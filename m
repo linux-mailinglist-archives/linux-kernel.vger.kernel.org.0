@@ -2,94 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7354F8BAEC
-	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66D138BAF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 13 Aug 2019 15:59:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729363AbfHMN6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 09:58:45 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52166 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727407AbfHMN6o (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:58:44 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7880F608FF; Tue, 13 Aug 2019 13:58:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565704723;
-        bh=M8oAe1f6maG+IxzSwYrxoIVVdKazq93Sv32mx1kHDTk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=UnYXjBsohipGcIhOiU7MbVsbLEx9berNqc16y6AT7dc/+7gM6zxDlknkaGartFwBs
-         wTmVznRdzrY7vbtfaxJW34Ni3lRNUiHaW/8eEfkCugzi5yqEM6ZWHdysjhRjB3oQgt
-         VkLtVzoHaMUKupIMsrs2eneH48+uRPOHZlasrHwI=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from potku.adurom.net (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AA5A560734;
-        Tue, 13 Aug 2019 13:58:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565704722;
-        bh=M8oAe1f6maG+IxzSwYrxoIVVdKazq93Sv32mx1kHDTk=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=IaI8Q6n2wPeQJAHwk4P9fPwbfo0nHJdPoiRlNZit9WBgBvAj3zU2/5X/WCuv732RX
-         vZFSpNsdsZs39QlwnnytW2C2fIDI61aQ+3GkJUV7EJzbTGFvac0y/PwRTQQFfQ5+Jl
-         a0EinvMjNaLJuO2Kne/S5kgkz5Rrrf8sqfsWTFiY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AA5A560734
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Ganapathi Bhat <gbhat@marvell.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot <syzbot+dc4127f950da51639216@syzkaller.appspotmail.com>,
-        "amitkarwar\@gmail.com" <amitkarwar@gmail.com>,
-        "davem\@davemloft.net" <davem@davemloft.net>,
-        "huxinming820\@gmail.com" <huxinming820@gmail.com>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless\@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "nishants\@marvell.com" <nishants@marvell.com>,
-        "syzkaller-bugs\@googlegroups.com" <syzkaller-bugs@googlegroups.com>
-Subject: Re: [EXT] INFO: trying to register non-static key in del_timer_sync (2)
-References: <000000000000927a7b0586561537@google.com>
-        <MN2PR18MB263783F52CAD4A335FD8BB34A01A0@MN2PR18MB2637.namprd18.prod.outlook.com>
-        <CACT4Y+aQzBkAq86Hx4jNFnAUzjXnq8cS2NZKfeCaFrZa__g-cg@mail.gmail.com>
-        <MN2PR18MB26372D98386D79736A7947EEA0140@MN2PR18MB2637.namprd18.prod.outlook.com>
-        <MN2PR18MB263710E8F1F8FFA06B2EDB3CA0EC0@MN2PR18MB2637.namprd18.prod.outlook.com>
-        <CAAeHK+z8MBNikw_x50Crf8ZhOhcF=uvPHakvBx44K77xHRUNfg@mail.gmail.com>
-Date:   Tue, 13 Aug 2019 16:58:36 +0300
-In-Reply-To: <CAAeHK+z8MBNikw_x50Crf8ZhOhcF=uvPHakvBx44K77xHRUNfg@mail.gmail.com>
-        (Andrey Konovalov's message of "Tue, 13 Aug 2019 15:36:33 +0200")
-Message-ID: <87k1bhb20j.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        id S1729421AbfHMN7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 09:59:31 -0400
+Received: from mail-eopbgr00071.outbound.protection.outlook.com ([40.107.0.71]:51556
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727427AbfHMN7b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 09:59:31 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HJ2F6Jvq8RqAZGZsnFCFWMHTjsTtbvWr4TwzhJKle4FchpvuWhE4URxSkQNu/e2zYeYSAw393TfutliAEA1gfRxYzHH3Tukm5lvtzEJWULET0O2XplMLSvyY153ah2iV2/e1R0PddHRE4RXGJiG+yWYD+gI1uwrztGnKu3qYOBdRRkwivc+U0IuKRur+NedkwO0rTlScoe4Ay1Mp5iwTF61nDctlkUQmmoNMnmZDBNR8wqTuuhW6hAwdrsfXEDaz4alBlqrqoSApEL+Pa//4uJjRIsT8+xze7PtQA/Ay6ca0lwykTY4h9uIGM2sK2Yt6/odGn722OoX+qiq9mDrpZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fi4SXYIyb6F9PNgzignVr5pyf3AcXXAVESOdExma4AA=;
+ b=dsxvhlBRc/KXtP7NiVQKusCkIM8GUQXj4rxTRIbxYLaRicDNkhemMXCoDhoJItAZ1XQlj4r2lOpJCX6mWTWe7AfRqt3ccJKXbluaLew5wIrYebC5QG0wQrHeRm3Y8x14cfTnBowKvPXMdycXwwwhdeLNR9C1a6Ky1Unujr5Zv+Tz7djke36u8oiyDcZKY22A+3GINESf45A+IwIIoYvILc5JCk8RBTW3wk9NHpOqQ2Fu5Tjmf0uq2/AMo0OptF/H8KLyREG2rMpRGXLtgz4ApAg27FId+3NupWIhjQLRpL0shjyx+0eBbUWwpkorA3/a7B+0GbOVfrLlgNFTAWXfjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Fi4SXYIyb6F9PNgzignVr5pyf3AcXXAVESOdExma4AA=;
+ b=A25k5EnSO5Q8HDxNv6SOZFYuW9rvxM79b0XMRv/j7Os4mUiGKINdAp8TIKshPnkTcOL6P3rrbQA1NrZwvIaKm7vNxb9IlfrJLD78wEH/H028Z71W6OSZDaMq2gaIJhNshyV6iL5fhate0+9IR1XuDxikYyg9+Tv7cOArPXhILDk=
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com (52.134.3.153) by
+ VI1PR0402MB3950.eurprd04.prod.outlook.com (52.134.17.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.13; Tue, 13 Aug 2019 13:59:22 +0000
+Received: from VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::a070:859:ccf8:3617]) by VI1PR0402MB3485.eurprd04.prod.outlook.com
+ ([fe80::a070:859:ccf8:3617%7]) with mapi id 15.20.2157.022; Tue, 13 Aug 2019
+ 13:59:22 +0000
+From:   Horia Geanta <horia.geanta@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>
+CC:     Chris Spencer <christopher.spencer@sea.co.uk>,
+        Cory Tusar <cory.tusar@zii.aero>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Aymen Sghaier <aymen.sghaier@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 00/15] crypto: caam - Add i.MX8MQ support
+Thread-Topic: [PATCH v7 00/15] crypto: caam - Add i.MX8MQ support
+Thread-Index: AQHVUUmn1hIaCFgDckirZJX9STyHyw==
+Date:   Tue, 13 Aug 2019 13:59:22 +0000
+Message-ID: <VI1PR0402MB34857B6486BDFE28B75A642398D20@VI1PR0402MB3485.eurprd04.prod.outlook.com>
+References: <20190812200739.30389-1-andrew.smirnov@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=horia.geanta@nxp.com; 
+x-originating-ip: [212.146.100.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7ba7ed39-115f-430a-c6df-08d71ff67184
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3950;
+x-ms-traffictypediagnostic: VI1PR0402MB3950:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR0402MB395044078E4147E7821BCF3B98D20@VI1PR0402MB3950.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 01283822F8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(376002)(396003)(136003)(346002)(199004)(189003)(4326008)(4744005)(33656002)(76176011)(99286004)(71200400001)(2906002)(26005)(5660300002)(8676002)(86362001)(66476007)(53936002)(14454004)(66946007)(66446008)(52536014)(66556008)(256004)(53546011)(14444005)(64756008)(91956017)(76116006)(186003)(6246003)(55016002)(102836004)(7696005)(478600001)(9686003)(6506007)(71190400001)(486006)(44832011)(476003)(25786009)(6436002)(81166006)(81156014)(8936002)(229853002)(446003)(66066001)(7736002)(2501003)(110136005)(54906003)(316002)(3846002)(6116002)(74316002)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3950;H:VI1PR0402MB3485.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: v5Y3n+Ve9qwKY9sg4+yJVrkwAPQ+QOArqG1PmX4VX2DqTzoJvP3Tc8+o4t85iM8UM/YXwUuyUq3YlyDujl9td9twvdF5O8F/N/bKx5+HkZSpXBc7AEZdmiy0d5Gqa4wxm38Jg/kD24fSvyBsHGeAb9k3Tr82qra+BERx2Ngugup9s8mrGy+etr+yC/LLusbQ00uZXj+uWu/nHiXiAZuElzmGnQPYGwHVJNTO9jNLSI+de8KNNLCbeBNtaCYZS0wyowMYWxEQqd3eCqLA3LL+0WQe1wXmAkimpYCqIi0UjhJeMQW9Rci9QMJ0TzNEED+MlHzXQ+iO9lVIcemOkQ+iwsk4GbLTPyMdAsFEY+om1MdbXYygKj/fcFUJIE7EuFBkLj38t5zm/AlPNoV+SELcCCK9fkB7TI6v223kEvpFQzE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ba7ed39-115f-430a-c6df-08d71ff67184
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Aug 2019 13:59:22.2807
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eWSk/fpCJrR8oxUUmGBG8t693Da9fLtsTw/+pMoRV2dL4uo9a81chVx41fTLz0kQlnwD73mfTVlTjQV34aqGOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3950
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrey Konovalov <andreyknvl@google.com> writes:
-
-> On Wed, Jun 12, 2019 at 6:03 PM Ganapathi Bhat <gbhat@marvell.com> wrote:
->>
->> Hi Dmitry,
->>
->> We have a patch to fix this: https://patchwork.kernel.org/patch/10990275/
->
-> Hi Ganapathi,
->
-> Has this patch been accepted anywhere? This bug is still open on syzbot.
-
-The patch is in "Changes Requested" state which means that the author is
-supposed to send a new version based on the review comments.
-
--- 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+On 8/12/2019 11:08 PM, Andrey Smirnov wrote:=0A=
+> Everyone:=0A=
+> =0A=
+> Picking up where Chris left off (I chatted with him privately=0A=
+> beforehead), this series adds support for i.MX8MQ to CAAM driver. Just=0A=
+> like [v1], this series is i.MX8MQ only.=0A=
+> =0A=
+> Feedback is welcome!=0A=
+> Thanks,=0A=
+> Andrey Smirnov=0A=
+> =0A=
+> Changes since [v6]:=0A=
+> =0A=
+>   - Fixed build problems in "crypto: caam - make CAAM_PTR_SZ dynamic"=0A=
+> =0A=
+>   - Collected Reviewied-by from Horia=0A=
+> =0A=
+>   - "crypto: caam - force DMA address to 32-bit on 64-bit i.MX SoCs"=0A=
+>     is changed to check 'caam_ptr_sz' instead of using 'caam_imx'=0A=
+>     =0A=
+>   - Incorporated feedback for "crypto: caam - request JR IRQ as the=0A=
+>     last step" and "crypto: caam - simplfy clock initialization"=0A=
+> =0A=
+FYI - the series does not apply cleanly on current cryptodev-2.6 tree.=0A=
+=0A=
+Horia=0A=
