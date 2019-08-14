@@ -2,114 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DAB568DB08
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:22:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9862F8DBCB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:28:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730144AbfHNRI2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58470 "EHLO mail.kernel.org"
+        id S1728872AbfHNRDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:03:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51702 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfHNRI0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:26 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728855AbfHNRDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:03:10 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3AB392084D;
-        Wed, 14 Aug 2019 17:08:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0EF3D21721;
+        Wed, 14 Aug 2019 17:03:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802505;
-        bh=1oYxQGPaHNjVLDTcSpfGfO2FZLfD0ONYzzODml0ub1I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xos01wi/3bNgeELrYDG03swLn3wGH8zL8biyirXHRvwjUIvOIis7riyGHrWqkv9Ab
-         iEovgZZ+4pbkJwqWQJCOESe/Oodph2pC5C1vJlcS8rFEvuucex5RirfRSPqmxqlgsw
-         4i7RPu3U4Lbuz38WfQUqFiZiF6MhgXIx7jSh6KFY=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.2 143/144] iwlwifi: mvm: dont send GEO_TX_POWER_LIMIT on version < 41
-Date:   Wed, 14 Aug 2019 19:01:39 +0200
-Message-Id: <20190814165805.951560164@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
-References: <20190814165759.466811854@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1565802189;
+        bh=CxvDG9zCWBcJ812reKgHR+JSRHBdcJUP+rEPiz+YCcg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=NJ4K9dUAH+t+UIQvAHVJFiRbRzhHLGejThFYXNc9CX5R6DksIoGG7XHUrbfzF9jwX
+         kfR6DJb5Gb3Ke06rKLCw+Zabi0EuAngzPLUuhN3SIEzI0HHUKDo/N4SFbMOCc0fMPR
+         S+Leo21cz7twxJopaDlRCeqiCdGyViIV0rs4l758=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814125012.8700-7-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-7-vkoul@kernel.org>
+Subject: Re: [PATCH 06/22] arm64: dts: qcom: pm8150: Add Base DTS file
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 10:03:08 -0700
+Message-Id: <20190814170309.0EF3D21721@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+Quoting Vinod Koul (2019-08-14 05:49:56)
+> Add base DTS file for pm8150 along with GPIOs
+>=20
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pm8150.dtsi | 41 ++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/pm8150.dtsi
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/pm8150.dtsi b/arch/arm64/boot/dts/q=
+com/pm8150.dtsi
+> new file mode 100644
+> index 000000000000..b533e254a203
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> @@ -0,0 +1,41 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +// Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2019, Linaro Limited
+> +
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/spmi/spmi.h>
+> +
+> +&spmi_bus {
+> +       pm8150_0: pm8150@0 {
 
-commit 39bd984c203e86f3109b49c2a2e20677c4d3ab65 upstream.
+I think node name should be 'pmic'
 
-Firmware versions before 41 don't support the GEO_TX_POWER_LIMIT
-command, and sending it to the firmware will cause a firmware crash.
-We allow this via debugfs, so we need to return an error value in case
-it's not supported.
+> +               compatible =3D "qcom,spmi-pmic";
 
-This had already been fixed during init, when we send the command if
-the ACPI WGDS table is present.  Fix it also for the other,
-userspace-triggered case.
+This should also have the model number? "qcom,pm8150"?
 
-Cc: stable@vger.kernel.org
-Fixes: 7fe90e0e3d60 ("iwlwifi: mvm: refactor geo init")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> +               reg =3D <0x0 SPMI_USID>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +
+> +               pm8150_gpios: gpio@c000 {
+> +                       compatible =3D "qcom,pm8150-gpio";
+> +                       reg =3D <0xc000>;
+> +                       gpio-controller;
+> +                       #gpio-cells =3D <2>;
+> +                       interrupts =3D <0 0xc0 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc1 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc2 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc3 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc4 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc5 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc6 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc7 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc8 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xc9 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xca 0 IRQ_TYPE_NONE>,
+> +                                    <0 0xcb 0 IRQ_TYPE_NONE>;
+> +               };
+> +       };
+> +
+> +       qcom,pm8150@1 {
 
----
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+Same comment, pmic@1.
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -874,6 +874,17 @@ int iwl_mvm_sar_select_profile(struct iw
- 	return iwl_mvm_send_cmd_pdu(mvm, REDUCE_TX_POWER_CMD, 0, len, &cmd);
- }
- 
-+static bool iwl_mvm_sar_geo_support(struct iwl_mvm *mvm)
-+{
-+	/*
-+	 * The GEO_TX_POWER_LIMIT command is not supported on earlier
-+	 * firmware versions.  Unfortunately, we don't have a TLV API
-+	 * flag to rely on, so rely on the major version which is in
-+	 * the first byte of ucode_ver.
-+	 */
-+	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 41;
-+}
-+
- int iwl_mvm_get_sar_geo_profile(struct iwl_mvm *mvm)
- {
- 	struct iwl_geo_tx_power_profiles_resp *resp;
-@@ -889,6 +900,9 @@ int iwl_mvm_get_sar_geo_profile(struct i
- 		.data = { &geo_cmd },
- 	};
- 
-+	if (!iwl_mvm_sar_geo_support(mvm))
-+		return -EOPNOTSUPP;
-+
- 	ret = iwl_mvm_send_cmd(mvm, &cmd);
- 	if (ret) {
- 		IWL_ERR(mvm, "Failed to get geographic profile info %d\n", ret);
-@@ -914,13 +928,7 @@ static int iwl_mvm_sar_geo_init(struct i
- 	int ret, i, j;
- 	u16 cmd_wide_id =  WIDE_ID(PHY_OPS_GROUP, GEO_TX_POWER_LIMIT);
- 
--	/*
--	 * This command is not supported on earlier firmware versions.
--	 * Unfortunately, we don't have a TLV API flag to rely on, so
--	 * rely on the major version which is in the first byte of
--	 * ucode_ver.
--	 */
--	if (IWL_UCODE_SERIAL(mvm->fw->ucode_ver) < 41)
-+	if (!iwl_mvm_sar_geo_support(mvm))
- 		return 0;
- 
- 	ret = iwl_mvm_sar_get_wgds_table(mvm);
-
-
+> +               compatible =3D"qcom,spmi-pmic";
+> +               reg =3D <0x1 SPMI_USID>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +       };
+> +};
