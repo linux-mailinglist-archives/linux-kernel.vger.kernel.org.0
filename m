@@ -2,69 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71AAE8D3BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6A498D3D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:53:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728018AbfHNMxI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:53:08 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:37583 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727111AbfHNMxE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:53:04 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1hxslz-0002In-Cp; Wed, 14 Aug 2019 12:53:03 +0000
-Date:   Wed, 14 Aug 2019 14:53:02 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
-        alistair23@gmail.com, ebiederm@xmission.com, arnd@arndb.de,
-        dalias@libc.org, torvalds@linux-foundation.org,
-        adhemerval.zanella@linaro.org, fweimer@redhat.com,
-        palmer@sifive.com, macro@wdc.com, zongbox@gmail.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, hpa@zytor.com
-Subject: Re: [PATCH v1 1/1] waitid: Add support for waiting for the current
- process group
-Message-ID: <20190814125301.4aed3cm747hjyzy5@wittgenstein>
-References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
- <20190814113822.9505-1-christian.brauner@ubuntu.com>
- <20190814113822.9505-2-christian.brauner@ubuntu.com>
- <20190814122909.GA11595@redhat.com>
- <20190814124551.hnt363g3blhuf2pv@wittgenstein>
- <20190814125012.GB11595@redhat.com>
+        id S1727933AbfHNMxi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:53:38 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33888 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727651AbfHNMxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:53:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8FEEAEE9;
+        Wed, 14 Aug 2019 12:53:34 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 14:53:34 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Linux API <linux-api@vger.kernel.org>
+Subject: Re: [RESEND PATCH 1/2 -mm] mm: account lazy free pages separately
+Message-ID: <20190814125334.GX17933@dhcp22.suse.cz>
+References: <1565308665-24747-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190809083216.GM18351@dhcp22.suse.cz>
+ <1a3c4185-c7ab-8d6f-8191-77dce02025a7@linux.alibaba.com>
+ <20190809180238.GS18351@dhcp22.suse.cz>
+ <79c90f6b-fcac-02e1-015a-0eaa4eafdf7d@linux.alibaba.com>
+ <564a0860-94f1-6301-5527-5c2272931d8b@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190814125012.GB11595@redhat.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <564a0860-94f1-6301-5527-5c2272931d8b@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 02:50:12PM +0200, Oleg Nesterov wrote:
-> On 08/14, Christian Brauner wrote:
-> >
-> > On Wed, Aug 14, 2019 at 02:29:10PM +0200, Oleg Nesterov wrote:
-> > > On 08/14, christian.brauner@ubuntu.com wrote:
-> > > >
-> > > >  	case P_PGID:
-> > > >  		type = PIDTYPE_PGID;
-> > > > -		if (upid <= 0)
-> > > > +		if (upid < 0)
-> > > >  			return -EINVAL;
-> > > > +
-> > > > +		if (upid == 0)
-> > > > +			pid = get_pid(task_pgrp(current));
-> > >
-> > > this needs rcu lock or tasklist_lock, this can race with another thread
-> > > doing sys_setpgid/setsid (see change_pid(PIDTYPE_PGID)).
-> >
-> > Oh, I naively assumed task_pgrp() would take an rcu lock...
+On Wed 14-08-19 14:49:18, Vlastimil Babka wrote:
+> On 8/9/19 8:26 PM, Yang Shi wrote:
+> > Here the new counter is introduced for patch 2/2 to account deferred 
+> > split THPs into available memory since NR_ANON_THPS may contain 
+> > non-deferred split THPs.
+> > 
+> > I could use an internal counter for deferred split THPs, but if it is 
+> > accounted by mod_node_page_state, why not just show it in /proc/meminfo? 
 > 
-> but it would not help ;)
+> The answer to "Why not" is that it becomes part of userspace API (btw this
+> patchset should have CC'd linux-api@ - please do for further iterations) and
+> even if the implementation detail of deferred splitting might change in the
+> future, we'll basically have to keep the counter (even with 0 value) in
+> /proc/meminfo forever.
+> 
+> Also, quite recently we have added the following counter:
+> 
+> KReclaimable: Kernel allocations that the kernel will attempt to reclaim
+>               under memory pressure. Includes SReclaimable (below), and other
+>               direct allocations with a shrinker.
+> 
+> Although THP allocations are not exactly "kernel allocations", once they are
+> unmapped, they are in fact kernel-only, so IMHO it wouldn't be a big stretch to
+> add the lazy THP pages there?
 
-Yeah, it doesn't do a get. :)
+That would indeed fit in much better than a dedicated counter.
+-- 
+Michal Hocko
+SUSE Labs
