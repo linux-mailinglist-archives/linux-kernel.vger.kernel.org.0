@@ -2,83 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D1808D34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:37:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA3BC8D33F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:36:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727972AbfHNMgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:36:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57072 "EHLO mail.kernel.org"
+        id S1727652AbfHNMgM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:36:12 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:53457 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726721AbfHNMgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:36:53 -0400
-Received: from localhost.localdomain (unknown [171.76.115.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C3DC8214DA;
-        Wed, 14 Aug 2019 12:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565786212;
-        bh=iw7/VOdW7KyurNi2mN9MCaftt4mJsQIbhD4ac/JMS08=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iYMGZ4F2C016+yIxESrvTfcGGu1G3m80KFPKMkBm585htPG2zIwAAQxEhwMpr7Vdx
-         +1d28PXinWL+jnEdnJhsYMIRySOyt+o2y4ApGXuay/XlakUuKk31olwS4ticd+OGBo
-         dx3zNuvBaI7MagLWcEEhDxOt9q9mVJ17arK2zlQY=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] dt-bindings: pinctrl: qcom-pmic-gpio: Add pm8150l support
-Date:   Wed, 14 Aug 2019 18:05:12 +0530
-Message-Id: <20190814123512.6017-3-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814123512.6017-1-vkoul@kernel.org>
-References: <20190814123512.6017-1-vkoul@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1725800AbfHNMgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:36:11 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 467pwS4ckmz9v0dH;
+        Wed, 14 Aug 2019 14:36:08 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=dh8izLOP; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id wBCHr_sXx0qq; Wed, 14 Aug 2019 14:36:08 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 467pwS3CNQz9v0QX;
+        Wed, 14 Aug 2019 14:36:08 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1565786168; bh=MWqbG02vkZmNYQgLQGkfZFOAvx7JkFoLhh24LWW8kCI=;
+        h=From:Subject:To:Cc:Date:From;
+        b=dh8izLOPZYR8ldqOQVPvsQ6hvHulPJd60EPpHHy6fzWjMHpNgxZWDv8uBAdGXzt70
+         CQSZGUMgAwoGrYE5np0E2jQDNiRvxkf2Ke3EPDvxnpZp+Fd59EC0PSIAW+N70Ntqje
+         IZAD04osr73vdQW0DGq2grwKvhmn2CxMzNNpNIaA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id EBA778B7F5;
+        Wed, 14 Aug 2019 14:36:09 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id i4GER-nDqlfb; Wed, 14 Aug 2019 14:36:09 +0200 (CEST)
+Received: from pc17473vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C63568B761;
+        Wed, 14 Aug 2019 14:36:09 +0200 (CEST)
+Received: by pc17473vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 905886B6C0; Wed, 14 Aug 2019 12:36:09 +0000 (UTC)
+Message-Id: <eb4d626514e22f85814830012642329018ef6af9.1565786091.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH 1/5] powerpc/ptdump: fix addresses display on PPC32
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Wed, 14 Aug 2019 12:36:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the PM8150l GPIO support to the Qualcomm PMIC GPIO
-binding.
+Commit 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
+wrongly changed KERN_VIRT_START from 0 to PAGE_OFFSET, leading to a
+shift in the displayed addresses.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Lets revert that change to resync walk_pagetables()'s addr val and
+pgd_t pointer for PPC32.
+
+Fixes: 453d87f6a8ae ("powerpc/mm: Warn if W+X pages found on boot")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 1 +
- drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 2 ++
- 2 files changed, 3 insertions(+)
+ arch/powerpc/mm/ptdump/ptdump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index 457459d17e79..c32bf3237545 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -99,6 +99,7 @@ to specify in a pin configuration subnode:
- 		    gpio1-gpio10 for pm8150 (holes on gpio2, gpio5, gpio7
- 					     and gpio8)
- 		    gpio1-gpio12 for pm8150b (holes on gpio3, gpio4, gpio7)
-+		    gpio1-gpio12 for pm8150l (hole on gpio7)
+diff --git a/arch/powerpc/mm/ptdump/ptdump.c b/arch/powerpc/mm/ptdump/ptdump.c
+index 6a88a9f585d4..3ad64fc11419 100644
+--- a/arch/powerpc/mm/ptdump/ptdump.c
++++ b/arch/powerpc/mm/ptdump/ptdump.c
+@@ -27,7 +27,7 @@
+ #include "ptdump.h"
  
- - function:
- 	Usage: required
-diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-index 931c9349f145..6f935e46f12c 100644
---- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
-@@ -1159,6 +1159,8 @@ static const struct of_device_id pmic_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm8150-gpio", .data = (void *) 10 },
- 	/* pm8150b has 12 GPIOs with holes on 3, r and 7 */
- 	{ .compatible = "qcom,pm8150b-gpio", .data = (void *) 12 },
-+	/* pm8150l has 12 GPIOs with holes on 7 */
-+	{ .compatible = "qcom,pm8150l-gpio", .data = (void *) 12 },
- 	{ },
- };
+ #ifdef CONFIG_PPC32
+-#define KERN_VIRT_START	PAGE_OFFSET
++#define KERN_VIRT_START	0
+ #endif
  
+ /*
 -- 
-2.20.1
+2.13.3
 
