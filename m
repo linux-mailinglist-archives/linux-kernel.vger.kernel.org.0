@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 828B18CBCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 08:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D85118CBE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 08:23:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727354AbfHNGQa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 02:16:30 -0400
-Received: from mga06.intel.com ([134.134.136.31]:54436 "EHLO mga06.intel.com"
+        id S1727031AbfHNGX5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 02:23:57 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:33162 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726631AbfHNGQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 02:16:30 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 23:16:29 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,384,1559545200"; 
-   d="scan'208";a="167287654"
-Received: from buildpc-hp-z230.iind.intel.com (HELO buildpc-HP-Z230) ([10.223.89.34])
-  by orsmga007.jf.intel.com with ESMTP; 13 Aug 2019 23:16:25 -0700
-Date:   Wed, 14 Aug 2019 11:48:28 +0530
-From:   Sanyog Kale <sanyog.r.kale@intel.com>
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc:     alsa-devel@alsa-project.org, tiwai@suse.de,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        vkoul@kernel.org, broonie@kernel.org,
-        srinivas.kandagatla@linaro.org, jank@cadence.com,
-        slawomir.blauciak@intel.com
-Subject: Re: [alsa-devel] [PATCH v2 0/3] soundwire: debugfs support for 5.4
-Message-ID: <20190814061827.GA21043@buildpc-HP-Z230>
-References: <20190812235942.7120-1-pierre-louis.bossart@linux.intel.com>
+        id S1725265AbfHNGX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 02:23:57 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 467ffy4tKYz9vBn1;
+        Wed, 14 Aug 2019 08:23:54 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=avbdMWC6; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id a4nZaAJs1IUV; Wed, 14 Aug 2019 08:23:54 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 467ffy3jSmz9vBn0;
+        Wed, 14 Aug 2019 08:23:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1565763834; bh=riZMoyaCD1+ZQ3eW9ssk+3+aGprxE6J0aY0oTm8WUHk=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=avbdMWC6gc6VxruvxXJGtYUHAYWYzSiS4yb5QNH+51hPcJHVoUSm6e/d/DNpYKicI
+         vS8BErZ65r9GgWrakVITqUbxe3MQx1YDyYqkEDsIDZE0uQCzGij7OUCEWw2XfNC49T
+         7TCdqwMlO5wSet+PmpAdKey3vLAnVDf8FPuOq+Uc=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 828FD8B780;
+        Wed, 14 Aug 2019 08:23:55 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id ApWTthVaOqfG; Wed, 14 Aug 2019 08:23:55 +0200 (CEST)
+Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5FC4F8B761;
+        Wed, 14 Aug 2019 08:23:55 +0200 (CEST)
+Subject: Re: [PATCH v1 10/10] powerpc/mm: refactor ioremap_range() and use
+ ioremap_page_range()
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+References: <6bc35eca507359075528bc0e55938bc1ce8ee485.1565726867.git.christophe.leroy@c-s.fr>
+ <bd784c8091cbf41231a862f73b52fd2a356ec8f1.1565726867.git.christophe.leroy@c-s.fr>
+ <20190814054941.GC27497@infradead.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <3f866bc8-7cc3-cb09-92f3-016dfb906526@c-s.fr>
+Date:   Wed, 14 Aug 2019 08:23:54 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812235942.7120-1-pierre-louis.bossart@linux.intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190814054941.GC27497@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 06:59:39PM -0500, Pierre-Louis Bossart wrote:
-> This patchset enables debugfs support and corrects all the feedback
-> provided on an earlier RFC ('soundwire: updates for 5.4')
+
+
+Le 14/08/2019 à 07:49, Christoph Hellwig a écrit :
+> Somehow this series is missing a cover letter.
 > 
-> There is one remaining hard-coded value in intel.c that will need to
-> be fixed in a follow-up patchset not specific to debugfs: we need to
-> remove hard-coded Intel-specific configurations from cadence_master.c
-> (PDI offsets, etc).
+> While you are touching all this "fun" can you also look into killing
+> __ioremap?  It seems to be a weird non-standard version of ioremap_prot
+> (probably predating ioremap_prot) that is missing a few lines of code
+> setting attributes that might not even be applicable for the two drivers
+> calling it.
 > 
-> Changes since v1 (Feedback from GKH)
-> Handle debugfs in a more self-contained way (no dentry as return or parameter)
-> Used CONFIG_DEBUG_FS in structures and code to make it easier to
-> remove if need be.
-> No functional change for register dumps.
-> 
-> Changes since RFC (Feedback from GKH, Vinod, Guennadi, Cezary, Sanyog):
-> removed error checks
-> used DEFINE_SHOW_ATTRIBUTE and seq_file
-> fixed copyright dates
-> fixed SPDX license info to use GPL2.0 only
-> fixed Makefile to include debugfs only if CONFIG_DEBUG_FS is selected
-> used static inlines for fallback compilation
-> removed intermediate variables
-> removed hard-coded constants in loops (used registers offsets and
-> hardware capabilities)
-> squashed patch 3
->
 
-Changes looks good to me.
+ocm_init_node() [arch/powerpc/platforms/4xx/ocm.c] calls __ioremap() 
+with _PAGE_EXEC set while ioremap_prot() clears _PAGE_EXEC
 
-Acked-by: Sanyog Kale <sanyog.r.kale@intel.com>
-
-> _______________________________________________
-> Alsa-devel mailing list
-> Alsa-devel@alsa-project.org
-> https://mailman.alsa-project.org/mailman/listinfo/alsa-devel
-
--- 
+Christophe
