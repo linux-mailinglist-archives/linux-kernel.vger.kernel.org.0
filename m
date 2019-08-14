@@ -2,42 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 691948DAC8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:20:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0728A8DB31
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbfHNRKm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:10:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33400 "EHLO mail.kernel.org"
+        id S1729343AbfHNRHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730220AbfHNRKe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:34 -0400
+        id S1729826AbfHNRHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:15 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 432BA208C2;
-        Wed, 14 Aug 2019 17:10:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E23D221743;
+        Wed, 14 Aug 2019 17:07:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802633;
-        bh=EHaAD9qiC6h7RKmfVt1UQ+1y1ZhRwFEYxLMl9PI7pG4=;
+        s=default; t=1565802434;
+        bh=HcpxKF/MCkxq4bpGnQg8NKwrDNeMif3vMtDdIL/Asro=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MDwqL2k93OuXskLgEX0IoEF9o6RfLJ6umPeOXedHoshgaIzy0zCauDzgPSwfIWu52
-         4jlh5Mc9pZgAXcAKsHuWDI3lqye5DNYQSQRbRyG138TSKKcMNK765zhdUjBVL67HY3
-         HPxrD6AmKExALq7wG/ZTi7S9udIbdU+6tyNJaqsU=
+        b=KT4qcTtKBKIZUVDErmTIG0iUXgtYNOs3UslhUTDe39FAooz2oztrK0j1Njahvu/Vq
+         uy0xuvT+wdBZCAodnghcYxI0Czb8g+RuJtIWxR57z5Nzonkwk9KrPc5b9xBpaDaD6o
+         PApNkS4aSqSSb1CwtBGI8bN+T+2fF0nfUQl99+0s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 57/91] perf probe: Avoid calling freeing routine multiple times for same pointer
-Date:   Wed, 14 Aug 2019 19:01:20 +0200
-Message-Id: <20190814165752.016176295@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>,
+        Vandita Kulkarni <vandita.kulkarni@intel.com>,
+        Deepak M <m.deepak@intel.com>,
+        Madhav Chauhan <madhav.chauhan@intel.com>,
+        Jani Nikula <jani.nikula@intel.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org
+Subject: [PATCH 5.2 125/144] drm/i915: Fix wrong escape clock divisor init for GLK
+Date:   Wed, 14 Aug 2019 19:01:21 +0200
+Message-Id: <20190814165805.156518457@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,49 +51,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d95daf5accf4a72005daa13fbb1d1bd8709f2861 ]
+From: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
 
-When perf_add_probe_events() we call cleanup_perf_probe_events() for the
-pev pointer it receives, then, as part of handling this failure the main
-'perf probe' goes on and calls cleanup_params() and that will again call
-cleanup_perf_probe_events()for the same pointer, so just set nevents to
-zero when handling the failure of perf_add_probe_events() to avoid the
-double free.
+commit 73a0ff0b30af79bf0303d557eb82f1d1945bb6ee upstream.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-x8qgma4g813z96dvtw9w219q@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+According to Bspec clock divisor registers in GeminiLake
+should be initialized by shifting 1(<<) to amount of correspondent
+divisor. While i915 was writing all this time that value as is.
+
+Surprisingly that it by accident worked, until we met some issues
+with Microtech Etab.
+
+v2: Added Fixes tag and cc
+v3: Added stable to cc as well.
+
+Signed-off-by: Stanislav Lisovskiy <stanislav.lisovskiy@intel.com>
+Reviewed-by: Vandita Kulkarni <vandita.kulkarni@intel.com>
+Bugzilla: https://bugs.freedesktop.org/show_bug.cgi?id=108826
+Fixes: bcc657004841 ("drm/i915/glk: Program txesc clock divider for GLK")
+Cc: Deepak M <m.deepak@intel.com>
+Cc: Madhav Chauhan <madhav.chauhan@intel.com>
+Cc: Jani Nikula <jani.nikula@intel.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: intel-gfx@lists.freedesktop.org
+Cc: stable@vger.kernel.org
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190712081938.14185-1-stanislav.lisovskiy@intel.com
+(cherry picked from commit ce52ad5dd52cfaf3398058384e0ff94134bbd89c)
+Signed-off-by: Jani Nikula <jani.nikula@intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/perf/builtin-probe.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/gpu/drm/i915/vlv_dsi_pll.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
-index 99de91698de1e..0bdb34fee9d81 100644
---- a/tools/perf/builtin-probe.c
-+++ b/tools/perf/builtin-probe.c
-@@ -711,6 +711,16 @@ __cmd_probe(int argc, const char **argv)
+--- a/drivers/gpu/drm/i915/vlv_dsi_pll.c
++++ b/drivers/gpu/drm/i915/vlv_dsi_pll.c
+@@ -394,8 +394,8 @@ static void glk_dsi_program_esc_clock(st
+ 	else
+ 		txesc2_div = 10;
  
- 		ret = perf_add_probe_events(params.events, params.nevents);
- 		if (ret < 0) {
-+
-+			/*
-+			 * When perf_add_probe_events() fails it calls
-+			 * cleanup_perf_probe_events(pevs, npevs), i.e.
-+			 * cleanup_perf_probe_events(params.events, params.nevents), which
-+			 * will call clear_perf_probe_event(), so set nevents to zero
-+			 * to avoid cleanup_params() to call clear_perf_probe_event() again
-+			 * on the same pevs.
-+			 */
-+			params.nevents = 0;
- 			pr_err_with_code("  Error: Failed to add events.", ret);
- 			return ret;
- 		}
--- 
-2.20.1
-
+-	I915_WRITE(MIPIO_TXESC_CLK_DIV1, txesc1_div & GLK_TX_ESC_CLK_DIV1_MASK);
+-	I915_WRITE(MIPIO_TXESC_CLK_DIV2, txesc2_div & GLK_TX_ESC_CLK_DIV2_MASK);
++	I915_WRITE(MIPIO_TXESC_CLK_DIV1, (1 << (txesc1_div - 1)) & GLK_TX_ESC_CLK_DIV1_MASK);
++	I915_WRITE(MIPIO_TXESC_CLK_DIV2, (1 << (txesc2_div - 1)) & GLK_TX_ESC_CLK_DIV2_MASK);
+ }
+ 
+ /* Program BXT Mipi clocks and dividers */
 
 
