@@ -2,117 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 139268C845
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADF338C92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729677AbfHNC3e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:29:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729856AbfHNCXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:23:31 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA40B216F4;
-        Wed, 14 Aug 2019 02:23:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749410;
-        bh=VwqIu6Zs5et+zIwo6WWfsCX9KCS+VO+NChuttBxxm/o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=F7pIwrkxZ2I4Y+9j6FVXNDWujAXAZZvhAVW2bCmYk5DtefD5xug0I+ff3cfZFW6p9
-         RAetzlFDq0loEcHH5JG3fOcnG04wNIlSwaqCZ+PiKXRjSQ8CSvjJFVwR+ytcoJ2lSu
-         V05DbjcFz4Exiq+hOfV/fX6d3D5iM+kifoZWR1yA=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
-        Jarod Wilson <jarod@redhat.com>,
-        Jay Vosburgh <j.vosburgh@gmail.com>,
-        Veaceslav Falico <vfalico@gmail.com>,
-        Andy Gospodarek <andy@greyhouse.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 05/33] bonding: Force slave speed check after link state recovery for 802.3ad
-Date:   Tue, 13 Aug 2019 22:22:55 -0400
-Message-Id: <20190814022323.17111-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814022323.17111-1-sashal@kernel.org>
-References: <20190814022323.17111-1-sashal@kernel.org>
+        id S1728257AbfHNChK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:37:10 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36343 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728458AbfHNChI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:37:08 -0400
+Received: by mail-ot1-f66.google.com with SMTP id k18so46811218otr.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hV2pKWlMxnhaypGzns6kJSRcp18KAhjsh92Ko5vM2dU=;
+        b=s4jfsXx+Cq+klsDPXG+/AvuC0BYDeQjlCJgMXkRlH6uOTDU0uk3KDxxap7JNbXYqZn
+         5wymoRYTTpTBAFjfHQvCHNtf9pA6e+DA34DFVNR5sVBCPQFulY4qlafhcJ3i0mh3iw4B
+         QsMATqQdvXL/I3B1lqcuI7SeJ4CJL6cnKGVO+o5QfK3rNkM9Zf+gqu6dKGh4UTYoZYKt
+         GacMgdbyQQFh+EqCKftFmQJTn9nhX87zjEC6HuvAsaA3wVebgOlYuggqskABTeS8/W+F
+         8KWzyETW2o8SuHJQUocXaSek2bkbt8LRpIrGaPk6kJVPttyR+yAaLh39j1WvDavSedYp
+         jT5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hV2pKWlMxnhaypGzns6kJSRcp18KAhjsh92Ko5vM2dU=;
+        b=gWuvZAtODz2b7BkCiRk7acGpcozFk5CefUe3a5UMVOkPkGRS56E7bCOxWwVyn/d+ZB
+         OZAbfFxdXFifjJvIsHCG6AW3eIf5IO9QQNy4Oti7uhf0+BhruvaaNhmHvWbPzrSYms1t
+         R4qGqllfOlSzi2zCEMiQ/w9xcgNO5ffx+LCG321gBUTqqyZpP2wSRsMlLA//tf0sts1i
+         aJDKn6decEPb+YGg3OAwaTjs4vx+kpgX0sv9GHhdfXp3mW14cW8jZN38n/UrZmjhhBZ/
+         GlGpBrRLZKCzMVvTgZ5FNvR3xjOfQYqG+6UDIGGr/5VB0UsUSmXrscfkg7rsCFL+R4Cq
+         xKJA==
+X-Gm-Message-State: APjAAAWxFiF0OJZcJAgAEdqgrpK2kr3K7mBAgVI159Pbf7nMRQFE5qBh
+        e1WUdrfHbchmXXDzLjv26QY=
+X-Google-Smtp-Source: APXvYqwCm95c1dn4xfbMaEyHxx8PGMDXqkcsKW7lYisFSX5mPMe4ewDWvMLmZIc03W0kaSBlbWSJSQ==
+X-Received: by 2002:a5e:c911:: with SMTP id z17mr13586768iol.119.1565750227338;
+        Tue, 13 Aug 2019 19:37:07 -0700 (PDT)
+Received: from peng.science.purdue.edu (cos-128-210-107-27.science.purdue.edu. [128.210.107.27])
+        by smtp.googlemail.com with ESMTPSA id y19sm14805008ioj.62.2019.08.13.19.37.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2019 19:37:06 -0700 (PDT)
+From:   Hui Peng <benquike@gmail.com>
+To:     security@kernel.org
+Cc:     Hui Peng <benquike@gmail.com>,
+        Mathias Payer <mathias.payer@nebelwelt.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Allison Randal <allison@lohutok.net>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Wenwen Wang <wang6495@umn.edu>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix an OOB bug in parse_audio_mixer_unit
+Date:   Tue, 13 Aug 2019 22:36:24 -0400
+Message-Id: <20190814023625.21683-1-benquike@gmail.com>
+X-Mailer: git-send-email 2.22.1
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Falcon <tlfalcon@linux.ibm.com>
+The `uac_mixer_unit_descriptor` shown as below is read from the
+device side. In `parse_audio_mixer_unit`, `baSourceID` field is
+accessed from index 0 to `bNrInPins` - 1, the current implementation
+assumes that descriptor is always valid (the length  of descriptor
+is no shorter than 5 + `bNrInPins`). If a descriptor read from
+the device side is invalid, it may trigger out-of-bound memory
+access.
 
-[ Upstream commit 12185dfe44360f814ac4ead9d22ad2af7511b2e9 ]
+```
+struct uac_mixer_unit_descriptor {
+	__u8 bLength;
+	__u8 bDescriptorType;
+	__u8 bDescriptorSubtype;
+	__u8 bUnitID;
+	__u8 bNrInPins;
+	__u8 baSourceID[];
+}
+```
 
-The following scenario was encountered during testing of logical
-partition mobility on pseries partitions with bonded ibmvnic
-adapters in LACP mode.
+This patch fixes the bug by add a sanity check on the length of
+the descriptor.
 
-1. Driver receives a signal that the device has been
-   swapped, and it needs to reset to initialize the new
-   device.
-
-2. Driver reports loss of carrier and begins initialization.
-
-3. Bonding driver receives NETDEV_CHANGE notifier and checks
-   the slave's current speed and duplex settings. Because these
-   are unknown at the time, the bond sets its link state to
-   BOND_LINK_FAIL and handles the speed update, clearing
-   AD_PORT_LACP_ENABLE.
-
-4. Driver finishes recovery and reports that the carrier is on.
-
-5. Bond receives a new notification and checks the speed again.
-   The speeds are valid but miimon has not altered the link
-   state yet.  AD_PORT_LACP_ENABLE remains off.
-
-Because the slave's link state is still BOND_LINK_FAIL,
-no further port checks are made when it recovers. Though
-the slave devices are operational and have valid speed
-and duplex settings, the bond will not send LACPDU's. The
-simplest fix I can see is to force another speed check
-in bond_miimon_commit. This way the bond will update
-AD_PORT_LACP_ENABLE if needed when transitioning from
-BOND_LINK_FAIL to BOND_LINK_UP.
-
-CC: Jarod Wilson <jarod@redhat.com>
-CC: Jay Vosburgh <j.vosburgh@gmail.com>
-CC: Veaceslav Falico <vfalico@gmail.com>
-CC: Andy Gospodarek <andy@greyhouse.net>
-Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
 ---
- drivers/net/bonding/bond_main.c | 9 +++++++++
+ sound/usb/mixer.c | 9 +++++++++
  1 file changed, 9 insertions(+)
 
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 5b116ec756b4e..0c96dabeb7f86 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -2129,6 +2129,15 @@ static void bond_miimon_commit(struct bonding *bond)
- 	bond_for_each_slave(bond, slave, iter) {
- 		switch (slave->new_link) {
- 		case BOND_LINK_NOCHANGE:
-+			/* For 802.3ad mode, check current slave speed and
-+			 * duplex again in case its port was disabled after
-+			 * invalid speed/duplex reporting but recovered before
-+			 * link monitoring could make a decision on the actual
-+			 * link status
-+			 */
-+			if (BOND_MODE(bond) == BOND_MODE_8023AD &&
-+			    slave->link == BOND_LINK_UP)
-+				bond_3ad_adapter_speed_duplex_changed(slave);
- 			continue;
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index 7498b5191b68..38202ce67237 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -2091,6 +2091,15 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
+ 	struct usb_audio_term iterm;
+ 	int input_pins, num_ins, num_outs;
+ 	int pin, ich, err;
++	int desc_len = (int) ((unsigned long) state->buffer +
++			state->buflen - (unsigned long) raw_desc);
++
++	if (desc_len < sizeof(*desc) + desc->bNrInPins) {
++		usb_audio_err(state->chip,
++			      "descriptor %d too short\n",
++			      unitid);
++		return -EINVAL;
++	}
  
- 		case BOND_LINK_UP:
+ 	err = uac_mixer_unit_get_channels(state, desc);
+ 	if (err < 0) {
 -- 
-2.20.1
+2.22.1
 
