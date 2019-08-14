@@ -2,86 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A6BE8D939
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:06:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40E3C8D8AD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:01:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728862AbfHNRGe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:06:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55686 "EHLO mail.kernel.org"
+        id S1728423AbfHNRBG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:01:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729670AbfHNRGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:06:31 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1728329AbfHNRBF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:01:05 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 988C0208C2;
-        Wed, 14 Aug 2019 17:06:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 027C42063F;
+        Wed, 14 Aug 2019 17:01:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802391;
-        bh=t6eA6VKXVROaAH59iF6DMwE06CidU+UM0bKpkui1p7Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d6bDvq+aCvQKT1O1FtxVrNdHEsw2ASdMvOwmU+6+bPADu41P14segcEN3X8A7lN+v
-         S8/afAB4yTj7n7a4T+MCZwqzJ2U2zIW1QtBFLdsfmR+aaQKCXWxrhcO+zjcsArKQvE
-         sei4HWLLV0MS9FKQBDdVQk9Ne2xjKQ0Rb6o11iCE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 107/144] scsi: megaraid_sas: fix panic on loading firmware crashdump
-Date:   Wed, 14 Aug 2019 19:01:03 +0200
-Message-Id: <20190814165804.380628302@linuxfoundation.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
-References: <20190814165759.466811854@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1565802065;
+        bh=Vh+lga1zBJdv/7/3pj4v8unidtWcvcdce5+7GazS3nI=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Pn7XS1QqYeCxlgbOHi0Q2V295J2Yw83V6M52HLgvD/biAQ3DLRmelp6urX9rHWdEO
+         5o3Vl2vKK7TWeCpC4Um/i4GXA8dkMLnGGTNMlKmq86wrfd5grVeDFRWbPnmixISTpF
+         5kUVGZizZp/IyKfvKQyKp3dJPi7v1NF5FPkwKU94=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814125012.8700-4-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-4-vkoul@kernel.org>
+Subject: Re: [PATCH 03/22] arm64: dts: qcom: sm8150: add tlmm node
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 10:01:04 -0700
+Message-Id: <20190814170105.027C42063F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3b5f307ef3cb5022bfe3c8ca5b8f2114d5bf6c29 ]
+Quoting Vinod Koul (2019-08-14 05:49:53)
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
 
-While loading fw crashdump in function fw_crash_buffer_show(), left bytes
-in one dma chunk was not checked, if copying size over it, overflow access
-will cause kernel panic.
+Add some commit text? Or just squash with the first patch? Not sure why
+it's a different commit.
 
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
- 1 file changed, 3 insertions(+)
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/q=
+com/sm8150.dtsi
+> index cd9fcadaeacb..5f2f21270e2d 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> @@ -189,6 +189,21 @@
+>                         };
+>                 };
+> =20
+> +               tlmm: pinctrl@3100000 {
+> +                       compatible =3D "qcom,sm8150-pinctrl";
+> +                       reg =3D <0x03100000 0x300000>,
+> +                             <0x03500000 0x300000>,
+> +                             <0x03900000 0x300000>,
+> +                             <0x03D00000 0x300000>;
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 7237114a1d534..5f30016e9b64f 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -3045,6 +3045,7 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	u32 size;
- 	unsigned long buff_addr;
- 	unsigned long dmachunk = CRASH_DMA_BUF_SIZE;
-+	unsigned long chunk_left_bytes;
- 	unsigned long src_addr;
- 	unsigned long flags;
- 	u32 buff_offset;
-@@ -3070,6 +3071,8 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	}
- 
- 	size = (instance->fw_crash_buffer_size * dmachunk) - buff_offset;
-+	chunk_left_bytes = dmachunk - (buff_offset % dmachunk);
-+	size = (size > chunk_left_bytes) ? chunk_left_bytes : size;
- 	size = (size >= PAGE_SIZE) ? (PAGE_SIZE - 1) : size;
- 
- 	src_addr = (unsigned long)instance->crash_buf[buff_offset / dmachunk] +
--- 
-2.20.1
+Please don't use capitalized hex characters.
 
-
-
+> +                       reg-names =3D "west", "east", "north", "south";
+> +                       interrupts =3D <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +                       gpio-ranges =3D <&tlmm 0 0 175>;
+> +                       gpio-controller;
+> +                       #gpio-cells =3D <2>;
+> +                       interrupt-controller;
+> +                       #interrupt-cells =3D <2>;
+> +               };
+> +
