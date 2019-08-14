@@ -2,110 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C42348CD75
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 662F68CD7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:01:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfHNIAL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:00:11 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:40274 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727411AbfHNIAK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:00:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=aAnmSRph1c1Gu2+S0Bf5dmihLUaL6lE7+YQ+WyB/8Io=; b=bM+YSebvWYi9TWCoNWvznDU4rK
-        PbGYSC1kDL4lM+HJPv/XKvL+1+89tZCp9zpByE9sGHwJjWDQjUUyETZEtrYJ2ZVWr+nImLnODGhGr
-        Px7VZx/459JkWE+617Z320wbe59gs70dEAfTZFkf7gxjUpz+comcBvRsHIs/2/wp7d/28TxxQGeaC
-        QnxdelxFLgpddzI4JUuX9iBWcEcI3jEaTh983n/LE0kJUerNxqxQekySl+oWl/1d+10zpd/blkhvt
-        1FKMaw1LL9eaVdr02KhYgcBEOpEj61YaLSReU27GR2//wmzBVDoKxKWf4VXSE3L6wcQsGyle3EMmm
-        WVu8ZTag==;
-Received: from [2001:4bb8:180:1ec3:c70:4a89:bc61:2] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hxoCP-0008Bl-UL; Wed, 14 Aug 2019 08:00:02 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Ben Skeggs <bskeggs@redhat.com>
-Cc:     Ralph Campbell <rcampbell@nvidia.com>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 10/10] mm: remove CONFIG_MIGRATE_VMA_HELPER
-Date:   Wed, 14 Aug 2019 09:59:28 +0200
-Message-Id: <20190814075928.23766-11-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814075928.23766-1-hch@lst.de>
-References: <20190814075928.23766-1-hch@lst.de>
+        id S1726714AbfHNIBp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:01:45 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:57874 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725928AbfHNIBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 04:01:44 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8CF023001839;
+        Wed, 14 Aug 2019 08:01:44 +0000 (UTC)
+Received: from gondolin (dhcp-192-232.str.redhat.com [10.33.192.232])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E88E808D0;
+        Wed, 14 Aug 2019 08:01:38 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 10:01:35 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Parav Pandit <parav@mellanox.com>
+Cc:     Alex Williamson <alex.williamson@redhat.com>,
+        Kirti Wankhede <kwankhede@nvidia.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "cjia@nvidia.com" <cjia@nvidia.com>
+Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
+Message-ID: <20190814100135.1f60aa42.cohuck@redhat.com>
+In-Reply-To: <AM0PR05MB4866D40F8EBB382C78193C91D1AD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
+References: <20190802065905.45239-1-parav@mellanox.com>
+        <20190808141255.45236-1-parav@mellanox.com>
+        <20190808170247.1fc2c4c4@x1.home>
+        <77ffb1f8-e050-fdf5-e306-0a81614f7a88@nvidia.com>
+        <AM0PR05MB4866993536C0C8ACEA2F92DBD1D20@AM0PR05MB4866.eurprd05.prod.outlook.com>
+        <20190813085246.1d642ae5@x1.home>
+        <AM0PR05MB48663579A340E6597B3D01BCD1D20@AM0PR05MB4866.eurprd05.prod.outlook.com>
+        <20190813111149.027c6a3c@x1.home>
+        <AM0PR05MB4866D40F8EBB382C78193C91D1AD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 14 Aug 2019 08:01:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-CONFIG_MIGRATE_VMA_HELPER guards helpers that are required for proper
-devic private memory support.  Remove the option and just check for
-CONFIG_DEVICE_PRIVATE instead.
+On Wed, 14 Aug 2019 05:54:36 +0000
+Parav Pandit <parav@mellanox.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- drivers/gpu/drm/nouveau/Kconfig | 1 -
- mm/Kconfig                      | 3 ---
- mm/migrate.c                    | 4 ++--
- 3 files changed, 2 insertions(+), 6 deletions(-)
+> > > I get that part. I prefer to remove the UUID itself from the structure
+> > > and therefore removing this API makes lot more sense?  
+> > 
+> > Mdev and support tools around mdev are based on UUIDs because it's defined
+> > in the documentation.    
+> When we introduce newer device naming scheme, it will update the documentation also.
+> May be that is the time to move to .rst format too.
 
-diff --git a/drivers/gpu/drm/nouveau/Kconfig b/drivers/gpu/drm/nouveau/Kconfig
-index df4352c279ba..3558df043592 100644
---- a/drivers/gpu/drm/nouveau/Kconfig
-+++ b/drivers/gpu/drm/nouveau/Kconfig
-@@ -89,7 +89,6 @@ config DRM_NOUVEAU_SVM
- 	depends on MMU
- 	depends on STAGING
- 	select HMM_MIRROR
--	select MIGRATE_VMA_HELPER
- 	select MMU_NOTIFIER
- 	default n
- 	help
-diff --git a/mm/Kconfig b/mm/Kconfig
-index 563436dc1f24..2fe4902ad755 100644
---- a/mm/Kconfig
-+++ b/mm/Kconfig
-@@ -669,9 +669,6 @@ config ZONE_DEVICE
- 
- 	  If FS_DAX is enabled, then say Y.
- 
--config MIGRATE_VMA_HELPER
--	bool
--
- config DEV_PAGEMAP_OPS
- 	bool
- 
-diff --git a/mm/migrate.c b/mm/migrate.c
-index 33e063c28c1b..993386cb5335 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -2117,7 +2117,7 @@ int migrate_misplaced_transhuge_page(struct mm_struct *mm,
- 
- #endif /* CONFIG_NUMA */
- 
--#if defined(CONFIG_MIGRATE_VMA_HELPER)
-+#ifdef CONFIG_DEVICE_PRIVATE
- static int migrate_vma_collect_hole(unsigned long start,
- 				    unsigned long end,
- 				    struct mm_walk *walk)
-@@ -2942,4 +2942,4 @@ void migrate_vma_finalize(struct migrate_vma *migrate)
- 	}
- }
- EXPORT_SYMBOL(migrate_vma_finalize);
--#endif /* defined(MIGRATE_VMA_HELPER) */
-+#endif /* CONFIG_DEVICE_PRIVATE */
--- 
-2.20.1
+You are aware that there are existing tools that expect a uuid naming
+scheme, right?
 
+> 
+> > I don't think it's as simple as saying "voila, UUID
+> > dependencies are removed, users are free to use arbitrary strings".  We'd need
+> > to create some kind of naming policy, what characters are allows so that we
+> > can potentially expand the creation parameters as has been proposed a couple
+> > times, how do we deal with collisions and races, and why should we make such
+> > a change when a UUID is a perfectly reasonable devices name.  Thanks,
+> >  
+> Sure, we should define a policy on device naming to be more relaxed.
+> We have enough examples in-kernel.
+> Few that I am aware of are netdev (vxlan, macvlan, ipvlan, lot more), rdma etc which has arbitrary device names and ID based device names.
+>  
+> Collisions and race is already taken care today in the mdev core. Same unique device names continue.
+
+I'm still completely missing a rationale _why_ uuids are supposedly
+bad/restricting/etc. We want to uniquely identify a device, across
+different types of vendor drivers. An uuid is a unique identifier and
+even a well-defined one. Tools (e.g. mdevctl) are relying on it for
+mdev devices today.
+
+What is the problem you're trying to solve?
