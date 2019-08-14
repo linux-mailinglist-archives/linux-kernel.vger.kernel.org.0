@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FF9C8DBA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C4A18DBA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729142AbfHNREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:04:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52952 "EHLO mail.kernel.org"
+        id S1729284AbfHNR06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:26:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729127AbfHNREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:09 -0400
+        id S1729173AbfHNREQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:04:16 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAB2F208C2;
-        Wed, 14 Aug 2019 17:04:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EECD208C2;
+        Wed, 14 Aug 2019 17:04:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802248;
-        bh=dcNlIq3Uf0l0lx13G3Fyg5C2xZf/pldIfA1pAiWLhjo=;
+        s=default; t=1565802256;
+        bh=CMtC4t94zvH+sK9mOeNZYQhRE9tKxvGvOKZoQrxpeok=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=laj6tMLrxxoX6/VMhNT+f3OowbXoXsGg0fBgMwkqrnceIhkeM2PEDa2BrCgJaR06w
-         FqWfEZ3rrU4RkcSaXe6SkOwHG0N+UaUf9ZeprtzBvzNEb54s06It3maQUDlz9vxG8H
-         NRuUpcpFDMT/jm6JdCZWS1AF1zeYMxRewjNEZYvo=
+        b=M1nvbpciR3+aa3B41M2FHytnJOQ33Bm84RZCa8mrpwz0vAY3D5KN7jCzS3n1H8IHK
+         yN/6zPVi5W/qQahob/G/Vv8UpJpiI6zFRc0/+Yu0EA3/mk0OZfAwqyf9nTMzDITc+c
+         MgfoiFmHNIydQoqpYTCzYLmufQhUtT0TTSTKhNKo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, Christian Hesse <mail@eworm.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 051/144] vfio-ccw: Set pa_nr to 0 if memory allocation fails for pa_iova_pfn
-Date:   Wed, 14 Aug 2019 19:00:07 +0200
-Message-Id: <20190814165801.962212682@linuxfoundation.org>
+Subject: [PATCH 5.2 054/144] netfilter: nf_tables: fix module autoload for redir
+Date:   Wed, 14 Aug 2019 19:00:10 +0200
+Message-Id: <20190814165802.092528994@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -45,37 +44,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c1ab69268d124ebdbb3864580808188ccd3ea355 ]
+[ Upstream commit f41828ee10b36644bb2b2bfa9dd1d02f55aa0516 ]
 
-So we don't call try to call vfio_unpin_pages() incorrectly.
+Fix expression for autoloading.
 
-Fixes: 0a19e61e6d4c ("vfio: ccw: introduce channel program interfaces")
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Message-Id: <33a89467ad6369196ae6edf820cbcb1e2d8d050c.1562854091.git.alifm@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Fixes: 5142967ab524 ("netfilter: nf_tables: fix module autoload with inet family")
+Signed-off-by: Christian Hesse <mail@eworm.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/vfio_ccw_cp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/netfilter/nft_redir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index 0e79799e9a719..79eb40bdaf9f4 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -89,8 +89,10 @@ static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 				  sizeof(*pa->pa_iova_pfn) +
- 				  sizeof(*pa->pa_pfn),
- 				  GFP_KERNEL);
--	if (unlikely(!pa->pa_iova_pfn))
-+	if (unlikely(!pa->pa_iova_pfn)) {
-+		pa->pa_nr = 0;
- 		return -ENOMEM;
-+	}
- 	pa->pa_pfn = pa->pa_iova_pfn + pa->pa_nr;
+diff --git a/net/netfilter/nft_redir.c b/net/netfilter/nft_redir.c
+index 8487eeff5c0ec..43eeb1f609f13 100644
+--- a/net/netfilter/nft_redir.c
++++ b/net/netfilter/nft_redir.c
+@@ -291,4 +291,4 @@ module_exit(nft_redir_module_exit);
  
- 	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
+ MODULE_LICENSE("GPL");
+ MODULE_AUTHOR("Arturo Borrero Gonzalez <arturo@debian.org>");
+-MODULE_ALIAS_NFT_EXPR("nat");
++MODULE_ALIAS_NFT_EXPR("redir");
 -- 
 2.20.1
 
