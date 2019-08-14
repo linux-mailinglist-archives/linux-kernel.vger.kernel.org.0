@@ -2,111 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C868D753
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 17:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93E178D765
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 17:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbfHNPl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 11:41:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45860 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728204AbfHNPl0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 11:41:26 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 777C7309BDA0;
-        Wed, 14 Aug 2019 15:41:26 +0000 (UTC)
-Received: from t460s.redhat.com (ovpn-116-49.ams2.redhat.com [10.36.116.49])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC13D80693;
-        Wed, 14 Aug 2019 15:41:24 +0000 (UTC)
-From:   David Hildenbrand <david@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, David Hildenbrand <david@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH v2 5/5] mm/memory_hotplug: online_pages cannot be 0 in online_pages()
-Date:   Wed, 14 Aug 2019 17:41:09 +0200
-Message-Id: <20190814154109.3448-6-david@redhat.com>
-In-Reply-To: <20190814154109.3448-1-david@redhat.com>
-References: <20190814154109.3448-1-david@redhat.com>
+        id S1728014AbfHNPqO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 11:46:14 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:42727 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727110AbfHNPqO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 11:46:14 -0400
+Received: from [213.220.153.21] (helo=localhost.localdomain)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1hxvTY-0005XX-2o; Wed, 14 Aug 2019 15:46:12 +0000
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     linux-kernel@vger.kernel.org, libc-alpha@sourceware.org
+Cc:     oleg@redhat.com, alistair23@gmail.com, ebiederm@xmission.com,
+        arnd@arndb.de, dalias@libc.org, torvalds@linux-foundation.org,
+        adhemerval.zanella@linaro.org, fweimer@redhat.com,
+        palmer@sifive.com, macro@wdc.com, zongbox@gmail.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, hpa@zytor.com,
+        Christian Brauner <christian.brauner@ubuntu.com>
+Subject: [PATCH v3 0/1] waitid: process group enhancement
+Date:   Wed, 14 Aug 2019 17:43:59 +0200
+Message-Id: <20190814154400.6371-1-christian.brauner@ubuntu.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
+References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 14 Aug 2019 15:41:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-walk_system_ram_range() will fail with -EINVAL in case
-online_pages_range() was never called (== no resource applicable in the
-range). Otherwise, we will always call online_pages_range() with
-nr_pages > 0 and, therefore, have online_pages > 0.
+Hey everyone,
 
-Remove that special handling.
+This patch adds support for waiting on the current process group by
+specifying waitid(P_PGID, 0, ...) as discussed in [1]. The details why
+we need to do this are in the commit message of [PATCH 1/1] so I won't
+repeat them here.
 
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Oscar Salvador <osalvador@suse.de>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- mm/memory_hotplug.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+I've picked this up since the thread has gone stale and parts of
+userspace are actually blocked by this.
 
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index f245fb50ba7f..01456fc66564 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -853,6 +853,7 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 	ret = walk_system_ram_range(pfn, nr_pages, &onlined_pages,
- 		online_pages_range);
- 	if (ret) {
-+		/* not a single memory resource was applicable */
- 		if (need_zonelists_rebuild)
- 			zone_pcp_reset(zone);
- 		goto failed_addition;
-@@ -866,27 +867,22 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
- 
- 	shuffle_zone(zone);
- 
--	if (onlined_pages) {
--		node_states_set_node(nid, &arg);
--		if (need_zonelists_rebuild)
--			build_all_zonelists(NULL);
--		else
--			zone_pcp_update(zone);
--	}
-+	node_states_set_node(nid, &arg);
-+	if (need_zonelists_rebuild)
-+		build_all_zonelists(NULL);
-+	else
-+		zone_pcp_update(zone);
- 
- 	init_per_zone_wmark_min();
- 
--	if (onlined_pages) {
--		kswapd_run(nid);
--		kcompactd_run(nid);
--	}
-+	kswapd_run(nid);
-+	kcompactd_run(nid);
- 
- 	vm_total_pages = nr_free_pagecache_pages();
- 
- 	writeback_set_ratelimit();
- 
--	if (onlined_pages)
--		memory_notify(MEM_ONLINE, &arg);
-+	memory_notify(MEM_ONLINE, &arg);
- 	mem_hotplug_done();
- 	return 0;
- 
+Note that the patch has been changed to be more closely aligned with the
+P_PIDFD changes to waitid() I have sitting in my for-next branch (cf. [2]).
+This makes the merge conflict a little simpler and picks up on the
+coding style discussions that guided the P_PIDFD patchset.
+
+There was some desire to get this feature in with 5.3 (cf. [3]).
+But given that this is a new feature for waitid() and for the sake of
+avoiding any merge conflicts I would prefer to land this in the 5.4
+merge window together with the P_PIDFD changes.
+
+Thanks!
+Christian
+
+/* v0 */
+Link: https://www.sourceware.org/ml/libc-alpha/2019-07/msg00587.html
+
+/* v1 */
+Link: https://lore.kernel.org/lkml/20190814113822.9505-1-christian.brauner@ubuntu.com/
+
+/* v2 */
+Link: https://lore.kernel.org/lkml/20190814130732.23572-1-christian.brauner@ubuntu.com/
+
+/* References */
+[1]: https://www.sourceware.org/ml/libc-alpha/2019-07/msg00587.html
+[2]: https://lore.kernel.org/lkml/20190727222229.6516-1-christian@brauner.io/
+[3]: https://www.sourceware.org/ml/libc-alpha/2019-08/msg00304.html
+
+Eric W. Biederman (1):
+  waitid: Add support for waiting for the current process group
+
+ kernel/exit.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
 -- 
-2.21.0
+2.22.0
 
