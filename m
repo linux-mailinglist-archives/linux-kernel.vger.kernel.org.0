@@ -2,120 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADF338C92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:37:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54EF98C998
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728257AbfHNChK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:37:10 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:36343 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728458AbfHNChI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:37:08 -0400
-Received: by mail-ot1-f66.google.com with SMTP id k18so46811218otr.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:37:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hV2pKWlMxnhaypGzns6kJSRcp18KAhjsh92Ko5vM2dU=;
-        b=s4jfsXx+Cq+klsDPXG+/AvuC0BYDeQjlCJgMXkRlH6uOTDU0uk3KDxxap7JNbXYqZn
-         5wymoRYTTpTBAFjfHQvCHNtf9pA6e+DA34DFVNR5sVBCPQFulY4qlafhcJ3i0mh3iw4B
-         QsMATqQdvXL/I3B1lqcuI7SeJ4CJL6cnKGVO+o5QfK3rNkM9Zf+gqu6dKGh4UTYoZYKt
-         GacMgdbyQQFh+EqCKftFmQJTn9nhX87zjEC6HuvAsaA3wVebgOlYuggqskABTeS8/W+F
-         8KWzyETW2o8SuHJQUocXaSek2bkbt8LRpIrGaPk6kJVPttyR+yAaLh39j1WvDavSedYp
-         jT5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hV2pKWlMxnhaypGzns6kJSRcp18KAhjsh92Ko5vM2dU=;
-        b=gWuvZAtODz2b7BkCiRk7acGpcozFk5CefUe3a5UMVOkPkGRS56E7bCOxWwVyn/d+ZB
-         OZAbfFxdXFifjJvIsHCG6AW3eIf5IO9QQNy4Oti7uhf0+BhruvaaNhmHvWbPzrSYms1t
-         R4qGqllfOlSzi2zCEMiQ/w9xcgNO5ffx+LCG321gBUTqqyZpP2wSRsMlLA//tf0sts1i
-         aJDKn6decEPb+YGg3OAwaTjs4vx+kpgX0sv9GHhdfXp3mW14cW8jZN38n/UrZmjhhBZ/
-         GlGpBrRLZKCzMVvTgZ5FNvR3xjOfQYqG+6UDIGGr/5VB0UsUSmXrscfkg7rsCFL+R4Cq
-         xKJA==
-X-Gm-Message-State: APjAAAWxFiF0OJZcJAgAEdqgrpK2kr3K7mBAgVI159Pbf7nMRQFE5qBh
-        e1WUdrfHbchmXXDzLjv26QY=
-X-Google-Smtp-Source: APXvYqwCm95c1dn4xfbMaEyHxx8PGMDXqkcsKW7lYisFSX5mPMe4ewDWvMLmZIc03W0kaSBlbWSJSQ==
-X-Received: by 2002:a5e:c911:: with SMTP id z17mr13586768iol.119.1565750227338;
-        Tue, 13 Aug 2019 19:37:07 -0700 (PDT)
-Received: from peng.science.purdue.edu (cos-128-210-107-27.science.purdue.edu. [128.210.107.27])
-        by smtp.googlemail.com with ESMTPSA id y19sm14805008ioj.62.2019.08.13.19.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2019 19:37:06 -0700 (PDT)
-From:   Hui Peng <benquike@gmail.com>
-To:     security@kernel.org
-Cc:     Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Wenwen Wang <wang6495@umn.edu>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix an OOB bug in parse_audio_mixer_unit
-Date:   Tue, 13 Aug 2019 22:36:24 -0400
-Message-Id: <20190814023625.21683-1-benquike@gmail.com>
-X-Mailer: git-send-email 2.22.1
+        id S1727084AbfHNCK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:10:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43108 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726383AbfHNCK4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:10:56 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5567F20844;
+        Wed, 14 Aug 2019 02:10:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565748656;
+        bh=J3Lo1cxa88GvBiqLpqc29gB3HJIGD4djX+xbc7OyQIQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=d6njIlUCH3S0VVLQybtimpJsaP4k+m79g+m1oRt36bJ1B3lt7hiFRHeCuhvaWd3IZ
+         7TYzYWqStHBCKBGzOTYfrgG+u3hWZDunvGCSYebhh8nRD85ALI4EmL22cO/4XIqmWF
+         2RtJ+GS/oa6rm+aAdjCZ04wcZ4fOm9sJaqMvgoSs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Wen Yang <wen.yang99@zte.com.cn>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 004/123] ASoC: audio-graph-card: fix use-after-free in graph_dai_link_of_dpcm()
+Date:   Tue, 13 Aug 2019 22:08:48 -0400
+Message-Id: <20190814021047.14828-4-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
+References: <20190814021047.14828-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The `uac_mixer_unit_descriptor` shown as below is read from the
-device side. In `parse_audio_mixer_unit`, `baSourceID` field is
-accessed from index 0 to `bNrInPins` - 1, the current implementation
-assumes that descriptor is always valid (the length  of descriptor
-is no shorter than 5 + `bNrInPins`). If a descriptor read from
-the device side is invalid, it may trigger out-of-bound memory
-access.
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-```
-struct uac_mixer_unit_descriptor {
-	__u8 bLength;
-	__u8 bDescriptorType;
-	__u8 bDescriptorSubtype;
-	__u8 bUnitID;
-	__u8 bNrInPins;
-	__u8 baSourceID[];
-}
-```
+[ Upstream commit aa2e362cb6b3f5ca88093ada01e1a0ace8a517b2 ]
 
-This patch fixes the bug by add a sanity check on the length of
-the descriptor.
+After calling of_node_put() on the ports, port, and node variables,
+they are still being used, which may result in use-after-free.
+Fix this issue by calling of_node_put() after the last usage.
 
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Fixes: dd98fbc558a0 ("ASoC: audio-graph-card: cleanup DAI link loop method - step1")
+Link: https://lore.kernel.org/r/1562743509-30496-4-git-send-email-wen.yang99@zte.com.cn
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/usb/mixer.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ sound/soc/generic/audio-graph-card.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 7498b5191b68..38202ce67237 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2091,6 +2091,15 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
- 	struct usb_audio_term iterm;
- 	int input_pins, num_ins, num_outs;
- 	int pin, ich, err;
-+	int desc_len = (int) ((unsigned long) state->buffer +
-+			state->buflen - (unsigned long) raw_desc);
-+
-+	if (desc_len < sizeof(*desc) + desc->bNrInPins) {
-+		usb_audio_err(state->chip,
-+			      "descriptor %d too short\n",
-+			      unitid);
-+		return -EINVAL;
-+	}
+diff --git a/sound/soc/generic/audio-graph-card.c b/sound/soc/generic/audio-graph-card.c
+index 70ed28d97d497..d5188a179378f 100644
+--- a/sound/soc/generic/audio-graph-card.c
++++ b/sound/soc/generic/audio-graph-card.c
+@@ -222,10 +222,6 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
  
- 	err = uac_mixer_unit_get_channels(state, desc);
- 	if (err < 0) {
+ 	dev_dbg(dev, "link_of DPCM (%pOF)\n", ep);
+ 
+-	of_node_put(ports);
+-	of_node_put(port);
+-	of_node_put(node);
+-
+ 	if (li->cpu) {
+ 		int is_single_links = 0;
+ 
+@@ -243,17 +239,17 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 
+ 		ret = asoc_simple_parse_cpu(ep, dai_link, &is_single_links);
+ 		if (ret)
+-			return ret;
++			goto out_put_node;
+ 
+ 		ret = asoc_simple_parse_clk_cpu(dev, ep, dai_link, dai);
+ 		if (ret < 0)
+-			return ret;
++			goto out_put_node;
+ 
+ 		ret = asoc_simple_set_dailink_name(dev, dai_link,
+ 						   "fe.%s",
+ 						   dai_link->cpu_dai_name);
+ 		if (ret < 0)
+-			return ret;
++			goto out_put_node;
+ 
+ 		/* card->num_links includes Codec */
+ 		asoc_simple_canonicalize_cpu(dai_link, is_single_links);
+@@ -277,17 +273,17 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 
+ 		ret = asoc_simple_parse_codec(ep, dai_link);
+ 		if (ret < 0)
+-			return ret;
++			goto out_put_node;
+ 
+ 		ret = asoc_simple_parse_clk_codec(dev, ep, dai_link, dai);
+ 		if (ret < 0)
+-			return ret;
++			goto out_put_node;
+ 
+ 		ret = asoc_simple_set_dailink_name(dev, dai_link,
+ 						   "be.%s",
+ 						   codecs->dai_name);
+ 		if (ret < 0)
+-			return ret;
++			goto out_put_node;
+ 
+ 		/* check "prefix" from top node */
+ 		snd_soc_of_parse_node_prefix(top, cconf, codecs->of_node,
+@@ -307,19 +303,23 @@ static int graph_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 
+ 	ret = asoc_simple_parse_tdm(ep, dai);
+ 	if (ret)
+-		return ret;
++		goto out_put_node;
+ 
+ 	ret = asoc_simple_parse_daifmt(dev, cpu_ep, codec_ep,
+ 				       NULL, &dai_link->dai_fmt);
+ 	if (ret < 0)
+-		return ret;
++		goto out_put_node;
+ 
+ 	dai_link->dpcm_playback		= 1;
+ 	dai_link->dpcm_capture		= 1;
+ 	dai_link->ops			= &graph_ops;
+ 	dai_link->init			= asoc_simple_dai_init;
+ 
+-	return 0;
++out_put_node:
++	of_node_put(ports);
++	of_node_put(port);
++	of_node_put(node);
++	return ret;
+ }
+ 
+ static int graph_dai_link_of(struct asoc_simple_priv *priv,
 -- 
-2.22.1
+2.20.1
 
