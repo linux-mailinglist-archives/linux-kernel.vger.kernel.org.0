@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDE988C928
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D7C8C911
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:36:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728944AbfHNChB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:37:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44980 "EHLO mail.kernel.org"
+        id S1728178AbfHNCNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:13:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbfHNCMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:12:51 -0400
+        id S1728058AbfHNCNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:13:05 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A4DE20842;
-        Wed, 14 Aug 2019 02:12:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4F02214C6;
+        Wed, 14 Aug 2019 02:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748770;
-        bh=MksosQLMGZ89hzq1CyJjp04g4mTD95UR39ssKqqsh+s=;
+        s=default; t=1565748784;
+        bh=lqGwCjPgydFZ6txMoyYeKha62yorusUGtlBCYkLLjKo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x3nwzRtSuvSOiI1m/fr/VLU6jDwAAqAa1vkrGn8SQtZwtMgzLVV+UmItrSc9PaZ60
-         ktLSXnAeOoCF5ncss1KCZ+3Zs/1IOtFp+1MyHjGEXone6yycHmJXXNkttztMSzeiQL
-         JgQKpXaWXZI0Gri1rUjPn0ZfNLIETBT5aQ0luytQ=
+        b=GuwB7Sj0OKJ0GrQj8R0/5NfYOObgWbo/YebAqBmFpKKC/OuBMmry87dsPNPbd/0B6
+         iXjmJveDp5kKANY9pGvgB51zeJUGMXO1Xin3RaIaMn9EMJaZZNSnLzVLWqfzHYw7Yj
+         PDz0EZnldfFt1D07RyjvZI6ivVDl8SAK6bSbp1kU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Shahar S Matityahu <shahar.s.matityahu@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 058/123] netfilter: ebtables: also count base chain policies
-Date:   Tue, 13 Aug 2019 22:09:42 -0400
-Message-Id: <20190814021047.14828-58-sashal@kernel.org>
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 063/123] iwlwifi: dbg_ini: move iwl_dbg_tlv_load_bin out of debug override ifdef
+Date:   Tue, 13 Aug 2019 22:09:47 -0400
+Message-Id: <20190814021047.14828-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -46,81 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Shahar S Matityahu <shahar.s.matityahu@intel.com>
 
-[ Upstream commit 3b48300d5cc7c7bed63fddb006c4046549ed4aec ]
+[ Upstream commit 072b30642f90b01d139131ec7bf763778a3a3f41 ]
 
-ebtables doesn't include the base chain policies in the rule count,
-so we need to add them manually when we call into the x_tables core
-to allocate space for the comapt offset table.
+ini debug mode should work even if debug override is not defined.
 
-This lead syzbot to trigger:
-WARNING: CPU: 1 PID: 9012 at net/netfilter/x_tables.c:649
-xt_compat_add_offset.cold+0x11/0x36 net/netfilter/x_tables.c:649
-
-Reported-by: syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com
-Fixes: 2035f3ff8eaa ("netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Shahar S Matityahu <shahar.s.matityahu@intel.com>
+Fixes: 68f6f492c4fa ("iwlwifi: trans: support loading ini TLVs from external file")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ drivers/net/wireless/intel/iwlwifi/iwl-drv.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index fd84b48e48b57..c8177a89f52c3 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1770,20 +1770,28 @@ static int compat_calc_entry(const struct ebt_entry *e,
- 	return 0;
- }
+diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+index fba242284507b..efd4bf04d0162 100644
+--- a/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
++++ b/drivers/net/wireless/intel/iwlwifi/iwl-drv.c
+@@ -1627,6 +1627,8 @@ struct iwl_drv *iwl_drv_start(struct iwl_trans *trans)
+ 	init_completion(&drv->request_firmware_complete);
+ 	INIT_LIST_HEAD(&drv->list);
  
-+static int ebt_compat_init_offsets(unsigned int number)
-+{
-+	if (number > INT_MAX)
-+		return -EINVAL;
++	iwl_load_fw_dbg_tlv(drv->trans->dev, drv->trans);
 +
-+	/* also count the base chain policies */
-+	number += NF_BR_NUMHOOKS;
-+
-+	return xt_compat_init_offsets(NFPROTO_BRIDGE, number);
-+}
- 
- static int compat_table_info(const struct ebt_table_info *info,
- 			     struct compat_ebt_replace *newinfo)
- {
- 	unsigned int size = info->entries_size;
- 	const void *entries = info->entries;
-+	int ret;
- 
- 	newinfo->entries_size = size;
--	if (info->nentries) {
--		int ret = xt_compat_init_offsets(NFPROTO_BRIDGE,
--						 info->nentries);
--		if (ret)
--			return ret;
--	}
-+	ret = ebt_compat_init_offsets(info->nentries);
-+	if (ret)
-+		return ret;
- 
- 	return EBT_ENTRY_ITERATE(entries, size, compat_calc_entry, info,
- 							entries, newinfo);
-@@ -2234,11 +2242,9 @@ static int compat_do_replace(struct net *net, void __user *user,
- 
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	if (tmp.nentries) {
--		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
--		if (ret < 0)
--			goto out_unlock;
--	}
-+	ret = ebt_compat_init_offsets(tmp.nentries);
-+	if (ret < 0)
-+		goto out_unlock;
- 
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
+ #ifdef CONFIG_IWLWIFI_DEBUGFS
+ 	/* Create the device debugfs entries. */
+ 	drv->dbgfs_drv = debugfs_create_dir(dev_name(trans->dev),
 -- 
 2.20.1
 
