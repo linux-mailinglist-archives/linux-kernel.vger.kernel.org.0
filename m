@@ -2,72 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D7C8C628
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:13:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DAA8C5E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbfHNCNZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:13:25 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42842 "EHLO inva020.nxp.com"
+        id S1727126AbfHNCLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:11:00 -0400
+Received: from ozlabs.org ([203.11.71.1]:60109 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727498AbfHNCNU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:13:20 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7CEAF1A0256;
-        Wed, 14 Aug 2019 04:13:18 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CD5741A0269;
-        Wed, 14 Aug 2019 04:13:13 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2C4AB402EC;
-        Wed, 14 Aug 2019 10:13:08 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv6 1/2] PCI: layerscape: Add the bar_fixed_64bit property in EP driver.
-Date:   Wed, 14 Aug 2019 10:03:29 +0800
-Message-Id: <20190814020330.12133-1-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727041AbfHNCK6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:10:58 -0400
+Received: by ozlabs.org (Postfix, from userid 1003)
+        id 467Y344Lhfz9sN1; Wed, 14 Aug 2019 12:10:56 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ozlabs.org; s=201707;
+        t=1565748656; bh=rn8nn7nDZW6prBqqprg63BKRnGn4fJeOHCTFgi95aSM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OP/Amg578H5HPYz9pLx7vbI154SYRemAbBtahq9i6PsUxSZWDR3+BR8fULNDSeFeT
+         lN69qph71OpRbZxQZhsadgnswfMK1QV/clTsnapeSNkeUkRKYQQ4LSjNDbU274LrOF
+         ldpdZIDuYSInULN7X+isqlJzTNXPYG8oM18g4tKWYb550qlvqPF/fjB72hsn+NMeQi
+         Z1dFASQTsVXoC4N10wAtLxS7KKB63r/mmlAf7tKGmYoHNTY0brp4LWnWEo0MEHCNbG
+         n8UVQ8NF2Q774Dm7CJYeh/k3SanuVkQHtyipth09R4+PBmEqmmUDNamcoL/9srZHMD
+         03bI8d2GqLCEQ==
+Date:   Wed, 14 Aug 2019 12:08:03 +1000
+From:   Paul Mackerras <paulus@ozlabs.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        segher@kernel.crashing.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/2] powerpc: rewrite LOAD_REG_IMMEDIATE() as an
+ intelligent macro
+Message-ID: <20190814020803.it7i7mjxyruu4vy3@oak.ozlabs.ibm.com>
+References: <61d2a0b6f0c89b1ee546851ce9b6bd345e5ec968.1565690241.git.christophe.leroy@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <61d2a0b6f0c89b1ee546851ce9b6bd345e5ec968.1565690241.git.christophe.leroy@c-s.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
-is 32bit, BAR2 and BAR4 is 64bit, this is determined by hardware,
-so set the bar_fixed_64bit with 0x14.
+On Tue, Aug 13, 2019 at 09:59:35AM +0000, Christophe Leroy wrote:
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
----
-v2:
- - Replace value 0x14 with a macro.
-v3:
- - No change.
-v4:
- - send the patch again with '--to'.
-v5:
- - fix the commit message.
-v6:
- - remove the [EXT] tag of the $SUBJECT in email.
+[snip]
 
- drivers/pci/controller/dwc/pci-layerscape-ep.c | 1 +
- 1 file changed, 1 insertion(+)
+> +.macro __LOAD_REG_IMMEDIATE r, x
+> +	.if \x & ~0xffffffff != 0
+> +		__LOAD_REG_IMMEDIATE_32 \r, (\x) >> 32
+> +		rldicr	\r, \r, 32, 31
+> +		.if (\x) & 0xffff0000 != 0
+> +			oris \r, \r, (\x)@__AS_ATHIGH
+> +		.endif
+> +		.if (\x) & 0xffff != 0
+> +			oris \r, \r, (\x)@l
+> +		.endif
+> +	.else
+> +		__LOAD_REG_IMMEDIATE_32 \r, \x
+> +	.endif
+> +.endm
 
-diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-index be61d96..ca9aa45 100644
---- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-+++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-@@ -44,6 +44,7 @@ static const struct pci_epc_features ls_pcie_epc_features = {
- 	.linkup_notifier = false,
- 	.msi_capable = true,
- 	.msix_capable = false,
-+	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
- };
- 
- static const struct pci_epc_features*
--- 
-2.9.5
+Doesn't this force all negative constants, even small ones, to use
+the long sequence?  For example, __LOAD_REG_IMMEDIATE r3, -1 will
+generate (as far as I can see):
 
+	li	r3, -1
+	rldicr	r3, r3, 32, 31
+	oris	r3, r3, 0xffff
+	ori	r3, r3, 0xffff
+
+which seems suboptimal.
+
+Paul.
