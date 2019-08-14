@@ -2,128 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 287738E054
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:06:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52A248E065
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729736AbfHNWGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 18:06:30 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33737 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727975AbfHNWG3 (ORCPT
+        id S1729869AbfHNWNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 18:13:22 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40498 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728378AbfHNWNV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:06:29 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n190so305654pgn.0;
-        Wed, 14 Aug 2019 15:06:29 -0700 (PDT)
+        Wed, 14 Aug 2019 18:13:21 -0400
+Received: by mail-pl1-f193.google.com with SMTP id a93so226125pla.7
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 15:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=FLFblGnxzQ1wI2QM5HelENy2vNVHmhf51uAkZDB+jpI=;
-        b=T6rUo53R9JDRHIkMfoGdrnDrsfMPkMGgqRTP3o5lVIOOcp2qrBarQDVb1rpfBmja8n
-         hb29IYPLiS+4SjkOcCclg6MMZoxlIVyTqswgEgSR7V8KdraVWdIS/Y9f7EuAGynkNAUW
-         q7mxLhX+gUtvRob9dALNvXjLvJG5SmqDsEzgqhzg+mcldPILPgMEgQ9DisII1gmhy1CL
-         btdIuPVtWn3qLlsf15RY2HYGl/QYNwAKfpBflkrRimTHbAPcEzBdlCUpDqEI8N1wIQSP
-         Xy9dZAyXPOS14n1PtzcJdAys2fGt8RKD+ZON5r/jZSwRi0T4BB1FTRf33dgs6plfiXK6
-         LSHA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=o3iTgpB3GXZ+kQcPnDKxJUeeBPOFZQS1HDP+dtSl8iI=;
+        b=HEFmOTX7vqz6H06xnoRwJnyjwS4ngqlcblSxxBe9uJf91C2C3l3H3afY81WwkxEetJ
+         EbUuQcyViX1xj4UfRyAAAdKQkMJMp+A+qWSGvq1zWUQw8DQ77jCsLpCgcMhfLo6nNVda
+         wPT3QzNUctnrmjktXM3EnsOkJ9WFmmfmF6P3JP5768lVtArSlAJdr5XkaQydkdBmUDdH
+         uDi58nt19hPwUpCeJaQPKGXa/z2gZnqlXC+ryopFfLScSWgENEVIXSevTZyjazE3ppis
+         zLF2GWdAmdB59Sq/EJsbTmRz5IiKtqn37DU/qrZVhnWBWkDLht8AheY3rvNIjk4LdN7S
+         2yNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=FLFblGnxzQ1wI2QM5HelENy2vNVHmhf51uAkZDB+jpI=;
-        b=eh/L90nKRH9z2jqp8p0wGn7B1Vs8g4S5WA3MjPQTNQIiu8niW4CrwE8VDLzKZA+wEI
-         UJXtzgpP21AYm9aendTIXQRe+t58+TRMgbGtyMeOfb6YRTsmXo79fNL9tesOcUp6OPLC
-         w/infUNvQ6O2MxYdZdriWBoQMvEFEaFyTZ07RiwnS5VAsyfieVev2WRdCzpv9SqgI688
-         RZSGQzidNkzxwBwcgB63iiXeHAxG/s2rbIEYISS7gqXmOAZE8o2K9nb8LS6IorvsqWx7
-         XgTfJdniHmkExS4XrixNSI7Oev8jiDmAh6EriboAfrd5jK8Ik6FqJQbt5kAJxIeF8D5B
-         Wq6Q==
-X-Gm-Message-State: APjAAAWA4Y/cguNq3u0Zau0q4PdL6pD+gCGDBYu+7DJnnOnov8/SvcjJ
-        1XdNEDG2+6h8zKSjNTVF58LWYbYy
-X-Google-Smtp-Source: APXvYqxOv2+QJT56iITOcewqwm/svzN0f2xI1RFG9HZpdRwcds+DscI/HKfjP2Yj28OcgA1qHhUUzg==
-X-Received: by 2002:a63:40a:: with SMTP id 10mr1072437pge.317.1565820388356;
-        Wed, 14 Aug 2019 15:06:28 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id i9sm5475pjj.2.2019.08.14.15.06.27
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 15:06:27 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 15:06:25 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Nicolas Boichat <drinkcat@chromium.org>
-Cc:     Fei Shao <fshao@chromium.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Benson Leung <bleung@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Ting Shen <phoenixshen@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: cros_ec_keyb: Add back missing mask for event_type
-Message-ID: <20190814220625.GD121898@dtor-ws>
-References: <20190813093821.74158-1-fshao@chromium.org>
- <CANMq1KCNFfWA=ApVUFoPctgTftHDSAvGjtk-Xu2hcKWBq9R1zw@mail.gmail.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=o3iTgpB3GXZ+kQcPnDKxJUeeBPOFZQS1HDP+dtSl8iI=;
+        b=GR8ATldQHsr6ouYarufsxXBn06uN5i1se+x5bj/X9DrWSdryTcOjHOevgOMcH8F7vm
+         Pwy0jnlDzOqJnPgNfsqGBtVSyldNo3n6phYpoYSZjeZ1+3uLB99D9//AGoC4PMYhKDAY
+         k8ngQUieZ6JCD7sFvVImICFK1J1Xtz6PUe9enDcWg/3Rq9lFhYaibkaUEsPVUFMPkDdG
+         Re8huZSadP5C1MalCHO2eoVfQjTcJQqla7kJ+IaEGddCqw62jetgNsOFtHo4ZvxEvSPw
+         PtMNKkkG8kQDDt4HQuMAkEEZsgb9E5cJvK6EOvwKRI6hgotuC4QkD6lVTuzG+aOPMpV0
+         x2dw==
+X-Gm-Message-State: APjAAAUZBW4EoTlzVybqUrXkAsuq30ueMj0xURGb8I7MEI7jNeQ4YQ5v
+        kfkwVPvqLraeYHaiN8zVXBo=
+X-Google-Smtp-Source: APXvYqyti+vq96Q0pE8Yd5FkzLw83ZjuNfSd6SNA8pgDAWZgNSvONObYFjog77tG3BgdbQT4MUollQ==
+X-Received: by 2002:a17:902:ac87:: with SMTP id h7mr1561600plr.36.1565820800768;
+        Wed, 14 Aug 2019 15:13:20 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id g1sm633892pgg.27.2019.08.14.15.13.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 15:13:20 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@chromium.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Doug Anderson <armlinux@m.disordat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Vladimir Murzin <vladimir.murzin@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        "Wolfram Sang (Renesas)" <wsa+renesas@sang-engineering.com>,
+        Anshuman Khandual <anshuman.khandual@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/6] arm: add arch_sync_dma_for_*()
+Date:   Wed, 14 Aug 2019 14:59:59 -0700
+Message-Id: <20190814220011.26934-5-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190814220011.26934-1-robdclark@gmail.com>
+References: <20190814220011.26934-1-robdclark@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANMq1KCNFfWA=ApVUFoPctgTftHDSAvGjtk-Xu2hcKWBq9R1zw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:47:22PM +0800, Nicolas Boichat wrote:
-> On Tue, Aug 13, 2019 at 5:38 PM Fei Shao <fshao@chromium.org> wrote:
-> >
-> > In the previous patch we didn't mask out event_type in case statement,
-> > so switches are always picked instead of buttons, which results in
-> > ChromeOS devices misbehaving when power button is pressed.
-> > This patch adds back the missing mask.
-> >
-> > Fixes: d096aa3eb604 ("Input: cros_ec_keyb: mask out extra flags in event_type")
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
-> 
-> Reviewed-by: Nicolas Boichat <drinkcat@chromium.org>
+From: Rob Clark <robdclark@chromium.org>
 
-Applied, thank you.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ arch/arm/Kconfig                |  2 ++
+ arch/arm/mm/dma-mapping-nommu.c | 14 ++++++++++++++
+ arch/arm/mm/dma-mapping.c       | 28 ++++++++++++++++++++++++++++
+ 3 files changed, 44 insertions(+)
 
-> 
-> > ---
-> >  drivers/input/keyboard/cros_ec_keyb.c | 6 ++++--
-> >  1 file changed, 4 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/input/keyboard/cros_ec_keyb.c b/drivers/input/keyboard/cros_ec_keyb.c
-> > index 38cb6d82d8fe..bef7bee6f05e 100644
-> > --- a/drivers/input/keyboard/cros_ec_keyb.c
-> > +++ b/drivers/input/keyboard/cros_ec_keyb.c
-> > @@ -226,6 +226,8 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
-> >  {
-> >         struct cros_ec_keyb *ckdev = container_of(nb, struct cros_ec_keyb,
-> >                                                   notifier);
-> > +       uint8_t mkbp_event_type = ckdev->ec->event_data.event_type &
-> > +                                 EC_MKBP_EVENT_TYPE_MASK;
-> >         u32 val;
-> >         unsigned int ev_type;
-> >
-> > @@ -237,7 +239,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
-> >         if (queued_during_suspend && !device_may_wakeup(ckdev->dev))
-> >                 return NOTIFY_OK;
-> >
-> > -       switch (ckdev->ec->event_data.event_type & EC_MKBP_EVENT_TYPE_MASK) {
-> > +       switch (mkbp_event_type) {
-> >         case EC_MKBP_EVENT_KEY_MATRIX:
-> >                 pm_wakeup_event(ckdev->dev, 0);
-> >
-> > @@ -264,7 +266,7 @@ static int cros_ec_keyb_work(struct notifier_block *nb,
-> >         case EC_MKBP_EVENT_SWITCH:
-> >                 pm_wakeup_event(ckdev->dev, 0);
-> >
-> > -               if (ckdev->ec->event_data.event_type == EC_MKBP_EVENT_BUTTON) {
-> > +               if (mkbp_event_type == EC_MKBP_EVENT_BUTTON) {
-> >                         val = get_unaligned_le32(
-> >                                         &ckdev->ec->event_data.data.buttons);
-> >                         ev_type = EV_KEY;
-> > --
-> > 2.23.0.rc1.153.gdeed80330f-goog
-
+diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+index 33b00579beff..a48a7263a2c1 100644
+--- a/arch/arm/Kconfig
++++ b/arch/arm/Kconfig
+@@ -18,6 +18,8 @@ config ARM
+ 	select ARCH_HAS_SET_MEMORY
+ 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
+ 	select ARCH_HAS_STRICT_MODULE_RWX if MMU
++	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
++	select ARCH_HAS_SYNC_DMA_FOR_CPU
+ 	select ARCH_HAS_TEARDOWN_DMA_OPS if MMU
+ 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
+ 	select ARCH_HAVE_CUSTOM_GPIO_H
+diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
+index 52b82559d99b..4a3df952151f 100644
+--- a/arch/arm/mm/dma-mapping-nommu.c
++++ b/arch/arm/mm/dma-mapping-nommu.c
+@@ -84,6 +84,13 @@ static void __dma_page_cpu_to_dev(phys_addr_t paddr, size_t size,
+ 		outer_clean_range(paddr, paddr + size);
+ }
+ 
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
++{
++	__dma_page_cpu_to_dev(paddr, size, dir);
++}
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_device);
++
+ static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
+ 				  enum dma_data_direction dir)
+ {
+@@ -93,6 +100,13 @@ static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
+ 	}
+ }
+ 
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
++{
++	__dma_page_dev_to_cpu(paddr, size, dir);
++}
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_cpu);
++
+ static dma_addr_t arm_nommu_dma_map_page(struct device *dev, struct page *page,
+ 					 unsigned long offset, size_t size,
+ 					 enum dma_data_direction dir,
+diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
+index 6774b03aa405..8ead93196194 100644
+--- a/arch/arm/mm/dma-mapping.c
++++ b/arch/arm/mm/dma-mapping.c
+@@ -979,6 +979,13 @@ static void __dma_page_cpu_to_dev(struct page *page, unsigned long off,
+ 	/* FIXME: non-speculating: flush on bidirectional mappings? */
+ }
+ 
++void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
++{
++	__dma_page_cpu_to_dev(phys_to_page(paddr), paddr % PAGE_SIZE, size, dir);
++}
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_device);
++
+ static void __dma_page_dev_to_cpu(struct page *page, unsigned long off,
+ 	size_t size, enum dma_data_direction dir)
+ {
+@@ -1013,6 +1020,27 @@ static void __dma_page_dev_to_cpu(struct page *page, unsigned long off,
+ 	}
+ }
+ 
++void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
++		size_t size, enum dma_data_direction dir)
++{
++	__dma_page_dev_to_cpu(phys_to_page(paddr), paddr % PAGE_SIZE, size, dir);
++}
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_cpu);
++
++/*
++ * arch_dma_{alloc,free} fail-stubs needed to avoid link-errors in dma/direct.c
++ * (which is not actually used on arch/arm)
++ */
++void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
++		gfp_t flags, unsigned long attrs)
++{
++	return NULL;
++}
++void arch_dma_free(struct device *dev, size_t size, void *vaddr,
++		dma_addr_t dma_handle, unsigned long attrs)
++{
++}
++
+ /**
+  * arm_dma_map_sg - map a set of SG buffers for streaming mode DMA
+  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
 -- 
-Dmitry
+2.21.0
+
