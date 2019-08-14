@@ -2,137 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABAFE8D216
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:26:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA7C8D202
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:21:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727671AbfHNL0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 07:26:19 -0400
-Received: from smark.slackware.pl ([88.198.48.135]:55578 "EHLO
-        smark.slackware.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfHNL0S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:26:18 -0400
-X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 07:26:17 EDT
-Received: from kich.toxcorp.com (kich.slackware.pl [193.218.152.244])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1727083AbfHNLVi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 07:21:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59084 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725800AbfHNLVi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 07:21:38 -0400
+Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: shasta@toxcorp.com)
-        by smark.slackware.pl (Postfix) with ESMTPSA id 473EB20630;
-        Wed, 14 Aug 2019 13:17:31 +0200 (CEST)
-Date:   Wed, 14 Aug 2019 13:17:30 +0200 (CEST)
-From:   Jakub Jankowski <shasta@toxcorp.com>
-To:     Reindl Harald <h.reindl@thelounge.net>
-cc:     Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 04/42] netfilter: conntrack: always store
- window size un-scaled
-In-Reply-To: <41ce587d-dfaa-fe6b-66a8-58ba1a3a2872@thelounge.net>
-Message-ID: <alpine.LNX.2.21.1908141316420.1803@kich.toxcorp.com>
-References: <20190802132302.13537-1-sashal@kernel.org> <20190802132302.13537-4-sashal@kernel.org> <20190808090209.wb63n6ibii4ivvba@intra2net.com> <41ce587d-dfaa-fe6b-66a8-58ba1a3a2872@thelounge.net>
-User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
+        by mail.kernel.org (Postfix) with ESMTPSA id EBA7C2083B;
+        Wed, 14 Aug 2019 11:21:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565781697;
+        bh=lKWyQhJZrTeR2mP8gMp1Sv43C4kaU0ItcD8UjHsGR64=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GoyIEeuy2aBMsczZxEjc418vIh6+C2Y2j1zEoa7vlM8xwuZ9K4Lx8mUTo+P3ENh3z
+         i4MieExVH35FpkJHKYrGnkalqrRJH19Pu0e79zbx70z//5lRJAjmuuStGEMPll9gj8
+         tcxu2X2I5qV6B/uj35CVsKOn4wUIaS2xvX5qVcac=
+Message-ID: <1ba29bfa22f82e6d880ab31c3835047f3353f05a.camel@kernel.org>
+Subject: Re: [RFC PATCH v2 01/19] fs/locks: Export F_LAYOUT lease to user
+ space
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>, Ira Weiny <ira.weiny@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Date:   Wed, 14 Aug 2019 07:21:34 -0400
+In-Reply-To: <20190814080547.GJ6129@dread.disaster.area>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+         <20190809225833.6657-2-ira.weiny@intel.com>
+         <20190809235231.GC7777@dread.disaster.area>
+         <20190812173626.GB19746@iweiny-DESK2.sc.intel.com>
+         <20190814080547.GJ6129@dread.disaster.area>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-14, Reindl Harald wrote:
+On Wed, 2019-08-14 at 18:05 +1000, Dave Chinner wrote:
+> On Mon, Aug 12, 2019 at 10:36:26AM -0700, Ira Weiny wrote:
+> > On Sat, Aug 10, 2019 at 09:52:31AM +1000, Dave Chinner wrote:
+> > > On Fri, Aug 09, 2019 at 03:58:15PM -0700, ira.weiny@intel.com wrote:
+> > > > +	/*
+> > > > +	 * NOTE on F_LAYOUT lease
+> > > > +	 *
+> > > > +	 * LAYOUT lease types are taken on files which the user knows that
+> > > > +	 * they will be pinning in memory for some indeterminate amount of
+> > > > +	 * time.
+> > > 
+> > > Indeed, layout leases have nothing to do with pinning of memory.
+> > 
+> > Yep, Fair enough.  I'll rework the comment.
+> > 
+> > > That's something an application taht uses layout leases might do,
+> > > but it largely irrelevant to the functionality layout leases
+> > > provide. What needs to be done here is explain what the layout lease
+> > > API actually guarantees w.r.t. the physical file layout, not what
+> > > some application is going to do with a lease. e.g.
+> > > 
+> > > 	The layout lease F_RDLCK guarantees that the holder will be
+> > > 	notified that the physical file layout is about to be
+> > > 	changed, and that it needs to release any resources it has
+> > > 	over the range of this lease, drop the lease and then
+> > > 	request it again to wait for the kernel to finish whatever
+> > > 	it is doing on that range.
+> > > 
+> > > 	The layout lease F_RDLCK also allows the holder to modify
+> > > 	the physical layout of the file. If an operation from the
+> > > 	lease holder occurs that would modify the layout, that lease
+> > > 	holder does not get notification that a change will occur,
+> > > 	but it will block until all other F_RDLCK leases have been
+> > > 	released by their holders before going ahead.
+> > > 
+> > > 	If there is a F_WRLCK lease held on the file, then a F_RDLCK
+> > > 	holder will fail any operation that may modify the physical
+> > > 	layout of the file. F_WRLCK provides exclusive physical
+> > > 	modification access to the holder, guaranteeing nothing else
+> > > 	will change the layout of the file while it holds the lease.
+> > > 
+> > > 	The F_WRLCK holder can change the physical layout of the
+> > > 	file if it so desires, this will block while F_RDLCK holders
+> > > 	are notified and release their leases before the
+> > > 	modification will take place.
+> > > 
+> > > We need to define the semantics we expose to userspace first.....
 
-> that's still not in 5.2.8
+Absolutely.
 
-It will make its way into next 5.2.x release, as it is now in the pending 
-queue: 
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/queue-5.2
+> > 
+> > Agreed.  I believe I have implemented the semantics you describe above.  Do I
+> > have your permission to use your verbiage as part of reworking the comment and
+> > commit message?
+> 
+> Of course. :)
+> 
+> Cheers,
+> 
 
-Regards,
-  Jakub.
+I'll review this in more detail soon, but subsequent postings of the set
+should probably also go to linux-api mailing list. This is a significant
+API change. It might not also hurt to get the glibc folks involved here
+too since you'll probably want to add the constants to the headers there
+as well.
 
-
->
-> without the exception and "nf_conntrack_tcp_timeout_max_retrans = 60" a
-> vnc-over-ssh session having the VNC view in the background freezes
-> within 60 secods
->
-> -----------------------------------------------------------------------------------------------
-> IPV4 TABLE MANGLE (STATEFUL PRE-NAT/FILTER)
-> -----------------------------------------------------------------------------------------------
-> Chain PREROUTING (policy ACCEPT 100 packets, 9437 bytes)
-> num   pkts bytes target     prot opt in     out     source
-> destination
-> 1     6526 3892K ACCEPT     all  --  *      *       0.0.0.0/0
-> 0.0.0.0/0            ctstate RELATED,ESTABLISHED
-> 2      125  6264 ACCEPT     all  --  lo     *       0.0.0.0/0
-> 0.0.0.0/0
-> 3       64  4952 ACCEPT     all  --  vmnet8 *       0.0.0.0/0
-> 0.0.0.0/0
-> 4        1    40 DROP       all  --  *      *       0.0.0.0/0
-> 0.0.0.0/0            ctstate INVALID
->
-> -------- Weitergeleitete Nachricht --------
-> Betreff: [PATCH AUTOSEL 5.2 07/76] netfilter: conntrack: always store
-> window size un-scaled
->
-> Am 08.08.19 um 11:02 schrieb Thomas Jarosch:
->> Hello together,
->>
->> You wrote on Fri, Aug 02, 2019 at 09:22:24AM -0400:
->>> From: Florian Westphal <fw@strlen.de>
->>>
->>> [ Upstream commit 959b69ef57db00cb33e9c4777400ae7183ebddd3 ]
->>>
->>> Jakub Jankowski reported following oddity:
->>>
->>> After 3 way handshake completes, timeout of new connection is set to
->>> max_retrans (300s) instead of established (5 days).
->>>
->>> shortened excerpt from pcap provided:
->>> 25.070622 IP (flags [DF], proto TCP (6), length 52)
->>> 10.8.5.4.1025 > 10.8.1.2.80: Flags [S], seq 11, win 64240, [wscale 8]
->>> 26.070462 IP (flags [DF], proto TCP (6), length 48)
->>> 10.8.1.2.80 > 10.8.5.4.1025: Flags [S.], seq 82, ack 12, win 65535, [wscale 3]
->>> 27.070449 IP (flags [DF], proto TCP (6), length 40)
->>> 10.8.5.4.1025 > 10.8.1.2.80: Flags [.], ack 83, win 512, length 0
->>>
->>> Turns out the last_win is of u16 type, but we store the scaled value:
->>> 512 << 8 (== 0x20000) becomes 0 window.
->>>
->>> The Fixes tag is not correct, as the bug has existed forever, but
->>> without that change all that this causes might cause is to mistake a
->>> window update (to-nonzero-from-zero) for a retransmit.
->>>
->>> Fixes: fbcd253d2448b8 ("netfilter: conntrack: lower timeout to RETRANS seconds if window is 0")
->>> Reported-by: Jakub Jankowski <shasta@toxcorp.com>
->>> Tested-by: Jakub Jankowski <shasta@toxcorp.com>
->>> Signed-off-by: Florian Westphal <fw@strlen.de>
->>> Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
->>> Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
->>> Signed-off-by: Sasha Levin <sashal@kernel.org>
->>
->> Also:
->> Tested-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
->>
->> ;)
->>
->> We've hit the issue with the wrong conntrack timeout at two different sites,
->> long-lived connections to a SAP server over IPSec VPN were constantly dropping.
->>
->> For us this was a regression after updating from kernel 3.14 to 4.19.
->> Yesterday I've applied the patch to kernel 4.19.57 and the problem is fixed.
->>
->> The issue was extra hard to debug as we could just boot the new kernel
->> for twenty minutes in the evening on these productive systems.
->>
->> The stable kernel patch from last Friday came right on time. I was just
->> about the replay the TCP connection with tcpreplay, so this saved
->> me from another week of debugging. Thanks everyone!
->
+Finally, consider going ahead and drafting a patch to the fcntl(2)
+manpage if you think you have the API mostly nailed down. This API is a
+little counterintuitive (i.e. you can change the layout with an F_RDLCK
+lease), so it will need to be very clearly documented. I've also found
+that when creating a new API, documenting it tends to help highlight its
+warts and areas where the behavior is not clearly defined.
 
 -- 
-Jakub Jankowski|shasta@toxcorp.com|https://toxcorp.com/
+Jeff Layton <jlayton@kernel.org>
+
