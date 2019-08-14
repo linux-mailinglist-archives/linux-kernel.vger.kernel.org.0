@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EE048D8F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 956DF8D8F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729125AbfHNREE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:04:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52826 "EHLO mail.kernel.org"
+        id S1728580AbfHNREP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:04:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729112AbfHNRED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:03 -0400
+        id S1729143AbfHNREL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:04:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AEDC721744;
-        Wed, 14 Aug 2019 17:04:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CF54216F4;
+        Wed, 14 Aug 2019 17:04:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802243;
-        bh=TEkliHrCqmBMsOtkH+iKXQ2HGKVEK/CT4G9DrCRz0t8=;
+        s=default; t=1565802250;
+        bh=QnpU/cJ7wfvq+7aR39NA6ASy2a/L9h+8OJ0opHC3RZ4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uvB2lUfewvo7jdNlIS2lQTIi8Og6nFbrTSpJnGWuZnXYVJUHJKy9mrLcMDu6Q018Z
-         AckZ1ZubqzQZQ04+/4UAXkTj7FloaiU9cg0+snz+XicNhy+8YNHmT+J78yXIWvrdR7
-         462etl6Wr3GLwTqzCHXb9iJ/o5Nv26P8flXwyygI=
+        b=auPOgxJVseBHLnZDp3QvE7XGKNbOfyMSnayALrXfU4ovPGj5LOg8900G2zZi7dIGO
+         3fX28RGy+LQ4FzB0aS632MGamud3VPXkxfZDjlr06erJq9WUovmoakKYpcIf98jngj
+         f7aQK0ULl0WktSb2QCv+DTfqFrS+7/SLFYmtFLA8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zorro Lang <zlang@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Eric Farman <farman@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 049/144] powerpc: fix off by one in max_zone_pfn initialization for ZONE_DMA
-Date:   Wed, 14 Aug 2019 19:00:05 +0200
-Message-Id: <20190814165801.880757406@linuxfoundation.org>
+Subject: [PATCH 5.2 052/144] vfio-ccw: Dont call cp_free if we are processing a channel program
+Date:   Wed, 14 Aug 2019 19:00:08 +0200
+Message-Id: <20190814165802.002115371@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -46,45 +45,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 03800e0526ee25ed7c843ca1e57b69ac2a5af642 ]
+[ Upstream commit f4c9939433bd396d0b08e803b2b880a9d02682b9 ]
 
-25078dc1f74be16b858e914f52cc8f4d03c2271a first introduced an off by
-one error in the ZONE_DMA initialization of PPC_BOOK3E_64=y and since
-9739ab7eda459f0669ec9807e0d9be5020bab88c the off by one applies to
-PPC32=y too. This simply corrects the off by one and should resolve
-crashes like below:
+There is a small window where it's possible that we could be working
+on an interrupt (queued in the workqueue) and setting up a channel
+program (i.e allocating memory, pinning pages, translating address).
+This can lead to allocating and freeing the channel program at the
+same time and can cause memory corruption.
 
-[   65.179101] page 0x7fff outside node 0 zone DMA [ 0x0 - 0x7fff ]
+Let's not call cp_free if we are currently processing a channel program.
+The only way we know for sure that we don't have a thread setting
+up a channel program is when the state is set to VFIO_CCW_STATE_CP_PENDING.
 
-Unfortunately in various MM places "max" means a non inclusive end of
-range. free_area_init_nodes max_zone_pfn parameter is one case and
-MAX_ORDER is another one (unrelated) that comes by memory.
-
-Reported-by: Zorro Lang <zlang@redhat.com>
-Fixes: 25078dc1f74b ("powerpc: use mm zones more sensibly")
-Fixes: 9739ab7eda45 ("powerpc: enable a 30-bit ZONE_DMA for 32-bit pmac")
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://lore.kernel.org/r/20190625141727.2883-1-aarcange@redhat.com
+Fixes: d5afd5d135c8 ("vfio-ccw: add handling for async channel instructions")
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Message-Id: <62e87bf67b38dc8d5760586e7c96d400db854ebe.1562854091.git.alifm@linux.ibm.com>
+Reviewed-by: Eric Farman <farman@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/mm/mem.c | 2 +-
+ drivers/s390/cio/vfio_ccw_drv.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 2540d3b2588c3..2eda1ec36f552 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -249,7 +249,7 @@ void __init paging_init(void)
- 
- #ifdef CONFIG_ZONE_DMA
- 	max_zone_pfns[ZONE_DMA]	= min(max_low_pfn,
--			((1UL << ARCH_ZONE_DMA_BITS) - 1) >> PAGE_SHIFT);
-+				      1UL << (ARCH_ZONE_DMA_BITS - PAGE_SHIFT));
- #endif
- 	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
- #ifdef CONFIG_HIGHMEM
+diff --git a/drivers/s390/cio/vfio_ccw_drv.c b/drivers/s390/cio/vfio_ccw_drv.c
+index 9125f7f4e64c9..8a8fbde7e1867 100644
+--- a/drivers/s390/cio/vfio_ccw_drv.c
++++ b/drivers/s390/cio/vfio_ccw_drv.c
+@@ -88,7 +88,7 @@ static void vfio_ccw_sch_io_todo(struct work_struct *work)
+ 		     (SCSW_ACTL_DEVACT | SCSW_ACTL_SCHACT));
+ 	if (scsw_is_solicited(&irb->scsw)) {
+ 		cp_update_scsw(&private->cp, &irb->scsw);
+-		if (is_final)
++		if (is_final && private->state == VFIO_CCW_STATE_CP_PENDING)
+ 			cp_free(&private->cp);
+ 	}
+ 	mutex_lock(&private->io_mutex);
 -- 
 2.20.1
 
