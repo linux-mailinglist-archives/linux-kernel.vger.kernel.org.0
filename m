@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EC638D8F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F198D8F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729076AbfHNRDy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:03:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52572 "EHLO mail.kernel.org"
+        id S1729100AbfHNREC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:04:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729047AbfHNRDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:03:51 -0400
+        id S1729089AbfHNRD7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:03:59 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D75FA21880;
-        Wed, 14 Aug 2019 17:03:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9638621721;
+        Wed, 14 Aug 2019 17:03:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802230;
-        bh=i4JaZPlAIAKbDEgv0AxRQX0K70BEiDs/vRW6yvhAZHw=;
+        s=default; t=1565802238;
+        bh=z+Yin1l0uC3EEV8udrsuSZXDzBL1PiKwdzmYceVqWxk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eQscw1jcIPBxslH845euSM/WiIdfJYRm/XXS09Vp6qonnV18OIzorEjKT/LtUBNJr
-         mn6MGHrvT2fJNsm3IOTSxeEozbLhBw0Y/yp/TweN+JS0SgcfMfgGKxuQKXssWTHRfV
-         1KX9jbRurv5OUqZcLJ+vhL4aDXOrjIKIfppaxQdc=
+        b=lkQ1Ny3dNjFRL5yKJsA+Z4dgLf0CfItJZv5iFoXUdLDLjOguTjPJcHtRXDz6zAmXR
+         tqfZWdHcE5FJJt0NHq010F5FToqUFZQdcWTeiM0wWUH4CEMeSYPOggrT+mglgDAeNu
+         CcFLL3vexFq3kJMw6YADd6ga7+dOqVOkFWtKSJqc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 5.2 045/144] can: rcar_canfd: fix possible IRQ storm on high load
-Date:   Wed, 14 Aug 2019 19:00:01 +0200
-Message-Id: <20190814165801.712085039@linuxfoundation.org>
+Subject: [PATCH 5.2 047/144] can: flexcan: fix an use-after-free in flexcan_setup_stop_mode()
+Date:   Wed, 14 Aug 2019 19:00:03 +0200
+Message-Id: <20190814165801.795811337@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,67 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+From: Wen Yang <wen.yang99@zte.com.cn>
 
-commit d4b890aec4bea7334ca2ca56fd3b12fb48a00cd1 upstream.
+commit e9f2a856e102fa27715b94bcc2240f686536d29b upstream.
 
-We have observed rcar_canfd driver entering IRQ storm under high load,
-with following scenario:
-- rcar_canfd_global_interrupt() in entered due to Rx available,
-- napi_schedule_prep() is called, and sets NAPIF_STATE_SCHED in state
-- Rx fifo interrupts are masked,
-- rcar_canfd_global_interrupt() is entered again, this time due to
-  error interrupt (e.g. due to overflow),
-- since scheduled napi poller has not yet executed, condition for calling
-  napi_schedule_prep() from rcar_canfd_global_interrupt() remains true,
-  thus napi_schedule_prep() gets called and sets NAPIF_STATE_MISSED flag
-  in state,
-- later, napi poller function rcar_canfd_rx_poll() gets executed, and
-  calls napi_complete_done(),
-- due to NAPIF_STATE_MISSED flag in state, this call does not clear
-  NAPIF_STATE_SCHED flag from state,
-- on return from napi_complete_done(), rcar_canfd_rx_poll() unmasks Rx
-  interrutps,
-- Rx interrupt happens, rcar_canfd_global_interrupt() gets called
-  and calls napi_schedule_prep(),
-- since NAPIF_STATE_SCHED is set in state at this time, this call
-  returns false,
-- due to that false return, rcar_canfd_global_interrupt() returns
-  without masking Rx interrupt
-- and this results into IRQ storm: unmasked Rx interrupt happens again
-  and again is misprocessed in the same way.
+The gpr_np variable is still being used in dev_dbg() after the
+of_node_put() call, which may result in use-after-free.
 
-This patch fixes that scenario by unmasking Rx interrupts only when
-napi_complete_done() returns true, which means it has cleared
-NAPIF_STATE_SCHED in state.
-
-Fixes: dd3bd23eb438 ("can: rcar_canfd: Add Renesas R-Car CAN FD driver")
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: linux-stable <stable@vger.kernel.org>
+Fixes: de3578c198c6 ("can: flexcan: add self wakeup support")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Cc: linux-stable <stable@vger.kernel.org> # >= v5.0
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/rcar/rcar_canfd.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/can/flexcan.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1508,10 +1508,11 @@ static int rcar_canfd_rx_poll(struct nap
+--- a/drivers/net/can/flexcan.c
++++ b/drivers/net/can/flexcan.c
+@@ -1455,10 +1455,10 @@ static int flexcan_setup_stop_mode(struc
  
- 	/* All packets processed */
- 	if (num_pkts < quota) {
--		napi_complete_done(napi, num_pkts);
--		/* Enable Rx FIFO interrupts */
--		rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx),
--				   RCANFD_RFCC_RFIE);
-+		if (napi_complete_done(napi, num_pkts)) {
-+			/* Enable Rx FIFO interrupts */
-+			rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx),
-+					   RCANFD_RFCC_RFIE);
-+		}
+ 	priv = netdev_priv(dev);
+ 	priv->stm.gpr = syscon_node_to_regmap(gpr_np);
+-	of_node_put(gpr_np);
+ 	if (IS_ERR(priv->stm.gpr)) {
+ 		dev_dbg(&pdev->dev, "could not find gpr regmap\n");
+-		return PTR_ERR(priv->stm.gpr);
++		ret = PTR_ERR(priv->stm.gpr);
++		goto out_put_node;
  	}
- 	return num_pkts;
+ 
+ 	priv->stm.req_gpr = out_val[1];
+@@ -1473,7 +1473,9 @@ static int flexcan_setup_stop_mode(struc
+ 
+ 	device_set_wakeup_capable(&pdev->dev, true);
+ 
+-	return 0;
++out_put_node:
++	of_node_put(gpr_np);
++	return ret;
  }
+ 
+ static const struct of_device_id flexcan_of_match[] = {
 
 
