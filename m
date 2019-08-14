@@ -2,74 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6ABB98D875
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:52:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6830F8D86E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:50:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfHNQwE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 12:52:04 -0400
-Received: from mga02.intel.com ([134.134.136.20]:41343 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728053AbfHNQwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 12:52:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 09:52:03 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="260559319"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga001.jf.intel.com with ESMTP; 14 Aug 2019 09:52:02 -0700
-Message-ID: <c7731c682b55ec882ad3d4ea11ad7a823dcaae8f.camel@intel.com>
-Subject: Re: [PATCH v8 11/27] x86/mm: Introduce _PAGE_DIRTY_SW
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Wed, 14 Aug 2019 09:42:23 -0700
-In-Reply-To: <dac2d62b-9045-4767-87dd-eac12e7abafd@intel.com>
-References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
-         <20190813205225.12032-12-yu-cheng.yu@intel.com>
-         <dac2d62b-9045-4767-87dd-eac12e7abafd@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728301AbfHNQuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 12:50:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51580 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725828AbfHNQuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 12:50:13 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C8C4BACC2;
+        Wed, 14 Aug 2019 16:50:11 +0000 (UTC)
+Subject: Re: [PATCH] bcache: add cond_resched() in __bch_cache_cmp()
+To:     Heitor Alves de Siqueira <halves@canonical.com>
+Cc:     kent.overstreet@gmail.com, linux-bcache@vger.kernel.org,
+        linux-kernel@vger.kernel.org, shile.zhang@linux.alibaba.com,
+        vojtech@suse.com
+References: <c13b1d2a-a8e6-f20c-604e-a375c018bf66@suse.de>
+ <20190814142301.32556-1-halves@canonical.com>
+From:   Coly Li <colyli@suse.de>
+Openpgp: preference=signencrypt
+Organization: SUSE Labs
+Message-ID: <74950e24-245a-c627-0e2e-32ac0b304a6c@suse.de>
+Date:   Thu, 15 Aug 2019 00:50:03 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190814142301.32556-1-halves@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-13 at 16:02 -0700, Dave Hansen wrote:
-[...]
-> Please also reconcile the supervisor XSAVE portion of your patches with
-> the ones that Fenghua has been sending around.  I've given quite a bit
-> of feedback to improve those.  Please consolidate and agree on a common
-> set of patches with him.
+On 2019/8/14 10:23 下午, Heitor Alves de Siqueira wrote:
+> Hi Coly,
+> 
+> We've had users impacted by system stalls and were able to trace it back to the
+> bcache priority_stats query. After investigating a bit further, it seems that
+> the sorting step in the quantiles calculation can cause heavy CPU
+> contention. This has a severe performance impact on any task that is running in
+> the same CPU as the sysfs query, and caused issues even for non-bcache
+> workloads.
+> 
+> We did some test runs with fio to get a better picture of the impact on
+> read/write workloads while a priority_stats query is running, and came up with
+> some interesting results. The bucket locking doesn't seem to have that
+> much performance impact even in full-write workloads, but the 'sort' can affect
+> bcache device throughput and latency pretty heavily (and any other tasks that
+> are "unlucky" to be scheduled together with it). In some of our tests, there was
+> a performance reduction of almost 90% in random read IOPS to the bcache device
+> (refer to the comparison graph at [0]). There's a few more details on the
+> Launchpad bug [1] we've created to track this, together with the complete fio
+> results + comparison graphs.
+> 
+> The cond_resched() patch suggested by Shile Zhang actually improved performance
+> a lot, and eliminated the stalls we've observed during the priority_stats
+> query. Even though it may cause the sysfs query to take a bit longer, it seems
+> like a decent tradeoff for general performance when running that query on a
+> system under heavy load. It's also a cheap short-term solution until we can look
+> into a more complex re-write of the priority_stats calculation (perhaps one that
+> doesn't require the locking?). Could we revisit Shile's patch, and consider
+> merging it?
+> 
+> Thanks!
+> Heitor
+> 
+> [0] https://people.canonical.com/~halves/priority_stats/read/4k-iops-2Dsmooth.png
+> [1] https://bugs.launchpad.net/bugs/1840043
+> 
 
-XSAVES supervisor is now a six-patch set.  Maybe we can make it a separate
-series?  I will consolidate and send it out.
+Hi Heitor,
 
-Yu-cheng
+With your very detailed explanation I come to understand why people
+cares about performance impact of pririty_stats. In the case of system
+monitoring, how long priority_stats returns is less important than
+overall system throughput.
+
+Yes I agree with your opinion and the benchmark chart makes me confident
+with the original patch. I will add this patch to v5.4 window with
+tested-by: Heitor Alves de Siqueira <halves@canonical.com>
+
+Thanks for your detailed information. And thanks for Shile Zhang
+originally composing this patch.
+
+-- 
+
+Coly Li
