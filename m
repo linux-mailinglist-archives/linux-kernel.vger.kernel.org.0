@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 98B108D95B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C44898D968
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729932AbfHNRHl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57210 "EHLO mail.kernel.org"
+        id S1730058AbfHNRIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57854 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729146AbfHNRHi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:38 -0400
+        id S1730046AbfHNRID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0346D2173E;
-        Wed, 14 Aug 2019 17:07:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7C359208C2;
+        Wed, 14 Aug 2019 17:08:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802457;
-        bh=0Vp4UWZHnthpVFQDM/7UKuuzPZZ4o4H7ERW+zQ1yIRc=;
+        s=default; t=1565802483;
+        bh=lcMozOM5yjam6HkNiqU50QQ7u0Xe0A4WXIsFCJZkTMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dRnzMx4VFb2rnnEY/y1aOoUhrE9qB3SGmagHwCGyJ68YOInKcvpmHvo5ol1Y7MtZp
-         X5QEGYJPJeHDpa8leao+xbgDR2FBQNe7EP2TASqqrQ/MhiZkvvdcoUJyS0+4600jH/
-         kNwTWh9fwVkvAQgv52IxaREX6uelopFcpsG6LkpI=
+        b=2FeCKMVITp6V9QlcbF8QGilrzEcGDPEWX7THq/nQHO3kWTmdJ5B/XP2RbtxBlnD9t
+         SKDYnZQNqSQOsYSYKHtOeauNE9Qm/aUrM7xtuNzLk3XXYK9+Z8VQa3xBIK4yXOQT7Z
+         hRJW345m9drFWxf0Z2gQ4mQ93vWOcyFLZg8InfZA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Halil Pasic <pasic@linux.ibm.com>,
-        Petr Tesarik <ptesarik@suse.cz>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 116/144] s390/dma: provide proper ARCH_ZONE_DMA_BITS value
-Date:   Wed, 14 Aug 2019 19:01:12 +0200
-Message-Id: <20190814165804.781212788@linuxfoundation.org>
+Subject: [PATCH 5.2 117/144] gen_compile_commands: lower the entry count threshold
+Date:   Wed, 14 Aug 2019 19:01:13 +0200
+Message-Id: <20190814165804.824720229@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -45,36 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1a2dcff881059dedc14fafc8a442664c8dbd60f1 ]
+[ Upstream commit cb36955a5569f1ff17a42ae93264ef391c013a97 ]
 
-On s390 ZONE_DMA is up to 2G, i.e. ARCH_ZONE_DMA_BITS should be 31 bits.
-The current value is 24 and makes __dma_direct_alloc_pages() take a
-wrong turn first (but __dma_direct_alloc_pages() recovers then).
+Running gen_compile_commands.py after building the kernel with
+allnoconfig gave this:
 
-Let's correct ARCH_ZONE_DMA_BITS value and avoid wrong turns.
+$ ./scripts/gen_compile_commands.py
+WARNING: Found 449 entries. Have you compiled the kernel?
 
-Signed-off-by: Halil Pasic <pasic@linux.ibm.com>
-Reported-by: Petr Tesarik <ptesarik@suse.cz>
-Fixes: c61e9637340e ("dma-direct: add support for allocation from ZONE_DMA and ZONE_DMA32")
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/page.h | 2 ++
- 1 file changed, 2 insertions(+)
+ scripts/gen_compile_commands.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-index a4d38092530ab..823578c6b9e2c 100644
---- a/arch/s390/include/asm/page.h
-+++ b/arch/s390/include/asm/page.h
-@@ -177,6 +177,8 @@ static inline int devmem_is_allowed(unsigned long pfn)
- #define VM_DATA_DEFAULT_FLAGS	(VM_READ | VM_WRITE | \
- 				 VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC)
+diff --git a/scripts/gen_compile_commands.py b/scripts/gen_compile_commands.py
+index 7915823b92a5e..c458696ef3a79 100755
+--- a/scripts/gen_compile_commands.py
++++ b/scripts/gen_compile_commands.py
+@@ -21,9 +21,9 @@ _LINE_PATTERN = r'^cmd_[^ ]*\.o := (.* )([^ ]*\.c)$'
+ _VALID_LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
  
-+#define ARCH_ZONE_DMA_BITS	31
-+
- #include <asm-generic/memory_model.h>
- #include <asm-generic/getorder.h>
+ # A kernel build generally has over 2000 entries in its compile_commands.json
+-# database. If this code finds 500 or fewer, then warn the user that they might
++# database. If this code finds 300 or fewer, then warn the user that they might
+ # not have all the .cmd files, and they might need to compile the kernel.
+-_LOW_COUNT_THRESHOLD = 500
++_LOW_COUNT_THRESHOLD = 300
  
+ 
+ def parse_arguments():
 -- 
 2.20.1
 
