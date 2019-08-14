@@ -2,96 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C162F8C6F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:20:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 145B78C6FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbfHNCTr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:19:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50534 "EHLO mail.kernel.org"
+        id S1729843AbfHNCUS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:20:18 -0400
+Received: from mga12.intel.com ([192.55.52.136]:4524 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729817AbfHNCTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:19:41 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 835E62084D;
-        Wed, 14 Aug 2019 02:19:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749180;
-        bh=Ru6KRlanO+UUuQwjsRGwQlGUiWu1aOFlwpYd+M1QXaI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mZc+fXaCz7KuPggI7bw9kRsnpGWltu7swtw2AQ3PePNAzHXjLYFD9fdEViuuh5NPC
-         y2T6qFnSP2Ht2sn4N1OQ8b2ug+0jJZNrr3s8fLOnOcud6V90IAxEZ/7DXI7Ftkblvw
-         Bqytq0NqKQ4ZlJexw1qdI/XoMR0ofZkkkMJpYcro=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     He Zhe <zhe.he@windriver.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Kan Liang <kan.liang@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 42/44] perf cpumap: Fix writing to illegal memory in handling cpumap mask
-Date:   Tue, 13 Aug 2019 22:18:31 -0400
-Message-Id: <20190814021834.16662-42-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814021834.16662-1-sashal@kernel.org>
-References: <20190814021834.16662-1-sashal@kernel.org>
+        id S1727699AbfHNCUP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:20:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 19:20:15 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
+   d="scan'208";a="181365818"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by orsmga006.jf.intel.com with ESMTP; 13 Aug 2019 19:20:13 -0700
+Date:   Wed, 14 Aug 2019 10:19:50 +0800
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Wei Yang <richardw.yang@linux.intel.com>,
+        akpm@linux-foundation.org, mgorman@techsingularity.net,
+        vbabka@suse.cz, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/mmap.c: rb_parent is not necessary in __vma_link_list
+Message-ID: <20190814021950.GA2025@richard>
+Reply-To: Wei Yang <richardw.yang@linux.intel.com>
+References: <20190813032656.16625-1-richardw.yang@linux.intel.com>
+ <20190813033958.GB5307@bombadil.infradead.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813033958.GB5307@bombadil.infradead.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: He Zhe <zhe.he@windriver.com>
+On Mon, Aug 12, 2019 at 08:39:58PM -0700, Matthew Wilcox wrote:
+>On Tue, Aug 13, 2019 at 11:26:56AM +0800, Wei Yang wrote:
+>> Now we use rb_parent to get next, while this is not necessary.
+>> 
+>> When prev is NULL, this means vma should be the first element in the
+>> list. Then next should be current first one (mm->mmap), no matter
+>> whether we have parent or not.
+>> 
+>> After removing it, the code shows the beauty of symmetry.
+>
+>Uhh ... did you test this?
+>
 
-[ Upstream commit 5f5e25f1c7933a6e1673515c0b1d5acd82fea1ed ]
+I have enabled DEBUG_VM_RB, system looks good with this.
 
-cpu_map__snprint_mask() would write to illegal memory pointed by
-zalloc(0) when there is only one cpu.
-
-This patch fixes the calculation and adds sanity check against the input
-parameters.
-
-Signed-off-by: He Zhe <zhe.he@windriver.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Stephane Eranian <eranian@google.com>
-Fixes: 4400ac8a9a90 ("perf cpumap: Introduce cpu_map__snprint_mask()")
-Link: http://lkml.kernel.org/r/1564734592-15624-2-git-send-email-zhe.he@windriver.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/perf/util/cpumap.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 383674f448fcd..f93846edc1e0d 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -701,7 +701,10 @@ size_t cpu_map__snprint_mask(struct cpu_map *map, char *buf, size_t size)
- 	unsigned char *bitmap;
- 	int last_cpu = cpu_map__cpu(map, map->nr - 1);
- 
--	bitmap = zalloc((last_cpu + 7) / 8);
-+	if (buf == NULL)
-+		return 0;
-+
-+	bitmap = zalloc(last_cpu / 8 + 1);
- 	if (bitmap == NULL) {
- 		buf[0] = '\0';
- 		return 0;
 -- 
-2.20.1
-
+Wei Yang
+Help you, Help me
