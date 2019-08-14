@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23DDA8D996
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CEBC8D991
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728467AbfHNRJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:09:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
+        id S1730380AbfHNRJo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730396AbfHNRJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:53 -0400
+        id S1729904AbfHNRJl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:41 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 52560214DA;
-        Wed, 14 Aug 2019 17:09:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76395208C2;
+        Wed, 14 Aug 2019 17:09:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802592;
-        bh=ocwnyKs1rifK7iP2Y5EL/eziwLUfhU6jkrxnY1uaWtw=;
+        s=default; t=1565802580;
+        bh=hk+BW2g498HkjhgTTJ87szRPCj5bd3Unj3WwSKMmQNk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VN/Ii/KxB0tKA7c/3XaSlruejrvjc0ninsIs6kFZTrf1Xcjmaj7tDMwPJMQotkz8C
-         CAxGuAUePDoMTJTLrBx9Xip7C5rnk62kIppBqzGPlyGmdfogca0RIru2DT4a4KQoJY
-         zgLAn4lRTdZn/P0fRqb/jRKQNd9YkWn3cbRklQxk=
+        b=WIHElwq85bjTD7crVgekgmHBveEUoPLDxxiThVVvk0d5J1FITy8KNJtQ7SrQL18xM
+         cmVksLNc4M9mlgWRyelwSfPCfHmblF/UpL95WE7ciSnWUNXssrd1g2e1BKga1zTOlm
+         WYJWfnq/vMV32GL5xgXpgQ8VGJrtvF84hTfYPpH8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 02/91] iio: adc: max9611: Fix misuse of GENMASK macro
-Date:   Wed, 14 Aug 2019 19:00:25 +0200
-Message-Id: <20190814165749.068181696@linuxfoundation.org>
+        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.19 07/91] crypto: ccp - Ignore tag length when decrypting GCM ciphertext
+Date:   Wed, 14 Aug 2019 19:00:30 +0200
+Message-Id: <20190814165749.388040530@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -44,32 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joe Perches <joe@perches.com>
+From: Gary R Hook <gary.hook@amd.com>
 
-commit ae8cc91a7d85e018c0c267f580820b2bb558cd48 upstream.
+commit e2664ecbb2f26225ac6646876f2899558ffb2604 upstream.
 
-Arguments are supposed to be ordered high then low.
+AES GCM input buffers for decryption contain AAD+CTEXT+TAG. Only
+decrypt the ciphertext, and use the tag for comparison.
 
-Signed-off-by: Joe Perches <joe@perches.com>
-Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Fixes: 36cf515b9bbe2 ("crypto: ccp - Enable support for AES GCM on v5 CCPs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/iio/adc/max9611.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/ccp/ccp-ops.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/iio/adc/max9611.c
-+++ b/drivers/iio/adc/max9611.c
-@@ -86,7 +86,7 @@
- #define MAX9611_TEMP_MAX_POS		0x7f80
- #define MAX9611_TEMP_MAX_NEG		0xff80
- #define MAX9611_TEMP_MIN_NEG		0xd980
--#define MAX9611_TEMP_MASK		GENMASK(7, 15)
-+#define MAX9611_TEMP_MASK		GENMASK(15, 7)
- #define MAX9611_TEMP_SHIFT		0x07
- #define MAX9611_TEMP_RAW(_r)		((_r) >> MAX9611_TEMP_SHIFT)
- #define MAX9611_TEMP_SCALE_NUM		1000000
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -785,8 +785,7 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 		while (src.sg_wa.bytes_left) {
+ 			ccp_prepare_data(&src, &dst, &op, AES_BLOCK_SIZE, true);
+ 			if (!src.sg_wa.bytes_left) {
+-				unsigned int nbytes = aes->src_len
+-						      % AES_BLOCK_SIZE;
++				unsigned int nbytes = ilen % AES_BLOCK_SIZE;
+ 
+ 				if (nbytes) {
+ 					op.eom = 1;
 
 
