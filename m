@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2818E8D97E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2F0E8D943
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730255AbfHNRJB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:09:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59176 "EHLO mail.kernel.org"
+        id S1729769AbfHNRG4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:06:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730244AbfHNRI5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:57 -0400
+        id S1729743AbfHNRGu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:06:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8BEA214DA;
-        Wed, 14 Aug 2019 17:08:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74C362173B;
+        Wed, 14 Aug 2019 17:06:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802536;
-        bh=LC4KV5Kjbvv9tdZ6mUbxa/nNUGvWNgu7cVPQ7hN42s0=;
+        s=default; t=1565802409;
+        bh=zAJIPmjoCYWSGafJerE0GQskZKt2BcTJxwk8jxxgqyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O82fYhlmYlcI2CwUpcV7ITei8JORngZTehhRuYbyIG2XWz0eDg0rvDJN6vu+0MjS7
-         fr9LWzwfLXPRZgVNSoOagD+GgYrEgpuyzMloOLCbin+EQU5BJj6YTcfph46rByjE9V
-         q9ndg9XqpSRPZ/ntyBxSci72+xIvWh76eydbaoXI=
+        b=U7N99X8xJKJtromylpThjigC2FqobTzh1SYk5iwsa1F4Yjsuy/IJpVuCSc9HOsW6H
+         /y8ELEB4XgaWYvsrkxXOwZ3GKr5sYbwpYeGxpg/CqLKE+7Kq6BGb23kDIEaGEQbjw6
+         hrXEcxLdTuCaltG1+OTAGxNXej4jIWEdcXduzeVg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Klaus Theurich <klaus.theurich@de.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.19 20/91] perf annotate: Fix s390 gap between kernel end and module start
-Date:   Wed, 14 Aug 2019 19:00:43 +0200
-Message-Id: <20190814165750.587317981@linuxfoundation.org>
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 088/144] arm64: dts: imx8mm: Correct SAI3 RXC/TXFS pins mux option #1
+Date:   Wed, 14 Aug 2019 19:00:44 +0200
+Message-Id: <20190814165803.557924318@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,159 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+[ Upstream commit 52d09014bb104a9157c0f5530700291052d2955c ]
 
-commit b9c0a64901d5bdec6eafd38d1dc8fa0e2974fccb upstream.
+According to i.MX8MM reference manual Rev.1, 03/2019:
 
-During execution of command 'perf top' the error message:
+SAI3_RXC pin's mux option #1 should be GPT1_CLK, NOT GPT1_CAPTURE2;
+SAI3_TXFS pin's mux option #1 should be GPT1_CAPTURE2, NOT GPT1_CLK.
 
-   Not enough memory for annotating '__irf_end' symbol!)
-
-is emitted from this call sequence:
-  __cmd_top
-    perf_top__mmap_read
-      perf_top__mmap_read_idx
-        perf_event__process_sample
-          hist_entry_iter__add
-            hist_iter__top_callback
-              perf_top__record_precise_ip
-                hist_entry__inc_addr_samples
-                  symbol__inc_addr_samples
-                    symbol__get_annotation
-                      symbol__alloc_hist
-
-In this function the size of symbol __irf_end is calculated. The size of
-a symbol is the difference between its start and end address.
-
-When the symbol was read the first time, its start and end was set to:
-
-   symbol__new: __irf_end 0xe954d0-0xe954d0
-
-which is correct and maps with /proc/kallsyms:
-
-   root@s8360046:~/linux-4.15.0/tools/perf# fgrep _irf_end /proc/kallsyms
-   0000000000e954d0 t __irf_end
-   root@s8360046:~/linux-4.15.0/tools/perf#
-
-In function symbol__alloc_hist() the end of symbol __irf_end is
-
-  symbol__alloc_hist sym:__irf_end start:0xe954d0 end:0x3ff80045a8
-
-which is identical with the first module entry in /proc/kallsyms
-
-This results in a symbol size of __irf_req for histogram analyses of
-70334140059072 bytes and a malloc() for this requested size fails.
-
-The root cause of this is function
-  __dso__load_kallsyms()
-  +-> symbols__fixup_end()
-
-Function symbols__fixup_end() enlarges the last symbol in the kallsyms
-map:
-
-   # fgrep __irf_end /proc/kallsyms
-   0000000000e954d0 t __irf_end
-   #
-
-to the start address of the first module:
-   # cat /proc/kallsyms | sort  | egrep ' [tT] '
-   ....
-   0000000000e952d0 T __security_initcall_end
-   0000000000e954d0 T __initramfs_size
-   0000000000e954d0 t __irf_end
-   000003ff800045a8 T fc_get_event_number       [scsi_transport_fc]
-   000003ff800045d0 t store_fc_vport_disable    [scsi_transport_fc]
-   000003ff800046a8 T scsi_is_fc_rport  [scsi_transport_fc]
-   000003ff800046d0 t fc_target_setup   [scsi_transport_fc]
-
-On s390 the kernel is located around memory address 0x200, 0x10000 or
-0x100000, depending on linux version. Modules however start some- where
-around 0x3ff xxxx xxxx.
-
-This is different than x86 and produces a large gap for which histogram
-allocation fails.
-
-Fix this by detecting the kernel's last symbol and do no adjustment for
-it. Introduce a weak function and handle s390 specifics.
-
-Reported-by: Klaus Theurich <klaus.theurich@de.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Link: http://lkml.kernel.org/r/20190724122703.3996-2-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: c1c9d41319c3 ("dt-bindings: imx: Add pinctrl binding doc for imx8mm")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/s390/util/machine.c |   17 +++++++++++++++++
- tools/perf/util/symbol.c            |    7 ++++++-
- tools/perf/util/symbol.h            |    1 +
- 3 files changed, 24 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/tools/perf/arch/s390/util/machine.c
-+++ b/tools/perf/arch/s390/util/machine.c
-@@ -6,6 +6,7 @@
- #include "machine.h"
- #include "api/fs/fs.h"
- #include "debug.h"
-+#include "symbol.h"
- 
- int arch__fix_module_text_start(u64 *start, const char *name)
- {
-@@ -21,3 +22,19 @@ int arch__fix_module_text_start(u64 *sta
- 
- 	return 0;
- }
-+
-+/* On s390 kernel text segment start is located at very low memory addresses,
-+ * for example 0x10000. Modules are located at very high memory addresses,
-+ * for example 0x3ff xxxx xxxx. The gap between end of kernel text segment
-+ * and beginning of first module's text segment is very big.
-+ * Therefore do not fill this gap and do not assign it to the kernel dso map.
-+ */
-+void arch__symbols__fixup_end(struct symbol *p, struct symbol *c)
-+{
-+	if (strchr(p->name, '[') == NULL && strchr(c->name, '['))
-+		/* Last kernel symbol mapped to end of page */
-+		p->end = roundup(p->end, page_size);
-+	else
-+		p->end = c->start;
-+	pr_debug4("%s sym:%s end:%#lx\n", __func__, p->name, p->end);
-+}
---- a/tools/perf/util/symbol.c
-+++ b/tools/perf/util/symbol.c
-@@ -86,6 +86,11 @@ static int prefix_underscores_count(cons
- 	return tail - str;
- }
- 
-+void __weak arch__symbols__fixup_end(struct symbol *p, struct symbol *c)
-+{
-+	p->end = c->start;
-+}
-+
- const char * __weak arch__normalize_symbol_name(const char *name)
- {
- 	return name;
-@@ -212,7 +217,7 @@ void symbols__fixup_end(struct rb_root *
- 		curr = rb_entry(nd, struct symbol, rb_node);
- 
- 		if (prev->end == prev->start && prev->end != curr->start)
--			prev->end = curr->start;
-+			arch__symbols__fixup_end(prev, curr);
- 	}
- 
- 	/* Last entry */
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -349,6 +349,7 @@ const char *arch__normalize_symbol_name(
- #define SYMBOL_A 0
- #define SYMBOL_B 1
- 
-+void arch__symbols__fixup_end(struct symbol *p, struct symbol *c);
- int arch__compare_symbol_names(const char *namea, const char *nameb);
- int arch__compare_symbol_names_n(const char *namea, const char *nameb,
- 				 unsigned int n);
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h b/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
+index e25f7fcd79975..cffa8991880d1 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
++++ b/arch/arm64/boot/dts/freescale/imx8mm-pinfunc.h
+@@ -462,7 +462,7 @@
+ #define MX8MM_IOMUXC_SAI3_RXFS_GPIO4_IO28                                   0x1CC 0x434 0x000 0x5 0x0
+ #define MX8MM_IOMUXC_SAI3_RXFS_TPSMP_HTRANS0                                0x1CC 0x434 0x000 0x7 0x0
+ #define MX8MM_IOMUXC_SAI3_RXC_SAI3_RX_BCLK                                  0x1D0 0x438 0x000 0x0 0x0
+-#define MX8MM_IOMUXC_SAI3_RXC_GPT1_CAPTURE2                                 0x1D0 0x438 0x000 0x1 0x0
++#define MX8MM_IOMUXC_SAI3_RXC_GPT1_CLK                                      0x1D0 0x438 0x000 0x1 0x0
+ #define MX8MM_IOMUXC_SAI3_RXC_SAI5_RX_BCLK                                  0x1D0 0x438 0x4D0 0x2 0x2
+ #define MX8MM_IOMUXC_SAI3_RXC_GPIO4_IO29                                    0x1D0 0x438 0x000 0x5 0x0
+ #define MX8MM_IOMUXC_SAI3_RXC_TPSMP_HTRANS1                                 0x1D0 0x438 0x000 0x7 0x0
+@@ -472,7 +472,7 @@
+ #define MX8MM_IOMUXC_SAI3_RXD_GPIO4_IO30                                    0x1D4 0x43C 0x000 0x5 0x0
+ #define MX8MM_IOMUXC_SAI3_RXD_TPSMP_HDATA0                                  0x1D4 0x43C 0x000 0x7 0x0
+ #define MX8MM_IOMUXC_SAI3_TXFS_SAI3_TX_SYNC                                 0x1D8 0x440 0x000 0x0 0x0
+-#define MX8MM_IOMUXC_SAI3_TXFS_GPT1_CLK                                     0x1D8 0x440 0x000 0x1 0x0
++#define MX8MM_IOMUXC_SAI3_TXFS_GPT1_CAPTURE2                                0x1D8 0x440 0x000 0x1 0x0
+ #define MX8MM_IOMUXC_SAI3_TXFS_SAI5_RX_DATA1                                0x1D8 0x440 0x4D8 0x2 0x2
+ #define MX8MM_IOMUXC_SAI3_TXFS_GPIO4_IO31                                   0x1D8 0x440 0x000 0x5 0x0
+ #define MX8MM_IOMUXC_SAI3_TXFS_TPSMP_HDATA1                                 0x1D8 0x440 0x000 0x7 0x0
+-- 
+2.20.1
+
 
 
