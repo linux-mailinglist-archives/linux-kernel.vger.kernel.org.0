@@ -2,101 +2,118 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E80768C572
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 03:08:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 568388C57F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 03:18:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfHNBIV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 21:08:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57578 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfHNBIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 21:08:20 -0400
-Received: from localhost (unknown [104.133.9.64])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC65120665;
-        Wed, 14 Aug 2019 01:08:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565744900;
-        bh=35iNLY+3zML5gtouJ5dOsP2hrVe43AhtfEzM8qZJI/0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TV0lQX62Ih7wGdK1OvaGqqb/W6gup3czmHlObR1mhlVD7vvOmg/QIiXwp+sXMF8OM
-         Bt1YnmJ8RpkUcKuXlugSt715ExPE/BED8n8mvoVr61b04uTbFcCDIjouA7QhT2le0x
-         4WWIPvsiqRXQutONno9RyGZHY41rTx2MVqfGphGo=
-Date:   Tue, 13 Aug 2019 20:08:19 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/5] PCI / PM: Check for error when reading Power State
-Message-ID: <20190814010819.GA206171@google.com>
-References: <20190805205214.194981-1-helgaas@kernel.org>
- <CAJZ5v0jFPU38zDugumJB0iq5d-LctcMCdygTrFU4=gYP3UJ+oA@mail.gmail.com>
- <20190809220116.GA221706@google.com>
- <27964051.NtteWoIlyA@kreacher>
+        id S1726875AbfHNBS3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 21:18:29 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:27000 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726102AbfHNBS3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 21:18:29 -0400
+Received: from ATCSQR.andestech.com (localhost [127.0.0.2] (may be forged))
+        by ATCSQR.andestech.com with ESMTP id x7E0n9Jj017975
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 08:49:09 +0800 (GMT-8)
+        (envelope-from alankao@andestech.com)
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x7E0mjaZ017904;
+        Wed, 14 Aug 2019 08:48:45 +0800 (GMT-8)
+        (envelope-from alankao@andestech.com)
+Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 14 Aug 2019
+ 09:00:13 +0800
+Date:   Wed, 14 Aug 2019 09:00:14 +0800
+From:   Alan Kao <alankao@andestech.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 13/15] riscv: clear the instruction cache and all
+ registers when booting
+Message-ID: <20190814010013.GA18655@andestech.com>
+References: <20190813154747.24256-1-hch@lst.de>
+ <20190813154747.24256-14-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <27964051.NtteWoIlyA@kreacher>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190813154747.24256-14-hch@lst.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x7E0mjaZ017904
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 12:59:26AM +0200, Rafael J. Wysocki wrote:
-> On Saturday, August 10, 2019 12:01:16 AM CEST Bjorn Helgaas wrote:
-> > On Mon, Aug 05, 2019 at 11:09:19PM +0200, Rafael J. Wysocki wrote:
-> > > On Mon, Aug 5, 2019 at 10:52 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+Hi Christoph,
 
-> > > > @@ -942,7 +942,7 @@ void pci_update_current_state(struct pci_dev *dev, pci_power_t state)
-> > > >                 u16 pmcsr;
-> > > >
-> > > >                 pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
-> > > > -               dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
-> > > > +               dev->current_state = pci_power_state(pmcsr);
-> > > 
-> > > The if () branch above should cover the D3cold case, shouldn't it?
-> > 
-> > You mean the "if (platform_pci_get_power_state(dev) == PCI_D3cold)"
-> > test?
-> 
-> Not exactly.
-> 
-> I mean "if (platform_pci_get_power_state(dev) == PCI_D3cold ||
-> !pci_device_is_present(dev))".
+On Tue, Aug 13, 2019 at 05:47:45PM +0200, Christoph Hellwig wrote:
+> When we get booted we want a clear slate without any leaks from previous
+> supervisors or the firmware.  Flush the instruction cache and then clear
+> all registers to known good values.  This is really important for the
+> upcoming nommu support that runs on M-mode, but can't really harm when
+> running in S-mode either.  
 
-I don't see what you mean.  The !pci_device_is_present(dev) test tells
-us something about what the state of the device was at some time in
-the past, but of course it doesn't say anything about whether reading
-PCI_PM_CTRL will succeed, e.g.,
+Sure.
 
-  # dev is present and in D0
-  platform_pci_get_power_state(dev) == PCI_D3cold   # currently false
-  !pci_device_is_present(dev)                       # currently false
-  # dev is surprise hot-removed or put in D3cold
-  pci_read_config_word(PCI_PM_CTRL, &pmcsr)
-  # pmcsr == ~0 (error response)
+> +#ifdef CONFIG_FPU
 
-(Maybe going to D3cold is impossible, but it's pretty hard to prove
-that.  The hot-remove is definitely possible.)
+But it doesn't really mean that the running system has an FPU given CONFIG_FPU
+enabled.  Normally the existence of an FPU is checked in riscv_fill_hwcap by
+searching device tree, where the code looks like
 
-> > platform_pci_get_power_state() returns PCI_UNKNOWN in some cases.
-> > When that happens, might we not read PCI_PM_CTRL of a device in
-> > D3cold?  I think this also has the same hotplug question as above.
-> 
-> Surprise hot-removal can take place at any time, in particular after setting
-> current_state, so adding extra checks here doesn't prevent the value of
-> it from becoming stale at least sometimes anyway.
 
-Definitely.  The point is not to prevent current_state from becoming
-stale, it's to prevent us from interpreting ~0 data (known to be
-invalid) as though it were a valid register value.
+bool has_fpu = false; // this one is global
+...
+#ifdef CONFIG_FPU
+        if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
+                has_fpu = true;
+#endif
 
-Bjorn
+
+Or does CONFIG_FPU have a more intuitive meaning when CONFIG_M_MODE is enabled?
+
+> +	csrr	t0, CSR_MISA
+> +	andi	t0, t0, (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D)
+> +	bnez	t0, .Lreset_regs_done
+> +
+> +	li	t1, SR_FS
+> +	csrs	CSR_XSTATUS, t1
+> +	fmv.s.x	f0, zero
+> +	fmv.s.x	f1, zero
+> +	fmv.s.x	f2, zero
+> +	fmv.s.x	f3, zero
+> +	fmv.s.x	f4, zero
+> +	fmv.s.x	f5, zero
+> +	fmv.s.x	f6, zero
+> +	fmv.s.x	f7, zero
+> +	fmv.s.x	f8, zero
+> +	fmv.s.x	f9, zero
+> +	fmv.s.x	f10, zero
+> +	fmv.s.x	f11, zero
+> +	fmv.s.x	f12, zero
+> +	fmv.s.x	f13, zero
+> +	fmv.s.x	f14, zero
+> +	fmv.s.x	f15, zero
+> +	fmv.s.x	f16, zero
+> +	fmv.s.x	f17, zero
+> +	fmv.s.x	f18, zero
+> +	fmv.s.x	f19, zero
+> +	fmv.s.x	f20, zero
+> +	fmv.s.x	f21, zero
+> +	fmv.s.x	f22, zero
+> +	fmv.s.x	f23, zero
+> +	fmv.s.x	f24, zero
+> +	fmv.s.x	f25, zero
+> +	fmv.s.x	f26, zero
+> +	fmv.s.x	f27, zero
+> +	fmv.s.x	f28, zero
+> +	fmv.s.x	f29, zero
+> +	fmv.s.x	f30, zero
+> +	fmv.s.x	f31, zero
+> +	csrw	fcsr, 0
+> +	/* note that the caller must clear SR_FS */
+> +#endif /* CONFIG_FPU */
