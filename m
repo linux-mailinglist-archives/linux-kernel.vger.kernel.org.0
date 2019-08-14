@@ -2,62 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D15A38CDBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:12:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C18A8CE2B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:18:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfHNIL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:11:57 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38490 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726555AbfHNIL5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:11:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EA6AAAF98;
-        Wed, 14 Aug 2019 08:11:55 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 10:11:55 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-team@fb.com
-Subject: Re: [PATCH] mm: vmscan: do not share cgroup iteration between
- reclaimers
-Message-ID: <20190814081155.GQ17933@dhcp22.suse.cz>
-References: <20190812192316.13615-1-hannes@cmpxchg.org>
- <20190813132938.GJ17933@dhcp22.suse.cz>
- <20190813171237.GA21743@cmpxchg.org>
+        id S1727099AbfHNISH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:18:07 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42371 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbfHNISG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 04:18:06 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i30so4423157pfk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 01:18:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vQ2pr3Cls72t2h2tsGZZ35CLiWwC2wgAdBlRAFpgySo=;
+        b=R7Kyn+equxgntT6XPosUWdGuRy3AD+4jLQsjf6tSHnWD0lLbaHelvOeW5nhL2rJ87p
+         tnXlsuUJW+q2AuzeoilkudENc95XbbKiHsz2pEXn9OPSq7CS+8WC51siM6fL1dXTyMNp
+         gwQ7ALwj2I+COTYxyCGdA1QgusKda1euBkyHY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=vQ2pr3Cls72t2h2tsGZZ35CLiWwC2wgAdBlRAFpgySo=;
+        b=USMhCbuUtj/7eY4LEteV6kjVld6dlhZn4dUey4LURtlM5kJIFp6Nh7Zw93rAbZ/38I
+         4lVkjNIp2kj+BuBlBHy3L3Q9upQTVbs7FeBdGB5J4N72FOJq51eZGiIk7H3W8KLFRYZd
+         dHbHMIOJ6TeaONAOcpcTV4dtp3PBEppG1yBkwkazWJuJLF5aJufZn7MBPpu+un2WBPFZ
+         4pLKvg3fn68clr1u6Aql6k9G6tkQe9iITZvtqVuB9DlxnowUZ21yQqeR2lHBufAGAcIf
+         wOt7g67gJPwDeqvN+D2VV0TeRebEcQQYvkz+CKxNE4rSs9BzY5uzs3Z4flQjuDcFJxu/
+         A47g==
+X-Gm-Message-State: APjAAAWuXo36E/1tPk4Dew4C/MWK4V/9yvjVHLqg9lcnzWKClIdrF0b2
+        0FNdaKjxfU5DXB46be0JVnfV8YR39Aw=
+X-Google-Smtp-Source: APXvYqx4bPRXa+kR2ABoEbrdX4duOpckAD+9E+8PZMdTgBc4vZrv59GuyMr8gWbIQN/dGIuRmYpAxg==
+X-Received: by 2002:a65:6284:: with SMTP id f4mr35970405pgv.416.1565770686132;
+        Wed, 14 Aug 2019 01:18:06 -0700 (PDT)
+Received: from localhost ([2401:fa00:1:10:e122:3674:c42c:2698])
+        by smtp.gmail.com with ESMTPSA id q126sm74303369pfb.56.2019.08.14.01.18.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 01:18:05 -0700 (PDT)
+From:   Yilun Lin <yllin@chromium.org>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     pihsun@chromium.org, Yilun Lin <yllin@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        Benson Leung <bleung@chromium.org>
+Subject: [PATCH] platform/chrome: cros_ec_rpmsg: Add host command AP sleep state support
+Date:   Wed, 14 Aug 2019 16:17:57 +0800
+Message-Id: <20190814081757.65056-1-yllin@chromium.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813171237.GA21743@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-08-19 13:12:37, Johannes Weiner wrote:
-> On Tue, Aug 13, 2019 at 03:29:38PM +0200, Michal Hocko wrote:
-> > On Mon 12-08-19 15:23:16, Johannes Weiner wrote:
-[...]
-> > > This change completely eliminates the OOM kills on our service, while
-> > > showing no signs of overreclaim - no increased scan rates, %sys time,
-> > > or abrupt free memory spikes. I tested across 100 machines that have
-> > > 64G of RAM and host about 300 cgroups each.
-> > 
-> > What is the usual direct reclaim involvement on those machines?
-> 
-> 80-200 kb/s. In general we try to keep this low to non-existent on our
-> hosts due to the latency implications. So it's fair to say that kswapd
-> does page reclaim, and direct reclaim is a sign of overload.
+Add EC host command to inform EC of AP suspend/resume status.
 
-Well, there are workloads which are much more direct reclaim heavier.
-How much they rely on large memcg trees remains to be seen. Your
-changelog should state that the above workload is very light on direct
-reclaim, though, because the above paragraph suggests that a risk of
-longer stalls is really non-issue while I think this is not really all
-that clear.
+Signed-off-by: Yilun Lin <yllin@chromium.org>
+---
+
+ drivers/platform/chrome/cros_ec_rpmsg.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/drivers/platform/chrome/cros_ec_rpmsg.c b/drivers/platform/chrome/cros_ec_rpmsg.c
+index 5d3fb2abad1d..6f34fe629e2c 100644
+--- a/drivers/platform/chrome/cros_ec_rpmsg.c
++++ b/drivers/platform/chrome/cros_ec_rpmsg.c
+@@ -236,6 +236,25 @@ static void cros_ec_rpmsg_remove(struct rpmsg_device *rpdev)
+ 	cancel_work_sync(&ec_rpmsg->host_event_work);
+ }
+ 
++#ifdef CONFIG_PM_SLEEP
++static int cros_ec_rpmsg_suspend(struct device *dev)
++{
++	struct cros_ec_device *ec_dev = dev_get_drvdata(dev);
++
++	return cros_ec_suspend(ec_dev);
++}
++
++static int cros_ec_rpmsg_resume(struct device *dev)
++{
++	struct cros_ec_device *ec_dev = dev_get_drvdata(dev);
++
++	return cros_ec_resume(ec_dev);
++}
++#endif
++
++static SIMPLE_DEV_PM_OPS(cros_ec_rpmsg_pm_ops, cros_ec_rpmsg_suspend,
++			 cros_ec_rpmsg_resume);
++
+ static const struct of_device_id cros_ec_rpmsg_of_match[] = {
+ 	{ .compatible = "google,cros-ec-rpmsg", },
+ 	{ }
+@@ -246,6 +265,7 @@ static struct rpmsg_driver cros_ec_driver_rpmsg = {
+ 	.drv = {
+ 		.name   = "cros-ec-rpmsg",
+ 		.of_match_table = cros_ec_rpmsg_of_match,
++		.pm	= &cros_ec_rpmsg_pm_ops,
+ 	},
+ 	.probe		= cros_ec_rpmsg_probe,
+ 	.remove		= cros_ec_rpmsg_remove,
 -- 
-Michal Hocko
-SUSE Labs
+2.23.0.rc1.153.gdeed80330f-goog
+
