@@ -2,67 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF3F98D0E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83ADF8D0F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:44:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727661AbfHNKmH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 06:42:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:52030 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726821AbfHNKmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:42:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4741815AD;
-        Wed, 14 Aug 2019 03:42:01 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6EE2A3F706;
-        Wed, 14 Aug 2019 03:41:59 -0700 (PDT)
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, akpm@linux-foundation.org,
-        bigeasy@linutronix.de, bp@suse.de, catalin.marinas@arm.com,
-        davem@davemloft.net, hch@lst.de, kan.liang@intel.com,
-        mark.rutland@arm.com, mingo@kernel.org, peterz@infradead.org,
-        riel@surriel.com, will@kernel.org
-Subject: [PATCH 9/9] samples/kretprobe: correctly check for kthreads
-Date:   Wed, 14 Aug 2019 11:41:31 +0100
-Message-Id: <20190814104131.20190-10-mark.rutland@arm.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190814104131.20190-1-mark.rutland@arm.com>
-References: <20190814104131.20190-1-mark.rutland@arm.com>
+        id S1727524AbfHNKoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 06:44:24 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:47358 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726383AbfHNKoX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 06:44:23 -0400
+Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 9F7EB43D394;
+        Wed, 14 Aug 2019 20:44:18 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hxqkI-0001pY-Aq; Wed, 14 Aug 2019 20:43:10 +1000
+Date:   Wed, 14 Aug 2019 20:43:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Mike Snitzer <msnitzer@redhat.com>, junxiao.bi@oracle.com,
+        dm-devel@redhat.com, Alasdair Kergon <agk@redhat.com>,
+        honglei.wang@oracle.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] direct-io: use GFP_NOIO to avoid deadlock
+Message-ID: <20190814104310.GN6129@dread.disaster.area>
+References: <alpine.LRH.2.02.1908080540240.15519@file01.intranet.prod.int.rdu2.redhat.com>
+ <20190809013403.GY7777@dread.disaster.area>
+ <alpine.LRH.2.02.1908090725290.31061@file01.intranet.prod.int.rdu2.redhat.com>
+ <20190809215733.GZ7777@dread.disaster.area>
+ <alpine.LRH.2.02.1908131231010.6852@file01.intranet.prod.int.rdu2.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LRH.2.02.1908131231010.6852@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=D+Q3ErZj c=1 sm=1 tr=0
+        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=VwQbUJbxAAAA:8 a=7-415B0cAAAA:8 a=B-2tCdbVYXm3Rcn1sc0A:9
+        a=CjuIK1q_8ugA:10 a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In general, a non-NULL current->mm doesn't imply that current is a
-kthread, as kthreads can install an mm via use_mm(), and so it's
-preferable to use is_kthread() to determine whether a thread is a
-kthread.
+On Tue, Aug 13, 2019 at 12:35:49PM -0400, Mikulas Patocka wrote:
+> 
+> 
+> On Sat, 10 Aug 2019, Dave Chinner wrote:
+> 
+> > No, you misunderstand. I'm talking about blocking kswapd being
+> > wrong.  i.e. Blocking kswapd in shrinkers causes problems
+> > because th ememory reclaim code does not expect kswapd to be
+> > arbitrarily delayed by waiting on IO. We've had this problem with
+> > the XFS inode cache shrinker for years, and there are many reports
+> > of extremely long reclaim latencies for both direct and kswapd
+> > reclaim that result from kswapd not making progress while waiting
+> > in shrinkers for IO to complete.
+> > 
+> > The work I'm currently doing to fix this XFS problem can be found
+> > here:
+> > 
+> > https://lore.kernel.org/linux-fsdevel/20190801021752.4986-1-david@fromorbit.com/
+> > 
+> > 
+> > i.e. the point I'm making is that waiting for IO in kswapd reclaim
+> > context is considered harmful - kswapd context shrinker reclaim
+> > should be as non-blocking as possible, and any back-off to wait for
+> > IO to complete should be done by the high level reclaim core once
+> > it's completed an entire reclaim scan cycle of everything....
+> > 
+> > What follows from that, and is pertinent for in this situation, is
+> > that if you don't block kswapd, then other reclaim contexts are not
+> > going to get stuck waiting for it regardless of the reclaim context
+> > they use.
+> > 
+> > Cheers,
+> > 
+> > Dave.
+> 
+> So, what do you think the dm-bufio shrinker should do?
 
-For consistency, let's use is_kthread() here.
+I'm not familiar with the constraints the code operates under, so
+I can't guarantee that I have an answer for you... :/
 
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
----
- samples/kprobes/kretprobe_example.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> Currently it tries to free buffers on the clean list and if there are not 
+> enough buffers on the clean list, it goes into the dirty list - it writes 
+> the buffers back and then frees them.
+> 
+> What should it do? Should it just start writeback of the dirty list 
+> without waiting for it? What should it do if all the buffers are under 
+> writeback?
 
-diff --git a/samples/kprobes/kretprobe_example.c b/samples/kprobes/kretprobe_example.c
-index 186315ca88b3..d6e0bf196f0e 100644
---- a/samples/kprobes/kretprobe_example.c
-+++ b/samples/kprobes/kretprobe_example.c
-@@ -41,7 +41,7 @@ static int entry_handler(struct kretprobe_instance *ri, struct pt_regs *regs)
- {
- 	struct my_data *data;
- 
--	if (!current->mm)
-+	if (is_kthread(current))
- 		return 1;	/* Skip kernel threads */
- 
- 	data = (struct my_data *)ri->data;
+For kswapd, it should do what it can without blocking. e.g. kicking
+an async writer thread rather than submitting the IO itself. That's
+what I changes XFS to do.
+
+And if you look at the patchset in the above link, it also
+introduced a mechanism for shrinkers to communicate back to the high
+level reclaim code that kswapd needs to back off
+(reclaim_state->need_backoff).
+
+With these mechanism, the shrinker can start IO without blocking
+kswapd on congested request queues and tell memory reclaim to wait
+before calling this shrinker again. This allows kswapd to aggregate
+all the waits that shrinkers and page reclaim require to all
+progress to be made into a single backoff event. That means kswapd
+does other scanning work while background writeback goes on, and
+once everythign is scanned it does a single wait for everything that
+needs time to make progress...
+
+I think that should also work for the dm-bufio shrinker, and the the
+direct reclaim backoff parts of the patchset should work for
+non-blocking direct reclaim scanning as well, like it now does for
+XFS.
+
+Cheers,
+
+Dave.
 -- 
-2.11.0
-
+Dave Chinner
+david@fromorbit.com
