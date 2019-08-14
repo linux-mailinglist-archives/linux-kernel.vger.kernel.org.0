@@ -2,93 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D26F8DD38
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79D7F8DD3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729261AbfHNSnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:43:37 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45808 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbfHNSng (ORCPT
+        id S1729300AbfHNSoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:44:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5878 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728265AbfHNSof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:43:36 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EIcmGn136901;
-        Wed, 14 Aug 2019 18:43:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to :
- references : cc : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=ogTf0C7vEGLcQeFZFv8Efl6J1d0vvpCj4vlJxV70x7Y=;
- b=DINf0EIt8bJ66rb45YXVqckaWEBxqsKEBl8ld5JcS29HKKAFhCKRUtT9pOTNFJDCbTVZ
- Rl3yX5oSX4AScdMqI4HDYGaWJsySh1r7kcOgSGhkwCmf6TGIRj4fZNIwlUKD0205vVGO
- b8kHkCddDfoSAKGs+B3gh2lO0+yG/0sdnWsXswZOVyKkXBt7p6g2sppgdg3UA/CY2r/m
- GXwqrgbR1yMWabhD5LBLufxiUr8YdQxcHIc5u/13VTaJGPPq0K73Jo3cTqC4UB74Avn6
- jsa7h1RKgxeseJUjgDB4RUeB3pZ6Q/NskI9TJ6a1SjcgTe4G1heZ0Z0LmbQ/nSY7wnXW 4w== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2120.oracle.com with ESMTP id 2u9pjqpfgj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 18:43:07 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EIciNM043330;
-        Wed, 14 Aug 2019 18:43:07 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3030.oracle.com with ESMTP id 2ubwrhkuf8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 18:43:06 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7EIh6hT008781;
-        Wed, 14 Aug 2019 18:43:06 GMT
-Received: from aruna-dev.us.oracle.com (/10.211.44.177)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Aug 2019 11:43:05 -0700
-Subject: Re: [PATCH 2/5] tracing: Verify if trace array exists before
- destroying it.
-To:     Divya Indi <divya.indi@oracle.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
- <1565805327-579-3-git-send-email-divya.indi@oracle.com>
-Cc:     Joe Jin <joe.jin@oracle.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>
-From:   Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Message-ID: <090274c8-6e8c-2526-5515-dbd5cbc11093@oracle.com>
-Date:   Wed, 14 Aug 2019 11:42:56 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+        Wed, 14 Aug 2019 14:44:35 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EIfajM098672
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:44:35 -0400
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucp3vkuxn-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:44:34 -0400
+Received: from localhost
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 14 Aug 2019 19:44:33 +0100
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 14 Aug 2019 19:44:28 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7EIiRlf49873240
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Aug 2019 18:44:27 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8864DB205F;
+        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 68424B2065;
+        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 446FE16C1049; Wed, 14 Aug 2019 11:44:29 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 11:44:29 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org, Rao Shoaib <rao.shoaib@oracle.com>,
+        max.byungchul.park@gmail.com, byungchul.park@lge.com,
+        kernel-team@android.com, kernel-team@lge.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Kees Cook <keescook@chromium.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        linux-doc@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v3 1/2] rcu/tree: Add basic support for kfree_rcu batching
+Reply-To: paulmck@linux.ibm.com
+References: <20190813170046.81707-1-joel@joelfernandes.org>
+ <20190813190738.GH28441@linux.ibm.com>
+ <20190814143817.GA253999@google.com>
+ <20190814172233.GA68498@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1565805327-579-3-git-send-email-divya.indi@oracle.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=742
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908140165
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=812 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908140165
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814172233.GA68498@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19081418-0064-0000-0000-000004089D35
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011590; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01246810; UDB=6.00657983; IPR=6.01028317;
+ MB=3.00028174; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-14 18:44:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081418-0065-0000-0000-00003EAB4496
+Message-Id: <20190814184429.GV28441@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908140165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Aug 14, 2019 at 01:22:33PM -0400, Joel Fernandes wrote:
+> On Wed, Aug 14, 2019 at 10:38:17AM -0400, Joel Fernandes wrote:
+> > On Tue, Aug 13, 2019 at 12:07:38PM -0700, Paul E. McKenney wrote:
+>  [snip]
+> > > > - * Queue an RCU callback for lazy invocation after a grace period.
+> > > > - * This will likely be later named something like "call_rcu_lazy()",
+> > > > - * but this change will require some way of tagging the lazy RCU
+> > > > - * callbacks in the list of pending callbacks. Until then, this
+> > > > - * function may only be called from __kfree_rcu().
+> > > > + * Maximum number of kfree(s) to batch, if this limit is hit then the batch of
+> > > > + * kfree(s) is queued for freeing after a grace period, right away.
+> > > >   */
+> > > > -void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
+> > > > +struct kfree_rcu_cpu {
+> > > > +	/* The rcu_work node for queuing work with queue_rcu_work(). The work
+> > > > +	 * is done after a grace period.
+> > > > +	 */
+> > > > +	struct rcu_work rcu_work;
+> > > > +
+> > > > +	/* The list of objects being queued in a batch but are not yet
+> > > > +	 * scheduled to be freed.
+> > > > +	 */
+> > > > +	struct rcu_head *head;
+> > > > +
+> > > > +	/* The list of objects that have now left ->head and are queued for
+> > > > +	 * freeing after a grace period.
+> > > > +	 */
+> > > > +	struct rcu_head *head_free;
+> > > 
+> > > So this is not yet the one that does multiple batches concurrently
+> > > awaiting grace periods, correct?  Or am I missing something subtle?
+> > 
+> > Yes, it is not. I honestly, still did not understand that idea. Or how it
+> > would improve things. May be we can discuss at LPC on pen and paper? But I
+> > think that can also be a follow-up optimization.
+> 
+> I got it now. Basically we can benefit a bit more by having another list
+> (that is have multiple kfree_rcu batches in flight). I will think more about
+> it - but hopefully we don't need to gate this patch by that.
 
+I am willing to take this as a later optimization.
 
-On 08/14/2019 10:55 AM, Divya Indi wrote:
-> A trace array can be destroyed from userspace or kernel. Verify if the
-> trace exists before proceeding to destroy/remove it.
->
+> It'll be interesting to see what rcuperf says about such an improvement :)
 
-^^ s/trace/trace array/
+Indeed, no guarantees either way.  The reason for hope assumes a busy
+system where each grace period is immediately followed by another
+grace period.  On such a system, the current setup allows each CPU to
+make use only of every second grace period for its kfree_rcu() work.
+The hope would therefore be that this would reduce the memory footprint
+substantially with no increase in overhead.
 
-As you pointed out yourself. :)
+But no way to know without trying it!  ;-)
 
-All the patches look good to me. For this patchset:
+							Thanx, Paul
 
-Reviewed-by: Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-
-Thanks,
-Aruna
