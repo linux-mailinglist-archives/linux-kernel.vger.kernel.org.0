@@ -2,97 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 248688CF62
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:25:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719488CF86
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:29:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHNJZz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 05:25:55 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:16000 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725888AbfHNJZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:25:54 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 467khv4p4bz9v0GZ;
-        Wed, 14 Aug 2019 11:25:51 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=tDKSVHbM; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id npt1ratVQikb; Wed, 14 Aug 2019 11:25:51 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 467khv3lsvz9v0GY;
-        Wed, 14 Aug 2019 11:25:51 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1565774751; bh=AnAI6eOBmIzFT0vPN6Zr0av8nS7BjNoeKOZuIxTShO0=;
-        h=From:Subject:To:Cc:Date:From;
-        b=tDKSVHbMwzDrWOYdWHa0XmSb0QD9j9TeNf895KleI+g1tGRGYfdLh2EKXtGh6960E
-         zuM5VevsUXrbRej0XC46libkHIWfcnr3yc7evL3GPQMN5LQBL46tO+yir9mLHJZqmS
-         VUNqMCpHDYU6CNAOtz6ZmzNJyIhhZWyunfSTofSU=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C16B28B7A3;
-        Wed, 14 Aug 2019 11:25:52 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 99Q4-iUKg2Gg; Wed, 14 Aug 2019 11:25:52 +0200 (CEST)
-Received: from pc17473vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A1C2B8B761;
-        Wed, 14 Aug 2019 11:25:52 +0200 (CEST)
-Received: by pc17473vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 6D3DC69632; Wed, 14 Aug 2019 09:25:52 +0000 (UTC)
-Message-Id: <86b72f0c134367b214910b27b9a6dd3321af93bb.1565774657.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/futex: fix warning: 'oldval' may be used
- uninitialized in this function
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 14 Aug 2019 09:25:52 +0000 (UTC)
+        id S1726525AbfHNJ3f (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 05:29:35 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:40506 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfHNJ3d (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 05:29:33 -0400
+Received: by mail-oi1-f195.google.com with SMTP id h21so2789159oie.7
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 02:29:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=YtmRJhxESxnNXUHBCPVvI4eH+L8nMtyAXY8TvLJshAM=;
+        b=ZAL2oggrdHUd8C/m4ixRevx2XI/WBu+JeofFLBTEzHMiBl5Wn5QpLG8namvDpdSFu+
+         U6q265kEk/SjQbxVnM5WStWL/0mTIMXIlGEVtthb5RevQKC7DPBpnRPCQb1P8WYlwQ8N
+         zDR5qw1N6UFNEsl57gK8x+HPL/8XF0dI+9w51GrnV/AoyC1b6H4wKNkd+MgzrQ/Vaimm
+         e8h8MEljZM1Cs7MF6co6lYd7nkKEm7mRCZkVIlMi4qGWX6a0ZxtXPczWGht0NZM60WjG
+         hvGuqhNO9ErDqxMyeGUtXIgTp7p7tNdsZm7TanNN4N2OyPzmr1uf9gKMFL6Y6dAmYjg3
+         MBTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=YtmRJhxESxnNXUHBCPVvI4eH+L8nMtyAXY8TvLJshAM=;
+        b=ahkWHZJemij7O38H5tIKIymfb0BY4CdigJI6LHTgTYsFF9wTskOF/7512ecRK6F9jK
+         st57cK7DOa/OI9xuQUxVSI7/x0GcAQfCIyGaY/YGMd+QWoECROtsvzdmqIaWa4jwfbqH
+         /ywSBJYk0x9nz0BiKrHbYU2kvSRSfy3lWKv0zqjDjsjy8ILcnH1X6Rq/Dljv1Kra4LE9
+         H5zfxELcMC/NJVpiCxuFymUtdmvE4Kf3Vcj+H0yNWgBD5kbpN8w2PokPZSYv9NSAPofn
+         4Wf8mh3EOfLn3K8ViVFIPJ2U/4Y7s6IvNqq0hmBtwNMoBh+61/QoEQw2stgNRdDjVho5
+         hK9w==
+X-Gm-Message-State: APjAAAWRi/5wzvh77ykQjBetpkBliykaK2gIIOfELCDZ5rb1icrvvJ1b
+        oeQZ4kqIKVJhNAESlieFNQqDpYOcEBdguqMkyXk=
+X-Google-Smtp-Source: APXvYqztgHMEmFelHJxZE7cCgiHW7f1XN5nOaz6jxrSZmHOcMntJYW1Qvo+v5yaMyGBhBRQQmFSSLP7U9KYShQ64w6o=
+X-Received: by 2002:a02:a703:: with SMTP id k3mr2338894jam.12.1565774973150;
+ Wed, 14 Aug 2019 02:29:33 -0700 (PDT)
+MIME-Version: 1.0
+Reply-To: diawaralassine226@aol.com
+Received: by 2002:a4f:f328:0:0:0:0:0 with HTTP; Wed, 14 Aug 2019 02:29:28
+ -0700 (PDT)
+From:   "Mr.Lassine Diawara" <mr.lassinediawara@gmail.com>
+Date:   Wed, 14 Aug 2019 02:29:28 -0700
+X-Google-Sender-Auth: Jkzo7Cqa66oPAidDuSqoPqVkViw
+Message-ID: <CAH-kjz26WdvYOfuG-56BZsjy9wSRyPbumTVfrXA8kYOqEDkbhQ@mail.gmail.com>
+Subject: VERRY VERRY URGENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  CC      kernel/futex.o
-kernel/futex.c: In function 'do_futex':
-kernel/futex.c:1676:17: warning: 'oldval' may be used uninitialized in this function [-Wmaybe-uninitialized]
-   return oldval == cmparg;
-                 ^
-kernel/futex.c:1651:6: note: 'oldval' was declared here
-  int oldval, ret;
-      ^
+FROM MR.LASSINE DIAWARA
+AUDIT& ACCOUNT MANAGER
+BANK OF AFRICA (B.O.A)
+OUAGADOUGOU BURKINA FASO
+WEST AFRICA.
 
-This is because arch_futex_atomic_op_inuser() only sets *oval
-if ret is NUL and GCC doesn't see that it will use it only when
-ret is NUL.
+Dear Friend,
 
-Anyway, the non-NUL ret path is an error path that won't suffer from
-setting *oval, and as *oval is a local var in futex_atomic_op_inuser()
-it will have no impact.
+With due respect, I have decided to contact you on a
+businesstransaction that will be beneficial to both of us. At the bank
+last account and auditing evaluation, my staffs came across an old
+account which was being maintained by a foreign client who we learn
+was among the deceased passengers of motor accident on November.2003,
+the deceased was unable to run this account since his death. The
+account has remained dormant without the knowledge of his family since
+it was put in a safe deposit account in the bank for future investment
+by the client.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/futex.h | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Since his demise, even the members of his family haven't applied for
+claims over this fund and it has been in the safe deposit account
+until I discovered that it cannot be claimed since our client is
+aforeign national and we are sure that he has no next of kin here to
+file claims over the money. As the director of the department, this
+discovery was brought to my office so as to decide what is to be
+done.I decided to seek ways through which to transfer this money out
+of the bank and out of the country too.
 
-diff --git a/arch/powerpc/include/asm/futex.h b/arch/powerpc/include/asm/futex.h
-index 3a6aa57b9d90..eea28ca679db 100644
---- a/arch/powerpc/include/asm/futex.h
-+++ b/arch/powerpc/include/asm/futex.h
-@@ -60,8 +60,7 @@ static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
- 
- 	pagefault_enable();
- 
--	if (!ret)
--		*oval = oldval;
-+	*oval = oldval;
- 
- 	prevent_write_to_user(uaddr, sizeof(*uaddr));
- 	return ret;
--- 
-2.13.3
+The total amount in the account is 18.6 million with my positions as
+staffs of the bank, I am handicapped because I cannot operate foreign
+accounts and cannot lay bonafide claim over this money. The client was
+a foreign national and you will only be asked to act as his next of
+kin and I will supply you with all the necessary information and bank
+data to assist you in being able to transfer this money to any bank of
+your choice where this money could be transferred into.The total sum
+will be shared as follows: 50% for me, 50% for you and expenses
+incidental occur during the transfer will be incur by both of us. The
+transfer is risk free on both sides hence you are going to follow my
+instruction till the fund transfer to your account. Since I work in
+this bank that is why you should be confident in the success of this
+transaction because you will be updated with information as at when
+desired.
 
+I will wish you to keep this transaction secret and confidential as I
+am hoping to retire with my share of this money at the end of
+transaction which will be when this money is safety in your account. I
+will then come over to your country for sharing according to the
+previously agreed percentages. You might even have to advise me on
+possibilities of investment in your country or elsewhere of our
+choice. May God help you to help me to a restive retirement, Amen,And
+You have to contact me through my private e-mail at
+(diawaralassine226@aol.com )Please for further information and
+inquires feel free to contact me back immediately for more explanation
+and better understanding I want you to assure me your capability of
+handling this project with trust by providing me your following
+information details such as:
+
+(1)NAME..............
+(2)AGE:................
+(3)SEX:.....................
+(4)PHONE NUMBER:.................
+(5)OCCUPATION:.....................
+(6)YOUR COUNTRY:.....................
+
+Yours sincerely,
+Mr.Lassine Diawara
