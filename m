@@ -2,77 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E53E8D485
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50EDB8D48B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:24:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728066AbfHNNUv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:20:51 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34954 "EHLO mx1.redhat.com"
+        id S1727814AbfHNNYX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:24:23 -0400
+Received: from mga14.intel.com ([192.55.52.115]:15870 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726263AbfHNNUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:20:51 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3CA602A09C1;
-        Wed, 14 Aug 2019 13:20:51 +0000 (UTC)
-Received: from [10.16.196.35] (wlan-196-35.bos.redhat.com [10.16.196.35])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F95C17AB7;
-        Wed, 14 Aug 2019 13:20:50 +0000 (UTC)
-Subject: Re: [PATCH] selftests: livepatch: add missing fragments to config
-To:     Anders Roxell <anders.roxell@linaro.org>, shuah@kernel.org,
-        pmladek@suse.com, mbenes@suse.cz, jikos@kernel.org,
-        jpoimboe@redhat.com
-Cc:     live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190814111651.28433-1-anders.roxell@linaro.org>
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-Message-ID: <e01a1182-d9cf-b2c2-78a9-35f60861e4a9@redhat.com>
-Date:   Wed, 14 Aug 2019 09:20:49 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726263AbfHNNYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:24:23 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 06:24:22 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,385,1559545200"; 
+   d="scan'208";a="194533755"
+Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
+  by fmsmga001.fm.intel.com with ESMTP; 14 Aug 2019 06:24:20 -0700
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] usb: typec: fusb302: Small changes
+Date:   Wed, 14 Aug 2019 16:24:16 +0300
+Message-Id: <20190814132419.39759-1-heikki.krogerus@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190814111651.28433-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 14 Aug 2019 13:20:51 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/19 7:16 AM, Anders Roxell wrote:
-> When generating config with 'make defconfig kselftest-merge' fragment
-> CONFIG_TEST_LIVEPATCH=m isn't set.
-> 
-> Rework to enable CONFIG_LIVEPATCH and CONFIG_DYNAMIC_DEBUG as well.
-> 
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
->   tools/testing/selftests/livepatch/config | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/livepatch/config b/tools/testing/selftests/livepatch/config
-> index 0dd7700464a8..ad23100cb27c 100644
-> --- a/tools/testing/selftests/livepatch/config
-> +++ b/tools/testing/selftests/livepatch/config
-> @@ -1 +1,3 @@
-> +CONFIG_LIVEPATCH=y
-> +CONFIG_DYNAMIC_DEBUG=y
->   CONFIG_TEST_LIVEPATCH=m
-> 
+Hi,
 
-Cool, I didn't know about that make target when doing commit 
-bae054372aba ("selftests/livepatch: add DYNAMIC_DEBUG config dependency")
+This series removes the deprecated fusb302 specific properties, and
+stops using struct tcpc_config in the driver.
 
-How does kselftest-merge verify dependencies?
+thanks,
 
-CONFIG_LIVEPATCH has its own list of configuration dependencies (see 
-kernel/livepatch/Kconfig) but we don't list all of those in this config 
-file.  Just curious.
+Heikki Krogerus (3):
+  usb: typec: fusb302: Remove unused properties
+  dt-bindings: usb: fusb302: Remove deprecated properties
+  usb: typec: fusb302: Always provide fwnode for the port
 
-Thanks,
+ .../devicetree/bindings/usb/fcs,fusb302.txt   |  7 --
+ drivers/usb/typec/tcpm/fusb302.c              | 85 ++++++++-----------
+ 2 files changed, 36 insertions(+), 56 deletions(-)
 
--- Joe
+-- 
+2.20.1
+
