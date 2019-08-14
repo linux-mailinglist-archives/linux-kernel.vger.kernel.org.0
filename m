@@ -2,35 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 869048C8B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A6C08C89E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:33:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbfHNCdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:33:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47412 "EHLO mail.kernel.org"
+        id S1728876AbfHNCQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:16:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbfHNCPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:15:52 -0400
+        id S1728864AbfHNCP4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:15:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5471208C2;
-        Wed, 14 Aug 2019 02:15:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 09D5F2085A;
+        Wed, 14 Aug 2019 02:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748952;
-        bh=mGv52XAZ3d+fAhOzX8m/aRfvStfvvZXLxF0cpc/IqOU=;
+        s=default; t=1565748955;
+        bh=sr48XOpd2ZgZRUgSrCbJ4u4y78XwJNBMgy3NiW0Ews0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ObR0Ptin4aRTgOsnJGHVvvtOkm1YX9grqyPTz3DruwnW4TmKY8OfsqAKEAdzEiV3X
-         CXb+YMO97vj7u/iejK0rQsJq4Nq1V+5bRDXWCv5v0pwv5VhCiaqSxwox2r/dHyanIO
-         Ix0Q0FYA4pyAI7NwPpBnfk0DHxig907OqTPCyF+w=
+        b=V4mMpGZHhDkXXtoMS3xc+Vnjl3qaGEWVQ6CBvaEiE3cy6EWmWl1Au0gxyd5DRDCOx
+         8wg9f2oBOUeY7ZbsU27zsbeNLzsyeQAwtXg/NKJOYlvf3CurvUtz0sq7K4gby2zOFi
+         FH7wHMc0m3zk/J6V3gqz+ZNgopCNAWfUkm47F7zk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gwendal Grignou <gwendal@chromium.org>, Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 02/68] iio: cros_ec_accel_legacy: Fix incorrect channel setting
-Date:   Tue, 13 Aug 2019 22:14:40 -0400
-Message-Id: <20190814021548.16001-2-sashal@kernel.org>
+Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 04/68] MIPS: kernel: only use i8253 clocksource with periodic clockevent
+Date:   Tue, 13 Aug 2019 22:14:42 -0400
+Message-Id: <20190814021548.16001-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -43,33 +45,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gwendal Grignou <gwendal@chromium.org>
+From: Thomas Bogendoerfer <tbogendoerfer@suse.de>
 
-[ Upstream commit 6cdff99c9f7d7d28b87cf05dd464f7c7736332ae ]
+[ Upstream commit a07e3324538a989b7cdbf2c679be6a7f9df2544f ]
 
-INFO_SCALE is set both for each channel and all channels.
-iio is using all channel setting, so the error was not user visible.
+i8253 clocksource needs a free running timer. This could only
+be used, if i8253 clockevent is set up as periodic.
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/accel/cros_ec_accel_legacy.c | 1 -
- 1 file changed, 1 deletion(-)
+ arch/mips/kernel/i8253.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
-index 063e89eff791a..c776a3509a717 100644
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -328,7 +328,6 @@ static const struct iio_chan_spec_ext_info cros_ec_accel_legacy_ext_info[] = {
- 		.modified = 1,					        \
- 		.info_mask_separate =					\
- 			BIT(IIO_CHAN_INFO_RAW) |			\
--			BIT(IIO_CHAN_INFO_SCALE) |			\
- 			BIT(IIO_CHAN_INFO_CALIBBIAS),			\
- 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SCALE),	\
- 		.ext_info = cros_ec_accel_legacy_ext_info,		\
+diff --git a/arch/mips/kernel/i8253.c b/arch/mips/kernel/i8253.c
+index 5f209f111e59e..df7ddd246eaac 100644
+--- a/arch/mips/kernel/i8253.c
++++ b/arch/mips/kernel/i8253.c
+@@ -32,7 +32,8 @@ void __init setup_pit_timer(void)
+ 
+ static int __init init_pit_clocksource(void)
+ {
+-	if (num_possible_cpus() > 1) /* PIT does not scale! */
++	if (num_possible_cpus() > 1 || /* PIT does not scale! */
++	    !clockevent_state_periodic(&i8253_clockevent))
+ 		return 0;
+ 
+ 	return clocksource_i8253_init();
 -- 
 2.20.1
 
