@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F68A8D961
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 698F38D963
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729998AbfHNRH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57606 "EHLO mail.kernel.org"
+        id S1730032AbfHNRIA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57726 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729980AbfHNRHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:53 -0400
+        id S1730003AbfHNRH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38D4D214DA;
-        Wed, 14 Aug 2019 17:07:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55A9A214DA;
+        Wed, 14 Aug 2019 17:07:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802472;
-        bh=kAm4ohhZC+0F8W3LOXxiYtCRij/PuuaITNK8B6OR/Bw=;
+        s=default; t=1565802477;
+        bh=7u6y6PJryD4iCbF2IuVqPiFbr3X04F7zJDSfs/jAL1M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BlhYYFWwfO2eUn7uSShKCFlxWkMNB60hdceQZ0M21Dqyc4nToW/HgRNtsZaofcOB9
-         vv6Frfkemxs1vXO/9yixdmWPx940iKJEW4aEh2qssUuGfgq2EQw5GRWxnJpmhat1G8
-         HhGhz42MQkHmumMUvwYFPpvJmjGM5zgLBnT9o65E=
+        b=lO7CrVCGo+p0ddbYx6lCGvYiAvvkBXoyNZ5Cri8bv5TAZ+/DtfGNsARIDwPjlGoVO
+         82A2Ys72JaPTmmzv75sw0X1iqtBD2pXiQYzR1DsSvPPvHojp5Hsh5y52UPbE/0Axmu
+         Qazj/Nc6MPiWfmJrNh0sIXKNjQNybVxP9Zbc+5kY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Kalle Valo <kvalo@codeaurora.org>
-Subject: [PATCH 5.2 139/144] mwifiex: fix 802.11n/WPA detection
-Date:   Wed, 14 Aug 2019 19:01:35 +0200
-Message-Id: <20190814165805.774794378@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 5.2 141/144] iwlwifi: mvm: fix an out-of-bound access
+Date:   Wed, 14 Aug 2019 19:01:37 +0200
+Message-Id: <20190814165805.863457330@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -43,52 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit df612421fe2566654047769c6852ffae1a31df16 upstream.
+commit ba3224db78034435e9ff0247277cce7c7bb1756c upstream.
 
-Commit 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant
-vendor IEs") adjusted the ieee_types_vendor_header struct, which
-inadvertently messed up the offsets used in
-mwifiex_is_wpa_oui_present(). Add that offset back in, mirroring
-mwifiex_is_rsn_oui_present().
+The index for the elements of the ACPI object we dereference
+was static. This means that if we called the function twice
+we wouldn't start from 3 again, but rather from the latest
+index we reached in the previous call.
+This was dutifully reported by KASAN.
 
-As it stands, commit 63d7ef36103d breaks compatibility with WPA (not
-WPA2) 802.11n networks, since we hit the "info: Disable 11n if AES is
-not supported by AP" case in mwifiex_is_network_compatible().
+Fix this.
 
-Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: stable@vger.kernel.org
+Fixes: 6996490501ed ("iwlwifi: mvm: add support for EWRD (Dynamic SAR) ACPI table")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/marvell/mwifiex/main.h |    1 +
- drivers/net/wireless/marvell/mwifiex/scan.c |    3 ++-
- 2 files changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/marvell/mwifiex/main.h
-+++ b/drivers/net/wireless/marvell/mwifiex/main.h
-@@ -124,6 +124,7 @@ enum {
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -753,7 +753,7 @@ static int iwl_mvm_sar_get_ewrd_table(st
  
- #define MWIFIEX_MAX_TOTAL_SCAN_TIME	(MWIFIEX_TIMER_10S - MWIFIEX_TIMER_1S)
+ 	for (i = 0; i < n_profiles; i++) {
+ 		/* the tables start at element 3 */
+-		static int pos = 3;
++		int pos = 3;
  
-+#define WPA_GTK_OUI_OFFSET				2
- #define RSN_GTK_OUI_OFFSET				2
- 
- #define MWIFIEX_OUI_NOT_PRESENT			0
---- a/drivers/net/wireless/marvell/mwifiex/scan.c
-+++ b/drivers/net/wireless/marvell/mwifiex/scan.c
-@@ -181,7 +181,8 @@ mwifiex_is_wpa_oui_present(struct mwifie
- 	u8 ret = MWIFIEX_OUI_NOT_PRESENT;
- 
- 	if (has_vendor_hdr(bss_desc->bcn_wpa_ie, WLAN_EID_VENDOR_SPECIFIC)) {
--		iebody = (struct ie_body *) bss_desc->bcn_wpa_ie->data;
-+		iebody = (struct ie_body *)((u8 *)bss_desc->bcn_wpa_ie->data +
-+					    WPA_GTK_OUI_OFFSET);
- 		oui = &mwifiex_wpa_oui[cipher][0];
- 		ret = mwifiex_search_oui_in_ie(iebody, oui);
- 		if (ret)
+ 		/* The EWRD profiles officially go from 2 to 4, but we
+ 		 * save them in sar_profiles[1-3] (because we don't
 
 
