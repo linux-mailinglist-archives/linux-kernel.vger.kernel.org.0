@@ -2,85 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A10E78D830
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:37:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C63BD8D819
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:31:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728172AbfHNQhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 12:37:01 -0400
-Received: from mga02.intel.com ([134.134.136.20]:39981 "EHLO mga02.intel.com"
+        id S1728239AbfHNQbC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 12:31:02 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:48192 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfHNQhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 12:37:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 09:37:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,385,1559545200"; 
-   d="scan'208";a="178213373"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Aug 2019 09:37:00 -0700
-Message-ID: <eabd0c16bd2028ad9fef8d10ddf570b3a10d5680.camel@intel.com>
-Subject: Re: [PATCH v8 15/27] mm: Handle shadow stack page fault
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Wed, 14 Aug 2019 09:27:21 -0700
-In-Reply-To: <CALCETrVKbqzivPfUOiGi5efHUpEsfPkNzP0CrmAZzcwUgf7quA@mail.gmail.com>
-References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
-         <20190813205225.12032-16-yu-cheng.yu@intel.com>
-         <CALCETrVKbqzivPfUOiGi5efHUpEsfPkNzP0CrmAZzcwUgf7quA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726047AbfHNQbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 12:31:01 -0400
+Received: from zn.tnic (p200300EC2F0BD0003850D0C8BF1AA1C5.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:3850:d0c8:bf1a:a1c5])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 600C51EC04CD;
+        Wed, 14 Aug 2019 18:31:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565800260;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=eB1BWExwcjZBat8Wci9JoVASBBkAEbKz+GapUWhzDWw=;
+        b=jVIxMAQp71DBbR5Pfi1GuNqgLnaAb9UNAD2xOeAVmCEuroB7iUuKN8sGebECvyvIzAH5BX
+        c/8FLuyXddixH4Zvl0mjdLC2lALGW+qWPCVYRaYkF9dVI++Oy3SZfcMOU/lvOvGXAXZLbx
+        HsHpD9FmXKg5NNOk6AWFVdOcoCZKfMM=
+Date:   Wed, 14 Aug 2019 18:31:46 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 09/24] EDAC, mc: Cleanup _edac_mc_free() code
+Message-ID: <20190814163146.GC1841@zn.tnic>
+References: <20190624150758.6695-1-rrichter@marvell.com>
+ <20190624150758.6695-10-rrichter@marvell.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190624150758.6695-10-rrichter@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-13 at 15:55 -0700, Andy Lutomirski wrote:
-> On Tue, Aug 13, 2019 at 2:02 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
-> > 
-> > When a task does fork(), its shadow stack (SHSTK) must be duplicated
-> > for the child.  This patch implements a flow similar to copy-on-write
-> > of an anonymous page, but for SHSTK.
-> > 
-> > A SHSTK PTE must be RO and dirty.  This dirty bit requirement is used
-> > to effect the copying.  In copy_one_pte(), clear the dirty bit from a
-> > SHSTK PTE to cause a page fault upon the next SHSTK access.  At that
-> > time, fix the PTE and copy/re-use the page.
+On Mon, Jun 24, 2019 at 03:09:13PM +0000, Robert Richter wrote:
+> Remove needless and boilerplate variable declarations. No functional
+> changes.
 > 
-> Is using VM_SHSTK and special-casing all of this really better than
-> using a special mapping or other pseudo-file-backed VMA and putting
-> all the magic in the vm_operations?
+> Signed-off-by: Robert Richter <rrichter@marvell.com>
+> ---
+>  drivers/edac/edac_mc.c | 21 +++++++++------------
+>  1 file changed, 9 insertions(+), 12 deletions(-)
 
-A special mapping is cleaner.  However, we also need to exclude normal [RO +
-dirty] pages from shadow stack.
+This can go in now because unrelated cleanup.
 
-Yu-cheng
+Applied,
+thanks.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
