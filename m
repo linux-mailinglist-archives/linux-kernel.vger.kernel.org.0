@@ -2,112 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 268038DD4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:47:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 417F48DD25
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728806AbfHNSqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:46:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55588 "EHLO mail.kernel.org"
+        id S1728598AbfHNSlI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:41:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfHNSqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:46:51 -0400
-Received: from quaco.ghostprotocols.net (unknown [177.195.212.110])
+        id S1728262AbfHNSlH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:41:07 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF5C921721;
-        Wed, 14 Aug 2019 18:46:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BE372084F;
+        Wed, 14 Aug 2019 18:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565808409;
-        bh=CJhC+yEJkjbu6GxuLOJBXyjcalbFEy1FjFZZiQpyy3I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iEE7QFTpc/SSyqsoq5Y9tsVNWR9iJyiFsLrHhnfqjxQaaf4pIJ4kcGN82iI7J4qUc
-         SFtpdnC0iS3B1auGyjT9w5ZnvG0oN7SsyjV2FwxC14Lu/X7mJRb6QAFnDwIYWYpmvP
-         35PvfFLUWhQ5DmeagcJIcF9UfuHtYqaSEC10otXY=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Chong Jiang <chongjiang@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Simon Que <sque@chromium.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 26/28] perf.data documentation: Clarify HEADER_SAMPLE_TOPOLOGY format
-Date:   Wed, 14 Aug 2019 15:40:49 -0300
-Message-Id: <20190814184051.3125-27-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190814184051.3125-1-acme@kernel.org>
-References: <20190814184051.3125-1-acme@kernel.org>
+        s=default; t=1565808066;
+        bh=rhwHtgh2/fDbYktm6AuNEWakyqGXppoxtIRS7xf4wlM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=DbTh5ns5su7SAOgV6S1k6SuCGatax5uiRRfnXs0DQX+RUFVqVGBiG3STZG8Cv20CT
+         Rnh+ijJhh+kpujLqWowUCnZF8msKVM0ofvSSU4FN3Y3n05Zav38fpHOsVhC7I1/7fy
+         5e+XsoDb0nOAv+nfCvw2zPPjlcN6KvlJLJ4B/3LY=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190727105330.44cc7f2f@xps13>
+References: <20190108161940.4814-1-miquel.raynal@bootlin.com> <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com> <20190521114644.7000a751@xps13> <20190617115703.642d9967@xps13> <20190727105330.44cc7f2f@xps13>
+Subject: Re: [PATCH v4 0/4] Add device links to clocks
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 11:41:05 -0700
+Message-Id: <20190814184106.9BE372084F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vince Weaver <vincent.weaver@maine.edu>
+Quoting Miquel Raynal (2019-07-27 01:53:30)
+>=20
+> I know this series might have side effects despite the consequent
+> amount of time spent to write and test it, but I also think the
+> clk subsystem would really benefit from such change and handling
+> suspend to RAM support would be greatly enhanced. You seemed
+> interested at first and now not anymore, could I know why? I got
+> inspired by the regulators subsystem. It is not an idea of mine
+> that device links should be bring to clocks. Regulators are almost
+> as used as clocks so I really understand your fears but why not
+> applying this to -next very early during the -rc cycles and see
+> what happens? You'll have plenty of time to ask me to fix things
+> or even drop it off.
+>=20
 
-The perf.data file format documentation for HEADER_SAMPLE_TOPOLOGY
-specifies the layout in a confusing manner that doesn't match the rest
-of the document.  This patch attempts to describe things consistent with
-the rest of the file.
-
-Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Chong Jiang <chongjiang@chromium.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Simon Que <sque@chromium.org>
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1908011425240.14303@macbook-air
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- .../Documentation/perf.data-file-format.txt   | 25 +++++++++++--------
- 1 file changed, 15 insertions(+), 10 deletions(-)
-
-diff --git a/tools/perf/Documentation/perf.data-file-format.txt b/tools/perf/Documentation/perf.data-file-format.txt
-index d030c87ed9f5..b0152e1095c5 100644
---- a/tools/perf/Documentation/perf.data-file-format.txt
-+++ b/tools/perf/Documentation/perf.data-file-format.txt
-@@ -298,16 +298,21 @@ Physical memory map and its node assignments.
- 
- The format of data in MEM_TOPOLOGY is as follows:
- 
--   0 - version          | for future changes
--   8 - block_size_bytes | /sys/devices/system/memory/block_size_bytes
--  16 - count            | number of nodes
--
--For each node we store map of physical indexes:
--
--  32 - node id          | node index
--  40 - size             | size of bitmap
--  48 - bitmap           | bitmap of memory indexes that belongs to node
--                        | /sys/devices/system/node/node<NODE>/memory<INDEX>
-+	u64 version;            // Currently 1
-+	u64 block_size_bytes;   // /sys/devices/system/memory/block_size_bytes
-+	u64 count;              // number of nodes
-+
-+struct memory_node {
-+        u64 node_id;            // node index
-+        u64 size;               // size of bitmap
-+        struct bitmap {
-+		/* size of bitmap again */
-+                u64 bitmapsize;
-+		/* bitmap of memory indexes that belongs to node     */
-+		/* /sys/devices/system/node/node<NODE>/memory<INDEX> */
-+                u64 entries[(bitmapsize/64)+1];
-+        }
-+}[count];
- 
- The MEM_TOPOLOGY can be displayed with following command:
- 
--- 
-2.21.0
+Ok, I'm back on this topic. Let me look at the latest code and see how
+it works on a qcom platform I have in hand. If the device links look OK
+then it should be good. I also want to make sure we're not holding a
+nested pile of locks when we're adding the device links so that we don't
+get some weird lockdep problems.
 
