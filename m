@@ -2,58 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EAA38DAB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85E8B8DA4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:17:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730578AbfHNRTt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:19:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43274 "EHLO mail.kernel.org"
+        id S1729548AbfHNRQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:16:52 -0400
+Received: from mga17.intel.com ([192.55.52.151]:45982 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729579AbfHNRTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:19:48 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9E8D20665;
-        Wed, 14 Aug 2019 17:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565803187;
-        bh=nAkuDP2FQ89IlX5/rCnqh9hhxWvJhrfgiaK5H9MwhLs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hPQgcdLJ/117BHOcYmgSrhkgHU9qP9D4YV/eUBcWWx2IhPQZoqbKaFvVIdHnZXPBX
-         VZ63c3vKXfWdTS1BojNIiOPkGWDBdEXxu4tkGMAOlX/3THqvvn1MD3TATmV/O6u8GK
-         pcn5uDs4ZHqJtDYgt6JORouZYBALVlBBXCSy28wM=
-Content-Type: text/plain; charset="utf-8"
+        id S1728718AbfHNRQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:16:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 10:16:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
+   d="scan'208";a="181628377"
+Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
+  by orsmga006.jf.intel.com with ESMTP; 14 Aug 2019 10:16:49 -0700
+Date:   Wed, 14 Aug 2019 10:20:32 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Lu Baolu <baolu.lu@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        Yi Liu <yi.l.liu@intel.com>,
+        "Tian, Kevin" <kevin.tian@intel.com>,
+        Raj Ashok <ashok.raj@intel.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        jacob.jun.pan@linux.intel.com
+Subject: Re: [PATCH v4 20/22] iommu/vt-d: Add bind guest PASID support
+Message-ID: <20190814102032.5265e1da@jacob-builder>
+In-Reply-To: <840a6943-87ab-938f-5f8d-3a2c21e08549@linux.intel.com>
+References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
+        <1560087862-57608-21-git-send-email-jacob.jun.pan@linux.intel.com>
+        <f183139b-b5a8-f6b5-58e6-f93e01f7be6a@linux.intel.com>
+        <20190627132244.351c7426@jacob-builder>
+        <840a6943-87ab-938f-5f8d-3a2c21e08549@linux.intel.com>
+Organization: OTC
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190814122958.4981-2-vkoul@kernel.org>
-References: <20190814122958.4981-1-vkoul@kernel.org> <20190814122958.4981-2-vkoul@kernel.org>
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Vinod Koul <vkoul@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:19:46 -0700
-Message-Id: <20190814171946.E9E8D20665@mail.kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-08-14 05:29:58)
-> Add support for rpmh clocks found in SM8150
->=20
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
+On Fri, 5 Jul 2019 10:21:27 +0800
+Lu Baolu <baolu.lu@linux.intel.com> wrote:
 
-Patch looks OK, but can you convert this driver to use the new parent
-style and then update the binding to handle it? We can fix the other
-platforms and dts files that use this driver in parallel, but sm8150
-will be forward looking.
+> Hi Jacob,
+> 
+> On 6/28/19 4:22 AM, Jacob Pan wrote:
+> >>> +		}
+> >>> +		refcount_set(&svm->refs, 0);
+> >>> +		ioasid_set_data(data->hpasid, svm);
+> >>> +		INIT_LIST_HEAD_RCU(&svm->devs);
+> >>> +		INIT_LIST_HEAD(&svm->list);
+> >>> +
+> >>> +		mmput(svm->mm);
+> >>> +	}
+> >>> +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+> >>> +	if (!sdev) {
+> >>> +		ret = -ENOMEM;
+> >>> +		goto out;  
+> >> I think you need to clean up svm if its device list is empty here,
+> >> as you said above:
+> >>  
+> > No, we come here only if the device list is not empty and the new
+> > device to bind is different than any existing device in the list.
+> > If we cannot allocate memory for the new device, should not free
+> > the existing SVM, right?
+> >   
+> 
+> I'm sorry, but the code doesn't show this. We come here even an svm
+> data structure was newly created with an empty device list. I post
+> the code below to ensure that we are reading a same piece of code.
+> 
+Sorry for the delay. You are right, I need to clean up svm if device
+list is empty.
 
+Thanks!
+>          mutex_lock(&pasid_mutex);
+>          svm = ioasid_find(NULL, data->hpasid, NULL);
+>          if (IS_ERR(svm)) {
+>                  ret = PTR_ERR(svm);
+>                  goto out;
+>          }
+>          if (svm) {
+>                  /*
+>                   * If we found svm for the PASID, there must be at
+>                   * least one device bond, otherwise svm should be
+> freed. */
+>                  BUG_ON(list_empty(&svm->devs));
+> 
+>                  for_each_svm_dev() {
+>                          /* In case of multiple sub-devices of the
+> same pdev assigned, we should
+>                           * allow multiple bind calls with the same 
+> PASID and pdev.
+>                           */
+>                          sdev->users++;
+>                          goto out;
+>                  }
+>          } else {
+>                  /* We come here when PASID has never been bond to a 
+> device. */
+>                  svm = kzalloc(sizeof(*svm), GFP_KERNEL);
+>                  if (!svm) {
+>                          ret = -ENOMEM;
+>                          goto out;
+>                  }
+>                  /* REVISIT: upper layer/VFIO can track host process 
+> that bind the PASID.
+>                   * ioasid_set = mm might be sufficient for vfio to 
+> check pasid VMM
+>                   * ownership.
+>                   */
+>                  svm->mm = get_task_mm(current);
+>                  svm->pasid = data->hpasid;
+>                  if (data->flags & IOMMU_SVA_GPASID_VAL) {
+>                          svm->gpasid = data->gpasid;
+>                          svm->flags &= SVM_FLAG_GUEST_PASID;
+>                  }
+>                  refcount_set(&svm->refs, 0);
+>                  ioasid_set_data(data->hpasid, svm);
+>                  INIT_LIST_HEAD_RCU(&svm->devs);
+>                  INIT_LIST_HEAD(&svm->list);
+> 
+>                  mmput(svm->mm);
+>          }
+>          sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
+>          if (!sdev) {
+>                  ret = -ENOMEM;
+>                  goto out;
+>          }
+>          sdev->dev = dev;
+>          sdev->users = 1;
+> 
+> Best regards,
+> Baolu
+
+[Jacob Pan]
