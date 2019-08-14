@@ -2,240 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E7EF68DE80
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:13:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66B388DE94
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfHNUNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:13:44 -0400
-Received: from mga06.intel.com ([134.134.136.31]:60300 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbfHNUNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:13:44 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 13:13:43 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="170894181"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga008.jf.intel.com with ESMTP; 14 Aug 2019 13:13:43 -0700
-Date:   Wed, 14 Aug 2019 13:17:26 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Auger Eric <eric.auger@redhat.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 21/22] iommu/vt-d: Support flushing more translation
- cache types
-Message-ID: <20190814131726.06e7423c@jacob-builder>
-In-Reply-To: <9d678164-219c-80f9-c1be-121c097c691a@redhat.com>
-References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1560087862-57608-22-git-send-email-jacob.jun.pan@linux.intel.com>
-        <9d678164-219c-80f9-c1be-121c097c691a@redhat.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1729134AbfHNUTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:19:41 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:17526 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726509AbfHNUTk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 16:19:40 -0400
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EKEmq7016364
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:19:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=WcSC1bSopTVeFcc/5wNxd5IcewwWd/Pxa+GV9dQeI3o=;
+ b=tbbYvH5Ni4mSUoHcuNg+wYTTLc7o1GvAfc4SszqSuQbd3rHgB2Q8hRYOOYYJ9a8IGM/c
+ eeLmWpOYQV21Q2kNOXHOHdt76An7Ab+JX4vQ0gWaPF69GNW+eHIOagW4882YdL19MfS+
+ QnvVVsLcGbbRe/s5rk3jNH319X2yMQhwiEFUUUMFpvhtJ4XnMuV/0AS+oFyrqsXYfPtw
+ YMC5kg+yytagPsH/GzdTjB8RCLzxrUib7kFE2UaeMCvvfcplQ6AGqyWh8u5m+FwnkiNV
+ j8Bh+rvMjUWAoLfxZlDmYAyPzq69Q1ELvm6I67GQVGkjqi8rH98MOqEGSvuWa7QFDh+g 3w== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2ubydm6su1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:19:39 -0400
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EKHr8O039394
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:19:38 -0400
+Received: from ausxipps310.us.dell.com (AUSXIPPS310.us.dell.com [143.166.148.211])
+        by mx0b-00154901.pphosted.com with ESMTP id 2ucqw196qb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:19:38 -0400
+X-LoopCount0: from 10.166.132.55
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="408454404"
+From:   <Mario.Limonciello@dell.com>
+To:     <sagi@grimberg.me>, <kbusch@kernel.org>
+CC:     <axboe@fb.com>, <hch@lst.de>, <linux-nvme@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Ryan.Hong@Dell.com>,
+        <Crag.Wang@dell.com>, <sjg@google.com>,
+        <Charles.Hyde@dellteam.com>, <Jared.Dominguez@dell.com>
+Subject: RE: [PATCH v2] nvme: Add quirk for LiteON CL1 devices running FW
+ 22301111
+Thread-Topic: [PATCH v2] nvme: Add quirk for LiteON CL1 devices running FW
+ 22301111
+Thread-Index: AQHVUtwQRoMvFWyQNUuquaDdHeAiWqb7Z/MA//+sqmA=
+Date:   Wed, 14 Aug 2019 20:19:34 +0000
+Message-ID: <3e38dce0c1ae406496af3a70dfd36077@AUSX13MPC105.AMER.DELL.COM>
+References: <1565813304-16710-1-git-send-email-mario.limonciello@dell.com>
+ <32f20898-b9af-eee0-97de-0a568de54b57@grimberg.me>
+In-Reply-To: <32f20898-b9af-eee0-97de-0a568de54b57@grimberg.me>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-08-14T20:19:32.9806728Z;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
+ aiplabel=External Public
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_07:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908140185
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908140184
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 18 Jul 2019 10:35:37 +0200
-Auger Eric <eric.auger@redhat.com> wrote:
-
-> Hi Jacob,
-> 
-> On 6/9/19 3:44 PM, Jacob Pan wrote:
-> > When Shared Virtual Memory is exposed to a guest via vIOMMU,
-> > scalable IOTLB invalidation may be passed down from outside IOMMU
-> > subsystems. This patch adds invalidation functions that can be used
-> > for additional translation cache types.
-> > 
-> > Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> > ---
-> >  drivers/iommu/dmar.c        | 50
-> > +++++++++++++++++++++++++++++++++++++++++++++
-> > include/linux/intel-iommu.h | 21 +++++++++++++++---- 2 files
-> > changed, 67 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
-> > index 6d969a1..0cda6fb 100644
-> > --- a/drivers/iommu/dmar.c
-> > +++ b/drivers/iommu/dmar.c
-> > @@ -1357,6 +1357,21 @@ void qi_flush_iotlb(struct intel_iommu
-> > *iommu, u16 did, u64 addr, qi_submit_sync(&desc, iommu);
-> >  }
-> >  
-> > +/* PASID-based IOTLB Invalidate */
-> > +void qi_flush_piotlb(struct intel_iommu *iommu, u16 did, u64 addr,
-> > u32 pasid,
-> > +		unsigned int size_order, u64 granu, int ih)
-> > +{
-> > +	struct qi_desc desc;  
-> nit: you could also init to {};
-> > +
-> > +	desc.qw0 = QI_EIOTLB_PASID(pasid) | QI_EIOTLB_DID(did) |
-> > +		QI_EIOTLB_GRAN(granu) | QI_EIOTLB_TYPE;
-> > +	desc.qw1 = QI_EIOTLB_ADDR(addr) | QI_EIOTLB_IH(ih) |
-> > +		QI_EIOTLB_AM(size_order);
-> > +	desc.qw2 = 0;
-> > +	desc.qw3 = 0;
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> >  void qi_flush_dev_iotlb(struct intel_iommu *iommu, u16 sid, u16
-> > pfsid, u16 qdep, u64 addr, unsigned mask)
-> >  {
-> > @@ -1380,6 +1395,41 @@ void qi_flush_dev_iotlb(struct intel_iommu
-> > *iommu, u16 sid, u16 pfsid, qi_submit_sync(&desc, iommu);
-> >  }
-> >  
-> > +/* PASID-based device IOTLB Invalidate */
-> > +void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16 sid, u16
-> > pfsid,
-> > +		u32 pasid,  u16 qdep, u64 addr, unsigned size, u64
-> > granu)  
-> s/size/size_order
-> > +{
-> > +	struct qi_desc desc;
-> > +
-> > +	desc.qw0 = QI_DEV_EIOTLB_PASID(pasid) |
-> > QI_DEV_EIOTLB_SID(sid) |
-> > +		QI_DEV_EIOTLB_QDEP(qdep) | QI_DEIOTLB_TYPE |
-> > +		QI_DEV_IOTLB_PFSID(pfsid);  
-> maybe add a comment to remind MIP hint is sent to 0 as of now.
-> > +	desc.qw1 = QI_DEV_EIOTLB_GLOB(granu);
-> > +
-> > +	/* If S bit is 0, we only flush a single page. If S bit is
-> > set,
-> > +	 * The least significant zero bit indicates the size. VT-d
-> > spec
-> > +	 * 6.5.2.6
-> > +	 */
-> > +	if (!size)
-> > +		desc.qw0 |= QI_DEV_EIOTLB_ADDR(addr) &
-> > ~QI_DEV_EIOTLB_SIZE;  
-> this is qw1.
-my mistake.
-> > +	else {
-> > +		unsigned long mask = 1UL << (VTD_PAGE_SHIFT +
-> > size);  
-> don't you miss a "- 1 " here?
-your are right
-> > +
-> > +		desc.qw1 |= QI_DEV_EIOTLB_ADDR(addr & ~mask) |
-> > QI_DEV_EIOTLB_SIZE;  
-> desc.qw1 |= addr & ~mask | QI_DEV_EIOTLB_SIZE;
-> ie. I don't think QI_DEV_EIOTLB_ADDR is useful here?
-> 
-> 
-> So won't the following lines do the job?
-> 
-> unsigned long mask = 1UL << (VTD_PAGE_SHIFT + size) -1;
-> desc.qw1 |= addr & ~mask;
-> if (size)
->     desc.qw1 |= QI_DEV_EIOTLB_SIZE
-that would work too, and simpler. thanks for the suggestion. will
-change.
-> > +	}
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> > +
-> > +void qi_flush_pasid_cache(struct intel_iommu *iommu, u16 did, u64
-> > granu, int pasid) +{
-> > +	struct qi_desc desc;
-> > +
-> > +	desc.qw0 = QI_PC_TYPE | QI_PC_DID(did) | QI_PC_GRAN(granu)
-> > | QI_PC_PASID(pasid);  
-> nit: reorder the fields according to the spec, easier to check if any
-> is missing.
-sounds good.
-
-> > +	desc.qw1 = 0;
-> > +	desc.qw2 = 0;
-> > +	desc.qw3 = 0;
-> > +	qi_submit_sync(&desc, iommu);
-> > +}
-> >  /*
-> >   * Disable Queued Invalidation interface.
-> >   */
-> > diff --git a/include/linux/intel-iommu.h
-> > b/include/linux/intel-iommu.h index 94d3a9a..1cdb35b 100644
-> > --- a/include/linux/intel-iommu.h
-> > +++ b/include/linux/intel-iommu.h
-> > @@ -339,7 +339,7 @@ enum {
-> >  #define QI_IOTLB_GRAN(gran) 	(((u64)gran) >>
-> > (DMA_TLB_FLUSH_GRANU_OFFSET-4)) #define QI_IOTLB_ADDR(addr)
-> > (((u64)addr) & VTD_PAGE_MASK) #define
-> > QI_IOTLB_IH(ih)		(((u64)ih) << 6) -#define
-> > QI_IOTLB_AM(am)		(((u8)am)) +#define
-> > QI_IOTLB_AM(am)		(((u8)am) & 0x3f) 
-> >  #define QI_CC_FM(fm)		(((u64)fm) << 48)
-> >  #define QI_CC_SID(sid)		(((u64)sid) << 32)
-> > @@ -357,17 +357,22 @@ enum {
-> >  #define QI_PC_DID(did)		(((u64)did) << 16)
-> >  #define QI_PC_GRAN(gran)	(((u64)gran) << 4)
-> >  
-> > -#define QI_PC_ALL_PASIDS	(QI_PC_TYPE | QI_PC_GRAN(0))
-> > -#define QI_PC_PASID_SEL		(QI_PC_TYPE | QI_PC_GRAN(1))
-> > +/* PASID cache invalidation granu */
-> > +#define QI_PC_ALL_PASIDS	0
-> > +#define QI_PC_PASID_SEL		1
-> >  
-> >  #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
-> >  #define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
-> >  #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
-> > -#define QI_EIOTLB_AM(am)	(((u64)am))
-> > +#define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
-> >  #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
-> >  #define QI_EIOTLB_DID(did)	(((u64)did) << 16)
-> >  #define QI_EIOTLB_GRAN(gran) 	(((u64)gran) << 4)
-> >  
-> > +/* QI Dev-IOTLB inv granu */
-> > +#define QI_DEV_IOTLB_GRAN_ALL		1
-> > +#define QI_DEV_IOTLB_GRAN_PASID_SEL	0
-> > +
-> >  #define QI_DEV_EIOTLB_ADDR(a)	((u64)(a) & VTD_PAGE_MASK)
-> >  #define QI_DEV_EIOTLB_SIZE	(((u64)1) << 11)
-> >  #define QI_DEV_EIOTLB_GLOB(g)	((u64)g)
-> > @@ -658,8 +663,16 @@ extern void qi_flush_context(struct
-> > intel_iommu *iommu, u16 did, u16 sid, u8 fm, u64 type);
-> >  extern void qi_flush_iotlb(struct intel_iommu *iommu, u16 did, u64
-> > addr, unsigned int size_order, u64 type);
-> > +extern void qi_flush_piotlb(struct intel_iommu *iommu, u16 did,
-> > u64 addr,
-> > +			u32 pasid, unsigned int size_order, u64
-> > type, int ih); extern void qi_flush_dev_iotlb(struct intel_iommu
-> > *iommu, u16 sid, u16 pfsid, u16 qdep, u64 addr, unsigned mask);
-> > +
-> > +extern void qi_flush_dev_piotlb(struct intel_iommu *iommu, u16
-> > sid, u16 pfsid,
-> > +			u32 pasid, u16 qdep, u64 addr, unsigned
-> > size, u64 granu);  
-> s/size/size_order
-> > +
-> > +extern void qi_flush_pasid_cache(struct intel_iommu *iommu, u16
-> > did, u64 granu, int pasid); +
-> >  extern int qi_submit_sync(struct qi_desc *desc, struct intel_iommu
-> > *iommu); 
-> >  extern int dmar_ir_support(void);
-> >   
-> 
-> Thanks
-> 
-> Eric
-
-[Jacob Pan]
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTYWdpIEdyaW1iZXJnIDxzYWdp
+QGdyaW1iZXJnLm1lPg0KPiBTZW50OiBXZWRuZXNkYXksIEF1Z3VzdCAxNCwgMjAxOSAzOjE1IFBN
+DQo+IFRvOiBMaW1vbmNpZWxsbywgTWFyaW87IEtlaXRoIEJ1c2NoDQo+IENjOiBKZW5zIEF4Ym9l
+OyBDaHJpc3RvcGggSGVsbHdpZzsgbGludXgtbnZtZUBsaXN0cy5pbmZyYWRlYWQub3JnOyBMS01M
+OyBIb25nLA0KPiBSeWFuOyBXYW5nLCBDcmFnOyBzamdAZ29vZ2xlLmNvbTsgSHlkZSwgQ2hhcmxl
+cyAtIERlbGwgVGVhbTsgRG9taW5ndWV6LCBKYXJlZA0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHYy
+XSBudm1lOiBBZGQgcXVpcmsgZm9yIExpdGVPTiBDTDEgZGV2aWNlcyBydW5uaW5nIEZXDQo+IDIy
+MzAxMTExDQo+IA0KPiANCj4gW0VYVEVSTkFMIEVNQUlMXQ0KPiANCj4gTWFyaW8sDQo+IA0KPiBD
+YW4geW91IHBsZWFzZSByZXNwaW4gYSBwYXRjaCB0aGF0IGFwcGxpZXMgY2xlYW5seSBvbiBudm1l
+LTUuND8NCg0KSXQgbG9va3MgbGlrZSBudm1lLTUuNCBpcyBtaXNzaW5nIHRoZSBjb21taXQgY29t
+aW5nIGluIGZyb20gUmFmYWVsJ3MgbGludXgtbmV4dCB0cmVlIHRoYXQgaXQncyBkZXBlbmRlbnQg
+dXBvbjoNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3Jh
+ZmFlbC9saW51eC1wbS5naXQvY29tbWl0L2RyaXZlcnMvbnZtZS9ob3N0P2g9bGludXgtbmV4dCZp
+ZD00ZWFlZmU4YzYyMWM2MTk1YzkxMDQ0Mzk2ZWQ4MDYwYzE3OWY3YWFlDQoNCkNvdWxkIHlvdSBj
+aGVycnkgcGljayB0aGF0IGludG8gbnZtZS01LjQgYXMgd2VsbD8gIEl0IHNob3VsZCBhcHBseSBj
+bGVhbmx5IHRoZW4uICBPdGhlcndpc2UsIHdvdWxkIHlvdSBwcmVmZXINCnRoaXMgdG8gY29tZSBp
+biBSYWZhZWwncyB0cmVlIHRvbz8NCg==
