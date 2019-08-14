@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C4038D9EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DE948DA96
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730920AbfHNRNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37786 "EHLO mail.kernel.org"
+        id S1730509AbfHNRSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:18:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbfHNRNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:13:31 -0400
+        id S1730690AbfHNRMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:12:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7C8220665;
-        Wed, 14 Aug 2019 17:13:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F0B7A2133F;
+        Wed, 14 Aug 2019 17:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802810;
-        bh=mys8FQso6TzX4lHjO1asflVuGbZOM4DUn8kKeE0Momg=;
+        s=default; t=1565802733;
+        bh=L+qeEKzA9GLPmmim2nacHjtP7EpGVaAj+yDAOQ+yr4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l+2/ozER0xfy88szvhOFtIbIIVdkOd9s5a41z8nogm4Duic8s12YvBEzGCLPfe0Am
-         wtkjKLktE54nJ69BJjdC+LfoURz2+sVrvPstFJDsXJ0L6S6TGiv2/MO90AGoxTU58K
-         RxwEexgg047stXtBOLwLJnFGODQMnlu7Hane0oLo=
+        b=qzC/FULYhK5s6sjcMHT4A01kILnHzXOeTIDyDVRnby0puYp8dgO9tWYzHBvbz/VZ9
+         YiwruT9CcGIjgWTdKsodH/0CdWsXpne1rkQS50dOpkxmzUzMlTmTg92eQ3cvvz2taE
+         ckcBlVVOcHx7lIl7UqJRzFAWb990ndL9bbHpRRiw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 34/69] cpufreq/pasemi: fix use-after-free in pas_cpufreq_cpu_init()
-Date:   Wed, 14 Aug 2019 19:01:32 +0200
-Message-Id: <20190814165747.834330702@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Roderick Colenbrander <roderick.colenbrander@sony.com>,
+        Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.19 70/91] HID: sony: Fix race condition between rumble and device remove.
+Date:   Wed, 14 Aug 2019 19:01:33 +0200
+Message-Id: <20190814165752.654373877@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e0a12445d1cb186d875410d093a00d215bec6a89 ]
+From: Roderick Colenbrander <roderick@gaikai.com>
 
-The cpu variable is still being used in the of_get_property() call
-after the of_node_put() call, which may result in use-after-free.
+commit e0f6974a54d3f7f1b5fdf5a593bd43ce9206ec04 upstream.
 
-Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Valve reported a kernel crash on Ubuntu 18.04 when disconnecting a DS4
+gamepad while rumble is enabled. This issue is reproducible with a
+frequency of 1 in 3 times in the game Borderlands 2 when using an
+automatic weapon, which triggers many rumble operations.
+
+We found the issue to be a race condition between sony_remove and the
+final device destruction by the HID / input system. The problem was
+that sony_remove didn't clean some of its work_item state in
+"struct sony_sc". After sony_remove work, the corresponding evdev
+node was around for sufficient time for applications to still queue
+rumble work after "sony_remove".
+
+On pre-4.19 kernels the race condition caused a kernel crash due to a
+NULL-pointer dereference as "sc->output_report_dmabuf" got freed during
+sony_remove. On newer kernels this crash doesn't happen due the buffer
+now being allocated using devm_kzalloc. However we can still queue work,
+while the driver is an undefined state.
+
+This patch fixes the described problem, by guarding the work_item
+"state_worker" with an initialized variable, which we are setting back
+to 0 on cleanup.
+
+Signed-off-by: Roderick Colenbrander <roderick.colenbrander@sony.com>
+CC: stable@vger.kernel.org
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ drivers/hid/hid-sony.c |   15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index 8456492124f0c..d1bdd8f622476 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -145,10 +145,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	int err = -ENODEV;
- 
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
-+	if (!cpu)
-+		goto out;
- 
-+	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
- 	of_node_put(cpu);
--	if (!cpu)
-+	if (!max_freqp) {
-+		err = -EINVAL;
- 		goto out;
-+	}
+--- a/drivers/hid/hid-sony.c
++++ b/drivers/hid/hid-sony.c
+@@ -587,10 +587,14 @@ static void sony_set_leds(struct sony_sc
+ static inline void sony_schedule_work(struct sony_sc *sc,
+ 				      enum sony_worker which)
+ {
++	unsigned long flags;
 +
-+	/* we need the freq in kHz */
-+	max_freq = *max_freqp / 1000;
+ 	switch (which) {
+ 	case SONY_WORKER_STATE:
+-		if (!sc->defer_initialization)
++		spin_lock_irqsave(&sc->lock, flags);
++		if (!sc->defer_initialization && sc->state_worker_initialized)
+ 			schedule_work(&sc->state_worker);
++		spin_unlock_irqrestore(&sc->lock, flags);
+ 		break;
+ 	case SONY_WORKER_HOTPLUG:
+ 		if (sc->hotplug_worker_initialized)
+@@ -2553,13 +2557,18 @@ static inline void sony_init_output_repo
  
- 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
- 	if (!dn)
-@@ -185,16 +193,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	}
+ static inline void sony_cancel_work_sync(struct sony_sc *sc)
+ {
++	unsigned long flags;
++
+ 	if (sc->hotplug_worker_initialized)
+ 		cancel_work_sync(&sc->hotplug_worker);
+-	if (sc->state_worker_initialized)
++	if (sc->state_worker_initialized) {
++		spin_lock_irqsave(&sc->lock, flags);
++		sc->state_worker_initialized = 0;
++		spin_unlock_irqrestore(&sc->lock, flags);
+ 		cancel_work_sync(&sc->state_worker);
++	}
+ }
  
- 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
 -
--	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
--	if (!max_freqp) {
--		err = -EINVAL;
--		goto out_unmap_sdcpwr;
--	}
--
--	/* we need the freq in kHz */
--	max_freq = *max_freqp / 1000;
--
- 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
- 	pr_debug("initializing frequency table\n");
- 
-@@ -212,9 +210,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 
- 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
- 
--out_unmap_sdcpwr:
--	iounmap(sdcpwr_mapbase);
--
- out_unmap_sdcasr:
- 	iounmap(sdcasr_mapbase);
- out:
--- 
-2.20.1
-
+ static int sony_input_configured(struct hid_device *hdev,
+ 					struct hid_input *hidinput)
+ {
 
 
