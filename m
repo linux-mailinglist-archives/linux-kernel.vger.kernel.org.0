@@ -2,50 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 188F48D339
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:35:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CABFB8D345
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfHNMfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:35:43 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55090 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfHNMfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:35:43 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p74so4461361wme.4;
-        Wed, 14 Aug 2019 05:35:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=o3+1DGCI+40iCgNQeNraT+W9gH7K4q3+/wyAXdj74H0=;
-        b=Y/utA6970bNuf57jmahnslU0JUuQeOYYamV9KPLj7UtwsWa3hJnwyB0gt4kpatWFHL
-         rZ8eRue5rrF7RgO1UgTTjp+bB4iYsMHDAzqeKDlL0iFzbUPQUbIoCT54ErrsZqAjdTiz
-         63apVmn+5WstAbbkM/Qi+DuGYbB9Jxkycq04BNoTLuwmKXlB5zP7mDtZGMZLFiCUJ+Vi
-         fbrQWva8uXvPlX9RahqigeXde4fKhVjXkTnwziKlaBD/XM8OT4QBaHckydcKcSoPf+4H
-         kUL/7vvC2VgxCjOSAc/8sCqjJYlvB1Vi9T8cABzsyBuhrMQVoQ2N00//MsIUCgytJyW/
-         TAfg==
-X-Gm-Message-State: APjAAAWbFGSpC5pFeouBuQOmLRb5TFISN5gSW3adkO1TSV25GHBIbct+
-        yEM8EUBgJdt9K6wzLF6ELBoGm/sQ7FQ=
-X-Google-Smtp-Source: APXvYqy2OoJyBEUvH6yudeOQVJ8pnaYwbYPqS1dOWBGxCOQfCQWCjBMRvHokvOsd0MJqwKajAkwP2A==
-X-Received: by 2002:a1c:a957:: with SMTP id s84mr8429998wme.65.1565786141198;
-        Wed, 14 Aug 2019 05:35:41 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id g14sm23289656wrb.38.2019.08.14.05.35.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 05:35:40 -0700 (PDT)
-From:   Denis Efremov <efremov@linux.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>
-Cc:     Denis Efremov <efremov@linux.com>, joe@perches.com,
-        linux-kernel@vger.kernel.org, Florian Westphal <fw@strlen.de>,
-        Juanjo Ciarlante <jjciarla@raiz.uncu.edu.ar>,
-        netfilter-devel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Remove IP MASQUERADING record
-Date:   Wed, 14 Aug 2019 15:35:02 +0300
-Message-Id: <20190814123502.12863-1-efremov@linux.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190813085818.4yfcaxfk2xqy32fx@salvia>
-References: <20190813085818.4yfcaxfk2xqy32fx@salvia>
+        id S1727926AbfHNMgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:36:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56938 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727304AbfHNMgp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:36:45 -0400
+Received: from localhost.localdomain (unknown [171.76.115.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0E62214DA;
+        Wed, 14 Aug 2019 12:36:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565786204;
+        bh=wqo1QtxFMdDaXjf0zXYMAwyreNgWwXT2nHsHAmdfdl8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bkhWJafs6Zn9rGNJFbbm8hLHdnvq9+YJER6CCcdHZBjJ1Xfr/qoL2koTQivXjo/vG
+         CAcYQzavFz/bnEmIm3Zd3SSJ8c+IhVxvxC+gy2f4hqHJyOsKtGDMx/BaEvq+RItXuG
+         QwfHah1IhzHorpdFVeOQYMEAumNSQhslAqBlDdRU=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] dt-bindings: pinctrl: qcom-pmic-gpio: Add pm8150 support
+Date:   Wed, 14 Aug 2019 18:05:10 +0530
+Message-Id: <20190814123512.6017-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,39 +43,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This entry is in MAINTAINERS for historical purpose.
-It doesn't match current sources since the commit
-adf82accc5f5 ("netfilter: x_tables: merge ip and
-ipv6 masquerade modules") moved the module.
-The net/netfilter/xt_MASQUERADE.c module is already under
-the netfilter section. Thus, there is no purpose to keep this
-separate entry in MAINTAINERS.
+Add support for the PM8150 GPIO support to the Qualcomm PMIC GPIO
+binding.
 
-Cc: Florian Westphal <fw@strlen.de>
-Cc: Juanjo Ciarlante <jjciarla@raiz.uncu.edu.ar>
-Cc: netfilter-devel@vger.kernel.org
-Suggested-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Denis Efremov <efremov@linux.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 ---
- MAINTAINERS | 5 -----
- 1 file changed, 5 deletions(-)
+ Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt | 3 +++
+ drivers/pinctrl/qcom/pinctrl-spmi-gpio.c                     | 2 ++
+ 2 files changed, 5 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 2b03d2d4bfca..2ab292d1fa0e 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -8429,11 +8429,6 @@ S:	Maintained
- F:	fs/io_uring.c
- F:	include/uapi/linux/io_uring.h
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 7f64a7e92c28..56553c06f129 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -21,6 +21,7 @@ PMIC's from Qualcomm.
+ 		    "qcom,pmi8994-gpio"
+ 		    "qcom,pmi8998-gpio"
+ 		    "qcom,pms405-gpio"
++		    "qcom,pm8150-gpio"
  
--IP MASQUERADING
--M:	Juanjo Ciarlante <jjciarla@raiz.uncu.edu.ar>
--S:	Maintained
--F:	net/ipv4/netfilter/ipt_MASQUERADE.c
--
- IPMI SUBSYSTEM
- M:	Corey Minyard <minyard@acm.org>
- L:	openipmi-developer@lists.sourceforge.net (moderated for non-subscribers)
+ 		    And must contain either "qcom,spmi-gpio" or "qcom,ssbi-gpio"
+ 		    if the device is on an spmi bus or an ssbi bus respectively
+@@ -94,6 +95,8 @@ to specify in a pin configuration subnode:
+ 		    gpio1-gpio22 for pma8084
+ 		    gpio1-gpio10 for pmi8994
+ 		    gpio1-gpio12 for pms405 (holes on gpio1, gpio9 and gpio10)
++		    gpio1-gpio10 for pm8150 (holes on gpio2, gpio5, gpio7
++					     and gpio8)
+ 
+ - function:
+ 	Usage: required
+diff --git a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+index f39da87ea185..5286ec060894 100644
+--- a/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-spmi-gpio.c
+@@ -1155,6 +1155,8 @@ static const struct of_device_id pmic_gpio_of_match[] = {
+ 	{ .compatible = "qcom,pma8084-gpio", .data = (void *) 22 },
+ 	/* pms405 has 12 GPIOs with holes on 1, 9, and 10 */
+ 	{ .compatible = "qcom,pms405-gpio", .data = (void *) 12 },
++	/* pm8150 has 10 GPIOs with holes on 2, 5, 7 and 8 */
++	{ .compatible = "qcom,pm8150-gpio", .data = (void *) 10 },
+ 	{ },
+ };
+ 
 -- 
-2.21.0
+2.20.1
 
