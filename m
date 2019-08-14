@@ -2,91 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72F138CC3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:03:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB278CC46
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:04:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727715AbfHNHCz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:02:55 -0400
-Received: from mga04.intel.com ([192.55.52.120]:42220 "EHLO mga04.intel.com"
+        id S1727358AbfHNHEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:04:14 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:46838 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727628AbfHNHCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:02:45 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 00:02:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,384,1559545200"; 
-   d="scan'208";a="181427262"
-Received: from unknown (HELO local-michael-cet-test.sh.intel.com) ([10.239.159.128])
-  by orsmga006.jf.intel.com with ESMTP; 14 Aug 2019 00:02:42 -0700
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pbonzini@redhat.com, sean.j.christopherson@intel.com
-Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com,
-        Yang Weijiang <weijiang.yang@intel.com>
-Subject: [PATCH RESEND v4 9/9] KVM: MMU: Handle host memory remapping and reclaim
-Date:   Wed, 14 Aug 2019 15:04:03 +0800
-Message-Id: <20190814070403.6588-10-weijiang.yang@intel.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190814070403.6588-1-weijiang.yang@intel.com>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
+        id S1727038AbfHNHEO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:04:14 -0400
+Received: from zn.tnic (p200300EC2F0BD0001434546E6F7AC9DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:1434:546e:6f7a:c9dd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EA0091EC02FE;
+        Wed, 14 Aug 2019 09:04:12 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565766253;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=apeO/Y9BwTwsaeyf+fZnRg01zq+ODzdXIwAuky6NwsM=;
+        b=EHDCKteyEG0E3E+Y6U46OjwbTGFjqqI31w3PUou5vVP6wdbLVZhU2QwcFx56I6zY6kaH8G
+        p0PrsTor/MFNoBiaarQqMsaHXU6NvPShyYkD8JvoXe85tPUPo4dv7qPhZwFw3oJxER2inL
+        ocALddnyBusIkvcVp8w8wSD79SljYso=
+Date:   Wed, 14 Aug 2019 09:04:57 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Kernel User <linux-kernel@riseup.net>
+Cc:     linux-kernel@vger.kernel.org, mhocko@suse.com, x86@kernel.org
+Subject: Re: /sys/devices/system/cpu/vulnerabilities/ doesn't show all known
+ CPU vulnerabilities
+Message-ID: <20190814070457.GA26456@zn.tnic>
+References: <20190813232829.3a1962cc@localhost>
+ <20190813212115.GO16770@zn.tnic>
+ <20190814010041.098fe4be@localhost>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190814010041.098fe4be@localhost>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Host page swapping/migration may change the translation in
-EPT leaf entry, if the target page is SPP protected,
-re-enable SPP protection in MMU notifier. If SPPT shadow
-page is reclaimed, the level1 pages don't have rmap to clear.
+On Wed, Aug 14, 2019 at 01:00:41AM +0300, Kernel User wrote:
+> That could be clarified like:
+> 
+> vulnerability1 - mitigation MDS
+> vulnerability2 - mitigation MDS
+> vulnerability3 - mitigation 3 (another mitigation)
+> ...
+>
+> Then it could be a file with content saying "No mitigation".
 
-Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
----
- arch/x86/kvm/mmu.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+And keep adding a sysfs file for each new variant and CVE?
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index f017fe6cd67b..6aab8902c808 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -1926,6 +1926,24 @@ static int kvm_set_pte_rmapp(struct kvm *kvm, struct kvm_rmap_head *rmap_head,
- 			new_spte &= ~PT_WRITABLE_MASK;
- 			new_spte &= ~SPTE_HOST_WRITEABLE;
- 
-+			/*
-+			 * if it's EPT leaf entry and the physical page is
-+			 * SPP protected, then re-enable SPP protection for
-+			 * the page.
-+			 */
-+			if (kvm->arch.spp_active &&
-+			    level == PT_PAGE_TABLE_LEVEL) {
-+				struct kvm_subpage spp_info = {0};
-+				int i;
-+
-+				spp_info.base_gfn = gfn;
-+				spp_info.npages = 1;
-+				i = kvm_mmu_get_subpages(kvm, &spp_info, true);
-+				if (i == 1 &&
-+				    spp_info.access_map[0] != FULL_SPP_ACCESS)
-+					new_spte |= PT_SPP_MASK;
-+			}
-+
- 			new_spte = mark_spte_for_access_track(new_spte);
- 
- 			mmu_spte_clear_track_bits(sptep);
-@@ -2809,6 +2827,10 @@ static bool mmu_page_zap_pte(struct kvm *kvm, struct kvm_mmu_page *sp,
- 	pte = *spte;
- 	if (is_shadow_present_pte(pte)) {
- 		if (is_last_spte(pte, sp->role.level)) {
-+			/* SPPT leaf entries don't have rmaps*/
-+			if (sp->role.level == PT_PAGE_TABLE_LEVEL &&
-+			    is_spp_spte(sp))
-+				return true;
- 			drop_spte(kvm, spte);
- 			if (is_large_pte(pte))
- 				--kvm->stat.lpages;
+Hell no.
+
+> Knowing that there is no mitigation or that a CPU is not affected is
+> quite different from not knowing anything. So I don't see why you
+> conclude that knowledge is unnecessary.
+
+IMO, what you want does not belong in sysfs but in documentation.
+
+I partially see your point that a table of sorts mapping all those CPU
+vulnerability names to (possible) mitigations is needed for users which
+would like to know whether they're covered, without having to run some
+scripts from github, but sysfs just ain't the place.
+
+Again, this is only my opinion.
+
 -- 
-2.17.2
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
