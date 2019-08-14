@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A424D8D98A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73F1F8D98E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbfHNRJc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:09:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
+        id S1730368AbfHNRJl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726265AbfHNRJa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:30 -0400
+        id S1729625AbfHNRJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:38 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D149217F4;
-        Wed, 14 Aug 2019 17:09:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE0872084D;
+        Wed, 14 Aug 2019 17:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802569;
-        bh=bMsK2oFPbruaZw4mTKjzxcr+KGodWlB7UpdOisVetwY=;
+        s=default; t=1565802577;
+        bh=afR9oa3kSoCxC4l8fCQGot8I+cJKctKLobT1GUTuKio=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yoWNYr476/lK2+QcrCvrTYNOspdFCgCDxkxAI7Zlcp5GgkXJejPG611u+XAm1X1ZB
-         Ha8V2zTaUVCm2cmWbQmHyqC0azgt73l0YIN27mRZAlOS0Xc7Y6jLQIBUnzLJXWLrYk
-         z0xtlz3MKrlliGTzcFubhJ8gRc9RLcWYilFIcNjo=
+        b=ujrPudUvWw9Umgi2R3cFZdLrurTBHD8hXj1nEKgD5wZfuF9JW2JC1X5vrhNTUly6p
+         yN6oCAHJE4cKFJRkpa3F3q5aNDQoXnAxxu6it3H2qWgWaU6ko7ShE3B3u7Fd5FI++1
+         QEqFQnN8wz2XACfSjFMTokGypjIHGSGFNR9eLtLQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.19 05/91] crypto: ccp - Fix oops by properly managing allocated structures
-Date:   Wed, 14 Aug 2019 19:00:28 +0200
-Message-Id: <20190814165749.293699173@linuxfoundation.org>
+Subject: [PATCH 4.19 06/91] crypto: ccp - Add support for valid authsize values less than 16
+Date:   Wed, 14 Aug 2019 19:00:29 +0200
+Message-Id: <20190814165749.355665426@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -45,11 +45,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Gary R Hook <gary.hook@amd.com>
 
-commit 25e44338321af545ab34243a6081c3f0fc6107d0 upstream.
+commit 9f00baf74e4b6f79a3a3dfab44fb7bb2e797b551 upstream.
 
-A plaintext or ciphertext length of 0 is allowed in AES, in which case
-no encryption occurs. Ensure that we don't clean up data structures
-that were never allocated.
+AES GCM encryption allows for authsize values of 4, 8, and 12-16 bytes.
+Validate the requested authsize, and retain it to save in the request
+context.
 
 Fixes: 36cf515b9bbe2 ("crypto: ccp - Enable support for AES GCM on v5 CCPs")
 Cc: <stable@vger.kernel.org>
@@ -58,24 +58,116 @@ Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/ccp/ccp-ops.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/crypto/ccp/ccp-crypto-aes-galois.c |   14 ++++++++++++++
+ drivers/crypto/ccp/ccp-ops.c               |   26 +++++++++++++++++++++-----
+ include/linux/ccp.h                        |    2 ++
+ 3 files changed, 37 insertions(+), 5 deletions(-)
 
+--- a/drivers/crypto/ccp/ccp-crypto-aes-galois.c
++++ b/drivers/crypto/ccp/ccp-crypto-aes-galois.c
+@@ -61,6 +61,19 @@ static int ccp_aes_gcm_setkey(struct cry
+ static int ccp_aes_gcm_setauthsize(struct crypto_aead *tfm,
+ 				   unsigned int authsize)
+ {
++	switch (authsize) {
++	case 16:
++	case 15:
++	case 14:
++	case 13:
++	case 12:
++	case 8:
++	case 4:
++		break;
++	default:
++		return -EINVAL;
++	}
++
+ 	return 0;
+ }
+ 
+@@ -107,6 +120,7 @@ static int ccp_aes_gcm_crypt(struct aead
+ 	memset(&rctx->cmd, 0, sizeof(rctx->cmd));
+ 	INIT_LIST_HEAD(&rctx->cmd.entry);
+ 	rctx->cmd.engine = CCP_ENGINE_AES;
++	rctx->cmd.u.aes.authsize = crypto_aead_authsize(tfm);
+ 	rctx->cmd.u.aes.type = ctx->u.aes.type;
+ 	rctx->cmd.u.aes.mode = ctx->u.aes.mode;
+ 	rctx->cmd.u.aes.action = encrypt;
 --- a/drivers/crypto/ccp/ccp-ops.c
 +++ b/drivers/crypto/ccp/ccp-ops.c
-@@ -862,11 +862,11 @@ e_tag:
- 	ccp_dm_free(&final_wa);
+@@ -625,6 +625,7 @@ static int ccp_run_aes_gcm_cmd(struct cc
  
- e_dst:
--	if (aes->src_len && !in_place)
-+	if (ilen > 0 && !in_place)
- 		ccp_free_data(&dst, cmd_q);
+ 	unsigned long long *final;
+ 	unsigned int dm_offset;
++	unsigned int authsize;
+ 	unsigned int jobid;
+ 	unsigned int ilen;
+ 	bool in_place = true; /* Default value */
+@@ -646,6 +647,21 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 	if (!aes->key) /* Gotta have a key SGL */
+ 		return -EINVAL;
  
- e_src:
--	if (aes->src_len)
-+	if (ilen > 0)
- 		ccp_free_data(&src, cmd_q);
++	/* Zero defaults to 16 bytes, the maximum size */
++	authsize = aes->authsize ? aes->authsize : AES_BLOCK_SIZE;
++	switch (authsize) {
++	case 16:
++	case 15:
++	case 14:
++	case 13:
++	case 12:
++	case 8:
++	case 4:
++		break;
++	default:
++		return -EINVAL;
++	}
++
+ 	/* First, decompose the source buffer into AAD & PT,
+ 	 * and the destination buffer into AAD, CT & tag, or
+ 	 * the input into CT & tag.
+@@ -660,7 +676,7 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 		p_tag = scatterwalk_ffwd(sg_tag, p_outp, ilen);
+ 	} else {
+ 		/* Input length for decryption includes tag */
+-		ilen = aes->src_len - AES_BLOCK_SIZE;
++		ilen = aes->src_len - authsize;
+ 		p_tag = scatterwalk_ffwd(sg_tag, p_inp, ilen);
+ 	}
  
- e_aad:
+@@ -842,19 +858,19 @@ static int ccp_run_aes_gcm_cmd(struct cc
+ 
+ 	if (aes->action == CCP_AES_ACTION_ENCRYPT) {
+ 		/* Put the ciphered tag after the ciphertext. */
+-		ccp_get_dm_area(&final_wa, 0, p_tag, 0, AES_BLOCK_SIZE);
++		ccp_get_dm_area(&final_wa, 0, p_tag, 0, authsize);
+ 	} else {
+ 		/* Does this ciphered tag match the input? */
+-		ret = ccp_init_dm_workarea(&tag, cmd_q, AES_BLOCK_SIZE,
++		ret = ccp_init_dm_workarea(&tag, cmd_q, authsize,
+ 					   DMA_BIDIRECTIONAL);
+ 		if (ret)
+ 			goto e_tag;
+-		ret = ccp_set_dm_area(&tag, 0, p_tag, 0, AES_BLOCK_SIZE);
++		ret = ccp_set_dm_area(&tag, 0, p_tag, 0, authsize);
+ 		if (ret)
+ 			goto e_tag;
+ 
+ 		ret = crypto_memneq(tag.address, final_wa.address,
+-				    AES_BLOCK_SIZE) ? -EBADMSG : 0;
++				    authsize) ? -EBADMSG : 0;
+ 		ccp_dm_free(&tag);
+ 	}
+ 
+--- a/include/linux/ccp.h
++++ b/include/linux/ccp.h
+@@ -173,6 +173,8 @@ struct ccp_aes_engine {
+ 	enum ccp_aes_mode mode;
+ 	enum ccp_aes_action action;
+ 
++	u32 authsize;
++
+ 	struct scatterlist *key;
+ 	u32 key_len;		/* In bytes */
+ 
 
 
