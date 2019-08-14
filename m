@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04FE98DABB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 497B98DB38
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730260AbfHNRKv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:10:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33680 "EHLO mail.kernel.org"
+        id S1729885AbfHNRH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56942 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730501AbfHNRKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:43 -0400
+        id S1729873AbfHNRHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC044208C2;
-        Wed, 14 Aug 2019 17:10:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EF352084D;
+        Wed, 14 Aug 2019 17:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802641;
-        bh=lD3fAztCuiappqaFlZBVJ9ZQCe7cohMY22oCWk0byLE=;
+        s=default; t=1565802444;
+        bh=+kOjzQ0XfNfoTzkA+c60zVZK78wHz8+KUjQfjFoop6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fm348XfLHgXXw4WeAu9ItNYE6rj1HMR4aWlDO20o95qBC11wtdCSqUbHDI4Pjgvx0
-         8N8exltq+PkYj7Ab811KOEonn/5sBvK8ItIllVHEVo4MVT/SxVbWGLndf/eaQHB5yC
-         QRIKbnqWjy2OSJ9dtbvmV7PmTn/H8XGsFrs3zcC0=
+        b=XVIi69GqW2MtDmHTBlccrkQ0p/2O72P90Ptrn0v+veY+fI5u+gIz+68enZexeX6/A
+         mrTpW0AHn3lwATSc7dK946vyCxNiM/uCzqemeeyd3ajX4fREazFx/FNnPpzXxJDsry
+         crCZM5bJt1fAAD3TMCaZy5ILmttV74i/BYr58D8o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marta Rybczynska <marta.rybczynska@kalray.eu>,
-        Jean-Baptiste Riaux <jbriaux@kalray.eu>,
-        Christoph Hellwig <hch@lst.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 60/91] nvme: fix multipath crash when ANA is deactivated
-Date:   Wed, 14 Aug 2019 19:01:23 +0200
-Message-Id: <20190814165752.121913117@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 5.2 129/144] ALSA: hda - Workaround for crackled sound on AMD controller (1022:1457)
+Date:   Wed, 14 Aug 2019 19:01:25 +0200
+Message-Id: <20190814165805.341862061@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,125 +42,202 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 66b20ac0a1a10769d059d6903202f53494e3d902 ]
+From: Takashi Iwai <tiwai@suse.de>
 
-Fix a crash with multipath activated. It happends when ANA log
-page is larger than MDTS and because of that ANA is disabled.
-The driver then tries to access unallocated buffer when connecting
-to a nvme target. The signature is as follows:
+commit c02f77d32d2c45cfb1b2bb99eabd8a78f5ecc7db upstream.
 
-[  300.433586] nvme nvme0: ANA log page size (8208) larger than MDTS (8192).
-[  300.435387] nvme nvme0: disabling ANA support.
-[  300.437835] nvme nvme0: creating 4 I/O queues.
-[  300.459132] nvme nvme0: new ctrl: NQN "nqn.0.0.0", addr 10.91.0.1:8009
-[  300.464609] BUG: unable to handle kernel NULL pointer dereference at 0000000000000008
-[  300.466342] #PF error: [normal kernel read fault]
-[  300.467385] PGD 0 P4D 0
-[  300.467987] Oops: 0000 [#1] SMP PTI
-[  300.468787] CPU: 3 PID: 50 Comm: kworker/u8:1 Not tainted 5.0.20kalray+ #4
-[  300.470264] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
-[  300.471532] Workqueue: nvme-wq nvme_scan_work [nvme_core]
-[  300.472724] RIP: 0010:nvme_parse_ana_log+0x21/0x140 [nvme_core]
-[  300.474038] Code: 45 01 d2 d8 48 98 c3 66 90 0f 1f 44 00 00 41 57 41 56 41 55 41 54 55 53 48 89 fb 48 83 ec 08 48 8b af 20 0a 00 00 48 89 34 24 <66> 83 7d 08 00 0f 84 c6 00 00 00 44 8b 7d 14 49 89 d5 8b 55 10 48
-[  300.477374] RSP: 0018:ffffa50e80fd7cb8 EFLAGS: 00010296
-[  300.478334] RAX: 0000000000000001 RBX: ffff9130f1872258 RCX: 0000000000000000
-[  300.479784] RDX: ffffffffc06c4c30 RSI: ffff9130edad4280 RDI: ffff9130f1872258
-[  300.481488] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
-[  300.483203] R10: 0000000000000220 R11: 0000000000000040 R12: ffff9130f18722c0
-[  300.484928] R13: ffff9130f18722d0 R14: ffff9130edad4280 R15: ffff9130f18722c0
-[  300.486626] FS:  0000000000000000(0000) GS:ffff9130f7b80000(0000) knlGS:0000000000000000
-[  300.488538] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  300.489907] CR2: 0000000000000008 CR3: 00000002365e6000 CR4: 00000000000006e0
-[  300.491612] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  300.493303] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  300.494991] Call Trace:
-[  300.495645]  nvme_mpath_add_disk+0x5c/0xb0 [nvme_core]
-[  300.496880]  nvme_validate_ns+0x2ef/0x550 [nvme_core]
-[  300.498105]  ? nvme_identify_ctrl.isra.45+0x6a/0xb0 [nvme_core]
-[  300.499539]  nvme_scan_work+0x2b4/0x370 [nvme_core]
-[  300.500717]  ? __switch_to_asm+0x35/0x70
-[  300.501663]  process_one_work+0x171/0x380
-[  300.502340]  worker_thread+0x49/0x3f0
-[  300.503079]  kthread+0xf8/0x130
-[  300.503795]  ? max_active_store+0x80/0x80
-[  300.504690]  ? kthread_bind+0x10/0x10
-[  300.505502]  ret_from_fork+0x35/0x40
-[  300.506280] Modules linked in: nvme_tcp nvme_rdma rdma_cm iw_cm ib_cm ib_core nvme_fabrics nvme_core xt_physdev ip6table_raw ip6table_mangle ip6table_filter ip6_tables xt_comment iptable_nat nf_nat_ipv4 nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_CHECKSUM iptable_mangle iptable_filter veth ebtable_filter ebtable_nat ebtables iptable_raw vxlan ip6_udp_tunnel udp_tunnel sunrpc joydev pcspkr virtio_balloon br_netfilter bridge stp llc ip_tables xfs libcrc32c ata_generic pata_acpi virtio_net virtio_console net_failover virtio_blk failover ata_piix serio_raw libata virtio_pci virtio_ring virtio
-[  300.514984] CR2: 0000000000000008
-[  300.515569] ---[ end trace faa2eefad7e7f218 ]---
-[  300.516354] RIP: 0010:nvme_parse_ana_log+0x21/0x140 [nvme_core]
-[  300.517330] Code: 45 01 d2 d8 48 98 c3 66 90 0f 1f 44 00 00 41 57 41 56 41 55 41 54 55 53 48 89 fb 48 83 ec 08 48 8b af 20 0a 00 00 48 89 34 24 <66> 83 7d 08 00 0f 84 c6 00 00 00 44 8b 7d 14 49 89 d5 8b 55 10 48
-[  300.520353] RSP: 0018:ffffa50e80fd7cb8 EFLAGS: 00010296
-[  300.521229] RAX: 0000000000000001 RBX: ffff9130f1872258 RCX: 0000000000000000
-[  300.522399] RDX: ffffffffc06c4c30 RSI: ffff9130edad4280 RDI: ffff9130f1872258
-[  300.523560] RBP: 0000000000000000 R08: 0000000000000001 R09: 0000000000000044
-[  300.524734] R10: 0000000000000220 R11: 0000000000000040 R12: ffff9130f18722c0
-[  300.525915] R13: ffff9130f18722d0 R14: ffff9130edad4280 R15: ffff9130f18722c0
-[  300.527084] FS:  0000000000000000(0000) GS:ffff9130f7b80000(0000) knlGS:0000000000000000
-[  300.528396] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  300.529440] CR2: 0000000000000008 CR3: 00000002365e6000 CR4: 00000000000006e0
-[  300.530739] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  300.531989] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  300.533264] Kernel panic - not syncing: Fatal exception
-[  300.534338] Kernel Offset: 0x17c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[  300.536227] ---[ end Kernel panic - not syncing: Fatal exception ]---
+A long-time problem on the recent AMD chip (X370, X470, B450, etc with
+PCI ID 1022:1457) with Realtek codecs is the crackled or distorted
+sound for capture streams, as well as occasional playback hiccups.
+After lengthy debugging sessions, the workarounds we've found are like
+the following:
 
-Condition check refactoring from Christoph Hellwig.
+- Set up the proper driver caps for this controller, similar as the
+  other AMD controller.
 
-Signed-off-by: Marta Rybczynska <marta.rybczynska@kalray.eu>
-Tested-by: Jean-Baptiste Riaux <jbriaux@kalray.eu>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+- Correct the DMA position reporting with the fixed FIFO size, which
+  is similar like as workaround used for VIA chip set.
+
+- Even after the position correction, PulseAudio still shows
+  mysterious stalls of playback streams when a capture is triggered in
+  timer-scheduled mode.  Since we have no clear way to eliminate the
+  stall, pass the BATCH PCM flag for PA to suppress the tsched mode as
+  a temporary workaround.
+
+This patch implements the workarounds.  For the driver caps, it
+defines a new preset, AXZ_DCAPS_PRESET_AMD_SB.  It enables the FIFO-
+corrected position reporting (corresponding to the new position_fix=6)
+and enforces the SNDRV_PCM_INFO_BATCH flag.
+
+Note that the current implementation is merely a workaround.
+Hopefully we'll find a better alternative in future, especially about
+removing the BATCH flag hack again.
+
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=195303
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/nvme/host/multipath.c | 8 ++------
- drivers/nvme/host/nvme.h      | 6 +++++-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ sound/pci/hda/hda_controller.c |    7 ++++
+ sound/pci/hda/hda_controller.h |    2 -
+ sound/pci/hda/hda_intel.c      |   63 ++++++++++++++++++++++++++++++++++++++++-
+ 3 files changed, 70 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 260248fbb8feb..a11e210d173e4 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -20,11 +20,6 @@ module_param(multipath, bool, 0444);
- MODULE_PARM_DESC(multipath,
- 	"turn on native support for multiple controllers per subsystem");
+--- a/sound/pci/hda/hda_controller.c
++++ b/sound/pci/hda/hda_controller.c
+@@ -613,6 +613,13 @@ static int azx_pcm_open(struct snd_pcm_s
+ 				     20,
+ 				     178000000);
  
--inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
--{
--	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
--}
--
- /*
-  * If multipathing is enabled we need to always use the subsystem instance
-  * number for numbering our devices to avoid conflicts between subsystems that
-@@ -516,7 +511,8 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
- {
- 	int error;
++	/* by some reason, the playback stream stalls on PulseAudio with
++	 * tsched=1 when a capture stream triggers.  Until we figure out the
++	 * real cause, disable tsched mode by telling the PCM info flag.
++	 */
++	if (chip->driver_caps & AZX_DCAPS_AMD_WORKAROUND)
++		runtime->hw.info |= SNDRV_PCM_INFO_BATCH;
++
+ 	if (chip->align_buffer_size)
+ 		/* constrain buffer sizes to be multiple of 128
+ 		   bytes. This is more efficient in terms of memory
+--- a/sound/pci/hda/hda_controller.h
++++ b/sound/pci/hda/hda_controller.h
+@@ -31,7 +31,7 @@
+ /* 14 unused */
+ #define AZX_DCAPS_CTX_WORKAROUND (1 << 15)	/* X-Fi workaround */
+ #define AZX_DCAPS_POSFIX_LPIB	(1 << 16)	/* Use LPIB as default */
+-/* 17 unused */
++#define AZX_DCAPS_AMD_WORKAROUND (1 << 17)	/* AMD-specific workaround */
+ #define AZX_DCAPS_NO_64BIT	(1 << 18)	/* No 64bit address */
+ #define AZX_DCAPS_SYNC_WRITE	(1 << 19)	/* sync each cmd write */
+ #define AZX_DCAPS_OLD_SSYNC	(1 << 20)	/* Old SSYNC reg for ICH */
+--- a/sound/pci/hda/hda_intel.c
++++ b/sound/pci/hda/hda_intel.c
+@@ -64,6 +64,7 @@ enum {
+ 	POS_FIX_VIACOMBO,
+ 	POS_FIX_COMBO,
+ 	POS_FIX_SKL,
++	POS_FIX_FIFO,
+ };
  
--	if (!nvme_ctrl_use_ana(ctrl))
-+	/* check if multipath is enabled and we have the capability */
-+	if (!multipath || !ctrl->subsys || !(ctrl->subsys->cmic & (1 << 3)))
- 		return 0;
+ /* Defines for ATI HD Audio support in SB450 south bridge */
+@@ -135,7 +136,7 @@ module_param_array(model, charp, NULL, 0
+ MODULE_PARM_DESC(model, "Use the given board model.");
+ module_param_array(position_fix, int, NULL, 0444);
+ MODULE_PARM_DESC(position_fix, "DMA pointer read method."
+-		 "(-1 = system default, 0 = auto, 1 = LPIB, 2 = POSBUF, 3 = VIACOMBO, 4 = COMBO, 5 = SKL+).");
++		 "(-1 = system default, 0 = auto, 1 = LPIB, 2 = POSBUF, 3 = VIACOMBO, 4 = COMBO, 5 = SKL+, 6 = FIFO).");
+ module_param_array(bdl_pos_adj, int, NULL, 0644);
+ MODULE_PARM_DESC(bdl_pos_adj, "BDL position adjustment offset.");
+ module_param_array(probe_mask, int, NULL, 0444);
+@@ -332,6 +333,11 @@ enum {
+ #define AZX_DCAPS_PRESET_ATI_HDMI_NS \
+ 	(AZX_DCAPS_PRESET_ATI_HDMI | AZX_DCAPS_SNOOP_OFF)
  
- 	ctrl->anacap = id->anacap;
-diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
-index e82cdaec81c9c..d5e29b57eb340 100644
---- a/drivers/nvme/host/nvme.h
-+++ b/drivers/nvme/host/nvme.h
-@@ -464,7 +464,11 @@ extern const struct attribute_group nvme_ns_id_attr_group;
- extern const struct block_device_operations nvme_ns_head_ops;
++/* quirks for AMD SB */
++#define AZX_DCAPS_PRESET_AMD_SB \
++	(AZX_DCAPS_NO_TCSEL | AZX_DCAPS_SYNC_WRITE | AZX_DCAPS_AMD_WORKAROUND |\
++	 AZX_DCAPS_SNOOP_TYPE(ATI) | AZX_DCAPS_PM_RUNTIME)
++
+ /* quirks for Nvidia */
+ #define AZX_DCAPS_PRESET_NVIDIA \
+ 	(AZX_DCAPS_NO_MSI | AZX_DCAPS_CORBRP_SELF_CLEAR |\
+@@ -841,6 +847,49 @@ static unsigned int azx_via_get_position
+ 	return bound_pos + mod_dma_pos;
+ }
  
- #ifdef CONFIG_NVME_MULTIPATH
--bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl);
-+static inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
++#define AMD_FIFO_SIZE	32
++
++/* get the current DMA position with FIFO size correction */
++static unsigned int azx_get_pos_fifo(struct azx *chip, struct azx_dev *azx_dev)
 +{
-+	return ctrl->ana_log_buf != NULL;
++	struct snd_pcm_substream *substream = azx_dev->core.substream;
++	struct snd_pcm_runtime *runtime = substream->runtime;
++	unsigned int pos, delay;
++
++	pos = snd_hdac_stream_get_pos_lpib(azx_stream(azx_dev));
++	if (!runtime)
++		return pos;
++
++	runtime->delay = AMD_FIFO_SIZE;
++	delay = frames_to_bytes(runtime, AMD_FIFO_SIZE);
++	if (azx_dev->insufficient) {
++		if (pos < delay) {
++			delay = pos;
++			runtime->delay = bytes_to_frames(runtime, pos);
++		} else {
++			azx_dev->insufficient = 0;
++		}
++	}
++
++	/* correct the DMA position for capture stream */
++	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
++		if (pos < delay)
++			pos += azx_dev->core.bufsize;
++		pos -= delay;
++	}
++
++	return pos;
 +}
 +
- void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
- 			struct nvme_ctrl *ctrl, int *flags);
- void nvme_failover_req(struct request *req);
--- 
-2.20.1
-
++static int azx_get_delay_from_fifo(struct azx *chip, struct azx_dev *azx_dev,
++				   unsigned int pos)
++{
++	struct snd_pcm_substream *substream = azx_dev->core.substream;
++
++	/* just read back the calculated value in the above */
++	return substream->runtime->delay;
++}
++
+ static unsigned int azx_skl_get_dpib_pos(struct azx *chip,
+ 					 struct azx_dev *azx_dev)
+ {
+@@ -1417,6 +1466,7 @@ static int check_position_fix(struct azx
+ 	case POS_FIX_VIACOMBO:
+ 	case POS_FIX_COMBO:
+ 	case POS_FIX_SKL:
++	case POS_FIX_FIFO:
+ 		return fix;
+ 	}
+ 
+@@ -1433,6 +1483,10 @@ static int check_position_fix(struct azx
+ 		dev_dbg(chip->card->dev, "Using VIACOMBO position fix\n");
+ 		return POS_FIX_VIACOMBO;
+ 	}
++	if (chip->driver_caps & AZX_DCAPS_AMD_WORKAROUND) {
++		dev_dbg(chip->card->dev, "Using FIFO position fix\n");
++		return POS_FIX_FIFO;
++	}
+ 	if (chip->driver_caps & AZX_DCAPS_POSFIX_LPIB) {
+ 		dev_dbg(chip->card->dev, "Using LPIB position fix\n");
+ 		return POS_FIX_LPIB;
+@@ -1453,6 +1507,7 @@ static void assign_position_fix(struct a
+ 		[POS_FIX_VIACOMBO] = azx_via_get_position,
+ 		[POS_FIX_COMBO] = azx_get_pos_lpib,
+ 		[POS_FIX_SKL] = azx_get_pos_skl,
++		[POS_FIX_FIFO] = azx_get_pos_fifo,
+ 	};
+ 
+ 	chip->get_position[0] = chip->get_position[1] = callbacks[fix];
+@@ -1467,6 +1522,9 @@ static void assign_position_fix(struct a
+ 			azx_get_delay_from_lpib;
+ 	}
+ 
++	if (fix == POS_FIX_FIFO)
++		chip->get_delay[0] = chip->get_delay[1] =
++			azx_get_delay_from_fifo;
+ }
+ 
+ /*
+@@ -2444,6 +2502,9 @@ static const struct pci_device_id azx_id
+ 	/* AMD Hudson */
+ 	{ PCI_DEVICE(0x1022, 0x780d),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
++	/* AMD, X370 & co */
++	{ PCI_DEVICE(0x1022, 0x1457),
++	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_AMD_SB },
+ 	/* AMD Stoney */
+ 	{ PCI_DEVICE(0x1022, 0x157a),
+ 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
 
 
