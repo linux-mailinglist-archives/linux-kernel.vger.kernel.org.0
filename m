@@ -2,192 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58AA98D80E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:29:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A10E78D830
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:37:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfHNQ3g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 12:29:36 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37685 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726047AbfHNQ3f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 12:29:35 -0400
-Received: by mail-ed1-f68.google.com with SMTP id f22so7596248edt.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 09:29:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=siwMqdoojDd3vGBAd4TykA8P+3WWK1D0e4/pZN7NS4U=;
-        b=jmzvqj2gv7f2RYPLWq9PNdOEZbIytJWu8r+PsIQdugqqEbOS0IYDcU4LUwwPFT3QvK
-         VXRL0BYivhu6A78eRmiztpl20FRIaQzgaKBgXqUvfBINyRRN5dRexSp9LvCX8dJV3UUH
-         AnNzJSviou2/H9wmpqk+ZYd4Q/gh2khEZrA9+ueK7Vf4cyd/baz2OK16KqDnYJWzplJb
-         4i/FEeu4cRSbwrgC6UGgUC9U+W6oNYnEMfNxaQEtOVG81PjyjJQc5cTma/9HJpqGVk65
-         YRcazufHAPVbbIvCQAak2bAxa+wDKTUrzHZfXTpS29Vq4uScHOWjHvQ1RkNzgowA2jM4
-         OUlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=siwMqdoojDd3vGBAd4TykA8P+3WWK1D0e4/pZN7NS4U=;
-        b=DdyO6vnfT9+NcznJ8G3gaJUFIJbO4y0XtgcGxisHfk+uUy1/AHkMmY9RsvWqqJsaqL
-         QF/mv265exRkpjxO+fV4XRXjczDZbjUwCgAU2DuIzgifztQyzrND6+WczkXXCFXKDli5
-         Wa6hAoWqmkUZYxAwMCoHgMqepK6xfdNBaWpJmmSd6UmVOGLu8mXamU/3qL+qD/B8wgMl
-         FT3V53rU/i8JcDWVVmaVkmOualxqjnd8hwApBOdgayle46q8PlGy+71uj4J3woAL4wtQ
-         KPvKHJjAcZY5CDFXaCK0gnRNqyue3I3mmmQLAv/tbeyACNH0eAb120hoZrCkN8yM7jLl
-         WXlw==
-X-Gm-Message-State: APjAAAWs8l3ljDQS4pHN94D/4/RiDkYFe14DHkA1ypUFDqUwDQ9zgwVf
-        tuxW3NWskSbp+N+i6AZLSgU=
-X-Google-Smtp-Source: APXvYqyqjyd1o1Utzo4odGjN6U4rkrRwW4HCZlNXs+6r6J6S1nBGdR8O2xRwKKvv/HCe8HCgNiWloA==
-X-Received: by 2002:a50:ba69:: with SMTP id 38mr542706eds.46.1565800173379;
-        Wed, 14 Aug 2019 09:29:33 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id w13sm14738eji.22.2019.08.14.09.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Aug 2019 09:29:32 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 16:29:32 +0000
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        "bp@suse.de" <bp@suse.de>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2] kernel/resource.c: invalidate parent when freed
- resource has childs
-Message-ID: <20190814162932.alwo7g4664c2dtp3@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <1565278859475.1962@mentor.com>
- <1565358624103.3694@mentor.com>
- <20190809223831.fk4uyrzscr366syr@master>
- <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
- <1565794104204.54092@mentor.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565794104204.54092@mentor.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        id S1728172AbfHNQhB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 12:37:01 -0400
+Received: from mga02.intel.com ([134.134.136.20]:39981 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfHNQhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 12:37:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 09:37:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,385,1559545200"; 
+   d="scan'208";a="178213373"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Aug 2019 09:37:00 -0700
+Message-ID: <eabd0c16bd2028ad9fef8d10ddf570b3a10d5680.camel@intel.com>
+Subject: Re: [PATCH v8 15/27] mm: Handle shadow stack page fault
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Andy Lutomirski <luto@kernel.org>
+Cc:     X86 ML <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Wed, 14 Aug 2019 09:27:21 -0700
+In-Reply-To: <CALCETrVKbqzivPfUOiGi5efHUpEsfPkNzP0CrmAZzcwUgf7quA@mail.gmail.com>
+References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
+         <20190813205225.12032-16-yu-cheng.yu@intel.com>
+         <CALCETrVKbqzivPfUOiGi5efHUpEsfPkNzP0CrmAZzcwUgf7quA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 02:48:24PM +0000, Schmid, Carsten wrote:
->When a resource is freed and has children, the childrens are
-
-s/childrens/children/
-
->left without any hint that their parent is no more valid.
->This caused at least one use-after-free in the xhci-hcd using
->ext-caps driver when platform code released platform devices.
->
->In such case, warn and release all resources beyond.
->
->Signed-off-by: Carsten Schmid <carsten_schmid@mentor.com>
->---
->v2:
->- release everything below the released resource, not only
->  one child; re-using __release_child_resources
->  (Inspired by Linus Torvalds outline)
->- warn only once
->  (According to Linus Torvalds outline)
->- Keep parent and child name in warning message
->  (eases hunting for the involved parties)
->---
-> kernel/resource.c | 26 ++++++++++++++++++++++----
-> 1 file changed, 22 insertions(+), 4 deletions(-)
->
->diff --git a/kernel/resource.c b/kernel/resource.c
->index c3cc6d85ec52..eb48d793aa74 100644
->--- a/kernel/resource.c
->+++ b/kernel/resource.c
->@@ -239,7 +239,7 @@ static int __release_resource(struct resource *old, bool release_child)
-> 	return -EINVAL;
-> }
+On Tue, 2019-08-13 at 15:55 -0700, Andy Lutomirski wrote:
+> On Tue, Aug 13, 2019 at 2:02 PM Yu-cheng Yu <yu-cheng.yu@intel.com> wrote:
+> > 
+> > When a task does fork(), its shadow stack (SHSTK) must be duplicated
+> > for the child.  This patch implements a flow similar to copy-on-write
+> > of an anonymous page, but for SHSTK.
+> > 
+> > A SHSTK PTE must be RO and dirty.  This dirty bit requirement is used
+> > to effect the copying.  In copy_one_pte(), clear the dirty bit from a
+> > SHSTK PTE to cause a page fault upon the next SHSTK access.  At that
+> > time, fix the PTE and copy/re-use the page.
 > 
->-static void __release_child_resources(struct resource *r)
->+static void __release_child_resources(struct resource *r, bool warn)
-> {
-> 	struct resource *tmp, *p;
-> 	resource_size_t size;
->@@ -252,9 +252,10 @@ static void __release_child_resources(struct resource *r)
-> 
-> 		tmp->parent = NULL;
-> 		tmp->sibling = NULL;
->-		__release_child_resources(tmp);
->+		__release_child_resources(tmp, warn);
+> Is using VM_SHSTK and special-casing all of this really better than
+> using a special mapping or other pseudo-file-backed VMA and putting
+> all the magic in the vm_operations?
 
-This function will release all the children.
+A special mapping is cleaner.  However, we also need to exclude normal [RO +
+dirty] pages from shadow stack.
 
-Is this what Linus suggest?
-
-From his code snippet, I just see siblings parent is set to NULL. I may miss
-some point?
-
-> 
->-		printk(KERN_DEBUG "release child resource %pR\n", tmp);
->+		if (warn)
->+			printk(KERN_DEBUG "release child resource %pR\n", tmp);
-> 		/* need to restore size, and keep flags */
-> 		size = resource_size(tmp);
-> 		tmp->start = 0;
->@@ -265,7 +266,7 @@ static void __release_child_resources(struct resource *r)
-> void release_child_resources(struct resource *r)
-> {
-> 	write_lock(&resource_lock);
->-	__release_child_resources(r);
->+	__release_child_resources(r, true);
-> 	write_unlock(&resource_lock);
-> }
-> 
->@@ -1172,7 +1173,20 @@ EXPORT_SYMBOL(__request_region);
->  * @n: resource region size
->  *
->  * The described resource region must match a currently busy region.
->+ * If the region has children they are released too.
->  */
->+static void check_children(struct resource *parent)
->+{
->+	if (parent->child) {
->+		/* warn and release all children */
->+		WARN_ONCE(1, "%s: %s has child %s, release all children\n",
->+				__func__, parent->name, parent->child->name);
->+		write_lock(&resource_lock);
-
-In previous version, lock is grasped before parent->child is checked.
-
-Not sure why you change the order?
-
->+		__release_child_resources(parent, false);
->+		write_unlock(&resource_lock);
->+	}
->+}
->+
-> void __release_region(struct resource *parent, resource_size_t start,
-> 		      resource_size_t n)
-> {
->@@ -1200,6 +1214,10 @@ void __release_region(struct resource *parent, resource_size_t start,
-> 			write_unlock(&resource_lock);
-> 			if (res->flags & IORESOURCE_MUXED)
-> 				wake_up(&muxed_resource_wait);
->+
->+			/* You should'nt release a resource that has children */
->+			check_children(res);
->+
-> 			free_resource(res);
-> 			return;
-> 		}
->-- 
->2.17.1
->
-
--- 
-Wei Yang
-Help you, Help me
+Yu-cheng
