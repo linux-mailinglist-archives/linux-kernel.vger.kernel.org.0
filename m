@@ -2,81 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92E648D26B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:43:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D56CA8D276
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:46:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727157AbfHNLno (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 07:43:44 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37150 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfHNLnn (ORCPT
+        id S1727503AbfHNLqa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 07:46:30 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45583 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfHNLq3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:43:43 -0400
-Received: by mail-qt1-f193.google.com with SMTP id y26so109759644qto.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:43:43 -0700 (PDT)
+        Wed, 14 Aug 2019 07:46:29 -0400
+Received: by mail-lj1-f194.google.com with SMTP id t3so15963416ljj.12
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:46:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to;
-        bh=iLi4gIumYmPkdBxa8OcdY3qX507LidIWc822BxkUzcw=;
-        b=E11zgJlbVoyhqKngOnqYViMm4fuiw8uqLX7voMtyV+JNp2p+2uEHJugzrzHQjk3//6
-         ZHAA1U4duX5bfWnXB/qhWl7cQJCgDYYWoZdYyo0Ef4VOrm7zC3kGqLPJeW5ovu2cWxM2
-         oe2542JvDVZ9Bm8wR5aKG3xtYps7LrLdyshOoP8QSWjU7lZEOgB7kR8PDTZM70gWcTJZ
-         dGj1TkeGFdwFXvJGaJz9Y/hyr4gluRzUbo1Lx+VVpkh/K+wUprG1n3SUlQq2hY6G/he1
-         22hAMpn2qjaYYnVWAL14TD7iNRdWVVDyPM+pnioayOlm5nGAhG9NhSjFzxOjlTu5AxNC
-         Eirw==
+        d=fooishbar-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HVIUs4ZIQVm7b7SR1n38pcFhXz6C3M2CIhWpAxdt8LQ=;
+        b=OV6v4RpJEGTSaeN9WjacjemHo7ZUtwknpaHLLy+MEre+zyB39wCwfeJtTg+FZ8IZ+B
+         OcJGOV/93rJokdOIQwig6ROI8s46ddhjgNFjuNQIRHDFv0ccHr12uxB9mmYTVVx67gy1
+         s8hLywCYXHwDkDbFXcF0V4TeSFIfT3tVWiVJTVB7XNHhkoelxy83LEM1tJcaxshNsR7G
+         nbvYUYuPB2OPUjvHesf9PtA8fp6EqjxvwKx+GijgH5csPsIWsi1CddxxpdnawisyZMAF
+         G1GvqKTt8QXGUkeS0wAZzBsBRXx6kryesDbVbLTprqrHNM3bOGm2jgMnuynRAAZzCWXS
+         SI9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
-        bh=iLi4gIumYmPkdBxa8OcdY3qX507LidIWc822BxkUzcw=;
-        b=cvioJAwEtSAK6iB1KFPxTrBEjlPe5Rn9xh8X/nsSQxh2T+0riP7J74kwRXZlsG33Cf
-         UnbCVB3q4UOY4VTM6rWbcd4azsACOToP5k6M7rt0LHGXM5YbGziLAoOCIY0ETzc/olE7
-         XF2ZXvcTLJq9YMyfht/GgbCKOT2HuYeOAtKZ4cVQRlxyFn7Estdi5KHpLJHeWtDtRsAa
-         qrDJaaQUzxxJEbrLgFYPtGEcjlWbMZtblFiwzdLvAWlfoiy3yXBU9UxBHM1QGSb/PuPR
-         G2pUBv3jAVuZfgkiAnGkwqNUxFnghca/3l9IceFXDXncE7kZgdyzGFpX2D+5xxfVRYc7
-         D3uQ==
-X-Gm-Message-State: APjAAAV7Q6wpjq17ikZ49xT5tVF8c9PBQ9vLUp9KyxbC7K6ILG1UZgbV
-        gecd2yS0kKu8gBpYPp92yHlV6rskq3zJjM9qgrM=
-X-Google-Smtp-Source: APXvYqxBiQNLG8rLxtFnhz5oHUsLkqTWDgEski4GkSrDquXpqJ0GEOLERvuVm/d7rrDPQfcT4qtShc8b4pj15EW3hj8=
-X-Received: by 2002:a05:6214:1e5:: with SMTP id c5mr2138174qvu.18.1565783023013;
- Wed, 14 Aug 2019 04:43:43 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HVIUs4ZIQVm7b7SR1n38pcFhXz6C3M2CIhWpAxdt8LQ=;
+        b=JVwJbyluNB5yS5yRVCtrkWh2VeTrhpy0ir8aC8qyNibP1QcYJgGrFOmDqKFIdk/pOJ
+         raLkKkOL/J2OwAcajFIBNjaZggTKHeafW9qmeio+m9un+wb2PGc3fREzIZx7PFNSh2Hj
+         DB6zB0MjOKplEU1Dz4BBljvOkqxWUiodwoiWrb2nJqaYSOF2R4mZyvRc3+lVJLxqGSLL
+         jT3MwcdRT8h0ws/VypDHbqsOMhW8BjXWjRAzoE4sDcwYDBKnUzSecCc5aX5sTV9SPMH7
+         v0DY0ub7QTTyCa309q8wm+c2rR0MpjW/eQzLeHWDw5rGBZz1tPFCqS9sHdoN38EjItr4
+         RyDg==
+X-Gm-Message-State: APjAAAUl30JT5cjjyZbS/FH3f33tnYAB6NUBzJA1eQtughLyWQzeB/yG
+        kexMKVcw4Q5JWmlya13Py4qfucCFt18RNKmrgEHBluna
+X-Google-Smtp-Source: APXvYqx8H8wf2cUfndKRitBxUVt4PunZZn7bV5z50HzDJV5mvhAjxp+vVMjixTxwiL4xvtZ+Nynqmt1s1BQ2RX367ts=
+X-Received: by 2002:a2e:b4e6:: with SMTP id s6mr11087965ljm.169.1565783187372;
+ Wed, 14 Aug 2019 04:46:27 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a0c:9306:0:0:0:0:0 with HTTP; Wed, 14 Aug 2019 04:43:42
- -0700 (PDT)
-From:   frederic koute <frederic55koute4444@gmail.com>
-Date:   Wed, 14 Aug 2019 12:43:42 +0100
-Message-ID: <CADt7tiy13VszWqT3biDuh1zHyWm0CCPMDiwraDvxMrWKO1RoRQ@mail.gmail.com>
-Subject: Dear Greetings to you Contact my secretary immediately From Dr
- Frederic, Your Compensation
-To:     undisclosed-recipients:;
+References: <1565779731-1300-1-git-send-email-robert.chiras@nxp.com> <1565779731-1300-7-git-send-email-robert.chiras@nxp.com>
+In-Reply-To: <1565779731-1300-7-git-send-email-robert.chiras@nxp.com>
+From:   Daniel Stone <daniel@fooishbar.org>
+Date:   Wed, 14 Aug 2019 12:44:34 +0100
+Message-ID: <CAPj87rMFG=RGmfVnawbE7qX4zU7vdYxLJB__K4E3B8jcJ764KQ@mail.gmail.com>
+Subject: Re: [PATCH v2 06/15] drm/mxsfb: Update mxsfb with additional pixel formats
+To:     Robert Chiras <robert.chiras@nxp.com>
+Cc:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Greetings to you Contact my secretary immediately From Dr
-Frederic, Your Compensation for your past efforts Compliments of the
-day and God's blessings. I am glad to inform you that I have
-successfully completed the transaction. The money has been transferred
-to Switzerland. I succeeded through the assistance  of my new business
-partner from the United States of America. Currently I am in India
-with him for a business trip.
+Hi Robert,
 
-However, I did not forget your past efforts in helping me then though
-you weren't able to complete the project with me but honestly, I still
-appreciate your past efforts. In appreciation towards your assistance,
-we jointly mapped out the sum of (US$900,000.00) and wrote in your
-favour a certified bank cheque, payable to your account only which was
-left with my secretary and you are expected to contact her immediately
-and negotiate with her the best way to send it to you.
+On Wed, 14 Aug 2019 at 11:49, Robert Chiras <robert.chiras@nxp.com> wrote:
+> +       case DRM_FORMAT_BGR565: /* BG16 */
+> +               if (mxsfb->devdata->ipversion < 4)
+> +                       goto err;
+> +               writel(CTRL2_ODD_LINE_PATTERN(CTRL2_LINE_PATTERN_BGR) |
+> +                       CTRL2_EVEN_LINE_PATTERN(CTRL2_LINE_PATTERN_BGR),
+> +                       mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
+> +               /* Fall through */
+> +       case DRM_FORMAT_RGB565: /* RG16 */
+> +               ctrl |= CTRL_SET_WORD_LENGTH(0);
+> +               ctrl &= ~CTRL_DF16;
+> +               ctrl1 |= CTRL1_SET_BYTE_PACKAGING(0xf);
+> +               break;
 
-Contact my secretary immediately you receive this mail at her contact
-information below and negotiate with her the best and safest way you
-want her to send the bank draft to you. Name: Mrs. Joy Max, Call +229
-66836241,  Email Address: mrsjoymax229@outlook.fr, Once again, thank
-you very much and remain blessed with your family.Let me know as soon
-as you receive your bank draft.
+For non-BGR formats, do you need to write RGB line-pattern back to the
+CTRL2 register? Otherwise, if you start with BGR565 then switch back
+to RGB565, presumably CTRL2 would still be programmed for BGR so you
+would display inverted channels.
 
-Best Regards,
+Same goes for all the other BGR/RGB format pairs below.
 
-Dr Frederic H Koute,
+Cheers,
+Daniel
