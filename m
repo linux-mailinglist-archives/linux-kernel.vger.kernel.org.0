@@ -2,89 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 914C78DD94
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:57:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1766D8DD9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 21:03:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728667AbfHNS4x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:56:53 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40245 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727975AbfHNS4w (ORCPT
+        id S1728576AbfHNTDC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 15:03:02 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46950 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728423AbfHNTDC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:56:52 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z64so844183ywe.7;
-        Wed, 14 Aug 2019 11:56:52 -0700 (PDT)
+        Wed, 14 Aug 2019 15:03:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w3so16716pgt.13
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 12:03:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KQB7DJ5gi9ev5acbUL1SU1wt21V4tJv7L8uzpgjR+Fk=;
+        b=sqQAnnHwlV7gMa7y3F9D4GehL3IsYU3YCA+AjkPswRUFoMM6rA/5HNjrv7BH+r3Byt
+         pxxH3BPx+lEJE162QXuBnQ9n7k/hJo3h5j7GwFzgQA5aCbqnopDbtBAG1hiiL0qeS0nU
+         OWbhXJ3qxPbxueBp5T23VPZm4lRjeU+/Pj58jqRtPE2bHnB5+UoysY61CXN7q9Q84Xn5
+         O3klIOZTUGju5bBNsTn9lBLcTirktH9tIEg4G/TwxuY01uQ3gUdC3m0u/+vgdF7DD5Cv
+         iXGJD/xUVNoFB4NxTY2VdPgIPqhk/hlZXegdkHy/nIIVB30H9WW2KL4Fpcc1JSZlAhgp
+         h5EA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qThyM3uosTzdaiq3sOMT9s9AE6tgP51TOvbLYoMxBkY=;
-        b=TbZv6Ye+WPWkIAB76pfDf7yBFn1yByBxmyo5pglaXHidIntg+uYoXbjD0JyYJe0Od+
-         8LijEeQQs04Vr7oaxaBsknB9vSJLl/0hQkduUD+7/jwEZfes0hfhgfZGl6iCEgKK/rAc
-         4Qqdo44SJNcbFMpVLJokU1n/Zms3KpD5L7uPVc+9EGXCoC4oGMbCs1wWF2JBdxeqEjvQ
-         0CaDv2OZcyJ2ygkY0JWsDMocddmf66WVrpEsgRf8uedgZBheEUkt7V7od6KDgBCxwq5z
-         2DdkLNyYRkr2MokF0Ppki1MEEXTnYGRNNl4nwblqOhsZdtulBsKyjgArgx9a6gfcHj7M
-         3ybg==
-X-Gm-Message-State: APjAAAWo/lN8WwMbCz0vggeK6VrT+Yh/EmGfQPbzR2Ja+vNXgQmRNl+p
-        XFhpJm3PVjnWQFG6DeGVp/I=
-X-Google-Smtp-Source: APXvYqy6iF4tzSFsfEjnjvIojvYZv6hAuiEgy4pi2UVVJ0ghBS6yudgAnVal845gs4IB/CyVH87R2Q==
-X-Received: by 2002:a81:9b49:: with SMTP id s70mr511290ywg.51.1565809011860;
-        Wed, 14 Aug 2019 11:56:51 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id c123sm155732ywf.25.2019.08.14.11.56.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 14 Aug 2019 11:56:50 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-usb@vger.kernel.org (open list:USB NETWORKING DRIVERS),
-        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] net: kalmia: fix memory leaks
-Date:   Wed, 14 Aug 2019 13:56:43 -0500
-Message-Id: <1565809005-8437-1-git-send-email-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KQB7DJ5gi9ev5acbUL1SU1wt21V4tJv7L8uzpgjR+Fk=;
+        b=Qbv1aOktlidat1VN6QgK0XEQhDEfBoq//76qY0rwGRVrcgJY3twT0UOIqOBgH4nLq7
+         GWduCjiREq8sAsD/QidARNHAzSzHENVwy2rDY1eZcqs5/miTXJuK+NpAs+oLQrp9Y6Hq
+         V3biNqBsIKkFBUGjtC4NxwVeWekqwhA4+7B/L8+MkKVWMZATcqYf6Crei1WADCFRVw4s
+         2A38I34KSwkQ/6yz/UvMNivGlf56LwELWVhTHM0VfYqwdVhNgiBaEmnsf3zn5lOBO1H4
+         SqtH2qAxgPYYh/f0Lgl+Q7qgza6E04OZdcTDCNg718Qj2dnJTBfkco+kWFiwFJRppWhh
+         efjg==
+X-Gm-Message-State: APjAAAXFPPUMxdFCpawQRrI4z17cXKj2htIXr2n+/xEKHGFtbyU7CWKo
+        zLA9Z68ycwnKTriWWKMTLnTD6A==
+X-Google-Smtp-Source: APXvYqz0jLMvYq9Khrkh4Ax5B5T9eielKEyuOLTtZaGXi9oZ1u5iqi5KfUNees6Jp/Evu+PAcUnqEw==
+X-Received: by 2002:a17:90b:8c1:: with SMTP id ds1mr1155095pjb.114.1565809380889;
+        Wed, 14 Aug 2019 12:03:00 -0700 (PDT)
+Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id x1sm471919pjo.4.2019.08.14.12.02.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 12:02:59 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 12:02:57 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        linux-arm-msm@vger.kernel.org, sibis@codeaurora.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 01/22] arm64: dts: qcom: sm8150: add base dts file
+Message-ID: <20190814190257.GI6167@minitux>
+References: <20190814125012.8700-1-vkoul@kernel.org>
+ <20190814125012.8700-2-vkoul@kernel.org>
+ <20190814165855.098FD2063F@mail.kernel.org>
+ <20190814174439.GE6167@minitux>
+ <20190814183552.5FF062133F@mail.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814183552.5FF062133F@mail.kernel.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kalmia_init_and_get_ethernet_addr(), 'usb_buf' is allocated through
-kmalloc(). In the following execution, if the 'status' returned by
-kalmia_send_init_packet() is not 0, 'usb_buf' is not deallocated, leading
-to memory leaks. To fix this issue, add the 'out' label to free 'usb_buf'.
+On Wed 14 Aug 11:35 PDT 2019, Stephen Boyd wrote:
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- drivers/net/usb/kalmia.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+> Quoting Bjorn Andersson (2019-08-14 10:44:39)
+> > On Wed 14 Aug 09:58 PDT 2019, Stephen Boyd wrote:
+> > 
+> > > Quoting Vinod Koul (2019-08-14 05:49:51)
+> > > > diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > [..]
+> > > > +       clocks {
+> > > > +               xo_board: xo-board {
+> > > > +                       compatible = "fixed-clock";
+> > > > +                       #clock-cells = <0>;
+> > > > +                       clock-frequency = <19200000>;
+> > > 
+> > > Is it 19.2 or 38.4 MHz? It seems like lately there are dividers, but I
+> > > guess it doesn't really matter in the end.
+> > > 
+> > 
+> > As with previous platforms, the board's XO feeds the PMIC at 38.4MHz and
+> > the SoC's CXO_IN pin (i.e. bi_tcxo) is fed from the PMIC's LNBBCLK1,
+> > which is ticking at 19.2MHz.
+> > 
+> > [..]
+> > > > +               gcc: clock-controller@100000 {
+> > > > +                       compatible = "qcom,gcc-sm8150";
+> > > > +                       reg = <0x00100000 0x1f0000>;
+> > > > +                       #clock-cells = <1>;
+> > > > +                       #reset-cells = <1>;
+> > > > +                       #power-domain-cells = <1>;
+> > > > +                       clock-names = "bi_tcxo", "sleep_clk";
+> > > > +                       clocks = <&xo_board>, <&sleep_clk>;
+> > 
+> > So this first one should actually be <&rpmhcc LNBBCLK1>.
+> 
+> Hrmm LNBBCLK1 doesn't make any sense to me. That's a buffer that is
+> technically the net connected to the XO pin on the Soc, but it isn't
+> really supposed to be used by anything from what I recall. Last time I
+> tried to use the buffers the RPM team told me I was using the wrong
+> resource and I should just use the XO resource instead. Doesn't RPMh
+> expose the other "XO" resource that is supposed to prevent XO shutdown?
 
-diff --git a/drivers/net/usb/kalmia.c b/drivers/net/usb/kalmia.c
-index d62b670..fc5895f 100644
---- a/drivers/net/usb/kalmia.c
-+++ b/drivers/net/usb/kalmia.c
-@@ -113,16 +113,16 @@ kalmia_init_and_get_ethernet_addr(struct usbnet *dev, u8 *ethernet_addr)
- 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_1),
- 					 usb_buf, 24);
- 	if (status != 0)
--		return status;
-+		goto out;
- 
- 	memcpy(usb_buf, init_msg_2, 12);
- 	status = kalmia_send_init_packet(dev, usb_buf, ARRAY_SIZE(init_msg_2),
- 					 usb_buf, 28);
- 	if (status != 0)
--		return status;
-+		goto out;
- 
- 	memcpy(ethernet_addr, usb_buf + 10, ETH_ALEN);
--
-+out:
- 	kfree(usb_buf);
- 	return status;
- }
--- 
-2.7.4
+So while it's the LNBBCLK1 pin we're referring to, it's the RPMH_CXO_CLK
+which has some level of magic involved that we should actually use in
+the software.
 
+> Just mark it critical for now so that XO isn't turned off at runtime.
+> 
+> > 
+> > But while we now should handle this gracefully in the clock driver I
+> > think we still have problems with the cascading probe deferral that
+> > follows - last time I tried to do this the serial driver probe deferred
+> > past user space initialization and the system crashed as we didn't have
+> > a /dev/console.
+> 
+> Does the serial driver probe eventually? Maybe you can run agetty when
+> the device appears based on some uevent for /dev/console. Or we have a
+> bug where /dev/console is created by devtmpfs when there isn't actually
+> a console?
+> 
+
+I don't remember the exact outcome, but presume it would depend on the
+implementation details of early user space (e.g. my regression test
+suite would not deal with this).
+
+> > 
+> > 
+> > So, I think we should s/xo_board/lnbbclk1/ (at 19.2MHz) to make it
+> > represent the schematics and then once we have rpmhcc and validated that
+> > the system handles this gracefully we can switch it out.
+> > 
+> 
+> Sure, some sort of approach that switches it later on is fine, just want
+> to make sure that the board clk frequency is accurately reflected in the
+> DT.
+> 
+
+We introduced the xo_board fixed clock to have a parent of gcc, but
+given that there is a clock named "XO" and it is not the clock being
+connected to gcc, nor is it ticking at the right frequency I think it
+should at least have a different name.
+
+Regards,
+Bjorn
