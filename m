@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DE428DFD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:31:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 77B238DFE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729882AbfHNVb3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 17:31:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39205 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729051AbfHNVbZ (ORCPT
+        id S1730017AbfHNVbi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 17:31:38 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54181 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729605AbfHNVb0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 17:31:25 -0400
-Received: by mail-wr1-f68.google.com with SMTP id t16so452021wra.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:31:24 -0700 (PDT)
+        Wed, 14 Aug 2019 17:31:26 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 10so473684wmp.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:31:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=OnqmTFBl6UH0AjitgL4NS1jwiF8ciOoeoor1qBPQFQM=;
-        b=XMdTD7r37Y7J5eKnWaRCP6ZnoGmaZA21CA61/9AFa9vmyiJjQn+fiB3BvNVcJDRHNP
-         eiV4mm7rkD324+YCRx2G3fmry9tfm1KpA1P4X8jXBSQCGP1TIbFPnBBxVQfR2TrzY8ds
-         J4TwN8+gi8G3q8rcfjFiSZt0HFQi5H8LJqk38t7+SRW85G7CqWyP94AhOhho/DkEpycp
-         44bp+gUDd3AL9LEgMZ5zc0rnFanSzdSqJIwfQ6wFQlOgmmkRgch0NxQcslxrL9rZytmM
-         eI1S40ErZ4hQhnoE/MwYDrB1GviKsPSbhqA51xdpexCCCbx9jywA3+OCMm9xxkNsZ/Nr
-         Tk4A==
-X-Gm-Message-State: APjAAAUTNiAsPLAzwhijFAEdn7i+BQFnAFE+ZLZNXbnCPk9TuAQBWSoj
-        trU6V90+B9TwrfCN7oRuBsC4zpi5V0g=
-X-Google-Smtp-Source: APXvYqzSVT+o3wy2DXl2BjBaEcVKdDbY4rCB1w2Yu2iz4eCbRD6vvvxvJe0FB/RLEmTeX7aqPb9o/w==
-X-Received: by 2002:adf:ce05:: with SMTP id p5mr1630518wrn.197.1565818283445;
-        Wed, 14 Aug 2019 14:31:23 -0700 (PDT)
+        bh=XYZjU1RTDpOkzFDReluCSDSSmZ91Zx0fRKtSGoSAbAQ=;
+        b=cHXxVf9wFkApCgc6eo+MXMdcPR4IbRT3UJsd95e/mTBs6CNGuaebDgjYsRrrzGoZb3
+         5yNkZQP8UA5o29Kno35ja1G49+zGBc6uUGq+4km6HNivVqwBdtU6UVvvAOldYhJJn/u/
+         nKnmzECK5aZsHbMfSn6yPbPNy6UaB86XfIA+i85/rZKZZW0yGmUSAULIfFCzTrVdkunr
+         h20Pf2JTEtW/kCjxQcWMl3ROT3cgM+tiv+VX+7yuQI2etfAwvm2F/J+Hi4bs5pRWlB5k
+         iwIzkEQpc6jQ3J6kJuIF44K4uINGnLH2cIR3wamLuxZYIwIeLANcSVp37PRLC2XOnJF6
+         EC+A==
+X-Gm-Message-State: APjAAAWJFghgTAIR3RL+3BLmAusbPdd4pahVCWj9JoabW37Vx4Y2GgKb
+        o5ma1BwAM7rkUWnpZWREvANIF8iR9EM=
+X-Google-Smtp-Source: APXvYqzNvd+OhowbMV5UPI7p1DFhfCV5EFIScUQVzbZ3KQZm996fQEnm0XDNrUvLBitBCCdEL8ugqA==
+X-Received: by 2002:a7b:c954:: with SMTP id i20mr884035wml.169.1565818284752;
+        Wed, 14 Aug 2019 14:31:24 -0700 (PDT)
 Received: from kherbst.pingu.com ([2a02:8108:453f:d1a0:28d1:9d88:57f6:f95b])
-        by smtp.gmail.com with ESMTPSA id r17sm2095134wrg.93.2019.08.14.14.31.22
+        by smtp.gmail.com with ESMTPSA id r17sm2095134wrg.93.2019.08.14.14.31.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 14:31:22 -0700 (PDT)
+        Wed, 14 Aug 2019 14:31:24 -0700 (PDT)
 From:   Karol Herbst <kherbst@redhat.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
@@ -42,9 +42,9 @@ Cc:     Karol Herbst <kherbst@redhat.com>,
         "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
         Dave Airlie <airlied@redhat.com>,
         Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>
-Subject: [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to enable dGPU direct output"
-Date:   Wed, 14 Aug 2019 23:31:12 +0200
-Message-Id: <20190814213118.28473-2-kherbst@redhat.com>
+Subject: [PATCH 2/7] Revert "ACPI / OSI: Add OEM _OSI string to enable NVidia HDMI audio"
+Date:   Wed, 14 Aug 2019 23:31:13 +0200
+Message-Id: <20190814213118.28473-3-kherbst@redhat.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190814213118.28473-1-kherbst@redhat.com>
 References: <20190814213118.28473-1-kherbst@redhat.com>
@@ -55,18 +55,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit 28586a51eea666d5531bcaef2f68e4abbd87242c.
+This reverts commit 887532ca7ca59fcf0547a79211756791128030a3.
 
-The original commit message didn't even make sense. AMD _does_ support it and
-it works with Nouveau as well.
+We have a better solution for this: b516ea586d717
 
-Also what was the issue being solved here? No references to any bugs and not
-even explaining any issue at all isn't the way we do things.
-
-And even if it means a muxed design, then the fix is to make it work inside the
-driver, not adding some hacky workaround through ACPI tricks.
-
-And what out of tree drivers do or do not support we don't care one bit anyway.
+And same as with the last commit: "NVidia Linux driver" that's Nouveau, any
+out of tree driver does _not_ matter. And with Nouveau all of this works even
+though it required a proper fix first, but we have that now.
 
 Signed-off-by: Karol Herbst <kherbst@redhat.com>
 CC: Alex Hung <alex.hung@canonical.com>
@@ -75,24 +70,25 @@ CC: Dave Airlie <airlied@redhat.com>
 CC: Lyude Paul <lyude@redhat.com>
 CC: Ben Skeggs <bskeggs@redhat.com>
 ---
- drivers/acpi/osi.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/acpi/osi.c | 8 --------
+ 1 file changed, 8 deletions(-)
 
 diff --git a/drivers/acpi/osi.c b/drivers/acpi/osi.c
-index bec0bebc7f52..9b20ac4d79a0 100644
+index 9b20ac4d79a0..56cc95b6b724 100644
 --- a/drivers/acpi/osi.c
 +++ b/drivers/acpi/osi.c
-@@ -61,13 +61,6 @@ osi_setup_entries[OSI_STRING_ENTRIES_MAX] __initdata = {
- 	 * a BIOS workaround.
+@@ -53,14 +53,6 @@ osi_setup_entries[OSI_STRING_ENTRIES_MAX] __initdata = {
+ 	 * be removed if both new and old graphics cards are supported.
  	 */
- 	{"Linux-Lenovo-NV-HDMI-Audio", true},
+ 	{"Linux-Dell-Video", true},
 -	/*
--	 * Linux-HPI-Hybrid-Graphics is used by BIOS to enable dGPU to
--	 * output video directly to external monitors on HP Inc. mobile
--	 * workstations as Nvidia and AMD VGA drivers provide limited
--	 * hybrid graphics supports.
+-	 * Linux-Lenovo-NV-HDMI-Audio is used by BIOS to power on NVidia's HDMI
+-	 * audio device which is turned off for power-saving in Windows OS.
+-	 * This power management feature observed on some Lenovo Thinkpad
+-	 * systems which will not be able to output audio via HDMI without
+-	 * a BIOS workaround.
 -	 */
--	{"Linux-HPI-Hybrid-Graphics", true},
+-	{"Linux-Lenovo-NV-HDMI-Audio", true},
  };
  
  static u32 acpi_osi_handler(acpi_string interface, u32 supported)
