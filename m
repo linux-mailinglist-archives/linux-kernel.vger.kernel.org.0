@@ -2,42 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 893B98DB09
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C8BF8DB95
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729378AbfHNRIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58526 "EHLO mail.kernel.org"
+        id S1729554AbfHNR0X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:26:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726585AbfHNRI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:28 -0400
+        id S1728741AbfHNREu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:04:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1C8E2084D;
-        Wed, 14 Aug 2019 17:08:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDCE9214DA;
+        Wed, 14 Aug 2019 17:04:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802508;
-        bh=qwsffHWW0eI3fbDTxJwbQQuhHJQ4PAHCk58eKDJhZ28=;
+        s=default; t=1565802289;
+        bh=pj+wkDPVO5SjIcDRmC1kkJGApAvAt413xZlwsZDQK9w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=THtjMvoJhSjdr4N1AO0xmN2pLIaXgi3sCkdVFjj4D+lAIof/czHqboC/ydyct28Pe
-         LNJdduz9o9YGk/ZneNb3AA3AjMyuoXNOR7asZGXazbwSu6YMUguiq2POmz9w8MCHeo
-         EOw2YvoEKVlXVQOyFrBHzFv2D0y9KeFPC0E0gppU=
+        b=15SCLeI1CrmW9gfhkkjyGwejN/oJCc+ZY6WD2HftPfyTEeCHyuIqRZwTR0eVl2i0c
+         yE/1bJs1Gef7mfc96idBiwYKaTHe3rpn630uQX7xkGES/ftLRvYW6SF4UJbmAMNYBE
+         mh+o3fxOanOvBwWai/8ktg0orFXJ22B2nQXmH1oI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>,
-        Stable@vger.kernel.org,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: [PATCH 4.19 01/91] iio: cros_ec_accel_legacy: Fix incorrect channel setting
+        stable@vger.kernel.org, Tai Man <taiman.wong@amd.com>,
+        Charlene Liu <Charlene.Liu@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 068/144] drm/amd/display: use encoders engine id to find matched free audio device
 Date:   Wed, 14 Aug 2019 19:00:24 +0200
-Message-Id: <20190814165749.035589218@linuxfoundation.org>
+Message-Id: <20190814165802.690615448@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
-X-stable: review
-X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -46,31 +46,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gwendal Grignou <gwendal@chromium.org>
+[ Upstream commit 74eda776d7a4e69ec7aa1ce30a87636f14220fbb ]
 
-commit 6cdff99c9f7d7d28b87cf05dd464f7c7736332ae upstream.
+[Why]
+On some platforms, the encoder id 3 is not populated. So the encoders
+are not stored in right order as index (id: 0, 1, 2, 4, 5) at pool. This
+would cause encoders id 4 & id 5 to fail when finding corresponding
+audio device, defaulting to the first available audio device. As result,
+we cannot stream audio into two DP ports with encoders id 4 & id 5.
 
-INFO_SCALE is set both for each channel and all channels.
-iio is using all channel setting, so the error was not user visible.
+[How]
+It need to create enough audio device objects (0 - 5) to perform matching.
+Then use encoder engine id to find matched audio device.
 
-Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
-Cc: <Stable@vger.kernel.org>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tai Man <taiman.wong@amd.com>
+Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/accel/cros_ec_accel_legacy.c |    1 -
- 1 file changed, 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/iio/accel/cros_ec_accel_legacy.c
-+++ b/drivers/iio/accel/cros_ec_accel_legacy.c
-@@ -328,7 +328,6 @@ static const struct iio_chan_spec_ext_in
- 		.modified = 1,					        \
- 		.info_mask_separate =					\
- 			BIT(IIO_CHAN_INFO_RAW) |			\
--			BIT(IIO_CHAN_INFO_SCALE) |			\
- 			BIT(IIO_CHAN_INFO_CALIBBIAS),			\
- 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SCALE),	\
- 		.ext_info = cros_ec_accel_legacy_ext_info,		\
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+index 12142d13f22f2..6ad7b54812f1c 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
+@@ -254,7 +254,7 @@ bool resource_construct(
+ 		 * PORT_CONNECTIVITY == 1 (as instructed by HW team).
+ 		 */
+ 		update_num_audio(&straps, &num_audio, &pool->audio_support);
+-		for (i = 0; i < pool->pipe_count && i < num_audio; i++) {
++		for (i = 0; i < caps->num_audio; i++) {
+ 			struct audio *aud = create_funcs->create_audio(ctx, i);
+ 
+ 			if (aud == NULL) {
+@@ -1702,6 +1702,12 @@ static struct audio *find_first_free_audio(
+ 			return pool->audios[i];
+ 		}
+ 	}
++
++    /* use engine id to find free audio */
++	if ((id < pool->audio_count) && (res_ctx->is_audio_acquired[id] == false)) {
++		return pool->audios[id];
++	}
++
+ 	/*not found the matching one, first come first serve*/
+ 	for (i = 0; i < pool->audio_count; i++) {
+ 		if (res_ctx->is_audio_acquired[i] == false) {
+-- 
+2.20.1
+
 
 
