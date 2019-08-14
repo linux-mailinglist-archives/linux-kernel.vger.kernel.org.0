@@ -2,162 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 590038C4ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 01:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1B38C4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 02:06:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726637AbfHMXyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 19:54:44 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:52144 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726155AbfHMXyn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 19:54:43 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7DNs0ej159246;
-        Tue, 13 Aug 2019 23:54:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=8uoxkmua1OS2X8xhxw5mu7ScJfwZNdN5PSdmlkbyv8g=;
- b=C/hffB2/CGhrbY+ybbD2RdOJshB9uPQiYKhfH3UFDwszzYTQ66/GGB6XygmPp4PIwbVx
- bwHxOm4r/8KGxtRF8fItyF+Jy3nnc3Y29khBpxZlHY1GpfBLlQBOg85UTcwv1sHj+qSx
- azxMUtwbXSZWoJY/+gqDW5xJVuA04mg/gY2bOqdVedOjwV3swFgnyqGx4q37R476ZRTA
- MSiDd0TjLE39DhY4aQFKpsO988HPK2Nunhrx13KDNSSdYCLR5847XoABJDa4mLMY4atA
- 9kN4JZoJ6NtmGzbYtVv7dn79wantwW0ksPQalJ4VxXYiUfkmTum5rtCNjMt7Ula7zTkT lw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by userp2130.oracle.com with ESMTP id 2u9nbthcfy-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 23:54:37 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7DNqqOF165505;
-        Tue, 13 Aug 2019 23:54:36 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3030.oracle.com with ESMTP id 2ubwrgk88d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Aug 2019 23:54:36 +0000
-Received: from abhmp0007.oracle.com (abhmp0007.oracle.com [141.146.116.13])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7DNsZpC025046;
-        Tue, 13 Aug 2019 23:54:35 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Aug 2019 16:54:35 -0700
-Subject: Re: [RFC PATCH v2 4/5] hugetlb_cgroup: Add accounting for shared
- mappings
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     shuah@kernel.org, rientjes@google.com, shakeelb@google.com,
-        gthelen@google.com, akpm@linux-foundation.org,
-        khalid.aziz@oracle.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20190808231340.53601-1-almasrymina@google.com>
- <20190808231340.53601-5-almasrymina@google.com>
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-Message-ID: <47cfc50d-bea3-0247-247e-888d2942f134@oracle.com>
-Date:   Tue, 13 Aug 2019 16:54:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1726747AbfHNAG0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 20:06:26 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59556 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726102AbfHNAGZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 20:06:25 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id B7E88ACC6;
+        Wed, 14 Aug 2019 00:06:23 +0000 (UTC)
+Date:   Tue, 13 Aug 2019 17:06:16 -0700
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Michel Lespinasse <walken@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        David Howells <dhowells@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/3] augmented rbtree: add new
+ RB_DECLARE_CALLBACKS_MAX macro
+Message-ID: <20190814000616.sd4mxwsewhqqz6ra@linux-r8p5>
+References: <20190702075819.34787-1-walken@google.com>
+ <20190702075819.34787-3-walken@google.com>
+ <20190702160913.ptg4p2jyb6ih43hb@linux-r8p5>
+ <CANN689HVDJXKEwB80yPAVwvRwnV4HfiucQVAho=dupKM_iKozw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190808231340.53601-5-almasrymina@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9348 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908130227
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9348 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908130227
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CANN689HVDJXKEwB80yPAVwvRwnV4HfiucQVAho=dupKM_iKozw@mail.gmail.com>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/8/19 4:13 PM, Mina Almasry wrote:
-> For shared mappings, the pointer to the hugetlb_cgroup to uncharge lives
-> in the resv_map entries, in file_region->reservation_counter.
-> 
-> When a file_region entry is added to the resv_map via region_add, we
-> also charge the appropriate hugetlb_cgroup and put the pointer to that
-> in file_region->reservation_counter. This is slightly delicate since we
-> need to not modify the resv_map until we know that charging the
-> reservation has succeeded. If charging doesn't succeed, we report the
-> error to the caller, so that the kernel fails the reservation.
+On Tue, 02 Jul 2019, Michel Lespinasse wrote:
+>Ehhh, I have my own list of gripes about interval tree (I'm
+>responsible for some of these too):
 
-I wish we did not need to modify these region_() routines as they are
-already difficult to understand.  However, I see no other way with the
-desired semantics.
+Sorry just getting back to this.
 
-> On region_del, which is when the hugetlb memory is unreserved, we delete
-> the file_region entry in the resv_map, but also uncharge the
-> file_region->reservation_counter.
-> 
-> ---
->  mm/hugetlb.c | 208 +++++++++++++++++++++++++++++++++++++++++----------
->  1 file changed, 170 insertions(+), 38 deletions(-)
-> 
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 235996aef6618..d76e3137110ab 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -242,8 +242,72 @@ struct file_region {
->  	struct list_head link;
->  	long from;
->  	long to;
-> +#ifdef CONFIG_CGROUP_HUGETLB
-> +	/*
-> +	 * On shared mappings, each reserved region appears as a struct
-> +	 * file_region in resv_map. These fields hold the info needed to
-> +	 * uncharge each reservation.
-> +	 */
-> +	struct page_counter *reservation_counter;
-> +	unsigned long pages_per_hpage;
-> +#endif
->  };
-> 
-> +/* Must be called with resv->lock held. Calling this with dry_run == true will
-> + * count the number of pages added but will not modify the linked list.
-> + */
-> +static long consume_regions_we_overlap_with(struct file_region *rg,
-> +		struct list_head *head, long f, long *t,
-> +		struct hugetlb_cgroup *h_cg,
-> +		struct hstate *h,
-> +		bool dry_run)
-> +{
-> +	long add = 0;
-> +	struct file_region *trg = NULL, *nrg = NULL;
-> +
-> +	/* Consume any regions we now overlap with. */
-> +	nrg = rg;
-> +	list_for_each_entry_safe(rg, trg, rg->link.prev, link) {
-> +		if (&rg->link == head)
-> +			break;
-> +		if (rg->from > *t)
-> +			break;
-> +
-> +		/* If this area reaches higher then extend our area to
-> +		 * include it completely.  If this is not the first area
-> +		 * which we intend to reuse, free it.
-> +		 */
-> +		if (rg->to > *t)
-> +			*t = rg->to;
-> +		if (rg != nrg) {
-> +			/* Decrement return value by the deleted range.
-> +			 * Another range will span this area so that by
-> +			 * end of routine add will be >= zero
-> +			 */
-> +			add -= (rg->to - rg->from);
-> +			if (!dry_run) {
-> +				list_del(&rg->link);
-> +				kfree(rg);
+>
+>- The majority of interval tree users (though either the
+>interval_tree.h or the interval_tree_generic.h API) do not store any
+>overlapping intervals, and as such they really don't have any reason
+>to use an augmented rbtree in the first place. This seems to be true
+>for at least drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c,
+>drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c, drivers/gpu/drm/drm_mm.c,
+>drivers/gpu/drm/radeon/radeon_mn.c,
+>drivers/infiniband/hw/usnic/usnic_uiom_interval_tree.c, and probably
+>(not 100% sure) also drivers/infiniband/hw/hfi1/mmu_rb.c and
+>drivers/vhost/vhost.c. I think the reason they do that is because they
+>like to have the auto-generated insert / remove / iter functions
+>rather than writing their own as they would have to do through the
+>base rbtree API. Not necessarily a huge problem but it is annoying
+>when working on inteval tree to consider that the data structure is
+>not optimal for most of its users.
 
-Is it possible that the region struct we are deleting pointed to
-a reservation_counter?  Perhaps even for another cgroup?
-Just concerned with the way regions are coalesced that we may be
-deleting counters.
+I think the patch I sent earlier will add to your unhappiness.
 
--- 
-Mike Kravetz
+>
+>- The intervals are represented as [start, last], where most
+>everything else in the kernel uses [start, end[ (with last == end -
+>1). The reason it was done that way was for stabbing queries - I
+>thought these would be nicer to represent as a [stab, stab] interval
+>rather than [stab, stab+1[. But, things didn't turn out that way
+>because of huge pages, and we end up with stabbing queries in the
+>[stab, stab + page_size - 1] format, at which point we could just as
+>easily go for [stab, stab + page_size[ representation. Having looked
+>into it, my understanding is that *all* current users of the interval
+>tree API would be better served if the intervals were represented as
+>[start, end[ like everywhere else in the kernel.
+>
+>- interval_tree_generic.h refers to interval_tree.h as being the
+>generic one. I think this is quite confusing. To me
+>interval_tree_generic is the generic implementation (it works with any
+>scalar ITTYPE), and interval_tree.h is the specialized version (it
+>works with unsigned long keys only). Fun fact, interval_tree.[c,h] was
+>initially only meant as sample / test code - I thought everyone would
+>use the generic version. Not a big deal, it's probably better for
+>everyone to use the specialized version when applicable (unless they
+>don't really need overlapping intervals in the first place, but that's
+>a separate gripe).
+>
+>- I don't like that interval tree API forces rb_leftmost caching on
+>its users. I'm not sure what was the use case that motivated it, but I
+>don' think it's a relevant optimization for most users - I can only
+>see a benefit if people are frequently calling the iter_first function
+>with a search interval that is to the left of the leftmost entry, and
+>that doesn't seem to be relevant to the general case (in the general
+>case, maintaining leftmost has a O(1) cost and its benefit is only
+>expected to show up in 1/N cases, ....)
+
+Right, so this was done originally for optimizing range locking which
+needed to do the iter_first a lot. fwiw pat_rbtree tree could also use
+it before insertion. While I did not examine the other users of interval_tree,
+I considered it overall worthwhile having; it comes at pretty
+much no cost and the extra footprint has not been a problem so far for
+users.
+
+>
+>Going back to your specific pat_rbtree.c comment, I think using
+>interval trees could still work. The issue with end is the typical one
+>([start, last] vs [start, end[) which can be worked around by
+>adjusting the end by 1 (still hate having to do that though). The
+>issue with insertion order may possibly not matter, as
+>memtype_rb_check_conflict verifies that any overlapping ranges will
+>have the same configured memory type. So maybe the order doesn't
+>matter in the end ??? Not 100% sure about that one.
+
+I've sent out a patch.
+
+Thanks,
+Davidlohr
+
+
