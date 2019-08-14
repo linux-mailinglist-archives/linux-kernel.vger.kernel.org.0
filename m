@@ -2,111 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A6998CD21
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 98D588CD29
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:47:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726714AbfHNHpG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:45:06 -0400
-Received: from mout.gmx.net ([212.227.15.19]:50411 "EHLO mout.gmx.net"
+        id S1726825AbfHNHrR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:47:17 -0400
+Received: from mga09.intel.com ([134.134.136.24]:30572 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726365AbfHNHpF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:45:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1565768699;
-        bh=WaUwZB8urvVG948whRzXPedtOy9zLbWOaIvo4IOnSXM=;
-        h=X-UI-Sender-Class:Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=iKfT+qbsajQWRJXS6tU6c88gCLfCpVaMOPyIn/q+dhRRoGB3ckpCAe+rvRMkHFiNZ
-         H7x3ajCaNN9H+UMzI7x0hyiyMcQr+B+ClFmSFcl8weOqA4hUOMxlIW82lLvxhv14fT
-         VCCBo+3w+0YDZs6lgEYUoPVTUT/iw44YtfOAZMcw=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from longitude ([109.90.233.87]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LkOeR-1iYEAy1qeJ-00cOG6; Wed, 14
- Aug 2019 09:44:59 +0200
-Date:   Wed, 14 Aug 2019 09:44:40 +0200
-From:   Jonathan =?utf-8?Q?Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>, j.neuschaefer@gmx.net,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/32s: fix boot failure with DEBUG_PAGEALLOC
- without KASAN.
-Message-ID: <20190814074440.GI1966@latitude>
-References: <8c83a4e1237658ed1acfb9a9891048a15f9ca36b.1565760495.git.christophe.leroy@c-s.fr>
+        id S1725280AbfHNHrR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:47:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 00:47:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,384,1559545200"; 
+   d="scan'208";a="188041233"
+Received: from pipin.fi.intel.com ([10.237.72.175])
+  by orsmga002.jf.intel.com with ESMTP; 14 Aug 2019 00:47:14 -0700
+From:   Felipe Balbi <felipe.balbi@linux.intel.com>
+To:     Richard Cochran <richardcochran@gmail.com>
+Cc:     Christopher S Hall <christopher.s.hall@intel.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 1/2] PTP: introduce new versions of IOCTLs
+Date:   Wed, 14 Aug 2019 10:47:11 +0300
+Message-Id: <20190814074712.10684-1-felipe.balbi@linux.intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r5lq+205vWdkqwtk"
-Content-Disposition: inline
-In-Reply-To: <8c83a4e1237658ed1acfb9a9891048a15f9ca36b.1565760495.git.christophe.leroy@c-s.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Provags-ID: V03:K1:wyxn0Wc5J5kp5Z+GclnMvwK33OhK308I1mfB8ka5lZnfMn/D6zH
- OnscyqIweg5eunew0cYK9tcc4f7dpYIUnqxgeEHzRiPb1esRj0Pdd2stcDywDm99Wt3dCC8
- STyRXCyWwsUiua9/L3bdpnncYy0IBd9ekhjYkpQ565vzvueP23h7/ANK9ZmZueN2LoJkZKQ
- KXhndwDzT5ijM3nNFZB1A==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:neJsRt2cxfg=:Lc60XBE/kqWVVXTtFhg/2x
- t8msVasIPAzjntLkj0iTeR+N9bINS+Ww05k+ETai6T4ojeaRMQckXH6Zfq9oRuxlZIdilJoA7
- wgc5rETnsfUbTHCmua149cZSGz38ttjY99lIDzJ+61UC0QBUvYGXgGGNJLwxHx4BdoWC96dxn
- hJ8gZkj8MAiCkwN3HVJ9wJxODzceTK70g0A+/6JN+zhTJHdrTNDUFDYyljU7/3nxH6c9QjoaH
- 35pA6+XinF1PimCmXIr5sAApTFZNb/JeuCsSQLFqlCPBzc4spCCe/k83VpxUiBhUexWJEX3DT
- gO9IASUmJzPwgWcC/c4hdLQyzKijlhgIsaniNiWwdS3pVYWvnxVafy5LQxlI7lTZl5j3rkYbc
- oVIdWWOCbHemlADdW7f3B7k5KAPIOCnMxbAVAjYZldUJpM93ARWLuSja0yhHqfbLomx00Im2F
- c7edCfL3AAJ1yXPxHm9j2uu1/qU5Ud0XHYdpnqxSQeofW9QrjwWnBTZxah0Z/NRBNklWcXhmm
- KSZYDxHcL3by0E/Ejvq/XfP3mSmz81bNabYijwjTXvXmsvnp999wqShMvinVi8lH4iQKJO6QC
- pFvEO0ct29swJMMUq2CYmvF50w9NeuLU9RkhmkrA1r5HBwQbhHyRIG5nyCmkpwmXWa3omrhE4
- 5L865pjZrSOq2YpK/hc4fAPgoMwZdd1/xdqfSBK7BQBqqkoiEQz8F71/UZG2b4LAVSmJhQtNC
- xFQfyzZ3Q1gDJqfoyYAkY+EY9RK6NQ4QR8nEkPZDzvv5tRra0F3gCIVQo9hmOhizqogEAJnaI
- 515ZGAxp/oZqkqolkrXMxkaOKekLjW7d8EuZHE9QuHAmnjKHztSwP7xdTr0/UWwjp+B4vhAms
- bNF3vObH2PGMz/8Nh4Rh2QuE66k4lY1u386r5zMtS7CO8qr0/Ie5QYSZe6UA0afeQU95D+qmu
- dDoj8/k/2ksIpo+iw/kk0qZVk2oGJfb4ClTE6+LH4T92fEidzy4NkOV9AhXwvH2zhqQZYUsmD
- zFcCLurTw+/tx9Thk9EwOXnTAsjs6dQ+LI/wrQOiJavQdNlBQx1GtTzwMAuZPm9hcabLBFyoD
- vGlCl7cbwdAXClnx+9h8pqPM4NyJJLwmymOuLWrKXBYLwr/1hCuW8Vgqg==
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The current version of the IOCTL have a small problem which prevents us
+from extending the API by making use of reserved fields. In these new
+IOCTLs, we are now making sure that flags and rsv fields are zero which
+will allow us to extend the API in the future.
 
---r5lq+205vWdkqwtk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+---
+ drivers/ptp/ptp_chardev.c      | 58 ++++++++++++++++++++++++++++++++--
+ include/uapi/linux/ptp_clock.h | 12 +++++++
+ 2 files changed, 68 insertions(+), 2 deletions(-)
 
-On Wed, Aug 14, 2019 at 05:28:35AM +0000, Christophe Leroy wrote:
-> When KASAN is selected, the definitive hash table has to be
-> set up later, but there is already an early temporary one.
->=20
-> When KASAN is not selected, there is no early hash table,
-> so the setup of the definitive hash table cannot be delayed.
->=20
-> Reported-by: Jonathan Neuschafer <j.neuschaefer@gmx.net>
-> Fixes: 72f208c6a8f7 ("powerpc/32s: move hash code patching out of MMU_ini=
-t_hw()")
-> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> ---
+diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+index 18ffe449efdf..204212fc3f8c 100644
+--- a/drivers/ptp/ptp_chardev.c
++++ b/drivers/ptp/ptp_chardev.c
+@@ -123,9 +123,11 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 	struct timespec64 ts;
+ 	int enable, err = 0;
+ 
++	memset(&req, 0, sizeof(req));
+ 	switch (cmd) {
+ 
+ 	case PTP_CLOCK_GETCAPS:
++	case PTP_CLOCK_GETCAPS2:
+ 		memset(&caps, 0, sizeof(caps));
+ 		caps.max_adj = ptp->info->max_adj;
+ 		caps.n_alarm = ptp->info->n_alarm;
+@@ -139,11 +141,22 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_EXTTS_REQUEST:
++	case PTP_EXTTS_REQUEST2:
+ 		if (copy_from_user(&req.extts, (void __user *)arg,
+ 				   sizeof(req.extts))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((req.extts.flags || req.extts.rsv[0] || req.extts.rsv[1])
++			&& cmd == PTP_EXTTS_REQUEST2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_EXTTS_REQUEST) {
++			req.extts.flags = 0;
++			req.extts.rsv[0] = 0;
++			req.extts.rsv[1] = 0;
++		}
++			
+ 		if (req.extts.index >= ops->n_ext_ts) {
+ 			err = -EINVAL;
+ 			break;
+@@ -154,11 +167,24 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_PEROUT_REQUEST:
++	case PTP_PEROUT_REQUEST2:
+ 		if (copy_from_user(&req.perout, (void __user *)arg,
+ 				   sizeof(req.perout))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((req.perout.flags || req.perout.rsv[0] || req.perout.rsv[1]
++				|| req.perout.rsv[2] || req.perout.rsv[3])
++			&& cmd == PTP_PEROUT_REQUEST2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PEROUT_REQUEST) {
++			req.perout.flags = 0;
++			req.perout.rsv[0] = 0;
++			req.perout.rsv[1] = 0;
++			req.perout.rsv[2] = 0;
++			req.perout.rsv[3] = 0;
++		}
+ 		if (req.perout.index >= ops->n_per_out) {
+ 			err = -EINVAL;
+ 			break;
+@@ -169,6 +195,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_ENABLE_PPS:
++	case PTP_ENABLE_PPS2:
+ 		if (!capable(CAP_SYS_TIME))
+ 			return -EPERM;
+ 		req.type = PTP_CLK_REQ_PPS;
+@@ -177,6 +204,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET_PRECISE:
++	case PTP_SYS_OFFSET_PRECISE2:
+ 		if (!ptp->info->getcrosststamp) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -201,6 +229,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET_EXTENDED:
++	case PTP_SYS_OFFSET_EXTENDED2:
+ 		if (!ptp->info->gettimex64) {
+ 			err = -EOPNOTSUPP;
+ 			break;
+@@ -232,6 +261,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 		break;
+ 
+ 	case PTP_SYS_OFFSET:
++	case PTP_SYS_OFFSET2:
+ 		sysoff = memdup_user((void __user *)arg, sizeof(*sysoff));
+ 		if (IS_ERR(sysoff)) {
+ 			err = PTR_ERR(sysoff);
+@@ -265,11 +295,23 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 		break;
+ 
+-	case PTP_PIN_GETFUNC:
++	case PTP_PIN_GETFUNC2:
+ 		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4])
++			&& cmd == PTP_PIN_GETFUNC2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PIN_GETFUNC) {
++			pd.rsv[0] = 0;
++			pd.rsv[1] = 0;
++			pd.rsv[2] = 0;
++			pd.rsv[3] = 0;
++			pd.rsv[4] = 0;
++		}
+ 		pin_index = pd.index;
+ 		if (pin_index >= ops->n_pins) {
+ 			err = -EINVAL;
+@@ -284,11 +326,23 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+ 			err = -EFAULT;
+ 		break;
+ 
+-	case PTP_PIN_SETFUNC:
++	case PTP_PIN_SETFUNC2:
+ 		if (copy_from_user(&pd, (void __user *)arg, sizeof(pd))) {
+ 			err = -EFAULT;
+ 			break;
+ 		}
++		if ((pd.rsv[0] || pd.rsv[1] || pd.rsv[2]
++				|| pd.rsv[3] || pd.rsv[4])
++			&& cmd == PTP_PIN_SETFUNC2) {
++			err = -EINVAL;
++			break;
++		} else if (cmd == PTP_PIN_SETFUNC) {
++			pd.rsv[0] = 0;
++			pd.rsv[1] = 0;
++			pd.rsv[2] = 0;
++			pd.rsv[3] = 0;
++			pd.rsv[4] = 0;
++		}
+ 		pin_index = pd.index;
+ 		if (pin_index >= ops->n_pins) {
+ 			err = -EINVAL;
+diff --git a/include/uapi/linux/ptp_clock.h b/include/uapi/linux/ptp_clock.h
+index 1bc794ad957a..039cd62ec706 100644
+--- a/include/uapi/linux/ptp_clock.h
++++ b/include/uapi/linux/ptp_clock.h
+@@ -149,6 +149,18 @@ struct ptp_pin_desc {
+ #define PTP_SYS_OFFSET_EXTENDED \
+ 	_IOWR(PTP_CLK_MAGIC, 9, struct ptp_sys_offset_extended)
+ 
++#define PTP_CLOCK_GETCAPS2  _IOR(PTP_CLK_MAGIC, 10, struct ptp_clock_caps)
++#define PTP_EXTTS_REQUEST2  _IOW(PTP_CLK_MAGIC, 11, struct ptp_extts_request)
++#define PTP_PEROUT_REQUEST2 _IOW(PTP_CLK_MAGIC, 12, struct ptp_perout_request)
++#define PTP_ENABLE_PPS2     _IOW(PTP_CLK_MAGIC, 13, int)
++#define PTP_SYS_OFFSET2     _IOW(PTP_CLK_MAGIC, 14, struct ptp_sys_offset)
++#define PTP_PIN_GETFUNC2    _IOWR(PTP_CLK_MAGIC, 15, struct ptp_pin_desc)
++#define PTP_PIN_SETFUNC2    _IOW(PTP_CLK_MAGIC, 16, struct ptp_pin_desc)
++#define PTP_SYS_OFFSET_PRECISE2 \
++	_IOWR(PTP_CLK_MAGIC, 17, struct ptp_sys_offset_precise)
++#define PTP_SYS_OFFSET_EXTENDED2 \
++	_IOWR(PTP_CLK_MAGIC, 18, struct ptp_sys_offset_extended)
++
+ struct ptp_extts_event {
+ 	struct ptp_clock_time t; /* Time event occured. */
+ 	unsigned int index;      /* Which channel produced the event. */
+-- 
+2.22.0
 
-Thanks. This does fix the DEBUG_PAGEALLOC-without-KASAN case.
-
-Tested-by: Jonathan Neuschafer <j.neuschaefer@gmx.net>
-
---r5lq+205vWdkqwtk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEvHAHGBBjQPVy+qvDCDBEmo7zX9sFAl1Tu94ACgkQCDBEmo7z
-X9uE2BAAy8A3Rc4+Bt+NtsfU5ntpwFsT7xUp4RlfKnMWZwTDC8GBh2NqaBrPJ5Ob
-uMxgdv4pYpCB2JWQKEHerh7IWUUBE0BGyytakjrs5gSG5L1dIUNKO0x8tTv8Ew0Y
-+8pY+eizv4V/fUPKLhoINKRVLlwWlZQs3r2A6Nw/uFpsR4l+nWPT5XNjIirrdsJO
-afHYg52YyYpO/IhEI37+sGx0l94hY5y73twQs1nUc6MzEwFN+bp70PhbSHM1Bco1
-Nwlxd1gCO4ArMQMlzKs0wMxja9paup6ZvZul6CcaxpJiH1L6DFVVejGVTpv3Yhvk
-tw3yoAbfe3CywkqfBZFDuTanvkw3OS+ew1DD+3VcnclndyrB/OIwEohIEGC3XohD
-Y3cSmE5NFPQ+HKE7M8XaTuvo7jliY85GWbl86WalK9wn9lmDlqKchaELkxYkCOMY
-rf3oA3akchxEJgJygnlG30Y6r5FyrAMkePEq7ABmaFQatg0BnB/BKD0l+Bvxrisz
-cmt4WoU9PIqohSucLALSiYBFOfATqP90Lw0SRBWTAeWI4ZPH6b9fb7LzBjf4550h
-vZUHDq2tkk7LSXSxJZ8SJ300Ww/kFHWIZYzfrURyNIFKadx9HmBcP/Oa8ta95Ic1
-cV907yOmw8T4rKHfSC75px4kz0+CJcl+urmHmSHwInZUogRMadY=
-=pQtO
------END PGP SIGNATURE-----
-
---r5lq+205vWdkqwtk--
