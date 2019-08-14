@@ -2,114 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A9E178DF6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1235F8DF75
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:56:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729963AbfHNUzy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:55:54 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46946 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHNUzx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:55:53 -0400
-Received: by mail-pg1-f193.google.com with SMTP id w3so174625pgt.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:55:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=pwlvkrg2tJ0Bro/GpRuA46erbIfp3xuzVQb1TgQ90jg=;
-        b=eAwTx8ooH0jipghYvKyEFk5GMB64L0WzCZrF48NqNbnpF54V+WuuBJRjVMBELngO/6
-         OvTT1H1pcfdbXnQcF+ieAMeQquT0g+ltYsN117sRmygfviCMP60y70h+V0WaYe1djZs+
-         j+nXP204e4qBJDTTgR6/N0Ns0qs6+GjP/m0SI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition;
-        bh=pwlvkrg2tJ0Bro/GpRuA46erbIfp3xuzVQb1TgQ90jg=;
-        b=ol3H20M9QfSYVJpYb5tM7gclzJZoiVZl+/0IpKkhRrZ+DG9964S7/0oPE2dSjl1dvC
-         fq5PcbI+uNtsV5DVGCpnvsrFVAb7gnWSnJFLij3ZsbOLAtgz57LB6PTW5ZnImg0ive0N
-         6I3+cs/9I8mfmAblI7vNhGkzSrhvkP2grZuCTNF6XPINh+6wQ9mzcAOPbIJaJD3ge8Jz
-         DnTkzJ40dn30j28jxRh103rxAlfdCcr/KEhkHynZEuL1FCs8+scLUHzEuUGvudP93li+
-         qzVWDhgmxBneZyLIKGIqC39w8Y0HDA8tYaY+jCJVCegzxCxEtvPMe2/CYMbJzIVLE67q
-         UDNg==
-X-Gm-Message-State: APjAAAU87ti/n9pb3LA9QrVxmgIg3bUdxSWfLaMrncGpJz60pY/JU5LL
-        yEYCg6QQnl5UTKNV+qLlEb0Ffg==
-X-Google-Smtp-Source: APXvYqwXwlomESOpg3jhtRVFxa+UXC9e0pyZnP+bf5Qmew+EduUR6NiVJ7TSfy2DGQScbKXr7iJNCw==
-X-Received: by 2002:a63:ee08:: with SMTP id e8mr931440pgi.70.1565816152853;
-        Wed, 14 Aug 2019 13:55:52 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o129sm752307pfg.1.2019.08.14.13.55.51
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Aug 2019 13:55:52 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 13:55:50 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Will Deacon <will@kernel.org>
-Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        linux-kernel@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>
-Subject: [PATCH] efi/libstub/arm64: Report meaningful relocation errors
-Message-ID: <201908141353.043EF60B@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+        id S1730004AbfHNU4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:56:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37990 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728443AbfHNU4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 16:56:09 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFD9E20651;
+        Wed, 14 Aug 2019 20:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565816169;
+        bh=/47vrJUcPnKmlW6QGCuX38MeKmclx+u9kcMLBRaqbs4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pi6KnQedP5wNrNC9WqJkX3iCMipQiegirC5UJ923ryfPZa6rrSPNcrL5FvjWNzJXe
+         uEFWtt5gQsv862Iv7+Ak1EKlQ+6njDmiCuKvxWLGmoM9pJ6Yd4U9QopjJbdgxB9+VC
+         biiBIGKf53FEg32rV49NF8iWU1PTqPGbKbe77Sa0=
+Date:   Wed, 14 Aug 2019 13:56:08 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Arun KS <arunks@codeaurora.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 4/5] mm/memory_hotplug: Make sure the pfn is aligned
+ to the order when onlining
+Message-Id: <20190814135608.a449ca5a75cd700e077a8d23@linux-foundation.org>
+In-Reply-To: <20190814154109.3448-5-david@redhat.com>
+References: <20190814154109.3448-1-david@redhat.com>
+        <20190814154109.3448-5-david@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When UEFI booting, if allocate_pages() fails (either via KASLR or
-regular boot), efi_low_alloc() is used for fall back. If it, too, fails,
-it reports "Failed to relocate kernel". Then handle_kernel_image()
-reports the failure to its caller, which unhelpfully reports exactly
-the same string again:
+On Wed, 14 Aug 2019 17:41:08 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-EFI stub: ERROR: Failed to relocate kernel
-EFI stub: ERROR: Failed to relocate kernel
+> Commit a9cd410a3d29 ("mm/page_alloc.c: memory hotplug: free pages as higher
+> order") assumed that any PFN we get via memory resources is aligned to
+> to MAX_ORDER - 1, I am not convinced that is always true. Let's play safe,
+> check the alignment and fallback to single pages.
+> 
+> ...
+>
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -646,6 +646,9 @@ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+>  	 */
+>  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1ul << order) {
+>  		order = min(MAX_ORDER - 1, get_order(PFN_PHYS(end_pfn - pfn)));
+> +		/* __free_pages_core() wants pfns to be aligned to the order */
+> +		if (unlikely(!IS_ALIGNED(pfn, 1ul << order)))
+> +			order = 0;
+>  		(*online_page_callback)(pfn_to_page(pfn), order);
+>  	}
 
-While debugging linker errors in the UEFI code that created insane memory
-sizes that all the allocation attempts would fail at, this was a cause
-for confusion. Knowing each allocation had failed would have helped me
-isolate the issue sooner. To that end, this improves the error messages
-to detail which specific allocations have failed.
+We aren't sure if this occurs, but if it does, we silently handle it.
 
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- drivers/firmware/efi/libstub/arm64-stub.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/firmware/efi/libstub/arm64-stub.c b/drivers/firmware/efi/libstub/arm64-stub.c
-index 1550d244e996..24022f956e01 100644
---- a/drivers/firmware/efi/libstub/arm64-stub.c
-+++ b/drivers/firmware/efi/libstub/arm64-stub.c
-@@ -111,6 +111,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
- 		status = efi_random_alloc(sys_table_arg, *reserve_size,
- 					  MIN_KIMG_ALIGN, reserve_addr,
- 					  (u32)phys_seed);
-+		if (status != EFI_SUCCESS)
-+			pr_efi_err(sys_table_arg, "KASLR allocate_pages() failed\n");
- 
- 		*image_addr = *reserve_addr + offset;
- 	} else {
-@@ -135,6 +137,8 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
- 					EFI_LOADER_DATA,
- 					*reserve_size / EFI_PAGE_SIZE,
- 					(efi_physical_addr_t *)reserve_addr);
-+		if (status != EFI_SUCCESS)
-+			pr_efi_err(sys_table_arg, "regular allocate_pages() failed\n");
- 	}
- 
- 	if (status != EFI_SUCCESS) {
-@@ -143,7 +147,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table_arg,
- 				       MIN_KIMG_ALIGN, reserve_addr);
- 
- 		if (status != EFI_SUCCESS) {
--			pr_efi_err(sys_table_arg, "Failed to relocate kernel\n");
-+			pr_efi_err(sys_table_arg, "efi_low_alloc() failed\n");
- 			*reserve_size = 0;
- 			return status;
- 		}
--- 
-2.17.1
+It seems a reasonable defensive thing to do, but should we add a
+WARN_ON_ONCE() so that we get to find out about it?  If we get such a
+report then we can remove the WARN_ON_ONCE() and add an illuminating
+comment.
 
 
--- 
-Kees Cook
