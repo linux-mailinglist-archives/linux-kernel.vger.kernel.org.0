@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D30A8C8BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:33:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 869048C8B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:33:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729041AbfHNCdc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:33:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46228 "EHLO mail.kernel.org"
+        id S1729112AbfHNCdT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:33:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728676AbfHNCOQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:14:16 -0400
+        id S1728840AbfHNCPw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:15:52 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59CF020842;
-        Wed, 14 Aug 2019 02:14:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5471208C2;
+        Wed, 14 Aug 2019 02:15:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748856;
-        bh=wozasWgbjk3RDT7vvWL0bibciU5WOlPVahhGuZNQ2Y8=;
+        s=default; t=1565748952;
+        bh=mGv52XAZ3d+fAhOzX8m/aRfvStfvvZXLxF0cpc/IqOU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=niVcyaQBBh3zH76faNFvxu9fbPTgDrMSq6hxZDWw/PWqELhaQwvsEdP8r5JHNf25T
-         osi5ruRzHr+oDDeWNMBNnELslg1gKAsts9UGknCR+q2QToR+rBCn0H9hwU6/wM/ku0
-         +JE1mUIZM0O39WcybV6imloe2WI4Nx0Z1QFhq/Bk=
+        b=ObR0Ptin4aRTgOsnJGHVvvtOkm1YX9grqyPTz3DruwnW4TmKY8OfsqAKEAdzEiV3X
+         CXb+YMO97vj7u/iejK0rQsJq4Nq1V+5bRDXWCv5v0pwv5VhCiaqSxwox2r/dHyanIO
+         Ix0Q0FYA4pyAI7NwPpBnfk0DHxig907OqTPCyF+w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Likun Gao <Likun.Gao@amd.com>, Paul Gover <pmw.gover@yahoo.co.uk>,
-        Feifei Xu <Feifei.Xu@amd.com>,
-        Xiaojie Yuan <xiaojie.yuan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 5.2 105/123] drm/amdgpu: pin the csb buffer on hw init for gfx v8
-Date:   Tue, 13 Aug 2019 22:10:29 -0400
-Message-Id: <20190814021047.14828-105-sashal@kernel.org>
+Cc:     Gwendal Grignou <gwendal@chromium.org>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 02/68] iio: cros_ec_accel_legacy: Fix incorrect channel setting
+Date:   Tue, 13 Aug 2019 22:14:40 -0400
+Message-Id: <20190814021548.16001-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
-References: <20190814021047.14828-1-sashal@kernel.org>
+In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
+References: <20190814021548.16001-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -46,89 +43,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Likun Gao <Likun.Gao@amd.com>
+From: Gwendal Grignou <gwendal@chromium.org>
 
-[ Upstream commit 72cda9bb5e219aea0f2f62f56ae05198c59022a7 ]
+[ Upstream commit 6cdff99c9f7d7d28b87cf05dd464f7c7736332ae ]
 
-Without this pin, the csb buffer will be filled with inconsistent
-data after S3 resume. And that will causes gfx hang on gfxoff
-exit since this csb will be executed then.
+INFO_SCALE is set both for each channel and all channels.
+iio is using all channel setting, so the error was not user visible.
 
-Signed-off-by: Likun Gao <Likun.Gao@amd.com>
-Tested-by: Paul Gover <pmw.gover@yahoo.co.uk>
-Reviewed-by: Feifei Xu <Feifei.Xu@amd.com>
-Reviewed-by: Xiaojie Yuan <xiaojie.yuan@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c | 40 +++++++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
+ drivers/iio/accel/cros_ec_accel_legacy.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-index 02955e6e9dd9e..c21ef99cc590f 100644
---- a/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-+++ b/drivers/gpu/drm/amd/amdgpu/gfx_v8_0.c
-@@ -1317,6 +1317,39 @@ static int gfx_v8_0_rlc_init(struct amdgpu_device *adev)
- 	return 0;
- }
- 
-+static int gfx_v8_0_csb_vram_pin(struct amdgpu_device *adev)
-+{
-+	int r;
-+
-+	r = amdgpu_bo_reserve(adev->gfx.rlc.clear_state_obj, false);
-+	if (unlikely(r != 0))
-+		return r;
-+
-+	r = amdgpu_bo_pin(adev->gfx.rlc.clear_state_obj,
-+			AMDGPU_GEM_DOMAIN_VRAM);
-+	if (!r)
-+		adev->gfx.rlc.clear_state_gpu_addr =
-+			amdgpu_bo_gpu_offset(adev->gfx.rlc.clear_state_obj);
-+
-+	amdgpu_bo_unreserve(adev->gfx.rlc.clear_state_obj);
-+
-+	return r;
-+}
-+
-+static void gfx_v8_0_csb_vram_unpin(struct amdgpu_device *adev)
-+{
-+	int r;
-+
-+	if (!adev->gfx.rlc.clear_state_obj)
-+		return;
-+
-+	r = amdgpu_bo_reserve(adev->gfx.rlc.clear_state_obj, true);
-+	if (likely(r == 0)) {
-+		amdgpu_bo_unpin(adev->gfx.rlc.clear_state_obj);
-+		amdgpu_bo_unreserve(adev->gfx.rlc.clear_state_obj);
-+	}
-+}
-+
- static void gfx_v8_0_mec_fini(struct amdgpu_device *adev)
- {
- 	amdgpu_bo_free_kernel(&adev->gfx.mec.hpd_eop_obj, NULL, NULL);
-@@ -4777,6 +4810,10 @@ static int gfx_v8_0_hw_init(void *handle)
- 	gfx_v8_0_init_golden_registers(adev);
- 	gfx_v8_0_constants_init(adev);
- 
-+	r = gfx_v8_0_csb_vram_pin(adev);
-+	if (r)
-+		return r;
-+
- 	r = adev->gfx.rlc.funcs->resume(adev);
- 	if (r)
- 		return r;
-@@ -4893,6 +4930,9 @@ static int gfx_v8_0_hw_fini(void *handle)
- 	else
- 		pr_err("rlc is busy, skip halt rlc\n");
- 	amdgpu_gfx_rlc_exit_safe_mode(adev);
-+
-+	gfx_v8_0_csb_vram_unpin(adev);
-+
- 	return 0;
- }
- 
+diff --git a/drivers/iio/accel/cros_ec_accel_legacy.c b/drivers/iio/accel/cros_ec_accel_legacy.c
+index 063e89eff791a..c776a3509a717 100644
+--- a/drivers/iio/accel/cros_ec_accel_legacy.c
++++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+@@ -328,7 +328,6 @@ static const struct iio_chan_spec_ext_info cros_ec_accel_legacy_ext_info[] = {
+ 		.modified = 1,					        \
+ 		.info_mask_separate =					\
+ 			BIT(IIO_CHAN_INFO_RAW) |			\
+-			BIT(IIO_CHAN_INFO_SCALE) |			\
+ 			BIT(IIO_CHAN_INFO_CALIBBIAS),			\
+ 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SCALE),	\
+ 		.ext_info = cros_ec_accel_legacy_ext_info,		\
 -- 
 2.20.1
 
