@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4514B8C67E
+	by mail.lfdr.de (Postfix) with ESMTP id AE8FB8C67F
 	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728902AbfHNCQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:16:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47544 "EHLO mail.kernel.org"
+        id S1728939AbfHNCQI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:16:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728534AbfHNCQB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:16:01 -0400
+        id S1728924AbfHNCQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:16:06 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C416B2084D;
-        Wed, 14 Aug 2019 02:15:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB64E2085A;
+        Wed, 14 Aug 2019 02:16:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748960;
-        bh=UH7bhnZYehzr0hz6D8xZ8k87NCcJgqpNxVXXdqKhKMc=;
+        s=default; t=1565748965;
+        bh=0jEK/OgHpG5EbCs5dIx3jCXgT+ckvbNgUWIKmzX17JA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J9grGTqNLuXmD1bEo0LqrR/DUgnc+c/0qiCTWx9sl9IIWFg4s/PkFMgxQUoCAsjEH
-         2c4Rf/Wafr3rVxvPHLl77g7Cv4cANDpt6Lz8dQf9pT3vA2QYkq6qJo3eJV+qwrDL7D
-         b6BSKLiE7xv+anTQGhybyZ/T06NjcW5O2oY166GE=
+        b=fdJAktTQC4bRXVzBvma+aKFaylIyy/p6bIDCJVx9/4EudrElHjRlR93VoWGL/laS6
+         XyUzilEzUxYR7GEIgTI4NCdBr6n8jSv4X5duLw+wNtPXH3wQvRI6opV5dOEKE/P4tD
+         YkDirS3Kn+6qQ84+OJocxvDo/10tEjS9qFzsLuUo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 07/68] ASoC: dapm: Fix handling of custom_stop_condition on DAPM graph walks
-Date:   Tue, 13 Aug 2019 22:14:45 -0400
-Message-Id: <20190814021548.16001-7-sashal@kernel.org>
+Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 10/68] net: mvpp2: Don't check for 3 consecutive Idle frames for 10G links
+Date:   Tue, 13 Aug 2019 22:14:48 -0400
+Message-Id: <20190814021548.16001-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -43,76 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-[ Upstream commit 8dd26dff00c0636b1d8621acaeef3f6f3a39dd77 ]
+[ Upstream commit bba18318e7d1d5c8b0bbafd65010a0cee3c65608 ]
 
-DPCM uses snd_soc_dapm_dai_get_connected_widgets to build a
-list of the widgets connected to a specific front end DAI so it
-can search through this list for available back end DAIs. The
-custom_stop_condition was added to is_connected_ep to facilitate this
-list not containing more widgets than is necessary. Doing so both
-speeds up the DPCM handling as less widgets need to be searched and
-avoids issues with CODEC to CODEC links as these would be confused
-with back end DAIs if they appeared in the list of available widgets.
+PPv2's XLGMAC can wait for 3 idle frames before triggering a link up
+event. This can cause the link to be stuck low when there's traffic on
+the interface, so disable this feature.
 
-custom_stop_condition was implemented by aborting the graph walk
-when the condition is triggered, however there is an issue with this
-approach. Whilst walking the graph is_connected_ep should update the
-endpoints cache on each widget, if the walk is aborted the number
-of attached end points is unknown for that sub-graph. When the stop
-condition triggered, the original patch ignored the triggering widget
-and returned zero connected end points; a later patch updated this
-to set the triggering widget's cache to 1 and return that. Both of
-these approaches result in inaccurate values being stored in various
-end point caches as the values propagate back through the graph,
-which can result in later issues with widgets powering/not powering
-unexpectedly.
-
-As the original goal was to reduce the size of the widget list passed
-to the DPCM code, the simplest solution is to limit the functionality
-of the custom_stop_condition to the widget list. This means the rest
-of the graph will still be processed resulting in correct end point
-caches, but only widgets up to the stop condition will be added to the
-returned widget list.
-
-Fixes: 6742064aef7f ("ASoC: dapm: support user-defined stop condition in dai_get_connected_widgets")
-Fixes: 5fdd022c2026 ("ASoC: dpcm: play nice with CODEC<->CODEC links")
-Fixes: 09464974eaa8 ("ASoC: dapm: Fix to return correct path list in is_connected_ep.")
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20190718084333.15598-1-ckeepax@opensource.cirrus.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: 4bb043262878 ("net: mvpp2: phylink support")
+Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/soc-dapm.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-index 3bfc788372f31..4ce57510b6236 100644
---- a/sound/soc/soc-dapm.c
-+++ b/sound/soc/soc-dapm.c
-@@ -1145,8 +1145,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
- 		list_add_tail(&widget->work_list, list);
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 6455511457ca3..9b608d23ff7ee 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -4412,9 +4412,9 @@ static void mvpp2_xlg_config(struct mvpp2_port *port, unsigned int mode,
+ 	if (state->pause & MLO_PAUSE_RX)
+ 		ctrl0 |= MVPP22_XLG_CTRL0_RX_FLOW_CTRL_EN;
  
- 	if (custom_stop_condition && custom_stop_condition(widget, dir)) {
--		widget->endpoints[dir] = 1;
--		return widget->endpoints[dir];
-+		list = NULL;
-+		custom_stop_condition = NULL;
- 	}
+-	ctrl4 &= ~MVPP22_XLG_CTRL4_MACMODSELECT_GMAC;
+-	ctrl4 |= MVPP22_XLG_CTRL4_FWD_FC | MVPP22_XLG_CTRL4_FWD_PFC |
+-		 MVPP22_XLG_CTRL4_EN_IDLE_CHECK;
++	ctrl4 &= ~(MVPP22_XLG_CTRL4_MACMODSELECT_GMAC |
++		   MVPP22_XLG_CTRL4_EN_IDLE_CHECK);
++	ctrl4 |= MVPP22_XLG_CTRL4_FWD_FC | MVPP22_XLG_CTRL4_FWD_PFC;
  
- 	if ((widget->is_ep & SND_SOC_DAPM_DIR_TO_EP(dir)) && widget->connected) {
-@@ -1183,8 +1183,8 @@ static __always_inline int is_connected_ep(struct snd_soc_dapm_widget *widget,
-  *
-  * Optionally, can be supplied with a function acting as a stopping condition.
-  * This function takes the dapm widget currently being examined and the walk
-- * direction as an arguments, it should return true if the walk should be
-- * stopped and false otherwise.
-+ * direction as an arguments, it should return true if widgets from that point
-+ * in the graph onwards should not be added to the widget list.
-  */
- static int is_connected_output_ep(struct snd_soc_dapm_widget *widget,
- 	struct list_head *list,
+ 	writel(ctrl0, port->base + MVPP22_XLG_CTRL0_REG);
+ 	writel(ctrl4, port->base + MVPP22_XLG_CTRL4_REG);
 -- 
 2.20.1
 
