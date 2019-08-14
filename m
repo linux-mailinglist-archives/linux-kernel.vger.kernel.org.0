@@ -2,75 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D1168CA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 06:42:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1E3A8CA7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 06:44:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfHNEmB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 00:42:01 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41608 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfHNEmA (ORCPT
+        id S1727314AbfHNEoQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 00:44:16 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:39965 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725262AbfHNEoQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 00:42:00 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g7so71089261oia.8
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 21:42:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=zWu5SUa2gWDy2A7vXqugTo7J4wSILytsfZpdfAVTMIo=;
-        b=HgkM5fFuFjMEvvdTk7aajxmDKFY+/8DQ+jDApa7K9sWpQ+ZhkCyHQjq04TgpwrACgg
-         zBQ9vusEsl8aprB40s5DddqLdh47ZJBNZyPYgE+zuow98FSvbgyELCWlIOWvFV7qt2jP
-         Q3KafW+0U+0pk0adaygLa3ee8miDfu+6s+Be9OkuFwaaMqkEkv7GRrG4kxco11F47fGA
-         wo9taJBmQZC+Yy4VZsPsexXu0BRQri3E+2CRl3tJ4by46UxGqiZFre4+cTyWjB6siQY1
-         yrTabP0U2cGD/J4CgOXs5nHWrqTkkB6R8Vg77DQ6WkljGI3gCP1G9mWp3DQc9K/0ktNA
-         bfug==
+        Wed, 14 Aug 2019 00:44:16 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h8so20616930edv.7;
+        Tue, 13 Aug 2019 21:44:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=zWu5SUa2gWDy2A7vXqugTo7J4wSILytsfZpdfAVTMIo=;
-        b=OvjnBhTULtn0eX50yvrQPcvHB1CoDrwzKYmEX8X9/dn8rAcFW+lobhxs2YLxXI3FT3
-         skDriEJjTWiZvjEZRjAjti20wUOoH5YeY3teqAWFcfeJO/d07wkSWjiP0Gojrrk+7BhP
-         zR3uEYXRRtxJmrL9MPPnLZvE4OdM8fEB9cFMcEscOli6HPg4ROf+9SYgqPtd9F7ZH1Y2
-         Ubrr8EbgJkdRreYa6YfqILRex4J1pP0HHxqM6j5JZeaB4nw6BWOFBcQHaYyUNOiVis0p
-         65BCCwjWp+nXfREacV0OlzAtQMa71NtSMoLE4ZsPuZnkUwvb4DYRLZRJlu5wV1bMpm/H
-         hTjA==
-X-Gm-Message-State: APjAAAV5NwbdbO3BqFB2ugg0WSMEygd8bl7EaqChJ8V2tUMZMpxTj6v5
-        VLRokQwoqM/raz7AgiEuiV8BiQ==
-X-Google-Smtp-Source: APXvYqyLwU3+iARM4Sl8p8WJD8acDem7R6dnM4175yjPenrhI/uqdG67o2+H8iF2eOkz36QcYgnT7w==
-X-Received: by 2002:a02:9f19:: with SMTP id z25mr1342269jal.107.1565757719608;
-        Tue, 13 Aug 2019 21:41:59 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id x11sm27051947ioh.87.2019.08.13.21.41.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 21:41:58 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 21:41:58 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Christoph Hellwig <hch@lst.de>
-cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/15] riscv: refactor the IPI code
-In-Reply-To: <20190813154747.24256-4-hch@lst.de>
-Message-ID: <alpine.DEB.2.21.9999.1908132141350.18249@viisi.sifive.com>
-References: <20190813154747.24256-1-hch@lst.de> <20190813154747.24256-4-hch@lst.de>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9Z6D8IiynDoonRo+cCux5+ugmeKBsc4T5KOeVrjO/y0=;
+        b=ohS3F0ckexhD0grG5/EApQQuSU8Hfrk8riSZ2PkJQzDDdiLJIzHkL5DG9DD/4QTsOk
+         w9sSNGeah+IpPxPzOfgqZ7vql6b3dpSFmpjTIG5BiZk4iAa5IYOov69U0o8W098u+nAY
+         NWUdZOvEL03XheMBzJpjg5mA1PK9IPjjw8inuGgM7jnyixuY66gziAIFqpJr6pYBZnu9
+         H6LLzZNzQQzn9gjFYhhYtCfHorDafPfCh4RqW56vY5LHoljLVwlnLRlKTyEJJar4yNTz
+         pXZHjkjG1EfOSUt+MoRHNEJm4s3qY7kVDbgsat86FI4uEhN6x7YuraXXdOtHR40vq6e0
+         RXaQ==
+X-Gm-Message-State: APjAAAVJtHc5iHi2tONF1DG0SOV7j3cs8PyM1A7uyVFkMKCVWksfRhZQ
+        u7YtdCC/8INOo9qS2peLuhZhd/GhbpQ=
+X-Google-Smtp-Source: APXvYqwCDlJlJQTBrjnpXRQJf4d8oHwRMFDgP4pWLMb04RmDK0zl6A+ZY82TSUXZLRT4qa4iv4Ciag==
+X-Received: by 2002:a17:906:1dcb:: with SMTP id v11mr38833182ejh.218.1565757854556;
+        Tue, 13 Aug 2019 21:44:14 -0700 (PDT)
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com. [209.85.221.41])
+        by smtp.gmail.com with ESMTPSA id b17sm1856923edy.43.2019.08.13.21.44.14
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Aug 2019 21:44:14 -0700 (PDT)
+Received: by mail-wr1-f41.google.com with SMTP id z11so7834876wrt.4;
+        Tue, 13 Aug 2019 21:44:14 -0700 (PDT)
+X-Received: by 2002:adf:eb0f:: with SMTP id s15mr49717223wrn.324.1565757853951;
+ Tue, 13 Aug 2019 21:44:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20190813124744.32614-1-mripard@kernel.org> <20190813124744.32614-5-mripard@kernel.org>
+In-Reply-To: <20190813124744.32614-5-mripard@kernel.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 14 Aug 2019 12:44:02 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66C-Mqdo-xWm4RAw33sFk-gLy-L_YWQ__6BjYU9gcpYug@mail.gmail.com>
+Message-ID: <CAGb2v66C-Mqdo-xWm4RAw33sFk-gLy-L_YWQ__6BjYU9gcpYug@mail.gmail.com>
+Subject: Re: [PATCH 5/5] ARM: dts: sunxi: Add missing watchdog interrupts
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2019, Christoph Hellwig wrote:
+On Tue, Aug 13, 2019 at 8:48 PM Maxime Ripard <mripard@kernel.org> wrote:
+>
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>
+> The watchdog has an interrupt on all our SoCs, but it wasn't always listed.
+> Add it to the devicetree where it's missing.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 
-> This prepare for adding native non-SBI IPI code.
-> 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks, queued for v5.4-rc1.
+On a separate note, the A31 has four watchdogs in the timer block, and
+one interrupt for each watchdog. Should we expand the node to encompass
+all of them, or add separate nodes for each additional one?
 
-
-- Paul
+Thanks
