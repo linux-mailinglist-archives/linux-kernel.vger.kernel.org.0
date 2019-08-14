@@ -2,111 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24A188C90C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:36:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EFDC8C994
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:40:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728463AbfHNCf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:35:58 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57528 "EHLO inva021.nxp.com"
+        id S1727262AbfHNCLL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:11:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727245AbfHNCNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:13:21 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EBEC420027A;
-        Wed, 14 Aug 2019 04:13:19 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 46BC1200162;
-        Wed, 14 Aug 2019 04:13:15 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 40CC940293;
-        Wed, 14 Aug 2019 10:13:09 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCHv6 2/2] PCI: layerscape: Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC separately
-Date:   Wed, 14 Aug 2019 10:03:30 +0800
-Message-Id: <20190814020330.12133-2-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190814020330.12133-1-xiaowei.bao@nxp.com>
-References: <20190814020330.12133-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727151AbfHNCLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:11:05 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45C6D20844;
+        Wed, 14 Aug 2019 02:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565748664;
+        bh=9RAKCN6QR0jyMvnU5LqbK9GlHJxo5HjFj1rPbL3jIws=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lSSA4di/dLyGTK8snqu3tFGPJsuq6YJiptuBkdBhvxtTmdxdDntt3CQr5Yv4WTN7g
+         JmeHMi3jiwoC8jLfhDjNVGfC8OA9srtQA3DXUp6xuqGfidJGe0Y2lEvGN3T9Koca8K
+         yVQDw1pq2qnS3fhtH2iBOWs7YJTODBVsd3OidFvA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Maarten ter Huurne <maarten@treewalker.org>,
+        Artur Rojek <contact@artur-rojek.eu>, Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 008/123] IIO: Ingenic JZ47xx: Set clock divider on probe
+Date:   Tue, 13 Aug 2019 22:08:52 -0400
+Message-Id: <20190814021047.14828-8-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
+References: <20190814021047.14828-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add CONFIG_PCI_LAYERSCAPE_EP to build EP/RC separately.
+From: Maarten ter Huurne <maarten@treewalker.org>
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+[ Upstream commit 5a304e1a4ea000177cf25f5ecf26e786dda25b98 ]
+
+The SADC component can run at up to 8 MHz on JZ4725B, but is fed
+a 12 MHz input clock (EXT). Divide it by two to get 6 MHz, then
+set up another divider to match, to produce a 10us clock.
+
+If the clock dividers are left on their power-on defaults (a divider
+of 1), the SADC mostly works, but will occasionally produce erroneous
+readings. This led to button presses being detected out of nowhere on
+the RS90 every few minutes. With this change, no ghost button presses
+were logged in almost a day worth of testing.
+
+The ADCLK register for configuring clock dividers doesn't exist on
+JZ4740, so avoid writing it there.
+
+A function has been introduced rather than a flag because there is a lot
+of variation between the ADCLK registers on JZ47xx SoCs, both in
+the internal layout of the register and in the frequency range
+supported by the SADC. So this solution should make it easier
+to add support for other JZ47xx SoCs later.
+
+Fixes: 1a78daea107d ("iio: adc: probe should set clock divider")
+Signed-off-by: Maarten ter Huurne <maarten@treewalker.org>
+Signed-off-by: Artur Rojek <contact@artur-rojek.eu>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-v2:
- - No change.
-v3:
- - modify the commit message.
-v4:
- - send the patch again with '--to'.
-v5:
- - No change.
-v6:
- - remove the [EXT] tag of the $SUBJECT in email.
+ drivers/iio/adc/ingenic-adc.c | 54 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
- drivers/pci/controller/dwc/Kconfig  | 20 ++++++++++++++++++--
- drivers/pci/controller/dwc/Makefile |  3 ++-
- 2 files changed, 20 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 6ea778a..869c645 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -131,13 +131,29 @@ config PCI_KEYSTONE_EP
- 	  DesignWare core functions to implement the driver.
+diff --git a/drivers/iio/adc/ingenic-adc.c b/drivers/iio/adc/ingenic-adc.c
+index 92b1d5037ac98..e234970b7150f 100644
+--- a/drivers/iio/adc/ingenic-adc.c
++++ b/drivers/iio/adc/ingenic-adc.c
+@@ -11,6 +11,7 @@
+ #include <linux/iio/iio.h>
+ #include <linux/io.h>
+ #include <linux/iopoll.h>
++#include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/platform_device.h>
+@@ -22,8 +23,11 @@
+ #define JZ_ADC_REG_ADTCH		0x18
+ #define JZ_ADC_REG_ADBDAT		0x1c
+ #define JZ_ADC_REG_ADSDAT		0x20
++#define JZ_ADC_REG_ADCLK		0x28
  
- config PCI_LAYERSCAPE
--	bool "Freescale Layerscape PCIe controller"
-+	bool "Freescale Layerscape PCIe controller - Host mode"
- 	depends on OF && (ARM || ARCH_LAYERSCAPE || COMPILE_TEST)
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select MFD_SYSCON
- 	select PCIE_DW_HOST
- 	help
--	  Say Y here if you want PCIe controller support on Layerscape SoCs.
-+	  Say Y here if you want to enable PCIe controller support on Layerscape
-+	  SoCs to work in Host mode.
-+	  This controller can work either as EP or RC. The RCW[HOST_AGT_PEX]
-+	  determines which PCIe controller works in EP mode and which PCIe
-+	  controller works in RC mode.
+ #define JZ_ADC_REG_CFG_BAT_MD		BIT(4)
++#define JZ_ADC_REG_ADCLK_CLKDIV_LSB	0
++#define JZ_ADC_REG_ADCLK_CLKDIV10US_LSB	16
+ 
+ #define JZ_ADC_AUX_VREF				3300
+ #define JZ_ADC_AUX_VREF_BITS			12
+@@ -34,6 +38,8 @@
+ #define JZ4740_ADC_BATTERY_HIGH_VREF		(7500 * 0.986)
+ #define JZ4740_ADC_BATTERY_HIGH_VREF_BITS	12
+ 
++struct ingenic_adc;
 +
-+config PCI_LAYERSCAPE_EP
-+	bool "Freescale Layerscape PCIe controller - Endpoint mode"
-+	depends on OF && (ARM || ARCH_LAYERSCAPE || COMPILE_TEST)
-+	depends on PCI_ENDPOINT
-+	select PCIE_DW_EP
-+	help
-+	  Say Y here if you want to enable PCIe controller support on Layerscape
-+	  SoCs to work in Endpoint mode.
-+	  This controller can work either as EP or RC. The RCW[HOST_AGT_PEX]
-+	  determines which PCIe controller works in EP mode and which PCIe
-+	  controller works in RC mode.
+ struct ingenic_adc_soc_data {
+ 	unsigned int battery_high_vref;
+ 	unsigned int battery_high_vref_bits;
+@@ -41,6 +47,7 @@ struct ingenic_adc_soc_data {
+ 	size_t battery_raw_avail_size;
+ 	const int *battery_scale_avail;
+ 	size_t battery_scale_avail_size;
++	int (*init_clk_div)(struct device *dev, struct ingenic_adc *adc);
+ };
  
- config PCI_HISI
- 	depends on OF && (ARM64 || COMPILE_TEST)
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index b085dfd..824fde7 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -8,7 +8,8 @@ obj-$(CONFIG_PCI_EXYNOS) += pci-exynos.o
- obj-$(CONFIG_PCI_IMX6) += pci-imx6.o
- obj-$(CONFIG_PCIE_SPEAR13XX) += pcie-spear13xx.o
- obj-$(CONFIG_PCI_KEYSTONE) += pci-keystone.o
--obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o pci-layerscape-ep.o
-+obj-$(CONFIG_PCI_LAYERSCAPE) += pci-layerscape.o
-+obj-$(CONFIG_PCI_LAYERSCAPE_EP) += pci-layerscape-ep.o
- obj-$(CONFIG_PCIE_QCOM) += pcie-qcom.o
- obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
+ struct ingenic_adc {
+@@ -151,6 +158,42 @@ static const int jz4740_adc_battery_scale_avail[] = {
+ 	JZ_ADC_BATTERY_LOW_VREF, JZ_ADC_BATTERY_LOW_VREF_BITS,
+ };
+ 
++static int jz4725b_adc_init_clk_div(struct device *dev, struct ingenic_adc *adc)
++{
++	struct clk *parent_clk;
++	unsigned long parent_rate, rate;
++	unsigned int div_main, div_10us;
++
++	parent_clk = clk_get_parent(adc->clk);
++	if (!parent_clk) {
++		dev_err(dev, "ADC clock has no parent\n");
++		return -ENODEV;
++	}
++	parent_rate = clk_get_rate(parent_clk);
++
++	/*
++	 * The JZ4725B ADC works at 500 kHz to 8 MHz.
++	 * We pick the highest rate possible.
++	 * In practice we typically get 6 MHz, half of the 12 MHz EXT clock.
++	 */
++	div_main = DIV_ROUND_UP(parent_rate, 8000000);
++	div_main = clamp(div_main, 1u, 64u);
++	rate = parent_rate / div_main;
++	if (rate < 500000 || rate > 8000000) {
++		dev_err(dev, "No valid divider for ADC main clock\n");
++		return -EINVAL;
++	}
++
++	/* We also need a divider that produces a 10us clock. */
++	div_10us = DIV_ROUND_UP(rate, 100000);
++
++	writel(((div_10us - 1) << JZ_ADC_REG_ADCLK_CLKDIV10US_LSB) |
++	       (div_main - 1) << JZ_ADC_REG_ADCLK_CLKDIV_LSB,
++	       adc->base + JZ_ADC_REG_ADCLK);
++
++	return 0;
++}
++
+ static const struct ingenic_adc_soc_data jz4725b_adc_soc_data = {
+ 	.battery_high_vref = JZ4725B_ADC_BATTERY_HIGH_VREF,
+ 	.battery_high_vref_bits = JZ4725B_ADC_BATTERY_HIGH_VREF_BITS,
+@@ -158,6 +201,7 @@ static const struct ingenic_adc_soc_data jz4725b_adc_soc_data = {
+ 	.battery_raw_avail_size = ARRAY_SIZE(jz4725b_adc_battery_raw_avail),
+ 	.battery_scale_avail = jz4725b_adc_battery_scale_avail,
+ 	.battery_scale_avail_size = ARRAY_SIZE(jz4725b_adc_battery_scale_avail),
++	.init_clk_div = jz4725b_adc_init_clk_div,
+ };
+ 
+ static const struct ingenic_adc_soc_data jz4740_adc_soc_data = {
+@@ -167,6 +211,7 @@ static const struct ingenic_adc_soc_data jz4740_adc_soc_data = {
+ 	.battery_raw_avail_size = ARRAY_SIZE(jz4740_adc_battery_raw_avail),
+ 	.battery_scale_avail = jz4740_adc_battery_scale_avail,
+ 	.battery_scale_avail_size = ARRAY_SIZE(jz4740_adc_battery_scale_avail),
++	.init_clk_div = NULL, /* no ADCLK register on JZ4740 */
+ };
+ 
+ static int ingenic_adc_read_avail(struct iio_dev *iio_dev,
+@@ -317,6 +362,15 @@ static int ingenic_adc_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	/* Set clock dividers. */
++	if (soc_data->init_clk_div) {
++		ret = soc_data->init_clk_div(dev, adc);
++		if (ret) {
++			clk_disable_unprepare(adc->clk);
++			return ret;
++		}
++	}
++
+ 	/* Put hardware in a known passive state. */
+ 	writeb(0x00, adc->base + JZ_ADC_REG_ENABLE);
+ 	writeb(0xff, adc->base + JZ_ADC_REG_CTRL);
 -- 
-2.9.5
+2.20.1
 
