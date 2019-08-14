@@ -2,132 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 284668CCA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:25:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BFA48CC9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727608AbfHNHZT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:25:19 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49952 "EHLO mail.skyhub.de"
+        id S1727343AbfHNHYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:24:33 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39274 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726575AbfHNHZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:25:19 -0400
-Received: from zn.tnic (p200300EC2F0BD0001434546E6F7AC9DD.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:1434:546e:6f7a:c9dd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AAA611EC02FE;
-        Wed, 14 Aug 2019 09:25:17 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565767517;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=9if7NiovkDbOcgnGK6zDQsx1E8XZHnyCTx4ck5LNTh8=;
-        b=BYcaYaPV4Ro0O8zZOHqqUv+fBqnmEBl7UqmriQHIHgzMVdE5oO1HNfXr5H7j6ZNeMRJpyt
-        NK3uZLBmOJuxt9LWoat7m7bOleVm/Vr5EXtgVRMWjysURqwQueYNtp2YUO5hIKD9nd+vIM
-        nzTz6YjcqOLkS82SwnF+SrEpmeBrYyo=
-Date:   Wed, 14 Aug 2019 09:26:02 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Matthew Garrett <matthewgarrett@google.com>
-Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Josh Boyer <jwboyer@redhat.com>,
-        David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Young <dyoung@redhat.com>, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH V38 15/29] acpi: Ignore acpi_rsdp kernel param when the
- kernel has been locked down
-Message-ID: <20190814072602.GA27836@zn.tnic>
-References: <20190808000721.124691-1-matthewgarrett@google.com>
- <20190808000721.124691-16-matthewgarrett@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190808000721.124691-16-matthewgarrett@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726575AbfHNHYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:24:33 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 182A11A0142;
+        Wed, 14 Aug 2019 09:24:31 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3015B1A0060;
+        Wed, 14 Aug 2019 09:24:20 +0200 (CEST)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 620FA40305;
+        Wed, 14 Aug 2019 15:24:07 +0800 (SGT)
+From:   Yinbo Zhu <yinbo.zhu@nxp.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Li Yang <leoyang.li@nxp.com>,
+        Claudiu Manoil <claudiu.manoil@nxp.com>,
+        Amit Jain <amit.jain_1@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>,
+        Vabhav Sharma <vabhav.sharma@nxp.com>,
+        Rajesh Bhagat <rajesh.bhagat@nxp.com>,
+        Ashish Kumar <Ashish.Kumar@nxp.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org
+Cc:     yinbo.zhu@nxp.com, xiaobo.xie@nxp.com, jiafei.pan@nxp.com,
+        Alison Wang <alison.wang@nxp.com>,
+        Alex Marginean <alexandru.marginean@nxp.com>,
+        Catalin Horghidan <catalin.horghidan@nxp.com>,
+        Rajat Srivastava <rajat.srivastava@nxp.com>,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v1 1/4] arm64: dts: ls1028a-rdb: enable emmc hs400 mode
+Date:   Wed, 14 Aug 2019 15:26:46 +0800
+Message-Id: <20190814072649.8237-1-yinbo.zhu@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:07:07PM -0700, Matthew Garrett wrote:
-> From: Josh Boyer <jwboyer@redhat.com>
-> 
-> This option allows userspace to pass the RSDP address to the kernel, which
-> makes it possible for a user to modify the workings of hardware. Reject
-> the option when the kernel is locked down. This requires some reworking
-> of the existing RSDP command line logic, since the early boot code also
-> makes use of a command-line passed RSDP when locating the SRAT table
-> before the lockdown code has been initialised. This is achieved by
-> separating the command line RSDP path in the early boot code from the
-> generic RSDP path, and then copying the command line RSDP into boot
-> params in the kernel proper if lockdown is not enabled. If lockdown is
-> enabled and an RSDP is provided on the command line, this will only be
-> used when parsing SRAT (which shouldn't permit kernel code execution)
-> and will be ignored in the rest of the kernel.
-> 
-> (Modified by Matthew Garrett in order to handle the early boot RSDP
-> environment)
-> 
-> Signed-off-by: Josh Boyer <jwboyer@redhat.com>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> Signed-off-by: Matthew Garrett <mjg59@google.com>
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> cc: Dave Young <dyoung@redhat.com>
-> cc: linux-acpi@vger.kernel.org
-> ---
->  arch/x86/boot/compressed/acpi.c | 19 +++++++++++++------
->  arch/x86/include/asm/acpi.h     |  9 +++++++++
->  arch/x86/include/asm/x86_init.h |  2 ++
->  arch/x86/kernel/acpi/boot.c     |  5 +++++
->  arch/x86/kernel/x86_init.c      |  1 +
->  drivers/acpi/osl.c              | 14 +++++++++++++-
->  include/linux/acpi.h            |  6 ++++++
->  7 files changed, 49 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/boot/compressed/acpi.c b/arch/x86/boot/compressed/acpi.c
-> index 15255f388a85..149795c369f2 100644
-> --- a/arch/x86/boot/compressed/acpi.c
-> +++ b/arch/x86/boot/compressed/acpi.c
-> @@ -26,7 +26,7 @@ struct mem_vector immovable_mem[MAX_NUMNODES*2];
->   */
->  #define MAX_ADDR_LEN 19
->  
-> -static acpi_physical_address get_acpi_rsdp(void)
-> +static acpi_physical_address get_cmdline_acpi_rsdp(void)
->  {
->  	acpi_physical_address addr = 0;
->  
-> @@ -278,10 +278,7 @@ acpi_physical_address get_rsdp_addr(void)
->  {
->  	acpi_physical_address pa;
->  
-> -	pa = get_acpi_rsdp();
-> -
-> -	if (!pa)
-> -		pa = boot_params->acpi_rsdp_addr;
+This patch is to enable emmc hs400 mode for ls1028ardb
 
-AFAICT, this looks like it would break current usage: get_rsdp_addr()
-needs to call get_acpi_rsdp() which you've now called
-get_cmdline_acpi_rsdp() to parse "acpi_rsdp=" but it ain't happening
-anymore.
+Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Where the parsing is happening now is in get_acpi_srat_table() which is
-not present in configs with
-
-#if defined(CONFIG_RANDOMIZE_BASE) && defined(CONFIG_MEMORY_HOTREMOVE)
-
-false and thus not available to early code anymore.
-
-I think the cleaner/easier approach would be to clear
-boot_params->acpi_rsdp_addr after SRAT has been parsed in lockdown
-configurations so that nothing else uses the supplied RDSP address
-anymore. But I could very well be missing something...
-
-Thx.
-
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+index 8a725409e881..f1e46cc4cea1 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-rdb.dts
+@@ -92,8 +92,10 @@
+ 	};
+ 
+ &esdhc1 {
+-	status = "okay";
+ 	mmc-hs200-1_8v;
++	mmc-hs400-1_8v;
++	bus-width = <8>;
++	status = "okay";
+ 	};
+ 
+ &i2c0 {
 -- 
-Regards/Gruss,
-    Boris.
+2.17.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
