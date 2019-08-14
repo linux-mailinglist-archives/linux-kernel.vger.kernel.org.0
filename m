@@ -2,72 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88F408C7AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:25:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A99B8C77A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729617AbfHNCZy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:25:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53976 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728775AbfHNCZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:25:52 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A51120679;
-        Wed, 14 Aug 2019 02:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749550;
-        bh=5rLlWUJ+nSWbLbJ/vJkace/NVU+oEELFK99umC/pAFk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gbS6sF8tVhyYo52tmZ/A2hUN0o3fTnFQ8Qr8iSw6/7+pvi8Vq0gEnSGXwCYcoko3d
-         uwBBwri9gaxZFTywsIkpeuXwn/j19miuM6h9P1JTnsadx4ONsP3Na4SUcV1kdIWgev
-         eFeEw+M6u8k2yitYEC4K4OKPx+H7Ds7vDCZt3WWs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 33/33] selftests: kvm: Adding config fragments
-Date:   Tue, 13 Aug 2019 22:23:23 -0400
-Message-Id: <20190814022323.17111-33-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814022323.17111-1-sashal@kernel.org>
-References: <20190814022323.17111-1-sashal@kernel.org>
+        id S1728681AbfHNCYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:24:24 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42549 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729534AbfHNCYV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:24:21 -0400
+Received: by mail-oi1-f193.google.com with SMTP id o6so1629031oic.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:24:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=1G/a7WS8pUpL1zmvbKTHzrkVwD487e3W+2smn5ktODc=;
+        b=hjIYO+1dYGPbiBq+dHbXBz3TuAYU415ba+1qYeiXmxFN4NqMFXVq7AezPzQ5RozDKt
+         OhVMOWSsix2AGx/5/KosEclzeVG+q4u4QX6T9v01GB2WbUHzhz+qKUgSqqvElDNcxguA
+         QAdWWDM0D9Fj4YUN2+SKnPEtgzLmRpQ3y6nT6JZdgsFTmheqoPdPSl710HrUWFxn1xx2
+         3sxXG13GhNUL+0YVJq/Fz2comXRXfon8+AUK8elZg51t2o8dQcKuUAKho0OPCl9ISl/l
+         LSkGWZOSVuTWk5+OCzWwwN5CH7GdzBhxogTwKdH9DHY/CN1agrEx5q/hdh32dTkjHcql
+         9KzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=1G/a7WS8pUpL1zmvbKTHzrkVwD487e3W+2smn5ktODc=;
+        b=VL4oAVUaeobnM4up0rRuQU9U7QIWzVYEp7D2sUEZXy8+P4lfJAnUt3HlcCkXV76AqJ
+         L8VtbRvyc+Bo2Yi9PNydcAtrm6+FMYusYNS8uzVsfQnNUgMB9MzkS3tshnI613rAH8np
+         V91iPUOrNQkCZYXg0xY8aurIphSVlyFEwNo74ITTpmlTB0NZd31U9GLP0JzTjdHSJzSM
+         kVxaRUw+nc2AF1R8ooqBV8/YHPgBWHWe0GpsTc6N52+D9UaOda46mxUf61jKciYoQD5d
+         lyKlPGyJQ6TxCj/hrAbF6cmhsuQBgUVIVyiLrzc8AT0+P/2bgMjl4Gl7GfUOv6RzPksL
+         kC5w==
+X-Gm-Message-State: APjAAAXdx1jLJLBsL9gcC3CD4xZjbH083rJfwfDA7zyD7GZ7BX5nK9xQ
+        x1NTMoMV2Gy7uaxVcLtlEefwtg==
+X-Google-Smtp-Source: APXvYqx1NahTVPRWa7m2oJ0W4YhsQAxXbI6gehhVtgk+OAiDDzj+CshHjmVcVPHC2vZxZqmTXgtrNg==
+X-Received: by 2002:a02:a18e:: with SMTP id n14mr980021jah.84.1565749459743;
+        Tue, 13 Aug 2019 19:24:19 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id y5sm114834811ioc.86.2019.08.13.19.24.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2019 19:24:19 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 19:24:18 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Alistair Francis <alistair.francis@wdc.com>
+cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        alistair23@gmail.com
+Subject: Re: [PATCH 1/2] riscv: rv32_defconfig: Update the defconfig
+In-Reply-To: <20190813233230.21804-1-alistair.francis@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1908131924100.19217@viisi.sifive.com>
+References: <20190813233230.21804-1-alistair.francis@wdc.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Naresh Kamboju <naresh.kamboju () linaro ! org>
+On Tue, 13 Aug 2019, Alistair Francis wrote:
 
-[ Upstream commit c096397c78f766db972f923433031f2dec01cae0 ]
+> Update the rv32_defconfig:
+>  - Add 'CONFIG_DEVTMPFS_MOUNT=y' to match the RISC-V defconfig
+>  - Add CONFIG_HW_RANDOM=y and CONFIG_HW_RANDOM_VIRTIO=y to enable
+>    VirtIORNG when running on QEMU
+> 
+> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
 
-selftests kvm test cases need pre-required kernel configs for the test
-to get pass.
+Thanks, queued for v5.3-rc.
 
-Signed-off-by: Naresh Kamboju <naresh.kamboju@linaro.org>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/testing/selftests/kvm/config | 3 +++
- 1 file changed, 3 insertions(+)
- create mode 100644 tools/testing/selftests/kvm/config
 
-diff --git a/tools/testing/selftests/kvm/config b/tools/testing/selftests/kvm/config
-new file mode 100644
-index 0000000000000..63ed533f73d6e
---- /dev/null
-+++ b/tools/testing/selftests/kvm/config
-@@ -0,0 +1,3 @@
-+CONFIG_KVM=y
-+CONFIG_KVM_INTEL=y
-+CONFIG_KVM_AMD=y
--- 
-2.20.1
-
+- Paul
