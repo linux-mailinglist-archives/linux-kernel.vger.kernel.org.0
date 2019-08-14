@@ -2,38 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCF668C697
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C044E8C699
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:17:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729182AbfHNCQo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:16:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
+        id S1727209AbfHNCQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:16:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729124AbfHNCQl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:16:41 -0400
+        id S1729174AbfHNCQo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:16:44 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D099920842;
-        Wed, 14 Aug 2019 02:16:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8533E208C2;
+        Wed, 14 Aug 2019 02:16:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749000;
-        bh=w/YX7Q0c7xtnIzDS6XXxjDXluFa5uOMuCgqOwiMkl0s=;
+        s=default; t=1565749003;
+        bh=OPSiXxS4swt0ozoxU8qLxZd2FnOGMLU53bDmra08Nqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JVLtBsWtSXveZ1k0di2/V5VC5GMiJMOUqPZxM2CsP/YEu02Z7L5Err2zktFoXbjh2
-         TnBMFlJJiIe7cqhXs9OkELZMV3WmFFCRpGCoFCSZWBTBzfbC7YfX22X5aVk4/CwvCj
-         vZJ5LGy+hBeoi12mwZW4OwaJD79cI516M8bOvpl8=
+        b=yIM0o/SVM009u8vLeJrsFxxPFM8Gstn39hxqlltnefyEYMECtozST/HTyBDlmKw2v
+         3b8i2UTR2nAixFJsMEV1pvn8pGLceVe8TkDMW2sEzhKcth4zcqrxS7hnxRUS02YXJ1
+         Zd9RSICi6yQ59D0pFwibalFNbKtb7PJsxPsfaFk0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+Cc:     David Howells <dhowells@redhat.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Jeffrey Altman <jaltman@auristor.com>,
+        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org,
         netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 28/68] netfilter: ebtables: also count base chain policies
-Date:   Tue, 13 Aug 2019 22:15:06 -0400
-Message-Id: <20190814021548.16001-28-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 30/68] rxrpc: Fix the lack of notification when sendmsg() fails on a DATA packet
+Date:   Tue, 13 Aug 2019 22:15:08 -0400
+Message-Id: <20190814021548.16001-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -46,81 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 3b48300d5cc7c7bed63fddb006c4046549ed4aec ]
+[ Upstream commit c69565ee6681e151e2bb80502930a16e04b553d1 ]
 
-ebtables doesn't include the base chain policies in the rule count,
-so we need to add them manually when we call into the x_tables core
-to allocate space for the comapt offset table.
+Fix the fact that a notification isn't sent to the recvmsg side to indicate
+a call failed when sendmsg() fails to transmit a DATA packet with the error
+ENETUNREACH, EHOSTUNREACH or ECONNREFUSED.
 
-This lead syzbot to trigger:
-WARNING: CPU: 1 PID: 9012 at net/netfilter/x_tables.c:649
-xt_compat_add_offset.cold+0x11/0x36 net/netfilter/x_tables.c:649
+Without this notification, the afs client just sits there waiting for the
+call to complete in some manner (which it's not now going to do), which
+also pins the rxrpc call in place.
 
-Reported-by: syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com
-Fixes: 2035f3ff8eaa ("netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+This can be seen if the client has a scope-level IPv6 address, but not a
+global-level IPv6 address, and we try and transmit an operation to a
+server's IPv6 address.
+
+Looking in /proc/net/rxrpc/calls shows completed calls just sat there with
+an abort code of RX_USER_ABORT and an error code of -ENETUNREACH.
+
+Fixes: c54e43d752c7 ("rxrpc: Fix missing start of call timeout")
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Marc Dionne <marc.dionne@auristor.com>
+Reviewed-by: Jeffrey Altman <jaltman@auristor.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 28 +++++++++++++++++-----------
- 1 file changed, 17 insertions(+), 11 deletions(-)
+ net/rxrpc/sendmsg.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 57856f8bc22dd..62ffc989a44a2 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -1779,20 +1779,28 @@ static int compat_calc_entry(const struct ebt_entry *e,
- 	return 0;
- }
- 
-+static int ebt_compat_init_offsets(unsigned int number)
-+{
-+	if (number > INT_MAX)
-+		return -EINVAL;
-+
-+	/* also count the base chain policies */
-+	number += NF_BR_NUMHOOKS;
-+
-+	return xt_compat_init_offsets(NFPROTO_BRIDGE, number);
-+}
- 
- static int compat_table_info(const struct ebt_table_info *info,
- 			     struct compat_ebt_replace *newinfo)
- {
- 	unsigned int size = info->entries_size;
- 	const void *entries = info->entries;
-+	int ret;
- 
- 	newinfo->entries_size = size;
--	if (info->nentries) {
--		int ret = xt_compat_init_offsets(NFPROTO_BRIDGE,
--						 info->nentries);
--		if (ret)
--			return ret;
--	}
-+	ret = ebt_compat_init_offsets(info->nentries);
-+	if (ret)
-+		return ret;
- 
- 	return EBT_ENTRY_ITERATE(entries, size, compat_calc_entry, info,
- 							entries, newinfo);
-@@ -2241,11 +2249,9 @@ static int compat_do_replace(struct net *net, void __user *user,
- 
- 	xt_compat_lock(NFPROTO_BRIDGE);
- 
--	if (tmp.nentries) {
--		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
--		if (ret < 0)
--			goto out_unlock;
--	}
-+	ret = ebt_compat_init_offsets(tmp.nentries);
-+	if (ret < 0)
-+		goto out_unlock;
- 
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
- 	if (ret < 0)
+diff --git a/net/rxrpc/sendmsg.c b/net/rxrpc/sendmsg.c
+index be01f9c5d963d..5d6ab4f6fd7ab 100644
+--- a/net/rxrpc/sendmsg.c
++++ b/net/rxrpc/sendmsg.c
+@@ -230,6 +230,7 @@ static void rxrpc_queue_packet(struct rxrpc_sock *rx, struct rxrpc_call *call,
+ 			rxrpc_set_call_completion(call,
+ 						  RXRPC_CALL_LOCAL_ERROR,
+ 						  0, ret);
++			rxrpc_notify_socket(call);
+ 			goto out;
+ 		}
+ 		_debug("need instant resend %d", ret);
 -- 
 2.20.1
 
