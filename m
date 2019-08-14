@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E42C68D503
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C173B8D4F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfHNNiu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:38:50 -0400
-Received: from 8bytes.org ([81.169.241.247]:49370 "EHLO theia.8bytes.org"
+        id S1728278AbfHNNiw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:38:52 -0400
+Received: from 8bytes.org ([81.169.241.247]:49374 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728165AbfHNNiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728168AbfHNNiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Aug 2019 09:38:46 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id A0D3D498; Wed, 14 Aug 2019 15:38:43 +0200 (CEST)
+        id BC81A4F1; Wed, 14 Aug 2019 15:38:43 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -21,9 +21,9 @@ Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
         linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, Thomas.Lendacky@amd.com,
         Suravee.Suthikulpanit@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 06/10] iommu: Remember when default domain type was set on kernel command line
-Date:   Wed, 14 Aug 2019 15:38:37 +0200
-Message-Id: <20190814133841.7095-7-joro@8bytes.org>
+Subject: [PATCH 07/10] iommu: Print default domain type on boot
+Date:   Wed, 14 Aug 2019 15:38:38 +0200
+Message-Id: <20190814133841.7095-8-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190814133841.7095-1-joro@8bytes.org>
 References: <20190814133841.7095-1-joro@8bytes.org>
@@ -34,58 +34,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Introduce an extensible concept to remember when certain
-configuration settings for the IOMMU code have been set on
-the kernel command line.
-
-This will be used later to prevent overwriting these
-settings with other defaults.
+Introduce a subsys_initcall for IOMMU code and use it to
+print the default domain type at boot.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/iommu.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/iommu/iommu.c | 30 +++++++++++++++++++++++++++++-
+ 1 file changed, 29 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index f187e85a074b..e1feb4061b8b 100644
+index e1feb4061b8b..233bc22b487e 100644
 --- a/drivers/iommu/iommu.c
 +++ b/drivers/iommu/iommu.c
-@@ -32,6 +32,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
- static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
- #endif
- static bool iommu_dma_strict __read_mostly = true;
-+static u32 iommu_cmd_line __read_mostly;
+@@ -93,12 +93,40 @@ struct iommu_group_attribute iommu_group_attr_##_name =		\
+ static LIST_HEAD(iommu_device_list);
+ static DEFINE_SPINLOCK(iommu_device_lock);
  
- struct iommu_group {
- 	struct kobject kobj;
-@@ -68,6 +69,18 @@ static const char * const iommu_group_resv_type_string[] = {
- 	[IOMMU_RESV_SW_MSI]			= "msi",
- };
- 
-+#define IOMMU_CMD_LINE_DMA_API		(1 << 0)
-+
-+static void iommu_set_cmd_line_dma_api(void)
++/*
++ * Use a function instead of an array here because the domain-type is a
++ * bit-field, so an array would waste memory.
++ */
++static const char *iommu_domain_type_str(unsigned int t)
 +{
-+	iommu_cmd_line |= IOMMU_CMD_LINE_DMA_API;
++	switch (t) {
++		case IOMMU_DOMAIN_BLOCKED:
++			return "Blocked";
++		case IOMMU_DOMAIN_IDENTITY:
++			return "Passthrough";
++		case IOMMU_DOMAIN_UNMANAGED:
++			return "Unmanaged";
++		case IOMMU_DOMAIN_DMA:
++			return "Translated";
++		default:
++			return "Unknown";
++	}
 +}
 +
-+static bool __maybe_unused iommu_cmd_line_dma_api(void)
++static int __init iommu_subsys_init(void)
 +{
-+	return !!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API);
++	pr_info("Default domain type: %s\n",
++		iommu_domain_type_str(iommu_def_domain_type));
++
++	return 0;
 +}
++subsys_initcall(iommu_subsys_init);
 +
- #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
- struct iommu_group_attribute iommu_group_attr_##_name =		\
- 	__ATTR(_name, _mode, _show, _store)
-@@ -165,6 +178,8 @@ static int __init iommu_set_def_domain_type(char *str)
- 	if (ret)
- 		return ret;
- 
-+	iommu_set_cmd_line_dma_api();
-+
- 	iommu_def_domain_type = pt ? IOMMU_DOMAIN_IDENTITY : IOMMU_DOMAIN_DMA;
+ int iommu_device_register(struct iommu_device *iommu)
+ {
+ 	spin_lock(&iommu_device_lock);
+ 	list_add_tail(&iommu->list, &iommu_device_list);
+ 	spin_unlock(&iommu_device_lock);
+-
  	return 0;
  }
+ 
 -- 
 2.17.1
 
