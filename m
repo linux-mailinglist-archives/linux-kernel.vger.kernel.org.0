@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB3718D96A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D878D96C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730092AbfHNRIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58070 "EHLO mail.kernel.org"
+        id S1728857AbfHNRIQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730078AbfHNRIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:11 -0400
+        id S1729045AbfHNRIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:13 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22924214DA;
-        Wed, 14 Aug 2019 17:08:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF3D7216F4;
+        Wed, 14 Aug 2019 17:08:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802490;
-        bh=Xdpt2zY/imvHs4oLSI3d+hTOzAVL2o8s930jvI2QNU0=;
+        s=default; t=1565802493;
+        bh=X2uMXTHGNhPxf1CI+iyWVQOr8M90YXHMvOG9H+Ly1Uo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=a3joxSzBpv6z2kbF8sm/ceIeoK1K58N+k+EchUCAeVkidY3M8PBq29VCKugTX85Tf
-         3m0RuNEDSDNblSs7jkbqDllr+ksmvKLPskPiZfoSDQKJToqqOrH9OMqFvelay19JOJ
-         iCTn4X14zakZB/9mbjnE2DwjX2pYoeQyHN3lB+YM=
+        b=NUCrV0EwJtzmuxic9PT2cxj8bxqUuQlcgGNJygqYGHRsWWtFzRKGp7WozmK1WOkAc
+         T3TFMsPdr9oUigHpCvFM6cGa1tEZwgNWrTdvdO1l7nOb0dS+OFUeriI1YZ3/U9dUNf
+         NtesYL06BCQngObU1YZcJKEp9Vx0VeLR3CIWZ3sA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Sean Christopherson <sean.j.christopherson@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 5.2 120/144] KVM/nSVM: properly map nested VMCB
-Date:   Wed, 14 Aug 2019 19:01:16 +0200
-Message-Id: <20190814165804.946479142@linuxfoundation.org>
+        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
+        syzbot+d6a5a1a3657b596ef132@syzkaller.appspotmail.com,
+        Marc Kleine-Budde <mkl@pengutronix.de>
+Subject: [PATCH 5.2 121/144] can: peak_usb: pcan_usb_pro: Fix info-leaks to USB devices
+Date:   Wed, 14 Aug 2019 19:01:17 +0200
+Message-Id: <20190814165804.990792548@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,44 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Tomas Bortoli <tomasbortoli@gmail.com>
 
-commit 8f38302c0be2d2daf3b40f7d2142ec77e35d209e upstream.
+commit ead16e53c2f0ed946d82d4037c630e2f60f4ab69 upstream.
 
-Commit 8c5fbf1a7231 ("KVM/nSVM: Use the new mapping API for mapping guest
-memory") broke nested SVM completely: kvm_vcpu_map()'s second parameter is
-GFN so vmcb_gpa needs to be converted with gpa_to_gfn(), not the other way
-around.
+Uninitialized Kernel memory can leak to USB devices.
 
-Fixes: 8c5fbf1a7231 ("KVM/nSVM: Use the new mapping API for mapping guest memory")
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fix by using kzalloc() instead of kmalloc() on the affected buffers.
+
+Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
+Reported-by: syzbot+d6a5a1a3657b596ef132@syzkaller.appspotmail.com
+Fixes: f14e22435a27 ("net: can: peak_usb: Do not do dma on the stack")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/svm.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb_pro.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -3290,7 +3290,7 @@ static int nested_svm_vmexit(struct vcpu
- 				       vmcb->control.exit_int_info_err,
- 				       KVM_ISA_SVM);
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_pro.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_pro.c
+@@ -494,7 +494,7 @@ static int pcan_usb_pro_drv_loaded(struc
+ 	u8 *buffer;
+ 	int err;
  
--	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(svm->nested.vmcb), &map);
-+	rc = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->nested.vmcb), &map);
- 	if (rc) {
- 		if (rc == -EINVAL)
- 			kvm_inject_gp(&svm->vcpu, 0);
-@@ -3580,7 +3580,7 @@ static bool nested_svm_vmrun(struct vcpu
+-	buffer = kmalloc(PCAN_USBPRO_FCT_DRVLD_REQ_LEN, GFP_KERNEL);
++	buffer = kzalloc(PCAN_USBPRO_FCT_DRVLD_REQ_LEN, GFP_KERNEL);
+ 	if (!buffer)
+ 		return -ENOMEM;
  
- 	vmcb_gpa = svm->vmcb->save.rax;
- 
--	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(vmcb_gpa), &map);
-+	rc = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
- 	if (rc) {
- 		if (rc == -EINVAL)
- 			kvm_inject_gp(&svm->vcpu, 0);
 
 
