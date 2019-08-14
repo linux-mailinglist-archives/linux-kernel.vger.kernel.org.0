@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17CC88DB96
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5DFC8DB79
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728731AbfHNR0e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:26:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
+        id S1728804AbfHNRFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:05:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54028 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729275AbfHNREj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:39 -0400
+        id S1729366AbfHNRFH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:05:07 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ABBA2084D;
-        Wed, 14 Aug 2019 17:04:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4852208C2;
+        Wed, 14 Aug 2019 17:05:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802279;
-        bh=+bHoaEyut0jt8XpJIrpUFxCbGOTtiDFobi2WIvPHMWk=;
+        s=default; t=1565802307;
+        bh=I6jrD+9sEDG0rP0Kpf9ZIM/0DZYLCKuF5SL2Mdn9uKI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rfQWcmsIqysVZLCjNe/TXNZTnI4azphL8ZpW/sV1bzCS1/kf88wlaiQ0dqj9LOmcN
-         LtGLczMwgKnyU4Pm259ZvcHvTj5KJTNhjB8Jh1m7IWs1Q2HV65c2UIOgXGn3cyzFxR
-         fsGYQuFEFHr9s2zc+A8iA8TEV+9NrogvH7Pd4b9E=
+        b=Dp3lLOU6s4vCPOKqKjcLblL72Zgl/qLbyFLO3GMBQtObjb3q7gDQKzYWuY9ANWczX
+         aOIz6HtkyBUei32WL0wTAHuO7Jp2doH7ts4NssPHa2YwJBXHGsgG7DQDR5UeOBWV+S
+         3nkYIVX6wCR9wsLrmvzJNV/OgImUa7ZUU0nIQwPA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Garcia Liebana <nevola@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 056/144] netfilter: nft_hash: fix symhash with modulus one
-Date:   Wed, 14 Aug 2019 19:00:12 +0200
-Message-Id: <20190814165802.173677704@linuxfoundation.org>
+Subject: [PATCH 5.2 057/144] scripts/sphinx-pre-install: fix script for RHEL/CentOS
+Date:   Wed, 14 Aug 2019 19:00:13 +0200
+Message-Id: <20190814165802.219114463@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,37 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 28b1d6ef53e3303b90ca8924bb78f31fa527cafb ]
+[ Upstream commit b308467c916aa7acc5069802ab76a9f657434701 ]
 
-The rule below doesn't work as the kernel raises -ERANGE.
+There's a missing parenthesis at the script, with causes it to
+fail to detect non-Fedora releases (e. g. RHEL/CentOS).
 
-nft add rule netdev nftlb lb01 ip daddr set \
-	symhash mod 1 map { 0 : 192.168.0.10 } fwd to "eth0"
+Tested with Centos 7.6.1810.
 
-This patch allows to use the symhash modulus with one
-element, in the same way that the other types of hashes and
-algorithms that uses the modulus parameter.
-
-Signed-off-by: Laura Garcia Liebana <nevola@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_hash.c | 2 +-
+ scripts/sphinx-pre-install | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nft_hash.c b/net/netfilter/nft_hash.c
-index fe93e731dc7fb..b836d550b9199 100644
---- a/net/netfilter/nft_hash.c
-+++ b/net/netfilter/nft_hash.c
-@@ -129,7 +129,7 @@ static int nft_symhash_init(const struct nft_ctx *ctx,
- 	priv->dreg = nft_parse_register(tb[NFTA_HASH_DREG]);
+diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
+index 9be208db88d3a..778f3ae918775 100755
+--- a/scripts/sphinx-pre-install
++++ b/scripts/sphinx-pre-install
+@@ -364,7 +364,7 @@ sub give_redhat_hints()
+ 	#
+ 	# Checks valid for RHEL/CentOS version 7.x.
+ 	#
+-	if (! $system_release =~ /Fedora/) {
++	if (!($system_release =~ /Fedora/)) {
+ 		$map{"virtualenv"} = "python-virtualenv";
+ 	}
  
- 	priv->modulus = ntohl(nla_get_be32(tb[NFTA_HASH_MODULUS]));
--	if (priv->modulus <= 1)
-+	if (priv->modulus < 1)
- 		return -ERANGE;
- 
- 	if (priv->offset + priv->modulus - 1 < priv->offset)
 -- 
 2.20.1
 
