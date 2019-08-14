@@ -2,91 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 059288C9A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:40:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37DE58C9A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:40:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728363AbfHNCkC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:40:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727254AbfHNCLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:11:11 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6803B2085A;
-        Wed, 14 Aug 2019 02:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748671;
-        bh=tXCXrScC8OHVXgT7BSG6vP4u7EQ7ruRY0gw5lPejnmo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qU2UmqKpaOYpQhUnR3QjYVbiS7DVb6LFQ6U0N1V+kjMvdvWLry6hVhwmXq13EXW4H
-         OsbO05+Qem0uqhsKk1HYQV9vZLqup0C9pYemWL4gEujLyCKDVrB0M6bFzU75DeR7nt
-         RjToUgxjdbu/ZZM/L3xBpnkS1VK62kRjxk7zrTFQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 012/123] regulator: axp20x: fix DCDC5 and DCDC6 for AXP803
-Date:   Tue, 13 Aug 2019 22:08:56 -0400
-Message-Id: <20190814021047.14828-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
-References: <20190814021047.14828-1-sashal@kernel.org>
+        id S1727980AbfHNCkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:40:25 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4254 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727182AbfHNCkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:40:23 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 71FB0567C5C78BC6698F;
+        Wed, 14 Aug 2019 10:40:20 +0800 (CST)
+Received: from [127.0.0.1] (10.177.96.96) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 14 Aug 2019
+ 10:40:15 +0800
+Subject: Re: [PATCH linux-next] drivers: dma: Fix sparse warning for
+ mux_configure32
+To:     Vinod Koul <vkoul@kernel.org>
+References: <20190812074205.96759-1-maowenan@huawei.com>
+ <20190813044327.GR12733@vkoul-mobl.Dlink>
+CC:     <dan.j.williams@intel.com>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+From:   maowenan <maowenan@huawei.com>
+Message-ID: <0a29e584-2385-9e7c-8d13-3ba47d3bf81c@huawei.com>
+Date:   Wed, 14 Aug 2019 10:40:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813044327.GR12733@vkoul-mobl.Dlink>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.96.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
 
-[ Upstream commit 8f46e22b5ac692b48d04bb722547ca17b66dda02 ]
 
-Refactoring of axp20x driver introduced a bug in AXP803's DCDC6
-regulator definition. AXP803_DCDC6_1120mV_STEPS was obtained by
-subtracting 0x47 and 0x33. This should be 0x14 (hex) and not 14
-(dec).
+On 2019/8/13 12:43, Vinod Koul wrote:
+> On 12-08-19, 15:42, Mao Wenan wrote:
+> 
+> Patch title is incorrect, it should mention the changes in patch, for
+> example make mux_configure32 static
+> 
+> Do read up on Documentation/process/submitting-patches.rst again!
+> 
+>> There is one sparse warning in drivers/dma/fsl-edma-common.c,
+> 
+> It will help to explain the warning before the fix
+> 
+>> fix it by setting mux_configure32() as static.
+>>
+>> make allmodconfig ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+>> make C=2 drivers/dma/fsl-edma-common.o ARCH=mips CROSS_COMPILE=mips-linux-gnu-
+> 
+> Make cmds are not relevant for the log
+> 
+>> drivers/dma/fsl-edma-common.c:93:6: warning: symbol 'mux_configure32' was not declared. Should it be static?
+> 
+> This one is and should be retained
+> 
+>>
+>> Fixes: 232a7f18cf8ec ("dmaengine: fsl-edma: add i.mx7ulp edma2 version support")
+>> Signed-off-by: Mao Wenan <maowenan@huawei.com>
+>> ---
+>>  drivers/dma/fsl-edma-common.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/dma/fsl-edma-common.c b/drivers/dma/fsl-edma-common.c
+>> index 6d6d8a4..7dbf7df 100644
+>> --- a/drivers/dma/fsl-edma-common.c
+>> +++ b/drivers/dma/fsl-edma-common.c
+>> @@ -90,8 +90,8 @@ static void mux_configure8(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+>>  	iowrite8(val8, addr + off);
+>>  }
+>>  
+>> -void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+>> -		     u32 off, u32 slot, bool enable)
+>> +static void mux_configure32(struct fsl_edma_chan *fsl_chan, void __iomem *addr,
+> 
+> just change this to static
+> 
+>> +			    u32 off, u32 slot, bool enable)
+> 
+> and dont change anything else.
+> 
+> If you feel to change this, propose a new patch for this line explaining
+> why this should be changed
 
-Refactoring also carried over a bug in DCDC5 regulator definition.
-Number of possible voltages must be for 1 bigger than maximum valid
-voltage index, because 0 is also valid and it means lowest voltage.
+thanks, I will send v2.
 
-Fixes: 1dbe0ccb0631 ("regulator: axp20x-regulator: add support for AXP803")
-Fixes: db4a555f7c4c ("regulator: axp20x: use defines for masks")
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Link: https://lore.kernel.org/r/20190713090717.347-3-jernej.skrabec@siol.net
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/regulator/axp20x-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index c951568994a11..989506bd90b19 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -174,14 +174,14 @@
- #define AXP803_DCDC5_1140mV_STEPS	35
- #define AXP803_DCDC5_1140mV_END		\
- 	(AXP803_DCDC5_1140mV_START + AXP803_DCDC5_1140mV_STEPS)
--#define AXP803_DCDC5_NUM_VOLTAGES	68
-+#define AXP803_DCDC5_NUM_VOLTAGES	69
- 
- #define AXP803_DCDC6_600mV_START	0x00
- #define AXP803_DCDC6_600mV_STEPS	50
- #define AXP803_DCDC6_600mV_END		\
- 	(AXP803_DCDC6_600mV_START + AXP803_DCDC6_600mV_STEPS)
- #define AXP803_DCDC6_1120mV_START	0x33
--#define AXP803_DCDC6_1120mV_STEPS	14
-+#define AXP803_DCDC6_1120mV_STEPS	20
- #define AXP803_DCDC6_1120mV_END		\
- 	(AXP803_DCDC6_1120mV_START + AXP803_DCDC6_1120mV_STEPS)
- #define AXP803_DCDC6_NUM_VOLTAGES	72
--- 
-2.20.1
+> 
+>>  {
+>>  	u32 val;
+>>  
+>> -- 
+>> 2.7.4
+> 
 
