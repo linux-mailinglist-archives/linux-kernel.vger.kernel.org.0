@@ -2,77 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BBA788CFAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:32:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9015C8CFE3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfHNJci (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 05:32:38 -0400
-Received: from szxga02-in.huawei.com ([45.249.212.188]:3530 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726019AbfHNJch (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:32:37 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.54])
-        by Forcepoint Email with ESMTP id 8C0962FE565903BFDD72;
-        Wed, 14 Aug 2019 17:32:35 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Wed, 14 Aug 2019 17:32:35 +0800
-Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
- (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Wed, 14
- Aug 2019 17:32:34 +0800
-Date:   Wed, 14 Aug 2019 17:49:43 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>
-CC:     Pavel Machek <pavel@denx.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
-Subject: Re: [PATCH RESEND 2/2] staging: erofs: differentiate unsupported
- on-disk format
-Message-ID: <20190814094943.GA17960@138>
-References: <20190814042525.4925-2-gaoxiang25@huawei.com>
- <20190814043208.15591-1-gaoxiang25@huawei.com>
- <20190814043208.15591-2-gaoxiang25@huawei.com>
- <108ee2f9-75dd-b8ab-8da7-b81c17bafbf6@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <108ee2f9-75dd-b8ab-8da7-b81c17bafbf6@huawei.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Originating-IP: [10.175.124.28]
-X-ClientProxiedBy: dggeme716-chm.china.huawei.com (10.1.199.112) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+        id S1726770AbfHNJmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 05:42:44 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:59448 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726047AbfHNJmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 05:42:44 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7A8AC1A02C2;
+        Wed, 14 Aug 2019 11:42:42 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6B0CF1A0119;
+        Wed, 14 Aug 2019 11:42:39 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 2DF0240293;
+        Wed, 14 Aug 2019 17:42:35 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        leoyang.li@nxp.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Date:   Wed, 14 Aug 2019 17:32:49 +0800
+Message-Id: <20190814093249.40065-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+Issue:
+    # hwclock -w
+    hwclock: RTC_SET_TIME: Invalid argument
 
-On Wed, Aug 14, 2019 at 05:25:51PM +0800, Chao Yu wrote:
-> On 2019/8/14 12:32, Gao Xiang wrote:
-> > For some specific fields, use ENOTSUPP instead of EIO
-> > for values which look sane but aren't supported right now.
-> > 
-> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> 
-> Reviewed-by: Chao Yu <yuchao0@huawei.com>
-> 
-> > +		return -ENOTSUPP;
-> 
-> A little bit confused about when we need to use ENOTSUPP or EOPNOTSUPP, I
-> checked several manual of syscall, it looks EOPNOTSUPP is widely used.
+The patch fixes error when run command hwclock -w
+with rtc pcf85363/pcf85263
 
-It seems that you are right, I didn't notice this.
-Let me resend this patchset to fix them all...
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+ drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Thanks,
-Gao Xiang
+diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+index a075e77617dc..3450d615974d 100644
+--- a/drivers/rtc/rtc-pcf85363.c
++++ b/drivers/rtc/rtc-pcf85363.c
+@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
+ 
+ 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+-				tmp, sizeof(tmp));
++				tmp, 2);
++	if (ret)
++		return ret;
++
++	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
++				buf, sizeof(tmp) - 2);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.17.1
 
-> 
-> Thanks,
