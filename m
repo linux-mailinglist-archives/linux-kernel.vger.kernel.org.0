@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDAFF8C5DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C71CC8C5E1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfHNCKw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:10:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43040 "EHLO mail.kernel.org"
+        id S1727011AbfHNCKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:10:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43056 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726383AbfHNCKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:10:52 -0400
+        id S1726383AbfHNCKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:10:54 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF3052084D;
-        Wed, 14 Aug 2019 02:10:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D11020842;
+        Wed, 14 Aug 2019 02:10:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748651;
-        bh=x2byiKTwlxzg6k5db6cf1XwNeXRnTfzALjIqoBBeesU=;
+        s=default; t=1565748653;
+        bh=bqerZwTnM7WuSIJtdXA+eZuk2L2Y1zKGa2r14rGFV94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tuuZ0smIBkBPNoVcVPs4Yet01BSAFsxROdiDq0/XHrkX4t2oloacGeLaY03jBkNJw
-         b6E94xjeRYLTpzyciX2dY9+Eba6+hn2JTrHGTcw2n9awisBQmZBXXgtB/wATuvGAxQ
-         X4/H5JmOmLVneHUFptOl+Iugr7kpRRxnASzP+zpc=
+        b=VmEtAIbkGDBjrylmaM9LpTe56CpZJRlAt8iouPF3wDHG4g3NPDK+XVWmCyw28Z/w/
+         ox7MgwExnkFQotRbVoNeK5wriiTuWcWACHcFx9Ur8LHqX/gfunRujbEBNVnZ7fSRFw
+         137MQGVVYfsSoceYXZ0CVcixpdx6kNyZNRcwYFfc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Wen Yang <wen.yang99@zte.com.cn>,
         Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
         Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 002/123] ASoC: simple-card: fix an use-after-free in simple_dai_link_of_dpcm()
-Date:   Tue, 13 Aug 2019 22:08:46 -0400
-Message-Id: <20190814021047.14828-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 003/123] ASoC: simple-card: fix an use-after-free in simple_for_each_link()
+Date:   Tue, 13 Aug 2019 22:08:47 -0400
+Message-Id: <20190814021047.14828-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -46,101 +46,48 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wen Yang <wen.yang99@zte.com.cn>
 
-[ Upstream commit 724808ad556c15e9473418d082f8aae81dd267f6 ]
+[ Upstream commit 27862d5a3325bc531ec15e3c607e44aa0fd57f6f ]
 
-The node variable is still being used after the of_node_put() call,
+The codec variable is still being used after the of_node_put() call,
 which may result in use-after-free.
 
-Fixes: cfc652a73331 ("ASoC: simple-card: tidyup prefix for snd_soc_codec_conf")
-Link: https://lore.kernel.org/r/1562743509-30496-2-git-send-email-wen.yang99@zte.com.cn
+Fixes: d947cdfd4be2 ("ASoC: simple-card: cleanup DAI link loop method - step1")
+Link: https://lore.kernel.org/r/1562743509-30496-3-git-send-email-wen.yang99@zte.com.cn
 Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
 Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/generic/simple-card.c | 22 +++++++++++-----------
- 1 file changed, 11 insertions(+), 11 deletions(-)
+ sound/soc/generic/simple-card.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/generic/simple-card.c b/sound/soc/generic/simple-card.c
-index 9b568f578bcd2..544064fdc780c 100644
+index 544064fdc780c..2712a2b201024 100644
 --- a/sound/soc/generic/simple-card.c
 +++ b/sound/soc/generic/simple-card.c
-@@ -138,8 +138,6 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+@@ -378,8 +378,6 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
+ 			goto error;
+ 		}
  
- 	li->link++;
- 
--	of_node_put(node);
+-		of_node_put(codec);
 -
- 	/* For single DAI link & old style of DT node */
- 	if (is_top)
- 		prefix = PREFIX;
-@@ -161,17 +159,17 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
+ 		/* get convert-xxx property */
+ 		memset(&adata, 0, sizeof(adata));
+ 		for_each_child_of_node(node, np)
+@@ -401,11 +399,13 @@ static int simple_for_each_link(struct asoc_simple_priv *priv,
+ 				ret = func_noml(priv, np, codec, li, is_top);
  
- 		ret = asoc_simple_parse_cpu(np, dai_link, &is_single_links);
- 		if (ret)
--			return ret;
-+			goto out_put_node;
+ 			if (ret < 0) {
++				of_node_put(codec);
+ 				of_node_put(np);
+ 				goto error;
+ 			}
+ 		}
  
- 		ret = asoc_simple_parse_clk_cpu(dev, np, dai_link, dai);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
++		of_node_put(codec);
+ 		node = of_get_next_child(top, node);
+ 	} while (!is_top && node);
  
- 		ret = asoc_simple_set_dailink_name(dev, dai_link,
- 						   "fe.%s",
- 						   dai_link->cpu_dai_name);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		asoc_simple_canonicalize_cpu(dai_link, is_single_links);
- 	} else {
-@@ -194,17 +192,17 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 
- 		ret = asoc_simple_parse_codec(np, dai_link);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_parse_clk_codec(dev, np, dai_link, dai);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		ret = asoc_simple_set_dailink_name(dev, dai_link,
- 						   "be.%s",
- 						   codecs->dai_name);
- 		if (ret < 0)
--			return ret;
-+			goto out_put_node;
- 
- 		/* check "prefix" from top node */
- 		snd_soc_of_parse_node_prefix(top, cconf, codecs->of_node,
-@@ -222,19 +220,21 @@ static int simple_dai_link_of_dpcm(struct asoc_simple_priv *priv,
- 
- 	ret = asoc_simple_parse_tdm(np, dai);
- 	if (ret)
--		return ret;
-+		goto out_put_node;
- 
- 	ret = asoc_simple_parse_daifmt(dev, node, codec,
- 				       prefix, &dai_link->dai_fmt);
- 	if (ret < 0)
--		return ret;
-+		goto out_put_node;
- 
- 	dai_link->dpcm_playback		= 1;
- 	dai_link->dpcm_capture		= 1;
- 	dai_link->ops			= &simple_ops;
- 	dai_link->init			= asoc_simple_dai_init;
- 
--	return 0;
-+out_put_node:
-+	of_node_put(node);
-+	return ret;
- }
- 
- static int simple_dai_link_of(struct asoc_simple_priv *priv,
 -- 
 2.20.1
 
