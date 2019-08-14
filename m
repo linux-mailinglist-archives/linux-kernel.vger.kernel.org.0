@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AD138D9B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4C78D997
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730563AbfHNRLK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:11:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34216 "EHLO mail.kernel.org"
+        id S1730416AbfHNRJ7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729970AbfHNRLF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:11:05 -0400
+        id S1730391AbfHNRJ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 074BD2084D;
-        Wed, 14 Aug 2019 17:11:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6493208C2;
+        Wed, 14 Aug 2019 17:09:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802664;
-        bh=XnL2R5SVJTzyTbeEXy6Ul6DQCr+YZAlH2A8KvE7+Ehc=;
+        s=default; t=1565802595;
+        bh=x/eYL3iSlanQaQ7hgdilPPIYolaOzoMQ6/gvsF0Q6IY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LsSmwlrQQDF3i4RrPSzE6XZQ90CsTS8VWn32CzGajw/M6QMRkW+qDSC6cFTPDbkEC
-         E/KF/AJUXTcOtLDj2WkZ0sSetz+rNiN+loJ4gKwnaoj/HOAhX7yT2l1wuHQPPZCx3u
-         KvdAgYScBsDl6NsGINON8hRJlfL/kHfgdTHBBc3I=
+        b=JzeLCtgIFSvlL2IsyzB/BPO5WK0ISslRdvj/ekp7UOIvrSJHrSLFu86wDLjhahQLr
+         a7vs5211Ck8DmF8k9jW+A0WCiOu+tqkoRf0o9nnR7q82210Mlg5f520vV0cVIm5fvP
+         i8m4RSnCbImK5kGBZr8v5IoVAjegxmLO4mkAzTh8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
-        Eric Farman <farman@linux.ibm.com>,
-        Cornelia Huck <cohuck@redhat.com>,
+        stable@vger.kernel.org, Miaohe Lin <linmiaohe@huawei.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 34/91] vfio-ccw: Set pa_nr to 0 if memory allocation fails for pa_iova_pfn
-Date:   Wed, 14 Aug 2019 19:00:57 +0200
-Message-Id: <20190814165751.146670444@linuxfoundation.org>
+Subject: [PATCH 4.19 35/91] netfilter: Fix rpfilter dropping vrf packets by mistake
+Date:   Wed, 14 Aug 2019 19:00:58 +0200
+Message-Id: <20190814165751.182391726@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -45,37 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c1ab69268d124ebdbb3864580808188ccd3ea355 ]
+[ Upstream commit b575b24b8eee37f10484e951b62ce2a31c579775 ]
 
-So we don't call try to call vfio_unpin_pages() incorrectly.
+When firewalld is enabled with ipv4/ipv6 rpfilter, vrf
+ipv4/ipv6 packets will be dropped. Vrf device will pass
+through netfilter hook twice. One with enslaved device
+and another one with l3 master device. So in device may
+dismatch witch out device because out device is always
+enslaved device.So failed with the check of the rpfilter
+and drop the packets by mistake.
 
-Fixes: 0a19e61e6d4c ("vfio: ccw: introduce channel program interfaces")
-Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
-Reviewed-by: Eric Farman <farman@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Message-Id: <33a89467ad6369196ae6edf820cbcb1e2d8d050c.1562854091.git.alifm@linux.ibm.com>
-Signed-off-by: Cornelia Huck <cohuck@redhat.com>
+Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/cio/vfio_ccw_cp.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_rpfilter.c  | 1 +
+ net/ipv6/netfilter/ip6t_rpfilter.c | 8 ++++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
-index 70a006ba4d050..4fe06ff7b2c8b 100644
---- a/drivers/s390/cio/vfio_ccw_cp.c
-+++ b/drivers/s390/cio/vfio_ccw_cp.c
-@@ -89,8 +89,10 @@ static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
- 				  sizeof(*pa->pa_iova_pfn) +
- 				  sizeof(*pa->pa_pfn),
- 				  GFP_KERNEL);
--	if (unlikely(!pa->pa_iova_pfn))
-+	if (unlikely(!pa->pa_iova_pfn)) {
-+		pa->pa_nr = 0;
- 		return -ENOMEM;
-+	}
- 	pa->pa_pfn = pa->pa_iova_pfn + pa->pa_nr;
+diff --git a/net/ipv4/netfilter/ipt_rpfilter.c b/net/ipv4/netfilter/ipt_rpfilter.c
+index 12843c9ef1421..74b19a5c572e9 100644
+--- a/net/ipv4/netfilter/ipt_rpfilter.c
++++ b/net/ipv4/netfilter/ipt_rpfilter.c
+@@ -96,6 +96,7 @@ static bool rpfilter_mt(const struct sk_buff *skb, struct xt_action_param *par)
+ 	flow.flowi4_mark = info->flags & XT_RPFILTER_VALID_MARK ? skb->mark : 0;
+ 	flow.flowi4_tos = RT_TOS(iph->tos);
+ 	flow.flowi4_scope = RT_SCOPE_UNIVERSE;
++	flow.flowi4_oif = l3mdev_master_ifindex_rcu(xt_in(par));
  
- 	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
+ 	return rpfilter_lookup_reverse(xt_net(par), &flow, xt_in(par), info->flags) ^ invert;
+ }
+diff --git a/net/ipv6/netfilter/ip6t_rpfilter.c b/net/ipv6/netfilter/ip6t_rpfilter.c
+index c3c6b09acdc4f..0f3407f2851ed 100644
+--- a/net/ipv6/netfilter/ip6t_rpfilter.c
++++ b/net/ipv6/netfilter/ip6t_rpfilter.c
+@@ -58,7 +58,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 	if (rpfilter_addr_linklocal(&iph->saddr)) {
+ 		lookup_flags |= RT6_LOOKUP_F_IFACE;
+ 		fl6.flowi6_oif = dev->ifindex;
+-	} else if ((flags & XT_RPFILTER_LOOSE) == 0)
++	/* Set flowi6_oif for vrf devices to lookup route in l3mdev domain. */
++	} else if (netif_is_l3_master(dev) || netif_is_l3_slave(dev) ||
++		  (flags & XT_RPFILTER_LOOSE) == 0)
+ 		fl6.flowi6_oif = dev->ifindex;
+ 
+ 	rt = (void *)ip6_route_lookup(net, &fl6, skb, lookup_flags);
+@@ -73,7 +75,9 @@ static bool rpfilter_lookup_reverse6(struct net *net, const struct sk_buff *skb,
+ 		goto out;
+ 	}
+ 
+-	if (rt->rt6i_idev->dev == dev || (flags & XT_RPFILTER_LOOSE))
++	if (rt->rt6i_idev->dev == dev ||
++	    l3mdev_master_ifindex_rcu(rt->rt6i_idev->dev) == dev->ifindex ||
++	    (flags & XT_RPFILTER_LOOSE))
+ 		ret = true;
+  out:
+ 	ip6_rt_put(rt);
 -- 
 2.20.1
 
