@@ -2,124 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 773FE8DCF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:25:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E5008DD12
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:36:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729161AbfHNSZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:25:21 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42339 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729109AbfHNSZV (ORCPT
+        id S1728771AbfHNSgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:36:38 -0400
+Received: from mail-a05.ithnet.com ([217.64.83.100]:42786 "EHLO
+        mail-a05.ithnet.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726522AbfHNSgi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:25:21 -0400
-Received: by mail-pf1-f196.google.com with SMTP id i30so5354125pfk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:25:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dj4KAX4oiOlHlXT1vUtLuT1vYXvby2UL10kTcUOrNVU=;
-        b=aVjpnrjNjtev+v0rOvs8haZujsIS+SKSncIJWkjkfISt434mYvH9ZXTPW8wBD5bGPC
-         o8SRuLOWToAWroJNjgL9mzkUg7pZL0rg9adAlql+R+78AjCyhV+sU3P0rmKZnNHhDq+Y
-         cEVrmLlVbqJ8RvxQU6HF1D7onDXD6y79XuyZ3wBbiBgOCGGad+d2p7DoBN0YkWVjtRv8
-         cXA/Tx/2iGDkeuY0xn6JOEzKk9UW/gSVIlOE4AeQfT6Nx8/GYwWEGSP/Oo++j+VyTGNj
-         hEtA5/sv1Nv3mH/GumYlvjJsqc92BETeL6d2WiboFtAgkgTSaiGT3u7TkLGJ7IJ9RIRF
-         L3lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dj4KAX4oiOlHlXT1vUtLuT1vYXvby2UL10kTcUOrNVU=;
-        b=jY1CzoY+QEkhab912kHpgzP9gLL6EJTTO7FUlz/013zGKlbBahGOORT+TXprOdChVu
-         kHNytqgH2N8TIv4khK982FSsUvGYG7QA/ejhWjsdTuCnvsDm6e71ODHF7VvH4qk9M0V6
-         /Qz2YbS4X9viRaAXh3rP2oNhyMHAa0maJRoVKzmw949vPsUKdEYGvy/aNt1XvTnfiimA
-         MActVsF1OJDWhHL+xQIcPAxLY42zfl2vGGr5MPvcMfh2L1SXlbn6ilVBeN6h4039qiyv
-         sZZl63k+dgodwAfF/EAH5hIvGB73wax3BPxHwj6FPD3t41QIWjGI6SCx61SkRpSmK2Ph
-         C0ww==
-X-Gm-Message-State: APjAAAU/cQOdT7vsqH0euLVmYKJ1h/5m0RYEcejh25vyxQZzdXcXztFZ
-        VdbvH3gHATHgNV13EDwJ31e/nwZNW9FiGIXBt3fMWBhNlig=
-X-Google-Smtp-Source: APXvYqz/twTfpGfqt66xJCwQIFEHEknWQOpgXq5rPtScTXaG6QgAeHl3K1Dxc6WBbeihQAjQJx847aX1lF7z3cIPudw=
-X-Received: by 2002:aa7:984a:: with SMTP id n10mr1326537pfq.3.1565807120061;
- Wed, 14 Aug 2019 11:25:20 -0700 (PDT)
+        Wed, 14 Aug 2019 14:36:38 -0400
+X-Greylist: delayed 401 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 14:36:36 EDT
+Received: (qmail 8432 invoked by uid 0); 14 Aug 2019 18:29:54 -0000
+Received: from skraw.ml@ithnet.com by mail-a05 
+ (Processed in 2.051755 secs); 14 Aug 2019 18:29:54 -0000
+X-Spam-Status: No, hits=1.5 required=5.0
+X-Virus-Status: No
+X-ExecutableContent: No
+Received: from unknown (HELO ithnet.com) (217.64.64.14)
+  by mail-a05.ithnet.com with ESMTPS (ECDHE-RSA-AES256-GCM-SHA384 encrypted); 14 Aug 2019 18:29:52 -0000
+X-Sender-Authentication: SMTP AUTH verified <skraw.ml@ithnet.com>
+Date:   Wed, 14 Aug 2019 20:29:51 +0200
+From:   Stephan von Krawczynski <skraw.ml@ithnet.com>
+To:     linux-kernel@vger.kernel.org
+Subject: VLAN tag stacking with bridge/tap device ?
+Message-ID: <20190814202951.20d7dff1@ithnet.com>
+Organization: ith Kommunikationstechnik GmbH
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190814165809.46421-1-natechancellor@gmail.com>
-In-Reply-To: <20190814165809.46421-1-natechancellor@gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 14 Aug 2019 11:25:08 -0700
-Message-ID: <CAKwvOdmvBkXu3JTp6c9yRKgPTv6pQ=_jrCsBzU5dJLD2xRvVxg@mail.gmail.com>
-Subject: Re: [PATCH] netfilter: nft_bitwise: Adjust parentheses to fix memcmp
- size argument
-To:     Nathan Chancellor <natechancellor@gmail.com>
-Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        Florian Westphal <fw@strlen.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        kbuild test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 9:58 AM Nathan Chancellor
-<natechancellor@gmail.com> wrote:
->
-> clang warns:
->
-> net/netfilter/nft_bitwise.c:138:50: error: size argument in 'memcmp'
-> call is a comparison [-Werror,-Wmemsize-comparison]
->         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
->                                       ~~~~~~~~~~~~~~~~~~^~
-> net/netfilter/nft_bitwise.c:138:6: note: did you mean to compare the
-> result of 'memcmp' instead?
->         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
->             ^
->                                                        )
-> net/netfilter/nft_bitwise.c:138:32: note: explicitly cast the argument
-> to size_t to silence this warning
->         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
->                                       ^
->                                       (size_t)(
-> 1 error generated.
->
-> Adjust the parentheses so that the result of the sizeof is used for the
-> size argument in memcmp, rather than the result of the comparison (which
-> would always be true because sizeof is a non-zero number).
->
-> Fixes: bd8699e9e292 ("netfilter: nft_bitwise: add offload support")
-> Link: https://github.com/ClangBuiltLinux/linux/issues/638
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Hello all,
 
-oh no! thanks for the patch.
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
-> ---
->  net/netfilter/nft_bitwise.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/net/netfilter/nft_bitwise.c b/net/netfilter/nft_bitwise.c
-> index 1f04ed5c518c..974300178fa9 100644
-> --- a/net/netfilter/nft_bitwise.c
-> +++ b/net/netfilter/nft_bitwise.c
-> @@ -135,8 +135,8 @@ static int nft_bitwise_offload(struct nft_offload_ctx *ctx,
->  {
->         const struct nft_bitwise *priv = nft_expr_priv(expr);
->
-> -       if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
-> -           priv->sreg != priv->dreg))
-> +       if (memcmp(&priv->xor, &zero, sizeof(priv->xor)) ||
-> +           priv->sreg != priv->dreg)
->                 return -EOPNOTSUPP;
->
->         memcpy(&ctx->regs[priv->dreg].mask, &priv->mask, sizeof(priv->mask));
-> --
-> 2.23.0.rc2
->
+I try to do a setup with qemu and tap devices attached to bridges where 802.1Q
+vlan packets that are tag stacked are running through the tap device/bridge
+where the outer tag is stripped. But it seems on the way back out of
+qemu/guest and back through the tap and bridge no additional vlan tags are
+added back.
+The very same setup with only one vlan tag that is stripped and added back
+works as expected. Is there something in the tap device or bridge code that
+prevents stacking? Can this be done by configuration or by additional coding
+in the tap or bridge?
 
 -- 
-Thanks,
-~Nick Desaulniers
+Regards,
+Stephan
+
+PS: please add me as cc in reply
