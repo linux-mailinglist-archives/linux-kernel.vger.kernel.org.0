@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CF278C634
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E65868C639
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:14:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbfHNCNs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:13:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45754 "EHLO mail.kernel.org"
+        id S1728512AbfHNCN5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:13:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45912 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728416AbfHNCNo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:13:44 -0400
+        id S1728456AbfHNCNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:13:51 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2713320844;
-        Wed, 14 Aug 2019 02:13:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 90AF020842;
+        Wed, 14 Aug 2019 02:13:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748823;
-        bh=v+WF0ZRVrM4VLB1uDTBTypBQtF7paU+fFtBRHVf9egE=;
+        s=default; t=1565748830;
+        bh=6IW0LbZ1Rpn2/X1ULoBXggIeNd4mXiLEGia1aydwyCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yOtoZ6zPmd3DcIg0TImsztSamqcXG7IeM0AgiFstlcB4dykTSwkml5VZlzMwn/y+n
-         sajM/aJ/+qRlEl9gzBeYQa9yMHqcJ5lfWdr8FsCSXs58rT/b1Ehb4nG4vmSZdfNvEt
-         635rAu5w7tENQb3qDMtczeYA2kIQu933h/sXWbXQ=
+        b=VLDiz1MhmbU1B/a29E0qHrinSTihADS5sYQGYpJ5tdsGg8MWxNNSJn5QtjvIHOEmk
+         nRG+1IOe52wcprQk/E/p0iVYYTGZiuWPWvjQAXWXjJrCmHbbfv/mOMHFgIr7QZZxvK
+         GNgiTcEsUiwpb77IZd0rqHTxK1SWY/BhxdXX/adY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Trond Myklebust <trond.myklebust@hammerspace.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 084/123] NFSv4: Fix a potential sleep while atomic in nfs4_do_reclaim()
-Date:   Tue, 13 Aug 2019 22:10:08 -0400
-Message-Id: <20190814021047.14828-84-sashal@kernel.org>
+Cc:     Pavel Shilovsky <pshilov@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 090/123] SMB3: Fix potential memory leak when processing compound chain
+Date:   Tue, 13 Aug 2019 22:10:14 -0400
+Message-Id: <20190814021047.14828-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -43,142 +44,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-[ Upstream commit c77e22834ae9a11891cb613bd9a551be1b94f2bc ]
+[ Upstream commit 3edeb4a4146dc3b54d6fa71b7ee0585cb52ebfdf ]
 
-John Hubbard reports seeing the following stack trace:
+When a reconnect happens in the middle of processing a compound chain
+the code leaks a buffer from the memory pool. Fix this by properly
+checking for a return code and freeing buffers in case of error.
 
-nfs4_do_reclaim
-   rcu_read_lock /* we are now in_atomic() and must not sleep */
-       nfs4_purge_state_owners
-           nfs4_free_state_owner
-               nfs4_destroy_seqid_counter
-                   rpc_destroy_wait_queue
-                       cancel_delayed_work_sync
-                           __cancel_work_timer
-                               __flush_work
-                                   start_flush_work
-                                       might_sleep:
-                                        (kernel/workqueue.c:2975: BUG)
+Also maintain a buf variable to be equal to either smallbuf or bigbuf
+depending on a response buffer size while parsing a chain and when
+returning to the caller.
 
-The solution is to separate out the freeing of the state owners
-from nfs4_purge_state_owners(), and perform that outside the atomic
-context.
-
-Reported-by: John Hubbard <jhubbard@nvidia.com>
-Fixes: 0aaaf5c424c7f ("NFS: Cache state owners after files are closed")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/nfs4_fs.h    |  3 ++-
- fs/nfs/nfs4client.c |  5 ++++-
- fs/nfs/nfs4state.c  | 27 ++++++++++++++++++++++-----
- 3 files changed, 28 insertions(+), 7 deletions(-)
+ fs/cifs/smb2ops.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
-index 8a38a254f5162..235919156eddd 100644
---- a/fs/nfs/nfs4_fs.h
-+++ b/fs/nfs/nfs4_fs.h
-@@ -465,7 +465,8 @@ static inline void nfs4_schedule_session_recovery(struct nfs4_session *session,
- 
- extern struct nfs4_state_owner *nfs4_get_state_owner(struct nfs_server *, const struct cred *, gfp_t);
- extern void nfs4_put_state_owner(struct nfs4_state_owner *);
--extern void nfs4_purge_state_owners(struct nfs_server *);
-+extern void nfs4_purge_state_owners(struct nfs_server *, struct list_head *);
-+extern void nfs4_free_state_owners(struct list_head *head);
- extern struct nfs4_state * nfs4_get_open_state(struct inode *, struct nfs4_state_owner *);
- extern void nfs4_put_open_state(struct nfs4_state *);
- extern void nfs4_close_state(struct nfs4_state *, fmode_t);
-diff --git a/fs/nfs/nfs4client.c b/fs/nfs/nfs4client.c
-index 81b9b6d7927ac..208a236dc2350 100644
---- a/fs/nfs/nfs4client.c
-+++ b/fs/nfs/nfs4client.c
-@@ -758,9 +758,12 @@ int nfs41_walk_client_list(struct nfs_client *new,
- 
- static void nfs4_destroy_server(struct nfs_server *server)
+diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+index 2ec37dc589a7b..ae10d6e297c3a 100644
+--- a/fs/cifs/smb2ops.c
++++ b/fs/cifs/smb2ops.c
+@@ -4015,7 +4015,6 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
  {
-+	LIST_HEAD(freeme);
-+
- 	nfs_server_return_all_delegations(server);
- 	unset_pnfs_layoutdriver(server);
--	nfs4_purge_state_owners(server);
-+	nfs4_purge_state_owners(server, &freeme);
-+	nfs4_free_state_owners(&freeme);
- }
+ 	int ret, length;
+ 	char *buf = server->smallbuf;
+-	char *tmpbuf;
+ 	struct smb2_sync_hdr *shdr;
+ 	unsigned int pdu_length = server->pdu_size;
+ 	unsigned int buf_size;
+@@ -4045,18 +4044,15 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
+ 		return length;
  
- /*
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index 556ec916846f0..261de26d897f7 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -624,24 +624,39 @@ void nfs4_put_state_owner(struct nfs4_state_owner *sp)
- /**
-  * nfs4_purge_state_owners - Release all cached state owners
-  * @server: nfs_server with cached state owners to release
-+ * @head: resulting list of state owners
-  *
-  * Called at umount time.  Remaining state owners will be on
-  * the LRU with ref count of zero.
-+ * Note that the state owners are not freed, but are added
-+ * to the list @head, which can later be used as an argument
-+ * to nfs4_free_state_owners.
-  */
--void nfs4_purge_state_owners(struct nfs_server *server)
-+void nfs4_purge_state_owners(struct nfs_server *server, struct list_head *head)
- {
- 	struct nfs_client *clp = server->nfs_client;
- 	struct nfs4_state_owner *sp, *tmp;
--	LIST_HEAD(doomed);
- 
- 	spin_lock(&clp->cl_lock);
- 	list_for_each_entry_safe(sp, tmp, &server->state_owners_lru, so_lru) {
--		list_move(&sp->so_lru, &doomed);
-+		list_move(&sp->so_lru, head);
- 		nfs4_remove_state_owner_locked(sp);
+ 	next_is_large = server->large_buf;
+- one_more:
++one_more:
+ 	shdr = (struct smb2_sync_hdr *)buf;
+ 	if (shdr->NextCommand) {
+-		if (next_is_large) {
+-			tmpbuf = server->bigbuf;
++		if (next_is_large)
+ 			next_buffer = (char *)cifs_buf_get();
+-		} else {
+-			tmpbuf = server->smallbuf;
++		else
+ 			next_buffer = (char *)cifs_small_buf_get();
+-		}
+ 		memcpy(next_buffer,
+-		       tmpbuf + le32_to_cpu(shdr->NextCommand),
++		       buf + le32_to_cpu(shdr->NextCommand),
+ 		       pdu_length - le32_to_cpu(shdr->NextCommand));
  	}
- 	spin_unlock(&clp->cl_lock);
-+}
  
--	list_for_each_entry_safe(sp, tmp, &doomed, so_lru) {
-+/**
-+ * nfs4_purge_state_owners - Release all cached state owners
-+ * @head: resulting list of state owners
-+ *
-+ * Frees a list of state owners that was generated by
-+ * nfs4_purge_state_owners
-+ */
-+void nfs4_free_state_owners(struct list_head *head)
-+{
-+	struct nfs4_state_owner *sp, *tmp;
-+
-+	list_for_each_entry_safe(sp, tmp, head, so_lru) {
- 		list_del(&sp->so_lru);
- 		nfs4_free_state_owner(sp);
+@@ -4085,12 +4081,21 @@ receive_encrypted_standard(struct TCP_Server_Info *server,
+ 		pdu_length -= le32_to_cpu(shdr->NextCommand);
+ 		server->large_buf = next_is_large;
+ 		if (next_is_large)
+-			server->bigbuf = next_buffer;
++			server->bigbuf = buf = next_buffer;
+ 		else
+-			server->smallbuf = next_buffer;
+-
+-		buf += le32_to_cpu(shdr->NextCommand);
++			server->smallbuf = buf = next_buffer;
+ 		goto one_more;
++	} else if (ret != 0) {
++		/*
++		 * ret != 0 here means that we didn't get to handle_mid() thus
++		 * server->smallbuf and server->bigbuf are still valid. We need
++		 * to free next_buffer because it is not going to be used
++		 * anywhere.
++		 */
++		if (next_is_large)
++			free_rsp_buf(CIFS_LARGE_BUFFER, next_buffer);
++		else
++			free_rsp_buf(CIFS_SMALL_BUFFER, next_buffer);
  	}
-@@ -1864,12 +1879,13 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- 	struct nfs4_state_owner *sp;
- 	struct nfs_server *server;
- 	struct rb_node *pos;
-+	LIST_HEAD(freeme);
- 	int status = 0;
  
- restart:
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(server, &clp->cl_superblocks, client_link) {
--		nfs4_purge_state_owners(server);
-+		nfs4_purge_state_owners(server, &freeme);
- 		spin_lock(&clp->cl_lock);
- 		for (pos = rb_first(&server->state_owners);
- 		     pos != NULL;
-@@ -1898,6 +1914,7 @@ static int nfs4_do_reclaim(struct nfs_client *clp, const struct nfs4_state_recov
- 		spin_unlock(&clp->cl_lock);
- 	}
- 	rcu_read_unlock();
-+	nfs4_free_state_owners(&freeme);
- 	return 0;
- }
- 
+ 	return ret;
 -- 
 2.20.1
 
