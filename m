@@ -2,108 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EAA8DD8A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C71108DD99
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:59:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729336AbfHNStI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:49:08 -0400
-Received: from gateway23.websitewelcome.com ([192.185.50.108]:30631 "EHLO
-        gateway23.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727558AbfHNStH (ORCPT
+        id S1728420AbfHNS7x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:59:53 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45031 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726047AbfHNS7w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:49:07 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway23.websitewelcome.com (Postfix) with ESMTP id 850B584EA
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:49:06 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id xyKYhblEQdnCexyKYh25hj; Wed, 14 Aug 2019 13:49:06 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=p5hynSMPXMeH82n7jbvD9dJKoFqmmN7YuPALk1OFdaw=; b=uYVSVOcnHoJqxxVQ81EpEL0Ehn
-        /H6Eij6gUT9VharDNvklb4dHGu7B4iZZ3EWPFy1OPg3HFrkn+oM2adEA3ETcx/7V1mauczSgXgrK9
-        Trqs8xN3s5SPZhJrJ7EUxj2Rjx9Sbr2/QsXdBdGx5RCg1c/TGQnjFfKTtbLkXQwEe6RKSVjE62dOJ
-        eCcczBhYbo8Il9JSV5yVOwNkaCRDkVlIFGTxn63Imj0F0wph3b0xx5ox0u/+uQFj6jTE7+n/3Gqgy
-        jKR2OVjI4anj/P1mkT+EoJCPWmWG1WLFYnLqj17TYA0JOajkR80reKtOj1InBGmNtnAWe2eSWGP/m
-        ghAYGl9Q==;
-Received: from [187.192.11.120] (port=38588 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1hxyKX-000GEO-8y; Wed, 14 Aug 2019 13:49:05 -0500
-Date:   Wed, 14 Aug 2019 13:49:01 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc5
-Message-ID: <20190814184901.GA16709@embeddedor>
+        Wed, 14 Aug 2019 14:59:52 -0400
+Received: by mail-qt1-f194.google.com with SMTP id 44so80250425qtg.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:59:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=fgFFBrhVtUGKZZbJJolYXsdk6eeUI4H6Yby6s8HsxXA=;
+        b=dkSN2Tr8QitHw/33jCiZhBgFHzbyCTcbfGRIRgnv+neWx9O0HTr2DeIxljWIqJD3Fn
+         qGF+8ImOPJQe/JjAqEvQO7d2739TqHbimcDrXcrqOeFk+MJSem0d6oy6qjB5UJdIjJB/
+         DNbfYEomOItz26Ame4+Y2h/vA462XSGBZUc2t5qtzlQ/Kn3HVrABoqHV+MdsUrt673lr
+         gQ/NcUiQhqCmElCYRZpcxgyPvqz1cSfGPWm09/2CMA8Vw4xF60XkMA7OUr9ZLcACP7b/
+         pnKASmC4Z2xsW5L9Hb33tGOqSmRwusJZZltflF6HC9fTM7NNmb3ZP6xvabrjn6PWoKzl
+         WC/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=fgFFBrhVtUGKZZbJJolYXsdk6eeUI4H6Yby6s8HsxXA=;
+        b=iKe3vjtA0r/u2eC2uhrhHm673+iJPVBx3rbEC6aCF0ZwBwQjExmdx+VCAksGpUJDam
+         NZCRYF7bsMrdbl7qJp5f+++C7Xx+zo/afavjACe8eOLw89NvtOSbZNzyT7w9bW4AygZK
+         DCu1TR/+zxauRxkyWub7ZazKb4Br9UyomExSup1TQpEVxfj+kotoBSTT9wwFtoF1tNML
+         03pr56zhZFEQ7ZZY752Him36tyjYQVLgVRlfSyQvXjUwf7BayP5q78sGxutvfhQhr/IW
+         Wa1CQUAfyx4VAHpeHhmsJ62S/Xd6VPcomtdp/9K2Z1umbqRILkKh0OV8uNO6BwkkacUB
+         NRXg==
+X-Gm-Message-State: APjAAAVbRw60d11ZL2dcp+VIuuW2Il4bmIaaqXL1HwFWP+81pQvUUtjX
+        YkLlKLtmyS+cIR61vgeseYk=
+X-Google-Smtp-Source: APXvYqzd/EAJYLa22vQNjsabFbparfS53hGh1tL9jaRpG0/iogqB5w0fwOlorjEX9hlu82GQjP7AFw==
+X-Received: by 2002:ac8:46cc:: with SMTP id h12mr831669qto.234.1565809191487;
+        Wed, 14 Aug 2019 11:59:51 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.212.110])
+        by smtp.gmail.com with ESMTPSA id j50sm341755qtj.30.2019.08.14.11.59.50
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 11:59:51 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 9170840857; Wed, 14 Aug 2019 15:52:13 -0300 (-03)
+Date:   Wed, 14 Aug 2019 15:52:13 -0300
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Igor Lubashev <ilubashe@akamai.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        James Morris <jmorris@namei.org>
+Subject: Re: [PATCH v3 3/4] perf: Use CAP_SYSLOG with kptr_restrict checks
+Message-ID: <20190814185213.GN9280@kernel.org>
+References: <cover.1565188228.git.ilubashe@akamai.com>
+ <291d2cda6ee75b4cd4c9ce717c177db18bf03a31.1565188228.git.ilubashe@akamai.com>
+ <CANLsYkxZE0CQJKQ-bFi=zFV5vTCbL2v76+x1fmCpqNruqWiFXg@mail.gmail.com>
+ <20190814184814.GM9280@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1hxyKX-000GEO-8y
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:38588
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <20190814184814.GM9280@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
+Em Wed, Aug 14, 2019 at 03:48:14PM -0300, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Aug 14, 2019 at 12:04:33PM -0600, Mathieu Poirier escreveu:
+> > # echo 0 > /proc/sys/kernel/kptr_restrict
+> > # ./tools/perf/perf record -e instructions:k uname
+> > perf: Segmentation fault
+> > Obtained 10 stack frames.
+> > ./tools/perf/perf(sighandler_dump_stack+0x44) [0x55af9e5da5d4]
+> > /lib/x86_64-linux-gnu/libc.so.6(+0x3ef20) [0x7fd31efb6f20]
+> > ./tools/perf/perf(perf_event__synthesize_kernel_mmap+0xa7) [0x55af9e590337]
+> > ./tools/perf/perf(+0x1cf5be) [0x55af9e50c5be]
+> > ./tools/perf/perf(cmd_record+0x1022) [0x55af9e50dff2]
+> > ./tools/perf/perf(+0x23f98d) [0x55af9e57c98d]
+> > ./tools/perf/perf(+0x23fc9e) [0x55af9e57cc9e]
+> > ./tools/perf/perf(main+0x369) [0x55af9e4f6bc9]
+> > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7) [0x7fd31ef99b97]
+> > ./tools/perf/perf(_start+0x2a) [0x55af9e4f704a]
+> > Segmentation fault
+> > 
+> > I can reproduce this on both x86 and ARM64.
+> 
+> I don't see this with these two csets removed:
+> 
+> 7ff5b5911144 perf symbols: Use CAP_SYSLOG with kptr_restrict checks
+> d7604b66102e perf tools: Use CAP_SYS_ADMIN with perf_event_paranoid checks
+> 
+> Which were the ones I guessed were related to the problem you reported,
+> so they are out of my ongoing perf/core pull request to Ingo/Thomas, now
+> trying with these applied and your instructions...
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
+Can't repro:
 
-are available in the Git repository at:
+[root@quaco ~]# cat /proc/sys/kernel/kptr_restrict
+0
+[root@quaco ~]# perf record -e instructions:k uname
+Linux
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.024 MB perf.data (1 samples) ]
+[root@quaco ~]# echo 1 > /proc/sys/kernel/kptr_restrict
+[root@quaco ~]# perf record -e instructions:k uname
+Linux
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.024 MB perf.data (1 samples) ]
+[root@quaco ~]# echo 0 > /proc/sys/kernel/kptr_restrict
+[root@quaco ~]# perf record -e instructions:k uname
+Linux
+[ perf record: Woken up 1 times to write data ]
+[ perf record: Captured and wrote 0.024 MB perf.data (1 samples) ]
+[root@quaco ~]#
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc5
+[acme@quaco perf]$ git log --oneline --author Lubashev tools/
+7ff5b5911144 (HEAD -> perf/cap, acme.korg/tmp.perf/cap, acme.korg/perf/cap) perf symbols: Use CAP_SYSLOG with kptr_restrict checks
+d7604b66102e perf tools: Use CAP_SYS_ADMIN with perf_event_paranoid checks
+c766f3df635d perf ftrace: Use CAP_SYS_ADMIN instead of euid==0
+c22e150e3afa perf tools: Add helpers to use capabilities if present
+74d5f3d06f70 tools build: Add capability-related feature detection
+perf version 5.3.rc4.g7ff5b5911144
+[acme@quaco perf]$
 
-for you to fetch changes up to 1ee1119d184bb06af921b48c3021d921bbd85bac:
-
-  sh: kernel: hw_breakpoint: Fix missing break in switch statement (2019-08-11 16:15:16 -0500)
-
-----------------------------------------------------------------
-Wimplicit-fallthrough patches for 5.3-rc5
-
-Hi Linus,
-
-Please, pull the following patches that fix sh mainline builds:
-
- - Fix fall-through warnings in sh.
- - Fix missing break bug (a 10-year-old bug) in sh. This
-   fix is tagged for stable.
-
-Currently, mainline builds for sh are broken. These patches fix that.
-
-Thanks
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-----------------------------------------------------------------
-Gustavo A. R. Silva (2):
-      sh: kernel: disassemble: Mark expected switch fall-throughs
-      sh: kernel: hw_breakpoint: Fix missing break in switch statement
-
- arch/sh/kernel/disassemble.c   | 5 ++---
- arch/sh/kernel/hw_breakpoint.c | 1 +
- 2 files changed, 3 insertions(+), 3 deletions(-)
+- Arnaldo
