@@ -2,65 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA5B8C5C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:03:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCE8B8C5CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:04:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfHNCDQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:03:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42198 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726373AbfHNCDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:03:16 -0400
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A913320844;
-        Wed, 14 Aug 2019 02:03:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748195;
-        bh=F8prTQ/k/b+W43RtabebnHqUglUVLPyMKRVC+/Nz7Vg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eavud9KM/G4Y+VFqXEPoGdZBJzeWlrvIthMYhHqb09rtfMoMACgIE31fqYVZF+vbf
-         bc8w4XdnfQrKLMRWccc7tpnYpyqh/EKlV+8SI/ebkLpmUcljB0jOKE5ayulPdnnfuH
-         iikw6fRZFnFVLg/jpOLTwgzIHEiolseBAdToHSxU=
-Date:   Tue, 13 Aug 2019 22:03:14 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Rob Clark <robdclark@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Subject: Re: [PATCH AUTOSEL 5.2 42/76] drm/msm: stop abusing dma_map/unmap
- for cache
-Message-ID: <20190814020314.GG17747@sasha-vm>
-References: <20190802131951.11600-1-sashal@kernel.org>
- <20190802131951.11600-42-sashal@kernel.org>
- <CAJs_Fx4ddE-85uA3S+YLPat4uX8Mk9zRU2SFm2xmGgmAFWPEyg@mail.gmail.com>
+        id S1727102AbfHNCEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:04:31 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38059 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726007AbfHNCEa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:04:30 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r12so5708122edo.5;
+        Tue, 13 Aug 2019 19:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yClt4IiYnvtlCU9uUEc5mhIYUjABpvyWOso+HI4mu3o=;
+        b=l9ndCYzlwR5qGpefWEgVLiJsPd4v8Dk4nsao6j4NOxiRFw3jG0aPROGqZxMVJR3lpC
+         GgflwMHAjzTKnoSfg6myFWphE5+A5HM8M2CC4ZNWiHjcMVl9lJ/c+PaDElSrNzJrfBGb
+         BniQUVDawR1ghe7yEsAp2HWpQJrndum1p0fxY5vT+knYDfn0SUqQPRT2Fgy1pQLXrb+I
+         WtvdlASjkuw+vO/1ZJ0V56F047OwOcNphKVmF3q3LEuJ6bEUsRuU1v5RdOVyx6oBNJbf
+         7glrhkCTTq7yr9ZGLALrsby9RiapZVvRb2IKimk68pRikKBjUMxUDjEVDYoqd8rLVkoM
+         IM0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yClt4IiYnvtlCU9uUEc5mhIYUjABpvyWOso+HI4mu3o=;
+        b=PJgHaZPnbKXJKqkVYvGMnUNUfRFlbwaYKHASInI+ak4LtttNCCeqJ76LQ8L0kRUoMu
+         nb5khdCVbmC5yh8dkT0NiG4h3oyi6ZRFbHx0u2aaGPIF1z5XztRWriuun9s3PPocmx2E
+         wpX5Ae06CvRJMVxBORvj4gc6PXxW5UDLjhTp79JsSkjwKsqS6zvLuKux4keZGxszKP1M
+         0Y7u3MC18JU6ogMhXIfwoDQzCfFmDOJ/qIAU1Gmy6oiQKjS7rPecf2pQDfIqQ++15yho
+         V9LSMp1lrd4A03viztn2IfuerY1ZcEskeJgL4TAiesCI9Iaf8giwUncg5d5Wj8SLIFKQ
+         UBYA==
+X-Gm-Message-State: APjAAAWlXr3axFgvQqD2sIfb/UNK9sdsTFp/dycanfm8SpF3HM98KvXi
+        puMwbSm/91qLiPRMIFJ65qA=
+X-Google-Smtp-Source: APXvYqxhOvGYIm/p1syoBfmRH4Nh5i7jAhIt7mkfGBb6oygRhVeG0iblgw2hn7e0AoAKsPwHBKza7g==
+X-Received: by 2002:a50:b48f:: with SMTP id w15mr45996037edd.260.1565748268455;
+        Tue, 13 Aug 2019 19:04:28 -0700 (PDT)
+Received: from continental ([186.212.91.40])
+        by smtp.gmail.com with ESMTPSA id x11sm25444255eda.80.2019.08.13.19.04.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Aug 2019 19:04:27 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 23:05:40 -0300
+From:   Marcos Paulo de Souza <marcos.souza.org@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-kernel@vger.kernel.org, hch@lst.de,
+        linux-block@vger.kernel.org
+Subject: Re: [PATCHv2 0/4] blk_execute_rq{_nowait} cleanup part1
+Message-ID: <20190814020540.GA27622@continental>
+References: <20190809105433.8946-1-marcos.souza.org@gmail.com>
+ <55246cff-6d32-e7d5-bee0-9940bc59250a@kernel.dk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJs_Fx4ddE-85uA3S+YLPat4uX8Mk9zRU2SFm2xmGgmAFWPEyg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <55246cff-6d32-e7d5-bee0-9940bc59250a@kernel.dk>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 02, 2019 at 05:14:35PM -0700, Rob Clark wrote:
->Hi Sasha,
->
->It's probably best *not* to backport this patch.. drm/msm abuses the
->DMA API in a way that it is not intended be used, to work around the
->lack of cache sync API exported to kernel modules on arm/arm64.  I
->couldn't really guarantee that this patch does the right thing on
->older versions of DMA API, so best to leave things as they were.
+On Sun, Aug 11, 2019 at 07:47:17AM -0600, Jens Axboe wrote:
+> On 8/9/19 3:54 AM, Marcos Paulo de Souza wrote:
+> > After checking the request_queue argument of funtion blk_execute_rq_nowait, I
+> > now added three more patches, one to remove the same argument from
+> > blk_execute_rq and other two to change the at_head argument from
+> > blk_exeute_rq_{nowait} from int to bool.
+> > 
+> > Original patch can be checked here[1].
+> > 
+> > After this patch gets merged, my plan is to analyse the usage the gendisk
+> > argument, is being set as NULL but the majority of callers.
+> > 
+> > [1]: https://lkml.org/lkml/2019/8/6/31
+> 
+> Don't ever send something out that hasn't even been compiled. I already
+> detest doing kernel-wide cleanup changes like this, but when I do, I
+> need absolute confidence in it actually being tested. The fact that it
+> hasn't even been compiled is a big black mark on the submitter.
 
-Now dropped, thank you.
+My bad. I compiled the code locally and tested in VM, but later on I removed
+the semicolon by mistake while reviewing the changes once more and the code
+was commited without the semicolon. I'm improving my setup (scripts
+and whatnot) to avoid this happening again in the future.
 
---
-Thanks,
-Sasha
+> 
+> -- 
+> Jens Axboe
+> 
