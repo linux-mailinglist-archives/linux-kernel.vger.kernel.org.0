@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 978CF8DACF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:20:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62CD28DAC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:20:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730466AbfHNRUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:20:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33116 "EHLO mail.kernel.org"
+        id S1729789AbfHNRUX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730129AbfHNRKY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:24 -0400
+        id S1730513AbfHNRKt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:49 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17CF82133F;
-        Wed, 14 Aug 2019 17:10:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 959382084D;
+        Wed, 14 Aug 2019 17:10:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802623;
-        bh=tOPneCiU3dnJ2IqXOI7xEijvZxNxzuf6Zmq9V0z+500=;
+        s=default; t=1565802649;
+        bh=H8FDFP5X2a7P0bd89NP2CiZd3e6i1VPxp7ZnyfTSNKg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W+/xf697LYG1jPcDt5YdmdQGGPNqz994osqzmDzMY/++B7USTYPXtrxAjjZaWgo/B
-         AnD58qHpZX9rHRClgeEvm8MoKdOcDejZrNunUYk8oC/NBFCegdzPZe3crpuC1CVLTB
-         Fldg8C3kAlwjxLzTXG2/KJOXz0wCGi5X1KB20Gvk=
+        b=zyzLzKsDd1rBqAq/LZi/9s5jc6MMJYK82JXR5+VQjvHj33Imwx9ZeSwmts01nTaWR
+         9BSddmqoCioqy5td8VYnt44UxPYWlXfAwWaz9cla8vPSWQl6KhTuuKfzCd7YGyimpw
+         Z9conbC4/uVzMQ0WvGeVNIuePu63R6Wj8I3TQqpA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jakub Jankowski <shasta@toxcorp.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 36/91] netfilter: conntrack: always store window size un-scaled
-Date:   Wed, 14 Aug 2019 19:00:59 +0200
-Message-Id: <20190814165751.214416473@linuxfoundation.org>
+Subject: [PATCH 4.19 38/91] scripts/sphinx-pre-install: fix script for RHEL/CentOS
+Date:   Wed, 14 Aug 2019 19:01:01 +0200
+Message-Id: <20190814165751.278778611@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -46,78 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 959b69ef57db00cb33e9c4777400ae7183ebddd3 ]
+[ Upstream commit b308467c916aa7acc5069802ab76a9f657434701 ]
 
-Jakub Jankowski reported following oddity:
+There's a missing parenthesis at the script, with causes it to
+fail to detect non-Fedora releases (e. g. RHEL/CentOS).
 
-After 3 way handshake completes, timeout of new connection is set to
-max_retrans (300s) instead of established (5 days).
+Tested with Centos 7.6.1810.
 
-shortened excerpt from pcap provided:
-25.070622 IP (flags [DF], proto TCP (6), length 52)
-10.8.5.4.1025 > 10.8.1.2.80: Flags [S], seq 11, win 64240, [wscale 8]
-26.070462 IP (flags [DF], proto TCP (6), length 48)
-10.8.1.2.80 > 10.8.5.4.1025: Flags [S.], seq 82, ack 12, win 65535, [wscale 3]
-27.070449 IP (flags [DF], proto TCP (6), length 40)
-10.8.5.4.1025 > 10.8.1.2.80: Flags [.], ack 83, win 512, length 0
-
-Turns out the last_win is of u16 type, but we store the scaled value:
-512 << 8 (== 0x20000) becomes 0 window.
-
-The Fixes tag is not correct, as the bug has existed forever, but
-without that change all that this causes might cause is to mistake a
-window update (to-nonzero-from-zero) for a retransmit.
-
-Fixes: fbcd253d2448b8 ("netfilter: conntrack: lower timeout to RETRANS seconds if window is 0")
-Reported-by: Jakub Jankowski <shasta@toxcorp.com>
-Tested-by: Jakub Jankowski <shasta@toxcorp.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nf_conntrack_proto_tcp.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ scripts/sphinx-pre-install | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nf_conntrack_proto_tcp.c b/net/netfilter/nf_conntrack_proto_tcp.c
-index 842f3f86fb2e7..7011ab27c4371 100644
---- a/net/netfilter/nf_conntrack_proto_tcp.c
-+++ b/net/netfilter/nf_conntrack_proto_tcp.c
-@@ -480,6 +480,7 @@ static bool tcp_in_window(const struct nf_conn *ct,
- 	struct ip_ct_tcp_state *receiver = &state->seen[!dir];
- 	const struct nf_conntrack_tuple *tuple = &ct->tuplehash[dir].tuple;
- 	__u32 seq, ack, sack, end, win, swin;
-+	u16 win_raw;
- 	s32 receiver_offset;
- 	bool res, in_recv_win;
+diff --git a/scripts/sphinx-pre-install b/scripts/sphinx-pre-install
+index 067459760a7b0..3524dbc313163 100755
+--- a/scripts/sphinx-pre-install
++++ b/scripts/sphinx-pre-install
+@@ -301,7 +301,7 @@ sub give_redhat_hints()
+ 	#
+ 	# Checks valid for RHEL/CentOS version 7.x.
+ 	#
+-	if (! $system_release =~ /Fedora/) {
++	if (!($system_release =~ /Fedora/)) {
+ 		$map{"virtualenv"} = "python-virtualenv";
+ 	}
  
-@@ -488,7 +489,8 @@ static bool tcp_in_window(const struct nf_conn *ct,
- 	 */
- 	seq = ntohl(tcph->seq);
- 	ack = sack = ntohl(tcph->ack_seq);
--	win = ntohs(tcph->window);
-+	win_raw = ntohs(tcph->window);
-+	win = win_raw;
- 	end = segment_seq_plus_len(seq, skb->len, dataoff, tcph);
- 
- 	if (receiver->flags & IP_CT_TCP_FLAG_SACK_PERM)
-@@ -663,14 +665,14 @@ static bool tcp_in_window(const struct nf_conn *ct,
- 			    && state->last_seq == seq
- 			    && state->last_ack == ack
- 			    && state->last_end == end
--			    && state->last_win == win)
-+			    && state->last_win == win_raw)
- 				state->retrans++;
- 			else {
- 				state->last_dir = dir;
- 				state->last_seq = seq;
- 				state->last_ack = ack;
- 				state->last_end = end;
--				state->last_win = win;
-+				state->last_win = win_raw;
- 				state->retrans = 0;
- 			}
- 		}
 -- 
 2.20.1
 
