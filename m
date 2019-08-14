@@ -2,76 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D883E8D579
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:00:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 680458D57F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:02:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727847AbfHNOAe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 10:00:34 -0400
-Received: from mga03.intel.com ([134.134.136.65]:6613 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726865AbfHNOAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:00:33 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 07:00:33 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,385,1559545200"; 
-   d="scan'208";a="167434926"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by orsmga007.jf.intel.com with ESMTP; 14 Aug 2019 07:00:31 -0700
-Date:   Wed, 14 Aug 2019 22:02:12 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-Subject: Re: [PATCH RESEND v4 0/9] Enable Sub-page Write Protection Support
-Message-ID: <20190814140212.GA7625@local-michael-cet-test.sh.intel.com>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <5db7a1fc-994f-f95b-5813-ffe1801dbfbc@redhat.com>
+        id S1728080AbfHNOCp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 10:02:45 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35432 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfHNOCp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 10:02:45 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k2so25367503wrq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:02:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9BCsaT/ypWtdhsmfXKzhWUE99AeirQdOEW2jeMnFuhQ=;
+        b=hdGANqTQ9F21qw3u2Ego2JScgA5oHNpiXRoKNozB7yNZReqYDa7LJmrxWHn8/BjFZA
+         VJcIcgSCiwFebMJ6Wtunw9n3td5KB8oF2KoPTxrozb5S9wPP2eysU9YFtFwLKO1ILLlG
+         jQZKIyxO1J99qglc+9rCgLVT8PBm7dz6RLjVXXvvqyF5mNtqHCr7TVDtUNZuSWfLZIwy
+         W7b58nIVz03ZjHRkydJi9TxhYyhV65qrJCm3UPE3NUxx8FS/tXQRvwTOGX92IlEb3a1r
+         5d2ZPTWM+Js2wa1jV7NZysCGy2pKT1lHA9sYZZQOb4mAMnJn2ywplnG9+Nf5MB/bPrUr
+         cShw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9BCsaT/ypWtdhsmfXKzhWUE99AeirQdOEW2jeMnFuhQ=;
+        b=sEhp50mCvbhzVeU3+US8OBpXpQEpsyrgqBERNxmbGjyFkTwgUURkohAGl0kWX7ZQXl
+         blsipr/jnkTqHge2Ycovkyof+C4LNTWQpimOXFKzIKLMkX49YVt66Zb9CzyNr+3f1LoU
+         x9f63FPHNOnz0jjhSs7zlbrPKUF6s9voYAmwMEJO3x8zN2Dpfwccgiz6yfnhpOVQgMIT
+         FSfcBbDe56i4w9t8bKfO1FN/KA9a/X3kQ5lQ5+FR9a3wysetHIUM+fEURH4diBFS3t3N
+         HiH+2fAKbQ4LhxK9QCaCkDSj4xIUjSyqmBvj1tj7jEOfgDfQcTJiphIy3oWZoBPlMafR
+         XhRg==
+X-Gm-Message-State: APjAAAWKnpfKymZjSAmk2TOPGy7mvvjxM4do9oZ3FVXf9eWpX4sSp60O
+        rNanzVNW9Ktwkbjw6ojVwsTco4xoR330ddO6UL8=
+X-Google-Smtp-Source: APXvYqxrhrONJQxS57JXyI89+iJAt6ObBY3ZfCskyIyx9vmteh564auNmoefwSfggsdTluXOxALfO9/LgPUpUfVMun0=
+X-Received: by 2002:a5d:4310:: with SMTP id h16mr45630912wrq.212.1565791362736;
+ Wed, 14 Aug 2019 07:02:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5db7a1fc-994f-f95b-5813-ffe1801dbfbc@redhat.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190811195545.32606-1-daniel.baluta@nxp.com> <20190814013916.GB13398@Asurada-Nvidia.nvidia.com>
+In-Reply-To: <20190814013916.GB13398@Asurada-Nvidia.nvidia.com>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Wed, 14 Aug 2019 17:02:31 +0300
+Message-ID: <CAEnQRZAQGdci_WtCKHqR-h9zid-COO1FaWWv-MPUkE_sYFszmg@mail.gmail.com>
+Subject: Re: [RFC PATCH] ASoC: fsl_sai: Enable data lines based on input channels
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     Daniel Baluta <daniel.baluta@nxp.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>, Takashi Iwai <tiwai@suse.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        Fabio Estevam <festevam@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 02:36:30PM +0200, Paolo Bonzini wrote:
-> On 14/08/19 09:03, Yang Weijiang wrote:
-> > EPT-Based Sub-Page write Protection(SPP)is a HW capability which allows
-> > Virtual Machine Monitor(VMM) to specify write-permission for guest
-> > physical memory at a sub-page(128 byte) granularity. When this
-> > capability is enabled, the CPU enforces write-access check for sub-pages
-> > within a 4KB page.
-> > 
-> > The feature is targeted to provide fine-grained memory protection for
-> > usages such as device virtualization, memory check-point and VM
-> > introspection etc.
-> > 
-> > SPP is active when the "sub-page write protection" (bit 23) is 1 in
-> > Secondary VM-Execution Controls. The feature is backed with a Sub-Page
-> > Permission Table(SPPT), SPPT is referenced via a 64-bit control field
-> > called Sub-Page Permission Table Pointer (SPPTP) which contains a
-> > 4K-aligned physical address.
-> > 
-> > Right now, only 4KB physical pages are supported for SPP. To enable SPP
-> > for certain physical page, we need to first make the physical page
-> > write-protected, then set bit 61 of the corresponding EPT leaf entry. 
-> > While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
-> > physical address to find out the sub-page permissions at the leaf entry.
-> > If the corresponding bit is set, write to sub-page is permitted,
-> > otherwise, SPP induced EPT violation is generated.
-> 
-> Still no testcases?
-> 
-> Paolo
+On Wed, Aug 14, 2019 at 4:39 AM Nicolin Chen <nicoleotsuka@gmail.com> wrote:
+>
+> On Sun, Aug 11, 2019 at 10:55:45PM +0300, Daniel Baluta wrote:
+> > An audio data frame consists of a number of slots one for each
+> > channel. In the case of I2S there are 2 data slots / frame.
+> >
+> > The maximum number of SAI slots / frame is configurable at
+> > IP integration time. This affects the width of Mask Register.
+> > SAI supports up to 32 slots per frame.
+> >
+> > The number of datalines is also configurable (up to 8 datalines)
+> > and affects TCE/RCE and the number of data/FIFO registers.
+> >
+> > The number of needed data lines (pins) is computed as follows:
+> >
+> > * pins = channels / slots.
+> >
+> > This can be computed in hw_params function so lets move TRCE bits
+> > seting from startup to hw_params.
+> >
+> > Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+> > ---
+> >  sound/soc/fsl/fsl_sai.c | 34 +++++++++++++---------------------
+> >  sound/soc/fsl/fsl_sai.h |  2 +-
+> >  2 files changed, 14 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/sound/soc/fsl/fsl_sai.c b/sound/soc/fsl/fsl_sai.c
+> > index 69cf3678c859..b70032c82fe2 100644
+> > --- a/sound/soc/fsl/fsl_sai.c
+> > +++ b/sound/soc/fsl/fsl_sai.c
+>
+> > @@ -480,13 +483,17 @@ static int fsl_sai_hw_params(struct snd_pcm_substream *substream,
+>
+> > -     regmap_write(sai->regmap, FSL_SAI_xMR(tx), ~0UL - ((1 << channels) - 1));
+> > +     regmap_write(sai->regmap, FSL_SAI_xMR(tx), ~0UL - ((1 << slots) - 1));
+>
+> Would this break mono channel audio?
 
-Hi, Paolo,
-The testcases are included in selftest: https://lkml.org/lkml/2019/6/18/1197
+Indeed, this isn't good for mono. I see in our internal tree that we
+have min(channels, slots).
+This would fix mono, let me think if this is really the right solution.
 
+>
+> >  static int fsl_sai_dai_probe(struct snd_soc_dai *cpu_dai)
+>
+> > @@ -881,6 +872,7 @@ static int fsl_sai_probe(struct platform_device *pdev)
+> >               return -ENOMEM;
+> >
+> >       sai->pdev = pdev;
+> > +
+>
+> Seemly unnecessary
+
+Oh, ok. Will fix in next version.
