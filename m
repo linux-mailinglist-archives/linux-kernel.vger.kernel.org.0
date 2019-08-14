@@ -2,133 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7903A8C6C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:18:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4114E8C6C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728031AbfHNCS1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:18:27 -0400
-Received: from mga12.intel.com ([192.55.52.136]:4431 "EHLO mga12.intel.com"
+        id S1729554AbfHNCSt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:18:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49706 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbfHNCSZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:18:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 19:18:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
-   d="scan'208";a="181365548"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by orsmga006.jf.intel.com with ESMTP; 13 Aug 2019 19:18:23 -0700
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     akpm@linux-foundation.org, mgorman@techsingularity.net,
-        vbabka@suse.cz, osalvador@suse.de
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Wei Yang <richardw.yang@linux.intel.com>
-Subject: [PATCH 3/3] mm/mmap.c: extract __vma_unlink_list as counter part for __vma_link_list
-Date:   Wed, 14 Aug 2019 10:17:55 +0800
-Message-Id: <20190814021755.1977-3-richardw.yang@linux.intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190814021755.1977-1-richardw.yang@linux.intel.com>
-References: <20190814021755.1977-1-richardw.yang@linux.intel.com>
+        id S1728738AbfHNCSq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:18:46 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DA81216F4;
+        Wed, 14 Aug 2019 02:18:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565749125;
+        bh=J6mQ9/2igUrWkfb/ewDtRr+g54jLGwhZCXQHjwUToLo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HZ754ViXg2yrGoUwH8q4F1e7FQ6Pmu2se4fO5SnMopLEDfW+SBbbuyGvimU6ocssf
+         lfP9RFNs/K8kYvAVZQm8+AqXv0zrWQFbR611yM6fnsOc1hl9gxoWs1uEHmWHtGPXSL
+         WkMB+przNa5z9hbkIM3dKlAYN2JxlRQRmUyErXZ4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Thomas Falcon <tlfalcon@linux.ibm.com>,
+        Jarod Wilson <jarod@redhat.com>,
+        Jay Vosburgh <j.vosburgh@gmail.com>,
+        Veaceslav Falico <vfalico@gmail.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/44] bonding: Force slave speed check after link state recovery for 802.3ad
+Date:   Tue, 13 Aug 2019 22:17:56 -0400
+Message-Id: <20190814021834.16662-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814021834.16662-1-sashal@kernel.org>
+References: <20190814021834.16662-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Just make the code a little easy to read.
+From: Thomas Falcon <tlfalcon@linux.ibm.com>
 
-Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
+[ Upstream commit 12185dfe44360f814ac4ead9d22ad2af7511b2e9 ]
 
+The following scenario was encountered during testing of logical
+partition mobility on pseries partitions with bonded ibmvnic
+adapters in LACP mode.
+
+1. Driver receives a signal that the device has been
+   swapped, and it needs to reset to initialize the new
+   device.
+
+2. Driver reports loss of carrier and begins initialization.
+
+3. Bonding driver receives NETDEV_CHANGE notifier and checks
+   the slave's current speed and duplex settings. Because these
+   are unknown at the time, the bond sets its link state to
+   BOND_LINK_FAIL and handles the speed update, clearing
+   AD_PORT_LACP_ENABLE.
+
+4. Driver finishes recovery and reports that the carrier is on.
+
+5. Bond receives a new notification and checks the speed again.
+   The speeds are valid but miimon has not altered the link
+   state yet.  AD_PORT_LACP_ENABLE remains off.
+
+Because the slave's link state is still BOND_LINK_FAIL,
+no further port checks are made when it recovers. Though
+the slave devices are operational and have valid speed
+and duplex settings, the bond will not send LACPDU's. The
+simplest fix I can see is to force another speed check
+in bond_miimon_commit. This way the bond will update
+AD_PORT_LACP_ENABLE if needed when transitioning from
+BOND_LINK_FAIL to BOND_LINK_UP.
+
+CC: Jarod Wilson <jarod@redhat.com>
+CC: Jay Vosburgh <j.vosburgh@gmail.com>
+CC: Veaceslav Falico <vfalico@gmail.com>
+CC: Andy Gospodarek <andy@greyhouse.net>
+Signed-off-by: Thomas Falcon <tlfalcon@linux.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-Note: For nommu part, the code is not tested.
----
- mm/internal.h |  1 +
- mm/mmap.c     | 12 +-----------
- mm/nommu.c    |  8 +-------
- mm/util.c     | 14 ++++++++++++++
- 4 files changed, 17 insertions(+), 18 deletions(-)
+ drivers/net/bonding/bond_main.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/mm/internal.h b/mm/internal.h
-index 41a49574acc3..4736aeb37dae 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -291,6 +291,7 @@ static inline bool is_data_mapping(vm_flags_t flags)
- /* mm/util.c */
- void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
- 		struct vm_area_struct *prev);
-+void __vma_unlink_list(struct mm_struct *mm, struct vm_area_struct *vma);
+diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+index 11a0e84d3d7cb..68e28346a367f 100644
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -2151,6 +2151,15 @@ static void bond_miimon_commit(struct bonding *bond)
+ 	bond_for_each_slave(bond, slave, iter) {
+ 		switch (slave->new_link) {
+ 		case BOND_LINK_NOCHANGE:
++			/* For 802.3ad mode, check current slave speed and
++			 * duplex again in case its port was disabled after
++			 * invalid speed/duplex reporting but recovered before
++			 * link monitoring could make a decision on the actual
++			 * link status
++			 */
++			if (BOND_MODE(bond) == BOND_MODE_8023AD &&
++			    slave->link == BOND_LINK_UP)
++				bond_3ad_adapter_speed_duplex_changed(slave);
+ 			continue;
  
- #ifdef CONFIG_MMU
- extern long populate_vma_page_range(struct vm_area_struct *vma,
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 3fde0ec18554..aa66753b175e 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -677,18 +677,8 @@ static __always_inline void __vma_unlink_common(struct mm_struct *mm,
- 						struct vm_area_struct *vma,
- 						struct vm_area_struct *ignore)
- {
--	struct vm_area_struct *prev, *next;
--
- 	vma_rb_erase_ignore(vma, &mm->mm_rb, ignore);
--	next = vma->vm_next;
--	prev = vma->vm_prev;
--	if (prev)
--		prev->vm_next = next;
--	else
--		mm->mmap = next;
--	if (next)
--		next->vm_prev = prev;
--
-+	__vma_unlink_list(mm, vma);
- 	/* Kill the cache */
- 	vmacache_invalidate(mm);
- }
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 12a66fbeb988..1a403f65b99e 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -673,13 +673,7 @@ static void delete_vma_from_mm(struct vm_area_struct *vma)
- 	/* remove from the MM's tree and list */
- 	rb_erase(&vma->vm_rb, &mm->mm_rb);
- 
--	if (vma->vm_prev)
--		vma->vm_prev->vm_next = vma->vm_next;
--	else
--		mm->mmap = vma->vm_next;
--
--	if (vma->vm_next)
--		vma->vm_next->vm_prev = vma->vm_prev;
-+	__vma_unlink_list(mm, vma);
- }
- 
- /*
-diff --git a/mm/util.c b/mm/util.c
-index 80632db29247..5f113cd0acad 100644
---- a/mm/util.c
-+++ b/mm/util.c
-@@ -281,6 +281,20 @@ void __vma_link_list(struct mm_struct *mm, struct vm_area_struct *vma,
- 		next->vm_prev = vma;
- }
- 
-+void __vma_unlink_list(struct mm_struct *mm, struct vm_area_struct *vma)
-+{
-+	struct vm_area_struct *prev, *next;
-+
-+	next = vma->vm_next;
-+	prev = vma->vm_prev;
-+	if (prev)
-+		prev->vm_next = next;
-+	else
-+		mm->mmap = next;
-+	if (next)
-+		next->vm_prev = prev;
-+}
-+
- /* Check if the vma is being used as a stack by this task */
- int vma_is_stack_for_current(struct vm_area_struct *vma)
- {
+ 		case BOND_LINK_UP:
 -- 
-2.17.1
+2.20.1
 
