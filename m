@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BA158DABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:20:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B718DB4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:24:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730385AbfHNRUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:20:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33946 "EHLO mail.kernel.org"
+        id S1729708AbfHNRGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:06:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55824 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730538AbfHNRKy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:54 -0400
+        id S1729244AbfHNRGg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:06:36 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B52BC2084D;
-        Wed, 14 Aug 2019 17:10:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFD0F216F4;
+        Wed, 14 Aug 2019 17:06:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802654;
-        bh=Lqu+Gb6MJgsXC8tH+vHrPCLUN56KFzybm5bfgYB8sV0=;
+        s=default; t=1565802396;
+        bh=4noxMmMwwZlBjkmbUaPchq6ruRdbS3jvks2GTzEWJc0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YZynM/+IqnAo28LohK3c2pnk0okH/zoGBfILl/Ktyu2M1JbcJVoiD8RQOkJmAKzFi
-         8vLHL8iwQ0AS71FbWSAEoVy5LFTBEb7qNLlfS6v18YE9CW9R6viz0lolvhXb/qwDiU
-         3w427o3S23jgftWSBMa6UreBSyhKuR7CnKdjXTLs=
+        b=CBlubNSV5pHYmdcGD90db78SU88WrfYDeadiynP+7KUeCXk7h6AkVogVsp6HKAILb
+         hMBdaSTB+6ZIBF0Mq6TbsQhSQi4qvs+DCetE+TTaidWwNwzeih3c0wx/ZkNKOrzn0C
+         O33V3QmVM34li1IV6c50xvTgvaTmU9GVId7G7wOA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tai Man <taiman.wong@amd.com>,
-        Charlene Liu <Charlene.Liu@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
+        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        Zhangguanghui <zhang.guanghui@h3c.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/91] drm/amd/display: use encoders engine id to find matched free audio device
-Date:   Wed, 14 Aug 2019 19:01:03 +0200
-Message-Id: <20190814165751.345796527@linuxfoundation.org>
+Subject: [PATCH 5.2 109/144] scsi: scsi_dh_alua: always use a 2 second delay before retrying RTPG
+Date:   Wed, 14 Aug 2019 19:01:05 +0200
+Message-Id: <20190814165804.469685205@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,54 +45,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 74eda776d7a4e69ec7aa1ce30a87636f14220fbb ]
+[ Upstream commit 20122994e38aef0ae50555884d287adde6641c94 ]
 
-[Why]
-On some platforms, the encoder id 3 is not populated. So the encoders
-are not stored in right order as index (id: 0, 1, 2, 4, 5) at pool. This
-would cause encoders id 4 & id 5 to fail when finding corresponding
-audio device, defaulting to the first available audio device. As result,
-we cannot stream audio into two DP ports with encoders id 4 & id 5.
+Retrying immediately after we've received a 'transitioning' sense code is
+pretty much pointless, we should always use a delay before retrying.  So
+ensure the default delay is applied before retrying.
 
-[How]
-It need to create enough audio device objects (0 - 5) to perform matching.
-Then use encoder engine id to find matched audio device.
-
-Signed-off-by: Tai Man <taiman.wong@amd.com>
-Reviewed-by: Charlene Liu <Charlene.Liu@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Hannes Reinecke <hare@suse.com>
+Tested-by: Zhangguanghui <zhang.guanghui@h3c.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/scsi/device_handler/scsi_dh_alua.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-index e0a96abb3c46c..06d5988dff723 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -222,7 +222,7 @@ bool resource_construct(
- 		 * PORT_CONNECTIVITY == 1 (as instructed by HW team).
- 		 */
- 		update_num_audio(&straps, &num_audio, &pool->audio_support);
--		for (i = 0; i < pool->pipe_count && i < num_audio; i++) {
-+		for (i = 0; i < caps->num_audio; i++) {
- 			struct audio *aud = create_funcs->create_audio(ctx, i);
+diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
+index f0066f8a17864..4971104b1817b 100644
+--- a/drivers/scsi/device_handler/scsi_dh_alua.c
++++ b/drivers/scsi/device_handler/scsi_dh_alua.c
+@@ -40,6 +40,7 @@
+ #define ALUA_FAILOVER_TIMEOUT		60
+ #define ALUA_FAILOVER_RETRIES		5
+ #define ALUA_RTPG_DELAY_MSECS		5
++#define ALUA_RTPG_RETRY_DELAY		2
  
- 			if (aud == NULL) {
-@@ -1713,6 +1713,12 @@ static struct audio *find_first_free_audio(
- 			return pool->audios[i];
- 		}
- 	}
-+
-+    /* use engine id to find free audio */
-+	if ((id < pool->audio_count) && (res_ctx->is_audio_acquired[id] == false)) {
-+		return pool->audios[id];
-+	}
-+
- 	/*not found the matching one, first come first serve*/
- 	for (i = 0; i < pool->audio_count; i++) {
- 		if (res_ctx->is_audio_acquired[i] == false) {
+ /* device handler flags */
+ #define ALUA_OPTIMIZE_STPG		0x01
+@@ -682,7 +683,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
+ 	case SCSI_ACCESS_STATE_TRANSITIONING:
+ 		if (time_before(jiffies, pg->expiry)) {
+ 			/* State transition, retry */
+-			pg->interval = 2;
++			pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			err = SCSI_DH_RETRY;
+ 		} else {
+ 			struct alua_dh_data *h;
+@@ -807,6 +808,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 				spin_lock_irqsave(&pg->lock, flags);
+ 				pg->flags &= ~ALUA_PG_RUNNING;
+ 				pg->flags |= ALUA_PG_RUN_RTPG;
++				if (!pg->interval)
++					pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 				spin_unlock_irqrestore(&pg->lock, flags);
+ 				queue_delayed_work(kaluad_wq, &pg->rtpg_work,
+ 						   pg->interval * HZ);
+@@ -818,6 +821,8 @@ static void alua_rtpg_work(struct work_struct *work)
+ 		spin_lock_irqsave(&pg->lock, flags);
+ 		if (err == SCSI_DH_RETRY || pg->flags & ALUA_PG_RUN_RTPG) {
+ 			pg->flags &= ~ALUA_PG_RUNNING;
++			if (!pg->interval && !(pg->flags & ALUA_PG_RUN_RTPG))
++				pg->interval = ALUA_RTPG_RETRY_DELAY;
+ 			pg->flags |= ALUA_PG_RUN_RTPG;
+ 			spin_unlock_irqrestore(&pg->lock, flags);
+ 			queue_delayed_work(kaluad_wq, &pg->rtpg_work,
 -- 
 2.20.1
 
