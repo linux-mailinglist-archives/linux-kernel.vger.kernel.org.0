@@ -2,76 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 52A248E065
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED6A08E08D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:16:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729869AbfHNWNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 18:13:22 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40498 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728378AbfHNWNV (ORCPT
+        id S1729746AbfHNWQF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 18:16:05 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38167 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727937AbfHNWQF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:13:21 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so226125pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 15:13:21 -0700 (PDT)
+        Wed, 14 Aug 2019 18:16:05 -0400
+Received: by mail-pl1-f196.google.com with SMTP id m12so232719plt.5;
+        Wed, 14 Aug 2019 15:16:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=o3iTgpB3GXZ+kQcPnDKxJUeeBPOFZQS1HDP+dtSl8iI=;
-        b=HEFmOTX7vqz6H06xnoRwJnyjwS4ngqlcblSxxBe9uJf91C2C3l3H3afY81WwkxEetJ
-         EbUuQcyViX1xj4UfRyAAAdKQkMJMp+A+qWSGvq1zWUQw8DQ77jCsLpCgcMhfLo6nNVda
-         wPT3QzNUctnrmjktXM3EnsOkJ9WFmmfmF6P3JP5768lVtArSlAJdr5XkaQydkdBmUDdH
-         uDi58nt19hPwUpCeJaQPKGXa/z2gZnqlXC+ryopFfLScSWgENEVIXSevTZyjazE3ppis
-         zLF2GWdAmdB59Sq/EJsbTmRz5IiKtqn37DU/qrZVhnWBWkDLht8AheY3rvNIjk4LdN7S
-         2yNQ==
+        bh=aWZa5dI2NRu6gHtKDFpC6w867E//TeA8xW/o66+S8bg=;
+        b=qBzDnv5WoEcN49Ehx8P57UUIl8oz7j6r5pJKgnDJkq/9i9JcNFNlrzIJlKHWe0bVRt
+         4VBrMBdIbbnWB3gueEj7YeclzU2RJJXWdDrjarGuiAi3yGBXO6hOIc/73O+CR0EEZ18j
+         9qYE5DRvKuLxLJS5XTXrqrVimdgbiJ5oL4pT1EgYOIBf4Uk/wyznzvDd2xw7B37Kc0oC
+         s3TwkOyd7vs6FnLVXfUQjsu4evDIWT81CEpi2WiJ5eRKyJxqRsZkpbQ1qBC6iD8EQNBn
+         lmB30rOH8gpS3p5romApm2kcDjm6u1DOklnmxABYn6kLbJj0nD5JyU9qyX3Yfs7sDosV
+         x9xA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=o3iTgpB3GXZ+kQcPnDKxJUeeBPOFZQS1HDP+dtSl8iI=;
-        b=GR8ATldQHsr6ouYarufsxXBn06uN5i1se+x5bj/X9DrWSdryTcOjHOevgOMcH8F7vm
-         Pwy0jnlDzOqJnPgNfsqGBtVSyldNo3n6phYpoYSZjeZ1+3uLB99D9//AGoC4PMYhKDAY
-         k8ngQUieZ6JCD7sFvVImICFK1J1Xtz6PUe9enDcWg/3Rq9lFhYaibkaUEsPVUFMPkDdG
-         Re8huZSadP5C1MalCHO2eoVfQjTcJQqla7kJ+IaEGddCqw62jetgNsOFtHo4ZvxEvSPw
-         PtMNKkkG8kQDDt4HQuMAkEEZsgb9E5cJvK6EOvwKRI6hgotuC4QkD6lVTuzG+aOPMpV0
-         x2dw==
-X-Gm-Message-State: APjAAAUZBW4EoTlzVybqUrXkAsuq30ueMj0xURGb8I7MEI7jNeQ4YQ5v
-        kfkwVPvqLraeYHaiN8zVXBo=
-X-Google-Smtp-Source: APXvYqyti+vq96Q0pE8Yd5FkzLw83ZjuNfSd6SNA8pgDAWZgNSvONObYFjog77tG3BgdbQT4MUollQ==
-X-Received: by 2002:a17:902:ac87:: with SMTP id h7mr1561600plr.36.1565820800768;
-        Wed, 14 Aug 2019 15:13:20 -0700 (PDT)
+        bh=aWZa5dI2NRu6gHtKDFpC6w867E//TeA8xW/o66+S8bg=;
+        b=fXxcvCBXrPlaKiTPqW0jGcv4iRB0Srt+0tDVeH6gr9iArIH1Ot3c31xzF9Z5S+a4DO
+         EBkXilMuphb3kWGsphoMk8ZbiajeMC4OP736lJjBqfcKkX87qiVt6TYK3Hn3OHVjkUgS
+         rhBoHQdjSikmAwXyrZxvbDDjaH2G1pS1p/g7WYWNSvF+PQwgrfFyVGM757WIIA7RU7Kj
+         yWZ1AxmseAgUItYJ7aIOQv2l+Mt7o8PPt/PTo3NKTtcf18pJwFRTWCT/lXUpwuHeoN48
+         Fz3GYAfYX+F2vARe/iwCNI+64JwDdtCv+aI+EVolkAJeQ/UWNhkSPtU2ywj5ADc3OeRH
+         eSsQ==
+X-Gm-Message-State: APjAAAXdHWWJsvDRpV4fsdctez8SAtqSSZ91ps4hSOLpkgfkc+XDivu4
+        RohKS2XBe5fjZhGzz/zAtrY=
+X-Google-Smtp-Source: APXvYqx4wiJg+kMGqoXbIWyLQISiWCqIYOJbh2AH50z72sXIlWDah+Rb8L65s8HhZIIA59tPKBJUVQ==
+X-Received: by 2002:a17:902:7b98:: with SMTP id w24mr1427925pll.163.1565820964515;
+        Wed, 14 Aug 2019 15:16:04 -0700 (PDT)
 Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id g1sm633892pgg.27.2019.08.14.15.13.19
+        by smtp.gmail.com with ESMTPSA id h195sm898264pfe.20.2019.08.14.15.16.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 15:13:20 -0700 (PDT)
+        Wed, 14 Aug 2019 15:16:03 -0700 (PDT)
 From:   Rob Clark <robdclark@gmail.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@chromium.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Doug Anderson <armlinux@m.disordat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        "Wolfram Sang (Renesas)" <wsa+renesas@sang-engineering.com>,
-        Anshuman Khandual <anshuman.khandual@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] arm: add arch_sync_dma_for_*()
-Date:   Wed, 14 Aug 2019 14:59:59 -0700
-Message-Id: <20190814220011.26934-5-robdclark@gmail.com>
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org,
+        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] drm/msm: stop abusing DMA API
+Date:   Wed, 14 Aug 2019 15:00:00 -0700
+Message-Id: <20190814220011.26934-6-robdclark@gmail.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190814220011.26934-1-robdclark@gmail.com>
 References: <20190814220011.26934-1-robdclark@gmail.com>
@@ -84,104 +67,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rob Clark <robdclark@chromium.org>
 
+Use arch_sync_dma_for_{device,cpu}() rather than abusing the DMA API to
+indirectly get at the arch_sync_dma code.
+
 Signed-off-by: Rob Clark <robdclark@chromium.org>
 ---
- arch/arm/Kconfig                |  2 ++
- arch/arm/mm/dma-mapping-nommu.c | 14 ++++++++++++++
- arch/arm/mm/dma-mapping.c       | 28 ++++++++++++++++++++++++++++
- 3 files changed, 44 insertions(+)
+ drivers/gpu/drm/msm/msm_gem.c | 37 +++++++++++------------------------
+ 1 file changed, 11 insertions(+), 26 deletions(-)
 
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 33b00579beff..a48a7263a2c1 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -18,6 +18,8 @@ config ARM
- 	select ARCH_HAS_SET_MEMORY
- 	select ARCH_HAS_STRICT_KERNEL_RWX if MMU && !XIP_KERNEL
- 	select ARCH_HAS_STRICT_MODULE_RWX if MMU
-+	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-+	select ARCH_HAS_SYNC_DMA_FOR_CPU
- 	select ARCH_HAS_TEARDOWN_DMA_OPS if MMU
- 	select ARCH_HAS_TICK_BROADCAST if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAVE_CUSTOM_GPIO_H
-diff --git a/arch/arm/mm/dma-mapping-nommu.c b/arch/arm/mm/dma-mapping-nommu.c
-index 52b82559d99b..4a3df952151f 100644
---- a/arch/arm/mm/dma-mapping-nommu.c
-+++ b/arch/arm/mm/dma-mapping-nommu.c
-@@ -84,6 +84,13 @@ static void __dma_page_cpu_to_dev(phys_addr_t paddr, size_t size,
- 		outer_clean_range(paddr, paddr + size);
+diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
+index 8cf6362e64bf..a2611e62df19 100644
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -7,6 +7,7 @@
+ #include <linux/spinlock.h>
+ #include <linux/shmem_fs.h>
+ #include <linux/dma-buf.h>
++#include <linux/dma-noncoherent.h>
+ #include <linux/pfn_t.h>
+ 
+ #include "msm_drv.h"
+@@ -32,43 +33,27 @@ static bool use_pages(struct drm_gem_object *obj)
+ 	return !msm_obj->vram_node;
  }
  
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_page_cpu_to_dev(paddr, size, dir);
-+}
-+EXPORT_SYMBOL_GPL(arch_sync_dma_for_device);
-+
- static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
- 				  enum dma_data_direction dir)
+-/*
+- * Cache sync.. this is a bit over-complicated, to fit dma-mapping
+- * API.  Really GPU cache is out of scope here (handled on cmdstream)
+- * and all we need to do is invalidate newly allocated pages before
+- * mapping to CPU as uncached/writecombine.
+- *
+- * On top of this, we have the added headache, that depending on
+- * display generation, the display's iommu may be wired up to either
+- * the toplevel drm device (mdss), or to the mdp sub-node, meaning
+- * that here we either have dma-direct or iommu ops.
+- *
+- * Let this be a cautionary tail of abstraction gone wrong.
+- */
+-
+ static void sync_for_device(struct msm_gem_object *msm_obj)
  {
-@@ -93,6 +100,13 @@ static void __dma_page_dev_to_cpu(phys_addr_t paddr, size_t size,
+ 	struct device *dev = msm_obj->base.dev->dev;
++	struct scatterlist *sg;
++	int i;
+ 
+-	if (get_dma_ops(dev)) {
+-		dma_sync_sg_for_device(dev, msm_obj->sgt->sgl,
+-			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+-	} else {
+-		dma_map_sg(dev, msm_obj->sgt->sgl,
+-			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	for_each_sg(msm_obj->sgt->sgl, sg, msm_obj->sgt->nents, i) {
++		arch_sync_dma_for_device(dev, sg_phys(sg), sg->length,
++				DMA_BIDIRECTIONAL);
  	}
  }
  
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_page_dev_to_cpu(paddr, size, dir);
-+}
-+EXPORT_SYMBOL_GPL(arch_sync_dma_for_cpu);
-+
- static dma_addr_t arm_nommu_dma_map_page(struct device *dev, struct page *page,
- 					 unsigned long offset, size_t size,
- 					 enum dma_data_direction dir,
-diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-index 6774b03aa405..8ead93196194 100644
---- a/arch/arm/mm/dma-mapping.c
-+++ b/arch/arm/mm/dma-mapping.c
-@@ -979,6 +979,13 @@ static void __dma_page_cpu_to_dev(struct page *page, unsigned long off,
- 	/* FIXME: non-speculating: flush on bidirectional mappings? */
- }
- 
-+void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_page_cpu_to_dev(phys_to_page(paddr), paddr % PAGE_SIZE, size, dir);
-+}
-+EXPORT_SYMBOL_GPL(arch_sync_dma_for_device);
-+
- static void __dma_page_dev_to_cpu(struct page *page, unsigned long off,
- 	size_t size, enum dma_data_direction dir)
+ static void sync_for_cpu(struct msm_gem_object *msm_obj)
  {
-@@ -1013,6 +1020,27 @@ static void __dma_page_dev_to_cpu(struct page *page, unsigned long off,
+ 	struct device *dev = msm_obj->base.dev->dev;
++	struct scatterlist *sg;
++	int i;
+ 
+-	if (get_dma_ops(dev)) {
+-		dma_sync_sg_for_cpu(dev, msm_obj->sgt->sgl,
+-			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
+-	} else {
+-		dma_unmap_sg(dev, msm_obj->sgt->sgl,
+-			msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++	for_each_sg(msm_obj->sgt->sgl, sg, msm_obj->sgt->nents, i) {
++		arch_sync_dma_for_cpu(dev, sg_phys(sg), sg->length,
++				DMA_BIDIRECTIONAL);
  	}
  }
  
-+void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
-+		size_t size, enum dma_data_direction dir)
-+{
-+	__dma_page_dev_to_cpu(phys_to_page(paddr), paddr % PAGE_SIZE, size, dir);
-+}
-+EXPORT_SYMBOL_GPL(arch_sync_dma_for_cpu);
-+
-+/*
-+ * arch_dma_{alloc,free} fail-stubs needed to avoid link-errors in dma/direct.c
-+ * (which is not actually used on arch/arm)
-+ */
-+void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
-+		gfp_t flags, unsigned long attrs)
-+{
-+	return NULL;
-+}
-+void arch_dma_free(struct device *dev, size_t size, void *vaddr,
-+		dma_addr_t dma_handle, unsigned long attrs)
-+{
-+}
-+
- /**
-  * arm_dma_map_sg - map a set of SG buffers for streaming mode DMA
-  * @dev: valid struct device pointer, or NULL for ISA and EISA-like devices
 -- 
 2.21.0
 
