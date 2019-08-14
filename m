@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FC638DD75
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9A48DD85
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfHNSr2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:47:28 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37661 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729191AbfHNSr0 (ORCPT
+        id S1729687AbfHNSsV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:48:21 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35846 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729415AbfHNSr2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:47:26 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so22026pgp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:47:26 -0700 (PDT)
+        Wed, 14 Aug 2019 14:47:28 -0400
+Received: by mail-pf1-f195.google.com with SMTP id w2so3283342pfi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:47:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wKlIaA25olU11BOMfTs22yk2wQhbHWnGWzmK5Nr5c8g=;
-        b=eZzQFn1vrMPxI+c/iYaHjDFjdZqtfub5KdhWWCpMgIT90qc4LcH6QPySnBMnKqR1RJ
-         hWFUlAp61oTrgfMmqMwVWrLDY3uwozkSqtAfucJDuU6oeJex9OI7lG0TKSrZC8t/+sC7
-         01P64SsD7fNSJ1fg1G5K9qXI0autzHTOrULBojThGkp/bgYTBYBa8OrdYy09/tid3Pnz
-         BMO0eQKBVdfcT99VfcCVYGNbxzc0RsJc5lTLl6njbbQlHkgbOFN5RJPixCjbNmsdV0oT
-         EJ46CZsKSnu+joJf8KYeWOviuK1PlsrCh7YHL94bkMPJNauTwDcq4UAB4xWnJYDqELDC
-         GxVQ==
+        bh=sfKXX+o4Qp2/I5oLyNwYp5frrb8P6SiEjD+Gvi5BkT0=;
+        b=T9iZEwFJF+TJKY0hHgQxpaN4a7p8bUuNIhxCNxLQu39fiS3b6qpIngIlGx0/PsKPxL
+         5BhpUZFNY4Y1uicrCiOl/ecaqtix8bpnBrPTriSTl+FU6MvKZhD40K1X9tpi1TJvUPHm
+         ZcAJO5JN/u2+RtuXPVeqCXTc3hi688nlSKe/ziB84VAnL9rED7HxiWWfh4RFYEADZwot
+         SFUn3RzcO/DdUz0dukUuu57PdnIWrfbgtu4pdiouqY8sD6tKNiQFqbIJ2WGGR0Ld88tt
+         +rvamYv9LUD5NWc/6TOtfO5PHTojq78/3MAmbMdtuZTQZHWhgnPjE3bkqg75GhB2aJe5
+         AbPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wKlIaA25olU11BOMfTs22yk2wQhbHWnGWzmK5Nr5c8g=;
-        b=UNvXuQW3N/NNTJ9Cpx8wZ35JRfR8topvLGabJSWz/ZMRVJb3Xdi9essvt0rvc2pAlL
-         DAk77KTtafFga07dVLd+rCAfblv92o3+QAYNgc0nS/nJ+9M7/YtJnwT1WPA0QFfgWber
-         BUNjMRLtQF8f6PqUP7SjEtFguYfrX5PaS4gF+SRhea0RuYewMcM4SDczw23Pl3PRz5db
-         r+KCPVKTfhKWhEf6WprAll/9Pn2JBjFJRypfraZVyVduXrTgLb4qlqFWm1B5sbGWGLxy
-         +aaG0OqwQ8LVIWQkpLkU8VGY5KVhHxoL0o4ugM7WxKL8mc24hf7Snc3lQG20lEnKtlCG
-         dHEQ==
-X-Gm-Message-State: APjAAAUWquLR92gCJ6VEVrqoeK1bhW7JX5V85+lHknhW9IiUpUpVgM1a
-        2k7vdwhORW1bQNjswD+CBbucczJ2qKc=
-X-Google-Smtp-Source: APXvYqzHEij/L3W78cYXzvyGC77DpNrqOmQ3aeVR5dxILgGVVx40Tz9jy8wBE2fteMZvJQgodyXz5A==
-X-Received: by 2002:a17:90a:1916:: with SMTP id 22mr695571pjg.62.1565808445560;
-        Wed, 14 Aug 2019 11:47:25 -0700 (PDT)
+        bh=sfKXX+o4Qp2/I5oLyNwYp5frrb8P6SiEjD+Gvi5BkT0=;
+        b=gyIp49jTKRecI5I32wU7+hs9BymcYtdrRf74k47yoKrdhX3pSoQWeJSLRueCQM3hN4
+         lmcHWG/PYTE48TdkXLurfAZwp1y0ewiBNsYnpHcZDDhi1Eb+mbC0G14DpzuT+PHHVqOt
+         C3mrcC21/kCPSJP/o2vsYfP3mlGd6x66hRVDNEX3PUlptbGU8AnuMUxR+EOQ305/E3Wm
+         r42r3ZV/ti/QYKvCyrsaBdbqT7LIq+xjPVtJGKT91xOOS21zSc5gcU9dT93dED63+1Et
+         X0GGLxpoCVnD2yGr2/2kHvZL911WZuKM9svShcjcoMBG4ageFQrGZIFge3YivBTADrsX
+         0gpg==
+X-Gm-Message-State: APjAAAVM7u2KpHyk2A7YPCpJ1FrpxsC+qDy4lEepRJXQ9KnkXcnIQjy7
+        W4zVggLx5HoDp5UvD2NTZR746zyY3AQ=
+X-Google-Smtp-Source: APXvYqyti+/OTVYfzLGL5f/MtTZ6Q0iILK/4POxjmbTxxzDN0spGBwaiT/XdSekW3R43JNlWtf0cCw==
+X-Received: by 2002:a17:90a:5288:: with SMTP id w8mr1079972pjh.61.1565808446871;
+        Wed, 14 Aug 2019 11:47:26 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id y16sm610855pfc.36.2019.08.14.11.47.24
+        by smtp.gmail.com with ESMTPSA id y16sm610855pfc.36.2019.08.14.11.47.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 11:47:24 -0700 (PDT)
+        Wed, 14 Aug 2019 11:47:26 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [RESEND][PATCH v3 12/26] drm: kirin: Move kirin_crtc, kirin_plane, kirin_format to kirin_drm_drv.h
-Date:   Wed, 14 Aug 2019 18:46:48 +0000
-Message-Id: <20190814184702.54275-13-john.stultz@linaro.org>
+Subject: [RESEND][PATCH v3 13/26] drm: kirin: Reanme dc_ops to kirin_drm_data
+Date:   Wed, 14 Aug 2019 18:46:49 +0000
+Message-Id: <20190814184702.54275-14-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190814184702.54275-1-john.stultz@linaro.org>
 References: <20190814184702.54275-1-john.stultz@linaro.org>
@@ -68,11 +68,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Xu YiPing <xuyiping@hisilicon.com>
 
 As part of refactoring the kirin driver to better support
-different hardware revisions, this patch moves some shared
-structures and helpers to the common kirin_drm_drv.h
-
-These structures will later used by both kirin620 and
-future kirin960 driver
+different hardware revisions, this patch renames the
+struct kirin_dc_ops to struct kirin_drm_data and cleans
+up the related variable names.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -85,104 +83,106 @@ Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
 [jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 27 ++-----------------
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.h   | 24 +++++++++++++++++
- 2 files changed, 26 insertions(+), 25 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c |  2 +-
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 16 ++++++++--------
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h |  4 ++--
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index ec4857e45b6e..3ad1e290bf58 100644
+index 3ad1e290bf58..acae2815eded 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -38,12 +38,6 @@
- #define OUT_OVLY	ADE_OVLY2 /* output overlay compositor */
- #define ADE_DEBUG	1
+@@ -1055,7 +1055,7 @@ static void ade_drm_cleanup(struct platform_device *pdev)
+ {
+ }
  
--#define to_kirin_crtc(crtc) \
--	container_of(crtc, struct kirin_crtc, base)
--
--#define to_kirin_plane(plane) \
--	container_of(plane, struct kirin_plane, base)
--
- 
- struct ade_hw_ctx {
- 	void __iomem  *base;
-@@ -59,18 +53,6 @@ struct ade_hw_ctx {
- 	struct drm_crtc *crtc;
+-const struct kirin_dc_ops ade_dc_ops = {
++struct kirin_drm_data ade_driver_data = {
+ 	.init = ade_drm_init,
+ 	.cleanup = ade_drm_cleanup
  };
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+index bfe0505ac4a0..60c164623f56 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+@@ -28,12 +28,12 @@
  
--struct kirin_crtc {
--	struct drm_crtc base;
--	void *hw_ctx;
--	bool enable;
--};
--
--struct kirin_plane {
--	struct drm_plane base;
--	void *hw_ctx;
--	u32 ch;
--};
--
- struct ade_data {
- 	struct kirin_crtc crtc;
- 	struct kirin_plane planes[ADE_CH_NUM];
-@@ -78,12 +60,7 @@ struct ade_data {
+ #include "kirin_drm_drv.h"
+ 
+-static struct kirin_dc_ops *dc_ops;
++static struct kirin_drm_data *driver_data;
+ 
+ static int kirin_drm_kms_cleanup(struct drm_device *dev)
+ {
+ 	drm_kms_helper_poll_fini(dev);
+-	dc_ops->cleanup(to_platform_device(dev->dev));
++	driver_data->cleanup(to_platform_device(dev->dev));
+ 	drm_mode_config_cleanup(dev);
+ 
+ 	return 0;
+@@ -67,7 +67,7 @@ static int kirin_drm_kms_init(struct drm_device *dev)
+ 	kirin_drm_mode_config_init(dev);
+ 
+ 	/* display controller init */
+-	ret = dc_ops->init(to_platform_device(dev->dev));
++	ret = driver_data->init(to_platform_device(dev->dev));
+ 	if (ret)
+ 		goto err_mode_config_cleanup;
+ 
+@@ -98,7 +98,7 @@ static int kirin_drm_kms_init(struct drm_device *dev)
+ err_unbind_all:
+ 	component_unbind_all(dev->dev, dev);
+ err_dc_cleanup:
+-	dc_ops->cleanup(to_platform_device(dev->dev));
++	driver_data->cleanup(to_platform_device(dev->dev));
+ err_mode_config_cleanup:
+ 	drm_mode_config_cleanup(dev);
+ 
+@@ -196,8 +196,8 @@ static int kirin_drm_platform_probe(struct platform_device *pdev)
+ 	struct component_match *match = NULL;
+ 	struct device_node *remote;
+ 
+-	dc_ops = (struct kirin_dc_ops *)of_device_get_match_data(dev);
+-	if (!dc_ops) {
++	driver_data = (struct kirin_drm_data *)of_device_get_match_data(dev);
++	if (!driver_data) {
+ 		DRM_ERROR("failed to get dt id data\n");
+ 		return -EINVAL;
+ 	}
+@@ -215,13 +215,13 @@ static int kirin_drm_platform_probe(struct platform_device *pdev)
+ static int kirin_drm_platform_remove(struct platform_device *pdev)
+ {
+ 	component_master_del(&pdev->dev, &kirin_drm_ops);
+-	dc_ops = NULL;
++	driver_data = NULL;
+ 	return 0;
+ }
+ 
+ static const struct of_device_id kirin_drm_dt_ids[] = {
+ 	{ .compatible = "hisilicon,hi6220-ade",
+-	  .data = &ade_dc_ops,
++	  .data = &ade_driver_data,
+ 	},
+ 	{ /* end node */ },
  };
- 
- /* ade-format info: */
--struct ade_format {
--	u32 pixel_format;
--	enum ade_fb_format ade_format;
--};
--
--static const struct ade_format ade_formats[] = {
-+static const struct kirin_format ade_formats[] = {
- 	/* 16bpp RGB: */
- 	{ DRM_FORMAT_RGB565, ADE_RGB_565 },
- 	{ DRM_FORMAT_BGR565, ADE_BGR_565 },
-@@ -127,7 +104,7 @@ static u32 ade_get_format(u32 pixel_format)
- 
- 	for (i = 0; i < ARRAY_SIZE(ade_formats); i++)
- 		if (ade_formats[i].pixel_format == pixel_format)
--			return ade_formats[i].ade_format;
-+			return ade_formats[i].hw_format;
- 
- 	/* not found */
- 	DRM_ERROR("Not found pixel format!!fourcc_format= %d\n",
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-index 22d1291668cd..d47cbb427979 100644
+index d47cbb427979..cd2eaa653db7 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-@@ -9,6 +9,30 @@
+@@ -34,11 +34,11 @@ struct kirin_plane {
+ };
  
- #define MAX_CRTC	2
- 
-+#define to_kirin_crtc(crtc) \
-+	container_of(crtc, struct kirin_crtc, base)
-+
-+#define to_kirin_plane(plane) \
-+	container_of(plane, struct kirin_plane, base)
-+
-+/* kirin-format translate table */
-+struct kirin_format {
-+	u32 pixel_format;
-+	u32 hw_format;
-+};
-+
-+struct kirin_crtc {
-+	struct drm_crtc base;
-+	void *hw_ctx;
-+	bool enable;
-+};
-+
-+struct kirin_plane {
-+	struct drm_plane base;
-+	void *hw_ctx;
-+	u32 ch;
-+};
-+
  /* display controller init/cleanup ops */
- struct kirin_dc_ops {
+-struct kirin_dc_ops {
++struct kirin_drm_data {
  	int (*init)(struct platform_device *pdev);
+ 	void (*cleanup)(struct platform_device *pdev);
+ };
+ 
+-extern const struct kirin_dc_ops ade_dc_ops;
++extern struct kirin_drm_data ade_driver_data;
+ 
+ #endif /* __KIRIN_DRM_DRV_H__ */
 -- 
 2.17.1
 
