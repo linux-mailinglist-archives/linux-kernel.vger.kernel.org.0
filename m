@@ -2,131 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF1D58CBB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 08:12:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8970C8CBC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 08:14:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727480AbfHNGMy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 02:12:54 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37766 "EHLO
+        id S1727516AbfHNGO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 02:14:26 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:38098 "EHLO
         mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfHNGMy (ORCPT
+        with ESMTP id S1725265AbfHNGOX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 02:12:54 -0400
+        Wed, 14 Aug 2019 02:14:23 -0400
 Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190814061247euoutp02735e3acaa4a4a8f7828dc2f8a3d00f7c~6tU4xbF-X3018130181euoutp02F
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 06:12:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190814061247euoutp02735e3acaa4a4a8f7828dc2f8a3d00f7c~6tU4xbF-X3018130181euoutp02F
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190814061422euoutp020f8219a3dd41f78dcf552eed43ebca6f~6tWRA9Att2918229182euoutp02j
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 06:14:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190814061422euoutp020f8219a3dd41f78dcf552eed43ebca6f~6tWRA9Att2918229182euoutp02j
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565763167;
-        bh=zH0H/Am6rFEX7Tq6/Cx8jitdW00s+oXxcueR2OogNUY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ptEpUAIaNgvE1i5zMWM3q2N7x5ytt0Wtv8g9Y2t/LTULSrS0f/2k1Y1MSYnlvEFlM
-         Y8yIUjA6BtVFyz/8fSkC5phA+CgSRWzlomq3M+3FjKpMGx6XZ4pm79et6aHw48PWk1
-         igh8OVS+SSlOr8r1oZy2vLHKLriAeMoYvGNxSmps=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190814061247eucas1p273e1ee2d5ddfd66456a2e5b56a5cf0f7~6tU4AjTkD0131201312eucas1p22;
-        Wed, 14 Aug 2019 06:12:47 +0000 (GMT)
+        s=mail20170921; t=1565763262;
+        bh=A9qn6/3oZyPgTnSv23DYT0U0eyRPsOJWWLBTj6TWiQM=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=RmdSOviwAmmdIRWFzJh8tAxhjIJErg3XxhbdJ94Rz3MIotnDoJOU9MH7gD0WpvgT1
+         1sdCgirrkGV0lfAGUL7wy7NbTC3LoXv6MKN3RlolX1S+3m7xkkOAhFHpsp+trR9cfc
+         FV6zbof9WARCUh2gL59mN5YJYmTXi6Vpd/x32g2Q=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190814061421eucas1p1e7c13e50a9b36257d62a442c0fd97114~6tWQRUtXg2140121401eucas1p1Q;
+        Wed, 14 Aug 2019 06:14:21 +0000 (GMT)
 Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.EC.04469.E56A35D5; Wed, 14
-        Aug 2019 07:12:46 +0100 (BST)
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 69.80.04309.DB6A35D5; Wed, 14
+        Aug 2019 07:14:21 +0100 (BST)
 Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413~6tU3HJw2A1469514695eucas1p1a;
-        Wed, 14 Aug 2019 06:12:46 +0000 (GMT)
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190814061420eucas1p2dcce5e9b1c1aa3743d4c1ede2f01e737~6tWPDe0Pe2033720337eucas1p2E;
+        Wed, 14 Aug 2019 06:14:20 +0000 (GMT)
 Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
         eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190814061245eusmtrp2a1aaa016b1a42773ea640a87ed942faa~6tU23iRIY3153431534eusmtrp2L;
-        Wed, 14 Aug 2019 06:12:45 +0000 (GMT)
-X-AuditID: cbfec7f2-54fff70000001175-af-5d53a65ef895
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id C4.70.04166.D56A35D5; Wed, 14
-        Aug 2019 07:12:45 +0100 (BST)
-Received: from AMDC2765.DIGITAL.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190814061245eusmtip1d471fa5f1d7b228d17d85b301acb80cd~6tU2VXBym2287722877eusmtip1W;
-        Wed, 14 Aug 2019 06:12:45 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        20190814061420eusmtrp2ce4d3a3f765a573b4b941546bb11f6cb~6tWOz3EPp3251532515eusmtrp2V;
+        Wed, 14 Aug 2019 06:14:20 +0000 (GMT)
+X-AuditID: cbfec7f4-ae1ff700000010d5-10-5d53a6bd9311
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 5D.80.04166.CB6A35D5; Wed, 14
+        Aug 2019 07:14:20 +0100 (BST)
+Received: from [106.120.50.63] (unknown [106.120.50.63]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190814061419eusmtip22e85c745574f1bb7a680372a6e6bba54~6tWOd-FoX2191321913eusmtip2X;
+        Wed, 14 Aug 2019 06:14:19 +0000 (GMT)
+Subject: Re: linux-next: Tree for Aug 13
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Vasily Gorbik <gor@linux.ibm.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Matthew Garrett <matthewgarrett@google.com>,
         James Morris <jmorris@namei.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-security-module@vger.kernel.org, linux-api@vger.kernel.org,
-        Matthew Garrett <matthewgarrett@google.com>
-Subject: [PATCH] tracefs: Fix NULL pointer dereference when no lockdown is
- used
-Date:   Wed, 14 Aug 2019 08:12:37 +0200
-Message-Id: <20190814061237.17406-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <3028ed35-3b6d-459f-f3c8-103c5636fe95@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupjleLIzCtJLcpLzFFi42LZduzned24ZcGxBm8mGlhsnLGe1WLd+sVM
-        FufPb2C32Py9g83i8q45bBYfeh6xWaw9cpfd4tULLYt/G96wWOzreMDkwOXRsu8Wu8eCTaUe
-        m1Z1snn0fE/26NuyitHj8ya5ALYoLpuU1JzMstQifbsErow9D26zFMznqLjzp5upgfErWxcj
-        B4eEgIlE93rnLkYuDiGBFYwS//Z/YYFwvjBKPLv7iBXC+cwo0b67j72LkROs40nnVEaIxHJG
-        iQ9r/rLDtXxu+ccGUsUmYCjR9bYLzBYRUJDY3PsMbBSzwEcmiYuHP4AlhAUCJbb/OM4CYrMI
-        qEpMuH8RzOYVsJVY276NDWKdvMTqDQeYQWxOAXuJA1ebwA6UEGhnl/i9ZgIzRJGLxJlDn6Bs
-        YYlXx7dA3Soj8X/nfCaIhmZGiYfn1rJDOD2MEpebZjBCVFlLHD5+kRUUHswCmhLrd+lDhB0l
-        Xh9YyQIJJj6JG28FQcLMQOakbdOZIcK8Eh1tQhDVahKzjq+DW3vwwiWoczwkph87ygwJoUmM
-        Es1HGpkmMMrPQli2gJFxFaN4amlxbnpqsWFearlecWJucWleul5yfu4mRmAqOf3v+KcdjF8v
-        JR1iFOBgVOLhDdgSFCvEmlhWXJl7iFGCg1lJhHfCRaAQb0piZVVqUX58UWlOavEhRmkOFiVx
-        3mqGB9FCAumJJanZqakFqUUwWSYOTqkGxgpGpa+bI/Yq3P+womy1iHLPCYPQ0/7/112c6psd
-        tcf/RITI1uOCiyNa/0YH3xU4dHnKzneNC6zjt3Hsf6fK9DffwYl75dH8zmK3yXazdmhsuJOz
-        Lr5j9YHk1XMU27Y2+Bs4N/5+eHzpNYXca4Z/+W79tirYHCmxK1C03seew8h475uaf81OJ5VY
-        ijMSDbWYi4oTAQejCnohAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHLMWRmVeSWpSXmKPExsVy+t/xu7qxy4JjDQ5OMrTYOGM9q8W69YuZ
-        LM6f38Busfl7B5vF5V1z2Cw+9Dxis1h75C67xasXWhb/NrxhsdjX8YDJgcujZd8tdo8Fm0o9
-        Nq3qZPPo+Z7s0bdlFaPH501yAWxRejZF+aUlqQoZ+cUltkrRhhZGeoaWFnpGJpZ6hsbmsVZG
-        pkr6djYpqTmZZalF+nYJehl7HtxmKZjPUXHnTzdTA+NXti5GTg4JAROJJ51TGbsYuTiEBJYy
-        Sryc94wRIiEjcXJaAyuELSzx51oXG0TRJ0aJb/P2gXWzCRhKdL3tArNFBBQkNvc+YwUpYhb4
-        ziRxbtNfZpCEsIC/ROfrp2BTWQRUJSbcv8gCYvMK2Eqsbd8GdYa8xOoNB8DqOQXsJQ5cbQKq
-        4QDaZifx4Lb3BEa+BYwMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLDetuxn5t3MF7aGHyI
-        UYCDUYmHN2BLUKwQa2JZcWXuIUYJDmYlEd4JF4FCvCmJlVWpRfnxRaU5qcWHGE2BbprILCWa
-        nA+MubySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxBAs0ma+5N
-        ld1UcSeqUDKx87DxxZOfZ0z8eayz539w/44Dj/LVIh+IivFeYzl2lclLOsa8Y8YTgdfJDHZT
-        5syb3yvC9CUoVmCX8AwF+7T2D5drCzvXvNz1jqF7fktyCrf4xHrNxm0t17Kc+RjqPtXxKu/r
-        Nlmyqy1f+LYUw4q5CelG29hFFymxFGckGmoxFxUnAgAZkavBgQIAAA==
-X-CMS-MailID: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <c17d1844-7e13-aba5-0fc9-98c4b247c147@samsung.com>
+Date:   Wed, 14 Aug 2019 08:14:18 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190813105645.4ffba70c@gandalf.local.home>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTYRju27nsaM0+5+3FosvMKCMvKbEoxKBs5B/R+lFelx5U1Ck7ztL+
+        LCvRZTkMLJeQZmQmXjAvqThvoWbmZiIMITBQNHUoaoqjNI8ny3/P87zP877fAx9DSKspdyZJ
+        lcGqVcoUGW1PNvetm053vAmP8s2fPiI3G1YpeW1dhUg+2lZKy7vLc5F8dsZLbsybEMmbOsbE
+        QWLFPYuFVjwwjosVZQ0ahf5VF1IUrMUplhsOhdI37S/EsylJmazaJzDWPnHBskmmm4g7ebXB
+        WmQT6ZAdAzgAqhvaKB2yZ6T4LYKVsUEkkBUEj9a1pECWEdhyLcROZNo0QAiDSgRzg/V/iRXB
+        8FT7VoRhnPAJmDJG8wFnHALdxR+3PQReRGBczaX5AY39QGfVbWMJDoSHNeuIz5LYE5YKZbzs
+        giOhdb6AECyO8KlkkuSxHT4HP79VUjwm8GFosZYSAnaD8cmXIv4W4GYxFLW/oPmdgC/BXJdG
+        KOAEs/2NYgEfhM3WHf99BN+Ha8QCKUAwmvMcCa7z0Ns/QvGLCHwS6tp8BPkiPK7PEQn7HcBi
+        dRTe4ABFzc8IQZZAXq5UcB8HQ3/tv7Pd5q+EHskMu5oZdrUx7Gpj+H+3DJHvkBur4VITWO6M
+        ir3tzSlTOY0qwTsuLbUBbX2hzxv9Kx9Q269bPQgzSLZPEtoYFiWllJlcVmoPAoaQOUv0I1uS
+        JF6Zlc2q02LUmhSW60EHGFLmJrm7ZyJCihOUGWwyy6az6p2piLFz16KyiNcjJVRhgJLKztdf
+        s9mI6fmgdtcqj3CZ/5eWTW1vSPnvJtHS0DH6fYzRz9fTe5F05WZwZ0zfwI+iaMPGfs3ZEnOF
+        h3pBnajtQ5FHaYuZNdkUl6+3VnkN7e2cjY8YNOZFudcHR+efKl5TXLmR4ZLs7/80lrqaMPyE
+        obPDZCSXqPTzItSc8g/JcY/KPgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLIsWRmVeSWpSXmKPExsVy+t/xe7p7lgXHGuy8IGBxYdY3Vot16xcz
+        WVzeNYfN4uDCNkaLVy+0LPZ1PGCy2Lr3KrsDu0fjjRtsHi37brF7LNhU6jFh0QFGj57vyR6f
+        N8kFsEXp2RTll5akKmTkF5fYKkUbWhjpGVpa6BmZWOoZGpvHWhmZKunb2aSk5mSWpRbp2yXo
+        Zby/8Z+l4DxzRcc6twbGX0xdjJwcEgImEs/Pn2DuYuTiEBJYyiix/tQ1RoiEjMTJaQ2sELaw
+        xJ9rXWwgtpDAa0aJvibHLkYODmEBDYmn++JAwiIC3hIHpx0Bm8Ms8IFR4uinVWwQQ98zSpz+
+        PhdsKJuAoUTXW4hBvAJ2Eq1rfzKCDGIRUJX41K8EEhYViJHYd2Y7O0SJoMTJmU9YQGxOAUuJ
+        r3eXg93DLGAmMW/zQ2YIW15i+9s5ULa4xK0n85kmMArNQtI+C0nLLCQts5C0LGBkWcUoklpa
+        nJueW2yoV5yYW1yal66XnJ+7iREYdduO/dy8g/HSxuBDjAIcjEo8vAFbgmKFWBPLiitzDzFK
+        cDArifBOuAgU4k1JrKxKLcqPLyrNSS0+xGgK9NtEZinR5HxgQsgriTc0NTS3sDQ0NzY3NrNQ
+        EuftEDgYIySQnliSmp2aWpBaBNPHxMEp1cDI1FCzeZLluUWdM8okrtziPh2xb5lHNu+HM0W1
+        O7MfGvEd3T7xZani3L+7v11wuP1LpuIxM/cLo5oz36ZnFxX57bnxnFU2a+eEFY2z6vJ/plUW
+        zvN/eFenc2bZ0voAl2D9iaaG+UlR3ff145Zt6DMzLZzQ3HNOWKshfMOGI0cXLwlXvObEor5f
+        iaU4I9FQi7moOBEAcBJSrtACAAA=
+X-CMS-MailID: 20190814061420eucas1p2dcce5e9b1c1aa3743d4c1ede2f01e737
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
+X-RootMTR: 20190813145654epcas2p2981ea6b19b84470dc37825469cba91de
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413
-References: <3028ed35-3b6d-459f-f3c8-103c5636fe95@samsung.com>
-        <CGME20190814061246eucas1p128cae99a14f27bc79fa2aa72084a0413@eucas1p1.samsung.com>
+X-CMS-RootMailID: 20190813145654epcas2p2981ea6b19b84470dc37825469cba91de
+References: <20190813191924.7c5310dd@canb.auug.org.au>
+        <your-ad-here.call-01565700115-ext-9407@work.hours>
+        <CGME20190813145654epcas2p2981ea6b19b84470dc37825469cba91de@epcas2p2.samsung.com>
+        <20190813105645.4ffba70c@gandalf.local.home>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 757ff7244358 ("tracefs: Restrict tracefs when the kernel is locked
-down") added infrastructure for restricting tracefs access when lockdown
-is enabled. It however broke tracefs operation when no lockdown is used.
-Fix this issue by adding missing check for a NULL ->open() callback.
+Hi Steven,
 
-Fixes: 757ff7244358 ("tracefs: Restrict tracefs when the kernel is locked down")
-Reported-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- fs/tracefs/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2019-08-13 16:56, Steven Rostedt wrote:
+> This looks related to what Marek posted.
+>
+>    https://lore.kernel.org/linux-security-module/3028ed35-3b6d-459f-f3c8-103c5636fe95@samsung.com/
+>
+> Care to apply the change he suggested to see if it fixes the issue for
+> you. If it does, Marek, can you make an official patch?
 
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 12a325fb4cbd..8efff7603032 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -43,7 +43,7 @@ static int default_open_file(struct inode *inode, struct file *filp)
- 		return ret;
- 
- 	real_fops = dentry->d_fsdata;
--	return real_fops->open(inode, filp);
-+	return real_fops->open ? real_fops->open(inode, filp) : 0;
- }
- 
- static ssize_t default_read_file(struct file *file, char __user *buf,
+Sure: https://lkml.org/lkml/2019/8/14/75
+
+Best regards
 -- 
-2.17.1
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
