@@ -2,41 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4D38DA06
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:15:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0DF8DA19
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731120AbfHNROl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:14:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39110 "EHLO mail.kernel.org"
+        id S1730970AbfHNRPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:15:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731106AbfHNROg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:14:36 -0400
+        id S1728775AbfHNRPD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:15:03 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 063CB20665;
-        Wed, 14 Aug 2019 17:14:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8124D2063F;
+        Wed, 14 Aug 2019 17:15:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802876;
-        bh=P+xKZoykRFBIK1haPKkOyTqNdvkHle2512pqLR/TUUI=;
+        s=default; t=1565802903;
+        bh=xgE+15QcMdwoAnFrAPREzcsQF9PufS+fugmS0e/+Dtw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P9dtLkmX5bI1hrnuIinbendSJsM9uU4XY7/8+2AuNb0sdb3KLMW5zsA1DVyzyCX2x
-         KqdTiFTLYmNoPJerpHMN2mnN5W9z12+i/KfwjfBg6A1R/9JhvzZWv4m4wPxT5fZZaO
-         rwfPwMOLGLIa8cMdEHu6NUCzXwR1sEfD2ji7PLPA=
+        b=iNrSlFC5F29NUg8XXNo8fWfMj8BN8o/cbkGCCBAgncEwViGfSaSXHobAlI9Txvg/f
+         JYlIniiXPSSeiVTta8vyh6Sniicbs+lyiBPSyPHhc3KdK31tlCVsssoYOHMwtwcufT
+         Fmu+6gEpGFIgHk+/joaBG4oOrmQq/VR+5Pj85bnU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hanjun Guo <guohanjun@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
+        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 43/69] ACPI/IORT: Fix off-by-one check in iort_dev_find_its_id()
-Date:   Wed, 14 Aug 2019 19:01:41 +0200
-Message-Id: <20190814165748.359949427@linuxfoundation.org>
+Subject: [PATCH 4.14 44/69] ARM: davinci: fix sleep.S build error on ARMv4
+Date:   Wed, 14 Aug 2019 19:01:42 +0200
+Message-Id: <20190814165748.481664366@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
 References: <20190814165744.822314328@linuxfoundation.org>
@@ -49,46 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 5a46d3f71d5e5a9f82eabc682f996f1281705ac7 ]
+[ Upstream commit d64b212ea960db4276a1d8372bd98cb861dfcbb0 ]
 
-Static analysis identified that index comparison against ITS entries in
-iort_dev_find_its_id() is off by one.
+When building a multiplatform kernel that includes armv4 support,
+the default target CPU does not support the blx instruction,
+which leads to a build failure:
 
-Update the comparison condition and clarify the resulting error
-message.
+arch/arm/mach-davinci/sleep.S: Assembler messages:
+arch/arm/mach-davinci/sleep.S:56: Error: selected processor does not support `blx ip' in ARM mode
 
-Fixes: 4bf2efd26d76 ("ACPI: Add new IORT functions to support MSI domain handling")
-Link: https://lore.kernel.org/linux-arm-kernel/20190613065410.GB16334@mwanda/
-Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Hanjun Guo <guohanjun@huawei.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will@kernel.org>
+Add a .arch statement in the sources to make this file build.
+
+Link: https://lore.kernel.org/r/20190722145211.1154785-1-arnd@arndb.de
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/acpi/arm64/iort.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/sleep.S | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
-index ca414910710ea..b0a7afd4e7d35 100644
---- a/drivers/acpi/arm64/iort.c
-+++ b/drivers/acpi/arm64/iort.c
-@@ -506,8 +506,8 @@ static int iort_dev_find_its_id(struct device *dev, u32 req_id,
+diff --git a/arch/arm/mach-davinci/sleep.S b/arch/arm/mach-davinci/sleep.S
+index cd350dee4df37..efcd400b2abb3 100644
+--- a/arch/arm/mach-davinci/sleep.S
++++ b/arch/arm/mach-davinci/sleep.S
+@@ -37,6 +37,7 @@
+ #define DEEPSLEEP_SLEEPENABLE_BIT	BIT(31)
  
- 	/* Move to ITS specific data */
- 	its = (struct acpi_iort_its_group *)node->node_data;
--	if (idx > its->its_count) {
--		dev_err(dev, "requested ITS ID index [%d] is greater than available [%d]\n",
-+	if (idx >= its->its_count) {
-+		dev_err(dev, "requested ITS ID index [%d] overruns ITS entries [%d]\n",
- 			idx, its->its_count);
- 		return -ENXIO;
- 	}
+ 	.text
++	.arch	armv5te
+ /*
+  * Move DaVinci into deep sleep state
+  *
 -- 
 2.20.1
 
