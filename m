@@ -2,178 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC3DD8D33E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D468D340
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727856AbfHNMgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:36:20 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:29440 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727774AbfHNMgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:36:15 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 467pwX46Jjz9v0dM;
-        Wed, 14 Aug 2019 14:36:12 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=sfigohy/; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Ns4VjSPXU8QY; Wed, 14 Aug 2019 14:36:12 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 467pwX302vz9v0dJ;
-        Wed, 14 Aug 2019 14:36:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1565786172; bh=tZIO4hN5UhqIHA84c5kHAJ+5u0attVl897iQhB7+51s=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=sfigohy/jUX16dbPav1SIlP8pYVpU7zUSM9YbV/0RMp4wds9r1qXJCBTO6NuS+9/m
-         HoOC325fZabH72Sz/OdlFEWHIySXjvcndVCXq3SNHnDEhxBEI3bVPXfAHo/jEGUzOb
-         7qVbRqdt97LD2RZf4l+wIAQen6AFi6kgpHODLQqI=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id E3E598B7F5;
-        Wed, 14 Aug 2019 14:36:13 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id GN1p7v0uNpUd; Wed, 14 Aug 2019 14:36:13 +0200 (CEST)
-Received: from pc17473vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C17B78B761;
-        Wed, 14 Aug 2019 14:36:13 +0200 (CEST)
-Received: by pc17473vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id B02EB6B6C0; Wed, 14 Aug 2019 12:36:13 +0000 (UTC)
-Message-Id: <c8998ed32e4e3954b56a8dacecfe43319a2a0483.1565786091.git.christophe.leroy@c-s.fr>
-In-Reply-To: <eb4d626514e22f85814830012642329018ef6af9.1565786091.git.christophe.leroy@c-s.fr>
-References: <eb4d626514e22f85814830012642329018ef6af9.1565786091.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 5/5] powerpc/ptdump: drop non vital #ifdefs
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Wed, 14 Aug 2019 12:36:13 +0000 (UTC)
+        id S1727879AbfHNMge (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:36:34 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44463 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726551AbfHNMgd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:36:33 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so110916893wrf.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 05:36:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=wuVjOoaxyYfyWJnYmRPjrLbRW1mIiUBjkOasfY9prsg=;
+        b=VhpGSUvvOXtjN0zZevcBDxQXldMnhergpPZC4TuVPVlszDN4jER+N3RHl/8REOWjP8
+         NhhLgy+f0m9JGcUlQMbYJvJfk3E+8ICZ8rRDu77kvAR9JdG9Pap8ieeiki9Z4UY047Tc
+         meWlpwzEqzaXSUJDjhXZhkRnKJKgukl5+mUxZm9Xay2y6kS5Xh1CjQ/S22p2s5Zm0usN
+         NVXJdpx4FMQjV20FBrc7mBOyGni+gBrQkTqoqi4f+Cwaw1sX6o3aMP+F9Gjj2dRhwZz+
+         iKu4VUaMjGQt5EajZbi984lXsVJQc4dmKgGdMc+Xk9RqEc7r3+0/co2JhRHte5iK21YR
+         yYDw==
+X-Gm-Message-State: APjAAAWoDjSrgZgDfOd68NS9yzVrNr4we0SpBrli/uWiIG91ZHg857VR
+        IAqU+EpDkA2RoYbmx5EhJtfYsA==
+X-Google-Smtp-Source: APXvYqzLtPHooUoQICvLxBgMLkG+W6Oap3eOZe4rPwxKBzM0VTPkTbcjTvwNLTRNTTKwxrSX7/UREw==
+X-Received: by 2002:adf:f6d2:: with SMTP id y18mr51783258wrp.102.1565786191460;
+        Wed, 14 Aug 2019 05:36:31 -0700 (PDT)
+Received: from [192.168.10.150] ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id 2sm3572989wmz.16.2019.08.14.05.36.30
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 05:36:30 -0700 (PDT)
+Subject: Re: [PATCH RESEND v4 0/9] Enable Sub-page Write Protection Support
+To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com
+Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
+        yu.c.zhang@intel.com, alazar@bitdefender.com
+References: <20190814070403.6588-1-weijiang.yang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Message-ID: <5db7a1fc-994f-f95b-5813-ffe1801dbfbc@redhat.com>
+Date:   Wed, 14 Aug 2019 14:36:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190814070403.6588-1-weijiang.yang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hashpagetable.c is only compiled when CONFIG_PPC_BOOK3S_64 is
-defined, so drop the test and its 'else' branch.
+On 14/08/19 09:03, Yang Weijiang wrote:
+> EPT-Based Sub-Page write Protection(SPP)is a HW capability which allows
+> Virtual Machine Monitor(VMM) to specify write-permission for guest
+> physical memory at a sub-page(128 byte) granularity. When this
+> capability is enabled, the CPU enforces write-access check for sub-pages
+> within a 4KB page.
+> 
+> The feature is targeted to provide fine-grained memory protection for
+> usages such as device virtualization, memory check-point and VM
+> introspection etc.
+> 
+> SPP is active when the "sub-page write protection" (bit 23) is 1 in
+> Secondary VM-Execution Controls. The feature is backed with a Sub-Page
+> Permission Table(SPPT), SPPT is referenced via a 64-bit control field
+> called Sub-Page Permission Table Pointer (SPPTP) which contains a
+> 4K-aligned physical address.
+> 
+> Right now, only 4KB physical pages are supported for SPP. To enable SPP
+> for certain physical page, we need to first make the physical page
+> write-protected, then set bit 61 of the corresponding EPT leaf entry. 
+> While HW walks EPT, if bit 61 is set, it traverses SPPT with the guset
+> physical address to find out the sub-page permissions at the leaf entry.
+> If the corresponding bit is set, write to sub-page is permitted,
+> otherwise, SPP induced EPT violation is generated.
 
-Use IS_ENABLED(CONFIG_PPC_PSERIES) instead of #ifdef, this allows the
-code to be checked at any build. It is still optimised out by GCC.
+Still no testcases?
 
-Use IS_ENABLED(CONFIG_PPC_64K_PAGES) instead of #ifdef.
-
-Use IS_ENABLED(CONFIG_SPARSEMEN_VMEMMAP) instead of #ifdef.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/plpar_wrappers.h |  6 ++++++
- arch/powerpc/mm/ptdump/hashpagetable.c    | 24 +++++++++---------------
- 2 files changed, 15 insertions(+), 15 deletions(-)
-
-diff --git a/arch/powerpc/include/asm/plpar_wrappers.h b/arch/powerpc/include/asm/plpar_wrappers.h
-index cff5a411e595..4497c8afb573 100644
---- a/arch/powerpc/include/asm/plpar_wrappers.h
-+++ b/arch/powerpc/include/asm/plpar_wrappers.h
-@@ -340,6 +340,12 @@ static inline long plpar_set_ciabr(unsigned long ciabr)
- {
- 	return 0;
- }
-+
-+static inline long plpar_pte_read_4(unsigned long flags, unsigned long ptex,
-+				    unsigned long *ptes)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_PPC_PSERIES */
- 
- #endif /* _ASM_POWERPC_PLPAR_WRAPPERS_H */
-diff --git a/arch/powerpc/mm/ptdump/hashpagetable.c b/arch/powerpc/mm/ptdump/hashpagetable.c
-index 72f0e4a3d839..a07278027c6f 100644
---- a/arch/powerpc/mm/ptdump/hashpagetable.c
-+++ b/arch/powerpc/mm/ptdump/hashpagetable.c
-@@ -237,7 +237,6 @@ static int native_find(unsigned long ea, int psize, bool primary, u64 *v, u64
- 	return -1;
- }
- 
--#ifdef CONFIG_PPC_PSERIES
- static int pseries_find(unsigned long ea, int psize, bool primary, u64 *v, u64 *r)
- {
- 	struct hash_pte ptes[4];
-@@ -274,7 +273,6 @@ static int pseries_find(unsigned long ea, int psize, bool primary, u64 *v, u64 *
- 	}
- 	return -1;
- }
--#endif
- 
- static void decode_r(int bps, unsigned long r, unsigned long *rpn, int *aps,
- 		unsigned long *lp_bits)
-@@ -316,10 +314,9 @@ static void decode_r(int bps, unsigned long r, unsigned long *rpn, int *aps,
- static int base_hpte_find(unsigned long ea, int psize, bool primary, u64 *v,
- 			  u64 *r)
- {
--#ifdef CONFIG_PPC_PSERIES
--	if (firmware_has_feature(FW_FEATURE_LPAR))
-+	if (IS_ENABLED(CONFIG_PPC_PSERIES) && firmware_has_feature(FW_FEATURE_LPAR))
- 		return pseries_find(ea, psize, primary, v, r);
--#endif
-+
- 	return native_find(ea, psize, primary, v, r);
- }
- 
-@@ -386,12 +383,13 @@ static void walk_pte(struct pg_state *st, pmd_t *pmd, unsigned long start)
- 			psize = mmu_vmalloc_psize;
- 		else
- 			psize = mmu_io_psize;
--#ifdef CONFIG_PPC_64K_PAGES
-+
- 		/* check for secret 4K mappings */
--		if (((pteval & H_PAGE_COMBO) == H_PAGE_COMBO) ||
--			((pteval & H_PAGE_4K_PFN) == H_PAGE_4K_PFN))
-+		if (IS_ENABLED(CONFIG_PPC_64K_PAGES) &&
-+		    ((pteval & H_PAGE_COMBO) == H_PAGE_COMBO ||
-+		     (pteval & H_PAGE_4K_PFN) == H_PAGE_4K_PFN))
- 			psize = mmu_io_psize;
--#endif
-+
- 		/* check for hashpte */
- 		status = hpte_find(st, addr, psize);
- 
-@@ -469,9 +467,10 @@ static void walk_linearmapping(struct pg_state *st)
- 
- static void walk_vmemmap(struct pg_state *st)
- {
--#ifdef CONFIG_SPARSEMEM_VMEMMAP
- 	struct vmemmap_backing *ptr = vmemmap_list;
- 
-+	if (!IS_ENABLED(CONFIG_SPARSEMEM_VMEMMAP))
-+		return;
- 	/*
- 	 * Traverse the vmemmaped memory and dump pages that are in the hash
- 	 * pagetable.
-@@ -481,7 +480,6 @@ static void walk_vmemmap(struct pg_state *st)
- 		ptr = ptr->list;
- 	}
- 	seq_puts(st->seq, "---[ vmemmap end ]---\n");
--#endif
- }
- 
- static void populate_markers(void)
-@@ -495,11 +493,7 @@ static void populate_markers(void)
- 	address_markers[6].start_address = PHB_IO_END;
- 	address_markers[7].start_address = IOREMAP_BASE;
- 	address_markers[8].start_address = IOREMAP_END;
--#ifdef CONFIG_PPC_BOOK3S_64
- 	address_markers[9].start_address =  H_VMEMMAP_START;
--#else
--	address_markers[9].start_address =  VMEMMAP_BASE;
--#endif
- }
- 
- static int ptdump_show(struct seq_file *m, void *v)
--- 
-2.13.3
-
+Paolo
