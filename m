@@ -2,35 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9DCB8C764
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED7F58C762
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbfHNCXX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:23:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48740 "EHLO mail.kernel.org"
+        id S1729400AbfHNCXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729384AbfHNCRY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:17:24 -0400
+        id S1729393AbfHNCRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:17:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3F93B2085A;
-        Wed, 14 Aug 2019 02:17:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55DB220843;
+        Wed, 14 Aug 2019 02:17:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749044;
-        bh=rCua/pLOOHJl0VYn10QbalqPgvgVWTDCJN4WKv8VjDo=;
+        s=default; t=1565749045;
+        bh=oMOOYF2muYVufUpefqwfVGjatThEUEuRCM/yLta1KHU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=br2j1rCX69xuhFOP31WXeRNXlABeEz31Yl2K29U90Me9XvRZsuNEJJetHFWkw9Hnx
-         KGWbdZXTxgOaKwSruX/rURjrYX8X2+8wZ8PpDVpLIvf3GVwTcW5yYfAw5m2ipYTqQt
-         Wj3TxKTVwW/5hAr7vC7MqKJs5ytHP3Sdnfgkylc4=
+        b=EdvhAIIwfNQ0o7CCsl7wFOLVl6iZyJLFzEMboDziIHsZqgzSaF3s/iR8f5q7cysIi
+         nI3+0SrdJa/owY9LXWaLCIPvJ7biJcY4rxj0TckJRsPJVIxWIj69KMPU1V9XEHolmg
+         Z7T9Uv3zp7lUlYxilctwEIb2y+MFd+hSMEs/kZUk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Krishna Ram Prakash R <krp@gtux.in>,
-        Kees Cook <keescook@chromium.org>,
+Cc:     Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>, linux-ide@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 58/68] libata: have ata_scsi_rw_xlat() fail invalid passthrough requests
-Date:   Tue, 13 Aug 2019 22:15:36 -0400
-Message-Id: <20190814021548.16001-58-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 59/68] libata: add SG safety checks in SFF pio transfers
+Date:   Tue, 13 Aug 2019 22:15:37 -0400
+Message-Id: <20190814021548.16001-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -45,80 +44,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jens Axboe <axboe@kernel.dk>
 
-[ Upstream commit 2d7271501720038381d45fb3dcbe4831228fc8cc ]
+[ Upstream commit 752ead44491e8c91e14d7079625c5916b30921c5 ]
 
-For passthrough requests, libata-scsi takes what the user passes in
-as gospel. This can be problematic if the user fills in the CDB
-incorrectly. One example of that is in request sizes. For read/write
-commands, the CDB contains fields describing the transfer length of
-the request. These should match with the SG_IO header fields, but
-libata-scsi currently does no validation of that.
+Abort processing of a command if we run out of mapped data in the
+SG list. This should never happen, but a previous bug caused it to
+be possible. Play it safe and attempt to abort nicely if we don't
+have more SG segments left.
 
-Check that the number of blocks in the CDB for passthrough requests
-matches what was mapped into the request. If the CDB asks for more
-data then the validated SG_IO header fields, error it.
-
-Reported-by: Krishna Ram Prakash R <krp@gtux.in>
 Reviewed-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-scsi.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/ata/libata-sff.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
-index 1984fc78c750b..3a64fa4aaf7e3 100644
---- a/drivers/ata/libata-scsi.c
-+++ b/drivers/ata/libata-scsi.c
-@@ -1803,6 +1803,21 @@ static unsigned int ata_scsi_verify_xlat(struct ata_queued_cmd *qc)
- 	return 1;
- }
+diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
+index c5ea0fc635e54..873cc09060551 100644
+--- a/drivers/ata/libata-sff.c
++++ b/drivers/ata/libata-sff.c
+@@ -674,6 +674,10 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
+ 	unsigned int offset;
+ 	unsigned char *buf;
  
-+static bool ata_check_nblocks(struct scsi_cmnd *scmd, u32 n_blocks)
-+{
-+	struct request *rq = scmd->request;
-+	u32 req_blocks;
-+
-+	if (!blk_rq_is_passthrough(rq))
-+		return true;
-+
-+	req_blocks = blk_rq_bytes(rq) / scmd->device->sector_size;
-+	if (n_blocks > req_blocks)
-+		return false;
-+
-+	return true;
-+}
-+
- /**
-  *	ata_scsi_rw_xlat - Translate SCSI r/w command into an ATA one
-  *	@qc: Storage for translated ATA taskfile
-@@ -1847,6 +1862,8 @@ static unsigned int ata_scsi_rw_xlat(struct ata_queued_cmd *qc)
- 		scsi_10_lba_len(cdb, &block, &n_block);
- 		if (cdb[1] & (1 << 3))
- 			tf_flags |= ATA_TFLAG_FUA;
-+		if (!ata_check_nblocks(scmd, n_block))
-+			goto invalid_fld;
- 		break;
- 	case READ_6:
- 	case WRITE_6:
-@@ -1861,6 +1878,8 @@ static unsigned int ata_scsi_rw_xlat(struct ata_queued_cmd *qc)
- 		 */
- 		if (!n_block)
- 			n_block = 256;
-+		if (!ata_check_nblocks(scmd, n_block))
-+			goto invalid_fld;
- 		break;
- 	case READ_16:
- 	case WRITE_16:
-@@ -1871,6 +1890,8 @@ static unsigned int ata_scsi_rw_xlat(struct ata_queued_cmd *qc)
- 		scsi_16_lba_len(cdb, &block, &n_block);
- 		if (cdb[1] & (1 << 3))
- 			tf_flags |= ATA_TFLAG_FUA;
-+		if (!ata_check_nblocks(scmd, n_block))
-+			goto invalid_fld;
- 		break;
- 	default:
- 		DPRINTK("no-byte command\n");
++	if (!qc->cursg) {
++		qc->curbytes = qc->nbytes;
++		return;
++	}
+ 	if (qc->curbytes == qc->nbytes - qc->sect_size)
+ 		ap->hsm_task_state = HSM_ST_LAST;
+ 
+@@ -699,6 +703,8 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
+ 
+ 	if (qc->cursg_ofs == qc->cursg->length) {
+ 		qc->cursg = sg_next(qc->cursg);
++		if (!qc->cursg)
++			ap->hsm_task_state = HSM_ST_LAST;
+ 		qc->cursg_ofs = 0;
+ 	}
+ }
 -- 
 2.20.1
 
