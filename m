@@ -2,109 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A3FD28C9F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 05:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B31E8CA01
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 06:01:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfHNDwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 23:52:11 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42438 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726739AbfHNDwL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 23:52:11 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b16so12989303wrq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 20:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=++nUJKgOGfOdCIF5m2zpPrP5+AC7n3dwa/EWdf1OwMc=;
-        b=HFCBcW46Up/t7+Wpl1cQtJ2Z0MWWKq6hkQvKXb3ym5uKoaplfmgQwory4qEbWfO4jw
-         tk4sWyGPPvxTFuwmNH0szfExit3F3tjHFyEC17hzd/O+B26qqXulmiGX4YwMuKHgHizU
-         8TgYxnzBNDEmjCDzCQh4mAmIHvEmxajyieBp+Q3VHuVWOUchIrYDojdBEU5R7S+xICm2
-         J5V2EQAPVtzexPzWD9BnIpG5lPctZMUORM4Avsyg6roeqpB1C8xkvivNLmXQmGdckM87
-         PwnQyfM05C3qbnxKCnsyx57TASNa2KqJY4CbFeyk5lrZMRDLbodZIOcFwe0hZQsw2HiQ
-         c/PQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=++nUJKgOGfOdCIF5m2zpPrP5+AC7n3dwa/EWdf1OwMc=;
-        b=tGjVbQF5IemV28QpGs30IOtG9Fkp1aYC0GIMxzS0WU5JKQ/971uRdrOMZCLUujHcA9
-         yYG4rmHFFdzbT/gLmnqS8zL/dH39DLhBvXncIbt0uATPxCMODsYTR5ugQ3FDgFNCcdSq
-         yT3SOYOd3QF+Ps9+JsODcAg7ls0/Hj1g76LxWyifmw1zgkEDHzOdyVBqZ7UbNIvpA41M
-         5uWmAncUbCj6PBpYAgbZRLF9zRT87jYwuc6xHrSsoFSyVHm/qYQByHNrrjr6ysB/rOAi
-         McTlzPXk67eYsy4D1CFm3jGPwZnThX7Tb/vmdizEUwAiiGrCNo87TSa0CbEIEogNVoUI
-         agng==
-X-Gm-Message-State: APjAAAVQa57LB8BhWGhBBVDdI2OkXs6ro7hZtriww071bvW4ieWVnQGh
-        LWtZb2ZO4HI1NuvBjAxu5zG+Dk1F+kAQc96eu+9imI9Ep3Uylw==
-X-Google-Smtp-Source: APXvYqyKhu6lwNRBKi6qoG6yfgcV2346iuvFcAyShI7YY1Od8sKPmm/Nn1gLTd8DaJxE6ZEhmmIXoQqWi/pM+l6tNl0=
-X-Received: by 2002:adf:f641:: with SMTP id x1mr6622878wrp.179.1565754728415;
- Tue, 13 Aug 2019 20:52:08 -0700 (PDT)
+        id S1727038AbfHNEBH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 00:01:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46684 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725262AbfHNEBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 00:01:07 -0400
+Received: from localhost (unknown [106.51.111.160])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C3262083B;
+        Wed, 14 Aug 2019 04:00:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565755265;
+        bh=KjGrHL3n1w6JAxO6p8Ca0jjy6JRrEniuOLnYntqmCG8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ONnlQGzsDHaZJiA2scjuNH9O0USpNDO8H5fBeieKfzd62tzRnCLZRfClpKloYexhC
+         JTe+tt1VBfK9HlRdchAkZptcmFkpy+LgzmBQBkCV0BkrOLWrVJHuZteA1Nnn5JLFf7
+         eZXb3AkHvZ1RDMUgS4VSWEpTMJj+dWrtj6QCKu3g=
+Date:   Wed, 14 Aug 2019 09:29:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        clang-built-linux@googlegroups.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [alsa-devel] [PATCH] soundwire: Don't build sound.o without
+ CONFIG_ACPI
+Message-ID: <20190814035947.GS12733@vkoul-mobl.Dlink>
+References: <20190813061014.45015-1-natechancellor@gmail.com>
+ <445d16e1-6b00-6797-82df-42a49a5e79e3@linux.intel.com>
 MIME-Version: 1.0
-References: <1565251121-28490-1-git-send-email-vincent.chen@sifive.com>
- <1565251121-28490-2-git-send-email-vincent.chen@sifive.com>
- <CAAhSdy0BNN4G270WJ+OqrFAv3-z9o2iE+QDHHo-FY0fqh5wGqg@mail.gmail.com>
- <alpine.DEB.2.21.9999.1908080846220.21111@viisi.sifive.com> <CABvJ_xgHVT4QKAxRPdLQp3Q5bTmjQ5QfTo6R49Z0Qwatuc_b+A@mail.gmail.com>
-In-Reply-To: <CABvJ_xgHVT4QKAxRPdLQp3Q5bTmjQ5QfTo6R49Z0Qwatuc_b+A@mail.gmail.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Wed, 14 Aug 2019 09:21:57 +0530
-Message-ID: <CAAhSdy0mOspKF7Z7H9MsbdrYYF3M_XGfm+F-dAt2wZSW_90PFg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] riscv: Correct the initialized flow of FP register
-To:     Vincent Chen <vincent.chen@sifive.com>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <445d16e1-6b00-6797-82df-42a49a5e79e3@linux.intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 7:15 AM Vincent Chen <vincent.chen@sifive.com> wrote:
->
-> On Thu, Aug 8, 2019 at 11:50 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
-> >
-> > On Thu, 8 Aug 2019, Anup Patel wrote:
-> >
-> > > On Thu, Aug 8, 2019 at 1:30 PM Vincent Chen <vincent.chen@sifive.com> wrote:
-> > > >
-> > > > +static inline void fstate_off(struct task_struct *task,
-> > > > +                              struct pt_regs *regs)
-> > > > +{
-> > > > +       regs->sstatus = (regs->sstatus & ~(SR_FS)) | SR_FS_OFF;
-> > >
-> > > The SR_FS_OFF is 0x0 so no need for ORing it.
-> >
-> > That one looks OK to me, since it makes it more obvious to humans what's
-> > happening here - reviewers won't need to know that "off" is 0x0.  The
-> > compiler should drop it internally, so it won't affect the generated
-> > code.
-> >
-> Thanks for Paul's comment
-> My thought is the same as Paul.
->
->
-> > > Apart from above minor comment, looks good to me.
-> > >
-> > > Reviewed-by: Anup Patel <anup@brainfault.org>
-> >
-> > Will add your Reviewed-by: tag - let us know if you want me to drop it or
-> > caveat it.
-> >
-> >
-> > - Paul
->
-> Dear Anup,
-> I suppose you can accept our thought about using the SR_FS_OFF flag
-> because I didn't receive any reply from you.
-> Thanks for your review and comments.
+On 13-08-19, 09:22, Pierre-Louis Bossart wrote:
+> On 8/13/19 1:10 AM, Nathan Chancellor wrote:
+> > clang warns when CONFIG_ACPI is unset:
+> > 
+> > ../drivers/soundwire/slave.c:16:12: warning: unused function
+> > 'sdw_slave_add' [-Wunused-function]
+> > static int sdw_slave_add(struct sdw_bus *bus,
+> >             ^
+> > 1 warning generated.
+> > 
+> > Before commit 8676b3ca4673 ("soundwire: fix regmap dependencies and
+> > align with other serial links"), this code would only be compiled when
+> > ACPI was set because it was only selected by SOUNDWIRE_INTEL, which
+> > depends on ACPI.
+> > 
+> > Now, this code can be compiled without CONFIG_ACPI, which causes the
+> > above warning. The IS_ENABLED(CONFIG_ACPI) guard could be moved to avoid
+> > compiling the function; however, slave.c only contains three functions,
+> > two of which are static. Only compile slave.o when CONFIG_ACPI is set,
+> > where it will actually be used. bus.h contains a stub for
+> > sdw_acpi_find_slaves so there will be no issues with an undefined
+> > function.
+> > 
+> > This has been build tested with CONFIG_ACPI set and unset in combination
+> > with CONFIG_SOUNDWIRE unset, built in, and a module.
+> 
+> Thanks for the patch. Do you have a .config you can share offline so that we
+> add it to our tests?
+> 
+> > 
+> > Fixes: 8676b3ca4673 ("soundwire: fix regmap dependencies and align with other serial links")
+> > Link: https://github.com/ClangBuiltLinux/linux/issues/637
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > ---
+> >   drivers/soundwire/Makefile | 6 +++++-
+> >   drivers/soundwire/slave.c  | 3 ---
+> >   2 files changed, 5 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+> > index 45b7e5001653..226090902716 100644
+> > --- a/drivers/soundwire/Makefile
+> > +++ b/drivers/soundwire/Makefile
+> > @@ -4,9 +4,13 @@
+> >   #
+> >   #Bus Objs
+> > -soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
+> > +soundwire-bus-objs := bus_type.o bus.o mipi_disco.o stream.o
+> >   obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
+> > +ifdef CONFIG_ACPI
+> > +soundwire-bus-objs += slave.o
+> > +endif
+> 
+> I am fine with the change, but we might as well rename the file acpi_slave.c
+> then?
 
-No problem, go ahead without dropping SR_FS_OFF flag.
+Srini's change add support for DT for the same file, so It does not make
+sense to rename. Yes this patch tries to fix a warn which is there due
+to DT being not supported but with Srini's patches this warn should go
+away as sdw_slave_add() will be invoked by the DT counterpart
 
-You can include my Reviewed-by.
+Sorry Nathan, we would have to live with the warn for few more days till
+I apply Srini's changes. So I am not taking this (or v2) patch
 
-Regards,
-Anup
+Thanks
+
+> 
+> > +
+> >   #Cadence Objs
+> >   soundwire-cadence-objs := cadence_master.o
+> >   obj-$(CONFIG_SOUNDWIRE_CADENCE) += soundwire-cadence.o
+> > diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
+> > index f39a5815e25d..0dc188e6873b 100644
+> > --- a/drivers/soundwire/slave.c
+> > +++ b/drivers/soundwire/slave.c
+> > @@ -60,7 +60,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
+> >   	return ret;
+> >   }
+> > -#if IS_ENABLED(CONFIG_ACPI)
+> >   /*
+> >    * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
+> >    * @bus: SDW bus instance
+> > @@ -110,5 +109,3 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+> >   	return 0;
+> >   }
+> > -
+> > -#endif
+> > 
+
+-- 
+~Vinod
