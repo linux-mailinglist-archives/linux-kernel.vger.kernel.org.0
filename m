@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE538DD37
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:44:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92C138DD3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:44:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfHNSnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:43:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53992 "EHLO mail.kernel.org"
+        id S1729080AbfHNSnz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:43:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728334AbfHNSnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:43:31 -0400
+        id S1728334AbfHNSny (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:43:54 -0400
 Received: from quaco.ghostprotocols.net (unknown [177.195.212.110])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74D962084F;
-        Wed, 14 Aug 2019 18:43:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0222A216F4;
+        Wed, 14 Aug 2019 18:43:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565808210;
-        bh=HcO66PNNQb0D9RyHiKkCGRqmnWWkH5YQA+Emx/fP1R0=;
+        s=default; t=1565808233;
+        bh=Z6/E1TwlB3NAM/fUwYfNNLi84vqOrgHSTD0v+UbODM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OJjzg+oGbwZGKsfT+gP7+qoLJ4K5vwinjf445d8Z900z1yiKqNyMrS1YKsty96+DB
-         pfC6F6FDnTvDUQ10nXhQl5VNvZ+WV8UipgTTaiQ4I0jqls8Q70CNU6Vd5NbD1I46oe
-         22pEDAUxkBMnP42kXTqgYaYu/4EsV+6nZMZhQzx0=
+        b=gwo8Dfz+0ylB9aXoW5Qku+/1p0tpdLmK42nvi3RxTc3tiUDPmVwCXyVIvbDusI7kh
+         8kUHosXBGJcC56uLUle8yD3ex9MlRZQa802IslTlgWne92TtEG5kd16t9coi2L+Ekx
+         E2EbqfRsYPqV+N+OV9wXaUiwKIbEfZf8BbubCoqM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -30,16 +30,17 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         Clark Williams <williams@redhat.com>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Igor Lubashev <ilubashe@akamai.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Alexey Budankov <alexey.budankov@linux.intel.com>,
         James Morris <jmorris@namei.org>,
         Mathieu Poirier <mathieu.poirier@linaro.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        Suzuki Poulouse <suzuki.poulose@arm.com>
-Subject: [PATCH 12/28] tools build: Add capability-related feature detection
-Date:   Wed, 14 Aug 2019 15:40:35 -0300
-Message-Id: <20190814184051.3125-13-acme@kernel.org>
+        Suzuki Poulouse <suzuki.poulose@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 13/28] perf tools: Add helpers to use capabilities if present
+Date:   Wed, 14 Aug 2019 15:40:36 -0300
+Message-Id: <20190814184051.3125-14-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190814184051.3125-1-acme@kernel.org>
 References: <20190814184051.3125-1-acme@kernel.org>
@@ -53,65 +54,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Igor Lubashev <ilubashe@akamai.com>
 
 Add utilities to help checking capabilities of the running procss.  Make
-perf link with libcap, if it is available. If no libcap-dev[el], assume
-no capabilities.
+perf link with libcap, if it is available. If no libcap-dev[el],
+fallback to the geteuid() == 0 test used before.
 
-Committer testing:
+Committer notes:
 
-  $ make O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-    BUILD:   Doing 'make -j8' parallel build
-
-  Auto-detecting system features:
-  <SNIP>
-  ...                        libbfd: [ on  ]
-  ...                        libcap: [ OFF ]
-  ...                        libelf: [ on  ]
-  <SNIP>
-  Makefile.config:833: No libcap found, disables capability support, please install libcap-devel/libcap-dev
-  <SNIP>
-  $ grep libcap /tmp/build/perf/FEATURE-DUMP
-  feature-libcap=0
-  $ cat /tmp/build/perf/feature/test-libcap.make.output
-  test-libcap.c:2:10: fatal error: sys/capability.h: No such file or directory
-      2 | #include <sys/capability.h>
-        |          ^~~~~~~~~~~~~~~~~~
-  compilation terminated.
+  $ perf test python
+  18: 'import perf' in python                               : FAILED!
+  $ perf test -v python
+  Couldn't bump rlimit(MEMLOCK), failures may take place when creating BPF maps, etc
+  18: 'import perf' in python                               :
+  --- start ---
+  test child forked, pid 23288
+  Traceback (most recent call last):
+    File "<stdin>", line 1, in <module>
+  ImportError: /tmp/build/perf/python/perf.so: undefined symbol: cap_get_flag
+  test child finished with -1
+  ---- end ----
+  'import perf' in python: FAILED!
   $
 
-Now install libcap-devel and try again:
+This happens because differently from the perf binary generated with
+this patch applied:
 
-  $ make O=/tmp/build/perf -C tools/perf install-bin
-  make: Entering directory '/home/acme/git/perf/tools/perf'
-    BUILD:   Doing 'make -j8' parallel build
-  Warning: Kernel ABI header at 'tools/include/linux/bits.h' differs from latest version at 'include/linux/bits.h'
-  diff -u tools/include/linux/bits.h include/linux/bits.h
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
-  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+  $ ldd /tmp/build/perf/perf | grep libcap
+  	libcap.so.2 => /lib64/libcap.so.2 (0x00007f724a4ef000)
+  $
 
-  Auto-detecting system features:
-  <SNIP>
-  ...                        libbfd: [ on  ]
-  ...                        libcap: [ on  ]
-  ...                        libelf: [ on  ]
-  <SNIP>>
-    CC       /tmp/build/perf/jvmti/libjvmti.o
-  <SNIP>>
-  $ grep libcap /tmp/build/perf/FEATURE-DUMP
-  feature-libcap=1
-  $ cat /tmp/build/perf/feature/test-libcap.make.output
-  $ ldd /tmp/build/perf/feature/test-libcap.make.bin
-  ldd: /tmp/build/perf/feature/test-libcap.make.bin: No such file or directory
-  $ ldd /tmp/build/perf/feature/test-libcap.bin
-  	linux-vdso.so.1 (0x00007ffc35bfe000)
-  	libcap.so.2 => /lib64/libcap.so.2 (0x00007ff9c62ff000)
-  	libc.so.6 => /lib64/libc.so.6 (0x00007ff9c6139000)
-  	/lib64/ld-linux-x86-64.so.2 (0x00007ff9c6326000)
+The python binding isn't linking with libcap:
+
+  $ ldd /tmp/build/perf/python/perf.so | grep libcap
+  $
+
+So add 'cap' to the 'extra_libraries' variable in
+tools/perf/util/setup.py, and rebuild:
+
+  $ perf test python
+  18: 'import perf' in python                               : Ok
+  $
+
+If we explicitely disable libcap it also continues to work:
+
+  $ make NO_LIBCAP=1 -C tools/perf O=/tmp/build/perf install-bin
+    $ ldd /tmp/build/perf/perf | grep libcap
+  $ ldd /tmp/build/perf/python/perf.so | grep libcap
+  $ perf test python
+  18: 'import perf' in python                               : Ok
   $
 
 Signed-off-by: Igor Lubashev <ilubashe@akamai.com>
 Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
 Cc: James Morris <jmorris@namei.org>
@@ -119,121 +111,171 @@ Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
 [ split from a larger patch ]
 Link: http://lkml.kernel.org/r/8a1e76cf5c7c9796d0d4d240fbaa85305298aafa.1565188228.git.ilubashe@akamai.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/build/Makefile.feature      |  2 ++
- tools/build/feature/Makefile      |  4 ++++
- tools/build/feature/test-libcap.c | 20 ++++++++++++++++++++
- tools/perf/Makefile.config        | 11 +++++++++++
- tools/perf/Makefile.perf          |  2 ++
- 5 files changed, 39 insertions(+)
- create mode 100644 tools/build/feature/test-libcap.c
+ tools/perf/util/Build              |  2 ++
+ tools/perf/util/cap.c              | 29 +++++++++++++++++++++++++++++
+ tools/perf/util/cap.h              | 27 +++++++++++++++++++++++++++
+ tools/perf/util/event.h            |  1 +
+ tools/perf/util/python-ext-sources |  1 +
+ tools/perf/util/setup.py           |  2 ++
+ tools/perf/util/util.c             |  9 +++++++++
+ 7 files changed, 71 insertions(+)
+ create mode 100644 tools/perf/util/cap.c
+ create mode 100644 tools/perf/util/cap.h
 
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 86b793dffbc4..8a19753cc26a 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -42,6 +42,7 @@ FEATURE_TESTS_BASIC :=                  \
-         gtk2-infobar                    \
-         libaudit                        \
-         libbfd                          \
-+        libcap                          \
-         libelf                          \
-         libelf-getphdrnum               \
-         libelf-gelf_getnote             \
-@@ -110,6 +111,7 @@ FEATURE_DISPLAY ?=              \
-          gtk2                   \
-          libaudit               \
-          libbfd                 \
-+         libcap                 \
-          libelf                 \
-          libnuma                \
-          numa_num_possible_cpus \
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 0658b8cd0e53..8499385365c0 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -20,6 +20,7 @@ FILES=                                          \
-          test-libbfd-liberty.bin                \
-          test-libbfd-liberty-z.bin              \
-          test-cplus-demangle.bin                \
-+         test-libcap.bin			\
-          test-libelf.bin                        \
-          test-libelf-getphdrnum.bin             \
-          test-libelf-gelf_getnote.bin           \
-@@ -105,6 +106,9 @@ $(OUTPUT)test-fortify-source.bin:
- $(OUTPUT)test-bionic.bin:
- 	$(BUILD)
+diff --git a/tools/perf/util/Build b/tools/perf/util/Build
+index 7abf05131889..7cda749059a9 100644
+--- a/tools/perf/util/Build
++++ b/tools/perf/util/Build
+@@ -148,6 +148,8 @@ perf-$(CONFIG_ZLIB) += zlib.o
+ perf-$(CONFIG_LZMA) += lzma.o
+ perf-$(CONFIG_ZSTD) += zstd.o
  
-+$(OUTPUT)test-libcap.bin:
-+	$(BUILD) -lcap
++perf-$(CONFIG_LIBCAP) += cap.o
 +
- $(OUTPUT)test-libelf.bin:
- 	$(BUILD) -lelf
+ perf-y += demangle-java.o
+ perf-y += demangle-rust.o
  
-diff --git a/tools/build/feature/test-libcap.c b/tools/build/feature/test-libcap.c
+diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
 new file mode 100644
-index 000000000000..d2a2e152195f
+index 000000000000..c3ba841bbf37
 --- /dev/null
-+++ b/tools/build/feature/test-libcap.c
-@@ -0,0 +1,20 @@
++++ b/tools/perf/util/cap.c
+@@ -0,0 +1,29 @@
 +// SPDX-License-Identifier: GPL-2.0
-+#include <sys/capability.h>
-+#include <linux/capability.h>
++/*
++ * Capability utilities
++ */
 +
-+int main(void)
++#ifdef HAVE_LIBCAP_SUPPORT
++
++#include "cap.h"
++#include <stdbool.h>
++#include <sys/capability.h>
++
++bool perf_cap__capable(cap_value_t cap)
 +{
 +	cap_flag_value_t val;
 +	cap_t caps = cap_get_proc();
 +
 +	if (!caps)
-+		return 1;
++		return false;
 +
-+	if (cap_get_flag(caps, CAP_SYS_ADMIN, CAP_EFFECTIVE, &val) != 0)
-+		return 1;
++	if (cap_get_flag(caps, cap, CAP_EFFECTIVE, &val) != 0)
++		val = CAP_CLEAR;
 +
 +	if (cap_free(caps) != 0)
-+		return 1;
++		return false;
 +
-+	return 0;
++	return val == CAP_SET;
 +}
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index e4988f49ea79..9a06787fedc6 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -824,6 +824,17 @@ ifndef NO_LIBZSTD
-   endif
- endif
- 
-+ifndef NO_LIBCAP
-+  ifeq ($(feature-libcap), 1)
-+    CFLAGS += -DHAVE_LIBCAP_SUPPORT
-+    EXTLIBS += -lcap
-+    $(call detected,CONFIG_LIBCAP)
-+  else
-+    msg := $(warning No libcap found, disables capability support, please install libcap-devel/libcap-dev);
-+    NO_LIBCAP := 1
-+  endif
-+endif
 +
- ifndef NO_BACKTRACE
-   ifeq ($(feature-backtrace), 1)
-     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 67512a12276b..f9807d8c005b 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -88,6 +88,8 @@ include ../scripts/utilities.mak
- #
- # Define NO_LIBBPF if you do not want BPF support
- #
-+# Define NO_LIBCAP if you do not want process capabilities considered by perf
-+#
- # Define NO_SDT if you do not want to define SDT event in perf tools,
- # note that it doesn't disable SDT scanning support.
- #
++#endif  /* HAVE_LIBCAP_SUPPORT */
+diff --git a/tools/perf/util/cap.h b/tools/perf/util/cap.h
+new file mode 100644
+index 000000000000..10af94e473da
+--- /dev/null
++++ b/tools/perf/util/cap.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __PERF_CAP_H
++#define __PERF_CAP_H
++
++#include <stdbool.h>
++#include <linux/capability.h>
++#include <linux/compiler.h>
++
++#ifdef HAVE_LIBCAP_SUPPORT
++
++#include <sys/capability.h>
++
++bool perf_cap__capable(cap_value_t cap);
++
++#else
++
++#include <unistd.h>
++#include <sys/types.h>
++
++static inline bool perf_cap__capable(int cap __maybe_unused)
++{
++	return geteuid() == 0;
++}
++
++#endif /* HAVE_LIBCAP_SUPPORT */
++
++#endif /* __PERF_CAP_H */
+diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
+index 70841d115349..0e164e8ae28d 100644
+--- a/tools/perf/util/event.h
++++ b/tools/perf/util/event.h
+@@ -851,6 +851,7 @@ void  cpu_map_data__synthesize(struct cpu_map_data *data, struct perf_cpu_map *m
+ void event_attr_init(struct perf_event_attr *attr);
+ 
+ int perf_event_paranoid(void);
++bool perf_event_paranoid_check(int max_level);
+ 
+ extern int sysctl_perf_event_max_stack;
+ extern int sysctl_perf_event_max_contexts_per_stack;
+diff --git a/tools/perf/util/python-ext-sources b/tools/perf/util/python-ext-sources
+index 235bd9803390..c6dd478956f1 100644
+--- a/tools/perf/util/python-ext-sources
++++ b/tools/perf/util/python-ext-sources
+@@ -7,6 +7,7 @@
+ 
+ util/python.c
+ ../lib/ctype.c
++util/cap.c
+ util/evlist.c
+ util/evsel.c
+ util/cpumap.c
+diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
+index d48f9cd58964..aa344a163eaf 100644
+--- a/tools/perf/util/setup.py
++++ b/tools/perf/util/setup.py
+@@ -59,6 +59,8 @@ ext_sources = list(map(lambda x: '%s/%s' % (src_perf, x) , ext_sources))
+ extra_libraries = []
+ if '-DHAVE_LIBNUMA_SUPPORT' in cflags:
+     extra_libraries = [ 'numa' ]
++if '-DHAVE_LIBCAP_SUPPORT' in cflags:
++    extra_libraries += [ 'cap' ]
+ 
+ perf = Extension('perf',
+ 		  sources = ext_sources,
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 9c3c97697387..6fd130a5d8f2 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -16,10 +16,12 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <limits.h>
++#include <linux/capability.h>
+ #include <linux/kernel.h>
+ #include <linux/log2.h>
+ #include <linux/time64.h>
+ #include <unistd.h>
++#include "cap.h"
+ #include "strlist.h"
+ #include "string2.h"
+ 
+@@ -403,6 +405,13 @@ int perf_event_paranoid(void)
+ 
+ 	return value;
+ }
++
++bool perf_event_paranoid_check(int max_level)
++{
++	return perf_cap__capable(CAP_SYS_ADMIN) ||
++			perf_event_paranoid() <= max_level;
++}
++
+ static int
+ fetch_ubuntu_kernel_version(unsigned int *puint)
+ {
 -- 
 2.21.0
 
