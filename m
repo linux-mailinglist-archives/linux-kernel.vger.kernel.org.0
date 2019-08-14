@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0F188D9A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FD2B8DA50
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:17:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfHNRKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:10:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32830 "EHLO mail.kernel.org"
+        id S1730957AbfHNRNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:13:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730129AbfHNRKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:14 -0400
+        id S1728900AbfHNRNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:13:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDEDB21721;
-        Wed, 14 Aug 2019 17:10:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A0CA2133F;
+        Wed, 14 Aug 2019 17:13:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802613;
-        bh=z+l4k8YVxe4Yc6ZWRwN/1i/2eo+/MBIo06KInJLfnGw=;
+        s=default; t=1565802828;
+        bh=2YBuIsDcMpoL0U/IBSf8khny7Yz77o+fjErHr9vIHBM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zv/vWS+DZFEKYODviMCXFeT+7t0GTbZsWCIltCeyL/ngirERFhUdlvfS5QCdLer1x
-         tevAq1AAeJSpysv7cyWOUK1V9RG20eYAQp4j7nToDnvigEUsHGiBajYBj3Av3tN3o0
-         pyH7ecL7e9QoRFbePgTu6Qpo9LMLL2bDGX5b0JpU=
+        b=nh98G+MfpEpEbXPehZ44xm8x5A8fAaujT09W69QOjckNPjA5Om+0rA8vZeEtXqHKs
+         xt6ttBkyAIORd8t+dC/eGXSHugON74nddwCQZNEKXQHB5rWxzXTZM03G9i2aEssgzs
+         Vb38A5uaGLd5YGS8/L3wFCG1OcJuqNf2dMJhSRuo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 50/91] cpufreq/pasemi: fix use-after-free in pas_cpufreq_cpu_init()
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 4.14 15/69] x86/mm: Check for pfn instead of page in vmalloc_sync_one()
 Date:   Wed, 14 Aug 2019 19:01:13 +0200
-Message-Id: <20190814165751.692297707@linuxfoundation.org>
+Message-Id: <20190814165746.553852707@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+References: <20190814165744.822314328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,73 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e0a12445d1cb186d875410d093a00d215bec6a89 ]
+From: Joerg Roedel <jroedel@suse.de>
 
-The cpu variable is still being used in the of_get_property() call
-after the of_node_put() call, which may result in use-after-free.
+commit 51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0 upstream.
 
-Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
-Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Do not require a struct page for the mapped memory location because it
+might not exist. This can happen when an ioremapped region is mapped with
+2MB pages.
+
+Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/20190719184652.11391-2-joro@8bytes.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
- 1 file changed, 9 insertions(+), 14 deletions(-)
+ arch/x86/mm/fault.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
-index c7710c149de85..a0620c9ec0649 100644
---- a/drivers/cpufreq/pasemi-cpufreq.c
-+++ b/drivers/cpufreq/pasemi-cpufreq.c
-@@ -145,10 +145,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	int err = -ENODEV;
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -266,7 +266,7 @@ static inline pmd_t *vmalloc_sync_one(pg
+ 	if (!pmd_present(*pmd))
+ 		set_pmd(pmd, *pmd_k);
+ 	else
+-		BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
++		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
  
- 	cpu = of_get_cpu_node(policy->cpu, NULL);
-+	if (!cpu)
-+		goto out;
- 
-+	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
- 	of_node_put(cpu);
--	if (!cpu)
-+	if (!max_freqp) {
-+		err = -EINVAL;
- 		goto out;
-+	}
-+
-+	/* we need the freq in kHz */
-+	max_freq = *max_freqp / 1000;
- 
- 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
- 	if (!dn)
-@@ -185,16 +193,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 	}
- 
- 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
--
--	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
--	if (!max_freqp) {
--		err = -EINVAL;
--		goto out_unmap_sdcpwr;
--	}
--
--	/* we need the freq in kHz */
--	max_freq = *max_freqp / 1000;
--
- 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
- 	pr_debug("initializing frequency table\n");
- 
-@@ -212,9 +210,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
- 
- 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
- 
--out_unmap_sdcpwr:
--	iounmap(sdcpwr_mapbase);
--
- out_unmap_sdcasr:
- 	iounmap(sdcasr_mapbase);
- out:
--- 
-2.20.1
-
+ 	return pmd_k;
+ }
 
 
