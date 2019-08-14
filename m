@@ -2,160 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6655D8DC8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9F568DC97
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:02:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728952AbfHNSAw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:00:52 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35036 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728841AbfHNSAv (ORCPT
+        id S1729069AbfHNSCK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:02:10 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46730 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728821AbfHNSCJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:00:51 -0400
-Received: by mail-pf1-f194.google.com with SMTP id d85so3532609pfd.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:00:51 -0700 (PDT)
+        Wed, 14 Aug 2019 14:02:09 -0400
+Received: by mail-pf1-f193.google.com with SMTP id q139so5738986pfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fJ9cwj5PrHv4tRSMH6SQvLLbwv7CS8HXTftOWfJo5YU=;
-        b=cECcwQ7pw8ag3svApom/3ETlM1wknpk5ILygrzGn1QU4bu/wsXI6CsZTBQ73V5pcq0
-         hXnqCylY/c5iFgimVmuUzZM+oxtdeRMf5TF/wOdu6A1kvOEYnyeE+01vSTVm4zSMihXs
-         dOnbA/MsU6qsOfN4jSNA1g041BjYGzwr45XH8ZYGhbgHoTpoLoIJvDu+eH4CKDQtRDif
-         Xy8xa4yYdsnUQfh1/WWJPu2ImOFr0aFF33yxzD6S2TiL4inlGcSGfNuGxOlQnPdPU1vg
-         jV3EmAmQCrmzlIet4ld2gJMgLo6m3DvCFpRneuCBvOV1wloKmsjcsrwY0n3xmKMvqWuF
-         8KFQ==
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:from:cc:to:user-agent:date;
+        bh=WfxA1A737XoI5ZZ/Hf4Cr2tS9xoxZFvNR1WhcJSUChE=;
+        b=nbuuCGGLRs2jIpwx5obA8WHvJ1rd4HSPNnsO6jd7X4i8etCRuSwgpoU5UUSuHhgGmB
+         yxxNkVHq72XrgE08a6AU6gQV0mgSYgifC1WnkUrRYPLW5PZa3h88lqtpphXfdJX9HwCP
+         r/KDowHHZ6yYZvOXVfENrcjMJZBXe1xYx6Uso=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fJ9cwj5PrHv4tRSMH6SQvLLbwv7CS8HXTftOWfJo5YU=;
-        b=UJTKzPhBJq4VAY6k+l6D16t23HNFsmlwmYc2iC16hpEz5nz3TrVTyM0SkZeU8g/zIO
-         KIl+9r1cSWSVn33pS5ebU6nZcjf3gUIKViz9CJMAhIP2c5n+5UijkfFM6ORR+QFcNYQb
-         4fZQdHV1ZC+D2Pcz+I2aUNR94JxjCXqNH3nsT17X+aTc4XBAv7OloqWVYX+R9fOgEamz
-         +6xRIKERMPKYrkWYOPZKcErXkHFLHPEpJfjX3jipxYs8Udp/LV32Vy4O97osoIleylIb
-         TAgyYTtR2SC57N0UWE6983x/vGIUrD8uglKRlXubYVvF5lec5K9v5lBqZGedBwW0fwht
-         UFfQ==
-X-Gm-Message-State: APjAAAWRaP+myfNWOKWFvn7OV6UYN3yjaHg/FZ3rxmYf1I6XWt5rEiOT
-        FcEZWIsAkZGg1GTy5E9tmFMzKOHE3Ro=
-X-Google-Smtp-Source: APXvYqzrakKid7QIIFOdnyxXZVtpIxlsGPaEU5w1zmjCc5Hh5N86JWWqrhekwsDpNQnJ1x5HdupD0w==
-X-Received: by 2002:a17:90a:858c:: with SMTP id m12mr870111pjn.129.1565805650121;
-        Wed, 14 Aug 2019 11:00:50 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id a6sm694379pjv.30.2019.08.14.11.00.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 11:00:49 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 11:00:47 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        sibis@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 10/22] arm64: dts: qcom: pm8150b: Add pon and adc nodes
-Message-ID: <20190814180047.GH6167@minitux>
-References: <20190814125012.8700-1-vkoul@kernel.org>
- <20190814125012.8700-11-vkoul@kernel.org>
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
+         :user-agent:date;
+        bh=WfxA1A737XoI5ZZ/Hf4Cr2tS9xoxZFvNR1WhcJSUChE=;
+        b=HzcHJbL9Q+GOE0YibvFHuDP8eVkGuyEDvkaJh/PzRUPSkjct/OgixzJH7AOiUODDaX
+         uFCGno8MAEH2GxzO/IVyWEDnIXlVzu7aheaZs7/YKhkGE64HH/8UbbhH/v6H+mK7Sod8
+         zGW2l61xKa8R2zKb0jhTSprgGks2x3okHBcBaDTbQ4ZnfBKOeHGG4ZxoMilpQyptD5o+
+         4LSjLIIC84x7OXNGslL42yXhnYnxsgENKXLpHs4/mYi1feJJBv89hPI0Zl7V8PSF5K9g
+         +KRCXOw2WxOniRCnDoArPFa3CDC8opPkLoYC49dZ6Pr8qnsOtQVG5OTyk3TfBuf0uxqt
+         Rwmg==
+X-Gm-Message-State: APjAAAW44oJHE+b+o13yDilDQLLMjqgkN/eGfmH6Hj4lPM3jK9MOYD8Q
+        JfyBOnQczMIjyjPIi2pbwuY8PpezK0asUA==
+X-Google-Smtp-Source: APXvYqwk4DMeNeDAM10WFbJ0Wxfbl3zzpawQoDzKGmcpMx0DkwBbVOGhCtuG5YmdXcz2nCdcgwAyTQ==
+X-Received: by 2002:a17:90b:14c:: with SMTP id em12mr971132pjb.28.1565805728996;
+        Wed, 14 Aug 2019 11:02:08 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id 185sm601094pff.54.2019.08.14.11.02.08
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 11:02:08 -0700 (PDT)
+Message-ID: <5d544ca0.1c69fb81.a98a7.19e1@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814125012.8700-11-vkoul@kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190813082442.25796-4-mkshah@codeaurora.org>
+References: <20190813082442.25796-1-mkshah@codeaurora.org> <20190813082442.25796-4-mkshah@codeaurora.org>
+Subject: Re: [PATCH 3/4] dt-bindings: soc: qcom: Add RSC power domain specifier
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        bjorn.andersson@linaro.org, evgreen@chromium.org,
+        dianders@chromium.org, rnayak@codeaurora.org, ilina@codeaurora.org,
+        lsrao@codeaurora.org, ulf.hansson@linaro.org,
+        Maulik Shah <mkshah@codeaurora.org>, devicetree@vger.kernel.org
+To:     Maulik Shah <mkshah@codeaurora.org>, agross@kernel.org,
+        david.brown@linaro.org, linux-arm-msm@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 11:02:07 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14 Aug 05:50 PDT 2019, Vinod Koul wrote:
-
-> Add the pon and adc nodes found in pm8150b PMIC.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Quoting Maulik Shah (2019-08-13 01:24:41)
+> In addition to transmitting resource state requests to the remote
+> processor, the RSC is responsible for powering off/lowering the
+> requirements from CPUs subsystem for the associated hardware like
+> buses, clocks, and regulators when all CPUs and cluster is powered down.
+>=20
+> The power domain is configured to a low power state and when all the
+> CPUs are powered down, the RSC can lower resource state requirements
+> and power down the rails that power the CPUs.
+>=20
+> Add PM domain specifier property for RSC controller.
+>=20
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
 > ---
->  arch/arm64/boot/dts/qcom/pm8150b.dtsi | 54 +++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/pm8150b.dtsi b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
-> index c0a678b0f159..846197bd65cd 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8150b.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
-> @@ -2,6 +2,7 @@
->  // Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
->  // Copyright (c) 2019, Linaro Limited
->  
-> +#include <dt-bindings/iio/qcom,spmi-vadc.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/spmi/spmi.h>
->  
-> @@ -11,6 +12,59 @@
->  		reg = <0x2 SPMI_USID>;
->  		#address-cells = <1>;
->  		#size-cells = <0>;
-> +
-> +		pon@800 {
-> +			compatible = "qcom,pm8916-pon";
-> +			reg = <0x0800>;
-> +		};
-> +
-> +		adc@3100 {
-> +			compatible = "qcom,spmi-adc5";
-> +			reg = <0x3100>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			#io-channel-cells = <1>;
-> +			interrupts = <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> +
-> +			ref-gnd@0 {
-> +				reg = <ADC5_REF_GND>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "ref_gnd";
-> +			};
-> +
-> +			vref-1p25@1 {
-> +				reg = <ADC5_1P25VREF>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "vref_1p25";
-> +			};
-> +
-> +			die-temp@6 {
-> +				reg = <ADC5_DIE_TEMP>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "die_temp";
-> +			};
-> +
-> +			chg-temp@9 {
-> +				reg = <ADC5_CHG_TEMP>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "chg_temp";
-> +			};
-> +
 
-I believe the above items are internal, so it makes sense to keep them
-here, the below amux ones relates to board configuration so I think
-those should go in the board file.
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-Regards,
-Bjorn
-
-> +			smb1390-therm@14 {
-> +				reg = <ADC5_AMUX_THM2>;
-> +				qcom,hw-settle-time = <200>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "smb1390_therm";
-> +			};
-> +
-> +			smb1355-therm@78 {
-> +				reg = <ADC5_AMUX_THM2_100K_PU>;
-> +				qcom,ratiometric;
-> +				qcom,hw-settle-time = <200>;
-> +				qcom,pre-scaling = <1 1>;
-> +				label = "smb1355_therm";
-> +			};
-> +		};
->  	};
->  
->  	qcom,pm8150@3 {
-> -- 
-> 2.20.1
-> 
