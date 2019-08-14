@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 451978DAAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC1478DA23
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:16:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730588AbfHNRLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34542 "EHLO mail.kernel.org"
+        id S1731232AbfHNRPZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:15:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfHNRLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:11:18 -0400
+        id S1731222AbfHNRPV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:15:21 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE899208C2;
-        Wed, 14 Aug 2019 17:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 425C821743;
+        Wed, 14 Aug 2019 17:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802677;
-        bh=Z9vCoxmg1F0JBLGhQ5ys9J4j4m/T7XhF6spaclXJU8A=;
+        s=default; t=1565802920;
+        bh=com3TRxcRZ4072zwSKf4aPMzXa1qbohAh+UwbVWjgAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MNNsqKm1oZTFjANQmgFo33FLOoUExrkLi1YwWkh3uEPWJgTCqA4b3M1T3O7wk9Z1Z
-         h5fyfj2/O2wMzEld4sriFz2qEjlST3U5fNjG9GxqdYq8w74kS2DVmZkmBxaCXuj3pC
-         lBv5wxrABDDLiqPiuIDcF1KbHNeJeTnt1uZN5sFA=
+        b=eeTohfxxyvmZiErx7KUVzRsg38BelEpykxyPujHBlOgrwXuN/xGpuxBzm2R++Q7Rz
+         mo3troRVIAXJHuEndMgdyYdsvdpj8BgEYVikFm43cJotwHSoQOBhyUOzsbsTpXgE5z
+         rN4sMD1+Mlk6s2+8crf6HsrqX3+dUuaaa7HSlLfk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gilles Buloz <Gilles.Buloz@kontron.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 75/91] hwmon: (nct7802) Fix wrong detection of in4 presence
-Date:   Wed, 14 Aug 2019 19:01:38 +0200
-Message-Id: <20190814165752.972237085@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 41/69] perf probe: Avoid calling freeing routine multiple times for same pointer
+Date:   Wed, 14 Aug 2019 19:01:39 +0200
+Message-Id: <20190814165748.197878283@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+References: <20190814165744.822314328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,56 +47,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+[ Upstream commit d95daf5accf4a72005daa13fbb1d1bd8709f2861 ]
 
-commit 38ada2f406a9b81fb1249c5c9227fa657e7d5671 upstream.
+When perf_add_probe_events() we call cleanup_perf_probe_events() for the
+pev pointer it receives, then, as part of handling this failure the main
+'perf probe' goes on and calls cleanup_params() and that will again call
+cleanup_perf_probe_events()for the same pointer, so just set nevents to
+zero when handling the failure of perf_add_probe_events() to avoid the
+double free.
 
-The code to detect if in4 is present is wrong; if in4 is not present,
-the in4_input sysfs attribute is still present.
-
-In detail:
-
-- Ihen RTD3_MD=11 (VSEN3 present), everything is as expected (no bug).
-- If we have RTD3_MD!=11 (no VSEN3), we unexpectedly have a in4_input
-  file under /sys and the "sensors" command displays in4_input.
-  But as expected, we have no in4_min, in4_max, in4_alarm, in4_beep.
-
-Fix is_visible function to detect and report in4_input visibility
-as expected.
-
-Reported-by: Gilles Buloz <Gilles.Buloz@kontron.com>
-Cc: Gilles Buloz <Gilles.Buloz@kontron.com>
-Cc: stable@vger.kernel.org
-Fixes: 3434f37835804 ("hwmon: Driver for Nuvoton NCT7802Y")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-x8qgma4g813z96dvtw9w219q@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/nct7802.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/builtin-probe.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/hwmon/nct7802.c
-+++ b/drivers/hwmon/nct7802.c
-@@ -768,7 +768,7 @@ static struct attribute *nct7802_in_attr
- 	&sensor_dev_attr_in3_alarm.dev_attr.attr,
- 	&sensor_dev_attr_in3_beep.dev_attr.attr,
+diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+index c0065923a525f..e1ac51aaedcff 100644
+--- a/tools/perf/builtin-probe.c
++++ b/tools/perf/builtin-probe.c
+@@ -712,6 +712,16 @@ __cmd_probe(int argc, const char **argv)
  
--	&sensor_dev_attr_in4_input.dev_attr.attr,	/* 17 */
-+	&sensor_dev_attr_in4_input.dev_attr.attr,	/* 16 */
- 	&sensor_dev_attr_in4_min.dev_attr.attr,
- 	&sensor_dev_attr_in4_max.dev_attr.attr,
- 	&sensor_dev_attr_in4_alarm.dev_attr.attr,
-@@ -794,9 +794,9 @@ static umode_t nct7802_in_is_visible(str
- 
- 	if (index >= 6 && index < 11 && (reg & 0x03) != 0x03)	/* VSEN1 */
- 		return 0;
--	if (index >= 11 && index < 17 && (reg & 0x0c) != 0x0c)	/* VSEN2 */
-+	if (index >= 11 && index < 16 && (reg & 0x0c) != 0x0c)	/* VSEN2 */
- 		return 0;
--	if (index >= 17 && (reg & 0x30) != 0x30)		/* VSEN3 */
-+	if (index >= 16 && (reg & 0x30) != 0x30)		/* VSEN3 */
- 		return 0;
- 
- 	return attr->mode;
+ 		ret = perf_add_probe_events(params.events, params.nevents);
+ 		if (ret < 0) {
++
++			/*
++			 * When perf_add_probe_events() fails it calls
++			 * cleanup_perf_probe_events(pevs, npevs), i.e.
++			 * cleanup_perf_probe_events(params.events, params.nevents), which
++			 * will call clear_perf_probe_event(), so set nevents to zero
++			 * to avoid cleanup_params() to call clear_perf_probe_event() again
++			 * on the same pevs.
++			 */
++			params.nevents = 0;
+ 			pr_err_with_code("  Error: Failed to add events.", ret);
+ 			return ret;
+ 		}
+-- 
+2.20.1
+
 
 
