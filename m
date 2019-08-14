@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A25AD8DB9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAD88DB9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729185AbfHNRE2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:04:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53288 "EHLO mail.kernel.org"
+        id S1729248AbfHNREd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:04:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53326 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729191AbfHNRE0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:26 -0400
+        id S1729215AbfHNREa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:04:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D92532084D;
-        Wed, 14 Aug 2019 17:04:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73BBD2084D;
+        Wed, 14 Aug 2019 17:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802266;
-        bh=XPHsir0PChY/6hRP2q7lahBsysmu4QRzoZq2avymxoo=;
+        s=default; t=1565802269;
+        bh=uxRHKqm3l87w3jcDPFoFAyfY8jEP22imeRNuXpLfmAc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oRFC+P3Jn2St6W0b0Dfj0+YdlzqM2J7uLmayjrZ9ylOInrt9Ob2Veq6oz8A3ziLYk
-         EVTfVJ2xirrsM9iGyaAnRrwc1BtBDP1cdWPhgcBjiVNCn9rBMvAt+v+Zlf7aU5Ogey
-         kg58MHpZtlg24uzH3LchcGpwOFEbZtrEx6v74mQg=
+        b=XgyQh4kSZHzgGPjlow8OE3v4kmI9AL1ah+iIl9szq5ujNREAC507o+f9Lt5I0SvD+
+         IQlOH+G56FukKuujEOHD+E90YTUs+PxPKQGcT126gE9wkI7N64p2ZvPezVVieCqWZL
+         Si69p0jBxN21FMJYni7PWecdyb0AS9fVJZvR7UN0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 5.2 033/144] perf record: Fix module size on s390
-Date:   Wed, 14 Aug 2019 18:59:49 +0200
-Message-Id: <20190814165801.217893171@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>,
+        Alistair Delva <adelva@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Manoj Gupta <manojgupta@google.com>
+Subject: [PATCH 5.2 034/144] x86/purgatory: Do not use __builtin_memcpy and __builtin_memset
+Date:   Wed, 14 Aug 2019 18:59:50 +0200
+Message-Id: <20190814165801.255920942@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -47,138 +47,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-commit 12a6d2940b5f02b4b9f71ce098e3bb02bc24a9ea upstream.
+commit 4ce97317f41d38584fb93578e922fcd19e535f5b upstream.
 
-On s390 the modules loaded in memory have the text segment located after
-the GOT and Relocation table. This can be seen with this output:
+Implementing memcpy and memset in terms of __builtin_memcpy and
+__builtin_memset is problematic.
 
-  [root@m35lp76 perf]# fgrep qeth /proc/modules
-  qeth 151552 1 qeth_l2, Live 0x000003ff800b2000
-  ...
-  [root@m35lp76 perf]# cat /sys/module/qeth/sections/.text
-  0x000003ff800b3990
-  [root@m35lp76 perf]#
+GCC at -O2 will replace calls to the builtins with calls to memcpy and
+memset (but will generate an inline implementation at -Os).  Clang will
+replace the builtins with these calls regardless of optimization level.
+$ llvm-objdump -dr arch/x86/purgatory/string.o | tail
 
-There is an offset of 0x1990 bytes. The size of the qeth module is
-151552 bytes (0x25000 in hex).
+0000000000000339 memcpy:
+     339: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
+                000000000000033b:  R_X86_64_64  memcpy
+     343: ff e0                         jmpq    *%rax
 
-The location of the GOT/relocation table at the beginning of a module is
-unique to s390.
+0000000000000345 memset:
+     345: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
+                0000000000000347:  R_X86_64_64  memset
+     34f: ff e0
 
-commit 203d8a4aa6ed ("perf s390: Fix 'start' address of module's map")
-adjusts the start address of a module in the map structures, but does
-not adjust the size of the modules. This leads to overlapping of module
-maps as this example shows:
+Such code results in infinite recursion at runtime. This is observed
+when doing kexec.
 
-[root@m35lp76 perf] # ./perf report -D
-     0 0 0xfb0 [0xa0]: PERF_RECORD_MMAP -1/0: [0x3ff800b3990(0x25000)
-          @ 0]:  x /lib/modules/.../qeth.ko.xz
-     0 0 0x1050 [0xb0]: PERF_RECORD_MMAP -1/0: [0x3ff800d85a0(0x8000)
-          @ 0]:  x /lib/modules/.../ip6_tables.ko.xz
+Instead, reuse an implementation from arch/x86/boot/compressed/string.c.
+This requires to implement a stub function for warn(). Also, Clang may
+lower memcmp's that compare against 0 to bcmp's, so add a small definition,
+too. See also: commit 5f074f3e192f ("lib/string.c: implement a basic bcmp")
 
-The module qeth.ko has an adjusted start address modified to b3990, but
-its size is unchanged and the module ends at 0x3ff800d8990.  This end
-address overlaps with the next modules start address of 0x3ff800d85a0.
-
-When the size of the leading GOT/Relocation table stored in the
-beginning of the text segment (0x1990 bytes) is subtracted from module
-qeth end address, there are no overlaps anymore:
-
-   0x3ff800d8990 - 0x1990 = 0x0x3ff800d7000
-
-which is the same as
-
-   0x3ff800b2000 + 0x25000 = 0x0x3ff800d7000.
-
-To fix this issue, also adjust the modules size in function
-arch__fix_module_text_start(). Add another function parameter named size
-and reduce the size of the module when the text segment start address is
-changed.
-
-Output after:
-     0 0 0xfb0 [0xa0]: PERF_RECORD_MMAP -1/0: [0x3ff800b3990(0x23670)
-          @ 0]:  x /lib/modules/.../qeth.ko.xz
-     0 0 0x1050 [0xb0]: PERF_RECORD_MMAP -1/0: [0x3ff800d85a0(0x7a60)
-          @ 0]:  x /lib/modules/.../ip6_tables.ko.xz
-
-Reported-by: Stefan Liebler <stli@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
+Fixes: 8fc5b4d4121c ("purgatory: core purgatory functionality")
+Reported-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Debugged-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Debugged-by: Manoj Gupta <manojgupta@google.com>
+Suggested-by: Alistair Delva <adelva@google.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
 Cc: stable@vger.kernel.org
-Fixes: 203d8a4aa6ed ("perf s390: Fix 'start' address of module's map")
-Link: http://lkml.kernel.org/r/20190724122703.3996-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Link: https://bugs.chromium.org/p/chromium/issues/detail?id=984056
+Link: https://lkml.kernel.org/r/20190807221539.94583-1-ndesaulniers@google.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- tools/perf/arch/s390/util/machine.c |   14 +++++++++++++-
- tools/perf/util/machine.c           |    3 ++-
- tools/perf/util/machine.h           |    2 +-
- 3 files changed, 16 insertions(+), 3 deletions(-)
+ arch/x86/boot/string.c         |    8 ++++++++
+ arch/x86/purgatory/Makefile    |    3 +++
+ arch/x86/purgatory/purgatory.c |    6 ++++++
+ arch/x86/purgatory/string.c    |   23 -----------------------
+ 4 files changed, 17 insertions(+), 23 deletions(-)
 
---- a/tools/perf/arch/s390/util/machine.c
-+++ b/tools/perf/arch/s390/util/machine.c
-@@ -8,7 +8,7 @@
- #include "debug.h"
- #include "symbol.h"
- 
--int arch__fix_module_text_start(u64 *start, const char *name)
-+int arch__fix_module_text_start(u64 *start, u64 *size, const char *name)
- {
- 	u64 m_start = *start;
- 	char path[PATH_MAX];
-@@ -18,6 +18,18 @@ int arch__fix_module_text_start(u64 *sta
- 	if (sysfs__read_ull(path, (unsigned long long *)start) < 0) {
- 		pr_debug2("Using module %s start:%#lx\n", path, m_start);
- 		*start = m_start;
-+	} else {
-+		/* Successful read of the modules segment text start address.
-+		 * Calculate difference between module start address
-+		 * in memory and module text segment start address.
-+		 * For example module load address is 0x3ff8011b000
-+		 * (from /proc/modules) and module text segment start
-+		 * address is 0x3ff8011b870 (from file above).
-+		 *
-+		 * Adjust the module size and subtract the GOT table
-+		 * size located at the beginning of the module.
-+		 */
-+		*size -= (*start - m_start);
- 	}
- 
- 	return 0;
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1365,6 +1365,7 @@ static int machine__set_modules_path(str
- 	return map_groups__set_modules_path_dir(&machine->kmaps, modules_path, 0);
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -37,6 +37,14 @@ int memcmp(const void *s1, const void *s
+ 	return diff;
  }
- int __weak arch__fix_module_text_start(u64 *start __maybe_unused,
-+				u64 *size __maybe_unused,
- 				const char *name __maybe_unused)
+ 
++/*
++ * Clang may lower `memcmp == 0` to `bcmp == 0`.
++ */
++int bcmp(const void *s1, const void *s2, size_t len)
++{
++	return memcmp(s1, s2, len);
++}
++
+ int strcmp(const char *str1, const char *str2)
  {
- 	return 0;
-@@ -1376,7 +1377,7 @@ static int machine__create_module(void *
- 	struct machine *machine = arg;
- 	struct map *map;
+ 	const unsigned char *s1 = (const unsigned char *)str1;
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup
+ targets += $(purgatory-y)
+ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
  
--	if (arch__fix_module_text_start(&start, name) < 0)
-+	if (arch__fix_module_text_start(&start, &size, name) < 0)
- 		return -1;
++$(obj)/string.o: $(srctree)/arch/x86/boot/compressed/string.c FORCE
++	$(call if_changed_rule,cc_o_c)
++
+ $(obj)/sha256.o: $(srctree)/lib/sha256.c FORCE
+ 	$(call if_changed_rule,cc_o_c)
  
- 	map = machine__findnew_module_map(machine, start, name);
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -222,7 +222,7 @@ struct symbol *machine__find_kernel_symb
- 
- struct map *machine__findnew_module_map(struct machine *machine, u64 start,
- 					const char *filename);
--int arch__fix_module_text_start(u64 *start, const char *name);
-+int arch__fix_module_text_start(u64 *start, u64 *size, const char *name);
- 
- int machine__load_kallsyms(struct machine *machine, const char *filename);
- 
+--- a/arch/x86/purgatory/purgatory.c
++++ b/arch/x86/purgatory/purgatory.c
+@@ -68,3 +68,9 @@ void purgatory(void)
+ 	}
+ 	copy_backup_region();
+ }
++
++/*
++ * Defined in order to reuse memcpy() and memset() from
++ * arch/x86/boot/compressed/string.c
++ */
++void warn(const char *msg) {}
+--- a/arch/x86/purgatory/string.c
++++ /dev/null
+@@ -1,23 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * Simple string functions.
+- *
+- * Copyright (C) 2014 Red Hat Inc.
+- *
+- * Author:
+- *       Vivek Goyal <vgoyal@redhat.com>
+- */
+-
+-#include <linux/types.h>
+-
+-#include "../boot/string.c"
+-
+-void *memcpy(void *dst, const void *src, size_t len)
+-{
+-	return __builtin_memcpy(dst, src, len);
+-}
+-
+-void *memset(void *dst, int c, size_t len)
+-{
+-	return __builtin_memset(dst, c, len);
+-}
 
 
