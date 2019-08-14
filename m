@@ -2,147 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79D7F8DD3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:44:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1A408DD6C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbfHNSoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:44:37 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:5878 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728265AbfHNSof (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:44:35 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EIfajM098672
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:44:35 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucp3vkuxn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:44:34 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 14 Aug 2019 19:44:33 +0100
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 14 Aug 2019 19:44:28 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7EIiRlf49873240
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 18:44:27 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8864DB205F;
-        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68424B2065;
-        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Aug 2019 18:44:27 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 446FE16C1049; Wed, 14 Aug 2019 11:44:29 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 11:44:29 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, Rao Shoaib <rao.shoaib@oracle.com>,
-        max.byungchul.park@gmail.com, byungchul.park@lge.com,
-        kernel-team@android.com, kernel-team@lge.com,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Kees Cook <keescook@chromium.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-doc@vger.kernel.org,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+        id S1729043AbfHNSrL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:47:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55748 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728792AbfHNSrK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:47:10 -0400
+Received: from quaco.ghostprotocols.net (unknown [177.195.212.110])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D43EC2064A;
+        Wed, 14 Aug 2019 18:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565808429;
+        bh=/YVLKbuofx3QJedTNi22hYOQSOPCKP1Mbk93RVno/m4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XvrOzYrurUkoGbqKkapxMNAWPKOWFMWaMhxebK1T1VgDKRjKA3kujExpp3WBE7tb9
+         6yGmpFfGe5q35h5sVjrV6A2ePQ6qD/CS6N/EVpZOutnqqEVu0fgy18J+bsXRrSzn9v
+         aCvBFf9sBiimCSIPtswEIFWe5Nh+3zNHAgCVzWL4=
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v3 1/2] rcu/tree: Add basic support for kfree_rcu batching
-Reply-To: paulmck@linux.ibm.com
-References: <20190813170046.81707-1-joel@joelfernandes.org>
- <20190813190738.GH28441@linux.ibm.com>
- <20190814143817.GA253999@google.com>
- <20190814172233.GA68498@google.com>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Clark Williams <williams@redhat.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        Tan Xiaojun <tanxiaojun@huawei.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH 27/28] perf record: Support aarch64 random socket_id assignment
+Date:   Wed, 14 Aug 2019 15:40:50 -0300
+Message-Id: <20190814184051.3125-28-acme@kernel.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190814184051.3125-1-acme@kernel.org>
+References: <20190814184051.3125-1-acme@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814172233.GA68498@google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19081418-0064-0000-0000-000004089D35
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011590; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01246810; UDB=6.00657983; IPR=6.01028317;
- MB=3.00028174; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-14 18:44:33
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081418-0065-0000-0000-00003EAB4496
-Message-Id: <20190814184429.GV28441@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908140165
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 01:22:33PM -0400, Joel Fernandes wrote:
-> On Wed, Aug 14, 2019 at 10:38:17AM -0400, Joel Fernandes wrote:
-> > On Tue, Aug 13, 2019 at 12:07:38PM -0700, Paul E. McKenney wrote:
->  [snip]
-> > > > - * Queue an RCU callback for lazy invocation after a grace period.
-> > > > - * This will likely be later named something like "call_rcu_lazy()",
-> > > > - * but this change will require some way of tagging the lazy RCU
-> > > > - * callbacks in the list of pending callbacks. Until then, this
-> > > > - * function may only be called from __kfree_rcu().
-> > > > + * Maximum number of kfree(s) to batch, if this limit is hit then the batch of
-> > > > + * kfree(s) is queued for freeing after a grace period, right away.
-> > > >   */
-> > > > -void kfree_call_rcu(struct rcu_head *head, rcu_callback_t func)
-> > > > +struct kfree_rcu_cpu {
-> > > > +	/* The rcu_work node for queuing work with queue_rcu_work(). The work
-> > > > +	 * is done after a grace period.
-> > > > +	 */
-> > > > +	struct rcu_work rcu_work;
-> > > > +
-> > > > +	/* The list of objects being queued in a batch but are not yet
-> > > > +	 * scheduled to be freed.
-> > > > +	 */
-> > > > +	struct rcu_head *head;
-> > > > +
-> > > > +	/* The list of objects that have now left ->head and are queued for
-> > > > +	 * freeing after a grace period.
-> > > > +	 */
-> > > > +	struct rcu_head *head_free;
-> > > 
-> > > So this is not yet the one that does multiple batches concurrently
-> > > awaiting grace periods, correct?  Or am I missing something subtle?
-> > 
-> > Yes, it is not. I honestly, still did not understand that idea. Or how it
-> > would improve things. May be we can discuss at LPC on pen and paper? But I
-> > think that can also be a follow-up optimization.
-> 
-> I got it now. Basically we can benefit a bit more by having another list
-> (that is have multiple kfree_rcu batches in flight). I will think more about
-> it - but hopefully we don't need to gate this patch by that.
+From: Tan Xiaojun <tanxiaojun@huawei.com>
 
-I am willing to take this as a later optimization.
+Same as in the commit 01766229533f ("perf record: Support s390 random
+socket_id assignment"), aarch64 also have this problem.
 
-> It'll be interesting to see what rcuperf says about such an improvement :)
+Without this fix:
 
-Indeed, no guarantees either way.  The reason for hope assumes a busy
-system where each grace period is immediately followed by another
-grace period.  On such a system, the current setup allows each CPU to
-make use only of every second grace period for its kfree_rcu() work.
-The hope would therefore be that this would reduce the memory footprint
-substantially with no increase in overhead.
+  [root@localhost perf]# ./perf report --header -I -v
+  ...
+  socket_id number is too big.You may need to upgrade the perf tool.
 
-But no way to know without trying it!  ;-)
+  # ========
+  # captured on    : Thu Aug  1 22:58:38 2019
+  # header version : 1
+  ...
+  # Core ID and Socket ID information is not available
+  ...
 
-							Thanx, Paul
+With this fix:
+  [root@localhost perf]# ./perf report --header -I -v
+  ...
+  cpumask list: 0-31
+  cpumask list: 32-63
+  cpumask list: 64-95
+  cpumask list: 96-127
+
+  # ========
+  # captured on    : Thu Aug  1 22:58:38 2019
+  # header version : 1
+  ...
+  # CPU 0: Core ID 0, Socket ID 36
+  # CPU 1: Core ID 1, Socket ID 36
+  ...
+  # CPU 126: Core ID 126, Socket ID 8442
+  # CPU 127: Core ID 127, Socket ID 8442
+  ...
+
+Signed-off-by: Tan Xiaojun <tanxiaojun@huawei.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Tzvetomir Stoyanov (VMware) <tz.stoyanov@gmail.com>
+Link: http://lkml.kernel.org/r/1564717737-21602-1-git-send-email-tanxiaojun@huawei.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/header.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index b04c2b6b28b3..1f2965a07bef 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2252,8 +2252,10 @@ static int process_cpu_topology(struct feat_fd *ff, void *data __maybe_unused)
+ 	/* On s390 the socket_id number is not related to the numbers of cpus.
+ 	 * The socket_id number might be higher than the numbers of cpus.
+ 	 * This depends on the configuration.
++	 * AArch64 is the same.
+ 	 */
+-	if (ph->env.arch && !strncmp(ph->env.arch, "s390", 4))
++	if (ph->env.arch && (!strncmp(ph->env.arch, "s390", 4)
++			  || !strncmp(ph->env.arch, "aarch64", 7)))
+ 		do_core_id_test = false;
+ 
+ 	for (i = 0; i < (u32)cpu_nr; i++) {
+-- 
+2.21.0
 
