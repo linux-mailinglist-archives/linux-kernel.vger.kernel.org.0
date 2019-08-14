@@ -2,40 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B661F8C5ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DF268C5F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727401AbfHNCLV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
+        id S1727446AbfHNCL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:11:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43620 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727333AbfHNCLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:11:18 -0400
+        id S1727333AbfHNCLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:11:23 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B727820843;
-        Wed, 14 Aug 2019 02:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C87C20844;
+        Wed, 14 Aug 2019 02:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748677;
-        bh=TSBliH0qWd9PJs1EiN+1smbpDa3gXwEEYQr6fkkxRRM=;
+        s=default; t=1565748682;
+        bh=tp/TihEb7M9Z4ZC/KrwWjm0E5mpt+2qt7/njaZiu8yg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LfySNg4M4AP5rYJ8gkKF2YCgJZ41rfewkH4+AR0giq782hyVfOHqe08Qs5hwnignJ
-         EriKsXSzARRa4A2MPFUqQWWQgO3KDNszLMAwe5f4vdI7L4F22RIAOEbSUtGNoWA4R2
-         I+LAN8bPYTovW63NIdri5AD0JW3ByH8kPIb31vBk=
+        b=bq0ODtPHzagId2SqTIK0FZ2DQgwqgOWZRfsDP4XTP21zXNKmTtODInCobS8FHZLzF
+         /w1pM/dGPLlGaO327xFvwpibvUFNY1/AowHQVcVUtbq/ghrSOO8OvvX/RJxQYNE1NC
+         iGr8pjZOS8f7m75sh7LacLrEcEkXl5Z7G/QZBPzM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Filipe=20La=C3=ADns?= <lains@archlinux.org>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 016/123] HID: logitech-hidpp: add USB PID for a few more supported mice
-Date:   Tue, 13 Aug 2019 22:09:00 -0400
-Message-Id: <20190814021047.14828-16-sashal@kernel.org>
+Cc:     Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 019/123] mips: fix cacheinfo
+Date:   Tue, 13 Aug 2019 22:09:03 -0400
+Message-Id: <20190814021047.14828-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -44,70 +45,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Filipe Laíns <lains@archlinux.org>
+From: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
 
-[ Upstream commit 27fc32fd9417968a459d43d9a7c50fd423d53eb9 ]
+[ Upstream commit b8bea8a5e5d942e62203416ab41edecaed4fda02 ]
 
-Add more device IDs to logitech-hidpp driver.
+Because CONFIG_OF defined for MIPS, cacheinfo attempts to fill information
+from DT, ignoring data filled by architecture routine. This leads to error
+reported
 
-Signed-off-by: Filipe Laíns <lains@archlinux.org>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+ cacheinfo: Unable to detect cache hierarchy for CPU 0
+
+Way to fix this provided in
+commit fac51482577d ("drivers: base: cacheinfo: fix x86 with
+ CONFIG_OF enabled")
+
+Utilize same mechanism to report that cacheinfo set by architecture
+specific function
+
+Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: linux-mips@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-logitech-hidpp.c | 32 +++++++++++++++++++++++++++++++-
- 1 file changed, 31 insertions(+), 1 deletion(-)
+ arch/mips/kernel/cacheinfo.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/hid/hid-logitech-hidpp.c b/drivers/hid/hid-logitech-hidpp.c
-index cf05816a601f5..34e2b3f9d540d 100644
---- a/drivers/hid/hid-logitech-hidpp.c
-+++ b/drivers/hid/hid-logitech-hidpp.c
-@@ -3749,15 +3749,45 @@ static const struct hid_device_id hidpp_devices[] = {
+diff --git a/arch/mips/kernel/cacheinfo.c b/arch/mips/kernel/cacheinfo.c
+index e0dd66881da68..f777e44653d57 100644
+--- a/arch/mips/kernel/cacheinfo.c
++++ b/arch/mips/kernel/cacheinfo.c
+@@ -69,6 +69,8 @@ static int __populate_cache_leaves(unsigned int cpu)
+ 	if (c->tcache.waysize)
+ 		populate_cache(tcache, this_leaf, 3, CACHE_TYPE_UNIFIED);
  
- 	{ L27MHZ_DEVICE(HID_ANY_ID) },
++	this_cpu_ci->cpu_map_populated = true;
++
+ 	return 0;
+ }
  
--	{ /* Logitech G403 Gaming Mouse over USB */
-+	{ /* Logitech G203/Prodigy Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC084) },
-+	{ /* Logitech G302 Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC07F) },
-+	{ /* Logitech G303 Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC080) },
-+	{ /* Logitech G400 Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC07E) },
-+	{ /* Logitech G403 Wireless Gaming Mouse over USB */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC082) },
-+	{ /* Logitech G403 Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC083) },
-+	{ /* Logitech G403 Hero Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC08F) },
-+	{ /* Logitech G502 Proteus Core Gaming Mouse */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC07D) },
-+	{ /* Logitech G502 Proteus Spectrum Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC332) },
-+	{ /* Logitech G502 Hero Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC08B) },
- 	{ /* Logitech G700 Gaming Mouse over USB */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC06B) },
-+	{ /* Logitech G700s Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC07C) },
-+	{ /* Logitech G703 Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC087) },
-+	{ /* Logitech G703 Hero Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC090) },
- 	{ /* Logitech G900 Gaming Mouse over USB */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC081) },
-+	{ /* Logitech G903 Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC086) },
-+	{ /* Logitech G903 Hero Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC091) },
- 	{ /* Logitech G920 Wheel over USB */
- 	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_G920_WHEEL),
- 		.driver_data = HIDPP_QUIRK_CLASS_G920 | HIDPP_QUIRK_FORCE_OUTPUT_REPORTS},
-+	{ /* Logitech G Pro Gaming Mouse over USB */
-+	  HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, 0xC088) },
- 
- 	{ /* MX5000 keyboard over Bluetooth */
- 	  HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LOGITECH, 0xb305),
 -- 
 2.20.1
 
