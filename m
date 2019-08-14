@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45D238C616
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:12:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E8E8C619
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:12:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727973AbfHNCMk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:12:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44700 "EHLO mail.kernel.org"
+        id S1727273AbfHNCMs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:12:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbfHNCMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:12:34 -0400
+        id S1727954AbfHNCMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:12:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D85D0216F4;
-        Wed, 14 Aug 2019 02:12:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5379220842;
+        Wed, 14 Aug 2019 02:12:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748753;
-        bh=qIvFu4dS1gerDv/hz0IBOs0engmXnXmF/k6htcL/Gac=;
+        s=default; t=1565748758;
+        bh=NScOqo+/Xnzi6GbYOIe5OX0ISrm1MWRJGyj0x9zIYUo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OD3FtkWjCTv7BGmVE7yKjQ7ngH6zu4slTceckbrlx5LNbNuXOD6Mbr+TbjEhrrPAf
-         HEFPatcVubJgYtWMTYcvCoPwzFyKxDdZkaP66EjjrUo3aPLLgPsFIEBVD9azv498bH
-         OqEQWdNw/HaAsgmvwScJAjI1DEKP7uI66nnaXaho=
+        b=HimVR5MHpCCOzF9syvVPi025pw8mUOlblVFjOyD8pAXQ3em17aTW0lzRRdcylbGXq
+         ZqPW0rVP36bjWFByQPUfRweyNlzYjA+2JTBmWM7Coc8/PGDqKmOhU9A0RZElyb5mmT
+         ShIiX3chAF5tfPkxJkEmrC50BQPg0FnCpY13SJlM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Mark Brown <broonie@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 048/123] ASoC: ti: davinci-mcasp: Correct slot_width posed constraint
-Date:   Tue, 13 Aug 2019 22:09:32 -0400
-Message-Id: <20190814021047.14828-48-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 051/123] isdn: mISDN: hfcsusb: Fix possible null-pointer dereferences in start_isoc_chain()
+Date:   Tue, 13 Aug 2019 22:09:35 -0400
+Message-Id: <20190814021047.14828-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -43,112 +43,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Ujfalusi <peter.ujfalusi@ti.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 1e112c35e3c96db7c8ca6ddaa96574f00c06e7db ]
+[ Upstream commit a0d57a552b836206ad7705a1060e6e1ce5a38203 ]
 
-The slot_width is a property for the bus while the constraint for
-SNDRV_PCM_HW_PARAM_SAMPLE_BITS is for the in memory format.
+In start_isoc_chain(), usb_alloc_urb() on line 1392 may fail
+and return NULL. At this time, fifo->iso[i].urb is assigned to NULL.
 
-Applying slot_width constraint to sample_bits works most of the time, but
-it will blacklist valid formats in some cases.
+Then, fifo->iso[i].urb is used at some places, such as:
+LINE 1405:    fill_isoc_urb(fifo->iso[i].urb, ...)
+                  urb->number_of_packets = num_packets;
+                  urb->transfer_flags = URB_ISO_ASAP;
+                  urb->actual_length = 0;
+                  urb->interval = interval;
+LINE 1416:    fifo->iso[i].urb->...
+LINE 1419:    fifo->iso[i].urb->...
 
-With slot_width 24 we can support S24_3LE and S24_LE formats as they both
-look the same on the bus, but a a 24 constraint on sample_bits would not
-allow S24_LE as it is stored in 32bits in memory.
+Thus, possible null-pointer dereferences may occur.
 
-Implement a simple hw_rule function to allow all formats which require less
-or equal number of bits on the bus as slot_width (if configured).
+To fix these bugs, "continue" is added to avoid using fifo->iso[i].urb
+when it is NULL.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20190726064244.3762-2-peter.ujfalusi@ti.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
+These bugs are found by a static analysis tool STCheck written by us.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/ti/davinci-mcasp.c | 43 ++++++++++++++++++++++++++++--------
- 1 file changed, 34 insertions(+), 9 deletions(-)
+ drivers/isdn/hardware/mISDN/hfcsusb.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/ti/davinci-mcasp.c b/sound/soc/ti/davinci-mcasp.c
-index dc01bbca0ff69..56009d1472084 100644
---- a/sound/soc/ti/davinci-mcasp.c
-+++ b/sound/soc/ti/davinci-mcasp.c
-@@ -1254,6 +1254,28 @@ static int davinci_mcasp_trigger(struct snd_pcm_substream *substream,
- 	return ret;
- }
- 
-+static int davinci_mcasp_hw_rule_slot_width(struct snd_pcm_hw_params *params,
-+					    struct snd_pcm_hw_rule *rule)
-+{
-+	struct davinci_mcasp_ruledata *rd = rule->private;
-+	struct snd_mask *fmt = hw_param_mask(params, SNDRV_PCM_HW_PARAM_FORMAT);
-+	struct snd_mask nfmt;
-+	int i, slot_width;
-+
-+	snd_mask_none(&nfmt);
-+	slot_width = rd->mcasp->slot_width;
-+
-+	for (i = 0; i <= SNDRV_PCM_FORMAT_LAST; i++) {
-+		if (snd_mask_test(fmt, i)) {
-+			if (snd_pcm_format_width(i) <= slot_width) {
-+				snd_mask_set(&nfmt, i);
-+			}
-+		}
-+	}
-+
-+	return snd_mask_refine(fmt, &nfmt);
-+}
-+
- static const unsigned int davinci_mcasp_dai_rates[] = {
- 	8000, 11025, 16000, 22050, 32000, 44100, 48000, 64000,
- 	88200, 96000, 176400, 192000,
-@@ -1361,7 +1383,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 	struct davinci_mcasp_ruledata *ruledata =
- 					&mcasp->ruledata[substream->stream];
- 	u32 max_channels = 0;
--	int i, dir;
-+	int i, dir, ret;
- 	int tdm_slots = mcasp->tdm_slots;
- 
- 	/* Do not allow more then one stream per direction */
-@@ -1390,6 +1412,7 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 			max_channels++;
- 	}
- 	ruledata->serializers = max_channels;
-+	ruledata->mcasp = mcasp;
- 	max_channels *= tdm_slots;
- 	/*
- 	 * If the already active stream has less channels than the calculated
-@@ -1415,20 +1438,22 @@ static int davinci_mcasp_startup(struct snd_pcm_substream *substream,
- 				   0, SNDRV_PCM_HW_PARAM_CHANNELS,
- 				   &mcasp->chconstr[substream->stream]);
- 
--	if (mcasp->slot_width)
--		snd_pcm_hw_constraint_minmax(substream->runtime,
--					     SNDRV_PCM_HW_PARAM_SAMPLE_BITS,
--					     8, mcasp->slot_width);
-+	if (mcasp->slot_width) {
-+		/* Only allow formats require <= slot_width bits on the bus */
-+		ret = snd_pcm_hw_rule_add(substream->runtime, 0,
-+					  SNDRV_PCM_HW_PARAM_FORMAT,
-+					  davinci_mcasp_hw_rule_slot_width,
-+					  ruledata,
-+					  SNDRV_PCM_HW_PARAM_FORMAT, -1);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	/*
- 	 * If we rely on implicit BCLK divider setting we should
- 	 * set constraints based on what we can provide.
- 	 */
- 	if (mcasp->bclk_master && mcasp->bclk_div == 0 && mcasp->sysclk_freq) {
--		int ret;
--
--		ruledata->mcasp = mcasp;
--
- 		ret = snd_pcm_hw_rule_add(substream->runtime, 0,
- 					  SNDRV_PCM_HW_PARAM_RATE,
- 					  davinci_mcasp_hw_rule_rate,
+diff --git a/drivers/isdn/hardware/mISDN/hfcsusb.c b/drivers/isdn/hardware/mISDN/hfcsusb.c
+index 0e224232f7464..8fb7c5dea07fc 100644
+--- a/drivers/isdn/hardware/mISDN/hfcsusb.c
++++ b/drivers/isdn/hardware/mISDN/hfcsusb.c
+@@ -1394,6 +1394,7 @@ start_isoc_chain(struct usb_fifo *fifo, int num_packets_per_urb,
+ 				printk(KERN_DEBUG
+ 				       "%s: %s: alloc urb for fifo %i failed",
+ 				       hw->name, __func__, fifo->fifonum);
++				continue;
+ 			}
+ 			fifo->iso[i].owner_fifo = (struct usb_fifo *) fifo;
+ 			fifo->iso[i].indx = i;
 -- 
 2.20.1
 
