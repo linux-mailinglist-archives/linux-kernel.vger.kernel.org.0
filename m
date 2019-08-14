@@ -2,87 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEA28CE73
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61CB08CE79
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbfHNIaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:30:35 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:33263 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbfHNIae (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:30:34 -0400
-Received: by mail-ot1-f68.google.com with SMTP id q20so27583988otl.0;
-        Wed, 14 Aug 2019 01:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nZHd0Mwvau9he5/1FmiwSLgH5Qz9c3ZEqp2z+9qu40w=;
-        b=IebKRSQNeCrFckv0XtH4F9f5wyBIk7dKKOKF31700y2SakCimIj8RonThKSr+GnDD6
-         wneeWv1H1j1VTrLwGu8VdCcEdkcweRtmfrMj3FNCKzbiWZd6Xw3X0IQ+PeESM7Rzmnbm
-         Z6HLuA55H7CJ/96g5lxG27w03Tyfb9OQYMBV2QdpL6pw9iWV9TiOCvs5/8nGTCyRvxju
-         Gz2qFQLm9fgC7DK777OGI2TIZFyh8ZFj3RN6BSY5Gm8U/6AcZY6vZBj2xHtUL9VJXuF5
-         RtyVkOlz2/B2jF+GCGtJmcLYsXQnwiP/PeM7YlaMnM8M33taBKQWHNGmhsEfk88EMZLe
-         r7/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nZHd0Mwvau9he5/1FmiwSLgH5Qz9c3ZEqp2z+9qu40w=;
-        b=FvwqcjhR1UqWdLnR+A+rYYVQEk1+PLRGM+jYhezudPqjY7pc5F+BPB2ZpM6gnrA24f
-         jF1w1ukLABxEvVz+q/vcwKr3Fext+wwuL99qjd1KbrZVO0LmRy6dRFH0ABEUL8QHJd9q
-         bNAxinpJ9kmUI5sGx5DbC0Gp7Q9yshp21rk2HC3xuFHZ28SVuxLIGD7Axp4mhYRUNSOq
-         Nfg6Vvvzz07X4CHOPATE59UF6GH9ZLBm/FPiO9DhWMGZLGrg4eH2UxVIRGTWofhy1lz/
-         WG4lnZIX8V3V5VAV7EbjaAcN6XdUpcebU7oxQhoOegL0m6sTdRxZqmDUQKGvwwaRlIlh
-         Yw9A==
-X-Gm-Message-State: APjAAAWgKi4GPEfDKfO0lMIx2I2eruO91fvOtrQ7qLiTrvDsVbUXAuy7
-        L9oCu9fxOPNZaiWAIkWZzPj0/2NeYPFxG1umcEY=
-X-Google-Smtp-Source: APXvYqwfNbhvjEBZSUb/GfOA3cYjubj1vvG5ANK36Sberlj1MUB9i+dySW1GmegE8C+a4ZUImDQ0ocWnA8g+P6KF31U=
-X-Received: by 2002:a6b:f906:: with SMTP id j6mr43925234iog.26.1565771433842;
- Wed, 14 Aug 2019 01:30:33 -0700 (PDT)
+        id S1727516AbfHNIbS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:31:18 -0400
+Received: from mga05.intel.com ([192.55.52.43]:41186 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726347AbfHNIbR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 04:31:17 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 01:31:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,384,1559545200"; 
+   d="scan'208";a="167322667"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga007.jf.intel.com with ESMTP; 14 Aug 2019 01:31:16 -0700
+Received: from [10.226.39.52] (ekotax-mobl.gar.corp.intel.com [10.226.39.52])
+        by linux.intel.com (Postfix) with ESMTP id 388D3580238;
+        Wed, 14 Aug 2019 01:31:15 -0700 (PDT)
+Subject: Re: [PATCH] PCI: dwc: Add map irq callback
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@intel.com
+References: <333e87c8ea92cd7442fbe874fc8c9eccabc62f58.1565763869.git.eswara.kota@linux.intel.com>
+ <20190814073605.GA31526@infradead.org>
+From:   Dilip Kota <eswara.kota@linux.intel.com>
+Message-ID: <fe722a89-37e7-9ef6-042b-a9584f234740@linux.intel.com>
+Date:   Wed, 14 Aug 2019 16:31:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.0
 MIME-Version: 1.0
-References: <20190812162105.13428-1-benjamin.tissoires@redhat.com>
- <CADyDSO4x49GWdRVkW=cytvMc7rM3NJkJ4-Sj-FjM9Gday7C-iw@mail.gmail.com> <CAO-hwJ+z0szwuQrUxpQhii2z_jwxMX91df0ynK5QbZpMhg79-g@mail.gmail.com>
-In-Reply-To: <CAO-hwJ+z0szwuQrUxpQhii2z_jwxMX91df0ynK5QbZpMhg79-g@mail.gmail.com>
-From:   David Rheinsberg <david.rheinsberg@gmail.com>
-Date:   Wed, 14 Aug 2019 10:30:22 +0200
-Message-ID: <CADyDSO7wyG7Zp6nFAL84b1tQ30t5x-5P+0QZBD-dx6VNm=WoeA@mail.gmail.com>
-Subject: Re: [PATCH] HID: uhid: actually use the err number from userspace
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190814073605.GA31526@infradead.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey
+Hi Christoph Hellwig,
 
-> > 2) I think you have to filter some of the error codes. For instance,
-> > if you return one of the -ERESTARTSYS codes, this might cause the
-> > syscall to restart (if auto-restart is enabled on this context). At
-> > the same time, this is not *that* bad. It might even be useful for the
-> > userspace driver to trigger an EINTR. At least we should be aware of
-> > this. So maybe filters are not necessary.. Mhhh. Comments?
->
-> I haven't thought at all of the side effects of letting the user
-> return a random error code.
-> I have the impression that anything below EHWPOISON (133) is
-> relatively safe. So maybe we should just make sure the error code is
-> below 134?
->
-> The ERESTARTSYS has a few warnings in the include file, so I guess the
-> side effects might be too much for what we want to deal with.
+On 8/14/2019 3:36 PM, Christoph Hellwig wrote:
+> On Wed, Aug 14, 2019 at 02:56:49PM +0800, Dilip Kota wrote:
+>> Certain platforms like Intel need to configure
+>> registers to enable the interrupts.
+>> Map Irq callback helps to perform platform specific
+>> configurations while assigning or enabling the interrupts.
+> This seems to miss the hunk that actually assigns the map_irq
+> callback.
+pp->map_irq() must assign the callback along with the platform specific 
+configuration.
+In Intel PCIe driver pp->map_irq() does the same. (Driver is not yet 
+present in mainline, i will submit for review once this change is approved).
+>> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> index f93252d0da5b..5880d2b72ef8 100644
+>> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
+>> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
+>> @@ -470,7 +470,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
+>>   	bridge->sysdata = pp;
+>>   	bridge->busnr = pp->root_bus_nr;
+>>   	bridge->ops = &dw_pcie_ops;
+>> -	bridge->map_irq = of_irq_parse_and_map_pci;
+>> +	bridge->map_irq = pp->map_irq ? pp->map_irq : of_irq_parse_and_map_pci;
+> Pleae just use a classic if / else to make the code a little easier
+> to read.
 
-How about `err < ERESTARTSYS`? That is, we grant user-space the entire
-range [1-511]. This seems to be the range reserved for uapi.
+Noted, will update it.
 
-I think the ERESTART* codes would be fine as well, but I also don't
-believe there to be any actual use-case for them. Anyway, I am fine
-with either range.
+--Dilip
 
-Thanks
-David
