@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B8CF8C8F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 875298C906
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:36:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728314AbfHNCNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:13:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45378 "EHLO mail.kernel.org"
+        id S1728460AbfHNCfl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:35:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728265AbfHNCNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:13:24 -0400
+        id S1727659AbfHNCN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:13:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94E0120844;
-        Wed, 14 Aug 2019 02:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 507B320874;
+        Wed, 14 Aug 2019 02:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748803;
-        bh=KHlI+UFOgX55V7hPb7anE+CUz6f3gHYaztSKhpbWUgQ=;
+        s=default; t=1565748807;
+        bh=vvz3aWMk50EHAH8sSwBbk24YETRqG1RoH/Mhp7Jmt+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tiPhGrw24+XvGc6hZvPJsPWygWF6Dp2ZaO/iKFtN5rQe5vepXn8j8mMzi9euLmzzh
-         jQVYkSosUKpkkrKI6Ed0j+aV9E2cIDoYzGBJSBBEz7tB8oKxmN6ABErGFdC4jX74Ci
-         fFd2xQVCQ0xBPEf/oFFF4ZILpG2E1efZnHAqjF8M=
+        b=YecRtSKzJLEv6t24usBuLgu0ixRsgiWCKp+uYUMK5PeC0rqDHwjYy4T2reDOyRHBx
+         0veu6lEuea6/z2i48MHy+TTx0BaDjjFnhsr6LISqgKNO3iWkEyzYiC4+D+o5o8u/BH
+         N7j0tR8bv0gsUJMVMRH/cYjqi0ZB+wfo/FozY+aE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@kernel.org>, Michael Petlan <mpetlan@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.2 071/123] perf bench numa: Fix cpu0 binding
-Date:   Tue, 13 Aug 2019 22:09:55 -0400
-Message-Id: <20190814021047.14828-71-sashal@kernel.org>
+Cc:     Denis Kirjanov <kda@linux-powerpc.org>,
+        syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 073/123] net: usb: pegasus: fix improper read if get_registers() fail
+Date:   Tue, 13 Aug 2019 22:09:57 -0400
+Message-Id: <20190814021047.14828-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -48,57 +45,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Denis Kirjanov <kda@linux-powerpc.org>
 
-[ Upstream commit 6bbfe4e602691b90ac866712bd4c43c51e546a60 ]
+[ Upstream commit 224c04973db1125fcebefffd86115f99f50f8277 ]
 
-Michael reported an issue with perf bench numa failing with binding to
-cpu0 with '-0' option.
+get_registers() may fail with -ENOMEM and in this
+case we can read a garbage from the status variable tmp.
 
-  # perf bench numa mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd
-  # Running 'numa/mem' benchmark:
-
-   # Running main, "perf bench numa numa-mem -p 3 -t 1 -P 512 -s 100 -zZcm0 --thp 1 -M 1 -ddd"
-  binding to node 0, mask: 0000000000000001 => -1
-  perf: bench/numa.c:356: bind_to_memnode: Assertion `!(ret)' failed.
-  Aborted (core dumped)
-
-This happens when the cpu0 is not part of node0, which is the benchmark
-assumption and we can see that's not the case for some powerpc servers.
-
-Using correct node for cpu0 binding.
-
-Reported-by: Michael Petlan <mpetlan@redhat.com>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190801142642.28004-1-jolsa@kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com
+Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/bench/numa.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/net/usb/pegasus.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
-index a7784554a80de..23c27ca48abf3 100644
---- a/tools/perf/bench/numa.c
-+++ b/tools/perf/bench/numa.c
-@@ -379,8 +379,10 @@ static u8 *alloc_data(ssize_t bytes0, int map_flags,
+diff --git a/drivers/net/usb/pegasus.c b/drivers/net/usb/pegasus.c
+index 6d25dea5ad4b2..f7d117d80cfbb 100644
+--- a/drivers/net/usb/pegasus.c
++++ b/drivers/net/usb/pegasus.c
+@@ -282,7 +282,7 @@ static void mdio_write(struct net_device *dev, int phy_id, int loc, int val)
+ static int read_eprom_word(pegasus_t *pegasus, __u8 index, __u16 *retdata)
+ {
+ 	int i;
+-	__u8 tmp;
++	__u8 tmp = 0;
+ 	__le16 retdatai;
+ 	int ret;
  
- 	/* Allocate and initialize all memory on CPU#0: */
- 	if (init_cpu0) {
--		orig_mask = bind_to_node(0);
--		bind_to_memnode(0);
-+		int node = numa_node_of_cpu(0);
-+
-+		orig_mask = bind_to_node(node);
-+		bind_to_memnode(node);
- 	}
- 
- 	bytes = bytes0 + HPSIZE;
 -- 
 2.20.1
 
