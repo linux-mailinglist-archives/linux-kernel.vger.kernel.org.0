@@ -2,105 +2,318 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE558DBB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 012FD8DBE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:30:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfHNR1R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:27:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729593AbfHNR1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:27:13 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8F6206C1;
-        Wed, 14 Aug 2019 17:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565803632;
-        bh=+41o6/e8C3rXOa97d7ojKaetkEKiEfIBz+3a72/HK8w=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=bz9MVcdnLCunPed+11bKUFqXoUxHJm8DV9Ku/iZIOTbgaS1Sjej5zap8bdJfM6HIU
-         NRy/p5pGykiILOq6ab5LAu+cxIIUhfzftTQbRX1APx5bOywzIjEPOezyH5OB2nv9I0
-         6O1GDRYSpW3DI/cwtbNyOsLvNyLCr7wunrBD+aJY=
-Content-Type: text/plain; charset="utf-8"
+        id S1728432AbfHNRap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:30:45 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:45033 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726126AbfHNRap (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:30:45 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so50946493plr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eF62A1S3YJtU2aqc6ZLJAq9FUXQUP8uLszgJ5usax84=;
+        b=ADnc/Zp1P1vrFpvZ9ZRKTDHvYhZg+ueiPG0LNxSmlNaFRtYyNsjR7wLN4N3FYXMK7F
+         Rr4OxUPCMrUn8CqpFn9JHrbZy8ZNHUuryWEQTSjuYtv1UiYBCWbML24C+h1/vQHKxgz2
+         jD9COBtAlmOxjaXJ3tOu+2qcQLYsh3LsHPJP7HHtGVF6tgQjT1ZHgUuTEgnSQoYRA8wZ
+         GHyzCEtXp+dqVWwY1T6ZmNngBiypCkZ04iuIovOOI7wA6kZliaQUWTJwLfUu2bUUnkyB
+         gx0rbZj78PAoxab4yLSuOBJ/BTHESd1eux1JKl9CxbED+QlMYWRy91wF0zjY7JnHhZzs
+         xz6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eF62A1S3YJtU2aqc6ZLJAq9FUXQUP8uLszgJ5usax84=;
+        b=E7zKzVWR4qWm1yRdfEoNxgeK9qTZm5Y5jEIELVUceOZpEQCpCgucC+PS5QE+XrvsKj
+         /1dA/s0xkoy4eb59CTYX7+H/f+rbnHI7+iQh1vNDz/To03HJXoA/yGXHCyAnH5ozZBAv
+         e37i24gq+cj5+fp+IyYzxRHvcsqL6Zr9WsQBKASY4k7OBRCnkcjDOUhpQOABniG6Tcc2
+         MRi0qdrMLxFR+X5jZwe1af7c5HB6pfBm48m4fscvYAP1B2vIOEkqzODlwQSQEyIfPt+1
+         m2/ECyF/TnZFGoXp9hI543qYC3gqxlqz5XvfGuFNT6AlP5s1OhDirp5oy6lUsjE2vrnd
+         3qLw==
+X-Gm-Message-State: APjAAAVWzr3T3NLh4rlP++UanrR6NwASGDQdJwPboeB386IZUhNL0qfi
+        DOncvZul7IorNjgz7nGn8yw=
+X-Google-Smtp-Source: APXvYqz9qdkNfWm4829RFp7eEtHWGEqvQQmG5U6yAmygQsgHaAHtrk5/fmTvVOiIUtTWc1dev5tAog==
+X-Received: by 2002:a17:902:e406:: with SMTP id ci6mr456163plb.207.1565803844383;
+        Wed, 14 Aug 2019 10:30:44 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.36])
+        by smtp.gmail.com with ESMTPSA id g11sm464689pfk.187.2019.08.14.10.30.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 10:30:43 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 23:00:34 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     Dimitri Sivanich <sivanich@hpe.com>
+Cc:     jhubbard@nvidia.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        ira.weiny@intel.com, jglisse@redhat.com,
+        william.kucharski@oracle.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [Linux-kernel-mentees][PATCH v5 1/1] sgi-gru: Remove *pte_lookup
+ functions, Convert to get_user_page*()
+Message-ID: <20190814173034.GA5121@bharath12345-Inspiron-5559>
+References: <1565379497-29266-1-git-send-email-linux.bhar@gmail.com>
+ <1565379497-29266-2-git-send-email-linux.bhar@gmail.com>
+ <20190813145029.GA32451@hpe.com>
+ <20190813172301.GA10228@bharath12345-Inspiron-5559>
+ <20190813181938.GA4196@hpe.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51955595AB182A80162E313AE2AD0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190812100103.34393-1-wen.he_1@nxp.com> <20190813182520.2914520665@mail.kernel.org> <DB7PR04MB51955595AB182A80162E313AE2AD0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-Subject: RE: [EXT] Re: [v1 1/3] clk: ls1028a: Add clock driver for Display output interface
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Wen He <wen.he_1@nxp.com>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:27:11 -0700
-Message-Id: <20190814172712.7F8F6206C1@mail.kernel.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813181938.GA4196@hpe.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Wen He (2019-08-14 02:38:21)
->=20
->=20
-> > -----Original Message-----
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Sent: 2019=E5=B9=B48=E6=9C=8814=E6=97=A5 2:25
-> > To: Michael Turquette <mturquette@baylibre.com>; Wen He
-> > <wen.he_1@nxp.com>; Leo Li <leoyang.li@nxp.com>;
-> > linux-clk@vger.kernel.org; linux-devel@linux.nxdi.nxp.com;
-> > linux-kernel@vger.kernel.org; liviu.dudau@arm.com
-> > Cc: Wen He <wen.he_1@nxp.com>
-> > Subject: [EXT] Re: [v1 1/3] clk: ls1028a: Add clock driver for Display =
-output
-> > interface
-> >=20
-> >=20
-> > Quoting Wen He (2019-08-12 03:01:03)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
-> > > 801fa1cd0321..0e6c7027d637 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -223,6 +223,15 @@ config CLK_QORIQ
-> > >           This adds the clock driver support for Freescale QorIQ plat=
-forms
-> > >           using common clock framework.
-> > >
-> > > +config CLK_PLLDIG
-> > > +        bool "Clock driver for LS1028A Display output"
-> > > +        depends on ARCH_LAYERSCAPE && OF
-> >=20
-> > Does it actually depend on either of these to build? Probabl not, so ma=
-ybe just
-> > default ARCH_LAYERSCAPE && OF? Also, can your Kconfig variable be named
-> > something more specific like CLK_LS1028A_PLLDIG?
->=20
-> Actually it also depends Display modules, but we allow building display d=
-rivers as modules,=20
-> so is here whether need add Display modules depend and also allow clock d=
-river building
-> to a module?=20
-> Would it be better to reduce the number of the modules insert, I think th=
-e clock driver
-> should be long available for the system.
+On Tue, Aug 13, 2019 at 01:19:38PM -0500, Dimitri Sivanich wrote:
+> On Tue, Aug 13, 2019 at 10:53:01PM +0530, Bharath Vedartham wrote:
+> > On Tue, Aug 13, 2019 at 09:50:29AM -0500, Dimitri Sivanich wrote:
+> > > Bharath,
+> > > 
+> > > I do not believe that __get_user_pages_fast will work for the atomic case, as
+> > > there is no guarantee that the 'current->mm' will be the correct one for the
+> > > process in question, as the process might have moved away from the cpu that is
+> > > handling interrupts for it's context.
+> > So what your saying is, there may be cases where current->mm != gts->ts_mm
+> > right? __get_user_pages_fast and get_user_pages do assume current->mm.
+> 
+> Correct, in the case of atomic context.
+> 
+> > 
+> > These changes were inspired a bit from kvm. In kvm/kvm_main.c,
+> > hva_to_pfn_fast uses __get_user_pages_fast. THe comment above the
+> > function states it runs in atomic context.
+> > 
+> > Just curious, get_user_pages also uses current->mm. Do you think that is
+> > also an issue? 
+> 
+> Not in non-atomic context.  Notice that it is currently done that way.
+> 
+> > 
+> > Do you feel using get_user_pages_remote would be a better idea? We can
+> > specify the mm_struct in get_user_pages_remote?
+> 
+> From that standpoint maybe, but is it safe in interrupt context?
+Hmm.. The gup maintainers seemed fine with the code..
 
-I'm asking if it actually requires ARCH_LAYERSCAPE or OF to successfully
-compile the file. Is that true? I don't see any asm/ includes or
-anything that's going to fail if either of these configs aren't enabled.
-So it seems safe to change this to=20
+Now this is only an issue if gru_vtop can be executed in an interrupt
+context. 
 
-	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-	default ARCH_LAYERSCAPE
+get_user_pages_remote is not valid in an interrupt context(if CONFIG_MMU
+is set). If we follow the function, in __get_user_pages, cond_resched()
+is called which definitly confirms that we can't run this function in an
+interrupt context. 
 
-so that it's compiled by default on this architecture and is available
-to be compile tested by various test builders.
+I think we might need some advice from the gup maintainers here.
+Note that the comment on the function __get_user_pages_fast states that
+__get_user_pages_fast is IRQ-safe.
 
->=20
-> looks like great if named Kconfig variable to 'CLK_LS1028A_PLLDIG'.
->=20
-> >=20
+Thank you
+Bharath
+> > 
+> > Thank you
+> > Bharath
+> > > On Sat, Aug 10, 2019 at 01:08:17AM +0530, Bharath Vedartham wrote:
+> > > > For pages that were retained via get_user_pages*(), release those pages
+> > > > via the new put_user_page*() routines, instead of via put_page() or
+> > > > release_pages().
+> > > > 
+> > > > This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> > > > ("mm: introduce put_user_page*(), placeholder versions").
+> > > > 
+> > > > As part of this conversion, the *pte_lookup functions can be removed and
+> > > > be easily replaced with get_user_pages_fast() functions. In the case of
+> > > > atomic lookup, __get_user_pages_fast() is used, because it does not fall
+> > > > back to the slow path: get_user_pages(). get_user_pages_fast(), on the other
+> > > > hand, first calls __get_user_pages_fast(), but then falls back to the
+> > > > slow path if __get_user_pages_fast() fails.
+> > > > 
+> > > > Also: remove unnecessary CONFIG_HUGETLB ifdefs.
+> > > > 
+> > > > Cc: Ira Weiny <ira.weiny@intel.com>
+> > > > Cc: John Hubbard <jhubbard@nvidia.com>
+> > > > Cc: Jérôme Glisse <jglisse@redhat.com>
+> > > > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > > > Cc: Dimitri Sivanich <sivanich@sgi.com>
+> > > > Cc: Arnd Bergmann <arnd@arndb.de>
+> > > > Cc: William Kucharski <william.kucharski@oracle.com>
+> > > > Cc: Christoph Hellwig <hch@lst.de>
+> > > > Cc: linux-kernel@vger.kernel.org
+> > > > Cc: linux-mm@kvack.org
+> > > > Cc: linux-kernel-mentees@lists.linuxfoundation.org
+> > > > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> > > > Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> > > > Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> > > > Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+> > > > ---
+> > > > This is a fold of the 3 patches in the v2 patch series.
+> > > > The review tags were given to the individual patches.
+> > > > 
+> > > > Changes since v3
+> > > > 	- Used gup flags in get_user_pages_fast rather than
+> > > > 	boolean flags.
+> > > > Changes since v4
+> > > > 	- Updated changelog according to John Hubbard.
+> > > > ---
+> > > >  drivers/misc/sgi-gru/grufault.c | 112 +++++++++-------------------------------
+> > > >  1 file changed, 24 insertions(+), 88 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+> > > > index 4b713a8..304e9c5 100644
+> > > > --- a/drivers/misc/sgi-gru/grufault.c
+> > > > +++ b/drivers/misc/sgi-gru/grufault.c
+> > > > @@ -166,96 +166,20 @@ static void get_clear_fault_map(struct gru_state *gru,
+> > > >  }
+> > > >  
+> > > >  /*
+> > > > - * Atomic (interrupt context) & non-atomic (user context) functions to
+> > > > - * convert a vaddr into a physical address. The size of the page
+> > > > - * is returned in pageshift.
+> > > > - * 	returns:
+> > > > - * 		  0 - successful
+> > > > - * 		< 0 - error code
+> > > > - * 		  1 - (atomic only) try again in non-atomic context
+> > > > - */
+> > > > -static int non_atomic_pte_lookup(struct vm_area_struct *vma,
+> > > > -				 unsigned long vaddr, int write,
+> > > > -				 unsigned long *paddr, int *pageshift)
+> > > > -{
+> > > > -	struct page *page;
+> > > > -
+> > > > -#ifdef CONFIG_HUGETLB_PAGE
+> > > > -	*pageshift = is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : PAGE_SHIFT;
+> > > > -#else
+> > > > -	*pageshift = PAGE_SHIFT;
+> > > > -#endif
+> > > > -	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
+> > > > -		return -EFAULT;
+> > > > -	*paddr = page_to_phys(page);
+> > > > -	put_page(page);
+> > > > -	return 0;
+> > > > -}
+> > > > -
+> > > > -/*
+> > > > - * atomic_pte_lookup
+> > > > + * mmap_sem is already helod on entry to this function. This guarantees
+> > > > + * existence of the page tables.
+> > > >   *
+> > > > - * Convert a user virtual address to a physical address
+> > > >   * Only supports Intel large pages (2MB only) on x86_64.
+> > > > - *	ZZZ - hugepage support is incomplete
+> > > > - *
+> > > > - * NOTE: mmap_sem is already held on entry to this function. This
+> > > > - * guarantees existence of the page tables.
+> > > > + *	ZZZ - hugepage support is incomplete.
+> > > >   */
+> > > > -static int atomic_pte_lookup(struct vm_area_struct *vma, unsigned long vaddr,
+> > > > -	int write, unsigned long *paddr, int *pageshift)
+> > > > -{
+> > > > -	pgd_t *pgdp;
+> > > > -	p4d_t *p4dp;
+> > > > -	pud_t *pudp;
+> > > > -	pmd_t *pmdp;
+> > > > -	pte_t pte;
+> > > > -
+> > > > -	pgdp = pgd_offset(vma->vm_mm, vaddr);
+> > > > -	if (unlikely(pgd_none(*pgdp)))
+> > > > -		goto err;
+> > > > -
+> > > > -	p4dp = p4d_offset(pgdp, vaddr);
+> > > > -	if (unlikely(p4d_none(*p4dp)))
+> > > > -		goto err;
+> > > > -
+> > > > -	pudp = pud_offset(p4dp, vaddr);
+> > > > -	if (unlikely(pud_none(*pudp)))
+> > > > -		goto err;
+> > > > -
+> > > > -	pmdp = pmd_offset(pudp, vaddr);
+> > > > -	if (unlikely(pmd_none(*pmdp)))
+> > > > -		goto err;
+> > > > -#ifdef CONFIG_X86_64
+> > > > -	if (unlikely(pmd_large(*pmdp)))
+> > > > -		pte = *(pte_t *) pmdp;
+> > > > -	else
+> > > > -#endif
+> > > > -		pte = *pte_offset_kernel(pmdp, vaddr);
+> > > > -
+> > > > -	if (unlikely(!pte_present(pte) ||
+> > > > -		     (write && (!pte_write(pte) || !pte_dirty(pte)))))
+> > > > -		return 1;
+> > > > -
+> > > > -	*paddr = pte_pfn(pte) << PAGE_SHIFT;
+> > > > -#ifdef CONFIG_HUGETLB_PAGE
+> > > > -	*pageshift = is_vm_hugetlb_page(vma) ? HPAGE_SHIFT : PAGE_SHIFT;
+> > > > -#else
+> > > > -	*pageshift = PAGE_SHIFT;
+> > > > -#endif
+> > > > -	return 0;
+> > > > -
+> > > > -err:
+> > > > -	return 1;
+> > > > -}
+> > > > -
+> > > >  static int gru_vtop(struct gru_thread_state *gts, unsigned long vaddr,
+> > > >  		    int write, int atomic, unsigned long *gpa, int *pageshift)
+> > > >  {
+> > > >  	struct mm_struct *mm = gts->ts_mm;
+> > > >  	struct vm_area_struct *vma;
+> > > >  	unsigned long paddr;
+> > > > -	int ret, ps;
+> > > > +	int ret;
+> > > > +	struct page *page;
+> > > >  
+> > > >  	vma = find_vma(mm, vaddr);
+> > > >  	if (!vma)
+> > > > @@ -263,21 +187,33 @@ static int gru_vtop(struct gru_thread_state *gts, unsigned long vaddr,
+> > > >  
+> > > >  	/*
+> > > >  	 * Atomic lookup is faster & usually works even if called in non-atomic
+> > > > -	 * context.
+> > > > +	 * context. get_user_pages_fast does atomic lookup before falling back to
+> > > > +	 * slow gup.
+> > > >  	 */
+> > > >  	rmb();	/* Must/check ms_range_active before loading PTEs */
+> > > > -	ret = atomic_pte_lookup(vma, vaddr, write, &paddr, &ps);
+> > > > -	if (ret) {
+> > > > -		if (atomic)
+> > > > +	if (atomic) {
+> > > > +		ret = __get_user_pages_fast(vaddr, 1, write, &page);
+> > > > +		if (!ret)
+> > > >  			goto upm;
+> > > > -		if (non_atomic_pte_lookup(vma, vaddr, write, &paddr, &ps))
+> > > > +	} else {
+> > > > +		ret = get_user_pages_fast(vaddr, 1, write ? FOLL_WRITE : 0, &page);
+> > > > +		if (!ret)
+> > > >  			goto inval;
+> > > >  	}
+> > > > +
+> > > > +	paddr = page_to_phys(page);
+> > > > +	put_user_page(page);
+> > > > +
+> > > > +	if (unlikely(is_vm_hugetlb_page(vma)))
+> > > > +		*pageshift = HPAGE_SHIFT;
+> > > > +	else
+> > > > +		*pageshift = PAGE_SHIFT;
+> > > > +
+> > > >  	if (is_gru_paddr(paddr))
+> > > >  		goto inval;
+> > > > -	paddr = paddr & ~((1UL << ps) - 1);
+> > > > +	paddr = paddr & ~((1UL << *pageshift) - 1);
+> > > >  	*gpa = uv_soc_phys_ram_to_gpa(paddr);
+> > > > -	*pageshift = ps;
+> > > > +
+> > > >  	return VTOP_SUCCESS;
+> > > >  
+> > > >  inval:
+> > > > -- 
+> > > > 2.7.4
+> > > > 
