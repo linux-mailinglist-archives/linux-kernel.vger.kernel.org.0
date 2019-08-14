@@ -2,53 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBC928C514
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 02:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F14788C516
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 02:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726924AbfHNAZK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 20:25:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40464 "EHLO mail.kernel.org"
+        id S1726968AbfHNAZQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 20:25:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726007AbfHNAZJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 20:25:09 -0400
+        id S1726931AbfHNAZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 20:25:15 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8513D20665;
-        Wed, 14 Aug 2019 00:25:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E40520665;
+        Wed, 14 Aug 2019 00:25:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565742308;
-        bh=9ymCfTnOKA7fydJEwi+1ybdfqazuP6HSmN2McK+7i+c=;
+        s=default; t=1565742314;
+        bh=jikbhWn71AXEKLp4lkK2oQ1OfucPwsjdNBfXYqceKxA=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cd/Vj9HDsDj0XAFZnsyBJYWNpwkadBTaCYDpDkuTMHgrWOYRAB71eb7bin5h/jJfd
-         IkvxIfc7az//LAjxFKpGE6YuOhlqgWrMhncv1gZtxcFIZcnpvjitWIdjk8qHaILus9
-         Tz3kUoHxj2jfWz2rNbO8+8UOJgk9rZ+YyRKVUZI4=
+        b=J33+kmouvguR55bvA7AHw/EGwE5zJ3XGWUmfiIc2I6eoEBSJ6jDn3Fo0k01b6jfA1
+         8wQ6EC+/gTPeUHclCb/DYHGS5aGiNU0mPcIFCQYOF1F+1TcdTrP6HFfR9zEt6rldQK
+         1xs3IIFcZiautYvoYuT24draBI21MUbKoMatAJy8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190731193517.237136-7-sboyd@kernel.org>
-References: <20190731193517.237136-1-sboyd@kernel.org> <20190731193517.237136-7-sboyd@kernel.org>
-Subject: Re: [PATCH 6/9] clk: socfpga: Don't reference clk_init_data after registration
+In-Reply-To: <20190731193517.237136-8-sboyd@kernel.org>
+References: <20190731193517.237136-1-sboyd@kernel.org> <20190731193517.237136-8-sboyd@kernel.org>
+Subject: Re: [PATCH 7/9] clk: sprd: Don't reference clk_init_data after registration
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Dinh Nguyen <dinguyen@kernel.org>
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Tue, 13 Aug 2019 17:25:07 -0700
-Message-Id: <20190814002508.8513D20665@mail.kernel.org>
+Date:   Tue, 13 Aug 2019 17:25:13 -0700
+Message-Id: <20190814002514.7E40520665@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-07-31 12:35:14)
+Quoting Stephen Boyd (2019-07-31 12:35:15)
 > A future patch is going to change semantics of clk_register() so that
 > clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
 > referencing this member here so that we don't run into NULL pointer
 > exceptions.
 >=20
-> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
 > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
