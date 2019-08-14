@@ -2,200 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5DD398DE39
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:03:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 229918DE6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:08:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728773AbfHNUC6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:02:58 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:41520 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726522AbfHNUC5 (ORCPT
+        id S1728484AbfHNUIh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:08:37 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:35480 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726522AbfHNUIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:02:57 -0400
-Received: from pps.filterd (m0050093.ppops.net [127.0.0.1])
-        by m0050093.ppops.net-00190b01. (8.16.0.42/8.16.0.42) with SMTP id x7EJvwkE022656;
-        Wed, 14 Aug 2019 21:02:29 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=jan2016.eng;
- bh=avFeVZg6Er4RG8Kprd47bJuJPWR48e3GkIqQkFX/Wfw=;
- b=Ot8VCgpzenKbCVByNjHHuI+1QmEwlKnEAjnwM8PhuSIv5EPdXqAQnT0qMBbR+D36WSUX
- B1WPizA8gN3uefMpPjYGx1hEUUzHVQej2wb3x3baWb0M9Feg5r0B2QpNRS/pQaXAEh7f
- 5FCskea15vs049FMj2TV7JLdu5xxwI8HAfiFRsfm6J329jPU363i0fBCItusKvr9luwo
- kKXoRdea5VyoBz1f++KpA1tBgtd/PfbQeD/BsJ9o+dAWLdgCRkWFVXvF0ut5uK9sYopZ
- WRi5I7KzQ6FEbkMdK5kq5qixMcPS8emFauE6MTljTSWBIEl1f9F1CDgHrfw3WVVoYIdl Iw== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18] (may be forged))
-        by m0050093.ppops.net-00190b01. with ESMTP id 2ubf8napqf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 21:02:29 +0100
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.27/8.16.0.27) with SMTP id x7EK2GSu009672;
-        Wed, 14 Aug 2019 16:02:27 -0400
-Received: from email.msg.corp.akamai.com ([172.27.123.33])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2u9s8vj1q9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 16:02:27 -0400
-Received: from usma1ex-dag1mb6.msg.corp.akamai.com (172.27.123.65) by
- usma1ex-dag1mb1.msg.corp.akamai.com (172.27.123.101) with Microsoft SMTP
- Server (TLS) id 15.0.1473.3; Wed, 14 Aug 2019 16:02:26 -0400
-Received: from usma1ex-dag1mb6.msg.corp.akamai.com ([172.27.123.65]) by
- usma1ex-dag1mb6.msg.corp.akamai.com ([172.27.123.65]) with mapi id
- 15.00.1473.005; Wed, 14 Aug 2019 16:02:26 -0400
-From:   "Lubashev, Igor" <ilubashe@akamai.com>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-CC:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        "Peter Zijlstra" <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        James Morris <jmorris@namei.org>
-Subject: RE: [PATCH v3 3/4] perf: Use CAP_SYSLOG with kptr_restrict checks
-Thread-Topic: [PATCH v3 3/4] perf: Use CAP_SYSLOG with kptr_restrict checks
-Thread-Index: AQHVTS6ohXVeHma7aEyJ5mLyFs0geab7PiSAgAAMNACAAAEdgP//yqiw
-Date:   Wed, 14 Aug 2019 20:02:26 +0000
-Message-ID: <23f7b8c7616a467c93ee2c77e8ffd3cf@usma1ex-dag1mb6.msg.corp.akamai.com>
-References: <cover.1565188228.git.ilubashe@akamai.com>
- <291d2cda6ee75b4cd4c9ce717c177db18bf03a31.1565188228.git.ilubashe@akamai.com>
- <CANLsYkxZE0CQJKQ-bFi=zFV5vTCbL2v76+x1fmCpqNruqWiFXg@mail.gmail.com>
- <20190814184814.GM9280@kernel.org> <20190814185213.GN9280@kernel.org>
-In-Reply-To: <20190814185213.GN9280@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.19.32.178]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+        Wed, 14 Aug 2019 16:08:36 -0400
+Received: from pps.filterd (m0170395.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EK5HJf003387
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:08:35 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id; s=smtpout1;
+ bh=fXpVluUplGl9HfVo+OrHKDg67y75U27zIUI7apa/eeA=;
+ b=ewaZL/m7PEgrfaZXrWUD/kVLUb5q7rO7jawWy3zcsEjW+Fv47bvltNenjuhKlbz6OHHg
+ wKSzdGu7xRJX9nsezI/YVXRZUnxG6ToftjiZ2gQ3LJkwL6rWVWNnHgfZBQRpFNAyBSsO
+ 2qsPXamtCGJicnC00PMtqM5gDab1ljHSHeGoJ9/dlY4rOHT3xnUYaNEWSYMDpkJ1uKMy
+ TC3wez1ydu3smuPDPv+VZU4RQkfS+c4BMigi4bu76OKOC+MTK3Otbp3WsYz3lBPIqtWr
+ hr6S3Q9Tjm2j2F+0GXJ9CFudJOFW7miR+IxA5q1Yg6/irH/cJSIxN3ZnXj6dv10f6tO7 YQ== 
+Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
+        by mx0b-00154904.pphosted.com with ESMTP id 2uc42nwcbc-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:08:35 -0400
+Received: from pps.filterd (m0090351.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EK7kTk132468
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:08:34 -0400
+Received: from ausxippc110.us.dell.com (AUSXIPPC110.us.dell.com [143.166.85.200])
+        by mx0b-00154901.pphosted.com with ESMTP id 2ucp0tu33q-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:08:34 -0400
+X-LoopCount0: from 10.173.37.27
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="843845849"
+From:   Mario Limonciello <mario.limonciello@dell.com>
+To:     Keith Busch <kbusch@kernel.org>
+Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Ryan Hong <Ryan.Hong@Dell.com>, Crag Wang <Crag.Wang@dell.com>,
+        sjg@google.com, Charles Hyde <charles.hyde@dellteam.com>,
+        Jared Dominguez <jared.dominguez@dell.com>,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH v2] nvme: Add quirk for LiteON CL1 devices running FW 22301111
+Date:   Wed, 14 Aug 2019 15:08:24 -0500
+Message-Id: <1565813304-16710-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_07:,,
  signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908140181
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:5.22.84,1.0.8
- definitions=2019-08-14_07:2019-08-14,2019-08-14 signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 spamscore=0 mlxscore=0 clxscore=1015
- bulkscore=0 lowpriorityscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-1906280000 definitions=main-1908140180
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=770 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908140183
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=885 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908140182
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> On Wed, August 14, 2019 at 2:52 PM Arnaldo Carvalho de Melo <arnaldo.melo=
-@gmail.com> wrote:
-> Em Wed, Aug 14, 2019 at 03:48:14PM -0300, Arnaldo Carvalho de Melo
-> escreveu:
-> > Em Wed, Aug 14, 2019 at 12:04:33PM -0600, Mathieu Poirier escreveu:
-> > > # echo 0 > /proc/sys/kernel/kptr_restrict # ./tools/perf/perf record
-> > > -e instructions:k uname
-> > > perf: Segmentation fault
-> > > Obtained 10 stack frames.
-> > > ./tools/perf/perf(sighandler_dump_stack+0x44) [0x55af9e5da5d4]
-> > > /lib/x86_64-linux-gnu/libc.so.6(+0x3ef20) [0x7fd31efb6f20]
-> > > ./tools/perf/perf(perf_event__synthesize_kernel_mmap+0xa7)
-> > > [0x55af9e590337]
-> > > ./tools/perf/perf(+0x1cf5be) [0x55af9e50c5be]
-> > > ./tools/perf/perf(cmd_record+0x1022) [0x55af9e50dff2]
-> > > ./tools/perf/perf(+0x23f98d) [0x55af9e57c98d]
-> > > ./tools/perf/perf(+0x23fc9e) [0x55af9e57cc9e]
-> > > ./tools/perf/perf(main+0x369) [0x55af9e4f6bc9]
-> > > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)
-> > > [0x7fd31ef99b97]
-> > > ./tools/perf/perf(_start+0x2a) [0x55af9e4f704a] Segmentation fault
-> > >
-> > > I can reproduce this on both x86 and ARM64.
-> >
-> > I don't see this with these two csets removed:
-> >
-> > 7ff5b5911144 perf symbols: Use CAP_SYSLOG with kptr_restrict checks
-> > d7604b66102e perf tools: Use CAP_SYS_ADMIN with perf_event_paranoid
-> > checks
-> >
-> > Which were the ones I guessed were related to the problem you
-> > reported, so they are out of my ongoing perf/core pull request to
-> > Ingo/Thomas, now trying with these applied and your instructions...
->=20
-> Can't repro:
->=20
-> [root@quaco ~]# cat /proc/sys/kernel/kptr_restrict
-> 0
-> [root@quaco ~]# perf record -e instructions:k uname Linux [ perf record:
-> Woken up 1 times to write data ] [ perf record: Captured and wrote 0.024 =
-MB
-> perf.data (1 samples) ] [root@quaco ~]# echo 1 >
-> /proc/sys/kernel/kptr_restrict [root@quaco ~]# perf record -e instruction=
-s:k
-> uname Linux [ perf record: Woken up 1 times to write data ] [ perf record=
-:
-> Captured and wrote 0.024 MB perf.data (1 samples) ] [root@quaco ~]# echo
-> 0 > /proc/sys/kernel/kptr_restrict [root@quaco ~]# perf record -e
-> instructions:k uname Linux [ perf record: Woken up 1 times to write data =
-] [
-> perf record: Captured and wrote 0.024 MB perf.data (1 samples) ]
-> [root@quaco ~]#
->=20
-> [acme@quaco perf]$ git log --oneline --author Lubashev tools/
-> 7ff5b5911144 (HEAD -> perf/cap, acme.korg/tmp.perf/cap,
-> acme.korg/perf/cap) perf symbols: Use CAP_SYSLOG with kptr_restrict
-> checks d7604b66102e perf tools: Use CAP_SYS_ADMIN with
-> perf_event_paranoid checks c766f3df635d perf ftrace: Use CAP_SYS_ADMIN
-> instead of euid=3D=3D0 c22e150e3afa perf tools: Add helpers to use capabi=
-lities if
-> present
-> 74d5f3d06f70 tools build: Add capability-related feature detection perf
-> version 5.3.rc4.g7ff5b5911144 [acme@quaco perf]$
+One of the components in LiteON CL1 device has limitations that
+can be encountered based upon boundary race conditions using the
+nvme bus specific suspend to idle flow.
 
-I got an ARM64 cloud VM, but I cannot reproduce.
-# cat /proc/sys/kernel/kptr_restrict
-0
+When this situation occurs the drive doesn't resume properly from
+suspend-to-idle.
 
-Perf trace works fine (does not die):
-# ./perf trace -a
+LiteON has confirmed this problem and fixed in the next firmware
+version.  As this firmware is already in the field, avoid running
+nvme specific suspend to idle flow.
 
-Here is my setup:
-Repo: git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
-Branch: tmp.perf/cap
-Commit: 7ff5b5911 "perf symbols: Use CAP_SYSLOG with kptr_restrict checks"
-gcc --version: gcc (Ubuntu/Linaro 7.4.0-1ubuntu1~18.04.1) 7.4.0
-uname -a: Linux arm-4-par-1 4.9.93-mainline-rev1 #1 SMP Tue Apr 10 09:54:46=
- UTC 2018 aarch64 aarch64 aarch64 GNU/Linux
-lsb_release -a: Ubuntu 18.04.3 LTS
+Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
+Link: http://lists.infradead.org/pipermail/linux-nvme/2019-July/thread.html
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+Signed-off-by: Charles Hyde <charles.hyde@dellteam.com>
+---
+ drivers/nvme/host/core.c | 10 ++++++++++
+ drivers/nvme/host/nvme.h |  5 +++++
+ drivers/nvme/host/pci.c  |  3 ++-
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
-Auto-detecting system features:
-...                         dwarf: [ on  ]
-...            dwarf_getlocations: [ on  ]
-...                         glibc: [ on  ]
-...                          gtk2: [ on  ]
-...                      libaudit: [ on  ]
-...                        libbfd: [ on  ]
-...                        libcap: [ on  ]
-...                        libelf: [ on  ]
-...                       libnuma: [ on  ]
-...        numa_num_possible_cpus: [ on  ]
-...                       libperl: [ on  ]
-...                     libpython: [ on  ]
-...                     libcrypto: [ on  ]
-...                     libunwind: [ on  ]
-...            libdw-dwarf-unwind: [ on  ]
-...                          zlib: [ on  ]
-...                          lzma: [ on  ]
-...                     get_cpuid: [ OFF ]
-...                           bpf: [ on  ]
-...                        libaio: [ on  ]
-...                       libzstd: [ on  ]
-...        disassembler-four-args: [ on  ]
+This patch is the spiritual successor to the previously submitted
+patch "[PATCH] drivers/nvme: save/restore HMB on suspend/resume".
 
-I also could not reproduce on x86:
-lsb_release -a: Ubuntu 18.04.1 LTS
-gcc --version: gcc (Ubuntu 7.4.0-1ubuntu1~18.04aka10.0.0) 7.4.0
-uname -r: 4.4.0-154-generic
+After discussion with LiteON, they agreed to resolve the issue
+in their next firmware release.
+
+changes from v1:
+ * Group all 3 possible CL1 strings together
+ * Remove the resume code because it's
+   already implied by ndev->last_ps = U32_MAX
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index 8f3fbe5..02770d6 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -2251,6 +2251,16 @@ static const struct nvme_core_quirk_entry core_quirks[] = {
+ 		.vid = 0x1179,
+ 		.mn = "THNSF5256GPUK TOSHIBA",
+ 		.quirks = NVME_QUIRK_NO_APST,
++	},
++	/*
++	 * This LiteON CL1-3D*-Q11 firmware version has a race condition
++	 * associated with actions related to suspend to idle.  LiteON has
++	 * resolved the problem in future firmware.
++	 */
++	{
++		.vid = 0x14a4,
++		.fr = "22301111",
++		.quirks = NVME_QUIRK_SIMPLE_SUSPEND,
+ 	}
+ };
+ 
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 26b563f..fe1ca0d 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -92,6 +92,11 @@ enum nvme_quirks {
+ 	 * Broken Write Zeroes.
+ 	 */
+ 	NVME_QUIRK_DISABLE_WRITE_ZEROES		= (1 << 9),
++
++	/*
++	 * Force simple suspend/resume path.
++	 */
++	NVME_QUIRK_SIMPLE_SUSPEND		= (1 << 10),
+ };
+ 
+ /*
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 108e109..b366f54 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2875,7 +2875,8 @@ static int nvme_suspend(struct device *dev)
+ 	 * state (which may not be possible if the link is up).
+ 	 */
+ 	if (pm_suspend_via_firmware() || !ctrl->npss ||
+-	    !pcie_aspm_enabled(pdev)) {
++	    !pcie_aspm_enabled(pdev) ||
++	    (ndev->ctrl.quirks & NVME_QUIRK_SIMPLE_SUSPEND)) {
+ 		nvme_dev_disable(ndev, true);
+ 		return 0;
+ 	}
+-- 
+2.7.4
+
