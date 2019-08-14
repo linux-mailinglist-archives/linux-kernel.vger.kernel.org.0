@@ -2,81 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29F618DC89
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:59:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FB148DC91
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:01:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbfHNR7p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:59:45 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35513 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728301AbfHNR7p (ORCPT
+        id S1729033AbfHNSA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:00:57 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:52928 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726166AbfHNSA5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:59:45 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n4so11732825pgv.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:59:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:from:cc:to:user-agent:date;
-        bh=kF2rSGg7TWdsph3+jKGWM5Z90AAtcPpo25Mf5csWFrU=;
-        b=Zc/RhUNaKUH6TKfhRZWBo6OBqnN6wsyVNMAXjBgiNUtQxZoaGMZ+qifnZYFCHOtQNq
-         93B6SETP1TqUWc7SCQ5mY3c3gtiWJs3r/RoBFb0OerUawl9ihfJgTVV4pxnTZyN7Uy7w
-         41upxhquofjg2gVE6AG70o1y8XyTA+QyHCgLQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
-         :user-agent:date;
-        bh=kF2rSGg7TWdsph3+jKGWM5Z90AAtcPpo25Mf5csWFrU=;
-        b=XRlyIS9JSBMUrXJOelXSv9pPFBCbIU7jc14L4z6xI0pjVAJuaJaVZA2lo1b6Mo1JyB
-         W9Zx23qKxWIe29Q9zo3M9r9HOMlPzCfz9mEn3NjRfYa2RLCrNMIqDgeS3McdF9soRmC2
-         akVTD6m0gVw4Ps07LYNuNDX1P9n/pkqOE/MbEfY8OXzMP5CL6i1fygYfOkLVwwfl7kyH
-         k4y0upV08Bl79asd02qDoPmJUjtb+gInrk5PGnTs2L/5fbRu3OzCIpKGa7qsLBhOZqDf
-         hikzikBcLUJDDP5YXiDiGzZoT6+G/sxisLeG1f5MNwqeU/pbpjscIYlPOnb2G0viCX2I
-         HU3A==
-X-Gm-Message-State: APjAAAUMXEBNU7BKe9+op6XYbhCvnBUGalXRwzhv8EnNLh/i8pofNsra
-        5bjt8Tf5nDktqbOgdRjIbiPNXNhQz7TlkA==
-X-Google-Smtp-Source: APXvYqzlhFg/syHBm6u3NkrWSTkdwA/nnqbqnwh5uAmEwTa/NV7gwIbeSWeDmlMEvcDq5rUej/oTTg==
-X-Received: by 2002:a17:90a:7d09:: with SMTP id g9mr903391pjl.38.1565805584194;
-        Wed, 14 Aug 2019 10:59:44 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id f72sm486217pjg.10.2019.08.14.10.59.43
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 10:59:43 -0700 (PDT)
-Message-ID: <5d544c0f.1c69fb81.a78d3.1381@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190813082442.25796-2-mkshah@codeaurora.org>
-References: <20190813082442.25796-1-mkshah@codeaurora.org> <20190813082442.25796-2-mkshah@codeaurora.org>
-Subject: Re: [PATCH 1/4] drivers: qcom: rpmh: fix macro to accept NULL argument
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        bjorn.andersson@linaro.org, evgreen@chromium.org,
-        dianders@chromium.org, rnayak@codeaurora.org, ilina@codeaurora.org,
-        lsrao@codeaurora.org, ulf.hansson@linaro.org,
-        Maulik Shah <mkshah@codeaurora.org>
-To:     Maulik Shah <mkshah@codeaurora.org>, agross@kernel.org,
-        david.brown@linaro.org, linux-arm-msm@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:59:42 -0700
+        Wed, 14 Aug 2019 14:00:57 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R281e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=liangyan.peng@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TZUYsGz_1565805622;
+Received: from localhost(mailfrom:liangyan.peng@linux.alibaba.com fp:SMTPD_---0TZUYsGz_1565805622)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Thu, 15 Aug 2019 02:00:54 +0800
+From:   Liangyan <liangyan.peng@linux.alibaba.com>
+To:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     shanpeic@linux.alibaba.com, xlpang@linux.alibaba.com
+Subject: [PATCH] sched/fair: don't assign runtime for throttled cfs_rq
+Date:   Thu, 15 Aug 2019 02:00:21 +0800
+Message-Id: <20190814180021.165389-1-liangyan.peng@linux.alibaba.com>
+X-Mailer: git-send-email 2.14.4.44.g2045bb6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Maulik Shah (2019-08-13 01:24:39)
-> Device argument matches with dev variable declared in RPMH message.
-> Compiler reports error when the argument is NULL since the argument
-> matches the name of the property. Rename dev argument to device to
-> fix this.
->=20
-> Signed-off-by: Maulik Shah <mkshah@codeaurora.org>
-> ---
+do_sched_cfs_period_timer() will refill cfs_b runtime and call
+distribute_cfs_runtime() to unthrottle cfs_rq, sometimes cfs_b->runtime
+will allocate all quota to one cfs_rq incorrectly.
+This will cause other cfs_rq can't get runtime and will be throttled.
+We find that one throttled cfs_rq has non-negative
+cfs_rq->runtime_remaining and cause an unexpetced cast from s64 to u64
+in snippet: distribute_cfs_runtime() {
+runtime = -cfs_rq->runtime_remaining + 1; }.
+This cast will cause that runtime will be a large number and
+cfs_b->runtime will be subtracted to be zero at last.
 
-Maybe this should have a Fixes tag? And the subject could be something
-like "avoid shadowing local variables in macro"?
+This commit prevents cfs_rq to be assgined new runtime if it has been
+throttled to avoid the above incorrect type cast.
 
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Liangyan <liangyan.peng@linux.alibaba.com>
+---
+ kernel/sched/fair.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 81fd8a2a605b..b14d67d28138 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -4068,6 +4068,8 @@ static void __account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+ 	if (likely(cfs_rq->runtime_remaining > 0))
+ 		return;
+ 
++	if (cfs_rq->throttled)
++		return;
+ 	/*
+ 	 * if we're unable to extend our runtime we resched so that the active
+ 	 * hierarchy can be throttled
+-- 
+2.14.4.44.g2045bb6
 
