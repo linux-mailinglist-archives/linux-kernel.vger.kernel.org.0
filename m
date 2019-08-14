@@ -2,97 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E3BE8DF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:39:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C54E8DEF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:38:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729625AbfHNUj2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:39:28 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:43538 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727516AbfHNUj1 (ORCPT
+        id S1729139AbfHNUia (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:38:30 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44005 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727273AbfHNUia (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:39:27 -0400
-Received: from pps.filterd (m0134420.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EKV1jS021531;
-        Wed, 14 Aug 2019 20:38:17 GMT
-Received: from g9t5009.houston.hpe.com (g9t5009.houston.hpe.com [15.241.48.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2ucqxt0keh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 20:38:17 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g9t5009.houston.hpe.com (Postfix) with ESMTP id 3E8A75B;
-        Wed, 14 Aug 2019 20:38:15 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-        id F117220131383; Wed, 14 Aug 2019 15:38:14 -0500 (CDT)
-From:   Kyle Meyer <meyerk@hpe.com>
-Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Wed, 14 Aug 2019 16:38:30 -0400
+Received: by mail-oi1-f193.google.com with SMTP id y8so5688924oih.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:38:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=8/VpPJuBcEAlBq5ppU9bWHqxCKnz3CDU+X2UU9Ge/5A=;
+        b=iFtJZARBLqCuehUIIZ6AX53e0HLaQLvnEVXGI7Gaw53CJuIbJqqJ2/Gw91zRiWBiOr
+         B+AT8Mwb7GgwRNuev7TOp6GfTfnZPTTilFQpSwTpcyVKzFk4xYK2i0026P902uwkbqRe
+         AmebT2nh3FEJohKc7/43Er3nVTZ5QP3OxmuJFOuHgr+cceWB05yqa9nsj0G/KWRzXV8w
+         dA5GGKSMGhAOc9EJP8uv33aO9C6SMwAhBje5dmq5hPod5JjNxJNvIcFy9C489z/Lm+gQ
+         tJPg8UH9nm9pQnfmpw9ZrJPiaOBKfqLMLDLTmit1mVc3vpLGfCBoP+7SQvVheo7TjyXA
+         MV+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8/VpPJuBcEAlBq5ppU9bWHqxCKnz3CDU+X2UU9Ge/5A=;
+        b=YB8h2ZrE1xKDd0jiDc1Gjlfe6eY19h6DwiOtUckYh0cI4NRPGzOI2FtAkxfoePtxNz
+         JYxK/1su/w8/5bDGYjuL3SwNrPH12XhCZLURmGCBxRwe5eY/L4mkkHoKsbINGSA5ISbc
+         1waAaMRCog3zLdWNV64UE5NKvqCAtQO5y1Shf9zqVhAL32qrG8n6A7PD7USDphdQcqOA
+         J+couJc/XUjtShxBfWZYYh2G9Dk7UtLtqywO8B/y2XsDV7MbcO8StSyhcxxZq+JigL0I
+         WHzyfgAIUaLhLRaxprXZyuOp//vsyyWCQ9rZWfHKsWIwcLra0/nZ94e01ZkgXFAd+hwl
+         jUbA==
+X-Gm-Message-State: APjAAAWHGKLWETkCEHBLZs/qzT/QSJldockn+16ua/d8JmC4jkrQFwnq
+        LaGkazZOI5AaenYZ2E5PYprzfCwe29lcTq2miSXbkg==
+X-Google-Smtp-Source: APXvYqwgjATWeoTZJWJRcTxRDk/XD8i0qTAP3Z8rOiz73ozATuTBONe2NNqtPexULHsGgvc7iWEkUn9MnzC4V5O61aU=
+X-Received: by 2002:a02:b609:: with SMTP id h9mr1322561jam.36.1565815109337;
+ Wed, 14 Aug 2019 13:38:29 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190812221154.46875-1-yabinc@google.com>
+In-Reply-To: <20190812221154.46875-1-yabinc@google.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 14 Aug 2019 14:38:18 -0600
+Message-ID: <CANLsYkzxLi36JNsOCaEE-Dsm3f4k6RXkkKrdkdeJDivdeu6axQ@mail.gmail.com>
+Subject: Re: [PATCH v2] coresight: tmc-etr: Fix updating buffer in
+ not-snapshot mode.
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH v2 0/6] perf: Replace MAX_NR_CPUS with dynamic alternatives
-Date:   Wed, 14 Aug 2019 15:38:04 -0500
-Message-Id: <20190814203804.204693-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-X-Mailer: git-send-email 2.12.3
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=932 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908140187
-To:     unlisted-recipients:; (no To-header on input)
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of this patch series is to replace MAX_NR_CPUS with a dynamic value
-throughout perf wherever possible using nr_cpus_online, the number of CPUs
-online during a record session, and cpu__max_cpu, the possible number of CPUs as
-defined in the sysfs. MAX_NR_CPUS is still used by DECLARE_BITMAP at compile
-time, however, it's replaced elsewhere.
+On Mon, 12 Aug 2019 at 16:11, Yabin Cui <yabinc@google.com> wrote:
+>
+> TMC etr always copies all available data to perf aux buffer, which
+> may exceed the available space in perf aux buffer. It isn't suitable
+> for not-snapshot mode, because:
+> 1) It may overwrite previously written data.
+> 2) It may make the perf_event_mmap_page->aux_head report having more
+> or less data than the reality.
+>
+> So change to only copy the latest data fitting the available space in
+> perf aux buffer.
+>
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> ---
+>
+> v1 -> v2: copy the latest data instead of the earliest data.
+>
+> ---
+>  .../hwtracing/coresight/coresight-tmc-etr.c    | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 17006705287a..676dcb4cf0e2 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -1410,9 +1410,10 @@ static void tmc_free_etr_buffer(void *config)
+>   * tmc_etr_sync_perf_buffer: Copy the actual trace data from the hardware
+>   * buffer to the perf ring buffer.
+>   */
+> -static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+> +static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf,
+> +                                    unsigned long to_copy)
+>  {
+> -       long bytes, to_copy;
+> +       long bytes;
+>         long pg_idx, pg_offset, src_offset;
+>         unsigned long head = etr_perf->head;
+>         char **dst_pages, *src_buf;
+> @@ -1422,8 +1423,7 @@ static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+>         pg_idx = head >> PAGE_SHIFT;
+>         pg_offset = head & (PAGE_SIZE - 1);
+>         dst_pages = (char **)etr_perf->pages;
+> -       src_offset = etr_buf->offset;
+> -       to_copy = etr_buf->len;
+> +       src_offset = etr_buf->offset + etr_buf->len - to_copy;
+>
+>         while (to_copy > 0) {
+>                 /*
+> @@ -1434,6 +1434,8 @@ static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+>                  *  3) what is available in the destination page.
+>                  * in one iteration.
+>                  */
+> +               if (src_offset >= etr_buf->size)
+> +                       src_offset -= etr_buf->size;
+>                 bytes = tmc_etr_buf_get_data(etr_buf, src_offset, to_copy,
+>                                              &src_buf);
+>                 if (WARN_ON_ONCE(bytes <= 0))
+> @@ -1454,8 +1456,6 @@ static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf)
+>
+>                 /* Move source pointers */
+>                 src_offset += bytes;
+> -               if (src_offset >= etr_buf->size)
+> -                       src_offset -= etr_buf->size;
+>         }
+>  }
 
-This patch series was tested using "perf record -a -g" on both an eight socket
-(288 CPU) system and a single socket (36 CPU) system. Each system was then
-rebooted single socket and eight socket before "perf report" was used to read
-the perf.data out file. "perf report --header" was used to confirm that each
-perf.data file had information on the correct number of CPUs.
+Yes, much better now.  I have applied your work.
 
-Change since v1:
-  Broke PATCH 2/2 into multiple patches.
+Thanks,
+Mathieu
 
-Kyle Meyer (6):
-  perf: Refactor svg_build_topology_map
-  perf/util/svghelper: Replace MAX_NR_CPUS with env->nr_cpus_online
-  perf/util/stat: Replace MAX_NR_CPUS with cpu__max_cpu
-  perf/util/session: Replace MAX_NR_CPUS with nr_cpus_online
-  perf/util/machine: Replace MAX_NR_CPUS with nr_cpus_online
-  perf/util/header: Replace MAX_NR_CPUS with cpu__max_cpu
-
- tools/perf/builtin-timechart.c |  5 +----
- tools/perf/util/header.c       |  7 +++---
- tools/perf/util/machine.c      | 12 +++++-----
- tools/perf/util/session.c      |  6 ++---
- tools/perf/util/stat.c         |  4 ++--
- tools/perf/util/svghelper.c    | 50 ++++++++++++++++++++----------------------
- tools/perf/util/svghelper.h    |  4 +++-
- 7 files changed, 44 insertions(+), 44 deletions(-)
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
--- 
-2.12.3
-
+>
+> @@ -1501,7 +1501,11 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+>         size = etr_buf->len;
+> -       tmc_etr_sync_perf_buffer(etr_perf);
+> +       if (!etr_perf->snapshot && size > handle->size) {
+> +               size = handle->size;
+> +               lost = true;
+> +       }
+> +       tmc_etr_sync_perf_buffer(etr_perf, size);
+>
+>         /*
+>          * In snapshot mode we simply increment the head by the number of byte
+> --
+> 2.23.0.rc1.153.gdeed80330f-goog
+>
