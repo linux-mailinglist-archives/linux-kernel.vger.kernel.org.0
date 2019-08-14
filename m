@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D9C8D965
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBE718D971
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729523AbfHNRID (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57798 "EHLO mail.kernel.org"
+        id S1730157AbfHNRI3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730035AbfHNRIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:01 -0400
+        id S1729640AbfHNRIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA5EB214DA;
-        Wed, 14 Aug 2019 17:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A017E2084D;
+        Wed, 14 Aug 2019 17:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802480;
-        bh=YFlaAVjmdVZ9XdNhwVjIZnJ4nRFc81vzqueGiTczBeA=;
+        s=default; t=1565802503;
+        bh=P7Rjrz7bA+AxUUjdjRu62QFk1gGz/UCPmO33bcqzB7A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4Gn9HEDOeFYRH+99yE/5QU+uGleMDnr6Sjr41EWny70wrU0A/MElvM9MgeIluGBs
-         oTurU3IAhVG+2PxAzzeK3sCuOcqiZ4VWm1t7PIj3p3G0HH1exDDZFGB+27qfQ0dWEM
-         Yupjj3tOIHZDIbh685zv5M9MxzPXmJIS59m4XpIo=
+        b=Qmzje68TAOi2Zo65Tzxq/6oxjs5XFoEoKtDegdD7ZASXD2mq9Ck4eVmVQzC7XDyq/
+         gmQwdC36HtW7FGNqlhusUTp2ljNxZ9WvpCJwwFEM8YbqRZyT2LqO+Y6cPokYT2LUN5
+         WctvAVNOYFLyAcYa//1+vI0li/Yz3MdcUMAE/B30=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 5.2 142/144] iwlwifi: mvm: fix a use-after-free bug in iwl_mvm_tx_tso_segment
-Date:   Wed, 14 Aug 2019 19:01:38 +0200
-Message-Id: <20190814165805.908186196@linuxfoundation.org>
+Subject: [PATCH 5.2 144/144] iwlwifi: mvm: fix version check for GEO_TX_POWER_LIMIT support
+Date:   Wed, 14 Aug 2019 19:01:40 +0200
+Message-Id: <20190814165805.991434750@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,44 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Luca Coelho <luciano.coelho@intel.com>
 
-commit 71b256f8f7a5c09810d2c3ed6165629c2cc0a652 upstream.
+commit f5a47fae6aa3eb06f100e701d2342ee56b857bee upstream.
 
-Accessing the hdr of an skb that was consumed already isn't
-a good idea.
-First ask if the skb is a QoS packet, then keep that data
-on stack, and then consume the skb.
-This was spotted by KASAN.
+We erroneously added a check for FW API version 41 before sending
+GEO_TX_POWER_LIMIT, but this was already implemented in version 38.
+Additionally, it was cherry-picked to older versions, namely 17, 26
+and 29, so check for those as well.
 
 Cc: stable@vger.kernel.org
-Fixes: 08f7d8b69aaf ("iwlwifi: mvm: bring back mvm GSO code")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Fixes: eca1e56ceedd ("iwlwifi: mvm: don't send GEO_TX_POWER_LIMIT to old firmwares")
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/tx.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tx.c
-@@ -831,6 +831,7 @@ iwl_mvm_tx_tso_segment(struct sk_buff *s
- 	unsigned int tcp_payload_len;
- 	unsigned int mss = skb_shinfo(skb)->gso_size;
- 	bool ipv4 = (skb->protocol == htons(ETH_P_IP));
-+	bool qos = ieee80211_is_data_qos(hdr->frame_control);
- 	u16 ip_base_id = ipv4 ? ntohs(ip_hdr(skb)->id) : 0;
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -880,9 +880,14 @@ static bool iwl_mvm_sar_geo_support(stru
+ 	 * The GEO_TX_POWER_LIMIT command is not supported on earlier
+ 	 * firmware versions.  Unfortunately, we don't have a TLV API
+ 	 * flag to rely on, so rely on the major version which is in
+-	 * the first byte of ucode_ver.
++	 * the first byte of ucode_ver.  This was implemented
++	 * initially on version 38 and then backported to 36, 29 and
++	 * 17.
+ 	 */
+-	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 41;
++	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 38 ||
++	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 36 ||
++	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 29 ||
++	       IWL_UCODE_SERIAL(mvm->fw->ucode_ver) == 17;
+ }
  
- 	skb_shinfo(skb)->gso_size = num_subframes * mss;
-@@ -864,7 +865,7 @@ iwl_mvm_tx_tso_segment(struct sk_buff *s
- 		if (tcp_payload_len > mss) {
- 			skb_shinfo(tmp)->gso_size = mss;
- 		} else {
--			if (ieee80211_is_data_qos(hdr->frame_control)) {
-+			if (qos) {
- 				u8 *qc;
- 
- 				if (ipv4)
+ int iwl_mvm_get_sar_geo_profile(struct iwl_mvm *mvm)
 
 
