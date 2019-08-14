@@ -2,133 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E1398DFFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:36:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4592E8E000
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:37:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbfHNVgT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 17:36:19 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:52520 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727083AbfHNVgT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 17:36:19 -0400
-Received: by mail-wm1-f68.google.com with SMTP id o4so1712wmh.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:to:from:cc;
-        bh=XWwAylDLr1ewfARUebkjg//6gCYbw06NtLYokdWmek0=;
-        b=KSGPqM76DveV79q1yTio02HLMvbtGr9oo/BtXzHUK+aso46xCrKV67SmkjxzbisiE9
-         sGu/lbFIU/QlmxGAX3YpnZUyJx3C6+r+FUyqbetev+q4OyOjAaZ1WH6FoM2m+AWHVefL
-         4rCOl0MWVzfgjFl2dgtxQufU8602yfwGcKUyTLmKHS/UcxA7+oCeRhMf9/qw6Y0ZW8kU
-         Qn4Gc6GxNFBb7u4tA5HQvOfi3Xsla5kqVM7Rvcm/8I/etSeYynlsM9o5O/NflrNE2+L+
-         seloSevQeozaOfD4j1Aci8tOsCC5uleWTCsbqH9HWtKLilVWxAYERgF6e3MuCnZswHlE
-         0UyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:to:from:cc;
-        bh=XWwAylDLr1ewfARUebkjg//6gCYbw06NtLYokdWmek0=;
-        b=s7vlh+8CDuWIZEXS1rboBYkVAoR0UcL8gewmFdGWm7qy/nRCZm3FEuPes6rF7WUU0P
-         8Ofi6OMXA9t3felCH3t5AAJvTNMr27F/jQsqRViWMqBsnQVfyB+jCQe0u8y1/WkD2d0Y
-         PNB1ivX86pONq0USKLWQgvlvxlpBi5gl3qZMmMsY3FZxuedAy7kWCMLgGvm/a4Mi/2nW
-         pDb9kYIsiojfVTkRXqYPlyvBntUciV3ZRQ0hYyfLU73eg0rMdTk55yy+L7aoK/GBute5
-         GZq4Es8oKGBxu2NohAyJ6Uqt7467Y9wbqiFymkRYwhIHPm/1I9rPYQo9knnxSqoeepe5
-         jAcA==
-X-Gm-Message-State: APjAAAWHIOE4cA/D2oYEcfP5NMXo8GcQUH00wWk3y3I18PnIwWRMeP0U
-        F9G9i9mctPWNuR60zWOa55TRyg==
-X-Google-Smtp-Source: APXvYqwP4DtXoYWeVm/3r36krjGhXKkjcp6Hm5I7BClJcBTppUcOxX5xSkXAWroLNI/EGGvh/iXoqg==
-X-Received: by 2002:a1c:740b:: with SMTP id p11mr6576wmc.6.1565818576956;
-        Wed, 14 Aug 2019 14:36:16 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f70sm806504wme.22.2019.08.14.14.36.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 14:36:16 -0700 (PDT)
-Message-ID: <5d547ed0.1c69fb81.14f04.42bf@mx.google.com>
-Date:   Wed, 14 Aug 2019 14:36:16 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
+        id S1728670AbfHNVhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 17:37:46 -0400
+Received: from correo.us.es ([193.147.175.20]:46810 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727079AbfHNVhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 17:37:46 -0400
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 43801C4145
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 23:37:43 +0200 (CEST)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 36B6ADA704
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 23:37:43 +0200 (CEST)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 1FAF264497; Wed, 14 Aug 2019 23:37:43 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on antivirus1-rhel7.int
+X-Spam-Level: 
+X-Spam-Status: No, score=-108.2 required=7.5 tests=ALL_TRUSTED,BAYES_50,
+        SMTPAUTH_US2,USER_IN_WHITELIST autolearn=disabled version=3.4.1
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 06DF4DA704;
+        Wed, 14 Aug 2019 23:37:41 +0200 (CEST)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Wed, 14 Aug 2019 23:37:41 +0200 (CEST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id CE5724265A2F;
+        Wed, 14 Aug 2019 23:37:40 +0200 (CEST)
+Date:   Wed, 14 Aug 2019 23:37:41 +0200
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com,
+        kbuild test robot <lkp@intel.com>
+Subject: Re: [PATCH] netfilter: nft_bitwise: Adjust parentheses to fix memcmp
+ size argument
+Message-ID: <20190814213741.ptoel7373xqwzlj5@salvia>
+References: <20190814165809.46421-1-natechancellor@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Kernel: v4.19.66-92-gf777613d3df0
-X-Kernelci-Tree: stable-rc
-X-Kernelci-Report-Type: boot
-X-Kernelci-Branch: linux-4.19.y
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
-Subject: Re: [PATCH 4.19 00/91] 4.19.67-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814165809.46421-1-natechancellor@gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-stable-rc/linux-4.19.y boot: 138 boots: 0 failed, 126 passed with 12 offlin=
-e (v4.19.66-92-gf777613d3df0)
+On Wed, Aug 14, 2019 at 09:58:09AM -0700, Nathan Chancellor wrote:
+> clang warns:
+> 
+> net/netfilter/nft_bitwise.c:138:50: error: size argument in 'memcmp'
+> call is a comparison [-Werror,-Wmemsize-comparison]
+>         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
+>                                       ~~~~~~~~~~~~~~~~~~^~
 
-Full Boot Summary: https://kernelci.org/boot/all/job/stable-rc/branch/linux=
--4.19.y/kernel/v4.19.66-92-gf777613d3df0/
-Full Build Summary: https://kernelci.org/build/stable-rc/branch/linux-4.19.=
-y/kernel/v4.19.66-92-gf777613d3df0/
-
-Tree: stable-rc
-Branch: linux-4.19.y
-Git Describe: v4.19.66-92-gf777613d3df0
-Git Commit: f777613d3df0e7226d30d0e0ba97e9419e3064f2
-Git URL: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
-e-rc.git
-Tested: 76 unique boards, 26 SoC families, 17 builds out of 206
-
-Boot Regressions Detected:
-
-arm:
-
-    qcom_defconfig:
-        gcc-8:
-          qcom-apq8064-cm-qs600:
-              lab-baylibre-seattle: new failure (last pass: v4.19.66)
-          qcom-apq8064-ifc6410:
-              lab-baylibre-seattle: new failure (last pass: v4.19.66)
-
-Offline Platforms:
-
-arm64:
-
-    defconfig:
-        gcc-8
-            apq8016-sbc: 1 offline lab
-            meson-gxbb-odroidc2: 1 offline lab
-
-arm:
-
-    multi_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-            sun5i-r8-chip: 1 offline lab
-
-    sunxi_defconfig:
-        gcc-8
-            sun5i-r8-chip: 1 offline lab
-
-    qcom_defconfig:
-        gcc-8
-            qcom-apq8064-cm-qs600: 1 offline lab
-            qcom-apq8064-ifc6410: 1 offline lab
-
-    imx_v6_v7_defconfig:
-        gcc-8
-            imx6dl-wandboard_solo: 1 offline lab
-            imx6q-wandboard: 1 offline lab
-
----
-For more info write to <info@kernelci.org>
+Applied, thanks.
