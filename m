@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E77E28DA76
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 170FD8D998
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731047AbfHNRSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:18:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36866 "EHLO mail.kernel.org"
+        id S1729282AbfHNRKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730409AbfHNRMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:12:50 -0400
+        id S1730412AbfHNRJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:58 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3490214DA;
-        Wed, 14 Aug 2019 17:12:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 79E5B2084D;
+        Wed, 14 Aug 2019 17:09:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802769;
-        bh=8vACyV4HWZSpDIGeYsjVQviONxqVr7jlAcvVeMNcYis=;
+        s=default; t=1565802598;
+        bh=HbEKa7Zri52UCkOvnsCGr3IcPyOq0d/HtyKJPhXp/Z4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ByPY/uMzzQ0o7JwXe77I4CFocudkWoNpo9o1uUlUrKAU63DN7zlPgktRFmbqIzyS5
-         DwGut8i6YYgPLgAb+qWaP5LHbhgATIQVqt0RPgP9C/PyMeH0DYphPNN0ZVblMH6SZw
-         mhxBkkYKLgmuoUX5iFeJD1EpWrNM/3kPio1wkPX0=
+        b=jzipTGXvRM4r/RfLmxC19cbwnv10bWJzb/4TiD/wWnkP0rDAB8eSA/KsmAMGP7iMY
+         Yy7Hut40Atsff8+0QxrAfELU3v417EVVb21dAshEHKQCha4xe+JIsuR+Dw0mtJopm2
+         /ywBxg3CtoB3J0LucHI61AO0iJEMP6c08lqSGDeQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 09/69] loop: set PF_MEMALLOC_NOIO for the worker thread
+        stable@vger.kernel.org, Thomas Tai <thomas.tai@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 44/91] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
 Date:   Wed, 14 Aug 2019 19:01:07 +0200
-Message-Id: <20190814165746.162799150@linuxfoundation.org>
+Message-Id: <20190814165751.476809309@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,82 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikulas Patocka <mpatocka@redhat.com>
+[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
 
-commit d0a255e795ab976481565f6ac178314b34fbf891 upstream.
+iscsi_ibft can use ACPI to find the iBFT entry during bootup,
+currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
+a X86 legacy way to find the iBFT by searching through the
+low memory. This patch changes the dependency so that other
+arch like ARM64 can use ISCSI_IBFT as long as the arch supports
+ACPI.
 
-A deadlock with this stacktrace was observed.
+ibft_init() needs to use the global variable ibft_addr declared
+in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
+to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
+Moving ibft_addr into the iscsi_ibft.c does not work because if
+ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
+be able to find the variable at compile time.
 
-The loop thread does a GFP_KERNEL allocation, it calls into dm-bufio
-shrinker and the shrinker depends on I/O completion in the dm-bufio
-subsystem.
-
-In order to fix the deadlock (and other similar ones), we set the flag
-PF_MEMALLOC_NOIO at loop thread entry.
-
-PID: 474    TASK: ffff8813e11f4600  CPU: 10  COMMAND: "kswapd0"
-   #0 [ffff8813dedfb938] __schedule at ffffffff8173f405
-   #1 [ffff8813dedfb990] schedule at ffffffff8173fa27
-   #2 [ffff8813dedfb9b0] schedule_timeout at ffffffff81742fec
-   #3 [ffff8813dedfba60] io_schedule_timeout at ffffffff8173f186
-   #4 [ffff8813dedfbaa0] bit_wait_io at ffffffff8174034f
-   #5 [ffff8813dedfbac0] __wait_on_bit at ffffffff8173fec8
-   #6 [ffff8813dedfbb10] out_of_line_wait_on_bit at ffffffff8173ff81
-   #7 [ffff8813dedfbb90] __make_buffer_clean at ffffffffa038736f [dm_bufio]
-   #8 [ffff8813dedfbbb0] __try_evict_buffer at ffffffffa0387bb8 [dm_bufio]
-   #9 [ffff8813dedfbbd0] dm_bufio_shrink_scan at ffffffffa0387cc3 [dm_bufio]
-  #10 [ffff8813dedfbc40] shrink_slab at ffffffff811a87ce
-  #11 [ffff8813dedfbd30] shrink_zone at ffffffff811ad778
-  #12 [ffff8813dedfbdc0] kswapd at ffffffff811ae92f
-  #13 [ffff8813dedfbec0] kthread at ffffffff810a8428
-  #14 [ffff8813dedfbf50] ret_from_fork at ffffffff81745242
-
-  PID: 14127  TASK: ffff881455749c00  CPU: 11  COMMAND: "loop1"
-   #0 [ffff88272f5af228] __schedule at ffffffff8173f405
-   #1 [ffff88272f5af280] schedule at ffffffff8173fa27
-   #2 [ffff88272f5af2a0] schedule_preempt_disabled at ffffffff8173fd5e
-   #3 [ffff88272f5af2b0] __mutex_lock_slowpath at ffffffff81741fb5
-   #4 [ffff88272f5af330] mutex_lock at ffffffff81742133
-   #5 [ffff88272f5af350] dm_bufio_shrink_count at ffffffffa03865f9 [dm_bufio]
-   #6 [ffff88272f5af380] shrink_slab at ffffffff811a86bd
-   #7 [ffff88272f5af470] shrink_zone at ffffffff811ad778
-   #8 [ffff88272f5af500] do_try_to_free_pages at ffffffff811adb34
-   #9 [ffff88272f5af590] try_to_free_pages at ffffffff811adef8
-  #10 [ffff88272f5af610] __alloc_pages_nodemask at ffffffff811a09c3
-  #11 [ffff88272f5af710] alloc_pages_current at ffffffff811e8b71
-  #12 [ffff88272f5af760] new_slab at ffffffff811f4523
-  #13 [ffff88272f5af7b0] __slab_alloc at ffffffff8173a1b5
-  #14 [ffff88272f5af880] kmem_cache_alloc at ffffffff811f484b
-  #15 [ffff88272f5af8d0] do_blockdev_direct_IO at ffffffff812535b3
-  #16 [ffff88272f5afb00] __blockdev_direct_IO at ffffffff81255dc3
-  #17 [ffff88272f5afb30] xfs_vm_direct_IO at ffffffffa01fe3fc [xfs]
-  #18 [ffff88272f5afb90] generic_file_read_iter at ffffffff81198994
-  #19 [ffff88272f5afc50] __dta_xfs_file_read_iter_2398 at ffffffffa020c970 [xfs]
-  #20 [ffff88272f5afcc0] lo_rw_aio at ffffffffa0377042 [loop]
-  #21 [ffff88272f5afd70] loop_queue_work at ffffffffa0377c3b [loop]
-  #22 [ffff88272f5afe60] kthread_worker_fn at ffffffff810a8a0c
-  #23 [ffff88272f5afec0] kthread at ffffffff810a8428
-  #24 [ffff88272f5aff50] ret_from_fork at ffffffff81745242
-
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/loop.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/firmware/Kconfig      | 5 +++--
+ drivers/firmware/iscsi_ibft.c | 4 ++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -857,7 +857,7 @@ static void loop_unprepare_queue(struct
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index 6e83880046d78..ed212c8b41083 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -198,7 +198,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
  
- static int loop_kthread_worker_fn(void *worker_ptr)
- {
--	current->flags |= PF_LESS_THROTTLE;
-+	current->flags |= PF_LESS_THROTTLE | PF_MEMALLOC_NOIO;
- 	return kthread_worker_fn(worker_ptr);
- }
+ config ISCSI_IBFT_FIND
+ 	bool "iSCSI Boot Firmware Table Attributes"
+-	depends on X86 && ACPI
++	depends on X86 && ISCSI_IBFT
+ 	default n
+ 	help
+ 	  This option enables the kernel to find the region of memory
+@@ -209,7 +209,8 @@ config ISCSI_IBFT_FIND
+ config ISCSI_IBFT
+ 	tristate "iSCSI Boot Firmware Table Attributes module"
+ 	select ISCSI_BOOT_SYSFS
+-	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
++	select ISCSI_IBFT_FIND if X86
++	depends on ACPI && SCSI && SCSI_LOWLEVEL
+ 	default	n
+ 	help
+ 	  This option enables support for detection and exposing of iSCSI
+diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
+index c51462f5aa1e4..966aef334c420 100644
+--- a/drivers/firmware/iscsi_ibft.c
++++ b/drivers/firmware/iscsi_ibft.c
+@@ -93,6 +93,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(IBFT_ISCSI_VERSION);
  
++#ifndef CONFIG_ISCSI_IBFT_FIND
++struct acpi_table_ibft *ibft_addr;
++#endif
++
+ struct ibft_hdr {
+ 	u8 id;
+ 	u8 version;
+-- 
+2.20.1
+
 
 
