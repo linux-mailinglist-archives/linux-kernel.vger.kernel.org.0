@@ -2,90 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B538DBAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 76CB98DB87
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfHNR1N (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:27:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52548 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729041AbfHNRDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:03:50 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E4462173E;
-        Wed, 14 Aug 2019 17:03:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802229;
-        bh=9q+dnxmp7wlV9CyGTOF8w+3RUc997Kz+VeFrAqoo1tk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=QgoMpwiOu8Em+B3wWDGgiVe0zWh6Nq+QgA1d5Y+2JLobHvV5ksMTQ894+QDuoF/ps
-         rYKLazrbDKqvQ5AYc350+yPlZMmJel+Skb52/iI3T1rb8KkHbUxNzKay9LSZVQUMGP
-         4h+Og4goilMJCZWPCbwIepZnpDsyI/Ha+pxCCDvk=
-Content-Type: text/plain; charset="utf-8"
+        id S1729664AbfHNR0B convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 14 Aug 2019 13:26:01 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:45619 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729398AbfHNRFP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:05:15 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y8so8848838plr.12;
+        Wed, 14 Aug 2019 10:05:15 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GTqeZQuB5IgM+FmX9PwW5NoGtvVH2NCZhDAITGesyDI=;
+        b=V4BknI/9PTqQybKoUCZBxz9U/b5ss9/oMzwfXviFWJQvjysp2n0UMUxS4FpgjCLXNC
+         72470W68kb3LTbYUsJih/SDba9IqNn0ofADPWaJ966SEiVPgF78wx2OJfRwp/yIB2QQ5
+         qzPM8Ofh149MJk+AuTxTGqfu/1gyYBBJc7zJb0mvK16xoWGgSRqq7nNe/UOopunAuGXl
+         rwdSx6g1dloV4QulTqGLbsw4t9cwXL6aAAEOzRXGc4Dzp5Jw7PpShCS0vdUgdImPmFUH
+         FlxekAu7Er1Z52PVHAq7HsTdPq6GvUwQM7+xYXZZHcHOEOxGztHVf/Vikv/VaPTmjgL8
+         jHNA==
+X-Gm-Message-State: APjAAAV3ciIb0fHybDZhn8ptyDFsaapNXBdwukteY4FH0ct5nMbcOUFV
+        djIwVtzpMtm3jTQydCpQ3Klfc9WrCXo=
+X-Google-Smtp-Source: APXvYqyY7dMRw94QInx53Q43ZHoQCxgqlpv6Xz4f7o17+uQhWoBsE2UtI2jpEFYNuEjRmoBdpNZKug==
+X-Received: by 2002:a17:902:8345:: with SMTP id z5mr406730pln.29.1565802314643;
+        Wed, 14 Aug 2019 10:05:14 -0700 (PDT)
+Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
+        by smtp.gmail.com with ESMTPSA id c70sm359640pfb.163.2019.08.14.10.05.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2019 10:05:13 -0700 (PDT)
+Subject: Re: [5.3.0-rc4-next][bisected 882632][qla2xxx] WARNING: CPU: 10 PID:
+ 425 at drivers/scsi/qla2xxx/qla_isr.c:2784 qla2x00_status_entry.isra
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Cc:     linux-next <linux-next@vger.kernel.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        linux-scsi <linux-scsi@vger.kernel.org>,
+        martin.petersen@oracle.com, hmadhani@marvell.com,
+        sachinp <sachinp@linux.vnet.ibm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Himanshu Madhani <hmadhani@marvell.com>
+References: <1565801523.6908.6.camel@abdul>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <cafb1d40-a11e-c137-db06-4564e5f5caf5@acm.org>
+Date:   Wed, 14 Aug 2019 10:05:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190814125012.8700-8-vkoul@kernel.org>
-References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-8-vkoul@kernel.org>
-Subject: Re: [PATCH 07/22] arm64: dts: qcom: pm8150: Add pon and rtc nodes
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:03:48 -0700
-Message-Id: <20190814170349.7E4462173E@mail.kernel.org>
+In-Reply-To: <1565801523.6908.6.camel@abdul>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-08-14 05:49:57)
-> PM8150 PMIC contains pon and rtc devices so add nodes for these.
->=20
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
+On 8/14/19 9:52 AM, Abdul Haleem wrote:
+> Greeting's
+> 
+> Today's linux-next kernel (5.3.0-rc4-next-20190813)  booted with warning on my powerpc power 8 lpar
+> 
+> The WARN_ON_ONCE() was introduced by commit 88263208 (scsi: qla2xxx: Complain if sp->done() is not...)
+> 
+> boot logs:
+> 
+> WARNING: CPU: 10 PID: 425 at drivers/scsi/qla2xxx/qla_isr.c:2784
 
-Squash this with the other patch?
+Hi Abdul,
 
-> @@ -12,6 +13,25 @@
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
-> =20
-> +               pon: pon@800 {
-> +                       compatible =3D "qcom,pm8916-pon";
-> +                       reg =3D <0x0800>;
-> +                       pwrkey {
-> +                               compatible =3D "qcom,pm8941-pwrkey";
-> +                               interrupts =3D <0x0 0x8 0 IRQ_TYPE_EDGE_B=
-OTH>;
-> +                               debounce =3D <15625>;
-> +                               bias-pull-up;
-> +                               linux,code =3D <KEY_POWER>;
+Thank you for having reported this. Is that the only warning reported on your setup by the qla2xxx
+driver? If that warning is commented out, does the qla2xxx driver work as expected?
 
-status =3D "disabled"?
+Thanks,
 
-> +                       };
-> +               };
-> +
-> +               rtc@6000 {
-> +                       compatible =3D "qcom,pm8941-rtc";
-> +                       reg =3D <0x6000>;
-> +                       reg-names =3D "rtc", "alarm";
-> +                       interrupts =3D <0x0 0x61 0x1 IRQ_TYPE_NONE>;
+Bart.
 
-status =3D "disabled"?
-
-> +               };
-> +
->                 pm8150_gpios: gpio@c000 {
->                         compatible =3D "qcom,pm8150-gpio";
->                         reg =3D <0xc000>;
-> --=20
-> 2.20.1
->=20
