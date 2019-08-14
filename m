@@ -2,128 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BFC68D24C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5DF898D256
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727343AbfHNLiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 07:38:07 -0400
-Received: from mail-oi1-f200.google.com ([209.85.167.200]:35297 "EHLO
-        mail-oi1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfHNLiG (ORCPT
+        id S1727705AbfHNLjY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 07:39:24 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:43043 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725800AbfHNLjX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:38:06 -0400
-Received: by mail-oi1-f200.google.com with SMTP id i132so38357634oif.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:38:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=YWQkpPFDkZrCtHRJpBrQhhdaTaxg9rth8B7pR83gTLY=;
-        b=akjAfwiCcvKuF9kniorAuDQgEHaZFH932mDSSf8Ij+z10t4dmb5DFMQ5CH1JvCzIpy
-         Y52chybAlopMJ65xbysy+u6MsWJ2A+HILVfsST03VHyi2Vthkvd61ET0N+JjA7GdFlno
-         Be6L4tt1Vb8XXetcff38g8OWEiqx+kRf33V+Owjhu7Mq6g8hzvgO+/NGIoUqUPVZT+vj
-         hbxnsT9ANoRs1/esM4/ACBcNM+EqOmjrpiC3n/pK/bNs9tmyeBiXhZGed+ns6Ly0a3YC
-         xp/hkUnWGpAGS8ZPJT74jcMD4ct0pW2GMMrT3egLNzM4CMtVs4RyrLwQSybGZZVhkVWr
-         HaLA==
-X-Gm-Message-State: APjAAAWSsSPp0IfHQJ6ykfO8FFOkmtVZF1RoZAj3IA02V+wl2tYz4Rmz
-        tEakgR/w6O5wrr40/Fi5nusIPaqJCtMUT06+swJ2uLENRGJI
-X-Google-Smtp-Source: APXvYqzn1jlyElPyeuZyrEOQDiA7iCHtsdE5gE/FFFK+D7+LHT+5Gzd46ohTJEhcvLbd7I10L8kQRQINURwT6Zh1zJDYSGji9CjP
+        Wed, 14 Aug 2019 07:39:23 -0400
+Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 4D35443D5DD;
+        Wed, 14 Aug 2019 21:39:17 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hxrbW-0002CL-QK; Wed, 14 Aug 2019 21:38:10 +1000
+Date:   Wed, 14 Aug 2019 21:38:10 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 01/19] fs/locks: Export F_LAYOUT lease to user
+ space
+Message-ID: <20190814113810.GJ7777@dread.disaster.area>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-2-ira.weiny@intel.com>
+ <20190809235231.GC7777@dread.disaster.area>
+ <20190812173626.GB19746@iweiny-DESK2.sc.intel.com>
+ <20190814080547.GJ6129@dread.disaster.area>
+ <1ba29bfa22f82e6d880ab31c3835047f3353f05a.camel@kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:ed01:: with SMTP id n1mr22583424iog.255.1565782685518;
- Wed, 14 Aug 2019 04:38:05 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 04:38:05 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c4157e0590123002@google.com>
-Subject: divide error in usbtmc_generic_read
-From:   syzbot <syzbot+55b0304b360654a7537b@syzkaller.appspotmail.com>
-To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
-        guido.kiener@rohde-schwarz.com, linux-kernel@vger.kernel.org,
-        linux-usb@vger.kernel.org, steve_bayless@keysight.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ba29bfa22f82e6d880ab31c3835047f3353f05a.camel@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
+        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=ZoWuoDdl_XJqS1jHo3MA:9
+        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Aug 14, 2019 at 07:21:34AM -0400, Jeff Layton wrote:
+> On Wed, 2019-08-14 at 18:05 +1000, Dave Chinner wrote:
+> > On Mon, Aug 12, 2019 at 10:36:26AM -0700, Ira Weiny wrote:
+> > > On Sat, Aug 10, 2019 at 09:52:31AM +1000, Dave Chinner wrote:
+> > > > On Fri, Aug 09, 2019 at 03:58:15PM -0700, ira.weiny@intel.com wrote:
+> > > > > +	/*
+> > > > > +	 * NOTE on F_LAYOUT lease
+> > > > > +	 *
+> > > > > +	 * LAYOUT lease types are taken on files which the user knows that
+> > > > > +	 * they will be pinning in memory for some indeterminate amount of
+> > > > > +	 * time.
+> > > > 
+> > > > Indeed, layout leases have nothing to do with pinning of memory.
+> > > 
+> > > Yep, Fair enough.  I'll rework the comment.
+> > > 
+> > > > That's something an application taht uses layout leases might do,
+> > > > but it largely irrelevant to the functionality layout leases
+> > > > provide. What needs to be done here is explain what the layout lease
+> > > > API actually guarantees w.r.t. the physical file layout, not what
+> > > > some application is going to do with a lease. e.g.
+> > > > 
+> > > > 	The layout lease F_RDLCK guarantees that the holder will be
+> > > > 	notified that the physical file layout is about to be
+> > > > 	changed, and that it needs to release any resources it has
+> > > > 	over the range of this lease, drop the lease and then
+> > > > 	request it again to wait for the kernel to finish whatever
+> > > > 	it is doing on that range.
+> > > > 
+> > > > 	The layout lease F_RDLCK also allows the holder to modify
+> > > > 	the physical layout of the file. If an operation from the
+> > > > 	lease holder occurs that would modify the layout, that lease
+> > > > 	holder does not get notification that a change will occur,
+> > > > 	but it will block until all other F_RDLCK leases have been
+> > > > 	released by their holders before going ahead.
+> > > > 
+> > > > 	If there is a F_WRLCK lease held on the file, then a F_RDLCK
+> > > > 	holder will fail any operation that may modify the physical
+> > > > 	layout of the file. F_WRLCK provides exclusive physical
+> > > > 	modification access to the holder, guaranteeing nothing else
+> > > > 	will change the layout of the file while it holds the lease.
+> > > > 
+> > > > 	The F_WRLCK holder can change the physical layout of the
+> > > > 	file if it so desires, this will block while F_RDLCK holders
+> > > > 	are notified and release their leases before the
+> > > > 	modification will take place.
+> > > > 
+> > > > We need to define the semantics we expose to userspace first.....
+> 
+> Absolutely.
+> 
+> > > 
+> > > Agreed.  I believe I have implemented the semantics you describe above.  Do I
+> > > have your permission to use your verbiage as part of reworking the comment and
+> > > commit message?
+> > 
+> > Of course. :)
+> > 
+> > Cheers,
+> > 
+> 
+> I'll review this in more detail soon, but subsequent postings of the set
+> should probably also go to linux-api mailing list. This is a significant
+> API change. It might not also hurt to get the glibc folks involved here
+> too since you'll probably want to add the constants to the headers there
+> as well.
 
-syzbot found the following crash on:
+Sure, but lets first get it to the point where we have something
+that is actually workable, much more complete and somewhat validated
+with unit tests before we start involving too many people. Wide
+review of prototype code isn't really a good use of resources given
+how much it's probably going to change from here...
 
-HEAD commit:    d0847550 usb-fuzzer: main usb gadget fuzzer driver
-git tree:       https://github.com/google/kasan.git usb-fuzzer
-console output: https://syzkaller.appspot.com/x/log.txt?x=16295d4a600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=dbc9c80cc095da19
-dashboard link: https://syzkaller.appspot.com/bug?extid=55b0304b360654a7537b
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1288a31c600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15282e86600000
+> Finally, consider going ahead and drafting a patch to the fcntl(2)
+> manpage if you think you have the API mostly nailed down. This API is a
+> little counterintuitive (i.e. you can change the layout with an F_RDLCK
+> lease), so it will need to be very clearly documented. I've also found
+> that when creating a new API, documenting it tends to help highlight its
+> warts and areas where the behavior is not clearly defined.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+55b0304b360654a7537b@syzkaller.appspotmail.com
+I find writing unit tests for xfstests to validate the new APIs work
+as intended finds far more problems with the API than writing the
+documentation. :)
 
-divide error: 0000 [#1] SMP KASAN
-CPU: 1 PID: 1761 Comm: syz-executor063 Not tainted 5.3.0-rc4+ #26
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:usbtmc_generic_read+0x135/0x1190 drivers/usb/class/usbtmc.c:816
-Code: 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2  
-0f 85 50 08 00 00 41 0f b7 6e 34 31 d2 31 ff 8b 44 24 28 <f7> f5 89 d6 41  
-89 d4 e8 2f 54 c9 fd 44 8b 6c 24 28 45 85 e4 44 89
-RSP: 0018:ffff8881d2b77a58 EFLAGS: 00010246
-RAX: 0000000000000002 RBX: 000000004f894bad RCX: ffffffff837487cd
-RDX: 0000000000000000 RSI: ffffffff837487da RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff8881d20a0000 R09: ffffed103a56ef90
-R10: ffffed103a56ef8f R11: 0000000000000003 R12: ffff8881d08e7180
-R13: 0000000020000000 R14: ffff8881d0404c80 R15: ffff8881d08e7180
-FS:  0000555555b74880(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cc090 CR3: 00000001d615e000 CR4: 00000000001406e0
-Call Trace:
-  usbtmc_ioctl_generic_read drivers/usb/class/usbtmc.c:1029 [inline]
-  usbtmc_ioctl+0x27d/0x2ab0 drivers/usb/class/usbtmc.c:2089
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:509 [inline]
-  do_vfs_ioctl+0xd2d/0x1330 fs/ioctl.c:696
-  ksys_ioctl+0x9b/0xc0 fs/ioctl.c:713
-  __do_sys_ioctl fs/ioctl.c:720 [inline]
-  __se_sys_ioctl fs/ioctl.c:718 [inline]
-  __x64_sys_ioctl+0x6f/0xb0 fs/ioctl.c:718
-  do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4419a9
-Code: e8 8c e8 ff ff 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb 08 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd0abd6738 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00000000004419a9
-RDX: 0000000020000000 RSI: 00000000c0145b0e RDI: 0000000000000004
-RBP: 000000000000a984 R08: 000000000000000f R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000402700
-R13: 0000000000402790 R14: 0000000000000000 R15: 0000000000000000
-Modules linked in:
----[ end trace a91d281a4d83213c ]---
-RIP: 0010:usbtmc_generic_read+0x135/0x1190 drivers/usb/class/usbtmc.c:816
-Code: 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 01 38 d0 7c 08 84 d2  
-0f 85 50 08 00 00 41 0f b7 6e 34 31 d2 31 ff 8b 44 24 28 <f7> f5 89 d6 41  
-89 d4 e8 2f 54 c9 fd 44 8b 6c 24 28 45 85 e4 44 89
-RSP: 0018:ffff8881d2b77a58 EFLAGS: 00010246
-RAX: 0000000000000002 RBX: 000000004f894bad RCX: ffffffff837487cd
-RDX: 0000000000000000 RSI: ffffffff837487da RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffff8881d20a0000 R09: ffffed103a56ef90
-R10: ffffed103a56ef8f R11: 0000000000000003 R12: ffff8881d08e7180
-R13: 0000000020000000 R14: ffff8881d0404c80 R15: ffff8881d08e7180
-FS:  0000555555b74880(0000) GS:ffff8881db300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00000000006cc090 CR3: 00000001d615e000 CR4: 00000000001406e0
+Cheers,
 
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
