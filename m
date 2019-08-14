@@ -2,37 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81DEB8D9C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D441D8D9C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730675AbfHNRME (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:12:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35608 "EHLO mail.kernel.org"
+        id S1730684AbfHNRMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:12:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35680 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730668AbfHNRMB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:12:01 -0400
+        id S1730671AbfHNRME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:12:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 619B42063F;
-        Wed, 14 Aug 2019 17:12:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE05F2173E;
+        Wed, 14 Aug 2019 17:12:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802720;
-        bh=H/J+QUGTpvkGNfplsZFmab6N54wgsHVUC46ruTanEMA=;
+        s=default; t=1565802723;
+        bh=j9MIz3asbyWyrjyFUN/nVZifFgfa9bkPDB77i1lNoIA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jPMoKfumwko11cMmX63DeNof5bAoHkc/C2NzPHJkzfJvyCf4zaGxlz4QDxDjdlxAV
-         hyESzJJ+Yk+9IdJYJPqP5Sf3GATDhq0sPmknW4Mh3g9B4q+/sNW37ViPHEt4Frf/Cp
-         vS3F3ZrT5zdBLr2RHIpe38PKgKiVtgYx4+0Z7Pas=
+        b=OWbYzhhcV6xWBJgfqlOPEp4ekGZ5SLFrF3bAH8yAYpNLk0K6+PIPqrNje8hUSnIs/
+         Dm6yHrT3CYQGXtNzpknp/NqeBngYyh1yI7CBgH80DbjnvXB2DqmglmhRF0rADX5y26
+         Tn2PpX1Tsv+ueWV8A9YqxWKzrw6wyCj+OSluXLCo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Zhangguanghui <zhang.guanghui@h3c.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 65/91] scsi: scsi_dh_alua: always use a 2 second delay before retrying RTPG
-Date:   Wed, 14 Aug 2019 19:01:28 +0200
-Message-Id: <20190814165752.371119116@linuxfoundation.org>
+Subject: [PATCH 4.19 66/91] test_firmware: fix a memory leak bug
+Date:   Wed, 14 Aug 2019 19:01:29 +0200
+Message-Id: <20190814165752.422980613@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -45,59 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 20122994e38aef0ae50555884d287adde6641c94 ]
+[ Upstream commit d4fddac5a51c378c5d3e68658816c37132611e1f ]
 
-Retrying immediately after we've received a 'transitioning' sense code is
-pretty much pointless, we should always use a delay before retrying.  So
-ensure the default delay is applied before retrying.
+In test_firmware_init(), the buffer pointed to by the global pointer
+'test_fw_config' is allocated through kzalloc(). Then, the buffer is
+initialized in __test_firmware_config_init(). In the case that the
+initialization fails, the following execution in test_firmware_init() needs
+to be terminated with an error code returned to indicate this failure.
+However, the allocated buffer is not freed on this execution path, leading
+to a memory leak bug.
 
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Tested-by: Zhangguanghui <zhang.guanghui@h3c.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+To fix the above issue, free the allocated buffer before returning from
+test_firmware_init().
+
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Link: https://lore.kernel.org/r/1563084696-6865-1-git-send-email-wang6495@umn.edu
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/device_handler/scsi_dh_alua.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ lib/test_firmware.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-index d1154baa9436a..9c21938ed67ed 100644
---- a/drivers/scsi/device_handler/scsi_dh_alua.c
-+++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-@@ -54,6 +54,7 @@
- #define ALUA_FAILOVER_TIMEOUT		60
- #define ALUA_FAILOVER_RETRIES		5
- #define ALUA_RTPG_DELAY_MSECS		5
-+#define ALUA_RTPG_RETRY_DELAY		2
+diff --git a/lib/test_firmware.c b/lib/test_firmware.c
+index fd48a15a0710c..a74b1aae74618 100644
+--- a/lib/test_firmware.c
++++ b/lib/test_firmware.c
+@@ -894,8 +894,11 @@ static int __init test_firmware_init(void)
+ 		return -ENOMEM;
  
- /* device handler flags */
- #define ALUA_OPTIMIZE_STPG		0x01
-@@ -696,7 +697,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
- 	case SCSI_ACCESS_STATE_TRANSITIONING:
- 		if (time_before(jiffies, pg->expiry)) {
- 			/* State transition, retry */
--			pg->interval = 2;
-+			pg->interval = ALUA_RTPG_RETRY_DELAY;
- 			err = SCSI_DH_RETRY;
- 		} else {
- 			struct alua_dh_data *h;
-@@ -821,6 +822,8 @@ static void alua_rtpg_work(struct work_struct *work)
- 				spin_lock_irqsave(&pg->lock, flags);
- 				pg->flags &= ~ALUA_PG_RUNNING;
- 				pg->flags |= ALUA_PG_RUN_RTPG;
-+				if (!pg->interval)
-+					pg->interval = ALUA_RTPG_RETRY_DELAY;
- 				spin_unlock_irqrestore(&pg->lock, flags);
- 				queue_delayed_work(kaluad_wq, &pg->rtpg_work,
- 						   pg->interval * HZ);
-@@ -832,6 +835,8 @@ static void alua_rtpg_work(struct work_struct *work)
- 		spin_lock_irqsave(&pg->lock, flags);
- 		if (err == SCSI_DH_RETRY || pg->flags & ALUA_PG_RUN_RTPG) {
- 			pg->flags &= ~ALUA_PG_RUNNING;
-+			if (!pg->interval && !(pg->flags & ALUA_PG_RUN_RTPG))
-+				pg->interval = ALUA_RTPG_RETRY_DELAY;
- 			pg->flags |= ALUA_PG_RUN_RTPG;
- 			spin_unlock_irqrestore(&pg->lock, flags);
- 			queue_delayed_work(kaluad_wq, &pg->rtpg_work,
+ 	rc = __test_firmware_config_init();
+-	if (rc)
++	if (rc) {
++		kfree(test_fw_config);
++		pr_err("could not init firmware test config: %d\n", rc);
+ 		return rc;
++	}
+ 
+ 	rc = misc_register(&test_fw_misc_device);
+ 	if (rc) {
 -- 
 2.20.1
 
