@@ -2,58 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D6948D4F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 79C328D50E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:39:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728310AbfHNNi4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:38:56 -0400
-Received: from 8bytes.org ([81.169.241.247]:49374 "EHLO theia.8bytes.org"
+        id S1728339AbfHNNjQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:39:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:54884 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728188AbfHNNis (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:38:48 -0400
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 47CBD55B; Wed, 14 Aug 2019 15:38:44 +0200 (CEST)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, linux-doc@vger.kernel.org,
-        linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, Thomas.Lendacky@amd.com,
-        Suravee.Suthikulpanit@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 10/10] Documentation: Update Documentation for iommu.passthrough
-Date:   Wed, 14 Aug 2019 15:38:41 +0200
-Message-Id: <20190814133841.7095-11-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190814133841.7095-1-joro@8bytes.org>
-References: <20190814133841.7095-1-joro@8bytes.org>
+        id S1728134AbfHNNjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:39:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 711A428;
+        Wed, 14 Aug 2019 06:39:14 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCA2B3F706;
+        Wed, 14 Aug 2019 06:39:12 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 14:39:10 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        akpm@linux-foundation.org, bp@suse.de, catalin.marinas@arm.com,
+        davem@davemloft.net, hch@lst.de, kan.liang@intel.com,
+        mingo@kernel.org, peterz@infradead.org, riel@surriel.com,
+        will@kernel.org
+Subject: Re: [PATCH 8/9] x86/fpu: correctly check for kthreads
+Message-ID: <20190814133910.GC51963@lakrids.cambridge.arm.com>
+References: <20190814104131.20190-1-mark.rutland@arm.com>
+ <20190814104131.20190-9-mark.rutland@arm.com>
+ <20190814130708.b4lu3d6enkga5p4h@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814130708.b4lu3d6enkga5p4h@linutronix.de>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Wed, Aug 14, 2019 at 03:07:08PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-08-14 11:41:30 [+0100], Mark Rutland wrote:
+> > Per commit:
+> > 
+> >   0cecca9d03c964ab ("x86/fpu: Eager switch PKRU state")
+> > 
+> > ... switch_fpu_state() is trying to distinguish user threads from
+> > kthreads, such that kthreads consistently use init_pkru_value. It does
+> > do by looking at current->mm.
+> > 
+> > In general, a non-NULL current->mm doesn't imply that current is a
+> > kthread, as kthreads can install an mm via use_mm(), and so it's
+> > preferable to use is_kthread() to determine whether a thread is a
+> > kthread.
+> 
+> I think this was missed in commit.
+> 	8d3289f2fa1e0 ("x86/fpu: Don't use current->mm to check for a kthread")
 
-This kernel parameter now takes also effect on X86.
+Yup, though if it's a bug it's been a bug since commit:
 
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- Documentation/admin-guide/kernel-parameters.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+  0cecca9d03c964ab ("x86/fpu: Eager switch PKRU state")
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 47d981a86e2f..2d5dfa46e88a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1811,7 +1811,7 @@
- 			  synchronously.
- 
- 	iommu.passthrough=
--			[ARM64] Configure DMA to bypass the IOMMU by default.
-+			[ARM64, X86] Configure DMA to bypass the IOMMU by default.
- 			Format: { "0" | "1" }
- 			0 - Use IOMMU translation for DMA.
- 			1 - Bypass the IOMMU for DMA.
--- 
-2.17.1
+... which I guess the fixes tag would have to mention.
 
+> 
+> A kthread with use_mm() would load here non-existing FPU state.
+> 
+> Acked-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Given the above, should I add the fixes tag (for 0cecca9d03c964ab)?
+
+Thanks,
+Mark.
