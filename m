@@ -2,53 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A4418D3E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:54:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AEAC38D3F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:55:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfHNMyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:54:35 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45425 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726263AbfHNMye (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:54:34 -0400
-Received: by mail-ed1-f66.google.com with SMTP id x19so103902668eda.12
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 05:54:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VhOtcUs6qecW9A5Ku6t6s7+WyBSfMvyZ0VSLJHIcnmU=;
-        b=TNdWJENz3Ot9nC8zCWp00REH4oLgmz7Gk74Qy9F9eE5ocrd8TjqHtz7L40wXk80yQu
-         djbnucK7bXcRrIEXThfNMFCpyNEdprpa4XZkezMS3VT9bVyduwa33Uw7JqGlfkSdoGBQ
-         b9efp0huXKpsppJUkQgnrRbnZ2OMhZQwweDsC3Kepi18dxPwBe8V0uWWS6QcDczPy1Cf
-         DnAnGny8vXE5HRPBlCqUAt1elCr69izML7J3EY7AFee+oMK3gKJTrHBdKSMd1NKwwz3x
-         8LQinFjOUozGcNUf7bTbCO1sN9HVYx2Qfa73KCAPm+ztj8wbfWSLoNFnEMbIbjXvGOqV
-         sHEA==
-X-Gm-Message-State: APjAAAWpHViFFVfoL/4q6l3lbu0XO2Go1daqqE5JCXwX7MpwWccthh7l
-        1eoJbdPG1YzH84wczzNuPgprcw==
-X-Google-Smtp-Source: APXvYqwHMa7CKohDcZxGXolr6aOboQawDOqzt7xdmk0Fs4g+/LFuohCkiGITZ0UNicDhSJh1b747Vw==
-X-Received: by 2002:a50:fb82:: with SMTP id e2mr2969241edq.15.1565787272521;
-        Wed, 14 Aug 2019 05:54:32 -0700 (PDT)
-Received: from shalem.localdomain (84-106-84-65.cable.dynamic.v4.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id ng6sm10794969ejb.13.2019.08.14.05.54.31
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 05:54:31 -0700 (PDT)
-Subject: Re: [PATCH] usb: xhci-pci: reorder removal to avoid use-after-free
-To:     "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-Cc:     "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>
-References: <1565782781938.37795@mentor.com>
-From:   Hans de Goede <hdegoede@redhat.com>
-Message-ID: <15aa45c7-6e45-d03f-9336-4291f8b2dc66@redhat.com>
-Date:   Wed, 14 Aug 2019 14:54:31 +0200
+        id S1727721AbfHNMz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:55:56 -0400
+Received: from mx2.suse.de ([195.135.220.15]:34976 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726551AbfHNMz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:55:56 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 82919AC64;
+        Wed, 14 Aug 2019 12:55:55 +0000 (UTC)
+Subject: Re: [RESEND PATCH 1/2 -mm] mm: account lazy free pages separately
+To:     Yang Shi <yang.shi@linux.alibaba.com>,
+        Michal Hocko <mhocko@kernel.org>
+Cc:     kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
+        rientjes@google.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+References: <1565308665-24747-1-git-send-email-yang.shi@linux.alibaba.com>
+ <20190809083216.GM18351@dhcp22.suse.cz>
+ <1a3c4185-c7ab-8d6f-8191-77dce02025a7@linux.alibaba.com>
+ <20190809180238.GS18351@dhcp22.suse.cz>
+ <79c90f6b-fcac-02e1-015a-0eaa4eafdf7d@linux.alibaba.com>
+ <fb1f4958-5147-2fab-531f-d234806c2f37@linux.alibaba.com>
+ <20190812093430.GD5117@dhcp22.suse.cz>
+ <297aefa2-ba64-cb91-d2c8-733054db01a3@linux.alibaba.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <9d2e63c4-ebb6-1f14-b8fb-b39f2f67d916@suse.cz>
+Date:   Wed, 14 Aug 2019 14:55:54 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1565782781938.37795@mentor.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <297aefa2-ba64-cb91-d2c8-733054db01a3@linux.alibaba.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,168 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 14-08-19 13:39, Schmid, Carsten wrote:
-> On driver removal, the platform_device_unregister call
-> attached through devm_add_action_or_reset was executed
-> after usb_hcd_pci_remove.
-> This lead to a use-after-free for the iomem resorce of
-> the xhci-ext-caps driver in the platform removal
-> because the parent of the resource was freed earlier.
+On 8/12/19 7:00 PM, Yang Shi wrote:
+>> I can see that memcg rss size was the primary problem David was looking
+>> at. But MemAvailable will not help with that, right? Moreover is
 > 
-> Fix this by reordering of the removal sequence.
+> Yes, but David actually would like to have memcg MemAvailable (the 
+> accounter like the global one), which should be counted like the global 
+> one and should account per memcg deferred split THP properly.
 > 
-> Signed-off-by: Carsten Schmid <carsten_schmid@mentor.com>
-
-Assuming this has been tested, overal this looks good to me.
-
-But there are 2 things to fix:
-
-1) Maybe pick a more descriptive struct member name then pdev.
-    pdev with pci-devices often points to a pci_device ...
-    How about: role_switch_pdev ?
-
-2) xhci_ext_cap_init() is not the last call which can fail in
-    xhci_pci_probe(), since you now no longer use devm_add_action_or_reset
-    for auto-cleanup, you must now manually cleanup by calling
-    xhci_ext_cap_remove() when later steps of xhci_pci_probe() fail.
-    it looks like you will need a new ext_cap_remove error-exit label
-    for this put above the put_usb3_hcd label and goto this new label
-    instead of to put_usb3_hcd in all error paths after a successful call
-    to xhci_ext_cap_init()
-
-Regards,
-
-Hans
-
-
-> ---
->   drivers/usb/host/xhci-ext-caps.c | 22 ++++++++++++----------
->   drivers/usb/host/xhci-pci.c      |  4 ++++
->   drivers/usb/host/xhci-pci.h      | 19 +++++++++++++++++++
->   drivers/usb/host/xhci.h          |  1 +
->   4 files changed, 36 insertions(+), 10 deletions(-)
->   create mode 100644 drivers/usb/host/xhci-pci.h
+>> accounting the full THP correct? What if subpages are still mapped?
 > 
-> diff --git a/drivers/usb/host/xhci-ext-caps.c b/drivers/usb/host/xhci-ext-caps.c
-> index 399113f9fc5c..d2ab1e2a39c0 100644
-> --- a/drivers/usb/host/xhci-ext-caps.c
-> +++ b/drivers/usb/host/xhci-ext-caps.c
-> @@ -7,21 +7,19 @@
->   
->   #include <linux/platform_device.h>
->   #include "xhci.h"
-> +#include "xhci-pci.h"
->   
->   #define USB_SW_DRV_NAME		"intel_xhci_usb_sw"
->   #define USB_SW_RESOURCE_SIZE	0x400
->   
-> -static void xhci_intel_unregister_pdev(void *arg)
-> -{
-> -	platform_device_unregister(arg);
-> -}
-> -
->   static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
->   {
->   	struct usb_hcd *hcd = xhci_to_hcd(xhci);
->   	struct device *dev = hcd->self.controller;
->   	struct platform_device *pdev;
->   	struct resource	res = { 0, };
-> +	struct xhci_pci_priv *priv = (struct xhci_pci_priv *)xhci->priv;
-> +
->   	int ret;
->   
->   	pdev = platform_device_alloc(USB_SW_DRV_NAME, PLATFORM_DEVID_NONE);
-> @@ -52,11 +50,7 @@ static int xhci_create_intel_xhci_sw_pdev(struct xhci_hcd *xhci, u32 cap_offset)
->   		return ret;
->   	}
->   
-> -	ret = devm_add_action_or_reset(dev, xhci_intel_unregister_pdev, pdev);
-> -	if (ret) {
-> -		dev_err(dev, "couldn't add unregister action for intel_xhci_usb_sw pdev\n");
-> -		return ret;
-> -	}
-> +	priv->pdev = pdev;
->   
->   	return 0;
->   }
-> @@ -88,3 +82,11 @@ int xhci_ext_cap_init(struct xhci_hcd *xhci)
->   	return 0;
->   }
->   EXPORT_SYMBOL_GPL(xhci_ext_cap_init);
-> +
-> +void xhci_ext_cap_remove(struct xhci_hcd *xhci)
-> +{
-> +	struct xhci_pci_priv *priv = (struct xhci_pci_priv *)xhci->priv;
-> +	if (priv->pdev)
-> +		platform_device_unregister(priv->pdev);
-> +}
-> +EXPORT_SYMBOL_GPL(xhci_ext_cap_remove);
-> diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-> index c2fe218e051f..a4d094df56f7 100644
-> --- a/drivers/usb/host/xhci-pci.c
-> +++ b/drivers/usb/host/xhci-pci.c
-> @@ -14,6 +14,7 @@
->   #include <linux/acpi.h>
->   
->   #include "xhci.h"
-> +#include "xhci-pci.h"
->   #include "xhci-trace.h"
->   
->   #define SSIC_PORT_NUM		2
-> @@ -62,6 +63,7 @@ static struct hc_driver __read_mostly xhci_pci_hc_driver;
->   static int xhci_pci_setup(struct usb_hcd *hcd);
->   
->   static const struct xhci_driver_overrides xhci_pci_overrides __initconst = {
-> +	.extra_priv_size = sizeof(struct xhci_pci_priv),
->   	.reset = xhci_pci_setup,
->   };
->   
-> @@ -393,6 +395,8 @@ static void xhci_pci_remove(struct pci_dev *dev)
->   		xhci->shared_hcd = NULL;
->   	}
->   
-> +	xhci_ext_cap_remove(xhci);
-> +
->   	/* Workaround for spurious wakeups at shutdown with HSW */
->   	if (xhci->quirks & XHCI_SPURIOUS_WAKEUP)
->   		pci_set_power_state(dev, PCI_D3hot);
-> diff --git a/drivers/usb/host/xhci-pci.h b/drivers/usb/host/xhci-pci.h
-> new file mode 100644
-> index 000000000000..ead9618d7368
-> --- /dev/null
-> +++ b/drivers/usb/host/xhci-pci.h
-> @@ -0,0 +1,19 @@
-> +/*
-> + * xhci-pci.h - xHCI extended capability handling platform Glue.
-> + *
-> + * Copyright (C) 2019 Mentor Graphics (Deutschland) GmbH
-> + * Derived from xhci-plat.h
-> + *
-> + * This program is free software; you can redistribute it and/or
-> + * modify it under the terms of the GNU General Public License
-> + * version 2 as published by the Free Software Foundation.
-> + */
-> +
-> +#ifndef _XHCI_PCI_H
-> +#define _XHCI_PCI_H
-> +
-> +struct xhci_pci_priv {
-> +	struct platform_device *pdev;
-> +};
-> +
-> +#endif	/* _XHCI_PCI_H */
-> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> index fabbce1c542a..847d2021fc2c 100644
-> --- a/drivers/usb/host/xhci.h
-> +++ b/drivers/usb/host/xhci.h
-> @@ -2052,6 +2052,7 @@ void xhci_init_driver(struct hc_driver *drv,
->   		      const struct xhci_driver_overrides *over);
->   int xhci_disable_slot(struct xhci_hcd *xhci, u32 slot_id);
->   int xhci_ext_cap_init(struct xhci_hcd *xhci);
-> +void xhci_ext_cap_remove(struct xhci_hcd *xhci);
->   
->   int xhci_suspend(struct xhci_hcd *xhci, bool do_wakeup);
->   int xhci_resume(struct xhci_hcd *xhci, bool hibernated);
+> "Deferred split" definitely doesn't mean they are free. When memory 
+> pressure is hit, they would be split, then the unmapped normal pages 
+> would be freed. So, when calculating MemAvailable, they are not 
+> accounted 100%, but like "available += lazyfree - min(lazyfree / 2, 
+> wmark_low)", just like how page cache is accounted.
 > 
+> We could get more accurate account, i.e. checking each sub page's 
+> mapcount when accounting, but it may change before shrinker start 
+> scanning. So, just use the ballpark estimation to trade off the 
+> complexity for accurate accounting.
+
+If we know the mapcounts in the moment the deferred split is initiated (I
+suppose there has to be a iteration over all subpages already?), we could get
+the exact number to adjust the counter with, and also store the number somewhere
+(e.g. a unused field in first/second tail page, I think we already do that for
+something). Then in the shrinker we just read that number to adjust the counter
+back. Then we can ignore the subpage mapping changes before shrinking happens,
+they shouldn't change the situation significantly, and importantly we we will be
+safe from counter imbalance thanks to the stored number.
