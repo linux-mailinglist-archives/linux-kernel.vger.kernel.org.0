@@ -2,244 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CBB48D6A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:52:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6318D69A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:52:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728197AbfHNOwt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 10:52:49 -0400
-Received: from smtp-fw-9102.amazon.com ([207.171.184.29]:16811 "EHLO
-        smtp-fw-9102.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726522AbfHNOws (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:52:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1565794367; x=1597330367;
-  h=subject:to:cc:references:from:message-id:date:
-   mime-version:in-reply-to:content-transfer-encoding;
-  bh=uU2vXqQn2xE4aIoP2zRUvSscT0xOogCLYBrPAGfZQmY=;
-  b=GNfzivQ8hsMQ/0KewWAcxUqhx1W0zN8XpMscln6RVrSo35S8w5JdlElz
-   24LmfGYibwMolx2RQs/o1yWskt8YwxQONcPopjOQUvjUrOD2jbh937RFx
-   E199Nwmz76HLPwlnrVc8mucgDvDrbHKn2zqq0AoSzWcgGVUK9EweScIi8
-   Y=;
-X-IronPort-AV: E=Sophos;i="5.64,385,1559520000"; 
-   d="scan'208";a="693828962"
-Received: from sea3-co-svc-lb6-vlan3.sea.amazon.com (HELO email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com) ([10.47.22.38])
-  by smtp-border-fw-out-9102.sea19.amazon.com with ESMTP; 14 Aug 2019 14:52:41 +0000
-Received: from EX13MTAUWC001.ant.amazon.com (iad55-ws-svc-p15-lb9-vlan2.iad.amazon.com [10.40.159.162])
-        by email-inbound-relay-1a-e34f1ddc.us-east-1.amazon.com (Postfix) with ESMTPS id 65391A21DD;
-        Wed, 14 Aug 2019 14:52:38 +0000 (UTC)
-Received: from EX13D20UWC001.ant.amazon.com (10.43.162.244) by
- EX13MTAUWC001.ant.amazon.com (10.43.162.135) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 14 Aug 2019 14:52:37 +0000
-Received: from 38f9d3867b82.ant.amazon.com (10.43.160.245) by
- EX13D20UWC001.ant.amazon.com (10.43.162.244) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Wed, 14 Aug 2019 14:52:34 +0000
-Subject: Re: [UNVERIFIED SENDER] Re: [PATCH 0/9] arm64: Stolen time support
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Steven Price <steven.price@arm.com>, <kvm@vger.kernel.org>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        <linux-doc@vger.kernel.org>, Russell King <linux@armlinux.org.uk>,
-        <linux-kernel@vger.kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Will Deacon <will@kernel.org>, <kvmarm@lists.cs.columbia.edu>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190802145017.42543-1-steven.price@arm.com>
- <20190803190522.5fec8f7d@why> <6789f477-8ab5-cc54-1ad2-8627917b07c9@arm.com>
- <8ca5c106-7c12-4c6e-6d81-a90f281a9894@amazon.com>
- <8636i3omnd.wl-maz@kernel.org>
-From:   Alexander Graf <graf@amazon.com>
-Message-ID: <bda4e0f7-e5f4-32af-e998-00b6240b5260@amazon.com>
-Date:   Wed, 14 Aug 2019 16:52:33 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1728066AbfHNOwJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 10:52:09 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33424 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbfHNOwJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 10:52:09 -0400
+Received: from zn.tnic (p200300EC2F0BD0000538F16F91702398.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:d000:538:f16f:9170:2398])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98A761EC0554;
+        Wed, 14 Aug 2019 16:52:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565794327;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=BskQ5DhIGKuIwHy1nktd9lNxwb4SfiRB6QlSE0m/dGg=;
+        b=LdIlYROee9QJn5dmedFuc/APWt+04NVXrE7HGkSFbSMJSzIy2kPkCLhPLZLkkyphnszX+u
+        hdWUayRHu3tgHxWSHq9TM24jG5/R7DHefUVi0zZGO6m5yvnv0JUwQHhlI0L2FcQz9ycjOm
+        H9DXhh7GCz+dVhCHzhqiLJ9oZWFclh0=
+Date:   Wed, 14 Aug 2019 16:52:52 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Robert Richter <rrichter@marvell.com>
+Cc:     James Morse <james.morse@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 07/24] EDAC: Kill EDAC_DIMM_OFF() macro
+Message-ID: <20190814145252.GA1841@zn.tnic>
+References: <20190624150758.6695-1-rrichter@marvell.com>
+ <20190624150758.6695-8-rrichter@marvell.com>
 MIME-Version: 1.0
-In-Reply-To: <8636i3omnd.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.43.160.245]
-X-ClientProxiedBy: EX13D18UWA002.ant.amazon.com (10.43.160.199) To
- EX13D20UWC001.ant.amazon.com (10.43.162.244)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190624150758.6695-8-rrichter@marvell.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 14.08.19 16:19, Marc Zyngier wrote:
-> On Wed, 14 Aug 2019 14:02:25 +0100,
-> Alexander Graf <graf@amazon.com> wrote:
->>
->>
->>
->> On 05.08.19 15:06, Steven Price wrote:
->>> On 03/08/2019 19:05, Marc Zyngier wrote:
->>>> On Fri,  2 Aug 2019 15:50:08 +0100
->>>> Steven Price <steven.price@arm.com> wrote:
->>>>
->>>> Hi Steven,
->>>>
->>>>> This series add support for paravirtualized time for arm64 guests and
->>>>> KVM hosts following the specification in Arm's document DEN 0057A:
->>>>>
->>>>> https://developer.arm.com/docs/den0057/a
->>>>>
->>>>> It implements support for stolen time, allowing the guest to
->>>>> identify time when it is forcibly not executing.
->>>>>
->>>>> It doesn't implement support for Live Physical Time (LPT) as there are
->>>>> some concerns about the overheads and approach in the above
->>>>> specification, and I expect an updated version of the specification to
->>>>> be released soon with just the stolen time parts.
->>>>
->>>> Thanks for posting this.
->>>>
->>>> My current concern with this series is around the fact that we allocate
->>>> memory from the kernel on behalf of the guest. It is the first example
->>>> of such thing in the ARM port, and I can't really say I'm fond of it.
->>>>
->>>> x86 seems to get away with it by having the memory allocated from
->>>> userspace, why I tend to like more. Yes, put_user is more
->>>> expensive than a straight store, but this isn't done too often either.
->>>>
->>>> What is the rational for your current approach?
->>>
->>> As I see it there are 3 approaches that can be taken here:
->>>
->>> 1. Hypervisor allocates memory and adds it to the virtual machine. This
->>> means that everything to do with the 'device' is encapsulated behind the
->>> KVM_CREATE_DEVICE / KVM_[GS]ET_DEVICE_ATTR ioctls. But since we want the
->>> stolen time structure to be fast it cannot be a trapping region and has
->>> to be backed by real memory - in this case allocated by the host kernel.
->>>
->>> 2. Host user space allocates memory. Similar to above, but this time
->>> user space needs to manage the memory region as well as the usual
->>> KVM_CREATE_DEVICE dance. I've no objection to this, but it means
->>> kvmtool/QEMU needs to be much more aware of what is going on (e.g. how
->>> to size the memory region).
->>
->> You ideally want to get the host overhead for a VM to as little as you
->> can. I'm not terribly fond of the idea of reserving a full page just
->> because we're too afraid of having the guest donate memory.
+On Mon, Jun 24, 2019 at 03:09:09PM +0000, Robert Richter wrote:
+> We do not need to calculate the offset in the mc's dimm array, let's
+> just store the index in struct dimm_info and we can get rid of this
+> macro.
 > 
-> Well, reduce the amount of memory you give to the guest by one page,
-> and allocate that page to the stolen time device. Problem solved!
-> 
-> Seriously, if you're worried about the allocation of a single page,
-> you should first look at how many holes we have in the vcpu structure,
-> for example (even better, with the 8.4 NV patches applied). Just
-> fixing that would give you that page back *per vcpu*.
+> Signed-off-by: Robert Richter <rrichter@marvell.com>
+> ---
+>  drivers/edac/edac_mc.c       | 13 ++++--------
+>  drivers/edac/edac_mc_sysfs.c | 20 ++++--------------
+>  include/linux/edac.h         | 41 ------------------------------------
+>  3 files changed, 8 insertions(+), 66 deletions(-)
 
-I'm worried about additional memory slots, about fragmenting the 
-cachable guest memory regions, about avoidable HV taxes.
+I like this cleanup a lot. Good!
 
-I think we need to distinguish here between the KVM implementation and 
-the hypervisor/guest interface. Just because in KVM we can save overhead 
-today doesn't mean that the HV interface should be built around the 
-assumption that "memory is free".
+> diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
+> index c959e8b1643c..c44bc83e8502 100644
+> --- a/drivers/edac/edac_mc.c
+> +++ b/drivers/edac/edac_mc.c
+> @@ -318,7 +318,7 @@ struct mem_ctl_info *edac_mc_alloc(unsigned mc_num,
+>  	unsigned size, tot_dimms = 1, count = 1;
+>  	unsigned tot_csrows = 1, tot_channels = 1, tot_errcount = 0;
+>  	void *pvt, *p, *ptr = NULL;
+> -	int i, j, row, chn, n, len, off;
+> +	int idx, i, j, row, chn, n, len;
+>  	bool per_rank = false;
+>  
+>  	BUG_ON(n_layers > EDAC_MAX_LAYERS || n_layers == 0);
+> @@ -426,20 +426,15 @@ struct mem_ctl_info *edac_mc_alloc(unsigned mc_num,
+>  	memset(&pos, 0, sizeof(pos));
+>  	row = 0;
+>  	chn = 0;
+> -	for (i = 0; i < tot_dimms; i++) {
+> +	for (idx = 0; idx < tot_dimms; idx++) {
+>  		chan = mci->csrows[row]->channels[chn];
+> -		off = EDAC_DIMM_OFF(layer, n_layers, pos[0], pos[1], pos[2]);
+> -		if (off < 0 || off >= tot_dimms) {
+> -			edac_mc_printk(mci, KERN_ERR, "EDAC core bug: EDAC_DIMM_OFF is trying to do an illegal data access\n");
+> -			goto error;
+> -		}
 
-> 
->>> 3. Guest kernel "donates" the memory to the hypervisor for the
->>> structure. As far as I'm aware this is what x86 does. The problems I see
->>> this approach are:
->>>
->>>    a) kexec becomes much more tricky - there needs to be a disabling
->>> mechanism for the guest to stop the hypervisor scribbling on memory
->>> before starting the new kernel.
->>
->> I wouldn't call "quiesce a device" much more tricky. We have to do
->> that for other devices as well today.
-> 
-> And since there is no standard way of doing it, we keep inventing
-> weird and wonderful ways of doing so -- cue the terrible GICv3 LPI
-> situation, and all the various hacks to keep existing IOMMU mappings
-> around across firmware/kernel handovers as well as kexec.
+Btw, right around here there's a comment:
 
-Well, the good news here is that we don't have to keep it around ;).
+        /*
+         * Allocate and fill the dimm structs
+         */
 
-> 
->>
->>>    b) If there is more than one entity that is interested in the
->>> information (e.g. firmware and kernel) then this requires some form of
->>> arbitration in the guest because the hypervisor doesn't want to have to
->>> track an arbitrary number of regions to update.
->>
->> Why would FW care?
-> 
-> Exactly. It doesn't care. Not caring means it doesn't know about the
-> page the guest has allocated for stolen time, and starts using it for
-> its own purposes. Hello, memory corruption. Same thing goes if you
-> reboot into a non stolen time aware kernel.
+and since you're cleaning up all this, can you please add another patch
+which takes all that code under the comment and see if you can carve it
+out into a separate helper edac_alloc_dimms() or so. Because that
+edac_mc_alloc() function is huuuge.
 
-If you reboot, you go via the vcpu reset path which clears the map, no? 
-Same goes for FW entry. If you enter firmware that does not set up the 
-map, you never see it.
+Btw, the code under
 
-> 
->>
->>>    c) Performance can suffer if the host kernel doesn't have a suitably
->>> aligned/sized area to use. As you say - put_user() is more expensive.
->>
->> Just define the interface to always require natural alignment when
->> donating a memory location?
->>
->>> The structure is updated on every return to the VM.
->>
->> If you really do suffer from put_user(), there are alternatives. You
->> could just map the page on the registration hcall and then leave it
->> pinned until the vcpu gets destroyed again.
-> 
-> put_user() should be cheap enough. It is one of the things we tend to
-> optimise anyway. And yes, worse case, we pin the page.
-> 
->>
->>> Of course x86 does prove the third approach can work, but I'm not sure
->>> which is actually better. Avoid the kexec cancellation requirements was
->>> the main driver of the current approach. Although many of the
->>
->> I really don't understand the problem with kexec cancellation. Worst
->> case, let guest FW set it up for you and propagate only the address
->> down via ACPI/DT. That way you can mark the respective memory as
->> reserved too.
-> 
-> We already went down that road with the LPI hack. I'm not going there
-> again if we can avoid it. And it turn out that we can. Just allocate
-> the stolen time page as a separate memblock, give it to KVM for that
-> purpose.
-> 
-> Your suggestion of letting the guest firmware set something up only
-> works if whatever you're booting after that understands it. If it
-> doesn't, you're screwed.
+        /*
+         * Alocate and fill the csrow/channels structs
+         */
 
-Why? For UEFI, mark the region as reserved in the memory map. For DT, 
-just mark it straight on reserved.
+begs to be a separate function too :-)
 
-That said, I'm not advocating for doing it in the FW. I think this can 
-be solved really easily with a simple guest driver to enable and a vcpu 
-reset hook to disable the map.
+Thx.
 
-> 
->> But even with a Linux only mechanism, just take a look at
->> arch/x86/kernel/kvmclock.c. All they do to remove the map is to hook
->> into machine_crash_shutdown() and machine_shutdown().
-> 
-> I'm not going to take something that is Linux specific. It has to work
-> for all guests, at all times, whether they know about the hypervisor
-> service or not.
+-- 
+Regards/Gruss,
+    Boris.
 
-If they don't know about the HV service, they don't register the writer, 
-so they don't see corruption.
-
-If they know about the HV service and they don't support kexec, they 
-don't have to worry because a vcpu reset should also clear the map.
-
-If they do support kexec, they already have a mechanism to quiesce devices.
-
-So I don't understand how this is Linux specific? The question was Linux 
-specific, so I answered with precedence to show that disabling on kexec 
-is not all that hard :).
-
-
-Alex
+Good mailing practices for 400: avoid top-posting and trim the reply.
