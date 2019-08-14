@@ -2,112 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C3978D566
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:51:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 430D98D568
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728037AbfHNNve (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:51:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfHNNve (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:51:34 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 843A02083B;
-        Wed, 14 Aug 2019 13:51:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565790693;
-        bh=5au+uySpHKMUgQfB6f0HCtqCGXnnNO/toEwWtCgwQRU=;
-        h=From:To:Cc:Subject:Date:From;
-        b=uiOtBSWig10yz+nCoVHu1if2OzdDV4ch9JMoPw/VNHRPt2QVN+cjR3yw23yu7Nk0k
-         n4D4OupfIZWb0Yr/4pEZsqvU/mCDaDVbjwPIlSZqiA+rJIroAd6hE5Cx9npR8da1BE
-         gpCVMkJlH1DrUn4oHZerUB2yp/Qg0rb4jJcPITqo=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
-        linux@armlinux.org.uk, frowand.list@gmail.com,
-        keescook@chromium.org, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com
-Subject: [PATCHv4] drivers/amba: add reset control to amba bus probe
-Date:   Wed, 14 Aug 2019 08:51:16 -0500
-Message-Id: <20190814135116.10123-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.20.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728128AbfHNNvr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:51:47 -0400
+Received: from coyote.holtmann.net ([212.227.132.17]:34836 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726263AbfHNNvr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:51:47 -0400
+Received: from marcel-macbook.fritz.box (p4FEFC580.dip0.t-ipconnect.de [79.239.197.128])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 6324ECED0B;
+        Wed, 14 Aug 2019 16:00:27 +0200 (CEST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.11\))
+Subject: Re: [PATCH v1] Bluetooth: hci_qca: Skip 1 error print in
+ device_want_to_sleep()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <1565768559-30755-1-git-send-email-rjliao@codeaurora.org>
+Date:   Wed, 14 Aug 2019 15:51:44 +0200
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <7F939460-BF90-4682-A100-3E9C4D668698@holtmann.org>
+References: <1565768559-30755-1-git-send-email-rjliao@codeaurora.org>
+To:     Rocky Liao <rjliao@codeaurora.org>
+X-Mailer: Apple Mail (2.3445.104.11)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The primecell controller on some SoCs, i.e. SoCFPGA, is held in reset by
-default. Until recently, the DMA controller was brought out of reset by the
-bootloader(i.e. U-Boot). But a recent change in U-Boot, the peripherals
-that are not used are held in reset and are left to Linux to bring them
-out of reset.
+Hi Rocky,
 
-Add a mechanism for getting the reset property and de-assert the primecell
-module from reset if found. This is a not a hard fail if the reset properti
-is not present in the device tree node, so the driver will continue to
-probe.
+> Don't fall through to print error message when receive sleep indication
+> in HCI_IBS_RX_ASLEEP state, this is allowed behavior.
+> 
+> Signed-off-by: Rocky Liao <rjliao@codeaurora.org>
+> ---
+> drivers/bluetooth/hci_qca.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Because there are different variants of the controller that may have
-multiple reset signals, the code will find all reset(s) specified and
-de-assert them.
+patch has been applied to bluetooth-stable tree.
 
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-v4: cleaned up indentation in loop
-    fix up a few checkpatch warnings
-    add Reviewed-by:
-v3: add a reset_control_put()
-    add error handling
-v2: move reset control to bus code
-    find all reset properties and de-assert them
----
- drivers/amba/bus.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+Regards
 
-diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
-index 100e798a5c82..76a1cd56a1ab 100644
---- a/drivers/amba/bus.c
-+++ b/drivers/amba/bus.c
-@@ -18,6 +18,7 @@
- #include <linux/limits.h>
- #include <linux/clk/clk-conf.h>
- #include <linux/platform_device.h>
-+#include <linux/reset.h>
- 
- #include <asm/irq.h>
- 
-@@ -401,6 +402,26 @@ static int amba_device_try_add(struct amba_device *dev, struct resource *parent)
- 	ret = amba_get_enable_pclk(dev);
- 	if (ret == 0) {
- 		u32 pid, cid;
-+		int count;
-+		struct reset_control *rstc;
-+
-+		/*
-+		 * Find reset control(s) of the amba bus and de-assert them.
-+		 */
-+		count = reset_control_get_count(&dev->dev);
-+		while (count > 0) {
-+			rstc = of_reset_control_get_shared_by_index(dev->dev.of_node, count - 1);
-+			if (IS_ERR(rstc)) {
-+				if (PTR_ERR(rstc) == -EPROBE_DEFER)
-+					ret = -EPROBE_DEFER;
-+				else
-+					dev_err(&dev->dev, "Can't get amba reset!\n");
-+				break;
-+			}
-+			reset_control_deassert(rstc);
-+			reset_control_put(rstc);
-+			count--;
-+		}
- 
- 		/*
- 		 * Read pid and cid based on size of resource
--- 
-2.20.0
+Marcel
 
