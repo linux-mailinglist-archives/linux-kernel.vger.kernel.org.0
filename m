@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9DD888C8F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:35:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7690F8C8FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728331AbfHNCNe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:13:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45552 "EHLO mail.kernel.org"
+        id S1728975AbfHNCfR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:35:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45664 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728300AbfHNCNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:13:31 -0400
+        id S1728362AbfHNCNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:13:39 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BEF6B20842;
-        Wed, 14 Aug 2019 02:13:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 436442084F;
+        Wed, 14 Aug 2019 02:13:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748810;
-        bh=6zB7ZAfRx6kO6WdFF2X4dn1BVug42pXpOBkfk/jE5/k=;
+        s=default; t=1565748819;
+        bh=tT82xRkihxHI2sedOcvsSUDg84D0mqteRBZHZJaYlo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TLKZL8PQ9wqQJR31tu7Zc5EF2OiiHF4ZXBj1m5WvsXdP5oFhWqqmTfCj2NQz272Er
-         4hK8bYgZnnmPiHS27VpEF+3c+r26eEEgn87ErXK7W6pxoJOoUJi1uTEZqfHpViX+0D
-         cWlM9RZlX74dxjf3xwZ4nR+qpQDtPuGaHCCzsVX4=
+        b=DSEp/C9L1JxgyuMmUwJu4ZsxitCE6y4h84BllAnFfTP6s/purZuozOTF8f0gVt1Vh
+         hzmGHl3D5IUAeAnRPhvBWmWDzmonX3OHpH4+yEooOkXUr7JKISTx1dJOqXwyIy2FJH
+         FDjwypHw/9sltl65QEYqEtTm0uYcCA23Q/ScMLOg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 075/123] can: sja1000: force the string buffer NULL-terminated
-Date:   Tue, 13 Aug 2019 22:09:59 -0400
-Message-Id: <20190814021047.14828-75-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>, Hulk Robot <hulkci@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 079/123] enetc: Select PHYLIB while CONFIG_FSL_ENETC_VF is set
+Date:   Tue, 13 Aug 2019 22:10:03 -0400
+Message-Id: <20190814021047.14828-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -44,38 +43,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit cd28aa2e056cd1ea79fc5f24eed0ce868c6cab5c ]
+[ Upstream commit 2802d2cf24b1ca7ea4c54dde266ded6a16020eb5 ]
 
-strncpy() does not ensure NULL-termination when the input string size
-equals to the destination buffer size IFNAMSIZ. The output string
-'name' is passed to dev_info which relies on NULL-termination.
+Like FSL_ENETC, when CONFIG_FSL_ENETC_VF is set,
+we should select PHYLIB, otherwise building still fails:
 
-Use strlcpy() instead.
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_open':
+enetc.c:(.text+0x2744): undefined reference to `phy_start'
+enetc.c:(.text+0x282c): undefined reference to `phy_disconnect'
+drivers/net/ethernet/freescale/enetc/enetc.o: In function `enetc_close':
+enetc.c:(.text+0x28f8): undefined reference to `phy_stop'
+enetc.c:(.text+0x2904): undefined reference to `phy_disconnect'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o:(.rodata+0x3f8): undefined reference to `phy_ethtool_get_link_ksettings'
+drivers/net/ethernet/freescale/enetc/enetc_ethtool.o:(.rodata+0x400): undefined reference to `phy_ethtool_set_link_ksettings'
 
-This issue is identified by a Coccinelle script.
-
-Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: d4fd0404c1c9 ("enetc: Introduce basic PF and VF ENETC ethernet drivers")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/sja1000/peak_pcmcia.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/enetc/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/can/sja1000/peak_pcmcia.c b/drivers/net/can/sja1000/peak_pcmcia.c
-index 185c7f7d38a4a..5e0d5e8101c86 100644
---- a/drivers/net/can/sja1000/peak_pcmcia.c
-+++ b/drivers/net/can/sja1000/peak_pcmcia.c
-@@ -479,7 +479,7 @@ static void pcan_free_channels(struct pcan_pccard *card)
- 		if (!netdev)
- 			continue;
- 
--		strncpy(name, netdev->name, IFNAMSIZ);
-+		strlcpy(name, netdev->name, IFNAMSIZ);
- 
- 		unregister_sja1000dev(netdev);
- 
+diff --git a/drivers/net/ethernet/freescale/enetc/Kconfig b/drivers/net/ethernet/freescale/enetc/Kconfig
+index 8ac109e73a7bb..a268e74b1834e 100644
+--- a/drivers/net/ethernet/freescale/enetc/Kconfig
++++ b/drivers/net/ethernet/freescale/enetc/Kconfig
+@@ -13,6 +13,7 @@ config FSL_ENETC
+ config FSL_ENETC_VF
+ 	tristate "ENETC VF driver"
+ 	depends on PCI && PCI_MSI && (ARCH_LAYERSCAPE || COMPILE_TEST)
++	select PHYLIB
+ 	help
+ 	  This driver supports NXP ENETC gigabit ethernet controller PCIe
+ 	  virtual function (VF) devices enabled by the ENETC PF driver.
 -- 
 2.20.1
 
