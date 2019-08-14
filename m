@@ -2,151 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 85E8B8DA4E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:17:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE328DBD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:28:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729548AbfHNRQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:16:52 -0400
-Received: from mga17.intel.com ([192.55.52.151]:45982 "EHLO mga17.intel.com"
+        id S1729014AbfHNR1u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:27:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfHNRQu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:16:50 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 10:16:50 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="181628377"
-Received: from jacob-builder.jf.intel.com (HELO jacob-builder) ([10.7.199.155])
-  by orsmga006.jf.intel.com with ESMTP; 14 Aug 2019 10:16:49 -0700
-Date:   Wed, 14 Aug 2019 10:20:32 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Lu Baolu <baolu.lu@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Yi Liu <yi.l.liu@intel.com>,
-        "Tian, Kevin" <kevin.tian@intel.com>,
-        Raj Ashok <ashok.raj@intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andriy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jacob.jun.pan@linux.intel.com
-Subject: Re: [PATCH v4 20/22] iommu/vt-d: Add bind guest PASID support
-Message-ID: <20190814102032.5265e1da@jacob-builder>
-In-Reply-To: <840a6943-87ab-938f-5f8d-3a2c21e08549@linux.intel.com>
-References: <1560087862-57608-1-git-send-email-jacob.jun.pan@linux.intel.com>
-        <1560087862-57608-21-git-send-email-jacob.jun.pan@linux.intel.com>
-        <f183139b-b5a8-f6b5-58e6-f93e01f7be6a@linux.intel.com>
-        <20190627132244.351c7426@jacob-builder>
-        <840a6943-87ab-938f-5f8d-3a2c21e08549@linux.intel.com>
-Organization: OTC
-X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+        id S1728864AbfHNRDM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:03:12 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A9582084D;
+        Wed, 14 Aug 2019 17:03:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565802191;
+        bh=kkUe3JrHtt33qgnokR/O4h/ujXrDTTyDNjLo5bGc2XQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VHDxhv+gaTJWeD0fdHAO4t2e4F7N5nFEdZZpcLhsgIz+P6SqcfVwPjINh4RcY187s
+         4+jv7oZE7fc2uYqQf2HssUbBAG4MoDuqH4DP7cSokLJilSdSbYzUL8BAFFVdJidhiO
+         94bR62hZoj4OWTFVrX7BaAWGoUa2/BzTui/o56wE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 5.2 005/144] iio: adc: gyroadc: fix uninitialized return code
+Date:   Wed, 14 Aug 2019 18:59:21 +0200
+Message-Id: <20190814165759.707144215@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 5 Jul 2019 10:21:27 +0800
-Lu Baolu <baolu.lu@linux.intel.com> wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> Hi Jacob,
-> 
-> On 6/28/19 4:22 AM, Jacob Pan wrote:
-> >>> +		}
-> >>> +		refcount_set(&svm->refs, 0);
-> >>> +		ioasid_set_data(data->hpasid, svm);
-> >>> +		INIT_LIST_HEAD_RCU(&svm->devs);
-> >>> +		INIT_LIST_HEAD(&svm->list);
-> >>> +
-> >>> +		mmput(svm->mm);
-> >>> +	}
-> >>> +	sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
-> >>> +	if (!sdev) {
-> >>> +		ret = -ENOMEM;
-> >>> +		goto out;  
-> >> I think you need to clean up svm if its device list is empty here,
-> >> as you said above:
-> >>  
-> > No, we come here only if the device list is not empty and the new
-> > device to bind is different than any existing device in the list.
-> > If we cannot allocate memory for the new device, should not free
-> > the existing SVM, right?
-> >   
-> 
-> I'm sorry, but the code doesn't show this. We come here even an svm
-> data structure was newly created with an empty device list. I post
-> the code below to ensure that we are reading a same piece of code.
-> 
-Sorry for the delay. You are right, I need to clean up svm if device
-list is empty.
+commit 90c6260c1905a68fb596844087f2223bd4657fee upstream.
 
-Thanks!
->          mutex_lock(&pasid_mutex);
->          svm = ioasid_find(NULL, data->hpasid, NULL);
->          if (IS_ERR(svm)) {
->                  ret = PTR_ERR(svm);
->                  goto out;
->          }
->          if (svm) {
->                  /*
->                   * If we found svm for the PASID, there must be at
->                   * least one device bond, otherwise svm should be
-> freed. */
->                  BUG_ON(list_empty(&svm->devs));
-> 
->                  for_each_svm_dev() {
->                          /* In case of multiple sub-devices of the
-> same pdev assigned, we should
->                           * allow multiple bind calls with the same 
-> PASID and pdev.
->                           */
->                          sdev->users++;
->                          goto out;
->                  }
->          } else {
->                  /* We come here when PASID has never been bond to a 
-> device. */
->                  svm = kzalloc(sizeof(*svm), GFP_KERNEL);
->                  if (!svm) {
->                          ret = -ENOMEM;
->                          goto out;
->                  }
->                  /* REVISIT: upper layer/VFIO can track host process 
-> that bind the PASID.
->                   * ioasid_set = mm might be sufficient for vfio to 
-> check pasid VMM
->                   * ownership.
->                   */
->                  svm->mm = get_task_mm(current);
->                  svm->pasid = data->hpasid;
->                  if (data->flags & IOMMU_SVA_GPASID_VAL) {
->                          svm->gpasid = data->gpasid;
->                          svm->flags &= SVM_FLAG_GUEST_PASID;
->                  }
->                  refcount_set(&svm->refs, 0);
->                  ioasid_set_data(data->hpasid, svm);
->                  INIT_LIST_HEAD_RCU(&svm->devs);
->                  INIT_LIST_HEAD(&svm->list);
-> 
->                  mmput(svm->mm);
->          }
->          sdev = kzalloc(sizeof(*sdev), GFP_KERNEL);
->          if (!sdev) {
->                  ret = -ENOMEM;
->                  goto out;
->          }
->          sdev->dev = dev;
->          sdev->users = 1;
-> 
-> Best regards,
-> Baolu
+gcc-9 complains about a blatant uninitialized variable use that
+all earlier compiler versions missed:
 
-[Jacob Pan]
+drivers/iio/adc/rcar-gyroadc.c:510:5: warning: 'ret' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+Return -EINVAL instead here and a few lines above it where
+we accidentally return 0 on failure.
+
+Cc: stable@vger.kernel.org
+Fixes: 059c53b32329 ("iio: adc: Add Renesas GyroADC driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/iio/adc/rcar-gyroadc.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/drivers/iio/adc/rcar-gyroadc.c
++++ b/drivers/iio/adc/rcar-gyroadc.c
+@@ -382,7 +382,7 @@ static int rcar_gyroadc_parse_subdevs(st
+ 				dev_err(dev,
+ 					"Only %i channels supported with %pOFn, but reg = <%i>.\n",
+ 					num_channels, child, reg);
+-				return ret;
++				return -EINVAL;
+ 			}
+ 		}
+ 
+@@ -391,7 +391,7 @@ static int rcar_gyroadc_parse_subdevs(st
+ 			dev_err(dev,
+ 				"Channel %i uses different ADC mode than the rest.\n",
+ 				reg);
+-			return ret;
++			return -EINVAL;
+ 		}
+ 
+ 		/* Channel is valid, grab the regulator. */
+
+
