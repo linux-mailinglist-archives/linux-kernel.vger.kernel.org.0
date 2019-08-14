@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B49D48DAA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3AC98D9C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfHNRTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:19:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
+        id S1730650AbfHNRL5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:11:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730635AbfHNRLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:11:54 -0400
+        id S1730648AbfHNRL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:11:56 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A08622063F;
-        Wed, 14 Aug 2019 17:11:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 408F12173B;
+        Wed, 14 Aug 2019 17:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802713;
-        bh=LKkqE582/S6sATCM3lFIxeJcT/BwhZU8XuQuYvGVD4w=;
+        s=default; t=1565802715;
+        bh=BdE+cBTP0oWpSam2vBk6L+Z5ww9Qpan2cXxQwsOx9Rc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lIG2V2QMifbgg7ln2rJ/L9sHm91xbl/grrjcJg9a0NGiyL3gXndHPazEpPu50yjUT
-         71oXDfwr252ifd8hel1Vl/kSzTFmLTUKr/7+X3MgaB23Ucz353b1M1p4Nqs9lXfE+9
-         kr+RtiOUy2oS9gbsnkxjv7FDjOfYXrDU7Qj0D9zA=
+        b=xDNqTyi7xR46clp63F4dcP5uuJzVQlFdET1ZCY8HO+KDiTyNJz3BFtmcYxE0jfK0b
+         Em9XUTlRuA6wLP/omL5QKN/vy6bP9BCfigopLM61r7O94X8HkBDcEZ4lnDpXLL9sd3
+         yVShUJ1gIwlaP8Fxg/cElIR/ZQE327+fmGoUvJjg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
         Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
         Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 88/91] iwlwifi: dont unmap as page memory that was mapped as single
-Date:   Wed, 14 Aug 2019 19:01:51 +0200
-Message-Id: <20190814165753.938454228@linuxfoundation.org>
+Subject: [PATCH 4.19 89/91] iwlwifi: mvm: fix an out-of-bound access
+Date:   Wed, 14 Aug 2019 19:01:52 +0200
+Message-Id: <20190814165753.986012528@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -46,35 +46,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 87e7e25aee6b59fef740856f4e86d4b60496c9e1 upstream.
+commit ba3224db78034435e9ff0247277cce7c7bb1756c upstream.
 
-In order to remember how to unmap a memory (as single or
-as page), we maintain a bit per Transmit Buffer (TBs) in
-the meta data (structure iwl_cmd_meta).
-We maintain a bitmap: 1 bit per TB.
-If the TB is set, we will free the memory as a page.
-This bitmap was never cleared. Fix this.
+The index for the elements of the ACPI object we dereference
+was static. This means that if we called the function twice
+we wouldn't start from 3 again, but rather from the latest
+index we reached in the previous call.
+This was dutifully reported by KASAN.
+
+Fix this.
 
 Cc: stable@vger.kernel.org
-Fixes: 3cd1980b0cdf ("iwlwifi: pcie: introduce new tfd and tb formats")
+Fixes: 6996490501ed ("iwlwifi: mvm: add support for EWRD (Dynamic SAR) ACPI table")
 Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/wireless/intel/iwlwifi/mvm/fw.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-@@ -403,6 +403,8 @@ static void iwl_pcie_tfd_unmap(struct iw
- 					 DMA_TO_DEVICE);
- 	}
+--- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
++++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
+@@ -724,7 +724,7 @@ static int iwl_mvm_sar_get_ewrd_table(st
  
-+	meta->tbs = 0;
-+
- 	if (trans->cfg->use_tfh) {
- 		struct iwl_tfh_tfd *tfd_fh = (void *)tfd;
+ 	for (i = 0; i < n_profiles; i++) {
+ 		/* the tables start at element 3 */
+-		static int pos = 3;
++		int pos = 3;
  
+ 		/* The EWRD profiles officially go from 2 to 4, but we
+ 		 * save them in sar_profiles[1-3] (because we don't
 
 
