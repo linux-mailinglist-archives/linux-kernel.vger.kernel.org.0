@@ -2,38 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFDE08DB42
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 253CB8DB5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729807AbfHNRHK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56508 "EHLO mail.kernel.org"
+        id S1728825AbfHNRYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:24:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729792AbfHNRHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:07 -0400
+        id S1729632AbfHNRGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:06:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AA8A21721;
-        Wed, 14 Aug 2019 17:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 096D02173E;
+        Wed, 14 Aug 2019 17:06:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802426;
-        bh=VtbA8zZWqby0Q8Drx6N71oFgtMUHUf+gQidEJvzWYpE=;
+        s=default; t=1565802383;
+        bh=VbIlRLilcZWNuGLQqEc87Kig/mLATMw2y+2OF9XSvXk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Lnp9yVpXPh5Cme8FyTmYMW8iprfxEZnpk+NcOKdraPHnrDynq2QL43vXrf5h6NSaH
-         2VPEjrDrUiAbM4Ol4F8ixBKIiZD7C9pIe79jAWEoKLAumkZyamvRjGimpzewmNW3Ow
-         17C8sTSU3rCPvz3gtDm/rwkPui7cXOMgqujJMRGo=
+        b=xg7AIKodBO8KuSZZiqpXITZuJlaFMiWl4ZGOgup0VT20Gj6Mwl3Ix3d35ztqAgPdA
+         JCNCzMJtE6INEvkN4O1vRhclY+aEk0RM5kT2mLj0y39DG9yhBjM92bEQ2MjYMhBymn
+         egjUWios56/c6E5rZIs7nOcxfumiyNpka8G7nwEw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>,
-        Joerg Roedel <joro@8bytes.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        iommu@lists.linux-foundation.org, Dmitry Safonov <dima@arista.com>,
-        Joerg Roedel <jroedel@suse.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 085/144] iommu/vt-d: Check if domain->pgd was allocated
-Date:   Wed, 14 Aug 2019 19:00:41 +0200
-Message-Id: <20190814165803.429413517@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Sean Paul <seanpaul@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 087/144] drm: silence variable conn set but not used
+Date:   Wed, 14 Aug 2019 19:00:43 +0200
+Message-Id: <20190814165803.518461885@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -46,55 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3ee9eca760e7d0b68c55813243de66bbb499dc3b ]
+[ Upstream commit bbb6fc43f131f77fcb7ae8081f6d7c51396a2120 ]
 
-There is a couple of places where on domain_init() failure domain_exit()
-is called. While currently domain_init() can fail only if
-alloc_pgtable_page() has failed.
+The "struct drm_connector" iteration cursor from
+"for_each_new_connector_in_state" is never used in atomic_remove_fb()
+which generates a compilation warning,
 
-Make domain_exit() check if domain->pgd present, before calling
-domain_unmap(), as it theoretically should crash on clearing pte entries
-in dma_pte_clear_level().
+drivers/gpu/drm/drm_framebuffer.c: In function 'atomic_remove_fb':
+drivers/gpu/drm/drm_framebuffer.c:838:24: warning: variable 'conn' set
+but not used [-Wunused-but-set-variable]
 
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux-foundation.org
-Signed-off-by: Dmitry Safonov <dima@arista.com>
-Reviewed-by: Lu Baolu <baolu.lu@linux.intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Silence it by marking "conn" __maybe_unused.
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Link: https://patchwork.freedesktop.org/patch/msgid/1563822886-13570-1-git-send-email-cai@lca.pw
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/intel-iommu.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/drm_framebuffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-index 2101601adf57d..1ad24367373f4 100644
---- a/drivers/iommu/intel-iommu.c
-+++ b/drivers/iommu/intel-iommu.c
-@@ -1900,7 +1900,6 @@ static int domain_init(struct dmar_domain *domain, struct intel_iommu *iommu,
- 
- static void domain_exit(struct dmar_domain *domain)
- {
--	struct page *freelist;
- 
- 	/* Remove associated devices and clear attached or cached domains */
- 	rcu_read_lock();
-@@ -1910,9 +1909,12 @@ static void domain_exit(struct dmar_domain *domain)
- 	/* destroy iovas */
- 	put_iova_domain(&domain->iovad);
- 
--	freelist = domain_unmap(domain, 0, DOMAIN_MAX_PFN(domain->gaw));
-+	if (domain->pgd) {
-+		struct page *freelist;
- 
--	dma_free_pagelist(freelist);
-+		freelist = domain_unmap(domain, 0, DOMAIN_MAX_PFN(domain->gaw));
-+		dma_free_pagelist(freelist);
-+	}
- 
- 	free_domain_mem(domain);
- }
+diff --git a/drivers/gpu/drm/drm_framebuffer.c b/drivers/gpu/drm/drm_framebuffer.c
+index d8d75e25f6fb8..45f6f11a88a74 100644
+--- a/drivers/gpu/drm/drm_framebuffer.c
++++ b/drivers/gpu/drm/drm_framebuffer.c
+@@ -830,7 +830,7 @@ static int atomic_remove_fb(struct drm_framebuffer *fb)
+ 	struct drm_device *dev = fb->dev;
+ 	struct drm_atomic_state *state;
+ 	struct drm_plane *plane;
+-	struct drm_connector *conn;
++	struct drm_connector *conn __maybe_unused;
+ 	struct drm_connector_state *conn_state;
+ 	int i, ret;
+ 	unsigned plane_mask;
 -- 
 2.20.1
 
