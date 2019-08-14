@@ -2,105 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDD138D510
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:39:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03778D51E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:40:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728350AbfHNNjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:39:19 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33099 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726821AbfHNNjP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:39:15 -0400
-Received: by mail-pf1-f196.google.com with SMTP id g2so53603739pfq.0;
-        Wed, 14 Aug 2019 06:39:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=pEriqsQ7CQvEEvoCUgLilgpVMRHXmKM4NZ9ssbqI1u8=;
-        b=iBwFtKvZ9Q7SNkpgJ55uaD8NoFW3yFTFslHTK7AC5RzcwI/2HQh/2HUnK7lN0X4Gp1
-         I/fZ6a5699/WPbci9Yvf5/XDJu0eKE3A279hAovvbsfrRzXCDmqPSLt1iikVfehqSmxA
-         F6APPLlwkqj731BP1W08E/b8aa92nOl8xsT/OlBKcuAojZhvxtpyzs7RsG3aRm2joXnc
-         bUOVazG0hF7MQYW7zuQVadNGixMzjUYmhPcR/IvO7xprlLGEviJzCBU0sHBcrO5GwlhQ
-         VLRIDqeKl2OcDXRY27iIKJNRW7vWTgLaqnPUT63TkYDlpXxN3lf3xP9BRAcNiiMPo00J
-         TXPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=pEriqsQ7CQvEEvoCUgLilgpVMRHXmKM4NZ9ssbqI1u8=;
-        b=bsSBrJXGCeU02vC/F5JJWIqluzKzcRnz5qUVUqM7hU+I3W0pln2HfvHED7tjF3X4pq
-         C29fiFwRbcOP0QGIThERsxNXzY5YeJf/WJxymywTRGjC9pe6HnLah0pQqslMnWrYENo0
-         H5b+fe0J0FAVvBCPtqxUoB8BaeYaG+xEDJndstOq2s0UY6plF+1Zchv7PYXOfMrrh7sL
-         Jwd6P9+ZZ53FqyFZE2VlmUjHsGMv0eDJLU22ZYmB5mxkpFeiJzuupbKQreC0UBmh6Qlm
-         3M83FPOJYC0M34P/FZCt7w+gTOXfCa51iBLShNTJE2wS1QxLtTn0S8TYx0TPd2RRhikU
-         dyEA==
-X-Gm-Message-State: APjAAAW5qH/rC10jJBipecj9UN9aElmpCZ7S+OLGbm479EzQ1HXxjoUg
-        QSE++6m7+RwnGioUjA6qJg4=
-X-Google-Smtp-Source: APXvYqwd4cYb6Hn+fTUOTqBOuQ3rOnxuBdLj5GdN/aMaxEctRsLNddhbrvjtpfPjobi5nALjn1Jecw==
-X-Received: by 2002:a17:90a:d792:: with SMTP id z18mr7252334pju.36.1565789954050;
-        Wed, 14 Aug 2019 06:39:14 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id f20sm144273462pgg.56.2019.08.14.06.39.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 06:39:13 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 06:39:12 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stefan Wahren <wahrenst@gmx.net>
-Cc:     Jean Delvare <jdelvare@suse.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-hwmon@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH 2/3] hwmon: raspberrypi: update MODULE_AUTHOR() email
- address
-Message-ID: <20190814133912.GA3222@roeck-us.net>
-References: <1565720249-6549-1-git-send-email-wahrenst@gmx.net>
- <1565720249-6549-2-git-send-email-wahrenst@gmx.net>
+        id S1727937AbfHNNkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:40:11 -0400
+Received: from muru.com ([72.249.23.125]:57752 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726722AbfHNNkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:40:10 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D37C680C8;
+        Wed, 14 Aug 2019 13:40:36 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 06:40:06 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 14/22] ARM: omap1: use pci_ioremap_io() for omap_cf
+Message-ID: <20190814134006.GE52127@atomide.com>
+References: <20190808212234.2213262-1-arnd@arndb.de>
+ <20190808212234.2213262-15-arnd@arndb.de>
+ <20190813103605.GL52127@atomide.com>
+ <CAK8P3a0E+QUn9wcP5Obv-FitWyXCFwcp+oPConeO2p-NV1rqsw@mail.gmail.com>
+ <20190813181158.GA26798@darkstar.musicnaut.iki.fi>
+ <CAK8P3a0LjKrc+7c5Ht9OL7LfYyLnG9=y7u+w24ujA1xAid_yCQ@mail.gmail.com>
+ <20190814074918.GA52127@atomide.com>
+ <CAK8P3a3k_HOGqzMGjtc+7NSaK0Bsa_vxxRFLzY8aP6ev4wa9iA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565720249-6549-2-git-send-email-wahrenst@gmx.net>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <CAK8P3a3k_HOGqzMGjtc+7NSaK0Bsa_vxxRFLzY8aP6ev4wa9iA@mail.gmail.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:17:28PM +0200, Stefan Wahren wrote:
-> The email address listed in MODULE_AUTHOR() will be disabled in the
-> near future. Replace it with my private one.
+* Arnd Bergmann <arnd@arndb.de> [190814 10:37]:
+> On Wed, Aug 14, 2019 at 9:49 AM Tony Lindgren <tony@atomide.com> wrote:
+> > * Arnd Bergmann <arnd@arndb.de> [190813 19:34]:
+> > > On Tue, Aug 13, 2019 at 8:12 PM Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
+> > > diff --git a/arch/arm/mach-omap1/hardware.h b/arch/arm/mach-omap1/hardware.h
+> > > index 232b8deef907..9fc76a3c9e57 100644
+> > > --- a/arch/arm/mach-omap1/hardware.h
+> > > +++ b/arch/arm/mach-omap1/hardware.h
+> > > @@ -61,7 +61,7 @@ static inline u32 omap_cs3_phys(void)
+> > >
+> > >  #endif /* ifndef __ASSEMBLER__ */
+> > >
+> > > -#define OMAP1_IO_OFFSET                0x01000000      /* Virtual IO
+> > > = 0xfefb0000 */
+> > > +#define OMAP1_IO_OFFSET                0x00fb0000      /* Virtual IO
+> > > = 0xff000000 */
+> > >  #define OMAP1_IO_ADDRESS(pa)   IOMEM((pa) - OMAP1_IO_OFFSET)
+> > >
+> > >  #include "serial.h"
+> >
+> > Oh OK yeah sounds like that's the issue.
+> >
+> > > There may be additional locations that hardcode the virtual address.
+> >
+> > Those should be in mach-omap1/io.c, and I recall innovator had some
+> > hardcoded fpga address that should also be checked.
 > 
-> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> I see four boards with hardcoded I/O addresses, but they are all below
+> the PCI I/O virtual address range, and are not affected by that change.
+> 
+> For the innovator FPGA access, this was ok, it uses the correct address
+> in the OMAP1_IO_OFFSET range.
 
-Applied to hwmon-next.
+OK thanks for checking. I tried to apply your virtual address patch to
+test boot it, but could not get it to apply. What tree is it against?
 
-Thanks,
-Guenter
+Regards,
 
-> ---
->  drivers/hwmon/raspberrypi-hwmon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> --
-> 2.7.4
-> 
-> diff --git a/drivers/hwmon/raspberrypi-hwmon.c b/drivers/hwmon/raspberrypi-hwmon.c
-> index efe4bb1..d3a64a3 100644
-> --- a/drivers/hwmon/raspberrypi-hwmon.c
-> +++ b/drivers/hwmon/raspberrypi-hwmon.c
-> @@ -146,7 +146,7 @@ static struct platform_driver rpi_hwmon_driver = {
->  };
->  module_platform_driver(rpi_hwmon_driver);
-> 
-> -MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
-> +MODULE_AUTHOR("Stefan Wahren <wahrenst@gmx.net>");
->  MODULE_DESCRIPTION("Raspberry Pi voltage sensor driver");
->  MODULE_LICENSE("GPL v2");
->  MODULE_ALIAS("platform:raspberrypi-hwmon");
+Tony
