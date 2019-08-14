@@ -2,73 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E6EE8E063
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:12:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA388E086
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:14:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729833AbfHNWMt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 18:12:49 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37183 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728378AbfHNWMq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:12:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so299702pgp.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 15:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pn4+TVeFCCrcFG61M/ievKm/DZAmwLymLPS9PLFRAC0=;
-        b=EXLXiKcwPDfZkDU3XkB5qIFQTQ25u5KzxI/NkZKQr00Ib8AkKTPEA+PjN59Qxb86VH
-         0TwkGx7bpIp1HSMsDsleheBWi4srrti35kr4xdaaliQyM7PeVM41oYPfQkulEeDt6UfC
-         pyno9YE+Tr81So6uEXPqtEDHIU/I8nu/GT4OqIxvh/15nIqtReIlOcbSGPyPiMU9vqwL
-         RPrjVJcDJ2nxBzrfDuNilPNgD0YkPJliWFfzs7WIuWpNW2uVvFrfgl118craXTgwpKB9
-         ikgRK4uvBlN7WngDbX6fGxNtjOU2SeFjd1dd/NXZzqqtn4DKX3+4o63yHvHNkt1mgBn2
-         vG+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pn4+TVeFCCrcFG61M/ievKm/DZAmwLymLPS9PLFRAC0=;
-        b=o9sNFia69bbwprC+Z3chBye+8tktQ9PTrSN1G25sGbPrC47jmHLGBlJe2f+BjRWW+W
-         oYnZp0sj13Sm5cS6PmO70j5q+mp8uCd4uL1Ltz1V4okocCll3H9k6QHSw4sdsgiupi6l
-         IlNXe1/zXmlmelQE/SNKxc0iwyP0JUwMlq6vLENEeKD3dB5dtZY1DN3utIEgAru14cLm
-         WfisPP6F1dsLC/3ktK9UEyJrAvAla0CeIVVZsb2LoVLzv02cF3Pf17K1zaPBAmovlvQA
-         xmX9MBubkApEmG/gvRJo0NRaYJLf1N7avaUozhHkXX9iI5lFzjVaa7U5YVI1iaWlDrfc
-         1d4g==
-X-Gm-Message-State: APjAAAVCIGJ9My33fz1aWok+c5G7v8iezOXqCtWlbFcdi/Ez5MqilnS6
-        XqAi3tQ1zVf9eCDlz28NAefRWHB8r5kNDXsk7qRKFXJXMZg=
-X-Google-Smtp-Source: APXvYqw9g0Ol6/us+Q/GSJVfgGX9NA6KnY0Keszi05hjY2TDTg9/n6bBjGRTuD0ehbKefyqYBvdltfVoI7u4VRb0bnE=
-X-Received: by 2002:a62:cec4:: with SMTP id y187mr2208756pfg.84.1565820765370;
- Wed, 14 Aug 2019 15:12:45 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190613184923.245935-1-nhuck@google.com> <27428324-129e-ee37-304a-0da2ed3810a0@linaro.org>
- <CAJkfWY4X-YwuansL1R5w0rQNmE_hVJZKrMBJmOLp9G2DJPkNow@mail.gmail.com>
-In-Reply-To: <CAJkfWY4X-YwuansL1R5w0rQNmE_hVJZKrMBJmOLp9G2DJPkNow@mail.gmail.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Wed, 14 Aug 2019 15:12:34 -0700
-Message-ID: <CAKwvOdkEp=q+2B_iqqyHJLwwUaFH2jnO+Ey8t-hn=x4shTbdoA@mail.gmail.com>
-Subject: Re: [PATCH] thermal: armada: Fix -Wshift-negative-value
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        rui.zhang@intel.com, edubezval@gmail.com
-Cc:     linux-pm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        Nathan Huckleberry <nhuck@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1729993AbfHNWOt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 18:14:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59140 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727937AbfHNWOt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 18:14:49 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 97C652064A;
+        Wed, 14 Aug 2019 22:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565820888;
+        bh=UI7guIwUhxj2d7avxjaE7hMxiiSK2A0bwoAKP8qw2sk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kgdL+2SiVRNwSW1JH17ZCHCofzHSIpTR4YWsnpsl1DebWSKDpe5dUCISgu8Up/S+V
+         wgHLmG+J9tdZ0hOfZk+W2Gz3gtDTZ1kwYLUSkUSYDNbrgubOrLmnymmaQQqM86LjYb
+         4pgir0WNhhiFRt0JrlAp8mqwek9vmFjP5iLFjw8w=
+Date:   Wed, 14 Aug 2019 15:14:47 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        David Rientjes <rientjes@google.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 1/5] mm: Check if mmu notifier callbacks are allowed to
+ fail
+Message-Id: <20190814151447.e9ab74f4c7ed4297e39321d1@linux-foundation.org>
+In-Reply-To: <20190814202027.18735-2-daniel.vetter@ffwll.ch>
+References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+        <20190814202027.18735-2-daniel.vetter@ffwll.ch>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 10:28 AM 'Nathan Huckleberry' via Clang Built
-Linux <clang-built-linux@googlegroups.com> wrote:
->
-> Following up to see if this patch is going to be accepted.
+On Wed, 14 Aug 2019 22:20:23 +0200 Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
 
-Miquel is listed as the maintainer of this file in MAINTAINERS.
-Miquel, can you please pick this up?  Otherwise Zhang, Eduardo, and
-Daniel are listed as maintainers for drivers/thermal/.
--- 
-Thanks,
-~Nick Desaulniers
+> Just a bit of paranoia, since if we start pushing this deep into
+> callchains it's hard to spot all places where an mmu notifier
+> implementation might fail when it's not allowed to.
+> 
+> Inspired by some confusion we had discussing i915 mmu notifiers and
+> whether we could use the newly-introduced return value to handle some
+> corner cases. Until we realized that these are only for when a task
+> has been killed by the oom reaper.
+> 
+> An alternative approach would be to split the callback into two
+> versions, one with the int return value, and the other with void
+> return value like in older kernels. But that's a lot more churn for
+> fairly little gain I think.
+> 
+> Summary from the m-l discussion on why we want something at warning
+> level: This allows automated tooling in CI to catch bugs without
+> humans having to look at everything. If we just upgrade the existing
+> pr_info to a pr_warn, then we'll have false positives. And as-is, no
+> one will ever spot the problem since it's lost in the massive amounts
+> of overall dmesg noise.
+> 
+> ...
+>
+> --- a/mm/mmu_notifier.c
+> +++ b/mm/mmu_notifier.c
+> @@ -179,6 +179,8 @@ int __mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
+>  				pr_info("%pS callback failed with %d in %sblockable context.\n",
+>  					mn->ops->invalidate_range_start, _ret,
+>  					!mmu_notifier_range_blockable(range) ? "non-" : "");
+> +				WARN_ON(mmu_notifier_range_blockable(range) ||
+> +					ret != -EAGAIN);
+>  				ret = _ret;
+>  			}
+>  		}
+
+A problem with WARN_ON(a || b) is that if it triggers, we don't know
+whether it was because of a or because of b.  Or both.  So I'd suggest
+
+	WARN_ON(a);
+	WARN_ON(b);
+
