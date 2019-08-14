@@ -2,83 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76CB98DB87
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:26:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 939978DB67
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:25:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729664AbfHNR0B convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 14 Aug 2019 13:26:01 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45619 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729398AbfHNRFP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:05:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id y8so8848838plr.12;
-        Wed, 14 Aug 2019 10:05:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GTqeZQuB5IgM+FmX9PwW5NoGtvVH2NCZhDAITGesyDI=;
-        b=V4BknI/9PTqQybKoUCZBxz9U/b5ss9/oMzwfXviFWJQvjysp2n0UMUxS4FpgjCLXNC
-         72470W68kb3LTbYUsJih/SDba9IqNn0ofADPWaJ966SEiVPgF78wx2OJfRwp/yIB2QQ5
-         qzPM8Ofh149MJk+AuTxTGqfu/1gyYBBJc7zJb0mvK16xoWGgSRqq7nNe/UOopunAuGXl
-         rwdSx6g1dloV4QulTqGLbsw4t9cwXL6aAAEOzRXGc4Dzp5Jw7PpShCS0vdUgdImPmFUH
-         FlxekAu7Er1Z52PVHAq7HsTdPq6GvUwQM7+xYXZZHcHOEOxGztHVf/Vikv/VaPTmjgL8
-         jHNA==
-X-Gm-Message-State: APjAAAV3ciIb0fHybDZhn8ptyDFsaapNXBdwukteY4FH0ct5nMbcOUFV
-        djIwVtzpMtm3jTQydCpQ3Klfc9WrCXo=
-X-Google-Smtp-Source: APXvYqyY7dMRw94QInx53Q43ZHoQCxgqlpv6Xz4f7o17+uQhWoBsE2UtI2jpEFYNuEjRmoBdpNZKug==
-X-Received: by 2002:a17:902:8345:: with SMTP id z5mr406730pln.29.1565802314643;
-        Wed, 14 Aug 2019 10:05:14 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:fb9c:664d:d2ad:c9b5? ([2620:15c:2c1:200:fb9c:664d:d2ad:c9b5])
-        by smtp.gmail.com with ESMTPSA id c70sm359640pfb.163.2019.08.14.10.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2019 10:05:13 -0700 (PDT)
-Subject: Re: [5.3.0-rc4-next][bisected 882632][qla2xxx] WARNING: CPU: 10 PID:
- 425 at drivers/scsi/qla2xxx/qla_isr.c:2784 qla2x00_status_entry.isra
-To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc:     linux-next <linux-next@vger.kernel.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        martin.petersen@oracle.com, hmadhani@marvell.com,
-        sachinp <sachinp@linux.vnet.ibm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Himanshu Madhani <hmadhani@marvell.com>
-References: <1565801523.6908.6.camel@abdul>
-From:   Bart Van Assche <bvanassche@acm.org>
-Message-ID: <cafb1d40-a11e-c137-db06-4564e5f5caf5@acm.org>
-Date:   Wed, 14 Aug 2019 10:05:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729350AbfHNRZH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:25:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54992 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729547AbfHNRF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:05:59 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB1F52084D;
+        Wed, 14 Aug 2019 17:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565802358;
+        bh=SUSCWt4xADsQMaH8+atQZsd7pBSYIKD5PVgyeC0Sc7E=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=F3QEhYWRy8PZBbWJ9+3RRUXDylL5Jpml3gB5zrbcuc36EuLCXGqosdX3Z1f2CPIYR
+         BJtvqinnV/8D6Rd6T8nxleFg1Euqa98S5FYLIDYqsKpy9TmmSRQajcJKb81TEhtRYK
+         PXLmc4KeIkeKESHHjQbzl+95are40ZUT9I/CscLo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <1565801523.6908.6.camel@abdul>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814125012.8700-10-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-10-vkoul@kernel.org>
+Subject: Re: [PATCH 09/22] arm64: dts: qcom: pm8150b: Add Base DTS file
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 10:05:57 -0700
+Message-Id: <20190814170557.DB1F52084D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/14/19 9:52 AM, Abdul Haleem wrote:
-> Greeting's
-> 
-> Today's linux-next kernel (5.3.0-rc4-next-20190813)  booted with warning on my powerpc power 8 lpar
-> 
-> The WARN_ON_ONCE() was introduced by commit 88263208 (scsi: qla2xxx: Complain if sp->done() is not...)
-> 
-> boot logs:
-> 
-> WARNING: CPU: 10 PID: 425 at drivers/scsi/qla2xxx/qla_isr.c:2784
+Quoting Vinod Koul (2019-08-14 05:49:59)
+> diff --git a/arch/arm64/boot/dts/qcom/pm8150b.dtsi b/arch/arm64/boot/dts/=
+qcom/pm8150b.dtsi
+> new file mode 100644
+> index 000000000000..c0a678b0f159
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
+> @@ -0,0 +1,22 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +// Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+> +// Copyright (c) 2019, Linaro Limited
+> +
+> +#include <dt-bindings/interrupt-controller/irq.h>
+> +#include <dt-bindings/spmi/spmi.h>
+> +
+> +&spmi_bus {
+> +       pm8150@2 {
 
-Hi Abdul,
+pmic.
 
-Thank you for having reported this. Is that the only warning reported on your setup by the qla2xxx
-driver? If that warning is commented out, does the qla2xxx driver work as expected?
+> +               compatible =3D "qcom,spmi-pmic";
+> +               reg =3D <0x2 SPMI_USID>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +       };
+> +
+> +       qcom,pm8150@3 {
 
-Thanks,
+pmic. Funny this one has qcom, prefix!
 
-Bart.
-
+> +               compatible =3D"qcom,spmi-pmic";
+> +               reg =3D <0x3 SPMI_USID>;
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +       };
+> +};
+> --=20
+> 2.20.1
+>=20
