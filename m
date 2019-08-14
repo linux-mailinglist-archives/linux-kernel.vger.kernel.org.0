@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB2EC8DA1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:16:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59DE68D9BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731196AbfHNRPO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:15:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39750 "EHLO mail.kernel.org"
+        id S1729782AbfHNRLm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:11:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35110 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731187AbfHNRPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:15:11 -0400
+        id S1730604AbfHNRLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:11:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24DC4216F4;
-        Wed, 14 Aug 2019 17:15:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3A162063F;
+        Wed, 14 Aug 2019 17:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802910;
-        bh=bT/ifoB7YigEAgm+EklFf5SF4up/C8At50C32O+TL2U=;
+        s=default; t=1565802700;
+        bh=WRLxgu5pjGZz8vXoOs3/zQIOrHQH6Ij/EdXN46H2njE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NKStqUdGW29dYS1oe4AS9hLN64GXzPhOVIDV/8PbddU67WLNFvVH9XDJkQwcDhZ/U
-         30uZSERjRF+9H6ID49DtjceUZlqJuY+MBra8f0VeMrJHgFHVt/0zjGuIhqGhSuGkns
-         idF0nP79lEZEbwSCmoXkKUi+w76m4vkQ1orN+hW8=
+        b=oP1TvyCMzkyfH21YwX8bXu/5pDHZZR6OlWlE4sDcUiRPO8fIAnRdBuZ5QSddf948+
+         CYIFBDxBUkSdIgJSx511lsMS99vPc8FktWG7Cx0NQfvCh5kVflY+I2hyw1a1qlDolY
+         9Hw/+E5FwEpvZRRpssJOwxLplGHCRybREe3X8yYM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        Zhangguanghui <zhang.guanghui@h3c.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 47/69] scsi: scsi_dh_alua: always use a 2 second delay before retrying RTPG
-Date:   Wed, 14 Aug 2019 19:01:45 +0200
-Message-Id: <20190814165748.628134162@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.19 83/91] SMB3: Fix deadlock in validate negotiate hits reconnect
+Date:   Wed, 14 Aug 2019 19:01:46 +0200
+Message-Id: <20190814165753.556737990@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,61 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 20122994e38aef0ae50555884d287adde6641c94 ]
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-Retrying immediately after we've received a 'transitioning' sense code is
-pretty much pointless, we should always use a delay before retrying.  So
-ensure the default delay is applied before retrying.
+commit e99c63e4d86d3a94818693147b469fa70de6f945 upstream.
 
-Signed-off-by: Hannes Reinecke <hare@suse.com>
-Tested-by: Zhangguanghui <zhang.guanghui@h3c.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Currently we skip SMB2_TREE_CONNECT command when checking during
+reconnect because Tree Connect happens when establishing
+an SMB session. For SMB 3.0 protocol version the code also calls
+validate negotiate which results in SMB2_IOCL command being sent
+over the wire. This may deadlock on trying to acquire a mutex when
+checking for reconnect. Fix this by skipping SMB2_IOCL command
+when doing the reconnect check.
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/device_handler/scsi_dh_alua.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ fs/cifs/smb2pdu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/device_handler/scsi_dh_alua.c b/drivers/scsi/device_handler/scsi_dh_alua.c
-index 09c6a16fab93f..41f5f64101630 100644
---- a/drivers/scsi/device_handler/scsi_dh_alua.c
-+++ b/drivers/scsi/device_handler/scsi_dh_alua.c
-@@ -53,6 +53,7 @@
- #define ALUA_FAILOVER_TIMEOUT		60
- #define ALUA_FAILOVER_RETRIES		5
- #define ALUA_RTPG_DELAY_MSECS		5
-+#define ALUA_RTPG_RETRY_DELAY		2
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -168,7 +168,7 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	if (tcon == NULL)
+ 		return 0;
  
- /* device handler flags */
- #define ALUA_OPTIMIZE_STPG		0x01
-@@ -677,7 +678,7 @@ static int alua_rtpg(struct scsi_device *sdev, struct alua_port_group *pg)
- 	case SCSI_ACCESS_STATE_TRANSITIONING:
- 		if (time_before(jiffies, pg->expiry)) {
- 			/* State transition, retry */
--			pg->interval = 2;
-+			pg->interval = ALUA_RTPG_RETRY_DELAY;
- 			err = SCSI_DH_RETRY;
- 		} else {
- 			struct alua_dh_data *h;
-@@ -802,6 +803,8 @@ static void alua_rtpg_work(struct work_struct *work)
- 				spin_lock_irqsave(&pg->lock, flags);
- 				pg->flags &= ~ALUA_PG_RUNNING;
- 				pg->flags |= ALUA_PG_RUN_RTPG;
-+				if (!pg->interval)
-+					pg->interval = ALUA_RTPG_RETRY_DELAY;
- 				spin_unlock_irqrestore(&pg->lock, flags);
- 				queue_delayed_work(kaluad_wq, &pg->rtpg_work,
- 						   pg->interval * HZ);
-@@ -813,6 +816,8 @@ static void alua_rtpg_work(struct work_struct *work)
- 		spin_lock_irqsave(&pg->lock, flags);
- 		if (err == SCSI_DH_RETRY || pg->flags & ALUA_PG_RUN_RTPG) {
- 			pg->flags &= ~ALUA_PG_RUNNING;
-+			if (!pg->interval && !(pg->flags & ALUA_PG_RUN_RTPG))
-+				pg->interval = ALUA_RTPG_RETRY_DELAY;
- 			pg->flags |= ALUA_PG_RUN_RTPG;
- 			spin_unlock_irqrestore(&pg->lock, flags);
- 			queue_delayed_work(kaluad_wq, &pg->rtpg_work,
--- 
-2.20.1
-
+-	if (smb2_command == SMB2_TREE_CONNECT)
++	if (smb2_command == SMB2_TREE_CONNECT || smb2_command == SMB2_IOCTL)
+ 		return 0;
+ 
+ 	if (tcon->tidStatus == CifsExiting) {
 
 
