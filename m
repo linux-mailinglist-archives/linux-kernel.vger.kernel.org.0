@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C44898D968
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB3718D96A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbfHNRIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57854 "EHLO mail.kernel.org"
+        id S1730092AbfHNRIM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58070 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730046AbfHNRID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:03 -0400
+        id S1730078AbfHNRIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:11 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C359208C2;
-        Wed, 14 Aug 2019 17:08:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22924214DA;
+        Wed, 14 Aug 2019 17:08:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802483;
-        bh=lcMozOM5yjam6HkNiqU50QQ7u0Xe0A4WXIsFCJZkTMQ=;
+        s=default; t=1565802490;
+        bh=Xdpt2zY/imvHs4oLSI3d+hTOzAVL2o8s930jvI2QNU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2FeCKMVITp6V9QlcbF8QGilrzEcGDPEWX7THq/nQHO3kWTmdJ5B/XP2RbtxBlnD9t
-         SKDYnZQNqSQOsYSYKHtOeauNE9Qm/aUrM7xtuNzLk3XXYK9+Z8VQa3xBIK4yXOQT7Z
-         hRJW345m9drFWxf0Z2gQ4mQ93vWOcyFLZg8InfZA=
+        b=a3joxSzBpv6z2kbF8sm/ceIeoK1K58N+k+EchUCAeVkidY3M8PBq29VCKugTX85Tf
+         3m0RuNEDSDNblSs7jkbqDllr+ksmvKLPskPiZfoSDQKJToqqOrH9OMqFvelay19JOJ
+         iCTn4X14zakZB/9mbjnE2DwjX2pYoeQyHN3lB+YM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 117/144] gen_compile_commands: lower the entry count threshold
-Date:   Wed, 14 Aug 2019 19:01:13 +0200
-Message-Id: <20190814165804.824720229@linuxfoundation.org>
+        stable@vger.kernel.org, Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 5.2 120/144] KVM/nSVM: properly map nested VMCB
+Date:   Wed, 14 Aug 2019 19:01:16 +0200
+Message-Id: <20190814165804.946479142@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,38 +44,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cb36955a5569f1ff17a42ae93264ef391c013a97 ]
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
 
-Running gen_compile_commands.py after building the kernel with
-allnoconfig gave this:
+commit 8f38302c0be2d2daf3b40f7d2142ec77e35d209e upstream.
 
-$ ./scripts/gen_compile_commands.py
-WARNING: Found 449 entries. Have you compiled the kernel?
+Commit 8c5fbf1a7231 ("KVM/nSVM: Use the new mapping API for mapping guest
+memory") broke nested SVM completely: kvm_vcpu_map()'s second parameter is
+GFN so vmcb_gpa needs to be converted with gpa_to_gfn(), not the other way
+around.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 8c5fbf1a7231 ("KVM/nSVM: Use the new mapping API for mapping guest memory")
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- scripts/gen_compile_commands.py | 4 ++--
+ arch/x86/kvm/svm.c |    4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/scripts/gen_compile_commands.py b/scripts/gen_compile_commands.py
-index 7915823b92a5e..c458696ef3a79 100755
---- a/scripts/gen_compile_commands.py
-+++ b/scripts/gen_compile_commands.py
-@@ -21,9 +21,9 @@ _LINE_PATTERN = r'^cmd_[^ ]*\.o := (.* )([^ ]*\.c)$'
- _VALID_LOG_LEVELS = ['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL']
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -3290,7 +3290,7 @@ static int nested_svm_vmexit(struct vcpu
+ 				       vmcb->control.exit_int_info_err,
+ 				       KVM_ISA_SVM);
  
- # A kernel build generally has over 2000 entries in its compile_commands.json
--# database. If this code finds 500 or fewer, then warn the user that they might
-+# database. If this code finds 300 or fewer, then warn the user that they might
- # not have all the .cmd files, and they might need to compile the kernel.
--_LOW_COUNT_THRESHOLD = 500
-+_LOW_COUNT_THRESHOLD = 300
+-	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(svm->nested.vmcb), &map);
++	rc = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(svm->nested.vmcb), &map);
+ 	if (rc) {
+ 		if (rc == -EINVAL)
+ 			kvm_inject_gp(&svm->vcpu, 0);
+@@ -3580,7 +3580,7 @@ static bool nested_svm_vmrun(struct vcpu
  
+ 	vmcb_gpa = svm->vmcb->save.rax;
  
- def parse_arguments():
--- 
-2.20.1
-
+-	rc = kvm_vcpu_map(&svm->vcpu, gfn_to_gpa(vmcb_gpa), &map);
++	rc = kvm_vcpu_map(&svm->vcpu, gpa_to_gfn(vmcb_gpa), &map);
+ 	if (rc) {
+ 		if (rc == -EINVAL)
+ 			kvm_inject_gp(&svm->vcpu, 0);
 
 
