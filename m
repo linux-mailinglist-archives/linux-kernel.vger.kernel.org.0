@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E184F8DBA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FF9C8DBA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:27:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729157AbfHNREN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:04:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52902 "EHLO mail.kernel.org"
+        id S1729142AbfHNREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:04:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729112AbfHNREG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:06 -0400
+        id S1729127AbfHNREJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:04:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3BD092084D;
-        Wed, 14 Aug 2019 17:04:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAB2F208C2;
+        Wed, 14 Aug 2019 17:04:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802245;
-        bh=mkd3jcm/2eaT88z+vZH8zv8REeNY7nMjafvMO45SvGA=;
+        s=default; t=1565802248;
+        bh=dcNlIq3Uf0l0lx13G3Fyg5C2xZf/pldIfA1pAiWLhjo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ckNYV4ZfF/gD2/Fc3MAtcmgPbljkBN83ekYoKqYCV48biEuEw+U4kU44fxdOrQvFN
-         wwqVZTfNi8xnTcrlYWEAKdKQKuihuS9kmeYOlSs8x4shD7EO1LKrl0ygA8uotOAyKM
-         ZkjQzuQIG/pi6KidOlgPWYVodg8rmnZJPXj3sNtg=
+        b=laj6tMLrxxoX6/VMhNT+f3OowbXoXsGg0fBgMwkqrnceIhkeM2PEDa2BrCgJaR06w
+         FqWfEZ3rrU4RkcSaXe6SkOwHG0N+UaUf9ZeprtzBvzNEb54s06It3maQUDlz9vxG8H
+         NRuUpcpFDMT/jm6JdCZWS1AF1zeYMxRewjNEZYvo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Farhan Ali <alifm@linux.ibm.com>,
+        Eric Farman <farman@linux.ibm.com>,
+        Cornelia Huck <cohuck@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 050/144] netfilter: nfnetlink: avoid deadlock due to synchronous request_module
-Date:   Wed, 14 Aug 2019 19:00:06 +0200
-Message-Id: <20190814165801.921500244@linuxfoundation.org>
+Subject: [PATCH 5.2 051/144] vfio-ccw: Set pa_nr to 0 if memory allocation fails for pa_iova_pfn
+Date:   Wed, 14 Aug 2019 19:00:07 +0200
+Message-Id: <20190814165801.962212682@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -47,72 +45,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1b0890cd60829bd51455dc5ad689ed58c4408227 ]
+[ Upstream commit c1ab69268d124ebdbb3864580808188ccd3ea355 ]
 
-Thomas and Juliana report a deadlock when running:
+So we don't call try to call vfio_unpin_pages() incorrectly.
 
-(rmmod nf_conntrack_netlink/xfrm_user)
-
-  conntrack -e NEW -E &
-  modprobe -v xfrm_user
-
-They provided following analysis:
-
-conntrack -e NEW -E
-    netlink_bind()
-        netlink_lock_table() -> increases "nl_table_users"
-            nfnetlink_bind()
-            # does not unlock the table as it's locked by netlink_bind()
-                __request_module()
-                    call_usermodehelper_exec()
-
-This triggers "modprobe nf_conntrack_netlink" from kernel, netlink_bind()
-won't return until modprobe process is done.
-
-"modprobe xfrm_user":
-    xfrm_user_init()
-        register_pernet_subsys()
-            -> grab pernet_ops_rwsem
-                ..
-                netlink_table_grab()
-                    calls schedule() as "nl_table_users" is non-zero
-
-so modprobe is blocked because netlink_bind() increased
-nl_table_users while also holding pernet_ops_rwsem.
-
-"modprobe nf_conntrack_netlink" runs and inits nf_conntrack_netlink:
-    ctnetlink_init()
-        register_pernet_subsys()
-            -> blocks on "pernet_ops_rwsem" thanks to xfrm_user module
-
-both modprobe processes wait on one another -- neither can make
-progress.
-
-Switch netlink_bind() to "nowait" modprobe -- this releases the netlink
-table lock, which then allows both modprobe instances to complete.
-
-Reported-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
-Reported-by: Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 0a19e61e6d4c ("vfio: ccw: introduce channel program interfaces")
+Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
+Reviewed-by: Eric Farman <farman@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Message-Id: <33a89467ad6369196ae6edf820cbcb1e2d8d050c.1562854091.git.alifm@linux.ibm.com>
+Signed-off-by: Cornelia Huck <cohuck@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nfnetlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/cio/vfio_ccw_cp.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-index 92077d4591090..4abbb452cf6c6 100644
---- a/net/netfilter/nfnetlink.c
-+++ b/net/netfilter/nfnetlink.c
-@@ -578,7 +578,7 @@ static int nfnetlink_bind(struct net *net, int group)
- 	ss = nfnetlink_get_subsys(type << 8);
- 	rcu_read_unlock();
- 	if (!ss)
--		request_module("nfnetlink-subsys-%d", type);
-+		request_module_nowait("nfnetlink-subsys-%d", type);
- 	return 0;
- }
- #endif
+diff --git a/drivers/s390/cio/vfio_ccw_cp.c b/drivers/s390/cio/vfio_ccw_cp.c
+index 0e79799e9a719..79eb40bdaf9f4 100644
+--- a/drivers/s390/cio/vfio_ccw_cp.c
++++ b/drivers/s390/cio/vfio_ccw_cp.c
+@@ -89,8 +89,10 @@ static int pfn_array_alloc_pin(struct pfn_array *pa, struct device *mdev,
+ 				  sizeof(*pa->pa_iova_pfn) +
+ 				  sizeof(*pa->pa_pfn),
+ 				  GFP_KERNEL);
+-	if (unlikely(!pa->pa_iova_pfn))
++	if (unlikely(!pa->pa_iova_pfn)) {
++		pa->pa_nr = 0;
+ 		return -ENOMEM;
++	}
+ 	pa->pa_pfn = pa->pa_iova_pfn + pa->pa_nr;
+ 
+ 	pa->pa_iova_pfn[0] = pa->pa_iova >> PAGE_SHIFT;
 -- 
 2.20.1
 
