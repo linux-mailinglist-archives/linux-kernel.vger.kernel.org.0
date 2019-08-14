@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58D88D1BD
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:08:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 303FE8D1BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:09:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfHNLIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 07:08:40 -0400
-Received: from relay4-d.mail.gandi.net ([217.70.183.196]:47179 "EHLO
-        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726126AbfHNLIi (ORCPT
+        id S1727537AbfHNLIn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 07:08:43 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:48069 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727083AbfHNLIm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:08:38 -0400
+        Wed, 14 Aug 2019 07:08:42 -0400
 X-Originating-IP: 86.250.200.211
 Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
         (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 97D71E0003;
-        Wed, 14 Aug 2019 11:08:35 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 09:09:23 +0200
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 055BE240006;
+        Wed, 14 Aug 2019 11:08:36 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 09:13:43 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     codekipper@gmail.com
 Cc:     wens@csie.org, linux-sunxi@googlegroups.com,
         linux-arm-kernel@lists.infradead.org, lgirdwood@gmail.com,
         broonie@kernel.org, linux-kernel@vger.kernel.org,
         alsa-devel@alsa-project.org, be17068@iperbole.bo.it
-Subject: Re: [PATCH v5 02/15] ASoC: sun4i-i2s: Add set_tdm_slot functionality
-Message-ID: <20190814070923.wwkw7hybjvy3p4br@flea>
+Subject: Re: [PATCH v5 03/15] ASoC: sun4i-i2s: Correct divider calculations
+Message-ID: <20190814071343.vvjbozrmv5ionwnf@flea>
 References: <20190814060854.26345-1-codekipper@gmail.com>
- <20190814060854.26345-3-codekipper@gmail.com>
+ <20190814060854.26345-4-codekipper@gmail.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mpw4oztj7vyrpshs"
+        protocol="application/pgp-signature"; boundary="bamdgrdnwpokqt4x"
 Content-Disposition: inline
-In-Reply-To: <20190814060854.26345-3-codekipper@gmail.com>
+In-Reply-To: <20190814060854.26345-4-codekipper@gmail.com>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -40,62 +40,97 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---mpw4oztj7vyrpshs
+--bamdgrdnwpokqt4x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
 Hi,
 
-On Wed, Aug 14, 2019 at 08:08:41AM +0200, codekipper@gmail.com wrote:
+(I just noticed this, but can you update my mail address, it's not
+@free-electrons for quite a while, you probably want to change your
+scripts to use mripard@kernel.org)
+
+On Wed, Aug 14, 2019 at 08:08:42AM +0200, codekipper@gmail.com wrote:
 > From: Marcus Cooper <codekipper@gmail.com>
 >
-> Codecs without a control connection such as i2s based HDMI audio and
-> the Pine64 DAC require a different amount of bit clocks per frame than
-> what is calculated by the sample width. Use the tdm slot bindings to
-> provide this mechanism.
+> The clock division circuitry is different on the H3 and later SoCs.
+> The division of bclk is now based on pll2.
 >
 > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
 > ---
->  sound/soc/sunxi/sun4i-i2s.c | 23 +++++++++++++++++++++--
->  1 file changed, 21 insertions(+), 2 deletions(-)
+>  sound/soc/sunxi/sun4i-i2s.c | 73 +++++++++++++++++++++++++------------
+>  1 file changed, 49 insertions(+), 24 deletions(-)
 >
 > diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> index 8201334a059b..7c37b6291df0 100644
+> index 7c37b6291df0..34f31439ae7b 100644
 > --- a/sound/soc/sunxi/sun4i-i2s.c
 > +++ b/sound/soc/sunxi/sun4i-i2s.c
-> @@ -195,6 +195,9 @@ struct sun4i_i2s {
->  	struct regmap_field	*field_rxchansel;
+> @@ -127,8 +127,6 @@ struct sun4i_i2s;
+>   * @has_chsel_offset: SoC uses offset for selecting dai operational mode.
+>   * @reg_offset_txdata: offset of the tx fifo.
+>   * @sun4i_i2s_regmap: regmap config to use.
+> - * @mclk_offset: Value by which mclkdiv needs to be adjusted.
+> - * @bclk_offset: Value by which bclkdiv needs to be adjusted.
+>   * @field_clkdiv_mclk_en: regmap field to enable mclk output.
+>   * @field_fmt_wss: regmap field to set word select size.
+>   * @field_fmt_sr: regmap field to set sample resolution.
+> @@ -150,8 +148,6 @@ struct sun4i_i2s_quirks {
+>  	bool				has_chsel_offset;
+>  	unsigned int			reg_offset_txdata;	/* TX FIFO */
+>  	const struct regmap_config	*sun4i_i2s_regmap;
+> -	unsigned int			mclk_offset;
+> -	unsigned int			bclk_offset;
 >
->  	const struct sun4i_i2s_quirks	*variant;
+>  	/* Register fields for i2s */
+>  	struct reg_field		field_clkdiv_mclk_en;
+> @@ -212,7 +208,25 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_bclk_div[] = {
+>  	{ .div = 8, .val = 3 },
+>  	{ .div = 12, .val = 4 },
+>  	{ .div = 16, .val = 5 },
+> -	/* TODO - extend divide ratio supported by newer SoCs */
+> +};
 > +
-> +	unsigned int	tdm_slots;
-> +	unsigned int	slot_width;
+> +static const struct sun4i_i2s_clk_div sun8i_i2s_clk_div[] = {
+> +	{ .div = 0, .val = 0 },
+
+Having a divider of 0 seems like a bad idea.
+
+> +	{ .div = 1, .val = 1 },
+> +	{ .div = 2, .val = 2 },
+> +	{ .div = 4, .val = 3 },
+> +	{ .div = 6, .val = 4 },
+> +	{ .div = 8, .val = 5 },
+> +	{ .div = 12, .val = 6 },
+> +	{ .div = 16, .val = 7 },
+> +	{ .div = 24, .val = 8 },
+> +	{ .div = 32, .val = 9 },
+> +	{ .div = 48, .val = 10 },
+> +	{ .div = 64, .val = 11 },
+> +	{ .div = 96, .val = 12 },
+> +	{ .div = 128, .val = 13 },
+> +	{ .div = 176, .val = 14 },
+> +	{ .div = 192, .val = 15 },
 >  };
 >
->  struct sun4i_i2s_clk_div {
-> @@ -346,7 +349,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
->  	if (i2s->variant->has_fmt_set_lrck_period)
->  		regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
->  				   SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
-> -				   SUN8I_I2S_FMT0_LRCK_PERIOD(32));
-> +				   SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
+>  static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
+> @@ -224,21 +238,21 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
+>  	{ .div = 12, .val = 5 },
+>  	{ .div = 16, .val = 6 },
+>  	{ .div = 24, .val = 7 },
+> -	/* TODO - extend divide ratio supported by newer SoCs */
+>  };
 >
->
->  	/* Set sign extension to pad out LSB with 0 */
->  	regmap_field_write(i2s->field_fmt_sext, 0);
-> @@ -450,7 +453,8 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
->  	regmap_field_write(i2s->field_fmt_sr, sr);
->
->  	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
-> -				      params_width(params));
-> +				      i2s->tdm_slots ?
-> +				      i2s->slot_width : params_width(params));
+>  static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
+>  				  unsigned int oversample_rate,
+> -				  unsigned int word_size)
+> +				  unsigned int word_size,
+> +				  const struct sun4i_i2s_clk_div *bdiv,
+> +				  unsigned int size)
 
-This is slightly more complicated than that.
-
-On the H3 (and all related ones), the CHAN_CFG_TX_SLOT_NUM and
-_RX_SLOT_NUM fields in the CHAN_CFG register need to be set to the
-number of slots as well.
+Wouldn't it be simpler to just have the divider list in the variant
+structure? It would avoid having to refactor all the functions, and
+it's not like it's really going to change from one call to another
+anyway.
 
 Maxime
 
@@ -104,15 +139,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---mpw4oztj7vyrpshs
+--bamdgrdnwpokqt4x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVOzowAKCRDj7w1vZxhR
-xYQiAQDZAhUPiv1ty7F7fpZyPJeJRXOokKvsfX401+9n0UxeEwEAimWXgMxiGvqG
-BMajnuQhZjSi5H9ncO28lJkw9KzobwU=
-=2WOa
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVO0pwAKCRDj7w1vZxhR
+xeUlAP9r6Z9EM/cbBKKY+kiTaI16sfr7c9NwecdxGZCT7mrOkAEAlrY4YQHdPrGM
+Ek/ZDh1DW7Q85spOkTJgAF0ugAOlDwQ=
+=8Nke
 -----END PGP SIGNATURE-----
 
---mpw4oztj7vyrpshs--
+--bamdgrdnwpokqt4x--
