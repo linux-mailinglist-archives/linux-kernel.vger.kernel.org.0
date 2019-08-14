@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B73A28C686
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:16:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CD448C68D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfHNCQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:16:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47780 "EHLO mail.kernel.org"
+        id S1726992AbfHNCQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:16:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728096AbfHNCQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:16:15 -0400
+        id S1728173AbfHNCQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:16:20 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 708472085A;
-        Wed, 14 Aug 2019 02:16:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B95B2085A;
+        Wed, 14 Aug 2019 02:16:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748974;
-        bh=iMt6Qn1efyK3QfEFLC8bvF9ax3KIPLQSkSGy+fdIcK4=;
+        s=default; t=1565748979;
+        bh=3Jcrcw9zMF/w/pzPYXFJ/upmtZXRNjEPEoCWMrlpXRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A8TF35UCV+tMt+eaRto3zDOl//y/nMBRXf046ymziFcQW1T2PlQy2y/tVuvjAwIb9
-         4pelmqTN3LkGyqNeperqVcJ2+QxI8e7VHPG0pYp8YHSm3CYN1HWEpmCv/4iLMvewBC
-         qVtPOhyIBTBVWPiRwAM0U8sLjoHfgPWfSTSr+5to=
+        b=cZ/CIWA/+jHEycDnrwZvDWu0zOR0I+Qsv8pm5l8/2Fkd0mhvz6x7f47oWoaxhwLxM
+         oOxWInyo/ahqzj2pw7c+kG9xVZT9zhcw7pmx75SCDniCXWuHxGkRWQnrU1Ct35VpP2
+         jHct3MAfTZ7U9wxeCrXJoUIx9GiJ4/zr+KRF9S0A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Weitao Hou <houweitaoo@gmail.com>,
-        Willem de Bruijn <willemb@google.com>,
-        Sean Nyekjaer <sean@geanix.com>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>, linux-can@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 14/68] can: mcp251x: add error check when wq alloc failed
-Date:   Tue, 13 Aug 2019 22:14:52 -0400
-Message-Id: <20190814021548.16001-14-sashal@kernel.org>
+Cc:     Navid Emamdoost <navid.emamdoost@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 17/68] st21nfca_connectivity_event_received: null check the allocation
+Date:   Tue, 13 Aug 2019 22:14:55 -0400
+Message-Id: <20190814021548.16001-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -46,105 +43,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Weitao Hou <houweitaoo@gmail.com>
+From: Navid Emamdoost <navid.emamdoost@gmail.com>
 
-[ Upstream commit 375f755899b8fc21196197e02aab26257df26e85 ]
+[ Upstream commit 9891d06836e67324c9e9c4675ed90fc8b8110034 ]
 
-add error check when workqueue alloc failed, and remove redundant code
-to make it clear.
+devm_kzalloc may fail and return null. So the null check is needed.
 
-Fixes: e0000163e30e ("can: Driver for the Microchip MCP251x SPI CAN controllers")
-Signed-off-by: Weitao Hou <houweitaoo@gmail.com>
-Acked-by: Willem de Bruijn <willemb@google.com>
-Tested-by: Sean Nyekjaer <sean@geanix.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/can/spi/mcp251x.c | 49 ++++++++++++++++-------------------
- 1 file changed, 22 insertions(+), 27 deletions(-)
+ drivers/nfc/st21nfca/se.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
-index da64e71a62ee2..fccb6bf21fada 100644
---- a/drivers/net/can/spi/mcp251x.c
-+++ b/drivers/net/can/spi/mcp251x.c
-@@ -678,17 +678,6 @@ static int mcp251x_power_enable(struct regulator *reg, int enable)
- 		return regulator_disable(reg);
- }
+diff --git a/drivers/nfc/st21nfca/se.c b/drivers/nfc/st21nfca/se.c
+index 4bed9e842db38..fd967a38a94a5 100644
+--- a/drivers/nfc/st21nfca/se.c
++++ b/drivers/nfc/st21nfca/se.c
+@@ -328,6 +328,8 @@ int st21nfca_connectivity_event_received(struct nfc_hci_dev *hdev, u8 host,
  
--static void mcp251x_open_clean(struct net_device *net)
--{
--	struct mcp251x_priv *priv = netdev_priv(net);
--	struct spi_device *spi = priv->spi;
--
--	free_irq(spi->irq, priv);
--	mcp251x_hw_sleep(spi);
--	mcp251x_power_enable(priv->transceiver, 0);
--	close_candev(net);
--}
--
- static int mcp251x_stop(struct net_device *net)
- {
- 	struct mcp251x_priv *priv = netdev_priv(net);
-@@ -954,37 +943,43 @@ static int mcp251x_open(struct net_device *net)
- 				   flags | IRQF_ONESHOT, DEVICE_NAME, priv);
- 	if (ret) {
- 		dev_err(&spi->dev, "failed to acquire irq %d\n", spi->irq);
--		mcp251x_power_enable(priv->transceiver, 0);
--		close_candev(net);
--		goto open_unlock;
-+		goto out_close;
- 	}
+ 		transaction = (struct nfc_evt_transaction *)devm_kzalloc(dev,
+ 						   skb->len - 2, GFP_KERNEL);
++		if (!transaction)
++			return -ENOMEM;
  
- 	priv->wq = alloc_workqueue("mcp251x_wq", WQ_FREEZABLE | WQ_MEM_RECLAIM,
- 				   0);
-+	if (!priv->wq) {
-+		ret = -ENOMEM;
-+		goto out_clean;
-+	}
- 	INIT_WORK(&priv->tx_work, mcp251x_tx_work_handler);
- 	INIT_WORK(&priv->restart_work, mcp251x_restart_work_handler);
- 
- 	ret = mcp251x_hw_reset(spi);
--	if (ret) {
--		mcp251x_open_clean(net);
--		goto open_unlock;
--	}
-+	if (ret)
-+		goto out_free_wq;
- 	ret = mcp251x_setup(net, spi);
--	if (ret) {
--		mcp251x_open_clean(net);
--		goto open_unlock;
--	}
-+	if (ret)
-+		goto out_free_wq;
- 	ret = mcp251x_set_normal_mode(spi);
--	if (ret) {
--		mcp251x_open_clean(net);
--		goto open_unlock;
--	}
-+	if (ret)
-+		goto out_free_wq;
- 
- 	can_led_event(net, CAN_LED_EVENT_OPEN);
- 
- 	netif_wake_queue(net);
-+	mutex_unlock(&priv->mcp_lock);
- 
--open_unlock:
-+	return 0;
-+
-+out_free_wq:
-+	destroy_workqueue(priv->wq);
-+out_clean:
-+	free_irq(spi->irq, priv);
-+	mcp251x_hw_sleep(spi);
-+out_close:
-+	mcp251x_power_enable(priv->transceiver, 0);
-+	close_candev(net);
- 	mutex_unlock(&priv->mcp_lock);
- 	return ret;
- }
+ 		transaction->aid_len = skb->data[1];
+ 		memcpy(transaction->aid, &skb->data[2],
 -- 
 2.20.1
 
