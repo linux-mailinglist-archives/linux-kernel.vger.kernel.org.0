@@ -2,87 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DD738CC97
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:24:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF958CCB1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:26:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727197AbfHNHYI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:24:08 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46359 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726575AbfHNHYI (ORCPT
+        id S1727297AbfHNH0G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:26:06 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42965 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726880AbfHNH0F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:24:08 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f9so5328494ljc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 00:24:07 -0700 (PDT)
+        Wed, 14 Aug 2019 03:26:05 -0400
+Received: by mail-oi1-f194.google.com with SMTP id o6so2387361oic.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 00:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=txvhkLq1oQkrQZlNX4f8rqJxytvmF9p8mW3QiWDWHfg=;
-        b=WqmU0ruUSunATOxLdt0++LUfIPMrL0m0FDwXtlMlFp4n/xusT3qg3bUXL2UPJp6Gci
-         Ay5uQeT6PmVDtraExkqcHnex7kEIwtn5F8juiw8ADafz2baFc7ekSnDtXR441gMzsQpx
-         uqJdvLW+aT6UEsWRaudXMTsn/AHDDrkPChMFCVMtFIVqhaJeM2qeJqbM9V33DJtbiI81
-         9gMkVScQcL7lhuL/7ssk2vZpuYZhM7pud+E787VO6TronDYn8mC/mfehHe9pThAenDKC
-         4fWzH291fd85xpBQxOSh1VeQx/IpvjMiAAXSgOJNdVDheEFt205+iPLSeBcT1J4NnqEz
-         +HEg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=olhS25dpAXpeU0ZvOtkBvW+ClqVt1x4RdJvEXREO/pM=;
+        b=PQPmRWR5gZp7mzNL5oK4V7JWl+aObCQ514py2raT6sWBvoDpoDhuhxyizxfGl2XDNP
+         UdsBhgl9sEiDrvP0H8ET+8rIEoPFqY6R1sm9YoFL86uC2rfA6bUw+PV8xE7CK2lySd5m
+         ZNBGAwbUtKuUMQWtxa0+IWsAFm8tUM8ypG9BxebjDxqKA0dIeupfD0FzbrZH2TCifaTu
+         CXyk57FMxJ+e0lk8uxDEfwiEONa4tZCtX3RT9CFvTMiJd5Wdf+K5M72jTGZ3kdRnDTi7
+         QhaxqQDtcl0A1omOHnRG3sSxc8/pfu9CrbwFznkMPVZ+6pLAWZQco9/JqGyRqH5OC2Gu
+         1srw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=txvhkLq1oQkrQZlNX4f8rqJxytvmF9p8mW3QiWDWHfg=;
-        b=Fesa0NX3/S+9Moh0+4Av2DU6ttltp+A3SyrtUDAhxfOJ2uqMCkpWAr+loSAbQFCnJa
-         r2s5mmpeqNkpIRfuFtzNG3HyzF9PHLjvIJeqh6l7eQAZqdfF4FBIy8T147FqisTmavJx
-         qrIE+mZrICNNYtuYEKyzM3EMi2V1IpBIMihEVYGwY07BnM+HIQVnaj0e1kwS3eu4saIM
-         EUHuHMJbq8rMiGsl1sdJFbJFXdS7nWVSqV3cSSZjrwIBnhB2db7zbIc017K6a/KmkZWW
-         OkGs5XJzzozeR6cB8wdu5ZtHMYY6bkYj26n7pRWkUCGNnpfK+5O11emLJXq3hV0Qxq2F
-         d1QQ==
-X-Gm-Message-State: APjAAAUaaxkBT9oSqRKCOUjothIL/z81qvFauo79ubtsPCDInvRO3KVT
-        Tv+HbkSPu/sOJdNvs5/1hGBDwA==
-X-Google-Smtp-Source: APXvYqyGrsxkXTzxQ19BKMuHGWbHsZf86tnrRUDEAjqHv6SAP7M+Z3zcMsDWQ7AOr1zrj0MxxHyO4Q==
-X-Received: by 2002:a2e:a312:: with SMTP id l18mr12572868lje.182.1565767446457;
-        Wed, 14 Aug 2019 00:24:06 -0700 (PDT)
-Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id j14sm21937508ljc.67.2019.08.14.00.24.04
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 00:24:05 -0700 (PDT)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     lee.jones@linaro.org, linux-kernel@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Paul Parsons <lost.distance@yahoo.com>
-Subject: [PATCH] mfd: asic3: Include the right header
-Date:   Wed, 14 Aug 2019 09:24:03 +0200
-Message-Id: <20190814072403.6294-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=olhS25dpAXpeU0ZvOtkBvW+ClqVt1x4RdJvEXREO/pM=;
+        b=MREbOulqjLP1f/nA6cQ/zBmph3Z10WPCEr8M6jGi6OUgMy6OjmxS5k383Ozrp+cEzx
+         5BAzfrCiyhm3iOn8j0GqGsOYKX9zAr2F1F9/tMPSfAK+QGTAxiX1ei3JH/Q98u+TQ8AP
+         AqQ3yLiKjKW4s9ZY3YMox5KvyrCcc8HhlVsJAsyqca+fNcfbtORMfreW0C/qc8xH4R4U
+         1IzDGSnpVe6/kZVqbcmcfLwbSIhRwHxXz3Lvg0NHiXkO0sLnZIaeSfCigR3niWxg+XXf
+         sirEjHEUjdaCrsIk6538B1hMl9+TttSlXUVd0m6c5KejG+WNoXyr9HaRXsgJVEA/YJ0h
+         3d+Q==
+X-Gm-Message-State: APjAAAXVotS37iNnFoqwXWbFg/8/yAa2QjO2QHnQjVqh6DWrQDwJPEDN
+        34skq/peWPoCr84AqyIkoQS4uqdNrkpDxmxn7uUwKg==
+X-Google-Smtp-Source: APXvYqw5nOr78y7pKXN0vQAd6beatsPQcxL4mjFV1POgeeN9zP3ZACVssAXIMIfMHPLrY/8lYDNt3otHDUbe5BNSK4s=
+X-Received: by 2002:aca:4255:: with SMTP id p82mr4392410oia.6.1565767564780;
+ Wed, 14 Aug 2019 00:26:04 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <f9d2c7cb01cbf31bf75c4160611fa1d37d99f355.1565703607.git.baolin.wang@linaro.org>
+ <20190813141256.jnbrfld42rtigek3@pengutronix.de> <CAMz4kuJA+a=nzFRja4wRkfJu3Gzb0wnvaM8H4Ek9X5u8CNegPg@mail.gmail.com>
+ <20190814070121.o53tj2mtky4hcy3n@pengutronix.de>
+In-Reply-To: <20190814070121.o53tj2mtky4hcy3n@pengutronix.de>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 14 Aug 2019 15:25:53 +0800
+Message-ID: <CAMz4ku+55O6ORVM9xDv4R954QG4PXV8EkcGypSTB5wKni+Dq+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: sprd: Add Spreadtrum PWM documentation
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a GPIO driver, use the appropriate header
-<linux/gpio/driver.h> rather than the legacy <linux/gpio.h>
-header.
+Hi Uwe,
 
-Cc: Paul Parsons <lost.distance@yahoo.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
----
- drivers/mfd/asic3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 14 Aug 2019 at 15:01, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello Baolin,
+>
+> On Wed, Aug 14, 2019 at 09:51:34AM +0800, Baolin Wang wrote:
+> > On Tue, 13 Aug 2019 at 22:13, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > > On Tue, Aug 13, 2019 at 09:46:40PM +0800, Baolin Wang wrote:
+> > > > +- assigned-clock-parents: The phandle of the parent clock of PWM c=
+lock.
+> > >
+> > > I'm not sure you need to point out assigned-clocks and
+> > > assigned-clock-parents as this is general clk stuff. Also I wonder if
+> > > these should be "required properties".
+> >
+> > I think I should describe any properties used by PWM node, like
+> > 'clocks' and 'clock-names' properties, though they are common clock
+> > properties.
+>
+> Then you might want to describe also "status", "assigned-clock-rates",
+> "pinctrl-$n", "pinctrl-names", "power-domains", "power-domain-names" and
+> probably another dozen I'm not aware of.
 
-diff --git a/drivers/mfd/asic3.c b/drivers/mfd/asic3.c
-index 83b18c998d6f..a6bd2134cea2 100644
---- a/drivers/mfd/asic3.c
-+++ b/drivers/mfd/asic3.c
-@@ -15,7 +15,7 @@
- #include <linux/kernel.h>
- #include <linux/delay.h>
- #include <linux/irq.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/driver.h>
- #include <linux/export.h>
- #include <linux/io.h>
- #include <linux/slab.h>
--- 
-2.21.0
+We usually do not describe 'status', but if your device node used
+"pinctrl-$n", "pinctrl-names" ... common properties, yes, you should
+describe them to let users know what is the purpose of these
+properties. That's also asked by DT maintainer Rob.
 
+>
+> > Yes, they are required. Thanks for your comments.
+>
+> required in which sense? Why can a Spreadtrum PWM not work when the
+> clock parents are unspecified?
+
+On some Spreadtrum platforms, the default source clock of PWM may not
+be enabled, so we should force users to select one available source
+clock for PWM output clock.
+
+--=20
+Baolin Wang
+Best Regards
