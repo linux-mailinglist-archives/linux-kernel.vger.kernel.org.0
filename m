@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A5938D9EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:13:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCFEF8D9CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730653AbfHNRNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:13:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37812 "EHLO mail.kernel.org"
+        id S1730703AbfHNRMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:12:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730888AbfHNRNd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:13:33 -0400
+        id S1730698AbfHNRMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:12:17 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BA0F2084D;
-        Wed, 14 Aug 2019 17:13:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95FCD216F4;
+        Wed, 14 Aug 2019 17:12:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802813;
-        bh=kR9+YXvfV2CdPfmskRIsMT9PpxhGNnm4bOzX5JEVLOI=;
+        s=default; t=1565802736;
+        bh=SKkNANZr+ygJCo5isJhEgLS5Oabwbiqh+RoOuJkiSlw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P4vTL27UvV2wMe8O+21m41zwDNqHesGqsV5BPS+/+zWPlkzQBWfJFLe4dN/fts8jo
-         xhjiFPjDnEVYa0/UNvtwJOA9X0bGUsuXeRuEQeUO+uRzP6IRy6Cq2y6tLgxsXZ0dkh
-         ervS2fcCO010ChryC4fKK0LztJ80MpruVaFn/JF8=
+        b=o3KbLzhXXD39EX7oHGgFyDE3xoqlr+BWDX8QhnmkJdRFmv8Lp2HNq5hS4Qmc6d8PX
+         aPqmkkqRurWbe7YvZDv5Xk4k9uG1A4z2byNdrm8EJclF4LLUVeGEk7uZbBZsCWxqVU
+         b/GijwFhAjMLKatdzmJajKrW6cSixFUgQN/DB4JI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 35/69] s390/qdio: add sanity checks to the fast-requeue path
-Date:   Wed, 14 Aug 2019 19:01:33 +0200
-Message-Id: <20190814165747.868696497@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Vaibhav Rustagi <vaibhavrustagi@google.com>,
+        Alistair Delva <adelva@google.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Manoj Gupta <manojgupta@google.com>
+Subject: [PATCH 4.19 71/91] x86/purgatory: Do not use __builtin_memcpy and __builtin_memset
+Date:   Wed, 14 Aug 2019 19:01:34 +0200
+Message-Id: <20190814165752.710198889@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +47,124 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a6ec414a4dd529eeac5c3ea51c661daba3397108 ]
+From: Nick Desaulniers <ndesaulniers@google.com>
 
-If the device driver were to send out a full queue's worth of SBALs,
-current code would end up discovering the last of those SBALs as PRIMED
-and erroneously skip the SIGA-w. This immediately stalls the queue.
+commit 4ce97317f41d38584fb93578e922fcd19e535f5b upstream.
 
-Add a check to not attempt fast-requeue in this case. While at it also
-make sure that the state of the previous SBAL was successfully extracted
-before inspecting it.
+Implementing memcpy and memset in terms of __builtin_memcpy and
+__builtin_memset is problematic.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+GCC at -O2 will replace calls to the builtins with calls to memcpy and
+memset (but will generate an inline implementation at -Os).  Clang will
+replace the builtins with these calls regardless of optimization level.
+$ llvm-objdump -dr arch/x86/purgatory/string.o | tail
+
+0000000000000339 memcpy:
+     339: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
+                000000000000033b:  R_X86_64_64  memcpy
+     343: ff e0                         jmpq    *%rax
+
+0000000000000345 memset:
+     345: 48 b8 00 00 00 00 00 00 00 00 movabsq $0, %rax
+                0000000000000347:  R_X86_64_64  memset
+     34f: ff e0
+
+Such code results in infinite recursion at runtime. This is observed
+when doing kexec.
+
+Instead, reuse an implementation from arch/x86/boot/compressed/string.c.
+This requires to implement a stub function for warn(). Also, Clang may
+lower memcmp's that compare against 0 to bcmp's, so add a small definition,
+too. See also: commit 5f074f3e192f ("lib/string.c: implement a basic bcmp")
+
+Fixes: 8fc5b4d4121c ("purgatory: core purgatory functionality")
+Reported-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Debugged-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Debugged-by: Manoj Gupta <manojgupta@google.com>
+Suggested-by: Alistair Delva <adelva@google.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Vaibhav Rustagi <vaibhavrustagi@google.com>
+Cc: stable@vger.kernel.org
+Link: https://bugs.chromium.org/p/chromium/issues/detail?id=984056
+Link: https://lkml.kernel.org/r/20190807221539.94583-1-ndesaulniers@google.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/s390/cio/qdio_main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/boot/string.c         |    8 ++++++++
+ arch/x86/purgatory/Makefile    |    3 +++
+ arch/x86/purgatory/purgatory.c |    6 ++++++
+ arch/x86/purgatory/string.c    |   25 -------------------------
+ 4 files changed, 17 insertions(+), 25 deletions(-)
 
-diff --git a/drivers/s390/cio/qdio_main.c b/drivers/s390/cio/qdio_main.c
-index ab8dd81fbc2b1..1a40c73961b83 100644
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -1577,13 +1577,13 @@ static int handle_outbound(struct qdio_q *q, unsigned int callflags,
- 		rc = qdio_kick_outbound_q(q, phys_aob);
- 	} else if (need_siga_sync(q)) {
- 		rc = qdio_siga_sync_q(q);
-+	} else if (count < QDIO_MAX_BUFFERS_PER_Q &&
-+		   get_buf_state(q, prev_buf(bufnr), &state, 0) > 0 &&
-+		   state == SLSB_CU_OUTPUT_PRIMED) {
-+		/* The previous buffer is not processed yet, tack on. */
-+		qperf_inc(q, fast_requeue);
- 	} else {
--		/* try to fast requeue buffers */
--		get_buf_state(q, prev_buf(bufnr), &state, 0);
--		if (state != SLSB_CU_OUTPUT_PRIMED)
--			rc = qdio_kick_outbound_q(q, 0);
--		else
--			qperf_inc(q, fast_requeue);
-+		rc = qdio_kick_outbound_q(q, 0);
- 	}
+--- a/arch/x86/boot/string.c
++++ b/arch/x86/boot/string.c
+@@ -34,6 +34,14 @@ int memcmp(const void *s1, const void *s
+ 	return diff;
+ }
  
- 	/* in case of SIGA errors we must process the error immediately */
--- 
-2.20.1
-
++/*
++ * Clang may lower `memcmp == 0` to `bcmp == 0`.
++ */
++int bcmp(const void *s1, const void *s2, size_t len)
++{
++	return memcmp(s1, s2, len);
++}
++
+ int strcmp(const char *str1, const char *str2)
+ {
+ 	const unsigned char *s1 = (const unsigned char *)str1;
+--- a/arch/x86/purgatory/Makefile
++++ b/arch/x86/purgatory/Makefile
+@@ -6,6 +6,9 @@ purgatory-y := purgatory.o stack.o setup
+ targets += $(purgatory-y)
+ PURGATORY_OBJS = $(addprefix $(obj)/,$(purgatory-y))
+ 
++$(obj)/string.o: $(srctree)/arch/x86/boot/compressed/string.c FORCE
++	$(call if_changed_rule,cc_o_c)
++
+ $(obj)/sha256.o: $(srctree)/lib/sha256.c FORCE
+ 	$(call if_changed_rule,cc_o_c)
+ 
+--- a/arch/x86/purgatory/purgatory.c
++++ b/arch/x86/purgatory/purgatory.c
+@@ -70,3 +70,9 @@ void purgatory(void)
+ 	}
+ 	copy_backup_region();
+ }
++
++/*
++ * Defined in order to reuse memcpy() and memset() from
++ * arch/x86/boot/compressed/string.c
++ */
++void warn(const char *msg) {}
+--- a/arch/x86/purgatory/string.c
++++ /dev/null
+@@ -1,25 +0,0 @@
+-/*
+- * Simple string functions.
+- *
+- * Copyright (C) 2014 Red Hat Inc.
+- *
+- * Author:
+- *       Vivek Goyal <vgoyal@redhat.com>
+- *
+- * This source code is licensed under the GNU General Public License,
+- * Version 2.  See the file COPYING for more details.
+- */
+-
+-#include <linux/types.h>
+-
+-#include "../boot/string.c"
+-
+-void *memcpy(void *dst, const void *src, size_t len)
+-{
+-	return __builtin_memcpy(dst, src, len);
+-}
+-
+-void *memset(void *dst, int c, size_t len)
+-{
+-	return __builtin_memset(dst, c, len);
+-}
 
 
