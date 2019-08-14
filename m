@@ -2,136 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DE4A8D969
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23DDA8D996
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730068AbfHNRIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:08:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57900 "EHLO mail.kernel.org"
+        id S1728467AbfHNRJ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60490 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730049AbfHNRIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:08:05 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1730396AbfHNRJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:53 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DEFCC214DA;
-        Wed, 14 Aug 2019 17:08:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 52560214DA;
+        Wed, 14 Aug 2019 17:09:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802484;
-        bh=1PjyB53SE5ISTW3kYQPPKdvQAcURDsEDX3z1n5W5Ncs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=RCCzAshXp3+krsNHFGqQiq5XI5PlLhffpj2vyugoA1i9+VSgSe1Ab6xaCzPLzrRRq
-         jgwPdVi/ErGjUXC4wM0jK/zzTYfsgsCAB6tt8aqNcZlA1bGaJg8EtieSfirhKXAbcs
-         xXHddlF/sHlSVloSOI09+Gg8f63YnINcVE/9i+GI=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1565802592;
+        bh=ocwnyKs1rifK7iP2Y5EL/eziwLUfhU6jkrxnY1uaWtw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=VN/Ii/KxB0tKA7c/3XaSlruejrvjc0ninsIs6kFZTrf1Xcjmaj7tDMwPJMQotkz8C
+         CAxGuAUePDoMTJTLrBx9Xip7C5rnk62kIppBqzGPlyGmdfogca0RIru2DT4a4KQoJY
+         zgLAn4lRTdZn/P0fRqb/jRKQNd9YkWn3cbRklQxk=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Joe Perches <joe@perches.com>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 02/91] iio: adc: max9611: Fix misuse of GENMASK macro
+Date:   Wed, 14 Aug 2019 19:00:25 +0200
+Message-Id: <20190814165749.068181696@linuxfoundation.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190814125012.8700-11-vkoul@kernel.org>
-References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-11-vkoul@kernel.org>
-Subject: Re: [PATCH 10/22] arm64: dts: qcom: pm8150b: Add pon and adc nodes
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:08:02 -0700
-Message-Id: <20190814170803.DEFCC214DA@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Vinod Koul (2019-08-14 05:50:00)
-> Add the pon and adc nodes found in pm8150b PMIC.
->=20
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  arch/arm64/boot/dts/qcom/pm8150b.dtsi | 54 +++++++++++++++++++++++++++
->  1 file changed, 54 insertions(+)
+From: Joe Perches <joe@perches.com>
 
-Squash?
+commit ae8cc91a7d85e018c0c267f580820b2bb558cd48 upstream.
 
->=20
-> diff --git a/arch/arm64/boot/dts/qcom/pm8150b.dtsi b/arch/arm64/boot/dts/=
-qcom/pm8150b.dtsi
-> index c0a678b0f159..846197bd65cd 100644
-> --- a/arch/arm64/boot/dts/qcom/pm8150b.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
-> @@ -2,6 +2,7 @@
->  // Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
->  // Copyright (c) 2019, Linaro Limited
-> =20
-> +#include <dt-bindings/iio/qcom,spmi-vadc.h>
->  #include <dt-bindings/interrupt-controller/irq.h>
->  #include <dt-bindings/spmi/spmi.h>
-> =20
-> @@ -11,6 +12,59 @@
->                 reg =3D <0x2 SPMI_USID>;
->                 #address-cells =3D <1>;
->                 #size-cells =3D <0>;
-> +
-> +               pon@800 {
+Arguments are supposed to be ordered high then low.
 
-Maybe pon node name should be 'key' or 'power-on'?
+Signed-off-by: Joe Perches <joe@perches.com>
+Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-> +                       compatible =3D "qcom,pm8916-pon";
-> +                       reg =3D <0x0800>;
-> +               };
-> +
-> +               adc@3100 {
-> +                       compatible =3D "qcom,spmi-adc5";
-> +                       reg =3D <0x3100>;
-> +                       #address-cells =3D <1>;
-> +                       #size-cells =3D <0>;
-> +                       #io-channel-cells =3D <1>;
-> +                       interrupts =3D <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING=
->;
-> +
-> +                       ref-gnd@0 {
-> +                               reg =3D <ADC5_REF_GND>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "ref_gnd";
-> +                       };
-> +
-> +                       vref-1p25@1 {
-> +                               reg =3D <ADC5_1P25VREF>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "vref_1p25";
-> +                       };
-> +
-> +                       die-temp@6 {
-> +                               reg =3D <ADC5_DIE_TEMP>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "die_temp";
-> +                       };
-> +
-> +                       chg-temp@9 {
-> +                               reg =3D <ADC5_CHG_TEMP>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "chg_temp";
-> +                       };
-> +
-> +                       smb1390-therm@14 {
-> +                               reg =3D <ADC5_AMUX_THM2>;
-> +                               qcom,hw-settle-time =3D <200>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "smb1390_therm";
-> +                       };
-> +
-> +                       smb1355-therm@78 {
-> +                               reg =3D <ADC5_AMUX_THM2_100K_PU>;
-> +                               qcom,ratiometric;
-> +                               qcom,hw-settle-time =3D <200>;
-> +                               qcom,pre-scaling =3D <1 1>;
-> +                               label =3D "smb1355_therm";
-> +                       };
+---
+ drivers/iio/adc/max9611.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Again, are these board level details? Maybe should be provided here with
-status =3D "disabled" and then added by the boards that use these ADCs.
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -86,7 +86,7 @@
+ #define MAX9611_TEMP_MAX_POS		0x7f80
+ #define MAX9611_TEMP_MAX_NEG		0xff80
+ #define MAX9611_TEMP_MIN_NEG		0xd980
+-#define MAX9611_TEMP_MASK		GENMASK(7, 15)
++#define MAX9611_TEMP_MASK		GENMASK(15, 7)
+ #define MAX9611_TEMP_SHIFT		0x07
+ #define MAX9611_TEMP_RAW(_r)		((_r) >> MAX9611_TEMP_SHIFT)
+ #define MAX9611_TEMP_SCALE_NUM		1000000
 
-> +               };
->         };
+
