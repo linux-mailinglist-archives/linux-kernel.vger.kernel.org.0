@@ -2,91 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BEEA38DC6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:55:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E1B518DC72
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbfHNRzZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:55:25 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:43616 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbfHNRzY (ORCPT
+        id S1729005AbfHNR4J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:56:09 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:50340 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728233AbfHNR4J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:55:24 -0400
-Received: by mail-pg1-f196.google.com with SMTP id k3so2433780pgb.10;
-        Wed, 14 Aug 2019 10:55:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=j9DLeltmWqsK1VKgMNbmGPdPd+zVJj18lOtoOTyj2aE=;
-        b=B5cExcFtUN2xSf6F3KnANjZcMO32Mf1SribfPey0JtmNXxP4BDTAMD0d+ux/DLkc/W
-         ITTu55hrJsUbt9+IM9KQiLP83n0V2nRU9n67rIdC9OVzdiZ7pk6zz+wp/L3YHMbZuDlJ
-         P9OhhNvDSJ9cyq7HAl4YkJCU2RkcqJuzgLUdsrIIxXGFnfs9xD+Jh+UR8blEBlnfKbyg
-         Zfd0WwndgjM5jYj8UDTIkpEVDC0m3l0Sg7Alc5t/g4yuppOidJdmEA0osQ7QwNbukflH
-         /eBA2LoyaJ2c2j5BN7tRdSlbmk/PgPznRIU0NHp6N7xBihLIECuNws2HqVGTNWG9rnRs
-         3EMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j9DLeltmWqsK1VKgMNbmGPdPd+zVJj18lOtoOTyj2aE=;
-        b=f64oKIyDGVHrlMsdvTpsVUiYb2OqfDhxg7JyK1qcMRP1xzQeQtaEnz4nz1Ho06dQgf
-         bxn+GxMAIma7HQUKb1W3EY6ZTy+z9r+iGFx3GOjLvAI0dX1czKeteUXNmHaBItpgiG8q
-         Lrbj9a4/M1zU76M5KBXhnnOuGd+xhncLqmXTeungonbImHCamna6VM72MoNaeSHWYEau
-         XUKtmGihi4N2KlxfNcwW9YNk+Atc5lpj8QeZ0v943js8al99uwO/5KGmfXw1prR32CKi
-         nVTx9QnWUb/6nb09V/XXgr8T99SbE1fncZJVVGGDAJ1HKRfSgfFvG6tyELNTAEQek7B6
-         oU1Q==
-X-Gm-Message-State: APjAAAUgfeVnhwuB0n+sgohKIgMuosGYY3ZZq9VUIvzjUnmYsoadsOm9
-        2muzP0UP/a+YLe8niEOazbE=
-X-Google-Smtp-Source: APXvYqxSIRb1/qhZIB33TiXGqt0Q79qM9ssv70o9wS6UrNdzIIuWrlDUBMQ8awZ8/bMnW+YCxo7v1Q==
-X-Received: by 2002:a17:90a:2525:: with SMTP id j34mr906461pje.11.1565805323712;
-        Wed, 14 Aug 2019 10:55:23 -0700 (PDT)
-Received: from [10.69.78.41] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id b14sm297615pga.20.2019.08.14.10.55.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 10:55:19 -0700 (PDT)
-Subject: Re: [PATCH v4 09/14] net: phy: adin: add EEE translation layer from
- Clause 45 to Clause 22
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        hkallweit1@gmail.com, andrew@lunn.ch
-References: <20190812112350.15242-1-alexandru.ardelean@analog.com>
- <20190812112350.15242-10-alexandru.ardelean@analog.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <14ef4f7c-74d9-f8ce-a146-5c5f8777d5ed@gmail.com>
-Date:   Wed, 14 Aug 2019 10:55:17 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190812112350.15242-10-alexandru.ardelean@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Aug 2019 13:56:09 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHrs7p120496;
+        Wed, 14 Aug 2019 17:55:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2019-08-05;
+ bh=BKxqk+CBk51jtK7v8gTw8n53G62GPRXfoVRO6EcuU6c=;
+ b=PneBln1qQwbiRopUdXPAnFRgh/ykeMQFzk+ajFK+2K7qfyCRqVv/90ZjC4FRGP0tDSVA
+ vOsG1tFHTsmpzjni7FN0rizE+IDdzWNFNoU00TR8jRklXI34KTcqMxPOZUPII16P0KAR
+ 57P9O41GCt3M968B3C4xxx1A5Tkq5OAf+yNsIg9xEbZH9G9YTGgXzwEXvxApj8RQgr9U
+ kWXCZe7+ULeQG03hTeA04T5QaQqMvKblWwLwnLGtEpAsn6lSEvlmWSdBwwIY/OIYOjfo
+ xF7FRjGC86IkERxOLTB8x/MMgobbIgGobojqq+SJ4QJq4gsV/tT+ImV7exw8x4f6/oeh GQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u9nvpef61-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Aug 2019 17:55:38 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHs2Sh027519;
+        Wed, 14 Aug 2019 17:55:38 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3020.oracle.com with ESMTP id 2ucgf01g8y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Aug 2019 17:55:37 +0000
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7EHtaEH025328;
+        Wed, 14 Aug 2019 17:55:36 GMT
+Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Aug 2019 10:55:36 -0700
+From:   Divya Indi <divya.indi@oracle.com>
+To:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
+Cc:     Divya Indi <divya.indi@oracle.com>, Joe Jin <joe.jin@oracle.com>,
+        Srinivas Eeda <srinivas.eeda@oracle.com>,
+        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
+Subject: [PATCH 0/5 v4]Kernel Access to Ftrace instances.
+Date:   Wed, 14 Aug 2019 10:55:22 -0700
+Message-Id: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=825
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908140160
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=874 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908140161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In addition to patches introduced by commit f45d1225adb0 "tracing: Kernel
+access to Ftrace instances") we also need the following patches to reliably
+access ftrace instances from other kernel modules or components.
 
+This version addresses the review comments/suggestions received for v3.
 
-On 8/12/2019 4:23 AM, Alexandru Ardelean wrote:
-> The ADIN1200 & ADIN1300 PHYs support EEE by using standard Clause 45 access
-> to access MMD registers for EEE.
-> 
-> The EEE register addresses (when using Clause 22) are available at
-> different addresses (than Clause 45), and since accessing these regs (via
-> Clause 22) needs a special mechanism, a translation table is required to
-> convert these addresses.
-> 
-> For Clause 45, this is not needed since the driver will likely never use
-> this access mode.
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Please review the patches that follow.
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Divya Indi (5):
+  tracing: Declare newly exported APIs in include/linux/trace.h
+  tracing: Verify if trace array exists before destroying it.
+  tracing: Adding NULL checks
+  tracing: Handle the trace array ref counter in new functions
+  tracing: New functions for kernel access to Ftrace instances
+
+ include/linux/trace.h        | 10 +++++
+ include/linux/trace_events.h |  3 +-
+ kernel/trace/trace.c         | 88 ++++++++++++++++++++++++++++++++++++++++++--
+ kernel/trace/trace.h         |  4 +-
+ kernel/trace/trace_events.c  | 25 ++++++++++++-
+ 5 files changed, 121 insertions(+), 9 deletions(-)
+
 -- 
-Florian
+1.8.3.1
+
