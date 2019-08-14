@@ -2,101 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CA818D8BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:02:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1B498D913
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:05:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728534AbfHNRCG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:02:06 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:44740 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfHNRCF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:02:05 -0400
-Received: from [213.220.153.21] (helo=wittgenstein)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <christian.brauner@ubuntu.com>)
-        id 1hxwew-0001t5-5g; Wed, 14 Aug 2019 17:02:02 +0000
-Date:   Wed, 14 Aug 2019 19:02:01 +0200
-From:   Christian Brauner <christian.brauner@ubuntu.com>
-To:     Rich Felker <dalias@libc.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org,
-        libc-alpha@sourceware.org, alistair23@gmail.com,
-        ebiederm@xmission.com, arnd@arndb.de,
-        torvalds@linux-foundation.org, adhemerval.zanella@linaro.org,
-        fweimer@redhat.com, palmer@sifive.com, macro@wdc.com,
-        zongbox@gmail.com, akpm@linux-foundation.org,
-        viro@zeniv.linux.org.uk, hpa@zytor.com
-Subject: Re: [PATCH v3 1/1] waitid: Add support for waiting for the current
- process group
-Message-ID: <20190814170200.kqkygob7yo5hciau@wittgenstein>
-References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
- <20190814154400.6371-1-christian.brauner@ubuntu.com>
- <20190814154400.6371-2-christian.brauner@ubuntu.com>
- <20190814160917.GG11595@redhat.com>
- <20190814161517.ldbn62mulk2pmqo5@wittgenstein>
- <20190814163443.6odsksff4jbta7be@wittgenstein>
- <20190814165501.GJ9017@brightrain.aerifal.cx>
+        id S1729434AbfHNRFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:05:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54232 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729409AbfHNRFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:05:19 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D0EB2084D;
+        Wed, 14 Aug 2019 17:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565802318;
+        bh=p2S5wxtRdlEoyTTI5d4Kr1BQjkHIIs2t54IZ3SRvnZ4=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=TFGKIjo6bCqSThrxmIMbuYC4Ps+IyPRDXCdOfQTEdUXA6nb7EmVE5+bKhKc7TKS3U
+         TRFbyUfkDIyRQZF0+qzflnsnJM/SQtjPqvnh1iS2v3pSnN/kBM+kS5hfhkxfarz50Y
+         1dp/A2FjLNbt51y+ZAh/JPA0v+zLSBPw48GjTScI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190814165501.GJ9017@brightrain.aerifal.cx>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814125012.8700-9-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-9-vkoul@kernel.org>
+Subject: Re: [PATCH 08/22] arm64: dts: qcom: pm8150: Add vadc node
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 10:05:17 -0700
+Message-Id: <20190814170518.9D0EB2084D@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 12:55:01PM -0400, Rich Felker wrote:
-> On Wed, Aug 14, 2019 at 06:34:44PM +0200, Christian Brauner wrote:
-> > On Wed, Aug 14, 2019 at 06:15:17PM +0200, Christian Brauner wrote:
-> > > On Wed, Aug 14, 2019 at 06:09:17PM +0200, Oleg Nesterov wrote:
-> > > > On 08/14, Christian Brauner wrote:
-> > > > >
-> > > > > and a signal could come in between the system call that
-> > > > > retrieved the process gorup and the call to waitid that changes the
-> > > >                         ^^^^^
-> > > > > current process group.
-> > > > 
-> > > > I noticed this typo only because I spent 2 minutes or more trying to
-> > > > understand this sentence ;) But yes, a signal handler or another thread
-> > > 
-> > > I'll try to rewrite it. :)
-> > 
-> > Ok, here's what I changed it to:
-> > 
-> > It was recently discovered that the linux version of waitid is not a
-> > superset of the other wait functions because it does not include
-> > support for waiting for the current process group. This has two
-> > downsides:
-> > 1. An extra system call is needed to get the current process group.
-> > 2. After the current process group is received and before it is passed
-> >    to waitid a signal could arrive causing the current process group to change.
-> 
-> I don't think "downsides" sufficiently conveys that this is hard
-> breakage of a requirement for waitpid. How about something like the
-> following?
-> 
-> "It was recently discovered that the linux version of waitid is not a
-> superset of the other wait functions because it does not include
-> support for waiting for the current process group. Userspace cannot
-> simply emulate this functionality with an additional getpgid syscall
-> due to inherent race conditions that violate the async-signal safety
-> requirements for waitpid."
+Quoting Vinod Koul (2019-08-14 05:49:58)
+> @@ -25,6 +26,33 @@
+>                         };
+>                 };
+> =20
+> +               pm8150_adc: adc@3100 {
+> +                       compatible =3D "qcom,spmi-adc5";
+> +                       reg =3D <0x3100>;
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <0>;
+> +                       #io-channel-cells =3D <1>;
+> +                       interrupts =3D <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING=
+>;
 
-I like the rather specific example in there. How about we add that after
-this section like so:
+status =3D "disabled"? I imagine there are cases where some board doesn't
+want to use the ADC for anything.
 
-It was recently discovered that the linux version of waitid is not a
-superset of the other wait functions because it does not include
-support for waiting for the current process group. This has two
-downsides:
-1. An extra system call is needed to get the current process group.
-2. After the current process group is received and before it is passed
-   to waitid a signal could arrive causing the current process group to change.
+> +
+> +                       ref-gnd@0 {
+> +                               reg =3D <ADC5_REF_GND>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "ref_gnd";
+> +                       };
+> +
+> +                       vref-1p25@1 {
+> +                               reg =3D <ADC5_1P25VREF>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "vref_1p25";
+> +                       };
+> +
+> +                       die-temp@6 {
+> +                               reg =3D <ADC5_DIE_TEMP>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "die_temp";
+> +                       };
 
-Such inherent race-conditions as mentioned in 2. make it impossible for
-userspace to emulate this functionaly and thus violate the async-signal
-safety requirements for waitpid.
+Are these board level details?
 
-Christian
+> +               };
+> +
+>                 rtc@6000 {
+>                         compatible =3D "qcom,pm8941-rtc";
+>                         reg =3D <0x6000>;
+> --=20
+> 2.20.1
+>=20
