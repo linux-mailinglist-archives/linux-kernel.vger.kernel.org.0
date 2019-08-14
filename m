@@ -2,79 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE90D8CA93
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 07:15:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 399DD8CA94
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 07:15:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfHNFO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 01:14:56 -0400
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:37629 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbfHNFO4 (ORCPT
+        id S1727383AbfHNFPT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 01:15:19 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42287 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725263AbfHNFPT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 01:14:56 -0400
-Received: by mail-yb1-f194.google.com with SMTP id t5so7330080ybt.4;
-        Tue, 13 Aug 2019 22:14:55 -0700 (PDT)
+        Wed, 14 Aug 2019 01:15:19 -0400
+Received: by mail-oi1-f193.google.com with SMTP id o6so2029420oic.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 22:15:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
+        b=bYFfiDD4cpK3BoXx3szj/Q7ElorplRRPhi5xrnFpp0lFdrEu/Ore6FcUZZFYtbuAfQ
+         +WOiUo3PDnM4Jte0czCrPnX0TdSEuB3xxjY4VeINLC3SpnrSCaTIUn62QyPu6fD2B7iB
+         sOHFqYzuwUbybm+4ldmyKVA9HuT91ge3JxG7q1dihfWnVZienWD0FMMnKHaPGlAAHsiF
+         h77ebIagOWSYhx6L+QRjfqK9kQlxcG9bRDNMaU1/MunTtjkVd1Xqygk6WjJiZyTMPNaV
+         zvZr0UwKMahA+AemcKECXq6KYZ6eWkOx00gWoOxrRnNTeE5hkkfbPUuiERyyhT8Tq1gP
+         kTgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lD7K7srnZm3/fJdQ4MMUb4Yt0W08MUzcITPyxwLfAmA=;
-        b=F/2y41XZ9wTXeFlGtw9NZKW9mcDwUSKNEY4So/EHnzZXTmpvq5UBcLxYXEooiufna+
-         VUUKZaqnbwCQ4HUsw+0ssTAAwiqVDL3XOizKNuW8RuqV95IrEqmLnyND1ClfhBP5ECC6
-         hqBMkW8ys7zXKeTCVXO/Zbt8FBgBa0mHztSQbEUz7q84EDUgvaH99ysA0fBgo1FLq4QU
-         U3C93pogha4C78ySDpd7e4qOQeo+ATb/IM4jxdR6paFAkn2Y6Y+AyWTIdwSZbBa24lay
-         LrnAFTTxMFTDcQzQ56myfZVsSXiev9FySbHDVytXzqJHREHP1zxW6dTdJ/q/7u7SrTxG
-         dnIA==
-X-Gm-Message-State: APjAAAXcGCp9yUCtJcfU1cTcDYweyVO9BP7XHV1FhH1ygAt/BlemwPl+
-        uVHTdvqLRkBRtPvI4I6+MMB6eyZuKij8Tg==
-X-Google-Smtp-Source: APXvYqzT8hE17MvfcP5XewY94v3FyRcPTNoIlWorGPihtOeX+s/REcCAdX4DnuyIGSuxwUxOY6zUkQ==
-X-Received: by 2002:a25:9345:: with SMTP id g5mr1981247ybo.394.1565759695426;
-        Tue, 13 Aug 2019 22:14:55 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id z6sm25581704ywg.40.2019.08.13.22.14.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Aug 2019 22:14:54 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Derek Chickles <dchickles@marvell.com>,
-        Satanand Burla <sburla@marvell.com>,
-        Felix Manlunas <fmanlunas@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev@vger.kernel.org (open list:CAVIUM LIQUIDIO NETWORK DRIVER),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] liquidio: add cleanup in octeon_setup_iq()
-Date:   Wed, 14 Aug 2019 00:14:49 -0500
-Message-Id: <1565759689-5941-1-git-send-email-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=JMnZ/37Wfl3iFzPaad42No4GU9GCU/1tNIhIc8+o7vI=;
+        b=PRWz0fgr1Aq0Cv6X6KW4dkz2lkaYbhQ0gc7IGYXVBDJRoKVgh6WAKcy7wJ1Xpo8cY/
+         bPSZxcw42qSlBIZ0C3ABTywRwFtG9aTGgN1+N45v7fN0k/90qMRiT0MpblgvKUSQVG/Y
+         CHPynrcVFejO+68LlbIZ0aY88H37fEqmq0e3l3bty/bYS30QQElol3RYE3qFxgR5oc97
+         TIWcKyckEIg4vuWgZqXkb002Xg9gyVcg7XK9LfeRtJD+nR3ilS+PofTWMkjyxIVcPEby
+         F6cMcmLd3u7QM2VQkq3rGkt83+w+HSWCTifEnk9fjf6LoZF1HX7ErhhSSjHKd302O/Mi
+         8loA==
+X-Gm-Message-State: APjAAAVGG3Mw014UPprEC5kwUnDUJP0ZimhSfaV25vjYDa1CJpyt5n2k
+        KbwqNdNvreFjAKyFkHgoWsM5sbHYyh0P0l8xN6I=
+X-Google-Smtp-Source: APXvYqxcYGuq5M2RqcpCglHr6mlh4K2DExr7fcGdh5boCm5t4kdF3zZlWuIkRbH0SHOJ8i7mMeg2wnyQdXvZkli8xcM=
+X-Received: by 2002:aca:cfcb:: with SMTP id f194mr3992881oig.103.1565759718488;
+ Tue, 13 Aug 2019 22:15:18 -0700 (PDT)
+MIME-Version: 1.0
+Reply-To: mrsaishag502@gmail.com
+Received: by 2002:a9d:6382:0:0:0:0:0 with HTTP; Tue, 13 Aug 2019 22:15:18
+ -0700 (PDT)
+From:   "Mrs. Aisha" <agaddafl080@gmail.com>
+Date:   Tue, 13 Aug 2019 22:15:18 -0700
+X-Google-Sender-Auth: Cw9YFGxK3XOlDBtdC9OeThdr_J4
+Message-ID: <CAMc0+sWfy_Uo9ywp=HZ1Zk2K+NaQteEvjh_959N48odkwKQ3vA@mail.gmail.com>
+Subject: GREETING BELOVED ONE,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If oct->fn_list.enable_io_queues() fails, no cleanup is executed, leading
-to memory/resource leaks. To fix this issue, invoke
-octeon_delete_instr_queue() before returning from the function.
+Dear Friend,
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- drivers/net/ethernet/cavium/liquidio/request_manager.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I came across your e-mail contact prior a private search whilst in
+need of your partnership for investment assistance in your country. I
+am opportune to use this medium to exhibit my legal intentions towards
+investing to your country under your management. I am fully convinced
+that you will really be of help as a business partner.
 
-diff --git a/drivers/net/ethernet/cavium/liquidio/request_manager.c b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-index 0322241..6dd65f9 100644
---- a/drivers/net/ethernet/cavium/liquidio/request_manager.c
-+++ b/drivers/net/ethernet/cavium/liquidio/request_manager.c
-@@ -237,8 +237,10 @@ int octeon_setup_iq(struct octeon_device *oct,
- 	}
- 
- 	oct->num_iqs++;
--	if (oct->fn_list.enable_io_queues(oct))
-+	if (oct->fn_list.enable_io_queues(oct)) {
-+		octeon_delete_instr_queue(oct, iq_no);
- 		return 1;
-+	}
- 
- 	return 0;
- }
--- 
-2.7.4
+My name is Aisha  Gaddafi a single Mother and a Widow and i have three
+Children. I am the only biological Daughter of late Libyan President
+(Late Colonel Muammar Gaddafi).
 
+I have investment funds worth Twenty Seven Million Five Hundred
+Thousand United State Dollar ($27.500.000.00 ) and i need a trusted
+investment Manager/Partner.  I am planning to go into investment
+projects in your country of origin or present country of Location to
+assist me establish the investments project.
+
+ I am willing to negotiate investment/business profit sharing ratio
+with you base on the future investment earning profits.
+
+If you are willing to handle this project on my behalf kindly reply
+urgent to enable me provide you tell you more details about myself and
+more information about the release of the investment funds.
+
+I appreciate Your Urgent Reply to my email address:
+
+Best Regards
+Mrs Aisha Gaddafi
