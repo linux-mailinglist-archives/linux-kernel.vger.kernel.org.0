@@ -2,161 +2,416 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6805C8CD37
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:52:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0DA68CD3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:52:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfHNHwL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:52:11 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33868 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726466AbfHNHwK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:52:10 -0400
-Received: by mail-ot1-f65.google.com with SMTP id c7so7687712otp.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 00:52:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=A3FwTQnzXQxQ1tn9puJCL/AccobFRlvOfxXdkmMzNAc=;
-        b=ZF66mpLco25PsHUC0Z45Wlas+FiEdMC3mkgmrVy7hzyZGD5YPGjRWRW1CYEAkiei3o
-         46MauRHGSRVvFr9uDrdyzuKzaFAtK1YqNdWoJdiF3XHZ+1Rta3dPk3igQlqu+duPJs7n
-         pT80bDQF5HDD8IX56+4VUF/v8Pg6dMuY7ZPET0yDJMT3YfA0BVCa7nSlfVRHP5JtFCvC
-         71KJPTmobIYH+qGf7HtfsXqHWq3CCGo7joebkNOymI+b3mCibWaoTa3dX4t8ntJR6FiC
-         Alqfy5mLpEQmKRBdzxyOMjLhVRupV+nTad5JKv5YELt2yEsfraOg4wsExz6ZM0nd9jj6
-         BkHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=A3FwTQnzXQxQ1tn9puJCL/AccobFRlvOfxXdkmMzNAc=;
-        b=UTP87vmIdH7krhrC+yVHM5LTLk9klSUnScDmdQ90o/Bbkwu8OxUi+E/Ip293E+R2yi
-         Q+rbgFrFbN9J6ROQKbtcBi1dLzWe7cpsbuQ51eNg2SkeFwUz0/qY4Wc708Zo3kU4jn4j
-         qL2i8lFTzW5QnZSWoAQjnrh8DxTGEuEanMeEEFNitHMvrTb9d87jI2hHlrfD0aV4AS4b
-         8iYXOvklgwcrvhWvdLs5n1sq3CCPZMObtQf2nSghbGYVr/Y2t2obeeJgpnvb3IRfqz7O
-         t+5JwoC4iTUn89CDsd0Iw4RMBTrVphtsizHVtGE+qMRSR2TQm4AFW/QPjv9SVsu6xDea
-         YD2w==
-X-Gm-Message-State: APjAAAXV6N7o0BC8rHF3vpqsP/lEep1CS4Q3vsfJk6mQnGgA22L+nUkD
-        XSBQxvD6gWi6jEOytKPUtVaHN6JxbRHxVcDJNyAA4w==
-X-Google-Smtp-Source: APXvYqwrX6eHcXHI70cXxsMFdQLH7Cii35FC5m0TSKZOvb6P4BNQxKbxI0LV5NtKmv0hV1QJkvyKm0Ux1HO9+tNcy3g=
-X-Received: by 2002:a05:6830:1e05:: with SMTP id s5mr22188129otr.247.1565769128779;
- Wed, 14 Aug 2019 00:52:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:6a:0:0:0:0:0 with HTTP; Wed, 14 Aug 2019 00:52:08 -0700 (PDT)
-In-Reply-To: <20190814073939.ubgzysmkmmel5h4y@pengutronix.de>
-References: <f9d2c7cb01cbf31bf75c4160611fa1d37d99f355.1565703607.git.baolin.wang@linaro.org>
- <20190813141256.jnbrfld42rtigek3@pengutronix.de> <CAMz4kuJA+a=nzFRja4wRkfJu3Gzb0wnvaM8H4Ek9X5u8CNegPg@mail.gmail.com>
- <20190814070121.o53tj2mtky4hcy3n@pengutronix.de> <CAMz4ku+55O6ORVM9xDv4R954QG4PXV8EkcGypSTB5wKni+Dq+Q@mail.gmail.com>
- <20190814073939.ubgzysmkmmel5h4y@pengutronix.de>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Wed, 14 Aug 2019 15:52:08 +0800
-Message-ID: <CAMz4ku+Q7CV+0dP1P0hAPJR7KiG0HOkZbT_LPXY4Q03hMuvS8A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: sprd: Add Spreadtrum PWM documentation
-To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726936AbfHNHwk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:52:40 -0400
+Received: from mail-eopbgr30057.outbound.protection.outlook.com ([40.107.3.57]:39161
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726373AbfHNHwj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:52:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q+wzEMGoJS+V3upkxrH4uxBTjiCwXDOxOBJLcmpxmCw=;
+ b=FenbPZVtutROnrludoI0kajh3dszztK0WLGZ8+YqrtDRlqUUZo1MsSyu8zarojLJxuhPghS2dReGiBi4kPsB73dqcKeTKby3YwtFHng9DLqoVGrjyki9vf0joNPXURcaKCjkQxtQ0XtMSf3ZjuFA0D32VikbDF243/ME4iS9VDg=
+Received: from VI1PR08CA0093.eurprd08.prod.outlook.com (2603:10a6:800:d3::19)
+ by DB8PR08MB4954.eurprd08.prod.outlook.com (2603:10a6:10:bf::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.18; Wed, 14 Aug
+ 2019 07:52:28 +0000
+Received: from VE1EUR03FT021.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::204) by VI1PR08CA0093.outlook.office365.com
+ (2603:10a6:800:d3::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2157.15 via Frontend
+ Transport; Wed, 14 Aug 2019 07:52:28 +0000
+Authentication-Results: spf=temperror (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; vger.kernel.org; dkim=pass (signature was verified)
+ header.d=armh.onmicrosoft.com;vger.kernel.org; dmarc=temperror action=none
+ header.from=arm.com;
+Received-SPF: TempError (protection.outlook.com: error in processing during
+ lookup of arm.com: DNS Timeout)
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ VE1EUR03FT021.mail.protection.outlook.com (10.152.18.117) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.18 via Frontend Transport; Wed, 14 Aug 2019 07:52:26 +0000
+Received: ("Tessian outbound 1e6e633a5b56:v26"); Wed, 14 Aug 2019 07:52:26 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: 10745c97b1bb1756
+X-CR-MTA-TID: 64aa7808
+Received: from dcc9ab17699d.1 (cr-mta-lb-1.cr-mta-net [104.47.9.59])
+        by 64aa7808-outbound-1.mta.getcheckrecipient.com id E8E9E1E3-DFE3-46D5-A2A1-0D9CC6CD5309.1;
+        Wed, 14 Aug 2019 07:52:20 +0000
+Received: from EUR03-VE1-obe.outbound.protection.outlook.com (mail-ve1eur03lp2059.outbound.protection.outlook.com [104.47.9.59])
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id dcc9ab17699d.1
+    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
+    Wed, 14 Aug 2019 07:52:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nCE1hrZ/HEbaK+Z58i5CniKyBrp+A0Nh85geeikRKerGILAjKi8wF6RDVcgP+RLxso4eprOzYY4S81UR+WxT8C9UXgQnJqeXVTG8NcAxCI8rGreyXjjksQnqBkJuJfSmPXOsJnpUMtRDheIu7YQKwaJzxeyvu9bUzghvbRu1T/UiTzBOAXi2qukZKVU27a8C9IaM+AWSQonV27tUksE2Gfp/iBxYcHV02YjldW8Le/xSq+O3D+fa/6iw2/lsmkHWtwICSAxb9kkNSQY/1zR0KbIP9MWQf5Z539VjTL45HvWZTpwRFLMK4AegtnZEBuJryt1kaMVmuEIN9S2Vd8mSyA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q+wzEMGoJS+V3upkxrH4uxBTjiCwXDOxOBJLcmpxmCw=;
+ b=CZ58GhkBKuC7KGeLYjG4pRX8vVaTJp88GJXWKDsFxNXBLfZ+fzLHIJGAtreZAu1DMXN+dxL3PwhDA3RbUt4PczNIvPCDmmsennxJrS31NtY6d07usrZwH4vsQpltfSVvuJ77eoZTPRI4C6vf0RsqnI7QhqorvgQfuQJO5FJWmakp0KdH6gRoWkz3KhuVlAfGOtwAmzTcvfNZ2No1Nua/ao726Wb/kIZ9jvmUsF2TAOB1MO6lv/PHcKlzm/1dUQoBBuAbONzxcbCvmN1l8M5mG/ToxMyZmhx6JMotdCHuHm2GtnOHlzvdWbW1GsKa5NDEGJsOHAFrlls8widPQDdmTw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=armh.onmicrosoft.com;
+ s=selector2-armh-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=q+wzEMGoJS+V3upkxrH4uxBTjiCwXDOxOBJLcmpxmCw=;
+ b=FenbPZVtutROnrludoI0kajh3dszztK0WLGZ8+YqrtDRlqUUZo1MsSyu8zarojLJxuhPghS2dReGiBi4kPsB73dqcKeTKby3YwtFHng9DLqoVGrjyki9vf0joNPXURcaKCjkQxtQ0XtMSf3ZjuFA0D32VikbDF243/ME4iS9VDg=
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com (10.255.159.31) by
+ VE1PR08MB5038.eurprd08.prod.outlook.com (10.255.159.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.15; Wed, 14 Aug 2019 07:52:18 +0000
+Received: from VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::2151:f0b1:3ea7:c134]) by VE1PR08MB5006.eurprd08.prod.outlook.com
+ ([fe80::2151:f0b1:3ea7:c134%6]) with mapi id 15.20.2157.022; Wed, 14 Aug 2019
+ 07:52:18 +0000
+From:   "james qian wang (Arm Technology China)" <james.qian.wang@arm.com>
+To:     Mihail Atanassov <Mihail.Atanassov@arm.com>
+CC:     Liviu Dudau <Liviu.Dudau@arm.com>,
+        "airlied@linux.ie" <airlied@linux.ie>,
+        Brian Starkey <Brian.Starkey@arm.com>,
+        "maarten.lankhorst@linux.intel.com" 
+        <maarten.lankhorst@linux.intel.com>,
+        "sean@poorly.run" <sean@poorly.run>,
+        "Jonathan Chai (Arm Technology China)" <Jonathan.Chai@arm.com>,
+        "Julien Yin (Arm Technology China)" <Julien.Yin@arm.com>,
+        "Thomas Sun (Arm Technology China)" <thomas.Sun@arm.com>,
+        "Lowry Li (Arm Technology China)" <Lowry.Li@arm.com>,
+        Ayan Halder <Ayan.Halder@arm.com>,
+        "Tiannan Zhu (Arm Technology China)" <Tiannan.Zhu@arm.com>,
+        "Yiqi Kang (Arm Technology China)" <Yiqi.Kang@arm.com>,
+        nd <nd@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Ben Davis <Ben.Davis@arm.com>,
+        "Oscar Zhang (Arm Technology China)" <Oscar.Zhang@arm.com>,
+        "Channing Chen (Arm Technology China)" <Channing.Chen@arm.com>
+Subject: Re: [PATCH v2 2/4] drm/komeda: Introduce komeda_color_manager/state
+Thread-Topic: [PATCH v2 2/4] drm/komeda: Introduce komeda_color_manager/state
+Thread-Index: AQHVUZNrgGWWre2e4Eyh5LBkmfNYaKb41hsAgAFxGAA=
+Date:   Wed, 14 Aug 2019 07:52:18 +0000
+Message-ID: <20190814075210.GA24984@jamwan02-TSP300>
+References: <20190813045536.28239-1-james.qian.wang@arm.com>
+ <20190813045536.28239-3-james.qian.wang@arm.com>
+ <3902025.BCtzpz6JhW@e123338-lin>
+In-Reply-To: <3902025.BCtzpz6JhW@e123338-lin>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mutt/1.10.1 (2018-07-13)
+x-originating-ip: [113.29.88.7]
+x-clientproxiedby: HK0P153CA0014.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:203:18::26) To VE1PR08MB5006.eurprd08.prod.outlook.com
+ (2603:10a6:803:113::31)
+Authentication-Results-Original: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+X-MS-Office365-Filtering-Correlation-Id: d4b7cc3e-e3a7-4291-6d04-08d7208c5960
+X-MS-Office365-Filtering-HT: Tenant
+X-Microsoft-Antispam-Untrusted: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR08MB5038;
+X-MS-TrafficTypeDiagnostic: VE1PR08MB5038:|DB8PR08MB4954:
+x-ms-exchange-transport-forked: True
+X-Microsoft-Antispam-PRVS: <DB8PR08MB4954E0B721950F24CE8326E8B3AD0@DB8PR08MB4954.eurprd08.prod.outlook.com>
+x-checkrecipientrouted: true
+x-ms-oob-tlc-oobclassifiers: OLM:8882;OLM:8882;
+x-forefront-prvs: 01294F875B
+X-Forefront-Antispam-Report-Untrusted: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(136003)(376002)(39860400002)(366004)(346002)(396003)(189003)(199004)(6436002)(58126008)(5660300002)(316002)(26005)(186003)(6116002)(3846002)(305945005)(2906002)(66066001)(7736002)(71190400001)(33716001)(33656002)(71200400001)(8676002)(1076003)(54906003)(6862004)(386003)(478600001)(52116002)(6636002)(4326008)(14454004)(6246003)(81156014)(55236004)(66946007)(446003)(256004)(11346002)(14444005)(76176011)(6506007)(81166006)(6486002)(66556008)(66476007)(229853002)(66446008)(102836004)(9686003)(86362001)(99286004)(6512007)(8936002)(486006)(64756008)(476003)(25786009)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR08MB5038;H:VE1PR08MB5006.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: arm.com does not designate
+ permitted sender hosts)
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info-Original: z4pzWggcGcqrRcaJ3MQFHCdB56R9Wm/bGyH7YR1yhvg2+ea3kEx+VkF4Ni0Jr1kDLvLjfHPnQuzGt3857yIvjhsbznMRPbpW/IOrH3jW4T7jwx9Cx54w22xl+iqvPumqy3sOITiBtIIhehubwGKz1FsNLkW1laKbTBJo6OJoq8ztYvaeXCW+kRpfT2b6Ui7Y5DkyrQPxOAq8BHep41Xi4tOdDGHXYjjXUJv7nVYy85lr8yIKxvMXYzOyaRv9oFx5+AxxIDXTCNWjBUoXPzllmO3eoP5nFLv9ainRChvzo3RjoUy8eecqHOzCzINcuZxoizeQ4qvpGaBnzjFQlWRW8ZSfOjUSyouYq++CPr+JIG9TyfQASYtGAhsYqYKKQqHmHQ2U6Somy7wb2o/nSp5NmQLxkwdjJSVQ5T41vGjs82Q=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1B6916E830453D4AB567C0609A6442AB@eurprd08.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR08MB5038
+Original-Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=james.qian.wang@arm.com; 
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped: VE1EUR03FT021.eop-EUR03.prod.protection.outlook.com
+X-Forefront-Antispam-Report: CIP:63.35.35.123;IPV:CAL;SCL:-1;CTRY:IE;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(7916004)(396003)(376002)(39860400002)(346002)(136003)(2980300002)(199004)(189003)(46406003)(6486002)(446003)(26826003)(63350400001)(11346002)(63370400001)(486006)(229853002)(5660300002)(58126008)(476003)(336012)(316002)(47776003)(356004)(26005)(66066001)(6636002)(22756006)(1076003)(126002)(8676002)(33716001)(81156014)(76176011)(305945005)(70206006)(386003)(102836004)(8746002)(186003)(8936002)(97756001)(70586007)(54906003)(478600001)(14454004)(50466002)(2906002)(4326008)(25786009)(33656002)(3846002)(99286004)(36906005)(86362001)(23726003)(76130400001)(6116002)(6512007)(6246003)(9686003)(14444005)(7736002)(6506007)(6862004)(81166006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB8PR08MB4954;H:64aa7808-outbound-1.mta.getcheckrecipient.com;FPR:;SPF:TempError;LANG:en;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;A:1;MX:1;
+X-MS-Office365-Filtering-Correlation-Id-Prvs: b4f7a331-2f72-4362-a409-08d7208c5449
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(710020)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:DB8PR08MB4954;
+NoDisclaimer: True
+X-Forefront-PRVS: 01294F875B
+X-Microsoft-Antispam-Message-Info: 1LIttZm0g5hcBLdwvvbOF9SjO4BAw9Q40OnVA/qMw4wPxUmv2LSA6h/FvY7cdJg2joDGlGBxcgKV9HZmYNAK88biO0LYw25jULKKA1xVqCLZD/8rbXv5Yb2sgyfSOqrZxrIWK6P+Y0aa4ZDEAqyeNoDEBq5qEMX/34SX8jWrZUz5kMiliXAN6hM+4H1qGA7gpWAVkCt3PHEczJtEvNUrlVSThLJWSY8mXAlgCw9kptOmnHp8Slt5JmOuhAq5CQQJM8I425YUKkRL/M1jqj/8CfjFWDnjoUdC+4FP4MjQphMhY5jhoACQ/UMbSmyhFHQic4ltlz0zGqi2M0d9F2kv4ous79aQ+5Oc6i1OzDVrF9OPiPKzSzengB956vJzmQMC+nKygJHi2nbHzpG1fEQTZ5WVU3Ru6nbFKQKOAOm0GVA=
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Aug 2019 07:52:26.1555
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4b7cc3e-e3a7-4291-6d04-08d7208c5960
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR08MB4954
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Uwe,
+On Tue, Aug 13, 2019 at 09:51:08AM +0000, Mihail Atanassov wrote:
+> Hi James,
+>=20
+> On Tuesday, 13 August 2019 05:56:07 BST james qian wang (Arm Technology C=
+hina) wrote:
+> > Many komeda component support color management like layer and IPS, so
+> > komeda_color_manager/state are introduced to manager gamma, csc and deg=
+amma
+> > together for easily share it to multiple componpent.
+> >=20
+> > And for komeda_color_manager which:
+> > - convert drm 3d gamma lut to komeda specific gamma coeffs
+> > - gamma table management and hide the HW difference for komeda-CORE
+> >=20
+> > Signed-off-by: James Qian Wang (Arm Technology China) <james.qian.wang@=
+arm.com>
+> > ---
+> >  .../arm/display/komeda/komeda_color_mgmt.c    | 126 ++++++++++++++++++
+> >  .../arm/display/komeda/komeda_color_mgmt.h    |  32 ++++-
+> >  2 files changed, 156 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > index 9d14a92dbb17..bf2388d641b9 100644
+> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.c
+> > @@ -4,7 +4,9 @@
+> >   * Author: James.Qian.Wang <james.qian.wang@arm.com>
+> >   *
+> >   */
+> > +#include <drm/drm_print.h>
+> > =20
+> > +#include "malidp_utils.h"
+> >  #include "komeda_color_mgmt.h"
+> > =20
+> >  /* 10bit precision YUV2RGB matrix */
+> > @@ -65,3 +67,127 @@ const s32 *komeda_select_yuv2rgb_coeffs(u32 color_e=
+ncoding, u32 color_range)
+> > =20
+> >  	return coeffs;
+> >  }
+> > +
+> > +struct gamma_curve_sector {
+> > +	u32 boundary_start;
+> > +	u32 num_of_segments;
+> > +	u32 segment_width;
+> > +};
+> > +
+> > +struct gamma_curve_segment {
+> > +	u32 start;
+> > +	u32 end;
+> > +};
+> > +
+> > +static struct gamma_curve_sector sector_tbl[] =3D {
+> > +	{ 0,    4,  4   },
+> > +	{ 16,   4,  4   },
+> > +	{ 32,   4,  8   },
+> > +	{ 64,   4,  16  },
+> > +	{ 128,  4,  32  },
+> > +	{ 256,  4,  64  },
+> > +	{ 512,  16, 32  },
+> > +	{ 1024, 24, 128 },
+> > +};
+> > +
+> > +static struct gamma_curve_sector igamma_sector_tbl[] =3D {
+> > +	{0, 64, 64},
+> > +};
+> > +
+> > +static void
+> > +drm_lut_to_coeffs(struct drm_property_blob *lut_blob, u32 *coeffs,
+> > +		  struct gamma_curve_sector *sector_tbl, u32 num_sectors)
+> > +{
+> > +	struct drm_color_lut *lut;
+> > +	u32 i, j, in, num =3D 0;
+> > +
+> > +	if (!lut_blob)
+> > +		return;
+> > +
+> > +	lut =3D lut_blob->data;
+> > +
+> > +	for (i =3D 0; i < num_sectors; i++) {
+> > +		for (j =3D 0; j < sector_tbl[i].num_of_segments; j++) {
+> > +			in =3D sector_tbl[i].boundary_start +
+> > +			     j * sector_tbl[i].segment_width;
+> > +
+> > +			coeffs[num++] =3D drm_color_lut_extract(lut[in].red,
+> > +						KOMEDA_COLOR_PRECISION);
+> > +		}
+> > +	}
+> > +
+> > +	coeffs[num] =3D BIT(KOMEDA_COLOR_PRECISION);
+> > +}
+> > +
+> > +void drm_lut_to_igamma_coeffs(struct drm_property_blob *lut_blob, u32 =
+*coeffs)
+> > +{
+> > +	drm_lut_to_coeffs(lut_blob, coeffs,
+> > +			  igamma_sector_tbl, ARRAY_SIZE(igamma_sector_tbl));
+> > +}
+> > +
+> > +void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 =
+*coeffs)
+> > +{
+> > +	drm_lut_to_coeffs(lut_blob, coeffs,
+> > +			  sector_tbl, ARRAY_SIZE(sector_tbl));
+> > +}
+> > +
+> > +void drm_ctm_to_coeffs(struct drm_property_blob *ctm_blob, u32 *coeffs=
+)
+> > +{
+> > +	struct drm_color_ctm *ctm;
+> > +	u32 i;
+> > +
+> > +	if (!ctm_blob)
+> > +		return;
+> > +
+> > +	ctm =3D ctm_blob->data;
+> > +
+> > +	for (i =3D 0; i < KOMEDA_N_CTM_COEFFS; ++i) {
+> > +		/* Convert from S31.32 to Q3.12. */
+> > +		s64 v =3D ctm->matrix[i];
+> > +
+> > +		coeffs[i] =3D clamp_val(v, 1 - (1LL << 34), (1LL << 34) - 1) >> 20;
+> CTM matrix values are S31.32, i.e. sign-magnitude, so clamp_val won't
+> give you the right result for negative coeffs. See
+> malidp_crtc_atomic_check_ctm for the sign-mag -> 2's complement
+> conversion.
 
-On 14/08/2019, Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> wrote=
-:
-> On Wed, Aug 14, 2019 at 03:25:53PM +0800, Baolin Wang wrote:
->> Hi Uwe,
->>
->> On Wed, 14 Aug 2019 at 15:01, Uwe Kleine-K=C3=B6nig
->> <u.kleine-koenig@pengutronix.de> wrote:
->> >
->> > Hello Baolin,
->> >
->> > On Wed, Aug 14, 2019 at 09:51:34AM +0800, Baolin Wang wrote:
->> > > On Tue, 13 Aug 2019 at 22:13, Uwe Kleine-K=C3=B6nig
->> > > <u.kleine-koenig@pengutronix.de> wrote:
->> > > > On Tue, Aug 13, 2019 at 09:46:40PM +0800, Baolin Wang wrote:
->> > > > > +- assigned-clock-parents: The phandle of the parent clock of PW=
-M
->> > > > > clock.
->> > > >
->> > > > I'm not sure you need to point out assigned-clocks and
->> > > > assigned-clock-parents as this is general clk stuff. Also I wonder
->> > > > if
->> > > > these should be "required properties".
->> > >
->> > > I think I should describe any properties used by PWM node, like
->> > > 'clocks' and 'clock-names' properties, though they are common clock
->> > > properties.
->> >
->> > Then you might want to describe also "status", "assigned-clock-rates",
->> > "pinctrl-$n", "pinctrl-names", "power-domains", "power-domain-names"
->> > and
->> > probably another dozen I'm not aware of.
->>
->> We usually do not describe 'status', but if your device node used
->> "pinctrl-$n", "pinctrl-names" ... common properties, yes, you should
->> describe them to let users know what is the purpose of these
->> properties. That's also asked by DT maintainer Rob.
->
-> Does this convince you that you should also describe "pinctrl-$n" and
-> the others? If not, why not? We also usually don't describe
+Thank you Mihail for pointing this out.
 
-Our PWM device node did not use "pinctrl-$n" things, why I should
-describe "pinctrl-$n"?
-If some devices use pinctrl, yes, they should describe what is the
-purpose of pinctrl, see:
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Do=
-cumentation/devicetree/bindings/mmc/sdhci-sprd.txt
+No matter our user or kernel all assume this s31.32 as 2's complement.=20
+we need to correct them both.
 
-> assigned-clock-parents. For me these are all in the same catagory:
+> > +	}
+> > +}
+> > +
+> > +void komeda_color_duplicate_state(struct komeda_color_state *new,
+> > +				  struct komeda_color_state *old)
+> [bikeshed] not really a _duplicate_state if all it does is refcounts.
+> kmemdup here and return a pointer (with ERR_PTR on fail), or memcpy if
+> you want to keep the signature?
 
-Lots of dt bindings describe 'assigned-clock-parents',:
-./Documentation/devicetree/bindings/display/msm/dsi.txt
-./Documentation/devicetree/bindings/display/msm/dsi.txt
-./Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.txt
-./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
-./Documentation/devicetree/bindings/pci/rockchip-pcie-host.txt
-./Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt
-./Documentation/devicetree/bindings/sound/brcm,cygnus-audio.txt
-./Documentation/devicetree/bindings/sound/brcm,cygnus-audio.txt
-......
+Yes, the dup mostly should return a new ptr from a old, the dup name here
+is not accurate.
+the reason is the color_state is not a separated structure but always
+embedded into layer_state, but I want to make all color_state operation
+into a func.
+Do you have any suggestion ?
 
-> Common properties supported for each devicetree node that represents a
-> device. The only difference is that on your board you make use of some
-> but not some others.
+> > +{
+> > +	new->igamma =3D komeda_coeffs_get(old->igamma);
+> > +	new->fgamma =3D komeda_coeffs_get(old->fgamma);
+> > +}
+> > +
+> > +void komeda_color_cleanup_state(struct komeda_color_state *color_st)
+> > +{
+> > +	komeda_coeffs_put(color_st->igamma);
+> > +	komeda_coeffs_put(color_st->fgamma);
+> > +}
+> > +
+> > +int komeda_color_validate(struct komeda_color_manager *mgr,
+> > +			  struct komeda_color_state *st,
+> > +			  struct drm_property_blob *igamma_blob,
+> > +			  struct drm_property_blob *fgamma_blob)
+> > +{
+> > +	u32 coeffs[KOMEDA_N_GAMMA_COEFFS];
+> > +
+> > +	komeda_color_cleanup_state(st);
+> > +
+> > +	if (igamma_blob) {
+> > +		drm_lut_to_igamma_coeffs(igamma_blob, coeffs);
+> > +		st->igamma =3D komeda_coeffs_request(mgr->igamma_mgr, coeffs);
+> > +		if (!st->igamma) {
+> > +			DRM_DEBUG_ATOMIC("request igamma table failed.\n");
+> > +			return -EBUSY;
+> > +		}
+> > +	}
+> > +
+> > +	if (fgamma_blob) {
+> > +		drm_lut_to_fgamma_coeffs(fgamma_blob, coeffs);
+> > +		st->fgamma =3D komeda_coeffs_request(mgr->fgamma_mgr, coeffs);
+> > +		if (!st->fgamma) {
+> > +			DRM_DEBUG_ATOMIC("request fgamma table failed.\n");
+> > +			return -EBUSY;
+> > +		}
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h b/d=
+rivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
+> > index a2df218f58e7..41a96b3b540f 100644
+> > --- a/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
+> > +++ b/drivers/gpu/drm/arm/display/komeda/komeda_color_mgmt.h
+> > @@ -4,14 +4,42 @@
+> >   * Author: James.Qian.Wang <james.qian.wang@arm.com>
+> >   *
+> >   */
+> > -
+> >  #ifndef _KOMEDA_COLOR_MGMT_H_
+> >  #define _KOMEDA_COLOR_MGMT_H_
+> > =20
+> >  #include <drm/drm_color_mgmt.h>
+> > +#include "komeda_coeffs.h"
+> > =20
+> >  #define KOMEDA_N_YUV2RGB_COEFFS		12
+> > +#define KOMEDA_N_RGB2YUV_COEFFS		12
+> > +#define KOMEDA_COLOR_PRECISION		12
+> > +#define KOMEDA_N_GAMMA_COEFFS		65
+> > +#define KOMEDA_COLOR_LUT_SIZE		BIT(KOMEDA_COLOR_PRECISION)
 
-Fine, let's decide this by PWM maintainer or DT maintainer Rob.
+> I don't see how the number of LUT entries has anything to do with the
+> bit-precision of each entry.
 
->
->> > > Yes, they are required. Thanks for your comments.
->> >
->> > required in which sense? Why can a Spreadtrum PWM not work when the
->> > clock parents are unspecified?
->>
->> On some Spreadtrum platforms, the default source clock of PWM may not
->> be enabled, so we should force users to select one available source
->> clock for PWM output clock.
->
-> Sounds like a bug in the clk tree of your SoC that shouldn't affect how
-> the PWM is described in the device tree. After all a parent of a clock
-> is supposed to become enabled when the clock gets enabled.
+Because our komeda color is 12-bit precison, and for 1 vs 1 loopup
+table, we need BIT(12) entries.
 
-That's not a bug, that's like a MUX, the default source clock of PWM
-can be disabled, since we usually do not use the default source clock.
-Then we can select a available source clock by the MUX.
+Thank you
+James
 
---=20
-Baolin Wang
-Best Regards
+> > +#define KOMEDA_N_CTM_COEFFS		9
+> > +
+> > +struct komeda_color_manager {
+> > +	struct komeda_coeffs_manager *igamma_mgr;
+> > +	struct komeda_coeffs_manager *fgamma_mgr;
+> > +	bool has_ctm;
+> > +};
+> > +
+> > +struct komeda_color_state {
+> > +	struct komeda_coeffs_table *igamma;
+> > +	struct komeda_coeffs_table *fgamma;
+> > +};
+> > +
+> > +void komeda_color_duplicate_state(struct komeda_color_state *new,
+> > +				  struct komeda_color_state *old);
+> > +void komeda_color_cleanup_state(struct komeda_color_state *color_st);
+> > +int komeda_color_validate(struct komeda_color_manager *mgr,
+> > +			  struct komeda_color_state *st,
+> > +			  struct drm_property_blob *igamma_blob,
+> > +			  struct drm_property_blob *fgamma_blob);
+> > +
+> > +void drm_lut_to_igamma_coeffs(struct drm_property_blob *lut_blob, u32 =
+*coeffs);
+> > +void drm_lut_to_fgamma_coeffs(struct drm_property_blob *lut_blob, u32 =
+*coeffs);
+> > +void drm_ctm_to_coeffs(struct drm_property_blob *ctm_blob, u32 *coeffs=
+);
+> > =20
+> >  const s32 *komeda_select_yuv2rgb_coeffs(u32 color_encoding, u32 color_=
+range);
+> > =20
+> > -#endif
+> > +#endif /*_KOMEDA_COLOR_MGMT_H_*/
+> >=20
+>=20
+> BR,
+> Mihail
+>=20
+>=20
