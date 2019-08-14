@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 467A58CE87
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:32:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70D168CE8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727466AbfHNIcm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:32:42 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:42491 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfHNIcl (ORCPT
+        id S1727606AbfHNIdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:33:03 -0400
+Received: from relay11.mail.gandi.net ([217.70.178.231]:59613 "EHLO
+        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726512AbfHNIdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:32:41 -0400
-Received: by mail-lj1-f196.google.com with SMTP id l14so1348981ljj.9
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 01:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Qprk97I1dFe+WA8kDtJTqkPzn2PSILy5kREIC5Uixm4=;
-        b=qMdw+xMV024LAbvccUI3jC70aaEEO5YWomLZhuABCdzO2cL+7TrxzWBaQItupTGIe5
-         V5iI287R6yEzuK4400Xf11LNmZT5SP6D3BpwXIiP0REHYCp8lEccJQsiTnSQK7+qJw5c
-         Adf6kT0NahAxCaB61a4PDzWh0bZsvpdye0vrJeeZ3SE9yW+n4tXTOd0BO1uq9rjGvYuB
-         5Nnv5m31Aj9HkD49sGMjQwz//29/ywzsTipoA+S2vbv/e5ERHrl6TQtuGZhTkqDX2q/6
-         Bt86uvuXeQ6/przYNgkxiJfzspWLBBF/cOGwWI6Nx23yadkF0Xae3G66sAVLnvA6hs3F
-         KrJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Qprk97I1dFe+WA8kDtJTqkPzn2PSILy5kREIC5Uixm4=;
-        b=NhpWDt60NqzsFGqGNRLkKMblDaji80kSUAECk09ZeIKv1gaZSwzGWvjmjcIE/ZLx/M
-         ffYihIkVKvVEr10rrxunGgY1swaADecvZYpKuCZOla/bdCF8w6BDZSZsycVZS/NI2X31
-         AvIKehE9GjLJ/q+sTa+Bz1p9K4FKry0Y3zSCqOj2J5jlH/XKf6yEqqAA/c1pTQpfgj0d
-         gKQg5wDM2hQB1zMmdYsJgKcBjYkXabJnyhFwfgFbj65qsEpgfOLYie4g18K2AqpDdJgW
-         HYZgq1vh9pkaj5HGHcFfCFMM1lyI8nVgBiCOaX5zdTdLQ5UlY5uCKtPJ+c5lcHMZHqyK
-         WbeA==
-X-Gm-Message-State: APjAAAXLaGORNTbKhZoqfvszsk0peBOvqeyMhRzri16wevxE06Kv4Pn2
-        VuCsLqy0bTOyOemcO676YRKtvH/G050VxjH6FlnN8A==
-X-Google-Smtp-Source: APXvYqx+fft1SOz2IQDyCGJ15XAqb3Zjb5OEqzoV7vIlggjkoFNfsMZU8eWQaIcFkhj1gV1hUfaGOfz43NWpoIBxdXE=
-X-Received: by 2002:a2e:9f0f:: with SMTP id u15mr14722764ljk.54.1565771559322;
- Wed, 14 Aug 2019 01:32:39 -0700 (PDT)
-MIME-Version: 1.0
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com> <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 14 Aug 2019 10:32:28 +0200
-Message-ID: <CACRpkdasx8AooB_bhUpVhU9ig_ztri3hbryiO_FEGEO+eUXwkg@mail.gmail.com>
-Subject: Re: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in pmx_writel
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stefan Agner <stefan@agner.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
-        linux-tegra@vger.kernel.org,
+        Wed, 14 Aug 2019 04:33:03 -0400
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 160A6100003;
+        Wed, 14 Aug 2019 08:33:00 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 10:32:59 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "sd@queasysnail.net" <sd@queasysnail.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
-        Rob Herring <robh+dt@kernel.org>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "allan.nielsen@microchip.com" <allan.nielsen@microchip.com>,
+        "camelia.groza@nxp.com" <camelia.groza@nxp.com>,
+        Simon Edelhaus <Simon.Edelhaus@aquantia.com>,
+        Pavel Belous <Pavel.Belous@aquantia.com>
+Subject: Re: [PATCH net-next v2 6/9] net: macsec: hardware offloading
+ infrastructure
+Message-ID: <20190814083259.GF3200@kwain>
+References: <20190808140600.21477-1-antoine.tenart@bootlin.com>
+ <20190808140600.21477-7-antoine.tenart@bootlin.com>
+ <e96fa4ae-1f2c-c1be-b2d8-060217d8e151@aquantia.com>
+ <20190813085817.GA3200@kwain>
+ <20190813131706.GE15047@lunn.ch>
+ <2e3c2307-d414-a531-26cb-064e05fa01fc@aquantia.com>
+ <20190813162823.GH15047@lunn.ch>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813162823.GH15047@lunn.ch>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 9, 2019 at 1:47 AM Sowjanya Komatineni
-<skomatineni@nvidia.com> wrote:
+Hi Andrew,
 
-> pmx_writel uses writel which inserts write barrier before the
-> register write rather.
->
-> This patch has fix to replace writel with writel_relaxed followed
-> by a write barrier to ensure write operation before the barrier
-> is completed for successful pinctrl change.
->
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+On Tue, Aug 13, 2019 at 06:28:23PM +0200, Andrew Lunn wrote:
+> 
+> It would also be nice to add extra information to the netlink API to
+> indicate if HW or SW is being used. In other places where we offload
+> to accelerators we have such additional information.
 
-Patch applied with the ACKs.
+Yes, that would be very nice to have.
 
-Yours,
-Linus Walleij
+Thanks!
+Antoine
+
+-- 
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
