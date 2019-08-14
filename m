@@ -2,41 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4194C8D9B0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E77E28DA76
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730025AbfHNRLF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:11:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34148 "EHLO mail.kernel.org"
+        id S1731047AbfHNRSL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:18:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728169AbfHNRLC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:11:02 -0400
+        id S1730409AbfHNRMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:12:50 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3EC2084D;
-        Wed, 14 Aug 2019 17:11:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3490214DA;
+        Wed, 14 Aug 2019 17:12:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802661;
-        bh=J4dSbfCwkT11Ar3nuoF9znqGCtoVQNozFYMuMTM2jMA=;
+        s=default; t=1565802769;
+        bh=8vACyV4HWZSpDIGeYsjVQviONxqVr7jlAcvVeMNcYis=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BqyolR44QTWJt6EZp2N4IpBs20tklemsDYBQepJnYFl0FRtiKf6aquYPN/v2m0NBM
-         OlsO02DQ3realMafwYhKfNEB/+zR/A/2jvL3A+9V/0dxAFKp0ZwSObzRg0hFtBoiIF
-         l8kBgq8paRa0ckqGwewHaYowN4oSaOx5gpThADbE=
+        b=ByPY/uMzzQ0o7JwXe77I4CFocudkWoNpo9o1uUlUrKAU63DN7zlPgktRFmbqIzyS5
+         DwGut8i6YYgPLgAb+qWaP5LHbhgATIQVqt0RPgP9C/PyMeH0DYphPNN0ZVblMH6SZw
+         mhxBkkYKLgmuoUX5iFeJD1EpWrNM/3kPio1wkPX0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tai Man <taiman.wong@amd.com>,
-        Joshua Aberback <Joshua.Aberback@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/91] drm/amd/display: Increase size of audios array
-Date:   Wed, 14 Aug 2019 19:01:06 +0200
-Message-Id: <20190814165751.443972078@linuxfoundation.org>
+        stable@vger.kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 09/69] loop: set PF_MEMALLOC_NOIO for the worker thread
+Date:   Wed, 14 Aug 2019 19:01:07 +0200
+Message-Id: <20190814165746.162799150@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+References: <20190814165744.822314328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,53 +43,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7352193a33dfc9b69ba3bf6a8caea925b96243b1 ]
+From: Mikulas Patocka <mpatocka@redhat.com>
 
-[Why]
-The audios array defined in "struct resource_pool" is only 6 (MAX_PIPES)
-but the max number of audio devices (num_audio) is 7. In some projects,
-it will run out of audios array.
+commit d0a255e795ab976481565f6ac178314b34fbf891 upstream.
 
-[How]
-Incraese the audios array size to 7.
+A deadlock with this stacktrace was observed.
 
-Signed-off-by: Tai Man <taiman.wong@amd.com>
-Reviewed-by: Joshua Aberback <Joshua.Aberback@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The loop thread does a GFP_KERNEL allocation, it calls into dm-bufio
+shrinker and the shrinker depends on I/O completion in the dm-bufio
+subsystem.
+
+In order to fix the deadlock (and other similar ones), we set the flag
+PF_MEMALLOC_NOIO at loop thread entry.
+
+PID: 474    TASK: ffff8813e11f4600  CPU: 10  COMMAND: "kswapd0"
+   #0 [ffff8813dedfb938] __schedule at ffffffff8173f405
+   #1 [ffff8813dedfb990] schedule at ffffffff8173fa27
+   #2 [ffff8813dedfb9b0] schedule_timeout at ffffffff81742fec
+   #3 [ffff8813dedfba60] io_schedule_timeout at ffffffff8173f186
+   #4 [ffff8813dedfbaa0] bit_wait_io at ffffffff8174034f
+   #5 [ffff8813dedfbac0] __wait_on_bit at ffffffff8173fec8
+   #6 [ffff8813dedfbb10] out_of_line_wait_on_bit at ffffffff8173ff81
+   #7 [ffff8813dedfbb90] __make_buffer_clean at ffffffffa038736f [dm_bufio]
+   #8 [ffff8813dedfbbb0] __try_evict_buffer at ffffffffa0387bb8 [dm_bufio]
+   #9 [ffff8813dedfbbd0] dm_bufio_shrink_scan at ffffffffa0387cc3 [dm_bufio]
+  #10 [ffff8813dedfbc40] shrink_slab at ffffffff811a87ce
+  #11 [ffff8813dedfbd30] shrink_zone at ffffffff811ad778
+  #12 [ffff8813dedfbdc0] kswapd at ffffffff811ae92f
+  #13 [ffff8813dedfbec0] kthread at ffffffff810a8428
+  #14 [ffff8813dedfbf50] ret_from_fork at ffffffff81745242
+
+  PID: 14127  TASK: ffff881455749c00  CPU: 11  COMMAND: "loop1"
+   #0 [ffff88272f5af228] __schedule at ffffffff8173f405
+   #1 [ffff88272f5af280] schedule at ffffffff8173fa27
+   #2 [ffff88272f5af2a0] schedule_preempt_disabled at ffffffff8173fd5e
+   #3 [ffff88272f5af2b0] __mutex_lock_slowpath at ffffffff81741fb5
+   #4 [ffff88272f5af330] mutex_lock at ffffffff81742133
+   #5 [ffff88272f5af350] dm_bufio_shrink_count at ffffffffa03865f9 [dm_bufio]
+   #6 [ffff88272f5af380] shrink_slab at ffffffff811a86bd
+   #7 [ffff88272f5af470] shrink_zone at ffffffff811ad778
+   #8 [ffff88272f5af500] do_try_to_free_pages at ffffffff811adb34
+   #9 [ffff88272f5af590] try_to_free_pages at ffffffff811adef8
+  #10 [ffff88272f5af610] __alloc_pages_nodemask at ffffffff811a09c3
+  #11 [ffff88272f5af710] alloc_pages_current at ffffffff811e8b71
+  #12 [ffff88272f5af760] new_slab at ffffffff811f4523
+  #13 [ffff88272f5af7b0] __slab_alloc at ffffffff8173a1b5
+  #14 [ffff88272f5af880] kmem_cache_alloc at ffffffff811f484b
+  #15 [ffff88272f5af8d0] do_blockdev_direct_IO at ffffffff812535b3
+  #16 [ffff88272f5afb00] __blockdev_direct_IO at ffffffff81255dc3
+  #17 [ffff88272f5afb30] xfs_vm_direct_IO at ffffffffa01fe3fc [xfs]
+  #18 [ffff88272f5afb90] generic_file_read_iter at ffffffff81198994
+  #19 [ffff88272f5afc50] __dta_xfs_file_read_iter_2398 at ffffffffa020c970 [xfs]
+  #20 [ffff88272f5afcc0] lo_rw_aio at ffffffffa0377042 [loop]
+  #21 [ffff88272f5afd70] loop_queue_work at ffffffffa0377c3b [loop]
+  #22 [ffff88272f5afe60] kthread_worker_fn at ffffffff810a8a0c
+  #23 [ffff88272f5afec0] kthread at ffffffff810a8428
+  #24 [ffff88272f5aff50] ret_from_fork at ffffffff81745242
+
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/gpu/drm/amd/display/dc/inc/core_types.h   | 2 +-
- drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h | 1 +
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/block/loop.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/inc/core_types.h b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-index c0b9ca13393b6..f4469fa5afb55 100644
---- a/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/core_types.h
-@@ -159,7 +159,7 @@ struct resource_pool {
- 	struct clock_source *clock_sources[MAX_CLOCK_SOURCES];
- 	unsigned int clk_src_count;
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -857,7 +857,7 @@ static void loop_unprepare_queue(struct
  
--	struct audio *audios[MAX_PIPES];
-+	struct audio *audios[MAX_AUDIOS];
- 	unsigned int audio_count;
- 	struct audio_support audio_support;
+ static int loop_kthread_worker_fn(void *worker_ptr)
+ {
+-	current->flags |= PF_LESS_THROTTLE;
++	current->flags |= PF_LESS_THROTTLE | PF_MEMALLOC_NOIO;
+ 	return kthread_worker_fn(worker_ptr);
+ }
  
-diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h b/drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h
-index cf7433ebf91a0..71901743a9387 100644
---- a/drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/hw/hw_shared.h
-@@ -34,6 +34,7 @@
-  * Data types shared between different Virtual HW blocks
-  ******************************************************************************/
- 
-+#define MAX_AUDIOS 7
- #define MAX_PIPES 6
- 
- struct gamma_curve {
--- 
-2.20.1
-
 
 
