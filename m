@@ -2,114 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5278E8D02D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:02:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8487B8D030
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfHNKBT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 06:01:19 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:34409 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725280AbfHNKBS (ORCPT
+        id S1727058AbfHNKCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 06:02:03 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:43903 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725280AbfHNKCD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:01:18 -0400
-Received: by mail-wr1-f99.google.com with SMTP id 31so110542376wrm.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 03:01:17 -0700 (PDT)
+        Wed, 14 Aug 2019 06:02:03 -0400
+Received: by mail-oi1-f193.google.com with SMTP id y8so2893994oih.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 03:02:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=jTwlo3HfpzwBbLjZdlYNR7XMc3lGAwn/CGtf8DP+Tqk=;
+        b=rtpr4bWGyZLiQk4iGaAs4o8pz6SokjlDum0l8s2GJ+6G/M0kbIjrJG8JsxY79jCDLg
+         Z01xW6gfihVhjFb+JEZORo2Oykezoo6J5Uvvx+e2LdA6GEoGSFDBliqdcuObCboFpcur
+         qNJDiaWdS7N8B038fOqYFYkZnRN0ohkjP5C8j8sTUyE+Nx5E7yeHqyBHW9aMEcyp7PzN
+         mgbmB5cbk2eN82yH99kiADVtiX3MHzMmIgZqLdsoDOdvKvsBxc4lONRAjg+FogK3joTF
+         AO12YDOLB/aYEvSeKyKMd5DZk4W24W5+GGSEpuAlFjGGLy9VRnFtZ1UjBQT/9igGKQwT
+         4OGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cxebrAA4qwXUsrw/utWWY2iCY1zg8Q+R46d3aRf1h38=;
-        b=XfPZxGgKlEiAajzjYREZgTLsk+du4uemSgzn9sbvYQ+Rqw6HuIZTorqP37WGYj++0K
-         3ltUoyWpLW3THWQ6WiqCNIiLwsBeRW1ZdVpL8TFhaP2/MA6PztBH/1JdzUjIAkvpK/Jj
-         xH/prxBXksqVrIULh9eMCcXEgdI7GQSJey/+SiJGGzmU69V/Cx8eR38++MMmkpjArXaA
-         ll49oBgydFfZ/v6/dC6xx6LiKadHlNDBGd1tS3VV3lOOT1ip1QqNk+GO0YJvNtF//cY/
-         hceTKsZplUy01+9GbzI05sDT4OWes+45mUQ2C/16OloSSLwGlr7PTGVAzwfjXf5IgMkk
-         6y4w==
-X-Gm-Message-State: APjAAAWo9djGXeCGYOSKwP/0OIIsxvHJ+4XJc9qbY+0ZLVLIzMhvlSir
-        XnuoxdFAhv7/1msvv+6y8Bdsv3FH3FnICptUI9QzzbXMqBvYFLwwwlhjFW4Iav2Eaw==
-X-Google-Smtp-Source: APXvYqz1P+o5bjs43C8iWeM522k1XMUB/uoqir7rPvJxkFRrmtNR/fyjxH7zF5KZbnGLQY/G1fhgOzOc4HY2
-X-Received: by 2002:a5d:45cb:: with SMTP id b11mr10300129wrs.117.1565776876953;
-        Wed, 14 Aug 2019 03:01:16 -0700 (PDT)
-Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id y6sm29162wmi.15.2019.08.14.03.01.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 03:01:16 -0700 (PDT)
-X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hxq5k-0004tf-N4; Wed, 14 Aug 2019 10:01:16 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id E0AAA2742B4F; Wed, 14 Aug 2019 11:01:15 +0100 (BST)
-Date:   Wed, 14 Aug 2019 11:01:15 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, afaerber@suse.de,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] regmap: fix writes to non incrementing registers
-Message-ID: <20190814100115.GF4640@sirena.co.uk>
-References: <20190813212251.12316-1-ben.whitten@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=jTwlo3HfpzwBbLjZdlYNR7XMc3lGAwn/CGtf8DP+Tqk=;
+        b=ddEIvXgf663jBBFazfU2GL4S8T6k4IQibHv27O57d8yPTEJOqrKeOfLDIaooIahS0P
+         Ofz7zX8jYCE84NwFyImv1LasnDF1zH43VIIX5G9Mc5stbtwMF+0SMflXU0H0jTGUGwxG
+         biiAsXOzQYXY34Qy+EP6DHUmHWBu/7OgtYA9K8a6j7SIIoZrE3my0JK6nVdxvryVqQeK
+         RP8UngvExzvs6x+m0rMHEyP+9tomX4jaNm4ZUnUgAQyPEj8KjBnwnTxEh9SxpwIk4UNp
+         7UImjVwilbYYRg1KHz7jo5X0xZFfVQoEku/khPtlJ0a4XwCU2UVeeH7zowb9Gnob66Sq
+         tGlA==
+X-Gm-Message-State: APjAAAXpZoMMFnXQRdwJYdzMyw8S0rZ3bvy9iFSRLWXf85DAMYoU9A2Z
+        YbV/Y0NkO7G4eMZk/QQ52aHxLuQDuOGonuPFL8Jz5g==
+X-Google-Smtp-Source: APXvYqwdNNqld3DanaeusS2W1477dJnsaSjW0fOGh2rhi3wBxakJwBAH2jGLtU439DOoTxW4H4D4h+/A+Agv5kIlN84=
+X-Received: by 2002:aca:52c2:: with SMTP id g185mr4855081oib.33.1565776922537;
+ Wed, 14 Aug 2019 03:02:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xaMk4Io5JJdpkLEb"
-Content-Disposition: inline
-In-Reply-To: <20190813212251.12316-1-ben.whitten@gmail.com>
-X-Cookie: Bridge ahead.  Pay troll.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <f9d2c7cb01cbf31bf75c4160611fa1d37d99f355.1565703607.git.baolin.wang@linaro.org>
+ <4f6e3110b4d7e0a2f7ab317bba98a933de12e5da.1565703607.git.baolin.wang@linaro.org>
+ <20190813151612.v6x6e6kzxflkpu7b@pengutronix.de> <CAMz4kuJURx=fPE6+0gP4ukzMcXr_z3t1ZH0K3Gv6=o4Od4uc7w@mail.gmail.com>
+ <20190814092339.73ybj5mycklvpnrq@pengutronix.de>
+In-Reply-To: <20190814092339.73ybj5mycklvpnrq@pengutronix.de>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 14 Aug 2019 18:01:50 +0800
+Message-ID: <CAMz4ku+3txx5kO-u_+_pxFwoovnX81WFF-moNBasUUgEpvQb+Q@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pwm: sprd: Add Spreadtrum PWM support
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Uwe,
 
---xaMk4Io5JJdpkLEb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 14 Aug 2019 at 17:23, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
+>
+> Hello Baolin,
+>
+> On Wed, Aug 14, 2019 at 04:42:28PM +0800, Baolin Wang wrote:
+> > On Tue, 13 Aug 2019 at 23:16, Uwe Kleine-K=C3=B6nig
+> > <u.kleine-koenig@pengutronix.de> wrote:
+> > > On Tue, Aug 13, 2019 at 09:46:41PM +0800, Baolin Wang wrote:
+> > > [...]
+> > Not really, our hardware's method is, when you changed a new
+> > configuration (MOD or duty is changed) , the hardware will wait for a
+> > while to complete current period, then change to the new period.
+>
+> Can you describe that in more detail? This doesn't explain why MOD must b=
+e
+> configured before DUTY. Is there another reason for that?
 
-On Tue, Aug 13, 2019 at 10:22:51PM +0100, Ben Whitten wrote:
+Sorry, I did not explain this explicitly. When we change a new PWM
+configuration, the PWM controller will make sure the current period is
+completed before changing to a new period. Once setting the MOD
+register (since we always set MOD firstly), that will tell the
+hardware that a new period need to change.
 
-> @@ -1489,10 +1489,11 @@ static int _regmap_raw_write_impl(struct regmap *=
-map, unsigned int reg,
->  	WARN_ON(!map->bus);
-> =20
->  	/* Check for unwritable registers before we start */
-> -	for (i =3D 0; i < val_len / map->format.val_bytes; i++)
-> -		if (!regmap_writeable(map,
-> -				     reg + regmap_get_offset(map, i)))
-> -			return -EINVAL;
-> +	if (!regmap_writeable_noinc(map, reg))
-> +		for (i =3D 0; i < val_len / map->format.val_bytes; i++)
-> +			if (!regmap_writeable(map,
-> +					     reg + regmap_get_offset(map, i)))
-> +				return -EINVAL;
+The reason MOD must be configured before DUTY is that, if we
+configured DUTY firstly, the PWM can work abnormally if the current
+DUTY is larger than previous MOD. That is also our hardware's
+limitation.
 
-This feels like we're getting ourselves confused about nonincrementing
-registers and probably have other breakage somewhere else - we're
-already checking for nonincrementability in regmap_write_noinc(), and
-here we're only checking if the first register in the block has that
-property which might blow up on us if there's a register in the middle
-of the block that is nonincrementable.  If we're going to check this
-here I think we should check on every register, but this is
-_raw_write_impl() which is part of the call path for implementing
-regmap_noinc_write() so checking here will break the API purpose
-designed for nonincrementing writes.
+>
+> > > > +static int sprd_pwm_apply(struct pwm_chip *chip, struct pwm_device=
+ *pwm,
+> > > > +                       struct pwm_state *state)
+> > > > +{
+> > > > +     struct sprd_pwm_chip *spc =3D
+> > > > +             container_of(chip, struct sprd_pwm_chip, chip);
+> > > > +     struct sprd_pwm_chn *chn =3D &spc->chn[pwm->hwpwm];
+> > > > +     struct pwm_state cstate;
+> > > > +     int ret;
+> > > > +
+> > > > +     pwm_get_state(pwm, &cstate);
+> > >
+> > > I don't like it when pwm drivers call pwm_get_state(). If ever
+> > > pwm_get_state would take a lock, this would deadlock as the lock is
+> > > probably already taken when your .apply() callback is running. Moreov=
+er
+> > > the (expensive) calculations are not used appropriately. See below.
+> >
+> > I do not think so, see:
+> >
+> > static inline void pwm_get_state(const struct pwm_device *pwm, struct
+> > pwm_state *state)
+> > {
+> >         *state =3D pwm->state;
+> > }
+>
+> OK, the PWM framework currently caches this for you. Still I would
+> prefer if you didn't call PWM API functions in your lowlevel driver.
+> There is (up to now) nothing bad that will happen if you do it anyhow,
+> but when the PWM framework evolves it might (and I want to work on such
+> an evolution). You must not call clk_get_rate() in a .set_rate()
+> callback of a clock either.
 
---xaMk4Io5JJdpkLEb
-Content-Type: application/pgp-signature; name="signature.asc"
+Make sense, I will change to:
 
------BEGIN PGP SIGNATURE-----
+struct pwm_state *cstate =3D pwm->state;
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1T2+sACgkQJNaLcl1U
-h9DiCAf+NkGrG44e6bBSmbdGlvwEH+uWw3YNmF8ZBR0BQ2PEj+JHd0Pmg+7mrtmi
-SYF2DD/vUbZkALAWQWlo+/+bK96VutNUbuo1poKUEPbZt2f949bWi8XOCBkWRpgw
-N0t8BbhjqSqv9eMtYdqukU8sXg3Jjwtp1ctnU/R/Y5sXGIBYaZnvrTUFPaJh42av
-kyjurYlhXMIgwL25RTwwAoQelR7izDuktSg7f6J87OtUFJTSfdBzKvMgDcNo0k/a
-68SvK7TpClIQyI3GJ0diwc8RUp7fAtS+9eStBdKRURFirPqqoyQF/QDa57PThX7y
-NLciOVJy82hAyaJCQGgIM44v3iT5AQ==
-=dgtC
------END PGP SIGNATURE-----
+>
+> > > > +     if (state->enabled) {
+> > > > +             if (!cstate.enabled) {
+> > >
+> > > To just know the value of cstate.enabled you only need to read the
+> > > register with the ENABLE flag. That is cheaper than calling get_state=
+.
+> > >
+> > > > +                     /*
+> > > > +                      * The clocks to PWM channel has to be enable=
+d first
+> > > > +                      * before writing to the registers.
+> > > > +                      */
+> > > > +                     ret =3D clk_bulk_prepare_enable(SPRD_PWM_NUM_=
+CLKS,
+> > > > +                                                   chn->clks);
+> > > > +                     if (ret) {
+> > > > +                             dev_err(spc->dev,
+> > > > +                                     "failed to enable pwm%u clock=
+s\n",
+> > > > +                                     pwm->hwpwm);
+> > > > +                             return ret;
+> > > > +                     }
+> > > > +             }
+> > > > +
+> > > > +             if (state->period !=3D cstate.period ||
+> > > > +                 state->duty_cycle !=3D cstate.duty_cycle) {
+> > >
+> > > This is a coarse check. If state->period and cstate.period only diffe=
+r
+> > > by one calling sprd_pwm_config(spc, pwm, state->duty_cycle,
+> > > state->period) probably results in a noop. So you're doing an expensi=
+ve
+> > > division to get an unreliable check. It would be better to calculate =
+the
+> > > register values from the requested state and compare the register
+> > > values. The costs are more or less the same than calling .get_state a=
+nd
+> > > the check is reliable. And you don't need to spend another division t=
+o
+> > > calculate the new register values.
+> >
+> > Same as above comment.
+>
+> When taking the caching into account (which I wouldn't) the check is
+> still incomplete. OK, you could argue avoiding the recalculation in 90%
+> (to just say some number) of the cases where it is unnecessary is good.
 
---xaMk4Io5JJdpkLEb--
+Yes :)
+
+>
+> > >
+> > > > +                     ret =3D sprd_pwm_config(spc, pwm, state->duty=
+_cycle,
+> > > > +                                           state->period);
+> > > > +                     if (ret)
+> > > > +                             return ret;
+> > > > +             }
+> > > > +
+> > > > +             sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_ENABLE, 1);
+> > > > +     } else if (cstate.enabled) {
+> > > > +             sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_ENABLE, 0);
+> > > > +
+> > > > +             clk_bulk_disable_unprepare(SPRD_PWM_NUM_CLKS, chn->cl=
+ks);
+> > >
+> > > Assuming writing SPRD_PWM_ENABLE =3D 0 to the hardware completes the
+> > > currently running period and the write doesn't block that long: Does
+> > > disabling the clocks interfere with completing the period?
+> >
+> > Writing SPRD_PWM_ENABLE =3D 0 will stop the PWM immediately, will not
+> > waiting for completing the currently period.
+>
+> The currently active period is supposed to be completed. If you cannot
+> implement this please point this out as limitation at the top of the
+> driver.
+
+Sure.
+
+>
+> Honestly I think most pwm users won't mind and they should get the
+> possibility to tell they prefer pwm_apply_state to return immediately
+> even if this could result in a spike. But we're not there yet.
+> (Actually there are three things a PWM consumer might want:
+>
+>  a) stop immediately;
+>  b) complete the currently running period, then stop and return only
+>     when the period is completed; or
+>  c) complete the currently running period and then stop, return immediate=
+ly if
+>     possible.
+>
+> Currently the expected semantic is b).
+
+Make sense.
+
+>
+> > > > +static int sprd_pwm_remove(struct platform_device *pdev)
+> > > > +{
+> > > > +     struct sprd_pwm_chip *spc =3D platform_get_drvdata(pdev);
+> > > > +     int ret, i;
+> > > > +
+> > > > +     ret =3D pwmchip_remove(&spc->chip);
+> > > > +
+> > > > +     for (i =3D 0; i < spc->num_pwms; i++) {
+> > > > +             struct sprd_pwm_chn *chn =3D &spc->chn[i];
+> > > > +
+> > > > +             clk_bulk_disable_unprepare(SPRD_PWM_NUM_CLKS, chn->cl=
+ks);
+> > >
+> > > If a PWM was still running you're effectively stopping it here, right=
+?
+> > > Are you sure you don't disable once more than you enabled?
+> >
+> > Yes, you are right. I should check current enable status of the PWM cha=
+nnel.
+> > Thanks for your comments.
+>
+> I didn't recheck, but I think the right approach is to not fiddle with
+> the clocks at all and rely on the PWM framework to not let someone call
+> sprd_pwm_remove when a PWM is still in use.
+
+So you mean just return pwmchip_remove(&spc->chip); ?
+
+--=20
+Baolin Wang
+Best Regards
