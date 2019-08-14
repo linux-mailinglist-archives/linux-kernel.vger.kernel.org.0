@@ -2,53 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99E7C8DCF0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 773FE8DCF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728947AbfHNSZJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:25:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48606 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728791AbfHNSZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:25:06 -0400
-Subject: Re: [GIT PULL] dma mapping fixes for 5.3-rc
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565807106;
-        bh=aMza95Rk5bvMKEYj7zMse/e16vrNacpcAj+1mggKrUs=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=qndm0DThOiJb5Z5dPls8PDEcC485XcjsoCz/fy582BgLzyRwe1tERHLO8SGSTw31I
-         dL6Kxb4/Qm0hxHb9sB+QGWFKaaCHpVdJ2URvYX4UZvBgVnzdIxwf9bn8Jwx3MzR66U
-         daBm29wp9GiIw/LXVrjEY4SZlvcyn56+zDIeECtU=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190814141217.GA3792@infradead.org>
-References: <20190814141217.GA3792@infradead.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190814141217.GA3792@infradead.org>
-X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git
- tags/dma-mapping-5.3-4
-X-PR-Tracked-Commit-Id: 33dcb37cef741294b481f4d889a465b8091f11bf
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: e83b009c5c366b678c7986fa6c1d38fed06c954c
-Message-Id: <156580710610.11871.6276353935293222057.pr-tracker-bot@kernel.org>
-Date:   Wed, 14 Aug 2019 18:25:06 +0000
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+        id S1729161AbfHNSZV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:25:21 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42339 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729109AbfHNSZV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:25:21 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i30so5354125pfk.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:25:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=dj4KAX4oiOlHlXT1vUtLuT1vYXvby2UL10kTcUOrNVU=;
+        b=aVjpnrjNjtev+v0rOvs8haZujsIS+SKSncIJWkjkfISt434mYvH9ZXTPW8wBD5bGPC
+         o8SRuLOWToAWroJNjgL9mzkUg7pZL0rg9adAlql+R+78AjCyhV+sU3P0rmKZnNHhDq+Y
+         cEVrmLlVbqJ8RvxQU6HF1D7onDXD6y79XuyZ3wBbiBgOCGGad+d2p7DoBN0YkWVjtRv8
+         cXA/Tx/2iGDkeuY0xn6JOEzKk9UW/gSVIlOE4AeQfT6Nx8/GYwWEGSP/Oo++j+VyTGNj
+         hEtA5/sv1Nv3mH/GumYlvjJsqc92BETeL6d2WiboFtAgkgTSaiGT3u7TkLGJ7IJ9RIRF
+         L3lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dj4KAX4oiOlHlXT1vUtLuT1vYXvby2UL10kTcUOrNVU=;
+        b=jY1CzoY+QEkhab912kHpgzP9gLL6EJTTO7FUlz/013zGKlbBahGOORT+TXprOdChVu
+         kHNytqgH2N8TIv4khK982FSsUvGYG7QA/ejhWjsdTuCnvsDm6e71ODHF7VvH4qk9M0V6
+         /Qz2YbS4X9viRaAXh3rP2oNhyMHAa0maJRoVKzmw949vPsUKdEYGvy/aNt1XvTnfiimA
+         MActVsF1OJDWhHL+xQIcPAxLY42zfl2vGGr5MPvcMfh2L1SXlbn6ilVBeN6h4039qiyv
+         sZZl63k+dgodwAfF/EAH5hIvGB73wax3BPxHwj6FPD3t41QIWjGI6SCx61SkRpSmK2Ph
+         C0ww==
+X-Gm-Message-State: APjAAAU/cQOdT7vsqH0euLVmYKJ1h/5m0RYEcejh25vyxQZzdXcXztFZ
+        VdbvH3gHATHgNV13EDwJ31e/nwZNW9FiGIXBt3fMWBhNlig=
+X-Google-Smtp-Source: APXvYqz/twTfpGfqt66xJCwQIFEHEknWQOpgXq5rPtScTXaG6QgAeHl3K1Dxc6WBbeihQAjQJx847aX1lF7z3cIPudw=
+X-Received: by 2002:aa7:984a:: with SMTP id n10mr1326537pfq.3.1565807120061;
+ Wed, 14 Aug 2019 11:25:20 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190814165809.46421-1-natechancellor@gmail.com>
+In-Reply-To: <20190814165809.46421-1-natechancellor@gmail.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Wed, 14 Aug 2019 11:25:08 -0700
+Message-ID: <CAKwvOdmvBkXu3JTp6c9yRKgPTv6pQ=_jrCsBzU5dJLD2xRvVxg@mail.gmail.com>
+Subject: Re: [PATCH] netfilter: nft_bitwise: Adjust parentheses to fix memcmp
+ size argument
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux <clang-built-linux@googlegroups.com>,
+        kbuild test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Wed, 14 Aug 2019 16:12:17 +0200:
+On Wed, Aug 14, 2019 at 9:58 AM Nathan Chancellor
+<natechancellor@gmail.com> wrote:
+>
+> clang warns:
+>
+> net/netfilter/nft_bitwise.c:138:50: error: size argument in 'memcmp'
+> call is a comparison [-Werror,-Wmemsize-comparison]
+>         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
+>                                       ~~~~~~~~~~~~~~~~~~^~
+> net/netfilter/nft_bitwise.c:138:6: note: did you mean to compare the
+> result of 'memcmp' instead?
+>         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
+>             ^
+>                                                        )
+> net/netfilter/nft_bitwise.c:138:32: note: explicitly cast the argument
+> to size_t to silence this warning
+>         if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
+>                                       ^
+>                                       (size_t)(
+> 1 error generated.
+>
+> Adjust the parentheses so that the result of the sizeof is used for the
+> size argument in memcmp, rather than the result of the comparison (which
+> would always be true because sizeof is a non-zero number).
+>
+> Fixes: bd8699e9e292 ("netfilter: nft_bitwise: add offload support")
+> Link: https://github.com/ClangBuiltLinux/linux/issues/638
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.3-4
+oh no! thanks for the patch.
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/e83b009c5c366b678c7986fa6c1d38fed06c954c
-
-Thank you!
+> ---
+>  net/netfilter/nft_bitwise.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/netfilter/nft_bitwise.c b/net/netfilter/nft_bitwise.c
+> index 1f04ed5c518c..974300178fa9 100644
+> --- a/net/netfilter/nft_bitwise.c
+> +++ b/net/netfilter/nft_bitwise.c
+> @@ -135,8 +135,8 @@ static int nft_bitwise_offload(struct nft_offload_ctx *ctx,
+>  {
+>         const struct nft_bitwise *priv = nft_expr_priv(expr);
+>
+> -       if (memcmp(&priv->xor, &zero, sizeof(priv->xor) ||
+> -           priv->sreg != priv->dreg))
+> +       if (memcmp(&priv->xor, &zero, sizeof(priv->xor)) ||
+> +           priv->sreg != priv->dreg)
+>                 return -EOPNOTSUPP;
+>
+>         memcpy(&ctx->regs[priv->dreg].mask, &priv->mask, sizeof(priv->mask));
+> --
+> 2.23.0.rc2
+>
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Thanks,
+~Nick Desaulniers
