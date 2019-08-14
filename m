@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E3C868DB33
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D66A78DB35
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729848AbfHNRHV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56756 "EHLO mail.kernel.org"
+        id S1729858AbfHNRHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729838AbfHNRHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:17 -0400
+        id S1727815AbfHNRHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:20 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BF222084D;
-        Wed, 14 Aug 2019 17:07:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 075402186A;
+        Wed, 14 Aug 2019 17:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802436;
-        bh=X42x0xK8Yv7JFdRdm38qmeC5UC56ygSVuWr4FXYQzcs=;
+        s=default; t=1565802439;
+        bh=Cot4NZC9zpqgEWzvcE10GWPQszsfudXCBDIx+BzIz9E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lEF533xaPiRmiVnYpTt0mQASMdSvJAWq+ZJuAIQF7MjYFFWy2mlTItR/UWJhjWZFb
-         xJyhogqiWH1B6cT0+uP3gY4pc3a5jrQ3KouVgHkaFQbZDHfPP8m7KA+PQPStJ2Nmw3
-         3fNFPfY2tog4E5cApqCa4XF/G18HfDBPCWzIVWRw=
+        b=sqXsTYJ+8N9qqTxbeCyKUura3dS9MpuTdSty/PV+IrOo5spnG3JzKU0zJYTpyfBOZ
+         NB+UdMVgSMnyd+ZdxjS5bim9EMULaQprGlTBrhvUnVDMbO3LDCMEsY1CCFXIBt8VnV
+         JLSz402v6MjCbnmQuP7wBS+TM35XmYAEWFgZGv8Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.2 126/144] ALSA: firewire: fix a memory leak bug
-Date:   Wed, 14 Aug 2019 19:01:22 +0200
-Message-Id: <20190814165805.203440679@linuxfoundation.org>
+Subject: [PATCH 5.2 127/144] ALSA: hiface: fix multiple memory leak bugs
+Date:   Wed, 14 Aug 2019 19:01:23 +0200
+Message-Id: <20190814165805.249493983@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -46,37 +45,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit 1be3c1fae6c1e1f5bb982b255d2034034454527a upstream.
+commit 3d92aa45fbfd7319e3a19f4ec59fd32b3862b723 upstream.
 
-In iso_packets_buffer_init(), 'b->packets' is allocated through
-kmalloc_array(). Then, the aligned packet size is checked. If it is
-larger than PAGE_SIZE, -EINVAL will be returned to indicate the error.
-However, the allocated 'b->packets' is not deallocated on this path,
-leading to a memory leak.
+In hiface_pcm_init(), 'rt' is firstly allocated through kzalloc(). Later
+on, hiface_pcm_init_urb() is invoked to initialize 'rt->out_urbs[i]'. In
+hiface_pcm_init_urb(), 'rt->out_urbs[i].buffer' is allocated through
+kzalloc().  However, if hiface_pcm_init_urb() fails, both 'rt' and
+'rt->out_urbs[i].buffer' are not deallocated, leading to memory leak bugs.
+Also, 'rt->out_urbs[i].buffer' is not deallocated if snd_pcm_new() fails.
 
-To fix the above issue, free 'b->packets' before returning the error code.
+To fix the above issues, free 'rt' and 'rt->out_urbs[i].buffer'.
 
-Fixes: 31ef9134eb52 ("ALSA: add LaCie FireWire Speakers/Griffin FireWave Surround driver")
+Fixes: a91c3fb2f842 ("Add M2Tech hiFace USB-SPDIF driver")
 Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: <stable@vger.kernel.org> # v2.6.39+
+Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/firewire/packets-buffer.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/usb/hiface/pcm.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
---- a/sound/firewire/packets-buffer.c
-+++ b/sound/firewire/packets-buffer.c
-@@ -37,7 +37,7 @@ int iso_packets_buffer_init(struct iso_p
- 	packets_per_page = PAGE_SIZE / packet_size;
- 	if (WARN_ON(!packets_per_page)) {
- 		err = -EINVAL;
--		goto error;
-+		goto err_packets;
+--- a/sound/usb/hiface/pcm.c
++++ b/sound/usb/hiface/pcm.c
+@@ -600,14 +600,13 @@ int hiface_pcm_init(struct hiface_chip *
+ 		ret = hiface_pcm_init_urb(&rt->out_urbs[i], chip, OUT_EP,
+ 				    hiface_pcm_out_urb_handler);
+ 		if (ret < 0)
+-			return ret;
++			goto error;
  	}
- 	pages = DIV_ROUND_UP(count, packets_per_page);
  
+ 	ret = snd_pcm_new(chip->card, "USB-SPDIF Audio", 0, 1, 0, &pcm);
+ 	if (ret < 0) {
+-		kfree(rt);
+ 		dev_err(&chip->dev->dev, "Cannot create pcm instance\n");
+-		return ret;
++		goto error;
+ 	}
+ 
+ 	pcm->private_data = rt;
+@@ -620,4 +619,10 @@ int hiface_pcm_init(struct hiface_chip *
+ 
+ 	chip->pcm = rt;
+ 	return 0;
++
++error:
++	for (i = 0; i < PCM_N_URBS; i++)
++		kfree(rt->out_urbs[i].buffer);
++	kfree(rt);
++	return ret;
+ }
 
 
