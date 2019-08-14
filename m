@@ -2,67 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B91868DE77
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:11:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 123978DE78
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728999AbfHNULD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:11:03 -0400
-Received: from mga06.intel.com ([134.134.136.31]:60128 "EHLO mga06.intel.com"
+        id S1729134AbfHNULK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:11:10 -0400
+Received: from gate.crashing.org ([63.228.1.57]:39568 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbfHNULD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:11:03 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 13:11:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="200992982"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Aug 2019 13:11:02 -0700
-Date:   Wed, 14 Aug 2019 14:08:47 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Mario Limonciello <mario.limonciello@dell.com>
-Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ryan Hong <Ryan.Hong@Dell.com>, Crag Wang <Crag.Wang@dell.com>,
-        "sjg@google.com" <sjg@google.com>,
-        Charles Hyde <charles.hyde@dellteam.com>,
-        Jared Dominguez <jared.dominguez@dell.com>
-Subject: Re: [PATCH v2] nvme: Add quirk for LiteON CL1 devices running FW
- 22301111
-Message-ID: <20190814200847.GA3504@localhost.localdomain>
-References: <1565813304-16710-1-git-send-email-mario.limonciello@dell.com>
-MIME-Version: 1.0
+        id S1729014AbfHNULJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 16:11:09 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7EKAi95012038;
+        Wed, 14 Aug 2019 15:10:44 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7EKAh6H012037;
+        Wed, 14 Aug 2019 15:10:43 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Wed, 14 Aug 2019 15:10:42 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 1/2] powerpc: rewrite LOAD_REG_IMMEDIATE() as an intelligent macro
+Message-ID: <20190814201042.GH31406@gate.crashing.org>
+References: <61d2a0b6f0c89b1ee546851ce9b6bd345e5ec968.1565690241.git.christophe.leroy@c-s.fr>
+Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565813304-16710-1-git-send-email-mario.limonciello@dell.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <61d2a0b6f0c89b1ee546851ce9b6bd345e5ec968.1565690241.git.christophe.leroy@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 01:08:24PM -0700, Mario Limonciello wrote:
-> One of the components in LiteON CL1 device has limitations that
-> can be encountered based upon boundary race conditions using the
-> nvme bus specific suspend to idle flow.
-> 
-> When this situation occurs the drive doesn't resume properly from
-> suspend-to-idle.
-> 
-> LiteON has confirmed this problem and fixed in the next firmware
-> version.  As this firmware is already in the field, avoid running
-> nvme specific suspend to idle flow.
-> 
-> Fixes: d916b1be94b6 ("nvme-pci: use host managed power state for suspend")
-> Link: http://lists.infradead.org/pipermail/linux-nvme/2019-July/thread.html
-> Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
-> Signed-off-by: Charles Hyde <charles.hyde@dellteam.com>
+Hi Christophe,
 
-Looks fine to me.
+On Tue, Aug 13, 2019 at 09:59:35AM +0000, Christophe Leroy wrote:
+> +		rldicr	\r, \r, 32, 31
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+Could you please write this as
+		sldi	\r, \r, 32
+?  It's much easier to read, imo (it's the exact same instruction).
+
+You can do a lot cheaper sequences if you have a temporary reg, as well
+(longest path of 3 insns instead of 5):
+	lis rt,A
+	ori rt,B
+	lis rd,C
+	ori rd,D
+	rldimi rd,rt,32,0
+to load ABCD.
+
+
+Segher
