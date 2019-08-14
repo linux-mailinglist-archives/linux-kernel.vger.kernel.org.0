@@ -2,115 +2,190 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CB558DE9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E56408DEB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729502AbfHNUUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:20:45 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43311 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729421AbfHNUUm (ORCPT
+        id S1729381AbfHNUYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:24:24 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41029 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728262AbfHNUYY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:20:42 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h13so338762edq.10
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:20:41 -0700 (PDT)
+        Wed, 14 Aug 2019 16:24:24 -0400
+Received: by mail-oi1-f196.google.com with SMTP id g7so74765380oia.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:24:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=8YdsxBm4SorcCs6LR7QkyWK07j5ac679kdHnkcCO8NA=;
-        b=SElBQSnY/MEpHH8627z9LUJO0AwXfwMVSdTTj8+/meirzqVOVaUQig461Ql4grU9BW
-         AVOrqu2gy8FVObWFxEJFZZI9KGDQ9zAPfmV41ZLckaSp17XA9+mEmzFQIBhzh/7c6swP
-         BOywaRmA/1lgbIGeuvAe+e1TOiq/MWLuxLS1U=
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=FWEB5IXfxLQbRwsaJv4PASoOFY+npQTdfta6EzEzKgU=;
+        b=NbeLsvzTZ/5uPyXuyWNMwPV8k3h6ZPoD4/z6yigMzzoYE8yAQIcHGOxR9EUoOOGEcf
+         FI/95Zs62gZaDFClUDbDoJ0EilpnfhqO/xLT6cVp0jnSkeJrE8lv7rleNw01KG923bEQ
+         2gIDx/NR0DXLNDGRVkNqgk6D7QHb6TqpPYdAtV9OmV0NftWmfIFu/XS+0oK2mE5FHlJP
+         TblFAJg7x8mQOepGtHPwjojbW9LHDzE1+a/98/vp/SOYbXl6GXP2emcKZyqWRpJf+Ya+
+         TG0kVtnE70Ju3jt/SOEgwnTSu/wuY+l7nOAiL2122mPyZcXMUEaKFF+2u+JiPqHFNXH9
+         w0Tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=8YdsxBm4SorcCs6LR7QkyWK07j5ac679kdHnkcCO8NA=;
-        b=j27NSoZURBpqc+tLSH6VJmAGrDX0ykq9Hide4PkBdE2a+f9pmDVGKKgQ+90n0Q7N2n
-         BuT/DjgjCIM1fsF+p2QJgC3cRBqRRxPTIbZ4+xGXwYExK6iJaHhzyAQxMljEkULTDrqv
-         K3RsR4Owkz9oiCkQCKsdnbdgHAuodG8yECtT9IuHSMF5cP6/Tu6k0QLigK8GhFamDv0a
-         EK97LaEJAEdK3LpwYInXLTu6Gr14285cOw3+z1Vc4SnrDpeYU8pSyDMnva+uF1J8j46s
-         JfkC/Hxp3dgHODe3pvnPl9D2MCmXY6nRYUS5Qr/xcVZ/HHlYjPKXxJGvT59KpT6eu49v
-         Ft0A==
-X-Gm-Message-State: APjAAAUVauD7gGpM+JCSjbmYTGZgWIp6cWLbbjaij99o38vogiDFbHZW
-        r5KS177Iyt2GPIW1Y3FgGBieGbMzlO4mKQ==
-X-Google-Smtp-Source: APXvYqyP95CvDgYSo4eGFz7IoA7gCAiTTQNCbZZ85IgUxdxzhynRxhcbBwMwFB/O5KsYTtdIbvM0uQ==
-X-Received: by 2002:aa7:d285:: with SMTP id w5mr1658562edq.134.1565814040425;
-        Wed, 14 Aug 2019 13:20:40 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id ns22sm84342ejb.9.2019.08.14.13.20.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 13:20:39 -0700 (PDT)
-From:   Daniel Vetter <daniel.vetter@ffwll.ch>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     linux-mm@kvack.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 5/5] mm/hmm: WARN on illegal ->sync_cpu_device_pagetables errors
-Date:   Wed, 14 Aug 2019 22:20:27 +0200
-Message-Id: <20190814202027.18735-6-daniel.vetter@ffwll.ch>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
-References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=FWEB5IXfxLQbRwsaJv4PASoOFY+npQTdfta6EzEzKgU=;
+        b=qo0C/V9hgqANSWHGX2Milrgy/R/YoESeOkzXXjC3zG3OwOdFoTwj3TRA4BBGcY35Pp
+         xMiWHbGPlZ1xxXx8YDctmmRjFk62U+EoN84e7B+sGcRBbePtelGbv9hij53sZ/ovwBgi
+         pe91FocbWzshx4IhBGCvC0BcYVegIX4FHshkcQHCEbKaD2Oi8vs0BbEK7O+BpILc9Ewc
+         lNOCydKGnVgOcGNzNJ/2JH0PJn8ui3X0fLmWLDzg/oVvqF8n3s6OLNVoWSbTDSD2I8XX
+         X7wvv/uAxsDgsxIrKYjFFyGES9Kxap3dVz0F0LLMOft4rTjNtF9dcjcNOhNDVhLB+o+3
+         rjpA==
+X-Gm-Message-State: APjAAAXLi0qhvTYADcEArVwTYiZSvLTJGYh8Y9a3to+wiBftDudrVAh5
+        n29nqSDVdRqB+geHJaGm9O0tJg==
+X-Google-Smtp-Source: APXvYqxKIqV46yyI7FJbGdz0Vaq4Oyn79QGiDeiZO1OsmP/cDItUzaSREbzG+k9tnFtc4NY1VBdp3A==
+X-Received: by 2002:a02:810:: with SMTP id 16mr1256799jac.121.1565814263417;
+        Wed, 14 Aug 2019 13:24:23 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id s4sm1377427iop.25.2019.08.14.13.24.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 13:24:23 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 13:24:22 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     Vincent Chen <vincent.chen@sifive.com>
+cc:     Palmer Dabbelt <palmer@sifive.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] riscv: Correct the initialized flow of FP
+ register
+In-Reply-To: <1565771033-1831-2-git-send-email-vincent.chen@sifive.com>
+Message-ID: <alpine.DEB.2.21.9999.1908141316060.18249@viisi.sifive.com>
+References: <1565771033-1831-1-git-send-email-vincent.chen@sifive.com> <1565771033-1831-2-git-send-email-vincent.chen@sifive.com>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to the warning in the mmu notifer, warning if an hmm mirror
-callback gets it's blocking vs. nonblocking handling wrong, or if it
-fails with anything else than -EAGAIN.
+On Wed, 14 Aug 2019, Vincent Chen wrote:
 
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Ralph Campbell <rcampbell@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dan Carpenter <dan.carpenter@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Balbir Singh <bsingharora@gmail.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Souptick Joarder <jrdr.linux@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: linux-mm@kvack.org
-Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
+>   The following two reasons cause FP registers are sometimes not
+> initialized before starting the user program.
+> 1. Currently, the FP context is initialized in flush_thread() function
+>    and we expect these initial values to be restored to FP register when
+>    doing FP context switch. However, the FP context switch only occurs in
+>    switch_to function. Hence, if this process does not be scheduled out
+>    and scheduled in before entering the user space, the FP registers
+>    have no chance to initialize.
+> 2. In flush_thread(), the state of reg->sstatus.FS inherits from the
+>    parent. Hence, the state of reg->sstatus.FS may be dirty. If this
+>    process is scheduled out during flush_thread() and initializing the
+>    FP register, the fstate_save() in switch_to will corrupt the FP context
+>    which has been initialized until flush_thread().
+> 
+>   To solve the 1st case, the initialization of the FP register will be
+> completed in start_thread(). It makes sure all FP registers are initialized
+> before starting the user program. For the 2nd case, the state of
+> reg->sstatus.FS in start_thread will be set to SR_FS_OFF to prevent this
+> process from corrupting FP context in doing context save. The FP state is
+> set to SR_FS_INITIAL in start_trhead().
+> 
+> Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+> Reviewed-by: Anup Patel <anup@brainfault.org>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+
+Thanks Vincent.  I fixed a 'checkpatch.pl --strict' issue, added a 
+"Fixes:" line and cc'ed stable, and queued the following for v5.3-rc.
+
+
+- Paul
+
+
+From: Vincent Chen <vincent.chen@sifive.com>
+Date: Wed, 14 Aug 2019 16:23:52 +0800
+Subject: [PATCH] riscv: Correct the initialized flow of FP register
+
+  The following two reasons cause FP registers are sometimes not
+initialized before starting the user program.
+1. Currently, the FP context is initialized in flush_thread() function
+   and we expect these initial values to be restored to FP register when
+   doing FP context switch. However, the FP context switch only occurs in
+   switch_to function. Hence, if this process does not be scheduled out
+   and scheduled in before entering the user space, the FP registers
+   have no chance to initialize.
+2. In flush_thread(), the state of reg->sstatus.FS inherits from the
+   parent. Hence, the state of reg->sstatus.FS may be dirty. If this
+   process is scheduled out during flush_thread() and initializing the
+   FP register, the fstate_save() in switch_to will corrupt the FP context
+   which has been initialized until flush_thread().
+
+  To solve the 1st case, the initialization of the FP register will be
+completed in start_thread(). It makes sure all FP registers are initialized
+before starting the user program. For the 2nd case, the state of
+reg->sstatus.FS in start_thread will be set to SR_FS_OFF to prevent this
+process from corrupting FP context in doing context save. The FP state is
+set to SR_FS_INITIAL in start_trhead().
+
+Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Fixes: 7db91e57a0acd ("RISC-V: Task implementation")
+Cc: stable@vger.kernel.org
+[paul.walmsley@sifive.com: fixed brace alignment issue reported by
+ checkpatch]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
 ---
- mm/hmm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/riscv/include/asm/switch_to.h |  6 ++++++
+ arch/riscv/kernel/process.c        | 11 +++++++++--
+ 2 files changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 16b6731a34db..52ac59384268 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -205,6 +205,9 @@ static int hmm_invalidate_range_start(struct mmu_notifier *mn,
- 			ret = -EAGAIN;
- 			break;
- 		}
-+		WARN(ret, "%pS callback failed with %d in %sblockable context\n",
-+		     mirror->ops->sync_cpu_device_pagetables, ret,
-+		     update.blockable ? "" : "non-");
- 	}
- 	up_read(&hmm->mirrors_sem);
+diff --git a/arch/riscv/include/asm/switch_to.h b/arch/riscv/include/asm/switch_to.h
+index 853b65ef656d..949d9cd91dec 100644
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -19,6 +19,12 @@ static inline void __fstate_clean(struct pt_regs *regs)
+ 	regs->sstatus |= (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
+ }
  
++static inline void fstate_off(struct task_struct *task,
++			      struct pt_regs *regs)
++{
++	regs->sstatus = (regs->sstatus & ~SR_FS) | SR_FS_OFF;
++}
++
+ static inline void fstate_save(struct task_struct *task,
+ 			       struct pt_regs *regs)
+ {
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index f23794bd1e90..fb3a082362eb 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -64,8 +64,14 @@ void start_thread(struct pt_regs *regs, unsigned long pc,
+ 	unsigned long sp)
+ {
+ 	regs->sstatus = SR_SPIE;
+-	if (has_fpu)
++	if (has_fpu) {
+ 		regs->sstatus |= SR_FS_INITIAL;
++		/*
++		 * Restore the initial value to the FP register
++		 * before starting the user program.
++		 */
++		fstate_restore(current, regs);
++	}
+ 	regs->sepc = pc;
+ 	regs->sp = sp;
+ 	set_fs(USER_DS);
+@@ -75,10 +81,11 @@ void flush_thread(void)
+ {
+ #ifdef CONFIG_FPU
+ 	/*
+-	 * Reset FPU context
++	 * Reset FPU state and context
+ 	 *	frm: round to nearest, ties to even (IEEE default)
+ 	 *	fflags: accrued exceptions cleared
+ 	 */
++	fstate_off(current, task_pt_regs(current));
+ 	memset(&current->thread.fstate, 0, sizeof(current->thread.fstate));
+ #endif
+ }
 -- 
-2.22.0
+2.23.0.rc1
 
