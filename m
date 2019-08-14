@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8B938DB3B
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F15288DB3E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729911AbfHNRHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57032 "EHLO mail.kernel.org"
+        id S1729949AbfHNRHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729895AbfHNRHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:30 -0400
+        id S1729181AbfHNRHk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:40 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44D172084D;
-        Wed, 14 Aug 2019 17:07:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89DA9214DA;
+        Wed, 14 Aug 2019 17:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802449;
-        bh=NfrpQmMOf4J9fkuQWntFAF9LT56Nkw0hUJGQNe8kZ3I=;
+        s=default; t=1565802460;
+        bh=yRsQvy2b9thCmIB4Ypt2LkjtSyzaXf3LEeQdcUkFSXA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vza96ptqohbyN4Uk7PoFynvG8hMBiWKh+/dKWBmAisOajYbmLxHQIOg3LhJPBvcvf
-         9SA0Y9XTHn7g5vzgk+7Sl7sno+cSeHzOkWm1OikywYzIa+0dihiXxHmlllg+u+kDKS
-         Ms3u9zpplM5ymJt4c5mmKmSPikoCwafU599/bMKI=
+        b=FhwzuwMNi0qi2/bdDGz1bL7xcRDaj4+sIPe86Tnl787dsADd+ziiPSVEoTLwH+cup
+         ZxA9hWDWpYTS86Xv0pTDHF/XA3KFC/1IF5SScEbdsEdENLhrZUVoFck0+CdIwSTSYW
+         LP0wQJuf2UoyKwO4s6pI2tHFu5oJHbGIfarQxjXA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: [PATCH 5.2 131/144] dax: dax_layout_busy_page() should not unmap cow pages
-Date:   Wed, 14 Aug 2019 19:01:27 +0200
-Message-Id: <20190814165805.424900046@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.2 134/144] NFSv4: Fix delegation state recovery
+Date:   Wed, 14 Aug 2019 19:01:30 +0200
+Message-Id: <20190814165805.544934158@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -43,60 +43,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Goyal <vgoyal@redhat.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit d75996dd022b6d83bd14af59b2775b1aa639e4b9 upstream.
+commit 5eb8d18ca0e001c6055da2b7f30d8f6dca23a44f upstream.
 
-Vivek:
+Once we clear the NFS_DELEGATED_STATE flag, we're telling
+nfs_delegation_claim_opens() that we're done recovering all open state
+for that stateid, so we really need to ensure that we test for all
+open modes that are currently cached and recover them before exiting
+nfs4_open_delegation_recall().
 
-    "As of now dax_layout_busy_page() calls unmap_mapping_range() with last
-     argument as 1, which says even unmap cow pages. I am wondering who needs
-     to get rid of cow pages as well.
-
-     I noticed one interesting side affect of this. I mount xfs with -o dax and
-     mmaped a file with MAP_PRIVATE and wrote some data to a page which created
-     cow page. Then I called fallocate() on that file to zero a page of file.
-     fallocate() called dax_layout_busy_page() which unmapped cow pages as well
-     and then I tried to read back the data I wrote and what I get is old
-     data from persistent memory. I lost the data I had written. This
-     read basically resulted in new fault and read back the data from
-     persistent memory.
-
-     This sounds wrong. Are there any users which need to unmap cow pages
-     as well? If not, I am proposing changing it to not unmap cow pages.
-
-     I noticed this while while writing virtio_fs code where when I tried
-     to reclaim a memory range and that corrupted the executable and I
-     was running from virtio-fs and program got segment violation."
-
-Dan:
-
-    "In fact the unmap_mapping_range() in this path is only to synchronize
-     against get_user_pages_fast() and force it to call back into the
-     filesystem to re-establish the mapping. COW pages should be left
-     untouched by dax_layout_busy_page()."
-
-Cc: <stable@vger.kernel.org>
-Fixes: 5fac7408d828 ("mm, fs, dax: handle layout changes to pinned dax mappings")
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
-Link: https://lore.kernel.org/r/20190802192956.GA3032@redhat.com
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Fixes: 24311f884189d ("NFSv4: Recovery of recalled read delegations...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/dax.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/delegation.c |    2 +-
+ fs/nfs/delegation.h |    2 +-
+ fs/nfs/nfs4proc.c   |   25 ++++++++++++-------------
+ 3 files changed, 14 insertions(+), 15 deletions(-)
 
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -601,7 +601,7 @@ struct page *dax_layout_busy_page(struct
- 	 * guaranteed to either see new references or prevent new
- 	 * references from being established.
- 	 */
--	unmap_mapping_range(mapping, 0, 0, 1);
-+	unmap_mapping_range(mapping, 0, 0, 0);
+--- a/fs/nfs/delegation.c
++++ b/fs/nfs/delegation.c
+@@ -153,7 +153,7 @@ again:
+ 		/* Block nfs4_proc_unlck */
+ 		mutex_lock(&sp->so_delegreturn_mutex);
+ 		seq = raw_seqcount_begin(&sp->so_reclaim_seqcount);
+-		err = nfs4_open_delegation_recall(ctx, state, stateid, type);
++		err = nfs4_open_delegation_recall(ctx, state, stateid);
+ 		if (!err)
+ 			err = nfs_delegation_claim_locks(state, stateid);
+ 		if (!err && read_seqcount_retry(&sp->so_reclaim_seqcount, seq))
+--- a/fs/nfs/delegation.h
++++ b/fs/nfs/delegation.h
+@@ -63,7 +63,7 @@ void nfs_reap_expired_delegations(struct
  
- 	xas_lock_irq(&xas);
- 	xas_for_each(&xas, entry, ULONG_MAX) {
+ /* NFSv4 delegation-related procedures */
+ int nfs4_proc_delegreturn(struct inode *inode, const struct cred *cred, const nfs4_stateid *stateid, int issync);
+-int nfs4_open_delegation_recall(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid, fmode_t type);
++int nfs4_open_delegation_recall(struct nfs_open_context *ctx, struct nfs4_state *state, const nfs4_stateid *stateid);
+ int nfs4_lock_delegation_recall(struct file_lock *fl, struct nfs4_state *state, const nfs4_stateid *stateid);
+ bool nfs4_copy_delegation_stateid(struct inode *inode, fmode_t flags, nfs4_stateid *dst, const struct cred **cred);
+ bool nfs4_refresh_delegation_stateid(nfs4_stateid *dst, struct inode *inode);
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -2148,12 +2148,10 @@ static int nfs4_handle_delegation_recall
+ 		case -NFS4ERR_BAD_HIGH_SLOT:
+ 		case -NFS4ERR_CONN_NOT_BOUND_TO_SESSION:
+ 		case -NFS4ERR_DEADSESSION:
+-			set_bit(NFS_DELEGATED_STATE, &state->flags);
+ 			nfs4_schedule_session_recovery(server->nfs_client->cl_session, err);
+ 			return -EAGAIN;
+ 		case -NFS4ERR_STALE_CLIENTID:
+ 		case -NFS4ERR_STALE_STATEID:
+-			set_bit(NFS_DELEGATED_STATE, &state->flags);
+ 			/* Don't recall a delegation if it was lost */
+ 			nfs4_schedule_lease_recovery(server->nfs_client);
+ 			return -EAGAIN;
+@@ -2174,7 +2172,6 @@ static int nfs4_handle_delegation_recall
+ 			return -EAGAIN;
+ 		case -NFS4ERR_DELAY:
+ 		case -NFS4ERR_GRACE:
+-			set_bit(NFS_DELEGATED_STATE, &state->flags);
+ 			ssleep(1);
+ 			return -EAGAIN;
+ 		case -ENOMEM:
+@@ -2190,8 +2187,7 @@ static int nfs4_handle_delegation_recall
+ }
+ 
+ int nfs4_open_delegation_recall(struct nfs_open_context *ctx,
+-		struct nfs4_state *state, const nfs4_stateid *stateid,
+-		fmode_t type)
++		struct nfs4_state *state, const nfs4_stateid *stateid)
+ {
+ 	struct nfs_server *server = NFS_SERVER(state->inode);
+ 	struct nfs4_opendata *opendata;
+@@ -2202,20 +2198,23 @@ int nfs4_open_delegation_recall(struct n
+ 	if (IS_ERR(opendata))
+ 		return PTR_ERR(opendata);
+ 	nfs4_stateid_copy(&opendata->o_arg.u.delegation, stateid);
+-	nfs_state_clear_delegation(state);
+-	switch (type & (FMODE_READ|FMODE_WRITE)) {
+-	case FMODE_READ|FMODE_WRITE:
+-	case FMODE_WRITE:
++	if (!test_bit(NFS_O_RDWR_STATE, &state->flags)) {
+ 		err = nfs4_open_recover_helper(opendata, FMODE_READ|FMODE_WRITE);
+ 		if (err)
+-			break;
++			goto out;
++	}
++	if (!test_bit(NFS_O_WRONLY_STATE, &state->flags)) {
+ 		err = nfs4_open_recover_helper(opendata, FMODE_WRITE);
+ 		if (err)
+-			break;
+-		/* Fall through */
+-	case FMODE_READ:
++			goto out;
++	}
++	if (!test_bit(NFS_O_RDONLY_STATE, &state->flags)) {
+ 		err = nfs4_open_recover_helper(opendata, FMODE_READ);
++		if (err)
++			goto out;
+ 	}
++	nfs_state_clear_delegation(state);
++out:
+ 	nfs4_opendata_put(opendata);
+ 	return nfs4_handle_delegation_recall_error(server, state, stateid, NULL, err);
+ }
 
 
