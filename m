@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1E708C643
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319948C646
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:14:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfHNCOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:14:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46136 "EHLO mail.kernel.org"
+        id S1728678AbfHNCOQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:14:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728571AbfHNCOI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:14:08 -0400
+        id S1728653AbfHNCOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:14:12 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5293E20842;
-        Wed, 14 Aug 2019 02:14:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE0B520874;
+        Wed, 14 Aug 2019 02:14:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748847;
-        bh=k8yonzpNdAgceiEG578aqiAgYJnAWLHIoNXeqkcJjYA=;
+        s=default; t=1565748851;
+        bh=B+IPkXxshQqbOeMagZZ5V+KJPiLO1RLJXzGs+eQk/Vw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lWwOWYKLoOIQqHrC0N7cDCGqRgfkkYQwIY5cbfktJgnlrQv4L58LabknSSPci63gX
-         aS6TvioRz530yDMXJl/4t853igm31JnVdsfae7LipVTL1LuKyrZ5FGUPjSo+Gqsq6k
-         lU/YkkibZFooiY1lmQvcQWv04INd/ERzwtWtJdqs=
+        b=Wigm5IDd3iC5fFpiHmWDpkOOivHE4ADdy64WflXQdAMcOvSG4oLzwpU6w5zGSrTVI
+         Ht9nyT8SQ/SJnonZmFnY9CA6Wt3N6Reu8nUOkPT/yTi/CCEFlfuLC+DhR7HLo73aLL
+         rqRkpGsE1iOFmFmuMAuhj/2MD/kmDhdP2X1rhQzM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vasily Gorbik <gor@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Andreas Krebbel <krebbel@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 099/123] s390: put _stext and _etext into .text section
-Date:   Tue, 13 Aug 2019 22:10:23 -0400
-Message-Id: <20190814021047.14828-99-sashal@kernel.org>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 102/123] net: cxgb3_main: Fix a resource leak in a error path in 'init_one()'
+Date:   Tue, 13 Aug 2019 22:10:26 -0400
+Message-Id: <20190814021047.14828-102-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -44,57 +43,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-[ Upstream commit 24350fdadbdec780406a1ef988e6cd3875e374a8 ]
+[ Upstream commit debea2cd3193ac868289e8893c3a719c265b0612 ]
 
-Perf relies on _etext and _stext symbols being one of 't', 'T', 'v' or
-'V'. Put them into .text section to guarantee that.
+A call to 'kfree_skb()' is missing in the error handling path of
+'init_one()'.
+This is already present in 'remove_one()' but is missing here.
 
-Also moves padding to page boundary inside .text which has an effect that
-.text section is now padded with nops rather than 0's, which apparently
-has been the initial intention for specifying 0x0700 fill expression.
-
-Reported-by: Thomas Richter <tmricht@linux.ibm.com>
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
-Suggested-by: Andreas Krebbel <krebbel@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/vmlinux.lds.S | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/vmlinux.lds.S b/arch/s390/kernel/vmlinux.lds.S
-index 49d55327de0bc..7e0eb40209177 100644
---- a/arch/s390/kernel/vmlinux.lds.S
-+++ b/arch/s390/kernel/vmlinux.lds.S
-@@ -32,10 +32,9 @@ PHDRS {
- SECTIONS
- {
- 	. = 0x100000;
--	_stext = .;		/* Start of text section */
- 	.text : {
--		/* Text and read-only data */
--		_text = .;
-+		_stext = .;		/* Start of text section */
-+		_text = .;		/* Text and read-only data */
- 		HEAD_TEXT
- 		TEXT_TEXT
- 		SCHED_TEXT
-@@ -47,11 +46,10 @@ SECTIONS
- 		*(.text.*_indirect_*)
- 		*(.fixup)
- 		*(.gnu.warning)
-+		. = ALIGN(PAGE_SIZE);
-+		_etext = .;		/* End of text section */
- 	} :text = 0x0700
+diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+index 1e82b9efe4471..58f89f6a040fe 100644
+--- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_main.c
+@@ -3269,7 +3269,7 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	if (!adapter->regs) {
+ 		dev_err(&pdev->dev, "cannot map device registers\n");
+ 		err = -ENOMEM;
+-		goto out_free_adapter;
++		goto out_free_adapter_nofail;
+ 	}
  
--	. = ALIGN(PAGE_SIZE);
--	_etext = .;		/* End of text section */
--
- 	NOTES :text :note
+ 	adapter->pdev = pdev;
+@@ -3397,6 +3397,9 @@ static int init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		if (adapter->port[i])
+ 			free_netdev(adapter->port[i]);
  
- 	.dummy : { *(.dummy) } :data
++out_free_adapter_nofail:
++	kfree_skb(adapter->nofail_skb);
++
+ out_free_adapter:
+ 	kfree(adapter);
+ 
 -- 
 2.20.1
 
