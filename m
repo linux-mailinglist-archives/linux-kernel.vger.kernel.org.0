@@ -2,34 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED7F58C762
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EAD68C75D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729400AbfHNCXN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:23:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48750 "EHLO mail.kernel.org"
+        id S1729786AbfHNCXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:23:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48788 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729393AbfHNCRZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:17:25 -0400
+        id S1729412AbfHNCRa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:17:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55DB220843;
-        Wed, 14 Aug 2019 02:17:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6730F20843;
+        Wed, 14 Aug 2019 02:17:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749045;
-        bh=oMOOYF2muYVufUpefqwfVGjatThEUEuRCM/yLta1KHU=;
+        s=default; t=1565749049;
+        bh=NSafegQqM6bZHr8DIYO0zVk1Y9lQxdXuReFFnkivw10=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EdvhAIIwfNQ0o7CCsl7wFOLVl6iZyJLFzEMboDziIHsZqgzSaF3s/iR8f5q7cysIi
-         nI3+0SrdJa/owY9LXWaLCIPvJ7biJcY4rxj0TckJRsPJVIxWIj69KMPU1V9XEHolmg
-         Z7T9Uv3zp7lUlYxilctwEIb2y+MFd+hSMEs/kZUk=
+        b=H5O2f+EU+ncEOfmjWcQk4UtAgQgqlXIsiroFTpCiMsxXq4PeHJQLSug235Qa7Pn8m
+         8MhjCLTOHGOB/6qvEY40V/AVRZ5T1DytWMw/KcvEoBhNhQMPC38X+X6Ms8l0nM2qPc
+         gLGytBrw4BZWKK3GD8G9Om6qYqLqHIzLHESygjUc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-ide@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 59/68] libata: add SG safety checks in SFF pio transfers
-Date:   Tue, 13 Aug 2019 22:15:37 -0400
-Message-Id: <20190814021548.16001-59-sashal@kernel.org>
+Cc:     Paolo Valente <paolo.valente@linaro.org>,
+        Hsin-Yi Wang <hsinyi@google.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 62/68] block, bfq: handle NULL return value by bfq_init_rq()
+Date:   Tue, 13 Aug 2019 22:15:40 -0400
+Message-Id: <20190814021548.16001-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021548.16001-1-sashal@kernel.org>
 References: <20190814021548.16001-1-sashal@kernel.org>
@@ -42,46 +47,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Paolo Valente <paolo.valente@linaro.org>
 
-[ Upstream commit 752ead44491e8c91e14d7079625c5916b30921c5 ]
+[ Upstream commit fd03177c33b287c6541f4048f1d67b7b45a1abc9 ]
 
-Abort processing of a command if we run out of mapped data in the
-SG list. This should never happen, but a previous bug caused it to
-be possible. Play it safe and attempt to abort nicely if we don't
-have more SG segments left.
+As reported in [1], the call bfq_init_rq(rq) may return NULL in case
+of OOM (in particular, if rq->elv.icq is NULL because memory
+allocation failed in failed in ioc_create_icq()).
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+This commit handles this circumstance.
+
+[1] https://lkml.org/lkml/2019/7/22/824
+
+Cc: Hsin-Yi Wang <hsinyi@google.com>
+Cc: Nicolas Boichat <drinkcat@chromium.org>
+Cc: Doug Anderson <dianders@chromium.org>
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Reported-by: Hsin-Yi Wang <hsinyi@google.com>
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-sff.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ block/bfq-iosched.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-index c5ea0fc635e54..873cc09060551 100644
---- a/drivers/ata/libata-sff.c
-+++ b/drivers/ata/libata-sff.c
-@@ -674,6 +674,10 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 	unsigned int offset;
- 	unsigned char *buf;
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index becd793a258c8..d8d2ac294b0c0 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -1886,9 +1886,14 @@ static void bfq_request_merged(struct request_queue *q, struct request *req,
+ 	    blk_rq_pos(container_of(rb_prev(&req->rb_node),
+ 				    struct request, rb_node))) {
+ 		struct bfq_queue *bfqq = bfq_init_rq(req);
+-		struct bfq_data *bfqd = bfqq->bfqd;
++		struct bfq_data *bfqd;
+ 		struct request *prev, *next_rq;
  
-+	if (!qc->cursg) {
-+		qc->curbytes = qc->nbytes;
++		if (!bfqq)
++			return;
++
++		bfqd = bfqq->bfqd;
++
+ 		/* Reposition request in its sort_list */
+ 		elv_rb_del(&bfqq->sort_list, req);
+ 		elv_rb_add(&bfqq->sort_list, req);
+@@ -1930,6 +1935,9 @@ static void bfq_requests_merged(struct request_queue *q, struct request *rq,
+ 	struct bfq_queue *bfqq = bfq_init_rq(rq),
+ 		*next_bfqq = bfq_init_rq(next);
+ 
++	if (!bfqq)
 +		return;
-+	}
- 	if (qc->curbytes == qc->nbytes - qc->sect_size)
- 		ap->hsm_task_state = HSM_ST_LAST;
++
+ 	/*
+ 	 * If next and rq belong to the same bfq_queue and next is older
+ 	 * than rq, then reposition rq in the fifo (by substituting next
+@@ -4590,12 +4598,12 @@ static void bfq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
  
-@@ -699,6 +703,8 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 
- 	if (qc->cursg_ofs == qc->cursg->length) {
- 		qc->cursg = sg_next(qc->cursg);
-+		if (!qc->cursg)
-+			ap->hsm_task_state = HSM_ST_LAST;
- 		qc->cursg_ofs = 0;
- 	}
- }
+ 	spin_lock_irq(&bfqd->lock);
+ 	bfqq = bfq_init_rq(rq);
+-	if (at_head || blk_rq_is_passthrough(rq)) {
++	if (!bfqq || at_head || blk_rq_is_passthrough(rq)) {
+ 		if (at_head)
+ 			list_add(&rq->queuelist, &bfqd->dispatch);
+ 		else
+ 			list_add_tail(&rq->queuelist, &bfqd->dispatch);
+-	} else { /* bfqq is assumed to be non null here */
++	} else {
+ 		idle_timer_disabled = __bfq_insert_request(bfqd, rq);
+ 		/*
+ 		 * Update bfqq, because, if a queue merge has occurred
 -- 
 2.20.1
 
