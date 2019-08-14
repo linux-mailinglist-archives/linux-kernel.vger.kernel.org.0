@@ -2,129 +2,167 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 685618CFDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54AB48CFF8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:46:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726670AbfHNJlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 05:41:05 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:39885 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfHNJlF (ORCPT
+        id S1726585AbfHNJqR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 05:46:17 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35993 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725265AbfHNJqQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:41:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id f17so49260087pfn.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 02:41:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LfFkLwjqyQIH9T75mSQkj/WAlvM62io+hnQFkWZp6Pc=;
-        b=jFuFnRB0/8csf+W8FViKPIDaEmS37F+row4a3iyvUZTk3+UEYYsc/umedWVPXZUEPN
-         LDdtmXgjxyfggY0JP9gzuxWNLkt9w7hpjz8XuE2kCmm80gh3Ki9JQxk9tWm1EBPlfH/K
-         DP12ymtzlN9IHXiSHs19xPERgy/Qb624g0yuWHYl2dH4tQJSIcz8tQn7dX+ptc4xCSJz
-         B5+5z3lM3tK0y5tdfekEiXiAa3s+bulCjpDfShlgK+v7H75t366TqhsaV7NYrIMciMC/
-         qdUcENrR41a7h870LEPPVNzFj8aZQuAJJprtvNeh4/Pv5rXpcBKXNaVjOrJr6lJaZqWu
-         frmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LfFkLwjqyQIH9T75mSQkj/WAlvM62io+hnQFkWZp6Pc=;
-        b=Aj9qcNqyQvqljSwKM5tuXeVILdC7qsBgSYICNuq5EcoU+zvasZ9rUIHzR5zoBRyO06
-         3mD62vp+ZKbDRq9JlFooQW4NO84v0BFkv8AmQHUGWSUh6uQqCOihMLG2gLtXWrsR+/QI
-         KQw9hGcRE83d/ZOFAEKP6rh+FBQ51Sdxwih2wsf4wSBBLBwJDvtGt7lafsVJ4lQ+z0/j
-         1bUfED4rCWjciDZFJHQRCrdXSuENB683ClsfnTFKVeZOagMLlYpXEGz39RBFmTXNczJy
-         fNGYLc52tQ+QmyIieVzRwlDaQ7Id3w5NSuy+UgDBaPBgqmeFSO3wuUNgz4yUPD6J7ikC
-         Kc8Q==
-X-Gm-Message-State: APjAAAXHRpsLnc3hrCLLIAB8poMZTBYXYYykm50VHFWqYS+bVYMKXfkT
-        ouPlFVDKYfun5F4nbiXjS4U02IM6JyLObg==
-X-Google-Smtp-Source: APXvYqyRTX2xe/RXO2a1R4wAMFoGUHd/8F69mYx1bwHIiLNCMYtDwXDbG78SgJR7jpu9zRPE3C/+Kg==
-X-Received: by 2002:a62:7a0f:: with SMTP id v15mr26284997pfc.35.1565775664294;
-        Wed, 14 Aug 2019 02:41:04 -0700 (PDT)
-Received: from [192.168.68.119] (203-219-253-117.static.tpgi.com.au. [203.219.253.117])
-        by smtp.gmail.com with ESMTPSA id i11sm17425385pfk.34.2019.08.14.02.41.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 02:41:03 -0700 (PDT)
-Subject: Re: [PATCH v9 7/7] powerpc: add machine check safe copy_to_user
-To:     Santosh Sivaraj <santosh@fossix.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        christophe leroy <christophe.leroy@c-s.fr>
-References: <20190812092236.16648-1-santosh@fossix.org>
- <20190812092236.16648-8-santosh@fossix.org>
-From:   Balbir Singh <bsingharora@gmail.com>
-Message-ID: <74d12529-d068-0210-e229-5cea68bcf9da@gmail.com>
-Date:   Wed, 14 Aug 2019 19:40:58 +1000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 14 Aug 2019 05:46:16 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hxpr8-0004OO-DB; Wed, 14 Aug 2019 11:46:10 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hxpr7-0005BZ-BS; Wed, 14 Aug 2019 11:46:09 +0200
+Date:   Wed, 14 Aug 2019 11:46:09 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de
+Subject: Re: [PATCH v2 1/2] dt-bindings: pwm: sprd: Add Spreadtrum PWM
+ documentation
+Message-ID: <20190814094609.pm7ulg57e37pphrs@pengutronix.de>
+References: <f9d2c7cb01cbf31bf75c4160611fa1d37d99f355.1565703607.git.baolin.wang@linaro.org>
+ <20190813141256.jnbrfld42rtigek3@pengutronix.de>
+ <CAMz4kuJA+a=nzFRja4wRkfJu3Gzb0wnvaM8H4Ek9X5u8CNegPg@mail.gmail.com>
+ <20190814070121.o53tj2mtky4hcy3n@pengutronix.de>
+ <CAMz4ku+55O6ORVM9xDv4R954QG4PXV8EkcGypSTB5wKni+Dq+Q@mail.gmail.com>
+ <20190814073939.ubgzysmkmmel5h4y@pengutronix.de>
+ <CAMz4ku+Q7CV+0dP1P0hAPJR7KiG0HOkZbT_LPXY4Q03hMuvS8A@mail.gmail.com>
+ <20190814084929.q3uy7cpf4ullpevo@pengutronix.de>
+ <CAMz4kuLFeg2OyzgxZLp4Ks5ucTptOBTrxod5yVFXQ+q8ttKjcw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190812092236.16648-8-santosh@fossix.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMz4kuLFeg2OyzgxZLp4Ks5ucTptOBTrxod5yVFXQ+q8ttKjcw@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
-
-On 12/8/19 7:22 pm, Santosh Sivaraj wrote:
-> Use  memcpy_mcsafe() implementation to define copy_to_user_mcsafe()
+On Wed, Aug 14, 2019 at 05:33:25PM +0800, Baolin Wang wrote:
+> On Wed, 14 Aug 2019 at 16:49, Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> wrote:
+> > On Wed, Aug 14, 2019 at 03:52:08PM +0800, Baolin Wang wrote:
+> > > On 14/08/2019, Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
+> > > > On Wed, Aug 14, 2019 at 03:25:53PM +0800, Baolin Wang wrote:
+> > > >> On Wed, 14 Aug 2019 at 15:01, Uwe Kleine-König
+> > > >> <u.kleine-koenig@pengutronix.de> wrote:
+> > > >> > On Wed, Aug 14, 2019 at 09:51:34AM +0800, Baolin Wang wrote:
+> > > >> > > On Tue, 13 Aug 2019 at 22:13, Uwe Kleine-König
+> > > >> > > <u.kleine-koenig@pengutronix.de> wrote:
+> > > >> > > > On Tue, Aug 13, 2019 at 09:46:40PM +0800, Baolin Wang wrote:
+> > > >> > > > > +- assigned-clock-parents: The phandle of the parent clock of PWM
+> > > >> > > > > clock.
+> > > >> > > >
+> > > >> > > > I'm not sure you need to point out assigned-clocks and
+> > > >> > > > assigned-clock-parents as this is general clk stuff. Also I wonder if
+> > > >> > > > these should be "required properties".
+> > > >> > >
+> > > >> > > I think I should describe any properties used by PWM node, like
+> > > >> > > 'clocks' and 'clock-names' properties, though they are common clock
+> > > >> > > properties.
+> > > >> >
+> > > >> > Then you might want to describe also "status", "assigned-clock-rates",
+> > > >> > "pinctrl-$n", "pinctrl-names", "power-domains", "power-domain-names"
+> > > >> > and
+> > > >> > probably another dozen I'm not aware of.
+> > > >>
+> > > >> We usually do not describe 'status', but if your device node used
+> > > >> "pinctrl-$n", "pinctrl-names" ... common properties, yes, you should
+> > > >> describe them to let users know what is the purpose of these
+> > > >> properties. That's also asked by DT maintainer Rob.
+> > > >
+> > > > Does this convince you that you should also describe "pinctrl-$n" and
+> > > > the others? If not, why not? We also usually don't describe
+> > >
+> > > Our PWM device node did not use "pinctrl-$n" things, why I should
+> > > describe "pinctrl-$n"?
+> >
+> > The binding you implemented supports "pinctrl-$n". And this is described
+> > somewhere in the generic pinctrl binding docs. The same applies to
+> > "assigned-clock-parents".
+> >
+> > That you happen to use assigned-clock-parents but not pinctrl-$n on the
+> > board you used to develop your driver is a detail that IMHO shouldn't
+> > decide about being listed in the binding doc for your PWM type.
+> >
+> > > If some devices use pinctrl, yes, they should describe what is the
+> > > purpose of pinctrl, see:
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+> >
+> > I agree that if the driver assumes special pinctrl names this is worth
+> > mentioning. If however there is nothing special and just some generic
+> > stuff is used that is described in some other location then I'd chose to
+> > not add this redundant information to the binding document. So if I
+> > reviewed the patch that created
+> > Documentation/devicetree/bindings/mmc/sdhci-sprd.txt I would have
+> > suggested to drop "assigned-clocks" and "assigned-clock-parents" there,
+> > too.
+> >
+> > > > assigned-clock-parents. For me these are all in the same catagory:
+> > >
+> > > Lots of dt bindings describe 'assigned-clock-parents',:
+> > > ./Documentation/devicetree/bindings/display/msm/dsi.txt
+> > > ./Documentation/devicetree/bindings/display/msm/dsi.txt
+> > > ./Documentation/devicetree/bindings/display/mediatek/mediatek,hdmi.txt
+> > > ./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
+> > > ./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
+> > > ./Documentation/devicetree/bindings/rtc/st,stm32-rtc.txt
+> > > ./Documentation/devicetree/bindings/pci/rockchip-pcie-host.txt
+> > > ./Documentation/devicetree/bindings/sound/mt2701-afe-pcm.txt
+> > > ./Documentation/devicetree/bindings/sound/brcm,cygnus-audio.txt
+> > > ./Documentation/devicetree/bindings/sound/brcm,cygnus-audio.txt
+> > > ......
+> >
+> > I didn't check each of them, but I assume the same applies here, too.
+> > Please don't copy blindly but think before using other people's stuff as
 > 
-> Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
-> ---
->  arch/powerpc/Kconfig               |  1 +
->  arch/powerpc/include/asm/uaccess.h | 14 ++++++++++++++
->  2 files changed, 15 insertions(+)
+> I did not  copy blindly.
+
+OK, there was no offence intended.
+
+> > reference. Even in the Linux kernel where reviews seem and are told to
+> > catch non-optimal stuff, there are places where this doesn't work. IMHO
+> > the key question is: Does it add value to describe "assigned-clocks" in
+> > the binding for your PWM device given that you're only using this
+> > generic and well documented construct?
 > 
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 77f6ebf97113..4316e36095a2 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -137,6 +137,7 @@ config PPC
->  	select ARCH_HAS_STRICT_KERNEL_RWX	if ((PPC_BOOK3S_64 || PPC32) && !RELOCATABLE && !HIBERNATION)
->  	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
->  	select ARCH_HAS_UACCESS_FLUSHCACHE	if PPC64
-> +	select ARCH_HAS_UACCESS_MCSAFE		if PPC64
->  	select ARCH_HAS_UBSAN_SANITIZE_ALL
->  	select ARCH_HAVE_NMI_SAFE_CMPXCHG
->  	select ARCH_KEEP_MEMBLOCK
-> diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-> index 8b03eb44e876..15002b51ff18 100644
-> --- a/arch/powerpc/include/asm/uaccess.h
-> +++ b/arch/powerpc/include/asm/uaccess.h
-> @@ -387,6 +387,20 @@ static inline unsigned long raw_copy_to_user(void __user *to,
->  	return ret;
->  }
->  
-> +static __always_inline unsigned long __must_check
-> +copy_to_user_mcsafe(void __user *to, const void *from, unsigned long n)
-> +{
-> +	if (likely(check_copy_size(from, n, true))) {
-> +		if (access_ok(to, n)) {
-> +			allow_write_to_user(to, n);
-> +			n = memcpy_mcsafe((void *)to, from, n);
-> +			prevent_write_to_user(to, n);
-> +		}
-> +	}
-> +
-> +	return n;
+> I just want to remind users that they should set the parent clock for
+> PWMs, otherwise the PWM source clock can be not available.
 
-Do we always return n independent of the check_copy_size return value and access_ok return values?
+Probably it is just subjective where to draw the line here. There are a
+thousand and one things that can go wrong when the PWM should be used.
+To me it seems artificial to pick one of these and mention it in a
+document that is supposed to describe how to formalize such a device.
 
-Balbir Singh.
+But given that we're going in cycles, I will stop trying to convince you
+now.
 
-> +}
-> +
->  extern unsigned long __clear_user(void __user *addr, unsigned long size);
->  
->  static inline unsigned long clear_user(void __user *addr, unsigned long size)
-> 
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
