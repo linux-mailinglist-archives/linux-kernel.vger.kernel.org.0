@@ -2,109 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BB2E8DD0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8478B8DD14
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:37:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbfHNSfy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:35:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51642 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfHNSfx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:35:53 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FF062133F;
-        Wed, 14 Aug 2019 18:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565807752;
-        bh=9tAo8oSEswY4dySBG+2prag4EPquno+j1Jc6Rul1qxg=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=cqeFc784XewRaoyjiWQdjwPJtXy60XYjptLMJV7LndEosH3B8GoyhJ6UrXCFrjYzl
-         jUIX+QIHJZhe6urpAZ6CkVGYOSRkIpOtCA9AZR+n4fZKWN+9wgunMN9PEgyN83gjq6
-         VeSKDC/IFB/6stoMEtRFdAKAG7Bot/JcAAKwrBko=
-Content-Type: text/plain; charset="utf-8"
+        id S1728876AbfHNShC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:37:02 -0400
+Received: from mx2.suse.de ([195.135.220.15]:51548 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728389AbfHNShB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:37:01 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D8BC2AC6E;
+        Wed, 14 Aug 2019 18:36:58 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 20:36:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     khlebnikov@yandex-team.ru, linux-kernel@vger.kernel.org,
+        Minchan Kim <minchan@kernel.org>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Borislav Petkov <bp@alien8.de>,
+        Brendan Gregg <bgregg@netflix.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christian Hansen <chansen3@cisco.com>, dancol@google.com,
+        fmayer@google.com, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Mike Rapoport <rppt@linux.ibm.com>, namhyung@google.com,
+        paulmck@linux.ibm.com, Robin Murphy <robin.murphy@arm.com>,
+        Roman Gushchin <guro@fb.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>, surenb@google.com,
+        Thomas Gleixner <tglx@linutronix.de>, tkjos@google.com,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>, Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v5 2/6] mm/page_idle: Add support for handling swapped
+ PG_Idle pages
+Message-ID: <20190814183657.GK17933@dhcp22.suse.cz>
+References: <20190807171559.182301-1-joel@joelfernandes.org>
+ <20190807171559.182301-2-joel@joelfernandes.org>
+ <20190813150450.GN17933@dhcp22.suse.cz>
+ <20190813153659.GD14622@google.com>
+ <20190814080531.GP17933@dhcp22.suse.cz>
+ <20190814163203.GB59398@google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190814174439.GE6167@minitux>
-References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-2-vkoul@kernel.org> <20190814165855.098FD2063F@mail.kernel.org> <20190814174439.GE6167@minitux>
-Subject: Re: [PATCH 01/22] arm64: dts: qcom: sm8150: add base dts file
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        linux-arm-msm@vger.kernel.org, sibis@codeaurora.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 11:35:51 -0700
-Message-Id: <20190814183552.5FF062133F@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814163203.GB59398@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-08-14 10:44:39)
-> On Wed 14 Aug 09:58 PDT 2019, Stephen Boyd wrote:
->=20
-> > Quoting Vinod Koul (2019-08-14 05:49:51)
-> > > diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/d=
-ts/qcom/sm8150.dtsi
-> [..]
-> > > +       clocks {
-> > > +               xo_board: xo-board {
-> > > +                       compatible =3D "fixed-clock";
-> > > +                       #clock-cells =3D <0>;
-> > > +                       clock-frequency =3D <19200000>;
-> >=20
-> > Is it 19.2 or 38.4 MHz? It seems like lately there are dividers, but I
-> > guess it doesn't really matter in the end.
-> >=20
->=20
-> As with previous platforms, the board's XO feeds the PMIC at 38.4MHz and
-> the SoC's CXO_IN pin (i.e. bi_tcxo) is fed from the PMIC's LNBBCLK1,
-> which is ticking at 19.2MHz.
->=20
-> [..]
-> > > +               gcc: clock-controller@100000 {
-> > > +                       compatible =3D "qcom,gcc-sm8150";
-> > > +                       reg =3D <0x00100000 0x1f0000>;
-> > > +                       #clock-cells =3D <1>;
-> > > +                       #reset-cells =3D <1>;
-> > > +                       #power-domain-cells =3D <1>;
-> > > +                       clock-names =3D "bi_tcxo", "sleep_clk";
-> > > +                       clocks =3D <&xo_board>, <&sleep_clk>;
->=20
-> So this first one should actually be <&rpmhcc LNBBCLK1>.
+On Wed 14-08-19 12:32:03, Joel Fernandes wrote:
+> On Wed, Aug 14, 2019 at 10:05:31AM +0200, Michal Hocko wrote:
+> > On Tue 13-08-19 11:36:59, Joel Fernandes wrote:
+> > > On Tue, Aug 13, 2019 at 05:04:50PM +0200, Michal Hocko wrote:
+> > > > On Wed 07-08-19 13:15:55, Joel Fernandes (Google) wrote:
+> > > > > Idle page tracking currently does not work well in the following
+> > > > > scenario:
+> > > > >  1. mark page-A idle which was present at that time.
+> > > > >  2. run workload
+> > > > >  3. page-A is not touched by workload
+> > > > >  4. *sudden* memory pressure happen so finally page A is finally swapped out
+> > > > >  5. now see the page A - it appears as if it was accessed (pte unmapped
+> > > > >     so idle bit not set in output) - but it's incorrect.
+> > > > > 
+> > > > > To fix this, we store the idle information into a new idle bit of the
+> > > > > swap PTE during swapping of anonymous pages.
+> > > > >
+> > > > > Also in the future, madvise extensions will allow a system process
+> > > > > manager (like Android's ActivityManager) to swap pages out of a process
+> > > > > that it knows will be cold. To an external process like a heap profiler
+> > > > > that is doing idle tracking on another process, this procedure will
+> > > > > interfere with the idle page tracking similar to the above steps.
+> > > > 
+> > > > This could be solved by checking the !present/swapped out pages
+> > > > right? Whoever decided to put the page out to the swap just made it
+> > > > idle effectively.  So the monitor can make some educated guess for
+> > > > tracking. If that is fundamentally not possible then please describe
+> > > > why.
+> > > 
+> > > But the monitoring process (profiler) does not have control over the 'whoever
+> > > made it effectively idle' process.
+> > 
+> > Why does that matter? Whether it is a global/memcg reclaim or somebody
+> > calling MADV_PAGEOUT or whatever it is a decision to make the page not
+> > hot. Sure you could argue that a missing idle bit on swap entries might
+> > mean that the swap out decision was pre-mature/sub-optimal/wrong but is
+> > this the aim of the interface?
+> > 
+> > > As you said it will be a guess, it will not be accurate.
+> > 
+> > Yes and the point I am trying to make is that having some space and not
+> > giving a guarantee sounds like a safer option for this interface because
+> 
+> I do see your point of view, but jJust because a future (and possibly not
+> going to happen) usecase which you mentioned as pte reclaim, makes you feel
+> that userspace may be subject to inaccuracies anyway, doesn't mean we should
+> make everything inaccurate..  We already know idle page tracking is not
+> completely accurate. But that doesn't mean we miss out on the opportunity to
+> make the "non pte-reclaim" usecase inaccurate as well. 
 
-Hrmm LNBBCLK1 doesn't make any sense to me. That's a buffer that is
-technically the net connected to the XO pin on the Soc, but it isn't
-really supposed to be used by anything from what I recall. Last time I
-tried to use the buffers the RPM team told me I was using the wrong
-resource and I should just use the XO resource instead. Doesn't RPMh
-expose the other "XO" resource that is supposed to prevent XO shutdown?
-Just mark it critical for now so that XO isn't turned off at runtime.
+Just keep in mind that you will add more burden to future features
+because they would have to somehow overcome this user visible behavior
+and we will get to the usual question - Is this going to break
+something that relies on the idle bit being stable?
 
->=20
-> But while we now should handle this gracefully in the clock driver I
-> think we still have problems with the cascading probe deferral that
-> follows - last time I tried to do this the serial driver probe deferred
-> past user space initialization and the system crashed as we didn't have
-> a /dev/console.
+> IMO, we should do our best for today, and not hypothesize. How likely is pte
+> reclaim and is there a thread to describe that direction?
 
-Does the serial driver probe eventually? Maybe you can run agetty when
-the device appears based on some uevent for /dev/console. Or we have a
-bug where /dev/console is created by devtmpfs when there isn't actually
-a console?
-
->=20
->=20
-> So, I think we should s/xo_board/lnbbclk1/ (at 19.2MHz) to make it
-> represent the schematics and then once we have rpmhcc and validated that
-> the system handles this gracefully we can switch it out.
->=20
-
-Sure, some sort of approach that switches it later on is fine, just want
-to make sure that the board clk frequency is accurately reflected in the
-DT.
-
+Not that I am aware of now but with large NVDIMM mapped files I can see
+that this will get more and more interesting.
+-- 
+Michal Hocko
+SUSE Labs
