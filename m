@@ -2,114 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE1D8DE7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 946928DE84
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:14:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729293AbfHNUMW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:12:22 -0400
-Received: from mail-ot1-f44.google.com ([209.85.210.44]:41598 "EHLO
-        mail-ot1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbfHNUMW (ORCPT
+        id S1729306AbfHNUO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:14:27 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:5567 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfHNUO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:12:22 -0400
-Received: by mail-ot1-f44.google.com with SMTP id o101so934862ota.8
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:12:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=baesCGH/f6622nKyTt3pYuyj9GQL9uGRdAZgpKFE0pg=;
-        b=nXecmtG4odunHeB6aXBTN0HKi7UMHEqpEKs1j6keLeZaCBgpHF5VklO2Y4bTIhuYGx
-         77N5DKPerrlC7WllHf34rtrK33Zn5+cdKLrTE5yXuDNzXuPBSqoV/6xoM109pN+cAxpJ
-         /CtREKnKJm5FlnkbSvYaSYJkw/K0E+GJcQ66g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=baesCGH/f6622nKyTt3pYuyj9GQL9uGRdAZgpKFE0pg=;
-        b=uCyHz8BaMEX/Vg22OoVoC0bxDU1ZMXftqjZTNhVw2rTrcwer27uqfmiH+R1rMgnFgH
-         Wa2ILQSKlwyUQZfCgHsnNFcYBd9QwCPHPIHKgPyBxOc7yWBrPULNwJBP8so0Yu/Tc7lB
-         Srhv5BPQeh2GfgTXyQSK3pwxJyPgadX/5AY5oZeorhoyBgWgGLzwRpEEVxqf5yT2m39O
-         br1UCcWwg65oT05Fog74ncAloaIh4lRduQmu8nc3i3YjD/YQFWV0HrkrX+tZK9+hJWsF
-         0bjjfcG3mnJ3Fq/HHdhVHA4YKZRPoSPG14TiSAsd1wkXyXUn5TJ9smpI2DeGjyggeDDz
-         lICA==
-X-Gm-Message-State: APjAAAUo8wlpkvgmIRS7C39joTbCU7wWDICZ4N5HEHpwCd8X4tE/Ciio
-        5sLw6E9Kam7uBEuWTyG2A1XzKSroUoM=
-X-Google-Smtp-Source: APXvYqzeXVGJRAObmUlcXBdcHBCME877BW4RB3Zhmr/6NHER7hxTi2A+itOebSodsOk5JE7xWgGrJg==
-X-Received: by 2002:a05:6830:1199:: with SMTP id u25mr651912otq.213.1565813540664;
-        Wed, 14 Aug 2019 13:12:20 -0700 (PDT)
-Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
-        by smtp.gmail.com with ESMTPSA id u16sm245556otk.53.2019.08.14.13.12.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2019 13:12:19 -0700 (PDT)
-Received: by mail-oi1-f171.google.com with SMTP id k22so5583937oiw.11
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:12:19 -0700 (PDT)
-X-Received: by 2002:aca:56d2:: with SMTP id k201mr761220oib.171.1565813538728;
- Wed, 14 Aug 2019 13:12:18 -0700 (PDT)
+        Wed, 14 Aug 2019 16:14:27 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d546ba40000>; Wed, 14 Aug 2019 13:14:28 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 14 Aug 2019 13:14:26 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 14 Aug 2019 13:14:26 -0700
+Received: from rcampbell-dev.nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Aug
+ 2019 20:14:24 +0000
+Subject: Re: [PATCH v3 hmm 01/11] mm/mmu_notifiers: hoist
+ do_mmu_notifier_register down_write to the caller
+To:     Jason Gunthorpe <jgg@ziepe.ca>, <linux-mm@kvack.org>
+CC:     Andrea Arcangeli <aarcange@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        "Kuehling, Felix" <Felix.Kuehling@amd.com>,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Dimitri Sivanich <sivanich@sgi.com>,
+        <dri-devel@lists.freedesktop.org>, <amd-gfx@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <iommu@lists.linux-foundation.org>,
+        <intel-gfx@lists.freedesktop.org>,
+        Gavin Shan <shangw@linux.vnet.ibm.com>,
+        Andrea Righi <andrea@betterlinux.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Christoph Hellwig <hch@infradead.org>
+References: <20190806231548.25242-1-jgg@ziepe.ca>
+ <20190806231548.25242-2-jgg@ziepe.ca>
+X-Nvconfidentiality: public
+From:   Ralph Campbell <rcampbell@nvidia.com>
+Message-ID: <1391be01-932c-68ca-0160-e08ed2a0243d@nvidia.com>
+Date:   Wed, 14 Aug 2019 13:14:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-References: <CAHX4x86QCrkrnPEfrup8k96wyqg=QR_vgetYLqP1AEa02fx1vw@mail.gmail.com>
- <20190813060249.GD6670@kroah.com>
-In-Reply-To: <20190813060249.GD6670@kroah.com>
-From:   Nick Crews <ncrews@chromium.org>
-Date:   Wed, 14 Aug 2019 14:12:07 -0600
-X-Gmail-Original-Message-ID: <CAHX4x87DbJ4cKuwVO3OS=UzwtwSucFCV073W8bYHOPHW8NiA=A@mail.gmail.com>
-Message-ID: <CAHX4x87DbJ4cKuwVO3OS=UzwtwSucFCV073W8bYHOPHW8NiA=A@mail.gmail.com>
-Subject: Re: Policy to keep USB ports powered in low-power states
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Daniel Kurtz <djkurtz@google.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190806231548.25242-2-jgg@ziepe.ca>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1565813668; bh=l693Dsnz2cNYZkVUIa0hGWj4gZqviofo6oB5vcHDRgE=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=R5LCsQ2RGYP/aRbOOTYVqp3+mNbaFthG3djuEbE/Q5RcS9mR/XTArigIkLJIJcoUm
+         2K4ojNSONT0DPE3p48KuDCnr8/b/xkcFIsjgMnEh2A4XHosGTEQqAsOIgDIYpKjhA6
+         rkPNvw30YaNhLDpHwnvQ22Rq+l1U9m2Nr7cxGupNe9zheNvIiYxkmouASaeFKHn1Ne
+         hfrZ3XyWn84qlbZhdg2Z+7hrQwZnGR5tn9y+gosmO+PTqodnJTwNCIDxM/tYLWvgwz
+         yiPA4kvRNQ0JR0eN4UhFvOmVWdRm65jh/bJrrdWl3KFGl5AiupxGl6Jnjo5KFXd1mW
+         QlJuphdrdgDvw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the fast response!
 
-On Tue, Aug 13, 2019 at 12:02 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Aug 12, 2019 at 06:08:43PM -0600, Nick Crews wrote:
-> > Hi Greg!
->
-> Hi!
->
-> First off, please fix your email client to not send html so that vger
-> does not reject your messages :)
+On 8/6/19 4:15 PM, Jason Gunthorpe wrote:
+> From: Jason Gunthorpe <jgg@mellanox.com>
+> 
+> This simplifies the code to not have so many one line functions and extra
+> logic. __mmu_notifier_register() simply becomes the entry point to
+> register the notifier, and the other one calls it under lock.
+> 
+> Also add a lockdep_assert to check that the callers are holding the lock
+> as expected.
+> 
+> Suggested-by: Christoph Hellwig <hch@infradead.org>
+> Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 
-Thanks, should be good now.
-
->
-> > I am working on a Chrome OS device that supports a policy called "USB Power
-> > Share," which allows users to turn the laptop into a charge pack for their
-> > phone. When the policy is enabled, power will be supplied to the USB ports
-> > even when the system is in low power states such as S3 and S5. When
-> > disabled, then no power will be supplied in S3 and S5. I wrote a driver
-> > <https://lore.kernel.org/patchwork/patch/1062995/> for this already as part
-> > of drivers/platform/chrome/, but Enric Balletbo i Serra, the maintainer,
-> > had the reasonable suggestion of trying to move this into the USB subsystem.
->
-> Correct suggestion.
->
-> > Has anything like this been done before? Do you have any preliminary
-> > thoughts on this before I start writing code? A few things that I haven't
-> > figured out yet:
-> > - How to make this feature only available on certain devices. Using device
-> > tree? Kconfig? Making a separate driver just for this device that plugs
-> > into the USB core?
-> > - The feature is only supported on some USB ports, so we need a way of
-> > filtering on a per-port basis.
->
-> Look at the drivers/usb/typec/ code, I think that should do everything
-> you need here as this is a typec standard functionality, right?
-
-Unfortunately this is for USB 2.0 ports, so it's not type-C.
-Is the type-C code still worth looking at?
-
->
-> thanks,
->
-> greg k-h
+Nice clean up.
+Reviewed-by: Ralph Campbell <rcampbell@nvidia.com>
