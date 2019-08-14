@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE39A8D9D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 841388D99B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730344AbfHNRM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:12:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36274 "EHLO mail.kernel.org"
+        id S1730061AbfHNRKI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730729AbfHNRM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:12:26 -0400
+        id S1730412AbfHNRKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:04 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2D6A2084D;
-        Wed, 14 Aug 2019 17:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACE45216F4;
+        Wed, 14 Aug 2019 17:10:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802746;
-        bh=S8IPL5fdFrB1YEC+xEAXvBeryNQRoErBMjsR/WoHJrE=;
+        s=default; t=1565802603;
+        bh=/Ff2BB1YQa4gCwavzBkOv5LyIublasKxglhj1JWbgpE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VW1mUpNLMQhxTW+JssxYdiXcgkIihXZs5BmRfeM3AYeQSg4pDCoMqTxCZ4YXcm3H3
-         W0+a2Y80ITDrlGmLUwf5qx/mTnoYGFdzNAGxtvODnGJ3pmdsoMyNq2wZa6WVeQax8q
-         dFKJ6k8EhVEML3H1Cf4w5yVZj/jDPgGFyC7t3Sro=
+        b=zrPLXDpf9nPpYY/WBXl5WRApzXKKvDR2OFug/G3pF0cBdsEhrbETvJJZCnKhdEwSj
+         FEIVIQV+2PQK3eh1091Dt+yQqEtp/mQr4PZdQUxyG8KTWga4CO5GInmU0m2V7z3aRt
+         bD4CRwRYlVtHpBW1FlCVbhkEWWQcjzEdrMY/gipA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nate Graham <pointedstick@zoho.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 10/69] Input: synaptics - enable RMI mode for HP Spectre X360
-Date:   Wed, 14 Aug 2019 19:01:08 +0200
-Message-Id: <20190814165746.219529267@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 46/91] mac80211: dont warn about CW params when not using them
+Date:   Wed, 14 Aug 2019 19:01:09 +0200
+Message-Id: <20190814165751.559920451@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+[ Upstream commit d2b3fe42bc629c2d4002f652b3abdfb2e72991c7 ]
 
-commit 25f8c834e2a6871920cc1ca113f02fb301d007c3 upstream.
+ieee80211_set_wmm_default() normally sets up the initial CW min/max for
+each queue, except that it skips doing this if the driver doesn't
+support ->conf_tx. We still end up calling drv_conf_tx() in some cases
+(e.g., ieee80211_reconfig()), which also still won't do anything
+useful...except it complains here about the invalid CW parameters.
 
-The 2016 kabylake HP Spectre X360 (model number 13-w013dx) works much better
-with psmouse.synaptics_intertouch=1 kernel parameter, so let's enable RMI4
-mode automatically.
+Let's just skip the WARN if we weren't going to do anything useful with
+the parameters.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=204115
-Reported-by: Nate Graham <pointedstick@zoho.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Link: https://lore.kernel.org/r/20190718015712.197499-1-briannorris@chromium.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/mouse/synaptics.c |    1 +
- 1 file changed, 1 insertion(+)
+ net/mac80211/driver-ops.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -185,6 +185,7 @@ static const char * const smbus_pnp_ids[
- 	"LEN2055", /* E580 */
- 	"SYN3052", /* HP EliteBook 840 G4 */
- 	"SYN3221", /* HP 15-ay000 */
-+	"SYN323d", /* HP Spectre X360 13-w013dx */
- 	NULL
- };
+diff --git a/net/mac80211/driver-ops.c b/net/mac80211/driver-ops.c
+index bb886e7db47f1..f783d1377d9a8 100644
+--- a/net/mac80211/driver-ops.c
++++ b/net/mac80211/driver-ops.c
+@@ -169,11 +169,16 @@ int drv_conf_tx(struct ieee80211_local *local,
+ 	if (!check_sdata_in_driver(sdata))
+ 		return -EIO;
  
+-	if (WARN_ONCE(params->cw_min == 0 ||
+-		      params->cw_min > params->cw_max,
+-		      "%s: invalid CW_min/CW_max: %d/%d\n",
+-		      sdata->name, params->cw_min, params->cw_max))
++	if (params->cw_min == 0 || params->cw_min > params->cw_max) {
++		/*
++		 * If we can't configure hardware anyway, don't warn. We may
++		 * never have initialized the CW parameters.
++		 */
++		WARN_ONCE(local->ops->conf_tx,
++			  "%s: invalid CW_min/CW_max: %d/%d\n",
++			  sdata->name, params->cw_min, params->cw_max);
+ 		return -EINVAL;
++	}
+ 
+ 	trace_drv_conf_tx(local, sdata, ac, params);
+ 	if (local->ops->conf_tx)
+-- 
+2.20.1
+
 
 
