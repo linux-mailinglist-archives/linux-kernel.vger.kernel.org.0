@@ -2,161 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464408D37E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D47A8D3A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:52:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfHNMuN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:50:13 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38036 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfHNMuM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:50:12 -0400
-Received: by mail-oi1-f196.google.com with SMTP id p124so3498972oig.5
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 05:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=digidescorp.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=/+aArS/+ZpXWQrNyAPbe/FVozsbsHho1Pyh+D5yt+eM=;
-        b=Q46RYsE22MhQi0qPL9mOVIvPiWIAlcb6XvRg2G1Kab100w6d33bkV6Nj7WbfBhZLFS
-         DePA24isLJdfXVfQiu01V6rvCiv+SNWBYE1TAmyt7D0OP0KaZLFg3PB7+pLJD+GF+OWk
-         MGcqJVVXmPl35qlkvYbT7sQLmXWlVgITTelZI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=/+aArS/+ZpXWQrNyAPbe/FVozsbsHho1Pyh+D5yt+eM=;
-        b=dWtD1asWUbTT9lBT74LlMsFYxyaBXE2YIJ1bhpXiqUfP0GDMngbAL9gnyNoRPJgp4Z
-         x9/KlwDq1OfANpJ7Hn9ORqjyU7Q2dxiHhm32grjKip/8tZA0XX6pkKhFmt1BWNehUZHr
-         aUA10kUbT12410uiE48ZBnzW4LRLFXzdVyrIQ0h3PBLSMYBOhp4DQnVvGXE5egpbNOix
-         6nEMOHx4uFLhtvWrrIJLIDpey0m3yn/uK/lZ9Eus5wUSfH+IQeBFJcNhssdtdp65lmz6
-         AvcEYrD3D5VOX1LHv4Anay7fBxxUGoMAFNn0fxep+Y8ma0eGLxXgp37jMTxortwOyxDa
-         RwGw==
-X-Gm-Message-State: APjAAAU0WeCUVbmb7E5y5lSgHRMIG712RNVUlrOaMynNoVu6f83IQ85g
-        xPma/13PkyW8EVju7GEs/uqvog==
-X-Google-Smtp-Source: APXvYqwDOApCZPr3cCgqfm3OG0AgLMRjBq0SWb9OHeIgBreHeTX11da+LxeS/BlgpYOjG+0S+p3dig==
-X-Received: by 2002:a02:9981:: with SMTP id a1mr3295802jal.17.1565787011740;
-        Wed, 14 Aug 2019 05:50:11 -0700 (PDT)
-Received: from iscandar.digidescorp.com ([50.73.98.161])
-        by smtp.googlemail.com with ESMTPSA id j5sm83102558iom.69.2019.08.14.05.50.10
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 05:50:11 -0700 (PDT)
-From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
-X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
-To:     Jan Kara <jack@suse.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Steven J . Magnani" <steve@digidescorp.com>
-Subject: [PATCH v2] udf: reduce leakage of blocks related to named streams
-Date:   Wed, 14 Aug 2019 07:50:02 -0500
-Message-Id: <20190814125002.10869-1-steve@digidescorp.com>
-X-Mailer: git-send-email 2.17.1
+        id S1728172AbfHNMwj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:52:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35668 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727687AbfHNMwi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:52:38 -0400
+Received: from localhost.localdomain (unknown [171.76.115.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D039A206C2;
+        Wed, 14 Aug 2019 12:52:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565787157;
+        bh=hKY3I5jTWS34k0VD8Uf0fyHcsSlvg46QwuYtvYAUysU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=X06siOE+DAYXS4OKihOPYi9NNZVN8wLt9TkHumUGQf9qTOmr917csN39oNFM1ObN1
+         QloA5z/8faprdsob1xPO8Rm4OE01oxY2Lf62CoJeZy2FqLz+Og6QYyqGMsYBOrHNec
+         0WchLJWvCMST6liSQg8I4DczqP13ctSfg3R1h84k=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 13/22] arm64: dts: qcom: pm8150l: Add pon and adc nodes
+Date:   Wed, 14 Aug 2019 18:20:03 +0530
+Message-Id: <20190814125012.8700-14-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814125012.8700-1-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Windows is capable of creating UDF files having named streams.
-One example is the "Zone.Identifier" stream attached automatically
-to files downloaded from a network. See:
-  https://msdn.microsoft.com/en-us/library/dn392609.aspx
+Add the pon and adc nodes found in pm8150l PMIC.
 
-Modification of a file having one or more named streams in Linux causes
-the stream directory to become detached from the file, essentially leaking
-all blocks pertaining to the file's streams.
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/pm8150l.dtsi | 33 +++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-Fix by saving off information about an inode's streams when reading it,
-for later use when its on-disk data is updated.
-
-Changes from v1:
-Remove modifications that would limit leakage of all inode blocks
-on deletion.
-This restricts the patch to preservation of stream data during inode
-modification.
-
-Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
-
---- a/fs/udf/udf_i.h	2019-07-26 11:35:28.257563879 -0500
-+++ b/fs/udf/udf_i.h	2019-08-06 14:35:55.579654263 -0500
-@@ -42,12 +42,15 @@ struct udf_inode_info {
- 	unsigned		i_efe : 1;	/* extendedFileEntry */
- 	unsigned		i_use : 1;	/* unallocSpaceEntry */
- 	unsigned		i_strat4096 : 1;
--	unsigned		reserved : 26;
-+	unsigned		i_streamdir : 1;
-+	unsigned		reserved : 25;
- 	union {
- 		struct short_ad	*i_sad;
- 		struct long_ad		*i_lad;
- 		__u8		*i_data;
- 	} i_ext;
-+	struct kernel_lb_addr	i_locStreamdir;
-+	__u64			i_lenStreams;
- 	struct rw_semaphore	i_data_sem;
- 	struct udf_ext_cache cached_extent;
- 	/* Spinlock for protecting extent cache */
---- a/fs/udf/super.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/super.c	2019-08-06 15:04:30.851086957 -0500
-@@ -151,9 +151,13 @@ static struct inode *udf_alloc_inode(str
+diff --git a/arch/arm64/boot/dts/qcom/pm8150l.dtsi b/arch/arm64/boot/dts/qcom/pm8150l.dtsi
+index e61ae6c6dab5..d685dac426a3 100644
+--- a/arch/arm64/boot/dts/qcom/pm8150l.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8150l.dtsi
+@@ -2,6 +2,7 @@
+ // Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+ // Copyright (c) 2019, Linaro Limited
  
- 	ei->i_unique = 0;
- 	ei->i_lenExtents = 0;
-+	ei->i_lenStreams = 0;
- 	ei->i_next_alloc_block = 0;
- 	ei->i_next_alloc_goal = 0;
- 	ei->i_strat4096 = 0;
-+	ei->i_streamdir = 0;
-+	ei->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+	ei->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	init_rwsem(&ei->i_data_sem);
- 	ei->cached_extent.lstart = -1;
- 	spin_lock_init(&ei->i_extent_cache_lock);
---- a/fs/udf/inode.c	2019-07-26 11:35:28.253563792 -0500
-+++ b/fs/udf/inode.c	2019-08-06 15:04:30.851086957 -0500
-@@ -1485,6 +1485,10 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(fe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(fe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(fe->checkpoint);
-+		iinfo->i_streamdir = 0;
-+		iinfo->i_lenStreams = 0;
-+		iinfo->i_locStreamdir.logicalBlockNum = 0xFFFFFFFF;
-+		iinfo->i_locStreamdir.partitionReferenceNum = 0xFFFF;
- 	} else {
- 		inode->i_blocks = le64_to_cpu(efe->logicalBlocksRecorded) <<
- 		    (inode->i_sb->s_blocksize_bits - 9);
-@@ -1498,6 +1502,16 @@ reread:
- 		iinfo->i_lenEAttr = le32_to_cpu(efe->lengthExtendedAttr);
- 		iinfo->i_lenAlloc = le32_to_cpu(efe->lengthAllocDescs);
- 		iinfo->i_checkpoint = le32_to_cpu(efe->checkpoint);
-+
-+		/* Named streams */
-+		iinfo->i_streamdir = (efe->streamDirectoryICB.extLength != 0);
-+		iinfo->i_locStreamdir =
-+			lelb_to_cpu(efe->streamDirectoryICB.extLocation);
-+		iinfo->i_lenStreams = le64_to_cpu(efe->objectSize);
-+		if (iinfo->i_lenStreams >= inode->i_size)
-+			iinfo->i_lenStreams -= inode->i_size;
-+		else
-+			iinfo->i_lenStreams = 0;
- 	}
- 	inode->i_generation = iinfo->i_unique;
++#include <dt-bindings/iio/qcom,spmi-vadc.h>
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/spmi/spmi.h>
  
-@@ -1760,9 +1774,19 @@ static int udf_update_inode(struct inode
- 		       iinfo->i_ext.i_data,
- 		       inode->i_sb->s_blocksize -
- 					sizeof(struct extendedFileEntry));
--		efe->objectSize = cpu_to_le64(inode->i_size);
-+		efe->objectSize =
-+			cpu_to_le64(inode->i_size + iinfo->i_lenStreams);
- 		efe->logicalBlocksRecorded = cpu_to_le64(lb_recorded);
+@@ -11,6 +12,38 @@
+ 		reg = <0x4 SPMI_USID>;
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
++
++		pon@800 {
++			compatible = "qcom,pm8916-pon";
++			reg = <0x0800>;
++		};
++
++		adc@3100 {
++			compatible = "qcom,spmi-adc5";
++			reg = <0x3100>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			#io-channel-cells = <1>;
++			interrupts = <0x4 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
++
++			ref-gnd@0 {
++				reg = <ADC5_REF_GND>;
++				qcom,pre-scaling = <1 1>;
++				label = "ref_gnd";
++			};
++
++			vref-1p25@1 {
++				reg = <ADC5_1P25VREF>;
++				qcom,pre-scaling = <1 1>;
++				label = "vref_1p25";
++			};
++
++			die-temp@6 {
++				reg = <ADC5_DIE_TEMP>;
++				qcom,pre-scaling = <1 1>;
++				label = "die_temp";
++			};
++		};
+ 	};
  
-+		if (iinfo->i_streamdir) {
-+			struct long_ad *icb_lad = &efe->streamDirectoryICB;
-+
-+			icb_lad->extLocation =
-+				cpu_to_lelb(iinfo->i_locStreamdir);
-+			icb_lad->extLength =
-+				cpu_to_le32(inode->i_sb->s_blocksize);
-+		}
-+
- 		udf_adjust_time(iinfo, inode->i_atime);
- 		udf_adjust_time(iinfo, inode->i_mtime);
- 		udf_adjust_time(iinfo, inode->i_ctime);
+ 	qcom,pm8150@5 {
+-- 
+2.20.1
+
