@@ -2,87 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B397F8CF8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:30:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AA188CF93
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:31:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfHNJ37 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 05:29:59 -0400
-Received: from foss.arm.com ([217.140.110.172]:50628 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725928AbfHNJ37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:29:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D9707344;
-        Wed, 14 Aug 2019 02:29:58 -0700 (PDT)
-Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A12C63F694;
-        Wed, 14 Aug 2019 02:29:57 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 10:29:52 +0100
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Cc:     minghuan.Lian@nxp.com, mingkai.hu@nxp.com, roy.zang@nxp.com,
-        bhelgaas@google.com, linuxppc-dev@lists.ozlabs.org,
-        linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv6 1/2] PCI: layerscape: Add the bar_fixed_64bit property
- in EP driver.
-Message-ID: <20190814092952.GA26840@e121166-lin.cambridge.arm.com>
-References: <20190814020330.12133-1-xiaowei.bao@nxp.com>
+        id S1726924AbfHNJa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 05:30:58 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:44656 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726121AbfHNJa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 05:30:58 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 3EA8BAFA9CB883CE19DB;
+        Wed, 14 Aug 2019 17:30:56 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.439.0; Wed, 14 Aug 2019 17:30:48 +0800
+From:   Zhou Wang <wangzhou1@hisilicon.com>
+To:     <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, Zhou Wang <wangzhou1@hisilicon.com>
+Subject: [PATCH 0/5] crypto: hisilicon: Misc fixes
+Date:   Wed, 14 Aug 2019 17:28:34 +0800
+Message-ID: <1565774919-31853-1-git-send-email-wangzhou1@hisilicon.com>
+X-Mailer: git-send-email 2.8.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814020330.12133-1-xiaowei.bao@nxp.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I asked you to remove the period at the end of the patch $SUBJECT and
-you did not, either you do not read what I write or explain me what's
-going on.
+Patch 1~3 are fixes about kbuild errors, patch 4,5 are tiny fixes about qm
+and zip.
 
-On Wed, Aug 14, 2019 at 10:03:29AM +0800, Xiaowei Bao wrote:
-> The PCIe controller of layerscape just have 4 BARs, BAR0 and BAR1
-> is 32bit, BAR2 and BAR4 is 64bit, this is determined by hardware,
-> so set the bar_fixed_64bit with 0x14.
-> 
-> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+This series is based on cryptodev-2.6.
 
-Kishon ACK'ed this patch and you have not carried his tag.
+Zhou Wang (5):
+  crypto: hisilicon - fix kbuild warnings
+  crypto: hisilicon - add dependency for CRYPTO_DEV_HISI_ZIP
+  crypto: hisilicon - init curr_sgl_dma to fix compile warning
+  crypto: hisilicon - add missing single_release
+  crypto: hisilicon - fix error handle in hisi_zip_create_req_q
 
-I will make these changes but that's the last time I do that
-for you.
+ drivers/crypto/hisilicon/Kconfig          | 1 +
+ drivers/crypto/hisilicon/qm.c             | 7 ++++---
+ drivers/crypto/hisilicon/sgl.c            | 2 +-
+ drivers/crypto/hisilicon/zip/zip_crypto.c | 6 ++++--
+ 4 files changed, 10 insertions(+), 6 deletions(-)
 
-Lorenzo
+-- 
+2.8.1
 
-> ---
-> v2:
->  - Replace value 0x14 with a macro.
-> v3:
->  - No change.
-> v4:
->  - send the patch again with '--to'.
-> v5:
->  - fix the commit message.
-> v6:
->  - remove the [EXT] tag of the $SUBJECT in email.
-> 
->  drivers/pci/controller/dwc/pci-layerscape-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-layerscape-ep.c b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> index be61d96..ca9aa45 100644
-> --- a/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> +++ b/drivers/pci/controller/dwc/pci-layerscape-ep.c
-> @@ -44,6 +44,7 @@ static const struct pci_epc_features ls_pcie_epc_features = {
->  	.linkup_notifier = false,
->  	.msi_capable = true,
->  	.msix_capable = false,
-> +	.bar_fixed_64bit = (1 << BAR_2) | (1 << BAR_4),
->  };
->  
->  static const struct pci_epc_features*
-> -- 
-> 2.9.5
-> 
