@@ -2,66 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F38BB8D067
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48E6F8D070
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:16:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfHNKOM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 06:14:12 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726019AbfHNKOM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:14:12 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 498122F366E;
-        Wed, 14 Aug 2019 10:14:12 +0000 (UTC)
-Received: from sirius.home.kraxel.org (ovpn-116-144.ams2.redhat.com [10.36.116.144])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 00501808DD;
-        Wed, 14 Aug 2019 10:14:11 +0000 (UTC)
-Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
-        id 2A5FD9D42; Wed, 14 Aug 2019 12:14:11 +0200 (CEST)
-Date:   Wed, 14 Aug 2019 12:14:11 +0200
-From:   Gerd Hoffmann <kraxel@redhat.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Ben Skeggs <bskeggs@redhat.com>, dri-devel@lists.freedesktop.org,
-        nouveau@lists.freedesktop.org, amd-gfx@lists.freedesktop.org,
-        linux-graphics-maintainer@vmware.com,
-        intel-gfx@lists.freedesktop.org, spice-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Intel-gfx] [PATCH v6 08/17] drm/ttm: use gem vma_node
-Message-ID: <20190814101411.lj3p6zjzbjvnnjf4@sirius.home.kraxel.org>
-References: <20190805140119.7337-1-kraxel@redhat.com>
- <20190805140119.7337-9-kraxel@redhat.com>
- <20190813151115.GA29955@ulmo>
- <20190814055827.6hrxj6daovxxnnvw@sirius.home.kraxel.org>
- <20190814093524.GA31345@ulmo>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814093524.GA31345@ulmo>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 14 Aug 2019 10:14:12 +0000 (UTC)
+        id S1727110AbfHNKQK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 06:16:10 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725828AbfHNKQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 06:16:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F1704AC8C;
+        Wed, 14 Aug 2019 10:16:08 +0000 (UTC)
+Message-ID: <1565777764.25764.4.camel@suse.com>
+Subject: Re: KMSAN: uninit-value in smsc75xx_bind
+From:   Oliver Neukum <oneukum@suse.com>
+To:     Andrey Konovalov <andreyknvl@google.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Alexander Potapenko <glider@google.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        steve.glendinning@shawell.net,
+        syzbot <syzbot+6966546b78d050bb0b5d@syzkaller.appspotmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>
+Date:   Wed, 14 Aug 2019 12:16:04 +0200
+In-Reply-To: <CAAeHK+zzj_+Qvm217KO2OHnfBMWbepP0Y-OYTWpOw3ghe5ji=g@mail.gmail.com>
+References: <0000000000009f4316058fab3bd7@google.com>
+         <1565700220.7043.8.camel@suse.com>
+         <CAAeHK+zzj_+Qvm217KO2OHnfBMWbepP0Y-OYTWpOw3ghe5ji=g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  Hi,
-
-> > Changing the order doesn't look hard.  Patch attached (untested, have no
-> > test hardware).  But maybe I missed some detail ...
+Am Dienstag, den 13.08.2019, 17:08 +0200 schrieb Andrey Konovalov:
+> On Tue, Aug 13, 2019 at 2:43 PM Oliver Neukum <oneukum@suse.com> wrote:
+> > 
+> > 
+> > Hi,
+> > 
+> > this looks like a false positive to me.
+> > The offending code is likely this:
+> > 
+> >         if (size) {
+> >                 buf = kmalloc(size, GFP_KERNEL);
+> >                 if (!buf)
+> >                         goto out;
+> >         }
+> > 
+> >         err = usb_control_msg(dev->udev, usb_rcvctrlpipe(dev->udev, 0),
+> >                               cmd, reqtype, value, index, buf, size,
+> >                               USB_CTRL_GET_TIMEOUT);
+> > 
+> > which uses 'buf' uninitialized. But it is used for input.
+> > What is happening here?
 > 
-> I came up with something very similar by splitting up nouveau_bo_new()
-> into allocation and initialization steps, so that when necessary the GEM
-> object can be initialized in between. I think that's slightly more
-> flexible and easier to understand than a boolean flag.
+> AFAICS, the uninitialized use of buf that KMSAN points out is in the
+> "if (buf & PMT_CTL_DEV_RDY)"  statement in smsc75xx_wait_ready(). Does
+> __smsc75xx_read_reg/usb_control_msg() always initialize buf? Can it
+> just initialize the first few bytes for example?
+> 
 
-Yes, that should work too.
+Hi,
 
-Acked-by: Gerd Hoffmann <kraxel@redhat.com>
+you are unfortunately right and this is not the only driver vulnerable
+in this way. I am going through them.
 
-cheers,
-  Gerd
+	Regards
+		Oliver
 
