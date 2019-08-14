@@ -2,34 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 497B98DB38
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8B938DB3B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:23:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbfHNRH3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56942 "EHLO mail.kernel.org"
+        id S1729911AbfHNRHd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729873AbfHNRHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:25 -0400
+        id S1729895AbfHNRHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:30 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EF352084D;
-        Wed, 14 Aug 2019 17:07:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44D172084D;
+        Wed, 14 Aug 2019 17:07:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802444;
-        bh=+kOjzQ0XfNfoTzkA+c60zVZK78wHz8+KUjQfjFoop6Y=;
+        s=default; t=1565802449;
+        bh=NfrpQmMOf4J9fkuQWntFAF9LT56Nkw0hUJGQNe8kZ3I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XVIi69GqW2MtDmHTBlccrkQ0p/2O72P90Ptrn0v+veY+fI5u+gIz+68enZexeX6/A
-         mrTpW0AHn3lwATSc7dK946vyCxNiM/uCzqemeeyd3ajX4fREazFx/FNnPpzXxJDsry
-         crCZM5bJt1fAAD3TMCaZy5ILmttV74i/BYr58D8o=
+        b=vza96ptqohbyN4Uk7PoFynvG8hMBiWKh+/dKWBmAisOajYbmLxHQIOg3LhJPBvcvf
+         9SA0Y9XTHn7g5vzgk+7Sl7sno+cSeHzOkWm1OikywYzIa+0dihiXxHmlllg+u+kDKS
+         Ms3u9zpplM5ymJt4c5mmKmSPikoCwafU599/bMKI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 5.2 129/144] ALSA: hda - Workaround for crackled sound on AMD controller (1022:1457)
-Date:   Wed, 14 Aug 2019 19:01:25 +0200
-Message-Id: <20190814165805.341862061@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Goyal <vgoyal@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: [PATCH 5.2 131/144] dax: dax_layout_busy_page() should not unmap cow pages
+Date:   Wed, 14 Aug 2019 19:01:27 +0200
+Message-Id: <20190814165805.424900046@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -42,202 +43,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Vivek Goyal <vgoyal@redhat.com>
 
-commit c02f77d32d2c45cfb1b2bb99eabd8a78f5ecc7db upstream.
+commit d75996dd022b6d83bd14af59b2775b1aa639e4b9 upstream.
 
-A long-time problem on the recent AMD chip (X370, X470, B450, etc with
-PCI ID 1022:1457) with Realtek codecs is the crackled or distorted
-sound for capture streams, as well as occasional playback hiccups.
-After lengthy debugging sessions, the workarounds we've found are like
-the following:
+Vivek:
 
-- Set up the proper driver caps for this controller, similar as the
-  other AMD controller.
+    "As of now dax_layout_busy_page() calls unmap_mapping_range() with last
+     argument as 1, which says even unmap cow pages. I am wondering who needs
+     to get rid of cow pages as well.
 
-- Correct the DMA position reporting with the fixed FIFO size, which
-  is similar like as workaround used for VIA chip set.
+     I noticed one interesting side affect of this. I mount xfs with -o dax and
+     mmaped a file with MAP_PRIVATE and wrote some data to a page which created
+     cow page. Then I called fallocate() on that file to zero a page of file.
+     fallocate() called dax_layout_busy_page() which unmapped cow pages as well
+     and then I tried to read back the data I wrote and what I get is old
+     data from persistent memory. I lost the data I had written. This
+     read basically resulted in new fault and read back the data from
+     persistent memory.
 
-- Even after the position correction, PulseAudio still shows
-  mysterious stalls of playback streams when a capture is triggered in
-  timer-scheduled mode.  Since we have no clear way to eliminate the
-  stall, pass the BATCH PCM flag for PA to suppress the tsched mode as
-  a temporary workaround.
+     This sounds wrong. Are there any users which need to unmap cow pages
+     as well? If not, I am proposing changing it to not unmap cow pages.
 
-This patch implements the workarounds.  For the driver caps, it
-defines a new preset, AXZ_DCAPS_PRESET_AMD_SB.  It enables the FIFO-
-corrected position reporting (corresponding to the new position_fix=6)
-and enforces the SNDRV_PCM_INFO_BATCH flag.
+     I noticed this while while writing virtio_fs code where when I tried
+     to reclaim a memory range and that corrupted the executable and I
+     was running from virtio-fs and program got segment violation."
 
-Note that the current implementation is merely a workaround.
-Hopefully we'll find a better alternative in future, especially about
-removing the BATCH flag hack again.
+Dan:
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=195303
+    "In fact the unmap_mapping_range() in this path is only to synchronize
+     against get_user_pages_fast() and force it to call back into the
+     filesystem to re-establish the mapping. COW pages should be left
+     untouched by dax_layout_busy_page()."
+
 Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 5fac7408d828 ("mm, fs, dax: handle layout changes to pinned dax mappings")
+Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
+Link: https://lore.kernel.org/r/20190802192956.GA3032@redhat.com
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_controller.c |    7 ++++
- sound/pci/hda/hda_controller.h |    2 -
- sound/pci/hda/hda_intel.c      |   63 ++++++++++++++++++++++++++++++++++++++++-
- 3 files changed, 70 insertions(+), 2 deletions(-)
+ fs/dax.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_controller.c
-+++ b/sound/pci/hda/hda_controller.c
-@@ -613,6 +613,13 @@ static int azx_pcm_open(struct snd_pcm_s
- 				     20,
- 				     178000000);
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -601,7 +601,7 @@ struct page *dax_layout_busy_page(struct
+ 	 * guaranteed to either see new references or prevent new
+ 	 * references from being established.
+ 	 */
+-	unmap_mapping_range(mapping, 0, 0, 1);
++	unmap_mapping_range(mapping, 0, 0, 0);
  
-+	/* by some reason, the playback stream stalls on PulseAudio with
-+	 * tsched=1 when a capture stream triggers.  Until we figure out the
-+	 * real cause, disable tsched mode by telling the PCM info flag.
-+	 */
-+	if (chip->driver_caps & AZX_DCAPS_AMD_WORKAROUND)
-+		runtime->hw.info |= SNDRV_PCM_INFO_BATCH;
-+
- 	if (chip->align_buffer_size)
- 		/* constrain buffer sizes to be multiple of 128
- 		   bytes. This is more efficient in terms of memory
---- a/sound/pci/hda/hda_controller.h
-+++ b/sound/pci/hda/hda_controller.h
-@@ -31,7 +31,7 @@
- /* 14 unused */
- #define AZX_DCAPS_CTX_WORKAROUND (1 << 15)	/* X-Fi workaround */
- #define AZX_DCAPS_POSFIX_LPIB	(1 << 16)	/* Use LPIB as default */
--/* 17 unused */
-+#define AZX_DCAPS_AMD_WORKAROUND (1 << 17)	/* AMD-specific workaround */
- #define AZX_DCAPS_NO_64BIT	(1 << 18)	/* No 64bit address */
- #define AZX_DCAPS_SYNC_WRITE	(1 << 19)	/* sync each cmd write */
- #define AZX_DCAPS_OLD_SSYNC	(1 << 20)	/* Old SSYNC reg for ICH */
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -64,6 +64,7 @@ enum {
- 	POS_FIX_VIACOMBO,
- 	POS_FIX_COMBO,
- 	POS_FIX_SKL,
-+	POS_FIX_FIFO,
- };
- 
- /* Defines for ATI HD Audio support in SB450 south bridge */
-@@ -135,7 +136,7 @@ module_param_array(model, charp, NULL, 0
- MODULE_PARM_DESC(model, "Use the given board model.");
- module_param_array(position_fix, int, NULL, 0444);
- MODULE_PARM_DESC(position_fix, "DMA pointer read method."
--		 "(-1 = system default, 0 = auto, 1 = LPIB, 2 = POSBUF, 3 = VIACOMBO, 4 = COMBO, 5 = SKL+).");
-+		 "(-1 = system default, 0 = auto, 1 = LPIB, 2 = POSBUF, 3 = VIACOMBO, 4 = COMBO, 5 = SKL+, 6 = FIFO).");
- module_param_array(bdl_pos_adj, int, NULL, 0644);
- MODULE_PARM_DESC(bdl_pos_adj, "BDL position adjustment offset.");
- module_param_array(probe_mask, int, NULL, 0444);
-@@ -332,6 +333,11 @@ enum {
- #define AZX_DCAPS_PRESET_ATI_HDMI_NS \
- 	(AZX_DCAPS_PRESET_ATI_HDMI | AZX_DCAPS_SNOOP_OFF)
- 
-+/* quirks for AMD SB */
-+#define AZX_DCAPS_PRESET_AMD_SB \
-+	(AZX_DCAPS_NO_TCSEL | AZX_DCAPS_SYNC_WRITE | AZX_DCAPS_AMD_WORKAROUND |\
-+	 AZX_DCAPS_SNOOP_TYPE(ATI) | AZX_DCAPS_PM_RUNTIME)
-+
- /* quirks for Nvidia */
- #define AZX_DCAPS_PRESET_NVIDIA \
- 	(AZX_DCAPS_NO_MSI | AZX_DCAPS_CORBRP_SELF_CLEAR |\
-@@ -841,6 +847,49 @@ static unsigned int azx_via_get_position
- 	return bound_pos + mod_dma_pos;
- }
- 
-+#define AMD_FIFO_SIZE	32
-+
-+/* get the current DMA position with FIFO size correction */
-+static unsigned int azx_get_pos_fifo(struct azx *chip, struct azx_dev *azx_dev)
-+{
-+	struct snd_pcm_substream *substream = azx_dev->core.substream;
-+	struct snd_pcm_runtime *runtime = substream->runtime;
-+	unsigned int pos, delay;
-+
-+	pos = snd_hdac_stream_get_pos_lpib(azx_stream(azx_dev));
-+	if (!runtime)
-+		return pos;
-+
-+	runtime->delay = AMD_FIFO_SIZE;
-+	delay = frames_to_bytes(runtime, AMD_FIFO_SIZE);
-+	if (azx_dev->insufficient) {
-+		if (pos < delay) {
-+			delay = pos;
-+			runtime->delay = bytes_to_frames(runtime, pos);
-+		} else {
-+			azx_dev->insufficient = 0;
-+		}
-+	}
-+
-+	/* correct the DMA position for capture stream */
-+	if (substream->stream == SNDRV_PCM_STREAM_CAPTURE) {
-+		if (pos < delay)
-+			pos += azx_dev->core.bufsize;
-+		pos -= delay;
-+	}
-+
-+	return pos;
-+}
-+
-+static int azx_get_delay_from_fifo(struct azx *chip, struct azx_dev *azx_dev,
-+				   unsigned int pos)
-+{
-+	struct snd_pcm_substream *substream = azx_dev->core.substream;
-+
-+	/* just read back the calculated value in the above */
-+	return substream->runtime->delay;
-+}
-+
- static unsigned int azx_skl_get_dpib_pos(struct azx *chip,
- 					 struct azx_dev *azx_dev)
- {
-@@ -1417,6 +1466,7 @@ static int check_position_fix(struct azx
- 	case POS_FIX_VIACOMBO:
- 	case POS_FIX_COMBO:
- 	case POS_FIX_SKL:
-+	case POS_FIX_FIFO:
- 		return fix;
- 	}
- 
-@@ -1433,6 +1483,10 @@ static int check_position_fix(struct azx
- 		dev_dbg(chip->card->dev, "Using VIACOMBO position fix\n");
- 		return POS_FIX_VIACOMBO;
- 	}
-+	if (chip->driver_caps & AZX_DCAPS_AMD_WORKAROUND) {
-+		dev_dbg(chip->card->dev, "Using FIFO position fix\n");
-+		return POS_FIX_FIFO;
-+	}
- 	if (chip->driver_caps & AZX_DCAPS_POSFIX_LPIB) {
- 		dev_dbg(chip->card->dev, "Using LPIB position fix\n");
- 		return POS_FIX_LPIB;
-@@ -1453,6 +1507,7 @@ static void assign_position_fix(struct a
- 		[POS_FIX_VIACOMBO] = azx_via_get_position,
- 		[POS_FIX_COMBO] = azx_get_pos_lpib,
- 		[POS_FIX_SKL] = azx_get_pos_skl,
-+		[POS_FIX_FIFO] = azx_get_pos_fifo,
- 	};
- 
- 	chip->get_position[0] = chip->get_position[1] = callbacks[fix];
-@@ -1467,6 +1522,9 @@ static void assign_position_fix(struct a
- 			azx_get_delay_from_lpib;
- 	}
- 
-+	if (fix == POS_FIX_FIFO)
-+		chip->get_delay[0] = chip->get_delay[1] =
-+			azx_get_delay_from_fifo;
- }
- 
- /*
-@@ -2444,6 +2502,9 @@ static const struct pci_device_id azx_id
- 	/* AMD Hudson */
- 	{ PCI_DEVICE(0x1022, 0x780d),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB },
-+	/* AMD, X370 & co */
-+	{ PCI_DEVICE(0x1022, 0x1457),
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_AMD_SB },
- 	/* AMD Stoney */
- 	{ PCI_DEVICE(0x1022, 0x157a),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
+ 	xas_lock_irq(&xas);
+ 	xas_for_each(&xas, entry, ULONG_MAX) {
 
 
