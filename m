@@ -2,39 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36D7C8D989
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB26E8D92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730338AbfHNRJb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59804 "EHLO mail.kernel.org"
+        id S1729611AbfHNRGN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:06:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730323AbfHNRJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:25 -0400
+        id S1729137AbfHNRGJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:06:09 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE8EC2173B;
-        Wed, 14 Aug 2019 17:09:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BDAB021721;
+        Wed, 14 Aug 2019 17:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802564;
-        bh=MB5RAsCkVL6iHJ/DICHCjuXpAOCin975sP3aOfY5WfE=;
+        s=default; t=1565802368;
+        bh=/2Wd/frythSl97MX/OTUSLUYw7DWSem4ThyOhhXUykA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qehXpEt6VRS+/HUCwh93AzvNfHigQbOmamW5i8qWSdG4rQMFoWsgGuw7z3/1yta1Z
-         +DvzePy9fLsrBYN/S7ks4UI2PDkb/2kizARKJH9fnnzhcabvpxrlgxBS7rmCcGdRkX
-         h+xJfFpNVjs3M5gH5jaUg/3RwZ7IJXvb7GtDY6Mg=
+        b=UrW6tIg0Kw0GFEGSuV8PwqGHkYx0rDD1xB1VTCdwq2WnsXz10QLSMUbwKncPsl7Fr
+         T2peTPgM/DiWSFJduknzbkWIrsZO3DPDpuhoR7I7f3t/FJqGmesL2sGco+0oRp+9Oa
+         /6dNFYIfxRdN0Zy/xID1678+Krl6bMUxhDrlStpM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Douglas Gilbert <dgilbert@interlog.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.19 30/91] usb: typec: tcpm: Ignore unsupported/unknown alternate mode requests
-Date:   Wed, 14 Aug 2019 19:00:53 +0200
-Message-Id: <20190814165750.977125262@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 5.2 099/144] perf session: Fix loading of compressed data split across adjacent records
+Date:   Wed, 14 Aug 2019 19:00:55 +0200
+Message-Id: <20190814165804.025278784@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+References: <20190814165759.466811854@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,121 +50,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+[ Upstream commit 872c8ee8f0f47222f7b10da96eea84d0486540a3 ]
 
-commit 88d02c9ba2e83fc22d37ccb1f11c62ea6fc9ae50 upstream.
+Fix decompression failure found during the loading of compressed trace
+collected on larger scale systems (>48 cores).
 
-TCPM may receive PD messages associated with unknown or unsupported
-alternate modes. If that happens, calls to typec_match_altmode()
-will return NULL. The tcpm code does not currently take this into
-account. This results in crashes.
+The error happened due to lack of decompression space for a mmaped
+buffer data chunk split across adjacent PERF_RECORD_COMPRESSED records.
 
-Unable to handle kernel NULL pointer dereference at virtual address 000001f0
-pgd = 41dad9a1
-[000001f0] *pgd=00000000
-Internal error: Oops: 5 [#1] THUMB2
-Modules linked in: tcpci tcpm
-CPU: 0 PID: 2338 Comm: kworker/u2:0 Not tainted 5.1.18-sama5-armv7-r2 #6
-Hardware name: Atmel SAMA5
-Workqueue: 2-0050 tcpm_pd_rx_handler [tcpm]
-PC is at typec_altmode_attention+0x0/0x14
-LR is at tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm]
-...
-[<c03fbee8>] (typec_altmode_attention) from [<bf8030fb>]
-				(tcpm_pd_rx_handler+0xa3b/0xda0 [tcpm])
-[<bf8030fb>] (tcpm_pd_rx_handler [tcpm]) from [<c012082b>]
-				(process_one_work+0x123/0x2a8)
-[<c012082b>] (process_one_work) from [<c0120a6d>]
-				(worker_thread+0xbd/0x3b0)
-[<c0120a6d>] (worker_thread) from [<c012431f>] (kthread+0xcf/0xf4)
-[<c012431f>] (kthread) from [<c01010f9>] (ret_from_fork+0x11/0x38)
+  $ perf report -i bt.16384.data --stats
+  failed to decompress (B): 63869 -> 0 : Destination buffer is too small
+  user stack dump failure
+  Can't parse sample, err = -14
+  0x2637e436 [0x4080]: failed to process type: 9
+  Error:
+  failed to process sample
 
-Ignore PD messages if the associated alternate mode is not supported.
+  $ perf test 71
+  71: Zstd perf.data compression/decompression              : Ok
 
-Fixes: e9576fe8e605c ("usb: typec: tcpm: Support for Alternate Modes")
-Cc: stable <stable@vger.kernel.org>
-Reported-by: Douglas Gilbert <dgilbert@interlog.com>
-Cc: Douglas Gilbert <dgilbert@interlog.com>
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Tested-by: Douglas Gilbert <dgilbert@interlog.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lore.kernel.org/r/1564761822-13984-1-git-send-email-linux@roeck-us.net
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <ak@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/4d839e1b-9c48-89c4-9702-a12217420611@linux.intel.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/typec/tcpm.c |   36 +++++++++++++++++++++++-------------
- 1 file changed, 23 insertions(+), 13 deletions(-)
+ tools/perf/util/session.c | 22 ++++++++++++++--------
+ tools/perf/util/session.h |  1 +
+ tools/perf/util/zstd.c    |  4 ++--
+ 3 files changed, 17 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/typec/tcpm.c
-+++ b/drivers/usb/typec/tcpm.c
-@@ -1108,7 +1108,8 @@ static int tcpm_pd_svdm(struct tcpm_port
- 			break;
- 		case CMD_ATTENTION:
- 			/* Attention command does not have response */
--			typec_altmode_attention(adev, p[1]);
-+			if (adev)
-+				typec_altmode_attention(adev, p[1]);
- 			return 0;
- 		default:
- 			break;
-@@ -1160,20 +1161,26 @@ static int tcpm_pd_svdm(struct tcpm_port
- 			}
- 			break;
- 		case CMD_ENTER_MODE:
--			typec_altmode_update_active(pdev, true);
-+			if (adev && pdev) {
-+				typec_altmode_update_active(pdev, true);
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 2e61dd6a3574e..d789840960444 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -36,10 +36,16 @@ static int perf_session__process_compressed_event(struct perf_session *session,
+ 	void *src;
+ 	size_t decomp_size, src_size;
+ 	u64 decomp_last_rem = 0;
+-	size_t decomp_len = session->header.env.comp_mmap_len;
++	size_t mmap_len, decomp_len = session->header.env.comp_mmap_len;
+ 	struct decomp *decomp, *decomp_last = session->decomp_last;
  
--			if (typec_altmode_vdm(adev, p[0], &p[1], cnt)) {
--				response[0] = VDO(adev->svid, 1, CMD_EXIT_MODE);
--				response[0] |= VDO_OPOS(adev->mode);
--				return 1;
-+				if (typec_altmode_vdm(adev, p[0], &p[1], cnt)) {
-+					response[0] = VDO(adev->svid, 1,
-+							  CMD_EXIT_MODE);
-+					response[0] |= VDO_OPOS(adev->mode);
-+					return 1;
-+				}
- 			}
- 			return 0;
- 		case CMD_EXIT_MODE:
--			typec_altmode_update_active(pdev, false);
-+			if (adev && pdev) {
-+				typec_altmode_update_active(pdev, false);
- 
--			/* Back to USB Operation */
--			WARN_ON(typec_altmode_notify(adev, TYPEC_STATE_USB,
--						     NULL));
-+				/* Back to USB Operation */
-+				WARN_ON(typec_altmode_notify(adev,
-+							     TYPEC_STATE_USB,
-+							     NULL));
-+			}
- 			break;
- 		default:
- 			break;
-@@ -1183,8 +1190,10 @@ static int tcpm_pd_svdm(struct tcpm_port
- 		switch (cmd) {
- 		case CMD_ENTER_MODE:
- 			/* Back to USB Operation */
--			WARN_ON(typec_altmode_notify(adev, TYPEC_STATE_USB,
--						     NULL));
-+			if (adev)
-+				WARN_ON(typec_altmode_notify(adev,
-+							     TYPEC_STATE_USB,
-+							     NULL));
- 			break;
- 		default:
- 			break;
-@@ -1195,7 +1204,8 @@ static int tcpm_pd_svdm(struct tcpm_port
+-	decomp = mmap(NULL, sizeof(struct decomp) + decomp_len, PROT_READ|PROT_WRITE,
++	if (decomp_last) {
++		decomp_last_rem = decomp_last->size - decomp_last->head;
++		decomp_len += decomp_last_rem;
++	}
++
++	mmap_len = sizeof(struct decomp) + decomp_len;
++	decomp = mmap(NULL, mmap_len, PROT_READ|PROT_WRITE,
+ 		      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
+ 	if (decomp == MAP_FAILED) {
+ 		pr_err("Couldn't allocate memory for decompression\n");
+@@ -47,10 +53,10 @@ static int perf_session__process_compressed_event(struct perf_session *session,
  	}
  
- 	/* Informing the alternate mode drivers about everything */
--	typec_altmode_vdm(adev, p[0], &p[1], cnt);
-+	if (adev)
-+		typec_altmode_vdm(adev, p[0], &p[1], cnt);
+ 	decomp->file_pos = file_offset;
++	decomp->mmap_len = mmap_len;
+ 	decomp->head = 0;
  
- 	return rlen;
+-	if (decomp_last) {
+-		decomp_last_rem = decomp_last->size - decomp_last->head;
++	if (decomp_last_rem) {
+ 		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
+ 		decomp->size = decomp_last_rem;
+ 	}
+@@ -61,7 +67,7 @@ static int perf_session__process_compressed_event(struct perf_session *session,
+ 	decomp_size = zstd_decompress_stream(&(session->zstd_data), src, src_size,
+ 				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
+ 	if (!decomp_size) {
+-		munmap(decomp, sizeof(struct decomp) + decomp_len);
++		munmap(decomp, mmap_len);
+ 		pr_err("Couldn't decompress data\n");
+ 		return -1;
+ 	}
+@@ -255,15 +261,15 @@ static void perf_session__delete_threads(struct perf_session *session)
+ static void perf_session__release_decomp_events(struct perf_session *session)
+ {
+ 	struct decomp *next, *decomp;
+-	size_t decomp_len;
++	size_t mmap_len;
+ 	next = session->decomp;
+-	decomp_len = session->header.env.comp_mmap_len;
+ 	do {
+ 		decomp = next;
+ 		if (decomp == NULL)
+ 			break;
+ 		next = decomp->next;
+-		munmap(decomp, decomp_len + sizeof(struct decomp));
++		mmap_len = decomp->mmap_len;
++		munmap(decomp, mmap_len);
+ 	} while (1);
  }
+ 
+diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
+index dd8920b745bce..863dbad878496 100644
+--- a/tools/perf/util/session.h
++++ b/tools/perf/util/session.h
+@@ -46,6 +46,7 @@ struct perf_session {
+ struct decomp {
+ 	struct decomp *next;
+ 	u64 file_pos;
++	size_t mmap_len;
+ 	u64 head;
+ 	size_t size;
+ 	char data[];
+diff --git a/tools/perf/util/zstd.c b/tools/perf/util/zstd.c
+index 23bdb98845760..d2202392ffdbb 100644
+--- a/tools/perf/util/zstd.c
++++ b/tools/perf/util/zstd.c
+@@ -99,8 +99,8 @@ size_t zstd_decompress_stream(struct zstd_data *data, void *src, size_t src_size
+ 	while (input.pos < input.size) {
+ 		ret = ZSTD_decompressStream(data->dstream, &output, &input);
+ 		if (ZSTD_isError(ret)) {
+-			pr_err("failed to decompress (B): %ld -> %ld : %s\n",
+-			       src_size, output.size, ZSTD_getErrorName(ret));
++			pr_err("failed to decompress (B): %ld -> %ld, dst_size %ld : %s\n",
++			       src_size, output.size, dst_size, ZSTD_getErrorName(ret));
+ 			break;
+ 		}
+ 		output.dst  = dst + output.pos;
+-- 
+2.20.1
+
 
 
