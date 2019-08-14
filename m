@@ -2,82 +2,241 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B10948CD85
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:04:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF21B8CD91
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:05:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727120AbfHNIEJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:04:09 -0400
-Received: from rtits2.realtek.com ([211.75.126.72]:55153 "EHLO
-        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725265AbfHNIEI (ORCPT
+        id S1727151AbfHNIFY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:05:24 -0400
+Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:45123 "EHLO
+        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725265AbfHNIFY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:04:08 -0400
-Authenticated-By: 
-X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x7E83toI020012, This message is accepted by code: ctaloc0852
-Received: from RS-CAS01.realsil.com.cn (RSFS1.realsil.com.cn[172.29.17.2](maybeforged))
-        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x7E83toI020012
-        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 14 Aug 2019 16:03:56 +0800
-Received: from RS-MBS01.realsil.com.cn ([::1]) by RS-CAS01.realsil.com.cn
- ([::1]) with mapi id 14.03.0439.000; Wed, 14 Aug 2019 16:03:55 +0800
-From:   =?utf-8?B?6ZmG5pyx5Lyf?= <alex_lu@realsil.com.cn>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Marcel Holtmann <marcel@holtmann.org>
-CC:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "Max Chou" <max.chou@realtek.com>
-Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjJdIEJsdWV0b290aDogYnR1c2I6IEZpeCBzdXNw?= =?utf-8?Q?end_issue_for_Realtek_devices?=
-Thread-Topic: [PATCH v2] Bluetooth: btusb: Fix suspend issue for Realtek
- devices
-Thread-Index: AQHVSSoXcj83mYj970uYtopmxf680qb3PuqAgABXdACAArxqUA==
-Date:   Wed, 14 Aug 2019 08:03:54 +0000
-Message-ID: <0551C926975A174EA8972327741C7889EE81192D@RS-MBS01.realsil.com.cn>
-References: <20190802120217.GA8712@toshiba>
- <A83A0A38-8AC8-4662-BBC1-3B48B707E97B@holtmann.org>
- <CAKdAkRQP8DBbpdfA6yFZK6THw5eVUbdr+QnVQMkm-mLyEp5brg@mail.gmail.com>
-In-Reply-To: <CAKdAkRQP8DBbpdfA6yFZK6THw5eVUbdr+QnVQMkm-mLyEp5brg@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.29.36.107]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 14 Aug 2019 04:05:24 -0400
+Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
+        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 2A6E62ADD91;
+        Wed, 14 Aug 2019 18:05:15 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hxoGO-0000sh-7T; Wed, 14 Aug 2019 18:04:08 +1000
+Date:   Wed, 14 Aug 2019 18:04:08 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Ira Weiny <ira.weiny@intel.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 07/19] fs/xfs: Teach xfs to use new
+ dax_layout_busy_page()
+Message-ID: <20190814080408.GI6129@dread.disaster.area>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190809225833.6657-8-ira.weiny@intel.com>
+ <20190809233037.GB7777@dread.disaster.area>
+ <20190812180551.GC19746@iweiny-DESK2.sc.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812180551.GC19746@iweiny-DESK2.sc.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
+        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=HrHlqKvGs1hBEanXDooA:9
+        a=7KaysmK63p_gRbVv:21 a=sBCleACJziiZA8k5:21 a=CjuIK1q_8ugA:10
+        a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgRG1pdHJ5LA0KSXQncyBvbmx5IGZvciBSZWFsdGVrIGRldmljZXMuDQpJZiBSZWFsdGVrIGRl
-dmljZSBmaXJtd2FyZSByZWNlaXZlcyBTRVRfRkVBVFVSRShkZXZpY2UgcmVtb3RlIHdha2V1cCkg
-dXNiIGNtZCBkdXJpbmcgdXNiIGlzIHN1c3BlbmRpbmcsIGl0IHdpbGwgcmVtYWlucyBpbiBzdXNw
-ZW5kIHN0YXRlLg0KT3RoZXJ3aXNlLCBmaXJtd2FyZSB3aWxsIGRyb3AgaXRzZWxmIGFuZCBkZXZp
-Y2Ugd2lsbCBjb25zdW1lIGxlc3MgcG93ZXIuIEJ1dCB3aGVuIGhvc3QgcmVzdW1lcywgaXQgbmVl
-ZHMgdG8gcmVsb2FkIGZpcm13YXJlLiBJdCBjYW4gYmUgYWNjb21wbGlzaGVkIGJ5IHNldHRpbmcg
-dXNiIHJlc2V0IHJlc3VtZSBmb3IgZGV2aWNlLg0KDQpUaGFua3MsDQpCUnMuDQoNCj4gU3ViamVj
-dDogUmU6IFtQQVRDSCB2Ml0gQmx1ZXRvb3RoOiBidHVzYjogRml4IHN1c3BlbmQgaXNzdWUgZm9y
-IFJlYWx0ZWsgZGV2aWNlcw0KPiANCj4gT24gTW9uLCBBdWcgMTIsIDIwMTkgYXQgOTozNiBBTSBN
-YXJjZWwgSG9sdG1hbm4gPG1hcmNlbEBob2x0bWFubi5vcmc+DQo+IHdyb3RlOg0KPiA+DQo+ID4g
-SGkgQWxleCwNCj4gPg0KPiA+ID4gRnJvbSB0aGUgcGVyc3BlY3RpdmUgb2YgY29udHJvbGxlciwg
-Z2xvYmFsIHN1c3BlbmQgbWVhbnMgdGhlcmUgaXMgbm8NCj4gPiA+IFNFVF9GRUFUVVJFIChERVZJ
-Q0VfUkVNT1RFX1dBS0VVUCkgYW5kIGNvbnRyb2xsZXIgd291bGQgZHJvcA0KPiB0aGUNCj4gPiA+
-IGZpcm13YXJlLiBJdCB3b3VsZCBjb25zdW1lIGxlc3MgcG93ZXIuIFNvIHdlIHNob3VsZCBub3Qg
-c2VuZCB0aGlzIGtpbmQNCj4gPiA+IG9mIFNFVF9GRUFUVVJFIHdoZW4gaG9zdCBnb2VzIHRvIHN1
-c3BlbmQgc3RhdGUuDQo+ID4gPiBPdGhlcndpc2UsIHdoZW4gbWFraW5nIGRldmljZSBlbnRlciBz
-ZWxlY3RpdmUgc3VzcGVuZCwgaG9zdCBzaG91bGQNCj4gc2VuZA0KPiA+ID4gU0VUX0ZFQVRVUkUg
-dG8gbWFrZSBzdXJlIHRoZSBmaXJtd2FyZSByZW1haW5zLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1v
-ZmYtYnk6IEFsZXggTHUgPGFsZXhfbHVAcmVhbHNpbC5jb20uY24+DQo+ID4gPiAtLS0NCj4gPiA+
-IGRyaXZlcnMvYmx1ZXRvb3RoL2J0dXNiLmMgfCAzNCArKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKystLS0NCj4gLQ0KPiA+ID4gMSBmaWxlIGNoYW5nZWQsIDMwIGluc2VydGlvbnMoKyksIDQg
-ZGVsZXRpb25zKC0pDQo+ID4NCj4gPiB0aGlzIG9uZSBkb2VzbuKAmXQgYXBwbHkgY2xlYW5seSB0
-byBibHVldG9vdGgtbmV4dC4gQ2FuIHlvdSBwbGVhc2Ugc2VuZCBhDQo+IHZlcnNpb24gdGhhdCBk
-b2VzLg0KPiANCj4gSXMgdGhpcyBhIGNoaXAgaXNzdWUgb3Igc3lzdGVtIGlzc3VlPyBJLmUuIGlm
-IGluIHNvbWUgc3lzdGVtIEJUDQo+IGNvbnRyb2xsZXIgaXMgd2lyZWQgc28gdGhhdCBpdCBsb3Nl
-cyBwb3dlciBvdmVyIHN5c3RlbSBzdXNwZW5kLCB0aGlzDQo+IGlzIHF1aXRlIGRpZmZlcmVudCBm
-b3JtIGNoaXAgaXRzZWxmIGxvc2luZyBmaXJtd2FyZSBpbiBjZXJ0YWluDQo+IHNpdHVhdGlvbnMs
-IGFuZCB0aGlzIHNtZWxscyBsaWtlIGEgc3lzdGVtIGlzc3VlIGFuZCB0aHVzIG5lZWRzIHRvIGJl
-DQo+IGFkZHJlc3NlZCBvbiBzeXN0ZW0gbGV2ZWwuDQo+IA0KPiBUaGFua3MuDQo+IA0KPiAtLQ0K
-PiBEbWl0cnkNCj4gDQo+IC0tLS0tLVBsZWFzZSBjb25zaWRlciB0aGUgZW52aXJvbm1lbnQgYmVm
-b3JlIHByaW50aW5nIHRoaXMgZS1tYWlsLg0K
+On Mon, Aug 12, 2019 at 11:05:51AM -0700, Ira Weiny wrote:
+> On Sat, Aug 10, 2019 at 09:30:37AM +1000, Dave Chinner wrote:
+> > On Fri, Aug 09, 2019 at 03:58:21PM -0700, ira.weiny@intel.com wrote:
+> > > From: Ira Weiny <ira.weiny@intel.com>
+> > > 
+> > > dax_layout_busy_page() can now operate on a sub-range of the
+> > > address_space provided.
+> > > 
+> > > Have xfs specify the sub range to dax_layout_busy_page()
+> > 
+> > Hmmm. I've got patches that change all these XFS interfaces to
+> > support range locks. I'm not sure the way the ranges are passed here
+> > is the best way to do it, and I suspect they aren't correct in some
+> > cases, either....
+> > 
+> > > diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+> > > index ff3c1fae5357..f0de5486f6c1 100644
+> > > --- a/fs/xfs/xfs_iops.c
+> > > +++ b/fs/xfs/xfs_iops.c
+> > > @@ -1042,10 +1042,16 @@ xfs_vn_setattr(
+> > >  		xfs_ilock(ip, XFS_MMAPLOCK_EXCL);
+> > >  		iolock = XFS_IOLOCK_EXCL | XFS_MMAPLOCK_EXCL;
+> > >  
+> > > -		error = xfs_break_layouts(inode, &iolock, BREAK_UNMAP);
+> > > -		if (error) {
+> > > -			xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+> > > -			return error;
+> > > +		if (iattr->ia_size < inode->i_size) {
+> > > +			loff_t                  off = iattr->ia_size;
+> > > +			loff_t                  len = inode->i_size - iattr->ia_size;
+> > > +
+> > > +			error = xfs_break_layouts(inode, &iolock, off, len,
+> > > +						  BREAK_UNMAP);
+> > > +			if (error) {
+> > > +				xfs_iunlock(ip, XFS_MMAPLOCK_EXCL);
+> > > +				return error;
+> > > +			}
+> > 
+> > This isn't right - truncate up still needs to break the layout on
+> > the last filesystem block of the file,
+> 
+> I'm not following this?  From a user perspective they can't have done anything
+> with the data beyond the EOF.  So isn't it safe to allow EOF to grow without
+> changing the layout of that last block?
+
+
+You're looking at this from the perspective of what RDMA page
+pinning, not what the guarantees a filesystem has to provide layout
+holders.
+
+For example, truncate up has to zero the portion of the block beyond
+EOF and that requires a data write. What happens if that block is a
+shared extent and hence we have do a copy on write and alter the
+file layout?
+
+Or perhaps that tail block still has dirty data over it that is
+marked for delayed allocation? Truncate up will have to write that
+data to zero the delayed allocation extent that spans EOF, and hence
+the truncate modifies the layout because it triggers allocation.
+
+i.e. just because an operation does not change user data, it does
+not mean that it will not change the file layout. There is a chance
+that truncate up will modify the layout and so we need to break the
+layout leases that span the range from the old size to the new
+size...
+
+> > and truncate down needs to
+> > extend to "maximum file offset" because we remove all extents beyond
+> > EOF on a truncate down.
+> 
+> Ok, I was trying to allow a user to extend the file without conflicts if they
+> were to have a pin on the 'beginning' of the original file.
+
+If we want to allow file extension under a layout lease, the lease
+has to extend beyond EOF, otherwise the new section of the file is
+not covered by a lease. If leases only extend to the existing
+EOF, then once the new data is written and the file is extended,
+then the lease owner needs to take a new lease on the range they
+just wrote. SO the application ends up having to do write - lease
+-write -lease - .... so that it has leases covering the range of the
+file it is extending into.
+
+Much better it to define a lease that extends to max file offset,
+such that it always covers they range past the existing EOF and
+extending writes will automatically be covered. What this then does
+is to trigger layout break notifications on file size change, either
+by write, truncate, fallocate, without having to actually know or
+track the exactly file size in the lease....
+
+> This sounds like
+> you are saying that a layout lease must be dropped to do that?  In some ways I
+> think I understand what you are driving at and I think I see how I may have
+> been playing "fast and loose" with the strictness of the layout lease.  But
+> from a user perspective if there is a part of the file which "does not exist"
+> (beyond EOF) does it matter that the layout there may change?
+
+Yes, it does, because userspace can directly manipulate the layout
+beyond EOF via fallocate(). e.g. we can preallocation beyond EOF
+without changing the file size, such that when we then do an
+extending write no layout change actually takes place. The only
+thing that happens from a layout point of view is that the file size
+changes.
+
+This becomes /interesting/ when you start doing things like
+
+	lseek(fd, offset, SEEK_END);
+	write(fd, buf, len);
+
+which will trigger a write way beyond EOF into allocated space.
+That will also trigger block zeroing at the old tail, and there may
+be block zeroing around the write() as well. We've effectively
+change the layout of the file at EOF,  We've effectively change the
+layout of the file at EOF, and potentially beyond EOF.
+
+Indeed, the app might be expecting the preallocation beyond EOF to
+remain, so it might register a layout over that range to be notified
+if the preallocation is removed or the EOF extends beyond it. It
+needs to be notified on truncate down (which removes that
+preallocated range the lease sits over) and EOF is moved beyond it
+(layout range state has changed from inaccessable to valid file
+data)....
+
+
+> > i.e. when we use preallocation, the extent map extends beyond EOF,
+> > and layout leases need to be able to extend beyond the current EOF
+> > to allow the lease owner to do extending writes, extending truncate,
+> > preallocation beyond EOF, etc safely without having to get a new
+> > lease to cover the new region in the extended file...
+> 
+> I'm not following this.  What determines when preallocation is done?
+
+The application can direct it via fallocate(FALLOC_FL_KEEPSIZE).
+It's typically used for workloads that do appending O_DSYNC or
+direct IO writes to minimise file fragmentation.
+
+The filesystem can ialso choose to do allocation beyond EOFi
+speculatively during writes. XFS does this extensively with delayed
+allocation. And the filesystem can also remove this speculative
+allocation beyond EOF, which it may do if there are no active pages
+dirties on the inode for a period, it is reclaimed, the filesystem
+is running low on space, the user/group is running low on quota
+space, etc.
+
+Again, just because user data does not change, it does not mean that
+the file layout will not change....
+
+> Forgive my ignorance on file systems but how can we have a layout for every
+> file which is "maximum file offset" for every file even if a file is only 1
+> page long?
+
+The layout lease doesn't care what the file size it. It doesn't even
+know what the file size is. The layout lease covers a range the
+logical file offset with the intend that any change to the file
+layout within that range will result in a notification. The layout
+lease is not bound to the range of valid data in the file at all -
+it doesn't matter if it points beyond EOF - if the file grows to
+the size the it overlaps the layout lease, then that layout lease
+needs to be notified by break_layouts....
+
+I've had a stinking headache all day, so I'm struggling to make
+sense right now. The best I can describe is that layout lease ranges
+do not imply or require valid file data to exist within the range
+they are taken over - they just cover a file offset range.
+
+FWIW, the fcntl() locking interface uses a length of 0 to
+indicate "to max file offset" rather than a specific length. e.g.
+SETLK and friends:
+
+	Specifying 0 for l_len has the special meaning: lock all
+	bytes starting at the location specified by l_whence and
+	l_start through to the end of file, no  matter
+	how large the file grows.
+
+That's exactly the semantics I'm talking about here - layout leases
+need to be able to specify an extent anywhere within the valid file
+offset range, and also to specify a nebulous "through to the end of
+the layout range" so taht file growth can be done without needing
+new leases to be taken as the file grows....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
