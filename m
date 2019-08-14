@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7468C8CEDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:58:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CFC648CEE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:59:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfHNI6h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:58:37 -0400
-Received: from mx2.suse.de ([195.135.220.15]:50750 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725828AbfHNI6h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:58:37 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 325FAAD4E;
-        Wed, 14 Aug 2019 08:58:33 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 10:58:31 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Khalid Aziz <khalid.aziz@oracle.com>
-Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
-        mgorman@techsingularity.net, dan.j.williams@intel.com,
-        osalvador@suse.de, richard.weiyang@gmail.com, hannes@cmpxchg.org,
-        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
-        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
-        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
-Message-ID: <20190814085831.GS17933@dhcp22.suse.cz>
-References: <20190813014012.30232-1-khalid.aziz@oracle.com>
- <20190813140553.GK17933@dhcp22.suse.cz>
- <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
+        id S1726585AbfHNI66 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:58:58 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:51512 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725265AbfHNI66 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 04:58:58 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 475864E926;
+        Wed, 14 Aug 2019 08:58:58 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-16.pek2.redhat.com [10.72.8.16])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id AE7A710016F3;
+        Wed, 14 Aug 2019 08:58:51 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 16:58:46 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "Derrick, Jonathan" <jonathan.derrick@intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "kbusch@kernel.org" <kbusch@kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>, "hch@lst.de" <hch@lst.de>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V3 1/3] genirq/affinity: Enhance warning check
+Message-ID: <20190814085845.GA21802@ming.t460p>
+References: <20190813081447.1396-1-ming.lei@redhat.com>
+ <20190813081447.1396-2-ming.lei@redhat.com>
+ <ac920ba3996d0feedc924045b54724ba5482e427.camel@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ac920ba3996d0feedc924045b54724ba5482e427.camel@intel.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 14 Aug 2019 08:58:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-08-19 09:20:51, Khalid Aziz wrote:
-> On 8/13/19 8:05 AM, Michal Hocko wrote:
-> > On Mon 12-08-19 19:40:10, Khalid Aziz wrote:
-> > [...]
-> >> Patch 1 adds code to maintain a sliding lookback window of (time, number
-> >> of free pages) points which can be updated continuously and adds code to
-> >> compute best fit line across these points. It also adds code to use the
-> >> best fit lines to determine if kernel must start reclamation or
-> >> compaction.
-> >>
-> >> Patch 2 adds code to collect data points on free pages of various orders
-> >> at different points in time, uses code in patch 1 to update sliding
-> >> lookback window with these points and kicks off reclamation or
-> >> compaction based upon the results it gets.
+On Tue, Aug 13, 2019 at 07:31:39PM +0000, Derrick, Jonathan wrote:
+> Hi Ming,
+> 
+> On Tue, 2019-08-13 at 16:14 +0800, Ming Lei wrote:
+> > The two-stage spread is done on same irq vectors, and we just need that
+> > either one stage covers all vector, not two stage work together to cover
+> > all vectors.
 > > 
-> > An important piece of information missing in your description is why
-> > do we need to keep that logic in the kernel. In other words, we have
-> > the background reclaim that acts on a wmark range and those are tunable
-> > from the userspace. The primary point of this background reclaim is to
-> > keep balance and prevent from direct reclaim. Why cannot you implement
-> > this or any other dynamic trend watching watchdog and tune watermarks
-> > accordingly? Something similar applies to kcompactd although we might be
-> > lacking a good interface.
+> > So enhance the warning check to make sure all vectors are spread.
 > > 
+> > Cc: Christoph Hellwig <hch@lst.de>
+> > Cc: Keith Busch <kbusch@kernel.org>
+> > Cc: linux-nvme@lists.infradead.org,
+> > Cc: Jon Derrick <jonathan.derrick@intel.com>
+> > Cc: Jens Axboe <axboe@kernel.dk>
+> > Fixes: 6da4b3ab9a6 ("genirq/affinity: Add support for allocating interrupt sets")
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> > ---
+> >  kernel/irq/affinity.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
+> > index 6fef48033f96..265b3076f16b 100644
+> > --- a/kernel/irq/affinity.c
+> > +++ b/kernel/irq/affinity.c
+> > @@ -215,8 +215,7 @@ static int irq_build_affinity_masks(unsigned int startvec, unsigned int numvecs,
+> >  					       npresmsk, nmsk, masks);
+> >  	put_online_cpus();
+> >  
+> > -	if (nr_present < numvecs)
+> > -		WARN_ON(nr_present + nr_others < numvecs);
+> > +	WARN_ON(max(nr_present, nr_others) < numvecs);
 > 
-> Hi Michal,
+> I think the patch description assumes the first condition
+> "The two-stage spread is done on same irq vectors"
 > 
-> That is a very good question. As a matter of fact the initial prototype
-> to assess the feasibility of this approach was written in userspace for
-> a very limited application. We wrote the initial prototype to monitor
-> fragmentation and used /sys/devices/system/node/node*/compact to trigger
-> compaction. The prototype demonstrated this approach has merits.
+>     /*
+>      * Spread on non present CPUs starting from the next vector to be
+>      * handled. If the spreading of present CPUs already exhausted the
+>      * vector space, assign the non present CPUs to the already spread
+>      * out vectors.
+>      */
+>     if (nr_present >= numvecs)
+>             curvec = firstvec;
 > 
-> The primary reason to implement this logic in the kernel is to make the
-> kernel self-tuning.
+> But doesn't following condition imply nr_others spread is potentionally
+> different vector set?
+> 
+>     else
+>             curvec = firstvec + nr_present;
+> 
 
-What makes this particular self-tuning an universal win? In other words
-there are many ways to analyze the memory pressure and feedback it back
-that I can think of. It is quite likely that very specific workloads
-would have very specific demands there. I have seen cases where are
-trivial increase of min_free_kbytes to normally insane value worked
-really great for a DB workload because the wasted memory didn't matter
-for example.
+Most times, __irq_build_affinity_masks() returns numvecs.
 
-> The more knobs we have externally, the more complex
-> it becomes to tune the kernel externally.
+However, each stage may expose less CPU number than num_vecs, then less
+vectors than 'numvecs' can be spread.
 
-I agree on this point. Is the current set of tunning sufficient? What
-would be missing if not?
--- 
-Michal Hocko
-SUSE Labs
+So this patch is actually wrong.
+
+
+Thank,
+Ming
