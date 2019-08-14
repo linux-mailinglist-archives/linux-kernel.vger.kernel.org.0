@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1037F8D95E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F68A8D961
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728813AbfHNRHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
+        id S1729998AbfHNRH4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728899AbfHNRHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:45 -0400
+        id S1729980AbfHNRHx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:53 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EA7E214DA;
-        Wed, 14 Aug 2019 17:07:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 38D4D214DA;
+        Wed, 14 Aug 2019 17:07:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802465;
-        bh=rhZtCfUqK4UYel8UwCC363nM4+CVBChyfSHBllp7SRU=;
+        s=default; t=1565802472;
+        bh=kAm4ohhZC+0F8W3LOXxiYtCRij/PuuaITNK8B6OR/Bw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Raoft7+q/ZHdybDzn1Gb1qKF4KMZw5S1io4D+OmwMpbQ4PTQ3Rbeq1e5GZGWcVhaB
-         NivJr2kNNwyzscKTVQ1k0RZaMnjWtzoLRlp0WC30uiwteeayA4QmA2L9aLmjO/TgVL
-         wH4yrfMrr2yfwCH2H3n0+2lSJlouskNFzZN5kPc4=
+        b=BlhYYFWwfO2eUn7uSShKCFlxWkMNB60hdceQZ0M21Dqyc4nToW/HgRNtsZaofcOB9
+         vv6Frfkemxs1vXO/9yixdmWPx940iKJEW4aEh2qssUuGfgq2EQw5GRWxnJpmhat1G8
+         HhGhz42MQkHmumMUvwYFPpvJmjGM5zgLBnT9o65E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Subject: [PATCH 5.2 136/144] NFSv4: Fix an Oops in nfs4_do_setattr
-Date:   Wed, 14 Aug 2019 19:01:32 +0200
-Message-Id: <20190814165805.628930185@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 5.2 139/144] mwifiex: fix 802.11n/WPA detection
+Date:   Wed, 14 Aug 2019 19:01:35 +0200
+Message-Id: <20190814165805.774794378@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -43,34 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Trond Myklebust <trond.myklebust@hammerspace.com>
+From: Brian Norris <briannorris@chromium.org>
 
-commit 09a54f0ebfe263bc27c90bbd80187b9a93283887 upstream.
+commit df612421fe2566654047769c6852ffae1a31df16 upstream.
 
-If the user specifies an open mode of 3, then we don't have a NFSv4 state
-attached to the context, and so we Oops when we try to dereference it.
+Commit 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant
+vendor IEs") adjusted the ieee_types_vendor_header struct, which
+inadvertently messed up the offsets used in
+mwifiex_is_wpa_oui_present(). Add that offset back in, mirroring
+mwifiex_is_rsn_oui_present().
 
-Reported-by: Olga Kornievskaia <aglo@umich.edu>
-Fixes: 29b59f9416937 ("NFSv4: change nfs4_do_setattr to take...")
-Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: stable@vger.kernel.org # v4.10: 991eedb1371dc: NFSv4: Only pass the...
-Cc: stable@vger.kernel.org # v4.10+
+As it stands, commit 63d7ef36103d breaks compatibility with WPA (not
+WPA2) 802.11n networks, since we hit the "info: Disable 11n if AES is
+not supported by AP" case in mwifiex_is_network_compatible().
+
+Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/nfs/nfs4proc.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/marvell/mwifiex/main.h |    1 +
+ drivers/net/wireless/marvell/mwifiex/scan.c |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
---- a/fs/nfs/nfs4proc.c
-+++ b/fs/nfs/nfs4proc.c
-@@ -3175,7 +3175,7 @@ static int _nfs4_do_setattr(struct inode
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -124,6 +124,7 @@ enum {
  
- 	if (nfs4_copy_delegation_stateid(inode, FMODE_WRITE, &arg->stateid, &delegation_cred)) {
- 		/* Use that stateid */
--	} else if (ctx != NULL) {
-+	} else if (ctx != NULL && ctx->state) {
- 		struct nfs_lock_context *l_ctx;
- 		if (!nfs4_valid_open_stateid(ctx->state))
- 			return -EBADF;
+ #define MWIFIEX_MAX_TOTAL_SCAN_TIME	(MWIFIEX_TIMER_10S - MWIFIEX_TIMER_1S)
+ 
++#define WPA_GTK_OUI_OFFSET				2
+ #define RSN_GTK_OUI_OFFSET				2
+ 
+ #define MWIFIEX_OUI_NOT_PRESENT			0
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -181,7 +181,8 @@ mwifiex_is_wpa_oui_present(struct mwifie
+ 	u8 ret = MWIFIEX_OUI_NOT_PRESENT;
+ 
+ 	if (has_vendor_hdr(bss_desc->bcn_wpa_ie, WLAN_EID_VENDOR_SPECIFIC)) {
+-		iebody = (struct ie_body *) bss_desc->bcn_wpa_ie->data;
++		iebody = (struct ie_body *)((u8 *)bss_desc->bcn_wpa_ie->data +
++					    WPA_GTK_OUI_OFFSET);
+ 		oui = &mwifiex_wpa_oui[cipher][0];
+ 		ret = mwifiex_search_oui_in_ie(iebody, oui);
+ 		if (ret)
 
 
