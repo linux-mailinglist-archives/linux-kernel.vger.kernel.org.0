@@ -2,78 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73938D16A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:50:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB6D68D16E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 12:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728109AbfHNKtj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 06:49:39 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44172 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfHNKti (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 06:49:38 -0400
-Received: by mail-oi1-f193.google.com with SMTP id k22so3058202oiw.11
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 03:49:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X3P5HD8zFs0OenSO+igXy3w9KtmPtkhkBINw7OrTEEo=;
-        b=TCIzQeUwk2KLZtCaTvQK1OrgxfSroQuRzPuMFWXvWOElOPwgv2RKWoe64433uMxHNW
-         bgreSS1YIUiNaMOzMSgX/uujzlDyjEKw/1v5hsx7E74JSV88PSJBF4FA56Ufnbkj9Ft6
-         bu9hn4Omp9YVMId8YSQVEtcnn15506rdySM6A6SBnco9xZPZynfQSUGqFJ/F839Qspph
-         UiQ8AR189rJsZsG2ieJ80VAhABMXDpMiDH2afzvYKQoyvwDpPcw8Sbg0BowqIAyFDKyR
-         Z0fI06bVUcrodZon9YIB6NiSHg999sfjWqz6Giw3PR/SwY58iNzrR9W2rHQeMleBfhqr
-         zSXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X3P5HD8zFs0OenSO+igXy3w9KtmPtkhkBINw7OrTEEo=;
-        b=M2602gagONbyoLLOxAoMEfCUiZqJ9szZdKWYBhB67XHwxGLisVFgGhakiGF06QSZ59
-         lKSlBu8Nr727WNmvfI3jRVyniiI80SLkO3kKYREqHMeJ2hdHB6n3XorPoQvNbTfUs8PH
-         PZemu9rZfXsE35uicP2vrLPOipnYUlzRKcyZ/GGuZb+GEx5FcsSsuZmJTmd2FY/sk8lZ
-         MnZiSxKQzIMrkuSxkynpnMH56EutJZZOZqJqOvSkVqHwot6HUH/lLJiaoCoKwlnPpKy0
-         5rneC/eZEn08P9oFUQRPWsBUR2fp0uhqMXFoJJl5nKS1K72RjdTV9fVSuIOfKV6ovSzc
-         /2aA==
-X-Gm-Message-State: APjAAAWTfLS7q2aZdGUVZag0GL6Y30C/+0R44Qek8IRD44XQnfYufR+Q
-        FCE0AM1Nr87WFavC/UARomyxP7RePcVKT7YSW+okOQ==
-X-Google-Smtp-Source: APXvYqx47KLEn+2zqAfX9CwXnDqbWR0RTlkz32o6QvlqLcG9QA5bQMFDNDn0S23xNxRR/2fXsHnK9Rq1WC7fz5opueU=
-X-Received: by 2002:a02:3941:: with SMTP id w1mr2690863jae.91.1565779777645;
- Wed, 14 Aug 2019 03:49:37 -0700 (PDT)
+        id S1728135AbfHNKtt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 06:49:49 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56840 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727226AbfHNKto (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 06:49:44 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A0F0CADEF;
+        Wed, 14 Aug 2019 10:49:43 +0000 (UTC)
+Date:   Wed, 14 Aug 2019 12:49:41 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Chuhong Yuan <hslester96@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/8] printk: Replace strncmp with str_has_prefix
+Message-ID: <20190814104941.qt66ozcau5fdswcs@pathway.suse.cz>
+References: <20190809071034.17279-1-hslester96@gmail.com>
 MIME-Version: 1.0
-References: <20190813110300.83025-1-darekm@google.com> <20190813110300.83025-8-darekm@google.com>
- <41c95313-fe39-b201-5238-24df7e72879a@xs4all.nl>
-In-Reply-To: <41c95313-fe39-b201-5238-24df7e72879a@xs4all.nl>
-From:   Dariusz Marcinkiewicz <darekm@google.com>
-Date:   Wed, 14 Aug 2019 12:49:26 +0200
-Message-ID: <CALFZZQHw+MJo-ZRKpJqZtFi2CZfuu6rs8LJ5hsXLHBD+ASrcYQ@mail.gmail.com>
-Subject: Re: [PATCH v6 7/8] drm: dw-hdmi: use cec_notifier_conn_(un)register
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809071034.17279-1-hslester96@gmail.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi.
+On Fri 2019-08-09 15:10:34, Chuhong Yuan wrote:
+> strncmp(str, const, len) is error-prone because len
+> is easy to have typo.
+> The example is the hard-coded len has counting error
+> or sizeof(const) forgets - 1.
+> So we prefer using newly introduced str_has_prefix()
+> to substitute such strncmp to make code better.
+> 
+> Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
 
-On Tue, Aug 13, 2019 at 1:38 PM Hans Verkuil <hverkuil-cisco@xs4all.nl> wrote:
->
-> Russell's review caused me to take another look at this series, and it made
-> wonder if cec_notifier_conn_unregister() shouldn't be called from bridge_detach?
->
-I've sent out v7 of the series where unregistration is done from bridge detach.
+Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-Regards.
+Best Regards,
+Petr
