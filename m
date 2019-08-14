@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B42438DC7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:58:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F89B8DC76
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:56:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfHNR6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:58:12 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45886 "EHLO
+        id S1729095AbfHNR4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:56:17 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43434 "EHLO
         userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728559AbfHNR6M (ORCPT
+        with ESMTP id S1729083AbfHNR4O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:58:12 -0400
+        Wed, 14 Aug 2019 13:56:14 -0400
 Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHrw4n098591;
-        Wed, 14 Aug 2019 17:57:42 GMT
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHrsli098539;
+        Wed, 14 Aug 2019 17:55:45 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=DrDmX3KaID3FNcrBcBFumpkeQ+Aov5um1uuL0jPhJzs=;
- b=QfIWDDfH2nc8cOt96Mxcj9qyNhXUpfhwyHauTlZ0d5JckQ0TPbA0Adn0phUVhHJ3FkdL
- xEUKCwhreOju7vJgg/cbdySvYFUlp4+Aa7xVrviHeERJi5luRFbIAT21GU9cVLHF0YE1
- Mn98o6YNhN8q+APKj9S7Yh+1r+yLMqNZPDJ56O0aRurvU/m0xPRVvlI8HD6dsFvyB9z7
- 0/Xq7yFNzmVowvgy6SpZCtirrAthK5D1PRcprdFsxUMf7SuJc55BjFwinIGXGPYLlndI
- h66JrAMUz9lOeLy4KS3yuPefcVnoeH9od5VGaIrMqK1D8Sc5zxWgpTp2AVX88I5pDsZ4 HA== 
+ bh=StjhRVJT5STPBomYiyWxppKH50oyW+XPLSWOY/dHgAU=;
+ b=qZU7rubJNquYxFICZT7Dte85s1QWM2rXTiUNxVub/7BvS49t+FtiaPpCEJzV2P4Bauhn
+ FJSAi7cfi2lS1gyDHYARDXh5zqtX5PUEdD5J73+IY3fezYStAla/KeFpNLq0KDKZV5ba
+ +AsA0GVoAQOMDZybPI5LLK0MEdK8IzgWfHWEwDxgkVY0yQDcoO9y6YoOC2i2mbtrFC6h
+ XlaL4QV4ZgpRI3DU/a1ysRcs4emV4UcusAYIrNm8y9r01tYE8yGCZ/wZ/ukM7SydCJPu
+ Wg/X3cGpasJfFFCErgD8VMegQRqXEaq3Pjnv2ZpSc6CDIyfTkgf1tpNAGMWWD+h/3ky8 0Q== 
 Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2u9pjqp8fg-1
+        by userp2120.oracle.com with ESMTP id 2u9pjqp84r-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 17:57:42 +0000
+        Wed, 14 Aug 2019 17:55:45 +0000
 Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHqwDj114053;
-        Wed, 14 Aug 2019 17:55:42 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2ucmwhprdn-1
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHqwDn114053;
+        Wed, 14 Aug 2019 17:55:44 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userp3030.oracle.com with ESMTP id 2ucmwhprep-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 17:55:42 +0000
+        Wed, 14 Aug 2019 17:55:44 +0000
 Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7EHtfSU008301;
-        Wed, 14 Aug 2019 17:55:41 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7EHthGj025390;
+        Wed, 14 Aug 2019 17:55:43 GMT
 Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Aug 2019 10:55:41 -0700
+        with ESMTP ; Wed, 14 Aug 2019 10:55:42 -0700
 From:   Divya Indi <divya.indi@oracle.com>
 To:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
 Cc:     Divya Indi <divya.indi@oracle.com>, Joe Jin <joe.jin@oracle.com>,
         Srinivas Eeda <srinivas.eeda@oracle.com>,
         Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Subject: [PATCH 4/5] tracing: Handle the trace array ref counter in new functions
-Date:   Wed, 14 Aug 2019 10:55:26 -0700
-Message-Id: <1565805327-579-5-git-send-email-divya.indi@oracle.com>
+Subject: [PATCH 5/5] tracing: New functions for kernel access to Ftrace instances
+Date:   Wed, 14 Aug 2019 10:55:27 -0700
+Message-Id: <1565805327-579-6-git-send-email-divya.indi@oracle.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
 References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
@@ -67,130 +67,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For functions returning a trace array Eg: trace_array_create(), we need to
-increment the reference counter associated with the trace array to ensure it
-does not get freed when in use.
+Adding 2 new functions -
+1) trace_array_lookup : Look up and return a trace array, given its
+name.
+2) trace_array_set_clr_event : Enable/disable event recording to the
+given trace array.
 
-Once we are done using the trace array, we need to call
-trace_array_put() to make sure we are not holding a reference to it
-anymore and the instance/trace array can be removed when required.
-
-Hence, additionally exporting trace_array_put().
+NOTE: trace_array_lookup returns a trace array and also increments the
+reference counter associated with the returned trace array. Make sure to
+call trace_array_put() once the use is done so that the instance can be
+removed at a later time.
 
 Example use:
 
-tr = trace_array_create("foo-bar");
-// Use this trace array
-// Log to this trace array or enable/disable events to this trace array.
-....
-....
-// tr no longer required
-trace_array_put();
+tr = trace_array_lookup("foo-bar");
+if (!tr)
+	tr = trace_array_create("foo-bar");
+// Log to tr
+// Enable/disable events to tr
+trace_array_set_clr_event(tr, _THIS_IP,"system","event",1);
+
+// Done using tr
+trace_array_put(tr);
+..
+
+Also, use trace_array_set_clr_event to enable/disable events to a trace array.
+So now we no longer need to have ftrace_set_clr_event as an exported
+API.
 
 Signed-off-by: Divya Indi <divya.indi@oracle.com>
 ---
- include/linux/trace.h |  1 +
- kernel/trace/trace.c  | 41 ++++++++++++++++++++++++++++++++++++++++-
- 2 files changed, 41 insertions(+), 1 deletion(-)
+ include/linux/trace.h        |  2 ++
+ include/linux/trace_events.h |  3 ++-
+ kernel/trace/trace.c         | 28 ++++++++++++++++++++++++++++
+ kernel/trace/trace_events.c  | 23 ++++++++++++++++++++++-
+ 4 files changed, 54 insertions(+), 2 deletions(-)
 
 diff --git a/include/linux/trace.h b/include/linux/trace.h
-index 24fcf07..2c782d5 100644
+index 2c782d5..05164bb 100644
 --- a/include/linux/trace.h
 +++ b/include/linux/trace.h
-@@ -31,6 +31,7 @@ int trace_array_printk(struct trace_array *tr, unsigned long ip,
- 		const char *fmt, ...);
+@@ -32,6 +32,8 @@ int trace_array_printk(struct trace_array *tr, unsigned long ip,
  struct trace_array *trace_array_create(const char *name);
  int trace_array_destroy(struct trace_array *tr);
-+void trace_array_put(struct trace_array *tr);
+ void trace_array_put(struct trace_array *tr);
++struct trace_array *trace_array_lookup(const char *name);
++
  #endif	/* CONFIG_TRACING */
  
  #endif	/* _LINUX_TRACE_H */
+diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
+index 8a62731..05a7514 100644
+--- a/include/linux/trace_events.h
++++ b/include/linux/trace_events.h
+@@ -540,7 +540,8 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
+ #define is_signed_type(type)	(((type)(-1)) < (type)1)
+ 
+ int trace_set_clr_event(const char *system, const char *event, int set);
+-
++int trace_array_set_clr_event(struct trace_array *tr, const char *system,
++		const char *event, int set);
+ /*
+  * The double __builtin_constant_p is because gcc will give us an error
+  * if we try to allocate the static variable to fmt if it is not a
 diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 22bf166..7b6a37a 100644
+index 7b6a37a..e394d55 100644
 --- a/kernel/trace/trace.c
 +++ b/kernel/trace/trace.c
-@@ -297,12 +297,22 @@ static void __trace_array_put(struct trace_array *this_tr)
- 	this_tr->ref--;
+@@ -8514,6 +8514,34 @@ static int instance_rmdir(const char *name)
+ 	return ret;
  }
  
 +/**
-+ * trace_array_put - Decrement reference counter for the given trace array.
-+ * @tr: Trace array for which reference counter needs to decrement.
++ * trace_array_lookup - Lookup the trace array, given its name.
++ * @name: The name of the trace array to be looked up.
 + *
-+ * NOTE: Functions like trace_array_create increment the reference counter for
-+ * the trace array to ensure they do not get freed while in use. Make sure to
-+ * call trace_array_put() when the use is done. This will ensure that the
-+ * instance can be later removed.
-+ */
- void trace_array_put(struct trace_array *this_tr)
- {
- 	mutex_lock(&trace_types_lock);
- 	__trace_array_put(this_tr);
- 	mutex_unlock(&trace_types_lock);
- }
-+EXPORT_SYMBOL_GPL(trace_array_put);
- 
- int call_filter_check_discard(struct trace_event_call *call, void *rec,
- 			      struct ring_buffer *buffer,
-@@ -8302,6 +8312,16 @@ static void update_tracer_options(struct trace_array *tr)
- 	mutex_unlock(&trace_types_lock);
- }
- 
-+/**
-+ * trace_array_create - Create a new trace array with the given name.
-+ * @name: The name of the trace array to be created.
-+ *
-+ * Create and return a trace array with given name if it does not exist.
++ * Lookup and return the trace array associated with @name.
 + *
 + * NOTE: The reference counter associated with the returned trace array is
 + * incremented to ensure it is not freed when in use. Make sure to call
 + * "trace_array_put" for this trace array when its use is done.
 + */
- struct trace_array *trace_array_create(const char *name)
- {
- 	struct trace_array *tr;
-@@ -8364,6 +8384,8 @@ struct trace_array *trace_array_create(const char *name)
- 
- 	list_add(&tr->list, &ftrace_trace_arrays);
- 
-+	tr->ref++;
-+
- 	mutex_unlock(&trace_types_lock);
- 	mutex_unlock(&event_mutex);
- 
-@@ -8385,7 +8407,19 @@ struct trace_array *trace_array_create(const char *name)
- 
- static int instance_mkdir(const char *name)
- {
--	return PTR_ERR_OR_ZERO(trace_array_create(name));
++struct trace_array *trace_array_lookup(const char *name)
++{
 +	struct trace_array *tr;
 +
-+	tr = trace_array_create(name);
-+	if (IS_ERR(tr))
-+		return PTR_ERR(tr);
++	mutex_lock(&trace_types_lock);
 +
-+	/* This function does not return a reference to the created trace array,
-+	 * so the reference counter is to be 0 when it returns.
-+	 * trace_array_create increments the ref counter, decrement it here
-+	 * by calling trace_array_put() */
-+	trace_array_put(tr);
++	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
++		if (tr->name && strcmp(tr->name, name) == 0) {
++			tr->ref++;
++			mutex_unlock(&trace_types_lock);
++			return tr;
++		}
++	}
++	mutex_unlock(&trace_types_lock);
++	return NULL;
++}
++EXPORT_SYMBOL_GPL(trace_array_lookup);
 +
-+	return 0;
- }
- 
- static int __remove_instance(struct trace_array *tr)
-@@ -8424,6 +8458,11 @@ static int __remove_instance(struct trace_array *tr)
- 	return 0;
- }
- 
-+/*
-+ * NOTE: An instance cannot be removed if there is still a reference to it.
-+ * Make sure to call "trace_array_put" for a trace array returned by functions
-+ * like trace_array_create(), otherwise trace_array_destroy will not succeed.
-+ */
- int trace_array_destroy(struct trace_array *this_tr)
+ static __init void create_trace_instances(struct dentry *d_tracer)
  {
- 	struct trace_array *tr;
+ 	trace_instance_dir = tracefs_create_instance_dir("instances", d_tracer,
+diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
+index 2621995..96dd997 100644
+--- a/kernel/trace/trace_events.c
++++ b/kernel/trace/trace_events.c
+@@ -834,7 +834,6 @@ static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL_GPL(ftrace_set_clr_event);
+ 
+ /**
+  * trace_set_clr_event - enable or disable an event
+@@ -859,6 +858,28 @@ int trace_set_clr_event(const char *system, const char *event, int set)
+ }
+ EXPORT_SYMBOL_GPL(trace_set_clr_event);
+ 
++/**
++ * trace_array_set_clr_event - enable or disable an event for a trace array
++ * @system: system name to match (NULL for any system)
++ * @event: event name to match (NULL for all events, within system)
++ * @set: 1 to enable, 0 to disable
++ *
++ * This is a way for other parts of the kernel to enable or disable
++ * event recording to instances.
++ *
++ * Returns 0 on success, -EINVAL if the parameters do not match any
++ * registered events.
++ */
++int trace_array_set_clr_event(struct trace_array *tr, const char *system,
++		const char *event, int set)
++{
++	if (!tr)
++		return -ENOENT;
++
++	return __ftrace_set_clr_event(tr, NULL, system, event, set);
++}
++EXPORT_SYMBOL_GPL(trace_array_set_clr_event);
++
+ /* 128 should be much more than enough */
+ #define EVENT_BUF_SIZE		127
+ 
 -- 
 1.8.3.1
 
