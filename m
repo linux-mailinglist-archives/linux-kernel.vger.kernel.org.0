@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C8B48DB75
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 893B98DB09
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:22:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfHNRZc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:25:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54722 "EHLO mail.kernel.org"
+        id S1729378AbfHNRIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729479AbfHNRFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:05:46 -0400
+        id S1726585AbfHNRI2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 075FE2084D;
-        Wed, 14 Aug 2019 17:05:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1C8E2084D;
+        Wed, 14 Aug 2019 17:08:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802345;
-        bh=b2zNZyKjcECupHNHtgikwqMvVgIIB0qbiiwmrBACDAM=;
+        s=default; t=1565802508;
+        bh=qwsffHWW0eI3fbDTxJwbQQuhHJQ4PAHCk58eKDJhZ28=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zx/x3+iQPhZuniANkZKN+dMjavidf3MmfERdoJ0WNeMgRQC0ZqK0JiMjiOkcAeqpw
-         FWyxOgughTWwN6HXX2NrHCc1KwRucyD8FaURiEgnf2e7HPZE3WgIf6phaFpJx3BNb0
-         BxK3GfFVSv920ATqrXcj84B26FHDrUo8/HJTrOd8=
+        b=THtjMvoJhSjdr4N1AO0xmN2pLIaXgi3sCkdVFjj4D+lAIof/czHqboC/ydyct28Pe
+         LNJdduz9o9YGk/ZneNb3AA3AjMyuoXNOR7asZGXazbwSu6YMUguiq2POmz9w8MCHeo
+         EOw2YvoEKVlXVQOyFrBHzFv2D0y9KeFPC0E0gppU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleg Nesterov <oleg@redhat.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.2 062/144] rq-qos: use a mb for got_token
-Date:   Wed, 14 Aug 2019 19:00:18 +0200
-Message-Id: <20190814165802.430179590@linuxfoundation.org>
+        stable@vger.kernel.org, Gwendal Grignou <gwendal@chromium.org>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 01/91] iio: cros_ec_accel_legacy: Fix incorrect channel setting
+Date:   Wed, 14 Aug 2019 19:00:24 +0200
+Message-Id: <20190814165749.035589218@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
-References: <20190814165759.466811854@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,51 +46,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit ac38297f7038cd5b80d66f8809c7bbf5b70031f3 ]
+From: Gwendal Grignou <gwendal@chromium.org>
 
-Oleg noticed that our checking of data.got_token is unsafe in the
-cleanup case, and should really use a memory barrier.  Use a wmb on the
-write side, and a rmb() on the read side.  We don't need one in the main
-loop since we're saved by set_current_state().
+commit 6cdff99c9f7d7d28b87cf05dd464f7c7736332ae upstream.
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
-Signed-off-by: Josef Bacik <josef@toxicpanda.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+INFO_SCALE is set both for each channel and all channels.
+iio is using all channel setting, so the error was not user visible.
+
+Signed-off-by: Gwendal Grignou <gwendal@chromium.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- block/blk-rq-qos.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iio/accel/cros_ec_accel_legacy.c |    1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index e3ab75e4df9ea..06d024204f504 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -202,6 +202,7 @@ static int rq_qos_wake_function(struct wait_queue_entry *curr,
- 		return -1;
- 
- 	data->got_token = true;
-+	smp_wmb();
- 	list_del_init(&curr->entry);
- 	wake_up_process(data->task);
- 	return 1;
-@@ -245,6 +246,7 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
- 
- 	prepare_to_wait_exclusive(&rqw->wait, &data.wq, TASK_UNINTERRUPTIBLE);
- 	do {
-+		/* The memory barrier in set_task_state saves us here. */
- 		if (data.got_token)
- 			break;
- 		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
-@@ -255,6 +257,7 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
- 			 * which means we now have two. Put our local token
- 			 * and wake anyone else potentially waiting for one.
- 			 */
-+			smp_rmb();
- 			if (data.got_token)
- 				cleanup_cb(rqw, private_data);
- 			break;
--- 
-2.20.1
-
+--- a/drivers/iio/accel/cros_ec_accel_legacy.c
++++ b/drivers/iio/accel/cros_ec_accel_legacy.c
+@@ -328,7 +328,6 @@ static const struct iio_chan_spec_ext_in
+ 		.modified = 1,					        \
+ 		.info_mask_separate =					\
+ 			BIT(IIO_CHAN_INFO_RAW) |			\
+-			BIT(IIO_CHAN_INFO_SCALE) |			\
+ 			BIT(IIO_CHAN_INFO_CALIBBIAS),			\
+ 		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SCALE),	\
+ 		.ext_info = cros_ec_accel_legacy_ext_info,		\
 
 
