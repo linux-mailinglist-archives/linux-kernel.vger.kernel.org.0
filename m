@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 170FD8D998
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AD6A8D99C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729282AbfHNRKC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:10:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60616 "EHLO mail.kernel.org"
+        id S1729754AbfHNRKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730412AbfHNRJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:58 -0400
+        id S1730421AbfHNRKB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:01 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79E5B2084D;
-        Wed, 14 Aug 2019 17:09:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22036208C2;
+        Wed, 14 Aug 2019 17:09:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802598;
-        bh=HbEKa7Zri52UCkOvnsCGr3IcPyOq0d/HtyKJPhXp/Z4=;
+        s=default; t=1565802600;
+        bh=HuRxaVhQ9x52rb/15XzzPx24nCvuKaL4i2x0kerzk+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jzipTGXvRM4r/RfLmxC19cbwnv10bWJzb/4TiD/wWnkP0rDAB8eSA/KsmAMGP7iMY
-         Yy7Hut40Atsff8+0QxrAfELU3v417EVVb21dAshEHKQCha4xe+JIsuR+Dw0mtJopm2
-         /ywBxg3CtoB3J0LucHI61AO0iJEMP6c08lqSGDeQ=
+        b=LvOo1bTp74hJEfHp4lZM1jrrndUvtywfHWGIywpoAP+J+vwCUiUtdHhITZ4DwXTeC
+         xX0VPijKun8WcU3LHf/se/HKeYvW8zSr6h6b2Tq1+MEeFusa53c7xAPqbs6H7gtVhW
+         SnXeUMwoYU2T/9sTmsM2+jiQERL/+ousHMLFdIzE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Tai <thomas.tai@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        stable@vger.kernel.org, John Crispin <john@phrozen.org>,
+        Johannes Berg <johannes.berg@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 44/91] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
-Date:   Wed, 14 Aug 2019 19:01:07 +0200
-Message-Id: <20190814165751.476809309@linuxfoundation.org>
+Subject: [PATCH 4.19 45/91] nl80211: fix NL80211_HE_MAX_CAPABILITY_LEN
+Date:   Wed, 14 Aug 2019 19:01:08 +0200
+Message-Id: <20190814165751.526332664@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -44,68 +44,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
+[ Upstream commit 5edaac063bbf1267260ad2a5b9bb803399343e58 ]
 
-iscsi_ibft can use ACPI to find the iBFT entry during bootup,
-currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
-a X86 legacy way to find the iBFT by searching through the
-low memory. This patch changes the dependency so that other
-arch like ARM64 can use ISCSI_IBFT as long as the arch supports
-ACPI.
+NL80211_HE_MAX_CAPABILITY_LEN has changed between D2.0 and D4.0. It is now
+MAC (6) + PHY (11) + MCS (12) + PPE (25) = 54.
 
-ibft_init() needs to use the global variable ibft_addr declared
-in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
-to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
-Moving ibft_addr into the iscsi_ibft.c does not work because if
-ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
-be able to find the variable at compile time.
-
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: John Crispin <john@phrozen.org>
+Link: https://lore.kernel.org/r/20190627095832.19445-1-john@phrozen.org
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/firmware/Kconfig      | 5 +++--
- drivers/firmware/iscsi_ibft.c | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ include/uapi/linux/nl80211.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index 6e83880046d78..ed212c8b41083 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -198,7 +198,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
+diff --git a/include/uapi/linux/nl80211.h b/include/uapi/linux/nl80211.h
+index 7acc16f349427..fa43dd5a7b3dc 100644
+--- a/include/uapi/linux/nl80211.h
++++ b/include/uapi/linux/nl80211.h
+@@ -2732,7 +2732,7 @@ enum nl80211_attrs {
+ #define NL80211_HT_CAPABILITY_LEN		26
+ #define NL80211_VHT_CAPABILITY_LEN		12
+ #define NL80211_HE_MIN_CAPABILITY_LEN           16
+-#define NL80211_HE_MAX_CAPABILITY_LEN           51
++#define NL80211_HE_MAX_CAPABILITY_LEN           54
+ #define NL80211_MAX_NR_CIPHER_SUITES		5
+ #define NL80211_MAX_NR_AKM_SUITES		2
  
- config ISCSI_IBFT_FIND
- 	bool "iSCSI Boot Firmware Table Attributes"
--	depends on X86 && ACPI
-+	depends on X86 && ISCSI_IBFT
- 	default n
- 	help
- 	  This option enables the kernel to find the region of memory
-@@ -209,7 +209,8 @@ config ISCSI_IBFT_FIND
- config ISCSI_IBFT
- 	tristate "iSCSI Boot Firmware Table Attributes module"
- 	select ISCSI_BOOT_SYSFS
--	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
-+	select ISCSI_IBFT_FIND if X86
-+	depends on ACPI && SCSI && SCSI_LOWLEVEL
- 	default	n
- 	help
- 	  This option enables support for detection and exposing of iSCSI
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index c51462f5aa1e4..966aef334c420 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -93,6 +93,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
- MODULE_LICENSE("GPL");
- MODULE_VERSION(IBFT_ISCSI_VERSION);
- 
-+#ifndef CONFIG_ISCSI_IBFT_FIND
-+struct acpi_table_ibft *ibft_addr;
-+#endif
-+
- struct ibft_hdr {
- 	u8 id;
- 	u8 version;
 -- 
 2.20.1
 
