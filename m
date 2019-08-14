@@ -2,176 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084F58C9C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:59:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 735298C9BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:54:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727325AbfHNC7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:59:30 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45124 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726692AbfHNC7a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:59:30 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7E2q1c7062908;
-        Tue, 13 Aug 2019 22:53:52 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uc9bk9705-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Aug 2019 22:53:52 -0400
-Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7E2rD60073181;
-        Tue, 13 Aug 2019 22:53:52 -0400
-Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uc9bk96ym-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Aug 2019 22:53:52 -0400
-Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
-        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7E2ovSg017784;
-        Wed, 14 Aug 2019 02:53:51 GMT
-Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
-        by ppma02dal.us.ibm.com with ESMTP id 2u9nj64jde-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 02:53:51 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7E2roxg19005708
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 02:53:50 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6AF97B2067;
-        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 34502B2064;
-        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.63])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id F198C16C1317; Tue, 13 Aug 2019 19:53:49 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 19:53:49 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Byungchul Park <byungchul.park@lge.com>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Byungchul Park <max.byungchul.park@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rao Shoaib <rao.shoaib@oracle.com>, kernel-team@android.com,
-        kernel-team <kernel-team@lge.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rcu <rcu@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH RFC v1 1/2] rcu/tree: Add basic support for kfree_rcu
- batching
-Message-ID: <20190814025349.GM28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <CANrsvRPU_u6oKpjZ1368Evto+1hGboNYeOuMdbdzaOfXhSO=5g@mail.gmail.com>
- <20190808180916.GP28441@linux.ibm.com>
- <20190811083626.GA9486@X58A-UD3R>
- <20190811084950.GB9486@X58A-UD3R>
- <20190811234939.GC28441@linux.ibm.com>
- <20190812101052.GA10478@X58A-UD3R>
- <20190812131234.GC27552@google.com>
- <20190813052954.GA18373@X58A-UD3R>
- <20190813154145.GE28441@linux.ibm.com>
- <20190814001103.GA31884@X58A-UD3R>
+        id S1727272AbfHNCym (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:54:42 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:42543 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726825AbfHNCym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:54:42 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 467Z1Q3Zrpz9sN1;
+        Wed, 14 Aug 2019 12:54:33 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565751277;
+        bh=pnshXtAEAaY0k7nVDf7DTgaFW2krmKG1q4o+k+yvbPU=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MSegR/AvH8/o79fAuMHcrDSCK/M0pb7KnAPJrpbAhsRVGeefdLNr65v7lVcMMN7Tc
+         K0U6s5L054IPTsOQx2oF2mFGgeUUPIPjB2Qj0PB/KmqzCVsKtfrEjerSLA/cP+u7UV
+         Qd22ZgjS7P87zqDepi6oWCotZdhYFk8Idl092FKrkRbWClQ2LSI/IVXzughxycRZjx
+         yOmjRxPH29ZnecSXbtGuIef5VwPFMmTBq+On4ksUnrJg+hYrjIOvMYeEToUgUv4pCA
+         ur6UaFfbKlWaskzrN+NxaWSY/8mPmc0auEHWSgm+21C6wQ6qaMFZ9K/10B5tx6zFYl
+         p2ID6CZetpwSA==
+Date:   Wed, 14 Aug 2019 12:54:33 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@linux.ie>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
+        Felix Kuehling <Felix.Kuehling@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>
+Subject: linux-next: manual merge of the drm-misc tree with the drm and
+ drm-intel trees
+Message-ID: <20190814125433.20147fb7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814001103.GA31884@X58A-UD3R>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908140025
+Content-Type: multipart/signed; boundary="Sig_/07c9HVqAookgL3hIp9iskP4";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 09:11:03AM +0900, Byungchul Park wrote:
-> On Tue, Aug 13, 2019 at 08:41:45AM -0700, Paul E. McKenney wrote:
-> > On Tue, Aug 13, 2019 at 02:29:54PM +0900, Byungchul Park wrote:
-> > > On Mon, Aug 12, 2019 at 09:12:34AM -0400, Joel Fernandes wrote:
-> > > > On Mon, Aug 12, 2019 at 07:10:52PM +0900, Byungchul Park wrote:
-> > > > > On Sun, Aug 11, 2019 at 04:49:39PM -0700, Paul E. McKenney wrote:
-> > > > > > Maybe.  Note well that I said "potential issue".  When I checked a few
-> > > > > > years ago, none of the uses of rcu_barrier() cared about kfree_rcu().
-> > > > > > They cared instead about call_rcu() callbacks that accessed code or data
-> > > > > > that was going to disappear soon, for example, due to module unload or
-> > > > > > filesystem unmount.
-> > > > > > 
-> > > > > > So it -might- be that rcu_barrier() can stay as it is, but with changes
-> > > > > > as needed to documentation.
-> > > > 
-> > > > Right, we should update the docs. Byungchul, do you mind sending a patch that
-> > > > documents the rcu_barrier() behavior?
-> > > 
-> > > Are you trying to give me the chance? I feel thankful. It doens't matter
-> > > to try it at the moment though, I can't follow-up until September. I'd
-> > > better do that in Septamber or give it up this time.
-> > 
-> > Which reminds me...  I recall your asking if the kfree_rcu() patch
-> > might be sensitive to the exact hardware, but I cannot locate that
-> > email right off-hand.  This is an excellent question!  When faced with
-> > floods of kfree_rcu() calls, I would expect some hardware, compiler,
-> > and kernel-configuration sensitivity.  Which is why it will likely be
-> 
-> Yes.
-> 
-> > necessary to do a few more improvements over time -- for but one example,
-> > accumulating callbacks into vectors in order to reduce the number of
-> > kfree()-time cache misses.
-> 
-> Yes. That would be a pretty good way to mitigate the problem. I hope
-> the simple way we've done works well enough so it would never happen
-> though.
-> 
-> Or I would check the condition of all system resourses e.g. CPU and
-> memory and control the bandwith of them, of course only if that actually
-> happens.
-> 
-> Thanks a lot for sharing your opinion on it!
+--Sig_/07c9HVqAookgL3hIp9iskP4
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Didn't you say earlier that you were getting OOM on your system even
-with the patches?  Or did I miss the resolution of that issue?
+Hi all,
 
-							Thanx, Paul
+Today's linux-next merge of the drm-misc tree got a conflict in:
 
-> Thanks,
-> Byungchul
-> 
-> > 							Thanx, Paul
-> > 
-> > > Thanks,
-> > > Byungchul
-> > > 
-> > > > > > It also -might- be, maybe now or maybe some time in the future, that
-> > > > > > there will need to be a kfree_rcu_barrier() or some such.  But if so,
-> > > > > > let's not create it until it is needed.  For one thing, it is reasonably
-> > > > > > likely that something other than a kfree_rcu_barrier() would really
-> > > > > > be what was needed.  After all, the main point would be to make sure
-> > > > > > that the old memory really was freed before allocating new memory.
-> > > > > 
-> > > > > Now I fully understand what you meant thanks to you. Thank you for
-> > > > > explaining it in detail.
-> > > > > 
-> > > > > > But if the system had ample memory, why wait?  In that case you don't
-> > > > > > really need to wait for all the old memory to be freed, but rather for
-> > > > > > sufficient memory to be available for allocation.
-> > > > > 
-> > > > > Agree. Totally make sense.
-> > > > 
-> > > > Agreed, all makes sense.
-> > > > 
-> > > > thanks,
-> > > > 
-> > > >  - Joel
-> > > > 
-> > > > [snip]
-> > > 
-> 
+  drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+  drivers/gpu/drm/i915/i915_vma.c
+  drivers/gpu/drm/i915/i915_gem_batch_pool.c
+  drivers/gpu/drm/i915/gem/i915_gem_object.c
+  drivers/gpu/drm/i915/gt/intel_engine_pool.c
+
+between commits:
+
+  a93615f900bd ("drm/i915: Throw away the active object retirement complexi=
+ty")
+  12c255b5dad1 ("drm/i915: Provide an i915_active.acquire callback")
+  cd2a4eaf8c79 ("drm/i915: Report resv_obj allocation failure")
+  b40d73784ffc ("drm/i915: Replace struct_mutex for batch pool serialisatio=
+n")
+  ab2f7a5c18b5 ("drm/amdgpu: Implement VRAM wipe on release")
+  0c159ffef628 ("drm/i915/gem: Defer obj->base.resv fini until RCU callback=
+")
+
+from the drm and drm-intel trees and commit:
+
+  52791eeec1d9 ("dma-buf: rename reservation_object to dma_resv")
+
+from the drm-misc tree.
+
+I fixed it up (see below and I added the following merge fix patch) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the
+conflicting tree to minimise any particularly complex conflicts.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Wed, 14 Aug 2019 12:48:39 +1000
+Subject: [PATCH] drm: fix up fallout from "dma-buf: rename reservation_obje=
+ct to dma_resv"
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/amd/amdgpu/amdgpu_object.c  | 4 ++--
+ drivers/gpu/drm/i915/gem/i915_gem_object.c  | 2 +-
+ drivers/gpu/drm/i915/gt/intel_engine_pool.c | 8 ++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c b/drivers/gpu/drm/a=
+md/amdgpu/amdgpu_object.c
+index dfd4aa68c806..6ebe61e14f29 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_object.c
+@@ -1242,7 +1242,7 @@ void amdgpu_bo_release_notify(struct ttm_buffer_objec=
+t *bo)
+ 	    !(abo->flags & AMDGPU_GEM_CREATE_VRAM_WIPE_ON_RELEASE))
+ 		return;
+=20
+-	reservation_object_lock(bo->base.resv, NULL);
++	dma_resv_lock(bo->base.resv, NULL);
+=20
+ 	r =3D amdgpu_fill_buffer(abo, AMDGPU_POISON, bo->base.resv, &fence);
+ 	if (!WARN_ON(r)) {
+@@ -1250,7 +1250,7 @@ void amdgpu_bo_release_notify(struct ttm_buffer_objec=
+t *bo)
+ 		dma_fence_put(fence);
+ 	}
+=20
+-	reservation_object_unlock(bo->base.resv);
++	dma_resv_unlock(bo->base.resv);
+ }
+=20
+ /**
+diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c b/drivers/gpu/drm/i=
+915/gem/i915_gem_object.c
+index 3929c3a6b281..67dc61e02c9f 100644
+--- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
++++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+@@ -154,7 +154,7 @@ static void __i915_gem_free_object_rcu(struct rcu_head =
+*head)
+ 		container_of(head, typeof(*obj), rcu);
+ 	struct drm_i915_private *i915 =3D to_i915(obj->base.dev);
+=20
+-	reservation_object_fini(&obj->base._resv);
++	dma_resv_fini(&obj->base._resv);
+ 	i915_gem_object_free(obj);
+=20
+ 	GEM_BUG_ON(!atomic_read(&i915->mm.free_count));
+diff --git a/drivers/gpu/drm/i915/gt/intel_engine_pool.c b/drivers/gpu/drm/=
+i915/gt/intel_engine_pool.c
+index 03d90b49584a..4cd54c569911 100644
+--- a/drivers/gpu/drm/i915/gt/intel_engine_pool.c
++++ b/drivers/gpu/drm/i915/gt/intel_engine_pool.c
+@@ -43,12 +43,12 @@ static int pool_active(struct i915_active *ref)
+ {
+ 	struct intel_engine_pool_node *node =3D
+ 		container_of(ref, typeof(*node), active);
+-	struct reservation_object *resv =3D node->obj->base.resv;
++	struct dma_resv *resv =3D node->obj->base.resv;
+ 	int err;
+=20
+-	if (reservation_object_trylock(resv)) {
+-		reservation_object_add_excl_fence(resv, NULL);
+-		reservation_object_unlock(resv);
++	if (dma_resv_trylock(resv)) {
++		dma_resv_add_excl_fence(resv, NULL);
++		dma_resv_unlock(resv);
+ 	}
+=20
+ 	err =3D i915_gem_object_pin_pages(node->obj);
+--=20
+2.20.1
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/i915/i915_vma.c
+index 8be1bbef40e5,ebfd03d117cd..000000000000
+--- a/drivers/gpu/drm/i915/i915_vma.c
++++ b/drivers/gpu/drm/i915/i915_vma.c
+@@@ -911,21 -951,16 +911,21 @@@ int i915_vma_move_to_active(struct i915
+  		if (intel_fb_obj_invalidate(obj, ORIGIN_CS))
+  			__i915_active_request_set(&obj->frontbuffer_write, rq);
+ =20
+- 		reservation_object_add_excl_fence(vma->resv, &rq->fence);
+++		dma_resv_add_excl_fence(vma->resv, &rq->fence);
+ +		obj->write_domain =3D I915_GEM_DOMAIN_RENDER;
+  		obj->read_domains =3D 0;
+ +	} else {
+- 		err =3D reservation_object_reserve_shared(vma->resv, 1);
+++		err =3D dma_resv_reserve_shared(vma->resv, 1);
+ +		if (unlikely(err))
+ +			return err;
+ +
+- 		reservation_object_add_shared_fence(vma->resv, &rq->fence);
+++		dma_resv_add_shared_fence(vma->resv, &rq->fence);
+ +		obj->write_domain =3D 0;
+  	}
+  	obj->read_domains |=3D I915_GEM_GPU_DOMAINS;
+ +	obj->mm.dirty =3D true;
+ =20
+ -	if (flags & EXEC_OBJECT_NEEDS_FENCE)
+ -		__i915_active_request_set(&vma->last_fence, rq);
+ -
+ -	export_fence(vma, rq, flags);
+ +	GEM_BUG_ON(!i915_vma_is_active(vma));
+  	return 0;
+  }
+ =20
+
+--Sig_/07c9HVqAookgL3hIp9iskP4
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1Td+kACgkQAVBC80lX
+0GzU8Af+KtbzLAIC/g1NfEN0dDKWUtuerpCRsRNbqfG6sDdQaN3xyMD+BdWzifLn
+zeNEae4NDLy36jPsJv7QJw+Xb/HMR6y9BvkFhxTbDy80zTHH4BW/SVVES0f8IhQg
+24xVCazCBmRJgTef5zatUtI4rB0angmBlwgzc+lfV6gaeyRuoWk26mhu3nyxJ9DI
+CCpVYufENS8B2esIU8GIwT/xBqrvOFGO7HpfAxhPmmqIjNGbeu8K/dE2acMBaOBl
+bTCTNH6lVp2H7Mj0UP1ZHyfAmTWhjX2bBKux5o0wI/3GpdMSsvX3hJZaH/VsjB2S
+K6ZPgpDbByYUBytWShudc35FDA93lA==
+=tx55
+-----END PGP SIGNATURE-----
+
+--Sig_/07c9HVqAookgL3hIp9iskP4--
