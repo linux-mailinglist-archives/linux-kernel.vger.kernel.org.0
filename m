@@ -2,92 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C6538D683
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3B0F8D693
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:50:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727989AbfHNOsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 10:48:39 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:38284 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725955AbfHNOsj (ORCPT
+        id S1727935AbfHNOui (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 10:50:38 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40725 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726265AbfHNOug (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:48:39 -0400
-Received: by mail-ot1-f67.google.com with SMTP id r20so33082993ota.5
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:48:38 -0700 (PDT)
+        Wed, 14 Aug 2019 10:50:36 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c34so42951031otb.7
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:50:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TuidyYaeRyKNuzkufRgN6Ec9LRr2Ifgbce3UwZKDqAk=;
-        b=VGmsuSutDmh/CjlBsd4sxqgbi8um+dCHzh+K0g76f30mKTKa4vnjEUi5IghOvDT2TU
-         IiuduD1hp/FbpMVaMr/e7wBsaqMWdJ6XHtQ/1mBsBItSP4Wnk6xfU27TabVrZ7CxNxNQ
-         xk36x4tWlqqM3zgQ+imkzsVY04ipeNiKK+QA1YnFVauQbb2Je88bjQTJ7UYiJXdobeSQ
-         8yXovyKKvS5GfjCCiA8ng2LVaXxNaFUycGFOD1MJp5B3wtPnD6SMS1YSM8AN/j0ewy4K
-         946ksv8AZDHbxIlpfzizsK/Ykelqs/5V6AZKhURom457TIKDaqNjmkxGJQw/75l6BLCF
-         rGkA==
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cWx0cFqnOpCViIJ4tMHIiuLTvCAxlz9fs3eE3H38dRE=;
+        b=lXrxUu2GbQ/3WBKNQg6bGoE9vwtRUCP4SFYSH0scEDD89DaRziNNmLBjE0vttmjUe/
+         O4oi/JbfzfFG5Xw+9gyej9xa8Hxo6VT5l/5Uhu6Ny65juAt0JRUAzvszKia3iSP6nh2r
+         cE0Ny9xPzGSah2fDAN6DN8EjpM8B6mh5i7nhJfiWPFDueWS5tsen90BhvNf8os6QfOaB
+         R9wxOqDAIO9Yz9t6d1bMDRQ3gDdzZeohh4mmfilwhiOUUe/mDlQ6e3WFeK9AEwQGx/YF
+         rY1tFBsimehN69v0SOIHFcLiMcb9eRNPzSfZvNrcyjLsWDG+3r2rJKdeGRUyQs6JW23U
+         vFbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TuidyYaeRyKNuzkufRgN6Ec9LRr2Ifgbce3UwZKDqAk=;
-        b=HANDBtMW8EKKlY8RsbtcK/opd8nFpcOjjc8E1wsJkZxuqyEaV+fwAUy77+Foclk+5v
-         WK+JYK3pZr47fRuc3MsfwJyxdnC6ukZOeBcFWXSdN859GDR2GY3k/WdOhUCSPYvi1NUw
-         9s/ZCDBxgLuU8IZ9VOtVpFOLMdX6fDs2HJpKz5bsZxYYYZHfVrhbc8Y7g1yAMoPV+Zr1
-         3lmrCp2lJnAzZuyRG45Lp8s7oF5GIJj6ZFKNgqiqr8fXJ9QA3dTzQ5Xbo53+a5i+Fgbf
-         It04ijXzWNcLpB/WO0d4mPxIs3TK/6LwHRs2/B0QEwwOl7YVqMDPi58S0a1Bc4pNDtRR
-         SnCQ==
-X-Gm-Message-State: APjAAAWqQIc21CBS0Jyxiwda/OoaXT5ktcusY5aXx2DrQeODaDjPJaOl
-        jheW8DMkcaBSqzsjq69W18rfofU1GBq1QALdj2XFxg==
-X-Google-Smtp-Source: APXvYqz7zm4exw86gTxj/ItuLHdqDfdPZkzMbuPMtbbm6xwrB+umcFhlOUSiQC4HRsH79R5rtenZdkZ3lrgt5XcFI70=
-X-Received: by 2002:a9d:6b96:: with SMTP id b22mr2732383otq.363.1565794118373;
- Wed, 14 Aug 2019 07:48:38 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cWx0cFqnOpCViIJ4tMHIiuLTvCAxlz9fs3eE3H38dRE=;
+        b=oyMgPcYYQf4HXaD3XbNcoo5mH3pe2hhusF0YlEJIWmq7gBNKAxnWetzVzrXmgFNNNU
+         /aUIGX0E5qwQpuH77KmMd8pv3JXJGirII0jAQi76jzmuqa5ecn2tDWV1p0gOyr8UkA5s
+         amPoNu8+P8qrm7pnPcywcnN1/GJUtGYnqqTTUAPZI3Qj8ItzEUjnFr27s00+CuQrW3JW
+         MI+esELhh7+jVAAPHtBiAXjS0QjFF5hdMTFWIvcKpcQ9UaC4N2d3jyufL+r1ya/6ohd3
+         NBJeTtkcmPEjqc8qbS1h6nKwQYuvegyUTlNij5F5xRsDWZjDclf+O64W2MysjFfD5WtB
+         ILeg==
+X-Gm-Message-State: APjAAAX+EWYuKc5EcmSAZoXR6USBslyVqznTOJP1u4qy+Y291GD1OmIj
+        x9KrQVFe74DEFTYjxeIy5KQdiEtdeWW7Nw==
+X-Google-Smtp-Source: APXvYqzQoRGPHjcNHC/V15omIqsc2Ze631e9qimSe/1ZAhI9YzS7mHKxHhdIL75MIuw/sd9unwIaTQ==
+X-Received: by 2002:a5e:834d:: with SMTP id y13mr288968iom.79.1565794234700;
+        Wed, 14 Aug 2019 07:50:34 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id e22sm101663iog.2.2019.08.14.07.50.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 07:50:33 -0700 (PDT)
+Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190808190300.GA9067@cmpxchg.org>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <4ad47b61-e917-16cc-95a0-18e070b6b4e0@kernel.dk>
+Date:   Wed, 14 Aug 2019 08:50:32 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190806160554.14046-1-hch@lst.de> <20190806160554.14046-5-hch@lst.de>
- <20190807174548.GJ1571@mellanox.com> <CAPcyv4hPCuHBLhSJgZZEh0CbuuJNPLFDA3f-79FX5uVOO0yubA@mail.gmail.com>
- <20190808065933.GA29382@lst.de> <CAPcyv4hMUzw8vyXFRPe2pdwef0npbMm9tx9wiZ9MWkHGhH1V6w@mail.gmail.com>
- <20190814073854.GA27249@lst.de> <20190814132746.GE13756@mellanox.com>
-In-Reply-To: <20190814132746.GE13756@mellanox.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 14 Aug 2019 07:48:28 -0700
-Message-ID: <CAPcyv4g8usp8prJ+1bMtyV1xuedp5FKErBp-N8+KzR=rJ-v0QQ@mail.gmail.com>
-Subject: Re: [PATCH 04/15] mm: remove the pgmap field from struct hmm_vma_walk
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190808190300.GA9067@cmpxchg.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 6:28 AM Jason Gunthorpe <jgg@mellanox.com> wrote:
->
-> On Wed, Aug 14, 2019 at 09:38:54AM +0200, Christoph Hellwig wrote:
-> > On Tue, Aug 13, 2019 at 06:36:33PM -0700, Dan Williams wrote:
-> > > Section alignment constraints somewhat save us here. The only example
-> > > I can think of a PMD not containing a uniform pgmap association for
-> > > each pte is the case when the pgmap overlaps normal dram, i.e. shares
-> > > the same 'struct memory_section' for a given span. Otherwise, distinct
-> > > pgmaps arrange to manage their own exclusive sections (and now
-> > > subsections as of v5.3). Otherwise the implementation could not
-> > > guarantee different mapping lifetimes.
-> > >
-> > > That said, this seems to want a better mechanism to determine "pfn is
-> > > ZONE_DEVICE".
-> >
-> > So I guess this patch is fine for now, and once you provide a better
-> > mechanism we can switch over to it?
->
-> What about the version I sent to just get rid of all the strange
-> put_dev_pagemaps while scanning? Odds are good we will work with only
-> a single pagemap, so it makes some sense to cache it once we find it?
+On 8/8/19 1:03 PM, Johannes Weiner wrote:
+> psi tracks the time tasks wait for refaulting pages to become
+> uptodate, but it does not track the time spent submitting the IO. The
+> submission part can be significant if backing storage is contended or
+> when cgroup throttling (io.latency) is in effect - a lot of time is
+> spent in submit_bio(). In that case, we underreport memory pressure.
+> 
+> Annotate submit_bio() to account submission time as memory stall when
+> the bio is reading userspace workingset pages.
 
-Yes, if the scan is over a single pmd then caching it makes sense.
+Applied for 5.4.
+
+-- 
+Jens Axboe
+
