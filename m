@@ -2,75 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A05128CA6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 06:34:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C9CA58CA71
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 06:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfHNEea (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 00:34:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51814 "EHLO mail.kernel.org"
+        id S1727327AbfHNEfz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 00:35:55 -0400
+Received: from verein.lst.de ([213.95.11.211]:34398 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726875AbfHNEea (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 00:34:30 -0400
-Received: from localhost (c-73-15-1-175.hsd1.ca.comcast.net [73.15.1.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09A732064A;
-        Wed, 14 Aug 2019 04:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565757269;
-        bh=YXfRePtrpgOp4VoVjGqzpZyjQJeuzOvercRnHiUWlN4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=brJjf4O+x1eiH8OsOXOavdaAHfwFbDDfO80eCQ/6wJq0DMsZ+kZhifa6UHFKqeQ6R
-         qi1D1sCoSX4y+1l3akjYpeaeMM6AjPhEWtLZH4vN65IBWbz7Apndw1s24zNK9DIjjh
-         TVDNfpT3amygGdbsDVcXfMUhtfWUhews9XrJrKto=
-Date:   Tue, 13 Aug 2019 23:34:28 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Haiyang Zhang <haiyangz@microsoft.com>
-Cc:     "sashal@kernel.org" <sashal@kernel.org>,
-        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "olaf@aepfle.de" <olaf@aepfle.de>, vkuznets <vkuznets@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4,1/2] PCI: hv: Detect and fix Hyper-V PCI domain number
- collision
-Message-ID: <20190814043428.GC206171@google.com>
-References: <1565743084-2069-1-git-send-email-haiyangz@microsoft.com>
+        id S1726631AbfHNEfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 00:35:55 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 9889C68B02; Wed, 14 Aug 2019 06:35:51 +0200 (CEST)
+Date:   Wed, 14 Aug 2019 06:35:51 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Alan Kao <alankao@andestech.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 13/15] riscv: clear the instruction cache and all
+ registers when booting
+Message-ID: <20190814043551.GA22862@lst.de>
+References: <20190813154747.24256-1-hch@lst.de> <20190813154747.24256-14-hch@lst.de> <20190814010013.GA18655@andestech.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565743084-2069-1-git-send-email-haiyangz@microsoft.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190814010013.GA18655@andestech.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for splitting these; I think that makes more sense.
+On Wed, Aug 14, 2019 at 09:00:14AM +0800, Alan Kao wrote:
+> But it doesn't really mean that the running system has an FPU given CONFIG_FPU
+> enabled.  Normally the existence of an FPU is checked in riscv_fill_hwcap by
+> searching device tree, where the code looks like
+> 
+> 
+> bool has_fpu = false; // this one is global
+> ...
+> #ifdef CONFIG_FPU
+>         if (elf_hwcap & (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D))
+>                 has_fpu = true;
+> #endif
+> 
+> 
+> Or does CONFIG_FPU have a more intuitive meaning when CONFIG_M_MODE is enabled?
 
-On Wed, Aug 14, 2019 at 12:38:54AM +0000, Haiyang Zhang wrote:
-> Currently in Azure cloud, for passthrough devices including GPU, the host
-> sets the device instance ID's bytes 8 - 15 to a value derived from the host
-> HWID, which is the same on all devices in a VM. So, the device instance
-> ID's bytes 8 and 9 provided by the host are no longer unique. This can
-> cause device passthrough to VMs to fail because the bytes 8 and 9 are used
-> as PCI domain number. Collision of domain numbers will cause the second
-> device with the same domain number fail to load.
+No, it doesn't..
 
-I think this patch is fine.  I could be misunderstanding the commit
-log, but when you say "the ID bytes 8 and 9 are *no longer* unique",
-that suggests that they *used* to be unique but stopped being unique
-at some point, which of course raises the question of *when* they
-became non-unique.
+> 
+> > +	csrr	t0, CSR_MISA
+> > +	andi	t0, t0, (COMPAT_HWCAP_ISA_F | COMPAT_HWCAP_ISA_D)
+> > +	bnez	t0, .Lreset_regs_done
 
-The specific information about that point would be useful to have in
-the commit log, e.g., is this related to a specific version of Azure,
-a configuration change, etc?
-
-Does this problem affect GPUs more than other passthrough devices?  If
-all passthrough devices are affected, why mention GPUs in particular?
-I can't tell whether that information is relevant or superfluous.
-
-Bjorn
+... which is why we have these few lines of code that check the
+caps returns from the misa CSR, similar to the elf_caps check quoted
+above.
