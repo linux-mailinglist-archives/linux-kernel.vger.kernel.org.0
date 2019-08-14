@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 239BF8DE9D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:20:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5843E8DEA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:20:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729465AbfHNUUn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:20:43 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:38821 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729385AbfHNUUj (ORCPT
+        id S1729538AbfHNUUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:20:48 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:33886 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729404AbfHNUUl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:20:39 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r12so363924edo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:20:38 -0700 (PDT)
+        Wed, 14 Aug 2019 16:20:41 -0400
+Received: by mail-ed1-f66.google.com with SMTP id s49so385352edb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:20:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=dDjwUmcwSXAq578UY4c9Vj0FS6SCgLfjeiZG1PLwBhc=;
-        b=QQneGltVZyDVKndymgf/V07Lz/mVu4xKZlufq/IsuBlC5+1QN4bp7NWpobW8CC1rIF
-         qIF8ZHgfa3ZzNQCa9U+7EASFdi6fg9QrXsipXLij2jwCn91t6FCHDSnO4dCluu2ktfVm
-         26tp0nC+Bvb3QHNr2PBbwL8HmhMnTo4N7ChVI=
+        bh=U5KwhaOsa05mLs5dKsxyaJ8nPNTkq9L0E7PVwxBUg2k=;
+        b=dtTpZc1TP3phfJWfjZ0TTcGZDEkgZeTx7+tiSVp14czRexPyqDM1gnaVtyCL269PpM
+         uyr+QykzpH67/lUTpJRJ4qgJstssFYUgdSFMP71ckMZGGA6c+b2mIUyn+RNlKV5QMWnf
+         BWavURm9nkk5uzc5rKnkwSgXxYm3JJg1jMKeM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=dDjwUmcwSXAq578UY4c9Vj0FS6SCgLfjeiZG1PLwBhc=;
-        b=XpTWyUoqycsdM/AHaBZopF07WJscY9jdJMo2J0B8Wo8JJfa0WMt5C4CEx2e4UBJoPh
-         ygGRhpVk1eRgreT4hduirnPdxw9OrNr6U+4RS1bvAIew6QbLzEJDQNFDZyHVzSkx38W1
-         CoAH7cyqBhOgZPtgDbbe3pL0MJzkqu3iCyGfLgk28sju5M3DUHcosluuHtZkv0VzuC2f
-         X9qhHsIPfmquVDfMZI1PqVic6ET1HSalExACVCTVdAlZxCK4iRbkH3ueSka9Ib672fM6
-         jCkIwMvbcYAawlfNqqtkjnR/RC91sBflvGUw0LZuprCMOD/mejrAIEBOjl0NaTxpspo1
-         mD9Q==
-X-Gm-Message-State: APjAAAV4io5NlqcdnRoH9wTgkJPu5ABYX00dIvVDQg76I5FWqN1+8guO
-        v1wHv8ZK2zoQsd5jxLiF5/5tNJozO3neWA==
-X-Google-Smtp-Source: APXvYqzQoXvD/5/BVfPi68WzUkMpSm1CHWB0tkEH2JnEfPgw2NOD1Bv5GUgUamH3qvvNe7OEQP+Ihw==
-X-Received: by 2002:a17:906:81cb:: with SMTP id e11mr1305807ejx.37.1565814037763;
-        Wed, 14 Aug 2019 13:20:37 -0700 (PDT)
+        bh=U5KwhaOsa05mLs5dKsxyaJ8nPNTkq9L0E7PVwxBUg2k=;
+        b=hYA+jhMCu3PXKjjlBYBhUg5E5RgR4LT1UzY+3gFQyjfr/x/FS9c/ylAPkLalFAxwIH
+         NtgpzQ35+2OccQZv8thrKI58bP9yDm9KtB28RXiHpY65fPgLDQWuketR27nuWdx2M1Fl
+         CwbrAwVG7YoRm5h0sOpQZmerEW6yEdede7KCKom1ppdduOMvI+PuOzDcwtVwpH5Imp/W
+         Ds08wvD3QU0wd/iM/1Tl1g7CHUa6T4+AtEqnNciGyBNMyqAlNHQGXIws13krbcLO160p
+         gatD/MGo1l4JxcrOtUi5bMg3GS2JXhR67H30ehsObQzNNV3gWx9eG5rsMnW3UaFShBCz
+         Oc8A==
+X-Gm-Message-State: APjAAAWxM0p6mH0tOVnsnI5cx34GY4DacWBD/hHhOJOj+CqndVfD8XXQ
+        3ZFK+aVEQZvpu9iaJYyBxbua1gLiYYtRoA==
+X-Google-Smtp-Source: APXvYqwr2QYX0Cwtm9mM9vEmD8lUn0css8IRklo25E0smQh544dGM+PTj5A8hH3aTQAPYL0Qh4N4uw==
+X-Received: by 2002:a17:907:390:: with SMTP id ss16mr1324369ejb.46.1565814039028;
+        Wed, 14 Aug 2019 13:20:39 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id ns22sm84342ejb.9.2019.08.14.13.20.36
+        by smtp.gmail.com with ESMTPSA id ns22sm84342ejb.9.2019.08.14.13.20.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 13:20:37 -0700 (PDT)
+        Wed, 14 Aug 2019 13:20:38 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     linux-mm@kvack.org,
@@ -49,15 +49,18 @@ Cc:     linux-mm@kvack.org,
         Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
         Jason Gunthorpe <jgg@ziepe.ca>,
+        Chris Wilson <chris@chris-wilson.co.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
         David Rientjes <rientjes@google.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 3/5] mm, notifier: Catch sleeping/blocking for !blockable
-Date:   Wed, 14 Aug 2019 22:20:25 +0200
-Message-Id: <20190814202027.18735-4-daniel.vetter@ffwll.ch>
+Subject: [PATCH 4/5] mm, notifier: Add a lockdep map for invalidate_range_start
+Date:   Wed, 14 Aug 2019 22:20:26 +0200
+Message-Id: <20190814202027.18735-5-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
 References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
@@ -69,58 +72,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We need to make sure implementations don't cheat and don't have a
-possible schedule/blocking point deeply burried where review can't
-catch it.
+This is a similar idea to the fs_reclaim fake lockdep lock. It's
+fairly easy to provoke a specific notifier to be run on a specific
+range: Just prep it, and then munmap() it.
 
-I'm not sure whether this is the best way to make sure all the
-might_sleep() callsites trigger, and it's a bit ugly in the code flow.
-But it gets the job done.
+A bit harder, but still doable, is to provoke the mmu notifiers for
+all the various callchains that might lead to them. But both at the
+same time is really hard to reliable hit, especially when you want to
+exercise paths like direct reclaim or compaction, where it's not
+easy to control what exactly will be unmapped.
 
-Inspired by an i915 patch series which did exactly that, because the
-rules haven't been entirely clear to us.
+By introducing a lockdep map to tie them all together we allow lockdep
+to see a lot more dependencies, without having to actually hit them
+in a single challchain while testing.
 
-v2: Use the shiny new non_block_start/end annotations instead of
-abusing preempt_disable/enable.
+Aside: Since I typed this to test i915 mmu notifiers I've only rolled
+this out for the invaliate_range_start callback. If there's
+interest, we should probably roll this out to all of them. But my
+undestanding of core mm is seriously lacking, and I'm not clear on
+whether we need a lockdep map for each callback, or whether some can
+be shared.
+
+v2: Use lock_map_acquire/release() like fs_reclaim, to avoid confusion
+with this being a real mutex (Chris Wilson).
 
 v3: Rebase on top of Glisse's arg rework.
 
-v4: Rebase on top of more Glisse rework.
-
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
 Cc: David Rientjes <rientjes@google.com>
-Cc: "Christian König" <christian.koenig@amd.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
 Cc: "Jérôme Glisse" <jglisse@redhat.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: "Christian König" <christian.koenig@amd.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Cc: linux-mm@kvack.org
-Reviewed-by: Christian König <christian.koenig@amd.com>
 Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
- mm/mmu_notifier.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ include/linux/mmu_notifier.h | 6 ++++++
+ mm/mmu_notifier.c            | 7 +++++++
+ 2 files changed, 13 insertions(+)
 
+diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
+index b6c004bd9f6a..9dd38c32fc53 100644
+--- a/include/linux/mmu_notifier.h
++++ b/include/linux/mmu_notifier.h
+@@ -42,6 +42,10 @@ enum mmu_notifier_event {
+ 
+ #ifdef CONFIG_MMU_NOTIFIER
+ 
++#ifdef CONFIG_LOCKDEP
++extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
++#endif
++
+ /*
+  * The mmu notifier_mm structure is allocated and installed in
+  * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
+@@ -310,10 +314,12 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
+ static inline void
+ mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
+ {
++	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
+ 	if (mm_has_notifiers(range->mm)) {
+ 		range->flags |= MMU_NOTIFIER_RANGE_BLOCKABLE;
+ 		__mmu_notifier_invalidate_range_start(range);
+ 	}
++	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
+ }
+ 
+ static inline int
 diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index 16f1cbc775d0..43a76d030164 100644
+index 43a76d030164..331e43ce6f3c 100644
 --- a/mm/mmu_notifier.c
 +++ b/mm/mmu_notifier.c
-@@ -174,7 +174,13 @@ int __mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
- 	id = srcu_read_lock(&srcu);
- 	hlist_for_each_entry_rcu(mn, &range->mm->mmu_notifier_mm->list, hlist) {
- 		if (mn->ops->invalidate_range_start) {
--			int _ret = mn->ops->invalidate_range_start(mn, range);
-+			int _ret;
+@@ -21,6 +21,13 @@
+ /* global SRCU for all MMs */
+ DEFINE_STATIC_SRCU(srcu);
+ 
++#ifdef CONFIG_LOCKDEP
++struct lockdep_map __mmu_notifier_invalidate_range_start_map = {
++	.name = "mmu_notifier_invalidate_range_start"
++};
++EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start_map);
++#endif
 +
-+			if (!mmu_notifier_range_blockable(range))
-+				non_block_start();
-+			_ret = mn->ops->invalidate_range_start(mn, range);
-+			if (!mmu_notifier_range_blockable(range))
-+				non_block_end();
- 			if (_ret) {
- 				pr_info("%pS callback failed with %d in %sblockable context.\n",
- 					mn->ops->invalidate_range_start, _ret,
+ /*
+  * This function allows mmu_notifier::release callback to delay a call to
+  * a function that will free appropriate resources. The function must be
 -- 
 2.22.0
 
