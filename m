@@ -2,78 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B9138D380
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:50:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE0648D3C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727868AbfHNMuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:50:19 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:37952 "EHLO mx1.redhat.com"
+        id S1728356AbfHNMxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:53:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbfHNMuS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:50:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1728313AbfHNMxM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 08:53:12 -0400
+Received: from localhost.localdomain (unknown [171.76.115.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9C29830044EF;
-        Wed, 14 Aug 2019 12:50:18 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 2083060BE1;
-        Wed, 14 Aug 2019 12:50:13 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Wed, 14 Aug 2019 14:50:17 +0200 (CEST)
-Date:   Wed, 14 Aug 2019 14:50:12 +0200
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Christian Brauner <christian.brauner@ubuntu.com>
-Cc:     linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
-        alistair23@gmail.com, ebiederm@xmission.com, arnd@arndb.de,
-        dalias@libc.org, torvalds@linux-foundation.org,
-        adhemerval.zanella@linaro.org, fweimer@redhat.com,
-        palmer@sifive.com, macro@wdc.com, zongbox@gmail.com,
-        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, hpa@zytor.com
-Subject: Re: [PATCH v1 1/1] waitid: Add support for waiting for the current
- process group
-Message-ID: <20190814125012.GB11595@redhat.com>
-References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
- <20190814113822.9505-1-christian.brauner@ubuntu.com>
- <20190814113822.9505-2-christian.brauner@ubuntu.com>
- <20190814122909.GA11595@redhat.com>
- <20190814124551.hnt363g3blhuf2pv@wittgenstein>
+        by mail.kernel.org (Postfix) with ESMTPSA id D5E9520679;
+        Wed, 14 Aug 2019 12:53:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565787192;
+        bh=ozSvUfuy0tlEOLeLXY303hhvAHSOWvlhS6BaeKgVStU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eXEkDRz5zqT5G5aV+1O9GdR5OPrgNlzGc5ad9clKYpLXLI/8gHQcxfPhFehS2Fpjd
+         ddFFUuAtEjalEx2hyeB8zlioqAvmeeAqW/23RhuoiHJM64L0ByHiwU1jNlUMfZR8hd
+         xstVadxH8stsCxNY0EtdFwa0JPSv0kZDk7X95V10=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 22/22] arm64: dts: qcom: sm8150: Add APSS shared mailbox
+Date:   Wed, 14 Aug 2019 18:20:12 +0530
+Message-Id: <20190814125012.8700-23-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190814125012.8700-1-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814124551.hnt363g3blhuf2pv@wittgenstein>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 14 Aug 2019 12:50:18 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14, Christian Brauner wrote:
->
-> On Wed, Aug 14, 2019 at 02:29:10PM +0200, Oleg Nesterov wrote:
-> > On 08/14, christian.brauner@ubuntu.com wrote:
-> > >
-> > >  	case P_PGID:
-> > >  		type = PIDTYPE_PGID;
-> > > -		if (upid <= 0)
-> > > +		if (upid < 0)
-> > >  			return -EINVAL;
-> > > +
-> > > +		if (upid == 0)
-> > > +			pid = get_pid(task_pgrp(current));
-> >
-> > this needs rcu lock or tasklist_lock, this can race with another thread
-> > doing sys_setpgid/setsid (see change_pid(PIDTYPE_PGID)).
->
-> Oh, I naively assumed task_pgrp() would take an rcu lock...
+From: Sibi Sankar <sibis@codeaurora.org>
 
-but it would not help ;)
+Add APSS shared mailbox support to SM8150 SoC.
 
-> though I think we should be fine with just rcu_read_lock().
+Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/sm8150.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Yes,
-
-Oleg.
+diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+index 5df3f335272a..88cbab4a9297 100644
+--- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+@@ -5,6 +5,7 @@
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-sm8150.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
++#include <dt-bindings/clock/qcom,rpmh.h>
+ 
+ / {
+ 	interrupt-parent = <&intc>;
+@@ -338,6 +339,16 @@
+ 			#interrupt-cells = <2>;
+ 		};
+ 
++		aoss_qmp: qmp@c300000 {
++			compatible = "qcom,sm8150-aoss-qmp";
++			reg = <0x0c300000 0x100000>;
++			interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
++			mboxes = <&apss_shared 0>;
++
++			#clock-cells = <0>;
++			#power-domain-cells = <1>;
++		};
++
+ 		intc: interrupt-controller@17a00000 {
+ 			compatible = "arm,gic-v3";
+ 			interrupt-controller;
+-- 
+2.20.1
 
