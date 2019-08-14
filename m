@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3BA58DA55
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:17:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F0F188D9A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730892AbfHNRN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:13:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37644 "EHLO mail.kernel.org"
+        id S1729180AbfHNRKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32830 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730869AbfHNRNX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:13:23 -0400
+        id S1730129AbfHNRKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:14 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4150D20665;
-        Wed, 14 Aug 2019 17:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CDEDB21721;
+        Wed, 14 Aug 2019 17:10:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802802;
-        bh=ybXdM9q+D0assHnEXTbPJ7lFEhy1R43tnhHrQ5xnTmU=;
+        s=default; t=1565802613;
+        bh=z+l4k8YVxe4Yc6ZWRwN/1i/2eo+/MBIo06KInJLfnGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dm8TqVNjc9xMkcFw77UPzeUikXfjeoRZNA+9u0rKnU8zhieOPFyi8QDFOTQSROybs
-         n+IrlM1W93L9kfC5M0vqz0ESErrKH87SZ/56zdsfQGbN1nPs/oLif2oqk31UApBasc
-         j3TMjYEec8ZPW/RrIii4C2zvkPYbjVL+ZRYeM6rE=
+        b=Zv/vWS+DZFEKYODviMCXFeT+7t0GTbZsWCIltCeyL/ngirERFhUdlvfS5QCdLer1x
+         tevAq1AAeJSpysv7cyWOUK1V9RG20eYAQp4j7nToDnvigEUsHGiBajYBj3Av3tN3o0
+         pyH7ecL7e9QoRFbePgTu6Qpo9LMLL2bDGX5b0JpU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Denis Andzakovic <denis.andzakovic@pulsesecurity.co.nz>,
-        Eric Dumazet <edumazet@google.com>,
-        Ben Hutchings <ben@decadent.org.uk>,
-        Salvatore Bonaccorso <carnil@debian.org>
-Subject: [PATCH 4.14 14/69] tcp: Clear sk_send_head after purging the write queue
-Date:   Wed, 14 Aug 2019 19:01:12 +0200
-Message-Id: <20190814165746.523313498@linuxfoundation.org>
+        stable@vger.kernel.org, Wen Yang <wen.yang99@zte.com.cn>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 50/91] cpufreq/pasemi: fix use-after-free in pas_cpufreq_cpu_init()
+Date:   Wed, 14 Aug 2019 19:01:13 +0200
+Message-Id: <20190814165751.692297707@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,52 +45,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Hutchings <ben@decadent.org.uk>
+[ Upstream commit e0a12445d1cb186d875410d093a00d215bec6a89 ]
 
-Denis Andzakovic discovered a potential use-after-free in older kernel
-versions, using syzkaller.  tcp_write_queue_purge() frees all skbs in
-the TCP write queue and can leave sk->sk_send_head pointing to freed
-memory.  tcp_disconnect() clears that pointer after calling
-tcp_write_queue_purge(), but tcp_connect() does not.  It is
-(surprisingly) possible to add to the write queue between
-disconnection and reconnection, so this needs to be done in both
-places.
+The cpu variable is still being used in the of_get_property() call
+after the of_node_put() call, which may result in use-after-free.
 
-This bug was introduced by backports of commit 7f582b248d0a ("tcp:
-purge write queue in tcp_connect_init()") and does not exist upstream
-because of earlier changes in commit 75c119afe14f ("tcp: implement
-rb-tree based retransmit queue").  The latter is a major change that's
-not suitable for stable.
-
-Reported-by: Denis Andzakovic <denis.andzakovic@pulsesecurity.co.nz>
-Bisected-by: Salvatore Bonaccorso <carnil@debian.org>
-Fixes: 7f582b248d0a ("tcp: purge write queue in tcp_connect_init()")
-Cc: <stable@vger.kernel.org> # before 4.15
-Cc: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: a9acc26b75f6 ("cpufreq/pasemi: fix possible object reference leak")
+Signed-off-by: Wen Yang <wen.yang99@zte.com.cn>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/net/tcp.h |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/cpufreq/pasemi-cpufreq.c | 23 +++++++++--------------
+ 1 file changed, 9 insertions(+), 14 deletions(-)
 
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1613,6 +1613,8 @@ static inline void tcp_init_send_head(st
- 	sk->sk_send_head = NULL;
- }
+diff --git a/drivers/cpufreq/pasemi-cpufreq.c b/drivers/cpufreq/pasemi-cpufreq.c
+index c7710c149de85..a0620c9ec0649 100644
+--- a/drivers/cpufreq/pasemi-cpufreq.c
++++ b/drivers/cpufreq/pasemi-cpufreq.c
+@@ -145,10 +145,18 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	int err = -ENODEV;
  
-+static inline void tcp_init_send_head(struct sock *sk);
+ 	cpu = of_get_cpu_node(policy->cpu, NULL);
++	if (!cpu)
++		goto out;
+ 
++	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
+ 	of_node_put(cpu);
+-	if (!cpu)
++	if (!max_freqp) {
++		err = -EINVAL;
+ 		goto out;
++	}
 +
- /* write queue abstraction */
- static inline void tcp_write_queue_purge(struct sock *sk)
- {
-@@ -1621,6 +1623,7 @@ static inline void tcp_write_queue_purge
- 	tcp_chrono_stop(sk, TCP_CHRONO_BUSY);
- 	while ((skb = __skb_dequeue(&sk->sk_write_queue)) != NULL)
- 		sk_wmem_free_skb(sk, skb);
-+	tcp_init_send_head(sk);
- 	sk_mem_reclaim(sk);
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
- 	tcp_init_send_head(sk);
++	/* we need the freq in kHz */
++	max_freq = *max_freqp / 1000;
+ 
+ 	dn = of_find_compatible_node(NULL, NULL, "1682m-sdc");
+ 	if (!dn)
+@@ -185,16 +193,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	}
+ 
+ 	pr_debug("init cpufreq on CPU %d\n", policy->cpu);
+-
+-	max_freqp = of_get_property(cpu, "clock-frequency", NULL);
+-	if (!max_freqp) {
+-		err = -EINVAL;
+-		goto out_unmap_sdcpwr;
+-	}
+-
+-	/* we need the freq in kHz */
+-	max_freq = *max_freqp / 1000;
+-
+ 	pr_debug("max clock-frequency is at %u kHz\n", max_freq);
+ 	pr_debug("initializing frequency table\n");
+ 
+@@ -212,9 +210,6 @@ static int pas_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 
+ 	return cpufreq_generic_init(policy, pas_freqs, get_gizmo_latency());
+ 
+-out_unmap_sdcpwr:
+-	iounmap(sdcpwr_mapbase);
+-
+ out_unmap_sdcasr:
+ 	iounmap(sdcasr_mapbase);
+ out:
+-- 
+2.20.1
+
 
 
