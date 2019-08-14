@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8FB58D5FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:29:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8055D8D5F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:29:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbfHNO3i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 10:29:38 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39609 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbfHNO3e (ORCPT
+        id S1728287AbfHNO3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 10:29:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:41001 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728230AbfHNO3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:29:34 -0400
-Received: by mail-wr1-f67.google.com with SMTP id t16so21186078wra.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:29:32 -0700 (PDT)
+        Wed, 14 Aug 2019 10:29:35 -0400
+Received: by mail-wr1-f66.google.com with SMTP id j16so9038353wrr.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:29:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=yzfWUBTNkEnWlc/VJanAk2xvxB7vKc+KwpDyTNdWOJA=;
-        b=p5hiQFsis2UOLe0K/BxWbyG2jH2KpPMoLOyQ6Wnpl2Vf4HynbFCg5JOK+5/OGZOdO6
-         TD39yapvQPrIo5Lz59swex+tSvYHaP+IXOznPBSYGjgC63mJoqcgi4iH1UdkV7thNEZE
-         m3e0FrJJm7nBZncFEwy4Lg8aIBMBobRWYbpGR37WT+OA2o7el3TwYZDXa7Zd+1wdBtaA
-         KVPSw8PCICD5UKZt0KAVH8BiS5cpO0Bo/NJIfDrWou0PbQtp2utaTlithYQkRUgTB62N
-         WvGoQgaXXo1C8ShR26EPl1AoPgi6bMliW4KSWvti+mKnVBJc2+/kzU0keu+1D+eU1pCB
-         bTOA==
+        bh=pwx9hW1o2Gq2PergB5v8yAwMnz0OCKYudbljjiRvXYk=;
+        b=Eb7EDaqtXhqzBiYSbdt5nj7cUJOesBGZQXjQGx8P5z8JqtF3ycxq2N+m6+TbPXN7RY
+         Fng0SarDUOEMF1v7x00LxuTin02vm50+HH0qQ67TsSGiIxIG1Dk2AJIVWDz7aFG4XmgN
+         horDmB4Ho4CRvX6FQGvnLZ2D2jm0i+BNfOSGRs2M6UkLZUyaiPmzVQaNQ0ezskEWjNbE
+         rk0zBi5o3XmLPtWH6R06MFqjvCvlXV8yFY+g5HN7pGBi+dTSaCR+7qZDhoNpaRR6zEcA
+         vs+Ib0qH8ApzA+VamZxKkLT6qh0yr03mhaVTq8EKLaKTN0X9wz13zPbobRvSF0yvN0Kb
+         1rpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=yzfWUBTNkEnWlc/VJanAk2xvxB7vKc+KwpDyTNdWOJA=;
-        b=YqVNMTz8G0MyRDZlmrIwajtSeKzf5kD3GVzS4nsjHW5FLitsqKn4GbtCHxsdNSJOJs
-         vCxoLsoOCtkk6vPzQ9p+13HTMuHN3RpuWAcgqERkORTaOVjvAPgn0/T3/DOHkMOSxmbA
-         lznzaYIHKKytkAIe3cXmUM5M1P4DQIdFLUpcMPYsSHSwhOq5OY2F7Eh32jqsyrb85PKy
-         /snXHbDNU2RiuHQ6I8U0+omIiyaejku9i6yl9lZM/eFZQ5zIZ+CYyxHKGVhzkeg5RUoJ
-         TMaFqsfPGba3XSH+Whrnls3eL9OT/yGctbKCb8BWWNtdPfkzvzjNeA4h1PJKGyVuXeVB
-         E3AA==
-X-Gm-Message-State: APjAAAVTw5iZP0yRyQWUs2T4g3h8/1lCPIA4kjz6BGCVb2ZS0fMuNZNZ
-        iDV1Oz+N6Yw9CnyizTXBXll3Hw==
-X-Google-Smtp-Source: APXvYqya2qNpy+swsErluAaX47OA7iL89LWY5IPgQpfrGkRoHlZUInIbqmt2sfzJ+IqY9mAjDKk4uQ==
-X-Received: by 2002:adf:e941:: with SMTP id m1mr54057504wrn.279.1565792972051;
-        Wed, 14 Aug 2019 07:29:32 -0700 (PDT)
+        bh=pwx9hW1o2Gq2PergB5v8yAwMnz0OCKYudbljjiRvXYk=;
+        b=dvyIZFSSZnUlDz3J94Ip/wFAIFV1tX1ZaRTXeygmkyZxVtZ1iM8RcQYAy9a8+O8TB5
+         PqtigeX1lafFH+yAt3JvjGMB8P82FPdsHwDAh0wa4HuLGPXKqjTJtEoA0513IvECHCYX
+         Xa589/Q/LeH8jiz4nE9pMdbWrRLPpq0EziCpqOuz1T95DFAfB1/fUlZ3wFnQ+ZW7HJtP
+         qU0ihajM+83BpT9FYBiXDrbyA84f1DBasnXIb2YLaafTPoJBnVlfRqUrn8ethdyDzWo6
+         u/JrNBtC9Z2hCUvnRF45U5ec0N3f4OZR+18qiaLARNX0d4ITu38ccabPW5ota4t6uk/x
+         21ig==
+X-Gm-Message-State: APjAAAViQKhMBNc/ms+mMVIKgluhzDZnHco4n1Rs+z+Sqxqadg2x7Z76
+        6+Jy66CoCsWmpOMj6cTA3/UUUA==
+X-Google-Smtp-Source: APXvYqwFlZqG2iV08FiE4OCohyI3fIgKZcqD8f1isbMX17aYIR7vsElvrXVqtTUDDib5F7ms/LyrVg==
+X-Received: by 2002:a5d:4b83:: with SMTP id b3mr48215449wrt.104.1565792973471;
+        Wed, 14 Aug 2019 07:29:33 -0700 (PDT)
 Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id o7sm4202908wmc.36.2019.08.14.07.29.31
+        by smtp.gmail.com with ESMTPSA id o7sm4202908wmc.36.2019.08.14.07.29.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 07:29:31 -0700 (PDT)
+        Wed, 14 Aug 2019 07:29:32 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com
 Cc:     linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org,
         Neil Armstrong <narmstrong@baylibre.com>
-Subject: [PATCH 09/14] arm64: dts: meson-axg: fix MHU compatible
-Date:   Wed, 14 Aug 2019 16:29:13 +0200
-Message-Id: <20190814142918.11636-10-narmstrong@baylibre.com>
+Subject: [PATCH 10/14] arm64: dts: meson-g12a: fix reset controller compatible
+Date:   Wed, 14 Aug 2019 16:29:14 +0200
+Message-Id: <20190814142918.11636-11-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814142918.11636-1-narmstrong@baylibre.com>
 References: <20190814142918.11636-1-narmstrong@baylibre.com>
@@ -65,26 +65,28 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 This fixes the following DT schemas check errors:
-meson-axg-s400.dt.yaml: mailbox@ff63c404: compatible:0: 'amlogic,meson-gx-mhu' is not one of ['amlogic,meson-gxbb-mhu']
+meson-g12a-u200.dt.yaml: reset-controller@1004: compatible:0: 'amlogic,meson-g12a-reset' is not one of ['amlogic,meson8b-reset', 'amlogic,meson-gxbb-reset', 'amlogic,meson-axg-reset']
+meson-g12a-sei510.dt.yaml: reset-controller@1004: compatible:0: 'amlogic,meson-g12a-reset' is not one of ['amlogic,meson8b-reset', 'amlogic,meson-gxbb-reset', 'amlogic,meson-axg-reset']
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 4a134d29491d..ed59a9e8ebb8 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1116,7 +1116,7 @@
- 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+index 465106d37289..74c587411306 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12a.dtsi
+@@ -2215,8 +2215,7 @@
+ 			ranges = <0x0 0x0 0x0 0xffd00000 0x0 0x100000>;
  
- 		mailbox: mailbox@ff63c404 {
--			compatible = "amlogic,meson-gx-mhu", "amlogic,meson-gxbb-mhu";
-+			compatible = "amlogic,meson-gxbb-mhu";
- 			reg = <0 0xff63c404 0 0x4c>;
- 			interrupts = <GIC_SPI 208 IRQ_TYPE_EDGE_RISING>,
- 				     <GIC_SPI 209 IRQ_TYPE_EDGE_RISING>,
+ 			reset: reset-controller@1004 {
+-				compatible = "amlogic,meson-g12a-reset",
+-					     "amlogic,meson-axg-reset";
++				compatible = "amlogic,meson-axg-reset";
+ 				reg = <0x0 0x1004 0x0 0x9c>;
+ 				#reset-cells = <1>;
+ 			};
 -- 
 2.22.0
 
