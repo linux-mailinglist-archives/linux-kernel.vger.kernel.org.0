@@ -2,36 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC6F8D954
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:07:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1037F8D95E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbfHNRHi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:07:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57150 "EHLO mail.kernel.org"
+        id S1728813AbfHNRHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:07:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729921AbfHNRHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:07:35 -0400
+        id S1728899AbfHNRHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:07:45 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 671EC2084D;
-        Wed, 14 Aug 2019 17:07:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8EA7E214DA;
+        Wed, 14 Aug 2019 17:07:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802454;
-        bh=8QzhLk11rKRS5pXk/KgrvZ/Uoumn2RD4aDet7Rx990E=;
+        s=default; t=1565802465;
+        bh=rhZtCfUqK4UYel8UwCC363nM4+CVBChyfSHBllp7SRU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I1fVFpBGsB3eOgucjCI5EWG1nqS88N1+JqYzi4wSRTjjMrVCXtj9DYhZizthlht2z
-         EoWC1W1VEvYj3zEPR/dJmlFkfLyp63K4nBrHgD5QmRlP1GL1apW18tb4vASjBJ4wAe
-         9o4yvepdykv5I76b9NFOnzUfJYnHokfoBSwkjA8U=
+        b=Raoft7+q/ZHdybDzn1Gb1qKF4KMZw5S1io4D+OmwMpbQ4PTQ3Rbeq1e5GZGWcVhaB
+         NivJr2kNNwyzscKTVQ1k0RZaMnjWtzoLRlp0WC30uiwteeayA4QmA2L9aLmjO/TgVL
+         wH4yrfMrr2yfwCH2H3n0+2lSJlouskNFzZN5kPc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Steve French <stfrench@microsoft.com>,
-        Pavel Shilovsky <pshilov@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>
-Subject: [PATCH 5.2 133/144] smb3: send CAP_DFS capability during session setup
-Date:   Wed, 14 Aug 2019 19:01:29 +0200
-Message-Id: <20190814165805.506257564@linuxfoundation.org>
+        stable@vger.kernel.org, Olga Kornievskaia <aglo@umich.edu>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Subject: [PATCH 5.2 136/144] NFSv4: Fix an Oops in nfs4_do_setattr
+Date:   Wed, 14 Aug 2019 19:01:32 +0200
+Message-Id: <20190814165805.628930185@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -44,40 +43,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve French <stfrench@microsoft.com>
+From: Trond Myklebust <trond.myklebust@hammerspace.com>
 
-commit 8d33096a460d5b9bd13300f01615df5bb454db10 upstream.
+commit 09a54f0ebfe263bc27c90bbd80187b9a93283887 upstream.
 
-We had a report of a server which did not do a DFS referral
-because the session setup Capabilities field was set to 0
-(unlike negotiate protocol where we set CAP_DFS).  Better to
-send it session setup in the capabilities as well (this also
-more closely matches Windows client behavior).
+If the user specifies an open mode of 3, then we don't have a NFSv4 state
+attached to the context, and so we Oops when we try to dereference it.
 
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Pavel Shilovsky <pshilov@microsoft.com>
-CC: Stable <stable@vger.kernel.org>
+Reported-by: Olga Kornievskaia <aglo@umich.edu>
+Fixes: 29b59f9416937 ("NFSv4: change nfs4_do_setattr to take...")
+Signed-off-by: Trond Myklebust <trond.myklebust@hammerspace.com>
+Cc: stable@vger.kernel.org # v4.10: 991eedb1371dc: NFSv4: Only pass the...
+Cc: stable@vger.kernel.org # v4.10+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- fs/cifs/smb2pdu.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ fs/nfs/nfs4proc.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -1173,7 +1173,12 @@ SMB2_sess_alloc_buffer(struct SMB2_sess_
- 	else
- 		req->SecurityMode = 0;
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -3175,7 +3175,7 @@ static int _nfs4_do_setattr(struct inode
  
-+#ifdef CONFIG_CIFS_DFS_UPCALL
-+	req->Capabilities = cpu_to_le32(SMB2_GLOBAL_CAP_DFS);
-+#else
- 	req->Capabilities = 0;
-+#endif /* DFS_UPCALL */
-+
- 	req->Channel = 0; /* MBZ */
- 
- 	sess_data->iov[0].iov_base = (char *)req;
+ 	if (nfs4_copy_delegation_stateid(inode, FMODE_WRITE, &arg->stateid, &delegation_cred)) {
+ 		/* Use that stateid */
+-	} else if (ctx != NULL) {
++	} else if (ctx != NULL && ctx->state) {
+ 		struct nfs_lock_context *l_ctx;
+ 		if (!nfs4_valid_open_stateid(ctx->state))
+ 			return -EBADF;
 
 
