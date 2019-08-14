@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F34398D9AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F126E8D9D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728689AbfHNRK4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33794 "EHLO mail.kernel.org"
+        id S1730763AbfHNRMf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:12:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730507AbfHNRKr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:10:47 -0400
+        id S1730745AbfHNRMc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:12:32 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07FF2214DA;
-        Wed, 14 Aug 2019 17:10:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 00D422133F;
+        Wed, 14 Aug 2019 17:12:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802646;
-        bh=zguiC8HP/MFooApydEOtzHjcprr/7Fmez4iab1u41pM=;
+        s=default; t=1565802751;
+        bh=zCzGe+IkEgLhN0/wnekb8wcp+LhDVFGV4vS0wRfFjuw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UJeqtW1kyawAwUizZsX4nV68roHre98XkeUon5WD+mFUgWhbHkgzns3x0LNDrHt+q
-         XYf2lS5XIMx4dQib0ecBZL7JbqUpoSesoEEC5RMaU9vTYuxLUKhsU04i79UYl/gZBF
-         Q3DL0ViXmaSCg26RIPTrxAMr068EzB+gCXSi00SM=
+        b=2ZoS9gy58UXUs7NqYdpXcX6UMRbnnMlSTf/edT24S5DqkjWaT9LqygLEfSXg0HwCB
+         RnEpx5gE2O5yQ5XB/aPo1QopCetcALgpGc9U+3R/caRTWJnjM6Az0XHhoTkYAClvvQ
+         NHTB7HCq0cCwQKKJO0M/gncKQJY6Cv8hLWrJD57Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Garcia Liebana <nevola@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 37/91] netfilter: nft_hash: fix symhash with modulus one
+        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.14 02/69] crypto: ccp - Fix oops by properly managing allocated structures
 Date:   Wed, 14 Aug 2019 19:01:00 +0200
-Message-Id: <20190814165751.247450065@linuxfoundation.org>
+Message-Id: <20190814165745.308040528@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+References: <20190814165744.822314328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,39 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 28b1d6ef53e3303b90ca8924bb78f31fa527cafb ]
+From: Gary R Hook <gary.hook@amd.com>
 
-The rule below doesn't work as the kernel raises -ERANGE.
+commit 25e44338321af545ab34243a6081c3f0fc6107d0 upstream.
 
-nft add rule netdev nftlb lb01 ip daddr set \
-	symhash mod 1 map { 0 : 192.168.0.10 } fwd to "eth0"
+A plaintext or ciphertext length of 0 is allowed in AES, in which case
+no encryption occurs. Ensure that we don't clean up data structures
+that were never allocated.
 
-This patch allows to use the symhash modulus with one
-element, in the same way that the other types of hashes and
-algorithms that uses the modulus parameter.
+Fixes: 36cf515b9bbe2 ("crypto: ccp - Enable support for AES GCM on v5 CCPs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Gary R Hook <gary.hook@amd.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Laura Garcia Liebana <nevola@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_hash.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/crypto/ccp/ccp-ops.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/net/netfilter/nft_hash.c b/net/netfilter/nft_hash.c
-index c2d237144f747..b8f23f75aea6c 100644
---- a/net/netfilter/nft_hash.c
-+++ b/net/netfilter/nft_hash.c
-@@ -196,7 +196,7 @@ static int nft_symhash_init(const struct nft_ctx *ctx,
- 	priv->dreg = nft_parse_register(tb[NFTA_HASH_DREG]);
+--- a/drivers/crypto/ccp/ccp-ops.c
++++ b/drivers/crypto/ccp/ccp-ops.c
+@@ -841,11 +841,11 @@ e_tag:
+ 	ccp_dm_free(&final_wa);
  
- 	priv->modulus = ntohl(nla_get_be32(tb[NFTA_HASH_MODULUS]));
--	if (priv->modulus <= 1)
-+	if (priv->modulus < 1)
- 		return -ERANGE;
+ e_dst:
+-	if (aes->src_len && !in_place)
++	if (ilen > 0 && !in_place)
+ 		ccp_free_data(&dst, cmd_q);
  
- 	if (priv->offset + priv->modulus - 1 < priv->offset)
--- 
-2.20.1
-
+ e_src:
+-	if (aes->src_len)
++	if (ilen > 0)
+ 		ccp_free_data(&src, cmd_q);
+ 
+ e_aad:
 
 
