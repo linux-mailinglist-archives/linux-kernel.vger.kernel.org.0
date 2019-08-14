@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D24088DD71
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0EF98DD73
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbfHNSrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:47:20 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33659 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729271AbfHNSrT (ORCPT
+        id S1729382AbfHNSrY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:47:24 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45156 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729341AbfHNSrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:47:19 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n190so34332pgn.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:47:18 -0700 (PDT)
+        Wed, 14 Aug 2019 14:47:20 -0400
+Received: by mail-pf1-f194.google.com with SMTP id w26so8830149pfq.12
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:47:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YedoGxgwewtM0MaOYhEMlQwwrUr+pL9zd95traMVohI=;
-        b=xE552AKzmeFQqQGiyhzB7OArKFHfpCKYogsjZANNkX8SJ6t05n6fO+5rrc++cLBf54
-         SNAdNPI3cZ6nHZq0q0eD0B17oAMAI/MnvMNJPnw4OIUirFXo8qC/op51FkyD3JeayMJB
-         ZiLcxV7kh21bUa5VBuKpdKSwTWVUkmEo0k2TDU54r/dwXH94zr6kP3PoS0eHNWdIjxta
-         UI3C8Q5Ystyqc+H580oXHqN3QZIMI396s3dXv0zjGiQJB8m8s4un/j9dA45C5yQ4xqfE
-         htgoDF9k5p03QW2rn1jbmGO1WQhPOFpqxNfyKvfBGeId74U4C15CLxPLedmdcaXms9dN
-         Pilg==
+        bh=Fr+/Pi2S9B6wdoWpzoVvTrtF22yjLCzedfYpDICy2D4=;
+        b=Hzt/VeOQAtc+O3ahVY5yzSd/gQ2fP+233P1dAlG8ZFYWfpXRv2yfBBpmlp4s74nw+p
+         bIdHX1J6cXzJMQwUL4Qmle5pzI+YfInoL1NGdUXnfT2nECm8GMUSJyR+8CwOxZJD/Om2
+         LY8Zr3ttUQCTgeUJJQWIo3hkiAm0ymc4LKv7eMviU4lAhBZSqppMPoCftbyGG79EggsL
+         /GN87Qxsr31JNXngR026FyQM6YYj8e+yQ20e2Q0oAKa+UTJhu0YAoaaAGfkTeBKC67lP
+         nTboFyQegkbmQFjAx0R2XXZqb+liiIrJE1UWQ7HxcaOo1nfgl60mZmNNEsv33aJZWbWZ
+         NmBQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YedoGxgwewtM0MaOYhEMlQwwrUr+pL9zd95traMVohI=;
-        b=cSy63H6XpEttjbYiHoGFZUb+n56NB4JOdfflHUZMzCTtsLdBvo6tSQV+YqMXc0XLI+
-         /uE1o+2UjBGF4xJmRYdxNuvp0O02JIU/7Ixo1FE0Z9W6rgF00Vo2J6H+mZVU6L1ezSsV
-         1Mt4VW+qACn3AeUc3c28r/eh7eosBufs+V+XiW18TYqtJnT+iDD6kOuKulncsh8O5xI4
-         QgNGMz7SvD7DPXov0GqkLoU4q6Qfgf/pIvq21A7KXhmN2vY6Ddtt0lr+2lES/GQFEQzi
-         aeTcqeiFTnfpuKQW1NF4W5I2aYYL03T+8yvnfG1i53N7Uw9UmXyUHZD4P4Spa2C87TyA
-         VENw==
-X-Gm-Message-State: APjAAAU9vY51CCAz4S+xdFFAj0Lu+JkAJDzMPrXWF3U9u6YTMxV+KFQ7
-        PwWx9dzt3ZBtS66eiIhiYr7mp9F5A9U=
-X-Google-Smtp-Source: APXvYqzwNPPrTdleEuLKHgqBNUXfY5/qSsznFarfg0QC08thyBHNTJSm/nMXPNVi5BJeU+5fQyKOWA==
-X-Received: by 2002:aa7:8746:: with SMTP id g6mr1313342pfo.191.1565808437798;
-        Wed, 14 Aug 2019 11:47:17 -0700 (PDT)
+        bh=Fr+/Pi2S9B6wdoWpzoVvTrtF22yjLCzedfYpDICy2D4=;
+        b=AeB6V//+37CRE14TgfihX4K7eMdRGH+MQIK08g0ePAsk9Ng0FADRZZVq+XJKPNtbhq
+         d7Zn1Q4v5XaTyGRNOK7JYDs4y7bvPGhwksRYC9E8iVqQG2a49UMcQtISas7HtWMo1yuZ
+         FtQWyoTAt4vfSDfBLpKsVJIHqtl2zhuUytNSEy8XL00gnXyUqB6qkooQ/vxrZhPk/SuN
+         t5KL2ey1RRQHiIZJ4lWR3T9JH2DcOlsQtjUzepwWQ9uvLxWxVLkrIUiJD+EdZZCRNTBu
+         nYph+JCBv14RR2TGBWoOy8vnOFkj9ARKgkmA//Lajnquvfr+pEtPDi2s4L8xE9z7Mw7m
+         WJAQ==
+X-Gm-Message-State: APjAAAVXFWSrzhJNRjITugO9I6TrUXBmmdOt7JKqBMXIC6AROQmLgRvA
+        942127xPYVulDVRsh1qC+7AFy8NS8zI=
+X-Google-Smtp-Source: APXvYqz25qEBowXuYDmJdMucOPok8ZyYp867yZ9aS4rBNEzKeqLTvI4N3IJIi7WYdVx+Z132OlVR4Q==
+X-Received: by 2002:a17:90a:db06:: with SMTP id g6mr1123686pjv.60.1565808439301;
+        Wed, 14 Aug 2019 11:47:19 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id y16sm610855pfc.36.2019.08.14.11.47.16
+        by smtp.gmail.com with ESMTPSA id y16sm610855pfc.36.2019.08.14.11.47.17
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 11:47:17 -0700 (PDT)
+        Wed, 14 Aug 2019 11:47:18 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [RESEND][PATCH v3 07/26] drm: kirin: Rename ade_plane to kirin_plane
-Date:   Wed, 14 Aug 2019 18:46:43 +0000
-Message-Id: <20190814184702.54275-8-john.stultz@linaro.org>
+Subject: [RESEND][PATCH v3 08/26] drm: kirin: Rename ade_crtc to kirin_crtc
+Date:   Wed, 14 Aug 2019 18:46:44 +0000
+Message-Id: <20190814184702.54275-9-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190814184702.54275-1-john.stultz@linaro.org>
 References: <20190814184702.54275-1-john.stultz@linaro.org>
@@ -69,9 +69,9 @@ From: Xu YiPing <xuyiping@hisilicon.com>
 
 As part of refactoring the kirin driver to better support
 different hardware revisions, this patch renames the
-struct ade_plane to kirin_plane.
+struct ade_crtc to kirin_crtc.
 
-The struct kirin_plane will later used by both kirin620 and
+The struct kirin_crtc will later used by both kirin620 and
 future kirin960 driver, and will be moved to a common
 kirin_drm_drv.h in a future patch
 
@@ -86,172 +86,226 @@ Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
 [jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 57 ++++++++++---------
- 1 file changed, 29 insertions(+), 28 deletions(-)
+ .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 74 +++++++++----------
+ 1 file changed, 37 insertions(+), 37 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index 73dff21bed6a..c09040876e68 100644
+index c09040876e68..ee3dc3d0f738 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -41,8 +41,9 @@
- #define to_ade_crtc(crtc) \
- 	container_of(crtc, struct ade_crtc, base)
+@@ -38,8 +38,8 @@
+ #define OUT_OVLY	ADE_OVLY2 /* output overlay compositor */
+ #define ADE_DEBUG	1
  
--#define to_ade_plane(plane) \
--	container_of(plane, struct ade_plane, base)
-+#define to_kirin_plane(plane) \
-+	container_of(plane, struct kirin_plane, base)
-+
+-#define to_ade_crtc(crtc) \
+-	container_of(crtc, struct ade_crtc, base)
++#define to_kirin_crtc(crtc) \
++	container_of(crtc, struct kirin_crtc, base)
  
- struct ade_hw_ctx {
- 	void __iomem  *base;
-@@ -62,15 +63,15 @@ struct ade_crtc {
- 	bool enable;
+ #define to_kirin_plane(plane) \
+ 	container_of(plane, struct kirin_plane, base)
+@@ -56,9 +56,9 @@ struct ade_hw_ctx {
+ 	int irq;
  };
  
--struct ade_plane {
-+struct kirin_plane {
- 	struct drm_plane base;
--	void *ctx;
--	u8 ch; /* channel */
+-struct ade_crtc {
++struct kirin_crtc {
+ 	struct drm_crtc base;
+-	struct ade_hw_ctx *ctx;
 +	void *hw_ctx;
-+	u32 ch;
+ 	struct work_struct display_reset_wq;
+ 	bool enable;
+ };
+@@ -70,7 +70,7 @@ struct kirin_plane {
  };
  
  struct ade_data {
- 	struct ade_crtc acrtc;
--	struct ade_plane aplane[ADE_CH_NUM];
-+	struct kirin_plane planes[ADE_CH_NUM];
+-	struct ade_crtc acrtc;
++	struct kirin_crtc crtc;
+ 	struct kirin_plane planes[ADE_CH_NUM];
  	struct ade_hw_ctx ctx;
  };
- 
-@@ -795,16 +796,16 @@ static void ade_compositor_routing_disable(void __iomem *base, u32 ch)
- /*
-  * Typicaly, a channel looks like: DMA-->clip-->scale-->ctrans-->compositor
-  */
--static void ade_update_channel(struct ade_plane *aplane,
-+static void ade_update_channel(struct kirin_plane *kplane,
- 			       struct drm_framebuffer *fb, int crtc_x,
- 			       int crtc_y, unsigned int crtc_w,
- 			       unsigned int crtc_h, u32 src_x,
- 			       u32 src_y, u32 src_w, u32 src_h)
+@@ -184,8 +184,8 @@ static bool ade_crtc_mode_fixup(struct drm_crtc *crtc,
+ 				const struct drm_display_mode *mode,
+ 				struct drm_display_mode *adjusted_mode)
  {
--	struct ade_hw_ctx *ctx = aplane->ctx;
-+	struct ade_hw_ctx *ctx = kplane->hw_ctx;
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 
+ 	adjusted_mode->clock =
+ 		clk_round_rate(ctx->ade_pix_clk, mode->clock * 1000) / 1000;
+@@ -317,8 +317,8 @@ static void ade_set_medianoc_qos(struct ade_hw_ctx *ctx)
+ 
+ static int ade_crtc_enable_vblank(struct drm_crtc *crtc)
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
  	void __iomem *base = ctx->base;
- 	u32 fmt = ade_get_format(fb->format->format);
--	u32 ch = aplane->ch;
-+	u32 ch = kplane->ch;
- 	u32 in_w;
- 	u32 in_h;
  
-@@ -828,11 +829,11 @@ static void ade_update_channel(struct ade_plane *aplane,
- 	ade_compositor_routing_set(base, ch, crtc_x, crtc_y, in_w, in_h, fmt);
- }
+ 	if (!ctx->power_on)
+@@ -332,8 +332,8 @@ static int ade_crtc_enable_vblank(struct drm_crtc *crtc)
  
--static void ade_disable_channel(struct ade_plane *aplane)
-+static void ade_disable_channel(struct kirin_plane *kplane)
+ static void ade_crtc_disable_vblank(struct drm_crtc *crtc)
  {
--	struct ade_hw_ctx *ctx = aplane->ctx;
-+	struct ade_hw_ctx *ctx = kplane->hw_ctx;
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
  	void __iomem *base = ctx->base;
--	u32 ch = aplane->ch;
-+	u32 ch = kplane->ch;
  
- 	DRM_DEBUG_DRIVER("disable channel%d\n", ch + 1);
+ 	if (!ctx->power_on) {
+@@ -347,7 +347,7 @@ static void ade_crtc_disable_vblank(struct drm_crtc *crtc)
  
-@@ -894,10 +895,10 @@ static int ade_plane_atomic_check(struct drm_plane *plane,
- static void ade_plane_atomic_update(struct drm_plane *plane,
- 				    struct drm_plane_state *old_state)
+ static void drm_underflow_wq(struct work_struct *work)
  {
--	struct drm_plane_state	*state	= plane->state;
--	struct ade_plane *aplane = to_ade_plane(plane);
-+	struct drm_plane_state *state = plane->state;
-+	struct kirin_plane *kplane = to_kirin_plane(plane);
+-	struct ade_crtc *acrtc = container_of(work, struct ade_crtc,
++	struct kirin_crtc *acrtc = container_of(work, struct kirin_crtc,
+ 					      display_reset_wq);
+ 	struct drm_device *drm_dev = (&acrtc->base)->dev;
+ 	struct drm_atomic_state *state;
+@@ -358,9 +358,9 @@ static void drm_underflow_wq(struct work_struct *work)
  
--	ade_update_channel(aplane, state->fb, state->crtc_x, state->crtc_y,
-+	ade_update_channel(kplane, state->fb, state->crtc_x, state->crtc_y,
- 			   state->crtc_w, state->crtc_h,
- 			   state->src_x >> 16, state->src_y >> 16,
- 			   state->src_w >> 16, state->src_h >> 16);
-@@ -906,9 +907,9 @@ static void ade_plane_atomic_update(struct drm_plane *plane,
- static void ade_plane_atomic_disable(struct drm_plane *plane,
- 				     struct drm_plane_state *old_state)
+ static irqreturn_t ade_irq_handler(int irq, void *data)
  {
--	struct ade_plane *aplane = to_ade_plane(plane);
-+	struct kirin_plane *kplane = to_kirin_plane(plane);
+-	struct ade_crtc *acrtc = data;
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
+-	struct drm_crtc *crtc = &acrtc->base;
++	struct kirin_crtc *kcrtc = data;
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
++	struct drm_crtc *crtc = &kcrtc->base;
+ 	void __iomem *base = ctx->base;
+ 	u32 status;
  
--	ade_disable_channel(aplane);
-+	ade_disable_channel(kplane);
- }
- 
- static const struct drm_plane_helper_funcs ade_plane_helper_funcs = {
-@@ -926,7 +927,7 @@ static struct drm_plane_funcs ade_plane_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
- };
- 
--static int ade_plane_init(struct drm_device *dev, struct ade_plane *aplane,
-+static int ade_plane_init(struct drm_device *dev, struct kirin_plane *kplane,
- 			  enum drm_plane_type type)
- {
- 	const u32 *fmts;
-@@ -934,18 +935,18 @@ static int ade_plane_init(struct drm_device *dev, struct ade_plane *aplane,
- 	int ret = 0;
- 
- 	/* get  properties */
--	fmts_cnt = ade_get_channel_formats(aplane->ch, &fmts);
-+	fmts_cnt = ade_get_channel_formats(kplane->ch, &fmts);
- 	if (ret)
- 		return ret;
- 
--	ret = drm_universal_plane_init(dev, &aplane->base, 1, &ade_plane_funcs,
-+	ret = drm_universal_plane_init(dev, &kplane->base, 1, &ade_plane_funcs,
- 				       fmts, fmts_cnt, NULL, type, NULL);
- 	if (ret) {
--		DRM_ERROR("fail to init plane, ch=%d\n", aplane->ch);
-+		DRM_ERROR("fail to init plane, ch=%d\n", kplane->ch);
- 		return ret;
+@@ -377,7 +377,7 @@ static irqreturn_t ade_irq_handler(int irq, void *data)
+ 		ade_update_bits(base + LDI_INT_CLR, UNDERFLOW_INT_EN_OFST,
+ 				MASK(1), 1);
+ 		DRM_ERROR("LDI underflow!");
+-		schedule_work(&acrtc->display_reset_wq);
++		schedule_work(&kcrtc->display_reset_wq);
  	}
  
--	drm_plane_helper_add(&aplane->base, &ade_plane_helper_funcs);
-+	drm_plane_helper_add(&kplane->base, &ade_plane_helper_funcs);
+ 	return IRQ_HANDLED;
+@@ -499,11 +499,11 @@ static void ade_dump_regs(void __iomem *base) { }
+ static void ade_crtc_atomic_enable(struct drm_crtc *crtc,
+ 				   struct drm_crtc_state *old_state)
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 	int ret;
  
- 	return 0;
+-	if (acrtc->enable)
++	if (kcrtc->enable)
+ 		return;
+ 
+ 	if (!ctx->power_on) {
+@@ -516,27 +516,27 @@ static void ade_crtc_atomic_enable(struct drm_crtc *crtc,
+ 	ade_display_enable(ctx);
+ 	ade_dump_regs(ctx->base);
+ 	drm_crtc_vblank_on(crtc);
+-	acrtc->enable = true;
++	kcrtc->enable = true;
  }
-@@ -1007,7 +1008,7 @@ static int ade_drm_init(struct platform_device *pdev)
+ 
+ static void ade_crtc_atomic_disable(struct drm_crtc *crtc,
+ 				    struct drm_crtc_state *old_state)
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 
+-	if (!acrtc->enable)
++	if (!kcrtc->enable)
+ 		return;
+ 
+ 	drm_crtc_vblank_off(crtc);
+ 	ade_power_down(ctx);
+-	acrtc->enable = false;
++	kcrtc->enable = false;
+ }
+ 
+ static void ade_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 	struct drm_display_mode *mode = &crtc->state->mode;
+ 	struct drm_display_mode *adj_mode = &crtc->state->adjusted_mode;
+ 
+@@ -548,8 +548,8 @@ static void ade_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ static void ade_crtc_atomic_begin(struct drm_crtc *crtc,
+ 				  struct drm_crtc_state *old_state)
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 	struct drm_display_mode *mode = &crtc->state->mode;
+ 	struct drm_display_mode *adj_mode = &crtc->state->adjusted_mode;
+ 
+@@ -562,13 +562,13 @@ static void ade_crtc_atomic_flush(struct drm_crtc *crtc,
+ 				  struct drm_crtc_state *old_state)
+ 
+ {
+-	struct ade_crtc *acrtc = to_ade_crtc(crtc);
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
++	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
++	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
+ 	struct drm_pending_vblank_event *event = crtc->state->event;
+ 	void __iomem *base = ctx->base;
+ 
+ 	/* only crtc is enabled regs take effect */
+-	if (acrtc->enable) {
++	if (kcrtc->enable) {
+ 		ade_dump_regs(base);
+ 		/* flush ade registers */
+ 		writel(ADE_ENABLE, base + ADE_EN);
+@@ -1007,7 +1007,7 @@ static int ade_drm_init(struct platform_device *pdev)
+ 	struct drm_device *dev = platform_get_drvdata(pdev);
  	struct ade_data *ade;
  	struct ade_hw_ctx *ctx;
- 	struct ade_crtc *acrtc;
--	struct ade_plane *aplane;
-+	struct kirin_plane *kplane;
+-	struct ade_crtc *acrtc;
++	struct kirin_crtc *kcrtc;
+ 	struct kirin_plane *kplane;
  	enum drm_plane_type type;
  	int ret;
- 	int i;
-@@ -1033,19 +1034,19 @@ static int ade_drm_init(struct platform_device *pdev)
- 	 * need to do.
- 	 */
- 	for (i = 0; i < ADE_CH_NUM; i++) {
--		aplane = &ade->aplane[i];
--		aplane->ch = i;
--		aplane->ctx = ctx;
-+		kplane = &ade->planes[i];
-+		kplane->ch = i;
-+		kplane->hw_ctx = ctx;
- 		type = i == PRIMARY_CH ? DRM_PLANE_TYPE_PRIMARY :
- 			DRM_PLANE_TYPE_OVERLAY;
+@@ -1021,8 +1021,8 @@ static int ade_drm_init(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, ade);
  
--		ret = ade_plane_init(dev, aplane, type);
-+		ret = ade_plane_init(dev, kplane, type);
- 		if (ret)
- 			return ret;
+ 	ctx = &ade->ctx;
+-	acrtc = &ade->acrtc;
+-	acrtc->ctx = ctx;
++	kcrtc = &ade->crtc;
++	kcrtc->hw_ctx = ctx;
+ 
+ 	ret = ade_dts_parse(pdev, ctx);
+ 	if (ret)
+@@ -1046,15 +1046,15 @@ static int ade_drm_init(struct platform_device *pdev)
  	}
  
  	/* crtc init */
--	ret = ade_crtc_init(dev, &acrtc->base, &ade->aplane[PRIMARY_CH].base);
-+	ret = ade_crtc_init(dev, &acrtc->base, &ade->planes[PRIMARY_CH].base);
+-	ret = ade_crtc_init(dev, &acrtc->base, &ade->planes[PRIMARY_CH].base);
++	ret = ade_crtc_init(dev, &kcrtc->base, &ade->planes[PRIMARY_CH].base);
  	if (ret)
  		return ret;
  
+ 	/* vblank irq init */
+ 	ret = devm_request_irq(dev->dev, ctx->irq, ade_irq_handler,
+-			       IRQF_SHARED, dev->driver->name, acrtc);
++			       IRQF_SHARED, dev->driver->name, kcrtc);
+ 
+-	INIT_WORK(&acrtc->display_reset_wq, drm_underflow_wq);
++	INIT_WORK(&kcrtc->display_reset_wq, drm_underflow_wq);
+ 
+ 	if (ret)
+ 		return ret;
 -- 
 2.17.1
 
