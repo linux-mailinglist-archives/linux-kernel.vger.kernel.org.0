@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E748D8D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75FBA8D8E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728825AbfHNRDD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:03:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51510 "EHLO mail.kernel.org"
+        id S1728953AbfHNRDc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:03:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728793AbfHNRC7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:02:59 -0400
+        id S1728935AbfHNRD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:03:28 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2CEEE208C2;
-        Wed, 14 Aug 2019 17:02:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 068A6216F4;
+        Wed, 14 Aug 2019 17:03:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802178;
-        bh=4WrNfSb7Mq6GDbDvVxcMPzFiAYnHmtNRWvUWsMX+hRs=;
+        s=default; t=1565802207;
+        bh=3e8u2wVo3Mi0CvtIBcwuCZF7hG1t1mMuqe5WMIxKoYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t3SISx1WOBJNb/P17m9VUHbFHTbKWhTAz9+dT+GdSQvha2DkjGLNACydaYJea01zB
-         S358w4qy3wg5BP2GMIYCKxNx3/nlSQErnKK9p+LAtq5TqkPVcO+iE9YJ+h79OFYEOn
-         ZWNsSyQvpyV5JwEgYDd6QLFUEc42xuAYf0wtw0tA=
+        b=L+GPEKfeRNLwacOGHu7ANtU6UnJb9J4UJRab/CbvloyhHvf49RMdYV4YTdxRY4OHr
+         N36dECOWx/km0Be0aSu5IWKvEJ4AXW9ZetOSKiKH8GQI8XJ6lEWl/gCc/yVg10lj11
+         FK9OnpOlLYgpPqf/FhhTsayDNa0pBwpXjPMTKoBU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+199ea16c7f26418b4365@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 5.2 024/144] Input: usbtouchscreen - initialize PM mutex before using it
-Date:   Wed, 14 Aug 2019 18:59:40 +0200
-Message-Id: <20190814165800.859770402@linuxfoundation.org>
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 5.2 028/144] x86/mm: Sync also unmappings in vmalloc_sync_all()
+Date:   Wed, 14 Aug 2019 18:59:44 +0200
+Message-Id: <20190814165801.017320362@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -45,33 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Joerg Roedel <jroedel@suse.de>
 
-commit b55d996f057bf2e7ba9422a80b5e17e99860cb0b upstream.
+commit 8e998fc24de47c55b47a887f6c95ab91acd4a720 upstream.
 
-Mutexes shall be initialized before they are used.
+With huge-page ioremap areas the unmappings also need to be synced between
+all page-tables. Otherwise it can cause data corruption when a region is
+unmapped and later re-used.
 
-Fixes: 12e510dbc57b2 ("Input: usbtouchscreen - fix deadlock in autosuspend")
-Reported-by: syzbot+199ea16c7f26418b4365@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Make the vmalloc_sync_one() function ready to sync unmappings and make sure
+vmalloc_sync_all() iterates over all page-tables even when an unmapped PMD
+is found.
+
+Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/20190719184652.11391-3-joro@8bytes.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/usbtouchscreen.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/x86/mm/fault.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/input/touchscreen/usbtouchscreen.c
-+++ b/drivers/input/touchscreen/usbtouchscreen.c
-@@ -1659,6 +1659,8 @@ static int usbtouch_probe(struct usb_int
- 	if (!usbtouch || !input_dev)
- 		goto out_free;
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -194,11 +194,12 @@ static inline pmd_t *vmalloc_sync_one(pg
  
-+	mutex_init(&usbtouch->pm_mutex);
+ 	pmd = pmd_offset(pud, address);
+ 	pmd_k = pmd_offset(pud_k, address);
+-	if (!pmd_present(*pmd_k))
+-		return NULL;
+ 
+-	if (!pmd_present(*pmd))
++	if (pmd_present(*pmd) != pmd_present(*pmd_k))
+ 		set_pmd(pmd, *pmd_k);
 +
- 	type = &usbtouch_dev_info[id->driver_info];
- 	usbtouch->type = type;
- 	if (!type->process_pkt)
++	if (!pmd_present(*pmd_k))
++		return NULL;
+ 	else
+ 		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
+ 
+@@ -220,17 +221,13 @@ void vmalloc_sync_all(void)
+ 		spin_lock(&pgd_lock);
+ 		list_for_each_entry(page, &pgd_list, lru) {
+ 			spinlock_t *pgt_lock;
+-			pmd_t *ret;
+ 
+ 			/* the pgt_lock only for Xen */
+ 			pgt_lock = &pgd_page_get_mm(page)->page_table_lock;
+ 
+ 			spin_lock(pgt_lock);
+-			ret = vmalloc_sync_one(page_address(page), address);
++			vmalloc_sync_one(page_address(page), address);
+ 			spin_unlock(pgt_lock);
+-
+-			if (!ret)
+-				break;
+ 		}
+ 		spin_unlock(&pgd_lock);
+ 	}
 
 
