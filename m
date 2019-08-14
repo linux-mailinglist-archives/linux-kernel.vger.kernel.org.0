@@ -2,214 +2,306 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F89B8DC76
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A1318DC71
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:55:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729095AbfHNR4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:56:17 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:43434 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729083AbfHNR4O (ORCPT
+        id S1728917AbfHNRzu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:55:50 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:41414 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726951AbfHNRzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:56:14 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHrsli098539;
-        Wed, 14 Aug 2019 17:55:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=StjhRVJT5STPBomYiyWxppKH50oyW+XPLSWOY/dHgAU=;
- b=qZU7rubJNquYxFICZT7Dte85s1QWM2rXTiUNxVub/7BvS49t+FtiaPpCEJzV2P4Bauhn
- FJSAi7cfi2lS1gyDHYARDXh5zqtX5PUEdD5J73+IY3fezYStAla/KeFpNLq0KDKZV5ba
- +AsA0GVoAQOMDZybPI5LLK0MEdK8IzgWfHWEwDxgkVY0yQDcoO9y6YoOC2i2mbtrFC6h
- XlaL4QV4ZgpRI3DU/a1ysRcs4emV4UcusAYIrNm8y9r01tYE8yGCZ/wZ/ukM7SydCJPu
- Wg/X3cGpasJfFFCErgD8VMegQRqXEaq3Pjnv2ZpSc6CDIyfTkgf1tpNAGMWWD+h/3ky8 0Q== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2u9pjqp84r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 17:55:45 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EHqwDn114053;
-        Wed, 14 Aug 2019 17:55:44 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3030.oracle.com with ESMTP id 2ucmwhprep-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 17:55:44 +0000
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7EHthGj025390;
-        Wed, 14 Aug 2019 17:55:43 GMT
-Received: from ca-common-hq.us.oracle.com (/10.211.9.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Aug 2019 10:55:42 -0700
-From:   Divya Indi <divya.indi@oracle.com>
-To:     Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc:     Divya Indi <divya.indi@oracle.com>, Joe Jin <joe.jin@oracle.com>,
-        Srinivas Eeda <srinivas.eeda@oracle.com>,
-        Aruna Ramakrishna <aruna.ramakrishna@oracle.com>
-Subject: [PATCH 5/5] tracing: New functions for kernel access to Ftrace instances
-Date:   Wed, 14 Aug 2019 10:55:27 -0700
-Message-Id: <1565805327-579-6-git-send-email-divya.indi@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
-References: <1565805327-579-1-git-send-email-divya.indi@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908140160
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908140161
+        Wed, 14 Aug 2019 13:55:49 -0400
+Received: by mail-pg1-f195.google.com with SMTP id x15so43115780pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:55:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=nuWXJOjzsNye9KJeHtjb1ZHem0YxEHLqHYROw3yaGkM=;
+        b=FWtfGsl8YpzNq+pRkq3j6nvuUDVhEojuobquaOFtUmVZCwnmbULipGIG6ZthEsG5ni
+         /WX+Zec35V+LVdzsN2DoVVWTs0IYL+PtU+b4AZhaCsxMY8rG8GOHLquTxCQl3YUdvZbp
+         poraHbx/JEYK4whkoF7jEzNgzvHayD+eUsRY8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nuWXJOjzsNye9KJeHtjb1ZHem0YxEHLqHYROw3yaGkM=;
+        b=DwgvrgxDzGdHW/ddWr8H6zIxLv/KUYsUX1y1D+SyKp3lnwZUXSvbEMSCl8EArKU0Pr
+         WhwEalTFQ3cFwMuS+k+lNoIX6LnV4CCHn3bTqieWi3lY2ieCT/eLHq4ZxVebDTvsv4IS
+         a6z19Rro7XSV0qrchv5u/wlrQaH+cGa5RhMDAiJxhUR/laUB/sjgE6fZ4xkzah1TNL36
+         vN5p9qOUlckS0sN/xeQhfa258t1+WQzqG97aQbXKCfRMafau8FOUvCDFNpQ5rhR2/ATw
+         SHtEY6bLkfzoQssm1vdyOJN0+wx4YVszKnEwX5O9U7o7EZ8kbeMGccEEV9zaZGwWSrU+
+         FF3g==
+X-Gm-Message-State: APjAAAW6m4sLattgi3VehvesD/JV6WkQNJpFXHOR3gYJpBgX/PURUQou
+        1ckuWt4PiC7Ca3j1dCXKSNvyWQ==
+X-Google-Smtp-Source: APXvYqx+wpl58ev29PGHiTIRjqEDvrJYAL/9jn6fW5Jt2p+WPvr2Vdhq/YeMuAsMrVIhv4Y7ecWrcQ==
+X-Received: by 2002:a17:90a:ba8e:: with SMTP id t14mr924167pjr.116.1565805348398;
+        Wed, 14 Aug 2019 10:55:48 -0700 (PDT)
+Received: from localhost ([2620:15c:6:12:9c46:e0da:efbf:69cc])
+        by smtp.gmail.com with ESMTPSA id v8sm318034pgs.82.2019.08.14.10.55.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 10:55:47 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 13:55:46 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
+ enable tick on all online CPUs
+Message-ID: <20190814175546.GB68498@google.com>
+References: <20190802151435.GA1081@linux.ibm.com>
+ <20190802151501.13069-14-paulmck@linux.ibm.com>
+ <20190812210232.GA3648@lenoir>
+ <20190812232316.GT28441@linux.ibm.com>
+ <20190813123016.GA11455@lenoir>
+ <20190813144809.GB28441@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190813144809.GB28441@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding 2 new functions -
-1) trace_array_lookup : Look up and return a trace array, given its
-name.
-2) trace_array_set_clr_event : Enable/disable event recording to the
-given trace array.
+On Tue, Aug 13, 2019 at 07:48:09AM -0700, Paul E. McKenney wrote:
+> On Tue, Aug 13, 2019 at 02:30:19PM +0200, Frederic Weisbecker wrote:
+> > On Mon, Aug 12, 2019 at 04:23:16PM -0700, Paul E. McKenney wrote:
+> > > On Mon, Aug 12, 2019 at 11:02:33PM +0200, Frederic Weisbecker wrote:
+> > > > On Fri, Aug 02, 2019 at 08:15:01AM -0700, Paul E. McKenney wrote:
+> > > > Looks like it's not the right fix but, should you ever need to set an
+> > > > all-CPUs (system wide) tick dependency in the future, you can use tick_set_dep().
+> > > 
+> > > Indeed, I have dropped this patch, but I now do something similar in
+> > > RCU's CPU-hotplug notifiers.  Which does have an effect, especially on
+> > > the system that isn't subject to the insane-latency cpu_relax().
+> > > 
+> > > Plus I am having to put a similar workaround into RCU's quiescent-state
+> > > forcing logic.
+> > > 
+> > > But how should this really be done?
+> > > 
+> > > Isn't there some sort of monitoring of nohz_full CPUs for accounting
+> > > purposes?  If so, would it make sense for this monitoring to check for
+> > > long-duration kernel execution and enable the tick in this case?  The
+> > > RCU dyntick machinery can be used to remotely detect the long-duration
+> > > kernel execution using something like the following:
+> > > 
+> > > 	int nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
+> > > 
+> > > 	...
+> > > 
+> > > 	if (rcu_dynticks_in_eqs_cpu(cpu, nohz_in_kernel_snap)
+> > > 		nohz_in_kernel_snap = rcu_dynticks_snap_cpu(cpu);
+> > > 	else
+> > > 		/* Turn on the tick! */
+> > > 
+> > > I would supply rcu_dynticks_snap_cpu() and rcu_dynticks_in_eqs_cpu(),
+> > > which would be simple wrappers around RCU's private rcu_dynticks_snap()
+> > > and rcu_dynticks_in_eqs() functions.
+> > > 
+> > > Would this make sense as a general solution, or am I missing a corner
+> > > case or three?
+> > 
+> > Oh I see. Until now we considered than running into the kernel (between user/guest/idle)
+> > is supposed to be short but there can be specific places where it doesn't apply.
+> > 
+> > I'm wondering if, more than just providing wrappers, this shouldn't be entirely
+> > driven by RCU using the tick_set_dep_cpu()/tick_clear_dep_cpu() at appropriate timings.
+> > 
+> > I don't want to sound like I'm trying to put all the work on you :p  It's just that
+> > the tick shouldn't know much about RCU, it's rather RCU that is a client for the tick and
+> > is probably better suited to determine when a CPU becomes annoying with its extended grace
+> > period.
+> > 
+> > Arming a CPU timer could also be an alternative to tick_set_dep_cpu() for that.
+> > 
+> > What do you think?
+> 
+> Left to itself, RCU would take action only when a given nohz_full
+> in-kernel CPU was delaying a grace period, which is what the (lightly
+> tested) patch below is supposed to help with.  If that is all that is
+> needed, well and good!
+> 
+> But should we need long-running in-kernel nohz_full CPUs to turn on
+> their ticks when they are not blocking an RCU grace period, for example,
+> when RCU is idle, more will be needed.  To that point, isn't there some
+> sort of monitoring that checks up on nohz_full CPUs ever second or so?
 
-NOTE: trace_array_lookup returns a trace array and also increments the
-reference counter associated with the returned trace array. Make sure to
-call trace_array_put() once the use is done so that the instance can be
-removed at a later time.
+Wouldn't such monitoring need to be more often than a second, given that
+rcu_urgent_qs and rcu_need_heavy_qs are configured typically to be sooner
+(200-300 jiffies on my system).
 
-Example use:
+> If so, perhaps that monitoring could periodically invoke an RCU function
+> that I provide for deciding when to turn the tick on.  We would also need
+> to work out how to turn the tick off in a timely fashion once the CPU got
+> out of kernel mode, perhaps in rcu_user_enter() or rcu_nmi_exit_common().
+> 
+> If this would be called only every second or so, the separate grace-period
+> checking is still needed for its shorter timespan, though.
+> 
+> Thoughts?
 
-tr = trace_array_lookup("foo-bar");
-if (!tr)
-	tr = trace_array_create("foo-bar");
-// Log to tr
-// Enable/disable events to tr
-trace_array_set_clr_event(tr, _THIS_IP,"system","event",1);
+Do you want me to test the below patch to see if it fixes the issue with my
+other test case (where I had a nohz full CPU holding up a grace period).
 
-// Done using tr
-trace_array_put(tr);
-..
+2 comments below:
 
-Also, use trace_array_set_clr_event to enable/disable events to a trace array.
-So now we no longer need to have ftrace_set_clr_event as an exported
-API.
+> ------------------------------------------------------------------------
+> 
+> commit 1cb89508804f6f2fdb79a1be032b1932d52318c4
+> Author: Paul E. McKenney <paulmck@linux.ibm.com>
+> Date:   Mon Aug 12 16:14:00 2019 -0700
+> 
+>     rcu: Force tick on for nohz_full CPUs not reaching quiescent states
+>     
+>     CPUs running for long time periods in the kernel in nohz_full mode
+>     might leave the scheduling-clock interrupt disabled for then full
+>     duration of their in-kernel execution.  This can (among other things)
+>     delay grace periods.  This commit therefore forces the tick back on
+>     for any nohz_full CPU that is failing to pass through a quiescent state
+>     upon return from interrupt, which the resched_cpu() will induce.
+>     
+>     Reported-by: Joel Fernandes <joel@joelfernandes.org>
+>     Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> 
+> diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> index 8c494a692728..8b8f5bffdc5a 100644
+> --- a/kernel/rcu/tree.c
+> +++ b/kernel/rcu/tree.c
+> @@ -651,6 +651,12 @@ static __always_inline void rcu_nmi_exit_common(bool irq)
+>  	 */
+>  	if (rdp->dynticks_nmi_nesting != 1) {
+>  		trace_rcu_dyntick(TPS("--="), rdp->dynticks_nmi_nesting, rdp->dynticks_nmi_nesting - 2, rdp->dynticks);
+> +		if (tick_nohz_full_cpu(rdp->cpu) &&
+> +		    rdp->dynticks_nmi_nesting == 2 &&
+> +		    rdp->rcu_urgent_qs && !rdp->rcu_forced_tick) {
+> +			rdp->rcu_forced_tick = true;
+> +			tick_dep_set_cpu(rdp->cpu, TICK_DEP_MASK_RCU);
+> +		}
+>  		WRITE_ONCE(rdp->dynticks_nmi_nesting, /* No store tearing. */
+>  			   rdp->dynticks_nmi_nesting - 2);
+>  		return;
+> @@ -886,6 +892,16 @@ void rcu_irq_enter_irqson(void)
+>  	local_irq_restore(flags);
+>  }
+>  
+> +/*
+> + * If the scheduler-clock interrupt was enabled on a nohz_full CPU
+> + * in order to get to a quiescent state, disable it.
+> + */
+> +void rcu_disable_tick_upon_qs(struct rcu_data *rdp)
+> +{
+> +	if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_forced_tick)
+> +		tick_dep_clear_cpu(rdp->cpu, TICK_DEP_MASK_RCU);
+> +}
+> +
+>  /**
+>   * rcu_is_watching - see if RCU thinks that the current CPU is not idle
+>   *
+> @@ -1980,6 +1996,7 @@ rcu_report_qs_rdp(int cpu, struct rcu_data *rdp)
+>  		if (!offloaded)
+>  			needwake = rcu_accelerate_cbs(rnp, rdp);
+>  
+> +		rcu_disable_tick_upon_qs(rdp);
+>  		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
+>  		/* ^^^ Released rnp->lock */
+>  		if (needwake)
+> @@ -2269,6 +2286,7 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
+>  	int cpu;
+>  	unsigned long flags;
+>  	unsigned long mask;
+> +	struct rcu_data *rdp;
+>  	struct rcu_node *rnp;
+>  
+>  	rcu_for_each_leaf_node(rnp) {
+> @@ -2293,8 +2311,11 @@ static void force_qs_rnp(int (*f)(struct rcu_data *rdp))
+>  		for_each_leaf_node_possible_cpu(rnp, cpu) {
+>  			unsigned long bit = leaf_node_cpu_bit(rnp, cpu);
+>  			if ((rnp->qsmask & bit) != 0) {
+> -				if (f(per_cpu_ptr(&rcu_data, cpu)))
+> +				rdp = per_cpu_ptr(&rcu_data, cpu);
+> +				if (f(rdp)) {
+>  					mask |= bit;
+> +					rcu_disable_tick_upon_qs(rdp);
+> +				}
 
-Signed-off-by: Divya Indi <divya.indi@oracle.com>
----
- include/linux/trace.h        |  2 ++
- include/linux/trace_events.h |  3 ++-
- kernel/trace/trace.c         | 28 ++++++++++++++++++++++++++++
- kernel/trace/trace_events.c  | 23 ++++++++++++++++++++++-
- 4 files changed, 54 insertions(+), 2 deletions(-)
+I am guessing this was the earlier thing you corrected, cool!!
 
-diff --git a/include/linux/trace.h b/include/linux/trace.h
-index 2c782d5..05164bb 100644
---- a/include/linux/trace.h
-+++ b/include/linux/trace.h
-@@ -32,6 +32,8 @@ int trace_array_printk(struct trace_array *tr, unsigned long ip,
- struct trace_array *trace_array_create(const char *name);
- int trace_array_destroy(struct trace_array *tr);
- void trace_array_put(struct trace_array *tr);
-+struct trace_array *trace_array_lookup(const char *name);
-+
- #endif	/* CONFIG_TRACING */
- 
- #endif	/* _LINUX_TRACE_H */
-diff --git a/include/linux/trace_events.h b/include/linux/trace_events.h
-index 8a62731..05a7514 100644
---- a/include/linux/trace_events.h
-+++ b/include/linux/trace_events.h
-@@ -540,7 +540,8 @@ extern int trace_define_field(struct trace_event_call *call, const char *type,
- #define is_signed_type(type)	(((type)(-1)) < (type)1)
- 
- int trace_set_clr_event(const char *system, const char *event, int set);
--
-+int trace_array_set_clr_event(struct trace_array *tr, const char *system,
-+		const char *event, int set);
- /*
-  * The double __builtin_constant_p is because gcc will give us an error
-  * if we try to allocate the static variable to fmt if it is not a
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 7b6a37a..e394d55 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -8514,6 +8514,34 @@ static int instance_rmdir(const char *name)
- 	return ret;
- }
- 
-+/**
-+ * trace_array_lookup - Lookup the trace array, given its name.
-+ * @name: The name of the trace array to be looked up.
-+ *
-+ * Lookup and return the trace array associated with @name.
-+ *
-+ * NOTE: The reference counter associated with the returned trace array is
-+ * incremented to ensure it is not freed when in use. Make sure to call
-+ * "trace_array_put" for this trace array when its use is done.
-+ */
-+struct trace_array *trace_array_lookup(const char *name)
-+{
-+	struct trace_array *tr;
-+
-+	mutex_lock(&trace_types_lock);
-+
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		if (tr->name && strcmp(tr->name, name) == 0) {
-+			tr->ref++;
-+			mutex_unlock(&trace_types_lock);
-+			return tr;
-+		}
-+	}
-+	mutex_unlock(&trace_types_lock);
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(trace_array_lookup);
-+
- static __init void create_trace_instances(struct dentry *d_tracer)
- {
- 	trace_instance_dir = tracefs_create_instance_dir("instances", d_tracer,
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 2621995..96dd997 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -834,7 +834,6 @@ static int ftrace_set_clr_event(struct trace_array *tr, char *buf, int set)
- 
- 	return ret;
- }
--EXPORT_SYMBOL_GPL(ftrace_set_clr_event);
- 
- /**
-  * trace_set_clr_event - enable or disable an event
-@@ -859,6 +858,28 @@ int trace_set_clr_event(const char *system, const char *event, int set)
- }
- EXPORT_SYMBOL_GPL(trace_set_clr_event);
- 
-+/**
-+ * trace_array_set_clr_event - enable or disable an event for a trace array
-+ * @system: system name to match (NULL for any system)
-+ * @event: event name to match (NULL for all events, within system)
-+ * @set: 1 to enable, 0 to disable
-+ *
-+ * This is a way for other parts of the kernel to enable or disable
-+ * event recording to instances.
-+ *
-+ * Returns 0 on success, -EINVAL if the parameters do not match any
-+ * registered events.
-+ */
-+int trace_array_set_clr_event(struct trace_array *tr, const char *system,
-+		const char *event, int set)
-+{
-+	if (!tr)
-+		return -ENOENT;
-+
-+	return __ftrace_set_clr_event(tr, NULL, system, event, set);
-+}
-+EXPORT_SYMBOL_GPL(trace_array_set_clr_event);
-+
- /* 128 should be much more than enough */
- #define EVENT_BUF_SIZE		127
- 
--- 
-1.8.3.1
+>  			}
+>  		}
+>  		if (mask != 0) {
+> @@ -2322,7 +2343,7 @@ void rcu_force_quiescent_state(void)
+>  	rnp = __this_cpu_read(rcu_data.mynode);
+>  	for (; rnp != NULL; rnp = rnp->parent) {
+>  		ret = (READ_ONCE(rcu_state.gp_flags) & RCU_GP_FLAG_FQS) ||
+> -		      !raw_spin_trylock(&rnp->fqslock);
+> +		       !raw_spin_trylock(&rnp->fqslock);
+>  		if (rnp_old != NULL)
+>  			raw_spin_unlock(&rnp_old->fqslock);
+>  		if (ret)
+> @@ -2855,7 +2876,7 @@ static void rcu_barrier_callback(struct rcu_head *rhp)
+>  {
+>  	if (atomic_dec_and_test(&rcu_state.barrier_cpu_count)) {
+>  		rcu_barrier_trace(TPS("LastCB"), -1,
+> -				   rcu_state.barrier_sequence);
+> +				  rcu_state.barrier_sequence);
+>  		complete(&rcu_state.barrier_completion);
+>  	} else {
+>  		rcu_barrier_trace(TPS("CB"), -1, rcu_state.barrier_sequence);
+> @@ -2879,7 +2900,7 @@ static void rcu_barrier_func(void *unused)
+>  	} else {
+>  		debug_rcu_head_unqueue(&rdp->barrier_head);
+>  		rcu_barrier_trace(TPS("IRQNQ"), -1,
+> -				   rcu_state.barrier_sequence);
+> +				  rcu_state.barrier_sequence);
+>  	}
+>  	rcu_nocb_unlock(rdp);
+>  }
+> @@ -2906,7 +2927,7 @@ void rcu_barrier(void)
+>  	/* Did someone else do our work for us? */
+>  	if (rcu_seq_done(&rcu_state.barrier_sequence, s)) {
+>  		rcu_barrier_trace(TPS("EarlyExit"), -1,
+> -				   rcu_state.barrier_sequence);
+> +				  rcu_state.barrier_sequence);
+>  		smp_mb(); /* caller's subsequent code after above check. */
+>  		mutex_unlock(&rcu_state.barrier_mutex);
+>  		return;
+> @@ -2938,11 +2959,11 @@ void rcu_barrier(void)
+>  			continue;
+>  		if (rcu_segcblist_n_cbs(&rdp->cblist)) {
+>  			rcu_barrier_trace(TPS("OnlineQ"), cpu,
+> -					   rcu_state.barrier_sequence);
+> +					  rcu_state.barrier_sequence);
+>  			smp_call_function_single(cpu, rcu_barrier_func, NULL, 1);
+>  		} else {
+>  			rcu_barrier_trace(TPS("OnlineNQ"), cpu,
+> -					   rcu_state.barrier_sequence);
+> +					  rcu_state.barrier_sequence);
+>  		}
+>  	}
+>  	put_online_cpus();
+> @@ -3168,6 +3189,7 @@ void rcu_cpu_starting(unsigned int cpu)
+>  	rdp->rcu_onl_gp_seq = READ_ONCE(rcu_state.gp_seq);
+>  	rdp->rcu_onl_gp_flags = READ_ONCE(rcu_state.gp_flags);
+>  	if (rnp->qsmask & mask) { /* RCU waiting on incoming CPU? */
+> +		rcu_disable_tick_upon_qs(rdp);
+>  		/* Report QS -after- changing ->qsmaskinitnext! */
+>  		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
+
+Just curious about the existing code. If a CPU is just starting up (after
+bringing it online), how can RCU be waiting on it? I thought RCU would not be
+watching offline CPUs.
+
+thanks,
+
+ - Joel
+[snip]
 
