@@ -2,227 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ED8B8C9B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 084F58C9C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:59:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727317AbfHNCwq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:52:46 -0400
-Received: from mail105.syd.optusnet.com.au ([211.29.132.249]:56391 "EHLO
-        mail105.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726750AbfHNCwq (ORCPT
+        id S1727325AbfHNC7a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:59:30 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:45124 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726692AbfHNC7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:52:46 -0400
-Received: from dread.disaster.area (pa49-181-167-148.pa.nsw.optusnet.com.au [49.181.167.148])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 4FE0C361163;
-        Wed, 14 Aug 2019 12:52:37 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hxjNq-0007K4-DZ; Wed, 14 Aug 2019 12:51:30 +1000
-Date:   Wed, 14 Aug 2019 12:51:30 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-btrfs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] block: annotate refault stalls from IO submission
-Message-ID: <20190814025130.GI7777@dread.disaster.area>
-References: <20190808190300.GA9067@cmpxchg.org>
- <20190809221248.GK7689@dread.disaster.area>
- <20190813174625.GA21982@cmpxchg.org>
+        Tue, 13 Aug 2019 22:59:30 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7E2q1c7062908;
+        Tue, 13 Aug 2019 22:53:52 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uc9bk9705-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 22:53:52 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7E2rD60073181;
+        Tue, 13 Aug 2019 22:53:52 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uc9bk96ym-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 13 Aug 2019 22:53:52 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7E2ovSg017784;
+        Wed, 14 Aug 2019 02:53:51 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma02dal.us.ibm.com with ESMTP id 2u9nj64jde-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 14 Aug 2019 02:53:51 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7E2roxg19005708
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Aug 2019 02:53:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6AF97B2067;
+        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 34502B2064;
+        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.180.63])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Aug 2019 02:53:50 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id F198C16C1317; Tue, 13 Aug 2019 19:53:49 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 19:53:49 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     Joel Fernandes <joel@joelfernandes.org>,
+        Byungchul Park <max.byungchul.park@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rao Shoaib <rao.shoaib@oracle.com>, kernel-team@android.com,
+        kernel-team <kernel-team@lge.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu <rcu@vger.kernel.org>, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [PATCH RFC v1 1/2] rcu/tree: Add basic support for kfree_rcu
+ batching
+Message-ID: <20190814025349.GM28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <CANrsvRPU_u6oKpjZ1368Evto+1hGboNYeOuMdbdzaOfXhSO=5g@mail.gmail.com>
+ <20190808180916.GP28441@linux.ibm.com>
+ <20190811083626.GA9486@X58A-UD3R>
+ <20190811084950.GB9486@X58A-UD3R>
+ <20190811234939.GC28441@linux.ibm.com>
+ <20190812101052.GA10478@X58A-UD3R>
+ <20190812131234.GC27552@google.com>
+ <20190813052954.GA18373@X58A-UD3R>
+ <20190813154145.GE28441@linux.ibm.com>
+ <20190814001103.GA31884@X58A-UD3R>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813174625.GA21982@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=gu9DDhuZhshYSb5Zs/lkOA==:117 a=gu9DDhuZhshYSb5Zs/lkOA==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=7-415B0cAAAA:8 a=bDTW_sOx19nDKLnYJhUA:9 a=cnofGfEq4Fq2u8Yj:21
-        a=FLub2pyhoGWWgdtb:21 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+In-Reply-To: <20190814001103.GA31884@X58A-UD3R>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908140025
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 01:46:25PM -0400, Johannes Weiner wrote:
-> On Sat, Aug 10, 2019 at 08:12:48AM +1000, Dave Chinner wrote:
-> > On Thu, Aug 08, 2019 at 03:03:00PM -0400, Johannes Weiner wrote:
-> > > psi tracks the time tasks wait for refaulting pages to become
-> > > uptodate, but it does not track the time spent submitting the IO. The
-> > > submission part can be significant if backing storage is contended or
-> > > when cgroup throttling (io.latency) is in effect - a lot of time is
-> > 
-> > Or the wbt is throttling.
-> > 
-> > > spent in submit_bio(). In that case, we underreport memory pressure.
+On Wed, Aug 14, 2019 at 09:11:03AM +0900, Byungchul Park wrote:
+> On Tue, Aug 13, 2019 at 08:41:45AM -0700, Paul E. McKenney wrote:
+> > On Tue, Aug 13, 2019 at 02:29:54PM +0900, Byungchul Park wrote:
+> > > On Mon, Aug 12, 2019 at 09:12:34AM -0400, Joel Fernandes wrote:
+> > > > On Mon, Aug 12, 2019 at 07:10:52PM +0900, Byungchul Park wrote:
+> > > > > On Sun, Aug 11, 2019 at 04:49:39PM -0700, Paul E. McKenney wrote:
+> > > > > > Maybe.  Note well that I said "potential issue".  When I checked a few
+> > > > > > years ago, none of the uses of rcu_barrier() cared about kfree_rcu().
+> > > > > > They cared instead about call_rcu() callbacks that accessed code or data
+> > > > > > that was going to disappear soon, for example, due to module unload or
+> > > > > > filesystem unmount.
+> > > > > > 
+> > > > > > So it -might- be that rcu_barrier() can stay as it is, but with changes
+> > > > > > as needed to documentation.
+> > > > 
+> > > > Right, we should update the docs. Byungchul, do you mind sending a patch that
+> > > > documents the rcu_barrier() behavior?
 > > > 
-> > > Annotate submit_bio() to account submission time as memory stall when
-> > > the bio is reading userspace workingset pages.
+> > > Are you trying to give me the chance? I feel thankful. It doens't matter
+> > > to try it at the moment though, I can't follow-up until September. I'd
+> > > better do that in Septamber or give it up this time.
 > > 
-> > PAtch looks fine to me, but it raises another question w.r.t. IO
-> > stalls and reclaim pressure feedback to the vm: how do we make use
-> > of the pressure stall infrastructure to track inode cache pressure
-> > and stalls?
-> > 
-> > With the congestion_wait() and wait_iff_congested() being entire
-> > non-functional for block devices since 5.0, there is no IO load
-> > based feedback going into memory reclaim from shrinkers that might
-> > require IO to free objects before they can be reclaimed. This is
-> > directly analogous to page reclaim writing back dirty pages from
-> > the LRU, and as I understand it one of things the PSI is supposed
-> > to be tracking.
-> >
-> > Lots of workloads create inode cache pressure and often it can
-> > dominate the time spent in memory reclaim, so it would seem to me
-> > that having PSI only track/calculate pressure and stalls from LRU
-> > pages misses a fair chunk of the memory pressure and reclaim stalls
-> > that can be occurring.
+> > Which reminds me...  I recall your asking if the kfree_rcu() patch
+> > might be sensitive to the exact hardware, but I cannot locate that
+> > email right off-hand.  This is an excellent question!  When faced with
+> > floods of kfree_rcu() calls, I would expect some hardware, compiler,
+> > and kernel-configuration sensitivity.  Which is why it will likely be
 > 
-> psi already tracks the entire reclaim operation. So if reclaim calls
-> into the shrinker and the shrinker scans inodes, initiates IO, or even
-> waits on IO, that time is accounted for as memory pressure stalling.
+> Yes.
+> 
+> > necessary to do a few more improvements over time -- for but one example,
+> > accumulating callbacks into vectors in order to reduce the number of
+> > kfree()-time cache misses.
+> 
+> Yes. That would be a pretty good way to mitigate the problem. I hope
+> the simple way we've done works well enough so it would never happen
+> though.
+> 
+> Or I would check the condition of all system resourses e.g. CPU and
+> memory and control the bandwith of them, of course only if that actually
+> happens.
+> 
+> Thanks a lot for sharing your opinion on it!
 
-hmmmm - reclaim _scanning_ is considered a stall event? i.e. even if
-scanning does not block, it's still accounting that _time_ as a
-memory pressure stall?
+Didn't you say earlier that you were getting OOM on your system even
+with the patches?  Or did I miss the resolution of that issue?
 
-I'm probably missing it, but I don't see anything in vmpressure()
-that actually accounts for time spent scanning.  AFAICT it accounts
-for LRU objects scanned and reclaimed from memcgs, and then the
-memory freed from the shrinkers is accounted only to the
-sc->target_mem_cgroup once all memcgs have been iterated.
+							Thanx, Paul
 
-So, AFAICT, there's no time aspect to this, and the amount of
-scanning that shrinkers do is not taken into account, so pressure
-can't really be determined properly there. It seems like what the
-shrinkers reclaim will actually give an incorrect interpretation of
-pressure right now...
-
-> If you can think of asynchronous events that are initiated from
-> reclaim but cause indirect stalls in other contexts, contexts which
-> can clearly link the stall back to reclaim activity, we can annotate
-> them using psi_memstall_enter() / psi_memstall_leave().
-
-Well, I was more thinking that issuing/waiting on IOs is a stall
-event, not scanning.
-
-The IO-less inode reclaim stuff for XFS really needs the main
-reclaim loop to back off under heavy IO load, but we cannot put the
-entire metadata writeback path under psi_memstall_enter/leave()
-because:
-
-	a) it's not linked to any user context - it's a
-	per-superblock kernel thread; and
-
-	b) it's designed to always be stalled on IO when there is
-	metadata writeback pressure. That pressure most often comes from
-	running out of journal space rather than memory pressure, and
-	really there is no way to distinguish between the two from
-	the writeback context.
-
-Hence I don't think the vmpressure mechanism does what the memory
-reclaim scanning loops really need because they do not feed back a
-clear picture of the load on the IO subsystem load into the reclaim
-loops.....
-
-> In that vein, what would be great to have is be a distinction between
-> read stalls on dentries/inodes that have never been touched before
-> versus those that have been recently reclaimed - analogous to cold
-> page faults vs refaults.
-
-See my "nonblocking inode reclaim for XFS" series. It adds new
-measures of that the shrinkers feed back to the main reclaim loop.
-
-One of those measures is the number of objects scanned. Shrinkers
-already report the number of objects they free, but that it tossed
-away and not used by the main reclaim loop.
-
-As for cold faults vs refaults, we could only report that for
-dentries - if the inode is still cached in memory, then the dentry
-hits the inode cache (hot fault), otherwise it's got to fetch the
-inode from disk (cold fault). There is no mechanisms for tracking
-inodes that have been recently reclaimed - the VFS uses a hash for
-tracking cached inodes and so there's nothign you can drop
-exceptional entries into to track reclaim state.
-
-That said, we /could/ do this with the XFS inode cache. It uses
-radix trees to index the cache, not the VFS level inode hash. Hence
-we could place exceptional entries into the tree on reclaim to do
-working set tracking similar to the way the page cache is used to
-track the working set of pages.
-
-The other thing we could do here is similar to the dentry cache - we
-often have inode metadata buffers in the buffer cache (we have a
-multi-level cache heirarchy that spans most of the metadata in the
-active working set in XFS) and so if we miss the inode cache we
-might hit the inode buffer in the buffer cache (hot fault).  If we
-miss the inode cache and have to do IO to read the inodes, then it's
-a cold fault.
-
-That might be misleading, however, because the inode buffers cache
-32 physical inodes and so reading 32 sequential cold inodes would
-give 1 cold fault and 31 hot faults, even though those 31 inodes
-have never been referenced by the workload before and that's not
-ideal.
-
-To complicate matters further, we can thrash the buffer cache,
-resulting in cached inodes that have no backing buffer in memory.
-then we we go to write the inode, we have to read in the inode
-buffer before we can write it. This may have nothing to do with
-working set thrashing, too. e.g. we have an inode that has been
-referenced over and over again by the workload for several hours,
-then a relatime update occurs and the inode is dirtied. when
-writeback occurs, the inode buffer is nowhere to be found because it
-was cycled out of the buffer cache hours ago and hasn't been
-referenced since. hence I think we're probably best to ignore the
-underlying filesystem metadata cache for the purposes of measuring
-and detecting inode cache working set thrashing...
-
-> It would help psi, sure, but more importantly it would help us better
-> balance pressure between filesystem metadata and the data pages. We
-> would be able to tell the difference between a `find /' and actual
-> thrashing, where hot inodes are getting kicked out and reloaded
-> repeatedly - and we could backfeed that pressure to the LRU pages to
-> allow the metadata caches to grow as needed.
-
-Well, hot inodes getting kicked out and immmediate re-used is
-something we largely already handle via caching inode buffers in the
-buffer cache.  So inode cache misses on XFS likely happen a lot more
-than is obvious as we only see inode cache thrashing when we have
-misses the metadata cache, not the inode cache.
-
-> For example, it could make sense to swap out a couple of completely
-> unused anonymous pages if it means we could hold the metadata
-> workingset fully in memory. But right now we cannot do that, because
-> we cannot risk swapping just because somebody runs find /.
-
-I have workloads that run find to produce slab cache memory
-pressure. On 5.2, they cause the system to swap madly because
-there's no file page cache to reclaim and so the only reclaim that
-can be done is inodes/dentries and swapping anonymous pages.
-
-And swap it does - if we don't throttle reclaim sufficiently to
-allow IO to make progress, then direct relcaim ends up in priority
-windup and I see lots of OOM kills on swap-in. I found quite a few
-ways to end up in "reclaim doesn't throttle on IO sufficiently and
-OOM kills" in the last 3-4 weeks...
-
-> I have semi-seriously talked to Josef about this before, but it wasn't
-> quite obvious where we could track non-residency or eviction
-> information for inodes, dentries etc. Maybe you have an idea?
-
-See above - I think only XFS could track working inodes because of
-it's unique caching infrastructure. Dentries largely don't matter,
-because dentry cache misses either hit or miss the inode cache and
-that's the working set that largely matters in terms of detecting
-IO-related thrashing...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> Thanks,
+> Byungchul
+> 
+> > 							Thanx, Paul
+> > 
+> > > Thanks,
+> > > Byungchul
+> > > 
+> > > > > > It also -might- be, maybe now or maybe some time in the future, that
+> > > > > > there will need to be a kfree_rcu_barrier() or some such.  But if so,
+> > > > > > let's not create it until it is needed.  For one thing, it is reasonably
+> > > > > > likely that something other than a kfree_rcu_barrier() would really
+> > > > > > be what was needed.  After all, the main point would be to make sure
+> > > > > > that the old memory really was freed before allocating new memory.
+> > > > > 
+> > > > > Now I fully understand what you meant thanks to you. Thank you for
+> > > > > explaining it in detail.
+> > > > > 
+> > > > > > But if the system had ample memory, why wait?  In that case you don't
+> > > > > > really need to wait for all the old memory to be freed, but rather for
+> > > > > > sufficient memory to be available for allocation.
+> > > > > 
+> > > > > Agree. Totally make sense.
+> > > > 
+> > > > Agreed, all makes sense.
+> > > > 
+> > > > thanks,
+> > > > 
+> > > >  - Joel
+> > > > 
+> > > > [snip]
+> > > 
+> 
