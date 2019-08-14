@@ -2,84 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FC408D1F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:17:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABAFE8D216
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 13:26:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727309AbfHNLQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 07:16:58 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46436 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726121AbfHNLQ6 (ORCPT
+        id S1727671AbfHNL0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 07:26:19 -0400
+Received: from smark.slackware.pl ([88.198.48.135]:55578 "EHLO
+        smark.slackware.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725800AbfHNL0S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 07:16:58 -0400
-Received: by mail-lj1-f195.google.com with SMTP id f9so5891812ljc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:16:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mM+lOG3uuaZKO9SiLPdJ+4deUlKV/b5HbUdj3Mc9GeI=;
-        b=DyZlW9rEyj+EVzbT42xD4GrOCx8/nZME5s1x9ubtqPvmzO3OboHv2sJX6yUbEIHv8I
-         VJeZOl5WCXgmjaoXlMtr+GU4OSoVo9m2HdDGg6ma9v7dv79kZXAa4eHOQPkPavbyFn+Z
-         LmVee68sPKqFRaEehadGBa9OSzLoWu7goRFs3nf90Wxg/kHBHrXxSYTK2wndU3zORTkC
-         UOX8E2oWqHFTJiazrI7Xv40sqBbRdSViRNeSDBSnoVsXQ7AQPJetvC21HTDU5G1LhGog
-         +VaFBgwg0tdww7ZnKwLqt5Xh0O3zHbQuTmDdkfFTDpbkiN7jrd14O5xaxAP3SkOnv2MU
-         pBrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mM+lOG3uuaZKO9SiLPdJ+4deUlKV/b5HbUdj3Mc9GeI=;
-        b=r4D5TMz0q24udTwKHY30Ce/ELocRFboBzOtzDMefncpVZ4wSRB1UlqSVdwvbgCUZT/
-         Ubafr7KgcMpAVRK60VRSCJatVPJ0ckrnPAwMNKus8EoiHp8uqXTRb2/kfKG8Jj0+Sgkw
-         Ejrqwj5S5hs2f0Yo4/thsPCcshm+1Em6PfHk6HQnNX3wsgdUJ9icBbzn54NSLY4EIyaZ
-         M1iySYn3wqJGverQh+lUUTtx6rm8dJKVIDVO8SU6nMRDGx0/EJzvbHjQEs4N7iHARoUB
-         BJci/+j8/pkHjVVu2bgJm9+7JYuoZmQXiT2pfJqwKeyNwwHrf8a89UEvBn5aBi3aR7Ur
-         /6lw==
-X-Gm-Message-State: APjAAAWByDjrsbXtqeRuTXdlmvxsq2nJ19WSkuG60TBhKn64deoJPpeb
-        U2qPAC80+fGGGipEMic0dJhVLQ==
-X-Google-Smtp-Source: APXvYqyE6JOL4CkL17m8OpVNbigSqpiZyVfokme8qoKLjA4Eav66jqxj/Jm39QFjJRx7gKdhbyUEew==
-X-Received: by 2002:a2e:9e81:: with SMTP id f1mr24935605ljk.29.1565781416360;
-        Wed, 14 Aug 2019 04:16:56 -0700 (PDT)
-Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
-        by smtp.gmail.com with ESMTPSA id q24sm2004302ljc.72.2019.08.14.04.16.55
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 04:16:55 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     shuah@kernel.org, pmladek@suse.com, mbenes@suse.cz,
-        jikos@kernel.org, jpoimboe@redhat.com
-Cc:     live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: livepatch: add missing fragments to config
-Date:   Wed, 14 Aug 2019 13:16:51 +0200
-Message-Id: <20190814111651.28433-1-anders.roxell@linaro.org>
-X-Mailer: git-send-email 2.20.1
+        Wed, 14 Aug 2019 07:26:18 -0400
+X-Greylist: delayed 525 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 07:26:17 EDT
+Received: from kich.toxcorp.com (kich.slackware.pl [193.218.152.244])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: shasta@toxcorp.com)
+        by smark.slackware.pl (Postfix) with ESMTPSA id 473EB20630;
+        Wed, 14 Aug 2019 13:17:31 +0200 (CEST)
+Date:   Wed, 14 Aug 2019 13:17:30 +0200 (CEST)
+From:   Jakub Jankowski <shasta@toxcorp.com>
+To:     Reindl Harald <h.reindl@thelounge.net>
+cc:     Thomas Jarosch <thomas.jarosch@intra2net.com>,
+        Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, Florian Westphal <fw@strlen.de>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 04/42] netfilter: conntrack: always store
+ window size un-scaled
+In-Reply-To: <41ce587d-dfaa-fe6b-66a8-58ba1a3a2872@thelounge.net>
+Message-ID: <alpine.LNX.2.21.1908141316420.1803@kich.toxcorp.com>
+References: <20190802132302.13537-1-sashal@kernel.org> <20190802132302.13537-4-sashal@kernel.org> <20190808090209.wb63n6ibii4ivvba@intra2net.com> <41ce587d-dfaa-fe6b-66a8-58ba1a3a2872@thelounge.net>
+User-Agent: Alpine 2.21 (LNX 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When generating config with 'make defconfig kselftest-merge' fragment
-CONFIG_TEST_LIVEPATCH=m isn't set.
+On 2019-08-14, Reindl Harald wrote:
 
-Rework to enable CONFIG_LIVEPATCH and CONFIG_DYNAMIC_DEBUG as well.
+> that's still not in 5.2.8
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
----
- tools/testing/selftests/livepatch/config | 2 ++
- 1 file changed, 2 insertions(+)
+It will make its way into next 5.2.x release, as it is now in the pending 
+queue: 
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tree/queue-5.2
 
-diff --git a/tools/testing/selftests/livepatch/config b/tools/testing/selftests/livepatch/config
-index 0dd7700464a8..ad23100cb27c 100644
---- a/tools/testing/selftests/livepatch/config
-+++ b/tools/testing/selftests/livepatch/config
-@@ -1 +1,3 @@
-+CONFIG_LIVEPATCH=y
-+CONFIG_DYNAMIC_DEBUG=y
- CONFIG_TEST_LIVEPATCH=m
+Regards,
+  Jakub.
+
+
+>
+> without the exception and "nf_conntrack_tcp_timeout_max_retrans = 60" a
+> vnc-over-ssh session having the VNC view in the background freezes
+> within 60 secods
+>
+> -----------------------------------------------------------------------------------------------
+> IPV4 TABLE MANGLE (STATEFUL PRE-NAT/FILTER)
+> -----------------------------------------------------------------------------------------------
+> Chain PREROUTING (policy ACCEPT 100 packets, 9437 bytes)
+> num   pkts bytes target     prot opt in     out     source
+> destination
+> 1     6526 3892K ACCEPT     all  --  *      *       0.0.0.0/0
+> 0.0.0.0/0            ctstate RELATED,ESTABLISHED
+> 2      125  6264 ACCEPT     all  --  lo     *       0.0.0.0/0
+> 0.0.0.0/0
+> 3       64  4952 ACCEPT     all  --  vmnet8 *       0.0.0.0/0
+> 0.0.0.0/0
+> 4        1    40 DROP       all  --  *      *       0.0.0.0/0
+> 0.0.0.0/0            ctstate INVALID
+>
+> -------- Weitergeleitete Nachricht --------
+> Betreff: [PATCH AUTOSEL 5.2 07/76] netfilter: conntrack: always store
+> window size un-scaled
+>
+> Am 08.08.19 um 11:02 schrieb Thomas Jarosch:
+>> Hello together,
+>>
+>> You wrote on Fri, Aug 02, 2019 at 09:22:24AM -0400:
+>>> From: Florian Westphal <fw@strlen.de>
+>>>
+>>> [ Upstream commit 959b69ef57db00cb33e9c4777400ae7183ebddd3 ]
+>>>
+>>> Jakub Jankowski reported following oddity:
+>>>
+>>> After 3 way handshake completes, timeout of new connection is set to
+>>> max_retrans (300s) instead of established (5 days).
+>>>
+>>> shortened excerpt from pcap provided:
+>>> 25.070622 IP (flags [DF], proto TCP (6), length 52)
+>>> 10.8.5.4.1025 > 10.8.1.2.80: Flags [S], seq 11, win 64240, [wscale 8]
+>>> 26.070462 IP (flags [DF], proto TCP (6), length 48)
+>>> 10.8.1.2.80 > 10.8.5.4.1025: Flags [S.], seq 82, ack 12, win 65535, [wscale 3]
+>>> 27.070449 IP (flags [DF], proto TCP (6), length 40)
+>>> 10.8.5.4.1025 > 10.8.1.2.80: Flags [.], ack 83, win 512, length 0
+>>>
+>>> Turns out the last_win is of u16 type, but we store the scaled value:
+>>> 512 << 8 (== 0x20000) becomes 0 window.
+>>>
+>>> The Fixes tag is not correct, as the bug has existed forever, but
+>>> without that change all that this causes might cause is to mistake a
+>>> window update (to-nonzero-from-zero) for a retransmit.
+>>>
+>>> Fixes: fbcd253d2448b8 ("netfilter: conntrack: lower timeout to RETRANS seconds if window is 0")
+>>> Reported-by: Jakub Jankowski <shasta@toxcorp.com>
+>>> Tested-by: Jakub Jankowski <shasta@toxcorp.com>
+>>> Signed-off-by: Florian Westphal <fw@strlen.de>
+>>> Acked-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+>>> Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+>>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>>
+>> Also:
+>> Tested-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
+>>
+>> ;)
+>>
+>> We've hit the issue with the wrong conntrack timeout at two different sites,
+>> long-lived connections to a SAP server over IPSec VPN were constantly dropping.
+>>
+>> For us this was a regression after updating from kernel 3.14 to 4.19.
+>> Yesterday I've applied the patch to kernel 4.19.57 and the problem is fixed.
+>>
+>> The issue was extra hard to debug as we could just boot the new kernel
+>> for twenty minutes in the evening on these productive systems.
+>>
+>> The stable kernel patch from last Friday came right on time. I was just
+>> about the replay the TCP connection with tcpreplay, so this saved
+>> me from another week of debugging. Thanks everyone!
+>
+
 -- 
-2.20.1
-
+Jakub Jankowski|shasta@toxcorp.com|https://toxcorp.com/
