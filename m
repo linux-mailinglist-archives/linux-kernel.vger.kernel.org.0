@@ -2,108 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDFF08D93C
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:06:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DE4A8D969
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:09:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfHNRGm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:06:42 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:44981 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729698AbfHNRGk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:06:40 -0400
-Received: by mail-lj1-f196.google.com with SMTP id e24so8774151ljg.11
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:06:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qmLXQ1DX4enCLG/blcVpIzNK/UzBgUaIlDbRYanVvW4=;
-        b=Csf25HiuxApDjXUxMS0pWtKyfLzVjYG4VXzOleml//uHgzP+qL0YwcJqGaQuNRQpl+
-         2SYQ8+b2PWgohIGByl+o5JyIcIk29Yc8tix8B3PRd7owe8Qz46sqgTFXQlaKOw2YUepA
-         ZDOaJE5DMkDYDpikit2AFTUhw9j/S3D2wNmEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qmLXQ1DX4enCLG/blcVpIzNK/UzBgUaIlDbRYanVvW4=;
-        b=BmSvlvynodXA151rMDSIWgg2dYkVL2HlwYvWMeftyk0W6TRb8aDnkZf7HaLImpHZa5
-         k5u+fVU7LwTdTgxWQmFMaUmClQMuCh4+yHLM97uDXq8csh+y5q/upog3Jw40CmLFmA4K
-         FJ+ziPmrT0kWqo9/NXHGIkj4tsvvlqyY2CAdM35JcM9RBWcHRFtdkGs3DlwcbXZLu2AR
-         9/lZ6KA0iCvVM97b8ktNLygDGcNNiAHFJ6SbgMvXOoRlX82QuTWeFhHt9PuxoGlYFw9u
-         vM9X8FK6+x6ZZEGPqOQ1h1qs15b472syYy80oQ8Kx/08+xOevAcHlqAqIrNZrY3Z0IJJ
-         biCA==
-X-Gm-Message-State: APjAAAUEnKqhOJEzYilWRKE2DBGW/VyUG1g6HZ0XJhA9PctzLO3I8NHn
-        ky5O8EPVku8kxMonPKuDcpSBv9yhUTY=
-X-Google-Smtp-Source: APXvYqwg5eZjU1FeBRhWalrBU3++A6LyNs+xdJIK0ekG3UKQJDeak5yDut8Tx0aVP3RD0+aCWZ+fRw==
-X-Received: by 2002:a2e:22c4:: with SMTP id i187mr403887lji.41.1565802397607;
-        Wed, 14 Aug 2019 10:06:37 -0700 (PDT)
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com. [209.85.167.49])
-        by smtp.gmail.com with ESMTPSA id a15sm23537lfl.44.2019.08.14.10.06.36
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 14 Aug 2019 10:06:36 -0700 (PDT)
-Received: by mail-lf1-f49.google.com with SMTP id x3so26094270lfn.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:06:36 -0700 (PDT)
-X-Received: by 2002:ac2:4c12:: with SMTP id t18mr235524lfq.134.1565802395958;
- Wed, 14 Aug 2019 10:06:35 -0700 (PDT)
+        id S1730068AbfHNRIJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:08:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730049AbfHNRIF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:08:05 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEFCC214DA;
+        Wed, 14 Aug 2019 17:08:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565802484;
+        bh=1PjyB53SE5ISTW3kYQPPKdvQAcURDsEDX3z1n5W5Ncs=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=RCCzAshXp3+krsNHFGqQiq5XI5PlLhffpj2vyugoA1i9+VSgSe1Ab6xaCzPLzrRRq
+         jgwPdVi/ErGjUXC4wM0jK/zzTYfsgsCAB6tt8aqNcZlA1bGaJg8EtieSfirhKXAbcs
+         xXHddlF/sHlSVloSOI09+Gg8f63YnINcVE/9i+GI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
- <20190814154400.6371-1-christian.brauner@ubuntu.com> <20190814154400.6371-2-christian.brauner@ubuntu.com>
- <20190814160917.GG11595@redhat.com> <20190814161517.ldbn62mulk2pmqo5@wittgenstein>
- <20190814163443.6odsksff4jbta7be@wittgenstein> <20190814165501.GJ9017@brightrain.aerifal.cx>
-In-Reply-To: <20190814165501.GJ9017@brightrain.aerifal.cx>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 14 Aug 2019 10:06:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgpoeAnhscv9+fKNLLJF0tvypGPAxyzBCa0rp5hppRDRQ@mail.gmail.com>
-Message-ID: <CAHk-=wgpoeAnhscv9+fKNLLJF0tvypGPAxyzBCa0rp5hppRDRQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] waitid: Add support for waiting for the current
- process group
-To:     Rich Felker <dalias@libc.org>
-Cc:     Christian Brauner <christian.brauner@ubuntu.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        GNU C Library <libc-alpha@sourceware.org>,
-        Alistair Francis <alistair23@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Adhemerval Zanella <adhemerval.zanella@linaro.org>,
-        Florian Weimer <fweimer@redhat.com>,
-        Palmer Dabbelt <palmer@sifive.com>, macro@wdc.com,
-        Zong Li <zongbox@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, Peter Anvin <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814125012.8700-11-vkoul@kernel.org>
+References: <20190814125012.8700-1-vkoul@kernel.org> <20190814125012.8700-11-vkoul@kernel.org>
+Subject: Re: [PATCH 10/22] arm64: dts: qcom: pm8150b: Add pon and adc nodes
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Andy Gross <agross@kernel.org>, Vinod Koul <vkoul@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 10:08:02 -0700
+Message-Id: <20190814170803.DEFCC214DA@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 9:55 AM Rich Felker <dalias@libc.org> wrote:
->
-> I don't think "downsides" sufficiently conveys that this is hard
-> breakage of a requirement for waitpid.
+Quoting Vinod Koul (2019-08-14 05:50:00)
+> Add the pon and adc nodes found in pm8150b PMIC.
+>=20
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  arch/arm64/boot/dts/qcom/pm8150b.dtsi | 54 +++++++++++++++++++++++++++
+>  1 file changed, 54 insertions(+)
 
-Well, let's be honest here. Who has _ever_ seen a signal handler
-changing the current process group?
+Squash?
 
-In fact, the SYSV version of setpgid() takes a process ID to set it
-*for somebody else*, so the signal safety is not even necessarily
-relevant, since it might be racing with _another_ thread doing it
-(which even the kernel side won't fix - it's just user space doing odd
-things).
+>=20
+> diff --git a/arch/arm64/boot/dts/qcom/pm8150b.dtsi b/arch/arm64/boot/dts/=
+qcom/pm8150b.dtsi
+> index c0a678b0f159..846197bd65cd 100644
+> --- a/arch/arm64/boot/dts/qcom/pm8150b.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/pm8150b.dtsi
+> @@ -2,6 +2,7 @@
+>  // Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+>  // Copyright (c) 2019, Linaro Limited
+> =20
+> +#include <dt-bindings/iio/qcom,spmi-vadc.h>
+>  #include <dt-bindings/interrupt-controller/irq.h>
+>  #include <dt-bindings/spmi/spmi.h>
+> =20
+> @@ -11,6 +12,59 @@
+>                 reg =3D <0x2 SPMI_USID>;
+>                 #address-cells =3D <1>;
+>                 #size-cells =3D <0>;
+> +
+> +               pon@800 {
 
-So yes - it's technically true that it's impossible to emulate
-properly in user space.
+Maybe pon node name should be 'key' or 'power-on'?
 
-But I doubt it makes _any_ difference what-so-ever, and glibc might as
-well do something like
+> +                       compatible =3D "qcom,pm8916-pon";
+> +                       reg =3D <0x0800>;
+> +               };
+> +
+> +               adc@3100 {
+> +                       compatible =3D "qcom,spmi-adc5";
+> +                       reg =3D <0x3100>;
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <0>;
+> +                       #io-channel-cells =3D <1>;
+> +                       interrupts =3D <0x2 0x31 0x0 IRQ_TYPE_EDGE_RISING=
+>;
+> +
+> +                       ref-gnd@0 {
+> +                               reg =3D <ADC5_REF_GND>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "ref_gnd";
+> +                       };
+> +
+> +                       vref-1p25@1 {
+> +                               reg =3D <ADC5_1P25VREF>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "vref_1p25";
+> +                       };
+> +
+> +                       die-temp@6 {
+> +                               reg =3D <ADC5_DIE_TEMP>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "die_temp";
+> +                       };
+> +
+> +                       chg-temp@9 {
+> +                               reg =3D <ADC5_CHG_TEMP>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "chg_temp";
+> +                       };
+> +
+> +                       smb1390-therm@14 {
+> +                               reg =3D <ADC5_AMUX_THM2>;
+> +                               qcom,hw-settle-time =3D <200>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "smb1390_therm";
+> +                       };
+> +
+> +                       smb1355-therm@78 {
+> +                               reg =3D <ADC5_AMUX_THM2_100K_PU>;
+> +                               qcom,ratiometric;
+> +                               qcom,hw-settle-time =3D <200>;
+> +                               qcom,pre-scaling =3D <1 1>;
+> +                               label =3D "smb1355_therm";
+> +                       };
 
-     ret = waitid(P_PGID, 0, ..);
-     if (ret == -EINVAL) { do the emulation }
+Again, are these board level details? Maybe should be provided here with
+status =3D "disabled" and then added by the boards that use these ADCs.
 
-which makes it work with older kernels, and has zero downside in practice.
-
-Hmm?
-
-              Linus
+> +               };
+>         };
