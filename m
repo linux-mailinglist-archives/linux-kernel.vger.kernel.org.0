@@ -2,89 +2,562 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FDC68CEA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:41:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 712FA8CEB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfHNIlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:41:31 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46850 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725928AbfHNIlb (ORCPT
+        id S1727611AbfHNImn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:42:43 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43307 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfHNImm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:41:31 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n19so10351181lfe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 01:41:29 -0700 (PDT)
+        Wed, 14 Aug 2019 04:42:42 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e12so36267973otp.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 01:42:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KzpALMQhsAYiuMs6y6iJLV3dLZWeIJlGmnisMykIAis=;
-        b=r2pSn+KrIj0p/r1Jh1Qa8oRX30gNZzgGkBpwKkDEJNczG7E+VnEvwitjkTtXDi+iiY
-         4quGEaWmppl+rGwEtCxpw/UZ3hBqlm+OVntmnenzCFo/I6+LXJxNE7F5nzZUYPGfUZiM
-         xiG/6RYIi+mV1854OvRiWUXHkXNDPIzy+8pHNKtKmSgN6mwGISjCmBFoX1/xBh582HPF
-         0rE/0WduaDy2igRu2LN3eXNSIweY7DEhtBe8nqhlALJP8Xv3yu9U1R/0vGBigFAmvlLa
-         PAsFJPhwguzevp0v5g/p6gMTOOiq08hxCCU/MhScC+UZSJVOlkN0kzs35xo7Oo+fvBp+
-         LgMg==
+         :cc:content-transfer-encoding;
+        bh=IkI4Dc5yQ3wMtfrwJtwttJTxS0gEeDbLMUrxq5X1+e8=;
+        b=ZBK8+ICYbCdVr/8Xh2o/iUG7FzQm8PJD6Se6/x1ANN7H+8W2ryeWPTJfLrO32GGJvD
+         00xGUg6LVpngD1YUU//mU3sznLSwID61lnd/aaeQIrsYz8P6Wzc/aJVrj4qUMXAVJ5sm
+         NGVJHe8sYwrpKEK68hXZnQkdbv23j7CEyo5z7dkGgn4dFJIzNsEc6iCezPFH9+/luF/H
+         5V3vocPENmVqNmEiX2PZ25hPwIwB6mnKyE5n7vJ8rH2JeeEAzZ/+cZBx0zjUfRLS0OCZ
+         6l1zuJyRq+JbHiUYaw8YPaROjQd7YG/0HLTwVqpDkOs2PDoYeBR4iL8eXMCiz+WD3z8X
+         cETw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KzpALMQhsAYiuMs6y6iJLV3dLZWeIJlGmnisMykIAis=;
-        b=kJWqHd3b9kzDxnJsG79w7otD1ndXyVpx0wZhbAkUxPoU71fdqGRVauXmgh0ghpMrAW
-         Pyrrk/2+qUEhbU/jtmDTYQmwIOZxf9NUFCWvmH/Yy4zGdOMv/vAEtYPnPMpA91hn3lcZ
-         YUo4UoA0ZNYtiPdLG8CqxH+zj9LbBrlDtzOXu04871RAfuNGqdkton//08vo8UJuHO39
-         ddDn0PJloYPZakS1i07elDQ98zGYH8pcRotE3vO5BUUy0+2qi6oXzvfq8n4GfgoWy3yO
-         LVqHIurYfzIn2ko2Rejugeha1ZpGGPjJNJMXGkZhHZPGVXoDo8++6F/kEQzzGhuimVcG
-         zfuA==
-X-Gm-Message-State: APjAAAUYiS8jpYZaYeGS35rii9EUKnc87A0wqDtC2eECfm3uIbvp9EGs
-        rE5TkAVZsLpwe3FpQpdS6dpVtQ9L9JZMJ4yapLjYbQ==
-X-Google-Smtp-Source: APXvYqx5nqnXeVYMCMOMXqQ9fV6cH2bSPFPCrhICg/SdR9VyEVww1xueQTgGw2t8u9djOnijC0ljUID4vf6sSeDgNCQ=
-X-Received: by 2002:ac2:4c07:: with SMTP id t7mr22886155lfq.152.1565772089303;
- Wed, 14 Aug 2019 01:41:29 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=IkI4Dc5yQ3wMtfrwJtwttJTxS0gEeDbLMUrxq5X1+e8=;
+        b=YlMGHDzqpcW2kEi1JRie7eR0j9QDd5+qhpXM8NF5y2/Q+YkIeGgUn88UHM3gAmhunm
+         sOervhY909Xe0S6Tq0a1eJwef1GfYos5CF/jWhlPBaJiGVbCsuuY/E8AdGlYiYzWf96w
+         /xdYYWLAELCbO4EIGJr565AawZRaCbB4OdbQ4KGh8fCbl037Oe7gwNYZyA+/Hbe11hfR
+         HFEgGUpRYdbFy3bOyviJESr+h+Wul8ltV7AMido2tzMLaeGQj5F0WQdVEsqzMqJb/Htl
+         hIRTQ89BT0Lr3CR82SisKje8j4Gr+ZkAubUbxLj2NfXWy4N5jMiIIOP02paQWKepwVpV
+         sc5g==
+X-Gm-Message-State: APjAAAU7Myn0R43omMr6ng5Y1BQWzwP9JxBNyvwnZ+1EfOoSiUdxXxp4
+        ZtG909juYktNhSmVDikb/nQRyUSRrlcMvRRdmpVfWkp6snLxhQ==
+X-Google-Smtp-Source: APXvYqwXYNXOn3LbXXojCjgXsGBl8vKmjJP78VGOFu78tJJl8B5R/IL1jk2L/oq+Ji2Lt41IQVbBl+Z9+PFU7PSWRfI=
+X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr25804763otk.145.1565772160874;
+ Wed, 14 Aug 2019 01:42:40 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190724081313.12934-1-andrew@aj.id.au> <20190724081313.12934-4-andrew@aj.id.au>
- <CACRpkdZCJWeZO6CFvkq4uhnX+o_q_AfkDZ=a2kmUgbS3JtDqfA@mail.gmail.com> <20190812101504.GF26727@dell>
-In-Reply-To: <20190812101504.GF26727@dell>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 14 Aug 2019 10:41:17 +0200
-Message-ID: <CACRpkdapA_-yp4ihY3S+CHMmDMKU2b0u=sj2UhJ-cvv39Dji_g@mail.gmail.com>
-Subject: Re: [PATCH 3/3] dt-bindings: aspeed: Remove mention of deprecated compatibles
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+References: <f9d2c7cb01cbf31bf75c4160611fa1d37d99f355.1565703607.git.baolin.wang@linaro.org>
+ <4f6e3110b4d7e0a2f7ab317bba98a933de12e5da.1565703607.git.baolin.wang@linaro.org>
+ <20190813151612.v6x6e6kzxflkpu7b@pengutronix.de>
+In-Reply-To: <20190813151612.v6x6e6kzxflkpu7b@pengutronix.de>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Wed, 14 Aug 2019 16:42:28 +0800
+Message-ID: <CAMz4kuJURx=fPE6+0gP4ukzMcXr_z3t1ZH0K3Gv6=o4Od4uc7w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] pwm: sprd: Add Spreadtrum PWM support
+To:     =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Joel Stanley <joel@jms.id.au>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+        Orson Zhai <orsonzhai@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-pwm@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 12:15 PM Lee Jones <lee.jones@linaro.org> wrote:
-> On Mon, 05 Aug 2019, Linus Walleij wrote:
+Hi Uwe,
+
+On Tue, 13 Aug 2019 at 23:16, Uwe Kleine-K=C3=B6nig
+<u.kleine-koenig@pengutronix.de> wrote:
 >
-> > On Wed, Jul 24, 2019 at 10:13 AM Andrew Jeffery <andrew@aj.id.au> wrote:
-> >
-> > > Guide readers away from using the aspeed,g[45].* compatible patterns.
-> > >
-> > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> >
-> > Patch applied to the pinctrl tree.
+> Hello,
 >
-> With my Ack?
+> On Tue, Aug 13, 2019 at 09:46:41PM +0800, Baolin Wang wrote:
+> > This patch adds the Spreadtrum PWM support, which provides maximum 4
+> > channels.
+> >
+> > Signed-off-by: Neo Hou <neo.hou@unisoc.com>
+> > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+> > ---
+> > Changes from v1:
+> >  - Add depending on HAS_IOMEM.
+> >  - Rename parameters' names.
+> >  - Implement .apply() instead of .config(), .enable() and .disable().
+> >  - Use NSEC_PER_SEC instead of 1000000000ULL.
+> >  - Add some comments to make code more readable.
+> >  - Remove some redundant operation.
+> >  - Use standard clock properties to set clock parent.
+> >  - Other coding style optimization.
+> > ---
+> >  drivers/pwm/Kconfig    |   11 ++
+> >  drivers/pwm/Makefile   |    1 +
+> >  drivers/pwm/pwm-sprd.c |  307 ++++++++++++++++++++++++++++++++++++++++=
+++++++++
+> >  3 files changed, 319 insertions(+)
+> >  create mode 100644 drivers/pwm/pwm-sprd.c
+> >
+> > diff --git a/drivers/pwm/Kconfig b/drivers/pwm/Kconfig
+> > index a7e5751..31dfc88 100644
+> > --- a/drivers/pwm/Kconfig
+> > +++ b/drivers/pwm/Kconfig
+> > @@ -423,6 +423,17 @@ config PWM_SPEAR
+> >         To compile this driver as a module, choose M here: the module
+> >         will be called pwm-spear.
+> >
+> > +config PWM_SPRD
+> > +     tristate "Spreadtrum PWM support"
+> > +     depends on ARCH_SPRD || COMPILE_TEST
+> > +     depends on HAS_IOMEM
+> > +     help
+> > +       Generic PWM framework driver for the PWM controller on
+> > +       Spreadtrum SoCs.
+> > +
+> > +       To compile this driver as a module, choose M here: the module
+> > +       will be called pwm-sprd.
+> > +
+> >  config PWM_STI
+> >       tristate "STiH4xx PWM support"
+> >       depends on ARCH_STI
+> > diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
+> > index 76b555b..26326ad 100644
+> > --- a/drivers/pwm/Makefile
+> > +++ b/drivers/pwm/Makefile
+> > @@ -41,6 +41,7 @@ obj-$(CONFIG_PWM_ROCKCHIP)  +=3D pwm-rockchip.o
+> >  obj-$(CONFIG_PWM_SAMSUNG)    +=3D pwm-samsung.o
+> >  obj-$(CONFIG_PWM_SIFIVE)     +=3D pwm-sifive.o
+> >  obj-$(CONFIG_PWM_SPEAR)              +=3D pwm-spear.o
+> > +obj-$(CONFIG_PWM_SPRD)               +=3D pwm-sprd.o
+> >  obj-$(CONFIG_PWM_STI)                +=3D pwm-sti.o
+> >  obj-$(CONFIG_PWM_STM32)              +=3D pwm-stm32.o
+> >  obj-$(CONFIG_PWM_STM32_LP)   +=3D pwm-stm32-lp.o
+> > diff --git a/drivers/pwm/pwm-sprd.c b/drivers/pwm/pwm-sprd.c
+> > new file mode 100644
+> > index 0000000..067e711
+> > --- /dev/null
+> > +++ b/drivers/pwm/pwm-sprd.c
+> > @@ -0,0 +1,307 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2019 Spreadtrum Communications Inc.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/err.h>
+> > +#include <linux/io.h>
+> > +#include <linux/math64.h>
+> > +#include <linux/module.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/pwm.h>
+> > +
+> > +#define SPRD_PWM_PRESCALE    0x0
+> > +#define SPRD_PWM_MOD         0x4
+> > +#define SPRD_PWM_DUTY                0x8
+> > +#define SPRD_PWM_ENABLE              0x18
+> > +
+> > +#define SPRD_PWM_MOD_MAX     GENMASK(7, 0)
+> > +#define SPRD_PWM_DUTY_MSK    GENMASK(15, 0)
+> > +#define SPRD_PWM_PRESCALE_MSK        GENMASK(7, 0)
+> > +#define SPRD_PWM_ENABLE_BIT  BIT(0)
+> > +
+> > +#define SPRD_PWM_NUM         4
+> > +#define SPRD_PWM_REGS_SHIFT  5
+> > +#define SPRD_PWM_NUM_CLKS    2
+> > +#define SPRD_PWM_OUTPUT_CLK  1
+>
+> These definitions could benefit from some explaining comments. Just from
+> looking at the names it is for example not obvious what is the
+> difference between SPRD_PWM_NUM and SPRD_PWM_NUM_CLKS is.
 
-Sorry no. :( Was I too trigger-happy?
+Sure, I will optimize the macros' names to make them understandable.
 
-Usually I take Rob's ACK as authoritative for anything under
-Documentation/devicetree but if you have concerns about the
-patch from an MFD point of view I will revert it pending further
-discussion.
+>
+> > +struct sprd_pwm_chn {
+> > +     struct clk_bulk_data clks[SPRD_PWM_NUM_CLKS];
+> > +     u32 clk_rate;
+> > +};
+> > +
+> > +struct sprd_pwm_chip {
+> > +     void __iomem *base;
+> > +     struct device *dev;
+> > +     struct pwm_chip chip;
+> > +     int num_pwms;
+> > +     struct sprd_pwm_chn chn[SPRD_PWM_NUM];
+> > +};
+> > +
+> > +/*
+> > + * The list of clocks required by PWM channels, and each channel has 2=
+ clocks:
+> > + * enable clock and pwm clock.
+> > + */
+> > +static const char * const sprd_pwm_clks[] =3D {
+> > +     "enable0", "pwm0",
+> > +     "enable1", "pwm1",
+> > +     "enable2", "pwm2",
+> > +     "enable3", "pwm3",
+> > +};
+> > +
+> > +static u32 sprd_pwm_read(struct sprd_pwm_chip *spc, u32 hwid, u32 reg)
+> > +{
+> > +     u32 offset =3D reg + (hwid << SPRD_PWM_REGS_SHIFT);
+> > +
+> > +     return readl_relaxed(spc->base + offset);
+> > +}
+> > +
+> > +static void sprd_pwm_write(struct sprd_pwm_chip *spc, u32 hwid,
+> > +                        u32 reg, u32 val)
+> > +{
+> > +     u32 offset =3D reg + (hwid << SPRD_PWM_REGS_SHIFT);
+> > +
+> > +     writel_relaxed(val, spc->base + offset);
+> > +}
+> > +
+> > +static void sprd_pwm_get_state(struct pwm_chip *chip, struct pwm_devic=
+e *pwm,
+> > +                            struct pwm_state *state)
+> > +{
+> > +     struct sprd_pwm_chip *spc =3D
+> > +             container_of(chip, struct sprd_pwm_chip, chip);
+> > +     struct sprd_pwm_chn *chn =3D &spc->chn[pwm->hwpwm];
+> > +     u32 val, duty, prescale;
+> > +     u64 tmp;
+> > +     int ret;
+> > +
+> > +     /*
+> > +      * The clocks to PWM channel has to be enabled first before
+> > +      * reading to the registers.
+> > +      */
+> > +     ret =3D clk_bulk_prepare_enable(SPRD_PWM_NUM_CLKS, chn->clks);
+> > +     if (ret) {
+> > +             dev_err(spc->dev, "failed to enable pwm%u clocks\n",
+> > +                     pwm->hwpwm);
+> > +             return;
+> > +     }
+> > +
+> > +     val =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_ENABLE);
+> > +     if (val & SPRD_PWM_ENABLE_BIT)
+> > +             state->enabled =3D true;
+> > +     else
+> > +             state->enabled =3D false;
+> > +
+> > +     /*
+> > +      * The hardware provides a counter that is feed by the source clo=
+ck.
+> > +      * The period length is (PRESCALE + 1) * MOD counter steps.
+> > +      * The duty cycle length is (PRESCALE + 1) * DUTY counter steps.
+> > +      * Thus the period_ns and duty_ns calculation formula should be:
+> > +      * period_ns =3D NSEC_PER_SEC * (prescale + 1) * mod / clk_rate
+> > +      * duty_ns =3D NSEC_PER_SEC * (prescale + 1) * duty / clk_rate
+> > +      */
+> > +     val =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_PRESCALE);
+> > +     prescale =3D val & SPRD_PWM_PRESCALE_MSK;
+> > +     tmp =3D (prescale + 1) * NSEC_PER_SEC * SPRD_PWM_MOD_MAX;
+> > +     state->period =3D DIV_ROUND_CLOSEST_ULL(tmp, chn->clk_rate);
+> > +
+> > +     val =3D sprd_pwm_read(spc, pwm->hwpwm, SPRD_PWM_DUTY);
+> > +     duty =3D val & SPRD_PWM_DUTY_MSK;
+> > +     tmp =3D (prescale + 1) * NSEC_PER_SEC * duty;
+> > +     state->duty_cycle =3D DIV_ROUND_CLOSEST_ULL(tmp, chn->clk_rate);
+> > +
+> > +     /* Disable PWM clocks if the PWM channel is not in enable state. =
+*/
+> > +     if (!state->enabled)
+> > +             clk_bulk_disable_unprepare(SPRD_PWM_NUM_CLKS, chn->clks);
+> > +}
+> > +
+> > +static int sprd_pwm_config(struct sprd_pwm_chip *spc, struct pwm_devic=
+e *pwm,
+> > +                        int duty_ns, int period_ns)
+> > +{
+> > +     struct sprd_pwm_chn *chn =3D &spc->chn[pwm->hwpwm];
+> > +     u64 div, tmp;
+> > +     u32 prescale, duty;
+> > +
+> > +     /*
+> > +      * The hardware provides a counter that is feed by the source clo=
+ck.
+> > +      * The period length is (PRESCALE + 1) * MOD counter steps.
+> > +      * The duty cycle length is (PRESCALE + 1) * DUTY counter steps.
+> > +      *
+> > +      * To keep the maths simple we're always using MOD =3D SPRD_PWM_M=
+OD_MAX.
+> > +      * The value for PRESCALE is selected such that the resulting per=
+iod
+> > +      * gets the maximal length not bigger than the requested one with=
+ the
+> > +      * given settings (MOD =3D SPRD_PWM_MOD_MAX and input clock).
+> > +      */
+> > +     duty =3D duty_ns * SPRD_PWM_MOD_MAX / period_ns;
+> > +
+> > +     tmp =3D (u64)chn->clk_rate * period_ns;
+> > +     div =3D NSEC_PER_SEC * SPRD_PWM_MOD_MAX;
+> > +     prescale =3D div64_u64(tmp, div) - 1;
+> > +     if (prescale > SPRD_PWM_PRESCALE_MSK)
+> > +             prescale =3D SPRD_PWM_PRESCALE_MSK;
+>
+> This isn't the inverse of .get_state(). Consider:
+>
+>         clk_rate =3D 3333333
+>         SPRD_PWM_PRESCALE =3D 15
+>
+> then you calculate in .get_state():
+>
+>         period =3D 1224000
+>
+> If you then call apply with this value you calulate:
+>
+>         prescale =3D 14
 
-Yours,
-Linus Walleij
+OK. I will optimize the logics to fix this issue in next version.
+
+> > +
+> > +     /*
+> > +      * Note: The MOD must be configured before DUTY, and the hardware=
+ can
+> > +      * ensure current running period is completed before changing a n=
+ew
+> > +      * configuration to avoid mixed settings.
+>
+> You write "the hardware can ensure ..". Does that actually means "The
+> hardware ensures that ..." or is there some additional condition? Maybe
+
+Yes, will update the comments.
+
+> you mean:
+>
+>         /*
+>          * Writing DUTY triggers the hardware to actually apply the
+>          * values written to MOD and DUTY to the output. So write DUTY
+>          * last.
+>          */
+
+Not really, our hardware's method is, when you changed a new
+configuration (MOD or duty is changed) , the hardware will wait for a
+while to complete current period, then change to the new period.
+
+>
+> > +     sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_MOD, SPRD_PWM_MOD_MAX);
+> > +     sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_DUTY, duty);
+> > +     sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_PRESCALE, prescale);
+>
+> If writing DUTY triggers the hardware to sample DUTY and MOD, what about
+> PRESCALE?
+
+See above comments.
+
+>
+> > +     return 0;
+> > +}
+> > +
+> > +static int sprd_pwm_apply(struct pwm_chip *chip, struct pwm_device *pw=
+m,
+> > +                       struct pwm_state *state)
+> > +{
+> > +     struct sprd_pwm_chip *spc =3D
+> > +             container_of(chip, struct sprd_pwm_chip, chip);
+> > +     struct sprd_pwm_chn *chn =3D &spc->chn[pwm->hwpwm];
+> > +     struct pwm_state cstate;
+> > +     int ret;
+> > +
+> > +     pwm_get_state(pwm, &cstate);
+>
+> I don't like it when pwm drivers call pwm_get_state(). If ever
+> pwm_get_state would take a lock, this would deadlock as the lock is
+> probably already taken when your .apply() callback is running. Moreover
+> the (expensive) calculations are not used appropriately. See below.
+
+I do not think so, see:
+
+static inline void pwm_get_state(const struct pwm_device *pwm, struct
+pwm_state *state)
+{
+        *state =3D pwm->state;
+}
+
+>
+> > +     if (state->enabled) {
+> > +             if (!cstate.enabled) {
+>
+> To just know the value of cstate.enabled you only need to read the
+> register with the ENABLE flag. That is cheaper than calling get_state.
+>
+> > +                     /*
+> > +                      * The clocks to PWM channel has to be enabled fi=
+rst
+> > +                      * before writing to the registers.
+> > +                      */
+> > +                     ret =3D clk_bulk_prepare_enable(SPRD_PWM_NUM_CLKS=
+,
+> > +                                                   chn->clks);
+> > +                     if (ret) {
+> > +                             dev_err(spc->dev,
+> > +                                     "failed to enable pwm%u clocks\n"=
+,
+> > +                                     pwm->hwpwm);
+> > +                             return ret;
+> > +                     }
+> > +             }
+> > +
+> > +             if (state->period !=3D cstate.period ||
+> > +                 state->duty_cycle !=3D cstate.duty_cycle) {
+>
+> This is a coarse check. If state->period and cstate.period only differ
+> by one calling sprd_pwm_config(spc, pwm, state->duty_cycle,
+> state->period) probably results in a noop. So you're doing an expensive
+> division to get an unreliable check. It would be better to calculate the
+> register values from the requested state and compare the register
+> values. The costs are more or less the same than calling .get_state and
+> the check is reliable. And you don't need to spend another division to
+> calculate the new register values.
+
+Same as above comment.
+
+>
+> > +                     ret =3D sprd_pwm_config(spc, pwm, state->duty_cyc=
+le,
+> > +                                           state->period);
+> > +                     if (ret)
+> > +                             return ret;
+> > +             }
+> > +
+> > +             sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_ENABLE, 1);
+> > +     } else if (cstate.enabled) {
+> > +             sprd_pwm_write(spc, pwm->hwpwm, SPRD_PWM_ENABLE, 0);
+> > +
+> > +             clk_bulk_disable_unprepare(SPRD_PWM_NUM_CLKS, chn->clks);
+>
+> Assuming writing SPRD_PWM_ENABLE =3D 0 to the hardware completes the
+> currently running period and the write doesn't block that long: Does
+> disabling the clocks interfere with completing the period?
+
+Writing SPRD_PWM_ENABLE =3D 0 will stop the PWM immediately, will not
+waiting for completing the currently period.
+
+>
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static const struct pwm_ops sprd_pwm_ops =3D {
+> > +     .apply =3D sprd_pwm_apply,
+> > +     .get_state =3D sprd_pwm_get_state,
+> > +     .owner =3D THIS_MODULE,
+> > +};
+> > +
+> > +static int sprd_pwm_clk_init(struct sprd_pwm_chip *spc)
+> > +{
+> > +     struct clk *clk_pwm;
+> > +     int ret, i, clk_index =3D 0;
+> > +
+> > +     for (i =3D 0; i < SPRD_PWM_NUM; i++) {
+> > +             struct sprd_pwm_chn *chn =3D &spc->chn[i];
+> > +             int j;
+> > +
+> > +             for (j =3D 0; j < SPRD_PWM_NUM_CLKS; ++j)
+> > +                     chn->clks[j].id =3D sprd_pwm_clks[clk_index++];
+>
+> I think this would be more understandable when written as:
+>
+>         for (j =3D 0; j < SPRD_PWM_NUM_CLKS; ++j)
+>                 chn->clks[j].id =3D sprd_pwm_clks[i * SPRD_PWM_NUM_CLKS +=
+ j];
+>
+> but I'm not sure I'm objective here.
+
+Sure.
+
+>
+> > +
+> > +             ret =3D devm_clk_bulk_get(spc->dev, SPRD_PWM_NUM_CLKS, ch=
+n->clks);
+> > +             if (ret) {
+> > +                     if (ret =3D=3D -ENOENT)
+> > +                             break;
+> > +
+> > +                     dev_err(spc->dev, "failed to get channel clocks\n=
+");
+>
+> if ret =3D=3D -EPROBE_DEFER you shouldn't issue an error message.
+
+Yes.
+
+>
+> > +                     return ret;
+> > +             }
+> > +
+> > +             clk_pwm =3D chn->clks[SPRD_PWM_OUTPUT_CLK].clk;
+> > +             chn->clk_rate =3D clk_get_rate(clk_pwm);
+> > +     }
+> > +
+> > +     if (!i) {
+> > +             dev_err(spc->dev, "no available PWM channels\n");
+> > +             return -EINVAL;
+>
+> ENODEV?
+
+Yes
+
+>
+> > +     }
+> > +
+> > +     spc->num_pwms =3D i;
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int sprd_pwm_probe(struct platform_device *pdev)
+> > +{
+> > +     struct sprd_pwm_chip *spc;
+> > +     int ret;
+> > +
+> > +     spc =3D devm_kzalloc(&pdev->dev, sizeof(*spc), GFP_KERNEL);
+> > +     if (!spc)
+> > +             return -ENOMEM;
+> > +
+> > +     spc->base =3D devm_platform_ioremap_resource(pdev, 0);
+> > +     if (IS_ERR(spc->base))
+> > +             return PTR_ERR(spc->base);
+> > +
+> > +     spc->dev =3D &pdev->dev;
+> > +     platform_set_drvdata(pdev, spc);
+> > +
+> > +     ret =3D sprd_pwm_clk_init(spc);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     spc->chip.dev =3D &pdev->dev;
+> > +     spc->chip.ops =3D &sprd_pwm_ops;
+> > +     spc->chip.base =3D -1;
+> > +     spc->chip.npwm =3D spc->num_pwms;
+> > +
+> > +     ret =3D pwmchip_add(&spc->chip);
+> > +     if (ret)
+> > +             dev_err(&pdev->dev, "failed to add PWM chip\n");
+> > +
+> > +     return ret;
+> > +}
+> > +
+> > +static int sprd_pwm_remove(struct platform_device *pdev)
+> > +{
+> > +     struct sprd_pwm_chip *spc =3D platform_get_drvdata(pdev);
+> > +     int ret, i;
+> > +
+> > +     ret =3D pwmchip_remove(&spc->chip);
+> > +
+> > +     for (i =3D 0; i < spc->num_pwms; i++) {
+> > +             struct sprd_pwm_chn *chn =3D &spc->chn[i];
+> > +
+> > +             clk_bulk_disable_unprepare(SPRD_PWM_NUM_CLKS, chn->clks);
+>
+> If a PWM was still running you're effectively stopping it here, right?
+> Are you sure you don't disable once more than you enabled?
+
+Yes, you are right. I should check current enable status of the PWM channel=
+.
+Thanks for your comments.
+
+--=20
+Baolin Wang
+Best Regards
