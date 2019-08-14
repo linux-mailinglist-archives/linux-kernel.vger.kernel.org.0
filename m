@@ -2,122 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 994848C5BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 03:56:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE40A8C5C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:03:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727087AbfHNB4b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 21:56:31 -0400
-Received: from mail1.windriver.com ([147.11.146.13]:49494 "EHLO
-        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726631AbfHNB4b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 21:56:31 -0400
-Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
-        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id x7E1uRhA021188
-        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
-        Tue, 13 Aug 2019 18:56:27 -0700 (PDT)
-Received: from [128.224.162.221] (128.224.162.221) by ALA-HCA.corp.ad.wrs.com
- (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.468.0; Tue, 13 Aug
- 2019 18:56:26 -0700
-Subject: Re: [PATCH] module: Fix load failure when CONFIG_STRICT_MODULE_RWX is
- diabled
-To:     Jessica Yu <jeyu@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>
-References: <1565421720-316924-1-git-send-email-zhe.he@windriver.com>
- <20190813175912.GB24753@linux-8ccs.fritz.box>
-From:   He Zhe <zhe.he@windriver.com>
-Message-ID: <c7f6d08c-b1ac-2616-332a-d69156811b26@windriver.com>
-Date:   Wed, 14 Aug 2019 09:56:22 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190813175912.GB24753@linux-8ccs.fritz.box>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [128.224.162.221]
+        id S1726896AbfHNCDL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:03:11 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:43180 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbfHNCDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:03:10 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 6641F2002E4;
+        Wed, 14 Aug 2019 04:03:08 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 222E620027A;
+        Wed, 14 Aug 2019 04:03:02 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 3507340293;
+        Wed, 14 Aug 2019 10:02:54 +0800 (SGT)
+From:   peng.fan@nxp.com
+To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, abel.vesa@nxp.com, ping.bai@nxp.com,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: imx8mn: fix int pll clk gate
+Date:   Wed, 14 Aug 2019 09:53:12 +0800
+Message-Id: <20190814015312.11711-1-peng.fan@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
+To Frac pll, the gate shift is 13, however to Int PLL the gate shift
+is 11.
 
-On 8/14/19 1:59 AM, Jessica Yu wrote:
-> +++ zhe.he@windriver.com [10/08/19 15:22 +0800]:
->> From: He Zhe <zhe.he@windriver.com>
->>
->> When loading modules with CONFIG_ARCH_HAS_STRICT_MODULE_RWX enabled and
->> CONFIG_STRICT_MODULE_RWX disabled, the memory allocated for modules would
->> not be page-aligned and cause the following BUG during frob_text.
->>
->> ------------[ cut here ]------------
->> kernel BUG at kernel/module.c:1907!
->> Internal error: Oops - BUG: 0 [#1] ARM
->> Modules linked in:
->> CPU: 0 PID: 89 Comm: systemd-modules Not tainted 5.3.0-rc2 #1
->> Hardware name: ARM-Versatile (Device Tree Support)
->> PC is at frob_text.constprop.0+0x2c/0x40
->> LR is at load_module+0x14b4/0x1d28
->> pc : [<c0082930>]    lr : [<c0084bb0>]    psr: 20000013
->> sp : ce44fe58  ip : 00000000  fp : 00000000
->> r10: 00000000  r9 : ce44feb8  r8 : 00000000
->> r7 : 00000001  r6 : bf00032c  r5 : ce44ff40  r4 : bf000320
->> r3 : bf000400  r2 : 00000fff  r1 : 00000220  r0 : bf000000
->> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
->> Control: 00093177  Table: 0e4c0000  DAC: 00000051
->> Process systemd-modules (pid: 89, stack limit = 0x9fccc8dc)
->> Stack: (0xce44fe58 to 0xce450000)
->> fe40:                                                       00000000 cf1b05b8
->> fe60: 00000001 ce47cf08 bf002754 c07ae5d8 d0a2a484 bf002060 bf0004f8 00000000
->> fe80: b6d17910 c017cf1c ce47cf00 d0a29000 ce47cf00 ce44ff34 000014fc 00000000
->> fea0: 00000000 00000000 bf00025c 00000001 00000000 00000000 6e72656b 00006c65
->> fec0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> fee0: 00000000 00000000 00000000 00000000 00000000 c0ac9048 7fffffff 00000000
->> ff00: b6d17910 00000005 0000017b c0009208 ce44e000 00000000 b6ebfe54 c008562c
->> ff20: 7fffffff 00000000 00000003 cefd28f8 00000001 d0a29000 000014fc 00000000
->> ff40: d0a292cb d0a29380 d0a29000 000014fc d0a29f0c d0a29d90 d0a29a60 00000520
->> ff60: 00000710 00000718 00000826 00000000 00000000 00000000 00000708 00000023
->> ff80: 00000024 0000001c 00000000 00000016 00000000 c0ac9048 0041c620 00000000
->> ffa0: 00000000 c0009000 0041c620 00000000 00000005 b6d17910 00000000 00000000
->> ffc0: 0041c620 00000000 00000000 0000017b 0041f078 00000000 004098b0 b6ebfe54
->> ffe0: bedb6bc8 bedb6bb8 b6d0f91c b6c945a0 60000010 00000005 00000000 00000000
->> [<c0082930>] (frob_text.constprop.0) from [<c0084bb0>] (load_module+0x14b4/0x1d28)
->> [<c0084bb0>] (load_module) from [<c008562c>] (sys_finit_module+0xa0/0xc4)
->> [<c008562c>] (sys_finit_module) from [<c0009000>] (ret_fast_syscall+0x0/0x50)
->> Exception stack(0xce44ffa8 to 0xce44fff0)
->> ffa0:                   0041c620 00000000 00000005 b6d17910 00000000 00000000
->> ffc0: 0041c620 00000000 00000000 0000017b 0041f078 00000000 004098b0 b6ebfe54
->> ffe0: bedb6bc8 bedb6bb8 b6d0f91c b6c945a0
->> Code: e7f001f2 e5931008 e1110002 0a000001 (e7f001f2)
->> ---[ end trace e904557128d9aed5 ]---
->>
->> This patch enables page-aligned allocation when
->> CONFIG_ARCH_HAS_STRICT_MODULE_RWX is enabled.
->>
->> Fixes: 93651f80dcb6 ("modules: fix compile error if don't have strict module rwx")
->> Signed-off-by: He Zhe <zhe.he@windriver.com>
->
-> Hi!
->
-> I have already committed a fix for this to modules-next and plan to
-> send a pull request next week.
+Cc: <stable@vger.kernel.org>
+Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mn.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-Thanks for pointing out :)
-
-https://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git/commit/?h=modules-next&id=38f054d549a869f22a02224cd276a27bf14b6171
-
-But I'd suggest we should keep the case of "define debug_align(X) (X)" for all
-the rest arches without CONFIG_HAS_STRICT_MODULE_RWX ability, which would save
-people who are sensitive to system size a lot of memory when using modules,
-especially for embedded systems, as this patch did. This seems the original
-intention of this #ifdef... statement and still valid for now.
-
-Zhe
-
->
-> Thanks!
->
-> Jessica
->
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index ecd1062f6847..c5838710e1d8 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -436,12 +436,12 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MN_AUDIO_PLL2_OUT] = imx_clk_gate("audio_pll2_out", "audio_pll2_bypass", base + 0x14, 13);
+ 	clks[IMX8MN_VIDEO_PLL1_OUT] = imx_clk_gate("video_pll1_out", "video_pll1_bypass", base + 0x28, 13);
+ 	clks[IMX8MN_DRAM_PLL_OUT] = imx_clk_gate("dram_pll_out", "dram_pll_bypass", base + 0x50, 13);
+-	clks[IMX8MN_GPU_PLL_OUT] = imx_clk_gate("gpu_pll_out", "gpu_pll_bypass", base + 0x64, 13);
+-	clks[IMX8MN_VPU_PLL_OUT] = imx_clk_gate("vpu_pll_out", "vpu_pll_bypass", base + 0x74, 13);
+-	clks[IMX8MN_ARM_PLL_OUT] = imx_clk_gate("arm_pll_out", "arm_pll_bypass", base + 0x84, 13);
+-	clks[IMX8MN_SYS_PLL1_OUT] = imx_clk_gate("sys_pll1_out", "sys_pll1_bypass", base + 0x94, 13);
+-	clks[IMX8MN_SYS_PLL2_OUT] = imx_clk_gate("sys_pll2_out", "sys_pll2_bypass", base + 0x104, 13);
+-	clks[IMX8MN_SYS_PLL3_OUT] = imx_clk_gate("sys_pll3_out", "sys_pll3_bypass", base + 0x114, 13);
++	clks[IMX8MN_GPU_PLL_OUT] = imx_clk_gate("gpu_pll_out", "gpu_pll_bypass", base + 0x64, 11);
++	clks[IMX8MN_VPU_PLL_OUT] = imx_clk_gate("vpu_pll_out", "vpu_pll_bypass", base + 0x74, 11);
++	clks[IMX8MN_ARM_PLL_OUT] = imx_clk_gate("arm_pll_out", "arm_pll_bypass", base + 0x84, 11);
++	clks[IMX8MN_SYS_PLL1_OUT] = imx_clk_gate("sys_pll1_out", "sys_pll1_bypass", base + 0x94, 11);
++	clks[IMX8MN_SYS_PLL2_OUT] = imx_clk_gate("sys_pll2_out", "sys_pll2_bypass", base + 0x104, 11);
++	clks[IMX8MN_SYS_PLL3_OUT] = imx_clk_gate("sys_pll3_out", "sys_pll3_bypass", base + 0x114, 11);
+ 
+ 	/* SYS PLL fixed output */
+ 	clks[IMX8MN_SYS_PLL1_40M] = imx_clk_fixed_factor("sys_pll1_40m", "sys_pll1_out", 1, 20);
+-- 
+2.16.4
 
