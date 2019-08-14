@@ -2,76 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0556B8DD76
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3272B8DD6B
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 20:50:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbfHNSrb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 14:47:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729404AbfHNSr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:47:26 -0400
-Received: from quaco.ghostprotocols.net (unknown [177.195.212.110])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A0372084F;
-        Wed, 14 Aug 2019 18:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565808446;
-        bh=4sgLjmnTO7CXBqVDep4HdViPQQ11wQ5oh3DTj7yzDrs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gVe/rDjt3hXO3O9u26UDtC8NZWEjheqeUiKxRFzN9ezXTZD9Z8Lnm7zbJnAfHu3va
-         QiYltiJNzMqGJV5HtVhH750Og9BDH6lVyUKejRM9l2zOdU9POoBy7e0y1sBWKxgpOS
-         7Gz5BViRmljBnbBpOL4U8TKrizW9uwtKUuFHZ9Wc=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 28/28] perf ui: No need to set ui_browser to 1 twice
-Date:   Wed, 14 Aug 2019 15:40:51 -0300
-Message-Id: <20190814184051.3125-29-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190814184051.3125-1-acme@kernel.org>
-References: <20190814184051.3125-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1728704AbfHNSrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 14:47:08 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32866 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726585AbfHNSrI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:47:08 -0400
+Received: by mail-pf1-f193.google.com with SMTP id g2so54105491pfq.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 11:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=e2lnOM0nFup0+pDAGMOKduOv8qYBIIuH1dlGE1F9sPs=;
+        b=ieBmvOQNdM7BQd6Gca54c7f9RiF5MCWMIzSkw+wXsP2vjco7xd/LwS6OHt7Vh+UZ7e
+         7X24Y6DGIMQVMarWETzWtvF3pDWJWSw1YKDBP8rmmDG7pP/GyO6pbbioIou35P4bC9bF
+         /ELRg6ljWXtk4eXrayC3/WrpoC6NwCzClrkkIsqBD2sBlXMDpG0z63orWyQLi/7zZU2v
+         6maY394hvg3TvFaqJlUdFc9s5xmIuQKjdjGQmWLr1VUlH1QFPoSa8q35I3WJoYfFuEXn
+         8C2x/ZkXdmNPUKXBQznie/ercfyaygJhrUTnTAcWqdVCkqZVKPV62Jby73cv1LF5wEYw
+         +PNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=e2lnOM0nFup0+pDAGMOKduOv8qYBIIuH1dlGE1F9sPs=;
+        b=n5odXARsN8UlMEo3W2FnYoxag4YOkyMaUdFKlnSm0lKTWJiQv7rd7vXki6ofv/5e+V
+         khhsvFCgfff3Y3m91zeqH/mcWFSUY+gu1Bd1lRd2Mlr2eff9xjoA2RUjyPt6Wqi5WYDh
+         mnDHaFZvnYi8HJfJZqZHFfYzAzbJNltf6d/U4qkZmnIIoKxfiqfn7YQzBLQnLyH4zoKB
+         +17hX7CrzL1Vm0IZrUGRpNlQ+SZjAibopvvYmhEVL11kZsZufYEuZkHsBxWAM77yrzhC
+         oisscvIljZwH6j+aNTAOK3qGFeJt5tZB2qS0fssOtee3VzEVa1l3ullNAJqLiQ2UnEXX
+         +6/g==
+X-Gm-Message-State: APjAAAXZeav+g2u5jCcfj0ZYYcE9Ee7LarEUYLcuuzXe3K0DBr7L8nDW
+        OSBG/Tv3xIKzjnEffXbXpnZgBbqVAEY=
+X-Google-Smtp-Source: APXvYqzCysw5Y/5dmalFUJZRxuOj2cWrLosCwl46s9aspUhN6WQQhOJ4b4h1iOtEIPC6cZFBiEMV7Q==
+X-Received: by 2002:a63:3fc9:: with SMTP id m192mr471718pga.429.1565808426805;
+        Wed, 14 Aug 2019 11:47:06 -0700 (PDT)
+Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
+        by smtp.gmail.com with ESMTPSA id y16sm610855pfc.36.2019.08.14.11.47.05
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 11:47:06 -0700 (PDT)
+From:   John Stultz <john.stultz@linaro.org>
+To:     lkml <linux-kernel@vger.kernel.org>
+Cc:     John Stultz <john.stultz@linaro.org>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: [RESEND][PATCH v3 00/26] drm: Kirin driver cleanups to prep for Kirin960 support
+Date:   Wed, 14 Aug 2019 18:46:36 +0000
+Message-Id: <20190814184702.54275-1-john.stultz@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+Just wanted to resend this patch set so I didn't have to
+continue carrying it forever to keep the HiKey960 board running.
 
-We need to do it only when fallbacking from GTK to the TUI.
+This patchset contains one fix (in the front, so its easier to
+eventually backport), and a series of changes from YiPing to
+refactor the kirin drm driver so that it can be used on both
+kirin620 based devices (like the original HiKey board) as well
+as kirin960 based devices (like the HiKey960 board).
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-dda0acxqef1k72n9z4myjbjt@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/ui/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The full kirin960 drm support is still being refactored, but as
+this base kirin rework was getting to be substantial, I wanted
+to send out the first chunk, so that the review burden wasn't
+overwhelming.
 
-diff --git a/tools/perf/ui/setup.c b/tools/perf/ui/setup.c
-index 44fe824e96cd..3bc7c9a6fae9 100644
---- a/tools/perf/ui/setup.c
-+++ b/tools/perf/ui/setup.c
-@@ -89,9 +89,9 @@ void setup_browser(bool fallback_to_pager)
- 		printf("GTK browser requested but could not find %s\n",
- 		       PERF_GTK_DSO);
- 		sleep(1);
-+		use_browser = 1;
- 		/* fall through */
- 	case 1:
--		use_browser = 1;
- 		if (ui__init() == 0)
- 			break;
- 		/* fall through */
+The full HiKey960 patch stack can be found here:
+  https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/hikey960-mainline-WIP
+
+thanks
+-john
+
+Cc: Rongrong Zou <zourongrong@gmail.com>
+Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
+Cc: David Airlie <airlied@linux.ie>
+Cc: Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel <dri-devel@lists.freedesktop.org>
+Cc: Sam Ravnborg <sam@ravnborg.org>
+
+Da Lv (1):
+  drm: kirin: Fix for hikey620 display offset problem
+
+John Stultz (4):
+  drm: kirin: Get rid of drmP.h includes
+  drm: kirin: Remove HISI_KIRIN_DW_DSI config option
+  drm: kirin: Remove unreachable return
+  drm: kirin: Move workqueue to ade_hw_ctx structure
+
+Xu YiPing (21):
+  drm: kirin: Remove uncessary parameter indirection
+  drm: kirin: Remove out_format from ade_crtc
+  drm: kirin: Rename ade_plane to kirin_plane
+  drm: kirin: Rename ade_crtc to kirin_crtc
+  drm: kirin: Dynamically allocate the hw_ctx
+  drm: kirin: Move request irq handle in ade hw ctx alloc
+  drm: kirin: Move kirin_crtc, kirin_plane, kirin_format to
+    kirin_drm_drv.h
+  drm: kirin: Reanme dc_ops to kirin_drm_data
+  drm: kirin: Move ade crtc/plane help functions to driver_data
+  drm: kirin: Move channel formats to driver data
+  drm: kirin: Move mode config function to driver_data
+  drm: kirin: Move plane number and primay plane in driver data
+  drm: kirin: Move config max_width and max_height to driver data
+  drm: kirin: Move drm driver to driver data
+  drm: kirin: Add register connect helper functions in drm init
+  drm: kirin: Rename plane_init and crtc_init
+  drm: kirin: Fix dev->driver_data setting
+  drm: kirin: Make driver_data variable non-global
+  drm: kirin: Add alloc_hw_ctx/clean_hw_ctx ops in driver data
+  drm: kirin: Pass driver data to crtc init and plane init
+  drm: kirin: Move ade drm init to kirin drm drv
+
+ drivers/gpu/drm/hisilicon/kirin/Kconfig       |  10 +-
+ drivers/gpu/drm/hisilicon/kirin/Makefile      |   4 +-
+ .../gpu/drm/hisilicon/kirin/kirin_ade_reg.h   |   1 +
+ .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 360 +++++++-----------
+ .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   | 257 +++++++++----
+ .../gpu/drm/hisilicon/kirin/kirin_drm_drv.h   |  48 ++-
+ 6 files changed, 379 insertions(+), 301 deletions(-)
+
 -- 
-2.21.0
+2.17.1
 
