@@ -2,34 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58E428C6F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:20:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9E5C98C6F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:20:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729483AbfHNCUE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:20:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50446 "EHLO mail.kernel.org"
+        id S1729838AbfHNCTy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:19:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729768AbfHNCTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:19:33 -0400
+        id S1727620AbfHNCTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:19:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB3042084D;
-        Wed, 14 Aug 2019 02:19:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D29862084D;
+        Wed, 14 Aug 2019 02:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749173;
-        bh=MyHtG47uOAPOj2mNF0ndNfw6NE6cKDd6Bqu/U6pudMI=;
+        s=default; t=1565749176;
+        bh=fG5gKSURpvl8cm1v+OZybGwKNiFssUS3aCFzr7Uketo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G9G1MgH2A0orLAkGAunWG/7hchl4Xw8zKK+Bk7znfrhhgljIIbUP5ebr51WwzRbpb
-         wUmAgm4CgEyetpLdhnsNbHJUocSumPvZt3s2xvK0tBwfMrEgIxnf/Fsulh6vljFwH0
-         R/RPQGQ4wZkwm7sWG1PZj5vUeV5Xlc0CkPEm6IW0=
+        b=VDPiDtMhlWrIrG1TVscC5A7ZQNO5aFEFHj6FnSFoqUxlesYtXEKsiJ7ioy98F3ZRI
+         KDrZV1Trsok7RS7bVeol2Sjcuviv37ai38ngY66lPTNhKB3RMaojtRJmm7lJphFAKD
+         6lZkdl72LO18Ytg66cy6uJUrWJj0SwbSjNWYZS8Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jens Axboe <axboe@kernel.dk>, Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, linux-ide@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 38/44] libata: add SG safety checks in SFF pio transfers
-Date:   Tue, 13 Aug 2019 22:18:27 -0400
-Message-Id: <20190814021834.16662-38-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Deepak Rawat <drawat@vmware.com>,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 40/44] drm/vmwgfx: fix memory leak when too many retries have occurred
+Date:   Tue, 13 Aug 2019 22:18:29 -0400
+Message-Id: <20190814021834.16662-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021834.16662-1-sashal@kernel.org>
 References: <20190814021834.16662-1-sashal@kernel.org>
@@ -42,46 +45,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jens Axboe <axboe@kernel.dk>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 752ead44491e8c91e14d7079625c5916b30921c5 ]
+[ Upstream commit 6b7c3b86f0b63134b2ab56508921a0853ffa687a ]
 
-Abort processing of a command if we run out of mapped data in the
-SG list. This should never happen, but a previous bug caused it to
-be possible. Play it safe and attempt to abort nicely if we don't
-have more SG segments left.
+Currently when too many retries have occurred there is a memory
+leak on the allocation for reply on the error return path. Fix
+this by kfree'ing reply before returning.
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Addresses-Coverity: ("Resource leak")
+Fixes: a9cd9c044aa9 ("drm/vmwgfx: Add a check to handle host message failure")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Reviewed-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Deepak Rawat <drawat@vmware.com>
+Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ata/libata-sff.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ata/libata-sff.c b/drivers/ata/libata-sff.c
-index cc2f2e35f4c2e..8c36ff0c2dd49 100644
---- a/drivers/ata/libata-sff.c
-+++ b/drivers/ata/libata-sff.c
-@@ -704,6 +704,10 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 	unsigned int offset;
- 	unsigned char *buf;
- 
-+	if (!qc->cursg) {
-+		qc->curbytes = qc->nbytes;
-+		return;
-+	}
- 	if (qc->curbytes == qc->nbytes - qc->sect_size)
- 		ap->hsm_task_state = HSM_ST_LAST;
- 
-@@ -729,6 +733,8 @@ static void ata_pio_sector(struct ata_queued_cmd *qc)
- 
- 	if (qc->cursg_ofs == qc->cursg->length) {
- 		qc->cursg = sg_next(qc->cursg);
-+		if (!qc->cursg)
-+			ap->hsm_task_state = HSM_ST_LAST;
- 		qc->cursg_ofs = 0;
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+index 97000996b8dc5..50cc060cc552a 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.c
+@@ -300,8 +300,10 @@ static int vmw_recv_msg(struct rpc_channel *channel, void **msg,
+ 		break;
  	}
- }
+ 
+-	if (retries == RETRIES)
++	if (retries == RETRIES) {
++		kfree(reply);
+ 		return -EINVAL;
++	}
+ 
+ 	*msg_len = reply_len;
+ 	*msg     = reply;
 -- 
 2.20.1
 
