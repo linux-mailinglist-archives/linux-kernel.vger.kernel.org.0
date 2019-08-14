@@ -2,77 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1235F8DF75
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:56:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54F7E8DF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:03:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730004AbfHNU4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:56:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37990 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728443AbfHNU4J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:56:09 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFD9E20651;
-        Wed, 14 Aug 2019 20:56:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565816169;
-        bh=/47vrJUcPnKmlW6QGCuX38MeKmclx+u9kcMLBRaqbs4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pi6KnQedP5wNrNC9WqJkX3iCMipQiegirC5UJ923ryfPZa6rrSPNcrL5FvjWNzJXe
-         uEFWtt5gQsv862Iv7+Ak1EKlQ+6njDmiCuKvxWLGmoM9pJ6Yd4U9QopjJbdgxB9+VC
-         biiBIGKf53FEg32rV49NF8iWU1PTqPGbKbe77Sa0=
-Date:   Wed, 14 Aug 2019 13:56:08 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Arun KS <arunks@codeaurora.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v2 4/5] mm/memory_hotplug: Make sure the pfn is aligned
- to the order when onlining
-Message-Id: <20190814135608.a449ca5a75cd700e077a8d23@linux-foundation.org>
-In-Reply-To: <20190814154109.3448-5-david@redhat.com>
-References: <20190814154109.3448-1-david@redhat.com>
-        <20190814154109.3448-5-david@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1729888AbfHNVDT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 17:03:19 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44500 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728524AbfHNVDS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 17:03:18 -0400
+Received: by mail-oi1-f196.google.com with SMTP id k22so39548oiw.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 14:03:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fQvw6+Cysy9DNZAaud1joF+LzoMS/HD7HFa+/9L4GG0=;
+        b=jPBf3uDulUcoKNAc5FGbcIPpld5MB7MguGlABvefio2QnWvJq/obtoqu6LpahFZIkQ
+         rM/GMVkfcRxE3U1bulrtw0Zs/k9utF6dZSbCwlX6WycAAjJgYMSbiXmThaLHRA6xThco
+         HZWYFDFuZtVUJTvJgk524nTNZRqlxLibSrVV+70Nyx4Ob47dkyLqrBabX24h5YgReC+W
+         t0UblEXnsWwaot5BRaD5GakbpFUgKWjS0dCY/pj1V7gaFj+wT35TLpg0S7O+vFDCztih
+         CI9HH/dfo1Rjqicz02DtjCrRt8heoR+3fKr4BErk1UwzCeCQ4BdkjzhheZqxAUuD1PVj
+         0IEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fQvw6+Cysy9DNZAaud1joF+LzoMS/HD7HFa+/9L4GG0=;
+        b=J5bk6Q+XYGNScmBJMeMI8Tax5PVOh8U9ayNtv1HkdSF5KWZOuAbY85OYftJg/nUWS5
+         Ys9nd6qypsavX5kWivFK5OYlUyPn3Q5x8qK8mgOsKdD3CQ/wR7de5CpmeCnuwoTNj7xd
+         djnf/KbCkpPFtvZWLer6NEeB+H7gPTQAsFeqHWjvO0Zj/+tDpczan6svwLf4zn61PO9j
+         0Ul2joOsmxXBWffq+kq9R5a+NeHQHsuYk4zlbS/PTW4wiVnAnqvqwqNR5gjLTeRqKDc2
+         VNNXqY8grYOm5EoqJHVWUWSJolnfUdp9cpcwo3StrgKZonTvGUSIMoe5c9UPWnZEwyN9
+         nMBw==
+X-Gm-Message-State: APjAAAXzcvEWmnsd1nFzHDoT2iZDSVF5W9VQ1UELYvpROMeTa5N7eOjx
+        KGmZd5ZX4ux6UwRjm1lo90yL4cojyglT5UV5mvE58w==
+X-Google-Smtp-Source: APXvYqx3dcBMnUheir3gSBs9xUQOcTyId+C2d3MDO2QXd53RNomRiQfCtM0IPYyzSOLbYGH7WOVy7saGs2fKzMZzluQ=
+X-Received: by 2002:aca:6104:: with SMTP id v4mr1341676oib.172.1565816597247;
+ Wed, 14 Aug 2019 14:03:17 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190806192654.138605-1-saravanak@google.com> <20190806192654.138605-2-saravanak@google.com>
+ <CAL_Jsq+BwHSj1XUNp_eY362XnNoOqVTNHqAkvnbgece8ZQE3Qw@mail.gmail.com> <CAGETcx8+EETv6nSu+BEBStKvbmBs+tZZgo1u_Pw8SNu+7Urq1Q@mail.gmail.com>
+In-Reply-To: <CAGETcx8+EETv6nSu+BEBStKvbmBs+tZZgo1u_Pw8SNu+7Urq1Q@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Wed, 14 Aug 2019 14:02:41 -0700
+Message-ID: <CAGETcx89sjoT0OWjhJyWtCfB_dBFTzwS9+bSSSXEbTUFygmuvw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] of/platform: Disable generic device linking code for PowerPC
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Android Kernel Team <kernel-team@android.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 17:41:08 +0200 David Hildenbrand <david@redhat.com> wrote:
-
-> Commit a9cd410a3d29 ("mm/page_alloc.c: memory hotplug: free pages as higher
-> order") assumed that any PFN we get via memory resources is aligned to
-> to MAX_ORDER - 1, I am not convinced that is always true. Let's play safe,
-> check the alignment and fallback to single pages.
-> 
-> ...
+On Tue, Aug 6, 2019 at 3:04 PM Saravana Kannan <saravanak@google.com> wrote:
 >
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -646,6 +646,9 @@ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
->  	 */
->  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1ul << order) {
->  		order = min(MAX_ORDER - 1, get_order(PFN_PHYS(end_pfn - pfn)));
-> +		/* __free_pages_core() wants pfns to be aligned to the order */
-> +		if (unlikely(!IS_ALIGNED(pfn, 1ul << order)))
-> +			order = 0;
->  		(*online_page_callback)(pfn_to_page(pfn), order);
->  	}
+> On Tue, Aug 6, 2019 at 2:27 PM Rob Herring <robh+dt@kernel.org> wrote:
+> >
+> > On Tue, Aug 6, 2019 at 1:27 PM Saravana Kannan <saravanak@google.com> wrote:
+> > >
+> > > PowerPC platforms don't use the generic of/platform code to populate the
+> > > devices from DT.
+> >
+> > Yes, they do.
+>
+> No they don't. My wording could be better, but they don't use
+> of_platform_default_populate_init()
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/of/platform.c#n511
+>
+> >
+> > > Therefore the generic device linking code is never used
+> > > in PowerPC.  Compile it out to avoid warning about unused functions.
+> >
+> > I'd prefer this get disabled on PPC using 'if (IS_ENABLED(CONFIG_PPC))
+> > return' rather than #ifdefs.
+>
+> I'm just moving the existing ifndef some lines above. I don't want to
+> go change existing #ifndef in this patch. Maybe that should be a
+> separate patch series that goes and fixes all such code in drivers/of/
+> or driver/
 
-We aren't sure if this occurs, but if it does, we silently handle it.
+Bump. Thoughts? I don't think changing the existing if(n)defs should
+be part of this patch series.
 
-It seems a reasonable defensive thing to do, but should we add a
-WARN_ON_ONCE() so that we get to find out about it?  If we get such a
-report then we can remove the WARN_ON_ONCE() and add an illuminating
-comment.
-
-
+-Saravana
