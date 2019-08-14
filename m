@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18C978D9C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB7CD8DA01
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729888AbfHNRMB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:12:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35536 "EHLO mail.kernel.org"
+        id S1731090AbfHNRO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:14:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730239AbfHNRL7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:11:59 -0400
+        id S1731064AbfHNROY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:14:24 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C6F3E2063F;
-        Wed, 14 Aug 2019 17:11:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65AFF2133F;
+        Wed, 14 Aug 2019 17:14:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802718;
-        bh=5KpzJcO9s1No6VYp64ZStfAjB04V+ezPbwatG7aZ2rs=;
+        s=default; t=1565802863;
+        bh=X42x0xK8Yv7JFdRdm38qmeC5UC56ygSVuWr4FXYQzcs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FcTP8y2wsFsB1hDoi7V59ldphcEA7mViYe8RulWywuHTJTgdBYgyFmWHzlYJWw0nW
-         LBb8R23AzJC3ViK5WtcAR3wnuSJEs/7LtZQl+2O0fWwKc5GPAZ2vlMKXvtHJQcrQba
-         VzidnahqCSpnoWJWaJ4pWE5d/d7UY99ZNFUS/8YA=
+        b=fMN3PQFxC6rN9oMCh7DH9UKaNSVH9riKPIJe2uMdin1DbOkHq3RG+MTfvDTZaYmNv
+         bCFDDFp6a4w8b4eXVEk00n5wV9SZ/51Dw2ysGgPYM9wTdelcrOBn3qoNE5v9YyNkv7
+         hhE6RHfn6k5H0jk1dMD6WHXyauTH2K0VcGQUYEyI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.19 90/91] iwlwifi: mvm: dont send GEO_TX_POWER_LIMIT on version < 41
-Date:   Wed, 14 Aug 2019 19:01:53 +0200
-Message-Id: <20190814165754.073170009@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.14 56/69] ALSA: firewire: fix a memory leak bug
+Date:   Wed, 14 Aug 2019 19:01:54 +0200
+Message-Id: <20190814165749.289717396@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
-References: <20190814165748.991235624@linuxfoundation.org>
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+References: <20190814165744.822314328@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,73 +44,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luca Coelho <luciano.coelho@intel.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit 39bd984c203e86f3109b49c2a2e20677c4d3ab65 upstream.
+commit 1be3c1fae6c1e1f5bb982b255d2034034454527a upstream.
 
-Firmware versions before 41 don't support the GEO_TX_POWER_LIMIT
-command, and sending it to the firmware will cause a firmware crash.
-We allow this via debugfs, so we need to return an error value in case
-it's not supported.
+In iso_packets_buffer_init(), 'b->packets' is allocated through
+kmalloc_array(). Then, the aligned packet size is checked. If it is
+larger than PAGE_SIZE, -EINVAL will be returned to indicate the error.
+However, the allocated 'b->packets' is not deallocated on this path,
+leading to a memory leak.
 
-This had already been fixed during init, when we send the command if
-the ACPI WGDS table is present.  Fix it also for the other,
-userspace-triggered case.
+To fix the above issue, free 'b->packets' before returning the error code.
 
-Cc: stable@vger.kernel.org
-Fixes: 7fe90e0e3d60 ("iwlwifi: mvm: refactor geo init")
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Fixes: 31ef9134eb52 ("ALSA: add LaCie FireWire Speakers/Griffin FireWave Surround driver")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Cc: <stable@vger.kernel.org> # v2.6.39+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/wireless/intel/iwlwifi/mvm/fw.c |   22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ sound/firewire/packets-buffer.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/fw.c
-@@ -836,6 +836,17 @@ int iwl_mvm_sar_select_profile(struct iw
- 	return iwl_mvm_send_cmd_pdu(mvm, REDUCE_TX_POWER_CMD, 0, len, &cmd);
- }
+--- a/sound/firewire/packets-buffer.c
++++ b/sound/firewire/packets-buffer.c
+@@ -37,7 +37,7 @@ int iso_packets_buffer_init(struct iso_p
+ 	packets_per_page = PAGE_SIZE / packet_size;
+ 	if (WARN_ON(!packets_per_page)) {
+ 		err = -EINVAL;
+-		goto error;
++		goto err_packets;
+ 	}
+ 	pages = DIV_ROUND_UP(count, packets_per_page);
  
-+static bool iwl_mvm_sar_geo_support(struct iwl_mvm *mvm)
-+{
-+	/*
-+	 * The GEO_TX_POWER_LIMIT command is not supported on earlier
-+	 * firmware versions.  Unfortunately, we don't have a TLV API
-+	 * flag to rely on, so rely on the major version which is in
-+	 * the first byte of ucode_ver.
-+	 */
-+	return IWL_UCODE_SERIAL(mvm->fw->ucode_ver) >= 41;
-+}
-+
- int iwl_mvm_get_sar_geo_profile(struct iwl_mvm *mvm)
- {
- 	struct iwl_geo_tx_power_profiles_resp *resp;
-@@ -851,6 +862,9 @@ int iwl_mvm_get_sar_geo_profile(struct i
- 		.data = { &geo_cmd },
- 	};
- 
-+	if (!iwl_mvm_sar_geo_support(mvm))
-+		return -EOPNOTSUPP;
-+
- 	ret = iwl_mvm_send_cmd(mvm, &cmd);
- 	if (ret) {
- 		IWL_ERR(mvm, "Failed to get geographic profile info %d\n", ret);
-@@ -876,13 +890,7 @@ static int iwl_mvm_sar_geo_init(struct i
- 	int ret, i, j;
- 	u16 cmd_wide_id =  WIDE_ID(PHY_OPS_GROUP, GEO_TX_POWER_LIMIT);
- 
--	/*
--	 * This command is not supported on earlier firmware versions.
--	 * Unfortunately, we don't have a TLV API flag to rely on, so
--	 * rely on the major version which is in the first byte of
--	 * ucode_ver.
--	 */
--	if (IWL_UCODE_SERIAL(mvm->fw->ucode_ver) < 41)
-+	if (!iwl_mvm_sar_geo_support(mvm))
- 		return 0;
- 
- 	ret = iwl_mvm_sar_get_wgds_table(mvm);
 
 
