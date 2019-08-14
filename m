@@ -2,166 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF2B8CF14
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:10:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46DF18CF25
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 11:17:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfHNJKz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 05:10:55 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:47892 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725306AbfHNJKy (ORCPT
+        id S1726496AbfHNJRs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 05:17:48 -0400
+Received: from gardel.0pointer.net ([85.214.157.71]:34924 "EHLO
+        gardel.0pointer.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbfHNJRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 05:10:54 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7E98gBC051496;
-        Wed, 14 Aug 2019 09:09:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=TNfNRRKJgbXv7UuZJo39ZwJD8vTIpc3kkLpNrGx/jZc=;
- b=WEU3oqFIDbauuFkn2Z4Zj55MKAreETQepZfadI63N7c9H3nRG0VLn3V2QLmS1n7IHDJy
- pvpKgtbZoiksHZMQYZd/7bAnei/VAlo0Jg93kM6DCL02zEwMXuOqpWd1Y/V1GU55Zf5L
- dwmaLqe7VHj4eY7Jdzy5lK8SYC8g/QM5XK7iR7Ui+rzSZK3iIygOSztXg865qQU1qzzm
- +PgsJLQZ9FDLMpXt6rAgR6f58/wWoFV9djD0P/jQ5jL6HcarZQP5660pbXaxWZM+ANfa
- lRxR2pVC822YT/YvjO5s0ssqv9AgmUYqdpkZ1j3psY4oYy4tVwf3OYQdId1Dwo78ZW+6 Gw== 
-Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
-        by aserp2120.oracle.com with ESMTP id 2u9nvpbptr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 09:09:42 +0000
-Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
-        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7E97toh101805;
-        Wed, 14 Aug 2019 09:09:42 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3030.oracle.com with ESMTP id 2ubwrh1xmp-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 09:09:42 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7E99U1i025522;
-        Wed, 14 Aug 2019 09:09:31 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Aug 2019 02:09:30 -0700
-Date:   Wed, 14 Aug 2019 12:09:21 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Hui Peng <benquike@gmail.com>, security@kernel.org,
-        alsa-devel@alsa-project.org, YueHaibing <yuehaibing@huawei.com>,
+        Wed, 14 Aug 2019 05:17:47 -0400
+X-Greylist: delayed 489 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 05:17:47 EDT
+Received: from gardel-login.0pointer.net (gardel.0pointer.net [85.214.157.71])
+        by gardel.0pointer.net (Postfix) with ESMTP id EF34CE80937;
+        Wed, 14 Aug 2019 11:09:36 +0200 (CEST)
+Received: by gardel-login.0pointer.net (Postfix, from userid 1000)
+        id 950C2160102; Wed, 14 Aug 2019 11:09:36 +0200 (CEST)
+Date:   Wed, 14 Aug 2019 11:09:36 +0200
+From:   Lennart Poettering <mzxreary@0pointer.de>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Allison Randal <allison@lohutok.net>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Wenwen Wang <wang6495@umn.edu>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Fix an OOB bug in parse_audio_mixer_unit
-Message-ID: <20190814090921.GO1935@kadam>
-References: <20190814023625.21683-1-benquike@gmail.com>
- <s5hzhkcb6dh.wl-tiwai@suse.de>
+        John Stultz <john.stultz@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Karel Zak <kzak@redhat.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Subject: Re: New kernel interface for sys_tz and timewarp?
+Message-ID: <20190814090936.GB10516@gardel-login>
+References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com>
+ <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com>
+ <20190814000622.GB20365@mit.edu>
+ <CAK8P3a1CXRETxn6Gh_cOxM3rZ-wUwVDu-7=yEwjqOY=uEdC6OQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <s5hzhkcb6dh.wl-tiwai@suse.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9348 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908140092
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9348 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908140092
+In-Reply-To: <CAK8P3a1CXRETxn6Gh_cOxM3rZ-wUwVDu-7=yEwjqOY=uEdC6OQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 08:36:42AM +0200, Takashi Iwai wrote:
-> On Wed, 14 Aug 2019 04:36:24 +0200,
-> Hui Peng wrote:
-> > 
-> > The `uac_mixer_unit_descriptor` shown as below is read from the
-> > device side. In `parse_audio_mixer_unit`, `baSourceID` field is
-> > accessed from index 0 to `bNrInPins` - 1, the current implementation
-> > assumes that descriptor is always valid (the length  of descriptor
-> > is no shorter than 5 + `bNrInPins`). If a descriptor read from
-> > the device side is invalid, it may trigger out-of-bound memory
-> > access.
-> > 
-> > ```
-> > struct uac_mixer_unit_descriptor {
-> > 	__u8 bLength;
-> > 	__u8 bDescriptorType;
-> > 	__u8 bDescriptorSubtype;
-> > 	__u8 bUnitID;
-> > 	__u8 bNrInPins;
-> > 	__u8 baSourceID[];
-> > }
-> > ```
-> > 
-> > This patch fixes the bug by add a sanity check on the length of
-> > the descriptor.
-> > 
-> > Signed-off-by: Hui Peng <benquike@gmail.com>
-> > Reported-by: Hui Peng <benquike@gmail.com>
-> > Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-> > ---
-> >  sound/usb/mixer.c | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-> > index 7498b5191b68..38202ce67237 100644
-> > --- a/sound/usb/mixer.c
-> > +++ b/sound/usb/mixer.c
-> > @@ -2091,6 +2091,15 @@ static int parse_audio_mixer_unit(struct mixer_build *state, int unitid,
-> >  	struct usb_audio_term iterm;
-> >  	int input_pins, num_ins, num_outs;
-> >  	int pin, ich, err;
-> > +	int desc_len = (int) ((unsigned long) state->buffer +
-> > +			state->buflen - (unsigned long) raw_desc);
-> > +
-> > +	if (desc_len < sizeof(*desc) + desc->bNrInPins) {
-> > +		usb_audio_err(state->chip,
-> > +			      "descriptor %d too short\n",
-> > +			      unitid);
-> > +		return -EINVAL;
-> > +	}
-> >  
-> >  	err = uac_mixer_unit_get_channels(state, desc);
-> >  	if (err < 0) {
-> 
-> Hm, what is the desc->bLength value in the error case?
-> 
-> Basically the buffer boundary is already checked against bLength in
-> snd_usb_find_desc() which is called from obtaining the raw_desc in the
-> caller of this function (parse_audio_unit()).
-> 
-> So, if any, we need to check bLength for the possible overflow like
-> below.
-> 
-> 
-> thanks,
-> 
-> Takashi
-> 
-> --- a/sound/usb/mixer.c
-> +++ b/sound/usb/mixer.c
-> @@ -744,6 +744,8 @@ static int uac_mixer_unit_get_channels(struct mixer_build *state,
->  		return -EINVAL;
->  	if (!desc->bNrInPins)
->  		return -EINVAL;
-> +	if (desc->bLength < sizeof(*desc) + desc->bNrInPins)
-> +		return -EINVAL;
+On Mi, 14.08.19 10:31, Arnd Bergmann (arnd@arndb.de) wrote:
 
-VERSION 1 and 2 already have a different check:
+> - glibc stops passing the caller timezone argument to the kernel
+> - the distro kernel disables CONFIG_RTC_HCTOSYS,
+>   CONFIG_RTC_SYSTOHC  and CONFIG_GENERIC_CMOS_UPDATE
 
-	if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 1)
-		return 0; /* no bmControls -> skip */
+What's the benefit of letting userspace do this? It sounds a lot more
+fragile to leave this syncing to userspace if the kernel can do this
+trivially on its own.
 
-So something is possibly off by one.  It's just version 3 which doesn't
-have a check.
+IIRC there are uses in kernel that use CLOCK_REALTIME already before
+userspace starts. e.g. iirc networking generally prefers
+CLOCK_REALTIME timestamps over CLOCK_MONOTONIC timestamps
+(i.e. SO_TIMESTAMP and friends are still CLOCK_REALTIME only so far,
+unless I am missing something). If the kernel comes up with a
+CLOCK_REALTIME that starts at 0 this is pretty annoying I
+figure... Hence, so far I suggested to distros to continue turning on
+the options above, and let the kernel do this on its own without
+involving userspace in that.
 
-regards,
-dan carpenter
+Lennart
 
+--
+Lennart Poettering, Berlin
