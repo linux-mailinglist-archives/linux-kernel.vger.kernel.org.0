@@ -2,66 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 291CB8D5EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E5A68D5F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 16:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfHNO2g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 10:28:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:36068 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727524AbfHNO2g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 10:28:36 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1A8C1AEE9;
-        Wed, 14 Aug 2019 14:28:35 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 16:28:34 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Arun KS <arunks@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Oscar Salvador <osalvador@suse.de>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH v1 2/4] mm/memory_hotplug: Handle unaligned start and
- nr_pages in online_pages_blocks()
-Message-ID: <20190814142834.GD17933@dhcp22.suse.cz>
-References: <20190809125701.3316-1-david@redhat.com>
- <20190809125701.3316-3-david@redhat.com>
- <20190814140805.GA17933@dhcp22.suse.cz>
- <ddb10470-8d6e-c8bd-4877-197621219612@redhat.com>
+        id S1728034AbfHNO30 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 10:29:26 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:45417 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfHNO3Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 10:29:25 -0400
+Received: by mail-wr1-f68.google.com with SMTP id q12so21021747wrj.12
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 07:29:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2IzMeyCw4b+7DKgb/SLhUrPAysAZa9vx3wztCpi4ATU=;
+        b=VAPOmbqxGPwOnu/ahhV4JorGqlJkzO90cqNgECVmwc2YqbZP4mROMy3dXJ/1sfFI2J
+         jpBnqHM3N6+eifsigJK3AM8SWvVHh4wWhSehha9PO4sAK1anbFSn/RGHNHxq7dvKwqTy
+         3waODWYiIhnsP9Qs3ebrS22URajl2LL9ObAK0jz+9ntmB3EaVgVpsMlH3xLqe6dYn/ac
+         C5xCtCa6nzJbuFhbESygbFQb8Q8Twmz0CT0wMj7r4ZhgGWS35T2jXiBnmdRZqpIFo5PD
+         eXitIImiYDiCADlNI6CfhY4pRc5db7iQCHmxtlXUjG2D1ZCcjZt6OBQlqsBYf9Gd5FU6
+         F7eA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2IzMeyCw4b+7DKgb/SLhUrPAysAZa9vx3wztCpi4ATU=;
+        b=ctGbzmdoNCIgyAy+gwTpQmD21QxbQKsUbZgcaoDqEIztpJV9i72ZezPCaDePT0AZ9j
+         QX1TJFv8DZ3MQzxEIjVz3aCkFXunQnH63FqzE5WT7+8w46ApEzGrYvryUhvFpvbBa5hk
+         tjwPsIr9cnH5kdErYJt3haRUYTweYtVVNm9/wQafrpHS94mCs6j66n+CnAC51f+vO+uS
+         9A6xjX9LrH+y8AX02bXdkyJPROix+n0BRHkaeA003EQrzNsba4nSchXoM6ZVO3uhLwmN
+         DCdcZmiL5yZniQZBEIv7lGGhgKB4D0O8YhY0pH8ZprRCfJFxZkOr17KRO2ReZsTBWe3j
+         soiw==
+X-Gm-Message-State: APjAAAX0YRT7IzGTB8YBxY6w92slMlI9AaKT3Mh8SWGOdZwOzWXli8/l
+        Eg8U0B5831r+V+Yk3bB2kpzvfQ==
+X-Google-Smtp-Source: APXvYqytAei+jJQfHJhChYLVNukfzd1vwskFZJVslXGn3U/8AlBoTjX7g3J6RtLDiVTl/Q6LfDLoGw==
+X-Received: by 2002:adf:fa42:: with SMTP id y2mr53881666wrr.170.1565792962947;
+        Wed, 14 Aug 2019 07:29:22 -0700 (PDT)
+Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id o7sm4202908wmc.36.2019.08.14.07.29.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 07:29:22 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: [PATCH 00/14] arm64: dts: meson: fixes following YAML bindings schemas conversion
+Date:   Wed, 14 Aug 2019 16:29:04 +0200
+Message-Id: <20190814142918.11636-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddb10470-8d6e-c8bd-4877-197621219612@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-08-19 16:17:03, David Hildenbrand wrote:
-> On 14.08.19 16:08, Michal Hocko wrote:
-> > On Fri 09-08-19 14:56:59, David Hildenbrand wrote:
-> >> Take care of nr_pages not being a power of two and start not being
-> >> properly aligned. Essentially, what walk_system_ram_range() could provide
-> >> to us. get_order() will round-up in case it's not a power of two.
-> >>
-> >> This should only apply to memory blocks that contain strange memory
-> >> resources (especially with holes), not to ordinary DIMMs.
-> > 
-> > I would really like to see an example of such setup before making the
-> > code hard to read. Because I am not really sure something like that
-> > exists at all.
-> 
-> I don't have a real-live example at hand (founds this while exploring
-> the code), however, the linked commit changed it without stating why it
-> would be safe to do so.
+This is the first set of DT fixes following the first YAML bindings conversion
+at [1], [2] and [3].
 
-Then just drop the change. It is making the code a real head scratcher,
-and more so after the next patch. I am pretty sure that things would
-easily and quickly blow up if we had ranges like that.
+After this set of fixes, the remaining errors are :
+meson-axg-s400.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+meson-g12a-sei510.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+meson-g12b-odroid-n2.dt.yaml: usb-hub: gpios:0:0: 20 is not valid under any of the given schemas
+meson-g12b-odroid-n2.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+meson-g12a-x96-max.dt.yaml: sound: 'clocks' is a dependency of 'assigned-clocks'
+
+These are only cosmetic changes, and should not break drivers implementation
+following the bindings.
+
+Neil Armstrong (14):
+  arm64: dts: meson: fix ethernet mac reg format
+  arm64: dts: meson-gx: drop the vpu dmc memory cell
+  arm64: dts: meson-gx: fix reset controller compatible
+  arm64: dts: meson-gx: fix spifc compatible
+  arm64: dts: meson-gx: fix watchdog compatible
+  arm64: dts: meson-gx: fix mhu compatible
+  arm64: dts: meson-gx: fix periphs bus node name
+  arm64: dts: meson-gxl: fix internal phy compatible
+  arm64: dts: meson-axg: fix MHU compatible
+  arm64: dts: meson-g12a: fix reset controller compatible
+  arm64: dts: meson-g12a-x96-max: fix compatible
+  arm64: dts: meson-gxbb-nanopi-k2: add missing model
+  arm64: dts: meson-gxbb-p201: fix snps,reset-delays-us format
+  arm64: dts: meson: fix boards regulators states format
+
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi    |  6 +++---
+ .../boot/dts/amlogic/meson-g12a-x96-max.dts   |  2 +-
+ arch/arm64/boot/dts/amlogic/meson-g12a.dtsi   |  7 +++----
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |  4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi     | 19 +++++++++----------
+ .../boot/dts/amlogic/meson-gxbb-nanopi-k2.dts |  1 +
+ .../dts/amlogic/meson-gxbb-nexbox-a95x.dts    |  4 ++--
+ .../boot/dts/amlogic/meson-gxbb-odroidc2.dts  |  4 ++--
+ .../boot/dts/amlogic/meson-gxbb-p201.dts      |  2 +-
+ .../boot/dts/amlogic/meson-gxbb-p20x.dtsi     |  4 ++--
+ .../meson-gxl-s905x-hwacom-amazetv.dts        |  4 ++--
+ .../amlogic/meson-gxl-s905x-nexbox-a95x.dts   |  4 ++--
+ arch/arm64/boot/dts/amlogic/meson-gxl.dtsi    |  5 +----
+ 13 files changed, 31 insertions(+), 35 deletions(-)
+
 -- 
-Michal Hocko
-SUSE Labs
+2.22.0
+
