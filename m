@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F7CC8DAF4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:21:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31F498DAF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:21:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbfHNRVt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:21:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59844 "EHLO mail.kernel.org"
+        id S1729910AbfHNRJg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730314AbfHNRJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:27 -0400
+        id S1729744AbfHNRJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 869CA2133F;
-        Wed, 14 Aug 2019 17:09:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFD472133F;
+        Wed, 14 Aug 2019 17:09:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802567;
-        bh=ZOosVN0Ic6Q88AcFPeEupioIcmxpjRiFLM8kbGNB5nU=;
+        s=default; t=1565802572;
+        bh=OPx45xy2p1rWXhmJFLkvQZHWulh+StboAdUlXNpnCFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c5fWbNoCc7gP+hGtJCYc0+HIEoZ6aCWYK4NqznkGPOwThydJUa9sxDI3j5SbFpT79
-         G80MPgWAs3sBULuMAl59Yzz1ZrJrthSme+5zizqV8xxDmRWfV2YoKn/MYYjXILXcd0
-         ugk2vxGqr2w1qkNCVPy76L6fINuV1lDmxRti+IBA=
+        b=JHUL0A3U8GBWnJDVgpYJ88QhCrTWF/F/WnBOdppSNjsDk4lmA6FkaJyUMff2BpOXK
+         MsW2qksZsShGvFsRMbffJwP3TclfEnMfpJXZr3axof7jNYEzFqlLP7uEEyQ3ObWzc9
+         Zn+uNs0mQJ0Trzi8RBRu7kKb/CAvD6M4Oukthrc4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nikita Yushchenko <nikita.yoush@cogentembedded.com>,
+        Stephane Grosjean <s.grosjean@peak-system.com>,
         Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.19 31/91] can: rcar_canfd: fix possible IRQ storm on high load
-Date:   Wed, 14 Aug 2019 19:00:54 +0200
-Message-Id: <20190814165751.018391194@linuxfoundation.org>
+Subject: [PATCH 4.19 32/91] can: peak_usb: fix potential double kfree_skb()
+Date:   Wed, 14 Aug 2019 19:00:55 +0200
+Message-Id: <20190814165751.055919064@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -44,67 +44,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+From: Stephane Grosjean <s.grosjean@peak-system.com>
 
-commit d4b890aec4bea7334ca2ca56fd3b12fb48a00cd1 upstream.
+commit fee6a8923ae0d318a7f7950c6c6c28a96cea099b upstream.
 
-We have observed rcar_canfd driver entering IRQ storm under high load,
-with following scenario:
-- rcar_canfd_global_interrupt() in entered due to Rx available,
-- napi_schedule_prep() is called, and sets NAPIF_STATE_SCHED in state
-- Rx fifo interrupts are masked,
-- rcar_canfd_global_interrupt() is entered again, this time due to
-  error interrupt (e.g. due to overflow),
-- since scheduled napi poller has not yet executed, condition for calling
-  napi_schedule_prep() from rcar_canfd_global_interrupt() remains true,
-  thus napi_schedule_prep() gets called and sets NAPIF_STATE_MISSED flag
-  in state,
-- later, napi poller function rcar_canfd_rx_poll() gets executed, and
-  calls napi_complete_done(),
-- due to NAPIF_STATE_MISSED flag in state, this call does not clear
-  NAPIF_STATE_SCHED flag from state,
-- on return from napi_complete_done(), rcar_canfd_rx_poll() unmasks Rx
-  interrutps,
-- Rx interrupt happens, rcar_canfd_global_interrupt() gets called
-  and calls napi_schedule_prep(),
-- since NAPIF_STATE_SCHED is set in state at this time, this call
-  returns false,
-- due to that false return, rcar_canfd_global_interrupt() returns
-  without masking Rx interrupt
-- and this results into IRQ storm: unmasked Rx interrupt happens again
-  and again is misprocessed in the same way.
+When closing the CAN device while tx skbs are inflight, echo skb could
+be released twice. By calling close_candev() before unlinking all
+pending tx urbs, then the internal echo_skb[] array is fully and
+correctly cleared before the USB write callback and, therefore,
+can_get_echo_skb() are called, for each aborted URB.
 
-This patch fixes that scenario by unmasking Rx interrupts only when
-napi_complete_done() returns true, which means it has cleared
-NAPIF_STATE_SCHED in state.
-
-Fixes: dd3bd23eb438 ("can: rcar_canfd: Add Renesas R-Car CAN FD driver")
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Fixes: bb4785551f64 ("can: usb: PEAK-System Technik USB adapters driver core")
+Signed-off-by: Stephane Grosjean <s.grosjean@peak-system.com>
 Cc: linux-stable <stable@vger.kernel.org>
 Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/rcar/rcar_canfd.c |    9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/net/can/usb/peak_usb/pcan_usb_core.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/can/rcar/rcar_canfd.c
-+++ b/drivers/net/can/rcar/rcar_canfd.c
-@@ -1512,10 +1512,11 @@ static int rcar_canfd_rx_poll(struct nap
+--- a/drivers/net/can/usb/peak_usb/pcan_usb_core.c
++++ b/drivers/net/can/usb/peak_usb/pcan_usb_core.c
+@@ -576,16 +576,16 @@ static int peak_usb_ndo_stop(struct net_
+ 	dev->state &= ~PCAN_USB_STATE_STARTED;
+ 	netif_stop_queue(netdev);
  
- 	/* All packets processed */
- 	if (num_pkts < quota) {
--		napi_complete_done(napi, num_pkts);
--		/* Enable Rx FIFO interrupts */
--		rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx),
--				   RCANFD_RFCC_RFIE);
-+		if (napi_complete_done(napi, num_pkts)) {
-+			/* Enable Rx FIFO interrupts */
-+			rcar_canfd_set_bit(priv->base, RCANFD_RFCC(ridx),
-+					   RCANFD_RFCC_RFIE);
-+		}
- 	}
- 	return num_pkts;
- }
++	close_candev(netdev);
++
++	dev->can.state = CAN_STATE_STOPPED;
++
+ 	/* unlink all pending urbs and free used memory */
+ 	peak_usb_unlink_all_urbs(dev);
+ 
+ 	if (dev->adapter->dev_stop)
+ 		dev->adapter->dev_stop(dev);
+ 
+-	close_candev(netdev);
+-
+-	dev->can.state = CAN_STATE_STOPPED;
+-
+ 	/* can set bus off now */
+ 	if (dev->adapter->dev_set_bus) {
+ 		int err = dev->adapter->dev_set_bus(dev, 0);
 
 
