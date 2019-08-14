@@ -2,76 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A3978C77D
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A59E58C815
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:29:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727885AbfHNCYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:24:34 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:39622 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730139AbfHNCYb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:24:31 -0400
-Received: by mail-ot1-f67.google.com with SMTP id b1so10764123otp.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:24:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=djwbOoU5ileobHGHzugslDxkoFaMGMiR2MOTUznWvvE=;
-        b=aUTYvZKENV7jx2SUF1Rt71AnU/eAfEOkOw82G9L2RA4jgcGrfvsbDozKAy/0Jd7xzj
-         dEZxsN1WCqx+vRxpE+2VZIaqHXxgGM5SLtGhQuB5JOJH7Was1RG0JSZPOdWVRH17vJD2
-         dLbkqTIpgKpxrzt66K9NiV9wke8kgqU+WNqLwmY0uSzAoZ4hWXbAQ1/JcyQuQltNiudT
-         cyh2KV2Q8y2+x1/+ytCHsMqZ5V79Njok7qu20FaXuZBg3e0SSQXi+Cu3Kj0Bt/XuAY6n
-         aVa9W6MzOIQuxeTLAO8rfrpJRidlychF7eKk1l6HDENnpfX0EUMfkwik3TNXY4v+tciy
-         a7Vw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=djwbOoU5ileobHGHzugslDxkoFaMGMiR2MOTUznWvvE=;
-        b=HrPqve3Ib3ZM5MhmC/UpLfhHC+kDcMB0IGKMhWlNvq19LIzN5sbKerlrMl/m7+bTiv
-         9FKigqhE+TfnP0FSn9QsA/aNM2T9N2ChHVbfuUA4wteubJTlREhDMzw76/1nGcrPZgB7
-         Hu0ylRUC9FoVX+y91OB7Ga6gILNNJ8iK3UADwKE2NWG1hRnb8RlchVdm1sUfmfC+dZgv
-         PNLXbUko4RqXQrZcy+Xju1DNrOlAWko+JxIs2Fg4k+aKJtrd+h/KlARj1eFQfKXBcowP
-         kvoPWXdI3+1cKVCmIB46syeyDCVEQxAjKNUSem29+kKkf5xyOFhl3DlIcpr2v0dOLN0Q
-         Gndw==
-X-Gm-Message-State: APjAAAUVhus/QqzN/uLkl1wojvlIbpD+H+Jsb+3OKvTHPz9iBdRNz5b0
-        P9CR5+ownRpIpZcipcLXBjQEgw==
-X-Google-Smtp-Source: APXvYqx+xLwy91cVwpgk6Jxu4j6BEJ3bP1Um+itheAYr7zgJCtQf5lOwrktHCYRgtlFyKi9r/5/W+g==
-X-Received: by 2002:a5d:9453:: with SMTP id x19mr2569033ior.183.1565749470857;
-        Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
-Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id a8sm79125353ioh.29.2019.08.13.19.24.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Alistair Francis <alistair.francis@wdc.com>
-cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        alistair23@gmail.com
-Subject: Re: [PATCH 2/2] riscv: defconfig: Update the defconfig
-In-Reply-To: <20190813233230.21804-2-alistair.francis@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1908131924210.19217@viisi.sifive.com>
-References: <20190813233230.21804-1-alistair.francis@wdc.com> <20190813233230.21804-2-alistair.francis@wdc.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1729424AbfHNC2p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:28:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54040 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729570AbfHNCZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:25:53 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0B7020842;
+        Wed, 14 Aug 2019 02:25:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565749552;
+        bh=Ifj00gfVsgvP+iQz6eKGgCcOciA1KGPr8g0npFZqP+o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gK8IVvazbe/v5mfz3BsRoiqwU+zB006Osjo3hDoJk5NBS+ZCiORfFsJXMuwlUowYQ
+         R96jnGtM9dQ01prDEUdig1aixyuf42JaP+8gz1MQLskRQFNrrkip60yHSphaW+ApfC
+         wz9gnlHhrDa9VJSj4GsA28RJvMrjvDKuWE3UTbS4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Ilya Trukhanov <lahvuun@gmail.com>, Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 01/28] HID: Add 044f:b320 ThrustMaster, Inc. 2 in 1 DT
+Date:   Tue, 13 Aug 2019 22:25:23 -0400
+Message-Id: <20190814022550.17463-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Aug 2019, Alistair Francis wrote:
+From: Ilya Trukhanov <lahvuun@gmail.com>
 
-> Update the defconfig:
->  - Add CONFIG_HW_RANDOM=y and CONFIG_HW_RANDOM_VIRTIO=y to enable
->    VirtIORNG when running on QEMU
-> 
-> Signed-off-by: Alistair Francis <alistair.francis@wdc.com>
+[ Upstream commit 65f11c72780fa9d598df88def045ccb6a885cf80 ]
 
-Thanks, queued for v5.3-rc.
+Enable force feedback for the Thrustmaster Dual Trigger 2 in 1 Rumble Force
+gamepad. Compared to other Thrustmaster devices, left and right rumble
+motors here are swapped.
 
+Signed-off-by: Ilya Trukhanov <lahvuun@gmail.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/hid-tmff.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-- Paul
+diff --git a/drivers/hid/hid-tmff.c b/drivers/hid/hid-tmff.c
+index b83376077d722..cfa0cb22c9b3c 100644
+--- a/drivers/hid/hid-tmff.c
++++ b/drivers/hid/hid-tmff.c
+@@ -34,6 +34,8 @@
+ 
+ #include "hid-ids.h"
+ 
++#define THRUSTMASTER_DEVICE_ID_2_IN_1_DT	0xb320
++
+ static const signed short ff_rumble[] = {
+ 	FF_RUMBLE,
+ 	-1
+@@ -88,6 +90,7 @@ static int tmff_play(struct input_dev *dev, void *data,
+ 	struct hid_field *ff_field = tmff->ff_field;
+ 	int x, y;
+ 	int left, right;	/* Rumbling */
++	int motor_swap;
+ 
+ 	switch (effect->type) {
+ 	case FF_CONSTANT:
+@@ -112,6 +115,13 @@ static int tmff_play(struct input_dev *dev, void *data,
+ 					ff_field->logical_minimum,
+ 					ff_field->logical_maximum);
+ 
++		/* 2-in-1 strong motor is left */
++		if (hid->product == THRUSTMASTER_DEVICE_ID_2_IN_1_DT) {
++			motor_swap = left;
++			left = right;
++			right = motor_swap;
++		}
++
+ 		dbg_hid("(left,right)=(%08x, %08x)\n", left, right);
+ 		ff_field->value[0] = left;
+ 		ff_field->value[1] = right;
+@@ -238,6 +248,8 @@ static const struct hid_device_id tm_devices[] = {
+ 		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb304),   /* FireStorm Dual Power 2 (and 3) */
+ 		.driver_data = (unsigned long)ff_rumble },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, THRUSTMASTER_DEVICE_ID_2_IN_1_DT),   /* Dual Trigger 2-in-1 */
++		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb323),   /* Dual Trigger 3-in-1 (PC Mode) */
+ 		.driver_data = (unsigned long)ff_rumble },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_THRUSTMASTER, 0xb324),   /* Dual Trigger 3-in-1 (PS3 Mode) */
+-- 
+2.20.1
+
