@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FBEF8DA3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:16:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B49D48DAA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730947AbfHNRQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:16:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38740 "EHLO mail.kernel.org"
+        id S1729668AbfHNRTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:19:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731049AbfHNROQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:14:16 -0400
+        id S1730635AbfHNRLy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:11:54 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A163821721;
-        Wed, 14 Aug 2019 17:14:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A08622063F;
+        Wed, 14 Aug 2019 17:11:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802856;
-        bh=haDGDPpQ1Pj1EGxaFFI0G/sBZ/fd/kn1SmnmBMF/z+U=;
+        s=default; t=1565802713;
+        bh=LKkqE582/S6sATCM3lFIxeJcT/BwhZU8XuQuYvGVD4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m+2qbvR50GlQ5guh8a/P3y5Vgz/SpgPhWwCrlsZLwyXfdaqjYY61hx8Ti7TgnlBUJ
-         RrVr1Xpvq2A7EYI4pZAzLe4RXtB0QJxsge8hPzsabKySERhnao2MwYVEQb4PPT7YDJ
-         Oe3h9bHDMxx2d6cpwL1MK6tiICuGPunxJ5Hq6ulw=
+        b=lIG2V2QMifbgg7ln2rJ/L9sHm91xbl/grrjcJg9a0NGiyL3gXndHPazEpPu50yjUT
+         71oXDfwr252ifd8hel1Vl/kSzTFmLTUKr/7+X3MgaB23Ucz353b1M1p4Nqs9lXfE+9
+         kr+RtiOUy2oS9gbsnkxjv7FDjOfYXrDU7Qj0D9zA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomas Bortoli <tomasbortoli@gmail.com>,
-        syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com,
-        Marc Kleine-Budde <mkl@pengutronix.de>
-Subject: [PATCH 4.14 53/69] can: peak_usb: pcan_usb_fd: Fix info-leaks to USB devices
+        stable@vger.kernel.org,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>
+Subject: [PATCH 4.19 88/91] iwlwifi: dont unmap as page memory that was mapped as single
 Date:   Wed, 14 Aug 2019 19:01:51 +0200
-Message-Id: <20190814165749.050344988@linuxfoundation.org>
+Message-Id: <20190814165753.938454228@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +44,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tomas Bortoli <tomasbortoli@gmail.com>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-commit 30a8beeb3042f49d0537b7050fd21b490166a3d9 upstream.
+commit 87e7e25aee6b59fef740856f4e86d4b60496c9e1 upstream.
 
-Uninitialized Kernel memory can leak to USB devices.
+In order to remember how to unmap a memory (as single or
+as page), we maintain a bit per Transmit Buffer (TBs) in
+the meta data (structure iwl_cmd_meta).
+We maintain a bitmap: 1 bit per TB.
+If the TB is set, we will free the memory as a page.
+This bitmap was never cleared. Fix this.
 
-Fix by using kzalloc() instead of kmalloc() on the affected buffers.
-
-Signed-off-by: Tomas Bortoli <tomasbortoli@gmail.com>
-Reported-by: syzbot+513e4d0985298538bf9b@syzkaller.appspotmail.com
-Fixes: 0a25e1f4f185 ("can: peak_usb: add support for PEAK new CANFD USB adapters")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: stable@vger.kernel.org
+Fixes: 3cd1980b0cdf ("iwlwifi: pcie: introduce new tfd and tb formats")
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/can/usb/peak_usb/pcan_usb_fd.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/intel/iwlwifi/pcie/tx.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/net/can/usb/peak_usb/pcan_usb_fd.c
-+++ b/drivers/net/can/usb/peak_usb/pcan_usb_fd.c
-@@ -852,7 +852,7 @@ static int pcan_usb_fd_init(struct peak_
- 			goto err_out;
+--- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
++++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
+@@ -403,6 +403,8 @@ static void iwl_pcie_tfd_unmap(struct iw
+ 					 DMA_TO_DEVICE);
+ 	}
  
- 		/* allocate command buffer once for all for the interface */
--		pdev->cmd_buffer_addr = kmalloc(PCAN_UFD_CMD_BUFFER_SIZE,
-+		pdev->cmd_buffer_addr = kzalloc(PCAN_UFD_CMD_BUFFER_SIZE,
- 						GFP_KERNEL);
- 		if (!pdev->cmd_buffer_addr)
- 			goto err_out_1;
++	meta->tbs = 0;
++
+ 	if (trans->cfg->use_tfh) {
+ 		struct iwl_tfh_tfd *tfd_fh = (void *)tfd;
+ 
 
 
