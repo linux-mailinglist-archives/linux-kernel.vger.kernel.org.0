@@ -2,42 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AAD918DA64
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:17:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 842E78D9AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730839AbfHNRNJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:13:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37286 "EHLO mail.kernel.org"
+        id S1730530AbfHNRKx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728503AbfHNRNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:13:05 -0400
+        id S1730508AbfHNRKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:44 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D5A92084D;
-        Wed, 14 Aug 2019 17:13:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CC4A2084D;
+        Wed, 14 Aug 2019 17:10:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802784;
-        bh=eArX+yKXU6PQ/EZVaaQjVivBLWy5s58Vjl88rRonlZY=;
+        s=default; t=1565802644;
+        bh=xgE+15QcMdwoAnFrAPREzcsQF9PufS+fugmS0e/+Dtw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V/ZXv4hlSiom2BPXOOkz6sN4g2jGaEeHaEAm0qcM8ri/TmIoT/wJzDsO1qzE45Y4V
-         IEF2w7t0LH/cbdEyyeS9yqV/YKOZey9cNsJ3NfzvwEaK4kpbViPXpjn76kZDj6lnTF
-         4NSLe0ievD1OhjquW4lo8UCMoeKacVfmGigUSu6M=
+        b=QnFmRjfQa4XJOkiKt30cS7rqLLLABDael162iBlPjgKxn6D+yJRDqMjedYe/6equV
+         6bYEDgSLIYHKL8RJqp/wZGeumduBlIjEy9wG7R4C/Nrvks8HizlFAYAXo+Rsp7F+qW
+         38uSs9M3dSi0xf1WQCu8t3dUZAN48shfAMf6qmhA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Thomas Jarosch <thomas.jarosch@intra2net.com>,
-        Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 25/69] netfilter: nfnetlink: avoid deadlock due to synchronous request_module
-Date:   Wed, 14 Aug 2019 19:01:23 +0200
-Message-Id: <20190814165747.162439196@linuxfoundation.org>
+Subject: [PATCH 4.19 61/91] ARM: davinci: fix sleep.S build error on ARMv4
+Date:   Wed, 14 Aug 2019 19:01:24 +0200
+Message-Id: <20190814165752.208167332@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,72 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1b0890cd60829bd51455dc5ad689ed58c4408227 ]
+[ Upstream commit d64b212ea960db4276a1d8372bd98cb861dfcbb0 ]
 
-Thomas and Juliana report a deadlock when running:
+When building a multiplatform kernel that includes armv4 support,
+the default target CPU does not support the blx instruction,
+which leads to a build failure:
 
-(rmmod nf_conntrack_netlink/xfrm_user)
+arch/arm/mach-davinci/sleep.S: Assembler messages:
+arch/arm/mach-davinci/sleep.S:56: Error: selected processor does not support `blx ip' in ARM mode
 
-  conntrack -e NEW -E &
-  modprobe -v xfrm_user
+Add a .arch statement in the sources to make this file build.
 
-They provided following analysis:
-
-conntrack -e NEW -E
-    netlink_bind()
-        netlink_lock_table() -> increases "nl_table_users"
-            nfnetlink_bind()
-            # does not unlock the table as it's locked by netlink_bind()
-                __request_module()
-                    call_usermodehelper_exec()
-
-This triggers "modprobe nf_conntrack_netlink" from kernel, netlink_bind()
-won't return until modprobe process is done.
-
-"modprobe xfrm_user":
-    xfrm_user_init()
-        register_pernet_subsys()
-            -> grab pernet_ops_rwsem
-                ..
-                netlink_table_grab()
-                    calls schedule() as "nl_table_users" is non-zero
-
-so modprobe is blocked because netlink_bind() increased
-nl_table_users while also holding pernet_ops_rwsem.
-
-"modprobe nf_conntrack_netlink" runs and inits nf_conntrack_netlink:
-    ctnetlink_init()
-        register_pernet_subsys()
-            -> blocks on "pernet_ops_rwsem" thanks to xfrm_user module
-
-both modprobe processes wait on one another -- neither can make
-progress.
-
-Switch netlink_bind() to "nowait" modprobe -- this releases the netlink
-table lock, which then allows both modprobe instances to complete.
-
-Reported-by: Thomas Jarosch <thomas.jarosch@intra2net.com>
-Reported-by: Juliana Rodrigueiro <juliana.rodrigueiro@intra2net.com>
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Link: https://lore.kernel.org/r/20190722145211.1154785-1-arnd@arndb.de
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nfnetlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-davinci/sleep.S | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/net/netfilter/nfnetlink.c b/net/netfilter/nfnetlink.c
-index 733d3e4a30d85..2cee032af46d2 100644
---- a/net/netfilter/nfnetlink.c
-+++ b/net/netfilter/nfnetlink.c
-@@ -530,7 +530,7 @@ static int nfnetlink_bind(struct net *net, int group)
- 	ss = nfnetlink_get_subsys(type << 8);
- 	rcu_read_unlock();
- 	if (!ss)
--		request_module("nfnetlink-subsys-%d", type);
-+		request_module_nowait("nfnetlink-subsys-%d", type);
- 	return 0;
- }
- #endif
+diff --git a/arch/arm/mach-davinci/sleep.S b/arch/arm/mach-davinci/sleep.S
+index cd350dee4df37..efcd400b2abb3 100644
+--- a/arch/arm/mach-davinci/sleep.S
++++ b/arch/arm/mach-davinci/sleep.S
+@@ -37,6 +37,7 @@
+ #define DEEPSLEEP_SLEEPENABLE_BIT	BIT(31)
+ 
+ 	.text
++	.arch	armv5te
+ /*
+  * Move DaVinci into deep sleep state
+  *
 -- 
 2.20.1
 
