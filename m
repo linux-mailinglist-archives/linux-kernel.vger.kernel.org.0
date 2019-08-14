@@ -2,37 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 111BB8C5F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 578D68C5F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727513AbfHNCLa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:11:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43658 "EHLO mail.kernel.org"
+        id S1727610AbfHNCLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:11:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727427AbfHNCL0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:11:26 -0400
+        id S1727566AbfHNCLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:11:37 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 687BF20843;
-        Wed, 14 Aug 2019 02:11:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 206D120874;
+        Wed, 14 Aug 2019 02:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748685;
-        bh=6FhRZtXSpJc/zn/HxIqcub7tqXgLzqXCTfx7VUmNxXY=;
+        s=default; t=1565748696;
+        bh=KJC1zLryXGyifwxyw7PIR5MBD6APX3t7YJiS0gvm7dc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kOWSjBC/R11qW8zhxb2ckepapAfjrf3KtTNXU8fewQS9zTVNNvQ8zMo+yMuTMdNeT
-         NKbtgsY3ODbTbsppbb338gtKY9YXCe/XK8DGybqFA4j7Y38vE6i4x6zU6skzkGG6rn
-         SiPgIyO1bWo8AXb3WSKcdXgcILeH1SY+eIRCQf30=
+        b=tC+BnhVAiyRPUTWvtOF0rCgv43sESEsPYNTEE0ZpmrsZyRpNR5/6fnh0Oy3Iq/pwn
+         PnYYYKaBvJ860brkQ88U/n+Zt7PVuplqY6Sg7/0Kb50DfWlju0jCoZvuqFqMgUHIdv
+         oNrd7LK5DJV5GaUs7O96L8e28QfTIvuoqBam5WGw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wenwen@cs.uga.edu>, Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 021/123] netfilter: ebtables: fix a memory leak bug in compat
-Date:   Tue, 13 Aug 2019 22:09:05 -0400
-Message-Id: <20190814021047.14828-21-sashal@kernel.org>
+Cc:     John Fastabend <john.fastabend@gmail.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        bpf@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 027/123] bpf: sockmap, only create entry if ulp is not already enabled
+Date:   Tue, 13 Aug 2019 22:09:11 -0400
+Message-Id: <20190814021047.14828-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -45,44 +44,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: John Fastabend <john.fastabend@gmail.com>
 
-[ Upstream commit 15a78ba1844a8e052c1226f930133de4cef4e7ad ]
+[ Upstream commit 0e858739c2d2eedeeac1d35bfa0ec3cc2a7190d8 ]
 
-In compat_do_replace(), a temporary buffer is allocated through vmalloc()
-to hold entries copied from the user space. The buffer address is firstly
-saved to 'newinfo->entries', and later on assigned to 'entries_tmp'. Then
-the entries in this temporary buffer is copied to the internal kernel
-structure through compat_copy_entries(). If this copy process fails,
-compat_do_replace() should be terminated. However, the allocated temporary
-buffer is not freed on this path, leading to a memory leak.
+Sockmap does not currently support adding sockets after TLS has been
+enabled. There never was a real use case for this so it was never
+added. But, we lost the test for ULP at some point so add it here
+and fail the socket insert if TLS is enabled. Future work could
+make sockmap support this use case but fixup the bug here.
 
-To fix the bug, free the buffer before returning from compat_do_replace().
-
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Reviewed-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
+Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bridge/netfilter/ebtables.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/core/sock_map.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/bridge/netfilter/ebtables.c b/net/bridge/netfilter/ebtables.c
-index 963dfdc148272..fd84b48e48b57 100644
---- a/net/bridge/netfilter/ebtables.c
-+++ b/net/bridge/netfilter/ebtables.c
-@@ -2261,8 +2261,10 @@ static int compat_do_replace(struct net *net, void __user *user,
- 	state.buf_kern_len = size64;
+diff --git a/net/core/sock_map.c b/net/core/sock_map.c
+index bbc91597d8364..8a4a45e7c29df 100644
+--- a/net/core/sock_map.c
++++ b/net/core/sock_map.c
+@@ -339,6 +339,7 @@ static int sock_map_update_common(struct bpf_map *map, u32 idx,
+ 				  struct sock *sk, u64 flags)
+ {
+ 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
++	struct inet_connection_sock *icsk = inet_csk(sk);
+ 	struct sk_psock_link *link;
+ 	struct sk_psock *psock;
+ 	struct sock *osk;
+@@ -349,6 +350,8 @@ static int sock_map_update_common(struct bpf_map *map, u32 idx,
+ 		return -EINVAL;
+ 	if (unlikely(idx >= map->max_entries))
+ 		return -E2BIG;
++	if (unlikely(icsk->icsk_ulp_data))
++		return -EINVAL;
  
- 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
--	if (WARN_ON(ret < 0))
-+	if (WARN_ON(ret < 0)) {
-+		vfree(entries_tmp);
- 		goto out_unlock;
-+	}
- 
- 	vfree(entries_tmp);
- 	tmp.entries_size = size64;
+ 	link = sk_psock_init_link();
+ 	if (!link)
 -- 
 2.20.1
 
