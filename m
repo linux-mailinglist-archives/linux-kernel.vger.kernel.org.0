@@ -2,57 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 465EB8DEAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 31E8B8DE97
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729583AbfHNUVP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:21:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:62596 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726509AbfHNUVP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:21:15 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 13:21:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,386,1559545200"; 
-   d="scan'208";a="260610415"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga001.jf.intel.com with ESMTP; 14 Aug 2019 13:21:13 -0700
-Date:   Wed, 14 Aug 2019 14:19:01 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Mario Limonciello <mario.limonciello@dell.com>,
-        Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Ryan Hong <Ryan.Hong@Dell.com>, Crag Wang <Crag.Wang@dell.com>,
-        "sjg@google.com" <sjg@google.com>,
-        Charles Hyde <charles.hyde@dellteam.com>,
-        Jared Dominguez <jared.dominguez@dell.com>
-Subject: Re: [PATCH v2] nvme: Add quirk for LiteON CL1 devices running FW
- 22301111
-Message-ID: <20190814201900.GA3511@localhost.localdomain>
-References: <1565813304-16710-1-git-send-email-mario.limonciello@dell.com>
- <32f20898-b9af-eee0-97de-0a568de54b57@grimberg.me>
+        id S1729345AbfHNUUg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:20:36 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:38977 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726509AbfHNUUf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 16:20:35 -0400
+Received: by mail-ed1-f66.google.com with SMTP id g8so359213edm.6
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 13:20:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nWZWsKOfmIl4yNVyC1A/XslquByM6vO1WGS7Kz0bD8U=;
+        b=SVq5cWxfnMTCbnzjMxfAenRqPrywZHCY7aSYPqhjndhFoxhSpIaewsuAAbQ+hxRege
+         LlE77zS9n3UHrI63NXV/R4kzhjhCsYIyspu6VzmOq3rB3oTT4FTYaoEIf2AXE4TNZw67
+         EpRfZR5Lx03CDLH2/rXob/8M+d0YAjVHOhE5s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=nWZWsKOfmIl4yNVyC1A/XslquByM6vO1WGS7Kz0bD8U=;
+        b=nFRQV/lr01ZkPS5zvC4JwBnGaQ+oz8D6RIV/VH4sNT80o/SDV4Q16tYfX3PU1HVdpL
+         AVUGqw3s/SprTDAIJTvad7C7g9CPY4UcSy6L0KBZVGudueDLXhB/J3wl+VqYbrtpwKvJ
+         Xh6quIZBY70GkAEs0uWcrTWfSS7GdEEkm83Q+1m5h3V2/Z7Om0OF1VPGJRH6gqMgEXFO
+         u2vXIfzzcLjxeBulE1cQF0NVvswj1Mrd7TWg4UNLX46DN39/zjO34VBTW3lwb6xXtTsq
+         9YDK5BTxY9BHcrqYlbqD8KBRQnRCyC2BVa3/xien/w6rzkSHhwKkrunQ6WHdXmEa4KLp
+         U7hQ==
+X-Gm-Message-State: APjAAAUb++TblIt19qYqJiEqZBJ9QHkFtbsYtwAu2QCh9In3vgSCJdLp
+        pmc269jy+/8zDz8TQaEL9652vMea7/Qtmg==
+X-Google-Smtp-Source: APXvYqw0SI+1ky3oT9vQxF5bI61NxCDkMXiJWr+jVakG6fqDm3c/lfxYyJWqP0bvugFJUIGMMW1jXQ==
+X-Received: by 2002:a17:906:5042:: with SMTP id e2mr1299846ejk.220.1565814033793;
+        Wed, 14 Aug 2019 13:20:33 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id ns22sm84342ejb.9.2019.08.14.13.20.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 13:20:33 -0700 (PDT)
+From:   Daniel Vetter <daniel.vetter@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     linux-mm@kvack.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 0/5] hmm & mmu_notifier debug/lockdep annotations
+Date:   Wed, 14 Aug 2019 22:20:22 +0200
+Message-Id: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32f20898-b9af-eee0-97de-0a568de54b57@grimberg.me>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 01:14:50PM -0700, Sagi Grimberg wrote:
-> Mario,
-> 
-> Can you please respin a patch that applies cleanly on nvme-5.4?
+Hi all (but I guess mostly Jason),
 
-This fixes a regression we introduced in 5.3, so it should go in
-5.3-rc. For this to apply cleanly, though, we'll need to resync to Linus'
-tree to get Rafael's PCIe ASPM check after he sends his linux-pm pull
-request.
+Finally gotten around to rebasing the previous version, fixing the rebase
+fail in there, update the commit message a bit and give this a spin with
+some tests. Nicely caught a lockdep splat that we're now discussing in
+i915, and seems to not have misfired anywhere else (including a few oom).
+
+Review, comments and everything very much appreciated. Plus I'd really
+like to land this, there's more hmm_mirror users in-flight, and I've seen
+some that get things wrong which this patchset should catch.
+
+Thanks, Daniel
+
+Daniel Vetter (5):
+  mm: Check if mmu notifier callbacks are allowed to fail
+  kernel.h: Add non_block_start/end()
+  mm, notifier: Catch sleeping/blocking for !blockable
+  mm, notifier: Add a lockdep map for invalidate_range_start
+  mm/hmm: WARN on illegal ->sync_cpu_device_pagetables errors
+
+ include/linux/kernel.h       | 10 +++++++++-
+ include/linux/mmu_notifier.h |  6 ++++++
+ include/linux/sched.h        |  4 ++++
+ kernel/sched/core.c          | 19 ++++++++++++++-----
+ mm/hmm.c                     |  3 +++
+ mm/mmu_notifier.c            | 17 ++++++++++++++++-
+ 6 files changed, 52 insertions(+), 7 deletions(-)
+
+-- 
+2.22.0
+
