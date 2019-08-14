@@ -2,113 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EE378CC6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140708CC76
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 09:17:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727585AbfHNHRX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 03:17:23 -0400
-Received: from mx01-fr.bfs.de ([193.174.231.67]:55417 "EHLO mx01-fr.bfs.de"
+        id S1727623AbfHNHRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 03:17:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727411AbfHNHRW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 03:17:22 -0400
-Received: from mail-fr.bfs.de (mail-fr.bfs.de [10.177.18.200])
-        by mx01-fr.bfs.de (Postfix) with ESMTPS id 32B4520312;
-        Wed, 14 Aug 2019 09:17:16 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-        t=1565767036; h=from:from:sender:reply-to:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=d9f3IQNuntXUeBa86V9VEU7wfXhvezEJu6Lae7htCko=;
-        b=dXqiGs9486bwMh1fs9txCTkgc44sKj2bU9b6y/sKB5+jJjve1jX5HXdpwq8PlF4MnsrJnn
-        p5wvNgz8a1guRtA2pKjbG5p1FLZof/N/YwxGd0fXoyRZtjtg+j9BZGhFl9z7BohLxPe3qe
-        Q0WNMeolwm2Y0qYxMHiKONMOdxXf5b7KychsLtTGKTwv5Ic+XSVqUMb9/Zga8KlQSv4CRL
-        84/Qbi8cdHW2b9vgSl/3uDPgwcQgLJQl5ZMqA/jch4vkzoMAVM/ukpPGF4VbugTRBtvnVy
-        oHFrObczs1suGAOY+X+PP6HAusS+o9jmfernWXFySNbzZnzOQnZ0qQ68OjOBlw==
-Received: from [134.92.181.33] (unknown [134.92.181.33])
-        by mail-fr.bfs.de (Postfix) with ESMTPS id D3442BEEBD;
-        Wed, 14 Aug 2019 09:17:15 +0200 (CEST)
-Message-ID: <5D53B57B.3000905@bfs.de>
-Date:   Wed, 14 Aug 2019 09:17:15 +0200
-From:   walter harms <wharms@bfs.de>
-Reply-To: wharms@bfs.de
-User-Agent: Mozilla/5.0 (X11; U; Linux x86_64; de; rv:1.9.1.16) Gecko/20101125 SUSE/3.0.11 Thunderbird/3.0.11
+        id S1727100AbfHNHRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 03:17:53 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1CF0F2054F;
+        Wed, 14 Aug 2019 07:17:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565767072;
+        bh=fFSODLNozIGjhPTZNb2HDDCi9OpfDQhPl8bfSqvMcsU=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=Tig6bqO+uLutcqoP8F96ocG1Zw8W4tfd0g/H7BQWrNvKiL9x7S1IaLUnEFmD/GI5B
+         3SZl55sPYQvUA5FzyIIn/HDJC+7sZkqtLbaf9LMihXQ+w5Rq1lRJj6TTVrLTSzMJ6b
+         Y6Dgtp5Id7PoxZl5W+jvWsXN4ST7X/w3KSvEKsMI=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-To:     Colin King <colin.king@canonical.com>
-CC:     Jianyun Li <jyli@marvell.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        linux-scsi@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scsi: mvumi: fix 32 bit shift of a u32 value
-References: <20190813180113.14245-1-colin.king@canonical.com>
-In-Reply-To: <20190813180113.14245-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.10
-Authentication-Results: mx01-fr.bfs.de
-X-Spamd-Result: default: False [-3.10 / 7.00];
-         ARC_NA(0.00)[];
-         HAS_REPLYTO(0.00)[wharms@bfs.de];
-         BAYES_HAM(-3.00)[100.00%];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         REPLYTO_ADDR_EQ_FROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         NEURAL_HAM(-0.00)[-0.999,0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         RCVD_COUNT_TWO(0.00)[2];
-         MID_RHS_MATCH_FROM(0.00)[];
-         RCVD_TLS_ALL(0.00)[]
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814055108.214253-4-brendanhiggins@google.com>
+References: <20190814055108.214253-1-brendanhiggins@google.com> <20190814055108.214253-4-brendanhiggins@google.com>
+Subject: Re: [PATCH v13 03/18] kunit: test: add string_stream a std::stream like string builder
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        kunit-dev@googlegroups.com, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-nvdimm@lists.01.org, linux-um@lists.infradead.org,
+        Alexander.Levin@microsoft.com, Tim.Bird@sony.com,
+        amir73il@gmail.com, dan.carpenter@oracle.com, daniel@ffwll.ch,
+        jdike@addtoit.com, joel@jms.id.au, julia.lawall@lip6.fr,
+        khilman@baylibre.com, knut.omang@oracle.com, logang@deltatee.com,
+        mpe@ellerman.id.au, pmladek@suse.com, rdunlap@infradead.org,
+        richard@nod.at, rientjes@google.com, rostedt@goodmis.org,
+        wfg@linux.intel.com, Brendan Higgins <brendanhiggins@google.com>
+To:     Brendan Higgins <brendanhiggins@google.com>,
+        frowand.list@gmail.com, gregkh@linuxfoundation.org,
+        jpoimboe@redhat.com, keescook@google.com,
+        kieran.bingham@ideasonboard.com, mcgrof@kernel.org,
+        peterz@infradead.org, robh@kernel.org, shuah@kernel.org,
+        tytso@mit.edu, yamada.masahiro@socionext.com
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 00:17:51 -0700
+Message-Id: <20190814071752.1CF0F2054F@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Am 13.08.2019 20:01, schrieb Colin King:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the top 32 bits of a 64 bit address is being calculated
-> by shifting a u32 twice by 16 bits and then being cast into a 64
-> bit address.  Shifting a u32 twice by 16 bits always ends up with
-> a zero.  Fix this by casting the u32 to a 64 bit address first
-> and then shifting it 32 bits.
-> 
-> Addresses-Coverity: ("Operands don't affect result")
-> Fixes: f0c568a478f0 ("[SCSI] mvumi: Add Marvell UMI driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Quoting Brendan Higgins (2019-08-13 22:50:53)
+> A number of test features need to do pretty complicated string printing
+> where it may not be possible to rely on a single preallocated string
+> with parameters.
+>=20
+> So provide a library for constructing the string as you go similar to
+> C++'s std::string. string_stream is really just a string builder,
+> nothing more.
+>=20
+> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 > ---
->  drivers/scsi/mvumi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/scsi/mvumi.c b/drivers/scsi/mvumi.c
-> index 8906aceda4c4..62df69f1e71e 100644
-> --- a/drivers/scsi/mvumi.c
-> +++ b/drivers/scsi/mvumi.c
-> @@ -296,7 +296,7 @@ static void mvumi_delete_internal_cmd(struct mvumi_hba *mhba,
->  			sgd_getsz(mhba, m_sg, size);
->  
->  			phy_addr = (dma_addr_t) m_sg->baseaddr_l |
-> -				(dma_addr_t) ((m_sg->baseaddr_h << 16) << 16);
-> +				   (dma_addr_t) m_sg->baseaddr_h << 32;
->  
 
-All the casts make it hard to read, i would propose an alternativ version:
-phy_addr = m_sg->baseaddr_h;
-phy_addr <<= 32;
-phy_addr |= m_sg->baseaddr_l;
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
-JM2C and totaly untested.
+The spinlocks will probably need to change to be irqsaves in the future,
+but I guess we can cross that bridge when we come to it.
 
-re,
- wh
-
->  			dma_free_coherent(&mhba->pdev->dev, size, cmd->data_buf,
->  								phy_addr);
