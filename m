@@ -2,110 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 674958D858
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:47:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 433578D86A
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 18:48:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbfHNQq6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 12:46:58 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58560 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726585AbfHNQq5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 12:46:57 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EGXxbX021344;
-        Wed, 14 Aug 2019 16:46:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : from : to :
- cc : references : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=VvhFfIQodEPqTncWoL+pgUbxVYn0zik2m+SUHnaOaRk=;
- b=CVuR2nj1znokxokzca7kxC7LTFRrxvOO7LH8BUN8vLI42e1FMfZ2cQJAvXUNjuJw4uRx
- saCDS7omnO8zKhSczlZZBGkSwiUM3PKkwyEsd+ChuCf7SGj7lpbbTm4/btjKF1Pxefrd
- N17nqTpow9dnh2JPnNYyO9GrHV2990WOuLFlOsgrCGDBYkwoFqB8+Pyl5G4AEPXnJg46
- mhCy/rMuXR3q16SjJK4ChQGYC11RPAa+xMQqfqLlZPxOML+ovqLTMCgJ4zgWG3Txf1Kp
- viQJcYQ42+F299tgL84yWge1Eo9Vk0RzLLOWK9gXWq//2ZW7d966Hl9QDnrlyiDXbfkr Fg== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2130.oracle.com with ESMTP id 2u9nbtp35u-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 16:46:50 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7EGXkNK186130;
-        Wed, 14 Aug 2019 16:46:50 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserp3020.oracle.com with ESMTP id 2ubwcy8qv0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 16:46:49 +0000
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7EGknbG013123;
-        Wed, 14 Aug 2019 16:46:49 GMT
-Received: from [192.168.1.222] (/71.63.128.209)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Aug 2019 09:46:48 -0700
-Subject: Re: [RFC PATCH v2 4/5] hugetlb_cgroup: Add accounting for shared
- mappings
-From:   Mike Kravetz <mike.kravetz@oracle.com>
-To:     Mina Almasry <almasrymina@google.com>
-Cc:     shuah@kernel.org, rientjes@google.com, shakeelb@google.com,
-        gthelen@google.com, akpm@linux-foundation.org,
-        khalid.aziz@oracle.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20190808231340.53601-1-almasrymina@google.com>
- <20190808231340.53601-5-almasrymina@google.com>
- <47cfc50d-bea3-0247-247e-888d2942f134@oracle.com>
-Message-ID: <9872cec9-a0fe-cfe0-0df6-90b6dd909f04@oracle.com>
-Date:   Wed, 14 Aug 2019 09:46:47 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1728384AbfHNQsm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 12:48:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52443 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726722AbfHNQsl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 12:48:41 -0400
+Received: from [IPv6:2601:646:8600:3281:2c7e:a77e:9d52:7c32] ([IPv6:2601:646:8600:3281:2c7e:a77e:9d52:7c32])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x7EGllrZ1907212
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Wed, 14 Aug 2019 09:48:01 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x7EGllrZ1907212
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565801283;
+        bh=etksQiyq83kHLcBsVn7h/6r7t63sqJ6ZCqfbAq4s+jQ=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=afIXOvzQgx2qnlUply+r6xDQ/x1UoaNoAc80t7FMe+ADbLOY7B8I85FxiGS41ewHv
+         XmobnrMVZGAAOAA3+CPcfoYqjFCiyF12rgTiNgGTPXUzSphHqYR6CTpRqGWOIU3cd8
+         UURdgkI8mNPSrEfi+nZX3zyWtIQN54jdfFuhB815yqvTII0/8x1LHJr3II4E66gd2H
+         roKmSp76TUtmYxRgrGhE00kpjNpi7nkr2LDk9hUoMrlZ1mu3JjPn8mh+vMdqRrUrMp
+         MPIxtDTWgs8tbCZhQqpmOrRUxobIU3xJCQ51x3zAJFnEPq5/L/cvQ/aWq8h6BBoMtJ
+         /DxyLVXZZju5g==
+Date:   Wed, 14 Aug 2019 09:47:39 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <342565604d704b6ebaf2e9ec28d3e109@AcuMS.aculab.com>
+References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com> <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com> <20190814000622.GB20365@mit.edu> <342565604d704b6ebaf2e9ec28d3e109@AcuMS.aculab.com>
 MIME-Version: 1.0
-In-Reply-To: <47cfc50d-bea3-0247-247e-888d2942f134@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908140157
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9349 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908140157
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: RE: New kernel interface for sys_tz and timewarp?
+To:     David Laight <David.Laight@ACULAB.COM>,
+        "'Theodore Y. Ts'o'" <tytso@mit.edu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+CC:     Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Karel Zak <kzak@redhat.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From:   hpa@zytor.com
+Message-ID: <0089C4CC-DD85-48A1-869B-A9D71852BEC7@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/13/19 4:54 PM, Mike Kravetz wrote:
-> On 8/8/19 4:13 PM, Mina Almasry wrote:
->> For shared mappings, the pointer to the hugetlb_cgroup to uncharge lives
->> in the resv_map entries, in file_region->reservation_counter.
->>
->> When a file_region entry is added to the resv_map via region_add, we
->> also charge the appropriate hugetlb_cgroup and put the pointer to that
->> in file_region->reservation_counter. This is slightly delicate since we
->> need to not modify the resv_map until we know that charging the
->> reservation has succeeded. If charging doesn't succeed, we report the
->> error to the caller, so that the kernel fails the reservation.
-> 
-> I wish we did not need to modify these region_() routines as they are
-> already difficult to understand.  However, I see no other way with the
-> desired semantics.
-> 
+On August 14, 2019 9:26:36 AM PDT, David Laight <David=2ELaight@ACULAB=2ECO=
+M> wrote:
+>From: Theodore Y=2E Ts'o
+>> Sent: 14 August 2019 01:06
+>> On Tue, Aug 13, 2019 at 10:30:34AM -0700, Linus Torvalds wrote:
+>> >
+>> > I suspect the only actual _valid_ use in the kernel for a time zone
+>> > setting is likely for RTC clock setting, but even that isn't really
+>> > "global", as much as "per RTC"=2E
+>>=20
+>> As I recall (and I may or may not have been original for the original
+>> sys_tz; it was many years ago, and my memories of 1992 are a bit
+>> fuzzy) the only reason why we added it was because x86 systems that
+>> were dual-booting with Windows had a RTC which ticked localtime, and
+>> originally, the system time was fetched from the RTC in early boot,
+>> and then when the timezone was set, the time would be warped so it
+>> would be correct=2E
+>
+>x86 systems are very likely to have the RTC set by the bios config=2E
+>In which case it will almost certainly get set to local time=2E
+>It is certainly the default for windows installs - I don't even know
+>if you have any other option=2E
+>
+>The 'real fun' (tm) happens when a dual boot system changes from
+>winter to summer time=2E
+>ISTR that it is quite easy to get both (or more) OS to change the
+>RTC by an hour (I went home an hour early one year)=2E
+>Although the x86 RTC chip has a bit defined for 'summertime', nothing
+>sets it (at least when I looked)=2E
+>
+>	David
+>
+>-
+>Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes,
+>MK1 1PT, UK
+>Registration No: 1397386 (Wales)
 
-I suspect you have considered this, but what about using the return value
-from region_chg() in hugetlb_reserve_pages() to charge reservation limits?
-There is a VERY SMALL race where the value could be too large, but that
-can be checked and adjusted at region_add time as is done with normal
-accounting today.  If the question is, where would we store the information
-to uncharge?, then we can hang a structure off the vma.  This would be
-similar to what is done for private mappings.  In fact, I would suggest
-making them both use a new cgroup reserve structure hanging off the vma.
-
-One issue I see is what to do if a vma is split?  The private mapping case
-'should' handle this today, but I would not be surprised if such code is
-missing or incorrect.
-
--- 
-Mike Kravetz
+I believe Windows 10 changed the default RTC to UTC, although perhaps only=
+ if running under UEFI=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
