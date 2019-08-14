@@ -2,104 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBE18E036
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 23:57:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 30B358E04B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:05:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729065AbfHNV5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 17:57:43 -0400
-Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:57130 "EHLO
-        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728745AbfHNV5m (ORCPT
+        id S1729617AbfHNWFO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 18:05:14 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41927 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727975AbfHNWFO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 17:57:42 -0400
-Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
-        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 800D843DB39;
-        Thu, 15 Aug 2019 07:57:37 +1000 (AEST)
-Received: from dave by dread.disaster.area with local (Exim 4.92)
-        (envelope-from <david@fromorbit.com>)
-        id 1hy1Fu-0006Ca-2B; Thu, 15 Aug 2019 07:56:30 +1000
-Date:   Thu, 15 Aug 2019 07:56:30 +1000
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     ira.weiny@intel.com, Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        Theodore Ts'o <tytso@mit.edu>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
-        linux-ext4@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH v2 02/19] fs/locks: Add Exclusive flag to user Layout
- lease
-Message-ID: <20190814215630.GQ6129@dread.disaster.area>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190809225833.6657-3-ira.weiny@intel.com>
- <fde2959db776616008fc5d31df700f5d7d899433.camel@kernel.org>
+        Wed, 14 Aug 2019 18:05:14 -0400
+Received: by mail-pg1-f194.google.com with SMTP id x15so281544pgg.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 15:05:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=zGCahEylBwx9+hrUl6JBv64qJITZ7AIfmMEaH7B2Nfg=;
+        b=KNxFr9QT2oHk0ee5GI2IjIkLTldwP57yZGwcnjUEsIx3OB6B0cmtOER71JKAynaxAl
+         tI28WVuAQNFlKsPnyqKGlZnvq7stwRv5qOx8V+A8CfeEzpCSJrEDgGxpC76R/mjugfZV
+         cfj3AMX5FF04HK8PouDp/LkA+AYBdKeqGW7mI9yywFHfFa+D9mW3dX3slJb9DT3Vb2nB
+         z1VC/a8ZneW4oXJPYnEqJeDKPyPYqbkfh/2OJgcLihAGqC7Bk8dISekepsMevjddKfwG
+         JwbAp2kne42JJ1D+FPohAKaeYVSHgGwpEG5iS4sn8vtrJGrv6DbWWHa+MfhexA3EwLHf
+         RGjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=zGCahEylBwx9+hrUl6JBv64qJITZ7AIfmMEaH7B2Nfg=;
+        b=RUUeEPA13rAcoC32kx9hmpKiZ58eRY7qObdI7Jo80LEDM3gbSOxAkrzGDnAQKSGJTF
+         m8e6L5AJ3gYj9HfY7gqE/vjZECKttoSsG4BJs1gzremi+snunD5lEmuqAC8rCjipi1WQ
+         lPJ8nbRuQoPk+y16Pko/QCD6PzK4ipwA5Zcwz4D5WuTg860fsAifLbBPAHlRHuXYaB46
+         B+N018PBr3z6TPtbsCF4wjI1YfgZAcfDzHwqLKdL1gDGjH3DirY/I+hlVLDNN8fjwjrK
+         KAWbDA5m8OBN+aj7DImDLONfFTptKIr6FauZyZw2/DquVUdi15CqelCfxNNHCIOdDldl
+         mjLg==
+X-Gm-Message-State: APjAAAWi1S+22RJ500YO+UxhhBhfrPe33bluekbDh0q6JYmRONc7SI4D
+        moRblpJHA8KKQQPsBnXa6x0=
+X-Google-Smtp-Source: APXvYqwdj2exVMetPPaW54oofiik0neX5PkaF4gcffTO1xCR5P3KzJE/Uy1GZgX/vn90YM4nR9bKlw==
+X-Received: by 2002:a62:e901:: with SMTP id j1mr2192946pfh.189.1565820313296;
+        Wed, 14 Aug 2019 15:05:13 -0700 (PDT)
+Received: from localhost ([100.118.89.196])
+        by smtp.gmail.com with ESMTPSA id g19sm968879pfk.0.2019.08.14.15.05.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 15:05:12 -0700 (PDT)
+From:   Rob Clark <robdclark@gmail.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@chromium.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Masayoshi Mizuma <m.mizuma@jp.fujitsu.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] arm64: export arch_sync_dma_for_*()
+Date:   Wed, 14 Aug 2019 14:59:56 -0700
+Message-Id: <20190814220011.26934-2-robdclark@gmail.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190814220011.26934-1-robdclark@gmail.com>
+References: <20190814220011.26934-1-robdclark@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fde2959db776616008fc5d31df700f5d7d899433.camel@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.2 cv=FNpr/6gs c=1 sm=1 tr=0
-        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
-        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=kj9zAlcOel0A:10 a=FmdZ9Uzk2mMA:10
-        a=QyXUC8HyAAAA:8 a=7-415B0cAAAA:8 a=qa3ElbQomqnm_qv8Y-cA:9
-        a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 10:15:06AM -0400, Jeff Layton wrote:
-> On Fri, 2019-08-09 at 15:58 -0700, ira.weiny@intel.com wrote:
-> > From: Ira Weiny <ira.weiny@intel.com>
-> > 
-> > Add an exclusive lease flag which indicates that the layout mechanism
-> > can not be broken.
-> > 
-> > Exclusive layout leases allow the file system to know that pages may be
-> > GUP pined and that attempts to change the layout, ie truncate, should be
-> > failed.
-> > 
-> > A process which attempts to break it's own exclusive lease gets an
-> > EDEADLOCK return to help determine that this is likely a programming bug
-> > vs someone else holding a resource.
-.....
-> > diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-> > index baddd54f3031..88b175ceccbc 100644
-> > --- a/include/uapi/asm-generic/fcntl.h
-> > +++ b/include/uapi/asm-generic/fcntl.h
-> > @@ -176,6 +176,8 @@ struct f_owner_ex {
-> >  
-> >  #define F_LAYOUT	16      /* layout lease to allow longterm pins such as
-> >  				   RDMA */
-> > +#define F_EXCLUSIVE	32      /* layout lease is exclusive */
-> > +				/* FIXME or shoudl this be F_EXLCK??? */
-> >  
-> >  /* operations for bsd flock(), also used by the kernel implementation */
-> >  #define LOCK_SH		1	/* shared lock */
-> 
-> This interface just seems weird to me. The existing F_*LCK values aren't
-> really set up to be flags, but are enumerated values (even if there are
-> some gaps on some arches). For instance, on parisc and sparc:
+From: Rob Clark <robdclark@chromium.org>
 
-I don't think we need to worry about this - the F_WRLCK version of
-the layout lease should have these exclusive access semantics (i.e
-other ops fail rather than block waiting for lease recall) and hence
-the API shouldn't need a new flag to specify them.
+Signed-off-by: Rob Clark <robdclark@chromium.org>
+---
+ arch/arm64/mm/dma-mapping.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-i.e. the primary difference between F_RDLCK and F_WRLCK layout
-leases is that the F_RDLCK is a shared, co-operative lease model
-where only delays in operations will be seen, while F_WRLCK is a
-"guarantee exclusive access and I don't care what it breaks"
-model... :)
-
-Cheers,
-
-Dave.
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index 1d3f0b5a9940..ea5ae11d07f7 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -24,12 +24,14 @@ void arch_sync_dma_for_device(struct device *dev, phys_addr_t paddr,
+ {
+ 	__dma_map_area(phys_to_virt(paddr), size, dir);
+ }
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_device);
+ 
+ void arch_sync_dma_for_cpu(struct device *dev, phys_addr_t paddr,
+ 		size_t size, enum dma_data_direction dir)
+ {
+ 	__dma_unmap_area(phys_to_virt(paddr), size, dir);
+ }
++EXPORT_SYMBOL_GPL(arch_sync_dma_for_cpu);
+ 
+ void arch_dma_prep_coherent(struct page *page, size_t size)
+ {
 -- 
-Dave Chinner
-david@fromorbit.com
+2.21.0
+
