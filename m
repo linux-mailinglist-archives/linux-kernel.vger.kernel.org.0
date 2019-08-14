@@ -2,82 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5231A8DC37
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:48:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C2B28DC3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:49:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbfHNRsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:48:51 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:39783 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728651AbfHNRsu (ORCPT
+        id S1728787AbfHNRtc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:49:32 -0400
+Received: from mail-ed1-f45.google.com ([209.85.208.45]:38643 "EHLO
+        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728537AbfHNRtc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:48:50 -0400
-Received: by mail-pf1-f194.google.com with SMTP id f17so50010729pfn.6;
-        Wed, 14 Aug 2019 10:48:50 -0700 (PDT)
+        Wed, 14 Aug 2019 13:49:32 -0400
+Received: by mail-ed1-f45.google.com with SMTP id r12so13496edo.5
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 10:49:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=JjXmk7pXQOMLxZgpEYBzHbDbsBvtUuW4FzkivJFUtz8=;
-        b=lBMuvLlEHpvux9PAgI79qF01xOk4oEUbokALibaKFb7HhKQ4EWeBTFX5OCP87/aDdW
-         8C2gRUf3C55DbxRUaCVtUyD3Ef6+liZAlojYpZ4QYU61T+dovMJjTXfvQ0xEnVLQ0Vkp
-         9OHc7G/ZqpLHCfsSY7kf1yiQIx+CUCFuZp6AhqF6BHOv6iY6bA9/WBucvS0/W41k3VMp
-         Kz+gTjbCp+GWraGRDpa8x8gKKm0GXrB6euT3wQhX1F4v1OWI3Qc2yg+dIh8ozcizn6O+
-         FXpSn4hXahzFA7FsKtvg8iPRsHj8SdgehRGFjr+MMqVnLvNXcLB/DVLbj+DEiCDJMn/J
-         CZsg==
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Hb464daFGycQhSgA9BEwjg8HNKIy+QMbts1XhF2KkhY=;
+        b=XbdmfFcT3jnZqRlVTGuaAFo1OtCPLWFWljVro0mfCdbdxEefp8fNvLYheP9O/U9RZ5
+         YWZ3imdFdL067IfOXnulKaXhUdDc+FcfNtu2hXsJNTM3bqKaa2YWSCA2NxFoIkrLyN7v
+         daxCcz4A95TTfgIwKhFdy5WvEkqqbj31ATPN8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=JjXmk7pXQOMLxZgpEYBzHbDbsBvtUuW4FzkivJFUtz8=;
-        b=BRwJJ89VgaZjxvRlvEAc8vmNw+eq4gL7AINonMn8c34MMb/UgEGe6mAaH4JWP+lgTV
-         whnPJis1bz20hqV+l0rkrNIxsDjBvWXm7u14OvKtMBhZ1hM11RFCKfbpAamzeHQWb2Yl
-         AnU7tND82fqtSro3ZRCEhRIq2k+5hIOzSqyRgtFrIA+I2E8ShKRaa+RRPyN9r2RXQqmA
-         ehT8HTqLy+D4ASISQIIhFr9l5RNiW/R0ejvLj9Ayn5N2c20EAj6TZYjeX4FQ9MDwkeC4
-         MSy8Z7h0NTYmvEwv8G8pz9bTfMGSi/3UrS+20WQqHsej2ZKglqU6UppRQpnwG8+crY30
-         nbrQ==
-X-Gm-Message-State: APjAAAWf+pXlDl+NPD07qGnGUmjdo5CdWFoG8Zm+mlz7eR1Ft4Tj+rXi
-        Dzux32OYQF06dQf+yRA3KmQ=
-X-Google-Smtp-Source: APXvYqzfkLeKkyjIgLIPq570di138yN6m5FnJNr/6PfkVy4YtQvKN3AUSGHwtl9ryfes2NifRmMbJA==
-X-Received: by 2002:a63:9e56:: with SMTP id r22mr294495pgo.221.1565804929926;
-        Wed, 14 Aug 2019 10:48:49 -0700 (PDT)
-Received: from [10.69.78.41] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id b14sm428475pfo.15.2019.08.14.10.48.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 10:48:49 -0700 (PDT)
-Subject: Re: [PATCH v4 03/14] net: phy: adin: add support for interrupts
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     davem@davemloft.net, robh+dt@kernel.org, mark.rutland@arm.com,
-        hkallweit1@gmail.com, andrew@lunn.ch
-References: <20190812112350.15242-1-alexandru.ardelean@analog.com>
- <20190812112350.15242-4-alexandru.ardelean@analog.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <a888c1d9-4f5d-c3fa-4526-94586fd9e242@gmail.com>
-Date:   Wed, 14 Aug 2019 10:48:47 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=Hb464daFGycQhSgA9BEwjg8HNKIy+QMbts1XhF2KkhY=;
+        b=tC+MoN2odsPVZUEHayUhXj7OdpSA39tYJGV6MEpKZzw8pF6q6DG2UrGk/K7wTAtIm4
+         /l0SRETXxE3/Y04Rp2ZD5ciN6J8kxOc7pURZXoFP1hb45mxMQyIpPqO87Swqu63ElDFo
+         oXSIC/AsZwNF0B5m2wDC9CBVkjMgxDDpj7Xe2xxpk8lWDBxknGA7EQs4my0zJPGST96A
+         4W0AMhoXVxDoqpFjpnMU8s0BDR81J8FaUBCwGqmO7ku8DxI0Oa4V6dTyWh4sHh4LVTn4
+         nPlP+lMu7waBVEalTj1Qocyen2OLVQboVoSA/P41HmiuyWF5fiZwLXD2fI3WtXYnsra4
+         tTAQ==
+X-Gm-Message-State: APjAAAXF4QPq5uZPTa9w378g9hdBh6KCo/d5UU/o3TfXND41wOO3K8Mf
+        afxnYkq3uUPr6I6eNFbFr80WtA==
+X-Google-Smtp-Source: APXvYqwBl2F3g+zroJnkq4eZ/+bHbYQoVu/ZDXQOMXZayvH7IQw3wqGZbNdQii7iJcpfIK39yqAZTQ==
+X-Received: by 2002:a17:906:7681:: with SMTP id o1mr710091ejm.207.1565804970147;
+        Wed, 14 Aug 2019 10:49:30 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
+        by smtp.gmail.com with ESMTPSA id b17sm81942edy.43.2019.08.14.10.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 10:49:29 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 19:49:27 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     Corentin Labbe <clabbe.montjoie@gmail.com>
+Cc:     bskeggs@redhat.com, airlied@linux.ie, daniel@ffwll.ch, hch@lst.de,
+        m.szyprowski@samsung.com, robin.murphy@arm.com,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+Subject: Re: DMA-API: cacheline tracking ENOMEM, dma-debug disabled due to
+ nouveau ?
+Message-ID: <20190814174927.GT7444@phenom.ffwll.local>
+Mail-Followup-To: Corentin Labbe <clabbe.montjoie@gmail.com>,
+        bskeggs@redhat.com, airlied@linux.ie, hch@lst.de,
+        m.szyprowski@samsung.com, robin.murphy@arm.com,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <20190814145033.GA11190@Red>
 MIME-Version: 1.0
-In-Reply-To: <20190812112350.15242-4-alexandru.ardelean@analog.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814145033.GA11190@Red>
+X-Operating-System: Linux phenom 4.19.0-5-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 8/12/2019 4:23 AM, Alexandru Ardelean wrote:
-> This change hooks link-status-change interrupts to phylib.
+On Wed, Aug 14, 2019 at 04:50:33PM +0200, Corentin Labbe wrote:
+> Hello
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> Since lot of release (at least since 4.19), I hit the following error message:
+> DMA-API: cacheline tracking ENOMEM, dma-debug disabled
+> 
+> After hitting that, I try to check who is creating so many DMA mapping and see:
+> cat /sys/kernel/debug/dma-api/dump | cut -d' ' -f2 | sort | uniq -c
+>       6 ahci
+>     257 e1000e
+>       6 ehci-pci
+>    5891 nouveau
+>      24 uhci_hcd
+> 
+> Does nouveau having this high number of DMA mapping is normal ?
 
-Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Yeah seems perfectly fine for a gpu.
+-Daniel
 -- 
-Florian
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
