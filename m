@@ -2,118 +2,220 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA6718CDB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:11:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3605A8CDCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 10:12:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfHNILl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 04:11:41 -0400
-Received: from lb2-smtp-cloud8.xs4all.net ([194.109.24.25]:32803 "EHLO
-        lb2-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725306AbfHNILl (ORCPT
+        id S1727498AbfHNIMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 04:12:05 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:29080 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727371AbfHNIMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 04:11:41 -0400
-Received: from [IPv6:2001:420:44c1:2579:6c2e:a3d:2bd:ee96] ([IPv6:2001:420:44c1:2579:6c2e:a3d:2bd:ee96])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id xoN6hRmGlqTdhxoNAhCccS; Wed, 14 Aug 2019 10:11:37 +0200
-Subject: Re: [PATCH v5 04/11] media: uapi: h264: Add the concept of start code
-To:     Ezequiel Garcia <ezequiel@collabora.com>,
-        linux-media@vger.kernel.org
-Cc:     kernel@collabora.com,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        fbuergisser@chromium.org, linux-kernel@vger.kernel.org
-References: <20190812193522.10911-1-ezequiel@collabora.com>
- <20190812193522.10911-5-ezequiel@collabora.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <f88d144f-e0fe-6974-efe5-77b5ed5c6e09@xs4all.nl>
-Date:   Wed, 14 Aug 2019 10:11:04 +0200
+        Wed, 14 Aug 2019 04:12:03 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7E8C1Fi130541
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:12:02 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucdgmax6t-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 04:12:02 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mahesh@linux.vnet.ibm.com>;
+        Wed, 14 Aug 2019 09:12:00 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 14 Aug 2019 09:11:57 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7E8BtJB36634886
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Aug 2019 08:11:55 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 70C44A404D;
+        Wed, 14 Aug 2019 08:11:55 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 78BC2A4057;
+        Wed, 14 Aug 2019 08:11:51 +0000 (GMT)
+Received: from [9.109.198.140] (unknown [9.109.198.140])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Aug 2019 08:11:51 +0000 (GMT)
+Subject: Re: [PATCH v9 6/7] powerpc/mce: Handle UE event for memcpy_mcsafe
+To:     Santosh Sivaraj <santosh@fossix.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Chandan Rajendra <chandan@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        christophe leroy <christophe.leroy@c-s.fr>
+References: <20190812092236.16648-1-santosh@fossix.org>
+ <20190812092236.16648-7-santosh@fossix.org>
+From:   Mahesh Jagannath Salgaonkar <mahesh@linux.vnet.ibm.com>
+Date:   Wed, 14 Aug 2019 13:41:50 +0530
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.5.1
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-In-Reply-To: <20190812193522.10911-5-ezequiel@collabora.com>
+In-Reply-To: <20190812092236.16648-7-santosh@fossix.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfG8Jzg4iwcPYhjaE3e0D1MzS/fTJ/eDl4AEQI2qX+XOCPw8tnWB5Y+HXAymMpC8EyabKscl/GIMDy/RJARU23MJZNq76ZSSM/xEECsPalo31ZWSBNCQe
- OiVJ1xF4NFcmHOVZa9JLq/xylYBGiJZLhwKx6OEJ29QQLrY5H3YWgXdHMLYd+L+bjMVzzdMXXmUevf0w2cwmjB+eAmLcrkxPsXJ4Zh2V0WYULRIMVzE1a0Ze
- ta8b89PWo00P5NlPW/aeg2BDTGaJzXFuUnjWrhu37Pf+NtrYt917QYI1HD2LIpUwOhVzCX2FTyYBakPMz/jcIJbJ+4c4RVQQdmuO3923M7tS1kWNzTu2leBn
- HoC6MDyCFUrT9aLlVhta7saGxI5nJnqYGKNJkDmavufWEhoRp4eUV9lwf682O5YerUzuScE++kne0/gOuD7fLY4CH6ZrAsZwPS317wIUhJ/HIUAx8MZjCfIo
- SeucqXmdwOPDQ6eNUBpXsyvfKrwQRk4zXrCRlmTXRA58Xb94D+bbRvixzBtwlSrbeSbp8jlluguU6CIfKnq+TXRarsR+mKMvzP+tueYbunp00BqTpR1Gua7w
- 479IGDcBjLac8AOsAMZVJ0zODF6y4kODYqZxBS/pFCcPiUJIBoYpiM5PSzIGlz6LXkoedT5fx4Pc9u15HRjD7j0EP0wu0bBXm5rqUfiNpwreDvPdIFEHjhhJ
- CixfdwKkLAt+KwA5kr3da35dbZPC/sATPI2z5zMIrsnmDN34sRdJoA==
+X-TM-AS-GCONF: 00
+x-cbid: 19081408-4275-0000-0000-0000035905CB
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081408-4276-0000-0000-0000386B17EF
+Message-Id: <7228295c-c4c3-4aa1-1b1a-60b3844705db@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908140081
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/12/19 9:35 PM, Ezequiel Garcia wrote:
-> Stateless decoders have different expectations about the
-> start code that is prepended on H264 slices. Add a
-> menu control to express the supported start code types
-> (including no start code).
+On 8/12/19 2:52 PM, Santosh Sivaraj wrote:
+> If we take a UE on one of the instructions with a fixup entry, set nip
+> to continue execution at the fixup entry. Stop processing the event
+> further or print it.
 > 
-> Drivers are allowed to support only one start code type,
-> but they can support both too.
-> 
-> Note that this is independent of the H264 decoding mode,
-> which specifies the granularity of the decoding operations.
-> Either in frame-based or slice-based mode, this new control
-> will allow to define the start code expected on H264 slices.
-> 
-> Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
-> Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+> Co-developed-by: Reza Arbab <arbab@linux.ibm.com>
+> Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
+> Cc: Mahesh Salgaonkar <mahesh@linux.ibm.com>
+> Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
+
+Looks good to me.
+
+Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+
+Thanks,
+-Mahesh.
+
 > ---
-> Changes in v5:
-> * Improve specification as suggested by Hans.
-> Changes in v4:
-> * New patch.
-> ---
->  .../media/uapi/v4l/ext-ctrls-codec.rst        | 33 +++++++++++++++++++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  3 +-
->  drivers/media/v4l2-core/v4l2-ctrls.c          |  9 +++++
->  include/media/h264-ctrls.h                    |  6 ++++
->  4 files changed, 50 insertions(+), 1 deletion(-)
+>  arch/powerpc/include/asm/mce.h  |  4 +++-
+>  arch/powerpc/kernel/mce.c       | 16 ++++++++++++++++
+>  arch/powerpc/kernel/mce_power.c | 15 +++++++++++++--
+>  3 files changed, 32 insertions(+), 3 deletions(-)
 > 
-
-<snip>
-
-> diff --git a/include/media/h264-ctrls.h b/include/media/h264-ctrls.h
-> index e6c510877f67..31555c99f64a 100644
-> --- a/include/media/h264-ctrls.h
-> +++ b/include/media/h264-ctrls.h
-> @@ -27,6 +27,7 @@
->  #define V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS	(V4L2_CID_MPEG_BASE+1003)
->  #define V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAMS	(V4L2_CID_MPEG_BASE+1004)
->  #define V4L2_CID_MPEG_VIDEO_H264_DECODING_MODE	(V4L2_CID_MPEG_BASE+1005)
-> +#define V4L2_CID_MPEG_VIDEO_H264_STARTCODE	(V4L2_CID_MPEG_BASE+1006)
-
-I almost forgot: can you change this to _START_CODE? Since it is two words?
-
-Thanks!
-
-	Hans
-
->  
->  /* enum v4l2_ctrl_type type values */
->  #define V4L2_CTRL_TYPE_H264_SPS			0x0110
-> @@ -41,6 +42,11 @@ enum v4l2_mpeg_video_h264_decoding_mode {
->  	V4L2_MPEG_VIDEO_H264_FRAME_BASED_DECODING,
+> diff --git a/arch/powerpc/include/asm/mce.h b/arch/powerpc/include/asm/mce.h
+> index f3a6036b6bc0..e1931c8c2743 100644
+> --- a/arch/powerpc/include/asm/mce.h
+> +++ b/arch/powerpc/include/asm/mce.h
+> @@ -122,7 +122,8 @@ struct machine_check_event {
+>  			enum MCE_UeErrorType ue_error_type:8;
+>  			u8		effective_address_provided;
+>  			u8		physical_address_provided;
+> -			u8		reserved_1[5];
+> +			u8		ignore_event;
+> +			u8		reserved_1[4];
+>  			u64		effective_address;
+>  			u64		physical_address;
+>  			u8		reserved_2[8];
+> @@ -193,6 +194,7 @@ struct mce_error_info {
+>  	enum MCE_Initiator	initiator:8;
+>  	enum MCE_ErrorClass	error_class:8;
+>  	bool			sync_error;
+> +	bool			ignore_event;
 >  };
 >  
-> +enum v4l2_mpeg_video_h264_start_code {
-> +	V4L2_MPEG_VIDEO_H264_NO_STARTCODE,
-> +	V4L2_MPEG_VIDEO_H264_ANNEX_B_STARTCODE,
-> +};
+>  #define MAX_MC_EVT	100
+> diff --git a/arch/powerpc/kernel/mce.c b/arch/powerpc/kernel/mce.c
+> index a3b122a685a5..ec4b3e1087be 100644
+> --- a/arch/powerpc/kernel/mce.c
+> +++ b/arch/powerpc/kernel/mce.c
+> @@ -149,6 +149,7 @@ void save_mce_event(struct pt_regs *regs, long handled,
+>  		if (phys_addr != ULONG_MAX) {
+>  			mce->u.ue_error.physical_address_provided = true;
+>  			mce->u.ue_error.physical_address = phys_addr;
+> +			mce->u.ue_error.ignore_event = mce_err->ignore_event;
+>  			machine_check_ue_event(mce);
+>  		}
+>  	}
+> @@ -266,8 +267,17 @@ static void machine_process_ue_event(struct work_struct *work)
+>  		/*
+>  		 * This should probably queued elsewhere, but
+>  		 * oh! well
+> +		 *
+> +		 * Don't report this machine check because the caller has a
+> +		 * asked us to ignore the event, it has a fixup handler which
+> +		 * will do the appropriate error handling and reporting.
+>  		 */
+>  		if (evt->error_type == MCE_ERROR_TYPE_UE) {
+> +			if (evt->u.ue_error.ignore_event) {
+> +				__this_cpu_dec(mce_ue_count);
+> +				continue;
+> +			}
 > +
->  #define V4L2_H264_SPS_CONSTRAINT_SET0_FLAG			0x01
->  #define V4L2_H264_SPS_CONSTRAINT_SET1_FLAG			0x02
->  #define V4L2_H264_SPS_CONSTRAINT_SET2_FLAG			0x04
+>  			if (evt->u.ue_error.physical_address_provided) {
+>  				unsigned long pfn;
+>  
+> @@ -301,6 +311,12 @@ static void machine_check_process_queued_event(struct irq_work *work)
+>  	while (__this_cpu_read(mce_queue_count) > 0) {
+>  		index = __this_cpu_read(mce_queue_count) - 1;
+>  		evt = this_cpu_ptr(&mce_event_queue[index]);
+> +
+> +		if (evt->error_type == MCE_ERROR_TYPE_UE &&
+> +		    evt->u.ue_error.ignore_event) {
+> +			__this_cpu_dec(mce_queue_count);
+> +			continue;
+> +		}
+>  		machine_check_print_event_info(evt, false, false);
+>  		__this_cpu_dec(mce_queue_count);
+>  	}
+> diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_power.c
+> index e74816f045f8..1dd87f6f5186 100644
+> --- a/arch/powerpc/kernel/mce_power.c
+> +++ b/arch/powerpc/kernel/mce_power.c
+> @@ -11,6 +11,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/ptrace.h>
+> +#include <linux/extable.h>
+>  #include <asm/mmu.h>
+>  #include <asm/mce.h>
+>  #include <asm/machdep.h>
+> @@ -18,6 +19,7 @@
+>  #include <asm/pte-walk.h>
+>  #include <asm/sstep.h>
+>  #include <asm/exception-64s.h>
+> +#include <asm/extable.h>
+>  
+>  /*
+>   * Convert an address related to an mm to a physical address.
+> @@ -559,9 +561,18 @@ static int mce_handle_derror(struct pt_regs *regs,
+>  	return 0;
+>  }
+>  
+> -static long mce_handle_ue_error(struct pt_regs *regs)
+> +static long mce_handle_ue_error(struct pt_regs *regs,
+> +				struct mce_error_info *mce_err)
+>  {
+>  	long handled = 0;
+> +	const struct exception_table_entry *entry;
+> +
+> +	entry = search_kernel_exception_table(regs->nip);
+> +	if (entry) {
+> +		mce_err->ignore_event = true;
+> +		regs->nip = extable_fixup(entry);
+> +		return 1;
+> +	}
+>  
+>  	/*
+>  	 * On specific SCOM read via MMIO we may get a machine check
+> @@ -594,7 +605,7 @@ static long mce_handle_error(struct pt_regs *regs,
+>  				&phys_addr);
+>  
+>  	if (!handled && mce_err.error_type == MCE_ERROR_TYPE_UE)
+> -		handled = mce_handle_ue_error(regs);
+> +		handled = mce_handle_ue_error(regs, &mce_err);
+>  
+>  	save_mce_event(regs, handled, &mce_err, regs->nip, addr, phys_addr);
+>  
 > 
 
