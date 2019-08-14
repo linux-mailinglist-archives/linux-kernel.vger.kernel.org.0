@@ -2,446 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 707AE8E105
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 011628E10B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 01:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729192AbfHNW7g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 18:59:36 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36104 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728413AbfHNW7f (ORCPT
+        id S1729341AbfHNXAo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 19:00:44 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44166 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728336AbfHNXAm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:59:35 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7EMvggQ088640;
-        Wed, 14 Aug 2019 18:58:50 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ucuhng26d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 18:58:50 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7EMwnFB091362;
-        Wed, 14 Aug 2019 18:58:49 -0400
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ucuhng261-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 18:58:49 -0400
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7EMseqG008944;
-        Wed, 14 Aug 2019 22:58:48 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma01wdc.us.ibm.com with ESMTP id 2u9nj6yca2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 14 Aug 2019 22:58:48 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7EMwmDp31326566
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Aug 2019 22:58:48 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 59A1EB2065;
-        Wed, 14 Aug 2019 22:58:48 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 268CFB2064;
-        Wed, 14 Aug 2019 22:58:48 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Aug 2019 22:58:48 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 4205B16C0600; Wed, 14 Aug 2019 15:58:50 -0700 (PDT)
-Date:   Wed, 14 Aug 2019 15:58:50 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
-Cc:     linux-kernel@vger.kernel.org, byungchul.park@lge.com,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Josh Triplett <josh@joshtriplett.org>, kernel-team@android.com,
-        kernel-team@lge.com, Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        max.byungchul.park@gmail.com, Rao Shoaib <rao.shoaib@oracle.com>,
-        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [PATCH v4 2/2] rcuperf: Add kfree_rcu() performance Tests
-Message-ID: <20190814225850.GZ28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190814160411.58591-1-joel@joelfernandes.org>
- <20190814160411.58591-2-joel@joelfernandes.org>
+        Wed, 14 Aug 2019 19:00:42 -0400
+Received: by mail-ot1-f68.google.com with SMTP id w4so1879101ote.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 16:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ps+EFQIEbsT8mGGr5ReNIIuoSPs/AsNLmAuvUEMVino=;
+        b=cvsiIRt/q2PKJ+VpL3Fd62IdjDLmnHGn+HTaU21QLcJw1Jup7UMKeumGGkwOUABcOW
+         fWQ3QGzSwQp2KAiPS9pQv6iujr8L6+py/pVn91frnOxWvRx5c1SrSAtqdzpgWkACoZ0B
+         LiBj5GgIsnPVZNG9l0rmE/U2Pq5un8h+6oS/HquEEEexpCkl5hUdBtINucL0fflGilNI
+         eV3PJvu//w/RVW/v1v8V4QkrevQvkkDPYmbnyUYOCSRj21jGLJ/77EIkBi7Lw7VLFeRX
+         I1XX4xQmrzdfg5V2vIgZisR4BdgXYRrUW+NveYDY3MO6JPqfEV76wqglJkm60bRneJ4L
+         MTgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ps+EFQIEbsT8mGGr5ReNIIuoSPs/AsNLmAuvUEMVino=;
+        b=MXY4JnT3bCeyBOhi99AQWZq5hpItzREt3sDgZaseG6FDv0TW1MrTS5MnnQFUFuHr3E
+         h6qY4QvmUU1WEsBKio9TbCB7olWJXdOXIHZUeIYdpW+f4PbfPw/DlkMKzO6z110YcefN
+         rEOgD8f2xc9wXBZ1ek+8ChjLS/g31GZ1/4Q5T+NLKcGPqZq71wCX3EyqPCsVtfvbhjC9
+         14AMzGGUerfpK9zGnq1g0w4lcVuhidbRKlfd9mIIHUN4PRrTVQyeiPLG2yB3PdqI2RYC
+         NN3zQU6Edu0oswVe8uQgsRq0PXrMf861wG24QrRvbfo/d+gsR31j18NF3Qr5KxckK8w6
+         /r9A==
+X-Gm-Message-State: APjAAAUqG8vni1/uY0C+y4dELwTIUzFTYF7ipEJLjvjTro5Wd8vrLeji
+        LSXKUeFDYbwqpsRpVObqs4WuPJElXFRAfMJ0dkyaLw==
+X-Google-Smtp-Source: APXvYqy/6uir6KpedrdY7ikNHexU+YPtfY9RLm7TaKlLdD+19hn7XeEaev/rKerNWentmbYt2c2CGqJT4irjg1lIWkU=
+X-Received: by 2002:a5d:9710:: with SMTP id h16mr2505936iol.237.1565823641440;
+ Wed, 14 Aug 2019 16:00:41 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814160411.58591-2-joel@joelfernandes.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-14_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908140209
+References: <20190812190320.209988-1-yabinc@google.com>
+In-Reply-To: <20190812190320.209988-1-yabinc@google.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 14 Aug 2019 17:00:30 -0600
+Message-ID: <CANLsYkz3_bzRCQEVb00Tbf3Rdww13mePN-woncctOu7OanF00A@mail.gmail.com>
+Subject: Re: [PATCH v2] coresight: tmc-etr: Fix perf_data check.
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 12:04:11PM -0400, Joel Fernandes (Google) wrote:
-> This test runs kfree_rcu in a loop to measure performance of the new
-> kfree_rcu batching functionality.
+Hi Yabin,
 
-kfree_rcu().
+On Mon, 12 Aug 2019 at 13:03, Yabin Cui <yabinc@google.com> wrote:
+>
+> When tracing etm data of multiple threads on multiple cpus through
+> perf interface, each cpu has a unique etr_perf_buffer while sharing
+> the same etr device. There is no guarantee that the last cpu starts
+> etm tracing also stops last. This makes perf_data check fail.
 
-> The following table shows results when booting with arguments:
-> rcuperf.kfree_loops=200000 rcuperf.kfree_alloc_num=1000 rcuperf.kfree_rcu_test=1
-> 
-> In addition, rcuperf.kfree_no_batch is used to toggle the batching of
-> kfree_rcu()s for a test run.
-> 
-> rcuperf.kfree_no_batch	GPs	time (seconds)
->  0 (default)		1732	15.9
->  1			9133 	14.5
-> 
-> Note that the results are the same for the case:
-> 1. Patch is not applied and rcuperf.kfree_no_batch=0
-> 2. Patch is applied     and rcuperf.kfree_no_batch=1
-> 
-> On a 16 CPU system with the above boot parameters, we see that the total
-> number of grace periods that elapse during the test drops from 9133 when
-> not batching to 1732 when batching (a 5X improvement). The kfree_rcu()
-> flood itself slows down a bit when batching, though, as shown. This is
-> likely due to rcuperf threads contending with the additional worker
-> threads that are now running both before (the monitor) and after (the
-> work done to kfree()) the grace period.
+Did you actually see the check fail or is this a theoretical thing?
+I'm really perplex here has I have tested this scenario many times
+without issues.
 
-Another possibility is that the batching approach is resulting in a
-greater number of objects waiting to be freed (noted below), and it
-takes the extra 1.4 seconds to catch up.  How would you decide which
-effect is the most important?  (Your path of least resistance is to
-remove the speculation.)
-
-> Note that the active memory consumption during the kfree_rcu() flood
-> does increase to around 300-400MB due to the batching (from around 50MB
-> without batching). However, this memory consumption is relatively
-> constant and is just an effect of the buffering. In other words, the
-> system is able to keep up with the kfree_rcu() load. The memory
-> consumption comes down to 200-300MB if KFREE_DRAIN_JIFFIES is
-> increased from HZ/50 to HZ/80.
-> 
-> Also, when running the test, please disable CONFIG_DEBUG_PREEMPT and
-> CONFIG_PROVE_RCU for realistic comparisons with/without batching.
-> 
-> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-
-Looks pretty close, just a very few issues needing fixing below.
-
-							Thanx, Paul
-
+>
+> Fix it by checking etr_buf instead of etr_perf_buffer.
+>
+> Fixes: 3147da92a8a8 ("coresight: tmc-etr: Allocate and free ETR memory buffers for CPU-wide scenarios")
+> Signed-off-by: Yabin Cui <yabinc@google.com>
 > ---
->  .../admin-guide/kernel-parameters.txt         |  17 ++
->  kernel/rcu/rcuperf.c                          | 189 +++++++++++++++++-
->  2 files changed, 198 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 7ccd158b3894..a9156ca5de24 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -3895,6 +3895,23 @@
->  			test until boot completes in order to avoid
->  			interference.
->  
-> +	rcuperf.kfree_rcu_test= [KNL]
-> +			Set to measure performance of kfree_rcu() flooding.
-> +
-> +	rcuperf.kfree_nthreads= [KNL]
-> +			The number of threads running loops of kfree_rcu().
-> +
-> +	rcuperf.kfree_alloc_num= [KNL]
-> +			Number of allocations and frees done in an iteration.
-> +
-> +	rcuperf.kfree_loops= [KNL]
-> +			Number of loops doing rcuperf.kfree_alloc_num number
-> +			of allocations and frees.
-> +
-> +	rcuperf.kfree_no_batch= [KNL]
-> +			Use the non-batching (slower) version of kfree_rcu.
-> +			This is useful for comparing with the batched version.
+>
+> v1 -> v2: rename perf_data to perf_buf. Add fixes tag.
+>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 6 +++---
+>  drivers/hwtracing/coresight/coresight-tmc.h     | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 17006705287a..90d1548ad268 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -1484,7 +1484,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+>                 goto out;
+>         }
+>
+> -       if (WARN_ON(drvdata->perf_data != etr_perf)) {
+> +       if (WARN_ON(drvdata->perf_buf != etr_buf)) {
 
-I suggest s/slower/more efficient/ given that the batching takes more
-wall-clock time than does the no-batching.
+In CPU wide scenarios each perf event (one per CPU) is associated with
+an event_data during the setup process.  The event_data is the
+etr_perf holding a reference to the perf ring buffer for that specific
+event along with the etr_buf, regardless of who created the latter.
+From there, when the event is installed on a CPU, the csdev for that
+CPU is given a reference to the event_data of that event[1].  Before
+going further notice how there is a per CPU csdev and event handle to
+keep track of event specifics[2]. As such both (per CPU) csdev and
+event handle carry the exact same reference to the etr_perf.
 
->  	rcuperf.nreaders= [KNL]
->  			Set number of RCU readers.  The value -1 selects
->  			N, where N is the number of CPUs.  A value
-> diff --git a/kernel/rcu/rcuperf.c b/kernel/rcu/rcuperf.c
-> index 7a6890b23c5f..70d6ac19cbff 100644
-> --- a/kernel/rcu/rcuperf.c
-> +++ b/kernel/rcu/rcuperf.c
-> @@ -86,6 +86,7 @@ torture_param(bool, shutdown, RCUPERF_SHUTDOWN,
->  	      "Shutdown at end of performance tests.");
->  torture_param(int, verbose, 1, "Enable verbose debugging printk()s");
->  torture_param(int, writer_holdoff, 0, "Holdoff (us) between GPs, zero to disable");
-> +torture_param(int, kfree_rcu_test, 0, "Do we run a kfree_rcu perf test?");
->  
->  static char *perf_type = "rcu";
->  module_param(perf_type, charp, 0444);
-> @@ -105,8 +106,8 @@ static atomic_t n_rcu_perf_writer_finished;
->  static wait_queue_head_t shutdown_wq;
->  static u64 t_rcu_perf_writer_started;
->  static u64 t_rcu_perf_writer_finished;
-> -static unsigned long b_rcu_perf_writer_started;
-> -static unsigned long b_rcu_perf_writer_finished;
-> +static unsigned long b_rcu_gp_test_started;
-> +static unsigned long b_rcu_gp_test_finished;
->  static DEFINE_PER_CPU(atomic_t, n_async_inflight);
->  
->  static int rcu_perf_writer_state;
-> @@ -379,10 +380,10 @@ rcu_perf_writer(void *arg)
->  	if (atomic_inc_return(&n_rcu_perf_writer_started) >= nrealwriters) {
->  		t_rcu_perf_writer_started = t;
->  		if (gp_exp) {
-> -			b_rcu_perf_writer_started =
-> +			b_rcu_gp_test_started =
->  				cur_ops->exp_completed() / 2;
->  		} else {
-> -			b_rcu_perf_writer_started = cur_ops->get_gp_seq();
-> +			b_rcu_gp_test_started = cur_ops->get_gp_seq();
->  		}
->  	}
->  
-> @@ -435,10 +436,10 @@ rcu_perf_writer(void *arg)
->  				PERFOUT_STRING("Test complete");
->  				t_rcu_perf_writer_finished = t;
->  				if (gp_exp) {
-> -					b_rcu_perf_writer_finished =
-> +					b_rcu_gp_test_finished =
->  						cur_ops->exp_completed() / 2;
->  				} else {
-> -					b_rcu_perf_writer_finished =
-> +					b_rcu_gp_test_finished =
->  						cur_ops->get_gp_seq();
->  				}
->  				if (shutdown) {
-> @@ -523,8 +524,8 @@ rcu_perf_cleanup(void)
->  			 t_rcu_perf_writer_finished -
->  			 t_rcu_perf_writer_started,
->  			 ngps,
-> -			 rcuperf_seq_diff(b_rcu_perf_writer_finished,
-> -					  b_rcu_perf_writer_started));
-> +			 rcuperf_seq_diff(b_rcu_gp_test_finished,
-> +					  b_rcu_gp_test_started));
->  		for (i = 0; i < nrealwriters; i++) {
->  			if (!writer_durations)
->  				break;
-> @@ -592,6 +593,175 @@ rcu_perf_shutdown(void *arg)
->  	return -EINVAL;
->  }
->  
-> +/*
-> + * kfree_rcu performance tests: Start a kfree_rcu loop on all CPUs for number
-> + * of iterations and measure total time and number of GP for all iterations to complete.
-> + */
-> +
-> +torture_param(int, kfree_nthreads, -1, "Number of threads running loops of kfree_rcu().");
-> +torture_param(int, kfree_alloc_num, 8000, "Number of allocations and frees done in an iteration.");
-> +torture_param(int, kfree_loops, 10, "Number of loops doing kfree_alloc_num allocations and frees.");
-> +torture_param(int, kfree_no_batch, 0, "Use the non-batching (slower) version of kfree_rcu.");
-> +
-> +static struct task_struct **kfree_reader_tasks;
-> +static int kfree_nrealthreads;
-> +static atomic_t n_kfree_perf_thread_started;
-> +static atomic_t n_kfree_perf_thread_ended;
-> +
-> +struct kfree_obj {
-> +	char kfree_obj[8];
-> +	struct rcu_head rh;
-> +};
+When an event is stopped the exact same per CPU references are
+taken[3] and later fed to sink->update_buffer().  If
+sink->update_buffer() is called on an event (again one per CPU)
+function etm_event_start() must have been called and
+(drvdata->perf_data == etf_perf) needs to hold.
 
-(Aside from above, no need to change this part of the patch, at least not
-that I know of at the moment.)
+If that is not the case, an event from a completely different trace
+session has been installed on that CPU and that can't happen thanks to
+drvdata->id.
 
-24 bytes on a 64-bit system, 16 on a 32-bit system.  So there might
-have been 10 million extra objects awaiting free in the batching case
-given the 400M-50M=350M excess for the batching approach.  If freeing
-each object took about 100ns, that could account for the additional
-wall-clock time for the batching approach.
+As such if you get a condition where (drvdata->perf_buf != etr_buf),
+one of two things has happened:
 
-> +
-> +static int
-> +kfree_perf_thread(void *arg)
-> +{
-> +	int i, loop = 0;
-> +	long me = (long)arg;
-> +	struct kfree_obj **alloc_ptrs;
-> +	u64 start_time, end_time;
-> +
-> +	VERBOSE_PERFOUT_STRING("kfree_perf_thread task started");
-> +	set_cpus_allowed_ptr(current, cpumask_of(me % nr_cpu_ids));
+1) Something went seriously wrong and the WARN_ON() did its job.
+2) A corner case is manifesting in your test environment that I
+haven't provisioned for.  If that is the case we need to figure out
+exactly what is happening before considering a fix.
 
-(No need for a change, another aside:  This assumes dense CPU numbering,
-which will cause trouble at some point.  As you may have noticed from
-the other similar code in rcuperf.c, I have been using the strategy of
-waiting until a real problem shows up before fixing it.)
+Thanks,
+Mathieu
 
-> +	set_user_nice(current, MAX_NICE);
-> +
-> +	alloc_ptrs = (struct kfree_obj **)kmalloc(sizeof(struct kfree_obj *) * kfree_alloc_num,
-> +						  GFP_KERNEL);
-> +	if (!alloc_ptrs)
-> +		return -ENOMEM;
-> +
-> +	start_time = ktime_get_mono_fast_ns();
-> +
-> +	if (atomic_inc_return(&n_kfree_perf_thread_started) >= kfree_nrealthreads) {
-> +		if (gp_exp)
-> +			b_rcu_gp_test_started = cur_ops->exp_completed() / 2;
-> +		else
-> +			b_rcu_gp_test_started = cur_ops->get_gp_seq();
-> +	}
-> +
-> +	do {
-> +		for (i = 0; i < kfree_alloc_num; i++) {
-> +			alloc_ptrs[i] = kmalloc(sizeof(struct kfree_obj), GFP_KERNEL);
-> +			if (!alloc_ptrs[i])
-> +				return -ENOMEM;
-> +		}
-> +
-> +		for (i = 0; i < kfree_alloc_num; i++) {
-> +			if (!kfree_no_batch) {
-> +				kfree_rcu(alloc_ptrs[i], rh);
-> +			} else {
-> +				rcu_callback_t cb;
-> +
-> +				cb = (rcu_callback_t)(unsigned long)offsetof(struct kfree_obj, rh);
-> +				kfree_call_rcu_nobatch(&(alloc_ptrs[i]->rh), cb);
-> +			}
-> +		}
+[1]. https://elixir.bootlin.com/linux/v5.3-rc4/source/drivers/hwtracing/coresight/coresight-tmc-etr.c#L1559
+[2]. https://elixir.bootlin.com/linux/v5.3-rc4/source/drivers/hwtracing/coresight/coresight-etm-perf.c#L298
+[3]. https://elixir.bootlin.com/linux/v5.3-rc4/source/drivers/hwtracing/coresight/coresight-etm-perf.c#L348
 
-The point of allocating a large batch and then kfree_rcu()ing them in a
-loop is to defeat the per-CPU pool optimization?  Either way, a comment
-would be very good!
-
-> +
-> +		cond_resched();
-> +	} while (!torture_must_stop() && ++loop < kfree_loops);
-> +
-> +	if (atomic_inc_return(&n_kfree_perf_thread_ended) >= kfree_nrealthreads) {
-> +		end_time = ktime_get_mono_fast_ns();
-> +
-> +		if (gp_exp)
-> +			b_rcu_gp_test_finished = cur_ops->exp_completed() / 2;
-
-Why not use a .gp_diff field similar to the way that rcutorture does?
-(Yes, rcutorture ignores numbers of expedited grace periods, but the
-GP sequence numbers now have the same formats in both cases.)
-
-This can be a follow-on.
-
-> +		else
-> +			b_rcu_gp_test_finished = cur_ops->get_gp_seq();
-> +
-> +		pr_alert("Total time taken by all kfree'ers: %llu ns, loops: %d, batches: %ld\n",
-> +		       (unsigned long long)(end_time - start_time), kfree_loops,
-> +		       rcuperf_seq_diff(b_rcu_gp_test_finished, b_rcu_gp_test_started));
-> +		if (shutdown) {
-> +			smp_mb(); /* Assign before wake. */
-> +			wake_up(&shutdown_wq);
-> +		}
-> +	}
-> +
-> +	kfree(alloc_ptrs);
-> +	torture_kthread_stopping("kfree_perf_thread");
-> +	return 0;
-> +}
-> +
-> +static void
-> +kfree_perf_cleanup(void)
-> +{
-> +	int i;
-> +
-> +	if (torture_cleanup_begin())
-> +		return;
-> +
-> +	if (kfree_reader_tasks) {
-> +		for (i = 0; i < kfree_nrealthreads; i++)
-> +			torture_stop_kthread(kfree_perf_thread,
-> +					     kfree_reader_tasks[i]);
-> +		kfree(kfree_reader_tasks);
-> +	}
-> +
-> +	torture_cleanup_end();
-> +}
-> +
-> +/*
-> + * shutdown kthread.  Just waits to be awakened, then shuts down system.
-> + */
-> +static int
-> +kfree_perf_shutdown(void *arg)
-> +{
-> +	do {
-> +		wait_event(shutdown_wq,
-> +			   atomic_read(&n_kfree_perf_thread_ended) >=
-> +			   kfree_nrealthreads);
-> +	} while (atomic_read(&n_kfree_perf_thread_ended) < kfree_nrealthreads);
-> +
-> +	smp_mb(); /* Wake before output. */
-> +
-> +	kfree_perf_cleanup();
-> +	kernel_power_off();
-> +	return -EINVAL;
-> +}
-> +
-> +static int __init
-> +kfree_perf_init(void)
-> +{
-> +	long i;
-> +	int firsterr = 0;
-> +
-> +	kfree_nrealthreads = compute_real(kfree_nthreads);
-> +	/* Start up the kthreads. */
-> +	if (shutdown) {
-> +		init_waitqueue_head(&shutdown_wq);
-> +		firsterr = torture_create_kthread(kfree_perf_shutdown, NULL,
-> +						  shutdown_task);
-> +		if (firsterr)
-> +			goto unwind;
-> +		schedule_timeout_uninterruptible(1);
-> +	}
-> +
-> +	kfree_reader_tasks = kcalloc(kfree_nrealthreads, sizeof(kfree_reader_tasks[0]),
-> +			       GFP_KERNEL);
-> +	if (kfree_reader_tasks == NULL) {
-> +		firsterr = -ENOMEM;
-> +		goto unwind;
-> +	}
-> +
-> +	for (i = 0; i < kfree_nrealthreads; i++) {
-> +		firsterr = torture_create_kthread(kfree_perf_thread, (void *)i,
-> +						  kfree_reader_tasks[i]);
-> +		if (firsterr)
-> +			goto unwind;
-> +	}
-> +
-> +	while (atomic_read(&n_kfree_perf_thread_started) < kfree_nrealthreads)
-> +		schedule_timeout_uninterruptible(1);
-> +
-> +	torture_init_end();
-> +	return 0;
-> +
-> +unwind:
-> +	torture_init_end();
-> +	kfree_perf_cleanup();
-> +	return firsterr;
-> +}
-> +
->  static int __init
->  rcu_perf_init(void)
->  {
-> @@ -624,6 +794,9 @@ rcu_perf_init(void)
->  	if (cur_ops->init)
->  		cur_ops->init();
->  
-> +	if (kfree_rcu_test)
-> +		return kfree_perf_init();
-> +
->  	nrealwriters = compute_real(nwriters);
->  	nrealreaders = compute_real(nreaders);
->  	atomic_set(&n_rcu_perf_reader_started, 0);
-> -- 
+>                 lost = true;
+>                 spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>                 goto out;
+> @@ -1497,7 +1497,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+>
+>         CS_LOCK(drvdata->base);
+>         /* Reset perf specific data */
+> -       drvdata->perf_data = NULL;
+> +       drvdata->perf_buf = NULL;
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+>         size = etr_buf->len;
+> @@ -1556,7 +1556,7 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+>         }
+>
+>         etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
+> -       drvdata->perf_data = etr_perf;
+> +       drvdata->perf_buf = etr_perf->etr_buf;
+>
+>         /*
+>          * No HW configuration is needed if the sink is already in
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index 1ed50411cc3c..f9a0c95e9ba2 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -178,8 +178,8 @@ struct etr_buf {
+>   *             device configuration register (DEVID)
+>   * @idr:       Holds etr_bufs allocated for this ETR.
+>   * @idr_mutex: Access serialisation for idr.
+> - * @perf_data: PERF buffer for ETR.
+> - * @sysfs_data:        SYSFS buffer for ETR.
+> + * @sysfs_buf: SYSFS buffer for ETR.
+> + * @perf_buf:  PERF buffer for ETR.
+>   */
+>  struct tmc_drvdata {
+>         void __iomem            *base;
+> @@ -202,7 +202,7 @@ struct tmc_drvdata {
+>         struct idr              idr;
+>         struct mutex            idr_mutex;
+>         struct etr_buf          *sysfs_buf;
+> -       void                    *perf_data;
+> +       struct etr_buf          *perf_buf;
+>  };
+>
+>  struct etr_buf_operations {
+> --
 > 2.23.0.rc1.153.gdeed80330f-goog
-> 
+>
