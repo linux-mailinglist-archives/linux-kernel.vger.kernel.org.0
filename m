@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 578D68C5F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DA398C5F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:11:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727610AbfHNCLk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:11:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43846 "EHLO mail.kernel.org"
+        id S1727644AbfHNCLn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:11:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727566AbfHNCLh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:11:37 -0400
+        id S1727611AbfHNCLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:11:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 206D120874;
-        Wed, 14 Aug 2019 02:11:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29EDA2084F;
+        Wed, 14 Aug 2019 02:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565748696;
-        bh=KJC1zLryXGyifwxyw7PIR5MBD6APX3t7YJiS0gvm7dc=;
+        s=default; t=1565748700;
+        bh=4qtCsYDP8EcYw/4S8oVyDACI3iiwfVy6SHThIaMn1IU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tC+BnhVAiyRPUTWvtOF0rCgv43sESEsPYNTEE0ZpmrsZyRpNR5/6fnh0Oy3Iq/pwn
-         PnYYYKaBvJ860brkQ88U/n+Zt7PVuplqY6Sg7/0Kb50DfWlju0jCoZvuqFqMgUHIdv
-         oNrd7LK5DJV5GaUs7O96L8e28QfTIvuoqBam5WGw=
+        b=nyOm1O4VQo9nQ2SE1FGfjP0uDYH3PvmsTuM8SR9g8QWgLVIy1FM9Z8mDUiFMHEWGB
+         FD99Kx54KyAd+SqRjL/JJGbqaGfFbEKGdumncCcnRGckEjmcmF3AvTj6jkR/hQvRWB
+         NXLX5CuuO0RzAl9HvS8ya0ipbV91/n5ufToDp5Ac=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     John Fastabend <john.fastabend@gmail.com>,
+Cc:     Ilya Leoshkevich <iii@linux.ibm.com>, Andrey Ignatov <rdna@fb.com>,
         Daniel Borkmann <daniel@iogearbox.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 027/123] bpf: sockmap, only create entry if ulp is not already enabled
-Date:   Tue, 13 Aug 2019 22:09:11 -0400
-Message-Id: <20190814021047.14828-27-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 028/123] selftests/bpf: fix sendmsg6_prog on s390
+Date:   Tue, 13 Aug 2019 22:09:12 -0400
+Message-Id: <20190814021047.14828-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190814021047.14828-1-sashal@kernel.org>
 References: <20190814021047.14828-1-sashal@kernel.org>
@@ -44,45 +45,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Fastabend <john.fastabend@gmail.com>
+From: Ilya Leoshkevich <iii@linux.ibm.com>
 
-[ Upstream commit 0e858739c2d2eedeeac1d35bfa0ec3cc2a7190d8 ]
+[ Upstream commit c8eee4135a456bc031d67cadc454e76880d1afd8 ]
 
-Sockmap does not currently support adding sockets after TLS has been
-enabled. There never was a real use case for this so it was never
-added. But, we lost the test for ULP at some point so add it here
-and fail the socket insert if TLS is enabled. Future work could
-make sockmap support this use case but fixup the bug here.
+"sendmsg6: rewrite IP & port (C)" fails on s390, because the code in
+sendmsg_v6_prog() assumes that (ctx->user_ip6[0] & 0xFFFF) refers to
+leading IPv6 address digits, which is not the case on big-endian
+machines.
 
-Fixes: 604326b41a6fb ("bpf, sockmap: convert to generic sk_msg interface")
-Signed-off-by: John Fastabend <john.fastabend@gmail.com>
+Since checking bitwise operations doesn't seem to be the point of the
+test, replace two short comparisons with a single int comparison.
+
+Signed-off-by: Ilya Leoshkevich <iii@linux.ibm.com>
+Acked-by: Andrey Ignatov <rdna@fb.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock_map.c | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/testing/selftests/bpf/progs/sendmsg6_prog.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/net/core/sock_map.c b/net/core/sock_map.c
-index bbc91597d8364..8a4a45e7c29df 100644
---- a/net/core/sock_map.c
-+++ b/net/core/sock_map.c
-@@ -339,6 +339,7 @@ static int sock_map_update_common(struct bpf_map *map, u32 idx,
- 				  struct sock *sk, u64 flags)
- {
- 	struct bpf_stab *stab = container_of(map, struct bpf_stab, map);
-+	struct inet_connection_sock *icsk = inet_csk(sk);
- 	struct sk_psock_link *link;
- 	struct sk_psock *psock;
- 	struct sock *osk;
-@@ -349,6 +350,8 @@ static int sock_map_update_common(struct bpf_map *map, u32 idx,
- 		return -EINVAL;
- 	if (unlikely(idx >= map->max_entries))
- 		return -E2BIG;
-+	if (unlikely(icsk->icsk_ulp_data))
-+		return -EINVAL;
+diff --git a/tools/testing/selftests/bpf/progs/sendmsg6_prog.c b/tools/testing/selftests/bpf/progs/sendmsg6_prog.c
+index 5aeaa284fc474..a680628204108 100644
+--- a/tools/testing/selftests/bpf/progs/sendmsg6_prog.c
++++ b/tools/testing/selftests/bpf/progs/sendmsg6_prog.c
+@@ -41,8 +41,7 @@ int sendmsg_v6_prog(struct bpf_sock_addr *ctx)
+ 	}
  
- 	link = sk_psock_init_link();
- 	if (!link)
+ 	/* Rewrite destination. */
+-	if ((ctx->user_ip6[0] & 0xFFFF) == bpf_htons(0xFACE) &&
+-	     ctx->user_ip6[0] >> 16 == bpf_htons(0xB00C)) {
++	if (ctx->user_ip6[0] == bpf_htonl(0xFACEB00C)) {
+ 		ctx->user_ip6[0] = bpf_htonl(DST_REWRITE_IP6_0);
+ 		ctx->user_ip6[1] = bpf_htonl(DST_REWRITE_IP6_1);
+ 		ctx->user_ip6[2] = bpf_htonl(DST_REWRITE_IP6_2);
 -- 
 2.20.1
 
