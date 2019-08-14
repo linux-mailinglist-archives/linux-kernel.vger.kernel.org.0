@@ -2,298 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FFB28E098
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:18:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA1E68E05E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 00:11:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730013AbfHNWSZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 18:18:25 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:40903 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726221AbfHNWSZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 18:18:25 -0400
-Received: by mail-pl1-f193.google.com with SMTP id a93so231893pla.7
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 15:18:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Luu+LaQt2anixYnOfUg7rdINVkRka0dN47+gECXOXbI=;
-        b=eX0HGQPYETy+KNpsGqasuDKK3q+HfL4o6FdC6Yvav9nP2L6uBhAMQGsPW6Nqyi8uSG
-         Oyfu1z0DBoiSZ3bgb18vjrr5DZ0cdB0Z7v8pBQL1PdcWbK4IYv4Tnsn228GohEYYkXgT
-         z9iR8JojMCynoOMifgFt0hNe9NjY45Te0sazxK+fPGWjaioNAr/+5gYYctPzYAhp35Gj
-         eS1dayOQkAjBlc6jK/SEHdhz2Rm3Vdc/BQncLJynR4e368GTBn1sO7oVVabIgc5rVX3J
-         5gOf5boAoTW1Q4bxXw92RQFPsVrfjcl6CxFXwwlgdlNgV8qc6WfFI97oGoJ9qYNJ4c8y
-         bFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Luu+LaQt2anixYnOfUg7rdINVkRka0dN47+gECXOXbI=;
-        b=OdO4zF836CrxJieuwVMWZMEeIjD60wDIDI1dszks9lqAeN/EhfvDOddtI7B5JYe4Ka
-         zQ5mdycAIlr4odGFkQGH8Pvz6joYF+JELvIF5zYmdgdI7DWaYDA9iAGlIIM1D/Vnwoid
-         dvcQHATRdzkybupshG544LMNmDBT3QoUa6wiwGYJIRaJoNJjdJqUHAtFFMxzv+WBmKMp
-         JW/SbSCKjpzWRk+MGpkZ29clYyE+eJzBb2yJd91q8zFwFBalLm4Sy8xh4Ub5OZ7KL59z
-         jQT/Kx9E5JA2dzKbb2MDsXB6yJateKx3UQxWKhrIlrwSyD2ZQZZIEhgoI8GKXiO0Fcmp
-         psRg==
-X-Gm-Message-State: APjAAAUQ5+DT9T1RexvZgQi5FvcBMUQoMxdA+XE6TXdL9q/c2jlYKtzd
-        xnQ+x/gxNTkOOOqszoQ3gho=
-X-Google-Smtp-Source: APXvYqzcbmoJoz247Kr2OpTmi7d2677yTSNM0zbuLxuLxdmQFn1Hz6OE1f0migwpgXGA6IA/LGnHiw==
-X-Received: by 2002:a17:902:a714:: with SMTP id w20mr1431650plq.135.1565821103875;
-        Wed, 14 Aug 2019 15:18:23 -0700 (PDT)
-Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id e3sm10650pjr.9.2019.08.14.15.18.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Aug 2019 15:18:23 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Christoph Hellwig <hch@lst.de>, Rob Clark <robdclark@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Emil Velikov <emil.velikov@collabora.com>,
-        Sean Paul <sean@poorly.run>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Imre Deak <imre.deak@intel.com>,
-        Eric Biggers <ebiggers@google.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] drm/vgem: fix cache synchronization on arm/arm64 (take two)
-Date:   Wed, 14 Aug 2019 15:00:01 -0700
-Message-Id: <20190814220011.26934-7-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190814220011.26934-1-robdclark@gmail.com>
-References: <20190814220011.26934-1-robdclark@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1729736AbfHNWLA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 18:11:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfHNWLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 18:11:00 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5BF32064A;
+        Wed, 14 Aug 2019 22:10:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565820660;
+        bh=2YQMr9WmohFL+xkk50uFprdKReR2E7JTnbbbO1059oA=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=nni+87chGmQaQDK8GYduslnDr78IJ75iX/jjJzdja8FuHyonKkGVJ9TJbqa+1r2+g
+         Bj5z2EZ9x7Tu4dLBvT9FHLLid9v0DUT5RTzPuYXwyKdKNIbsFi6X0YF5iUvKb5JNAj
+         EqADKsB5cz+e0n1z7exbiuiRittpuRoGaNTXA404=
+Date:   Wed, 14 Aug 2019 15:10:59 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Arun KS <arunks@codeaurora.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>,
+        Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [PATCH v2 4/5] mm/memory_hotplug: Make sure the pfn is aligned
+ to the order when onlining
+Message-Id: <20190814151059.54618c4f86b7e0c613ab7413@linux-foundation.org>
+In-Reply-To: <784cba14-e0ad-cfea-8ffc-bfbf855ceb10@redhat.com>
+References: <20190814154109.3448-1-david@redhat.com>
+        <20190814154109.3448-5-david@redhat.com>
+        <20190814135608.a449ca5a75cd700e077a8d23@linux-foundation.org>
+        <784cba14-e0ad-cfea-8ffc-bfbf855ceb10@redhat.com>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+On Wed, 14 Aug 2019 23:47:24 +0200 David Hildenbrand <david@redhat.com> wrote:
 
-drm_cflush_pages() is no-op on arm/arm64.  But instead we can use
-arch_sync API.
+> >> --- a/mm/memory_hotplug.c
+> >> +++ b/mm/memory_hotplug.c
+> >> @@ -646,6 +646,9 @@ static int online_pages_range(unsigned long start_pfn, unsigned long nr_pages,
+> >>  	 */
+> >>  	for (pfn = start_pfn; pfn < end_pfn; pfn += 1ul << order) {
+> >>  		order = min(MAX_ORDER - 1, get_order(PFN_PHYS(end_pfn - pfn)));
+> >> +		/* __free_pages_core() wants pfns to be aligned to the order */
+> >> +		if (unlikely(!IS_ALIGNED(pfn, 1ul << order)))
+> >> +			order = 0;
+> >>  		(*online_page_callback)(pfn_to_page(pfn), order);
+> >>  	}
+> > 
+> > We aren't sure if this occurs, but if it does, we silently handle it.
+> > 
+> > It seems a reasonable defensive thing to do, but should we add a
+> > WARN_ON_ONCE() so that we get to find out about it?  If we get such a
+> > report then we can remove the WARN_ON_ONCE() and add an illuminating
+> > comment.
+> > 
+> > 
+> 
+> Makes sense, do you want to add the WARN_ON_ONCE() or shall I resend?
 
-Fixes failures with vgem_test.
-
-Signed-off-by: Rob Clark <robdclark@chromium.org>
----
- drivers/gpu/drm/vgem/vgem_drv.c | 145 +++++++++++++++++++++-----------
- 1 file changed, 98 insertions(+), 47 deletions(-)
-
-diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
-index 11a8f99ba18c..4493abdba134 100644
---- a/drivers/gpu/drm/vgem/vgem_drv.c
-+++ b/drivers/gpu/drm/vgem/vgem_drv.c
-@@ -34,6 +34,7 @@
- #include <linux/ramfs.h>
- #include <linux/shmem_fs.h>
- #include <linux/dma-buf.h>
-+#include <linux/dma-noncoherent.h>
- #include "vgem_drv.h"
- 
- #define DRIVER_NAME	"vgem"
-@@ -47,10 +48,16 @@ static struct vgem_device {
- 	struct platform_device *platform;
- } *vgem_device;
- 
-+static void sync_and_unpin(struct drm_vgem_gem_object *bo);
-+static struct page **pin_and_sync(struct drm_vgem_gem_object *bo);
-+
- static void vgem_gem_free_object(struct drm_gem_object *obj)
- {
- 	struct drm_vgem_gem_object *vgem_obj = to_vgem_bo(obj);
- 
-+	if (!obj->import_attach)
-+		sync_and_unpin(vgem_obj);
-+
- 	kvfree(vgem_obj->pages);
- 	mutex_destroy(&vgem_obj->pages_lock);
- 
-@@ -78,40 +85,15 @@ static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
- 		return VM_FAULT_SIGBUS;
- 
- 	mutex_lock(&obj->pages_lock);
-+	if (!obj->pages)
-+		pin_and_sync(obj);
- 	if (obj->pages) {
- 		get_page(obj->pages[page_offset]);
- 		vmf->page = obj->pages[page_offset];
- 		ret = 0;
+--- a/mm/memory_hotplug.c~mm-memory_hotplug-make-sure-the-pfn-is-aligned-to-the-order-when-onlining-fix
++++ a/mm/memory_hotplug.c
+@@ -647,7 +647,7 @@ static int online_pages_range(unsigned l
+ 	for (pfn = start_pfn; pfn < end_pfn; pfn += 1ul << order) {
+ 		order = min(MAX_ORDER - 1, get_order(PFN_PHYS(end_pfn - pfn)));
+ 		/* __free_pages_core() wants pfns to be aligned to the order */
+-		if (unlikely(!IS_ALIGNED(pfn, 1ul << order)))
++		if (WARN_ON_ONCE(!IS_ALIGNED(pfn, 1ul << order)))
+ 			order = 0;
+ 		(*online_page_callback)(pfn_to_page(pfn), order);
  	}
- 	mutex_unlock(&obj->pages_lock);
--	if (ret) {
--		struct page *page;
--
--		page = shmem_read_mapping_page(
--					file_inode(obj->base.filp)->i_mapping,
--					page_offset);
--		if (!IS_ERR(page)) {
--			vmf->page = page;
--			ret = 0;
--		} else switch (PTR_ERR(page)) {
--			case -ENOSPC:
--			case -ENOMEM:
--				ret = VM_FAULT_OOM;
--				break;
--			case -EBUSY:
--				ret = VM_FAULT_RETRY;
--				break;
--			case -EFAULT:
--			case -EINVAL:
--				ret = VM_FAULT_SIGBUS;
--				break;
--			default:
--				WARN_ON(PTR_ERR(page));
--				ret = VM_FAULT_SIGBUS;
--				break;
--		}
- 
--	}
- 	return ret;
- }
- 
-@@ -277,32 +259,107 @@ static const struct file_operations vgem_driver_fops = {
- 	.release	= drm_release,
- };
- 
--static struct page **vgem_pin_pages(struct drm_vgem_gem_object *bo)
-+/* Called under pages_lock, except in free path (where it can't race): */
-+static void sync_and_unpin(struct drm_vgem_gem_object *bo)
- {
--	mutex_lock(&bo->pages_lock);
--	if (bo->pages_pin_count++ == 0) {
--		struct page **pages;
--
--		pages = drm_gem_get_pages(&bo->base);
--		if (IS_ERR(pages)) {
--			bo->pages_pin_count--;
--			mutex_unlock(&bo->pages_lock);
--			return pages;
-+	struct device *dev = bo->base.dev->dev;
-+
-+	if (bo->table) {
-+		struct scatterlist *sg;
-+		int i;
-+
-+		for_each_sg(bo->table->sgl, sg, bo->table->nents, i) {
-+			arch_sync_dma_for_cpu(dev, sg_phys(sg), sg->length,
-+					      DMA_BIDIRECTIONAL);
- 		}
- 
--		bo->pages = pages;
-+		sg_free_table(bo->table);
-+		kfree(bo->table);
-+		bo->table = NULL;
-+	}
-+
-+	if (bo->pages) {
-+		drm_gem_put_pages(&bo->base, bo->pages, true, true);
-+		bo->pages = NULL;
-+	}
-+}
-+
-+static struct page **pin_and_sync(struct drm_vgem_gem_object *bo)
-+{
-+	struct device *dev = bo->base.dev->dev;
-+	int npages = bo->base.size >> PAGE_SHIFT;
-+	struct page **pages;
-+	struct sg_table *sgt;
-+	struct scatterlist *sg;
-+	int i;
-+
-+	WARN_ON(!mutex_is_locked(&bo->pages_lock));
-+
-+	pages = drm_gem_get_pages(&bo->base);
-+	if (IS_ERR(pages)) {
-+		bo->pages_pin_count--;
-+		mutex_unlock(&bo->pages_lock);
-+		return pages;
-+	}
-+
-+	sgt = drm_prime_pages_to_sg(pages, npages);
-+	if (IS_ERR(sgt)) {
-+		dev_err(dev, "failed to allocate sgt: %ld\n",
-+			PTR_ERR(bo->table));
-+		drm_gem_put_pages(&bo->base, pages, false, false);
-+		mutex_unlock(&bo->pages_lock);
-+		return ERR_CAST(bo->table);
-+	}
-+
-+	/*
-+	 * Flush the object from the CPU cache so that importers
-+	 * can rely on coherent indirect access via the exported
-+	 * dma-address.
-+	 */
-+	for_each_sg(sgt->sgl, sg, sgt->nents, i) {
-+		arch_sync_dma_for_device(dev, sg_phys(sg), sg->length,
-+					 DMA_BIDIRECTIONAL);
-+	}
-+
-+#if defined(CONFIG_X86)
-+	/* x86 doesn't have arch_sync_dma_*() */
-+	drm_clflush_pages(pages, npages);
-+#endif
-+
-+	bo->pages = pages;
-+	bo->table = sgt;
-+
-+	return pages;
-+}
-+
-+static struct page **vgem_pin_pages(struct drm_vgem_gem_object *bo)
-+{
-+	struct page **pages;
-+
-+	mutex_lock(&bo->pages_lock);
-+	if (bo->pages_pin_count++ == 0 && !bo->pages) {
-+		pages = pin_and_sync(bo);
-+	} else {
-+		WARN_ON(!bo->pages);
-+		pages = bo->pages;
- 	}
- 	mutex_unlock(&bo->pages_lock);
- 
--	return bo->pages;
-+	return pages;
- }
- 
- static void vgem_unpin_pages(struct drm_vgem_gem_object *bo)
- {
-+	/*
-+	 * We shouldn't hit this for imported bo's.. in the import
-+	 * case we don't own the scatter-table
-+	 */
-+	WARN_ON(bo->base.import_attach);
-+
- 	mutex_lock(&bo->pages_lock);
- 	if (--bo->pages_pin_count == 0) {
--		drm_gem_put_pages(&bo->base, bo->pages, true, true);
--		bo->pages = NULL;
-+		WARN_ON(!bo->table);
-+		sync_and_unpin(bo);
- 	}
- 	mutex_unlock(&bo->pages_lock);
- }
-@@ -310,18 +367,12 @@ static void vgem_unpin_pages(struct drm_vgem_gem_object *bo)
- static int vgem_prime_pin(struct drm_gem_object *obj)
- {
- 	struct drm_vgem_gem_object *bo = to_vgem_bo(obj);
--	long n_pages = obj->size >> PAGE_SHIFT;
- 	struct page **pages;
- 
- 	pages = vgem_pin_pages(bo);
- 	if (IS_ERR(pages))
- 		return PTR_ERR(pages);
- 
--	/* Flush the object from the CPU cache so that importers can rely
--	 * on coherent indirect access via the exported dma-address.
--	 */
--	drm_clflush_pages(pages, n_pages);
--
- 	return 0;
- }
- 
--- 
-2.21.0
+_
 
