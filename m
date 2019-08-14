@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE3338D992
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DFBC8D995
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfHNRJp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:09:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60246 "EHLO mail.kernel.org"
+        id S1730398AbfHNRJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:09:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730372AbfHNRJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:09:42 -0400
+        id S1730391AbfHNRJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:09:48 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F9B6214DA;
-        Wed, 14 Aug 2019 17:09:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2DA982084D;
+        Wed, 14 Aug 2019 17:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802582;
-        bh=uZx/YxYl0pu1bln3sAog1+mlRjc9Q0jlUpMBSFc9XU8=;
+        s=default; t=1565802587;
+        bh=Bdw0sl1aWne9A7zIwsKJUivc8ei5zDfDpTfnzUxJBYs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SBPorsrP0zt/cKa4Npe/v0hUT8GdHQkXkXX3Vl1eRY2gDatggSX3gsbRCtym4ZCra
-         nU4fLQfAWScNd5V8D0U2VTOno/tg9P+F8mZWnVS+cQzfaTkXjqVscTRoB1WG4m41kC
-         FT9YHmlTBx4fmP/lJ8jaKP0gIlCpokdwh15IvVPo=
+        b=hzcobyzkANO3Kk4zLs8ygxP4qY/1mWorEWzLUu8voTxdFdi7SWLwSSzXlqmVevUFo
+         8u9WQgp5U1d43RLSZruJr4QyZXaaiJrk6S7VBYa3ARGDLqWXeG7xrCnk8yKhzQ9NBt
+         3jZfWuP4ZY//h3dumNJhg6m7jjiGnjUXfMkHg6o4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gavin Li <git@thegavinli.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.19 08/91] usb: usbfs: fix double-free of usb memory upon submiturb error
-Date:   Wed, 14 Aug 2019 19:00:31 +0200
-Message-Id: <20190814165749.494054788@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 10/91] sound: fix a memory leak bug
+Date:   Wed, 14 Aug 2019 19:00:33 +0200
+Message-Id: <20190814165750.046750688@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
 References: <20190814165748.991235624@linuxfoundation.org>
@@ -43,34 +43,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gavin Li <git@thegavinli.com>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit c43f28dfdc4654e738aa6d3fd08a105b2bee758d upstream.
+commit c7cd7c748a3250ca33509f9235efab9c803aca09 upstream.
 
-Upon an error within proc_do_submiturb(), dec_usb_memory_use_count()
-gets called once by the error handling tail and again by free_async().
-Remove the first call.
+In sound_insert_unit(), the controlling structure 's' is allocated through
+kmalloc(). Then it is added to the sound driver list by invoking
+__sound_insert_unit(). Later on, if __register_chrdev() fails, 's' is
+removed from the list through __sound_remove_unit(). If 'index' is not less
+than 0, -EBUSY is returned to indicate the error. However, 's' is not
+deallocated on this execution path, leading to a memory leak bug.
 
-Signed-off-by: Gavin Li <git@thegavinli.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190804235044.22327-1-gavinli@thegavinli.com
+To fix the above issue, free 's' before -EBUSY is returned.
+
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/core/devio.c |    2 --
- 1 file changed, 2 deletions(-)
+ sound/sound_core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/devio.c
-+++ b/drivers/usb/core/devio.c
-@@ -1792,8 +1792,6 @@ static int proc_do_submiturb(struct usb_
- 	return 0;
+--- a/sound/sound_core.c
++++ b/sound/sound_core.c
+@@ -280,7 +280,8 @@ retry:
+ 				goto retry;
+ 			}
+ 			spin_unlock(&sound_loader_lock);
+-			return -EBUSY;
++			r = -EBUSY;
++			goto fail;
+ 		}
+ 	}
  
-  error:
--	if (as && as->usbm)
--		dec_usb_memory_use_count(as->usbm, &as->usbm->urb_use_count);
- 	kfree(isopkt);
- 	kfree(dr);
- 	if (as)
 
 
