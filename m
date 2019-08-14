@@ -2,90 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5A018C6C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:19:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BAA68C6C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:18:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbfHNCSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:18:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49638 "EHLO mail.kernel.org"
+        id S1728702AbfHNCSX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:18:23 -0400
+Received: from mga09.intel.com ([134.134.136.24]:54536 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729525AbfHNCSm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:18:42 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253B620842;
-        Wed, 14 Aug 2019 02:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565749122;
-        bh=+G6YI7uCiWl5NzsZjlF0cb+BjDlIwDypveGYVOUdif8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J47q/8xorcguLssSvFsFPNHAwpieKUW8+Um8JP1FK4gaCcPm6EnM/qpkMVu6jnhDO
-         SxQdBGB0PWjBgtaFIV17Dd/tm5nyMz2p8qnAqngMk9c76FK2FKAbGRtD5JQl6w9sMp
-         7nRmJuhOAvEjaWyin8aUqMFAYLCI3ZDn8d5OStUY=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>, linux-mips@vger.kernel.org,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 04/44] mips: fix cacheinfo
-Date:   Tue, 13 Aug 2019 22:17:53 -0400
-Message-Id: <20190814021834.16662-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814021834.16662-1-sashal@kernel.org>
-References: <20190814021834.16662-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1727877AbfHNCSV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Aug 2019 22:18:21 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Aug 2019 19:18:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,382,1559545200"; 
+   d="scan'208";a="205293131"
+Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Aug 2019 19:18:19 -0700
+From:   Wei Yang <richardw.yang@linux.intel.com>
+To:     akpm@linux-foundation.org, mgorman@techsingularity.net,
+        vbabka@suse.cz, osalvador@suse.de
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Wei Yang <richardw.yang@linux.intel.com>
+Subject: [PATCH 1/3] mm/mmap.c: prev could be retrieved from vma->vm_prev
+Date:   Wed, 14 Aug 2019 10:17:53 +0800
+Message-Id: <20190814021755.1977-1-richardw.yang@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
+Currently __vma_unlink_common handles two cases:
 
-[ Upstream commit b8bea8a5e5d942e62203416ab41edecaed4fda02 ]
+  * has_prev
+  * or not
 
-Because CONFIG_OF defined for MIPS, cacheinfo attempts to fill information
-from DT, ignoring data filled by architecture routine. This leads to error
-reported
+When has_prev is false, it is obvious prev is calculated from
+vma->vm_prev in __vma_unlink_common.
 
- cacheinfo: Unable to detect cache hierarchy for CPU 0
+When has_prev is true, the prev is passed through from __vma_unlink_prev
+in __vma_adjust for non-case 8. And at the beginning next is calculated
+from vma->vm_next, which implies vma is next->vm_prev.
 
-Way to fix this provided in
-commit fac51482577d ("drivers: base: cacheinfo: fix x86 with
- CONFIG_OF enabled")
+The above statement sounds a little complicated, while to think in
+another point of view, no matter whether vma and next is swapped, the
+mmap link list still preserves its property. It is proper to access
+vma->vm_prev.
 
-Utilize same mechanism to report that cacheinfo set by architecture
-specific function
-
-Signed-off-by: Vladimir Kondratiev <vladimir.kondratiev@linux.intel.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: linux-mips@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Wei Yang <richardw.yang@linux.intel.com>
 ---
- arch/mips/kernel/cacheinfo.c | 2 ++
- 1 file changed, 2 insertions(+)
+ mm/mmap.c | 20 +++++++-------------
+ 1 file changed, 7 insertions(+), 13 deletions(-)
 
-diff --git a/arch/mips/kernel/cacheinfo.c b/arch/mips/kernel/cacheinfo.c
-index 97d5239ca47ba..428ef21892039 100644
---- a/arch/mips/kernel/cacheinfo.c
-+++ b/arch/mips/kernel/cacheinfo.c
-@@ -80,6 +80,8 @@ static int __populate_cache_leaves(unsigned int cpu)
- 	if (c->tcache.waysize)
- 		populate_cache(tcache, this_leaf, 3, CACHE_TYPE_UNIFIED);
+diff --git a/mm/mmap.c b/mm/mmap.c
+index b8072630766f..3d56340fea36 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -675,23 +675,17 @@ static void __insert_vm_struct(struct mm_struct *mm, struct vm_area_struct *vma)
  
-+	this_cpu_ci->cpu_map_populated = true;
-+
- 	return 0;
+ static __always_inline void __vma_unlink_common(struct mm_struct *mm,
+ 						struct vm_area_struct *vma,
+-						struct vm_area_struct *prev,
+-						bool has_prev,
+ 						struct vm_area_struct *ignore)
+ {
+-	struct vm_area_struct *next;
++	struct vm_area_struct *prev, *next;
+ 
+ 	vma_rb_erase_ignore(vma, &mm->mm_rb, ignore);
+ 	next = vma->vm_next;
+-	if (has_prev)
++	prev = vma->vm_prev;
++	if (prev)
+ 		prev->vm_next = next;
+-	else {
+-		prev = vma->vm_prev;
+-		if (prev)
+-			prev->vm_next = next;
+-		else
+-			mm->mmap = next;
+-	}
++	else
++		mm->mmap = next;
+ 	if (next)
+ 		next->vm_prev = prev;
+ 
+@@ -703,7 +697,7 @@ static inline void __vma_unlink_prev(struct mm_struct *mm,
+ 				     struct vm_area_struct *vma,
+ 				     struct vm_area_struct *prev)
+ {
+-	__vma_unlink_common(mm, vma, prev, true, vma);
++	__vma_unlink_common(mm, vma, vma);
  }
  
+ /*
+@@ -891,7 +885,7 @@ int __vma_adjust(struct vm_area_struct *vma, unsigned long start,
+ 			 * "next" (which is stored in post-swap()
+ 			 * "vma").
+ 			 */
+-			__vma_unlink_common(mm, next, NULL, false, vma);
++			__vma_unlink_common(mm, next, vma);
+ 		if (file)
+ 			__remove_shared_vm_struct(next, file, mapping);
+ 	} else if (insert) {
 -- 
-2.20.1
+2.17.1
 
