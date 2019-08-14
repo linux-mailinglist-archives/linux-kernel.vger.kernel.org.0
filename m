@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F2C8D4F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:38:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 42A7F8D513
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 15:39:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbfHNNiz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 09:38:55 -0400
-Received: from 8bytes.org ([81.169.241.247]:49360 "EHLO theia.8bytes.org"
+        id S1728360AbfHNNj0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 09:39:26 -0400
+Received: from 8bytes.org ([81.169.241.247]:49366 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727956AbfHNNip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728163AbfHNNip (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Aug 2019 09:38:45 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 56BCB476; Wed, 14 Aug 2019 15:38:43 +0200 (CEST)
+        id 81587479; Wed, 14 Aug 2019 15:38:43 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -21,9 +21,9 @@ Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
         linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, Thomas.Lendacky@amd.com,
         Suravee.Suthikulpanit@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 04/10] x86/dma: Get rid of iommu_pass_through
-Date:   Wed, 14 Aug 2019 15:38:35 +0200
-Message-Id: <20190814133841.7095-5-joro@8bytes.org>
+Subject: [PATCH 05/10] ia64: Get rid of iommu_pass_through
+Date:   Wed, 14 Aug 2019 15:38:36 +0200
+Message-Id: <20190814133841.7095-6-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190814133841.7095-1-joro@8bytes.org>
 References: <20190814133841.7095-1-joro@8bytes.org>
@@ -34,64 +34,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-This variable has no users anymore. Remove it and tell the
-IOMMU code via its new functions about requested DMA modes.
+This variable has no users anymore so it can be removed.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- arch/x86/include/asm/iommu.h |  1 -
- arch/x86/kernel/pci-dma.c    | 11 +++--------
- 2 files changed, 3 insertions(+), 9 deletions(-)
+ arch/ia64/include/asm/iommu.h | 2 --
+ arch/ia64/kernel/pci-dma.c    | 2 --
+ 2 files changed, 4 deletions(-)
 
-diff --git a/arch/x86/include/asm/iommu.h b/arch/x86/include/asm/iommu.h
-index baedab8ac538..b91623d521d9 100644
---- a/arch/x86/include/asm/iommu.h
-+++ b/arch/x86/include/asm/iommu.h
-@@ -4,7 +4,6 @@
- 
+diff --git a/arch/ia64/include/asm/iommu.h b/arch/ia64/include/asm/iommu.h
+index 7429a72f3f92..92aceef63710 100644
+--- a/arch/ia64/include/asm/iommu.h
++++ b/arch/ia64/include/asm/iommu.h
+@@ -8,10 +8,8 @@
+ extern void no_iommu_init(void);
+ #ifdef	CONFIG_INTEL_IOMMU
  extern int force_iommu, no_iommu;
- extern int iommu_detected;
 -extern int iommu_pass_through;
- 
- /* 10 seconds */
- #define DMAR_OPERATION_TIMEOUT ((cycles_t) tsc_khz*10*1000)
-diff --git a/arch/x86/kernel/pci-dma.c b/arch/x86/kernel/pci-dma.c
-index f62b498b18fb..a6fd479d4a71 100644
---- a/arch/x86/kernel/pci-dma.c
-+++ b/arch/x86/kernel/pci-dma.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include <linux/dma-direct.h>
- #include <linux/dma-debug.h>
-+#include <linux/iommu.h>
- #include <linux/dmar.h>
- #include <linux/export.h>
- #include <linux/memblock.h>
-@@ -43,12 +44,6 @@ int iommu_detected __read_mostly = 0;
-  * It is also possible to disable by default in kernel config, and enable with
-  * iommu=nopt at boot time.
-  */
--#ifdef CONFIG_IOMMU_DEFAULT_PASSTHROUGH
--int iommu_pass_through __read_mostly = 1;
--#else
--int iommu_pass_through __read_mostly;
--#endif
--
- extern struct iommu_table_entry __iommu_table[], __iommu_table_end[];
- 
- void __init pci_iommu_alloc(void)
-@@ -120,9 +115,9 @@ static __init int iommu_setup(char *p)
- 			swiotlb = 1;
+ extern int iommu_detected;
+ #else
+-#define iommu_pass_through	(0)
+ #define no_iommu		(1)
+ #define iommu_detected		(0)
  #endif
- 		if (!strncmp(p, "pt", 2))
--			iommu_pass_through = 1;
-+			iommu_set_default_passthrough();
- 		if (!strncmp(p, "nopt", 4))
--			iommu_pass_through = 0;
-+			iommu_set_default_translated();
+diff --git a/arch/ia64/kernel/pci-dma.c b/arch/ia64/kernel/pci-dma.c
+index fe988c49f01c..f5d49cd3fbb0 100644
+--- a/arch/ia64/kernel/pci-dma.c
++++ b/arch/ia64/kernel/pci-dma.c
+@@ -22,8 +22,6 @@ int force_iommu __read_mostly = 1;
+ int force_iommu __read_mostly;
+ #endif
  
- 		gart_parse_options(p);
- 
+-int iommu_pass_through;
+-
+ static int __init pci_iommu_init(void)
+ {
+ 	if (iommu_detected)
 -- 
 2.17.1
 
