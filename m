@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 953A88D903
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E4FE78D8E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:04:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729288AbfHNREk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:04:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53434 "EHLO mail.kernel.org"
+        id S1728969AbfHNRDf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:03:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729253AbfHNREe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:04:34 -0400
+        id S1728955AbfHNRDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:03:33 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 765B1214DA;
-        Wed, 14 Aug 2019 17:04:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1D5C1214DA;
+        Wed, 14 Aug 2019 17:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802273;
-        bh=LPfPacdqzNLUM0fy/JrApmF/4SQTkvNzeA5k+KvbKKQ=;
+        s=default; t=1565802212;
+        bh=bbV/8pJFh2CJ+OTFXl4xsgxVcDcaQJ5Cl2Q4N6T3Ltc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KpvMPPlvGZoxiMDaPCZoJQinVJvrWYDuIUyVDTzxzL3LntyikZbEq1kHYIWqmxcEp
-         u6xcMJKQTXGI6ssq6EXubBYpJSrg13u7pSVz50wZzCnQw3KCP4p+mKYPalaQWyHIR+
-         OJDAj4mILNLfKWjaxsOfK32/g+TSu8VRYtUaagqM=
+        b=H5o3MWt8mtFa9Ggp2/9r/yhcLrJFujYQoOf1FcjKy5TKcfnv4vIsgoIVnDwtyGpPy
+         ow8UU14xZSLdbq62DQvOufB0rfTk7oh5vrn+c1YULaqYU6mFSIkqwEOxwuwT7cJdOC
+         mnAfBuY77OcXtvlxB/EzV04ELRFh2qqpk58UaBi8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ming Lei <ming.lei@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 5.2 036/144] genirq/affinity: Create affinity mask for single vector
-Date:   Wed, 14 Aug 2019 18:59:52 +0200
-Message-Id: <20190814165801.335390862@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH 5.2 038/144] usb: host: xhci-rcar: Fix timeout in xhci_suspend()
+Date:   Wed, 14 Aug 2019 18:59:54 +0200
+Message-Id: <20190814165801.413447145@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
 References: <20190814165759.466811854@linuxfoundation.org>
@@ -43,53 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 491beed3b102b6e6c0e7734200661242226e3933 upstream.
+commit 783bda5e41acc71f98336e1a402c180f9748e5dc upstream.
 
-Since commit c66d4bd110a1f8 ("genirq/affinity: Add new callback for
-(re)calculating interrupt sets"), irq_create_affinity_masks() returns
-NULL in case of single vector. This change has caused regression on some
-drivers, such as lpfc.
+When a USB device is connected to the host controller and
+the system enters suspend, the following error happens
+in xhci_suspend():
 
-The problem is that single vector requests can happen in some generic cases:
+	xhci-hcd ee000000.usb: WARN: xHC CMD_RUN timeout
 
-  1) kdump kernel
+Since the firmware/internal CPU control the USBSTS.STS_HALT
+and the process speed is down when the roothub port enters U3,
+long delay for the handshake of STS_HALT is neeed in xhci_suspend().
+So, this patch adds to set the XHCI_SLOW_SUSPEND.
 
-  2) irq vectors resource is close to exhaustion.
-
-If in that situation the affinity mask for a single vector is not created,
-every caller has to handle the special case.
-
-There is no reason why the mask cannot be created, so remove the check for
-a single vector and create the mask.
-
-Fixes: c66d4bd110a1f8 ("genirq/affinity: Add new callback for (re)calculating interrupt sets")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: stable@vger.kernel.org
-Link: https://lkml.kernel.org/r/20190805011906.5020-1-ming.lei@redhat.com
+Fixes: 435cc1138ec9 ("usb: host: xhci-plat: set resume_quirk() for R-Car controllers")
+Cc: <stable@vger.kernel.org> # v4.12+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Link: https://lore.kernel.org/r/1564734815-17964-1-git-send-email-yoshihiro.shimoda.uh@renesas.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/irq/affinity.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/usb/host/xhci-rcar.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -253,11 +253,9 @@ irq_create_affinity_masks(unsigned int n
- 	 * Determine the number of vectors which need interrupt affinities
- 	 * assigned. If the pre/post request exhausts the available vectors
- 	 * then nothing to do here except for invoking the calc_sets()
--	 * callback so the device driver can adjust to the situation. If there
--	 * is only a single vector, then managing the queue is pointless as
--	 * well.
-+	 * callback so the device driver can adjust to the situation.
+--- a/drivers/usb/host/xhci-rcar.c
++++ b/drivers/usb/host/xhci-rcar.c
+@@ -238,10 +238,15 @@ int xhci_rcar_init_quirk(struct usb_hcd
+ 	 * pointers. So, this driver clears the AC64 bit of xhci->hcc_params
+ 	 * to call dma_set_coherent_mask(dev, DMA_BIT_MASK(32)) in
+ 	 * xhci_gen_setup().
++	 *
++	 * And, since the firmware/internal CPU control the USBSTS.STS_HALT
++	 * and the process speed is down when the roothub port enters U3,
++	 * long delay for the handshake of STS_HALT is neeed in xhci_suspend().
  	 */
--	if (nvecs > 1 && nvecs > affd->pre_vectors + affd->post_vectors)
-+	if (nvecs > affd->pre_vectors + affd->post_vectors)
- 		affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
- 	else
- 		affvecs = 0;
+ 	if (xhci_rcar_is_gen2(hcd->self.controller) ||
+-			xhci_rcar_is_gen3(hcd->self.controller))
+-		xhci->quirks |= XHCI_NO_64BIT_SUPPORT;
++			xhci_rcar_is_gen3(hcd->self.controller)) {
++		xhci->quirks |= XHCI_NO_64BIT_SUPPORT | XHCI_SLOW_SUSPEND;
++	}
+ 
+ 	if (!xhci_rcar_wait_for_pll_active(hcd))
+ 		return -ETIMEDOUT;
 
 
