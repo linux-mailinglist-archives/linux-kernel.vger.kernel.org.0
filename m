@@ -2,123 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 956B18D3E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:54:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 825758D3E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 14:54:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbfHNMyB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 08:54:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51253 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727954AbfHNMyA (ORCPT
+        id S1728150AbfHNMyg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 08:54:36 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37008 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727993AbfHNMyf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:54:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id 207so4515922wma.1;
-        Wed, 14 Aug 2019 05:53:58 -0700 (PDT)
+        Wed, 14 Aug 2019 08:54:35 -0400
+Received: by mail-wr1-f66.google.com with SMTP id z11so9056985wrt.4
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 05:54:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:mime-version:message-id:in-reply-to
-         :references:user-agent:content-transfer-encoding;
-        bh=wnzpQNcThUX3QcXowxnBBqL4j7IIg0MRcsVT4jZ+WQ0=;
-        b=WwwUTaFUjx3mwTYy5bqQydNTcjvb4Mj3YTzlRP+WWEevgrRkOs6SNV6SQIjWAXZKSJ
-         5qrhxomUmXZJUtK4teuc5qDa1xXeToy095gJLHKfRdh0CfjwEAWazg5b6yJOir6Qls/Y
-         aVPqNQtRo2Ic1NDBkpxyyGZsV74K5wUv9Ayut3OrQklqElanK1V/Gt5ew3jnAT3rOY2h
-         kyjKupMoC8hrHtUWKHFUoz5YizXy4wAmH/oOq4MtOY/HDXwOiry6kYcavF+YYBq+XtyF
-         GQ2iXY3JB6qRjxzRhqdO3jyhgauwFzFpE9TW5GDxuf+NuFWpOzvOhbl24OGR2vn823Hh
-         LOpg==
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/HqwVHo+/VGU/O3Ao2yHcSMYTRRkF5dGkjofFJ4lQDI=;
+        b=a214pvbWsUYqE7gFah0NDcz7JM2UYBy76uQcdIF2EkF002SXmrJWUGewBWbFk/2SA+
+         YUtGYjT48o6iTu5GykHi2ODU4FThxYcbsQdQc0xdD7uHoB8yf+oispewNpo8rzLPOUio
+         S67e2fNzvfOzCGAN9Y6qxipWccwRr5vHIR8ykTNcwP3KsJhc3d9k17Tds78XuI66px6+
+         D8rNX2s/Jnk2pVrAQoCAj5Am5Y/TyHPkOKoTomK0JdBDMU0ioLWBdoNAlfKE3cTYNcsP
+         rKem4Pk+x1q2rKdqQ87as+E/PkdUnfo7GDTHbDBG7fkMACdUIM/tx9rjyww93IMEH/TV
+         8lGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:mime-version:message-id
-         :in-reply-to:references:user-agent:content-transfer-encoding;
-        bh=wnzpQNcThUX3QcXowxnBBqL4j7IIg0MRcsVT4jZ+WQ0=;
-        b=WwsKumqxtYEb/NbfHxmxdrftVxUcZnE7aMMiY5CbHkAB8K5R843i2XR6P5+BMAkOgu
-         FbeFEIkjZG29U17jlOwNZqYGPlgKOhEbeYirfY76UUkrpZnjFxNDMW6PuRHja+wrdTxB
-         edaeL7Dy0zESLTscmFEh10Cu9r43jGF48Ambin3dju5nKIqmsygpOhdKvsfq4On6h68+
-         u7EXNnI9w9AkKdVsmFZ1kDZi+gmdsDT3O4xU1HwPBWLVy4aJe8a+uvL5UFHj1sED5TNF
-         jqpIrLv3u60/G+gPklg7oEQDXNVjd5uxiotZGdykBnUiB5He+ZwJuw8i1N1/2exgjM3Z
-         ViRQ==
-X-Gm-Message-State: APjAAAWS/DlhKcykONG3pYyGENBbgtDxsT8liUQAj9OCkLRUwr4MHcs6
-        ChUtMI/Z0tRyV95QLuN0A0mMjmSTats=
-X-Google-Smtp-Source: APXvYqx6AefTr2LbCPjkcPD6r87zgcK6uLcRCUKzw5qoY3RHcLdPUUBtabUtohdhw9NKRmdXApfuFw==
-X-Received: by 2002:a1c:4b15:: with SMTP id y21mr4099609wma.53.1565787238388;
-        Wed, 14 Aug 2019 05:53:58 -0700 (PDT)
-Received: from localhost ([92.59.185.54])
-        by smtp.gmail.com with ESMTPSA id k124sm10048136wmk.47.2019.08.14.05.53.56
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 05:53:57 -0700 (PDT)
-From:   Vicente Bergas <vicencb@gmail.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-rockchip@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: kexec on rk3399
-Date:   Wed, 14 Aug 2019 14:53:55 +0200
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/HqwVHo+/VGU/O3Ao2yHcSMYTRRkF5dGkjofFJ4lQDI=;
+        b=rIhzRmxZb37nAnX2/60fwRZVqi3rNA1hXeQbjIhPIUNRFAHGdZeyaNVJepSsnliQ4+
+         5YQ2V2b75slvYuwoYdTeU2hGbQsDcvUxyrO8oq35vp78LFG4RJLZVEXzXtXwOpmunrlY
+         mJcquhCdd+GPqos2S3u2rRvsLFJT/MC2HDBs93a0oemIRkuKLAZYydpYuxOvTlLc6Fua
+         yO34hoSz+/fPQP/olcXAOSHfuOW7t65mjs2NziAIx7Ytg+/tb1s81+xm8u45geJFjazK
+         qIcqRBXpg6HmAG8RItx7h33OCmX8uc3ABdvmRs1OTFXxu9UcUlUJARZnGNcRPeeNUbNi
+         DGZg==
+X-Gm-Message-State: APjAAAUQwehRTS3EYtRLqm0ga+eN7TQvzX7c2Nz3f5LIWWqkyAte0XZc
+        hPh6hfSSSHZ3B0owjCwed77H+g==
+X-Google-Smtp-Source: APXvYqxkrHVC6b0ZSbTKxO4CqracBUS6OzqIGTAg1coGZhxQ2Dg7Lj2RxDEodMoA9y4fuBbu63dSdw==
+X-Received: by 2002:adf:d1b4:: with SMTP id w20mr46171829wrc.301.1565787272814;
+        Wed, 14 Aug 2019 05:54:32 -0700 (PDT)
+Received: from google.com ([2a00:79e0:d:210:e8f7:125b:61e9:733d])
+        by smtp.gmail.com with ESMTPSA id n9sm163817113wrp.54.2019.08.14.05.54.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 05:54:32 -0700 (PDT)
+Date:   Wed, 14 Aug 2019 13:54:27 +0100
+From:   Matthias Maennich <maennich@google.com>
+To:     Saravana Kannan <saravanak@google.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, maco@android.com,
+        Android Kernel Team <kernel-team@android.com>, arnd@arndb.de,
+        geert@linux-m68k.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>, hpa@zytor.com,
+        jeyu@kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
+        maco@google.com, michal.lkml@markovi.net, mingo@redhat.com,
+        oneukum@suse.com, pombredanne@nexb.com, sam@ravnborg.org,
+        Sandeep Patil <sspatil@google.com>, stern@rowland.harvard.edu,
+        tglx@linutronix.de, usb-storage@lists.one-eyed-alien.net,
+        x86@kernel.org, yamada.masahiro@socionext.com,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Patrick Bellasi <patrick.bellasi@arm.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: Re: [PATCH v2 05/10] module: add config option
+ MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+Message-ID: <20190814125427.GA72826@google.com>
+References: <20180716122125.175792-1-maco@android.com>
+ <20190813121733.52480-1-maennich@google.com>
+ <20190813121733.52480-6-maennich@google.com>
+ <CAGETcx_LQDdnaU+3JVGw+6=DJ8tRoQ00+3rD2gOiHHkWomt8jg@mail.gmail.com>
 MIME-Version: 1.0
-Message-ID: <c6993a1e-6fc2-44ab-b59e-152142e2ff4d@gmail.com>
-In-Reply-To: <ebcb52be-2063-4e2c-9a09-fdcacb94f855@gmail.com>
-References: <ebcb52be-2063-4e2c-9a09-fdcacb94f855@gmail.com>
-User-Agent: Trojita
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <CAGETcx_LQDdnaU+3JVGw+6=DJ8tRoQ00+3rD2gOiHHkWomt8jg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Monday, July 22, 2019 4:31:27 PM CEST, Vicente Bergas wrote:
-> Hi, i have been running linux on rk3399 booted with kexec fine until 5.2
-> From 5.2 onwards, there are memory corruption issues as reported here:
-> http://lkml.iu.edu/hypermail/linux/kernel/1906.2/07211.html
-> kexec has been identified as the principal reason for the issues.
+On Tue, Aug 13, 2019 at 01:15:44PM -0700, Saravana Kannan wrote:
+>On Tue, Aug 13, 2019 at 5:19 AM 'Matthias Maennich' via kernel-team
+><kernel-team@android.com> wrote:
+>>
+>> If MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS is enabled (default=n), the
+>> requirement for modules to import all namespaces that are used by
+>> the module is relaxed.
+>>
+>> Enabling this option effectively allows (invalid) modules to be loaded
+>> while only a warning is emitted.
+>>
+>> Disabling this option keeps the enforcement at module loading time and
+>> loading is denied if the module's imports are not satisfactory.
+>>
+>> Reviewed-by: Martijn Coenen <maco@android.com>
+>> Signed-off-by: Matthias Maennich <maennich@google.com>
+>> ---
+>>  init/Kconfig    | 14 ++++++++++++++
+>>  kernel/module.c | 11 +++++++++--
+>>  2 files changed, 23 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/init/Kconfig b/init/Kconfig
+>> index bd7d650d4a99..b3373334cdf1 100644
+>> --- a/init/Kconfig
+>> +++ b/init/Kconfig
+>> @@ -2119,6 +2119,20 @@ config MODULE_COMPRESS_XZ
+>>
+>>  endchoice
+>>
+>> +config MODULE_ALLOW_MISSING_NAMESPACE_IMPORTS
+>> +       bool "Allow loading of modules with missing namespace imports"
+>> +       default n
+>> +       help
+>> +         Symbols exported with EXPORT_SYMBOL_NS*() are considered exported in
+>> +         a namespace. A module that makes use of a symbol exported with such a
+>> +         namespace is required to import the namespace via MODULE_IMPORT_NS().
+>> +         This option relaxes this requirement when loading a module.
 >
-> It turns out that kexec has never worked reliably on this platform,
-> i was just lucky until recently.
+>> While
+>> +         technically there is no reason to enforce correct namespace imports,
+>> +         it creates consistency between symbols defining namespaces and users
+>> +         importing namespaces they make use of.
 >
-> Please, can you provide some directions on how to debug the issue?
+>I'm confused by this sentence. It sounds like it's the opposite of
+>what the config is doing? Can you please reword it for clarify?
 
-Thank you all for your suggestions on where the issue could be.
+How about:
 
-It seems that it was the USB driver.
-Now using v5.2.8 booted with kexec from v5.2.8 with a workaround and
-so far so good. It is being tested on the Sapphire board.
+  Symbols exported with EXPORT_SYMBOL_NS*() are considered exported in
+  a namespace. A module that makes use of a symbol exported with such a
+  namespace is required to import the namespace via MODULE_IMPORT_NS().
+  There is no technical reason to enforce correct namespace imports,
+  but it creates consistency between symbols defining namespaces and
+  users importing namespaces they make use of. This option relaxes this
+  requirement and lifts the enforcement when loading a module.
 
-The workaround is:
---- a/drivers/usb/dwc3/dwc3-of-simple.c
-+++ b/drivers/usb/dwc3/dwc3-of-simple.c
-@@ -133,6 +133,13 @@
- =09return 0;
- }
-=20
-+static void dwc3_of_simple_shutdown(struct platform_device *pdev)
-+{
-+=09struct dwc3_of_simple *simple =3D platform_get_drvdata(pdev);
-+
-+=09reset_control_assert(simple->resets);
-+}
-+
- static int __maybe_unused dwc3_of_simple_runtime_suspend(struct device=20
-*dev)
- {
- =09struct dwc3_of_simple=09*simple =3D dev_get_drvdata(dev);
-@@ -190,6 +197,7 @@
- static struct platform_driver dwc3_of_simple_driver =3D {
- =09.probe=09=09=3D dwc3_of_simple_probe,
- =09.remove=09=09=3D dwc3_of_simple_remove,
-+=09.shutdown=09=3D dwc3_of_simple_shutdown,
- =09.driver=09=09=3D {
- =09=09.name=09=3D "dwc3-of-simple",
- =09=09.of_match_table =3D of_dwc3_simple_match,
-
-If this patch is OK after review i can resubmit it as a pull request.
-Should a similar change be applied to drivers/usb/dwc3/core.c ?
-
-Regards,
-  Vicen=C3=A7.
-
+-- 
+Cheers,
+Matthias
