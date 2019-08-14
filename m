@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 706B48D9D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:12:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6DEBE8D9AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:11:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730056AbfHNRMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:12:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
+        id S1730544AbfHNRK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:10:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730332AbfHNRMe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:12:34 -0400
+        id S1730524AbfHNRKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:10:52 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 858812084D;
-        Wed, 14 Aug 2019 17:12:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24EA9214DA;
+        Wed, 14 Aug 2019 17:10:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802754;
-        bh=s6FgJYfNgOiYJdk98S53txAk4fmhvuTEHWOb5pEm2x8=;
+        s=default; t=1565802651;
+        bh=3hcUrXBwLYEFvDHHf+GYMkiPTXNi7elwJUIL1TIduhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gbxcTkGT24C47ZAy/LOarh2ZNh6ukCccbfq6ECchURVxYtA82YwP2BMAwSXbW2lbC
-         o6lCvyx7c2wS2fHe0+3+sO3rCvdPKi8ishRnEElLNheQrJCt62qwN1MnvXhCNnSWKW
-         guNx8rZVYl8OKlH+sCJWwnRTDKpCWyNoFIEHiecw=
+        b=WtBFL4CRS1usCjgm8z7q1BGbkZ2Hcn5GyX2Pi5fKVtkXTrJ7wt2rNkmIMwvOvTzLq
+         /hJfx1yF9jjI+vjJQiparFdQI5T78Nt1tIRNAXLE376bVuVuuKuJbE9qmedlwqx5/L
+         nq+2fGalIxNb285hTb1YfMIrhInmmBaTsZGmdkvI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Gary R Hook <gary.hook@amd.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 03/69] crypto: ccp - Ignore tag length when decrypting GCM ciphertext
-Date:   Wed, 14 Aug 2019 19:01:01 +0200
-Message-Id: <20190814165745.372646143@linuxfoundation.org>
+        stable@vger.kernel.org,
+        SivapiriyanKumarasamy <sivapiriyan.kumarasamy@amd.com>,
+        Anthony Koo <Anthony.Koo@amd.com>, Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 39/91] drm/amd/display: Wait for backlight programming completion in set backlight level
+Date:   Wed, 14 Aug 2019 19:01:02 +0200
+Message-Id: <20190814165751.313309758@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,34 +46,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gary R Hook <gary.hook@amd.com>
+[ Upstream commit c7990daebe71d11a9e360b5c3b0ecd1846a3a4bb ]
 
-commit e2664ecbb2f26225ac6646876f2899558ffb2604 upstream.
+[WHY]
+Currently we don't wait for blacklight programming completion in DMCU
+when setting backlight level. Some sequences such as PSR static screen
+event trigger reprogramming requires it to be complete.
 
-AES GCM input buffers for decryption contain AAD+CTEXT+TAG. Only
-decrypt the ciphertext, and use the tag for comparison.
+[How]
+Add generic wait for dmcu command completion in set backlight level.
 
-Fixes: 36cf515b9bbe2 ("crypto: ccp - Enable support for AES GCM on v5 CCPs")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Gary R Hook <gary.hook@amd.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: SivapiriyanKumarasamy <sivapiriyan.kumarasamy@amd.com>
+Reviewed-by: Anthony Koo <Anthony.Koo@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ccp/ccp-ops.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/dce/dce_abm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/crypto/ccp/ccp-ops.c
-+++ b/drivers/crypto/ccp/ccp-ops.c
-@@ -752,8 +752,7 @@ static int ccp_run_aes_gcm_cmd(struct cc
- 		while (src.sg_wa.bytes_left) {
- 			ccp_prepare_data(&src, &dst, &op, AES_BLOCK_SIZE, true);
- 			if (!src.sg_wa.bytes_left) {
--				unsigned int nbytes = aes->src_len
--						      % AES_BLOCK_SIZE;
-+				unsigned int nbytes = ilen % AES_BLOCK_SIZE;
+diff --git a/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c b/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
+index 070ab56a8aca7..da8b198538e5f 100644
+--- a/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
++++ b/drivers/gpu/drm/amd/display/dc/dce/dce_abm.c
+@@ -242,6 +242,10 @@ static void dmcu_set_backlight_level(
+ 	s2 |= (level << ATOM_S2_CURRENT_BL_LEVEL_SHIFT);
  
- 				if (nbytes) {
- 					op.eom = 1;
+ 	REG_WRITE(BIOS_SCRATCH_2, s2);
++
++	/* waitDMCUReadyForCmd */
++	REG_WAIT(MASTER_COMM_CNTL_REG, MASTER_COMM_INTERRUPT,
++			0, 1, 80000);
+ }
+ 
+ static void dce_abm_init(struct abm *abm)
+-- 
+2.20.1
+
 
 
