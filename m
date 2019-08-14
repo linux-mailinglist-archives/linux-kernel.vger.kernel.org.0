@@ -2,82 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B03B18DF66
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:55:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D648DF4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729921AbfHNUzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:55:04 -0400
-Received: from mout.kundenserver.de ([212.227.126.130]:47591 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726505AbfHNUzD (ORCPT
+        id S1729436AbfHNUuo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:50:44 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:50471 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbfHNUuo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:55:03 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1N7gfa-1iKZYU3lUA-014jrh; Wed, 14 Aug 2019 22:54:45 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Mario Schuknecht <m.schuknecht@dresearch.de>,
-        Steffen Sledz <sledz@dresearch.de>,
-        Willem de Bruijn <willemb@google.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Deepa Dinamani <deepa.kernel@gmail.com>, netdev@vger.kernel.org
-Subject: [PATCH v5 09/18] compat_ioctl: handle SIOCOUTQNSD
-Date:   Wed, 14 Aug 2019 22:49:21 +0200
-Message-Id: <20190814205245.121691-4-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20190814204259.120942-1-arnd@arndb.de>
-References: <20190814204259.120942-1-arnd@arndb.de>
+        Wed, 14 Aug 2019 16:50:44 -0400
+Received: from [213.220.153.21] (helo=wittgenstein)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <christian.brauner@ubuntu.com>)
+        id 1hy0EE-0007JQ-7Q; Wed, 14 Aug 2019 20:50:42 +0000
+Date:   Wed, 14 Aug 2019 22:50:41 +0200
+From:   Christian Brauner <christian.brauner@ubuntu.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, libc-alpha@sourceware.org,
+        alistair23@gmail.com, ebiederm@xmission.com, arnd@arndb.de,
+        dalias@libc.org, torvalds@linux-foundation.org,
+        adhemerval.zanella@linaro.org, fweimer@redhat.com,
+        palmer@sifive.com, macro@wdc.com, zongbox@gmail.com,
+        akpm@linux-foundation.org, viro@zeniv.linux.org.uk, hpa@zytor.com
+Subject: Re: [PATCH v3 1/1] waitid: Add support for waiting for the current
+ process group
+Message-ID: <20190814205040.d7shwe6u3jz6qmcc@wittgenstein>
+References: <CAKmqyKMJPQAOKn11xepzAwXOd4e9dU0Cyz=A0T-uMEgUp5yJjA@mail.gmail.com>
+ <20190814154400.6371-1-christian.brauner@ubuntu.com>
+ <20190814154400.6371-2-christian.brauner@ubuntu.com>
+ <20190814160917.GG11595@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:PR2kN+3b7Ibxtnk41q7Nxz/FfJzjWkTqKtlwh7QP5DaHQ4nbRYc
- NiBXcxAA5hJaBn1P+Fpve4A5y3aKag9gv5v2r7+a/cpLhPgwYCDqwREb86JtUgNOePqKqwO
- 9PFoe0Dmlm8ahvvWkFp4laELhzMZjpcMcXd+WxVvuyWNmbvw5Mmsj2C7vmluBXGG9G9Xb6L
- o1ewHcZ3o87tDYhM10iqw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:U+fzLfynvBw=:1jD0thGH+ZMq+c9jiboTLb
- BlplpqEkAj9npkOADezy/rfKW9RRddQR26ODkc5xHQZIs+Fy0kZq/ZLe432CGs3a0VwRwnjx0
- VqDkkvkoEfFlpRC01EB5r/i9jDrEx9sixAHF6qNWlJh6EiYP9fUhr0F9RPRlDma5rD4DtKIE/
- zPwg9l0mNNBuBAy+Q9qQ8AjM94seaols/Y18YZg8U3H2zUdxYQqv6NJ+4S34APo/xl2l4KYTU
- 5NjF2m4BbUz4WuY4WqrjJGsRc7Tu/Hzozj+8ggRZT5Fsy6cZZDd7l9hPYC2yltVnLFvfrcmuy
- fsU4VHZree9L45yKMAcpb3ij45dL0r1b9Ue24Z7F1wvJI4BrgJp9ENvacPx1nUmqg59tQCQ9s
- caHyYBeDSE0S3u4xboxsO3AkS3QomjAMQlKGMRL//NGUbIK51oqEqa8VT/259Qi1QjeqVmRHn
- UWRFw4Sp0v5tDl5CQhLG7/fVT2oOR6/ydrhssMiE02yfoUHC+PPGXVoBEK3dDKJ2T4jOOcv36
- FtQzODhYoF073qsHUsHjrxo5L58edg/7a38nDUNPJqnuRlN9Suu40Rg4GvjaI/ESf7bx3vbPn
- ht3BaBZYhM3ojviYfFnuYvIVLEv/UPJBQfZ+gopabMNu30gaxLDURPasEZVGqA0YaxbBU880j
- vShZr4VPbPVQiHAGupjPf/3hXFS9ObrabfhHuLICA954HFV3rj5R8i0WLntB+FAhW+GBiDuM7
- GHEUzvsNfRmYXh5/TzEkUp2uWojN4dFfly316Y5bcuOxOLAKUH4miD+ftlu/PGboQVXU4WsV7
- uIQbo6ccew25RiZi9c12pCLbuULQg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190814160917.GG11595@redhat.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike the normal SIOCOUTQ, SIOCOUTQNSD was never handled in compat
-mode. Add it to the common socket compat handler along with similar
-ones.
+On Wed, Aug 14, 2019 at 06:09:17PM +0200, Oleg Nesterov wrote:
+> On 08/14, Christian Brauner wrote:
+> >
+> > and a signal could come in between the system call that
+> > retrieved the process gorup and the call to waitid that changes the
+>                         ^^^^^
+> > current process group.
+> 
+> I noticed this typo only because I spent 2 minutes or more trying to
+> understand this sentence ;) But yes, a signal handler or another thread
+> can change pgrp in between.
+> 
+> Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-Fixes: 2f4e1b397097 ("tcp: ioctl type SIOCOUTQNSD returns amount of data not sent")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- net/socket.c | 1 +
- 1 file changed, 1 insertion(+)
+Applied-to:
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=pidfd
+on top of P_PIDFD changes (cf. [1]) with merge conflict resolved (cf. [2]).
+(All changes on top of v5.3-rc1.)
 
-diff --git a/net/socket.c b/net/socket.c
-index 6a9ab7a8b1d2..a60f48ab2130 100644
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -3452,6 +3452,7 @@ static int compat_sock_ioctl_trans(struct file *file, struct socket *sock,
- 	case SIOCSARP:
- 	case SIOCGARP:
- 	case SIOCDARP:
-+	case SIOCOUTQNSD:
- 	case SIOCATMARK:
- 		return sock_do_ioctl(net, sock, cmd, arg);
- 	}
--- 
-2.20.0
+Merged-into:
+https://git.kernel.org/pub/scm/linux/kernel/git/brauner/linux.git/log/?h=for-next
+and should show up in linux-next tomorrow.
 
+Thanks!
+Christian
+
+/* References */
+[1]: https://lore.kernel.org/r/20190727222229.6516-2-christian@brauner.io
+[2]: patch after resolved merge-conflict:
+ kernel/exit.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/exit.c b/kernel/exit.c
+index 64bb6893a37d..d2d74a7b81d1 100644
+--- a/kernel/exit.c
++++ b/kernel/exit.c
+@@ -1596,10 +1596,13 @@ static long kernel_waitid(int which, pid_t upid, struct waitid_info *infop,
+ 		break;
+ 	case P_PGID:
+ 		type = PIDTYPE_PGID;
+-		if (upid <= 0)
++		if (upid < 0)
+ 			return -EINVAL;
+ 
+-		pid = find_get_pid(upid);
++		if (upid)
++			pid = find_get_pid(upid);
++		else
++			pid = get_task_pid(current, PIDTYPE_PGID);
+ 		break;
+ 	case P_PIDFD:
+ 		type = PIDTYPE_PID;
