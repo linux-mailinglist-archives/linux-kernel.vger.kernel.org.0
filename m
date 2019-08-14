@@ -2,59 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A99B8C77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A3978C77D
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 04:24:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728681AbfHNCYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 13 Aug 2019 22:24:24 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42549 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729534AbfHNCYV (ORCPT
+        id S1727885AbfHNCYe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 13 Aug 2019 22:24:34 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39622 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730139AbfHNCYb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Aug 2019 22:24:21 -0400
-Received: by mail-oi1-f193.google.com with SMTP id o6so1629031oic.9
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:24:21 -0700 (PDT)
+        Tue, 13 Aug 2019 22:24:31 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b1so10764123otp.6
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Aug 2019 19:24:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=date:from:to:cc:subject:in-reply-to:message-id:references
          :user-agent:mime-version;
-        bh=1G/a7WS8pUpL1zmvbKTHzrkVwD487e3W+2smn5ktODc=;
-        b=hjIYO+1dYGPbiBq+dHbXBz3TuAYU415ba+1qYeiXmxFN4NqMFXVq7AezPzQ5RozDKt
-         OhVMOWSsix2AGx/5/KosEclzeVG+q4u4QX6T9v01GB2WbUHzhz+qKUgSqqvElDNcxguA
-         QAdWWDM0D9Fj4YUN2+SKnPEtgzLmRpQ3y6nT6JZdgsFTmheqoPdPSl710HrUWFxn1xx2
-         3sxXG13GhNUL+0YVJq/Fz2comXRXfon8+AUK8elZg51t2o8dQcKuUAKho0OPCl9ISl/l
-         LSkGWZOSVuTWk5+OCzWwwN5CH7GdzBhxogTwKdH9DHY/CN1agrEx5q/hdh32dTkjHcql
-         9KzQ==
+        bh=djwbOoU5ileobHGHzugslDxkoFaMGMiR2MOTUznWvvE=;
+        b=aUTYvZKENV7jx2SUF1Rt71AnU/eAfEOkOw82G9L2RA4jgcGrfvsbDozKAy/0Jd7xzj
+         dEZxsN1WCqx+vRxpE+2VZIaqHXxgGM5SLtGhQuB5JOJH7Was1RG0JSZPOdWVRH17vJD2
+         dLbkqTIpgKpxrzt66K9NiV9wke8kgqU+WNqLwmY0uSzAoZ4hWXbAQ1/JcyQuQltNiudT
+         cyh2KV2Q8y2+x1/+ytCHsMqZ5V79Njok7qu20FaXuZBg3e0SSQXi+Cu3Kj0Bt/XuAY6n
+         aVa9W6MzOIQuxeTLAO8rfrpJRidlychF7eKk1l6HDENnpfX0EUMfkwik3TNXY4v+tciy
+         a7Vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
          :references:user-agent:mime-version;
-        bh=1G/a7WS8pUpL1zmvbKTHzrkVwD487e3W+2smn5ktODc=;
-        b=VL4oAVUaeobnM4up0rRuQU9U7QIWzVYEp7D2sUEZXy8+P4lfJAnUt3HlcCkXV76AqJ
-         L8VtbRvyc+Bo2Yi9PNydcAtrm6+FMYusYNS8uzVsfQnNUgMB9MzkS3tshnI613rAH8np
-         V91iPUOrNQkCZYXg0xY8aurIphSVlyFEwNo74ITTpmlTB0NZd31U9GLP0JzTjdHSJzSM
-         kVxaRUw+nc2AF1R8ooqBV8/YHPgBWHWe0GpsTc6N52+D9UaOda46mxUf61jKciYoQD5d
-         lyKlPGyJQ6TxCj/hrAbF6cmhsuQBgUVIVyiLrzc8AT0+P/2bgMjl4Gl7GfUOv6RzPksL
-         kC5w==
-X-Gm-Message-State: APjAAAXdx1jLJLBsL9gcC3CD4xZjbH083rJfwfDA7zyD7GZ7BX5nK9xQ
-        x1NTMoMV2Gy7uaxVcLtlEefwtg==
-X-Google-Smtp-Source: APXvYqx1NahTVPRWa7m2oJ0W4YhsQAxXbI6gehhVtgk+OAiDDzj+CshHjmVcVPHC2vZxZqmTXgtrNg==
-X-Received: by 2002:a02:a18e:: with SMTP id n14mr980021jah.84.1565749459743;
-        Tue, 13 Aug 2019 19:24:19 -0700 (PDT)
+        bh=djwbOoU5ileobHGHzugslDxkoFaMGMiR2MOTUznWvvE=;
+        b=HrPqve3Ib3ZM5MhmC/UpLfhHC+kDcMB0IGKMhWlNvq19LIzN5sbKerlrMl/m7+bTiv
+         9FKigqhE+TfnP0FSn9QsA/aNM2T9N2ChHVbfuUA4wteubJTlREhDMzw76/1nGcrPZgB7
+         Hu0ylRUC9FoVX+y91OB7Ga6gILNNJ8iK3UADwKE2NWG1hRnb8RlchVdm1sUfmfC+dZgv
+         PNLXbUko4RqXQrZcy+Xju1DNrOlAWko+JxIs2Fg4k+aKJtrd+h/KlARj1eFQfKXBcowP
+         kvoPWXdI3+1cKVCmIB46syeyDCVEQxAjKNUSem29+kKkf5xyOFhl3DlIcpr2v0dOLN0Q
+         Gndw==
+X-Gm-Message-State: APjAAAUVhus/QqzN/uLkl1wojvlIbpD+H+Jsb+3OKvTHPz9iBdRNz5b0
+        P9CR5+ownRpIpZcipcLXBjQEgw==
+X-Google-Smtp-Source: APXvYqx+xLwy91cVwpgk6Jxu4j6BEJ3bP1Um+itheAYr7zgJCtQf5lOwrktHCYRgtlFyKi9r/5/W+g==
+X-Received: by 2002:a5d:9453:: with SMTP id x19mr2569033ior.183.1565749470857;
+        Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
 Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
-        by smtp.gmail.com with ESMTPSA id y5sm114834811ioc.86.2019.08.13.19.24.18
+        by smtp.gmail.com with ESMTPSA id a8sm79125353ioh.29.2019.08.13.19.24.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Aug 2019 19:24:19 -0700 (PDT)
-Date:   Tue, 13 Aug 2019 19:24:18 -0700 (PDT)
+        Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 19:24:30 -0700 (PDT)
 From:   Paul Walmsley <paul.walmsley@sifive.com>
 X-X-Sender: paulw@viisi.sifive.com
 To:     Alistair Francis <alistair.francis@wdc.com>
 cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
         alistair23@gmail.com
-Subject: Re: [PATCH 1/2] riscv: rv32_defconfig: Update the defconfig
-In-Reply-To: <20190813233230.21804-1-alistair.francis@wdc.com>
-Message-ID: <alpine.DEB.2.21.9999.1908131924100.19217@viisi.sifive.com>
-References: <20190813233230.21804-1-alistair.francis@wdc.com>
+Subject: Re: [PATCH 2/2] riscv: defconfig: Update the defconfig
+In-Reply-To: <20190813233230.21804-2-alistair.francis@wdc.com>
+Message-ID: <alpine.DEB.2.21.9999.1908131924210.19217@viisi.sifive.com>
+References: <20190813233230.21804-1-alistair.francis@wdc.com> <20190813233230.21804-2-alistair.francis@wdc.com>
 User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -65,8 +65,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, 13 Aug 2019, Alistair Francis wrote:
 
-> Update the rv32_defconfig:
->  - Add 'CONFIG_DEVTMPFS_MOUNT=y' to match the RISC-V defconfig
+> Update the defconfig:
 >  - Add CONFIG_HW_RANDOM=y and CONFIG_HW_RANDOM_VIRTIO=y to enable
 >    VirtIORNG when running on QEMU
 > 
