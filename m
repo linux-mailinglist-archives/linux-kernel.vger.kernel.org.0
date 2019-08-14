@@ -2,145 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D1DB8D768
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 17:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9881B8D76E
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 17:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbfHNPtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 11:49:19 -0400
-Received: from foss.arm.com ([217.140.110.172]:56360 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726166AbfHNPtT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 11:49:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0B2328;
-        Wed, 14 Aug 2019 08:49:17 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0A26C3F694;
-        Wed, 14 Aug 2019 08:49:14 -0700 (PDT)
-Subject: Re: [PATCH 6/6] driver core: initialize a default DMA mask for
- platform device
-To:     Christoph Hellwig <hch@lst.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc:     linux-arch@vger.kernel.org, Olav Kongas <ok@artecdesign.ee>,
-        Gavin Li <git@thegavinli.com>, linuxppc-dev@lists.ozlabs.org,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Geoff Levand <geoff@infradead.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        linux-usb@vger.kernel.org, Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, Tony Prisk <linux@prisktech.co.nz>,
-        iommu@lists.linux-foundation.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Shawn Guo <shawnguo@kernel.org>, Bin Liu <b-liu@ti.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190811080520.21712-1-hch@lst.de>
- <20190811080520.21712-7-hch@lst.de>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <fbea6e6d-7721-b51d-0501-582e8446e9c9@arm.com>
-Date:   Wed, 14 Aug 2019 16:49:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1728176AbfHNPtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 11:49:47 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33283 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727524AbfHNPtq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 11:49:46 -0400
+Received: by mail-wm1-f66.google.com with SMTP id p77so3610515wme.0;
+        Wed, 14 Aug 2019 08:49:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=GgpF7Bn3iLxmnrlzmfTXq5Ybf354IdpR2J0OxIgAaos=;
+        b=E68uOgMU8ez6QYfyKgOF0aUz+R483YEAGnrHG78TwWWLqRfyXaosFyZvuMjED77gpF
+         RYoLcNxdOCkQ9N9Q8ck78j5lekrj1M9x6avQQOMyd0S3O9kpp0LhO3Cj19U7ztzYNPeG
+         8Yh+YN+ZfkDMYYZwb01/Yn0kpQmifXZNG6KPfQVgAQnStDcBLgT1AxNbK4Cum1HR0VoG
+         T8M/ZZG+z4d9FXPlVHGEpdPxdrFA6Lrx2sRy9tqxHP7/P85GLOv/Ua75Ojw4zoIsRdaU
+         soqMu9OT2kwnTPeTREA3x6oFewWg7o6GrlLDibyKykicoaVDm/VTRV+JgjAmWq4bmuh1
+         CofA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=GgpF7Bn3iLxmnrlzmfTXq5Ybf354IdpR2J0OxIgAaos=;
+        b=FNncLivW+J/NTdydfN8VEQsaXsFQguPdo9Bs/8KIvO0wwpS7s2GZdynjHcMpwYJszr
+         uNyJG3xnIDMZpUkL/gl9vsvxP160ItNIpsVggzjhWLg2tL5JHxV4xbwO12+VoiyrzTJl
+         ndgoKikbsBdpJxdi6po8ZUAlzi6LAbj87iae4KXDEJxwWUpggn5nCLvXDXpdX4EiGJgG
+         SS0wVapxHAw/yB1NRLbzRM0Hv7I+GgP5Sn7+C7S44w7jDomBoGYtnhwVy8eE68DMXkhM
+         XpY9D/p56ciiJ6VthnUy6oSSDKsmEizxsUca2ByIBtxqCoJONpUeTJgwXtxa/3mY1W4+
+         vpnw==
+X-Gm-Message-State: APjAAAWLzhNU/s914XDeQdPg3bXyHty2nevfXTGRA41KuZ/Qd4eQv7SJ
+        2q7iUaVRrM4lztJVeiNFeh5boHMjdd4=
+X-Google-Smtp-Source: APXvYqzmHYv2EUqjBT0QKvTZqMloDV5pIEqjUO6JotbuaOuSFQ46EuBUNff9GAYIkVEc36bwchX0zg==
+X-Received: by 2002:a1c:1a4c:: with SMTP id a73mr9505796wma.109.1565797784296;
+        Wed, 14 Aug 2019 08:49:44 -0700 (PDT)
+Received: from planxty.redhat.com ([2a02:8108:1700:19dc:b567:5617:6bc1:51bb])
+        by smtp.gmail.com with ESMTPSA id r190sm94942wmf.0.2019.08.14.08.49.42
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 08:49:43 -0700 (PDT)
+From:   John Kacur <jkacur@redhat.com>
+To:     rt-users <linux-rt-users@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Cc:     Clark Williams <williams@redhat.com>,
+        John Kacur <jkacur@redhat.com>
+Subject: [ANNOUNCE] rt-tests-1.5
+Date:   Wed, 14 Aug 2019 17:49:29 +0200
+Message-Id: <20190814154929.9481-1-jkacur@redhat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190811080520.21712-7-hch@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/08/2019 09:05, Christoph Hellwig wrote:
-> We still treat devices without a DMA mask as defaulting to 32-bits for
-> both mask, but a few releases ago we've started warning about such
-> cases, as they require special cases to work around this sloppyness.
-> Add a dma_mask field to struct platform_object so that we can initialize
+Mostly small clean-ups and bug fixes,
 
-s/object/device/
+There was a fix to a bug where the paramater to -t was being ignored if 
+the user didn't also specify the affinity -a.
 
-> the dma_mask pointer in struct device and initialize both masks to
-> 32-bits by default.  Architectures can still override this in
-> arch_setup_pdev_archdata if needed.
-> 
-> Note that the code looks a little odd with the various conditionals
-> because we have to support platform_device structures that are
-> statically allocated.
+This was a bit of fallout from the changes to automatically use numa if
+support for it is available.
 
-This would be a good point to also get rid of the long-standing bodge in 
-platform_device_register_full().
+Bug reports and patches, are always welcome.
 
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/base/platform.c         | 15 +++++++++++++--
->   include/linux/platform_device.h |  1 +
->   2 files changed, 14 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
-> index ec974ba9c0c4..b216fcb0a8af 100644
-> --- a/drivers/base/platform.c
-> +++ b/drivers/base/platform.c
-> @@ -264,6 +264,17 @@ struct platform_object {
->   	char name[];
->   };
->   
-> +static void setup_pdev_archdata(struct platform_device *pdev)
+John Kacur
 
-Bikeshed: painting the generic DMA API properties as "archdata" feels a 
-bit off-target :/
+Clone
+git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+branches
 
-> +{
-> +	if (!pdev->dev.coherent_dma_mask)
-> +		pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
-> +	if (!pdev->dma_mask)
-> +		pdev->dma_mask = DMA_BIT_MASK(32);
-> +	if (!pdev->dev.dma_mask)
-> +		pdev->dev.dma_mask = &pdev->dma_mask;
-> +	arch_setup_pdev_archdata(pdev);
+Branches
+unstable/devel/latest (rt-tests: Version 1.5)
+unstable/devel/latest-devel (for latest development of Version 1.5)
 
-AFAICS m68k's implementation of that arch hook becomes entirely 
-redundant after this change, so may as well go. That would just leave 
-powerpc's actual archdata, which at a glance looks like it could 
-probably be cleaned up with not *too* much trouble.
+tarballs are available here
+https://kernel.org/pub/linux/utils/rt-tests
 
-Robin.
+older version tarballs are available to in
+https://kernel.org/pub/linux/utils/rt-tests/older
 
-> +};
-> +
->   /**
->    * platform_device_put - destroy a platform device
->    * @pdev: platform device to free
-> @@ -310,7 +321,7 @@ struct platform_device *platform_device_alloc(const char *name, int id)
->   		pa->pdev.id = id;
->   		device_initialize(&pa->pdev.dev);
->   		pa->pdev.dev.release = platform_device_release;
-> -		arch_setup_pdev_archdata(&pa->pdev);
-> +		setup_pdev_archdata(&pa->pdev);
->   	}
->   
->   	return pa ? &pa->pdev : NULL;
-> @@ -512,7 +523,7 @@ EXPORT_SYMBOL_GPL(platform_device_del);
->   int platform_device_register(struct platform_device *pdev)
->   {
->   	device_initialize(&pdev->dev);
-> -	arch_setup_pdev_archdata(pdev);
-> +	setup_pdev_archdata(pdev);
->   	return platform_device_add(pdev);
->   }
->   EXPORT_SYMBOL_GPL(platform_device_register);
-> diff --git a/include/linux/platform_device.h b/include/linux/platform_device.h
-> index 9bc36b589827..a2abde2aef25 100644
-> --- a/include/linux/platform_device.h
-> +++ b/include/linux/platform_device.h
-> @@ -24,6 +24,7 @@ struct platform_device {
->   	int		id;
->   	bool		id_auto;
->   	struct device	dev;
-> +	u64		dma_mask;
->   	u32		num_resources;
->   	struct resource	*resource;
->   
-> 
+John Kacur (3):
+  rt-tests: Use gettid from rt-utils.c everywhere
+  rt-tests: hwlatdetect: Remove kmodule options and clean-up help
+  rt-tests: cyclictest: Without -t default to 1 thread in numa case
+
+Kurt Kanzenbach (6):
+  rt-tests: deadline: Remove duplicated code for sched_{set,get}_attr
+  rt-tests: cyclicdeadline: Remove unused getcpu code
+  rt-tests: deadline: Remove duplicated gettid() code
+  rt-tests: cyclicdeadline: Add options to usage
+  rt-tests: cyclicdeadline: Print fail only if something failed
+  rt-tests: cyclicdeadline: Fix cgroup setup
+
+Qiao Zhao (1):
+  ptsematest, sigwaittest, pmqtest, svsematest reprot error "Could not
+    access /sys/kernel/debug/tracing/tracing_enabled"
+
+ src/cyclictest/cyclictest.c           | 13 ++---
+ src/hwlatdetect/hwlatdetect.8         | 43 +++++++--------
+ src/hwlatdetect/hwlatdetect.py        | 12 +----
+ src/pmqtest/pmqtest.c                 |  4 +-
+ src/ptsematest/ptsematest.c           |  4 +-
+ src/rt-migrate-test/rt-migrate-test.c |  2 -
+ src/sched_deadline/cyclicdeadline.c   | 71 ++++++------------------
+ src/sched_deadline/deadline_test.c    | 78 ++-------------------------
+ src/signaltest/signaltest.c           |  3 --
+ src/sigwaittest/sigwaittest.c         |  4 +-
+ src/svsematest/svsematest.c           |  4 +-
+ 11 files changed, 51 insertions(+), 187 deletions(-)
+
+-- 
+2.20.1
+
