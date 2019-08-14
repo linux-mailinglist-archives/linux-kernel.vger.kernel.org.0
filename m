@@ -2,80 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86F548DEC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:27:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 626C38DEF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 22:36:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729671AbfHNU1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 16:27:23 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:35937 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729625AbfHNU1V (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 16:27:21 -0400
-X-Originating-IP: 87.5.130.64
-Received: from uno.homenet.telecomitalia.it (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id D59F3FF807;
-        Wed, 14 Aug 2019 20:27:18 +0000 (UTC)
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
-        (V4L/DVB)), linux-kernel@vger.kernel.org (open list)
-Subject: [RFC 5/5] media: i2c: ov13858: Report the camera location
-Date:   Wed, 14 Aug 2019 22:28:15 +0200
-Message-Id: <20190814202815.32491-6-jacopo@jmondi.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814202815.32491-1-jacopo@jmondi.org>
-References: <20190814202815.32491-1-jacopo@jmondi.org>
+        id S1729066AbfHNUgH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 16:36:07 -0400
+Received: from mta6.epbfi.com ([74.205.143.41]:40731 "EHLO mta6.epbfi.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbfHNUgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 16:36:05 -0400
+X-Greylist: delayed 488 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 16:36:04 EDT
+Received: from mail1.epbfi.com ([74.205.143.164])
+        by cmsmtp with SMTP
+        id xzsBhGsnJYCqLxzsBhvV4L; Wed, 14 Aug 2019 16:27:55 -0400
+X-Authority-Analysis: v=2.1 cv=TLq4MARa c=1 sm=1 tr=0
+ a=5ScIZQf/Q5/3FLbwc1EtpQ==:117 a=L9H7d07YOLsA:10 a=9cW_t1CCXrUA:10
+ a=s5jvgZ67dGcA:10 a=FKkrIqjQGGEA:10 a=grFN1ervr_QA:10 a=UG-uvQm33TwA:10
+ a=IkcTkHD0fZMA:10 a=x7bEGLp0ZPQA:10 a=DFN9YHfRJOsA:10
+ a=wXAVZr1hBdtwWWVGSaMA:9 a=QEXdDO2ut3YA:10 a=9ZFY-tFxM8eGAlHkra-o:22
+Date:   Wed, 14 Aug 2019 16:27:55 -0400 (EDT)
+From:   "I.D" <incordesign@epbfi.com>
+Reply-To: mattadams.cclc@gmail.com
+Message-ID: <1012346246.30499326.1565814475610.JavaMail.zimbra@epbfi.com>
+Subject: 3% L OANS.
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [185.242.6.5]
+X-Mailer: Zimbra 8.6.0_GA_1242 (zclient/8.6.0_GA_1242)
+Thread-Topic: 3% L OANS.
+Thread-Index: WFJVs1zIIRsiGV1zsMUTB0cTYIUd0w==
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The camera location is retrieved from the firmware interface parsing
-the "location" device property and reported through the read-only
-V4L2_CID_LOCATION control.
-
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/media/i2c/ov13858.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
-index 45bb872db3c5..6baefc3083e1 100644
---- a/drivers/media/i2c/ov13858.c
-+++ b/drivers/media/i2c/ov13858.c
-@@ -1591,6 +1591,7 @@ static int ov13858_init_controls(struct ov13858 *ov13858)
- 	struct i2c_client *client = v4l2_get_subdevdata(&ov13858->sd);
- 	struct v4l2_ctrl_handler *ctrl_hdlr;
- 	s64 exposure_max;
-+	u32 location;
- 	s64 vblank_def;
- 	s64 vblank_min;
- 	s64 hblank;
-@@ -1659,6 +1660,16 @@ static int ov13858_init_controls(struct ov13858 *ov13858)
- 				     V4L2_CID_TEST_PATTERN,
- 				     ARRAY_SIZE(ov13858_test_pattern_menu) - 1,
- 				     0, 0, ov13858_test_pattern_menu);
-+
-+	ret = device_property_read_u32(&client->dev, "location", &location);
-+	if (!ret) {
-+		v4l2_ctrl_new_std(ctrl_hdlr, &ov13858_ctrl_ops,
-+				  V4L2_CID_LOCATION, V4L2_LOCATION_FRONT,
-+				  V4L2_LOCATION_BACK, 1,
-+				  location == V4L2_LOCATION_FRONT ?
-+				  V4L2_LOCATION_FRONT : V4L2_LOCATION_BACK);
-+	}
-+
- 	if (ctrl_hdlr->error) {
- 		ret = ctrl_hdlr->error;
- 		dev_err(&client->dev, "%s control init failed (%d)\n",
--- 
-2.22.0
-
+Hi, Contact us for a 3% L oan today. Let me know how much you need and duration to pay back for more details. Thanks.
