@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56F078D9FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:14:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB5678DAAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 14 Aug 2019 19:19:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731042AbfHNROL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 13:14:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38594 "EHLO mail.kernel.org"
+        id S1729705AbfHNRTm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 13:19:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731023AbfHNROI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:14:08 -0400
+        id S1730592AbfHNRLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 13:11:25 -0400
 Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 044A12063F;
-        Wed, 14 Aug 2019 17:14:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E2382133F;
+        Wed, 14 Aug 2019 17:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565802848;
-        bh=9J/hVlocitOzGgJbVxHih96oSCV/jmUgFFqrsAWV2aE=;
+        s=default; t=1565802684;
+        bh=ZVWqXDhVYCfDqX3KEET7MUpwNtvT7KRdDULsbPhFlaU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=E8meYCjttmB6wmApiI60hfpHkJyuNEkp0MIGhTJNAALJmKEJ+iiiVPpqEnKiStn6g
-         oL8sSWZ0wzztwCrj5aLWv9HI69ve2TmbjaPqO7PCm6pzUPkfFs/iksS/V99S069clu
-         rM0SajkKL7lG3Tt6wtHiD5dOlX1WaHr2c3zMQtwA=
+        b=HIzztwcJzVTSzBGUQe4oSLWNVb+vxgb3kDRIaUufZ4dhbFuIB/dJnWchi/PVV4PoO
+         pzcloS7QF4NQ5v8KSfwt+SWxPI3NQBfftJPiWHzEb0gxut2hZQSGLCVkfyb474VrWi
+         7i1iytTmf400WLY4gIonXNnwqU2WiVAmWjHtfuNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Roland Kammerer <roland.kammerer@linbit.com>,
-        Arnd Bergmann <arnd@arndb.de>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 42/69] drbd: dynamically allocate shash descriptor
-Date:   Wed, 14 Aug 2019 19:01:40 +0200
-Message-Id: <20190814165748.230767321@linuxfoundation.org>
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 78/91] ALSA: hiface: fix multiple memory leak bugs
+Date:   Wed, 14 Aug 2019 19:01:41 +0200
+Message-Id: <20190814165753.135761925@linuxfoundation.org>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
-References: <20190814165744.822314328@linuxfoundation.org>
+In-Reply-To: <20190814165748.991235624@linuxfoundation.org>
+References: <20190814165748.991235624@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,69 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 77ce56e2bfaa64127ae5e23ef136c0168b818777 ]
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-Building with clang and KASAN, we get a warning about an overly large
-stack frame on 32-bit architectures:
+commit 3d92aa45fbfd7319e3a19f4ec59fd32b3862b723 upstream.
 
-drivers/block/drbd/drbd_receiver.c:921:31: error: stack frame size of 1280 bytes in function 'conn_connect'
-      [-Werror,-Wframe-larger-than=]
+In hiface_pcm_init(), 'rt' is firstly allocated through kzalloc(). Later
+on, hiface_pcm_init_urb() is invoked to initialize 'rt->out_urbs[i]'. In
+hiface_pcm_init_urb(), 'rt->out_urbs[i].buffer' is allocated through
+kzalloc().  However, if hiface_pcm_init_urb() fails, both 'rt' and
+'rt->out_urbs[i].buffer' are not deallocated, leading to memory leak bugs.
+Also, 'rt->out_urbs[i].buffer' is not deallocated if snd_pcm_new() fails.
 
-We already allocate other data dynamically in this function, so
-just do the same for the shash descriptor, which makes up most of
-this memory.
+To fix the above issues, free 'rt' and 'rt->out_urbs[i].buffer'.
 
-Link: https://lore.kernel.org/lkml/20190617132440.2721536-1-arnd@arndb.de/
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: Roland Kammerer <roland.kammerer@linbit.com>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: a91c3fb2f842 ("Add M2Tech hiFace USB-SPDIF driver")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/block/drbd/drbd_receiver.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
+ sound/usb/hiface/pcm.c |   11 ++++++++---
+ 1 file changed, 8 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 1aad373da50e2..8fbdfaacc2226 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -5237,7 +5237,7 @@ static int drbd_do_auth(struct drbd_connection *connection)
- 	unsigned int key_len;
- 	char secret[SHARED_SECRET_MAX]; /* 64 byte */
- 	unsigned int resp_size;
--	SHASH_DESC_ON_STACK(desc, connection->cram_hmac_tfm);
-+	struct shash_desc *desc;
- 	struct packet_info pi;
- 	struct net_conf *nc;
- 	int err, rv;
-@@ -5250,6 +5250,13 @@ static int drbd_do_auth(struct drbd_connection *connection)
- 	memcpy(secret, nc->shared_secret, key_len);
- 	rcu_read_unlock();
+--- a/sound/usb/hiface/pcm.c
++++ b/sound/usb/hiface/pcm.c
+@@ -604,14 +604,13 @@ int hiface_pcm_init(struct hiface_chip *
+ 		ret = hiface_pcm_init_urb(&rt->out_urbs[i], chip, OUT_EP,
+ 				    hiface_pcm_out_urb_handler);
+ 		if (ret < 0)
+-			return ret;
++			goto error;
+ 	}
  
-+	desc = kmalloc(sizeof(struct shash_desc) +
-+		       crypto_shash_descsize(connection->cram_hmac_tfm),
-+		       GFP_KERNEL);
-+	if (!desc) {
-+		rv = -1;
-+		goto fail;
-+	}
- 	desc->tfm = connection->cram_hmac_tfm;
- 	desc->flags = 0;
+ 	ret = snd_pcm_new(chip->card, "USB-SPDIF Audio", 0, 1, 0, &pcm);
+ 	if (ret < 0) {
+-		kfree(rt);
+ 		dev_err(&chip->dev->dev, "Cannot create pcm instance\n");
+-		return ret;
++		goto error;
+ 	}
  
-@@ -5392,7 +5399,10 @@ static int drbd_do_auth(struct drbd_connection *connection)
- 	kfree(peers_ch);
- 	kfree(response);
- 	kfree(right_response);
--	shash_desc_zero(desc);
-+	if (desc) {
-+		shash_desc_zero(desc);
-+		kfree(desc);
-+	}
+ 	pcm->private_data = rt;
+@@ -624,4 +623,10 @@ int hiface_pcm_init(struct hiface_chip *
  
- 	return rv;
+ 	chip->pcm = rt;
+ 	return 0;
++
++error:
++	for (i = 0; i < PCM_N_URBS; i++)
++		kfree(rt->out_urbs[i].buffer);
++	kfree(rt);
++	return ret;
  }
--- 
-2.20.1
-
 
 
