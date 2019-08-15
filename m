@@ -2,131 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AE8838E692
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:35:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E94008E6C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731068AbfHOIfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:35:39 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38480 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730409AbfHOIfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:35:39 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6EB69B601;
-        Thu, 15 Aug 2019 08:35:37 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 10:35:36 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>
-Subject: Re: [PATCH 2/2] mm: memcontrol: flush percpu slab vmstats on kmem
- offlining
-Message-ID: <20190815083536.GD9477@dhcp22.suse.cz>
-References: <20190812222911.2364802-1-guro@fb.com>
- <20190812222911.2364802-3-guro@fb.com>
- <20190814113242.GV17933@dhcp22.suse.cz>
- <20190814215408.GA5584@tower.dhcp.thefacebook.com>
+        id S1730809AbfHOIgy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:36:54 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:38020 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfHOIgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 04:36:53 -0400
+Received: from zn.tnic (p200300EC2F0B5200DD69E9E370CF27BC.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:dd69:e9e3:70cf:27bc])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6FBFF1EC0716;
+        Thu, 15 Aug 2019 10:36:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565858212;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=bir8kfrFAU0YOr+52ulKaVBapWTLDDk20LurJeUAdC8=;
+        b=cR17bCeABBpDdIUzGc7YWd3uwXYEqWuXVxZSIGpZxPyjxaOtJETk/yQyBBZIk5VU14SnmH
+        hQgq/7GUbGaYt7oXzdie9cBhCkUQ/3pb1v8i3yjmrlHRIlFPZkELPExF8QoyGsysYvjba4
+        spjxZTU9DvRF7hi3vacAOGoidznER+c=
+Date:   Thu, 15 Aug 2019 10:37:37 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 03/28] x86/asm: annotate relocate_kernel
+Message-ID: <20190815083737.GD15313@zn.tnic>
+References: <20190808103854.6192-1-jslaby@suse.cz>
+ <20190808103854.6192-4-jslaby@suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190814215408.GA5584@tower.dhcp.thefacebook.com>
+In-Reply-To: <20190808103854.6192-4-jslaby@suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-08-19 21:54:12, Roman Gushchin wrote:
-> On Wed, Aug 14, 2019 at 01:32:42PM +0200, Michal Hocko wrote:
-> > On Mon 12-08-19 15:29:11, Roman Gushchin wrote:
-> > > I've noticed that the "slab" value in memory.stat is sometimes 0,
-> > > even if some children memory cgroups have a non-zero "slab" value.
-> > > The following investigation showed that this is the result
-> > > of the kmem_cache reparenting in combination with the per-cpu
-> > > batching of slab vmstats.
-> > > 
-> > > At the offlining some vmstat value may leave in the percpu cache,
-> > > not being propagated upwards by the cgroup hierarchy. It means
-> > > that stats on ancestor levels are lower than actual. Later when
-> > > slab pages are released, the precise number of pages is substracted
-> > > on the parent level, making the value negative. We don't show negative
-> > > values, 0 is printed instead.
-> > 
-> > So the difference with other counters is that slab ones are reparented
-> > and that's why we have treat them specially? I guess that is what the
-> > comment in the code suggest but being explicit in the changelog would be
-> > nice.
-> 
-> Right. And I believe the list can be extended further. Objects which
-> are often outliving the origin memory cgroup (e.g. pagecache pages)
-> are pinning dead cgroups, so it will be cool to reparent them all.
-> 
-> > 
-> > [...]
-> > > -static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg)
-> > > +static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg, bool slab_only)
-> > >  {
-> > >  	unsigned long stat[MEMCG_NR_STAT];
-> > >  	struct mem_cgroup *mi;
-> > >  	int node, cpu, i;
-> > > +	int min_idx, max_idx;
-> > >  
-> > > -	for (i = 0; i < MEMCG_NR_STAT; i++)
-> > > +	if (slab_only) {
-> > > +		min_idx = NR_SLAB_RECLAIMABLE;
-> > > +		max_idx = NR_SLAB_UNRECLAIMABLE;
-> > > +	} else {
-> > > +		min_idx = 0;
-> > > +		max_idx = MEMCG_NR_STAT;
-> > > +	}
-> > 
-> > This is just ugly has hell! I really detest how this implicitly makes
-> > counters value very special without any note in the node_stat_item
-> > definition. Is it such a big deal to have a per counter flush and do
-> > the loop over all counters resp. specific counters around it so much
-> > worse? This should be really a slow path to safe few instructions or
-> > cache misses, no?
-> 
-> I believe that it is a big deal, because it's
-> NR_VMSTAT_ITEMS * all memory cgroups * online cpus * numa nodes.
+On Thu, Aug 08, 2019 at 12:38:29PM +0200, Jiri Slaby wrote:
+> There are functions in relocate_kernel which are not annotated. This
+					^
+					_{32,64}.c
 
-I am not sure I follow. I just meant to remove all for (i = 0; i < MEMCG_NR_STAT; i++)
-from flushing and do that loop around the flushing function. That would
-mean that the NR_SLAB_$FOO wouldn't have to play tricks and simply call
-the flushing for the two counters.
-
-> If the goal is to merge it with cpu hotplug code, I'd think about passing
-> cpumask to it, and do the opposite. Also I'm not sure I understand
-> why reordering loops will make it less ugly.
-
-And adding a cpu/nodemasks would just work with that as well, right.
-
+> makes automatic annotations rather hard. So annotate all the functions
+> now.
 > 
-> But you're right, a comment nearby NR_SLAB_(UN)RECLAIMABLE definition
-> is totaly worth it. How about something like:
+> Note that these are not C-like functions, so we do not use FUNC, but
+> CODE markers. Also they are not aligned, so we use the NOALIGN versions:
+> - SYM_CODE_START_NOALIGN
+> - SYM_CODE_START_LOCAL_NOALIGN
+> - SYM_CODE_END
 > 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index 8b5f758942a2..231bcbe5dcc6 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -215,8 +215,9 @@ enum node_stat_item {
->         NR_INACTIVE_FILE,       /*  "     "     "   "       "         */
->         NR_ACTIVE_FILE,         /*  "     "     "   "       "         */
->         NR_UNEVICTABLE,         /*  "     "     "   "       "         */
-> -       NR_SLAB_RECLAIMABLE,
-> -       NR_SLAB_UNRECLAIMABLE,
-> +       NR_SLAB_RECLAIMABLE,    /* Please, do not reorder this item */
-> +       NR_SLAB_UNRECLAIMABLE,  /* and this one without looking at
-> +                                * memcg_flush_percpu_vmstats() first. */
->         NR_ISOLATED_ANON,       /* Temporary isolated pages from anon lru */
->         NR_ISOLATED_FILE,       /* Temporary isolated pages from file lru */
->         WORKINGSET_NODES,
+> In return, we get:
+>   0000   108 NOTYPE  GLOBAL DEFAULT    1 relocate_kernel
+>   006c   165 NOTYPE  LOCAL  DEFAULT    1 identity_mapped
+>   0146   127 NOTYPE  LOCAL  DEFAULT    1 swap_pages
+>   0111    53 NOTYPE  LOCAL  DEFAULT    1 virtual_mapped
 
-Thanks, that is an improvement.
+It would be cool if those NOTYPE objects could be marked as OS-specific:
+
+From /usr/include/elf.h:
+
+#define STT_LOOS        10              /* Start of OS-specific */
+
+to denote that they're special but gas doesn't seem to support that type
+out of the box at least.
+
+Oh well...
+
 -- 
-Michal Hocko
-SUSE Labs
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
