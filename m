@@ -2,107 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42CC08E7F0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1EB78E7F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:18:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731113AbfHOJRU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 05:17:20 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:42999 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731058AbfHOJRU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 05:17:20 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7F9HAUk2270406
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 15 Aug 2019 02:17:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7F9HAUk2270406
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565860630;
-        bh=QsQ9Yiodl0WBhxVGnVERq90Isva7wVbnssFaKcqW+7M=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=cyKBh3eWhf19mIquSSarpr0RJ5YZ3bwU7cuk/SFPnhHSKkB7M6W+fqQBQ7sSiRSTA
-         m1VJ5Y8cmEo9G7DHuMTQsSEmmcbCQ/GTV8wNzgdayadRLNY3wOyZha16GHjBNnkei1
-         mzAbfrWM/BjOhi//m4H3gsOrXHTGQxqTi4hPr+0lcYeT2w7eN/LMw5zORVDAjehAQo
-         kMxwjiL1oTLZgby4IzlXzV+xnIRQECDcaYUFlI/lFz0GVCPkAn7S2TQoCjEMPtS67Q
-         Lf0fkMRa7rCyoCkUy1r17kHjoiizUO2nhXwo1Gbj+CA4oq/WGsezIbdknThCl2drnS
-         qlZBleaQxPHuQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7F9H9RT2270403;
-        Thu, 15 Aug 2019 02:17:09 -0700
-Date:   Thu, 15 Aug 2019 02:17:09 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-jo209zac9rut0dz1rqvbdlgm@git.kernel.org>
-Cc:     adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
-        lclaudio@redhat.com, tglx@linutronix.de, treeze.taeung@gmail.com,
-        mingo@kernel.org, hpa@zytor.com, jolsa@kernel.org,
-        linux-kernel@vger.kernel.org
-Reply-To: tglx@linutronix.de, treeze.taeung@gmail.com, jolsa@kernel.org,
-          hpa@zytor.com, mingo@kernel.org, linux-kernel@vger.kernel.org,
-          adrian.hunter@intel.com, acme@redhat.com, lclaudio@redhat.com,
-          namhyung@kernel.org
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf config: Honour $PERF_CONFIG env var to specify
- alternate .perfconfig
-Git-Commit-ID: 61a461fcbd62d42c29a1ea6a9cc3838ad9f49401
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1731154AbfHOJSI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 05:18:08 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44368 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729668AbfHOJSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 05:18:08 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 9A43D17C3A25E7092CA3;
+        Thu, 15 Aug 2019 17:17:56 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Thu, 15 Aug 2019
+ 17:17:45 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <afd@ti.com>, <colin.king@canonical.com>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'
+Date:   Thu, 15 Aug 2019 17:17:38 +0800
+Message-ID: <20190815091738.21680-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=1.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  61a461fcbd62d42c29a1ea6a9cc3838ad9f49401
-Gitweb:     https://git.kernel.org/tip/61a461fcbd62d42c29a1ea6a9cc3838ad9f49401
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 30 Jul 2019 11:20:55 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 12 Aug 2019 16:26:02 -0300
+sound/soc/codecs/tlv320aic31xx.c:261:29: warning:
+ cm_m_enum defined but not used [-Wunused-const-variable=]
 
-perf config: Honour $PERF_CONFIG env var to specify alternate .perfconfig
+It is never used, so can be removed.
 
-We had this comment in Documentation/perf_counter/config.c, i.e. since
-when we got this from the git sources, but never really did that
-getenv("PERF_CONFIG"), do it now as I need to disable whatever
-~/.perfconfig root has so that tests parsing tool output are done for
-the expected default output or that we specify an alternate config file
-that when read will make the tools produce expected output.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Fixes: 078006012401 ("perf_counter tools: add in basic glue from Git")
-Link: https://lkml.kernel.org/n/tip-jo209zac9rut0dz1rqvbdlgm@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- tools/perf/perf.c | 3 +++
- 1 file changed, 3 insertions(+)
+ sound/soc/codecs/tlv320aic31xx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/perf.c b/tools/perf/perf.c
-index 97e2628ea5dd..d4e4d53e8b44 100644
---- a/tools/perf/perf.c
-+++ b/tools/perf/perf.c
-@@ -441,6 +441,9 @@ int main(int argc, const char **argv)
+diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
+index 26a4f6c..df627a0 100644
+--- a/sound/soc/codecs/tlv320aic31xx.c
++++ b/sound/soc/codecs/tlv320aic31xx.c
+@@ -258,7 +258,6 @@ static SOC_ENUM_SINGLE_DECL(mic1rp_p_enum, AIC31XX_MICPGAPI, 4,
+ static SOC_ENUM_SINGLE_DECL(mic1lm_p_enum, AIC31XX_MICPGAPI, 2,
+ 	mic_select_text);
  
- 	srandom(time(NULL));
+-static SOC_ENUM_SINGLE_DECL(cm_m_enum, AIC31XX_MICPGAMI, 6, mic_select_text);
+ static SOC_ENUM_SINGLE_DECL(mic1lm_m_enum, AIC31XX_MICPGAMI, 4,
+ 	mic_select_text);
  
-+	/* Setting $PERF_CONFIG makes perf read _only_ the given config file. */
-+	config_exclusive_filename = getenv("PERF_CONFIG");
-+
- 	err = perf_config(perf_default_config, NULL);
- 	if (err)
- 		return err;
+-- 
+2.7.4
+
+
