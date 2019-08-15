@@ -2,84 +2,126 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 380768F1B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:13:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59FBA8F1D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731484AbfHORNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:13:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730932AbfHORNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:13:48 -0400
-Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7249205F4;
-        Thu, 15 Aug 2019 17:13:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565889227;
-        bh=OKnNdaFflk01RelsesjLPMicKWo1UdpFSgHbeCLxf00=;
-        h=Date:From:To:Cc:Subject:From;
-        b=s1NtQV4QDwfCIanOxEY6gJfURskShQ6M/q1if21UG/eHis2DblrJwMwSd6PzILckR
-         Fi7SD5Fswtg62p6PaWtXYs3bN54YA6idXgjrw4EKXof2HwPcZl/ESqJHyF3ZOhDJxs
-         Flkp1XUVtJ+edDIni5EjmwJ8bdac7XHT6Q3x9cOM=
-Date:   Thu, 15 Aug 2019 10:13:47 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de
-Subject: [GIT PULL] xfs: fixes for 5.3-rc5
-Message-ID: <20190815171347.GD15186@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1731571AbfHORO1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:27 -0400
+Received: from mail-wm1-f97.google.com ([209.85.128.97]:36207 "EHLO
+        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731408AbfHOROZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:14:25 -0400
+Received: by mail-wm1-f97.google.com with SMTP id g67so1865017wme.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
+        bh=YrQsEFJ5XC+2bOl3bLXcIx2i2ZGtQ6HBlicu0o4QGgQ=;
+        b=hVvr1xSyeDeYV/DjW/5I/gG/SS2ttSoEz4HZn83FI9phF5rI0tkX7Q+A8EPI+i/2Sp
+         Bjw6wI4BfY+yKXouJBhfPM6uAAF943MgssMYKPlYdjXHc08bu8r4BGLo5fyhEd7nuXv5
+         cMSZVJ6f0PJDdUtWDqaGSqq2Hll6F64YklSYioQkSoRg7t09OwA+qWTfjOiCapUHlGfz
+         vo1DlCdj81msdxcG0BGisivhrrPxlLbQefFydvui4r920fyxVUG+48Zul3l3vHIpdhct
+         f6AuBgEaHcmQDIXlFkDSCAo3zh7i9K3caROBVCtgfati/CkBAS0uXz2E2vjze110TiNO
+         z/ag==
+X-Gm-Message-State: APjAAAUjbea7dpzAeSNS49BSG35RMrMXX+fLdglByG+GJV03JAle5JZb
+        qKEOU1/GmAtx/AtF8vA3+qZEXQpNDneYov/DoIyRLQOS20Q1OcC8QyTWZPanxwfV8g==
+X-Google-Smtp-Source: APXvYqx1iRICMh93BpRXmF4AKcbCLW2jBBmcjI1MuOMZKItMXpIxLf8pu1aQLiSHmmf/yIjcZ4c3/NU4swrd
+X-Received: by 2002:a1c:18d:: with SMTP id 135mr3701132wmb.171.1565889263498;
+        Thu, 15 Aug 2019 10:14:23 -0700 (PDT)
+Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
+        by smtp-relay.gmail.com with ESMTPS id n10sm55657wrs.49.2019.08.15.10.14.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:23 -0700 (PDT)
+X-Relaying-Domain: sirena.org.uk
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hyJKR-00051G-4X; Thu, 15 Aug 2019 17:14:23 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id AB4402742B9E; Thu, 15 Aug 2019 18:14:22 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
+        broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, Paul.Handrigan@cirrus.com,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: cs42l56: remove unused variable 'adc_swap_enum'" to the asoc tree
+In-Reply-To: <20190815092436.34632-1-yuehaibing@huawei.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190815171422.AB4402742B9E@ypsilon.sirena.org.uk>
+Date:   Thu, 15 Aug 2019 18:14:22 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The patch
 
-Here are a few more bug fixes that trickled in since -rc3.  It's
-survived the usual xfstests runs and merges cleanly with this morning's
-master.  Please let me know if anything strange happens.
+   ASoC: cs42l56: remove unused variable 'adc_swap_enum'
 
---D
+has been applied to the asoc tree at
 
-The following changes since commit afa1d96d1430c2138c545fb76e6dcb21222098d4:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
-  xfs: Fix possible null-pointer dereferences in xchk_da_btree_block_check_sibling() (2019-07-30 11:28:20 -0700)
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-are available in the Git repository at:
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-5.3-fixes-2
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-for you to fetch changes up to 8612de3f7ba6e900465e340516b8313806d27b2d:
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-  xfs: don't crash on null attr fork xfs_bmapi_read (2019-08-12 09:32:44 -0700)
+Thanks,
+Mark
 
-----------------------------------------------------------------
-Changes since last update:
-- Fix crashes when the attr fork isn't present due to errors but inode
-  inactivation tries to zap the attr data anyway.
-- Convert more directory corruption debugging asserts to actual
-  EFSCORRUPTED returns instead of blowing up later on.
-- Don't fail writeback just because we ran out of memory allocating
-  metadata log data.
+From e33d565795930d0341bb946aec457a814ccd53e6 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Aug 2019 17:24:36 +0800
+Subject: [PATCH] ASoC: cs42l56: remove unused variable 'adc_swap_enum'
 
-----------------------------------------------------------------
-Darrick J. Wong (2):
-      xfs: remove more ondisk directory corruption asserts
-      xfs: don't crash on null attr fork xfs_bmapi_read
+sound/soc/codecs/cs42l56.c:206:30: warning:
+ adc_swap_enum defined but not used [-Wunused-const-variable=]
 
-Tetsuo Handa (1):
-      fs: xfs: xfs_log: Don't use KM_MAYFAIL at xfs_log_reserve().
+It is never used, so can be removed.
 
- fs/xfs/libxfs/xfs_bmap.c      | 29 +++++++++++++++++++++--------
- fs/xfs/libxfs/xfs_da_btree.c  | 19 ++++++++++++-------
- fs/xfs/libxfs/xfs_dir2_node.c |  3 ++-
- fs/xfs/xfs_log.c              |  5 +----
- 4 files changed, 36 insertions(+), 20 deletions(-)
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190815092436.34632-1-yuehaibing@huawei.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ sound/soc/codecs/cs42l56.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/sound/soc/codecs/cs42l56.c b/sound/soc/codecs/cs42l56.c
+index b4d7627525f9..ac569ab3d30f 100644
+--- a/sound/soc/codecs/cs42l56.c
++++ b/sound/soc/codecs/cs42l56.c
+@@ -199,14 +199,6 @@ static const struct soc_enum beep_bass_enum =
+ 	SOC_ENUM_SINGLE(CS42L56_BEEP_TONE_CFG, 1,
+ 			ARRAY_SIZE(beep_bass_text), beep_bass_text);
+ 
+-static const char * const adc_swap_text[] = {
+-	"None", "A+B/2", "A-B/2", "Swap"
+-};
+-
+-static const struct soc_enum adc_swap_enum =
+-	SOC_ENUM_SINGLE(CS42L56_MISC_ADC_CTL, 3,
+-			ARRAY_SIZE(adc_swap_text), adc_swap_text);
+-
+ static const char * const pgaa_mux_text[] = {
+ 	"AIN1A", "AIN2A", "AIN3A"};
+ 
+-- 
+2.20.1
+
