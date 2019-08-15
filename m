@@ -2,89 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E978C8E8B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 12:02:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DCB418E8BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 12:02:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731303AbfHOKCL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 06:02:11 -0400
-Received: from dougal.metanate.com ([90.155.101.14]:7993 "EHLO metanate.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730464AbfHOKCK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 06:02:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/simple; d=metanate.com;
-         s=stronger; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-        Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=UoFEzh3ATL6zXQ0dPZbMp5klVXEtsjWzHvPOLWEvEVA=; b=uAt7OOD4L7Y2WSX/PwXhrB5ihM
-        MlKsYtdssp9YDXiMwp5Tk/ne6mc8VT4FWrxwkVfXvONuuvsHkkEff6iaN4gbkuJLDSO5NysqQ7DhJ
-        +mIpAhqjUxA4wokFHA+mh9Y5sVDG6Jld70quKN0z6zYPgAl5d+ZmUfBWCKFBZejOVIglSSt7DQBIZ
-        FRz+8k/V8Itpv4v5UQU3evTDcG1SpuULp+Oy2wdF54M8KImm4t9dZaQ86eoRQWkOcaLtLlYJ5NHPh
-        dSiCHxRQ8Cj7xmfhMguc9WGKPni/4Tgk3Xt6ie6o4urqUV35Oy+x1ORLs5xqeeRhbZ5LIFPNgTkmH
-        6Y2+ZVTA==;
-Received: from 188-39-28-98.static.enta.net ([188.39.28.98] helo=donbot.corp.numark.com)
-        by shrek.metanate.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <john@metanate.com>)
-        id 1hyCZv-0001ER-N6; Thu, 15 Aug 2019 11:01:55 +0100
-From:   John Keeping <john@metanate.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org, John Keeping <john@metanate.com>
-Subject: [PATCH v2 3/3] perf unwind: remove unnecessary test
-Date:   Thu, 15 Aug 2019 11:01:46 +0100
-Message-Id: <20190815100146.28842-3-john@metanate.com>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20190815100146.28842-1-john@metanate.com>
-References: <20190804124434.204da4ac.john@metanate.com>
- <20190815100146.28842-1-john@metanate.com>
+        id S1731379AbfHOKCU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 06:02:20 -0400
+Received: from foss.arm.com ([217.140.110.172]:41472 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730715AbfHOKCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 06:02:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 60E7028;
+        Thu, 15 Aug 2019 03:02:19 -0700 (PDT)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9271E3F706;
+        Thu, 15 Aug 2019 03:02:18 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:02:16 +0100
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Qian Cai <cai@lca.pw>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] mm/kmemleak: record the current memory pool size
+Message-ID: <20190815100215.GB9352@arrakis.emea.arm.com>
+References: <1565809631-28933-1-git-send-email-cai@lca.pw>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authenticated: YES
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1565809631-28933-1-git-send-email-cai@lca.pw>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If dwarf_callchain_users is false, then unwind__prepare_access() will
-not set unwind_libunwind_ops so the remaining test here is sufficient.
+On Wed, Aug 14, 2019 at 03:07:11PM -0400, Qian Cai wrote:
+> The only way to obtain the current memory pool size for a running kernel
+> is to check back the kernel config file which is inconvenient. Record it
+> in the kernel messages.
+> 
+> Signed-off-by: Qian Cai <cai@lca.pw>
+> ---
+>  mm/kmemleak.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+> index b8bbe9ac5472..1f74f8bcb4eb 100644
+> --- a/mm/kmemleak.c
+> +++ b/mm/kmemleak.c
+> @@ -1967,7 +1967,8 @@ static int __init kmemleak_late_init(void)
+>  		mutex_unlock(&scan_mutex);
+>  	}
+>  
+> -	pr_info("Kernel memory leak detector initialized\n");
+> +	pr_info("Kernel memory leak detector initialized (mem pool size: %d)\n",
+> +		mem_pool_free_count);
 
-Signed-off-by: John Keeping <john@metanate.com>
----
-v2: new patch split out from patch 2
----
- tools/perf/util/unwind-libunwind.c | 6 ------
- 1 file changed, 6 deletions(-)
+I wouldn't actually call it the "memory pool size" as I see the size as
+a constant set at config time. What about "memory pool available"?
 
-diff --git a/tools/perf/util/unwind-libunwind.c b/tools/perf/util/unwind-libunwind.c
-index b843f9d0a9ea..6499b22b158b 100644
---- a/tools/perf/util/unwind-libunwind.c
-+++ b/tools/perf/util/unwind-libunwind.c
-@@ -69,18 +69,12 @@ int unwind__prepare_access(struct map_groups *mg, struct map *map,
- 
- void unwind__flush_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
- 	if (mg->unwind_libunwind_ops)
- 		mg->unwind_libunwind_ops->flush_access(mg);
- }
- 
- void unwind__finish_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
- 	if (mg->unwind_libunwind_ops)
- 		mg->unwind_libunwind_ops->finish_access(mg);
- }
--- 
-2.22.0
+(even this one is not entirely accurate since we have a
+mem_pool_free_list but I expect such list not to have too many elements
+at the late_initcall time)
 
+If you change the printed string:
+
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
