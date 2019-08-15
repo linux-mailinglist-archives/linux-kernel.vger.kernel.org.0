@@ -2,159 +2,242 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E43688E1EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:40:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 392038E1E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:40:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729786AbfHOAka (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 20:40:30 -0400
-Received: from alln-iport-5.cisco.com ([173.37.142.92]:32375 "EHLO
-        alln-iport-5.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbfHOAk1 (ORCPT
+        id S1729448AbfHOAkG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 20:40:06 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41226 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726490AbfHOAkE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:40:27 -0400
-X-Greylist: delayed 424 seconds by postgrey-1.27 at vger.kernel.org; Wed, 14 Aug 2019 20:40:26 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=cisco.com; i=@cisco.com; l=2206; q=dns/txt; s=iport;
-  t=1565829627; x=1567039227;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=sl9cIkLwBOxShxMMfKwe9ivNs/CmuLsMGqJUc1r1RCM=;
-  b=DAL151YdQJNsiFAAVRGDVbgb/bKUhFHNHPF/M07ZkCMol6KkCMryd1aI
-   KIHkIO2DPNgmxPiAjvApzEYFxE8NN53a1Xfp2KJ4HwdaN4vtx163rn4tC
-   AWW+OxL7VMWW5izhZccgyddqcyzh3ulW2bmx5J/wAwYMG0phxtBQsschX
-   k=;
-IronPort-PHdr: =?us-ascii?q?9a23=3ARAQHPRT7ZLSs6/Sqezf+DeMXYNpsv++ubAcI9p?=
- =?us-ascii?q?oqja5Pea2//pPkeVbS/uhpkESXBNfA8/wRje3QvuigQmEG7Zub+FE6OJ1XH1?=
- =?us-ascii?q?5g640NmhA4RsuMCEn1NvnvOi8zBthDUFZm13q6KkNSXs35Yg6arw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A0B7AABZp1Rd/4QNJK1mGQEBAQEBAQE?=
- =?us-ascii?q?BAQEBAQcBAQEBAQGBZ4FFUAOBQiAECyoKhBSDRwOKdoJbfpZlglIDVAkBAQE?=
- =?us-ascii?q?MAQEtAgEBhD8CF4J2IzgTAgQBAQQBAQEEAQYEbYUnDIVKAQEBAQMSEQQNDAE?=
- =?us-ascii?q?BNwELBAIBCBEEAQEDAiYCAgIwFQgIAgQBDQUIGoRrAx0BAp9/AoE4iGBzfzO?=
- =?us-ascii?q?CegEBBYEGAYQBGIIUCYEMKItpF4F/gRFGghc1PoRGgwkygiaPFJw9CQKCHZR?=
- =?us-ascii?q?OgjCLRYpIjVeYAwIEAgQFAg4BAQWBZyGBWHAVgyeCQgwXg0+KHAE2coEpjFM?=
- =?us-ascii?q?BgSABAQ?=
-X-IronPort-AV: E=Sophos;i="5.64,387,1559520000"; 
-   d="scan'208";a="310622945"
-Received: from alln-core-10.cisco.com ([173.36.13.132])
-  by alln-iport-5.cisco.com with ESMTP/TLS/DHE-RSA-SEED-SHA; 15 Aug 2019 00:33:21 +0000
-Received: from XCH-ALN-019.cisco.com (xch-aln-019.cisco.com [173.36.7.29])
-        by alln-core-10.cisco.com (8.15.2/8.15.2) with ESMTPS id x7F0XLZl022286
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=FAIL);
-        Thu, 15 Aug 2019 00:33:21 GMT
-Received: from xhs-rtp-002.cisco.com (64.101.210.229) by XCH-ALN-019.cisco.com
- (173.36.7.29) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Aug
- 2019 19:33:21 -0500
-Received: from xhs-rcd-003.cisco.com (173.37.227.248) by xhs-rtp-002.cisco.com
- (64.101.210.229) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 14 Aug
- 2019 20:33:19 -0400
-Received: from NAM05-BY2-obe.outbound.protection.outlook.com (72.163.14.9) by
- xhs-rcd-003.cisco.com (173.37.227.248) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3 via Frontend Transport; Wed, 14 Aug 2019 19:33:19 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mS04w9MmL3PpY7Stn4lYo1NyueKN5SSh9czihdOl8hG51pE6tJB3STdnQVrdALPNILZmJUrX28F+a43/qO3x8HX2t6adSEX4qz9yFQef7qNcaSujRDRyfRaHU/JKORx0oqztOvaz+b0dnw32aeML1yt3LgpX1MzOdyf7KK0hLo7QPPWIR18eS0XqTztFmW1vfaTI+1e4cgyOVrgk8VAqhabcMeYN8ELR+WXu/IHQo6ZR3ZPULDvirT5W6LncehFUgmv5GPG0NyxSEbc8qOu75p2fvuioFqm8jjnUh6q8buGLRVhPv8uUnrkbFEcpVGqj4Jf4HsEuNCYkWrdViWwfPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sl9cIkLwBOxShxMMfKwe9ivNs/CmuLsMGqJUc1r1RCM=;
- b=jJMk558rEHcFEEM82z6YpERKB+jXjcD0pi+vz9KiY57g4pYPOW3+mc/gG6Ol1e1g4o2BDrBGOn2nN7tt8cvrH7ebfZYpL+I4jjWUVtM4WByhNHOsYA6/WSdUUk/oEaAjn5EZ4t2E5wLwDUb4FLKMoPsKuCwaJGHbVZ5aplXPiWD3j2Mfe9ajmkShXApz9YokXmud9YvTZcUQ9HxNEWONBflH5eDMXz7cYx2VWRHHkINaizDJzcgICdhhVvpcGNbDF+RW7i+T+gHOU4r1aIGR50NirFot2xL92jSdH0CMEhPg8JsebFrMvuRILtRpAl/g+6efcWjZCdbudJMdQgwyBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cisco.com; dmarc=pass action=none header.from=cisco.com;
- dkim=pass header.d=cisco.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cisco.onmicrosoft.com;
- s=selector2-cisco-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sl9cIkLwBOxShxMMfKwe9ivNs/CmuLsMGqJUc1r1RCM=;
- b=sSulQA0nXcTgKaARvhUUNxDuHFe50vNE8KYmx89yncMWciBmCvQa/QBERaC1pzV3LdTl/Mm/BgxgOs24KZwCv8t38kqBPpa90/yOjIvgCIX/6SUi88c+VNnyup3j1wajvQZZxcsZTxHQfxaBqfnpPwMBDr4XQ/ZP5PZrgrGLXfs=
-Received: from BYAPR11MB3511.namprd11.prod.outlook.com (20.177.226.94) by
- BYAPR11MB2725.namprd11.prod.outlook.com (52.135.227.155) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Thu, 15 Aug 2019 00:33:18 +0000
-Received: from BYAPR11MB3511.namprd11.prod.outlook.com
- ([fe80::509e:4378:d915:242f]) by BYAPR11MB3511.namprd11.prod.outlook.com
- ([fe80::509e:4378:d915:242f%4]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
- 00:33:18 +0000
-From:   "Karan Tilak Kumar (kartilak)" <kartilak@cisco.com>
-To:     Colin King <colin.king@canonical.com>,
-        "Satish Kharat (satishkh)" <satishkh@cisco.com>,
-        "Sesidhar Baddela (sebaddel)" <sebaddel@cisco.com>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] scsi: fnic: remove redundant assignment of variable rc
-Thread-Topic: [PATCH] scsi: fnic: remove redundant assignment of variable rc
-Thread-Index: AQHVUdpqlbeDuk+xq0OvqNpJwpY4e6b7Xhyw
-Date:   Thu, 15 Aug 2019 00:33:17 +0000
-Message-ID: <BYAPR11MB35115365560883FECD6C88DCC3AC0@BYAPR11MB3511.namprd11.prod.outlook.com>
-References: <20190813132349.8720-1-colin.king@canonical.com>
-In-Reply-To: <20190813132349.8720-1-colin.king@canonical.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=kartilak@cisco.com; 
-x-originating-ip: [128.107.241.191]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: a28913d9-af51-48da-eb0e-08d721182b1f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR11MB2725;
-x-ms-traffictypediagnostic: BYAPR11MB2725:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR11MB27256B6B0210F3D6FB3CB700C3AC0@BYAPR11MB2725.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:374;
-x-forefront-prvs: 01304918F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(39860400002)(396003)(366004)(346002)(199004)(189003)(13464003)(6436002)(2501003)(14454004)(316002)(6506007)(33656002)(52536014)(229853002)(476003)(186003)(102836004)(3846002)(76176011)(478600001)(53546011)(8936002)(7696005)(486006)(64756008)(6116002)(66066001)(86362001)(11346002)(26005)(446003)(55016002)(8676002)(9686003)(81166006)(256004)(7736002)(54906003)(66446008)(66476007)(66946007)(110136005)(76116006)(66556008)(71190400001)(5660300002)(2906002)(81156014)(53936002)(305945005)(25786009)(74316002)(99286004)(71200400001)(4326008)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR11MB2725;H:BYAPR11MB3511.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: cisco.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1IfmJhrfg/ZmHHZqQDCTzYPn2m9kJOia2IzOxIYXIQDnDT1/7Zf13T4XCS7gVNgSZlTMKnVWfRs7Sr3EoOCtUaqNqsQpPVDATyWnAwbydNRQbzxkdA1f8s5k6paR4P0ttsjR1M2NcrfZqqgE/qQkKk8miIl/BNbmJGUzi0nZV1aN4FhQZknwbz2mu/jdhca5t8Y01eRUKqX86nyPODBYm2M1WGMYVO/PC8aho4yy4r8Wxogc+FAgYkSUxkWckObqOTWkGN1C9BB+6nxe6FBpSFy6qfsfR9lueFZENnRpAXiLXPCGNlT4mD2xDMSQiYR21bh4+GOeLvG/Gl7uHNXnpo9u5eacj7wbwUeiabbLkxANVUKIy0TcToSdL9pjSVVvDTaeSrriZtm5Unb+knJjSLA6gjMf5MSN+24wm5RDTTs=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 14 Aug 2019 20:40:04 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 196so390269pfz.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 17:40:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fossix-org.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=D2tlN+71g8bWt9oQlVT6rxO2X/4rsSsVdmtXxR74abA=;
+        b=kdCxrQJCWt07ionWVmtYa9pkcvVdj6ejpK9Z/fzG1CU/wmax9uUyylyLS4k6l1zcxi
+         QgWUUCA8BuF0rYGj8gE0NOZG7zmBkMtjJtOWifH157TJavy6ZGMLJpK3PdAKW3wzKPHn
+         Z2Q8LYFUSrlQM1SVeg1j8ms2BzQI+yxK8jeH0NqDUiM7nirgUIoqpn83PPVs+KkGNKz4
+         eAwZAoMlt6R+OR276CGGB8RQ+nTrrhqq8pNlypPCuqOPdO7mR1JXwFp3cPWmQjztUr9o
+         f5NwTS/flLhKTEbRdbwgg/tpTWQkX6l8f+Gf9i+6sMvZIFixeQyB/SaAb5mGF1aVB8az
+         NMcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=D2tlN+71g8bWt9oQlVT6rxO2X/4rsSsVdmtXxR74abA=;
+        b=lYnZnmq2d5rHtIl45UtTdigSNNwLJM8dhRWvOkdKXgSUoakE6jC/kW4OT+hVbOKHYk
+         R3rUuDdi2HX/ixlu99HqJ7OeI0zVoCdKEOUkhKvdpvpnx/hn4eyrnVdTkh8Ur3xEQDCy
+         xK1RdwqvbcHf7IrOnzhqdpSb7IUZ1ACCT2I9yF66K9Jhy1C1HdXT4K+VtijQLNR5heFI
+         ka3AvOQbd/oZGfIIYeVFoHPugyNj4C1V1KVprRbsvmLObuIUAxPdv5c9ixRPYZwbG6Vz
+         7wX+g6D1hCU3yHBjCWh1uYeF6RHlslSRd2Aqbobs1cKCVsCUEOPUKJ77Calb03Tc+FoY
+         kfSg==
+X-Gm-Message-State: APjAAAUiMLVCkZNUAgERVbEQ/BldiKUl5H5ygbdacYVSsOoFowXjc6tL
+        n26eK73OQT+dUDvPz9Dk+nnBWw==
+X-Google-Smtp-Source: APXvYqztEmpGDpuKWxd7856OuuhAQ2uDhuhwrGZpks3eemWDqZvzdd3Equs389OOwmlt6xHIgUhqew==
+X-Received: by 2002:a17:90a:1110:: with SMTP id d16mr580444pja.29.1565829604197;
+        Wed, 14 Aug 2019 17:40:04 -0700 (PDT)
+Received: from santosiv.in.ibm.com ([49.205.218.176])
+        by smtp.gmail.com with ESMTPSA id g8sm815917pgk.1.2019.08.14.17.40.00
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 17:40:03 -0700 (PDT)
+From:   Santosh Sivaraj <santosh@fossix.org>
+To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux Kernel <linux-kernel@vger.kernel.org>
+Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
+        Reza Arbab <arbab@linux.ibm.com>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Chandan Rajendra <chandan@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        christophe leroy <christophe.leroy@c-s.fr>,
+        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v10 2/7] powerpc/mce: Fix MCE handling for huge pages
+Date:   Thu, 15 Aug 2019 06:09:36 +0530
+Message-Id: <20190815003941.18655-3-santosh@fossix.org>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190815003941.18655-1-santosh@fossix.org>
+References: <20190815003941.18655-1-santosh@fossix.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: a28913d9-af51-48da-eb0e-08d721182b1f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 00:33:18.0279
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5ae1af62-9505-4097-a69a-c1553ef7840e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gnqeOOS19Ah4tWVclCtKhV7vFxAmVW/jptvu4AmwgCeXow3uCKYO2KM3yNhcorj+Q73pwv3hBhHh2ay4aX26jw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR11MB2725
-X-OriginatorOrg: cisco.com
-X-Outbound-SMTP-Client: 173.36.7.29, xch-aln-019.cisco.com
-X-Outbound-Node: alln-core-10.cisco.com
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QWNrZWQtYnk6ICAgS2FyYW4gVGlsYWsgS3VtYXIgICA8a2FydGlsYWtAY2lzY28uY29tPg0KDQot
-LS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KRnJvbTogQ29saW4gS2luZyA8Y29saW4ua2luZ0Bj
-YW5vbmljYWwuY29tPiANClNlbnQ6IFR1ZXNkYXksIEF1Z3VzdCAxMywgMjAxOSA2OjI0IEFNDQpU
-bzogU2F0aXNoIEtoYXJhdCAoc2F0aXNoa2gpIDxzYXRpc2hraEBjaXNjby5jb20+OyBTZXNpZGhh
-ciBCYWRkZWxhIChzZWJhZGRlbCkgPHNlYmFkZGVsQGNpc2NvLmNvbT47IEthcmFuIFRpbGFrIEt1
-bWFyIChrYXJ0aWxhaykgPGthcnRpbGFrQGNpc2NvLmNvbT47IEphbWVzIEUgLiBKIC4gQm90dG9t
-bGV5IDxqZWpiQGxpbnV4LmlibS5jb20+OyBNYXJ0aW4gSyAuIFBldGVyc2VuIDxtYXJ0aW4ucGV0
-ZXJzZW5Ab3JhY2xlLmNvbT47IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnDQpDYzoga2VybmVs
-LWphbml0b3JzQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0K
-U3ViamVjdDogW1BBVENIXSBzY3NpOiBmbmljOiByZW1vdmUgcmVkdW5kYW50IGFzc2lnbm1lbnQg
-b2YgdmFyaWFibGUgcmMNCg0KRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25p
-Y2FsLmNvbT4NCg0KVmFyaWFibGUgcmV0IGlzIGluaXRpYWxpemVkIHRvIGEgdmFsdWUgdGhhdCBp
-cyBuZXZlciByZWFkIGFuZCBpdCBpcw0KcmUtYXNzaWduZWQgbGF0ZXIgYW5kIGltbWVkaWF0ZXRs
-eSByZXR1cm5zLiBDbGVhbiB1cCB0aGUgY29kZSBieQ0KcmVtb3ZpbmcgcmMgYW5kIGp1c3QgcmV0
-dXJuaW5nIDAuDQoNCkFkZHJlc3Nlcy1Db3Zlcml0eTogKCJVbnVzZWQgdmFsdWUiKQ0KU2lnbmVk
-LW9mZi1ieTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCi0tLQ0K
-IGRyaXZlcnMvc2NzaS9mbmljL2ZuaWNfZGVidWdmcy5jIHwgNCArLS0tDQogMSBmaWxlIGNoYW5n
-ZWQsIDEgaW5zZXJ0aW9uKCspLCAzIGRlbGV0aW9ucygtKQ0KDQpkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9zY3NpL2ZuaWMvZm5pY19kZWJ1Z2ZzLmMgYi9kcml2ZXJzL3Njc2kvZm5pYy9mbmljX2RlYnVn
-ZnMuYw0KaW5kZXggMjE5OTFjOTlkYjdjLi4xM2Y3ZDg4ZDZlNTcgMTAwNjQ0DQotLS0gYS9kcml2
-ZXJzL3Njc2kvZm5pYy9mbmljX2RlYnVnZnMuYw0KKysrIGIvZHJpdmVycy9zY3NpL2ZuaWMvZm5p
-Y19kZWJ1Z2ZzLmMNCkBAIC01Miw3ICs1Miw2IEBAIHN0YXRpYyBzdHJ1Y3QgZmNfdHJhY2VfZmxh
-Z190eXBlICpmY190cmNfZmxhZzsNCiAgKi8NCiBpbnQgZm5pY19kZWJ1Z2ZzX2luaXQodm9pZCkN
-CiB7DQotCWludCByYyA9IC0xOw0KIAlmbmljX3RyYWNlX2RlYnVnZnNfcm9vdCA9IGRlYnVnZnNf
-Y3JlYXRlX2RpcigiZm5pYyIsIE5VTEwpOw0KIA0KIAlmbmljX3N0YXRzX2RlYnVnZnNfcm9vdCA9
-IGRlYnVnZnNfY3JlYXRlX2Rpcigic3RhdGlzdGljcyIsDQpAQCAtNzAsOCArNjksNyBAQCBpbnQg
-Zm5pY19kZWJ1Z2ZzX2luaXQodm9pZCkNCiAJCWZjX3RyY19mbGFnLT5mY19jbGVhciA9IDQ7DQog
-CX0NCiANCi0JcmMgPSAwOw0KLQlyZXR1cm4gcmM7DQorCXJldHVybiAwOw0KIH0NCiANCiAvKg0K
-LS0gDQoyLjIwLjENCg0K
+From: Balbir Singh <bsingharora@gmail.com>
+
+The current code would fail on huge pages addresses, since the shift would
+be incorrect. Use the correct page shift value returned by
+__find_linux_pte() to get the correct physical address. The code is more
+generic and can handle both regular and compound pages.
+
+Fixes: ba41e1e1ccb9 ("powerpc/mce: Hookup derror (load/store) UE errors")
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+[arbab@linux.ibm.com: Fixup pseries_do_memory_failure()]
+Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
+Co-developed-by: Santosh Sivaraj <santosh@fossix.org>
+Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
+Tested-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Cc: stable@vger.kernel.org # v4.15+
+---
+ arch/powerpc/include/asm/mce.h       |  2 +-
+ arch/powerpc/kernel/mce_power.c      | 55 ++++++++++++++--------------
+ arch/powerpc/platforms/pseries/ras.c |  9 ++---
+ 3 files changed, 32 insertions(+), 34 deletions(-)
+
+diff --git a/arch/powerpc/include/asm/mce.h b/arch/powerpc/include/asm/mce.h
+index a4c6a74ad2fb..f3a6036b6bc0 100644
+--- a/arch/powerpc/include/asm/mce.h
++++ b/arch/powerpc/include/asm/mce.h
+@@ -209,7 +209,7 @@ extern void release_mce_event(void);
+ extern void machine_check_queue_event(void);
+ extern void machine_check_print_event_info(struct machine_check_event *evt,
+ 					   bool user_mode, bool in_guest);
+-unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr);
++unsigned long addr_to_phys(struct pt_regs *regs, unsigned long addr);
+ #ifdef CONFIG_PPC_BOOK3S_64
+ void flush_and_reload_slb(void);
+ #endif /* CONFIG_PPC_BOOK3S_64 */
+diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_power.c
+index a814d2dfb5b0..e74816f045f8 100644
+--- a/arch/powerpc/kernel/mce_power.c
++++ b/arch/powerpc/kernel/mce_power.c
+@@ -20,13 +20,14 @@
+ #include <asm/exception-64s.h>
+ 
+ /*
+- * Convert an address related to an mm to a PFN. NOTE: we are in real
+- * mode, we could potentially race with page table updates.
++ * Convert an address related to an mm to a physical address.
++ * NOTE: we are in real mode, we could potentially race with page table updates.
+  */
+-unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
++unsigned long addr_to_phys(struct pt_regs *regs, unsigned long addr)
+ {
+-	pte_t *ptep;
+-	unsigned long flags;
++	pte_t *ptep, pte;
++	unsigned int shift;
++	unsigned long flags, phys_addr;
+ 	struct mm_struct *mm;
+ 
+ 	if (user_mode(regs))
+@@ -35,14 +36,21 @@ unsigned long addr_to_pfn(struct pt_regs *regs, unsigned long addr)
+ 		mm = &init_mm;
+ 
+ 	local_irq_save(flags);
+-	if (mm == current->mm)
+-		ptep = find_current_mm_pte(mm->pgd, addr, NULL, NULL);
+-	else
+-		ptep = find_init_mm_pte(addr, NULL);
++	ptep = __find_linux_pte(mm->pgd, addr, NULL, &shift);
+ 	local_irq_restore(flags);
++
+ 	if (!ptep || pte_special(*ptep))
+ 		return ULONG_MAX;
+-	return pte_pfn(*ptep);
++
++	pte = *ptep;
++	if (shift > PAGE_SHIFT) {
++		unsigned long rpnmask = (1ul << shift) - PAGE_SIZE;
++
++		pte = __pte(pte_val(pte) | (addr & rpnmask));
++	}
++	phys_addr = pte_pfn(pte) << PAGE_SHIFT;
++
++	return phys_addr;
+ }
+ 
+ /* flush SLBs and reload */
+@@ -344,7 +352,7 @@ static const struct mce_derror_table mce_p9_derror_table[] = {
+   MCE_INITIATOR_CPU,   MCE_SEV_SEVERE, true },
+ { 0, false, 0, 0, 0, 0, 0 } };
+ 
+-static int mce_find_instr_ea_and_pfn(struct pt_regs *regs, uint64_t *addr,
++static int mce_find_instr_ea_and_phys(struct pt_regs *regs, uint64_t *addr,
+ 					uint64_t *phys_addr)
+ {
+ 	/*
+@@ -354,18 +362,16 @@ static int mce_find_instr_ea_and_pfn(struct pt_regs *regs, uint64_t *addr,
+ 	 * faults
+ 	 */
+ 	int instr;
+-	unsigned long pfn, instr_addr;
++	unsigned long instr_addr;
+ 	struct instruction_op op;
+ 	struct pt_regs tmp = *regs;
+ 
+-	pfn = addr_to_pfn(regs, regs->nip);
+-	if (pfn != ULONG_MAX) {
+-		instr_addr = (pfn << PAGE_SHIFT) + (regs->nip & ~PAGE_MASK);
++	instr_addr = addr_to_phys(regs, regs->nip) + (regs->nip & ~PAGE_MASK);
++	if (instr_addr != ULONG_MAX) {
+ 		instr = *(unsigned int *)(instr_addr);
+ 		if (!analyse_instr(&op, &tmp, instr)) {
+-			pfn = addr_to_pfn(regs, op.ea);
+ 			*addr = op.ea;
+-			*phys_addr = (pfn << PAGE_SHIFT);
++			*phys_addr = addr_to_phys(regs, op.ea);
+ 			return 0;
+ 		}
+ 		/*
+@@ -440,15 +446,9 @@ static int mce_handle_ierror(struct pt_regs *regs,
+ 			*addr = regs->nip;
+ 			if (mce_err->sync_error &&
+ 				table[i].error_type == MCE_ERROR_TYPE_UE) {
+-				unsigned long pfn;
+-
+-				if (get_paca()->in_mce < MAX_MCE_DEPTH) {
+-					pfn = addr_to_pfn(regs, regs->nip);
+-					if (pfn != ULONG_MAX) {
+-						*phys_addr =
+-							(pfn << PAGE_SHIFT);
+-					}
+-				}
++				if (get_paca()->in_mce < MAX_MCE_DEPTH)
++					*phys_addr = addr_to_phys(regs,
++								 regs->nip);
+ 			}
+ 		}
+ 		return handled;
+@@ -541,7 +541,8 @@ static int mce_handle_derror(struct pt_regs *regs,
+ 			 * kernel/exception-64s.h
+ 			 */
+ 			if (get_paca()->in_mce < MAX_MCE_DEPTH)
+-				mce_find_instr_ea_and_pfn(regs, addr, phys_addr);
++				mce_find_instr_ea_and_phys(regs, addr,
++							   phys_addr);
+ 		}
+ 		found = 1;
+ 	}
+diff --git a/arch/powerpc/platforms/pseries/ras.c b/arch/powerpc/platforms/pseries/ras.c
+index f16fdd0f71f7..5743f6353638 100644
+--- a/arch/powerpc/platforms/pseries/ras.c
++++ b/arch/powerpc/platforms/pseries/ras.c
+@@ -739,13 +739,10 @@ static void pseries_do_memory_failure(struct pt_regs *regs,
+ 	if (mce_log->sub_err_type & UE_LOGICAL_ADDR_PROVIDED) {
+ 		paddr = be64_to_cpu(mce_log->logical_address);
+ 	} else if (mce_log->sub_err_type & UE_EFFECTIVE_ADDR_PROVIDED) {
+-		unsigned long pfn;
+-
+-		pfn = addr_to_pfn(regs,
+-				  be64_to_cpu(mce_log->effective_address));
+-		if (pfn == ULONG_MAX)
++		paddr = addr_to_phys(regs,
++				     be64_to_cpu(mce_log->effective_address));
++		if (paddr == ULONG_MAX)
+ 			return;
+-		paddr = pfn << PAGE_SHIFT;
+ 	} else {
+ 		return;
+ 	}
+-- 
+2.21.0
+
