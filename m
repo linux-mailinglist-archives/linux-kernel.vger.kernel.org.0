@@ -2,57 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83E428F4F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:45:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 180308F4FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:45:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733126AbfHOTpD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 15:45:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36364 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729843AbfHOTpC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 15:45:02 -0400
-Subject: Re: [GIT PULL] iomap: small fixes for 5.3-rc5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565898301;
-        bh=RkhfQrIe9++zikgZHlw+Y2EP8lb+hIuXuKwjYaod2tE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=FU15IwHNgUSzGHHvSttuAz59jyQqAyFRFW6DOHoS4bZGt0QZXKJRziVhvm7//RNvI
-         ccROhx0nhKZxJHXH7xZVG9U+l6oaWd6eoH4JloHMtucS4s+G2lUpTK2M+JFI+jm5/D
-         7Kz1WVQRDF8SksJdkVz8SrwUQ+T0B1IEwkvcHpyY=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190815171024.GC15186@magnolia>
-References: <20190719162221.GF7093@magnolia> <20190815171024.GC15186@magnolia>
-X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190815171024.GC15186@magnolia>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
- tags/iomap-5.3-fixes-1
-X-PR-Tracked-Commit-Id: 9a67b72552f8d019948453e56ca7db8c7e5a94ba
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 4ec1fa692dc7dc915c3485a7fad928924fc13de2
-Message-Id: <156589830158.13301.5783532201325925027.pr-tracker-bot@kernel.org>
-Date:   Thu, 15 Aug 2019 19:45:01 +0000
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        david@fromorbit.com, linux-kernel@vger.kernel.org,
-        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
-        rpeterso@redhat.com, cluster-devel@redhat.com
+        id S1733162AbfHOTpX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 15:45:23 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:49240 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729843AbfHOTpW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 15:45:22 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 35C7614013D5B;
+        Thu, 15 Aug 2019 12:45:22 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 12:45:21 -0700 (PDT)
+Message-Id: <20190815.124521.638274291598387510.davem@davemloft.net>
+To:     wenwen@cs.uga.edu
+Cc:     christopher.lee@cspi.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: myri10ge: fix memory leaks
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1565764719-6488-1-git-send-email-wenwen@cs.uga.edu>
+References: <1565764719-6488-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 15 Aug 2019 12:45:22 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Thu, 15 Aug 2019 10:10:24 -0700:
+From: Wenwen Wang <wenwen@cs.uga.edu>
+Date: Wed, 14 Aug 2019 01:38:39 -0500
 
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.3-fixes-1
+> In myri10ge_probe(), myri10ge_alloc_slices() is invoked to allocate slices
+> related structures. Later on, myri10ge_request_irq() is used to get an irq.
+> However, if this process fails, the allocated slices related structures are
+> not deallocated, leading to memory leaks. To fix this issue, revise the
+> target label of the goto statement to 'abort_with_slices'.
+> 
+> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/4ec1fa692dc7dc915c3485a7fad928924fc13de2
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Applied, thanks.
