@@ -2,135 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14F668EA39
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB558EA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:29:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731550AbfHOL2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 07:28:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:42656 "EHLO foss.arm.com"
+        id S1731589AbfHOL3C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 07:29:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbfHOL2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:28:49 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4A2E0360;
-        Thu, 15 Aug 2019 04:28:48 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CD5DA3F694;
-        Thu, 15 Aug 2019 04:28:46 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 12:28:44 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Daniel Axtens <dja@axtens.net>
-Cc:     kasan-dev@googlegroups.com, linux-mm@kvack.org, x86@kernel.org,
-        aryabinin@virtuozzo.com, glider@google.com, luto@kernel.org,
-        linux-kernel@vger.kernel.org, dvyukov@google.com,
-        linuxppc-dev@lists.ozlabs.org, gor@linux.ibm.com
-Subject: Re: [PATCH v4 0/3] kasan: support backing vmalloc space with real
- shadow memory
-Message-ID: <20190815112844.GC22153@lakrids.cambridge.arm.com>
-References: <20190815001636.12235-1-dja@axtens.net>
+        id S1730452AbfHOL3B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 07:29:01 -0400
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2D9F2064A
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 11:29:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565868541;
+        bh=xsDOK/RvH6NC83CrnpMsXVuR6bMBD+bxF8hmHMB8Usg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=gSUWjdsDExsJMrXnrjkONNZmCVRVhBVtov7ZfmA6neAqjFAhq0YijqvSKuhwJy8rO
+         bVOtbJRirDLVOO1xa4G75q1eD6REcgviYLqPcoL7p7A2SIwVu8kf94T8Ca29lSDsbb
+         LombbvUFtpQlB2GEWGBHaMTA81MhkA/0KDciLyrk=
+Received: by mail-qt1-f175.google.com with SMTP id x4so1941208qts.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 04:29:00 -0700 (PDT)
+X-Gm-Message-State: APjAAAW+Ks7bovZlGTCTdi/EVhF84s0rnOd4I60IcXVoR2ttLScLlXdZ
+        1ev85pdo8NGBlKLjSEi8gDwSkAaR0r2hatypSzA=
+X-Google-Smtp-Source: APXvYqwvx+sMmwYtsN4fUcsT07hdR+FyBH7zCj5rFvJIX2CvsHIdCOaHhm7fxPt8i1skqGiAYEGUL4Bym+TcUAU/5vg=
+X-Received: by 2002:ac8:1a86:: with SMTP id x6mr3476583qtj.231.1565868540175;
+ Thu, 15 Aug 2019 04:29:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815001636.12235-1-dja@axtens.net>
-User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
+References: <MWHPR12MB134396EEFEFF70FE0387BA75CBD50@MWHPR12MB1343.namprd12.prod.outlook.com>
+In-Reply-To: <MWHPR12MB134396EEFEFF70FE0387BA75CBD50@MWHPR12MB1343.namprd12.prod.outlook.com>
+From:   Josh Boyer <jwboyer@kernel.org>
+Date:   Thu, 15 Aug 2019 07:28:48 -0400
+X-Gmail-Original-Message-ID: <CA+5PVA49fN-EE7OWshzMOnO5_njcwz57rjtx=2kiyJDZfSqOzw@mail.gmail.com>
+Message-ID: <CA+5PVA49fN-EE7OWshzMOnO5_njcwz57rjtx=2kiyJDZfSqOzw@mail.gmail.com>
+Subject: Re: pull request: Linux-firmware: Update cxgb4 firmware to 1.24.3.0
+To:     Vishal Kulkarni <vishal@chelsio.com>
+Cc:     "linux-firmware@kernel.org" <linux-firmware@kernel.org>,
+        Nirranjan Kirubaharan <nirranjan@chelsio.com>,
+        dt <dt@chelsio.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 10:16:33AM +1000, Daniel Axtens wrote:
-> Currently, vmalloc space is backed by the early shadow page. This
-> means that kasan is incompatible with VMAP_STACK, and it also provides
-> a hurdle for architectures that do not have a dedicated module space
-> (like powerpc64).
-> 
-> This series provides a mechanism to back vmalloc space with real,
-> dynamically allocated memory. I have only wired up x86, because that's
-> the only currently supported arch I can work with easily, but it's
-> very easy to wire up other architectures.
+On Tue, Aug 6, 2019 at 6:38 AM Vishal Kulkarni <vishal@chelsio.com> wrote:
+>
+> Hi,
+>
+> Kindly pull the new firmware from the following URL:
+> git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+>
+> Thanks,
+> Vishal
+>
+>
+> The following changes since commit dff98c6c57383fe343407bcb7b6e775e0b87274f:
+>
+>   Merge branch 'master' of git://github.com/skeggsb/linux-firmware (2019-07-26 07:32:37 -0400)
+>
+> are available in the git repository at:
+>
+>
+>   git://git.chelsio.net/pub/git/linux-firmware.git for-upstream
+>
+> for you to fetch changes up to b1e26aaebfdc34827c23a96ef3948298137f72e9:
+>
+>   cxgb4: update firmware to revision 1.24.3.0 (2019-08-06 00:33:02 -0700)
+>
+> ----------------------------------------------------------------
+> Vishal Kulkarni (1):
+>       cxgb4: update firmware to revision 1.24.3.0
+>
+>  WHENCE                  |  12 ++++++------
+>  cxgb4/t4fw-1.23.4.0.bin | Bin 570880 -> 0 bytes
+>  cxgb4/t4fw-1.24.3.0.bin | Bin 0 -> 571904 bytes
+>  cxgb4/t4fw.bin          |   2 +-
+>  cxgb4/t5fw-1.23.4.0.bin | Bin 659456 -> 0 bytes
+>  cxgb4/t5fw-1.24.3.0.bin | Bin 0 -> 662016 bytes
+>  cxgb4/t5fw.bin          |   2 +-
+>  cxgb4/t6fw-1.23.4.0.bin | Bin 708608 -> 0 bytes
+>  cxgb4/t6fw-1.24.3.0.bin | Bin 0 -> 714240 bytes
+>  cxgb4/t6fw.bin          |   2 +-
+>  10 files changed, 9 insertions(+), 9 deletions(-)
+>  delete mode 100644 cxgb4/t4fw-1.23.4.0.bin
+>  create mode 100644 cxgb4/t4fw-1.24.3.0.bin
+>  delete mode 100644 cxgb4/t5fw-1.23.4.0.bin
+>  create mode 100644 cxgb4/t5fw-1.24.3.0.bin
+>  delete mode 100644 cxgb4/t6fw-1.23.4.0.bin
+>  create mode 100644 cxgb4/t6fw-1.24.3.0.bin
 
-I'm happy to send patches for arm64 once we've settled some conflicting
-rework going on for 52-bit VA support.
+Pulled and pushed out.  Thanks.
 
-> 
-> This has been discussed before in the context of VMAP_STACK:
->  - https://bugzilla.kernel.org/show_bug.cgi?id=202009
->  - https://lkml.org/lkml/2018/7/22/198
->  - https://lkml.org/lkml/2019/7/19/822
-> 
-> In terms of implementation details:
-> 
-> Most mappings in vmalloc space are small, requiring less than a full
-> page of shadow space. Allocating a full shadow page per mapping would
-> therefore be wasteful. Furthermore, to ensure that different mappings
-> use different shadow pages, mappings would have to be aligned to
-> KASAN_SHADOW_SCALE_SIZE * PAGE_SIZE.
-> 
-> Instead, share backing space across multiple mappings. Allocate
-> a backing page the first time a mapping in vmalloc space uses a
-> particular page of the shadow region. Keep this page around
-> regardless of whether the mapping is later freed - in the mean time
-> the page could have become shared by another vmalloc mapping.
-> 
-> This can in theory lead to unbounded memory growth, but the vmalloc
-> allocator is pretty good at reusing addresses, so the practical memory
-> usage appears to grow at first but then stay fairly stable.
-> 
-> If we run into practical memory exhaustion issues, I'm happy to
-> consider hooking into the book-keeping that vmap does, but I am not
-> convinced that it will be an issue.
-
-FWIW, I haven't spotted such memory exhaustion after a week of Syzkaller
-fuzzing with the last patchset, across 3 machines, so that sounds fine
-to me.
-
-Otherwise, this looks good to me now! For the x86 and fork patch, feel
-free to add:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
-> 
-> v1: https://lore.kernel.org/linux-mm/20190725055503.19507-1-dja@axtens.net/
-> v2: https://lore.kernel.org/linux-mm/20190729142108.23343-1-dja@axtens.net/
->  Address review comments:
->  - Patch 1: use kasan_unpoison_shadow's built-in handling of
->             ranges that do not align to a full shadow byte
->  - Patch 3: prepopulate pgds rather than faulting things in
-> v3: https://lore.kernel.org/linux-mm/20190731071550.31814-1-dja@axtens.net/
->  Address comments from Mark Rutland:
->  - kasan_populate_vmalloc is a better name
->  - handle concurrency correctly
->  - various nits and cleanups
->  - relax module alignment in KASAN_VMALLOC case
-> v4: Changes to patch 1 only:
->  - Integrate Mark's rework, thanks Mark!
->  - handle the case where kasan_populate_shadow might fail
->  - poision shadow on free, allowing the alloc path to just
->      unpoision memory that it uses
-> 
-> Daniel Axtens (3):
->   kasan: support backing vmalloc space with real shadow memory
->   fork: support VMAP_STACK with KASAN_VMALLOC
->   x86/kasan: support KASAN_VMALLOC
-> 
->  Documentation/dev-tools/kasan.rst | 60 +++++++++++++++++++++++++++
->  arch/Kconfig                      |  9 +++--
->  arch/x86/Kconfig                  |  1 +
->  arch/x86/mm/kasan_init_64.c       | 61 ++++++++++++++++++++++++++++
->  include/linux/kasan.h             | 24 +++++++++++
->  include/linux/moduleloader.h      |  2 +-
->  include/linux/vmalloc.h           | 12 ++++++
->  kernel/fork.c                     |  4 ++
->  lib/Kconfig.kasan                 | 16 ++++++++
->  lib/test_kasan.c                  | 26 ++++++++++++
->  mm/kasan/common.c                 | 67 +++++++++++++++++++++++++++++++
->  mm/kasan/generic_report.c         |  3 ++
->  mm/kasan/kasan.h                  |  1 +
->  mm/vmalloc.c                      | 28 ++++++++++++-
->  14 files changed, 308 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
+josh
