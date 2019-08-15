@@ -2,110 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF24B8E4AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 07:59:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9EC2B8E4B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:00:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfHOF7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 01:59:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:39733 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbfHOF7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 01:59:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 22:59:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,388,1559545200"; 
-   d="scan'208";a="194702947"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by fmsmga001.fm.intel.com with ESMTP; 14 Aug 2019 22:59:29 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-usb\@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Cc:     Xiaobo Xie <xiaobo.xie@nxp.com>, Jiafei Pan <jiafei.pan@nxp.com>,
-        Ran Wang <ran.wang_1@nxp.com>
-Subject: RE: [EXT] Re: [PATCH v1] usb: dwc3: remove the call trace of USBx_GFLADJ
-In-Reply-To: <VI1PR04MB4158B49129BE9E3C00997555E9AC0@VI1PR04MB4158.eurprd04.prod.outlook.com>
-References: <20190729064607.8131-1-yinbo.zhu@nxp.com> <875zn8nt31.fsf@gmail.com> <VI1PR04MB41580DBF1A0C2DC143EE9CE3E9D30@VI1PR04MB4158.eurprd04.prod.outlook.com> <87h86nvtqo.fsf@gmail.com> <VI1PR04MB4158B49129BE9E3C00997555E9AC0@VI1PR04MB4158.eurprd04.prod.outlook.com>
-Date:   Thu, 15 Aug 2019 08:59:28 +0300
-Message-ID: <87v9uzt1dr.fsf@gmail.com>
+        id S1730320AbfHOGA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 02:00:29 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:47060 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfHOGA2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 02:00:28 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so700618plz.13;
+        Wed, 14 Aug 2019 23:00:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iHk0jK1HEft/SVCetsI5tXpmz7bQuY1G+3y6n19Cwo8=;
+        b=BsbFFroYY5WlVlovWF6nQoym+VeuI4m+UOU/asXHXRK37/2ZRav2UStHmccwdXS6AU
+         fYL1l4spKZ2mDGQfOGRMkwCr9Yvkq2PwXEvjdEjaeRTR0OzJK6oZ9r5PD5SSxDGbIr6U
+         9axlTs9u4s1L9HdjjigQPgdILgMCplm2lWyhDFyxg1Zb50tbpqpVPnuVxCvJE92w0Eae
+         upsJeL/rifQrLBhHWUKoGvkDcvm+ZYep2p9MpvFTkgEsJJhEcsvRfPZ/ns/FxLpTWl4u
+         1d7vwY6G41CuCRJnJp2GTqtlLlTDYt+JrAv2c3bwgZFFRAwGKsRZYshW+qwFP+CgF7Yj
+         lj9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iHk0jK1HEft/SVCetsI5tXpmz7bQuY1G+3y6n19Cwo8=;
+        b=gSsRd7jMz77aim8NzmRCof6D6H3GpEZLYv449LEr4WPy0ROgc/zPVmm0LhQmaE5KxD
+         8JlH/0pusf2skMiqf2F03cjE3DzFM4Y+G4gJbclN/xhPlXZofxRbr0CQHeLmmROXGOUc
+         yN9XgtBG7TcsxQC7dWXiK3ZXbsC3O1G5dgt7ByzVXksMSdsuzF/681OnQlatbtSHi5d+
+         b1c9SK2Rj0UlOHgv7+OY2l9Bup/welbzzBhYa4Iv/2wVzcNrF5zriiNByZ3LDI3JLU1R
+         gI7gaw3S2qhQe7PLnYfSi8UpMYeWewXLqtRVfIf/Qx2LmE3UDl+zOPdsfVqCHdlXMly2
+         uhgg==
+X-Gm-Message-State: APjAAAWZ07sdZ9rTABHv7g4VVaz9KuBM04b7wYsNfSXXQmVCMgHpy9PV
+        wSDbmDkWd1bYqzMNVaqmgc0=
+X-Google-Smtp-Source: APXvYqxTK4pEpESpRen2PMxU8JXsjr2HKEhQxS6NEA104v0fy9n/EKwCRxgxbzoakUSR0MEiP8/3lA==
+X-Received: by 2002:a17:902:20ec:: with SMTP id v41mr2829873plg.117.1565848828134;
+        Wed, 14 Aug 2019 23:00:28 -0700 (PDT)
+Received: from localhost.localdomain ([110.225.3.176])
+        by smtp.gmail.com with ESMTPSA id a6sm798014pjv.30.2019.08.14.23.00.25
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 23:00:27 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     hdegoede@redhat.com, axboe@kernel.dk, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] ata: libahci_platform: Add of_node_put() before loop exit
+Date:   Thu, 15 Aug 2019 11:30:14 +0530
+Message-Id: <20190815060014.2191-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Each iteration of for_each_child_of_node puts the previous node, but
+in the case of a goto from the middle of the loop, there is no put,
+thus causing a memory leak. Add an of_node_put before three such goto
+statements.
+Issue found with Coccinelle.
 
-Hi,
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/ata/libahci_platform.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Yinbo Zhu <yinbo.zhu@nxp.com> writes:
->> Yinbo Zhu <yinbo.zhu@nxp.com> writes:
->> >> > diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
->> >> > index
->> >> > 98bce85c29d0..a133d8490322 100644
->> >> > --- a/drivers/usb/dwc3/core.c
->> >> > +++ b/drivers/usb/dwc3/core.c
->> >> > @@ -300,8 +300,7 @@ static void dwc3_frame_length_adjustment(struct
->> >> > dwc3 *dwc)
->> >> >
->> >> >       reg = dwc3_readl(dwc->regs, DWC3_GFLADJ);
->> >> >       dft = reg & DWC3_GFLADJ_30MHZ_MASK;
->> >> > -     if (!dev_WARN_ONCE(dwc->dev, dft == dwc->fladj,
->> >> > -         "request value same as default, ignoring\n")) {
->> >> > +     if (dft != dwc->fladj) {
->> >>
->> >> if the value isn't different, why do you want to change it?
->> >>
->> >> --
->> >> Balbi
->> > Hi Balbi,
->> >
->> > I don't change any value. I was remove that call trace.
->> 
->> Sure you do. The splat only shows when you request a FLADJ value that's the
->> same as the one already in the register. The reason you see the splat is because
->> your requested value is what's already in the HW.
->> 
->> So, again, why are you adding this device tree property if the value is already the
->> correct one?
->> 
->> > In addition that GFLADJ_30MHZ value intial value is 0, and it's value
->> > must be 0x20, if not, usb will not work.
->> 
->> it's not zero, otherwise the splat wouldn't trigger. You're requesting the value
->> that's already in your register by default.
->> 
->> --
->> Balbi
->
-> Hi Balbi,
->    
-> According that rm doc that GFLADJ_30MHZ has a default value is 0x20,
-> when GFLADJ_30MHZ_REG_SEL is 0, this 0x20 is a hard-coded value.
->
-> But in fact, that default value is 0, please you note!    
->
-> Then according that xhci spec 5.2.4, that register the sixth bit if is
-> 0, then that can support Frame Lenth Timing value.
->
-> So set GFLADJ_30MHZ_REG_SEL to 1 for use FLADJ, then I find that it
-> must use 0x20 usb will work well, even thoug xhci can permit
-> GFLADJ_30MHZ use other value
-
-You only get the splat because you try to sent GFLADJ to 0x20 and it's
-ALREADY 0x20. This means that you don't need the property in DTS.
-
-> In addition about what you said is about dts patch, and that patch had
-> merged by upstream, patch owner isn't me,
-
-Well, then remove the setting from DTS, since clearly it's not needed.
-
-> My patch is only for remove the call-trace, about why remove it commit
-> information has detail introduce please check!
-
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 9e9583a6bba9..e742780950de 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -497,6 +497,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 
+ 			if (of_property_read_u32(child, "reg", &port)) {
+ 				rc = -EINVAL;
++				of_node_put(child);
+ 				goto err_out;
+ 			}
+ 
+@@ -514,14 +515,18 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+ 			if (port_dev) {
+ 				rc = ahci_platform_get_regulator(hpriv, port,
+ 								&port_dev->dev);
+-				if (rc == -EPROBE_DEFER)
++				if (rc == -EPROBE_DEFER) {
++					of_node_put(child);
+ 					goto err_out;
++				}
+ 			}
+ #endif
+ 
+ 			rc = ahci_platform_get_phy(hpriv, port, dev, child);
+-			if (rc)
++			if (rc) {
++				of_node_put(child);
+ 				goto err_out;
++			}
+ 
+ 			enabled_ports++;
+ 		}
 -- 
-balbi
+2.19.1
+
