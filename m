@@ -2,55 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DE458F1E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5116A8F1B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:14:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732132AbfHORPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:15:49 -0400
-Received: from mail-wm1-f100.google.com ([209.85.128.100]:50342 "EHLO
-        mail-wm1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731495AbfHORO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731535AbfHORO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 15 Aug 2019 13:14:26 -0400
-Received: by mail-wm1-f100.google.com with SMTP id v15so1882278wml.0
+Received: from mail-wm1-f100.google.com ([209.85.128.100]:53895 "EHLO
+        mail-wm1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731497AbfHOROZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:14:25 -0400
+Received: by mail-wm1-f100.google.com with SMTP id 10so1879515wmp.3
         for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=KkPpDRxBh4y4Ugsa/l+moUzY5JvfhTqXMrzYyAMXcys=;
-        b=Z6hMxLQfQA2AQVSOdESL2oSXHhJbgFA6j1q+lUpITflnvgMPS6U0mQzHD2fx1jFp0R
-         OgXlp0UmVydCxsYHsPNAdy+Z/BiWaoZrqmPt44RN/vKgaj8C25ZeRSDEt5wCi4QOUsrF
-         Iz5wPQ8ju5DJoZA8NPd2DZvvahKfGM84hw4N/5eH+SpgixPymEfQRXIFHiVBWc48H7UI
-         cvvwtUWUTKeNxYpEhiQLwudXTy2WIsOgyYVkea0pc2McdTk6No+bLv4QEK2llDO/HbBn
-         EXJ6/2zXVklA8ueHF+2eMTQfHtStM5aUa5N+KqVJduRLPZbezKE/UcvFrhaHbRAB4A28
-         xb0w==
-X-Gm-Message-State: APjAAAWi85B+F9TDuCF2VZbxzmJb3YYxfdaW97U+Xlqc+EEMWNKvrZC4
-        hIZqMVWS03s2f8UyXHw9GOAmuVLQ/9S5oUCWajMR/cJQ53RkYYewS3tq9FCGhZaOVQ==
-X-Google-Smtp-Source: APXvYqxL31/i+9qxWSQ9K0DwiRE3HvKdRQbaqHhmRhxUp+ImMJz5EPYbVHkr6XpYVk+FdqMC5l2hb8BOQuqO
-X-Received: by 2002:a05:600c:2255:: with SMTP id a21mr3617574wmm.119.1565889264018;
+        bh=qLZh8IhwQg9ydE/0+1Zpu/OWvv9AdAPsrO/K7o4vHUY=;
+        b=sejYDkW8Vg0AE2kHwZ+ZBsQWFw1B/bhTJ0iA8XyJnw/LdnNm+8KWQPdxLce103L5jU
+         T7/2ZOecEsOFRyCeD0bI3czUPjyrPbNB2o1fKUPZdy0+p9fO2tcJSJGAU4d8kUEAt0zh
+         gNZgt8h3rq8ixn4hU1d1RNQsPA1z1gaVoWfz8+UeSEXUcTMiOaathp5TbkGhuV4xSup1
+         VhVmdwDXGVMk70leFIEEnr5BWIhc1axVC3IlMnwL9LOiTtXH4ivJdmJdggMrj/GJswPH
+         +WGxk8pR6IfxeiOwJcsNV7igAUDoa438mJhTcF2T+rKMFPMTV3/CliHJL8HEOW7+gEKP
+         58Fg==
+X-Gm-Message-State: APjAAAUsqU6bRS4Zu5qxV8OZ/4ZbkAwSVmytpi8kQSP6ssyCqtYNXFK3
+        0ZlZzbOcykFwcZlVng93iTKB2nZ34IGovgaAP6senK/GBJSVvFCN1lv6yQ+jNCHiuw==
+X-Google-Smtp-Source: APXvYqwus8sMCeDcfNR/ErhO8PCbz1Pe+ABOtdCF2IXdy17QHyMub/fGageBGCgGJjKNz/akKGnSpIKz8V40
+X-Received: by 2002:a1c:2dcf:: with SMTP id t198mr3503302wmt.147.1565889264289;
         Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id x63sm13450wmb.9.2019.08.15.10.14.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:23 -0700 (PDT)
+        by smtp-relay.gmail.com with ESMTPS id i11sm56780wrr.50.2019.08.15.10.14.24
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKR-00051R-PY; Thu, 15 Aug 2019 17:14:23 +0000
+        id 1hyJKS-00051S-1K; Thu, 15 Aug 2019 17:14:24 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 318EC2742BD6; Thu, 15 Aug 2019 18:14:23 +0100 (BST)
+        id 74DB42742B9E; Thu, 15 Aug 2019 18:14:23 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        gustavo@embeddedor.com, Hulk Robot <hulkci@huawei.com>,
+Cc:     afd@ti.com, alsa-devel@alsa-project.org, broonie@kernel.org,
+        colin.king@canonical.com, Hulk Robot <hulkci@huawei.com>,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: es8328: remove unused variable 'pga_tlv'" to the asoc tree
-In-Reply-To: <20190815092056.28724-1-yuehaibing@huawei.com>
+Subject: Applied "ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'" to the asoc tree
+In-Reply-To: <20190815091738.21680-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171423.318EC2742BD6@ypsilon.sirena.org.uk>
+Message-Id: <20190815171423.74DB42742B9E@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:23 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: es8328: remove unused variable 'pga_tlv'
+   ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'
 
 has been applied to the asoc tree at
 
@@ -84,35 +84,35 @@ to this mail.
 Thanks,
 Mark
 
-From 97d39be9ce5befc2e36f15d0df33832e0f633565 Mon Sep 17 00:00:00 2001
+From 6d6376b143d59ab1b8635807c78d224d03580418 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Aug 2019 17:20:56 +0800
-Subject: [PATCH] ASoC: es8328: remove unused variable 'pga_tlv'
+Date: Thu, 15 Aug 2019 17:17:38 +0800
+Subject: [PATCH] ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'
 
-sound/soc/codecs/es8328.c:102:35: warning:
- pga_tlv defined but not used [-Wunused-const-variable=]
+sound/soc/codecs/tlv320aic31xx.c:261:29: warning:
+ cm_m_enum defined but not used [-Wunused-const-variable=]
 
-They are never used, so can be removed.
+It is never used, so can be removed.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190815092056.28724-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190815091738.21680-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/es8328.c | 1 -
+ sound/soc/codecs/tlv320aic31xx.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
-index 822a25a8f53c..4a3d303fedfb 100644
---- a/sound/soc/codecs/es8328.c
-+++ b/sound/soc/codecs/es8328.c
-@@ -99,7 +99,6 @@ static SOC_ENUM_SINGLE_DECL(adcpol,
+diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
+index 26a4f6cd3288..df627a08def9 100644
+--- a/sound/soc/codecs/tlv320aic31xx.c
++++ b/sound/soc/codecs/tlv320aic31xx.c
+@@ -258,7 +258,6 @@ static SOC_ENUM_SINGLE_DECL(mic1rp_p_enum, AIC31XX_MICPGAPI, 4,
+ static SOC_ENUM_SINGLE_DECL(mic1lm_p_enum, AIC31XX_MICPGAPI, 2,
+ 	mic_select_text);
  
- static const DECLARE_TLV_DB_SCALE(play_tlv, -3000, 100, 0);
- static const DECLARE_TLV_DB_SCALE(dac_adc_tlv, -9600, 50, 0);
--static const DECLARE_TLV_DB_SCALE(pga_tlv, 0, 300, 0);
- static const DECLARE_TLV_DB_SCALE(bypass_tlv, -1500, 300, 0);
- static const DECLARE_TLV_DB_SCALE(mic_tlv, 0, 300, 0);
+-static SOC_ENUM_SINGLE_DECL(cm_m_enum, AIC31XX_MICPGAMI, 6, mic_select_text);
+ static SOC_ENUM_SINGLE_DECL(mic1lm_m_enum, AIC31XX_MICPGAMI, 4,
+ 	mic_select_text);
  
 -- 
 2.20.1
