@@ -2,45 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99DC8ECC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A15D58ECD1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:28:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732225AbfHON1c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 09:27:32 -0400
-Received: from verein.lst.de ([213.95.11.211]:46701 "EHLO verein.lst.de"
+        id S1732246AbfHON2t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 09:28:49 -0400
+Received: from verein.lst.de ([213.95.11.211]:46712 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729918AbfHON1b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:27:31 -0400
+        id S1729918AbfHON2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:28:49 -0400
 Received: by verein.lst.de (Postfix, from userid 2407)
-        id 9A98968AFE; Thu, 15 Aug 2019 15:27:28 +0200 (CEST)
-Date:   Thu, 15 Aug 2019 15:27:28 +0200
+        id D963768B05; Thu, 15 Aug 2019 15:28:45 +0200 (CEST)
+Date:   Thu, 15 Aug 2019 15:28:45 +0200
 From:   Christoph Hellwig <hch@lst.de>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Richard Kuo <rkuo@codeaurora.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-hexagon@vger.kernel.org,
+To:     Ralph Campbell <rcampbell@nvidia.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hexagon: drop empty and unused free_initrd_mem
-Message-ID: <20190815132728.GB12036@lst.de>
-References: <1565858133-25852-1-git-send-email-rppt@linux.ibm.com>
+Subject: Re: turn hmm migrate_vma upside down v3
+Message-ID: <20190815132845.GC12036@lst.de>
+References: <20190814075928.23766-1-hch@lst.de> <8e3b17ef-0b9e-6866-128f-403c8ba3a322@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565858133-25852-1-git-send-email-rppt@linux.ibm.com>
+In-Reply-To: <8e3b17ef-0b9e-6866-128f-403c8ba3a322@nvidia.com>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 11:35:33AM +0300, Mike Rapoport wrote:
-> hexagon never reserves or initializes initrd and the only mention of it is
-> the empty free_initrd_mem() function.
-> 
-> As we have a generic implementation of free_initrd_mem(), there is no need
-> to define an empty stub for the hexagon implementation and it can be
-> dropped.
+On Wed, Aug 14, 2019 at 05:09:54PM -0700, Ralph Campbell wrote:
+> Some of the patches seem to have been mangled in the mail.
 
-Looks good,
+Weird, I never had such a an issue with git-send-email.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+But to be covered for such weird cases I also posted a git url
+for exactly the tree I've been working on.
+
+> I was able to edit them and apply to Jason's tree
+> https://github.com/jgunthorpe/linux.git mmu_notifier branch.
+> So for the series you can add:
+>
+> Tested-by: Ralph Campbell <rcampbell@nvidia.com>
+
+Thanks!
