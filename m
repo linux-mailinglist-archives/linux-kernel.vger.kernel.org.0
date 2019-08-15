@@ -2,149 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D358F185
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:04:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C7F48F188
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:04:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731085AbfHOREK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:04:10 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45378 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbfHOREK (ORCPT
+        id S1731257AbfHOREh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:04:37 -0400
+Received: from sonic301-22.consmr.mail.ir2.yahoo.com ([77.238.176.99]:41320
+        "EHLO sonic301-22.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726098AbfHOREg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:04:10 -0400
-Received: by mail-io1-f68.google.com with SMTP id t3so535705ioj.12;
-        Thu, 15 Aug 2019 10:04:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Scr9HNWKaHgDEj49CvsDMxRjjWP6o7f0Yc7vVj9GTHw=;
-        b=WuHM2rVQu3+MPHlL2fGa2cC3RUDLRjkVtyxLv6R7YHG9U7EL2FiDM2uhgHoEEYg2ug
-         z/heB4Urx0ddEn1H+VQ23Ri3Tkt3RHt8Ivur898gxVEJ8AAdq46bJtbjPagy0sTm0uM3
-         x9jrgjn/VkB7EnR8hdQhDL0MajIie1h66MykhWIm26ZC52xtF0idglf+9RH7/Qj4mq3z
-         7ALeQvrXXJeePgyjO/vmRp5dKVpUYv0AGHLqbPfXH5LtjWhajHMPIbXTkfAGVNtNb4qx
-         i7SJZPQdvM0VOtZZ4MaAEUzjY5FgV2d+0vRaOwSik6xqv59uZaVrxYO0zico8zzRs9gB
-         I9fw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Scr9HNWKaHgDEj49CvsDMxRjjWP6o7f0Yc7vVj9GTHw=;
-        b=LULFz+To27ykV22mdfkJkb1bWFjSrvVlqDqTvpMR+3uazbILc53jLKIJW522YdojaN
-         7yWec22VhDTzUTsytWo/TW8oMD69M06wxWwXBxAWMNNCm73KwTw81NsYl/PVGDwjKDTj
-         wI5q36jsJVPlkF2yfkebK6CnB/D2gF/DiMrzw8UPekxnGxWoh/dDr5JSwrWAZVjPI2QV
-         lnnZ/EmPXY/zvgNqU2IzXThDQaFVtu9XFPJbyKzakgLm5CyU/lkAmEReCX6bU0M2YLZW
-         gFRyoNJWDHi4Y8EH5+AFLRpjW9wu29MV7HQZTpMpE/r9n/LOQ4eccECbY83zxJXdNc5o
-         JYJA==
-X-Gm-Message-State: APjAAAVMyZFPYHzILpiuK7nDmQG+OHOjrBRq7BAl2g4h9o0W+sRfniCj
-        tOTwsjNP7TiqZMXyuQj3cJG5AZxxiWTcrfkMBOc=
-X-Google-Smtp-Source: APXvYqzaFudHgRVLW6Mzv0uHaWX4YlnmXvI8gAaKyPb/u8XrZtklw2lfHgT0MCd4Wh8b5eskXodrKUO0atVMOz4aJJc=
-X-Received: by 2002:a5d:8352:: with SMTP id q18mr6177548ior.154.1565888649021;
- Thu, 15 Aug 2019 10:04:09 -0700 (PDT)
+        Thu, 15 Aug 2019 13:04:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1565888674; bh=B1CDKmFfj6aDeTiNOiZadWEgT+fWeNQZxcrgAnVsmOs=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=HDOdOuuayJtJ4At+QPaPyvRwQCfBsUapF49QasrPrPcoc252mv8LHcNr7nXZZpsa4R/w0rw4WA4xIStpwqmQ40wDlNFvzHHNZpw/8DEMsR2eGPp215VYPIAXK5Z8mmaQI43ltmJzM3xplwtyYqILGlUUpBiM2wAy0OtqGuPUNGehJCt4l2PzMxkrzGRlkYXb5oyoM2RnGH1ZrYlW3LBYizvW/hsaVNw+Mc6BEHtoQhex/oFj+i1DsDvGpxV3NfqFWwKHn7RAiEUl+sB45lz6xMp7Oht9uQNNmVeqauMY0wBuFuUMwdbMS0Ypkwwpnh6nFwe7XPVO6VMktbruGsb0rA==
+X-YMail-OSG: UCM0UGEVM1k.ECZKTxS2OqaNxzGHhhZ.pF6bQgH1V5pop2SUDTzFWfBv_5CJXjN
+ lmzvdcgsctqscHstS.D3ySu2diMWMVLd1NlS_.QLBfWHJgiZJNUUORUdNzd_1JBEHhl23GXEI9Cr
+ SkA.ME94KDhq3JYnKqfxE3lBqx1qsUoxTDPcsaK7CSV9uXRuC_rVeJWQGHFrLSxBUMlfKTCwLK1Q
+ SRwutEVv7UDXOJfgMG4dfSMV8ocaxYvcBM__Q2ClXC6IYJVrJ4YY.flrgyQVVBvoCL7eNBwLxq..
+ E_cKvKeO5.MMCvhwZl.6UTiEJwVPemSOCL9d9MpkZyzrjgsHgpLwmbmm4TZE9yC7ZV5IgDV.cfqj
+ 6yNGkLoZdle_xiEedxjALL37oIp1kh0B0AnA.rfKPdq.uwJVIgTQW3DfVqlf6iKhB6uy5RFkNXRD
+ IlR3ZLEMzYftGCwgQzomL.99B5RdayKOfbP7ZfTyQFsQfXaxma1dQwsDzs1eJW7MlH6NvdnIH6v0
+ bl_66yAONv0NOGPRWVKJ2AUkGWWM5HBJDnqQZDhfj2vYWjXijuZiUOYh218tDbWkiNOWjMiXRv5w
+ Nco0gD6FUD9TZNJowGp.fNnHLIWQcSoJvyGArd42Ffch7Cx6LrmtIkLSBB96xZiAkDsIdZSQCSc6
+ dkew2LYcnzCsBKEhae3KwsT1sQGkuPPJHLa0xazi.g4qhenO1N9UemS55UuwOF0X0QuNam0ArZVe
+ B33q0v8eDbA3TkRAhrspGG0NCt8Bw54BjY6.zQd4f7PTFB76.fPLd7UUF5LElwll.bgQ7L6fQplJ
+ OkBMAzSujJwqSD6EqYHLE0a5NAsbBhO9VISE_me1hH17bSBl7PczHs72rzmHz7y4Ct6M2jZQpSB6
+ tHWM.i.sGQksU1s5UcKLX3g9nFurGU02ehnJtJH_DkBr5b75yV8_Kwlosn0Z.4gGb_AUmPY7CvEN
+ MUT_Hs1lwsxl9CamXd_8IYJNCuCjCl439CIsZhETFo1_kc3Ym_ysi0jzwtdzhSf3nvYG65HHjczN
+ 02AhHEXoNChDFLMmb35Zbz597Zwjb_yN.f8l32.wP_8j2dFd61e9qAPZ9feIO1mnYh8jMP9.8gtC
+ Iuhc0t6IPpsXPvLhXu6mLkFuALJhX9VT7QJomXTsg2k0BTOmxpOPmc4KbWEtgl.qKtaeqJBXu.Lh
+ U2PQwdOgTlMhmhp4bmv2LeLI40LC8k3GvxgXsEOLJJHFKc4uiqRbwrVnkKviQ..NTaE3gXl6T8yc
+ dtaTogao_6wD2HNBCXC2GNMHbgcUmop8L_06agRcMtFBrCsI-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.ir2.yahoo.com with HTTP; Thu, 15 Aug 2019 17:04:34 +0000
+Received: by smtp432.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID ed96a2e86c060211f0b97b71e44301c9;
+          Thu, 15 Aug 2019 17:04:32 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 01:04:14 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel@driverdev.osuosl.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Richard Weinberger <richard@nod.at>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-erofs@lists.ozlabs.org
+Subject: Re: [PATCH v8 00/24] erofs: promote erofs from staging v8
+Message-ID: <20190815170409.GB4958@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190815044155.88483-1-gaoxiang25@huawei.com>
+ <20190815090603.GD4938@kroah.com>
+ <CAHk-=wjKz7JLd=mj0w2LUiWC2_VOeNWhTTrw1j-i-KyEHH5g5w@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190628151327.206818-1-oshrialkoby85@gmail.com>
- <8e6ca8796f229c5dc94355437351d7af323f0c56.camel@linux.intel.com>
- <79e8bfd2-2ed1-cf48-499c-5122229beb2e@infineon.com> <CAM9mBwJC2QD5-gV1eJUDzC2Fnnugr-oCZCoaH2sT_7ktFDkS-Q@mail.gmail.com>
- <45603af2fc8374a90ef9e81a67083395cc9c7190.camel@linux.intel.com>
- <6e7ff1b958d84f6e8e585fd3273ef295@NTILML02.nuvoton.com> <CAP6Zq1hPo9dG71YFyr7z9rjmi-DvoUZJOme4+2uqsfO+7nH+HQ@mail.gmail.com>
- <20190715094541.zjqxainggjuvjxd2@linux.intel.com> <9c8e216dbc4f43dbaa1701dc166b05e0@NTILML02.nuvoton.com>
- <548d3727-4a8f-38d4-2193-8a09cbae1e64@infineon.com>
-In-Reply-To: <548d3727-4a8f-38d4-2193-8a09cbae1e64@infineon.com>
-From:   Oshri Alkobi <oshrialkoby85@gmail.com>
-Date:   Thu, 15 Aug 2019 20:03:56 +0300
-Message-ID: <CAM9mBwL=5+pGTYUKbSdw5F6soR=tW-cqfbEQ9_NmCQTO=fSVZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] char: tpm: add new driver for tpm i2c ptp
-To:     Alexander Steffen <Alexander.Steffen@infineon.com>
-Cc:     Eyal.Cohen@nuvoton.com,
-        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        tmaimon77@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        gregkh@linuxfoundation.org, oshri.alkoby@nuvoton.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org, gcwilson@us.ibm.com,
-        kgoldman@us.ibm.com, nayna@linux.vnet.ibm.com,
-        Dan.Morav@nuvoton.com, oren.tanami@nuvoton.com,
-        amir.mizinski@nuvoton.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjKz7JLd=mj0w2LUiWC2_VOeNWhTTrw1j-i-KyEHH5g5w@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 18, 2019 at 8:10 PM Alexander Steffen
-<Alexander.Steffen@infineon.com> wrote:
->
-> On 18.07.2019 14:51, Eyal.Cohen@nuvoton.com wrote:
-> > Hi Jarkko and Alexander,
+Hi Linus,
+
+On Thu, Aug 15, 2019 at 09:18:12AM -0700, Linus Torvalds wrote:
+> On Thu, Aug 15, 2019 at 2:06 AM Greg Kroah-Hartman
+> <gregkh@linuxfoundation.org> wrote:
 > >
-> > We have made an additional code review on the TPM TIS core driver, it looks quite good and we can connect our new I2C driver to this layer.
->
-> Great :) In the meantime, I've done some experiments creating an I2C
-> driver based on tpm_tis_core, see
-> https://patchwork.kernel.org/patch/11049363/ Please have a look at that
-> and provide your feedback (and/or use it as a basis for further
-> implementations).
->
+> > I know everyone is busy, but given the length this has been in staging,
+> > and the constant good progress toward cleaning it all up that has been
+> > happening, I want to get this moved out of staging soon.
+> 
+> Since it doesn't touch anything outside of its own filesystem, I have
+> no real objections. We've never had huge problems with odd
+> filesystems.
+> 
+> I read through the patches to look for syntactic stuff (ie very much
+> *not* looking at actual code working or not), and had only one
+> comment. It's not critical, but it would be nice to do as part of (or
+> before) the "get it out of staging".
 
-Sorry for the late response.
+Thanks for your kind reply!
 
-Thanks Alexander, indeed it looks much simpler.
-I've checked it with Nuvoton's TPM - basic TPM commands work, I only
-had to remove the first msg from the read/write I2C transmitting
-(from/to TPM_LOC_SEL), the TPM couldn't handle two register writes in
-a sequence.
-Actually it is more efficient to set TPM_LOC_SEL only before locality
-check/request/relinquish - it is sticky.
-I still didn't manage to work with interrupts, will debug it.
+OK, I will submit a patch later to address your comment and
+a pending formal moving patch with a suggestion by Stephen earlier
+for Greg as well.
 
-We weren't aware to the implementation of Christophe/ST which looks
-good and can be complement to yours.
-If no one is currently working on that, we can prepare a new patch
-that is based on both.
-Please let us know.
+Thanks,
+Gao Xiang
 
-> > However, there are several differences between the SPI interface and the I2C interface that will require changes to the TIS core.
-> > At a minimum we thought of:
-> > 1. Handling TPM Localities in I2C is different
->
-> It turned out not to be that different in the end, see the code
-> mentioned above and my comment here:
-> https://patchwork.kernel.org/cover/11049365/
->
-> > 2. Handling I2C CRC - relevant only to I2C bus hence not supported today by TIS core
->
-> That is completely optional, so there is no need to implement it in the
-> beginning. Also, do you expect a huge benefit from that functionality?
-> Are bit flips that much more likely on I2C compared to SPI, which has no
-> CRC at all, but still works fine?
->
-
-I2C is noisy bus with potentially more devices with larger variety
-than SPI. I2C may have more than one master and may have collisions
-and/or arbitration.
-Still we can start w/o CRC for the first stage and add it later.
-BTW, Christophe already did most of the work
-(https://patchwork.kernel.org/patch/8628661/)
-
-> > 3. Handling Chip specific issues, since I2C implementation might be slightly different across the various TPM vendors
->
-> Right, that seems similar to the cr50 issues
-> (https://lkml.org/lkml/2019/7/17/677), so there should probably be a
-> similar way to do it.
-
-Got it. We hope things will work for us without having another driver,
-but it's an option.
-
->
-> > 4. Modify tpm_tis_send_data and tpm_tis_recv_data to work according the TCG Device Driver Guide (optimization on TPM_STS access and send/recv retry)
->
-> Optimizations are always welcome, but I'd expect basic communication to
-> work already with the current code (though maybe not as efficiently as
-> possible).
->
-> > Besides this, during development we might encounter additional differences between SPI and I2C.
-> >
-> > We currently target to allocate an eng. to work on this on the second half of August with a goal to have the driver ready for the next kernel merge window.
-> >
-> > Regards,
-> > Eyal.
+> 
+>                  Linus
