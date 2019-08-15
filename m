@@ -2,53 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EEE18F4DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:40:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3AB28F4D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:38:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732993AbfHOTkf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 15:40:35 -0400
-Received: from smtp.emailarray.com ([69.28.212.198]:64696 "EHLO
-        smtp2.emailarray.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732410AbfHOTkd (ORCPT
+        id S1732952AbfHOTix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 15:38:53 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43094 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732647AbfHOTix (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 15:40:33 -0400
-Received: (qmail 35549 invoked by uid 89); 15 Aug 2019 19:33:52 -0000
-Received: from unknown (HELO ?172.20.53.208?) (amxlbW9uQGZsdWdzdmFtcC5jb21AMTk5LjIwMS42NC4xMzk=) (POLARISLOCAL)  
-  by smtp2.emailarray.com with (AES256-GCM-SHA384 encrypted) SMTP; 15 Aug 2019 19:33:52 -0000
-From:   "Jonathan Lemon" <jlemon@flugsvamp.com>
-To:     "Ivan Khoronzhuk" <ivan.khoronzhuk@linaro.org>
-Cc:     magnus.karlsson@intel.com, bjorn.topel@intel.com,
-        davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
-        jakub.kicinski@netronome.com, daniel@iogearbox.net,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        xdp-newbies@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yhs@fb.com, andrii.nakryiko@gmail.com
-Subject: Re: [PATCH bpf-next v2 2/3] xdp: xdp_umem: replace kmap on vmap for
- umem map
-Date:   Thu, 15 Aug 2019 12:33:44 -0700
-X-Mailer: MailMate (1.12.5r5635)
-Message-ID: <2D5AB510-F3F1-4215-B9D6-CE576CC474B0@flugsvamp.com>
-In-Reply-To: <20190815121356.8848-3-ivan.khoronzhuk@linaro.org>
-References: <20190815121356.8848-1-ivan.khoronzhuk@linaro.org>
- <20190815121356.8848-3-ivan.khoronzhuk@linaro.org>
+        Thu, 15 Aug 2019 15:38:53 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c19so2408174lfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 12:38:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yMwOuV3nMz/hoRB1Cse/AbiFhP4WrksE1suSS0/V1zE=;
+        b=YmGIhLIQHRX1aKG0aqinsyf8Q6Cz8DldpQwWcGk+3w0bstMiMpVU5jvU0qMkhk9iqJ
+         i+43l3YXMdK3T4S3opKhlYw/6UZSza9gRXU3Bz9lQXs+DX3uDP32Tlqgca7j09ZmGM/+
+         DdfOz+AukMq5QpjiXFdsZmJDBjz4N4+21ioXQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yMwOuV3nMz/hoRB1Cse/AbiFhP4WrksE1suSS0/V1zE=;
+        b=h0WMNYzrQsuWzl77/AFa+52yCFQ6NwPakQ0p7UJTKQwbxmZjO1MrwFKIqHzdl44LSj
+         sWk76tK/75BHard1/FFpG+PiOatid0N6KhzBl7ssfzVSyd2IOchtYELGUzeYZSid4cAk
+         akoKuZ0KS8vUnj2CnJWLvGK5cCAdydbjEj9ChduJcjRJwfR21qAGSTLzYAYa3iYfxkdj
+         r6Z/jIlP17fbFeP0iyV/RFpVkSv56aiwzAJCMY80aTcRqRK5CYH0CugKXJVdt/+Dtzl9
+         II0tR9xifPo9E15rrDVRC3crliw0cG95R0MNSu0Cc9229Q9OPBfEXL19BrQnlzFSAZWl
+         79Vg==
+X-Gm-Message-State: APjAAAWL4YcxMC3pONWcdtk5f8EBDQb9bQOi+3cNY797jC71D4MBH0UL
+        xdu9c5svtY54uqTDmD/zKRxN5ek0HtM=
+X-Google-Smtp-Source: APXvYqw9omhzjHrunWN9Oa4PoN4wKn/r92IhgcuTDDutql22pNnBHeXShWaA5tGT0udDe6N0UwK9Jg==
+X-Received: by 2002:a19:c511:: with SMTP id w17mr2915448lfe.31.1565897930910;
+        Thu, 15 Aug 2019 12:38:50 -0700 (PDT)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id s10sm621311ljm.35.2019.08.15.12.38.49
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2019 12:38:49 -0700 (PDT)
+Received: by mail-lf1-f46.google.com with SMTP id h28so2424523lfj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 12:38:49 -0700 (PDT)
+X-Received: by 2002:a19:c20b:: with SMTP id l11mr3214120lfc.106.1565897929268;
+ Thu, 15 Aug 2019 12:38:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20190815171347.GD15186@magnolia>
+In-Reply-To: <20190815171347.GD15186@magnolia>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 15 Aug 2019 12:38:33 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiHuHLK49LKQhtERXaq0OYUnug4DJZFLPq9RHEG2Cm+bQ@mail.gmail.com>
+Message-ID: <CAHk-=wiHuHLK49LKQhtERXaq0OYUnug4DJZFLPq9RHEG2Cm+bQ@mail.gmail.com>
+Subject: Re: [GIT PULL] xfs: fixes for 5.3-rc5
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        Christoph Hellwig <hch@lst.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Pulled. Just a quick note:
 
-
-On 15 Aug 2019, at 5:13, Ivan Khoronzhuk wrote:
-
-> For 64-bit there is no reason to use vmap/vunmap, so use page_address
-> as it was initially. For 32 bits, in some apps, like in samples
-> xdpsock_user.c when number of pgs in use is quite big, the kmap
-> memory can be not enough, despite on this, kmap looks like is
-> deprecated in such cases as it can block and should be used rather
-> for dynamic mm.
+On Thu, Aug 15, 2019 at 10:13 AM Darrick J. Wong <djwong@kernel.org> wrote:
 >
-> Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+> - Convert more directory corruption debugging asserts to actual
+>   EFSCORRUPTED returns instead of blowing up later on.
 
-Acked-by: Jonathan Lemon <jonathan.lemon@gmail.com>
+The proper error code looks like an obvious improvement, but I do
+wonder if there should be some (ratelimited) system logging too?
+
+I've seen a lot of programs that don't report errors very clearly and
+might just silently stop running and as a sysadmin I'd think I'd
+rather have something in the system logs than users saying "my app
+crashes at startup"/
+
+Maybe the logging ends up being there already - just done later. It
+wasn't obvious from the patch, and I didn't check the whole callchain
+(only direct callers).
+
+                  Linus
