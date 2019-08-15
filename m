@@ -2,113 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07D0D8E976
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:02:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B205A8E97E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:04:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731502AbfHOLCh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 07:02:37 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:45849 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731238AbfHOLCh (ORCPT
+        id S1731524AbfHOLEt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 07:04:49 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:53536 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727814AbfHOLEs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:02:37 -0400
-Received: by mail-qk1-f194.google.com with SMTP id m2so1425871qki.12;
-        Thu, 15 Aug 2019 04:02:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ixfnPlK+rwVj932VbW13T/GSWLfhy/p7HuarjF6luFA=;
-        b=qeR6W2KxmDFq6IVpiGCHnM2UwZMhJzwZlWXa9u6c1yM/r7mKuunG9yhYx0vT0yMZog
-         +Z78mVTX/dmvJv8fzq5GmIKQJ/NUAGaoTu9f+EdHpuBbicw3GWHKwc+F1tD1eA5se5ux
-         zHU+YVFclAGCwhEL1z85Ly0S6EGCWnNaA3cLXsED5iDKkvyAcGuFDARLbefcKpVMhIq/
-         v9wQhu97TwUDTjGGFdp2++7Umms6Ay76aBfaO/BxfsMdQAe3Dapc92wjuzxhQYkuQjbm
-         tQLDcfHgkJAFRMqh3vNgNQZ1PTU7TnuI/qyS+uuzNEid5OSkS0+f1C1u38Xk7UOeUVgp
-         K6eg==
-X-Gm-Message-State: APjAAAUju6iRflwCbZ+gFC31bzHn6z6PDmfh8AS97MD0JkyKhQHmyPLN
-        OzRk8r3vznRfqaTdMIVw9/faeZqQ4arUlNJ4g1E=
-X-Google-Smtp-Source: APXvYqyXpHeJIvd+b99fNFc8nOvxOYKmr5krcLTUrLPsheJN0BLptRHKfW021hvb9zclheDXuX6WV/9ruuHsR11kpnU=
-X-Received: by 2002:a37:984:: with SMTP id 126mr3353679qkj.3.1565866956167;
- Thu, 15 Aug 2019 04:02:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-2-arnd@arndb.de>
- <20190814213753.GP6129@dread.disaster.area> <20190815071314.GA6960@infradead.org>
- <CAK8P3a2Hjfd49XY18cDr04ZpvC5ZBGudzxqpCesbSsDf1ydmSA@mail.gmail.com>
- <20190815080211.GA17055@infradead.org> <20190815102649.GA10821@infradead.org>
-In-Reply-To: <20190815102649.GA10821@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 15 Aug 2019 13:02:19 +0200
-Message-ID: <CAK8P3a0jEsJbpkgKrjWNOsDSvQv5AXq_P7A92zr4my+uMnZijw@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] xfs: compat_ioctl: use compat_ptr()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Nick Bowler <nbowler@draconx.ca>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Dave Chinner <dchinner@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Aug 2019 07:04:48 -0400
+X-IronPort-AV: E=Sophos;i="5.64,389,1559487600"; 
+   d="scan'208";a="23867444"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 15 Aug 2019 20:04:46 +0900
+Received: from fabrizio-dev.ree.adwin.renesas.com (unknown [10.226.36.196])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 911BD41773C3;
+        Thu, 15 Aug 2019 20:04:38 +0900 (JST)
+From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Eric Anholt <eric@anholt.net>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        xu_shunji@hoperun.com, ebiharaml@si-linux.co.jp
+Subject: [PATCH v2 0/9] Add dual-LVDS panel support to EK874
+Date:   Thu, 15 Aug 2019 12:04:24 +0100
+Message-Id: <1565867073-24746-1-git-send-email-fabrizio.castro@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 12:26 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Thu, Aug 15, 2019 at 01:02:11AM -0700, Christoph Hellwig wrote:
-> > In many ways I'd actually much rather have a table driven approach.
-> > Let me try something..
->
-> Ok, it seems like we don't even need a table containing native and
-> compat as we can just fall back.  The tables still seem nicer to read,
-> though.
->
-> Let me know what you think of this:
->
-> http://git.infradead.org/users/hch/xfs.git/shortlog/refs/heads/xfs-ioctl-table
+Dear All,
 
-These all look like useful cleanups, but I'm a little worried about introducing
-merge conflicts with my own patches. I would want to have my series get
-merged as a complete branch since each patch that removes a bit of
-fs/compat_ioctl.c would clash with a patch removing the adjacent bits
-otherwise.
+this series adds support for dual-LVDS panel IDK-2121WR
+from Advantech:
+https://buy.advantech.eu/Displays/Embedded-LCD-Kits-High-Brightness/model-IDK-2121WR-K2FHA2E.htm
+Dual link support is very recent for R-Car Gen3, and I couldn't
+find much on dual link panels in the kernel either, therefore
+comments are very welcome to get this right.
 
-I still haven't heard from Al regarding what he thinks of my v5 series.
-If he wants me to send a pull request for it, I can of course add in
-your patches  after they are fully reviewed.
+The panel doesn't come with the EK874 kit, but it's advertised as
+supported, therefore this series adds a new dts file to support
+the configuration of the EK874 + IDK-2121WR.
 
-> I also wonder if we should life the ioctl handler tables to the VFS.
+Laurent,
 
-The idea of these tables has come up a few times in the past,
-and there are a couple of subsystems that have something like it,
-e.g. drivers/media.
+it appears that Rob has been busy converting the dt-bindings relevant to this
+series, and his changes are now found in linux-next. Most notably
+Documentation/devicetree/bindings/display/panel/panel-lvds.txt has now become
+Documentation/devicetree/bindings/display/panel/lvds.yaml
 
-Usually you'd want to combine the table with a more generic way to
-do the copy_from_user()/copy_to_user() on the argument, but that
-in turn requires all commands to be defined correctly (a lot of drivers
-have some commands that specify the wrong direction or the wrong
-size, or one that predates the _IO() macro).
+You have already taken patch:
+https://patchwork.kernel.org/patch/11072749/
 
-What I could imaging having in the long run is to have the ioctl table
-attached to the file_operations structure, and then define it in a way
-that handles at least the more common variations:
+as such the patch I am sending you is still related to:
+Documentation/devicetree/bindings/display/panel/panel-lvds.txt
 
-- copy_from_user to stack, pass a kernel pointer to handler
-- a single entry for commands that are 32/64-bit compatible
-- entries that are only used for native vs compat mode if they
-  have incompatible arguments (this could also be handled
-  by calling in_compat_syscall() in the handler itself).
-- a flag to specify handlers that require the __user pointer instead
-  of the implied copy.
+Patch "dt-bindings: display: Add bindings for Advantech IDK-2121WR" is still
+assuming the format is .txt, as I am not too sure about what the protocol is in
+this case? Shall we take this patch and convert it later to .yaml or shall I
+convert it to .yaml straight away?
 
-Doing this right will certainly require several revisions of patch
-series and lots of discussions, and is unrelated to the removal
-of fs/compat_ioctl.c, so I'd much prefer to get this series merged
-before we start working on that.
+Please, let me know what's the best course of action.
 
-       Arnd
+v1->v2:
+* dt-bindings: display: renesas: lvds: Document renesas,swap-data - dropped
+* drm: rcar-du: lvds: Add data swap support - dropped
+* drm: rcar-du: lvds: Do not look at ports for identifying bridges - dropped
+* drm: rcar-du: lvds: Add support for dual link panels - dropped
+* dt-bindings: display: renesas: lvds: RZ/G2E needs renesas,companion too - taken
+* drm: rcar-du: lvds: Fix bridge_to_rcar_lvds - taken
+* arm64: dts: renesas: r8a774c0: Point LVDS0 to its companion LVDS1 - taken
+* arm64: dts: renesas: cat874: Add definition for 12V regulator -taken
+* dt-bindings: panel: lvds: Add dual-link LVDS display support - reworked according to Laurent's feedback
+* dt-bindings: display: Add bindings for Advantech IDK-2121WR - reworked according to Laurent's feedback
+* drm: Rename drm_bridge_timings to drm_timings - new patch
+* drm/timings: Add link flags - new patch
+* drm/panel: Add timings field to drm_panel - new patch
+* drm: rcar-du: lvds: Fix companion's mode - reworked according to Laurent's feedback
+* drm: rcar-du: lvds: Add dual-LVDS panels support - new patch
+* drm/panel: lvds: Add support for the IDK-2121WR - new patch
+* arm64: dts: renesas: Add EK874 board with idk-2121wr display support - Made some changes
+
+Thanks,
+Fab
+
+Fabrizio Castro (9):
+  dt-bindings: panel: lvds: Add dual-link LVDS display support
+  dt-bindings: display: Add bindings for Advantech IDK-2121WR
+  drm: Rename drm_bridge_timings to drm_timings
+  drm/timings: Add link flags
+  drm/panel: Add timings field to drm_panel
+  drm: rcar-du: lvds: Fix companion's mode
+  drm: rcar-du: lvds: Add dual-LVDS panels support
+  drm/panel: lvds: Add support for the IDK-2121WR
+  arm64: dts: renesas: Add EK874 board with idk-2121wr display support
+
+ .../display/panel/advantech,idk-2121wr.txt         |  56 +++++++++
+ .../bindings/display/panel/panel-lvds.txt          |  95 ++++++++++++----
+ arch/arm64/boot/dts/renesas/Makefile               |   3 +-
+ .../boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts | 116 +++++++++++++++++++
+ drivers/gpu/drm/bridge/dumb-vga-dac.c              |   6 +-
+ drivers/gpu/drm/bridge/sii902x.c                   |   2 +-
+ drivers/gpu/drm/bridge/thc63lvd1024.c              |   2 +-
+ drivers/gpu/drm/bridge/ti-tfp410.c                 |   6 +-
+ drivers/gpu/drm/panel/panel-lvds.c                 |   8 ++
+ drivers/gpu/drm/pl111/pl111_display.c              |   2 +-
+ drivers/gpu/drm/rcar-du/rcar_lvds.c                | 126 ++++++++++++++-------
+ include/drm/drm_bridge.h                           |  40 +------
+ include/drm/drm_panel.h                            |   3 +
+ include/drm/drm_timings.h                          |  86 ++++++++++++++
+ 14 files changed, 439 insertions(+), 112 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/advantech,idk-2121wr.txt
+ create mode 100644 arch/arm64/boot/dts/renesas/r8a774c0-ek874-idk-2121wr.dts
+ create mode 100644 include/drm/drm_timings.h
+
+-- 
+2.7.4
+
