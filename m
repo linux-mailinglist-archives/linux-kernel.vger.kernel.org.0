@@ -2,72 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C54478F0BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:38:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 334F38F11E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:45:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732135AbfHOQir (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:38:47 -0400
-Received: from mga09.intel.com ([134.134.136.24]:22205 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731913AbfHOQiq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:38:46 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 09:38:45 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
-   d="scan'208";a="178512101"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.41])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Aug 2019 09:38:44 -0700
-Date:   Thu, 15 Aug 2019 09:38:44 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Jim Mattson <jmattson@google.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        yu.c.zhang@intel.com, alazar@bitdefender.com,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH RESEND v4 5/9] KVM: VMX: Add init/set/get functions for
- SPP
-Message-ID: <20190815163844.GD27076@linux.intel.com>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-6-weijiang.yang@intel.com>
- <87a7cbapdw.fsf@vitty.brq.redhat.com>
- <20190815134329.GA11449@local-michael-cet-test>
- <CALMp9eTGXDDfVspFwFyEhagg9sdnqZqzSQhDksT0bkKzVNGSqw@mail.gmail.com>
+        id S1730255AbfHOQpd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:45:33 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40209 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726099AbfHOQpd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:45:33 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyIsS-0001TI-7S; Thu, 15 Aug 2019 18:45:28 +0200
+Date:   Thu, 15 Aug 2019 18:45:27 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Ben Luo <luoben@linux.alibaba.com>
+cc:     alex.williamson@redhat.com, linux-kernel@vger.kernel.org,
+        tao.ma@linux.alibaba.com, gerry@linux.alibaba.com,
+        nanhai.zou@linux.alibaba.com, linyunsheng@huawei.com
+Subject: Re: [PATCH v3 3/3] vfio_pci: make use of update_irq_devid and optimize
+ irq ops
+In-Reply-To: <f8838cf037055351d677e628f169cb21c6a76f02.1565857737.git.luoben@linux.alibaba.com>
+Message-ID: <alpine.DEB.2.21.1908151833010.1908@nanos.tec.linutronix.de>
+References: <cover.1565857737.git.luoben@linux.alibaba.com> <f8838cf037055351d677e628f169cb21c6a76f02.1565857737.git.luoben@linux.alibaba.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALMp9eTGXDDfVspFwFyEhagg9sdnqZqzSQhDksT0bkKzVNGSqw@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 09:25:41AM -0700, Jim Mattson wrote:
-> On Thu, Aug 15, 2019 at 6:41 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> 
-> > Hi, Vitaly,
-> > After looked into the issue and others, I feel to make SPP co-existing
-> > with nested VM is not good, the major reason is, L1 pages protected by
-> > SPP are transparent to L1 VM, if it launches L2 VM, probably the
-> > pages would be allocated to L2 VM, and that will bother to L1 and L2.
-> > Given the feature is new and I don't see nested VM can benefit
-> > from it right now, I would like to make SPP and nested feature mutually
-> > exclusive, i.e., detecting if the other part is active before activate one
-> > feature,what do you think of it?
-> > thanks!
-> 
-> How do you propose making the features mutually exclusive?
+On Thu, 15 Aug 2019, Ben Luo wrote:
+>  	if (vdev->ctx[vector].trigger) {
+> -		free_irq(irq, vdev->ctx[vector].trigger);
+> -		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+> -		kfree(vdev->ctx[vector].name);
+> -		eventfd_ctx_put(vdev->ctx[vector].trigger);
+> -		vdev->ctx[vector].trigger = NULL;
+> +		if (vdev->ctx[vector].trigger == trigger) {
+> +			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
 
-I haven't looked at the details or the end to end flow, but would it make
-sense to exit to userspace on nested VMLAUNCH/VMRESUME if there are SPP
-mappings?  And have the SPP ioctl() kick vCPUs out of guest.
+What's the point of unregistering the producer, just to register it again below?
 
-KVM already exits on SPP violations, so presumably this is something that
-can be punted to userspace.
+> +		} else if (trigger) {
+> +			ret = update_irq_devid(irq,
+> +					vdev->ctx[vector].trigger, trigger);
+> +			if (unlikely(ret)) {
+> +				dev_info(&pdev->dev,
+> +					 "update_irq_devid %d (token %p) fails: %d\n",
+
+s/fails/failed/
+
+> +					 irq, vdev->ctx[vector].trigger, ret);
+> +				eventfd_ctx_put(trigger);
+> +				return ret;
+> +			}
+
+This lacks any form of comment why this is correct. dev_id is updated and
+the producer with the old token is still registered.
+
+> +			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+
+Now it's unregistered.
+
+> +			eventfd_ctx_put(vdev->ctx[vector].trigger);
+> +			vdev->ctx[vector].producer.token = trigger;
+
+The token is updated and then it's newly registered below.
+
+> +			vdev->ctx[vector].trigger = trigger;
+> -	vdev->ctx[vector].producer.token = trigger;
+> -	vdev->ctx[vector].producer.irq = irq;
+> +	/* always update irte for posted mode */
+>  	ret = irq_bypass_register_producer(&vdev->ctx[vector].producer);
+>  	if (unlikely(ret))
+>  		dev_info(&pdev->dev,
+>  		"irq bypass producer (token %p) registration fails: %d\n",
+>  		vdev->ctx[vector].producer.token, ret);
+
+I know this code already existed, but again this looks inconsistent. If the
+registration fails then a subsequent update will try to unregister a not
+registered producer. Does not make any sense to me.
+
+Thanks,
+
+	tglx
