@@ -2,113 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276EB8F040
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:13:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 383338F088
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:26:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfHOQNk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:13:40 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42448 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728956AbfHOQNk (ORCPT
+        id S1731808AbfHOQ0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:26:11 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37900 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731752AbfHOQ0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:13:40 -0400
-Received: by mail-lj1-f193.google.com with SMTP id l14so2690235ljj.9
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:13:38 -0700 (PDT)
+        Thu, 15 Aug 2019 12:26:06 -0400
+Received: by mail-lj1-f195.google.com with SMTP id r9so2741576ljg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:26:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=FuOQKA7vgPA06is52x9xKpXiDGgbCZoxJgLKNkyGfUs=;
-        b=GiMGu61r0de7kE+jxFqk2ISTMZec3MCIu0HBqAiSXGeSP8AeU/RC1ZhX/syTNiFag1
-         vef2zaQMkRgI5yQRnEcUQA2HqnQz4O2DAMgPqxYorQxLdg6N07Qt35SI/EEKkX7h+ocx
-         AGxQCZHY70aVP3rFrb29kL6nHWXMwFLTwSK+g=
+        bh=9Io8f1bPaeNDioMtOu6b9FaHz1PaQCP05A6nz5CudSE=;
+        b=GdUTEFZxtX4Lqzwngdfr2kBTyvwT41GJPNn6kb81iJMXzazObo52enBgWkwrOOq3lr
+         fcNdZi8U6UPgNqNDEBWhKZKeMiP71ad8QufdLOLqaXmVo1Qm1ZJcKLGCfWYtcR0rwDEt
+         373s5sBtHdFaBBHWllHqZ5/T8eYXJ/Nx4+edw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=FuOQKA7vgPA06is52x9xKpXiDGgbCZoxJgLKNkyGfUs=;
-        b=lPPZY90SjzMj+mAyPwzLGV5MXZafJRuMAS8fzcBylezvPzkb1r0Vpxpy1nU2R7axyf
-         R5721WmtAZRjbTYw1J8bge5ZPh1f2bwKG2tmSApACUR92cMAsXgwDMgNKMgJ8mup9+EM
-         LIQ/FBKQA9vbk34FPdEXkU4+I1f81/5xwvFYnz6gd/TEpWGiRQI8/ksD5i7YM/dFgx5V
-         8Lw4FNXJT/JNlQL5ZDnYrajYlLalq9A34MKqu+Z4wHQ9RiOMzxGmWqPaznGNbzPzWvEO
-         uB+MT/OMIl2RDerRH7goEX1VsZKPUrhak+toTxEGa8d/WDt/97PTRHpVU0zHceLQ+7U2
-         TKYg==
-X-Gm-Message-State: APjAAAVBv8YrrsSOQg0oDWydHVlGp0wfi35bE+dI0whOXi29mc40+j9m
-        9l/MEvbZEzAUVYyCYGsRpUE+Hf6nTFs=
-X-Google-Smtp-Source: APXvYqxs+6VjJwpzPDOHwLAawmU0Cph8wP3PiVW2ER2B0jmksyLw6IOYBh2npVQD00lmpM39uFX2rg==
-X-Received: by 2002:a2e:8ed5:: with SMTP id e21mr3123242ljl.156.1565885617130;
-        Thu, 15 Aug 2019 09:13:37 -0700 (PDT)
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
-        by smtp.gmail.com with ESMTPSA id d21sm513224lfc.73.2019.08.15.09.13.35
+        bh=9Io8f1bPaeNDioMtOu6b9FaHz1PaQCP05A6nz5CudSE=;
+        b=acNjXtthLVMpXEZibUmmO6cdz6uPluGP2QuphL2g7w6MUoBKTzK3+Bpijq+GQgD98s
+         48bEZZFHaMJ1LWv4TZRZmTr8uyS2wFg4x4m7qeHCXcG/8P+lqz1KNM7cN4UrMSZw84A7
+         HbKewOxSIqIyrX2kAuDg0C0IeLDUDwxYr2i/K5huWqdCAD3+pIUBHc8uvH21WJnAjd8K
+         E+M0aME67ovuxKIikzNM1C1fnK6Ze+PDRbQlyerHXqWADXJ5ubPvz7yJ13pNOJqAZK0R
+         E+Nu8SbKwAsdVwNZXijFxAXL9/eH5ejsx0Bym091MAhCKM9RV4djlbVmrEKw6uHFDHfy
+         mgQw==
+X-Gm-Message-State: APjAAAVKb2x/wWZcyeB07ZDhEGiZDFUoDV71y9855EcpGDWSu+LHz+pf
+        /7UUvmDX7qQu+hs8bCRry7GJIRTZIXg=
+X-Google-Smtp-Source: APXvYqzqK7bbzOWCFAEXn0DgYcooTS9AU6DgJXT4mjEY05l92ddVOJOtdVgXKFRkCUQJvhYrjcBNHw==
+X-Received: by 2002:a2e:894d:: with SMTP id b13mr2493587ljk.38.1565886363820;
+        Thu, 15 Aug 2019 09:26:03 -0700 (PDT)
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
+        by smtp.gmail.com with ESMTPSA id f22sm551445ljh.22.2019.08.15.09.26.03
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2019 09:13:36 -0700 (PDT)
-Received: by mail-lj1-f172.google.com with SMTP id m24so2693298ljg.8
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:13:35 -0700 (PDT)
-X-Received: by 2002:a2e:7018:: with SMTP id l24mr3046966ljc.165.1565885615360;
- Thu, 15 Aug 2019 09:13:35 -0700 (PDT)
+        Thu, 15 Aug 2019 09:26:03 -0700 (PDT)
+Received: by mail-lj1-f171.google.com with SMTP id t3so2705360ljj.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:26:03 -0700 (PDT)
+X-Received: by 2002:a2e:9192:: with SMTP id f18mr3104005ljg.52.1565885908392;
+ Thu, 15 Aug 2019 09:18:28 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190815044155.88483-1-gaoxiang25@huawei.com> <20190815044155.88483-8-gaoxiang25@huawei.com>
-In-Reply-To: <20190815044155.88483-8-gaoxiang25@huawei.com>
+References: <20190815044155.88483-1-gaoxiang25@huawei.com> <20190815090603.GD4938@kroah.com>
+In-Reply-To: <20190815090603.GD4938@kroah.com>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 15 Aug 2019 09:13:19 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
-Message-ID: <CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com>
-Subject: Re: [PATCH v8 07/24] erofs: add directory operations
-To:     Gao Xiang <gaoxiang25@huawei.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+Date:   Thu, 15 Aug 2019 09:18:12 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjKz7JLd=mj0w2LUiWC2_VOeNWhTTrw1j-i-KyEHH5g5w@mail.gmail.com>
+Message-ID: <CAHk-=wjKz7JLd=mj0w2LUiWC2_VOeNWhTTrw1j-i-KyEHH5g5w@mail.gmail.com>
+Subject: Re: [PATCH v8 00/24] erofs: promote erofs from staging v8
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         devel@driverdev.osuosl.org,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
         Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Theodore Ts'o" <tytso@mit.edu>, Pavel Machek <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
         linux-erofs@lists.ozlabs.org, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Pavel Machek <pavel@denx.de>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        LKML <linux-kernel@vger.kernel.org>,
         Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>
+        David Sterba <dsterba@suse.cz>,
+        Christoph Hellwig <hch@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 9:42 PM Gao Xiang <gaoxiang25@huawei.com> wrote:
+On Thu, Aug 15, 2019 at 2:06 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> +
-> +static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
-> +       [EROFS_FT_UNKNOWN]      = DT_UNKNOWN,
-> +       [EROFS_FT_REG_FILE]     = DT_REG,
-> +       [EROFS_FT_DIR]          = DT_DIR,
-> +       [EROFS_FT_CHRDEV]       = DT_CHR,
-> +       [EROFS_FT_BLKDEV]       = DT_BLK,
-> +       [EROFS_FT_FIFO]         = DT_FIFO,
-> +       [EROFS_FT_SOCK]         = DT_SOCK,
-> +       [EROFS_FT_SYMLINK]      = DT_LNK,
-> +};
+> I know everyone is busy, but given the length this has been in staging,
+> and the constant good progress toward cleaning it all up that has been
+> happening, I want to get this moved out of staging soon.
 
-Hmm.
+Since it doesn't touch anything outside of its own filesystem, I have
+no real objections. We've never had huge problems with odd
+filesystems.
 
-The EROFS_FT_XYZ values seem to match the normal FT_XYZ values, and
-we've lately tried to just have filesystems use the standard ones
-instead of having a (pointless) duplicate conversion between the two.
+I read through the patches to look for syntactic stuff (ie very much
+*not* looking at actual code working or not), and had only one
+comment. It's not critical, but it would be nice to do as part of (or
+before) the "get it out of staging".
 
-And then you can use the common "fs_ftype_to_dtype()" to convert from
-FT_XYZ to DT_XYZ.
-
-Maybe I'm missing something, and the EROFS_FT_x list actually differs
-from the normal FT_x list some way, but it would be good to not
-introduce another case of this in normal filesystems, just as we've
-been getting rid of them.
-
-See for example commit e10892189428 ("ext2: use common file type conversion").
-
-               Linus
+                 Linus
