@@ -2,73 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE34D8F312
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C7FF8F317
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:19:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732764AbfHOSSx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:18:53 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36371 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbfHOSSx (ORCPT
+        id S1732784AbfHOSTQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:19:16 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46792 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbfHOSTP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:18:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id g67so2019670wme.1;
-        Thu, 15 Aug 2019 11:18:51 -0700 (PDT)
+        Thu, 15 Aug 2019 14:19:15 -0400
+Received: by mail-pg1-f195.google.com with SMTP id m3so1041898pgv.13;
+        Thu, 15 Aug 2019 11:19:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=23o7efePufPgMiRtsV680P2Y8XF1cb1fcBKJIqg5v0s=;
+        b=XQzlat5ilupPPJtGBI7dl9lgCTIhhQstpG+rOreORCn27xpRRYncTjW9fw3xFsCNW7
+         9jXeLOxOwauWrq3+qDR0hAh4U7YObv4cLWg0j2o9y2tehzGgKUm0kOwrlzGyPl6jCjaP
+         o+LMGAM+/KLWmwE8UDJsbpjKDfqZ62ZqroEeXEjMc3oD/C3L4TSnax/8euzp4onoWrqF
+         eat688HCZhiJJXYRy58Vr/+cjWy2G+t6+kfXeNxxg5ckgEgGpENtVkdxhiNu03bKexh9
+         8Y8xo97J9H1G/qNtQogi4SHK99nHT0X5uM4JD/ZjND9qPqcl4aY0yU/g57VuHUD/goRl
+         Kfyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5leAgXssmuJq/e90a7MyYuV3K+kXUHUhhkOK+kGTeCI=;
-        b=BnnimLP4qlW5AnZuZHBLi6MSPvT+eQNFFh81qGkSRNGZ4JluQDg+Yi9I4xpi6ns8yH
-         r58eWqh1mX6B5QBq9eDcGBUqU+JD76Je0iSidlbSfNheIlaAQvlwKTnlm6WP4ioh4y7/
-         +Sh133iZ4Yhc25P6ubrYTHmzgGGVVi6cJEb+dnPRAFdmsuKcCH+y5eUstX2GxnmwsRAY
-         4xNSrtXCu/yLCszeloTI3BhxfioLxDYPWyllGvxdWLkty1rdAIeX819VOOG/iiEl4fVA
-         LtaCXNZLW7onrL4/mmWsmKwLrNdDWEcAb4VmbK3p20tiG9mazREaF93U+9C1hAHdMuhr
-         VNaA==
-X-Gm-Message-State: APjAAAV9cD4czObNnB5nZmhV/DKT6+Pup0YA38Lwsy2ZWQaNNzBoxvtQ
-        9x+KyvsggXE3vQvxbiS6mHk=
-X-Google-Smtp-Source: APXvYqzE6ItclCocP3PgZPG+mo57YgFsf9InExOzUcHhgjzT41/UMFtc8ufAeRAqH3HuEm/VsIuTiA==
-X-Received: by 2002:a1c:7e85:: with SMTP id z127mr4016971wmc.95.1565893130728;
-        Thu, 15 Aug 2019 11:18:50 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.124])
-        by smtp.googlemail.com with ESMTPSA id v65sm2874829wme.31.2019.08.15.11.18.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 11:18:50 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 20:18:48 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org,
-        kgene@kernel.org, pankaj.dubey@samsung.com,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v3 1/9] soc: samsung: Add exynos chipid driver support
-Message-ID: <20190815181848.GB14360@kozik-lap>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150850eucas1p2aff64b5edb49ffb6626433de1c9e58ec@eucas1p2.samsung.com>
- <20190813150827.31972-2-s.nawrocki@samsung.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=23o7efePufPgMiRtsV680P2Y8XF1cb1fcBKJIqg5v0s=;
+        b=rCcZ1+OyzIRkk7i5CEhu7hdXF+3IKQeq8opGp6yMR67Mv5UVjYBR/aC1DCTkh2zP0I
+         eDzfVLBPBLFaRPLcirGQn4Ou0f/uqbTFBJC6hemPp20qywNPi2kcjMT7zZYnU4G0ttkX
+         SlMUD/+803NBT5VfOxI8/Ohxm/ApzSI2NqKNw7jJwaLVQ0A31vlmOl8nm9SkZW8g8x06
+         d9SfJ/Fi/aIS1RIcoWdZIEFOyKIUspfNqzu+KnAZc0OIns4aukgvLFGpkhVUzi7YhXmD
+         hH8RfZiZhgqVq8/LzhGLiimk3UbLjZq1GLLInheq2PqCcmjRZNXcfWmLwfzqpXDZp+Mr
+         EAsg==
+X-Gm-Message-State: APjAAAVrB+bwukAbysTOlmL9r3B7ZNiX3KUlzL4jUXVuUQjcyJT5BKHw
+        p1+qBY76fny/r94VAzcfjyE=
+X-Google-Smtp-Source: APXvYqx6lJyuaGzfOV9L2AuKtJc7lV40LTY8/4JzVQZe+D9BKhGhgTr2K0t6v071c/fkjUf0kdsROg==
+X-Received: by 2002:a63:c442:: with SMTP id m2mr4639543pgg.286.1565893155275;
+        Thu, 15 Aug 2019 11:19:15 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id y128sm2811186pgy.41.2019.08.15.11.19.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 11:19:14 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:19:13 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-watchdog@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Rick Ramstetter <rick@anteaterllc.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 12/22] watchdog: ziirave_wdt: Don't check if ihex
+ record length is zero
+Message-ID: <20190815181913.GH14388@roeck-us.net>
+References: <20190812200906.31344-1-andrew.smirnov@gmail.com>
+ <20190812200906.31344-13-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813150827.31972-2-s.nawrocki@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190812200906.31344-13-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:08:19PM +0200, Sylwester Nawrocki wrote:
-> From: Pankaj Dubey <pankaj.dubey@samsung.com>
+On Mon, Aug 12, 2019 at 01:08:56PM -0700, Andrey Smirnov wrote:
+> Ihex_next_binrec() will return NULL if next record's 'len' is zero, so
+> explicit checks for that in the driver are unnecessary. Drop them.
 > 
-> Exynos SoCs have Chipid, for identification of product IDs and SoC
-> revisions. This patch intends to provide initialization code for all
-> these functionalities, at the same time it provides some sysfs entries
-> for accessing these information to user-space.
-> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rick Ramstetter <rick@anteaterllc.com>
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-Thanks, applied.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
