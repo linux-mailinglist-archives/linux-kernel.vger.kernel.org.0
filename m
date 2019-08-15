@@ -2,117 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C6A678F71B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F5B18F724
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:43:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731946AbfHOWkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 18:40:24 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:46534 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726357AbfHOWkY (ORCPT
+        id S1732921AbfHOWnp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 18:43:45 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44430 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731244AbfHOWno (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 18:40:24 -0400
-Received: by mail-oi1-f193.google.com with SMTP id t24so3404677oij.13;
-        Thu, 15 Aug 2019 15:40:23 -0700 (PDT)
+        Thu, 15 Aug 2019 18:43:44 -0400
+Received: by mail-pf1-f193.google.com with SMTP id c81so2037457pfc.11;
+        Thu, 15 Aug 2019 15:43:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jS6ShQKayPnRfpjr7j4ASXzzmaziPz8YNcXH2Dd4cGI=;
+        b=qCJImpwQOUspMCTLKbwvXVRgGObb7V6OYqGLS8BjgWthmzLXv8hotcavowknGzXCsU
+         Q8skwEIjCthehtVk/rrbB8uvTRNBz9JUxcdnkDVdVZ0M36fO2wT7xX6/Xbx4opoTXA1s
+         1rq8b6rSC8MaKo/AC4WBP2sNJLP/3NHdi09MbtoVVCFZo6CvEq8DaKWs1wTJD3W2bsP1
+         /jxVMaot27wvz+Hv2FTmH2z3QhLuRqqOH1/LpcqVTWuKsnIQV6yY52EY6dli+6xL9HV3
+         oAYfeFgy8vXMr5FMuIilsg+TfMDP7J7qr8ca8uRAYkGXbwcTmGqNa13K4vK2JLWNZ8Bt
+         fcTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5N0BrmR1Tjy4UAxxe/8xM6uCYUxnCI+4Zt+Yt4/wBa0=;
-        b=d0AlVKdcuc8e7USj1p+njHyS5CIXk+ViENs9nRRjJqjKRbGNze1Wlk6uyf0hrSpfEY
-         PfePUGshj2edu0rm5Q35HKCsgMoUpYBpyAzg2q9bUqDHJYPj78N8DmXE0yGUDNk41XxA
-         X02BMykh80mMpWr0aWqRlL/0G2KHo/UFHLJ6sm1rTpy/hTnt0D00upf7idRGrPdpbj4p
-         +3HlzQo9fgIyc2IyKqXU/OlF6oeYRODNq2OoKQdYgnEQZ96d4asYtHimFEHNtpx09UtV
-         OYP+9temn5sv696CCFMs/qKfaS/V/aw4gy1wQpaZWesPaoA3p8kcAPsue3aYpiqobVGp
-         YFrw==
-X-Gm-Message-State: APjAAAV7u7PtzF7xLDoIAKrSrKrgJq8S/LnBv9UMa1wx8s8MFjVkSg5D
-        w/Iph15ghbucuOQnOlxSXgz93c90LZM=
-X-Google-Smtp-Source: APXvYqwYW4D/hTHIhZmRg6kF45XejlNLGsR7+EHYaCi+BY2j30kZLJbhDCf93qyLpBI2Gl4BqjLJvw==
-X-Received: by 2002:aca:f593:: with SMTP id t141mr3194805oih.76.1565908822733;
-        Thu, 15 Aug 2019 15:40:22 -0700 (PDT)
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com. [209.85.167.170])
-        by smtp.gmail.com with ESMTPSA id a22sm1486121otr.3.2019.08.15.15.40.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 15 Aug 2019 15:40:21 -0700 (PDT)
-Received: by mail-oi1-f170.google.com with SMTP id p124so3440362oig.5;
-        Thu, 15 Aug 2019 15:40:21 -0700 (PDT)
-X-Received: by 2002:a54:4191:: with SMTP id 17mr2851640oiy.175.1565908820908;
- Thu, 15 Aug 2019 15:40:20 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jS6ShQKayPnRfpjr7j4ASXzzmaziPz8YNcXH2Dd4cGI=;
+        b=Rr5iOmAgsGEY1wwgaV0zxSzVg+dRhlkvzeIu6LPalg5joIhS00eDzm441MLC/twKy5
+         1f6kqWJmtq0O44WLykvH86oUF3jFbm0wdnMGuPEkG21BzuHPEZ2saeNA+WDIp0lrjCOJ
+         dZv8uwSPFU+uflDZbSSQVrB2n7EiO05siBM6nFS/4xM3GQu/YDbCEt1hSGCBIFsMi0o/
+         h2WmFAFMqmW9KAbsQVZDqVJLFxKlYnbu5wBhUEWH0vo+h7MpZ7M+auhGfV24LrrzlliR
+         JOpMyutyLRkjIh+frA+rjkdHsf0lRYw679XRYPtRscggaWaJuB8n3+XAQpVbDJ9dWkS3
+         nwSA==
+X-Gm-Message-State: APjAAAWtosj8nWt36hFxXNUAf0+nGewwDI1OtgejGpA0TK734FEgX6xl
+        8/37Ed4XjwnRa0RmFA6AwTXcGavd
+X-Google-Smtp-Source: APXvYqy9PwdVKsaODSdLLrFGTDC0/CiqF1mCACd5317pAaqx6ZPgD8PIEXqW90ku1YNHlCgfqc4bZQ==
+X-Received: by 2002:aa7:9e9a:: with SMTP id p26mr7875391pfq.25.1565909023971;
+        Thu, 15 Aug 2019 15:43:43 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 16sm6203783pfc.66.2019.08.15.15.43.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 15:43:42 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 15:43:41 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Max Staudt <max@enpas.org>
+Cc:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jean Delvare <jdelvare@suse.com>, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de
+Subject: Re: [PATCH v3 2/3] hwmon/ltc2990: Generalise DT to fwnode support
+Message-ID: <20190815224341.GA12420@roeck-us.net>
+References: <20190815125802.16500-1-max@enpas.org>
+ <20190815125802.16500-2-max@enpas.org>
+ <6920f2da-3139-6fc8-b02c-3678cc17912e@enpas.org>
 MIME-Version: 1.0
-References: <20190814072649.8237-1-yinbo.zhu@nxp.com> <20190814072649.8237-2-yinbo.zhu@nxp.com>
-In-Reply-To: <20190814072649.8237-2-yinbo.zhu@nxp.com>
-From:   Li Yang <leoyang.li@nxp.com>
-Date:   Thu, 15 Aug 2019 17:40:09 -0500
-X-Gmail-Original-Message-ID: <CADRPPNSW4A0gkbzcPD=y-J_YHSnbAgP7p=RQnS6i0U-Ze=L6qA@mail.gmail.com>
-Message-ID: <CADRPPNSW4A0gkbzcPD=y-J_YHSnbAgP7p=RQnS6i0U-Ze=L6qA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/4] soc: fsl: guts: Add definition for LS1028A
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Amit Jain <amit.jain_1@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Rajesh Bhagat <rajesh.bhagat@nxp.com>,
-        Ashish Kumar <Ashish.Kumar@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        lkml <linux-kernel@vger.kernel.org>, linux-mmc@vger.kernel.org,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        Alex Marginean <alexandru.marginean@nxp.com>,
-        Catalin Horghidan <catalin.horghidan@nxp.com>,
-        Rajat Srivastava <rajat.srivastava@nxp.com>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6920f2da-3139-6fc8-b02c-3678cc17912e@enpas.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 2:26 AM Yinbo Zhu <yinbo.zhu@nxp.com> wrote:
->
-> Adding compatible string "ls1028a-dcfg" to initialize guts driver
-> for ls1028 and SoC die attribute definition for LS1028A
->
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+On Fri, Aug 16, 2019 at 12:19:42AM +0200, Max Staudt wrote:
+> On 08/15/2019 02:58 PM, Max Staudt wrote:
+> > -	if (of_node) {
+> > -		ret = of_property_read_u32_array(of_node, "lltc,meas-mode",
+> > -						 data->mode, 2);
+> > +	if (i2c->dev.of_node || i2c->dev.fwnode) {
+> 
+> One more idea, would it be better here to do the following?
+> 
+> 	if (device_property_present(i2c->dev, "lltc,meas-mode")) {
+> 		ret = of_property_read_u32_array(of_node, "lltc,meas-mode",
+> 						 data->mode, 2);
+> 	}
+> 
+> I'm happy to prepare a patch if you wish to have this in - just let me know whether it should be on top of the last one, or instead of it.
 
-Applied for next.
+That would be semantically different. The property is currently mandatory.
+The above code would make it optional. This might work:
 
-> ---
->  drivers/soc/fsl/guts.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/soc/fsl/guts.c b/drivers/soc/fsl/guts.c
-> index 1ef8068c8dd3..34810f9bb2ee 100644
-> --- a/drivers/soc/fsl/guts.c
-> +++ b/drivers/soc/fsl/guts.c
-> @@ -102,6 +102,11 @@ static const struct fsl_soc_die_attr fsl_soc_die[] = {
->           .svr          = 0x87360000,
->           .mask         = 0xff3f0000,
->         },
-> +       /* Die: LS1028A, SoC: LS1028A */
-> +       { .die          = "LS1028A",
-> +         .svr          = 0x870b0000,
-> +         .mask         = 0xff3f0000,
-> +       },
->         { },
->  };
->
-> @@ -224,6 +229,7 @@ static const struct of_device_id fsl_guts_of_match[] = {
->         { .compatible = "fsl,ls1012a-dcfg", },
->         { .compatible = "fsl,ls1046a-dcfg", },
->         { .compatible = "fsl,lx2160a-dcfg", },
-> +       { .compatible = "fsl,ls1028a-dcfg", },
->         {}
->  };
->  MODULE_DEVICE_TABLE(of, fsl_guts_of_match);
-> --
-> 2.17.1
->
+	if (dev_fwnode(&i2c->dev)) {
+		ret = device_property_read_u32_array(...);
+		...
+	}
+
+Feel free to send another version of your patch.
+
+Thanks,
+Guenter
