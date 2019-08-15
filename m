@@ -2,160 +2,226 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8AEF78F46A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:22:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B88608F46E
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 21:23:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732624AbfHOTWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 15:22:46 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:40680 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729820AbfHOTWq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 15:22:46 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hyLKN-0004XU-Lb; Thu, 15 Aug 2019 21:22:27 +0200
-Date:   Thu, 15 Aug 2019 21:22:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Dmitry Safonov <dima@arista.com>
-cc:     linux-kernel@vger.kernel.org,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Adrian Reber <adrian@lisas.de>,
-        Andrei Vagin <avagin@openvz.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Cyrill Gorcunov <gorcunov@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        containers@lists.linux-foundation.org, criu@openvz.org,
-        linux-api@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCHv6 28/36] posix-clocks: Add align for timens_offsets
-In-Reply-To: <20190815163836.2927-29-dima@arista.com>
-Message-ID: <alpine.DEB.2.21.1908152010230.1908@nanos.tec.linutronix.de>
-References: <20190815163836.2927-1-dima@arista.com> <20190815163836.2927-29-dima@arista.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1732851AbfHOTXH convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 15:23:07 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48438 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726545AbfHOTXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 15:23:07 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 19D2C307CDD1;
+        Thu, 15 Aug 2019 19:23:06 +0000 (UTC)
+Received: from [10.18.17.163] (dhcp-17-163.bos.redhat.com [10.18.17.163])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F08E8CBB9;
+        Thu, 15 Aug 2019 19:22:55 +0000 (UTC)
+Subject: Re: [RFC][Patch v12 1/2] mm: page_reporting: core infrastructure
+From:   Nitesh Narayan Lal <nitesh@redhat.com>
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     kvm list <kvm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>, virtio-dev@lists.oasis-open.org,
+        Paolo Bonzini <pbonzini@redhat.com>, lcapitulino@redhat.com,
+        Pankaj Gupta <pagupta@redhat.com>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        Yang Zhang <yang.zhang.wz@gmail.com>,
+        Rik van Riel <riel@surriel.com>,
+        David Hildenbrand <david@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, dodgen@google.com,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        dhildenb@redhat.com, Andrea Arcangeli <aarcange@redhat.com>,
+        john.starks@microsoft.com, Dave Hansen <dave.hansen@intel.com>,
+        Michal Hocko <mhocko@suse.com>, cohuck@redhat.com
+References: <20190812131235.27244-1-nitesh@redhat.com>
+ <20190812131235.27244-2-nitesh@redhat.com>
+ <CAKgT0UcSabyrO=jUwq10KpJKLSuzorHDnKAGrtWVigKVgvD-6Q@mail.gmail.com>
+ <6d5b57ca-41ff-5c54-ab20-2b1631a6ce29@redhat.com>
+ <CAKgT0UfavuUT4ZvfxVdm3h25qc86ksxPO=GFpFkf8zbGAjHPvg@mail.gmail.com>
+ <09c6fbef-fa53-3a25-d3d6-460b9b6b2020@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=nitesh@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ VujM7c/b4pps
+Organization: Red Hat Inc,
+Message-ID: <6241ef40-9403-1cb0-4e91-a1b86fcf1388@redhat.com>
+Date:   Thu, 15 Aug 2019 15:22:54 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <09c6fbef-fa53-3a25-d3d6-460b9b6b2020@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+Content-Language: en-US
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Thu, 15 Aug 2019 19:23:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Aug 2019, Dmitry Safonov wrote:
 
-> Align offsets so that time namespace will work for ia32 applications on
-> x86_64 host.
+On 8/15/19 9:15 AM, Nitesh Narayan Lal wrote:
+> On 8/14/19 12:11 PM, Alexander Duyck wrote:
+>> On Wed, Aug 14, 2019 at 8:49 AM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>>> On 8/12/19 2:47 PM, Alexander Duyck wrote:
+>>>> On Mon, Aug 12, 2019 at 6:13 AM Nitesh Narayan Lal <nitesh@redhat.com> wrote:
+>>>>> This patch introduces the core infrastructure for free page reporting in
+>>>>> virtual environments. It enables the kernel to track the free pages which
+>>>>> can be reported to its hypervisor so that the hypervisor could
+>>>>> free and reuse that memory as per its requirement.
+>>>>>
+>>>>> While the pages are getting processed in the hypervisor (e.g.,
+>>>>> via MADV_DONTNEED), the guest must not use them, otherwise, data loss
+>>>>> would be possible. To avoid such a situation, these pages are
+>>>>> temporarily removed from the buddy. The amount of pages removed
+>>>>> temporarily from the buddy is governed by the backend(virtio-balloon
+>>>>> in our case).
+>>>>>
+>>>>> To efficiently identify free pages that can to be reported to the
+>>>>> hypervisor, bitmaps in a coarse granularity are used. Only fairly big
+>>>>> chunks are reported to the hypervisor - especially, to not break up THP
+>>>>> in the hypervisor - "MAX_ORDER - 2" on x86, and to save space. The bits
+>>>>> in the bitmap are an indication whether a page *might* be free, not a
+>>>>> guarantee. A new hook after buddy merging sets the bits.
+>>>>>
+>>>>> Bitmaps are stored per zone, protected by the zone lock. A workqueue
+>>>>> asynchronously processes the bitmaps, trying to isolate and report pages
+>>>>> that are still free. The backend (virtio-balloon) is responsible for
+>>>>> reporting these batched pages to the host synchronously. Once reporting/
+>>>>> freeing is complete, isolated pages are returned back to the buddy.
+>>>>>
+>>>>> Signed-off-by: Nitesh Narayan Lal <nitesh@redhat.com>
+>>> [...]
+>>>>> +}
+>>>>> +
+>>>>> +/**
+>>>>> + * __page_reporting_enqueue - tracks the freed page in the respective zone's
+>>>>> + * bitmap and enqueues a new page reporting job to the workqueue if possible.
+>>>>> + */
+>>>>> +void __page_reporting_enqueue(struct page *page)
+>>>>> +{
+>>>>> +       struct page_reporting_config *phconf;
+>>>>> +       struct zone *zone;
+>>>>> +
+>>>>> +       rcu_read_lock();
+>>>>> +       /*
+>>>>> +        * We should not process this page if either page reporting is not
+>>>>> +        * yet completely enabled or it has been disabled by the backend.
+>>>>> +        */
+>>>>> +       phconf = rcu_dereference(page_reporting_conf);
+>>>>> +       if (!phconf)
+>>>>> +               return;
+>>>>> +
+>>>>> +       zone = page_zone(page);
+>>>>> +       bitmap_set_bit(page, zone);
+>>>>> +
+>>>>> +       /*
+>>>>> +        * We should not enqueue a job if a previously enqueued reporting work
+>>>>> +        * is in progress or we don't have enough free pages in the zone.
+>>>>> +        */
+>>>>> +       if (atomic_read(&zone->free_pages) >= phconf->max_pages &&
+>>>>> +           !atomic_cmpxchg(&phconf->refcnt, 0, 1))
+>>>> This doesn't make any sense to me. Why are you only incrementing the
+>>>> refcount if it is zero? Combining this with the assignment above, this
+>>>> isn't really a refcnt. It is just an oversized bitflag.
+>>> The intent for having an extra variable was to ensure that at a time only one
+>>> reporting job is enqueued. I do agree that for that purpose I really don't need
+>>> a reference counter and I should have used something like bool
+>>> 'page_hinting_active'. But with bool, I think there could be a possible chance
+>>> of race. Maybe I should rename this variable and keep it as atomic.
+>>> Any thoughts?
+>> You could just use a bitflag to achieve what you are doing here. That
+>> is the primary use case for many of the test_and_set_bit type
+>> operations. However one issue with doing it as a bitflag is that you
+>> have no way of telling that you took care of all requesters.
+> I think you are right, I might end up missing on certain reporting
+> opportunities in some special cases. Specifically when the pages which are
+> part of this new reporting request belongs to a section of the bitmap which
+> has already been scanned. Although, I have failed to reproduce this kind of
+> situation in an actual setup.
+>
+>>  That is
+>> where having an actual reference count comes in handy as you know
+>> exactly how many zones are requesting to be reported on.
+>
+> True.
+>
+>>>> Also I am pretty sure this results in the opportunity to miss pages
+>>>> because there is nothing to prevent you from possibly missing a ton of
+>>>> pages you could hint on if a large number of pages are pushed out all
+>>>> at once and then the system goes idle in terms of memory allocation
+>>>> and freeing.
+>>> I was looking at how you are enqueuing/processing reporting jobs for each zone.
+>>> I am wondering if I should also consider something on similar lines as having
+>>> that I might be able to address the concern which you have raised above. But it
+>>> would also mean that I have to add an additional flag in the zone_flags. :)
+>> You could do it either in the zone or outside the zone as yet another
+>> bitmap. I decided to put the flags inside the zone because there was a
+>> number of free bits there and it should be faster since we were
+>> already using the zone structure.
+> There are two possibilities which could happen while I am reporting:
+> 1. Another request might come in for a different zone.
+> 2. Another request could come in for the same zone and the pages belong to a
+>     section of the bitmap which has already been scanned.
+>
+> Having a per zone flag to indicate reporting status will solve the first
+> issue and to an extent the second as well. Having refcnt will possibly solve
+> both of them. What I am wondering about is that in my case I could easily
+> impact the performance negatively by performing more bitmap scanning.
+>
+>
 
-That's true for any 64 bit arch which supports 32bit user space and should
-be folded into the patch which introduces the offset store.
+I realized that it may not be possible for me to directly adopt either refcnt
+or zone flags just because of the way I have page reporting setup right now.
 
-> +/*
-> + * Time offsets need align as they're placed on VVAR page,
-> + * which is used by x86_64 and ia32 VDSO code.
-> + * On ia32 offset::tv_sec (u64) has align(4), so re-align offsets
-> + * to the same positions as 64-bit offsets.
+For now, I will just replace the refcnt with a bitflag as that should work
+for most of the cases.  Nevertheless, I will also keep looking for a better way.
 
-This is generic code. Please do not add x86'isms here. The alignement
-problem is more or less the same for any 64bit arch which supports 32bit
-user space. And it's even worse on BE.
+-- 
+Thanks
+Nitesh
 
-> + * On 64-bit big-endian systems VDSO should convert to timespec64
-> + * to timespec ...
-
-What?
-
-> ... because of a padding occurring between the fields.
-
-There is no padding between the fields.
-
-32bit BE (powerpc)
-
-struct timespec64 {
-	time64_t                   tv_sec;               /*     0     8 */
-	long int                   tv_nsec;              /*     8     4 */
-
-tv_nsec is directly after tv_sec
-
-};
-
-64bit LE and BE (x86, powerpc64)
-
-struct timespec64 {
-	time64_t                   tv_sec;               /*     0     8 */
-	long int                   tv_nsec;              /*     8     8 */
-};
-
-The problem for BE is that the 64bit host uses long int to store
-tv_nsec. So the 32bit userspace will always read 0 because it reads byte
-2/3 as seen from the 64 host side.
-
-So using struct timespec64 for the offset is wrong. You really need to open
-code that offset storage if you don't want to end up with weird workarounds
-for BE.
-
-Something like this:
-
-struct timens_offs {
-	  time64_t	tv_sec;
-	  s64		tv_nsec;
-};
-
-Then your offset store becomes:
-
-struct timens_offsets {
-	struct timens_offs	monotonic;
-	struct timens_offs	boottime;
-};
-
-which needs tweaks to your conversion functions:
-
-static inline void timens_add_monotonic(struct timespec64 *ts)
-{
-	struct timens_offsets *ns_offsets = current->nsproxy->time_ns->offsets;
-	struct timens_offs *mo = &ns_offsets->monotonic;
-
-	if (ns_offsets) {
-		set_normalized_timespec64(ts, ts->tv_sec + mo->tv_sec,
-                                	  ts->tv_nsec + mo->tv_nsec);
-	}
-}
-
-And for your to host conversion you need:
-
-	case CLOCK_MONOTONIC:
-		mo = &ns_offsets->monotonic;
-		offset = ktime_set(mo->tv_sec, mo->tv_nsec);
-		break;
-
-Similar changes are needed in the VDSO and the proc interface
-obviously. Then this works for any arch without magic BE fixups. You get
-the idea.
-
-And ideally you change that storage to:
-
-struct timens_offs {
-	  time64_t	tv_sec;
-	  s64		tv_nsec;
-	  ktime_t	nsecs;
-};
-
-and do the conversion once in the proc write. Then your to host conversion
-can use 'nsecs' and spare the multiplication on every invocation.
-
-	case CLOCK_MONOTONIC:
-    		offset = ns_offsets.monotonic.nsecs;
-
-Thanks,
-
-	tglx
