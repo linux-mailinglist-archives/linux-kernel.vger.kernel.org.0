@@ -2,86 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C50938F32E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:22:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89F1D8F332
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:23:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732830AbfHOSWn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:22:43 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:36689 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729565AbfHOSWn (ORCPT
+        id S1732847AbfHOSXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:23:01 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:43760 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729565AbfHOSXB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:22:43 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r3so3051512wrt.3;
-        Thu, 15 Aug 2019 11:22:41 -0700 (PDT)
+        Thu, 15 Aug 2019 14:23:01 -0400
+Received: by mail-pf1-f195.google.com with SMTP id v12so1714399pfn.10;
+        Thu, 15 Aug 2019 11:23:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=I6r9xkUCIDGW06+ejaTpiSeJRRLD5vi4+EJ3xtafcno=;
+        b=t7j5WaaLgIimZFUmKcUwkdWOUn+nGVIAK23dZp6RwRENhysF47CtajMMjHyRc2CkKt
+         0fQgzsv75xAd1bzfLRjsjaqqIfJfusCNvrmh3YwZFecLutgyP2thTwa/9M3UN1dupGrr
+         wH8LLB3Ymciyeiy3xD47RkA81rzt3FA7bNR4xJJzyy84rgwyT4rBgYpj5uxreqD034kw
+         mJ+NJNGXADaGVLMyTIiwcmsf7ikBRHNzLqT+0H7jVl+V85cr8UZM68vdJh2WROGXzsxi
+         s2L/JWVqM35gfwIAvOvGgvJcjnkZJxUI3buHQexC0XttahPRS+CgmkElzuBXTs/A8LkV
+         M1Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Mh8n/VNiTVWDFrItd4GHUV+f3zt1dfnH+uZF/6gzubw=;
-        b=QVqYevEA1IhtJVC/Ut6igsF2qLcAIpugNA0p5f8GP8ZrNLsT/RXU0n1ODamEczE3yK
-         YyGsFQI/A27K89WhPY9VQxPlslQvLsCNmzmo2RedR8Ww3OdOtN368vTZO8jeJDnAYXTv
-         lFrlkzPTFlJeFDIlh02OnmYQuFeUi1t6IR8XvHTaicf0DKv5JBs7MAOyyRLa33uZMSmT
-         q53gYvnrMAgVX06HBKrLEasRg0s+31w/MSk35S4HzfbFvOgpcZ/51Ok/scZNCpNAQq6S
-         XBMjxI3tOvTzwGLmY8lop9ARUBoNCKrQPh2ussQpiLIB89VtzLgQHVuAa6VaKiy8msV/
-         qZGQ==
-X-Gm-Message-State: APjAAAWsi9TMETASn2lvhwC6H50V11ZXWNKUD/rzL/eaMzeo1qHda2Hv
-        LKvaYLhj49Gw8v5H6qntTMhFni5v
-X-Google-Smtp-Source: APXvYqxAOF7d8gx7S+4KOLrESeMUupXxwlLNiqXx0Gy90/oE4qxtlhlu0qmZit2MPXZBrY1LY5pCKA==
-X-Received: by 2002:adf:d4c6:: with SMTP id w6mr6996086wrk.98.1565893360200;
-        Thu, 15 Aug 2019 11:22:40 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.124])
-        by smtp.googlemail.com with ESMTPSA id 16sm4108056wmx.45.2019.08.15.11.22.38
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 11:22:39 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 20:22:37 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org,
-        kgene@kernel.org, pankaj.dubey@samsung.com,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to use
- the regmap API
-Message-ID: <20190815182237.GC14360@kozik-lap>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
- <20190813150827.31972-3-s.nawrocki@samsung.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=I6r9xkUCIDGW06+ejaTpiSeJRRLD5vi4+EJ3xtafcno=;
+        b=s3PrQA1+pOakdfvEP5CkRltDhH6gKhabnetGpc91+WtMwqUUZ062UGaA66JuIJPBWE
+         JQr4mo5MTaJ3t04EflwTHE+96VorKqF+VkmjOyyFFvttaHOGjDBQ9bfzNxoItliu3gWy
+         KfLtHBrpON3uVZpKwlF4bUglue2SVDx1tD7ORd0dQ1f8xePEeal8u6S8Sq84gKJacnaV
+         bw6fakezRrm9lVq3rX5RIyXQxcTcU/cvaPOIECt24kaa7TNCllngVOp7R3/LsO7BFzal
+         r/pJ0yfwp0ZAXYpcgn1MVFYRfsrDKYSskXxJR/7dUe+bvd058iUVn86935pWL0fKCKsL
+         uNDw==
+X-Gm-Message-State: APjAAAUVz9sF0Fwf8TrwgAP6/b7aj8lzUMi09mUyd+IxamW17EGpAwM0
+        McjeYCpscmXY02Fn5eZ8VZc=
+X-Google-Smtp-Source: APXvYqzhC5UI9d5ry1PZ/csR99PGtScRk8UUAYK7skX/O9eHPNaZWiTRcSDxByRBqnxMgjKmSqxxrQ==
+X-Received: by 2002:a63:1918:: with SMTP id z24mr4365232pgl.94.1565893380493;
+        Thu, 15 Aug 2019 11:23:00 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d189sm3976808pfd.165.2019.08.15.11.22.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 11:23:00 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:22:59 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-watchdog@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Rick Ramstetter <rick@anteaterllc.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 16/22] watchdog: ziirave_wdt: Fix JUMP_TO_BOOTLOADER
+ payload
+Message-ID: <20190815182259.GL14388@roeck-us.net>
+References: <20190812200906.31344-1-andrew.smirnov@gmail.com>
+ <20190812200906.31344-17-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813150827.31972-3-s.nawrocki@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190812200906.31344-17-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:08:20PM +0200, Sylwester Nawrocki wrote:
-> Convert the driver to use regmap API in order to allow other
-> drivers, like ASV, to access the CHIPID registers.
+On Mon, Aug 12, 2019 at 01:09:00PM -0700, Andrey Smirnov wrote:
+> Bootloader firmware expects the following traffic for
+> JUMP_TO_BOOTLOADER:
 > 
-> This patch adds definition of selected CHIPID register offsets
-> and register bit fields for Exynos5422 SoC.
+> S Addr Wr [A] 0x0c [A] 0x01 [A] P
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v2:
->  - s/_EXYNOS_ASV_H/__LINU_SOC_EXYNOS_ASV_H,
->  - removed __func__ from error log,
->  - removed unneeded <linux/of_address.h> header inclusion.
+> using ziirave_firm_write_byte() will result in
 > 
-> Changes since v1 (RFC):
->  - new patch
-> ---
->  drivers/soc/samsung/exynos-chipid.c       | 34 ++++++---------
->  include/linux/soc/samsung/exynos-chipid.h | 52 +++++++++++++++++++++++
->  2 files changed, 65 insertions(+), 21 deletions(-)
+> S Addr Wr [A] 0x0c [A] 0x01 [A] 0x01 [A] P
+> 
+> which happens to work because firmware will ignore any extra bytes and
+> expected magic value matches byte count sent by
+> i2c_smbus_write_block_data(). Fix this by converting the code to use
+> i2c_smbus_write_byte_data() instead.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rick Ramstetter <rick@anteaterllc.com>
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-Thanks, applied.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
