@@ -2,120 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D40A8E378
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:15:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84FF38E367
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:10:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfHOEPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 00:15:21 -0400
-Received: from mga04.intel.com ([192.55.52.120]:58501 "EHLO mga04.intel.com"
+        id S1726080AbfHOEKj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 00:10:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfHOEPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:15:20 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 21:15:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,387,1559545200"; 
-   d="scan'208";a="184514859"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by FMSMGA003.fm.intel.com with ESMTP; 14 Aug 2019 21:15:18 -0700
-Date:   Thu, 15 Aug 2019 11:58:04 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     Scott Wood <swood@redhat.com>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, mdf@kernel.org,
-        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        atull@kernel.org, Ananda Ravuri <ananda.ravuri@intel.com>,
-        Xu Yilun <yilun.xu@intel.com>
-Subject: Re: [PATCH v3 01/12] fpga: dfl: fme: support 512bit data width PR
-Message-ID: <20190815035804.GA29090@hao-dev>
-References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
- <1563857495-26692-2-git-send-email-hao.wu@intel.com>
- <20190724093532.GB29532@kroah.com>
- <20190724142235.GE8463@hao-dev>
- <32c46e3de1a6641eb0d5940868f7d8b8a30181d3.camel@redhat.com>
+        id S1725832AbfHOEKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:10:38 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 37CF9208C2;
+        Thu, 15 Aug 2019 04:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565842238;
+        bh=8F3KRsBxdhyWon/KQ5t5lXGBquSIxOV11AsIVZq7ikQ=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QHwVyyn3C/XQA4Csutk/Nfs1u2TaBaXhbnpmmiQs9nwObS17SgmrWrpd5PCpCRTJo
+         U7MMeOVGYnOx/aanAWmj0gRPLfFw+/kW0LnoUDXenr3muZyvliLInjrX1NaYUi3ASY
+         dfEXFC1qN/ue9gWK+TSQHvSsJmG7PmiTR7/lAqXI=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH] clk: sunxi: Don't call clk_hw_get_name() on a hw that isn't registered
+Date:   Wed, 14 Aug 2019 21:10:37 -0700
+Message-Id: <20190815041037.3470-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32c46e3de1a6641eb0d5940868f7d8b8a30181d3.camel@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 11:34:15AM -0500, Scott Wood wrote:
-> On Wed, 2019-07-24 at 22:22 +0800, Wu Hao wrote:
-> > On Wed, Jul 24, 2019 at 11:35:32AM +0200, Greg KH wrote:
-> > > On Tue, Jul 23, 2019 at 12:51:24PM +0800, Wu Hao wrote:
-> > > >  
-> > > > @@ -67,8 +69,43 @@
-> > > >  #define PR_WAIT_TIMEOUT   8000000
-> > > >  #define PR_HOST_STATUS_IDLE	0
-> > > >  
-> > > > +#if defined(CONFIG_X86) && defined(CONFIG_AS_AVX512)
-> > > > +
-> > > > +#include <linux/cpufeature.h>
-> > > > +#include <asm/fpu/api.h>
-> > > > +
-> > > > +static inline int is_cpu_avx512_enabled(void)
-> > > > +{
-> > > > +	return cpu_feature_enabled(X86_FEATURE_AVX512F);
-> > > > +}
-> > > 
-> > > That's a very arch specific function, why would a driver ever care about
-> > > this?
-> > 
-> > Yes, this is only applied to a specific FPGA solution, which FPGA
-> > has been integrated with XEON. Hardware indicates this using register
-> > to software. As it's cpu integrated solution, so CPU always has this
-> > AVX512 capability. The only check we do, is make sure this is not
-> > manually disabled by kernel.
-> > 
-> > With this hardware, software could use AVX512 to accelerate the FPGA
-> > partial reconfiguration as mentioned in the patch commit message.
-> > It brings performance benifits to people who uses it. This is only one
-> > optimization (512 vs 32bit data write to hw) for a specific hardware.
-> 
-> I thought earlier you said that 512 bit accesses were required for this
-> particular integrated-only version of the device, and not just an
-> optimization?
+The implementation of clk_hw_get_name() relies on the clk_core
+associated with the clk_hw pointer existing. If of_clk_hw_register()
+fails, there isn't a clk_core created yet, so calling clk_hw_get_name()
+here fails. Extract the name first so we can print it later.
 
-yes, some optimization implemented in a specific integrated-only version
-of hardware, this patch is used to support that particular hardware. This
-is also the reason you see code here to check hardware revision in this
-patch.
+Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-> 
-> > > > +#else
-> > > > +static inline int is_cpu_avx512_enabled(void)
-> > > > +{
-> > > > +	return 0;
-> > > > +}
-> > > > +
-> > > > +static inline void copy512(const void *src, void __iomem *dst)
-> > > > +{
-> > > > +	WARN_ON_ONCE(1);
-> > > 
-> > > Are you trying to get reports from syzbot?  :)
-> > 
-> > Oh.. no.. I will remove it. :)
-> > 
-> > Thank you very much!
-> 
-> What's wrong with this?  The driver should never call copy512() if
-> is_cpu_avx512_enabled() returns 0, and if syzbot can somehow make the driver
-> do so, then yes we do want a report.
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 7fe3ac980e5f..2e20e650b6c0 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -97,14 +97,15 @@ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
+ 
+ 	for (i = 0; i < desc->hw_clks->num ; i++) {
+ 		struct clk_hw *hw = desc->hw_clks->hws[i];
++		const char *name;
+ 
+ 		if (!hw)
+ 			continue;
+ 
++		name = hw->init->name;
+ 		ret = of_clk_hw_register(node, hw);
+ 		if (ret) {
+-			pr_err("Couldn't register clock %d - %s\n",
+-			       i, clk_hw_get_name(hw));
++			pr_err("Couldn't register clock %d - %s\n", i, name);
+ 			goto err_clk_unreg;
+ 		}
+ 	}
 
-Yes, you are right, in previous version, it doesn't have avx512 enable check
-there, so it's possible to have false reporting, it should be fine after
-driver does early check on this during probe. As this patch has been dropped
-from main patchset, may rework it later and resubmit. Thanks for the comments.
+base-commit: 5f9e832c137075045d15cd6899ab0505cfb2ca4b
+-- 
+Sent by a computer through tubes
 
-Hao
-
-> 
-> -Scott
-> 
