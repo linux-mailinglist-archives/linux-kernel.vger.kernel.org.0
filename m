@@ -2,250 +2,422 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A20488E9EE
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A77498EABC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:53:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731471AbfHOLOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 07:14:23 -0400
-Received: from mail-eopbgr00072.outbound.protection.outlook.com ([40.107.0.72]:15754
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729986AbfHOLOW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:14:22 -0400
+        id S1730842AbfHOLxX convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 07:53:23 -0400
+Received: from m9a0003g.houston.softwaregrp.com ([15.124.64.68]:56692 "EHLO
+        m9a0003g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729986AbfHOLxW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 07:53:22 -0400
+X-Greylist: delayed 1521 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 07:53:21 EDT
+Received: FROM m9a0003g.houston.softwaregrp.com (15.121.0.190) BY m9a0003g.houston.softwaregrp.com WITH ESMTP;
+ Thu, 15 Aug 2019 11:52:48 +0000
+Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
+ M9W0067.microfocus.com (2002:f79:be::f79:be) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Thu, 15 Aug 2019 11:16:13 +0000
+Received: from NAM05-DM3-obe.outbound.protection.outlook.com (15.124.8.14) by
+ M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10 via Frontend Transport; Thu, 15 Aug 2019 11:16:13 +0000
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=aWhXNqRMN2MR9MvRilAgnvXFdQQNovgAQVs+hvGexyDVUDwpLqUpbCDNxlcW8haZv/OkQf+K8LWgtEqsb9fRVHGxQ1E0bKKWWXth0jhImmFes4EMsaybQjrQko0XCS8eL8MB8w1pr0xVFoTmJXjLj3DiARwFeloODk0Y6coSLcGKDczgMJ1TA7AyTnb9ddCXo9l+RCXCqzSMu2EoJImRbIbcC+EobCSQ8mFVFDTbLQvtC/Ge5L32UB9B+EFfVcxx+wEqqMMjobNjSr/ocVQcqk3I1jui7j4pWmZ3+nfEX8Mxfn3qFFOxZAxX/t3dfmA+8zDKGqZoeD33Mf9smPdBwA==
+ b=USABAu6ReCCpFXMK0fSbKQwrkgoaAqBlI/1N6qsDwIsPxhwWX8jLG4ROnqBzEhT4eyxbAnvyBblsaJI9+bu4K2qBitXHFE57Rc6v4J5SzaNLqaxnShSVBeQP+DP2kZlv7zycRfWjvnOEtTafddBLiNRZ71+tIjXkK+cwFfVsB1qGGrgSWGlBIG9cLSnb022kCcwjmBCMnEbG+i8Z08ELSYRwvaUMg0EWGAlpPswSHFnNbERlLL25USYVSuyLmcWOydICStz/2KIIkUouDrbSKAo9Dif8/J+KEcNz4dB8qqVCkvoLfu6E12nQEjSuaPkv4m6Ls+4rcrvtV/nNKVirmw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jO3Ncm+9VuXevFS1lY4fvBUAqo0rqHb43jirik8Js0U=;
- b=eDq4UiE24V60npEfD6i6govXp9mF2PZwaGjZScNni+mHqUICc2zh/sib6lUm1/Q399T2d40cTuGPLfk0UiP/eQdNvsAgWzXIWleRzKEy9gdTRaZDtwRJealxdxzkBw3dVfR4rmIXbMdYC5Q1BIvKhvp0z6REChTzM6+jg7JSjbDvanY/MKxLQHOOgJUu0QFIMRlTZIL+6PSjFC1nnmMcqD40rTk5el8mi2xBmgVpdfEhO5TTnLzOOk7pnlA+BNTgCSjEz2v04OjdTektBiZULPCTnct8rs0mQso6vBra5DUZ8EBOTxskTXZ8LqQpe1WrFEkNem9xwT5JUH1cyrh21g==
+ bh=XE5gjmJaG89rGFN2Wivn9jOi53U3V58G2S7W7jgVEtM=;
+ b=JLAxBHVOnUtoxtRm4s9hbg+a84GDX3K5UJfc6bvBV7U1Besh++Z2dtx/o+46mRdvhtPi3hVZccDHJPDGBe98qL+BAP6dRJTAggv7rk6923kzBtZfkOcSuNIoZP+aD/Vlp5Z+rHNqVLUkAXhMGQcqSTkayr8jv3UcUPJMDGCLO/q2ZiinAPvuNxUgJ8A8pPIWKtJ/2eD/lgVqRqjWSGuLjWFE0bqCQuO+JTijlVmZfT5IBojMj03rnk/ToVj2daDAM2fMTfP+hGVtHLYVuJhXkQiXT3jBhE6I4oh6A9olfOgXINSDeCbnPJKfGPnZLAaWu4mQ593k/wctgOPy8t962Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jO3Ncm+9VuXevFS1lY4fvBUAqo0rqHb43jirik8Js0U=;
- b=e/zWmkRfw12BF1LhtMPaJDiR3AoszcY1BFqbh6ogD6I2iJFkWG9214e7zb7yaJHajYPwr9TiNSC/qa9TKv40JpqgQIrEhpPU8gyGW0QtH+L1Avl+9wCChc8klfAAwXyhmRNoCE7VrXvVAOZMll8bQ3iaauabKq6C8k5euyMURHk=
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com (20.176.236.27) by
- DB7PR04MB4778.eurprd04.prod.outlook.com (20.176.233.88) with Microsoft SMTP
+ smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
+ dkim=pass header.d=suse.com; arc=none
+Received: from BY5PR18MB3283.namprd18.prod.outlook.com (10.255.139.203) by
+ BY5PR18MB3156.namprd18.prod.outlook.com (10.255.138.204) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.20; Thu, 15 Aug 2019 11:14:17 +0000
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::e854:ffa9:a285:88a4]) by DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::e854:ffa9:a285:88a4%5]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
- 11:14:17 +0000
-From:   Wen He <wen.he_1@nxp.com>
-To:     Liviu Dudau <liviu.dudau@arm.com>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "brian.starkey@arm.com" <brian.starkey@arm.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "daniel@ffwll.ch" <daniel@ffwll.ch>, Leo Li <leoyang.li@nxp.com>
-Subject: RE: [EXT] Re: [v2 1/3] drm/arm/mali-dp: Add display QoS interface
- configuration for Mali DP500
-Thread-Topic: [EXT] Re: [v2 1/3] drm/arm/mali-dp: Add display QoS interface
- configuration for Mali DP500
-Thread-Index: AQHVPhlNBn8r2UCjPE68MMKIi4MPSqbR0vsAgAQHHnCAAIqFgIAlz+MA
-Date:   Thu, 15 Aug 2019 11:14:17 +0000
-Message-ID: <DB7PR04MB519533DF619D0E114EBA4C3AE2AC0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190719095445.11575-1-wen.he_1@nxp.com>
- <20190719114624.GB16673@e110455-lin.cambridge.arm.com>
- <DB7PR04MB5195BD852798B113D4CB8BA4E2C40@DB7PR04MB5195.eurprd04.prod.outlook.com>
- <20190722093241.GC15612@e110455-lin.cambridge.arm.com>
-In-Reply-To: <20190722093241.GC15612@e110455-lin.cambridge.arm.com>
-Accept-Language: en-US, zh-CN
+ 15.20.2178.16; Thu, 15 Aug 2019 11:16:12 +0000
+Received: from BY5PR18MB3283.namprd18.prod.outlook.com
+ ([fe80::847e:511a:8cc2:8fca]) by BY5PR18MB3283.namprd18.prod.outlook.com
+ ([fe80::847e:511a:8cc2:8fca%6]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
+ 11:16:12 +0000
+From:   Chester Lin <clin@suse.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        Chester Lin <clin@suse.com>,
+        "guillaume.gardet@arm.com" <guillaume.gardet@arm.com>,
+        "ren_guo@c-sky.com" <ren_guo@c-sky.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>, Gary Lin <GLin@suse.com>,
+        "Juergen Gross" <JGross@suse.com>, Joey Lee <JLee@suse.com>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] efi/arm: fix allocation failure when reserving the kernel
+ base
+Thread-Topic: [PATCH] efi/arm: fix allocation failure when reserving the
+ kernel base
+Thread-Index: AQHVSPSS9nx4lee000qskpi0lgLxmKbqoqP1gBFKchaAADaQgA==
+Date:   Thu, 15 Aug 2019 11:16:11 +0000
+Message-ID: <20190815111543.GA4728@linux-8mug>
+References: <20190802053744.5519-1-clin@suse.com>
+ <CAKv+Gu-yaNYsLQOOcr8srW91-nt-w0e+RBqxXGOagiGGT69n1Q@mail.gmail.com>
+ <CAKv+Gu8uwbY-JtjNbgoyY230X_M6xLchVM3OUg_oNWOJrF=iCg@mail.gmail.com>
+In-Reply-To: <CAKv+Gu8uwbY-JtjNbgoyY230X_M6xLchVM3OUg_oNWOJrF=iCg@mail.gmail.com>
+Accept-Language: zh-TW, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com; 
-x-originating-ip: [119.31.174.73]
+x-clientproxiedby: DB6PR04CA0032.eurprd04.prod.outlook.com (2603:10a6:6::45)
+ To BY5PR18MB3283.namprd18.prod.outlook.com (2603:10b6:a03:196::11)
+authentication-results: spf=none (sender IP is ) smtp.mailfrom=clin@suse.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [202.47.205.198]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 033a4fd6-92f8-4379-3733-08d72171b67b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4778;
-x-ms-traffictypediagnostic: DB7PR04MB4778:
+x-ms-office365-filtering-correlation-id: 393e15ac-a8b3-43e8-c764-08d72171fa53
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BY5PR18MB3156;
+x-ms-traffictypediagnostic: BY5PR18MB3156:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB4778D24ABC37D16BAE29504BE2AC0@DB7PR04MB4778.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-microsoft-antispam-prvs: <BY5PR18MB3156F004A9C72E8E4B94B09FADAC0@BY5PR18MB3156.namprd18.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
 x-forefront-prvs: 01304918F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(366004)(39850400004)(376002)(346002)(199004)(189003)(52314003)(54094003)(13464003)(2906002)(14444005)(66946007)(186003)(11346002)(486006)(6116002)(446003)(66556008)(64756008)(3846002)(76116006)(8936002)(256004)(66446008)(478600001)(66476007)(54906003)(53546011)(6506007)(25786009)(9686003)(99286004)(476003)(102836004)(14454004)(26005)(316002)(71190400001)(33656002)(71200400001)(305945005)(7736002)(6246003)(4326008)(6436002)(6916009)(81156014)(7696005)(76176011)(74316002)(229853002)(5660300002)(53936002)(86362001)(81166006)(52536014)(66066001)(55016002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4778;H:DB7PR04MB5195.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(4636009)(39860400002)(376002)(396003)(366004)(346002)(136003)(189003)(53434003)(199004)(476003)(71200400001)(6116002)(3846002)(71190400001)(256004)(316002)(6512007)(9686003)(6436002)(33716001)(66066001)(54906003)(25786009)(8936002)(7736002)(66946007)(305945005)(66446008)(66556008)(66476007)(64756008)(11346002)(53936002)(14444005)(486006)(446003)(7416002)(2906002)(1076003)(229853002)(26005)(86362001)(14454004)(386003)(81166006)(30864003)(102836004)(186003)(6506007)(81156014)(5660300002)(6246003)(478600001)(8676002)(53946003)(6486002)(33656002)(99286004)(52116002)(4326008)(6916009)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3156;H:BY5PR18MB3283.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: suse.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YKQUd6aOrm81t4bmL6PpP9Teqv6ImloA2e7w0NLf6lN6XDYkY5LS0711E8rqsSjqZ5AjFXYRaJQgNosfNkoZOpEsv8U60C5dramXcke0q/xZsALm1qnRovJYoURkKfsaz7o/vPXUWj8Zm94qIk49ePWhb7G6te4uKJTZ9+oivFJiy80G/F2h4fnn1Go9wuCJp/LEE82egzogomvtM1xyB/Gcdlp9QRro6i62Jl5BPBbPYMAll/T8jwdjNlK7XidBx80uNM6WoiphuwXHnivFVoFur3+mQOW6UaqEzzVNnvNIt7KxuFN1qICIfcxa2P9m/mAdzqvhjcsUV1jBT8qMatuTVtno1ZkfOKL6k3wqnKMxTSePhxnPxBPErief/mFluU1W1i7+qZXv0aoVmwCqP+F8OHRqyXb89Jy0KNIDE1o=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+x-microsoft-antispam-message-info: 1uPXBHWzlAb1VpHQ78IuMZT2wCmXMFfJyraYwBZnFAvfcmds9ynY/irOGLIBRBG1izdYZnLY4qqvT38TycxdTBRAhAywG0mwC39HuUGCQC238+MmiEuX1jA9Xm+C09CMPl2wckoaqR8CkLaN87K/XX/f9Ljw26ocKUhdVc53LFSuIPjXq8DCCdOQDMw/hnpO6/LCjgy2N5CDFKoYnahkfXoc3C+ggHGT1FyF4bgKdlJNFdCZ/ZQDNCPJSNDr5iSardGIzmYEd9GDTgfPNGaizo9DsakWpVaI7KPuV1clMBuAeWQ2hAJ79izAbvVsDh4s+eFbqcZrTuDQWH3gcxre6/Aj8IDs22mfC64Mu2NYZJQpAqtfrDrECCDvrQqQbEaiRgb8QWmekiXjBj0jBftUo11xW/q8N5a3Aeeulyqk5xU=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <17223CB882A0764185864C6E9EE256E0@namprd18.prod.outlook.com>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 033a4fd6-92f8-4379-3733-08d72171b67b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 11:14:17.1514
+X-MS-Exchange-CrossTenant-Network-Message-Id: 393e15ac-a8b3-43e8-c764-08d72171fa53
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 11:16:11.6606
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PHYHYyo8irrvIngYGEk9O4CG1kUCrPpf9JCHBxVWHn0yjqxVxJaoWmWVMJeiQ6gg6RyhznoGA9sTGNiqjJm9RQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4778
+X-MS-Exchange-CrossTenant-userprincipalname: oXmlQmdB7lvTNqA8wQHo/5QtwH2IEEg0rfW+qR5AuPOfCbiwOhCJ5FU9NZOdR85b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3156
+X-OriginatorOrg: suse.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTGl2aXUgRHVkYXUgPGxp
-dml1LmR1ZGF1QGFybS5jb20+DQo+IFNlbnQ6IDIwMTnlubQ35pyIMjLml6UgMTc6MzMNCj4gVG86
-IFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNvbT4NCj4gQ2M6IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGJyaWFuLnN0YXJrZXlA
-YXJtLmNvbTsgYWlybGllZEBsaW51eC5pZTsgZGFuaWVsQGZmd2xsLmNoOyBMZW8gTGkNCj4gPGxl
-b3lhbmcubGlAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtFWFRdIFJlOiBbdjIgMS8zXSBkcm0v
-YXJtL21hbGktZHA6IEFkZCBkaXNwbGF5IFFvUyBpbnRlcmZhY2UNCj4gY29uZmlndXJhdGlvbiBm
-b3IgTWFsaSBEUDUwMA0KPiANCj4gQ2F1dGlvbjogRVhUIEVtYWlsDQo+IA0KPiBPbiBNb24sIEp1
-bCAyMiwgMjAxOSBhdCAwMjoxMjowOEFNICswMDAwLCBXZW4gSGUgd3JvdGU6DQo+ID4NCj4gPg0K
-PiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IExpdml1IER1ZGF1
-IDxsaXZpdS5kdWRhdUBhcm0uY29tPg0KPiA+ID4gU2VudDogMjAxOeW5tDfmnIgxOeaXpSAxOTo0
-Ng0KPiA+ID4gVG86IFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNvbT4NCj4gPiA+IENjOiBkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0K
-PiA+ID4gYnJpYW4uc3RhcmtleUBhcm0uY29tOyBhaXJsaWVkQGxpbnV4LmllOyBkYW5pZWxAZmZ3
-bGwuY2g7IExlbyBMaQ0KPiA+ID4gPGxlb3lhbmcubGlAbnhwLmNvbT4NCj4gPiA+IFN1YmplY3Q6
-IFtFWFRdIFJlOiBbdjIgMS8zXSBkcm0vYXJtL21hbGktZHA6IEFkZCBkaXNwbGF5IFFvUw0KPiA+
-ID4gaW50ZXJmYWNlIGNvbmZpZ3VyYXRpb24gZm9yIE1hbGkgRFA1MDANCj4gPiA+DQo+ID4gPiBD
-YXV0aW9uOiBFWFQgRW1haWwNCj4gPiA+DQo+ID4gPiBPbiBGcmksIEp1bCAxOSwgMjAxOSBhdCAw
-NTo1NDo0NVBNICswODAwLCBXZW4gSGUgd3JvdGU6DQo+ID4gPiA+IENvbmZpZ3VyZSB0aGUgZGlz
-cGxheSBRdWFsaXR5IG9mIHNlcnZpY2UgKFFvUykgbGV2ZWxzIHByaW9yaXR5IGlmDQo+ID4gPiA+
-IHRoZSBvcHRpb25hbCBwcm9wZXJ0eSBub2RlICJhcm0sbWFsaWRwLWFxcm9zLXZhbHVlIiBpcyBk
-ZWZpbmVkIGluIERUUw0KPiBmaWxlLg0KPiA+ID4gPg0KPiA+ID4gPiBRb1Mgc2lnbmFsaW5nIHVz
-aW5nIEFRUk9TIGFuZCBBV1FPUyBBWEkgaW50ZXJmYWNlIHNpZ25hbHMsIHRoZQ0KPiA+ID4gPiBB
-UVJPUyBpcyBkcml2ZW4gZnJvbSB0aGUgIlJRT1MiIHJlZ2lzdGVyLCBzbyBuZWVkZWQgdG8gcHJv
-Z3JhbSB0aGUNCj4gPiA+ID4gUlFPUyByZWdpc3RlciB0byBhdm9pZCB0aGUgNGsgcmVzb2x1dGlv
-biBmbGlja2VyIGlzc3VlIG9uIHRoZSBMUzEwMjhBDQo+IHBsYXRmb3JtLg0KPiA+ID4gPg0KPiA+
-ID4gPiBTaWduZWQtb2ZmLWJ5OiBXZW4gSGUgPHdlbi5oZV8xQG54cC5jb20+DQo+ID4gPiA+IC0t
-LQ0KPiA+ID4gPiBjaGFuZ2UgaW4gdjI6DQo+ID4gPiA+ICAgICAgICAgLSBtb2RpZnkgc29tZSBj
-b250ZW50IGJhc2VkIG9uIGZlZWRiYWNrIGZyb20gbWFpbnRhaW5lcnMNCj4gPiA+ID4NCj4gPiA+
-ID4gIGRyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2Rydi5jICB8ICA2ICsrKysrKw0KPiA+ID4g
-PiAgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfaHcuYyAgIHwgMTMgKysrKysrKysrKysrKw0K
-PiA+ID4gPiAgZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfaHcuaCAgIHwgIDMgKysrDQo+ID4g
-PiA+ICBkcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9yZWdzLmggfCAxMCArKysrKysrKysrDQo+
-ID4gPiA+ICA0IGZpbGVzIGNoYW5nZWQsIDMyIGluc2VydGlvbnMoKykNCj4gPiA+ID4NCj4gPiA+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2Rydi5jDQo+ID4gPiA+
-IGIvZHJpdmVycy9ncHUvZHJtL2FybS9tYWxpZHBfZHJ2LmMNCj4gPiA+ID4gaW5kZXggZjI1ZWM0
-MzgyMjc3Li42MWM0OWEwNjY4YTcgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
-bS9hcm0vbWFsaWRwX2Rydi5jDQo+ID4gPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFs
-aWRwX2Rydi5jDQo+ID4gPiA+IEBAIC04MTgsNiArODE4LDEyIEBAIHN0YXRpYyBpbnQgbWFsaWRw
-X2JpbmQoc3RydWN0IGRldmljZSAqZGV2KQ0KPiA+ID4gPg0KPiA+ID4gPiAgICAgICBtYWxpZHAt
-PmNvcmVfaWQgPSB2ZXJzaW9uOw0KPiA+ID4gPg0KPiA+ID4gPiArICAgICByZXQgPSBvZl9wcm9w
-ZXJ0eV9yZWFkX3UzMihkZXYtPm9mX25vZGUsDQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgImFybSxtYWxpZHAtYXJxb3MtdmFsdWUiLA0KPiA+ID4gPiArICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICZod2Rldi0+YXJxb3NfdmFsdWUpOw0K
-PiA+ID4gPiArICAgICBpZiAocmV0KQ0KPiA+ID4gPiArICAgICAgICAgICAgIGh3ZGV2LT5hcnFv
-c192YWx1ZSA9IDB4MDsNCj4gPiA+DQo+ID4gPiBJcyB6ZXJvIHRoZSBkZWZhdWx0IHZhbHVlIHRo
-YXQgeW91IHdhbnQ/IEkgdGhvdWdodCBpdCB3YXMgMHgwMDAxMDAwMS4NCj4gPg0KPiA+IEFjdHVh
-bGx5LCB0aGUgcmVnaXN0ZXIgZGVmYXVsdCB2YWx1ZSBhbHdheXMgaXMgMHgwMDAxMDAwMShjYW4g
-YmUgZm91bmQgaW4gUk0NCj4gZG9jdW1lbnQpLg0KPiANCj4gRXhhY3RseSwgYnV0IHdpdGggeW91
-ciBjb2RlIHlvdSBhcmUgb3ZlcndyaXRpbmcgaXQgdG8gMCBpZiB0aGUgRFQgZG9lc24ndCBoYXZl
-DQo+IHRoZSBhcm0sbWFsaWRwLWFycW9zLXZhbHVlIHByb3BlcnR5Lg0KPiANCj4gPg0KPiA+ID4N
-Cj4gPiA+ID4gKw0KPiA+ID4gPiAgICAgICAvKiBzZXQgdGhlIG51bWJlciBvZiBsaW5lcyB1c2Vk
-IGZvciBvdXRwdXQgb2YgUkdCIGRhdGEgKi8NCj4gPiA+ID4gICAgICAgcmV0ID0gb2ZfcHJvcGVy
-dHlfcmVhZF91OF9hcnJheShkZXYtPm9mX25vZGUsDQo+ID4gPiA+DQo+ID4gPiA+ICJhcm0sbWFs
-aWRwLW91dHB1dC1wb3J0LWxpbmVzIiwgZGlmZiAtLWdpdA0KPiA+ID4gPiBhL2RyaXZlcnMvZ3B1
-L2RybS9hcm0vbWFsaWRwX2h3LmMNCj4gPiA+ID4gYi9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlk
-cF9ody5jIGluZGV4IDUwYWYzOTlkN2Y2Zi4uMzIzNjgzYjFlOWY3DQo+ID4gPiA+IDEwMDY0NA0K
-PiA+ID4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9ody5jDQo+ID4gPiA+ICsr
-KyBiL2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2h3LmMNCj4gPiA+ID4gQEAgLTM3NCw2ICsz
-NzQsMTkgQEAgc3RhdGljIHZvaWQgbWFsaWRwNTAwX21vZGVzZXQoc3RydWN0DQo+ID4gPiBtYWxp
-ZHBfaHdfZGV2aWNlICpod2Rldiwgc3RydWN0IHZpZGVvbW9kZSAqDQo+ID4gPiA+ICAgICAgICAg
-ICAgICAgbWFsaWRwX2h3X3NldGJpdHMoaHdkZXYsIE1BTElEUF9ESVNQX0ZVTkNfSUxBQ0VELA0K
-PiA+ID4gTUFMSURQX0RFX0RJU1BMQVlfRlVOQyk7DQo+ID4gPiA+ICAgICAgIGVsc2UNCj4gPiA+
-ID4gICAgICAgICAgICAgICBtYWxpZHBfaHdfY2xlYXJiaXRzKGh3ZGV2LA0KPiBNQUxJRFBfRElT
-UF9GVU5DX0lMQUNFRCwNCj4gPiA+ID4gTUFMSURQX0RFX0RJU1BMQVlfRlVOQyk7DQo+ID4gPiA+
-ICsNCj4gPiA+ID4gKyAgICAgLyoNCj4gPiA+ID4gKyAgICAgICogUHJvZ3JhbSB0aGUgUlFvUyBy
-ZWdpc3RlciB0byBhdm9pZCA0ayByZXNvbHV0aW9uIGZsaWNrZXINCj4gPiA+ID4gKyAgICAgICog
-b24gdGhlIExTMTAyOEEuDQo+ID4gPiA+ICsgICAgICAqLw0KPiA+ID4gPiArICAgICBpZiAoaHdk
-ZXYtPmFycW9zX3ZhbHVlKSB7DQo+ID4gPiA+ICsgICAgICAgICAgICAgdmFsID0gaHdkZXYtPmFy
-cW9zX3ZhbHVlOw0KPiA+ID4gPiArDQo+ID4gPiA+ICsgICAgICAgICAgICAgaWYgKG1vZGUtPnBp
-eGVsY2xvY2sgPT0gNTk0MDAwMDAwKQ0KPiA+ID4NCj4gPiA+IElmIEkgcmVtZW1iZXIgY29ycmVj
-dGx5LCB5b3UgZGVjbGFyZSB0aGUgcGl4ZWxjbG9ja3MgaW4gdGhlIGRldmljZQ0KPiA+ID4gdHJl
-ZSwgc28gSSB3b25kZXIgaWYgdGhpcyBpcyBuZWVkZWQgaGVyZS4gV2Ugc2hvdWxkIGp1c3Qgc2V0
-IHdoYXQNCj4gPiA+IHZhbHVlIHdhcyBpbiB0aGUgRFQgcmVnYXJkbGVzcyBvZiB0aGUgcGl4ZWxj
-bG9jaywgYW5kIHRoZW4geW91DQo+ID4gPiBtYW5pcHVsYXRlIHRoZSBEVCB0byBjaG9vc2Ugb25l
-IG9mIHlvdXIgZml4ZWQgcmVzb2x1dGlvbnMgYW5kIGFsc28gc2V0IHRoZQ0KPiBRb1MgdmFsdWUu
-DQo+ID4NCj4gPiBZZXMsIHlvdSByZW1lbWJlciBjb3JyZWN0bHksIGJ1dA0KPiA+IDEuIGRlY2xh
-cmUgdGhlIHBpeGVsY2xvY2tzIGluIHRoZSBkZXZpY2UgdHJlZS4NCj4gPiBBYm91dCB0aGlzLCBJ
-IHdhcyBob3BpbmcgdG8gZGlzY3VzcyBpdCB3aXRoIHlvdS4gSSB3YW50IHRvIGltcGxlbWVudA0K
-PiA+IGFub3RoZXIgcGF0Y2ggdGhhdCBqdXN0IGRlY2xhcmUgMjdNSHogcmVmZXJlbmNlIGNsb2Nr
-IGluIHRoZSBkZXZpY2UNCj4gPiB0cmVlIGFuZCBhZGQgYSBmYWtlIGNsb2NrIHN1YnN5c3RlbSB0
-byBlbmFibGUvZGlzcGxheSBwcmVwYXJlIHRvIHNldCBQTEwuIEkNCj4gYW0gdGhpbmtpbmcgd2hh
-dCB0byBkbyBuZXh0Lg0KPiA+IEFzIEkgcmVtZW1iZXIsIEkgc2VudCBvdXQgYSBwYXRjaCB0aGF0
-ICJEaXNhYmxlIGNoZWNraW5nIGZvciByZXF1aXJlZA0KPiA+IHBpeGVsIGNsb2NrIiwgSSB0aGlu
-ayBzaG91bGQgYmUgY2FuY2VsIGl0Lg0KPiA+DQo+ID4gMi4gZGVjbGFyZSB0aGUgZml4ZWQgcmVz
-b2x1dGlvbnMgbGlzdCBpbiBEVFMuDQo+ID4gWWVzLCBBbHRob3VnaCBJIHB1dCBmb3VyIHJlc29s
-dXRpb25zIGZvciBzdXBwb3J0ZWQgbGlzdCBpbiBEVFMgZmlsZSwNCj4gPiBidXQgdGhpcyBqdXN0
-IGEgd29ya2Fyb3VuZCB0aGF0IElmIG5vdCBlbmFibGUgRURJRCBPUiBFRElEIGlzIG5vdA0KPiA+
-IGF2YWlsYWJsZS4gT25jZSBFRElEIGlzIGVuYWJsZWQsIHRoZXNlIHJlc29sdXRpb25zIGxpc3Qg
-ZGVjbGFyZSB3aWxsDQo+ID4gYmUgcmVtb3ZlIGluIERUUy4gc28gd2UgY2FuJ3QgdXNlIGl0IGFz
-IGEgY29uZGl0aW9uIHRvIHNldCB0aGUgUW9TIHZhbHVlLg0KPiANCj4gMy4gQWN0dWFsbHkgZW5h
-YmxlIHRoZSBjbG9jayBwcm92aWRlci4gSSd2ZSBoYWQgYSBsb29rIGF0IHRoZSBwdWJsaWMNCj4g
-ZG9jdW1lbnRhdGlvbiBhbmQgaXQgbG9va3MgbGlrZSB0aGUgdGhlIHBpeGVsY2xvY2sgaXMgcHJv
-dmlkZWQgYnkgYW4gSURUDQo+IFZlcnNhQ2xvY2sgNSBnZW5lcmF0b3IsIGZvciB3aGljaCB0aGVy
-ZSBpcyBhIGtlcm5lbCBkcml2ZXIuIEkndmUgc3RhcnRlZCBwbGF5aW5nDQo+IHdpdGggaXQgYnV0
-IGdvdCBwdWxsZWQgYmFjayBieSBvdGhlciBtb3JlIGltbWVkaWF0ZSB0YXNrcy4NCj4gDQo+IEFu
-eXdheSwgd2hhdCBJIHdhcyB0cnlpbmcgdG8gaGludCB3YXMgdGhhdCBwdXR0aW5nIGluIHRoZSBj
-b2RlIHRoZSBleGFjdA0KPiBwaXhlbGNsb2NrIHZhbHVlIG1pZ2h0IG5vdCBiZSB0aGUgYmVzdCB0
-aGluZy4gSW4gbXkgdmlldywgcGl4ZWxjbG9jayByZWZsZWN0cyB0aGUNCj4gbmVlZCBmb3IgYSBj
-ZXJ0YWluIGJhbmR3aWR0aCwgd2l0aCBpcyB1c3VhbGx5IGEgcHJvZHVjdCBvZiBvdXRwdXQgKG51
-bWJlciBvZg0KPiBwaXhlbHMpIGFuZCByZWZyZXNoIGZyZXF1ZW5jeS4gSSdtIGd1ZXNzaW5nIGdv
-aW5nIGFib3ZlIDRrQDYwIHdpbGwgYWxzbyB0cmlnZ2VyDQo+IHRoZSBmbGlja2VyLCBidXQgd2l0
-aCB5b3VyIHBhdGNoIHdlIHdpbGwgbm90IHJlYWN0IGNvcnJlY3RseS4NCj4gDQo+IEJlc3QgcmVn
-YXJkcywNCj4gTGl2aXUNCj4NCg0KSG1tLi4gSSd2ZSBhbHJlYWR5IHdyaXR0ZW4gdGhlIHBpeGVs
-IGNsb2NrIHByb3ZpZGVyIGRyaXZlciBvZiB0aGUgTFMxMDI4QSBhbmQgdXBzdHJlYW1lZC4uDQpT
-byBtb3JlIHJlc29sdXRpb25zIHdpbGwgYmUgc3VwcG9ydCBvbiBMUzEwMjhBLg0KVGhhbmsgeW91
-IGZvciB0aGUgY29tbWVudHMgdGhhdCB3aGljaCBtYWRlIG1lIGRldGVybWluZWQgdG8gZ2V0IHRo
-aXMgZG9uZS4NCg0KRm9yIHRoaXMgY2hhbmdlLCBJIHdvdWxkIGJlIHJlbW92ZSB0aGlzIGNvbmRp
-dGlvbiAiaWYgKG1vZGUtPnBpeGVsY2xvY2sgPT0gNTk0MDAwMDAwKSINCkFuZCBhcHBseSB0aGlz
-IGNoYW5nZSBmb3IgYWxsIHJlc29sdXRpb25zIG9uIExTMTAyOEEuDQoNCkhvdyBkbyB5b3UgdGhp
-bms/ICANCg0KQmVzdCBSZWdhcmRzLA0KV2VuDQo+IA0KPiA+DQo+ID4gQmVzdCBSZWdhcmRzLA0K
-PiA+IFdlbg0KPiA+DQo+ID4gPg0KPiA+ID4gQmVzdCByZWdhcmRzLA0KPiA+ID4gTGl2aXUNCj4g
-PiA+DQo+ID4gPiA+ICsgICAgICAgICAgICAgICAgICAgICBtYWxpZHBfaHdfc2V0Yml0cyhod2Rl
-diwgdmFsLA0KPiA+ID4gTUFMSURQNTAwX1JRT1NfUVVBTElUWSk7DQo+ID4gPiA+ICsgICAgICAg
-ICAgICAgZWxzZQ0KPiA+ID4gPiArICAgICAgICAgICAgICAgICAgICAgbWFsaWRwX2h3X2NsZWFy
-Yml0cyhod2RldiwgdmFsLA0KPiA+ID4gTUFMSURQNTAwX1JRT1NfUVVBTElUWSk7DQo+ID4gPiA+
-ICsgICAgIH0NCj4gPiA+ID4gIH0NCj4gPiA+ID4NCj4gPiA+ID4gIGludCBtYWxpZHBfZm9ybWF0
-X2dldF9icHAodTMyIGZtdCkgZGlmZiAtLWdpdA0KPiA+ID4gPiBhL2RyaXZlcnMvZ3B1L2RybS9h
-cm0vbWFsaWRwX2h3LmgNCj4gPiA+ID4gYi9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9ody5o
-IGluZGV4DQo+IDk2OGE2NWVlZDM3MS4uZTRjMzZiYzkwYmRhDQo+ID4gPiA+IDEwMDY0NA0KPiA+
-ID4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9ody5oDQo+ID4gPiA+ICsrKyBi
-L2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX2h3LmgNCj4gPiA+ID4gQEAgLTI1MSw2ICsyNTEs
-OSBAQCBzdHJ1Y3QgbWFsaWRwX2h3X2RldmljZSB7DQo+ID4gPiA+DQo+ID4gPiA+ICAgICAgIC8q
-IHNpemUgb2YgbWVtb3J5IHVzZWQgZm9yIHJvdGF0aW5nIGxheWVycywgdXAgdG8gdHdvIGJhbmtz
-DQo+ID4gPiA+IGF2YWlsYWJsZQ0KPiA+ID4gKi8NCj4gPiA+ID4gICAgICAgdTMyIHJvdGF0aW9u
-X21lbW9yeVsyXTsNCj4gPiA+ID4gKw0KPiA+ID4gPiArICAgICAvKiBwcmlvcml0eSBsZXZlbCBv
-ZiBSUU9TIHJlZ2lzdGVyIHVzZWQgZm9yIGRyaXZlbiB0aGUgQVJRT1Mgc2lnbmFsDQo+ICovDQo+
-ID4gPiA+ICsgICAgIHUzMiBhcnFvc192YWx1ZTsNCj4gPiA+ID4gIH07DQo+ID4gPiA+DQo+ID4g
-PiA+ICBzdGF0aWMgaW5saW5lIHUzMiBtYWxpZHBfaHdfcmVhZChzdHJ1Y3QgbWFsaWRwX2h3X2Rl
-dmljZSAqaHdkZXYsDQo+ID4gPiA+IHUzMg0KPiA+ID4gPiByZWcpIGRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9yZWdzLmgNCj4gPiA+ID4gYi9kcml2ZXJzL2dwdS9kcm0v
-YXJtL21hbGlkcF9yZWdzLmgNCj4gPiA+ID4gaW5kZXggOTkzMDMxNTQyZmExLi41MTRjNTBkY2I3
-NGQgMTAwNjQ0DQo+ID4gPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hcm0vbWFsaWRwX3JlZ3Mu
-aA0KPiA+ID4gPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtL21hbGlkcF9yZWdzLmgNCj4gPiA+
-ID4gQEAgLTIxMCw2ICsyMTAsMTYgQEANCj4gPiA+ID4gICNkZWZpbmUgTUFMSURQNTAwX0NPTkZJ
-R19WQUxJRCAgICAgICAgICAgICAgIDB4MDBmMDANCj4gPiA+ID4gICNkZWZpbmUgTUFMSURQNTAw
-X0NPTkZJR19JRCAgICAgICAgICAweDAwZmQ0DQo+ID4gPiA+DQo+ID4gPiA+ICsvKg0KPiA+ID4g
-PiArICogVGhlIHF1YWxpdHkgb2Ygc2VydmljZSAoUW9TKSByZWdpc3RlciBvbiB0aGUgRFA1MDAu
-IFJRT1MNCj4gPiA+ID4gK3JlZ2lzdGVyIHZhbHVlcw0KPiA+ID4gPiArICogYXJlIGRyaXZlbiBi
-eSB0aGUgQVJRT1Mgc2lnbmFsLCB1c2luZyBBWEkgdHJhbnNhY2F0aW9ucywNCj4gPiA+ID4gK2Rl
-cGVuZGVudCBvbiB0aGUNCj4gPiA+ID4gKyAqIEZJRk8gaW5wdXQgbGV2ZWwuDQo+ID4gPiA+ICsg
-KiBUaGUgUlFPUyByZWdpc3RlciBjYW4gYWxzbyBzZXQgUW9TIGxldmVscyBmb3I6DQo+ID4gPiA+
-ICsgKiAgICAtIFJFRF9BUlFPUyAgIEAgQSA0LWJpdCBzaWduYWwgdmFsdWUgZm9yIGNsb3NlIHRv
-IHVuZGVyZmxvdw0KPiA+ID4gY29uZGl0aW9ucw0KPiA+ID4gPiArICogICAgLSBHUkVFTl9BUlFP
-UyBAIEEgNC1iaXQgc2lnbmFsIHZhbHVlIGZvciBub3JtYWwgY29uZGl0aW9ucw0KPiA+ID4gPiAr
-ICovDQo+ID4gPiA+ICsjZGVmaW5lIE1BTElEUDUwMF9SUU9TX1FVQUxJVFkgICAgICAgICAgMHgw
-MDUwMA0KPiA+ID4gPiArDQo+ID4gPiA+ICAvKiByZWdpc3RlciBvZmZzZXRzIGFuZCBiaXRzIHNw
-ZWNpZmljIHRvIERQNTUwL0RQNjUwICovDQo+ID4gPiA+ICAjZGVmaW5lIE1BTElEUDU1MF9BRERS
-X1NQQUNFX1NJWkUgICAgMHgxMDAwMA0KPiA+ID4gPiAgI2RlZmluZSBNQUxJRFA1NTBfREVfQ09O
-VFJPTCAgICAgICAgIDB4MDAwMTANCj4gPiA+ID4gLS0NCj4gPiA+ID4gMi4xNy4xDQo+ID4gPiA+
-DQo+ID4gPg0KPiA+ID4gLS0NCj4gPiA+ID09PT09PT09PT09PT09PT09PT09DQo+ID4gPiB8IEkg
-d291bGQgbGlrZSB0byB8DQo+ID4gPiB8IGZpeCB0aGUgd29ybGQsICB8DQo+ID4gPiB8IGJ1dCB0
-aGV5J3JlIG5vdCB8DQo+ID4gPiB8IGdpdmluZyBtZSB0aGUgICB8DQo+ID4gPiAgXCBzb3VyY2Ug
-Y29kZSEgIC8NCj4gPiA+ICAgLS0tLS0tLS0tLS0tLS0tDQo+ID4gPiAgICAgwq9cXyjjg4QpXy/C
-rw0KPiANCj4gLS0NCj4gPT09PT09PT09PT09PT09PT09PT0NCj4gfCBJIHdvdWxkIGxpa2UgdG8g
-fA0KPiB8IGZpeCB0aGUgd29ybGQsICB8DQo+IHwgYnV0IHRoZXkncmUgbm90IHwNCj4gfCBnaXZp
-bmcgbWUgdGhlICAgfA0KPiAgXCBzb3VyY2UgY29kZSEgIC8NCj4gICAtLS0tLS0tLS0tLS0tLS0N
-Cj4gICAgIMKvXF8o44OEKV8vwq8NCg==
+Hi Ard,
+
+On Thu, Aug 15, 2019 at 10:59:43AM +0300, Ard Biesheuvel wrote:
+> On Sun, 4 Aug 2019 at 10:57, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> > Hello Chester,
+> >
+> > On Fri, 2 Aug 2019 at 08:40, Chester Lin <clin@suse.com> wrote:
+> > >
+> > > In some cases the arm32 efistub could fail to allocate memory for
+> > > uncompressed kernel. For example, we got the following error message when
+> > > verifying EFI stub on Raspberry Pi-2 [kernel-5.2.1 + grub-2.04] :
+> > >
+> > >   EFI stub: Booting Linux Kernel...
+> > >   EFI stub: ERROR: Unable to allocate memory for uncompressed kernel.
+> > >   EFI stub: ERROR: Failed to relocate kernel
+> > >
+> > > After checking the EFI memory map we found that the first page [0 - 0xfff]
+> > > had been reserved by Raspberry Pi-2's firmware, and the efistub tried to
+> > > set the dram base at 0, which was actually in a reserved region.
+> > >
+> >
+> > This by itself is a violation of the Linux boot protocol for 32-bit
+> > ARM when using the decompressor. The decompressor rounds down its own
+> > base address to a multiple of 128 MB, and assumes the whole area is
+> > available for the decompressed kernel and related data structures.
+> > (The first TEXT_OFFSET bytes are no longer used in practice, which is
+> > why putting a reserved region of 4 KB bytes works at the moment, but
+> > this is fragile). Note that the decompressor does not look at any DT
+> > or EFI provided memory maps *at all*.
+> >
+> > So unfortunately, this is not something we can fix in the kernel, but
+> > we should fix it in the bootloader or in GRUB, so it does not put any
+> > reserved regions in the first 128 MB of memory,
+> >
+> 
+> OK, perhaps we can fix this by taking TEXT_OFFSET into account. The
+> ARM boot protocol docs are unclear about whether this memory should be
+> used or not, but it is no longer used for its original purpose (page
+> tables), and the RPi loader already keeps data there.
+> 
+> Can you check whether the following patch works for you?
+> 
+> diff --git a/drivers/firmware/efi/libstub/Makefile
+> b/drivers/firmware/efi/libstub/Makefile
+> index 0460c7581220..ee0661ddb25b 100644
+> --- a/drivers/firmware/efi/libstub/Makefile
+> +++ b/drivers/firmware/efi/libstub/Makefile
+> @@ -52,6 +52,7 @@ lib-$(CONFIG_EFI_ARMSTUB)     += arm-stub.o fdt.o
+> string.o random.o \
+> 
+>  lib-$(CONFIG_ARM)              += arm32-stub.o
+>  lib-$(CONFIG_ARM64)            += arm64-stub.o
+> +CFLAGS_arm32-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
+>  CFLAGS_arm64-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
+> 
+>  #
+> diff --git a/drivers/firmware/efi/libstub/arm32-stub.c
+> b/drivers/firmware/efi/libstub/arm32-stub.c
+> index e8f7aefb6813..66ff0c8ec269 100644
+> --- a/drivers/firmware/efi/libstub/arm32-stub.c
+> +++ b/drivers/firmware/efi/libstub/arm32-stub.c
+> @@ -204,7 +204,7 @@ efi_status_t
+> handle_kernel_image(efi_system_table_t *sys_table,
+>          * loaded. These assumptions are made by the decompressor,
+>          * before any memory map is available.
+>          */
+> -       dram_base = round_up(dram_base, SZ_128M);
+> +       dram_base = round_up(dram_base, SZ_128M) + TEXT_OFFSET;
+> 
+>         status = reserve_kernel_base(sys_table, dram_base, reserve_addr,
+>                                      reserve_size);
+> 
+
+I tried your patch on rpi2 and got the following panic. Just a reminder that I
+have replaced some log messages with "......" since it might be too long to
+post all.
+
+In this case the kernel failed to reserve cma, which should hit the issue of
+memblock_limit=0x1000 as I had mentioned in my patch description. The first
+block [0-0xfff] was scanned in adjust_lowmem_bounds(), but it did not align
+with PMD_SIZE so the cma reservation failed because the memblock.current_limit
+was extremely low. That's why I expand the first reservation from 1 PAGESIZE to
+1 PMD_SIZE in my patch in order to avoid this issue. Please kindly let me know
+if any suggestion, thank you.
+
+boot-log:
+--------
+
+Loading Linux test ...
+EFI stub: Booting Linux Kernel...
+EFI stub: Using DTB from configuration table
+EFI stub: Exiting boot services and installing virtual address map...
+Uncompressing Linux... done, booting the kernel.
+[    0.000000] Booting Linux on physical CPU 0xf00
+[    0.000000] Linux version 5.2.1-lpae (chester@linux-8mug) (......)
+[    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7), cr=30c5387d
+[    0.000000] CPU: div instructions available: patching division code
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000] OF: fdt: Machine model: Raspberry Pi 2 Model B Rev 1.1
+[    0.000000] printk: bootconsole [earlycon0] enabled
+[    0.000000] Memory policy: Data cache writealloc
+[    0.000000] efi: Getting EFI parameters from FDT:
+[    0.000000] efi:   System Table: 0x000000003df757c0
+[    0.000000] efi:   MemMap Address: 0x000000002c1c5040
+[    0.000000] efi:   MemMap Size: 0x000003c0
+[    0.000000] efi:   MemMap Desc. Size: 0x00000028
+[    0.000000] efi:   MemMap Desc. Version: 0x00000001
+[    0.000000] efi: EFI v2.70 by Das U-Boot
+[    0.000000] efi:  SMBIOS=0x3cb62000  MEMRESERVE=0x3cb3d040
+[    0.000000] memblock_reserve: [0x000000003cb3d040-0x000000003cb3d04f] efi_config_parse_tables+0x25c/0x2d8
+[    0.000000] efi: Processing EFI memory map:
+[    0.000000] MEMBLOCK configuration:
+[    0.000000]  memory size = 0x000000003e000000 reserved size = 0x0000000000000010
+[    0.000000]  memory.cnt  = 0x1
+[    0.000000]  memory[0x0]     [0x0000000000000000-0x000000003dffffff], 0x000000003e000000 bytes flags: 0x0
+[    0.000000]  reserved.cnt  = 0x1
+[    0.000000]  reserved[0x0]   [0x000000003cb3d040-0x000000003cb3d04f], 0x0000000000000010 bytes flags: 0x0
+[    0.000000] memblock_remove: [0x0000000000000000-0xfffffffffffffffe] reserve_regions+0x68/0x23c
+[    0.000000] efi:   0x000000000000-0x000000000fff [Reserved           |   |  |  |  |  |  |  |   |WB|  |  |  ]
+[    0.000000] memblock_add: [0x0000000000000000-0x0000000000000fff] early_init_dt_add_memory_arch+0x164/0x178
+[    0.000000] efi:   0x000000001000-0x000000307fff [Conventional Memory|   |  |  |  |  |  |  |   |WB|  |  |  ]
+[    0.000000] memblock_add: [0x0000000000001000-0x0000000000307fff] early_init_dt_add_memory_arch+0x164/0x178
+[    0.000000] efi:   0x000000308000-0x000002307fff [Boot Data          |   |  |  |  |  |  |  |   |WB|  |  |  ]
+[    0.000000] memblock_add: [0x0000000000308000-0x0000000002307fff] early_init_dt_add_memory_arch+0x164/0x178
+[    0.000000] efi:   0x000002308000-0x000002a93fff [Loader Data        |   |  |  |  |  |  |  |   |WB|  |  |  ]
+[    0.000000] memblock_add: [0x0000000002308000-0x0000000002a93fff] early_init_dt_add_memory_arch+0x164/0x178
+[    0.000000] efi:   0x000002a94000-0x000007cf5fff [Conventional Memory|   |  |  |  |  |  |  |   |WB|  |  |  ]
+[    0.000000] memblock_add: [0x0000000002a94000-0x0000000007cf5fff] early_init_dt_add_memory_arch+0x164/0x178
+......
+......
+[    0.000000] memblock_add: [0x000000003df76000-0x000000003dffffff] early_init_dt_add_memory_arch+0x164/0x178
+[    0.000000] efi:   0x00003f100000-0x00003f100fff [Memory Mapped I/O  |RUN|  |  |  |  |  |  |   |  |  |  |  ]
+[    0.000000] memblock_reserve: [0x000000002c1c5000-0x000000002c1c5fff] efi_init+0xd8/0x1c8
+[    0.000000] memblock_reserve: [0x0000000000400000-0x0000000001df2cef] arm_memblock_init+0x44/0x19c
+[    0.000000] memblock_reserve: [0x0000000000303000-0x0000000000307fff] arm_mm_memblock_reserve+0x30/0x38
+[    0.000000] memblock_reserve: [0x0000000007cf6000-0x0000000007cfc5c4] early_init_dt_reserve_memory_arch+0x2c/0x30
+[    0.000000] cma: Failed to reserve 64 MiB
+[    0.000000] MEMBLOCK configuration:
+[    0.000000]  memory size = 0x000000003e000000 reserved size = 0x00000000019ff2c5
+[    0.000000]  memory.cnt  = 0xa
+[    0.000000]  memory[0x0]     [0x0000000000000000-0x0000000000000fff], 0x0000000000001000 bytes flags: 0x4
+[    0.000000]  memory[0x1]     [0x0000000000001000-0x0000000007ef5fff], 0x0000000007ef5000 bytes flags: 0x0
+[    0.000000]  memory[0x2]     [0x0000000007ef6000-0x0000000007f09fff], 0x0000000000014000 bytes flags: 0x4
+[    0.000000]  memory[0x3]     [0x0000000007f0a000-0x000000003cb3efff], 0x0000000034c35000 bytes flags: 0x0
+[    0.000000]  memory[0x4]     [0x000000003cb3f000-0x000000003cb3ffff], 0x0000000000001000 bytes flags: 0x4
+[    0.000000]  memory[0x5]     [0x000000003cb40000-0x000000003cb5ffff], 0x0000000000020000 bytes flags: 0x0
+[    0.000000]  memory[0x6]     [0x000000003cb60000-0x000000003cb68fff], 0x0000000000009000 bytes flags: 0x4
+[    0.000000]  memory[0x7]     [0x000000003cb69000-0x000000003df74fff], 0x000000000140c000 bytes flags: 0x0
+[    0.000000]  memory[0x8]     [0x000000003df75000-0x000000003df75fff], 0x0000000000001000 bytes flags: 0x4
+[    0.000000]  memory[0x9]     [0x000000003df76000-0x000000003dffffff], 0x000000000008a000 bytes flags: 0x0
+[    0.000000]  reserved.cnt  = 0x5
+[    0.000000]  reserved[0x0]   [0x0000000000303000-0x0000000000307fff], 0x0000000000005000 bytes flags: 0x0
+[    0.000000]  reserved[0x1]   [0x0000000000400000-0x0000000001df2cef], 0x00000000019f2cf0 bytes flags: 0x0
+[    0.000000]  reserved[0x2]   [0x0000000007cf6000-0x0000000007cfc5c4], 0x00000000000065c5 bytes flags: 0x0
+[    0.000000]  reserved[0x3]   [0x000000002c1c5000-0x000000002c1c5fff], 0x0000000000001000 bytes flags: 0x0
+[    0.000000]  reserved[0x4]   [0x000000003cb3d040-0x000000003cb3d04f], 0x0000000000000010 bytes flags: 0x0
+[    0.000000] memblock_alloc_try_nid: 4096 bytes align=0x1000 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 early_alloc+0x44/0x70
+[    0.000000] Kernel panic - not syncing: early_alloc: Failed to allocate 4096 bytes align=0x1000
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.1-lpae #1 openSUSE Tumbleweed (unreleased)
+[    0.000000] Hardware name: BCM2835
+[    0.000000] Backtrace:
+[    0.000000] [<c043fafc>] (dump_backtrace) from [<c043fd84>] (show_stack+0x20/0x24)
+[    0.000000]  r7:c1800000 r6:00000000 r5:600001d3 r4:c1901ba0
+[    0.000000] [<c043fd64>] (show_stack) from [<c0df9400>] (dump_stack+0xd0/0x104)
+[    0.000000] [<c0df9330>] (dump_stack) from [<c048061c>] (panic+0xf8/0x32c)
+[    0.000000]  r10:c0307000 r9:c0001000 r8:00000003 r7:00000000 r6:00000000 r5:c181df04
+[    0.000000]  r4:c192b8d8 r3:00000001
+[    0.000000] [<c0480528>] (panic) from [<c1609728>] (early_alloc+0x60/0x70)
+[    0.000000]  r3:00001000 r2:00001000 r1:c10037e8 r0:c12fe64c
+[    0.000000]  r7:00000000
+[    0.000000] [<c16096c8>] (early_alloc) from [<c1609114>] (arm_pte_alloc+0x34/0x94)
+[    0.000000]  r7:00000000 r6:00000000 r4:c0307000
+[    0.000000] [<c16090e0>] (arm_pte_alloc) from [<c1609384>] (__create_mapping+0x210/0x2c0)
+[    0.000000]  r9:c0001000 r8:c0001000 r7:00000001 r6:c13f22e0 r5:c0200000 r4:c0400000
+[    0.000000] [<c1609174>] (__create_mapping) from [<c160951c>] (create_mapping+0xe8/0x108)
+[    0.000000]  r10:c0400000 r9:c16a2110 r8:c19c7a80 r7:00000000 r6:00400000 r5:c13f2000
+[    0.000000]  r4:c1801ef0
+[    0.000000] [<c1609434>] (create_mapping) from [<c1609f50>] (paging_init+0x350/0x75c)
+[    0.000000]  r4:c1842d40
+
+
+> >
+> > >   grub> lsefimmap
+> > >   Type      Physical start  - end             #Pages        Size Attributes
+> > >   reserved  0000000000000000-0000000000000fff 00000001      4KiB WB
+> > >   conv-mem  0000000000001000-0000000007ef5fff 00007ef5 130004KiB WB
+> > >   RT-data   0000000007ef6000-0000000007f09fff 00000014     80KiB RT WB
+> > >   conv-mem  0000000007f0a000-000000002d871fff 00025968 615840KiB WB
+> > >   .....
+> > >
+> > > To avoid a reserved address, we have to ignore the memory regions which are
+> > > marked as EFI_RESERVED_TYPE, and only conventional memory regions can be
+> > > chosen. If the region before the kernel base is unaligned, it will be
+> > > marked as EFI_RESERVED_TYPE and let kernel ignore it so that memblock_limit
+> > > will not be sticked with a very low address such as 0x1000.
+> > >
+> 
+> This is a separate issue, so it should be handled in a separate patch.
+> 
+> > > Signed-off-by: Chester Lin <clin@suse.com>
+> > > ---
+> > >  arch/arm/mm/mmu.c                         |  3 ++
+> > >  drivers/firmware/efi/libstub/arm32-stub.c | 43 ++++++++++++++++++-----
+> > >  2 files changed, 37 insertions(+), 9 deletions(-)
+> > >
+> > > diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
+> > > index f3ce34113f89..909b11ba48d8 100644
+> > > --- a/arch/arm/mm/mmu.c
+> > > +++ b/arch/arm/mm/mmu.c
+> > > @@ -1184,6 +1184,9 @@ void __init adjust_lowmem_bounds(void)
+> > >                 phys_addr_t block_start = reg->base;
+> > >                 phys_addr_t block_end = reg->base + reg->size;
+> > >
+> > > +               if (memblock_is_nomap(reg))
+> > > +                       continue;
+> > > +
+> > >                 if (reg->base < vmalloc_limit) {
+> > >                         if (block_end > lowmem_limit)
+> > >                                 /*
+> > > diff --git a/drivers/firmware/efi/libstub/arm32-stub.c b/drivers/firmware/efi/libstub/arm32-stub.c
+> > > index e8f7aefb6813..10d33d36df00 100644
+> > > --- a/drivers/firmware/efi/libstub/arm32-stub.c
+> > > +++ b/drivers/firmware/efi/libstub/arm32-stub.c
+> > > @@ -128,7 +128,7 @@ static efi_status_t reserve_kernel_base(efi_system_table_t *sys_table_arg,
+> > >
+> > >         for (l = 0; l < map_size; l += desc_size) {
+> > >                 efi_memory_desc_t *desc;
+> > > -               u64 start, end;
+> > > +               u64 start, end, spare, kernel_base;
+> > >
+> > >                 desc = (void *)memory_map + l;
+> > >                 start = desc->phys_addr;
+> > > @@ -144,27 +144,52 @@ static efi_status_t reserve_kernel_base(efi_system_table_t *sys_table_arg,
+> > >                 case EFI_BOOT_SERVICES_DATA:
+> > >                         /* Ignore types that are released to the OS anyway */
+> > >                         continue;
+> > > -
+> > > +               case EFI_RESERVED_TYPE:
+> > > +                       /* Ignore reserved regions */
+> > > +                       continue;
+> > >                 case EFI_CONVENTIONAL_MEMORY:
+> > >                         /*
+> > >                          * Reserve the intersection between this entry and the
+> > >                          * region.
+> > >                          */
+> > >                         start = max(start, (u64)dram_base);
+> > > -                       end = min(end, (u64)dram_base + MAX_UNCOMP_KERNEL_SIZE);
+> > > +                       kernel_base = round_up(start, PMD_SIZE);
+> > > +                       spare = kernel_base - start;
+> > > +                       end = min(end, kernel_base + MAX_UNCOMP_KERNEL_SIZE);
+> > > +
+> > > +                       status = efi_call_early(allocate_pages,
+> > > +                                       EFI_ALLOCATE_ADDRESS,
+> > > +                                       EFI_LOADER_DATA,
+> > > +                                       MAX_UNCOMP_KERNEL_SIZE / EFI_PAGE_SIZE,
+> > > +                                       &kernel_base);
+> > > +                       if (status != EFI_SUCCESS) {
+> > > +                               pr_efi_err(sys_table_arg,
+> > > +                                       "reserve_kernel_base: alloc failed.\n");
+> > > +                               goto out;
+> > > +                       }
+> > > +                       *reserve_addr = kernel_base;
+> > >
+> > > +                       if (!spare)
+> > > +                               break;
+> > > +                       /*
+> > > +                        * If there's a gap between start and kernel_base,
+> > > +                        * it needs be reserved so that the memblock_limit
+> > > +                        * will not fall on a very low address when running
+> > > +                        * adjust_lowmem_bounds(), wchich could eventually
+> > > +                        * cause CMA reservation issue.
+> > > +                        */
+> > >                         status = efi_call_early(allocate_pages,
+> > >                                                 EFI_ALLOCATE_ADDRESS,
+> > > -                                               EFI_LOADER_DATA,
+> > > -                                               (end - start) / EFI_PAGE_SIZE,
+> > > +                                               EFI_RESERVED_TYPE,
+> > > +                                               spare / EFI_PAGE_SIZE,
+> > >                                                 &start);
+> > >                         if (status != EFI_SUCCESS) {
+> > >                                 pr_efi_err(sys_table_arg,
+> > > -                                       "reserve_kernel_base(): alloc failed.\n");
+> > > +                                       "reserve spare-region failed\n");
+> > >                                 goto out;
+> > >                         }
+> > > -                       break;
+> > >
+> > > +                       break;
+> > >                 case EFI_LOADER_CODE:
+> > >                 case EFI_LOADER_DATA:
+> > >                         /*
+> > > @@ -220,7 +245,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
+> > >         *image_size = image->image_size;
+> > >         status = efi_relocate_kernel(sys_table, image_addr, *image_size,
+> > >                                      *image_size,
+> > > -                                    dram_base + MAX_UNCOMP_KERNEL_SIZE, 0);
+> > > +                                    *reserve_addr + MAX_UNCOMP_KERNEL_SIZE, 0);
+> > >         if (status != EFI_SUCCESS) {
+> > >                 pr_efi_err(sys_table, "Failed to relocate kernel.\n");
+> > >                 efi_free(sys_table, *reserve_size, *reserve_addr);
+> > > @@ -233,7 +258,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
+> > >          * in memory. The kernel determines the base of DRAM from the
+> > >          * address at which the zImage is loaded.
+> > >          */
+> > > -       if (*image_addr + *image_size > dram_base + ZIMAGE_OFFSET_LIMIT) {
+> > > +       if (*image_addr + *image_size > *reserve_addr + ZIMAGE_OFFSET_LIMIT) {
+> > >                 pr_efi_err(sys_table, "Failed to relocate kernel, no low memory available.\n");
+> > >                 efi_free(sys_table, *reserve_size, *reserve_addr);
+> > >                 *reserve_size = 0;
+> > > --
+> > > 2.22.0
+> > >
+> 
