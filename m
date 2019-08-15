@@ -2,127 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E31C8E636
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:25:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D3CC8E620
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730560AbfHOIZU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 04:25:20 -0400
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:49674 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730213AbfHOIZU (ORCPT
+        id S1730895AbfHOIW7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:22:59 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41599 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729668AbfHOIW7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:25:20 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 04:25:19 EDT
-IronPort-SDR: vdvsQ8Iv0WG7sz1QV0nN5aS3OM7d3QEtNR3/Z3o7LWwt0fRCWkXxJvuLgQazXnA73A5OFItmt5
- 0ldGMSM4K/7zuozjL6rb32sSm1wthHTf+CdXH96Ik/Z414gGHBHjPvtuTvc0mMIjAfHT9PXFKV
- FOMkH4FZGGuw9IOSxIxt0VQtIiuigxuOPWHMX05C495/BHq7mxZDOZNqRMJoK83hEWZfkNNGqG
- waPaSPHQ0/vwcI6LV/WQ88HociRQs0YSaPmIOjJTy5dUyJGcybIkON8qMTaZsnWVXEgzXCy4Gm
- Oto=
-X-IronPort-AV: E=Sophos;i="5.64,388,1559548800"; 
-   d="scan'208";a="40453435"
-Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
-  by esa2.mentor.iphmx.com with ESMTP; 15 Aug 2019 00:18:12 -0800
-IronPort-SDR: htcRjcmG9l9zGnWMZ+4soCAXhpE2Zibe/ltCHmq+74d1fR0FdNoga33DgrUAk0Uq+YQ9Hi4Wyn
- sgJtbzWgBUbD6zg+QDNAkgOdd2PjrstZROoBjDV/wQ4r1IijKrpyGUh9i8NvPweyTNqcnKg3qp
- Z0Pr1LfQIF4tJhZqOCb7dQTusDqUheV2JBIuFyb5x2lQtrNjRwVkQKoFBGUWIRmRGbCfcRgnNv
- HLFrD1pLTEWB9k9qWw6B0+nCbVJW3c4lerAipRd5wYa07jIqv5/2R5f5O/dI8t7RqhofTcicvI
- WlM=
-From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-To:     Wei Yang <richard.weiyang@gmail.com>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: AW: [PATCH v2] kernel/resource.c: invalidate parent when freed
- resource has childs
-Thread-Topic: [PATCH v2] kernel/resource.c: invalidate parent when freed
- resource has childs
-Thread-Index: AQHVUq5kcb5Ex7JpNUSktSjVjdFue6b6xMYAgAEUHnA=
-Date:   Thu, 15 Aug 2019 08:18:06 +0000
-Message-ID: <c925c7d1041f478c99863da56c24b8a7@SVR-IES-MBX-03.mgc.mentorg.com>
-References: <1565278859475.1962@mentor.com> <1565358624103.3694@mentor.com>
- <20190809223831.fk4uyrzscr366syr@master>
- <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
- <1565794104204.54092@mentor.com> <20190814162932.alwo7g4664c2dtp3@master>
-In-Reply-To: <20190814162932.alwo7g4664c2dtp3@master>
-Accept-Language: de-DE, en-IE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [137.202.0.90]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 15 Aug 2019 04:22:59 -0400
+Received: by mail-lj1-f193.google.com with SMTP id m24so1529012ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 01:22:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=rNifjZHy9qpEjr0GVjpJDJGNo3i2//VHyToq2Gi1I5o=;
+        b=OlwYctZRlIMTjnglbFz8m9UPeYHKRsw+HS0cqHa/AZrP3rCVWXzJ5gTfiLfl40hRWX
+         cX599NGltZt5oVIqpRPPhMuFrdyeOZm97dwPU+CAxT5l2Fmeh/ZSbFOCb/7nY3jY2z0d
+         CIjrlvHSyzJD4VsaZOWNL8WGygu6Rqv8F2u1V5+5Vq2p/D6QfBUPCY82EgeyCZmGRItF
+         sjGHEgbToBdt25gqu0ZmUeiwWbzQ33NvDXBHQd6ysLH7sZmeFJ9duV5eFYsKV7RiV72h
+         eNWFtqLstPI4m/mvgNB4pqyITfo+BGeWUfVdKBuxzmRIaxr6JBuXwM1U7lK/HLoL9KU5
+         xc1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=rNifjZHy9qpEjr0GVjpJDJGNo3i2//VHyToq2Gi1I5o=;
+        b=T1Ey7DHiLV8FDaEerhpNRiDxVzoLHZ8PQ8A+w4TDfoqKttpJoDkWfIL0FvuMUQ5bJe
+         db2HIporhWcUhySdcTpNw7SjKi34r2kLnLjGbbxigxlE6eeyGRPGvBq3rz/yFCPWw0el
+         S/XJsF5Run0UAsmaKL4dFfftHbXvgUviaLGx+AAwOq8F7B4DjAzkIvYNbeYgxPIkmZ5K
+         gqXaglMDAQWewqSL0dWR4e1lnwQbnWpgPUIpEzf+j9E5CjhbhrwYbCuzUkWBTjTdPPBr
+         ABw9f1RRkgoBdwmEAtjpPX9YhVeRe3yqYQTYpZxvGysP+/06kHS9yGMj/ALK8Zfz6aW5
+         swoA==
+X-Gm-Message-State: APjAAAViZvothvmrKFbvFHdrn/HFH0FrFjp7TrVqCZBEjhbXkZK43TVv
+        drEQNgrVI3CkkDwXtz7fAbiaBboMyVGK1ML2bcbeWA==
+X-Google-Smtp-Source: APXvYqzSKpPdJ2jsFgd1uIci3/V28JBr33UJghFYLTf8pCPXob33LzLWLieV3eJDVU3sY3EnTwoxgKPof5pySOFlK/A=
+X-Received: by 2002:a2e:781a:: with SMTP id t26mr2027257ljc.28.1565857377246;
+ Thu, 15 Aug 2019 01:22:57 -0700 (PDT)
 MIME-Version: 1.0
+References: <20190815004854.19860-1-masneyb@onstation.org> <20190815004854.19860-7-masneyb@onstation.org>
+In-Reply-To: <20190815004854.19860-7-masneyb@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Aug 2019 10:22:45 +0200
+Message-ID: <CACRpkdYdQa+FVfpSjLi0SsBMDT4QC667z1P1dnapz7PXgRoB5Q@mail.gmail.com>
+Subject: Re: [PATCH RFC 06/11] drm/bridge: analogix-anx78xx: add support for
+ avdd33 regulator
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Dave Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        freedreno <freedreno@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
->>When a resource is freed and has children, the childrens are
-> 
-> s/childrens/children/
+On Thu, Aug 15, 2019 at 2:49 AM Brian Masney <masneyb@onstation.org> wrote:
+
+> Add support for the avdd33 regulator to the analogix-anx78xx driver.
+> Note that the regulator is currently enabled during driver probe and
+> disabled when the driver is removed. This is currently how the
+> downstream MSM kernel sources do this.
 >
-oh, missed that. Too many children ... ;-)
- 
->>+		__release_child_resources(tmp, warn);
-> 
-> This function will release all the children.
-> 
-> Is this what Linus suggest?
-> 
-> From his code snippet, I just see siblings parent is set to NULL. I may miss
-> some point?
+> Let's not merge this upstream for the mean time until I get the external
+> display fully working on the Nexus 5 and then I can submit proper
+> support then that powers down this regulator in the power off function.
 >
-At the point we are here, there should be no children, and children of
-children at all ...
-So they are all more or less lost in the wild.
-That was why i didn't copy Linus' code 1:1 but reused an already existing
-function doing similar thing.
-It's anyway worth of thinking about this.
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-What i have in mind here (example):
-Parent: iomem map 0x1000..0x1FFF
-  Child1: iomem map 0x1000..0x17FF
-    Child11: iomem map 0x1000..0x13FF
-    Child12: iomem map 0x1400..0x17FF
-  Child2: iomem map 0x1800..0x1FFF
-    Child21: iomem map 0x1800..0x1BFF
-    Child22: iomem map 0x1C00..0x1FFF
+> +static void anx78xx_disable_regulator_action(void *_data)
+> +{
+> +       struct anx78xx_platform_data *pdata = _data;
+> +
+> +       regulator_disable(pdata->avdd33);
+> +}
+(...)
+> +       err = devm_add_action(dev, anx78xx_disable_regulator_action,
+> +                             pdata);
 
-When releasing the parent, how can children 11, 12, 21 and 22 still be valid?
-They don't know about their grandfather died ...
-Looking at the __release_child_resources, i exactly found that all children are
-invalidated/released in the way Linus did for the parent's children list.
-Doesn't it make sense to do the same for all?
+Clever idea. Good for initial support, probably later on it would
+need to be reworked using runtime PM so it's not constantly
+powered up.
 
-Please comment.
+See for example how I try to push down power dissipation
+of sensors in 3d838118c6aa.
 
-> >+static void check_children(struct resource *parent)
-> >+{
-> >+	if (parent->child) {
-> >+		/* warn and release all children */
-> >+		WARN_ONCE(1, "%s: %s has child %s, release all children\n",
-> >+				__func__, parent->name, parent->child-
-> >name);
-> >+		write_lock(&resource_lock);
-> 
-> In previous version, lock is grasped before parent->child is checked.
-> 
-> Not sure why you change the order?
-> 
-To hold the lock as short as possible.
-But yes, you are right, this could lead to problems if releasing of the
-children is done in a parallel thread on a multicore ...
-I'll change that to cover the whole resource access within the lock.
-Not a big thing ...
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Best regards
-Carsten
+Yours,
+Linus Walleij
