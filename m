@@ -2,133 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 693888EC01
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:54:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D4758EC18
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:57:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731895AbfHOMyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:54:25 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:42443 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729627AbfHOMyZ (ORCPT
+        id S1731976AbfHOM5P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:57:15 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:44403 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730087AbfHOM5O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:54:25 -0400
-Received: from uno.localdomain (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9640A200002;
-        Thu, 15 Aug 2019 12:54:21 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 14:55:48 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [RFC 1/5] media: dt-bindings: Document 'location' property
-Message-ID: <20190815125548.kh2pdxzysafltswc@uno.localdomain>
-References: <20190814202815.32491-1-jacopo@jmondi.org>
- <20190814202815.32491-2-jacopo@jmondi.org>
- <20190815065635.GJ6133@paasikivi.fi.intel.com>
+        Thu, 15 Aug 2019 08:57:14 -0400
+Received: by mail-pl1-f196.google.com with SMTP id t14so1035471plr.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 05:57:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=cz1MzjYMzX4D9CL1r4WIIDgSC+c8JyxTOfGaxa1b0zw=;
+        b=cj4O6vp4Eukds5YXbbO7pQY+yJMcHVcww8QLY1Vwp37C3JJcTy1Qp4qXpJJAtXWtY3
+         W8vrGcz9aUUYDKH3cJCTjgoVzyCCD5U/gl13JkYFORoIeyEql0Anw5Wb4/YvWa8UEDdC
+         H7k15MyLo/sl5B1K4VvE/rJfj96EyLvlMaCWgqCz7sjBTvMSdtYbgLAubg9zPjjkKzSR
+         2IOeh27V/7HM2+v4S4UvFgbUs9vPLKl18lM9FqSTP+oFxDDkorhEXr7nlkjqhRSB05l9
+         NAmJoR4JKxsjMvz1FuxpomI7dNndPG0WV9NrisRIb+ulKcA1FDffwpOuyvb6zy3TRkML
+         cV8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=cz1MzjYMzX4D9CL1r4WIIDgSC+c8JyxTOfGaxa1b0zw=;
+        b=XDvy4TYdIqz5Z8s3cR+BUDKflVrLaGzCYqUiaNz9fj52xEEBaP7k1LyLqy1SUZ9poJ
+         MzMowKf3GOJOJPuL0bLNX0eCkN7xP7+hoSFDy+tLJIDn9ASy7L9YJJPCgmo8v75+QTdk
+         yZaG8jpj8bpSudz1kG97sE06xFT8VwiPALL/4O2Bk6A3mHGW0EwkVH5+itIED8GF9okJ
+         p295u3iG+H0H24uk28sYyTpFxpfDTPP2hsN4+cJPVXDMLtXVDPXnx5mKgFwgxwkJw4hi
+         eVYty7Z+E1PUpTXsngFviGPzNLKn/5rBd4lZMJAyMy2N5wFVENMHx+W3DRQCpQkqDPmY
+         WzKQ==
+X-Gm-Message-State: APjAAAUp5fBeqzIGEBSAAJS0kyA82cOVkvl2tqusH77H+dNerje63yk8
+        FIe3i/unDTPA/iz6PnVlZwxGEzSiwT2zXB1Y1gM=
+X-Google-Smtp-Source: APXvYqzF+djrzTK3h1BgNnvKjeyGw4DDDWA7fM8n3nU29bJPJPPhF05ukbXUPh5tCvDQR6i1TcLRnYnIbr9bzt1Qu/Q=
+X-Received: by 2002:a17:902:9349:: with SMTP id g9mr4137313plp.262.1565873833959;
+ Thu, 15 Aug 2019 05:57:13 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="guiyz7n4y2542mup"
-Content-Disposition: inline
-In-Reply-To: <20190815065635.GJ6133@paasikivi.fi.intel.com>
-User-Agent: NeoMutt/20180716
+References: <20190815112826.81785-1-heikki.krogerus@linux.intel.com> <20190815112826.81785-3-heikki.krogerus@linux.intel.com>
+In-Reply-To: <20190815112826.81785-3-heikki.krogerus@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 15 Aug 2019 15:57:02 +0300
+Message-ID: <CAHp75Ve6PXtP3D94B1iDB5TcO6etqX9uCrQ7HSn1wSes-B3FPQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] usb: roles: intel_xhci: Supplying software node for
+ the role mux
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---guiyz7n4y2542mup
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Sakari,
-
-On Thu, Aug 15, 2019 at 09:56:35AM +0300, Sakari Ailus wrote:
-> Hi Jacopo,
+On Thu, Aug 15, 2019 at 2:28 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
 >
-> On Wed, Aug 14, 2019 at 10:28:11PM +0200, Jacopo Mondi wrote:
-> > Add the 'location' device property, used to specify the camera device
-> > mounting position. The property is particularly meaningful for mobile
-> > devices with a well defined usage orientation.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> > ---
-> >  Documentation/devicetree/bindings/media/video-interfaces.txt | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> > index f884ada0bffc..819077b2649c 100644
-> > --- a/Documentation/devicetree/bindings/media/video-interfaces.txt
-> > +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
-> > @@ -89,6 +89,10 @@ Optional properties
-> >    but a number of degrees counter clockwise. Typical values are 0 and 180
-> >    (upside down).
-> >
-> > +- location: The camera device mounting position, relative to the device
-> > +  usage orientation. Possible values are:
-> > +  0 - Front camera. The image sensor is mounted on the front side of the device.
-> > +  1 - Back camera. The image sensor is mounted on the back side of the device.
->
-> Would it make sense to make this a little more generic? Such as s/image
-> sensor/ device/, for instance?
+> The primary purpose for this node will be to allow linking
+> the users of the switch to it. The users will be for example
+> USB Type-C connectors. By supplying a reference to this
+> node in the software nodes representing the USB Type-C
+> controllers or connectors, the drivers for those devices can
+> access the switch.
 
-Laurent seems to be of the opposite opinion, but i think staying as
-generic as possible might be a good idea. Now I have a linguistic
-problem though.
+> -static const struct usb_role_switch_desc sw_desc = {
+> +static struct usb_role_switch_desc sw_desc = {
 
- +- location: The device mounting position, relative to the device
- +  usage orientation. Possible values are:
- +  0 - Front. The device is mounted on the front side of the device.
- +  1 - Back. The device is mounted on the back side of the device.
+I dunno what is better, but usual approach I'm using in other drivers
+is to kmemdup() input constant structures in order to have originals
+untouched.
 
-So I need one "device" to indicate the lens/flash/image sensor and one
-to indicate the device they're installed on :) Any idea?
-
->
-> Is this also relevant for flash or lens devices?
->
-> Flash (torch) devices could be present, at least principle, without a
-> camera. There once was even such a Nokia phone, 1100 unless I'm mistaken.
-> :-)
-
-Not to mention that lenses are indeed installed in the same package as
-the camera sensor, but they're described as separate device nodes as
-flash leds are, so the mounting location might need to be specified in their
-device node properties too, even if it would be the same as the image
-sensor one.
-
->
-> --
-> Regards,
->
-> Sakari Ailus
-> sakari.ailus@linux.intel.com
-
---guiyz7n4y2542mup
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1VVlMACgkQcjQGjxah
-Vjzusg//X9PG4Cmjuk3pVya27qa6x9ghMPj/jf4z/DUsywmOUgyZ5iVpmOzJBCL0
-FwHslnBZ03WbUjBVIvqnYNbLzd6yIbSE1EyTnjBDfhmeJ8iqTjN+qetPc1hM804S
-5dKlthkP7UFG3PShJbFJoU+26eGfQi3rt94jtpX4I4WawodSCLf6neueow56V/O7
-CBjH5d2oqkk0+gyXNwn8YZyeaUPaFlN7wKuGQqg/O7OgbuV0LZJCoFFEaKZNhJcJ
-gzDXFk7I9ywmlySZ340gLNH3GUiCSqUQYTVkv0vUxihagAtA1HpYEeRde75DOe/4
-1bCrHrb75K0AYOjza0sKoMo6qI6yulSkGepWU9QNwjinWV/3Z/g7GkTABVwCSBNH
-wVOiwxqj834941oqb5vxCAKWrg4i3pA6YWgCJ5oMFuxrCE4FjjQm7V0kCyErSFUL
-QFlt+KhM8AhQETJ/uS5u/nwh70WFpVpcI0A4yAbgbCIZLl7Ta4SaOJOiqDZs1XQU
-c1nTGXbXOjo2bHqGRabHupNF876E38CHUYB+ubvjkzJEzczvk94gTFNfqeaEdiOq
-XB17wFZT7UHTKaKrIEOnKvPdJd5hMp0fTkNoDM6g0is8m1vqXixf+aHQcJEpIA7S
-i4IiRb6s4ipRLI9ymsmNBysjXJZ9z1SsHhUFbaJy6WbbhBKA668=
-=+0WF
------END PGP SIGNATURE-----
-
---guiyz7n4y2542mup--
+-- 
+With Best Regards,
+Andy Shevchenko
