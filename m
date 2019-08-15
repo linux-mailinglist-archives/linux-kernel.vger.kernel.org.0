@@ -2,118 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B74048E61B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:19:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E31C8E636
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730888AbfHOITD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:19:03 -0400
-Received: from mx2.suse.de ([195.135.220.15]:34614 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729971AbfHOITC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:19:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 80243ACF2;
-        Thu, 15 Aug 2019 08:19:00 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 10:18:58 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Edward Chron <echron@arista.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
-Subject: Re: [PATCH] mm/oom: Add killed process selection information
-Message-ID: <20190815081858.GB9477@dhcp22.suse.cz>
-References: <20190808183247.28206-1-echron@arista.com>
- <20190808185119.GF18351@dhcp22.suse.cz>
- <CAM3twVT0_f++p1jkvGuyMYtaYtzgEiaUtb8aYNCmNScirE4=og@mail.gmail.com>
- <20190808200715.GI18351@dhcp22.suse.cz>
- <CAM3twVS7tqcHmHqjzJqO5DEsxzLfBaYF0FjVP+Jjb1ZS4rA9qA@mail.gmail.com>
- <20190809064032.GJ18351@dhcp22.suse.cz>
- <CAM3twVRCTLdn+Lhcr+4ZdY3nYVvXFe1O19UR9H121W34H=oV7g@mail.gmail.com>
- <20190812114256.GG5117@dhcp22.suse.cz>
- <CAM3twVSXEwN+r8YG=z3fmnN0G55N5HD-Bnh6g=MVk75qB1kpWQ@mail.gmail.com>
+        id S1730560AbfHOIZU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 04:25:20 -0400
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:49674 "EHLO
+        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730213AbfHOIZU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 04:25:20 -0400
+X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 04:25:19 EDT
+IronPort-SDR: vdvsQ8Iv0WG7sz1QV0nN5aS3OM7d3QEtNR3/Z3o7LWwt0fRCWkXxJvuLgQazXnA73A5OFItmt5
+ 0ldGMSM4K/7zuozjL6rb32sSm1wthHTf+CdXH96Ik/Z414gGHBHjPvtuTvc0mMIjAfHT9PXFKV
+ FOMkH4FZGGuw9IOSxIxt0VQtIiuigxuOPWHMX05C495/BHq7mxZDOZNqRMJoK83hEWZfkNNGqG
+ waPaSPHQ0/vwcI6LV/WQ88HociRQs0YSaPmIOjJTy5dUyJGcybIkON8qMTaZsnWVXEgzXCy4Gm
+ Oto=
+X-IronPort-AV: E=Sophos;i="5.64,388,1559548800"; 
+   d="scan'208";a="40453435"
+Received: from orw-gwy-01-in.mentorg.com ([192.94.38.165])
+  by esa2.mentor.iphmx.com with ESMTP; 15 Aug 2019 00:18:12 -0800
+IronPort-SDR: htcRjcmG9l9zGnWMZ+4soCAXhpE2Zibe/ltCHmq+74d1fR0FdNoga33DgrUAk0Uq+YQ9Hi4Wyn
+ sgJtbzWgBUbD6zg+QDNAkgOdd2PjrstZROoBjDV/wQ4r1IijKrpyGUh9i8NvPweyTNqcnKg3qp
+ Z0Pr1LfQIF4tJhZqOCb7dQTusDqUheV2JBIuFyb5x2lQtrNjRwVkQKoFBGUWIRmRGbCfcRgnNv
+ HLFrD1pLTEWB9k9qWw6B0+nCbVJW3c4lerAipRd5wYa07jIqv5/2R5f5O/dI8t7RqhofTcicvI
+ WlM=
+From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
+To:     Wei Yang <richard.weiyang@gmail.com>
+CC:     Linus Torvalds <torvalds@linux-foundation.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "osalvador@suse.de" <osalvador@suse.de>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: AW: [PATCH v2] kernel/resource.c: invalidate parent when freed
+ resource has childs
+Thread-Topic: [PATCH v2] kernel/resource.c: invalidate parent when freed
+ resource has childs
+Thread-Index: AQHVUq5kcb5Ex7JpNUSktSjVjdFue6b6xMYAgAEUHnA=
+Date:   Thu, 15 Aug 2019 08:18:06 +0000
+Message-ID: <c925c7d1041f478c99863da56c24b8a7@SVR-IES-MBX-03.mgc.mentorg.com>
+References: <1565278859475.1962@mentor.com> <1565358624103.3694@mentor.com>
+ <20190809223831.fk4uyrzscr366syr@master>
+ <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
+ <1565794104204.54092@mentor.com> <20190814162932.alwo7g4664c2dtp3@master>
+In-Reply-To: <20190814162932.alwo7g4664c2dtp3@master>
+Accept-Language: de-DE, en-IE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [137.202.0.90]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAM3twVSXEwN+r8YG=z3fmnN0G55N5HD-Bnh6g=MVk75qB1kpWQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-08-19 23:24:51, Edward Chron wrote:
-> On Mon, Aug 12, 2019 at 4:42 AM Michal Hocko <mhocko@kernel.org> wrote:
-> >
-> > On Fri 09-08-19 15:15:18, Edward Chron wrote:
-> > [...]
-> > > So it is optimal if you only have to go and find the correct log and search
-> > > or run your script(s) when you absolutely need to, not on every OOM event.
-> >
-> > OK, understood.
-> >
-> > > That is the whole point of triage and triage is easier when you have
-> > > relevant information to decide which events require action and with what
-> > > priority.
-> > >
-> > > The OOM Killed message is the one message that we have go to
-> > > the console and or is sent as SNMP alert to the Admin to let the
-> > > Admin know that a server or switch has suffered a low memory OOM
-> > > event.
-> > >
-> > > Maybe a few examples would be helpful to show why the few extra
-> > > bits of information would be helpful in such an environment.
-> > >
-> > > For example if we see serverA and serverB are taking oom events
-> > > with the fooWidget being killed, something along the lines of
-> > > the following you will get message likes this:
-> > >
-> > > Jul 21 20:07:48 serverA kernel: Out of memory: Killed process 2826
-> > >  (fooWidget) total-vm:10493400kB, anon-rss:10492996kB, file-rss:128kB,
-> > >  shmem-rss:0kB memory-usage:32.0% oom_score: 320 oom_score_adj:0
-> > >  total-pages: 32791748kB
-> > >
-> > > Jul 21 20:13:51 serverB kernel: Out of memory: Killed process 2911
-> > >  (fooWidget) total-vm:11149196kB, anon-rss:11148508kB, file-rss:128kB,
-> > >  shmem-rss:0kB memory-usage:34.0% oom_score: 340 oom_score_adj:0
-> > >  total-pages: 32791748kB
-> > >
-> > > It is often possible to recognize that fooWidget is using more memory than
-> > > expected on those systems and you can act on that possibly without ever
-> > > having to hunt down the log and run a script or otherwise analyze the
-> > > log. The % of memory and memory size can often be helpful to understand
-> > > if the numbers look reasonable or not. Maybe the application was updated
-> > > on just the those systems which explains why we don't see issues on the
-> > > other servers running that application, possible application memory leak.
-> >
-> > This is all quite vague and requires a lot of guessing. Also your
-> > trained guess eye might easily get confused for constrained OOMs (e.g.
-> > due to NUMA or memcg). So I am not really sold to the percentage idea.
-> > And likewise the oom_score.
-> >
-> > [...]
-> >
+>>When a resource is freed and has children, the childrens are
 > 
-> Actually totalpages is used by oom control and is set to the appropriate
-> value for a memcg OOM event or to totalram_pages + totalswap if it is
-> a system wide OOM event.
+> s/childrens/children/
+>
+oh, missed that. Too many children ... ;-)
+ 
+>>+		__release_child_resources(tmp, warn);
 > 
-> The percentage coupled with the totalpages is how we know what we're
-> looking at and for our environments. Seems to work fine, but maybe there are
-> some environments where that is not the case.
+> This function will release all the children.
 > 
-> I must be missing something here so I need to go back and study this.
+> Is this what Linus suggest?
+> 
+> From his code snippet, I just see siblings parent is set to NULL. I may miss
+> some point?
+>
+At the point we are here, there should be no children, and children of
+children at all ...
+So they are all more or less lost in the wild.
+That was why i didn't copy Linus' code 1:1 but reused an already existing
+function doing similar thing.
+It's anyway worth of thinking about this.
 
-total pages is the amount of memory (limit for memcg) in the OOM domain
-(e.g. a subset of numa nodes) while the oom victim might span more numa
-nodes resp. have memory charged to a different memcg (e.g. when the task
-has been moved between memcgs). And that is why the percentage might be
-misleading for anything but the whole system or static memcgs oom and
-likely why it works in your case.
--- 
-Michal Hocko
-SUSE Labs
+What i have in mind here (example):
+Parent: iomem map 0x1000..0x1FFF
+  Child1: iomem map 0x1000..0x17FF
+    Child11: iomem map 0x1000..0x13FF
+    Child12: iomem map 0x1400..0x17FF
+  Child2: iomem map 0x1800..0x1FFF
+    Child21: iomem map 0x1800..0x1BFF
+    Child22: iomem map 0x1C00..0x1FFF
+
+When releasing the parent, how can children 11, 12, 21 and 22 still be valid?
+They don't know about their grandfather died ...
+Looking at the __release_child_resources, i exactly found that all children are
+invalidated/released in the way Linus did for the parent's children list.
+Doesn't it make sense to do the same for all?
+
+Please comment.
+
+> >+static void check_children(struct resource *parent)
+> >+{
+> >+	if (parent->child) {
+> >+		/* warn and release all children */
+> >+		WARN_ONCE(1, "%s: %s has child %s, release all children\n",
+> >+				__func__, parent->name, parent->child-
+> >name);
+> >+		write_lock(&resource_lock);
+> 
+> In previous version, lock is grasped before parent->child is checked.
+> 
+> Not sure why you change the order?
+> 
+To hold the lock as short as possible.
+But yes, you are right, this could lead to problems if releasing of the
+children is done in a parallel thread on a multicore ...
+I'll change that to cover the whole resource access within the lock.
+Not a big thing ...
+
+Best regards
+Carsten
