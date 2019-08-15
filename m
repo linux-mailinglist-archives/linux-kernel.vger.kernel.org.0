@@ -2,73 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B4058E5CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:57:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DEC68E5D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:58:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730683AbfHOH5i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 03:57:38 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:60386 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730382AbfHOH5i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 03:57:38 -0400
-Received: from zn.tnic (p200300EC2F0B5200DD69E9E370CF27BC.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:dd69:e9e3:70cf:27bc])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 1897E1EC067D;
-        Thu, 15 Aug 2019 09:57:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565855857;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=uw3MuAP15iFyITo377LGBMxCUt0Up0dvOinOJIGTV2A=;
-        b=W9esGaaupYIdGPouuR90QaBfSgBnDfREQw6TDL6x045YHxclYzfsbxIC+SdU+VaY58/TW2
-        04vwvyTA+P/AtaS/obMo/1thFLCIcjCo02SBanEVuEP/v7rrBmZS8Lo9cReSMxVQ8nlUQR
-        PzuY9GuVwWpP0i0Azq1Nelq1iqEjWMg=
-Date:   Thu, 15 Aug 2019 09:58:22 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Tony Luck <tony.luck@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
- asm/intel-family.h
-Message-ID: <20190815075822.GC15313@zn.tnic>
-References: <20190814234030.30817-1-tony.luck@intel.com>
+        id S1730765AbfHOH6l (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 03:58:41 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43816 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730614AbfHOH6l (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 03:58:41 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c19so1072229lfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:58:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxYIVJXDl0DAiqdp8/QVOF+ggKcEMBtGLnHvtUKRSiU=;
+        b=T0OEX7pfHxaxo4aOq3gWAKq/k0OH2V2V+0DlhgiT8Hrugb/ErCNRJlwXiF/Nr/oE/w
+         4QYtPLkq3vH5b/AhdCSlkirEHFA5XypmeH9DrVATrPxXf/2iJ1FEHF4KhayWLtKLqt1Z
+         okxEUthyOLkUCCJxiDwPdOgsa+jYUm0rwvb15ZWFrcAIW5BY08SehpOBA8iGpKfiYhLj
+         qw5PevsY02PaqtX/tnUtCusfkEE2SkxjevazeUKUYxO1kcXuRl3MrRKHfdbMzWdCfycZ
+         Nr0oJerFm+zm4wRsJ9JU+889w1msI+zFq7lHEvsyyfHNfdsJJEHWYzqYdY+CFIzD6VUl
+         dbjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZxYIVJXDl0DAiqdp8/QVOF+ggKcEMBtGLnHvtUKRSiU=;
+        b=SCThBbvXZkPJR7QEM8Z9GGdeweB0yvm4p0NTC2iqtrE9plcGhHaQlTUY00mhERorYv
+         aOgkqt1VUCXQ1MgO24tfIbtrfvYtN2lttSBO6InYkpAneeXNu4q3dhHxIWAmfd8tyXnR
+         EAa+kT6WB01WEMK6tPFJymv4PPQtyvW2obLCCcXN+P40cu8VMYN+x15vek0w2TY837xK
+         X0JEjA7ZHjioHfYQNhrecQ0h1G5fa+fyPOhRTEvPwwRSNv7S+9ADXYZB3LVOfwHqp5lB
+         dDdlc6ZPzCSw6f3HFmkWwuk66AzHLXGRH2ofSZl0cpGh0hYut4ZOZxelwzf4ikyVpL+o
+         0ApA==
+X-Gm-Message-State: APjAAAUo7KMmDv1adPybBl0psliyFICzILuzStUdEABYdc+2JZlDlDWx
+        Cjm0rXT/7GWLqHfUUF4n463X706M4DVPhQ==
+X-Google-Smtp-Source: APXvYqxls4X1ddxQTHCuwIDVXDZ78NOkk+luCUq8TVbBFysydFKTl+4JYn40PZg7QDBcqHkKXP/y1A==
+X-Received: by 2002:a19:9111:: with SMTP id t17mr1694958lfd.113.1565855918902;
+        Thu, 15 Aug 2019 00:58:38 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id w8sm319257lfq.53.2019.08.15.00.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 00:58:38 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     davem@davemloft.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, tim.bird@sony.com,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH v2] selftests: net: tcp_fastopen_backup_key.sh: fix shellcheck issue
+Date:   Thu, 15 Aug 2019 09:58:26 +0200
+Message-Id: <20190815075826.13210-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190814234030.30817-1-tony.luck@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 04:40:30PM -0700, Tony Luck wrote:
-> There are a few different subsystems in the kernel that depend on
-> model specific behaviour (perf, EDAC, power, ...). Easier for just
-> one person to have the task to get new model numbers included instead
-> of having these groups trip over each other to do it.
-> 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  MAINTAINERS | 6 ++++++
->  1 file changed, 6 insertions(+)
+When running tcp_fastopen_backup_key.sh the following issue was seen in
+a busybox environment.
+./tcp_fastopen_backup_key.sh: line 33: [: -ne: unary operator expected
 
-Applied, thanks.
+Shellcheck showed the following issue.
+$ shellcheck tools/testing/selftests/net/tcp_fastopen_backup_key.sh
 
-As a first order of business, pls sum up the naming scheme convention
-you guys are going to adhere to so that it is clear to everybody:
+In tools/testing/selftests/net/tcp_fastopen_backup_key.sh line 33:
+        if [ $val -ne 0 ]; then
+             ^-- SC2086: Double quote to prevent globbing and word splitting.
 
-https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
+Rework to do a string comparison instead.
 
-in a patch form. :)
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/net/tcp_fastopen_backup_key.sh | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thx.
-
+diff --git a/tools/testing/selftests/net/tcp_fastopen_backup_key.sh b/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+index 41476399e184..f6e65674b83c 100755
+--- a/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
++++ b/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+@@ -30,7 +30,7 @@ do_test() {
+ 	ip netns exec "${NETNS}" ./tcp_fastopen_backup_key "$1"
+ 	val=$(ip netns exec "${NETNS}" nstat -az | \
+ 		grep TcpExtTCPFastOpenPassiveFail | awk '{print $2}')
+-	if [ $val -ne 0 ]; then
++	if [ "$val" != 0 ]; then
+ 		echo "FAIL: TcpExtTCPFastOpenPassiveFail non-zero"
+ 		return 1
+ 	fi
 -- 
-Regards/Gruss,
-    Boris.
+2.20.1
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
