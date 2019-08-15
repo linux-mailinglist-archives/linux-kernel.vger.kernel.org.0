@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B00FE8E223
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:50:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B0FA8E212
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729498AbfHOAt4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 20:49:56 -0400
-Received: from onstation.org ([52.200.56.107]:44344 "EHLO onstation.org"
+        id S1728861AbfHOAtW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 20:49:22 -0400
+Received: from onstation.org ([52.200.56.107]:44380 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726221AbfHOAtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:49:13 -0400
+        id S1728373AbfHOAtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 20:49:15 -0400
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 1F73C3E9DE;
-        Thu, 15 Aug 2019 00:49:12 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 1D6D03EA1D;
+        Thu, 15 Aug 2019 00:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1565830152;
-        bh=kd0RcC8EypG7pu0fFFwfrtGaJLMU4ZBdU98OJAZs4wc=;
+        s=default; t=1565830154;
+        bh=vvUbQvnJ/4OGyTU3jR+k5h+lF40i8YqgCaHr7dOl1Qg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zyr/OmmFc1pFqaN7q1uS3WkW7lsWqpU0xv5LyXFy4NGocFyuwV0Cz/JWVi7tQxsAj
-         rw+LjB0NmAWn5XnoC4egZzqXVUHMH4ArPs5aOJBFQ0HO65BMLTuxR6o73aNOdzFJZZ
-         ZOVLfYqsyC+2nMJ2TosUl5r0beffcAFXtHU58h/E=
+        b=GNUjU00qmOaQpH/H6nGA9HmdDwtETr0KGIReNXp+26ch2MMd1z4kyfQvyaMbZt+HT
+         xecw9TYCY+UOayRIlV9u0VzL3URggiPjeSxlavZeF0NQM+UJ3yXYsIJO+ZD9DOLJ5d
+         AYCIS3i/+uvfkd3WekVOviCLXubzK8/+7Khmrp0Y=
 From:   Brian Masney <masneyb@onstation.org>
 To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org,
         a.hajda@samsung.com, narmstrong@baylibre.com, robdclark@gmail.com,
@@ -36,9 +36,9 @@ Cc:     airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         freedreno@lists.freedesktop.org
-Subject: [PATCH 02/11] drm/bridge: analogix-anx78xx: add new variants
-Date:   Wed, 14 Aug 2019 20:48:45 -0400
-Message-Id: <20190815004854.19860-3-masneyb@onstation.org>
+Subject: [PATCH 05/11] drm/bridge: analogix-anx78xx: correct value of TX_P0
+Date:   Wed, 14 Aug 2019 20:48:48 -0400
+Message-Id: <20190815004854.19860-6-masneyb@onstation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190815004854.19860-1-masneyb@onstation.org>
 References: <20190815004854.19860-1-masneyb@onstation.org>
@@ -49,37 +49,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the 7808 variant. While we're here, the of match table
-was missing support for the 7812 and 7818 variants, so add them as well.
+When attempting to configure this driver on a Nexus 5 phone (msm8974),
+setting up the dummy i2c bus for TX_P0 would fail due to an -EBUSY
+error. The downstream MSM kernel sources [1] shows that the proper value
+for TX_P0 is 0x78, not 0x70, so correct the value to allow device
+probing to succeed.
+
+[1] https://github.com/AICP/kernel_lge_hammerhead/blob/n7.1/drivers/video/slimport/slimport_tx_reg.h
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- drivers/gpu/drm/bridge/analogix-anx78xx.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/gpu/drm/bridge/analogix-anx78xx.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.c b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-index 3c7cc5af735c..9acdbedf1245 100644
---- a/drivers/gpu/drm/bridge/analogix-anx78xx.c
-+++ b/drivers/gpu/drm/bridge/analogix-anx78xx.c
-@@ -1301,6 +1301,7 @@ static const struct regmap_config anx78xx_regmap_config = {
- };
+diff --git a/drivers/gpu/drm/bridge/analogix-anx78xx.h b/drivers/gpu/drm/bridge/analogix-anx78xx.h
+index 25e063bcecbc..bc511fc605c9 100644
+--- a/drivers/gpu/drm/bridge/analogix-anx78xx.h
++++ b/drivers/gpu/drm/bridge/analogix-anx78xx.h
+@@ -6,7 +6,7 @@
+ #ifndef __ANX78xx_H
+ #define __ANX78xx_H
  
- static const u16 anx78xx_chipid_list[] = {
-+	0x7808,
- 	0x7812,
- 	0x7814,
- 	0x7818,
-@@ -1463,7 +1464,10 @@ MODULE_DEVICE_TABLE(i2c, anx78xx_id);
+-#define TX_P0				0x70
++#define TX_P0				0x78
+ #define TX_P1				0x7a
+ #define TX_P2				0x72
  
- #if IS_ENABLED(CONFIG_OF)
- static const struct of_device_id anx78xx_match_table[] = {
-+	{ .compatible = "analogix,anx7808", },
-+	{ .compatible = "analogix,anx7812", },
- 	{ .compatible = "analogix,anx7814", },
-+	{ .compatible = "analogix,anx7818", },
- 	{ /* sentinel */ },
- };
- MODULE_DEVICE_TABLE(of, anx78xx_match_table);
 -- 
 2.21.0
 
