@@ -2,60 +2,505 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF1428EB1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:08:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 992EC8EB35
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:12:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731721AbfHOMIr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:08:47 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:57280 "EHLO fornost.hmeau.com"
+        id S1731731AbfHOMM0 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 08:12:26 -0400
+Received: from nospam.anselm.edu ([207.89.61.79]:50779 "EHLO nospam.anselm.edu"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730497AbfHOMIq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:08:46 -0400
-Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
-        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hyEYZ-0003S4-5r; Thu, 15 Aug 2019 22:08:39 +1000
-Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hyEYZ-0007km-02; Thu, 15 Aug 2019 22:08:39 +1000
-Date:   Thu, 15 Aug 2019 22:08:38 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Zhou Wang <wangzhou1@hisilicon.com>
-Cc:     davem@davemloft.net, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxarm@huawei.com
-Subject: Re: [PATCH 0/5] crypto: hisilicon: Misc fixes
-Message-ID: <20190815120838.GA29793@gondor.apana.org.au>
-References: <1565774919-31853-1-git-send-email-wangzhou1@hisilicon.com>
+        id S1726098AbfHOMM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:12:26 -0400
+Received: from nospam.anselm.edu (127.0.0.1) id hal62i0171s3 for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 08:11:08 -0400 (envelope-from <mekelly@Anselm.Edu>)
+Received: from EXCAS1.anselm.edu ([10.3.1.115])
+        by nospam.anselm.edu ([207.89.61.79]) (SonicWALL 9.0.6.2473 )
+        with ESMTPS (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256/256)
+        id o201908151210390046521-8; Thu, 15 Aug 2019 08:10:54 -0400
+Received: from EXMAIL1.anselm.edu ([169.254.1.87]) by EXCAS1.anselm.edu
+ ([::1]) with mapi id 14.03.0435.000; Thu, 15 Aug 2019 08:10:38 -0400
+From:   Meghan Kelly <mekelly@Anselm.Edu>
+To:     Meghan Kelly <mekelly@Anselm.Edu>
+Subject: RE: IT Infrastructure
+Thread-Topic: IT Infrastructure
+Thread-Index: AdVTX9eOTIzOdmG4S02I4sTkqL3qZgAAfU/g
+Date:   Thu, 15 Aug 2019 12:10:36 +0000
+Message-ID: <A078C36BD37C1A459D4765669B4C8EEE49506CF0@EXMAIL1.anselm.edu>
+References: <A078C36BD37C1A459D4765669B4C8EEE495066F4@EXMAIL1.anselm.edu>
+In-Reply-To: <A078C36BD37C1A459D4765669B4C8EEE495066F4@EXMAIL1.anselm.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.3.1.202]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565774919-31853-1-git-send-email-wangzhou1@hisilicon.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Mlf-Version: 9.0.6.2473
+X-Mlf-License: BSVKCAP__
+X-Mlf-UniqueId: o201908151210390046521
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 05:28:34PM +0800, Zhou Wang wrote:
-> Patch 1~3 are fixes about kbuild errors, patch 4,5 are tiny fixes about qm
-> and zip.
-> 
-> This series is based on cryptodev-2.6.
-> 
-> Zhou Wang (5):
->   crypto: hisilicon - fix kbuild warnings
->   crypto: hisilicon - add dependency for CRYPTO_DEV_HISI_ZIP
->   crypto: hisilicon - init curr_sgl_dma to fix compile warning
->   crypto: hisilicon - add missing single_release
->   crypto: hisilicon - fix error handle in hisi_zip_create_req_q
-> 
->  drivers/crypto/hisilicon/Kconfig          | 1 +
->  drivers/crypto/hisilicon/qm.c             | 7 ++++---
->  drivers/crypto/hisilicon/sgl.c            | 2 +-
->  drivers/crypto/hisilicon/zip/zip_crypto.c | 6 ++++--
->  4 files changed, 10 insertions(+), 6 deletions(-)
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+________________________________
+From: Meghan Kelly
+Sent: Thursday, August 15, 2019 8:01 AM
+Subject: IT Infrastructure
+
+
+Das Office of IT Infrastructure hat den Speicherzugriff aktualisiert, um den Schutz der Datenbestände und die Systemleistung zu verbessern. Klicken Sie auf: SYSTEM-UPGRADE<https://epayforalloufushere.securechkout.net/>, um den Speicher zu aktualisieren
+
+
+
+© 2019 Helpdesk
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
