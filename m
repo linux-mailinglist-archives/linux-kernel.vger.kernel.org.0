@@ -2,117 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EEE798F20B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:22:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02AF38F210
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:22:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732239AbfHORW0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:22:26 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:35180 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731059AbfHORWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:22:25 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6EBA730832E1;
-        Thu, 15 Aug 2019 17:22:25 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 643C55C219;
-        Thu, 15 Aug 2019 17:22:24 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 13:22:22 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/3] mm/migrate: see hole as invalid source page
-Message-ID: <20190815172222.GD30916@redhat.com>
-References: <1565078411-27082-1-git-send-email-kernelfans@gmail.com>
- <1565078411-27082-2-git-send-email-kernelfans@gmail.com>
+        id S1732280AbfHORWt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:22:49 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36564 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729931AbfHORWs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:22:48 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so656660iom.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:22:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YPHDIOljV5hQaERK4FC6PgOmZFfQHVVab+DpiSEe62s=;
+        b=lX/+/pbPgVYuikGECsCt+M8bkwOrFQVZRfUmqOQPaMX1z9CL2Yc1cjJHNpNYU4Sbrn
+         bz3T9KHyos41p1xP12MdWHQX26nF9Y3GlGKfhpewxe2Rc3ijwD8hHHyukD99wq6Q2x6v
+         PgL5MVdMZXWnZDtH/3OHfqd9z9BqsKmkGgd2jnQsyqV4EciddEOt4ubAYIPB/hUmpsTg
+         KO3sU3cRyCNUpTzwGC0S7Hi46ohz4Vv3cJJoKy0STcxJwuDqx7wiQVo7bxAxKtLhDDnW
+         3APvUEGu/YYpyL2u8P1u9hln1OTcnmmvcAsICdmLl598yRShpj6b5MVHjQoVglmpk2rD
+         2b3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YPHDIOljV5hQaERK4FC6PgOmZFfQHVVab+DpiSEe62s=;
+        b=SfDBStyJrnLlRzHG4JOzm52V1KqYPZN3Ffyx5gTEJTQIIXGreeiysKxFa/9ggbAHA6
+         Sxtu7MKjxrq2KuoNpPzDsW8Du8EdlOPpQ0m/K5S5+YbnMwr0oJe5go/mgzAn0CyNgxhq
+         /bA6kwigeoUPN3QNK08pAgi3vmYYDOhqmJ/9WTcwAkcj2B4V1hWqqNmNx7FLQEdSwswh
+         orTgRFO3FxAFX/0XaUeWduh8kkC+JYoJdjnBAeSdDIKLRElZANlnDO7FMWPyACRFQq68
+         LyS3CmQ68FDl6z14yHgco1/0uJ6NYlAMMXEV2+iR/UHReJisZ9hSapm4b4+YG67j6kY4
+         Kb2A==
+X-Gm-Message-State: APjAAAUNluyHCp5KYWeEWIGpYQyh3fq3t3jXWG2lBmceeBAnauhQqHh/
+        Y0cM/VuPCtLZ8FnTtAyF2hIlVc6A9Z4h3DdR5du6GZCN
+X-Google-Smtp-Source: APXvYqyM8y6XV3ud8k+ti2yuhyZmBt2wQ3LZoMTRTv3ex/apV+hFyTyTpYDw/Dstjey1CnvaQ1AzxIqk9gDnK49wd9Y=
+X-Received: by 2002:a5e:c601:: with SMTP id f1mr6364484iok.57.1565889767438;
+ Thu, 15 Aug 2019 10:22:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565078411-27082-2-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 15 Aug 2019 17:22:25 +0000 (UTC)
+References: <CANLsYkz3_bzRCQEVb00Tbf3Rdww13mePN-woncctOu7OanF00A@mail.gmail.com>
+ <20190814235058.184204-1-yabinc@google.com>
+In-Reply-To: <20190814235058.184204-1-yabinc@google.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 15 Aug 2019 11:22:36 -0600
+Message-ID: <CANLsYkwG-nCzomcr2n8T5NaFp-y_Efft+4mbH0Fb1yNE=Lgepg@mail.gmail.com>
+Subject: Re: [PATCH v2] coresight: tmc-etr: Fix perf_data check.
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 04:00:10PM +0800, Pingfan Liu wrote:
-> MIGRATE_PFN_MIGRATE marks a valid pfn, further more, suitable to migrate.
-> As for hole, there is no valid pfn, not to mention migration.
-> 
-> Before this patch, hole has already relied on the following code to be
-> filtered out. Hence it is more reasonable to see hole as invalid source
-> page.
-> migrate_vma_prepare()
-> {
-> 		struct page *page = migrate_pfn_to_page(migrate->src[i]);
-> 
-> 		if (!page || (migrate->src[i] & MIGRATE_PFN_MIGRATE))
-> 		     \_ this condition
-> }
+On Wed, 14 Aug 2019 at 17:51, Yabin Cui <yabinc@google.com> wrote:
+>
+> > Did you actually see the check fail or is this a theoretical thing?
+> > I'm really perplex here has I have tested this scenario many times
+> > without issues.
+> >
+> I have seen this warning in dmesg output, that's how I find the problem.
+>
+> > In CPU wide scenarios each perf event (one per CPU) is associated with
+> > an event_data during the setup process.  The event_data is the
+> > etr_perf holding a reference to the perf ring buffer for that specific
+> > event along with the etr_buf, regardless of who created the latter.
+>
+> Agree.
+>
+> > From there, when the event is installed on a CPU, the csdev for that
+> > CPU is given a reference to the event_data of that event[1].  Before
+> > going further notice how there is a per CPU csdev and event handle to
+> > keep track of event specifics[2]. As such both (per CPU) csdev and
+> > event handle carry the exact same reference to the etr_perf.
+> >
+> On my test device (Pixel 3), there is an ETM device on each cpu, but only
+> one ETR device for the whole device. So there is only one instance of etr
+> csdev in the kernel. If multiple cpus are scheduling on etm perf events at
+> the same time, all of them are trying to set their event_data to the same
+> etr csdev. And different perf events have different event_data. A warning
+> situation is as below:
+>
+>    cpu 0
+>    schedule on event A (set etr csdev->perf_data to event_a.etr_perf)
+>
+>    cpu 1
+>    schedule on event B (set etr csdev->perf_data to event_b.etr_perf)
+>
 
-NAK you break the API, MIGRATE_PFN_MIGRATE is use for 2 things,
-first it allow the collection code to mark entry that can be
-migrated, then it use by driver to allow driver to skip migration
-for some entry (for whatever reason the driver might have), we
-still need to keep the entry and not clear it so that we can
-cleanup thing (ie remove migration pte entry).
+You are 100% right and looking at it again this morning it just jumped
+at me.  I simply can't understand how it did not manifest itself
+during all the hammering I did on it.
 
-> 
-> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> To: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  mm/migrate.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index c2ec614..832483f 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2136,10 +2136,9 @@ static int migrate_vma_collect_hole(unsigned long start,
->  	unsigned long addr;
->  
->  	for (addr = start & PAGE_MASK; addr < end; addr += PAGE_SIZE) {
-> -		migrate->src[migrate->npages] = MIGRATE_PFN_MIGRATE;
-> +		migrate->src[migrate->npages] = 0;
->  		migrate->dst[migrate->npages] = 0;
->  		migrate->npages++;
-> -		migrate->cpages++;
->  	}
->  
->  	return 0;
-> @@ -2228,8 +2227,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  		pfn = pte_pfn(pte);
->  
->  		if (pte_none(pte)) {
-> -			mpfn = MIGRATE_PFN_MIGRATE;
-> -			migrate->cpages++;
-> +			mpfn = 0;
->  			goto next;
->  		}
->  
-> -- 
-> 2.7.5
-> 
+Please see details in my other (and upcoming) email.
+
+Thanks,
+Mathieu
+
+>    cpu 1
+>    schedule off event B (update buffer, does nothing since csdev->refcnt != 1)
+>
+>    cpu 0
+>    schedule off event A (update buffer, but etr csdev->perf_data check fail)
