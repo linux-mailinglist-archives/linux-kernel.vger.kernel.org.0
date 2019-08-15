@@ -2,141 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE9E48F0A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:34:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC94D8F0B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731960AbfHOQeU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:34:20 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33394 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730156AbfHOQeT (ORCPT
+        id S1732025AbfHOQgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:36:55 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:51712 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728348AbfHOQgy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:34:19 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so2783696wrr.0;
-        Thu, 15 Aug 2019 09:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=pTn+NtsTL+V0D+GdWsANpO5LDlMDujGKQnBTFznYvrg=;
-        b=b0I5b9umvFU/dTbkGZ8lpI4IO0BntAfcK/I9nuYpwuBM+8XbOgALyBm+ZWw4KA8Rpq
-         5QjqOnGNaJK6h456JXrc9md8wR77ry1v2+nExuB1/of/Cx6VQTNlp3zqUydXrs595iLN
-         xi5g99hILsigrn9aspf7eQbiNtWPbG3/EiHghM18mEQ2KHNbqW5o0b8YGihRneXoAX1x
-         CZGuMee8ohk2PO5cChypZvO4/JWYSUCII8yJCbl1gNJFDyTXDAQ8qKIzq9hW7w2ZpoOq
-         veLzzO3eA0lFHqAH2iGJPr8p7wHKS9A17modOPj5hy8g31swF7edmPtCA2tm+NsPkqeN
-         nzZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pTn+NtsTL+V0D+GdWsANpO5LDlMDujGKQnBTFznYvrg=;
-        b=AHqeCZKgBRsoEAs4kxiOI0EoDhnUw+SSXjunR+OwNfRbSOsuepmp3l8Eil8AtN85dL
-         /QD76zKWlTkPw81YLpxwGfFjkoXYBomFVlAbq+w0YiNyUWohMv4dMWJT6Axk5Hxi9s4F
-         5frhXVOsQluMS+ZLl0fJbNnDuo+Iqws7b+Ea7TXI6BMUKv8v5F6ZMOtAzXTQ88ryPfez
-         D23cSEvK4Qx6xHk3f/cj1YxePklYjTC7KEijDPFo+CE275h1sKzDvbIsdYs27hqqyAeG
-         ZkNTxnxLTL2Y9fA8KHSUix2TMcM39OJUFEXVhBZICG9wZmtJg0/tZEksgSheNf6rnb+v
-         4UNQ==
-X-Gm-Message-State: APjAAAUwN8x9o0b4EVJ2LN83mgEZZey2soZRlLxbG13afrFJSMtmI9sW
-        ZKbVVr+pqsgBj6xh56jBNzk=
-X-Google-Smtp-Source: APXvYqwOrCQJCIbbsm7t9XfeonICJnDff2rMsiIMCZSORG7Bv+ZFuT2VYG1FcFnDQtFQ42EJPkFZjA==
-X-Received: by 2002:adf:b64e:: with SMTP id i14mr6486128wre.248.1565886857510;
-        Thu, 15 Aug 2019 09:34:17 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f2f:3200:c0f5:392f:547b:417a? (p200300EA8F2F3200C0F5392F547B417A.dip0.t-ipconnect.de. [2003:ea:8f2f:3200:c0f5:392f:547b:417a])
-        by smtp.googlemail.com with ESMTPSA id g14sm5756141wrb.38.2019.08.15.09.34.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 09:34:16 -0700 (PDT)
-Subject: Re: [PATCH net-next 1/1] Added BASE-T1 PHY support to PHY Subsystem
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Christian Herber <christian.herber@nxp.com>
-Cc:     "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>
-References: <20190815153209.21529-1-christian.herber@nxp.com>
- <20190815153209.21529-2-christian.herber@nxp.com>
- <20190815155613.GE15291@lunn.ch>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <2ca68436-8e49-b0b2-2460-4fcac3094b09@gmail.com>
-Date:   Thu, 15 Aug 2019 18:34:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 15 Aug 2019 12:36:54 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FGYQWJ191500;
+        Thu, 15 Aug 2019 16:36:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=tQp5b+UWyvDkv+mGHv76dD+bCogpkczjZQzmfVTQMNA=;
+ b=UhntzMAfWALdFCA48bRct57tOumFWBA3G42PC/w+X4/OsjQIx41oHRuI/w6t3OOZyIoF
+ NdG1hCNIGQzZiOLbgkVJUHsKNM0j+Mps4ca0ICeOhOXb0mKZJqQdZFh/ZFrjOPj0MRlg
+ encRmoGw4lQYevOL2Wpi2UQbHCLBM4iVnNT8/oDXVNdEWD0sfLW2rRn9L+ebu8qRhH8b
+ 7Qg8rhhmpzZLubHbFue+jNF415ZfYdlqhvZXai/tjb0BvJDNK8/AR2fEcReBiDzcd7/n
+ tbVDn1OQgbBWhExDCWddjeU1b0Zt04eP0HSxO3qTH2mjQg7z4Rfbzr8ggAJz7Ap4I+3M 1w== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2130.oracle.com with ESMTP id 2u9nbturdd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 16:36:37 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FGX7Yv003161;
+        Thu, 15 Aug 2019 16:34:36 GMT
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserp3030.oracle.com with ESMTP id 2ucs8858qr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 16:34:36 +0000
+Received: from abhmp0022.oracle.com (abhmp0022.oracle.com [141.146.116.28])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7FGYZ0S027609;
+        Thu, 15 Aug 2019 16:34:35 GMT
+Received: from localhost (/67.169.218.210)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Aug 2019 09:34:35 -0700
+Date:   Thu, 15 Aug 2019 09:34:34 -0700
+From:   "Darrick J. Wong" <darrick.wong@oracle.com>
+To:     hch@infradead.org, akpm@linux-foundation.org, tytso@mit.edu,
+        viro@zeniv.linux.org.uk
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        fstests <fstests@vger.kernel.org>
+Subject: [PATCH RFC 3/2] fstests: check that we can't write to swap files
+Message-ID: <20190815163434.GA15186@magnolia>
+References: <156588514105.111054.13645634739408399209.stgit@magnolia>
 MIME-Version: 1.0
-In-Reply-To: <20190815155613.GE15291@lunn.ch>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <156588514105.111054.13645634739408399209.stgit@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908150161
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908150161
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.08.2019 17:56, Andrew Lunn wrote:
-> On Thu, Aug 15, 2019 at 03:32:29PM +0000, Christian Herber wrote:
->> BASE-T1 is a category of Ethernet PHYs.
->> They use a single copper pair for transmission.
->> This patch add basic support for this category of PHYs.
->> It coveres the discovery of abilities and basic configuration.
->> It includes setting fixed speed and enabling auto-negotiation.
->> BASE-T1 devices should always Clause-45 managed.
->> Therefore, this patch extends phy-c45.c.
->> While for some functions like auto-neogtiation different registers are
->> used, the layout of these registers is the same for the used fields.
->> Thus, much of the logic of basic Clause-45 devices can be reused.
->>
->> Signed-off-by: Christian Herber <christian.herber@nxp.com>
->> ---
->>  drivers/net/phy/phy-c45.c    | 113 +++++++++++++++++++++++++++++++----
->>  drivers/net/phy/phy-core.c   |   4 +-
->>  include/uapi/linux/ethtool.h |   2 +
->>  include/uapi/linux/mdio.h    |  21 +++++++
->>  4 files changed, 129 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
->> index b9d4145781ca..9ff0b8c785de 100644
->> --- a/drivers/net/phy/phy-c45.c
->> +++ b/drivers/net/phy/phy-c45.c
->> @@ -8,13 +8,23 @@
->>  #include <linux/mii.h>
->>  #include <linux/phy.h>
->>  
->> +#define IS_100BASET1(phy) (linkmode_test_bit( \
->> +			   ETHTOOL_LINK_MODE_100baseT1_Full_BIT, \
->> +			   (phy)->supported))
->> +#define IS_1000BASET1(phy) (linkmode_test_bit( \
->> +			    ETHTOOL_LINK_MODE_1000baseT1_Full_BIT, \
->> +			    (phy)->supported))
-> 
-> Hi Christian
-> 
-> We already have the flag phydev->is_gigabit_capable. Maybe add a flag
-> phydev->is_t1_capable
-> 
->> +
->> +static u32 get_aneg_ctrl(struct phy_device *phydev);
->> +static u32 get_aneg_stat(struct phy_device *phydev);
-> 
-> No forward declarations please. Put the code in the right order so
-> they are not needed.
-> 
-> Thanks
-> 
->      Andrew
-> 
 
-For whatever reason I don't have the original mail in my netdev inbox (yet).
+From: Darrick J. Wong <darrick.wong@oracle.com>
 
-+	if (IS_100BASET1(phydev) || IS_1000BASET1(phydev))
-+		ctrl = MDIO_AN_BT1_CTRL;
+While active, the media backing a swap file is leased to the kernel.
+Userspace has no business writing to it.  Make sure we can't do this.
 
-Code like this could be problematic once a PHY supports one of the T1 modes
-AND normal modes. Then normal modes would be unusable.
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+---
+ tests/generic/717     |   60 +++++++++++++++++++++++++++++++++++++++++++++++++
+ tests/generic/717.out |    7 ++++++
+ tests/generic/718     |   46 ++++++++++++++++++++++++++++++++++++++
+ tests/generic/718.out |    5 ++++
+ tests/generic/group   |    2 ++
+ 5 files changed, 120 insertions(+)
+ create mode 100755 tests/generic/717
+ create mode 100644 tests/generic/717.out
+ create mode 100755 tests/generic/718
+ create mode 100644 tests/generic/718.out
 
-I think this scenario isn't completely hypothetical. See the Aquantia
-AQCS109 that supports normal modes and (proprietary) 1000Base-T2.
-
-Maybe we need separate versions of the generic functions for T1.
-Then it would be up to the PHY driver to decide when to use which
-version.
-
-Heiner
+diff --git a/tests/generic/717 b/tests/generic/717
+new file mode 100755
+index 00000000..ab12ee4d
+--- /dev/null
++++ b/tests/generic/717
+@@ -0,0 +1,60 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0-or-newer
++# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
++#
++# FS QA Test No. 717
++#
++# Check that we can't modify a file that's an active swap file.
++
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1    # failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	cd /
++	swapoff $testfile
++	rm -rf $tmp.* $testfile
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++
++# real QA test starts here
++_supported_os Linux
++_supported_fs generic
++_require_scratch_swapfile
++
++rm -f $seqres.full
++
++_scratch_mkfs > $seqres.full 2>&1
++_scratch_mount >> $seqres.full 2>&1
++
++testfile=$SCRATCH_MNT/$seq.swap
++
++_format_swapfile $testfile 20m
++swapon $testfile 2>&1 | _filter_scratch
++
++# Can we write to it?
++$XFS_IO_PROG -c 'pwrite -S 0x59 64k 64k' $testfile
++$XFS_IO_PROG -d -c 'pwrite -S 0x60 64k 64k' $testfile
++$XFS_IO_PROG -c 'mmap -rw 64k 64k' -c 'mwrite -S 0x61 64k 64k' $testfile
++
++# Can we change the file size?
++$XFS_IO_PROG -c 'truncate 18m' $testfile
++
++# Can you fallocate the file?
++$XFS_IO_PROG -c 'falloc 0 32m' $testfile
++
++# We test that you can't reflink, dedupe, or copy_file_range into a swapfile
++# in other tests.
++
++# success, all done
++status=0
++exit
+diff --git a/tests/generic/717.out b/tests/generic/717.out
+new file mode 100644
+index 00000000..2cd9bcdb
+--- /dev/null
++++ b/tests/generic/717.out
+@@ -0,0 +1,7 @@
++QA output created by 717
++pwrite: Text file busy
++pwrite: Text file busy
++mmap: Text file busy
++no mapped regions, try 'help mmap'
++ftruncate: Text file busy
++fallocate: Text file busy
+diff --git a/tests/generic/718 b/tests/generic/718
+new file mode 100755
+index 00000000..35cf718f
+--- /dev/null
++++ b/tests/generic/718
+@@ -0,0 +1,46 @@
++#! /bin/bash
++# SPDX-License-Identifier: GPL-2.0-or-newer
++# Copyright (c) 2019, Oracle and/or its affiliates.  All Rights Reserved.
++#
++# FS QA Test No. 718
++#
++# Check that we can't modify a block device that's an active swap device.
++
++seq=`basename $0`
++seqres=$RESULT_DIR/$seq
++echo "QA output created by $seq"
++
++here=`pwd`
++tmp=/tmp/$$
++status=1    # failure is the default!
++trap "_cleanup; exit \$status" 0 1 2 3 15
++
++_cleanup()
++{
++	cd /
++	swapoff $SCRATCH_DEV
++	rm -rf $tmp.*
++}
++
++# get standard environment, filters and checks
++. ./common/rc
++. ./common/filter
++
++# real QA test starts here
++_supported_os Linux
++_supported_fs generic
++_require_scratch_nocheck
++
++rm -f $seqres.full
++
++$MKSWAP_PROG "$SCRATCH_DEV" >> $seqres.full
++swapon $SCRATCH_DEV 2>&1 | _filter_scratch
++
++# Can we write to it?
++$XFS_IO_PROG -c 'pwrite -S 0x59 64k 64k' $SCRATCH_DEV
++$XFS_IO_PROG -d -c 'pwrite -S 0x60 64k 64k' $SCRATCH_DEV
++$XFS_IO_PROG -c 'mmap -rw 64k 64k' -c 'mwrite -S 0x61 64k 64k' $SCRATCH_DEV
++
++# success, all done
++status=0
++exit
+diff --git a/tests/generic/718.out b/tests/generic/718.out
+new file mode 100644
+index 00000000..5cd25b9a
+--- /dev/null
++++ b/tests/generic/718.out
+@@ -0,0 +1,5 @@
++QA output created by 718
++pwrite: Text file busy
++pwrite: Text file busy
++mmap: Text file busy
++no mapped regions, try 'help mmap'
+diff --git a/tests/generic/group b/tests/generic/group
+index 003fa963..c58d41e3 100644
+--- a/tests/generic/group
++++ b/tests/generic/group
+@@ -570,3 +570,5 @@
+ 565 auto quick copy_range
+ 715 auto quick rw
+ 716 auto quick rw
++717 auto quick rw swap
++718 auto quick rw swap
