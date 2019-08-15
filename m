@@ -2,78 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B39A8EC0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:55:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 693888EC01
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:54:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731961AbfHOMzr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:55:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729649AbfHOMzr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:55:47 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDD90206C1;
-        Thu, 15 Aug 2019 12:55:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565873746;
-        bh=VmCloNb/xfgJz/sV6/R5lq6ky6sKNBaakUCXudqB6O8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=uvZmENs8shu2/OfyxxMlBOBL5JxvyyE9B56vfjosRx24B7xvhR/VckU4OIUxSX7V/
-         KsG6ON77b9gnqbrC9MjLX3ucDx4C9q8vLOetCS5n4U4pGXFkJiBXEEn8seLTTx6BGy
-         0kNuh+6OfbMlwX+baBR+ZqZqquIYsB5l/7p52DKs=
-Date:   Thu, 15 Aug 2019 14:55:44 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Hans de Goede <hdegoede@redhat.com>
-Cc:     Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-        Guenter Roeck <linux@roeck-us.net>,
+        id S1731895AbfHOMyZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:54:25 -0400
+Received: from relay12.mail.gandi.net ([217.70.178.232]:42443 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729627AbfHOMyZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:54:25 -0400
+Received: from uno.localdomain (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 9640A200002;
+        Thu, 15 Aug 2019 12:54:21 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 14:55:48 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] usb: typec: fusb302: Small changes
-Message-ID: <20190815125544.GC24270@kroah.com>
-References: <20190814132419.39759-1-heikki.krogerus@linux.intel.com>
- <a826c351-4e9d-8a33-ad0f-764d13aeb1ed@redhat.com>
+        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
+        <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [RFC 1/5] media: dt-bindings: Document 'location' property
+Message-ID: <20190815125548.kh2pdxzysafltswc@uno.localdomain>
+References: <20190814202815.32491-1-jacopo@jmondi.org>
+ <20190814202815.32491-2-jacopo@jmondi.org>
+ <20190815065635.GJ6133@paasikivi.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="guiyz7n4y2542mup"
 Content-Disposition: inline
-In-Reply-To: <a826c351-4e9d-8a33-ad0f-764d13aeb1ed@redhat.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190815065635.GJ6133@paasikivi.fi.intel.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 03:42:46PM +0200, Hans de Goede wrote:
-> Hi,
-> 
-> On 14-08-19 15:24, Heikki Krogerus wrote:
-> > Hi,
-> > 
-> > This series removes the deprecated fusb302 specific properties, and
-> > stops using struct tcpc_config in the driver.
-> 
-> Series looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> 
-> This has a small conflict with my
-> "[PATCH] usb: typec: fusb302: Call fusb302_debugfs_init earlier"
-> patch.
-> 
-> Since we've agreed to do the rootdir leak fix as a separate patch
-> (which I will write when I find some time probably tomorrow), I
-> was wondering if we can merge my patch first. I would like to see
-> a "Cc: stable@vger.kernel.org" added to my patch and then it would
-> be good to have it merged first.
-> 
-> Regardless we should probable prepare one series with all patches
-> for Greg to make this easy to merge for him.
 
-I'll take this series now, and you can redo your patch based on my
-usb-next branch with them in it.
+--guiyz7n4y2542mup
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-thanks,
+Hi Sakari,
 
-greg k-h
+On Thu, Aug 15, 2019 at 09:56:35AM +0300, Sakari Ailus wrote:
+> Hi Jacopo,
+>
+> On Wed, Aug 14, 2019 at 10:28:11PM +0200, Jacopo Mondi wrote:
+> > Add the 'location' device property, used to specify the camera device
+> > mounting position. The property is particularly meaningful for mobile
+> > devices with a well defined usage orientation.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+> > ---
+> >  Documentation/devicetree/bindings/media/video-interfaces.txt | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/media/video-interfaces.txt b/Documentation/devicetree/bindings/media/video-interfaces.txt
+> > index f884ada0bffc..819077b2649c 100644
+> > --- a/Documentation/devicetree/bindings/media/video-interfaces.txt
+> > +++ b/Documentation/devicetree/bindings/media/video-interfaces.txt
+> > @@ -89,6 +89,10 @@ Optional properties
+> >    but a number of degrees counter clockwise. Typical values are 0 and 180
+> >    (upside down).
+> >
+> > +- location: The camera device mounting position, relative to the device
+> > +  usage orientation. Possible values are:
+> > +  0 - Front camera. The image sensor is mounted on the front side of the device.
+> > +  1 - Back camera. The image sensor is mounted on the back side of the device.
+>
+> Would it make sense to make this a little more generic? Such as s/image
+> sensor/ device/, for instance?
+
+Laurent seems to be of the opposite opinion, but i think staying as
+generic as possible might be a good idea. Now I have a linguistic
+problem though.
+
+ +- location: The device mounting position, relative to the device
+ +  usage orientation. Possible values are:
+ +  0 - Front. The device is mounted on the front side of the device.
+ +  1 - Back. The device is mounted on the back side of the device.
+
+So I need one "device" to indicate the lens/flash/image sensor and one
+to indicate the device they're installed on :) Any idea?
+
+>
+> Is this also relevant for flash or lens devices?
+>
+> Flash (torch) devices could be present, at least principle, without a
+> camera. There once was even such a Nokia phone, 1100 unless I'm mistaken.
+> :-)
+
+Not to mention that lenses are indeed installed in the same package as
+the camera sensor, but they're described as separate device nodes as
+flash leds are, so the mounting location might need to be specified in their
+device node properties too, even if it would be the same as the image
+sensor one.
+
+>
+> --
+> Regards,
+>
+> Sakari Ailus
+> sakari.ailus@linux.intel.com
+
+--guiyz7n4y2542mup
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1VVlMACgkQcjQGjxah
+Vjzusg//X9PG4Cmjuk3pVya27qa6x9ghMPj/jf4z/DUsywmOUgyZ5iVpmOzJBCL0
+FwHslnBZ03WbUjBVIvqnYNbLzd6yIbSE1EyTnjBDfhmeJ8iqTjN+qetPc1hM804S
+5dKlthkP7UFG3PShJbFJoU+26eGfQi3rt94jtpX4I4WawodSCLf6neueow56V/O7
+CBjH5d2oqkk0+gyXNwn8YZyeaUPaFlN7wKuGQqg/O7OgbuV0LZJCoFFEaKZNhJcJ
+gzDXFk7I9ywmlySZ340gLNH3GUiCSqUQYTVkv0vUxihagAtA1HpYEeRde75DOe/4
+1bCrHrb75K0AYOjza0sKoMo6qI6yulSkGepWU9QNwjinWV/3Z/g7GkTABVwCSBNH
+wVOiwxqj834941oqb5vxCAKWrg4i3pA6YWgCJ5oMFuxrCE4FjjQm7V0kCyErSFUL
+QFlt+KhM8AhQETJ/uS5u/nwh70WFpVpcI0A4yAbgbCIZLl7Ta4SaOJOiqDZs1XQU
+c1nTGXbXOjo2bHqGRabHupNF876E38CHUYB+ubvjkzJEzczvk94gTFNfqeaEdiOq
+XB17wFZT7UHTKaKrIEOnKvPdJd5hMp0fTkNoDM6g0is8m1vqXixf+aHQcJEpIA7S
+i4IiRb6s4ipRLI9ymsmNBysjXJZ9z1SsHhUFbaJy6WbbhBKA668=
+=+0WF
+-----END PGP SIGNATURE-----
+
+--guiyz7n4y2542mup--
