@@ -2,101 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3293B8F73A
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1CB68F745
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:55:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733298AbfHOWvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 18:51:09 -0400
-Received: from onstation.org ([52.200.56.107]:49700 "EHLO onstation.org"
+        id S2387487AbfHOWzA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 18:55:00 -0400
+Received: from mga14.intel.com ([192.55.52.115]:38943 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730406AbfHOWvH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 18:51:07 -0400
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id D89F23E998;
-        Thu, 15 Aug 2019 22:51:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1565909466;
-        bh=GlErRnlbnhtp3xOCD8QDuEBNzdpIzm/CEjl/t+YePi4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kbBRmB2Ag3E2vXFKqyIe3P3JBKnDCf2Gw4yfO4jcxecQTEdBlDWG3wDJ+vxPQ+XQN
-         a1BNwFsIm8w50ApVariWEfK20tN4ggz3LwN3Ya5I93TAxtpu1h1nThdsONxNN6uX7o
-         QkSapavjafeT34+PmnZN/YYXcO0hocqwBz5MLwfA=
-Date:   Thu, 15 Aug 2019 18:51:04 -0400
-From:   Brian Masney <masneyb@onstation.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Subject: Re: [PATCH RFC 06/11] drm/bridge: analogix-anx78xx: add support for
- avdd33 regulator
-Message-ID: <20190815225104.GB32072@onstation.org>
-References: <20190815004854.19860-1-masneyb@onstation.org>
- <20190815004854.19860-7-masneyb@onstation.org>
- <CACRpkdYdQa+FVfpSjLi0SsBMDT4QC667z1P1dnapz7PXgRoB5Q@mail.gmail.com>
+        id S1733225AbfHOWzA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 18:55:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 15:54:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="206055505"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Aug 2019 15:54:59 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 70DB75806C4;
+        Thu, 15 Aug 2019 15:54:59 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v6 1/9] PCI/ERR: Update error status after reset_link()
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+References: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <6be594215ae2ea0935d949537bfb84ff9e656a36.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190815221629.GI253360@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <d2521962-c72b-49b0-3ed0-00d53adba4c2@linux.intel.com>
+Date:   Thu, 15 Aug 2019 15:52:13 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdYdQa+FVfpSjLi0SsBMDT4QC667z1P1dnapz7PXgRoB5Q@mail.gmail.com>
+In-Reply-To: <20190815221629.GI253360@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 10:22:45AM +0200, Linus Walleij wrote:
-> On Thu, Aug 15, 2019 at 2:49 AM Brian Masney <masneyb@onstation.org> wrote:
-> 
-> > Add support for the avdd33 regulator to the analogix-anx78xx driver.
-> > Note that the regulator is currently enabled during driver probe and
-> > disabled when the driver is removed. This is currently how the
-> > downstream MSM kernel sources do this.
-> >
-> > Let's not merge this upstream for the mean time until I get the external
-> > display fully working on the Nexus 5 and then I can submit proper
-> > support then that powers down this regulator in the power off function.
-> >
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> 
-> > +static void anx78xx_disable_regulator_action(void *_data)
-> > +{
-> > +       struct anx78xx_platform_data *pdata = _data;
-> > +
-> > +       regulator_disable(pdata->avdd33);
-> > +}
-> (...)
-> > +       err = devm_add_action(dev, anx78xx_disable_regulator_action,
-> > +                             pdata);
-> 
-> Clever idea. Good for initial support, probably later on it would
-> need to be reworked using runtime PM so it's not constantly
-> powered up.
+Hi,
 
-Yes, that's my plan. I suspect that I may have a regulator disabled
-somewhere so I was planning to leave this on all the time for the time
-being to match the downstream behavior until I get the hot plug detect
-GPIO working.
+On 8/15/19 3:16 PM, Bjorn Helgaas wrote:
+> On Fri, Jul 26, 2019 at 02:43:11PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
+>> reset_link() to recover from fatal errors. But, if the reset is
+>> successful there is no need to continue the rest of the error recovery
+>> checks. Also, during fatal error recovery, if the initial value of error
+>> status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
+>> even after successful recovery (using reset_link()) pcie_do_recovery()
+>> will report the recovery result as failure. So update the status of
+>> error after reset_link().
+>>
+>> Fixes: bdb5ac85777d ("PCI/ERR: Handle fatal error recovery")
+>> Cc: Ashok Raj <ashok.raj@intel.com>
+>> Cc: Keith Busch <keith.busch@intel.com>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/pci/pcie/err.c | 11 ++++++++---
+>>   1 file changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+>> index 773197a12568..aecec124a829 100644
+>> --- a/drivers/pci/pcie/err.c
+>> +++ b/drivers/pci/pcie/err.c
+>> @@ -204,9 +204,13 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
+>>   	else
+>>   		pci_walk_bus(bus, report_normal_detected, &status);
+>>   
+>> -	if (state == pci_channel_io_frozen &&
+>> -	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
+>> -		goto failed;
+>> +	if (state == pci_channel_io_frozen) {
+>> +		status = reset_link(dev, service);
+>> +		if (status != PCI_ERS_RESULT_RECOVERED)
+>> +			goto failed;
+>> +		else
+>> +			goto done;
+> This will be easier to read without the negation, i.e.,
+>
+>                  if (status == PCI_ERS_RESULT_RECOVERED)
+>                          goto done;
+>                  else
+>                          goto failed;
+will change it in next version.
 
-> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-Thanks,
-
-Brian
