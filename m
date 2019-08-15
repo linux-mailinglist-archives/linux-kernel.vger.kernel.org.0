@@ -2,108 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9570F8F6C5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:06:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACE1E8F6CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732862AbfHOWGV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 18:06:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731709AbfHOWGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 18:06:21 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C08AB2084D;
-        Thu, 15 Aug 2019 22:06:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565906780;
-        bh=JRVBU2lBRgwV3098fyFCphIm9jw8AlXvgcZJOCDaySw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WRFhSz7rboh0PyCNEGSUGrjtBQe6rmL3TEZpkQXBlnXiscba2F5wlIJI9LA87uRVo
-         xCJ+srrdn4AyhfK2B2hX2owi2A9TN4R6z3xZWye9OoH+eLKXKG6/e7HS0VbrTF4JLQ
-         N+8goAx9PP0Tc2tvGu5aVmmga/0qDl1nVMyBdoKE=
-Date:   Fri, 16 Aug 2019 00:06:18 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        torvalds@linux-foundation.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 00/91] 4.19.67-stable review
-Message-ID: <20190815220618.GA22860@kroah.com>
-References: <20190814165748.991235624@linuxfoundation.org>
- <aa683926-3df0-6f60-841a-7ea5a5e3566d@roeck-us.net>
- <CAEUSe78A6Cvt2irKzysfRSHubVxDaEGUVaLf2UF5EHzTeiOVOw@mail.gmail.com>
- <20190815193716.GG30437@kroah.com>
- <20190815202004.GA1192@roeck-us.net>
- <20190815204221.GA6782@kroah.com>
- <20190815213205.GA11036@roeck-us.net>
+        id S1731007AbfHOWMH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 18:12:07 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34998 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfHOWMH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 18:12:07 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k2so3567130wrq.2;
+        Thu, 15 Aug 2019 15:12:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=2VSiIUxKNFkiB9+c2R7u/EHBxMEOJ5mWiAVsv2Kr2Ss=;
+        b=rTGOAv3m5luaq1ehyRbEBi86OwaDKnQJHxNxdriJPiKL8f+I/Xpy3GV8kwLthHOs7d
+         BZgsnEkETL4p4sJMg2JziTz9+d8Z9Yku2PzB5233Gs63D192b7JFEVH/lIrUIk98HTRg
+         fmDywUwWIDm035RYzUAESEyyeO+SnDiUWR2XPeP990bYnUvlqGzY7qtN0oTzeLDWXstP
+         Gn8bdvX/bCxFlP5NNT0gtLQimum0Se7r2xp2paWVcWw8YzjtrSsaijE1ZWpRO+gFii/a
+         TppOIF3UGEZphCq1HU9y7UFImyf7LNbUhNgmYvJz6igD78B6zhY3UI6rU/vm24GGhbYa
+         nf6A==
+X-Gm-Message-State: APjAAAUT+Bv7yGfJe03E35bFLtJTRu4WYH51PN1z+7KTJ3RddioCvsNJ
+        dT/xzRgaxGN6E/ya8nd/BlTONcTW
+X-Google-Smtp-Source: APXvYqzGC77fYDK9g8cZlzwrtM9BXuO3SFsvZ/94xoIb+aLGXYv3+AJ8L4V7boO03nAosNmMzRnbrw==
+X-Received: by 2002:adf:fe08:: with SMTP id n8mr7111830wrr.60.1565907125380;
+        Thu, 15 Aug 2019 15:12:05 -0700 (PDT)
+Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru. [188.32.48.208])
+        by smtp.googlemail.com with ESMTPSA id h97sm10652662wrh.74.2019.08.15.15.12.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 15:12:04 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     Denis Efremov <efremov@linux.com>, joe@perches.com,
+        linux-kernel@vger.kernel.org, Denis Kenzior <denkenz@gmail.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: [RESEND PATCH] MAINTAINERS: keys: Update path to trusted.h
+Date:   Fri, 16 Aug 2019 01:12:00 +0300
+Message-Id: <20190815221200.3465-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190815215712.tho3fdfk43rs45ej@linux.intel.com>
+References: <20190815215712.tho3fdfk43rs45ej@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190815213205.GA11036@roeck-us.net>
-User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 02:32:05PM -0700, Guenter Roeck wrote:
-> On Thu, Aug 15, 2019 at 10:42:21PM +0200, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 15, 2019 at 01:20:04PM -0700, Guenter Roeck wrote:
-> > > On Thu, Aug 15, 2019 at 09:37:16PM +0200, Greg Kroah-Hartman wrote:
-> > > > On Thu, Aug 15, 2019 at 08:58:55AM -0500, Daniel Díaz wrote:
-> > > > > Hello!
-> > > > > 
-> > > > > On Thu, 15 Aug 2019 at 08:29, Guenter Roeck <linux@roeck-us.net> wrote:
-> > > > > >
-> > > > > > On 8/14/19 10:00 AM, Greg Kroah-Hartman wrote:
-> > > > > > > This is the start of the stable review cycle for the 4.19.67 release.
-> > > > > > > There are 91 patches in this series, all will be posted as a response
-> > > > > > > to this one.  If anyone has any issues with these being applied, please
-> > > > > > > let me know.
-> > > > > > >
-> > > > > > > Responses should be made by Fri 16 Aug 2019 04:55:34 PM UTC.
-> > > > > > > Anything received after that time might be too late.
-> > > > > > >
-> > > > > >
-> > > > > > Building x86_64:tools/perf ... failed
-> > > > > > --------------
-> > > > > > Error log:
-> > > > > > Warning: arch/x86/include/asm/cpufeatures.h differs from kernel
-> > > > > > Warning: arch/x86/include/uapi/asm/kvm.h differs from kernel
-> > > > > >    PERF_VERSION = 4.9.189.ge000f87
-> > > > > > util/machine.c: In function ‘machine__create_module’:
-> > > > > > util/machine.c:1088:43: error: ‘size’ undeclared (first use in this function); did you mean ‘die’?
-> > > > > >    if (arch__fix_module_text_start(&start, &size, name) < 0)
-> > > > > >                                             ^~~~
-> > > > > >                                             die
-> > > > > > util/machine.c:1088:43: note: each undeclared identifier is reported only once for each function it appears in
-> > > > > 
-> > > > > We noticed this exact failure but not on 4.19. For us, 4.19's perf builds fine.
-> > > > > 
-> > > > > On 4.9, perf failed with the error you described, as it looks like
-> > > > > it's missing 9ad4652b66f1 ("perf record: Fix wrong size in
-> > > > > perf_record_mmap for last kernel module"), though I have not verified
-> > > > > yet.
-> > > > 
-> > > > I've queued that up now, and will push out the 4.9-rc tree, so let's see
-> > > > if that fixes it or not.
-> > > > 
-> > > I think you may have pushed the 4.19 branch. Sorry for the confusion
-> > > I caused by attributing the problem to the wrong branch.
-> > 
-> > Ah, I did, good catch.  I've pushed the 4.9 one now.  At least I applied
-> > the patch to the correct branch :)
-> > 
-> 
-> Confirmed fixed with v4.9.189-42-g9a2a343109e5.
+Update MAINTAINERS record to reflect that trusted.h
+was moved to a different directory in commit 22447981fc05
+("KEYS: Move trusted.h to include/keys [ver #2]").
 
-Great, thanks for testing and letting me know.
+Cc: Denis Kenzior <denkenz@gmail.com>
+Cc: James Bottomley <jejb@linux.ibm.com>
+Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-greg k-h
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cfb344ba2914..168e5121578e 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -8916,7 +8916,7 @@ S:	Supported
+ F:	Documentation/security/keys/trusted-encrypted.rst
+ F:	include/keys/trusted-type.h
+ F:	security/keys/trusted.c
+-F:	security/keys/trusted.h
++F:	include/keys/trusted.h
+ 
+ KEYS/KEYRINGS:
+ M:	David Howells <dhowells@redhat.com>
+-- 
+2.21.0
+
