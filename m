@@ -2,54 +2,53 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 424858F1C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 138C98F1C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731964AbfHORO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:56 -0400
-Received: from mail-ed1-f100.google.com ([209.85.208.100]:40228 "EHLO
-        mail-ed1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731796AbfHOROh (ORCPT
+        id S1731883AbfHOROj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:39 -0400
+Received: from mail-wm1-f99.google.com ([209.85.128.99]:50344 "EHLO
+        mail-wm1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731784AbfHOROg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:37 -0400
-Received: by mail-ed1-f100.google.com with SMTP id h8so2704199edv.7
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
+        Thu, 15 Aug 2019 13:14:36 -0400
+Received: by mail-wm1-f99.google.com with SMTP id v15so1882697wml.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=2tOdgRw7bHfBUMRr5A78wZooift8kR44FLxZ2fHFoq4=;
-        b=f+CEoFEFFQLZf2i3OABqsLhhctYgsQFlMIgu30gsZqbDs8VpIFhtUdPpDM5Z52bm0M
-         DcDatQRPqvVdi0XNjlYnCpQsOXi403zAvtV2BTHKBF0uk8aKlWFtrnY4rAYVzYo3YARn
-         YyjvRjcxJMnt7bFXicSJAd8oVRssefKZo5nDjw2i/+2SB+XCZAxBoAgJNZh8OcyoBQEV
-         oOMCFi9wcCxiWP+zlAf6M1jmSqOAAF2ZP912rTgqCr6ACzLQKCFirZkvVCKYn+wo9b+8
-         fTcfDwCMW3HXu1GmuvzOgV5Xxck48Ggi7UqqKRge1h1dbvUTSEUDCQTEIJLFPgVLPnyz
-         ghTQ==
-X-Gm-Message-State: APjAAAVArbf+h5du73stKTox6sy8NB8oiwAF/Vf6EsSioBITZqfNAQbV
-        cZ5O4LYwv3+/2EoGY3fbrw94JiaB+7IWo+meB5MoUYgAkfpy4hXPZx8eFxglFXv2hQ==
-X-Google-Smtp-Source: APXvYqxFD14tT+W/wcwosNR4mJq7LHL6hBkxp8vUHcz2et2BdUwg/HEyBFE8UDSLNuhEWf01rrv+4zglTLjl
-X-Received: by 2002:aa7:dc5a:: with SMTP id g26mr6664165edu.62.1565889275802;
+        bh=gE06bHYUuZ3QYmVI3yQvlrzHi0/sRfjaZGC6+azO7fM=;
+        b=KGezymgVibZPJA9h9lnkvRX6FXinDYdsFg73ExOmV+cR+0eX4SO2ghL/g7YWXOb9wM
+         CUfLte4aR7YYimv7+Xq/8ycyYJj+Fn/vXm5QSqQyRZ+rAD42Z4hC+/bULByj4zvHB8ez
+         6aVpriJzvXwOTk61Eyfis2lwcpGJOI2iNVuidY14dI4drrNb8cH09P4GRzod/9B6sGVG
+         rkJsN111CM0ns2Zlmr/q+ECmt/34OgdhWgSFlzpROkLrw6nTWMQ0o7gfw2vQkEpyOYex
+         XxqeZh39YYG19HTni1K+JiBD462+6bN6feio5Pv+lL7+RytDhxtvzeemJ0+CuqP08ozb
+         IL4g==
+X-Gm-Message-State: APjAAAUnKDlNRtpVLN/kltK3FznRWjOKjUWu06uLZBANVcnMK3W1cxN5
+        pOfMA7nfC3B7xeiR2wj5nOvDFRKzVw7K6O7vq14nTZTYzMk7gM34E5m66eHQ1w9bhg==
+X-Google-Smtp-Source: APXvYqx8H4C2nURJML4ac5xRNzSLHJnRxhU9cISiLhVP/yaYThltxH7sBXT+ks64GHr0RxGbY54V/Qu1F5xE
+X-Received: by 2002:a05:600c:2411:: with SMTP id 17mr3424992wmp.171.1565889275152;
         Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id u22sm54883edi.2.2019.08.15.10.14.35
+        by smtp-relay.gmail.com with ESMTPS id e9sm57426wre.37.2019.08.15.10.14.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKd-00052v-CB; Thu, 15 Aug 2019 17:14:35 +0000
+        id 1hyJKc-00052p-TE; Thu, 15 Aug 2019 17:14:34 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id DD14E2742BD6; Thu, 15 Aug 2019 18:14:34 +0100 (BST)
+        id 4C4D62742BC7; Thu, 15 Aug 2019 18:14:34 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     kernel-janitors@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
+To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Cc:     broonie@kernel.org, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: max8660: remove redundant assignment of variable ret" to the regulator tree
-In-Reply-To: <20190813133114.14931-1-colin.king@canonical.com>
+Subject: Applied "regulator: core: Add label to collate of_node_put() statements" to the regulator tree
+In-Reply-To: <20190815053704.32156-1-nishkadg.linux@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171434.DD14E2742BD6@ypsilon.sirena.org.uk>
+Message-Id: <20190815171434.4C4D62742BC7@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:34 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,7 +57,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: max8660: remove redundant assignment of variable ret
+   regulator: core: Add label to collate of_node_put() statements
 
 has been applied to the regulator tree at
 
@@ -83,35 +82,53 @@ to this mail.
 Thanks,
 Mark
 
-From 9e127fab67e3ec4451696da0c7872fd291b9372b Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Tue, 13 Aug 2019 14:31:14 +0100
-Subject: [PATCH] regulator: max8660: remove redundant assignment of variable
- ret
+From 81eeb0a35c2e40bcaf122c6aae3be4f7d9abe201 Mon Sep 17 00:00:00 2001
+From: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Date: Thu, 15 Aug 2019 11:07:04 +0530
+Subject: [PATCH] regulator: core: Add label to collate of_node_put()
+ statements
 
-Variable ret is initialized to a value that is never read before
-a return statement and hence can be removed. Remove it.
+In function of_get_child_regulator(), the loop for_each_child_of_node()
+contains two mid-loop return statements, each preceded by a statement
+putting child. In order to reduce this repetition, create a new label,
+err_node_put, that puts child and then returns the required value;
+edit the mid-loop return blocks to instead go to this new label.
 
-Addresses-Coverity: ("Unused value")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Link: https://lore.kernel.org/r/20190813133114.14931-1-colin.king@canonical.com
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Link: https://lore.kernel.org/r/20190815053704.32156-1-nishkadg.linux@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/max8660.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/regulator/core.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/regulator/max8660.c b/drivers/regulator/max8660.c
-index 4bca54446287..347043a5a9a7 100644
---- a/drivers/regulator/max8660.c
-+++ b/drivers/regulator/max8660.c
-@@ -485,7 +485,6 @@ static int max8660_probe(struct i2c_client *client,
- 		rdev = devm_regulator_register(&client->dev,
- 						  &max8660_reg[id], &config);
- 		if (IS_ERR(rdev)) {
--			ret = PTR_ERR(rdev);
- 			dev_err(&client->dev, "failed to register %s\n",
- 				max8660_reg[id].name);
- 			return PTR_ERR(rdev);
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 7a5d52948703..4a27a46ec6e7 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -380,16 +380,17 @@ static struct device_node *of_get_child_regulator(struct device_node *parent,
+ 
+ 		if (!regnode) {
+ 			regnode = of_get_child_regulator(child, prop_name);
+-			if (regnode) {
+-				of_node_put(child);
+-				return regnode;
+-			}
++			if (regnode)
++				goto err_node_put;
+ 		} else {
+-			of_node_put(child);
+-			return regnode;
++			goto err_node_put;
+ 		}
+ 	}
+ 	return NULL;
++
++err_node_put:
++	of_node_put(child);
++	return regnode;
+ }
+ 
+ /**
 -- 
 2.20.1
 
