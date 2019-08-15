@@ -2,92 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1E6A8EB3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02ECC8EB28
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731750AbfHOMNC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:13:02 -0400
-Received: from mao.bsc.es ([84.88.52.34]:34795 "EHLO opsmail01.bsc.es"
+        id S1731287AbfHOMLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:11:02 -0400
+Received: from mail.intenta.de ([178.249.25.132]:34744 "EHLO mail.intenta.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfHOMNB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:13:01 -0400
-X-Greylist: delayed 564 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 08:13:00 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by opsmail01.bsc.es (Postfix) with ESMTP id 3A5232EC2E8;
-        Thu, 15 Aug 2019 14:03:35 +0200 (CEST)
-Received: from opsmail01.bsc.es ([127.0.0.1])
- by localhost (opswc01.bsc.es [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id 13495-10; Thu, 15 Aug 2019 14:03:34 +0200 (CEST)
-Received: from opswc01.bsc.es (localhost [127.0.0.1])
-        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by opsmail01.bsc.es (Postfix) with ESMTPS id A541A169D9C;
-        Thu, 15 Aug 2019 14:03:34 +0200 (CEST)
-Received: (from filter@localhost)
-        by opswc01.bsc.es (8.13.6/8.13.6/Submit) id x7FC3YpC026248;
-        Thu, 15 Aug 2019 14:03:34 +0200
-Received: from rocks (unknown [10.100.11.7])
-        (using TLSv1 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by opsmail01.bsc.es (Postfix) with ESMTPSA id EB0A615DA32;
-        Thu, 15 Aug 2019 14:03:28 +0200 (CEST)
-Date:   Thu, 15 Aug 2019 14:03:22 +0200
-From:   Aleix Roca Nonell <aleix.rocanonell@bsc.es>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, aleix.rocanonell@bsc.es
-Subject: [PATCH] io_uring: fix manual setup of iov_iter for fixed buffers
-Message-ID: <20190815120322.GA19630@rocks>
+        id S1729900AbfHOMLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:11:01 -0400
+X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 08:11:01 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
+        h=Content-Type:MIME-Version:Message-ID:Subject:CC:To:From:Date; bh=tiUovoTmX8WTknD03H5cq8pLU7iviOHB1c7ypfV349k=;
+        b=p4QqYh7IcmNGRSHbu88v7pbctwn1qYSGXbdB4lNq9NsKA8K73mAUVoWO+77cte5bvgJfgDShKnVt0dvqVBHr3wrDytDvkZFUMnpi0Ie+a1VtJVUo5kwjXysHD5YxCJruUIWvl8VU/yZ/WAM+VsFEJw1T1HFvVMh07cAfIVNEvmPJ4dbvwfSxWnxy/LrbieyRbvIE4c1TN3jzL4C4mv4eHjJBQajatDIqvCyRYdHGIUJ/yeZg1RYNZ1sLc3q7zqQRrTv/7DJ/zsqV3w9/ZGdxXIM6ObuVaq6tbkG07YqofEKSEF1dkMpS4HpBiptMArloRMVeiGy7tLzAJ3BN1R6VdQ==;
+X-CTCH-RefID: str=0001.0A0C0202.5D554A2A.0078,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Date:   Thu, 15 Aug 2019 14:03:54 +0200
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH] Revert "clocksource/drivers/sp804: Add COMPILE_TEST to
+ CONFIG_ARM_TIMER_SP804"
+Message-ID: <20190815120352.3sakpao2cpjl3sl2@laureti-dev>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Copyrighted-Material: Please visit http://www.bsc.es/disclaimer
-X-Virus-Scanned: amavisd-new at bsc.es
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
+ (10.10.16.48)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit bd11b3a391e3 ("io_uring: don't use iov_iter_advance() for fixed
-buffers") introduced an optimization to avoid using the slow
-iov_iter_advance by manually populating the iov_iter iterator in some
-cases.
+This reverts commit dfc82faad72520769ca146f857e65c23632eed5a.
 
-However, the computation of the iterator count field was erroneous: The
-first bvec was always accounted for an extent of page size even if the
-bvec length was smaller.
+The commit effectively makes ARM_TIMER_SP804 depend on COMPILE_TEST,
+which makes it unselectable for practical uses.
 
-In consequence, some I/O operations on fixed buffers were unable to
-operate on the full extent of the buffer, consistently skipping some
-bytes at the end of it.
-
-Fixes: bd11b3a391e3 ("io_uring: don't use iov_iter_advance() for fixed buffers")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aleix Roca Nonell <aleix.rocanonell@bsc.es>
+Link: https://lore.kernel.org/lkml/20190618120719.a4kgyiuljm5uivfq@laureti-dev/
+Signed-off-by: Helmut Grohne <helmut.grohne@intenta.de>
 ---
- fs/io_uring.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/clocksource/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/io_uring.c b/fs/io_uring.c
-index d542f1cf4428..aa25b5bbd4ae 100644
---- a/fs/io_uring.c
-+++ b/fs/io_uring.c
-@@ -1097,10 +1097,8 @@ static int io_import_fixed(struct io_ring_ctx *ctx, int rw,
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 5e9317dc3d39..72e924374591 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -393,7 +393,7 @@ config ARM_GLOBAL_TIMER
+ 	  This options enables support for the ARM global timer unit
  
- 			iter->bvec = bvec + seg_skip;
- 			iter->nr_segs -= seg_skip;
--			iter->count -= (seg_skip << PAGE_SHIFT);
-+			iter->count -= bvec->bv_len + offset;
- 			iter->iov_offset = offset & ~PAGE_MASK;
--			if (iter->iov_offset)
--				iter->count -= iter->iov_offset;
- 		}
- 	}
- 
+ config ARM_TIMER_SP804
+-	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
++	bool "Support for Dual Timer SP804 module"
+ 	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF if OF
 -- 
-2.12.0
+2.11.0
 
-
-http://bsc.es/disclaimer
