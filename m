@@ -2,106 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22FBE8E694
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:35:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE8838E692
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:35:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731083AbfHOIfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:35:44 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:60888 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731070AbfHOIfn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:35:43 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7F8WRFn049913
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 04:35:42 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ucybwqwxq-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 04:35:42 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 15 Aug 2019 09:35:40 +0100
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Aug 2019 09:35:37 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7F8ZaGx57344044
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 08:35:36 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6E298A4040;
-        Thu, 15 Aug 2019 08:35:36 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 02409A404D;
-        Thu, 15 Aug 2019 08:35:35 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.59])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 15 Aug 2019 08:35:34 +0000 (GMT)
-Received: by rapoport-lnx (sSMTP sendmail emulation); Thu, 15 Aug 2019 11:35:34 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Richard Kuo <rkuo@codeaurora.org>
+        id S1731068AbfHOIfj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:35:39 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38480 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730409AbfHOIfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 04:35:39 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6EB69B601;
+        Thu, 15 Aug 2019 08:35:37 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 10:35:36 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>, linux-hexagon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Mike Rapoport <rppt@linux.ibm.com>
-Subject: [PATCH] hexagon: drop empty and unused free_initrd_mem
-Date:   Thu, 15 Aug 2019 11:35:33 +0300
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19081508-0016-0000-0000-0000029EFDD6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081508-0017-0000-0000-000032FF1B5B
-Message-Id: <1565858133-25852-1-git-send-email-rppt@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=881 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908150091
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH 2/2] mm: memcontrol: flush percpu slab vmstats on kmem
+ offlining
+Message-ID: <20190815083536.GD9477@dhcp22.suse.cz>
+References: <20190812222911.2364802-1-guro@fb.com>
+ <20190812222911.2364802-3-guro@fb.com>
+ <20190814113242.GV17933@dhcp22.suse.cz>
+ <20190814215408.GA5584@tower.dhcp.thefacebook.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814215408.GA5584@tower.dhcp.thefacebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hexagon never reserves or initializes initrd and the only mention of it is
-the empty free_initrd_mem() function.
+On Wed 14-08-19 21:54:12, Roman Gushchin wrote:
+> On Wed, Aug 14, 2019 at 01:32:42PM +0200, Michal Hocko wrote:
+> > On Mon 12-08-19 15:29:11, Roman Gushchin wrote:
+> > > I've noticed that the "slab" value in memory.stat is sometimes 0,
+> > > even if some children memory cgroups have a non-zero "slab" value.
+> > > The following investigation showed that this is the result
+> > > of the kmem_cache reparenting in combination with the per-cpu
+> > > batching of slab vmstats.
+> > > 
+> > > At the offlining some vmstat value may leave in the percpu cache,
+> > > not being propagated upwards by the cgroup hierarchy. It means
+> > > that stats on ancestor levels are lower than actual. Later when
+> > > slab pages are released, the precise number of pages is substracted
+> > > on the parent level, making the value negative. We don't show negative
+> > > values, 0 is printed instead.
+> > 
+> > So the difference with other counters is that slab ones are reparented
+> > and that's why we have treat them specially? I guess that is what the
+> > comment in the code suggest but being explicit in the changelog would be
+> > nice.
+> 
+> Right. And I believe the list can be extended further. Objects which
+> are often outliving the origin memory cgroup (e.g. pagecache pages)
+> are pinning dead cgroups, so it will be cool to reparent them all.
+> 
+> > 
+> > [...]
+> > > -static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg)
+> > > +static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg, bool slab_only)
+> > >  {
+> > >  	unsigned long stat[MEMCG_NR_STAT];
+> > >  	struct mem_cgroup *mi;
+> > >  	int node, cpu, i;
+> > > +	int min_idx, max_idx;
+> > >  
+> > > -	for (i = 0; i < MEMCG_NR_STAT; i++)
+> > > +	if (slab_only) {
+> > > +		min_idx = NR_SLAB_RECLAIMABLE;
+> > > +		max_idx = NR_SLAB_UNRECLAIMABLE;
+> > > +	} else {
+> > > +		min_idx = 0;
+> > > +		max_idx = MEMCG_NR_STAT;
+> > > +	}
+> > 
+> > This is just ugly has hell! I really detest how this implicitly makes
+> > counters value very special without any note in the node_stat_item
+> > definition. Is it such a big deal to have a per counter flush and do
+> > the loop over all counters resp. specific counters around it so much
+> > worse? This should be really a slow path to safe few instructions or
+> > cache misses, no?
+> 
+> I believe that it is a big deal, because it's
+> NR_VMSTAT_ITEMS * all memory cgroups * online cpus * numa nodes.
 
-As we have a generic implementation of free_initrd_mem(), there is no need
-to define an empty stub for the hexagon implementation and it can be
-dropped.
+I am not sure I follow. I just meant to remove all for (i = 0; i < MEMCG_NR_STAT; i++)
+from flushing and do that loop around the flushing function. That would
+mean that the NR_SLAB_$FOO wouldn't have to play tricks and simply call
+the flushing for the two counters.
 
-Signed-off-by: Mike Rapoport <rppt@linux.ibm.com>
----
- arch/hexagon/mm/init.c | 13 -------------
- 1 file changed, 13 deletions(-)
+> If the goal is to merge it with cpu hotplug code, I'd think about passing
+> cpumask to it, and do the opposite. Also I'm not sure I understand
+> why reordering loops will make it less ugly.
 
-diff --git a/arch/hexagon/mm/init.c b/arch/hexagon/mm/init.c
-index f1f6ebd..c961773 100644
---- a/arch/hexagon/mm/init.c
-+++ b/arch/hexagon/mm/init.c
-@@ -71,19 +71,6 @@ void __init mem_init(void)
- 	init_mm.context.ptbase = __pa(init_mm.pgd);
- }
- 
--/*
-- * free_initrd_mem - frees...  initrd memory.
-- * @start - start of init memory
-- * @end - end of init memory
-- *
-- * Apparently has to be passed the address of the initrd memory.
-- *
-- * Wrapped by #ifdef CONFIG_BLKDEV_INITRD
-- */
--void free_initrd_mem(unsigned long start, unsigned long end)
--{
--}
--
- void sync_icache_dcache(pte_t pte)
- {
- 	unsigned long addr;
+And adding a cpu/nodemasks would just work with that as well, right.
+
+> 
+> But you're right, a comment nearby NR_SLAB_(UN)RECLAIMABLE definition
+> is totaly worth it. How about something like:
+> 
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index 8b5f758942a2..231bcbe5dcc6 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -215,8 +215,9 @@ enum node_stat_item {
+>         NR_INACTIVE_FILE,       /*  "     "     "   "       "         */
+>         NR_ACTIVE_FILE,         /*  "     "     "   "       "         */
+>         NR_UNEVICTABLE,         /*  "     "     "   "       "         */
+> -       NR_SLAB_RECLAIMABLE,
+> -       NR_SLAB_UNRECLAIMABLE,
+> +       NR_SLAB_RECLAIMABLE,    /* Please, do not reorder this item */
+> +       NR_SLAB_UNRECLAIMABLE,  /* and this one without looking at
+> +                                * memcg_flush_percpu_vmstats() first. */
+>         NR_ISOLATED_ANON,       /* Temporary isolated pages from anon lru */
+>         NR_ISOLATED_FILE,       /* Temporary isolated pages from file lru */
+>         WORKINGSET_NODES,
+
+Thanks, that is an improvement.
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
