@@ -2,63 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02ECC8EB28
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46D7F8EB03
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731287AbfHOMLC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:11:02 -0400
-Received: from mail.intenta.de ([178.249.25.132]:34744 "EHLO mail.intenta.de"
+        id S1731511AbfHOMEe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:04:34 -0400
+Received: from sauhun.de ([88.99.104.3]:60830 "EHLO pokefinder.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729900AbfHOMLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:11:01 -0400
-X-Greylist: delayed 422 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 08:11:01 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
-        h=Content-Type:MIME-Version:Message-ID:Subject:CC:To:From:Date; bh=tiUovoTmX8WTknD03H5cq8pLU7iviOHB1c7ypfV349k=;
-        b=p4QqYh7IcmNGRSHbu88v7pbctwn1qYSGXbdB4lNq9NsKA8K73mAUVoWO+77cte5bvgJfgDShKnVt0dvqVBHr3wrDytDvkZFUMnpi0Ie+a1VtJVUo5kwjXysHD5YxCJruUIWvl8VU/yZ/WAM+VsFEJw1T1HFvVMh07cAfIVNEvmPJ4dbvwfSxWnxy/LrbieyRbvIE4c1TN3jzL4C4mv4eHjJBQajatDIqvCyRYdHGIUJ/yeZg1RYNZ1sLc3q7zqQRrTv/7DJ/zsqV3w9/ZGdxXIM6ObuVaq6tbkG07YqofEKSEF1dkMpS4HpBiptMArloRMVeiGy7tLzAJ3BN1R6VdQ==;
-X-CTCH-RefID: str=0001.0A0C0202.5D554A2A.0078,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Date:   Thu, 15 Aug 2019 14:03:54 +0200
-From:   Helmut Grohne <helmut.grohne@intenta.de>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-CC:     <linux-kernel@vger.kernel.org>
-Subject: [PATCH] Revert "clocksource/drivers/sp804: Add COMPILE_TEST to
- CONFIG_ARM_TIMER_SP804"
-Message-ID: <20190815120352.3sakpao2cpjl3sl2@laureti-dev>
+        id S1731340AbfHOMEd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:04:33 -0400
+Received: from localhost (p54B33431.dip0.t-ipconnect.de [84.179.52.49])
+        by pokefinder.org (Postfix) with ESMTPSA id C07C22C2704;
+        Thu, 15 Aug 2019 14:04:30 +0200 (CEST)
+Date:   Thu, 15 Aug 2019 14:04:30 +0200
+From:   Wolfram Sang <wsa@the-dreams.de>
+To:     Max <max@enpas.org>
+Cc:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>, linux-m68k@vger.kernel.org,
+        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de
+Subject: Re: [PATCH v2 1/4] i2c/busses: Add i2c-icy for I2C on m68k/Amiga
+Message-ID: <20190815120430.GB1916@kunai>
+References: <20190812235237.21797-1-max@enpas.org>
+ <20190814194714.GB9756@kunai>
+ <f33ef44e-61e8-0392-7f5c-5a0bd7b42fff@enpas.org>
+ <20190815071228.GA1054@kunai>
+ <276714fb-6b3a-1e99-0744-bfd037305724@enpas.org>
+ <20190815114809.GA1916@kunai>
+ <54185c85-8c26-916e-41b1-af9b55223e7b@enpas.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="tjCHc7DPkfUGtrlw"
 Content-Disposition: inline
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
- (10.10.16.48)
+In-Reply-To: <54185c85-8c26-916e-41b1-af9b55223e7b@enpas.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit dfc82faad72520769ca146f857e65c23632eed5a.
 
-The commit effectively makes ARM_TIMER_SP804 depend on COMPILE_TEST,
-which makes it unselectable for practical uses.
+--tjCHc7DPkfUGtrlw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Link: https://lore.kernel.org/lkml/20190618120719.a4kgyiuljm5uivfq@laureti-dev/
-Signed-off-by: Helmut Grohne <helmut.grohne@intenta.de>
----
- drivers/clocksource/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 5e9317dc3d39..72e924374591 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -393,7 +393,7 @@ config ARM_GLOBAL_TIMER
- 	  This options enables support for the ARM global timer unit
- 
- config ARM_TIMER_SP804
--	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
-+	bool "Support for Dual Timer SP804 module"
- 	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
- 	select TIMER_OF if OF
--- 
-2.11.0
+> My suggestion is to not touch i2c-elektor at all for now, and remove
+> the 'clock' parameter from the first iteration of i2c-icy. It can be
+> added back in case someone complains, which I deem unlikely.
 
+Full ack.
+
+>   When the PCF8584 is addressed as slave, this register
+>   must be loaded with the 7-bit I 2 C-bus address to which the
+>   PCF8584 is to respond. During initialization, the own
+>   address register S0' must be written to, regardless
+>   whether it is later used.
+
+I see. It must be written a non-zero value to leave the monitor mode.
+But this really needs no callback, we can hardcode any non-zero value.
+If slave support is (ever) to be implemented, the own address will come
+=66rom the I2C core.
+
+> Okay, so we don't care. Cool, then it's safe to kick the 'clock'
+> parameter from i2c-icy. All 2019 boards (which should be the vast
+> majority in existence) came with a 12 MHz oscillator AFAIK, so the
+> default should be good.
+
+Most drivers don't allow users to change the bus speed, so I think it is
+safe to remove.
+
+
+--tjCHc7DPkfUGtrlw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1VSk4ACgkQFA3kzBSg
+KbaiGBAAodEGPift49JeBi1yJrTTGr4RWOodih6yvhYigloZgzzCOjujdcDFc833
+5dB5EG7SwdqLD+Kwda8tbsCPgfuYXqtdVbJALZWlN7NyLQpA/0zOIPWM8OEZ5g4/
+1WWFZL403EJNRtDNAQ7EMa/gAw7IR5fqxP0CIbyuwmZ5AANyyxzXHJcUl5BY7leY
+qkKveL9sSbRRd2iKUEpu4bZCZXECZMeowqlaUz5Rmvi7bYAIUhe70GZE2jcDWALF
+EckGVh0BqnzWhjUck0AFpSScHQbwwj385JWlVEs2GfCiCppVvNp/FTLuytwgcDI0
+Xv86OeXeh7SyZD4SGwj5wdGd386K3y+Y0ozUeq/bPyal8+mziEAN/trWlBbLG//Z
+MNanwIB9Lp+5RXeLqXh7iDLTEEiLqZv3InaYXZq5PuNNKLePBMA10rDeg0+cruVX
+PWzJUlY2MfQUnqxP+yVCSJcaQ5R2EkUdIcSqIHoXDpaHq6tih5hq64tK+u4Q8pGS
+o9KdzPsNkqCHRypQ2HejoRBs9HzNz3TXYRhGWXPUL4wR6y7qmEC5UCxXZ7Hb2gLh
+aHPr3XFkdXUQr493p9qJiFvtU8opP8I/QhG3FC9yPfbbeKDcAKMclEwxyaHyZALE
+gzZ8CIiLXX6o+ID0pKFF2wXVmseASzZ8X2j3JmBhKaJU+Tff/Io=
+=l/xN
+-----END PGP SIGNATURE-----
+
+--tjCHc7DPkfUGtrlw--
