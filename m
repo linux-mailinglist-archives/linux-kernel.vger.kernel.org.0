@@ -2,63 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B11BF8F6BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 23:59:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60A048F6C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:06:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbfHOV7s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 17:59:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57260 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730803AbfHOV7r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 17:59:47 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C06492083B;
-        Thu, 15 Aug 2019 21:59:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565906386;
-        bh=mEVjBqVTehrFxgdgqD2Yu12Sff3Abl8yi0X38S7mGKs=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vrNCBIlOvUZBhh6F0hNPaJ+1mWyUYRM0n5/huK1edKLL7Mmq62L2XCswp10WUPDex
-         dc/jveN4l9Nuka7NVBJSRzRUEFjAClFhy628vVpID6N5audrCf7h0cxG0XTeoTqUT8
-         Q/iF1LI1EWCiVl/kzpooqVJ8SjZjOsgoAMnLW3zs=
-Content-Type: text/plain; charset="utf-8"
+        id S1733271AbfHOWGW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 18:06:22 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:49750 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731599AbfHOWGV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 18:06:21 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FM3VCk094140;
+        Thu, 15 Aug 2019 22:06:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=grnXFtqO9q0UoP/PmJExNPh9Y4n2KrY3SsAsTHF9hdY=;
+ b=e1BFTcjW9s3nrydozJKI6md2XYVyun65H0oO0jDGJrvyNC7dJG93jcOF5lsXaq03r+x2
+ hMR0Hs/dseuIkeC6dvOXAZLQTZniyywRZlONE5XdCevEvxomHiQd+Zby3ZNlEurH+WRc
+ vfV2R7UspJsT4pqLRUi/apDu0buDq0AvDg9t4P3q5RcqHxqQ+i9GWs2hzQkL9k/Dkxyp
+ j9jAcLon9xmdLwn9WFOq+UUQXvExqtJ/k67SJEQn/vmj7RgxP+1tKyeH+XX2doR6JYsd
+ XFAsTVuypgtYfqWh5eOkaSwgW3edCaXHOKhoOJhltU6UCWxU4//8S1Fv07J7RDnH0GVB UQ== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2u9pjqw851-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 22:06:11 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FM3WSk195485;
+        Thu, 15 Aug 2019 22:06:10 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserp3030.oracle.com with ESMTP id 2ucs88drwa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 22:06:10 +0000
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7FM68TO019521;
+        Thu, 15 Aug 2019 22:06:08 GMT
+Received: from [10.211.55.26] (/10.211.55.26)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Aug 2019 15:06:08 -0700
+Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
+ tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>, Chris Mason <clm@fb.com>,
+        andy@groveronline.com
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Grover <andy.grover@oracle.com>,
+        Chris Mason <chris.mason@oracle.com>
+References: <20190816075312.64959223@canb.auug.org.au>
+From:   Gerd Rausch <gerd.rausch@oracle.com>
+Message-ID: <8fd20efa-8e3d-eca2-8adf-897428a2f9ad@oracle.com>
+Date:   Thu, 15 Aug 2019 15:06:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815160020.183334-4-sboyd@kernel.org>
-References: <20190815160020.183334-1-sboyd@kernel.org> <20190815160020.183334-4-sboyd@kernel.org>
-Subject: Re: [PATCH 3/4] rtc: sun6i: Don't reference clk_init_data after registration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 15 Aug 2019 14:59:45 -0700
-Message-Id: <20190815215946.C06492083B@mail.kernel.org>
+In-Reply-To: <20190816075312.64959223@canb.auug.org.au>
+Content-Type: text/plain; charset=windows-1252
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908150207
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908150208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Stephen Boyd (2019-08-15 09:00:19)
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
->=20
-> Cc: Alessandro Zummo <a.zummo@towertech.it>
-> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Chen-Yu Tsai <wens@csie.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->=20
+Hi,
 
-Looks like this fixed the sunxi boot crashes in -next. I'll add a tag
-for kernelci credit.
+Just added the e-mail addresses I found using a simple "google search",
+in order to reach out to the original authors of these commits:
+Chris Mason and Andy Grover.
 
+I'm hoping they still remember their work from 7-8 years ago.
+
+Thanks,
+
+  Gerd
+
+On 15/08/2019 14.53, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commits
+> 
+>   11740ef44829 ("rds: check for excessive looping in rds_send_xmit")
+>   65dedd7fe1f2 ("RDS: limit the number of times we loop in rds_send_xmit")
+> 
+> are missing a Signed-off-by from their authors.
+> 
