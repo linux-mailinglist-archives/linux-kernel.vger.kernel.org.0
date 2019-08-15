@@ -2,38 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A54D08EFE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:00:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6DC08EFF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:00:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730833AbfHOQAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:00:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46552 "EHLO mail.kernel.org"
+        id S1731006AbfHOQAc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:00:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729603AbfHOQAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:00:24 -0400
+        id S1729539AbfHOQAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:00:23 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EBA7E21721;
-        Thu, 15 Aug 2019 16:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EFBA2171F;
+        Thu, 15 Aug 2019 16:00:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1565884823;
-        bh=jhLe5vckYppF9TruqTI2eUqweArAAMsxS2OiscqnHNI=;
+        bh=A4wQl6vcC8iZEo+vLLbng0Wix6dTYFgjLABnwe1gTpY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AxmYTfa+Uov2w+URSRdFeyfWLhIeASvrCuS9pp75G/3Q/+oZDEvbVbkPneXLOxD5z
-         41byxi6mBnZG0QOd8yFrdHepi4Dh/BIgTSfGOGDAQZUfWq6Y0+yTH1t/cw/KooUmJw
-         DY2yjvHobhcjU/vLjzCI+DA6LXoFz3Pqd32WCIyw=
+        b=YC9e654T/YbzSJ2/aIR2ryASLUL2B5Uu0n1AxyMJhG/B3tjT6DSd0JQYAvHdw3ose
+         1SvsZKH1vaij+mxpOTcfr9+N5HrM8bcw4G+DoqXmYvqAsxXneDziMTe9+IaRrJMzit
+         xMAeOPSyULkiHT+QQrS2pk8v9ap8ygmcYPC6V80o=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rtc@vger.kernel.org, Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH 3/4] rtc: sun6i: Don't reference clk_init_data after registration
-Date:   Thu, 15 Aug 2019 09:00:19 -0700
-Message-Id: <20190815160020.183334-4-sboyd@kernel.org>
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 4/4] clk: qcom: Remove error prints from DFS registration
+Date:   Thu, 15 Aug 2019 09:00:20 -0700
+Message-Id: <20190815160020.183334-5-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 In-Reply-To: <20190815160020.183334-1-sboyd@kernel.org>
 References: <20190815160020.183334-1-sboyd@kernel.org>
@@ -44,36 +41,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+These aren't useful and they reference the init structure name. Let's
+just drop them.
 
-Cc: Alessandro Zummo <a.zummo@towertech.it>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Taniya Das <tdas@codeaurora.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
+ drivers/clk/qcom/clk-rcg2.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-Please ack so I can take this through clk tree.
-
- drivers/rtc/rtc-sun6i.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-sun6i.c b/drivers/rtc/rtc-sun6i.c
-index c0e75c373605..d50ee023b559 100644
---- a/drivers/rtc/rtc-sun6i.c
-+++ b/drivers/rtc/rtc-sun6i.c
-@@ -279,7 +279,7 @@ static void __init sun6i_rtc_clk_init(struct device_node *node,
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 8c02bffe50df..161a6498ed5a 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -1105,8 +1105,6 @@ static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
  
- 	of_property_read_string_index(node, "clock-output-names", 1,
- 				      &clkout_name);
--	rtc->ext_losc = clk_register_gate(NULL, clkout_name, rtc->hw.init->name,
-+	rtc->ext_losc = clk_register_gate(NULL, clkout_name, init.name,
- 					  0, rtc->base + SUN6I_LOSC_OUT_GATING,
- 					  SUN6I_LOSC_OUT_GATING_EN_OFFSET, 0,
- 					  &rtc->lock);
+ 	rcg->freq_tbl = NULL;
+ 
+-	pr_debug("DFS registered for clk %s\n", init->name);
+-
+ 	return 0;
+ }
+ 
+@@ -1117,12 +1115,8 @@ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+ 
+ 	for (i = 0; i < len; i++) {
+ 		ret = clk_rcg2_enable_dfs(&rcgs[i], regmap);
+-		if (ret) {
+-			const char *name = rcgs[i].init->name;
+-
+-			pr_err("DFS register failed for clk %s\n", name);
++		if (ret)
+ 			return ret;
+-		}
+ 	}
+ 
+ 	return 0;
 -- 
 Sent by a computer through tubes
 
