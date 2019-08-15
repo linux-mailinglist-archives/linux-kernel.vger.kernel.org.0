@@ -2,191 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B3A78EC00
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:54:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FA0C8EC04
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:54:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731678AbfHOMyF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:54:05 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35658 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729627AbfHOMyF (ORCPT
+        id S1731944AbfHOMyi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:54:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:39742 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731873AbfHOMyi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:54:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d85so1311181pfd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 05:54:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=k3B9Z8TePpXTNa77soV+Yw4aRHM57h5fDNR35eGyOSk=;
-        b=C3tDi1tZvON2ek83YfAj6Kxd+Qu/iur7e/xho3vY5GLc0U8KDGc1m9Ri6SPy/FbS9w
-         La/YpFxayS9wUenF264SszoLB3GuanhI88D9ynsH9yrdfhTYn1JTnB4eN6dffEIZ67Ew
-         yXDCLbYJnIhPj9wglrCUr7mcnKwk3E0Qkki0WLTy1nGXyvqs1M4FiG1WX1QHOWxZAOxU
-         Wf4Xf03Yc0wDU8wxLoeJ3Ic3Bm77zMpWwk97cjxAizHp9mCQZ3UVtBD0WdqxqMraP30N
-         /IqXp3O+rE+jq+w5xqUCjMuPZlg9v5sA+tbZfJunbtfjP/ahZieUKPBHMvmmJevtPsSA
-         27Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=k3B9Z8TePpXTNa77soV+Yw4aRHM57h5fDNR35eGyOSk=;
-        b=CCQqQq0u8jhcrEaMcqHyniDoqeVrzfm9q7ddnEvjfxTAtOKKptosNtic3pEFCqwH4n
-         toyTW0eWsfZm4t+UOUTElDeTR8vYkdUnGJMiH3OXX1YURGQ2kCVmb63Wrl8Shlser7Ia
-         PL0HcgvhVHSeCbRjeST7enMD7DQ2op49O0t44gHV47i+S3UtMPXg8+wx+7/Ltjkp4dSC
-         Oz8Hculq0NvjmKTQUedAVb8sk/nAL3VAbaO7haZqfv6uEy0WtbuoB+O/uLagoBn0/NlO
-         haVAVYCoWckievY+BNaxCr9Gm8mDqXes1H6MRBiuwgs2egEwFFoOmFgSMxMXtcCMB55o
-         FTFg==
-X-Gm-Message-State: APjAAAU+cWbT1+jwMP62Sn+nVTHFYihQQMfIZ8SMXv6Te1Iw2/PIJ6U3
-        9VpwMGz/gCydKqiIjm1W2mUETH4LjzVuD5DyLeE=
-X-Google-Smtp-Source: APXvYqzFJk1zO8xcEE8IP248NIhjzuuPvBpWByKcqa1XF+GU7cPijMJwvzOJEIXH2uT/HJPVO2kXwcVErFw8KCb9ITM=
-X-Received: by 2002:a63:e54f:: with SMTP id z15mr3403500pgj.4.1565873644063;
- Thu, 15 Aug 2019 05:54:04 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190815112826.81785-1-heikki.krogerus@linux.intel.com> <20190815112826.81785-4-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190815112826.81785-4-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 15 Aug 2019 15:53:52 +0300
-Message-ID: <CAHp75VeEKczQ5sX01QqeyiQnuMKdcWQkdqMqLksVB3rDTHL_hw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] platform/x86: intel_cht_int33fe: Use new API to gain
- access to the role switch
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
+        Thu, 15 Aug 2019 08:54:38 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyFGz-0004Ri-1T; Thu, 15 Aug 2019 14:54:33 +0200
+Date:   Thu, 15 Aug 2019 14:54:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Greg KH <gregkh@linuxfoundation.org>
+cc:     Paul Menzel <pmenzel@molgen.mpg.de>, x86@kernel.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: =?ISO-8859-7?Q?Re=3A_warning=3A_=A1memset=A2_offset_=5B197=2C_4?=
+ =?ISO-8859-7?Q?48=5D_from_the_object_at_=A1boot=5Fparams=A2_i?=
+ =?ISO-8859-7?Q?s_out_of_the_bounds_of_referenced_subobject?=
+ =?ISO-8859-7?Q?_=A1ext=5Framdisk=5Fimage=A2_with_type=2C_=A1unsig?=
+ =?ISO-8859-7?Q?ned_int=A2_at_offset_192_=5B-Warray-bounds=5D?=
+In-Reply-To: <20190815124306.GA17581@kroah.com>
+Message-ID: <alpine.DEB.2.21.1908151452250.1923@nanos.tec.linutronix.de>
+References: <7e44d224-ce7e-909d-e91e-9a643b5fcd71@molgen.mpg.de> <20190815124306.GA17581@kroah.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8323329-1831806387-1565873673=:1923"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 2:28 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> The driver for the Intel USB role mux now always supplies
-> software node for the role switch, so no longer checking
-> that, and never creating separate node for the role switch.
-> From now on using software_node_find_by_name() function to
-> get the handle to the USB role switch.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+--8323329-1831806387-1565873673=:1923
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
->
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->  drivers/platform/x86/intel_cht_int33fe.c | 57 +++++-------------------
->  1 file changed, 10 insertions(+), 47 deletions(-)
->
-> diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-> index 4fbdff48a4b5..1d5d877b9582 100644
-> --- a/drivers/platform/x86/intel_cht_int33fe.c
-> +++ b/drivers/platform/x86/intel_cht_int33fe.c
-> @@ -34,7 +34,6 @@ enum {
->         INT33FE_NODE_MAX17047,
->         INT33FE_NODE_PI3USB30532,
->         INT33FE_NODE_DISPLAYPORT,
-> -       INT33FE_NODE_ROLE_SWITCH,
->         INT33FE_NODE_USB_CONNECTOR,
->         INT33FE_NODE_MAX,
->  };
-> @@ -45,7 +44,6 @@ struct cht_int33fe_data {
->         struct i2c_client *pi3usb30532;
->
->         struct fwnode_handle *dp;
-> -       struct fwnode_handle *mux;
->  };
->
->  static const struct software_node nodes[];
-> @@ -139,46 +137,10 @@ static const struct software_node nodes[] = {
->         { "max17047", NULL, max17047_props },
->         { "pi3usb30532" },
->         { "displayport" },
-> -       { "usb-role-switch" },
->         { "connector", &nodes[0], usb_connector_props, usb_connector_refs },
->         { }
->  };
->
-> -static int cht_int33fe_setup_mux(struct cht_int33fe_data *data)
-> -{
-> -       struct fwnode_handle *fwnode;
-> -       struct device *dev;
-> -       struct device *p;
-> -
-> -       fwnode = software_node_fwnode(&nodes[INT33FE_NODE_ROLE_SWITCH]);
-> -       if (!fwnode)
-> -               return -ENODEV;
-> -
-> -       /* First finding the platform device */
-> -       p = bus_find_device_by_name(&platform_bus_type, NULL,
-> -                                   "intel_xhci_usb_sw");
-> -       if (!p)
-> -               return -EPROBE_DEFER;
-> -
-> -       /* Then the mux child device */
-> -       dev = device_find_child_by_name(p, "intel_xhci_usb_sw-role-switch");
-> -       put_device(p);
-> -       if (!dev)
-> -               return -EPROBE_DEFER;
-> -
-> -       /* If there already is a node for the mux, using that one. */
-> -       if (dev->fwnode)
-> -               fwnode_remove_software_node(fwnode);
-> -       else
-> -               dev->fwnode = fwnode;
-> -
-> -       data->mux = fwnode_handle_get(dev->fwnode);
-> -       put_device(dev);
-> -       mux_ref.node = to_software_node(data->mux);
-> -
-> -       return 0;
-> -}
-> -
->  static int cht_int33fe_setup_dp(struct cht_int33fe_data *data)
->  {
->         struct fwnode_handle *fwnode;
-> @@ -211,10 +173,9 @@ static void cht_int33fe_remove_nodes(struct cht_int33fe_data *data)
->  {
->         software_node_unregister_nodes(nodes);
->
-> -       if (data->mux) {
-> -               fwnode_handle_put(data->mux);
-> +       if (mux_ref.node) {
-> +               fwnode_handle_put(software_node_fwnode(mux_ref.node));
->                 mux_ref.node = NULL;
-> -               data->mux = NULL;
->         }
->
->         if (data->dp) {
-> @@ -235,14 +196,16 @@ static int cht_int33fe_add_nodes(struct cht_int33fe_data *data)
->         /* The devices that are not created in this driver need extra steps. */
->
->         /*
-> -        * There is no ACPI device node for the USB role mux, so we need to find
-> -        * the mux device and assign our node directly to it. That means we
-> -        * depend on the mux driver. This function will return -PROBE_DEFER
-> -        * until the mux device is registered.
-> +        * There is no ACPI device node for the USB role mux, so we need to wait
-> +        * until the mux driver has created software node for the mux device.
-> +        * It means we depend on the mux driver. This function will return
-> +        * -EPROBE_DEFER until the mux device is registered.
->          */
-> -       ret = cht_int33fe_setup_mux(data);
-> -       if (ret)
-> +       mux_ref.node = software_node_find_by_name(NULL, "intel-xhci-usb-sw");
-> +       if (!mux_ref.node) {
-> +               ret = -EPROBE_DEFER;
->                 goto err_remove_nodes;
-> +       }
->
->         /*
->          * The DP connector does have ACPI device node. In this case we can just
-> --
-> 2.20.1
->
+On Thu, 15 Aug 2019, Greg KH wrote:
+> On Tue, Aug 13, 2019 at 06:15:51PM +0200, Paul Menzel wrote:
+> > Dear Linux folks,
+> > 
+> > 
+> > No idea, if you are interested in these reports. Building Linux 5.3-rc4,
+> > GCC 9.2.0 shows the warning below.
+> > 
+> > ```
+> > In file included from arch/x86/kernel/head64.c:35:
+> > In function ‘sanitize_boot_params’,
+> >     inlined from ‘copy_bootdata’ at arch/x86/kernel/head64.c:391:2:
+> > ./arch/x86/include/asm/bootparam_utils.h:40:3: warning: ‘memset’ offset [197, 448] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘ext_ramdisk_image’ with type
+> >  ‘unsigned int’ at offset 192 [-Warray-bounds]
+> >    40 |   memset(&boot_params->ext_ramdisk_image, 0,
+> >       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    41 |          (char *)&boot_params->efi_info -
+> >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    42 |    (char *)&boot_params->ext_ramdisk_image);
+> >       |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > ./arch/x86/include/asm/bootparam_utils.h:43:3: warning: ‘memset’ offset [493, 497] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘kbd_status’ with type ‘unsig
+> > ned char’ at offset 491 [-Warray-bounds]
+> >    43 |   memset(&boot_params->kbd_status, 0,
+> >       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    44 |          (char *)&boot_params->hdr -
+> >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >    45 |          (char *)&boot_params->kbd_status);
+> >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > ```
+> 
+> Yeah, it shows up on my builds as well :(
+> 
+> Any chance you can make a fix for this?
 
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/boot&id=a156cadef2fe445ac423670eace517b39a01ccd0
 
--- 
-With Best Regards,
-Andy Shevchenko
+I guess I need to reprioritize that and mark it for stable....
+--8323329-1831806387-1565873673=:1923--
