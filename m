@@ -2,101 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7CB98E361
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:05:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D40A8E378
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:15:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfHOEFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 00:05:07 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:46387 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725440AbfHOEFG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:05:06 -0400
-Received: by mail-ot1-f65.google.com with SMTP id z17so3149624otk.13;
-        Wed, 14 Aug 2019 21:05:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hhpSNDDdJjVXj/ea1nbfBdH4ileub7FSt2+byXY5COo=;
-        b=dRKfezk6wLD8aeBoV6dH6+vP9uNj1ixyut6Qx2AstL4Y5PpAq14H7YOqmG+p8A+z8D
-         0gN0atNkD5mDPadJCGPyINoFRUtUelAe4iZubONrQYxCCr3LLR3wtDlEaPJeWqYpgTq7
-         +p0D31Tm61pVtELl/nsBAOxhihrjRFr05jvAfhYK0xzAx08R6DUbq+aOHvrPPfIoX7rj
-         y0lDwwgRqbZuCGU4jzX7lF4eYrFNdmvGVKwFbMbjiIrS+0lkRWamMrtacBSuOez0uUvx
-         Txsk6yGwGQGpSX3e9ff2dgxs4xC7ieBwS0Mbf/KVgCM1AIsTDeI4J4y611MQXp1UFq2d
-         j4FA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hhpSNDDdJjVXj/ea1nbfBdH4ileub7FSt2+byXY5COo=;
-        b=S6Dkd5el8MvSSSy3Rir58l2pobhjt05oABC8VlJap990FZnz19/8E+X1ddACpda8YU
-         k18pGFk6bBzDHzPjM47gI7m94wqwmvqz0h8v09ZG+zSslJeroTH9/bdDGD7bLaFnEMg/
-         ZVV3EOuKRVlEu0NgKfB/15JxwMoVe4RIRyNgjeO1XDo7yO9RaKylYl5xWdcpcIR7XiZ1
-         JkoZCRPsGkGZ9OU65eNqAMVSMXA6XSOFTMq0ow+DGx+gJO8U8H5e4Ch6SFyjfXo++PcQ
-         uskaQoSlKWEJkEBktaQVL1ULdoKQ74ntS2jAHwTgGE0KD36HBluI8/8rC3s5UYXUUylM
-         GjqQ==
-X-Gm-Message-State: APjAAAWsCXIkCTAey4vbwJ1nHucMtUZPvkgSWdZi0aTgQYUOkptgb52L
-        YLMb1BiSAle2w7qSFRz2dRZ7LGxKB+icW8PEdXpWqVDS
-X-Google-Smtp-Source: APXvYqwCRTwWTw7SR/A8Wq6QJdAx2Jdsxrh64E6D2IWQ6kUf7znfSKE12dj2jIshA0cUhR08ojSDKlBLMIXUh1+TZCI=
-X-Received: by 2002:a05:6830:144b:: with SMTP id w11mr2012289otp.185.1565841905602;
- Wed, 14 Aug 2019 21:05:05 -0700 (PDT)
+        id S1726545AbfHOEPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 00:15:21 -0400
+Received: from mga04.intel.com ([192.55.52.120]:58501 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725875AbfHOEPU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:15:20 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 21:15:20 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,387,1559545200"; 
+   d="scan'208";a="184514859"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Aug 2019 21:15:18 -0700
+Date:   Thu, 15 Aug 2019 11:58:04 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Scott Wood <swood@redhat.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>, mdf@kernel.org,
+        linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        atull@kernel.org, Ananda Ravuri <ananda.ravuri@intel.com>,
+        Xu Yilun <yilun.xu@intel.com>
+Subject: Re: [PATCH v3 01/12] fpga: dfl: fme: support 512bit data width PR
+Message-ID: <20190815035804.GA29090@hao-dev>
+References: <1563857495-26692-1-git-send-email-hao.wu@intel.com>
+ <1563857495-26692-2-git-send-email-hao.wu@intel.com>
+ <20190724093532.GB29532@kroah.com>
+ <20190724142235.GE8463@hao-dev>
+ <32c46e3de1a6641eb0d5940868f7d8b8a30181d3.camel@redhat.com>
 MIME-Version: 1.0
-References: <1565329531-12327-1-git-send-email-wanpengli@tencent.com>
- <fad8ceed-8b98-8fc4-5b6a-63bbca4059a8@redhat.com> <CANRm+CwMMUEyZXmiUu5Y8GA=BEUYGLw31CRyZTc2uA+ct4Bamg@mail.gmail.com>
- <ba07fb02-9b55-15e4-d240-24da59e09369@redhat.com>
-In-Reply-To: <ba07fb02-9b55-15e4-d240-24da59e09369@redhat.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Thu, 15 Aug 2019 12:04:48 +0800
-Message-ID: <CANRm+CzGNyST4=BtE-eKvjB-PUVVoM-gUC2Np8NH7tm0Gp2_nQ@mail.gmail.com>
-Subject: Re: [PATCH] KVM: LAPIC: Periodically revaluate appropriate lapic_timer_advance_ns
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <32c46e3de1a6641eb0d5940868f7d8b8a30181d3.camel@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 at 20:50, Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 12/08/19 11:06, Wanpeng Li wrote:
-> > On Fri, 9 Aug 2019 at 18:24, Paolo Bonzini <pbonzini@redhat.com> wrote:
-> >>
-> >> On 09/08/19 07:45, Wanpeng Li wrote:
-> >>> From: Wanpeng Li <wanpengli@tencent.com>
-> >>>
-> >>> Even if for realtime CPUs, cache line bounces, frequency scaling, presence
-> >>> of higher-priority RT tasks, etc can cause different response. These
-> >>> interferences should be considered and periodically revaluate whether
-> >>> or not the lapic_timer_advance_ns value is the best, do nothing if it is,
-> >>> otherwise recaluate again.
-> >>
-> >> How much fluctuation do you observe between different runs?
-> >
-> > Sometimes can ~1000 cycles after converting to guest tsc freq.
->
-> Hmm, I wonder if we need some kind of continuous smoothing.  Something like
+On Wed, Aug 14, 2019 at 11:34:15AM -0500, Scott Wood wrote:
+> On Wed, 2019-07-24 at 22:22 +0800, Wu Hao wrote:
+> > On Wed, Jul 24, 2019 at 11:35:32AM +0200, Greg KH wrote:
+> > > On Tue, Jul 23, 2019 at 12:51:24PM +0800, Wu Hao wrote:
+> > > >  
+> > > > @@ -67,8 +69,43 @@
+> > > >  #define PR_WAIT_TIMEOUT   8000000
+> > > >  #define PR_HOST_STATUS_IDLE	0
+> > > >  
+> > > > +#if defined(CONFIG_X86) && defined(CONFIG_AS_AVX512)
+> > > > +
+> > > > +#include <linux/cpufeature.h>
+> > > > +#include <asm/fpu/api.h>
+> > > > +
+> > > > +static inline int is_cpu_avx512_enabled(void)
+> > > > +{
+> > > > +	return cpu_feature_enabled(X86_FEATURE_AVX512F);
+> > > > +}
+> > > 
+> > > That's a very arch specific function, why would a driver ever care about
+> > > this?
+> > 
+> > Yes, this is only applied to a specific FPGA solution, which FPGA
+> > has been integrated with XEON. Hardware indicates this using register
+> > to software. As it's cpu integrated solution, so CPU always has this
+> > AVX512 capability. The only check we do, is make sure this is not
+> > manually disabled by kernel.
+> > 
+> > With this hardware, software could use AVX512 to accelerate the FPGA
+> > partial reconfiguration as mentioned in the patch commit message.
+> > It brings performance benifits to people who uses it. This is only one
+> > optimization (512 vs 32bit data write to hw) for a specific hardware.
+> 
+> I thought earlier you said that 512 bit accesses were required for this
+> particular integrated-only version of the device, and not just an
+> optimization?
 
-Actually this can fluctuate drastically instead of continuous
-smoothing during testing (running linux guest instead of
-kvm-unit-tests).
+yes, some optimization implemented in a specific integrated-only version
+of hardware, this patch is used to support that particular hardware. This
+is also the reason you see code here to check hardware revision in this
+patch.
 
->
->         if (abs(advance_expire_delta) < LAPIC_TIMER_ADVANCE_ADJUST_DONE) {
->                 /* no update for random fluctuations */
->                 return;
->         }
->
->         if (unlikely(timer_advance_ns > 5000))
->                 timer_advance_ns = LAPIC_TIMER_ADVANCE_ADJUST_INIT;
->         apic->lapic_timer.timer_advance_ns = timer_advance_ns;
->
-> and removing all the timer_advance_adjust_done stuff.  What do you think?
+> 
+> > > > +#else
+> > > > +static inline int is_cpu_avx512_enabled(void)
+> > > > +{
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static inline void copy512(const void *src, void __iomem *dst)
+> > > > +{
+> > > > +	WARN_ON_ONCE(1);
+> > > 
+> > > Are you trying to get reports from syzbot?  :)
+> > 
+> > Oh.. no.. I will remove it. :)
+> > 
+> > Thank you very much!
+> 
+> What's wrong with this?  The driver should never call copy512() if
+> is_cpu_avx512_enabled() returns 0, and if syzbot can somehow make the driver
+> do so, then yes we do want a report.
 
-I just sent out v2, periodically revaluate and get a minimal
-conservative value from these revaluate points. Please have a look. :)
+Yes, you are right, in previous version, it doesn't have avx512 enable check
+there, so it's possible to have false reporting, it should be fine after
+driver does early check on this during probe. As this patch has been dropped
+from main patchset, may rework it later and resubmit. Thanks for the comments.
 
-Regards,
-Wanpeng Li
+Hao
+
+> 
+> -Scott
+> 
