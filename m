@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C5458F09A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FEAD8F0A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:30:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731901AbfHOQ2q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:28:46 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46379 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730452AbfHOQ2q (ORCPT
+        id S1731780AbfHOQap (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:30:45 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44367 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730132AbfHOQao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:28:46 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q139so1550973pfc.13
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:28:45 -0700 (PDT)
+        Thu, 15 Aug 2019 12:30:44 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so1497856pgl.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 09:30:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=joelfernandes.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=ako5fluBLDpfE1J18WjJkmrO4kyd01koUp3/srSLSio=;
-        b=qtT/kgiqDdqZS87IpBnNlRkIc96pYOs3bsFznlNVDQXAV2IQZtGmds429Cbcj1BTeq
-         ZRejWIcNM9GvygOmD8IxOlvXRvQOmdcgh6laGyvGysnw6JvUmmGthXwWmTlMNHdjNCF/
-         6sQOAp7i1LGEOBBfLrB8gi3qFuSZ7/MNXiNFM=
+        bh=YXtKn6tSCQy3NpA9rMW2UTi1pemQ0emlmM8VnUNaMb4=;
+        b=Hu85KiG7Ok++jxRYVDbjomkFeYLFzXGOLI4c+CF1GFmLn15HbUeRCf1KF/2FQ+hpfp
+         9jA7urHEkeMnGRuF2CVBM3zZ/CCBzG0dB1kQ/uY+kYpL2ReZlk7XP9554UdsgjN34dl5
+         RCtc6YTXLk3L8BT8MzvPpjMFMFnRKOHE8yES0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ako5fluBLDpfE1J18WjJkmrO4kyd01koUp3/srSLSio=;
-        b=hD5pLU31kY2/aWaVznxCm3aLz0E14DMY1zpzCh97oGwtoR0ePhzLguUKBP+TPaYMD8
-         68M44fSee30tB6Rw60Et8Ro9idLQZ7qRGL+j57+UHcCfELl6OJxaDCV0QC7ay2BH+ghd
-         IIyqeVGCfF4+uf3c8InNS1UGa9AUlWVmwaaFnFuHvLeJua9CDSma6Opd3EwrzSXN04fo
-         u0f8QZ8TBLgXv8CC/1twsTudWtkuyPM28pChyk6zQZ5mNGUCh7HEzLrNhxvOzLfZy9KM
-         6SYkUU9lKgFd1wvhv6S1sWrBlRjXlNg+3JTxn8U+a31nfFBcw1s1Tb+a7GXtutD8pYw1
-         CCcA==
-X-Gm-Message-State: APjAAAUdaizwer3HqKl9q8gLyOxSEjzWEG3ks3FLWjyU3iYo8nyg02fc
-        lfy48gXvwF0PEvIIFg2SNANAoA==
-X-Google-Smtp-Source: APXvYqyyibvRsNaV3CtcWbxkzfTVTQ58VnhGf9a0pKudGLIxAoscuok8Pnf8eybfSz3FnCIT24W3TQ==
-X-Received: by 2002:a63:7b4d:: with SMTP id k13mr4073354pgn.182.1565886524798;
-        Thu, 15 Aug 2019 09:28:44 -0700 (PDT)
+        bh=YXtKn6tSCQy3NpA9rMW2UTi1pemQ0emlmM8VnUNaMb4=;
+        b=FkJfY7oI28AoT443AeWIzsw3hW4xsQ1TRI0QwU6IbodW9K/zFpHgKw/+hhId4Q1G7+
+         ohhqDxN8W0jtpTnO3NUOmQ0yX1xA0y7JETC4IBZ8dK3j/CTSsrmYt1zcTvj67rRkx/7K
+         oTjGFbuJSyA0Oj7UBFyhdZx5Q9YJ08aKg8S/DKkq6OQGuM8VqfXehR8vPKIpQV9BER+Y
+         Zlb5aIuzzO4iOslXRvjfPbPDLips9SmEcm4oCx/T52oNh8r3s6T5ZM8CQiJZtPK+g+B6
+         pSiPXzJEdUi3XVqPZ9vrTqJ7iLy4yC/Q7HtO6rnBfnts2hIlyRJ9JfWL46grhTADfHZX
+         /rYg==
+X-Gm-Message-State: APjAAAVwnUma8n1BLbYVt+espAvgN2hkOvtVc4XG35TGyvtwP2TFHmdY
+        Q7CqroJNkg/FJy2wsDHegJq7TljLA38=
+X-Google-Smtp-Source: APXvYqwUsPXLcmLHAxB2tRsW34D41FmV40ffddklYTLPs1CB9bmhuB11dBR/dzlVYi+AjkqgOw7N6g==
+X-Received: by 2002:a65:5a8c:: with SMTP id c12mr4055445pgt.73.1565886643402;
+        Thu, 15 Aug 2019 09:30:43 -0700 (PDT)
 Received: from localhost ([172.19.216.18])
-        by smtp.gmail.com with ESMTPSA id 185sm3486276pfd.125.2019.08.15.09.28.43
+        by smtp.gmail.com with ESMTPSA id f205sm3924774pfa.161.2019.08.15.09.30.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 09:28:43 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 12:28:27 -0400
+        Thu, 15 Aug 2019 09:30:42 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 12:30:25 -0400
 From:   Joel Fernandes <joel@joelfernandes.org>
 To:     Hridya Valsaraju <hridya@google.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -55,7 +55,7 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Christian Brauner <christian.brauner@ubuntu.com>
 Subject: Re: [PATCH v3 1/2] binder: Add default binder devices through
  binderfs when configured
-Message-ID: <20190815162827.GA75595@google.com>
+Message-ID: <20190815163025.GB75595@google.com>
 References: <20190808222727.132744-1-hridya@google.com>
  <20190808222727.132744-2-hridya@google.com>
 MIME-Version: 1.0
@@ -83,6 +83,7 @@ On Thu, Aug 08, 2019 at 03:27:25PM -0700, Hridya Valsaraju wrote:
 > Co-developed-by: Christian Brauner <christian.brauner@ubuntu.com>
 > Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
 > Signed-off-by: Hridya Valsaraju <hridya@google.com>
+> ---
 
 Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
@@ -90,7 +91,6 @@ thanks,
 
  - Joel
 
-> ---
 > 
 > Changes in v2:
 > - Updated commit message as per Greg Kroah-Hartman.
