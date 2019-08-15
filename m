@@ -2,92 +2,210 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7911B8E62C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:24:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3778E63B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:25:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730924AbfHOIYU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:24:20 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:33705 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730898AbfHOIYU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:24:20 -0400
-Received: by mail-lf1-f68.google.com with SMTP id x3so1154286lfc.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 01:24:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OQ0EE8KBKUB2wnGR7WI4DHIvan4LQMsfKVjPNCbJp30=;
-        b=BtMASVRwCxEESb39swhUi6eKRj6LJ+hlNA4zpwGR2CrCnj90lLF4XUtzeSbcFnkIeH
-         Rua8own1u82bzcCfXFA2g1OhlZ09we6lALghTOQaf28IZJU+IPkngEhprVhE11a/ALd/
-         FuPpbfhwYsCQ3+XtIUgBR2+NG0zT8OR8sq4KMqI6xllCpkCgmH+NjXOfcYu1jRvB5m2t
-         zy7HTL11dzTNin51nsoF+SKMm9VCxW4mlbsGJqLxFdi4VqZNclku0cU3xi/43cIPB0u2
-         BjqKpwqDoRkDO4NFdAkrngy7sLiHI2K27UgsJ3yGyv+9WI/hB4kP+K7lDNZOSCG/kSyb
-         jKbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OQ0EE8KBKUB2wnGR7WI4DHIvan4LQMsfKVjPNCbJp30=;
-        b=net2Zq6SlmS9IhIBZGedGWgK3tqw/wO5vTvbSb18Bq8WPIjswl67VFSQj/R+dTXAcb
-         upu+JliGd1YyfEbIjurCJ9i5LrS+9I9mQ7VfT9iCAuSJ5CoK05k7k/tF7sAmC7UFZ2Og
-         fZLunRyTjZoZqQOBElZrpIm6pry66CzGYfIGHHeD0f3zsQS6tX8ZcxHVd25nehjj7Bz0
-         Uy0ci3SXAgpyiGil4/Vqz9FGYMya2Kr9vxz07VS7wxPstr2k5RftTmzYz8o/pKnz0OwC
-         3bmO3uVKQIg5Ku0xOFHvnau4kAr7+XZROnTZ6jaP/RJE+xeE7YeQQFPWu7se09gKNeg/
-         ECzQ==
-X-Gm-Message-State: APjAAAW7cyVi1aJlzsrotAziJu9d2rtQR/TFR9YHnvMWOVhpFB1igqDU
-        rwq3xbKb0J21SLitTOhHTbVcx67PrvJpv9OlyhLMqg==
-X-Google-Smtp-Source: APXvYqwLnc3C4Y4Uj9ggAwakGzpIWkkpLBmK9Z2FcyUqoiL21SA+0DNibnPbsKNQqp+zQbxvlbBPxLQn3oxhDsqLDWY=
-X-Received: by 2002:ac2:59d0:: with SMTP id x16mr1894686lfn.60.1565857457973;
- Thu, 15 Aug 2019 01:24:17 -0700 (PDT)
+        id S1730952AbfHOIZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:25:34 -0400
+Received: from mga05.intel.com ([192.55.52.43]:48394 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729838AbfHOIZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 04:25:33 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 01:25:33 -0700
+X-IronPort-AV: E=Sophos;i="5.64,388,1559545200"; 
+   d="scan'208";a="184561788"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga003-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 01:25:28 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 7CD1B20BCA; Thu, 15 Aug 2019 11:24:22 +0300 (EEST)
+Date:   Thu, 15 Aug 2019 11:24:22 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
+        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
+        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, hans.verkuil@cisco.com,
+        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
+        ezequiel@collabora.com, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
+        Jacob Chen <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
+Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
+Message-ID: <20190815082422.GM6133@paasikivi.fi.intel.com>
+References: <20190730184256.30338-1-helen.koike@collabora.com>
+ <20190730184256.30338-6-helen.koike@collabora.com>
+ <20190808091406.GQ21370@paasikivi.fi.intel.com>
+ <da6c1d01-e3f6-ad73-db55-145d7832a665@collabora.com>
 MIME-Version: 1.0
-References: <20190815004854.19860-1-masneyb@onstation.org> <20190815004854.19860-6-masneyb@onstation.org>
-In-Reply-To: <20190815004854.19860-6-masneyb@onstation.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Aug 2019 10:24:05 +0200
-Message-ID: <CACRpkdbZ09+pS+AchWLcxyA9MHgQ2ytL2qN77V3_gKmtw9yFog@mail.gmail.com>
-Subject: Re: [PATCH 05/11] drm/bridge: analogix-anx78xx: correct value of TX_P0
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Dave Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        freedreno <freedreno@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <da6c1d01-e3f6-ad73-db55-145d7832a665@collabora.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 2:49 AM Brian Masney <masneyb@onstation.org> wrote:
+Hi Helen,
 
-> When attempting to configure this driver on a Nexus 5 phone (msm8974),
-> setting up the dummy i2c bus for TX_P0 would fail due to an -EBUSY
-> error. The downstream MSM kernel sources [1] shows that the proper value
-> for TX_P0 is 0x78, not 0x70, so correct the value to allow device
-> probing to succeed.
->
-> [1] https://github.com/AICP/kernel_lge_hammerhead/blob/n7.1/drivers/video/slimport/slimport_tx_reg.h
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Wed, Aug 14, 2019 at 09:58:05PM -0300, Helen Koike wrote:
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+...
 
-Yours,
-Linus Walleij
+> >> +static int rkisp1_isp_sd_set_fmt(struct v4l2_subdev *sd,
+> >> +				 struct v4l2_subdev_pad_config *cfg,
+> >> +				 struct v4l2_subdev_format *fmt)
+> >> +{
+> >> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
+> >> +	struct rkisp1_isp_subdev *isp_sd = &isp_dev->isp_sdev;
+> >> +	struct v4l2_mbus_framefmt *mf = &fmt->format;
+> >> +
+> > 
+> > Note that for sub-device nodes, the driver is itself responsible for
+> > serialising the access to its data structures.
+> 
+> But looking at subdev_do_ioctl_lock(), it seems that it serializes the
+> ioctl calls for subdevs, no? Or I'm misunderstanding something (which is
+> most probably) ?
+
+Good question. I had missed this change --- subdev_do_ioctl_lock() is
+relatively new. But setting that lock is still not possible as the struct
+is allocated in the framework and the device is registered before the
+driver gets hold of it. It's a good idea to provide the same serialisation
+for subdevs as well.
+
+I'll get back to this later.
+
+...
+
+> >> +static int rkisp1_isp_sd_s_power(struct v4l2_subdev *sd, int on)
+> > 
+> > If you support runtime PM, you shouldn't implement the s_power op.
+> 
+> Is is ok to completly remove the usage of runtime PM then?
+> Like this http://ix.io/1RJb ?
+
+Please use runtime PM instead. In the long run we should get rid of the
+s_power op. Drivers themselves know better when the hardware they control
+should be powered on or off.
+
+> 
+> tbh I'm not that familar with runtime PM and I'm not sure what is the
+> difference of it and using s_power op (and Documentation/power/runtime_pm.rst
+> is not being that helpful tbh).
+
+You can find a simple example e.g. in
+drivers/media/platform/atmel/atmel-isi.c .
+
+> 
+> > 
+> > You'll still need to call s_power on external subdevs though.
+> > 
+> >> +{
+> >> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
+> >> +	int ret;
+> >> +
+> >> +	v4l2_dbg(1, rkisp1_debug, &isp_dev->v4l2_dev, "s_power: %d\n", on);
+> >> +
+> >> +	if (on) {
+> >> +		ret = pm_runtime_get_sync(isp_dev->dev);
+> 
+> If this is not ok to remove suport for runtime PM, then where should I put
+> the call to pm_runtime_get_sync() if not in this s_power op ?
+
+Basically the runtime_resume and runtime_suspend callbacks are where the
+device power state changes are implemented, and pm_runtime_get_sync and
+pm_runtime_put are how the driver controls the power state.
+
+So you no longer need the s_power() op at all. The op needs to be called on
+the pipeline however, as there are drivers that still use it.
+
+> 
+> >> +		if (ret < 0)
+> >> +			return ret;
+> >> +
+> >> +		rkisp1_config_clk(isp_dev);
+> >> +	} else {
+> >> +		ret = pm_runtime_put(isp_dev->dev);
+> >> +		if (ret < 0)
+> >> +			return ret;
+> >> +	}
+> >> +
+> >> +	return 0;
+> >> +}
+> >> +
+> >> +static int rkisp1_subdev_link_validate(struct media_link *link)
+> >> +{
+> >> +	if (link->source->index == RKISP1_ISP_PAD_SINK_PARAMS)
+> > 
+> > Is this test correct? The source is the source end of the link, i.e. the
+> > video node.
+> 
+> Ah yes, it should be link->sink->index (and not source), thanks for spotting this.
+> 
+> > 
+> > How about the links that end in a video node?
+> 
+> I thought that the only possibilities were sensor->isp1 and params->isp1 (where params
+> is an output video node that should be catched by the corrected version of the if
+> statement above.
+> 
+> Or do you mean another thing?
+
+The link_validate of the sink entity will be called only, for the knowledge
+what is possible is generally in that end.
+
+So you'll need this for all the sink pads this driver is in control of.
+I suppose this means the sub-devices as well as capture video nodes in
+practice.
+
+> 
+> > 
+> >> +		return 0;
+> >> +
+> >> +	return v4l2_subdev_link_validate(link);
+> >> +}
+> >> +
+> >> +static int rkisp1_subdev_fmt_link_validate(struct v4l2_subdev *sd,
+> >> +					struct media_link *link,
+> >> +					struct v4l2_subdev_format *source_fmt,
+> >> +					struct v4l2_subdev_format *sink_fmt)
+> >> +{
+> >> +	if (source_fmt->format.code != sink_fmt->format.code)
+> >> +		return -EINVAL;
+> 
+> ops, should be -EPIPE
+> 
+> >> +
+> >> +	/* Crop is available */
+> >> +	if (source_fmt->format.width < sink_fmt->format.width ||
+> >> +	    source_fmt->format.height < sink_fmt->format.height)
+> >> +		return -EINVAL;
+> 
+> -EPIPE
+> 
+> >> +
+> > 
+> > Could you use v4l2_subdev_link_validate_default()?
+> 
+> v4l2_subdev_link_validate_default() only allows for an exact width/height match,
+> but here we allow the sink to be smaller then the source for cropping, no?
+
+The width and height generally must match over a link. But cropping takes
+place inside a sub-device, it is not a concern in link validation as such.
+
+> 
+> Thanks again for your review!
+
+You're welcome!
+
+-- 
+Kind regards,
+
+Sakari Ailus
+sakari.ailus@linux.intel.com
