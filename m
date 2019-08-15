@@ -2,58 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C9018F1CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCD828F1DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731753AbfHOROe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:34 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:45479 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731593AbfHORO3 (ORCPT
+        id S1732030AbfHORPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:15:12 -0400
+Received: from mail-wm1-f98.google.com ([209.85.128.98]:35485 "EHLO
+        mail-wm1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731637AbfHOROa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:29 -0400
-Received: by mail-wr1-f99.google.com with SMTP id q12so2831236wrj.12
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
+        Thu, 15 Aug 2019 13:14:30 -0400
+Received: by mail-wm1-f98.google.com with SMTP id l2so1867527wmg.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=YPeSnlp85BSgqZ8FUqvf/b5hI6uRVke7m+e+NVbbr4w=;
-        b=hGukWCOcwzySSmP8nSfR1+66LG0hu1LU8Y1tyRzIlQgJ0X/aNLDHH0eJdOhR9nCURa
-         J0BfwvBIbvqZVphIdeBPjPxhTS+mWfCHEG5A9REVVwu3V1Q+dTsBEFmOznb+x5rAKiub
-         H0tL9bukUiDZ6XMFV6Va/7FvGdfLcqmbU1cT0Xj5X3OyP7euHngolXS/ZL7XsBpXMdtr
-         0Ojl4APrBH4VlTifDUlWH6zWoNaRxy7gI/0lIwOJBfgRaWD8Tz/kspcKb5tUsRAdmQCa
-         gHWKx6dNsaHt1q4mWWv4r85hTQPJi/RlmYuKTs4NfT1inpFmnVk1vgRGW0vZtw0C13UE
-         5udw==
-X-Gm-Message-State: APjAAAUOS1jbIHgMzyN7/Amnmva6rrAdyzI22tvDRvO7rXWok7d8SbGS
-        jJ+3/VI/R36M0HVQE7YFUWmxXboT2r05ElofKDuemZd26b9P+gJkF66JONIJe7lrOQ==
-X-Google-Smtp-Source: APXvYqwzCFxnd7Tnrw+VcKoRu5IrfLOdJxhmvb9tC1g2WmdJI+J7y+97oDUNU/8wBnVKOLWS0o9WgLgcpwBa
-X-Received: by 2002:adf:f5c5:: with SMTP id k5mr6963937wrp.42.1565889267066;
-        Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
+        bh=qK+K3lvg5j7KBSfj3mqp/CfZUMLY6IjIIgyqWda7qdY=;
+        b=jrptLSSGaEhsZnemGxbQsiutDVJEabMLnUvAlPyQGJ1J2DRRSxl3aed33cLWjtrSnU
+         BNpPXVllF4JO1NUGW6ibpxzSeRJfWFQKzo4l9YL8KpWt/MPylUaJyS6+7u8SpZcxT/sa
+         VTZoiWPQY9oBAVWJnfR2AH4Pe+JcUl1KAUhIQwr7SK2nKlZPAPUQALzGiGjK7l5r0+iA
+         e49bHtgp8/5tqjPnky06s/v0+XljlPblYh8OPAro9kc0d3NqCkUkcCvqhuntQW80ltvl
+         wNPKg5Cu5634CuuJx6TwPIs6+eUGSaHYCiSQdArtqxuSTnk9+feRvgQ3kIC+p9xPj81f
+         G02A==
+X-Gm-Message-State: APjAAAUdRFnxw7eOG/wl35qnIPWhpaydoLNdVKnLGiAD/NesoHukKwnI
+        LWbvEcG5BdswM/9upUyHDgB1lz+gfs/Coj3ZJ5DjNnC3z0gqqZfQYgh60YsqptmbRA==
+X-Google-Smtp-Source: APXvYqzwc/xYr8huKOghn9vmtQMt/8YLWEaKPN+5vpK0OgbJx4iilw7n+VrgNxOG+/p65MKqhugGqHofkiLa
+X-Received: by 2002:a7b:c198:: with SMTP id y24mr3681836wmi.131.1565889268536;
+        Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id o9sm58910wrg.25.2019.08.15.10.14.26
+        by smtp-relay.gmail.com with ESMTPS id r12sm59823wrw.27.2019.08.15.10.14.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
+        Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKU-00052B-Ld; Thu, 15 Aug 2019 17:14:26 +0000
+        id 1hyJKW-00052a-AD; Thu, 15 Aug 2019 17:14:28 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 173082742BC7; Thu, 15 Aug 2019 18:14:26 +0100 (BST)
+        id D1B542742BD6; Thu, 15 Aug 2019 18:14:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
+To:     Masanari Iida <standby24x7@gmail.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Hulk Robot <hulkci@huawei.com>, lgirdwood@gmail.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org,
-        Mark Brown <broonie@kernel.org>, matthias.bgg@gmail.com,
-        perex@perex.c, tiwai@suse.com
-Subject: Applied "ASoC: mt2701: remove unused variables" to the asoc tree
-In-Reply-To: <20190813143811.31456-1-yuehaibing@huawei.com>
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, perex@perex.cz,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>, peter.ujfalusi@ti.com,
+        tiwai@suse.com
+Subject: Applied "ASoC: ti: Fix typos in ti/Kconfig" to the asoc tree
+In-Reply-To: <20190813034235.30673-1-standby24x7@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171426.173082742BC7@ypsilon.sirena.org.uk>
-Date:   Thu, 15 Aug 2019 18:14:26 +0100 (BST)
+Message-Id: <20190815171427.D1B542742BD6@ypsilon.sirena.org.uk>
+Date:   Thu, 15 Aug 2019 18:14:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: mt2701: remove unused variables
+   ASoC: ti: Fix typos in ti/Kconfig
 
 has been applied to the asoc tree at
 
@@ -86,59 +85,43 @@ to this mail.
 Thanks,
 Mark
 
-From a9e792d006edbd33724f2eb858887d3b591d82c5 Mon Sep 17 00:00:00 2001
-From: YueHaibing <yuehaibing@huawei.com>
-Date: Tue, 13 Aug 2019 22:38:11 +0800
-Subject: [PATCH] ASoC: mt2701: remove unused variables
+From ae3a5901dde2ab136ec0cebda2fccc48e810d2ec Mon Sep 17 00:00:00 2001
+From: Masanari Iida <standby24x7@gmail.com>
+Date: Tue, 13 Aug 2019 12:42:35 +0900
+Subject: [PATCH] ASoC: ti: Fix typos in ti/Kconfig
 
-sound/soc/mediatek/mt2701/mt2701-afe-pcm.c:799:38: warning:
- mt2701_afe_o23_mix defined but not used [-Wunused-const-variable=]
-sound/soc/mediatek/mt2701/mt2701-afe-pcm.c:803:38: warning:
- mt2701_afe_o24_mix defined but not used [-Wunused-const-variable=]
-sound/soc/mediatek/mt2701/mt2701-afe-pcm.c:835:38: warning:
- mt2701_afe_multi_ch_out_i2s4 defined but not used [-Wunused-const-variable=]
+This patch fixes some spelling typo in Kconfig.
 
-They are never used, so can be removed.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190813143811.31456-1-yuehaibing@huawei.com
+Signed-off-by: Masanari Iida <standby24x7@gmail.com>
+Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Link: https://lore.kernel.org/r/20190813034235.30673-1-standby24x7@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c | 13 -------------
- 1 file changed, 13 deletions(-)
+ sound/soc/ti/Kconfig | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-index 9af76ae315a5..d7f5defa50c2 100644
---- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-+++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
-@@ -796,14 +796,6 @@ static const struct snd_kcontrol_new mt2701_afe_o22_mix[] = {
- 	SOC_DAPM_SINGLE_AUTODISABLE("I19 Switch", AFE_CONN22, 19, 1, 0),
- };
+diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
+index 2197f3e1eaed..87a9b9dd4e98 100644
+--- a/sound/soc/ti/Kconfig
++++ b/sound/soc/ti/Kconfig
+@@ -12,7 +12,7 @@ config SND_SOC_TI_SDMA_PCM
  
--static const struct snd_kcontrol_new mt2701_afe_o23_mix[] = {
--	SOC_DAPM_SINGLE_AUTODISABLE("I20 Switch", AFE_CONN23, 20, 1, 0),
--};
--
--static const struct snd_kcontrol_new mt2701_afe_o24_mix[] = {
--	SOC_DAPM_SINGLE_AUTODISABLE("I21 Switch", AFE_CONN24, 21, 1, 0),
--};
--
- static const struct snd_kcontrol_new mt2701_afe_o31_mix[] = {
- 	SOC_DAPM_SINGLE_AUTODISABLE("I35 Switch", AFE_CONN41, 9, 1, 0),
- };
-@@ -832,11 +824,6 @@ static const struct snd_kcontrol_new mt2701_afe_multi_ch_out_i2s3[] = {
- 				    PWR2_TOP_CON, 18, 1, 0),
- };
+ comment "Texas Instruments DAI support for:"
+ config SND_SOC_DAVINCI_ASP
+-	tristate "daVinci Audio Serial Port (ASP) or McBSP suport"
++	tristate "daVinci Audio Serial Port (ASP) or McBSP support"
+ 	depends on ARCH_DAVINCI || COMPILE_TEST
+ 	select SND_SOC_TI_EDMA_PCM
+ 	help
+@@ -33,7 +33,7 @@ config SND_SOC_DAVINCI_MCASP
+ 	  - Keystone devices
  
--static const struct snd_kcontrol_new mt2701_afe_multi_ch_out_i2s4[] = {
--	SOC_DAPM_SINGLE_AUTODISABLE("Multich I2S4 Out Switch",
--				    PWR2_TOP_CON, 19, 1, 0),
--};
--
- static const struct snd_soc_dapm_widget mt2701_afe_pcm_widgets[] = {
- 	/* inter-connections */
- 	SND_SOC_DAPM_MIXER("I00", SND_SOC_NOPM, 0, 0, NULL, 0),
+ config SND_SOC_DAVINCI_VCIF
+-	tristate "daVinci Voice Interface (VCIF) suport"
++	tristate "daVinci Voice Interface (VCIF) support"
+ 	depends on ARCH_DAVINCI || COMPILE_TEST
+ 	select SND_SOC_TI_EDMA_PCM
+ 	help
 -- 
 2.20.1
 
