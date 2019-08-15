@@ -2,99 +2,319 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 875758F5F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:49:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B18A48F5FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:51:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732660AbfHOUto (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 16:49:44 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:34341 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730540AbfHOUto (ORCPT
+        id S1732895AbfHOUvj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 16:51:39 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:57472 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730540AbfHOUvi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 16:49:44 -0400
-Received: by mail-oi1-f195.google.com with SMTP id l12so3271681oil.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 13:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=lgnLIsY3NAF2I8cARaxRotDmNV7GudD+acm8febioSE=;
-        b=YIJ7YIpMxznBPHgTdpSwquDHILTgLsnpo12EU8rkd+AHKFJZ5ZwqKoIwrRqaFSFR8y
-         OSm/+kJt94YLyv2W7RB5Syzoulous/GPdyhQE4c6S/acM0xv4AIF2T1fqDaLkhBzGFIm
-         8xguUk+swY546hiuNvL1kRCs6fhSMGv4cUMt8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=lgnLIsY3NAF2I8cARaxRotDmNV7GudD+acm8febioSE=;
-        b=O/N57L+yU54H45dwsxKDPkzetnFuDtTfo1s9q2L9WSnHtl+zNl/MvrhE8IHP1ri2U4
-         f3WMOeJU67dw8t2I82zIqiZN+AF87Ix5Sx54oWNSJtO6yUPIBOSLbs9BmASG45qscIHn
-         CnDcFCo11hL8mobY7QJAiu8ogcgUMV9OqmRmZA7nwohNwu/gKgf9A9psWWZNJ7OttkW7
-         r+kV8uqLjyYv3kA1h3f+Hj682G27j/1y0svu9encN/S39s2/DXqxmFBLH3eisYGZrYNq
-         A5ZjC349Cu0dGRWRkROIKMMC2ZoeevtLOshSWIvFYgZJxyJbJnL1WmEN41ilsU6TjjCO
-         ndwg==
-X-Gm-Message-State: APjAAAWtSPO7gfazr8YZYo+v1PqczmjAN2O7Y0Zy6bz/g3px8DeE7aM8
-        4TNbAlsBJp7PmBZTisZXyr1fzkfKHECrE2ghpEDUiw==
-X-Google-Smtp-Source: APXvYqwzZ/kApGN6PiSs4Jakj+3xLiJKsdwsUzoZ79QigfmdRjFBzCS/DYJGNsj8cG6QhlWGKnUS/ZCe5UFKl5trWe8=
-X-Received: by 2002:aca:4994:: with SMTP id w142mr2705861oia.132.1565902183316;
- Thu, 15 Aug 2019 13:49:43 -0700 (PDT)
+        Thu, 15 Aug 2019 16:51:38 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FKn4OC061339;
+        Thu, 15 Aug 2019 20:51:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=GpC+6R1lz8+JZEuMGasUscMLJA1wE7x7lhh/SRTOENY=;
+ b=PnxGlUUALVdrpZbvp7Px7WPwjLC10xeCPai7tl5B/azIyyCBXBfjHb6CnawAmC1qJet5
+ nF+iV4kN6deEmhqLGvQ28lumeA+Td3BbUzPYMh+YzMDV0F7eF1um1fFYlGD89a2yrFYm
+ duacSYxusqHElhQx18/dv6e+/BUKG3f9ZEXwvOFkSP5VxmYFN0SsFsAwBwQJe6/G7EJm
+ Xz1a1lAhMjXH78C4tI7oUnMMXkwdYCpzzLzmbrdLZTlUaj2+aByh1L+JNZtFhQ73EG82
+ d//9iNoQa86F9q8fR/v9glNShz+oehJB9qj2uT7UiCaXhtFxX7tl2fzLRJbdVjAIUpiL xw== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2u9nvpn7s3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 20:51:18 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7FKlw2u057107;
+        Thu, 15 Aug 2019 20:51:17 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2ucgf1f3yd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 20:51:17 +0000
+Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7FKp6bV030722;
+        Thu, 15 Aug 2019 20:51:07 GMT
+Received: from [10.65.149.173] (/10.65.149.173)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Aug 2019 13:51:06 -0700
+Subject: Re: [RFC PATCH 0/2] Add predictive memory reclamation and compaction
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, vbabka@suse.cz,
+        mgorman@techsingularity.net, dan.j.williams@intel.com,
+        osalvador@suse.de, richard.weiyang@gmail.com, hannes@cmpxchg.org,
+        arunks@codeaurora.org, rppt@linux.vnet.ibm.com, jgg@ziepe.ca,
+        amir73il@gmail.com, alexander.h.duyck@linux.intel.com,
+        linux-mm@kvack.org, linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+References: <20190813014012.30232-1-khalid.aziz@oracle.com>
+ <20190813140553.GK17933@dhcp22.suse.cz>
+ <3cb0af00-f091-2f3e-d6cc-73a5171e6eda@oracle.com>
+ <20190814085831.GS17933@dhcp22.suse.cz>
+ <d3895804-7340-a7ae-d611-62913303e9c5@oracle.com>
+ <20190815170215.GQ9477@dhcp22.suse.cz>
+From:   Khalid Aziz <khalid.aziz@oracle.com>
+Organization: Oracle Corp
+Message-ID: <2668ad2e-ee52-8c88-22c0-1952243af5a1@oracle.com>
+Date:   Thu, 15 Aug 2019 14:51:04 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190815132127.GI9477@dhcp22.suse.cz> <20190815141219.GF21596@ziepe.ca>
- <20190815155950.GN9477@dhcp22.suse.cz> <20190815165631.GK21596@ziepe.ca>
- <20190815174207.GR9477@dhcp22.suse.cz> <20190815182448.GP21596@ziepe.ca>
- <20190815190525.GS9477@dhcp22.suse.cz> <20190815191810.GR21596@ziepe.ca>
- <20190815193526.GT9477@dhcp22.suse.cz> <CAKMK7uH42EgdxL18yce-7yay=x=Gb21nBs3nY7RA92Nsd-HCNA@mail.gmail.com>
- <20190815202721.GV21596@ziepe.ca>
-In-Reply-To: <20190815202721.GV21596@ziepe.ca>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Thu, 15 Aug 2019 22:49:31 +0200
-Message-ID: <CAKMK7uER0u1TqeJBXarKakphnyZTHOmedOfXXqLGVDE2mE-mAQ@mail.gmail.com>
-Subject: Re: [Intel-gfx] [PATCH 2/5] kernel.h: Add non_block_start/end()
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     Michal Hocko <mhocko@kernel.org>, Feng Tang <feng.tang@intel.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Jann Horn <jannh@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        David Rientjes <rientjes@google.com>,
-        Wei Wang <wvw@google.com>,
-        Daniel Vetter <daniel.vetter@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190815170215.GQ9477@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=775
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908150198
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=829 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908150198
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 10:27 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
-> On Thu, Aug 15, 2019 at 10:16:43PM +0200, Daniel Vetter wrote:
-> > So if someone can explain to me how that works with lockdep I can of
-> > course implement it. But afaics that doesn't exist (I tried to explain
-> > that somewhere else already), and I'm no really looking forward to
-> > hacking also on lockdep for this little series.
->
-> Hmm, kind of looks like it is done by calling preempt_disable()
+On 8/15/19 11:02 AM, Michal Hocko wrote:
+> On Thu 15-08-19 10:27:26, Khalid Aziz wrote:
+>> On 8/14/19 2:58 AM, Michal Hocko wrote:
+>>> On Tue 13-08-19 09:20:51, Khalid Aziz wrote:
+>>>> On 8/13/19 8:05 AM, Michal Hocko wrote:
+>>>>> On Mon 12-08-19 19:40:10, Khalid Aziz wrote:
+>>>>> [...]
+>>>>>> Patch 1 adds code to maintain a sliding lookback window of (time, =
+number
+>>>>>> of free pages) points which can be updated continuously and adds c=
+ode to
+>>>>>> compute best fit line across these points. It also adds code to us=
+e the
+>>>>>> best fit lines to determine if kernel must start reclamation or
+>>>>>> compaction.
+>>>>>>
+>>>>>> Patch 2 adds code to collect data points on free pages of various =
+orders
+>>>>>> at different points in time, uses code in patch 1 to update slidin=
+g
+>>>>>> lookback window with these points and kicks off reclamation or
+>>>>>> compaction based upon the results it gets.
+>>>>>
+>>>>> An important piece of information missing in your description is wh=
+y
+>>>>> do we need to keep that logic in the kernel. In other words, we hav=
+e
+>>>>> the background reclaim that acts on a wmark range and those are tun=
+able
+>>>>> from the userspace. The primary point of this background reclaim is=
+ to
+>>>>> keep balance and prevent from direct reclaim. Why cannot you implem=
+ent
+>>>>> this or any other dynamic trend watching watchdog and tune watermar=
+ks
+>>>>> accordingly? Something similar applies to kcompactd although we mig=
+ht be
+>>>>> lacking a good interface.
+>>>>>
+>>>>
+>>>> Hi Michal,
+>>>>
+>>>> That is a very good question. As a matter of fact the initial protot=
+ype
+>>>> to assess the feasibility of this approach was written in userspace =
+for
+>>>> a very limited application. We wrote the initial prototype to monito=
+r
+>>>> fragmentation and used /sys/devices/system/node/node*/compact to tri=
+gger
+>>>> compaction. The prototype demonstrated this approach has merits.
+>>>>
+>>>> The primary reason to implement this logic in the kernel is to make =
+the
+>>>> kernel self-tuning.
+>>>
+>>> What makes this particular self-tuning an universal win? In other wor=
+ds
+>>> there are many ways to analyze the memory pressure and feedback it ba=
+ck
+>>> that I can think of. It is quite likely that very specific workloads
+>>> would have very specific demands there. I have seen cases where are
+>>> trivial increase of min_free_kbytes to normally insane value worked
+>>> really great for a DB workload because the wasted memory didn't matte=
+r
+>>> for example.
+>>
+>> Hi Michal,
+>>
+>> The problem is not so much as do we have enough knobs available, rathe=
+r
+>> how do we tweak them dynamically to avoid allocation stalls. Knobs lik=
+e
+>> watermarks and min_free_kbytes are set once typically and left alone.
+>=20
+> Does anything prevent from tuning these knobs more dynamically based on=
 
-Yup. That was v1, then came the suggestion that disabling preemption
-is maybe not the best thing (the oom reaper could still run for a long
-time comparatively, if it's cleaning out gigabytes of process memory
-or what not, hence this dedicated debug infrastructure).
+> already exported metrics?
 
-> Probably the debug option is CONFIG_DEBUG_PREEMPT, not lockdep?
+Hi Michal,
 
-CONFIG_DEBUG_ATOMIC_SLEEP. Like in my patch.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+The smarts for tuning these knobs can be implemented in userspace and
+more knobs added to allow for what is missing today, but we get back to
+the same issue as before. That does nothing to make kernel self-tuning
+and adds possibly even more knobs to userspace. Something so fundamental
+to kernel memory management as making free pages available when they are
+needed really should be taken care of in the kernel itself. Moving it to
+userspace just means the kernel is hobbled unless one installs and tunes
+a userspace package correctly.
+
+>=20
+>> Allocation stalls show up even on much smaller scale than large DB or
+>> cloud platforms. I have seen it on a desktop class machine running a f=
+ew
+>> services in the background. Desktop is running gnome3, I would lock th=
+e
+>> screen and come back to unlock it a day or two later. In that time mos=
+t
+>> of memory has been consumed by buffer/page cache. Just unlocking the
+>> screen can take 30+ seconds while system reclaims pages to be able swa=
+p
+>> back in all the processes that were inactive so far.
+>=20
+> This sounds like a bug to me.
+
+Quite possibly. I had seen that behavior with 4.17, 4.18 and 4.19
+kernels. I then just moved enough tasks off of my machine to other
+machines to make the problem go away. So I can't say if the problem has
+persisted past 4.19.
+
+>=20
+>> It is true different workloads will have different requirements and th=
+at
+>> is what I am attempting to address here. Instead of tweaking the knobs=
+
+>> statically based upon one workload requirements, I am looking at the
+>> trend of memory consumption instead. A best fit line showing recent
+>> trend can be quite indicative of what the workload is doing in terms o=
+f
+>> memory.
+>=20
+> Is there anything preventing from following that trend from the
+> userspace and trigger background reclaim earlier to not even get to the=
+
+> direct reclaim though?
+
+It is possible to do that in userspace for compaction. We will need a
+smaller hammer than drop_cache to do the same for reclamation. This
+still makes kernel dependent upon a properly configured userspace
+program for it to do something as fundamental as free page management.
+That does not sound like a good situation. Allocation stalls have been a
+problem for many years (I could find patch from as far back as 2002
+attempting to address allocation stalls). More tuning knobs have been
+temporary solution at best since workloads and storage technology keep
+changing and processors keep getting faster overall.
+
+>=20
+>> For instance, a cloud server might be running a certain number
+>> of instances for a few days and it can end up using any memory not use=
+d
+>> up by tasks, for buffer/page cache. Now the sys admin gets a request t=
+o
+>> launch another instance and when they try to to do that, system starts=
+
+>> to allocate pages and soon runs out of free pages. We are now in direc=
+t
+>> reclaim path and it can take significant amount of time to find all fr=
+ee
+>> pages the new task needs. If the kernel were watching the memory
+>> consumption trend instead, it could see that the trend line shows a
+>> complete exhaustion of free pages or 100% fragmentation in near future=
+,
+>> irrespective of what the workload is.
+>=20
+> I am confused now. How can an unpredictable action (like sys admin
+> starting a new workload) be handled by watching a memory consumption
+> history trend? From the above description I would expect that the syste=
+m
+> would be in a balanced state for few days when a new instance is
+> launched. The only reasonable thing to do then is to trigger the reclai=
+m
+> before the workload is spawned but then what is the actual difference
+> between direct reclaim and an early reclaim?
+
+If kernel watches trend far ahead enough, it can start
+reclaiming/compacting well in advance and keep direct reclamation at bay
+even if there is sudden surge of memory demand. A pathological case of
+userspace suddenly demanding 100's of GB of memory in one request is
+always difficult to tackle. For such cases, triggering
+reclamation/compaction and waiting to launch new process until enough
+free pages are available might be the only solution. A more normal case
+will be a continuous stream of page allocations until a database is
+fully populated or a new server instance is launched. It is like a
+bucket with a hole. We can wait to start filling it until water gets
+very low in it or notice that the hole at the bottom has been unplugged
+and water is draining fast, so we start filling it before water gets too
+low. If we have been observing how fast the bucket fills up with no leak
+and how fast is the current drain, we can start filling in advance
+enough that water never gets too low. That is what I referred to as
+improvements to current patch, i.e. track current reclamation/compaction
+rate in kswapd and kcompactd and use those rates to determine how far in
+advance do we start reclaiming/compacting.
+
+>=20
+> [...]
+>>> I agree on this point. Is the current set of tunning sufficient? What=
+
+>>> would be missing if not?
+>>>
+>>
+>> We have knob available to force compaction immediately. That is helpfu=
+l
+>> and in some case, sys admins have resorted to forcing compaction on al=
+l
+>> zones before launching a new cloud instance or loading a new database.=
+
+>> Some admins have resorted to using /proc/sys/vm/drop_caches to force
+>> buffer/page cache pages to be freed up. Either of these solutions caus=
+es
+>> system load to go up immediately while kswapd/kcompactd run to free up=
+
+>> and compact pages. This is far from ideal. Other knobs available seem =
+to
+>> be hard to set correctly especially on servers that run mixed workload=
+s
+>> which results in a regular stream of customer complaints coming in abo=
+ut
+>> system stalling at most inopportune times.
+>=20
+> Then let's talk about what is missing in the existing tuning we already=
+
+> provide. I do agree that compaction needs some love but I am under
+> impression that min_free_kbytes and watermark_*_factor should give a
+> decent abstraction to control the background reclaim. If that is not th=
+e
+> case then I am really interested on examples because I might be easily
+> missing something there.
+
+Just last week an email crossed my mailbox where an order 4 allocation
+failed on a server that has 768 GB memory and had 355,000 free pages of
+order 2 and lower available at the time. That allocation failure brought
+down an important service and was a significant disruption.
+
+These knobs do give some control to userspace but their values depend
+upon workload and it is easy enough to set them wrong. Finding the right
+value is not easy for servers that run mixed workloads. So it is not
+that there are not enough knobs or we can not add more knobs. The
+question is is that the right direction to go or do we make kernel
+self-tuning and give it the capability to deal with these issues without
+requiring sys admins to be able to determine correct values for these
+knobs for every new workload.
+
+Thanks,
+Khalid
+
