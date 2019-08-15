@@ -2,100 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 276DD8F20C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:22:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D0F8F212
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:23:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732254AbfHORWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:22:39 -0400
-Received: from mga01.intel.com ([192.55.52.88]:19173 "EHLO mga01.intel.com"
+        id S1732299AbfHORW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:22:57 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48356 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729931AbfHORWj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:22:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 10:22:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
-   d="scan'208";a="179427792"
-Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
-  by orsmga003.jf.intel.com with ESMTP; 15 Aug 2019 10:22:38 -0700
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Paul Mackerras <paulus@ozlabs.org>, Joerg Roedel <joro@8bytes.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Cc:     kvm-ppc@vger.kernel.org, kvm@vger.kernel.org,
+        id S1729931AbfHORW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:22:56 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 43F523082E51;
+        Thu, 15 Aug 2019 17:22:56 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3D85710018F9;
+        Thu, 15 Aug 2019 17:22:55 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 13:22:53 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Pingfan Liu <kernelfans@gmail.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jan Kara <jack@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: Assert that struct kvm_vcpu is always as offset zero
-Date:   Thu, 15 Aug 2019 10:22:37 -0700
-Message-Id: <20190815172237.10464-1-sean.j.christopherson@intel.com>
-X-Mailer: git-send-email 2.22.0
+Subject: Re: [PATCH 3/3] mm/migrate: remove the duplicated code
+ migrate_vma_collect_hole()
+Message-ID: <20190815172253.GE30916@redhat.com>
+References: <1565078411-27082-1-git-send-email-kernelfans@gmail.com>
+ <1565078411-27082-3-git-send-email-kernelfans@gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <1565078411-27082-3-git-send-email-kernelfans@gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Thu, 15 Aug 2019 17:22:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM implementations that wrap struct kvm_vcpu with a vendor specific
-struct, e.g. struct vcpu_vmx, must place the vcpu member at offset 0,
-otherwise the usercopy region intended to encompass struct kvm_vcpu_arch
-will instead overlap random chunks of the vendor specific struct.
-E.g. padding a large number of bytes before struct kvm_vcpu triggers
-a usercopy warn when running with CONFIG_HARDENED_USERCOPY=y.
+On Tue, Aug 06, 2019 at 04:00:11PM +0800, Pingfan Liu wrote:
+> After the previous patch which sees hole as invalid source,
+> migrate_vma_collect_hole() has the same code as migrate_vma_collect_skip().
+> Removing the duplicated code.
 
-Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
----
+NAK this one too given previous NAK.
 
-Note, the PowerPC change is completely untested.
-
- arch/powerpc/kvm/e500.c | 3 +++
- arch/x86/kvm/svm.c      | 3 +++
- arch/x86/kvm/vmx/vmx.c  | 3 +++
- 3 files changed, 9 insertions(+)
-
-diff --git a/arch/powerpc/kvm/e500.c b/arch/powerpc/kvm/e500.c
-index b5a848a55504..00649ca5fa9a 100644
---- a/arch/powerpc/kvm/e500.c
-+++ b/arch/powerpc/kvm/e500.c
-@@ -440,6 +440,9 @@ static struct kvm_vcpu *kvmppc_core_vcpu_create_e500(struct kvm *kvm,
- 	struct kvm_vcpu *vcpu;
- 	int err;
- 
-+	BUILD_BUG_ON_MSG(offsetof(struct kvmppc_vcpu_e500, vcpu) != 0,
-+		"struct kvm_vcpu must be at offset 0 for arch usercopy region");
-+
- 	vcpu_e500 = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL);
- 	if (!vcpu_e500) {
- 		err = -ENOMEM;
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index d685491fce4d..70015ae5fc19 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -2137,6 +2137,9 @@ static struct kvm_vcpu *svm_create_vcpu(struct kvm *kvm, unsigned int id)
- 	struct page *nested_msrpm_pages;
- 	int err;
- 
-+	BUILD_BUG_ON_MSG(offsetof(struct vcpu_svm, vcpu) != 0,
-+		"struct kvm_vcpu must be at offset 0 for arch usercopy region");
-+
- 	svm = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL_ACCOUNT);
- 	if (!svm) {
- 		err = -ENOMEM;
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index 42ed3faa6af8..402cf2fe5cdd 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6615,6 +6615,9 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
- 	unsigned long *msr_bitmap;
- 	int cpu;
- 
-+	BUILD_BUG_ON_MSG(offsetof(struct vcpu_vmx, vcpu) != 0,
-+		"struct kvm_vcpu must be at offset 0 for arch usercopy region");
-+
- 	vmx = kmem_cache_zalloc(kvm_vcpu_cache, GFP_KERNEL_ACCOUNT);
- 	if (!vmx)
- 		return ERR_PTR(-ENOMEM);
--- 
-2.22.0
-
+> 
+> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Mel Gorman <mgorman@techsingularity.net>
+> Cc: Jan Kara <jack@suse.cz>
+> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: Mike Kravetz <mike.kravetz@oracle.com>
+> Cc: Andrea Arcangeli <aarcange@redhat.com>
+> Cc: Matthew Wilcox <willy@infradead.org>
+> To: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
+>  mm/migrate.c | 22 +++-------------------
+>  1 file changed, 3 insertions(+), 19 deletions(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 832483f..95e038d 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -2128,22 +2128,6 @@ struct migrate_vma {
+>  	unsigned long		end;
+>  };
+>  
+> -static int migrate_vma_collect_hole(unsigned long start,
+> -				    unsigned long end,
+> -				    struct mm_walk *walk)
+> -{
+> -	struct migrate_vma *migrate = walk->private;
+> -	unsigned long addr;
+> -
+> -	for (addr = start & PAGE_MASK; addr < end; addr += PAGE_SIZE) {
+> -		migrate->src[migrate->npages] = 0;
+> -		migrate->dst[migrate->npages] = 0;
+> -		migrate->npages++;
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+>  static int migrate_vma_collect_skip(unsigned long start,
+>  				    unsigned long end,
+>  				    struct mm_walk *walk)
+> @@ -2173,7 +2157,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>  
+>  again:
+>  	if (pmd_none(*pmdp))
+> -		return migrate_vma_collect_hole(start, end, walk);
+> +		return migrate_vma_collect_skip(start, end, walk);
+>  
+>  	if (pmd_trans_huge(*pmdp)) {
+>  		struct page *page;
+> @@ -2206,7 +2190,7 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>  				return migrate_vma_collect_skip(start, end,
+>  								walk);
+>  			if (pmd_none(*pmdp))
+> -				return migrate_vma_collect_hole(start, end,
+> +				return migrate_vma_collect_skip(start, end,
+>  								walk);
+>  		}
+>  	}
+> @@ -2337,7 +2321,7 @@ static void migrate_vma_collect(struct migrate_vma *migrate)
+>  
+>  	mm_walk.pmd_entry = migrate_vma_collect_pmd;
+>  	mm_walk.pte_entry = NULL;
+> -	mm_walk.pte_hole = migrate_vma_collect_hole;
+> +	mm_walk.pte_hole = migrate_vma_collect_skip;
+>  	mm_walk.hugetlb_entry = NULL;
+>  	mm_walk.test_walk = NULL;
+>  	mm_walk.vma = migrate->vma;
+> -- 
+> 2.7.5
+> 
