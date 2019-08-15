@@ -2,84 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 278338E5C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:50:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32B2D8E5C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:51:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730496AbfHOHug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 03:50:36 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43343 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729967AbfHOHug (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 03:50:36 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c19so1060589lfm.10
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+HQ26YjFqd095HuQvJkZw1Unk1E5d9gNZv6ke3nfrfU=;
-        b=r+rFIHHqW5m0YFQe1g8i7BLnASGugeC2XmMV0v2rXhVAqgAuup9I5P8hJNWRuVWtxD
-         evsDnCtNZbRfrAKslsFUEAGfRiZSIw7t/8YWJCyZM+tCvItHgQLmqGHBhEtVSatfxZ+1
-         zDewhNUYNHAgGkZfvZ4BXRdZ6Wq2OaZtZMmwl+SOiWrZZID7ZIoMKK0L/U9/EOS9NUhG
-         +Pi6B8DFqwsGnCb6rZBcVrgrXs5Lu3MEN7/gRrhZZiKRQnDP0Mkn1o2o2UBIMOLAaSqa
-         2+X7n001LrALm1cKCDDZpKyHydiAtOFNIT2gBWMYynGwfqyyFFfzbCqG+kOIYBY7GO4C
-         llWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+HQ26YjFqd095HuQvJkZw1Unk1E5d9gNZv6ke3nfrfU=;
-        b=VrToq53FjM1RTi5Ky+Q7wtZjv4mO/dAia+vjpQDiJZ7UV0lK1Plf2XP1H5bK7TvxfF
-         4Caucimt3H60zl+cLPfcQtSxP5v429kw0Uec1CSUarjv0BTQYSIg+9lO9RIdnWDS+RiD
-         C5LuS5nHJodsFKkp2lsTRrzBAB1zisWvNlHzle3HjHOT7d1ZJW12IkXXGfnvbNV9uums
-         4neUg1rG/vhhmC9KnzymZLLUf4jaX+5tvLgxO8c1XMB+HmRo2i6xBt+ovg9jmMv2U4Vr
-         m8B3wd9/8IL/PM1jnlmi/VePy6dSvGUc4Q3JhrgsosoZ2FVaov6lB4dy4gNLozqw+u92
-         HJrA==
-X-Gm-Message-State: APjAAAXcXw/VrcgZZWvPr+AqAPnAAFNlYzDua/jmKIa4qvq0t3WcnchK
-        QOA83P6TI+LkAw/4k+zslBs=
-X-Google-Smtp-Source: APXvYqxPngTmU8hHwXQJ/jC6MPCH6+qWwKTY7y7FwWq4oEEAAkQYdQz/c7ZUOSXecQ0h6K3+SksSIQ==
-X-Received: by 2002:ac2:4644:: with SMTP id s4mr1709242lfo.158.1565855434435;
-        Thu, 15 Aug 2019 00:50:34 -0700 (PDT)
-Received: from localhost ([178.127.188.12])
-        by smtp.gmail.com with ESMTPSA id b6sm353677ljk.31.2019.08.15.00.50.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 00:50:33 -0700 (PDT)
-From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Date:   Thu, 15 Aug 2019 16:50:33 +0900
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Chuhong Yuan <hslester96@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 4/8] printk: Replace strncmp with str_has_prefix
-Message-ID: <20190815075033.GA26479@tigerII.localdomain>
-References: <20190809071034.17279-1-hslester96@gmail.com>
- <20190814104941.qt66ozcau5fdswcs@pathway.suse.cz>
+        id S1730535AbfHOHvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 03:51:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43046 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfHOHvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 03:51:35 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 363212084D;
+        Thu, 15 Aug 2019 07:51:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565855494;
+        bh=Tintz3vghWwVDNj/Taqq8DXHpRr/OtzG9jCOqlpQMew=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=hQ62F4RyeEIyg7Jz33C0vT5zcKzrKvHRUUlQwxSUj38TxDyvKBYj0MoC61ocOpBmW
+         SPx54eAW19M/+D7ccg4OGM3rAdjgXjxklzrFuEyF9deg8Rmbku9etI3ogW8dMQ2TwJ
+         eE7zIXUO9V749AZDnE2+DijAgNAVmV1icb4tSWNI=
+Date:   Thu, 15 Aug 2019 09:51:32 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Pavel Machek <pavel@denx.de>
+Cc:     kernel list <linux-kernel@vger.kernel.org>, stable@kernel.org,
+        matthias.bgg@gmail.com, neil@brown.name,
+        thirtythreeforty@gmail.com, christian@lkamp.de,
+        nishadkamdar@gmail.com, ser.perschin@gmail.com, blogic@openwrt.org,
+        jan.kiszka@siemens.com
+Subject: Re: [stable] Deleting "mt7621-mmc" with "interesting" license?
+Message-ID: <20190815075132.GA30284@kroah.com>
+References: <20190815071350.GB3906@amd>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190814104941.qt66ozcau5fdswcs@pathway.suse.cz>
+In-Reply-To: <20190815071350.GB3906@amd>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (08/14/19 12:49), Petr Mladek wrote:
-> On Fri 2019-08-09 15:10:34, Chuhong Yuan wrote:
-> > strncmp(str, const, len) is error-prone because len
-> > is easy to have typo.
-> > The example is the hard-coded len has counting error
-> > or sizeof(const) forgets - 1.
-> > So we prefer using newly introduced str_has_prefix()
-> > to substitute such strncmp to make code better.
-> > 
-> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+On Thu, Aug 15, 2019 at 09:13:50AM +0200, Pavel Machek wrote:
+> Hi!
 > 
-> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> I realize that "interesting" license is not on a list of bugs suitable
+> for -stable, but on the other hand, this tends to scare corporate
+> lawyers... so perhaps we should remove the driver in -stable, too?
+> 
+> Upstream commit id is 441bf7332d55c4d34afae9ffc3bbec621093f4d1.
+> 
+> 4.19 has the problematic driver, 4.4 does not.
 
-Reviewed-by:  Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+If a lawyer has issues with this, please just upgrade to the latest
+kernel release :)
 
-	-ss
+thanks,
+
+greg k-h
