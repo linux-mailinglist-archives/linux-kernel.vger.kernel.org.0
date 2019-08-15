@@ -2,66 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CAAFF8E750
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:48:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE12B8E718
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731174AbfHOIsE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:48:04 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:59826 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbfHOIsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:48:02 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C62BC1A03EE;
-        Thu, 15 Aug 2019 10:48:00 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1E0881A0031;
-        Thu, 15 Aug 2019 10:47:52 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1343640327;
-        Thu, 15 Aug 2019 16:47:40 +0800 (SGT)
-From:   Xiaowei Bao <xiaowei.bao@nxp.com>
-To:     jingoohan1@gmail.com, gustavo.pimentel@synopsys.com,
-        bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
-        lorenzo.pieralisi@arm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
-        mingkai.hu@nxp.com, roy.zang@nxp.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
-Cc:     Xiaowei Bao <xiaowei.bao@nxp.com>
-Subject: [PATCH 10/10] misc: pci_endpoint_test: Add LS1088a in pci_device_id table
-Date:   Thu, 15 Aug 2019 16:37:16 +0800
-Message-Id: <20190815083716.4715-10-xiaowei.bao@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190815083716.4715-1-xiaowei.bao@nxp.com>
-References: <20190815083716.4715-1-xiaowei.bao@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730865AbfHOIkh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:40:37 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:36256 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfHOIkh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 04:40:37 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1hyBJC-0006KM-Hw; Thu, 15 Aug 2019 08:40:34 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        John Whitmore <johnfwhitmore@gmail.com>,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] staging: rtl8192u: fix up indentation of a statement
+Date:   Thu, 15 Aug 2019 09:40:34 +0100
+Message-Id: <20190815084034.13885-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add LS1088a in pci_device_id table so that pci-epf-test can be used
-for testing PCIe EP in LS1088a.
+From: Colin Ian King <colin.king@canonical.com>
 
-Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
+There is a statement that is indented one level too deeply, remove
+the extraneous tab.
+
+Addresses-Coverity: ("Identation does not match nesting level")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 ---
- drivers/misc/pci_endpoint_test.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/rtl8192u/r8190_rtl8256.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 6e208a0..d531951 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -793,6 +793,7 @@ static const struct pci_device_id pci_endpoint_test_tbl[] = {
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA74x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_DRA72x) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x81c0) },
-+	{ PCI_DEVICE(PCI_VENDOR_ID_FREESCALE, 0x80c0) },
- 	{ PCI_DEVICE_DATA(SYNOPSYS, EDDA, NULL) },
- 	{ PCI_DEVICE(PCI_VENDOR_ID_TI, PCI_DEVICE_ID_TI_AM654),
- 	  .driver_data = (kernel_ulong_t)&am654_data
+diff --git a/drivers/staging/rtl8192u/r8190_rtl8256.c b/drivers/staging/rtl8192u/r8190_rtl8256.c
+index 92de92a3325a..0bedf88525cd 100644
+--- a/drivers/staging/rtl8192u/r8190_rtl8256.c
++++ b/drivers/staging/rtl8192u/r8190_rtl8256.c
+@@ -289,8 +289,8 @@ void phy_set_rf8256_ofdm_tx_power(struct net_device *dev, u8 powerlevel)
+ 			writeVal = 0x03030303;
+ 		} else {
+ 			writeVal = (byte3<<24) | (byte2<<16) | (byte1<<8) | byte0;
+-			}
+-			rtl8192_setBBreg(dev, RegOffset[index], 0x7f7f7f7f, writeVal);
++		}
++		rtl8192_setBBreg(dev, RegOffset[index], 0x7f7f7f7f, writeVal);
+ 	}
+ 	return;
+ 
 -- 
-2.9.5
+2.20.1
 
