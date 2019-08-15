@@ -2,90 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333328EBB8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 772328EB98
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:36:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731701AbfHOMls (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:41:48 -0400
-Received: from smtp81.ord1d.emailsrvr.com ([184.106.54.81]:34146 "EHLO
-        smtp81.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725977AbfHOMls (ORCPT
+        id S1731558AbfHOMf6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:35:58 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46203 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfHOMf6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:41:48 -0400
-X-Greylist: delayed 452 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 08:41:47 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mev.co.uk;
-        s=20190130-41we5z8j; t=1565872455;
-        bh=hGpCaA/D00Yczz11TX8jM5ILlUq2mYkAlz4nIzKqTdY=;
-        h=Subject:To:From:Date:From;
-        b=UYfnMEJKphn9631j7Bja//vrYjr1SmVhK43enCNfvn2eyGxsvzvEeISqo7jq1FzBE
-         sxwf1fcLN9xsSMqrGG64uv9gpUhADmkD2XF4BDi5ZLWC7eyeE+ptoM50QkdQwxZAf+
-         BoyvlHbc5xkFb6i3wca2OangIJwHMVJAE6kPVsf0=
-X-Auth-ID: abbotti@mev.co.uk
-Received: by smtp19.relay.ord1d.emailsrvr.com (Authenticated sender: abbotti-AT-mev.co.uk) with ESMTPSA id 260466021A;
-        Thu, 15 Aug 2019 08:34:13 -0400 (EDT)
-X-Sender-Id: abbotti@mev.co.uk
-Received: from [10.0.0.173] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Thu, 15 Aug 2019 08:34:14 -0400
-Subject: Re: [PATCH] staging: comedi: usbduxsigma: remove redundant assignment
- to variable fx2delay
-To:     Colin King <colin.king@canonical.com>,
-        H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190815105314.5756-1-colin.king@canonical.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <7d0f8510-9c54-ab4b-c963-e99348efdfd0@mev.co.uk>
-Date:   Thu, 15 Aug 2019 13:34:12 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 15 Aug 2019 08:35:58 -0400
+Received: by mail-qk1-f195.google.com with SMTP id p13so1607005qkg.13
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 05:35:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=dMM4Yh2lSK206Ipl1C50HgHP0mjyxRSuLJo2cy44isg=;
+        b=LcThbfWlDi/1kO+hot7trp2RyPL/m8trA/zLWvD92LpYSw9yeBGasQ9R8EuhQAD4Bt
+         bKTs6mxBzCYP5bxVj7suBbpQpwPmyVk9+ValBigp6E3/dN66mhkX8Njt4ppVEZtvDs7I
+         pFV8ElSL59gPu/AJrf/nBtVrnXSJNWNiktqRsXie0F6agJz4BKwmgdVzNu8UCtVSZyjt
+         8Wo1tUaZ7v0gu4catDl7h/ooM4QQ31MZD++g646hqe9H7YlNvUSIJCxR7iEcgQ6UNJ9L
+         6M/IYIm3vG+ItNPPGAvXI3A8PLTW1EGMyGgSG4iOIgZ0ADxVFk0nYIVgDLqPrtq/MGRs
+         HJ9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=dMM4Yh2lSK206Ipl1C50HgHP0mjyxRSuLJo2cy44isg=;
+        b=ubhrthV8M4eCxqOK67zH20qKiOG5HfydXIXcksBy8T29TMyb9ehTUW+giecH3qmuvE
+         hUJHbuZ4MnjX8g72BosYIqTlXpaKucxrinChsXTdotCwghH1v+Lhzg1/JR60BlkOYxAH
+         zCBFVPGWFkR0UCDvQE4TxTmdA2CVOAAB8OD18tmNGnO57hj3GWCzO5Aba9bDB0CBM4gw
+         CEw7UYvVpgUooUuR9yTPuFtvDtPQN8YxS84iFIlWqHK4A57iN83m651OMJ61QpAFjFZq
+         +qRZ9eSxTSz2VdPN9BgAPOnix8H03KB4eyUp48xJ1RqrtKj2L4m1MXIQJCwf3LzULghn
+         C0wQ==
+X-Gm-Message-State: APjAAAUHIcLVTpvhIZOnPIjuFmaSeQy0cM4AvTb2c/oiMJi6NZOHmMPA
+        L0JACeTmbmDsStOUgfIQZakavLx+TZw=
+X-Google-Smtp-Source: APXvYqzZPQEBN057F2yrI4X3kt2D83j+OvSKMlIAqweM6AFW+AjersDlJeeVNu5FXC0uFyP+8gWENQ==
+X-Received: by 2002:a37:96c7:: with SMTP id y190mr3700663qkd.111.1565872557356;
+        Thu, 15 Aug 2019 05:35:57 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id w10sm1320862qts.37.2019.08.15.05.35.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Aug 2019 05:35:56 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hyEyy-00043M-ES; Thu, 15 Aug 2019 09:35:56 -0300
+Date:   Thu, 15 Aug 2019 09:35:56 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/5] mm, notifier: Catch sleeping/blocking for !blockable
+Message-ID: <20190815123556.GB21596@ziepe.ca>
+References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+ <20190814202027.18735-4-daniel.vetter@ffwll.ch>
+ <20190815000029.GC11200@ziepe.ca>
+ <20190815070249.GB7444@phenom.ffwll.local>
 MIME-Version: 1.0
-In-Reply-To: <20190815105314.5756-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815070249.GB7444@phenom.ffwll.local>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/08/2019 11:53, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
+On Thu, Aug 15, 2019 at 09:02:49AM +0200, Daniel Vetter wrote:
+> On Wed, Aug 14, 2019 at 09:00:29PM -0300, Jason Gunthorpe wrote:
+> > On Wed, Aug 14, 2019 at 10:20:25PM +0200, Daniel Vetter wrote:
+> > > We need to make sure implementations don't cheat and don't have a
+> > > possible schedule/blocking point deeply burried where review can't
+> > > catch it.
+> > > 
+> > > I'm not sure whether this is the best way to make sure all the
+> > > might_sleep() callsites trigger, and it's a bit ugly in the code flow.
+> > > But it gets the job done.
+> > > 
+> > > Inspired by an i915 patch series which did exactly that, because the
+> > > rules haven't been entirely clear to us.
+> > 
+> > I thought lockdep already was able to detect:
+> > 
+> >  spin_lock()
+> >  might_sleep();
+> >  spin_unlock()
+> > 
+> > Am I mistaken? If yes, couldn't this patch just inject a dummy lockdep
+> > spinlock?
 > 
-> Variable fx2delay is being initialized with a value that is never read
-> and fx2delay is being re-assigned a little later on. The assignment is
-> redundant and hence can be removed.
-> 
-> Addresses-Coverity: ("Unused value")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->   drivers/staging/comedi/drivers/usbduxsigma.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers/usbduxsigma.c b/drivers/staging/comedi/drivers/usbduxsigma.c
-> index 3cc40d2544be..54d7605e909f 100644
-> --- a/drivers/staging/comedi/drivers/usbduxsigma.c
-> +++ b/drivers/staging/comedi/drivers/usbduxsigma.c
-> @@ -1074,7 +1074,7 @@ static int usbduxsigma_pwm_period(struct comedi_device *dev,
->   				  unsigned int period)
->   {
->   	struct usbduxsigma_private *devpriv = dev->private;
-> -	int fx2delay = 255;
-> +	int fx2delay;
->   
->   	if (period < MIN_PWM_PERIOD)
->   		return -EAGAIN;
-> 
+> Hm ... assuming I didn't get lost in the maze I think might_sleep (well
+> ___might_sleep) doesn't do any lockdep checking at all. And we want
+> might_sleep, since that catches a lot more than lockdep.
 
-Looks fine, thanks!
+Don't know how it works, but it sure looks like it does:
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+This:
+	spin_lock(&file->uobjects_lock);
+	down_read(&file->hw_destroy_rwsem);
+	up_read(&file->hw_destroy_rwsem);
+	spin_unlock(&file->uobjects_lock);
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Causes:
+
+[   33.324729] BUG: sleeping function called from invalid context at kernel/locking/rwsem.c:1444
+[   33.325599] in_atomic(): 1, irqs_disabled(): 0, pid: 247, name: ibv_devinfo
+[   33.326115] 3 locks held by ibv_devinfo/247:
+[   33.326556]  #0: 000000009edf8379 (&uverbs_dev->disassociate_srcu){....}, at: ib_uverbs_open+0xff/0x5f0 [ib_uverbs]
+[   33.327657]  #1: 000000005e0eddf1 (&uverbs_dev->lists_mutex){+.+.}, at: ib_uverbs_open+0x16c/0x5f0 [ib_uverbs]
+[   33.328682]  #2: 00000000505f509e (&(&file->uobjects_lock)->rlock){+.+.}, at: ib_uverbs_open+0x31a/0x5f0 [ib_uverbs]
+
+And this:
+
+	spin_lock(&file->uobjects_lock);
+	might_sleep();
+	spin_unlock(&file->uobjects_lock);
+
+Causes:
+
+[   16.867211] BUG: sleeping function called from invalid context at drivers/infiniband/core/uverbs_main.c:1095
+[   16.867776] in_atomic(): 1, irqs_disabled(): 0, pid: 245, name: ibv_devinfo
+[   16.868098] 3 locks held by ibv_devinfo/245:
+[   16.868383]  #0: 000000004c5954ff (&uverbs_dev->disassociate_srcu){....}, at: ib_uverbs_open+0xf8/0x600 [ib_uverbs]
+[   16.868938]  #1: 0000000020a6fae2 (&uverbs_dev->lists_mutex){+.+.}, at: ib_uverbs_open+0x16c/0x600 [ib_uverbs]
+[   16.869568]  #2: 00000000036e6a97 (&(&file->uobjects_lock)->rlock){+.+.}, at: ib_uverbs_open+0x317/0x600 [ib_uverbs]
+
+I think this is done in some very expensive way, so it probably only
+works when lockdep is enabled..
+
+Jason
