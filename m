@@ -2,98 +2,177 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDBED8F29A
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:54:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D98FF8F2A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:59:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfHORyM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:54:12 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35720 "EHLO mail.skyhub.de"
+        id S1731527AbfHOR5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:57:25 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46325 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729909AbfHORyM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:54:12 -0400
-Received: from zn.tnic (p200300EC2F0B5200B5E4FA5ECC10BE25.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:b5e4:fa5e:cc10:be25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1730932AbfHOR5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:57:25 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 29DA21EC097D;
-        Thu, 15 Aug 2019 19:54:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565891651;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=vF2oh2cDgq7Qt+uvuum84fXp+ZMjQvhfOcSDfMKlKo0=;
-        b=aZrBSxo9m8AmaF86l66Mn565+4csBCvu8eJtisYvxojZdmg4jiUfHjJtcJjVfQR4+lZKJl
-        XkpDmxQI9W7JqfWxeUbJJ0NnJ/QZxWF1PQGH3FRAYB3LURjeKJB6aZM33HRPDDjJV27Ig9
-        6WqSQodsphBtUPOle4qd/DPkMZ0qUTk=
-Date:   Thu, 15 Aug 2019 19:54:55 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
- asm/intel-family.h
-Message-ID: <20190815175455.GJ15313@zn.tnic>
-References: <20190814234030.30817-1-tony.luck@intel.com>
- <20190815075822.GC15313@zn.tnic>
- <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id B3C0D3083363;
+        Thu, 15 Aug 2019 17:57:23 +0000 (UTC)
+Received: from redhat.com (unknown [10.20.6.178])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E61018CBB9;
+        Thu, 15 Aug 2019 17:57:21 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 13:57:20 -0400
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
+Message-ID: <20190815175720.GJ30916@redhat.com>
+References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+ <20190814202027.18735-3-daniel.vetter@ffwll.ch>
+ <20190814235805.GB11200@ziepe.ca>
+ <20190815065829.GA7444@phenom.ffwll.local>
+ <20190815122344.GA21596@ziepe.ca>
+ <20190815132127.GI9477@dhcp22.suse.cz>
+ <20190815141219.GF21596@ziepe.ca>
+ <20190815155950.GN9477@dhcp22.suse.cz>
+ <20190815165631.GK21596@ziepe.ca>
+ <20190815174207.GR9477@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190815174207.GR9477@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 15 Aug 2019 17:57:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 10:21:59AM -0700, Luck, Tony wrote:
-> Like this?
+On Thu, Aug 15, 2019 at 07:42:07PM +0200, Michal Hocko wrote:
+> On Thu 15-08-19 13:56:31, Jason Gunthorpe wrote:
+> > On Thu, Aug 15, 2019 at 06:00:41PM +0200, Michal Hocko wrote:
+> > 
+> > > > AFAIK 'GFP_NOWAIT' is characterized by the lack of __GFP_FS and
+> > > > __GFP_DIRECT_RECLAIM..
+> > > >
+> > > > This matches the existing test in __need_fs_reclaim() - so if you are
+> > > > OK with GFP_NOFS, aka __GFP_IO which triggers try_to_compact_pages(),
+> > > > allocations during OOM, then I think fs_reclaim already matches what
+> > > > you described?
+> > > 
+> > > No GFP_NOFS is equally bad. Please read my other email explaining what
+> > > the oom_reaper actually requires. In short no blocking on direct or
+> > > indirect dependecy on memory allocation that might sleep.
+> > 
+> > It is much easier to follow with some hints on code, so the true
+> > requirement is that the OOM repear not block on GFP_FS and GFP_IO
+> > allocations, great, that constraint is now clear.
+> 
+> I still do not get why do you put FS/IO into the picture. This is really
+> about __GFP_DIRECT_RECLAIM.
+> 
+> > 
+> > > If you can express that in the existing lockdep machinery. All
+> > > fine. But then consider deployments where lockdep is no-no because
+> > > of the overhead.
+> > 
+> > This is all for driver debugging. The point of lockdep is to find all
+> > these paths without have to hit them as actual races, using debug
+> > kernels.
+> > 
+> > I don't think we need this kind of debugging on production kernels?
+> 
+> Again, the primary motivation was a simple debugging aid that could be
+> used without worrying about overhead. So lockdep is very often out of
+> the question.
+> 
+> > > > The best we got was drivers tested the VA range and returned success
+> > > > if they had no interest. Which is a big win to be sure, but it looks
+> > > > like getting any more is not really posssible.
+> > > 
+> > > And that is already a great win! Because many notifiers only do care
+> > > about particular mappings. Please note that backing off unconditioanlly
+> > > will simply cause that the oom reaper will have to back off not doing
+> > > any tear down anything.
+> > 
+> > Well, I'm working to propose that we do the VA range test under core
+> > mmu notifier code that cannot block and then we simply remove the idea
+> > of blockable from drivers using this new 'range notifier'. 
+> > 
+> > I think this pretty much solves the concern?
+> 
+> Well, my idea was that a range check and early bail out was a first step
+> and then each specific notifier would be able to do a more specific
+> check. I was not able to do the second step because that requires a deep
+> understanding of the respective subsystem.
+> 
+> Really all I do care about is to reclaim as much memory from the
+> oom_reaper context as possible. And that cannot really be an unbounded
+> process. Quite contrary it should be as swift as possible. From my
+> cursory look some notifiers are able to achieve their task without
+> blocking or depending on memory just fine. So bailing out
+> unconditionally on the range of interest would just put us back.
 
-Actually, I was thinking you'd put it above the defines in the file
-intel-family.h itself so that *everyone* who wants to add a model, sees
-it first and while that explanation below is very nice...
+Agree, OOM just asking the question: can i unmap that page quickly ?
+so that me (OOM) can swap it out. In many cases the driver need to
+lookup something to see if at the time the memory is just not in use
+and can be reclaim right away. So driver should have a path to
+optimistically update its state to allow quick reclaim.
 
-> +The CPU model number on a running system can be found by executing
-> +the CPUID(EAX=0) instruction to find the vendor, family, model
-> +and stepping.  The model number is found by concatenating two bit
-> +fields from the EAX return value. Bits 19:16 (extended model number)
-> +and 7:4 (model number).
-> +
-> +Inside the Linux kernel the vendor, family, model and stepping are
-> +stored in the cpuinfo_x86 structure. Model specific code typically
-> +uses x86_match_cpu() to determine if it is running on any of some
-> +list of CPU models.
-> +
-> +There are several subsystems that need model specific handling on
-> +Intel CPUs. For code legibility it is better to assign names for
-> +the various model numbers in the include file <asm/intel-family.h>
-> +
-> +Currently all interesting Intel CPU models are in family 6.
 
-.. we're probably going to need the text only from here on down:
+> > > > However, we could (probably even should) make the drivers fs_reclaim
+> > > > safe.
+> > > > 
+> > > > If that is enough to guarantee progress of OOM, then lets consider
+> > > > something like using current_gfp_context() to force PF_MEMALLOC_NOFS
+> > > > allocation behavior on the driver callback and lockdep to try and keep
+> > > > pushing on the the debugging, and dropping !blocking.
+> > > 
+> > > How are you going to enforce indirect dependency? E.g. a lock that is
+> > > also used in other context which depend on sleepable memory allocation
+> > > to move forward.
+> > 
+> > You mean like this:
+> > 
+> >        CPU0                                 CPU1
+> >                                         mutex_lock()
+> >                                         kmalloc(GFP_KERNEL)
+> 
+> no I mean __GFP_DIRECT_RECLAIM here.
+> 
+> >                                         mutex_unlock()
+> >   fs_reclaim_acquire()
+> >   mutex_lock() <- illegal: lock dep assertion
+> 
+> I cannot really comment on how that is achieveable by lockdep. I managed
+> to forget details about FS/IO reclaim recursion tracking already and I
+> do not have time to learn it again. It was quite a hack. Anyway, let me
+> repeat that the primary motivation was a simple aid. Not something as
+> poverful as lockdep.
 
-> +
-> +HOWTO Build an INTEL_FAM6_ definition:
-> +
-> +1. Start with INTEL_FAM6_
-> +2. If not Core-family, add a note about it, like "ATOM".  There are only
-> +   two options for this (Xeon Phi and Atom).  It is exceedingly unlikely
-> +   that you are adding a cpu which needs a new option here.
-> +3. Add the processor microarchitecture, not the platform name
-> +4. Add a short differentiator if necessary.  Add an _X to differentiate
-> +   Server from Client.
-> +5. Add an optional comment with the platform name(s)
-> +
-> +It should end up looking like this:
-> +
-> +INTEL_FAM6_<ATOM?>_<MICROARCH>_<SHORT...> /* Platform Name */
-> -- 
+I feel that the fs_reclaim_acquire() is just too heavy weight here. I
+do think that Daniel patches improve the debugging situation without
+burdening anything so i am in favor or merging that.
 
-Thx.
+I do not think we should devote too much time into fs_reclaim(), our
+time would be better spend in improving the driver shrinker for instance
+after all OOM is all about trying to free-up memory.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Cheers,
+Jérôme
