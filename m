@@ -2,119 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 203808F1FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:20:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D4B58F202
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:21:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732160AbfHORTV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:19:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:60766 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731134AbfHORTV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:19:21 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41DFE8535C;
-        Thu, 15 Aug 2019 17:19:21 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 24D02601A4;
-        Thu, 15 Aug 2019 17:19:20 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 13:19:18 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Pingfan Liu <kernelfans@gmail.com>
-Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2] mm/migrate: clean up useless code in
- migrate_vma_collect_pmd()
-Message-ID: <20190815171918.GC30916@redhat.com>
-References: <20190807052858.GA9749@mypc>
- <1565167272-21453-1-git-send-email-kernelfans@gmail.com>
+        id S1731987AbfHORVx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:21:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:40324 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728547AbfHORVx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:21:53 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyJRN-0002FC-BI; Thu, 15 Aug 2019 19:21:33 +0200
+Date:   Thu, 15 Aug 2019 19:21:32 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <dima@arista.com>
+cc:     linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Andrei Vagin <avagin@openvz.org>,
+        Adrian Reber <adrian@lisas.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv6 02/36] timens: Add timens_offsets
+In-Reply-To: <20190815163836.2927-3-dima@arista.com>
+Message-ID: <alpine.DEB.2.21.1908151920250.1908@nanos.tec.linutronix.de>
+References: <20190815163836.2927-1-dima@arista.com> <20190815163836.2927-3-dima@arista.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565167272-21453-1-git-send-email-kernelfans@gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 15 Aug 2019 17:19:21 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 04:41:12PM +0800, Pingfan Liu wrote:
-> Clean up useless 'pfn' variable.
+On Thu, 15 Aug 2019, Dmitry Safonov wrote:
+> +	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
+> +	if (!page)
+> +		goto fail_free;
+> +	ns->offsets = page_address(page);
+> +	if (old_ns->offsets)
+> +		memcpy(ns->offsets, old_ns->offsets, sizeof(struct timens_offsets));
 
-NAK there is a bug see below:
+sizeof(*ns->offsets)
 
-> 
-> Signed-off-by: Pingfan Liu <kernelfans@gmail.com>
-> Cc: "Jérôme Glisse" <jglisse@redhat.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Mike Kravetz <mike.kravetz@oracle.com>
-> Cc: Andrea Arcangeli <aarcange@redhat.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> To: linux-mm@kvack.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  mm/migrate.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 8992741..d483a55 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -2225,17 +2225,15 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  		pte_t pte;
->  
->  		pte = *ptep;
-> -		pfn = pte_pfn(pte);
->  
->  		if (pte_none(pte)) {
->  			mpfn = MIGRATE_PFN_MIGRATE;
->  			migrate->cpages++;
-> -			pfn = 0;
->  			goto next;
->  		}
->  
->  		if (!pte_present(pte)) {
-> -			mpfn = pfn = 0;
-> +			mpfn = 0;
->  
->  			/*
->  			 * Only care about unaddressable device page special
-> @@ -2252,10 +2250,10 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			if (is_write_device_private_entry(entry))
->  				mpfn |= MIGRATE_PFN_WRITE;
->  		} else {
-> +			pfn = pte_pfn(pte);
->  			if (is_zero_pfn(pfn)) {
->  				mpfn = MIGRATE_PFN_MIGRATE;
->  				migrate->cpages++;
-> -				pfn = 0;
->  				goto next;
->  			}
->  			page = vm_normal_page(migrate->vma, addr, pte);
-> @@ -2265,10 +2263,9 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  
->  		/* FIXME support THP */
->  		if (!page || !page->mapping || PageTransCompound(page)) {
-> -			mpfn = pfn = 0;
-> +			mpfn = 0;
->  			goto next;
->  		}
-> -		pfn = page_to_pfn(page);
+Thanks,
 
-You can not remove that one ! Otherwise it will break the device
-private case.
+	tglx
