@@ -2,162 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C4418EA3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 906818EA50
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:32:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbfHOL3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 07:29:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53068 "EHLO mail.kernel.org"
+        id S1731040AbfHOLcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 07:32:04 -0400
+Received: from mga05.intel.com ([192.55.52.43]:60872 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbfHOL3K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:29:10 -0400
-Received: from guoren-Inspiron-7460.lan (unknown [223.93.147.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 041FA2064A;
-        Thu, 15 Aug 2019 11:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565868549;
-        bh=iiPFjQ6IpGaSo+ZfHDmX+dVXiSF+Y0k80QYxQEedsKc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=djZMVfT7jDb6PTyLETIQfabTlehNjYjkeLD+QO2DV69Gk9CsnFKc+KsCD+xFoPgcD
-         Yzte242KQRZnpQi03iO4rK8p9lNxk1Gb1gGqMEYRhzPFEZAtN1OxLEDIik2eLeZlrM
-         rbmc1VTP8VapiKx9nn8kxGLHavBm1BuJ5k5iQMco=
-From:   guoren@kernel.org
-To:     arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-csky@vger.kernel.org, zhang_jian5@dahuatech.com,
-        Guo Ren <ren_guo@c-sky.com>,
-        Christoph Hellwig <hch@infradead.org>
-Subject: [PATCH] csky: Fixup ioremap function losing
-Date:   Thu, 15 Aug 2019 19:28:57 +0800
-Message-Id: <1565868537-17753-1-git-send-email-guoren@kernel.org>
-X-Mailer: git-send-email 2.7.4
+        id S1725977AbfHOLcE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 07:32:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 04:32:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="184598389"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 15 Aug 2019 04:32:02 -0700
+Subject: Re: [PATCH v3 2/3] PCI: Add Genesys Logic, Inc. Vendor ID
+To:     "Michael K. Johnson" <johnsonm@danlj.org>
+Cc:     ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org,
+        Ben Chuang <ben.chuang@genesyslogic.com.tw>
+References: <20190726020754.GA12078@people.danlj.org>
+ <62a756ff-6432-fd43-5e90-038eb28045cd@intel.com>
+ <20190812225730.GB30758@people.danlj.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <0b195576-48ef-0cff-80c1-b5da47452e96@intel.com>
+Date:   Thu, 15 Aug 2019 14:30:53 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190812225730.GB30758@people.danlj.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guo Ren <ren_guo@c-sky.com>
+On 13/08/19 1:57 AM, Michael K. Johnson wrote:
+> Add the Genesys Logic, Inc. verndor ID to pci_ids.h.
 
-Implement the following apis to meet usage in different scenarios.
+verndor -> vendor
 
- - ioremap          (NonCache + StrongOrder)
- - ioremap_nocache  (NonCache + StrongOrder)
- - ioremap_wc       (NonCache + WeakOrder  )
- - ioremap_cache    (   Cache + WeakOrder  )
+> 
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Co-developed-by: Michael K Johnson <johnsonm@danlj.org>
 
-Also change flag VM_ALLOC to VM_IOREMAP in get_vm_area_caller.
+Did you mean for this patch to be "From:" Ben Chuang because otherwise
+"Co-developed-by" the author is redundant.
 
-Signed-off-by: Guo Ren <ren_guo@c-sky.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Christoph Hellwig <hch@infradead.org>
----
- arch/csky/include/asm/io.h | 23 ++++++++++++-----------
- arch/csky/mm/ioremap.c     | 23 +++++++++++++++++------
- 2 files changed, 29 insertions(+), 17 deletions(-)
-
-diff --git a/arch/csky/include/asm/io.h b/arch/csky/include/asm/io.h
-index c1dfa9c..80d071e 100644
---- a/arch/csky/include/asm/io.h
-+++ b/arch/csky/include/asm/io.h
-@@ -4,17 +4,10 @@
- #ifndef __ASM_CSKY_IO_H
- #define __ASM_CSKY_IO_H
- 
--#include <abi/pgtable-bits.h>
-+#include <asm/pgtable.h>
- #include <linux/types.h>
- #include <linux/version.h>
- 
--extern void __iomem *ioremap(phys_addr_t offset, size_t size);
--
--extern void iounmap(void *addr);
--
--extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
--		size_t size, unsigned long flags);
--
- /*
-  * I/O memory access primitives. Reads are ordered relative to any
-  * following Normal memory access. Writes are ordered relative to any prior
-@@ -40,9 +33,17 @@ extern int remap_area_pages(unsigned long address, phys_addr_t phys_addr,
- #define writel(v,c)		({ wmb(); writel_relaxed((v),(c)); mb(); })
- #endif
- 
--#define ioremap_nocache(phy, sz)	ioremap(phy, sz)
--#define ioremap_wc ioremap_nocache
--#define ioremap_wt ioremap_nocache
-+/*
-+ * I/O memory mapping functions.
-+ */
-+extern void __iomem *ioremap_cache(phys_addr_t addr, size_t size);
-+extern void __iomem *__ioremap(phys_addr_t addr, size_t size, pgprot_t prot);
-+extern void iounmap(void *addr);
-+
-+#define ioremap(addr, size)		__ioremap((addr), (size), pgprot_noncached(PAGE_KERNEL))
-+#define ioremap_wc(addr, size)		__ioremap((addr), (size), pgprot_writecombine(PAGE_KERNEL))
-+#define ioremap_nocache(addr, size)	ioremap((addr), (size))
-+#define ioremap_cache			ioremap_cache
- 
- #include <asm-generic/io.h>
- 
-diff --git a/arch/csky/mm/ioremap.c b/arch/csky/mm/ioremap.c
-index 4853111..e13cd34 100644
---- a/arch/csky/mm/ioremap.c
-+++ b/arch/csky/mm/ioremap.c
-@@ -8,12 +8,12 @@
- 
- #include <asm/pgtable.h>
- 
--void __iomem *ioremap(phys_addr_t addr, size_t size)
-+static void __iomem *__ioremap_caller(phys_addr_t addr, size_t size,
-+				      pgprot_t prot, void *caller)
- {
- 	phys_addr_t last_addr;
- 	unsigned long offset, vaddr;
- 	struct vm_struct *area;
--	pgprot_t prot;
- 
- 	last_addr = addr + size - 1;
- 	if (!size || last_addr < addr)
-@@ -23,14 +23,12 @@ void __iomem *ioremap(phys_addr_t addr, size_t size)
- 	addr &= PAGE_MASK;
- 	size = PAGE_ALIGN(size + offset);
- 
--	area = get_vm_area_caller(size, VM_ALLOC, __builtin_return_address(0));
-+	area = get_vm_area_caller(size, VM_IOREMAP, caller);
- 	if (!area)
- 		return NULL;
- 
- 	vaddr = (unsigned long)area->addr;
- 
--	prot = pgprot_noncached(PAGE_KERNEL);
--
- 	if (ioremap_page_range(vaddr, vaddr + size, addr, prot)) {
- 		free_vm_area(area);
- 		return NULL;
-@@ -38,7 +36,20 @@ void __iomem *ioremap(phys_addr_t addr, size_t size)
- 
- 	return (void __iomem *)(vaddr + offset);
- }
--EXPORT_SYMBOL(ioremap);
-+
-+void __iomem *__ioremap(phys_addr_t phys_addr, size_t size, pgprot_t prot)
-+{
-+	return __ioremap_caller(phys_addr, size, prot,
-+				__builtin_return_address(0));
-+}
-+EXPORT_SYMBOL(__ioremap);
-+
-+void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size)
-+{
-+	return __ioremap_caller(phys_addr, size, PAGE_KERNEL,
-+				__builtin_return_address(0));
-+}
-+EXPORT_SYMBOL(ioremap_cache);
- 
- void iounmap(void __iomem *addr)
- {
--- 
-2.7.4
+> Signed-off-by: Michael K Johnson <johnsonm@danlj.org>
+> 
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index 70e86148cb1e..4f7e12772a14 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2403,6 +2403,8 @@
+>  #define PCI_DEVICE_ID_RDC_R6061		0x6061
+>  #define PCI_DEVICE_ID_RDC_D1010		0x1010
+>  
+> +#define PCI_VENDOR_ID_GLI		0x17a0
+> +
+>  #define PCI_VENDOR_ID_LENOVO		0x17aa
+>  
+>  #define PCI_VENDOR_ID_QCOM		0x17cb
+> 
 
