@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A7A98F1BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 424858F1C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731811AbfHOROi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:38 -0400
-Received: from mail-ed1-f98.google.com ([209.85.208.98]:39411 "EHLO
-        mail-ed1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731793AbfHOROh (ORCPT
+        id S1731964AbfHORO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:56 -0400
+Received: from mail-ed1-f100.google.com ([209.85.208.100]:40228 "EHLO
+        mail-ed1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731796AbfHOROh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Aug 2019 13:14:37 -0400
-Received: by mail-ed1-f98.google.com with SMTP id g8so2703507edm.6
+Received: by mail-ed1-f100.google.com with SMTP id h8so2704199edv.7
         for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=Z7ZxsDgfWU46Ybcjy2/C5BgvQB81y4GKF7sm31CzdrM=;
-        b=kUKTIEsUicryBa13q2lzf6993xZbRUKGCqRLHvngbZAXLytussytbYSmhw520w4/oa
-         niFFtF4TDu0HWd3i7mbRedCRoLoAyx7pZfn6um2QCBFl3x6yUcpD3e8J5BLJ7dwYCy1Z
-         cAxlZFhvgW1EMGrrLXUiQlkc1qM3aJCZuHqyK337Y35A+FMggVzG9tlJTqJ0bsuNhXbP
-         4A8Zgsvirxm2Yom73iE4c/YzYyuvJpVcqUKAtYE0vKVLlhXrEKlvdfgp9j8T/YFofKQ3
-         Xl7E7kPRut6laIAb3iDGIHrioLn71h6y3CqMK4KhfEk5Kk2nN+/eFMZlze1byMKrmw4d
-         nXRg==
-X-Gm-Message-State: APjAAAW3ji7rSknTbp8KW/YL8NbQMfChGJfSTlkY1aDP3oIFeBcGCzTa
-        jVu/ftYotF5C7M/yT5G5NbCJTN7yMwODz2aYAIdpa3OlNBAMh5cjTV9za08kkTHxaw==
-X-Google-Smtp-Source: APXvYqzi4mE6JEqoZ4pkdHHrkjGFjr3tCHkQB1uiMMh1QmQ6fxIcRujGg6T/odlByK8WT3k/pcQ2CowbXPyk
-X-Received: by 2002:a50:d1c6:: with SMTP id i6mr6519505edg.110.1565889275471;
+        bh=2tOdgRw7bHfBUMRr5A78wZooift8kR44FLxZ2fHFoq4=;
+        b=f+CEoFEFFQLZf2i3OABqsLhhctYgsQFlMIgu30gsZqbDs8VpIFhtUdPpDM5Z52bm0M
+         DcDatQRPqvVdi0XNjlYnCpQsOXi403zAvtV2BTHKBF0uk8aKlWFtrnY4rAYVzYo3YARn
+         YyjvRjcxJMnt7bFXicSJAd8oVRssefKZo5nDjw2i/+2SB+XCZAxBoAgJNZh8OcyoBQEV
+         oOMCFi9wcCxiWP+zlAf6M1jmSqOAAF2ZP912rTgqCr6ACzLQKCFirZkvVCKYn+wo9b+8
+         fTcfDwCMW3HXu1GmuvzOgV5Xxck48Ggi7UqqKRge1h1dbvUTSEUDCQTEIJLFPgVLPnyz
+         ghTQ==
+X-Gm-Message-State: APjAAAVArbf+h5du73stKTox6sy8NB8oiwAF/Vf6EsSioBITZqfNAQbV
+        cZ5O4LYwv3+/2EoGY3fbrw94JiaB+7IWo+meB5MoUYgAkfpy4hXPZx8eFxglFXv2hQ==
+X-Google-Smtp-Source: APXvYqxFD14tT+W/wcwosNR4mJq7LHL6hBkxp8vUHcz2et2BdUwg/HEyBFE8UDSLNuhEWf01rrv+4zglTLjl
+X-Received: by 2002:aa7:dc5a:: with SMTP id g26mr6664165edu.62.1565889275802;
         Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id me22sm13772ejb.69.2019.08.15.10.14.35
+        by smtp-relay.gmail.com with ESMTPS id u22sm54883edi.2.2019.08.15.10.14.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,19 +38,18 @@ Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKd-00052t-5K; Thu, 15 Aug 2019 17:14:35 +0000
+        id 1hyJKd-00052v-CB; Thu, 15 Aug 2019 17:14:35 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id A604C2742B9E; Thu, 15 Aug 2019 18:14:34 +0100 (BST)
+        id DD14E2742BD6; Thu, 15 Aug 2019 18:14:34 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Raag Jadav <raagjadav@gmail.com>
-Cc:     devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Applied "regulator: act8865 regulator modes and suspend states" to the regulator tree
-In-Reply-To: <1565721176-8955-3-git-send-email-raagjadav@gmail.com>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     kernel-janitors@vger.kernel.org,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: max8660: remove redundant assignment of variable ret" to the regulator tree
+In-Reply-To: <20190813133114.14931-1-colin.king@canonical.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171434.A604C2742B9E@ypsilon.sirena.org.uk>
+Message-Id: <20190815171434.DD14E2742BD6@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:34 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,7 +58,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: act8865 regulator modes and suspend states
+   regulator: max8660: remove redundant assignment of variable ret
 
 has been applied to the regulator tree at
 
@@ -84,118 +83,35 @@ to this mail.
 Thanks,
 Mark
 
-From ff461ebfd4b7051d9b79ca023741e6c2d960a912 Mon Sep 17 00:00:00 2001
-From: Raag Jadav <raagjadav@gmail.com>
-Date: Wed, 14 Aug 2019 00:02:56 +0530
-Subject: [PATCH] regulator: act8865 regulator modes and suspend states
+From 9e127fab67e3ec4451696da0c7872fd291b9372b Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Tue, 13 Aug 2019 14:31:14 +0100
+Subject: [PATCH] regulator: max8660: remove redundant assignment of variable
+ ret
 
-Add documentation for act8865 regulator modes and suspend states.
-Add active-semi,8865-regulator.h file for device tree binding constants
-for act8865 regulators.
+Variable ret is initialized to a value that is never read before
+a return statement and hence can be removed. Remove it.
 
-Signed-off-by: Raag Jadav <raagjadav@gmail.com>
-Link: https://lore.kernel.org/r/1565721176-8955-3-git-send-email-raagjadav@gmail.com
+Addresses-Coverity: ("Unused value")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Link: https://lore.kernel.org/r/20190813133114.14931-1-colin.king@canonical.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- .../bindings/regulator/act8865-regulator.txt  | 27 ++++++++++++++++--
- .../regulator/active-semi,8865-regulator.h    | 28 +++++++++++++++++++
- 2 files changed, 53 insertions(+), 2 deletions(-)
- create mode 100644 include/dt-bindings/regulator/active-semi,8865-regulator.h
+ drivers/regulator/max8660.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/regulator/act8865-regulator.txt b/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-index 3ae9f1088845..b9f58e480349 100644
---- a/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-+++ b/Documentation/devicetree/bindings/regulator/act8865-regulator.txt
-@@ -34,6 +34,9 @@ Optional input supply properties:
-   - inl67-supply: The input supply for LDO_REG3 and LDO_REG4
- 
- Any standard regulator properties can be used to configure the single regulator.
-+regulator-initial-mode, regulator-allowed-modes and regulator-mode could be specified
-+for act8865 using mode values from dt-bindings/regulator/active-semi,8865-regulator.h
-+file.
- 
- The valid names for regulators are:
- 	- for act8846:
-@@ -47,6 +50,8 @@ The valid names for regulators are:
- Example:
- --------
- 
-+#include <dt-bindings/regulator/active-semi,8865-regulator.h>
-+
- 		i2c1: i2c@f0018000 {
- 			pmic: act8865@5b {
- 				compatible = "active-semi,act8865";
-@@ -65,9 +70,19 @@ Example:
- 						regulator-name = "VCC_1V2";
- 						regulator-min-microvolt = <1100000>;
- 						regulator-max-microvolt = <1300000>;
--						regulator-suspend-mem-microvolt = <1150000>;
--						regulator-suspend-standby-microvolt = <1150000>;
- 						regulator-always-on;
-+
-+						regulator-allowed-modes = <ACT8865_REGULATOR_MODE_FIXED>,
-+									  <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						regulator-initial-mode = <ACT8865_REGULATOR_MODE_FIXED>;
-+
-+						regulator-state-mem {
-+							regulator-on-in-suspend;
-+							regulator-suspend-min-microvolt = <1150000>;
-+							regulator-suspend-max-microvolt = <1150000>;
-+							regulator-changeable-in-suspend;
-+							regulator-mode = <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						};
- 					};
- 
- 					vcc_3v3_reg: DCDC_REG3 {
-@@ -82,6 +97,14 @@ Example:
- 						regulator-min-microvolt = <3300000>;
- 						regulator-max-microvolt = <3300000>;
- 						regulator-always-on;
-+
-+						regulator-allowed-modes = <ACT8865_REGULATOR_MODE_NORMAL>,
-+									  <ACT8865_REGULATOR_MODE_LOWPOWER>;
-+						regulator-initial-mode = <ACT8865_REGULATOR_MODE_NORMAL>;
-+
-+						regulator-state-mem {
-+							regulator-off-in-suspend;
-+						};
- 					};
- 
- 					vddfuse_reg: LDO_REG2 {
-diff --git a/include/dt-bindings/regulator/active-semi,8865-regulator.h b/include/dt-bindings/regulator/active-semi,8865-regulator.h
-new file mode 100644
-index 000000000000..15473dbeaf38
---- /dev/null
-+++ b/include/dt-bindings/regulator/active-semi,8865-regulator.h
-@@ -0,0 +1,28 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Device Tree binding constants for the ACT8865 PMIC regulators
-+ */
-+
-+#ifndef _DT_BINDINGS_REGULATOR_ACT8865_H
-+#define _DT_BINDINGS_REGULATOR_ACT8865_H
-+
-+/*
-+ * These constants should be used to specify regulator modes in device tree for
-+ * ACT8865 regulators as follows:
-+ * ACT8865_REGULATOR_MODE_FIXED:	It is specific to DCDC regulators and it
-+ *					specifies the usage of fixed-frequency
-+ *					PWM.
-+ *
-+ * ACT8865_REGULATOR_MODE_NORMAL:	It is specific to LDO regulators and it
-+ *					specifies the usage of normal mode.
-+ *
-+ * ACT8865_REGULATOR_MODE_LOWPOWER:	For DCDC and LDO regulators; it specify
-+ *					the usage of proprietary power-saving
-+ *					mode.
-+ */
-+
-+#define ACT8865_REGULATOR_MODE_FIXED		1
-+#define ACT8865_REGULATOR_MODE_NORMAL		2
-+#define ACT8865_REGULATOR_MODE_LOWPOWER	3
-+
-+#endif
+diff --git a/drivers/regulator/max8660.c b/drivers/regulator/max8660.c
+index 4bca54446287..347043a5a9a7 100644
+--- a/drivers/regulator/max8660.c
++++ b/drivers/regulator/max8660.c
+@@ -485,7 +485,6 @@ static int max8660_probe(struct i2c_client *client,
+ 		rdev = devm_regulator_register(&client->dev,
+ 						  &max8660_reg[id], &config);
+ 		if (IS_ERR(rdev)) {
+-			ret = PTR_ERR(rdev);
+ 			dev_err(&client->dev, "failed to register %s\n",
+ 				max8660_reg[id].name);
+ 			return PTR_ERR(rdev);
 -- 
 2.20.1
 
