@@ -2,66 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 692B78E1E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FCCF8E1F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729706AbfHOAk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 20:40:27 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42769 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726490AbfHOAk0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:40:26 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i30so387564pfk.9
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 17:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fossix-org.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=/fmDyudl4ch4OP62eHQXqnVTVLm5jUqLhjp55PmzJvo=;
-        b=HWqj9ejNdJQayCUbigjbIXvdJTCNkGhJls8EEyFYC0V8P4n0cTodkeE/HZhHecjB2W
-         l7K6/dnZ3R92f0SnXwkyP4/Slv8+iF8HLECnGiERqMUdnAxpOvN6Me8I+/OVNGlTMWWH
-         glveWyra0FcWwjnojoIwAzWWCNACyTvNdRFctxY1L0ClXgRia0nJ7aA0BC8IB/kuQBN3
-         Pj+r+anTktTiSy2dF3unKDZi5QJdbIEpr3+y+WwRAU9VsbXTYnltGnsmDCenf+WVBJab
-         Uc/f4tASqK5hui6iQhES1/wQ3tn4JLbkW7lPDoaTwWFKP02oJTUmptnbNvSC7sdIZ0E0
-         sFeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=/fmDyudl4ch4OP62eHQXqnVTVLm5jUqLhjp55PmzJvo=;
-        b=QuILWkRP/6fCaB3/Wsqo11nT32ix5uVnwH2kDOHx8pkCgOquIjKIN6N10E0my0jsyg
-         DKBARKaIPnCAxYV8k6sxC5l/FiPVYNNyMzfCuaGwDEG74V3erkICk1zSp6Td+6e5j+ge
-         OB/fOSDlavRD0h5yCzWdTpvUlmlgS2XwFOuv9UnXIrbU1/RtcJh+Z0SG8kQHltfrPZWf
-         iILqpwTXE2xYFK2UvZqZNsUUtItrJRJK6qHlVoUEem7VYPQiEZeLzpTLtiERHPRUw0V8
-         4yC52uC7y26LukyZ4mr5LRf5TuRV1JWbCMBViyMidb52itU+6d5Bt1oepL+e35/5jirH
-         o14g==
-X-Gm-Message-State: APjAAAXJRyGlDS3oHiFSNOLKrm79kvBs4X6u24WiGdmKb9HBdkkQjyBa
-        uB+R94O2JGX+vqN7J/IHhgNWkg==
-X-Google-Smtp-Source: APXvYqxJ0ghvU9hcLu7YTY3p+AcV3t2y1ZX9SIluJdDl1sFi0V2JgVZjpV4KqrkTpI3HBiO5NV1fBw==
-X-Received: by 2002:a63:ee08:: with SMTP id e8mr1562536pgi.70.1565829625505;
-        Wed, 14 Aug 2019 17:40:25 -0700 (PDT)
-Received: from santosiv.in.ibm.com ([49.205.218.176])
-        by smtp.gmail.com with ESMTPSA id g8sm815917pgk.1.2019.08.14.17.40.21
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 14 Aug 2019 17:40:24 -0700 (PDT)
-From:   Santosh Sivaraj <santosh@fossix.org>
-To:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Chandan Rajendra <chandan@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        christophe leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v10 7/7] powerpc: add machine check safe copy_to_user
-Date:   Thu, 15 Aug 2019 06:09:41 +0530
-Message-Id: <20190815003941.18655-8-santosh@fossix.org>
+        id S1727848AbfHOAtM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 20:49:12 -0400
+Received: from onstation.org ([52.200.56.107]:44266 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726221AbfHOAtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 20:49:12 -0400
+Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 351503E95F;
+        Thu, 15 Aug 2019 00:49:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1565830151;
+        bh=PCy1j7MQudvJstVSVlYc4cRcJStkAE4OqJRndsZJOI0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=q+P4dvnY8kCbSHP6/cQeJNcM49HQS1+tGPc+xTcR+NwY72Dg4KvVyK6FG5xTEo6OD
+         Y0IU/xMhrkp5ILcJF73dQBeXzhK6vqkhotTJU3BhwoVHVXfT7SDH+vnJ/YUcDoyfct
+         XVblgW3CGsQv/S/J6MMGbtBm1olh/8loyiE9N9b0=
+From:   Brian Masney <masneyb@onstation.org>
+To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org,
+        a.hajda@samsung.com, narmstrong@baylibre.com, robdclark@gmail.com,
+        sean@poorly.run
+Cc:     airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
+        Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+        jernej.skrabec@siol.net, linus.walleij@linaro.org,
+        enric.balletbo@collabora.com, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        freedreno@lists.freedesktop.org
+Subject: [PATCH 00/11] ARM: dts: qcom: msm8974: add support for external display
+Date:   Wed, 14 Aug 2019 20:48:43 -0400
+Message-Id: <20190815004854.19860-1-masneyb@onstation.org>
 X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190815003941.18655-1-santosh@fossix.org>
-References: <20190815003941.18655-1-santosh@fossix.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,51 +47,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use  memcpy_mcsafe() implementation to define copy_to_user_mcsafe()
+This patch series begins to add support for the external display over
+HDMI that is supported on msm8974 SoCs. I'm testing this series on the
+Nexus 5, and I'm able to communicate with the HDMI bridge via the
+analogix-anx78xx driver, however the external display is not working
+yet.
 
-Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
----
- arch/powerpc/Kconfig               |  1 +
- arch/powerpc/include/asm/uaccess.h | 14 ++++++++++++++
- 2 files changed, 15 insertions(+)
+When I plug in the HDMI cable, the monitor detects that a device is
+hooked up, but nothing is shown on the external monitor. The hot plug
+detect GPIO (hpd-gpios) on the analogix-anx78xx bridge and MSM HDMI
+drivers do not change state when the slimport adapter or HDMI cable is
+plugged in or removed. I wonder if a regulator is not enabled somewhere?
+I have a comment in patch 10 regarding 'hpd-gdsc-supply' that may
+potentially be an issue.
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 77f6ebf97113..4316e36095a2 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -137,6 +137,7 @@ config PPC
- 	select ARCH_HAS_STRICT_KERNEL_RWX	if ((PPC_BOOK3S_64 || PPC32) && !RELOCATABLE && !HIBERNATION)
- 	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
- 	select ARCH_HAS_UACCESS_FLUSHCACHE	if PPC64
-+	select ARCH_HAS_UACCESS_MCSAFE		if PPC64
- 	select ARCH_HAS_UBSAN_SANITIZE_ALL
- 	select ARCH_HAVE_NMI_SAFE_CMPXCHG
- 	select ARCH_KEEP_MEMBLOCK
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index 8b03eb44e876..15002b51ff18 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -387,6 +387,20 @@ static inline unsigned long raw_copy_to_user(void __user *to,
- 	return ret;
- }
- 
-+static __always_inline unsigned long __must_check
-+copy_to_user_mcsafe(void __user *to, const void *from, unsigned long n)
-+{
-+	if (likely(check_copy_size(from, n, true))) {
-+		if (access_ok(to, n)) {
-+			allow_write_to_user(to, n);
-+			n = memcpy_mcsafe((void *)to, from, n);
-+			prevent_write_to_user(to, n);
-+		}
-+	}
-+
-+	return n;
-+}
-+
- extern unsigned long __clear_user(void __user *addr, unsigned long size);
- 
- static inline unsigned long clear_user(void __user *addr, unsigned long size)
+I'm still digging in on this, however I'd appreciate any feedback if
+anyone has time. Most of these patches are ready now, so I marked the
+ones that aren't ready with 'PATCH RFC'.
+
+I'm using an Analogix Semiconductor SP6001 SlimPort Micro-USB to 4K HDMI
+Adapter to connect my phone to an external display via a standard HDMI
+cable. This works just fine with the downstream MSM kernel using
+Android.
+
+Brian Masney (11):
+  dt-bindings: drm/bridge: analogix-anx78xx: add new variants
+  drm/bridge: analogix-anx78xx: add new variants
+  drm/bridge: analogix-anx78xx: silence -EPROBE_DEFER warnings
+  drm/bridge: analogix-anx78xx: convert to i2c_new_dummy_device
+  drm/bridge: analogix-anx78xx: correct value of TX_P0
+  drm/bridge: analogix-anx78xx: add support for avdd33 regulator
+  ARM: qcom_defconfig: add CONFIG_DRM_ANALOGIX_ANX78XX
+  drm/msm/hdmi: silence -EPROBE_DEFER warning
+  ARM: dts: qcom: pm8941: add 5vs2 regulator node
+  ARM: dts: qcom: msm8974: add HDMI nodes
+  ARM: dts: qcom: msm8974-hammerhead: add support for external display
+
+ .../bindings/display/bridge/anx7814.txt       |   6 +-
+ .../qcom-msm8974-lge-nexus5-hammerhead.dts    | 140 ++++++++++++++++++
+ arch/arm/boot/dts/qcom-msm8974.dtsi           |  80 ++++++++++
+ arch/arm/boot/dts/qcom-pm8941.dtsi            |  10 ++
+ arch/arm/configs/qcom_defconfig               |   1 +
+ drivers/gpu/drm/bridge/analogix-anx78xx.c     |  60 +++++++-
+ drivers/gpu/drm/bridge/analogix-anx78xx.h     |   2 +-
+ drivers/gpu/drm/msm/hdmi/hdmi_phy.c           |   8 +-
+ 8 files changed, 295 insertions(+), 12 deletions(-)
+
 -- 
 2.21.0
 
