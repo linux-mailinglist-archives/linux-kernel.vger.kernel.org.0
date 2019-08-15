@@ -2,258 +2,176 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D99B58EEF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:01:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 974F28EEFB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:02:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732181AbfHOPBt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:01:49 -0400
-Received: from mail-eopbgr1400091.outbound.protection.outlook.com ([40.107.140.91]:17984
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727160AbfHOPBt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:01:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WC/N8NW69QVyJ5oChT4ro3Dxuh8uy0Ir6H6zc5jSm8ij+RWA2YmL7OaufQMXl9XTEX5+9liCkuU1p3BfYL2aQIte7++NRZGLhyerMJuYz9uCVWE046GQR88Gw7d68Fr+zjbhRb7RC1UJ77jWx3O6iMH/pyvzrZGb0HYcGH2AbfmqONKLlq2MI5zJSRsD++p4e7YVeewNgr13ft3h499kCmZbBAYUU8U8if6CQZjb4VdMLpVsE3gT7Qq/NlVrNHnk9AVb3Bg7e2g9yVrDcFFu/ADngPA3/uxafbpse5Vf3cwmwGnuNsbTAQfnr6kI0YsU1Gfq9iTIlwja5gfvqgNDGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hXGUA2JogWOLFE2PJ6GSAFG+qu+o5RBJL7qBImXb0zo=;
- b=h7lBzMO/P7ByP8XiOLcGuUWSmQQ6RO0Q0N7fkiau/9xzr4Fv743b/zIgxpj7BjLIaiGpcPWIMSIE0e9tyJE34lm/MKEO121ss1qNRFPXKggWl87sB3WukorkuV0fh5EYPn5IC4/QsvjKIYBMkUsJ/MWVkqHHT5nc4s/TDladqfy/PfYI/wQBEw2rgZLLhF1Cx53lyyudZWcPYc+QHsGALsH4kmtz4vHNOWxK72hSEH9GOcbPeTeq6Xg27mNgdqqFavo6vC5sM4XoDZU/AroyNZTYn4PpIOx0S+5I5myHHjJGByeoj6zw8Eqjzu8slZjE3t4KkYGU6RscV0IKZoovyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+        id S1732302AbfHOPCD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 11:02:03 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34740 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727160AbfHOPCD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:02:03 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c7so6612736otp.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 08:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hXGUA2JogWOLFE2PJ6GSAFG+qu+o5RBJL7qBImXb0zo=;
- b=IIaJ0nIrn78qV0Xn1IDqLuQ7kGo459yQWFiObBK7GbtsC4m2KLsq/JXGdGHi/GYYuBoEMPKUMOd99gnMiZc+tPlUcraF1v4ByAPBnOKWQpUI23uZKPQWizCEXf6R8JJNOUBR3WWkX6F2Ir21Uc26XYqkXhG69X04l4K9MDx/1Ec=
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com (52.133.163.13) by
- TY1PR01MB1596.jpnprd01.prod.outlook.com (52.133.162.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.14; Thu, 15 Aug 2019 15:01:44 +0000
-Received: from TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16]) by TY1PR01MB1770.jpnprd01.prod.outlook.com
- ([fe80::d881:cb74:8277:5a16%7]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
- 15:01:44 +0000
-From:   Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: RE: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
-Thread-Topic: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
-Thread-Index: AQHVU1lM9+L2miT/i0amqdy98WNy2qb8MTMAgAAMrQCAAAL7AIAAASrAgAAJiwCAAACe0A==
-Date:   Thu, 15 Aug 2019 15:01:43 +0000
-Message-ID: <TY1PR01MB177014EDD97819824C163F36C0AC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
-References: <1565867073-24746-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1565867073-24746-4-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190815131838.GP5011@pendragon.ideasonboard.com>
- <20190815140400.GA7174@kroah.com>
- <20190815141440.GA20322@pendragon.ideasonboard.com>
- <TY1PR01MB1770404C560F6967FA81D521C0AC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
- <20190815145300.GA15016@kroah.com>
-In-Reply-To: <20190815145300.GA15016@kroah.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fabrizio.castro@bp.renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: eff8ff50-8c27-468a-5848-08d721917ca2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1596;
-x-ms-traffictypediagnostic: TY1PR01MB1596:
-x-ms-exchange-purlcount: 2
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <TY1PR01MB159675706F14FA3EE0B51594C0AC0@TY1PR01MB1596.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 01304918F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(346002)(376002)(366004)(136003)(396003)(189003)(199004)(81166006)(76116006)(64756008)(476003)(66476007)(55016002)(66556008)(11346002)(81156014)(186003)(446003)(66946007)(6916009)(52536014)(26005)(5660300002)(86362001)(4326008)(53936002)(102836004)(9686003)(6306002)(486006)(8936002)(66446008)(74316002)(6246003)(53546011)(478600001)(66066001)(316002)(6506007)(25786009)(8676002)(7696005)(305945005)(99286004)(3846002)(44832011)(2906002)(54906003)(256004)(6436002)(229853002)(7416002)(7736002)(14444005)(6116002)(14454004)(71190400001)(76176011)(71200400001)(966005)(33656002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1596;H:TY1PR01MB1770.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: bp.renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KiRZHup8bNKAh15iWEo3E/ljcaWcYWV26thAD7UdICWC4W6x2hh32UZSYfplGscYOUQ2Cp/sT52MPoXbMqGl9TXbl19aeC93oelxh3goV2OhK1rRw1mRjDUn3gEFMIuY9+0fQtiZnh51i1j2V6AGrcM63+ETidVxnIg+ntHDuYwVpXpzPtFRZsZL+CbEZ8PbmdszUgPUzkRVkm8geNiGD+a6hbbODDshWef5rMhDl8xfn0GkkvTlUzBYVNbVg/3MGEOpQsZcsOMeDUKDGl+SvVlSOWYwHyGGcoqnqcc2VCdf0P/BUHwtR4VyqsFwxZlTpVmh+5i7TFKasJLs83jGH8iPTdFgeMEva37aL6HcF7+5GkxpSRuLBs7iuG+QZFX8e6vGP1eh6q7RdCGPwBZja2/VPzC94YmKCtk8XkxCwlM=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/MRnxbjz1Xv9wb4xXAKX3Jx0kdP69/dxq0cQR/4W0mE=;
+        b=KuEsqDIjNbs8Gmbl0tP2HadsC0myqvgFMTr0pFgE1HCayXF1TPx+n9GeQ1nAO4Be59
+         eopv6yLRuybV6oZv86XQFTkcmnEUk6eQmqnv+IByXoY8TDuvrjmgJdeIdqQkxZItBAXC
+         4MhQ974sqMX/SaSU3kkx6UfBudLYqGXZdgvCPLGuuAXPndrY5wvBpao2bi5JX7m45uCJ
+         86HuOiHUkuzEmcVsuaNvu8C3/j2sg2qkSDFxigmpEqke/C5cciHGSrXRyMcRm/uKbqK2
+         BYZkqY9d0xbZnf8pa7kBSmYv5ACBSXt5D5h8uIjkeK7ZYPSHnOCB6O2aNRpZwOh7ayuV
+         MpCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/MRnxbjz1Xv9wb4xXAKX3Jx0kdP69/dxq0cQR/4W0mE=;
+        b=Mkn7EIUHD5HcX72JbSDBBTQkoKThpKHs0JcYrG54t2pXGcAXe198kmP7HJ6saxBFzf
+         PxKBsPKt1nbJAmMRvt/zStjxg+yT/C/OMXhQ0MFHCcpvzeXjKdyeIEMEKJ21QmedxKai
+         KgItn5X26XLY8U2ezUVdwhQFhtAj2cA6PDg+Y8ig2hM24MkGgv9jsik2WBIKRlacWMCV
+         FvHvcejPOHuk92L8aM51VN0mhmP0YlAy154fsK2WI1huKsZq3eoXzDp5wS3mFKvCZY7c
+         712cpHdynjuA/uYThSF0KiBZW8EjQRkdJmagqVwzSq85czsTbSmdzFUQGVLf8U3XJm6n
+         WpQA==
+X-Gm-Message-State: APjAAAVHXMBvOK3yTMHHAGvYvmKlo+za1GX2OA4kR0l6R4+ELu2b6acX
+        u665dGLO/oeXLbvHE3nOMMezKKgu13EkMtgbvMePhw==
+X-Google-Smtp-Source: APXvYqxMR89cP6StUyYoKcNyCEY6rlMZMM3t6Srnd+J04T1e2Dc+c+Hfl5ihzwhFcAWsP5k+dytIMQalsbxdJhry47Y=
+X-Received: by 2002:a6b:7d49:: with SMTP id d9mr5969234ioq.50.1565881322002;
+ Thu, 15 Aug 2019 08:02:02 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eff8ff50-8c27-468a-5848-08d721917ca2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 15:01:43.8135
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Rx5IOwulmj/jTaxkShwIhWzGkx9xLBsz9T2m/VxjJBM2xrnzxNp9f2kkGfNro0dhKUXNP82QGQV3sVxrMtX4oRFcmNtez4a0h0b5H6W8f3c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1596
+References: <cover.1565188228.git.ilubashe@akamai.com> <291d2cda6ee75b4cd4c9ce717c177db18bf03a31.1565188228.git.ilubashe@akamai.com>
+ <CANLsYkxZE0CQJKQ-bFi=zFV5vTCbL2v76+x1fmCpqNruqWiFXg@mail.gmail.com>
+ <20190814184814.GM9280@kernel.org> <20190814185213.GN9280@kernel.org> <23f7b8c7616a467c93ee2c77e8ffd3cf@usma1ex-dag1mb6.msg.corp.akamai.com>
+In-Reply-To: <23f7b8c7616a467c93ee2c77e8ffd3cf@usma1ex-dag1mb6.msg.corp.akamai.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 15 Aug 2019 09:01:51 -0600
+Message-ID: <CANLsYkyhSO13NhKMkCsHT87z-380JHDKsM3U_R=HesN0bKEDPA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] perf: Use CAP_SYSLOG with kptr_restrict checks
+To:     "Lubashev, Igor" <ilubashe@akamai.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        James Morris <jmorris@namei.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg, hi Laurent,
-
-Thank you for your feedback!
-
-> From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Sent: 15 August 2019 15:53
-> Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
->=20
-> On Thu, Aug 15, 2019 at 02:31:26PM +0000, Fabrizio Castro wrote:
-> > Hi Greg, hi Laurent,
-> >
-> > Thank you for your feedback!
-> >
-> > > From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.ker=
-nel.org> On Behalf Of Laurent Pinchart
-> > > Sent: 15 August 2019 15:15
-> > > Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_tim=
-ings
-> > >
-> > > Hi Greg,
-> > >
-> > > On Thu, Aug 15, 2019 at 04:04:00PM +0200, Greg Kroah-Hartman wrote:
-> > > > On Thu, Aug 15, 2019 at 04:18:38PM +0300, Laurent Pinchart wrote:
-> > > > > Hi Fabrizio,
-> > > > >
-> > > > > (CC'ing Greg as the architect of the SPDX move)
+On Wed, 14 Aug 2019 at 14:02, Lubashev, Igor <ilubashe@akamai.com> wrote:
+>
+> > On Wed, August 14, 2019 at 2:52 PM Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com> wrote:
+> > Em Wed, Aug 14, 2019 at 03:48:14PM -0300, Arnaldo Carvalho de Melo
+> > escreveu:
+> > > Em Wed, Aug 14, 2019 at 12:04:33PM -0600, Mathieu Poirier escreveu:
+> > > > # echo 0 > /proc/sys/kernel/kptr_restrict # ./tools/perf/perf record
+> > > > -e instructions:k uname
+> > > > perf: Segmentation fault
+> > > > Obtained 10 stack frames.
+> > > > ./tools/perf/perf(sighandler_dump_stack+0x44) [0x55af9e5da5d4]
+> > > > /lib/x86_64-linux-gnu/libc.so.6(+0x3ef20) [0x7fd31efb6f20]
+> > > > ./tools/perf/perf(perf_event__synthesize_kernel_mmap+0xa7)
+> > > > [0x55af9e590337]
+> > > > ./tools/perf/perf(+0x1cf5be) [0x55af9e50c5be]
+> > > > ./tools/perf/perf(cmd_record+0x1022) [0x55af9e50dff2]
+> > > > ./tools/perf/perf(+0x23f98d) [0x55af9e57c98d]
+> > > > ./tools/perf/perf(+0x23fc9e) [0x55af9e57cc9e]
+> > > > ./tools/perf/perf(main+0x369) [0x55af9e4f6bc9]
+> > > > /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xe7)
+> > > > [0x7fd31ef99b97]
+> > > > ./tools/perf/perf(_start+0x2a) [0x55af9e4f704a] Segmentation fault
 > > > >
-> > > > _one of_, not the one that did the most of he work, that would be T=
-homas :)
-> > > >
-> > > > > On Thu, Aug 15, 2019 at 12:04:27PM +0100, Fabrizio Castro wrote:
-> > > > > > The information represented by drm_bridge_timings is also
-> > > > > > needed by panels, therefore rename drm_bridge_timings to
-> > > > > > drm_timings.
-> > > > > >
-> > > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > > > > > Link: https://www.spinics.net/lists/linux-renesas-soc/msg43271.=
-html
-> > > > > >
-> > > > > > ---
-> > > > > > v1->v2:
-> > > > > > * new patch
-> > > > > >
-> > > > > > I have copied the license from include/drm/drm_bridge.h as that=
-'s
-> > > > > > where the struct originally came from. What's the right SPDX li=
-cense
-> > > > > > to use in this case?
-> > > > >
-> > > > > https://wiki.spdx.org/view/Legal_Team/Decisions/Dealing_with_Publ=
-ic_Domain_within_SPDX_Files
-> > > > >
-> > > > > Greg, any idea on how we should handle this ?
-> > > >
-> > > > Ugh, what lunacy.  But drm_bridge.h is NOT under any "public domain=
-"
-> > > > license, so why is that an issue here?  This looks like a "normal" =
-bsd 3
-> > > > clause license to me, right?
+> > > > I can reproduce this on both x86 and ARM64.
 > > >
-> > > You're right, I overread part of the text in drm_bridge.h, it seems t=
-o
-> > > indeed be covered by a BSD 3 clause license. Sorry for the noise.
+> > > I don't see this with these two csets removed:
+> > >
+> > > 7ff5b5911144 perf symbols: Use CAP_SYSLOG with kptr_restrict checks
+> > > d7604b66102e perf tools: Use CAP_SYS_ADMIN with perf_event_paranoid
+> > > checks
+> > >
+> > > Which were the ones I guessed were related to the problem you
+> > > reported, so they are out of my ongoing perf/core pull request to
+> > > Ingo/Thomas, now trying with these applied and your instructions...
 > >
-> > Mmm... This is the template for the BSD-3-Clause:
+> > Can't repro:
 > >
-> > Copyright (c) <YEAR>, <OWNER>
-> > All rights reserved.
+> > [root@quaco ~]# cat /proc/sys/kernel/kptr_restrict
+> > 0
+> > [root@quaco ~]# perf record -e instructions:k uname Linux [ perf record:
+> > Woken up 1 times to write data ] [ perf record: Captured and wrote 0.024 MB
+> > perf.data (1 samples) ] [root@quaco ~]# echo 1 >
+> > /proc/sys/kernel/kptr_restrict [root@quaco ~]# perf record -e instructions:k
+> > uname Linux [ perf record: Woken up 1 times to write data ] [ perf record:
+> > Captured and wrote 0.024 MB perf.data (1 samples) ] [root@quaco ~]# echo
+> > 0 > /proc/sys/kernel/kptr_restrict [root@quaco ~]# perf record -e
+> > instructions:k uname Linux [ perf record: Woken up 1 times to write data ] [
+> > perf record: Captured and wrote 0.024 MB perf.data (1 samples) ]
+> > [root@quaco ~]#
 > >
-> > Redistribution and use in source and binary forms, with or without modi=
-fication, are permitted provided that the following
-> conditions are met:
-> >
-> > Redistributions of source code must retain the above copyright notice, =
-this list of conditions and the following disclaimer.
-> > Redistributions in binary form must reproduce the above copyright notic=
-e, this list of conditions and the following disclaimer in the
-> documentation and/or other materials provided with the distribution.
-> > Neither the name of the <ORGANIZATION> nor the names of its contributor=
-s may be used to endorse or promote products derived
-> from this software without specific prior written permission.
-> > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS=
- IS" AND ANY EXPRESS OR IMPLIED
-> WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERC=
-HANTABILITY AND FITNESS FOR A PARTICULAR
-> PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIB=
-UTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-> INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT =
-NOT LIMITED TO, PROCUREMENT OF
-> SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS =
-INTERRUPTION) HOWEVER CAUSED AND ON ANY
-> THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCL=
-UDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY
-> WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY O=
-F SUCH DAMAGE.
-> >
-> > And this is the license coming from include/drm/drm_bridge.h:
-> >
-> > /*
-> >  * Copyright (c) 2016 Intel Corporation
-> >  *
-> >  * Permission to use, copy, modify, distribute, and sell this software =
-and its
-> >  * documentation for any purpose is hereby granted without fee, provide=
-d that
-> >  * the above copyright notice appear in all copies and that both that c=
-opyright
-> >  * notice and this permission notice appear in supporting documentation=
-, and
-> >  * that the name of the copyright holders not be used in advertising or
-> >  * publicity pertaining to distribution of the software without specifi=
-c,
-> >  * written prior permission.  The copyright holders make no representat=
-ions
-> >  * about the suitability of this software for any purpose.  It is provi=
-ded "as
-> >  * is" without express or implied warranty.
-> >  *
-> >  * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SO=
-FTWARE,
-> >  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN =
-NO
-> >  * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIREC=
-T OR
-> >  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS =
-OF USE,
-> >  * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTH=
-ER
-> >  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PER=
-FORMANCE
-> >  * OF THIS SOFTWARE.
-> >  */
-> >
-> > Perhaps I am completely wrong here, and I am not a lawyer, but the word=
-ing seems different enough to me...
-> > I am happy to use "BSD-3-Clause" though. Laurent please double check.
->=20
-> Please talk to your lawyers about this, we are not them...
+> > [acme@quaco perf]$ git log --oneline --author Lubashev tools/
+> > 7ff5b5911144 (HEAD -> perf/cap, acme.korg/tmp.perf/cap,
+> > acme.korg/perf/cap) perf symbols: Use CAP_SYSLOG with kptr_restrict
+> > checks d7604b66102e perf tools: Use CAP_SYS_ADMIN with
+> > perf_event_paranoid checks c766f3df635d perf ftrace: Use CAP_SYS_ADMIN
+> > instead of euid==0 c22e150e3afa perf tools: Add helpers to use capabilities if
+> > present
+> > 74d5f3d06f70 tools build: Add capability-related feature detection perf
+> > version 5.3.rc4.g7ff5b5911144 [acme@quaco perf]$
+>
+> I got an ARM64 cloud VM, but I cannot reproduce.
+> # cat /proc/sys/kernel/kptr_restrict
+> 0
+>
+> Perf trace works fine (does not die):
+> # ./perf trace -a
+>
+> Here is my setup:
+> Repo: git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git
+> Branch: tmp.perf/cap
+> Commit: 7ff5b5911 "perf symbols: Use CAP_SYSLOG with kptr_restrict checks"
+> gcc --version: gcc (Ubuntu/Linaro 7.4.0-1ubuntu1~18.04.1) 7.4.0
+> uname -a: Linux arm-4-par-1 4.9.93-mainline-rev1 #1 SMP Tue Apr 10 09:54:46 UTC 2018 aarch64 aarch64 aarch64 GNU/Linux
+> lsb_release -a: Ubuntu 18.04.3 LTS
+>
+> Auto-detecting system features:
+> ...                         dwarf: [ on  ]
+> ...            dwarf_getlocations: [ on  ]
+> ...                         glibc: [ on  ]
+> ...                          gtk2: [ on  ]
+> ...                      libaudit: [ on  ]
+> ...                        libbfd: [ on  ]
+> ...                        libcap: [ on  ]
+> ...                        libelf: [ on  ]
+> ...                       libnuma: [ on  ]
+> ...        numa_num_possible_cpus: [ on  ]
+> ...                       libperl: [ on  ]
+> ...                     libpython: [ on  ]
+> ...                     libcrypto: [ on  ]
+> ...                     libunwind: [ on  ]
+> ...            libdw-dwarf-unwind: [ on  ]
+> ...                          zlib: [ on  ]
+> ...                          lzma: [ on  ]
+> ...                     get_cpuid: [ OFF ]
+> ...                           bpf: [ on  ]
+> ...                        libaio: [ on  ]
+> ...                       libzstd: [ on  ]
+> ...        disassembler-four-args: [ on  ]
 
-I am really sorry for the trouble (and the waste of time)!
+Thank you for posting your configuration.  I will see where things are
+different with mine.
 
-I'll try and use "BSD-3-Clause" for the next version and I'll see what happ=
-ens.
-
-Thanks,
-Fab
-
->=20
-> thanks,
->=20
-> greg k-h
+>
+> I also could not reproduce on x86:
+> lsb_release -a: Ubuntu 18.04.1 LTS
+> gcc --version: gcc (Ubuntu 7.4.0-1ubuntu1~18.04aka10.0.0) 7.4.0
+> uname -r: 4.4.0-154-generic
