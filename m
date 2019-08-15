@@ -2,109 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D67E58EA30
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B87568EA3B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:29:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731231AbfHOL1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 07:27:39 -0400
-Received: from mail-lf1-f50.google.com ([209.85.167.50]:41800 "EHLO
-        mail-lf1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729909AbfHOL1j (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:27:39 -0400
-Received: by mail-lf1-f50.google.com with SMTP id 62so1410289lfa.8;
-        Thu, 15 Aug 2019 04:27:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=xUxmXNBF0cpbiVK6x0jPufNmerVF62JVW8riEyG2SSg=;
-        b=i/B4LZkyTHGRnn3GlG2EeIeggZoupuOFCJDYO6AUgaTqob4f7jtknE1vFXgJtHnnez
-         LuTePhPxYpgN12uii5oFJiwsXuYCCrzalUiUNXe1lp7IYwQpxqUd66jfC2jKqW4kAsuh
-         f8iRCoYo/JAMOU0J7R2PN0UUkrlXoyZ+Bl/SV+PhbKIbbJuZdCltGhNE+J9A4s5yCRmJ
-         B7sMHO0ZpuxCUAGuTDn6QNSVxQ6s/CmzUTL4g1UaR2/SIPpmntAbJgQvROZiOmosUAHg
-         j/Ijpt8H4jGJdUVzo+DEeQhIg2xK9ICTvebJwBTXyzUfpb/BWIU7XP93ILWN8VpWzOvg
-         ShOA==
-X-Gm-Message-State: APjAAAUBUg02r/aQ1tJ1HXC9Uj27Abir3Syo2UGaSZLFMs8mPlsbw1R1
-        9iHWGmevmJJIN7SwN5zOXEA=
-X-Google-Smtp-Source: APXvYqyR2tocJ5yjqNECkZryDtNzNxZMWT3PiZpHYCtkdJLEPnxCc3kjEFYscHpgkmsc+8XHcTSOlA==
-X-Received: by 2002:ac2:5ec3:: with SMTP id d3mr2101249lfq.44.1565868456756;
-        Thu, 15 Aug 2019 04:27:36 -0700 (PDT)
-Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
-        by smtp.gmail.com with ESMTPSA id j30sm400135lfk.48.2019.08.15.04.27.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 04:27:36 -0700 (PDT)
-Received: from johan by xi.terra with local (Exim 4.92)
-        (envelope-from <johan@kernel.org>)
-        id 1hyDur-00087s-OG; Thu, 15 Aug 2019 13:27:38 +0200
-Date:   Thu, 15 Aug 2019 13:27:37 +0200
-From:   Johan Hovold <johan@kernel.org>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Lars Melin <larsm17@gmail.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, Pavel Machek <pavel@ucw.cz>,
-        Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCHv2] USB: serial: option: Add Motorola modem UARTs
-Message-ID: <20190815112737.GD32300@localhost>
-References: <20190815082602.51765-1-tony@atomide.com>
+        id S1731571AbfHOL24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 07:28:56 -0400
+Received: from mga05.intel.com ([192.55.52.43]:60658 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728128AbfHOL24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 07:28:56 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 04:28:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="184597668"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 15 Aug 2019 04:28:53 -0700
+Subject: Re: [PATCH v3 1/3] mmc: sdhci: Add PLL Enable support to internal
+ clock setup
+To:     "Michael K. Johnson" <johnsonm@danlj.org>
+Cc:     ulf.hansson@linaro.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org,
+        Ben Chuang <ben.chuang@genesyslogic.com.tw>
+References: <20190726020746.GB12042@people.danlj.org>
+ <acc74e9e-ca41-a5dd-780a-615745d70101@intel.com>
+ <20190812225611.GA30758@people.danlj.org>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <d6432410-6431-efdb-4e28-a601493e4916@intel.com>
+Date:   Thu, 15 Aug 2019 14:27:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190815082602.51765-1-tony@atomide.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190812225611.GA30758@people.danlj.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 01:26:02AM -0700, Tony Lindgren wrote:
-> On Motorola Mapphone devices such as Droid 4 there are five USB ports
-> that do not use the same layout as Gobi 1K/2K/etc devices listed in
-> qcserial.c. So we should use qcaux.c or option.c as noted by
-> Dan Williams <dan.j.williams@intel.com>.
+On 13/08/19 1:56 AM, Michael K. Johnson wrote:
+> The GL9750 and GL9755 chipsets, and possibly others, require PLL Enable
+> setup as part of the internal clock setup as described in 3.2.1 Internal
+> Clock Setup Sequence of SD Host Controller Simplified Specification
+> Version 4.20.  This changes the timeouts to the new specification of
+> 150ms for each step and is documented as safe for "prior versions which
+> do not support PLL Enable."
 > 
-> As the Motorola USB serial ports have an interrupt endpoint as shown
-> with lsusb -v, we should use option.c instead of qcaux.c as pointed out
-> by Johan Hovold <johan@kernel.org>.
-> 
-> The ff/ff/ff interfaces seem to always be UARTs on Motorola devices.
-> For the other interfaces, class 0x0a (CDC Data) should not in general
-> be added as they are typically part of a multi-interface function as
-> noted earlier by Bjørn Mork <bjorn@mork.no>.
-> 
-> However, looking at the Motorola mapphone kernel code, the mdm6600 0x0a
-> class is only used for flashing the modem firmware, and there are no
-> other interfaces. So I've added that too with more details below as it
-> works just fine.
-> 
-> The ttyUSB ports on Droid 4 are:
-> 
-> ttyUSB0 DIAG, CQDM-capable
-> ttyUSB1 MUX or NMEA, no response
-> ttyUSB2 MUX or NMEA, no response
-> ttyUSB3 TCMD
-> ttyUSB4 AT-capable
+> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> Co-developed-by: Michael K Johnson <johnsonm@danlj.org>
 
-> Tested-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Tony Lingren <tony@atomide.com>
+Did you mean for this patch to be "From:" Ben Chuang because otherwise
+"Co-developed-by" the author is redundant.
 
-I fixed up the typo in your name here, which checkpatch caught.
-
-> ---
+> Signed-off-by: Michael K Johnson <johnsonm@danlj.org>
 > 
-> Changes since v1:
-> - Leave out defines as suggested by Lars
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 59acf8e3331e..9106ebc7a422 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -1636,8 +1636,8 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
+>  	clk |= SDHCI_CLOCK_INT_EN;
+>  	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>  
+> -	/* Wait max 20 ms */
+> -	timeout = ktime_add_ms(ktime_get(), 20);
+> +	/* Wait max 150 ms */
+> +	timeout = ktime_add_ms(ktime_get(), 150);
 
-Thanks, Tony. Now applied.
+Should be a separate patch.
 
-Johan
+>  	while (1) {
+>  		bool timedout = ktime_after(ktime_get(), timeout);
+>  
+> @@ -1653,6 +1653,29 @@ void sdhci_enable_clk(struct sdhci_host *host, u16 clk)
+>  		udelay(10);
+>  	}
+>  
+> +	if (host->version >= SDHCI_SPEC_410 && host->v4_mode) {
+> +		clk |= SDHCI_CLOCK_PLL_EN;
+> +		clk &= ~SDHCI_CLOCK_INT_STABLE;
+> +		sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+> +
+> +		/* Wait max 150 ms */
+> +		timeout = ktime_add_ms(ktime_get(), 150);
+> +		while (1) {
+> +			bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +			clk = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
+> +			if (clk & SDHCI_CLOCK_INT_STABLE)
+> +				break;
+> +			if (timedout) {
+> +				pr_err("%s: PLL clock never stabilised.\n",
+> +				       mmc_hostname(host->mmc));
+> +				sdhci_dumpregs(host);
+> +				return;
+> +			}
+> +			udelay(10);
+> +		}
+> +	}
+> +
+>  	clk |= SDHCI_CLOCK_CARD_EN;
+>  	sdhci_writew(host, clk, SDHCI_CLOCK_CONTROL);
+>  }
+> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> index 199712e7adbb..72601a4d2e95 100644
+> --- a/drivers/mmc/host/sdhci.h
+> +++ b/drivers/mmc/host/sdhci.h
+> @@ -114,6 +114,7 @@
+>  #define  SDHCI_DIV_HI_MASK	0x300
+>  #define  SDHCI_PROG_CLOCK_MODE	0x0020
+>  #define  SDHCI_CLOCK_CARD_EN	0x0004
+> +#define  SDHCI_CLOCK_PLL_EN	0x0008
+>  #define  SDHCI_CLOCK_INT_STABLE	0x0002
+>  #define  SDHCI_CLOCK_INT_EN	0x0001
+>  
+> 
+
