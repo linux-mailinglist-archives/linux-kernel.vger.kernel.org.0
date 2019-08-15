@@ -2,97 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D490D8F60E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:56:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69D638F614
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:58:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732991AbfHOU4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 16:56:43 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35150 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732521AbfHOU4m (ORCPT
+        id S1732780AbfHOU6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 16:58:53 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50208 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfHOU6w (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 16:56:42 -0400
-Received: by mail-lj1-f196.google.com with SMTP id l14so3425683lje.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 13:56:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=205QOW+yfCAbUC7sqLeSze+Vg1m2Bj7bh4Zpv9ddbPA=;
-        b=aHSHLFL2ibBV/js7b7q+6nct87exfpVR8oXwxPxV1O3q6wd5IOfaorpO5msfvRyevT
-         nYKoDnt9kqYmiQu9PjsrPREPSVxpT9OzKTUoF3JQdooYysuqXafyRNzG7iDVEFoE0IeS
-         3ZoOHiiqJprJgUr8Tfrc/9AbsMPLPS0kBBA/XGerv/Vt/XOsD71F+/3fM9gEBNUCWZAk
-         65kZb29OLfGg5zb6VfW7gyr4F/F42sB/LPn1fUg0usLHPPnJzxH+vgNnMrCd32OsCh0f
-         AsVZGyYS1Hp9/Ychz/oDWhBSoli78rvDYq7YI7yYJHv7gCl/+GTOkq96i3FHnuHbFrLk
-         kNOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=205QOW+yfCAbUC7sqLeSze+Vg1m2Bj7bh4Zpv9ddbPA=;
-        b=YVPGAuqtHCY/1+HiwVM1FD66FXFHE5Y0bGEmuJKap0at1o4Ckpm4D+JLBwOY1P92EH
-         y2JeCx+ejotSvPAKnU4cUFbPE9OiybVGJnDAy5ePKYJcEX+rL/iA6cO70r5eRr430t0j
-         zkQeisXkpABycY80e9pUs442kQ5qQeG2Eig4hZlp9lGHRTPwkYlk9gJl4n96xy6jCg/B
-         43k3IYfuY3cK2v/qHH1tVu6nfPgiSQU6lefwVSIGAi+XW+tJqmDvHrRkhuWR3Bm5f/jH
-         VrZpMPI1g+x8wsbUxK9zmC3TmlpHUle2tqk1sNYiZ7sYRvbxrWtQjoRQu4JpxLEZJRlr
-         0z+A==
-X-Gm-Message-State: APjAAAWgpocv5NBtILDovb1RIokqT2qokI2Ga7rA1DWw8J+P50AjbCT4
-        JIaD6gv7ars4Jvk1+f83Rb2wL3WGkgo=
-X-Google-Smtp-Source: APXvYqyuY8R61y7WvPEvbnEg7y6ACV3N9GK5MW1RpPiIpvbgr2NsI7s4+uvjBaACZ8Tx4DVi1QBdDA==
-X-Received: by 2002:a2e:8510:: with SMTP id j16mr3721390lji.174.1565902600461;
-        Thu, 15 Aug 2019 13:56:40 -0700 (PDT)
-Received: from localhost.localdomain (168-200-94-178.pool.ukrtel.net. [178.94.200.168])
-        by smtp.gmail.com with ESMTPSA id j14sm651676ljc.67.2019.08.15.13.56.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 13:56:39 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     bjorn.topel@intel.com
-Cc:     magnus.karlsson@intel.com, jonathan.lemon@gmail.com,
-        davem@davemloft.net, ast@kernel.org, daniel@iogearbox.net,
-        jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH bpf 1/1] xdp: unpin xdp umem pages in error path
-Date:   Thu, 15 Aug 2019 23:56:35 +0300
-Message-Id: <20190815205635.6536-1-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 15 Aug 2019 16:58:52 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3A4AB1402BC49;
+        Thu, 15 Aug 2019 13:58:52 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 13:58:51 -0700 (PDT)
+Message-Id: <20190815.135851.1942927063321516679.davem@davemloft.net>
+To:     hayeswang@realtek.com
+Cc:     netdev@vger.kernel.org, nic_swsd@realtek.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] r8152: divide the tx and rx bottom functions
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1394712342-15778-301-Taiwan-albertk@realtek.com>
+References: <1394712342-15778-301-Taiwan-albertk@realtek.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 15 Aug 2019 13:58:52 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix mem leak caused by missed unpin routine for umem pages.
-Fixes: 8aef7340ae9695 ("commit xsk: introduce xdp_umem_page")
+From: Hayes Wang <hayeswang@realtek.com>
+Date: Wed, 14 Aug 2019 16:30:17 +0800
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
+> Move the tx bottom function from NAPI to a new tasklet. Then, for
+> multi-cores, the bottom functions of tx and rx may be run at same
+> time with different cores. This is used to improve performance.
+> 
+> Signed-off-by: Hayes Wang <hayeswang@realtek.com>
 
-Based on bpf/master
+Theoretically, yes.
 
- net/xdp/xdp_umem.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+But do you have actual performance numbers showing this to be worth
+the change?
 
-diff --git a/net/xdp/xdp_umem.c b/net/xdp/xdp_umem.c
-index 83de74ca729a..688aac7a6943 100644
---- a/net/xdp/xdp_umem.c
-+++ b/net/xdp/xdp_umem.c
-@@ -365,7 +365,7 @@ static int xdp_umem_reg(struct xdp_umem *umem, struct xdp_umem_reg *mr)
- 	umem->pages = kcalloc(umem->npgs, sizeof(*umem->pages), GFP_KERNEL);
- 	if (!umem->pages) {
- 		err = -ENOMEM;
--		goto out_account;
-+		goto out_pin;
- 	}
- 
- 	for (i = 0; i < umem->npgs; i++)
-@@ -373,6 +373,8 @@ static int xdp_umem_reg(struct xdp_umem *umem, struct xdp_umem_reg *mr)
- 
- 	return 0;
- 
-+out_pin:
-+	xdp_umem_unpin_pages(umem);
- out_account:
- 	xdp_umem_unaccount_pages(umem);
- 	return err;
--- 
-2.17.1
-
+Always provide performance numbers with changes that are supposed to
+improve performance.
