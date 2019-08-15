@@ -2,21 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AA8D8EB2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B19768EB2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:12:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731726AbfHOML7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:11:59 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4279 "EHLO huawei.com"
+        id S1731441AbfHOMLw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:11:52 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:50936 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726865AbfHOML5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:11:57 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3F05632DDAE6107C412A;
+        id S1730032AbfHOMLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:11:51 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 71EE8288D19D6B69B9DB;
         Thu, 15 Aug 2019 20:11:40 +0800 (CST)
 Received: from HGHY4L002753561.china.huawei.com (10.133.215.186) by
  DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 15 Aug 2019 20:11:32 +0800
+ 14.3.439.0; Thu, 15 Aug 2019 20:11:33 +0800
 From:   Zhen Lei <thunder.leizhen@huawei.com>
 To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         "Jean-Philippe Brucker" <jean-philippe@linaro.org>,
@@ -31,10 +31,12 @@ To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
         linux-kernel <linux-kernel@vger.kernel.org>
 CC:     Zhen Lei <thunder.leizhen@huawei.com>
-Subject: [PATCH v2 0/2] iommu/iova: enhance the rcache optimization
-Date:   Thu, 15 Aug 2019 20:11:02 +0800
-Message-ID: <20190815121104.29140-1-thunder.leizhen@huawei.com>
+Subject: [PATCH v2 1/2] iommu/iova: introduce iova_magazine_compact_pfns()
+Date:   Thu, 15 Aug 2019 20:11:03 +0800
+Message-ID: <20190815121104.29140-2-thunder.leizhen@huawei.com>
 X-Mailer: git-send-email 2.21.0.windows.1
+In-Reply-To: <20190815121104.29140-1-thunder.leizhen@huawei.com>
+References: <20190815121104.29140-1-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -45,36 +47,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v1 --> v2
-1. I did not chagne the patches but added this cover-letter.
-2. Add a batch of reviewers base on
-   9257b4a206fc ("iommu/iova: introduce per-cpu caching to iova allocation")
-3. I described the problem I met in patch 2, but I hope below brief description
-   can help people to quickly understand.
-   Suppose there are six rcache sizes, each size can maximum hold 10000 IOVAs.
-   --------------------------------------------
-   |  4K   |  8K  | 16K  |  32K | 64K  | 128K |
-   --------------------------------------------
-   | 10000 | 9000 | 8500 | 8600 | 9200 | 7000 |
-   --------------------------------------------
-   As the above map displayed, the whole rcache buffered too many IOVAs. Now, the
-   worst case can be coming, suppose we need 20000 4K IOVAs at one time. That means
-   10000 IOVAs can be allocated from rcache, but another 10000 IOVAs should be 
-   allocated from RB tree base on alloc_iova() function. But the RB tree currently
-   have at least (9000 + 8500 + 8600 + 9200 + 7000) = 42300 nodes. The average speed
-   of RB tree traverse will be very slow. For my test scenario, the 4K size IOVAs are
-   frequently used, but others are not. So similarly, when the 20000 4K IOVAs are
-   continuous freed, the first 10000 IOVAs can be quickly buffered, but the other
-   10000 IOVAs can not.
+iova_magazine_free_pfns() can only free the whole magazine buffer, add
+iova_magazine_compact_pfns() to support free part of it.
 
-Zhen Lei (2):
-  iommu/iova: introduce iova_magazine_compact_pfns()
-  iommu/iova: enhance the rcache optimization
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+---
+ drivers/iommu/iova.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
- drivers/iommu/iova.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++----
- include/linux/iova.h |   1 +
- 2 files changed, 95 insertions(+), 6 deletions(-)
-
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 3e1a8a6755723a9..4b7a9efa0ef40af 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -795,18 +795,19 @@ static void iova_magazine_free(struct iova_magazine *mag)
+ 	kfree(mag);
+ }
+ 
+-static void
+-iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
++static void iova_magazine_compact_pfns(struct iova_magazine *mag,
++				       struct iova_domain *iovad,
++				       unsigned long newsize)
+ {
+ 	unsigned long flags;
+ 	int i;
+ 
+-	if (!mag)
++	if (!mag || mag->size <= newsize)
+ 		return;
+ 
+ 	spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+ 
+-	for (i = 0 ; i < mag->size; ++i) {
++	for (i = newsize; i < mag->size; ++i) {
+ 		struct iova *iova = private_find_iova(iovad, mag->pfns[i]);
+ 
+ 		BUG_ON(!iova);
+@@ -815,7 +816,13 @@ static void iova_magazine_free(struct iova_magazine *mag)
+ 
+ 	spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
+ 
+-	mag->size = 0;
++	mag->size = newsize;
++}
++
++static void
++iova_magazine_free_pfns(struct iova_magazine *mag, struct iova_domain *iovad)
++{
++	iova_magazine_compact_pfns(mag, iovad, 0);
+ }
+ 
+ static bool iova_magazine_full(struct iova_magazine *mag)
 -- 
 1.8.3
 
