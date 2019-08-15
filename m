@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 799618EC81
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:13:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D872F8EC44
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:03:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732179AbfHONNh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 09:13:37 -0400
-Received: from out4436.biz.mail.alibaba.com ([47.88.44.36]:59528 "EHLO
-        out4436.biz.mail.alibaba.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731933AbfHONNh (ORCPT
+        id S1732111AbfHOND3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 09:03:29 -0400
+Received: from out30-44.freemail.mail.aliyun.com ([115.124.30.44]:42891 "EHLO
+        out30-44.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732100AbfHOND2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:13:37 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04394;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TZYF1iF_1565874193;
-Received: from localhost(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TZYF1iF_1565874193)
+        Thu, 15 Aug 2019 09:03:28 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07487;MF=luoben@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0TZYSswy_1565874199;
+Received: from localhost(mailfrom:luoben@linux.alibaba.com fp:SMTPD_---0TZYSswy_1565874199)
           by smtp.aliyun-inc.com(127.0.0.1);
-          Thu, 15 Aug 2019 21:03:19 +0800
+          Thu, 15 Aug 2019 21:03:25 +0800
 From:   Ben Luo <luoben@linux.alibaba.com>
 To:     tglx@linutronix.de, alex.williamson@redhat.com
 Cc:     linux-kernel@vger.kernel.org, tao.ma@linux.alibaba.com,
         gerry@linux.alibaba.com, nanhai.zou@linux.alibaba.com,
         linyunsheng@huawei.com
-Subject: [PATCH v3 2/3] genirq: introduce update_irq_devid()
-Date:   Thu, 15 Aug 2019 21:03:00 +0800
-Message-Id: <6343a7e34ffdd0ddcd730996fc5dad3024e42251.1565857737.git.luoben@linux.alibaba.com>
+Subject: [PATCH v3 3/3] vfio_pci: make use of update_irq_devid and optimize irq ops
+Date:   Thu, 15 Aug 2019 21:03:01 +0800
+Message-Id: <f8838cf037055351d677e628f169cb21c6a76f02.1565857737.git.luoben@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <cover.1565857737.git.luoben@linux.alibaba.com>
 References: <cover.1565857737.git.luoben@linux.alibaba.com>
@@ -34,127 +34,165 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes, only the dev_id field of irqaction need to be changed.
-E.g. KVM VM with device passthru via VFIO may switch irq injection
-path between KVM irqfd and userspace eventfd. These two paths
-share the same irq num and handler for the same vector of a device,
-only with different dev_id referencing to different fds' contexts.
+When userspace (e.g. qemu) triggers a switch between KVM
+irqfd and userspace eventfd, only dev_id of irq action
+(i.e. the "trigger" in this patch's context) will be
+changed, but a free-then-request-irq action is taken in
+current code. And, irq affinity setting in VM will also
+trigger a free-then-request-irq action, which actually
+changes nothing, but only fires a producer re-registration
+to update irte in case that posted-interrupt is in use.
 
-So, instead of free/request irq, only update dev_id of irqaction.
-This narrows the gap for setting up new irq (and irte, if has)
-and also gains some performance benefit.
+This patch makes use of update_irq_devid() and optimize
+both cases above, which reduces the risk of losing interrupt
+and also cuts some overhead.
 
 Signed-off-by: Ben Luo <luoben@linux.alibaba.com>
 Reviewed-by: Liu Jiang <gerry@linux.alibaba.com>
-Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Zou Nanhai <nanhai.zou@linux.alibaba.com>
+Reviewed-by: Yunsheng Lin <linyunsheng@huawei.com>
 ---
- include/linux/interrupt.h |  3 ++
- kernel/irq/manage.c       | 78 +++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 81 insertions(+)
+ drivers/vfio/pci/vfio_pci_intrs.c | 101 ++++++++++++++++++++++++--------------
+ 1 file changed, 63 insertions(+), 38 deletions(-)
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 5b8328a..6060c5a 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -172,6 +172,9 @@ struct irqaction {
- request_percpu_nmi(unsigned int irq, irq_handler_t handler,
- 		   const char *devname, void __percpu *dev);
+diff --git a/drivers/vfio/pci/vfio_pci_intrs.c b/drivers/vfio/pci/vfio_pci_intrs.c
+index 3fa3f72..b2654ba 100644
+--- a/drivers/vfio/pci/vfio_pci_intrs.c
++++ b/drivers/vfio/pci/vfio_pci_intrs.c
+@@ -284,70 +284,95 @@ static int vfio_msi_enable(struct vfio_pci_device *vdev, int nvec, bool msix)
+ static int vfio_msi_set_vector_signal(struct vfio_pci_device *vdev,
+ 				      int vector, int fd, bool msix)
+ {
++	struct eventfd_ctx *trigger = NULL;
+ 	struct pci_dev *pdev = vdev->pdev;
+-	struct eventfd_ctx *trigger;
+ 	int irq, ret;
  
-+extern int __must_check
-+update_irq_devid(unsigned int irq, void *dev_id, void *new_dev_id);
-+
- extern const void *free_irq(unsigned int, void *);
- extern void free_percpu_irq(unsigned int, void __percpu *);
+ 	if (vector < 0 || vector >= vdev->num_ctx)
+ 		return -EINVAL;
  
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 6f9b20f..a76ef61 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -2064,6 +2064,84 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
- EXPORT_SYMBOL(request_threaded_irq);
- 
- /**
-+ *	update_irq_devid - update irq dev_id to a new one
-+ *	@irq: Interrupt line to update
-+ *	@dev_id: A cookie to find the irqaction to update
-+ *	@new_dev_id: New cookie passed to the handler function
-+ *
-+ *	Sometimes, only the cookie data need to be changed.
-+ *	Instead of free/request irq, only update dev_id here
-+ *	Not only to gain some performance benefit, but also
-+ *	reduce the risk of losing interrupt.
-+ *
-+ *	E.g. irq affinity setting in a VM with VFIO passthru
-+ *	device is carried out in a free-then-request-irq way
-+ *	since lack of this very function. The free_irq()
-+ *	eventually triggers deactivation of IR domain, which
-+ *	will cleanup IRTE. There is a gap before request_irq()
-+ *	finally setup the IRTE again. In this gap, a in-flight
-+ *	irq buffering in hardware layer may trigger DMAR fault
-+ *	and be lost.
-+ *
-+ *	On failure, it returns a negative value. On success,
-+ *	it returns 0
-+ */
-+int update_irq_devid(unsigned int irq, void *dev_id, void *new_dev_id)
-+{
-+	struct irq_desc *desc = irq_to_desc(irq);
-+	struct irqaction *action, **action_ptr;
-+	unsigned long flags;
-+
-+	if (in_interrupt()) {
-+		WARN(1, "Trying to update IRQ %d (dev_id %p to %p) from IRQ context!\n",
-+		     irq, dev_id, new_dev_id);
-+		return -EPERM;
++	if (fd >= 0) {
++		trigger = eventfd_ctx_fdget(fd);
++		if (IS_ERR(trigger))
++			return PTR_ERR(trigger);
 +	}
 +
-+	if (!desc)
-+		return -EINVAL;
-+
-+	chip_bus_lock(desc);
-+	raw_spin_lock_irqsave(&desc->lock, flags);
-+
-+	/*
-+	 * There can be multiple actions per IRQ descriptor, find the right
-+	 * one based on the dev_id:
-+	 */
-+	action_ptr = &desc->action;
-+	for (;;) {
-+		action = *action_ptr;
-+
-+		if (!action) {
-+			raw_spin_unlock_irqrestore(&desc->lock, flags);
-+			chip_bus_sync_unlock(desc);
-+			WARN(1, "Trying to update already-free IRQ %d (dev_id %p to %p)\n",
-+			     irq, dev_id, new_dev_id);
-+			return -ENXIO;
+ 	irq = pci_irq_vector(pdev, vector);
+ 
+ 	if (vdev->ctx[vector].trigger) {
+-		free_irq(irq, vdev->ctx[vector].trigger);
+-		irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
+-		kfree(vdev->ctx[vector].name);
+-		eventfd_ctx_put(vdev->ctx[vector].trigger);
+-		vdev->ctx[vector].trigger = NULL;
++		if (vdev->ctx[vector].trigger == trigger) {
++			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
++		} else if (trigger) {
++			ret = update_irq_devid(irq,
++					vdev->ctx[vector].trigger, trigger);
++			if (unlikely(ret)) {
++				dev_info(&pdev->dev,
++					 "update_irq_devid %d (token %p) fails: %d\n",
++					 irq, vdev->ctx[vector].trigger, ret);
++				eventfd_ctx_put(trigger);
++				return ret;
++			}
++			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
++			eventfd_ctx_put(vdev->ctx[vector].trigger);
++			vdev->ctx[vector].producer.token = trigger;
++			vdev->ctx[vector].trigger = trigger;
++		} else {
++			free_irq(irq, vdev->ctx[vector].trigger);
++			irq_bypass_unregister_producer(&vdev->ctx[vector].producer);
++			kfree(vdev->ctx[vector].name);
++			eventfd_ctx_put(vdev->ctx[vector].trigger);
++			vdev->ctx[vector].trigger = NULL;
 +		}
-+
-+		if (action->dev_id == dev_id) {
-+			action->dev_id = new_dev_id;
-+			break;
+ 	}
+ 
+ 	if (fd < 0)
+ 		return 0;
+ 
+-	vdev->ctx[vector].name = kasprintf(GFP_KERNEL, "vfio-msi%s[%d](%s)",
+-					   msix ? "x" : "", vector,
+-					   pci_name(pdev));
+-	if (!vdev->ctx[vector].name)
+-		return -ENOMEM;
++	if (!vdev->ctx[vector].trigger) {
++		vdev->ctx[vector].name = kasprintf(GFP_KERNEL,
++						   "vfio-msi%s[%d](%s)",
++						   msix ? "x" : "", vector,
++						   pci_name(pdev));
++		if (!vdev->ctx[vector].name) {
++			eventfd_ctx_put(trigger);
++			return -ENOMEM;
 +		}
-+		action_ptr = &action->next;
-+	}
-+
-+	raw_spin_unlock_irqrestore(&desc->lock, flags);
-+	chip_bus_sync_unlock(desc);
-+
-+	/*
-+	 * Make sure it's not being used on another CPU:
-+	 * There is a risk of UAF for old *dev_id, if it is
-+	 * freed in a short time after this func returns
-+	 */
-+	synchronize_irq(irq);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(update_irq_devid);
-+
-+/**
-  *	request_any_context_irq - allocate an interrupt line
-  *	@irq: Interrupt line to allocate
-  *	@handler: Function to be called when the IRQ occurs.
+ 
+-	trigger = eventfd_ctx_fdget(fd);
+-	if (IS_ERR(trigger)) {
+-		kfree(vdev->ctx[vector].name);
+-		return PTR_ERR(trigger);
+-	}
++		/*
++		 * The MSIx vector table resides in device memory which may be
++		 * cleared via backdoor resets. We don't allow direct access to
++		 * the vector table so even if a userspace driver attempts to
++		 * save/restore around such a reset it would be unsuccessful.
++		 * To avoid this, restore the cached value of the message prior
++		 * to enabling.
++		 */
++		if (msix) {
++			struct msi_msg msg;
+ 
+-	/*
+-	 * The MSIx vector table resides in device memory which may be cleared
+-	 * via backdoor resets. We don't allow direct access to the vector
+-	 * table so even if a userspace driver attempts to save/restore around
+-	 * such a reset it would be unsuccessful. To avoid this, restore the
+-	 * cached value of the message prior to enabling.
+-	 */
+-	if (msix) {
+-		struct msi_msg msg;
++			get_cached_msi_msg(irq, &msg);
++			pci_write_msi_msg(irq, &msg);
++		}
+ 
+-		get_cached_msi_msg(irq, &msg);
+-		pci_write_msi_msg(irq, &msg);
+-	}
++		ret = request_irq(irq, vfio_msihandler, 0,
++				  vdev->ctx[vector].name, trigger);
++		if (ret) {
++			kfree(vdev->ctx[vector].name);
++			eventfd_ctx_put(trigger);
++			return ret;
++		}
+ 
+-	ret = request_irq(irq, vfio_msihandler, 0,
+-			  vdev->ctx[vector].name, trigger);
+-	if (ret) {
+-		kfree(vdev->ctx[vector].name);
+-		eventfd_ctx_put(trigger);
+-		return ret;
++		vdev->ctx[vector].producer.token = trigger;
++		vdev->ctx[vector].producer.irq = irq;
++		vdev->ctx[vector].trigger = trigger;
+ 	}
+ 
+-	vdev->ctx[vector].producer.token = trigger;
+-	vdev->ctx[vector].producer.irq = irq;
++	/* always update irte for posted mode */
+ 	ret = irq_bypass_register_producer(&vdev->ctx[vector].producer);
+ 	if (unlikely(ret))
+ 		dev_info(&pdev->dev,
+ 		"irq bypass producer (token %p) registration fails: %d\n",
+ 		vdev->ctx[vector].producer.token, ret);
+ 
+-	vdev->ctx[vector].trigger = trigger;
+-
+ 	return 0;
+ }
+ 
 -- 
 1.8.3.1
 
