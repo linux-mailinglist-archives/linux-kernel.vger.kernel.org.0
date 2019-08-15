@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A63338F1BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB1E88F1DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731778AbfHOROf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:35 -0400
-Received: from mail-wr1-f100.google.com ([209.85.221.100]:35398 "EHLO
-        mail-wr1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731604AbfHORO3 (ORCPT
+        id S1732065AbfHORPV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:15:21 -0400
+Received: from mail-wm1-f97.google.com ([209.85.128.97]:55213 "EHLO
+        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731622AbfHORO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Aug 2019 13:14:29 -0400
-Received: by mail-wr1-f100.google.com with SMTP id k2so2876743wrq.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
+Received: by mail-wm1-f97.google.com with SMTP id p74so1872601wme.4
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=dXH5iCrajVuHNaQjRFbCRi3wnS4PzGsd3NOsiMm0Dhs=;
-        b=fJPOou7DPmoSekaNTKWz2svNRKwJDryECvk8Tum6HIjW091FFyDZH6XoyBe7H93nJ2
-         mr9dblmAIXAS5YqEhvPcNMbcqThKg4xQhk3e1aLLwiO27atlnR79+Mx5oWzDSLqn3Bn9
-         oiaq5kSaqER0Np8AngY+hdGXMlWKYr38ilaHfPVMs0/smbliyPYzLPqQSUmhDIRxMsjN
-         cV/8KjEa4PVInGDncKzA9VOuWNVi9rCQlSiMfppIvhml7EefbEAy0rPhRKDcQRkX5Y8W
-         M0nzxpzxl8J1Gz1qICpBMFhUzVUCcrx5fe8ppIq6X+/gk5RIA8vJER9VS7IIcdRzCr4f
-         2kAQ==
-X-Gm-Message-State: APjAAAWLeyvcOEoti6WM+oGBx5GM0N86pAIZlRLtKJULpN1CEILnqCIL
-        AaIemGE9IaW/cqInIi63G0yfri0bD4I8CiAYlUTMDspnvuj23ZimNhUtghwumYtwaQ==
-X-Google-Smtp-Source: APXvYqzdUat/m0ESOjrmVH6XsjvmuVYd5FZiZgx9NSQRpwZI4Y9N9JZMF8QNa37wGKT1mshgc86AuIZ3pySu
-X-Received: by 2002:a5d:4310:: with SMTP id h16mr6602997wrq.212.1565889267391;
+        bh=H42j7NEHlsPF3r/4bj3RbhLYDdVkIJ1yMKu66UQkvI4=;
+        b=oAzAkgNq0tPv4IhytmlfcgQvgtPa7T1FE4lOmKoYWLPh4+hJnKZVBgcOYDHTNFvVmL
+         b+Sh+QyaG3QuyNTzRlkITX6rncVlmJ+2AmZBWBjlOLUO53FEII7LTggXB6s+fRiBvdQr
+         UYrpAdSWlb5cZKS06Q/ionazQSi5h7PELm4nzxfclip2OKAb+Ms10O9zeu5Eqy1yL4+e
+         kvtCA+bHZg/0kxVZ4r86GaKGM+FAPon1bsmvzMuwuC6vhHat/2/8FGCprwvkzApT0Tx9
+         ZUfgl+Mc6Rpe22NKmkWGIDQakrgn1VhSMUX14mMYeWQdCRASqpBLt6RhCLKiGhTt6+2W
+         A9tw==
+X-Gm-Message-State: APjAAAX6B2BVrfavPJNbK1xuTVpAKYuTSSKfKD8kN4EUQrudQTHgTCJD
+        BDaxVVRSjUrDjRm4FmiksatHi5vK9eJJghp9Fph084cU0GDehBR9PoHODgG1PlXeyw==
+X-Google-Smtp-Source: APXvYqwMVHN1Cq4FcYozfOJt19P1x3Rl/aGkIkoFGx/zDiL5eHAyaKLoPUmxO54xTdVQEi0Sywi2RctYSaIS
+X-Received: by 2002:a1c:f702:: with SMTP id v2mr3843515wmh.114.1565889267826;
         Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id c128sm12461wma.50.2019.08.15.10.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        by smtp-relay.gmail.com with ESMTPS id 9sm7523wmf.3.2019.08.15.10.14.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
         Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKV-00052G-3O; Thu, 15 Aug 2019 17:14:27 +0000
+        id 1hyJKV-00052K-EL; Thu, 15 Aug 2019 17:14:27 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 93A0C2742B9E; Thu, 15 Aug 2019 18:14:26 +0100 (BST)
+        id CED5D2742BC7; Thu, 15 Aug 2019 18:14:26 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Hulk Robot <hulkci@huawei.com>, info@metux.net,
+Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
+        broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
-        perex@perex.cz, tglx@linutronix.de, tiwai@suse.com
-Subject: Applied "ASoC: wm8737: Fix copy-paste error in wm8737_snd_controls" to the asoc tree
-In-Reply-To: <20190815091920.64480-1-yuehaibing@huawei.com>
+        Mark Brown <broonie@kernel.org>, Paul.Handrigan@cirrus.com,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'" to the asoc tree
+In-Reply-To: <20190815090157.70036-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171426.93A0C2742B9E@ypsilon.sirena.org.uk>
+Message-Id: <20190815171426.CED5D2742BC7@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:26 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: wm8737: Fix copy-paste error in wm8737_snd_controls
+   ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'
 
 has been applied to the asoc tree at
 
@@ -86,39 +85,38 @@ to this mail.
 Thanks,
 Mark
 
-From 554b75bde64bcad9662530726d1483f7ef012069 Mon Sep 17 00:00:00 2001
+From 9b4275c415acca6264a3d7f1182589959c93d530 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Aug 2019 17:19:20 +0800
-Subject: [PATCH] ASoC: wm8737: Fix copy-paste error in wm8737_snd_controls
+Date: Thu, 15 Aug 2019 17:01:57 +0800
+Subject: [PATCH] ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'
 
-sound/soc/codecs/wm8737.c:112:29: warning:
- high_3d defined but not used [-Wunused-const-variable=]
+sound/soc/codecs/cs4349.c:358:32: warning:
+ cs4349_runtime_pm defined but not used [-Wunused-const-variable=]
 
-'high_3d' should be used for 3D High Cut-off.
+cs4349_runtime_pm ops already defined, it seems
+we should enable it.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 2a9ae13a2641 ("ASoC: Add initial WM8737 driver")
+Fixes: e40da86 ("ASoC: cs4349: Add support for Cirrus Logic CS4349")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Link: https://lore.kernel.org/r/20190815091920.64480-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190815090157.70036-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/wm8737.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/codecs/cs4349.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/codecs/wm8737.c b/sound/soc/codecs/wm8737.c
-index 0c246fb5e5ac..7a3f9fbe8d53 100644
---- a/sound/soc/codecs/wm8737.c
-+++ b/sound/soc/codecs/wm8737.c
-@@ -167,7 +167,7 @@ SOC_DOUBLE("Polarity Invert Switch", WM8737_ADC_CONTROL, 5, 6, 1, 0),
- SOC_SINGLE("3D Switch", WM8737_3D_ENHANCE, 0, 1, 0),
- SOC_SINGLE("3D Depth", WM8737_3D_ENHANCE, 1, 15, 0),
- SOC_ENUM("3D Low Cut-off", low_3d),
--SOC_ENUM("3D High Cut-off", low_3d),
-+SOC_ENUM("3D High Cut-off", high_3d),
- SOC_SINGLE_TLV("3D ADC Volume", WM8737_3D_ENHANCE, 7, 1, 1, adc_tlv),
- 
- SOC_SINGLE("Noise Gate Switch", WM8737_NOISE_GATE, 0, 1, 0),
+diff --git a/sound/soc/codecs/cs4349.c b/sound/soc/codecs/cs4349.c
+index 09716fab1e26..3381209a882d 100644
+--- a/sound/soc/codecs/cs4349.c
++++ b/sound/soc/codecs/cs4349.c
+@@ -378,6 +378,7 @@ static struct i2c_driver cs4349_i2c_driver = {
+ 	.driver = {
+ 		.name		= "cs4349",
+ 		.of_match_table	= cs4349_of_match,
++		.pm = &cs4349_runtime_pm,
+ 	},
+ 	.id_table	= cs4349_i2c_id,
+ 	.probe		= cs4349_i2c_probe,
 -- 
 2.20.1
 
