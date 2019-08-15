@@ -2,175 +2,199 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DF2308F7B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 01:42:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 416998F7BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 01:47:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfHOXmX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 19:42:23 -0400
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:45039 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbfHOXmX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 19:42:23 -0400
-Received: by mail-vs1-f68.google.com with SMTP id c7so2572115vse.11
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 16:42:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=adCOu9nDiZkMdpLyTmT0+/YcmhLlfKn9ZIk2EvNGin4=;
-        b=Uj64cP5/AeOk/CghcfT2p+2nbk1bQvzFbxwrxXRumbp1HjIKC5UjhXiXj3PMo6BeTd
-         AnqZm0zZ4O6fu8jqemv8mbSLPLQ8htWTuu9VL9CYJehnRUjUjYE0ILUP+t46sq1/QMjO
-         nnbiw9NXBTi7lnlSt32X/XOIfMz31t7M6U5oTxXCNAwUnzsSGjl17Hi+eT1n2N2zG9II
-         8/MFBywmzgMh0ARxu0GQ5UrRgmoyV6rod/NVvkMmW1qWCJXm0M/5c/QDMz0JDIlwPA7I
-         yEDQhWy7I2nGi7DCj6zEXAOdL/M+niByHpAp7hnTK2GrqGkfubUYYQR3DmWHYGx4MVtW
-         +Y4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=adCOu9nDiZkMdpLyTmT0+/YcmhLlfKn9ZIk2EvNGin4=;
-        b=S7lEwDVByGGtn4hJDIRXjVIliog7kP53m1FweWZo3EBzKqh46K88vOlVQwV05jtQ6D
-         +EiLGUx/Tuc8LPw7qdx8XqiHBiOVpRfrsoHv4jP3FXDQGBbP8kaGvxruJHg8BwUQvUR1
-         I55asdHQLme1m8s4xWzyb8bj0IFKmEjCsOjPXMq5onTbwHZImifnByU+Y1CextS/c23B
-         PXlm/NUR91ilkZuFHXMwHkc03V9tl2tbkcfKwm3unmw+9G/UtTQ9f1smAo1ysO5l5Dg7
-         8iBZE12phbozBB5eLUBkDxwhs2+tsKvXcdXRP/PH6tWHOJ2i+ymOqnazGRv8pYtdibkV
-         8p8A==
-X-Gm-Message-State: APjAAAV8qbC9ut8WYwL+dluP83pknVk/SIInCtgz+ckl5RUPwsePA0a0
-        KP0Ip0LVHDpBX2yiGzxs2jpEsjOQqBQqpcczooVQpg==
-X-Google-Smtp-Source: APXvYqwOgyRx9FKqQo804GjrF6fZbOZewFvcMKE8cJedUDm3jnXNo4HYJ9Gyh9H08j0Z0Kc4bxsVFkLNZaBHgEl1/q4=
-X-Received: by 2002:a67:cd9a:: with SMTP id r26mr4589218vsl.152.1565912541342;
- Thu, 15 Aug 2019 16:42:21 -0700 (PDT)
+        id S1726534AbfHOXr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 19:47:29 -0400
+Received: from mga17.intel.com ([192.55.52.151]:60459 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbfHOXr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 19:47:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 16:47:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
+   d="scan'208";a="260958906"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 15 Aug 2019 16:47:27 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 8BD9D5806C4;
+        Thu, 15 Aug 2019 16:47:27 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v6 2/9] PCI/ACPI: Add _OSC based negotiation support for
+ DPC
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+References: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <6cd9661f4b7250e0d988eea4b668e2e2f6dae7a8.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190815221723.GJ253360@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <e413b480-7e5e-4292-b5ad-a69b4c764dee@linux.intel.com>
+Date:   Thu, 15 Aug 2019 16:44:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <CAHX4x86QCrkrnPEfrup8k96wyqg=QR_vgetYLqP1AEa02fx1vw@mail.gmail.com>
- <20190813060249.GD6670@kroah.com> <CAHX4x87DbJ4cKuwVO3OS=UzwtwSucFCV073W8bYHOPHW8NiA=A@mail.gmail.com>
- <20190814212012.GB22618@kroah.com> <CAHX4x84YM0PcoQw17FxMz=6=NPq2+HUUw2GWZarAKzZxr+ax=A@mail.gmail.com>
-In-Reply-To: <CAHX4x84YM0PcoQw17FxMz=6=NPq2+HUUw2GWZarAKzZxr+ax=A@mail.gmail.com>
-From:   Duncan Laurie <dlaurie@google.com>
-Date:   Thu, 15 Aug 2019 17:42:05 -0600
-Message-ID: <CADv6+07pYd-kg1i0TJXOPnEO6NUp6D5+BQBkqUO0MDAE+cquow@mail.gmail.com>
-Subject: Re: Policy to keep USB ports powered in low-power states
-To:     Nick Crews <ncrews@chromium.org>
-Cc:     linux-usb@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Daniel Kurtz <djkurtz@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190815221723.GJ253360@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 6:08 PM Nick Crews <ncrews@chromium.org> wrote:
->
-> Adding Duncan Laurie who I think has some more intimate knowledge
-> of how this is implemented in HW. Duncan, could you correct or elaborate
-> on my answers below as you see fit? Also, sorry if I make some beginner
-> mistakes here, I'm just getting familiar with the USB subsystem, and thanks for
-> your patience.
->
-> On Wed, Aug 14, 2019 at 3:20 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Wed, Aug 14, 2019 at 02:12:07PM -0600, Nick Crews wrote:
-> > > Thanks for the fast response!
-> > >
-> > > On Tue, Aug 13, 2019 at 12:02 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Aug 12, 2019 at 06:08:43PM -0600, Nick Crews wrote:
-> > > > > Hi Greg!
-> > > >
-> > > > Hi!
-> > > >
-> > > > First off, please fix your email client to not send html so that vger
-> > > > does not reject your messages :)
-> > >
-> > > Thanks, should be good now.
-> > >
-> > > >
-> > > > > I am working on a Chrome OS device that supports a policy called "USB Power
-> > > > > Share," which allows users to turn the laptop into a charge pack for their
-> > > > > phone. When the policy is enabled, power will be supplied to the USB ports
-> > > > > even when the system is in low power states such as S3 and S5. When
-> > > > > disabled, then no power will be supplied in S3 and S5. I wrote a driver
-> > > > > <https://lore.kernel.org/patchwork/patch/1062995/> for this already as part
-> > > > > of drivers/platform/chrome/, but Enric Balletbo i Serra, the maintainer,
-> > > > > had the reasonable suggestion of trying to move this into the USB subsystem.
-> > > >
-> > > > Correct suggestion.
-> > > >
-> > > > > Has anything like this been done before? Do you have any preliminary
-> > > > > thoughts on this before I start writing code? A few things that I haven't
-> > > > > figured out yet:
-> > > > > - How to make this feature only available on certain devices. Using device
-> > > > > tree? Kconfig? Making a separate driver just for this device that plugs
-> > > > > into the USB core?
-> > > > > - The feature is only supported on some USB ports, so we need a way of
-> > > > > filtering on a per-port basis.
-> > > >
-> > > > Look at the drivers/usb/typec/ code, I think that should do everything
-> > > > you need here as this is a typec standard functionality, right?
-> > >
-> > > Unfortunately this is for USB 2.0 ports, so it's not type-C.
-> > > Is the type-C code still worth looking at?
-> >
-> > If this is for USB 2, does it use the "non-standard" hub commands to
-> > turn on and off power?  If so, why not just use the usbreset userspace
-> > program for that?
->
-> It does not use the standard hub commands. The USB ports are controlled
-> by an Embedded Controller (EC), so to control this policy we send a command
-> to the EC. Since the command to send to the EC is very specific, this would need
-> to go into a "hub driver" unique for these Wilco devices. We would make it so
-> that the normal hub registration is intercepted by something that sees this is a
-> Wilco device, and instead register the hub as a "wilco-hub", which has its own
-> special "power_share" sysfs attribute, but still is treated as a normal USB hub
-> otherwise?
->
 
+On 8/15/19 3:17 PM, Bjorn Helgaas wrote:
+> On Fri, Jul 26, 2019 at 02:43:12PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> As per PCI firmware specification r3.2 Downstream Port Containment
+>> Related Enhancements ECN, sec 4.5.1, table 4-6, OS can use bit 7 of _OSC
+>> Control Field to negotiate control over Downstream Port Containment
+>> (DPC) configuration of PCIe port.
+>>
+>> After _OSC negotiation, firmware will Set this bit to grant OS control
+>> over PCIe DPC configuration and Clear it if this feature was requested
+>> and denied, or was not requested.
+>>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> Cc: Len Brown <lenb@kernel.org>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/acpi/pci_root.c         | 6 ++++++
+>>   drivers/pci/pcie/portdrv_core.c | 3 ++-
+>>   drivers/pci/probe.c             | 1 +
+>>   include/linux/acpi.h            | 3 ++-
+>>   include/linux/pci.h             | 2 +-
+>>   5 files changed, 12 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+>> index 314a187ed572..73b08f40b0da 100644
+>> --- a/drivers/acpi/pci_root.c
+>> +++ b/drivers/acpi/pci_root.c
+>> @@ -142,6 +142,7 @@ static struct pci_osc_bit_struct pci_osc_control_bit[] = {
+>>   	{ OSC_PCI_EXPRESS_AER_CONTROL, "AER" },
+>>   	{ OSC_PCI_EXPRESS_CAPABILITY_CONTROL, "PCIeCapability" },
+>>   	{ OSC_PCI_EXPRESS_LTR_CONTROL, "LTR" },
+>> +	{ OSC_PCI_EXPRESS_DPC_CONTROL, "DPC" },
+>>   };
+>>   
+>>   static void decode_osc_bits(struct acpi_pci_root *root, char *msg, u32 word,
+>> @@ -488,6 +489,9 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
+>>   			control |= OSC_PCI_EXPRESS_AER_CONTROL;
+>>   	}
+>>   
+>> +	if (IS_ENABLED(CONFIG_PCIE_DPC))
+>> +		control |= OSC_PCI_EXPRESS_DPC_CONTROL;
+> Sec 4.5.2.4 says:
+>
+>    If the OS sets bit 7 of the Control field, it must set bit 7 of the
+>    Support field, indicating support for the Error Disconnect Recover
+>    event.
 
-I would say it is somewhat similar to the USB port power control which
-eventually calls into usb_acpi_set_power_state() but in this case it only
-affects the behavior when the system is NOT running.
+I think the correct dependency should be , if OS indicates support for 
+EDR then it must
+set bit 7 of the Control field to indicate support for DPC. As per DPC 
+control bit definition, setting
+this bit indicates requesting control of DPC for OS (not EDR).
 
-This design has a standalone USB charge power controller on the board
-that passes through the USB2 D+/D- pins from one port and is able to do
-BC1.2 negotiation when the host controller is not powered, assuming
-the chip has been enabled by the Embedded Controller.
-
+I will ask the spec author for clarification. But for now I will go with 
+spec requirement, I will merge this
+patch with "Expose EDR support via _OSC to BIOS" patch and push it to 
+the end of the patch set.
 
 >
-> >
-> > And how are you turning a USB 2 port into a power source?  That feels
-> > really odd given the spec.  Is this part of the standard somewhere or
-> > just a firmware/hardware hack that you are adding to a device?
+> I see that you do set bit 7 (OSC_PCI_EDR_SUPPORT) in the Support field
+> in a later patch, but I don't think we should have this intermediate
+> state where we set OSC_PCI_EXPRESS_DPC_CONTROL in Control but not
+> OSC_PCI_EDR_SUPPORT in Support.
 >
-> The EC twiddles something in the port' HW so that the port turns into a
-> DCP (Dedicated Charging Port) and only supplies power, not data. So I
-> think yes, this is a bit of a hack that does not conform to the spec.
+>>   	requested = control;
+>>   	status = acpi_pci_osc_control_set(handle, &control,
+>>   					  OSC_PCI_EXPRESS_CAPABILITY_CONTROL);
+>> @@ -917,6 +921,8 @@ struct pci_bus *acpi_pci_root_create(struct acpi_pci_root *root,
+>>   		host_bridge->native_pme = 0;
+>>   	if (!(root->osc_control_set & OSC_PCI_EXPRESS_LTR_CONTROL))
+>>   		host_bridge->native_ltr = 0;
+>> +	if (!(root->osc_control_set & OSC_PCI_EXPRESS_DPC_CONTROL))
+>> +		host_bridge->native_dpc = 0;
+>>   
+>>   	/*
+>>   	 * Evaluate the "PCI Boot Configuration" _DSM Function.  If it
+>> diff --git a/drivers/pci/pcie/portdrv_core.c b/drivers/pci/pcie/portdrv_core.c
+>> index 308c3e0c4a34..58c40fe7856f 100644
+>> --- a/drivers/pci/pcie/portdrv_core.c
+>> +++ b/drivers/pci/pcie/portdrv_core.c
+>> @@ -252,7 +252,8 @@ static int get_port_device_capability(struct pci_dev *dev)
+>>   	}
+>>   
+>>   	if (pci_find_ext_capability(dev, PCI_EXT_CAP_ID_DPC) &&
+>> -	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER)
+>> +	    pci_aer_available() && services & PCIE_PORT_SERVICE_AER &&
+>> +	    (pcie_ports_native || host->native_dpc))
+>>   		services |= PCIE_PORT_SERVICE_DPC;
+>>   
+>>   	if (pci_pcie_type(dev) == PCI_EXP_TYPE_DOWNSTREAM ||
+>> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+>> index a3c7338fad86..cf8acdd62089 100644
+>> --- a/drivers/pci/probe.c
+>> +++ b/drivers/pci/probe.c
+>> @@ -601,6 +601,7 @@ static void pci_init_host_bridge(struct pci_host_bridge *bridge)
+>>   	bridge->native_shpc_hotplug = 1;
+>>   	bridge->native_pme = 1;
+>>   	bridge->native_ltr = 1;
+>> +	bridge->native_dpc = 1;
+>>   }
+>>   
+>>   struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index 9426b9aaed86..8959ed322e15 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -525,7 +525,8 @@ extern bool osc_pc_lpi_support_confirmed;
+>>   #define OSC_PCI_EXPRESS_AER_CONTROL		0x00000008
+>>   #define OSC_PCI_EXPRESS_CAPABILITY_CONTROL	0x00000010
+>>   #define OSC_PCI_EXPRESS_LTR_CONTROL		0x00000020
+>> -#define OSC_PCI_CONTROL_MASKS			0x0000003f
+>> +#define OSC_PCI_EXPRESS_DPC_CONTROL		0x00000080
+>> +#define OSC_PCI_CONTROL_MASKS			0x000000ff
+> You added 0x80, but 0x3f | 0x80 == 0xbf, not 0xff, so I expected
+> OSC_PCI_CONTROL_MASKS would change to 0xbf.  Why the difference?
+Good catch. Even though spec has support for bit[6], it should be
+masked till OS supports it. I will fix it in next version.
 >
-> >
-> > Is there some port information in the firmware that describes this
-> > functionality?  If so, can you expose it through sysfs to the port that
-> > way?
+>>   #define ACPI_GSB_ACCESS_ATTRIB_QUICK		0x00000002
+>>   #define ACPI_GSB_ACCESS_ATTRIB_SEND_RCV         0x00000004
+>> diff --git a/include/linux/pci.h b/include/linux/pci.h
+>> index 9e700d9f9f28..9145136ca728 100644
+>> --- a/include/linux/pci.h
+>> +++ b/include/linux/pci.h
+>> @@ -510,7 +510,7 @@ struct pci_host_bridge {
+>>   	unsigned int	native_pme:1;		/* OS may use PCIe PME */
+>>   	unsigned int	native_ltr:1;		/* OS may use PCIe LTR */
+>>   	unsigned int	preserve_config:1;	/* Preserve FW resource setup */
+>> -
+>> +	unsigned int	native_dpc:1;		/* OS may use PCIe DPC */
+> Please put this next to the other "native_*" bits and preserve the
+> blank line.
+ok.
 >
-> [I'm not sure I'm answering your question, but] I believe that we could
-> make the BIOS firmware describe the USB ports' capabilities, and the
-> kernel's behavior would be gated upon what the firmware reports. I see
-> that struct usb_port already contains a "quirks" field, should we add a
-> POWER_SHARE quirk to include/linux/usb/quirks.h? I would guess that
-> should that should be reserved for quirks shared between many USB
-> devices/hubs?
->
+>>   	/* Resource alignment requirements */
+>>   	resource_size_t (*align_resource)(struct pci_dev *dev,
+>>   			const struct resource *res,
+>> -- 
+>> 2.21.0
+>>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
-
-We could add a Device Property to the affected USB port in ACPI and
-describe it that way, similar to other properties like 'vcc-supply', 'clocks',
-'vbus-detect', etc and hook it into the phy-generic driver.
-
-However I'm not clear on whether the phy driver binding works with XHCI
-when using ACPI, so this may not be an appropriate place either.
-
--duncan
