@@ -2,422 +2,973 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A77498EABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:53:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C661B8EA21
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 13:22:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730842AbfHOLxX convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 07:53:23 -0400
-Received: from m9a0003g.houston.softwaregrp.com ([15.124.64.68]:56692 "EHLO
-        m9a0003g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729986AbfHOLxW (ORCPT
+        id S1730969AbfHOLWq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 07:22:46 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:39382 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729157AbfHOLWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:53:22 -0400
-X-Greylist: delayed 1521 seconds by postgrey-1.27 at vger.kernel.org; Thu, 15 Aug 2019 07:53:21 EDT
-Received: FROM m9a0003g.houston.softwaregrp.com (15.121.0.190) BY m9a0003g.houston.softwaregrp.com WITH ESMTP;
- Thu, 15 Aug 2019 11:52:48 +0000
-Received: from M4W0334.microfocus.com (2002:f78:1192::f78:1192) by
- M9W0067.microfocus.com (2002:f79:be::f79:be) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 15 Aug 2019 11:16:13 +0000
-Received: from NAM05-DM3-obe.outbound.protection.outlook.com (15.124.8.14) by
- M4W0334.microfocus.com (15.120.17.146) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Thu, 15 Aug 2019 11:16:13 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=USABAu6ReCCpFXMK0fSbKQwrkgoaAqBlI/1N6qsDwIsPxhwWX8jLG4ROnqBzEhT4eyxbAnvyBblsaJI9+bu4K2qBitXHFE57Rc6v4J5SzaNLqaxnShSVBeQP+DP2kZlv7zycRfWjvnOEtTafddBLiNRZ71+tIjXkK+cwFfVsB1qGGrgSWGlBIG9cLSnb022kCcwjmBCMnEbG+i8Z08ELSYRwvaUMg0EWGAlpPswSHFnNbERlLL25USYVSuyLmcWOydICStz/2KIIkUouDrbSKAo9Dif8/J+KEcNz4dB8qqVCkvoLfu6E12nQEjSuaPkv4m6Ls+4rcrvtV/nNKVirmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XE5gjmJaG89rGFN2Wivn9jOi53U3V58G2S7W7jgVEtM=;
- b=JLAxBHVOnUtoxtRm4s9hbg+a84GDX3K5UJfc6bvBV7U1Besh++Z2dtx/o+46mRdvhtPi3hVZccDHJPDGBe98qL+BAP6dRJTAggv7rk6923kzBtZfkOcSuNIoZP+aD/Vlp5Z+rHNqVLUkAXhMGQcqSTkayr8jv3UcUPJMDGCLO/q2ZiinAPvuNxUgJ8A8pPIWKtJ/2eD/lgVqRqjWSGuLjWFE0bqCQuO+JTijlVmZfT5IBojMj03rnk/ToVj2daDAM2fMTfP+hGVtHLYVuJhXkQiXT3jBhE6I4oh6A9olfOgXINSDeCbnPJKfGPnZLAaWu4mQ593k/wctgOPy8t962Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Received: from BY5PR18MB3283.namprd18.prod.outlook.com (10.255.139.203) by
- BY5PR18MB3156.namprd18.prod.outlook.com (10.255.138.204) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Thu, 15 Aug 2019 11:16:12 +0000
-Received: from BY5PR18MB3283.namprd18.prod.outlook.com
- ([fe80::847e:511a:8cc2:8fca]) by BY5PR18MB3283.namprd18.prod.outlook.com
- ([fe80::847e:511a:8cc2:8fca%6]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
- 11:16:12 +0000
-From:   Chester Lin <clin@suse.com>
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-CC:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        Chester Lin <clin@suse.com>,
-        "guillaume.gardet@arm.com" <guillaume.gardet@arm.com>,
-        "ren_guo@c-sky.com" <ren_guo@c-sky.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, Gary Lin <GLin@suse.com>,
-        "Juergen Gross" <JGross@suse.com>, Joey Lee <JLee@suse.com>,
-        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] efi/arm: fix allocation failure when reserving the kernel
- base
-Thread-Topic: [PATCH] efi/arm: fix allocation failure when reserving the
- kernel base
-Thread-Index: AQHVSPSS9nx4lee000qskpi0lgLxmKbqoqP1gBFKchaAADaQgA==
-Date:   Thu, 15 Aug 2019 11:16:11 +0000
-Message-ID: <20190815111543.GA4728@linux-8mug>
-References: <20190802053744.5519-1-clin@suse.com>
- <CAKv+Gu-yaNYsLQOOcr8srW91-nt-w0e+RBqxXGOagiGGT69n1Q@mail.gmail.com>
- <CAKv+Gu8uwbY-JtjNbgoyY230X_M6xLchVM3OUg_oNWOJrF=iCg@mail.gmail.com>
-In-Reply-To: <CAKv+Gu8uwbY-JtjNbgoyY230X_M6xLchVM3OUg_oNWOJrF=iCg@mail.gmail.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB6PR04CA0032.eurprd04.prod.outlook.com (2603:10a6:6::45)
- To BY5PR18MB3283.namprd18.prod.outlook.com (2603:10b6:a03:196::11)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=clin@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [202.47.205.198]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 393e15ac-a8b3-43e8-c764-08d72171fa53
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BY5PR18MB3156;
-x-ms-traffictypediagnostic: BY5PR18MB3156:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BY5PR18MB3156F004A9C72E8E4B94B09FADAC0@BY5PR18MB3156.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01304918F3
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(4636009)(39860400002)(376002)(396003)(366004)(346002)(136003)(189003)(53434003)(199004)(476003)(71200400001)(6116002)(3846002)(71190400001)(256004)(316002)(6512007)(9686003)(6436002)(33716001)(66066001)(54906003)(25786009)(8936002)(7736002)(66946007)(305945005)(66446008)(66556008)(66476007)(64756008)(11346002)(53936002)(14444005)(486006)(446003)(7416002)(2906002)(1076003)(229853002)(26005)(86362001)(14454004)(386003)(81166006)(30864003)(102836004)(186003)(6506007)(81156014)(5660300002)(6246003)(478600001)(8676002)(53946003)(6486002)(33656002)(99286004)(52116002)(4326008)(6916009)(76176011);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3156;H:BY5PR18MB3283.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 1uPXBHWzlAb1VpHQ78IuMZT2wCmXMFfJyraYwBZnFAvfcmds9ynY/irOGLIBRBG1izdYZnLY4qqvT38TycxdTBRAhAywG0mwC39HuUGCQC238+MmiEuX1jA9Xm+C09CMPl2wckoaqR8CkLaN87K/XX/f9Ljw26ocKUhdVc53LFSuIPjXq8DCCdOQDMw/hnpO6/LCjgy2N5CDFKoYnahkfXoc3C+ggHGT1FyF4bgKdlJNFdCZ/ZQDNCPJSNDr5iSardGIzmYEd9GDTgfPNGaizo9DsakWpVaI7KPuV1clMBuAeWQ2hAJ79izAbvVsDh4s+eFbqcZrTuDQWH3gcxre6/Aj8IDs22mfC64Mu2NYZJQpAqtfrDrECCDvrQqQbEaiRgb8QWmekiXjBj0jBftUo11xW/q8N5a3Aeeulyqk5xU=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <17223CB882A0764185864C6E9EE256E0@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Thu, 15 Aug 2019 07:22:46 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7FBMd3f026074;
+        Thu, 15 Aug 2019 06:22:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565868159;
+        bh=wzHnUwzXaOeCSlGq80jahlM4LbU87kzZO/P428SlrFM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=LiCtSgpZjquP5Y2i98qI4chWz1ke/xFGSGXm1h9WJJ/q6Myj4gz8fRmfy2JI3IaAi
+         GiFKW6nmlX9cfEek6da/dKyzwbZYkPGUvHGdremlr5SMF2sysqGniwU/hJWwK9HPgo
+         dKNyFToxo9kbLGTzbgGU4RTnm2Mp/kMLyafKxQSo=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7FBMdde040521
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 15 Aug 2019 06:22:39 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 15
+ Aug 2019 06:22:38 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 15 Aug 2019 06:22:38 -0500
+Received: from [192.168.2.14] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7FBMZlO022664;
+        Thu, 15 Aug 2019 06:22:36 -0500
+Subject: Re: [PATCH v10 5/6] usb:cdns3 Add Cadence USB3 DRD Driver
+To:     Pawel Laszczak <pawell@cadence.com>, <felipe.balbi@linux.intel.com>
+CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <jbergsagel@ti.com>,
+        <nsekhar@ti.com>, <nm@ti.com>, <sureshp@cadence.com>,
+        <jpawar@cadence.com>, <kurahul@cadence.com>, <aniljoy@cadence.com>
+References: <1563733939-21214-1-git-send-email-pawell@cadence.com>
+ <1563733939-21214-6-git-send-email-pawell@cadence.com>
+From:   Roger Quadros <rogerq@ti.com>
+Message-ID: <61a14c20-c02c-776c-6ce1-3dd5d6abac8e@ti.com>
+Date:   Thu, 15 Aug 2019 14:22:35 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 393e15ac-a8b3-43e8-c764-08d72171fa53
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 11:16:11.6606
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: oXmlQmdB7lvTNqA8wQHo/5QtwH2IEEg0rfW+qR5AuPOfCbiwOhCJ5FU9NZOdR85b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3156
-X-OriginatorOrg: suse.com
+In-Reply-To: <1563733939-21214-6-git-send-email-pawell@cadence.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ard,
+Pawel,
 
-On Thu, Aug 15, 2019 at 10:59:43AM +0300, Ard Biesheuvel wrote:
-> On Sun, 4 Aug 2019 at 10:57, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
-> >
-> > Hello Chester,
-> >
-> > On Fri, 2 Aug 2019 at 08:40, Chester Lin <clin@suse.com> wrote:
-> > >
-> > > In some cases the arm32 efistub could fail to allocate memory for
-> > > uncompressed kernel. For example, we got the following error message when
-> > > verifying EFI stub on Raspberry Pi-2 [kernel-5.2.1 + grub-2.04] :
-> > >
-> > >   EFI stub: Booting Linux Kernel...
-> > >   EFI stub: ERROR: Unable to allocate memory for uncompressed kernel.
-> > >   EFI stub: ERROR: Failed to relocate kernel
-> > >
-> > > After checking the EFI memory map we found that the first page [0 - 0xfff]
-> > > had been reserved by Raspberry Pi-2's firmware, and the efistub tried to
-> > > set the dram base at 0, which was actually in a reserved region.
-> > >
-> >
-> > This by itself is a violation of the Linux boot protocol for 32-bit
-> > ARM when using the decompressor. The decompressor rounds down its own
-> > base address to a multiple of 128 MB, and assumes the whole area is
-> > available for the decompressed kernel and related data structures.
-> > (The first TEXT_OFFSET bytes are no longer used in practice, which is
-> > why putting a reserved region of 4 KB bytes works at the moment, but
-> > this is fragile). Note that the decompressor does not look at any DT
-> > or EFI provided memory maps *at all*.
-> >
-> > So unfortunately, this is not something we can fix in the kernel, but
-> > we should fix it in the bootloader or in GRUB, so it does not put any
-> > reserved regions in the first 128 MB of memory,
-> >
+On 21/07/2019 21:32, Pawel Laszczak wrote:
+> This patch introduce new Cadence USBSS DRD driver to Linux kernel.
 > 
-> OK, perhaps we can fix this by taking TEXT_OFFSET into account. The
-> ARM boot protocol docs are unclear about whether this memory should be
-> used or not, but it is no longer used for its original purpose (page
-> tables), and the RPi loader already keeps data there.
+> The Cadence USBSS DRD Controller is a highly configurable IP Core which
+> can be instantiated as Dual-Role Device (DRD), Peripheral Only and
+> Host Only (XHCI)configurations.
 > 
-> Can you check whether the following patch works for you?
+> The current driver has been validated with FPGA platform. We have
+> support for PCIe bus, which is used on FPGA prototyping.
 > 
-> diff --git a/drivers/firmware/efi/libstub/Makefile
-> b/drivers/firmware/efi/libstub/Makefile
-> index 0460c7581220..ee0661ddb25b 100644
-> --- a/drivers/firmware/efi/libstub/Makefile
-> +++ b/drivers/firmware/efi/libstub/Makefile
-> @@ -52,6 +52,7 @@ lib-$(CONFIG_EFI_ARMSTUB)     += arm-stub.o fdt.o
-> string.o random.o \
+> The host side of USBSS-DRD controller is compliant with XHCI
+> specification, so it works with standard XHCI Linux driver.
 > 
->  lib-$(CONFIG_ARM)              += arm32-stub.o
->  lib-$(CONFIG_ARM64)            += arm64-stub.o
-> +CFLAGS_arm32-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
->  CFLAGS_arm64-stub.o            := -DTEXT_OFFSET=$(TEXT_OFFSET)
-> 
->  #
-> diff --git a/drivers/firmware/efi/libstub/arm32-stub.c
-> b/drivers/firmware/efi/libstub/arm32-stub.c
-> index e8f7aefb6813..66ff0c8ec269 100644
-> --- a/drivers/firmware/efi/libstub/arm32-stub.c
-> +++ b/drivers/firmware/efi/libstub/arm32-stub.c
-> @@ -204,7 +204,7 @@ efi_status_t
-> handle_kernel_image(efi_system_table_t *sys_table,
->          * loaded. These assumptions are made by the decompressor,
->          * before any memory map is available.
->          */
-> -       dram_base = round_up(dram_base, SZ_128M);
-> +       dram_base = round_up(dram_base, SZ_128M) + TEXT_OFFSET;
-> 
->         status = reserve_kernel_base(sys_table, dram_base, reserve_addr,
->                                      reserve_size);
+> Signed-off-by: Pawel Laszczak <pawell@cadence.com>
+> ---
+>  drivers/usb/Kconfig                |    2 +
+>  drivers/usb/Makefile               |    2 +
+>  drivers/usb/cdns3/Kconfig          |   46 +
+>  drivers/usb/cdns3/Makefile         |   17 +
+>  drivers/usb/cdns3/cdns3-pci-wrap.c |  203 +++
+>  drivers/usb/cdns3/core.c           |  554 +++++++
+>  drivers/usb/cdns3/core.h           |  109 ++
+>  drivers/usb/cdns3/debug.h          |  171 ++
+>  drivers/usb/cdns3/debugfs.c        |   87 ++
+>  drivers/usb/cdns3/drd.c            |  390 +++++
+>  drivers/usb/cdns3/drd.h            |  166 ++
+>  drivers/usb/cdns3/ep0.c            |  914 +++++++++++
+>  drivers/usb/cdns3/gadget-export.h  |   28 +
+>  drivers/usb/cdns3/gadget.c         | 2338 ++++++++++++++++++++++++++++
+>  drivers/usb/cdns3/gadget.h         | 1321 ++++++++++++++++
+>  drivers/usb/cdns3/host-export.h    |   28 +
+>  drivers/usb/cdns3/host.c           |   71 +
+>  drivers/usb/cdns3/trace.c          |   11 +
+>  drivers/usb/cdns3/trace.h          |  493 ++++++
+>  19 files changed, 6951 insertions(+)
+>  create mode 100644 drivers/usb/cdns3/Kconfig
+>  create mode 100644 drivers/usb/cdns3/Makefile
+>  create mode 100644 drivers/usb/cdns3/cdns3-pci-wrap.c
+>  create mode 100644 drivers/usb/cdns3/core.c
+>  create mode 100644 drivers/usb/cdns3/core.h
+>  create mode 100644 drivers/usb/cdns3/debug.h
+>  create mode 100644 drivers/usb/cdns3/debugfs.c
+>  create mode 100644 drivers/usb/cdns3/drd.c
+>  create mode 100644 drivers/usb/cdns3/drd.h
+>  create mode 100644 drivers/usb/cdns3/ep0.c
+>  create mode 100644 drivers/usb/cdns3/gadget-export.h
+>  create mode 100644 drivers/usb/cdns3/gadget.c
+>  create mode 100644 drivers/usb/cdns3/gadget.h
+>  create mode 100644 drivers/usb/cdns3/host-export.h
+>  create mode 100644 drivers/usb/cdns3/host.c
+>  create mode 100644 drivers/usb/cdns3/trace.c
+>  create mode 100644 drivers/usb/cdns3/trace.h
 > 
 
-I tried your patch on rpi2 and got the following panic. Just a reminder that I
-have replaced some log messages with "......" since it might be too long to
-post all.
+<snip>
 
-In this case the kernel failed to reserve cma, which should hit the issue of
-memblock_limit=0x1000 as I had mentioned in my patch description. The first
-block [0-0xfff] was scanned in adjust_lowmem_bounds(), but it did not align
-with PMD_SIZE so the cma reservation failed because the memblock.current_limit
-was extremely low. That's why I expand the first reservation from 1 PAGESIZE to
-1 PMD_SIZE in my patch in order to avoid this issue. Please kindly let me know
-if any suggestion, thank you.
+> diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+> new file mode 100644
+> index 000000000000..900b2ce08162
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/core.c
+> @@ -0,0 +1,554 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cadence USBSS DRD Driver.
+> + *
+> + * Copyright (C) 2018-2019 Cadence.
+> + * Copyright (C) 2017-2018 NXP
+> + * Copyright (C) 2019 Texas Instruments
+> + *
+> + * Author: Peter Chen <peter.chen@nxp.com>
+> + *         Pawel Laszczak <pawell@cadence.com>
+> + *         Roger Quadros <rogerq@ti.com>
+> + */
+> +
+> +#include <linux/dma-mapping.h>
+> +#include <linux/module.h>
+> +#include <linux/kernel.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/pm_runtime.h>
+> +
+> +#include "gadget.h"
+> +#include "core.h"
+> +#include "host-export.h"
+> +#include "gadget-export.h"
+> +#include "drd.h"
+> +#include "debug.h"
+> +
+> +static inline
+> +struct cdns3_role_driver *cdns3_get_current_role_driver(struct cdns3 *cdns)
+> +{
+> +	WARN_ON(!cdns->roles[cdns->role]);
+> +	return cdns->roles[cdns->role];
+> +}
+> +
+> +static int cdns3_role_start(struct cdns3 *cdns, enum usb_role role)
+> +{
+> +	int ret;
+> +
+> +	if (WARN_ON(role > USB_ROLE_DEVICE))
+> +		return 0;
+> +
+> +	mutex_lock(&cdns->mutex);
+> +	cdns->role = role;
+> +	mutex_unlock(&cdns->mutex);
+> +
+> +	if (role == USB_ROLE_NONE)
+> +		return 0;
 
-boot-log:
---------
+We will need to have a role driver for NONE case so we can deal with
+type-C cable swap case. I will post a patch at the end about this.
+You can squash the patches and use them in the next revision.
 
-Loading Linux test ...
-EFI stub: Booting Linux Kernel...
-EFI stub: Using DTB from configuration table
-EFI stub: Exiting boot services and installing virtual address map...
-Uncompressing Linux... done, booting the kernel.
-[    0.000000] Booting Linux on physical CPU 0xf00
-[    0.000000] Linux version 5.2.1-lpae (chester@linux-8mug) (......)
-[    0.000000] CPU: ARMv7 Processor [410fc075] revision 5 (ARMv7), cr=30c5387d
-[    0.000000] CPU: div instructions available: patching division code
-[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
-[    0.000000] OF: fdt: Machine model: Raspberry Pi 2 Model B Rev 1.1
-[    0.000000] printk: bootconsole [earlycon0] enabled
-[    0.000000] Memory policy: Data cache writealloc
-[    0.000000] efi: Getting EFI parameters from FDT:
-[    0.000000] efi:   System Table: 0x000000003df757c0
-[    0.000000] efi:   MemMap Address: 0x000000002c1c5040
-[    0.000000] efi:   MemMap Size: 0x000003c0
-[    0.000000] efi:   MemMap Desc. Size: 0x00000028
-[    0.000000] efi:   MemMap Desc. Version: 0x00000001
-[    0.000000] efi: EFI v2.70 by Das U-Boot
-[    0.000000] efi:  SMBIOS=0x3cb62000  MEMRESERVE=0x3cb3d040
-[    0.000000] memblock_reserve: [0x000000003cb3d040-0x000000003cb3d04f] efi_config_parse_tables+0x25c/0x2d8
-[    0.000000] efi: Processing EFI memory map:
-[    0.000000] MEMBLOCK configuration:
-[    0.000000]  memory size = 0x000000003e000000 reserved size = 0x0000000000000010
-[    0.000000]  memory.cnt  = 0x1
-[    0.000000]  memory[0x0]     [0x0000000000000000-0x000000003dffffff], 0x000000003e000000 bytes flags: 0x0
-[    0.000000]  reserved.cnt  = 0x1
-[    0.000000]  reserved[0x0]   [0x000000003cb3d040-0x000000003cb3d04f], 0x0000000000000010 bytes flags: 0x0
-[    0.000000] memblock_remove: [0x0000000000000000-0xfffffffffffffffe] reserve_regions+0x68/0x23c
-[    0.000000] efi:   0x000000000000-0x000000000fff [Reserved           |   |  |  |  |  |  |  |   |WB|  |  |  ]
-[    0.000000] memblock_add: [0x0000000000000000-0x0000000000000fff] early_init_dt_add_memory_arch+0x164/0x178
-[    0.000000] efi:   0x000000001000-0x000000307fff [Conventional Memory|   |  |  |  |  |  |  |   |WB|  |  |  ]
-[    0.000000] memblock_add: [0x0000000000001000-0x0000000000307fff] early_init_dt_add_memory_arch+0x164/0x178
-[    0.000000] efi:   0x000000308000-0x000002307fff [Boot Data          |   |  |  |  |  |  |  |   |WB|  |  |  ]
-[    0.000000] memblock_add: [0x0000000000308000-0x0000000002307fff] early_init_dt_add_memory_arch+0x164/0x178
-[    0.000000] efi:   0x000002308000-0x000002a93fff [Loader Data        |   |  |  |  |  |  |  |   |WB|  |  |  ]
-[    0.000000] memblock_add: [0x0000000002308000-0x0000000002a93fff] early_init_dt_add_memory_arch+0x164/0x178
-[    0.000000] efi:   0x000002a94000-0x000007cf5fff [Conventional Memory|   |  |  |  |  |  |  |   |WB|  |  |  ]
-[    0.000000] memblock_add: [0x0000000002a94000-0x0000000007cf5fff] early_init_dt_add_memory_arch+0x164/0x178
-......
-......
-[    0.000000] memblock_add: [0x000000003df76000-0x000000003dffffff] early_init_dt_add_memory_arch+0x164/0x178
-[    0.000000] efi:   0x00003f100000-0x00003f100fff [Memory Mapped I/O  |RUN|  |  |  |  |  |  |   |  |  |  |  ]
-[    0.000000] memblock_reserve: [0x000000002c1c5000-0x000000002c1c5fff] efi_init+0xd8/0x1c8
-[    0.000000] memblock_reserve: [0x0000000000400000-0x0000000001df2cef] arm_memblock_init+0x44/0x19c
-[    0.000000] memblock_reserve: [0x0000000000303000-0x0000000000307fff] arm_mm_memblock_reserve+0x30/0x38
-[    0.000000] memblock_reserve: [0x0000000007cf6000-0x0000000007cfc5c4] early_init_dt_reserve_memory_arch+0x2c/0x30
-[    0.000000] cma: Failed to reserve 64 MiB
-[    0.000000] MEMBLOCK configuration:
-[    0.000000]  memory size = 0x000000003e000000 reserved size = 0x00000000019ff2c5
-[    0.000000]  memory.cnt  = 0xa
-[    0.000000]  memory[0x0]     [0x0000000000000000-0x0000000000000fff], 0x0000000000001000 bytes flags: 0x4
-[    0.000000]  memory[0x1]     [0x0000000000001000-0x0000000007ef5fff], 0x0000000007ef5000 bytes flags: 0x0
-[    0.000000]  memory[0x2]     [0x0000000007ef6000-0x0000000007f09fff], 0x0000000000014000 bytes flags: 0x4
-[    0.000000]  memory[0x3]     [0x0000000007f0a000-0x000000003cb3efff], 0x0000000034c35000 bytes flags: 0x0
-[    0.000000]  memory[0x4]     [0x000000003cb3f000-0x000000003cb3ffff], 0x0000000000001000 bytes flags: 0x4
-[    0.000000]  memory[0x5]     [0x000000003cb40000-0x000000003cb5ffff], 0x0000000000020000 bytes flags: 0x0
-[    0.000000]  memory[0x6]     [0x000000003cb60000-0x000000003cb68fff], 0x0000000000009000 bytes flags: 0x4
-[    0.000000]  memory[0x7]     [0x000000003cb69000-0x000000003df74fff], 0x000000000140c000 bytes flags: 0x0
-[    0.000000]  memory[0x8]     [0x000000003df75000-0x000000003df75fff], 0x0000000000001000 bytes flags: 0x4
-[    0.000000]  memory[0x9]     [0x000000003df76000-0x000000003dffffff], 0x000000000008a000 bytes flags: 0x0
-[    0.000000]  reserved.cnt  = 0x5
-[    0.000000]  reserved[0x0]   [0x0000000000303000-0x0000000000307fff], 0x0000000000005000 bytes flags: 0x0
-[    0.000000]  reserved[0x1]   [0x0000000000400000-0x0000000001df2cef], 0x00000000019f2cf0 bytes flags: 0x0
-[    0.000000]  reserved[0x2]   [0x0000000007cf6000-0x0000000007cfc5c4], 0x00000000000065c5 bytes flags: 0x0
-[    0.000000]  reserved[0x3]   [0x000000002c1c5000-0x000000002c1c5fff], 0x0000000000001000 bytes flags: 0x0
-[    0.000000]  reserved[0x4]   [0x000000003cb3d040-0x000000003cb3d04f], 0x0000000000000010 bytes flags: 0x0
-[    0.000000] memblock_alloc_try_nid: 4096 bytes align=0x1000 nid=-1 from=0x0000000000000000 max_addr=0x0000000000000000 early_alloc+0x44/0x70
-[    0.000000] Kernel panic - not syncing: early_alloc: Failed to allocate 4096 bytes align=0x1000
-[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.1-lpae #1 openSUSE Tumbleweed (unreleased)
-[    0.000000] Hardware name: BCM2835
-[    0.000000] Backtrace:
-[    0.000000] [<c043fafc>] (dump_backtrace) from [<c043fd84>] (show_stack+0x20/0x24)
-[    0.000000]  r7:c1800000 r6:00000000 r5:600001d3 r4:c1901ba0
-[    0.000000] [<c043fd64>] (show_stack) from [<c0df9400>] (dump_stack+0xd0/0x104)
-[    0.000000] [<c0df9330>] (dump_stack) from [<c048061c>] (panic+0xf8/0x32c)
-[    0.000000]  r10:c0307000 r9:c0001000 r8:00000003 r7:00000000 r6:00000000 r5:c181df04
-[    0.000000]  r4:c192b8d8 r3:00000001
-[    0.000000] [<c0480528>] (panic) from [<c1609728>] (early_alloc+0x60/0x70)
-[    0.000000]  r3:00001000 r2:00001000 r1:c10037e8 r0:c12fe64c
-[    0.000000]  r7:00000000
-[    0.000000] [<c16096c8>] (early_alloc) from [<c1609114>] (arm_pte_alloc+0x34/0x94)
-[    0.000000]  r7:00000000 r6:00000000 r4:c0307000
-[    0.000000] [<c16090e0>] (arm_pte_alloc) from [<c1609384>] (__create_mapping+0x210/0x2c0)
-[    0.000000]  r9:c0001000 r8:c0001000 r7:00000001 r6:c13f22e0 r5:c0200000 r4:c0400000
-[    0.000000] [<c1609174>] (__create_mapping) from [<c160951c>] (create_mapping+0xe8/0x108)
-[    0.000000]  r10:c0400000 r9:c16a2110 r8:c19c7a80 r7:00000000 r6:00400000 r5:c13f2000
-[    0.000000]  r4:c1801ef0
-[    0.000000] [<c1609434>] (create_mapping) from [<c1609f50>] (paging_init+0x350/0x75c)
-[    0.000000]  r4:c1842d40
+> +
+> +	if (!cdns->roles[role])
+> +		return -ENXIO;
+> +
+> +	if (cdns->roles[role]->state == CDNS3_ROLE_STATE_ACTIVE)
+> +		return 0;
+> +
+> +	mutex_lock(&cdns->mutex);
+> +	if (role == USB_ROLE_HOST)
+> +		cdns3_drd_switch_host(cdns, 1);
+> +	else
+> +		cdns3_drd_switch_gadget(cdns, 1);
+
+Please don't do this here. You can call them from the respective role
+drivers at the start. i.e. __cdns3_host_init(), __cdns3_gadget_init()
+> +
+> +	ret = cdns->roles[role]->start(cdns);
+> +	if (!ret)
+> +		cdns->roles[role]->state = CDNS3_ROLE_STATE_ACTIVE;
+> +	mutex_unlock(&cdns->mutex);
+> +
+> +	return ret;
+> +}
+> +
+> +static void cdns3_role_stop(struct cdns3 *cdns)
+> +{
+> +	enum usb_role role = cdns->role;
+> +
+> +	if (WARN_ON(role > USB_ROLE_DEVICE))
+> +		return;
+> +
+> +	if (role == USB_ROLE_NONE)
+> +		return;
+> +
+> +	if (cdns->roles[role]->state == CDNS3_ROLE_STATE_INACTIVE)
+> +		return;
+> +
+> +	mutex_lock(&cdns->mutex);
+> +	cdns->roles[role]->stop(cdns);
+> +	if (role == USB_ROLE_HOST)
+> +		cdns3_drd_switch_host(cdns, 0);
+> +	else
+> +		cdns3_drd_switch_gadget(cdns, 0);
+
+No need to do this here. They can be done at the respective role
+drivers at the end. i.e. cdns3_host_exit(), cdns3_gadget_exit()
+
+> +
+> +	cdns->roles[role]->state = CDNS3_ROLE_STATE_INACTIVE;
+> +	mutex_unlock(&cdns->mutex);
+> +}
+> +
+> +static void cdns3_exit_roles(struct cdns3 *cdns)
+> +{
+> +	cdns3_role_stop(cdns);
+> +	cdns3_drd_exit(cdns);
+> +}
+> +
+> +enum usb_role cdsn3_real_role_switch_get(struct device *dev);
+> +
+> +/**
+> + * cdns3_core_init_role - initialize role of operation
+> + * @cdns: Pointer to cdns3 structure
+> + *
+> + * Returns 0 on success otherwise negative errno
+> + */
+> +static int cdns3_core_init_role(struct cdns3 *cdns)
+> +{
+> +	struct device *dev = cdns->dev;
+> +	enum usb_dr_mode best_dr_mode;
+> +	enum usb_dr_mode dr_mode;
+> +	int ret = 0;
+> +
+> +	dr_mode = usb_get_dr_mode(dev);
+> +	cdns->role = USB_ROLE_NONE;
+> +
+> +	/*
+> +	 * If driver can't read mode by means of usb_get_dr_mode function then
+> +	 * chooses mode according with Kernel configuration. This setting
+> +	 * can be restricted later depending on strap pin configuration.
+> +	 */
+> +	if (dr_mode == USB_DR_MODE_UNKNOWN) {
+> +		if (IS_ENABLED(CONFIG_USB_CDNS3_HOST) &&
+> +		    IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> +			dr_mode = USB_DR_MODE_OTG;
+> +		else if (IS_ENABLED(CONFIG_USB_CDNS3_HOST))
+> +			dr_mode = USB_DR_MODE_HOST;
+> +		else if (IS_ENABLED(CONFIG_USB_CDNS3_GADGET))
+> +			dr_mode = USB_DR_MODE_PERIPHERAL;
+> +	}
+> +
+> +	/*
+> +	 * At this point cdns->dr_mode contains strap configuration.
+> +	 * Driver try update this setting considering kernel configuration
+> +	 */
+> +	best_dr_mode = cdns->dr_mode;
+> +
+> +	if (dr_mode == USB_DR_MODE_OTG) {
+> +		best_dr_mode = cdns->dr_mode;
+> +	} else if (cdns->dr_mode == USB_DR_MODE_OTG) {
+> +		best_dr_mode = dr_mode;
+> +	} else if (cdns->dr_mode != dr_mode) {
+> +		dev_err(dev, "Incorrect DRD configuration\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dr_mode = best_dr_mode;
+> +
+> +	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_HOST) {
+> +		ret = cdns3_host_init(cdns);
+> +		if (ret) {
+> +			dev_err(dev, "Host initialization failed with %d\n",
+> +				ret);
+> +			goto err;
+> +		}
+> +	}
+> +
+> +	if (dr_mode == USB_DR_MODE_OTG || dr_mode == USB_DR_MODE_PERIPHERAL) {
+> +		ret = cdns3_gadget_init(cdns);
+> +		if (ret) {
+> +			dev_err(dev, "Device initialization failed with %d\n",
+> +				ret);
+> +			goto err;
+> +		}
+> +	}
+> +
+> +	cdns->desired_dr_mode = dr_mode;
+> +	cdns->dr_mode = dr_mode;
+> +
+> +	/*
+> +	 * desired_dr_mode might have changed so we need to update
+> +	 * the controller configuration"?
+> +	 */
+> +	ret = cdns3_drd_update_mode(cdns);
+> +	if (ret)
+> +		goto err;
+> +
+> +	cdns->role = cdsn3_real_role_switch_get(cdns->dev);
+> +
+> +	ret = cdns3_role_start(cdns, cdns->role);
+> +	if (ret) {
+> +		dev_err(dev, "can't start %s role\n",
+> +			cdns3_get_current_role_driver(cdns)->name);
+> +		goto err;
+> +	}
+> +
+> +	return ret;
+> +err:
+> +	cdns3_exit_roles(cdns);
+> +	return ret;
+> +}
+> +
+> +/**
+> + * cdsn3_real_role_switch_get - get real role of controller based on hardware
+> + *   settings.
+> + * @dev: Pointer to device structure
+> + *
+> + * Returns role
+> + */
+> +enum usb_role cdsn3_real_role_switch_get(struct device *dev)
+
+let's not mix user space role_switch and HW based role swith.
+
+This function is really the HW based state machine. Let's rename it to
+
+ * cdsn3_hw_role_state_machine - role switch state machine based on hw events
+ *
+ * @cdns: Pointer to controller structure
+ *
+ * Returns next role to be entered based on hw events.
+ */
+static enum usb_role cdsn3_hw_role_state_machine(struct cdns3 *cdns)
+
+> +{
+> +	struct cdns3 *cdns = dev_get_drvdata(dev);
+> +	enum usb_role role;
+> +	int id, vbus;
+> +
+> +	if (cdns->current_dr_mode != USB_DR_MODE_OTG)
+> +		goto not_otg;
+> +
+> +	id = cdns3_get_id(cdns);
+> +	vbus = cdns3_get_vbus(cdns);
+> +
+> +	/*
+> +	 * Role change state machine
+> +	 * Inputs: ID, VBUS
+> +	 * Previous state: cdns->role
+> +	 * Next state: role
+> +	 */
+> +	role = cdns->role;
+> +
+> +	switch (role) {
+> +	case USB_ROLE_NONE:
+> +		/*
+> +		 * Driver treat USB_ROLE_NONE synonymous to IDLE state from
+
+s/treat/treats
+
+> +		 * controller specification.
+> +		 */
+> +		if (!id)
+> +			role = USB_ROLE_HOST;
+> +		else if (vbus)
+> +			role = USB_ROLE_DEVICE;
+> +		break;
+> +	case USB_ROLE_HOST: /* from HOST, we can only change to NONE */
+> +		if (id)
+> +			role = USB_ROLE_NONE;
+> +		break;
+> +	case USB_ROLE_DEVICE: /* from GADGET, we can only change to NONE*/
+> +		if (!vbus)
+> +			role = USB_ROLE_NONE;
+> +		break;
+> +	}
+> +
+> +	dev_dbg(cdns->dev, "role %d -> %d\n", cdns->role, role);
+> +
+> +	return role;
+> +
+> +not_otg:
+> +	if (cdns3_is_host(cdns))
+> +		role = USB_ROLE_HOST;
+> +	if (cdns3_is_device(cdns))
+> +		role = USB_ROLE_DEVICE;
+> +
+> +	return role;
+> +}
+> +
+> +/**
+> + * cdns3_role_switch_set - work queue handler for role switch
+> + *
+> + * @dev: pointer to device object
+> + * @role - the previous role
+> + * Handles below events:
+> + * - Role switch for dual-role devices
+> + * - USB_ROLE_GADGET <--> USB_ROLE_NONE for peripheral-only devices
+> + */
+> +static int cdns3_role_switch_set(struct device *dev, enum usb_role role)
+
+Let's not use this for user space role switch but just for HW based switching
+How about calling it
+
+int cdns3_hw_role_switch(struct cdns3 *cdns)
+
+> +{
+> +	struct cdns3 *cdns = dev_get_drvdata(dev);
+> +	enum usb_role real_role = USB_ROLE_NONE;
+> +	enum usb_role current_role;
+
+enum usb_role real_role, current_role;
+
+> +	int ret = 0;
+> +
+> +	/* Check if dr_mode was changed.*/
+> +	ret = cdns3_drd_update_mode(cdns);
+
+Why is this check required? Who is going to change dr_mode?
+
+> +	if (ret)
+> +		return ret;
+
+I think here we need to check if user overrides the role
+using role switch sysfs. If yes then we ned ignore HW events
+and just return here.
+
+> +
+> +	pm_runtime_get_sync(cdns->dev);
+> +
+> +	real_role = cdsn3_real_role_switch_get(cdns->dev);
+
+       current_role = cdns->role;
+       real_role = cdsn3_hw_role_state_machine(cdns);
+
+> +
+> +	/* Do nothing if nothing changed */
+> +	if (cdns->role == real_role)
+
+	if (current_role == real_role)
+
+> +		goto exit;
+> +
+> +	cdns3_role_stop(cdns);
+> +
+> +	real_role = cdsn3_real_role_switch_get(cdns->dev);
+> +
+> +	current_role = role;
+
+Remove above 2 lines. Don't need to get real role again
+here as it will break the state machine.
+If HW state changes, we will deal with it in next interrupt
+not here.
+
+> +	dev_dbg(cdns->dev, "Switching role");
+
+	dev_dbg(cdns->dev, "Switching role %d -> %d", current_role, real_role);
+
+> +
+> +	ret = cdns3_role_start(cdns, real_role);
+> +	if (ret) {
+> +		/* Back to current role */
+> +		dev_err(cdns->dev, "set %d has failed, back to %d\n",
+> +			role, current_role);
+
+			real_role, current_role
+
+> +		ret = cdns3_role_start(cdns, current_role);
+> +		if (ret)
+> +			dev_err(cdns->dev, "back to %d failed too\n",
+> +				current_role);
+> +	}
+> +exit:
+> +	pm_runtime_put_sync(cdns->dev);
+> +	return ret;
+> +}
+
+How about the below 2 functions for user space role switch handling.
+
++/**
++ * cdsn3_role_get - get current role of controller.
++ *
++ * @dev: Pointer to device structure
++ *
++ * Returns role
++ */
++static enum usb_role cdns3_role_get(struct device *dev)
++{
++       struct cdns3 *cdns = dev_get_drvdata(dev);
++
++       return cdns->role;
++}
++
++/**
++ * cdns3_role_set - set current role of controller.
++ *
++ * @dev: pointer to device object
++ * @role - the previous role
++ * Handles below events:
++ * - Role switch for dual-role devices
++ * - USB_ROLE_GADGET <--> USB_ROLE_NONE for peripheral-only devices
++ */
++static int cdns3_role_set(struct device *dev, enum usb_role role)
++{
++       /* FIXME: doing nothing for now */
+
+Here we need to implement the user space switching logic.
+
+1) If called change to desired role and set a userspace override flag
+2) How do we clear the userspace override flag so HW based switching can
+continue? Need new API hook in struct usb_role_switch_desc?
+
++       return -EPERM;
++}
++
+
+> +
+> +static const struct usb_role_switch_desc cdns3_switch_desc = {
+> +	.set = cdns3_role_switch_set,
+> +	.get = cdsn3_real_role_switch_get,
+
+       .set = cdns3_role_set,
+       .get = cdns3_role_get,
+
+> +	.allow_userspace_control = true,
+> +};
+> +
+
+<snip>
+
+> diff --git a/drivers/usb/cdns3/drd.c b/drivers/usb/cdns3/drd.c
+> new file mode 100644
+> index 000000000000..77f8a1516140
+> --- /dev/null
+> +++ b/drivers/usb/cdns3/drd.c
+> @@ -0,0 +1,390 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Cadence USBSS DRD Driver.
+> + *
+> + * Copyright (C) 2018-2019 Cadence.
+> + * Copyright (C) 2019 Texas Instruments
+> + *
+> + * Author: Pawel Laszczak <pawell@cadence.com>
+> + *         Roger Quadros <rogerq@ti.com>
+> + *
+> + *
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/delay.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/usb/otg.h>
+> +
+> +#include "gadget.h"
+> +#include "drd.h"
+> +#include "core.h"
+> +
+
+<snip>
+
+> +/**
+> + * cdns3_drd_update_mode - initialize mode of operation
+> + * @cdns: Pointer to controller context structure
+> + *
+> + * Returns 0 on success otherwise negative errno
+> + */
+> +int cdns3_drd_update_mode(struct cdns3 *cdns)
+> +{
+> +	int ret = 0;
+> +
+> +	if (cdns->desired_dr_mode == cdns->current_dr_mode)
+> +		return ret;
+> +
+> +	switch (cdns->desired_dr_mode) {
+> +	case USB_DR_MODE_PERIPHERAL:
+> +		ret = cdns3_set_mode(cdns, USB_DR_MODE_PERIPHERAL);
+> +		break;
+> +	case USB_DR_MODE_HOST:
+> +		ret = cdns3_set_mode(cdns, USB_DR_MODE_HOST);
+> +		break;
+> +	case USB_DR_MODE_OTG:
+> +		ret = cdns3_init_otg_mode(cdns);
+> +		break;
+> +	default:
+> +		dev_err(cdns->dev, "Unsupported mode of operation %d\n",
+> +			cdns->dr_mode);
+> +		return -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +static irqreturn_t cdns3_drd_thread_irq(int irq, void *data)
+> +{
+> +	struct cdns3 *cdns = data;
+> +
+> +	usb_role_switch_set_role(cdns->role_sw, cdns->role);
+> +
+	This is HW based event. Don't mix this with user space role switch.
+	So,
+
+	cdns3_hw_role_switch(cdns);
+
+> +	return IRQ_HANDLED;
+> +}
+> +
+
+<snip>
+
+The below 2 patches address the above comments and introduce
+a IDLE role driver so we can deal with Type-C lane swap.
+
+Please squash them into this patch, if they look OK. Thanks.
+
+cheers,
+-roger
+--
+
+From 228da29ea47d0000f2bab49377fce8f3f0e97b63 Mon Sep 17 00:00:00 2001
+From: Roger Quadros <rogerq@ti.com>
+Date: Thu, 15 Aug 2019 11:11:02 +0300
+Subject: [PATCH 1/2] usb: cdns3: Fix hw based role switch
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/cdns3/core.c | 76 ++++++++++++++++++++++++++--------------
+ drivers/usb/cdns3/core.h |  2 ++
+ drivers/usb/cdns3/drd.c  |  2 +-
+ 3 files changed, 52 insertions(+), 28 deletions(-)
+
+diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+index b132acca60f1..07f8d8f23930 100644
+--- a/drivers/usb/cdns3/core.c
++++ b/drivers/usb/cdns3/core.c
+@@ -97,7 +97,7 @@ static void cdns3_exit_roles(struct cdns3 *cdns)
+ 	cdns3_drd_exit(cdns);
+ }
+ 
+-enum usb_role cdsn3_real_role_switch_get(struct device *dev);
++static enum usb_role cdsn3_hw_role_state_machine(struct cdns3 *cdns);
+ 
+ /**
+  * cdns3_core_init_role - initialize role of operation
+@@ -176,7 +176,7 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
+ 	if (ret)
+ 		goto err;
+ 
+-	cdns->role = cdsn3_real_role_switch_get(cdns->dev);
++	cdns->role = cdsn3_hw_role_state_machine(cdns);
+ 
+ 	ret = cdns3_role_start(cdns, cdns->role);
+ 	if (ret) {
+@@ -192,15 +192,14 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
+ }
+ 
+ /**
+- * cdsn3_real_role_switch_get - get real role of controller based on hardware
+- *   settings.
+- * @dev: Pointer to device structure
++ * cdsn3_hw_role_state_machine - role switch state machine based on hw events
+  *
+- * Returns role
++ * @cdns: Pointer to controller structure
++ *
++ * Returns next role to be entered based on hw events.
+  */
+-enum usb_role cdsn3_real_role_switch_get(struct device *dev)
++static enum usb_role cdsn3_hw_role_state_machine(struct cdns3 *cdns)
+ {
+-	struct cdns3 *cdns = dev_get_drvdata(dev);
+ 	enum usb_role role;
+ 	int id, vbus;
+ 
+@@ -253,46 +252,40 @@ enum usb_role cdsn3_real_role_switch_get(struct device *dev)
+ }
+ 
+ /**
+- * cdns3_role_switch_set - work queue handler for role switch
++ * cdns3_hw_role_switch - switch roles based on HW state
+  *
+- * @dev: pointer to device object
+- * @role - the previous role
+- * Handles below events:
+- * - Role switch for dual-role devices
+- * - USB_ROLE_GADGET <--> USB_ROLE_NONE for peripheral-only devices
++ * @cdns: controller
+  */
+-static int cdns3_role_switch_set(struct device *dev, enum usb_role role)
++int cdns3_hw_role_switch(struct cdns3 *cdns)
+ {
+-	struct cdns3 *cdns = dev_get_drvdata(dev);
+-	enum usb_role real_role = USB_ROLE_NONE;
+-	enum usb_role current_role;
++	enum usb_role real_role, current_role;
+ 	int ret = 0;
+ 
+ 	/* Check if dr_mode was changed.*/
++	/* FIXME: why do we need this call? */
+ 	ret = cdns3_drd_update_mode(cdns);
+ 	if (ret)
+ 		return ret;
+ 
++	/* FIXME: don't do anything if userspace role switch has override */
+ 	pm_runtime_get_sync(cdns->dev);
+ 
+-	real_role = cdsn3_real_role_switch_get(cdns->dev);
++	current_role = cdns->role;
++	real_role = cdsn3_hw_role_state_machine(cdns);
+ 
+ 	/* Do nothing if nothing changed */
+-	if (cdns->role == real_role)
++	if (current_role == real_role)
+ 		goto exit;
+ 
+ 	cdns3_role_stop(cdns);
+ 
+-	real_role = cdsn3_real_role_switch_get(cdns->dev);
+-
+-	current_role = role;
+-	dev_dbg(cdns->dev, "Switching role");
++	dev_dbg(cdns->dev, "Switching role %d -> %d", current_role, real_role);
+ 
+ 	ret = cdns3_role_start(cdns, real_role);
+ 	if (ret) {
+ 		/* Back to current role */
+ 		dev_err(cdns->dev, "set %d has failed, back to %d\n",
+-			role, current_role);
++			real_role, current_role);
+ 		ret = cdns3_role_start(cdns, current_role);
+ 		if (ret)
+ 			dev_err(cdns->dev, "back to %d failed too\n",
+@@ -303,9 +296,38 @@ static int cdns3_role_switch_set(struct device *dev, enum usb_role role)
+ 	return ret;
+ }
+ 
++/**
++ * cdsn3_role_get - get current role of controller.
++ *
++ * @dev: Pointer to device structure
++ *
++ * Returns role
++ */
++static enum usb_role cdns3_role_get(struct device *dev)
++{
++	struct cdns3 *cdns = dev_get_drvdata(dev);
++
++	return cdns->role;
++}
++
++/**
++ * cdns3_role_set - set current role of controller.
++ *
++ * @dev: pointer to device object
++ * @role - the previous role
++ * Handles below events:
++ * - Role switch for dual-role devices
++ * - USB_ROLE_GADGET <--> USB_ROLE_NONE for peripheral-only devices
++ */
++static int cdns3_role_set(struct device *dev, enum usb_role role)
++{
++	/* FIXME: doing nothing for now */
++	return -EPERM;
++}
++
+ static const struct usb_role_switch_desc cdns3_switch_desc = {
+-	.set = cdns3_role_switch_set,
+-	.get = cdsn3_real_role_switch_get,
++	.set = cdns3_role_set,
++	.get = cdns3_role_get,
+ 	.allow_userspace_control = true,
+ };
+ 
+diff --git a/drivers/usb/cdns3/core.h b/drivers/usb/cdns3/core.h
+index 2a35f025b0a5..e0d23f2934bb 100644
+--- a/drivers/usb/cdns3/core.h
++++ b/drivers/usb/cdns3/core.h
+@@ -103,4 +103,6 @@ struct cdns3 {
+ 	struct usb_role_switch		*role_sw;
+ };
+ 
++int cdns3_hw_role_switch(struct cdns3 *cdns);
++
+ #endif /* __LINUX_CDNS3_CORE_H */
+diff --git a/drivers/usb/cdns3/drd.c b/drivers/usb/cdns3/drd.c
+index 77f8a1516140..780fc7d59932 100644
+--- a/drivers/usb/cdns3/drd.c
++++ b/drivers/usb/cdns3/drd.c
+@@ -265,7 +265,7 @@ static irqreturn_t cdns3_drd_thread_irq(int irq, void *data)
+ {
+ 	struct cdns3 *cdns = data;
+ 
+-	usb_role_switch_set_role(cdns->role_sw, cdns->role);
++	cdns3_hw_role_switch(cdns);
+ 
+ 	return IRQ_HANDLED;
+ }
 
 
-> >
-> > >   grub> lsefimmap
-> > >   Type      Physical start  - end             #Pages        Size Attributes
-> > >   reserved  0000000000000000-0000000000000fff 00000001      4KiB WB
-> > >   conv-mem  0000000000001000-0000000007ef5fff 00007ef5 130004KiB WB
-> > >   RT-data   0000000007ef6000-0000000007f09fff 00000014     80KiB RT WB
-> > >   conv-mem  0000000007f0a000-000000002d871fff 00025968 615840KiB WB
-> > >   .....
-> > >
-> > > To avoid a reserved address, we have to ignore the memory regions which are
-> > > marked as EFI_RESERVED_TYPE, and only conventional memory regions can be
-> > > chosen. If the region before the kernel base is unaligned, it will be
-> > > marked as EFI_RESERVED_TYPE and let kernel ignore it so that memblock_limit
-> > > will not be sticked with a very low address such as 0x1000.
-> > >
-> 
-> This is a separate issue, so it should be handled in a separate patch.
-> 
-> > > Signed-off-by: Chester Lin <clin@suse.com>
-> > > ---
-> > >  arch/arm/mm/mmu.c                         |  3 ++
-> > >  drivers/firmware/efi/libstub/arm32-stub.c | 43 ++++++++++++++++++-----
-> > >  2 files changed, 37 insertions(+), 9 deletions(-)
-> > >
-> > > diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> > > index f3ce34113f89..909b11ba48d8 100644
-> > > --- a/arch/arm/mm/mmu.c
-> > > +++ b/arch/arm/mm/mmu.c
-> > > @@ -1184,6 +1184,9 @@ void __init adjust_lowmem_bounds(void)
-> > >                 phys_addr_t block_start = reg->base;
-> > >                 phys_addr_t block_end = reg->base + reg->size;
-> > >
-> > > +               if (memblock_is_nomap(reg))
-> > > +                       continue;
-> > > +
-> > >                 if (reg->base < vmalloc_limit) {
-> > >                         if (block_end > lowmem_limit)
-> > >                                 /*
-> > > diff --git a/drivers/firmware/efi/libstub/arm32-stub.c b/drivers/firmware/efi/libstub/arm32-stub.c
-> > > index e8f7aefb6813..10d33d36df00 100644
-> > > --- a/drivers/firmware/efi/libstub/arm32-stub.c
-> > > +++ b/drivers/firmware/efi/libstub/arm32-stub.c
-> > > @@ -128,7 +128,7 @@ static efi_status_t reserve_kernel_base(efi_system_table_t *sys_table_arg,
-> > >
-> > >         for (l = 0; l < map_size; l += desc_size) {
-> > >                 efi_memory_desc_t *desc;
-> > > -               u64 start, end;
-> > > +               u64 start, end, spare, kernel_base;
-> > >
-> > >                 desc = (void *)memory_map + l;
-> > >                 start = desc->phys_addr;
-> > > @@ -144,27 +144,52 @@ static efi_status_t reserve_kernel_base(efi_system_table_t *sys_table_arg,
-> > >                 case EFI_BOOT_SERVICES_DATA:
-> > >                         /* Ignore types that are released to the OS anyway */
-> > >                         continue;
-> > > -
-> > > +               case EFI_RESERVED_TYPE:
-> > > +                       /* Ignore reserved regions */
-> > > +                       continue;
-> > >                 case EFI_CONVENTIONAL_MEMORY:
-> > >                         /*
-> > >                          * Reserve the intersection between this entry and the
-> > >                          * region.
-> > >                          */
-> > >                         start = max(start, (u64)dram_base);
-> > > -                       end = min(end, (u64)dram_base + MAX_UNCOMP_KERNEL_SIZE);
-> > > +                       kernel_base = round_up(start, PMD_SIZE);
-> > > +                       spare = kernel_base - start;
-> > > +                       end = min(end, kernel_base + MAX_UNCOMP_KERNEL_SIZE);
-> > > +
-> > > +                       status = efi_call_early(allocate_pages,
-> > > +                                       EFI_ALLOCATE_ADDRESS,
-> > > +                                       EFI_LOADER_DATA,
-> > > +                                       MAX_UNCOMP_KERNEL_SIZE / EFI_PAGE_SIZE,
-> > > +                                       &kernel_base);
-> > > +                       if (status != EFI_SUCCESS) {
-> > > +                               pr_efi_err(sys_table_arg,
-> > > +                                       "reserve_kernel_base: alloc failed.\n");
-> > > +                               goto out;
-> > > +                       }
-> > > +                       *reserve_addr = kernel_base;
-> > >
-> > > +                       if (!spare)
-> > > +                               break;
-> > > +                       /*
-> > > +                        * If there's a gap between start and kernel_base,
-> > > +                        * it needs be reserved so that the memblock_limit
-> > > +                        * will not fall on a very low address when running
-> > > +                        * adjust_lowmem_bounds(), wchich could eventually
-> > > +                        * cause CMA reservation issue.
-> > > +                        */
-> > >                         status = efi_call_early(allocate_pages,
-> > >                                                 EFI_ALLOCATE_ADDRESS,
-> > > -                                               EFI_LOADER_DATA,
-> > > -                                               (end - start) / EFI_PAGE_SIZE,
-> > > +                                               EFI_RESERVED_TYPE,
-> > > +                                               spare / EFI_PAGE_SIZE,
-> > >                                                 &start);
-> > >                         if (status != EFI_SUCCESS) {
-> > >                                 pr_efi_err(sys_table_arg,
-> > > -                                       "reserve_kernel_base(): alloc failed.\n");
-> > > +                                       "reserve spare-region failed\n");
-> > >                                 goto out;
-> > >                         }
-> > > -                       break;
-> > >
-> > > +                       break;
-> > >                 case EFI_LOADER_CODE:
-> > >                 case EFI_LOADER_DATA:
-> > >                         /*
-> > > @@ -220,7 +245,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
-> > >         *image_size = image->image_size;
-> > >         status = efi_relocate_kernel(sys_table, image_addr, *image_size,
-> > >                                      *image_size,
-> > > -                                    dram_base + MAX_UNCOMP_KERNEL_SIZE, 0);
-> > > +                                    *reserve_addr + MAX_UNCOMP_KERNEL_SIZE, 0);
-> > >         if (status != EFI_SUCCESS) {
-> > >                 pr_efi_err(sys_table, "Failed to relocate kernel.\n");
-> > >                 efi_free(sys_table, *reserve_size, *reserve_addr);
-> > > @@ -233,7 +258,7 @@ efi_status_t handle_kernel_image(efi_system_table_t *sys_table,
-> > >          * in memory. The kernel determines the base of DRAM from the
-> > >          * address at which the zImage is loaded.
-> > >          */
-> > > -       if (*image_addr + *image_size > dram_base + ZIMAGE_OFFSET_LIMIT) {
-> > > +       if (*image_addr + *image_size > *reserve_addr + ZIMAGE_OFFSET_LIMIT) {
-> > >                 pr_efi_err(sys_table, "Failed to relocate kernel, no low memory available.\n");
-> > >                 efi_free(sys_table, *reserve_size, *reserve_addr);
-> > >                 *reserve_size = 0;
-> > > --
-> > > 2.22.0
-> > >
-> 
+From 701277afb2c1087d327be5387b239d507f0abf6e Mon Sep 17 00:00:00 2001
+From: Roger Quadros <rogerq@ti.com>
+Date: Thu, 15 Aug 2019 11:39:38 +0300
+Subject: [PATCH 2/2] usb: cdns3: fix type-c lane swap
+
+We need to have a discrete IDLE state so that
+we know type-C cable is disconnected.
+
+On exting IDLE state we can program lane swap
+via a PHY reset.
+
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/cdns3/core.c   | 49 +++++++++++++++++++++++++++-----------
+ drivers/usb/cdns3/gadget.c |  2 ++
+ drivers/usb/cdns3/host.c   |  3 +++
+ 3 files changed, 40 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/usb/cdns3/core.c b/drivers/usb/cdns3/core.c
+index 07f8d8f23930..3c42ee347836 100644
+--- a/drivers/usb/cdns3/core.c
++++ b/drivers/usb/cdns3/core.c
+@@ -44,9 +44,6 @@ static int cdns3_role_start(struct cdns3 *cdns, enum usb_role role)
+ 	cdns->role = role;
+ 	mutex_unlock(&cdns->mutex);
+ 
+-	if (role == USB_ROLE_NONE)
+-		return 0;
+-
+ 	if (!cdns->roles[role])
+ 		return -ENXIO;
+ 
+@@ -54,10 +51,6 @@ static int cdns3_role_start(struct cdns3 *cdns, enum usb_role role)
+ 		return 0;
+ 
+ 	mutex_lock(&cdns->mutex);
+-	if (role == USB_ROLE_HOST)
+-		cdns3_drd_switch_host(cdns, 1);
+-	else
+-		cdns3_drd_switch_gadget(cdns, 1);
+ 
+ 	ret = cdns->roles[role]->start(cdns);
+ 	if (!ret)
+@@ -74,18 +67,11 @@ static void cdns3_role_stop(struct cdns3 *cdns)
+ 	if (WARN_ON(role > USB_ROLE_DEVICE))
+ 		return;
+ 
+-	if (role == USB_ROLE_NONE)
+-		return;
+-
+ 	if (cdns->roles[role]->state == CDNS3_ROLE_STATE_INACTIVE)
+ 		return;
+ 
+ 	mutex_lock(&cdns->mutex);
+ 	cdns->roles[role]->stop(cdns);
+-	if (role == USB_ROLE_HOST)
+-		cdns3_drd_switch_host(cdns, 0);
+-	else
+-		cdns3_drd_switch_gadget(cdns, 0);
+ 
+ 	cdns->roles[role]->state = CDNS3_ROLE_STATE_INACTIVE;
+ 	mutex_unlock(&cdns->mutex);
+@@ -99,6 +85,37 @@ static void cdns3_exit_roles(struct cdns3 *cdns)
+ 
+ static enum usb_role cdsn3_hw_role_state_machine(struct cdns3 *cdns);
+ 
++static int cdns3_idle_role_start(struct cdns3 *cdns)
++{
++	return 0;
++}
++
++static void cdns3_idle_role_stop(struct cdns3 *cdns)
++{
++	/* Program Lane swap and bring PHY out of RESET */
++	phy_reset(cdns->usb3_phy);
++}
++
++static int cdns3_idle_init(struct cdns3 *cdns)
++{
++	struct cdns3_role_driver *rdrv;
++
++	rdrv = devm_kzalloc(cdns->dev, sizeof(*rdrv), GFP_KERNEL);
++	if (!rdrv)
++		return -ENOMEM;
++
++	rdrv->start = cdns3_idle_role_start;
++	rdrv->stop = cdns3_idle_role_stop;
++	rdrv->state = CDNS3_ROLE_STATE_INACTIVE;
++	rdrv->suspend = NULL;
++	rdrv->resume = NULL;
++	rdrv->name = "idle";
++
++	cdns->roles[USB_ROLE_NONE] = rdrv;
++
++	return 0;
++}
++
+ /**
+  * cdns3_core_init_role - initialize role of operation
+  * @cdns: Pointer to cdns3 structure
+@@ -136,6 +153,10 @@ static int cdns3_core_init_role(struct cdns3 *cdns)
+ 	 */
+ 	best_dr_mode = cdns->dr_mode;
+ 
++	ret = cdns3_idle_init(cdns);
++	if (ret)
++		return ret;
++
+ 	if (dr_mode == USB_DR_MODE_OTG) {
+ 		best_dr_mode = cdns->dr_mode;
+ 	} else if (cdns->dr_mode == USB_DR_MODE_OTG) {
+diff --git a/drivers/usb/cdns3/gadget.c b/drivers/usb/cdns3/gadget.c
+index a42e832b3c6a..2ac2eba284c7 100644
+--- a/drivers/usb/cdns3/gadget.c
++++ b/drivers/usb/cdns3/gadget.c
+@@ -2475,6 +2475,7 @@ void cdns3_gadget_exit(struct cdns3 *cdns)
+ 	kfree(priv_dev->zlp_buf);
+ 	kfree(priv_dev);
+ 	cdns->gadget_dev = NULL;
++	cdns3_drd_switch_gadget(cdns, 0);
+ }
+ 
+ static int cdns3_gadget_start(struct cdns3 *cdns)
+@@ -2594,6 +2595,7 @@ static int __cdns3_gadget_init(struct cdns3 *cdns)
+ 	struct cdns3_device *priv_dev;
+ 	int ret = 0;
+ 
++	cdns3_drd_switch_gadget(cdns, 1);
+ 	pm_runtime_get_sync(cdns->dev);
+ 
+ 	ret = cdns3_gadget_start(cdns);
+diff --git a/drivers/usb/cdns3/host.c b/drivers/usb/cdns3/host.c
+index a7629ab2c20c..2733a8f71fcd 100644
+--- a/drivers/usb/cdns3/host.c
++++ b/drivers/usb/cdns3/host.c
+@@ -18,6 +18,8 @@ static int __cdns3_host_init(struct cdns3 *cdns)
+ 	struct platform_device *xhci;
+ 	int ret;
+ 
++	cdns3_drd_switch_host(cdns, 1);
++
+ 	xhci = platform_device_alloc("xhci-hcd", PLATFORM_DEVID_AUTO);
+ 	if (!xhci) {
+ 		dev_err(cdns->dev, "couldn't allocate xHCI device\n");
+@@ -50,6 +52,7 @@ static void cdns3_host_exit(struct cdns3 *cdns)
+ {
+ 	platform_device_unregister(cdns->host_dev);
+ 	cdns->host_dev = NULL;
++	cdns3_drd_switch_host(cdns, 0);
+ }
+ 
+ int cdns3_host_init(struct cdns3 *cdns)
+
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
