@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C9E168F57C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:11:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82EC68F571
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:10:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387552AbfHOUKf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 16:10:35 -0400
+        id S2387529AbfHOUKX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 16:10:23 -0400
 Received: from mga18.intel.com ([134.134.136.126]:43467 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733281AbfHOUJs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 16:09:48 -0400
+        id S1733289AbfHOUJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 16:09:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
   by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 13:09:42 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
-   d="scan'208";a="188596221"
+   d="scan'208";a="188596223"
 Received: from jacob-builder.jf.intel.com ([10.7.199.155])
   by orsmga002.jf.intel.com with ESMTP; 15 Aug 2019 13:09:42 -0700
 From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
@@ -33,9 +33,9 @@ Cc:     Eric Auger <eric.auger@redhat.com>, "Yi Liu" <yi.l.liu@intel.com>,
         Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
         "Lu Baolu" <baolu.lu@linux.intel.com>,
         Jonathan Cameron <jic23@kernel.org>
-Subject: [PATCH v5 08/19] iommu/ioasid: Add custom allocators
-Date:   Thu, 15 Aug 2019 13:13:14 -0700
-Message-Id: <1565900005-62508-9-git-send-email-jacob.jun.pan@linux.intel.com>
+Subject: [PATCH v5 09/19] iommu: Introduce guest PASID bind function
+Date:   Thu, 15 Aug 2019 13:13:15 -0700
+Message-Id: <1565900005-62508-10-git-send-email-jacob.jun.pan@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565900005-62508-1-git-send-email-jacob.jun.pan@linux.intel.com>
 References: <1565900005-62508-1-git-send-email-jacob.jun.pan@linux.intel.com>
@@ -44,445 +44,215 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Custom IOASID allocators can be registered at runtime and take precedence
-over the default XArray allocator. They have these attributes:
+Guest shared virtual address (SVA) may require host to shadow guest
+PASID tables. Guest PASID can also be allocated from the host via
+enlightened interfaces. In this case, guest needs to bind the guest
+mm, i.e. cr3 in guest physical address to the actual PASID table in
+the host IOMMU. Nesting will be turned on such that guest virtual
+address can go through a two level translation:
+- 1st level translates GVA to GPA
+- 2nd level translates GPA to HPA
+This patch introduces APIs to bind guest PASID data to the assigned
+device entry in the physical IOMMU. See the diagram below for usage
+explanation.
 
-- provides platform specific alloc()/free() functions with private data.
-- allocation results lookup are not provided by the allocator, lookup
-  request must be done by the IOASID framework by its own XArray.
-- allocators can be unregistered at runtime, either fallback to the next
-  custom allocator or to the default allocator.
-- custom allocators can share the same set of alloc()/free() helpers, in
-  this case they also share the same IOASID space, thus the same XArray.
-- switching between allocators requires all outstanding IOASIDs to be
-  freed unless the two allocators share the same alloc()/free() helpers.
+    .-------------.  .---------------------------.
+    |   vIOMMU    |  | Guest process mm, FL only |
+    |             |  '---------------------------'
+    .----------------/
+    | PASID Entry |--- PASID cache flush -
+    '-------------'                       |
+    |             |                       V
+    |             |                      GP
+    '-------------'
+Guest
+------| Shadow |----------------------- GP->HP* ---------
+      v        v                          |
+Host                                      v
+    .-------------.  .----------------------.
+    |   pIOMMU    |  | Bind FL for GVA-GPA  |
+    |             |  '----------------------'
+    .----------------/  |
+    | PASID Entry |     V (Nested xlate)
+    '----------------\.---------------------.
+    |             |   |Set SL to GPA-HPA    |
+    |             |   '---------------------'
+    '-------------'
 
-Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Where:
+ - FL = First level/stage one page tables
+ - SL = Second level/stage two page tables
+ - GP = Guest PASID
+ - HP = Host PASID
+* Conversion needed if non-identity GP-HP mapping option is chosen.
+
 Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Link: https://lkml.org/lkml/2019/4/26/462
+Signed-off-by: Liu Yi L <yi.l.liu@intel.com>
 ---
- drivers/iommu/ioasid.c | 302 +++++++++++++++++++++++++++++++++++++++++++++++--
- include/linux/ioasid.h |  28 +++++
- 2 files changed, 320 insertions(+), 10 deletions(-)
+ drivers/iommu/iommu.c      | 20 ++++++++++++++++
+ include/linux/iommu.h      | 22 ++++++++++++++++++
+ include/uapi/linux/iommu.h | 58 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 100 insertions(+)
 
-diff --git a/drivers/iommu/ioasid.c b/drivers/iommu/ioasid.c
-index 6fbea76..b2d9ea5 100644
---- a/drivers/iommu/ioasid.c
-+++ b/drivers/iommu/ioasid.c
-@@ -17,7 +17,254 @@ struct ioasid_data {
- 	struct rcu_head rcu;
- };
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 6228d5d..c19ea1f 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -1729,6 +1729,26 @@ int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
  
--static DEFINE_XARRAY_ALLOC(ioasid_xa);
-+/*
-+ * struct ioasid_allocator_data - Internal data structure to hold information
-+ * about an allocator. There are two types of allocators:
-+ *
-+ * - Default allocator always has its own XArray to track the IOASIDs allocated.
-+ * - Custom allocators may share allocation helpers with different private data.
-+ *   Custom allocators share the same helper functions also share the same
-+ *   XArray.
-+ * Rules:
-+ * 1. Default allocator is always available, not dynamically registered. This is
-+ *    to prevent race conditions with early boot code that want to register
-+ *    custom allocators or allocate IOASIDs.
-+ * 2. Custom allocators take precedence over the default allocator.
-+ * 3. When all custom allocators sharing the same helper functions are
-+ *    unregistered (e.g. due to hotplug), all outstanding IOASIDs must be
-+ *    freed.
-+ * 4. When switching between custom allocators sharing the same helper
-+ *    functions, outstanding IOASIDs are preserved.
-+ * 5. When switching between custom allocator and default allocator, all IOASIDs
-+ *    must be freed to ensure unadulterated space for the new allocator.
-+ *
-+ * @ops:	allocator helper functions and its data
-+ * @list:	registered custom allocators
-+ * @slist:	allocators share the same ops but different data
-+ * @flags:	attributes of the allocator
-+ * @xa		xarray holds the IOASID space
-+ * @users	number of allocators sharing the same ops and XArray
-+ */
-+struct ioasid_allocator_data {
-+	struct ioasid_allocator_ops *ops;
-+	struct list_head list;
-+	struct list_head slist;
-+#define IOASID_ALLOCATOR_CUSTOM BIT(0) /* Needs framework to track results */
-+	unsigned long flags;
-+	struct xarray xa;
-+	refcount_t users;
-+};
-+
-+static DEFINE_MUTEX(ioasid_allocator_lock);
-+static LIST_HEAD(allocators_list);
-+
-+static ioasid_t default_alloc(ioasid_t min, ioasid_t max, void *opaque);
-+static void default_free(ioasid_t ioasid, void *opaque);
-+
-+static struct ioasid_allocator_ops default_ops = {
-+	.alloc = default_alloc,
-+	.free = default_free,
-+};
-+
-+static struct ioasid_allocator_data default_allocator = {
-+	.ops = &default_ops,
-+	.flags = 0,
-+	.xa = XARRAY_INIT(ioasid_xa, XA_FLAGS_ALLOC),
-+};
-+
-+static struct ioasid_allocator_data *active_allocator = &default_allocator;
-+
-+static ioasid_t default_alloc(ioasid_t min, ioasid_t max, void *opaque)
++int iommu_sva_bind_gpasid(struct iommu_domain *domain,
++			   struct device *dev, struct iommu_gpasid_bind_data *data)
 +{
-+	ioasid_t id;
++	if (unlikely(!domain->ops->sva_bind_gpasid))
++		return -ENODEV;
 +
-+	if (xa_alloc(&default_allocator.xa, &id, opaque, XA_LIMIT(min, max), GFP_KERNEL)) {
-+		pr_err("Failed to alloc ioasid from %d to %d\n", min, max);
-+		return INVALID_IOASID;
-+	}
-+
-+	return id;
++	return domain->ops->sva_bind_gpasid(domain, dev, data);
 +}
++EXPORT_SYMBOL_GPL(iommu_sva_bind_gpasid);
 +
-+static void default_free(ioasid_t ioasid, void *opaque)
++int iommu_sva_unbind_gpasid(struct iommu_domain *domain, struct device *dev,
++			     ioasid_t pasid)
 +{
-+	struct ioasid_data *ioasid_data;
++	if (unlikely(!domain->ops->sva_unbind_gpasid))
++		return -ENODEV;
 +
-+	ioasid_data = xa_erase(&default_allocator.xa, ioasid);
-+	kfree_rcu(ioasid_data, rcu);
++	return domain->ops->sva_unbind_gpasid(dev, pasid);
 +}
++EXPORT_SYMBOL_GPL(iommu_sva_unbind_gpasid);
 +
-+/* Allocate and initialize a new custom allocator with its helper functions */
-+static struct ioasid_allocator_data *ioasid_alloc_allocator(struct ioasid_allocator_ops *ops)
-+{
-+	struct ioasid_allocator_data *ia_data;
-+
-+	ia_data = kzalloc(sizeof(*ia_data), GFP_KERNEL);
-+	if (!ia_data)
-+		return NULL;
-+
-+	xa_init_flags(&ia_data->xa, XA_FLAGS_ALLOC);
-+	INIT_LIST_HEAD(&ia_data->slist);
-+	ia_data->flags |= IOASID_ALLOCATOR_CUSTOM;
-+	ia_data->ops = ops;
-+
-+	/* For tracking custom allocators that share the same ops */
-+	list_add_tail(&ops->list, &ia_data->slist);
-+	refcount_set(&ia_data->users, 1);
-+
-+	return ia_data;
-+}
-+
-+static bool use_same_ops(struct ioasid_allocator_ops *a, struct ioasid_allocator_ops *b)
-+{
-+	return (a->free == b->free) && (a->alloc == b->alloc);
-+}
-+
-+/**
-+ * ioasid_register_allocator - register a custom allocator
-+ * @ops: the custom allocator ops to be registered
-+ *
-+ * Custom allocators take precedence over the default xarray based allocator.
-+ * Private data associated with the IOASID allocated by the custom allocators
-+ * are managed by IOASID framework similar to data stored in xa by default
-+ * allocator.
-+ *
-+ * There can be multiple allocators registered but only one is active. In case
-+ * of runtime removal of a custom allocator, the next one is activated based
-+ * on the registration ordering.
-+ *
-+ * Multiple allocators can share the same alloc() function, in this case the
-+ * IOASID space is shared.
-+ */
-+int ioasid_register_allocator(struct ioasid_allocator_ops *ops)
-+{
-+	struct ioasid_allocator_data *ia_data;
-+	struct ioasid_allocator_data *pallocator;
-+	int ret = 0;
-+
-+	mutex_lock(&ioasid_allocator_lock);
-+
-+	ia_data = ioasid_alloc_allocator(ops);
-+	if (!ia_data) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * No particular preference, we activate the first one and keep
-+	 * the later registered allocators in a list in case the first one gets
-+	 * removed due to hotplug.
-+	 */
-+	if (list_empty(&allocators_list)) {
-+		WARN_ON(active_allocator != &default_allocator);
-+		/* Use this new allocator if default is not active */
-+		if (xa_empty(&active_allocator->xa)) {
-+			active_allocator = ia_data;
-+			list_add_tail(&ia_data->list, &allocators_list);
-+			goto out_unlock;
-+		}
-+		pr_warn("Default allocator active with outstanding IOASID\n");
-+		ret = -EAGAIN;
-+		goto out_free;
-+	}
-+
-+	/* Check if the allocator is already registered */
-+	list_for_each_entry(pallocator, &allocators_list, list) {
-+		if (pallocator->ops == ops) {
-+			pr_err("IOASID allocator already registered\n");
-+			ret = -EEXIST;
-+			goto out_free;
-+		} else if (use_same_ops(pallocator->ops, ops)) {
-+			/*
-+			 * If the new allocator shares the same ops,
-+			 * then they will share the same IOASID space.
-+			 * We should put them under the same xarray.
-+			 */
-+			list_add_tail(&ops->list, &pallocator->slist);
-+			refcount_inc(&pallocator->users);
-+			pr_info("New IOASID allocator ops shared %u times\n",
-+				refcount_read(&pallocator->users));
-+			goto out_free;
-+		}
-+	}
-+	list_add_tail(&ia_data->list, &allocators_list);
-+
-+	mutex_unlock(&ioasid_allocator_lock);
-+	return 0;
-+out_free:
-+	kfree(ia_data);
-+out_unlock:
-+	mutex_unlock(&ioasid_allocator_lock);
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(ioasid_register_allocator);
-+
-+static inline bool has_shared_ops(struct ioasid_allocator_data *allocator)
-+{
-+	return refcount_read(&allocator->users) > 1;
-+}
-+
-+/**
-+ * ioasid_unregister_allocator - Remove a custom IOASID allocator ops
-+ * @ops: the custom allocator to be removed
-+ *
-+ * Remove an allocator from the list, activate the next allocator in
-+ * the order it was registered. Or revert to default allocator if all
-+ * custom allocators are unregistered without outstanding IOASIDs.
-+ */
-+void ioasid_unregister_allocator(struct ioasid_allocator_ops *ops)
-+{
-+	struct ioasid_allocator_data *pallocator;
-+	struct ioasid_allocator_ops *sops;
-+
-+	mutex_lock(&ioasid_allocator_lock);
-+	if (list_empty(&allocators_list)) {
-+		pr_warn("No custom IOASID allocators active!\n");
-+		goto exit_unlock;
-+	}
-+
-+	list_for_each_entry(pallocator, &allocators_list, list) {
-+		if (!use_same_ops(pallocator->ops, ops))
-+			continue;
-+
-+		if (refcount_read(&pallocator->users) == 1) {
-+			/* No shared helper functions */
-+			list_del(&pallocator->list);
-+			/*
-+			 * All IOASIDs should have been freed before
-+			 * the last allocator that shares the same ops
-+			 * is unregistered.
-+			 */
-+			WARN_ON(!xa_empty(&pallocator->xa));
-+			kfree(pallocator);
-+			if (list_empty(&allocators_list)) {
-+				pr_info("No custom IOASID allocators, switch to default.\n");
-+				active_allocator = &default_allocator;
-+			} else if (pallocator == active_allocator) {
-+				active_allocator = list_first_entry(&allocators_list, struct ioasid_allocator_data, list);
-+				pr_info("IOASID allocator changed");
-+			}
-+			break;
-+		}
-+		/*
-+		 * Find the matching shared ops to delete,
-+		 * but keep outstanding IOASIDs
-+		 */
-+		list_for_each_entry(sops, &pallocator->slist, list) {
-+			if (sops == ops) {
-+				list_del(&ops->list);
-+				if (refcount_dec_and_test(&pallocator->users))
-+					pr_err("no shared ops\n");
-+				break;
-+			}
-+		}
-+		break;
-+	}
-+
-+exit_unlock:
-+	mutex_unlock(&ioasid_allocator_lock);
-+}
-+EXPORT_SYMBOL_GPL(ioasid_unregister_allocator);
- 
- /**
-  * ioasid_set_data - Set private data for an allocated ioasid
-@@ -32,13 +279,13 @@ int ioasid_set_data(ioasid_t ioasid, void *data)
- 	struct ioasid_data *ioasid_data;
- 	int ret = 0;
- 
--	xa_lock(&ioasid_xa);
--	ioasid_data = xa_load(&ioasid_xa, ioasid);
-+	mutex_lock(&ioasid_allocator_lock);
-+	ioasid_data = xa_load(&active_allocator->xa, ioasid);
- 	if (ioasid_data)
- 		rcu_assign_pointer(ioasid_data->private, data);
- 	else
- 		ret = -ENOENT;
--	xa_unlock(&ioasid_xa);
-+	mutex_unlock(&ioasid_allocator_lock);
- 
- 	/*
- 	 * Wait for readers to stop accessing the old private data, so the
-@@ -66,8 +313,9 @@ EXPORT_SYMBOL_GPL(ioasid_set_data);
- ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
- 		      void *private)
+ static void __iommu_detach_device(struct iommu_domain *domain,
+ 				  struct device *dev)
  {
--	ioasid_t id;
- 	struct ioasid_data *data;
-+	void *adata;
-+	ioasid_t id;
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 28f1a8c..91370e7 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -13,6 +13,7 @@
+ #include <linux/errno.h>
+ #include <linux/err.h>
+ #include <linux/of.h>
++#include <linux/ioasid.h>
+ #include <uapi/linux/iommu.h>
  
- 	data = kzalloc(sizeof(*data), GFP_KERNEL);
- 	if (!data)
-@@ -76,14 +324,34 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
- 	data->set = set;
- 	data->private = private;
- 
--	if (xa_alloc(&ioasid_xa, &id, data, XA_LIMIT(min, max), GFP_KERNEL)) {
--		pr_err("Failed to alloc ioasid from %d to %d\n", min, max);
-+	/*
-+	 * Custom allocator needs allocator data to perform platform specific
-+	 * operations.
-+	 */
-+	adata = active_allocator->flags & IOASID_ALLOCATOR_CUSTOM ? active_allocator->ops->pdata : data;
-+	mutex_lock(&ioasid_allocator_lock);
-+	id = active_allocator->ops->alloc(min, max, adata);
-+	if (id == INVALID_IOASID) {
-+		pr_err("Failed ASID allocation %lu\n", active_allocator->flags);
- 		goto exit_free;
- 	}
+ #define IOMMU_READ	(1 << 0)
+@@ -232,6 +233,8 @@ struct iommu_sva_ops {
+  * @detach_pasid_table: detach the pasid table
+  * @cache_invalidate: invalidate translation caches
+  * @pgsize_bitmap: bitmap of all possible supported page sizes
++ * @sva_bind_gpasid: bind guest pasid and mm
++ * @sva_unbind_gpasid: unbind guest pasid and mm
+  */
+ struct iommu_ops {
+ 	bool (*capable)(enum iommu_cap);
+@@ -299,6 +302,10 @@ struct iommu_ops {
+ 			     struct iommu_page_response *msg);
+ 	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
+ 				struct iommu_cache_invalidate_info *inv_info);
++	int (*sva_bind_gpasid)(struct iommu_domain *domain,
++			struct device *dev, struct iommu_gpasid_bind_data *data);
 +
-+	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
-+		/* Custom allocator needs framework to store and track allocation results */
-+		min = max = id;
-+
-+		if (xa_alloc(&active_allocator->xa, &id, data, XA_LIMIT(min, max), GFP_KERNEL)) {
-+			pr_err("Failed to alloc ioasid from %d to %d\n", min, max);
-+			active_allocator->ops->free(id, NULL);
-+			goto exit_free;
-+		}
-+	}
- 	data->id = id;
++	int (*sva_unbind_gpasid)(struct device *dev, int pasid);
  
-+	mutex_unlock(&ioasid_allocator_lock);
- 	return id;
- exit_free:
-+	mutex_unlock(&ioasid_allocator_lock);
- 	kfree(data);
- 	return INVALID_IOASID;
- }
-@@ -97,9 +365,23 @@ void ioasid_free(ioasid_t ioasid)
- {
- 	struct ioasid_data *ioasid_data;
- 
--	ioasid_data = xa_erase(&ioasid_xa, ioasid);
-+	mutex_lock(&ioasid_allocator_lock);
- 
--	kfree_rcu(ioasid_data, rcu);
-+	ioasid_data = xa_load(&active_allocator->xa, ioasid);
-+	if (!ioasid_data) {
-+		pr_err("Trying to free unknown IOASID %u\n", ioasid);
-+		goto exit_unlock;
-+	}
-+
-+	active_allocator->ops->free(ioasid, active_allocator->ops->pdata);
-+	/* Custom allocator needs additional steps to free the xa element */
-+	if (active_allocator->flags & IOASID_ALLOCATOR_CUSTOM) {
-+		ioasid_data = xa_erase(&active_allocator->xa, ioasid);
-+		kfree_rcu(ioasid_data, rcu);
-+	}
-+
-+exit_unlock:
-+	mutex_unlock(&ioasid_allocator_lock);
- }
- EXPORT_SYMBOL_GPL(ioasid_free);
- 
-@@ -124,7 +406,7 @@ void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- 	struct ioasid_data *ioasid_data;
- 
- 	rcu_read_lock();
--	ioasid_data = xa_load(&ioasid_xa, ioasid);
-+	ioasid_data = xa_load(&active_allocator->xa, ioasid);
- 	if (!ioasid_data) {
- 		priv = ERR_PTR(-ENOENT);
- 		goto unlock;
-diff --git a/include/linux/ioasid.h b/include/linux/ioasid.h
-index 0c272d9..33ef3ea 100644
---- a/include/linux/ioasid.h
-+++ b/include/linux/ioasid.h
-@@ -6,11 +6,28 @@
- 
- #define INVALID_IOASID ((ioasid_t)-1)
- typedef unsigned int ioasid_t;
-+typedef ioasid_t (*ioasid_alloc_fn_t)(ioasid_t min, ioasid_t max, void *data);
-+typedef void (*ioasid_free_fn_t)(ioasid_t ioasid, void *data);
- 
- struct ioasid_set {
- 	int dummy;
+ 	unsigned long pgsize_bitmap;
  };
- 
-+/**
-+ * struct ioasid_allocator_ops - IOASID allocator helper functions and data
-+ *
-+ * @alloc:	helper function to allocate IOASID
-+ * @free:	helper function to free IOASID
-+ * @list:	for tracking ops that share helper functions but not data
-+ * @pdata:	data belong to the allocator, provided when calling alloc()
-+ */
-+struct ioasid_allocator_ops {
-+	ioasid_alloc_fn_t alloc;
-+	ioasid_free_fn_t free;
-+	struct list_head list;
-+	void *pdata;
-+};
-+
- #define DECLARE_IOASID_SET(name) struct ioasid_set name = { 0 }
- 
- #if IS_ENABLED(CONFIG_IOASID)
-@@ -19,6 +36,8 @@ ioasid_t ioasid_alloc(struct ioasid_set *set, ioasid_t min, ioasid_t max,
- void ioasid_free(ioasid_t ioasid);
- void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- 		  bool (*getter)(void *));
-+int ioasid_register_allocator(struct ioasid_allocator_ops *allocator);
-+void ioasid_unregister_allocator(struct ioasid_allocator_ops *allocator);
- int ioasid_set_data(ioasid_t ioasid, void *data);
- 
- #else /* !CONFIG_IOASID */
-@@ -38,6 +57,15 @@ static inline void *ioasid_find(struct ioasid_set *set, ioasid_t ioasid,
- 	return NULL;
+@@ -413,6 +420,10 @@ extern void iommu_detach_pasid_table(struct iommu_domain *domain);
+ extern int iommu_cache_invalidate(struct iommu_domain *domain,
+ 				  struct device *dev,
+ 				  struct iommu_cache_invalidate_info *inv_info);
++extern int iommu_sva_bind_gpasid(struct iommu_domain *domain,
++		struct device *dev, struct iommu_gpasid_bind_data *data);
++extern int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
++				struct device *dev, ioasid_t pasid);
+ extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+ extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+ extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+@@ -972,6 +983,17 @@ iommu_cache_invalidate(struct iommu_domain *domain,
+ {
+ 	return -ENODEV;
  }
- 
-+static inline int ioasid_register_allocator(struct ioasid_allocator_ops *allocator)
++static inline int iommu_sva_bind_gpasid(struct iommu_domain *domain,
++				struct device *dev, struct iommu_gpasid_bind_data *data)
 +{
 +	return -ENODEV;
 +}
 +
-+static inline void ioasid_unregister_allocator(struct ioasid_allocator_ops *allocator)
++static inline int iommu_sva_unbind_gpasid(struct iommu_domain *domain,
++					   struct device *dev, int pasid)
 +{
++	return -ENODEV;
 +}
+ 
+ #endif /* CONFIG_IOMMU_API */
+ 
+diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+index 919ea02..780dc1f 100644
+--- a/include/uapi/linux/iommu.h
++++ b/include/uapi/linux/iommu.h
+@@ -313,4 +313,62 @@ struct iommu_cache_invalidate_info {
+ 	};
+ };
+ 
++/**
++ * struct iommu_gpasid_bind_data_vtd - Intel VT-d specific data on device and guest
++ * SVA binding.
++ *
++ * @flags:	VT-d PASID table entry attributes
++ * @pat:	Page attribute table data to compute effective memory type
++ * @emt:	Extended memory type
++ *
++ * Only guest vIOMMU selectable and effective options are passed down to
++ * the host IOMMU.
++ */
++struct iommu_gpasid_bind_data_vtd {
++#define IOMMU_SVA_VTD_GPASID_SRE	(1 << 0) /* supervisor request */
++#define IOMMU_SVA_VTD_GPASID_EAFE	(1 << 1) /* extended access enable */
++#define IOMMU_SVA_VTD_GPASID_PCD	(1 << 2) /* page-level cache disable */
++#define IOMMU_SVA_VTD_GPASID_PWT	(1 << 3) /* page-level write through */
++#define IOMMU_SVA_VTD_GPASID_EMTE	(1 << 4) /* extended mem type enable */
++#define IOMMU_SVA_VTD_GPASID_CD		(1 << 5) /* PASID-level cache disable */
++	__u64 flags;
++	__u32 pat;
++	__u32 emt;
++};
 +
- static inline int ioasid_set_data(ioasid_t ioasid, void *data)
- {
- 	return -ENODEV;
++/**
++ * struct iommu_gpasid_bind_data - Information about device and guest PASID binding
++ * @version:	Version of this data structure
++ * @format:	PASID table entry format
++ * @flags:	Additional information on guest bind request
++ * @gpgd:	Guest page directory base of the guest mm to bind
++ * @hpasid:	Process address space ID used for the guest mm in host IOMMU
++ * @gpasid:	Process address space ID used for the guest mm in guest IOMMU
++ * @addr_width:	Guest virtual address width
++ * @vtd:	Intel VT-d specific data
++ *
++ * Guest to host PASID mapping can be an identity or non-identity, where guest
++ * has its own PASID space. For non-identify mapping, guest to host PASID lookup
++ * is needed when VM programs guest PASID into an assigned device. VMM may
++ * trap such PASID programming then request host IOMMU driver to convert guest
++ * PASID to host PASID based on this bind data.
++ */
++struct iommu_gpasid_bind_data {
++#define IOMMU_GPASID_BIND_VERSION_1	1
++	__u32 version;
++#define IOMMU_PASID_FORMAT_INTEL_VTD	1
++	__u32 format;
++#define IOMMU_SVA_GPASID_VAL	(1 << 0) /* guest PASID valid */
++	__u64 flags;
++	__u64 gpgd;
++	__u64 hpasid;
++	__u64 gpasid;
++	__u32 addr_width;
++	__u8  padding[4];
++	/* Vendor specific data */
++	union {
++		struct iommu_gpasid_bind_data_vtd vtd;
++	};
++};
++
+ #endif /* _UAPI_IOMMU_H */
 -- 
 2.7.4
 
