@@ -2,88 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CFCE8F187
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EE958F19D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:10:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731159AbfHORE1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:04:27 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:34500 "EHLO mx1.redhat.com"
+        id S1731293AbfHORK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726098AbfHORE1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:04:27 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1729084AbfHORKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:10:25 -0400
+Received: from localhost (c-67-169-218-210.hsd1.or.comcast.net [67.169.218.210])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DC48D51EE1;
-        Thu, 15 Aug 2019 17:04:26 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 512EF43FD5;
-        Thu, 15 Aug 2019 17:04:26 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 13:04:24 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Zhangfei Gao <zhangfei.gao@linaro.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        linux-accelerators@lists.ozlabs.org
-Subject: Re: [PATCH 0/2] A General Accelerator Framework, WarpDrive
-Message-ID: <20190815170424.GA30916@redhat.com>
-References: <1565775265-21212-1-git-send-email-zhangfei.gao@linaro.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id BB2FF2084D;
+        Thu, 15 Aug 2019 17:10:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565889024;
+        bh=mu8LD5qZnhRCtDTT0NY1oQ6FPPJv/PceMZl2lhZPTpk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cMC9A5dLSFqTd+vHnTaus8/oNnEY0p1mAMS4VR0BtBD9UhXeTTKBi3gpcIrngm5MQ
+         TANMY7g4/HVlxdRUmWL6ul3OFDYlkHWzlRacDNsHX/+Li1yvohxPh45b6PFWOiutZV
+         tMv6xZGlWIAilOWI2HXUB3tZKUsqOSOfB3svvNpY=
+Date:   Thu, 15 Aug 2019 10:10:24 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        david@fromorbit.com, linux-kernel@vger.kernel.org,
+        sandeen@sandeen.net, hch@lst.de, agruenba@redhat.com,
+        rpeterso@redhat.com, cluster-devel@redhat.com
+Subject: [GIT PULL] iomap: small fixes for 5.3-rc5
+Message-ID: <20190815171024.GC15186@magnolia>
+References: <20190719162221.GF7093@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1565775265-21212-1-git-send-email-zhangfei.gao@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 15 Aug 2019 17:04:27 +0000 (UTC)
+In-Reply-To: <20190719162221.GF7093@magnolia>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 05:34:23PM +0800, Zhangfei Gao wrote:
-> *WarpDrive* is a general accelerator framework for the user application to
-> access the hardware without going through the kernel in data path.
-> 
-> WarpDrive is the name for the whole framework. The component in kernel
-> is called uacce, meaning "Unified/User-space-access-intended Accelerator
-> Framework". It makes use of the capability of IOMMU to maintain a
-> unified virtual address space between the hardware and the process.
-> 
-> WarpDrive is intended to be used with Jean Philippe Brucker's SVA
-> patchset[1], which enables IO side page fault and PASID support. 
-> We have keep verifying with Jean's sva/current [2]
-> We also keep verifying with Eric's SMMUv3 Nested Stage patch [3]
-> 
-> This series and related zip & qm driver as well as dummy driver for qemu test:
-> https://github.com/Linaro/linux-kernel-warpdrive/tree/5.3-rc1-warpdrive-v1
-> zip driver already been upstreamed.
-> zip supporting uacce will be the next step.
-> 
-> The library and user application:
-> https://github.com/Linaro/warpdrive/tree/wdprd-v1-current
+Hi Linus,
 
-Do we want a new framework ? I think that is the first question that
-should be answer here. Accelerator are in many forms and so far they
-never have been enough commonality to create a framework, even GPUs
-with the drm is an example of that, drm only offer share framework
-for the modesetting part of the GPU (as thankfully monitor connector
-are not specific to GPU brands :))
+Here's a single update to the MAINTAINERS entry for iomap.
+I test-merged it with this morning's master and didn't see any
+conflicts.  Please let me know if you encounter any funniness.
 
-FPGA is another example the only common code expose to userspace is
-about bitstream management AFAIK.
+--D
 
-I would argue that a framework should only be created once there is
-enough devices with same userspace API. Meanwhile you can provide
-in kernel helper that allow driver to expose same API. If after a
-while we have enough device driver which all use that same in kernel
-helpers API then it will a good time to introduce a new framework.
-Meanwhile this will allow individual device driver to tinker with
-their API and maybe get to something useful to more devices in the
-end.
+The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
 
-Note that what i propose also allow userspace code sharing for all
-driver that use the same in kernel helper.
+  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
 
-Cheers,
-Jérôme
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/iomap-5.3-fixes-1
+
+for you to fetch changes up to 9a67b72552f8d019948453e56ca7db8c7e5a94ba:
+
+  MAINTAINERS: iomap: Remove fs/iomap.c record (2019-08-13 08:15:07 -0700)
+
+----------------------------------------------------------------
+Changes since last update:
+- Update MAINTAINERS now that we've removed fs/iomap.c.
+
+----------------------------------------------------------------
+Denis Efremov (1):
+      MAINTAINERS: iomap: Remove fs/iomap.c record
+
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
