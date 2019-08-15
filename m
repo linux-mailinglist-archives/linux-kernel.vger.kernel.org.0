@@ -2,164 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42F8C8EC1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:58:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B2CE8EC15
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732001AbfHOM6M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:58:12 -0400
-Received: from enpas.org ([46.38.239.100]:60076 "EHLO mail.enpas.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730981AbfHOM6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:58:11 -0400
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        by mail.enpas.org (Postfix) with ESMTPSA id 16FC71006F0;
-        Thu, 15 Aug 2019 12:58:08 +0000 (UTC)
-From:   Max Staudt <max@enpas.org>
-To:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Cc:     linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
-        glaubitz@physik.fu-berlin.de, Max Staudt <max@enpas.org>
-Subject: [PATCH v3 3/3] i2c/busses/i2c-icy: Add LTC2990 present on 2019 board revision
-Date:   Thu, 15 Aug 2019 14:58:02 +0200
-Message-Id: <20190815125802.16500-3-max@enpas.org>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190815125802.16500-1-max@enpas.org>
-References: <20190815125802.16500-1-max@enpas.org>
+        id S1731455AbfHOM5A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:57:00 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:40495 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfHOM5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:57:00 -0400
+Received: from uno.localdomain (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id E2778240007;
+        Thu, 15 Aug 2019 12:56:55 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 14:58:22 +0200
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
+        <linux-media@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC 2/5] media: v4l2-ctrl: Document V4L2_CID_LOCATION
+Message-ID: <20190815125822.ik6mlcaolxdyhyd6@uno.localdomain>
+References: <20190814202815.32491-1-jacopo@jmondi.org>
+ <20190814202815.32491-3-jacopo@jmondi.org>
+ <20190814224340.GD5015@pendragon.ideasonboard.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fo4e5w67urwfcyy2"
+Content-Disposition: inline
+In-Reply-To: <20190814224340.GD5015@pendragon.ideasonboard.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the 2019 a1k.org community re-print of these PCBs sports an
-LTC2990 hwmon chip as an example use case, let this driver autoprobe
-for that as well. If it is present, modprobing ltc2990 is sufficient.
 
-The property_entry enables the three additional inputs available on
-this particular board:
+--fo4e5w67urwfcyy2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-  in1 will be the voltage of the 5V rail, divided by 2.
-  in2 will be the voltage of the 12V rail, divided by 4.
-  temp3 will be measured using a PCB loop next the chip.
+Hi Laurent,
 
-v3: Merged with initial LTC2990 support on ICY.
-    Moved defaults from platform_data to swnode.
-    Added note to Kconfig.
+On Thu, Aug 15, 2019 at 01:43:40AM +0300, Laurent Pinchart wrote:
+> Hi Jacopo,
+>
+> Thank you for the patch.
+>
+> On Wed, Aug 14, 2019 at 10:28:12PM +0200, Jacopo Mondi wrote:
+> > Add documentation for the V4L2_CID_LOCATION camera control. The newly
+> > added read-only control reports the camera device mounting position.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
+> > ---
+> >  .../media/uapi/v4l/ext-ctrls-camera.rst       | 23 +++++++++++++++++++
+> >  1 file changed, 23 insertions(+)
+> >
+> > diff --git a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > index 51c1d5c9eb00..fc0a02eee6d4 100644
+> > --- a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > +++ b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > @@ -510,6 +510,29 @@ enum v4l2_scene_mode -
+> >      value down. A value of zero stops the motion if one is in progress
+> >      and has no effect otherwise.
+> >
+> > +``V4L2_CID_LOCATION (integer)``
+>
+> Maybe V4L2_CID_CAMERA_SENSOR_LOCATION ? Same for the values below.
+>
+> > +    This read-only control describes the camera location by reporting its
+>
+> Here too I would mention camera sensor instead of just camera (or
+> possibly imaging sensor).
+>
 
-Signed-off-by: Max Staudt <max@enpas.org>
----
- drivers/i2c/busses/Kconfig   |  3 +++
- drivers/i2c/busses/i2c-icy.c | 56 ++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 59 insertions(+)
+Let's sort this out in the discussion on the dt property.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 9e57e1101..a311d07f3 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -1311,6 +1311,9 @@ config I2C_ICY
- 	  This support is also available as a module.  If so, the module
- 	  will be called i2c-icy.
- 
-+	  If you have a 2019 edition board with an LTC2990 sensor at address
-+	  0x4c, loading the module 'ltc2990' is sufficient to enable it.
-+
- config I2C_MLXCPLD
- 	tristate "Mellanox I2C driver"
- 	depends on X86_64
-diff --git a/drivers/i2c/busses/i2c-icy.c b/drivers/i2c/busses/i2c-icy.c
-index edac515da..c43cd170f 100644
---- a/drivers/i2c/busses/i2c-icy.c
-+++ b/drivers/i2c/busses/i2c-icy.c
-@@ -54,6 +54,8 @@ struct icy_i2c {
- 
- 	void __iomem *reg_s0;
- 	void __iomem *reg_s1;
-+	struct fwnode_handle *ltc2990_fwnode;
-+	struct i2c_client *ltc2990_client;
- };
- 
- 
-@@ -100,11 +102,33 @@ static void icy_pcf_waitforpin(void *data)
- /*
-  * Main i2c-icy part
-  */
-+static unsigned short const icy_ltc2990_addresses[] = {0x4c, I2C_CLIENT_END};
-+
-+/*
-+ * Additional sensors exposed once this property is applied:
-+ *
-+ * in1 will be the voltage of the 5V rail, divided by 2.
-+ * in2 will be the voltage of the 12V rail, divided by 4.
-+ * temp3 will be measured using a PCB loop next the chip.
-+ */
-+static const u32 icy_ltc2990_meas_mode[] = {0, 3};
-+
-+static const struct property_entry icy_ltc2990_props[] = {
-+	PROPERTY_ENTRY_U32_ARRAY("lltc,meas-mode", icy_ltc2990_meas_mode),
-+	{ }
-+};
-+
-+
- static int icy_probe(struct zorro_dev *z,
- 			 const struct zorro_device_id *ent)
- {
- 	struct icy_i2c *i2c;
- 	struct i2c_algo_pcf_data *algo_data;
-+	struct fwnode_handle *new_fwnode;
-+	struct i2c_board_info ltc2990_info = {
-+		.type		= "ltc2990",
-+		.addr		= 0x4c,
-+	};
- 
- 
- 	i2c = devm_kzalloc(&z->dev, sizeof(*i2c), GFP_KERNEL);
-@@ -147,6 +171,35 @@ static int icy_probe(struct zorro_dev *z,
- 	dev_info(&z->dev, "ICY I2C controller at %pa, IRQ not implemented\n",
- 		 &z->resource.start);
- 
-+	/*
-+	 * The 2019 a1k.org PCBs have an LTC2990 at 0x4c, so start
-+	 * it automatically once ltc2990 is modprobed.
-+	 *
-+	 * in0 is the voltage of the internal 5V power supply.
-+	 * temp1 is the temperature inside the chip.
-+	 *
-+	 * See property_entry above for in1, in2, temp3.
-+	 */
-+	new_fwnode = fwnode_create_software_node(icy_ltc2990_props, NULL);
-+	if (IS_ERR(new_fwnode))
-+		dev_info(&z->dev, "Failed to create fwnode for LTC2990, error: %ld\n",
-+			 PTR_ERR(new_fwnode));
-+	else {
-+		/*
-+		 * Store the fwnode so we can destroy it on .remove().
-+		 * Only store it on success, as fwnode_remove_software_node()
-+		 * is NULL safe, but not PTR_ERR safe.
-+		 */
-+		i2c->ltc2990_fwnode = new_fwnode;
-+		ltc2990_info.fwnode = new_fwnode;
-+
-+		i2c->ltc2990_client =
-+			i2c_new_probed_device(&i2c->adapter,
-+					      &ltc2990_info,
-+					      icy_ltc2990_addresses,
-+					      NULL);
-+	}
-+
- 	return 0;
- }
- 
-@@ -154,6 +207,9 @@ static void icy_remove(struct zorro_dev *z)
- {
- 	struct icy_i2c *i2c = dev_get_drvdata(&z->dev);
- 
-+	i2c_unregister_device(i2c->ltc2990_client);
-+	fwnode_remove_software_node(i2c->ltc2990_fwnode);
-+
- 	i2c_del_adapter(&i2c->adapter);
- }
- 
--- 
-2.11.0
+> > +    mounting position on the device where the camera is installed. This
+> > +    control is particularly meaningful for devices which have a well defined
+> > +    orientation, such as phones, laptops and portable devices as the camera
+> > +    location is expressed as a position relative to the device intended
+> > +    usage position. In example, a camera installed on the user-facing side
+> > +    of a phone device is said to be installed in the ``V4L2_LOCATION_FRONT``
+> > +    position.
+>
+> The DT bindings could use such an example :-) I would extend this to
+> tablets and laptops.
 
+I could copy part of the text there and expand the example device
+list.
+
+>
+> > +
+> > +
+> > +
+>
+> Do we need three blank lines ?
+>
+
+I don't know :) I copied this style from the other tables in the file.
+There doesn't seem to a requirement about this, I just tried to keep
+the style consistent :)
+
+> > +.. flat-table::
+> > +    :header-rows:  0
+> > +    :stub-columns: 0
+> > +
+> > +    * - ``V4L2_LOCATION_FRONT``
+> > +      - The camera device is located on the front side of the device.
+> > +    * - ``V4L2_LOCATION_BACK``
+> > +      - The camera device is located on the back side of the device.
+> > +
+> > +
+> > +
+> >  .. [#f1]
+> >     This control may be changed to a menu control in the future, if more
+> >     options are required.
+>
+> --
+> Regards,
+>
+> Laurent Pinchart
+
+--fo4e5w67urwfcyy2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1VVu4ACgkQcjQGjxah
+Vjwveg/+JKy6+TrvF1i7DUeIFc2WRXtrmT4PHKMFySy6A1AaMdKNyuES2s/GD1Vn
+JdtbhCaWZ2Lo7WXRbx1xNJlDLfGUPx55raR/G8JuRRaBdR1PYt6S1bjpDXlNLkCn
+CeBdL379wxhbHuAal4mZoXW9iMlRj4WVco+K2DpdSwQULbeq9zisBWTwV32j9ArS
+kT+9Wikaeu4rTieHRkbZb3prIyyEaCRnhorFYXVk4vrpjJ4M0ksfSCF9Trj19FP4
+Qa/twQVHWXPksbNEoLUDgV4nUK4PPFoUiY1Vo68EpuSO0IlUsHsPJ6aOCPxjEuE/
+yrvbgbjCzC+oqbmfyaunWzkrxkAPAFYutLFjnzTUJ3m15KXd5VdA8mycVk7pxee8
+vTlpQ7h0U/zJVkQGgw8IjFOh1bw6ssq01YN88g/Z5jHdEqs2e4SX3gPxkSUw5Z/b
+TMYJJ48aqxvekt+h7p91lpDJxdIM/0PhTCPftSynX8jx7BH40i8NdnOMqIoSlk2f
+e9DcZSE/NaL3/kgJAoOv3trwjd3xOPBD4Q2qsGksu0Vej5jL1ss32zlNFpffiCs9
+Echpa4m1HPfgTfCivjIOk3Gdl9pQSmHvA2k64Kyg4BPzqI+lPRM0UbnO3gzGd1YU
+b1iOZB/L6SPKIRyw72ewQ1tps1+kozDTAOZHbAnDDrBoNHwkA8Q=
+=geG3
+-----END PGP SIGNATURE-----
+
+--fo4e5w67urwfcyy2--
