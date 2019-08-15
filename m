@@ -2,89 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB0A18F2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA288F2C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:05:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731926AbfHOSD2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:03:28 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42196 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731200AbfHOSD2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:03:28 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 161762A09AF;
-        Thu, 15 Aug 2019 18:03:28 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F1A13600CD;
-        Thu, 15 Aug 2019 18:03:26 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 14:03:25 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>, Christoph Hellwig <hch@lst.de>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/15] mm: remove the pgmap field from struct hmm_vma_walk
-Message-ID: <20190815180325.GA4920@redhat.com>
-References: <20190806160554.14046-1-hch@lst.de>
- <20190806160554.14046-5-hch@lst.de>
- <20190807174548.GJ1571@mellanox.com>
- <CAPcyv4hPCuHBLhSJgZZEh0CbuuJNPLFDA3f-79FX5uVOO0yubA@mail.gmail.com>
- <20190808065933.GA29382@lst.de>
- <CAPcyv4hMUzw8vyXFRPe2pdwef0npbMm9tx9wiZ9MWkHGhH1V6w@mail.gmail.com>
- <20190814073854.GA27249@lst.de>
- <20190814132746.GE13756@mellanox.com>
- <CAPcyv4g8usp8prJ+1bMtyV1xuedp5FKErBp-N8+KzR=rJ-v0QQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPcyv4g8usp8prJ+1bMtyV1xuedp5FKErBp-N8+KzR=rJ-v0QQ@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 15 Aug 2019 18:03:28 +0000 (UTC)
+        id S1732059AbfHOSFJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:05:09 -0400
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41783 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729736AbfHOSFJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 14:05:09 -0400
+Received: by mail-yb1-f196.google.com with SMTP id n7so1104876ybd.8;
+        Thu, 15 Aug 2019 11:05:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+7ik1RvxnhAES3NBX5CO26tA3ZEBBHVVi3bXNL+10EQ=;
+        b=WyAGvjil3rCmLR0WeJIzoS5cwWA7hEydGBlQUJlUZ47usGLvAUKbqxmmgufy07cl7e
+         X9n+SbRn/opzmbXSmfIRooVd5YFEtWQQj3ctXpOIU2OIxJ26AJLYxonqkmmTYL76AHdN
+         4XKT4mIs8ZA2ifn+wdnR2tK3exU5pzbdLKipgM6u5KQANa4GwnHEWYZX0AnZpOpyYjJi
+         d31tYmGsHIFV3ol/wbV+q6tNJ5WWtRUoZbHpJemmWiuGbVopdP5ANorWy1MPdjjCdV9U
+         JWfXGNscZmSHsPbtB3wwKFfbWqgr0rVyhu8fsii++PcUziW64MbGB6W7EzxfYCTC3Em+
+         KVQA==
+X-Gm-Message-State: APjAAAWwCmuHrVi9t+G5spTXXQ+8uWdnyEOTvC/ZNGclfZG0WeNjUPE+
+        wCtBf7C3c6kwcmBCJn4pWtk=
+X-Google-Smtp-Source: APXvYqzjeg/tMSF/9JfD1evzrNm/IdG2loRQLts4Qfq74BWA3UBsM3cxG5PNeC3VMJZAoFoly/wVDg==
+X-Received: by 2002:a5b:307:: with SMTP id j7mr4426281ybp.316.1565892308230;
+        Thu, 15 Aug 2019 11:05:08 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id v68sm745113ywe.23.2019.08.15.11.05.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 15 Aug 2019 11:05:07 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Inaky Perez-Gonzalez <inaky.perez-gonzalez@intel.com>,
+        linux-wimax@intel.com (supporter:INTEL WIRELESS WIMAX CONNECTION 2400),
+        "David S. Miller" <davem@davemloft.net>,
+        netdev@vger.kernel.org (open list:NETWORKING DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] wimax/i2400m: fix a memory leak bug
+Date:   Thu, 15 Aug 2019 13:05:01 -0500
+Message-Id: <1565892301-2812-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 07:48:28AM -0700, Dan Williams wrote:
-> On Wed, Aug 14, 2019 at 6:28 AM Jason Gunthorpe <jgg@mellanox.com> wrote:
-> >
-> > On Wed, Aug 14, 2019 at 09:38:54AM +0200, Christoph Hellwig wrote:
-> > > On Tue, Aug 13, 2019 at 06:36:33PM -0700, Dan Williams wrote:
-> > > > Section alignment constraints somewhat save us here. The only example
-> > > > I can think of a PMD not containing a uniform pgmap association for
-> > > > each pte is the case when the pgmap overlaps normal dram, i.e. shares
-> > > > the same 'struct memory_section' for a given span. Otherwise, distinct
-> > > > pgmaps arrange to manage their own exclusive sections (and now
-> > > > subsections as of v5.3). Otherwise the implementation could not
-> > > > guarantee different mapping lifetimes.
-> > > >
-> > > > That said, this seems to want a better mechanism to determine "pfn is
-> > > > ZONE_DEVICE".
-> > >
-> > > So I guess this patch is fine for now, and once you provide a better
-> > > mechanism we can switch over to it?
-> >
-> > What about the version I sent to just get rid of all the strange
-> > put_dev_pagemaps while scanning? Odds are good we will work with only
-> > a single pagemap, so it makes some sense to cache it once we find it?
-> 
-> Yes, if the scan is over a single pmd then caching it makes sense.
+In i2400m_barker_db_init(), 'options_orig' is allocated through kstrdup()
+to hold the original command line options. Then, the options are parsed.
+However, if an error occurs during the parsing process, 'options_orig' is
+not deallocated, leading to a memory leak bug. To fix this issue, free
+'options_orig' before returning the error.
 
-Quite frankly an easier an better solution is to remove the pagemap
-lookup as HMM user abide by mmu notifier it means we will not make
-use or dereference the struct page so that we are safe from any
-racing hotunplug of dax memory (as long as device driver using hmm
-do not have a bug).
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ drivers/net/wimax/i2400m/fw.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Cheers,
-Jérôme
+diff --git a/drivers/net/wimax/i2400m/fw.c b/drivers/net/wimax/i2400m/fw.c
+index e9fc168..6b36f6d 100644
+--- a/drivers/net/wimax/i2400m/fw.c
++++ b/drivers/net/wimax/i2400m/fw.c
+@@ -342,6 +342,7 @@ int i2400m_barker_db_init(const char *_options)
+ 				       "a 32-bit number\n",
+ 				       __func__, token);
+ 				result = -EINVAL;
++				kfree(options_orig);
+ 				goto error_parse;
+ 			}
+ 			if (barker == 0) {
+@@ -350,8 +351,10 @@ int i2400m_barker_db_init(const char *_options)
+ 				continue;
+ 			}
+ 			result = i2400m_barker_db_add(barker);
+-			if (result < 0)
++			if (result < 0) {
++				kfree(options_orig);
+ 				goto error_add;
++			}
+ 		}
+ 		kfree(options_orig);
+ 	}
+-- 
+2.7.4
+
