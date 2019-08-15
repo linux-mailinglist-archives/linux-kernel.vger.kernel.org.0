@@ -2,179 +2,285 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 812D38EB5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:19:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 335418EB6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:22:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730715AbfHOMT0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:19:26 -0400
-Received: from comms.puri.sm ([159.203.221.185]:36920 "EHLO comms.puri.sm"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729649AbfHOMTZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:19:25 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by comms.puri.sm (Postfix) with ESMTP id E5C86DFD78;
-        Thu, 15 Aug 2019 05:19:23 -0700 (PDT)
-Received: from comms.puri.sm ([127.0.0.1])
-        by localhost (comms.puri.sm [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Tjr_SaRr22I2; Thu, 15 Aug 2019 05:19:23 -0700 (PDT)
-Subject: Re: [PATCH 1/2] usb: serial: option: Add the BroadMobi BM818 card
-To:     Johan Hovold <johan@kernel.org>
-Cc:     "Angus Ainslie (Purism)" <angus@akkea.ca>, kernel@puri.sm,
-        =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        netdev@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190724145227.27169-1-angus@akkea.ca>
- <20190724145227.27169-2-angus@akkea.ca> <20190805114711.GF3574@localhost>
- <5fb96703-b174-eef1-5ad1-693e2bbce32f@puri.sm>
- <20190815114941.GE32300@localhost>
-From:   Bob Ham <bob.ham@puri.sm>
-Openpgp: preference=signencrypt
-Autocrypt: addr=bob.ham@puri.sm; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <57190963-22e2-cb89-bfd0-502f135237c3@puri.sm>
-Date:   Thu, 15 Aug 2019 13:19:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1731341AbfHOMWZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:22:25 -0400
+Received: from mail-eopbgr00076.outbound.protection.outlook.com ([40.107.0.76]:46208
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725977AbfHOMWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:22:24 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=i2zVOXIO5kS4HQvvh+vGwJqcjda5zcGpuc4P6R0hazcxWQSz3wgTZ7KgqJooHbDqOiQdWwy1IoG40jhsynrsrQSNJ/YtWdXlxNwo5tOuQBxelqUUAwaGcCXxRg7EIjnE2v3AtccKUipK5fdYPbmGuNMFP2/WUBMSrhgPPhClAja/X64AofmMadVdRP5VzpTqUI73WyH5TNpgAnwl2dgqplOj/0Z3mJoL1V77/OueEjaog2MrL9vssAxSEWf1RdmFu06ashzyGoRW4mBY5ixhLtq2bl8nF+twE+JsDLm3CJiKNNTaDF5/5Nz4wuPORH9LSySYtJFngHD7anXlaKuqeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ufOBix5IY4nj0Nx/CTgkI8W0IxnmcH2w9HLt1RR1W/s=;
+ b=XinzqF9DDOQNchqWiqcgxUsTKudf+2wVEfnK4HcVHRoOmLOf5N5WpYeiTg8/T8ku7ZcXXav60MXkjk6/PlRIRLYCq3Ci7blgx8VBsfkkCj2cw01+ZAkDNMwmOisWaYA+YUmzUm4YNyAfA24D2K+z0x9nr0qwEn3mIk5fxZkeWUgAxmvKn1NfrWup9PBRAzSvVe5tF2W6RjkdTHyiaAQMlE3oeMCf+dzcZL2kf5iLBm0NecUPk4MXk+7wXfvGbWqTM+wrDBdUqYT/8lHsd7A2or6vtSzAKJgCDizk82wYy8Iz2s/n1GgB0zGLmU0BWmd6pE/qNmwfTlXLHjIzuEsutA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 193.47.165.251) smtp.rcpttodomain=raithlin.com smtp.mailfrom=mellanox.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=mellanox.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ufOBix5IY4nj0Nx/CTgkI8W0IxnmcH2w9HLt1RR1W/s=;
+ b=bzAdPJvDmgOM4UxCKrT7NwyyUpFO0TTZKXs127Q1vDDQQrTHT/SATMBYBALuMf5JqIuHOD3AjluVm0DkJxACxxjLlbQn590Tikx+ErN9Jl/LtM2xmRk49pYGx5jvtO4K5sx9CAN5/SEF4uVt2ZgkMPxqgERYHtT7nd3pjtwnmhE=
+Received: from HE1PR05CA0238.eurprd05.prod.outlook.com (2603:10a6:3:fb::14) by
+ HE1PR05MB3385.eurprd05.prod.outlook.com (2603:10a6:7:33::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.21; Thu, 15 Aug 2019 12:20:39 +0000
+Received: from VE1EUR03FT006.eop-EUR03.prod.protection.outlook.com
+ (2a01:111:f400:7e09::208) by HE1PR05CA0238.outlook.office365.com
+ (2603:10a6:3:fb::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2157.18 via Frontend
+ Transport; Thu, 15 Aug 2019 12:20:39 +0000
+Authentication-Results: spf=pass (sender IP is 193.47.165.251)
+ smtp.mailfrom=mellanox.com; raithlin.com; dkim=none (message not signed)
+ header.d=none;raithlin.com; dmarc=pass action=none header.from=mellanox.com;
+Received-SPF: Pass (protection.outlook.com: domain of mellanox.com designates
+ 193.47.165.251 as permitted sender) receiver=protection.outlook.com;
+ client-ip=193.47.165.251; helo=mtlcas13.mtl.com;
+Received: from mtlcas13.mtl.com (193.47.165.251) by
+ VE1EUR03FT006.mail.protection.outlook.com (10.152.18.116) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.2178.16 via Frontend Transport; Thu, 15 Aug 2019 12:20:38 +0000
+Received: from MTLCAS13.mtl.com (10.0.8.78) by mtlcas13.mtl.com (10.0.8.78)
+ with Microsoft SMTP Server (TLS) id 15.0.1178.4; Thu, 15 Aug 2019 15:20:37
+ +0300
+Received: from MTLCAS01.mtl.com (10.0.8.71) by MTLCAS13.mtl.com (10.0.8.78)
+ with Microsoft SMTP Server (TLS) id 15.0.1178.4 via Frontend Transport; Thu,
+ 15 Aug 2019 15:20:37 +0300
+Received: from [10.223.0.54] (10.223.0.54) by MTLCAS01.mtl.com (10.0.8.71)
+ with Microsoft SMTP Server (TLS) id 14.3.301.0; Thu, 15 Aug 2019 15:20:35
+ +0300
+Subject: Re: [PATCH v7 07/14] nvmet-passthru: add enable/disable helpers
+To:     Logan Gunthorpe <logang@deltatee.com>,
+        <linux-kernel@vger.kernel.org>, <linux-nvme@lists.infradead.org>,
+        <linux-block@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+CC:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+        "Keith Busch" <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
+        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
+        Stephen Bates <sbates@raithlin.com>
+References: <20190801234514.7941-1-logang@deltatee.com>
+ <20190801234514.7941-8-logang@deltatee.com>
+From:   Max Gurtovoy <maxg@mellanox.com>
+Message-ID: <e0323600-c4e8-00e7-d8cc-ff8d31b4ed10@mellanox.com>
+Date:   Thu, 15 Aug 2019 15:20:35 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
-In-Reply-To: <20190815114941.GE32300@localhost>
-Content-Type: multipart/signed; micalg=pgp-sha512;
- protocol="application/pgp-signature";
- boundary="ZNMKRsShnEEY9wDWprBhCeugmdfHlBIFO"
+MIME-Version: 1.0
+In-Reply-To: <20190801234514.7941-8-logang@deltatee.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.223.0.54]
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:193.47.165.251;IPV:NLI;CTRY:IL;EFV:NLI;SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(39860400002)(376002)(2980300002)(189003)(199004)(65806001)(6246003)(486006)(65956001)(53936002)(6116002)(70206006)(64126003)(31696002)(5660300002)(65826007)(3846002)(70586007)(4326008)(36906005)(86362001)(76176011)(2201001)(53546011)(8936002)(11346002)(446003)(126002)(36756003)(14444005)(230700001)(476003)(7416002)(2616005)(47776003)(7736002)(336012)(16526019)(23676004)(2486003)(26005)(305945005)(31686004)(81166006)(316002)(81156014)(58126008)(106002)(16576012)(50466002)(54906003)(186003)(356004)(110136005)(8676002)(2906002)(478600001)(229853002)(3940600001)(2101003);DIR:OUT;SFP:1101;SCL:1;SRVR:HE1PR05MB3385;H:mtlcas13.mtl.com;FPR:;SPF:Pass;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 11fb4de1-fd0c-4f7f-1f6f-08d7217afbc3
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(4709080)(1401327)(2017052603328)(7193020);SRVR:HE1PR05MB3385;
+X-MS-TrafficTypeDiagnostic: HE1PR05MB3385:
+X-Microsoft-Antispam-PRVS: <HE1PR05MB338596D6F8A8AF0A1CC549EDB6AC0@HE1PR05MB3385.eurprd05.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:5236;
+X-Forefront-PRVS: 01304918F3
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: 9NQ4bTKsOhu230m9i62mEMXukNxqgOZr6KhHuyNDY5v2/Jon1fBKjSO7p/7G3yfnTHr9vtaU00aYOPf6gvpcw2XNSj2QH/eMh/ire7tD+3Ow0qQiiASi9yeJkEqytBO/Q2Ny6LYSPFYMfl0bUM+nZvZEPkmmWz2m4xS4MoW9QkHg+hNhxpT5VlW598hQL1goyDmn6Vk1G8KOSoRJbZ25V/0z9+IigEtw1xQwezbVyepkpfFzcXGmb04Gdb1jq0Nm4wHlSKvexZc/c9U65RiGcGEnYJeSs98akxnOVs0r7ZBCLPpbf+WWMi3kMr0InNFS+aWI1bFblNFtXKMVsEQ79f+UooILTDssH9swZ3WmWE6j0h85GxJ0rpYFufWf2R88W0TX1J/HXwWC6CUObW9qlPi3QISHyBhsKW4EroK02b4=
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2019 12:20:38.5576
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11fb4de1-fd0c-4f7f-1f6f-08d7217afbc3
+X-MS-Exchange-CrossTenant-Id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a652971c-7d2e-4d9b-a6a4-d149256f461b;Ip=[193.47.165.251];Helo=[mtlcas13.mtl.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR05MB3385
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---ZNMKRsShnEEY9wDWprBhCeugmdfHlBIFO
-Content-Type: multipart/mixed; boundary="AcdudyfEnMMVAUzhK5E3VomylemxqhAdu";
- protected-headers="v1"
-From: Bob Ham <bob.ham@puri.sm>
-To: Johan Hovold <johan@kernel.org>
-Cc: "Angus Ainslie (Purism)" <angus@akkea.ca>, kernel@puri.sm,
- =?UTF-8?Q?Bj=c3=b8rn_Mork?= <bjorn@mork.no>,
- "David S. Miller" <davem@davemloft.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, netdev@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <57190963-22e2-cb89-bfd0-502f135237c3@puri.sm>
-Subject: Re: [PATCH 1/2] usb: serial: option: Add the BroadMobi BM818 card
-References: <20190724145227.27169-1-angus@akkea.ca>
- <20190724145227.27169-2-angus@akkea.ca> <20190805114711.GF3574@localhost>
- <5fb96703-b174-eef1-5ad1-693e2bbce32f@puri.sm>
- <20190815114941.GE32300@localhost>
-In-Reply-To: <20190815114941.GE32300@localhost>
 
---AcdudyfEnMMVAUzhK5E3VomylemxqhAdu
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-GB
-Content-Transfer-Encoding: quoted-printable
+On 8/2/2019 2:45 AM, Logan Gunthorpe wrote:
+> This patch adds helper functions which are used in the NVMeOF configfs
+> when the user is configuring the passthru subsystem. Here we ensure
+> that only one subsys is assigned to each nvme_ctrl by using an xarray
+> on the cntlid.
+>
+> [chaitanya.kulkarni@wdc.com: this patch is very roughly based
+>   on a similar one by Chaitanya]
+> Signed-off-by: Chaitanya Kulkarni <chaitanya.kulkarni@wdc.com>
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> ---
+>   drivers/nvme/target/core.c            |  8 +++
+>   drivers/nvme/target/io-cmd-passthru.c | 77 +++++++++++++++++++++++++++
+>   drivers/nvme/target/nvmet.h           | 10 ++++
+>   3 files changed, 95 insertions(+)
+>
+> diff --git a/drivers/nvme/target/core.c b/drivers/nvme/target/core.c
+> index 50c01b2da568..2e75968af7f4 100644
+> --- a/drivers/nvme/target/core.c
+> +++ b/drivers/nvme/target/core.c
+> @@ -519,6 +519,12 @@ int nvmet_ns_enable(struct nvmet_ns *ns)
+>   
+>   	mutex_lock(&subsys->lock);
+>   	ret = 0;
+> +
+> +	if (nvmet_passthru_ctrl(subsys)) {
+> +		pr_info("cannot enable both passthru and regular namespaces for a single subsystem");
+> +		goto out_unlock;
+> +	}
+> +
+>   	if (ns->enabled)
+>   		goto out_unlock;
+>   
+> @@ -1439,6 +1445,8 @@ static void nvmet_subsys_free(struct kref *ref)
+>   
+>   	WARN_ON_ONCE(!list_empty(&subsys->namespaces));
+>   
+> +	nvmet_passthru_subsys_free(subsys);
+> +
+>   	kfree(subsys->subsysnqn);
+>   	kfree(subsys);
+>   }
+> diff --git a/drivers/nvme/target/io-cmd-passthru.c b/drivers/nvme/target/io-cmd-passthru.c
+> index 46c58fec5608..b199785500ad 100644
+> --- a/drivers/nvme/target/io-cmd-passthru.c
+> +++ b/drivers/nvme/target/io-cmd-passthru.c
+> @@ -11,6 +11,11 @@
+>   #include "../host/nvme.h"
+>   #include "nvmet.h"
+>   
+> +/*
+> + * xarray to maintain one passthru subsystem per nvme controller.
+> + */
+> +static DEFINE_XARRAY(passthru_subsystems);
+> +
+>   static struct workqueue_struct *passthru_wq;
+>   
+>   int nvmet_passthru_init(void)
+> @@ -27,6 +32,78 @@ void nvmet_passthru_destroy(void)
+>   	destroy_workqueue(passthru_wq);
+>   }
+>   
+> +int nvmet_passthru_ctrl_enable(struct nvmet_subsys *subsys)
+> +{
+> +	struct nvme_ctrl *ctrl;
+> +	int ret = -EINVAL;
+> +	void *old;
+> +
+> +	mutex_lock(&subsys->lock);
+> +	if (!subsys->passthru_ctrl_path)
+> +		goto out_unlock;
+> +	if (subsys->passthru_ctrl)
+> +		goto out_unlock;
+> +
+> +	if (subsys->nr_namespaces) {
+> +		pr_info("cannot enable both passthru and regular namespaces for a single subsystem");
+> +		goto out_unlock;
+> +	}
+> +
+> +	ctrl = nvme_ctrl_get_by_path(subsys->passthru_ctrl_path);
+> +	if (IS_ERR(ctrl)) {
+> +		ret = PTR_ERR(ctrl);
+> +		pr_err("failed to open nvme controller %s\n",
+> +		       subsys->passthru_ctrl_path);
+> +
+> +		goto out_unlock;
+> +	}
+> +
+> +	old = xa_cmpxchg(&passthru_subsystems, ctrl->cntlid, NULL,
+> +			 subsys, GFP_KERNEL);
+> +	if (xa_is_err(old)) {
+> +		ret = xa_err(old);
+> +		goto out_put_ctrl;
+> +	}
+> +
+> +	if (old)
+> +		goto out_put_ctrl;
+> +
+> +	subsys->passthru_ctrl = ctrl;
+> +	ret = 0;
+> +
+> +	goto out_unlock;
 
-On 15/08/2019 12:49, Johan Hovold wrote:
-> On Mon, Aug 05, 2019 at 03:44:30PM +0100, Bob Ham wrote:
->> On 05/08/2019 12:47, Johan Hovold wrote:
->>> On Wed, Jul 24, 2019 at 07:52:26AM -0700, Angus Ainslie (Purism) wrot=
-e:
->>>> From: Bob Ham <bob.ham@puri.sm>
->>>>
->>>> Add a VID:PID for the BroadModi BM818 M.2 card
->>>
->>> Would you mind posting the output of usb-devices (or lsusb -v) for th=
-is
->>> device?
->>
->> T:  Bus=3D01 Lev=3D03 Prnt=3D40 Port=3D03 Cnt=3D01 Dev#=3D 44 Spd=3D48=
-0 MxCh=3D 0
->> D:  Ver=3D 2.00 Cls=3D00(>ifc ) Sub=3D00 Prot=3D00 MxPS=3D64 #Cfgs=3D =
- 1
->> P:  Vendor=3D2020 ProdID=3D2060 Rev=3D00.00
->> S:  Manufacturer=3DQualcomm, Incorporated
->> S:  Product=3DQualcomm CDMA Technologies MSM
->> C:  #Ifs=3D 5 Cfg#=3D 1 Atr=3De0 MxPwr=3D500mA
->> I:  If#=3D0x0 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3Dff Prot=3Dff Dr=
-iver=3D(none)
->> I:  If#=3D0x1 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3Dff Prot=3Dff Dr=
-iver=3D(none)
->> I:  If#=3D0x2 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3Dff Prot=3Dff Dr=
-iver=3D(none)
->> I:  If#=3D0x3 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3Dfe Prot=3Dff Dr=
-iver=3D(none)
->> I:  If#=3D0x4 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3Dff Prot=3Dff Dr=
-iver=3D(none)
->=20
-> I amended the commit message with the above, switched to
-> USB_DEVICE_INTERFACE_CLASS(), fixed the comment and moved the entry
-> to the other 0x2020 entries before applying.
+can we re-arrange the code here ?
 
-Sorry I should probably have mentioned this before but Angus has been on
-vacation, hence the silence on the other matters.  Regardless, thanks.
+it's not so common to see goto in a good flow.
 
-Bob
+maybe have 1 good flow the goto's will go bellow it as we usually do in 
+this subsystem.
 
 
---AcdudyfEnMMVAUzhK5E3VomylemxqhAdu--
-
---ZNMKRsShnEEY9wDWprBhCeugmdfHlBIFO
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE745irA8zXATsZwYpUxfwLpX1YkEFAl1VTccACgkQUxfwLpX1
-YkGCtxAAxy4zuPH4eoYKdgIFScVOHZtRnclOrlCN1ZluUXU5czb0SCk6BDekoyrd
-ka0VwFB4Mn+bfQokROl+2tXHoJeEPviPq82u6iWDvRwOTt/IO8Sp07AdnZfnbTd9
-jNhVnSIpQLeVNVsdwG3ZVXftih4KmKID5XAEuHiyZabNrqT0yRLNOOk3rbD5pErl
-nT+K+nGgwlWuawMPZNwWx6k2IfEd/Bu6+23Z1cEHluDsqIzxcIgLNlUQyLato2gV
-cRr52pQ+0Kc1Wzg3xMNSWI9OUO0LITR80y6wfcdeDD9y8QdldsjAOGz9wq9UK3hO
-wdPTK2JTn2CaW1a2me8sixlWgwxAAER/Lg798U2MPEXD7jFMSkyncXD8EBjxyOw8
-VTY2oge/6RWkRNJc0dK1DeKVvNLjT98IiFZ06T9U5WvTbF9r74jKf3knENacVe1u
-uJ+LJ7LhyjsIh+PuFecku54Xcvr6L1W54XEkcyns6PTVqCYAND8a6G3CrEdbjzBw
-hz50yvXFEp2UQfEdNy3eSlCkWAHhcWOT4C56rRDJSbMQ5TDo+1TFOERgSSjQYf2m
-Owbur3RmzuUboLwt+H4L0FD4rM0VE6Vl+Q5PuE/qLAjTJquswzjvv6bMCu2dvPLv
-mQvWm2J+dONjYjajT1cntP6QDIOz43cyW6bxIB4CHkvPGIK6Pl8=
-=/sAy
------END PGP SIGNATURE-----
-
---ZNMKRsShnEEY9wDWprBhCeugmdfHlBIFO--
+> +
+> +out_put_ctrl:
+> +	nvme_put_ctrl(ctrl);
+> +out_unlock:
+> +	mutex_unlock(&subsys->lock);
+> +	return ret;
+> +}
+> +
+> +static void __nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys)
+> +{
+> +	if (subsys->passthru_ctrl) {
+> +		xa_erase(&passthru_subsystems, subsys->passthru_ctrl->cntlid);
+> +		nvme_put_ctrl(subsys->passthru_ctrl);
+> +	}
+> +	subsys->passthru_ctrl = NULL;
+> +}
+> +
+> +void nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys)
+> +{
+> +	mutex_lock(&subsys->lock);
+> +	__nvmet_passthru_ctrl_disable(subsys);
+> +	mutex_unlock(&subsys->lock);
+> +}
+> +
+> +void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys)
+> +{
+> +	mutex_lock(&subsys->lock);
+> +	__nvmet_passthru_ctrl_disable(subsys);
+> +	kfree(subsys->passthru_ctrl_path);
+> +	mutex_unlock(&subsys->lock);
+> +}
+> +
+>   static void nvmet_passthru_req_complete(struct nvmet_req *req,
+>   		struct request *rq, u16 status)
+>   {
+> diff --git a/drivers/nvme/target/nvmet.h b/drivers/nvme/target/nvmet.h
+> index bd11114ebbb9..aff4db03269d 100644
+> --- a/drivers/nvme/target/nvmet.h
+> +++ b/drivers/nvme/target/nvmet.h
+> @@ -230,6 +230,7 @@ struct nvmet_subsys {
+>   
+>   #ifdef CONFIG_NVME_TARGET_PASSTHRU
+>   	struct nvme_ctrl	*passthru_ctrl;
+> +	char			*passthru_ctrl_path;
+>   #endif /* CONFIG_NVME_TARGET_PASSTHRU */
+>   };
+>   
+> @@ -509,6 +510,9 @@ static inline u32 nvmet_rw_len(struct nvmet_req *req)
+>   
+>   int nvmet_passthru_init(void);
+>   void nvmet_passthru_destroy(void);
+> +void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys);
+> +int nvmet_passthru_ctrl_enable(struct nvmet_subsys *subsys);
+> +void nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys);
+>   u16 nvmet_parse_passthru_cmd(struct nvmet_req *req);
+>   
+>   static inline
+> @@ -526,6 +530,12 @@ static inline int nvmet_passthru_init(void)
+>   static inline void nvmet_passthru_destroy(void)
+>   {
+>   }
+> +static inline void nvmet_passthru_subsys_free(struct nvmet_subsys *subsys)
+> +{
+> +}
+> +static inline void nvmet_passthru_ctrl_disable(struct nvmet_subsys *subsys)
+> +{
+> +}
+>   static inline u16 nvmet_parse_passthru_cmd(struct nvmet_req *req)
+>   {
+>   	return 0;
