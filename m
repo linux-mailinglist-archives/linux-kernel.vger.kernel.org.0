@@ -2,95 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 498EC8EE5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:37:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 742988EE63
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:38:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733015AbfHOOhQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 10:37:16 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:22767 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730084AbfHOOhP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:37:15 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 3ABABCF22;
-        Thu, 15 Aug 2019 14:37:15 +0000 (UTC)
-Received: from [10.3.117.107] (ovpn-117-107.phx2.redhat.com [10.3.117.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 42E0760CC0;
-        Thu, 15 Aug 2019 14:37:14 +0000 (UTC)
-Subject: Re: [Linux-kernel-mentees] [PATCH v2 2/3] PCI: sysfs: Change
- permissions from symbolic to octal
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Kelsey Skunberg <skunberg.kelsey@gmail.com>
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        Bodong Wang <bodong@mellanox.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20190809195721.34237-1-skunberg.kelsey@gmail.com>
- <20190813204513.4790-1-skunberg.kelsey@gmail.com>
- <20190813204513.4790-3-skunberg.kelsey@gmail.com>
- <20190814053846.GA253360@google.com>
-From:   Don Dutile <ddutile@redhat.com>
-Message-ID: <b4c0d5b4-7243-ba96-96d1-041a264ac499@redhat.com>
-Date:   Thu, 15 Aug 2019 10:37:13 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1732953AbfHOOiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 10:38:01 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43908 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730084AbfHOOiB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 10:38:01 -0400
+Received: by mail-qk1-f196.google.com with SMTP id m2so1960785qkd.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 07:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RNrMF/uU1bNfvkdgF74Cua5rMx69GIS6m4JXv8+fHak=;
+        b=XnFf3BH105JLrwSSPLnlMStnXLEm7eHDNv2oomajK/Ybv809VU4soaSuvYD1TD7VSI
+         MIirezR57bfSFb4WaBjePGwtVqJBvLc8HYIm8CQlxzDgGuFT9drXu/rOQA54w+kVgzaP
+         fvAUCocOeA2I5HJKBeDM2pb5hx2cZfivgf3rrjq6F+c0VVywo+/UDfFIOkt02YIk+X9/
+         2dVQ6wjna9i0ewdzm0w+BzK471JyIW33cus7Md5bUPLhnitYZ5H0wjbovbgDRhxVXZZU
+         pYAtaJjNT0gpe9G55FwQNHSb2Ar2gczUjkeuoQkYNRfnDDTkOQiGfxOzNZ+HLDwMpHQf
+         izfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RNrMF/uU1bNfvkdgF74Cua5rMx69GIS6m4JXv8+fHak=;
+        b=CVbEORPhgRTdG8UOejSkTJ186HfbAZs07/XPQKCk3d4/JgXZ7If7I7FGljNaJAb3+L
+         vdJp6crAUlPjCr+7dqLvEC6+xgeMmrjoedxaitZ7ctA8Cu/S/tHL1xUbynluPCDEkziL
+         vF20XyGndXGyyeG54lokGGPL7dRAgtaYeRg+Fbua+nb70p/w+J9maT0m6P1DBML/CBM8
+         IJsDEJqZLyf0tMYlo9kfE6A09tEgw9JyJ3UlqCBXr9kdWA9IrzVzYQ8HpAtfMjnT8qUo
+         yy6wFRoEyNtGv/g2J9omG9qSB5whgArHWbTxBSNpmfPb5sp3ItqKU+DNEc7AaN5P3Xtq
+         txXA==
+X-Gm-Message-State: APjAAAVK8t9brBsTOM8QV9oLoqkaQtNmBTYwrD5g1WDCWkxS+hw5usn0
+        P/6DlC70lru1d4mCY6c3jzK7lQ==
+X-Google-Smtp-Source: APXvYqyrLUurfa+j/pK7k5WY8Y78wjqUesLo+WjaUZ5NQgAZCAzL488QQTrcCxHIE4RpT+716qDyEA==
+X-Received: by 2002:ae9:e8d6:: with SMTP id a205mr4069811qkg.241.1565879880315;
+        Thu, 15 Aug 2019 07:38:00 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id u16sm1430477qkj.107.2019.08.15.07.37.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Aug 2019 07:37:59 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hyGt5-0005At-Fn; Thu, 15 Aug 2019 11:37:59 -0300
+Date:   Thu, 15 Aug 2019 11:37:59 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
+Message-ID: <20190815143759.GG21596@ziepe.ca>
+References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+ <20190814202027.18735-3-daniel.vetter@ffwll.ch>
+ <20190814134558.fe659b1a9a169c0150c3e57c@linux-foundation.org>
+ <20190815084429.GE9477@dhcp22.suse.cz>
+ <20190815130415.GD21596@ziepe.ca>
+ <CAKMK7uE9zdmBuvxa788ONYky=46GN=5Up34mKDmsJMkir4x7MQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190814053846.GA253360@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 15 Aug 2019 14:37:15 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uE9zdmBuvxa788ONYky=46GN=5Up34mKDmsJMkir4x7MQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 08/14/2019 01:38 AM, Bjorn Helgaas wrote:
-> [+cc Bodong, Don, Greg for permission question]
+On Thu, Aug 15, 2019 at 03:12:11PM +0200, Daniel Vetter wrote:
+> On Thu, Aug 15, 2019 at 3:04 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> >
+> > On Thu, Aug 15, 2019 at 10:44:29AM +0200, Michal Hocko wrote:
+> >
+> > > As the oom reaper is the primary guarantee of the oom handling forward
+> > > progress it cannot be blocked on anything that might depend on blockable
+> > > memory allocations. These are not really easy to track because they
+> > > might be indirect - e.g. notifier blocks on a lock which other context
+> > > holds while allocating memory or waiting for a flusher that needs memory
+> > > to perform its work.
+> >
+> > But lockdep *does* track all this and fs_reclaim_acquire() was created
+> > to solve exactly this problem.
+> >
+> > fs_reclaim is a lock and it flows through all the usual lockdep
+> > schemes like any other lock. Any time the page allocator wants to do
+> > something the would deadlock with reclaim it takes the lock.
+> >
+> > Failure is expressed by a deadlock cycle in the lockdep map, and
+> > lockdep can handle arbitary complexity through layers of locks, work
+> > queues, threads, etc.
+> >
+> > What is missing?
 > 
-> On Tue, Aug 13, 2019 at 02:45:12PM -0600, Kelsey Skunberg wrote:
->> Symbolic permissions such as "(S_IWUSR | S_IWGRP)" are not
->> preferred and octal permissions should be used instead. Change all
->> symbolic permissions to octal permissions.
->>
->> Example of old:
->>
->> "(S_IWUSR | S_IWGRP)"
->>
->> Example of new:
->>
->> "0220"
-> 
-> 
->>   static DEVICE_ATTR_RO(sriov_totalvfs);
->> -static DEVICE_ATTR(sriov_numvfs, (S_IRUGO | S_IWUSR | S_IWGRP),
->> -				  sriov_numvfs_show, sriov_numvfs_store);
->> +static DEVICE_ATTR(sriov_numvfs, 0664, sriov_numvfs_show, sriov_numvfs_store);
->>   static DEVICE_ATTR_RO(sriov_offset);
->>   static DEVICE_ATTR_RO(sriov_stride);
->>   static DEVICE_ATTR_RO(sriov_vf_device);
->> -static DEVICE_ATTR(sriov_drivers_autoprobe, (S_IRUGO | S_IWUSR | S_IWGRP),
->> -		   sriov_drivers_autoprobe_show, sriov_drivers_autoprobe_store);
->> +static DEVICE_ATTR(sriov_drivers_autoprobe, 0664, sriov_drivers_autoprobe_show,
->> +		   sriov_drivers_autoprobe_store);
-> 
-> Greg noticed that sriov_numvfs and sriov_drivers_autoprobe have
-> "unusual" permissions.  These were added by:
-> 
->    0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control VF driver binding")
->    1789382a72a5 ("PCI: SRIOV control and status via sysfs")
-> 
-> Kelsey's patch correctly preserves the existing permissions, but we
-> should double-check that they are the permissions they want, and
-> possibly add a comment about why they're different from the rest.
-> 
-> Bjorn
-> 
-The rest being? ... 0644 vs 0664 ?
-The file is read & written, thus the (first) 6; I'll have to dig through very old (7 yr) notes to see if the second 6 is needed for libvirt (so it doesn't have to be root to enable).
+> Lockdep doens't seen everything by far. E.g. a wait_event will be
+> caught by the annotations here, but not by lockdep. 
 
--dd
+Sure, but the wait_event might be OK if its progress isn't contingent
+on fs_reclaim, ie triggered from interrupt, so why ban it?
 
+> And since we're talking about mmu notifiers here and gpus/dma engines.
+> We have dma_fence_wait, which can wait for any hw/driver in the system
+> that takes part in shared/zero-copy buffer processing. Which at least
+> on the graphics side is everything. This pulls in enormous amounts of
+> deadlock potential that lockdep simply is blind about and will never
+> see.
+
+It seems very risky to entagle a notifier widely like that.
+
+It looks pretty sure that notifiers are fs_reclaim, so at a minimum
+that wait_event can't be contingent on anything that is doing
+GFP_KERNEL or it will deadlock - and blockable doesn't make that sleep
+safe.
+
+Avoiding an uncertain wait_event under notifiers would seem to be the
+only reasonable design here..
+
+Jason
