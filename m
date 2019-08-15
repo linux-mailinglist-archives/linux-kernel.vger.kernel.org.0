@@ -2,137 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB5838E7F7
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:18:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89A048E7F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:19:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731168AbfHOJSv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 05:18:51 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33777 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730029AbfHOJSu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 05:18:50 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7F9Ig4f2270753
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Thu, 15 Aug 2019 02:18:43 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7F9Ig4f2270753
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565860723;
-        bh=Ti+A5DmLubGWvxE+G1z/lwt3lnWYsZKvzG65MGPjIwY=;
-        h=Date:From:Cc:Reply-To:To:Subject:From;
-        b=393BsZMwOOSwkU8wqdQqHWE6lrKyzIbz/p97776ZEiPInl5vznjy+5ovqiNS4qTJX
-         lWZ8uxbznzgMScfz5cJrc3H/t0B9hzsEUlvKFng7TMQdnhmz78G9s9Pg138aADq8rC
-         k2bCi4OIG2m1xNRYTX12jjBX16IEnT8z0xxSBBTnwKPw76Ssh2+Ud7LWttETcCl+5V
-         Gi1k83l4REyAoeowXpYmpBNlL7Q+6D458QXlwtI7yaqPuKM97BdFu33DgZ2eykuaXY
-         VKM2EF7PFZmZbAiYj34a7+VYvQKyyNYCSZxz4ZxZZ4glDmGJLLSoqXv6pY/TKA1S1F
-         9sZ9brXQXCX9w==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7F9IgLR2270750;
-        Thu, 15 Aug 2019 02:18:42 -0700
-Date:   Thu, 15 Aug 2019 02:18:42 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-3up27pexg5i3exuzqrvt4m8u@git.kernel.org>
-Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tglx@linutronix.de, lclaudio@redhat.com,
-        hpa@zytor.com, adrian.hunter@intel.com, treeze.taeung@gmail.com,
-        acme@redhat.com, jolsa@kernel.org
-Reply-To: adrian.hunter@intel.com, hpa@zytor.com, namhyung@kernel.org,
-          linux-kernel@vger.kernel.org, tglx@linutronix.de,
-          lclaudio@redhat.com, mingo@kernel.org, treeze.taeung@gmail.com,
-          jolsa@kernel.org, acme@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf test vfs_getname: Disable ~/.perfconfig to get
- default output
-Git-Commit-ID: 4fe94ce1c6ba678b5f12b94bb9996eea4fc99e85
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        id S1731197AbfHOJTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 05:19:43 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4274 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726643AbfHOJTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 05:19:43 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 243EEBE4D07C07CD1AC6;
+        Thu, 15 Aug 2019 17:19:36 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Thu, 15 Aug 2019
+ 17:19:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
+        <tiwai@suse.com>, <tglx@linutronix.de>, <info@metux.net>
+CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <patches@opensource.cirrus.com>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] ASoC: wm8737: Fix copy-paste error in wm8737_snd_controls
+Date:   Thu, 15 Aug 2019 17:19:20 +0800
+Message-ID: <20190815091920.64480-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=1.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        FREEMAIL_FORGED_REPLYTO autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Level: *
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4fe94ce1c6ba678b5f12b94bb9996eea4fc99e85
-Gitweb:     https://git.kernel.org/tip/4fe94ce1c6ba678b5f12b94bb9996eea4fc99e85
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 30 Jul 2019 11:37:44 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Mon, 12 Aug 2019 16:26:02 -0300
+sound/soc/codecs/wm8737.c:112:29: warning:
+ high_3d defined but not used [-Wunused-const-variable=]
 
-perf test vfs_getname: Disable ~/.perfconfig to get default output
+'high_3d' should be used for 3D High Cut-off.
 
-To get the expected output we have to ignore whatever changes the user
-has in its ~/.perfconfig file, so set PERF_CONFIG to /dev/null to
-achieve that.
-
-Before:
-
-  # egrep 'trace|show_' ~/.perfconfig
-  [trace]
-  	show_zeros = yes
-  	show_duration = no
-  	show_timestamp = no
-  	show_arg_names = no
-  	show_prefix = yes
-  # echo $PERF_CONFIG
-
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: FAILED!
-  # export PERF_CONFIG=/dev/null
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: Ok
-  #
-
-After:
-
-  # egrep 'trace|show_' ~/.perfconfig
-  [trace]
-  	show_zeros = yes
-  	show_duration = no
-  	show_timestamp = no
-  	show_arg_names = no
-  	show_prefix = yes
-  # echo $PERF_CONFIG
-
-  # perf test "trace + vfs_getname"
-  70: Check open filename arg using perf trace + vfs_getname: Ok
-  #
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Taeung Song <treeze.taeung@gmail.com>
-Link: https://lkml.kernel.org/n/tip-3up27pexg5i3exuzqrvt4m8u@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 2a9ae13a2641 ("ASoC: Add initial WM8737 driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- tools/perf/tests/shell/trace+probe_vfs_getname.sh | 4 ++++
- 1 file changed, 4 insertions(+)
+ sound/soc/codecs/wm8737.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-index 45d269b0157e..11cc2af13f2b 100755
---- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-+++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
-@@ -32,6 +32,10 @@ if [ $err -ne 0 ] ; then
- 	exit $err
- fi
+diff --git a/sound/soc/codecs/wm8737.c b/sound/soc/codecs/wm8737.c
+index 0c246fb..7a3f9fb 100644
+--- a/sound/soc/codecs/wm8737.c
++++ b/sound/soc/codecs/wm8737.c
+@@ -167,7 +167,7 @@ SOC_DOUBLE("Polarity Invert Switch", WM8737_ADC_CONTROL, 5, 6, 1, 0),
+ SOC_SINGLE("3D Switch", WM8737_3D_ENHANCE, 0, 1, 0),
+ SOC_SINGLE("3D Depth", WM8737_3D_ENHANCE, 1, 15, 0),
+ SOC_ENUM("3D Low Cut-off", low_3d),
+-SOC_ENUM("3D High Cut-off", low_3d),
++SOC_ENUM("3D High Cut-off", high_3d),
+ SOC_SINGLE_TLV("3D ADC Volume", WM8737_3D_ENHANCE, 7, 1, 1, adc_tlv),
  
-+# Do not use whatever ~/.perfconfig file, it may change the output
-+# via trace.{show_timestamp,show_prefix,etc}
-+export PERF_CONFIG=/dev/null
-+
- trace_open_vfs_getname
- err=$?
- rm -f ${file}
+ SOC_SINGLE("Noise Gate Switch", WM8737_NOISE_GATE, 0, 1, 0),
+-- 
+2.7.4
+
+
