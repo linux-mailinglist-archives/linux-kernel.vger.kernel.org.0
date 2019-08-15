@@ -2,65 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADCBC8E7E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 849ED8E7EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:16:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731072AbfHOJQA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 05:16:00 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4695 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728128AbfHOJQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 05:16:00 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DDFDB7BEC2ECEE5EFB79;
-        Thu, 15 Aug 2019 17:15:51 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Thu, 15 Aug 2019
- 17:15:40 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <allison@lohutok.net>,
-        <kstewart@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] ASoC: tlv320aic23: remove unused variable 'tlv320aic23_rec_src'
-Date:   Thu, 15 Aug 2019 17:15:34 +0800
-Message-ID: <20190815091534.57780-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1731086AbfHOJQw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 05:16:52 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:36681 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730389AbfHOJQw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 05:16:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7F9GMYr2270342
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 15 Aug 2019 02:16:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7F9GMYr2270342
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565860583;
+        bh=qgQwcS9vqN6A1JMDyfTrlZSBFQeKPquDL/x8bhkf67s=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=DAp0EWbGpB/Koi3PHlsDFJRtbPI22EluaRHClvqENR93qzBBldXchQi1tZWgtVvWT
+         RmPSQTHju5eJ37s4FG5QGCDHUnOkkajq6miB9hnBxr7MWhTzWfVlN86WNZB8ZtNO5K
+         JdOnmoORxGT7IoHVtJxpYQWv4oWVxHpTdakJ67xssoIQGTNFapbS/tRwPrNb6BEqkc
+         hxo4vWG5z8Lc+US7m3X8hF/2MjhvSZjsKxG6gKWRQOfngVR7pWRUONPdPOipEk55HM
+         yb7WlsiaERb5FagGvpCDJkiK9wakrZpTCeMTI7LSvNA9BOzzU/M78nwdGMeob+eniH
+         Nqgzj5SojhROw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7F9GLYb2270335;
+        Thu, 15 Aug 2019 02:16:21 -0700
+Date:   Thu, 15 Aug 2019 02:16:21 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-57fc032ad643ffd018d66bd4c1bd3a91de4841e8@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
+        namhyung@kernel.org, mingo@kernel.org, jolsa@kernel.org,
+        vincent.weaver@maine.edu, tglx@linutronix.de, peterz@infradead.org,
+        alexander.shishkin@linux.intel.com
+Reply-To: namhyung@kernel.org, hpa@zytor.com, mingo@kernel.org,
+          tglx@linutronix.de, jolsa@kernel.org, vincent.weaver@maine.edu,
+          peterz@infradead.org, alexander.shishkin@linux.intel.com,
+          linux-kernel@vger.kernel.org, acme@redhat.com
+In-Reply-To: <20190726211415.GE24867@kernel.org>
+References: <20190726211415.GE24867@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf session: Avoid infinite loop when seeing
+ invalid header.size
+Git-Commit-ID: 57fc032ad643ffd018d66bd4c1bd3a91de4841e8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-sound/soc/codecs/tlv320aic23.c:70:29: warning:
- tlv320aic23_rec_src defined but not used [-Wunused-const-variable=]
+Commit-ID:  57fc032ad643ffd018d66bd4c1bd3a91de4841e8
+Gitweb:     https://git.kernel.org/tip/57fc032ad643ffd018d66bd4c1bd3a91de4841e8
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Tue, 30 Jul 2019 10:58:41 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Mon, 12 Aug 2019 16:26:02 -0300
 
-It is never used, so can be removed.
+perf session: Avoid infinite loop when seeing invalid header.size
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Vince reported that when fuzzing the userland perf tool with a bogus
+perf.data file he got into a infinite loop in 'perf report'.
+
+Changing the return of fetch_mmaped_event() to ERR_PTR(-EINVAL) for that
+case gets us out of that infinite loop.
+
+Reported-by: Vince Weaver <vincent.weaver@maine.edu>
+Tested-by: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20190726211415.GE24867@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- sound/soc/codecs/tlv320aic23.c | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/util/session.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
-index 080a840..f8e2f4b 100644
---- a/sound/soc/codecs/tlv320aic23.c
-+++ b/sound/soc/codecs/tlv320aic23.c
-@@ -67,8 +67,6 @@ static SOC_ENUM_SINGLE_DECL(rec_src_enum,
- static const struct snd_kcontrol_new tlv320aic23_rec_src_mux_controls =
- SOC_DAPM_ENUM("Input Select", rec_src_enum);
+diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+index 11e6093c941b..b9fe71d11bf6 100644
+--- a/tools/perf/util/session.c
++++ b/tools/perf/util/session.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <errno.h>
+ #include <inttypes.h>
++#include <linux/err.h>
+ #include <linux/kernel.h>
+ #include <linux/zalloc.h>
+ #include <traceevent/event-parse.h>
+@@ -1955,7 +1956,9 @@ fetch_mmaped_event(struct perf_session *session,
+ 		/* We're not fetching the event so swap back again */
+ 		if (session->header.needs_swap)
+ 			perf_event_header__bswap(&event->header);
+-		return NULL;
++		pr_debug("%s: head=%#" PRIx64 " event->header_size=%#x, mmap_size=%#zx: fuzzed perf.data?\n",
++			 __func__, head, event->header.size, mmap_size);
++		return ERR_PTR(-EINVAL);
+ 	}
  
--static SOC_ENUM_SINGLE_DECL(tlv320aic23_rec_src,
--			    TLV320AIC23_ANLG, 2, rec_src_text);
- static SOC_ENUM_SINGLE_DECL(tlv320aic23_deemph,
- 			    TLV320AIC23_DIGT, 1, deemph_text);
+ 	return event;
+@@ -1973,6 +1976,9 @@ static int __perf_session__process_decomp_events(struct perf_session *session)
+ 	while (decomp->head < decomp->size && !session_done()) {
+ 		union perf_event *event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
  
--- 
-2.7.4
-
-
++		if (IS_ERR(event))
++			return PTR_ERR(event);
++
+ 		if (!event)
+ 			break;
+ 
+@@ -2072,6 +2078,9 @@ remap:
+ 
+ more:
+ 	event = fetch_mmaped_event(session, head, mmap_size, buf);
++	if (IS_ERR(event))
++		return PTR_ERR(event);
++
+ 	if (!event) {
+ 		if (mmaps[map_idx]) {
+ 			munmap(mmaps[map_idx], mmap_size);
