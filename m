@@ -2,124 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D893E8F6D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:12:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7109F8F6D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 00:15:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731758AbfHOWMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 18:12:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59442 "EHLO mail.kernel.org"
+        id S1731971AbfHOWPL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 18:15:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59934 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbfHOWMv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 18:12:51 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728685AbfHOWPL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 18:15:11 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61A6A20644;
-        Thu, 15 Aug 2019 22:12:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C578E20644;
+        Thu, 15 Aug 2019 22:15:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565907170;
-        bh=G/b2bcj6Snv17mmT0yDLb7pCowc74GtOlBXWNz/6aGA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Ehmx0dlYnGogaJaM5WZqce4bZUoxVsgGVsAiQFAGEiNR9KEoqKw/EzSIJFAhAJlvo
-         HsMAOJ93DKqEe618RPA0l8QXFSBvI4olXgam3VpvTDFZ3YNCPaNUFNEcLHOGagas5f
-         +ubsFh5u/jBdK+B6WBfPSJ82EQAsmAqHE+Zuj2dw=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH] clk: ti: Don't reference clk_init_data after registration
-Date:   Thu, 15 Aug 2019 15:12:49 -0700
-Message-Id: <20190815221249.53235-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        s=default; t=1565907310;
+        bh=uN4VcpeCW2jBJTI1Si370+ePLjzfshSmi9q5RwHK3zw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=aTOvUoVh3yDGHY2VKKGjzrt2j37IUIAGRxiOv+BFw5caUUjN4/hUeJnHSChr2JqpI
+         ttZvBwHNpv3VJSotvsrCun1FEqYSEDpoeVcWA9n9Ed8qlXTHvUVYtRTbD5b2RUVVCX
+         GolZZPhsHLpPwXJ8M/alcsoSO7uLILhwTOk/xb7I=
+Date:   Thu, 15 Aug 2019 15:15:09 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?ISO-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?ISO-8859-1?Q?J=E9r=F4me?= Glisse <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
+Message-Id: <20190815151509.9ddbd1f11fb9c4c3e97a67a5@linux-foundation.org>
+In-Reply-To: <20190815084429.GE9477@dhcp22.suse.cz>
+References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
+        <20190814202027.18735-3-daniel.vetter@ffwll.ch>
+        <20190814134558.fe659b1a9a169c0150c3e57c@linux-foundation.org>
+        <20190815084429.GE9477@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+On Thu, 15 Aug 2019 10:44:29 +0200 Michal Hocko <mhocko@kernel.org> wrote:
 
-Cc: Tero Kristo <t-kristo@ti.com>
-Cc: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+> > I continue to struggle with this.  It introduces a new kernel state
+> > "running preemptibly but must not call schedule()".  How does this make
+> > any sense?
+> > 
+> > Perhaps a much, much more detailed description of the oom_reaper
+> > situation would help out.
+>  
+> The primary point here is that there is a demand of non blockable mmu
+> notifiers to be called when the oom reaper tears down the address space.
+> As the oom reaper is the primary guarantee of the oom handling forward
+> progress it cannot be blocked on anything that might depend on blockable
+> memory allocations. These are not really easy to track because they
+> might be indirect - e.g. notifier blocks on a lock which other context
+> holds while allocating memory or waiting for a flusher that needs memory
+> to perform its work. If such a blocking state happens that we can end up
+> in a silent hang with an unusable machine.
+> Now we hope for reasonable implementations of mmu notifiers (strong
+> words I know ;) and this should be relatively simple and effective catch
+> all tool to detect something suspicious is going on.
+> 
+> Does that make the situation more clear?
 
-This might be causing boot regressions in linux-next. Not sure.
+Yes, thanks, much.  Maybe a code comment along the lines of
 
- drivers/clk/ti/apll.c | 9 +++++----
- drivers/clk/ti/dpll.c | 9 +++++----
- 2 files changed, 10 insertions(+), 8 deletions(-)
+  This is on behalf of the oom reaper, specifically when it is
+  calling the mmu notifiers.  The problem is that if the notifier were
+  to block on, for example, mutex_lock() and if the process which holds
+  that mutex were to perform a sleeping memory allocation, the oom
+  reaper is now blocked on completion of that memory allocation.
 
-diff --git a/drivers/clk/ti/apll.c b/drivers/clk/ti/apll.c
-index 015a657d3382..ac5bc8857a51 100644
---- a/drivers/clk/ti/apll.c
-+++ b/drivers/clk/ti/apll.c
-@@ -140,6 +140,7 @@ static void __init omap_clk_register_apll(void *user,
- 	struct clk_hw_omap *clk_hw = to_clk_hw_omap(hw);
- 	struct dpll_data *ad = clk_hw->dpll_data;
- 	struct clk *clk;
-+	const struct clk_init_data *init = clk_hw->hw.init;
- 
- 	clk = of_clk_get(node, 0);
- 	if (IS_ERR(clk)) {
-@@ -168,15 +169,15 @@ static void __init omap_clk_register_apll(void *user,
- 	clk = ti_clk_register_omap_hw(NULL, &clk_hw->hw, node->name);
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		kfree(clk_hw->hw.init->parent_names);
--		kfree(clk_hw->hw.init);
-+		kfree(init->parent_names);
-+		kfree(init);
- 		return;
- 	}
- 
- cleanup:
- 	kfree(clk_hw->dpll_data);
--	kfree(clk_hw->hw.init->parent_names);
--	kfree(clk_hw->hw.init);
-+	kfree(init->parent_names);
-+	kfree(init);
- 	kfree(clk_hw);
- }
- 
-diff --git a/drivers/clk/ti/dpll.c b/drivers/clk/ti/dpll.c
-index 659dadb23279..f3f609c465a7 100644
---- a/drivers/clk/ti/dpll.c
-+++ b/drivers/clk/ti/dpll.c
-@@ -165,6 +165,7 @@ static void __init _register_dpll(void *user,
- 	struct clk_hw_omap *clk_hw = to_clk_hw_omap(hw);
- 	struct dpll_data *dd = clk_hw->dpll_data;
- 	struct clk *clk;
-+	const struct clk_init_data *init = hw->init;
- 
- 	clk = of_clk_get(node, 0);
- 	if (IS_ERR(clk)) {
-@@ -196,15 +197,15 @@ static void __init _register_dpll(void *user,
- 
- 	if (!IS_ERR(clk)) {
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
--		kfree(clk_hw->hw.init->parent_names);
--		kfree(clk_hw->hw.init);
-+		kfree(init->parent_names);
-+		kfree(init);
- 		return;
- 	}
- 
- cleanup:
- 	kfree(clk_hw->dpll_data);
--	kfree(clk_hw->hw.init->parent_names);
--	kfree(clk_hw->hw.init);
-+	kfree(init->parent_names);
-+	kfree(init);
- 	kfree(clk_hw);
- }
- 
--- 
-Sent by a computer through tubes
+btw, do we need task_struct.non_block_count?  Perhaps the oom reaper
+thread could set a new PF_NONBLOCK (which would be more general than
+PF_OOM_REAPER).  If we run out of PF_ flags, use (current == oom_reaper_th).
 
