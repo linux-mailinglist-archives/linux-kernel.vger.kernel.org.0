@@ -2,97 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 697E58EEB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:52:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D81558EEB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:53:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732731AbfHOOwD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 10:52:03 -0400
-Received: from foss.arm.com ([217.140.110.172]:45190 "EHLO foss.arm.com"
+        id S1731868AbfHOOxD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 10:53:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44116 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfHOOwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:52:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 15FF2344;
-        Thu, 15 Aug 2019 07:52:01 -0700 (PDT)
-Received: from e113632-lin.cambridge.arm.com (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 138523F706;
-        Thu, 15 Aug 2019 07:51:59 -0700 (PDT)
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     mingo@kernel.org, peterz@infradead.org, vincent.guittot@linaro.org,
-        tglx@linutronix.de, qais.yousef@arm.com
-Subject: [PATCH v2 4/4] sched/fair: Prevent active LB from preempting higher sched classes
-Date:   Thu, 15 Aug 2019 15:51:07 +0100
-Message-Id: <20190815145107.5318-5-valentin.schneider@arm.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190815145107.5318-1-valentin.schneider@arm.com>
-References: <20190815145107.5318-1-valentin.schneider@arm.com>
+        id S1726120AbfHOOxD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 10:53:03 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CFBF2067D;
+        Thu, 15 Aug 2019 14:53:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565880782;
+        bh=bRZvm6yxXSrefvnsJeDbE6ci/lTE+/CpIr134zPqLQA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=q2nQc79vb2vvtXIZoJ5+ep0LduuzugDb84RMSrRmkNDQ4znUasvwCqpfzuXOuPGNZ
+         FWDAHTC5tF89vXDgv9N3Hfs3AWngTYoAaq1iY6r5s0pemq6o9gKhWcLavGGuajLMoa
+         CaVPbQ+fbgyQaslbWr4uHynOoJUiDi4BPR6os2jY=
+Date:   Thu, 15 Aug 2019 16:53:00 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Simon Horman <horms@verge.net.au>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Biju Das <biju.das@bp.renesas.com>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
+Message-ID: <20190815145300.GA15016@kroah.com>
+References: <1565867073-24746-1-git-send-email-fabrizio.castro@bp.renesas.com>
+ <1565867073-24746-4-git-send-email-fabrizio.castro@bp.renesas.com>
+ <20190815131838.GP5011@pendragon.ideasonboard.com>
+ <20190815140400.GA7174@kroah.com>
+ <20190815141440.GA20322@pendragon.ideasonboard.com>
+ <TY1PR01MB1770404C560F6967FA81D521C0AC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY1PR01MB1770404C560F6967FA81D521C0AC0@TY1PR01MB1770.jpnprd01.prod.outlook.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CFS load balancer can cause the cpu_stopper to run a function to
-try and steal a remote rq's running task. However, it so happens
-that while only CFS tasks will ever be migrated by that function, we
-can end up preempting higher sched class tasks, since it is executed
-by the cpu_stopper.
+On Thu, Aug 15, 2019 at 02:31:26PM +0000, Fabrizio Castro wrote:
+> Hi Greg, hi Laurent,
+> 
+> Thank you for your feedback!
+> 
+> > From: linux-kernel-owner@vger.kernel.org <linux-kernel-owner@vger.kernel.org> On Behalf Of Laurent Pinchart
+> > Sent: 15 August 2019 15:15
+> > Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
+> > 
+> > Hi Greg,
+> > 
+> > On Thu, Aug 15, 2019 at 04:04:00PM +0200, Greg Kroah-Hartman wrote:
+> > > On Thu, Aug 15, 2019 at 04:18:38PM +0300, Laurent Pinchart wrote:
+> > > > Hi Fabrizio,
+> > > >
+> > > > (CC'ing Greg as the architect of the SPDX move)
+> > >
+> > > _one of_, not the one that did the most of he work, that would be Thomas :)
+> > >
+> > > > On Thu, Aug 15, 2019 at 12:04:27PM +0100, Fabrizio Castro wrote:
+> > > > > The information represented by drm_bridge_timings is also
+> > > > > needed by panels, therefore rename drm_bridge_timings to
+> > > > > drm_timings.
+> > > > >
+> > > > > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+> > > > > Link: https://www.spinics.net/lists/linux-renesas-soc/msg43271.html
+> > > > >
+> > > > > ---
+> > > > > v1->v2:
+> > > > > * new patch
+> > > > >
+> > > > > I have copied the license from include/drm/drm_bridge.h as that's
+> > > > > where the struct originally came from. What's the right SPDX license
+> > > > > to use in this case?
+> > > >
+> > > > https://wiki.spdx.org/view/Legal_Team/Decisions/Dealing_with_Public_Domain_within_SPDX_Files
+> > > >
+> > > > Greg, any idea on how we should handle this ?
+> > >
+> > > Ugh, what lunacy.  But drm_bridge.h is NOT under any "public domain"
+> > > license, so why is that an issue here?  This looks like a "normal" bsd 3
+> > > clause license to me, right?
+> > 
+> > You're right, I overread part of the text in drm_bridge.h, it seems to
+> > indeed be covered by a BSD 3 clause license. Sorry for the noise.
+> 
+> Mmm... This is the template for the BSD-3-Clause:
+> 
+> Copyright (c) <YEAR>, <OWNER>                                                    
+> All rights reserved.                                                             
+>                                                                                  
+> Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+>                                                                                  
+> Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+> Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+> Neither the name of the <ORGANIZATION> nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+> 
+> And this is the license coming from include/drm/drm_bridge.h:
+> 
+> /*                                                                                                                                                                                                                                                                              
+>  * Copyright (c) 2016 Intel Corporation                                          
+>  *                                                                               
+>  * Permission to use, copy, modify, distribute, and sell this software and its   
+>  * documentation for any purpose is hereby granted without fee, provided that    
+>  * the above copyright notice appear in all copies and that both that copyright  
+>  * notice and this permission notice appear in supporting documentation, and     
+>  * that the name of the copyright holders not be used in advertising or          
+>  * publicity pertaining to distribution of the software without specific,        
+>  * written prior permission.  The copyright holders make no representations      
+>  * about the suitability of this software for any purpose.  It is provided "as   
+>  * is" without express or implied warranty.                                      
+>  *                                                                               
+>  * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,   
+>  * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO        
+>  * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR      
+>  * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,   
+>  * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER        
+>  * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE  
+>  * OF THIS SOFTWARE.                                                             
+>  */
+> 
+> Perhaps I am completely wrong here, and I am not a lawyer, but the wording seems different enough to me...
+> I am happy to use "BSD-3-Clause" though. Laurent please double check.
 
-This can potentially occur whenever a rq's running task is > CFS but
-the rq has runnable CFS tasks.
+Please talk to your lawyers about this, we are not them...
 
-Check the sched class of the remote rq's running task after we've
-grabbed its lock. If it's CFS, carry on, otherwise run
-detach_one_task() locally since we don't need the cpu_stopper (that
-!CFS task is doing the exact same thing).
+thanks,
 
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
----
- kernel/sched/fair.c | 15 ++++++++++++++-
- 1 file changed, 14 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 8f5f6cad5008..bf4f7f43252f 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -8759,6 +8759,7 @@ static inline enum alb_status active_load_balance(struct lb_env *env)
- 	enum alb_status status = cancelled;
- 	struct sched_domain *sd = env->sd;
- 	struct rq *busiest = env->src_rq;
-+	struct task_struct *p = NULL;
- 	unsigned long flags;
- 
- 	schedstat_inc(sd->lb_failed[env->idle]);
-@@ -8780,6 +8781,16 @@ static inline enum alb_status active_load_balance(struct lb_env *env)
- 	if (busiest->cfs.h_nr_running < 1)
- 		goto unlock;
- 
-+	/*
-+	 * If busiest->curr isn't CFS, then there's no point in running the
-+	 * cpu_stopper. We can try to nab one CFS task though, since they're
-+	 * all ready to be plucked.
-+	 */
-+	if (busiest->curr->sched_class != &fair_sched_class) {
-+		p = detach_one_task(env);
-+		goto unlock;
-+	}
-+
- 	/*
- 	 * Don't kick the active_load_balance_cpu_stop, if the curr task on
- 	 * busiest CPU can't be moved to dst_cpu:
-@@ -8803,7 +8814,9 @@ static inline enum alb_status active_load_balance(struct lb_env *env)
- unlock:
- 	raw_spin_unlock_irqrestore(&busiest->lock, flags);
- 
--	if (status == started)
-+	if (p)
-+		attach_one_task(env->dst_rq, p);
-+	else if (status == started)
- 		stop_one_cpu_nowait(cpu_of(busiest),
- 				    active_load_balance_cpu_stop, busiest,
- 				    &busiest->active_balance_work);
--- 
-2.22.0
-
+greg k-h
