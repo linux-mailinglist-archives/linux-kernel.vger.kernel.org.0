@@ -2,333 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD91B8EC91
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:18:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A8BF8EC98
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:19:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732209AbfHONSp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 09:18:45 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:45670 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731306AbfHONSp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:18:45 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 359172AF;
-        Thu, 15 Aug 2019 15:18:41 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1565875121;
-        bh=7QbJ4Du/XnlBN1gYFnN5imwadM72F3m3mwA3dcBOKEU=;
+        id S1732230AbfHONTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 09:19:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732128AbfHONTj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:19:39 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A27B2083B;
+        Thu, 15 Aug 2019 13:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565875178;
+        bh=HFXQAFDpp3inO4W+xusMOFdVhwa9Gi6AIGEKoCjQ0mc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kuFpq7IijfpLmgWtufJF+7RYZ9k1X/R4ZECkPbri1bp7Z39wiO7OPtdHgkNOX8OWD
-         NxOfCRQ37iexNAV37FSIXtLaCJBf00PI+DPNeNCMe4zRupmVeZy6OfdQQ9k2TOCB2M
-         qITK9bZ1tBQqRmNjYmBndbZyL8DBdJCMV7It9Ags=
-Date:   Thu, 15 Aug 2019 16:18:38 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-Cc:     Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
-Message-ID: <20190815131838.GP5011@pendragon.ideasonboard.com>
-References: <1565867073-24746-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1565867073-24746-4-git-send-email-fabrizio.castro@bp.renesas.com>
+        b=ezessHcgm5nt5CaRNi+dtrhOXaXTOgB63KfLBPU4DGt5ci+tiVH7rrOqjk8e1KuZo
+         /yHXrQIAv8Q096JykPfnWajQot1gcxEPBE7E5Dfyi2PuxC1SHNATsjnvuKbFM1Gt2t
+         hDQDXfJLEl82o9h6bFWqoPSk5O1S8UMnxmtD/T4U=
+Date:   Thu, 15 Aug 2019 15:19:35 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Paul Menzel <pmenzel@molgen.mpg.de>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: warning: =?utf-8?B?4oCYbWVtc2V04oCZ?=
+ =?utf-8?Q?_offset_=5B197=2C_448=5D_from_the_object_at_=E2=80=98boot=5Fpar?=
+ =?utf-8?Q?ams=E2=80=99_is_out_of_the_bounds_of_referenced_subobject_?=
+ =?utf-8?B?4oCYZXh0X3JhbWRpc2tfaW1hZ2XigJkgd2l0aCB0eXBlLCDigJh1bnNpZ25l?=
+ =?utf-8?B?ZCBpbnTigJk=?= at offset 192 [-Warray-bounds]
+Message-ID: <20190815131935.GA21644@kroah.com>
+References: <7e44d224-ce7e-909d-e91e-9a643b5fcd71@molgen.mpg.de>
+ <20190815124306.GA17581@kroah.com>
+ <alpine.DEB.2.21.1908151452250.1923@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1565867073-24746-4-git-send-email-fabrizio.castro@bp.renesas.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.21.1908151452250.1923@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabrizio,
-
-(CC'ing Greg as the architect of the SPDX move)
-
-On Thu, Aug 15, 2019 at 12:04:27PM +0100, Fabrizio Castro wrote:
-> The information represented by drm_bridge_timings is also
-> needed by panels, therefore rename drm_bridge_timings to
-> drm_timings.
+On Thu, Aug 15, 2019 at 02:54:32PM +0200, Thomas Gleixner wrote:
+> On Thu, 15 Aug 2019, Greg KH wrote:
+> > On Tue, Aug 13, 2019 at 06:15:51PM +0200, Paul Menzel wrote:
+> > > Dear Linux folks,
+> > > 
+> > > 
+> > > No idea, if you are interested in these reports. Building Linux 5.3-rc4,
+> > > GCC 9.2.0 shows the warning below.
+> > > 
+> > > ```
+> > > In file included from arch/x86/kernel/head64.c:35:
+> > > In function ‘sanitize_boot_params’,
+> > >     inlined from ‘copy_bootdata’ at arch/x86/kernel/head64.c:391:2:
+> > > ./arch/x86/include/asm/bootparam_utils.h:40:3: warning: ‘memset’ offset [197, 448] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘ext_ramdisk_image’ with type
+> > >  ‘unsigned int’ at offset 192 [-Warray-bounds]
+> > >    40 |   memset(&boot_params->ext_ramdisk_image, 0,
+> > >       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >    41 |          (char *)&boot_params->efi_info -
+> > >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >    42 |    (char *)&boot_params->ext_ramdisk_image);
+> > >       |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > ./arch/x86/include/asm/bootparam_utils.h:43:3: warning: ‘memset’ offset [493, 497] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘kbd_status’ with type ‘unsig
+> > > ned char’ at offset 491 [-Warray-bounds]
+> > >    43 |   memset(&boot_params->kbd_status, 0,
+> > >       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >    44 |          (char *)&boot_params->hdr -
+> > >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > >    45 |          (char *)&boot_params->kbd_status);
+> > >       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> > > ```
+> > 
+> > Yeah, it shows up on my builds as well :(
+> > 
+> > Any chance you can make a fix for this?
 > 
-> Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> Link: https://www.spinics.net/lists/linux-renesas-soc/msg43271.html
+> https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/boot&id=a156cadef2fe445ac423670eace517b39a01ccd0
 > 
-> ---
-> v1->v2:
-> * new patch
-> 
-> I have copied the license from include/drm/drm_bridge.h as that's
-> where the struct originally came from. What's the right SPDX license
-> to use in this case?
+> I guess I need to reprioritize that and mark it for stable....
 
-https://wiki.spdx.org/view/Legal_Team/Decisions/Dealing_with_Public_Domain_within_SPDX_Files
 
-Greg, any idea on how we should handle this ?
+Please do, it's the only build warning I currently have for
+'allmodconfig' on x86 for 4.14.y, 4.19.y, and 5.2.y and is annoying :)
 
->  drivers/gpu/drm/bridge/dumb-vga-dac.c |  6 ++--
->  drivers/gpu/drm/bridge/sii902x.c      |  2 +-
->  drivers/gpu/drm/bridge/thc63lvd1024.c |  2 +-
->  drivers/gpu/drm/bridge/ti-tfp410.c    |  6 ++--
->  drivers/gpu/drm/pl111/pl111_display.c |  2 +-
->  include/drm/drm_bridge.h              | 40 ++---------------------
->  include/drm/drm_timings.h             | 60 +++++++++++++++++++++++++++++++++++
->  7 files changed, 71 insertions(+), 47 deletions(-)
->  create mode 100644 include/drm/drm_timings.h
-> 
-> diff --git a/drivers/gpu/drm/bridge/dumb-vga-dac.c b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> index d32885b..bb1d928 100644
-> --- a/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> +++ b/drivers/gpu/drm/bridge/dumb-vga-dac.c
-> @@ -228,7 +228,7 @@ static int dumb_vga_remove(struct platform_device *pdev)
->   * NOTE: the ADV7123EP seems to have other timings and need a new timings
->   * set if used.
->   */
-> -static const struct drm_bridge_timings default_dac_timings = {
-> +static const struct drm_timings default_dac_timings = {
->  	/* Timing specifications, datasheet page 7 */
->  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
->  	.setup_time_ps = 500,
-> @@ -239,7 +239,7 @@ static const struct drm_bridge_timings default_dac_timings = {
->   * Information taken from the THS8134, THS8134A, THS8134B datasheet named
->   * "SLVS205D", dated May 1990, revised March 2000.
->   */
-> -static const struct drm_bridge_timings ti_ths8134_dac_timings = {
-> +static const struct drm_timings ti_ths8134_dac_timings = {
->  	/* From timing diagram, datasheet page 9 */
->  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
->  	/* From datasheet, page 12 */
-> @@ -252,7 +252,7 @@ static const struct drm_bridge_timings ti_ths8134_dac_timings = {
->   * Information taken from the THS8135 datasheet named "SLAS343B", dated
->   * May 2001, revised April 2013.
->   */
-> -static const struct drm_bridge_timings ti_ths8135_dac_timings = {
-> +static const struct drm_timings ti_ths8135_dac_timings = {
->  	/* From timing diagram, datasheet page 14 */
->  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE,
->  	/* From datasheet, page 16 */
-> diff --git a/drivers/gpu/drm/bridge/sii902x.c b/drivers/gpu/drm/bridge/sii902x.c
-> index dd7aa46..0c63065 100644
-> --- a/drivers/gpu/drm/bridge/sii902x.c
-> +++ b/drivers/gpu/drm/bridge/sii902x.c
-> @@ -914,7 +914,7 @@ static int sii902x_i2c_bypass_deselect(struct i2c_mux_core *mux, u32 chan_id)
->  	return 0;
->  }
->  
-> -static const struct drm_bridge_timings default_sii902x_timings = {
-> +static const struct drm_timings default_sii902x_timings = {
->  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_NEGEDGE
->  		 | DRM_BUS_FLAG_SYNC_SAMPLE_NEGEDGE
->  		 | DRM_BUS_FLAG_DE_HIGH,
-> diff --git a/drivers/gpu/drm/bridge/thc63lvd1024.c b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> index 3d74129b..9047a9e 100644
-> --- a/drivers/gpu/drm/bridge/thc63lvd1024.c
-> +++ b/drivers/gpu/drm/bridge/thc63lvd1024.c
-> @@ -34,7 +34,7 @@ struct thc63_dev {
->  	struct drm_bridge bridge;
->  	struct drm_bridge *next;
->  
-> -	struct drm_bridge_timings timings;
-> +	struct drm_timings timings;
->  };
->  
->  static inline struct thc63_dev *to_thc63(struct drm_bridge *bridge)
-> diff --git a/drivers/gpu/drm/bridge/ti-tfp410.c b/drivers/gpu/drm/bridge/ti-tfp410.c
-> index dbf35c7..c086b06c 100644
-> --- a/drivers/gpu/drm/bridge/ti-tfp410.c
-> +++ b/drivers/gpu/drm/bridge/ti-tfp410.c
-> @@ -32,7 +32,7 @@ struct tfp410 {
->  	struct delayed_work	hpd_work;
->  	struct gpio_desc	*powerdown;
->  
-> -	struct drm_bridge_timings timings;
-> +	struct drm_timings timings;
->  
->  	struct device *dev;
->  };
-> @@ -190,7 +190,7 @@ static irqreturn_t tfp410_hpd_irq_thread(int irq, void *arg)
->  	return IRQ_HANDLED;
->  }
->  
-> -static const struct drm_bridge_timings tfp410_default_timings = {
-> +static const struct drm_timings tfp410_default_timings = {
->  	.input_bus_flags = DRM_BUS_FLAG_PIXDATA_SAMPLE_POSEDGE
->  			 | DRM_BUS_FLAG_DE_HIGH,
->  	.setup_time_ps = 1200,
-> @@ -199,7 +199,7 @@ static const struct drm_bridge_timings tfp410_default_timings = {
->  
->  static int tfp410_parse_timings(struct tfp410 *dvi, bool i2c)
->  {
-> -	struct drm_bridge_timings *timings = &dvi->timings;
-> +	struct drm_timings *timings = &dvi->timings;
->  	struct device_node *ep;
->  	u32 pclk_sample = 0;
->  	u32 bus_width = 24;
-> diff --git a/drivers/gpu/drm/pl111/pl111_display.c b/drivers/gpu/drm/pl111/pl111_display.c
-> index 15d2755..c82b21f 100644
-> --- a/drivers/gpu/drm/pl111/pl111_display.c
-> +++ b/drivers/gpu/drm/pl111/pl111_display.c
-> @@ -188,7 +188,7 @@ static void pl111_display_enable(struct drm_simple_display_pipe *pipe,
->  	}
->  
->  	if (bridge) {
-> -		const struct drm_bridge_timings *btimings = bridge->timings;
-> +		const struct drm_timings *btimings = bridge->timings;
->  
->  		/*
->  		 * Here is when things get really fun. Sometimes the bridge
-> diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
-> index 7616f65..8270a38 100644
-> --- a/include/drm/drm_bridge.h
-> +++ b/include/drm/drm_bridge.h
-> @@ -27,9 +27,9 @@
->  #include <linux/ctype.h>
->  #include <drm/drm_mode_object.h>
->  #include <drm/drm_modes.h>
-> +#include <drm/drm_timings.h>
->  
->  struct drm_bridge;
-> -struct drm_bridge_timings;
->  struct drm_panel;
->  
->  /**
-> @@ -337,42 +337,6 @@ struct drm_bridge_funcs {
->  };
->  
->  /**
-> - * struct drm_bridge_timings - timing information for the bridge
-> - */
-> -struct drm_bridge_timings {
-> -	/**
-> -	 * @input_bus_flags:
-> -	 *
-> -	 * Tells what additional settings for the pixel data on the bus
-> -	 * this bridge requires (like pixel signal polarity). See also
-> -	 * &drm_display_info->bus_flags.
-> -	 */
-> -	u32 input_bus_flags;
-> -	/**
-> -	 * @setup_time_ps:
-> -	 *
-> -	 * Defines the time in picoseconds the input data lines must be
-> -	 * stable before the clock edge.
-> -	 */
-> -	u32 setup_time_ps;
-> -	/**
-> -	 * @hold_time_ps:
-> -	 *
-> -	 * Defines the time in picoseconds taken for the bridge to sample the
-> -	 * input signal after the clock edge.
-> -	 */
-> -	u32 hold_time_ps;
-> -	/**
-> -	 * @dual_link:
-> -	 *
-> -	 * True if the bus operates in dual-link mode. The exact meaning is
-> -	 * dependent on the bus type. For LVDS buses, this indicates that even-
-> -	 * and odd-numbered pixels are received on separate links.
-> -	 */
-> -	bool dual_link;
-> -};
-> -
-> -/**
->   * struct drm_bridge - central DRM bridge control structure
->   */
->  struct drm_bridge {
-> @@ -393,7 +357,7 @@ struct drm_bridge {
->  	 *
->  	 * the timing specification for the bridge, if any (may be NULL)
->  	 */
-> -	const struct drm_bridge_timings *timings;
-> +	const struct drm_timings *timings;
->  	/** @funcs: control functions */
->  	const struct drm_bridge_funcs *funcs;
->  	/** @driver_private: pointer to the bridge driver's internal context */
-> diff --git a/include/drm/drm_timings.h b/include/drm/drm_timings.h
-> new file mode 100644
-> index 0000000..4af8814
-> --- /dev/null
-> +++ b/include/drm/drm_timings.h
-> @@ -0,0 +1,60 @@
-> +/*
-> + * Permission to use, copy, modify, distribute, and sell this software and its
-> + * documentation for any purpose is hereby granted without fee, provided that
-> + * the above copyright notice appear in all copies and that both that copyright
-> + * notice and this permission notice appear in supporting documentation, and
-> + * that the name of the copyright holders not be used in advertising or
-> + * publicity pertaining to distribution of the software without specific,
-> + * written prior permission.  The copyright holders make no representations
-> + * about the suitability of this software for any purpose.  It is provided "as
-> + * is" without express or implied warranty.
-> + *
-> + * THE COPYRIGHT HOLDERS DISCLAIM ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
-> + * INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
-> + * EVENT SHALL THE COPYRIGHT HOLDERS BE LIABLE FOR ANY SPECIAL, INDIRECT OR
-> + * CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE,
-> + * DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER
-> + * TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE
-> + * OF THIS SOFTWARE.
-> + */
-> +
-> +#ifndef __DRM_TIMINGS_H__
-> +#define __DRM_TIMINGS_H__
-> +
-> +/**
-> + * struct drm_timings - timing information
+thanks,
 
-This dangerously relates to video timings. I would name the structure
-drm_bus_timings, or drm_bus_params (or something similar) as it contains
-more than timings.
-
-> + */
-> +struct drm_timings {
-> +	/**
-> +	 * @input_bus_flags:
-> +	 *
-> +	 * Tells what additional settings for the pixel data on the bus
-> +	 * are required (like pixel signal polarity). See also
-> +	 * &drm_display_info->bus_flags.
-> +	 */
-> +	u32 input_bus_flags;
-> +	/**
-> +	 * @setup_time_ps:
-> +	 *
-> +	 * Defines the time in picoseconds the input data lines must be
-> +	 * stable before the clock edge.
-> +	 */
-> +	u32 setup_time_ps;
-> +	/**
-> +	 * @hold_time_ps:
-> +	 *
-> +	 * Defines the time in picoseconds taken for the bridge to sample the
-> +	 * input signal after the clock edge.
-> +	 */
-> +	u32 hold_time_ps;
-> +	/**
-> +	 * @dual_link:
-> +	 *
-> +	 * True if the bus operates in dual-link mode. The exact meaning is
-> +	 * dependent on the bus type. For LVDS buses, this indicates that even-
-> +	 * and odd-numbered pixels are received on separate links.
-> +	 */
-> +	bool dual_link;
-> +};
-> +
-> +#endif /* __DRM_TIMINGS_H__ */
-
--- 
-Regards,
-
-Laurent Pinchart
+greg k-h
