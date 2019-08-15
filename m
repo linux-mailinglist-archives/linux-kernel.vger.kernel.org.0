@@ -2,69 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08C158EB11
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:07:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82AEF8EB16
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:07:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731654AbfHOMHF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:07:05 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46592 "EHLO mx1.redhat.com"
+        id S1731699AbfHOMHX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:07:23 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:57238 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731629AbfHOMHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:07:05 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 73AD42A09B3;
-        Thu, 15 Aug 2019 12:07:05 +0000 (UTC)
-Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 423EE95A42;
-        Thu, 15 Aug 2019 12:07:05 +0000 (UTC)
-Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
-        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 1596718005A0;
-        Thu, 15 Aug 2019 12:07:05 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 08:07:04 -0400 (EDT)
-From:   Bob Peterson <rpeterso@redhat.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     linux-kernel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Steve Whitehouse <swhiteho@redhat.com>,
-        Jan Kara <jack@suse.cz>, NeilBrown <neilb@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        cluster-devel@redhat.com
-Message-ID: <1709436723.8673728.1565870824837.JavaMail.zimbra@redhat.com>
-In-Reply-To: <20190814204259.120942-4-arnd@arndb.de>
-References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-4-arnd@arndb.de>
-Subject: Re: [PATCH v5 03/18] gfs2: add compat_ioctl support
+        id S1730300AbfHOMHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:07:23 -0400
+Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
+        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1hyEXE-0003Lf-9Q; Thu, 15 Aug 2019 22:07:16 +1000
+Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1hyEXD-0007iU-3B; Thu, 15 Aug 2019 22:07:15 +1000
+Date:   Thu, 15 Aug 2019 22:07:15 +1000
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+Subject: Re: [PATCH -next] crypto: aes-generic - remove unused variable
+ 'rco_tab'
+Message-ID: <20190815120715.GF29355@gondor.apana.org.au>
+References: <20190809082919.62776-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.3.117.77, 10.4.195.5]
-Thread-Topic: gfs2: add compat_ioctl support
-Thread-Index: 8SO9yFi8yGVJNB4umFOMffc9nMr6lg==
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 15 Aug 2019 12:07:05 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809082919.62776-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Original Message -----
-> Out of the four ioctl commands supported on gfs2, only FITRIM
-> works in compat mode.
+On Fri, Aug 09, 2019 at 04:29:19PM +0800, YueHaibing wrote:
+> crypto/aes_generic.c:64:18: warning:
+>  rco_tab defined but not used [-Wunused-const-variable=]
 > 
-> Add a proper handler based on the ext4 implementation.
+> It is never used, so can be removed.
 > 
-> Fixes: 6ddc5c3ddf25 ("gfs2: getlabel support")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > ---
->  fs/gfs2/file.c | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
+>  crypto/aes_generic.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Hi,
-
-Reviewed-by: Bob Peterson <rpeterso@redhat.com>
-
-Regards,
-
-Bob Peterson
+Patch applied.  Thanks.
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
