@@ -2,188 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B58618F053
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:19:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C3B18F05B
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730816AbfHOQT5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 12:19:57 -0400
-Received: from mx0a-00154904.pphosted.com ([148.163.133.20]:15560 "EHLO
-        mx0a-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728956AbfHOQT5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:19:57 -0400
-Received: from pps.filterd (m0170389.ppops.net [127.0.0.1])
-        by mx0a-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7FGAXmk022073;
-        Thu, 15 Aug 2019 12:19:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=smtpout1;
- bh=EeZtSFfcASxzQDiDgQ5G5QblMNz9X1uWYaIgK2p9tnY=;
- b=Tu+T6myXCWoUSFAl0NxM5b/ntnWKClidfeali/n2ICHJgIRVJ9S+6wGyrGCpOA/VuKLQ
- 577HT7V65Td9lsnAOU2iQ734oU7J+uLSdOPbZZvfGw+Vlud8X3vngzLVGET8UYaF8Kl0
- bfmRpWi6AAGx8+1mYNhbzqvsZg8WyJQsGAq2zqoo3IqsR0+TedWbqj9n9m8RzGXfMkA4
- pdb+cuJHmlVKVVH+dYi68lXMVQBe2hSzdLSQe5LFc6gw0v54HQAfxEAqxBmtl6FOMNw/
- qfDx1Xig+V46SFCnS77dW9JJbL/kfrQ6tUqmnj87fqfjmZ0Tly7/b55W6Vc/se2B3wD6 Uw== 
-Received: from mx0a-00154901.pphosted.com (mx0a-00154901.pphosted.com [67.231.149.39])
-        by mx0a-00154904.pphosted.com with ESMTP id 2ucg1jxkgx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Aug 2019 12:19:56 -0400
-Received: from pps.filterd (m0142699.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7FGDU2m016365;
-        Thu, 15 Aug 2019 12:19:55 -0400
-Received: from ausxipps310.us.dell.com (AUSXIPPS310.us.dell.com [143.166.148.211])
-        by mx0a-00154901.pphosted.com with ESMTP id 2ud9aj9whg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 12:19:55 -0400
-X-LoopCount0: from 10.166.132.129
-X-PREM-Routing: D-Outbound
-X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
-   d="scan'208";a="408820564"
-From:   <Mario.Limonciello@dell.com>
-To:     <tiwai@suse.de>, <alexdeucher@gmail.com>
-CC:     <kherbst@redhat.com>, <nouveau@lists.freedesktop.org>,
-        <rafael.j.wysocki@intel.com>, <linux-kernel@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-acpi@vger.kernel.org>,
-        <alex.hung@canonical.com>, <bskeggs@redhat.com>,
-        <airlied@redhat.com>
-Subject: RE: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
- enable dGPU direct output"
-Thread-Topic: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
- enable dGPU direct output"
-Thread-Index: AQGgd6rdZMP3IawUTGaO286TGix+WwEoseSWASaOw1KnU3bBEIAAWGiA//+vQECAAFaFAIAAA1mAgAAFeoD//8KZYA==
-Date:   Thu, 15 Aug 2019 16:19:52 +0000
-Message-ID: <8724585e50004bc8b6f310587555f4a1@AUSX13MPC101.AMER.DELL.COM>
-References: <20190814213118.28473-1-kherbst@redhat.com>
-        <20190814213118.28473-2-kherbst@redhat.com>
-        <CAPM=9ty7yEUqKrcixV1tTuWCpyh6UikA3rxX8BF1E3fDb6WLQQ@mail.gmail.com>
-        <5e05532328324d01bc554c573f6298f8@AUSX13MPC101.AMER.DELL.COM>
-        <CACO55tsDA1WpMGtAPqUJpWt0AmPDnv9LuC09g2KB5GXB-VSCew@mail.gmail.com>
-        <3fc22fe8bcaf4304bb07534b61c4de90@AUSX13MPC101.AMER.DELL.COM>
-        <CACO55tvDfxYMZr0BGv2ROSNEVB4GvXZnBnWBy=RDPOG5hnk7OA@mail.gmail.com>
-        <CADnq5_Nv6tsW0J20td5rQSLq048HtTcw1b4c25jP6ZR6XWZ-eA@mail.gmail.com>
- <s5ho90qa34m.wl-tiwai@suse.de>
-In-Reply-To: <s5ho90qa34m.wl-tiwai@suse.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-08-15T16:19:51.1871148Z;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
- aiplabel=External Public
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1730890AbfHOQUo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:20:44 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:59628 "EHLO ale.deltatee.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730857AbfHOQUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:20:44 -0400
+Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1hyIUJ-0001Sz-T8; Thu, 15 Aug 2019 10:20:32 -0600
+To:     Greentime Hu <greentime.hu@sifive.com>
+Cc:     Greentime Hu <green.hu@gmail.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Rob Herring <robh@kernel.org>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Andrew Waterman <andrew@sifive.com>,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Stephen Bates <sbates@raithlin.com>,
+        Olof Johansson <olof@lixom.net>,
+        linux-riscv@lists.infradead.org,
+        Michael Clark <michaeljclark@mac.com>,
+        Christoph Hellwig <hch@lst.de>, linux-mm@vger.kernel.org
+References: <20190109203911.7887-1-logang@deltatee.com>
+ <c4298fdd-6fd6-fa7f-73f7-5ff016788e49@deltatee.com>
+ <CAEbi=3cn4+7zk2DU1iRa45CDwTsJYfkAV8jXHf-S7Jz63eYy-A@mail.gmail.com>
+ <CAEbi=3eZcgWevpX9VO9ohgxVDFVprk_t52Xbs3-TdtZ+js3NVA@mail.gmail.com>
+ <0926a261-520e-4c40-f926-ddd40bb8ce44@deltatee.com>
+ <CAEbi=3ebNM-t_vA4OA7KCvQUF08o6VmL1j=kMojVnYsYsN_fBw@mail.gmail.com>
+ <e2603558-7b2c-2e5f-e28c-f01782dc4e66@deltatee.com>
+ <CAEbi=3d7_xefYaVXEnMJW49Bzdbbmc2+UOwXWrCiBo7YkTAihg@mail.gmail.com>
+ <96156909-1453-d487-ff66-a041d67c74d6@deltatee.com>
+ <CAEbi=3dC86dhGdwdarS_x+6-5=WPydUBKjo613qRZxKLDAqU_g@mail.gmail.com>
+ <5506c875-9387-acc9-a7fe-5b7c10036c40@deltatee.com>
+ <alpine.DEB.2.21.9999.1908130921170.30024@viisi.sifive.com>
+ <e1f78a33-18bb-bd6e-eede-e5e86758a4d0@deltatee.com>
+ <CAEbi=3f+JDywuHYspfYKuC8z2wm8inRenBz+3DYbKK3ixFjU_g@mail.gmail.com>
+ <8b7b6285-dd85-5895-8653-be1f6f08cca8@deltatee.com>
+ <CAHCEeh+us9N5_AMAJp41Ob9R9PD=JfWLcUrU+gU54xf8NKddJw@mail.gmail.com>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <315f8a06-72f8-9ee8-4a3c-aa9e66b472fd@deltatee.com>
+Date:   Thu, 15 Aug 2019 10:20:28 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908150159
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908150159
+In-Reply-To: <CAHCEeh+us9N5_AMAJp41Ob9R9PD=JfWLcUrU+gU54xf8NKddJw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 70.73.163.230
+X-SA-Exim-Rcpt-To: linux-mm@vger.kernel.org, hch@lst.de, michaeljclark@mac.com, linux-riscv@lists.infradead.org, olof@lixom.net, sbates@raithlin.com, linux-kernel@vger.kernel.org, palmer@sifive.com, andrew@sifive.com, aou@eecs.berkeley.edu, robh@kernel.org, paul.walmsley@sifive.com, green.hu@gmail.com, greentime.hu@sifive.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
+X-Spam-Level: 
+X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
+Subject: Re: [PATCH v4 2/2] RISC-V: Implement sparsemem
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Takashi Iwai <tiwai@suse.de>
-> Sent: Thursday, August 15, 2019 9:57 AM
-> To: Alex Deucher
-> Cc: Karol Herbst; Limonciello, Mario; nouveau; Rafael J . Wysocki; LKML; =
-dri-devel;
-> Linux ACPI Mailing List; Alex Hung; Ben Skeggs; David Airlie
-> Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI strin=
-g to
-> enable dGPU direct output"
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Thu, 15 Aug 2019 16:37:05 +0200,
-> Alex Deucher wrote:
-> >
-> > On Thu, Aug 15, 2019 at 10:25 AM Karol Herbst <kherbst@redhat.com> wrot=
-e:
-> > >
-> > > On Thu, Aug 15, 2019 at 4:20 PM <Mario.Limonciello@dell.com> wrote:
-> > > >
-> > > > > > There are definitely going to be regressions on machines in the=
- field
-> with the
-> > > > > > in tree drivers by reverting this.  I think we should have an a=
-nswer for all
-> of
-> > > > > those
-> > > > > > before this revert is accepted.
-> > > > > >
-> > > > > > Regarding systems with Intel+NVIDIA, we'll have to work with pa=
-rtners
-> to
-> > > > > collect
-> > > > > > some information on the impact of reverting this.
-> > > > > >
-> > > > > > When this is used on a system with Intel+AMD the ASL configures=
- AMD
-> GPU to
-> > > > > use
-> > > > > > "Hybrid Graphics" when on Windows and "Power Express" and
-> "Switchable
-> > > > > Graphics"
-> > > > > > when on Linux.
-> > > > >
-> > > > > and what's exactly the difference between those? And what's the a=
-ctual
-> > > > > issue here?
-> > > >
-> > > > DP/HDMI is not detected unless plugged in at bootup.  It's due to m=
-issing
-> HPD
-> > > > events.
-> > > >
-> > >
-> > > afaik Lyude was working on fixing all that, at least for some drivers=
-.
-> > > If there is something wrong, we still should fix the drivers, not
-> > > adding ACPI workarounds.
-> > >
-> > > Alex: do you know if there are remaining issues regarding that with a=
-mdgpu?
-> >
-> > There was an issue with hpd events not making it to the audio side
-> > when things were powered down that was fixed with this patch set:
-> > https://patchwork.freedesktop.org/patch/316793/
-> > Those patches depended on a bunch of alsa changes as well which may
-> > have not been available in the distro used for a particular OEM
-> > program.
->=20
-> FYI, the corresponding commit for ALSA part is destined for 5.4
-> kernel:
->=20
-> https://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git/commit/?i=
-d=3Dade
-> 49db337a9d44ac5835cfce1ee873549011b27
->=20
-> BTW, Nouveau should suffer from the same problem.  The patch to add
-> the audio component support is found at:
->   https://patchwork.freedesktop.org/patch/319131/
->=20
->=20
 
-It sounds like 5.3rcX won't be a useful check then.
 
-So am I correct to understand that everything related to the AMD failures
-described in this thread should be in linux-next at this point?
+On 2019-08-15 3:31 a.m., Greentime Hu wrote:
+> Hi Logan,
+> 
+> On Thu, Aug 15, 2019 at 6:21 AM Logan Gunthorpe <logang@deltatee.com> wrote:
+>>
+>> Hey,
+>>
+>> On 2019-08-14 7:35 a.m., Greentime Hu wrote:
+>>> How about this fix? Not sure if it is good for everyone.
+>>
+>> I applied your fix to the patch and it seems ok. But it doesn't seem to
+>> work on a recent version of the kernel. Have you got it working on v5.3?
+>> It seems the following patch breaks things:
+>>
+>> 671f9a3e2e24 ("RISC-V: Setup initial page tables in two stages")
+>>
+>> I don't really have time right now to debug this any further.
+>>
+> 
+> I just tried v5.3-rc4 and it failed. I try to debug this case.
+> I found it failed might be because of an unmapped virtual address is used
+> in memblocks_present() -> memblock_alloc ().
+> 
+> In this commit 671f9a3e2e24 ("RISC-V: Setup initial page tables in two
+> stages"), it finishes all the VA/PA mapping after setup_vm_final() is
+> called.
+> So we have to call memblocks_present() and sparse_init() right after
+> setup_vm_final().
+> 
+> Here is my patch and I tested with memory-with-hole.
+> It can boot normally in Unleashed board after applying this patch.
 
+Great, thanks! I'll roll this into my patch and send v5 out when I have
+a moment. Can I add your Signed-off-by for the bits you've contributed
+to give you credit for your work?
+
+Logan
