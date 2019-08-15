@@ -2,170 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 532358EE45
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D9E808EE51
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:35:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732972AbfHOOdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 10:33:00 -0400
-Received: from relay10.mail.gandi.net ([217.70.178.230]:42981 "EHLO
-        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729668AbfHOOdA (ORCPT
+        id S1731493AbfHOOff (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 10:35:35 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:40162 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730084AbfHOOfe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:33:00 -0400
-Received: from uno.localdomain (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay10.mail.gandi.net (Postfix) with ESMTPSA id CE3A9240006;
-        Thu, 15 Aug 2019 14:32:56 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 16:34:23 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 2/5] media: v4l2-ctrl: Document V4L2_CID_LOCATION
-Message-ID: <20190815143423.vaoswb4jvzd2blxp@uno.localdomain>
-References: <20190814202815.32491-1-jacopo@jmondi.org>
- <20190814202815.32491-3-jacopo@jmondi.org>
- <20190814224340.GD5015@pendragon.ideasonboard.com>
- <664fe7b3-9051-30da-736e-710a4e9cecde@xs4all.nl>
- <d60e4664-3a3f-1723-6c96-4fc822b6a7bb@xs4all.nl>
+        Thu, 15 Aug 2019 10:35:34 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c34so6302634otb.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 07:35:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BtTSn2uMyyP8QHhCiI6vaNdIzu8IHEHZhZ5nwC+nMAU=;
+        b=A/6hhhp4//DTvR77VQ8kyUsKftcsdvHwbLmN0MGWSw+cQFQT/2BWsEpxwuI5booaZi
+         ZDeG6XDOSdLwZVR1yYa8kuPMNlK2K2VZukvZLaY1I4Rz3TilTPJXCIu1i5FtlbpN4Dqk
+         D/GrulCP2HoyfrqV4uk6Y+QSm+xa47HLURpX9jRpnKKpDA6yLlmgKQTK1/0svQZ3S6jS
+         oahTFjw9+Xwq/TQvVdOlAYGU8NS+KNnhyfaNRJMAPpLfcvUF5UWQJ7luXoxxtYLlX6zO
+         YYbDRuL5rs3W5Adavg8DnTGqYBfTvpGFXzTI69AqVfg4MEiUM6M7cWRsoQLMe0HCpJOI
+         ch4w==
+X-Gm-Message-State: APjAAAXPFd1C4FqIODrFdwFFOx7yhJDhR2e+SProlsWx4CtWZjgJeaMo
+        HX2dAp/iadfZdI6p3x4OgzuyCizbnCO0ctOP1PyDHQ==
+X-Google-Smtp-Source: APXvYqzKOnt+7f9VOL89+ec428aBeZSnl2atgboE0ieQNu4BQtWa3L1DeSUe5NY6fj6Fh4lzcbXWphwAs3uyRC9CmKY=
+X-Received: by 2002:a6b:f906:: with SMTP id j6mr5800892iog.26.1565879733515;
+ Thu, 15 Aug 2019 07:35:33 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fixbluj3hgdhxc76"
-Content-Disposition: inline
-In-Reply-To: <d60e4664-3a3f-1723-6c96-4fc822b6a7bb@xs4all.nl>
-User-Agent: NeoMutt/20180716
+References: <20190814213118.28473-1-kherbst@redhat.com> <20190814213118.28473-2-kherbst@redhat.com>
+ <CAPM=9ty7yEUqKrcixV1tTuWCpyh6UikA3rxX8BF1E3fDb6WLQQ@mail.gmail.com>
+ <5e05532328324d01bc554c573f6298f8@AUSX13MPC101.AMER.DELL.COM>
+ <CACO55tsDA1WpMGtAPqUJpWt0AmPDnv9LuC09g2KB5GXB-VSCew@mail.gmail.com>
+ <CADnq5_NUox3vvg6Mt3i9erA+AL2MfotpNBZQnWWknn4j+j-F=Q@mail.gmail.com>
+ <CACO55tty6TqEo4UBkX5YckLuP-XhHXKVs0ew+Q8__sKMi1BCbA@mail.gmail.com>
+ <CADnq5_PWuLU0pcG549-xThMHy3W0P2+fAO_Ledk6FP2TVG3+gQ@mail.gmail.com> <6ed1c393ffeb4c24ab5875927d6a37ac@AUSX13MPC101.AMER.DELL.COM>
+In-Reply-To: <6ed1c393ffeb4c24ab5875927d6a37ac@AUSX13MPC101.AMER.DELL.COM>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Thu, 15 Aug 2019 16:35:22 +0200
+Message-ID: <CACO55ttUKCGJq66czgsgWSR5VE6VmQFs6Syr0R2CenXomU2O-w@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
+ enable dGPU direct output"
+To:     Mario.Limonciello@dell.com
+Cc:     Alex Deucher <alexdeucher@gmail.com>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---fixbluj3hgdhxc76
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-
-Hi Hans,
-
-On Thu, Aug 15, 2019 at 04:14:38PM +0200, Hans Verkuil wrote:
-> On 8/15/19 4:10 PM, Hans Verkuil wrote:
-> > On 8/15/19 12:43 AM, Laurent Pinchart wrote:
-> >> Hi Jacopo,
-> >>
-> >> Thank you for the patch.
-> >>
-> >> On Wed, Aug 14, 2019 at 10:28:12PM +0200, Jacopo Mondi wrote:
-> >>> Add documentation for the V4L2_CID_LOCATION camera control. The newly
-> >>> added read-only control reports the camera device mounting position.
-> >>>
-> >>> Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> >>> ---
-> >>>  .../media/uapi/v4l/ext-ctrls-camera.rst       | 23 +++++++++++++++++++
-> >>>  1 file changed, 23 insertions(+)
-> >>>
-> >>> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> >>> index 51c1d5c9eb00..fc0a02eee6d4 100644
-> >>> --- a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> >>> +++ b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> >>> @@ -510,6 +510,29 @@ enum v4l2_scene_mode -
-> >>>      value down. A value of zero stops the motion if one is in progress
-> >>>      and has no effect otherwise.
-> >>>
-> >>> +``V4L2_CID_LOCATION (integer)``
-> >>
-> >> Maybe V4L2_CID_CAMERA_SENSOR_LOCATION ? Same for the values below.
-> >
-> > Probably a better name, if a bit long. But we might need other location
-> > controls in the future (e.g. flash location), so CID_LOCATION is just too
-> > generic.
+On Thu, Aug 15, 2019 at 4:30 PM <Mario.Limonciello@dell.com> wrote:
 >
-
-Thanks for the feedback.
-
-> Note that the location defines themselves can most likely be used with any
-> LOCATION control, so V4L2_LOCATION_FRONT would be fine with any control.
->
-
-What do you think instead of the control type? Would a single integer
-control do or an integer menu one would be better? I see merit in both
-proposals actually...
-
-Once this is clarified, I can send a proper v1.
-
-Thanks
-  j
-
-> Regards,
->
-> 	Hans
->
+> > On Thu, Aug 15, 2019 at 10:15 AM Karol Herbst <kherbst@redhat.com> wrote:
+> > >
+> > > On Thu, Aug 15, 2019 at 4:13 PM Alex Deucher <alexdeucher@gmail.com>
+> > wrote:
+> > > >
+> > > > On Thu, Aug 15, 2019 at 10:04 AM Karol Herbst <kherbst@redhat.com> wrote:
+> > > > >
+> > > > > On Thu, Aug 15, 2019 at 3:56 PM <Mario.Limonciello@dell.com> wrote:
+> > > > > >
+> > > > > > > -----Original Message-----
+> > > > > > > From: linux-acpi-owner@vger.kernel.org <linux-acpi-
+> > owner@vger.kernel.org> On
+> > > > > > > Behalf Of Dave Airlie
+> > > > > > > Sent: Wednesday, August 14, 2019 5:48 PM
+> > > > > > > To: Karol Herbst
+> > > > > > > Cc: LKML; Linux ACPI; dri-devel; nouveau; Rafael J . Wysocki; Alex Hung;
+> > Ben
+> > > > > > > Skeggs; Dave Airlie
+> > > > > > > Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI
+> > string to
+> > > > > > > enable dGPU direct output"
+> > > > > > >
+> > > > > > > On Thu, 15 Aug 2019 at 07:31, Karol Herbst <kherbst@redhat.com>
+> > wrote:
+> > > > > > > >
+> > > > > > > > This reverts commit 28586a51eea666d5531bcaef2f68e4abbd87242c.
+> > > > > > > >
+> > > > > > > > The original commit message didn't even make sense. AMD _does_
+> > support it and
+> > > > > > > > it works with Nouveau as well.
+> > > > > > > >
+> > > > > > > > Also what was the issue being solved here? No references to any bugs
+> > and not
+> > > > > > > > even explaining any issue at all isn't the way we do things.
+> > > > > > > >
+> > > > > > > > And even if it means a muxed design, then the fix is to make it work
+> > inside the
+> > > > > > > > driver, not adding some hacky workaround through ACPI tricks.
+> > > > > > > >
+> > > > > > > > And what out of tree drivers do or do not support we don't care one
+> > bit anyway.
+> > > > > > > >
+> > > > > > >
+> > > > > > > I think the reverts should be merged via Rafael's tree as the original
+> > > > > > > patches went in via there, and we should get them in asap.
+> > > > > > >
+> > > > > > > Acked-by: Dave Airlie <airlied@redhat.com>
+> > > > > > > Dave.
+> > > > > >
+> > > > > > There are definitely going to be regressions on machines in the field with
+> > the
+> > > > > > in tree drivers by reverting this.  I think we should have an answer for all
+> > of those
+> > > > > > before this revert is accepted.
+> > > > > >
+> > > > > > Regarding systems with Intel+NVIDIA, we'll have to work with partners to
+> > collect
+> > > > > > some information on the impact of reverting this.
+> > > > > >
+> > > > > > When this is used on a system with Intel+AMD the ASL configures AMD
+> > GPU to use
+> > > > > > "Hybrid Graphics" when on Windows and "Power Express" and
+> > "Switchable Graphics"
+> > > > > > when on Linux.
+> > > > >
+> > > > > and what's exactly the difference between those? And what's the actual
+> > > > > issue here?
+> > > >
+> > > > Hybrid Graphics is the new "standard" way of handling these laptops.
+> > > > It uses the standard _PR3 APCI method to handle dGPU power.  Support
+> > > > for this was added to Linux relatively later compared to when the
+> > > > laptops were launched.  "Power Express" used the other AMD specific
+> > > > ATPX ACPI method to handle dGPU power.  The driver supports both so
+> > > > either method will work.
+> > > >
+> > > > Alex
+> > > >
+> > >
+> > > thanks for clarifying. But that still means that we won't need such
+> > > workarounds for AMD users, right? amdgpu handles hybrid graphics just
+> > > fine, right?
 > >
-> > Regards,
+> > Yeah it should, assuming you have a new enough kernel which supports
+> > HG, which has been several years at this point IIRC.
 > >
-> > 	Hans
-> >
-> >>
-> >>> +    This read-only control describes the camera location by reporting its
-> >>
-> >> Here too I would mention camera sensor instead of just camera (or
-> >> possibly imaging sensor).
-> >>
-> >>> +    mounting position on the device where the camera is installed. This
-> >>> +    control is particularly meaningful for devices which have a well defined
-> >>> +    orientation, such as phones, laptops and portable devices as the camera
-> >>> +    location is expressed as a position relative to the device intended
-> >>> +    usage position. In example, a camera installed on the user-facing side
-> >>> +    of a phone device is said to be installed in the ``V4L2_LOCATION_FRONT``
-> >>> +    position.
-> >>
-> >> The DT bindings could use such an example :-) I would extend this to
-> >> tablets and laptops.
-> >>
-> >>> +
-> >>> +
-> >>> +
-> >>
-> >> Do we need three blank lines ?
-> >>
-> >>> +.. flat-table::
-> >>> +    :header-rows:  0
-> >>> +    :stub-columns: 0
-> >>> +
-> >>> +    * - ``V4L2_LOCATION_FRONT``
-> >>> +      - The camera device is located on the front side of the device.
-> >>> +    * - ``V4L2_LOCATION_BACK``
-> >>> +      - The camera device is located on the back side of the device.
-> >>> +
-> >>> +
-> >>> +
-> >>>  .. [#f1]
-> >>>     This control may be changed to a menu control in the future, if more
-> >>>     options are required.
-> >>
+> > Alex
 > >
 >
+> Can you define how new of a kernel is a new enough kernel?
+>
+> Looking on my side these problems were on new hardware (Precision 7740) and
+> are checked as recently as start of this summer, w/ kernel 4.15.
 
---fixbluj3hgdhxc76
-Content-Type: application/pgp-signature; name="signature.asc"
+That's not even a long term one. And it shouldn't get any fixes. I
+just checked, last update was 16 months ago.
 
------BEGIN PGP SIGNATURE-----
+>
+> We can arrange to have it checked again on 5.3rcX w/ the OSI disabled.
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1VbW8ACgkQcjQGjxah
-VjyARQ/+Mz9rvMdvMsyusC3DTUqrvRKQL6Fqjb9FJWy2lR184bCc8/Z6ocreqs+p
-JDbXdSyDkDP4TaXcoz70xsLOiWUdPCR4Vr2SKNRffqCO+idS9BzK8uYu6pR4KnIz
-AveQ9A2onENTf5CNUg3sodDAuMXHk1LDGX0gI+l6kDHtOc/4sG6H0rOoeDQ67sFP
-MDeWk93Tnr+xet+q2wmKIP7EJrQTwVgt6Ovc2cBl9af798dTyIShYnmO4Gzi7ixH
-sGhoa4X7xpJtPnHb0zGvYszit0E4xP4maNp9kPahcFFSiwsClToDloj1SjhXnJJ6
-2ff8iKpuTWIDOj6jVtad8gmy6GdUvk671VopwtC1EQO0mmKnmXus55EKjKRJFWnb
-fGwBj4u/nVHQ4zYoniUsiW868TXZC/v5r2pAaxaVscpquR0s1FoGnQE//w7cn96y
-xYRRRZ4CXuGVXSgEX8lZTAtsQO8RrsPawyh1yyOAx2K3AX/n9y0Y+Rj9ZP/HSIjD
-hbrVSgI3DCFdd4cPaAmjQguVQDcE5jto6pGtLuCTB2oAw6ejhPWRl9HPc9BAwFAB
-RokMl5MKS4PRuSoV5BFHKb+Gju5WxiM9M77hzmoYSjooF+W7BNKw4uyH175Br2X/
-doOiWAEEGEliKsYQnTFBrs2XJkf0LDdwNX55LVPEmzplTHss/+w=
-=2ECY
------END PGP SIGNATURE-----
-
---fixbluj3hgdhxc76--
+yeah, please do. If there are any issues, we (as in drm developers)
+are happy to fix the issues inside the drivers.
