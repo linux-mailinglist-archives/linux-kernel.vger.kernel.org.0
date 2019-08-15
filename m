@@ -2,94 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 431168ED9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:04:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F0798EDA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 16:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732723AbfHOOEF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 10:04:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48112 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732705AbfHOOED (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 10:04:03 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D31720644;
-        Thu, 15 Aug 2019 14:04:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565877843;
-        bh=MIPucA8nlaeUB0gX1iRzjKyYa/bVxtRZHYmUpn/icYU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KBJbzT98lJdPARaPU38GixwII164snNT2WYHBu4XVIXpmEdEfq+P1WZZvxzWZs193
-         OvmX0xjRRBV2zIUPLjWQAZAvQqnwEUmE9oJpcIY91mnI4Cl4IXk5UO2ugysErxjjLX
-         vKaSjOA2qaWKLfb+Ed0yLok/T2iukEID/1Bntyb4=
-Date:   Thu, 15 Aug 2019 16:04:00 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Eric Anholt <eric@anholt.net>,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Biju Das <biju.das@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-Subject: Re: [PATCH v2 3/9] drm: Rename drm_bridge_timings to drm_timings
-Message-ID: <20190815140400.GA7174@kroah.com>
-References: <1565867073-24746-1-git-send-email-fabrizio.castro@bp.renesas.com>
- <1565867073-24746-4-git-send-email-fabrizio.castro@bp.renesas.com>
- <20190815131838.GP5011@pendragon.ideasonboard.com>
+        id S1732733AbfHOOEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 10:04:38 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42713 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732705AbfHOOEi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 10:04:38 -0400
+Received: by mail-ot1-f66.google.com with SMTP id j7so6044959ota.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 07:04:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/zM3G1xWX3WogoYIxIH0si8CwpIiqkYLZ2hiihxpOqQ=;
+        b=Sy1iBFsWZHK7axv8bgDxBI1fhkK/67MwzRPQ5fV3QlH5Zle6L28+7aoNykJ5HgxZGF
+         j9GhwfTAWLnR6M+HfM4G+bgTTW0p7G488hycnq20ja71FW3rh1QoiLYv3VHqZwjFbYcR
+         Q8AHHvNppj6bj0T+W4CFqY22R6y5Yy4uV1eUV9feMBH+LqcfjAcTKuZy+6UpzE7bXswg
+         QNROcyl/2rhmhZM2gSURqAZpJY8J8Uq594asDz7xTwdT48eQSnhx0OG+SYrI/9hDL3pC
+         cHqgJTcxnuYxEN9geZNxmvyDAgboF8RznW+tG6ailD2xs68QFGFmc5WmyvpvclH+wwd/
+         EFtg==
+X-Gm-Message-State: APjAAAUkS1/xrb3CEffNRyUhJHk0m0MThS8CszfRhNLyZtPtLUahNMyJ
+        NO9FmZLWp9owIcrYA8XomKc2VdoxS5ktTfAWzba9WA==
+X-Google-Smtp-Source: APXvYqzchRXgP4x789+GjQl+9hOyJZGL6tLjLzEJ8LcaNO1Yx6DCAmdlcRIEhnpH8KVHbuj5x4BhAACAIvjM27sfOC8=
+X-Received: by 2002:a5d:8195:: with SMTP id u21mr5821290ion.260.1565877878036;
+ Thu, 15 Aug 2019 07:04:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815131838.GP5011@pendragon.ideasonboard.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190814213118.28473-1-kherbst@redhat.com> <20190814213118.28473-2-kherbst@redhat.com>
+ <CAPM=9ty7yEUqKrcixV1tTuWCpyh6UikA3rxX8BF1E3fDb6WLQQ@mail.gmail.com> <5e05532328324d01bc554c573f6298f8@AUSX13MPC101.AMER.DELL.COM>
+In-Reply-To: <5e05532328324d01bc554c573f6298f8@AUSX13MPC101.AMER.DELL.COM>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Thu, 15 Aug 2019 16:04:27 +0200
+Message-ID: <CACO55tsDA1WpMGtAPqUJpWt0AmPDnv9LuC09g2KB5GXB-VSCew@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
+ enable dGPU direct output"
+To:     Mario.Limonciello@dell.com
+Cc:     Dave Airlie <airlied@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Alex Hung <alex.hung@canonical.com>,
+        Ben Skeggs <bskeggs@redhat.com>,
+        David Airlie <airlied@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 04:18:38PM +0300, Laurent Pinchart wrote:
-> Hi Fabrizio,
-> 
-> (CC'ing Greg as the architect of the SPDX move)
+On Thu, Aug 15, 2019 at 3:56 PM <Mario.Limonciello@dell.com> wrote:
+>
+> > -----Original Message-----
+> > From: linux-acpi-owner@vger.kernel.org <linux-acpi-owner@vger.kernel.org> On
+> > Behalf Of Dave Airlie
+> > Sent: Wednesday, August 14, 2019 5:48 PM
+> > To: Karol Herbst
+> > Cc: LKML; Linux ACPI; dri-devel; nouveau; Rafael J . Wysocki; Alex Hung; Ben
+> > Skeggs; Dave Airlie
+> > Subject: Re: [Nouveau] [PATCH 1/7] Revert "ACPI / OSI: Add OEM _OSI string to
+> > enable dGPU direct output"
+> >
+> > On Thu, 15 Aug 2019 at 07:31, Karol Herbst <kherbst@redhat.com> wrote:
+> > >
+> > > This reverts commit 28586a51eea666d5531bcaef2f68e4abbd87242c.
+> > >
+> > > The original commit message didn't even make sense. AMD _does_ support it and
+> > > it works with Nouveau as well.
+> > >
+> > > Also what was the issue being solved here? No references to any bugs and not
+> > > even explaining any issue at all isn't the way we do things.
+> > >
+> > > And even if it means a muxed design, then the fix is to make it work inside the
+> > > driver, not adding some hacky workaround through ACPI tricks.
+> > >
+> > > And what out of tree drivers do or do not support we don't care one bit anyway.
+> > >
+> >
+> > I think the reverts should be merged via Rafael's tree as the original
+> > patches went in via there, and we should get them in asap.
+> >
+> > Acked-by: Dave Airlie <airlied@redhat.com>
+> > Dave.
+>
+> There are definitely going to be regressions on machines in the field with the
+> in tree drivers by reverting this.  I think we should have an answer for all of those
+> before this revert is accepted.
+>
+> Regarding systems with Intel+NVIDIA, we'll have to work with partners to collect
+> some information on the impact of reverting this.
+>
+> When this is used on a system with Intel+AMD the ASL configures AMD GPU to use
+> "Hybrid Graphics" when on Windows and "Power Express" and "Switchable Graphics"
+> when on Linux.
 
-_one of_, not the one that did the most of he work, that would be Thomas :)
+and what's exactly the difference between those? And what's the actual
+issue here?
 
-> On Thu, Aug 15, 2019 at 12:04:27PM +0100, Fabrizio Castro wrote:
-> > The information represented by drm_bridge_timings is also
-> > needed by panels, therefore rename drm_bridge_timings to
-> > drm_timings.
-> > 
-> > Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
-> > Link: https://www.spinics.net/lists/linux-renesas-soc/msg43271.html
-> > 
-> > ---
-> > v1->v2:
-> > * new patch
-> > 
-> > I have copied the license from include/drm/drm_bridge.h as that's
-> > where the struct originally came from. What's the right SPDX license
-> > to use in this case?
-> 
-> https://wiki.spdx.org/view/Legal_Team/Decisions/Dealing_with_Public_Domain_within_SPDX_Files
-> 
-> Greg, any idea on how we should handle this ?
+We already have the PRIME offloading in place and if that's not
+enough, we should work on extending it, not adding some ACPI based
+workarounds, because that's exactly how that looks like.
 
-Ugh, what lunacy.  But drm_bridge.h is NOT under any "public domain"
-license, so why is that an issue here?  This looks like a "normal" bsd 3
-clause license to me, right?
+Also, was this discussed with anybody involved in the drm subsystem?
 
-So I would just use "BSD-3-Clause" as the SPDX license here, if I were
-doing this patch...
+>
+> I feel we need a knob and/or DMI detection to affect the changes that the ASL
+> normally performs.
 
-thanks,
-
-greg k-h
+Why do we have to do that on a firmware level at all?
