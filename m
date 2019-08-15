@@ -2,81 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 067008F377
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:33:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8715F8F380
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbfHOSdD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:33:03 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44455 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728579AbfHOSdC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:33:02 -0400
-Received: by mail-pg1-f193.google.com with SMTP id i18so1643063pgl.11;
-        Thu, 15 Aug 2019 11:33:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rvhgIfiAcLo5VhLT6MFATYs/CalMc2TfDSCJaauWHBA=;
-        b=GRnoxNhWMIdhH+FFenKnBtccjesFa4axTMx0cpMDVJ/ugA+mkjeGSXVLwxisgztXSP
-         3XymaANLePnVMDHtd08GB6EAJGYxsi7mylG201dlD+7/CfL/80/ZnC88zTxmjYalRHqN
-         OT1u7e/+MBakkyc4gohkdmseHcDCJAP6J0aZluNfQ4Z33+w5pJA5SaAHADktvLf/19Tt
-         04GwObaWjxbBbKX71bi0OLZfkxq5X1ux57/sULCT3c50yRJhuOgi6UW5DXxAJ5EddKIG
-         a7X8oB9XO0jQvM6+HMAf5T6rEfoEB0n76xW0FVjfYR65MoLet0n+xwr8YXEeweP9qBdr
-         BbYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rvhgIfiAcLo5VhLT6MFATYs/CalMc2TfDSCJaauWHBA=;
-        b=qcRq7vTT8vILByX+5htfvxQT/EN4zXjEChxERwbB11tiIM5/eHhIUVdIfsu3f3Xyqz
-         cR6n/VOGChO7Kg3GoL7ciWWdgf+flvVqPT5dKgTyVz2uuxb1VEHLWmM3/QS8IUTGjj8E
-         MtH2k+zKLa6mctOEgdP6k/GLLKASIGAdLDIzNcAME86G2FAsAMkpg5bnSbP0CdhxNuVZ
-         LtMSSj+svx1xkFj8fCOniqt4DcXVBXKFjPn0HsyPkgGFiQth24bFqo7P4Zs01WaKei0/
-         DmrhhGzNNlaBFSTS0tlWMGhDntbk2e84jI0neVYf1VMk/h9phI2ewvww1pHfuVF/msJQ
-         5Qnw==
-X-Gm-Message-State: APjAAAUWN7HI6ng7PCSNXI8CDfhyJQQVrwe43TAzBpOveQy09REiHSx6
-        J/qqxu6yBQeqp2T0J0Kv5qg=
-X-Google-Smtp-Source: APXvYqwaTvG+dXpud8t+SGDZs0MUgLf73XKT6y5QDWsZN7z+RrSon07LwGoYiLQmIW26Y7Zz8ZiV/g==
-X-Received: by 2002:a17:90a:feb:: with SMTP id 98mr3282646pjz.55.1565893982140;
-        Thu, 15 Aug 2019 11:33:02 -0700 (PDT)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 136sm3867841pfz.123.2019.08.15.11.33.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Aug 2019 11:33:01 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 11:33:00 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Max Staudt <max@enpas.org>
-Cc:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Jean Delvare <jdelvare@suse.com>, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org, glaubitz@physik.fu-berlin.de
-Subject: Re: [PATCH v3 2/3] hwmon/ltc2990: Generalise DT to fwnode support
-Message-ID: <20190815183300.GA18227@roeck-us.net>
-References: <20190815125802.16500-1-max@enpas.org>
- <20190815125802.16500-2-max@enpas.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815125802.16500-2-max@enpas.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1732978AbfHOSen (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:34:43 -0400
+Received: from mout.gmx.net ([212.227.17.22]:35169 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732731AbfHOSel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 14:34:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1565894066;
+        bh=oUegn+OzzqrlGQ58We8pXrOWyGGRz5WOSepueZRR5DE=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date;
+        b=ZKwCb7GTHVfyn52jUflQssEZbYOYkYMe+r7AyH//cQ0gIivV+8OrsRDQ+SX1fD9EI
+         D/UzzkAfF1h1iWJv7fRxLgkEgkm5MljRyooGWt+2sHpc2m6f2QjvX3qgyKacyUtzR6
+         4lfbkosYQSi4K/9uNJbJWoE4dcQkKi0wARGv8LKg=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.106]) by mail.gmx.com
+ (mrgmx104 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1MG9g4-1i3okQ0UJg-00GW9g; Thu, 15 Aug 2019 20:34:26 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Stefan Wahren <wahrenst@gmx.net>, Eric Anholt <eric@anholt.net>,
+        linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [GIT PULL 1/3] bcm2835-dt-next-2019-08-15
+Date:   Thu, 15 Aug 2019 20:34:01 +0200
+Message-Id: <1565894043-5249-1-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+X-Provags-ID: V03:K1:RvoNJciCciw+BH2y7lrTfNZLSc2nmRjVwvWGSPVn24kWoufePuA
+ Voc3A92Wwatp4m0PEWYnvhRg07YpZT6p9q7ktWEc4dsiIl8Qudifu5zaqJ9WBNHmo88dXWl
+ q8ZxGm8ig7B6qRf3Ub32E5we2xEo9Q3HseIirD1AH84BFsPe0wM8lfhsflh69s5QPbaelsy
+ E23UsZk0NU5aBPx1WABjw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:X+5paVtZqY0=:xjZa8BcP1d/9n1T8srkcbn
+ L4tGraW3wKTTDiyOUq/J60nBusFRHYXqV4jsQgZem9GURAfPukCsBBoQyBMaIhjyPZ4I3oeGj
+ Hu71JdRyaxzh8Nz0h9hwdwsWoqHWO+VmzYvMgPimq5Cxgiu06q7K0b8FDzWRR3mOP3E1NNkxu
+ p2r5C9VdV2pP9MAQGx+Js9/j97Es4+LuwetLWd0/1+U/TlWfJLdW3Kno4NErIJHD0P2V1eBnF
+ RoTSyIhjcLovlcZ6lHS239X4ifSHV0UuxENLuZ664Dbb1ij9DSOnwFWuh44UbmTBFv99wVUJi
+ 1LvkVOoROSnMLE7MnL74loN7AdVX97ZiD3aoyo+tqF1EWFDtS4RaNR8iN9/y8Uq6dtCi6UTQS
+ FmqANq9YkZY68hcaYewAmYsob34tamK3NEjIx9cPLv25Qt0oZNbau+hZ/RwXb/ka7zgZtnslN
+ UsQFBzXh6AGExMaPNMaXj0VQnwHsdgLPhSzmN2cCbBEKrSxC2Pc+We0bqM0A8FT4W4OMzXLww
+ p+dZKcdi10n898JckcYC3nHVzUqqzP4SYJMw096BMJl6/pWtndKqrHbJ8wxdVU0TksTlzG+6M
+ V5ooc1mpi8X2ChdXorNJ/61c0E47i7G6nnHm3rO/3od8AjkQXalqyDO42HK3BKtlCPfbR9BUV
+ yS/EZLsovFGteRPEtWR/UeJPVqmP/B4j1d+DhPKkn8pd03Rfwndz3bt1XwEdFJI5aYibNyNpQ
+ RX4Ngk1GLq8CFie77SS1rlh3GNLrb166a4dfmf6zHZDeTv7RN5DJtwy3C6CQtQAHhOIT2vJLV
+ en7xwk+0JHkbcT8MVYM/qqG3FKu/KGGKqpliIa3aDCmFOt2Es/1TCiFWwu6FRgw46QwGBAzqc
+ 36oKUkiNbob9tysHrmLtTv+z8UhIL82aO+jn0TyC2HEHMTyTmnEThEgqG8M7Vf8V+6LK0yXIy
+ sLZ/cwtqzLTPVPXd9IrI70ZV6v7G1IHLQ8TBkhl1mwJ5h1Qwmtm+VLAOXUpl4UYXanCOcoBh8
+ UTKYM9VrulAlpSU3FjrnyxZgWOIh7TyGY18m+jXhysmH6kQCpdu9yFsvwWne2F2wyZQR0O0T1
+ 8C4iI7i1UTaOBsG44KQXijy2uHMzQzA/XwgbjlJzLNzWgC+VIdGaxAqKQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 02:58:01PM +0200, Max Staudt wrote:
-> ltc2990 will now use device_property_read_u32_array() instead of
-> of_property_read_u32_array() - allowing the use of software nodes
-> via fwnode_create_software_node().
-> 
-> This allows code using i2c_new_device() to specify a default
-> measurement mode for the LTC2990.
-> 
-> Signed-off-by: Max Staudt <max@enpas.org>
+Hi Florian,
 
-Applied to hwmon-next.
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-Thanks,
-Guenter
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+
+are available in the git repository at:
+
+  git://github.com/anholt/linux tags/bcm2835-dt-next-2019-08-15
+
+for you to fetch changes up to 60c833d5664e1b3f71c4471233469790adf505ca:
+
+  ARM: dts: bcm283x: Enable HDMI at board level (2019-08-15 19:35:15 +0200)
+
+----------------------------------------------------------------
+This pull request prepares the BCM2835 DTS files for the introduction
+of the new SoC BCM2711.
+
+----------------------------------------------------------------
+Stefan Wahren (4):
+      ARM: bcm283x: Reduce register ranges for UART, SPI and I2C
+      ARM: dts: bcm283x: Define MMC interfaces at board level
+      ARM: dts: bcm283x: Define memory at board level
+      ARM: dts: bcm283x: Enable HDMI at board level
+
+ arch/arm/boot/dts/bcm2835-rpi-a-plus.dts   | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-a.dts        | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-b-plus.dts   | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-b-rev2.dts   | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-b.dts        | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-cm1-io1.dts  |  9 +++++++++
+ arch/arm/boot/dts/bcm2835-rpi-cm1.dtsi     |  5 +++++
+ arch/arm/boot/dts/bcm2835-rpi-zero-w.dts   | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi-zero.dts     | 14 ++++++++++++++
+ arch/arm/boot/dts/bcm2835-rpi.dtsi         | 23 -----------------------
+ arch/arm/boot/dts/bcm2836-rpi-2-b.dts      | 10 ++++++++++
+ arch/arm/boot/dts/bcm2837-rpi-3-a-plus.dts |  3 +++
+ arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts |  3 +++
+ arch/arm/boot/dts/bcm2837-rpi-3-b.dts      |  3 +++
+ arch/arm/boot/dts/bcm2837-rpi-cm3-io3.dts  |  9 +++++++++
+ arch/arm/boot/dts/bcm2837-rpi-cm3.dtsi     |  1 +
+ arch/arm/boot/dts/bcm283x.dtsi             |  6 +++---
+ 17 files changed, 144 insertions(+), 26 deletions(-)
