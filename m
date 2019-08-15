@@ -2,135 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B9008EF61
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DCEB8EF77
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:37:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730176AbfHOPdJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:33:09 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35206 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730049AbfHOPdJ (ORCPT
+        id S1730451AbfHOPhM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 11:37:12 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:38289 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729998AbfHOPhM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:33:09 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1198660736; Thu, 15 Aug 2019 15:33:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565883188;
-        bh=uo5H+y/d8CeAGVlGgEqg/owuTjfwykTO28LcSJ+xr/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=i7Yfe8lkksQXtPilSJpmG+DZTo3/5PsbbvskTeYAjHXEL4LcUMrAsZABl47mqB+cZ
-         Uk/Wo6tJWK6WoPNxaHtykreYkd7TpL/7J5jsxvqAx1fHj+PAt0cIXmR5bkkR0Fls4j
-         /ApoqDqtGDwO07uhw/kj/j9okcX2Dpkx68NQ6HIU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09845602DB;
-        Thu, 15 Aug 2019 15:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565883186;
-        bh=uo5H+y/d8CeAGVlGgEqg/owuTjfwykTO28LcSJ+xr/4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=RzWtWebSM6sga9d+OFbdNomQXt2erULsaPlh8pnTHBZtZyGoEFu/YQWnwWPs72tQk
-         qOKjG9KEdXR6TLhBuDZEmtumeRgnsWuqmbxssYDp3D8XHF0kWV1JwF/qKTDVRqvmsX
-         pE5VXpZ0oG+3PfHMM6LMzK8I5mAQKLk7o64a0K2M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09845602DB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Thu, 15 Aug 2019 09:33:04 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Zhen Lei <thunder.leizhen@huawei.com>, robin.murphy@arm.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [Freedreno] [PATCH v3 0/2] iommu/arm-smmu: Split pagetable
- support
-Message-ID: <20190815153304.GD28465@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: freedreno@lists.freedesktop.org,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>,
-        jean-philippe.brucker@arm.com, linux-arm-msm@vger.kernel.org,
-        Joerg Roedel <joro@8bytes.org>, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org,
-        Zhen Lei <thunder.leizhen@huawei.com>, robin.murphy@arm.com,
-        linux-arm-kernel@lists.infradead.org
-References: <1565216500-28506-1-git-send-email-jcrouse@codeaurora.org>
+        Thu, 15 Aug 2019 11:37:12 -0400
+Received: by mail-oi1-f196.google.com with SMTP id p124so2519488oig.5;
+        Thu, 15 Aug 2019 08:37:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=suz4mKzGOm43s2AkTS32mygq2S1lAq1/2KkLJRCcuhI=;
+        b=BU+L/BikDVQeibw0EaDlqNH0M39YSDw4l2NssNBQ5HVSKf3PnMSL46YV3aGAlipVT6
+         j3UVmAAi5tAK0gH2D1mQABUsRBs7b/WdAkTm3zGadgUd24tSxdfwseZPyUkRNVWIaunE
+         1s9o3QJApWcej2KiMyjW5svK1eza9ICGsvjRxc+q8Cp0srbVW5DAf3vw8JKHcHh+lv72
+         y+SP7gkpwhUJQxuacUagwST9K1ZHP2Bp3Z/DQCuhKprEIAB2GMwRpyskkYJ6c5BC8HeN
+         yfHed+k4n4jSfOkZm2Yvq0gINHYpG3ISvIlxE6HOO5Ml/Q5luYmq9ORXOATC1MRxyXlU
+         1sjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=suz4mKzGOm43s2AkTS32mygq2S1lAq1/2KkLJRCcuhI=;
+        b=NbymDNoJmpc3cDghnnFtoylIDigNdxjQvVToURMscbvjpQStkyXtAjUpmFQgnDA/tn
+         2PDA0XKpWAoUaecs7KWKSxL0isvyGfrxjh8v5ETJ8yE99/zTIQ24OizULA2tnBEodf5m
+         XyFRM82HylkYTGpctqYYfC7oQW63t+kJzdDtFvC7wthm5noPrlmgmFf+tox/v2b6l6jF
+         qSRO1C4SmSaXukO8WQ0X3VOwKxy9hdJ7l55DbbqcK5V0pE+DuCGQP2N056xFyoCh3Sru
+         3RXmZscpTQRSkFhnKT1ocI7WQpS6500E3ZjeA5Od5SnfKbOWovxl9uT41XV0wD+ZWH6b
+         Ea7A==
+X-Gm-Message-State: APjAAAXVwydjiRG+ygg98VLytLYqTdz03lu1/YlZcfjlCwON3sIiwew9
+        kAKf10QomSDx5hMf0yRC+EY=
+X-Google-Smtp-Source: APXvYqyHna7FfuRasokgTH8PppSPOd+C93aaRzZFjLUIE4EtFikMOioFypedbkXo6otEajkh/cp2cA==
+X-Received: by 2002:a02:a383:: with SMTP id y3mr5754146jak.6.1565883431093;
+        Thu, 15 Aug 2019 08:37:11 -0700 (PDT)
+Received: from localhost.localdomain (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
+        by smtp.gmail.com with ESMTPSA id c18sm1491856iod.19.2019.08.15.08.37.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 08:37:10 -0700 (PDT)
+From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
+To:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     skhan@linuxfoundation.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        bodong@mellanox.com, ddutile@redhat.com,
+        gregkh@linuxfoundation.org, skunberg.kelsey@gmail.com
+Subject: [PATCH v3 0/4] PCI: Clean up pci-sysfs.c
+Date:   Thu, 15 Aug 2019 09:33:49 -0600
+Message-Id: <20190815153352.86143-1-skunberg.kelsey@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+References: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565216500-28506-1-git-send-email-jcrouse@codeaurora.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 04:21:38PM -0600, Jordan Crouse wrote:
-> (Sigh, resend. I freaked out my SMTP server)
-> 
-> This is part of an ongoing evolution for enabling split pagetable support for
-> arm-smmu. Previous versions can be found [1].
-> 
-> In the discussion for v2 Robin pointed out that this is a very Adreno specific
-> use case and that is exactly true. Not only do we want to configure and use a
-> pagetable in the TTBR1 space, we also want to configure the TTBR0 region but
-> not allocate a pagetable for it or touch it until the GPU hardware does so. As
-> much as I want it to be a generic concept it really isn't.
-> 
-> This revision leans into that idea. Most of the same io-pgtable code is there
-> but now it is wrapped as an Adreno GPU specific format that is selected by the
-> compatible string in the arm-smmu device.
-> 
-> Additionally, per Robin's suggestion we are skipping creating a TTBR0 pagetable
-> to save on wasted memory.
-> 
-> This isn't as clean as I would like it to be but I think that this is a better
-> direction than trying to pretend that the generic format would work.
-> 
-> I'm tempting fate by posting this and then taking some time off, but I wanted
-> to try to kick off a conversation or at least get some flames so I can try to
-> refine this again next week. Please take a look and give some advice on the
-> direction.
+This series is designed to clean up device attributes and permissions in
+pci-sysfs.c. Then move the sysfs SR-IOV functions from pci-sysfs.c to
+iov.c for better organization.
 
-Will, Robin -
+Patch 1: Define device attributes with DEVICE_ATTR* instead of __ATTR*.
 
-Modulo the impl changes from Robin, do you think that using a dedicated
-pagetable format is the right approach for supporting split pagetables for the
-Adreno GPU?
+Patch 2: Change permissions from symbolic to the preferred octal.
 
-If so, then is adding the changes to io-pgtable-arm.c possible for 5.4 and then
-add the implementation specific code on top of Robin's stack later or do you
-feel they should come as part of a package deal?
+Patch 3: Change DEVICE_ATTR() with 0220 permissions to DEVICE_ATTR_WO().
 
-Jordan
+Patch 4: Move sysfs SR-IOV functions to iov.c to keep the feature's code
+together.
 
-> Jordan Crouse (2):
->   iommu/io-pgtable-arm: Add support for ARM_ADRENO_GPU_LPAE io-pgtable
->     format
->   iommu/arm-smmu: Add support for Adreno GPU pagetable formats
-> 
->  drivers/iommu/arm-smmu.c       |   8 +-
->  drivers/iommu/io-pgtable-arm.c | 214 ++++++++++++++++++++++++++++++++++++++---
->  drivers/iommu/io-pgtable.c     |   1 +
->  include/linux/io-pgtable.h     |   2 +
->  4 files changed, 209 insertions(+), 16 deletions(-)
-> 
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> Freedreno mailing list
-> Freedreno@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/freedreno
+
+Patch 1, 2, and 4 will report unusual permissions '0664' used from the
+following:
+
+  static DEVICE_ATTR(sriov_numvfs, 0664, sriov_numvfs_show,
+                     sriov_numvfs_store);
+
+  static DEVICE_ATTR(sriov_drivers_autoprobe, 0664,
+                     sriov_drivers_autoprobe_show,
+                     sriov_drivers_autoprobe_store);
+
+This series preserves the existing permissions set in:
+
+
+  commit 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control
+                        VF driver binding")
+
+  commit 1789382a72a5 ("PCI: SRIOV control and status via sysfs")
+
+Either adding a comment verifying permissions are okay or changing the
+permissions is to be completed with a new patch.
+
+Changes since v1:
+        Add patch 1 and 2 to fix the way device attributes are defined
+        and change permissions from symbolic to octal. Patch 4 which moves
+        sysfs SR-IOV functions to iov.c will then apply cleaner.
+
+Changes since v2:
+
+        Patch 1: Commit log updated. Example shows DEVICE_ATTR_RO()
+        example instead of DEVICE_ATTR(). DEVICE_ATTR() should be avoided
+        unless the files have unusual permissions. Changed to reflect a
+        more encouraged usage.  Also updated regex to be accurate.
+
+        Patch 3: [NEW] Add patch to change DEVICE_ATTR() with 0220
+        permissions to DEVICE_ATTR_WO().
+
+        Updated series log to reflect new patch and unusual permissions
+        information.
+
+
+Kelsey Skunberg (4):
+  PCI: sysfs: Define device attributes with DEVICE_ATTR*
+  PCI: sysfs: Change permissions from symbolic to octal
+  PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()
+  PCI/IOV: Move sysfs SR-IOV functions to iov.c
+
+ drivers/pci/iov.c       | 168 ++++++++++++++++++++++++++++++
+ drivers/pci/pci-sysfs.c | 223 ++++------------------------------------
+ drivers/pci/pci.h       |   2 +-
+ 3 files changed, 191 insertions(+), 202 deletions(-)
 
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.20.1
+
