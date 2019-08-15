@@ -2,133 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9158E4B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:00:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A15118E4B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:01:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730257AbfHOGAV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 02:00:21 -0400
-Received: from mga18.intel.com ([134.134.136.126]:39804 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726008AbfHOGAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 02:00:21 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 23:00:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,388,1559545200"; 
-   d="scan'208";a="352148825"
-Received: from pipin.fi.intel.com (HELO pipin) ([10.237.72.175])
-  by orsmga005.jf.intel.com with ESMTP; 14 Aug 2019 23:00:17 -0700
-From:   Felipe Balbi <balbi@kernel.org>
-To:     Vicente Bergas <vicencb@gmail.com>
-Cc:     Robin Murphy <robin.murphy@arm.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Will Deacon <will.deacon@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: kexec on rk3399
-In-Reply-To: <4fc3e5b5-31fe-41f6-8031-b37454f21437@gmail.com>
-References: <ebcb52be-2063-4e2c-9a09-fdcacb94f855@gmail.com> <c6993a1e-6fc2-44ab-b59e-152142e2ff4d@gmail.com> <87v9uzaocj.fsf@gmail.com> <4fc3e5b5-31fe-41f6-8031-b37454f21437@gmail.com>
-Date:   Thu, 15 Aug 2019 09:00:16 +0300
-Message-ID: <87sgq3t1cf.fsf@gmail.com>
+        id S1730336AbfHOGBj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 02:01:39 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36185 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726008AbfHOGBj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 02:01:39 -0400
+Received: by mail-pl1-f193.google.com with SMTP id g4so724775plo.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 23:01:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bmSCdnIPB1eNwZ60Q3PEiT3kdrTU05F9OKohp8Lrv6U=;
+        b=hCcZByq+TgABNzIBu34g4/VXnusd7y6Lpex5x9X3JLLg9YwFvEcxQKfqyvtgujFnj+
+         Qv0D1C0prHGL9PlxtUd0KEdb+ztLmtKpBsCIa2SwKAViuHT/UmguvquOEWkfNR+lNAd/
+         XenD4goEDRlVjR1d3W5h6sgMAFCECZsjN9MLKBjoiLGthopOz22VUhsf9DRF2jPyQ145
+         z2RJVnPGhblkHpAi35BT7H6Od8imPwnt0W8yOV46oZ30N/EoBvRB9ZWkHfHYkiZsQ46E
+         /bA6QTImf/4F7WxaUZ3fSsWaxEVup8JNYSHOt7qSJOc++Vy0l6ThfBoMnxjZVryHQt1Z
+         Domg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bmSCdnIPB1eNwZ60Q3PEiT3kdrTU05F9OKohp8Lrv6U=;
+        b=FC2qVAOLC2t0+G3ywRCWuRckg2u4IogYjALJqwj4lntArpvlAwfLt9pOn+phbre+OT
+         vm91ux5H+7ljmObtEY0yLdc/oCvCmeUszMcYmaraurr9mr1cp4/qExODrsy6uGq4GjGW
+         bKH2H77HiqNBq9FoaJNd/vt0Sb/wkfiCPOawfVBYCGX8BXshOeULZxlV2xYVBXoc9UpA
+         jkM3Vft3yELQMirisrx5H+j7n7eset7MBhAZjUOG+tqGKv7d8Q9G9ojDFrLv9DeUuqtj
+         UBtTMaWPf6agxLovGxWrPU1kt0pCHdvbunJVvy7bygWXm30BULV1KWk1Dwl3vB2v6VjT
+         znDQ==
+X-Gm-Message-State: APjAAAVNSNyeGsqvRt1k/67duSu7JO+PYsxhJa9bmEyos5r462k30UE1
+        lnBTYIF9clCoGFSgt6PzPeniZ8/s
+X-Google-Smtp-Source: APXvYqwAGBnQSTTsWVzmoID/FtxQAy2pcPv6Z5k7uAYf/Ea5AMqq1nCrJIFpL4N/Go8xxyzFnUGMSg==
+X-Received: by 2002:a17:902:aa08:: with SMTP id be8mr2964869plb.144.1565848898432;
+        Wed, 14 Aug 2019 23:01:38 -0700 (PDT)
+Received: from localhost.localdomain ([110.225.3.176])
+        by smtp.gmail.com with ESMTPSA id e6sm1860879pfl.37.2019.08.14.23.01.37
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Wed, 14 Aug 2019 23:01:38 -0700 (PDT)
+From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
+Subject: [PATCH] bus: arm-cci: Add of_node_put() before break
+Date:   Thu, 15 Aug 2019 11:31:27 +0530
+Message-Id: <20190815060127.2400-1-nishkadg.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Each iteration of for_each_child_of_node puts the previous node, but
+in the case of a break from the middle of the loop, there is no put,
+thus causing a memory leak. Add an of_node_put before the break.
+Issue found with Coccinelle.
 
-Hi,
+Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+---
+ drivers/bus/arm-cci.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Vicente Bergas <vicencb@gmail.com> writes:
->> Vicente Bergas <vicencb@gmail.com> writes:
->>> On Monday, July 22, 2019 4:31:27 PM CEST, Vicente Bergas wrote:
->>>> Hi, i have been running linux on rk3399 booted with kexec fine until 5.2
->>>> From 5.2 onwards, there are memory corruption issues as reported here:
->>>> http://lkml.iu.edu/hypermail/linux/kernel/1906.2/07211.html
->>>> kexec has been identified as the principal reason for the issues.
->>>> 
->>>> It turns out that kexec has never worked reliably on this platform, ...
->>> 
->>> Thank you all for your suggestions on where the issue could be.
->>> 
->>> It seems that it was the USB driver.
->>> Now using v5.2.8 booted with kexec from v5.2.8 with a workaround and
->>> so far so good. It is being tested on the Sapphire board.
->>> 
->>> The workaround is:
->>> --- a/drivers/usb/dwc3/dwc3-of-simple.c
->>> +++ b/drivers/usb/dwc3/dwc3-of-simple.c
->>> @@ -133,6 +133,13 @@
->>>  	return 0;
->>>  }
->>>  
->>> +static void dwc3_of_simple_shutdown(struct platform_device *pdev)
->>> +{
->>> +	struct dwc3_of_simple *simple = platform_get_drvdata(pdev);
->>> +
->>> +	reset_control_assert(simple->resets);
->>> +}
->>> +
->>>  static int __maybe_unused dwc3_of_simple_runtime_suspend(struct device 
->>> *dev)
->>>  {
->>>  	struct dwc3_of_simple	*simple = dev_get_drvdata(dev);
->>> @@ -190,6 +197,7 @@
->>>  static struct platform_driver dwc3_of_simple_driver = {
->>>  	.probe		= dwc3_of_simple_probe,
->>>  	.remove		= dwc3_of_simple_remove,
->>> +	.shutdown	= dwc3_of_simple_shutdown,
->>>  	.driver		= {
->>>  		.name	= "dwc3-of-simple",
->>>  		.of_match_table = of_dwc3_simple_match,
->>> 
->>> If this patch is OK after review i can resubmit it as a pull request.
->>
->> not a pull request, just send a patch using git send-email
->>
->>> Should a similar change be applied to drivers/usb/dwc3/core.c ?
->>
->> Is it necessary? We haven't had any bug reports regarding that. Also, if
->> we have reset control support in the core driver, why do we need it in
->> of_simple? Seems like of_simple could just rely on what core does.
->
-> the workaround has been tested patching only core.c with
-> --- a/drivers/usb/dwc3/core.c
-> +++ b/drivers/usb/dwc3/core.c
-> @@ -1561,6 +1561,13 @@
->  	return 0;
->  }
->  
-> +static void dwc3_shutdown(struct platform_device *pdev)
-> +{
-> +	struct dwc3 *dwc = platform_get_drvdata(pdev);
-> +
-> +	reset_control_assert(dwc->reset);
-> +}
-> +
->  #ifdef CONFIG_PM
->  static int dwc3_core_init_for_resume(struct dwc3 *dwc)
->  {
-> @@ -1866,6 +1873,7 @@
->  static struct platform_driver dwc3_driver = {
->  	.probe		= dwc3_probe,
->  	.remove		= dwc3_remove,
-> +	.shutdown	= dwc3_shutdown,
->  	.driver		= {
->  		.name	= "dwc3",
->  		.of_match_table	= of_match_ptr(of_dwc3_match),
->
-> and leaving dwc3-of-simple.c as is, the issue persisted.
-
-That's because your reset controller is not passed to dwc3 core, only to
-your glue layer.
-
+diff --git a/drivers/bus/arm-cci.c b/drivers/bus/arm-cci.c
+index b8184a903583..1f84a5528073 100644
+--- a/drivers/bus/arm-cci.c
++++ b/drivers/bus/arm-cci.c
+@@ -461,8 +461,10 @@ static int cci_probe_ports(struct device_node *np)
+ 
+ 		i = nb_ace + nb_ace_lite;
+ 
+-		if (i >= nb_cci_ports)
++		if (i >= nb_cci_ports) {
++			of_node_put(cp);
+ 			break;
++		}
+ 
+ 		if (of_property_read_string(cp, "interface-type",
+ 					&match_str)) {
 -- 
-balbi
+2.19.1
+
