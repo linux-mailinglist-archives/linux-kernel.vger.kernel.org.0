@@ -2,67 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA79A8E44C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 07:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41AB78E453
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 07:03:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729931AbfHOFBZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 01:01:25 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:57034 "EHLO fornost.hmeau.com"
+        id S1730049AbfHOFDE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 01:03:04 -0400
+Received: from mga05.intel.com ([192.55.52.43]:34458 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725681AbfHOFBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 01:01:24 -0400
-Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
-        by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1hy7se-0004zi-KL; Thu, 15 Aug 2019 15:00:56 +1000
-Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1hy7sY-0006Te-Id; Thu, 15 Aug 2019 15:00:50 +1000
-Date:   Thu, 15 Aug 2019 15:00:50 +1000
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     atul.gupta@chelsio.com, zhongjiang@huawei.com,
-        ganeshgr@chelsio.com, davem@davemloft.net, tglx@linutronix.de,
-        bigeasy@linutronix.de, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] crypto: chtls - use 'skb_put_zero()' instead of
- re-implementing it
-Message-ID: <20190815050050.GA24863@gondor.apana.org.au>
-References: <20190807154014.22548-1-christophe.jaillet@wanadoo.fr>
+        id S1728128AbfHOFDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 01:03:04 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 22:03:03 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,388,1559545200"; 
+   d="scan'208";a="171012988"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga008.jf.intel.com with ESMTP; 14 Aug 2019 22:02:59 -0700
+Cc:     baolu.lu@linux.intel.com, corbet@lwn.net, tony.luck@intel.com,
+        fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-ia64@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Thomas.Lendacky@amd.com, Suravee.Suthikulpanit@amd.com,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 06/10] iommu: Remember when default domain type was set on
+ kernel command line
+To:     Joerg Roedel <joro@8bytes.org>
+References: <20190814133841.7095-1-joro@8bytes.org>
+ <20190814133841.7095-7-joro@8bytes.org>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <754a526e-a6d4-8a3f-0b35-9dd3def5d24b@linux.intel.com>
+Date:   Thu, 15 Aug 2019 13:01:57 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807154014.22548-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190814133841.7095-7-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 05:40:14PM +0200, Christophe JAILLET wrote:
-> 'skb_put()+memset()' is equivalent to 'skb_put_zero()'
-> Use the latter because it is less verbose and it hides the internals of the
-> sk_buff structure.
-> 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/crypto/chelsio/chtls/chtls_main.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/crypto/chelsio/chtls/chtls_main.c b/drivers/crypto/chelsio/chtls/chtls_main.c
-> index 635bb4b447fb..830b238da77e 100644
-> --- a/drivers/crypto/chelsio/chtls/chtls_main.c
-> +++ b/drivers/crypto/chelsio/chtls/chtls_main.c
-> @@ -218,9 +218,8 @@ static int chtls_get_skb(struct chtls_dev *cdev)
->  	if (!cdev->askb)
->  		return -ENOMEM;
->  
-> -	skb_put(cdev->askb, sizeof(struct tcphdr));
-> +	skb_put_zero(cdev->askb, sizeof(struct tcphdr));
->  	skb_reset_transport_header(cdev->askb);
-> -	memset(cdev->askb->data, 0, cdev->askb->len);
+Hi,
 
-These two are NOT equivalent.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+On 8/14/19 9:38 PM, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
+> 
+> Introduce an extensible concept to remember when certain
+> configuration settings for the IOMMU code have been set on
+> the kernel command line.
+> 
+> This will be used later to prevent overwriting these
+> settings with other defaults.
+> 
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
+> ---
+>   drivers/iommu/iommu.c | 15 +++++++++++++++
+>   1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index f187e85a074b..e1feb4061b8b 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -32,6 +32,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
+>   static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
+>   #endif
+>   static bool iommu_dma_strict __read_mostly = true;
+> +static u32 iommu_cmd_line __read_mostly;
+>   
+>   struct iommu_group {
+>   	struct kobject kobj;
+> @@ -68,6 +69,18 @@ static const char * const iommu_group_resv_type_string[] = {
+>   	[IOMMU_RESV_SW_MSI]			= "msi",
+>   };
+>   
+> +#define IOMMU_CMD_LINE_DMA_API		(1 << 0)
+
+Prefer BIT() micro?
+
+> +
+> +static void iommu_set_cmd_line_dma_api(void)
+> +{
+> +	iommu_cmd_line |= IOMMU_CMD_LINE_DMA_API;
+> +}
+> +
+> +static bool __maybe_unused iommu_cmd_line_dma_api(void)
+> +{
+> +	return !!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API);
+> +}
+> +
+>   #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
+>   struct iommu_group_attribute iommu_group_attr_##_name =		\
+>   	__ATTR(_name, _mode, _show, _store)
+> @@ -165,6 +178,8 @@ static int __init iommu_set_def_domain_type(char *str)
+>   	if (ret)
+>   		return ret;
+>   
+> +	iommu_set_cmd_line_dma_api();
+
+IOMMU command line is also set in other places, for example,
+iommu_setup() (arch/x86/kernel/pci-dma.c). Need to call this there as
+well?
+
+Best regards,
+Lu Baolu
+
+> +
+>   	iommu_def_domain_type = pt ? IOMMU_DOMAIN_IDENTITY : IOMMU_DOMAIN_DMA;
+>   	return 0;
+>   }
+> 
