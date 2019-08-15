@@ -2,124 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B24288E5CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:57:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA878E5D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:58:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbfHOH5M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 03:57:12 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:39870 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfHOH5M (ORCPT
+        id S1730723AbfHOH6L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 03:58:11 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40737 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730382AbfHOH6L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 03:57:12 -0400
-Received: by mail-qt1-f196.google.com with SMTP id l9so1507220qtu.6;
-        Thu, 15 Aug 2019 00:57:11 -0700 (PDT)
+        Thu, 15 Aug 2019 03:58:11 -0400
+Received: by mail-lf1-f67.google.com with SMTP id b17so1084591lff.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:58:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CnRbLL/LwcVbEhMPr3jh4hj3/IFBTWKQ7hQtkYbtm+Q=;
+        b=pqEb3j5BXKs3Sa7gN2Wbkf6RpXszqoFScxLyvNGkR11jYA9kGdfZXG+HlUdgQKNnWG
+         q5ejtmml9Bar7HZ2m4nlqH/1j8wQ56NxmQLyYuXCAUx+UoO5Pkij4DM0QKdXYuuplshD
+         ddaVz0LpMwJg+x8PZh3wxZ2SgP9x3kWZbv/QjJFUFf08rAMip5CtECO0QYH8bRlUTloR
+         t8QHj4YJHhwVt+wD9d2aERGbsMu4xYYoVYwToRTLf6vK5O/U3t4bPcBqR7O2Fkdq7paQ
+         2GaFJ7ild8BjYuMdvsgqBS2/XEVm/9RyIOnye/VsSMrcyaUXjJprtVKSnNiRofmPmMm+
+         jDDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=og1blWTjQbHD8z+Aa6GJsSM0EvDf+W5fF8nT8B5d5bg=;
-        b=CGvye5CU7blgQva+6GTdYRDGWKAygsJVKVOPKGyXYhjPvsEkJncwtCzCAGHgFZNZqI
-         seZpwaZT/GmvP75b+V9BUuz7suFpvoozamD4Focu6os8ICZKfsodyP4KIDor+piykMAY
-         W4VzDkADsoWtvwprZ15853+SEpzfNKS6zhURj3Wzt6X+nx/OvKAJFdeQ8Od3ammWxiaV
-         cURkXC4STeXXv5Jhs54MwUBwrivm2X8waGYN2x/lIk9095kFa96+jffYEfkUQkgBozC5
-         4a9555TowHsSgma5kHtQgEAQBCKrzfSHLFQzi6qxzrqek42Rn5aiq4bVDVxpULKKGMjP
-         ANBA==
-X-Gm-Message-State: APjAAAVW4YasHezuoaI8DdgjSDAGKc+1C5IFdpI/OzKQWMJJmo/Q7DPk
-        f/mDpkZutWY9gLVWYp+ruP8dLu52mS2y6LF6z2s=
-X-Google-Smtp-Source: APXvYqwd8Z0CEHj5l9dzXypLlvuaYz5uk3nK3xCoedz6ioYtSMQQriLYP3kyev1HsvcasLudoxA0iEzxmBatKCCLNxk=
-X-Received: by 2002:ac8:239d:: with SMTP id q29mr2844105qtq.304.1565855830956;
- Thu, 15 Aug 2019 00:57:10 -0700 (PDT)
+        bh=CnRbLL/LwcVbEhMPr3jh4hj3/IFBTWKQ7hQtkYbtm+Q=;
+        b=W/7K8CENuli2TQpyq0odYJiMxzdiMzTB7c68y6kuNvLgkxM8PXZHQQ8wer9hJo5Zpx
+         6DwbDDvJ8t+T5+oQnJ073haXXsSM5WSBNUq4oJjivlOalapVQzHph3G/s4xbO1r+9sCO
+         kp8RHetVQz1u/L9JXaVFakkEy/jGhWQnhE0SB7nD2ooAr1zP55JQ5yYGSJAvbhutHYZg
+         zt4inNYdYVtM4ICuqs/GPmXkY7Yyd9MulTNKcILn0UGHpM654ykWohpR9of2X2D0Qg0B
+         4Ck11IBEfno9RiPYB2W4ISyy3MJHePZDVVD+LbrzPUKRk2ezn9B7FV2evUUUZ5FLqJAC
+         7RSg==
+X-Gm-Message-State: APjAAAXMnabVJ60jX+VxqUK4zYFMywA51E9htyC+m+FVNVleyop9imEw
+        nc3to22UMzeXwNfKrDCSmqlm5zhPLA5E2wQkwwAHBg==
+X-Google-Smtp-Source: APXvYqwMAF8mRtAvZKZai+/e8vMST+bOSfBJcWGHSL0RwdDxNeOQRlQgjseHs33+eHbShwhHpOhbSbBaw131Y8zhFMA=
+X-Received: by 2002:a19:4c57:: with SMTP id z84mr1736285lfa.87.1565855889359;
+ Thu, 15 Aug 2019 00:58:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-2-arnd@arndb.de>
- <20190814213753.GP6129@dread.disaster.area> <20190815071314.GA6960@infradead.org>
-In-Reply-To: <20190815071314.GA6960@infradead.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 15 Aug 2019 09:56:54 +0200
-Message-ID: <CAK8P3a2Hjfd49XY18cDr04ZpvC5ZBGudzxqpCesbSsDf1ydmSA@mail.gmail.com>
-Subject: Re: [PATCH v5 01/18] xfs: compat_ioctl: use compat_ptr()
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Allison Collins <allison.henderson@oracle.com>,
-        Nick Bowler <nbowler@draconx.ca>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Dave Chinner <dchinner@redhat.com>
+References: <20190814214948.5571-1-anders.roxell@linaro.org> <ECADFF3FD767C149AD96A924E7EA6EAF977A2939@USCULXMSG01.am.sony.com>
+In-Reply-To: <ECADFF3FD767C149AD96A924E7EA6EAF977A2939@USCULXMSG01.am.sony.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Thu, 15 Aug 2019 09:57:58 +0200
+Message-ID: <CADYN=9JuC_+MJEL36ScK1=yC3Qmo2zaMsNMLKHPjqBR1RKQMAA@mail.gmail.com>
+Subject: Re: [PATCH] selftests: net: tcp_fastopen_backup_key.sh: fix
+ shellcheck issue
+To:     Tim.Bird@sony.com
+Cc:     David Miller <davem@davemloft.net>, Shuah Khan <shuah@kernel.org>,
+        Networking <netdev@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 9:13 AM Christoph Hellwig <hch@infradead.org> wrote:
+On Thu, 15 Aug 2019 at 01:35, <Tim.Bird@sony.com> wrote:
 >
-> On Thu, Aug 15, 2019 at 07:37:53AM +1000, Dave Chinner wrote:
-> > > @@ -576,7 +576,7 @@ xfs_file_compat_ioctl(
-> > >     case XFS_IOC_SCRUB_METADATA:
-> > >     case XFS_IOC_BULKSTAT:
-> > >     case XFS_IOC_INUMBERS:
-> > > -           return xfs_file_ioctl(filp, cmd, p);
-> > > +           return xfs_file_ioctl(filp, cmd, (unsigned long)arg);
+>
+>
+> > -----Original Message-----
+> > From: Anders Roxell
 > >
-> > I don't really like having to sprinkle special casts through the
-> > code because of this.
+> > When running tcp_fastopen_backup_key.sh the following issue was seen in
+> > a busybox environment.
+> > ./tcp_fastopen_backup_key.sh: line 33: [: -ne: unary operator expected
+> >
+> > Shellcheck showed the following issue.
+> > $ shellcheck tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+> >
+> > In tools/testing/selftests/net/tcp_fastopen_backup_key.sh line 33:
+> >         if [ $val -ne 0 ]; then
+> >              ^-- SC2086: Double quote to prevent globbing and word splitting.
+> >
+> > Rework to add double quotes around the variable 'val' that shellcheck
+> > recommends.
+> >
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  tools/testing/selftests/net/tcp_fastopen_backup_key.sh | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+> > b/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+> > index 41476399e184..ba5ec3eb314e 100755
+> > --- a/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+> > +++ b/tools/testing/selftests/net/tcp_fastopen_backup_key.sh
+> > @@ -30,7 +30,7 @@ do_test() {
+> >       ip netns exec "${NETNS}" ./tcp_fastopen_backup_key "$1"
+> >       val=$(ip netns exec "${NETNS}" nstat -az | \
+> >               grep TcpExtTCPFastOpenPassiveFail | awk '{print $2}')
+> > -     if [ $val -ne 0 ]; then
+> > +     if [ "$val" -ne 0 ]; then
 >
-> True.  But the proper fix is to not do the indirection through
-> xfs_file_ioctl but instead to call xfs_ioc_scrub_metadata,
-> xfs_ioc_bulkstat, etc directly which all take a void __user
-> arguments already.
+> Did you test this in the failing environment?
 
-I'm not sure that's better: This would end up duplicating all
-of xfs_file_ioctl(), which is already a fairly long function, compared
-to the current way of having a large set of commands all handled
-with a single line.
+I thought I did that but the environment wasn't exactly the same. =/
 
-From looking at other subsystems, what I find to work best is to
-move the compat handler into the same file as the native code
-and then structure the files so that shared handlers get
-put into one place, something like
+>
+> With a busybox shell, I get:
+>  $ [ "" -ne 0 ]
+> sh: bad number
+>
+> You might need to explicitly check for empty string here, or switch to a string comparison instead:
+> if [ "$val" != 0 ]; then
 
-/* these are the ones that have the same ABI for 32-bit and 64-bit tasks */
-static int xfs_compatible_file_ioctl(struct file *filp, unsigned cmd,
-void __user *p)
-{
-      int ret = -ENOIOCTLCMD;
+I'll do that instead.
 
-       switch (cmd) {
-       case XFS_IOC_DIOINFO:
-            ...
-        case ...
-     }
+Sending out a v2 shortly.
 
-     return ret;
-}
+Cheers,
+Anders
 
-long
-xfs_file_compat_ioctl(
-        struct file             *filp,
-        unsigned                cmd,
-        unsigned long           p)
-{
-       ret = xfs_compatible_file_ioctl(filp, cmd, compat_ptr(p));
-       if (ret != -ENOIOCTLCMD)
-              return ret;
-
-      /* all incompatible ones below */
-      switch (cmd) {
-         ...
-      }
-}
-Having them in one place makes it more obvious to readers how the
-native and compat handlers fit together, and makes it easier to keep
-the two in sync.
-
-That would of course be a much larger change to how it's done today,
-and it's way out of scope of what I want to achieve in my (already
-too long) series.
-
-     Arnd
+>
+>    -- Tim
+>
+> >               echo "FAIL: TcpExtTCPFastOpenPassiveFail non-zero"
+> >               return 1
+> >       fi
+> > --
+> > 2.20.1
+>
