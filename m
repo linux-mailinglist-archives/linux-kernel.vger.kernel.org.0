@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5116A8F1B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:14:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FC5D8F1E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731535AbfHORO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:26 -0400
-Received: from mail-wm1-f100.google.com ([209.85.128.100]:53895 "EHLO
-        mail-wm1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731497AbfHOROZ (ORCPT
+        id S1732096AbfHORPf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:15:35 -0400
+Received: from mail-wm1-f99.google.com ([209.85.128.99]:37004 "EHLO
+        mail-wm1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731516AbfHORO1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:25 -0400
-Received: by mail-wm1-f100.google.com with SMTP id 10so1879515wmp.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+        Thu, 15 Aug 2019 13:14:27 -0400
+Received: by mail-wm1-f99.google.com with SMTP id z23so1867499wmf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=qLZh8IhwQg9ydE/0+1Zpu/OWvv9AdAPsrO/K7o4vHUY=;
-        b=sejYDkW8Vg0AE2kHwZ+ZBsQWFw1B/bhTJ0iA8XyJnw/LdnNm+8KWQPdxLce103L5jU
-         T7/2ZOecEsOFRyCeD0bI3czUPjyrPbNB2o1fKUPZdy0+p9fO2tcJSJGAU4d8kUEAt0zh
-         gNZgt8h3rq8ixn4hU1d1RNQsPA1z1gaVoWfz8+UeSEXUcTMiOaathp5TbkGhuV4xSup1
-         VhVmdwDXGVMk70leFIEEnr5BWIhc1axVC3IlMnwL9LOiTtXH4ivJdmJdggMrj/GJswPH
-         +WGxk8pR6IfxeiOwJcsNV7igAUDoa438mJhTcF2T+rKMFPMTV3/CliHJL8HEOW7+gEKP
-         58Fg==
-X-Gm-Message-State: APjAAAUsqU6bRS4Zu5qxV8OZ/4ZbkAwSVmytpi8kQSP6ssyCqtYNXFK3
-        0ZlZzbOcykFwcZlVng93iTKB2nZ34IGovgaAP6senK/GBJSVvFCN1lv6yQ+jNCHiuw==
-X-Google-Smtp-Source: APXvYqwus8sMCeDcfNR/ErhO8PCbz1Pe+ABOtdCF2IXdy17QHyMub/fGageBGCgGJjKNz/akKGnSpIKz8V40
-X-Received: by 2002:a1c:2dcf:: with SMTP id t198mr3503302wmt.147.1565889264289;
-        Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+        bh=+DSWXy6YR+0x+jeOKrcGm/4VoyxLyzX52Rt+viI5/nM=;
+        b=cH76NXKaT/TmM52SOT2RGMmmR5nbXbH4RueKsGeHcs0GTDNDnEZ4cCRpAfEDPprOVs
+         7mQ2NW12UgJHFM3VnEJ5KBBuJNqmpIXz4XVmAMMUBFsw5eGpmdVlXo8zJKzWSlGd91BP
+         Sx3QSxkaC3DUE46WuMk8/SKvOQIPXFcl+fr+ITskA5vcwIT+gMFBTy+pkt3h+RdiCvwU
+         BfP2T7oLby/u67r+DbjFGwrSPy6l2pekTGZocouTjqe8DZYY3kEaRywizF2cst0490K5
+         ZN0nGsQgJ8xn3Eeb09k2PRjXpp/EIUaiRwQSDBbtYb6XEKgGk6z1bLskyKhc+WEALLEa
+         OZiA==
+X-Gm-Message-State: APjAAAVldsFviaiVocHkpdnH7UCtuWml6liTvuBfq36sKWoGA28bbcV7
+        haU+l9aIxAQGZV6ApfsyD6dlJaX9FXBnx2AoA6It3aQ2vWb78mOng/lYynaGBhSj5Q==
+X-Google-Smtp-Source: APXvYqw5tWIFYqhmPqKGUvwB4qSgZ40SOEwR1C7fyoTaB7QXcLgKdLeL+Z1f2Ziu2Ohfx2U9p12FNyPyFVFr
+X-Received: by 2002:a1c:f101:: with SMTP id p1mr3664335wmh.62.1565889265208;
+        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id i11sm56780wrr.50.2019.08.15.10.14.24
+        by smtp-relay.gmail.com with ESMTPS id o6sm50502wrm.17.2019.08.15.10.14.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKS-00051S-1K; Thu, 15 Aug 2019 17:14:24 +0000
+        id 1hyJKS-00051e-Nn; Thu, 15 Aug 2019 17:14:24 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 74DB42742B9E; Thu, 15 Aug 2019 18:14:23 +0100 (BST)
+        id 409CF2742B9E; Thu, 15 Aug 2019 18:14:24 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     afd@ti.com, alsa-devel@alsa-project.org, broonie@kernel.org,
-        colin.king@canonical.com, Hulk Robot <hulkci@huawei.com>,
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Hulk Robot <hulkci@huawei.com>, info@metux.net,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
         Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'" to the asoc tree
-In-Reply-To: <20190815091738.21680-1-yuehaibing@huawei.com>
+Subject: Applied "ASoC: max98371: remove unused variable 'max98371_noload_gain_tlv'" to the asoc tree
+In-Reply-To: <20190815090404.72752-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171423.74DB42742B9E@ypsilon.sirena.org.uk>
-Date:   Thu, 15 Aug 2019 18:14:23 +0100 (BST)
+Message-Id: <20190815171424.409CF2742B9E@ypsilon.sirena.org.uk>
+Date:   Thu, 15 Aug 2019 18:14:24 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'
+   ASoC: max98371: remove unused variable 'max98371_noload_gain_tlv'
 
 has been applied to the asoc tree at
 
@@ -84,36 +84,40 @@ to this mail.
 Thanks,
 Mark
 
-From 6d6376b143d59ab1b8635807c78d224d03580418 Mon Sep 17 00:00:00 2001
+From 9d22142c9b1ec8612b880121dd0bc27311cbb2b5 Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Aug 2019 17:17:38 +0800
-Subject: [PATCH] ASoC: tlv320aic31xx: remove unused variable 'cm_m_enum'
+Date: Thu, 15 Aug 2019 17:04:04 +0800
+Subject: [PATCH] ASoC: max98371: remove unused variable
+ 'max98371_noload_gain_tlv'
 
-sound/soc/codecs/tlv320aic31xx.c:261:29: warning:
- cm_m_enum defined but not used [-Wunused-const-variable=]
+sound/soc/codecs/max98371.c:157:35: warning:
+ max98371_noload_gain_tlv defined but not used [-Wunused-const-variable=]
 
 It is never used, so can be removed.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190815091738.21680-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190815090404.72752-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tlv320aic31xx.c | 1 -
- 1 file changed, 1 deletion(-)
+ sound/soc/codecs/max98371.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic31xx.c b/sound/soc/codecs/tlv320aic31xx.c
-index 26a4f6cd3288..df627a08def9 100644
---- a/sound/soc/codecs/tlv320aic31xx.c
-+++ b/sound/soc/codecs/tlv320aic31xx.c
-@@ -258,7 +258,6 @@ static SOC_ENUM_SINGLE_DECL(mic1rp_p_enum, AIC31XX_MICPGAPI, 4,
- static SOC_ENUM_SINGLE_DECL(mic1lm_p_enum, AIC31XX_MICPGAPI, 2,
- 	mic_select_text);
+diff --git a/sound/soc/codecs/max98371.c b/sound/soc/codecs/max98371.c
+index ce801489a86d..dfee05f985bd 100644
+--- a/sound/soc/codecs/max98371.c
++++ b/sound/soc/codecs/max98371.c
+@@ -154,10 +154,6 @@ static const DECLARE_TLV_DB_RANGE(max98371_gain_tlv,
+ 	8, 10, TLV_DB_SCALE_ITEM(400, 100, 0)
+ );
  
--static SOC_ENUM_SINGLE_DECL(cm_m_enum, AIC31XX_MICPGAMI, 6, mic_select_text);
- static SOC_ENUM_SINGLE_DECL(mic1lm_m_enum, AIC31XX_MICPGAMI, 4,
- 	mic_select_text);
+-static const DECLARE_TLV_DB_RANGE(max98371_noload_gain_tlv,
+-	0, 11, TLV_DB_SCALE_ITEM(950, 100, 0),
+-);
+-
+ static const DECLARE_TLV_DB_SCALE(digital_tlv, -6300, 50, 1);
  
+ static const struct snd_kcontrol_new max98371_snd_controls[] = {
 -- 
 2.20.1
 
