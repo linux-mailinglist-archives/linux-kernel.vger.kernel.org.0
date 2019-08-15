@@ -2,90 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 446948F7B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 01:46:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 48EBB8F7BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 01:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726477AbfHOXqF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 19:46:05 -0400
-Received: from smtprelay0242.hostedemail.com ([216.40.44.242]:35436 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726189AbfHOXqF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 19:46:05 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 918DF18225E1B;
-        Thu, 15 Aug 2019 23:46:03 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:800:960:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2196:2199:2380:2393:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3873:4250:4321:4605:5007:8660:10004:10400:10848:11026:11232:11658:11914:12043:12295:12296:12297:12438:12555:12740:12760:12895:12986:13069:13148:13230:13311:13357:13439:14096:14097:14181:14659:14721:21080:21433:21627:21939:30012:30054:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:26,LUA_SUMMARY:none
-X-HE-Tag: sheet19_6eed4fd187f5f
-X-Filterd-Recvd-Size: 2681
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf18.hostedemail.com (Postfix) with ESMTPA;
-        Thu, 15 Aug 2019 23:46:02 +0000 (UTC)
-Message-ID: <d98d1f0150bec8b69a886f77fc375b8ca9d24262.camel@perches.com>
-Subject: Re: [PATCH] afs: Move comments after /* fallthrough */
-From:   Joe Perches <joe@perches.com>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Huckleberry <nhuck@google.com>,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Thu, 15 Aug 2019 16:46:01 -0700
-In-Reply-To: <12308.1565876416@warthog.procyon.org.uk>
-References: <e77b0f32a2ce97c872eede52c88b84aa78094ae5.1565836130.git.joe@perches.com>
-         <12308.1565876416@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        id S1726557AbfHOXsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 19:48:53 -0400
+Received: from mga11.intel.com ([192.55.52.93]:48486 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726189AbfHOXsw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 19:48:52 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 16:48:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
+   d="scan'208";a="201377119"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Aug 2019 16:48:51 -0700
+Received: from [10.54.74.33] (skuppusw-desk.jf.intel.com [10.54.74.33])
+        by linux.intel.com (Postfix) with ESMTP id 8B0CE5806C4;
+        Thu, 15 Aug 2019 16:48:51 -0700 (PDT)
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+Subject: Re: [PATCH v6 3/9] PCI/ACPI: Expose EDR support via _OSC to BIOS
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>
+References: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <c2841a077e304b3173e1c6f95f7fe488d1e15030.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190815221934.GK253360@google.com>
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+Organization: Intel
+Message-ID: <62dc67cc-de4d-bac9-bffb-b2ce2ce84f6b@linux.intel.com>
+Date:   Thu, 15 Aug 2019 16:46:05 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190815221934.GK253360@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-15 at 14:40 +0100, David Howells wrote:
-> Joe Perches <joe@perches.com> wrote:
-> 
-> > Make the code a bit easier for a script to appropriately convert
-> > case statement blocks with /* fallthrough */ comments to a macro by
-> > moving comments describing the next case block to the case statement.
-> 
-> This doesn't sound good.  Can you give an illustration of what a resulting
-> case might look like?  Say taking the following as an example:
-> 
-> > @@ -282,10 +282,8 @@ static int afs_deliver_cb_callback(struct afs_call *call)
-> >  	case 0:
-> >  		afs_extract_to_tmp(call);
-> >  		call->unmarshall++;
-> > -
-> > -		/* extract the FID array and its count in two steps */
-> >  		/* fall through */
-> > -	case 1:
-> > +	case 1:		/* extract the FID array and its count in two steps */
-> >  		_debug("extract FID count");
-> >  		ret = afs_extract_data(call, true);
-> >  		if (ret < 0)
 
-This case above would not change, but this case below would:
-
-diff --git a/fs/afs/fsclient.c b/fs/afs/fsclient.c
-index 114f281f3687..d9dc1bdfa695 100644
---- a/fs/afs/fsclient.c
-+++ b/fs/afs/fsclient.c
-@@ -341,8 +341,7 @@ static int afs_deliver_fs_fetch_data(struct afs_call *call)
-                }
-                /* Fall through */
- 
--               /* extract the returned data length */
--       case 1:
-+       case 1:         /* extract the returned data length */
-                _debug("extract data length");
-                ret = afs_extract_data(call, true);
-                if (ret < 0)
-
-Here the script would not convert the /* Fall through */
-because the next non-blank line does not start with
-case or default
-
+On 8/15/19 3:19 PM, Bjorn Helgaas wrote:
+> On Fri, Jul 26, 2019 at 02:43:13PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+>> From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>>
+>> As per PCI firmware specification r3.2 Downstream Port Containment
+>> Related Enhancements ECN, sec 4.5.1, table 4-4, if OS supports EDR,
+>> it should expose its support to BIOS by setting bit 7 of _OSC Support
+>> Field.
+>>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+>> Cc: Len Brown <lenb@kernel.org>
+>> Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+>> ---
+>>   drivers/acpi/pci_root.c | 3 +++
+>>   include/linux/acpi.h    | 1 +
+>>   2 files changed, 4 insertions(+)
+>>
+>> diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+>> index 73b08f40b0da..988d09d788b6 100644
+>> --- a/drivers/acpi/pci_root.c
+>> +++ b/drivers/acpi/pci_root.c
+>> @@ -132,6 +132,7 @@ static struct pci_osc_bit_struct pci_osc_support_bit[] = {
+>>   	{ OSC_PCI_CLOCK_PM_SUPPORT, "ClockPM" },
+>>   	{ OSC_PCI_SEGMENT_GROUPS_SUPPORT, "Segments" },
+>>   	{ OSC_PCI_MSI_SUPPORT, "MSI" },
+>> +	{ OSC_PCI_EDR_SUPPORT, "EDR" },
+>>   	{ OSC_PCI_HPX_TYPE_3_SUPPORT, "HPX-Type3" },
+>>   };
+>>   
+>> @@ -442,6 +443,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
+>>   		support |= OSC_PCI_ASPM_SUPPORT | OSC_PCI_CLOCK_PM_SUPPORT;
+>>   	if (pci_msi_enabled())
+>>   		support |= OSC_PCI_MSI_SUPPORT;
+>> +	if (IS_ENABLED(CONFIG_PCIE_EDR))
+>> +		support |= OSC_PCI_EDR_SUPPORT;
+> Do we really support it here?  This is patch [3/9] and it looks like
+> patch [6/9] might be where EDR support really gets added.  It's good
+> to split changes into small pieces, but only if each piece is
+> logically self-contained.
+I will move this patch to the end of this series.
+>
+>>   	decode_osc_support(root, "OS supports", support);
+>>   	status = acpi_pci_osc_support(root, support);
+>> diff --git a/include/linux/acpi.h b/include/linux/acpi.h
+>> index 8959ed322e15..b6b43da85d26 100644
+>> --- a/include/linux/acpi.h
+>> +++ b/include/linux/acpi.h
+>> @@ -515,6 +515,7 @@ extern bool osc_pc_lpi_support_confirmed;
+>>   #define OSC_PCI_CLOCK_PM_SUPPORT		0x00000004
+>>   #define OSC_PCI_SEGMENT_GROUPS_SUPPORT		0x00000008
+>>   #define OSC_PCI_MSI_SUPPORT			0x00000010
+>> +#define OSC_PCI_EDR_SUPPORT			0x00000080
+>>   #define OSC_PCI_HPX_TYPE_3_SUPPORT		0x00000100
+>>   #define OSC_PCI_SUPPORT_MASKS			0x0000011f
+> You defined a new bit above but didn't update OSC_PCI_SUPPORT_MASKS to
+> include that bit.  This looks broken.
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
 
