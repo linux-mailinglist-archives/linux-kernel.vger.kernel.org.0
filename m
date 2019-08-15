@@ -2,125 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B2388F2E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:11:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE22A8F2EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:12:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732176AbfHOSLU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:11:20 -0400
-Received: from foss.arm.com ([217.140.110.172]:47480 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730474AbfHOSLT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:11:19 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCD94360;
-        Thu, 15 Aug 2019 11:11:18 -0700 (PDT)
-Received: from [10.1.196.105] (eglon.cambridge.arm.com [10.1.196.105])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DD89B3F694;
-        Thu, 15 Aug 2019 11:11:16 -0700 (PDT)
-Subject: Re: [PATCH v1 2/8] arm64, mm: transitional tables
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-References: <20190801152439.11363-1-pasha.tatashin@soleen.com>
- <20190801152439.11363-3-pasha.tatashin@soleen.com>
-From:   James Morse <james.morse@arm.com>
-Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
-        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
-        vladimir.murzin@arm.com, matthias.bgg@gmail.com,
-        bhsharma@redhat.com, linux-mm@kvack.org
-Message-ID: <e00455af-a9f6-82e1-4c0d-78fae01ae00a@arm.com>
-Date:   Thu, 15 Aug 2019 19:11:15 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1732278AbfHOSMQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:12:16 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39050 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730474AbfHOSMP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 14:12:15 -0400
+Received: by mail-pg1-f196.google.com with SMTP id u17so1632290pgi.6;
+        Thu, 15 Aug 2019 11:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=n9tUkG7lD8HBZBIfJu4sHWhJeh6vg7iC3im3UhLYB78=;
+        b=GWy0WOuF1yD+p7ShPnwB9tU5z2eta0obVE2c5a2C066QeGhwW48ZdMnzHSPRJKoe8d
+         bajI7UKzxlBpoF/5H7WbgVtUpuoTr+6E1Zkeu6O5DGIWQ3aayNSDDpfarITDEJjAg4sN
+         r/UHUb02gg9rKLcN6+pwFdQczJYFKX+6WBsarS0K4coff0Nybr9BIP63KN6gNZoCczuP
+         SgPdZJthkEGEhRMVjEzM0s3XMVY8BGwkPJcDAvoxpxS2pkTpaLt77FKBNdc96dxqyeO8
+         DvftPVphIa6BfyA6TzUuEUDblNXBjE+ux4H/+yt7rJpN32Ti3s1V/V6m7wkS2DcNFLTb
+         oL0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=n9tUkG7lD8HBZBIfJu4sHWhJeh6vg7iC3im3UhLYB78=;
+        b=RVkv3sm1luQTagjKz5lv3OKIeDQzuvW2OGYfMWuLUZlGIM7tb+4CaHBvVJbat8ugMC
+         sOOUe/vtmieUIFiSoNLGritXM0ofboCaeWhQhHmCmYOsQnTDHkOkz2+AJrKM/+3Ql9YT
+         xgNDM8MBiPbk4BI4dv1UwPcJfhuucTiXHjq+MihRH6GMIsszUnr5kQDl2DWDtQEVv7G0
+         RInBCWQr7Qj4ttPK5oxFF2koAdiBBS8uooAdvGjc90OdxI/x0WH7su25xQy4Y3CTFVwe
+         bFSIOen08F7ZjFevdLmM3aAoA5q8a7js95u5fajym98QnjnRQXH1Qq9Ls7yN3cxSXFAS
+         TRNA==
+X-Gm-Message-State: APjAAAVK4zheUq/DDYF9Qcxu+r2wh9+NTVZwIE/Yc435lJNlfYFKBMzd
+        bvQVga56bMIXQoh8YQYaie8=
+X-Google-Smtp-Source: APXvYqy3ZsrSdpCRks8cJhp/ftXr7OVvrV+UaVSt653H/GnIWE4REvYlquujbaMe2nfOmJKlPj9+tw==
+X-Received: by 2002:a62:7912:: with SMTP id u18mr7060592pfc.254.1565892735146;
+        Thu, 15 Aug 2019 11:12:15 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id j1sm2558476pgl.12.2019.08.15.11.12.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 11:12:14 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:12:13 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-watchdog@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Rick Ramstetter <rick@anteaterllc.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/22] watchdog: ziirave_wdt: Don't bail out on
+ unexpected timeout value
+Message-ID: <20190815181213.GA14388@roeck-us.net>
+References: <20190812200906.31344-1-andrew.smirnov@gmail.com>
+ <20190812200906.31344-5-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190801152439.11363-3-pasha.tatashin@soleen.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812200906.31344-5-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Pavel,
-
-On 01/08/2019 16:24, Pavel Tatashin wrote:
-> There are cases where normal kernel pages tables, i.e. idmap_pg_dir
-> and swapper_pg_dir are not sufficient because they may be overwritten.
+On Mon, Aug 12, 2019 at 01:08:48PM -0700, Andrey Smirnov wrote:
+> Reprogramming bootloader on watchdog MCU will result in reported
+> default timeout value of "0". That in turn will be unnecessarily
+> rejected by the driver as invalid device (-ENODEV). Simplify probe to
+> read stored timeout value, set it to a sane default if it is bogus,
+> and then program that value unconditionally.
 > 
-> This happens when we transition from one world to another: for example
-> during kexec kernel relocation transition, and also during hibernate
-> kernel restore transition.
-> 
-> In these cases, if MMU is needed, the page table memory must be allocated
-> from a safe place. Transitional tables is intended to allow just that.
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rick Ramstetter <rick@anteaterllc.com>
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-> index db92950bb1a0..dcb4f13c7888 100644
-> --- a/arch/arm64/include/asm/pgtable-hwdef.h
-> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
-> @@ -110,6 +110,7 @@
->  #define PUD_TABLE_BIT		(_AT(pudval_t, 1) << 1)
->  #define PUD_TYPE_MASK		(_AT(pudval_t, 3) << 0)
->  #define PUD_TYPE_SECT		(_AT(pudval_t, 1) << 0)
-> +#define PUD_SECT_RDONLY		(_AT(pudval_t, 1) << 7)		/* AP[2] */
-
-This shouldn't be needed. As far as I'm aware, we only get read-only pages in the linear
-map from debug-pagealloc, and the module aliases. Both of which require the linear map to
-be made of page-size mappings.
-
-Where are you seeing these?
-
-
-> diff --git a/arch/arm64/include/asm/trans_table.h b/arch/arm64/include/asm/trans_table.h
-> new file mode 100644
-> index 000000000000..c7aef70587a1
-> --- /dev/null
-> +++ b/arch/arm64/include/asm/trans_table.h
-> @@ -0,0 +1,68 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +
-> +/*
-> + * Copyright (c) 2019, Microsoft Corporation.
-> + * Pavel Tatashin <patatash@linux.microsoft.com>
-> + */
-> +
-> +#ifndef _ASM_TRANS_TABLE_H
-> +#define _ASM_TRANS_TABLE_H
-> +
-> +#include <linux/bits.h>
-> +#include <asm/pgtable-types.h>
-> +
-> +/*
-> + * trans_alloc_page
-> + *	- Allocator that should return exactly one uninitilaized page, if this
-> + *	 allocator fails, trans_table returns -ENOMEM error.
-> + *
-> + * trans_alloc_arg
-> + *	- Passed to trans_alloc_page as an argument
-> + *
-> + * trans_flags
-> + *	- bitmap with flags that control how page table is filled.
-> + *	  TRANS_MKWRITE: during page table copy make PTE, PME, and PUD page
-> + *			 writeable by removing RDONLY flag from PTE.
-> + *	  TRANS_MKVALID: during page table copy, if PTE present, but not valid,
-> + *			 make it valid.
-> + *	  TRANS_CHECKPFN: During page table copy, for every PTE entry check that
-> + *			  PFN that this PTE points to is valid. Otherwise return
-> + *			  -ENXIO
-
-Adding top-level global knobs to manipulate the copied linear map is going to lead to
-bugs. The existing code will only change the PTE in specific circumstances, that it tests
-for, that only happen at the PTE level.
-
-
-> + *	  TRANS_FORCEMAP: During page map, if translation exists, force
-> + *			  overwrite it. Otherwise -ENXIO may be returned by
-> + *			  trans_table_map_* functions if conflict is detected.
-
-This one, sounds like a very bad idea.
-
-
-Thanks,
-
-James
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
