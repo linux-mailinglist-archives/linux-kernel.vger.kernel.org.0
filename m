@@ -2,56 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DCF88F1E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41FCD8F1B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732119AbfHORPo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:15:44 -0400
-Received: from mail-wr1-f98.google.com ([209.85.221.98]:42378 "EHLO
-        mail-wr1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731499AbfHORO0 (ORCPT
+        id S1731660AbfHORO3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:29 -0400
+Received: from mail-wr1-f100.google.com ([209.85.221.100]:38488 "EHLO
+        mail-wr1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731500AbfHORO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Aug 2019 13:14:26 -0400
-Received: by mail-wr1-f98.google.com with SMTP id b16so2847958wrq.9
+Received: by mail-wr1-f100.google.com with SMTP id g17so2869387wrr.5
         for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=LkRo0LEpuvWQLdD7RS5Oy9z1REDgwUldokEQpfRcGzw=;
-        b=QF7EPGFrRW5EyBRufxe1wpKZC0IaLGntQujuNv7OFiVldoFkpK4ldy4vnwXsghK+ab
-         leIyM889h0SfUOelNpJEBb6OrReULYwjyC3dZvMaKZaxFWi8Pmq+MIdETHUt9sws2E9Y
-         oNKFqCoSJX4UtOYZqosh5xaP7PIJol62bgI4pZJ0JA2nbyKl3j/gFv8kI9NumZbYTi2a
-         ZG45zWB4Oh/purnj4kpAPkL8zlWgTDH32j3VQm0xk3PVdY3t3uWkKtJngwh/dCnwTgN9
-         Tr3iDRS6JviPO4zoNsQJqpRqQ/QcEvwSomYaAJz7eDjWG3XEBm9SOpBGTIRsI5YJdxMk
-         UEtA==
-X-Gm-Message-State: APjAAAVLZUOoe4MYuZYIoZZzH2hl1VVSAjryOd79Y22U+Ox4uCPZOO3e
-        EsBpgwkOTGhSo/K00f2E1SzhnRNqQdl3iGvGbZbgItpUPKWRvTmA1vNbe73A47bl3A==
-X-Google-Smtp-Source: APXvYqwbgDkBSeusiCNHGIa5V444ZMTjGNsPfmPdlvjykZ+7aqKz5HZiNp4zQdXJ2talNWx4jCvTzou2WIG0
-X-Received: by 2002:adf:b64e:: with SMTP id i14mr6661321wre.248.1565889264640;
-        Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+        bh=q2b27kNIK6EqgSJpM3zfR9hAioAbBxEiISceYvWjTXE=;
+        b=jA0ooqhU/LMo0ahmfH1SatsPj6sMrofAPchfbt+voyZN9dP5J6euTvglj362SY0Dpd
+         9pLYZg7g2n0VckX/j+bwi/0ao9SUiNSlUVPMKgrgBwG/XzMGdoqu+s/0Vvhc2N6nppgX
+         c3ZliPxa6I3HlHmhlNEAJQmyvCCbewtebb73C62rtCOlSSnpyLozwDPUV1i9th05l1Yb
+         hLgKMexDG0rjsuy4bsEpbVJ1VCspr90CweuwPdzvATOWrVeCTTQig/eB5XHWWW2XVGiG
+         S3lvPh9ehFDJxb+XaDkhfSwFp553TRZztdvUIzrCqds4LbBC8ictPCVHFxmQxoA9MIA7
+         i/CQ==
+X-Gm-Message-State: APjAAAX6Fwwo/W9Wc7Ksn4s9VZhi4Pi+GKeLPX2vf389uzAqcSqseTG7
+        OPI8yiLC2DmD0N/I2NCrWTu+gDS+c+pC6gEqmOmLzOUYu2O6XmrwWVIjCj1GkmjrZQ==
+X-Google-Smtp-Source: APXvYqzOz+Zqdf+HSDNjzGbbh9zF2epB8ziADuAl2ufBlIUuKwF+X8RjGSMHN6MqxNFhp+aitzIJF7ZNxJOD
+X-Received: by 2002:a5d:6a45:: with SMTP id t5mr6944280wrw.228.1565889265011;
+        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id c128sm12460wma.50.2019.08.15.10.14.24
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:24 -0700 (PDT)
+        by smtp-relay.gmail.com with ESMTPS id b7sm61334wrv.31.2019.08.15.10.14.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKS-00051Y-BD; Thu, 15 Aug 2019 17:14:24 +0000
+        id 1hyJKS-00051c-It; Thu, 15 Aug 2019 17:14:24 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id BA3862742BC7; Thu, 15 Aug 2019 18:14:23 +0100 (BST)
+        id 034DC2742BD6; Thu, 15 Aug 2019 18:14:23 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     allison@lohutok.net, alsa-devel@alsa-project.org,
-        broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
-        kstewart@linuxfoundation.org, lgirdwood@gmail.com,
+Cc:     alsa-devel@alsa-project.org, bardliao@realtek.com,
+        broonie@kernel.org, lgirdwood@gmail.com,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: tlv320aic23: remove unused variable 'tlv320aic23_rec_src'" to the asoc tree
-In-Reply-To: <20190815091534.57780-1-yuehaibing@huawei.com>
+        oder_chiou@realtek.com, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: rt1011: remove unused variable 'dac_vol_tlv' and 'adc_vol_tlv'" to the asoc tree
+In-Reply-To: <20190815090602.9000-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171423.BA3862742BC7@ypsilon.sirena.org.uk>
+Message-Id: <20190815171424.034DC2742BD6@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:23 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: tlv320aic23: remove unused variable 'tlv320aic23_rec_src'
+   ASoC: rt1011: remove unused variable 'dac_vol_tlv' and 'adc_vol_tlv'
 
 has been applied to the asoc tree at
 
@@ -85,38 +84,40 @@ to this mail.
 Thanks,
 Mark
 
-From ab0ac2707784a966927c229752849c343bd1dbbf Mon Sep 17 00:00:00 2001
+From 5b366753c1c12feead0ae53b45482f569ed5399c Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Aug 2019 17:15:34 +0800
-Subject: [PATCH] ASoC: tlv320aic23: remove unused variable
- 'tlv320aic23_rec_src'
+Date: Thu, 15 Aug 2019 17:06:02 +0800
+Subject: [PATCH] ASoC: rt1011: remove unused variable 'dac_vol_tlv' and
+ 'adc_vol_tlv'
 
-sound/soc/codecs/tlv320aic23.c:70:29: warning:
- tlv320aic23_rec_src defined but not used [-Wunused-const-variable=]
+sound/soc/codecs/rt1011.c:981:35: warning:
+ dac_vol_tlv defined but not used [-Wunused-const-variable=]
+sound/soc/codecs/rt1011.c:982:35: warning:
+ adc_vol_tlv defined but not used [-Wunused-const-variable=]
 
-It is never used, so can be removed.
+They are never used, so can be removed.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190815091534.57780-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190815090602.9000-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/tlv320aic23.c | 2 --
- 1 file changed, 2 deletions(-)
+ sound/soc/codecs/rt1011.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/sound/soc/codecs/tlv320aic23.c b/sound/soc/codecs/tlv320aic23.c
-index 080a840c987a..f8e2f4b74db3 100644
---- a/sound/soc/codecs/tlv320aic23.c
-+++ b/sound/soc/codecs/tlv320aic23.c
-@@ -67,8 +67,6 @@ static SOC_ENUM_SINGLE_DECL(rec_src_enum,
- static const struct snd_kcontrol_new tlv320aic23_rec_src_mux_controls =
- SOC_DAPM_ENUM("Input Select", rec_src_enum);
+diff --git a/sound/soc/codecs/rt1011.c b/sound/soc/codecs/rt1011.c
+index 638abcaf52b3..fa34565a3938 100644
+--- a/sound/soc/codecs/rt1011.c
++++ b/sound/soc/codecs/rt1011.c
+@@ -978,9 +978,6 @@ static bool rt1011_readable_register(struct device *dev, unsigned int reg)
+ 	}
+ }
  
--static SOC_ENUM_SINGLE_DECL(tlv320aic23_rec_src,
--			    TLV320AIC23_ANLG, 2, rec_src_text);
- static SOC_ENUM_SINGLE_DECL(tlv320aic23_deemph,
- 			    TLV320AIC23_DIGT, 1, deemph_text);
- 
+-static const DECLARE_TLV_DB_SCALE(dac_vol_tlv, -9435, 37, 0);
+-static const DECLARE_TLV_DB_SCALE(adc_vol_tlv, -1739, 37, 0);
+-
+ static const char * const rt1011_din_source_select[] = {
+ 	"Left",
+ 	"Right",
 -- 
 2.20.1
 
