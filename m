@@ -2,137 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 26E918EF3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:23:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B8BE8EFCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:50:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728979AbfHOPXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728846AbfHOPXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:23:20 -0400
-Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85BCE20644;
-        Thu, 15 Aug 2019 15:23:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565882599;
-        bh=3KBqf0uqTC0ABTjfZbdiuByQVZZGp/ONMP3E9R4V9jQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qrYDyUNz5qqZaU1zX67lb+YeBx/VbjPGwOOxiCzCBPo22QkgFau7YFUkM6EaPfuDE
-         K0JZYQeaVspP7x1io+ebzsGGGULqyIcq4xFjvpe5N/CFu6xNZSsz1K4NMLZ3WIsXB2
-         5zkL7N/gFTlAPoPFQK1yfcpZRq2R+SJKkOFNys1k=
-Date:   Thu, 15 Aug 2019 16:23:14 +0100
-From:   Will Deacon <will@kernel.org>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        Jean-Philippe Brucker <jean-philippe@linaro.org>,
-        John Garry <john.garry@huawei.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] iommu/arm-smmu-v3: add nr_ats_masters for quickly
- check
-Message-ID: <20190815152313.apa2d5rzhqa34l7l@willie-the-truck>
-References: <20190815054439.30652-1-thunder.leizhen@huawei.com>
- <20190815054439.30652-3-thunder.leizhen@huawei.com>
+        id S1728329AbfHOPu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 11:50:56 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:52655 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726008AbfHOPu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:50:56 -0400
+Received: from [IPv6:2601:646:8600:3281:591e:e77:65e1:9db1] ([IPv6:2601:646:8600:3281:591e:e77:65e1:9db1])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x7FFo2e82401331
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 15 Aug 2019 08:50:04 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com x7FFo2e82401331
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565884208;
+        bh=rZVtSKWKJMYaNqQAqv7vBDcXZkR10Vw+m7flZizgKig=;
+        h=Date:In-Reply-To:References:Subject:To:CC:From:From;
+        b=PKP9EOU3UYbYSGImxe+UPWqDyYAZXTZe+MMNowVHnkuaETdwk6L/yrF9pstKMeHak
+         /Q2Anr2bsSO0g7boKn1A6o6Mw0c5INMZgSBvtr7Cb6pT2m1tTs+88Netipp17KDn6I
+         5lL1hrXp9Cw5VOteRpseX4e9K3HHagDCRgYtHcnNxp772Y+U0OZ1IJ1NcrSXehEGFm
+         kvU9Ml2AvClG5MlIE2Q4OlGdoeZEosxINH12prwicZTPj4l7MZVm1yQvRq1Ms5Bm7a
+         TVYKhH2MkGOGSfiqfU6+bxQiPGghZgoj+N/wT5F7Q5/DjZpR4sUU3GOjJuq+FjQWZ6
+         bDobhTpMGYdyg==
+Date:   Thu, 15 Aug 2019 08:24:09 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20190815150530.GA18727@mit.edu>
+References: <CAK8P3a0VxM1BkjY1D2FfHi6L-ho_NH3v3+gBu45EfpjLF5NU5w@mail.gmail.com> <CAHk-=wiO2CWONDBud4nxoPgUJN1JEewFWhHa5wAqY8G5rrTXRQ@mail.gmail.com> <20190814000622.GB20365@mit.edu> <342565604d704b6ebaf2e9ec28d3e109@AcuMS.aculab.com> <0089C4CC-DD85-48A1-869B-A9D71852BEC7@zytor.com> <CAK8P3a0VQ1F5xnRNmfeg-rAWbKb64u_8xfQjFNahNRoAHTMJ3g@mail.gmail.com> <20190815150530.GA18727@mit.edu>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815054439.30652-3-thunder.leizhen@huawei.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: New kernel interface for sys_tz and timewarp?
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>, Arnd Bergmann <arnd@arndb.de>
+CC:     David Laight <David.Laight@aculab.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Florian Weimer <fweimer@redhat.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Alistair Francis <alistair.francis@wdc.com>,
+        GNU C Library <libc-alpha@sourceware.org>,
+        Karel Zak <kzak@redhat.com>,
+        Lennart Poettering <lennart@poettering.net>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+From:   hpa@zytor.com
+Message-ID: <EA707642-4509-4B88-B4FF-453B1F473608@zytor.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 01:44:39PM +0800, Zhen Lei wrote:
-> When (smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS) is true, even if a
-> smmu domain does not contain any ats master, the operations of
-> arm_smmu_atc_inv_to_cmd() and lock protection in arm_smmu_atc_inv_domain()
-> are always executed. This will impact performance, especially in
-> multi-core and stress scenarios. For my FIO test scenario, about 8%
-> performance reduced.
-> 
-> In fact, we can use a struct member to record how many ats masters that
-> the smmu contains. And check that without traverse the list and check all
-> masters one by one in the lock protection.
-> 
-> Fixes: 9ce27afc0830 ("iommu/arm-smmu-v3: Add support for PCI ATS")
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> ---
->  drivers/iommu/arm-smmu-v3.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-> index 29056d9bb12aa01..154334d3310c9b8 100644
-> --- a/drivers/iommu/arm-smmu-v3.c
-> +++ b/drivers/iommu/arm-smmu-v3.c
-> @@ -631,6 +631,7 @@ struct arm_smmu_domain {
->  
->  	struct io_pgtable_ops		*pgtbl_ops;
->  	bool				non_strict;
-> +	int				nr_ats_masters;
->  
->  	enum arm_smmu_domain_stage	stage;
->  	union {
-> @@ -1531,7 +1532,16 @@ static int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
->  	struct arm_smmu_cmdq_ent cmd;
->  	struct arm_smmu_master *master;
->  
-> -	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS))
-> +	/*
-> +	 * The protectiom of spinlock(&iommu_domain->devices_lock) is omitted.
-> +	 * Because for a given master, its map/unmap operations should only be
-> +	 * happened after it has been attached and before it has been detached.
-> +	 * So that, if at least one master need to be atc invalidated, the
-> +	 * value of smmu_domain->nr_ats_masters can not be zero.
-> +	 *
-> +	 * This can alleviate performance loss in multi-core scenarios.
-> +	 */
+On August 15, 2019 8:05:30 AM PDT, "Theodore Y=2E Ts'o" <tytso@mit=2Eedu> w=
+rote:
+>On Thu, Aug 15, 2019 at 03:22:45PM +0200, Arnd Bergmann wrote:
+>> If 64-bit Windows relies on a working EFI RTC implementation, we
+>could
+>> decide to leave the driver enabled on 64-bit and only disable it for
+>> 32-bit EFI=2E That way, future distros would no longer have to worry
+>about
+>> the localtime hack, at least the ones that have dropped support for
+>> 32-bit x86 kernels=2E
+>
+>=2E=2E=2E and who have also dropped support for legacy (non-UEFI) 64-bit
+>boot=2E  Keep in mind that even for distributions which may install with
+>UEFI by default, if people have been upgrading from (for example)
+>Debian Jessie to Stretch to Buster, they may still be using non-UEFI
+>boot=2E  This might be especially true on small Linode servers (such as,
+>for example, the one which is currently running my mail smarthost=2E=2E=
+=2E=2E)
+>
+>    	     	     	      			   - Ted
 
-I find this reasoning pretty dubious, since I think you're assuming that
-an endpoint cannot issue speculative ATS translation requests once its
-ATS capability is enabled. That said, I think it also means we should enable
-ATS in the STE *before* enabling it in the endpoint -- the current logic
-looks like it's the wrong way round to me (including in detach()).
-
-Anyway, these speculative translations could race with a concurrent unmap()
-call and end up with the ATC containing translations for unmapped pages,
-which I think we should try to avoid.
-
-Did the RCU approach not work out? You could use an rwlock instead as a
-temporary bodge if the performance doesn't hurt too much.
-
-Alternatively... maybe we could change the attach flow to do something
-like:
-
-	enable_ats_in_ste(master);
-	enable_ats_at_pcie_endpoint(master);
-	spin_lock(devices_lock)
-	add_to_device_list(master);
-	nr_ats_masters++;
-	spin_unlock(devices_lock);
-	invalidate_atc(master);
-
-in which case, the concurrent unmapper will be doing something like:
-
-	issue_tlbi();
-	smp_mb();
-	if (READ_ONCE(nr_ats_masters)) {
-		...
-	}
-
-and I *think* that means that either the unmapper will see the
-nr_ats_masters update and perform the invalidation, or they'll miss
-the update but the attach will invalidate the ATC /after/ the TLBI
-in the command queue.
-
-Also, John's idea of converting this stuff over to my command batching
-mechanism should help a lot if we can defer this to sync time using the
-gather structure. Maybe an rwlock would be alright for that. Dunno.
-
-Will
+There is also the ACPI TAD device, which can be used to expose this throug=
+h ACPI=2E We might also be able to request that the ACPI information for th=
+e RTC be augmented with a CMOS timezone location=2E
+--=20
+Sent from my Android device with K-9 Mail=2E Please excuse my brevity=2E
