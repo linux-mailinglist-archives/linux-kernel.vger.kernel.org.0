@@ -2,177 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D98FF8F2A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE8BA8F2B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:01:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731527AbfHOR5Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:57:25 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:46325 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730932AbfHOR5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:57:25 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3C0D3083363;
-        Thu, 15 Aug 2019 17:57:23 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E61018CBB9;
-        Thu, 15 Aug 2019 17:57:21 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 13:57:20 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jason Gunthorpe <jgg@ziepe.ca>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wei Wang <wvw@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
-Message-ID: <20190815175720.GJ30916@redhat.com>
-References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
- <20190814202027.18735-3-daniel.vetter@ffwll.ch>
- <20190814235805.GB11200@ziepe.ca>
- <20190815065829.GA7444@phenom.ffwll.local>
- <20190815122344.GA21596@ziepe.ca>
- <20190815132127.GI9477@dhcp22.suse.cz>
- <20190815141219.GF21596@ziepe.ca>
- <20190815155950.GN9477@dhcp22.suse.cz>
- <20190815165631.GK21596@ziepe.ca>
- <20190815174207.GR9477@dhcp22.suse.cz>
+        id S1731655AbfHOSB1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:01:27 -0400
+Received: from mail-eopbgr60067.outbound.protection.outlook.com ([40.107.6.67]:48807
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731202AbfHOSB1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 14:01:27 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ASkoJLDWNBOFufa6j6pGmoEgfAOTKLXDzmIELrf/1PAiCpCD5wo5LejUFBuvvcf5ZYZC+WJfZmdwIiNQ43AHyZfVImxBcwxVbpA2lECYBXN49sfDGcKPG+xF1fHMNpxCB2ns9jAGKDC+90lxkd+Fxl0i8jZsaGzKHVnxoGg2ZapyK7Fh6zX72Zno/Um1w8zjuq+XbekT3uqHUHlhqcwAHUAWpu5x/CHJmEu+899FuIiY62aAjgkcPkybKVAhOJQP+ZGjAUozxQ4PVJE3l6RnhYTQURuwXuI6Pi6yfcR8bpYR7JCVAoP6/8zuAM5KL8nCxr3A3xBDM/SCAXmq8oK6pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZzXqH8RlVMsCCYXoyu4N9nEXihNXMsDqpJxyQHqH73I=;
+ b=k/MfkF89Mvx3p0rUSjgMhm1kVKg7ggy9mwKv9usAukvYkSkHJTDRz78qkkZdHHsc+TY/eqJ6NzlXRtWkv4DnQ+M84sgSbQDkLSyhbs0QT6Pxceg4f1QFKa305g1i2kOviEI9+LJjn6TjxiS0BXIzqiH/1FN5zmDEGa2wlClGU+mSd+bq/HEA4xM435AU5ZggZwKE9ZCil6dQB5O4yIVGSgd/LigLz+T+5mleS7Tl2gRib5GI3WZOJAhZj6zvJtuIjPCm42gesXZ0mo4BP2WierYdD7bqj6rCtp2hhjVE2I2xAKElx4I3h478UUV+/8DidE1c8ApNpwebcdc0dcuRYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZzXqH8RlVMsCCYXoyu4N9nEXihNXMsDqpJxyQHqH73I=;
+ b=FnhFzFzSaN24WvYeiBfSw9zUVZJgappe+kt/n0KGQC5DBtUZ6JLAKoZy9Qv6b0VTnCHuQojISkg8ddf9TDhQmcUjmUj8lQ6f2bI/tj6UdDZwJtGjKHFjzvdaQb6kLMyfZc9VOMAy2cvDjrhUph3qmLKrQ5Xha6qxyIu8evnGtIA=
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com (20.179.235.152) by
+ VE1PR04MB6368.eurprd04.prod.outlook.com (10.255.118.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.23; Thu, 15 Aug 2019 18:01:22 +0000
+Received: from VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::3c54:f415:644a:15f9]) by VE1PR04MB6687.eurprd04.prod.outlook.com
+ ([fe80::3c54:f415:644a:15f9%6]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
+ 18:01:22 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     Biwen Li <biwen.li@nxp.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Thread-Topic: rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Thread-Index: AQHVUoSffVMVL9pU8EWFzlDe9z+sGab6+TgAgAChtoCAAOVX4A==
+Date:   Thu, 15 Aug 2019 18:01:22 +0000
+Message-ID: <VE1PR04MB66873BEBB6EBCC1C04D0AC238FAC0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+References: <20190814093249.40065-1-biwen.li@nxp.com>
+ <VE1PR04MB66875AF7A38BF43351970EB08FAD0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+ <DB7PR04MB449054F05411CBDC935605F28FAC0@DB7PR04MB4490.eurprd04.prod.outlook.com>
+In-Reply-To: <DB7PR04MB449054F05411CBDC935605F28FAC0@DB7PR04MB4490.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.157.242.222]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 6d4d1ded-c852-481a-4885-08d721aa954d
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VE1PR04MB6368;
+x-ms-traffictypediagnostic: VE1PR04MB6368:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VE1PR04MB63688545F48280D4DEC9D4B78FAC0@VE1PR04MB6368.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2043;
+x-forefront-prvs: 01304918F3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(396003)(346002)(39860400002)(136003)(189003)(199004)(13464003)(26005)(5660300002)(316002)(110136005)(6306002)(14444005)(229853002)(256004)(53546011)(305945005)(186003)(86362001)(6506007)(7736002)(478600001)(52536014)(66066001)(102836004)(53936002)(9686003)(54906003)(6436002)(64756008)(55016002)(81166006)(66476007)(66446008)(2906002)(8936002)(81156014)(14454004)(33656002)(2201001)(6246003)(66946007)(3846002)(76116006)(66556008)(99286004)(966005)(7696005)(76176011)(74316002)(486006)(476003)(4326008)(446003)(25786009)(6116002)(8676002)(71200400001)(71190400001)(2501003)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:VE1PR04MB6368;H:VE1PR04MB6687.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IUebzMTH7M+Mg/GvT44VNqxHkYSvDa9H5T7JdHKYF11vDoIOsX4aJuuiBs42N2DaagbovLqXdAzthWsZWL1lDphLdRb8WErt+LxHVQJa3gx90IafQcsKm9zmXCeUp58nIS4mNoL92hBiuRGsxVZpMwbnQxf+xnXvKI/ekbMnGD8OFNFbihTcDATw3sKUUnnvw+eIkqka2sb6IZoio0AuwCGiuQSkmTYeBFigYsrHmOm4VDrEH12NFwBLmdfA5jQMwafLW44krnU3Aw5f2TiTJNhxJkBgwRrj+Ca4OTgYsbaSb6zQqisbuUPvRq2v8QDiXK37v0CS5nOl1QiJcssJkdLgOgtMuTx0zyielMqOVV89efXpAAOj91/O/Qn3mFEm3YhSgo83TUBVzxaIT0StsykZaALnckTU0Q1N0Yef6Ww=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190815174207.GR9477@dhcp22.suse.cz>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 15 Aug 2019 17:57:24 +0000 (UTC)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6d4d1ded-c852-481a-4885-08d721aa954d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 18:01:22.8361
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hlYVC5bSg9cJH/MRBsYFovNKh1SAyNRbg0Lr+Y+hAqO/1lQD6VproLbYixZ70ijxb/LB9hGz1QPc5HzmB0FP1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB6368
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 07:42:07PM +0200, Michal Hocko wrote:
-> On Thu 15-08-19 13:56:31, Jason Gunthorpe wrote:
-> > On Thu, Aug 15, 2019 at 06:00:41PM +0200, Michal Hocko wrote:
-> > 
-> > > > AFAIK 'GFP_NOWAIT' is characterized by the lack of __GFP_FS and
-> > > > __GFP_DIRECT_RECLAIM..
-> > > >
-> > > > This matches the existing test in __need_fs_reclaim() - so if you are
-> > > > OK with GFP_NOFS, aka __GFP_IO which triggers try_to_compact_pages(),
-> > > > allocations during OOM, then I think fs_reclaim already matches what
-> > > > you described?
-> > > 
-> > > No GFP_NOFS is equally bad. Please read my other email explaining what
-> > > the oom_reaper actually requires. In short no blocking on direct or
-> > > indirect dependecy on memory allocation that might sleep.
-> > 
-> > It is much easier to follow with some hints on code, so the true
-> > requirement is that the OOM repear not block on GFP_FS and GFP_IO
-> > allocations, great, that constraint is now clear.
-> 
-> I still do not get why do you put FS/IO into the picture. This is really
-> about __GFP_DIRECT_RECLAIM.
-> 
-> > 
-> > > If you can express that in the existing lockdep machinery. All
-> > > fine. But then consider deployments where lockdep is no-no because
-> > > of the overhead.
-> > 
-> > This is all for driver debugging. The point of lockdep is to find all
-> > these paths without have to hit them as actual races, using debug
-> > kernels.
-> > 
-> > I don't think we need this kind of debugging on production kernels?
-> 
-> Again, the primary motivation was a simple debugging aid that could be
-> used without worrying about overhead. So lockdep is very often out of
-> the question.
-> 
-> > > > The best we got was drivers tested the VA range and returned success
-> > > > if they had no interest. Which is a big win to be sure, but it looks
-> > > > like getting any more is not really posssible.
-> > > 
-> > > And that is already a great win! Because many notifiers only do care
-> > > about particular mappings. Please note that backing off unconditioanlly
-> > > will simply cause that the oom reaper will have to back off not doing
-> > > any tear down anything.
-> > 
-> > Well, I'm working to propose that we do the VA range test under core
-> > mmu notifier code that cannot block and then we simply remove the idea
-> > of blockable from drivers using this new 'range notifier'. 
-> > 
-> > I think this pretty much solves the concern?
-> 
-> Well, my idea was that a range check and early bail out was a first step
-> and then each specific notifier would be able to do a more specific
-> check. I was not able to do the second step because that requires a deep
-> understanding of the respective subsystem.
-> 
-> Really all I do care about is to reclaim as much memory from the
-> oom_reaper context as possible. And that cannot really be an unbounded
-> process. Quite contrary it should be as swift as possible. From my
-> cursory look some notifiers are able to achieve their task without
-> blocking or depending on memory just fine. So bailing out
-> unconditionally on the range of interest would just put us back.
-
-Agree, OOM just asking the question: can i unmap that page quickly ?
-so that me (OOM) can swap it out. In many cases the driver need to
-lookup something to see if at the time the memory is just not in use
-and can be reclaim right away. So driver should have a path to
-optimistically update its state to allow quick reclaim.
 
 
-> > > > However, we could (probably even should) make the drivers fs_reclaim
-> > > > safe.
-> > > > 
-> > > > If that is enough to guarantee progress of OOM, then lets consider
-> > > > something like using current_gfp_context() to force PF_MEMALLOC_NOFS
-> > > > allocation behavior on the driver callback and lockdep to try and keep
-> > > > pushing on the the debugging, and dropping !blocking.
-> > > 
-> > > How are you going to enforce indirect dependency? E.g. a lock that is
-> > > also used in other context which depend on sleepable memory allocation
-> > > to move forward.
-> > 
-> > You mean like this:
-> > 
-> >        CPU0                                 CPU1
-> >                                         mutex_lock()
-> >                                         kmalloc(GFP_KERNEL)
-> 
-> no I mean __GFP_DIRECT_RECLAIM here.
-> 
-> >                                         mutex_unlock()
-> >   fs_reclaim_acquire()
-> >   mutex_lock() <- illegal: lock dep assertion
-> 
-> I cannot really comment on how that is achieveable by lockdep. I managed
-> to forget details about FS/IO reclaim recursion tracking already and I
-> do not have time to learn it again. It was quite a hack. Anyway, let me
-> repeat that the primary motivation was a simple aid. Not something as
-> poverful as lockdep.
+> -----Original Message-----
+> From: Biwen Li
+> Sent: Wednesday, August 14, 2019 11:15 PM
+> To: Leo Li <leoyang.li@nxp.com>; a.zummo@towertech.it;
+> alexandre.belloni@bootlin.com
+> Cc: linux-rtc@vger.kernel.org; linux-kernel@vger.kernel.org
+> Subject: RE: rtc: pcf85363/pcf85263: fix error that failed to run hwclock=
+ -w
+>=20
+> > > Subject: rtc: pcf85363/pcf85263: fix error that failed to run
+> > > hwclock -w
+> > >
+> > > Issue:
+> > >     # hwclock -w
+> > >     hwclock: RTC_SET_TIME: Invalid argument
+> > >
+> > > The patch fixes error when run command hwclock -w with rtc
+> > > pcf85363/pcf85263
+> >
+> > Can you explain a little bit more in the commit message on how the
+> changes fix
+> > the above issue?   It is not that clear just from the code.
+> 1. Relative patch: https://lkml.org/lkml/2019/4/3/55 , this patch will al=
+ways
+> check for unwritable registers, it will compare reg with max_register in
+> regmap_writeable.
+>=20
+> 2. In drivers/rtc/rtc-pcf85363.c, CTRL_STOP_EN is 0x2e, but DT_100THS is =
+0,
+> max_regiter is 0x2f, then reg will be equal to 0x30, '0x30 < 0x2f' is fal=
+se,so
+> regmap_writeable will return false.
 
-I feel that the fs_reclaim_acquire() is just too heavy weight here. I
-do think that Daniel patches improve the debugging situation without
-burdening anything so i am in favor or merging that.
+From you description, it looks like the problem is actually that the buf[] =
+was written to a wrong place.  If that's the case, we should say that in th=
+e commit message.
 
-I do not think we should devote too much time into fs_reclaim(), our
-time would be better spend in improving the driver shrinker for instance
-after all OOM is all about trying to free-up memory.
+>=20
+> >
+> > >
+> > > Signed-off-by: Biwen Li <biwen.li@nxp.com>
+> > > ---
+> > >  drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+> > >  1 file changed, 6 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+> > > index a075e77617dc..3450d615974d 100644
+> > > --- a/drivers/rtc/rtc-pcf85363.c
+> > > +++ b/drivers/rtc/rtc-pcf85363.c
+> > > @@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device
+> > > *dev, struct rtc_time *tm)
+> > >  	buf[DT_YEARS] =3D bin2bcd(tm->tm_year % 100);
+> > >
+> > >  	ret =3D regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+> > > -				tmp, sizeof(tmp));
+> > > +				tmp, 2);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	ret =3D regmap_bulk_write(pcf85363->regmap, DT_100THS,
+> > > +				buf, sizeof(tmp) - 2);
+> > >  	if (ret)
+> > >  		return ret;
+> > >
+> > > --
+> > > 2.17.1
 
-Cheers,
-Jérôme
