@@ -2,120 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E99F88F25B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E12858F260
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:38:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732432AbfHORf7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:35:59 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45952 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfHORf7 (ORCPT
+        id S1732469AbfHORh6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:37:58 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39220 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728685AbfHORh5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:35:59 -0400
-Received: by mail-qk1-f193.google.com with SMTP id m2so2433719qki.12
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:35:58 -0700 (PDT)
+        Thu, 15 Aug 2019 13:37:57 -0400
+Received: by mail-io1-f67.google.com with SMTP id l7so757113ioj.6
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:37:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3I0/JtshV0JYc9v5er9Nyt2RkR0gXgFBErZRF2qt5m0=;
-        b=TEE2VTSv3tx1ZS4nODo3IOEMW+jHQ+D+qi1QIiUZkTdg3tRdtrDS1Yi2Ge0OnwlQjy
-         9uKji7u3GHzFOTQr/5OvgUSnhcrBXLslyqF2JAqkQ3GgIk6PLNtVym1yiMIGLCNKTOL1
-         iQXtVYo5wmF7eZRIICfA54N3DHqUUMZ+9l5FqFEVzN+v0bu03kcn014mCrD0u20coYbC
-         eOTlerFgdQ1Hl3pSxKkr16MDtNGjVedbFoafrOTqsODAG2Dy9iAybdLDz91AheE0jhP3
-         csOgvcEu4MCFZjOLKT0QXJJsbsK8STjBB7eCxSDOzDzFeZfx8mVvw4ErfTv55+OVi7LQ
-         HPJQ==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=W/qaXV9S7EqSXjJ9HVVNAqMBd3/53HT0f+nyTBIWkjQ=;
+        b=wUeoX1uPuGsbMGnSpUBVS62MFU9GgL7ic0/36SPnwOTAguBfWA5Gak5iU8UcYL+6Dq
+         eGzLlIckv3K1bz2qreTGE3JfD/5nCYhPO/tTJhCS/6LuqmPYxQj6ZwKSdD2VrjUKqbA9
+         cF2gjQykZblgqUg090nE4cyIWH4OSJX1WMpYqrhjWe1o4KMHHqH1EHezZg37KrkJo5BF
+         cL27sbU6YsXo3SELPEd7nMTo41502vReAZTx1EIqEBrmtKQi0wmLGx2pZ35M1iUIds9p
+         9/NT5Q+9z7VMWJiJdQBCojS5ovGK4mfJLU7cI8ikaLIhf8fn56Ap8BsjZj11gMu94O9S
+         2pAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3I0/JtshV0JYc9v5er9Nyt2RkR0gXgFBErZRF2qt5m0=;
-        b=tTbEERheDjAZ11g3djUUAdeq1scrEVYHnRTkMAXPzZVrUJa734W4YPUBJC92Ae3hOE
-         ErgiEjdNjwtk99tAxZcogcMuIzIHG6J8LqEpGzDqWeaQtDoLMs33UaX4BdCAlXmE2GHC
-         diDhYz/3voZJSOTJRuOMFueLg8XK8yKW+M8EK8dttOQZI0T+kNgsiPKUG3XDlLayDxU9
-         qjRIDr2gXTQ5RSUakTkcm8MYS2Vpl408DO6pYajVvsbpoLZJgRB1n0/95+30ObmlLVUP
-         BUVoEO0fgerbJ/Pawgh8zWbI7VXdhewiksx725/6g9DCDa27K1bPXPxA+/JVfT3rvBK5
-         kuPQ==
-X-Gm-Message-State: APjAAAXGobVnjSCqMeYjSaoBaDCMMcSN8vtpF7iQST0I83W6zYiL1jZV
-        liKpFtmEqIYd02NWNWl9Y5QuyQ==
-X-Google-Smtp-Source: APXvYqxCT6Z6k6qpPIV0VSEi+Ea/Upm35vjesy1M0E1G5PDQA92PUo48Y+Ame9Jik9oEIwW+jp3Waw==
-X-Received: by 2002:ae9:f707:: with SMTP id s7mr5159848qkg.0.1565890558329;
-        Thu, 15 Aug 2019 10:35:58 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id e3sm1552304qkg.91.2019.08.15.10.35.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 10:35:58 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hyJfJ-0006yS-GO; Thu, 15 Aug 2019 14:35:57 -0300
-Date:   Thu, 15 Aug 2019 14:35:57 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>,
-        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wei Wang <wvw@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
-Message-ID: <20190815173557.GN21596@ziepe.ca>
-References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
- <20190814202027.18735-3-daniel.vetter@ffwll.ch>
- <20190814134558.fe659b1a9a169c0150c3e57c@linux-foundation.org>
- <20190815084429.GE9477@dhcp22.suse.cz>
- <20190815130415.GD21596@ziepe.ca>
- <CAKMK7uE9zdmBuvxa788ONYky=46GN=5Up34mKDmsJMkir4x7MQ@mail.gmail.com>
- <20190815143759.GG21596@ziepe.ca>
- <CAKMK7uEJQ6mPQaOWbT_6M+55T-dCVbsOxFnMC6KzLAMQNa-RGg@mail.gmail.com>
- <20190815151028.GJ21596@ziepe.ca>
- <CAKMK7uG33FFCGJrDV4-FHT2FWi+Z5SnQ7hoyBQd4hignzm1C-A@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=W/qaXV9S7EqSXjJ9HVVNAqMBd3/53HT0f+nyTBIWkjQ=;
+        b=FnJ3sWGnCByeXncBZGFHw24FpEIGLRtA8gZGqK3z+cmuAZrGp1Y77DwOOcaffzA9wx
+         rqZayORxwlYXQzQfgSCSbFDumTZ5nwgDgKpaxUpdnqJzX0tfWJ4spfGi+XpoNTIviWYn
+         nQ7CCeADPT/uAKABvuog7uuZc7Jx7N9cqnnlps5UEPkQgiSAzQJzoW4LHpYjI4D4Qj7e
+         PhEmfZ+jvVBJzf9bEs9rVJrFfm8yuZYWKc5EgwEGZW+dnLMExsmfNXbf0BTb0qv/uo97
+         A985enpR0yw642cnrUq+afmWqdl6mLHAMb7rD8S4VwJvRmMsAsy3p7a9/ggeQgMY0FHR
+         4hAQ==
+X-Gm-Message-State: APjAAAWDy13CeOrDli7N2e8twAF1fqQQ0klmu2XeI1gFHTPI6iR0OgSX
+        3t2z6VIZk/WxwQMTDvbwCIEeEhtJOYIM1EE7JfloJQ==
+X-Google-Smtp-Source: APXvYqzXDH761xotArU4aND1o5POeE8CAePCGs7xEh0u4TRFQawyaT1FFjR38e/5ItDgOAYVLnQdcE3hNtMTm5//Ma8=
+X-Received: by 2002:a6b:7d49:: with SMTP id d9mr6742403ioq.50.1565890677021;
+ Thu, 15 Aug 2019 10:37:57 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uG33FFCGJrDV4-FHT2FWi+Z5SnQ7hoyBQd4hignzm1C-A@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190812190320.209988-1-yabinc@google.com>
+In-Reply-To: <20190812190320.209988-1-yabinc@google.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Thu, 15 Aug 2019 11:37:46 -0600
+Message-ID: <CANLsYkxRVvWUxEAmRQ7nCuS-NaOogN4sYOipxBW5zsozyu+y2g@mail.gmail.com>
+Subject: Re: [PATCH v2] coresight: tmc-etr: Fix perf_data check.
+To:     Yabin Cui <yabinc@google.com>
+Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 06:25:16PM +0200, Daniel Vetter wrote:
+On Mon, 12 Aug 2019 at 13:03, Yabin Cui <yabinc@google.com> wrote:
+>
+> When tracing etm data of multiple threads on multiple cpus through
+> perf interface, each cpu has a unique etr_perf_buffer while sharing
+> the same etr device. There is no guarantee that the last cpu starts
+> etm tracing also stops last. This makes perf_data check fail.
+>
+> Fix it by checking etr_buf instead of etr_perf_buffer.
+>
+> Fixes: 3147da92a8a8 ("coresight: tmc-etr: Allocate and free ETR memory buffers for CPU-wide scenarios")
+> Signed-off-by: Yabin Cui <yabinc@google.com>
+> ---
+>
+> v1 -> v2: rename perf_data to perf_buf. Add fixes tag.
+>
+> ---
+>  drivers/hwtracing/coresight/coresight-tmc-etr.c | 6 +++---
+>  drivers/hwtracing/coresight/coresight-tmc.h     | 6 +++---
+>  2 files changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> index 17006705287a..90d1548ad268 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
+> @@ -1484,7 +1484,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+>                 goto out;
+>         }
+>
+> -       if (WARN_ON(drvdata->perf_data != etr_perf)) {
+> +       if (WARN_ON(drvdata->perf_buf != etr_buf)) {
+>                 lost = true;
+>                 spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>                 goto out;
+> @@ -1497,7 +1497,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
+>
+>         CS_LOCK(drvdata->base);
+>         /* Reset perf specific data */
+> -       drvdata->perf_data = NULL;
+> +       drvdata->perf_buf = NULL;
+>         spin_unlock_irqrestore(&drvdata->spinlock, flags);
+>
+>         size = etr_buf->len;
+> @@ -1556,7 +1556,7 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
+>         }
+>
+>         etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
+> -       drvdata->perf_data = etr_perf;
+> +       drvdata->perf_buf = etr_perf->etr_buf;
 
-> I'm not really well versed in the details of our userptr, but both
-> amdgpu and i915 wait for the gpu to complete from
-> invalidate_range_start. Jerome has at least looked a lot at the amdgpu
-> one, so maybe he can explain what exactly it is we're doing ...
+Ok for the fix.  Looking a things again I don't see a need to do the
+assignment for each event - this needs to be done only when the device
+is assocated with a monitored process.  Please move it here [1].
 
-amdgpu is (wrongly) using hmm for something, I can't really tell what
-it is trying to do. The calls to dma_fence under the
-invalidate_range_start do not give me a good feeling.
+Thanks,
+Mathieu
 
-However, i915 shows all the signs of trying to follow the registration
-cache model, it even has a nice comment in
-i915_gem_userptr_get_pages() explaining that the races it has don't
-matter because it is a user space bug to change the VA mapping in the
-first place. That just screams registration cache to me.
-
-So it is fine to run HW that way, but if you do, there is no reason to
-fence inside the invalidate_range end. Just orphan the DMA buffer and
-clean it up & release the page pins when all DMA buffer refs go to
-zero. The next access to that VA should get a new DMA buffer with the
-right mapping.
-
-In other words the invalidation should be very simple without
-complicated locking, or wait_event's. Look at hfi1 for example.
-
-Jason
+[1]. https://elixir.bootlin.com/linux/v5.3-rc4/source/drivers/hwtracing/coresight/coresight-tmc-etr.c#L1572
+>
+>         /*
+>          * No HW configuration is needed if the sink is already in
+> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
+> index 1ed50411cc3c..f9a0c95e9ba2 100644
+> --- a/drivers/hwtracing/coresight/coresight-tmc.h
+> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
+> @@ -178,8 +178,8 @@ struct etr_buf {
+>   *             device configuration register (DEVID)
+>   * @idr:       Holds etr_bufs allocated for this ETR.
+>   * @idr_mutex: Access serialisation for idr.
+> - * @perf_data: PERF buffer for ETR.
+> - * @sysfs_data:        SYSFS buffer for ETR.
+> + * @sysfs_buf: SYSFS buffer for ETR.
+> + * @perf_buf:  PERF buffer for ETR.
+>   */
+>  struct tmc_drvdata {
+>         void __iomem            *base;
+> @@ -202,7 +202,7 @@ struct tmc_drvdata {
+>         struct idr              idr;
+>         struct mutex            idr_mutex;
+>         struct etr_buf          *sysfs_buf;
+> -       void                    *perf_data;
+> +       struct etr_buf          *perf_buf;
+>  };
+>
+>  struct etr_buf_operations {
+> --
+> 2.23.0.rc1.153.gdeed80330f-goog
+>
