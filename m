@@ -2,92 +2,219 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA7288E518
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:57:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 296378E51D
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730503AbfHOG5E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 02:57:04 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:46220 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfHOG5E (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 02:57:04 -0400
-Received: by mail-lf1-f68.google.com with SMTP id n19so973737lfe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 23:57:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=hgJrNRBNHtDq7sAYiX+DZ8YnHpU34hU1rQmq3ot6dZw=;
-        b=j1AnsEePN/KW0HMmaePlAW+4s11k/qV+uDHpT6ndW/2EcKgcI+1xAwgnAGE+sGMsi0
-         PYS0ALOF7iV7uqeiZjb3x1be7nTY9RBZ97TC7N5123EIoK0ckxfYcXV5vKd4B47jzDHq
-         ra0el1qXOaVWgxtWxtAVJLH5T7cUjpbgvaecqcP/oRpdMAmDDKu0kK+8faTx47F7E50d
-         ZL2gybENJ+Zi037ynuCYC4g6uo/QNwDg4+8fByK31BEc+Uux0pO0NHrezjRDjvob8zvS
-         s5r1mhvB0xQgT/Aww9Q60RZHy98c4UxiXYrFuRG5k2KUE+u8e3V/4pBtBjU9LsMbOZor
-         SIuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=hgJrNRBNHtDq7sAYiX+DZ8YnHpU34hU1rQmq3ot6dZw=;
-        b=jHMS55azlHiKjh3ItjNKg7lIzUzDt/ABr9EKuRN5u7oZcy7DxBI0Pw4PAmobB2a+TH
-         IayMoZzN6aJ6i8HzyMoRQ0ftTSjHZ9Frn1v9AlUkO2KM17WYor3DObKQog+tI/ci7got
-         T80ZD4SzjirZ9SU79rkagLsAarnWFTKjyYcTX3KlFjvGorgRz+OVY9CyoBzDjm1W/6dU
-         8j97IkEy0QQow+aRJ0I0DwF6seO584z2iYhnPKMNbEPgQuZnv8GZIPyId3eJuWi7XhJP
-         GCvqDN4neypOy5Rl2ix9SxOZJHj0KFVGEa8MCrutrM7a//c+yGrA1axQTMxIK6XXpGrd
-         Dpdg==
-X-Gm-Message-State: APjAAAVjfbcBCx0bV4UUqlgJqE7Orit5y/ZDrwcxtK2C8Fq1O7U/t1Hd
-        zSDIoK0nt3qS5LogorERDvbcyQ==
-X-Google-Smtp-Source: APXvYqzfCzhF11z2F4XsMUzO2mumPQq0sKbZSqSSnFlIg89QB+a7wZox9HdKZUoyffMFbn6H6j1c3A==
-X-Received: by 2002:ac2:44ce:: with SMTP id d14mr1626809lfm.143.1565852222061;
-        Wed, 14 Aug 2019 23:57:02 -0700 (PDT)
-Received: from jax (h-84-105.A175.priv.bahnhof.se. [79.136.84.105])
-        by smtp.gmail.com with ESMTPSA id i17sm303452lfp.94.2019.08.14.23.57.01
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Aug 2019 23:57:01 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 08:56:59 +0200
-From:   Jens Wiklander <jens.wiklander@linaro.org>
-To:     arm-soc <arm@kernel.org>, soc@kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: [GIT PULL] tee subsys for v5.4
-Message-ID: <20190815065659.GA13498@jax>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1730513AbfHOG6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 02:58:07 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43662 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729838AbfHOG6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 02:58:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5AD47AC8B;
+        Thu, 15 Aug 2019 06:58:05 +0000 (UTC)
+Date:   Thu, 15 Aug 2019 08:58:04 +0200
+Message-ID: <s5hk1beapab.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Hui Peng" <benquike@gmail.com>
+Cc:     <security@kernel.org>, <alsa-devel@alsa-project.org>,
+        "YueHaibing" <yuehaibing@huawei.com>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Allison Randal" <allison@lohutok.net>,
+        "Mathias Payer" <mathias.payer@nebelwelt.net>,
+        "Jaroslav Kysela" <perex@perex.cz>,
+        "Takashi Iwai" <tiwai@suse.com>, "Wenwen Wang" <wang6495@umn.edu>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] Fix a stack buffer overflow bug check_input_term
+In-Reply-To: <s5htvaj9cre.wl-tiwai@suse.de>
+References: <20190815043554.16623-1-benquike@gmail.com>
+        <s5htvaj9cre.wl-tiwai@suse.de>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello arm-soc maintainers,
+On Thu, 15 Aug 2019 08:13:57 +0200,
+Takashi Iwai wrote:
+> 
+> On Thu, 15 Aug 2019 06:35:49 +0200,
+> Hui Peng wrote:
+> > 
+> > `check_input_term` recursively calls itself with input
+> > from device side (e.g., uac_input_terminal_descriptor.bCSourceID)
+> > as argument (id). In `check_input_term`, if `check_input_term`
+> > is called with the same `id` argument as the caller, it triggers
+> > endless recursive call, resulting kernel space stack overflow.
+> > 
+> > This patch fixes the bug by adding a bitmap to `struct mixer_build`
+> > to keep track of the checked ids by `check_input_term` and stop
+> > the execution if some id has been checked (similar to how
+> > parse_audio_unit handles unitid argument).
+> > 
+> > Reported-by: Hui Peng <benquike@gmail.com>
+> > Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+> > Signed-off-by: Hui Peng <benquike@gmail.com>
+> 
+> The fix looks almost good, but we need to be careful about the
+> bitmap check.  In theory, it's possible that multiple nodes point to
+> the same input terminal, and your patch would break that scenario.
+> For fixing that, we need to zero-clear the termbitmap at each first
+> invocation of check_input_term(), something like below.
+> 
+> Could you check whether this works?
 
-Please pull this OP-TEE driver patch. It adds a call to might_sleep()
-during RPC in the OP-TEE driver in order to be more friendly with
-CONFIG_PREEMPT_VOLUNTARY.
+Thinking of this further, there is another possible infinite loop.
+Namely, when the feature unit in the input terminal chain points to
+itself as the source, it'll loop endlessly without the stack
+overflow.
 
-Thanks,
-Jens
+So the check of the termbitmap should be inside the loop.
+The revised patch is below.
 
-The following changes since commit 0ecfebd2b52404ae0c54a878c872bb93363ada36:
 
-  Linux 5.2 (2019-07-07 15:41:56 -0700)
+thanks,
 
-are available in the Git repository at:
+Takashi
 
-  git://git.linaro.org/people/jens.wiklander/linux-tee.git tags/tee-optee-for-5.4
+-- 8< --
+From: Hui Peng <benquike@gmail.com>
+Subject: [PATCH] ALSA: usb-audio: Fix a stack buffer overflow bug
+ check_input_term
 
-for you to fetch changes up to 9f02b8f61f29f4518581770d57bfffe99b1ea599:
+`check_input_term` recursively calls itself with input
+from device side (e.g., uac_input_terminal_descriptor.bCSourceID)
+as argument (id). In `check_input_term`, if `check_input_term`
+is called with the same `id` argument as the caller, it triggers
+endless recursive call, resulting kernel space stack overflow.
 
-  tee: optee: add might_sleep for RPC requests (2019-07-08 22:38:56 +0200)
+This patch fixes the bug by adding a bitmap to `struct mixer_build`
+to keep track of the checked ids by `check_input_term` and stop
+the execution if some id has been checked (similar to how
+parse_audio_unit handles unitid argument).
 
-----------------------------------------------------------------
-Add might_sleep() in OP-TEE RPC requests
+[ The termbitmap needs to be cleared at each first check of the input
+  terminal, so the function got split now.  Also, for catching another
+  endless loop in the input terminal chain -- where the feature unit
+  points to itself as its source -- the termbitmap check is moved
+  inside the parser loop. -- tiwai ]
 
-----------------------------------------------------------------
-Rouven Czerwinski (1):
-      tee: optee: add might_sleep for RPC requests
+Reported-by: Hui Peng <benquike@gmail.com>
+Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
+Signed-off-by: Hui Peng <benquike@gmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ sound/usb/mixer.c | 36 ++++++++++++++++++++++++++----------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
- drivers/tee/optee/call.c | 1 +
- 1 file changed, 1 insertion(+)
+diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
+index ea487378be17..aa8b046aa91f 100644
+--- a/sound/usb/mixer.c
++++ b/sound/usb/mixer.c
+@@ -68,6 +68,7 @@ struct mixer_build {
+ 	unsigned char *buffer;
+ 	unsigned int buflen;
+ 	DECLARE_BITMAP(unitbitmap, MAX_ID_ELEMS);
++	DECLARE_BITMAP(termbitmap, MAX_ID_ELEMS);
+ 	struct usb_audio_term oterm;
+ 	const struct usbmix_name_map *map;
+ 	const struct usbmix_selector_map *selector_map;
+@@ -775,16 +776,23 @@ static int uac_mixer_unit_get_channels(struct mixer_build *state,
+  * parse the source unit recursively until it reaches to a terminal
+  * or a branched unit.
+  */
+-static int check_input_term(struct mixer_build *state, int id,
+-			    struct usb_audio_term *term)
++static int __check_input_term(struct mixer_build *state, int id,
++			      struct usb_audio_term *term)
+ {
+ 	int protocol = state->mixer->protocol;
+ 	int err;
+ 	void *p1;
++	unsigned char *hdr;
+ 
+-	memset(term, 0, sizeof(*term));
+-	while ((p1 = find_audio_control_unit(state, id)) != NULL) {
+-		unsigned char *hdr = p1;
++	for (;;) {
++		/* a loop in the terminal chain? */
++		if (test_and_set_bit(id, state->termbitmap))
++			break;
++
++		p1 = find_audio_control_unit(state, id);
++		if (!p1)
++			break;
++		hdr = p1;
+ 		term->id = id;
+ 
+ 		if (protocol == UAC_VERSION_1 || protocol == UAC_VERSION_2) {
+@@ -802,7 +810,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 
+ 					/* call recursively to verify that the
+ 					 * referenced clock entity is valid */
+-					err = check_input_term(state, d->bCSourceID, term);
++					err = __check_input_term(state, d->bCSourceID, term);
+ 					if (err < 0)
+ 						return err;
+ 
+@@ -836,7 +844,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 			case UAC2_CLOCK_SELECTOR: {
+ 				struct uac_selector_unit_descriptor *d = p1;
+ 				/* call recursively to retrieve the channel info */
+-				err = check_input_term(state, d->baSourceID[0], term);
++				err = __check_input_term(state, d->baSourceID[0], term);
+ 				if (err < 0)
+ 					return err;
+ 				term->type = UAC3_SELECTOR_UNIT << 16; /* virtual type */
+@@ -899,7 +907,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 
+ 				/* call recursively to verify that the
+ 				 * referenced clock entity is valid */
+-				err = check_input_term(state, d->bCSourceID, term);
++				err = __check_input_term(state, d->bCSourceID, term);
+ 				if (err < 0)
+ 					return err;
+ 
+@@ -950,7 +958,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 			case UAC3_CLOCK_SELECTOR: {
+ 				struct uac_selector_unit_descriptor *d = p1;
+ 				/* call recursively to retrieve the channel info */
+-				err = check_input_term(state, d->baSourceID[0], term);
++				err = __check_input_term(state, d->baSourceID[0], term);
+ 				if (err < 0)
+ 					return err;
+ 				term->type = UAC3_SELECTOR_UNIT << 16; /* virtual type */
+@@ -966,7 +974,7 @@ static int check_input_term(struct mixer_build *state, int id,
+ 					return -EINVAL;
+ 
+ 				/* call recursively to retrieve the channel info */
+-				err = check_input_term(state, d->baSourceID[0], term);
++				err = __check_input_term(state, d->baSourceID[0], term);
+ 				if (err < 0)
+ 					return err;
+ 
+@@ -984,6 +992,14 @@ static int check_input_term(struct mixer_build *state, int id,
+ 	return -ENODEV;
+ }
+ 
++static int check_input_term(struct mixer_build *state, int id,
++			    struct usb_audio_term *term)
++{
++	memset(term, 0, sizeof(*term));
++	memset(state->termbitmap, 0, sizeof(state->termbitmap));
++	return __check_input_term(state, id, term);
++}
++
+ /*
+  * Feature Unit
+  */
+-- 
+2.16.4
+
