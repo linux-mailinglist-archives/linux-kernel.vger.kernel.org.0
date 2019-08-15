@@ -2,126 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E90548F37E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A85628F3B6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:40:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732720AbfHOSeg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:34:36 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:42066 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730867AbfHOSeg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:34:36 -0400
-Received: from zn.tnic (p200300EC2F0B5200B5E4FA5ECC10BE25.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:b5e4:fa5e:cc10:be25])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A10D21EC0959;
-        Thu, 15 Aug 2019 20:34:34 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565894074;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Oh+hQo4aEGMq33kP804dr6bgBixAm/GTzCD1fU24gME=;
-        b=EekcWs4FQBu/BRFt652W7dYZSaSPFtCNOLjZtSWHwX+gH1ON888OvufulZHcnhgQgDBjt0
-        vh6F23v16kIEe1EwxkHSHDbHalqTxQ5Yb53KhRubSWE7ysVcVV0XhVhsUou9fSfG64a9ly
-        mWTxaekzpGFUyfW8eE91gqMYareDdPU=
-Date:   Thu, 15 Aug 2019 20:35:15 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
- asm/intel-family.h
-Message-ID: <20190815183515.GK15313@zn.tnic>
-References: <20190814234030.30817-1-tony.luck@intel.com>
- <20190815075822.GC15313@zn.tnic>
- <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
- <20190815175455.GJ15313@zn.tnic>
- <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
+        id S1731423AbfHOSkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:40:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37268 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728818AbfHOSkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 14:40:24 -0400
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7FIc5BL017167;
+        Thu, 15 Aug 2019 14:39:40 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2udag05q4w-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Aug 2019 14:39:39 -0400
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7FIcTP7018381;
+        Thu, 15 Aug 2019 14:39:39 -0400
+Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2udag05q39-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Aug 2019 14:39:38 -0400
+Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
+        by ppma01wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7FIb2iw018869;
+        Thu, 15 Aug 2019 18:39:37 GMT
+Received: from b01cxnp22036.gho.pok.ibm.com (b01cxnp22036.gho.pok.ibm.com [9.57.198.26])
+        by ppma01wdc.us.ibm.com with ESMTP id 2u9nj74naj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 15 Aug 2019 18:39:37 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7FIdaId32833934
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Aug 2019 18:39:36 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CB544B2068;
+        Thu, 15 Aug 2019 18:39:36 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9BB28B2064;
+        Thu, 15 Aug 2019 18:39:36 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 15 Aug 2019 18:39:36 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 6833B16C1B67; Thu, 15 Aug 2019 11:39:37 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:39:37 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Frederic Weisbecker <frederic@kernel.org>, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com
+Subject: Re: [PATCH RFC tip/core/rcu 14/14] rcu/nohz: Make multi_cpu_stop()
+ enable tick on all online CPUs
+Message-ID: <20190815183937.GK28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190802151501.13069-14-paulmck@linux.ibm.com>
+ <20190812210232.GA3648@lenoir>
+ <20190812232316.GT28441@linux.ibm.com>
+ <20190813123016.GA11455@lenoir>
+ <20190813144809.GB28441@linux.ibm.com>
+ <20190814175546.GB68498@google.com>
+ <20190814220516.GY28441@linux.ibm.com>
+ <20190815150735.GA12078@google.com>
+ <20190815172351.GI28441@linux.ibm.com>
+ <20190815181500.GC12078@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190815181500.GC12078@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908150175
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 11:30:55AM -0700, Luck, Tony wrote:
-> On Thu, Aug 15, 2019 at 07:54:55PM +0200, Borislav Petkov wrote:
-> > On Thu, Aug 15, 2019 at 10:21:59AM -0700, Luck, Tony wrote:
-> > > Like this?
+On Thu, Aug 15, 2019 at 02:15:00PM -0400, Joel Fernandes wrote:
+> On Thu, Aug 15, 2019 at 10:23:51AM -0700, Paul E. McKenney wrote:
+> > On Thu, Aug 15, 2019 at 11:07:35AM -0400, Joel Fernandes wrote:
+> > > On Wed, Aug 14, 2019 at 03:05:16PM -0700, Paul E. McKenney wrote:
+> > > [snip]
+> > > > > > If so, perhaps that monitoring could periodically invoke an RCU function
+> > > > > > that I provide for deciding when to turn the tick on.  We would also need
+> > > > > > to work out how to turn the tick off in a timely fashion once the CPU got
+> > > > > > out of kernel mode, perhaps in rcu_user_enter() or rcu_nmi_exit_common().
+> > > > > > 
+> > > > > > If this would be called only every second or so, the separate grace-period
+> > > > > > checking is still needed for its shorter timespan, though.
+> > > > > > 
+> > > > > > Thoughts?
+> > > > > 
+> > > > > Do you want me to test the below patch to see if it fixes the issue with my
+> > > > > other test case (where I had a nohz full CPU holding up a grace period).
+> > > > 
+> > > > Please!
+> > > 
+> > > I tried the patch below, but it did not seem to make a difference to the
+> > > issue I was seeing. My test tree is here in case you can spot anything I did
+> > > not do right: https://github.com/joelagnel/linux-kernel/commits/rcu/nohz-test
+> > > The main patch is here:
+> > > https://github.com/joelagnel/linux-kernel/commit/4dc282b559d918a0be826936f997db0bdad7abb3
 > > 
-> > Actually, I was thinking you'd put it above the defines in the file
-> > intel-family.h itself so that *everyone* who wants to add a model, sees
-> > it first and while that explanation below is very nice...
+> > That is more aggressive that rcutorture's rcu_torture_fwd_prog_nr(), so
+> > I am guessing that I need to up rcu_torture_fwd_prog_nr()'s game.  I am
+> > currently testing that.
+> > 
+> > > On the trace output, I grep something like: egrep "(rcu_perf|cpu 3|3d)". I
+> > > see a few ticks after 300ms, but then there are no more ticks and just a
+> > > periodic resched_cpu() from rcu_implicit_dynticks_qs():
+> > > 
+> > > [   19.534107] rcu_perf-165    12.... 2276436us : rcu_perf_writer: Start of rcuperf test
+> > > [   19.557968] rcu_pree-10      0d..1 2287973us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   20.136222] rcu_perf-165     3d.h. 2591894us : rcu_sched_clock_irq: sched-tick
+> > > [   20.137185] rcu_perf-165     3d.h2 2591906us : rcu_sched_clock_irq: sched-tick
+> > > [   20.138149] rcu_perf-165     3d.h. 2591911us : rcu_sched_clock_irq: sched-tick
+> > > [   20.139106] rcu_perf-165     3d.h. 2591915us : rcu_sched_clock_irq: sched-tick
+> [snip]
+> > > [   20.147797] rcu_perf-165     3d.h. 2591953us : rcu_sched_clock_irq: sched-tick
+> > > [   20.148759] rcu_perf-165     3d.h. 2591957us : rcu_sched_clock_irq: sched-tick
+> > > [   20.151655] rcu_pree-10      0d..1 2591979us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   20.732938] rcu_pree-10      0d..1 2895960us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> [snip]
+> > > [   26.566100] rcu_pree-10      0d..1 5935982us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   27.144497] rcu_pree-10      0d..1 6239973us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   27.192661] rcu_perf-165     3d.h. 6276923us : rcu_sched_clock_irq: sched-tick
+> > > [   27.705789] rcu_pree-10      0d..1 6541901us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   28.292155] rcu_pree-10      0d..1 6845974us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   28.874049] rcu_pree-10      0d..1 7149972us : rcu_implicit_dynticks_qs: Sending urgent resched to cpu 3
+> > > [   29.112646] rcu_perf-165     3.... 7275951us : rcu_perf_writer: End of rcuperf test
+> > 
+> > That would be due to my own stupidity.  I forgot to clear ->rcu_forced_tick
+> > in rcu_disable_tick_upon_qs() inside the "if" statement.  This of course
+> > prevents rcu_nmi_exit_common() from ever re-enabling it.
+> > 
+> > Excellent catch!  Thank you for testing this!!!
 > 
-> V2 ... ugh ... C doesn't do well with nested comments, so the example
-> has issues.  I chose to use a C++ style comment (as they are not as
-> verboten in Linux as they used to be).
+> Ah I missed it too. Happy to help! I tried setting it as below but getting
+> same results:
 > 
-> Another option would be to put the instructions inside #if 0 ... #endif
-> but that seems less than ideal.
-> 
-> Any other ideas?
-> 
-> -Tony
-> 
-> From 84624a3410a3ba03c3acb13e54b1292c3ca64b8c Mon Sep 17 00:00:00 2001
-> From: Tony Luck <tony.luck@intel.com>
-> Date: Thu, 15 Aug 2019 11:16:24 -0700
-> Subject: [PATCH] x86/cpu: Explain Intel model naming convention
-> 
-> Dave Hansen spelled out the rules in an e-mail:
-> 
->  https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
-> 
-> Copy those right into the <asm/intel-family.h> file to
-> make it easy for people to find them.
-> 
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/include/asm/intel-family.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> index 0278aa66ef62..87443df77eee 100644
-> --- a/arch/x86/include/asm/intel-family.h
-> +++ b/arch/x86/include/asm/intel-family.h
-> @@ -11,6 +11,21 @@
->   * While adding a new CPUID for a new microarchitecture, add a new
->   * group to keep logically sorted out in chronological order. Within
->   * that group keep the CPUID for the variants sorted by model number.
-> + *
-> + * HOWTO Build an INTEL_FAM6_ definition:
-> + * 
-> + * 1. Start with INTEL_FAM6_
-> + * 2. If not Core-family, add a note about it, like "ATOM".  There are only
-> + *    two options for this (Xeon Phi and Atom).  It is exceedingly unlikely
-> + *    that you are adding a cpu which needs a new option here.
-> + * 3. Add the processor microarchitecture, not the platform name
-> + * 4. Add a short differentiator if necessary.  Add an _X to differentiate
-> + *    Server from Client.
-> + * 5. Add an optional comment with the platform name(s)
-> + * 
-> + * It should end up looking like this:
-> + * 
-> + * INTEL_FAM6_<ATOM?>_<MICROARCH>_<SHORT...> // Platform Name(s)
->   */
->  
->  #define INTEL_FAM6_CORE_YONAH		0x0E
-> -- 
+> +/*
+> + * If the scheduler-clock interrupt was enabled on a nohz_full CPU
+> + * in order to get to a quiescent state, disable it.
+> + */
+> +void rcu_disable_tick_upon_qs(struct rcu_data *rdp)
+> +{
+> +       if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_forced_tick)
+> +               tick_dep_clear_cpu(rdp->cpu, TICK_DEP_MASK_RCU);
+> +       rdp->rcu_forced_tick = false;
 
-Thanks, LGTM. Let's wait for the others to bikeshed a little before I
-take it.
+I put this inside the "if" statement, though I would not expect that to
+change behavior in this case.
 
-:-)
+Does your test case still avoid turning on the tick more than once?  Or
+is it turning on the tick each time the grace period gets too long, but
+without the tick managing to end the grace periods?
 
--- 
-Regards/Gruss,
-    Boris.
+> +}
+> +
+> 
+> > > [snip]
+> > > > > >  	if (rnp->qsmask & mask) { /* RCU waiting on incoming CPU? */
+> > > > > > +		rcu_disable_tick_upon_qs(rdp);
+> > > > > >  		/* Report QS -after- changing ->qsmaskinitnext! */
+> > > > > >  		rcu_report_qs_rnp(mask, rnp, rnp->gp_seq, flags);
+> > > > > 
+> > > > > Just curious about the existing code. If a CPU is just starting up (after
+> > > > > bringing it online), how can RCU be waiting on it? I thought RCU would not be
+> > > > > watching offline CPUs.
+> > > > 
+> > > > Well, neither grace periods nor CPU-hotplug operations are atomic,
+> > > > and each can take significant time to complete.
+> > > > 
+> > > > So suppose we have a large system with multiple leaf rcu_node structures
+> > > > (not that 17 CPUs is all that many these days, but please bear with me).
+> > > > Suppose just after a new grace period initializes a given leaf rcu_node
+> > > > structure, one of its CPUs goes offline (yes, that CPU would have to
+> > > > have waited on a grace period, but that might have been the previous
+> > > > grace period).  But before the FQS scan notices that RCU is waiting on
+> > > > an offline CPU, the CPU comes back online.
+> > > > 
+> > > > That situation is exactly what the above code is intended to handle.
+> > > 
+> > > That makes sense!
+> > > 
+> > > > Without that code, RCU can give false-positive splats at various points
+> > > > in its processing.  ("Wait!  How can a task be blocked waiting on a
+> > > > grace period that hasn't even started yet???")
+> > > 
+> > > I did not fully understand the question in brackets though, a task can be on
+> > > a different CPU though which has nothing to do with the CPU that's going
+> > > offline/online so it could totally be waiting on a grace period right?
+> > > 
+> > > Also waiting on a grace period that hasn't even started is totally possible:
+> > > 
+> > >      GP1         GP2
+> > > |<--------->|<-------->|
+> > >      ^                 ^
+> > >      |                 |____  task gets unblocked
+> > > task blocks
+> > > on synchronize_rcu
+> > > but is waiting on
+> > > GP2 which hasn't started
+> > > 
+> > > Or did I misunderstand the question?
+> > 
+> > There is a ->gp_tasks field in the leaf rcu_node structures that
+> > references a list of tasks blocking the current grace period.  When there
+> > is no grace period in progress (as is the case from the end of GP1 to
+> > the beginning of GP2, the RCU code expects ->gp_tasks to be NULL.
+> > Without the curiosity code you pointed out above, ->gp_tasks could
+> > in fact end up being non-NULL when no grace period was in progress.
+> > 
+> > And did end up being non-NULL from time to time, initially every few
+> > hundred hours of a particular rcutorture scenario.
+> 
+> Oh ok! I will think more about it. I am not yet able to connect the gp_tasks
+> being non-NULL to the CPU going offline/online scenario though. Maybe I
+> should delete this code, run an experiment and trace for this condition
+> (gp_tasks != NULL)?
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Or you could dig through the git logs for this code change.
+
+> I love it how you found these issues by heavy testing and fixed them.
+
+Me, I would have rather foreseen them and avoided them in the first place,
+but I agree that it is better for rcutorture to find them than for some
+hapless user somewhere to be inconvenienced by them.  ;-)
+
+							Thanx, Paul
