@@ -2,106 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB72D8EFE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C59A88EFF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 18:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfHOP77 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:59:59 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:59178 "EHLO ale.deltatee.com"
+        id S1729855AbfHOQAX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 12:00:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728886AbfHOP77 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:59:59 -0400
-Received: from s0106ac1f6bb1ecac.cg.shawcable.net ([70.73.163.230] helo=[192.168.11.155])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1hyIAB-0000kk-MY; Thu, 15 Aug 2019 09:59:44 -0600
-To:     Max Gurtovoy <maxg@mellanox.com>, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>
-References: <20190801234514.7941-1-logang@deltatee.com>
- <20190801234514.7941-2-logang@deltatee.com>
- <563baec2-61f6-5705-d751-1eee75370e66@mellanox.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <3dc99450-bd6d-b994-4b4c-1af225565c2f@deltatee.com>
-Date:   Thu, 15 Aug 2019 09:59:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729539AbfHOQAX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:00:23 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74E6A206C1;
+        Thu, 15 Aug 2019 16:00:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565884822;
+        bh=pln53YyoxIrrm78qGdr+loO6ia2BSdIYlVyYfDz+Ck8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Txfhv8QBYpK2livl6OXHUknugGqueIyUg/oPjQY0GQ9j/n+qYFhX6mcfNvBqdAJdu
+         AzIKZaGLoIj8jaAg+h2Eld8FGlTFia13cJwukraa1G+bcbS7q3Nqug+7o8mJNuUSpe
+         qFehkLroFRc6XDy/sw27axiMadXjVsw6HRPXs9fA=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-rtc@vger.kernel.org, bot@kernelci.org,
+        tomeu.vizoso@collabora.com, guillaume.tucker@collabora.com,
+        mgalka@collabora.com, broonie@kernel.org, matthew.hart@linaro.org,
+        khilman@baylibre.com, enric.balletbo@collabora.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Jun Nie <jun.nie@linaro.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sugaya Taichi <sugaya.taichi@socionext.com>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/4] Followup to "Make clk_hw::init NULL after clk registration"
+Date:   Thu, 15 Aug 2019 09:00:16 -0700
+Message-Id: <20190815160020.183334-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-In-Reply-To: <563baec2-61f6-5705-d751-1eee75370e66@mellanox.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 70.73.163.230
-X-SA-Exim-Rcpt-To: sbates@raithlin.com, Chaitanya.Kulkarni@wdc.com, axboe@fb.com, kbusch@kernel.org, sagi@grimberg.me, hch@lst.de, linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org, linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, maxg@mellanox.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE autolearn=ham autolearn_force=no version=3.4.2
-Subject: Re: [PATCH v7 01/14] nvme-core: introduce nvme_ctrl_get_by_path()
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+I found some more cases where the init structure is referenced from
+within the clk_hw struct after clk_registration is called. I suspect the
+rtc driver fix is useful to avoid crashes on Allwinner devices, reported
+by kernel-ci.
 
+Cc: <bot@kernelci.org>                                                                                                                                      
+Cc: <tomeu.vizoso@collabora.com>
+Cc: <guillaume.tucker@collabora.com>
+Cc: <mgalka@collabora.com>
+Cc: <broonie@kernel.org>
+Cc: <matthew.hart@linaro.org>
+Cc: <khilman@baylibre.com>
+Cc: <enric.balletbo@collabora.com>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>      
+Cc: Alessandro Zummo <a.zummo@towertech.it>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Cc: Jun Nie <jun.nie@linaro.org>
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sugaya Taichi <sugaya.taichi@socionext.com>
+Cc: Taniya Das <tdas@codeaurora.org>
 
-On 2019-08-15 5:46 a.m., Max Gurtovoy wrote:
-> 
-> On 8/2/2019 2:45 AM, Logan Gunthorpe wrote:
->> nvme_ctrl_get_by_path() is analagous to blkdev_get_by_path() except it
->> gets a struct nvme_ctrl from the path to its char dev (/dev/nvme0).
->> It makes use of filp_open() to open the file and uses the private
->> data to obtain a pointer to the struct nvme_ctrl. If the fops of the
->> file do not match, -EINVAL is returned.
->>
->> The purpose of this function is to support NVMe-OF target passthru.
->>
->> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
->> ---
->>   drivers/nvme/host/core.c | 24 ++++++++++++++++++++++++
->>   drivers/nvme/host/nvme.h |  2 ++
->>   2 files changed, 26 insertions(+)
->>
->> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
->> index e6ee6f2a3da6..f72334f34a30 100644
->> --- a/drivers/nvme/host/core.c
->> +++ b/drivers/nvme/host/core.c
->> @@ -2817,6 +2817,30 @@ static const struct file_operations
->> nvme_dev_fops = {
->>       .compat_ioctl    = nvme_dev_ioctl,
->>   };
->>   +struct nvme_ctrl *nvme_ctrl_get_by_path(const char *path)
->> +{
->> +    struct nvme_ctrl *ctrl;
->> +    struct file *f;
->> +
->> +    f = filp_open(path, O_RDWR, 0);
->> +    if (IS_ERR(f))
->> +        return ERR_CAST(f);
->> +
->> +    if (f->f_op != &nvme_dev_fops) {
->> +        ctrl = ERR_PTR(-EINVAL);
->> +        goto out_close;
->> +    }
-> 
-> Logan,
-> 
-> this means that the PT is for nvme-pci and also nvme-fabrics as well.
-> 
-> Is this the intention ? or we want to restrict it to pci only.
+Stephen Boyd (4):
+  clk: milbeaut:  Don't reference clk_init_data after registration
+  clk: zx296718: Don't reference clk_init_data after registration
+  rtc: sun6i: Don't reference clk_init_data after registration
+  clk: qcom: Remove error prints from DFS registration
 
-Yes, in theory, someone could passthru an nvme-fabrics controller or
-they could passthru a passthru'd passthru'd nvme-fabrics controller.
-This probably isn't a good idea but I don't know that we need to
-specifically reject it. If you think we should I could figure out a way
-to filter by pci controllers only.
+ drivers/clk/clk-milbeaut.c     |   2 +-
+ drivers/clk/qcom/clk-rcg2.c    |   8 +--
+ drivers/clk/zte/clk-zx296718.c | 109 +++++++++++++++------------------
+ drivers/rtc/rtc-sun6i.c        |   2 +-
+ 4 files changed, 52 insertions(+), 69 deletions(-)
 
-Logan
+-- 
+Sent by a computer through tubes
+
