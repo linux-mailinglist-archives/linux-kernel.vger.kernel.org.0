@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF7398E21F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF4608E213
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:50:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbfHOAtl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 20:49:41 -0400
-Received: from onstation.org ([52.200.56.107]:44344 "EHLO onstation.org"
+        id S1728914AbfHOAtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 20:49:24 -0400
+Received: from onstation.org ([52.200.56.107]:44380 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728559AbfHOAtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728647AbfHOAtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Aug 2019 20:49:17 -0400
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 26AB63EA22;
+        by onstation.org (Postfix) with ESMTPSA id C34763EE60;
         Thu, 15 Aug 2019 00:49:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1565830156;
-        bh=d3q75pXkjIXM1QryEInKZPabWpuCo5QQR2U68bge2+A=;
+        s=default; t=1565830157;
+        bh=MgVVYz3IFOaEWkO0SUurG8P6fyggfR5oXu1sG6fhpmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NJdtoh3/ImfhdTmSEd85mj5KPu2ZKI0+UpUzJUTokWtV70S3liqeW3s4dbfky+wr4
-         LolisNgSRIh+ji/BEC/+LNt4IZWePqwWkQ0lf99WfPMtT+plnIZnwpj94J+7JjQ06J
-         WoLNwQj3TpHlok1OzDecQd2NzU7BUwa+XkPAjiD8=
+        b=Bp3wTiAHR/MmK4BZ7UH9Kofa1DoQnFfUoY1BKE1p7bS2jKvwMZ7NtUQ5SBR5Yj8oM
+         zZ7+UhUUD4ei3UIylr8qmYdCQjodCRWJM/JTShTg5Zfsl89p5BwGyP2ttJlRD5qKXe
+         N+p9CACHiMQ9R+jKZjKW/Z3Ee5GDeUksSCLoV/uE=
 From:   Brian Masney <masneyb@onstation.org>
 To:     bjorn.andersson@linaro.org, robh+dt@kernel.org, agross@kernel.org,
         a.hajda@samsung.com, narmstrong@baylibre.com, robdclark@gmail.com,
@@ -36,9 +36,9 @@ Cc:     airlied@linux.ie, daniel@ffwll.ch, mark.rutland@arm.com,
         linux-arm-msm@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         freedreno@lists.freedesktop.org
-Subject: [PATCH 08/11] drm/msm/hdmi: silence -EPROBE_DEFER warning
-Date:   Wed, 14 Aug 2019 20:48:51 -0400
-Message-Id: <20190815004854.19860-9-masneyb@onstation.org>
+Subject: [PATCH 09/11] ARM: dts: qcom: pm8941: add 5vs2 regulator node
+Date:   Wed, 14 Aug 2019 20:48:52 -0400
+Message-Id: <20190815004854.19860-10-masneyb@onstation.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190815004854.19860-1-masneyb@onstation.org>
 References: <20190815004854.19860-1-masneyb@onstation.org>
@@ -49,33 +49,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Silence a warning message due to an -EPROBE_DEFER error to help cleanup
-the system boot log.
+pm8941 is missing the 5vs2 regulator node so let's add it since its
+needed to get the external display working. This regulator was already
+configured in the interrupts property on the parent node.
+
+Note that this regulator is referred to as mvs2 in the downstream MSM
+kernel sources.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- drivers/gpu/drm/msm/hdmi/hdmi_phy.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/qcom-pm8941.dtsi | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-index 1697e61f9c2f..8a38d4b95102 100644
---- a/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-+++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy.c
-@@ -29,8 +29,12 @@ static int msm_hdmi_phy_resource_init(struct hdmi_phy *phy)
- 		reg = devm_regulator_get(dev, cfg->reg_names[i]);
- 		if (IS_ERR(reg)) {
- 			ret = PTR_ERR(reg);
--			DRM_DEV_ERROR(dev, "failed to get phy regulator: %s (%d)\n",
--				cfg->reg_names[i], ret);
-+			if (ret != -EPROBE_DEFER) {
-+				DRM_DEV_ERROR(dev,
-+					      "failed to get phy regulator: %s (%d)\n",
-+					      cfg->reg_names[i], ret);
-+			}
+diff --git a/arch/arm/boot/dts/qcom-pm8941.dtsi b/arch/arm/boot/dts/qcom-pm8941.dtsi
+index f198480c8ef4..c1f2012d1c8b 100644
+--- a/arch/arm/boot/dts/qcom-pm8941.dtsi
++++ b/arch/arm/boot/dts/qcom-pm8941.dtsi
+@@ -178,6 +178,16 @@
+ 				qcom,vs-soft-start-strength = <0>;
+ 				regulator-initial-mode = <1>;
+ 			};
 +
- 			return ret;
- 		}
- 
++			pm8941_5vs2: 5vs2 {
++				regulator-enable-ramp-delay = <1000>;
++				regulator-pull-down;
++				regulator-over-current-protection;
++				qcom,ocp-max-retries = <10>;
++				qcom,ocp-retry-delay = <30>;
++				qcom,vs-soft-start-strength = <0>;
++				regulator-initial-mode = <1>;
++			};
+ 		};
+ 	};
+ };
 -- 
 2.21.0
 
