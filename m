@@ -2,54 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 138C98F1C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBF098F1C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731883AbfHOROj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:39 -0400
-Received: from mail-wm1-f99.google.com ([209.85.128.99]:50344 "EHLO
-        mail-wm1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731784AbfHOROg (ORCPT
+        id S1731924AbfHOROt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:49 -0400
+Received: from mail-wm1-f97.google.com ([209.85.128.97]:40326 "EHLO
+        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731813AbfHOROh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:36 -0400
-Received: by mail-wm1-f99.google.com with SMTP id v15so1882697wml.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
+        Thu, 15 Aug 2019 13:14:37 -0400
+Received: by mail-wm1-f97.google.com with SMTP id v19so1862665wmj.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=gE06bHYUuZ3QYmVI3yQvlrzHi0/sRfjaZGC6+azO7fM=;
-        b=KGezymgVibZPJA9h9lnkvRX6FXinDYdsFg73ExOmV+cR+0eX4SO2ghL/g7YWXOb9wM
-         CUfLte4aR7YYimv7+Xq/8ycyYJj+Fn/vXm5QSqQyRZ+rAD42Z4hC+/bULByj4zvHB8ez
-         6aVpriJzvXwOTk61Eyfis2lwcpGJOI2iNVuidY14dI4drrNb8cH09P4GRzod/9B6sGVG
-         rkJsN111CM0ns2Zlmr/q+ECmt/34OgdhWgSFlzpROkLrw6nTWMQ0o7gfw2vQkEpyOYex
-         XxqeZh39YYG19HTni1K+JiBD462+6bN6feio5Pv+lL7+RytDhxtvzeemJ0+CuqP08ozb
-         IL4g==
-X-Gm-Message-State: APjAAAUnKDlNRtpVLN/kltK3FznRWjOKjUWu06uLZBANVcnMK3W1cxN5
-        pOfMA7nfC3B7xeiR2wj5nOvDFRKzVw7K6O7vq14nTZTYzMk7gM34E5m66eHQ1w9bhg==
-X-Google-Smtp-Source: APXvYqx8H4C2nURJML4ac5xRNzSLHJnRxhU9cISiLhVP/yaYThltxH7sBXT+ks64GHr0RxGbY54V/Qu1F5xE
-X-Received: by 2002:a05:600c:2411:: with SMTP id 17mr3424992wmp.171.1565889275152;
-        Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
+        bh=JHUIetjIti0pEcfSYiQiE8e28/5D5NNhoAZkL5HFjGI=;
+        b=XkzUUTe8MO4xCy1UFFZtR65UJ2iAYCiJ5Im5raueQfVe6+Hc4366Que/25BNvnHxS1
+         qrewNoKITKkmW3rSBkCC5foDWR1Hueqhr1x5OLkez7USMnoPhVZdoA0aYHVuT6lYsKAO
+         7ZTu8UK7YbM/Fl9i1DB1fp0bNq7TRPVLECgOhcVfZgoxF2Nr+uDCcIEMEE2PkxOkHtf6
+         eIWIcPSkAym5iMWjId7QPjx3oOiUZfAvFdMxx7tRJ9mmW3AomI6iZXHEZz8EYfd4bDtJ
+         fpzYcWgQmtNS5TZR3VlFoLXCQxwXuJnoECkhvlpmDoVwxH+sKBn19mkNv9S79gVvp7fr
+         2Bsw==
+X-Gm-Message-State: APjAAAW0fE7nm0KoCbbD4r8Ts5yyLHbEp+c6VAGxKay9q4QPyNI8Q4k1
+        xZheaL50clyjwBm6u1+Q/kVXJU+xFRH+/9e2Aj1o13k/c3MMe51ZBi720NbhF+E+dw==
+X-Google-Smtp-Source: APXvYqwtsvivErczjYZ8MtHJ8gEom0mS3aCoimQxOdueqzNzCjMGqpxdf4fd3hkQCu+k7Xk4Tx9krBGNnokU
+X-Received: by 2002:a05:600c:2487:: with SMTP id 7mr3807673wms.141.1565889276148;
+        Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id e9sm57426wre.37.2019.08.15.10.14.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:35 -0700 (PDT)
+        by smtp-relay.gmail.com with ESMTPS id c3sm12896wmd.26.2019.08.15.10.14.36
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKc-00052p-TE; Thu, 15 Aug 2019 17:14:34 +0000
+        id 1hyJKd-000535-UI; Thu, 15 Aug 2019 17:14:35 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 4C4D62742BC7; Thu, 15 Aug 2019 18:14:34 +0100 (BST)
+        id 73AE32742B9E; Thu, 15 Aug 2019 18:14:35 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     broonie@kernel.org, lgirdwood@gmail.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: core: Add label to collate of_node_put() statements" to the regulator tree
-In-Reply-To: <20190815053704.32156-1-nishkadg.linux@gmail.com>
+To:     Raag Jadav <raagjadav@gmail.com>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: act8945a-regulator: fix ldo register addresses in set_mode hook" to the regulator tree
+In-Reply-To: <1565635194-5816-1-git-send-email-raagjadav@gmail.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171434.4C4D62742BC7@ypsilon.sirena.org.uk>
-Date:   Thu, 15 Aug 2019 18:14:34 +0100 (BST)
+Message-Id: <20190815171435.73AE32742B9E@ypsilon.sirena.org.uk>
+Date:   Thu, 15 Aug 2019 18:14:35 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -57,11 +57,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: core: Add label to collate of_node_put() statements
+   regulator: act8945a-regulator: fix ldo register addresses in set_mode hook
 
 has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -82,53 +82,50 @@ to this mail.
 Thanks,
 Mark
 
-From 81eeb0a35c2e40bcaf122c6aae3be4f7d9abe201 Mon Sep 17 00:00:00 2001
-From: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Date: Thu, 15 Aug 2019 11:07:04 +0530
-Subject: [PATCH] regulator: core: Add label to collate of_node_put()
- statements
+From 5d2fc542e8c92130b55ddeb81876ec398adf4d13 Mon Sep 17 00:00:00 2001
+From: Raag Jadav <raagjadav@gmail.com>
+Date: Tue, 13 Aug 2019 00:09:54 +0530
+Subject: [PATCH] regulator: act8945a-regulator: fix ldo register addresses in
+ set_mode hook
 
-In function of_get_child_regulator(), the loop for_each_child_of_node()
-contains two mid-loop return statements, each preceded by a statement
-putting child. In order to reduce this repetition, create a new label,
-err_node_put, that puts child and then returns the required value;
-edit the mid-loop return blocks to instead go to this new label.
+According to ACT8945A datasheet[1], operating modes for ldos are
+controlled by BIT(5) of their respective _CTRL registers.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
-Link: https://lore.kernel.org/r/20190815053704.32156-1-nishkadg.linux@gmail.com
+[1] https://active-semi.com/wp-content/uploads/ACT8945A_Datasheet.pdf
+
+Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
+Signed-off-by: Raag Jadav <raagjadav@gmail.com>
+Link: https://lore.kernel.org/r/1565635194-5816-1-git-send-email-raagjadav@gmail.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/regulator/act8945a-regulator.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 7a5d52948703..4a27a46ec6e7 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -380,16 +380,17 @@ static struct device_node *of_get_child_regulator(struct device_node *parent,
- 
- 		if (!regnode) {
- 			regnode = of_get_child_regulator(child, prop_name);
--			if (regnode) {
--				of_node_put(child);
--				return regnode;
--			}
-+			if (regnode)
-+				goto err_node_put;
- 		} else {
--			of_node_put(child);
--			return regnode;
-+			goto err_node_put;
- 		}
- 	}
- 	return NULL;
-+
-+err_node_put:
-+	of_node_put(child);
-+	return regnode;
- }
- 
- /**
+diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
+index 584284938ac9..d2f804dbc785 100644
+--- a/drivers/regulator/act8945a-regulator.c
++++ b/drivers/regulator/act8945a-regulator.c
+@@ -169,16 +169,16 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
+ 		reg = ACT8945A_DCDC3_CTRL;
+ 		break;
+ 	case ACT8945A_ID_LDO1:
+-		reg = ACT8945A_LDO1_SUS;
++		reg = ACT8945A_LDO1_CTRL;
+ 		break;
+ 	case ACT8945A_ID_LDO2:
+-		reg = ACT8945A_LDO2_SUS;
++		reg = ACT8945A_LDO2_CTRL;
+ 		break;
+ 	case ACT8945A_ID_LDO3:
+-		reg = ACT8945A_LDO3_SUS;
++		reg = ACT8945A_LDO3_CTRL;
+ 		break;
+ 	case ACT8945A_ID_LDO4:
+-		reg = ACT8945A_LDO4_SUS;
++		reg = ACT8945A_LDO4_CTRL;
+ 		break;
+ 	default:
+ 		return -EINVAL;
 -- 
 2.20.1
 
