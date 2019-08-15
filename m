@@ -2,126 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77DC88E36E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:13:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3844C8E372
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:14:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726636AbfHOEMw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 00:12:52 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:24818 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725978AbfHOEMv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:12:51 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7F4CK4V057603
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:12:50 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucy4fhs0j-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:12:50 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Thu, 15 Aug 2019 05:12:48 +0100
-Received: from b06avi18626390.portsmouth.uk.ibm.com (9.149.26.192)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Aug 2019 05:12:42 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7F4CM6W36307236
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 04:12:22 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE4DFA4053;
-        Thu, 15 Aug 2019 04:12:41 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7DFE5A404D;
-        Thu, 15 Aug 2019 04:12:41 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 15 Aug 2019 04:12:41 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 5DE25A03BE;
-        Thu, 15 Aug 2019 14:12:40 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Qian Cai <cai@lca.pw>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Allison Randal <allison@lohutok.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] powerpc: Don't flush caches when adding memory
-Date:   Thu, 15 Aug 2019 14:10:51 +1000
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190815041057.13627-1-alastair@au1.ibm.com>
-References: <20190815041057.13627-1-alastair@au1.ibm.com>
+        id S1726245AbfHOEO4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 00:14:56 -0400
+Received: from mail-eopbgr10074.outbound.protection.outlook.com ([40.107.1.74]:61861
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725875AbfHOEO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:14:56 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VlvaQqA20oGFE+Q4Z6MSyap5QL1/LIeYS8bFadts/q54LaWsFzB7qqDTMn+OCg2SnMsKopEUbsb9i6d7jbETK6DjkojMSFpFbkzM1Q66fjdxnc24j9Jv9oClK4dAyfTfX7CH05RilrNXIrjiaGAM814NbT0emVbvi4kTH5k8J2qzigw9oy7xs0pl+g4LhP0STX04weFiizCt8OSGw1OrS1GfeL0MmYKR+08AEmLXjSqUEdgEdjMRzVVGhQCSR7HZv/VuNxscTJBZkTiEkXKy9S5wcCwn/i0WIbNGBpQJmjFhNOCCg+rCKMPwuB8V/zJzZejKVx9hsLGczzFi91FGEA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ff2QWEEgVH5vAIeKiVGTpQ4IpNUEcdfesUwKiVCrUNw=;
+ b=ks9A8y63OjmQoTVuOsG4evm0jgR6+DJKSjmL5k0qkM/CLImUYMnEm1mqbVZqzvsKKMT5a7MOi6UhASrM8ZX0NkZOktqfnnJWomzHpK+3z81u0d8DugY9S1bob+4rLh7DRs4aOz1Eu9iiBCvenBGR/cvN/REcaMnoXLfX9DY5q+rAcFzV8QXWd59XJ3845p4ZPP3uw5WckLqJDolHBF5Lm7N103YH6KgJe09yYlQWvbgOKOPwOiiRjFmJrjAw5bu2tqeJXJb9gBWacqZtC90hRXtGx5MZt6XVOkYdmYqXj1yxp2fLJsEIqyRgvyqqx2AvUYiG9icNnBkY8XWe++WhcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ff2QWEEgVH5vAIeKiVGTpQ4IpNUEcdfesUwKiVCrUNw=;
+ b=WTmKoUilDkwpr0ox0DXLLOBv3HFjJVRjio3yauxnrLjqQ/iJKIL1SWU7ksuw+0Vy032DkA6SprUAdyHrt5hw8sxrIy+ATvzSRGn+ydfSD/0aKE/wyVK9QL6cbRG+LkqppqvskDH3UAUumcYnECcjtsDGXeKdWajLyCu8s+UrHCo=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4665.eurprd04.prod.outlook.com (52.135.139.152) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.23; Thu, 15 Aug 2019 04:14:51 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::ccc8:8:c071:8283]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::ccc8:8:c071:8283%5]) with mapi id 15.20.2157.022; Thu, 15 Aug 2019
+ 04:14:51 +0000
+From:   Biwen Li <biwen.li@nxp.com>
+To:     Leo Li <leoyang.li@nxp.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
+CC:     "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Thread-Topic: rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Thread-Index: AQHVUoSfyAMvxeFinU6CH649Ec3dZ6b6+iOAgAB7elA=
+Date:   Thu, 15 Aug 2019 04:14:51 +0000
+Message-ID: <DB7PR04MB449054F05411CBDC935605F28FAC0@DB7PR04MB4490.eurprd04.prod.outlook.com>
+References: <20190814093249.40065-1-biwen.li@nxp.com>
+ <VE1PR04MB66875AF7A38BF43351970EB08FAD0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+In-Reply-To: <VE1PR04MB66875AF7A38BF43351970EB08FAD0@VE1PR04MB6687.eurprd04.prod.outlook.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=biwen.li@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 873857c3-037c-49f6-b264-08d721371eaf
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB4665;
+x-ms-traffictypediagnostic: DB7PR04MB4665:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB466554D4BB7E8DD340CBB0BE8FAC0@DB7PR04MB4665.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1201;
+x-forefront-prvs: 01304918F3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(366004)(396003)(346002)(136003)(199004)(189003)(71190400001)(6436002)(8676002)(55016002)(44832011)(102836004)(9686003)(6246003)(476003)(316002)(446003)(2906002)(66066001)(11346002)(7736002)(6116002)(53936002)(486006)(186003)(26005)(66446008)(229853002)(66946007)(66556008)(64756008)(54906003)(76176011)(3846002)(7696005)(6506007)(76116006)(6306002)(71200400001)(110136005)(2201001)(66476007)(86362001)(2501003)(4326008)(99286004)(81156014)(74316002)(14444005)(478600001)(8936002)(52536014)(81166006)(256004)(5660300002)(966005)(14454004)(33656002)(25786009)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4665;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: QXtHl3N3pS9XsgY+yPJS9MdKAWUHFU6rdOkg9aGDVliXwDBPmSEVvP4ynhmZD5N710NW36EKve314/dQmfg/2hr+7C5LasOGY8n+lxFL+DJpVLcZnY4xuk657v5unSrRZZxIEnkjabdl6elrGL6akJPcw8t16YPXCaJ6MyXxQAQc/9hEhkJuHygJiroBgyxEjDMttWuOVWKzZ7V01xJR/Dbt4NTGEqFC/lLDxu9R7Eid/qvqmtNHIqmA9LYqshsjA8Bsmps5rKgum87Ju3BBCQy/L9pyUsthYmJ6IVLGPZi77DtgdAK0uRE2OUgO3cYpsyv4ps3e7hf+07Q0hXJb7jAUV6XOvrPl+tsIekt/CeCNBRQJcKr+TfRaE+pC2rdKAJcPVaE+kAi5IYOzvv9ByATaxg0/mv4sWvU19vnca0A=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19081504-4275-0000-0000-000003594ED6
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081504-4276-0000-0000-0000386B6375
-Message-Id: <20190815041057.13627-7-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=741 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908150045
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 873857c3-037c-49f6-b264-08d721371eaf
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 04:14:51.7533
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: IxqPlZ+9Rs4JdP4/lG0mF9Us/ehwhq7cBd4srARqZQjPEF4leMOSXsB8TLm7ekg6Y+wXUw2JjhE6CI9IilfRZw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4665
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+> > Subject: rtc: pcf85363/pcf85263: fix error that failed to run hwclock
+> > -w
+> >
+> > Issue:
+> >     # hwclock -w
+> >     hwclock: RTC_SET_TIME: Invalid argument
+> >
+> > The patch fixes error when run command hwclock -w with rtc
+> > pcf85363/pcf85263
+>=20
+> Can you explain a little bit more in the commit message on how the change=
+s fix
+> the above issue?   It is not that clear just from the code.
+1. Relative patch: https://lkml.org/lkml/2019/4/3/55 , this patch will alwa=
+ys
+check for unwritable registers, it will compare reg with max_register in re=
+gmap_writeable.
 
-This operation takes a significant amount of time when hotplugging
-large amounts of memory (~50 seconds with 890GB of persistent memory).
+2. In drivers/rtc/rtc-pcf85363.c, CTRL_STOP_EN is 0x2e, but DT_100THS is 0,=
+ max_regiter is 0x2f,
+then reg will be equal to 0x30, '0x30 < 0x2f' is false,so regmap_writeable =
+will return false.
 
-This was orignally in commit fb5924fddf9e
-("powerpc/mm: Flush cache on memory hot(un)plug") to support memtrace,
-but the flush on add is not needed as it is flushed on remove.
-
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- arch/powerpc/mm/mem.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index fb0d5e9aa11b..43be99de7c9a 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -111,7 +111,6 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
- {
- 	unsigned long start_pfn = start >> PAGE_SHIFT;
- 	unsigned long nr_pages = size >> PAGE_SHIFT;
--	unsigned long i;
- 	int rc;
- 
- 	resize_hpt_for_hotplug(memblock_phys_mem_size());
-@@ -124,11 +123,6 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
- 		return -EFAULT;
- 	}
- 
--	for (i = 0; i < size; i += FLUSH_CHUNK_SIZE) {
--		flush_dcache_range(start + i, min(start + size, start + i + FLUSH_CHUNK_SIZE));
--		cond_resched();
--	}
--
- 	return __add_pages(nid, start_pfn, nr_pages, restrictions);
- }
- 
--- 
-2.21.0
+>=20
+> >
+> > Signed-off-by: Biwen Li <biwen.li@nxp.com>
+> > ---
+> >  drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+> >  1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+> > index a075e77617dc..3450d615974d 100644
+> > --- a/drivers/rtc/rtc-pcf85363.c
+> > +++ b/drivers/rtc/rtc-pcf85363.c
+> > @@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device
+> > *dev, struct rtc_time *tm)
+> >  	buf[DT_YEARS] =3D bin2bcd(tm->tm_year % 100);
+> >
+> >  	ret =3D regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+> > -				tmp, sizeof(tmp));
+> > +				tmp, 2);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	ret =3D regmap_bulk_write(pcf85363->regmap, DT_100THS,
+> > +				buf, sizeof(tmp) - 2);
+> >  	if (ret)
+> >  		return ret;
+> >
+> > --
+> > 2.17.1
 
