@@ -2,83 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56A68EBC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:43:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FA548EBC4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:42:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731916AbfHOMnK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:43:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34766 "EHLO mail.kernel.org"
+        id S1731896AbfHOMmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:42:44 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:45440 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725977AbfHOMnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:43:09 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        id S1725977AbfHOMmn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 08:42:43 -0400
+Received: from zn.tnic (p200300EC2F0B52007D93C58FB2CAB236.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:7d93:c58f:b2ca:b236])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36A3C2084D;
-        Thu, 15 Aug 2019 12:43:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565872988;
-        bh=D/Jks0xo+pMhFeOT08w4aft8IvmKTzcS5/Tm1mJgbco=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eXesuGjnz699u5P/b41p5MmOtNEFuf7/LUanQq21309Kfzc2GLPGSoaAo9f2/z9m0
-         6ziMuNTWX6fgzlYY6hSBuXtFk/P5ANRRorpyhTxmrGA/u/Qneee+GbCzPqMuC25Kfx
-         ctt9oWCR2nZoDCRJYqJbfUT1teCC/gnopa5yv1L4=
-Date:   Thu, 15 Aug 2019 14:43:06 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Paul Menzel <pmenzel@molgen.mpg.de>
-Cc:     x86@kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: warning: =?utf-8?B?4oCYbWVtc2V04oCZ?=
- =?utf-8?Q?_offset_=5B197=2C_448=5D_from_the_object_at_=E2=80=98boot=5Fpar?=
- =?utf-8?Q?ams=E2=80=99_is_out_of_the_bounds_of_referenced_subobject_?=
- =?utf-8?B?4oCYZXh0X3JhbWRpc2tfaW1hZ2XigJkgd2l0aCB0eXBlLCDigJh1bnNpZ25l?=
- =?utf-8?B?ZCBpbnTigJk=?= at offset 192 [-Warray-bounds]
-Message-ID: <20190815124306.GA17581@kroah.com>
-References: <7e44d224-ce7e-909d-e91e-9a643b5fcd71@molgen.mpg.de>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A11E31EC0959;
+        Thu, 15 Aug 2019 14:42:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565872962;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=nh3pf51gCZmQw2YfQM+MgPsZnvg6T7RDaOXPp08q8gE=;
+        b=gHATmie+7+tCBI8m6VDMKU7fIzpG6Gr6CPMbvoCpY4Sx/6dNSKkaakRabgFwpXnYcUMDmo
+        IVIPjnTBkD9mOTeMUULICeC+sF25MCrVSpnq/Gjr+S7YBaj3cLwseX9+xPd5Qug0V6sEUj
+        71VETtXK6yLjo8ZjMz65r/bk4DIXbCU=
+Date:   Thu, 15 Aug 2019 14:43:28 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jiri Slaby <jslaby@suse.cz>
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 04/28] x86/asm/entry: annotate THUNKs
+Message-ID: <20190815124328.GG15313@zn.tnic>
+References: <20190808103854.6192-1-jslaby@suse.cz>
+ <20190808103854.6192-5-jslaby@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7e44d224-ce7e-909d-e91e-9a643b5fcd71@molgen.mpg.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190808103854.6192-5-jslaby@suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 06:15:51PM +0200, Paul Menzel wrote:
-> Dear Linux folks,
+On Thu, Aug 08, 2019 at 12:38:30PM +0200, Jiri Slaby wrote:
+> Place SYM_*_START_NOALIGN and SYM_*_END around the THUNK macro body.
+> Preserve @function by FUNC (64bit) and CODE (32bit). Given it was not
+> marked as aligned, use NOALIGN.
 > 
-> 
-> No idea, if you are interested in these reports. Building Linux 5.3-rc4,
-> GCC 9.2.0 shows the warning below.
-> 
-> ```
-> In file included from arch/x86/kernel/head64.c:35:
-> In function ‘sanitize_boot_params’,
->     inlined from ‘copy_bootdata’ at arch/x86/kernel/head64.c:391:2:
-> ./arch/x86/include/asm/bootparam_utils.h:40:3: warning: ‘memset’ offset [197, 448] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘ext_ramdisk_image’ with type
->  ‘unsigned int’ at offset 192 [-Warray-bounds]
->    40 |   memset(&boot_params->ext_ramdisk_image, 0,
->       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    41 |          (char *)&boot_params->efi_info -
->       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    42 |    (char *)&boot_params->ext_ramdisk_image);
->       |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ./arch/x86/include/asm/bootparam_utils.h:43:3: warning: ‘memset’ offset [493, 497] from the object at ‘boot_params’ is out of the bounds of referenced subobject ‘kbd_status’ with type ‘unsig
-> ned char’ at offset 491 [-Warray-bounds]
->    43 |   memset(&boot_params->kbd_status, 0,
->       |   ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    44 |          (char *)&boot_params->hdr -
->       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~
->    45 |          (char *)&boot_params->kbd_status);
->       |          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> ```
+> The common tail .L_restore is put inside SYM_CODE_START_LOCAL_NOALIGN
+> and SYM_CODE_END too.
 
-Yeah, it shows up on my builds as well :(
+What is that needed for? It is a local label...
 
-Any chance you can make a fix for this?
+> The result:
+>  Value  Size Type    Bind   Vis      Ndx Name
+>   0000    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_on_thunk
+>   001c    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_off_thunk
+>   0038    24 FUNC    GLOBAL DEFAULT    1 lockdep_sys_exit_thunk
+>   0050    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule
+>   0068    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule_notra
 
-thanks,
+No difference except alignment:
 
-greg k-h
+before:
+ 70545: ffffffff81001c20    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_off_thunk
+ 78965: ffffffff81001c00    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_on_thunk
+ 82545: ffffffff81001c80    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule_notra
+ 86963: ffffffff81001c40    24 FUNC    GLOBAL DEFAULT    1 lockdep_sys_exit_thunk
+ 88045: ffffffff81001c60    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule
+
+after:
+ 70545: ffffffff81001c10    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_off_thunk
+ 78965: ffffffff81001bf4    28 FUNC    GLOBAL DEFAULT    1 trace_hardirqs_on_thunk
+ 82545: ffffffff81001c5c    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule_notra
+ 86963: ffffffff81001c2c    24 FUNC    GLOBAL DEFAULT    1 lockdep_sys_exit_thunk
+ 88045: ffffffff81001c44    24 FUNC    GLOBAL DEFAULT    1 ___preempt_schedule
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
