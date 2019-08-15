@@ -2,124 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AC3748EF1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:14:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2DA08EF23
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:16:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbfHOPO6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:14:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57284 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732517AbfHOPO6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:14:58 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=10q5T0aOD1la3+BpiY+S9zqCgRrKNaeZtsX3VZw5VxY=; b=gg4D1gWf8X+2Arko+oEkMeegw
-        UJw1OKqnBBmXrMYrmYbD3BjV+tZ1zPHj86w+/ofJDU7xwAmIUnXa8t9yQ+WdEeHJNEo+cHeBd5nX7
-        deZDXop9Jdtjw1E04bFBXSbmkiG9YkWsY93f23ig1ZCcAutpYl3tlQYQHTIE/PPweHBmDIFCC+Eu/
-        mkQ8ySnIoUMLOZHtt0XJHZC38IvH5L6nWcG3QYYgupmNWwN0MaalbowAh/0wsmBpRBILt8FgJBwNB
-        XOzYaaXWTCJu02wPP57sVrb/RayVlnrUJZQROH4uyBCLm6KYKG9eBbPiRZaqCjYUwXStHmVhRXhAh
-        eLtqoVR5g==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hyHSn-0000cI-1u; Thu, 15 Aug 2019 15:14:53 +0000
-Subject: Re: [PATCH] PCI: pci-hyperv: fix build errors on non-SYSFS config
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     linux-pci <linux-pci@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jake Oshins <jakeo@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Sasha Levin <sashal@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Dexuan Cui <decui@microsoft.com>
-References: <abbe8012-1e6f-bdea-1454-5c59ccbced3d@infradead.org>
- <20190815104748.GB9511@e121166-lin.cambridge.arm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <8e1b9297-c75d-3d64-1d40-c14e9033dc10@infradead.org>
-Date:   Thu, 15 Aug 2019 08:14:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1732672AbfHOPQR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 11:16:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55518 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732623AbfHOPQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:16:17 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A298206C1;
+        Thu, 15 Aug 2019 15:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565882176;
+        bh=YIfI/ppz1LWSDkP2R1sEFsQgzfbXfwcerSHGBbeZVcQ=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=f7BBgtpIhpR9pWeAYZpkjQLqjogcL13PZg3qdB77K49aXzmH7+UAGHJYl2BzFqmTg
+         ftpiCR+aKQnJcT6J8GzHhy0l2POdjDxE8ea++K/LX4Nk8Cp1lx9+09y0tlRtg3ZBPe
+         2ETdoIwk46b6D8EWrqHmNqHzJebqw8y5JXYS84Ng=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190815104748.GB9511@e121166-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190815112614.GA4841@sirena.co.uk>
+References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com> <20190815040221.DE28F2067D@mail.kernel.org> <20190815112614.GA4841@sirena.co.uk>
+Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     "kernelci.org bot" <bot@kernelci.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
+        khilman@baylibre.com, matthew.hart@linaro.org,
+        mgalka@collabora.com, tomeu.vizoso@collabora.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Mark Brown <broonie@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 15 Aug 2019 08:16:15 -0700
+Message-Id: <20190815151616.2A298206C1@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/15/19 3:47 AM, Lorenzo Pieralisi wrote:
-> On Fri, Jul 12, 2019 at 08:53:19AM -0700, Randy Dunlap wrote:
->> From: Randy Dunlap <rdunlap@infradead.org>
->>
->> Fix build errors when building almost-allmodconfig but with SYSFS
->> not set (not enabled).  Fixes these build errors:
->>
->> ERROR: "pci_destroy_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
->> ERROR: "pci_create_slot" [drivers/pci/controller/pci-hyperv.ko] undefined!
->>
->> drivers/pci/slot.o is only built when SYSFS is enabled, so
->> pci-hyperv.o has an implicit dependency on SYSFS.
->> Make that explicit.
->>
->> Also, depending on X86 && X86_64 is not needed, so just change that
->> to depend on X86_64.
->>
->> Fixes: a15f2c08c708 ("PCI: hv: support reporting serial number as slot
->> information")
-> 
-> Fixed line break on Fixes tag, FYI.
+Quoting Mark Brown (2019-08-15 04:26:14)
+> On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
+> > Quoting kernelci.org bot (2019-08-14 20:35:25)
+>=20
+> > > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-li=
+bretech-all-h3-cc
+>=20
+> > If this is the only board that failed, great! Must be something in a
+> > sun8i driver that uses the init structure after registration.
+>=20
+> The infrastructure suppresses duplicate-seeming bisections so I'd not
+> count on it, check the reports on the web site.
 
-Thanks.
-
-> 
->> Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
->> Cc: Matthew Wilcox <willy@infradead.org>
->> Cc: Jake Oshins <jakeo@microsoft.com>
->> Cc: "K. Y. Srinivasan" <kys@microsoft.com>
->> Cc: Haiyang Zhang <haiyangz@microsoft.com>
->> Cc: Stephen Hemminger <sthemmin@microsoft.com>
->> Cc: Stephen Hemminger <stephen@networkplumber.org>
->> Cc: Sasha Levin <sashal@kernel.org>
->> Cc: Bjorn Helgaas <bhelgaas@google.com>
->> Cc: linux-pci@vger.kernel.org
->> Cc: linux-hyperv@vger.kernel.org
->> Cc: Dexuan Cui <decui@microsoft.com>
->> ---
->> v3: corrected Fixes: tag [Dexuan Cui <decui@microsoft.com>]
->>     This is the Microsoft-preferred version of the patch.
->>
->>  drivers/pci/Kconfig |    2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Applied to pci/hv for v5.4.
-> 
-> Thanks,
-> Lorenzo
-> 
->> --- lnx-52.orig/drivers/pci/Kconfig
->> +++ lnx-52/drivers/pci/Kconfig
->> @@ -181,7 +181,7 @@ config PCI_LABEL
->>  
->>  config PCI_HYPERV
->>          tristate "Hyper-V PCI Frontend"
->> -        depends on X86 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && X86_64
->> +        depends on X86_64 && HYPERV && PCI_MSI && PCI_MSI_IRQ_DOMAIN && SYSFS
->>          help
->>            The PCI device frontend driver allows the kernel to import arbitrary
->>            PCI devices from a PCI backend to support PCI driver domains.
->>
->>
-
-
--- 
-~Randy
+Hmm ok. I can remove the change from -next, but I'd still like to figure
+out what is using the init pointer after registration. Is there a way to
+get earlycon logs?
