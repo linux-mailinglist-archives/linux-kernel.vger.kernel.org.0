@@ -2,135 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 915E28ED46
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:49:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9ECC8ED56
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:50:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732549AbfHONtT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 09:49:19 -0400
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:45307 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732504AbfHONtS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:49:18 -0400
-X-Originating-IP: 87.5.130.64
-Received: from uno.localdomain (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 8F425C0006;
-        Thu, 15 Aug 2019 13:49:15 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 15:50:42 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        "open list:MEDIA INPUT INFRASTRUCTURE (V4L/DVB)" 
-        <linux-media@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC 3/5] media: v4l2-ctrls: Add support for V4L2_CID_LOCATION
-Message-ID: <20190815135042.mm2co73badsv2wbo@uno.localdomain>
-References: <20190814202815.32491-1-jacopo@jmondi.org>
- <20190814202815.32491-4-jacopo@jmondi.org>
- <6c9460e2-b607-9863-f8f0-1a94773c6556@xs4all.nl>
+        id S1732575AbfHONu4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 09:50:56 -0400
+Received: from foss.arm.com ([217.140.110.172]:44456 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732426AbfHONu4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:50:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 25C6D344;
+        Thu, 15 Aug 2019 06:50:56 -0700 (PDT)
+Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 068C83F694;
+        Thu, 15 Aug 2019 06:50:54 -0700 (PDT)
+Subject: Re: DMA-API: cacheline tracking ENOMEM, dma-debug disabled due to
+ nouveau ?
+To:     Christoph Hellwig <hch@lst.de>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>, bskeggs@redhat.com,
+        airlied@linux.ie, m.szyprowski@samsung.com,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, iommu@lists.linux-foundation.org
+References: <20190814145033.GA11190@Red>
+ <20190814174927.GT7444@phenom.ffwll.local> <20190815133554.GE12036@lst.de>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <cdb43f4b-55ff-80c3-8d27-56238b2ab1a1@arm.com>
+Date:   Thu, 15 Aug 2019 14:50:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="ipri7ukjihz5d7ak"
-Content-Disposition: inline
-In-Reply-To: <6c9460e2-b607-9863-f8f0-1a94773c6556@xs4all.nl>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190815133554.GE12036@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 15/08/2019 14:35, Christoph Hellwig wrote:
+> On Wed, Aug 14, 2019 at 07:49:27PM +0200, Daniel Vetter wrote:
+>> On Wed, Aug 14, 2019 at 04:50:33PM +0200, Corentin Labbe wrote:
+>>> Hello
+>>>
+>>> Since lot of release (at least since 4.19), I hit the following error message:
+>>> DMA-API: cacheline tracking ENOMEM, dma-debug disabled
+>>>
+>>> After hitting that, I try to check who is creating so many DMA mapping and see:
+>>> cat /sys/kernel/debug/dma-api/dump | cut -d' ' -f2 | sort | uniq -c
+>>>        6 ahci
+>>>      257 e1000e
+>>>        6 ehci-pci
+>>>     5891 nouveau
+>>>       24 uhci_hcd
+>>>
+>>> Does nouveau having this high number of DMA mapping is normal ?
+>>
+>> Yeah seems perfectly fine for a gpu.
+> 
+> That is a lot and apparently overwhelm the dma-debug tracking.  Robin
+> rewrote this code in Linux 4.21 to work a little better, so I'm curious
+> why this might have changes in 4.19, as dma-debug did not change at
+> all there.
 
---ipri7ukjihz5d7ak
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+FWIW, the cacheline tracking entries are a separate thing from the 
+dma-debug entries that I rejigged - judging by those numbers there 
+should still be plenty of free dma-debug entries, but for some reason it 
+has failed to extend the radix tree :/
 
-Hi Hans,
-
-On Thu, Aug 15, 2019 at 03:23:47PM +0200, Hans Verkuil wrote:
-> On 8/14/19 10:28 PM, Jacopo Mondi wrote:
-> > Add support for the newly defined V4L2_CID_LOCATION read-only control
-> > used to report the camera device mounting position.
-> >
-> > Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
-> > ---
-> >  drivers/media/v4l2-core/v4l2-ctrls.c | 7 +++++++
-> >  include/uapi/linux/v4l2-controls.h   | 4 ++++
-> >  2 files changed, 11 insertions(+)
-> >
-> > diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> > index 7d3a33258748..8ab0857df59a 100644
-> > --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> > +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> > @@ -943,6 +943,7 @@ const char *v4l2_ctrl_get_name(u32 id)
-> >  	case V4L2_CID_AUTO_FOCUS_RANGE:		return "Auto Focus, Range";
-> >  	case V4L2_CID_PAN_SPEED:		return "Pan, Speed";
-> >  	case V4L2_CID_TILT_SPEED:		return "Tilt, Speed";
-> > +	case V4L2_CID_LOCATION:			return "Location";
-> >
-> >  	/* FM Radio Modulator controls */
-> >  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-> > @@ -1300,6 +1301,12 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
-> >  		break;
-> >  	case V4L2_CID_MPEG_VIDEO_FWHT_PARAMS:
-> >  		*type = V4L2_CTRL_TYPE_FWHT_PARAMS;
->
-> Missing break!
->
-
-Sorry, this was a trivial mistake. Thanks for spotting!
-
-> Regards,
->
-> 	Hans
->
-> > +	case V4L2_CID_LOCATION:
-> > +		*type = V4L2_CTRL_TYPE_INTEGER;
-> > +		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
-> > +		*min = V4L2_LOCATION_FRONT;
-> > +		*max = V4L2_LOCATION_BACK;
-> > +		*step = 1;
-> >  		break;
-> >  	default:
-> >  		*type = V4L2_CTRL_TYPE_INTEGER;
-> > diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> > index 37807f23231e..5c4c7b245921 100644
-> > --- a/include/uapi/linux/v4l2-controls.h
-> > +++ b/include/uapi/linux/v4l2-controls.h
-> > @@ -889,6 +889,10 @@ enum v4l2_auto_focus_range {
-> >  #define V4L2_CID_PAN_SPEED			(V4L2_CID_CAMERA_CLASS_BASE+32)
-> >  #define V4L2_CID_TILT_SPEED			(V4L2_CID_CAMERA_CLASS_BASE+33)
-> >
-> > +#define V4L2_CID_LOCATION			(V4L2_CID_CAMERA_CLASS_BASE+34)
-> > +#define V4L2_LOCATION_FRONT			(0 << 0)
-> > +#define V4L2_LOCATION_BACK			(1 << 0)
-> > +
-> >  /* FM Modulator class control IDs */
-> >
-> >  #define V4L2_CID_FM_TX_CLASS_BASE		(V4L2_CTRL_CLASS_FM_TX | 0x900)
-> >
->
-
---ipri7ukjihz5d7ak
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1VYzEACgkQcjQGjxah
-VjyXGg//TtjdcaQodf+iq7So6at1omA6DRghCTKwiwhy/mXsNnNp6O3SHF42nFsU
-3Mv9EBaYdzpcmaASPMiT82hxUufOT16IOVQ1L/bBs+/JHnVv0fPtw0LbmuVPIQwD
-gzGHQDKRkgzCzcp54oodPZ9UvtEvxRyUWU/GEzmewd8QTa5kccKEj9+VYPHrRhoz
-SLXzVXSj6ux5kQOvnv9Ys3a3k3EVXhEnNAGvq5kYLohvhlFeI46rQJoSZYsFOfpx
-aFLxfcoRYhOU33LEFLiOykQsIPzUyRMkzbfPOkLUSSUlgFjF8g2tAkusdOWGtU4Q
-KGd9XF4u51zc2O/nUAb0dWjgSOCmALq/Gn6hwH4rFV1pj0m9kfALYOJCwoMpCFrF
-pwxK6sVPkYRrihMz3t0aEEV6iPei9z06S5Ri7hGT+xlE6nfwn2MRy1Biia+NN95Y
-y/AJx9KzSQKba2idsSXMXYBakFJah5p5RnJhIxE1WZef0e0fdTiXnQKp9lvFhA82
-Q9s/48w/bQ2xMyM8A7G8z4NOoxeGeQEfFkytSiR2jxW9cgleDc63zVvwQdUBU+ZW
-4Doso5lGdaUBlkv84HqCAknKF3sQOcMEmpe40eDxYswJ7cTiR2h5bw3ur1VwPhRP
-eIBta5yHl9GShlIXTG5jaSLXIMHp8ZKScISLWuNl0y86ETm+JnM=
-=UjlD
------END PGP SIGNATURE-----
-
---ipri7ukjihz5d7ak--
+Robin.
