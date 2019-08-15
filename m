@@ -2,57 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88EC48F1E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ADF48F1DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732109AbfHORPh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:15:37 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:39935 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731520AbfHORO1 (ORCPT
+        id S1731581AbfHORPb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:15:31 -0400
+Received: from mail-ed1-f97.google.com ([209.85.208.97]:37617 "EHLO
+        mail-ed1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731591AbfHORO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:27 -0400
-Received: by mail-wr1-f99.google.com with SMTP id t16so2862097wra.6
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
+        Thu, 15 Aug 2019 13:14:28 -0400
+Received: by mail-ed1-f97.google.com with SMTP id f22so2719784edt.4
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=hvo1EnWObIjc8cgzVjI5oyqc1tcm26PERJDdCuksuoA=;
-        b=aNYhm6q6mbY28BjQlaRvsa+N4JZK4dCcOWLYJ4PjgkRKzBeMo198yBuZpC8hv0ENNW
-         khirHKmAilByQK+uvj6XZ5ny8RHbkpCX5rxnTrZy6fld7nnxzvYLA/iFUSO3mJbuZOOP
-         E2F8ACY/cGTeGy5gU2l7jZOH707UhTIcaQm/gZOTjeHeMA/GoAT+f+fJox+sZpLvJxzd
-         U8WeAjLarVqRvixPEeri4enHbQkZoaZP0EHoA+zWQNP/nv//mmWJyHuBXWLFzHvTALSr
-         OQFRn/tDS1cCwVi8Mjr9U+diqR0toWd/rLHJaUMUg+A2SjX1DklnR9ccDV4Yc94+LRwf
-         5Awg==
-X-Gm-Message-State: APjAAAW+qEXAh7tyu5vyR1eLEpuXB/R3TsXWKbmuXU+K0ryeWGZztZ07
-        g0fAmxqW2k2ai194oSrdIIROVaiwSDbgbbpybuW2Xk+wZE+RDDWPAK2hw9R5yZVjng==
-X-Google-Smtp-Source: APXvYqwPO9IMVEuBbyw4spZ+oufd8pC6QxP/EfFndhhHqyb1phYS9Uuz9ATo8LbYLMleuuu60dgsG8rzObRo
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr4504460wrn.223.1565889265464;
-        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
+        bh=2ww6/ywSQxx+FgrrjZeNuFo6FDkJCG7XwL5PeJBApYo=;
+        b=hF+Y0+R2BXC0hnGtjRMm4m1MKjJ8YzKqcznn+Lme6nFkc4HN+3sNL+9EmDautmKsIP
+         gxsoyWybDaJG85I62KtRXrOV3vBJnp/Hsodjxn9zIDHtL2WvhhLWijlEp8O9Xpw6avkN
+         +QW8rSJGYUx3St9FB77FNzmJ6bMb2+g/0ynOS/ZarloUD7KWytb7MKDDV+E0ruig2r5N
+         KiiiWEKd1aWhPcRtb+rvDzMW96a0lu+FYTzrTSA9DkiSqihjPF9PlxOMZPJ/JmnNQoTH
+         KZTGk1YFO5eyrz0Y1bT2XRdq3bxyi9GyRyuGkZps/ytGRm1VdkH2rvTLbECQaEkbl4wT
+         vjqA==
+X-Gm-Message-State: APjAAAXc63h9+o6f8FAlODoDnrB77ZDBuNuIYb3c1FOydPM8o8qiHOd/
+        dNKU2Ia3l4a9egCMpLwIP2IU0aJbnHY+zOJs2NJywPg81jgSOuu0LplHIMdowFxbDw==
+X-Google-Smtp-Source: APXvYqx0U9ZCcYUC9eRM0DPks9F0HSMKXSk3Nh5ZEhg1Rg2rsLGzl8YhUIVKN2eZ5e8UAz7seGjHZbV8WmDJ
+X-Received: by 2002:a17:906:b7c9:: with SMTP id fy9mr5281973ejb.237.1565889266689;
+        Thu, 15 Aug 2019 10:14:26 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id l2sm71317wrm.9.2019.08.15.10.14.25
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:25 -0700 (PDT)
+        by smtp-relay.gmail.com with ESMTPS id dt26sm13428ejb.51.2019.08.15.10.14.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:26 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKT-00051i-3B; Thu, 15 Aug 2019 17:14:25 +0000
+        id 1hyJKU-000526-CF; Thu, 15 Aug 2019 17:14:26 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 81F622742BC7; Thu, 15 Aug 2019 18:14:24 +0100 (BST)
+        id C800A2742B9E; Thu, 15 Aug 2019 18:14:25 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     alsa-devel@alsa-project.org, brian.austin@cirrus.com,
-        broonie@kernel.org, Hulk Robot <hulkci@huawei.com>,
-        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, Paul.Handrigan@cirrus.com,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'" to the asoc tree
-In-Reply-To: <20190815090157.70036-1-yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Hulk Robot <hulkci@huawei.com>, lgirdwood@gmail.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Mark Brown <broonie@kernel.org>, matthias.bgg@gmail.com,
+        perex@perex.c, tiwai@suse.com
+Subject: Applied "ASoC: mediatek: mt8183-da7219-max98357: remove unused variable" to the asoc tree
+In-Reply-To: <20190813143952.29232-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171424.81F622742BC7@ypsilon.sirena.org.uk>
-Date:   Thu, 15 Aug 2019 18:14:24 +0100 (BST)
+Message-Id: <20190815171425.C800A2742B9E@ypsilon.sirena.org.uk>
+Date:   Thu, 15 Aug 2019 18:14:25 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'
+   ASoC: mediatek: mt8183-da7219-max98357: remove unused variable
 
 has been applied to the asoc tree at
 
@@ -85,38 +86,47 @@ to this mail.
 Thanks,
 Mark
 
-From bed7f1469f08fd123cdec7a351ef0d875feadcf6 Mon Sep 17 00:00:00 2001
+From 57c3ed42f52cdc51f416c93b19708ef6ceb4a00b Mon Sep 17 00:00:00 2001
 From: YueHaibing <yuehaibing@huawei.com>
-Date: Thu, 15 Aug 2019 17:01:57 +0800
-Subject: [PATCH] ASoC: cs4349: Use PM ops 'cs4349_runtime_pm'
+Date: Tue, 13 Aug 2019 22:39:52 +0800
+Subject: [PATCH] ASoC: mediatek: mt8183-da7219-max98357: remove unused
+ variable
 
-sound/soc/codecs/cs4349.c:358:32: warning:
- cs4349_runtime_pm defined but not used [-Wunused-const-variable=]
+sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c:120:1: warning:
+ mt8183_da7219_max98357_dapm_widgets defined but not used [-Wunused-const-variable=]
+sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c:124:40: warning:
+ mt8183_da7219_max98357_dapm_routes defined but not used [-Wunused-const-variable=]
 
-cs4349_runtime_pm ops already defined, it seems
-we should enable it.
+They are never used, so can be removed.
 
 Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: e40da86 ("ASoC: cs4349: Add support for Cirrus Logic CS4349")
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Link: https://lore.kernel.org/r/20190815090157.70036-1-yuehaibing@huawei.com
+Link: https://lore.kernel.org/r/20190813143952.29232-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/cs4349.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c | 9 ---------
+ 1 file changed, 9 deletions(-)
 
-diff --git a/sound/soc/codecs/cs4349.c b/sound/soc/codecs/cs4349.c
-index 09716fab1e26..3381209a882d 100644
---- a/sound/soc/codecs/cs4349.c
-+++ b/sound/soc/codecs/cs4349.c
-@@ -378,6 +378,7 @@ static struct i2c_driver cs4349_i2c_driver = {
- 	.driver = {
- 		.name		= "cs4349",
- 		.of_match_table	= cs4349_of_match,
-+		.pm = &cs4349_runtime_pm,
- 	},
- 	.id_table	= cs4349_i2c_id,
- 	.probe		= cs4349_i2c_probe,
+diff --git a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+index 2a6097174614..43f99e59a078 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
++++ b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+@@ -116,15 +116,6 @@ static int mt8183_i2s_hw_params_fixup(struct snd_soc_pcm_runtime *rtd,
+ 	return 0;
+ }
+ 
+-static const struct snd_soc_dapm_widget
+-mt8183_da7219_max98357_dapm_widgets[] = {
+-	SND_SOC_DAPM_OUTPUT("IT6505_8CH"),
+-};
+-
+-static const struct snd_soc_dapm_route mt8183_da7219_max98357_dapm_routes[] = {
+-	{"IT6505_8CH", NULL, "TDM"},
+-};
+-
+ /* FE */
+ SND_SOC_DAILINK_DEFS(playback1,
+ 	DAILINK_COMP_ARRAY(COMP_CPU("DL1")),
 -- 
 2.20.1
 
