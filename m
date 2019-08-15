@@ -2,142 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1088F8F204
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:22:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27AFC8F209
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:22:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732211AbfHORWB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:22:01 -0400
-Received: from mga14.intel.com ([192.55.52.115]:16225 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732171AbfHORWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:22:00 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 10:21:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
-   d="scan'208";a="178523176"
-Received: from agluck-desk2.sc.intel.com (HELO agluck-desk2.amr.corp.intel.com) ([10.3.52.68])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Aug 2019 10:21:59 -0700
-Date:   Thu, 15 Aug 2019 10:21:59 -0700
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        id S1732236AbfHORWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:22:14 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35510 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731530AbfHORWN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:22:13 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34so3150145qte.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:22:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OQP1eUr9wWUBvltOQ9Z8Ub62tAaopiVDYE144Am9PUo=;
+        b=HZpXjn+wNo0sYnP8fO/9yi9VvMIl2O1vBqS8Gie0c3FRn6sQcTfP9It56G6JplB5nu
+         6VownGa1B8OF7b8irbXNCSR+PzKi7JmcuM4CQfuPlRxhfFejaHkab6ZOdE3AoI32m0ym
+         9kJ/FcPddnqe494h+5mJIqpN8bMFl29a2XjmzcKwArH2JCGXbQ9IqvTODG3SBiXDo6OK
+         yCF3is3A5wQj8iInyzHqtNlF6mJXcwZY3WY1cZAnr4RFS8A7douZtCnwhELnMFfM1jlj
+         QwAOY9+OGQNin1iSiarC/jXnwc6Mrf+qPsKiJHOkejdQmAIyz9D1rE115khKlpbX0f0O
+         kg7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OQP1eUr9wWUBvltOQ9Z8Ub62tAaopiVDYE144Am9PUo=;
+        b=glyyxno/qr/rJL4Cx3P7d1tnbqdm0bu/cftYg2LDn/O20bnQrIAqdG9XTpmCL1d+uY
+         G4z1zhhaZI4ioUGc8AlePxMKBieNecTC5Q9PO4BpP/Ge8YrYEN7Omk2OkGQsK8MsiOVD
+         T8QTIYIKI8c4cSXxQxfMd9MBk0uOlrcKecGuTq9WQSICcAxKpqFKG/1AOvsJ94aBy1H2
+         RlN/bhKnTXIj9Cef1OdqoPv5GBoec0sJGyjDIha5Bnc1K4WT5dkMhuRPbVWHM7ERgmZQ
+         mBqDd5LubPno/c1Vmig43Fmwbj+N0eyI4TC5EtIfRr/sM28xXtSMZGC+Qfr02FcEInzE
+         pcFg==
+X-Gm-Message-State: APjAAAUdbLylRGgAjlbRyWV78L9ZkHSDPbHiw+4jm3Y9Dm5Et6tUKe0h
+        smK6BhjpkKGitf2tEAvJAM/0z6/k6j7JJQ==
+X-Google-Smtp-Source: APXvYqytVj4F93Lz8NG25cUqyDAsrQnJhJ3dX1TYfOQ21CEln44s8gEqzzxOvwnd/uQdneR7JttTRQ==
+X-Received: by 2002:a02:5105:: with SMTP id s5mr6163824jaa.42.1565889730912;
+        Thu, 15 Aug 2019 10:22:10 -0700 (PDT)
+Received: from [192.168.1.50] ([65.144.74.34])
+        by smtp.gmail.com with ESMTPSA id f9sm4511731ioc.47.2019.08.15.10.22.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 10:22:10 -0700 (PDT)
+Subject: Re: [PATCH] io_uring: fix manual setup of iov_iter for fixed buffers
+To:     Aleix Roca Nonell <aleix.rocanonell@bsc.es>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
- asm/intel-family.h
-Message-ID: <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
-References: <20190814234030.30817-1-tony.luck@intel.com>
- <20190815075822.GC15313@zn.tnic>
+References: <20190815120322.GA19630@rocks>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ab327769-f18d-61d4-1c71-fb7ad60bb53d@kernel.dk>
+Date:   Thu, 15 Aug 2019 11:22:09 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815075822.GC15313@zn.tnic>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190815120322.GA19630@rocks>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 09:58:22AM +0200, Borislav Petkov wrote:
-> On Wed, Aug 14, 2019 at 04:40:30PM -0700, Tony Luck wrote:
-> > There are a few different subsystems in the kernel that depend on
-> > model specific behaviour (perf, EDAC, power, ...). Easier for just
-> > one person to have the task to get new model numbers included instead
-> > of having these groups trip over each other to do it.
-> > 
-> > Signed-off-by: Tony Luck <tony.luck@intel.com>
-> > ---
-> >  MAINTAINERS | 6 ++++++
-> >  1 file changed, 6 insertions(+)
+On 8/15/19 6:03 AM, Aleix Roca Nonell wrote:
+> Commit bd11b3a391e3 ("io_uring: don't use iov_iter_advance() for fixed
+> buffers") introduced an optimization to avoid using the slow
+> iov_iter_advance by manually populating the iov_iter iterator in some
+> cases.
 > 
-> Applied, thanks.
+> However, the computation of the iterator count field was erroneous: The
+> first bvec was always accounted for an extent of page size even if the
+> bvec length was smaller.
 > 
-> As a first order of business, pls sum up the naming scheme convention
-> you guys are going to adhere to so that it is clear to everybody:
-> 
-> https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
-> 
-> in a patch form. :)
+> In consequence, some I/O operations on fixed buffers were unable to
+> operate on the full extent of the buffer, consistently skipping some
+> bytes at the end of it.
 
+Applied, thanks.
 
-Like this?
-
-From 364e337ec2008442a8a77cf919fbf499b297b3f4 Mon Sep 17 00:00:00 2001
-From: Tony Luck <tony.luck@intel.com>
-Date: Thu, 15 Aug 2019 10:04:18 -0700
-Subject: [PATCH] Documentation: x86: Explain Intel model naming convention
-
-This was written in an e-mail by Dave Hansen, but not everybody
-reads the entire LKML archive before posting a patch.
-
-https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
----
- Documentation/x86/index.rst            |  1 +
- Documentation/x86/intel-cpu-models.rst | 37 ++++++++++++++++++++++++++
- 2 files changed, 38 insertions(+)
- create mode 100644 Documentation/x86/intel-cpu-models.rst
-
-diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-index af64c4bb4447..6ba9e9cc5938 100644
---- a/Documentation/x86/index.rst
-+++ b/Documentation/x86/index.rst
-@@ -19,6 +19,7 @@ x86-specific Documentation
-    tlb
-    mtrr
-    pat
-+   intel-cpu-models
-    intel_mpx
-    intel-iommu
-    intel_txt
-diff --git a/Documentation/x86/intel-cpu-models.rst b/Documentation/x86/intel-cpu-models.rst
-new file mode 100644
-index 000000000000..75b5267a5354
---- /dev/null
-+++ b/Documentation/x86/intel-cpu-models.rst
-@@ -0,0 +1,37 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+=======================
-+Intel CPU model numbers
-+=======================
-+
-+The CPU model number on a running system can be found by executing
-+the CPUID(EAX=0) instruction to find the vendor, family, model
-+and stepping.  The model number is found by concatenating two bit
-+fields from the EAX return value. Bits 19:16 (extended model number)
-+and 7:4 (model number).
-+
-+Inside the Linux kernel the vendor, family, model and stepping are
-+stored in the cpuinfo_x86 structure. Model specific code typically
-+uses x86_match_cpu() to determine if it is running on any of some
-+list of CPU models.
-+
-+There are several subsystems that need model specific handling on
-+Intel CPUs. For code legibility it is better to assign names for
-+the various model numbers in the include file <asm/intel-family.h>
-+
-+Currently all interesting Intel CPU models are in family 6.
-+
-+HOWTO Build an INTEL_FAM6_ definition:
-+
-+1. Start with INTEL_FAM6_
-+2. If not Core-family, add a note about it, like "ATOM".  There are only
-+   two options for this (Xeon Phi and Atom).  It is exceedingly unlikely
-+   that you are adding a cpu which needs a new option here.
-+3. Add the processor microarchitecture, not the platform name
-+4. Add a short differentiator if necessary.  Add an _X to differentiate
-+   Server from Client.
-+5. Add an optional comment with the platform name(s)
-+
-+It should end up looking like this:
-+
-+INTEL_FAM6_<ATOM?>_<MICROARCH>_<SHORT...> /* Platform Name */
 -- 
-2.20.1
+Jens Axboe
 
