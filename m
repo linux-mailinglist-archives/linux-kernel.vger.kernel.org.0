@@ -2,94 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9B68EC8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:17:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 889238EC93
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 15:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732207AbfHONRV convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 09:17:21 -0400
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:4217 "EHLO
-        esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731747AbfHONRV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:17:21 -0400
-IronPort-SDR: CZqAmgBqt90rwvWsRi5vb1fTTKYZGxvJ8oRExRKJmAhQ5naPKaZRbd3x2eRSL8ttmHc9JNHtWf
- cMeQrgsoDf1/NfvWXi4sJYwoAUJFAtafVEyG06KKfrj6xa2B/6YJrhgMffLzO0DAZfOeC4QsKZ
- 0N4dDOjx9lcDlyFNP2Nb5/k8AtQOve2z93CvUJzBpuMmNZgPZZU5f7tduxfoZEsrrC4qS0ykW/
- snBWW7ge4GdPY+vGRBDfBFHkyt1ZgycdoWEZ8+huNq949KuAhVaPPwY6fz9XsOeD9VsLu8yg8B
- oNI=
-X-IronPort-AV: E=Sophos;i="5.64,389,1559548800"; 
-   d="scan'208";a="40459753"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 15 Aug 2019 05:17:07 -0800
-IronPort-SDR: SpxPcx9utDYLec0NRy33av/mbpCMPViEgzxb2qwobB+PebuBH/m1zx6KKp/ZKyjsHqT7Z1DNMi
- fpTU6iUVS3viYdAGY/2fbxzVRQnnfp60Wbl2Up/BHwV5c3HpF361gDMv9YJ6JJdypjliG6O/Sq
- uWjLV7NKvapZ8aiO0GFyqzC1KJx7RPLGrqC1OSoMQzv6wh/QnWNWZxna3Kb7NRKSvLVmAFnIMs
- 4F9xPfYCrx8JSnjT9eyBRie9IyRBkW9c8zXJHPeV/fH6Ts57T2xWCxRAg3lPHmnaFWYeFxDh3Z
- HpI=
-From:   "Schmid, Carsten" <Carsten_Schmid@mentor.com>
-To:     Wei Yang <richard.weiyang@gmail.com>
-CC:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bhelgaas@google.com" <bhelgaas@google.com>,
-        "osalvador@suse.de" <osalvador@suse.de>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "richardw.yang@linux.intel.com" <richardw.yang@linux.intel.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: AW: [PATCH v2] kernel/resource.c: invalidate parent when freed
- resource has childs
-Thread-Topic: [PATCH v2] kernel/resource.c: invalidate parent when freed
- resource has childs
-Thread-Index: AQHVUq5kcb5Ex7JpNUSktSjVjdFue6b6xMYAgAEUHnCAAESkAIAAERsQ
-Date:   Thu, 15 Aug 2019 13:17:01 +0000
-Message-ID: <ff78412f81494678bb7685dc2604002e@SVR-IES-MBX-03.mgc.mentorg.com>
-References: <1565278859475.1962@mentor.com> <1565358624103.3694@mentor.com>
- <20190809223831.fk4uyrzscr366syr@master>
- <CAHk-=wi_9sdMxurjZ1MbNnxt-pA=dqoyf8Fdn9aYc8xvjjnTBg@mail.gmail.com>
- <1565794104204.54092@mentor.com> <20190814162932.alwo7g4664c2dtp3@master>
- <c925c7d1041f478c99863da56c24b8a7@SVR-IES-MBX-03.mgc.mentorg.com>
- <20190815130328.yk4cybuuqnzb7xrx@master>
-In-Reply-To: <20190815130328.yk4cybuuqnzb7xrx@master>
-Accept-Language: de-DE, en-IE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [137.202.0.90]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1732221AbfHONTA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 09:19:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:61934 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730211AbfHONTA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 09:19:00 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 06:18:59 -0700
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="171107427"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by orsmga008-auth.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 06:18:53 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 1B0FC206FD; Thu, 15 Aug 2019 16:17:49 +0300 (EEST)
+Date:   Thu, 15 Aug 2019 16:17:49 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Helen Koike <helen.koike@collabora.com>
+Cc:     linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+        eddie.cai.linux@gmail.com, mchehab@kernel.org, heiko@sntech.de,
+        jacob2.chen@rock-chips.com, jeffy.chen@rock-chips.com,
+        zyc@rock-chips.com, linux-kernel@vger.kernel.org,
+        tfiga@chromium.org, hans.verkuil@cisco.com,
+        laurent.pinchart@ideasonboard.com, kernel@collabora.com,
+        ezequiel@collabora.com, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, zhengsq@rock-chips.com,
+        Jacob Chen <cc@rock-chips.com>,
+        Allon Huang <allon.huang@rock-chips.com>
+Subject: Re: [PATCH v8 05/14] media: rkisp1: add Rockchip ISP1 subdev driver
+Message-ID: <20190815131748.GS6133@paasikivi.fi.intel.com>
+References: <20190730184256.30338-1-helen.koike@collabora.com>
+ <20190730184256.30338-6-helen.koike@collabora.com>
+ <20190808091406.GQ21370@paasikivi.fi.intel.com>
+ <da6c1d01-e3f6-ad73-db55-145d7832a665@collabora.com>
+ <20190815082422.GM6133@paasikivi.fi.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815082422.GM6133@paasikivi.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> My gut feeling is this is the problem from mal-functional driver, e.g.
-> xhci-hcd. We do our best to protect core kernel from it instead of do the
-> cleanup for it.
-Agree.
-My intention wasn't to fix mal-functional driver, but to give it a hint
-that it's doing something wrong.
-(In the xhci-hcd case the patch indirectly avoids the later use-after-free in driver,
- a nice side effect here)
-
-I think the same what Linus meant with
-> I'm less interested in the xhci-hcd case - which I certainly *hope* is
-> fixed already? - than in "if this happens somewhere else".
-What about giving only a WARN_ONCE?
-Wouldn't hurt but notice developers and ease bug hunting.
-Would be fine for me too.
-Finally, i also could put the patch in a private branch named "useful_patches" ;-)
-but then the community won't benefit.
-
+On Thu, Aug 15, 2019 at 11:24:22AM +0300, Sakari Ailus wrote:
+> Hi Helen,
 > 
-> So my suggestion is to look into why xhci-hcd behave like this and fix that.
+> On Wed, Aug 14, 2019 at 09:58:05PM -0300, Helen Koike wrote:
 > 
-xhci-hcd fix proposal @ Hans de Goede already.
+> ...
+> 
+> > >> +static int rkisp1_isp_sd_set_fmt(struct v4l2_subdev *sd,
+> > >> +				 struct v4l2_subdev_pad_config *cfg,
+> > >> +				 struct v4l2_subdev_format *fmt)
+> > >> +{
+> > >> +	struct rkisp1_device *isp_dev = sd_to_isp_dev(sd);
+> > >> +	struct rkisp1_isp_subdev *isp_sd = &isp_dev->isp_sdev;
+> > >> +	struct v4l2_mbus_framefmt *mf = &fmt->format;
+> > >> +
+> > > 
+> > > Note that for sub-device nodes, the driver is itself responsible for
+> > > serialising the access to its data structures.
+> > 
+> > But looking at subdev_do_ioctl_lock(), it seems that it serializes the
+> > ioctl calls for subdevs, no? Or I'm misunderstanding something (which is
+> > most probably) ?
+> 
+> Good question. I had missed this change --- subdev_do_ioctl_lock() is
+> relatively new. But setting that lock is still not possible as the struct
+> is allocated in the framework and the device is registered before the
+> driver gets hold of it. It's a good idea to provide the same serialisation
+> for subdevs as well.
+> 
+> I'll get back to this later.
 
-Best regards
-Carsten
+The main reason is actually that these ops are also called through the
+sub-device kAPI, not only through the uAPI, and the locks are only taken
+through the calls via uAPI.
+
+So adding the locks to uAPI calls alone would not address the issue.
+
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
