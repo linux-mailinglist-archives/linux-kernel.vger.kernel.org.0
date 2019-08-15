@@ -2,108 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 860DE8F22B
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:28:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B3BE68F246
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730325AbfHOR2m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:28:42 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39236 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726203AbfHOR2m (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:28:42 -0400
-Received: by mail-ot1-f65.google.com with SMTP id b1so7162964otp.6
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:28:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=L0GqPPZ3ptyjBkt7aBOY+B9eZEmSOFdqgFUkWXmTO1k=;
-        b=elMBytnSkJObtOhpcJ7Xs6NSK2Zels7ZXnuvJKtDo7E/y+sRTtehbpYEgdfEqVVQAe
-         KqeV+Z/+6xSDjCkXSbhKtJON1HD6dEg1WDp7qu0NyKIMHY5WsaUDYZlEZacJsR4pyi8Q
-         pPMcC4GNOtrTkW3MLpbzTNHtf+c/XjrlNS7OteTSuWtNE6x+0XFsOYDqGE+Qy89vO/b5
-         ciRfccITYue+8mjdkhKDrJAbD+tZMNI/plcncKU6yK+YbrNSQdoX/jyJ+qIIAYeUHtSk
-         lBVKTMSqji4XkczEOouA5UsRHjFT2PCvgxarNlqjY80Dk52+BQLUJpFREPWdLB8oxDiO
-         GLxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=L0GqPPZ3ptyjBkt7aBOY+B9eZEmSOFdqgFUkWXmTO1k=;
-        b=X+B0289ohiS3yWLwX6uKar5KhyLWEC6UtFBJxAny+hfZ7PzaOxq4rcVC3x7CQXsfUa
-         4lFwkUuxytvUZD29IAdc+DP7kJGH6/zGzEKbM2pCyeswL+6KmHSiSxgKkFdNVKt0AV6N
-         vBD3hUeBJ7b3POszLZzhLpNWWnIdiPbfQIa9UAoHUB9SZ3FHmRcEZwZON61Pq5KY4ohA
-         B5fX6Yr+hqGLpUik3NjT7JtM6qsLxSS5OMJvtfdvPOJONK0W2E1dZmkFLCjqgF1iTGRL
-         DG9TPmehUnRkdPzRyTThyxbbd337cr72vs27Q4EOVtLI7kaWVuoPRX8C0I3rbzl/gQw4
-         FZ7g==
-X-Gm-Message-State: APjAAAXd4ZZRnjhsGI89zyX2U6JW42P6iNZbQPHWHxyMVuZirrPvjo80
-        j3H1ne651WuCp9znHlSCgRWcQa+sKvg+vpugBOAoMh3n
-X-Google-Smtp-Source: APXvYqyBTBaI9eJbvDjqXYBo8fRWxyThpItUw1gVkcDVt08Xz/Q10OjpEU3cZtbZCeecsS0S9fRvt9+7d9K6qfNXZo0=
-X-Received: by 2002:a05:6830:458:: with SMTP id d24mr4109027otc.126.1565890121099;
- Thu, 15 Aug 2019 10:28:41 -0700 (PDT)
+        id S1731634AbfHORdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:33:16 -0400
+Received: from mga18.intel.com ([134.134.136.126]:31604 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726203AbfHORdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 13:33:15 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 10:32:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,389,1559545200"; 
+   d="scan'208";a="176934043"
+Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Aug 2019 10:32:49 -0700
+Date:   Thu, 15 Aug 2019 10:30:03 -0700
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ashok.raj@intel.com, keith.busch@intel.com
+Subject: Re: [PATCH v5 2/7] PCI/ATS: Initialize PRI in pci_ats_init()
+Message-ID: <20190815173003.GB139211@skuppusw-desk.amr.corp.intel.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+References: <cover.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <3dd8c36177ac52d9a87655badb000d11785a5a4a.1564702313.git.sathyanarayanan.kuppuswamy@linux.intel.com>
+ <20190815044657.GD253360@google.com>
 MIME-Version: 1.0
-References: <20190731111207.12836-1-pagupta@redhat.com>
-In-Reply-To: <20190731111207.12836-1-pagupta@redhat.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Thu, 15 Aug 2019 10:28:30 -0700
-Message-ID: <CAPcyv4gLqd43CLDuGYrDdx4xR1_oc3D0hzdETz8uQmV1C2Dp_Q@mail.gmail.com>
-Subject: Re: [PATCH] libnvdimm: change disk name of virtio pmem disk
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Keith Busch <keith.busch@intel.com>,
-        "Weiny, Ira" <ira.weiny@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815044657.GD253360@google.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 4:12 AM Pankaj Gupta <pagupta@redhat.com> wrote:
->
-> This patch adds prefix 'v' in disk name for virtio pmem.
-> This differentiates virtio-pmem disks from the pmem disks.
+On Wed, Aug 14, 2019 at 11:46:57PM -0500, Bjorn Helgaas wrote:
+> On Thu, Aug 01, 2019 at 05:05:59PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
+> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > 
+> > Currently, PRI Capability checks are repeated across all PRI API's.
+> > Instead, cache the capability check result in pci_pri_init() and use it
+> > in other PRI API's. Also, since PRI is a shared resource between PF/VF,
+> > initialize default values for common PRI features in pci_pri_init().
+> > 
+> > Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+> > ---
+> >  drivers/pci/ats.c       | 80 ++++++++++++++++++++++++++++-------------
+> >  include/linux/pci-ats.h |  5 +++
+> >  include/linux/pci.h     |  1 +
+> >  3 files changed, 61 insertions(+), 25 deletions(-)
+> > 
+> 
+> > diff --git a/drivers/pci/ats.c b/drivers/pci/ats.c
+> > index cdd936d10f68..280be911f190 100644
+> > --- a/drivers/pci/ats.c
+> > +++ b/drivers/pci/ats.c
+> 
+> > @@ -28,6 +28,8 @@ void pci_ats_init(struct pci_dev *dev)
+> >  		return;
+> >  
+> >  	dev->ats_cap = pos;
+> > +
+> > +	pci_pri_init(dev);
+> >  }
+> >  
+> >  /**
+> > @@ -170,36 +172,72 @@ int pci_ats_page_aligned(struct pci_dev *pdev)
+> >  EXPORT_SYMBOL_GPL(pci_ats_page_aligned);
+> >  
+> >  #ifdef CONFIG_PCI_PRI
+> > +
+> > +void pci_pri_init(struct pci_dev *pdev)
+> > +{
+> > ...
+> > +}
+> 
+> > diff --git a/include/linux/pci-ats.h b/include/linux/pci-ats.h
+> > index 1a0bdaee2f32..33653d4ca94f 100644
+> > --- a/include/linux/pci-ats.h
+> > +++ b/include/linux/pci-ats.h
+> > @@ -6,6 +6,7 @@
+> >  
+> >  #ifdef CONFIG_PCI_PRI
+> >  
+> > +void pci_pri_init(struct pci_dev *pdev);
+> 
+> pci_pri_init() is implemented and called in drivers/pci/ats.c.  Unless
+> there's a need to call this from outside ats.c, it should be static
+> and should not be declared here.
+> 
+> If you can make it static, please also reorder the code so you don't
+> need a forward declaration in ats.c.
+Initially I did implement it as static function in drivers/pci/ats.c
+and protected the calling of pci_pri_init() with #ifdef CONFIG_PCI_PRI.
+But Keith did not like the implementation using #ifdefs and asked me to
+define empty functions. That's the reason for moving it to header file.
+In your previous review to this patch, since this is not used outside ats.c
+you asked me to move the declaraion to drivers/pci/pci.h. So I was planing
+to move it to drivers/pci/pci.h in next version. Let me know if you are in
+agreement.
+> 
+> >  int pci_enable_pri(struct pci_dev *pdev, u32 reqs);
+> >  void pci_disable_pri(struct pci_dev *pdev);
+> >  void pci_restore_pri_state(struct pci_dev *pdev);
+> > @@ -13,6 +14,10 @@ int pci_reset_pri(struct pci_dev *pdev);
+> >  
+> >  #else /* CONFIG_PCI_PRI */
+> >  
+> > +static inline void pci_pri_init(struct pci_dev *pdev)
+> > +{
+> > +}
+> > +
+> >  static inline int pci_enable_pri(struct pci_dev *pdev, u32 reqs)
+> >  {
+> >  	return -ENODEV;
 
-I don't think the small matter that this device does not support
-MAP_SYNC warrants a separate naming scheme.  That said I do think we
-need to export this attribute in sysfs, likely at the region level,
-and then display that information in ndctl. This is distinct from the
-btt case where it is operating a different data consistency contract
-than baseline pmem.
->
-> Signed-off-by: Pankaj Gupta <pagupta@redhat.com>
-> ---
->  drivers/nvdimm/namespace_devs.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/nvdimm/namespace_devs.c b/drivers/nvdimm/namespace_devs.c
-> index a16e52251a30..8e5d29266fb0 100644
-> --- a/drivers/nvdimm/namespace_devs.c
-> +++ b/drivers/nvdimm/namespace_devs.c
-> @@ -182,8 +182,12 @@ const char *nvdimm_namespace_disk_name(struct nd_namespace_common *ndns,
->                 char *name)
->  {
->         struct nd_region *nd_region = to_nd_region(ndns->dev.parent);
-> +       const char *prefix = "";
->         const char *suffix = NULL;
->
-> +       if (!is_nvdimm_sync(nd_region))
-> +               prefix = "v";
-> +
->         if (ndns->claim && is_nd_btt(ndns->claim))
->                 suffix = "s";
->
-> @@ -201,7 +205,7 @@ const char *nvdimm_namespace_disk_name(struct nd_namespace_common *ndns,
->                         sprintf(name, "pmem%d.%d%s", nd_region->id, nsidx,
->                                         suffix ? suffix : "");
->                 else
-> -                       sprintf(name, "pmem%d%s", nd_region->id,
-> +                       sprintf(name, "%spmem%d%s", prefix, nd_region->id,
->                                         suffix ? suffix : "");
->         } else if (is_namespace_blk(&ndns->dev)) {
->                 struct nd_namespace_blk *nsblk;
-> --
-> 2.20.1
->
+-- 
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
