@@ -2,80 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F4118E8FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 12:26:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 553028E8DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 12:16:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730345AbfHOK0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 06:26:14 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:36364 "EHLO inva020.nxp.com"
+        id S1731327AbfHOKQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 06:16:40 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:46644 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729996AbfHOK0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 06:26:11 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B4DA1A0275;
-        Thu, 15 Aug 2019 12:26:10 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BBEBC1A000E;
-        Thu, 15 Aug 2019 12:26:04 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B5613402F1;
-        Thu, 15 Aug 2019 18:25:57 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com, Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-Subject: [v2 3/3] arm64: dts: ls1028a: Add properties node for Display output pixel clock
-Date:   Thu, 15 Aug 2019 18:16:13 +0800
-Message-Id: <20190815101613.22872-3-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190815101613.22872-1-wen.he_1@nxp.com>
-References: <20190815101613.22872-1-wen.he_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1725875AbfHOKQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 06:16:39 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8A73130832E1;
+        Thu, 15 Aug 2019 10:16:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.136])
+        by smtp.corp.redhat.com (Postfix) with SMTP id D50D12C8C6;
+        Thu, 15 Aug 2019 10:16:36 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Thu, 15 Aug 2019 12:16:39 +0200 (CEST)
+Date:   Thu, 15 Aug 2019 12:16:36 +0200
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Song Liu <songliubraving@fb.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <matthew.wilcox@oracle.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Kernel Team <Kernel-team@fb.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        "srikar@linux.vnet.ibm.com" <srikar@linux.vnet.ibm.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        "Kirill A. Shutemov" <kirill@shutemov.name>
+Subject: Re: [PATCH v12 5/6] khugepaged: enable collapse pmd for pte-mapped
+ THP
+Message-ID: <20190815101635.GD32051@redhat.com>
+References: <20190808163303.GB7934@redhat.com>
+ <770B3C29-CE8F-4228-8992-3C6E2B5487B6@fb.com>
+ <20190809152404.GA21489@redhat.com>
+ <3B09235E-5CF7-4982-B8E6-114C52196BE5@fb.com>
+ <4D8B8397-5107-456B-91FC-4911F255AE11@fb.com>
+ <20190812121144.f46abvpg6lvxwwzs@box>
+ <20190812132257.GB31560@redhat.com>
+ <20190812144045.tkvipsyit3nccvuk@box>
+ <2D11C742-BB7E-4296-9E97-5114FA58474B@fb.com>
+ <857DA509-D891-4F4C-A55C-EE58BC2CC452@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <857DA509-D891-4F4C-A55C-EE58BC2CC452@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 15 Aug 2019 10:16:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The LS1028A has a clock domain PXLCLK0 used for the Display output
-interface in the display core, independent of the system bus frequency,
-for flexible clock design. This display core has its own pixel clock.
+Hi Song,
 
-This patch enable the pixel clock provider on the LS1028A.
+sorry, I forgot to reply to this email,
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+On 08/13, Song Liu wrote:
+>
+> Do you have further comments for the version below? If not, could you
+> please reply with your Acked-by or Reviewed-by?
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 2d31e1c09e74..5218d65588c3 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -70,11 +70,18 @@
- 		clock-output-names = "sysclk";
- 	};
- 
--	dpclk: clock-dp {
-+	osc_27m: clock-osc-27m {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
- 		clock-frequency = <27000000>;
--		clock-output-names= "dpclk";
-+		clock-output-names = "phy_27m";
-+	};
-+
-+	dpclk: clock-display@f1f0000 {
-+		compatible = "fsl,ls1028a-plldig";
-+		reg = <0x0 0xf1f0000 0x0 0xffff>;
-+		#clock-cells = <0>;
-+		clocks = <&osc_27m>;
- 	};
- 
- 	aclk: clock-axi {
--- 
-2.17.1
+I see nothing wrong in the last series, no objections from me.
+
+I don't think I can't ack the changes in this area, but feel free to
+add my Reviewed-by.
+
+Oleg.
 
