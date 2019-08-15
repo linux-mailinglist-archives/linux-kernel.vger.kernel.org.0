@@ -2,87 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D25678E88E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AEF88E895
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:50:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730781AbfHOJtY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 05:49:24 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:38796 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728464AbfHOJtY (ORCPT
+        id S1730816AbfHOJu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 05:50:28 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33154 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728464AbfHOJu2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 05:49:24 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 667D880C11; Thu, 15 Aug 2019 11:49:09 +0200 (CEST)
-Date:   Thu, 15 Aug 2019 11:49:22 +0200
-From:   Pavel Machek <pavel@denx.de>
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?iso-8859-1?Q?Bj=F8rn?= Mork <bjorn@mork.no>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Lars Melin <larsm17@gmail.com>,
-        Marcel Partap <mpartap@gmx.net>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Scott <hashcode0f@gmail.com>,
-        NeKit <nekit1000@gmail.com>, Sebastian Reichel <sre@kernel.org>
-Subject: Re: [PATCHv2] USB: serial: option: Add Motorola modem UARTs
-Message-ID: <20190815094922.GB11427@amd>
-References: <20190815082602.51765-1-tony@atomide.com>
+        Thu, 15 Aug 2019 05:50:28 -0400
+Received: by mail-wm1-f65.google.com with SMTP id p77so670712wme.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 02:50:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=mKkMiDKSyTJw/7LVXvJilrdQ57dob5YNo/WJXmcLijk=;
+        b=BMseJm3z6S9MxdMPZJLAQxw7tPAQfIUYAjVsgMSj9cLCf4LmrzQor4CFmFgY/SjLEG
+         75mJ2jvcnojlEid0jF/MQNgq97aK2934GhcalsuR0D3hXi2gFslRFnY75+y/gUgGKVE3
+         2E4KNcGkg8oJlhmf1JNNiOhizQuXbNNuYIgsbCXd9vxYD0JrmoQXQ6peHtsegzS+WPL1
+         FAck5MmlkR88NAzEId0SJYS+fm5qeSkm29NV193KIFx0de3l8ifBcqOZm1wdiObWzN24
+         gNGsOn0vKK8hx58q9V7BmvdIrZFR9gh2EHyhM0bZ3c3YgO0GkWE5RXw5vLulmLTcvy0W
+         yc8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=mKkMiDKSyTJw/7LVXvJilrdQ57dob5YNo/WJXmcLijk=;
+        b=uD4gjfoLj+CaFLol1O/nWlDpy8QFyZGcTCbM/zCC4AfdiU6GvxuobKi7Ly+jRyufGJ
+         rwm187XY7EroFRvT1vIEvP31n159Tsd3oeXsntRwQbGwZ8YkvCnEm7+2cvo3nLAB/37i
+         cCf1eYKLp6j32W5rRtPjiXMYUe4pRok6At4Er+ylL4om1hS8qSSHcKzii7JpKC55tAJq
+         wfig8JLuQn/SfqYKXEYPKf9nTfHzM9ZJZB44DVKroJwAF9+0ZnQU7mp4iXePv/99p825
+         s+NHHqZ8krYwrKcn4scZHULCTk+Vr0KFTsOk5B0ssOvB9htpRqno0S6Ns4WgKa0InKMA
+         XEiA==
+X-Gm-Message-State: APjAAAVJ5ecFUZ0L8SQlq2899UpCcY6oy1FHHiJ97z1494MpM+F5edGg
+        ZJNMWta5tbg/7/zDlIOVm5j9NukRdJCLHpi5lAA=
+X-Google-Smtp-Source: APXvYqz94fq2ADONlIKyArk4Y1yujO0jrcMmkTVmBRXut/REfFD+JZQ5Vfe7V8omjv9B0bV6YafiYZYs0K7m1eWbCF0=
+X-Received: by 2002:a1c:f618:: with SMTP id w24mr1999845wmc.112.1565862626427;
+ Thu, 15 Aug 2019 02:50:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
-Content-Disposition: inline
-In-Reply-To: <20190815082602.51765-1-tony@atomide.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a1c:4409:0:0:0:0:0 with HTTP; Thu, 15 Aug 2019 02:50:25
+ -0700 (PDT)
+Reply-To: jessicavail090@gmail.com
+From:   Jessica Vail <frank.roy459@gmail.com>
+Date:   Thu, 15 Aug 2019 09:50:25 +0000
+Message-ID: <CA+=he5t0eEFHB3zHNDb_rfEk-eU8zn7p4e3stZqS=GtmYDe0tA@mail.gmail.com>
+Subject: Hi dear,
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi dear,
 
---rS8CxjVDS/+yyDmU
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm Jessica Vail, from the United States,please i wish to have a
+communication with you.
 
-On Thu 2019-08-15 01:26:02, Tony Lindgren wrote:
-> On Motorola Mapphone devices such as Droid 4 there are five USB ports
-> that do not use the same layout as Gobi 1K/2K/etc devices listed in
-> qcserial.c. So we should use qcaux.c or option.c as noted by
-> Dan Williams <dan.j.williams@intel.com>.
->=20
-> As the Motorola USB serial ports have an interrupt endpoint as shown
-> with lsusb -v, we should use option.c instead of qcaux.c as pointed out
-> by Johan Hovold <johan@kernel.org>.
->=20
-> The ff/ff/ff interfaces seem to always be UARTs on Motorola devices.
-> For the other interfaces, class 0x0a (CDC Data) should not in general
-> be added as they are typically part of a multi-interface function as
-> noted earlier by Bj=F8rn Mork <bjorn@mork.no>.
+I am waiting for your answer,
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
-> Cc: Sebastian Reichel <sre@kernel.org>
-> Tested-by: Pavel Machek <pavel@ucw.cz>
-> Signed-off-by: Tony Lingren <tony@atomide.com>
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---rS8CxjVDS/+yyDmU
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1VKqIACgkQMOfwapXb+vJ+YwCeOiINkTCJCV7hE+8e3sPOiUW8
-Y5QAoIYZz3Ln70nhSt3ikoVxqRegCq93
-=k4Po
------END PGP SIGNATURE-----
-
---rS8CxjVDS/+yyDmU--
+Jessica Vail,
