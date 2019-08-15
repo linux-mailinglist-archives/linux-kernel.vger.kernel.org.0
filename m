@@ -2,88 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C9248E311
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 05:13:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298528E315
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 05:14:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729325AbfHODNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 23:13:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42160 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727217AbfHODNW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 23:13:22 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 05BC74628B;
-        Thu, 15 Aug 2019 03:13:22 +0000 (UTC)
-Received: from [10.10.120.60] (ovpn-120-60.rdu2.redhat.com [10.10.120.60])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3E90D1001B02;
-        Thu, 15 Aug 2019 03:13:21 +0000 (UTC)
-Subject: Re: [PATCH] nbd: add a missed nbd_config_put() in nbd_xmit_timeout()
-To:     "sunke (E)" <sunke32@huawei.com>, josef@toxicpanda.com,
-        axboe@kernel.dk, linux-block@vger.kernel.org, nbd@other.debian.org,
+        id S1729687AbfHODOG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 23:14:06 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45995 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfHODOG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 23:14:06 -0400
+Received: by mail-pg1-f196.google.com with SMTP id o13so655332pgp.12;
+        Wed, 14 Aug 2019 20:14:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=RTx+dQdBrh00Kn9mHjwvPfU+NaiUOj18Vh2dAGiUWPc=;
+        b=Eb0fvx1Eg6BZFhSsKdV62SSGQo19TR7Voq+Ph8h7/AzeS2hsafMg51LallcPXDoqb/
+         HA0CNrZkIkCmazMYs24n9ri1VO3DUqmPgGYrDNlpk0S+eaFYjDbkRBIfhnqwlMqPiiit
+         uf1vt5LnrR4Genams95bpkhXZd3K3ZPlHxg4aTWCnMNDiCORDji18akynMCU8ofBXzwo
+         7jn5rgqb5rEwAH1qfMnRfLErzlTi6Zzc6h047D78Z/jjK7vdI82b+2yWrd1GwrZ6mAhF
+         Lhn2RE0MqnGJ0XIAWyqFcFz8Mzcq5582VqIKnfhjdNEh466i0TQ3BdPFED75r0SnlzqQ
+         wSxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RTx+dQdBrh00Kn9mHjwvPfU+NaiUOj18Vh2dAGiUWPc=;
+        b=HSrTluH02lk5etiG4k9wrWcHMQejEX5clTa+dA4yeRKe7tcCBf3aUEPP4MJGOIzT3f
+         h8MnX02x/Naiw45N0GYxctSDJ5Q5PXUgpCQLcHYG3VMGlxbourzfea3C2VEXORKadYez
+         jV/maDlOKYpiz9BdiC0WWV0B9J05vNrCdjns/D7d7URHgpG112T6KTlupW/wvEMJoix4
+         cYWKY/cPmTyTxvyvmUSTgGH8SOIDPOfMHyblQJf4TZiKloWUOgzjOhnL2ZJxafwUdmDL
+         QIVY0wMAzt7pwTiB09Vihf+aIyeV6DOc5PU62WBScv2e6WJ8Z8uCTmO6kYv3WYFANhKR
+         WqeA==
+X-Gm-Message-State: APjAAAVMG6ndX0c+Hw+IHpMVdOo/oUkgwHTHTGnZJ58+ol2WkekNZ0cE
+        9KknIiyrYNmHpt09mLUrj39iNEGq
+X-Google-Smtp-Source: APXvYqz8p5NvUaO1d/1NGQNhozFZSzg90YWYYqpmKrL5wtTFHmpLULND1kxxwaWE+qgK8YFBKSj96w==
+X-Received: by 2002:a17:90a:ba93:: with SMTP id t19mr304997pjr.139.1565838845337;
+        Wed, 14 Aug 2019 20:14:05 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g11sm1500550pfk.187.2019.08.14.20.14.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 20:14:04 -0700 (PDT)
+Subject: Re: [PATCH] sh: Drop -Werror from kernel Makefile
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc:     Rich Felker <dalias@libc.org>, linux-sh@vger.kernel.org,
         linux-kernel@vger.kernel.org
-References: <1565613086-13776-1-git-send-email-sunke32@huawei.com>
- <05b3cd4a-d2c1-5ad7-7a39-64bac470032a@huawei.com>
-From:   Mike Christie <mchristi@redhat.com>
-Message-ID: <5D54CDD0.1010701@redhat.com>
-Date:   Wed, 14 Aug 2019 22:13:20 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.6.0
+References: <1564971263-21562-1-git-send-email-linux@roeck-us.net>
+ <87a7cdpi06.wl-ysato@users.sourceforge.jp>
+ <ee8b2e37-643d-9b29-b7de-d83c7739c3a0@roeck-us.net>
+ <ea8c7d68-d799-6a7e-9606-e011951bf22e@embeddedor.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <f07114e2-0b25-9f0e-0c05-b8e61ba673ca@roeck-us.net>
+Date:   Wed, 14 Aug 2019 20:14:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <05b3cd4a-d2c1-5ad7-7a39-64bac470032a@huawei.com>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 15 Aug 2019 03:13:22 +0000 (UTC)
+In-Reply-To: <ea8c7d68-d799-6a7e-9606-e011951bf22e@embeddedor.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Josef had ackd my patch for the same thing here:
-
-https://www.spinics.net/lists/linux-block/msg43800.html
-
-so maybe Jens will pick that up with the rest of the set Josef had acked:
-
-https://www.spinics.net/lists/linux-block/msg43809.html
-
-to make it easier.
-
-On 08/14/2019 08:27 PM, sunke (E) wrote:
-> ping
+On 8/14/19 5:59 PM, Gustavo A. R. Silva wrote:
+> Guenter,
 > 
-> ÔÚ 2019/8/12 20:31, Sun Ke Ð´µÀ:
->> When try to get the lock failed, before return, execute the
->> nbd_config_put() to decrease the nbd->config_refs.
+> On 8/13/19 8:18 AM, Guenter Roeck wrote:
 >>
->> If the nbd->config_refs is added but not decreased. Then will not
->> execute nbd_clear_sock() in nbd_config_put(). bd->task_setup will
->> not be cleared away. Finally, print"Device being setup by another
->> task" in nbd_add_sock() and nbd device can not be reused.
->>
->> Fixes: 8f3ea35929a0 ("nbd: handle unexpected replies better")
->> Signed-off-by: Sun Ke <sunke32@huawei.com>
->> ---
->>   drivers/block/nbd.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
->> index e21d2de..a69a90a 100644
->> --- a/drivers/block/nbd.c
->> +++ b/drivers/block/nbd.c
->> @@ -357,8 +357,10 @@ static enum blk_eh_timer_return
->> nbd_xmit_timeout(struct request *req,
->>       }
->>       config = nbd->config;
->>   -    if (!mutex_trylock(&cmd->lock))
->> +    if (!mutex_trylock(&cmd->lock)) {
->> +        nbd_config_put(nbd);
->>           return BLK_EH_RESET_TIMER;
->> +    }
->>         if (config->num_connections > 1) {
->>           dev_err_ratelimited(nbd_to_dev(nbd),
+>> Please note that _mainline_ builds are currently broken.
 >>
 > 
+> This should be fixed now:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=41de59634046b19cd53a1983594a95135c656997
+> 
+
+Yes, it is.
+
+Thanks!
+
+Guenter
 
