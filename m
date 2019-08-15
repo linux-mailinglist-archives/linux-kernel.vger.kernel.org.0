@@ -2,231 +2,198 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E64E8E1A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:03:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5C638E1A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 02:04:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfHOADC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 14 Aug 2019 20:03:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbfHOADC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:03:02 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ABAF2086C;
-        Thu, 15 Aug 2019 00:03:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565827381;
-        bh=RtMAYfIjXbyIwNtKxUn/T57yGlOX78wkZ0yS6geZUQY=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Gi6hs8MhufhyIXn3oDRGHnWb4PKIOTGT7g3cIUF1p9gUr606juKvhsmvzk1QWdeR3
-         TULen+AC/P/9ssDC/6SEiWa676VANHnK6SdDuG0Vxc+8RYqcziRvC5Nv9dDc5x4YL3
-         +Sc9H+pDanpJHuW+FrqmQwYKAPUlNAyB2gVaG5Ks=
-Content-Type: text/plain; charset="utf-8"
+        id S1728781AbfHOAEB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 14 Aug 2019 20:04:01 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:39625 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726119AbfHOAEA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Aug 2019 20:04:00 -0400
+Received: by mail-oi1-f193.google.com with SMTP id 16so628389oiq.6;
+        Wed, 14 Aug 2019 17:03:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YPTBaJLD3D/u6walQ8y9NQD1N5lcuts2Kk/49zILziw=;
+        b=a9kKTsPERfA4T4/IuV7BQpfXwEmT0OefjpLqFp1KOxPeJV7X0ITbcYyTNHrxcDkP0U
+         cLZ3tX7s4hLtexS5/mGOUhUcZaXLlfOtcOOGNO6AAaEBRLlRZea+EcP42OSlRoIsAeo7
+         FeiEpZYerJsJk84Y8N3YdYC5/hF9FSYI9oY+CNRIQie4hBt6W8nAZkz3ZXhtLuzSjwn8
+         tQoKcKz0qAioZ17+nR1UFeopJQDZ2wOF7qmOd8cx5npJy8diDudk9IOX9Gio0M/ITD8H
+         TGwoc8oLl/PMcuUPa5okGq+7kUaXueotRBHcyGQpJke/zqfT8u8SKhXIcZi7jC6VNGMj
+         HPbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=YPTBaJLD3D/u6walQ8y9NQD1N5lcuts2Kk/49zILziw=;
+        b=iF8X9G4tF/REIlbDkNJZA6Rz0q0XfBEHv6BQKAuB+pIqODb8Lb0Zs9LOjdQqkFrMEL
+         8DP2ZAHUWS9fb08KjApBqlr/B9ehRSV+hdhjD6AN4N1rHZ0GAvIUekGYT04JLQCLdIHo
+         ee7VMEePI4uWlKUsXPfMMR5mKL1RJq+NXUMIAIx6GxYxeq4NDiqTq2zQ60w87Pp/OD18
+         kvEey6vm88M2Wbp4vJaQyaq0DSHqFe+9RzBh8iQaxNBKlLwRSHHMoqZe5kLYHL+/hIjF
+         UGlLKmGjkynXI5ccXPNt+0HD6ihqRmvXqTYsas2y+aq58rmrM4CnAgpVipu00pDhzBLo
+         Ly9Q==
+X-Gm-Message-State: APjAAAU/nHkqzGd3+gXXPWslNBq5DogCK8B/+BgOarJLzwmal4gWQ0kw
+        KHDNxwLFWqnOtU53ngTftNU=
+X-Google-Smtp-Source: APXvYqzIS5Ql9OSvCapX12ZA26wlw4RWfNnpgchMEH4A84CibU0GviPLsji5VuKlpeaYLnc/PtnIrQ==
+X-Received: by 2002:a05:6808:2c3:: with SMTP id a3mr333060oid.121.1565827439381;
+        Wed, 14 Aug 2019 17:03:59 -0700 (PDT)
+Received: from localhost.members.linode.com ([2600:3c00::f03c:91ff:fe99:7fe5])
+        by smtp.gmail.com with ESMTPSA id k24sm455013oic.29.2019.08.14.17.03.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 14 Aug 2019 17:03:58 -0700 (PDT)
+From:   Anton Protopopov <a.s.protopopov@gmail.com>
+To:     Andrii Nakryiko <andriin@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>,
+        netdev@vger.kernel.org, bpf@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     Anton Protopopov <a.s.protopopov@gmail.com>
+Subject: [PATCH bpf-next] tools: libbpf: update extended attributes version of bpf_object__open()
+Date:   Thu, 15 Aug 2019 00:03:30 +0000
+Message-Id: <20190815000330.12044-1-a.s.protopopov@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190521125114.20357-2-miquel.raynal@bootlin.com>
-References: <20190521125114.20357-1-miquel.raynal@bootlin.com> <20190521125114.20357-2-miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v5 1/4] clk: core: link consumer with clock driver
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 17:03:00 -0700
-Message-Id: <20190815000301.3ABAF2086C@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Miquel Raynal (2019-05-21 05:51:10)
-> One major concern when, for instance, suspending/resuming a platform
-> is to never access registers before the underlying clock has been
-> resumed, otherwise most of the time the kernel will just crash. One
-> solution is to use syscore operations when registering clock drivers
-> suspend/resume callbacks. One problem of using syscore_ops is that the
-> suspend/resume scheduling will depend on the order of the
-> registrations, which brings (unacceptable) randomness in the process.
->=20
-> A feature called device links has been introduced to handle such
-> situation. It creates dependencies between consumers and providers,
-> enforcing e.g. the suspend/resume order when needed. Such feature is
-> already in use for regulators.
->=20
-> Add device links support in the clock subsystem by creating/deleting
-> the links at get/put time.
->=20
-> Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
->=20
-> marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013=
-800.pinctrl:xtal-clk
-> marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800=
-.pinctrl:xtal-clk
-> marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013=
-800.pinctrl:xtal-clk
-> marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a cons=
-umer to d0013200.tbg
-> marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a cons=
-umer to d0013800.pinctrl:xtal-clk
-> marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a cons=
-umer to d0013200.tbg
-> mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
-> xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
-> mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal=
--clk
-> advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
-> cpu cpu0: Dropping the link to d0013000.nb-periph-clk
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
->=20
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
+Update the bpf_object_open_attr structure and corresponding code so that the
+bpf_object__open_xattr function could be used to open objects from buffers as
+well as from files.  The reason for this change is that the existing
+bpf_object__open_buffer function doesn't provide a way to specify neither the
+needs_kver nor flags parameters to the internal call to __bpf_object__open
+which makes it inconvenient for loading BPF objects which doesn't require a
+kernel version.
 
-This patch doesn't apply. Things have changed upstream.
+Two new fields, obj_buf and obj_buf_sz, were added to the structure, and the
+file field was union'ed with obj_name so that one can open an object like this:
 
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index ec6f04dcf5e6..e6b84ab43f9f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1676,6 +1710,8 @@ static void clk_reparent(struct clk_core *core, str=
-uct clk_core *new_parent)
-> =20
->                 if (was_orphan !=3D becomes_orphan)
->                         clk_core_update_orphan_status(core, becomes_orpha=
-n);
-> +
-> +               clk_link_hierarchy(core, new_parent);
+    struct bpf_object_open_attr attr = {
+        .obj_name   = name,
+        .obj_buf    = obj_buf,
+        .obj_buf_sz = obj_buf_sz,
+        .prog_type  = BPF_PROG_TYPE_UNSPEC,
+    };
+    return bpf_object__open_xattr(&attr);
 
-This isn't going to work.
+while still being able to use the file semantics:
 
- BUG: sleeping function called from invalid context at kernel/locking/mutex=
-.c:909
- in_atomic(): 1, irqs_disabled(): 128, pid: 1, name: swapper/0
- 3 locks held by swapper/0/1:
-  #0: (____ptrval____) (&dev->mutex){....}, at: __device_driver_lock+0x40/0=
-x4c
-  #1: (____ptrval____) (prepare_lock){+.+.}, at: clk_prepare_lock+0x18/0x94
-  #2: (____ptrval____) (enable_lock){....}, at: clk_enable_lock+0x34/0xdc
- irq event stamp: 311516
- hardirqs last  enabled at (311515): [<ffffff901fce5c90>] _raw_spin_unlock_=
-irqrestore+0x54/0x90
- hardirqs last disabled at (311516): [<ffffff901f73d468>] clk_enable_lock+0=
-x28/0xdc
- softirqs last  enabled at (311348): [<ffffff901f28188c>] __do_softirq+0x4c=
-c/0x514
- softirqs last disabled at (311341): [<ffffff901f2f89ac>] irq_exit+0xd8/0xf8
- CPU: 4 PID: 1 Comm: swapper/0 Tainted: G        W         5.3.0-rc4-00005-=
-g6be06bbec80ef #10
- Hardware name: Google Cheza (rev3+) (DT)
- Call trace:
-  dump_backtrace+0x0/0x13c
-  show_stack+0x20/0x2c
-  dump_stack+0xc4/0x12c
-  ___might_sleep+0x1b4/0x1c4
-  __might_sleep+0x50/0x88
-  __mutex_lock_common+0x5c/0xbfc
-  mutex_lock_nested+0x40/0x50
-  device_link_add+0x88/0x3ac
-  clk_reparent+0xc4/0x114
-  __clk_set_parent_before+0x74/0x90
-  clk_change_rate+0x98/0x854
-  clk_core_set_rate_nolock+0x1b0/0x21c
-  clk_set_rate+0x3c/0x6c
-  of_clk_set_defaults+0x29c/0x364
-  platform_drv_probe+0x28/0xb0
-  really_probe+0x130/0x2b4
-  driver_probe_device+0x64/0xfc
-  device_driver_attach+0x4c/0x6c
-  __driver_attach+0xb0/0xc4
-  bus_for_each_dev+0x84/0xcc
-  driver_attach+0x2c/0x38
-  bus_add_driver+0xfc/0x1d0
-  driver_register+0x64/0xf0
-  __platform_driver_register+0x4c/0x58
-  msm_drm_register+0x5c/0x60
-  do_one_initcall+0x1e0/0x478
-  do_initcall_level+0x21c/0x25c
-  do_basic_setup+0x60/0x78
-  kernel_init_freeable+0x128/0x1b0
-  kernel_init+0x14/0x100
-  ret_from_fork+0x10/0x18
+    struct bpf_object_open_attr attr = {
+        .file       = path,
+        .prog_type  = BPF_PROG_TYPE_UNSPEC,
+    };
+    return bpf_object__open_xattr(&attr);
 
->         } else {
->                 hlist_add_head(&core->child_node, &clk_orphan_list);
->                 if (!was_orphan)
-> @@ -2402,6 +2438,8 @@ __clk_init_parent(struct clk_core *core, bool updat=
-e_orphan)
->         if (!parent_hw)
->                 return NULL;
-> =20
-> +       clk_link_hierarchy(core, parent_hw->core);
-> +
+Another thing to note is that since the commit c034a177d3c8 ("bpf: bpftool, add
+flag to allow non-compat map definitions") which introduced a MAPS_RELAX_COMPAT
+flag to load objects with non-compat map definitions, bpf_object__open_buffer
+was called with this flag enabled (it was passed as the boolean true value in
+flags argument to __bpf_object__open).  The default behaviour for all open
+functions is to clear this flag and this patch changes bpf_object__open_buffer
+to clears this flag.  It can be enabled, if needed, by opening an object from
+buffer using __bpf_object__open_xattr.
 
-This is the hunk that doesn't apply anymore.
+Signed-off-by: Anton Protopopov <a.s.protopopov@gmail.com>
+---
+ tools/lib/bpf/libbpf.c | 45 ++++++++++++++++++++++++++----------------
+ tools/lib/bpf/libbpf.h |  7 ++++++-
+ 2 files changed, 34 insertions(+), 18 deletions(-)
 
->         return parent_hw->core;
->  }
-> =20
-
-The general thought is that it would be good to _not_ call the device
-link APIs from deep within the clk parent changing code or even parent
-initialization code. It would be better to make device links based on
-the possible parents of a clk controller when the clk is registered and
-after the clk prepare lock (i.e. the registration lock) is dropped. Is
-this possible? The problem is that we're deeply nested in locks that are
-already hard to reason about and get out from underneath. I don't want
-to get into some sort of ABBA deadlock scenario with the PM core. The
-usage of runtime PM in the clk framework is probably busted right now
-because it is used under the prepare lock. Ugh.
-
-Is it necessary to add the device links between different clk
-controllers either? I mean, is it necessary to create links between clks
-and their parents right now?  Maybe we can take the easy way out and
-just make links between devices that call clk_get() and the devices that
-provide those clks (the consumer side). I suppose you may want to order
-suspend/resume of a device with the parent clks of some clk that is
-acquired from clk_get(). I hope it isn't required though, because this
-is a problem to do with ordering suspend/resume of the clk tree itself,
-which isn't really solved at all.
-
-We probably need to solve that by doing something clk provider specific
-in the clk framework to figure out a way for device drivers that provide
-clks to get callbacks to suspend/resume clks in the clk tree in some
-sort of topo-sorted order. That way we can traverse the clk tree and
-call down into provider drivers for each clk it registered to do things
-like restore the clk frequency or clk enable/prepare state, etc. It
-needs to be done in a certain order and it's not possible to flatten
-that order into a sequential list of providers (that correspond 1:1 with
-devices) given that there are loops between providers.
-
-But from the perspective of a consumer driver like PCI, I don't see why
-it needs to care about the clk tree suspend/resume ordering details. It
-really only cares that the clk it's consuming, at the edge of the tree,
-is resumed before the consumer itself, PCI, is resumed. However the
-dependencies of that clk it's consuming is managed, be it with device
-links or something clk framework specific, doesn't matter to the PCI
-driver. And other clks that are parents or grandparents of the clk
-consumed by PCI could have device link dependencies themselves, on
-something like an i2c controller or such. Even then, we don't need to
-use device links in the clk tree to describe ordering between clks. We
-can do it without device links and break the device link chain when it
-crosses the clk tree.
-
-  PCI -[device link]-> PCI leaf clk provider -[clk framework ordering black=
- box]-> parent of leaf clk -[device link]-> i2c controller=20
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index 2233f919dd88..7c8054afd901 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -3630,13 +3630,31 @@ __bpf_object__open(const char *path, void *obj_buf, size_t obj_buf_sz,
+ struct bpf_object *__bpf_object__open_xattr(struct bpf_object_open_attr *attr,
+ 					    int flags)
+ {
++	char tmp_name[64];
++
+ 	/* param validation */
+-	if (!attr->file)
++	if (!attr)
+ 		return NULL;
+ 
+-	pr_debug("loading %s\n", attr->file);
++	if (attr->obj_buf) {
++		if (attr->obj_buf_sz <= 0)
++			return NULL;
++		if (!attr->file) {
++			snprintf(tmp_name, sizeof(tmp_name), "%lx-%lx",
++				 (unsigned long)attr->obj_buf,
++				 (unsigned long)attr->obj_buf_sz);
++			attr->obj_name = tmp_name;
++		}
++		pr_debug("loading object '%s' from buffer\n", attr->obj_name);
++	} else if (!attr->file) {
++		return NULL;
++	} else {
++		attr->obj_buf_sz = 0;
+ 
+-	return __bpf_object__open(attr->file, NULL, 0,
++		pr_debug("loading object file '%s'\n", attr->file);
++	}
++
++	return __bpf_object__open(attr->file, attr->obj_buf, attr->obj_buf_sz,
+ 				  bpf_prog_type__needs_kver(attr->prog_type),
+ 				  flags);
+ }
+@@ -3660,21 +3678,14 @@ struct bpf_object *bpf_object__open_buffer(void *obj_buf,
+ 					   size_t obj_buf_sz,
+ 					   const char *name)
+ {
+-	char tmp_name[64];
+-
+-	/* param validation */
+-	if (!obj_buf || obj_buf_sz <= 0)
+-		return NULL;
+-
+-	if (!name) {
+-		snprintf(tmp_name, sizeof(tmp_name), "%lx-%lx",
+-			 (unsigned long)obj_buf,
+-			 (unsigned long)obj_buf_sz);
+-		name = tmp_name;
+-	}
+-	pr_debug("loading object '%s' from buffer\n", name);
++	struct bpf_object_open_attr attr = {
++		.obj_name	= name,
++		.obj_buf	= obj_buf,
++		.obj_buf_sz	= obj_buf_sz,
++		.prog_type	= BPF_PROG_TYPE_UNSPEC,
++	};
+ 
+-	return __bpf_object__open(name, obj_buf, obj_buf_sz, true, true);
++	return bpf_object__open_xattr(&attr);
+ }
+ 
+ int bpf_object__unload(struct bpf_object *obj)
+diff --git a/tools/lib/bpf/libbpf.h b/tools/lib/bpf/libbpf.h
+index e8f70977d137..634f278578dd 100644
+--- a/tools/lib/bpf/libbpf.h
++++ b/tools/lib/bpf/libbpf.h
+@@ -63,8 +63,13 @@ LIBBPF_API libbpf_print_fn_t libbpf_set_print(libbpf_print_fn_t fn);
+ struct bpf_object;
+ 
+ struct bpf_object_open_attr {
+-	const char *file;
++	union {
++		const char *file;
++		const char *obj_name;
++	};
+ 	enum bpf_prog_type prog_type;
++	void *obj_buf;
++	size_t obj_buf_sz;
+ };
+ 
+ LIBBPF_API struct bpf_object *bpf_object__open(const char *path);
+-- 
+2.19.1
 
