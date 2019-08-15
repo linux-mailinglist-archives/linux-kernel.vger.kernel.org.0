@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 704178E684
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F7E18E6A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 10:36:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731055AbfHOIfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 04:35:25 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:46622 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730609AbfHOIfY (ORCPT
+        id S1731094AbfHOIfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 04:35:47 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40954 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731076AbfHOIfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 04:35:24 -0400
-Received: by mail-lf1-f66.google.com with SMTP id n19so1118901lfe.13
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 01:35:23 -0700 (PDT)
+        Thu, 15 Aug 2019 04:35:45 -0400
+Received: by mail-lf1-f67.google.com with SMTP id b17so1143647lff.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 01:35:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=rIQuHahZHT61N3pBhyPaMSRx0lDKJTzgLeGkPUGpwnw=;
-        b=Y+FH2yajTgKkaI7nsmE3WEZkZeDokd2RUNA2EldWJj3L3ayjASGWVw8k2Ij/OubaDA
-         M5j0TR6ZH7t2zzUaVTqdINB8m5lZjQKpnPOSypEFo2alm8nos9NKEpcKFvMeG4r1uAGP
-         8AaHAOiGbMsxK4DiqokN1Oe/6ULi7Td0OYQaU6PgDrUrliFei/NY6KsdXRXQTJ6grcA2
-         +XXBHx1lgL1P0ofcfjauBj28vKllqp7gfVIDQ8OSvDzcvPiPEFztsRnRSqMrrh/2PyyG
-         Dd0SqjtUzV6NYaebRMJOREUG+7ff7D1na1lXslQREjafp/2W4q53ICtF5IW5iS9XRfz6
-         bsYg==
+        bh=LckeMEL++L98xkE6bRHUomn8itgtRqdrAYiiSW7aPt8=;
+        b=jPedfFTQpgM6N16VFCMmcxfHRcTAvQLEVyl2L+pi2uNbG2bAZTYPJy6zsyYd/zsq75
+         qLGM6kd/VOPA6/+zGy4f2K6XHTk26IBdEHY/QLWxecOs/9lvtdbmOJfZwKIQJ7DlE+sE
+         YPADIXmnziNit+bcqcv1rMbb3OPAfelMCc27OtpaNVFdT2cms0GzvMd1b8R0vzNSkYZj
+         89bhsFLRmjCXBeGnfb0+txiyL5JPTobZE1xPE4SJnCl4HZqvVhB6UcxWPwOK7DObetSQ
+         fffSbk6TjILxq9Q88zUiRn1VeY8FagM25tADUr0X8nG874svkQvTRhpsxvLxr4M5G22L
+         rQ2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=rIQuHahZHT61N3pBhyPaMSRx0lDKJTzgLeGkPUGpwnw=;
-        b=pJTyvavX66tEf4vtwzG+6EJrJSliWPoAFRtMVJ76nedHZ0qKBXVVDl4buIvldXsbGe
-         uoEPfIVYn4yrSv8931jA9fZWLmgafKZzI3elF04sDeVNhfBmE/SWqhkUdO160zwsGrZK
-         G05jqjgnfan7iN2eNp2OkuaTv9O5nfyu0r2wJnj927hQyQowE9cyow5uApQpriEYOWzp
-         8MmOTjJenqOYC8jXx0brNhHT2BRbm6VCL/A/GZSSYCVDhsoFDkhvqu1SurnLEUQtWWXM
-         zHACt7u5oa6q711coabqtaRy/xGf7knR1fAaMjqR8g9vv6NgCNjXAQnhb88yyjyKwDI3
-         c28g==
-X-Gm-Message-State: APjAAAUOzirxqu+XByPH+oTwqTpvWz1BpLzrIANmCttQjbJq5E8rfVM7
-        SDmW0Z5vhFua5/AwCw4wjo2P8J2WpO4t5vXDG5DK/A==
-X-Google-Smtp-Source: APXvYqy4JWhaSExzEs8fNpyvhhFIffJYnQjxDmgWOFMcNEneP7xcjaUdbR6c+1Du9tQXJhhtHsvVS1Z3y4aDb+ws8Qs=
-X-Received: by 2002:ac2:5939:: with SMTP id v25mr1829550lfi.115.1565858122600;
- Thu, 15 Aug 2019 01:35:22 -0700 (PDT)
+        bh=LckeMEL++L98xkE6bRHUomn8itgtRqdrAYiiSW7aPt8=;
+        b=YX9gPKQxB9D00cjLgOQnB6McTa7F56Bshop0R3DomHI31IzSKkR4sZtvBPlnc+ejoV
+         8n55QK95Ys2ZBrmk/Kd6xWUUTg7mj1I4g6JOuNgrngJwLj0pxqVP4yltzDzMJhFTOLIg
+         dZc1E4PWaOWAoekeE4JUSYW1zUBPYiAJHH5rxl60SfSU2ufgNvo9kY9TE0yinbG6mhrJ
+         ib5ZHFfzizn0Gzc1YE/PnB2j+f1pHXWlSiE0s5+B2sf3jCEhE/fRgl1GL9yWkRbEJL8p
+         m5dwR0ZqB/18m+QJsivHNVEZMjcCOXqsbVriRQr4LhDWldetDc2pXdKPBgB/m3nlBC4n
+         8Hzg==
+X-Gm-Message-State: APjAAAVGzJwHn746mDpbNoZM3eSjjjEw6y2RKRyWmY2QqxWBnaR3Hg0z
+        oDNkfAoGJWGsvoCgVQkmeZGekDjVI7PLzdhjF/cF+Q==
+X-Google-Smtp-Source: APXvYqwK1EXF1OlxOI1zDtBRCI1LlnDOnp15wcax8wzG7tnNStvRwTaXt1N5txPI2Ni93wI6DJH8/9XBc1qmOdGdFeU=
+X-Received: by 2002:a19:ed11:: with SMTP id y17mr1783154lfy.141.1565858143676;
+ Thu, 15 Aug 2019 01:35:43 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190815004854.19860-1-masneyb@onstation.org> <20190815004854.19860-4-masneyb@onstation.org>
-In-Reply-To: <20190815004854.19860-4-masneyb@onstation.org>
+References: <20190815004854.19860-1-masneyb@onstation.org> <20190815004854.19860-9-masneyb@onstation.org>
+In-Reply-To: <20190815004854.19860-9-masneyb@onstation.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Aug 2019 10:35:10 +0200
-Message-ID: <CACRpkdbCwUbn68trGZTN8pe8rF8x6SeAW1gd7bwFTs3z-6vK=A@mail.gmail.com>
-Subject: Re: [PATCH 03/11] drm/bridge: analogix-anx78xx: silence -EPROBE_DEFER warnings
+Date:   Thu, 15 Aug 2019 10:35:31 +0200
+Message-ID: <CACRpkdavMPW1gv8jGUJb-48+=9XCmT=_bsMQFEx3Tk06aQNcAA@mail.gmail.com>
+Subject: Re: [PATCH 08/11] drm/msm/hdmi: silence -EPROBE_DEFER warning
 To:     Brian Masney <masneyb@onstation.org>
 Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -77,8 +77,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Thu, Aug 15, 2019 at 2:49 AM Brian Masney <masneyb@onstation.org> wrote:
 
-> Silence two warning messages that occur due to -EPROBE_DEFER errors to
-> help cleanup the system boot log.
+> Silence a warning message due to an -EPROBE_DEFER error to help cleanup
+> the system boot log.
 >
 > Signed-off-by: Brian Masney <masneyb@onstation.org>
 
