@@ -2,97 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA89E8F5FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:51:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 847E38F606
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 22:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732845AbfHOUvg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 16:51:36 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49862 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730540AbfHOUvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 16:51:36 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CD57286663;
-        Thu, 15 Aug 2019 20:51:35 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.178])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id C77D017B64;
-        Thu, 15 Aug 2019 20:51:34 +0000 (UTC)
-Date:   Thu, 15 Aug 2019 16:51:33 -0400
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/15] mm: remove the pgmap field from struct hmm_vma_walk
-Message-ID: <20190815205132.GC25517@redhat.com>
-References: <CAPcyv4hMUzw8vyXFRPe2pdwef0npbMm9tx9wiZ9MWkHGhH1V6w@mail.gmail.com>
- <20190814073854.GA27249@lst.de>
- <20190814132746.GE13756@mellanox.com>
- <CAPcyv4g8usp8prJ+1bMtyV1xuedp5FKErBp-N8+KzR=rJ-v0QQ@mail.gmail.com>
- <20190815180325.GA4920@redhat.com>
- <CAPcyv4g4hzcEA=TPYVTiqpbtOoS30ahogRUttCvQAvXQbQjfnw@mail.gmail.com>
- <20190815194339.GC9253@redhat.com>
- <CAPcyv4jid8_=-8hBpn_Qm=c4S8BapL9B9RGT7e9uu303yH=Yqw@mail.gmail.com>
- <20190815203306.GB25517@redhat.com>
- <20190815204128.GI22970@mellanox.com>
+        id S1732931AbfHOUxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 16:53:34 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:39368 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732720AbfHOUxe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 16:53:34 -0400
+Received: by mail-qt1-f196.google.com with SMTP id l9so3818037qtu.6
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 13:53:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=lca.pw; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSpVZiPBrGYAUGx+Ea3a4Y0npIYaRGCqHD40eUQBGCU=;
+        b=HYBnUyoVPsBJvVkswIQnogJxrcbVs8FykxsadpD+OBBcZSLXZY31yp6SetRVZSo3gw
+         pXzFGNahpp430zsf6TO5hgqAge4ytAHZkg3cz+qsLurhE/NR2LeM/v5U35AorKka9gOm
+         F0/agF8rX0XtBCdT4/DrAcB6EFxp+zi7TzRss7TkheyzTzqRpE6DOQzim91W1HXcSLOE
+         wbTK2OuQvyTNEOSMn5Q8UkH9VBs/SMEVMpdybq9m9vQdnq1OEvPmmwCNhZn9WugTWoTF
+         SFcCB60AjKm8JKJrM2UOHkhWHNhcfq764HCA8eZz6beZKGzsZJxEXd1W7upwpenkYYWx
+         fjpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSpVZiPBrGYAUGx+Ea3a4Y0npIYaRGCqHD40eUQBGCU=;
+        b=dzi3VsSsY1fIIpL/s4kcG8NJzjjHm2De/nS83zyiw6Anl99Y3oNdRH5uLituUuBtHL
+         PYEWK3XJ+3yHLWr0F8GfTM9M+OEDqMCPgAM18DmkW5rQTqeiHXdy07DC1hrBcjmYfwnX
+         tnQxh4IuqI2R3idGSGWOl5ULRYDRBRvZKlv/Fsf3cYLHF79QpBNN9PNmOZvVU9coyuyY
+         lejZszbUdCMkeBpeRw70fp1OnbRSvQ6S0u5aSxVUIz52iTNwzAQY8CvQd9EOx/0Zc2w+
+         l5gYz16ko/W+4X4s9YOpNK1pSIQPTutciXnheFx7qQh21yjVQkIcjpVdB496ZZGbjxj8
+         /SbA==
+X-Gm-Message-State: APjAAAW/qvSVlhsTEiyXhudsiAOrU42igj+by1YsUnYFQpqvJXbp+jJw
+        3vROdzPgZdbqnIEltO2IWS9hWw==
+X-Google-Smtp-Source: APXvYqzbXNyNwRv677yBKxMuVBmtR2yPqIKJwxHbRYZPkBY8ioVL+BuHkgNtj5ndJuuFzEJngE7PkQ==
+X-Received: by 2002:a0c:b0ef:: with SMTP id p44mr4599552qvc.27.1565902413583;
+        Thu, 15 Aug 2019 13:53:33 -0700 (PDT)
+Received: from ovpn-122-72.rdu2.redhat.com (pool-71-184-117-43.bstnma.fios.verizon.net. [71.184.117.43])
+        by smtp.gmail.com with ESMTPSA id x3sm1991828qkl.71.2019.08.15.13.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 15 Aug 2019 13:53:33 -0700 (PDT)
+From:   Qian Cai <cai@lca.pw>
+To:     akpm@linux-foundation.org
+Cc:     James.Bottomley@HansenPartnership.com, deller@gmx.de,
+        linux@roeck-us.net, kirill.shutemov@linux.intel.com,
+        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Qian Cai <cai@lca.pw>
+Subject: [PATCH] parisc: fix compilation errrors
+Date:   Thu, 15 Aug 2019 16:53:05 -0400
+Message-Id: <20190815205305.1382-1-cai@lca.pw>
+X-Mailer: git-send-email 2.20.1 (Apple Git-117)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190815204128.GI22970@mellanox.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Thu, 15 Aug 2019 20:51:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 08:41:33PM +0000, Jason Gunthorpe wrote:
-> On Thu, Aug 15, 2019 at 04:33:06PM -0400, Jerome Glisse wrote:
-> 
-> > So nor HMM nor driver should dereference the struct page (i do not
-> > think any iommu driver would either),
-> 
-> Er, they do technically deref the struct page:
-> 
-> nouveau_dmem_convert_pfn(struct nouveau_drm *drm,
-> 			 struct hmm_range *range)
-> 		struct page *page;
-> 		page = hmm_pfn_to_page(range, range->pfns[i]);
-> 		if (!nouveau_dmem_page(drm, page)) {
-> 
-> 
-> nouveau_dmem_page(struct nouveau_drm *drm, struct page *page)
-> {
-> 	return is_device_private_page(page) && drm->dmem == page_to_dmem(page)
-> 
-> 
-> Which does touch 'page->pgmap'
-> 
-> Is this OK without having a get_dev_pagemap() ?
->
-> Noting that the collision-retry scheme doesn't protect anything here
-> as we can have a concurrent invalidation while doing the above deref.
+The commit 0cfaee2af3a0 ("include/asm-generic/5level-fixup.h: fix
+variable 'p4d' set but not used") converted a few functions from macros
+to static inline, which causes parisc to complain,
 
-Uh ? How so ? We are not reading the same code i think.
+In file included from ./include/asm-generic/4level-fixup.h:38:0,
+                 from ./arch/parisc/include/asm/pgtable.h:5,
+                 from ./arch/parisc/include/asm/io.h:6,
+                 from ./include/linux/io.h:13,
+                 from sound/core/memory.c:9:
+./include/asm-generic/5level-fixup.h:14:18: error: unknown type name
+'pgd_t'; did you mean 'pid_t'?
+ #define p4d_t    pgd_t
+                  ^
+./include/asm-generic/5level-fixup.h:24:28: note: in expansion of macro
+'p4d_t'
+ static inline int p4d_none(p4d_t p4d)
+                            ^~~~~
 
-My read is that function is call when holding the device
-lock which exclude any racing mmu notifier from making
-forward progress and it is also protected by the range so
-at the time this happens it is safe to dereference the
-struct page. In this case any way we can update the
-nouveau_dmem_page() to check that page page->pgmap == the
-expected pgmap.
+It is because "4level-fixup.h" is included before "asm/page.h" where
+"pgd_t" is defined.
 
-Cheers,
-Jérôme
+Fixes: 0cfaee2af3a0 ("include/asm-generic/5level-fixup.h: fix variable 'p4d' set but not used")
+Reported-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Qian Cai <cai@lca.pw>
+---
+ arch/parisc/include/asm/pgtable.h | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/arch/parisc/include/asm/pgtable.h b/arch/parisc/include/asm/pgtable.h
+index a39b079e73f2..6d58c1739b42 100644
+--- a/arch/parisc/include/asm/pgtable.h
++++ b/arch/parisc/include/asm/pgtable.h
+@@ -2,6 +2,7 @@
+ #ifndef _PARISC_PGTABLE_H
+ #define _PARISC_PGTABLE_H
+ 
++#include <asm/page.h>
+ #include <asm-generic/4level-fixup.h>
+ 
+ #include <asm/fixmap.h>
+@@ -98,8 +99,6 @@ static inline void purge_tlb_entries(struct mm_struct *mm, unsigned long addr)
+ 
+ #endif /* !__ASSEMBLY__ */
+ 
+-#include <asm/page.h>
+-
+ #define pte_ERROR(e) \
+ 	printk("%s:%d: bad pte %08lx.\n", __FILE__, __LINE__, pte_val(e))
+ #define pmd_ERROR(e) \
+-- 
+2.20.1 (Apple Git-117)
+
