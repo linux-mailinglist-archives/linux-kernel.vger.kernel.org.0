@@ -2,161 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A874E8E50E
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:55:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 286128E514
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 08:56:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730276AbfHOGzE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 02:55:04 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42230 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726098AbfHOGzE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 02:55:04 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7F6pkoj092889
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 02:55:03 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ucwk40cxb-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 02:55:02 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 15 Aug 2019 07:55:00 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Aug 2019 07:54:56 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7F6stfi50921518
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Aug 2019 06:54:55 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 68AA9A4060;
-        Thu, 15 Aug 2019 06:54:55 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 31DEEA4054;
-        Thu, 15 Aug 2019 06:54:54 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.59])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 15 Aug 2019 06:54:54 +0000 (GMT)
-Date:   Thu, 15 Aug 2019 09:54:52 +0300
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     "Alastair D'Silva" <alastair@au1.ibm.com>
-Cc:     alastair@d-silva.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Qian Cai <cai@lca.pw>, Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/6] powerpc: Chunk calls to flush_dcache_range in
- arch_*_memory
-References: <20190815041057.13627-1-alastair@au1.ibm.com>
- <20190815041057.13627-5-alastair@au1.ibm.com>
+        id S1730493AbfHOG4p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 02:56:45 -0400
+Received: from mga11.intel.com ([192.55.52.93]:41130 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726098AbfHOG4o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 02:56:44 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Aug 2019 23:56:44 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,388,1559545200"; 
+   d="scan'208";a="171034750"
+Received: from allen-box.sh.intel.com (HELO [10.239.159.136]) ([10.239.159.136])
+  by orsmga008.jf.intel.com with ESMTP; 14 Aug 2019 23:56:40 -0700
+Cc:     baolu.lu@linux.intel.com, corbet@lwn.net, tony.luck@intel.com,
+        fenghua.yu@intel.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-doc@vger.kernel.org, linux-ia64@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        Thomas.Lendacky@amd.com, Suravee.Suthikulpanit@amd.com,
+        Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH 08/10] iommu: Set default domain type at runtime
+To:     Joerg Roedel <joro@8bytes.org>
+References: <20190814133841.7095-1-joro@8bytes.org>
+ <20190814133841.7095-9-joro@8bytes.org>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <a8e804dd-a8ae-2e0d-6b3c-698fbc96bf75@linux.intel.com>
+Date:   Thu, 15 Aug 2019 14:55:39 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815041057.13627-5-alastair@au1.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19081506-0028-0000-0000-0000038FF606
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081506-0029-0000-0000-000024520BD9
-Message-Id: <20190815065452.GB19609@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908150071
+In-Reply-To: <20190814133841.7095-9-joro@8bytes.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 02:10:49PM +1000, Alastair D'Silva wrote:
-> From: Alastair D'Silva <alastair@d-silva.org>
+Hi,
+
+On 8/14/19 9:38 PM, Joerg Roedel wrote:
+> From: Joerg Roedel <jroedel@suse.de>
 > 
-> When presented with large amounts of memory being hotplugged
-> (in my test case, ~890GB), the call to flush_dcache_range takes
-> a while (~50 seconds), triggering RCU stalls.
+> Set the default domain-type at runtime, not at compile-time.
+> This keeps default domain type setting in one place when we
+> have to change it at runtime.
 > 
-> This patch breaks up the call into 16GB chunks, calling
-> cond_resched() inbetween to allow the scheduler to run.
-> 
-> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> Signed-off-by: Joerg Roedel <jroedel@suse.de>
 > ---
->  arch/powerpc/mm/mem.c | 16 ++++++++++++++--
->  1 file changed, 14 insertions(+), 2 deletions(-)
+>   drivers/iommu/iommu.c | 23 +++++++++++++++--------
+>   1 file changed, 15 insertions(+), 8 deletions(-)
 > 
-> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-> index 5400da87a804..fb0d5e9aa11b 100644
-> --- a/arch/powerpc/mm/mem.c
-> +++ b/arch/powerpc/mm/mem.c
-> @@ -104,11 +104,14 @@ int __weak remove_section_mapping(unsigned long start, unsigned long end)
->  	return -ENODEV;
->  }
-> 
-> +#define FLUSH_CHUNK_SIZE (16ull * 1024ull * 1024ull * 1024ull)
-
-IMHO this begs for adding SZ_16G to include/linux/sizes.h and using it here
-
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index 233bc22b487e..96cc7cc8ab21 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -26,11 +26,8 @@
+>   
+>   static struct kset *iommu_group_kset;
+>   static DEFINE_IDA(iommu_group_ida);
+> -#ifdef CONFIG_IOMMU_DEFAULT_PASSTHROUGH
+> -static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
+> -#else
+> -static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
+> -#endif
 > +
->  int __ref arch_add_memory(int nid, u64 start, u64 size,
->  			struct mhp_restrictions *restrictions)
->  {
->  	unsigned long start_pfn = start >> PAGE_SHIFT;
->  	unsigned long nr_pages = size >> PAGE_SHIFT;
-> +	unsigned long i;
->  	int rc;
-> 
->  	resize_hpt_for_hotplug(memblock_phys_mem_size());
-> @@ -120,7 +123,11 @@ int __ref arch_add_memory(int nid, u64 start, u64 size,
->  			start, start + size, rc);
->  		return -EFAULT;
->  	}
-> -	flush_dcache_range(start, start + size);
+> +static unsigned int iommu_def_domain_type __read_mostly;
+>   static bool iommu_dma_strict __read_mostly = true;
+>   static u32 iommu_cmd_line __read_mostly;
+>   
+> @@ -76,7 +73,7 @@ static void iommu_set_cmd_line_dma_api(void)
+>   	iommu_cmd_line |= IOMMU_CMD_LINE_DMA_API;
+>   }
+>   
+> -static bool __maybe_unused iommu_cmd_line_dma_api(void)
+> +static bool iommu_cmd_line_dma_api(void)
+>   {
+>   	return !!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API);
+>   }
+> @@ -115,8 +112,18 @@ static const char *iommu_domain_type_str(unsigned int t)
+>   
+>   static int __init iommu_subsys_init(void)
+>   {
+> -	pr_info("Default domain type: %s\n",
+> -		iommu_domain_type_str(iommu_def_domain_type));
+> +	bool cmd_line = iommu_cmd_line_dma_api();
 > +
-> +	for (i = 0; i < size; i += FLUSH_CHUNK_SIZE) {
-> +		flush_dcache_range(start + i, min(start + size, start + i + FLUSH_CHUNK_SIZE));
-> +		cond_resched();
-> +	}
-> 
->  	return __add_pages(nid, start_pfn, nr_pages, restrictions);
->  }
-> @@ -131,13 +138,18 @@ void __ref arch_remove_memory(int nid, u64 start, u64 size,
->  	unsigned long start_pfn = start >> PAGE_SHIFT;
->  	unsigned long nr_pages = size >> PAGE_SHIFT;
->  	struct page *page = pfn_to_page(start_pfn) + vmem_altmap_offset(altmap);
-> +	unsigned long i;
->  	int ret;
-> 
->  	__remove_pages(page_zone(page), start_pfn, nr_pages, altmap);
-> 
->  	/* Remove htab bolted mappings for this section of memory */
->  	start = (unsigned long)__va(start);
-> -	flush_dcache_range(start, start + size);
-> +	for (i = 0; i < size; i += FLUSH_CHUNK_SIZE) {
-> +		flush_dcache_range(start + i, min(start + size, start + i + FLUSH_CHUNK_SIZE));
-> +		cond_resched();
+> +	if (!cmd_line) {
+> +		if (IS_ENABLED(CONFIG_IOMMU_DEFAULT_PASSTHROUGH))
+> +			iommu_set_default_passthrough();
+> +		else
+> +			iommu_set_default_translated();
+
+This overrides kernel parameters parsed in iommu_setup(), for example,
+iommu=pt won't work anymore.
+
+Best regards,
+Lu Baolu
+
 > +	}
 > +
->  	ret = remove_section_mapping(start, start + size);
->  	WARN_ON_ONCE(ret);
+> +	pr_info("Default domain type: %s %s\n",
+> +		iommu_domain_type_str(iommu_def_domain_type),
+> +		cmd_line ? "(set via kernel command line)" : "");
+>   
+>   	return 0;
+>   }
 > 
-> -- 
-> 2.21.0
-> 
-
--- 
-Sincerely yours,
-Mike.
-
