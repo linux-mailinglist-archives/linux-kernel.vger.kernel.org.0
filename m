@@ -2,56 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD828F1DB
+	by mail.lfdr.de (Postfix) with ESMTP id 43FD28F1DA
 	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:16:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732030AbfHORPM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:15:12 -0400
-Received: from mail-wm1-f98.google.com ([209.85.128.98]:35485 "EHLO
-        mail-wm1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731637AbfHOROa (ORCPT
+        id S1732006AbfHORPK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:15:10 -0400
+Received: from mail-wr1-f98.google.com ([209.85.221.98]:42379 "EHLO
+        mail-wr1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731625AbfHOROa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Aug 2019 13:14:30 -0400
-Received: by mail-wm1-f98.google.com with SMTP id l2so1867527wmg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:29 -0700 (PDT)
+Received: by mail-wr1-f98.google.com with SMTP id b16so2848112wrq.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=qK+K3lvg5j7KBSfj3mqp/CfZUMLY6IjIIgyqWda7qdY=;
-        b=jrptLSSGaEhsZnemGxbQsiutDVJEabMLnUvAlPyQGJ1J2DRRSxl3aed33cLWjtrSnU
-         BNpPXVllF4JO1NUGW6ibpxzSeRJfWFQKzo4l9YL8KpWt/MPylUaJyS6+7u8SpZcxT/sa
-         VTZoiWPQY9oBAVWJnfR2AH4Pe+JcUl1KAUhIQwr7SK2nKlZPAPUQALzGiGjK7l5r0+iA
-         e49bHtgp8/5tqjPnky06s/v0+XljlPblYh8OPAro9kc0d3NqCkUkcCvqhuntQW80ltvl
-         wNPKg5Cu5634CuuJx6TwPIs6+eUGSaHYCiSQdArtqxuSTnk9+feRvgQ3kIC+p9xPj81f
-         G02A==
-X-Gm-Message-State: APjAAAUdRFnxw7eOG/wl35qnIPWhpaydoLNdVKnLGiAD/NesoHukKwnI
-        LWbvEcG5BdswM/9upUyHDgB1lz+gfs/Coj3ZJ5DjNnC3z0gqqZfQYgh60YsqptmbRA==
-X-Google-Smtp-Source: APXvYqzwc/xYr8huKOghn9vmtQMt/8YLWEaKPN+5vpK0OgbJx4iilw7n+VrgNxOG+/p65MKqhugGqHofkiLa
-X-Received: by 2002:a7b:c198:: with SMTP id y24mr3681836wmi.131.1565889268536;
-        Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
+        bh=KWUuHNaeuLnP3/JiAYH55pf1los9RRnsI3012c89ha8=;
+        b=g/BKtK45mkDcTLVm2WOxcGvfKAblk/00eUBC+k7uKo9wBdSfUn0469l3FrQ51+mvTn
+         ij7QefDfbK4vAsMZq/ZCfOsSBaeX+le3EKpzVrKSZtBwJngznTMlLZlLpwMvQa+sSFjO
+         Q2nBNpYhJ86YHeVEBXlmcA8pX+s0vTVF4Vu98ZOQFpXBfMfwCPd4PXB874yCvI8OHaov
+         7fSRs2ftl66KiJ+OdLHpjARYjlANpy4/Mu/r4l/fyPdC3/WYL2M1eFKrDExxq7G/8UeM
+         ex7EKYsxQsUflSpyEJIwgdNZzPhizL6nFSfGxK5UqO2JjZs26qtrDeHDh6lG1y179V0n
+         lOYg==
+X-Gm-Message-State: APjAAAWN8mFIppu39NWEAMWRjoC+/g2MkuB4g/8uJ2II4erTdzZe+b1j
+        RorMpW55vnxDzDXXy7v0A+rSIv1XU+qJtlfaayp3ds1p4fBXUuUFYAf+4a35d89wQw==
+X-Google-Smtp-Source: APXvYqwWDvl7fMqBHpJtlbdFiqytWl7O/XHWKPee2tCAd0zJbkiaCCfr3WgkbS1PijRiJdEJ1PqDf7oVgqUx
+X-Received: by 2002:adf:aa8d:: with SMTP id h13mr6910152wrc.307.1565889267900;
+        Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id r12sm59823wrw.27.2019.08.15.10.14.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 10:14:28 -0700 (PDT)
+        by smtp-relay.gmail.com with ESMTPS id e16sm10188wma.1.2019.08.15.10.14.27
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 15 Aug 2019 10:14:27 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKW-00052a-AD; Thu, 15 Aug 2019 17:14:28 +0000
+        id 1hyJKV-00052P-Ij; Thu, 15 Aug 2019 17:14:27 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id D1B542742BD6; Thu, 15 Aug 2019 18:14:27 +0100 (BST)
+        id 19EF52742BD6; Thu, 15 Aug 2019 18:14:27 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Masanari Iida <standby24x7@gmail.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org, info@metux.net,
         lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>, perex@perex.cz,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>, peter.ujfalusi@ti.com,
-        tiwai@suse.com
-Subject: Applied "ASoC: ti: Fix typos in ti/Kconfig" to the asoc tree
-In-Reply-To: <20190813034235.30673-1-standby24x7@gmail.com>
+        Mark Brown <broonie@kernel.org>, perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: es8328: Fix copy-paste error in es8328_right_line_controls" to the asoc tree
+In-Reply-To: <20190815092300.68712-1-yuehaibing@huawei.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171427.D1B542742BD6@ypsilon.sirena.org.uk>
+Message-Id: <20190815171427.19EF52742BD6@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:27 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +58,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: ti: Fix typos in ti/Kconfig
+   ASoC: es8328: Fix copy-paste error in es8328_right_line_controls
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,43 +83,36 @@ to this mail.
 Thanks,
 Mark
 
-From ae3a5901dde2ab136ec0cebda2fccc48e810d2ec Mon Sep 17 00:00:00 2001
-From: Masanari Iida <standby24x7@gmail.com>
-Date: Tue, 13 Aug 2019 12:42:35 +0900
-Subject: [PATCH] ASoC: ti: Fix typos in ti/Kconfig
+From 630742c296341a8cfe00dfd941392025ba8dd4e8 Mon Sep 17 00:00:00 2001
+From: YueHaibing <yuehaibing@huawei.com>
+Date: Thu, 15 Aug 2019 17:23:00 +0800
+Subject: [PATCH] ASoC: es8328: Fix copy-paste error in
+ es8328_right_line_controls
 
-This patch fixes some spelling typo in Kconfig.
+It seems 'es8328_rline_enum' should be used
+in es8328_right_line_controls
 
-Signed-off-by: Masanari Iida <standby24x7@gmail.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Link: https://lore.kernel.org/r/20190813034235.30673-1-standby24x7@gmail.com
+Fixes: 567e4f98922c ("ASoC: add es8328 codec driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Link: https://lore.kernel.org/r/20190815092300.68712-1-yuehaibing@huawei.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/ti/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/es8328.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/ti/Kconfig b/sound/soc/ti/Kconfig
-index 2197f3e1eaed..87a9b9dd4e98 100644
---- a/sound/soc/ti/Kconfig
-+++ b/sound/soc/ti/Kconfig
-@@ -12,7 +12,7 @@ config SND_SOC_TI_SDMA_PCM
+diff --git a/sound/soc/codecs/es8328.c b/sound/soc/codecs/es8328.c
+index 822a25a8f53c..69b81e704127 100644
+--- a/sound/soc/codecs/es8328.c
++++ b/sound/soc/codecs/es8328.c
+@@ -228,7 +228,7 @@ static const struct soc_enum es8328_rline_enum =
+ 			      ARRAY_SIZE(es8328_line_texts),
+ 			      es8328_line_texts);
+ static const struct snd_kcontrol_new es8328_right_line_controls =
+-	SOC_DAPM_ENUM("Route", es8328_lline_enum);
++	SOC_DAPM_ENUM("Route", es8328_rline_enum);
  
- comment "Texas Instruments DAI support for:"
- config SND_SOC_DAVINCI_ASP
--	tristate "daVinci Audio Serial Port (ASP) or McBSP suport"
-+	tristate "daVinci Audio Serial Port (ASP) or McBSP support"
- 	depends on ARCH_DAVINCI || COMPILE_TEST
- 	select SND_SOC_TI_EDMA_PCM
- 	help
-@@ -33,7 +33,7 @@ config SND_SOC_DAVINCI_MCASP
- 	  - Keystone devices
- 
- config SND_SOC_DAVINCI_VCIF
--	tristate "daVinci Voice Interface (VCIF) suport"
-+	tristate "daVinci Voice Interface (VCIF) support"
- 	depends on ARCH_DAVINCI || COMPILE_TEST
- 	select SND_SOC_TI_EDMA_PCM
- 	help
+ /* Left Mixer */
+ static const struct snd_kcontrol_new es8328_left_mixer_controls[] = {
 -- 
 2.20.1
 
