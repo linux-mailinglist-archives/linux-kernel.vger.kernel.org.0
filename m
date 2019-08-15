@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CF388E5B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 278338E5C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 09:50:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730586AbfHOHpA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 03:45:00 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4271 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726008AbfHOHo7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 03:44:59 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 7EA442442DD3B4FC2EE7;
-        Thu, 15 Aug 2019 15:44:51 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 15 Aug 2019 15:44:44 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <agross@kernel.org>, <georgi.djakov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Mao Wenan" <maowenan@huawei.com>
-Subject: [PATCH linux-next] qcom: qcs404: remove COMPILE_TEST from CONFIG_INTERCONNECT_QCOM_QCS404
-Date:   Thu, 15 Aug 2019 15:48:48 +0800
-Message-ID: <20190815074848.195806-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1730496AbfHOHug (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 03:50:36 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:43343 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729967AbfHOHug (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 03:50:36 -0400
+Received: by mail-lf1-f68.google.com with SMTP id c19so1060589lfm.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 00:50:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=+HQ26YjFqd095HuQvJkZw1Unk1E5d9gNZv6ke3nfrfU=;
+        b=r+rFIHHqW5m0YFQe1g8i7BLnASGugeC2XmMV0v2rXhVAqgAuup9I5P8hJNWRuVWtxD
+         evsDnCtNZbRfrAKslsFUEAGfRiZSIw7t/8YWJCyZM+tCvItHgQLmqGHBhEtVSatfxZ+1
+         zDewhNUYNHAgGkZfvZ4BXRdZ6Wq2OaZtZMmwl+SOiWrZZID7ZIoMKK0L/U9/EOS9NUhG
+         +Pi6B8DFqwsGnCb6rZBcVrgrXs5Lu3MEN7/gRrhZZiKRQnDP0Mkn1o2o2UBIMOLAaSqa
+         2+X7n001LrALm1cKCDDZpKyHydiAtOFNIT2gBWMYynGwfqyyFFfzbCqG+kOIYBY7GO4C
+         llWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+HQ26YjFqd095HuQvJkZw1Unk1E5d9gNZv6ke3nfrfU=;
+        b=VrToq53FjM1RTi5Ky+Q7wtZjv4mO/dAia+vjpQDiJZ7UV0lK1Plf2XP1H5bK7TvxfF
+         4Caucimt3H60zl+cLPfcQtSxP5v429kw0Uec1CSUarjv0BTQYSIg+9lO9RIdnWDS+RiD
+         C5LuS5nHJodsFKkp2lsTRrzBAB1zisWvNlHzle3HjHOT7d1ZJW12IkXXGfnvbNV9uums
+         4neUg1rG/vhhmC9KnzymZLLUf4jaX+5tvLgxO8c1XMB+HmRo2i6xBt+ovg9jmMv2U4Vr
+         m8B3wd9/8IL/PM1jnlmi/VePy6dSvGUc4Q3JhrgsosoZ2FVaov6lB4dy4gNLozqw+u92
+         HJrA==
+X-Gm-Message-State: APjAAAXcXw/VrcgZZWvPr+AqAPnAAFNlYzDua/jmKIa4qvq0t3WcnchK
+        QOA83P6TI+LkAw/4k+zslBs=
+X-Google-Smtp-Source: APXvYqxPngTmU8hHwXQJ/jC6MPCH6+qWwKTY7y7FwWq4oEEAAkQYdQz/c7ZUOSXecQ0h6K3+SksSIQ==
+X-Received: by 2002:ac2:4644:: with SMTP id s4mr1709242lfo.158.1565855434435;
+        Thu, 15 Aug 2019 00:50:34 -0700 (PDT)
+Received: from localhost ([178.127.188.12])
+        by smtp.gmail.com with ESMTPSA id b6sm353677ljk.31.2019.08.15.00.50.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 00:50:33 -0700 (PDT)
+From:   Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Date:   Thu, 15 Aug 2019 16:50:33 +0900
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Chuhong Yuan <hslester96@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 4/8] printk: Replace strncmp with str_has_prefix
+Message-ID: <20190815075033.GA26479@tigerII.localdomain>
+References: <20190809071034.17279-1-hslester96@gmail.com>
+ <20190814104941.qt66ozcau5fdswcs@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814104941.qt66ozcau5fdswcs@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one compilation error when CONFIG_INTERCONNECT_QCOM_QCS404=y and
-CONFIG_INTERCONNECT_QCOM_SMD_RPM=y, as well as CONFIG_COMPILE_TEST=y,
-but CONFIG_QCOM_SMD_RPM is not set, logs as below:
+On (08/14/19 12:49), Petr Mladek wrote:
+> On Fri 2019-08-09 15:10:34, Chuhong Yuan wrote:
+> > strncmp(str, const, len) is error-prone because len
+> > is easy to have typo.
+> > The example is the hard-coded len has counting error
+> > or sizeof(const) forgets - 1.
+> > So we prefer using newly introduced str_has_prefix()
+> > to substitute such strncmp to make code better.
+> > 
+> > Signed-off-by: Chuhong Yuan <hslester96@gmail.com>
+> 
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
 
-drivers/interconnect/qcom/smd-rpm.o: In function `qcom_icc_rpm_smd_send':
-smd-rpm.c:(.text+0xe4): undefined reference to `qcom_rpm_smd_write'
-Makefile:1071: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
+Reviewed-by:  Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 
-This is because
-INTERCONNECT_QCOM_QCS404 depends on QCOM_SMD_RPM || COMPILE_TEST.
-Here CONFIG_COMPILE_TEST=y, so CONFIG_INTERCONNECT_QCOM_SMD_RPM
-is selected. If CONFIG_QCOM_SMD_RPM is not set, then
-qcom_rpm_smd_write() is not defined, and compilation error happen.
-Fix this by removing COMPILE_TEST from CONFIG_INTERCONNECT_QCOM_QCS404.
-
-Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/interconnect/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-index 339e8f1..6ab4012 100644
---- a/drivers/interconnect/qcom/Kconfig
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -8,7 +8,7 @@ config INTERCONNECT_QCOM
- config INTERCONNECT_QCOM_QCS404
- 	tristate "Qualcomm QCS404 interconnect driver"
- 	depends on INTERCONNECT_QCOM
--	depends on QCOM_SMD_RPM || COMPILE_TEST
-+	depends on QCOM_SMD_RPM
- 	select INTERCONNECT_QCOM_SMD_RPM
- 	help
- 	  This is a driver for the Qualcomm Network-on-Chip on qcs404-based
--- 
-2.7.4
-
+	-ss
