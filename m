@@ -2,297 +2,146 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F008E3ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:44:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F2928E427
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 06:49:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730229AbfHOEnd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 00:43:33 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4269 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730089AbfHOEnZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:43:25 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 82FE887EA8E85D941DED;
-        Thu, 15 Aug 2019 12:43:13 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.210) with Microsoft SMTP Server (TLS) id 14.3.439.0; Thu, 15 Aug
- 2019 12:43:07 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     <linux-fsdevel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
-        "Alexander Viro" <viro@zeniv.linux.org.uk>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Theodore Ts'o <tytso@mit.edu>, "Pavel Machek" <pavel@denx.de>,
-        David Sterba <dsterba@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>, Jan Kara <jack@suse.cz>,
-        Richard Weinberger <richard@nod.at>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        <linux-erofs@lists.ozlabs.org>, Chao Yu <yuchao0@huawei.com>,
-        Miao Xie <miaoxie@huawei.com>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH v8 24/24] erofs: add document
-Date:   Thu, 15 Aug 2019 12:41:55 +0800
-Message-ID: <20190815044155.88483-25-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190815044155.88483-1-gaoxiang25@huawei.com>
-References: <20190815044155.88483-1-gaoxiang25@huawei.com>
+        id S1730325AbfHOEoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 00:44:21 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46552 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729826AbfHOEoT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:44:19 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z17so3290019otk.13
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Aug 2019 21:44:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7sgS6p5Q/fcvkuEHxhDuVLaRmp/CaA8gA0Ducst9aSA=;
+        b=qtJ+i+a0tAJY6FT9b8QmTdQlLeR5ZZ19RdrdQcy5JEiNZlXPbitXkJOjJW/eLJQG/s
+         UZIck7oKpduNF27TYMQN7qFmaMD+0Vohgxfe/0rSS7EhgISIKL+rM+xyJRz0gxu66O2Y
+         pB1qRJHpMoDXG7JtKaM16W209ukDCTN39q9c/tYSVHn7W6cNXs/Slcbqg6Uh2vzvxVGk
+         zbI8FPbJFCQItPd1HeypZyoXdAplk80nsfdGTR2oByqqbHBuXDx3eIwhMrZ8A8iGqQsv
+         k5Xp/cfoNeggvjUM5geVgM/10HTtPYt3WIdRk/QaV07KjW6GWl5ah5WZodq2MaFMW3A4
+         DTBw==
+X-Gm-Message-State: APjAAAWgT0e6Obz0zBst24tKRIzIc0bUvKPS85Prw1osVrZ9/9lMYzGn
+        BMSj2J9Bjku51bIM9+eUYyyQIy3njQuM9VURmE6GIA==
+X-Google-Smtp-Source: APXvYqzSDSGEKv6Lo/FEdaBeeBng3hZLZ0ZFMnC1IGlwgNjG49HHY2f6Hq8EMesb30W3wQuAlY93QT/q+q+6otEXm7U=
+X-Received: by 2002:a6b:f906:: with SMTP id j6mr3664108iog.26.1565844258431;
+ Wed, 14 Aug 2019 21:44:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+References: <20190814213118.28473-1-kherbst@redhat.com> <20190814213118.28473-4-kherbst@redhat.com>
+ <CAJ=jquaVcWisQ3Qw-_GMktcOq4zqFmeYXztfwNAVKZJO=_+yLA@mail.gmail.com>
+In-Reply-To: <CAJ=jquaVcWisQ3Qw-_GMktcOq4zqFmeYXztfwNAVKZJO=_+yLA@mail.gmail.com>
+From:   Karol Herbst <kherbst@redhat.com>
+Date:   Thu, 15 Aug 2019 06:44:06 +0200
+Message-ID: <CACO55ttcXhod940t_G1ty74tU7vT2K1tShwqAwhcy0Eu2TYGqA@mail.gmail.com>
+Subject: Re: [PATCH 3/7] Revert "ACPI / OSI: Add OEM _OSI strings to disable
+ NVidia RTD3"
+To:     Alex Hung <alex.hung@canonical.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux ACPI Mailing List <linux-acpi@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        nouveau <nouveau@lists.freedesktop.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Lyude Paul <lyude@redhat.com>, Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This documents key features, usage, and
-on-disk design of erofs.
+On Thu, Aug 15, 2019 at 1:35 AM Alex Hung <alex.hung@canonical.com> wrote:
+>
+> On Wed, Aug 14, 2019 at 3:31 PM Karol Herbst <kherbst@redhat.com> wrote:
+> >
+> > This reverts commit 9251a71db62ca9cc7e7cf364218610b0f018c291.
+> >
+> > This was never discussed with anybody Nouveau related and we would have NACKed
+> > this change immediately.
+> >
+> > We have a better workaround, which makes it actually work with Nouveau. No idea
+> > why the comment mentions the Nvidia driver and assumes it gives any weight to
+> > the reasoning.... we don't care about out of tree drivers.
+> >
+> > Nouveau does support RTD3, but we had some issues with that. And we even have
+> > a better fix for this issue. Also, can we _please_ do it in a way worthy of an
+> > upstream community the next time?
+> >
+> > If some distribution feels like they have to please companies not wanting to
+> > be part of the linux community, please do so downstream and don't try to push
+> > something like this upstream.
+>
+> Hi Karol,
+>
+> A lot of appreciation for your hard-work on this issue, but unfriendly
+> comments aren't necessary. At the time this was discussed with
+> hardware vendors and platform vendors and it worked for many systems
+> and benefit for many people buying these platforms. Last but not
+> least, I do appreciate better fixes and want to retire the hacks too.
+>
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- Documentation/filesystems/erofs.txt | 225 ++++++++++++++++++++++++++++
- 1 file changed, 225 insertions(+)
- create mode 100644 Documentation/filesystems/erofs.txt
+sorry if that sounded too harsh, but the issue is not that it helped,
+the issue is, that nobody talked with us about that. And those three
+commits also sounded like they were mainly targeted against the Nvidia
+driver (and please correct me if I am wrong here).
 
-diff --git a/Documentation/filesystems/erofs.txt b/Documentation/filesystems/erofs.txt
-new file mode 100644
-index 000000000000..457e601e0467
---- /dev/null
-+++ b/Documentation/filesystems/erofs.txt
-@@ -0,0 +1,225 @@
-+Overview
-+========
-+
-+EROFS file-system stands for Enhanced Read-Only File System. Different
-+from other read-only file systems, it aims to be designed for flexibility,
-+scalability, but be kept simple and high performance.
-+
-+It is designed as a better filesystem solution for the following scenarios:
-+ - read-only storage media or
-+
-+ - part of a fully trusted read-only solution, which means it needs to be
-+   immutable and bit-for-bit identical to the official golden image for
-+   their releases due to security and other considerations and
-+
-+ - hope to save some extra storage space with guaranteed end-to-end performance
-+   by using reduced metadata and transparent file compression, especially
-+   for those embedded devices with limited memory (ex, smartphone);
-+
-+Here is the main features of EROFS:
-+ - Little endian on-disk design;
-+
-+ - Currently 4KB block size (nobh) and therefore maximum 16TB address space;
-+
-+ - Metadata & data could be mixed by design;
-+
-+ - 2 inode versions for different requirements:
-+                          v1            v2
-+   Inode metadata size:   32 bytes      64 bytes
-+   Max file size:         4 GB          16 EB (also limited by max. vol size)
-+   Max uids/gids:         65536         4294967296
-+   File creation time:    no            yes (64 + 32-bit timestamp)
-+   Max hardlinks:         65536         4294967296
-+   Metadata reserved:     4 bytes       14 bytes
-+
-+ - Support extended attributes (xattrs) as an option;
-+
-+ - Support xattr inline and tail-end data inline for all files;
-+
-+ - Support POSIX.1e ACLs by using xattrs;
-+
-+ - Support statx();
-+
-+ - Support transparent file compression as an option:
-+   LZ4 algorithm with 4 KB fixed-output compression for high performance;
-+
-+The following git tree provides the file system user-space tools under
-+development (ex, formatting tool mkfs.erofs):
-+>> git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git
-+
-+Bugs and patches are welcome, please kindly help us and send to the following
-+linux-erofs mailing list:
-+>> linux-erofs mailing list   <linux-erofs@lists.ozlabs.org>
-+
-+Note that EROFS is still working in progress as a Linux staging driver,
-+Cc the staging mailing list as well is highly recommended:
-+>> Linux Driver Project Developer List <devel@driverdev.osuosl.org>
-+
-+Mount options
-+=============
-+
-+fault_injection=%d     Enable fault injection in all supported types with
-+                       specified injection rate. Supported injection type:
-+                       Type_Name                Type_Value
-+                       FAULT_KMALLOC            0x000000001
-+                       FAULT_READ_IO            0x000000002
-+(no)user_xattr         Setup Extended User Attributes. Note: xattr is enabled
-+                       by default if CONFIG_EROFS_FS_XATTR is selected.
-+(no)acl                Setup POSIX Access Control List. Note: acl is enabled
-+                       by default if CONFIG_EROFS_FS_POSIX_ACL is selected.
-+cache_strategy=%s      Select a strategy for cached decompression from now on:
-+                         disabled: In-place I/O decompression only;
-+                        readahead: Cache the last incomplete compressed physical
-+                                   cluster for further reading. It still does
-+                                   in-place I/O decompression for the rest
-+                                   compressed physical clusters;
-+                       readaround: Cache the both ends of incomplete compressed
-+                                   physical clusters for further reading.
-+                                   It still does in-place I/O decompression
-+                                   for the rest compressed physical clusters.
-+
-+Module parameters
-+=================
-+use_vmap=[0|1]         Use vmap() instead of vm_map_ram() (default 0).
-+
-+On-disk details
-+===============
-+
-+Summary
-+-------
-+Different from other read-only file systems, an EROFS volume is designed
-+to be as simple as possible:
-+
-+                                |-> aligned with the block size
-+   ____________________________________________________________
-+  | |SB| | ... | Metadata | ... | Data | Metadata | ... | Data |
-+  |_|__|_|_____|__________|_____|______|__________|_____|______|
-+  0 +1K
-+
-+All data areas should be aligned with the block size, but metadata areas
-+may not. All metadatas can be now observed in two different spaces (views):
-+ 1. Inode metadata space
-+    Each valid inode should be aligned with an inode slot, which is a fixed
-+    value (32 bytes) and designed to be kept in line with v1 inode size.
-+
-+    Each inode can be directly found with the following formula:
-+         inode offset = meta_blkaddr * block_size + 32 * nid
-+
-+                                |-> aligned with 8B
-+                                           |-> followed closely
-+    + meta_blkaddr blocks                                      |-> another slot
-+     _____________________________________________________________________
-+    |  ...   | inode |  xattrs  | extents  | data inline | ... | inode ...
-+    |________|_______|(optional)|(optional)|__(optional)_|_____|__________
-+             |-> aligned with the inode slot size
-+                  .                   .
-+                .                         .
-+              .                              .
-+            .                                    .
-+          .                                         .
-+        .                                              .
-+      .____________________________________________________|-> aligned with 4B
-+      | xattr_ibody_header | shared xattrs | inline xattrs |
-+      |____________________|_______________|_______________|
-+      |->    12 bytes    <-|->x * 4 bytes<-|               .
-+                          .                .                 .
-+                    .                      .                   .
-+               .                           .                     .
-+           ._______________________________.______________________.
-+           | id | id | id | id |  ... | id | ent | ... | ent| ... |
-+           |____|____|____|____|______|____|_____|_____|____|_____|
-+                                           |-> aligned with 4B
-+                                                       |-> aligned with 4B
-+
-+    Inode could be 32 or 64 bytes, which can be distinguished from a common
-+    field which all inode versions have -- i_advise:
-+
-+        __________________               __________________
-+       |     i_advise     |             |     i_advise     |
-+       |__________________|             |__________________|
-+       |        ...       |             |        ...       |
-+       |                  |             |                  |
-+       |__________________| 32 bytes    |                  |
-+                                        |                  |
-+                                        |__________________| 64 bytes
-+
-+    Xattrs, extents, data inline are followed by the corresponding inode with
-+    proper alignes, and they could be optional for different data mappings,
-+    _currently_ there are totally 3 valid data mappings supported:
-+
-+     1) flat file data without data inline (no extent);
-+     2) fixed-output size data compression (must have extents);
-+     3) flat file data with tail-end data inline (no extent);
-+
-+    The size of the optional xattrs is indicated by i_xattr_count in inode
-+    header. Large xattrs or xattrs shared by many different files can be
-+    stored in shared xattrs metadata rather than inlined right after inode.
-+
-+ 2. Shared xattrs metadata space
-+    Shared xattrs space is similar to the above inode space, started with
-+    a specific block indicated by xattr_blkaddr, organized one by one with
-+    proper align.
-+
-+    Each share xattr can also be directly found by the following formula:
-+         xattr offset = xattr_blkaddr * block_size + 4 * xattr_id
-+
-+                           |-> aligned by  4 bytes
-+    + xattr_blkaddr blocks                     |-> aligned with 4 bytes
-+     _________________________________________________________________________
-+    |  ...   | xattr_entry |  xattr data | ... |  xattr_entry | xattr data  ...
-+    |________|_____________|_____________|_____|______________|_______________
-+
-+Directories
-+-----------
-+All directories are now organized in a compact on-disk format. Note that
-+each directory block is divided into index and name areas in order to support
-+random file lookup, and all directory entries are _strictly_ recorded in
-+alphabetical order in order to support improved prefix binary search
-+algorithm (could refer to the related source code).
-+
-+                 ___________________________
-+                /                           |
-+               /              ______________|________________
-+              /              /              | nameoff1       | nameoffN-1
-+ ____________.______________._______________v________________v__________
-+| dirent | dirent | ... | dirent | filename | filename | ... | filename |
-+|___.0___|____1___|_____|___N-1__|____0_____|____1_____|_____|___N-1____|
-+     \                           ^
-+      \                          |                           * could have
-+       \                         |                             trailing '\0'
-+        \________________________| nameoff0
-+
-+                             Directory block
-+
-+Note that apart from the offset of the first filename, nameoff0 also indicates
-+the total number of directory entries in this block since it is no need to
-+introduce another on-disk field at all.
-+
-+Compression
-+-----------
-+Currently, EROFS supports 4KB fixed-output clustersize transparent file
-+compression, as illustrated below:
-+
-+         |---- Variant-Length Extent ----|-------- VLE --------|----- VLE -----
-+         clusterofs                      clusterofs            clusterofs
-+         |                               |                     |   logical data
-+_________v_______________________________v_____________________v_______________
-+... |    .        |             |        .    |             |  .          | ...
-+____|____.________|_____________|________.____|_____________|__.__________|____
-+    |-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|-> cluster <-|
-+         size          size          size          size          size
-+          .                             .                .                   .
-+           .                       .               .                  .
-+            .                  .              .                .
-+      _______._____________._____________._____________._____________________
-+         ... |             |             |             | ... physical data
-+      _______|_____________|_____________|_____________|_____________________
-+             |-> cluster <-|-> cluster <-|-> cluster <-|
-+                  size          size          size
-+
-+Currently each on-disk physical cluster can contain 4KB (un)compressed data
-+at most. For each logical cluster, there is a corresponding on-disk index to
-+describe its cluster type, physical cluster address, etc.
-+
-+See "struct z_erofs_vle_decompressed_index" in erofs_fs.h for more details.
-+
--- 
-2.17.1
+The situation would be completely different if we would have talked
+about all this earlier (and I wouldn't get annoyed by all of this in
+the first place).
 
+I am well aware this is a super painful issue for a lot of users, but
+even then disabling RTD3 (for a limited amount of hardware) inside
+nouveau would be the only acceptable way to disable it.
+
+I don't see how pushing vendors to add some firmware code to disable
+certain features  helps in any way, when there is a fast and easy way
+to disable it and wouldn't draw resources away from actually fixing
+it.
+
+> I am going to notify hardware owners to test these patches on the
+> original intended systems, and will report whether there are
+> regressions.
+>
+>
+> >
+> > Signed-off-by: Karol Herbst <kherbst@redhat.com>
+> > CC: Alex Hung <alex.hung@canonical.com>
+> > CC: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > CC: Dave Airlie <airlied@redhat.com>
+> > CC: Lyude Paul <lyude@redhat.com>
+> > CC: Ben Skeggs <bskeggs@redhat.com>
+> > ---
+> >  drivers/acpi/osi.c | 9 ---------
+> >  1 file changed, 9 deletions(-)
+> >
+> > diff --git a/drivers/acpi/osi.c b/drivers/acpi/osi.c
+> > index 56cc95b6b724..f5d559a2ff14 100644
+> > --- a/drivers/acpi/osi.c
+> > +++ b/drivers/acpi/osi.c
+> > @@ -44,15 +44,6 @@ osi_setup_entries[OSI_STRING_ENTRIES_MAX] __initdata = {
+> >         {"Processor Device", true},
+> >         {"3.0 _SCP Extensions", true},
+> >         {"Processor Aggregator Device", true},
+> > -       /*
+> > -        * Linux-Dell-Video is used by BIOS to disable RTD3 for NVidia graphics
+> > -        * cards as RTD3 is not supported by drivers now.  Systems with NVidia
+> > -        * cards will hang without RTD3 disabled.
+> > -        *
+> > -        * Once NVidia drivers officially support RTD3, this _OSI strings can
+> > -        * be removed if both new and old graphics cards are supported.
+> > -        */
+> > -       {"Linux-Dell-Video", true},
+> >  };
+> >
+> >  static u32 acpi_osi_handler(acpi_string interface, u32 supported)
+> > --
+> > 2.21.0
+> >
+>
+>
+> --
+> Cheers,
+> Alex Hung
