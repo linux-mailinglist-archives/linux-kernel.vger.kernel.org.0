@@ -2,81 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C86A8F340
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 147ED8F343
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 20:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732918AbfHOSYg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 14:24:36 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:37309 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729121AbfHOSYf (ORCPT
+        id S1732932AbfHOSYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 14:24:45 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:42739 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729121AbfHOSYo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:24:35 -0400
-Received: by mail-wm1-f67.google.com with SMTP id z23so2033211wmf.2;
-        Thu, 15 Aug 2019 11:24:33 -0700 (PDT)
+        Thu, 15 Aug 2019 14:24:44 -0400
+Received: by mail-pl1-f193.google.com with SMTP id y1so1360478plp.9;
+        Thu, 15 Aug 2019 11:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kKRdEB+5fpumZ2i4totbBIrGnA1HMKrFPQUwJDf1R7E=;
+        b=WeI4HrKLBUSUz/Q+zYSFd4FS5FV1yVYzqwzMUTA+RmPNqz/4Pc9vVTRAJaPh69mmj7
+         KI6ea+asiBWKGlfqWO9Q+wWyg2L2zOQ7W886SuL8OkxrIe+hfaLhzz6AXS2DtzvlTnL5
+         SSwa41BGot1ICBlHAYt1THN539uLz8iNMeTt/LJyK0xMWv9A3lRYuYCT5zQgAWQQGE6x
+         gyJlU4E/UpwSULSOwL0MuzLSxTLoIKMbhz/ccVm6F9tpyANbQwN/JuqOJCLNkMMmn8VO
+         8eNTeUgqTT5Y/2T5MP7P/XfZz7ss2Np+GvrCBLcBS2UyO2aJZDeOs+1XWZluh03i9gje
+         pVvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I8LpUlYZvhVr6pk/y17OXv83aq2SFVNq4KhnnC2cLW4=;
-        b=WQh37+3lZfAA/YK+zAM5dho2T6B4BzCBtQXQMFYHiWylt6yehqMRnuM8djJjAUQCxI
-         OBZl1ahTRbbMwozoPoPl+hBcNSWHJr4F4F6Cvn5FXaad3oHQpU9QiNH4F+GerC6rMi7q
-         awJJXDr5MOGAvyu9/E5YDtZbDPrOrtGeJYXNqVWp4tCntYEll0BrY+5XF8U57gW+Ay/7
-         7UhcmOK2GNfUZ6LldY4AYgdT1qoOoKGppsWQCYGhsIRk9mCyJqNa1nYiRJ723RA5wGUI
-         nf6l7R83KBdtG46vFkIDg4cPV9hoJVIPrInTSuhbA+m81Zr3bfryXB35hZ7LiLrHr87K
-         zobg==
-X-Gm-Message-State: APjAAAVS8MYy6UadwvWXBq5QL2emShE417nGPfDNFxbrHpRZrXANnVXJ
-        V2zArSHZdxsdPr2lbbUoNWc=
-X-Google-Smtp-Source: APXvYqxK3boAcUy6fh+CU/UaSq4E+pD5s5IvBqlD5jfe0NnSfwNIE99uIt2toexVhRW42hSSyaU2AA==
-X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr4214329wmf.161.1565893472805;
-        Thu, 15 Aug 2019 11:24:32 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.124])
-        by smtp.googlemail.com with ESMTPSA id o9sm2587458wrj.17.2019.08.15.11.24.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 11:24:32 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 20:24:30 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org,
-        kgene@kernel.org, pankaj.dubey@samsung.com,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, b.zolnierkie@samsung.com,
-        m.szyprowski@samsung.com
-Subject: Re: [PATCH v3 7/9] soc: samsung: Update the CHIP ID DT binding
- documentation
-Message-ID: <20190815182430.GD14360@kozik-lap>
-References: <20190813150827.31972-1-s.nawrocki@samsung.com>
- <CGME20190813150858eucas1p1a5fbf425753e4911c50631c3a6d34ffd@eucas1p1.samsung.com>
- <20190813150827.31972-8-s.nawrocki@samsung.com>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kKRdEB+5fpumZ2i4totbBIrGnA1HMKrFPQUwJDf1R7E=;
+        b=DNhsIaKuLFcw8n7xh6OTbUA3iQFX8gux19ojfWEJCLKa49w4BQRA2g1OXbaHWzQFn1
+         PsIOAAQgTjmBHO2Aexkrf9EPew9aWvtU3Ly2TDJh7Fr5DEblIy8PGy9YI9FOlutP2srn
+         Z7ke/aZeeDxbiasaYleJDMGLMVuO610xn2tBv6SKZU61TPOXNhBnsgOuI1JwK4+Vy4iC
+         uRat0xxkLyq+X1bu3je9wFCGx2yKYdpMMcJgMa51Y4ea0wz5C9cAFgy9EDEK7S9uKddn
+         wnrTI06D+jpBwVsTFj1xD6n11YPWNNRVTaQ9LR6auQ0/j6W3YRreufn3AMO/vA7EiyMx
+         Z8UQ==
+X-Gm-Message-State: APjAAAUY4zvBqCmu1yIosWz3dZhX+5wCc9vGjVbNqPuNTGoJ8Guwy+IU
+        5ySscUttsB5oz4r7qhpmAaZwbyin
+X-Google-Smtp-Source: APXvYqzEQim9Yaq0DhDAq1ZPUsMDpbx6zkmbniZVWyDgPM5yHwTVjyLHrZ+myhIoOoeOVHksoCd1sg==
+X-Received: by 2002:a17:902:f301:: with SMTP id gb1mr5338158plb.249.1565893483975;
+        Thu, 15 Aug 2019 11:24:43 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id q24sm1801884pjp.14.2019.08.15.11.24.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 11:24:43 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 11:24:42 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-watchdog@vger.kernel.org, Chris Healy <cphealy@gmail.com>,
+        Rick Ramstetter <rick@anteaterllc.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 20/22] watchdog: ziirave_wdt: Fix DOWNLOAD_START
+ payload
+Message-ID: <20190815182442.GP14388@roeck-us.net>
+References: <20190812200906.31344-1-andrew.smirnov@gmail.com>
+ <20190812200906.31344-21-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190813150827.31972-8-s.nawrocki@samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190812200906.31344-21-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:08:25PM +0200, Sylwester Nawrocki wrote:
-> This patch adds documentation of a new optional "samsung,asv-bin"
-> property in the chipid device node and documents requirement of
-> "syscon" compatible string.  These additions are needed to support
-> Exynos ASV (Adaptive Supply Voltage) feature.
+On Mon, Aug 12, 2019 at 01:09:04PM -0700, Andrey Smirnov wrote:
+> Bootloader firmware expects the following traffic for DOWNLOAD_END:
 > 
-> Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> ---
-> Changes since v2:
->  - none
+> S Addr Wr [A] 0x10 [A] P
 > 
-> Changes since v1 (RFC):
+> using ziirave_firm_write_byte() will result in
+> 
+> S Addr Wr [A] 0x10 [A] 0x01 [A] 0x01 [A] P
+> 
+> which happens to work because firmware will ignore any extra bytes
+> sent. Fix this by converting the code to use i2c_smbus_write_byte()
+> instead.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Rick Ramstetter <rick@anteaterllc.com>
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
 
-Title should match bindings, so:
-dt-bindings: samsung:
-
-Also please put it before the driver change using these bindings.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
