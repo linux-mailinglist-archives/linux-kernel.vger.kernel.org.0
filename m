@@ -2,121 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 775EC8EF68
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB078EF67
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 17:34:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730342AbfHOPeJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 11:34:09 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38874 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728728AbfHOPeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:34:08 -0400
-Received: by mail-wr1-f68.google.com with SMTP id g17so2591094wrr.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 08:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=cItIjPaZNW0gDFR2/8t+2jjgRX6wobUwIJOP4x+pnhk=;
-        b=Lkdny2521+c84pQQGWqqj0XX2HECgnYwJZxQ5A1qAO5pth/PKS8sjH9+X5wS/uxmPR
-         1UDjYqdEiMNNQxxFVI5Mh8kXGxL7sFN3R+aQB/fIL3j66Y+slqC/1kc1I3+OgX6ZFsIQ
-         yWG3S44jbT79v9SdCH/B8wfUeJnu/YhmQRYqtl9xyBg9sqD4MH25341N+T41KUgj3Bws
-         7DDt2B5e2KaSW8PBGGE6daFOjg2eguRsFS1D4vz52z5ENRiHygMMGDJS4fbtUQK41Wxj
-         U5UEjwraeteD1Cq2YJLzN8g8vk76EAohXdQt4ZezCzef3eRI+qRImxrhDdOA57Gy2dQg
-         8bqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=cItIjPaZNW0gDFR2/8t+2jjgRX6wobUwIJOP4x+pnhk=;
-        b=N/5CEqUjM1ElnQpgYbwvUHYuy4D8HZ/8bQCl9vFH5lEiwIy/YPR8ulNumJ2zd34lns
-         FjjlhUEmHkwwuQdY27e5ch52CPmDNh0PRaSS79povUUlhXrc7HPx+h7yqGUrWupxl/xO
-         VQRHJncsZiHVsxaJfJXIp6q05d+6ryASzrpkMOBbo0WOW3cIKQqXWfCJSS0rHjCdGFWm
-         eNV8g2Zqu22Yzy08cmt0hxKTcB+lrA/a7L0D8awJu6n2yEjkh5Zw9ykM7Pf7oIlYjcd3
-         X6O6HPcSIrX0cp2n7WbJGrYHDEaQ/+i+ZfBa273MP3Ycf1dIIzFz+mbsl3MlB3IxeOCG
-         3qLQ==
-X-Gm-Message-State: APjAAAVR4gUmxLAMc2VZS1SaXL8n5WalmUl/Dt9lgjSSipH+QAEo2qxZ
-        WX/ZGFPNDjp54KfV0K2Ifp8=
-X-Google-Smtp-Source: APXvYqx8TEvvd2kToStAl2/G5h/i/bhwculFy4DWx4KSvuVNYvwcXTNGplwbIH22cYHPGaaekwWkrQ==
-X-Received: by 2002:a05:6000:1284:: with SMTP id f4mr6312213wrx.89.1565883246514;
-        Thu, 15 Aug 2019 08:34:06 -0700 (PDT)
-Received: from gmail.com (82.159.32.155.dyn.user.ono.com. [82.159.32.155])
-        by smtp.gmail.com with ESMTPSA id k9sm2518281wrq.15.2019.08.15.08.34.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 08:34:06 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 17:34:03 +0200
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Masanari Iida <standby24x7@gmail.com>,
-        Mans Rullgard <mans@mansr.com>,
-        zhengbin <zhengbin13@huawei.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] auxdisplay for v5.3-rc5
-Message-ID: <20190815153403.GA27385@gmail.com>
+        id S1730302AbfHOPeG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 11:34:06 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:43036 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728728AbfHOPeG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:34:06 -0400
+Received: from zn.tnic (p200300EC2F0B52001DDC45CCE62FC494.dip0.t-ipconnect.de [IPv6:2003:ec:2f0b:5200:1ddc:45cc:e62f:c494])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7627B1EC074B;
+        Thu, 15 Aug 2019 17:34:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565883244;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=6ea0+0I7fYBanPI40B3Ad6TnGdmO71uK0qGfHM+0Bo4=;
+        b=ixw2ad5rraIJ95A28jqAg/FczeVEcYhxQFEzLrDlcL+fFOZ9Gc1GDa6MUF2M8s0AdfC+Bz
+        S77CYzbLrz7CLJC3Tv9lWuQRXOz97162qtRh/TmVGCmoYewt7C5uv5G64Zsn2XNbg6BB/R
+        IDkIkwuGBgKSfBHUmJCbTXH/Ll8qt5s=
+Date:   Thu, 15 Aug 2019 17:34:47 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH] x86/CPU/AMD: Clear RDRAND CPUID bit on AMD family 15h/16h
+Message-ID: <20190815153447.GH15313@zn.tnic>
+References: <776cb5c2d33e7fd0d2893904724c0e52b394f24a.1565817448.git.thomas.lendacky@amd.com>
+ <20190815071940.GB15313@zn.tnic>
+ <768aa720-1db1-81ca-4d0d-adf31f4d134b@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: elm/2
+In-Reply-To: <768aa720-1db1-81ca-4d0d-adf31f4d134b@amd.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Aug 15, 2019 at 01:47:24PM +0000, Lendacky, Thomas wrote:
+> Sure, I can do that. Do we want to tie this into the nordrand option and
+> add rdrand=off or keep that separate?
 
-Please pull these few fixes for auxdisplay for this cycle.
+Yeah, I was looking at that this morning and I'd say keep 'em separate
+because if you have to tie, you need to export functions and then
+there's
 
-Cheers,
-Miguel
+	setup_clear_cpu_cap(X86_FEATURE_RDSEED);
 
-The following changes since commit e21a712a9685488f5ce80495b37b9fdbe96c230d:
+in the nordrand callback but then F15h and F16h don't have RDSEED and
+people would wonder, why clear RDSEED on AMD, blabla... so keeping them
+separate saves us all that.
 
-  Linux 5.3-rc3 (2019-08-04 18:40:12 -0700)
+> I think this is a clearer indication that the action has taken place.
 
-are available in the Git repository at:
+Yeah, but what does that bring us? You wanna know this now, while
+testing. Once that whole effort is done, it is a useless printing of
+info which you have in cpuinfo already.
 
-  https://github.com/ojeda/linux.git tags/auxdisplay-for-linus-v5.3-rc5
+> Not sure what you mean. We can't use the DMI stuff for this. So now, with
+> the x86 family checks, if anyone adds some DMI stuff or x86 family stuff
+> in the future that matches both the DMI and x86 family checks, this will
+> be called more than once and so you need to copy any previous settings and
+> add the new ones.
 
-for you to fetch changes up to 6c4d6bc5486466e3a67cc47270001d0b4a26eed4:
+I had a suspicion that it was something like that. Ok, this is not a
+big structure currently so I guess it is fine but if it keeps growing,
+it would need a proper redesign like making it a list and callbacks
+doing list_add_tail() for MSRs which get added. It would avoid that
+kmalloc and copying which is silly. Please put a comment ontop why we're
+copying.
 
-  auxdisplay: Fix a typo in cfag12864b-example.c (2019-08-08 20:00:18 +0200)
+> Except that X86_FEATURE_RDRAND isn't set anymore. I could create a new
+> software feature that is set when the CPUID bit is cleared if that's
+> preferred.
 
-----------------------------------------------------------------
-A few minor auxdisplay improvements:
+Nah, let's leave it like you had it.
 
-  - A couple of small header cleanups for charlcd
-    From Masahiro Yamada
+Thx.
 
-  - A trivial typo fix for the sampels of cfag12864b
-    From Masahiro Yamada
+-- 
+Regards/Gruss,
+    Boris.
 
-  - An Kconfig help text improvement for charlcd
-    From Mans Rullgard
-
-  - An error path fix for panel
-    From zhengbin
-
-----------------------------------------------------------------
-Mans Rullgard (1):
-      auxdisplay: charlcd: add help text for backlight initial state
-
-Masahiro Yamada (2):
-      auxdisplay: charlcd: move charlcd.h to drivers/auxdisplay
-      auxdisplay: charlcd: add include guard to charlcd.h
-
-Masanari Iida (1):
-      auxdisplay: Fix a typo in cfag12864b-example.c
-
-zhengbin (1):
-      auxdisplay: panel: need to delete scan_timer when misc_register fails in panel_attach
-
- drivers/auxdisplay/Kconfig                     | 5 +++++
- drivers/auxdisplay/charlcd.c                   | 2 +-
- {include/misc => drivers/auxdisplay}/charlcd.h | 5 +++++
- drivers/auxdisplay/hd44780.c                   | 3 +--
- drivers/auxdisplay/panel.c                     | 4 +++-
- samples/auxdisplay/cfag12864b-example.c        | 2 +-
- 6 files changed, 16 insertions(+), 5 deletions(-)
- rename {include/misc => drivers/auxdisplay}/charlcd.h (94%)
+Good mailing practices for 400: avoid top-posting and trim the reply.
