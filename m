@@ -2,98 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D2D88E82F
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:26:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C5308E832
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 11:26:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731383AbfHOJ0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 05:26:09 -0400
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:36126 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730346AbfHOJ0I (ORCPT
+        id S1730918AbfHOJ0m (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 05:26:42 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:33329 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727814AbfHOJ0m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 05:26:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 8AEBC8EE1FB;
-        Thu, 15 Aug 2019 02:26:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1565861165;
-        bh=ChiJO460CwqJr6bCz/k4RtKNXSI3O1ZZt8g3+Id8X0Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=txS1ipMiR7CUHSlUoHY7Yr340RD45sludbWwlFZbAST/wJTgB93X+NH4hXMHmM+sf
-         fNgzpuZSnLQC7esRTxpsajyQxQCp08OzyfabL7vdCWupMwcui8U+xdDnveqEPNhWv9
-         Z8o5cDslbreqbUwKWCvykOv3uCBIKZbKtc9/CFHc=
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id xdeaREgeheqG; Thu, 15 Aug 2019 02:26:04 -0700 (PDT)
-Received: from [192.168.1.74] (host31-48-63-146.range31-48.btcentralplus.com [31.48.63.146])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 68D8F8EE0BF;
-        Thu, 15 Aug 2019 02:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1565861164;
-        bh=ChiJO460CwqJr6bCz/k4RtKNXSI3O1ZZt8g3+Id8X0Q=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OlWfXIG7zOd1sAz8WOHgBIsq+CjD6O6sa7mniwoVsb5xfY6YsyfecX180meWmNBEE
-         AScnlELkp6geKt+seKwyCwqWGyxc9X+k5anMN1Vuga1ATt8Sq1gJxaFt33pFzZ4vBU
-         rFECwrGGAhoFxx6qCn0IkP2mtfuU8za0Eta3XNl4=
-Message-ID: <1565861152.2963.7.camel@HansenPartnership.com>
-Subject: Re: [PATCH 7/8] parisc: don't set ARCH_NO_COHERENT_DMA_MMAP
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     Vladimir Murzin <vladimir.murzin@arm.com>,
-        Takashi Iwai <tiwai@suse.de>, Helge Deller <deller@gmx.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 15 Aug 2019 10:25:52 +0100
-In-Reply-To: <20190808160005.10325-8-hch@lst.de>
-References: <20190808160005.10325-1-hch@lst.de>
-         <20190808160005.10325-8-hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Aug 2019 05:26:42 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7F9QFO32273546
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Thu, 15 Aug 2019 02:26:15 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7F9QFO32273546
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565861176;
+        bh=CEdv23Vqx5irCbXcpPnAkTHtVCRcdd6g1utuqbVtqO8=;
+        h=Date:From:Cc:Reply-To:To:Subject:From;
+        b=iCkxwcggo/XYQFuKTJYmTrFaf9m2TmidLdWvD6MK3ExWHVrxib+OXfhCoe/KPw3ES
+         h7LnAZ56x2YTOJ44j/8Cfmk7661fwXolFY2K4JWercQXrWMMdTQ9+YzGa55QGV6oc0
+         O/KIJf+tz1fconAd52ZKY9xFdZdHP5JlPRZ+CLVqYhwg+t/w2AoL75RIRyCUL8Carm
+         +0oQ2Yr1Nxj4cCK6LKIFxB+uBg93kEkK3ZXYlaN8jtvWppRIAu6Q1p546zjUdp1kHu
+         d0QJYq5V82lWYnu/xips2+JB+VAgs7E+Q/3ciswfGaPKMkOKqb9Rq/8D4uaYBEbvGc
+         gqVlM8Fdew71A==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7F9QEo62273543;
+        Thu, 15 Aug 2019 02:26:14 -0700
+Date:   Thu, 15 Aug 2019 02:26:14 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-eknnvp22elznj0cl5a39hc4v@git.kernel.org>
+Cc:     mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com,
+        suzuki.poulose@arm.com, peterz@infradead.org, namhyung@kernel.org,
+        mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
+        jolsa@kernel.org, hpa@zytor.com, ilubashe@akamai.com,
+        linux-kernel@vger.kernel.org, alexey.budankov@linux.intel.com,
+        jmorris@namei.org
+Reply-To: namhyung@kernel.org, peterz@infradead.org,
+          suzuki.poulose@arm.com, tglx@linutronix.de, mingo@kernel.org,
+          mathieu.poirier@linaro.org, alexander.shishkin@linux.intel.com,
+          alexey.budankov@linux.intel.com, jmorris@namei.org,
+          linux-kernel@vger.kernel.org, jolsa@kernel.org, acme@redhat.com,
+          ilubashe@akamai.com, hpa@zytor.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf tools: Add NO_LIBCAP=1 to the minimal build
+ test
+Git-Commit-ID: 97993bd6eb89bf08649c01d4d57453feca4314f8
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-08 at 19:00 +0300, Christoph Hellwig wrote:
-> parisc is the only architecture that sets ARCH_NO_COHERENT_DMA_MMAP
-> when an MMU is enabled.  AFAIK this is because parisc CPUs use VIVT
-> caches,
+Commit-ID:  97993bd6eb89bf08649c01d4d57453feca4314f8
+Gitweb:     https://git.kernel.org/tip/97993bd6eb89bf08649c01d4d57453feca4314f8
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Mon, 12 Aug 2019 16:43:08 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Wed, 14 Aug 2019 10:59:59 -0300
 
-We're actually VIPT but the same principle applies.
+perf tools: Add NO_LIBCAP=1 to the minimal build test
 
->  which means exporting normally cachable memory to userspace is
-> relatively dangrous due to cache aliasing.
-> 
-> But normally cachable memory is only allocated by dma_alloc_coherent
-> on parisc when using the sba_iommu or ccio_iommu drivers, so just
-> remove the .mmap implementation for them so that we don't have to set
-> ARCH_NO_COHERENT_DMA_MMAP, which I plan to get rid of.
+We need to add these so that we test building without all selectable
+features.
 
-So I don't think this is quite right.  We have three architectural
-variants essentially (hidden behind about 12 cpu types):
+Acked-by: Igor Lubashev <ilubashe@akamai.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Suzuki Poulouse <suzuki.poulose@arm.com>
+Link: https://lkml.kernel.org/n/tip-eknnvp22elznj0cl5a39hc4v@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/tests/make | 1 +
+ 1 file changed, 1 insertion(+)
 
-   1. pa70xx: These can't turn off page caching, so they were the non
-      coherent problem case
-   2. pa71xx: These can manufacture coherent memory simply by turning off
-      the cache on a per page basis
-   3. pa8xxx: these have a full cache flush coherence mechanism.
-
-(I might have this slightly wrong: I vaguely remember the pa71xxlc
-variants have some weird cache quirks for DMA as well)
-
-So I think pa70xx we can't mmap.  pa71xx we can provided we mark the
-page as uncached ... which should already have happened in the allocate
-and pa8xxx which can always mmap dma memory without any special tricks.
-
-James
-
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index 5363a12a8b9b..70c48475896d 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -108,6 +108,7 @@ make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1
+ make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
+ make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
+ make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
++make_minimal        += NO_LIBCAP=1
+ 
+ # $(run) contains all available tests
+ run := make_pure
