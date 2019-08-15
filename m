@@ -2,53 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBF098F1C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D278F1C4
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 19:15:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731924AbfHOROt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 13:14:49 -0400
-Received: from mail-wm1-f97.google.com ([209.85.128.97]:40326 "EHLO
-        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731813AbfHOROh (ORCPT
+        id S1731905AbfHOROo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 13:14:44 -0400
+Received: from mail-ed1-f99.google.com ([209.85.208.99]:38371 "EHLO
+        mail-ed1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731827AbfHOROi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 13:14:37 -0400
-Received: by mail-wm1-f97.google.com with SMTP id v19so1862665wmj.5
+        Thu, 15 Aug 2019 13:14:38 -0400
+Received: by mail-ed1-f99.google.com with SMTP id r12so2720786edo.5
         for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=JHUIetjIti0pEcfSYiQiE8e28/5D5NNhoAZkL5HFjGI=;
-        b=XkzUUTe8MO4xCy1UFFZtR65UJ2iAYCiJ5Im5raueQfVe6+Hc4366Que/25BNvnHxS1
-         qrewNoKITKkmW3rSBkCC5foDWR1Hueqhr1x5OLkez7USMnoPhVZdoA0aYHVuT6lYsKAO
-         7ZTu8UK7YbM/Fl9i1DB1fp0bNq7TRPVLECgOhcVfZgoxF2Nr+uDCcIEMEE2PkxOkHtf6
-         eIWIcPSkAym5iMWjId7QPjx3oOiUZfAvFdMxx7tRJ9mmW3AomI6iZXHEZz8EYfd4bDtJ
-         fpzYcWgQmtNS5TZR3VlFoLXCQxwXuJnoECkhvlpmDoVwxH+sKBn19mkNv9S79gVvp7fr
-         2Bsw==
-X-Gm-Message-State: APjAAAW0fE7nm0KoCbbD4r8Ts5yyLHbEp+c6VAGxKay9q4QPyNI8Q4k1
-        xZheaL50clyjwBm6u1+Q/kVXJU+xFRH+/9e2Aj1o13k/c3MMe51ZBi720NbhF+E+dw==
-X-Google-Smtp-Source: APXvYqwtsvivErczjYZ8MtHJ8gEom0mS3aCoimQxOdueqzNzCjMGqpxdf4fd3hkQCu+k7Xk4Tx9krBGNnokU
-X-Received: by 2002:a05:600c:2487:: with SMTP id 7mr3807673wms.141.1565889276148;
+        bh=STOMTB8soQ9SpdsHI1kcwCTKID5AQX15fSXLD/Rbf0M=;
+        b=KQXFVqadKbd1VdjiK57cz927LmQtxURTQpOaEGLNxjgItx7zMHta+bfTWi6Khup+LX
+         cPUflXNUhiMKTsRrC0VcqYaHla9xAeGNrIbwhZWfRyOok469IeXsL+7VOj3ckmhwokUI
+         0ik2iDy39ZMBFGg64q5jRTObzLhBo1DeTiWlrn69Hr3XIUBUp53oNaIXh3N8F9NXe/bx
+         jr4J2CbW6wCl0GFYgZtPb7EV1hQs0QHAAdDSeD/GOFCEW1ZOuxH5fWzzO1te3ILJLhRy
+         dL/MiCHRCf57MfiPUJOXfiGfE+DrE6jGCimLCPdpJ90daRnXR7yVP3GXbLI5refOATPC
+         crXg==
+X-Gm-Message-State: APjAAAU8CySGQSv8r0GJ5V/JYOBJwDmK3oqg+amo7b/vDoNvAZS6ARZL
+        mhznZmPTJ7NCFZqq3HgqNnvFp87U+qhHI2FqiO3poDNdLQSzL93Z/NkS16rV9caRfQ==
+X-Google-Smtp-Source: APXvYqzyLgL1YBE8FNASctPwC+Lz8lFYO0GlBacef5FmFcI+vyr96Ej3Sj0TANIE49KimsRnjlx4FWa+dJ98
+X-Received: by 2002:a50:ba81:: with SMTP id x1mr6456670ede.257.1565889276186;
         Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id c3sm12896wmd.26.2019.08.15.10.14.36
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        by smtp-relay.gmail.com with ESMTPS id m17sm21059ejc.94.2019.08.15.10.14.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 15 Aug 2019 10:14:36 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1hyJKd-000535-UI; Thu, 15 Aug 2019 17:14:35 +0000
+        id 1hyJKd-000531-Qb; Thu, 15 Aug 2019 17:14:35 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 73AE32742B9E; Thu, 15 Aug 2019 18:14:35 +0100 (BST)
+        id 3A8AC2742BC7; Thu, 15 Aug 2019 18:14:35 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Raag Jadav <raagjadav@gmail.com>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
-        Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: act8945a-regulator: fix ldo register addresses in set_mode hook" to the regulator tree
-In-Reply-To: <1565635194-5816-1-git-send-email-raagjadav@gmail.com>
+To:     Andreas Kemnade <andreas@kemnade.info>
+Cc:     Adam Ford <aford173@gmail.com>, broonie@kernel.org,
+        lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-pm@vger.kernel.org,
+        Mark Brown <broonie@kernel.org>, nm@ti.com, sboyd@kernel.org,
+        stable@vger.kernel.org, tony@atomide.com, vireshk@kernel.org
+Subject: Applied "regulator: twl: voltage lists for vdd1/2 on twl4030" to the regulator tree
+In-Reply-To: <20190814214319.24087-1-andreas@kemnade.info>
 X-Patchwork-Hint: ignore
-Message-Id: <20190815171435.73AE32742B9E@ypsilon.sirena.org.uk>
+Message-Id: <20190815171435.3A8AC2742BC7@ypsilon.sirena.org.uk>
 Date:   Thu, 15 Aug 2019 18:14:35 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -57,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: act8945a-regulator: fix ldo register addresses in set_mode hook
+   regulator: twl: voltage lists for vdd1/2 on twl4030
 
 has been applied to the regulator tree at
 
@@ -82,50 +85,109 @@ to this mail.
 Thanks,
 Mark
 
-From 5d2fc542e8c92130b55ddeb81876ec398adf4d13 Mon Sep 17 00:00:00 2001
-From: Raag Jadav <raagjadav@gmail.com>
-Date: Tue, 13 Aug 2019 00:09:54 +0530
-Subject: [PATCH] regulator: act8945a-regulator: fix ldo register addresses in
- set_mode hook
+From 3829100a63724f6dbf264b2a7f06e7f638ed952d Mon Sep 17 00:00:00 2001
+From: Andreas Kemnade <andreas@kemnade.info>
+Date: Wed, 14 Aug 2019 23:43:19 +0200
+Subject: [PATCH] regulator: twl: voltage lists for vdd1/2 on twl4030
 
-According to ACT8945A datasheet[1], operating modes for ldos are
-controlled by BIT(5) of their respective _CTRL registers.
+_opp_supported_by_regulators() wrongly ignored errors from
+regulator_is_supported_voltage(), so it considered errors as
+success. Since
+commit 498209445124 ("regulator: core: simplify return value on suported_voltage")
+regulator_is_supported_voltage() returns a real boolean, so
+errors make _opp_supported_by_regulators() return false.
 
-[1] https://active-semi.com/wp-content/uploads/ACT8945A_Datasheet.pdf
+That reveals a problem with the declaration of the VDD1/2
+regulators on twl4030.
+The VDD1/VDD2 regulators on twl4030 are neither defined with
+voltage lists nor with the continuous flag set, so
+regulator_is_supported_voltage() returns false and an error
+before above mentioned commit (which was considered success)
+The result is that after the above mentioned commit cpufreq
+does not work properly e.g. dm3730.
 
-Fixes: 7482d6ecc68e ("regulator: act8945a-regulator: Implement PM functionalities")
-Signed-off-by: Raag Jadav <raagjadav@gmail.com>
-Link: https://lore.kernel.org/r/1565635194-5816-1-git-send-email-raagjadav@gmail.com
+[    2.490997] core: _opp_supported_by_regulators: OPP minuV: 1012500 maxuV: 1012500, not supported by regulator
+[    2.501617] cpu cpu0: _opp_add: OPP not supported by regulators (300000000)
+[    2.509246] core: _opp_supported_by_regulators: OPP minuV: 1200000 maxuV: 1200000, not supported by regulator
+[    2.519775] cpu cpu0: _opp_add: OPP not supported by regulators (600000000)
+[    2.527313] core: _opp_supported_by_regulators: OPP minuV: 1325000 maxuV: 1325000, not supported by regulator
+[    2.537750] cpu cpu0: _opp_add: OPP not supported by regulators (800000000)
+
+The patch fixes declaration of VDD1/2 regulators by
+adding proper voltage lists.
+
+Fixes: 498209445124 ("regulator: core: simplify return value on suported_voltage")
+Cc: stable@vger.kernel.org
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
+Link: https://lore.kernel.org/r/20190814214319.24087-1-andreas@kemnade.info
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/act8945a-regulator.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/regulator/twl-regulator.c | 23 ++++++++++++++++++++---
+ 1 file changed, 20 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/regulator/act8945a-regulator.c b/drivers/regulator/act8945a-regulator.c
-index 584284938ac9..d2f804dbc785 100644
---- a/drivers/regulator/act8945a-regulator.c
-+++ b/drivers/regulator/act8945a-regulator.c
-@@ -169,16 +169,16 @@ static int act8945a_set_mode(struct regulator_dev *rdev, unsigned int mode)
- 		reg = ACT8945A_DCDC3_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO1:
--		reg = ACT8945A_LDO1_SUS;
-+		reg = ACT8945A_LDO1_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO2:
--		reg = ACT8945A_LDO2_SUS;
-+		reg = ACT8945A_LDO2_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO3:
--		reg = ACT8945A_LDO3_SUS;
-+		reg = ACT8945A_LDO3_CTRL;
- 		break;
- 	case ACT8945A_ID_LDO4:
--		reg = ACT8945A_LDO4_SUS;
-+		reg = ACT8945A_LDO4_CTRL;
- 		break;
- 	default:
- 		return -EINVAL;
+diff --git a/drivers/regulator/twl-regulator.c b/drivers/regulator/twl-regulator.c
+index 6fa15b2d6fb3..866b4dd01da9 100644
+--- a/drivers/regulator/twl-regulator.c
++++ b/drivers/regulator/twl-regulator.c
+@@ -359,6 +359,17 @@ static const u16 VINTANA2_VSEL_table[] = {
+ 	2500, 2750,
+ };
+ 
++/* 600mV to 1450mV in 12.5 mV steps */
++static const struct regulator_linear_range VDD1_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 68, 12500)
++};
++
++/* 600mV to 1450mV in 12.5 mV steps, everything above = 1500mV */
++static const struct regulator_linear_range VDD2_ranges[] = {
++	REGULATOR_LINEAR_RANGE(600000, 0, 68, 12500),
++	REGULATOR_LINEAR_RANGE(1500000, 69, 69, 12500)
++};
++
+ static int twl4030ldo_list_voltage(struct regulator_dev *rdev, unsigned index)
+ {
+ 	struct twlreg_info	*info = rdev_get_drvdata(rdev);
+@@ -427,6 +438,8 @@ static int twl4030smps_get_voltage(struct regulator_dev *rdev)
+ }
+ 
+ static const struct regulator_ops twl4030smps_ops = {
++	.list_voltage   = regulator_list_voltage_linear_range,
++
+ 	.set_voltage	= twl4030smps_set_voltage,
+ 	.get_voltage	= twl4030smps_get_voltage,
+ };
+@@ -466,7 +479,8 @@ static const struct twlreg_info TWL4030_INFO_##label = { \
+ 		}, \
+ 	}
+ 
+-#define TWL4030_ADJUSTABLE_SMPS(label, offset, num, turnon_delay, remap_conf) \
++#define TWL4030_ADJUSTABLE_SMPS(label, offset, num, turnon_delay, remap_conf, \
++		n_volt) \
+ static const struct twlreg_info TWL4030_INFO_##label = { \
+ 	.base = offset, \
+ 	.id = num, \
+@@ -479,6 +493,9 @@ static const struct twlreg_info TWL4030_INFO_##label = { \
+ 		.owner = THIS_MODULE, \
+ 		.enable_time = turnon_delay, \
+ 		.of_map_mode = twl4030reg_map_mode, \
++		.n_voltages = n_volt, \
++		.n_linear_ranges = ARRAY_SIZE(label ## _ranges), \
++		.linear_ranges = label ## _ranges, \
+ 		}, \
+ 	}
+ 
+@@ -518,8 +535,8 @@ TWL4030_ADJUSTABLE_LDO(VSIM, 0x37, 9, 100, 0x00);
+ TWL4030_ADJUSTABLE_LDO(VDAC, 0x3b, 10, 100, 0x08);
+ TWL4030_ADJUSTABLE_LDO(VINTANA2, 0x43, 12, 100, 0x08);
+ TWL4030_ADJUSTABLE_LDO(VIO, 0x4b, 14, 1000, 0x08);
+-TWL4030_ADJUSTABLE_SMPS(VDD1, 0x55, 15, 1000, 0x08);
+-TWL4030_ADJUSTABLE_SMPS(VDD2, 0x63, 16, 1000, 0x08);
++TWL4030_ADJUSTABLE_SMPS(VDD1, 0x55, 15, 1000, 0x08, 68);
++TWL4030_ADJUSTABLE_SMPS(VDD2, 0x63, 16, 1000, 0x08, 69);
+ /* VUSBCP is managed *only* by the USB subchip */
+ TWL4030_FIXED_LDO(VINTANA1, 0x3f, 1500, 11, 100, 0x08);
+ TWL4030_FIXED_LDO(VINTDIG, 0x47, 1500, 13, 100, 0x08);
 -- 
 2.20.1
 
