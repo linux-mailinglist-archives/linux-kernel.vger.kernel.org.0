@@ -2,95 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8296D8EBA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:38:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CD2D8EBAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 15 Aug 2019 14:39:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731860AbfHOMiU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 08:38:20 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:37481 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725977AbfHOMiU (ORCPT
+        id S1731445AbfHOMjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 08:39:48 -0400
+Received: from mail-qk1-f172.google.com ([209.85.222.172]:44877 "EHLO
+        mail-qk1-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725977AbfHOMjs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 08:38:20 -0400
-Received: by mail-pl1-f194.google.com with SMTP id bj8so1039177plb.4;
-        Thu, 15 Aug 2019 05:38:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=1ee2WC7wFUitxl0VhlNk/I0IaNSildZhX3LeEHVWcaU=;
-        b=bU7F69OaIb5ke+Qt0qr7HlZwNfbiYKkzBNNDd8WzOHgsvEfE1khSOgq2w7EpiRuWPh
-         uTqfEiRYLy6fq3vEnJnH7/iPX37E1FVbVulx7Vv4U18g2VLI86sei7DpxGqKZDZ96V8+
-         rSoDO6VJthK6lxxQXoyz0eywkCeUmf/HVebo2WM0qgyPW9iHxjb5jXIwCH/78l9samiB
-         m2STME5iKjiocHcUzIBq5wqyuPgAlKn7Cq1b3FOToXEt7XIEjowRnd3jV3pH+WCgbrwb
-         y/wg7L3zNnBb2BOCFeUQahe99n0O2JYWx17ui9xB37TfI3KFvJtxA92FplWroT1DsaAR
-         LHVg==
+        Thu, 15 Aug 2019 08:39:48 -0400
+Received: by mail-qk1-f172.google.com with SMTP id d79so1623304qke.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 05:39:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=1ee2WC7wFUitxl0VhlNk/I0IaNSildZhX3LeEHVWcaU=;
-        b=ovbZ5cY9Trf6ZwcGv1tYn/TZUTd+r7paJG4+Q5oFgYBYbVsvoewwFhgpB4eNPFlTxI
-         jC9jY0iNn7t7e74onD8L0NcWQQFnmHwPF10gIIoKS1ijpZ5vpjI31Gmhnd2616ZwhO/D
-         +hSDlydnoBQceM8gm9y3+0Y2E5jAX37hF+uKWCIbvSo6sE1FbQUl8bfZPrYVlctdnM5J
-         6MLCJeLG3TTRS9pD2Il8x3sXkQNsm3riUVG5lJ22bFoRs/eZyWWxa6w5G9SkR2/x8hbo
-         a95v+VwN4FeDcteDIJSd5QzxGFd92DllBoHg06K3IL3xe/EPNKrCEQezfy+DA28eh8n3
-         VwTg==
-X-Gm-Message-State: APjAAAW4Q1sF4cJSddhaYGVhTutcImjlbyFSSC+7b+p3BbND4I/mSz3L
-        Tk6BajHMEOfijOLvFgXpwkk=
-X-Google-Smtp-Source: APXvYqwacwndMgsXukx1fTNdcEaTu+xtzJYP9eajJDSzmxObARVKtVJS5xCwgo93gUEa6Hu2wopekQ==
-X-Received: by 2002:a17:902:e60c:: with SMTP id cm12mr2573361plb.304.1565872699079;
-        Thu, 15 Aug 2019 05:38:19 -0700 (PDT)
-Received: from icarus ([2001:268:c146:4483:71c4:4d14:b4c7:2693])
-        by smtp.gmail.com with ESMTPSA id t4sm2836798pfd.109.2019.08.15.05.38.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Aug 2019 05:38:17 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 21:37:58 +0900
-From:   William Breathitt Gray <vilhelm.gray@gmail.com>
-To:     David Lechner <david@lechnology.com>
-Cc:     linux-iio@vger.kernel.org, linux-omap@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pwm@vger.kernel.org, Jonathan Cameron <jic23@kernel.org>
-Subject: Re: [PATCH v2 3/5] counter: new TI eQEP driver
-Message-ID: <20190815123758.GA646493@icarus>
-References: <20190807194023.15318-1-david@lechnology.com>
- <20190807194023.15318-4-david@lechnology.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+sz8iMwRtA16rKBM+y1xtqsr2FT3ggqC7wXEVqNU80Y=;
+        b=DnWkHHPSpWWgaGgdv2K1qOgUXogZ3si0TK/CZZdydz3z6l0bum3/rHNHHARC8o5TwP
+         dhvrM6uV2x5pjIh4CHCMSMYoty5zoDlq2xbR+S6SKiH15ew9+4uERXDBl840EyohTh1v
+         4pdZbqTmilkk+TaxtviXnDlEzDRFWMgLT6ZFg0zmkuKK0PNjKOZotkQEnm87MvAkU1h7
+         5DKt8LHDZsfTUyjLJhcMoqZQAe29CvLUHjmt0ib90fYtd6qjQc9n6luCKWMJ4n00KKgb
+         JP2JZzvCbqBz3iI85UR1FqU9nC4bTKbospT7+jc27fzdyK/BzyanOjktoXsd2lUWiqk3
+         QUqQ==
+X-Gm-Message-State: APjAAAXa74AuaEivM/XvsTtN/j6hoYXrM24ZwZQ9MYxsiCzEZjBNhVul
+        dxWBwh3Ya+dpx9DKP4iCnnHXYCeKXtSN1aTxFbM=
+X-Google-Smtp-Source: APXvYqyLvIyU6AnKUG0hHT8aa7Za+z6fbHp4ioldVGfk9TXm4wyKocAOhU2KdR8M1elDp43RaX0KruXrHyHMX8Jtyjk=
+X-Received: by 2002:a37:bd44:: with SMTP id n65mr1261997qkf.286.1565872786986;
+ Thu, 15 Aug 2019 05:39:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190807194023.15318-4-david@lechnology.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190815065659.GA13498@jax>
+In-Reply-To: <20190815065659.GA13498@jax>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 15 Aug 2019 14:39:30 +0200
+Message-ID: <CAK8P3a09pJ+ZHHEDoc6=znB5Ycsy1nPMf2QS=dssktN3mv591w@mail.gmail.com>
+Subject: Re: [GIT PULL] tee subsys for v5.4
+To:     Jens Wiklander <jens.wiklander@linaro.org>
+Cc:     arm-soc <arm@kernel.org>, SoC Team <soc@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 07, 2019 at 02:40:21PM -0500, David Lechner wrote:
-> +static struct counter_synapse ti_eqep_position_synapses[] = {
-> +	{
-> +		.action		= TI_EQEP_SYNAPSE_ACTION_BOTH_EDGES,
-> +		.actions_list	= ti_eqep_position_synapse_actions,
-> +		.num_actions	= ARRAY_SIZE(ti_eqep_position_synapse_actions),
-> +		.signal		= &ti_eqep_signals[TI_EQEP_SIGNAL_QEPA],
-> +	},
-> +	{
-> +		.action		= TI_EQEP_SYNAPSE_ACTION_BOTH_EDGES,
-> +		.actions_list	= ti_eqep_position_synapse_actions,
-> +		.num_actions	= ARRAY_SIZE(ti_eqep_position_synapse_actions),
-> +		.signal		= &ti_eqep_signals[TI_EQEP_SIGNAL_QEPB],
-> +	},
-> +};
+On Thu, Aug 15, 2019 at 8:57 AM Jens Wiklander
+<jens.wiklander@linaro.org> wrote:
+>
+> Hello arm-soc maintainers,
+>
+> Please pull this OP-TEE driver patch. It adds a call to might_sleep()
+> during RPC in the OP-TEE driver in order to be more friendly with
+> CONFIG_PREEMPT_VOLUNTARY.
+>
 
-Hi David,
+Pulled into arm/drivers, thanks!
 
-Just a minor suggestion for your v3: you don't need to initialize
-"action" here since it'll be automatically updated in the core
-counter_action_show function to the value returned by your action_get
-callback function. So you can safely delete those two ".action =" lines.
-
-William Breathitt Gray
+      Arnd
