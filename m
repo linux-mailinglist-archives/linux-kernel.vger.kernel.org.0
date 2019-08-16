@@ -2,57 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E574190702
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:35:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BB6390707
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:36:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727614AbfHPRfO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 13:35:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
+        id S1727533AbfHPRgF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 13:36:05 -0400
+Received: from foss.arm.com ([217.140.110.172]:59492 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727005AbfHPRfO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:35:14 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D0C32086C;
-        Fri, 16 Aug 2019 17:35:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565976913;
-        bh=KwRVVOrbytzGnxOURauAndFe+pfthF388DNgyyvGERk=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=xpQpUa2BQ0TqloUC1TlYy1EeGHiyVhpeP/kdEpmzeD87XGk3bB/a3CsWlqZ4ZJLX4
-         clm9pfY59Kr3mcwsfTD0QxZwyX1v3TB6MSrl2Mg0ZxQUKBOVnNaskq2FD0MEOZUTQ/
-         bAuMuZQ9A8Q3PE0oDC82fmx52XsZDpXJKeXJFAyA=
-Content-Type: text/plain; charset="utf-8"
+        id S1726900AbfHPRgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:36:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1FB0928;
+        Fri, 16 Aug 2019 10:36:04 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BA173F694;
+        Fri, 16 Aug 2019 10:36:02 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 18:36:00 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Will Deacon <will@kernel.org>
+Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
+        Guan Xuetao <gxt@pku.edu.cn>,
+        Shawn Anastasio <shawn@anastas.io>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/6] arm64: document the choice of page attributes for
+ pgprot_dmacoherent
+Message-ID: <20190816173559.GB7417@lakrids.cambridge.arm.com>
+References: <20190816070754.15653-1-hch@lst.de>
+ <20190816070754.15653-7-hch@lst.de>
+ <20190816173118.4rbbzuogfamfa554@willie-the-truck>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190816135944.54232-1-yuehaibing@huawei.com>
-References: <20190816135944.54232-1-yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] clk: qcom: clk-rpm: remove unused code
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
-To:     YueHaibing <yuehaibing@huawei.com>, agross@kernel.org,
-        mturquette@baylibre.com
-User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 10:35:12 -0700
-Message-Id: <20190816173513.7D0C32086C@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816173118.4rbbzuogfamfa554@willie-the-truck>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting YueHaibing (2019-08-16 06:59:44)
-> drivers/clk/qcom/clk-rpm.c:453:29: warning:
->  clk_rpm_branch_ops defined but not used [-Wunused-const-variable=3D]
->=20
-> It is never used, also the macros 'DEFINE_CLK_RPM_CXO_BRANCH'
-> and 'DEFINE_CLK_RPM_CXO_BRANCH' are unused, so remove them.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
+On Fri, Aug 16, 2019 at 06:31:18PM +0100, Will Deacon wrote:
+> Hi Christoph,
+> 
+> Thanks for spinning this into a patch.
+> 
+> On Fri, Aug 16, 2019 at 09:07:54AM +0200, Christoph Hellwig wrote:
+> > Based on an email from Will Deacon.
+> > 
+> > Signed-off-by: Christoph Hellwig <hch@lst.de>
+> > ---
+> >  arch/arm64/include/asm/pgtable.h | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> > 
+> > diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> > index 6700371227d1..6ff221d9a631 100644
+> > --- a/arch/arm64/include/asm/pgtable.h
+> > +++ b/arch/arm64/include/asm/pgtable.h
+> > @@ -435,6 +435,14 @@ static inline pmd_t pmd_mkdevmap(pmd_t pmd)
+> >  	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_NORMAL_NC) | PTE_PXN | PTE_UXN)
+> >  #define pgprot_device(prot) \
+> >  	__pgprot_modify(prot, PTE_ATTRINDX_MASK, PTE_ATTRINDX(MT_DEVICE_nGnRE) | PTE_PXN | PTE_UXN)
+> > +/*
+> > + * DMA allocations for non-coherent devices use what the Arm architecture calls
+> > + * "Normal non-cacheable" memory, which permits speculation, unaligned accesses
+> > + * and merging of writes.  This is different from "Strongly Ordered" memory
+> > + * which is intended for MMIO and thus forbids speculation, preserves access
+> > + * size, requires strict alignment and also forces write responses to come from
+> > + * the endpoint.
+> > + */
+> 
+> Mind if I tweak the second sentence to be:
+> 
+>   This is different from "Device-nGnR[nE]" memory which is intended for MMIO
+>   and thus forbids speculation, preserves access size, requires strict
+>   alignment and can also force write responses to come from the endpoint.
+> 
+> ? It's a small change, but it better fits with the arm64 terminology
+> ("strongly ordered" is no longer used in the architecture).
+> 
+> If you're happy with that, I can make the change and queue this patch
+> for 5.4.
 
-Sorry, apparently we're leaving this code around for qcom folks to use
-one day.
+FWIW, with that wording:
 
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
