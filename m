@@ -2,100 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9B968FE64
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:41:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0AB148FE1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfHPIku (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:40:50 -0400
-Received: from esa4.mentor.iphmx.com ([68.232.137.252]:36144 "EHLO
-        esa4.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfHPIhu (ORCPT
+        id S1727304AbfHPIiY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:38:24 -0400
+Received: from esa3.mentor.iphmx.com ([68.232.137.180]:42029 "EHLO
+        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727188AbfHPIiX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:37:50 -0400
-IronPort-SDR: TNfRHd001JlxC+a7kUTnwdUAA1h1lvJV52b2AELbxvEUHxRNB1+0WB/ZPSvWyj15i7WQkoYPjc
- fZZEHufMoHeLptMHgB5/f1QokgIVXGpD5tWoUpMfyX8ZIl8O0QSNHa3exgadujF4geFLtEu35F
- VT24IHCVf2IUYYW7OdBDuvaMDq3mdFW+pfxfIJ4Wn+YgxrZGOmfiEdPQCneinEHNfR/+lutp5G
- sJ0cpe0G7N+rcE5TF/4kg11hBUVfFfnORw1ZUedo/Mjnn3BVfrFuHHEvIyRAEYv4aOmvxtvfHY
- U/8=
+        Fri, 16 Aug 2019 04:38:23 -0400
+IronPort-SDR: jrTJUyIB8wLCLCIgUmDd9dUQXFacnNTPpEPbbYgf+2bpyMbOlLtphDvvH64KZIYAkdrPffLJYQ
+ 8e+ppzLL3wTfboN3c7pmOWB0cikDNCRDqfDsGOsPyI+2SaK8kepJLAh7aNaO0RO5YeWAYeC2ly
+ HudXk4SFT2FkIhNaLSw6GIT1/62ffghEE7FFNqGvlcYVtBZhklSlaknjArZzgjmGJq8N0FHtqx
+ q3DTEPtI6pwXPTGeFYvoeAYSSa5u9PO88W2pw+jbhT2Cwz0tjXPocoZWZgmCfKoYvjt1YoQJtx
+ xMY=
 X-IronPort-AV: E=Sophos;i="5.64,391,1559548800"; 
-   d="scan'208";a="40519177"
+   d="scan'208";a="40507245"
 Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa4.mentor.iphmx.com with ESMTP; 16 Aug 2019 00:37:49 -0800
-IronPort-SDR: ar4w/QkJJMYItMaCLz4GJoXWQXdx3uUbqEtBxS89GB9vVfE5zBAz/J7ANcY2oB5GWkjf31ItR5
- skikK1OEtibNGMg5JU7VdSGzkjeiRU8NASi5gNtKkIpmDuTCYXj5e5EUwIUrT3EvPhjTw2chtI
- PXJZc7p+OUI5FeM1iV87Usbuv7Lfcr2qMOIAINV5Fta15VKQmLaAUnvAvRvbZk2iOyEd3EAc2H
- iol85OFcKs9OHypn+boAcJJ3/We9jAM6JvR8r+zkNxr/cgKWt4BN5s8gDD8t0CbZ9LbpPR4FXG
- LZ4=
+  by esa3.mentor.iphmx.com with ESMTP; 16 Aug 2019 00:38:21 -0800
+IronPort-SDR: Ld2RW3s3aku5NrPIGsQOXbKSNwBwtAoQGuUS3kcWHQcJ5r12xyAuJqQ5Sww1WhMoSRQaikSohZ
+ uQEwXKRhivIlYb1zv9zl/UD8lPWr8XNAb6Y29IqSW8XMDATJCt5sovEpBUQjnhjkfVOkYILHrc
+ r3Ex7chWRG+e0Mv8DRhtPTncwT1Z8cp1MeLNe3F5udgKjeDwD75b4Se0COw+caxAgl/h6N1JeO
+ uotPXZORj8mKlJCwB5UGR7nHGlT/aeIBnHxbCfPoj3OiuEt0vNfD7Q9roHqJqRHucW9L+plh+y
+ QhA=
 From:   Jiada Wang <jiada_wang@mentor.com>
 To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>
 CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <jiada_wang@mentor.com>, <george_davis@mentor.com>
-Subject: [PATCH v1 50/63] Input: Atmel: handle ReportID "0x00" while processing T5 messages
-Date:   Fri, 16 Aug 2019 17:37:44 +0900
-Message-ID: <20190816083757.19449-1-jiada_wang@mentor.com>
+Subject: [PATCH v1 55/63] Input: atmel_mxt_ts: Use msecs_to_jiffies() instead of HZ
+Date:   Fri, 16 Aug 2019 17:38:22 +0900
+Message-ID: <20190816083830.19553-1-jiada_wang@mentor.com>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) To
+X-ClientProxiedBy: svr-orw-mbx-04.mgc.mentorg.com (147.34.90.204) To
  svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Deepak Das <deepak_das@mentor.com>
+From: Dean Jenkins <Dean_Jenkins@mentor.com>
 
-ReportID "0x00" is reserved by Atmel and should not be used by any
-Atmel touch controller.
+Replace HZ / 10 with msecs_to_jiffies(100) in the
+schedule_delayed_work() calls in mxt_fw_work() and
+mxt_check_bootloader() because it is cleaner.
 
-reportID is the first byte retrieved from T5 message payload.
-Currently Atmel driver continues to process the T5 messages even if
-the reportID "0x00" is returned by Touch Controller.
-
-This commit modifies Atmel touch driver to return -EINVAL if ReportID
-"0x00" is received while processing T5 messages.
-
-Signed-off-by: Deepak Das <deepak_das@mentor.com>
+Signed-off-by: Dean Jenkins <Dean_Jenkins@mentor.com>
+Signed-off-by: Sanjeev Chugh <sanjeev_chugh@mentor.com>
 Signed-off-by: George G. Davis <george_davis@mentor.com>
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/input/touchscreen/atmel_mxt_ts.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index b17af89a4711..2041a82a4551 100644
+index 35d92751e49f..40263ef79e8e 100644
 --- a/drivers/input/touchscreen/atmel_mxt_ts.c
 +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -76,6 +76,7 @@
- #define MXT_PROCI_TOUCHSEQUENCELOGGER	93
- #define MXT_TOUCH_MULTITOUCHSCREEN_T100 100
- #define MXT_PROCI_ACTIVESTYLUS_T107	107
-+#define MXT_RPTID_RESERVED		0
+@@ -842,7 +842,7 @@ static int mxt_check_bootloader(struct mxt_data *data)
+ 	f->previous = state;
  
- /* MXT_GEN_MESSAGE_T5 object */
- #define MXT_RPTID_NOMSG		0xff
-@@ -1385,6 +1386,11 @@ static int mxt_proc_message(struct mxt_data *data, u8 *message)
- 	u8 report_id = message[0];
- 	bool dump = data->debug_enabled;
+ 	/* Poll after 0.1s if no interrupt received */
+-	schedule_delayed_work(&f->work, HZ / 10);
++	schedule_delayed_work(&f->work, msecs_to_jiffies(100));
  
-+	if (report_id == MXT_RPTID_RESERVED) {
-+		dev_err(&data->client->dev,
-+			"Received Reserved ReportID 0x00\n");
-+		return -EINVAL;
-+	}
- 	if (report_id == MXT_RPTID_NOMSG)
- 		return 0;
+ 	return 0;
  
-@@ -1456,6 +1462,8 @@ static int mxt_read_and_process_messages(struct mxt_data *data, u8 count)
- 		ret = mxt_proc_message(data,
- 			data->msg_buf + data->T5_msg_size * i);
+@@ -3773,7 +3773,7 @@ static int mxt_load_fw(struct device *dev)
+ 		goto release_firmware;
  
-+		if (ret < 0)
-+			return ret;
- 		if (ret == 1)
- 			num_valid++;
- 	}
+ 	/* Poll after 0.1s if no interrupt received */
+-	schedule_delayed_work(&data->flash->work, HZ / 10);
++	schedule_delayed_work(&data->flash->work, msecs_to_jiffies(100));
+ 
+ 	/* Wait for flash. */
+ 	ret = mxt_wait_for_completion(data, &data->flash->flash_completion,
 -- 
 2.19.2
 
