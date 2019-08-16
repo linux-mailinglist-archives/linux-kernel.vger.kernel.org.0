@@ -2,136 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B6C5A906CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:25:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A1796906CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:25:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfHPRZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 13:25:05 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39427 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727529AbfHPRZE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:25:04 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f17so3440249pfn.6;
-        Fri, 16 Aug 2019 10:25:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=eV24mEVLUAWo7NIyZVsA3Rt3ddpLn+tixssQhqBd+jk=;
-        b=I+Yu8AIZCUfZGeLW+9Sse7haGYCSeVgo6YQFpsbqTSKXFIJnN0aXAbLZbEEsSIY8YX
-         pAT47/Au77G8bGzng16YJ3xYOkkFn1b03yP1fa9kWUreOp/ZCpS2BakuxLk1SdN6wTnS
-         1MFBXs1a42yW5TjTtBR9PmXqybYzO9fi6wuBOFV011lrRLF9V88G4OfScbwUZX6ydA0D
-         v+7bByYBbZm+B5ZeKDGpqSbbTS2uVDGEnhYrD0ccjMO7+8ophxICG/gMxnG+zhUHYREm
-         HEOpxl2IELn26+TAzT9qrhoxaBUgMrVnEuA+Qh+43Mi2M3sMtez4zVV1sPOlXW8DQsMg
-         CciA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eV24mEVLUAWo7NIyZVsA3Rt3ddpLn+tixssQhqBd+jk=;
-        b=Xqp5bWlOZhMyQhuYliL0/XYhGjdsABAVFlx9Y4ZpQQoKY43WLhERnt6NqngHekW1K3
-         svCb5ZywrL5ijVZboxWbZeYu1pYz7A91zAsd7wrNy0o39xCOTQh+gGwfrNIA9R9ASwZF
-         P2bmXiGI0ujVtsy0Q+m31WISg40I84G3Dov1eMbpXDZDQbbSbbyX1RTGD+F92wH24HLS
-         5+ATtTc+u3Xnjpj4qFxflOSJHP4xxenMQOHaNbnWTxszPOkYHDdRTSzHX6vU6gJKJYYL
-         eE+QTdZ14gQIaaOE576mx8lrZ0owCultOCMnaFku1/BEsXdyAL+HFsm5ixzubvzBuEii
-         U9pQ==
-X-Gm-Message-State: APjAAAX4/KiGE6XJLA+X6eIO+5eqCkz7ogHVoZ1p8nEFPsYhWI+747O/
-        tNrgYPe4X57l3+eGKdlR5yM=
-X-Google-Smtp-Source: APXvYqwqzHmUMmNaFK9M5wvmk81EsJ02lZiWY9eiwt5XVUo8e0fiIvbYMs8bsG3xPM4sQeDUjCy9Yg==
-X-Received: by 2002:a65:448a:: with SMTP id l10mr8556895pgq.327.1565976303259;
-        Fri, 16 Aug 2019 10:25:03 -0700 (PDT)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id z14sm4177882pjr.23.2019.08.16.10.25.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 10:25:02 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 10:25:00 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Jiada Wang <jiada_wang@mentor.com>
-Cc:     nick@shmanahar.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, george_davis@mentor.com
-Subject: Re: [PATCH v1 39/63] Input: touchscreen: Atmel: Add device tree
- support for T15 key array objects
-Message-ID: <20190816172500.GI121898@dtor-ws>
-References: <20190816083525.19071-1-jiada_wang@mentor.com>
- <20190816083525.19071-5-jiada_wang@mentor.com>
+        id S1727597AbfHPRZI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 13:25:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50244 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727529AbfHPRZH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:25:07 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 727322086C;
+        Fri, 16 Aug 2019 17:25:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565976306;
+        bh=l2UhekZfp46Gm4ghaGYnz4/LUNxAABqLtkbqZkEPCNg=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=gD5G1dqI0AxFdz7yj5rpcx6Hb/aRlL6atXSEOPhTcs8zDfLbxz4oUOWe6oUctF30d
+         7oNlP/OFy7GGEHcR4Mf+JRceID6pn2el9azNIcWpvC44fY3tbCYbRGKW6dp7T4u0Jq
+         ol9ZwtqsVTrMkDi66S+6oOdt5xkkBqDevVOyJXa4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816083525.19071-5-jiada_wang@mentor.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190815041037.3470-1-sboyd@kernel.org>
+References: <20190815041037.3470-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: sunxi: Don't call clk_hw_get_name() on a hw that isn't registered
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Fri, 16 Aug 2019 10:25:05 -0700
+Message-Id: <20190816172506.727322086C@mail.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 05:35:01PM +0900, Jiada Wang wrote:
-> From: Daniel Gong <Zhanli.Gong@cn.bosch.com>
-
-This should be with the code adding T15 handling.
-
-> 
-> Signed-off-by: Daniel Gong <Zhanli.Gong@cn.bosch.com>
-> Signed-off-by: George G. Davis <george_davis@mentor.com>
-> Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
+Quoting Stephen Boyd (2019-08-14 21:10:37)
+> The implementation of clk_hw_get_name() relies on the clk_core
+> associated with the clk_hw pointer existing. If of_clk_hw_register()
+> fails, there isn't a clk_core created yet, so calling clk_hw_get_name()
+> here fails. Extract the name first so we can print it later.
+>=20
+> Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/input/touchscreen/atmel_mxt_ts.c | 29 ++++++++++++++++++++++++
->  1 file changed, 29 insertions(+)
-> 
-> diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-> index be63002c2b31..3b9544c0a209 100644
-> --- a/drivers/input/touchscreen/atmel_mxt_ts.c
-> +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-> @@ -4143,10 +4143,12 @@ static int mxt_parse_device_properties(struct mxt_data *data)
->  {
->  	static const char keymap_property[] = "linux,gpio-keymap";
->  	static const char gpios_property[] = "atmel,gpios";
-> +	static const char buttons_property[] = "atmel,key-buttons";
->  	struct device *dev = &data->client->dev;
->  	struct device_node *np = dev ? dev->of_node : NULL;
->  	struct device_node *np_gpio;
->  	u32 *keymap;
-> +	u32 *buttonmap;
->  	int n_keys;
->  	int error;
->  
-> @@ -4181,6 +4183,33 @@ static int mxt_parse_device_properties(struct mxt_data *data)
->  		data->t19_num_keys = n_keys;
->  	}
->  
-> +	if (device_property_present(dev, buttons_property)) {
-> +		n_keys = device_property_read_u32_array(dev, buttons_property,
-> +							NULL, 0);
-> +		if (n_keys <= 0) {
-> +			error = n_keys < 0 ? n_keys : -EINVAL;
-> +			dev_err(dev, "invalid/malformed '%s' property: %d\n",
-> +				buttons_property, error);
-> +			return error;
-> +		}
-> +
-> +		buttonmap = devm_kmalloc_array(dev, n_keys, sizeof(*buttonmap),
-> +					       GFP_KERNEL);
-> +		if (!buttonmap)
-> +			return -ENOMEM;
-> +
-> +		error = device_property_read_u32_array(dev, buttons_property,
-> +						       buttonmap, n_keys);
-> +		if (error) {
-> +			dev_err(dev, "failed to parse '%s' property: %d\n",
-> +				buttons_property, error);
-> +			return error;
-> +		}
-> +
-> +		data->t15_keymap = buttonmap;
-> +		data->t15_num_keys = n_keys;
-> +	}
-> +
->  	device_property_read_u32(dev, "atmel,suspend-mode", &data->suspend_mode);
->  
->  	np_gpio = of_get_child_by_name(np, gpios_property);
-> -- 
-> 2.19.2
-> 
 
--- 
-Dmitry
+Applied to clk-next
+
