@@ -2,112 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CB928FBEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:17:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 807348FC01
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:21:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726728AbfHPHQr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 03:16:47 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46042 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726604AbfHPHQr (ORCPT
+        id S1726728AbfHPHV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:21:27 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:42412 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726482AbfHPHV1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 03:16:47 -0400
-Received: by mail-wr1-f65.google.com with SMTP id q12so559843wrj.12
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 00:16:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=EJIVlcVrChaIchPRvi0VZFSGzF07MglN/xDgbO0U5g8=;
-        b=dFE8+bQZlrZw2ixx7ri4h9WGmhjqSTWiKEq88OIrL/7lE3MAyM0XzHHThG9OHKwg7I
-         A5Epcl/LIS4qrpE7De/KpO92UX8IF1degGbCb0yjsMd5feYECRAsCvubQrPGsMnp1Nkb
-         jcslBcdVAjOoskvq10KFLisGv5woZIL5DMmGMK/vHO2AvSVFNkP1Fwe/PsXsB8KQyeyZ
-         5heiUpIBIQ8KKZgvVmAANunTlIxGdPH8EJ93WQEpe2joV8IwEgeb2DrrMFtHXyAGAK05
-         K+4B6FohwbH26k0OumMAy3vFNr1DD7hPGoSrSMSo4slzrnVc3rbXh2w3rvOyWz+0NBMa
-         sDPw==
-X-Gm-Message-State: APjAAAU0megdNBhbeZqPNDdl6Us0VW6QrJKYH5uYfK0JhHhYaVpXxuSn
-        UUfqlzxgEwcr5Kvfid04r4r1lw==
-X-Google-Smtp-Source: APXvYqzTfq2WpNnyBkTVV943/NPrjFUPf4oiM2s4KVceIdYqfb9LPPM0nQxqCppVTo2b/jit8oFZxQ==
-X-Received: by 2002:adf:9050:: with SMTP id h74mr8738567wrh.191.1565939805105;
-        Fri, 16 Aug 2019 00:16:45 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:399c:411e:1ccb:f240? ([2001:b07:6468:f312:399c:411e:1ccb:f240])
-        by smtp.gmail.com with ESMTPSA id g26sm3184169wmh.32.2019.08.16.00.16.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2019 00:16:44 -0700 (PDT)
-Subject: Re: [PATCH] KVM: x86/MMU: Zap all when removing memslot if VM has
- assigned device
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alex Willamson <alex.williamson@redhat.com>
-References: <1565855169-29491-1-git-send-email-pbonzini@redhat.com>
- <20190815151228.32242-1-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <6c040867-2978-5c57-bbd1-3000593ed538@redhat.com>
-Date:   Fri, 16 Aug 2019 09:16:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 16 Aug 2019 03:21:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=93/+ko3Du/V64K+y2AaxEF8szX3mmmGeAKtqr4Af7n4=; b=uD64//zCEadY8MVXbMxmYL0wF5
+        JL8NpGWh01hpr1xDUQ3pQ/X/LOcdegwW571SEMAsM75acLv+MiSA6BTrcLsJdQsS5xpvm675K0nDL
+        6Za/4ML9/MzwOpVprTl36eyRZpRJgVv4sxzr1kvP8fremDTyT8YyyKJHzgf0jPHvTk97LheZTk0HG
+        eGStRpYLFKpQvMY3YPCEdoJh9Xz5AK1AojqEe1mz7Yxg27cm8j8zc4ztOUXa4ray0w5GDb/ke91Lu
+        /fEt8DcaI+QuHnxHdxCFB9YlNC7HHpBtm4WxewG3P25WjEVM7ieTk+Dqct7D4Xi+xbvSZxwsGak8f
+        TlvdexdA==;
+Received: from 089144199030.atnat0008.highway.a1.net ([89.144.199.30] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hyWXz-0002li-Gr; Fri, 16 Aug 2019 07:21:16 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     Guan Xuetao <gxt@pku.edu.cn>, Shawn Anastasio <shawn@anastas.io>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linuxppc-dev@lists.ozlabs.org, linux-mips@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 5/6] dma-mapping: make dma_atomic_pool_init self-contained
+Date:   Fri, 16 Aug 2019 09:07:53 +0200
+Message-Id: <20190816070754.15653-6-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190816070754.15653-1-hch@lst.de>
+References: <20190816070754.15653-1-hch@lst.de>
 MIME-Version: 1.0
-In-Reply-To: <20190815151228.32242-1-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/08/19 17:12, Sean Christopherson wrote:
-> Alex Williamson reported regressions with device assignment when KVM
-> changed its memslot removal logic to zap only the SPTEs for the memslot
-> being removed.  The source of the bug is unknown at this time, and root
-> causing the issue will likely be a slow process.  In the short term, fix
-> the regression by zapping all SPTEs when removing a memslot from a VM
-> with assigned device(s).
-> 
-> Fixes: 4e103134b862 ("KVM: x86/mmu: Zap only the relevant pages when removing a memslot", 2019-02-05)
-> Reported-by: Alex Willamson <alex.williamson@redhat.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> ---
-> 
-> An alternative idea to a full revert.  I assume this would be easy to
-> backport, and also easy to revert or quirk depending on where the bug
-> is hiding.
+The memory allocated for the atomic pool needs to have the same
+mapping attributes that we use for remapping, so use
+pgprot_dmacoherent instead of open coding it.  Also deduct a
+suitable zone to allocate the memory from based on the presence
+of the DMA zones.
 
-We're not sure that it only happens with assigned devices; it's just
-that assigned BARs are the memslots that are more likely to be
-reprogrammed at boot.  So this patch feels unsafe.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/arc/mm/dma.c           |  6 ------
+ arch/arm64/mm/dma-mapping.c |  6 ------
+ arch/csky/mm/dma-mapping.c  |  6 ------
+ arch/nds32/kernel/dma.c     |  6 ------
+ include/linux/dma-mapping.h |  1 -
+ kernel/dma/remap.c          | 17 ++++++++++++++---
+ 6 files changed, 14 insertions(+), 28 deletions(-)
 
-Paolo
-
-> 
->  arch/x86/kvm/mmu.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-> index 8f72526e2f68..358b93882ac6 100644
-> --- a/arch/x86/kvm/mmu.c
-> +++ b/arch/x86/kvm/mmu.c
-> @@ -5659,6 +5659,17 @@ static void kvm_mmu_invalidate_zap_pages_in_memslot(struct kvm *kvm,
->  	bool flush;
->  	gfn_t gfn;
->  
-> +	/*
-> +	 * Zapping only the removed memslot introduced regressions for VMs with
-> +	 * assigned devices.  It is unknown what piece of code is buggy.  Until
-> +	 * the source of the bug is identified, zap everything if the VM has an
-> +	 * assigned device.
-> +	 */
-> +	if (kvm_arch_has_assigned_device(kvm)) {
-> +		kvm_mmu_zap_all(kvm);
-> +		return;
-> +	}
-> +
->  	spin_lock(&kvm->mmu_lock);
->  
->  	if (list_empty(&kvm->arch.active_mmu_pages))
-> 
+diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
+index 62c210e7ee4c..ff4a5752f8cc 100644
+--- a/arch/arc/mm/dma.c
++++ b/arch/arc/mm/dma.c
+@@ -104,9 +104,3 @@ void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
+ 	dev_info(dev, "use %sncoherent DMA ops\n",
+ 		 dev->dma_coherent ? "" : "non");
+ }
+-
+-static int __init atomic_pool_init(void)
+-{
+-	return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
+-}
+-postcore_initcall(atomic_pool_init);
+diff --git a/arch/arm64/mm/dma-mapping.c b/arch/arm64/mm/dma-mapping.c
+index 676efcda51e6..a1d05f669f67 100644
+--- a/arch/arm64/mm/dma-mapping.c
++++ b/arch/arm64/mm/dma-mapping.c
+@@ -28,12 +28,6 @@ void arch_dma_prep_coherent(struct page *page, size_t size)
+ 	__dma_flush_area(page_address(page), size);
+ }
+ 
+-static int __init arm64_dma_init(void)
+-{
+-	return dma_atomic_pool_init(GFP_DMA32, __pgprot(PROT_NORMAL_NC));
+-}
+-arch_initcall(arm64_dma_init);
+-
+ #ifdef CONFIG_IOMMU_DMA
+ void arch_teardown_dma_ops(struct device *dev)
+ {
+diff --git a/arch/csky/mm/dma-mapping.c b/arch/csky/mm/dma-mapping.c
+index 80783bb71c5c..602a60d47a94 100644
+--- a/arch/csky/mm/dma-mapping.c
++++ b/arch/csky/mm/dma-mapping.c
+@@ -14,12 +14,6 @@
+ #include <linux/version.h>
+ #include <asm/cache.h>
+ 
+-static int __init atomic_pool_init(void)
+-{
+-	return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
+-}
+-postcore_initcall(atomic_pool_init);
+-
+ void arch_dma_prep_coherent(struct page *page, size_t size)
+ {
+ 	if (PageHighMem(page)) {
+diff --git a/arch/nds32/kernel/dma.c b/arch/nds32/kernel/dma.c
+index 490e3720d694..4206d4b6c8ce 100644
+--- a/arch/nds32/kernel/dma.c
++++ b/arch/nds32/kernel/dma.c
+@@ -80,9 +80,3 @@ void arch_dma_prep_coherent(struct page *page, size_t size)
+ {
+ 	cache_op(page_to_phys(page), size, cpu_dma_wbinval_range);
+ }
+-
+-static int __init atomic_pool_init(void)
+-{
+-	return dma_atomic_pool_init(GFP_KERNEL, pgprot_noncached(PAGE_KERNEL));
+-}
+-postcore_initcall(atomic_pool_init);
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index f7d1eea32c78..48ebe8295987 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -624,7 +624,6 @@ void *dma_common_pages_remap(struct page **pages, size_t size,
+ 			const void *caller);
+ void dma_common_free_remap(void *cpu_addr, size_t size, unsigned long vm_flags);
+ 
+-int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot);
+ bool dma_in_atomic_pool(void *start, size_t size);
+ void *dma_alloc_from_pool(size_t size, struct page **ret_page, gfp_t flags);
+ bool dma_free_from_pool(void *start, size_t size);
+diff --git a/kernel/dma/remap.c b/kernel/dma/remap.c
+index ffe78f0b2fe4..838123f79639 100644
+--- a/kernel/dma/remap.c
++++ b/kernel/dma/remap.c
+@@ -105,7 +105,16 @@ static int __init early_coherent_pool(char *p)
+ }
+ early_param("coherent_pool", early_coherent_pool);
+ 
+-int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
++static gfp_t dma_atomic_pool_gfp(void)
++{
++	if (IS_ENABLED(CONFIG_ZONE_DMA))
++		return GFP_DMA;
++	if (IS_ENABLED(CONFIG_ZONE_DMA32))
++		return GFP_DMA32;
++	return GFP_KERNEL;
++}
++
++static int __init dma_atomic_pool_init(void)
+ {
+ 	unsigned int pool_size_order = get_order(atomic_pool_size);
+ 	unsigned long nr_pages = atomic_pool_size >> PAGE_SHIFT;
+@@ -117,7 +126,7 @@ int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
+ 		page = dma_alloc_from_contiguous(NULL, nr_pages,
+ 						 pool_size_order, false);
+ 	else
+-		page = alloc_pages(gfp, pool_size_order);
++		page = alloc_pages(dma_atomic_pool_gfp(), pool_size_order);
+ 	if (!page)
+ 		goto out;
+ 
+@@ -128,7 +137,8 @@ int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
+ 		goto free_page;
+ 
+ 	addr = dma_common_contiguous_remap(page, atomic_pool_size, VM_USERMAP,
+-					   prot, __builtin_return_address(0));
++					   pgprot_dmacoherent(PAGE_KERNEL),
++					   __builtin_return_address(0));
+ 	if (!addr)
+ 		goto destroy_genpool;
+ 
+@@ -155,6 +165,7 @@ int __init dma_atomic_pool_init(gfp_t gfp, pgprot_t prot)
+ 		atomic_pool_size / 1024);
+ 	return -ENOMEM;
+ }
++postcore_initcall(dma_atomic_pool_init);
+ 
+ bool dma_in_atomic_pool(void *start, size_t size)
+ {
+-- 
+2.20.1
 
