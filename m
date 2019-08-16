@@ -2,137 +2,140 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EE978FD47
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:11:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A456E8FD4A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:11:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfHPIKe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:10:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37612 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726166AbfHPIKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:10:33 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 41A16AD20;
-        Fri, 16 Aug 2019 08:10:31 +0000 (UTC)
-Date:   Fri, 16 Aug 2019 10:10:29 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Jason Gunthorpe <jgg@ziepe.ca>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wei Wang <wvw@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
-Message-ID: <20190816081029.GA27790@dhcp22.suse.cz>
-References: <20190815132127.GI9477@dhcp22.suse.cz>
- <20190815141219.GF21596@ziepe.ca>
- <20190815155950.GN9477@dhcp22.suse.cz>
- <20190815165631.GK21596@ziepe.ca>
- <20190815174207.GR9477@dhcp22.suse.cz>
- <20190815182448.GP21596@ziepe.ca>
- <20190815190525.GS9477@dhcp22.suse.cz>
- <20190815191810.GR21596@ziepe.ca>
- <20190815193526.GT9477@dhcp22.suse.cz>
- <20190815201323.GU21596@ziepe.ca>
+        id S1727007AbfHPIK6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:10:58 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:46551 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfHPIK4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:10:56 -0400
+Received: by mail-wr1-f68.google.com with SMTP id z1so679586wru.13
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 01:10:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloud.ionos.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MS61GMgEvdHYUsX/D1TRCCawW8p8Qqopt15uSqVsXJY=;
+        b=Y0WaWiAsWj46fzLNk/Pk0gg1cBEpKiTtG9ViFT+7Egli+OeoljqrIP2l00vNM64iHo
+         N6F3+VxxeK3ilnbUrBoUj5t4ZOPkUtcxGtBbGUq48YlLWIUtumboc8S/DQw9tMFIa6ZN
+         IiYMgeMsDdVAvOxwFYwMlkwivyiCtw5gZSEE6Trpuqq2JHCHldvD8yF0DFkiEfboJSqb
+         6mf8wA34wB0R0oMrWzPHIEGkVTQQ2secG6Lnll1IomQRQTrUvacMAdWQFqglRF93HmQP
+         Ex3HBc8K1O+05TmmMWjdfeufc4NoUCBcFl1GvxLxxPL4WjLVy3pvwz7+lBZuor5chmyZ
+         0/eQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MS61GMgEvdHYUsX/D1TRCCawW8p8Qqopt15uSqVsXJY=;
+        b=j/KcdB5hZmdQBylO99LeulKG+L56bkhgbW5uP25SVyOzCeCQAX0uZG5owoyynHCKUL
+         eT/DD1A+yI1iaPVAzEeEgk4p092R9nxMTq2iF7go4EAK3I1+zyz9I9ZAiZgCzdBXsLEw
+         z6iiS3mN7S9SoH7F373uXe+nnTG1DE+XUtKZgtKeoz+HNG4mUbkLnr3g7bqvQGFAPyex
+         bLtfvl1kGwKBB32Pt75sbdTRuPs78pRxCRWsY7Nh1f9cD8Zh3Y/Mzyycemqw+MakYpYG
+         CtiXByTHZnOk8eVgjZZt3wAVBmbwB47nZjkD66UkVQwAAb3N/6F/AF+OkfXWVXaaNITI
+         M9TQ==
+X-Gm-Message-State: APjAAAXszfekPcey4U9sKh69VGIBAmJyYxk7dnCDtRIvQoZzO8TCu0LE
+        6AH7+g7KKTeKx3MGxUnSHXzl//5WDm8BEbDFpBK6Ow==
+X-Google-Smtp-Source: APXvYqwafOormkwlcyK+ZlFMv6/CTaDla48+B+XDU17HTGTU4m3SZ5JBPeSo9IVg/8m6HDIO35UgWA3sUADVHt57e7Q=
+X-Received: by 2002:a5d:5701:: with SMTP id a1mr9260849wrv.95.1565943054219;
+ Fri, 16 Aug 2019 01:10:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815201323.GU21596@ziepe.ca>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAMGffEkotpvVz8FA78vNFh0qZv3kEMNrXXfVPEUC=MhH0pMCZA@mail.gmail.com>
+ <0a83fde3-1a74-684c-0d70-fb44b9021f96@molgen.mpg.de> <CAMGffE=_kPoBmSwbxvrqdqbhpR5Cu2Vbe4ArGqm9ns9+iVEH_g@mail.gmail.com>
+ <CAMGffEkcXcQC+kjwdH0iVSrFDk-o+dp+b3Q1qz4z=R=6D+QqLQ@mail.gmail.com>
+ <87h86vjhv0.fsf@notabene.neil.brown.name> <CAMGffEnKXQJBbDS8Yi0S5ZKEMHVJ2_SKVPHeb9Rcd6oT_8eTuw@mail.gmail.com>
+ <CAMGffEkfs0KsuWX8vGY==1dym78d6wsao_otSjzBAPzwGtoQcw@mail.gmail.com>
+ <87blx1kglx.fsf@notabene.neil.brown.name> <CAMGffE=cpxumr0QqJsiGGKpmZr+4a0BiCx3n0_twa5KPs=yX1g@mail.gmail.com>
+ <CAMGffEm41+-DvUu_MhfbVURL_LOY8KP1QkTWDcFf7nyGLK7Y3A@mail.gmail.com>
+In-Reply-To: <CAMGffEm41+-DvUu_MhfbVURL_LOY8KP1QkTWDcFf7nyGLK7Y3A@mail.gmail.com>
+From:   Jinpu Wang <jinpu.wang@cloud.ionos.com>
+Date:   Fri, 16 Aug 2019 10:10:43 +0200
+Message-ID: <CAMGffEn8FkjoQjno0kDzQcr6pcSXr3PGGfsErnhv0HN0+zEwhg@mail.gmail.com>
+Subject: Re: Bisected: Kernel 4.14 + has 3 times higher write IO latency than
+ Kernel 4.4 with raid1
+To:     NeilBrown <neilb@suse.com>
+Cc:     Neil F Brown <nfbrown@suse.com>,
+        Alexandr Iarygin <alexandr.iarygin@cloud.ionos.com>,
+        Guoqing Jiang <guoqing.jiang@cloud.ionos.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        linux-kernel@vger.kernel.org,
+        linux-raid <linux-raid@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-08-19 17:13:23, Jason Gunthorpe wrote:
-> On Thu, Aug 15, 2019 at 09:35:26PM +0200, Michal Hocko wrote:
-> 
-> > > The last detail is I'm still unclear what a GFP flags a blockable
-> > > invalidate_range_start() should use. Is GFP_KERNEL OK?
-> > 
-> > I hope I will not make this muddy again ;)
-> > invalidate_range_start in the blockable mode can use/depend on any sleepable
-> > allocation allowed in the context it is called from. 
-> 
-> 'in the context is is called from' is the magic phrase, as
-> invalidate_range_start is called while holding several different mm
-> related locks. I know at least write mmap_sem and i_mmap_rwsem
-> (write?)
-> 
-> Can GFP_KERNEL be called while holding those locks?
+On Wed, Aug 7, 2019 at 2:35 PM Jinpu Wang <jinpu.wang@cloud.ionos.com> wrote:
+>
+> On Wed, Aug 7, 2019 at 8:36 AM Jinpu Wang <jinpu.wang@cloud.ionos.com> wrote:
+> >
+> > On Wed, Aug 7, 2019 at 1:40 AM NeilBrown <neilb@suse.com> wrote:
+> > >
+> > > On Tue, Aug 06 2019, Jinpu Wang wrote:
+> > >
+> > > > On Tue, Aug 6, 2019 at 9:54 AM Jinpu Wang <jinpu.wang@cloud.ionos.com> wrote:
+> > > >>
+> > > >> On Tue, Aug 6, 2019 at 1:46 AM NeilBrown <neilb@suse.com> wrote:
+> > > >> >
+> > > >> > On Mon, Aug 05 2019, Jinpu Wang wrote:
+> > > >> >
+> > > >> > > Hi Neil,
+> > > >> > >
+> > > >> > > For the md higher write IO latency problem, I bisected it to these commits:
+> > > >> > >
+> > > >> > > 4ad23a97 MD: use per-cpu counter for writes_pending
+> > > >> > > 210f7cd percpu-refcount: support synchronous switch to atomic mode.
+> > > >> > >
+> > > >> > > Do you maybe have an idea? How can we fix it?
+> > > >> >
+> > > >> > Hmmm.... not sure.
+> > > >> Hi Neil,
+> > > >>
+> > > >> Thanks for reply, detailed result in line.
+> > >
+> > > Thanks for the extra testing.
+> > > ...
+> > > > [  105.133299] md md0 in_sync is 0, sb_flags 2, recovery 3, external
+> > > > 0, safemode 0, recovery_cp 524288
+> > > ...
+> > >
+> > > ahh - the resync was still happening.  That explains why set_in_sync()
+> > > is being called so often.  If you wait for sync to complete (or create
+> > > the array with --assume-clean) you should see more normal behaviour.
+> > I've updated my tests accordingly, thanks for the hint.
+> > >
+> > > This patch should fix it.  I think we can do better but it would be more
+> > > complex so no suitable for backports to -stable.
+> > >
+> > > Once you confirm it works, I'll send it upstream with a
+> > > Reported-and-Tested-by from you.
+> > >
+> > > Thanks,
+> > > NeilBrown
+> >
+> > Thanks a lot, Neil, my quick test show, yes, it fixed the problem for me.
+> >
+> > I will run more tests to be sure, will report back the test result.
+> Hi Neil,
+>
+> I've run our regression tests with your patch, everything works fine
+> as expected.
+>
+> So Reported-and-Tested-by: Jack Wang <jinpu.wang@cloud.ionos.com>
+>
+> Thank you for your quick fix.
+>
+> The patch should go to stable 4.12+
 
-i_mmap_rwsem would be problematic because it is taken during the
-reclaim.
+Hi Neil,
 
-> This is the question of indirect dependency on reclaim via locks you
-> raised earlier.
-> 
-> > So in other words it is no different from any other function in the
-> > kernel that calls into allocator. As the API is missing gfp context
-> > then I hope it is not called from any restricted contexts (except
-> > from the oom which we have !blockable for).
-> 
-> Yes, the callers are exactly my concern.
->  
-> > > Lockdep has
-> > > complained on that in past due to fs_reclaim - how do you know if it
-> > > is a false positive?
-> > 
-> > I would have to see the specific lockdep splat.
-> 
-> See below. I found it when trying to understand why the registration
-> of the mmu notififer was so oddly coded.
-> 
-> The situation was:
-> 
->   down_write(&mm->mmap_sem);
->   mm_take_all_locks(mm);
->   kmalloc(GFP_KERNEL);  <--- lockdep warning
+I hope you're doing well, just a soft ping? do you need further
+testing from my side?
 
-Ugh. mm_take_all_locks :/
+Please let me know how can we move the fix forward.
 
-> I understood Daniel said he saw this directly on a recent kernel when
-> working with his lockdep patch?
-> 
-> Checking myself, on todays kernel I see a call chain:
-> 
-> shrink_all_memory
->   fs_reclaim_acquire(sc.gfp_mask);
->   [..]
->   do_try_to_free_pages
->    shrink_zones
->     shrink_node
->      shrink_node_memcg
->       shrink_list
->        shrink_active_list
->         page_referenced
->          rmap_walk
->           rmap_walk_file
->            i_mmap_lock_read
->             down_read(i_mmap_rwsem)
-> 
-> So it is possible that the down_read() above will block on
-> i_mmap_rwsem being held in the caller of invalidate_range_start which
-> is doing kmalloc(GPF_KERNEL).
-> 
-> Is this OK? The lockdep annotation says no..
-
-It's not as per the above code patch which is easily possible because
-mm_take_all_locks will lock all file vmas.
-
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Jack Wang
