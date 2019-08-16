@@ -2,134 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8766B8FBD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:12:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E70C18FBDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:14:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfHPHM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 03:12:28 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4720 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726425AbfHPHM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 03:12:28 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 0B2F5E6B3FC0967671C6;
-        Fri, 16 Aug 2019 15:12:25 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 16 Aug
- 2019 15:12:16 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>,
-        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
-        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH] staging: erofs: use common file type conversion
-Date:   Fri, 16 Aug 2019 15:11:42 +0800
-Message-ID: <20190816071142.8633-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727134AbfHPHOP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:14:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37560 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725829AbfHPHOP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 03:14:15 -0400
+Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35AAA2077C;
+        Fri, 16 Aug 2019 07:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565939654;
+        bh=Evl2KKOh6MQV7F5Fco/BFBWeXigewfLlx6StyE+rljQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=iIgo3dUGMR9iE/l7kU96+kdHskaGuaFsxyB/rbyEh7/OuqhbX1SUm6V7roCjoI3EW
+         iylJ7DGPqaYp/oaL2Usdl4/uz2VDbRqkODX+frdFkIAaddeiSlQqXkDckYoSEy46Vg
+         zO9+mj0DYLxZ6JhhFo0C/O/eaXrPQySk0z8NGhfg=
+Date:   Fri, 16 Aug 2019 09:14:12 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org,
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Allow flush_(inval_)dcache_range to work across
+ ranges >4GB
+Message-ID: <20190816071412.GF1368@kroah.com>
+References: <20190815045543.16325-1-alastair@au1.ibm.com>
+ <20190815071924.GA26670@kroah.com>
+ <87mug97uo1.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87mug97uo1.fsf@concordia.ellerman.id.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Deduplicate the EROFS file type conversion implementation and
-remove EROFS_FT_* definitions since it's the same as defined
-by POSIX, let's follow ext2 as Linus pointed out [1]
-commit e10892189428 ("ext2: use common file type conversion").
+On Fri, Aug 16, 2019 at 11:42:22AM +1000, Michael Ellerman wrote:
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > On Thu, Aug 15, 2019 at 02:55:42PM +1000, Alastair D'Silva wrote:
+> >> From: Alastair D'Silva <alastair@d-silva.org>
+> >> 
+> >> Heads Up: This patch cannot be submitted to Linus's tree, as the affected
+> >> assembler functions have already been converted to C.
+> 
+> That was done in upstream commit:
+> 
+> 22e9c88d486a ("powerpc/64: reuse PPC32 static inline flush_dcache_range()")
+> 
+> Which is a larger change that we don't want to backport. This patch is a
+> minimal fix for stable trees.
+> 
+> 
+> >> When calling flush_(inval_)dcache_range with a size >4GB, we were masking
+> >> off the upper 32 bits, so we would incorrectly flush a range smaller
+> >> than intended.
+> >> 
+> >> This patch replaces the 32 bit shifts with 64 bit ones, so that
+> >> the full size is accounted for.
+> >> 
+> >> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> >> ---
+> >>  arch/powerpc/kernel/misc_64.S | 4 ++--
+> >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+> 
+> > <formletter>
+> >
+> > This is not the correct way to submit patches for inclusion in the
+> > stable kernel tree.  Please read:
+> >     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> > for how to do this properly.
+> >
+> > </formletter>
+> 
+> Hi Greg,
+> 
+> This is "option 3", submit the patch directly, and the patch "deviates
+> from the original upstream patch" because the upstream patch was a
+> wholesale conversion from asm to C.
+> 
+> This patch applies cleanly to v4.14 and v4.19.
+> 
+> The change log should have mentioned which upstream patch it is not a
+> backport of, is there anything else we should have done differently to
+> avoid the formletter bot :)
 
-[1] https://lore.kernel.org/r/CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com/
+That is exactly what you should have done.  It needs to be VERY explicit
+as to why this is being submitted different from what upstream did, and
+to what trees it needs to go to and who is going to be responsible for
+when it breaks.  And it will break :)
 
-Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/dir.c      | 16 +---------------
- drivers/staging/erofs/erofs_fs.h | 17 +++++------------
- drivers/staging/erofs/namei.c    |  2 +-
- 3 files changed, 7 insertions(+), 28 deletions(-)
+thanks,
 
-diff --git a/drivers/staging/erofs/dir.c b/drivers/staging/erofs/dir.c
-index 01efc96e1212..5f38382637e6 100644
---- a/drivers/staging/erofs/dir.c
-+++ b/drivers/staging/erofs/dir.c
-@@ -8,17 +8,6 @@
-  */
- #include "internal.h"
- 
--static const unsigned char erofs_filetype_table[EROFS_FT_MAX] = {
--	[EROFS_FT_UNKNOWN]	= DT_UNKNOWN,
--	[EROFS_FT_REG_FILE]	= DT_REG,
--	[EROFS_FT_DIR]		= DT_DIR,
--	[EROFS_FT_CHRDEV]	= DT_CHR,
--	[EROFS_FT_BLKDEV]	= DT_BLK,
--	[EROFS_FT_FIFO]		= DT_FIFO,
--	[EROFS_FT_SOCK]		= DT_SOCK,
--	[EROFS_FT_SYMLINK]	= DT_LNK,
--};
--
- static void debug_one_dentry(unsigned char d_type, const char *de_name,
- 			     unsigned int de_namelen)
- {
-@@ -46,10 +35,7 @@ static int erofs_fill_dentries(struct inode *dir, struct dir_context *ctx,
- 		unsigned int de_namelen;
- 		unsigned char d_type;
- 
--		if (de->file_type < EROFS_FT_MAX)
--			d_type = erofs_filetype_table[de->file_type];
--		else
--			d_type = DT_UNKNOWN;
-+		d_type = fs_ftype_to_dtype(de->file_type);
- 
- 		nameoff = le16_to_cpu(de->nameoff);
- 		de_name = (char *)dentry_blk + nameoff;
-diff --git a/drivers/staging/erofs/erofs_fs.h b/drivers/staging/erofs/erofs_fs.h
-index 8dc2a75e478f..6db70f395937 100644
---- a/drivers/staging/erofs/erofs_fs.h
-+++ b/drivers/staging/erofs/erofs_fs.h
-@@ -282,18 +282,11 @@ struct erofs_dirent {
- 	__u8 reserved;  /* 11, reserved */
- } __packed;
- 
--/* file types used in inode_info->flags */
--enum {
--	EROFS_FT_UNKNOWN,
--	EROFS_FT_REG_FILE,
--	EROFS_FT_DIR,
--	EROFS_FT_CHRDEV,
--	EROFS_FT_BLKDEV,
--	EROFS_FT_FIFO,
--	EROFS_FT_SOCK,
--	EROFS_FT_SYMLINK,
--	EROFS_FT_MAX
--};
-+/*
-+ * EROFS file types should match generic FT_* types and
-+ * it seems no need to add BUILD_BUG_ONs since potential
-+ * unmatchness will break other fses as well...
-+ */
- 
- #define EROFS_NAME_LEN      255
- 
-diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
-index c0963f5a2d22..8334a910acef 100644
---- a/drivers/staging/erofs/namei.c
-+++ b/drivers/staging/erofs/namei.c
-@@ -237,7 +237,7 @@ static struct dentry *erofs_lookup(struct inode *dir,
- 	} else {
- 		debugln("%s, %s (nid %llu) found, d_type %u", __func__,
- 			dentry->d_name.name, nid, d_type);
--		inode = erofs_iget(dir->i_sb, nid, d_type == EROFS_FT_DIR);
-+		inode = erofs_iget(dir->i_sb, nid, d_type == FT_DIR);
- 	}
- 	return d_splice_alias(inode, dentry);
- }
--- 
-2.17.1
-
+greg k-h
