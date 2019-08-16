@@ -2,102 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EC5C8FDBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 15E6F8FDC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726910AbfHPIYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:24:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:42142 "EHLO mx1.suse.de"
+        id S1726872AbfHPI0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:26:45 -0400
+Received: from mx2.suse.de ([195.135.220.15]:42700 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726684AbfHPIYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:24:32 -0400
+        id S1725945AbfHPI0p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:26:45 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 11D2CAFC3;
-        Fri, 16 Aug 2019 08:24:30 +0000 (UTC)
-Date:   Fri, 16 Aug 2019 10:24:28 +0200
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        DRI Development <dri-devel@lists.freedesktop.org>,
-        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        David Rientjes <rientjes@google.com>,
-        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Wei Wang <wvw@google.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        by mx1.suse.de (Postfix) with ESMTP id CB5B5AFDB;
+        Fri, 16 Aug 2019 08:26:43 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 10:26:42 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Jia He <justin.he@arm.com>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
-        Kees Cook <keescook@chromium.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Daniel Vetter <daniel.vetter@intel.com>
-Subject: Re: [PATCH 2/5] kernel.h: Add non_block_start/end()
-Message-ID: <20190816082428.GB27790@dhcp22.suse.cz>
-References: <20190814202027.18735-1-daniel.vetter@ffwll.ch>
- <20190814202027.18735-3-daniel.vetter@ffwll.ch>
- <20190814134558.fe659b1a9a169c0150c3e57c@linux-foundation.org>
- <20190815084429.GE9477@dhcp22.suse.cz>
- <20190815151509.9ddbd1f11fb9c4c3e97a67a5@linux-foundation.org>
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Shuah Khan <shuah@kernel.org>,
+        "Tobin C. Harding" <tobin@kernel.org>
+Subject: Re: [PATCH 2/2] lib/test_printf: add test of null/invalid pointer
+ dereference for dentry
+Message-ID: <20190816082642.6xdrxnrnv42vq4um@pathway.suse.cz>
+References: <20190809012457.56685-1-justin.he@arm.com>
+ <20190809012457.56685-2-justin.he@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815151509.9ddbd1f11fb9c4c3e97a67a5@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190809012457.56685-2-justin.he@arm.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-08-19 15:15:09, Andrew Morton wrote:
-> On Thu, 15 Aug 2019 10:44:29 +0200 Michal Hocko <mhocko@kernel.org> wrote:
+On Fri 2019-08-09 09:24:57, Jia He wrote:
+> This add some additional test cases of null/invalid pointer dereference
+> for dentry and file (%pd and %pD)
 > 
-> > > I continue to struggle with this.  It introduces a new kernel state
-> > > "running preemptibly but must not call schedule()".  How does this make
-> > > any sense?
-> > > 
-> > > Perhaps a much, much more detailed description of the oom_reaper
-> > > situation would help out.
-> >  
-> > The primary point here is that there is a demand of non blockable mmu
-> > notifiers to be called when the oom reaper tears down the address space.
-> > As the oom reaper is the primary guarantee of the oom handling forward
-> > progress it cannot be blocked on anything that might depend on blockable
-> > memory allocations. These are not really easy to track because they
-> > might be indirect - e.g. notifier blocks on a lock which other context
-> > holds while allocating memory or waiting for a flusher that needs memory
-> > to perform its work. If such a blocking state happens that we can end up
-> > in a silent hang with an unusable machine.
-> > Now we hope for reasonable implementations of mmu notifiers (strong
-> > words I know ;) and this should be relatively simple and effective catch
-> > all tool to detect something suspicious is going on.
-> > 
-> > Does that make the situation more clear?
+> Signed-off-by: Jia He <justin.he@arm.com>
+> ---
+>  lib/test_printf.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Yes, thanks, much.  Maybe a code comment along the lines of
-> 
->   This is on behalf of the oom reaper, specifically when it is
->   calling the mmu notifiers.  The problem is that if the notifier were
->   to block on, for example, mutex_lock() and if the process which holds
->   that mutex were to perform a sleeping memory allocation, the oom
->   reaper is now blocked on completion of that memory allocation.
+> diff --git a/lib/test_printf.c b/lib/test_printf.c
+> index 944eb50f3862..befedffeb476 100644
+> --- a/lib/test_printf.c
+> +++ b/lib/test_printf.c
+> @@ -455,6 +455,13 @@ dentry(void)
+>  	test("foo", "%pd", &test_dentry[0]);
+>  	test("foo", "%pd2", &test_dentry[0]);
+>  
+> +	/* test the null/invalid pointer case for dentry */
+> +	test("(null)", "%pd", NULL);
+> +	test("(efault)", "%pd", PTR_INVALID);
+> +	/* test the null/invalid pointer case for file */
 
-    reaper is now blocked on completion of that memory allocation
-    and cannot provide the guarantee of the OOM forward progress.
+The two comments mention something that is obvious from the code.
 
-OK. 
- 
-> btw, do we need task_struct.non_block_count?  Perhaps the oom reaper
-> thread could set a new PF_NONBLOCK (which would be more general than
-> PF_OOM_REAPER).  If we run out of PF_ flags, use (current == oom_reaper_th).
+I have pushed the patch as is and removed the comments in
+a follow up patch [1]. Both are in printk.git, branch for-5.4.
 
-Well, I do not have a strong opinion here. A simple check for the value
-seems to be trivial. There are quite some holes in task_struct to hide
-this counter without increasing the size.
--- 
-Michal Hocko
-SUSE Labs
+> +	test("(null)", "%pD", NULL);
+> +	test("(efault)", "%pD", PTR_INVALID);
+
+Reference:
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/pmladek/printk.git/commit/?h=for-5.4&id=8ebea6ea1a7ed5d67ecbb2a493c716a2a89c0be2
+
+Best Regards,
+Petr
