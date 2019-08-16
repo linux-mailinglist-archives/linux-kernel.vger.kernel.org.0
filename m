@@ -2,104 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ECD68FC37
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 353478FC40
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:27:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727123AbfHPHXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 03:23:00 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:40028 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbfHPHWw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 03:22:52 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7G7MSq6069050;
-        Fri, 16 Aug 2019 02:22:28 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565940148;
-        bh=769mRvMaqWMjfKMLHVtt3D58PyPf5Cng9PJibBI4dM0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=G99W94Vl1w/nHqfCTX0vhXvYYoW53uNvyequAqaj4LTkAI9PY32LtQ1oRzyxlUqg9
-         7rsPmWGIDlXNyeZdKKYdCl8Ukzq1VAB0D390zO4afh3OlkjANUBQnpjaDagsTGW//s
-         kdOQRCRyAcLv3KrertPLr8V1NSKSqdHS/bepCHRo=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7G7MRGh090486
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Aug 2019 02:22:28 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 16
- Aug 2019 02:22:26 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 16 Aug 2019 02:22:26 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7G7MO3s104401;
-        Fri, 16 Aug 2019 02:22:24 -0500
-Subject: Re: [PATCH] dmaengine: ti: omap-dma: Add cleanup in omap_dma_probe()
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-CC:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Enrico Weigelt <info@metux.net>,
-        Allison Randal <allison@lohutok.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
+        id S1726708AbfHPHZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:25:52 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:34278 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbfHPHZv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 03:25:51 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 88D86B213B1AD625CCD0;
+        Fri, 16 Aug 2019 15:25:46 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server (TLS) id 14.3.439.0; Fri, 16 Aug
+ 2019 15:25:36 +0800
+Subject: Re: [PATCH] staging: erofs: use common file type conversion
+To:     Gao Xiang <gaoxiang25@huawei.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1565938570-7528-1-git-send-email-wenwen@cs.uga.edu>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <2e9382ff-1940-2247-4335-a5c1229d2cee@ti.com>
-Date:   Fri, 16 Aug 2019 10:22:40 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>,
+        "Linus Torvalds" <torvalds@linux-foundation.org>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        <weidu.du@huawei.com>, Fang Wei <fangwei1@huawei.com>
+References: <20190816071142.8633-1-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <bb4b3b82-18d4-fbd5-47ab-be13de148c39@huawei.com>
+Date:   Fri, 16 Aug 2019 15:25:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1565938570-7528-1-git-send-email-wenwen@cs.uga.edu>
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <20190816071142.8633-1-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 16/08/2019 9.56, Wenwen Wang wrote:
-> If devm_request_irq() fails to disable all interrupts, no cleanup is
-> performed before retuning the error. To fix this issue, invoke
-> omap_dma_free() to do the cleanup.
-
-Thank you,
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-> ---
->  drivers/dma/ti/omap-dma.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On 2019/8/16 15:11, Gao Xiang wrote:
+> Deduplicate the EROFS file type conversion implementation and
+> remove EROFS_FT_* definitions since it's the same as defined
+> by POSIX, let's follow ext2 as Linus pointed out [1]
+> commit e10892189428 ("ext2: use common file type conversion").
 > 
-> diff --git a/drivers/dma/ti/omap-dma.c b/drivers/dma/ti/omap-dma.c
-> index ba2489d..5158b58 100644
-> --- a/drivers/dma/ti/omap-dma.c
-> +++ b/drivers/dma/ti/omap-dma.c
-> @@ -1540,8 +1540,10 @@ static int omap_dma_probe(struct platform_device *pdev)
->  
->  		rc = devm_request_irq(&pdev->dev, irq, omap_dma_irq,
->  				      IRQF_SHARED, "omap-dma-engine", od);
-> -		if (rc)
-> +		if (rc) {
-> +			omap_dma_free(od);
->  			return rc;
-> +		}
->  	}
->  
->  	if (omap_dma_glbl_read(od, CAPS_0) & CAPS_0_SUPPORT_LL123)
+> [1] https://lore.kernel.org/r/CAHk-=wiUs+b=iVKM3mVooXgVk7cmmC67KTmnAuL0cd_cMMVAKw@mail.gmail.com/
 > 
+> Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 
-- Péter
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Thanks,
