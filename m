@@ -2,99 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AEAA8FEA8
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:07:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACD808FEAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:07:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfHPJHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 05:07:18 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:39959 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726800AbfHPJHS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:07:18 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id D68E380F3A; Fri, 16 Aug 2019 11:07:01 +0200 (CEST)
-Date:   Fri, 16 Aug 2019 11:07:13 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        nhorman@tuxdriver.com,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Chen Yu <yu.c.chen@intel.com>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: Non-random RDRAND Re: [PATCH] x86/CPU/AMD: Clear RDRAND CPUID
- bit on AMD family 15h/16h
-Message-ID: <20190816090713.GA17833@amd>
-References: <776cb5c2d33e7fd0d2893904724c0e52b394f24a.1565817448.git.thomas.lendacky@amd.com>
- <20190814232434.GA31769@amd>
- <20190815151224.GB18727@mit.edu>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <20190815151224.GB18727@mit.edu>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        id S1727080AbfHPJHu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 05:07:50 -0400
+Received: from enpas.org ([46.38.239.100]:33334 "EHLO mail.enpas.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726863AbfHPJHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 05:07:49 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        by mail.enpas.org (Postfix) with ESMTPSA id 49BD9FF845;
+        Fri, 16 Aug 2019 09:07:47 +0000 (UTC)
+From:   Max Staudt <max@enpas.org>
+To:     linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-m68k@vger.kernel.org, linux-kernel@vger.kernel.org,
+        glaubitz@physik.fu-berlin.de, Max Staudt <max@enpas.org>
+Subject: [PATCH] hwmon/ltc2990: Generalise DT to fwnode support
+Date:   Fri, 16 Aug 2019 11:07:31 +0200
+Message-Id: <20190816090731.12809-1-max@enpas.org>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <5b9b4383-c1e9-91a6-8ab6-8f831b362dca@enpas.org>
+References: <5b9b4383-c1e9-91a6-8ab6-8f831b362dca@enpas.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ltc2990 will now use device_property_read_u32_array() instead of
+of_property_read_u32_array() - allowing the use of software nodes
+via fwnode_create_software_node().
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This allows code using i2c_new_device() to specify a default
+measurement mode for the LTC2990 via fwnode_create_software_node().
 
-On Thu 2019-08-15 11:12:24, Theodore Y. Ts'o wrote:
-> On Thu, Aug 15, 2019 at 01:24:35AM +0200, Pavel Machek wrote:
-> > Burn it with fire!
-> >=20
-> > I mean... people were afraid RDRAND would be backdoored, and you now
-> > confirm ... it indeed _is_ backdoored? /., here's news for you!
->=20
-> To be fair to AMD, I wouldn't call it a backdoor.  Hanlon's razor is
-> applicable here:
->=20
-> 	"Never attribute to malice that which can be adequately
-> 	explained by neglect."
+Signed-off-by: Max Staudt <max@enpas.org>
+---
+ drivers/hwmon/ltc2990.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-> (Sometimes other words are used instead of neglect, but i'm trying to
-> be nice.)
+diff --git a/drivers/hwmon/ltc2990.c b/drivers/hwmon/ltc2990.c
+index f9431ad43..ff11189ea 100644
+--- a/drivers/hwmon/ltc2990.c
++++ b/drivers/hwmon/ltc2990.c
+@@ -206,7 +206,6 @@ static int ltc2990_i2c_probe(struct i2c_client *i2c,
+ 	int ret;
+ 	struct device *hwmon_dev;
+ 	struct ltc2990_data *data;
+-	struct device_node *of_node = i2c->dev.of_node;
+ 
+ 	if (!i2c_check_functionality(i2c->adapter, I2C_FUNC_SMBUS_BYTE_DATA |
+ 				     I2C_FUNC_SMBUS_WORD_DATA))
+@@ -218,9 +217,10 @@ static int ltc2990_i2c_probe(struct i2c_client *i2c,
+ 
+ 	data->i2c = i2c;
+ 
+-	if (of_node) {
+-		ret = of_property_read_u32_array(of_node, "lltc,meas-mode",
+-						 data->mode, 2);
++	if (dev_fwnode(&i2c->dev)) {
++		ret = device_property_read_u32_array(&i2c->dev,
++						     "lltc,meas-mode",
++						     data->mode, 2);
+ 		if (ret < 0)
+ 			return ret;
+ 
+-- 
+2.11.0
 
-You are right, I thought it was returning values with low entropy, and
-it returns ~0 (so -- really really low entropy :-) and can't be
-clasified as a backdoor.
-
-Anyway, AMD is _not_ doing good job right now.
-
-I'd expect:
-
-a) CVE reference
-
-b) real fix; if BIOS can init the rng, so can kernel
-
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1WckEACgkQMOfwapXb+vJUmgCbBaZAQvUTMEhu0sVBHUxqvAVR
-ZPEAn3mz1LDei9CmYiqspf9+V/tvyKCj
-=tgYd
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
