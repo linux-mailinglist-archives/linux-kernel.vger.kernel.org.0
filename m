@@ -2,76 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B0E28903CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:17:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B57D903D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:19:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727518AbfHPORU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:17:20 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:42373 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727291AbfHPORO (ORCPT
+        id S1727491AbfHPOTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:19:38 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46161 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727217AbfHPOTh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:17:14 -0400
-X-Originating-IP: 87.5.130.64
-Received: from uno.homenet.telecomitalia.it (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id DDAAAFF812;
-        Fri, 16 Aug 2019 14:17:11 +0000 (UTC)
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Jacopo Mondi <jacopo@jmondi.org>,
-        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
-        (V4L/DVB)), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 6/6] media: i2c: ov13858: Register controls from firmware
-Date:   Fri, 16 Aug 2019 16:18:22 +0200
-Message-Id: <20190816141822.7582-7-jacopo@jmondi.org>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190816141822.7582-1-jacopo@jmondi.org>
-References: <20190816141822.7582-1-jacopo@jmondi.org>
+        Fri, 16 Aug 2019 10:19:37 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m3so2425593pgv.13
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 07:19:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:subject:from:cc:to:user-agent:date;
+        bh=tBN0L54QMtDYld2dZHBXnZOaHPOrCsY9yGKAHJ7HtJ0=;
+        b=iLtynzXp2unH1FB4V6Qf4QmIe20CFCYKaGvYyJveb4LxrCW63jAtA3i9KRJeoxmJJJ
+         NK6IDGqtsnMNG1Kp/P8KjwSrredRdP9H3MvonGVmiFS3VouEsfA8pc2ebyf38oWLOigf
+         gl3KBPJUfHK7xBL4pKE9E3qXAPNOFMF1nrZzY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
+         :user-agent:date;
+        bh=tBN0L54QMtDYld2dZHBXnZOaHPOrCsY9yGKAHJ7HtJ0=;
+        b=Coz38mhjB/prDu9Dlb/ag9/QfCeVwSqjmlfH5rcD+myzKYyMqdkDLUL2u7Xj6I6sRF
+         7pc6hiy03WFixGQlp/WZyQ7fSaOtOe+ZiAXsI02nhEdDIi5av6ufrvXbQgCN5KsuLUi7
+         dcXyuLpCPlMgrVPdBvyYjFvgXj4cpxlLXriFMZB/sdOsi95CZ3iP2dhll3YtoyZA0S6G
+         xZrAQEsuXqtiRVwv35klYFNuLpopXkRfI070T7LqaLF4PA2xZiHo1spQcjCRjMC0xQYa
+         yRUlaTV2lhoxtCDKvFtw6plIJanAgs8oOEL/677pUGgtKRuJOCI0vEoA/zlr9aA2K880
+         R3qQ==
+X-Gm-Message-State: APjAAAUIMNaXh4D68XBWTlGBmQg8mw6l/XuScP3HKYJ5GMRYyWxfBxJv
+        EPwunNHaBaAolGizqxVvT326nw==
+X-Google-Smtp-Source: APXvYqwwzm10fJ3ctwq/5tUrgeLy9Mcr/LM5jM1mglSPuSxrCJ+a04sKYfNc0DSOUi94rf+krvKZlg==
+X-Received: by 2002:a62:198d:: with SMTP id 135mr10915627pfz.169.1565965176712;
+        Fri, 16 Aug 2019 07:19:36 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id p1sm6067967pff.44.2019.08.16.07.19.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2019 07:19:35 -0700 (PDT)
+Message-ID: <5d56bb77.1c69fb81.58e9d.1f86@mx.google.com>
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAJZ5v0hY8=0j=heXuAS-5cBafDSE8ZakLDW4NGCjAbxUAt3j4Q@mail.gmail.com>
+References: <1565731976.8572.16.camel@lca.pw> <5d53b238.1c69fb81.d3cd3.cd53@mx.google.com> <20190814084014.GB52127@atomide.com> <CANA+-vDeSAYUNfTQzQPT2N_CUgvYr6i_LP_BdHT_zX+FPt8NHg@mail.gmail.com> <CAJZ5v0hY8=0j=heXuAS-5cBafDSE8ZakLDW4NGCjAbxUAt3j4Q@mail.gmail.com>
+Subject: Re: "PM / wakeup: Show wakeup sources stats in sysfs" causes boot warnings
+From:   Stephen Boyd <swboyd@chromium.org>
+Cc:     Tony Lindgren <tony@atomide.com>, Qian Cai <cai@lca.pw>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>, Tri Vo <trong@android.com>
+User-Agent: alot/0.8.1
+Date:   Fri, 16 Aug 2019 07:19:35 -0700
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the newly introduced helper to parse properties from firmware and
-registerer the associated v4l2 control.
+Quoting Rafael J. Wysocki (2019-08-16 05:17:23)
+> On Wed, Aug 14, 2019 at 8:37 PM Tri Vo <trong@android.com> wrote:
+> >
+> > On Wed, Aug 14, 2019 at 1:40 AM Tony Lindgren <tony@atomide.com> wrote:
+> > >
+> > > * Stephen Boyd <swboyd@chromium.org> [691231 23:00]:
+> > > > I also notice that device_set_wakeup_capable() has a check to see i=
+f the
+> > > > device is registered yet and it skips creating sysfs entries for the
+> > > > device if it isn't created in sysfs yet. Why? Just so it can be cal=
+led
+> > > > before the device is created? I guess the same logic is handled by
+> > > > dpm_sysfs_add() if the device is registered after calling
+> > > > device_set_wakeup_*().
+> > >
+> > > Hmm just guessing.. It's maybe because drivers can enable and disable
+> > > the wakeup capability at any point for example like driver/net drivers
+> > > do based on WOL etc?
+> > >
+> > > > There's two approaches I see:
+> > > >
+> > > >       1) Do a similar check for device_set_wakeup_enable() and skip
+> > > >       adding the wakeup class until dpm_sysfs_add().
+> > > >
+> > > >       2) Find each case where this happens and only call wakeup APIs
+> > > >       on the device after the device is added.
+> > > >
+> > > > I guess it's better to let devices have wakeup modified on them bef=
+ore
+> > > > they're registered with the device core?
+> > >
+> > > I think we should at least initially handle case #1 above as multiple
+> > > places otherwise seem to break. Then maybe we could add a warning to
+> > > help fix all the #2 cases if needed?
+> >
+> > Makes sense. For case#1, we could also just register the wakeup source
+> > without specifying the parent device if the latter hasn't been
+> > registered yet. Userspace won't be able to associate a wakeup source
+> > to the parent device. But I think it's a reasonable fix, assuming we
+> > want to fix devices not being added before calling wakeup APIs #2.
+>=20
+> Well, OK
+>=20
+> I'm going to drop the entire series from linux-next at this point and
+> let's start over.
 
-Signed-off-by: Jacopo Mondi <jacopo@jmondi.org>
----
- drivers/media/i2c/ov13858.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+I was going to send the first patch I floated as a more formal patch to
+be applied to the PM tree. I was waiting to see if the semantics of
+device_set_wakeup_*() could be clarified because I don't understand if
+they're allowed to be called before device_add().
 
-diff --git a/drivers/media/i2c/ov13858.c b/drivers/media/i2c/ov13858.c
-index aac6f77afa0f..aa239cc5a921 100644
---- a/drivers/media/i2c/ov13858.c
-+++ b/drivers/media/i2c/ov13858.c
-@@ -7,6 +7,7 @@
- #include <linux/pm_runtime.h>
- #include <media/v4l2-ctrls.h>
- #include <media/v4l2-device.h>
-+#include <media/v4l2-fwnode.h>
- 
- #define OV13858_REG_VALUE_08BIT		1
- #define OV13858_REG_VALUE_16BIT		2
-@@ -1666,6 +1667,13 @@ static int ov13858_init_controls(struct ov13858 *ov13858)
- 		goto error;
- 	}
- 
-+	ret = v4l2_fwnode_register_controls(dev_fwnode(&client->dev),
-+					    ctrl_hdlr, &ov13858_ctrl_ops);
-+	if (ret)
-+		goto error;
-+
-+
-+
- 	ov13858->sd.ctrl_handler = ctrl_hdlr;
- 
- 	return 0;
--- 
-2.22.0
+>=20
+> Also note that all of this is not an issue until we start to add
+> children under the device passed to device_set_wakeup_enable() and
+> friends so maybe that is not a good idea after all?
+
+My primary goal is to know what wakeup is associated with a device. If
+we delay creation of the sysfs node to the time that device_add() is
+called then it will allow device_set_wakeup_enable() to be called before
+the device is published to userspace. Is anything wrong with that? This
+seems to be the intention of the API based on the way
+device_set_wakeup_capable() is written. Furthermore, if we make this
+change then we don't need to fix various drivers to reorder calls to
+device_set_wakeup_enable() and device_add(), so it looks like the right
+approach.
+
+I'll send the patch over the list now and let you decide. I'll also send
+a patch for serio to have it operate on the device in a less racy way,
+but not necessarily after the device_add() is called.
 
