@@ -2,68 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7A5D8FB98
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:00:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE9B8FBAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:07:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfHPG75 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:59:57 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:41472 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfHPG74 (ORCPT
+        id S1727035AbfHPHGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:06:07 -0400
+Received: from mail.someserver.de ([31.15.66.35]:54022 "EHLO
+        mail.someserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfHPHGH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:59:56 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hyWDK-0003lN-HH; Fri, 16 Aug 2019 08:59:54 +0200
-Date:   Fri, 16 Aug 2019 08:59:53 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Helmut Grohne <helmut.grohne@intenta.de>
-cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clocksource/drivers/sp804: make CONFIG_ARM_TIMER_SP804
- selectable again
-In-Reply-To: <20190816064728.52ymq7rflmuqparz@laureti-dev>
-Message-ID: <alpine.DEB.2.21.1908160855060.1908@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1908152227590.1908@nanos.tec.linutronix.de> <20190816064728.52ymq7rflmuqparz@laureti-dev>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 16 Aug 2019 03:06:07 -0400
+X-Greylist: delayed 343 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 03:06:06 EDT
+Received: from localhost (87-231-101-12.rev.numericable.fr [87.231.101.12])
+        by mail.someserver.de (Postfix) with ESMTPSA id 66533121546;
+        Fri, 16 Aug 2019 09:00:20 +0200 (CEST)
+From:   Christina Quast <contact@christina-quast.de>
+To:     ard.biesheuvel@linaro.org
+Cc:     Christina Quast <contact@christina-quast.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Anushka Shukla <anushkacharu9@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Zach Turner <turnerzdp@gmail.com>,
+        linux-wireless@vger.kernel.org,
+        Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH 0/2] Use ccm(aes) aead transform in staging drivers
+Date:   Fri, 16 Aug 2019 08:59:34 +0200
+Message-Id: <20190816065936.12214-1-contact@christina-quast.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Helmut,
+Use ccm(aes) aead transform instead of invoking the AES block cipher
+block by block.
 
-On Fri, 16 Aug 2019, Helmut Grohne wrote:
-> I also note that there are likely more instances for this pattern.
-> Should they be fixed in a similar way? You can find a lot using the
-> following incantation:
-> 
->     $ git describe --tags
->     v5.3-rc4
->     $ git ls-files -- "*/Kconfig" | xargs git grep --cached 'bool .* if COMPILE_TEST$' -- | wc -l
->     185
->     $
-> 
-> Seems like an anti-pattern to me. It is particularly common in the
-> clocksource subtree.
+Christina Quast (2):
+  staging: rtl8192u: ieee80211: ieee80211_crypt_ccmp.c: Use crypto API
+    ccm(aes)
+  staging: rtl8192e: rtllib_crypt_ccmp.c: Use crypto API ccm(aes)
 
-After some rumaging I figured out that the idea behind this is that the
-platforms which need those clocksources use 'select $CLOCKSOURCE' which
-works despite the 'if COMPILE_TEST'.
+ drivers/staging/rtl8192e/Kconfig              |   1 +
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c  | 187 ++++++++----------
+ drivers/staging/rtl8192u/Kconfig              |   2 +
+ .../rtl8192u/ieee80211/ieee80211_crypt_ccmp.c | 187 ++++++++----------
+ 4 files changed, 159 insertions(+), 218 deletions(-)
 
-The 'if COMPILE_TEST' is there to hide the config option when there is no
-platform which needs it and expose it for compile test purposes.
+-- 
+2.20.1
 
-So if your particular platform does not use 'select ARM_TIMER_SP804' then
-the right fix is to add it to that platform.
-
-Thanks,
-
-	tglx
