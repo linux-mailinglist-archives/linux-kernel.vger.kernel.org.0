@@ -2,79 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D60B90304
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E409190311
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:31:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfHPN34 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 09:29:56 -0400
-Received: from mga11.intel.com ([192.55.52.93]:21164 "EHLO mga11.intel.com"
+        id S1727354AbfHPNbu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 09:31:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727246AbfHPN34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 09:29:56 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 06:29:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,393,1559545200"; 
-   d="scan'208";a="188814716"
-Received: from local-michael-cet-test.sh.intel.com (HELO localhost) ([10.239.159.128])
-  by orsmga002.jf.intel.com with ESMTP; 16 Aug 2019 06:29:53 -0700
-Date:   Fri, 16 Aug 2019 21:31:30 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Jim Mattson <jmattson@google.com>,
-        Yang Weijiang <weijiang.yang@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        yu.c.zhang@intel.com, alazar@bitdefender.com,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [PATCH RESEND v4 5/9] KVM: VMX: Add init/set/get functions for
- SPP
-Message-ID: <20190816133130.GA14380@local-michael-cet-test.sh.intel.com>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-6-weijiang.yang@intel.com>
- <87a7cbapdw.fsf@vitty.brq.redhat.com>
- <20190815134329.GA11449@local-michael-cet-test>
- <CALMp9eTGXDDfVspFwFyEhagg9sdnqZqzSQhDksT0bkKzVNGSqw@mail.gmail.com>
- <20190815163844.GD27076@linux.intel.com>
+        id S1727263AbfHPNbu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 09:31:50 -0400
+Received: from localhost (173-25-83-245.client.mchsi.com [173.25.83.245])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E28922086C;
+        Fri, 16 Aug 2019 13:31:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565962309;
+        bh=MttKe0yp/T1sDIDthL7yI1Dis6PQYbgmffNkmTOfatI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kn7n9FRwaRPPoxR93SNO+a6ImoR7ukr/jjPj2drzk1PO+MAH4mSmWrIYpr9zCdCMJ
+         gBbHLMuNBh6E/dJX8HsEfCwm638l6iPKD43eSe2lvChzbpJG1kUX3j7LoITJvpGgy/
+         1b74thu+9+ZXv/oaViO3vx7QPtztw1SHc3QqaPN4=
+Date:   Fri, 16 Aug 2019 08:31:47 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Denis Efremov <efremov@linux.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 03/10] x86/PCI: Loop using PCI_STD_NUM_BARS
+Message-ID: <20190816133147.GM253360@google.com>
+References: <20190816092437.31846-1-efremov@linux.com>
+ <20190816092437.31846-4-efremov@linux.com>
+ <alpine.DEB.2.21.1908161131400.1873@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190815163844.GD27076@linux.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <alpine.DEB.2.21.1908161131400.1873@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 09:38:44AM -0700, Sean Christopherson wrote:
-> On Thu, Aug 15, 2019 at 09:25:41AM -0700, Jim Mattson wrote:
-> > On Thu, Aug 15, 2019 at 6:41 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
-> > 
-> > > Hi, Vitaly,
-> > > After looked into the issue and others, I feel to make SPP co-existing
-> > > with nested VM is not good, the major reason is, L1 pages protected by
-> > > SPP are transparent to L1 VM, if it launches L2 VM, probably the
-> > > pages would be allocated to L2 VM, and that will bother to L1 and L2.
-> > > Given the feature is new and I don't see nested VM can benefit
-> > > from it right now, I would like to make SPP and nested feature mutually
-> > > exclusive, i.e., detecting if the other part is active before activate one
-> > > feature,what do you think of it?
-> > > thanks!
-> > 
-> > How do you propose making the features mutually exclusive?
+On Fri, Aug 16, 2019 at 11:32:41AM +0200, Thomas Gleixner wrote:
+> On Fri, 16 Aug 2019, Denis Efremov wrote:
 > 
-> I haven't looked at the details or the end to end flow, but would it make
-> sense to exit to userspace on nested VMLAUNCH/VMRESUME if there are SPP
-> mappings?  And have the SPP ioctl() kick vCPUs out of guest.
+> > Refactor loops to use 'i < PCI_STD_NUM_BARS' instead of
+> > 'i <= PCI_STD_RESOURCE_END'.
 > 
-> KVM already exits on SPP violations, so presumably this is something that
-> can be punted to userspace.
-Thanks Jim and Sean! Could we add a new flag in kvm to identify if nested VM is on
-or off? That would make things easier. When VMLAUNCH is trapped,
-set the flag, if VMXOFF is trapped, clear the flag.
+> Please describe the WHY not the WHAT. I can see the WHAT from the patch
+> itself, but I can't figure out WHY.
+
+Good point; the WHY is to use idiomatic C style and avoid
+the fencepost error of using "i < PCI_STD_RESOURCE_END"
+when "i <= PCI_STD_RESOURCE_END" is required, e.g.,
+2f686f1d9bee ("PCI: Correct PCI_STD_RESOURCE_END usage")
+
+Denis, can you include something along those lines in the next
+version?
