@@ -2,79 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 157B78FB86
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:55:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D6698FB72
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:53:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfHPGz2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:55:28 -0400
-Received: from letterbox.kde.org ([46.43.1.242]:53688 "EHLO letterbox.kde.org"
+        id S1726968AbfHPGxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:53:02 -0400
+Received: from mail.intenta.de ([178.249.25.132]:41766 "EHLO mail.intenta.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726982AbfHPGz1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:55:27 -0400
-Received: from archbox.localdomain (unknown [123.201.155.129])
-        (Authenticated sender: bshah)
-        by letterbox.kde.org (Postfix) with ESMTPSA id AED5128ACF1;
-        Fri, 16 Aug 2019 07:47:46 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kde.org; s=users;
-        t=1565938067; bh=ePjvQ8ajgrtxUHMFSOWhNNhVxI+y1Eg4fcjki3juWZg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nQqTnRjC/rPiFnACpoHJbEsxdIP3/KJtCoYYqAVhn1JemXcnRWlJ5Db2qrdvCIR6d
-         ABYLnRY7ayDaAe/ygo5IgrK/xmlpnBZyN3FKBDbThd7YhdwLKmLNQaAXBFEPBKF6Dv
-         k8CXqC8vwQkwfp+7qRsgWqGR8YVYs8EGK22AIUWEWv6P4X05euOSriRv8M2aPcVXzn
-         M0ZHpO2Jjn6IoSDVW1ciEedk1IW0/Hvk24V/p91BUwsYtBmTjeq2GadQt80lkkCqxm
-         JzUBeMVZRXLS1+7xdkTjf0YFrreE5njql+/30QxR68nNTCE9rHNwrxfpxjz4z1G7CA
-         gzw/SXslRGUSg==
-From:   Bhushan Shah <bshah@kde.org>
-To:     Icenowy Zheng <icenowy@aosc.io>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Wolfram Sang <wsa@the-dreams.de>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc:     Bhushan Shah <bshah@kde.org>
-Subject: [PATCH v2 3/3] arm64: allwinner: h6: add i2c0 node in PineH64
-Date:   Fri, 16 Aug 2019 12:17:10 +0530
-Message-Id: <20190816064710.18280-4-bshah@kde.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190816064710.18280-1-bshah@kde.org>
-References: <20190811090503.32396-1-bshah@kde.org>
- <20190816064710.18280-1-bshah@kde.org>
+        id S1725945AbfHPGxC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:53:02 -0400
+X-Greylist: delayed 327 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 02:53:01 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=intenta.de; s=dkim1;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:CC:To:From:Date; bh=XGDxRJXRDAYSGkBgoHrcdJKPBcXv/0/xhS9n/WVSbHI=;
+        b=vNyEnij5dWjnpCOiyaV0zqMrX6EVSo/1v2ELQ4u5e1Zkuy6LbAo0v7yKw1XMyQhk8bEoem2aNi8Yh1H5+nip7VemxX3m1iJ8+Nmba2+Dy6tw9sCj7VFv+ZzNUQM7BmOegpkJqK/aie7iAJSb7H3LPwemTxDeUsPaf0h4RNA74987eYu8ixkcl9Sk8lWpOVYKY1N5aZz1H4nKo5k2IrNIEw2Su5tn8fuInz2kir8GiI0tPR9WhyWqYQW45xyUhAnYEbsLuKXkBj5LZ1LiA5rwuLF0xeiLbmeblBDRdIRrTIuELb+L+VG4gXEvYGDlmUxy6J/BsJHnA0e2ARC5/dGB+Q==;
+X-CTCH-RefID: str=0001.0A0C0202.5D565182.0082,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Date:   Fri, 16 Aug 2019 08:47:30 +0200
+From:   Helmut Grohne <helmut.grohne@intenta.de>
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+CC:     <linux-kernel@vger.kernel.org>
+Subject: [PATCH] clocksource/drivers/sp804: make CONFIG_ARM_TIMER_SP804
+ selectable again
+Message-ID: <20190816064728.52ymq7rflmuqparz@laureti-dev>
+References: <alpine.DEB.2.21.1908152227590.1908@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1908152227590.1908@nanos.tec.linutronix.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-ClientProxiedBy: ICSMA002.intenta.de (10.10.16.48) To ICSMA002.intenta.de
+ (10.10.16.48)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-i2c0 bus is exposed by PI-2 BUS in the PineH64, model B.
+Adding a dependency on CONFIG_COMPILE_TEST makes the relevant item
+unselectable for practical purposes. The correct solution is to add a
+dependency alternative on the relevant architecture.
 
-Signed-off-by: Bhushan Shah <bshah@kde.org>
+Fixes: dfc82faad72520 ("clocksource/drivers/sp804: Add COMPILE_TEST to CONFIG_ARM_TIMER_SP804")
+Link: https://lore.kernel.org/lkml/20190618120719.a4kgyiuljm5uivfq@laureti-dev/
+Link: https://lore.kernel.org/lkml/alpine.DEB.2.21.1908152227590.1908@nanos.tec.linutronix.de/
+Signed-off-by: Helmut Grohne <helmut.grohne@intenta.de>
 ---
-Changes in v2:
-  - Don't enable the i2c0 node in PineH64 by default
+ drivers/clocksource/Kconfig | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Hi Thomas,
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-index 684d1daa3081..97d9b7c63fb3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64.dts
-@@ -160,6 +160,15 @@
- 	vcc-pg-supply = <&reg_aldo1>;
- };
+On Thu, Aug 15, 2019 at 10:30:39PM +0200, Thomas Gleixner wrote:
+> The obvious fix is to add
+> 
+>       depends on ARM || ARM64 || COMPILE_TEST
+> 
+> instead of reverting the whole thing. Care to do that?
+
+Incidentally, that's what I proposed earlier as RFC. Resending that
+variant now.
+
+I also note that there are likely more instances for this pattern.
+Should they be fixed in a similar way? You can find a lot using the
+following incantation:
+
+    $ git describe --tags
+    v5.3-rc4
+    $ git ls-files -- "*/Kconfig" | xargs git grep --cached 'bool .* if COMPILE_TEST$' -- | wc -l
+    185
+    $
+
+Seems like an anti-pattern to me. It is particularly common in the
+clocksource subtree.
+
+Helmut
+
+diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+index 5e9317dc3d39..7081a250573b 100644
+--- a/drivers/clocksource/Kconfig
++++ b/drivers/clocksource/Kconfig
+@@ -393,7 +393,8 @@ config ARM_GLOBAL_TIMER
+ 	  This options enables support for the ARM global timer unit
  
-+/* This i2c interface is exposed on PI-2 BUS, Pin 3 (I2C_SDA) and 5 (I2C_SCL) */
-+&i2c0 {
-+	status = "disabled";
-+};
-+
-+&i2c0_pins {
-+	bias-pull-up;
-+};
-+
- &r_i2c {
- 	status = "okay";
- 
+ config ARM_TIMER_SP804
+-	bool "Support for Dual Timer SP804 module" if COMPILE_TEST
++	bool "Support for Dual Timer SP804 module"
++	depends on ARM || ARM64 || COMPILE_TEST
+ 	depends on GENERIC_SCHED_CLOCK && CLKDEV_LOOKUP
+ 	select CLKSRC_MMIO
+ 	select TIMER_OF if OF
 -- 
-2.17.1
+2.11.0
 
