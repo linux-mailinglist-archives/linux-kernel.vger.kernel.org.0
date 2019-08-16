@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3093C90806
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:01:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EDB90808
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:02:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727569AbfHPTBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 15:01:23 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45226 "EHLO mx1.redhat.com"
+        id S1727586AbfHPTCT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 15:02:19 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:50884 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfHPTBW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 15:01:22 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727067AbfHPTCT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 15:02:19 -0400
+Received: from zn.tnic (p200300EC2F0A9200200CA3DD4E56A7C9.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:9200:200c:a3dd:4e56:a7c9])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4F8DF30821A1;
-        Fri, 16 Aug 2019 19:01:22 +0000 (UTC)
-Received: from [10.10.123.64] (ovpn-123-64.rdu2.redhat.com [10.10.123.64])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 81D625C1D6;
-        Fri, 16 Aug 2019 19:01:21 +0000 (UTC)
-Subject: Re: [PATCH v4 06/10] modpost: Add modinfo flag to livepatch modules
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Miroslav Benes <mbenes@suse.cz>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        live-patching@vger.kernel.org,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-References: <20190509143859.9050-1-joe.lawrence@redhat.com>
- <20190509143859.9050-7-joe.lawrence@redhat.com>
- <CAK7LNAQuS-YcXecfJ21BGzc0CimzWxQcYST5-1xRgnCQGtcL4A@mail.gmail.com>
- <20190812155626.GA19845@redhat.com>
- <CAK7LNATRLTBqA9c=b+Y38T-zWc9o5JMq18r9auA=enPC=p10pA@mail.gmail.com>
- <alpine.LSU.2.21.1908161016430.2020@pobox.suse.cz>
- <6c7e4d19-b993-1c14-d6cf-6aa1ee891361@redhat.com>
-Message-ID: <163ad1fb-ccbf-0a3e-d795-2bb748a0e88f@redhat.com>
-Date:   Fri, 16 Aug 2019 15:01:20 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 09BF71EC097D;
+        Fri, 16 Aug 2019 21:02:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565982137;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Bjb9ujwNm6DqUuFJKsly1caPpod8hyH5EWKGnEND7J4=;
+        b=cHrCeXfl89ikeZi2QR12dqZFFuvTsZR++3e7YR+i23vkTaMLRBwsSSB/l9o+/MOPwW5N74
+        K4fAEdR5eUnDiE1ceH31CZUxaALoKHuqhjNduMIxehpKdrs1mcMiMB6NPCTAsARPA9rdnz
+        S3JnIEcTR00758fdrHzggzRupvzQ5Fc=
+Date:   Fri, 16 Aug 2019 21:03:06 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
+ asm/intel-family.h
+Message-ID: <20190816190306.GB21147@zn.tnic>
+References: <20190814234030.30817-1-tony.luck@intel.com>
+ <20190815075822.GC15313@zn.tnic>
+ <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
+ <20190815175455.GJ15313@zn.tnic>
+ <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
+ <alpine.DEB.2.21.1908152217070.1908@nanos.tec.linutronix.de>
+ <20190815224704.GA10025@agluck-desk2.amr.corp.intel.com>
+ <20190816064625.GD18980@zn.tnic>
+ <3908561D78D1C84285E8C5FCA982C28F7F42410E@ORSMSX115.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <6c7e4d19-b993-1c14-d6cf-6aa1ee891361@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 16 Aug 2019 19:01:22 +0000 (UTC)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3908561D78D1C84285E8C5FCA982C28F7F42410E@ORSMSX115.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/16/19 8:43 AM, Joe Lawrence wrote:
-> On 8/16/19 4:19 AM, Miroslav Benes wrote:
->> Hi,
->>
->>> I cleaned up the build system, and pushed it based on my
->>> kbuild tree.
->>>
->>> Please see:
->>>
->>> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git
->>> klp-cleanup
->>
->> This indeed looks much simpler and cleaner (as far as I can judge with my
->> limited kbuild knowledge). We just need to remove MODULE_INFO(livepatch,
->> "Y") from lib/livepatch/test_klp_convert_mod_a.c to make it compile and
->> work (test_klp_convert_mod_a is not a livepatch module, it is just a dummy
->> module which is then livepatched by lib/livepatch/test_klp_convert1.c).
->>
+On Fri, Aug 16, 2019 at 04:29:19PM +0000, Luck, Tony wrote:
+> >> + * The defined symbol names have the following form:
+> >> + *	INTEL_FAM6{OPTFAMILY}_{MICROARCH}{OPTDIFF}
+> >
+> > I think you want to have the underscores in the template:
+> >
+> >	INTEL_FAM6_{OPTFAMILY}_{MICROARCH}_{OPTDIFF}
+> >
+> > but no need to resend if this is the only issue - I'll fix it up when
+> > applying.
 > 
-> Yeah, Masahiro this is great, thanks for reworking this!
-> 
-> I did tweak one module like Miroslav mentioned and I think a few of the
-> newly generated files need to be cleaned up as part of "make clean", but
-> all said, this is a nice improvement.
-> 
+> I started there, but then had to include a sentence saying to skip the "_"
+> if you didn't include either/both of the optional fields.
 
-Well actually, now I see this comment in the top-level Makefile:
+Ok, I see, that's why you call it "_CORE" - with a prepended underscore
+- which should be omitted, for example. Ok, I'll take it and we can
+always fix it up if it ain't clear.
 
-# Cleaning is done on three levels. 
+Thx.
 
-# make clean     Delete most generated files 
+-- 
+Regards/Gruss,
+    Boris.
 
-#                Leave enough to build external modules 
-
-# make mrproper  Delete the current configuration, and all generated 
-files
-# make distclean Remove editor backup files, patch leftover files and 
-the like
-
-I didn't realize that we're supposed to be able to still build external 
-modules after "make clean".  If that's the case, then one might want to 
-build an external klp-module after doing that.
-
-With that in mind, shouldn't Symbols.list to persist until mrproper? 
-And I think modules-livepatch could go away during clean, what do you think?
-
--- Joe
+Good mailing practices for 400: avoid top-posting and trim the reply.
