@@ -2,65 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F41678FB2E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6438FB35
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:40:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726892AbfHPGim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:38:42 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:52106 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726872AbfHPGik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:38:40 -0400
-Received: from zn.tnic (p200300EC2F0A920041519BC41B2ACCA3.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:9200:4151:9bc4:1b2a:cca3])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C8E51EC0A91;
-        Fri, 16 Aug 2019 08:38:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565937519;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=5Vqiu9wtaNx8kVRzHPBxlLz2F2d6oTzKG7AVaoCM5PU=;
-        b=V1pG1doAqPi4XoqA2IBe8N40J5t74wL8WVTo6puCBmWddUU3k/Khf7QOat3LZ6FoCArSVX
-        RUEzU4Ng1uH9iV7KWOckv85k2fnd8FJc5j+6mp5X1Va7mnWKkO3aa/DvZ6ylTFfWODEDq/
-        J4RhIRXf3QR4LrTQAkdTqeyVY2LF2gU=
-Date:   Fri, 16 Aug 2019 08:39:25 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Zhao Yakui <yakui.zhao@intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: Re: [RFC PATCH 00/15] acrn: add the ACRN driver module
-Message-ID: <20190816063925.GB18980@zn.tnic>
-References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
+        id S1726944AbfHPGkA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:40:00 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45087 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725897AbfHPGj7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:39:59 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q12so477479wrj.12;
+        Thu, 15 Aug 2019 23:39:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=5CiCivYuLKVWcTvhyXRHZSRzZ+pFRBC2NZeakCldL+o=;
+        b=BNyCP1TO3qjPbK5rP9vIaHG8bXEJrTnMwc2yeOZxIcv/p0DrAl6K0DMQvWGoLArbzC
+         mQC7LUTTKemH6cvncmuqk9381Xuy1e4RZLqGH67YfB4EOh4EYk4sF5R7b2+V09DDjSyr
+         IN0ntVFz18ofbM2seF0IQ5OXDMZ0r+17FPSf4DHu7ZmiGTcteoBO8e+JaHeZdm+vNwek
+         6FMLXr0rtwp2D7sJkbsjm8v3JB2KJxgoSt5M9Q07dtykb7V6KYUeNTTDhOXRWKAa2mtn
+         BxWt7/wvlDjSLCoHQeAJLty5vrNdHvDeH9NIG8luAiEyO1c+BJU8am6vL+cBl/SWPBRX
+         lwLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=5CiCivYuLKVWcTvhyXRHZSRzZ+pFRBC2NZeakCldL+o=;
+        b=ZWA5NtgNDxDuTWurBjGB5E+vJftoWjnPSsW7gNiuLgdFthbDb1mx/Lup1365+E4Tv5
+         GKwXgCMQSStKkK2pnIxqOwbK0G/TcHbi8m8zfqRx2QfMAh2H9axLQYNsZZpA4e+4Ok9X
+         RRA2RrJjfYHACMSM4782FEtORFskRNY/jcRLTZj2u232QQsOewjt/epcqB1ciJFgy+bK
+         tCUlrMyu6+KQSEKeNnrHxmp5ugndZ6ZSeyFCdtaWZlcX4P3LKWwGe+RITUYs9YDgXH0w
+         Cy4tLR14CtymksAMkQIETkXNML1fSbp7eK7KKCSYrKwjC3Z5G3S8fDV9yFBNQQxwy7Ei
+         OovA==
+X-Gm-Message-State: APjAAAUjSU/6Yv5nn0vJZhOoRCVgDHJmHGp7HFK+uTy+vWfHaT6H/WjS
+        0NREcFtNPlmcy+oWMs18/ZtuYkjn
+X-Google-Smtp-Source: APXvYqzu5S4jP1HucZDHre6xJ2x0X8lPA3VySpIREgwplU+EW/f3cCL3cxMcL864x1snQikP1wEkSA==
+X-Received: by 2002:adf:f14f:: with SMTP id y15mr8733609wro.28.1565937597703;
+        Thu, 15 Aug 2019 23:39:57 -0700 (PDT)
+Received: from [192.168.8.147] (187.170.185.81.rev.sfr.net. [81.185.170.187])
+        by smtp.gmail.com with ESMTPSA id o8sm5576893wma.1.2019.08.15.23.39.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Aug 2019 23:39:56 -0700 (PDT)
+Subject: Re: [PATCH net-next] r8152: divide the tx and rx bottom functions
+To:     Hayes Wang <hayeswang@realtek.com>, netdev@vger.kernel.org
+Cc:     nic_swsd@realtek.com, linux-kernel@vger.kernel.org
+References: <1394712342-15778-301-Taiwan-albertk@realtek.com>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <9749764d-7815-b673-0fc4-22475601efec@gmail.com>
+Date:   Fri, 16 Aug 2019 08:39:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <1394712342-15778-301-Taiwan-albertk@realtek.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 10:25:41AM +0800, Zhao Yakui wrote:
-> The first three patches are the changes under x86/acrn, which adds the
-> required APIs for the driver and reports the X2APIC caps. 
-> The remaining patches add the ACRN driver module, which accepts the ioctl
-> from user-space and then communicate with the low-level ACRN hypervisor
-> by using hypercall.
 
-I have a problem with that: you're adding interfaces to arch/x86/ and
-its users go into staging. Why? Why not directly put the driver where
-it belongs, clean it up properly and submit it like everything else is
-submitted?
 
-I don't want to have stuff in arch/x86/ which is used solely by code in
-staging and the latter is lingering there indefinitely because no one is
-cleaning it up...
+On 8/14/19 10:30 AM, Hayes Wang wrote:
+> Move the tx bottom function from NAPI to a new tasklet. Then, for
+> multi-cores, the bottom functions of tx and rx may be run at same
+> time with different cores. This is used to improve performance.
+> 
+>  
 
--- 
-Regards/Gruss,
-    Boris.
+tasklet and NAPI are scheduled on the same core (the current
+cpu calling napi_schedule() or tasklet_schedule())
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+I would rather not add this dubious tasklet, and instead try to understand
+what is wrong in this driver ;)
+
+The various napi_schedule() calls are suspect IMO.
+
+Also rtl8152_start_xmit() uses skb_queue_tail(&tp->tx_queue, skb);
+
+But I see nothing really kicking the transmit if tx_free is empty ?
+
+tx_bottom() is only called from bottom_half() (called from r8152_poll())
+
+
