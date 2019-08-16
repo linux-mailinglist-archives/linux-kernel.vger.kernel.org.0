@@ -2,77 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36CCF907A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 20:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2315907AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 20:24:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfHPST6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 14:19:58 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33901 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727555AbfHPST6 (ORCPT
+        id S1727599AbfHPSYT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 14:24:19 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:33302 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727067AbfHPSYT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 14:19:58 -0400
-Received: by mail-io1-f67.google.com with SMTP id s21so8027659ioa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 11:19:58 -0700 (PDT)
+        Fri, 16 Aug 2019 14:24:19 -0400
+Received: by mail-qt1-f195.google.com with SMTP id v38so7127908qtb.0;
+        Fri, 16 Aug 2019 11:24:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fnuMsmujra29dp1FTSHBcRawQgyoBfthqZjlSsqr0ro=;
-        b=kjvql2Fd+K3tNtaX3xqbcP60tjRZd3ve9Avkm5DscmGcY4B4h+AO6NZ4n5M0JxHbK/
-         blGJ2jE7epeuYd18BqhU59gcABGrhJDbrTPms2fF72gauL7f11noPHGQRxopt1TlZlES
-         jORwP7E1AFDebFCbl8y51+bg56Yt9ONkL0brycIKPoYl1s9AG/Ja8FlXOi7nKXKLTyjm
-         860oRbL2N0xnYPErgs8HaRwoQrjr+1JFGQZEnTE1lRY/elPjcV+vrSTx7a74X+eBO87t
-         Q5uV+5Je5OCbdijJd6gTQ8VnRk3BSWSIGKLwW8rGO4PLsNAXVxu+5UTHVsIv7XLXiItA
-         DS7g==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to;
+        bh=CVCgjz4ZRTGlXDNPoWQ4eybdK42uJ02OuOk+1ZD+7TM=;
+        b=T6PHkLO5n/E64dtYj050nsoUzdL5ForjJcQNx0LC5AKSTRiSKzZCK7q7U15mSMeMBS
+         S24cnroTEQJN41mBi7ShBqIYBGWAshuziprWSO+qX3tTTub5M8UWJbpMdA9124+rgeOJ
+         kGLxTV2fULFjWCtTDvresTdgk1sStWksADdN5oXJiQv+PPbxMWHURl62fxBWDq20GefF
+         zB6ChsM+r5EG7N7F/zbprhRqZt51ZHCI4qZJeu7acXAZuuyW2ncztrPK7qyqzSc8cnDp
+         2LH2LxLHF0/tDnJ1Wr9q8mPkJ0FKA83n5RREja0LZkpvJwFf5vOXXsQKuVmuyDtCCXGG
+         gvkg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fnuMsmujra29dp1FTSHBcRawQgyoBfthqZjlSsqr0ro=;
-        b=bcARWWXESLOxcTOhTJRCj0OYInkIq7wpGmug7QwNDC2uFWqdOU/g+WZzNbthm16S5E
-         1ezTFG4L8queEYb6kBxX60cF6YZBxRyUM31YzLiFbLXI+EAyXGQcU/iaSRqw7JuCQdET
-         +RRDpn2xx0O+bZjagsSEAXYe8nzYJOVxQ/1AT2d6hZEKjoR7DByte62me1xKMCfEAIex
-         3cIOzXcjD+2AaebvcKbt8X34oR0CN30lEWaFmlwXU3mfl9q8J+i6IHluxfZvLa/4NKO1
-         X1+fDKaVtEHh8skGaSzQAcMTpmbKQiIuPmurPrDM2/cTqYzx10STIEMVHcVeObakNgzM
-         Un0w==
-X-Gm-Message-State: APjAAAU3WZPKri/7ZflzyFcyWu+hsIwv8nJgrgHpk1hXPUx9f9oOPKDI
-        o5TNQ2OEjh7/4Ps5aOulMzKQ6ohmhk4QbN6b5246vg==
-X-Google-Smtp-Source: APXvYqwfU734wkK0YpcYpc0AOVf/v9+g+Q5CSYSz6+OfVjVVRrlUOQOiqK9kLJGsftekpgUa5W1sAkAr6zNKZZBB29o=
-X-Received: by 2002:a05:6638:348:: with SMTP id x8mr12561075jap.31.1565979597300;
- Fri, 16 Aug 2019 11:19:57 -0700 (PDT)
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to;
+        bh=CVCgjz4ZRTGlXDNPoWQ4eybdK42uJ02OuOk+1ZD+7TM=;
+        b=Tu4BEFX9UeBpo3mC0lDYXVYmNRA/+cg2vYaTWNKPGjHJuPPBCUwdRCCf6YSxCgW+5w
+         KByDPjyKYr2JRhsKhS5eYGET2K9GxC9DeM8togWEBe2UU53tD3z1h8jCHALtb6xYFz89
+         wd6cNwwMXUOVsKiFy38B/xQvCjJz12dpW+nBhuXeLN8vt/YB7+xsC33tuPhNFZ7zdCI1
+         Rp6nSj/T6j+YKQwpqp2/jqfpE6nw3oohMBXRY71W3dj3ZMwkJvJgkRP6mj7wOr2G8yTC
+         AFIdWTNU4IWSbSgG0J3qu7QwITt+d98t8oZE+a+hvT4/yjNtUcINug9N60tnlY7cUHpi
+         zb/w==
+X-Gm-Message-State: APjAAAVV8TFicbCrHDoE35yer3J09jDxUhh9gfv2yonO1hi7ztbI9seN
+        7wqWhB6NO46o4nhz6DYjSNsSBTYoHE/TGwRYx9A=
+X-Google-Smtp-Source: APXvYqwVoKfHivX5vQN7nv4Z0pu4iK0FOL6nOfKp0VkTogxZoitdDqyVTHQj3P+31K45vOG2NIWgVtYcwBMySP3Q5oo=
+X-Received: by 2002:ac8:4896:: with SMTP id i22mr9880951qtq.13.1565979492912;
+ Fri, 16 Aug 2019 11:18:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-6-weijiang.yang@intel.com> <87a7cbapdw.fsf@vitty.brq.redhat.com>
- <20190815134329.GA11449@local-michael-cet-test> <CALMp9eTGXDDfVspFwFyEhagg9sdnqZqzSQhDksT0bkKzVNGSqw@mail.gmail.com>
- <20190815163844.GD27076@linux.intel.com> <20190816133130.GA14380@local-michael-cet-test.sh.intel.com>
-In-Reply-To: <20190816133130.GA14380@local-michael-cet-test.sh.intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Fri, 16 Aug 2019 11:19:46 -0700
-Message-ID: <CALMp9eRDhbxkFNqY-+GOMtfg+guafdKcCNq1OJt9UgnyFVvSGw@mail.gmail.com>
-Subject: Re: [PATCH RESEND v4 5/9] KVM: VMX: Add init/set/get functions for SPP
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        yu.c.zhang@intel.com, alazar@bitdefender.com,
-        Paolo Bonzini <pbonzini@redhat.com>
+From:   Nathan Royce <nroycea+kernel@gmail.com>
+Date:   Fri, 16 Aug 2019 13:18:01 -0500
+Message-ID: <CALaQ_hruPmgnE5yh_MJLLZ_7sPNEnzX8H-WfR=fBvcfEzfG9Fg@mail.gmail.com>
+Subject: Kernel 5.2.8 - au0828 - Tuner Is Busy
+To:     sean@mess.org, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Shuah Khan <shuah@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Brad Love <brad@nextdimension.cc>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 6:29 AM Yang Weijiang <weijiang.yang@intel.com> wrote:
+Right up front, I must say I do NOT have a Hauppauge tuner. I think
+it's like maybe Mygica/Geniatech:
+Bus 002 Device 004: ID 05e1:0400 Syntek Semiconductor Co., Ltd
 
-> Thanks Jim and Sean! Could we add a new flag in kvm to identify if nested VM is on
-> or off? That would make things easier. When VMLAUNCH is trapped,
-> set the flag, if VMXOFF is trapped, clear the flag.
+Whenever I update my kernel, I edit the
+./drivers/media/usb/au0828/au0828-cards.c file adding an entry for my
+0x400 device.
+I've been doing it for years and it's been working fine... until now...
 
-KVM_GET_NESTED_STATE has the requested information. If
-data.vmx.vmxon_pa is anything other than -1, then the vCPU is in VMX
-operation. If (flags & KVM_STATE_NESTED_GUEST_MODE), then L2 is
-active.
+*****
+Aug 16 12:07:20 computerName kernel: usb 2-2.3: Tuner is busy. Error -19
+<...18 more repeated entries...>
+Aug 16 12:07:20 computerName kernel: usb 2-2.3: Tuner is busy. Error -19
+Aug 16 12:07:10 computerName tvheadend[3276]: main: Log started
+*****
+"w_scan" behaves the same way.
+
+*****
+$ modprobe au0828
+Aug 16 12:52:52 computerName kernel: videodev: Linux video capture
+interface: v2.00
+Aug 16 12:52:52 computerName kernel: au0828: au0828_init() Debugging is enabled
+Aug 16 12:52:52 computerName kernel: au0828: au0828 driver loaded
+Aug 16 12:52:52 computerName kernel: au0828: au0828_usb_probe() vendor
+id 0x5e1 device id 0x400 ifnum:0
+Aug 16 12:52:52 computerName kernel: au0828: au0828_gpio_setup()
+Aug 16 12:52:52 computerName kernel: au0828: au0828_i2c_register()
+Aug 16 12:52:52 computerName kernel: au0828: i2c bus registered
+Aug 16 12:52:52 computerName kernel: au0828: au0828_card_setup()
+Aug 16 12:52:52 computerName kernel: tveeprom: Encountered bad packet
+header [20]. Corrupt or not a Hauppauge eeprom.
+Aug 16 12:52:52 computerName kernel: au0828: hauppauge_eeprom:
+warning: unknown hauppauge model #0
+Aug 16 12:52:52 computerName kernel: au0828: hauppauge_eeprom:
+hauppauge eeprom: model=0
+Aug 16 12:52:52 computerName kernel: au0828: au0828_analog_register
+called for intf#0!
+Aug 16 12:52:52 computerName kernel: au0828: au0828_dvb_register()
+Aug 16 12:52:52 computerName kernel: au8522 7-0047: creating new instance
+Aug 16 12:52:52 computerName kernel: tda18271 7-0060: creating new instance
+Aug 16 12:52:52 computerName kernel: tda18271: TDA18271HD/C2 detected @ 7-0060
+Aug 16 12:52:53 computerName kernel: au0828: dvb_register()
+Aug 16 12:52:53 computerName kernel: dvbdev: DVB: registering new
+adapter (au0828)
+Aug 16 12:52:53 computerName kernel: usb 2-2.3: DVB: registering
+adapter 0 frontend 0 (Auvitek AU8522 QAM/8VSB Frontend)...
+Aug 16 12:52:53 computerName kernel: dvbdev: dvb_create_media_entity:
+media entity 'Auvitek AU8522 QAM/8VSB Frontend' registered.
+Aug 16 12:52:53 computerName kernel: dvbdev: dvb_create_media_entity:
+media entity 'dvb-demux' registered.
+Aug 16 12:52:53 computerName kernel: au0828: Registered device AU0828
+[Hauppauge Woodbury]
+Aug 16 12:52:53 computerName kernel: usbcore: registered new interface
+driver au0828
+*****
+The "eeprom" thing has never been an issue with regard to my tuner
+working. It still worked in spite of it.
+
+It's odd because:
+*****
+$ lsmod | grep au0828
+au0828                 86016  0
+tveeprom               28672  1 au0828
+dvb_core              176128  1 au0828
+v4l2_common            20480  1 au0828
+videobuf2_vmalloc      20480  2 dvb_core,au0828
+videobuf2_v4l2         28672  1 au0828
+videobuf2_common       61440  3 videobuf2_v4l2,dvb_core,au0828
+videodev              253952  4
+v4l2_common,videobuf2_v4l2,videobuf2_common,au0828
+rc_core                61440  1 au0828
+media                  61440  6
+videodev,snd_usb_audio,videobuf2_v4l2,dvb_core,videobuf2_common,au0828
+
+$ ls -la /dev/dvb/adapter0/
+total 0
+drwxr-xr-x  2 root root     120 Aug 16 12:01 .
+drwxr-xr-x  3 root root      60 Aug 16 12:01 ..
+crw-rw----+ 1 root video 212, 4 Aug 16 12:01 demux0
+crw-rw----+ 1 root video 212, 5 Aug 16 12:01 dvr0
+crw-rw----+ 1 root video 212, 3 Aug 16 12:01 frontend0
+crw-rw----+ 1 root video 212, 7 Aug 16 12:01 net0
+*****
+
+The previous kernel version I was on that worked was 5.1.15.
+I just reverted back to the previous version and it's working again.
+I don't know what broke and where, between the versions.
+
+I saw https://lkml.org/lkml/2019/1/21/1020 but this is back in January
+so I don't know if something was more recently applied to au0828 that
+makes use of the API.
+"lsof" didn't show anything related to "/dev/dvb" being used.
+
+Oh neat! Someone posted a neat git feature which I tried and I get:
+*****
+$ git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset
+%s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative
+v5.1.15..v5.2.8 drivers/media/usb/au0828/
+* be50f19fee84 - media: au0828: fix null dereference in error path (12 days ago)
+* c942fddf8793 - treewide: Replace GPLv2 boilerplate/reference with
+SPDX - rule 157 (3 months ago)
+* 16216333235a - treewide: Replace GPLv2 boilerplate/reference with
+SPDX - rule 1 (3 months ago)
+* ec8f24b7faaf - treewide: Add SPDX license identifier -
+Makefile/Kconfig (3 months ago)
+* 14340de506c9 - media: prefix header search paths with $(srctree)/ (3
+months ago)
+* f604f0f5afb8 - media: au0828: stop video streaming only when last
+user stops (4 months ago)
+* 898bc40bfcc2 - media: au0828: Fix NULL pointer dereference in
+au0828_analog_stream_enable() (4 months ago)
+* 383b0e5b6ebb - media: au0828: fix enable and disable source audio
+and video inconsistencies (4 months ago)
+* 812658d88d26 - media: change au0828 to use Media Device Allocator
+API (4 months ago)
+* b60a5b8dcf49 - media: Kconfig files: use the right help coding style
+(5 months ago)
+* f712e5358d43 - media: au0828: minor fix to a misleading comment in
+_close() (5 months ago)
+*****
+Note the 812658d88d26 commit.
+So if I did the git command correctly, then it WAS added between these versions.
+Any thoughts on if it is broken or if I can hack in a fix to force it
+to ignore it being thought as being busy?
