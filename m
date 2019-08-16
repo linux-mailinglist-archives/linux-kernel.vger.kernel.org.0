@@ -2,151 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A0A8FB8C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41CDF8FB92
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:56:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727119AbfHPGze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:55:34 -0400
-Received: from mga17.intel.com ([192.55.52.151]:11229 "EHLO mga17.intel.com"
+        id S1726967AbfHPG4L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:56:11 -0400
+Received: from ozlabs.org ([203.11.71.1]:44101 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726976AbfHPGzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:55:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 23:55:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
-   d="scan'208";a="182101092"
-Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
-  by orsmga006.jf.intel.com with ESMTP; 15 Aug 2019 23:55:29 -0700
-Date:   Fri, 16 Aug 2019 14:55:48 +0800
-From:   Feng Tang <feng.tang@intel.com>
-To:     Thomas Zimmermann <tzimmermann@suse.de>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, michel@daenzer.net,
-        linux-kernel@vger.kernel.org,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Daniel Vetter <daniel@ffwll.ch>, lkp@01.org
-Subject: Re: [LKP] [drm/mgag200] 90f479ae51: vm-scalability.median -18.8%
- regression
-Message-ID: <20190816065548.GA67708@shbuild999.sh.intel.com>
-References: <1c0bf22b-2c69-6b45-f700-ed832a3a5c17@suse.de>
- <14fdaaed-51c8-b270-b46b-cba7b5c4ba52@suse.de>
- <20190805070200.GA91650@shbuild999.sh.intel.com>
- <c0c3f387-dc93-3146-788c-23258b28a015@intel.com>
- <045a23ab-78f7-f363-4a2e-bf24a7a2f79e@suse.de>
- <37ae41e4-455d-c18d-5c93-7df854abfef9@intel.com>
- <370747ca-4dc9-917b-096c-891dcc2aedf0@suse.de>
- <c6e220fe-230c-265c-f2fc-b0948d1cb898@intel.com>
- <20190812072545.GA63191@shbuild999.sh.intel.com>
- <20190813093616.GA65475@shbuild999.sh.intel.com>
+        id S1725829AbfHPG4L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:56:11 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 468vHD3nsWz9s00;
+        Fri, 16 Aug 2019 16:56:07 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565938568;
+        bh=s8Ek3AUUEpdUyReBiFQ2Grbuguu8Y1jMvSOVW3HYLtk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=CgBiAHpzBmonPmS+uuQDb4AtaUBOSSTRi3W/zkgYRYgGriNDVWS5CMo9EP3syYCnL
+         hm4ashXsE4z+G/D++ERyJt+j6kLr1xZP3M/wSd74mu0npJyDbPV7O0F277gYPkgE3e
+         xDR7uId8CWJYu+OtofgP8nIC9GyloA10j8joFxnikp9VkORZfxQ3kQyYT76UDmetzS
+         SqvBk5N4Ys1sYZmVgxedMEhXm6tGW5S0bfo51m0e2g/Ef1TaoWTa2ccy/wsuF89coD
+         K5Z0efwguemYhn49xIge/mG3EljgXkGfsOWfRhl8FvRl79fW+IT2++cnejCsL9+RBx
+         TbvRLVQitdWwA==
+Date:   Fri, 16 Aug 2019 16:56:07 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Brian Masney <masneyb@onstation.org>
+Subject: linux-next: manual merge of the gpio-brgl tree with the gpio tree
+Message-ID: <20190816165607.3b896463@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190813093616.GA65475@shbuild999.sh.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; boundary="Sig_/4sIVZc0bbTg/uHBfndk_bz.";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+--Sig_/4sIVZc0bbTg/uHBfndk_bz.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 13, 2019 at 05:36:16PM +0800, Feng Tang wrote:
-> Hi Thomas, 
-> 
-> On Mon, Aug 12, 2019 at 03:25:45PM +0800, Feng Tang wrote:
-> > Hi Thomas,
-> > 
-> > On Fri, Aug 09, 2019 at 04:12:29PM +0800, Rong Chen wrote:
-> > > Hi,
-> > > 
-> > > >>Actually we run the benchmark as a background process, do we need to
-> > > >>disable the cursor and test again?
-> > > >There's a worker thread that updates the display from the shadow buffer.
-> > > >The blinking cursor periodically triggers the worker thread, but the
-> > > >actual update is just the size of one character.
-> > > >
-> > > >The point of the test without output is to see if the regression comes
-> > > >from the buffer update (i.e., the memcpy from shadow buffer to VRAM), or
-> > > >from the worker thread. If the regression goes away after disabling the
-> > > >blinking cursor, then the worker thread is the problem. If it already
-> > > >goes away if there's simply no output from the test, the screen update
-> > > >is the problem. On my machine I have to disable the blinking cursor, so
-> > > >I think the worker causes the performance drop.
-> > > 
-> > > We disabled redirecting stdout/stderr to /dev/kmsg,  and the regression is
-> > > gone.
-> > > 
-> > > commit:
-> > >   f1f8555dfb9 drm/bochs: Use shadow buffer for bochs framebuffer console
-> > >   90f479ae51a drm/mgag200: Replace struct mga_fbdev with generic framebuffer
-> > > emulation
-> > > 
-> > > f1f8555dfb9a70a2  90f479ae51afa45efab97afdde testcase/testparams/testbox
-> > > ----------------  -------------------------- ---------------------------
-> > >          %stddev      change         %stddev
-> > >              \          |                \
-> > >      43785                       44481
-> > > vm-scalability/300s-8T-anon-cow-seq-hugetlb/lkp-knm01
-> > >      43785                       44481        GEO-MEAN vm-scalability.median
-> > 
-> > Till now, from Rong's tests:
-> > 1. Disabling cursor blinking doesn't cure the regression.
-> > 2. Disabling printint test results to console can workaround the
-> > regression.
-> > 
-> > Also if we set the perfer_shadown to 0, the regression is also
-> > gone.
-> 
-> We also did some further break down for the time consumed by the
-> new code.
-> 
-> The drm_fb_helper_dirty_work() calls sequentially 
-> 1. drm_client_buffer_vmap	  (290 us)
-> 2. drm_fb_helper_dirty_blit_real  (19240 us)
-> 3. helper->fb->funcs->dirty()    ---> NULL for mgag200 driver
-> 4. drm_client_buffer_vunmap       (215 us)
-> 
-> The average run time is listed after the function names.
-> 
-> From it, we can see drm_fb_helper_dirty_blit_real() takes too long
-> time (about 20ms for each run). I guess this is the root cause
-> of this regression, as the original code doesn't use this dirty worker.
-> 
-> As said in last email, setting the prefer_shadow to 0 can avoid
-> the regrssion. Could it be an option?
+Hi all,
 
-Any comments on this? thanks
+Today's linux-next merge of the gpio-brgl tree got a conflict in:
 
-- Feng
+  include/linux/gpio/driver.h
 
-> 
-> Thanks,
-> Feng
-> 
-> > 
-> > --- a/drivers/gpu/drm/mgag200/mgag200_main.c
-> > +++ b/drivers/gpu/drm/mgag200/mgag200_main.c
-> > @@ -167,7 +167,7 @@ int mgag200_driver_load(struct drm_device *dev, unsigned long flags)
-> >  		dev->mode_config.preferred_depth = 16;
-> >  	else
-> >  		dev->mode_config.preferred_depth = 32;
-> > -	dev->mode_config.prefer_shadow = 1;
-> > +	dev->mode_config.prefer_shadow = 0;
-> > 
-> > And from the perf data, one obvious difference is good case don't
-> > call drm_fb_helper_dirty_work(), while bad case calls.
-> > 
-> > Thanks,
-> > Feng
-> > 
-> > > Best Regards,
-> > > Rong Chen
-> _______________________________________________
-> LKP mailing list
-> LKP@lists.01.org
-> https://lists.01.org/mailman/listinfo/lkp
+between commit:
+
+  fdd61a013a24 ("gpio: Add support for hierarchical IRQ domains")
+
+from the gpio tree and commit:
+
+  9091373ab7ea ("gpio: remove less important #ifdef around declarations")
+
+from the gpio-brgl tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/gpio/driver.h
+index 0e6d3b0c0211,f28f534f451a..000000000000
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@@ -20,12 -20,6 +20,8 @@@ struct module
+  enum gpiod_flags;
+  enum gpio_lookup_flags;
+ =20
+- #ifdef CONFIG_GPIOLIB
+-=20
+- #ifdef CONFIG_GPIOLIB_IRQCHIP
+-=20
+ +struct gpio_chip;
+ +
+  /**
+   * struct gpio_irq_chip - GPIO interrupt controller
+   */
+@@@ -530,38 -443,6 +523,36 @@@ struct bgpio_pdata=20
+  	int ngpio;
+  };
+ =20
+ +#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+ +
+ +void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+ +					     struct irq_fwspec *fwspec,
+ +					     unsigned int parent_hwirq,
+ +					     unsigned int parent_type);
+ +void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+ +					      struct irq_fwspec *fwspec,
+ +					      unsigned int parent_hwirq,
+ +					      unsigned int parent_type);
+ +
+ +#else
+ +
+ +static void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chi=
+p,
+ +						    struct irq_fwspec *fwspec,
+ +						    unsigned int parent_hwirq,
+ +						    unsigned int parent_type)
+ +{
+ +}
+ +
+ +static void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *ch=
+ip,
+ +						     struct irq_fwspec *fwspec,
+ +						     unsigned int parent_hwirq,
+ +						     unsigned int parent_type)
+ +{
+ +}
+ +
+ +#endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
+ +
+ +
+- #if IS_ENABLED(CONFIG_GPIO_GENERIC)
+-=20
+  int bgpio_init(struct gpio_chip *gc, struct device *dev,
+  	       unsigned long sz, void __iomem *dat, void __iomem *set,
+  	       void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
+
+--Sig_/4sIVZc0bbTg/uHBfndk_bz.
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1WU4cACgkQAVBC80lX
+0GxhVwf+Nf3MjQSZE/zHRBzEFSdsEJyZdjWqDJduEwnnCazu2+rToykDlRJBO4nT
+ib0/tuciaikjtbqz4ka6xY8bGzuyanZwwW1L90jko/9wWChi9Q85n79Mpei3bjoA
+bR15BbedikgVGBsgMaEYMBaEw/D4eTT9mFxwSgmMO8fztL39Ownlh60wJkOd5Ljp
+WejV8gQT241uCBCHWx/d/1xGVMvK94rt1v/QjC1QB8HzuSNd2h5DGkeHXRcqrvnV
+p6Ntt3fB+oChg2F5d4nAnEPfxVawiNVKW4xd2eOjUC+l56e2uiSfWLGKEkKwBDtJ
+QfDXvUBAvQTb3RbgLzXmVoaORHYd+A==
+=mDIy
+-----END PGP SIGNATURE-----
+
+--Sig_/4sIVZc0bbTg/uHBfndk_bz.--
