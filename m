@@ -2,124 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D91ED8F825
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 02:50:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C68DD8F830
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 02:57:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfHPAuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 20:50:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:48530 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725983AbfHPAuF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 20:50:05 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7G0lE2g060786;
-        Thu, 15 Aug 2019 20:49:38 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2udgdgufwu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Aug 2019 20:49:38 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7G0l82C060567;
-        Thu, 15 Aug 2019 20:49:38 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2udgdgufwh-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 15 Aug 2019 20:49:37 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7G0idd1008401;
-        Fri, 16 Aug 2019 00:49:36 GMT
-Received: from b03cxnp08025.gho.boulder.ibm.com (b03cxnp08025.gho.boulder.ibm.com [9.17.130.17])
-        by ppma05wdc.us.ibm.com with ESMTP id 2udbc489w3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Aug 2019 00:49:36 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08025.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7G0nZSx61276572
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 00:49:35 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 10C61BE05B;
-        Fri, 16 Aug 2019 00:49:35 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 39D37BE054;
-        Fri, 16 Aug 2019 00:49:32 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.158.166])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri, 16 Aug 2019 00:49:31 +0000 (GMT)
-References: <20190806052237.12525-1-bauerman@linux.ibm.com> <20190806052237.12525-12-bauerman@linux.ibm.com> <8736i6sfhn.fsf@concordia.ellerman.id.au> <87r25qgeb5.fsf@morokweng.localdomain> <87sgq36ivk.fsf@concordia.ellerman.id.au>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Ryan Grimm <grimm@linux.vnet.ibm.com>
-Subject: Re: [PATCH v3 11/16] powerpc/pseries/svm: Export guest SVM status to user space via sysfs
-In-reply-to: <87sgq36ivk.fsf@concordia.ellerman.id.au>
-Date:   Thu, 15 Aug 2019 21:49:26 -0300
-Message-ID: <87imqyrl2h.fsf@morokweng.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=900 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908160005
+        id S1726183AbfHPA5V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 20:57:21 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:56554 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725440AbfHPA5U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 20:57:20 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1BB51200060;
+        Fri, 16 Aug 2019 02:57:19 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 93E922004BF;
+        Fri, 16 Aug 2019 02:57:09 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id D430840250;
+        Fri, 16 Aug 2019 08:56:57 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        daniel.lezcano@linaro.org, tglx@linutronix.de,
+        leonard.crestez@nxp.com, daniel.baluta@nxp.com, ping.bai@nxp.com,
+        jun.li@nxp.com, l.stach@pengutronix.de, abel.vesa@nxp.com,
+        ccaione@baylibre.com, andrew.smirnov@gmail.com, angus@akkea.ca,
+        agx@sigxcpu.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V6 1/4] clocksource: imx-sysctr: Add internal clock divider handle
+Date:   Thu, 15 Aug 2019 20:38:42 -0400
+Message-Id: <1565915925-21009-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The system counter block guide states that the base clock is
+internally divided by 3 before use, that means the clock input of
+system counter defined in DT should be base clock which is normally
+from OSC, and then internally divided by 3 before use.
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No changes.
+---
+ drivers/clocksource/timer-imx-sysctr.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->> Michael Ellerman <mpe@ellerman.id.au> writes:
->>> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->>>> From: Ryan Grimm <grimm@linux.vnet.ibm.com>
->>>> User space might want to know it's running in a secure VM.  It can't do
->>>> a mfmsr because mfmsr is a privileged instruction.
->>>>
->>>> The solution here is to create a cpu attribute:
->>>>
->>>> /sys/devices/system/cpu/svm
->>>>
->>>> which will read 0 or 1 based on the S bit of the guest's CPU 0.
->>>
->>> Why CPU 0?
->>>
->>> If we have different CPUs running with different MSR_S then something
->>> has gone badly wrong, no?
->>
->> Yes, that would be very bad.
->>
->>> So can't we just read the MSR on whatever CPU the sysfs code happens to
->>> run on.
->>
->> Good point. I made the change in the patch below.
->
-> The patch looks good. Although, it raises the question of whether it
-> should be an attribute of the CPU at all.
->
-> I guess there's not obviously anywhere better for it.
+diff --git a/drivers/clocksource/timer-imx-sysctr.c b/drivers/clocksource/timer-imx-sysctr.c
+index fd7d680..b7c80a3 100644
+--- a/drivers/clocksource/timer-imx-sysctr.c
++++ b/drivers/clocksource/timer-imx-sysctr.c
+@@ -20,6 +20,8 @@
+ #define SYS_CTR_EN		0x1
+ #define SYS_CTR_IRQ_MASK	0x2
+ 
++#define SYS_CTR_CLK_DIV		0x3
++
+ static void __iomem *sys_ctr_base;
+ static u32 cmpcr;
+ 
+@@ -134,6 +136,9 @@ static int __init sysctr_timer_init(struct device_node *np)
+ 	if (ret)
+ 		return ret;
+ 
++	/* system counter clock is divided by 3 internally */
++	to_sysctr.of_clk.rate /= SYS_CTR_CLK_DIV;
++
+ 	sys_ctr_base = timer_of_base(&to_sysctr);
+ 	cmpcr = readl(sys_ctr_base + CMPCR);
+ 	cmpcr &= ~SYS_CTR_EN;
+-- 
+2.7.4
 
-Ok. TBH this patch is not as urgent as the others. It was added so that
-tests have an easy way to tell if they're in an SVM. I can leave it out
-for now to figure out if there's a better place for this information.
-
-> Still you should document the attribute in Documentation/ABI/testing/sysfs-devices-system-cpu
-
-Indedd, will do that.
-
---
-Thiago Jung Bauermann
-IBM Linux Technology Center
