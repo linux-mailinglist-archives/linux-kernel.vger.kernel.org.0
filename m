@@ -2,97 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BDD19092B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:09:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B17BF90934
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:10:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbfHPUJ3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 16:09:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56760 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726527AbfHPUJ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 16:09:29 -0400
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0150321743;
-        Fri, 16 Aug 2019 20:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565986169;
-        bh=dBKRpCb+TdtFesGpn6eSh3quFn1tVcWVH4LK3WLPRRs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=PtnUD++jqV+GjQkcWEZ+e4I5qc7dX8ApeEQuQ5RPADy3+0Wh1L58LyRxHnp7n/dwG
-         u8xxXcJqUYgwBXtQenTqknzJjgAjJzbALa+WLVgp5UxTncf5y2u6uCRcBVekBKOfCJ
-         YTNIIy7OjyC8NtM6E+yEKW9/X4yG2fk174HpcGAM=
-Received: by mail-qt1-f176.google.com with SMTP id q4so7453070qtp.1;
-        Fri, 16 Aug 2019 13:09:28 -0700 (PDT)
-X-Gm-Message-State: APjAAAVxOlkUp1fKRdI6HGvsyWId+ozkEsX1/fES1ED732RVxJHzOHhc
-        Cv7iA4PYH9UblnBCYRsUOsZ9bFbPH9oQiBKUFg==
-X-Google-Smtp-Source: APXvYqwebIs+I5l3D3YNa890IMkRQs6Czk1XXOPRicSteg8JjjQ6x/E6bhhzrgOT4keRPpNwkXj4uLugSyFeEGtAOs8=
-X-Received: by 2002:ac8:368a:: with SMTP id a10mr10274315qtc.143.1565986168088;
- Fri, 16 Aug 2019 13:09:28 -0700 (PDT)
+        id S1727650AbfHPUKo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 16:10:44 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43105 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726527AbfHPUKo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 16:10:44 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyiYG-0008Bd-PY; Fri, 16 Aug 2019 22:10:20 +0200
+Date:   Fri, 16 Aug 2019 22:10:19 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Andy Lutomirski <luto@kernel.org>
+cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv6 23/36] x86/vdso: Allocate timens vdso
+In-Reply-To: <b719199a-ed91-610b-38bc-015a0749f600@kernel.org>
+Message-ID: <alpine.DEB.2.21.1908162208190.1923@nanos.tec.linutronix.de>
+References: <20190815163836.2927-1-dima@arista.com> <20190815163836.2927-24-dima@arista.com> <b719199a-ed91-610b-38bc-015a0749f600@kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190816100424.5366-1-wen.he_1@nxp.com>
-In-Reply-To: <20190816100424.5366-1-wen.he_1@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Fri, 16 Aug 2019 14:09:16 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLPZ+hCGd=J3MU83saHJJ-yx6k+X0Y7-2ECu5yT8PxF4w@mail.gmail.com>
-Message-ID: <CAL_JsqLPZ+hCGd=J3MU83saHJJ-yx6k+X0Y7-2ECu5yT8PxF4w@mail.gmail.com>
-Subject: Re: [v3 1/2] dt/bindings: display: Add optional property node for
- Mali DP500
-To:     Wen He <wen.he_1@nxp.com>
-Cc:     linux-devel@linux.nxdi.nxp.com, Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yang-Leo Li <leoyang.li@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 4:14 AM Wen He <wen.he_1@nxp.com> wrote:
->
-> Add optional property node 'arm,malidp-arqos-value' for the Mali DP500.
-> This property describe the ARQoS levels of DP500's QoS signaling.
->
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
-> ---
-> change in v3:
->         - correction the describe of the node
->
->  Documentation/devicetree/bindings/display/arm,malidp.txt | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/display/arm,malidp.txt b/Documentation/devicetree/bindings/display/arm,malidp.txt
-> index 2f7870983ef1..1f711d32f235 100644
-> --- a/Documentation/devicetree/bindings/display/arm,malidp.txt
-> +++ b/Documentation/devicetree/bindings/display/arm,malidp.txt
-> @@ -37,6 +37,8 @@ Optional properties:
->      Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt)
->      to be used for the framebuffer; if not present, the framebuffer may
->      be located anywhere in memory.
-> +  - arm,malidp-arqos-high-level: phandle to describing the ARQoS levels of DP500's
-> +    QoS signaling.
+On Fri, 16 Aug 2019, Andy Lutomirski wrote:
+> On 8/15/19 9:38 AM, Dmitry Safonov wrote:
+> > As it has been discussed on timens RFC, adding a new conditional branch
+> > `if (inside_time_ns)` on VDSO for all processes is undesirable.
+> > It will add a penalty for everybody as branch predictor may mispredict
+> > the jump. Also there are instruction cache lines wasted on cmp/jmp.
+> > 
+> > Those effects of introducing time namespace are very much unwanted
+> > having in mind how much work have been spent on micro-optimisation
+> > vdso code.
+> > 
+> > The propose is to allocate a second vdso code with dynamically
+> > patched out (disabled by static_branch) timens code on boot time.
+> > 
+> > Allocate another vdso and copy original code.
+> 
+> 
+> I'm unconvinced that any of this magic is wise.  I think you should make a
+> special timens vvar page that causes the normal fastpath to fail (using a
+> special vclock mode, a special seq value, or a special "last" value) and then
+> make the failure path detect that timens is in use and use the timens path.
 
-The driver is reading a u32... Did you test this?
+My initial suggestion still stands. Do that at compile time. It really does
+not matter whether we have another 2 or 3 variants of vdso binaries.
 
+Use it and be done with it. No special magic, just straight forward
+decisions to use a timens capable VDSO or not.
 
->
->
->  Example:
-> @@ -54,6 +56,7 @@ Example:
->                 clocks = <&oscclk2>, <&fpgaosc0>, <&fpgaosc1>, <&fpgaosc1>;
->                 clock-names = "pxlclk", "mclk", "aclk", "pclk";
->                 arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
-> +               arm,malidp-arqos-high-level = <&rqosvalue>;
->                 port {
->                         dp0_output: endpoint {
->                                 remote-endpoint = <&tda998x_2_input>;
-> --
-> 2.17.1
->
+Thanks,
+
+	tglx
