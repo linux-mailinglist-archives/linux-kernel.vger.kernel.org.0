@@ -2,64 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A02858FDBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:24:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E888FDA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:21:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726942AbfHPIYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:24:55 -0400
-Received: from mga02.intel.com ([134.134.136.20]:54028 "EHLO mga02.intel.com"
+        id S1726921AbfHPIVV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:21:21 -0400
+Received: from letterbox.kde.org ([46.43.1.242]:36542 "EHLO letterbox.kde.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726684AbfHPIYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:24:55 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 01:19:21 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
-   d="scan'208";a="182118822"
-Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
-  by orsmga006.jf.intel.com with ESMTP; 16 Aug 2019 01:19:17 -0700
-From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
-To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        tony.luck@intel.com, x86@kernel.org
-Cc:     andriy.shevchenko@intel.com, alan@linux.intel.com,
-        ricardo.neri-calderon@linux.intel.com, rafael.j.wysocki@intel.com,
-        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar@intel.com,
-        Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Subject: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
-Date:   Fri, 16 Aug 2019 16:18:58 +0800
-Message-Id: <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
-References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
-In-Reply-To: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
-References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+        id S1726739AbfHPIVU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:21:20 -0400
+Received: from archbox.localdomain (unknown [203.187.238.17])
+        (Authenticated sender: bshah)
+        by letterbox.kde.org (Postfix) with ESMTPSA id 8FF8528AA7C;
+        Fri, 16 Aug 2019 09:21:17 +0100 (BST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kde.org; s=users;
+        t=1565943678; bh=Fq/JAj2DMh5WajhSajiSBS2R4HbCSthz3JemWQBtydg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OtmIbVxJwwcw6KxbEh03BicruwOl1HuQRNp/YGd4t/srRWSJC8O4SEroVIJqQyOYQ
+         T3PSedJzn3/9EGnfjq3ZkY97GxxWfC7LneC3xZ663dyWNDlhcV9tHkvhusMb5V8zqB
+         xhKUjj3FVPgV7BgCtppVrAVUOuqBPthstefPURWuO2oRyJNTPuY7NYn2wF9aRSXpff
+         YgHtM/n2AQfY4OQhmdYUilcsqN7YDSsjkgIJkQKJEoYcaNd4l2UBA9TOrgKrrrgtni
+         7F3yDqRw6pohzzV/IHEyYrBEqhTsnAReg/JcrBk2QvY02mfvOfxAWCkpunob7zFwLH
+         /jQo/n1QgEXbQ==
+Date:   Fri, 16 Aug 2019 13:51:14 +0530
+From:   Bhushan Shah <bshah@kde.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Bhushan Shah <bshah@kde.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>, Wolfram Sang <wsa@the-dreams.de>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] arm64: allwinner: h6: add i2c0 node in PineH64
+Message-ID: <20190816082114.GA18236@pyxis>
+References: <20190811090503.32396-1-bshah@kde.org>
+ <20190816064710.18280-1-bshah@kde.org>
+ <20190816064710.18280-4-bshah@kde.org>
+ <20190816075211.xaq54q2cdniwjpp3@flea>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="6c2NcOVqGQ03X4Wi"
+Content-Disposition: inline
+In-Reply-To: <20190816075211.xaq54q2cdniwjpp3@flea>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new variant of Intel Atom Airmont CPU model.
 
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
----
- arch/x86/include/asm/intel-family.h | 1 +
- 1 file changed, 1 insertion(+)
+--6c2NcOVqGQ03X4Wi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-index 0278aa66ef62..cbbb8250370f 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -73,6 +73,7 @@
- 
- #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
- #define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
-+#define INTEL_FAM6_ATOM_AIRMONT_NP	0x75 /* Lightning Mountain */
- 
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denverton */
--- 
-2.11.0
+On Fri, Aug 16, 2019 at 09:52:11AM +0200, Maxime Ripard wrote:
+> > +/* This i2c interface is exposed on PI-2 BUS, Pin 3 (I2C_SDA) and 5 (I=
+2C_SCL) */
+> > +&i2c0 {
+> > +	status =3D "disabled";
+> > +};
+>=20
+> This property is set to disabled in the DTSI already
 
+I added this node here with disabled status due to comment from wens in
+previous revision, main reason being that serves as reference/pointer to
+people looking at how to enable i2c0.
+
+I can remove it if you prefer.
+
+
+--=20
+Bhushan Shah
+http://blog.bshah.in
+IRC Nick : bshah on Freenode
+GPG key fingerprint : 0AAC 775B B643 7A8D 9AF7 A3AC FE07 8411 7FBC E11D
+
+--6c2NcOVqGQ03X4Wi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEs8s2ZVJUC+Bu6a2XEZaMRJKMrvwFAl1WZ3IACgkQEZaMRJKM
+rvzmrQgAs4UbPI/OrKjksQjR9SX73B9grk5BFXC1ueeuEriMeFJmXNCDe8p8TKOj
+5uuflxKRw958jtYLvMoc9Z+AQwJZG2oBjzP0X7s9aJAcXIKulQ9NIW6eQU7ZoiZD
+2F5Nwb8iYYq8v7OYd+t5I7yGzq/olO/tYvs2eIpPPHQDM7NqzYU+FLi4JcB8UUkL
+Mp7h9MrMtNQoY149/3F9QfaFyU77C3rirD0xqf59Lf4e+UVyk8u/eeYzMFemA7br
+5rJg+jDbOpJzb6Jn9bw8MMM9TKWs0rW8WyLy0xabATSNB6XEPCyCd/WxH+XzRP8c
+wA+Kb80TXdmtsgssKa1+/Llt/AYWew==
+=FgLh
+-----END PGP SIGNATURE-----
+
+--6c2NcOVqGQ03X4Wi--
