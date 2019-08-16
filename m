@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 565C59015C
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91A2590174
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727375AbfHPMYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 08:24:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:55808 "EHLO foss.arm.com"
+        id S1727544AbfHPMZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:25:36 -0400
+Received: from foss.arm.com ([217.140.110.172]:55828 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727021AbfHPMYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:24:50 -0400
+        id S1727286AbfHPMYw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:24:52 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2E4E1597;
-        Fri, 16 Aug 2019 05:24:49 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DC81360;
+        Fri, 16 Aug 2019 05:24:51 -0700 (PDT)
 Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B94E03F706;
-        Fri, 16 Aug 2019 05:24:48 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 346983F706;
+        Fri, 16 Aug 2019 05:24:50 -0700 (PDT)
 From:   Raphael Gault <raphael.gault@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         jpoimboe@redhat.com
 Cc:     peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
         julien.thierry.kdev@gmail.com, raph.gault+kdev@gmail.com,
         Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC v4 07/18] objtool: Introduce INSN_UNKNOWN type
-Date:   Fri, 16 Aug 2019 13:23:52 +0100
-Message-Id: <20190816122403.14994-8-raphael.gault@arm.com>
+Subject: [RFC v4 08/18] objtool: Refactor switch-tables code to support other architectures
+Date:   Fri, 16 Aug 2019 13:23:53 +0100
+Message-Id: <20190816122403.14994-9-raphael.gault@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190816122403.14994-1-raphael.gault@arm.com>
 References: <20190816122403.14994-1-raphael.gault@arm.com>
@@ -34,115 +34,334 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On arm64 some object files contain data stored in the .text section.
-This data is interpreted by objtool as instruction but can't be
-identified as a valid one. In order to keep analysing those files we
-introduce INSN_UNKNOWN type. The "unknown instruction" warning will thus
-only be raised if such instructions are uncountered while validating an
-execution branch.
-
-This change doesn't impact the x86 decoding logic since 0 is still used
-as a way to specify an unknown type, raising the "unknown instruction"
-warning during the decoding phase still.
+The way to identify switch-tables and retrieves all the data necessary
+to handle the different execution branches is not the same on all
+architecture. In order to be able to add other architecture support,
+this patch defines arch-dependent functions to process jump-tables.
 
 Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- tools/objtool/arch.h                           |  1 +
- tools/objtool/arch/arm64/decode.c              |  8 ++++----
- tools/objtool/arch/arm64/include/insn_decode.h |  4 ++--
- tools/objtool/check.c                          | 10 +++++++++-
- 4 files changed, 16 insertions(+), 7 deletions(-)
+ tools/objtool/arch/arm64/arch_special.c | 15 ++++
+ tools/objtool/arch/arm64/decode.c       |  4 +-
+ tools/objtool/arch/x86/arch_special.c   | 79 ++++++++++++++++++++
+ tools/objtool/check.c                   | 95 +------------------------
+ tools/objtool/check.h                   |  7 ++
+ tools/objtool/special.h                 | 10 ++-
+ 6 files changed, 114 insertions(+), 96 deletions(-)
 
-diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index 68d6371a24a2..9f2590e1df79 100644
---- a/tools/objtool/arch.h
-+++ b/tools/objtool/arch.h
-@@ -28,6 +28,7 @@ enum insn_type {
- 	INSN_CLAC,
- 	INSN_STD,
- 	INSN_CLD,
-+	INSN_UNKNOWN,
- 	INSN_OTHER,
- };
- 
+diff --git a/tools/objtool/arch/arm64/arch_special.c b/tools/objtool/arch/arm64/arch_special.c
+index a21d28876317..17a8a06aac2a 100644
+--- a/tools/objtool/arch/arm64/arch_special.c
++++ b/tools/objtool/arch/arm64/arch_special.c
+@@ -20,3 +20,18 @@ void arch_force_alt_path(unsigned short feature,
+ 			 struct special_alt *alt)
+ {
+ }
++
++int arch_add_jump_table(struct objtool_file *file, struct instruction *insn,
++			struct rela *table, struct rela *next_table)
++{
++	return 0;
++}
++
++struct rela *arch_find_switch_table(struct objtool_file *file,
++				  struct rela *text_rela,
++				  struct section *rodata_sec,
++				  unsigned long table_offset)
++{
++	file->ignore_unreachables = true;
++	return NULL;
++}
 diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
-index be3d2eb10227..4cb9402d6fe1 100644
+index 4cb9402d6fe1..a20725c1bfd7 100644
 --- a/tools/objtool/arch/arm64/decode.c
 +++ b/tools/objtool/arch/arm64/decode.c
-@@ -37,9 +37,9 @@
-  */
- static arm_decode_class aarch64_insn_class_decode_table[] = {
- 	[INSN_RESERVED]			= arm_decode_reserved,
--	[INSN_UNKNOWN]			= arm_decode_unknown,
-+	[INSN_UNALLOC_1]		= arm_decode_unknown,
- 	[INSN_SVE_ENC]			= arm_decode_sve_encoding,
--	[INSN_UNALLOC]			= arm_decode_unknown,
-+	[INSN_UNALLOC_2]		= arm_decode_unknown,
- 	[INSN_LD_ST_4]			= arm_decode_ld_st,
- 	[INSN_DP_REG_5]			= arm_decode_dp_reg,
- 	[INSN_LD_ST_6]			= arm_decode_ld_st,
-@@ -191,7 +191,7 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
- int arm_decode_unknown(u32 instr, unsigned char *type,
- 		       unsigned long *immediate, struct stack_op *op)
+@@ -159,7 +159,7 @@ static int is_arm64(struct elf *elf)
+ 
+ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 			    unsigned long offset, unsigned int maxlen,
+-			    unsigned int *len, unsigned char *type,
++			    unsigned int *len, enum insn_type *type,
+ 			    unsigned long *immediate, struct stack_op *op)
  {
--	*type = 0;
-+	*type = INSN_UNKNOWN;
- 	return 0;
+ 	int arm64 = 0;
+@@ -184,7 +184,7 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ 	insn = *(u32 *)(sec->data->d_buf + offset);
+ 
+ 	//dispatch according to encoding classes
+-	return aarch64_insn_class_decode_table[(insn >> 25) & 0xf](insn, type,
++	return aarch64_insn_class_decode_table[(insn >> 25) & 0xf](insn, (unsigned char *)type,
+ 							immediate, op);
  }
  
-@@ -206,7 +206,7 @@ int arm_decode_reserved(u32 instr, unsigned char *type,
- 			unsigned long *immediate, struct stack_op *op)
- {
- 	*immediate = instr & ONES(16);
--	*type = INSN_BUG;
-+	*type = INSN_UNKNOWN;
- 	return 0;
+diff --git a/tools/objtool/arch/x86/arch_special.c b/tools/objtool/arch/x86/arch_special.c
+index 6583a1770bb2..c097001d805b 100644
+--- a/tools/objtool/arch/x86/arch_special.c
++++ b/tools/objtool/arch/x86/arch_special.c
+@@ -26,3 +26,82 @@ void arch_force_alt_path(unsigned short feature,
+ 				alt->skip_alt = true;
+ 		}
  }
- 
-diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
-index eb54fc39dca5..a01d76306749 100644
---- a/tools/objtool/arch/arm64/include/insn_decode.h
-+++ b/tools/objtool/arch/arm64/include/insn_decode.h
-@@ -20,9 +20,9 @@
- #include "../../../arch.h"
- 
- #define INSN_RESERVED	0b0000
--#define INSN_UNKNOWN	0b0001
-+#define INSN_UNALLOC_1	0b0001
- #define INSN_SVE_ENC	0b0010
--#define INSN_UNALLOC	0b0011
-+#define INSN_UNALLOC_2	0b0011
- #define INSN_DP_IMM	0b1001	//0x100x
- #define INSN_BRANCH	0b1011	//0x101x
- #define INSN_LD_ST_4	0b0100	//0bx1x0
-diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 519569b0329f..baa6a93f37cd 100644
---- a/tools/objtool/check.c
-+++ b/tools/objtool/check.c
-@@ -1981,6 +1981,13 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
- 	while (1) {
- 		next_insn = next_insn_same_sec(file, insn);
- 
-+		if (insn->type == INSN_UNKNOWN) {
-+			WARN("%s+0x%lx unknown instruction type, should never be reached",
-+			     insn->sec->name,
-+			     insn->offset);
-+			return 1;
++
++int arch_add_jump_table(struct objtool_file *file, struct instruction *insn,
++			struct rela *table, struct rela *next_table)
++{
++	struct rela *rela = table;
++	struct instruction *dest_insn;
++	struct alternative *alt;
++	struct symbol *pfunc = insn->func->pfunc;
++	unsigned int prev_offset = 0;
++
++	/*
++	 * Each @rela is a switch table relocation which points to the target
++	 * instruction.
++	 */
++	list_for_each_entry_from(rela, &table->sec->rela_list, list) {
++
++		/* Check for the end of the table: */
++		if (rela != table && rela->jump_table_start)
++			break;
++
++		/* Make sure the table entries are consecutive: */
++		if (prev_offset && rela->offset != prev_offset + 8)
++			break;
++
++		/* Detect function pointers from contiguous objects: */
++		if (rela->sym->sec == pfunc->sec &&
++		    rela->addend == pfunc->offset)
++			break;
++
++		dest_insn = find_insn(file, rela->sym->sec, rela->addend);
++		if (!dest_insn)
++			break;
++
++		/* Make sure the destination is in the same function: */
++		if (!dest_insn->func || dest_insn->func->pfunc != pfunc)
++			break;
++
++		alt = malloc(sizeof(*alt));
++		if (!alt) {
++			WARN("malloc failed");
++			return -1;
 +		}
 +
- 		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
- 			WARN("%s() falls through to next function %s()",
- 			     func->name, insn->func->name);
-@@ -2414,7 +2421,8 @@ static int validate_reachable_instructions(struct objtool_file *file)
- 		return 0;
++		alt->insn = dest_insn;
++		list_add_tail(&alt->list, &insn->alts);
++		prev_offset = rela->offset;
++	}
++
++	if (!prev_offset) {
++		WARN_FUNC("can't find switch jump table",
++			  insn->sec, insn->offset);
++		return -1;
++	}
++
++	return 0;
++}
++
++struct rela *arch_find_switch_table(struct objtool_file *file,
++				  struct rela *text_rela,
++				  struct section *rodata_sec,
++				  unsigned long table_offset)
++{
++	struct rela *rodata_rela;
++
++	rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
++	if (rodata_rela) {
++		/*
++		 * Use of RIP-relative switch jumps is quite rare, and
++		 * indicates a rare GCC quirk/bug which can leave dead
++		 * code behind.
++		 */
++		if (text_rela->type == R_X86_64_PC32)
++			file->ignore_unreachables = true;
++
++		return rodata_rela;
++	}
++
++	return NULL;
++}
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index baa6a93f37cd..18f7fb47392a 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -20,12 +20,6 @@
  
- 	for_each_insn(file, insn) {
--		if (insn->visited || ignore_unreachable_insn(insn))
-+		if (insn->visited || ignore_unreachable_insn(insn) ||
-+		    insn->type == INSN_UNKNOWN)
+ #define C_JUMP_TABLE_SECTION ".rodata..c_jump_table"
+ 
+-struct alternative {
+-	struct list_head list;
+-	struct instruction *insn;
+-	bool skip_orig;
+-};
+-
+ const char *objname;
+ struct cfi_state initial_func_cfi;
+ 
+@@ -901,62 +895,6 @@ static int add_special_section_alts(struct objtool_file *file)
+ 	return ret;
+ }
+ 
+-static int add_jump_table(struct objtool_file *file, struct instruction *insn,
+-			    struct rela *table)
+-{
+-	struct rela *rela = table;
+-	struct instruction *dest_insn;
+-	struct alternative *alt;
+-	struct symbol *pfunc = insn->func->pfunc;
+-	unsigned int prev_offset = 0;
+-
+-	/*
+-	 * Each @rela is a switch table relocation which points to the target
+-	 * instruction.
+-	 */
+-	list_for_each_entry_from(rela, &table->sec->rela_list, list) {
+-
+-		/* Check for the end of the table: */
+-		if (rela != table && rela->jump_table_start)
+-			break;
+-
+-		/* Make sure the table entries are consecutive: */
+-		if (prev_offset && rela->offset != prev_offset + 8)
+-			break;
+-
+-		/* Detect function pointers from contiguous objects: */
+-		if (rela->sym->sec == pfunc->sec &&
+-		    rela->addend == pfunc->offset)
+-			break;
+-
+-		dest_insn = find_insn(file, rela->sym->sec, rela->addend);
+-		if (!dest_insn)
+-			break;
+-
+-		/* Make sure the destination is in the same function: */
+-		if (!dest_insn->func || dest_insn->func->pfunc != pfunc)
+-			break;
+-
+-		alt = malloc(sizeof(*alt));
+-		if (!alt) {
+-			WARN("malloc failed");
+-			return -1;
+-		}
+-
+-		alt->insn = dest_insn;
+-		list_add_tail(&alt->list, &insn->alts);
+-		prev_offset = rela->offset;
+-	}
+-
+-	if (!prev_offset) {
+-		WARN_FUNC("can't find switch jump table",
+-			  insn->sec, insn->offset);
+-		return -1;
+-	}
+-
+-	return 0;
+-}
+-
+ /*
+  * find_jump_table() - Given a dynamic jump, find the switch jump table in
+  * .rodata associated with it.
+@@ -1058,38 +996,9 @@ static struct rela *find_jump_table(struct objtool_file *file,
  			continue;
  
- 		WARN_FUNC("unreachable instruction", insn->sec, insn->offset);
+ 		/* Each table entry has a rela associated with it. */
+-		table_rela = find_rela_by_dest(table_sec, table_offset);
++		table_rela = arch_find_switch_table(file, text_rela, table_sec, table_offset);
+ 		if (!table_rela)
+ 			continue;
+-		/*
+-		 * If we are on arm64 architecture, we now that we
+-		 * are in presence of a switch table thanks to
+-		 * the `br <Xn>` insn. but we can't retrieve it yet.
+-		 * So we just ignore unreachable for this file.
+-		 */
+-		if (!arch_support_switch_table()) {
+-			file->ignore_unreachables = true;
+-			return NULL;
+-		}
+-
+-		rodata_rela = find_rela_by_dest(rodata_sec, table_offset);
+-		if (rodata_rela) {
+-			/*
+-			 * Use of RIP-relative switch jumps is quite rare, and
+-			 * indicates a rare GCC quirk/bug which can leave dead
+-			 * code behind.
+-			 */
+-			if (text_rela->type == R_X86_64_PC32)
+-				file->ignore_unreachables = true;
+-
+-		/*
+-		 * Use of RIP-relative switch jumps is quite rare, and
+-		 * indicates a rare GCC quirk/bug which can leave dead code
+-		 * behind.
+-		 */
+-		if (text_rela->type == R_X86_64_PC32)
+-			file->ignore_unreachables = true;
+-
+ 		return table_rela;
+ 	}
+ 
+@@ -1145,7 +1054,7 @@ static int add_func_jump_tables(struct objtool_file *file,
+ 		if (!insn->jump_table)
+ 			continue;
+ 
+-		ret = add_jump_table(file, insn, insn->jump_table);
++		ret = arch_add_jump_table(file, insn, insn->jump_table, NULL);
+ 		if (ret)
+ 			return ret;
+ 	}
+diff --git a/tools/objtool/check.h b/tools/objtool/check.h
+index af87b55db454..267759760a3d 100644
+--- a/tools/objtool/check.h
++++ b/tools/objtool/check.h
+@@ -13,6 +13,7 @@
+ #include "orc.h"
+ #include "arch_special.h"
+ #include <linux/hashtable.h>
++;
+ 
+ struct insn_state {
+ 	struct cfi_reg cfa;
+@@ -48,6 +49,12 @@ struct instruction {
+ 	struct orc_entry orc;
+ };
+ 
++struct alternative {
++	struct list_head list;
++	struct instruction *insn;
++	bool skip_orig;
++};
++
+ struct objtool_file {
+ 	struct elf *elf;
+ 	struct list_head insn_list;
+diff --git a/tools/objtool/special.h b/tools/objtool/special.h
+index 90626a7e41cf..9b1f968a4325 100644
+--- a/tools/objtool/special.h
++++ b/tools/objtool/special.h
+@@ -7,7 +7,10 @@
+ #define _SPECIAL_H
+ 
+ #include <stdbool.h>
++#include <stdlib.h>
++#include "check.h"
+ #include "elf.h"
++#include "warn.h"
+ 
+ struct special_alt {
+ 	struct list_head list;
+@@ -30,5 +33,10 @@ int special_get_alts(struct elf *elf, struct list_head *alts);
+ void arch_force_alt_path(unsigned short feature,
+ 			 bool uaccess,
+ 			 struct special_alt *alt);
+-
++int arch_add_jump_table(struct objtool_file *file, struct instruction *insn,
++			struct rela *table, struct rela *next_table);
++struct rela *arch_find_switch_table(struct objtool_file *file,
++				  struct rela *text_rela,
++				  struct section *rodata_sec,
++				  unsigned long table_offset);
+ #endif /* _SPECIAL_H */
 -- 
 2.17.1
 
