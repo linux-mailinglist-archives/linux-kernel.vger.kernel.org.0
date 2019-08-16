@@ -2,78 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 147A190A27
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ECBE90A30
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:17:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727874AbfHPVQn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 17:16:43 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:34083 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727848AbfHPVQj (ORCPT
+        id S1727921AbfHPVRa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 17:17:30 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:43308 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727726AbfHPVRa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 17:16:39 -0400
-Received: by mail-io1-f66.google.com with SMTP id s21so8994760ioa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 14:16:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Int3qXRxTtMLZpwLZ2e6cbllifhw+j89MK6a4PSSxKs=;
-        b=WMsue2VIg8HAKY+hUVTbQ3NledHMv2Vy3n21BHZtmEGvftmjPF9kPlF0azKgkb45rG
-         3eJb0K2ofV4rE5ojGEL84Bsuit8rGVd9s6Yk54sbK1lTSrJ6UJhDVGijSw6iFjtPQ9Ad
-         aOCu/SA2uFJsSKD4bwejZP1+CAiv1ZZLfcGs6yG1SG1vDSqdntz4GuP1wQhO8nBHeOSI
-         KA0PaBXa/qUFxQRwZ/EydvH9dxp0kzagGaBigUmp1kq0nT7lrgqJSOujPQL6mt4Hokxc
-         PmNBeLE9XLvIrIxuc9NktzeND/yyTuLHL72DtYhmkGEKIDpjw/IKBfa8QTQllNN/xg+Y
-         MUpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Int3qXRxTtMLZpwLZ2e6cbllifhw+j89MK6a4PSSxKs=;
-        b=nQi+bkzQdOZ/Zpb4of6gV4rfl0ar7ucMdIeGtYIppiBuOaZbETnKnb0e3jk33OkGMd
-         a57seYOxFGQBKyNnt+l8Mxkb4XrAD+KRevOHXsiOaYz/+tf5OSHkDU5dIT1k8NtZJGmg
-         D7xMKO4M6wiWIEx9ELBjLnmjWVc7h/b982EfophHJf3TTXIJOfaJqvMwrQiNktyvlEZ6
-         2Po/5v807zxc8JOagAXCWPysIoSxVfOX65hHHPumKfHSgZ7g9pPhGHJuH7jdhYWBZMBI
-         ywW9/NK+jACFqFBJYU0MTLAAMmoHiCK7fxhOv9gIC+ajlJLSE4pVEYMGJwKbQUuSmpOL
-         HRew==
-X-Gm-Message-State: APjAAAXa+occ3w7hjkyj7CWPVsaF1W6YqjomWg74Zo6bPLPDKLtUR0UI
-        oV1hT4vvKF5N6+lFpg2wHw0qfRD7WZR5VRhaAY+fOQ==
-X-Google-Smtp-Source: APXvYqy9tYsUxi0DNu9mhE/ntscDvxLoXebX+iGLalDZMl6lWKFfoR9p+EaKbRUicrM4nhuxZfGC6FfCiU+KY0yLggQ=
-X-Received: by 2002:a02:c65a:: with SMTP id k26mr13146161jan.18.1565990197653;
- Fri, 16 Aug 2019 14:16:37 -0700 (PDT)
+        Fri, 16 Aug 2019 17:17:30 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyjbD-00019X-93; Fri, 16 Aug 2019 23:17:27 +0200
+Date:   Fri, 16 Aug 2019 23:17:26 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arul Jeniston <arul.jeniston@gmail.com>
+cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
+ function.
+In-Reply-To: <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908162255400.1923@nanos.tec.linutronix.de>
+References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com> <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de> <CACAVd4h05P2tWb7Eh1+3_0Cm7MkDNAt+SJVoBT4gErBfsBmsAQ@mail.gmail.com>
+ <CACAVd4gHQ+_y5QBSQm3pMFHKrVgvvJZAABGvtp6=qt3drVXpTA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20190815162032.6679-1-sean.j.christopherson@intel.com>
-In-Reply-To: <20190815162032.6679-1-sean.j.christopherson@intel.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Fri, 16 Aug 2019 14:16:26 -0700
-Message-ID: <CALMp9eTJpzGu=NyTknGUAoxWOfWJiXgJzxZmPJwZEbScJDJqjw@mail.gmail.com>
-Subject: Re: [PATCH] KVM: x86: Fix x86_decode_insn() return when fetching insn
- bytes fails
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm list <kvm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 9:20 AM Sean Christopherson
-<sean.j.christopherson@intel.com> wrote:
->
-> Jump to the common error handling in x86_decode_insn() if
-> __do_insn_fetch_bytes() fails so that its error code is converted to the
-> appropriate return type.  Although the various helpers used by
-> x86_decode_insn() return X86EMUL_* values, x86_decode_insn() itself
-> returns EMULATION_FAILED or EMULATION_OK.
->
-> This doesn't cause a functional issue as the sole caller,
-> x86_emulate_instruction(), currently only cares about success vs.
-> failure, and success is indicated by '0' for both types
-> (X86EMUL_CONTINUE and EMULATION_OK).
->
-> Fixes: 285ca9e948fa ("KVM: emulate: speed up do_insn_fetch")
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Arul,
+
+On Fri, 16 Aug 2019, Arul Jeniston wrote:
+
+> Adding few more data points...
+
+Can you please trim your replies? It's annoying to have to search for the
+meat of your mail by scrolling down several pages and paying attention to
+not skip something useful inside of useless information.
+
+> On Fri, Aug 16, 2019 at 10:25 PM Arul Jeniston <arul.jeniston@gmail.com> wrote:
+> > On Fri, Aug 16, 2019 at 4:15 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> >
+> > We use CLOCK_REALTIME while creating timer_fd.
+> > Can read() on timerfd return 0 when the clock is set to CLOCK_REALTIME?
+
+As CLOCK_REALTIME is subject to be set by various mechanisms, yes. See
+timerfd_clock_was_set(). If that's the case, your application is missing
+something. But see below ...
+
+> > We have Intel rangely 4 cpu system running debian stretch linux
+> > kernel. The current clock source is set to tsc. During our testing, we
+> > observed the time drifts backward occasionally. Through kernel
+> > instrumentation, we observed, sometimes clocksource_delta() finds the
+> > current time lesser than last time. and returns 0 delta.
+
+That has absolutely nothing to do with CLOCK_REALTIME. Your machines TSC is
+either going backwards or not synchronized between cores.
+
+Hint: Dell has a track record of BIOS doing the wrong things to TSC in
+order to hide their 'value add' features stealing CPU time.
+
+> This causes the following code flow to return a time which is lesser
+> than previously fetched time.
+> ktime_get()-->timekeeping_get_ns()-->timekeeping_get_delta()-->clocksource_delta()
+
+ktime_get() is CLOCK_MONOTONIC and not CLOCK_REALTIME.
+ 
+> Since ktime_get() returns a time which is lesser than the expiry time,
+> hrtimer_forward_now return 0.
+> This in-turn causes timerfd_read to return 0.
+> Is it not a bug?
+
+It's a bug, but either a hardware or a BIOS bug and you are trying to paper
+over it at the place where you observe the symptom, which is obviously the
+wrong place because:
+
+ 1) Any other time related function even in timerfd is affected as well
+
+ 2) We do not cure symptoms, we cure the root cause. And clearly the root
+    cause hase not been explained and addressed.
+
+Thanks,
+
+	tglx
