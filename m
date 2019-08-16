@@ -2,68 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C81469038E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E09F90393
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727380AbfHPOAH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:00:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:57422 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727261AbfHPOAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:00:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 795CD360;
-        Fri, 16 Aug 2019 07:00:06 -0700 (PDT)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.78])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C83D23F694;
-        Fri, 16 Aug 2019 07:00:05 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 15:00:03 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the akpm-current tree
-Message-ID: <20190816140003.GA33405@arrakis.emea.arm.com>
-References: <20190816221603.7c0939f0@canb.auug.org.au>
+        id S1727431AbfHPOA5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:00:57 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34816 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727261AbfHPOA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:00:57 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id D4C51C4BC3A2E475478C;
+        Fri, 16 Aug 2019 22:00:46 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
+ 22:00:38 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <agross@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: qcom: clk-rpm: remove unused code
+Date:   Fri, 16 Aug 2019 21:59:44 +0800
+Message-ID: <20190816135944.54232-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816221603.7c0939f0@canb.auug.org.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 10:16:03PM +1000, Stephen Rothwell wrote:
-> After merging the akpm-current tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> mm/kmemleak.c: In function 'kmemleak_disable':
-> mm/kmemleak.c:1884:2: error: 'kmemleak_early_log' undeclared (first use in this function); did you mean 'kmemleak_alloc'?
->   kmemleak_early_log = 0;
->   ^~~~~~~~~~~~~~~~~~
->   kmemleak_alloc
-> mm/kmemleak.c:1884:2: note: each undeclared identifier is reported only once for each function it appears in
-> 
-> Caused by commit
-> 
->   fcf3a5b62f43 ("mm: kmemleak: disable early logging in case of error")
-> 
-> from Linus' tree mismerging with commits
-> 
->   bce40af67cba ("mm: kmemleak: disable early logging in case of error")
->   c405460afc4a ("mm: kmemleak: use the memory pool for early allocations")
-> 
-> from the akpm-current tree.
-> 
-> I just removed the above line again (as was dome in the last commit
-> above).
+drivers/clk/qcom/clk-rpm.c:453:29: warning:
+ clk_rpm_branch_ops defined but not used [-Wunused-const-variable=]
 
-Thanks. Commit c405460 should remove all traces of kmemleak_early_log
-from current Linus' tree but somehow during merging in -next the line
-reappeared.
+It is never used, also the macros 'DEFINE_CLK_RPM_CXO_BRANCH'
+and 'DEFINE_CLK_RPM_CXO_BRANCH' are unused, so remove them.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/qcom/clk-rpm.c | 63 ----------------------------------------------
+ 1 file changed, 63 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rpm.c b/drivers/clk/qcom/clk-rpm.c
+index 9e3110a..c3430e2 100644
+--- a/drivers/clk/qcom/clk-rpm.c
++++ b/drivers/clk/qcom/clk-rpm.c
+@@ -73,62 +73,6 @@
+ 		},							      \
+ 	}
+ 
+-#define DEFINE_CLK_RPM_PXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+-	static struct clk_rpm _platform##_##_active;			      \
+-	static struct clk_rpm _platform##_##_name = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.active_only = true,					      \
+-		.peer = &_platform##_##_active,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_name,					      \
+-			.parent_names = (const char *[]){ "pxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	};								      \
+-	static struct clk_rpm _platform##_##_active = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.peer = &_platform##_##_name,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_active,				      \
+-			.parent_names = (const char *[]){ "pxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	}
+-
+-#define DEFINE_CLK_RPM_CXO_BRANCH(_platform, _name, _active, r_id, r)	      \
+-	static struct clk_rpm _platform##_##_active;			      \
+-	static struct clk_rpm _platform##_##_name = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.peer = &_platform##_##_active,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_name,					      \
+-			.parent_names = (const char *[]){ "cxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	};								      \
+-	static struct clk_rpm _platform##_##_active = {			      \
+-		.rpm_clk_id = (r_id),					      \
+-		.active_only = true,					      \
+-		.peer = &_platform##_##_name,				      \
+-		.rate = (r),						      \
+-		.branch = true,						      \
+-		.hw.init = &(struct clk_init_data){			      \
+-			.ops = &clk_rpm_branch_ops,			      \
+-			.name = #_active,				      \
+-			.parent_names = (const char *[]){ "cxo_board" },      \
+-			.num_parents = 1,				      \
+-		},							      \
+-	}
+-
+ #define to_clk_rpm(_hw) container_of(_hw, struct clk_rpm, hw)
+ 
+ struct rpm_cc;
+@@ -450,13 +394,6 @@ static const struct clk_ops clk_rpm_ops = {
+ 	.recalc_rate	= clk_rpm_recalc_rate,
+ };
+ 
+-static const struct clk_ops clk_rpm_branch_ops = {
+-	.prepare	= clk_rpm_prepare,
+-	.unprepare	= clk_rpm_unprepare,
+-	.round_rate	= clk_rpm_round_rate,
+-	.recalc_rate	= clk_rpm_recalc_rate,
+-};
+-
+ /* MSM8660/APQ8060 */
+ DEFINE_CLK_RPM(msm8660, afab_clk, afab_a_clk, QCOM_RPM_APPS_FABRIC_CLK);
+ DEFINE_CLK_RPM(msm8660, sfab_clk, sfab_a_clk, QCOM_RPM_SYS_FABRIC_CLK);
 -- 
-Catalin
+2.7.4
+
+
