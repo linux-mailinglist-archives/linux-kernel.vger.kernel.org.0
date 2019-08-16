@@ -2,69 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 363DA907F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 20:57:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EF4890800
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 20:58:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727593AbfHPS51 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 14:57:27 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:38016 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727286AbfHPS51 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 14:57:27 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 11EEF133F9EED;
-        Fri, 16 Aug 2019 11:57:26 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 11:57:21 -0700 (PDT)
-Message-Id: <20190816.115721.2066524764941816948.davem@davemloft.net>
-To:     alexandru.ardelean@analog.com
-Cc:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, f.fainelli@gmail.com, hkallweit1@gmail.com,
-        andrew@lunn.ch
-Subject: Re: [PATCH v5 00/13] net: phy: adin: add support for Analog
- Devices PHYs
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190816131011.23264-1-alexandru.ardelean@analog.com>
-References: <20190816131011.23264-1-alexandru.ardelean@analog.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 16 Aug 2019 11:57:26 -0700 (PDT)
+        id S1727632AbfHPS63 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 14:58:29 -0400
+Received: from mga03.intel.com ([134.134.136.65]:47555 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727466AbfHPS63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 14:58:29 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 11:58:28 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,394,1559545200"; 
+   d="scan'208";a="179753626"
+Received: from dpalikow-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.34.140])
+  by orsmga003.jf.intel.com with ESMTP; 16 Aug 2019 11:58:25 -0700
+Date:   Fri, 16 Aug 2019 21:58:23 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     joe@perches.com, linux-kernel@vger.kernel.org,
+        Denis Kenzior <denkenz@gmail.com>,
+        James Bottomley <jejb@linux.ibm.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        linux-integrity@vger.kernel.org
+Subject: Re: [RESEND PATCH] MAINTAINERS: keys: Update path to trusted.h
+Message-ID: <20190816185823.kjuxqfegpsywulkn@linux.intel.com>
+References: <20190815215712.tho3fdfk43rs45ej@linux.intel.com>
+ <20190815221200.3465-1-efremov@linux.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815221200.3465-1-efremov@linux.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Date: Fri, 16 Aug 2019 16:09:58 +0300
+On Fri, Aug 16, 2019 at 01:12:00AM +0300, Denis Efremov wrote:
+> Update MAINTAINERS record to reflect that trusted.h
+> was moved to a different directory in commit 22447981fc05
+> ("KEYS: Move trusted.h to include/keys [ver #2]").
+> 
+> Cc: Denis Kenzior <denkenz@gmail.com>
+> Cc: James Bottomley <jejb@linux.ibm.com>
+> Cc: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Cc: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: linux-integrity@vger.kernel.org
+> Signed-off-by: Denis Efremov <efremov@linux.com>
 
-> This changeset adds support for Analog Devices Industrial Ethernet PHYs.
-> Particularly the PHYs this driver adds support for:
->  * ADIN1200 - Robust, Industrial, Low Power 10/100 Ethernet PHY
->  * ADIN1300 - Robust, Industrial, Low Latency 10/100/1000 Gigabit
->    Ethernet PHY
-> 
-> The 2 chips are register compatible with one another. The main
-> difference being that ADIN1200 doesn't operate in gigabit mode.
-> 
-> The chips can be operated by the Generic PHY driver as well via the
-> standard IEEE PHY registers (0x0000 - 0x000F) which are supported by the
-> kernel as well. This assumes that configuration of the PHY has been done
-> completely in HW, according to spec, i.e. no extra SW configuration
-> required.
-> 
-> This changeset also implements the ability to configure the chips via SW
-> registers.
-> 
-> Datasheets:
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ADIN1300.pdf
->   https://www.analog.com/media/en/technical-documentation/data-sheets/ADIN1200.pdf
-> 
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Acked-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 
-Series applied, thank you.
+/Jarkko
