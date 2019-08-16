@@ -2,106 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 757B28FED4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:23:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C8E08FED1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:22:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfHPJXm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 05:23:42 -0400
-Received: from pigeon.groveronline.com ([198.145.19.6]:34440 "EHLO
-        pigeon.buunabet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726864AbfHPJXl (ORCPT
+        id S1726973AbfHPJWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 05:22:11 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:45821 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfHPJWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:23:41 -0400
-X-Greylist: delayed 492 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 05:23:41 EDT
-Received: by pigeon.buunabet.com (Postfix, from userid 501)
-        id 4569160818; Fri, 16 Aug 2019 02:15:28 -0700 (PDT)
-X-Spam-Checker-Version: SpamAssassin 3.3.1 (2010-03-16) on pigeon.buunabet.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=2.5 tests=ALL_TRUSTED
-        autolearn=unavailable version=3.3.1
-Received: from [10.241.119.227] (unknown [217.116.215.226])
-        (using TLSv1.2 with cipher AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by pigeon.buunabet.com (Postfix) with ESMTPSA id 91A1860662;
-        Fri, 16 Aug 2019 02:15:25 -0700 (PDT)
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-To:     Gerd Rausch <gerd.rausch@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, Chris Mason <clm@fb.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Grover <andy.grover@oracle.com>,
-        Chris Mason <chris.mason@oracle.com>
-References: <20190816075312.64959223@canb.auug.org.au>
- <8fd20efa-8e3d-eca2-8adf-897428a2f9ad@oracle.com>
-From:   Andy Grover <andy@groveronline.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andy@groveronline.com; keydata=
- mQENBFz6mPMBCAClDMGqYBeCSE0Q+rU7v0JibtGh+nSZoNTSdXOHUkk3rN7rmJwdjlWsL0aT
- 2BGsSYBQjuqlculeJAQq6GG8dj7gjkDX8zVvjNPVqZxNd0bRh9DFE5AZrz3TiTIUwNauKWE9
- XvVCMn/ZfzEJhehLa7SUs5vgZ6NHaScq4KZByfNsmiu/n+mPRhJOjgIN7fql5u+ElnNHxOP3
- Z9vsoQc5pS9YAMKtEvyWgljm4fbZMs6VBDUGJGaLRmALF5VrJ5AJKzbZWZmaXYNqoxdtakT5
- PhJuXkqdnrijZw8TJCglQ/z2wiq2HCU2pzq6/l+19yV0m9iegEuPgtAuwqkh4ecsPAbbABEB
- AAG0IUFuZHkgR3JvdmVyIDxhZ3JvdmVyQG1vemlsbGEuY29tPokBVAQTAQgAPhYhBKVh7hV4
- 1gY7lZbAkBVqKb2tr6NBBQJc+pjzAhsDBQkDwmcABQsJCAcCBhUKCQgLAgQWAgMBAh4BAheA
- AAoJEBVqKb2tr6NB7uwH/RIEtXUCpRGCbVO5LyXmlzTCue9djrb8YrvOOyeVzUxA5kIskguB
- 5DH7X7RuVa1PlsfsG2F40/5/bPS/fjYIUOGxTQdyiXGeVPotDvg4vaC/3zV16gs8YxOgzKgb
- P7QhFLHkZoITe6gOv4R0QH1qvRkbg9cyyPr5FoIPaLoXDnw4DWxaNBUSsN+fPRI87yUjPO1v
- kL+OWBOnBsHxNGaHjd/s9WsIUp8RbLbfMEI+xlM8lM+r5ccECkMS/l9NFX+mCMUlRXqTkd49
- mWYJWY5zNnLyqbAZcaRGCrFlX/gjDn8p+pXQEdvtbbqy3KMofxrmf73ECSStM0WnOEgWtSFG
- ycW5AQ0EXPqY8wEIAMY7xc/W7mIt2nyAe9K/5RiuyGaDItuaEbFzfRmxFvISJm3s5LiyyrGA
- 82o0HQWqoMjPyLd+pGSSxHL5aWCUsj5vt/rV0FCPvC8W3a0bWxHa+sbb0VeAHna18Ozav1Cx
- RFLW437tqaD8yF5yh1c0aGolCqv2LjMHetm+UmFoQVbSfcJoxpXepJFVDwvrqqlL+5BoQM15
- MzCwux/D8RCgNlTXTnlfm6bRvlD5ttgDoyzN7qYwm+RjA9Izhyps39fKzdk8xkgeu/A55C94
- KcPuSs4U9ti7WeU+CubDaLB3bxp7KCyjWpX3oS2CxHFnQsBAbzGx8UeH3dXbdni1AjE71wkA
- EQEAAYkBPAQYAQgAJhYhBKVh7hV41gY7lZbAkBVqKb2tr6NBBQJc+pjzAhsMBQkDwmcAAAoJ
- EBVqKb2tr6NBP2MH/0g/e3idsu/ajGzRx6CaRd/ZNxG0/p0aYT4iQWUEt0KZVyHKf17OQK2z
- u3QSGjSR2V1H419U0m5V3HSMQmy5XrGi3ks4f01Cgq2HiYizhwVwqNVfZERY+WavEIr35w/L
- eJqEI2Cm4PySxbOOuFig6R7GAknL76iKQBlMH8uX7yV9p0JnrI6tn0lm2n4UjW76CJ3Fk6gD
- wqoDYDQXfIxYtyMD6QUfiSDZ+8KZoCMDYQQsEcDBz0hRI2mHwL1jHkGNMcVOhBZPtUHinFTc
- EiQKDXQKkBvschbpbcfJI5g82v6Bl5M995ob7wsXy8VN5+usot+bKqQHGYMsBMbqJf+Ci1I=
-Message-ID: <e85146f3-93a0-b23f-6a6e-11e42815946d@groveronline.com>
-Date:   Fri, 16 Aug 2019 11:15:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 16 Aug 2019 05:22:11 -0400
+Received: by mail-pg1-f193.google.com with SMTP id o13so2645659pgp.12;
+        Fri, 16 Aug 2019 02:22:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9ecN5oXMiEZjV2F0Oa58Q+yKo9ivsAVzldeQfVYkRrE=;
+        b=cihxO+YY+3C2mg/dNbgdwcsdVTxEIPgKIFyXfek5ixCTfHXiS8CSjgrWyxznHeuw+m
+         9SSd6/oaNcu8jvDfJLQ75yDKGr6Acw7iuXqkaFGWw66lm+IfE/xdSuDxPuBFp+95GWYi
+         bw4e92tDtvr0mcnnPdUIQA3p01dO9LXwnvrNpoLe3D58SnGnQfqbriUe2Qb3MqJCoyUM
+         ZYU9OUwB6c984EMFKb9udJteBBut2o02SGBxlNByZ8LbwWPLwt2OCaiW/Lmi+1r6peyL
+         WVJnGidYs3GX2VlmydtYfp+lPe0HNSZZwha57X+JdIk7dKk1VtVnjthtoiUiT/FNWyNO
+         rx0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9ecN5oXMiEZjV2F0Oa58Q+yKo9ivsAVzldeQfVYkRrE=;
+        b=A4U9Ms6pFzvqNEE4/h4lcSwF7iVxtSe7YeqAkG5oEKfjK+mMHiV866YsvG3LYzJKRm
+         EC5FjQGBRD428IVyLJj+/r/kJcp/legm2hVOumyoWCaRXdI2LTdCS49Ri5Gcn6hbez6b
+         sVHMfUkokVb11L1RSACreOrsZqyg2hFzFHep9tjBFO+l6/sPTpt9AttFOOqqrXE9BTNn
+         VCGSRGZI86H5cG0Hjz3aqxsUs7hhjDsB+FQFJEJYa1vvK4JvZFJ+9FWnbLOoIbVwW+Yj
+         OlP799cKlrqEvQrVxcHmbGZdQ/tBXULAg6aiF9BLBVF/vOO9orSeiYyNzNEQpFu9yOG5
+         auNw==
+X-Gm-Message-State: APjAAAVNGGeNud1EJ8Nte9Gzaw8rPDvP+oWRWWnHQJO+jK+GJIJw9d2X
+        i7T9ULY3braRMfO/pGHYcsmZcIm2I80mGXJZxyM=
+X-Google-Smtp-Source: APXvYqznoRkaQ5GGcoSzSFwlDt1oEQZmbLYLEWCLaguzIcJK2jrm5d8J8n4mqZwdgOew9hcmBQwx+uxIqxRS/ZS1Eyw=
+X-Received: by 2002:a63:e54f:: with SMTP id z15mr6915845pgj.4.1565947330601;
+ Fri, 16 Aug 2019 02:22:10 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <8fd20efa-8e3d-eca2-8adf-897428a2f9ad@oracle.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190816014140.10687-1-m.v.b@runbox.com>
+In-Reply-To: <20190816014140.10687-1-m.v.b@runbox.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 16 Aug 2019 12:21:58 +0300
+Message-ID: <CAHp75Vc1BP9UXBWW1tv7T8v8vgqxZWngD+tN9=ZKkgc1imUVxQ@mail.gmail.com>
+Subject: Re: [PATCH] platform/x86: intel_pmc_core: Do not ioremap RAM
+To:     "M. Vefa Bicakci" <m.v.b@runbox.com>
+Cc:     Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/16/19 3:06 PM, Gerd Rausch wrote:
-> Hi,
-> 
-> Just added the e-mail addresses I found using a simple "google search",
-> in order to reach out to the original authors of these commits:
-> Chris Mason and Andy Grover.
-> 
-> I'm hoping they still remember their work from 7-8 years ago.
+On Fri, Aug 16, 2019 at 4:42 AM M. Vefa Bicakci <m.v.b@runbox.com> wrote:
+>
+> On a Xen-based PVH virtual machine with more than 4 GiB of RAM,
+> intel_pmc_core fails initialization with the following warning message
+> from the kernel, indicating that the driver is attempting to ioremap
+> RAM:
+>
+>   ------------[ cut here ]------------
+>   ioremap on RAM at 0x00000000fe000000 - 0x00000000fe001fff
 
-Yes looks like what I was working on. What did you need from me? It's
-too late to amend the commitlogs...
+> This issue appears to manifest itself because of the following fallback
+> mechanism in the driver:
+>
+>         if (lpit_read_residency_count_address(&slp_s0_addr))
+>                 pmcdev->base_addr = PMC_BASE_ADDR_DEFAULT;
+>
+> The validity of address PMC_BASE_ADDR_DEFAULT (i.e., 0xFE000000) is not
+> verified by the driver, which is what this patch introduces. With this
+> patch, if address PMC_BASE_ADDR_DEFAULT is in RAM, then the driver will
+> not attempt to ioremap the aforementioned address.
 
--- Andy
+Thank you for the patch.
+Is there anything preventing us to use memremap() in such case?
 
-> 
-> Thanks,
-> 
->   Gerd
-> 
-> On 15/08/2019 14.53, Stephen Rothwell wrote:
->> Hi all,
->>
->> Commits
->>
->>   11740ef44829 ("rds: check for excessive looping in rds_send_xmit")
->>   65dedd7fe1f2 ("RDS: limit the number of times we loop in rds_send_xmit")
->>
->> are missing a Signed-off-by from their authors.
->>
+-- 
+With Best Regards,
+Andy Shevchenko
