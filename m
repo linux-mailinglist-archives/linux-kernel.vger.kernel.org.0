@@ -2,104 +2,206 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6E4F902A3
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:11:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E3F690299
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:11:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfHPNLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 09:11:46 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:45015 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726597AbfHPNLj (ORCPT
+        id S1727556AbfHPNLf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 09:11:35 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:54374 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726597AbfHPNLd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 09:11:39 -0400
-Received: by mail-ot1-f66.google.com with SMTP id w4so9454706ote.11;
-        Fri, 16 Aug 2019 06:11:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=lWcyAmV1Uxrxcs0AfEFdOQKYxj1U/I3IYlhoxoBaFv4=;
-        b=d1exZ6gFOjqyrrwjklAFnTna3w5cB9QDE/sqHy9aswxR+Dj4p+ebYC+BWbYRRp+dSh
-         qvm0zOI76zvbhY5Qxpz1WZVwtbdNofRFAPWFTV++lfXkXW/9BGgLDBaNn/wft9LlGxlU
-         Fi8iFg1wqAjA7kjWomBt6uQJIBUBmIic3P28T+a84Ulltmfe3kJeFvfqFyJi9wM32qBm
-         rFCzHQdFaitkWqkHpLNPEbN/0XDv0L6DtSxO3Yr2LUQ3GG+M0GUPLxHW8DMqdNEBTV8X
-         XUP9q8BNsuEXDS06z5W/GOgtpCrI303bPlfVc177BwQXP8KPYktPVI6OiMRrl4pFjGdi
-         ljXw==
-X-Gm-Message-State: APjAAAVbL0ncbXuwtJ7YVqwE1S8Z/aekzmew5LPnLc8z8tw5qKylK6/y
-        6i2pzCH03ZmnTKkH2H2vLnpqSCrgShte45V5vAI=
-X-Google-Smtp-Source: APXvYqxP4hYrPfDsQFlbREk8hpApTYfpZUfHTFRUvPveFErL5wlerojyl24HOL2KJd1oY7iD0OgXXobaKRQhNdUEC84=
-X-Received: by 2002:a9d:674c:: with SMTP id w12mr4311320otm.118.1565961098308;
- Fri, 16 Aug 2019 06:11:38 -0700 (PDT)
+        Fri, 16 Aug 2019 09:11:33 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id 8F1E925AEC0;
+        Fri, 16 Aug 2019 23:11:31 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id 87C1B94057D; Fri, 16 Aug 2019 15:11:29 +0200 (CEST)
+Date:   Fri, 16 Aug 2019 15:11:29 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clocksource/drivers/ostm: Use unique device name
+ instead of ostm
+Message-ID: <20190816131129.eh4jgsdle77kulaq@verge.net.au>
+References: <20190807084635.24173-1-geert+renesas@glider.be>
+ <20190807084635.24173-4-geert+renesas@glider.be>
 MIME-Version: 1.0
-From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Fri, 16 Aug 2019 15:11:27 +0200
-Message-ID: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
-Subject: [GIT PULL] Power management fixes for v5.3-rc5
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807084635.24173-4-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Wed, Aug 07, 2019 at 10:46:35AM +0200, Geert Uytterhoeven wrote:
+> Currently all OSTM devices are called "ostm", also in kernel messages.
+> 
+> As there can be multiple instances in an SoC, this can confuse the user.
+> Hence construct a unique name from the DT node name, like is done for
+> platform devices.
+> 
+> On RSK+RZA1, the boot log changes like:
+> 
+>     -clocksource: ostm: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
+>     +clocksource: ostm fcfec000.timer: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 57352151442 ns
+>      sched_clock: 32 bits at 33MHz, resolution 30ns, wraps every 64440619504ns
+>     -ostm: used for clocksource
+>     -ostm: used for clock events
+>     +ostm fcfec000.timer: used for clocksource
+>     +ostm fcfec400.timer: used for clock events
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v3:
+>   - Make the name format similar to the one used for platform devices,
+>   - Use kasprintf() instead of buffer size guessing,
+>   - Use a real example from rskrza1.
+> 
+> v2 (by Jacopo):
+>   - Use np->full_name.
+> ---
+>  drivers/clocksource/renesas-ostm.c | 45 ++++++++++++++++++++----------
+>  1 file changed, 30 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/clocksource/renesas-ostm.c b/drivers/clocksource/renesas-ostm.c
+> index 1e22e54d7b0df40d..659e3ec7b86714e3 100644
+> --- a/drivers/clocksource/renesas-ostm.c
+> +++ b/drivers/clocksource/renesas-ostm.c
+> @@ -25,6 +25,7 @@
+>   */
+>  
+>  struct ostm_device {
+> +	const char *name;
+>  	void __iomem *base;
+>  	unsigned long ticks_per_jiffy;
+>  	struct clock_event_device ced;
+> @@ -79,9 +80,8 @@ static int __init ostm_init_clksrc(struct ostm_device *ostm, unsigned long rate)
+>  	writeb(CTL_FREERUN, ostm->base + OSTM_CTL);
+>  	writeb(TS, ostm->base + OSTM_TS);
+>  
+> -	return clocksource_mmio_init(ostm->base + OSTM_CNT,
+> -			"ostm", rate,
+> -			300, 32, clocksource_mmio_readl_up);
+> +	return clocksource_mmio_init(ostm->base + OSTM_CNT, ostm->name, rate,
+> +				     300, 32, clocksource_mmio_readl_up);
+>  }
+>  
+>  static u64 notrace ostm_read_sched_clock(void)
+> @@ -161,15 +161,14 @@ static int __init ostm_init_clkevt(struct ostm_device *ostm, unsigned int irq,
+>  	struct clock_event_device *ced = &ostm->ced;
+>  	int ret = -ENXIO;
+>  
+> -	ret = request_irq(irq, ostm_timer_interrupt,
+> -			  IRQF_TIMER | IRQF_IRQPOLL,
+> -			  "ostm", ostm);
+> +	ret = request_irq(irq, ostm_timer_interrupt, IRQF_TIMER | IRQF_IRQPOLL,
+> +			  ostm->name, ostm);
+>  	if (ret) {
+> -		pr_err("ostm: failed to request irq\n");
+> +		pr_err("%s: Failed to request irq\n", ostm->name);
+>  		return ret;
+>  	}
+>  
+> -	ced->name = "ostm";
+> +	ced->name = ostm->name;
+>  	ced->features = CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC;
+>  	ced->set_state_shutdown = ostm_shutdown;
+>  	ced->set_state_periodic = ostm_set_periodic;
+> @@ -187,6 +186,7 @@ static int __init ostm_init(struct device_node *np)
+>  {
+>  	struct clk *ostm_clk = NULL;
+>  	struct ostm_device *ostm;
+> +	struct resource res;
+>  	unsigned long rate;
+>  	unsigned int irq;
+>  	int ret;
+> @@ -195,22 +195,35 @@ static int __init ostm_init(struct device_node *np)
+>  	if (!ostm)
+>  		return -ENOMEM;
+>  
+> -	ostm->base = of_iomap(np, 0);
+> -	if (!ostm->base) {
+> +	ret = of_address_to_resource(np, 0, &res);
+> +	if (ret) {
+> +		pr_err("ostm: Failed to obtain I/O memory\n");
+> +		goto err_free;
+> +	}
+> +
+> +	ostm->name = kasprintf(GFP_KERNEL, "ostm %llx.%s",
+> +			       (unsigned long long)res.start, np->name);
 
-Please pull from the tag
+I'm not sure, but looking at printk-formats.rst it seems that
+%pa[p] as a format specifier for resource_size_t. If so it may
+allow dropping the cast above.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-5.3-rc5
-
-with top-most commit a3ee2477c45f73184a64d9c6cf97855a52732dc6
-
- Merge branch 'pm-cpufreq'
-
-on top of commit d45331b00ddb179e291766617259261c112db872
-
- Linux 5.3-rc4
-
-to receive power management fixes for 5.3-rc5.
-
-These add a check to avoid recent suspend-to-idle power regression on
-systems with NVMe drives where the PCIe ASPM policy is "performance"
-(or when the kernel is built without ASPM support), fix an issue
-related to frequency limits in the schedutil cpufreq governor and fix a
-mistake related to the PM QoS usage in the cpufreq core introduced
-recently.
-
-Specifics:
-
- - Disable NVMe power optimization related to suspend-to-idle added
-   recently on systems where PCIe ASPM is not able to put PCIe links
-   into low-power states to prevent excess power from being drawn by
-   the system while suspended (Rafael Wysocki).
-
- - Make the schedutil cpufreq governor handle frequency limits changes
-   properly in all cases (Viresh Kumar).
-
- - Prevent the cpufreq core from treating positive values returned
-   by dev_pm_qos_update_request() as errors (Viresh Kumar).
-
-Thanks!
-
-
----------------
-
-Rafael J. Wysocki (2):
-      PCI/ASPM: Add pcie_aspm_enabled()
-      nvme-pci: Allow PCI bus-level PM to be used if ASPM is disabled
-
-Viresh Kumar (2):
-      cpufreq: dev_pm_qos_update_request() can return 1 on success
-      cpufreq: schedutil: Don't skip freq update when limits change
-
----------------
-
- drivers/cpufreq/cpufreq.c        |  2 +-
- drivers/nvme/host/pci.c          | 13 ++++++++++---
- drivers/pci/pcie/aspm.c          | 20 ++++++++++++++++++++
- include/linux/pci.h              |  2 ++
- kernel/sched/cpufreq_schedutil.c | 14 ++++++++++----
- 5 files changed, 43 insertions(+), 8 deletions(-)
+> +	if (!ostm->name) {
+>  		ret = -ENOMEM;
+>  		goto err_free;
+>  	}
+>  
+> +	ostm->base = ioremap(res.start, resource_size(&res));
+> +	if (!ostm->base) {
+> +		ret = -ENOMEM;
+> +		goto err_free_name;
+> +	}
+> +
+>  	irq = irq_of_parse_and_map(np, 0);
+>  	if (!irq) {
+> -		pr_err("ostm: Failed to get irq\n");
+> +		pr_err("%s: Failed to get irq\n", ostm->name);
+>  		ret = -EINVAL;
+>  		goto err_unmap;
+>  	}
+>  
+>  	ostm_clk = of_clk_get(np, 0);
+>  	if (IS_ERR(ostm_clk)) {
+> -		pr_err("ostm: Failed to get clock\n");
+> +		pr_err("%s: Failed to get clock\n", ostm->name);
+>  		ostm_clk = NULL;
+>  		ret = PTR_ERR(ostm_clk);
+>  		goto err_unmap;
+> @@ -218,7 +231,7 @@ static int __init ostm_init(struct device_node *np)
+>  
+>  	ret = clk_prepare_enable(ostm_clk);
+>  	if (ret) {
+> -		pr_err("ostm: Failed to enable clock\n");
+> +		pr_err("%s: Failed to enable clock\n", ostm->name);
+>  		goto err_clk_put;
+>  	}
+>  
+> @@ -235,13 +248,13 @@ static int __init ostm_init(struct device_node *np)
+>  			goto err_clk_disable;
+>  
+>  		ostm_init_sched_clock(ostm, rate);
+> -		pr_info("ostm: used for clocksource\n");
+> +		pr_info("%s: used for clocksource\n", ostm->name);
+>  	} else {
+>  		ret = ostm_init_clkevt(ostm, irq, rate);
+>  		if (ret)
+>  			goto err_clk_disable;
+>  
+> -		pr_info("ostm: used for clock events\n");
+> +		pr_info("%s: used for clock events\n", ostm->name);
+>  	}
+>  
+>  	return 0;
+> @@ -252,6 +265,8 @@ static int __init ostm_init(struct device_node *np)
+>  	clk_put(ostm_clk);
+>  err_unmap:
+>  	iounmap(ostm->base);
+> +err_free_name:
+> +	kfree(ostm->name);
+>  err_free:
+>  	kfree(ostm);
+>  	return ret;
+> -- 
+> 2.17.1
+> 
