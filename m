@@ -2,51 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2D1905D4
+	by mail.lfdr.de (Postfix) with ESMTP id 109CC905D2
 	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 18:32:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfHPQaO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 12:30:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51068 "EHLO mail.kernel.org"
+        id S1727502AbfHPQaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 12:30:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727391AbfHPQaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:30:07 -0400
-Subject: Re: [GIT PULL]: dmaengine fixes for v5.3-rc5
+        id S1727457AbfHPQaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:30:08 -0400
+Subject: Re: [GIT PULL] Power management fixes for v5.3-rc5
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1565973007;
-        bh=C+15RRON7v0kZNLZM4cWgiba2GqK7EyGHEkGjYx5UfA=;
+        bh=XHjlZmKTF9nNMGhgjea6r5OALoj3MwKvj+3B+20nqFI=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=PjlYNJax/L7UGcDSkucKo0TTavXoe2/VUOj8GwiQMtCON/4sHzYxrX2PPxMstVWL1
-         14ZBeIIFJEUlMsI122qDsJb6cim0+rvpy5/EHDQlFWxOJ45xB4iB3SPIxW/V6wyMqF
-         ODpc3cQp/ao10YyELyKFsVqvazEZMtyHURFY/BAY=
+        b=RT3tspNBfxudhjqy1BRPh2T1OxocwyBShKCEBeEj/NKaMJ+HxS6S+MHIE/Hy0Iv0k
+         IPemShark9xJhwpYnFuXj7ALffjBlfb9nbKtolb3lF/3d+qq6nXbeH1B0XKoP+5gNs
+         gE7hYjZGskOAQzbktfsqYg0WoU5j2nhUczA59np4=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190816094627.GB12733@vkoul-mobl.Dlink>
-References: <20190816094627.GB12733@vkoul-mobl.Dlink>
+In-Reply-To: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
+References: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190816094627.GB12733@vkoul-mobl.Dlink>
-X-PR-Tracked-Remote: git://git.infradead.org/users/vkoul/slave-dma.git
- tags/dmaengine-fix-5.3-rc5
-X-PR-Tracked-Commit-Id: d555c34338cae844b207564c482e5a3fb089d25e
+X-PR-Tracked-Message-Id: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc5
+X-PR-Tracked-Commit-Id: a3ee2477c45f73184a64d9c6cf97855a52732dc6
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 9da5bb24bb368567a43ac2df0e108e43d80f3564
-Message-Id: <156597300729.15122.18141782735058596853.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 2d63ba3e41db3ceb0d23924ed2879b910276e24c
+Message-Id: <156597300748.15122.2547327554860184999.pr-tracker-bot@kernel.org>
 Date:   Fri, 16 Aug 2019 16:30:07 +0000
-To:     Vinod Koul <vkoul@kernel.org>
+To:     "Rafael J. Wysocki" <rafael@kernel.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 16 Aug 2019 15:16:28 +0530:
+The pull request you sent on Fri, 16 Aug 2019 15:11:27 +0200:
 
-> git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.3-rc5
+> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc5
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/9da5bb24bb368567a43ac2df0e108e43d80f3564
+https://git.kernel.org/torvalds/c/2d63ba3e41db3ceb0d23924ed2879b910276e24c
 
 Thank you!
 
