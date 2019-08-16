@@ -2,67 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B91AB90396
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:02:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE1B9039A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:04:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727312AbfHPOCI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:02:08 -0400
-Received: from foss.arm.com ([217.140.110.172]:57462 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727217AbfHPOCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:02:07 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0769C344;
-        Fri, 16 Aug 2019 07:02:07 -0700 (PDT)
-Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id ABD583F694;
-        Fri, 16 Aug 2019 07:02:05 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: don't assign runtime for throttled cfs_rq
-To:     Liangyan <liangyan.peng@linux.alibaba.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, shanpeic@linux.alibaba.com,
-        xlpang@linux.alibaba.com, pjt@google.com
-References: <20190814180021.165389-1-liangyan.peng@linux.alibaba.com>
- <2994a6ee-9238-5285-3227-cb7084a834c8@arm.com>
- <7C1833A8-27A4-4755-9B1E-335C20207A66@linux.alibaba.com>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <39d1affb-9cfa-208d-8bf4-f4c802e8c7f9@arm.com>
-Date:   Fri, 16 Aug 2019 15:02:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727376AbfHPOEd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:04:33 -0400
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38053 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727261AbfHPOEd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:04:33 -0400
+Received: by mail-ed1-f68.google.com with SMTP id r12so5237229edo.5
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 07:04:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=shutemov-name.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=j/6BPKwgYdq3kl7X0DqLCdZOmgeTKbt4kEmnV+oeC6I=;
+        b=YnSjsjmqORHGTHdLdT4KBnuh8v3t5NbxdxRxz3vfItQsLFguH8BIUURBkKImiy3fc+
+         QKMSsp4mKy1//EDwlszPaGY31GZAyFNdG4ssiVrhdszq9NlYgjlosyognbxKAcI3ilra
+         N/JfIZ8yhEgylnIyMvpv1wmwtlDBvAcfCtiYWfk9USKXRvvTP0EkR6dYW7QHIP0dfzBb
+         A0ac3u0A4PJ8TfFimtt9BL7EOajczxJ2XfDozJdP3e/pu3EntdUyw/HNezq23EFggd7A
+         +83PyOi1icjBaMtvayv/2K09oVZtJ3h4iUj0aHkVaDkYwd3Nk/aXrAwbLxEvTQlhoJRU
+         djfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=j/6BPKwgYdq3kl7X0DqLCdZOmgeTKbt4kEmnV+oeC6I=;
+        b=Ta2SypEpQZTS4+VyeyFj6bMas1bnQ6bad43fQp7/qPBYvAWY+i9qeicEEIoiXQRqXM
+         KfbsDFeAvvdRUthrczkxTp0aIdIGlL1a24TBDGJLhdqUfHL5IFF5V2KcaDx8SITROgrN
+         iyrnwNvwBhe4iyND5MFAsUEVui4kJZIm3D9MDVBDwQbjAO4gRb6jnesdkMRK4ld8GHtB
+         rK9tTrML68aO6+hnfqikWDu5AkYLWG5xKiA0joDZ23BeKGO0rYs8OgkLa2UUNwBNS+Dv
+         gINJgEmMwdMENXqOIZN0nx+Ca9WLApN9zEzzWlvKjKu/pwGydfzXlw0W6a3bn6WiDbJ2
+         rBvA==
+X-Gm-Message-State: APjAAAU14RuRceBpiy0euFjvj7RpsMIGJqNb3yJ30yKs3gvJE+WjmkRy
+        TKy9AuWcOc2wy/sKSW+HwGxHAw==
+X-Google-Smtp-Source: APXvYqwqdMEG9G2Oq0aACS617rRtH166b9AKeywrjTiPb1fssPssuw3ekoGQZcKpFtGVZiXPMI46Rg==
+X-Received: by 2002:a50:e8c5:: with SMTP id l5mr11205255edn.120.1565964271580;
+        Fri, 16 Aug 2019 07:04:31 -0700 (PDT)
+Received: from box.localdomain ([86.57.175.117])
+        by smtp.gmail.com with ESMTPSA id gz5sm829374ejb.21.2019.08.16.07.04.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 07:04:30 -0700 (PDT)
+Received: by box.localdomain (Postfix, from userid 1000)
+        id 263B710490E; Fri, 16 Aug 2019 17:04:30 +0300 (+03)
+Date:   Fri, 16 Aug 2019 17:04:30 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH 1/3] mm, page_owner: record page owner for each subpage
+Message-ID: <20190816140430.aoya6k7qxxrls72h@box>
+References: <20190816101401.32382-1-vbabka@suse.cz>
+ <20190816101401.32382-2-vbabka@suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <7C1833A8-27A4-4755-9B1E-335C20207A66@linux.alibaba.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816101401.32382-2-vbabka@suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/08/2019 08:08, Liangyan wrote:
-> Please check below dmesg log with “WARN_ON(cfs_rq->runtime_remaining > 0)”. If apply my patch, the warning is gone.  Append the reproducing case in the end.
+On Fri, Aug 16, 2019 at 12:13:59PM +0200, Vlastimil Babka wrote:
+> Currently, page owner info is only recorded for the first page of a high-order
+> allocation, and copied to tail pages in the event of a split page. With the
+> plan to keep previous owner info after freeing the page, it would be benefical
+> to record page owner for each subpage upon allocation. This increases the
+> overhead for high orders, but that should be acceptable for a debugging option.
 > 
+> The order stored for each subpage is the order of the whole allocation. This
+> makes it possible to calculate the "head" pfn and to recognize "tail" pages
+> (quoted because not all high-order allocations are compound pages with true
+> head and tail pages). When reading the page_owner debugfs file, keep skipping
+> the "tail" pages so that stats gathered by existing scripts don't get inflated.
+> 
+> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
 
-[...]
+Hm. That's all reasonable, but I have a question: do you see how page
+owner thing works for THP now?
 
-Huh, thanks for the log & the reproducer. I'm still struggling to
-understand how we could hit the condition you're adding, since
-account_cfs_rq_runtime() shouldn't be called for throttled cfs_rqs (which
-I guess is the bug). Also, if the cfs_rq is throttled, shouldn't we
-prevent any further decrement of its ->runtime_remaining ?
+I don't see anything in split_huge_page() path (do not confuse it with
+split_page() path) that would copy the information to tail pages. Do you?
 
-I had a look at the callers of account_cfs_rq_runtime():
-
-- update_curr(). Seems safe, but has a cfs_rq->curr check at the top. This
-  won't catch throttled cfs_rq's because AFAICT their curr pointer isn't
-  NULL'd on throttle.
-
-- check_enqueue_throttle(). Already has a cfs_rq_throttled() check.
-
-- set_next_task_fair(). Peter shuffled the whole set/put task thing
-  recently but last I looked it seemed all sane.
-
-I'll try to make sense of it, but have also Cc'd Paul since unlike me he
-actually knows this stuff.
+-- 
+ Kirill A. Shutemov
