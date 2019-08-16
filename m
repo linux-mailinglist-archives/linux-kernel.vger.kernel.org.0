@@ -2,83 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6028B8F937
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:48:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B12418F946
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbfHPCs2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:48:28 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:50140 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726279AbfHPCs2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:48:28 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3B28C6083E; Fri, 16 Aug 2019 02:48:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565923707;
-        bh=wv59p8ClltpNozpwVUS0BK+L2Q/WPAN3/oCedbCshwY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=OPer1vth8AKGaeueSjSM+6gvV8NnKFqUBwOK+yPuXZ4v0Bv+2j6DamKlZmH0daVkR
-         TN1AIz5oTzvkpeNB0hgeQbI2Pb2fLbOsuywqWa7D2AiD+DbDR+ygBXR6jgVnecFQdX
-         vEaDeUn6CeYKMJu6P0Ot3rzKreCb36lT3ad3rIZU=
-X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
-        pdx-caf-mail.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=2.0 tests=ALL_TRUSTED,BAYES_00,
-        DKIM_INVALID,DKIM_SIGNED,SPF_NONE autolearn=no autolearn_force=no
-        version=3.4.0
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3D7E1606DB;
-        Fri, 16 Aug 2019 02:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565923706;
-        bh=wv59p8ClltpNozpwVUS0BK+L2Q/WPAN3/oCedbCshwY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=gM0tk3Wi4Q8+oFl6VSvmxzpShyviw4d6tiu9LlckLobAQGZkiSLIxC4AtZOteo9mU
-         DSOqOPc1pIYas7JuN00wKvpHTjcT0FpuLq35gGe/hNnSvPEYV39aDmn3EeJamBXKnz
-         68/i6EVvA3q95YbeKT3l05fTbSVoVyOrS31JkN1I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3D7E1606DB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH 4/4] clk: qcom: Remove error prints from DFS registration
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20190815160020.183334-1-sboyd@kernel.org>
- <20190815160020.183334-5-sboyd@kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <9e92bf38-0513-cd9a-f178-6a791b15fba5@codeaurora.org>
-Date:   Fri, 16 Aug 2019 08:18:22 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190815160020.183334-5-sboyd@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726596AbfHPC4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:56:34 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42208 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfHPC4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 22:56:34 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 824A01A04D0;
+        Fri, 16 Aug 2019 04:56:32 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 71B0C1A0110;
+        Fri, 16 Aug 2019 04:56:29 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B49D040250;
+        Fri, 16 Aug 2019 10:56:25 +0800 (SGT)
+From:   Biwen Li <biwen.li@nxp.com>
+To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
+        leoyang.li@nxp.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Biwen Li <biwen.li@nxp.com>
+Subject: [v2] rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
+Date:   Fri, 16 Aug 2019 10:46:36 +0800
+Message-Id: <20190816024636.34738-1-biwen.li@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Issue:
+    - # hwclock -w
+      hwclock: RTC_SET_TIME: Invalid argument
 
+Why:
+    - Relative patch: https://lkml.org/lkml/2019/4/3/55 , this patch
+      will always check for unwritable registers, it will compare reg
+      with max_register in regmap_writeable.
 
-On 8/15/2019 9:30 PM, Stephen Boyd wrote:
-> These aren't useful and they reference the init structure name. Let's
-> just drop them.
-> 
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+    - In drivers/rtc/rtc-pcf85363.c, CTRL_STOP_EN is 0x2e, but DT_100THS
+      is 0, max_regiter is 0x2f, then reg will be equal to 0x30,
+      '0x30 < 0x2f' is false,so regmap_writeable will return false.
 
-Acked-by: Taniya Das <tdas@codeaurora.org>
+    - Root cause: the buf[] was written to a wrong place in the file
+      drivers/rtc/rtc-pcf85363.c
 
+How:
+    - Split of writing regs to two parts, first part writes control
+      registers about stop_enable and resets, second part writes
+      RTC time and date registers.
 
+Signed-off-by: Biwen Li <biwen.li@nxp.com>
+---
+Change in v2:
+	- add Why and How into commit message.
+	 
+ drivers/rtc/rtc-pcf85363.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
+index a075e77617dc..3450d615974d 100644
+--- a/drivers/rtc/rtc-pcf85363.c
++++ b/drivers/rtc/rtc-pcf85363.c
+@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
+ 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
+ 
+ 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
+-				tmp, sizeof(tmp));
++				tmp, 2);
++	if (ret)
++		return ret;
++
++	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
++				buf, sizeof(tmp) - 2);
+ 	if (ret)
+ 		return ret;
+ 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.17.1
 
---
