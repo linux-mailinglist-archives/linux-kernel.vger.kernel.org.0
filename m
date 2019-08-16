@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 562679016F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565C59015C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfHPMYw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 08:24:52 -0400
+        id S1727375AbfHPMYx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:24:53 -0400
 Received: from foss.arm.com ([217.140.110.172]:55808 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727317AbfHPMYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:24:49 -0400
+        id S1727021AbfHPMYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:24:50 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 83A961570;
-        Fri, 16 Aug 2019 05:24:48 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F2E4E1597;
+        Fri, 16 Aug 2019 05:24:49 -0700 (PDT)
 Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4A2F13F706;
-        Fri, 16 Aug 2019 05:24:47 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B94E03F706;
+        Fri, 16 Aug 2019 05:24:48 -0700 (PDT)
 From:   Raphael Gault <raphael.gault@arm.com>
 To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         jpoimboe@redhat.com
 Cc:     peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
         julien.thierry.kdev@gmail.com, raph.gault+kdev@gmail.com,
         Raphael Gault <raphael.gault@arm.com>
-Subject: [RFC v4 06/18] objtool: arm64: Adapt the stack frame checks for arm architecture
-Date:   Fri, 16 Aug 2019 13:23:51 +0100
-Message-Id: <20190816122403.14994-7-raphael.gault@arm.com>
+Subject: [RFC v4 07/18] objtool: Introduce INSN_UNKNOWN type
+Date:   Fri, 16 Aug 2019 13:23:52 +0100
+Message-Id: <20190816122403.14994-8-raphael.gault@arm.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190816122403.14994-1-raphael.gault@arm.com>
 References: <20190816122403.14994-1-raphael.gault@arm.com>
@@ -34,300 +34,115 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the way the initial stack frame when entering a function is different
-that what is done in the x86_64 architecture, we need to add some more
-check to support the different cases.  As opposed as for x86_64, the return
-address is not stored by the call instruction but is instead loaded in a
-register. The initial stack frame is thus empty when entering a function
-and 2 push operations are needed to set it up correctly. All the different
-combinations need to be taken into account.
+On arm64 some object files contain data stored in the .text section.
+This data is interpreted by objtool as instruction but can't be
+identified as a valid one. In order to keep analysing those files we
+introduce INSN_UNKNOWN type. The "unknown instruction" warning will thus
+only be raised if such instructions are uncountered while validating an
+execution branch.
+
+This change doesn't impact the x86 decoding logic since 0 is still used
+as a way to specify an unknown type, raising the "unknown instruction"
+warning during the decoding phase still.
 
 Signed-off-by: Raphael Gault <raphael.gault@arm.com>
 ---
- tools/objtool/arch.h              |   2 +
- tools/objtool/arch/arm64/decode.c |  28 +++++++++
- tools/objtool/arch/x86/decode.c   |   5 ++
- tools/objtool/check.c             | 100 ++++++++++++++++++++++++++++--
- tools/objtool/elf.c               |   3 +-
- 5 files changed, 131 insertions(+), 7 deletions(-)
+ tools/objtool/arch.h                           |  1 +
+ tools/objtool/arch/arm64/decode.c              |  8 ++++----
+ tools/objtool/arch/arm64/include/insn_decode.h |  4 ++--
+ tools/objtool/check.c                          | 10 +++++++++-
+ 4 files changed, 16 insertions(+), 7 deletions(-)
 
 diff --git a/tools/objtool/arch.h b/tools/objtool/arch.h
-index bb5ce810fb6e..68d6371a24a2 100644
+index 68d6371a24a2..9f2590e1df79 100644
 --- a/tools/objtool/arch.h
 +++ b/tools/objtool/arch.h
-@@ -91,4 +91,6 @@ unsigned long arch_jump_destination(struct instruction *insn);
+@@ -28,6 +28,7 @@ enum insn_type {
+ 	INSN_CLAC,
+ 	INSN_STD,
+ 	INSN_CLD,
++	INSN_UNKNOWN,
+ 	INSN_OTHER,
+ };
  
- unsigned long arch_dest_rela_offset(int addend);
- 
-+bool arch_is_insn_sibling_call(struct instruction *insn);
-+
- #endif /* _ARCH_H */
 diff --git a/tools/objtool/arch/arm64/decode.c b/tools/objtool/arch/arm64/decode.c
-index 395c5777afab..be3d2eb10227 100644
+index be3d2eb10227..4cb9402d6fe1 100644
 --- a/tools/objtool/arch/arm64/decode.c
 +++ b/tools/objtool/arch/arm64/decode.c
-@@ -106,6 +106,34 @@ unsigned long arch_dest_rela_offset(int addend)
- 	return addend;
- }
- 
-+/*
-+ * In order to know if we are in presence of a sibling
-+ * call and not in presence of a switch table we look
-+ * back at the previous instructions and see if we are
-+ * jumping inside the same function that we are already
-+ * in.
-+ */
-+bool arch_is_insn_sibling_call(struct instruction *insn)
-+{
-+	struct instruction *prev;
-+	struct list_head *l;
-+	struct symbol *sym;
-+	list_for_each_prev(l, &insn->list) {
-+		prev = list_entry(l, struct instruction, list);
-+		if (!prev->func ||
-+		    prev->func->pfunc != insn->func->pfunc)
-+			return false;
-+		if (prev->stack_op.src.reg != ADR_SOURCE)
-+			continue;
-+		sym = find_symbol_containing(insn->sec, insn->immediate);
-+		if (!sym || sym->type != STT_FUNC)
-+			return false;
-+		else if (sym->type == STT_FUNC)
-+			return true;
-+		break;
-+	}
-+	return false;
-+}
- static int is_arm64(struct elf *elf)
+@@ -37,9 +37,9 @@
+  */
+ static arm_decode_class aarch64_insn_class_decode_table[] = {
+ 	[INSN_RESERVED]			= arm_decode_reserved,
+-	[INSN_UNKNOWN]			= arm_decode_unknown,
++	[INSN_UNALLOC_1]		= arm_decode_unknown,
+ 	[INSN_SVE_ENC]			= arm_decode_sve_encoding,
+-	[INSN_UNALLOC]			= arm_decode_unknown,
++	[INSN_UNALLOC_2]		= arm_decode_unknown,
+ 	[INSN_LD_ST_4]			= arm_decode_ld_st,
+ 	[INSN_DP_REG_5]			= arm_decode_dp_reg,
+ 	[INSN_LD_ST_6]			= arm_decode_ld_st,
+@@ -191,7 +191,7 @@ int arch_decode_instruction(struct elf *elf, struct section *sec,
+ int arm_decode_unknown(u32 instr, unsigned char *type,
+ 		       unsigned long *immediate, struct stack_op *op)
  {
- 	switch (elf->ehdr.e_machine) {
-diff --git a/tools/objtool/arch/x86/decode.c b/tools/objtool/arch/x86/decode.c
-index fa33b3465722..98726990714d 100644
---- a/tools/objtool/arch/x86/decode.c
-+++ b/tools/objtool/arch/x86/decode.c
-@@ -72,6 +72,11 @@ unsigned long arch_dest_rela_offset(int addend)
- 	return addend + 4;
+-	*type = 0;
++	*type = INSN_UNKNOWN;
+ 	return 0;
  }
  
-+bool arch_is_insn_sibling_call(struct instruction *insn)
-+{
-+	return true;
-+}
-+
- int arch_decode_instruction(struct elf *elf, struct section *sec,
- 			    unsigned long offset, unsigned int maxlen,
- 			    unsigned int *len, enum insn_type *type,
+@@ -206,7 +206,7 @@ int arm_decode_reserved(u32 instr, unsigned char *type,
+ 			unsigned long *immediate, struct stack_op *op)
+ {
+ 	*immediate = instr & ONES(16);
+-	*type = INSN_BUG;
++	*type = INSN_UNKNOWN;
+ 	return 0;
+ }
+ 
+diff --git a/tools/objtool/arch/arm64/include/insn_decode.h b/tools/objtool/arch/arm64/include/insn_decode.h
+index eb54fc39dca5..a01d76306749 100644
+--- a/tools/objtool/arch/arm64/include/insn_decode.h
++++ b/tools/objtool/arch/arm64/include/insn_decode.h
+@@ -20,9 +20,9 @@
+ #include "../../../arch.h"
+ 
+ #define INSN_RESERVED	0b0000
+-#define INSN_UNKNOWN	0b0001
++#define INSN_UNALLOC_1	0b0001
+ #define INSN_SVE_ENC	0b0010
+-#define INSN_UNALLOC	0b0011
++#define INSN_UNALLOC_2	0b0011
+ #define INSN_DP_IMM	0b1001	//0x100x
+ #define INSN_BRANCH	0b1011	//0x101x
+ #define INSN_LD_ST_4	0b0100	//0bx1x0
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index 4af6422d3428..519569b0329f 100644
+index 519569b0329f..baa6a93f37cd 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -566,10 +566,10 @@ static int add_jump_destinations(struct objtool_file *file)
- 			dest_off = arch_jump_destination(insn);
- 		} else if (rela->sym->type == STT_SECTION) {
- 			dest_sec = rela->sym->sec;
--			dest_off = rela->addend + 4;
-+			dest_off = arch_dest_rela_offset(rela->addend);
- 		} else if (rela->sym->sec->idx) {
- 			dest_sec = rela->sym->sec;
--			dest_off = rela->sym->sym.st_value + rela->addend + 4;
-+			dest_off = rela->sym->sym.st_value + arch_dest_rela_offset(rela->addend);
- 		} else if (strstr(rela->sym->name, "_indirect_thunk_")) {
- 			/*
- 			 * Retpoline jumps are really dynamic jumps in
-@@ -1368,8 +1368,8 @@ static void save_reg(struct insn_state *state, unsigned char reg, int base,
+@@ -1981,6 +1981,13 @@ static int validate_branch(struct objtool_file *file, struct symbol *func,
+ 	while (1) {
+ 		next_insn = next_insn_same_sec(file, insn);
  
- static void restore_reg(struct insn_state *state, unsigned char reg)
- {
--	state->regs[reg].base = CFI_UNDEFINED;
--	state->regs[reg].offset = 0;
-+	state->regs[reg].base = initial_func_cfi.regs[reg].base;
-+	state->regs[reg].offset = initial_func_cfi.regs[reg].offset;
- }
- 
- /*
-@@ -1525,8 +1525,32 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 
- 				/* add imm, %rsp */
- 				state->stack_size -= op->src.offset;
--				if (cfa->base == CFI_SP)
-+				if (cfa->base == CFI_SP) {
- 					cfa->offset -= op->src.offset;
-+					if (state->stack_size == 0 &&
-+					    initial_func_cfi.cfa.base == CFI_CFA) {
-+						cfa->base = CFI_CFA;
-+						cfa->offset = 0;
-+					}
-+				}
-+				/*
-+				 * on arm64 the save/restore of sp into fp is not automatic
-+				 * and the first one can be done without the other so we
-+				 * need to be careful not to invalidate the stack frame in such
-+				 * cases.
-+				 */
-+				else if (cfa->base == CFI_BP) {
-+					if (state->stack_size == 0 &&
-+					    initial_func_cfi.cfa.base == CFI_CFA) {
-+						cfa->base = CFI_CFA;
-+						cfa->offset = 0;
-+						restore_reg(state, CFI_BP);
-+					}
-+				} else if (cfa->base == CFI_CFA) {
-+					cfa->base = CFI_SP;
-+					if (state->stack_size >= 16)
-+						cfa->offset = 16;
-+				}
- 				break;
- 			}
- 
-@@ -1537,6 +1561,15 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 				break;
- 			}
- 
-+			if (op->src.reg == CFI_SP && op->dest.reg == CFI_BP &&
-+			    cfa->base == CFI_SP &&
-+			    regs[CFI_BP].base == CFI_CFA &&
-+			    regs[CFI_BP].offset == -cfa->offset) {
-+				/* mov %rsp, %rbp */
-+				cfa->base = op->dest.reg;
-+				state->bp_scratch = false;
-+				break;
-+			}
- 			if (op->src.reg == CFI_SP && cfa->base == CFI_SP) {
- 
- 				/* drap: lea disp(%rsp), %drap */
-@@ -1629,6 +1662,22 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 			state->stack_size -= 8;
- 			if (cfa->base == CFI_SP)
- 				cfa->offset -= 8;
-+			if (cfa->base == CFI_SP &&
-+			    cfa->offset == 0 &&
-+			    initial_func_cfi.cfa.base == CFI_CFA)
-+				cfa->base = CFI_CFA;
-+
-+			if (op->extra.used) {
-+				if (regs[op->extra.reg].offset == -state->stack_size)
-+					restore_reg(state, op->extra.reg);
-+				state->stack_size -= 8;
-+				if (cfa->base == CFI_SP)
-+					cfa->offset -= 8;
-+				if (cfa->base == CFI_SP &&
-+				    cfa->offset == 0 &&
-+				    initial_func_cfi.cfa.base == CFI_CFA)
-+					cfa->base = CFI_CFA;
-+			}
- 
- 			break;
- 
-@@ -1648,12 +1697,22 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 				/* drap: mov disp(%rbp), %reg */
- 				restore_reg(state, op->dest.reg);
- 
-+				if (op->extra.used &&
-+				    op->src.reg == CFI_BP &&
-+				    op->extra.offset == regs[op->extra.reg].offset)
-+					restore_reg(state, op->extra.reg);
-+
- 			} else if (op->src.reg == cfa->base &&
- 			    op->src.offset == regs[op->dest.reg].offset + cfa->offset) {
- 
- 				/* mov disp(%rbp), %reg */
- 				/* mov disp(%rsp), %reg */
- 				restore_reg(state, op->dest.reg);
-+
-+				if (op->extra.used &&
-+				    op->src.reg == cfa->base &&
-+				    op->extra.offset == regs[op->extra.reg].offset + cfa->offset)
-+					restore_reg(state, op->extra.reg);
- 			}
- 
- 			break;
-@@ -1669,6 +1728,8 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 	case OP_DEST_PUSH:
- 	case OP_DEST_PUSHF:
- 		state->stack_size += 8;
-+		if (cfa->base == CFI_CFA)
-+			cfa->base = CFI_SP;
- 		if (cfa->base == CFI_SP)
- 			cfa->offset += 8;
- 
-@@ -1702,6 +1763,21 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 			save_reg(state, op->src.reg, CFI_CFA, -state->stack_size);
- 		}
- 
-+		if (op->extra.used) {
-+			state->stack_size += 8;
-+			if (cfa->base == CFI_CFA)
-+				cfa->base = CFI_SP;
-+			if (cfa->base == CFI_SP)
-+				cfa->offset += 8;
-+			if (!state->drap ||
-+			    (!(op->extra.reg == cfa->base &&
-+			       op->extra.reg == state->drap_reg) &&
-+			     !(op->extra.reg == CFI_BP &&
-+			       cfa->base == state->drap_reg) &&
-+			     regs[op->extra.reg].base == CFI_UNDEFINED))
-+			save_reg(state, op->extra.reg, CFI_CFA,
-+				 -state->stack_size);
++		if (insn->type == INSN_UNKNOWN) {
++			WARN("%s+0x%lx unknown instruction type, should never be reached",
++			     insn->sec->name,
++			     insn->offset);
++			return 1;
 +		}
- 		/* detect when asm code uses rbp as a scratch register */
- 		if (!no_fp && insn->func && op->src.reg == CFI_BP &&
- 		    cfa->base != CFI_BP)
-@@ -1720,11 +1796,19 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 				/* save drap offset so we know when to restore it */
- 				state->drap_offset = op->dest.offset;
- 			}
-+			if (op->extra.used && op->extra.reg == cfa->base &&
-+			    op->extra.reg == state->drap_reg) {
-+				cfa->base = CFI_BP_INDIRECT;
-+				cfa->offset = op->extra.offset;
-+			}
- 
- 			else if (regs[op->src.reg].base == CFI_UNDEFINED) {
- 
- 				/* drap: mov reg, disp(%rbp) */
- 				save_reg(state, op->src.reg, CFI_BP, op->dest.offset);
-+				if (op->extra.used)
-+					save_reg(state, op->extra.reg, CFI_BP,
-+						 op->extra.offset);
- 			}
- 
- 		} else if (op->dest.reg == cfa->base) {
-@@ -1733,8 +1817,12 @@ static int update_insn_state(struct instruction *insn, struct insn_state *state)
- 			/* mov reg, disp(%rsp) */
- 			save_reg(state, op->src.reg, CFI_CFA,
- 				 op->dest.offset - state->cfa.offset);
-+			if (op->extra.used)
-+				save_reg(state, op->extra.reg, CFI_CFA,
-+					 op->extra.offset - state->cfa.offset);
- 		}
- 
 +
- 		break;
+ 		if (file->c_file && func && insn->func && func != insn->func->pfunc) {
+ 			WARN("%s() falls through to next function %s()",
+ 			     func->name, insn->func->name);
+@@ -2414,7 +2421,8 @@ static int validate_reachable_instructions(struct objtool_file *file)
+ 		return 0;
  
- 	case OP_DEST_LEAVE:
-@@ -1857,7 +1945,7 @@ static int validate_call(struct instruction *insn, struct insn_state *state)
+ 	for_each_insn(file, insn) {
+-		if (insn->visited || ignore_unreachable_insn(insn))
++		if (insn->visited || ignore_unreachable_insn(insn) ||
++		    insn->type == INSN_UNKNOWN)
+ 			continue;
  
- static int validate_sibling_call(struct instruction *insn, struct insn_state *state)
- {
--	if (has_modified_stack_frame(state)) {
-+	if (arch_is_insn_sibling_call(insn) && has_modified_stack_frame(state)) {
- 		WARN_FUNC("sibling call from callable instruction with modified stack frame",
- 				insn->sec, insn->offset);
- 		return 1;
-diff --git a/tools/objtool/elf.c b/tools/objtool/elf.c
-index edba4745f25a..c6ac0b771b73 100644
---- a/tools/objtool/elf.c
-+++ b/tools/objtool/elf.c
-@@ -62,7 +62,8 @@ struct symbol *find_symbol_by_offset(struct section *sec, unsigned long offset)
- 	struct symbol *sym;
- 
- 	list_for_each_entry(sym, &sec->symbol_list, list)
--		if (sym->type != STT_SECTION &&
-+		if (sym->type != STT_NOTYPE &&
-+		    sym->type != STT_SECTION &&
- 		    sym->offset == offset)
- 			return sym;
- 
+ 		WARN_FUNC("unreachable instruction", insn->sec, insn->offset);
 -- 
 2.17.1
 
