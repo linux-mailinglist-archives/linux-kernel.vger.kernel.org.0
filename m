@@ -2,104 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0C96905A6
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 18:21:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94EB7905AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 18:23:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726654AbfHPQVO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 12:21:14 -0400
-Received: from mail-lj1-f180.google.com ([209.85.208.180]:34441 "EHLO
-        mail-lj1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726129AbfHPQVO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:21:14 -0400
-Received: by mail-lj1-f180.google.com with SMTP id x18so5840645ljh.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 09:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ymHwSq4wTpjRhSkNkSGTSSHl5As6L3PV3bdJQptYy1o=;
-        b=fgp4v8P6AxU+KKUY1EDc5rYVP1G7Mk7BIPRI7oZVb9n5xTGtQUQwxxYGrbtt4g5Gu3
-         D4qg2XzBD6zjFtV9FiMyLGBsnngoRe1p7cJuCZFYZmtZ0f0vQtQMdktkSt0/8nrR0Aoz
-         iLR92sZEp4yc9Ff9XsWy9gGBabbw281EZw/wg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ymHwSq4wTpjRhSkNkSGTSSHl5As6L3PV3bdJQptYy1o=;
-        b=OybmTdqftF2eA52E7uPk95nLIhVD85NerDXI9kERm8Z3YxfltB7r2SwU4DwJzfAlrK
-         QedQSzqQ15986J9iM9ynL6k3NgISsOpSNDRe/CIw+yrWyex0gkrprud569xEo37FOkWI
-         inZeXWkz96c+U8CQu8zFxUgIeozhEROMXlJ6yNni8Vo0Q9Cz8bFH3A2tTOi5FYg3BKF3
-         wrkfCoGcPVHnsGhX3kMUsf06G+74KCEAxZUZCSR/rnVyMKffTWRpWO9hGhNLTZu9Us89
-         8TLQ3dnzMd3Ga+Ow/u3krxDjsO1CoRHFMvZfaJlE6q0JH6ulXCOZsuDoy0m37g3ikDtX
-         QYjA==
-X-Gm-Message-State: APjAAAXgl4A5E/is7GcH3+ZcW8xhfgYFGcYucPSzMakHdP9PiUl2+pXs
-        JcJhA5GijhKEYlfG4Ul72Fogk7ls7ls=
-X-Google-Smtp-Source: APXvYqyELHetkxTKiX/nI6sPruFWcO310tbi62GXXRSEAVxIHkrqqBIKbwla4vsePr3WgtyH8a+1sQ==
-X-Received: by 2002:a2e:9cc6:: with SMTP id g6mr6208754ljj.22.1565972472100;
-        Fri, 16 Aug 2019 09:21:12 -0700 (PDT)
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com. [209.85.208.179])
-        by smtp.gmail.com with ESMTPSA id r76sm1024710ljb.13.2019.08.16.09.21.08
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2019 09:21:09 -0700 (PDT)
-Received: by mail-lj1-f179.google.com with SMTP id z17so5845241ljz.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 09:21:08 -0700 (PDT)
-X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr6088169lja.180.1565972468547;
- Fri, 16 Aug 2019 09:21:08 -0700 (PDT)
+        id S1726851AbfHPQXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 12:23:50 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56782 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726129AbfHPQXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:23:50 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B2ABD3084295;
+        Fri, 16 Aug 2019 16:23:49 +0000 (UTC)
+Received: from x1.home (ovpn-116-99.phx2.redhat.com [10.3.116.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F213F27C49;
+        Fri, 16 Aug 2019 16:23:48 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 10:23:47 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Cornelia Huck <cohuck@redhat.com>, kvm@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/10] vfio_pci: Loop using PCI_STD_NUM_BARS
+Message-ID: <20190816102347.781a2ee1@x1.home>
+In-Reply-To: <20190816092437.31846-9-efremov@linux.com>
+References: <20190816092437.31846-1-efremov@linux.com>
+        <20190816092437.31846-9-efremov@linux.com>
+Organization: Red Hat
 MIME-Version: 1.0
-References: <20190808154240.9384-1-hch@lst.de> <CAHk-=wh3jZnD3zaYJpW276WL=N0Vgo4KGW8M2pcFymHthwf0Vg@mail.gmail.com>
- <20190816062751.GA16169@infradead.org> <20190816115735.GB5412@mellanox.com> <20190816123258.GA22140@lst.de>
-In-Reply-To: <20190816123258.GA22140@lst.de>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 16 Aug 2019 09:20:52 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wiOB5wLWxHe8UDHnBB1DWrZaZ62ZPXnD0KiE8hYoWokNA@mail.gmail.com>
-Message-ID: <CAHk-=wiOB5wLWxHe8UDHnBB1DWrZaZ62ZPXnD0KiE8hYoWokNA@mail.gmail.com>
-Subject: Re: cleanup the walk_page_range interface
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas@shipmail.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Steven Price <steven.price@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Minchan Kim <minchan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 16 Aug 2019 16:23:49 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 5:33 AM Christoph Hellwig <hch@lst.de> wrote:
->
-> I see two new walk_page_range user in linux-next related to MADV_COLD
-> support (which probably really should use walk_range_vma), and then
-> there is the series from Steven, which hasn't been merged yet.
+On Fri, 16 Aug 2019 12:24:35 +0300
+Denis Efremov <efremov@linux.com> wrote:
 
-It does sound like this might as well just be handled in linux-next,
-and there's no big advantage in me pulling the walker cleanups early.
+> Refactor loops to use 'i < PCI_STD_NUM_BARS' instead of
+> 'i <= PCI_STD_RESOURCE_END'.
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  drivers/vfio/pci/vfio_pci.c         | 11 +++++++----
+>  drivers/vfio/pci/vfio_pci_config.c  | 10 ++++++----
+>  drivers/vfio/pci/vfio_pci_private.h |  4 ++--
+>  3 files changed, 15 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
+> index 703948c9fbe1..cb7d220d3246 100644
+> --- a/drivers/vfio/pci/vfio_pci.c
+> +++ b/drivers/vfio/pci/vfio_pci.c
+> @@ -110,13 +110,15 @@ static inline bool vfio_pci_is_vga(struct pci_dev *pdev)
+>  static void vfio_pci_probe_mmaps(struct vfio_pci_device *vdev)
+>  {
+>  	struct resource *res;
+> -	int bar;
+> +	int i;
+>  	struct vfio_pci_dummy_resource *dummy_res;
+>  
+>  	INIT_LIST_HEAD(&vdev->dummy_resources_list);
+>  
+> -	for (bar = PCI_STD_RESOURCES; bar <= PCI_STD_RESOURCE_END; bar++) {
+> -		res = vdev->pdev->resource + bar;
+> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> +		int bar = i + PCI_STD_RESOURCES;
+> +
+> +		res = &vdev->pdev->resource[bar];
+>  
+>  		if (!IS_ENABLED(CONFIG_VFIO_PCI_MMAP))
+>  			goto no_mmap;
+> @@ -399,7 +401,8 @@ static void vfio_pci_disable(struct vfio_pci_device *vdev)
+>  
+>  	vfio_config_free(vdev);
+>  
+> -	for (bar = PCI_STD_RESOURCES; bar <= PCI_STD_RESOURCE_END; bar++) {
+> +	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
+> +		bar = i + PCI_STD_RESOURCES;
+>  		if (!vdev->barmap[bar])
+>  			continue;
+>  		pci_iounmap(pdev, vdev->barmap[bar]);
+> diff --git a/drivers/vfio/pci/vfio_pci_config.c b/drivers/vfio/pci/vfio_pci_config.c
+> index f0891bd8444c..df8772395219 100644
+> --- a/drivers/vfio/pci/vfio_pci_config.c
+> +++ b/drivers/vfio/pci/vfio_pci_config.c
+> @@ -455,16 +455,18 @@ static void vfio_bar_fixup(struct vfio_pci_device *vdev)
+>  
+>  	bar = (__le32 *)&vdev->vconfig[PCI_BASE_ADDRESS_0];
+>  
+> -	for (i = PCI_STD_RESOURCES; i <= PCI_STD_RESOURCE_END; i++, bar++) {
+> -		if (!pci_resource_start(pdev, i)) {
+> +	for (i = 0; i < PCI_STD_NUM_BARS; i++, bar++) {
+> +		int ibar = i + PCI_STD_RESOURCES;
+> +
+> +		if (!pci_resource_start(pdev, ibar)) {
+>  			*bar = 0; /* Unmapped by host = unimplemented to user */
+>  			continue;
+>  		}
+>  
+> -		mask = ~(pci_resource_len(pdev, i) - 1);
+> +		mask = ~(pci_resource_len(pdev, ibar) - 1);
+>  
+>  		*bar &= cpu_to_le32((u32)mask);
+> -		*bar |= vfio_generate_bar_flags(pdev, i);
+> +		*bar |= vfio_generate_bar_flags(pdev, ibar);
+>  
+>  		if (*bar & cpu_to_le32(PCI_BASE_ADDRESS_MEM_TYPE_64)) {
+>  			bar++;
 
-Honestly, even if it ends up being handled as a conflict resolution
-issue (rather than some shared branch), it probably simply isn't all
-that painful. We have those kinds of semantic conflicts all the time,
-it doesn't worry me too much.
+It might be a bit cleaner to rename the 'bar' variable to 'vbar', then
+we have 'bar' available to use as the BAR number.  It seems more
+consistent with other uses.  Otherwise the logic looks fine.  Thanks,
 
-So I'm not worried about new _users_ of the page walker concurrently
-with the page walker interface itself being cleaned up. Those kinds of
-conflicts end up being "just make sure to update the new users to the
-new interface when they get pulled". Happens all the time.
+Alex
 
-I'd be more worried about two different branches wanting to change the
-internal implementation of the page walker itself, and the actual
-*code* itself getting conflicts (as opposed to the interface vs users
-kind of conflicts). Those kinds of conflicts can be messy. But it
-sounds like Thomas Hellstr=C3=B6m's changes aren't that kind of thing.
+> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
+> index ee6ee91718a4..8a2c7607d513 100644
+> --- a/drivers/vfio/pci/vfio_pci_private.h
+> +++ b/drivers/vfio/pci/vfio_pci_private.h
+> @@ -86,8 +86,8 @@ struct vfio_pci_reflck {
+>  
+>  struct vfio_pci_device {
+>  	struct pci_dev		*pdev;
+> -	void __iomem		*barmap[PCI_STD_RESOURCE_END + 1];
+> -	bool			bar_mmap_supported[PCI_STD_RESOURCE_END + 1];
+> +	void __iomem		*barmap[PCI_STD_NUM_BARS];
+> +	bool			bar_mmap_supported[PCI_STD_NUM_BARS];
+>  	u8			*pci_config_map;
+>  	u8			*vconfig;
+>  	struct perm_bits	*msi_perm;
 
-I'm still willing to do the early merge if it turns out to be hugely
-helpful, but from the discussion so far it does sound like "just merge
-during 5.4 merge window" is perfectly fine.
-
-               Linus
