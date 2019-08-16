@@ -2,71 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF2838FE41
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:40:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 755538FE66
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:41:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727534AbfHPIjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:39:22 -0400
-Received: from esa3.mentor.iphmx.com ([68.232.137.180]:42057 "EHLO
-        esa3.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727519AbfHPIjT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:39:19 -0400
-IronPort-SDR: rhV3hDnFVIIdujUjvqAJwMio7Pm8J+A+zBP5ZzHTkclgeOhVTcZBScl+O65hKDquz8pRmeZbd+
- zDZkLt1P33LcTWn5qHJU9tvf9gRXGwX7DKLdOmicI8dmdrKq8R8u81Uc6OjXmQ/bLfip4hfuC3
- YwZSjCasU+lpUwRoKhhO/FtzZPCZFVZI9SIi9Jnf4nPvxikOcHZXCdgy8x0NWiQCrnfhKTdjGP
- D52mlNNBPxpGQlR2xRD0mA5zgGLXAqm2Qaz+tNXf55Opcq9zPXgcVn5AP20jz7n70cG+oQwCe8
- /RU=
-X-IronPort-AV: E=Sophos;i="5.64,391,1559548800"; 
-   d="scan'208";a="40507262"
-Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa3.mentor.iphmx.com with ESMTP; 16 Aug 2019 00:39:03 -0800
-IronPort-SDR: KpBfaGbIc1jMikhxq9noTnNdCkmy+laTPt8mVUXnd6C6GRF4wdScsNBESmhWsdNZXF+K40wNLQ
- j62f7E2gpZ4LH+rF57AL8mKwNimNZWPyFGjCPgYCelyRaD4hNr2cDRBnE7J7tbwiX7UX1FE0Fh
- QQe0Ydp4qE+hif1YrDENQAi/dZKxo6zKNiMIqGmONZLUE2cu9ter4R3RQku1WWsVETxC9hWyvB
- cJrwUx2jdzrq3V0mc3fZogODPfImWPjJ8u+AYNGLNa4eRPIytDNRP2snNuuETW1knj23SBLkVU
- fbo=
-From:   Jiada Wang <jiada_wang@mentor.com>
-To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>
-CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <jiada_wang@mentor.com>, <george_davis@mentor.com>
-Subject: [PATCH v1 63/63] Input: atmel_mxt_ts - Fix compilation warning
-Date:   Fri, 16 Aug 2019 17:39:02 +0900
-Message-ID: <20190816083902.19659-4-jiada_wang@mentor.com>
-X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190816083902.19659-1-jiada_wang@mentor.com>
-References: <20190816083902.19659-1-jiada_wang@mentor.com>
+        id S1727057AbfHPIlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:41:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:57554 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726810AbfHPIlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:41:51 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 15731BB44AE410066264;
+        Fri, 16 Aug 2019 16:41:50 +0800 (CST)
+Received: from [127.0.0.1] (10.57.101.250) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
+ 16:41:40 +0800
+Subject: Re: [PATCH] gpio: pl061: Fix the issue failed to register the ACPI
+ interruption
+To:     Linus Walleij <linus.walleij@linaro.org>
+References: <5D514D6F.4090904@hisilicon.com>
+ <CACRpkdbi21mV5quTmur6egb6FJMFrD-Lg1EUKtk+HejyWjzmUA@mail.gmail.com>
+CC:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        "Jonathan Cameron" <jonathan.cameron@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>, <jinying@hisilicon.com>,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Tangkunshan <tangkunshan@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5D566C44.5080106@hisilicon.com>
+Date:   Fri, 16 Aug 2019 16:41:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: SVR-ORW-MBX-09.mgc.mentorg.com (147.34.90.209) To
- svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
+In-Reply-To: <CACRpkdbi21mV5quTmur6egb6FJMFrD-Lg1EUKtk+HejyWjzmUA@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.101.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-fix "make W=1" compilation warnings from Atmel driver
-as per the compilation logs.
+Hi Linus,
 
-Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
----
- drivers/input/touchscreen/atmel_mxt_ts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 2019/8/14 17:04, Linus Walleij wrote:
+> Hi Wei,
+>
+> thanks for your patch!
+>
+> This doesn't apply for my "devel" branch, can you rebase
+> on this:
+> https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=devel
+>
+> We have moved some ACPI headers around recently.
 
-diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index 6e5fad91c379..063565511ae1 100644
---- a/drivers/input/touchscreen/atmel_mxt_ts.c
-+++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -2056,7 +2056,7 @@ static int mxt_prepare_cfg_mem(struct mxt_data *data, struct mxt_cfg *cfg)
- 
- 			byte_offset = reg + i - cfg->start_ofs;
- 
--			if (byte_offset >= 0 && byte_offset < cfg->mem_size) {
-+			if (byte_offset < cfg->mem_size) {
- 				*(cfg->mem + byte_offset) = val;
- 			} else {
- 				dev_err(dev, "Bad object: reg:%d, T%d, ofs=%d\n",
--- 
-2.19.2
+Thanks to review!
+I just sent out the v2 based on that.
+
+> On Mon, Aug 12, 2019 at 1:28 PM Wei Xu <xuwei5@hisilicon.com> wrote:
+>
+>> Invoke acpi_gpiochip_request_interrupts after the acpi data has been
+>> attached to the pl061 acpi node to register interruption.
+> Makes sense.
+>
+>> Fixes: 04ce935c6b2a ("gpio: pl061: Pass irqchip when adding gpiochip")
+> I doubt this is a regression since I haven't seen anyone use this
+> gpiochip with ACPI before.
+>
+> Please rename the patch "gpio: pl061: Add ACPI support" unless
+> you can convince me it worked without changes before.
+
+In the v2, I attached the log on QEMU v3.0.0 and Linux kernel v5.2.0-rc7 
+and
+the pl061 driver can register ACPI interruption.
+Based on that, I did not rename the patch but I am OK to rename it if 
+you have
+any doubt.
+
+> Please include some ACPI people on review of this. From
+> MAINTAINERS:
+> ACPI
+> M:      "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> M:      Len Brown <lenb@kernel.org>
+> L:      linux-acpi@vger.kernel.org
+>
+> I would also include Andy Shevchenko and Mika Westerberg for
+> the GPIO aspects.
+Copied to all of them in the v2.
+Thanks!
+
+Best Regards,
+Wei
+
+> Thanks!
+> Linus Walleij
+>
+> .
+>
+
 
