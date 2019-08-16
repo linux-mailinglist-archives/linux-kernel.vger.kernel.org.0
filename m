@@ -2,102 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4777C901C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:39:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4936901D0
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:40:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbfHPMjW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 08:39:22 -0400
-Received: from ozlabs.org ([203.11.71.1]:37755 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727182AbfHPMjW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:39:22 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4692v90yfSz9sDQ;
-        Fri, 16 Aug 2019 22:39:17 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1565959159;
-        bh=BViRoTUOAfG+pYpx8zNplnOf0mFkjZ2oGDklRG/VWIg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=aW9RsszNHcmOQIoQlpVO3Q0a2krBJN0PJaQQQfGQKg9xmkAq5ppFud5qbPiV7GO0p
-         ObixDABG2hCmyVK/c4OrF5WSAFtjHm1aKIu0CZgfWVf0Q8WXrDa3e1Obmx3VngM8Tr
-         13srGruUtxDdL4vFWGjxnnbUndCcCB534qwSybQy8Qwl+xHEYTQVZyllS7992p83Ia
-         w5M2BXZNTQI+YMGvbcFxHPhsRTGFQVu8nXauRNo9SHV+yQG0rUuqu/oSmcb1rIGEoh
-         gOZeAxlaO0ZHlJYuwVI+a+PCOAoiJoZhcU/oOYQOYCr0fshidtxvjMCG8s29vYP7O9
-         /P3cwxeswgQ+g==
-Date:   Fri, 16 Aug 2019 22:39:14 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrii Nakryiko <andriin@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: linux-next: manual merge of the net-next tree with the kbuild
- tree
-Message-ID: <20190816223914.1cc64295@canb.auug.org.au>
-In-Reply-To: <20190816160128.36e5cc4e@canb.auug.org.au>
-References: <20190816124143.2640218a@canb.auug.org.au>
-        <CAEf4BzY9dDZF-DBDmuQQz0Rcx3DNGvQn_GLr0Uar1PAbAf2iig@mail.gmail.com>
-        <20190816160128.36e5cc4e@canb.auug.org.au>
+        id S1727307AbfHPMke (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:40:34 -0400
+Received: from mail-eopbgr60056.outbound.protection.outlook.com ([40.107.6.56]:20398
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727159AbfHPMke (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:40:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=YESYB6AXN4CeudgldfnpVuQqQSa8FubEo/bpOzfOB44FymI85b2jUJMczO9KTC8unPLpavdyWq66hN2gZ+JLb73oWigVD3MmSQC5xDXZlVkgumcZHwV2RtNsozfo9KpTcGUgOCkImAxiB21NGjBolPdFCOeyL33hd6e8Y7ZBYcItKw6vih22LhS119PhX7xu2yCVjYpABjRWEd5UU8kCnK2I8vgjh/eXIxxDo4PiehoQ58DghzRet1Z44EZXJLUx8a8fjixL6Y44nQRUmBm2+mRMeBb5JO92gWdvj2M8HOLtQ0g1bsrFGMHayEu8Fs+WyLFxeOTk76Sg83tpp1flqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6MQHQ34g+2H1b0ZoReFLzIEtb4+bD/IlYOfpioqTric=;
+ b=FEH3SRojDEP1GOBJwnRq/L04DyWCScX4qVmlph4jXK3Jfg0VVHkyjsx76u3TFOt2mjBWyj+Kl9DNkdf6VJQbRcR4z7cW046RyQJlSglc3WsTgP+FxJEKU6ADTQRMrtj4oIQII/x+1kKFMvZpQTSxEytoa3+e6JTuzBYWhBNFgf+RXmqFocImFRwKSU7ebYfgTgJ74tRK/ZdAwn/bi0m2nxWb9IomViIgjRTFMni7uyDxbsJmRdy6mfvqp9cMttDn8cGubXtHTDe8VsQh2+XHC0Ic9w7SdDxEdF7kpvcGWoR4+87Iqn0qxgaaXfp1gz4LlNS9TR9TNXr55KlRv98zyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6MQHQ34g+2H1b0ZoReFLzIEtb4+bD/IlYOfpioqTric=;
+ b=r+Yk4hh/zE9TGLK+2z/i2eX1rsGQoj9Rx0XoHLOEXModJH6Ql8BKsVwJwlzhIffbj5PBhfqBfNM/3L5PiytTmIyX17arbBiFc2c0DYZo+Fr6sLmfeC9rnIsTcdJ8MQw/omxNhkvwkJ78BzF1K0N39di8H159XDe5VDcjnt5CCw0=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB4272.eurprd05.prod.outlook.com (52.133.12.25) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Fri, 16 Aug 2019 12:40:30 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7%6]) with mapi id 15.20.2178.016; Fri, 16 Aug 2019
+ 12:40:30 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Dan Williams <dan.j.williams@intel.com>,
+        Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: add a not device managed memremap_pages v2
+Thread-Topic: add a not device managed memremap_pages v2
+Thread-Index: AQHVU/97vsv9UEZaeUmMAUjVp5ftIKb9tb4AgAAAnICAAAEzAA==
+Date:   Fri, 16 Aug 2019 12:40:30 +0000
+Message-ID: <20190816124024.GF5412@mellanox.com>
+References: <20190816065434.2129-1-hch@lst.de>
+ <20190816123356.GE5412@mellanox.com> <20190816123607.GA22681@lst.de>
+In-Reply-To: <20190816123607.GA22681@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YQBPR0101CA0016.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00::29) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [156.34.55.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: ff118e16-0ef1-4aa3-a43f-08d72246ec1a
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB4272;
+x-ms-traffictypediagnostic: VI1PR05MB4272:
+x-microsoft-antispam-prvs: <VI1PR05MB42722C7BFF7B7A49010D6F9CCFAF0@VI1PR05MB4272.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0131D22242
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(39850400004)(396003)(346002)(136003)(189003)(199004)(5660300002)(11346002)(8936002)(81166006)(81156014)(4744005)(8676002)(26005)(86362001)(66066001)(229853002)(1076003)(14454004)(186003)(54906003)(6916009)(478600001)(386003)(33656002)(102836004)(6506007)(52116002)(76176011)(446003)(486006)(476003)(2616005)(316002)(99286004)(4326008)(3846002)(6436002)(256004)(6512007)(25786009)(14444005)(66446008)(71200400001)(66476007)(6246003)(64756008)(53936002)(6486002)(66556008)(7736002)(71190400001)(36756003)(305945005)(6116002)(2906002)(66946007);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB4272;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: I2etAiXoz1Q0bO4szsQ9ZyGopxORIB8Zai6kmODFx+LptCh1xZJlz001Xfys434s18LcskeJkxfrsn2jmBZe8VEihJovMKOaEcQ31d701uFNki0guN0tgahkEfkjhxvJQL3715IuZrObazTpTPz/p3bHafRfDWxfysmDKG3vKL8bM0GeJT1qJb1sbtVkI2VPwSEj+EhG8YdSXDF2rUct1ly+vplAsOJ8KaZtCuFF/A/+zkQpL1bzA0QOeWaRfw+dmUfDabSylxZIC7jM1GG73oUxxYP4IpzeIRCh9CxproQDLpKX0O0SX27FCIzR3mwSrgYv7aSRkDkyC4eDodeoKP7Ed++efWO/BpkufuwfPXKuCOcqXhvtrLULuJXcaBa9tm91hGQy36KFBvpkplMN7Yeiy+1yZ3YpGbwrF7OTr5M=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <49CFD18A4DCBF442B6C7AF0837F23DC5@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/spNxyuS=dKTRE=B2ygqtFmd";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff118e16-0ef1-4aa3-a43f-08d72246ec1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2019 12:40:30.2337
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: O3V86azQkC5uno8w8R0FgXibF7U7UEHD3Bw9sdhW2d79/vC9P5P6mGbjUslksa1nFTxgfrBtpGXlTJVGXi+iHA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB4272
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/spNxyuS=dKTRE=B2ygqtFmd
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Fri, 16 Aug 2019 16:01:28 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> On Thu, 15 Aug 2019 22:21:29 -0700 Andrii Nakryiko <andrii.nakryiko@gmail=
-.com> wrote:
-> >
-> > Thanks, Stephen! Looks good except one minor issue below. =20
->=20
-> Thanks for checking.
->=20
-> > >   vmlinux_link()
-> > >   {
-> > >  +      info LD ${2}   =20
+On Fri, Aug 16, 2019 at 02:36:07PM +0200, Christoph Hellwig wrote:
+> > > Changes since v1:
+> > >  - don't overload devm_request_free_mem_region
+> > >  - export the memremap_pages and munmap_pages as kvmppc can be a modu=
+le
 > >=20
-> > This needs to be ${1}. =20
+> > What tree do we want this to go through? Dan are you running a pgmap
+> > tree still? Do we know of any conflicts?
 >=20
-> At least its only an information message and doesn't affect the build.
-> I will fix my resolution for Monday.
+> The last changes in this area went through the hmm tree.  There are
+> now known conflicts, and the kvmppc drivers that needs this already
+> has a dependency on the hmm tree for the migrate_vma_* changes.
 
-I also fixed it up in today's linux-next (just so people aren't
-suprised and report it :-)).
---=20
-Cheers,
-Stephen Rothwell
+OK by me, Dan can you ack or review? Thanks
 
---Sig_/spNxyuS=dKTRE=B2ygqtFmd
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1Wo/IACgkQAVBC80lX
-0Gyz4Af/ewkkUYxT3pvXClY2luiHNEx7ic7jT2jK8sY6lPKBYWVFi6DDOBe5np3u
-bWiiA3RaZBDnCts7mw/mfS2NJTRrza51FnjQeVIPHucqlUt8L5sjDorBSwS6Rgyh
-TXTXXQVer6Fldf9dm+5WoVgUDys3DUIrKtSMsQ+iKWQRykiaaHWgKDz8is250Z+v
-FX7eQ27AwYnl/eTsTAOf65gIDekjDauaJnbljKBl1jIOxC/5VEmU0YFXrKCP4nnU
-cHNsvPruzO+d1+0sTapb2MiEGpndV3m4HlvaB705hJaLmI3E0Jtu/d+3zX3rQDkr
-VYZ7Ug24gl+wJClrOC1c0WzpdIv0vg==
-=E/fG
------END PGP SIGNATURE-----
-
---Sig_/spNxyuS=dKTRE=B2ygqtFmd--
+Jason
