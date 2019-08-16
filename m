@@ -2,108 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E638090177
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D583A90151
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:24:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727554AbfHPMZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 08:25:47 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:60144 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727266AbfHPMYm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:24:42 -0400
-Received: from [88.128.80.55] (helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hybHM-0000UE-Ke; Fri, 16 Aug 2019 14:24:25 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Kever Yang <kever.yang@rock-chips.com>
-Cc:     linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomohiro Mayama <parly-gh@iris.mystia.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm: dts: rockchip: fix vcc_host_5v regulator for usb3 host
-Date:   Fri, 16 Aug 2019 14:24:06 +0200
-Message-ID: <2932927.UJgUFA1Pmh@phil>
-In-Reply-To: <20190815081252.27405-1-kever.yang@rock-chips.com>
-References: <20190815081252.27405-1-kever.yang@rock-chips.com>
+        id S1727184AbfHPMYS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:24:18 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:38462 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727007AbfHPMYS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:24:18 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 5AE142AF;
+        Fri, 16 Aug 2019 14:24:15 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1565958255;
+        bh=Xvsx+Qa2ZOQg4OjurY0P2Q8XnZceB+vL/gqEMZuluQI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NkbxcG36hw0krUs5uFpSKH+UI86xtGWx65rlhdgnABM+nCetNG9shKvQ/aL5H1Nwd
+         BNd0gNUFcLwQQpiyPh2gxFhTsgU72SsW1sXqGj2nf6OeQryHfllS2GMWrqcSZk+DeF
+         R/TqDRz1zxwY0FxfVdgKS67Ogv92j+mF0Fnh+Q7A=
+Date:   Fri, 16 Aug 2019 15:24:11 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the drm-misc tree
+Message-ID: <20190816122411.GE5020@pendragon.ideasonboard.com>
+References: <20190816133132.6b37d7fa@canb.auug.org.au>
+ <20190816044846.GA27781@ravnborg.org>
+ <CAKMK7uFy2vtOpSNrJyPDp0mvPTEvTD3zw7_gTuWe6gRqj18FFg@mail.gmail.com>
+ <20190816094715.GB5020@pendragon.ideasonboard.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190816094715.GB5020@pendragon.ideasonboard.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kever, TL,
-
-[added TL Lim for clarification]
-
-Am Donnerstag, 15. August 2019, 10:12:52 CEST schrieb Kever Yang:
-> According to rock64 schemetic V2 and V3, the VCC_HOST_5V output is
-> controlled by USB_20_HOST_DRV, which is the same as VCC_HOST1_5V.
-
-The v1 schematics I have do reference the GPIO0_A0 as controlling this
-supply, so the big question would be how to handle the different versions.
-
-Because adding this would probably break v1 boards in this function.
-
-@TL: where v1 boards also sold or were they only used during development?
-If this were the case, we could just apply the patch, not caring about
-v1 boards, but if v1 boards were also sold to customers there would be
-more of a problem.
-
-Thanks
-Heiko
-
-
+On Fri, Aug 16, 2019 at 12:47:15PM +0300, Laurent Pinchart wrote:
+> On Fri, Aug 16, 2019 at 08:23:54AM +0200, Daniel Vetter wrote:
+> > On Fri, Aug 16, 2019 at 6:48 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > > > Hi all,
+> > > >
+> > > > After merging the drm-misc tree, today's linux-next build (x86_64
+> > > > allmodconfig) produced this warning:
+> > > >
+> > > > warning: same module names found:
+> > > >   drivers/video/fbdev/omap2/omapfb/displays/panel-nec-nl8048hl11.ko
+> > > >   drivers/gpu/drm/panel/panel-nec-nl8048hl11.ko
+> > > > warning: same module names found:
+> > > >   drivers/video/fbdev/omap2/omapfb/displays/panel-sharp-ls037v7dw01.ko
+> > > >   drivers/gpu/drm/panel/panel-sharp-ls037v7dw01.ko
+> > > > warning: same module names found:
+> > > >   drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.ko
+> > > >   drivers/gpu/drm/panel/panel-sony-acx565akm.ko
+> > > > warning: same module names found:
+> > > >   drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.ko
+> > > >   drivers/gpu/drm/panel/panel-tpo-td028ttec1.ko
+> > > > warning: same module names found:
+> > > >   drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.ko
+> > > >   drivers/gpu/drm/panel/panel-tpo-td043mtea1.ko
+> > > >
+> > > > Introduced by commits
+> > > >
+> > > >   df439abe6501 ("drm/panel: Add driver for the NEC NL8048HL11 panel")
+> > > >   c9cf4c2a3bd3 ("drm/panel: Add driver for the Sharp LS037V7DW01 panel")
+> > > >   1c8fc3f0c5d2 ("drm/panel: Add driver for the Sony ACX565AKM panel")
+> > > >   415b8dd08711 ("drm/panel: Add driver for the Toppoly TD028TTEC1 panel")
+> > > >   dc2e1e5b2799 ("drm/panel: Add driver for the Toppoly TD043MTEA1 panel")
+> > >
+> > > Ups, had not seen this one coming.
+> > > We are in the process of removing the drivers in drivers/video/fbdev/omap2/omapfb/
+> > > and decided to introduce the new drivers early to get them out of a
+> > > longer patch series.
 > 
-> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
-> ---
+> Oops :-(
 > 
-> Changes in v2:
-> - remove enable-active-high property
+> The new drivers were initially part of a patch series that removed the
+> duplicated drivers. The new drivers then got fast-tracked, and I didn't
+> notice this issue.
 > 
->  arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 11 ++---------
->  1 file changed, 2 insertions(+), 9 deletions(-)
+> > Should we have a config dependency to not allow the old fbdev omap
+> > when the drm omap driver is enabled? I think that would take care of
+> > all this.
+> > 
+> > Or too annoying for development?
+> > 
+> > Also note that fbdev is in drm-misc now, so we should be able to fix
+> > this all without cross-tree conflicts.
 > 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-> index 7cfd5ca6cc85..62936b432f9a 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
-> @@ -34,10 +34,9 @@
->  
->  	vcc_host_5v: vcc-host-5v-regulator {
->  		compatible = "regulator-fixed";
-> -		enable-active-high;
-> -		gpio = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
-> +		gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
->  		pinctrl-names = "default";
-> -		pinctrl-0 = <&usb30_host_drv>;
-> +		pinctrl-0 = <&usb20_host_drv>;
->  		regulator-name = "vcc_host_5v";
->  		regulator-always-on;
->  		regulator-boot-on;
-> @@ -320,12 +319,6 @@
->  			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
->  		};
->  	};
-> -
-> -	usb3 {
-> -		usb30_host_drv: usb30-host-drv {
-> -			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
-> -		};
-> -	};
->  };
->  
->  &sdmmc {
-> 
+> Note that drivers/video/fbdev/omap2/omapfb/ will stay, it's
+> drivers/gpu/drm/omapdrm/displays/ that is being removed. FB_OMAP2
+> already depends on DRM_OMAP = n, I propose doing something similar at
+> the level of the individual display drivers.
 
+I've just posted "[PATCH 0/2] Fix module name clash with omapdrm and DRM
+panel modules" that should solve this issue.
 
+-- 
+Regards,
 
-
+Laurent Pinchart
