@@ -2,131 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EAD090402
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:32:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 908B6903FB
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:31:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfHPOcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:32:04 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11212 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727245AbfHPOcD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:32:03 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7GEUQFW046935;
-        Fri, 16 Aug 2019 10:31:10 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2udx190u1s-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Aug 2019 10:31:10 -0400
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7GEUaMi047879;
-        Fri, 16 Aug 2019 10:31:10 -0400
-Received: from ppma02wdc.us.ibm.com (aa.5b.37a9.ip4.static.sl-reverse.com [169.55.91.170])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2udx190u16-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Aug 2019 10:31:10 -0400
-Received: from pps.filterd (ppma02wdc.us.ibm.com [127.0.0.1])
-        by ppma02wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7GEUPFY015415;
-        Fri, 16 Aug 2019 14:31:09 GMT
-Received: from b03cxnp08027.gho.boulder.ibm.com (b03cxnp08027.gho.boulder.ibm.com [9.17.130.19])
-        by ppma02wdc.us.ibm.com with ESMTP id 2u9nj66bq8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 16 Aug 2019 14:31:09 +0000
-Received: from b03ledav005.gho.boulder.ibm.com (b03ledav005.gho.boulder.ibm.com [9.17.130.236])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7GEV7in58392940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 14:31:07 GMT
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 02BFBBE056;
-        Fri, 16 Aug 2019 14:31:07 +0000 (GMT)
-Received: from b03ledav005.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 781A9BE081;
-        Fri, 16 Aug 2019 14:31:06 +0000 (GMT)
-Received: from localhost (unknown [9.85.178.67])
-        by b03ledav005.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Aug 2019 14:31:06 +0000 (GMT)
-From:   Gustavo Walbon <gwalbon@linux.ibm.com>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     diana.craciun@nxp.com, tglx@linutronix.de, jkosina@suse.cz,
-        mikey@neuling.org, jpoimboe@redhat.com, leitao@debian.org,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        gustavowalbon@gmail.com
-Subject: [PATCH] powerpc: Set right value of Speculation_Store_Bypass in /proc/<pid>/status
-Date:   Fri, 16 Aug 2019 11:30:48 -0300
-Message-Id: <20190816143048.11458-1-gwalbon@linux.ibm.com>
-X-Mailer: git-send-email 2.19.1
+        id S1727392AbfHPObe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:31:34 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50135 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727245AbfHPObd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:31:33 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4695Nd21HCz9sN1;
+        Sat, 17 Aug 2019 00:31:29 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1565965890;
+        bh=2iRYX7jfBSRcApAbDixoo0BxgKjwKEbNC9aG5ULUoZM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=tAerOc88l1hx8EFyxGITEtlqGZPIK9IJpG0gMQJWDwkAJBzqjfCGwIy62f0lXZUFc
+         n3Rwr9Wz4pUWsBf5AK/qTBCvMm3Rvw0y99WMeMj7fG+OqsBzFk19LCCccMsBwEdo0h
+         sDRftVk55z7faozAHOgDWixuaxYQbFZJsGuL2g1W3SNTq/T8lBuyNkyMTyz6DZiRbT
+         oLEnAQdy8a3b1kUacZg4mpzNGYqjIRmF/6h8uk07UhDXJEq0GgnG70R61+7QWmoFLm
+         ElGOw3zRYDluqdzP/D3DnBpwE5QjEx98q2u8alqPDq8K5EBlDJOQq1XUSBWfcGHqH2
+         kkembZYmp74Xg==
+Date:   Sat, 17 Aug 2019 00:31:24 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Gerd Rausch <gerd.rausch@oracle.com>
+Cc:     Andy Grover <andy@groveronline.com>,
+        David Miller <davem@davemloft.net>,
+        Networking <netdev@vger.kernel.org>, Chris Mason <clm@fb.com>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Grover <andy.grover@oracle.com>,
+        Chris Mason <chris.mason@oracle.com>
+Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
+ tree
+Message-ID: <20190817003124.0229ed5e@canb.auug.org.au>
+In-Reply-To: <15078f1f-a036-2a54-1a07-9197f81bd58f@oracle.com>
+References: <20190816075312.64959223@canb.auug.org.au>
+        <8fd20efa-8e3d-eca2-8adf-897428a2f9ad@oracle.com>
+        <e85146f3-93a0-b23f-6a6e-11e42815946d@groveronline.com>
+        <15078f1f-a036-2a54-1a07-9197f81bd58f@oracle.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-16_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908160152
+Content-Type: multipart/signed; boundary="Sig_/tM.s=t/oyS.VH_y4PVWIpUJ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The issue has showed the value of status of Speculation_Store_Bypass in the
-/proc/<pid>/status as `unknown` for PowerPC systems.
+--Sig_/tM.s=t/oyS.VH_y4PVWIpUJ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The patch fix the checking of the mitigation status of Speculation, and
-can be reported as "not vulnerable", "globally mitigated" or "vulnerable".
+Hi all,
 
-Link: https://github.com/linuxppc/issues/issues/255
+On Fri, 16 Aug 2019 07:10:34 -0700 Gerd Rausch <gerd.rausch@oracle.com> wro=
+te:
+>
+> On 16/08/2019 02.15, Andy Grover wrote:
+> > On 8/16/19 3:06 PM, Gerd Rausch wrote: =20
+> >>
+> >> Just added the e-mail addresses I found using a simple "google search",
+> >> in order to reach out to the original authors of these commits:
+> >> Chris Mason and Andy Grover.
+> >>
+> >> I'm hoping they still remember their work from 7-8 years ago. =20
+> >=20
+> > Yes looks like what I was working on. What did you need from me? It's
+> > too late to amend the commitlogs...
 
-Signed-off-by: Gustavo Walbon <gwalbon@linux.ibm.com>
----
- arch/powerpc/kernel/security.c | 25 ++++++++++++++++++++++++-
- 1 file changed, 24 insertions(+), 1 deletion(-)
+Yeah, Dave doesn't rebase his trees.
 
-diff --git a/arch/powerpc/kernel/security.c b/arch/powerpc/kernel/security.c
-index e1c9cf079503..754ae4238d4e 100644
---- a/arch/powerpc/kernel/security.c
-+++ b/arch/powerpc/kernel/security.c
-@@ -14,7 +14,7 @@
- #include <asm/debugfs.h>
- #include <asm/security_features.h>
- #include <asm/setup.h>
--
-+#include <linux/prctl.h>
- 
- unsigned long powerpc_security_features __read_mostly = SEC_FTR_DEFAULT;
- 
-@@ -339,6 +339,29 @@ ssize_t cpu_show_spec_store_bypass(struct device *dev, struct device_attribute *
- 	return sprintf(buf, "Vulnerable\n");
- }
- 
-+static int ssb_prctl_get(struct task_struct *task)
-+{
-+	if (stf_barrier) {
-+		if (stf_enabled_flush_types == STF_BARRIER_NONE)
-+			return PR_SPEC_NOT_AFFECTED;
-+		else
-+			return PR_SPEC_DISABLE;
-+	} else
-+		return PR_SPEC_DISABLE_NOEXEC;
-+
-+	return -EINVAL;
-+}
-+
-+int arch_prctl_spec_ctrl_get(struct task_struct *task, unsigned long which)
-+{
-+	switch (which) {
-+	case PR_SPEC_STORE_BYPASS:
-+		return ssb_prctl_get(task);
-+	default:
-+		return -ENODEV;
-+	}
-+}
-+
- #ifdef CONFIG_DEBUG_FS
- static int stf_barrier_set(void *data, u64 val)
- {
--- 
-2.19.1
+> I'll let Stephen or David respond to what (if any) action is necessary.
+>=20
+> The missing Signed-off-by was pointed out to me by Stephen yesterday.
+>=20
+> Hence I tried to locate you guys to pull you into the loop in order to
+> not leave his concern unanswered.
 
+It is OK for SOBs to be missing, I just wanted to make sure that it was
+OK in this instance.  (Its better that I ask when its OK then not to
+ask and find something has gone wrong.)
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/tM.s=t/oyS.VH_y4PVWIpUJ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1WvjwACgkQAVBC80lX
+0GxkZgf+K+HspxKdrXDdlSTnUKcU7KW869GIDYqdUeVFdegpsUn1N+TKaQOMhPbP
+R1YjmIBnC0R/9Q2hG9i2BIHy0e5zritvVCFg1j1cJ5zZJQ6e8WdIir8XX1AR76Z8
+/olEI9gCgv4Njnm9O9NY4OG9eADGKg4teGyovvgQL8QNIzvIS+q8ebRwxajoE1+U
+Ruz1NW2YZAkYH4xixfMpVNBhJ049dzueU3BuMT1VQ6+0r7phK38UHtdU7PJTPtbs
+sBY9YVd5HWZyk9TJLOy6hn96E8pHgnz6OC5vNUH16W20eFxg2s4wwHB4vQIyuyrO
+4LSBlLuDqTXYNqWiX0zCN/BdUgvDCw==
+=/Q+q
+-----END PGP SIGNATURE-----
+
+--Sig_/tM.s=t/oyS.VH_y4PVWIpUJ--
