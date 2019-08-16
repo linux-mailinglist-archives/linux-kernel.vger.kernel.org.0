@@ -2,128 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE7AE8FF62
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:47:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8A3E8FF5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:47:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727137AbfHPJrl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 05:47:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59710 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726839AbfHPJrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:47:41 -0400
-Received: from localhost (unknown [117.99.90.214])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B172020644;
-        Fri, 16 Aug 2019 09:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565948860;
-        bh=YEmxXkiikw9Il4bR7+fmneVfLCggRlkVRGUMcR+NDZQ=;
-        h=Date:From:To:Cc:Subject:From;
-        b=NS0G69P6qoNzqar+xEdDHce5ghJZrZKLBBwfJ6shhZE7r7okJPs6ef8q4+Pg1es62
-         Tvv1B1utASayXblaEE0YdHYGSUNf3yKtLd3DDhjrbIiQtkMjPDxw1deKfWycnIiE24
-         cd4gIXxi/U+GG7opGipeV2Rp+1HqkIfz+PuGOfqk=
-Date:   Fri, 16 Aug 2019 15:16:28 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     dma <dmaengine@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine fixes for v5.3-rc5
-Message-ID: <20190816094627.GB12733@vkoul-mobl.Dlink>
+        id S1727028AbfHPJrW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 05:47:22 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:36764 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726839AbfHPJrV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 05:47:21 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id B87612AF;
+        Fri, 16 Aug 2019 11:47:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1565948839;
+        bh=bUdICGGdTZmBFibu3xdD2aPAGHUfElKiRrQso0XsRTc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mlqItdkhQU8LiVblfmgAjFuo001m9rrZNL9N/mwDi6KnDfDs5J+AFvViaMnQOEgu6
+         fIWoCwBnwpjT/0ZTGKwhpIpR7XgDtC4ImWtCEg+pqjg2EhqXnNi8GkKPEJe5/m7WT0
+         AIaGeexf6EL/gMzYLJjCil7Ke3mu4B87oJCuhImw=
+Date:   Fri, 16 Aug 2019 12:47:15 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the drm-misc tree
+Message-ID: <20190816094715.GB5020@pendragon.ideasonboard.com>
+References: <20190816133132.6b37d7fa@canb.auug.org.au>
+ <20190816044846.GA27781@ravnborg.org>
+ <CAKMK7uFy2vtOpSNrJyPDp0mvPTEvTD3zw7_gTuWe6gRqj18FFg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <CAKMK7uFy2vtOpSNrJyPDp0mvPTEvTD3zw7_gTuWe6gRqj18FFg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---pAwQNkOnpTn9IO2O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Aug 16, 2019 at 08:23:54AM +0200, Daniel Vetter wrote:
+> On Fri, Aug 16, 2019 at 6:48 AM Sam Ravnborg <sam@ravnborg.org> wrote:
+> > > Hi all,
+> > >
+> > > After merging the drm-misc tree, today's linux-next build (x86_64
+> > > allmodconfig) produced this warning:
+> > >
+> > > warning: same module names found:
+> > >   drivers/video/fbdev/omap2/omapfb/displays/panel-nec-nl8048hl11.ko
+> > >   drivers/gpu/drm/panel/panel-nec-nl8048hl11.ko
+> > > warning: same module names found:
+> > >   drivers/video/fbdev/omap2/omapfb/displays/panel-sharp-ls037v7dw01.ko
+> > >   drivers/gpu/drm/panel/panel-sharp-ls037v7dw01.ko
+> > > warning: same module names found:
+> > >   drivers/video/fbdev/omap2/omapfb/displays/panel-sony-acx565akm.ko
+> > >   drivers/gpu/drm/panel/panel-sony-acx565akm.ko
+> > > warning: same module names found:
+> > >   drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td028ttec1.ko
+> > >   drivers/gpu/drm/panel/panel-tpo-td028ttec1.ko
+> > > warning: same module names found:
+> > >   drivers/video/fbdev/omap2/omapfb/displays/panel-tpo-td043mtea1.ko
+> > >   drivers/gpu/drm/panel/panel-tpo-td043mtea1.ko
+> > >
+> > > Introduced by commits
+> > >
+> > >   df439abe6501 ("drm/panel: Add driver for the NEC NL8048HL11 panel")
+> > >   c9cf4c2a3bd3 ("drm/panel: Add driver for the Sharp LS037V7DW01 panel")
+> > >   1c8fc3f0c5d2 ("drm/panel: Add driver for the Sony ACX565AKM panel")
+> > >   415b8dd08711 ("drm/panel: Add driver for the Toppoly TD028TTEC1 panel")
+> > >   dc2e1e5b2799 ("drm/panel: Add driver for the Toppoly TD043MTEA1 panel")
+> >
+> > Ups, had not seen this one coming.
+> > We are in the process of removing the drivers in drivers/video/fbdev/omap2/omapfb/
+> > and decided to introduce the new drivers early to get them out of a
+> > longer patch series.
 
-Hello Linus,
+Oops :-(
 
-Please pull the fixes for dmaengine drivers as listed below.
+The new drivers were initially part of a patch series that removed the
+duplicated drivers. The new drivers then got fast-tracked, and I didn't
+notice this issue.
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+> Should we have a config dependency to not allow the old fbdev omap
+> when the drm omap driver is enabled? I think that would take care of
+> all this.
+> 
+> Or too annoying for development?
+> 
+> Also note that fbdev is in drm-misc now, so we should be able to fix
+> this all without cross-tree conflicts.
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+Note that drivers/video/fbdev/omap2/omapfb/ will stay, it's
+drivers/gpu/drm/omapdrm/displays/ that is being removed. FB_OMAP2
+already depends on DRM_OMAP = n, I propose doing something similar at
+the level of the individual display drivers.
 
-are available in the Git repository at:
+-- 
+Regards,
 
-  git://git.infradead.org/users/vkoul/slave-dma.git tags/dmaengine-fix-5.3-=
-rc5
-
-for you to fetch changes up to d555c34338cae844b207564c482e5a3fb089d25e:
-
-  omap-dma/omap_vout_vrfb: fix off-by-one fi value (2019-08-09 16:33:41 +05=
-30)
-
-----------------------------------------------------------------
-dmaengine fixes for v5.3-rc5
-
-Fixes in dmaengine drivers for:
- - dw-edma endianess, _iomem type and stack usages
- - ste_dma40 unneeded variable and null-pointer dereference
- - tegra210-adma unused function
- - omap-dma off-by-one fix
-
-----------------------------------------------------------------
-Arnd Bergmann (4):
-      dmaengine: dw-edma: fix unnecessary stack usage
-      dmaengine: dw-edma: fix __iomem type confusion
-      dmaengine: dw-edma: fix endianess confusion
-      dmaengine: ste_dma40: fix unneeded variable warning
-
-Hans Verkuil (1):
-      omap-dma/omap_vout_vrfb: fix off-by-one fi value
-
-Jia-Ju Bai (1):
-      dmaengine: stm32-mdma: Fix a possible null-pointer dereference in stm=
-32_mdma_irq_handler()
-
-YueHaibing (1):
-      dmaengine: tegra210-adma: Fix unused function warnings
-
- drivers/dma/dw-edma/dw-edma-core.h           |  2 +-
- drivers/dma/dw-edma/dw-edma-pcie.c           | 18 +++++++--------
- drivers/dma/dw-edma/dw-edma-v0-core.c        | 34 ++++++++++++------------=
-----
- drivers/dma/dw-edma/dw-edma-v0-debugfs.c     | 29 ++++++++++++------------
- drivers/dma/ste_dma40.c                      |  4 ++--
- drivers/dma/stm32-mdma.c                     |  2 +-
- drivers/dma/tegra210-adma.c                  |  4 ++--
- drivers/dma/ti/omap-dma.c                    |  4 ++--
- drivers/media/platform/omap/omap_vout_vrfb.c |  3 +--
- 9 files changed, 48 insertions(+), 52 deletions(-)
-
-Thanks
---=20
-~Vinod
-
---pAwQNkOnpTn9IO2O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJdVntzAAoJEHwUBw8lI4NHWXQP/2VfNGr1LKUZ4tW4oGEBb4Ea
-VsbgWPMSPJ9L2b+Yi/cnElIrf+E7Az8wwAUn+R+JQbwW0FaBGHcp7AUzLelXT+lj
-/enlQV4bcMY+M2C3ClD0KmH2BOdtj0O1q8DiVSWU9hQnjZMIIZzdQ5ygjUqZrBEh
-sA7b6orb9DD/aSLuRHCJrpF0jT7KczmVEP8uFswr2m83uPsXCTwyWi+KU7Tt9z0U
-8vt5rnBTOt9cg1+Wwo95cOPIKqP0Ki16OfE1e17bEbwlb2qmQeYihU+sM1xvsxau
-swbpZkdMfjZ8hHokMbGU/MXRdroZZv0QIVrU31Tt/o7vzlOTkfDtPNfMrIQRjSuB
-Mp+se62CLbhtdYJSbkqSD+90jaX8a7XP1El4jMOp85E1twlPndVfuBjKl4jLph+5
-DABmgmqJNpyaRjUInBDP/OqVNX0t3DnAFgYL1PkB334boMrzYjaYay7A5WFJCtbi
-XIZXaTLqPcLaTVU+V9zjoY6eOfxmTXHjZnk3NrE7kEGBMdl3oPItWssn55YkmRMk
-S1sMpqH/SPLMplLPG+GuxThyfedQP5BuF+v9xww+W45AcX9l0lKj1AA/50CHyT0j
-3uqG4vojjEHBWgnvxAGqp7CAuv1XYoxph75EhpcZwbdjeciSLkrZMbbsx8mawBGP
-1NoktcFmFvFC/iNAXu/C
-=ikF9
------END PGP SIGNATURE-----
-
---pAwQNkOnpTn9IO2O--
+Laurent Pinchart
