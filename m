@@ -2,167 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E32608F8C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:14:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 17A5B8F8D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:25:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfHPCOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:14:11 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:15793 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfHPCOK (ORCPT
+        id S1726437AbfHPCZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:25:57 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:36901 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfHPCZ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:14:10 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5611740000>; Thu, 15 Aug 2019 19:14:12 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 15 Aug 2019 19:14:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 15 Aug 2019 19:14:09 -0700
-Received: from [10.110.48.28] (172.20.13.39) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 16 Aug
- 2019 02:14:08 +0000
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-From:   John Hubbard <jhubbard@nvidia.com>
-To:     Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>
-References: <20190812234950.GA6455@iweiny-DESK2.sc.intel.com>
- <38d2ff2f-4a69-e8bd-8f7c-41f1dbd80fae@nvidia.com>
- <20190813210857.GB12695@iweiny-DESK2.sc.intel.com>
- <a1044a0d-059c-f347-bd68-38be8478bf20@nvidia.com>
- <90e5cd11-fb34-6913-351b-a5cc6e24d85d@nvidia.com>
- <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
- <20190815132622.GG14313@quack2.suse.cz>
- <20190815133510.GA21302@quack2.suse.cz>
- <20190815173237.GA30924@iweiny-DESK2.sc.intel.com>
- <b378a363-f523-518d-9864-e2f8e5bd0c34@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <58b75fa9-1272-b683-cb9f-722cc316bf8f@nvidia.com>
-Date:   Thu, 15 Aug 2019 19:14:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 15 Aug 2019 22:25:57 -0400
+Received: by mail-io1-f66.google.com with SMTP id q22so3307099iog.4;
+        Thu, 15 Aug 2019 19:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/fibelXvW+1LdGP+tmxyfYovRPGaPOb71lYeqEJPE9w=;
+        b=LvvLFypJqUtGcuZAf7ZZQjdIPS/eQWQeafYVUPKL0TI7ZJ3ta88iENF7vQ0U3UtOEe
+         02YnSNW4M8rIg/utVyCb8+KAtzniL/7SQyZEBFlXCM+D+B1v7XrbE7hlJ6TE98z40BJD
+         ZBIKgVBaJqaiq+sqCWlRDoXRmy8DkG6FuBGG6RHONt919JykRE3qnSXyUj3KOgJ4BmD2
+         /+nmFsNnn/93bVI0P1voTaMAxIwmhLKwdryt9Xp+UVBlGoVMWEMHR7yf7nMuJBr4q7PB
+         5Lyczt7kyUz9eR9fMBILvzTKdPYDd3AtHTXBKo+ijHKr5r6GuVgInnjZTmPvy0TYxAYg
+         F/cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/fibelXvW+1LdGP+tmxyfYovRPGaPOb71lYeqEJPE9w=;
+        b=otcjsziFZo+yxVUXINuDRuYcvRHz60rBxH6jcC3c9Ts8HvrXj65pLRW9jpQPoLe+4R
+         kFX0FrNccEP5MKddfoTfHmCNGiaR7ylW5orfJ+em78AjcdFCy6bqrHqoNoLJPObjPNdg
+         tAOOilP+PmuFDCPIkwLM1boZi5Vbch8igudzrFLJJRDy/FY0yVoaSFL/MguFkO+9l8IY
+         3+12872h3OAUwci3ec6abFvXi28Wz3+/smL+OJUf41P2TLPtOpIoBnZspkr2tiOQmKtA
+         JciP045UBUMNqCQ6T6rmRdXIA6hiuQk+jP7Fnh6PnWBXa+p3fRXW27BTrXKL/wm7qL5X
+         1jaQ==
+X-Gm-Message-State: APjAAAXkcSjg6X9miI61+UDANCCsZAOo6Dnr7yZXiZwIdWuBUBWGaB+c
+        cPb3EUViHAXulCE2NGAHl7e2ZrMhRSPz0Bsqxu0=
+X-Google-Smtp-Source: APXvYqyfmapAZhacZLbg2eN8uGz/g14h/u54c3qPjhPxRzsQXwC5ZPILLOCDagZSKqk7giCm7DH7ECRbNI8H/GXpZjk=
+X-Received: by 2002:a02:8387:: with SMTP id z7mr1847813jag.117.1565922355684;
+ Thu, 15 Aug 2019 19:25:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b378a363-f523-518d-9864-e2f8e5bd0c34@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565921652; bh=iNYDYKVrRpRnEo7TyIFnzJma8HwHSIJJS6Onnonm3a4=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=gRe/cawPAvvKSdqcSXxV0BoA22Rm11wp20pEHyCpKtYaNY3NvTNMCgmALlhtzu63M
-         RIN3ZKEK8vifpbjEEnzFOUyI3Yl6wn/IXsxA7v8zVZr/JTwcIZiqqXqnZVpR31FtxW
-         LRjVeT7m2OURFkEMYaWljedPYFG11RUPR+Kj9YErvI8wkkj12ypFa9D6sllAiLfyfl
-         0Re0SVd3Yol0BqOOIfZwkoSUIa605h9OKR8HgGsdeLCjZCuQngc0TTm5JUNQeqGAFw
-         K/rTsEjAfTKf2rtwDqQpM7AKASOcW56X99NJr0h5hYkPgG0MQNSnrxD6ZasNBIsLz4
-         lcQC4JwZDBA3w==
+References: <20190613005109.1867-1-jassisinghbrar@gmail.com>
+ <20190613005247.2048-1-jassisinghbrar@gmail.com> <20190624064442.GW2962@vkoul-mobl>
+In-Reply-To: <20190624064442.GW2962@vkoul-mobl>
+From:   Jassi Brar <jassisinghbrar@gmail.com>
+Date:   Thu, 15 Aug 2019 21:25:44 -0500
+Message-ID: <CABb+yY3pLBA=Y_4kUZ-E_VWOiJsofung2bMA5HqkNeNJkOOZxQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] dmaengine: milbeaut-hdmac: Add HDMAC driver for
+ Milbeaut platforms
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     dmaengine@vger.kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, orito.takao@socionext.com,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        kasai.kazuhiro@socionext.com,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/15/19 10:41 AM, John Hubbard wrote:
-> On 8/15/19 10:32 AM, Ira Weiny wrote:
->> On Thu, Aug 15, 2019 at 03:35:10PM +0200, Jan Kara wrote:
->>> On Thu 15-08-19 15:26:22, Jan Kara wrote:
->>>> On Wed 14-08-19 20:01:07, John Hubbard wrote:
->>>>> On 8/14/19 5:02 PM, John Hubbard wrote:
-...
->> Ok just to make this clear I threw up my current tree with your patches here:
->>
->> https://github.com/weiny2/linux-kernel/commits/mmotm-rdmafsdax-b0-v4
->>
->> I'm talking about dropping the final patch:
->> 05fd2d3afa6b rdma/umem_odp: Use vaddr_pin_pages_remote() in ODP
->>
->> The other 2 can stay.  I split out the *_remote() call.  We don't have a user
->> but I'll keep it around for a bit.
->>
->> This tree is still WIP as I work through all the comments.  So I've not changed
->> names or variable types etc...  Just wanted to settle this.
->>
-> 
-> Right. And now that ODP is not a user, I'll take a quick look through my other
-> call site conversions and see if I can find an easy one, to include here as
-> the first user of vaddr_pin_pages_remote(). I'll send it your way if that
-> works out.
-> 
+On Mon, Jun 24, 2019 at 1:47 AM Vinod Koul <vkoul@kernel.org> wrote:
+>
+> On 12-06-19, 19:52, jassisinghbrar@gmail.com wrote:
+>
+> > +#include <linux/bits.h>
+> > +#include <linux/clk.h>
+> > +#include <linux/dma-mapping.h>
+> > +#include <linux/dmaengine.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/list.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_dma.h>
+>
+> Do we need both, IIRC of_dma.h does include of.h!
+>
+OK
 
-OK, there was only process_vm_access.c, plus (sort of) Bharath's sgi-gru
-patch, maybe eventually [1].  But looking at process_vm_access.c, I think 
-it is one of the patches that is no longer applicable, and I can just
-drop it entirely...I'd welcome a second opinion on that...
+> > +/* mc->vc.lock must be held by caller */
+> > +static void milbeaut_chan_start(struct milbeaut_hdmac_chan *mc,
+> > +                             struct milbeaut_hdmac_desc *md)
+> > +{
+> > +     struct scatterlist *sg;
+> > +     u32  cb, ca, src_addr, dest_addr, len;
+>            ^^
+> double space
+>
+OK
 
-So we might be all out of potential users for vaddr_pin_pages_remote()!
+> > +static irqreturn_t milbeaut_hdmac_interrupt(int irq, void *dev_id)
+> > +{
+> > +     struct milbeaut_hdmac_chan *mc = dev_id;
+> > +     struct milbeaut_hdmac_desc *md;
+> > +     irqreturn_t ret = IRQ_HANDLED;
+> > +     u32 val;
+> > +
+> > +     spin_lock(&mc->vc.lock);
+> > +
+> > +     /* Ack and Disable irqs */
+> > +     val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACB);
+> > +     val &= ~(FIELD_PREP(MLB_HDMAC_SS, 0x7));
+>                                          ^^^^
+> Magic ..?
+>
+OK, will define a macro for 7
 
-For quick reference, it looks like this:
- 
-diff --git a/mm/process_vm_access.c b/mm/process_vm_access.c
-index 357aa7bef6c0..4d29d54ec93f 100644
---- a/mm/process_vm_access.c
-+++ b/mm/process_vm_access.c
-@@ -96,7 +96,7 @@ static int process_vm_rw_single_vec(unsigned long addr,
-                flags |= FOLL_WRITE;
- 
-        while (!rc && nr_pages && iov_iter_count(iter)) {
--               int pages = min(nr_pages, max_pages_per_loop);
-+               int pinned_pages = min(nr_pages, max_pages_per_loop);
-                int locked = 1;
-                size_t bytes;
- 
-@@ -106,14 +106,15 @@ static int process_vm_rw_single_vec(unsigned long addr,
-                 * current/current->mm
-                 */
-                down_read(&mm->mmap_sem);
--               pages = get_user_pages_remote(task, mm, pa, pages, flags,
--                                             process_pages, NULL, &locked);
-+               pinned_pages = get_user_pages_remote(task, mm, pa, pinned_pages,
-+                                                    flags, process_pages, NULL,
-+                                                    &locked);
-                if (locked)
-                        up_read(&mm->mmap_sem);
--               if (pages <= 0)
-+               if (pinned_pages <= 0)
-                        return -EFAULT;
- 
--               bytes = pages * PAGE_SIZE - start_offset;
-+               bytes = pinned_pages * PAGE_SIZE - start_offset;
-                if (bytes > len)
-                        bytes = len;
- 
-@@ -122,10 +123,9 @@ static int process_vm_rw_single_vec(unsigned long addr,
-                                         vm_write);
-                len -= bytes;
-                start_offset = 0;
--               nr_pages -= pages;
--               pa += pages * PAGE_SIZE;
--               while (pages)
--                       put_page(process_pages[--pages]);
-+               nr_pages -= pinned_pages;
-+               pa += pinned_pages * PAGE_SIZE;
-+               put_user_pages(process_pages, pinned_pages);
-        }
- 
-        return rc;
+> > +static int milbeaut_hdmac_chan_pause(struct dma_chan *chan)
+> > +{
+> > +     struct virt_dma_chan *vc = to_virt_chan(chan);
+> > +     struct milbeaut_hdmac_chan *mc = to_milbeaut_hdmac_chan(vc);
+> > +     u32 val;
+> > +
+> > +     spin_lock(&mc->vc.lock);
+> > +     val = readl_relaxed(mc->reg_ch_base + MLB_HDMAC_DMACA);
+> > +     val |= MLB_HDMAC_PB;
+> > +     writel_relaxed(val, mc->reg_ch_base + MLB_HDMAC_DMACA);
+>
+> We really should have an updatel() and friends in kernel, feel free to
+> add in your driver though!
+>
+I'll pass on that for now.
 
+> > +static int milbeaut_hdmac_chan_init(struct platform_device *pdev,
+> > +                                 struct milbeaut_hdmac_device *mdev,
+> > +                                 int chan_id)
+> > +{
+> > +     struct device *dev = &pdev->dev;
+> > +     struct milbeaut_hdmac_chan *mc = &mdev->channels[chan_id];
+> > +     char *irq_name;
+> > +     int irq, ret;
+> > +
+> > +     irq = platform_get_irq(pdev, chan_id);
+> > +     if (irq < 0) {
+> > +             dev_err(&pdev->dev, "failed to get IRQ number for ch%d\n",
+> > +                     chan_id);
+> > +             return irq;
+> > +     }
+> > +
+> > +     irq_name = devm_kasprintf(dev, GFP_KERNEL, "milbeaut-hdmac-%d",
+> > +                               chan_id);
+> > +     if (!irq_name)
+> > +             return -ENOMEM;
+> > +
+> > +     ret = devm_request_irq(dev, irq, milbeaut_hdmac_interrupt,
+> > +                            IRQF_SHARED, irq_name, mc);
+>
+> I tend to dislike using devm_request_irq(), we have no control over when
+> the irq is freed and what is a spirious irq is running while we are
+> unrolling, so IMHO it make sense to free up and ensure all tasklets are
+> quiesced when remove returns
+>
+If the code is written clean and tight we need not be so paranoid.
 
-[1] https://lore.kernel.org/r/1565379497-29266-2-git-send-email-linux.bhar@gmail.com
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     mc->mdev = mdev;
+> > +     mc->reg_ch_base = mdev->reg_base + MLB_HDMAC_CH_STRIDE * (chan_id + 1);
+> > +     mc->vc.desc_free = milbeaut_hdmac_desc_free;
+> > +     vchan_init(&mc->vc, &mdev->ddev);
+>
+> who kills the vc->task?
+>
+vchan_synchronize() called from milbeaut_hdmac_synchronize()
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+> > +static int milbeaut_hdmac_remove(struct platform_device *pdev)
+> > +{
+> > +     struct milbeaut_hdmac_device *mdev = platform_get_drvdata(pdev);
+> > +     struct dma_chan *chan;
+> > +     int ret;
+> > +
+> > +     /*
+> > +      * Before reaching here, almost all descriptors have been freed by the
+> > +      * ->device_free_chan_resources() hook. However, each channel might
+> > +      * be still holding one descriptor that was on-flight at that moment.
+> > +      * Terminate it to make sure this hardware is no longer running. Then,
+> > +      * free the channel resources once again to avoid memory leak.
+> > +      */
+> > +     list_for_each_entry(chan, &mdev->ddev.channels, device_node) {
+> > +             ret = dmaengine_terminate_sync(chan);
+> > +             if (ret)
+> > +                     return ret;
+> > +             milbeaut_hdmac_free_chan_resources(chan);
+> > +     }
+> > +
+> > +     of_dma_controller_free(pdev->dev.of_node);
+> > +     dma_async_device_unregister(&mdev->ddev);
+> > +     clk_disable_unprepare(mdev->clk);
+>
+> And as suspected we have active tasklets and irq at this time :(
+>
+Not sure how is that....
+
+thanks.
