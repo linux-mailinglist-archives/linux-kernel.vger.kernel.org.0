@@ -2,86 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B12418F946
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:56:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 06A138F93E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfHPC4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:56:34 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:42208 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfHPC4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:56:34 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 824A01A04D0;
-        Fri, 16 Aug 2019 04:56:32 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 71B0C1A0110;
-        Fri, 16 Aug 2019 04:56:29 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id B49D040250;
-        Fri, 16 Aug 2019 10:56:25 +0800 (SGT)
-From:   Biwen Li <biwen.li@nxp.com>
-To:     a.zummo@towertech.it, alexandre.belloni@bootlin.com,
-        leoyang.li@nxp.com
-Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Biwen Li <biwen.li@nxp.com>
-Subject: [v2] rtc: pcf85363/pcf85263: fix error that failed to run hwclock -w
-Date:   Fri, 16 Aug 2019 10:46:36 +0800
-Message-Id: <20190816024636.34738-1-biwen.li@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726537AbfHPCxj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:53:39 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:33782 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726279AbfHPCxi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 22:53:38 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n190so2213754pgn.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 19:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6C7nsEWeVGB4888cN8q/jWIS1P5u9hq1V6DhL0RVWe8=;
+        b=cne4Uy0chp6xXGf5/NPrrQ1rTDHu4xTxyOdhFhYq/KAJNdVDz+vD+0zD0Gap9PndIB
+         cfdOpNHZk1lhhE0sqqUYUnEvyV5Ougv5wyIophewCy2RW1BOxr7Ny7YWbJXBBnqxO/oY
+         aXAQfwthwibtfeOJ2wRL+khB7q4160zGWVvyY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=6C7nsEWeVGB4888cN8q/jWIS1P5u9hq1V6DhL0RVWe8=;
+        b=VZpJ7KrmUwf4ABJPqhsZ2agy1m9Ec2QDcCX+6SQ6GK4ywe5g7ltsrtq/da0IFHvjTY
+         On9ZBudmhtQjWyTo1e0yFal7fu3/lKFBLVmtkn050BFNOi5m5y1KpN7Eq7HE8APcsET4
+         YD5k5UOQkfqv7TUqt4nK4nOm9Zs5E+kReddO2RqrDRJNWgLUWdwaLrCZt7mVfXdkiyhm
+         As6FNAnS8OHymEvcfSljmar0f5UHHH96Wtub5ngw+AC7JZ8yrcWA5VH9kdHH5wglCJhJ
+         JmCNi9pXGs+OZCVuj2BKKBTNgARVEXmhg6tu/FmngDZ70J4BAxbY/PzoujhH2SGtSWmm
+         U3DQ==
+X-Gm-Message-State: APjAAAXJ79ydIbcyRhrOOOZh04KZrU97Ym/w4/t7PpzdSuIQ2AIPoRLv
+        yJmmZ1wiCH9ifTeaBJQkCNaWZ0eFLh4=
+X-Google-Smtp-Source: APXvYqwenGZSyYNmDl5chXWdMBNMV19H3KiRONvj973n+jLJ0Vv7EAyJdhjZndMbR6qEq0gHwoNq1A==
+X-Received: by 2002:aa7:8e17:: with SMTP id c23mr8576153pfr.227.1565924017537;
+        Thu, 15 Aug 2019 19:53:37 -0700 (PDT)
+Received: from joelaf.cam.corp.google.com ([172.19.216.18])
+        by smtp.gmail.com with ESMTPSA id v14sm4181258pfm.164.2019.08.15.19.53.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Aug 2019 19:53:36 -0700 (PDT)
+From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        frederic@kernel.org
+Subject: [PATCH -rcu dev 1/3] rcu/tree: tick_dep_set/clear_cpu should accept bits instead of masks
+Date:   Thu, 15 Aug 2019 22:53:09 -0400
+Message-Id: <20190816025311.241257-1-joel@joelfernandes.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Issue:
-    - # hwclock -w
-      hwclock: RTC_SET_TIME: Invalid argument
+This commit fixes the issue.
 
-Why:
-    - Relative patch: https://lkml.org/lkml/2019/4/3/55 , this patch
-      will always check for unwritable registers, it will compare reg
-      with max_register in regmap_writeable.
-
-    - In drivers/rtc/rtc-pcf85363.c, CTRL_STOP_EN is 0x2e, but DT_100THS
-      is 0, max_regiter is 0x2f, then reg will be equal to 0x30,
-      '0x30 < 0x2f' is false,so regmap_writeable will return false.
-
-    - Root cause: the buf[] was written to a wrong place in the file
-      drivers/rtc/rtc-pcf85363.c
-
-How:
-    - Split of writing regs to two parts, first part writes control
-      registers about stop_enable and resets, second part writes
-      RTC time and date registers.
-
-Signed-off-by: Biwen Li <biwen.li@nxp.com>
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 ---
-Change in v2:
-	- add Why and How into commit message.
-	 
- drivers/rtc/rtc-pcf85363.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/rcu/tree.c | 29 +++++++++++++++++------------
+ 1 file changed, 17 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/rtc/rtc-pcf85363.c b/drivers/rtc/rtc-pcf85363.c
-index a075e77617dc..3450d615974d 100644
---- a/drivers/rtc/rtc-pcf85363.c
-+++ b/drivers/rtc/rtc-pcf85363.c
-@@ -166,7 +166,12 @@ static int pcf85363_rtc_set_time(struct device *dev, struct rtc_time *tm)
- 	buf[DT_YEARS] = bin2bcd(tm->tm_year % 100);
+diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+index 0512de9ead20..322b1b57967c 100644
+--- a/kernel/rcu/tree.c
++++ b/kernel/rcu/tree.c
+@@ -829,7 +829,7 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
+ 		   !rdp->dynticks_nmi_nesting &&
+ 		   rdp->rcu_urgent_qs && !rdp->rcu_forced_tick) {
+ 		rdp->rcu_forced_tick = true;
+-		tick_dep_set_cpu(rdp->cpu, TICK_DEP_MASK_RCU);
++		tick_dep_set_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
+ 	}
+ 	trace_rcu_dyntick(incby == 1 ? TPS("Endirq") : TPS("++="),
+ 			  rdp->dynticks_nmi_nesting,
+@@ -898,7 +898,7 @@ void rcu_irq_enter_irqson(void)
+ void rcu_disable_tick_upon_qs(struct rcu_data *rdp)
+ {
+ 	if (tick_nohz_full_cpu(rdp->cpu) && rdp->rcu_forced_tick) {
+-		tick_dep_clear_cpu(rdp->cpu, TICK_DEP_MASK_RCU);
++		tick_dep_clear_cpu(rdp->cpu, TICK_DEP_BIT_RCU);
+ 		rdp->rcu_forced_tick = false;
+ 	}
+ }
+@@ -2123,8 +2123,9 @@ int rcutree_dead_cpu(unsigned int cpu)
+ 	do_nocb_deferred_wakeup(per_cpu_ptr(&rcu_data, cpu));
  
- 	ret = regmap_bulk_write(pcf85363->regmap, CTRL_STOP_EN,
--				tmp, sizeof(tmp));
-+				tmp, 2);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_bulk_write(pcf85363->regmap, DT_100THS,
-+				buf, sizeof(tmp) - 2);
- 	if (ret)
- 		return ret;
+ 	// Stop-machine done, so allow nohz_full to disable tick.
+-	for_each_online_cpu(c)
+-		tick_dep_clear_cpu(c, TICK_DEP_MASK_RCU);
++	for_each_online_cpu(c) {
++		tick_dep_clear_cpu(c, TICK_DEP_BIT_RCU);
++	}
+ 	return 0;
+ }
+ 
+@@ -2175,8 +2176,9 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	rcu_nocb_unlock_irqrestore(rdp, flags);
+ 
+ 	/* Invoke callbacks. */
+-	if (IS_ENABLED(CONFIG_NO_HZ_FULL))
+-		tick_dep_set_task(current, TICK_DEP_MASK_RCU);
++	if (IS_ENABLED(CONFIG_NO_HZ_FULL)) {
++		tick_dep_set_task(current, TICK_DEP_BIT_RCU);
++	}
+ 	rhp = rcu_cblist_dequeue(&rcl);
+ 	for (; rhp; rhp = rcu_cblist_dequeue(&rcl)) {
+ 		debug_rcu_head_unqueue(rhp);
+@@ -2243,8 +2245,9 @@ static void rcu_do_batch(struct rcu_data *rdp)
+ 	/* Re-invoke RCU core processing if there are callbacks remaining. */
+ 	if (!offloaded && rcu_segcblist_ready_cbs(&rdp->cblist))
+ 		invoke_rcu_core();
+-	if (IS_ENABLED(CONFIG_NO_HZ_FULL))
+-		tick_dep_clear_task(current, TICK_DEP_MASK_RCU);
++	if (IS_ENABLED(CONFIG_NO_HZ_FULL)) {
++		tick_dep_clear_task(current, TICK_DEP_BIT_RCU);
++	}
+ }
+ 
+ /*
+@@ -3118,8 +3121,9 @@ int rcutree_online_cpu(unsigned int cpu)
+ 	rcutree_affinity_setting(cpu, -1);
+ 
+ 	// Stop-machine done, so allow nohz_full to disable tick.
+-	for_each_online_cpu(c)
+-		tick_dep_clear_cpu(c, TICK_DEP_MASK_RCU);
++	for_each_online_cpu(c) {
++		tick_dep_clear_cpu(c, TICK_DEP_BIT_RCU);
++	}
+ 	return 0;
+ }
+ 
+@@ -3143,8 +3147,9 @@ int rcutree_offline_cpu(unsigned int cpu)
+ 	rcutree_affinity_setting(cpu, cpu);
+ 
+ 	// nohz_full CPUs need the tick for stop-machine to work quickly
+-	for_each_online_cpu(c)
+-		tick_dep_set_cpu(c, TICK_DEP_MASK_RCU);
++	for_each_online_cpu(c) {
++		tick_dep_set_cpu(c, TICK_DEP_BIT_RCU);
++	}
+ 	return 0;
+ }
  
 -- 
-2.17.1
+2.23.0.rc1.153.gdeed80330f-goog
 
