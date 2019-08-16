@@ -2,94 +2,178 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 122C58F8A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 03:53:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D79D98F8A8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 03:54:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726462AbfHPBxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 21:53:37 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42034 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726245AbfHPBxh (ORCPT
+        id S1726578AbfHPBy4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 21:54:56 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:32906 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726441AbfHPBy4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 21:53:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:Cc:From:References:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HtyHYdFlwyazFIJGohR0P9Gp5PX4Jt5DqPd93qaXEGQ=; b=IjkAUELEaQ8I3nTD9a5Mfx463
-        annfybnsgAmRS/OgPXhEHeDljQgQZiUY/JFVYh9FupbATnMg7DcZ/y4lADefb+JslT6TpAtJZGVRJ
-        fQ0DOj2QtyjBm3XX7T5+ryi0Q+LcUbgeFhqOUuLp+0hYntz0NZ0InXw6zSlCx64XXm24rmZ4bEg3P
-        duqn6rGKm1CESw4wrAuEHhrUvk9yk6gu/tQFyTrTn2ro6BWQ8HWpP/9b2REKxp+IfJUxZYdXUGklZ
-        PjWKhsEKN53qMJtdIpVsr2SzVORNHJP4dqbHVX2O/FBeMmNd3yIx+NJhRyYCetEtP+Bq6QQj0Svso
-        UD+Pn9rDg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=[192.168.1.17])
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hyRQu-0007UH-KQ; Fri, 16 Aug 2019 01:53:36 +0000
-Subject: Re: Linux Kernel 5.2.8 (uvc or i915?)
-To:     Nathaniel Russell <naterussell83@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        intel-gfx@lists.freedesktop.org
-References: <CAONH+Jm-O6=DQ+K2n5pNTNMg2Sq1KcVNFLuweVh6W82OPEFJoQ@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org
-Message-ID: <abcae5c9-b3dc-7403-d628-5d7543d19702@infradead.org>
-Date:   Thu, 15 Aug 2019 18:53:36 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 15 Aug 2019 21:54:56 -0400
+Received: by mail-ot1-f67.google.com with SMTP id q20so7474452otl.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 18:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eTBLiXSIuUXd+8NGvTkyeSPJUrRK2Bbf1LlrvKYe2Bs=;
+        b=c1eMypNZciY3A2RHemaEo3MmOwfU81fQPf4Ro35MWp58GOMiksnAuGWsDOvT0vTD+J
+         Pm152McXNZ+R6kJnBaQIfMXt/hqzfaC/RbQpbN39NVCIZxh8bdHEbKRicdwbMZc0HBHk
+         17wMxwDScDGZzYn/fQGKtBfPD1xtCA+DNNQKHetV/Xe0APpTarYVOx7uaAUsuuvDUuXo
+         HqwjEouJ87uP1+nOMyVs/nVupjeWmscIqx71esKyhyQ+T9GBYzR3wuGetPH0IdSO57Ia
+         BihlodiAuEXo3zgM6pulsz5sM70nnEVS9t5y9L9GT2Kkygo9ae24fU9+aKKnGmSQL7g4
+         siCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eTBLiXSIuUXd+8NGvTkyeSPJUrRK2Bbf1LlrvKYe2Bs=;
+        b=hsHRDtG1b50EuXA09iU+7wRCcL76kPsz4a2Bh/EraF9KnmciDf9jfLQTzgM6i321Su
+         XNruY/0O6OF58WLMokr7JadSzx3gHOtLNQQAQpUxDLo+nURFI+VVpMm45Jicu5Vw8/Me
+         czmCAnc6SmNeuOmfsIoFbL/hb54isl77Zb1oA7v8kJdW9DLDQEZWsyXCKZ9Zh25gDvID
+         DrEf6mKpk7CytX/rTrk54xeXHG6yoI0pKLTive/Ot7pZPEGCvpG70MQWDv9CBR83d81P
+         t2IfluPpQZwaSnevmz1pOGdMPVH6iAktalYs5/jUWNeD6R9vuwnyVpmbG0WmOHbrgph+
+         gL/Q==
+X-Gm-Message-State: APjAAAUaVjYpJRudBqimpeBgkklyqLmTmG8I7av1eJeg9meM96vaH41h
+        TG7zHi2F1QCgZ7t/V8vEyaROWjhl89BycW6B+qVksg==
+X-Google-Smtp-Source: APXvYqyIhzjv/mzlBeEGYrBrvhv6vf4+oF36WPPG9u45hKnTlVMFItiKqprxNUbwc41ChxrtOG+Tn0kFOtTd7SBW3Zc=
+X-Received: by 2002:a05:6830:1e0f:: with SMTP id s15mr6147817otr.231.1565920495218;
+ Thu, 15 Aug 2019 18:54:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAONH+Jm-O6=DQ+K2n5pNTNMg2Sq1KcVNFLuweVh6W82OPEFJoQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190807223111.230846-1-saravanak@google.com> <b8a6020f-eda5-0c3d-b365-a294c28b9650@linaro.org>
+In-Reply-To: <b8a6020f-eda5-0c3d-b365-a294c28b9650@linaro.org>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 15 Aug 2019 18:54:19 -0700
+Message-ID: <CAGETcx_pzFj1TSoyCTGgZn_yZGZBMT2c_d74wLA5gBqhmhH8Gw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/3] Introduce Bandwidth OPPs for interconnects
+To:     Georgi Djakov <georgi.djakov@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        "Sweeney, Sean" <seansw@qti.qualcomm.com>,
+        David Dai <daidavid1@codeaurora.org>, adharmap@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Evan Green <evgreen@chromium.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/15/19 6:15 PM, Nathaniel Russell wrote:
-> I would really like help with the kernel error with my uvcvideo driver.
-> 
+On Thu, Aug 15, 2019 at 9:19 AM Georgi Djakov <georgi.djakov@linaro.org> wrote:
+>
+> Hi,
+>
+> On 8/8/19 01:31, Saravana Kannan wrote:
+> > Interconnects and interconnect paths quantify their performance levels in
+> > terms of bandwidth and not in terms of frequency. So similar to how we have
+> > frequency based OPP tables in DT and in the OPP framework, we need
+> > bandwidth OPP table support in DT and in the OPP framework.
+> >
+> > So with the DT bindings added in this patch series, the DT for a GPU
+> > that does bandwidth voting from GPU to Cache and GPU to DDR would look
+> > something like this:
+> >
+> > gpu_cache_opp_table: gpu_cache_opp_table {
+> >       compatible = "operating-points-v2";
+> >
+> >       gpu_cache_3000: opp-3000 {
+> >               opp-peak-KBps = <3000000>;
+> >               opp-avg-KBps = <1000000>;
+> >       };
+> >       gpu_cache_6000: opp-6000 {
+> >               opp-peak-KBps = <6000000>;
+> >               opp-avg-KBps = <2000000>;
+> >       };
+> >       gpu_cache_9000: opp-9000 {
+> >               opp-peak-KBps = <9000000>;
+> >               opp-avg-KBps = <9000000>;
+> >       };
+> > };
+> >
+> > gpu_ddr_opp_table: gpu_ddr_opp_table {
+> >       compatible = "operating-points-v2";
+> >
+> >       gpu_ddr_1525: opp-1525 {
+> >               opp-peak-KBps = <1525000>;
+> >               opp-avg-KBps = <452000>;
+> >       };
+> >       gpu_ddr_3051: opp-3051 {
+> >               opp-peak-KBps = <3051000>;
+> >               opp-avg-KBps = <915000>;
+> >       };
+> >       gpu_ddr_7500: opp-7500 {
+> >               opp-peak-KBps = <7500000>;
+> >               opp-avg-KBps = <3000000>;
+> >       };
+> > };
+> >
+> > gpu_opp_table: gpu_opp_table {
+> >       compatible = "operating-points-v2";
+> >       opp-shared;
+> >
+> >       opp-200000000 {
+> >               opp-hz = /bits/ 64 <200000000>;
+> >       };
+> >       opp-400000000 {
+> >               opp-hz = /bits/ 64 <400000000>;
+> >       };
+> > };
+> >
+> > gpu@7864000 {
+> >       ...
+> >       operating-points-v2 = <&gpu_opp_table>, <&gpu_cache_opp_table>, <&gpu_ddr_opp_table>;
+> >       ...
+> > };
+> >
+> > v1 -> v3:
+> > - Lots of patch additions that were later dropped
+> > v3 -> v4:
+> > - Fixed typo bugs pointed out by Sibi.
+> > - Fixed bug that incorrectly reset rate to 0 all the time
+> > - Added units documentation
+> > - Dropped interconnect-opp-table property and related changes
+> > v4->v5:
+> > - Replaced KBps with kBps
+> > - Minor documentation fix
+> >
+> > Cheers,
+> > Saravana
+> >
+> > Saravana Kannan (3):
+> >   dt-bindings: opp: Introduce opp-peak-kBps and opp-avg-kBps bindings
+> >   OPP: Add support for bandwidth OPP tables
+> >   OPP: Add helper function for bandwidth OPP tables
+> >
+> >  Documentation/devicetree/bindings/opp/opp.txt | 15 ++++--
+> >  .../devicetree/bindings/property-units.txt    |  4 ++
+> >  drivers/opp/core.c                            | 51 +++++++++++++++++++
+> >  drivers/opp/of.c                              | 41 +++++++++++----
+> >  drivers/opp/opp.h                             |  4 +-
+> >  include/linux/pm_opp.h                        | 19 +++++++
+> >  6 files changed, 121 insertions(+), 13 deletions(-)
+> >
+>
+> For the series:
+> Acked-by: Georgi Djakov <georgi.djakov@linaro.org>
 
-Hi again.
+Thanks Georgi.
 
-What makes you think that the problem is related to the uvcvideo driver?
-Does some previous kernel version work correctly?  If so, what version(s)?
+Rob and Viresh, We've settled on one format. Can you pull this series in please?
 
+Do you need me to resent the series with the Ack? Or can you put that
+in if you pull in this series?
 
-Does this warning message only happen when the uvcvideo driver is being loaded?
-Can you suppress loading of the uvcvideo driver to find out?
-
-Most of the problems/errors/warnings that I see are related to the i915 driver:
-
-[   13.032341] timed out waiting for port C ready: got 0x20, expected 0xe0
-[   13.032872] WARNING: CPU: 1 PID: 239 at drivers/gpu/drm/i915/intel_display.c:1597 vlv_wait_port_ready+0x99/0xe0 [i915]
-[   13.033632] RIP: 0010:vlv_wait_port_ready+0x99/0xe0 [i915]
-
-although there are a few uvcvideo warnings:
-[   13.039305] uvcvideo 1-5:1.0: Entity type for entity Extension 4 was not initialized!
-[   13.039318] uvcvideo 1-5:1.0: Entity type for entity Extension 3 was not initialized!
-[   13.039330] uvcvideo 1-5:1.0: Entity type for entity Processing 2 was not initialized!
-[   13.039339] uvcvideo 1-5:1.0: Entity type for entity Camera 1 was not initialized!
-
-
-Laurent, do you see any uvc issues here?  Any ideas/suggestions?
-
-
-@intel-gfx:  any ideas about what is going on here with the i915 driver?
-
-
-
-Original message to lkml:
-https://lore.kernel.org/lkml/CAONH+Jm-O6=DQ+K2n5pNTNMg2Sq1KcVNFLuweVh6W82OPEFJoQ@mail.gmail.com/T/#u
-
-Previous message for 5.1.21 kernel:
-https://lore.kernel.org/lkml/CAONH+JkTFujY9vEyNNuem+9rJ2qBKkf-PbKk9=DBSVEp6kW=yw@mail.gmail.com/
-
-
-thanks.
--- 
-~Randy
+Thanks,
+Saravana
