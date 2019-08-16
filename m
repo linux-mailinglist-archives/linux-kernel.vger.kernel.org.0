@@ -2,145 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C40E8FFCB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:12:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95F2E8FFD1
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:13:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfHPKM2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 06:12:28 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4705 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726839AbfHPKM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 06:12:28 -0400
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 051C3F27E7A2CC767AAE;
-        Fri, 16 Aug 2019 18:12:25 +0800 (CST)
-Received: from [127.0.0.1] (10.133.215.186) by DGGEMS414-HUB.china.huawei.com
- (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
- 18:12:17 +0800
-Subject: Re: [PATCH v2 2/2] iommu/arm-smmu-v3: add nr_ats_masters for quickly
- check
-To:     Will Deacon <will@kernel.org>
-CC:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
-        "Jean-Philippe Brucker" <jean-philippe@linaro.org>,
-        John Garry <john.garry@huawei.com>,
-        "Robin Murphy" <robin.murphy@arm.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu <iommu@lists.linux-foundation.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <20190815054439.30652-1-thunder.leizhen@huawei.com>
- <20190815054439.30652-3-thunder.leizhen@huawei.com>
- <20190815152313.apa2d5rzhqa34l7l@willie-the-truck>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <d8fdc516-3aed-b4ab-9cbc-81179d4e20d8@huawei.com>
-Date:   Fri, 16 Aug 2019 18:12:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+        id S1727126AbfHPKNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 06:13:50 -0400
+Received: from sonic311-23.consmr.mail.ne1.yahoo.com ([66.163.188.204]:46718
+        "EHLO sonic311-23.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727035AbfHPKNu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 06:13:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1565950429; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=KzZIvSlT/tkgHH/H1HsXcwAXCmFM0k71WwppyCFiF8SCh3QhIh6FLSrxBhCkL/DK+juxDoUpasXEtPBry43TrH3UD7Lo25eRrerTaP3GS5SAXW7iF99hs4eg+SRem3aoTaO3narLINvuhfuf97RpnjINR8z3K7zQ8Ofg9avLeW4cVxHkGjlXEIkfY3zHoC6SQmWJOg023TE+MiNWvg8+MpnuZj6K7PTsLV3mtmEbJxShrAQtwEZMLz/yddIl6z1UmLW1qaHG/vfeP6qYAB4KTifxoHQa/m3stxWn6NgCdwN+hDS4IDYl/5HdyMJHBPUo15/scuJzsGTyN3AJYKpGqw==
+X-YMail-OSG: c42ZiIgVM1nJL50rJK1cZjZDtCdll1G1wDkzbCSiZVSsEIpyToBx3fb_G2eMuF2
+ GFHJwRateeNws7FK0DbavyhkIDTKoEOsMA6gcHzQnM0QOqJ0saEPX5DV5ysY1o0SarRTs19_y4B6
+ VSD8fxT5PfK2_wpyu91AAVgBfjYS2J3GWbh6Afc.CJzfRbvdVzqTqc.GQbvSsqDnYJ91_.RZhCY4
+ ZXj3xJwtLEAa6Zpj6ICmnut93XJ3C2mSLuRS9gWV5ugOUUunawBZrh9gi.ZVO9gllwjPwmu0mibR
+ Knskz9lhx2n2wtUvuvBAsVr6cNlNxNrKmimIPKo69wNjyvIv6L2eA2CKdRp.md2MTB6cABIrJs2n
+ fXghW1U7ZrxEzPTjPQEmBjjMziIa02zrihQH1RVPaXF4.08.PHahOObdBvvWFR21t82jDeMFc0iK
+ 5GJPT6WOIhxGnxXQpNjqswveQoJNF2IcADcYrDT2_R76lVaXDP3FyeQnWegG8WCyuWs4dInnQu1i
+ WEntt0APfBL3xaSDkKru0hitv2wpz9tEw5gEeyh3rRBtrwD4AVN2C5IYHcPEIysE3SsB5wHqrJy5
+ ofMQb8Wu_4KxtIDJ1KVueJEOSOCCpOWIkjGIoHJs5WCyQmdqJxXMe4QYnTMlyeCT2RdANVJLtsav
+ 79IR.fOIJWjY9FdMwL24ibju5ZYq20Wrpf9PwrxmYYqERCMGjs3Pj9KMZFD2VOWHnOV9RSmr1J9n
+ j8cWXZXZq2.kN2syAkaLN.bb4sYG5ZZqkvDp13YstaXuZm6HP4GptHYMsZ98OfCDD470_QqMHAce
+ JUIGcOKZiQtzNWEiw6r21L2kDkf51RZmymLX1JDCm154ZDlPYieYB_NJK6GyC20raD1fo9CbgWER
+ hXf0Kk2l1QrfgQMM2KT.zIlJkaV26y0MeOiUrkB7YkTKYpj7l42TTn9j0SvmDDpB.Ww7NgDWj5eN
+ 2.gUeZyrhEYKsMraK4YVf5JikZhTuiBJBD_P0nsgPKhRfuwNDAHfAOl_qZ63qqLDisz00.pXagWZ
+ DgzShumLlbT02os90oIMAfAGVB6BkJL9x4SvFyranmlwsRzkeGEMSkrAeZcpB9TZgDDbrENpiIWi
+ vTHLqhdmJO4Blrp0zTlwIw.4bt3eXFxDMGdoXvFvPzNHOblnnpqMO4U7pz9VSiPPjit62og91tkC
+ bZmF1VriuUqSD1OKJKxsqqRRDLBua3_H1EtueIJSsuLQ0ESJoZ1cNl.G.4Z02LXLEgn15hDO4Ubs
+ KBoAWvo3cJdb7
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Aug 2019 10:13:49 +0000
+Date:   Fri, 16 Aug 2019 10:13:45 +0000 (UTC)
+From:   Aisha Gaddafi <gaddafi661@gmail.com>
+Reply-To: gaisha983@gmail.com
+Message-ID: <208601980.6195563.1565950425294@mail.yahoo.com>
+Subject: Dear Friend,
 MIME-Version: 1.0
-In-Reply-To: <20190815152313.apa2d5rzhqa34l7l@willie-the-truck>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.133.215.186]
-X-CFilter-Loop: Reflected
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Dear Friend,
 
+I came across your e-mail contact prior a private search while in need of 
+your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
+three Children. I am the only biological Daughter of late Libyan President 
+(Late Colonel Muammar Gaddafi).
 
-On 2019/8/15 23:23, Will Deacon wrote:
-> On Thu, Aug 15, 2019 at 01:44:39PM +0800, Zhen Lei wrote:
->> When (smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS) is true, even if a
->> smmu domain does not contain any ats master, the operations of
->> arm_smmu_atc_inv_to_cmd() and lock protection in arm_smmu_atc_inv_domain()
->> are always executed. This will impact performance, especially in
->> multi-core and stress scenarios. For my FIO test scenario, about 8%
->> performance reduced.
->>
->> In fact, we can use a struct member to record how many ats masters that
->> the smmu contains. And check that without traverse the list and check all
->> masters one by one in the lock protection.
->>
->> Fixes: 9ce27afc0830 ("iommu/arm-smmu-v3: Add support for PCI ATS")
->> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
->> ---
->>  drivers/iommu/arm-smmu-v3.c | 14 +++++++++++++-
->>  1 file changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
->> index 29056d9bb12aa01..154334d3310c9b8 100644
->> --- a/drivers/iommu/arm-smmu-v3.c
->> +++ b/drivers/iommu/arm-smmu-v3.c
->> @@ -631,6 +631,7 @@ struct arm_smmu_domain {
->>  
->>  	struct io_pgtable_ops		*pgtbl_ops;
->>  	bool				non_strict;
->> +	int				nr_ats_masters;
->>  
->>  	enum arm_smmu_domain_stage	stage;
->>  	union {
->> @@ -1531,7 +1532,16 @@ static int arm_smmu_atc_inv_domain(struct arm_smmu_domain *smmu_domain,
->>  	struct arm_smmu_cmdq_ent cmd;
->>  	struct arm_smmu_master *master;
->>  
->> -	if (!(smmu_domain->smmu->features & ARM_SMMU_FEAT_ATS))
->> +	/*
->> +	 * The protectiom of spinlock(&iommu_domain->devices_lock) is omitted.
->> +	 * Because for a given master, its map/unmap operations should only be
->> +	 * happened after it has been attached and before it has been detached.
->> +	 * So that, if at least one master need to be atc invalidated, the
->> +	 * value of smmu_domain->nr_ats_masters can not be zero.
->> +	 *
->> +	 * This can alleviate performance loss in multi-core scenarios.
->> +	 */
-> 
-> I find this reasoning pretty dubious, since I think you're assuming that
-> an endpoint cannot issue speculative ATS translation requests once its
-> ATS capability is enabled. That said, I think it also means we should enable
-> ATS in the STE *before* enabling it in the endpoint -- the current logic
-> looks like it's the wrong way round to me (including in detach()).
-> 
-> Anyway, these speculative translations could race with a concurrent unmap()
-> call and end up with the ATC containing translations for unmapped pages,
-> which I think we should try to avoid.
-> 
-> Did the RCU approach not work out? You could use an rwlock instead as a
-> temporary bodge if the performance doesn't hurt too much.
-OK, I will try rwlock first, this does not change the original code logic.
+I have investment funds worth Twenty Seven Million Five Hundred Thousand 
+United State Dollar ($27.500.000.00 ) and i need a trusted investment 
+Manager/Partner because of my current refugee status, however, I am 
+interested in you for investment project assistance in your country, may be 
+from there, we can build business relationship in the nearest future.
 
-> 
-> Alternatively... maybe we could change the attach flow to do something
-> like:
-> 
-> 	enable_ats_in_ste(master);
-> 	enable_ats_at_pcie_endpoint(master);
-> 	spin_lock(devices_lock)
-> 	add_to_device_list(master);
-> 	nr_ats_masters++;
-> 	spin_unlock(devices_lock);
-> 	invalidate_atc(master);
-> 
-> in which case, the concurrent unmapper will be doing something like:
-> 
-> 	issue_tlbi();
-> 	smp_mb();
-> 	if (READ_ONCE(nr_ats_masters)) {
-> 		...
-> 	}
-> 
-> and I *think* that means that either the unmapper will see the
-> nr_ats_masters update and perform the invalidation, or they'll miss
-> the update but the attach will invalidate the ATC /after/ the TLBI
-> in the command queue.
-> 
-> Also, John's idea of converting this stuff over to my command batching
-> mechanism should help a lot if we can defer this to sync time using the
-> gather structure. Maybe an rwlock would be alright for that. Dunno.
-> 
-> Will
-> 
-> .
-> 
+I am willing to negotiate investment/business profit sharing ratio with you 
+base on the future investment earning profits.
 
+If you are willing to handle this project on my behalf kindly reply urgent 
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated.
+
+Best Regards
+Mrs Aisha Gaddafi
+(gaisha983@gmail.com)
