@@ -2,150 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC05A90736
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:49:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE69190744
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:52:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfHPRtg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 13:49:36 -0400
-Received: from mga05.intel.com ([192.55.52.43]:19545 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726469AbfHPRtf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:49:35 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 10:49:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,394,1559545200"; 
-   d="scan'208";a="201606195"
-Received: from otc-lr-04.jf.intel.com ([10.54.39.18])
-  by fmsmga004.fm.intel.com with ESMTP; 16 Aug 2019 10:49:35 -0700
-From:   kan.liang@linux.intel.com
-To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     eranian@google.com, ak@linux.intel.com,
-        Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86: Consider pinned events for group validation
-Date:   Fri, 16 Aug 2019 10:49:10 -0700
-Message-Id: <1565977750-76693-1-git-send-email-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727550AbfHPRwH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 13:52:07 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:40181 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727503AbfHPRwG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:52:06 -0400
+Received: by mail-pg1-f193.google.com with SMTP id w10so3291862pgj.7
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 10:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=xjxlB0B/JZnHNwu9yzdxZFE3he1ESE8+7aIO3e2RkyQ=;
+        b=NWmOxTmlwuqvYepW/pFP8VjWfNcBSeaFJiXDcL0o6v7Rvz8TLVtdKnwCd8I/2FMoMs
+         78S4FIuhOe1aIEuZ/RxhcqKOfVuhGptQBHAw3i/dj3GvfGe2XVrRPMoi1FV9rxsP40Gi
+         aOcF7Niwzy0kmnSzlnHcurkXlpMbOhRfTDSyQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=xjxlB0B/JZnHNwu9yzdxZFE3he1ESE8+7aIO3e2RkyQ=;
+        b=DDJn/TjziiH95hHSxBxoN36uxESGYWx+x51H0xtDXRBw+uaXCLcN8Y3DL2wB5uQqmt
+         mI/A+L7J2ktmvRXkuCoeYEZDTklL5WAA4PyLj6xFVW4kKoReXMXWlbRjXl8Um5/KNMBz
+         O5rRrzfVgTb1Hht/8BgwgMjkdvONgDLfoLoTQKDy+sM6XXK2sUMKHfyvpxRk+X/Gxi9B
+         ODuXQjZK+KWkTzdIbSQAqZU75bmknyH8Rb9fZgW2COpBZOldv3hrdlFbB0auKRHdzyoL
+         pkYXNh7mtHJFKXPYSK3NyzQMT9j6s7sY9WTST4rCybaIJS0ZDLeBtAEJLVN0GSYdmKt1
+         ooSg==
+X-Gm-Message-State: APjAAAV7XQPkGgSNBPcIjyASUKotVjxwsIrnReZJT37454eQjAhwtNE5
+        ZHpJ6kgrrcpqJxv5p3OdW/9jfQ==
+X-Google-Smtp-Source: APXvYqwQomJ4VDkW8Ugkil0/0Fx0afChPTSA24OHMr8FpMJsdU6v6T3IhgWzwQyyDkhwbqMSnFaCYg==
+X-Received: by 2002:aa7:8102:: with SMTP id b2mr12049391pfi.105.1565977925626;
+        Fri, 16 Aug 2019 10:52:05 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id 16sm10735880pfc.66.2019.08.16.10.52.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 10:52:05 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 10:51:57 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 2/4] backlight: Expose brightness curve type through
+ sysfs
+Message-ID: <20190816175157.GT250418@google.com>
+References: <20190709190007.91260-1-mka@chromium.org>
+ <20190709190007.91260-3-mka@chromium.org>
+ <20190816165148.7keg45fmlndr22fl@pengutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190816165148.7keg45fmlndr22fl@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+Hi Uwe,
 
-perf stat -M metrics relies on weak groups to reject unschedulable
-groups and run them as non-groups.
-This uses the group validation code in the kernel. Unfortunately
-that code doesn't take pinned events, such as the NMI watchdog, into
-account. So some groups can pass validation, but then later still
-never schedule.
+On Fri, Aug 16, 2019 at 06:51:48PM +0200, Uwe Kleine-König wrote:
+> On Tue, Jul 09, 2019 at 12:00:05PM -0700, Matthias Kaehlcke wrote:
+> > Backlight brightness curves can have different shapes. The two main
+> > types are linear and non-linear curves. The human eye doesn't
+> > perceive linearly increasing/decreasing brightness as linear (see
+> > also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
+> > linearly to human eye"), hence many backlights use non-linear (often
+> > logarithmic) brightness curves. The type of curve currently is opaque
+> > to userspace, so userspace often uses more or less reliable heuristics
+> > (like the number of brightness levels) to decide whether to treat a
+> > backlight device as linear or non-linear.
+> > 
+> > Export the type of the brightness curve via the new sysfs attribute
+> > 'scale'. The value of the attribute can be 'linear', 'non-linear' or
+> > 'unknown'. For devices that don't provide information about the scale
+> > of their brightness curve the value of the 'scale' attribute is 'unknown'.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> 
+> I wonder what kind of problem you are solving here. Can you describe
+> that in a few words?
 
-For example,
+The human eye perceives brightness in a logarithmic manner. For
+backlights with a linear brightness curve brightness controls like
+sliders need to use a mapping to achieve a behavior that is perceived
+as linear-ish (more details: http://www.pathwaylighting.com/products/downloads/brochure/technical_materials_1466797044_Linear+vs+Logarithmic+Dimming+White+Paper.pdf)
 
- $echo 1 > /proc/sys/kernel/nmi_watchdog
- $perf stat -M Page_Walks_Utilization
-
- Performance counter stats for 'system wide':
-
-     <not counted>      itlb_misses.walk_pending
-(0.00%)
-     <not counted>      dtlb_load_misses.walk_pending
-(0.00%)
-     <not counted>      dtlb_store_misses.walk_pending
-(0.00%)
-     <not counted>      ept.walk_pending
-(0.00%)
-     <not counted>      cycles
-(0.00%)
-
-       1.176613558 seconds time elapsed
-
-Current pinned events are always scheduled first. So the new group must
-can be scheduled together with current pinned events. Otherwise, it will
-never get a chance to be scheduled later.
-The trick is to pretend the current pinned events as part of the new
-group, and insert them into the fake_cpuc.
-The simulation result will tell if they can be scheduled successfully.
-The fake_cpuc never touch event state. The current pinned events will
-not be impacted.
-
-It won't catch all possible cases that cannot be scheduled, such as
-events pinned differently on different CPUs, or complicated constraints.
-But for the most common case, the NMI watchdog interacting with the
-current perf metrics, it is strong enough.
-
-After applying the patch,
-
- $echo 1 > /proc/sys/kernel/nmi_watchdog
- $ perf stat -M Page_Walks_Utilization
-
- Performance counter stats for 'system wide':
-
-         2,491,910      itlb_misses.walk_pending  #      0.0
-Page_Walks_Utilization   (79.94%)
-        13,630,942      dtlb_load_misses.walk_pending
-(80.02%)
-           207,255      dtlb_store_misses.walk_pending
-(80.04%)
-                 0      ept.walk_pending
-(80.04%)
-       236,204,924      cycles
-(79.97%)
-
-       0.901785713 seconds time elapsed
-
-Reported-by: Stephane Eranian <eranian@google.com>
-Suggested-by: Andi Kleen <ak@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/core.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
-index 81b005e..c8ed441 100644
---- a/arch/x86/events/core.c
-+++ b/arch/x86/events/core.c
-@@ -2011,9 +2011,11 @@ static int validate_event(struct perf_event *event)
-  */
- static int validate_group(struct perf_event *event)
- {
-+	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
- 	struct perf_event *leader = event->group_leader;
- 	struct cpu_hw_events *fake_cpuc;
--	int ret = -EINVAL, n;
-+	struct perf_event *pinned_event;
-+	int ret = -EINVAL, n, i;
- 
- 	fake_cpuc = allocate_fake_cpuc();
- 	if (IS_ERR(fake_cpuc))
-@@ -2033,6 +2035,24 @@ static int validate_group(struct perf_event *event)
- 	if (n < 0)
- 		goto out;
- 
-+	/*
-+	 * The new group must can be scheduled
-+	 * together with current pinned events.
-+	 * Otherwise, it will never get a chance
-+	 * to be scheduled later.
-+	 */
-+	for (i = 0; i < cpuc->n_events; i++) {
-+		pinned_event = cpuc->event_list[i];
-+		if (WARN_ON_ONCE(!pinned_event))
-+			continue;
-+		if (!pinned_event->attr.pinned)
-+			continue;
-+		fake_cpuc->n_events = n;
-+		n = collect_events(fake_cpuc, pinned_event, false);
-+		if (n < 0)
-+			goto out;
-+	}
-+
- 	fake_cpuc->n_events = 0;
- 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
- 
--- 
-2.7.4
-
+As of now userspace doesn't have information about the type of the
+brightness curve, and often uses heuristics to make a guess, which may
+be right most of the time, but not always. The new attribute eliminates
+the need to guess.
