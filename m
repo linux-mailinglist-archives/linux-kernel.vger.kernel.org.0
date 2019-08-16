@@ -2,123 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 866E390343
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:40:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27C909034D
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfHPNkx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 09:40:53 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37450 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726032AbfHPNkw (ORCPT
+        id S1727376AbfHPNm6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 09:42:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:33983 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727206AbfHPNm5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 09:40:52 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bj8so2477487plb.4;
-        Fri, 16 Aug 2019 06:40:52 -0700 (PDT)
+        Fri, 16 Aug 2019 09:42:57 -0400
+Received: by mail-pf1-f193.google.com with SMTP id b24so3181317pfp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 06:42:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=vDN0+dyr6DMJd4+K52kh69879Me//RnUZQzc4InlSuI=;
-        b=pKlnlCGxRoVBUmrLdA9fApZTDvZ5DJq3I+0kCVBqienNx9Qn7pdopdYm+dyXTWCi4e
-         ld85emkhKH4xYp5n5lnIHz47ik8yefKVI2kFdE03AHYTvMEkyOdF0qM2zLwuzXmxbadi
-         brekO1yP9CUCjg8NFI4TeAbMfP4dggWQUssO3eCaHccAm79SCnyTosfUSTusDQrB+MSL
-         PllpCHry3OMcTFyCmbgX4XBbKwsgBO9nNMI0HBqOOx3WPDHErJ0ylYPB9GhHg0m8PzYL
-         sBSZhoHVSVTGIOc2Kr9FdHg8PZ7X02lzsJVJHvQFu3+mv6c91tDwRj4pd/E4WH0jwJPA
-         HOvQ==
+        bh=i95hjXCJDrJPx4BxvkVZX0wlp8fNawFNwEDM8N6lzWk=;
+        b=cwMs+Z1zU8uKnOFjaxWVb4exkaTKQXN4WfXdfP3udYFeulyAnCPgxPlKeJCYUlsP4u
+         NgYdFKMqnCXuG/g6WKitl9enp3T19S+ys9Z6nL6G+VpmIeHLjr/NEMUv3rJtvxD+UH++
+         c/S4TjxLcpouiAIirMf0M9KIyJu9NngdKF9TjpFApGG55ck6g5qyoY3xeRBvCn2aBqKZ
+         i2sJMoExoF4/bRnkL3H0EFVzIi0dv6o16H6PHIdFigw7WFvwCplbBhmhCSRq59RdPlL1
+         0FFwJftv+qFGwk793L2q7wg8NeXN0PXuFq9jBK6KjH4I9Oj2J2yr44l7FoBm+KMKGMGY
+         r8sg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=vDN0+dyr6DMJd4+K52kh69879Me//RnUZQzc4InlSuI=;
-        b=L2/bq+gEyaijiKYNL4ZsthRCHA5drjbOegIGZmXDwwlY0hAv1idngl82i0M57o3nes
-         fZXV7xEZsEAfioIneard5luntQ9nVO3VovHG+a7E3fCCbHCP5Bquk0jFw2q8O4zV2+md
-         LfcShBD9MTdV/mMy75sOd7O78R3xXH0koxEHXhQbePptwJc5fpqs1ybw5zvbjE+aFvFn
-         u2ieB8Rj73LrTechSNldp2gGyeu0dKxkDITGlh+TBlD/RyBG3CuYpUyCpFN78lhuXuUK
-         jZP5n2FMNXfTaxne9VdpEmUGRC/bDuZL+lGNZpragVDUwlKIDUjh3VxwFQRsiwoArjtl
-         9tGA==
-X-Gm-Message-State: APjAAAW41DLiGVeLMjSs1I74J/h5OWNflyey71LD9kK0rgI7u9P+tD3e
-        H5Ov/N8m4PtHUBNuX3pq+1oWd1RPrpwudfg+q3M=
-X-Google-Smtp-Source: APXvYqyOqNRH0WBVdfxBLkaw7mQ2WBZbnECGUjAk75ks9d9mQcn1NWOwlq96XVwE8oEFizIMPWTo+W4QkBOhfTK99nE=
-X-Received: by 2002:a17:902:e106:: with SMTP id cc6mr9230690plb.255.1565962852141;
- Fri, 16 Aug 2019 06:40:52 -0700 (PDT)
+        bh=i95hjXCJDrJPx4BxvkVZX0wlp8fNawFNwEDM8N6lzWk=;
+        b=FbXdAQKb0/gNlHoOl/sVsTM1eiMJRulvd4CQv7PVmiFSHx0Mraf6MoLj/seBQO9FxT
+         tBQswB1RluyLr3XWF2v1vg9K3ZsTJVudLPk4bCbBf1M544yddGfpg/tAyIsr69N6zP2W
+         nvPQcf2bPQUTaQJmWUAq1ZadRcma8UcmOA7JgwbOIoK7SUVJpTSNlxH09wQxq66UN8em
+         FLT87NntS3MntMKFAHGlQQMLy9QeE9Taabaa3M598hZi/OBT20fIdDUyYdJzPztdx9SY
+         NygJOvYoSPlyk4ehcU13dH2T7qdBH2mCj7lb0a1+D9HFwgV5dZorVFdU0gbXztB8qjDu
+         v4Bw==
+X-Gm-Message-State: APjAAAWhzIJZnK9JNL1KVB+NkPIxs59CxJg7Y7oYbTi3DxCCnNOQm68J
+        mvCmRCXD3bRBBZ/EJ8DgzwZq7270YqG48cKGvX8=
+X-Google-Smtp-Source: APXvYqzepLDKeM2xkfmllmPMj2LYmRwJCr7AUK+efN/I7goGu/oUV8dsfD7I4XNg0V7rRORVmDdK7LMs5X/K/Mq1d84=
+X-Received: by 2002:a17:90a:a114:: with SMTP id s20mr7378476pjp.20.1565962977120;
+ Fri, 16 Aug 2019 06:42:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <1565946336-20080-1-git-send-email-xuwei5@hisilicon.com>
-In-Reply-To: <1565946336-20080-1-git-send-email-xuwei5@hisilicon.com>
+References: <20190816104515.63613-1-heikki.krogerus@linux.intel.com> <20190816104515.63613-2-heikki.krogerus@linux.intel.com>
+In-Reply-To: <20190816104515.63613-2-heikki.krogerus@linux.intel.com>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 16 Aug 2019 16:40:40 +0300
-Message-ID: <CAHp75VfjE4V7yY1b3JYd_Mk9-8RTok2WCN=-MMrUBw5NN90o2A@mail.gmail.com>
-Subject: Re: [PATCH v2] gpio: pl061: Fix the issue failed to register the ACPI interrtupion
-To:     Wei Xu <xuwei5@hisilicon.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        shameerali.kolothum.thodi@huawei.com,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        John Garry <john.garry@huawei.com>, salil.mehta@huawei.com,
-        shiju.jose@huawei.com, jinying@hisilicon.com,
-        zhangyi.ac@huawei.com, liguozhu@hisilicon.com,
-        tangkunshan@huawei.com, huangdaode <huangdaode@hisilicon.com>
+Date:   Fri, 16 Aug 2019 16:42:45 +0300
+Message-ID: <CAHp75Vcp6JZ6jWT0dcbWXZYEJKz8Ps1TE-d8+haVni+g4DMnBA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] software node: Add software_node_find_by_name()
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 12:07 PM Wei Xu <xuwei5@hisilicon.com> wrote:
+On Fri, Aug 16, 2019 at 1:45 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
 >
-> Invoke acpi_gpiochip_request_interrupts after the acpi data has been
-> attached to the pl061 acpi node to register interruption.
+> Function that searches software nodes by node name.
 >
-> Otherwise it will be failed to register interruption for the ACPI case.
-> Because in the gpiochip_add_data_with_key, acpi_gpiochip_add is invoked
-> after gpiochip_add_irqchip but at that time the acpi data has not been
-> attached yet.
 
-> 2. cat /proc/interrupts in the guest console:
->
->         estuary:/$ cat /proc/interrupts
->                    CPU0
->         2:         3228     GICv3  27 Level     arch_timer
->         4:           15     GICv3  33 Level     uart-pl011
->         42:           0     GICv3  23 Level     arm-pmu
->         IPI0:         0       Rescheduling interrupts
->         IPI1:         0       Function call interrupts
->         IPI2:         0       CPU stop interrupts
->         IPI3:         0       CPU stop (for crash dump) interrupts
->         IPI4:         0       Timer broadcast interrupts
->         IPI5:         0       IRQ work interrupts
->         IPI6:         0       CPU wake-up interrupts
->         Err:          0
->
-> But on QEMU v3.0.0 and Linux kernel v5.2.0-rc7, pl061 interruption is
-> there as below:
->
->         estuary:/$ cat /proc/interrupts
->                    CPU0
->           2:       2648     GICv3  27 Level     arch_timer
->           4:         12     GICv3  33 Level     uart-pl011
->          42:          0     GICv3  23 Level     arm-pmu
->          43:          0  ARMH0061:00   3 Edge      ACPI:Event
->         IPI0:         0       Rescheduling interrupts
->         IPI1:         0       Function call interrupts
->         IPI2:         0       CPU stop interrupts
->         IPI3:         0       CPU stop (for crash dump) interrupts
->         IPI4:         0       Timer broadcast interrupts
->         IPI5:         0       IRQ work interrupts
->         IPI6:         0       CPU wake-up interrupts
->         Err:          0
+FWIW,
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 
-In above show only affected line.
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+> Tested-by: Hans de Goede <hdegoede@redhat.com>
+> ---
+>  drivers/base/swnode.c    | 37 +++++++++++++++++++++++++++++++++++++
+>  include/linux/property.h |  4 ++++
+>  2 files changed, 41 insertions(+)
+>
+> diff --git a/drivers/base/swnode.c b/drivers/base/swnode.c
+> index e7b3aa3bd55a..ee2a405cca9a 100644
+> --- a/drivers/base/swnode.c
+> +++ b/drivers/base/swnode.c
+> @@ -620,6 +620,43 @@ static const struct fwnode_operations software_node_ops = {
+>
+>  /* -------------------------------------------------------------------------- */
+>
+> +/**
+> + * software_node_find_by_name - Find software node by name
+> + * @parent: Parent of the software node
+> + * @name: Name of the software node
+> + *
+> + * The function will find a node that is child of @parent and that is named
+> + * @name. If no node is found, the function returns NULL.
+> + *
+> + * NOTE: you will need to drop the reference with fwnode_handle_put() after use.
+> + */
+> +const struct software_node *
+> +software_node_find_by_name(const struct software_node *parent, const char *name)
+> +{
+> +       struct swnode *swnode;
+> +       struct kobject *k;
+> +
+> +       if (!name)
+> +               return NULL;
+> +
+> +       spin_lock(&swnode_kset->list_lock);
+> +
+> +       list_for_each_entry(k, &swnode_kset->list, entry) {
+> +               swnode = kobj_to_swnode(k);
+> +               if (parent == swnode->node->parent && swnode->node->name &&
+> +                   !strcmp(name, swnode->node->name)) {
+> +                       kobject_get(&swnode->kobj);
+> +                       break;
+> +               }
+> +               swnode = NULL;
+> +       }
+> +
+> +       spin_unlock(&swnode_kset->list_lock);
+> +
+> +       return swnode ? swnode->node : NULL;
+> +}
+> +EXPORT_SYMBOL_GPL(software_node_find_by_name);
+> +
+>  static int
+>  software_node_register_properties(struct software_node *node,
+>                                   const struct property_entry *properties)
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 5a910ad79591..9b3d4ca3a73a 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -421,6 +421,10 @@ bool is_software_node(const struct fwnode_handle *fwnode);
+>  const struct software_node *to_software_node(struct fwnode_handle *fwnode);
+>  struct fwnode_handle *software_node_fwnode(const struct software_node *node);
+>
+> +const struct software_node *
+> +software_node_find_by_name(const struct software_node *parent,
+> +                          const char *name);
+> +
+>  int software_node_register_nodes(const struct software_node *nodes);
+>  void software_node_unregister_nodes(const struct software_node *nodes);
+>
+> --
+> 2.23.0.rc1
+>
 
-> And the whole dmesg log on Linux kernel v5.2.0-rc7 is as below:
-
-NO!
-Please, remove this huge noise!
 
 -- 
 With Best Regards,
