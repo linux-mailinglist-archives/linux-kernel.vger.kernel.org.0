@@ -2,58 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 74388901D5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E67901D7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfHPMld convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Fri, 16 Aug 2019 08:41:33 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42168 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727159AbfHPMlc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:41:32 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1hybXa-00010v-Ni; Fri, 16 Aug 2019 14:41:10 +0200
-Date:   Fri, 16 Aug 2019 14:41:10 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     syzbot <syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com>
-Cc:     antoine.tenart@bootlin.com, ard.biesheuvel@linaro.org,
-        baruch@tkos.co.il, davem@davemloft.net, gregkh@linuxfoundation.org,
-        gustavo@embeddedor.com, jeyu@kernel.org,
-        linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
-        maxime.chevallier@bootlin.com, mingo@kernel.org,
-        netdev@vger.kernel.org, paulmck@linux.ibm.com,
-        paulmck@linux.vnet.ibm.com, rmk+kernel@armlinux.org.uk,
-        rostedt@goodmis.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de
-Subject: Re: WARNING in tracepoint_probe_register_prio (3)
-Message-ID: <20190816124110.pohillduyajfuo2p@linutronix.de>
-References: <000000000000ab6f84056c786b93@google.com>
- <000000000000479a1705903b2dc9@google.com>
+        id S1727310AbfHPMmU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:42:20 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:60334 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727181AbfHPMmU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:42:20 -0400
+Received: from [88.128.80.55] (helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hybYc-0000bE-J7; Fri, 16 Aug 2019 14:42:15 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Andy Yan <andyshrk@gmail.com>
+Cc:     robh+dt@kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add dts for Leez RK3399 P710 SBC
+Date:   Fri, 16 Aug 2019 14:42:01 +0200
+Message-ID: <2387554.nTnFO2ePRC@phil>
+In-Reply-To: <20190805124037.10597-1-andyshrk@gmail.com>
+References: <20190805124037.10597-1-andyshrk@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <000000000000479a1705903b2dc9@google.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-16 05:32:00 [-0700], syzbot wrote:
-> syzbot has bisected this bug to:
+Am Montag, 5. August 2019, 14:40:37 CEST schrieb Andy Yan:
+> P710 is a RK3399 based SBC, designed by Leez [0].
 > 
-> commit ecb9f80db23a7ab09b46b298b404e41dd7aff6e6
-> Author: Thomas Gleixner <tglx@linutronix.de>
-> Date:   Tue Aug 13 08:00:25 2019 +0000
+> Specification
+> - Rockchip RK3399
+> - 4/2GB LPDDR4
+> - TF sd scard slot
+> - eMMC
+> - M.2 B-Key for 4G LTE
+> - AP6256 for WiFi + BT
+> - Gigabit ethernet
+> - HDMI out
+> - 40 pin header
+> - USB 2.0 x 2
+> - USB 3.0 x 1
+> - USB 3.0 Type-C x 1
+> - TYPE-C Power supply
 > 
->     net/mvpp2: Replace tasklet with softirq hrtimer
+> [0]https://leez.lenovo.com
 > 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13ffb9ee600000
+> Signed-off-by: Andy Yan <andyshrk@gmail.com>
 
-that bisect is wrong. That warning triggered once and this commit was
-the top most one in net-next at the time…
+applied for 5.4 - I did correct the alphabetical sorting a tiny bit though.
 
-Sebastian
+Thanks
+Heiko
+
+
