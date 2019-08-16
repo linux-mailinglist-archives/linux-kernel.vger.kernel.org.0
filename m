@@ -2,184 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EC1C8F90E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:37:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFC098F91C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:37:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfHPCgG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:36:06 -0400
-Received: from mga07.intel.com ([134.134.136.100]:39514 "EHLO mga07.intel.com"
+        id S1726677AbfHPChf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:37:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726649AbfHPCgD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:36:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 19:35:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
-   d="scan'208";a="194894864"
-Received: from gvt.bj.intel.com ([10.238.158.180])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Aug 2019 19:35:54 -0700
-From:   Tina Zhang <tina.zhang@intel.com>
-To:     intel-gvt-dev@lists.freedesktop.org
-Cc:     Kechen Lu <kechen.lu@intel.com>, kraxel@redhat.com,
-        alex.williamson@redhat.com, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, hang.yuan@intel.com,
-        zhiyuan.lv@intel.com, Tina Zhang <tina.zhang@intel.com>
-Subject: [PATCH v5 6/6] drm/i915/gvt: Add cursor plane reg update trap emulation handler
-Date:   Fri, 16 Aug 2019 10:35:28 +0800
-Message-Id: <20190816023528.30210-7-tina.zhang@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190816023528.30210-1-tina.zhang@intel.com>
-References: <20190816023528.30210-1-tina.zhang@intel.com>
+        id S1726329AbfHPChf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 22:37:35 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E5582064A;
+        Fri, 16 Aug 2019 02:37:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565923055;
+        bh=tM3LK3Axr9da+0tPynRfy4DTO/ULvWs6X8pG7K2xsEg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IZx5p8f6wQX38wzChoK+Tl+G24r9NUJvHDqhEDsFlCB8ijkV7LBQdaqVtjgufhY0c
+         2qZebSGEXIuNVocFvqKrE9swVLg/F5hg2L6p74kr2FZQS+HXizGxih2JLUe+rzu0Tw
+         YdbPDImuCLpF7n/bAahBWEMd/cdssYxYkg0qh9u8=
+Subject: Re: [PATCH 4.14 00/69] 4.14.139-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190814165744.822314328@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <c5b77555-a28e-ada8-c9e6-7d3c9d201327@kernel.org>
+Date:   Thu, 15 Aug 2019 20:37:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190814165744.822314328@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kechen Lu <kechen.lu@intel.com>
+On 8/14/19 11:00 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.139 release.
+> There are 69 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri 16 Aug 2019 04:55:34 PM UTC.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.139-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
 
-This patch adds the cursor plane CURBASE reg update trap handler
-in order to:
+Compiled and booted on my test system. No dmesg regressions.
 
-- Deliver the cursor refresh event at each vblank emulation,
-the flip_done_event bit check is supposed to do here. If cursor
-plane updates happen, deliver the cursor refresh events.
-
-- Support the sync and async cursor plane updates and
-corresponding cursor plane flip interrupts reporting.
-
-v2:
-- As the suggestion from Zhenyu, the experiments show that
-Windows driver programs the CURBASE and CURPOS at one time as
-well as the Linux i915 driver. So only track the CURBASE is
-enough.
-
-Signed-off-by: Kechen Lu <kechen.lu@intel.com>
-Signed-off-by: Tina Zhang <tina.zhang@intel.com>
----
- drivers/gpu/drm/i915/gvt/display.c   |  7 +++++++
- drivers/gpu/drm/i915/gvt/handlers.c  | 27 ++++++++++++++++++++++++---
- drivers/gpu/drm/i915/gvt/interrupt.c |  7 +++++++
- drivers/gpu/drm/i915/gvt/interrupt.h |  3 +++
- 4 files changed, 41 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/i915/gvt/display.c b/drivers/gpu/drm/i915/gvt/display.c
-index 35436e845227..78d43a81bbeb 100644
---- a/drivers/gpu/drm/i915/gvt/display.c
-+++ b/drivers/gpu/drm/i915/gvt/display.c
-@@ -401,6 +401,7 @@ static void emulate_vblank_on_pipe(struct intel_vgpu *vgpu, int pipe)
- 		[PIPE_C] = PIPE_C_VBLANK,
- 	};
- 	int pri_flip_event = SKL_FLIP_EVENT(pipe, PLANE_PRIMARY);
-+	int cur_flip_event = CURSOR_A_FLIP_DONE + pipe;
- 	int event;
- 	u64 eventfd_signal_val = 0;
- 	static int no_pageflip_count;
-@@ -417,6 +418,9 @@ static void emulate_vblank_on_pipe(struct intel_vgpu *vgpu, int pipe)
- 		if (event == pri_flip_event)
- 			eventfd_signal_val |= DISPLAY_PRI_REFRESH_EVENT_VAL;
- 
-+		if (event == cur_flip_event)
-+			eventfd_signal_val |= DISPLAY_CUR_REFRESH_EVENT_VAL;
-+
- 		intel_vgpu_trigger_virtual_event(vgpu, event);
- 	}
- 
-@@ -428,6 +432,9 @@ static void emulate_vblank_on_pipe(struct intel_vgpu *vgpu, int pipe)
- 
- 		if (event == PLANE_PRIMARY)
- 			eventfd_signal_val |= DISPLAY_PRI_REFRESH_EVENT_VAL;
-+
-+		if (event == PLANE_CURSOR)
-+			eventfd_signal_val |= DISPLAY_CUR_REFRESH_EVENT_VAL;
- 	}
- 
- 	if (eventfd_signal_val)
-diff --git a/drivers/gpu/drm/i915/gvt/handlers.c b/drivers/gpu/drm/i915/gvt/handlers.c
-index 92ff037996a2..53ef96562d48 100644
---- a/drivers/gpu/drm/i915/gvt/handlers.c
-+++ b/drivers/gpu/drm/i915/gvt/handlers.c
-@@ -767,6 +767,27 @@ static int pri_surf_mmio_write(struct intel_vgpu *vgpu, unsigned int offset,
- 	return 0;
- }
- 
-+#define CURBASE_TO_PIPE(offset) \
-+	calc_index(offset, _CURABASE, _CURBBASE, 0, CURBASE(PIPE_C))
-+
-+static int cur_surf_mmio_write(struct intel_vgpu *vgpu, unsigned int offset,
-+		void *p_data, unsigned int bytes)
-+{
-+	struct drm_i915_private *dev_priv = vgpu->gvt->dev_priv;
-+	u32 pipe = CURBASE_TO_PIPE(offset);
-+	int event = CURSOR_A_FLIP_DONE + pipe;
-+
-+	write_vreg(vgpu, offset, p_data, bytes);
-+
-+	if (vgpu_vreg_t(vgpu, CURCNTR(pipe)) & PLANE_CTL_ASYNC_FLIP) {
-+		intel_vgpu_trigger_virtual_event(vgpu, event);
-+		set_bit(PLANE_CURSOR, vgpu->display.async_flip_event[pipe]);
-+	} else
-+		set_bit(event, vgpu->irq.flip_done_event[pipe]);
-+
-+	return 0;
-+}
-+
- #define SPRSURF_TO_PIPE(offset) \
- 	calc_index(offset, _SPRA_SURF, _SPRB_SURF, 0, SPRSURF(PIPE_C))
- 
-@@ -1970,9 +1991,9 @@ static int init_generic_mmio_info(struct intel_gvt *gvt)
- 	MMIO_D(CURPOS(PIPE_B), D_ALL);
- 	MMIO_D(CURPOS(PIPE_C), D_ALL);
- 
--	MMIO_D(CURBASE(PIPE_A), D_ALL);
--	MMIO_D(CURBASE(PIPE_B), D_ALL);
--	MMIO_D(CURBASE(PIPE_C), D_ALL);
-+	MMIO_DH(CURBASE(PIPE_A), D_ALL, NULL, cur_surf_mmio_write);
-+	MMIO_DH(CURBASE(PIPE_B), D_ALL, NULL, cur_surf_mmio_write);
-+	MMIO_DH(CURBASE(PIPE_C), D_ALL, NULL, cur_surf_mmio_write);
- 
- 	MMIO_D(CUR_FBC_CTL(PIPE_A), D_ALL);
- 	MMIO_D(CUR_FBC_CTL(PIPE_B), D_ALL);
-diff --git a/drivers/gpu/drm/i915/gvt/interrupt.c b/drivers/gpu/drm/i915/gvt/interrupt.c
-index 951681813230..9c2b9d2e1529 100644
---- a/drivers/gpu/drm/i915/gvt/interrupt.c
-+++ b/drivers/gpu/drm/i915/gvt/interrupt.c
-@@ -113,6 +113,9 @@ static const char * const irq_name[INTEL_GVT_EVENT_MAX] = {
- 	[SPRITE_A_FLIP_DONE] = "Sprite Plane A flip done",
- 	[SPRITE_B_FLIP_DONE] = "Sprite Plane B flip done",
- 	[SPRITE_C_FLIP_DONE] = "Sprite Plane C flip done",
-+	[CURSOR_A_FLIP_DONE] = "Cursor Plane A flip done",
-+	[CURSOR_B_FLIP_DONE] = "Cursor Plane B flip done",
-+	[CURSOR_C_FLIP_DONE] = "Cursor Plane C flip done",
- 
- 	[PCU_THERMAL] = "PCU Thermal Event",
- 	[PCU_PCODE2DRIVER_MAILBOX] = "PCU pcode2driver mailbox event",
-@@ -593,6 +596,10 @@ static void gen8_init_irq(
- 		SET_BIT_INFO(irq, 4, SPRITE_A_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_A);
- 		SET_BIT_INFO(irq, 4, SPRITE_B_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_B);
- 		SET_BIT_INFO(irq, 4, SPRITE_C_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_C);
-+
-+		SET_BIT_INFO(irq, 6, CURSOR_A_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_A);
-+		SET_BIT_INFO(irq, 6, CURSOR_B_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_B);
-+		SET_BIT_INFO(irq, 6, CURSOR_C_FLIP_DONE, INTEL_GVT_IRQ_INFO_DE_PIPE_C);
- 	}
- 
- 	/* GEN8 interrupt PCU events */
-diff --git a/drivers/gpu/drm/i915/gvt/interrupt.h b/drivers/gpu/drm/i915/gvt/interrupt.h
-index 5313fb1b33e1..158f1c7a23f2 100644
---- a/drivers/gpu/drm/i915/gvt/interrupt.h
-+++ b/drivers/gpu/drm/i915/gvt/interrupt.h
-@@ -92,6 +92,9 @@ enum intel_gvt_event_type {
- 	SPRITE_A_FLIP_DONE,
- 	SPRITE_B_FLIP_DONE,
- 	SPRITE_C_FLIP_DONE,
-+	CURSOR_A_FLIP_DONE,
-+	CURSOR_B_FLIP_DONE,
-+	CURSOR_C_FLIP_DONE,
- 
- 	PCU_THERMAL,
- 	PCU_PCODE2DRIVER_MAILBOX,
--- 
-2.17.1
+thanks,
+-- Shuah
 
