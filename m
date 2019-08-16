@@ -2,90 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 903BD8FD9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:20:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A02858FDBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727046AbfHPIUC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:20:02 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40896 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726575AbfHPIUC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:20:02 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 62492B089;
-        Fri, 16 Aug 2019 08:20:01 +0000 (UTC)
-Date:   Fri, 16 Aug 2019 10:20:00 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     " Justin He (Arm Technology China) " <Justin.He@arm.com>
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        KeesCook <keescook@chromium.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "Tobin C.Harding" <tobin@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/2] vsprintf: Prevent crash when dereferencing invalid
- pointers for %pD
-Message-ID: <20190816082000.jmz47bke4it72sv5@pathway.suse.cz>
-References: <20190809012457.56685-1-justin.he@arm.com>
- <CAHp75VcR1rJ5AX_Nj3n2NnMasLRp74Y3R6Mh4XQ5s64aKrF6tw@mail.gmail.com>
- <DB7PR08MB3082C27A075C410FE339F308F7D60@DB7PR08MB3082.eurprd08.prod.outlook.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <DB7PR08MB3082C27A075C410FE339F308F7D60@DB7PR08MB3082.eurprd08.prod.outlook.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+        id S1726942AbfHPIYz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:24:55 -0400
+Received: from mga02.intel.com ([134.134.136.20]:54028 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726684AbfHPIYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:24:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 01:19:21 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
+   d="scan'208";a="182118822"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by orsmga006.jf.intel.com with ESMTP; 16 Aug 2019 01:19:17 -0700
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        tony.luck@intel.com, x86@kernel.org
+Cc:     andriy.shevchenko@intel.com, alan@linux.intel.com,
+        ricardo.neri-calderon@linux.intel.com, rafael.j.wysocki@intel.com,
+        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
+        cheol.yong.kim@intel.com, rahul.tanwar@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
+Date:   Fri, 16 Aug 2019 16:18:58 +0800
+Message-Id: <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+In-Reply-To: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 2019-08-09 10:56:04,  Justin He (Arm Technology China)  wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Andy Shevchenko <andy.shevchenko@gmail.com>
-> > Sent: 2019年8月9日 18:52
-> > To: Justin He (Arm Technology China) <Justin.He@arm.com>
-> > Cc: Petr Mladek <pmladek@suse.com>; Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com>; Sergey Senozhatsky
-> > <sergey.senozhatsky@gmail.com>; Geert Uytterhoeven
-> > <geert+renesas@glider.be>; Linux Kernel Mailing List <linux-
-> > kernel@vger.kernel.org>; Thomas Gleixner <tglx@linutronix.de>; Steven
-> > Rostedt (VMware) <rostedt@goodmis.org>; Kees Cook
-> > <keescook@chromium.org>; Shuah Khan <shuah@kernel.org>; Tobin C.
-> > Harding <tobin@kernel.org>
-> > Subject: Re: [PATCH 1/2] vsprintf: Prevent crash when dereferencing invalid
-> > pointers for %pD
-> >
-> > On Fri, Aug 9, 2019 at 4:28 AM Jia He <justin.he@arm.com> wrote:
-> > >
-> > > Commit 3e5903eb9cff ("vsprintf: Prevent crash when dereferencing
-> > invalid
-> > > pointers") prevents most crash except for %pD.
-> > > There is an additional pointer dereferencing before dentry_name.
-> > >
-> > > At least, vma->file can be NULL and be passed to printk %pD in
-> > > print_bad_pte, which can cause crash.
-> > >
-> > > This patch fixes it with introducing a new file_dentry_name.
-> > >
-> >
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> >
-> > Perhaps you need to add a Fixes tag
-> Thanks, Andy
-> Fixes: 3e5903eb9cff ("vsprintf: Prevent crash when dereferencing invalid pointers")
+Add a new variant of Intel Atom Airmont CPU model.
 
-I have added the Fixes tag and pushed the patch into printk.git,
-branch for-5.4.
+Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+---
+ arch/x86/include/asm/intel-family.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for the fix.
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 0278aa66ef62..cbbb8250370f 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -73,6 +73,7 @@
+ 
+ #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
+ #define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
++#define INTEL_FAM6_ATOM_AIRMONT_NP	0x75 /* Lightning Mountain */
+ 
+ #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
+ #define INTEL_FAM6_ATOM_GOLDMONT_X	0x5F /* Denverton */
+-- 
+2.11.0
 
-Best Regards,
-Petr
