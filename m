@@ -2,135 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F288FAEC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:27:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2D1E8FB01
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:30:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfHPG1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:27:18 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42625 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfHPG1S (ORCPT
+        id S1726832AbfHPG3K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:29:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:41026 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726734AbfHPG3J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:27:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id s19so3295346lfb.9
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 23:27:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+lm26ypr1HFcyJ7hZ74u9revSRfSoVfoTCtYpt3Woco=;
-        b=GDQS3E3wgsOcpEmUdh/7FrM+PIwG363gn6bd/2WcIDTYecvOS6uKIzzZah8q/y++LL
-         JAPEsMUEGYHVt/cJCJ5RH4/KRZVEZ5zHs1HjqBD4Lh8P+yeCfaGzm/qZNWcwRr5klPFP
-         gXkGm26epRrNG7drbO05XPe6GKCVNb2zU9wlzDMI/y2bi0BCxZvj4P4PKKQO/e4Yq1cj
-         PL/z1F1uN+BlT8QbNG3TZ35AKbl35qDVdizIf6yQ8DE5/3XDtXBHeQ/NulYnxZt288Su
-         +3D9HTDceHmk6mPD/4ZZXrjPfd/p2H5DtdIGAfhXjLoiv0yPkL3TGoclyQgG0hDjF5l7
-         6lbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+lm26ypr1HFcyJ7hZ74u9revSRfSoVfoTCtYpt3Woco=;
-        b=sEDfMb9znplQ6VI2PWaRRoNCWPuu+fdT2T+cimKNFK7W0GQ/2h1ZljVauUX2aJKYTU
-         HeJA2Cyzgy1Ps3sZTaHK5UmAEEqZ/WxYEnFlVftUi0iU2xPoM71nl4h0PyCoFDGE+gjs
-         YtczgXCkZaU67XrBq/7GcE27m57u5DRB0goPWzjdfMItYTBD59LWniCagYGBB1wAeFA6
-         SzBVXHxDHf1sfQWBMQM7QtvAhqGuWe77fpl2eyUHUgmQJ0YHH4lcQsQkmCcArw8X8cO2
-         Wt4kbw7T/bndE1JLlh/uDiTNRbegQJvDUd5leiu2KpMCxqIfS2vwWQ/m7Gxj86lM/mva
-         0S5w==
-X-Gm-Message-State: APjAAAWY7Tkx4TAdqoFhT21Dt2jkvhP7pw4oqyEDFeOYEUagTNrE2SZF
-        rCKhYvMb18WzbWjXqiUiaMPke3fntSD1LOiXXc8=
-X-Google-Smtp-Source: APXvYqw/pzogfFsM3txv21J7mmVAMuAg5bLpt1moRRMwMAytRKI/2ywz6QY1qaZduB8tnnRHj850nAkh/ETZxUwIOXg=
-X-Received: by 2002:ac2:465e:: with SMTP id s30mr4431231lfo.19.1565936836466;
- Thu, 15 Aug 2019 23:27:16 -0700 (PDT)
+        Fri, 16 Aug 2019 02:29:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=dftcSzfDdyc02vTQypmmr4nqPV2SE1bB1GMbvWD2Jek=; b=RF9/8JHwKe7RmdyKImreqwMQQI
+        NQS5qXpKIaLeNoh33nFXYa0H7EG0Ar8NEjKXNVsK0FBbP6IDmdn+aoJMKRrAwrC/DsuJC0nb6xH6N
+        MDdUY/JvBPCr7BiGguUzQ0pwLGej3AHJq7Dz56yKvSOY7n/1cJSXiKA+nSgQkP+RN6v4qjL0SyuoN
+        yAc3lvtmBc7/Jrf5xGMAjW9hPf6+W/MtHpBNroiq2tw5EWZVgcTJ8LANmbQDiNosv57PLiGR+1oFD
+        IBkUd1mu8/d+TQ+LZaw4vtte/TOgpju9oE3jzSFIWh2mFcu7EfjrwbvVVtDPcD6QDAqXKJWpjWwt7
+        LiV7E8KQ==;
+Received: from 089144199030.atnat0008.highway.a1.net ([89.144.199.30] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hyVjP-00068C-GP; Fri, 16 Aug 2019 06:29:00 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc:     Gavin Li <git@thegavinli.com>,
+        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Geoff Levand <geoff@infradead.org>,
+        Michal Simek <michal.simek@xilinx.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Bin Liu <b-liu@ti.com>, linux-arm-kernel@lists.infradead.org,
+        linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-m68k@lists.linux-m68k.org, iommu@lists.linux-foundation.org,
+        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] usb: don't create dma pools for HCDs with a localmem_pool
+Date:   Fri, 16 Aug 2019 08:24:30 +0200
+Message-Id: <20190816062435.881-2-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190816062435.881-1-hch@lst.de>
+References: <20190816062435.881-1-hch@lst.de>
 MIME-Version: 1.0
-References: <20190814060854.26345-1-codekipper@gmail.com> <20190814060854.26345-3-codekipper@gmail.com>
- <20190814070923.wwkw7hybjvy3p4br@flea>
-In-Reply-To: <20190814070923.wwkw7hybjvy3p4br@flea>
-From:   Code Kipper <codekipper@gmail.com>
-Date:   Fri, 16 Aug 2019 08:27:05 +0200
-Message-ID: <CAEKpxBkOu0+zek9f=4grNEhyPS=Ly3nweCUCgaz6y8M61xvpaQ@mail.gmail.com>
-Subject: Re: [PATCH v5 02/15] ASoC: sun4i-i2s: Add set_tdm_slot functionality
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "Andrea Venturi (pers)" <be17068@iperbole.bo.it>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 at 13:08, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> On Wed, Aug 14, 2019 at 08:08:41AM +0200, codekipper@gmail.com wrote:
-> > From: Marcus Cooper <codekipper@gmail.com>
-> >
-> > Codecs without a control connection such as i2s based HDMI audio and
-> > the Pine64 DAC require a different amount of bit clocks per frame than
-> > what is calculated by the sample width. Use the tdm slot bindings to
-> > provide this mechanism.
-> >
-> > Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-> > ---
-> >  sound/soc/sunxi/sun4i-i2s.c | 23 +++++++++++++++++++++--
-> >  1 file changed, 21 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> > index 8201334a059b..7c37b6291df0 100644
-> > --- a/sound/soc/sunxi/sun4i-i2s.c
-> > +++ b/sound/soc/sunxi/sun4i-i2s.c
-> > @@ -195,6 +195,9 @@ struct sun4i_i2s {
-> >       struct regmap_field     *field_rxchansel;
-> >
-> >       const struct sun4i_i2s_quirks   *variant;
-> > +
-> > +     unsigned int    tdm_slots;
-> > +     unsigned int    slot_width;
-> >  };
-> >
-> >  struct sun4i_i2s_clk_div {
-> > @@ -346,7 +349,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
-> >       if (i2s->variant->has_fmt_set_lrck_period)
-> >               regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
-> >                                  SUN8I_I2S_FMT0_LRCK_PERIOD_MASK,
-> > -                                SUN8I_I2S_FMT0_LRCK_PERIOD(32));
-> > +                                SUN8I_I2S_FMT0_LRCK_PERIOD(word_size));
-> >
-> >
-> >       /* Set sign extension to pad out LSB with 0 */
-> >       regmap_field_write(i2s->field_fmt_sext, 0);
-> > @@ -450,7 +453,8 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
-> >       regmap_field_write(i2s->field_fmt_sr, sr);
-> >
-> >       return sun4i_i2s_set_clk_rate(dai, params_rate(params),
-> > -                                   params_width(params));
-> > +                                   i2s->tdm_slots ?
-> > +                                   i2s->slot_width : params_width(params));
->
-> This is slightly more complicated than that.
+If the HCD provides a localmem pool we will never use the DMA pools, so
+don't create them.
 
-At this point we're only supporting 2 channels with fixed slot
-settings. I've added a comment to state
-that we're using the tdm_slot at the moment as an indicator to
-override the slot width. Do you think
-that is enough for now?.
+Fixes: b0310c2f09bb ("USB: use genalloc for USB HCs with local memory")
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ drivers/usb/core/buffer.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Thanks,
-CK
->
-> On the H3 (and all related ones), the CHAN_CFG_TX_SLOT_NUM and
-> _RX_SLOT_NUM fields in the CHAN_CFG register need to be set to the
-> number of slots as well.
->
-> Maxime
->
-> --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
+diff --git a/drivers/usb/core/buffer.c b/drivers/usb/core/buffer.c
+index 1359b78a624e..1a5b3dcae930 100644
+--- a/drivers/usb/core/buffer.c
++++ b/drivers/usb/core/buffer.c
+@@ -66,9 +66,9 @@ int hcd_buffer_create(struct usb_hcd *hcd)
+ 	char		name[16];
+ 	int		i, size;
+ 
+-	if (!IS_ENABLED(CONFIG_HAS_DMA) ||
+-	    (!is_device_dma_capable(hcd->self.sysdev) &&
+-	     !hcd->localmem_pool))
++	if (hcd->localmem_pool ||
++	    !IS_ENABLED(CONFIG_HAS_DMA) ||
++	    !is_device_dma_capable(hcd->self.sysdev))
+ 		return 0;
+ 
+ 	for (i = 0; i < HCD_BUFFER_POOLS; i++) {
+-- 
+2.20.1
+
