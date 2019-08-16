@@ -2,229 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A4448FB82
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:55:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A0A8FB8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:55:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfHPGy5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:54:57 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60728 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfHPGyz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:54:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=YFr/r1WuSTNnE+OoNkjNf7rF5XlC5mR260Fl41QkQtk=; b=ScVOhPczdoQh3syfKvqiHDyb1v
-        jJtMUtelYGfsTjCkQb5HfKS7wb8XT5N8KY02z4QsvqIZp3TgnLkUeK32IAudoaO0d61J/gnViDM1b
-        RIxKBXUiB4iRMEEPX6+D2bcTFUxDVKzWIhRZjEMKygaAgix7Wofw1xEtKYoGrTlBlNlYQ2U/gb8vP
-        +sxPK6xFJKYg8eN9u4lhUVpy4B0dljq0CnHFu+KAR71lqOhmxuq8N14XGj2WK58Gh8/P+QJezepP8
-        qcUqfw13++G/pqXpLKkeYWyNgAVLsmU1lX3QxQQB4PQdJIko51aWFCQzqtwBoSQX1dyZQ7KyDUK/Y
-        HhJZEzkw==;
-Received: from [2001:4bb8:18c:28b5:44f9:d544:957f:32cb] (helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1hyW8R-0008I8-TD; Fri, 16 Aug 2019 06:54:52 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: [PATCH 4/4] memremap: provide a not device managed memremap_pages
-Date:   Fri, 16 Aug 2019 08:54:34 +0200
-Message-Id: <20190816065434.2129-5-hch@lst.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190816065434.2129-1-hch@lst.de>
-References: <20190816065434.2129-1-hch@lst.de>
+        id S1727119AbfHPGze (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:55:34 -0400
+Received: from mga17.intel.com ([192.55.52.151]:11229 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726976AbfHPGzc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:55:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 23:55:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
+   d="scan'208";a="182101092"
+Received: from shbuild999.sh.intel.com (HELO localhost) ([10.239.147.113])
+  by orsmga006.jf.intel.com with ESMTP; 15 Aug 2019 23:55:29 -0700
+Date:   Fri, 16 Aug 2019 14:55:48 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Thomas Zimmermann <tzimmermann@suse.de>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>, michel@daenzer.net,
+        linux-kernel@vger.kernel.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>,
+        Daniel Vetter <daniel@ffwll.ch>, lkp@01.org
+Subject: Re: [LKP] [drm/mgag200] 90f479ae51: vm-scalability.median -18.8%
+ regression
+Message-ID: <20190816065548.GA67708@shbuild999.sh.intel.com>
+References: <1c0bf22b-2c69-6b45-f700-ed832a3a5c17@suse.de>
+ <14fdaaed-51c8-b270-b46b-cba7b5c4ba52@suse.de>
+ <20190805070200.GA91650@shbuild999.sh.intel.com>
+ <c0c3f387-dc93-3146-788c-23258b28a015@intel.com>
+ <045a23ab-78f7-f363-4a2e-bf24a7a2f79e@suse.de>
+ <37ae41e4-455d-c18d-5c93-7df854abfef9@intel.com>
+ <370747ca-4dc9-917b-096c-891dcc2aedf0@suse.de>
+ <c6e220fe-230c-265c-f2fc-b0948d1cb898@intel.com>
+ <20190812072545.GA63191@shbuild999.sh.intel.com>
+ <20190813093616.GA65475@shbuild999.sh.intel.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <20190813093616.GA65475@shbuild999.sh.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kvmppc ultravisor code wants a device private memory pool that is
-system wide and not attached to a device.  Instead of faking up one
-provide a low-level memremap_pages for it.  Note that this function is
-not exported, and doesn't have a cleanup routine associated with it to
-discourage use from more driver like users.
+Hi Thomas,
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/memremap.h |  2 +
- mm/memremap.c            | 84 +++++++++++++++++++++++++---------------
- 2 files changed, 54 insertions(+), 32 deletions(-)
+On Tue, Aug 13, 2019 at 05:36:16PM +0800, Feng Tang wrote:
+> Hi Thomas, 
+> 
+> On Mon, Aug 12, 2019 at 03:25:45PM +0800, Feng Tang wrote:
+> > Hi Thomas,
+> > 
+> > On Fri, Aug 09, 2019 at 04:12:29PM +0800, Rong Chen wrote:
+> > > Hi,
+> > > 
+> > > >>Actually we run the benchmark as a background process, do we need to
+> > > >>disable the cursor and test again?
+> > > >There's a worker thread that updates the display from the shadow buffer.
+> > > >The blinking cursor periodically triggers the worker thread, but the
+> > > >actual update is just the size of one character.
+> > > >
+> > > >The point of the test without output is to see if the regression comes
+> > > >from the buffer update (i.e., the memcpy from shadow buffer to VRAM), or
+> > > >from the worker thread. If the regression goes away after disabling the
+> > > >blinking cursor, then the worker thread is the problem. If it already
+> > > >goes away if there's simply no output from the test, the screen update
+> > > >is the problem. On my machine I have to disable the blinking cursor, so
+> > > >I think the worker causes the performance drop.
+> > > 
+> > > We disabled redirecting stdout/stderr to /dev/kmsg,  and the regression is
+> > > gone.
+> > > 
+> > > commit:
+> > >   f1f8555dfb9 drm/bochs: Use shadow buffer for bochs framebuffer console
+> > >   90f479ae51a drm/mgag200: Replace struct mga_fbdev with generic framebuffer
+> > > emulation
+> > > 
+> > > f1f8555dfb9a70a2  90f479ae51afa45efab97afdde testcase/testparams/testbox
+> > > ----------------  -------------------------- ---------------------------
+> > >          %stddev      change         %stddev
+> > >              \          |                \
+> > >      43785                       44481
+> > > vm-scalability/300s-8T-anon-cow-seq-hugetlb/lkp-knm01
+> > >      43785                       44481        GEO-MEAN vm-scalability.median
+> > 
+> > Till now, from Rong's tests:
+> > 1. Disabling cursor blinking doesn't cure the regression.
+> > 2. Disabling printint test results to console can workaround the
+> > regression.
+> > 
+> > Also if we set the perfer_shadown to 0, the regression is also
+> > gone.
+> 
+> We also did some further break down for the time consumed by the
+> new code.
+> 
+> The drm_fb_helper_dirty_work() calls sequentially 
+> 1. drm_client_buffer_vmap	  (290 us)
+> 2. drm_fb_helper_dirty_blit_real  (19240 us)
+> 3. helper->fb->funcs->dirty()    ---> NULL for mgag200 driver
+> 4. drm_client_buffer_vunmap       (215 us)
+> 
+> The average run time is listed after the function names.
+> 
+> From it, we can see drm_fb_helper_dirty_blit_real() takes too long
+> time (about 20ms for each run). I guess this is the root cause
+> of this regression, as the original code doesn't use this dirty worker.
+> 
+> As said in last email, setting the prefer_shadow to 0 can avoid
+> the regrssion. Could it be an option?
 
-diff --git a/include/linux/memremap.h b/include/linux/memremap.h
-index 8f0013e18e14..fb2a0bd826b9 100644
---- a/include/linux/memremap.h
-+++ b/include/linux/memremap.h
-@@ -123,6 +123,8 @@ static inline struct vmem_altmap *pgmap_altmap(struct dev_pagemap *pgmap)
- }
- 
- #ifdef CONFIG_ZONE_DEVICE
-+void *memremap_pages(struct dev_pagemap *pgmap, int nid);
-+void memunmap_pages(struct dev_pagemap *pgmap);
- void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap);
- void devm_memunmap_pages(struct device *dev, struct dev_pagemap *pgmap);
- struct dev_pagemap *get_dev_pagemap(unsigned long pfn,
-diff --git a/mm/memremap.c b/mm/memremap.c
-index 4e11da4ecab9..9e163fe367ae 100644
---- a/mm/memremap.c
-+++ b/mm/memremap.c
-@@ -102,9 +102,8 @@ static void dev_pagemap_cleanup(struct dev_pagemap *pgmap)
- 		pgmap->ref = NULL;
- }
- 
--static void devm_memremap_pages_release(void *data)
-+void memunmap_pages(struct dev_pagemap *pgmap)
- {
--	struct dev_pagemap *pgmap = data;
- 	struct resource *res = &pgmap->res;
- 	unsigned long pfn;
- 	int nid;
-@@ -134,6 +133,12 @@ static void devm_memremap_pages_release(void *data)
- 	WARN_ONCE(pgmap->altmap.alloc, "failed to free all reserved pages\n");
- 	devmap_managed_enable_put();
- }
-+EXPORT_SYMBOL_GPL(memunmap_pages);
-+
-+static void devm_memremap_pages_release(void *data)
-+{
-+	memunmap_pages(data);
-+}
- 
- static void dev_pagemap_percpu_release(struct percpu_ref *ref)
- {
-@@ -143,27 +148,12 @@ static void dev_pagemap_percpu_release(struct percpu_ref *ref)
- 	complete(&pgmap->done);
- }
- 
--/**
-- * devm_memremap_pages - remap and provide memmap backing for the given resource
-- * @dev: hosting device for @res
-- * @pgmap: pointer to a struct dev_pagemap
-- *
-- * Notes:
-- * 1/ At a minimum the res and type members of @pgmap must be initialized
-- *    by the caller before passing it to this function
-- *
-- * 2/ The altmap field may optionally be initialized, in which case
-- *    PGMAP_ALTMAP_VALID must be set in pgmap->flags.
-- *
-- * 3/ The ref field may optionally be provided, in which pgmap->ref must be
-- *    'live' on entry and will be killed and reaped at
-- *    devm_memremap_pages_release() time, or if this routine fails.
-- *
-- * 4/ res is expected to be a host memory range that could feasibly be
-- *    treated as a "System RAM" range, i.e. not a device mmio range, but
-- *    this is not enforced.
-+/*
-+ * Not device managed version of dev_memremap_pages, undone by
-+ * memunmap_pages().  Please use dev_memremap_pages if you have a struct
-+ * device available.
-  */
--void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
-+void *memremap_pages(struct dev_pagemap *pgmap, int nid)
- {
- 	struct resource *res = &pgmap->res;
- 	struct dev_pagemap *conflict_pgmap;
-@@ -174,7 +164,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 		.altmap = pgmap_altmap(pgmap),
- 	};
- 	pgprot_t pgprot = PAGE_KERNEL;
--	int error, nid, is_ram;
-+	int error, is_ram;
- 	bool need_devmap_managed = true;
- 
- 	switch (pgmap->type) {
-@@ -229,7 +219,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 
- 	conflict_pgmap = get_dev_pagemap(PHYS_PFN(res->start), NULL);
- 	if (conflict_pgmap) {
--		dev_WARN(dev, "Conflicting mapping in same section\n");
-+		WARN(1, "Conflicting mapping in same section\n");
- 		put_dev_pagemap(conflict_pgmap);
- 		error = -ENOMEM;
- 		goto err_array;
-@@ -237,7 +227,7 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 
- 	conflict_pgmap = get_dev_pagemap(PHYS_PFN(res->end), NULL);
- 	if (conflict_pgmap) {
--		dev_WARN(dev, "Conflicting mapping in same section\n");
-+		WARN(1, "Conflicting mapping in same section\n");
- 		put_dev_pagemap(conflict_pgmap);
- 		error = -ENOMEM;
- 		goto err_array;
-@@ -258,7 +248,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	if (error)
- 		goto err_array;
- 
--	nid = dev_to_node(dev);
- 	if (nid < 0)
- 		nid = numa_mem_id();
- 
-@@ -314,12 +303,6 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 				PHYS_PFN(res->start),
- 				PHYS_PFN(resource_size(res)), pgmap);
- 	percpu_ref_get_many(pgmap->ref, pfn_end(pgmap) - pfn_first(pgmap));
--
--	error = devm_add_action_or_reset(dev, devm_memremap_pages_release,
--			pgmap);
--	if (error)
--		return ERR_PTR(error);
--
- 	return __va(res->start);
- 
-  err_add_memory:
-@@ -334,6 +317,43 @@ void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
- 	devmap_managed_enable_put();
- 	return ERR_PTR(error);
- }
-+EXPORT_SYMBOL_GPL(memremap_pages);
-+
-+/**
-+ * devm_memremap_pages - remap and provide memmap backing for the given resource
-+ * @dev: hosting device for @res
-+ * @pgmap: pointer to a struct dev_pagemap
-+ *
-+ * Notes:
-+ * 1/ At a minimum the res and type members of @pgmap must be initialized
-+ *    by the caller before passing it to this function
-+ *
-+ * 2/ The altmap field may optionally be initialized, in which case
-+ *    PGMAP_ALTMAP_VALID must be set in pgmap->flags.
-+ *
-+ * 3/ The ref field may optionally be provided, in which pgmap->ref must be
-+ *    'live' on entry and will be killed and reaped at
-+ *    devm_memremap_pages_release() time, or if this routine fails.
-+ *
-+ * 4/ res is expected to be a host memory range that could feasibly be
-+ *    treated as a "System RAM" range, i.e. not a device mmio range, but
-+ *    this is not enforced.
-+ */
-+void *devm_memremap_pages(struct device *dev, struct dev_pagemap *pgmap)
-+{
-+	int error;
-+	void *ret;
-+
-+	ret = memremap_pages(pgmap, dev_to_node(dev));
-+	if (IS_ERR(ret))
-+		return ret;
-+
-+	error = devm_add_action_or_reset(dev, devm_memremap_pages_release,
-+			pgmap);
-+	if (error)
-+		return ERR_PTR(error);
-+	return ret;
-+}
- EXPORT_SYMBOL_GPL(devm_memremap_pages);
- 
- void devm_memunmap_pages(struct device *dev, struct dev_pagemap *pgmap)
--- 
-2.20.1
+Any comments on this? thanks
 
+- Feng
+
+> 
+> Thanks,
+> Feng
+> 
+> > 
+> > --- a/drivers/gpu/drm/mgag200/mgag200_main.c
+> > +++ b/drivers/gpu/drm/mgag200/mgag200_main.c
+> > @@ -167,7 +167,7 @@ int mgag200_driver_load(struct drm_device *dev, unsigned long flags)
+> >  		dev->mode_config.preferred_depth = 16;
+> >  	else
+> >  		dev->mode_config.preferred_depth = 32;
+> > -	dev->mode_config.prefer_shadow = 1;
+> > +	dev->mode_config.prefer_shadow = 0;
+> > 
+> > And from the perf data, one obvious difference is good case don't
+> > call drm_fb_helper_dirty_work(), while bad case calls.
+> > 
+> > Thanks,
+> > Feng
+> > 
+> > > Best Regards,
+> > > Rong Chen
+> _______________________________________________
+> LKP mailing list
+> LKP@lists.01.org
+> https://lists.01.org/mailman/listinfo/lkp
