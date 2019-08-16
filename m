@@ -2,96 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FFDE90AE3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 00:24:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2888C90AED
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 00:26:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727855AbfHPWYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 18:24:07 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38816 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727756AbfHPWYH (ORCPT
+        id S1727850AbfHPW0K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 18:26:10 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:38290 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727757AbfHPW0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 18:24:07 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so3816230pfg.5;
-        Fri, 16 Aug 2019 15:24:07 -0700 (PDT)
+        Fri, 16 Aug 2019 18:26:10 -0400
+Received: by mail-lf1-f67.google.com with SMTP id h28so5063988lfj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 15:26:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z/RL8I+CX00aaoEA3B93OfzM8SWXYflpbq6Zuf69+2Q=;
-        b=PCD6NB8TBlV/+xuB6WcPJ6ZvxS8yBi9wwHXyInSFgGxD55G8j3R8gvP+bb7gQEsNel
-         UwNGTdYr/oghTCCM65TW7ecBXltVDwyWqZ00zBm7d+o407wI90UM2BCigLgBv0jeZ81O
-         lkNJjNOSM64BSGDg9E+zVE5guJUEt9jJZ2g/yKy4nf7mLCjWoD0SQ+ktXySUAosoe4XF
-         7R/yLHB0JMOGiJMpzOMQ9YPqLLYK5K7o78nQqxgz1cLOZZLgb/7is+F0K5ME2dGnPUde
-         3mN7TuHHVDYc7FP3VXJU1NmS/FejfhOLwpyI+PPnL96RsC4P9x0Fv+xATfQSmMHPr9UB
-         mHYA==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PrIWwCYqt6y1eeO+WlCbe2ljn3Qkrri3qYgYEjIcBUU=;
+        b=qFqM+LoXVUtv+l/noiHl2Ppx+2RqdzE0dHyHVHdvhb0yYwPvRjkhXq1I0pkuU6DDu7
+         GOFlW8G6LgZv5ELVCNJFvDR11volrbvDq7D0fG6irF48m2fXOvYyZKjzcd73zmLNg0uo
+         6trEiVPvkWibXdxu1ZQi4UUbZ/4LiGMrMc9LHJrnSpWj6CeO50miqfe1xeI1CLWEjJw+
+         DaA/VcO5bUfANdlShuG86jTwrsJRdXuP+noqLPaMJrnKUn1wd8+yKLINhV61RXCsf/Bj
+         FgkVbizPtsrhdhZp/uUbKPaaZVDLsmiemphcadsCwzi7i9x/sGpbzdjnxxlXb6h8ClGx
+         vpFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z/RL8I+CX00aaoEA3B93OfzM8SWXYflpbq6Zuf69+2Q=;
-        b=D2Q0WW0aWd+nwRUH1I5GCrp8VJ4YCcVAEHEczp/P0R4xzxK5+RgrIcHAbzfLZhQfu1
-         kM1001g44ELD2a3C14mCbf/0l/9gK143P3d03jr//21uCHBAp9cEIX4PPG+QHCEfnSrK
-         dt2kyzqRfhqhcGrjlE2kpeFPjfHfaFmfKpfXB0ufjRWRvUDtlSN7FDZLKqdwgnkrOY2V
-         nAQF+Yd/yeqUV1NigESZnFu+cld7nc6GZ5+g6cIdhiRoaYnYpjHCVbIh5NDTxjPih0iB
-         ugh46Jhtne6zu9LILfpJnSvWsBc1KVjN5fmrPRHT70qrDL+/VPSrVo/zS0/9g/bbGbRt
-         Mztw==
-X-Gm-Message-State: APjAAAWjxY1YDEZGzTiHIhTsVXY7AGE/DJHlHzGSyGwky1QreJ+eC+zo
-        0J6xW02Lhsb4G9cOluitI+I=
-X-Google-Smtp-Source: APXvYqwfeEddZmSKMzfnbRIkkn5pkJotwXSMMLkGDy7aeLpXD5GJCVFazyjo4DIpIG1cw6MwYNKbuQ==
-X-Received: by 2002:a17:90a:e38e:: with SMTP id b14mr9226497pjz.125.1565994246561;
-        Fri, 16 Aug 2019 15:24:06 -0700 (PDT)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id v21sm7433880pfe.131.2019.08.16.15.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 15:24:06 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 15:25:07 -0700
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-Cc:     Christoph Hellwig <hch@lst.de>, kvalo@codeaurora.org,
-        davem@davemloft.net, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
-        tobias.klausmann@freenet.de
-Subject: Re: regression in ath10k dma allocation
-Message-ID: <20190816222506.GA24413@Asurada-Nvidia.nvidia.com>
-References: <8fe8b415-2d34-0a14-170b-dcb31c162e67@mni.thm.de>
- <20190816164301.GA3629@lst.de>
- <af96ea6a-2b17-9b66-7aba-b7dae5bcbba5@mni.thm.de>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PrIWwCYqt6y1eeO+WlCbe2ljn3Qkrri3qYgYEjIcBUU=;
+        b=TbkNZOT7Fu/w8EgkKIlk0KdNcbjHrIihyEbKls3elUwQUinstaaKEaAnoudJa62/7N
+         dFW2oD1J5D8K7NlaYygHAzHKXY3vAqPROaVRmycu/8akHgfZrmm9zrxzgk3h8olocHMH
+         SnDr+tknxEyuqJ9QQ505uhv16GBtWtCoomAoxrECJ26FTYK465A4ZNSLv6CP2jTyvhAA
+         FIxO2OOkANY5XDw7MX4X2zKsS1LsicJA5et7P9H66p2qTYlXckT5L2LNxBcGUoRLqcwa
+         cV3E9aZMIRpvrLoZILNUBYmhSfrzDIJnx5dZccZRwr3QwSpyOxlu/lZjG3hbS/C8AP1l
+         GKrw==
+X-Gm-Message-State: APjAAAVuf6E50W3uNvrHFem9uAvFgdUuleb34trm9trjn6Ht2hS/K0ym
+        kOaEqXUqgHDrGG3Az/qBo1Zul2xYx93oCxeIiYuHHQ==
+X-Google-Smtp-Source: APXvYqzRk4JU/UJJ4c76iwXHUBfgyYIL6EN9ZrEhlw6vzj6X19IKVB1C81FHKMDHsmKWCqHhTR5CtHwUKlzQLEAQxP8=
+X-Received: by 2002:ac2:4c07:: with SMTP id t7mr5764558lfq.152.1565994368218;
+ Fri, 16 Aug 2019 15:26:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af96ea6a-2b17-9b66-7aba-b7dae5bcbba5@mni.thm.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190816213812.40a130db@canb.auug.org.au>
+In-Reply-To: <20190816213812.40a130db@canb.auug.org.au>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sat, 17 Aug 2019 00:25:56 +0200
+Message-ID: <CACRpkdbhdcmzqbr=4nQQ_upAyjrZsxGkMHhz=pZN2fvD7H9sOw@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the gpio tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Brian Masney <masneyb@onstation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tobias
+On Fri, Aug 16, 2019 at 1:38 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-On Fri, Aug 16, 2019 at 10:16:45PM +0200, Tobias Klausmann wrote:
-> > do you have CONFIG_DMA_CMA set in your config?  If not please make sure
-> > you have this commit in your testing tree, and if the problem still
-> > persists it would be a little odd and we'd have to dig deeper:
-> > 
-> > commit dd3dcede9fa0a0b661ac1f24843f4a1b1317fdb6
-> > Author: Nicolin Chen <nicoleotsuka@gmail.com>
-> > Date:   Wed May 29 17:54:25 2019 -0700
-> > 
-> >      dma-contiguous: fix !CONFIG_DMA_CMA version of dma_{alloc, free}_contiguous()
+> After merging the gpio tree, today's linux-next build (powerpc
+> ppc44x_defconfig) failed like this:
 
-> yes CONFIG_DMA_CMA is set (=y, see attached config), the commit you mention
-> above is included, if you have any hints how to go forward, please let me
-> know!
+Oops!
 
-For CONFIG_DMA_CMA=y, by judging the log with error code -12, I
-feel this one should work for you. Would you please check if it
-is included or try it out otherwise?
+> I have applied the following patch for today:
+>
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 16 Aug 2019 21:29:30 +1000
+> Subject: [PATCH] gpio: stubs in headers should be inline
+>
+> Fixes: fdd61a013a24 ("gpio: Add support for hierarchical IRQ domains")
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
 
-dma-contiguous: do not overwrite align in dma_alloc_contiguous()
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=c6622a425acd1d2f3a443cd39b490a8777b622d7
+I just nicked that and applied to the GPIO tree to fix this.
 
-Thanks
-Nicolin
+Thanks Stephen!
+
+Linus Walleij
