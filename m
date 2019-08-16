@@ -2,90 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D07608FB30
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:39:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F41678FB2E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:39:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfHPGjZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:39:25 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:45113 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725897AbfHPGjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:39:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id t3so4195777ioj.12;
-        Thu, 15 Aug 2019 23:39:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LfX+pe6KX9sYIxHfVZ6eX9dKoc6kQLPyaT3gRQ+L47U=;
-        b=jSnaQIfpsRUA+Z+KFynREb/Cpq0rdaFJFDYEsEC1rY6i2vD3EOHjha55I+6MCS7uU7
-         hBXUQ+944NZoj8HpvAbgTEFVxyGl9K9G9FV3e8Y4GMV1kGa77fxmG4BEhXobdYhd9kZp
-         6dN9ea4NQd65GaCWmVazGH6SDjeuw39dtbbv84CNdKnhUwDdeo3fgDJUAL45jA2g2FPE
-         69aDNYjrbaIxWOkkdq60aijcs+apNgZwL2Dwwf9Tq191KwXq7tC4qLf+JjW+Zsi3jnoI
-         1AC0w9nVP0E+lhSKmQgaQ5fHMrLGwLpPWFp+nVYNVXPi+BymxMiAmvPgzlO7QjMN3u6A
-         sXOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LfX+pe6KX9sYIxHfVZ6eX9dKoc6kQLPyaT3gRQ+L47U=;
-        b=g9K4G6oLoRiMX90ed2KUB4aInfaRIF/7ckl1GIwkJGjuTqHeA5y15WHSO6YTewFCR+
-         4F6VxF5RDUk7MaUMnObXabgeQFiypQ2uQxYBxMta7xgPtomVG7FXiPdDyCw3Jy7f1s36
-         QMlF/ygXt8S2IlgQEU5hbJKgAH4xYSbui6Ssr8n+1SXOPMnStAJyopmgvsIlsEjUv/gB
-         ocpW345mheoybXKxPvZAjzsLgcQYXKrhvgwwDEZkIZljn8BgBRiVX7mFSBCZvINLxLXU
-         EJnfQQ8JI5VCjQ0cfZZNj+gJ7NUVv05j11QaO3XzOcGk2J4I4F/SVjY0P/pXV/B+L2uW
-         BNrw==
-X-Gm-Message-State: APjAAAWNFPQ46SUwpvzAf+L5Mg235bqk1Dv/6k1QFf8Tk3G15IpnDejS
-        qlevZxQCQNzCgjPsUsyAktA=
-X-Google-Smtp-Source: APXvYqy8z+gWc8ebHkrdRits59r/NS4DoKa1CvuB7a9BBWBSWXp2RXbkPLYiZ21w8ojYdAZqEkxGDw==
-X-Received: by 2002:a5e:8e08:: with SMTP id a8mr9260494ion.94.1565937563961;
-        Thu, 15 Aug 2019 23:39:23 -0700 (PDT)
-Received: from JATN (c-73-243-191-173.hsd1.co.comcast.net. [73.243.191.173])
-        by smtp.gmail.com with ESMTPSA id p12sm6724015ioh.72.2019.08.15.23.39.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 23:39:23 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 00:39:21 -0600
-From:   Kelsey Skunberg <skunberg.kelsey@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-        patches@kernelci.org, ben.hutchings@codethink.co.uk,
-        lkft-triage@lists.linaro.org, stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/144] 5.2.9-stable review
-Message-ID: <20190816063921.GC3058@JATN>
-References: <20190814165759.466811854@linuxfoundation.org>
+        id S1726892AbfHPGim (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:38:42 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:52106 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726872AbfHPGik (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:38:40 -0400
+Received: from zn.tnic (p200300EC2F0A920041519BC41B2ACCA3.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:9200:4151:9bc4:1b2a:cca3])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8C8E51EC0A91;
+        Fri, 16 Aug 2019 08:38:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1565937519;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=5Vqiu9wtaNx8kVRzHPBxlLz2F2d6oTzKG7AVaoCM5PU=;
+        b=V1pG1doAqPi4XoqA2IBe8N40J5t74wL8WVTo6puCBmWddUU3k/Khf7QOat3LZ6FoCArSVX
+        RUEzU4Ng1uH9iV7KWOckv85k2fnd8FJc5j+6mp5X1Va7mnWKkO3aa/DvZ6ylTFfWODEDq/
+        J4RhIRXf3QR4LrTQAkdTqeyVY2LF2gU=
+Date:   Fri, 16 Aug 2019 08:39:25 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Zhao Yakui <yakui.zhao@intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: Re: [RFC PATCH 00/15] acrn: add the ACRN driver module
+Message-ID: <20190816063925.GB18980@zn.tnic>
+References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190814165759.466811854@linuxfoundation.org>
+In-Reply-To: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 06:59:16PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.2.9 release.
-> There are 144 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri 16 Aug 2019 04:55:34 PM UTC.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.9-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.2.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Fri, Aug 16, 2019 at 10:25:41AM +0800, Zhao Yakui wrote:
+> The first three patches are the changes under x86/acrn, which adds the
+> required APIs for the driver and reports the X2APIC caps. 
+> The remaining patches add the ACRN driver module, which accepts the ioctl
+> from user-space and then communicate with the low-level ACRN hypervisor
+> by using hypercall.
 
-Compiled and booted with no dmesg regressions on my system.
+I have a problem with that: you're adding interfaces to arch/x86/ and
+its users go into staging. Why? Why not directly put the driver where
+it belongs, clean it up properly and submit it like everything else is
+submitted?
 
-Cheers,
-Kelsey 
- 
+I don't want to have stuff in arch/x86/ which is used solely by code in
+staging and the latter is lingering there indefinitely because no one is
+cleaning it up...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
