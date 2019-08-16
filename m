@@ -2,96 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3264D8FED7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:24:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AE608FF03
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 11:28:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727052AbfHPJYB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 05:24:01 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:49130 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfHPJYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 05:24:01 -0400
-Received: from zn.tnic (p200300EC2F0A920014AE47D987991812.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:9200:14ae:47d9:8799:1812])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A73951EC067D;
-        Fri, 16 Aug 2019 11:23:59 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565947439;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=cygAj/2KeoXPUrfXfBK12mcmYpE6aLde83uSyzIMb0w=;
-        b=DRYCBg1pOzz4Hg5+hYpeC8vfN1VRSyA41igLJ3kSFnBCEYKX/udaByrO777XrleI6b//ep
-        XLKNWs/PXwQBq/XEDxy4/OGtHeIXJYgCtGJKhfdlu2rEgJWSsd89y/fWxQZGLNBtSVYuMW
-        SiuDPpWaB7BuIlAZdHhYEEeX0aMRRIc=
-Date:   Fri, 16 Aug 2019 11:24:49 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Robert Richter <rrichter@marvell.com>
-Cc:     James Morse <james.morse@arm.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        id S1727289AbfHPJ1Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 05:27:16 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38145 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726961AbfHPJ1P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 05:27:15 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g17so904045wrr.5;
+        Fri, 16 Aug 2019 02:27:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=oYkbotweVRb4ftV2/uVHHZIFS0AoWMqkCv8uwUS+oiE=;
+        b=FfyHhKNNxm1mI2D+JurEucOuQV6fl3XUDy/copih67qITK5WZoaDNfy7tTGTwIyXdN
+         tmy0wK7NlDtAX14x2LTN2Q/rjsZZ6bq+loYe8gB+x4UHD4QVCVL39Ky8n5ptAV/GYclT
+         3BCnvxW3Z/o3N0XvzN093O/VAjRHPSGW7Hhp2rLB0DRRAMWGkeIntEdiNOIKUucHEEjb
+         ohDCqgCdjBHnNOB6hOzGibQh70o3cYkX0DZRJ+DXK5HAHnvmkwF43Y9iKtjSrpTKtUtl
+         FVJxpnGIVHXVF9LjODRtO0koMfDsJFLFjl3hWOWuU6BpqBNhQAcxzr8t2Ust40iZ56qd
+         pK4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=oYkbotweVRb4ftV2/uVHHZIFS0AoWMqkCv8uwUS+oiE=;
+        b=iRpniliuz+Tmq5hZaTzpnpXN7b1vMJ0Uqfu+kqE/L9H2wNBAeB4CyPVRNUjPIdk455
+         htyZLLzCY0a775X1WVTxiy1PRLAAhiTiws6I/d+dr88rBZdGVEKLy4PWQbqiOdwFXOKD
+         ZJuajVZB7Xdnkx4P64jI1mxZqFdEZKxJJrOpF1olgtEua8/2F7Pgjt9lFqyviN4fSY4f
+         ycQvJrOUDyxeB2GxlkqMmHr4gffs3HUDYxQ86qXtBsbMM4cmnDw14AFUek3B+kQFOe5g
+         WWnPTJ/DBVZM17/vZkBkthAUAcc4bjSox/mKdiRwUWSbKxaWrOSJgWOrPZPuRJITsgjl
+         JZxg==
+X-Gm-Message-State: APjAAAXwjTmsyxdUnP6eZMW+nsohjZhwx9v5EIhyR7RS0D0LzKPTz0ni
+        CqCBjlZk/ZbHxLfzxGZzKZv893ec
+X-Google-Smtp-Source: APXvYqzme0ZdMBuRNkscCYPjra4vTBGVPnWgnx/112Hd7r/aL2wtFNDa0RKTjrpUuuruE0emLP6c2g==
+X-Received: by 2002:adf:dcc6:: with SMTP id x6mr9719759wrm.322.1565947633523;
+        Fri, 16 Aug 2019 02:27:13 -0700 (PDT)
+Received: from [192.168.8.147] (187.170.185.81.rev.sfr.net. [81.185.170.187])
+        by smtp.gmail.com with ESMTPSA id t19sm3826386wmi.29.2019.08.16.02.27.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 02:27:12 -0700 (PDT)
+Subject: Re: [PATCH net-next] r8152: divide the tx and rx bottom functions
+To:     Hayes Wang <hayeswang@realtek.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Cc:     nic_swsd <nic_swsd@realtek.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 10/24] EDAC, mc: Remove per layer counters
-Message-ID: <20190816092449.GK18980@zn.tnic>
-References: <20190624150758.6695-1-rrichter@marvell.com>
- <20190624150758.6695-11-rrichter@marvell.com>
+References: <1394712342-15778-301-Taiwan-albertk@realtek.com>
+ <9749764d-7815-b673-0fc4-22475601efec@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18D470D@RTITMBSVM03.realtek.com.tw>
+ <68015004-fb60-f6c6-05b0-610466223cf5@gmail.com>
+ <0835B3720019904CB8F7AA43166CEEB2F18D47C8@RTITMBSVM03.realtek.com.tw>
+From:   Eric Dumazet <eric.dumazet@gmail.com>
+Message-ID: <a262d73b-0e91-7610-c88f-9670cc6fd18d@gmail.com>
+Date:   Fri, 16 Aug 2019 11:27:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <0835B3720019904CB8F7AA43166CEEB2F18D47C8@RTITMBSVM03.realtek.com.tw>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190624150758.6695-11-rrichter@marvell.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 24, 2019 at 03:09:15PM +0000, Robert Richter wrote:
-> Looking at how mci->{ue,ce}_per_layer[EDAC_MAX_LAYERS] is used, it
-> turns out that only the leaves in the memory hierarchy are consumed
-> (in sysfs), but not the intermediate layers, e.g.:
-> 
->  count = dimm->mci->ce_per_layer[dimm->mci->n_layers-1][dimm->idx];
-> 
-> So let's get rid of the unused counters that just add complexity.
-> 
-> Error counter values are directly stored in struct dimm_info now.
-> 
-> Signed-off-by: Robert Richter <rrichter@marvell.com>
-> ---
->  drivers/edac/edac_mc.c       | 98 ++++++++++++------------------------
->  drivers/edac/edac_mc_sysfs.c | 20 +++-----
->  drivers/edac/ghes_edac.c     |  5 +-
->  include/linux/edac.h         |  7 ++-
->  4 files changed, 44 insertions(+), 86 deletions(-)
-> 
-> diff --git a/drivers/edac/edac_mc.c b/drivers/edac/edac_mc.c
-> index f2acdab34eb7..bce39b2e10c9 100644
-> --- a/drivers/edac/edac_mc.c
-> +++ b/drivers/edac/edac_mc.c
-> @@ -313,10 +313,9 @@ struct mem_ctl_info *edac_mc_alloc(unsigned mc_num,
->  	struct csrow_info *csr;
->  	struct rank_info *chan;
->  	struct dimm_info *dimm;
-> -	u32 *ce_per_layer[EDAC_MAX_LAYERS], *ue_per_layer[EDAC_MAX_LAYERS];
->  	unsigned pos[EDAC_MAX_LAYERS];
-> -	unsigned size, tot_dimms = 1, count = 1;
-> -	unsigned tot_csrows = 1, tot_channels = 1, tot_errcount = 0;
-> +	unsigned size, tot_dimms = 1;
-> +	unsigned tot_csrows = 1, tot_channels = 1;
 
-Pls fix those while touching this:
 
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-#48: FILE: drivers/edac/edac_mc.c:317:
-+       unsigned size, tot_dimms = 1;
+On 8/16/19 11:08 AM, Hayes Wang wrote:
+> Eric Dumazet [mailto:eric.dumazet@gmail.com]
+>> Sent: Friday, August 16, 2019 4:20 PM
+> [...]
+>> Which callback ?
+> 
+> The USB device has two endpoints for Tx and Rx.
+> If I submit tx or rx URB to the USB host controller,
+> the relative callback functions would be called, when
+> they are finished. For rx, it is read_bulk_callback.
+> For tx, it is write_bulk_callback.
+> 
+>> After an idle period (no activity, no prior packets being tx-completed ...),
+>> a packet is sent by the upper stack, enters the ndo_start_xmit() of a network
+>> driver.
+>>
+>> This driver ndo_start_xmit() simply adds an skb to a local list, and returns.
+> 
+> Base on the current method (without tasklet), when
+> ndo_start_xmit() is called, napi_schedule is called only
+> if there is at least one free buffer (!list_empty(&tp->tx_free))
+> to transmit the packet. Then, the flow would be as following.
 
-WARNING: Prefer 'unsigned int' to bare use of 'unsigned'
-#49: FILE: drivers/edac/edac_mc.c:318:
-+       unsigned tot_csrows = 1, tot_channels = 1;
+Very uncommon naming conventions really :/
 
--- 
-Regards/Gruss,
-    Boris.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Maybe you would avoid messing with a tasklet (we really try to get rid
+of tasklets in general) using two NAPI, one for TX, one for RX.
+
+Some drivers already use two NAPI, it is fine.
+
+This might avoid the ugly dance in r8152_poll(),
+calling napi_schedule(napi) after napi_complete_done() !
+
