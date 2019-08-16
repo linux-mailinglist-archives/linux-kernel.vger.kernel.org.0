@@ -2,155 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D9E28F8F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B26E98F901
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:35:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726769AbfHPCdZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:33:25 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:37697 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726702AbfHPCdV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:33:21 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R361e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=aaron.lu@linux.alibaba.com;NM=1;PH=DS;RN=22;SR=0;TI=SMTPD_---0TZayJcx_1565922789;
-Received: from aaronlu(mailfrom:aaron.lu@linux.alibaba.com fp:SMTPD_---0TZayJcx_1565922789)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 16 Aug 2019 10:33:15 +0800
-Date:   Fri, 16 Aug 2019 10:33:09 +0800
-From:   Aaron Lu <aaron.lu@linux.alibaba.com>
-To:     Dario Faggioli <dfaggioli@suse.com>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Julien Desfossez <jdesfossez@digitalocean.com>,
-        "Li, Aubrey" <aubrey.li@linux.intel.com>,
-        Aubrey Li <aubrey.intel@gmail.com>,
-        Subhra Mazumdar <subhra.mazumdar@oracle.com>,
-        Vineeth Remanan Pillai <vpillai@digitalocean.com>,
-        Nishanth Aravamudan <naravamudan@digitalocean.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Paul Turner <pjt@google.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        =?iso-8859-1?Q?Fr=E9d=E9ric?= Weisbecker <fweisbec@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kerr <kerrnel@google.com>, Phil Auld <pauld@redhat.com>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: Re: [RFC PATCH v3 00/16] Core scheduling v3
-Message-ID: <20190816023309.GA78614@aaronlu>
-References: <20190619183302.GA6775@sinkpad>
- <20190718100714.GA469@aaronlu>
- <CAERHkrtvLKxrpvfw04urAuougsYOWnNw4-H1vUDFx27Dvy0=Ww@mail.gmail.com>
- <20190725143003.GA992@aaronlu>
- <20190726152101.GA27884@sinkpad>
- <7dc86e3c-aa3f-905f-3745-01181a3b0dac@linux.intel.com>
- <20190802153715.GA18075@sinkpad>
- <eec72c2d533b7600c63de3c8001cc6ab9e915afe.camel@suse.com>
- <69cd9bca-da28-1d35-3913-1efefe0c1c22@linux.intel.com>
- <bd1f79c0a9aed2dfae3bb9f5df24fcf5528e3864.camel@suse.com>
+        id S1726549AbfHPCfY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:35:24 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4717 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726252AbfHPCfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 22:35:24 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id C0A6014AB6A60EF9B3FD;
+        Fri, 16 Aug 2019 10:35:20 +0800 (CST)
+Received: from [127.0.0.1] (10.57.101.250) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
+ 10:35:12 +0800
+Subject: Re: [PATCH v4 0/5] Fixes for HiSilicon LPC driver and logical PIO
+ code
+To:     John Garry <john.garry@huawei.com>, <xuwei5@huawei.com>
+References: <1564493396-92195-1-git-send-email-john.garry@huawei.com>
+CC:     <bhelgaas@google.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <arnd@arndb.de>, <olof@lixom.net>,
+        <stable@vger.kernel.org>
+From:   Wei Xu <xuwei5@hisilicon.com>
+Message-ID: <5D561660.1080003@hisilicon.com>
+Date:   Fri, 16 Aug 2019 10:35:12 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.2.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bd1f79c0a9aed2dfae3bb9f5df24fcf5528e3864.camel@suse.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1564493396-92195-1-git-send-email-john.garry@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.101.250]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 06:09:28PM +0200, Dario Faggioli wrote:
-> On Wed, 2019-08-07 at 10:10 -0700, Tim Chen wrote:
-> > On 8/7/19 1:58 AM, Dario Faggioli wrote:
-> > 
-> > > Since I see that, in this thread, there are various patches being
-> > > proposed and discussed... should I rerun my benchmarks with them
-> > > applied? If yes, which ones? And is there, by any chance, one (or
-> > > maybe
-> > > more than one) updated git branch(es)?
-> > > 
-> > Hi Dario,
-> > 
-> Hi Tim!
-> 
-> > Having an extra set of eyes are certainly welcomed.
-> > I'll give my 2 cents on the issues with v3.
-> > 
-> Ok, and thanks a lot for this.
-> 
-> > 1) Unfairness between the sibling threads
-> > -----------------------------------------
-> > One sibling thread could be suppressing and force idling
-> > the sibling thread over proportionally.  Resulting in
-> > the force idled CPU not getting run and stall tasks on
-> > suppressed CPU.
-> > 
-> > 
-> > [...]
-> >
-> > 2) Not rescheduling forced idled CPU
-> > ------------------------------------
-> > The forced idled CPU does not get a chance to re-schedule
-> > itself, and will stall for a long time even though it
-> > has eligible tasks to run.
-> > 
-> > [...]
-> > 
-> > 3) Load balancing between CPU cores
-> > -----------------------------------
-> > Say if one CPU core's sibling threads get forced idled
-> > a lot as it has mostly incompatible tasks between the siblings,
-> > moving the incompatible load to other cores and pulling
-> > compatible load to the core could help CPU utilization.
-> > 
-> > So just considering the load of a task is not enough during
-> > load balancing, task compatibility also needs to be considered.
-> > Peter has put in mechanisms to balance compatible tasks between
-> > CPU thread siblings, but not across cores.
-> > 
-> > [...]
-> >
-> Ok. Yes, as said, I've been trying to follow the thread, but thanks a
-> lot again for this summary.
-> 
-> As said, I'm about to have numbers for the repo/branch I mentioned.
-> 
-> I was considering whether to also re-run the benchmarking campaign with
-> some of the patches that floated around within this thread. Now, thanks
-> to your summary, I have an even clearer picture about which patch does
-> what, and that is indeed very useful.
-> 
-> I'll see about putting something together. I'm thinking of picking:
-> 
-> https://lore.kernel.org/lkml/b7a83fcb-5c34-9794-5688-55c52697fd84@linux.intel.com/
-> https://lore.kernel.org/lkml/20190725143344.GD992@aaronlu/
-> 
-> And maybe even (part of):
-> https://lore.kernel.org/lkml/20190810141556.GA73644@aaronlu/#t
-> 
-> If anyone has ideas or suggestions about whether or not this choice
-> makes sense, feel free to share. :-)
+Hi John,
 
-Makes sense to me.
-patch3 in the last link is slightly better than the one in the 2nd link,
-so just use that instead.
+On 2019/7/30 21:29, John Garry wrote:
+> As reported in [1], the hisi-lpc driver has certain issues in handling
+> logical PIO regions, specifically unregistering regions.
+>
+> This series add a method to unregister a logical PIO region, and fixes up
+> the driver to use them.
+>
+> RCU usage in logical PIO code looks to always have been broken, so that
+> is fixed also. This is not a major fix as the list which RCU protects
+> would be rarely modified.
+>
+> At this point, there are still separate ongoing discussions about how to
+> stop the logical PIO and PCI host bridge code leaking ranges, as in [2],
+> which I haven't had a chance to look at recently.
+>
+> Hopefully this series can go through the arm soc tree and the maintainers
+> have no issue with that. I'm talking specifically about the logical PIO
+> code, which went through PCI tree on only previous upstreaming.
+>
+>
+> [1] https://lore.kernel.org/lkml/1560770148-57960-1-git-send-email-john.garry@huawei.com/
+> [2] https://lore.kernel.org/lkml/4b24fd36-e716-7c5e-31cc-13da727802e7@huawei.com/
 
-Thanks,
-Aaron
+Thanks!
+Series applied to the hisilicon fixes tree.
 
-> Also, I only have another week before leaving, so let's see what I
-> manage to actually run, and then share here, by then.
-> 
-> Thanks and Regards
-> -- 
-> Dario Faggioli, Ph.D
-> http://about.me/dario.faggioli
-> Virtualization Software Engineer
-> SUSE Labs, SUSE https://www.suse.com/
-> -------------------------------------------------------------------
-> <<This happens because _I_ choose it to happen!>> (Raistlin Majere)
-> 
+Best Regards,
+Wei
+
+> Changes since v3:
+> https://lore.kernel.org/lkml/1561566418-22714-1-git-send-email-john.garry@huawei.com/
+> - drop optimisation patch (lib: logic_pio: Enforce LOGIC_PIO_INDIRECT
+>    region ops are set at registration)
+>    Not a fix
+> - rebase to v5.3-rc2
+> - cc stable
+>
+> Change since v2:
+> - Add hisi_lpc_acpi_remove() stub to fix build for !CONFIG_ACPI
+>
+> Changes since v1:
+> - Add more reasoning in RCU fix patch
+> - Create separate patch to change LOGIC_PIO_CPU_MMIO registration to
+>    accomodate unregistration
+>
+> John Garry (5):
+>    lib: logic_pio: Fix RCU usage
+>    lib: logic_pio: Avoid possible overlap for unregistering regions
+>    lib: logic_pio: Add logic_pio_unregister_range()
+>    bus: hisi_lpc: Unregister logical PIO range to avoid potential
+>      use-after-free
+>    bus: hisi_lpc: Add .remove method to avoid driver unbind crash
+>
+>   drivers/bus/hisi_lpc.c    | 47 +++++++++++++++++++++----
+>   include/linux/logic_pio.h |  1 +
+>   lib/logic_pio.c           | 73 +++++++++++++++++++++++++++++----------
+>   3 files changed, 96 insertions(+), 25 deletions(-)
+>
 
 
