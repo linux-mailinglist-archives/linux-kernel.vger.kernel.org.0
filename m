@@ -2,73 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4096D8F7DB
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 02:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91D8A8F7E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 02:11:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726512AbfHPAKE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 20:10:04 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:38238 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726388AbfHPAKC (ORCPT
+        id S1726549AbfHPALF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 20:11:05 -0400
+Received: from mail-io1-f69.google.com ([209.85.166.69]:56691 "EHLO
+        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725937AbfHPALF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 20:10:02 -0400
-Received: by mail-io1-f71.google.com with SMTP id h4so1436931iol.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 17:10:01 -0700 (PDT)
+        Thu, 15 Aug 2019 20:11:05 -0400
+Received: by mail-io1-f69.google.com with SMTP id m13so1432801ioj.23
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 17:11:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
          :from:to;
-        bh=Z+/LdDMDpi7lCJAGstTSfTIJspkV8FAjlsJ+Y9XME1o=;
-        b=RmiImedn2i6XYqWYwzgeOvruHxGf0Z5BNUUcO+RoDLwubXC+zdu/FnOopNZSwCUOYw
-         0w+3A16g7L0gq16E+/AsnPKU5LwWhQTK3K/Y/OFc3zZkiy5yAMPg6VdKuy8AWgT8qx/t
-         lg06AtPgOKplbAm6HE4UEFj72/xi0EIXCkSoWhuM9vns8hrvF8tzGstNW7hJxUgwSnlv
-         MWcmXbnhdps5kt6UgSQM8f/6OE9A0J3mLtduH/K9tE9x/BuWcm2+PtvCPc5wDZpgOMP4
-         7HP+YcbNPsBQn01xDQBhcH60E3WvRy/jpuPoPlViTYsPxVFupxPmCtlEWs7T+RAv+kto
-         rd7Q==
-X-Gm-Message-State: APjAAAUy3HJDappG4V5ItE9GkUhVOiJq8o412+miCRYRhb/BUd/2ecpR
-        BOjoxX328DdwCZHvUfzSpQfXPLoepWNYY4N/BaaDLsQm3iiM
-X-Google-Smtp-Source: APXvYqxLnHH6gUm2XRj2MsMlZpnv5+xeMGHnuOZMWTpWzPIrEbk6j67Nc+FVcbqQceXFkseKHbtoCfntpPYzq5cIpvyhqD0pFMOp
+        bh=7aNOMcysliVqYix28FIAFaamW29TY9E/DIOR9SA9tVo=;
+        b=Ykf9ITdiwBIswZONcVcV3kdLNxhF9cH01zU8mbA2hhOeuNdmKYrkXed8s0T0IExS8s
+         NKOv2aXb94DrBeKwM9V2KNU4AkRad72e7L3sEOFmhGvjP6OgiUwtrToonefW8gUvwtRi
+         R2blHIkCs/9RYnUKsR5dAmuQHkJlarOpHgqEHYw72QVYTAqSZUXDQkGkfTb7LuXR4okZ
+         6BOcJp9RRMTBOIdWYNDdavrY66KD3dUg2v2PgKj2LbHW4nqoaelT9SUnjA9sGlX/d61s
+         tSIxHemgmTO9yUM7xFtyLZ3+RtcpzpoF9jOtU7mlyB8qluaVL1S1uake2CRpaaCto5Ml
+         4DXw==
+X-Gm-Message-State: APjAAAUz+NWSioSNRNGfKVaDtm3HRIQG9XPmC0q09axOdmqCdHMqV2bY
+        DOAxoLumd26BPFAXePiqQym9G7u+9kyVqedy899wQFVBPWev
+X-Google-Smtp-Source: APXvYqz6bK5qk2bfTYB+nezTUfiQuXS7EZc0ZX1tjIAMdih8Y/x52ZzN3gyLpTW7T4oU0FyX39wPb3Le2RuodI3clWkblgMnCRcS
 MIME-Version: 1.0
-X-Received: by 2002:a6b:cd07:: with SMTP id d7mr7926143iog.150.1565914201066;
- Thu, 15 Aug 2019 17:10:01 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 17:10:01 -0700
-In-Reply-To: <000000000000d3c7e0058f605a53@google.com>
+X-Received: by 2002:a02:4e43:: with SMTP id r64mr7978873jaa.34.1565914264167;
+ Thu, 15 Aug 2019 17:11:04 -0700 (PDT)
+Date:   Thu, 15 Aug 2019 17:11:04 -0700
+In-Reply-To: <000000000000ab6f84056c786b93@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b4126c059030cfb6@google.com>
-Subject: Re: INFO: rcu detected stall in __do_softirq
-From:   syzbot <syzbot+6593c6b8c8b66a07cd98@syzkaller.appspotmail.com>
-To:     alsa-devel@alsa-project.org, bp@alien8.de,
-        gregkh@linuxfoundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, nstange@suse.de,
-        pierre-louis.bossart@linux.intel.com, sanyog.r.kale@intel.com,
-        srinivas.kandagatla@linaro.org, syzkaller-bugs@googlegroups.com,
-        tglx@linutronix.de, vkoul@kernel.org, x86@kernel.org,
-        yakui.zhao@intel.com
+Message-ID: <00000000000076ecf3059030d3f1@google.com>
+Subject: Re: WARNING in tracepoint_probe_register_prio (3)
+From:   syzbot <syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com>
+To:     ard.biesheuvel@linaro.org, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, jeyu@kernel.org,
+        linux-kernel@vger.kernel.org, mathieu.desnoyers@efficios.com,
+        mingo@kernel.org, netdev@vger.kernel.org, paulmck@linux.ibm.com,
+        paulmck@linux.vnet.ibm.com, rostedt@goodmis.org,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has bisected this bug to:
+syzbot has found a reproducer for the following crash on:
 
-commit 2aeac95d1a4cc85aae57ab842d5c3340df0f817f
-Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date:   Tue Jun 11 10:40:41 2019 +0000
+HEAD commit:    ecb9f80d net/mvpp2: Replace tasklet with softirq hrtimer
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=115730ac600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d4cf1ffb87d590d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=774fddf07b7ab29a1e55
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11b02a22600000
 
-     soundwire: add module_sdw_driver helper macro
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+774fddf07b7ab29a1e55@syzkaller.appspotmail.com
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114b45ee600000
-start commit:   882e8691 Add linux-next specific files for 20190801
-git tree:       linux-next
-final crash:    https://syzkaller.appspot.com/x/report.txt?x=134b45ee600000
-console output: https://syzkaller.appspot.com/x/log.txt?x=154b45ee600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=466b331af3f34e94
-dashboard link: https://syzkaller.appspot.com/bug?extid=6593c6b8c8b66a07cd98
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b216b2600000
+WARNING: CPU: 0 PID: 8824 at kernel/tracepoint.c:243 tracepoint_add_func  
+kernel/tracepoint.c:243 [inline]
+WARNING: CPU: 0 PID: 8824 at kernel/tracepoint.c:243  
+tracepoint_probe_register_prio+0x216/0x790 kernel/tracepoint.c:315
+Kernel panic - not syncing: panic_on_warn set ...
+CPU: 0 PID: 8824 Comm: syz-executor.4 Not tainted 5.3.0-rc3+ #133
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  panic+0x2dc/0x755 kernel/panic.c:219
+  __warn.cold+0x20/0x4c kernel/panic.c:576
+  report_bug+0x263/0x2b0 lib/bug.c:186
+  fixup_bug arch/x86/kernel/traps.c:179 [inline]
+  fixup_bug arch/x86/kernel/traps.c:174 [inline]
+  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:272
+  do_invalid_op+0x37/0x50 arch/x86/kernel/traps.c:291
+  invalid_op+0x23/0x30 arch/x86/entry/entry_64.S:1028
+RIP: 0010:tracepoint_add_func kernel/tracepoint.c:243 [inline]
+RIP: 0010:tracepoint_probe_register_prio+0x216/0x790 kernel/tracepoint.c:315
+Code: 48 89 f8 48 c1 e8 03 80 3c 08 00 0f 85 bf 04 00 00 48 8b 45 b8 49 3b  
+45 08 0f 85 21 ff ff ff 41 bd ef ff ff ff e8 aa 8c fe ff <0f> 0b e8 a3 8c  
+fe ff 48 c7 c7 20 44 de 88 e8 d7 1d ca 05 44 89 e8
+RSP: 0018:ffff88807b5a7498 EFLAGS: 00010293
+RAX: ffff8880a87a85c0 RBX: ffffffff89a1eb00 RCX: dffffc0000000000
+RDX: 0000000000000000 RSI: ffffffff8173fcd6 RDI: ffff88808afc4698
+RBP: ffff88807b5a74f0 R08: ffff8880a87a85c0 R09: fffffbfff11bc885
+R10: ffff88807b5a7488 R11: ffffffff88de4427 R12: ffff88808afc4690
+R13: 00000000ffffffef R14: 00000000ffffffff R15: ffffffff8177f710
+  tracepoint_probe_register+0x2b/0x40 kernel/tracepoint.c:335
+  register_trace_sched_wakeup include/trace/events/sched.h:96 [inline]
+  tracing_sched_register kernel/trace/trace_sched_switch.c:54 [inline]
+  tracing_start_sched_switch+0xa8/0x190 kernel/trace/trace_sched_switch.c:106
+  tracing_start_cmdline_record+0x13/0x20  
+kernel/trace/trace_sched_switch.c:131
+  trace_printk_init_buffers kernel/trace/trace.c:3050 [inline]
+  trace_printk_init_buffers.cold+0xdf/0xe9 kernel/trace/trace.c:3013
+  bpf_get_trace_printk_proto+0xe/0x20 kernel/trace/bpf_trace.c:338
+  cgroup_base_func_proto kernel/bpf/cgroup.c:799 [inline]
+  cgroup_base_func_proto.isra.0+0x10e/0x120 kernel/bpf/cgroup.c:776
+  cg_sockopt_func_proto+0x53/0x70 kernel/bpf/cgroup.c:1411
+  check_helper_call+0x141/0x32f0 kernel/bpf/verifier.c:3950
+  do_check+0x6213/0x89f0 kernel/bpf/verifier.c:7707
+  bpf_check+0x6f99/0x9948 kernel/bpf/verifier.c:9294
+  bpf_prog_load+0xe68/0x1670 kernel/bpf/syscall.c:1698
+  __do_sys_bpf+0xc43/0x3460 kernel/bpf/syscall.c:2849
+  __se_sys_bpf kernel/bpf/syscall.c:2808 [inline]
+  __x64_sys_bpf+0x73/0xb0 kernel/bpf/syscall.c:2808
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x459829
+Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc4bf1dec78 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
+RDX: 0000000000000070 RSI: 0000000020000180 RDI: 0000000000000005
+RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc4bf1df6d4
+R13: 00000000004bfc7c R14: 00000000004d1938 R15: 00000000ffffffff
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
 
-Reported-by: syzbot+6593c6b8c8b66a07cd98@syzkaller.appspotmail.com
-Fixes: 2aeac95d1a4c ("soundwire: add module_sdw_driver helper macro")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
