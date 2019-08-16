@@ -2,88 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9918F952
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3572C8F950
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfHPC7d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:59:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40238 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726506AbfHPC7c (ORCPT
+        id S1726765AbfHPC71 convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 15 Aug 2019 22:59:27 -0400
+Received: from rtits2.realtek.com ([211.75.126.72]:52971 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfHPC70 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:59:32 -0400
-Received: by mail-pl1-f196.google.com with SMTP id a93so1845310pla.7
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 19:59:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5TOZw4aX2ouYHWL3SPiBVA6qRZbVTxguU44+pODdzqI=;
-        b=gdQSJruoAM1XM+3a/CIqDvm0o6MwERJuLTfpy9OI9EGyi8eqi1yTpNYOYc1pMFygim
-         Mj0B864cQw1184rdHxkBe+b5EoTA7r8bRQv+vewlFkxnjYXVlvmIUEPqYeHeaxcuY2kj
-         DZeEWsiHhMJMcd0pt4KxN4CQTl7VmYJBYI89Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5TOZw4aX2ouYHWL3SPiBVA6qRZbVTxguU44+pODdzqI=;
-        b=tWxGHQ6jP1282wWJ082sP5dSEW/OVOTdoD2XLHywd26yeuTnEJy8VQmmABipa063Yo
-         Wu9eWvqI+DRW0fSGJkWK4jfm43W4Jbf1mSSlm+YkGtay3HpdV+z/DWnAzfpvNxHVE38r
-         5ehmcHZ4bUs7XVuKnFJuLpAnteCxlyqOlNu4niBQHVUNVx8f+xjuiKCYfoMVvyYPL9mG
-         oz7TECt6PfVxDRydHXDRk8e5dYcii0q7LjD3wrXcmQfbpyG/IGpQmyoNuScrkP0bmmNj
-         xeDVCT7Nw9LUG695smZVyclQqjOs7Of6MZJl9nMwzIintUvfbznwU3bwYkUIGpi+34iZ
-         +NDQ==
-X-Gm-Message-State: APjAAAW11HCs9lsz7x+S9pU1fCG6+F/jM2PqV/IxqJ7u3YOfC71Pa4JQ
-        U7K0OLcJCgbZCB1/VNg4W4CbHOIZmPo=
-X-Google-Smtp-Source: APXvYqzOsc28s9gVz0EkrhaSrs5/PUB6mUriwSSU1aeKlkoNXVLriuQGGqrLsSQSAAAn3wdPYB2XOg==
-X-Received: by 2002:a17:902:424:: with SMTP id 33mr7238481ple.34.1565924371577;
-        Thu, 15 Aug 2019 19:59:31 -0700 (PDT)
-Received: from localhost ([172.19.216.18])
-        by smtp.gmail.com with ESMTPSA id v184sm3378377pgd.34.2019.08.15.19.59.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 15 Aug 2019 19:59:30 -0700 (PDT)
-Date:   Thu, 15 Aug 2019 22:59:14 -0400
-From:   "Joel Fernandes (Google)" <joel@joelfernandes.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        frederic@kernel.org
-Subject: [PATCH v2 -rcu dev 2/3] rcu/tree: Fix issue where sometimes
- rcu_urgent_qs is not set on IPI
-Message-ID: <20190816025914.GB242309@google.com>
-References: <20190816025311.241257-1-joel@joelfernandes.org>
+        Thu, 15 Aug 2019 22:59:26 -0400
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID x7G2xI8R019537, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id x7G2xI8R019537
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 16 Aug 2019 10:59:18 +0800
+Received: from RTITMBSVM03.realtek.com.tw ([fe80::e1fe:b2c1:57ec:f8e1]) by
+ RTITCASV01.realtek.com.tw ([::1]) with mapi id 14.03.0468.000; Fri, 16 Aug
+ 2019 10:59:17 +0800
+From:   Hayes Wang <hayeswang@realtek.com>
+To:     David Miller <davem@davemloft.net>
+CC:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        nic_swsd <nic_swsd@realtek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH net-next] r8152: divide the tx and rx bottom functions
+Thread-Topic: [PATCH net-next] r8152: divide the tx and rx bottom functions
+Thread-Index: AQHVUnqNDBLFc1N41kCW+rl5DeKpGqb8LWmAgADnKaA=
+Date:   Fri, 16 Aug 2019 02:59:16 +0000
+Message-ID: <0835B3720019904CB8F7AA43166CEEB2F18D43A3@RTITMBSVM03.realtek.com.tw>
+References: <1394712342-15778-301-Taiwan-albertk@realtek.com>
+ <20190815.135851.1942927063321516679.davem@davemloft.net>
+In-Reply-To: <20190815.135851.1942927063321516679.davem@davemloft.net>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.21.177.214]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816025311.241257-1-joel@joelfernandes.org>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sometimes I see rcu_urgent_qs is not set. This could be when the last
-IPI was a long time ago, however, the grace period just started. Set
-rcu_urgent_qs so the tick can indeed not be stopped.
+David Miller [mailto:davem@davemloft.net]
+> Sent: Friday, August 16, 2019 4:59 AM
+[...]
+> Theoretically, yes.
+> 
+> But do you have actual performance numbers showing this to be worth
+> the change?
+> 
+> Always provide performance numbers with changes that are supposed to
+> improve performance.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
----
- kernel/rcu/tree.c | 1 +
- 1 file changed, 1 insertion(+)
+On x86, they are almost the same.
+Tx/Rx: 943/943 Mbits/sec -> 945/944
 
-diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
-index 322b1b57967c..856d3c9f1955 100644
---- a/kernel/rcu/tree.c
-+++ b/kernel/rcu/tree.c
-@@ -1091,6 +1091,7 @@ static int rcu_implicit_dynticks_qs(struct rcu_data *rdp)
- 	if (tick_nohz_full_cpu(rdp->cpu) &&
- 		   time_after(jiffies,
- 			      READ_ONCE(rdp->last_fqs_resched) + jtsq * 3)) {
-+		WRITE_ONCE(*ruqp, true);
- 		resched_cpu(rdp->cpu);
- 		WRITE_ONCE(rdp->last_fqs_resched, jiffies);
- 	}
--- 
-2.23.0.rc1.153.gdeed80330f-goog
+For arm platform,
+Tx/Rx: 917/917 Mbits/sec -> 933/933
+Improve about 1.74%.
+
+Best Regards,
+Hayes
+
 
