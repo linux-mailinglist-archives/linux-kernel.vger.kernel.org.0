@@ -2,88 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B790A8FC38
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:23:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E238FC12
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:22:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727143AbfHPHXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 03:23:01 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:4667 "EHLO
+        id S1726918AbfHPHWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:22:36 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:54580 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727032AbfHPHWv (ORCPT
+        with ESMTP id S1726139AbfHPHWg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 03:22:51 -0400
-X-UUID: addcb72474974aed9f3de23209357a45-20190816
-X-UUID: addcb72474974aed9f3de23209357a45-20190816
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1361610004; Fri, 16 Aug 2019 15:22:44 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 16 Aug 2019 15:22:47 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 16 Aug 2019 15:22:47 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        Fri, 16 Aug 2019 03:22:36 -0400
+X-UUID: 43d757f4b0e946618d6cbab272d1ee3a-20190816
+X-UUID: 43d757f4b0e946618d6cbab272d1ee3a-20190816
+Received: from mtkcas36.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <yong.wu@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 1470457894; Fri, 16 Aug 2019 15:22:30 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS32DR.mediatek.inc
+ (172.27.6.104) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 16 Aug
+ 2019 15:22:24 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 16 Aug 2019 15:22:23 +0800
+Message-ID: <1565940140.20346.21.camel@mhfsdcap03>
+Subject: Re: [PATCH v9 08/21] iommu/io-pgtable-arm-v7s: Extend MediaTek 4GB
+ Mode
+From:   Yong Wu <yong.wu@mediatek.com>
+To:     Will Deacon <will@kernel.org>
+CC:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Tomasz Figa <tfiga@google.com>,
         <linux-mediatek@lists.infradead.org>,
-        sam shih <sam.shih@mediatek.com>
-Subject: [PATCH 10/10] arm: dts: mediatek: add mt7629 pwm support
-Date:   Fri, 16 Aug 2019 15:21:28 +0800
-Message-ID: <1565940088-845-11-git-send-email-sam.shih@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1565940088-845-1-git-send-email-sam.shih@mediatek.com>
-References: <1565940088-845-1-git-send-email-sam.shih@mediatek.com>
+        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux-foundation.org>, <youlin.pei@mediatek.com>,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>,
+        <cui.zhang@mediatek.com>, <chao.hao@mediatek.com>,
+        <ming-fan.chen@mediatek.com>
+Date:   Fri, 16 Aug 2019 15:22:20 +0800
+In-Reply-To: <20190815115021.7pbv5s2qbgsuitvh@willie-the-truck>
+References: <1565423901-17008-1-git-send-email-yong.wu@mediatek.com>
+         <1565423901-17008-9-git-send-email-yong.wu@mediatek.com>
+         <20190814144059.ruyc45yoqkwpbuga@willie-the-truck>
+         <1565858869.12818.51.camel@mhfsdcap03>
+         <20190815095123.rzgtpklvhtjlqir4@willie-the-truck>
+         <1565864318.14278.4.camel@mhfsdcap03>
+         <20190815115021.7pbv5s2qbgsuitvh@willie-the-truck>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: BA349197A457FBABF294C6AEA76C731A816F8C5D8247B147DB51393DA440EAB42000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: sam shih <sam.shih@mediatek.com>
+On Thu, 2019-08-15 at 12:50 +0100, Will Deacon wrote:
+> Ok, I think speaking to Robin helped me a bit with this...
+> 
+> On Thu, Aug 15, 2019 at 06:18:38PM +0800, Yong Wu wrote:
+> > On Thu, 2019-08-15 at 10:51 +0100, Will Deacon wrote:
+> > > On Thu, Aug 15, 2019 at 04:47:49PM +0800, Yong Wu wrote:
+> > > > On Wed, 2019-08-14 at 15:41 +0100, Will Deacon wrote:
+> > > > > On Sat, Aug 10, 2019 at 03:58:08PM +0800, Yong Wu wrote:
+> > > > > > MediaTek extend the arm v7s descriptor to support the dram over 4GB.
+> > > > > > 
+> > > > > > In the mt2712 and mt8173, it's called "4GB mode", the physical address
+> > > > > > is from 0x4000_0000 to 0x1_3fff_ffff, but from EMI point of view, it
+> > > > > > is remapped to high address from 0x1_0000_0000 to 0x1_ffff_ffff, the
+> > > > > > bit32 is always enabled. thus, in the M4U, we always enable the bit9
+> > > > > > for all PTEs which means to enable bit32 of physical address. Here is
+> > > > > > the detailed remap relationship in the "4GB mode":
+> > > > > > CPU PA         ->    HW PA
+> > > > > > 0x4000_0000          0x1_4000_0000 (Add bit32)
+> > > > > > 0x8000_0000          0x1_8000_0000 ...
+> > > > > > 0xc000_0000          0x1_c000_0000 ...
+> > > > > > 0x1_0000_0000        0x1_0000_0000 (No change)
+> 
+> [...]
+> 
+> > > > > The way I would like this quirk to work is that the io-pgtable code
+> > > > > basically sets bit 9 in the pte when bit 32 is set in the physical address,
+> > > > > and sets bit 4 in the pte when bit 33 is set in the physical address. It
+> > > > > would then do the opposite when converting a pte to a physical address.
+> > > > > 
+> > > > > That way, your driver can call the page table code directly with the high
+> > > > > addresses and we don't have to do any manual offsetting or range checking
+> > > > > in the page table code.
+> > > > 
+> > > > In this case, the mt8183 can work successfully while the "4gb
+> > > > mode"(mt8173/mt2712) can not.
+> > > > 
+> > > > In the "4gb mode", As the remap relationship above, we should always add
+> > > > bit32 in pte as we did in [2]. and need add bit32 in the
+> > > > "iova_to_phys"(Not always add.). That means the "4gb mode" has a special
+> > > > flow:
+> > > > a. Always add bit32 in paddr_to_iopte.
+> > > > b. Add bit32 only when PA < 0x40000000 in iopte_to_paddr.
+> > > 
+> > > I think this is probably at the heart of my misunderstanding. What is so
+> > > special about PAs (is this HW PA or CPU PA?) below 0x40000000? Is this RAM
+> > > or something else?
+> > 
+> > SRAM and HW register that IOMMU can not access.
+> 
+> Ok, so redrawing your table from above, I think we can say something like:
+> 
+> 
+> CPU Physical address
+> ====================
+> 
+> 0G	1G	2G	3G	4G	5G
+> |---A---|---B---|---C---|---D---|---E---|
+> +--I/O--+------------Memory-------------+
+> 
+> 
+> IOMMU output physical address
+> =============================
+> 
+> 				4G	5G	6G	7G	8G
+> 				|---E---|---B---|---C---|---D---|
+> 				+------------Memory-------------+
+> 
+> 
+> Do you agree? 
 
-This adds pwm support for MT7629.
+Quite right.
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- arch/arm/boot/dts/mt7629.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm/boot/dts/mt7629.dtsi b/arch/arm/boot/dts/mt7629.dtsi
-index 9608bc2ccb3f..10f788a93346 100644
---- a/arch/arm/boot/dts/mt7629.dtsi
-+++ b/arch/arm/boot/dts/mt7629.dtsi
-@@ -241,6 +241,22 @@
- 			status = "disabled";
- 		};
- 
-+		pwm: pwm@11006000 {
-+			compatible = "mediatek,mt7629-pwm",
-+				     "mediatek,mt7622-pwm";
-+			reg = <0 0x11006000 0 0x1000>;
-+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_PWM_SEL>,
-+				 <&pericfg CLK_PERI_PWM_PD>,
-+				 <&pericfg CLK_PERI_PWM1_PD>;
-+			clock-names = "top", "main", "pwm1";
-+			assigned-clocks = <&topckgen CLK_TOP_PWM_SEL>;
-+			assigned-clock-parents =
-+					<&topckgen CLK_TOP_UNIVPLL2_D4>;
-+			num-pwms = <1>;
-+			status = "disabled";
-+		};
-+
- 		i2c: i2c@11007000 {
- 			compatible = "mediatek,mt7629-i2c",
- 				     "mediatek,mt2712-i2c";
--- 
-2.17.1
+> If so, what happens to region 'A' (the I/O region) in the
+> IOMMU output physical address space. Is it accessible?
+
+No. IOMMU can not access region 'A' above.
+
+> 
+> Anyway, I think it's the job of the driver to convert between the two
+> address spaces, so that:
+> 
+>   - On ->map(), bit 32 of the CPU physical address is set before calling
+>     into the iopgtable code
+> 
+>   - The result from ->iova_to_phys() should be the result from the
+>     iopgtable code, but with the top bit cleared for addresses over
+>     5G.
+> 
+> This assumes that:
+> 
+>   1. We're ok setting bit 9 in the ptes mapping region 'E'.
+>   2. The IOMMU page-table walker uses CPU physical addresses
+> 
+> Are those true?
+
+Yes. Then this patch would be close to the one[1] I sent in v8.
+
+Do I need to split this patch into 2 ones?:
+a).the pagetable code that support 34bit PA when MTK quirk is enabled.
+It only has the symmetric code handle BIT32/BIT33. Besides, I will add
+CONFIG_PHYS_ADDR_T_64BIT in the iopte_to_addr as commented before.
+
+b) MTK code that apply the special "4gb mode" flow. And the "oas" will
+always is 34 bit since v7s has already supported our case.
+
+[1]http://lists.infradead.org/pipermail/linux-mediatek/2019-June/020991.html
+
+> 
+> Thanks,
+> 
+> Will
+
 
