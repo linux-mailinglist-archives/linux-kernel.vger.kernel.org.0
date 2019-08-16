@@ -2,102 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E19DA90667
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52D949066A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 19:05:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727546AbfHPREN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 13:04:13 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:37170 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727042AbfHPREM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:04:12 -0400
-Received: by mail-qk1-f193.google.com with SMTP id s14so5334475qkm.4
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 10:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
-        b=CgyAwPGtGbDRUG8Q8IPdiAN946YBd9GiTLHLY9qdMO5DtczZ+v/ksZz5SGjHhHDB0g
-         hiV6XUJ4c9P/Fox7d6UOuEz97SD/EhMDbiCw8kD+oxlGk5WZy2o/dhyrB5D8Leo7SHAD
-         BKUA1fyEb0S2R5LJe+cV2l0+5GCV3Ei1qwVPLJVNjVyjL/1JaNhiXlUIMTcYmIQCwa5w
-         UFybR3WyOnO6J0TyWyymvk11R0w9E51nhI3I9ejTlLJRWh894PP5rmYob/zftnr58EHa
-         1R9EcYM6LGmbUn/CP/1T6cgliyd8l3igSjchOMhsF9pHYkfmf7q8dp+B8ImzDvpVFHxr
-         0xBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3/tESAZDqjf2ti4MOUFqaLyuCU2G0DdLcKzf9OCJK1A=;
-        b=j8GzOoUGy1iMzjtQz/TbU19RNt+x+LFo+2Xksafqmt9lDZAfg8Vz0purJj0i7x1RLN
-         VTG0M4jBiwXCG4aq9eD4vDeH2wsuQ0tcSIpe4XTSVsOJPHdeZkauuuSmagtomMXeJ8oa
-         lWOTWIvVZJHpUrZ66mPiTjUgq2KrKtemiOTa1rU98frzZ3LjX34Ok2iQJbJhW5/npEed
-         Mbt4Ip7B49LoWYZ6pTNjac67ZZek+j67f0KF1zpxq7g6E+beIyZEtAqAZSnGcjiUeeSD
-         KGgeGp5hgJKOybh+QMyCvK1x3kHCevftAeseA91byOzFl4s7fBF7WVRUPpxRIz+Lztez
-         Fb5w==
-X-Gm-Message-State: APjAAAWMGsMlJEn14Wn/61zzxYY0E25uX8qXXvWaBh9yWBCGIFoHF6+7
-        JvMC8LJSKyZHgXv7cBHLqTtJ+A==
-X-Google-Smtp-Source: APXvYqx/H9DYP00gkOY/+C82HTHZ3xyAsu8DjOC+iOmym4LKCzVRjzFvWdNtwrKPess7YdPgQyP7Sw==
-X-Received: by 2002:a05:620a:16d6:: with SMTP id a22mr9866792qkn.414.1565975051948;
-        Fri, 16 Aug 2019 10:04:11 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id s58sm3477747qth.59.2019.08.16.10.04.10
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 10:04:10 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hyfe6-0000CI-Dj; Fri, 16 Aug 2019 14:04:10 -0300
-Date:   Fri, 16 Aug 2019 14:04:10 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, Vlastimil Babka <vbabka@suse.cz>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Chinner <david@fromorbit.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] mm/gup: introduce vaddr_pin_pages_remote()
-Message-ID: <20190816170410.GH5398@ziepe.ca>
-References: <20190814234959.GA463@iweiny-DESK2.sc.intel.com>
- <2cbdf599-2226-99ae-b4d5-8909a0a1eadf@nvidia.com>
- <ac834ac6-39bd-6df9-fca4-70b9520b6c34@nvidia.com>
- <20190815132622.GG14313@quack2.suse.cz>
- <20190815133510.GA21302@quack2.suse.cz>
- <0d6797d8-1e04-1ebe-80a7-3d6895fe71b0@suse.cz>
- <20190816154404.GF3041@quack2.suse.cz>
- <20190816155220.GC3149@redhat.com>
- <20190816161355.GL3041@quack2.suse.cz>
- <20190816165445.GD3149@redhat.com>
+        id S1727552AbfHPRFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 13:05:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44282 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726447AbfHPRFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:05:06 -0400
+Received: from oasis.local.home (rrcs-76-79-140-27.west.biz.rr.com [76.79.140.27])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1E1E42077C;
+        Fri, 16 Aug 2019 17:05:05 +0000 (UTC)
+Date:   Fri, 16 Aug 2019 13:04:40 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Valentin Schneider <valentin.schneider@arm.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linux-kernel@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E . McKenney" <paulmck@linux.ibm.com>
+Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
+Message-ID: <20190816130440.07cc0a30@oasis.local.home>
+In-Reply-To: <28afb801-6b76-f86b-9e1b-09488fb7c8ce@arm.com>
+References: <00000000000076ecf3059030d3f1@google.com>
+        <20190816142643.13758-1-mathieu.desnoyers@efficios.com>
+        <20190816122539.34fada7b@oasis.local.home>
+        <28afb801-6b76-f86b-9e1b-09488fb7c8ce@arm.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816165445.GD3149@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 12:54:45PM -0400, Jerome Glisse wrote:
+On Fri, 16 Aug 2019 17:48:59 +0100
+Valentin Schneider <valentin.schneider@arm.com> wrote:
 
-> > Yes, I understand. But the fact is that GUP calls are currently still there
-> > e.g. in ODP code. If you can make the code work without taking a page
-> > reference at all, I'm only happy :)
+> On 16/08/2019 17:25, Steven Rostedt wrote:
+> >> Also, write and read to/from those variables should be done with
+> >> WRITE_ONCE() and READ_ONCE(), given that those are read within tracing
+> >> probes without holding the sched_register_mutex.
+> >>  
+> > 
+> > I understand the READ_ONCE() but is the WRITE_ONCE() truly necessary?
+> > It's done while holding the mutex. It's not that critical of a path,
+> > and makes the code look ugly.
+> >   
 > 
-> Already in rdma next AFAIK so in 5.4 it will be gone :)
+> I seem to recall something like locking primitives don't protect you from
+> store tearing / invented stores, so if you can have concurrent readers
+> using READ_ONCE(), there should be a WRITE_ONCE() on the writer side, even
+> if it's done in a critical section.
 
-Unfortunately no.. only a lot of patches supporting this change will
-be in 5.4. The notifiers are still a problem, and I need to figure out
-if the edge cases in hmm_range_fault are OK for ODP or not. :(
+But for this, it really doesn't matter. The READ_ONCE() is for going
+from 0->1 or 1->0 any other change is the same as 1.
 
-This is taking a long time in part because ODP itself has all sorts of
-problems that make it hard to tell if the other changes are safe or
-not..
+When we enable trace events, we start recording the tasks comms such
+that we can possibly map them to the pids. When we disable trace
+events, we stop recording the comms so that we don't overwrite the
+cache when not needed. Note, if more than the max cache of tasks are
+recorded during a session, we are likely to miss comms anyway.
 
-Lots of effort is being spent to get there though.
+Thinking about this more, the READ_ONCE() and WRTIE_ONCE() are not even
+needed, because this is just a best effort anyway.
 
-Jason
+The only real fix was to move the check into the mutex protect area,
+because that can cause a real bug if there was a race.
+
+ {
+-	bool sched_register = (!sched_cmdline_ref && !sched_tgid_ref);
++	bool sched_register;
++
+ 	mutex_lock(&sched_register_mutex);
++	sched_register = (!sched_cmdline_ref && !sched_tgid_ref);
+
+Thus, I'd like to see a v2 of this patch without the READ_ONCE() or
+WRITE_ONCE() added.
+
+-- Steve
