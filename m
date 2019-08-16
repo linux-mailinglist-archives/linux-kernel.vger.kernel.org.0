@@ -2,111 +2,253 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF3FE903B0
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:11:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CC63903B9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfHPOLD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:11:03 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:36324 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727205AbfHPOLD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:11:03 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GE90p3040745;
-        Fri, 16 Aug 2019 14:10:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2019-08-05;
- bh=rrAIgZ4P0ppcqVMyqyiR1dhc7wUibmp5okZHvHPQgT8=;
- b=iS6KgC1swYeXsIXOvTz7W7s/tmTZChGDvn98Lr12Uq4seG88kEN+hpXPqJknTF8t1NG2
- 8T0BAeHdszNIiBpI76034nG6htOhrcZy+H+yzxihlp8qPz/fDTvlOAszlyn5TBuCBLow
- 6innOXMU6rVm8QiohQ4QkTaJYtA3811nBciImzQIw2UePzmQAjQ1J+sIZiWFTKL49qKl
- qsyYElIdYSG+gMJ+CaO4mumqzYkurjDKmFy3VqgoSdvrxsJyx2h3h6zIJL5tzAUfcMA0
- CgHI0eNdXWnnvPXLruSZihA0xLI4V3k9vrtto4M01zLo5OnYjDH+xThkctWeHuWFyN63 xw== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2130.oracle.com with ESMTP id 2u9nbu0r2x-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 14:10:43 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GE9N1l176962;
-        Fri, 16 Aug 2019 14:10:43 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3020.oracle.com with ESMTP id 2udgqg5wsn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 14:10:43 +0000
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7GEAdcG017410;
-        Fri, 16 Aug 2019 14:10:40 GMT
-Received: from [10.159.153.160] (/10.159.153.160)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 16 Aug 2019 07:10:39 -0700
-Subject: Re: linux-next: Signed-off-by missing for commits in the net-next
- tree
-To:     Andy Grover <andy@groveronline.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Miller <davem@davemloft.net>,
-        Networking <netdev@vger.kernel.org>, Chris Mason <clm@fb.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andy Grover <andy.grover@oracle.com>,
-        Chris Mason <chris.mason@oracle.com>
-References: <20190816075312.64959223@canb.auug.org.au>
- <8fd20efa-8e3d-eca2-8adf-897428a2f9ad@oracle.com>
- <e85146f3-93a0-b23f-6a6e-11e42815946d@groveronline.com>
-From:   Gerd Rausch <gerd.rausch@oracle.com>
-Message-ID: <15078f1f-a036-2a54-1a07-9197f81bd58f@oracle.com>
-Date:   Fri, 16 Aug 2019 07:10:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727448AbfHPOMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:12:12 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4725 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726032AbfHPOML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:12:11 -0400
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 2CFA7DCCF5BDC3D35796;
+        Fri, 16 Aug 2019 22:11:54 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
+ 22:11:47 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
+        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
+        <benjaminfair@google.com>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: npcm7xx: remove unused code
+Date:   Fri, 16 Aug 2019 22:11:32 +0800
+Message-ID: <20190816141132.55060-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-In-Reply-To: <e85146f3-93a0-b23f-6a6e-11e42815946d@groveronline.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908160148
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908160148
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+drivers/clk/clk-npcm7xx.c:365:48: warning:
+ npcm7xx_divs_fx defined but not used [-Wunused-const-variable=]
+drivers/clk/clk-npcm7xx.c:438:43: warning:
+ npcm7xx_gates defined but not used [-Wunused-const-variable=]
 
-On 16/08/2019 02.15, Andy Grover wrote:
-> On 8/16/19 3:06 PM, Gerd Rausch wrote:
->> Hi,
->>
->> Just added the e-mail addresses I found using a simple "google search",
->> in order to reach out to the original authors of these commits:
->> Chris Mason and Andy Grover.
->>
->> I'm hoping they still remember their work from 7-8 years ago.
-> 
-> Yes looks like what I was working on. What did you need from me? It's
-> too late to amend the commitlogs...
-> 
+The two variables are never used, so remove them,
+also remove related type declarations.
 
-I'll let Stephen or David respond to what (if any) action is necessary.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/clk-npcm7xx.c | 157 ----------------------------------------------
+ 1 file changed, 157 deletions(-)
 
-The missing Signed-off-by was pointed out to me by Stephen yesterday.
-
-Hence I tried to locate you guys to pull you into the loop in order to
-not leave his concern unanswered.
-
-Thanks,
-
-  Gerd
-
-
+diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
+index 27a86b7..9c5390c 100644
+--- a/drivers/clk/clk-npcm7xx.c
++++ b/drivers/clk/clk-npcm7xx.c
+@@ -100,9 +100,6 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
+ 	return hw;
+ }
+ 
+-#define NPCM7XX_CLKEN1          (0x00)
+-#define NPCM7XX_CLKEN2          (0x28)
+-#define NPCM7XX_CLKEN3          (0x30)
+ #define NPCM7XX_CLKSEL          (0x04)
+ #define NPCM7XX_CLKDIV1         (0x08)
+ #define NPCM7XX_CLKDIV2         (0x2C)
+@@ -110,38 +107,7 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
+ #define NPCM7XX_PLLCON0         (0x0C)
+ #define NPCM7XX_PLLCON1         (0x10)
+ #define NPCM7XX_PLLCON2         (0x54)
+-#define NPCM7XX_SWRSTR          (0x14)
+-#define NPCM7XX_IRQWAKECON      (0x18)
+-#define NPCM7XX_IRQWAKEFLAG     (0x1C)
+-#define NPCM7XX_IPSRST1         (0x20)
+-#define NPCM7XX_IPSRST2         (0x24)
+-#define NPCM7XX_IPSRST3         (0x34)
+-#define NPCM7XX_WD0RCR          (0x38)
+-#define NPCM7XX_WD1RCR          (0x3C)
+-#define NPCM7XX_WD2RCR          (0x40)
+-#define NPCM7XX_SWRSTC1         (0x44)
+-#define NPCM7XX_SWRSTC2         (0x48)
+-#define NPCM7XX_SWRSTC3         (0x4C)
+-#define NPCM7XX_SWRSTC4         (0x50)
+-#define NPCM7XX_CORSTC          (0x5C)
+ #define NPCM7XX_PLLCONG         (0x60)
+-#define NPCM7XX_AHBCKFI         (0x64)
+-#define NPCM7XX_SECCNT          (0x68)
+-#define NPCM7XX_CNTR25M         (0x6C)
+-
+-struct npcm7xx_clk_gate_data {
+-	u32 reg;
+-	u8 bit_idx;
+-	const char *name;
+-	const char *parent_name;
+-	unsigned long flags;
+-	/*
+-	 * If this clock is exported via DT, set onecell_idx to constant
+-	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
+-	 * this specific clock.  Otherwise, set to -1.
+-	 */
+-	int onecell_idx;
+-};
+ 
+ struct npcm7xx_clk_mux_data {
+ 	u8 shift;
+@@ -160,21 +126,6 @@ struct npcm7xx_clk_mux_data {
+ 
+ };
+ 
+-struct npcm7xx_clk_div_fixed_data {
+-	u8 mult;
+-	u8 div;
+-	const char *name;
+-	const char *parent_name;
+-	u8 clk_divider_flags;
+-	/*
+-	 * If this clock is exported via DT, set onecell_idx to constant
+-	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
+-	 * this specific clock.  Otherwise, set to -1.
+-	 */
+-	int onecell_idx;
+-};
+-
+-
+ struct npcm7xx_clk_div_data {
+ 	u32 reg;
+ 	u8 shift;
+@@ -361,13 +312,6 @@ static const struct npcm7xx_clk_mux_data npcm7xx_muxes[] __initconst = {
+ 	dvcssel_mux_parents, ARRAY_SIZE(dvcssel_mux_parents), 0, -1},
+ };
+ 
+-/* fixed ratio dividers (no register): */
+-static const struct npcm7xx_clk_div_fixed_data npcm7xx_divs_fx[] __initconst = {
+-	{ 1, 2, NPCM7XX_CLK_S_MC, NPCM7XX_CLK_S_MC_MUX, 0, NPCM7XX_CLK_MC},
+-	{ 1, 2, NPCM7XX_CLK_S_PLL1_DIV2, NPCM7XX_CLK_S_PLL1, 0, -1},
+-	{ 1, 2, NPCM7XX_CLK_S_PLL2_DIV2, NPCM7XX_CLK_S_PLL2, 0, -1},
+-};
+-
+ /* configurable dividers: */
+ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
+ 	{NPCM7XX_CLKDIV1, 28, 3, NPCM7XX_CLK_S_ADC,
+@@ -435,107 +379,6 @@ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
+ 
+ };
+ 
+-static const struct npcm7xx_clk_gate_data npcm7xx_gates[] __initconst = {
+-	{NPCM7XX_CLKEN1, 31, "smb1-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 30, "smb0-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 29, "smb7-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 28, "smb6-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 27, "adc-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 26, "wdt-gate", NPCM7XX_CLK_S_TIMER, 0},
+-	{NPCM7XX_CLKEN1, 25, "usbdev3-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 24, "usbdev6-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 23, "usbdev5-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 22, "usbdev4-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 21, "emc2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 20, "timer5_9-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 19, "timer0_4-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 18, "pwmm0-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN1, 17, "huart-gate", NPCM7XX_CLK_S_UART, 0},
+-	{NPCM7XX_CLKEN1, 16, "smb5-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 15, "smb4-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 14, "smb3-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 13, "smb2-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN1, 12, "mc-gate", NPCM7XX_CLK_S_MC, 0},
+-	{NPCM7XX_CLKEN1, 11, "uart01-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 10, "aes-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 9, "peci-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN1, 8, "usbdev2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 7, "uart23-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 6, "emc1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 5, "usbdev1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 4, "shm-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 3 is reserved */
+-	{NPCM7XX_CLKEN1, 2, "kcs-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN1, 1, "spi3-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN1, 0, "spi0-gate", NPCM7XX_CLK_S_AHB, 0},
+-
+-	{NPCM7XX_CLKEN2, 31, "cp-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 30, "tock-gate", NPCM7XX_CLK_S_TOCK, 0},
+-	/* bit 29 is reserved */
+-	{NPCM7XX_CLKEN2, 28, "gmac1-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 27, "usbif-gate", NPCM7XX_CLK_S_USBIF, 0},
+-	{NPCM7XX_CLKEN2, 26, "usbhost-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 25, "gmac2-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 24 is reserved */
+-	{NPCM7XX_CLKEN2, 23, "pspi2-gate", NPCM7XX_CLK_S_APB5, 0},
+-	{NPCM7XX_CLKEN2, 22, "pspi1-gate", NPCM7XX_CLK_S_APB5, 0},
+-	{NPCM7XX_CLKEN2, 21, "3des-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 20 is reserved */
+-	{NPCM7XX_CLKEN2, 19, "siox2-gate", NPCM7XX_CLK_S_APB3, 0},
+-	{NPCM7XX_CLKEN2, 18, "siox1-gate", NPCM7XX_CLK_S_APB3, 0},
+-	/* bit 17 is reserved */
+-	{NPCM7XX_CLKEN2, 16, "fuse-gate", NPCM7XX_CLK_S_APB4, 0},
+-	/*  bit 15 is reserved */
+-	{NPCM7XX_CLKEN2, 14, "vcd-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 13, "ece-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 12, "vdma-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 11, "ahbpcibrg-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 10, "gfxsys-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN2, 9, "sdhc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 8, "mmc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN2, 7, "mft7-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 6, "mft6-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 5, "mft5-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 4, "mft4-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 3, "mft3-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 2, "mft2-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 1, "mft1-gate", NPCM7XX_CLK_S_APB4, 0},
+-	{NPCM7XX_CLKEN2, 0, "mft0-gate", NPCM7XX_CLK_S_APB4, 0},
+-
+-	{NPCM7XX_CLKEN3, 31, "gpiom7-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 30, "gpiom6-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 29, "gpiom5-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 28, "gpiom4-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 27, "gpiom3-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 26, "gpiom2-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 25, "gpiom1-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 24, "gpiom0-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 23, "espi-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 22, "smb11-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 21, "smb10-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 20, "smb9-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 19, "smb8-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 18, "smb15-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 17, "rng-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 16, "timer10_14-gate", NPCM7XX_CLK_S_APB1, 0},
+-	{NPCM7XX_CLKEN3, 15, "pcirc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 14, "sececc-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 13, "sha-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 12, "smb14-gate", NPCM7XX_CLK_S_APB2, 0},
+-	/* bit 11 is reserved */
+-	/* bit 10 is reserved */
+-	{NPCM7XX_CLKEN3, 9, "pcimbx-gate", NPCM7XX_CLK_S_AHB, 0},
+-	/* bit 8 is reserved */
+-	{NPCM7XX_CLKEN3, 7, "usbdev9-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 6, "usbdev8-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 5, "usbdev7-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 4, "usbdev0-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 3, "smb13-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 2, "spix-gate", NPCM7XX_CLK_S_AHB, 0},
+-	{NPCM7XX_CLKEN3, 1, "smb12-gate", NPCM7XX_CLK_S_APB2, 0},
+-	{NPCM7XX_CLKEN3, 0, "pwmm1-gate", NPCM7XX_CLK_S_APB3, 0},
+-};
+-
+ static DEFINE_SPINLOCK(npcm7xx_clk_lock);
+ 
+ static void __init npcm7xx_clk_init(struct device_node *clk_np)
+-- 
+2.7.4
 
 
