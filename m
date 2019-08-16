@@ -2,73 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B896A903D4
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:18:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2383D903C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:17:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfHPOSz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:18:55 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:4708 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726786AbfHPOSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:18:55 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 95EB0A9EC821E413B7E4;
-        Fri, 16 Aug 2019 22:15:16 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
- 22:15:08 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <vkoul@kernel.org>, <sanyog.r.kale@intel.com>,
-        <pierre-louis.bossart@linux.intel.com>
-CC:     <linux-kernel@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] soundwire: Fix -Wunused-function warning
-Date:   Fri, 16 Aug 2019 22:14:09 +0800
-Message-ID: <20190816141409.49940-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727351AbfHPORD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:17:03 -0400
+Received: from relay9-d.mail.gandi.net ([217.70.183.199]:54695 "EHLO
+        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727291AbfHPORD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:17:03 -0400
+X-Originating-IP: 87.5.130.64
+Received: from uno.homenet.telecomitalia.it (host64-130-dynamic.5-87-r.retail.telecomitalia.it [87.5.130.64])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id EDA65FF80E;
+        Fri, 16 Aug 2019 14:16:59 +0000 (UTC)
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        linux-media@vger.kernel.org (open list:MEDIA INPUT INFRASTRUCTURE
+        (V4L/DVB)), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/6] media: v4l2-ctrls: Add camera sensor location
+Date:   Fri, 16 Aug 2019 16:18:16 +0200
+Message-Id: <20190816141822.7582-1-jacopo@jmondi.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If CONFIG_ACPI is not set, gcc warning this:
+Hello,
+  after yesterday's RFC I'm now sending a proper v1 for inclusion.
+Thanks Hans, Laurent and Sakari for the comments on the RFC.
 
-drivers/soundwire/slave.c:16:12: warning:
- 'sdw_slave_add' defined but not used [-Wunused-function]
+I have expanded the documentation, finalized on an integer control to expose
+the camera sensor location, and provided and helper in v4l2-fwnode to parse
+the firmware property and register the associated control.
 
-move them to #ifdef CONFIG_ACPI block.
+On the helper: right now only 'location' is parsed and the assoiated
+V4L2_CID_CAMERA_SENSOR_LOCATION control registered. Ideally, I would have liked
+to support more properties coming from firmware and exposed through controls,
+but:
+- V4L2_CID_LINK_FREQ which corresponds to the 'link-frequencies' property is
+  never directly parsed for firmware and exposed as a control in any mainline
+  driver. The contrary is actually true: all drivers but smiapp register values
+  not coming from DT but hardcoded in the driver itself. smiapp parses the link
+  frequencies from DT but does not expose them directly. This makes me wonder
+  about the actual purpose of the property if nobody uses that.
+  Should drivers be moved to retrieve the property from firmware instead?
+- V4L2_CID_PIXEL_RATE depends on the link frequencies, number of lanes and
+  configured image format. It seems better handled by drivers instead of in an
+  helper considering how many parameters are required to calculate it.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/soundwire/slave.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+So the newly added function just parses and expose the camera location, which
+makes me wonder if it's worth an helper at all. What other properties could be
+parsed and registered as controls which I have missed?
 
-diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-index f39a581..34c7e65 100644
---- a/drivers/soundwire/slave.c
-+++ b/drivers/soundwire/slave.c
-@@ -6,6 +6,7 @@
- #include <linux/soundwire/sdw_type.h>
- #include "bus.h"
- 
-+#if IS_ENABLED(CONFIG_ACPI)
- static void sdw_slave_release(struct device *dev)
- {
- 	struct sdw_slave *slave = dev_to_sdw_dev(dev);
-@@ -60,7 +61,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
- 	return ret;
- }
- 
--#if IS_ENABLED(CONFIG_ACPI)
- /*
-  * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
-  * @bus: SDW bus instance
--- 
-2.7.4
+Thanks
+   j
 
+Jacopo Mondi (6):
+  media: dt-bindings: Document 'location' property
+  media: v4l2-ctrl: Document V4L2_CID_LOCATION
+  media: v4l2-ctrls: Add support for V4L2_CID_LOCATION
+  media: v4l2-fwnode: Add helper to register controls from fw
+  media: i2c: ov5670: Register controls from firmware
+  media: i2c: ov13858: Register controls from firmware
+
+ .../bindings/media/video-interfaces.txt       | 10 +++++
+ .../media/uapi/v4l/ext-ctrls-camera.rst       | 34 ++++++++++++++++
+ drivers/media/i2c/ov13858.c                   |  8 ++++
+ drivers/media/i2c/ov5670.c                    |  7 ++++
+ drivers/media/v4l2-core/v4l2-ctrls.c          |  2 +
+ drivers/media/v4l2-core/v4l2-fwnode.c         | 40 +++++++++++++++++++
+ include/media/v4l2-fwnode.h                   | 29 ++++++++++++++
+ include/uapi/linux/v4l2-controls.h            |  5 +++
+ 8 files changed, 135 insertions(+)
+
+--
+2.22.0
 
