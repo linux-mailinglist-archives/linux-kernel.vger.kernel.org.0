@@ -2,58 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7586B909E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:01:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D10A909E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:02:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfHPVBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 17:01:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48802 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727548AbfHPVBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 17:01:36 -0400
-Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28D7C2133F;
-        Fri, 16 Aug 2019 21:01:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565989295;
-        bh=MxoPEBdUgeGG8r1YMtqWjR43bDHROWKuxhhQbv0Dyd4=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=V+taPJeoXoU39dnw4eLkWys2oiJYLOa4Kz30m61AGUDeqfuWPigLu5mtk/NBZ4EVe
-         B+vgjZJsohmFph06ZE175qMwGCufq9Lz2dwY9FU1nW8Qnmq5y54FKkcs3RmSkO7pGl
-         B5jzTM/MEaZDZcmqg90IE5o1Sx27v/d00qBxFkww=
-Date:   Fri, 16 Aug 2019 14:01:34 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Bharata B Rao <bharata@linux.ibm.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH 1/4] resource: add a not device managed
- request_free_mem_region variant
-Message-Id: <20190816140134.1f3225bed9bf2734c03341b1@linux-foundation.org>
-In-Reply-To: <20190816065434.2129-2-hch@lst.de>
-References: <20190816065434.2129-1-hch@lst.de>
-        <20190816065434.2129-2-hch@lst.de>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1727754AbfHPVCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 17:02:09 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:40379 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727548AbfHPVCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 17:02:08 -0400
+Received: by mail-ot1-f65.google.com with SMTP id c34so10829519otb.7;
+        Fri, 16 Aug 2019 14:02:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ZFxKR576aWu66XIGODf4Dfqh9pMbrp3cn6HjNum0x/A=;
+        b=lkQ7a7EEws2eTQsn87CRGSqBxNIYRGijVCfv+nXWBlVB1i5ZkHkoyZNvXI/LAqVfcI
+         N/IuDJOLFK+l6HhmQ1SIhMePndOH6Bpy7nZ0WgBuoZIuwnN8QfxLzydj1WIWJx+PL1FV
+         5zc/kxb9UL7LOQRD31PoO3URHoJXF8erRmyIPuMWev0i89w9ju2cm8PGnC+JvQkosk/2
+         IMBM+ht+yZUn97PU8RVdsGNQg2IB13oa3732CgU8IxYUlWd+OgCrwmegkDFhgO9UlOx3
+         olBXzIV1hKxNEZI4/usd1l9brAglRKmoD4dwrBS9tqx3gvclkFtsEmXChKqWeh2dNqMV
+         uzfQ==
+X-Gm-Message-State: APjAAAUGpE7sOgMp7eb7+U5Fxe7j9txFMDnTPtf9HZhEpB4APRnNPxH1
+        ZPZpUuCqbsfjy4Xdl9o7LA==
+X-Google-Smtp-Source: APXvYqx2dK3twuUktSJd04/r2aF5V2tGmUhKOx7YAFKtnfAaGx9f/qJ8sIFYoDauwR1vMrY5vHRb/A==
+X-Received: by 2002:a9d:590b:: with SMTP id t11mr9386551oth.239.1565989327722;
+        Fri, 16 Aug 2019 14:02:07 -0700 (PDT)
+Received: from localhost (ip-173-126-47-137.ftwttx.spcsdns.net. [173.126.47.137])
+        by smtp.gmail.com with ESMTPSA id 11sm2590891otc.45.2019.08.16.14.02.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 16 Aug 2019 14:02:07 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 16:02:05 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: Re: [PATCH v3 7/10] dt-bindings: pwm: update bindings for MT7629 SoC
+Message-ID: <20190816210205.GA23351@bogus>
+References: <1565940088-845-1-git-send-email-sam.shih@mediatek.com>
+ <1565940088-845-8-git-send-email-sam.shih@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1565940088-845-8-git-send-email-sam.shih@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Aug 2019 08:54:31 +0200 Christoph Hellwig <hch@lst.de> wrote:
+On Fri, 16 Aug 2019 15:21:25 +0800, Sam Shih wrote:
+> From: Ryder Lee <ryder.lee@mediatek.com>
+> 
+> This updates bindings for MT7629 pwm controller.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-> Just add a simple macro that passes a NULL dev argument to
-> dev_request_free_mem_region, and call request_mem_region in the
-> function for that particular case.
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-Nit:
-
-> +struct resource *request_free_mem_region(struct resource *base,
-> +		unsigned long size, const char *name);
-
-This isn't a macro ;)
+If a tag was not added on purpose, please state why and what changed.
