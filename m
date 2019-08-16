@@ -2,106 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 119858FB53
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:45:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ACB28FB57
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:48:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfHPGph (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:45:37 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:53152 "EHLO mail.skyhub.de"
+        id S1726898AbfHPGq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:46:57 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:53358 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725945AbfHPGph (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:45:37 -0400
+        id S1725945AbfHPGq4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 02:46:56 -0400
 Received: from zn.tnic (p200300EC2F0A920041519BC41B2ACCA3.dip0.t-ipconnect.de [IPv6:2003:ec:2f0a:9200:4151:9bc4:1b2a:cca3])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 307A51EC074B;
-        Fri, 16 Aug 2019 08:45:36 +0200 (CEST)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8504D1EC074B;
+        Fri, 16 Aug 2019 08:46:55 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1565937936;
+        t=1565938015;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=yoiKixPe5qr94uGkb8tkzi///jkObvb6JYyEAla0DjE=;
-        b=O0xVAwPtn9ffg8o8RxBw/t0wIiKzBpv0igzPdnKXaTs45O9vreIMwSE55EnGOaf+yarp3L
-        QGGogq9l8ts/nBcSxLmTD9SVcRzeUalJD5wbIYV59q46WUtckjT1/d/OspA9P4unNe0+YH
-        TP1mce8yB+bIkNWK3rUHxtuN5jW3WpY=
-Date:   Fri, 16 Aug 2019 08:46:25 +0200
+        bh=3ldeSatrRtTyNqO2P96WQqIXOHLJo+VWGZk+uXxJcII=;
+        b=TyiSeb9Ph8Bz5VxBujWAble1erTVxtJ47aBU7iSykM8A/zC4bxLf4x3CjhS9oxFVSpcB0l
+        jaNdSxcyJGnLVUrIh1rFHk3NssHUDPasBbY7fK83PIXTGHwLkONbomHwU8bVc6Inh89MB7
+        2XTuni7eo4lee624rf1k4JDtBTjYcUE=
+Date:   Fri, 16 Aug 2019 08:47:44 +0200
 From:   Borislav Petkov <bp@alien8.de>
-To:     "Luck, Tony" <tony.luck@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
- asm/intel-family.h
-Message-ID: <20190816064625.GD18980@zn.tnic>
-References: <20190814234030.30817-1-tony.luck@intel.com>
- <20190815075822.GC15313@zn.tnic>
- <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
- <20190815175455.GJ15313@zn.tnic>
- <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
- <alpine.DEB.2.21.1908152217070.1908@nanos.tec.linutronix.de>
- <20190815224704.GA10025@agluck-desk2.amr.corp.intel.com>
+To:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
+Cc:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 0/7] AMD64 EDAC fixes
+Message-ID: <20190816064744.GE18980@zn.tnic>
+References: <20190709215643.171078-1-Yazen.Ghannam@amd.com>
+ <20190802144626.GD30661@zn.tnic>
+ <SN6PR12MB263968E448E4CCD4C6856288F8AC0@SN6PR12MB2639.namprd12.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190815224704.GA10025@agluck-desk2.amr.corp.intel.com>
+In-Reply-To: <SN6PR12MB263968E448E4CCD4C6856288F8AC0@SN6PR12MB2639.namprd12.prod.outlook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 03:47:05PM -0700, Luck, Tony wrote:
-> On Thu, Aug 15, 2019 at 10:22:07PM +0200, Thomas Gleixner wrote:
-> > On Thu, 15 Aug 2019, Luck, Tony wrote:
-> > > On Thu, Aug 15, 2019 at 07:54:55PM +0200, Borislav Petkov wrote:
-> > So we should document the list of valid and usable ones and either fixup
-> > broken ones or document that they are historic ballast and not to be used
-> > for new ones. Otherwise you end up with the same discussions again.
-> 
-> This version is a lot more specific (but still allows future
-> flexibility). I see a world of bike-shedding if I try to come
-> up with a naming scheme to fix previous questionable naming
-> choices ... I'm not going to open that can of worms.
-> 
-> -Tony
-> 
-> From 093bf8cd02f4c7a3fa256c2cf7302014190e2840 Mon Sep 17 00:00:00 2001
-> From: Tony Luck <tony.luck@intel.com>
-> Date: Thu, 15 Aug 2019 11:16:24 -0700
-> Subject: [PATCH] x86/cpu: Explain Intel model naming convention
-> 
-> Dave Hansen spelled out the rules in an e-mail:
-> 
->  https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
-> 
-> Copy those right into the <asm/intel-family.h> file to
-> make it easy for people to find them.
-> 
-> Suggested-by: Borislav Petkov <bp@alien8.de>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> ---
->  arch/x86/include/asm/intel-family.h | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> index 0278aa66ef62..fe7c205233f1 100644
-> --- a/arch/x86/include/asm/intel-family.h
-> +++ b/arch/x86/include/asm/intel-family.h
-> @@ -11,6 +11,21 @@
->   * While adding a new CPUID for a new microarchitecture, add a new
->   * group to keep logically sorted out in chronological order. Within
->   * that group keep the CPUID for the variants sorted by model number.
-> + *
-> + * The defined symbol names have the following form:
-> + *	INTEL_FAM6{OPTFAMILY}_{MICROARCH}{OPTDIFF}
+On Thu, Aug 15, 2019 at 08:08:39PM +0000, Ghannam, Yazen wrote:
+> Yes, I agree. I was planning to do a fix in a separate set. Is that
+> okay? Or should I add it here?
 
-I think you want to have the underscores in the template:
+If you have it, send it on, sure.
 
-	INTEL_FAM6_{OPTFAMILY}_{MICROARCH}_{OPTDIFF}
-
-but no need to resend if this is the only issue - I'll fix it up when
-applying.
+Thx.
 
 -- 
 Regards/Gruss,
