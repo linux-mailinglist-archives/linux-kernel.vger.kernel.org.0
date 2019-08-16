@@ -2,55 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B38F28FD3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C71A8FD64
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:13:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726970AbfHPIKD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:10:03 -0400
-Received: from verein.lst.de ([213.95.11.211]:53320 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfHPIKC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:10:02 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 65B1868B02; Fri, 16 Aug 2019 10:09:59 +0200 (CEST)
-Date:   Fri, 16 Aug 2019 10:09:59 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-rdma@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@fb.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Eric Pilmore <epilmore@gigaio.com>,
-        Stephen Bates <sbates@raithlin.com>
-Subject: Re: [PATCH v3 06/14] PCI/P2PDMA: Factor out host_bridge_whitelist()
-Message-ID: <20190816080959.GF9249@lst.de>
-References: <20190812173048.9186-1-logang@deltatee.com> <20190812173048.9186-7-logang@deltatee.com>
+        id S1727153AbfHPIMg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:12:36 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:50786 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726866AbfHPIMH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 04:12:07 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 69CAC77673F27F850E45;
+        Fri, 16 Aug 2019 16:11:58 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.132) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 16 Aug 2019 16:11:48 +0800
+From:   Huazhong Tan <tanhuazhong@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <linuxarm@huawei.com>, <jakub.kicinski@netronome.com>,
+        Huazhong Tan <tanhuazhong@huawei.com>
+Subject: [PATCH net-next 0/6] net: hns3: add some cleanups & bugfix
+Date:   Fri, 16 Aug 2019 16:09:36 +0800
+Message-ID: <1565942982-12105-1-git-send-email-tanhuazhong@huawei.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190812173048.9186-7-logang@deltatee.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.132]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 11:30:40AM -0600, Logan Gunthorpe wrote:
-> Push both PCI devices into the whitelist checking function seeing some
-> hardware will require us ensuring they are on the same host bridge.
-> 
-> At the same time we rename root_complex_whitelist() to
-> host_bridge_whitelist() to match the terminology used in the code.
-> 
-> Link: https://lore.kernel.org/r/20190730163545.4915-7-logang@deltatee.com
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+This patch-set includes cleanups and bugfix for the HNS3 ethernet
+controller driver.
 
-Looks good,
+[patch 01/06 - 03/06] adds some cleanups.
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+[patch 04/06] changes the print level of RAS.
+
+[patch 05/06] fixes a bug related to MAC TNL.
+
+[patch 06/06] adds phy_attached_info().
+
+Guojia Liao (3):
+  net: hns3: add or modify comments
+  net: hns3: modify redundant initialization of variable
+  net: hns3: fix error and incorrect format
+
+Huazhong Tan (1):
+  net: hns3: prevent unnecessary MAC TNL interrupt
+
+Xiaofei Tan (1):
+  net: hns3: change print level of RAS error log from warning to error
+
+Yonglong Liu (1):
+  net: hns3: add phy_attached_info() to the hns3 driver
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.c        |  9 +--
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h        | 12 +--
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c    |  8 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.h    |  8 +-
+ drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c |  6 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_debugfs.c |  3 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_err.c | 90 +++++++++++-----------
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.c    | 17 ++--
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_main.h    |  1 -
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c |  2 +-
+ .../ethernet/hisilicon/hns3/hns3pf/hclge_mdio.c    |  2 +
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_tm.c  |  2 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.c   |  2 +-
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c  | 11 ++-
+ 14 files changed, 89 insertions(+), 84 deletions(-)
+
+-- 
+2.7.4
+
