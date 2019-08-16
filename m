@@ -2,132 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CBE090969
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:19:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4744390970
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:26:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfHPUTG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 16:19:06 -0400
-Received: from mail-eopbgr740102.outbound.protection.outlook.com ([40.107.74.102]:26649
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727545AbfHPUTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 16:19:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=L6UV1++ZR2YaWuuHQXT4vBUTDm8dYgQCCqXCkBfDa/bqkMJokH1OjqRX4OguYJT3NTf4yQYauVTpwvrUvoAKXjPM0gLn+QGku/8O/L+yP7n47o4+5AN3amFVOGMiLLsJkLGW7VUm4ttVtTt0KNykJLB2y3JwnFJ+B/gMm/AMeJ/MsBmpTjBTLF9WGIqyXiJLCCxtTlHaE1YNmSNxZIG4zc5UmSfL4SRm/RuSiIuMVedjI2vzyFe52EBcQu1Ne+1epNmCyTgta97EhYZsly0eHYPONhjx48U4qUScxeGBDyb/AMF6jcc4a9XGIU3ulfFlUKYCr6WeZg92UNaGFRtNqg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sFesdq79pwwa6qJ/WNIMauYBO+D//nyD2a3OkNYEUVI=;
- b=FQQnSa1apq3LCmFRK/20cupGjvu+oIs/a1CguPQSzQq1k9AlI2kKhZg60F8svQ/w4pePElsRstvFn0cndqDsWowubnJsJnKhVpkiV6Xl/Fv/abSNKGyqQen4cEUCVmhuIx9pt3RI//Z0epA0zYvbiB35SRT4ecYDuyMO18q6nz6NZTh+T/6EJ0r4M1Zwm5jOgh0acGI0RpgT3CCqfPojuqfGeEovKTzb7WQZu5tu0NSTX37cRAyQunUw7FCbWq8kdlQuKMMKW07oyZAYKyDPwTg6ASsPT7jJ6ANt70SlWto+fhkohR0YgX1G0FtHL+c6NhRtkmltPyUiB+JfqTcAXA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wavecomp.com; dmarc=pass action=none header.from=mips.com;
- dkim=pass header.d=mips.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sFesdq79pwwa6qJ/WNIMauYBO+D//nyD2a3OkNYEUVI=;
- b=WuvblQ5t6u/PCdXoTyKBiC9w+1bPnF9pnvEUX7l2NXNM6EkgdZIgsW46O7acNo1A3bOTqf6RHszZOIddAATklUNC/FUSMs5V2exgs8kdNxcs+1lMn2qwyX2OEUKmain6nPuGjJ/JoQeZvZkhFG7TLFMwbNG9EyxPSGrheAgumu8=
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1486.namprd22.prod.outlook.com (10.174.170.147) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2157.21; Fri, 16 Aug 2019 20:19:02 +0000
-Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::f566:bf1f:dcd:862c]) by MWHPR2201MB1277.namprd22.prod.outlook.com
- ([fe80::f566:bf1f:dcd:862c%10]) with mapi id 15.20.2157.022; Fri, 16 Aug 2019
- 20:19:02 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-CC:     YueHaibing <yuehaibing@huawei.com>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "maz@kernel.org" <maz@kernel.org>,
-        "paul@crapouillou.net" <paul@crapouillou.net>,
-        "malat@debian.org" <malat@debian.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
-Thread-Topic: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
-Thread-Index: AQHVVG/YNAEDnEE/XUChmtFF11fMGA==
-Date:   Fri, 16 Aug 2019 20:19:02 +0000
-Message-ID: <20190816201857.46hqlsezqkxdabd7@pburton-laptop>
-References: <20190813015602.30576-1-yuehaibing@huawei.com>
- <alpine.DEB.2.21.1908161428001.8238@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1908161428001.8238@nanos.tec.linutronix.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: LNXP265CA0074.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:76::14) To MWHPR2201MB1277.namprd22.prod.outlook.com
- (2603:10b6:301:18::12)
-user-agent: NeoMutt/20180716
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2a02:c7f:5e65:9900:4e8f:fd55:165f:4d31]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 86aa0df0-9d1c-4523-702e-08d72286fa6c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1486;
-x-ms-traffictypediagnostic: MWHPR2201MB1486:
-x-microsoft-antispam-prvs: <MWHPR2201MB1486AF389675AC2FC8CE7E00C1AF0@MWHPR2201MB1486.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0131D22242
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39840400004)(396003)(366004)(136003)(376002)(346002)(199004)(189003)(2906002)(186003)(25786009)(76176011)(386003)(81166006)(6506007)(81156014)(6512007)(9686003)(7736002)(305945005)(102836004)(229853002)(6486002)(6116002)(71200400001)(6916009)(71190400001)(256004)(42882007)(46003)(478600001)(11346002)(446003)(66946007)(64756008)(476003)(66446008)(66556008)(8676002)(6436002)(52116002)(66476007)(44832011)(53936002)(6246003)(8936002)(33716001)(486006)(99286004)(54906003)(5660300002)(14454004)(1076003)(4326008)(58126008)(316002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1486;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: wRM73jSO+Gv0NJHGJ81TTfI6tT3QS8g7jRBJJ0TxvGFWwP8pGXVM6UScqB+x5JtKwXKMxlp8IYwhsvfl0LbXIAPcPjJhTw2o4/q4YiJSW438lfq/5aCr+6aDKtftFqfd37qbLQCVIBlxlj1YKdlzUpvm+afRC5stGpFHRRcNepkUP0sL9ayXbO1QvFRIOVHKFJQf1Ltiopuw1PKOQQSem9XVGwDCF06epcRI9XAxEN4X9LI0SmczzSNKhYr2dPwhM/s0K2cuKBouHez/DTMgO0bO8g4kzk90zBY7G3+nOc8wBMOH64ZRRUeGyHIRiKiKh8nR1omTBUDCX0a3MFDZlpCpowXHXnD2C3FSZXbQHBzoThFZ55NgnTMeRFkEkzf3/7dEKH4zauwYs/bW1w79yKQ41MwrOJaRjHhPm1vu/dM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <9A0A32E8C4931949A14EA2BC8F43835A@namprd22.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727641AbfHPU0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 16:26:54 -0400
+Received: from mail.klausen.dk ([174.138.9.187]:52666 "EHLO mail.klausen.dk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727568AbfHPU0x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 16:26:53 -0400
+X-Greylist: delayed 397 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 16:26:52 EDT
+From:   Kristian Klausen <kristian@klausen.dk>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=klausen.dk; s=dkim;
+        t=1565986812;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=s9A+nkXWVA/jF2o9MhtP9GY66Zha2aaG5LtnYmm+FZk=;
+        b=HbFInzYxixr8DpRdSujExpk4Qnj2TL+nlNzxCd+8zdl9iLRZTJ07PriEb9iDB1TuBHj2MH
+        rQaO2qSQpFOawtgs8823BoyI8+EMnRDTVWJJLzAbLbX8dgb1D+8dtEsC+DZ+AW6G8ctcud
+        3p/HPeXTs2blBx9pOcLnlMzF81XWVU0=
+Subject: Re: [PATCH v3 0/8] PM / ACPI: sleep: Additional changes related to
+ suspend-to-idle
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux ACPI <linux-acpi@vger.kernel.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+References: <5997740.FPbUVk04hV@kreacher>
+Message-ID: <800186a2-e912-3498-f08b-47469bbe8b0d@klausen.dk>
+Date:   Fri, 16 Aug 2019 22:20:10 +0200
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86aa0df0-9d1c-4523-702e-08d72286fa6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2019 20:19:02.1545
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /WI1JonFylFgexHmPCTbaeUltxwkptsn2/Y159VNAlZZhdHqwCGHOhhusuPwrb0WfRmfrZiOEBHiiwObrKWJsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1486
+In-Reply-To: <5997740.FPbUVk04hV@kreacher>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas,
+On 02.08.2019 12.33, Rafael J. Wysocki wrote:
+> Hi All,
+>
+>>> On top of the "Simplify the suspend-to-idle control flow" patch series
+>>> posted previously:
+>>>
+>>> https://lore.kernel.org/lkml/71085220.z6FKkvYQPX@kreacher/
+>>>
+>>> sanitize the suspend-to-idle flow even further.
+>>>
+>>> First off, decouple EC wakeup from the LPS0 _DSM processing (patch 1).
+>>>
+>>> Next, reorder the code to invoke LPS0 _DSM Functions 5 and 6 in the
+>>> specification-compliant order with respect to suspending and resuming
+>>> devices (patch 2).
+>>>
+>>> Finally, rearrange lps0_device_attach() (patch 3) and add a command line
+>>> switch to prevent the LPS0 _DSM from being used.
+>> The v2 is because I found a (minor) bug in patch 1, decided to use a module
+>> parameter instead of a kernel command line option in patch 4.  Also, there
+>> are 4 new patches:
+>>
+>> Patch 5: Switch the EC over to polling during "noirq" suspend and back
+>> during "noirq" resume.
+>>
+>> Patch 6: Eliminate acpi_sleep_no_ec_events().
+>>
+>> Patch 7: Consolidate some EC code depending on PM_SLEEP.
+>>
+>> Patch 8: Add EC GPE dispatching debug message.
+> The v3 is just a rearranged v2 so as to move the post sensitive patch (previous patch 2)
+> to the end of the series.   [After applying the full series the code is the same as before.]
+>
+> For easier testing, the series (along with some previous patches depended on by it)
+> is available in the pm-s2idle-testing branch of the linux-pm.git tree at kernel.org:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=pm-s2idle-testing
+It was just testing this patch series(461fc1caed55), to see if it would 
+fix my charging issue 
+(https://bugzilla.kernel.org/show_bug.cgi?id=201307), which it didn't.
 
-On Fri, Aug 16, 2019 at 02:28:42PM +0200, Thomas Gleixner wrote:
-> On Tue, 13 Aug 2019, YueHaibing wrote:
->=20
-> > While do COMPILE_TEST building, if GENERIC_IRQ_CHIP is
-> > not selected, it fails:
-> >=20
-> > drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_intc_cascad=
-e':
-> > irq-ingenic-tcu.c:(.text+0x13f): undefined reference to `irq_get_domain=
-_generic_chip'
-> > drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_irq_init':
-> > irq-ingenic-tcu.c:(.init.text+0x97): undefined reference to `irq_generi=
-c_chip_ops'
-> > irq-ingenic-tcu.c:(.init.text+0xdd): undefined reference to `__irq_allo=
-c_domain_generic_chips'
-> > irq-ingenic-tcu.c:(.init.text+0x10b): undefined reference to `irq_get_d=
-omain_generic_chip'
-> >=20
-> > select GENERIC_IRQ_CHIP to fix this.
-> >=20
-> > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > Fixes: 9536eba03ec7 ("irqchip: Add irq-ingenic-tcu driver")
->=20
-> git show 9536eba03ec7
->=20
-> fatal: ambiguous argument '9536eba03ec7': unknown revision or path not in
->        the working tree.
+I did however notice that my laptop (ASUS Zenbook UX430UNR/i7-8550U) 
+won't wake when opening the lid or pressing a key, the only way to wake 
+the laptop is pressing the power button.
 
-The referenced patch is in mips-next - can I get your Ack to apply this
-there too?
+I also tested mainline (5.3.0-rc4 b7e7c85dc7b0) and 5.2.8 and the laptop 
+wakes without issue when the lid is opened or a key is presed.
+> Please refer to the changelogs for details.
+>
+> Thanks,
+> Rafael
+>
+>
+>
 
-Thanks,
-    Paul
