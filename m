@@ -2,60 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE9B8FBAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AD3A8FB9B
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 09:01:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfHPHGH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 03:06:07 -0400
-Received: from mail.someserver.de ([31.15.66.35]:54022 "EHLO
-        mail.someserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725945AbfHPHGH (ORCPT
+        id S1726994AbfHPHBO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 03:01:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41479 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfHPHBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 03:06:07 -0400
-X-Greylist: delayed 343 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 03:06:06 EDT
-Received: from localhost (87-231-101-12.rev.numericable.fr [87.231.101.12])
-        by mail.someserver.de (Postfix) with ESMTPSA id 66533121546;
-        Fri, 16 Aug 2019 09:00:20 +0200 (CEST)
-From:   Christina Quast <contact@christina-quast.de>
-To:     ard.biesheuvel@linaro.org
-Cc:     Christina Quast <contact@christina-quast.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Payal Kshirsagar <payal.s.kshirsagar.98@gmail.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        Anushka Shukla <anushkacharu9@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Zach Turner <turnerzdp@gmail.com>,
-        linux-wireless@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org
-Subject: [PATCH 0/2] Use ccm(aes) aead transform in staging drivers
-Date:   Fri, 16 Aug 2019 08:59:34 +0200
-Message-Id: <20190816065936.12214-1-contact@christina-quast.de>
-X-Mailer: git-send-email 2.20.1
+        Fri, 16 Aug 2019 03:01:14 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyWEW-0003nX-Is; Fri, 16 Aug 2019 09:01:08 +0200
+Date:   Fri, 16 Aug 2019 09:01:07 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     "Luck, Tony" <tony.luck@intel.com>
+cc:     Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
+ asm/intel-family.h
+In-Reply-To: <20190815224704.GA10025@agluck-desk2.amr.corp.intel.com>
+Message-ID: <alpine.DEB.2.21.1908160900290.1908@nanos.tec.linutronix.de>
+References: <20190814234030.30817-1-tony.luck@intel.com> <20190815075822.GC15313@zn.tnic> <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com> <20190815175455.GJ15313@zn.tnic> <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
+ <alpine.DEB.2.21.1908152217070.1908@nanos.tec.linutronix.de> <20190815224704.GA10025@agluck-desk2.amr.corp.intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use ccm(aes) aead transform instead of invoking the AES block cipher
-block by block.
+On Thu, 15 Aug 2019, Luck, Tony wrote:
+> >From 093bf8cd02f4c7a3fa256c2cf7302014190e2840 Mon Sep 17 00:00:00 2001
+> From: Tony Luck <tony.luck@intel.com>
+> Date: Thu, 15 Aug 2019 11:16:24 -0700
+> Subject: [PATCH] x86/cpu: Explain Intel model naming convention
+> 
+> Dave Hansen spelled out the rules in an e-mail:
+> 
+>  https://lkml.kernel.org/r/91eefbe4-e32b-d762-be4d-672ff915db47@intel.com
+> 
+> Copy those right into the <asm/intel-family.h> file to
+> make it easy for people to find them.
+> 
+> Suggested-by: Borislav Petkov <bp@alien8.de>
+> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> ---
+>  arch/x86/include/asm/intel-family.h | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+> index 0278aa66ef62..fe7c205233f1 100644
+> --- a/arch/x86/include/asm/intel-family.h
+> +++ b/arch/x86/include/asm/intel-family.h
+> @@ -11,6 +11,21 @@
+>   * While adding a new CPUID for a new microarchitecture, add a new
+>   * group to keep logically sorted out in chronological order. Within
+>   * that group keep the CPUID for the variants sorted by model number.
+> + *
+> + * The defined symbol names have the following form:
+> + *	INTEL_FAM6{OPTFAMILY}_{MICROARCH}{OPTDIFF}
+> + * where:
+> + * OPTFAMILY	Describes the family of CPUs that this belongs to. Default
+> + *		is assumed to be "_CORE" (and should be omitted). Other values
+> + *		currently in use are _ATOM and _XEON_PHI
+> + * MICROARCH	Is the code name for the micro-architecture for this core.
+> + *		N.B. Not the platform name.
+> + * OPTDIFF	If needed, a short string to differentiate by market segment.
+> + *		Exact strings here will vary over time. _DESKTOP, _MOBILE, and
+> + *		_X (short for Xeon server) should be used when they are
+> + *		appropriate.
+> + *
+> + * The #define line may optionally include a comment including platform names.
+>   */
 
-Christina Quast (2):
-  staging: rtl8192u: ieee80211: ieee80211_crypt_ccmp.c: Use crypto API
-    ccm(aes)
-  staging: rtl8192e: rtllib_crypt_ccmp.c: Use crypto API ccm(aes)
-
- drivers/staging/rtl8192e/Kconfig              |   1 +
- drivers/staging/rtl8192e/rtllib_crypt_ccmp.c  | 187 ++++++++----------
- drivers/staging/rtl8192u/Kconfig              |   2 +
- .../rtl8192u/ieee80211/ieee80211_crypt_ccmp.c | 187 ++++++++----------
- 4 files changed, 159 insertions(+), 218 deletions(-)
-
--- 
-2.20.1
-
+Acked-by: Thomas Gleixner <tglx@linutronix.de>
