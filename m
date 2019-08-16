@@ -2,115 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A84A6909E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:01:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7586B909E7
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:01:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727831AbfHPVBX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 17:01:23 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:49923 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727548AbfHPVBW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 17:01:22 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7GL18l32960880
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 16 Aug 2019 14:01:08 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7GL18l32960880
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1565989268;
-        bh=Q+6F7TluFBK2tIaqc8cWv7BEw07K7Xt56N49104j54g=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=YLVVtCJJaJ5gE4M9bzqt3ZqihCzfCspCuZ8sOzKTQnqFoU9uNmEr8WdCE4Hf9C9Q5
-         u9etIQSiM+cGZk3DyTsttJJLpIM4YnCJbnj81GBCAQh1flH0KigiwjdyRkYcWncDXH
-         F7yeBIH+fgXIKh4O+i/ZF8fu4h/k3G5gjfLydpEeZwaGmjQiqyfRsRbJNk8SBuOb43
-         vWqBRGQHavj1Axwl8izXc79UBexOcMN2FsgJ0fEtD3sCx0652ZFZ4+GZev0Z9ME0h5
-         diCWCpJgFCyjdovuS9P9miE0wYqF4SRDRukTVIwo3WYIoRolRFBl7Z6u3QLtrPSCen
-         c6GporIXSOQvQ==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7GL176p2960864;
-        Fri, 16 Aug 2019 14:01:07 -0700
-Date:   Fri, 16 Aug 2019 14:01:07 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for John Keeping <tipbot@zytor.com>
-Message-ID: <tip-e2736219e6ca3117e10651e215b96d66775220da@git.kernel.org>
-Cc:     namhyung@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, alexander.shishkin@linux.intel.com,
-        khlebnikov@yandex-team.ru, peterz@infradead.org, acme@redhat.com,
-        jolsa@kernel.org, john@metanate.com, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: namhyung@kernel.org, khlebnikov@yandex-team.ru,
-          peterz@infradead.org, acme@redhat.com, jolsa@kernel.org,
-          john@metanate.com, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, linux-kernel@vger.kernel.org,
-          alexander.shishkin@linux.intel.com
-In-Reply-To: <20190815100146.28842-3-john@metanate.com>
-References: <20190815100146.28842-3-john@metanate.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf unwind: Remove unnecessary test
-Git-Commit-ID: e2736219e6ca3117e10651e215b96d66775220da
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        id S1727841AbfHPVBg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 17:01:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727548AbfHPVBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 17:01:36 -0400
+Received: from localhost.localdomain (c-73-223-200-170.hsd1.ca.comcast.net [73.223.200.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28D7C2133F;
+        Fri, 16 Aug 2019 21:01:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565989295;
+        bh=MxoPEBdUgeGG8r1YMtqWjR43bDHROWKuxhhQbv0Dyd4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=V+taPJeoXoU39dnw4eLkWys2oiJYLOa4Kz30m61AGUDeqfuWPigLu5mtk/NBZ4EVe
+         B+vgjZJsohmFph06ZE175qMwGCufq9Lz2dwY9FU1nW8Qnmq5y54FKkcs3RmSkO7pGl
+         B5jzTM/MEaZDZcmqg90IE5o1Sx27v/d00qBxFkww=
+Date:   Fri, 16 Aug 2019 14:01:34 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Bharata B Rao <bharata@linux.ibm.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: Re: [PATCH 1/4] resource: add a not device managed
+ request_free_mem_region variant
+Message-Id: <20190816140134.1f3225bed9bf2734c03341b1@linux-foundation.org>
+In-Reply-To: <20190816065434.2129-2-hch@lst.de>
+References: <20190816065434.2129-1-hch@lst.de>
+        <20190816065434.2129-2-hch@lst.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e2736219e6ca3117e10651e215b96d66775220da
-Gitweb:     https://git.kernel.org/tip/e2736219e6ca3117e10651e215b96d66775220da
-Author:     John Keeping <john@metanate.com>
-AuthorDate: Thu, 15 Aug 2019 11:01:46 +0100
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 16 Aug 2019 12:30:14 -0300
+On Fri, 16 Aug 2019 08:54:31 +0200 Christoph Hellwig <hch@lst.de> wrote:
 
-perf unwind: Remove unnecessary test
+> Just add a simple macro that passes a NULL dev argument to
+> dev_request_free_mem_region, and call request_mem_region in the
+> function for that particular case.
 
-If dwarf_callchain_users is false, then unwind__prepare_access() will
-not set unwind_libunwind_ops so the remaining test here is sufficient.
+Nit:
 
-Signed-off-by: John Keeping <john@metanate.com>
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: john keeping <john@metanate.com>
-Link: http://lkml.kernel.org/r/20190815100146.28842-3-john@metanate.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/unwind-libunwind.c | 6 ------
- 1 file changed, 6 deletions(-)
+> +struct resource *request_free_mem_region(struct resource *base,
+> +		unsigned long size, const char *name);
 
-diff --git a/tools/perf/util/unwind-libunwind.c b/tools/perf/util/unwind-libunwind.c
-index b843f9d0a9ea..6499b22b158b 100644
---- a/tools/perf/util/unwind-libunwind.c
-+++ b/tools/perf/util/unwind-libunwind.c
-@@ -69,18 +69,12 @@ out_register:
- 
- void unwind__flush_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
- 	if (mg->unwind_libunwind_ops)
- 		mg->unwind_libunwind_ops->flush_access(mg);
- }
- 
- void unwind__finish_access(struct map_groups *mg)
- {
--	if (!dwarf_callchain_users)
--		return;
--
- 	if (mg->unwind_libunwind_ops)
- 		mg->unwind_libunwind_ops->finish_access(mg);
- }
+This isn't a macro ;)
