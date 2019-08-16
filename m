@@ -2,156 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22DE090230
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:00:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E0D90272
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 15:06:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727391AbfHPNAa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 09:00:30 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35347 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfHPNA1 (ORCPT
+        id S1727199AbfHPNGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 09:06:05 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54634 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfHPNGE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 09:00:27 -0400
-Received: by mail-wr1-f66.google.com with SMTP id k2so1476284wrq.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 06:00:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I3CVewp4IQKV9PANnFZa+bW0Szihhk0Ui9WK/spVS1s=;
-        b=h4iRshGRDj0So2Jszu4oaPogIcNzERSdeYdv5Y/WtJ8RWAyJHnb4Eb8nVIC+EUwjE4
-         MNTXVoFd0pmiOOz/X9VgeFYGUizDF+5W4k5pboWRNE6QUEalBxHUDHo08PiYMWFxYv1B
-         +UNSlelxScE+braJzo6ybIRF2it57h46mC6N4Z4/v/SBuYJyeH22n6aWypr+eHPKnIQ1
-         7YqwczQNzWCa0yrWsBXOHYJuWfdtsv1PyvMnpNzDm9lQEVNRSpuhlDyjaBN2+kXzEkkm
-         uFd3Dmlqs7Ph1drPtk4qCJVrtnBoHUOvF8ihXj4+07L9Dg/c9ollbM2YMI0druV0M/1t
-         XQsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=I3CVewp4IQKV9PANnFZa+bW0Szihhk0Ui9WK/spVS1s=;
-        b=jwr+oEbxexwj4CpvqS2Pwqm/eG7gZABWUxKgb19ZM83BE7sCkZJrj/FUX/wKZqXAO/
-         R66xg7tAqqKArO3owAjfW487Q11iA5kpMEScOgVDspGQQJyfz/H0F4MtbNcwleJ467wh
-         3vIeFbB/59q6N5pENzTj2LVnSf0fgnfvK2NUIQLNEU4sh003fUOs8JsSPOeuYGz6K26x
-         miRgcpx9A/fhQHsueChCBP/xdXfyQtyLyqg5ombM5dKJPRh8NKHV07jw8L96HfeCZnWZ
-         8Qb146Zdw1UBu4nBb4RK4VuSsbD3ZoRfU3jZ6WW2+G3N/Cte7BbBhKXjujX6k+dle8jN
-         u3ug==
-X-Gm-Message-State: APjAAAUiL3uc+7W6ejWrDoik3oUKvVoK1/VCNfg613gYvtdd+koaIoeV
-        VDxywMzPbH1sAJuR3fEodBofIacjFeo=
-X-Google-Smtp-Source: APXvYqyG6PebRbcvgW+PnOIhTstxDfj62rEMa/NW5bb4+dOHKYw0xWr4wJspRZ5KpnccAlpOINFqDA==
-X-Received: by 2002:adf:ed4a:: with SMTP id u10mr11652591wro.284.1565960424486;
-        Fri, 16 Aug 2019 06:00:24 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:d199:47e7:7c84:8d62? ([2a01:e34:ed2f:f020:d199:47e7:7c84:8d62])
-        by smtp.googlemail.com with ESMTPSA id u186sm8629261wmu.26.2019.08.16.06.00.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Aug 2019 06:00:23 -0700 (PDT)
-Subject: Re: [PATCH v3 1/3] clocksource/drivers/renesas-ostm: Use
- DIV_ROUND_CLOSEST() helper
-To:     Simon Horman <horms@verge.net.au>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190807084635.24173-1-geert+renesas@glider.be>
- <20190807084635.24173-2-geert+renesas@glider.be>
- <20190816125828.jl36jytcez2okqvs@verge.net.au>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <d5d2cdf9-2c37-3d1d-3199-f10a22899b8d@linaro.org>
-Date:   Fri, 16 Aug 2019 15:00:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 16 Aug 2019 09:06:04 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GD3bVU190836;
+        Fri, 16 Aug 2019 13:05:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=67pOKecjpo97WLpPkKdW/nVnEGYMOXd1PrwE481gBPM=;
+ b=MHGVno8yNc2zU1C4hqVBEr8N/UMexD6PdT2dGzN0+xWPIr6d49bndsRzNDbfq1q573Z9
+ t2ku/JV1Kxu4YJkqwOZtdqAu5twsy+iPFeSBYb5h+VdlQC4Qa6A7ikdTFewWNdmKk2BK
+ rU9//Ke785G7O+5IvW7a+eaMxjwIBsbI+BhfSl7csdPGd4zaEOExuqBdZlvbckPaPrtL
+ wa6dUx22Pzp1u+cT/YIYfBPTL4jRh7Vrm6SepC2MjDWHWOhW9lqWBEnZd+egB41voxXh
+ wipBIYUC1IzEYeiEzMg3s6Z2un5kZvJbrXrSrFAnBLsfwB9ZbFEtbgzIcxAOAH+Ydrxh 7A== 
+Received: from aserp3030.oracle.com (aserp3030.oracle.com [141.146.126.71])
+        by userp2120.oracle.com with ESMTP id 2u9pjr0977-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 13:05:59 +0000
+Received: from pps.filterd (aserp3030.oracle.com [127.0.0.1])
+        by aserp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7GD34Lt027182;
+        Fri, 16 Aug 2019 13:05:58 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserp3030.oracle.com with ESMTP id 2ucs890utk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Aug 2019 13:05:58 +0000
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7GD5uEq023843;
+        Fri, 16 Aug 2019 13:05:57 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 16 Aug 2019 06:05:56 -0700
+Date:   Fri, 16 Aug 2019 16:05:46 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Zhao Yakui <yakui.zhao@intel.com>
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, Gao@osuosl.org,
+        Shiqing <shiqing.gao@intel.com>,
+        Jason Chen CJ <jason.cj.chen@intel.com>
+Subject: Re: [RFC PATCH 09/15] drivers/acrn: add passthrough device support
+Message-ID: <20190816130546.GA3632@kadam>
+References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
+ <1565922356-4488-10-git-send-email-yakui.zhao@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190816125828.jl36jytcez2okqvs@verge.net.au>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1565922356-4488-10-git-send-email-yakui.zhao@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908160135
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9350 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908160135
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/08/2019 14:58, Simon Horman wrote:
-> On Wed, Aug 07, 2019 at 10:46:33AM +0200, Geert Uytterhoeven wrote:
->> Use the DIV_ROUND_CLOSEST() helper instead of open-coding the same
->> operation.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+On Fri, Aug 16, 2019 at 10:25:50AM +0800, Zhao Yakui wrote:
+> +	case IC_ASSIGN_PTDEV: {
+> +		unsigned short bdf;
+> +
+> +		if (copy_from_user(&bdf, (void *)ioctl_param,
 
-Applied this one, thanks
+This casting is ugly and you also need a __user tag for Sparse.  Do
+something like "void __user *p = ioctl_param;"
 
-I'm waiting Geert feedbacks for 2/3 and 3/3.
+> +				   sizeof(unsigned short)))
+> +			return -EFAULT;
+> +
+> +		ret = hcall_assign_ptdev(vm->vmid, bdf);
+> +		if (ret < 0) {
+> +			pr_err("acrn: failed to assign ptdev!\n");
+> +			return -EFAULT;
 
+Preserve the error code.  "return ret;".
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> +		}
+> +		break;
+> +	}
+> +	case IC_DEASSIGN_PTDEV: {
+> +		unsigned short bdf;
+> +
+> +		if (copy_from_user(&bdf, (void *)ioctl_param,
+> +				   sizeof(unsigned short)))
+> +			return -EFAULT;
+> +
+> +		ret = hcall_deassign_ptdev(vm->vmid, bdf);
+> +		if (ret < 0) {
+> +			pr_err("acrn: failed to deassign ptdev!\n");
+> +			return -EFAULT;
+> +		}
+> +		break;
+> +	}
+> +
+> +	case IC_SET_PTDEV_INTR_INFO: {
+> +		struct ic_ptdev_irq ic_pt_irq;
+> +		struct hc_ptdev_irq *hc_pt_irq;
+> +
+> +		if (copy_from_user(&ic_pt_irq, (void *)ioctl_param,
+> +				   sizeof(ic_pt_irq)))
+> +			return -EFAULT;
+> +
+> +		hc_pt_irq = kmalloc(sizeof(*hc_pt_irq), GFP_KERNEL);
+> +		if (!hc_pt_irq)
+> +			return -ENOMEM;
+> +
+> +		memcpy(hc_pt_irq, &ic_pt_irq, sizeof(*hc_pt_irq));
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Use memdup_user().
 
+> +
+> +		ret = hcall_set_ptdev_intr_info(vm->vmid,
+> +						virt_to_phys(hc_pt_irq));
+> +		kfree(hc_pt_irq);
+> +		if (ret < 0) {
+> +			pr_err("acrn: failed to set intr info for ptdev!\n");
+> +			return -EFAULT;
+> +		}
+> +
+> +		break;
+> +	}
+
+regards,
+dan carpenter
