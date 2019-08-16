@@ -2,148 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516E48F827
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 02:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 964908F83F
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 03:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfHPAwc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 20:52:32 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33060 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725832AbfHPAwc (ORCPT
+        id S1726278AbfHPBAi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 21:00:38 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:35967 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHPBAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 20:52:32 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7G0qD6G071265
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 20:52:31 -0400
-Received: from e35.co.us.ibm.com (e35.co.us.ibm.com [32.97.110.153])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2udgdguhxr-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 20:52:30 -0400
-Received: from localhost
-        by e35.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bauerman@linux.ibm.com>;
-        Fri, 16 Aug 2019 01:52:30 +0100
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e35.co.us.ibm.com (192.168.1.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Aug 2019 01:52:26 +0100
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7G0qOSx42139982
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Aug 2019 00:52:25 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE6ACC6055;
-        Fri, 16 Aug 2019 00:52:24 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B9BD7C6057;
-        Fri, 16 Aug 2019 00:52:21 +0000 (GMT)
-Received: from morokweng.localdomain (unknown [9.85.158.166])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Fri, 16 Aug 2019 00:52:21 +0000 (GMT)
-References: <20190806052237.12525-1-bauerman@linux.ibm.com> <20190806052237.12525-9-bauerman@linux.ibm.com> <875zn2sgqs.fsf@concordia.ellerman.id.au> <87sgq6gium.fsf@morokweng.localdomain> <87tvakqap7.fsf@concordia.ellerman.id.au>
-User-agent: mu4e 1.2.0; emacs 26.2
-From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Anshuman Khandual <anshuman.linux@gmail.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Mike Anderson <andmike@linux.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Ram Pai <linuxram@us.ibm.com>,
-        Claudio Carvalho <cclaudio@linux.ibm.com>,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>
-Subject: Re: [PATCH v3 08/16] powerpc/pseries/svm: Use shared memory for LPPACA structures
-In-reply-to: <87tvakqap7.fsf@concordia.ellerman.id.au>
-Date:   Thu, 15 Aug 2019 21:52:17 -0300
+        Thu, 15 Aug 2019 21:00:38 -0400
+Received: by mail-qk1-f193.google.com with SMTP id d23so3481387qko.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 18:00:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ae7oLtYinKvgCP13tnVSH7l6maTQr55HBH5L3FO3DiI=;
+        b=KcW7SJTCvYMKEBr6ZA7ZBCVrwhTBhrxBAzKDZCEQfgTQ1UAU1/yBqq/rXTp4rQSuMJ
+         IO3knBqpn2AdA04HAixLj3yCozsg1UAo/yGd5mtobT9P7ox1cF3Az+gzxvSHjtS74RUp
+         WvaqkLapT2Ubt9ToChKBB0qe0ngW33kWeP+H8aeA2AYYZE14PPhIZ/S3lqmaw6o7OQOc
+         +NqXbwj2Kf5YIU09s9BqFI5Fx6K9MIW9Pox2mvr2sLTsxwPMikvBFCp/EFlqT78uepMz
+         rSFX7X+6jzzyCjzCiQ0A93GLozvhXSdE0CeSM6/pkHRgn74yKYamKJEUnwca6vz4+PPL
+         iGog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ae7oLtYinKvgCP13tnVSH7l6maTQr55HBH5L3FO3DiI=;
+        b=I50SEBaJp2EEudvPlh+gklwJRLjxGm4n1q+CkIlkiFYjWj7hZqKYA5pkD6q3s8uYgi
+         5Hz6sTYEB8dAB7Bz5jYBo3KqkDToY4YWft7nPA91EqOBaPz5XCPwESh3xmCTmY/lsjVp
+         bGDh+02iPyJnT4XirYWLPweM8rjXCSk92BFDfh0ODbGRhJClnNyc1eMRbKuhQAv2vjiO
+         hlXyZw8Mqk7jScIViYUNbC3Rbkya60T7nbSRG0CgtVyLTTGPOBDGPZ4XpsilXUyIotfu
+         DfZ5Um4IO38XA1//dvCx1xngifNhJ0O6QPqDfEVrQWUajbx+8UL2mbh8qVexS/B4I3Pd
+         1t9g==
+X-Gm-Message-State: APjAAAUdxRhTN/+CKFFruvU2K4I3Tkz3OsCJ1E/2nqr6QXnnSPG4GekD
+        XlWMuULDMyuf2fD6z2mwsfqmRQ==
+X-Google-Smtp-Source: APXvYqyxI9OS6AUw/7wEeJomE7hGeWSroP0/H9Q9E+ZoJynGDvtwyvcA9yHhjJMm3q3CVcLQLGNODw==
+X-Received: by 2002:a37:aa57:: with SMTP id t84mr6562963qke.34.1565917237376;
+        Thu, 15 Aug 2019 18:00:37 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
+        by smtp.gmail.com with ESMTPSA id t15sm2084806qtr.88.2019.08.15.18.00.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Aug 2019 18:00:36 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1hyQbc-0002v2-3C; Thu, 15 Aug 2019 22:00:36 -0300
+Date:   Thu, 15 Aug 2019 22:00:36 -0300
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Daniel Vetter <daniel@ffwll.ch>
+Cc:     Michal Hocko <mhocko@kernel.org>, Feng Tang <feng.tang@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Rientjes <rientjes@google.com>,
+        Wei Wang <wvw@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [Intel-gfx] [PATCH 2/5] kernel.h: Add non_block_start/end()
+Message-ID: <20190816010036.GA9915@ziepe.ca>
+References: <20190815155950.GN9477@dhcp22.suse.cz>
+ <20190815165631.GK21596@ziepe.ca>
+ <20190815174207.GR9477@dhcp22.suse.cz>
+ <20190815182448.GP21596@ziepe.ca>
+ <20190815190525.GS9477@dhcp22.suse.cz>
+ <20190815191810.GR21596@ziepe.ca>
+ <20190815193526.GT9477@dhcp22.suse.cz>
+ <CAKMK7uH42EgdxL18yce-7yay=x=Gb21nBs3nY7RA92Nsd-HCNA@mail.gmail.com>
+ <20190815202721.GV21596@ziepe.ca>
+ <CAKMK7uER0u1TqeJBXarKakphnyZTHOmedOfXXqLGVDE2mE-mAQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-x-cbid: 19081600-0012-0000-0000-0000175B83EC
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011595; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01247410; UDB=6.00658345; IPR=6.01028917;
- MB=3.00028192; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-16 00:52:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081600-0013-0000-0000-0000587E05A0
-Message-Id: <87h86irkxq.fsf@morokweng.localdomain>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-15_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=914 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908160006
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKMK7uER0u1TqeJBXarKakphnyZTHOmedOfXXqLGVDE2mE-mAQ@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 15, 2019 at 10:49:31PM +0200, Daniel Vetter wrote:
+> On Thu, Aug 15, 2019 at 10:27 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > On Thu, Aug 15, 2019 at 10:16:43PM +0200, Daniel Vetter wrote:
+> > > So if someone can explain to me how that works with lockdep I can of
+> > > course implement it. But afaics that doesn't exist (I tried to explain
+> > > that somewhere else already), and I'm no really looking forward to
+> > > hacking also on lockdep for this little series.
+> >
+> > Hmm, kind of looks like it is done by calling preempt_disable()
+> 
+> Yup. That was v1, then came the suggestion that disabling preemption
+> is maybe not the best thing (the oom reaper could still run for a long
+> time comparatively, if it's cleaning out gigabytes of process memory
+> or what not, hence this dedicated debug infrastructure).
 
-Michael Ellerman <mpe@ellerman.id.au> writes:
+Oh, I'm coming in late, sorry
 
-> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->> Michael Ellerman <mpe@ellerman.id.au> writes:
->>> Thiago Jung Bauermann <bauerman@linux.ibm.com> writes:
->>>> From: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->>>>
->>>> LPPACA structures need to be shared with the host. Hence they need to be in
->>>> shared memory. Instead of allocating individual chunks of memory for a
->>>> given structure from memblock, a contiguous chunk of memory is allocated
->>>> and then converted into shared memory. Subsequent allocation requests will
->>>> come from the contiguous chunk which will be always shared memory for all
->>>> structures.
->>>>
->>>> While we are able to use a kmem_cache constructor for the Debug Trace Log,
->>>> LPPACAs are allocated very early in the boot process (before SLUB is
->>>> available) so we need to use a simpler scheme here.
->>>>
->>>> Introduce helper is_svm_platform() which uses the S bit of the MSR to tell
->>>> whether we're running as a secure guest.
->>>>
->>>> Signed-off-by: Anshuman Khandual <khandual@linux.vnet.ibm.com>
->>>> Signed-off-by: Thiago Jung Bauermann <bauerman@linux.ibm.com>
->>>> ---
->>>>  arch/powerpc/include/asm/svm.h | 26 ++++++++++++++++++++
->>>>  arch/powerpc/kernel/paca.c     | 43 +++++++++++++++++++++++++++++++++-
->>>>  2 files changed, 68 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/powerpc/include/asm/svm.h b/arch/powerpc/include/asm/svm.h
->>>> new file mode 100644
->>>> index 000000000000..fef3740f46a6
->>>> --- /dev/null
->>>> +++ b/arch/powerpc/include/asm/svm.h
->>>> @@ -0,0 +1,26 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0+ */
->>>> +/*
->>>> + * SVM helper functions
->>>> + *
->>>> + * Copyright 2019 Anshuman Khandual, IBM Corporation.
->>>
->>> Are we sure this copyright date is correct?
->>
->> I may be confused about which year the copyright refers to. I thought it
->> was the year when the patch was committed. If it is the first time the
->> patch was published then this one should be 2018.
->
-> I'm not a lawyer etc. but AIUI the date above is about the authorship,
-> ie. when it was originally written, not when it was published or
-> committed.
->
-> In general I don't think it matters too much, but in this case I'm
-> pretty sure Anshuman can't have possibly written it in 2019 on behalf of
-> IBM :)
->
-> So we can either change the date to 2018, or drop his name and just say
-> it's copyright 2019 by IBM.
+Anyhow, I was thinking since we agreed this can trigger on some
+CONFIG_DEBUG flag, something like
 
-I think it's better to change the date to 2018. The same should be done
-for svm.c, svm.h and mem_encrypt.h. I'll send a new patch series with
-the correction.
+    /* This is a sleepable region, but use preempt_disable to get debugging
+     * for calls that are not allowed to block for OOM [.. insert
+     * Michal's explanation.. ] */
+    if (IS_ENABLED(CONFIG_DEBUG_ATOMIC_SLEEP) && !mmu_notifier_range_blockable(range))
+	preempt_disable();
+    ops->invalidate_range_start();
 
--- 
-Thiago Jung Bauermann
-IBM Linux Technology Center
+And I have also been idly mulling doing something like
 
+   if (IS_ENABLED(CONFIG_DEBUG_NOTIFIERS) && 
+       rand &&
+       mmu_notifier_range_blockable(range)) {
+     range->flags = 0
+     if (!ops->invalidate_range_start(range))
+	continue
+
+     // Failed, try again as blockable
+     range->flags = MMU_NOTIFIER_RANGE_BLOCKABLE
+   }
+   ops->invalidate_range_start(range);
+
+Which would give coverage for this corner case without forcing OOM.
+
+Jason
