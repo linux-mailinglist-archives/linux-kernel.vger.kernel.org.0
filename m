@@ -2,55 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 109CC905D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 18:32:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41C8905D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 18:33:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727502AbfHPQaK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 12:30:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51096 "EHLO mail.kernel.org"
+        id S1727302AbfHPQav (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 12:30:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52018 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727457AbfHPQaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:30:08 -0400
-Subject: Re: [GIT PULL] Power management fixes for v5.3-rc5
+        id S1726469AbfHPQav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 12:30:51 -0400
+Received: from localhost.localdomain (unknown [194.230.155.124])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB00720665;
+        Fri, 16 Aug 2019 16:30:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565973007;
-        bh=XHjlZmKTF9nNMGhgjea6r5OALoj3MwKvj+3B+20nqFI=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=RT3tspNBfxudhjqy1BRPh2T1OxocwyBShKCEBeEj/NKaMJ+HxS6S+MHIE/Hy0Iv0k
-         IPemShark9xJhwpYnFuXj7ALffjBlfb9nbKtolb3lF/3d+qq6nXbeH1B0XKoP+5gNs
-         gE7hYjZGskOAQzbktfsqYg0WoU5j2nhUczA59np4=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
-References: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <CAJZ5v0j4ezEuK1dk0J3wwjSuudzjhKWTXzJL=EkE1QG39HKRiw@mail.gmail.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc5
-X-PR-Tracked-Commit-Id: a3ee2477c45f73184a64d9c6cf97855a52732dc6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2d63ba3e41db3ceb0d23924ed2879b910276e24c
-Message-Id: <156597300748.15122.2547327554860184999.pr-tracker-bot@kernel.org>
-Date:   Fri, 16 Aug 2019 16:30:07 +0000
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Linux PCI <linux-pci@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        s=default; t=1565973050;
+        bh=bDKLgHOhZqF4s7OBfQaY2Jv5cHcLwf9e2NERN0UJfBM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LREVkLwtWXZAjtv4NdF17RfjRlBesDm5DZclZlPCJ2gxyISS1Gz2vXsnf10ahbLUX
+         bxdXGX/0J50FMiHOG/d/DCRgxF4sCfcXqG4PkdpNDf5m9B7mhgZVOMXep7NZitwu5A
+         0+lTov/NbUaXVUBZMaDhR1vym7IWNwtjHtyaP6sA=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Olof Johansson <olof@lixom.net>, Arnd Bergmann <arnd@arndb.de>,
+        arm@kernel.org, soc@kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL 1/3] soc: samsung: Exynos for v5.4
+Date:   Fri, 16 Aug 2019 18:30:40 +0200
+Message-Id: <20190816163042.6604-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 16 Aug 2019 15:11:27 +0200:
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git pm-5.3-rc5
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2d63ba3e41db3ceb0d23924ed2879b910276e24c
+are available in the Git repository at:
 
-Thank you!
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-drivers-5.4
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+for you to fetch changes up to 40d8aff614f71ab3cab20785b4f213e3802d4e87:
+
+  soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API (2019-08-15 20:25:25 +0200)
+
+----------------------------------------------------------------
+Samsung soc drivers changes for v5.4
+
+Add Exynos Chipid driver for identification of product IDs and SoC
+revisions.  The driver also exposes chipid regmap, later to be used by
+Exynos Adaptive Supply Voltage driver (adjusting voltages to different
+revisions of same SoC).
+
+----------------------------------------------------------------
+Pankaj Dubey (1):
+      soc: samsung: Add exynos chipid driver support
+
+Sylwester Nawrocki (1):
+      soc: samsung: chipid: Convert exynos-chipid driver to use the regmap API
+
+ drivers/soc/samsung/Kconfig               |   5 ++
+ drivers/soc/samsung/Makefile              |   2 +
+ drivers/soc/samsung/exynos-chipid.c       | 101 ++++++++++++++++++++++++++++++
+ include/linux/soc/samsung/exynos-chipid.h |  52 +++++++++++++++
+ 4 files changed, 160 insertions(+)
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+ create mode 100644 include/linux/soc/samsung/exynos-chipid.h
