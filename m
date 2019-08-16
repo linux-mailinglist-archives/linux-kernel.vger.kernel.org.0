@@ -2,106 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 29AD28FB77
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:54:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 224E18FB7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 08:54:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfHPGyA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 02:54:00 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33432 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbfHPGyA (ORCPT
+        id S1726962AbfHPGyo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 02:54:44 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60662 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfHPGyo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 02:54:00 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7G6rZOm004713;
-        Fri, 16 Aug 2019 01:53:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565938415;
-        bh=Gu7E7gqMococXfCNlEpS2YaEPFtnyWvUe/FmGZ/Bp7Q=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=RkdODmGul5qq6uzQyBl7BRLIEWuS9ETqapW5FFHnzSQ/uivM0RhuB7qh7zBSFvpIK
-         z0VK2GsXix0zUckD5p/4Zpr61KeSp4+0jBkVYpqC7ux6/YSXW0qzuyvB4cfOGyGLof
-         j7bMBfevDPDNEuCaGbEn22hwmwMOB/XXgu0arvVw=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7G6rZ9B053873
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Aug 2019 01:53:35 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 16
- Aug 2019 01:53:35 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 16 Aug 2019 01:53:35 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7G6rXDu088304;
-        Fri, 16 Aug 2019 01:53:33 -0500
-Subject: Re: [PATCH v2] dmaengine: ti: dma-crossbar: Fix a memory leak bug
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-CC:     Vinod Koul <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Enrico Weigelt <info@metux.net>,
-        "open list:DMA GENERIC OFFLOAD ENGINE SUBSYSTEM" 
-        <dmaengine@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <1565938136-7249-1-git-send-email-wenwen@cs.uga.edu>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <a2eeda4d-0949-1d22-7b5a-275d72bd9130@ti.com>
-Date:   Fri, 16 Aug 2019 09:53:49 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Fri, 16 Aug 2019 02:54:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=GereEEuIF570EiKueg45SrscGAcsm53Jmc8D7sejksY=; b=PpvYvAH+KP58nV6izstqduOxt
+        6xZbDzbpIZtPEsO9CQjgqucxq7ocLr0SIseaBoGaJY4NFwkG+IubSesgQwLQBlyQE3QsLPmjVLVfY
+        GmuBb7lhlEtEosRF0w8bMzrYlcr4QdtE+hmgmB54j6YH/sFwlDhne3pDBbJ/V4GtymNSSSbJVKDdF
+        pelq9A1cESIRK5Y7ix33Fs7hOIYdzquVSs7ZiqG/uL2n4RaGVkxFDL4C94ertZYqFI3nEFVCoZA7F
+        Y6FcG+haPB/P3GUmrdK2i7hzOmUO2/m5N1zpZf9U/PzEfFf4snYbd23glYY5wlJvTPC7/fEyFlLeX
+        t8QFPJsVg==;
+Received: from [2001:4bb8:18c:28b5:44f9:d544:957f:32cb] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hyW8D-0008H2-1p; Fri, 16 Aug 2019 06:54:40 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org
+Subject: add a not device managed memremap_pages v2
+Date:   Fri, 16 Aug 2019 08:54:30 +0200
+Message-Id: <20190816065434.2129-1-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <1565938136-7249-1-git-send-email-wenwen@cs.uga.edu>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Dan and Jason,
 
+Bharata has been working on secure page management for kvmppc guests,
+and one I thing I noticed is that he had to fake up a struct device
+just so that it could be passed to the devm_memremap_pages
+instrastructure for device private memory.
 
-On 16/08/2019 9.48, Wenwen Wang wrote:
-> In ti_dra7_xbar_probe(), 'rsv_events' is allocated through kcalloc(). Then
-> of_property_read_u32_array() is invoked to search for the property.
-> However, if this process fails, 'rsv_events' is not deallocated, leading to
-> a memory leak bug. To fix this issue, free 'rsv_events' before returning
-> the error.
+This series adds non-device managed versions of the
+devm_request_free_mem_region and devm_memremap_pages functions for
+his use case.
 
-Thank you,
-
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-
-> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-> ---
->  drivers/dma/ti/dma-crossbar.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
-> index ad2f0a4..f255056 100644
-> --- a/drivers/dma/ti/dma-crossbar.c
-> +++ b/drivers/dma/ti/dma-crossbar.c
-> @@ -391,8 +391,10 @@ static int ti_dra7_xbar_probe(struct platform_device *pdev)
->  
->  		ret = of_property_read_u32_array(node, pname, (u32 *)rsv_events,
->  						 nelm * 2);
-> -		if (ret)
-> +		if (ret) {
-> +			kfree(rsv_events);
->  			return ret;
-> +		}
->  
->  		for (i = 0; i < nelm; i++) {
->  			ti_dra7_xbar_reserve(rsv_events[i][0], rsv_events[i][1],
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Changes since v1:
+ - don't overload devm_request_free_mem_region
+ - export the memremap_pages and munmap_pages as kvmppc can be a module
