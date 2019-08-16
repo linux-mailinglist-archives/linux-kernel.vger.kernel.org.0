@@ -2,161 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C135B90030
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:45:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09FAC90033
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:45:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727203AbfHPKpZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 06:45:25 -0400
-Received: from mga09.intel.com ([134.134.136.24]:44447 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727154AbfHPKpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 06:45:24 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 03:45:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
-   d="scan'208";a="194970286"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Aug 2019 03:45:22 -0700
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Darren Hart <dvhart@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/3] platform/x86: intel_cht_int33fe: Use new API to gain access to the role switch
-Date:   Fri, 16 Aug 2019 13:45:15 +0300
-Message-Id: <20190816104515.63613-4-heikki.krogerus@linux.intel.com>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20190816104515.63613-1-heikki.krogerus@linux.intel.com>
-References: <20190816104515.63613-1-heikki.krogerus@linux.intel.com>
+        id S1727231AbfHPKpt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 06:45:49 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:41996 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfHPKpt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 06:45:49 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hyZjs-0007t3-3s; Fri, 16 Aug 2019 12:45:44 +0200
+Date:   Fri, 16 Aug 2019 12:45:39 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Arul Jeniston <arul.jeniston@gmail.com>
+cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, arul_mc@dell.com
+Subject: Re: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read
+ function.
+In-Reply-To: <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908161224220.1873@nanos.tec.linutronix.de>
+References: <20190816083246.169312-1-arul.jeniston@gmail.com> <CACAVd4iXVH2U41msVKhT4GBGgE=2V2oXnOXkQUQKSSh72HMMmw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The driver for the Intel USB role mux now always supplies
-software node for the role switch, so no longer checking
-that, and never creating separate node for the role switch.
-From now on using software_node_find_by_name() function to
-get the handle to the USB role switch.
+Arul,
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Tested-by: Hans de Goede <hdegoede@redhat.com>
----
- drivers/platform/x86/intel_cht_int33fe.c | 57 +++++-------------------
- 1 file changed, 10 insertions(+), 47 deletions(-)
+On Fri, 16 Aug 2019, Arul Jeniston wrote:
 
-diff --git a/drivers/platform/x86/intel_cht_int33fe.c b/drivers/platform/x86/intel_cht_int33fe.c
-index 4fbdff48a4b5..1d5d877b9582 100644
---- a/drivers/platform/x86/intel_cht_int33fe.c
-+++ b/drivers/platform/x86/intel_cht_int33fe.c
-@@ -34,7 +34,6 @@ enum {
- 	INT33FE_NODE_MAX17047,
- 	INT33FE_NODE_PI3USB30532,
- 	INT33FE_NODE_DISPLAYPORT,
--	INT33FE_NODE_ROLE_SWITCH,
- 	INT33FE_NODE_USB_CONNECTOR,
- 	INT33FE_NODE_MAX,
- };
-@@ -45,7 +44,6 @@ struct cht_int33fe_data {
- 	struct i2c_client *pi3usb30532;
- 
- 	struct fwnode_handle *dp;
--	struct fwnode_handle *mux;
- };
- 
- static const struct software_node nodes[];
-@@ -139,46 +137,10 @@ static const struct software_node nodes[] = {
- 	{ "max17047", NULL, max17047_props },
- 	{ "pi3usb30532" },
- 	{ "displayport" },
--	{ "usb-role-switch" },
- 	{ "connector", &nodes[0], usb_connector_props, usb_connector_refs },
- 	{ }
- };
- 
--static int cht_int33fe_setup_mux(struct cht_int33fe_data *data)
--{
--	struct fwnode_handle *fwnode;
--	struct device *dev;
--	struct device *p;
--
--	fwnode = software_node_fwnode(&nodes[INT33FE_NODE_ROLE_SWITCH]);
--	if (!fwnode)
--		return -ENODEV;
--
--	/* First finding the platform device */
--	p = bus_find_device_by_name(&platform_bus_type, NULL,
--				    "intel_xhci_usb_sw");
--	if (!p)
--		return -EPROBE_DEFER;
--
--	/* Then the mux child device */
--	dev = device_find_child_by_name(p, "intel_xhci_usb_sw-role-switch");
--	put_device(p);
--	if (!dev)
--		return -EPROBE_DEFER;
--
--	/* If there already is a node for the mux, using that one. */
--	if (dev->fwnode)
--		fwnode_remove_software_node(fwnode);
--	else
--		dev->fwnode = fwnode;
--
--	data->mux = fwnode_handle_get(dev->fwnode);
--	put_device(dev);
--	mux_ref.node = to_software_node(data->mux);
--
--	return 0;
--}
--
- static int cht_int33fe_setup_dp(struct cht_int33fe_data *data)
- {
- 	struct fwnode_handle *fwnode;
-@@ -211,10 +173,9 @@ static void cht_int33fe_remove_nodes(struct cht_int33fe_data *data)
- {
- 	software_node_unregister_nodes(nodes);
- 
--	if (data->mux) {
--		fwnode_handle_put(data->mux);
-+	if (mux_ref.node) {
-+		fwnode_handle_put(software_node_fwnode(mux_ref.node));
- 		mux_ref.node = NULL;
--		data->mux = NULL;
- 	}
- 
- 	if (data->dp) {
-@@ -235,14 +196,16 @@ static int cht_int33fe_add_nodes(struct cht_int33fe_data *data)
- 	/* The devices that are not created in this driver need extra steps. */
- 
- 	/*
--	 * There is no ACPI device node for the USB role mux, so we need to find
--	 * the mux device and assign our node directly to it. That means we
--	 * depend on the mux driver. This function will return -PROBE_DEFER
--	 * until the mux device is registered.
-+	 * There is no ACPI device node for the USB role mux, so we need to wait
-+	 * until the mux driver has created software node for the mux device.
-+	 * It means we depend on the mux driver. This function will return
-+	 * -EPROBE_DEFER until the mux device is registered.
- 	 */
--	ret = cht_int33fe_setup_mux(data);
--	if (ret)
-+	mux_ref.node = software_node_find_by_name(NULL, "intel-xhci-usb-sw");
-+	if (!mux_ref.node) {
-+		ret = -EPROBE_DEFER;
- 		goto err_remove_nodes;
-+	}
- 
- 	/*
- 	 * The DP connector does have ACPI device node. In this case we can just
--- 
-2.23.0.rc1
+> Subject: [PATCH] FS: timerfd: Fix unexpected return value of timerfd_read function.
 
+The prefix is not 'FS: timerfd:'
+
+1) The usual prefix for fs/* is: 'fs:' but...
+
+2) git log fs/timerfd.c gives you a pretty good hint for the proper
+   prefix. Look at the commits which actually do functional changes to that
+   file, not at those which do (sub)system wide cleanups/adjustments.
+
+Also 'timerfd_read function' can be written as 'timerfd_read()' which
+spares the redundant function and clearly marks it as function via the
+brackets.
+
+> 'hrtimer_forward_now()' returns zero due to bigger backward time drift.
+> This causes timerfd_read to return 0. As per man page, read on timerfd
+>  is not expected to return 0.
+> This problem is well explained in https://lkml.org/lkml/2019/7/31/442
+
+1) The explanation needs to be in the changelog itself. Links can point to
+   discussions, bug-reports which have supplementary information.
+
+2) Please do not use lkml.org links.
+
+Again: Please read and follow Documentation/process/submitting-patches.rst 
+
+> . This patch fixes this problem.
+> Signed-off-by: Arul Jeniston <arul.jeniston@gmail.com>
+
+Missing empty line before Signed-off-by. Please use git-log to see how
+changelogs are properly formatted.
+
+Also: 'This patch fixes this problem' is not helpful at all. Again see the
+document I already pointed you to.
+
+> ---
+>  fs/timerfd.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/fs/timerfd.c b/fs/timerfd.c
+> index 6a6fc8aa1de7..f5094e070e9a 100644
+> --- a/fs/timerfd.c
+> +++ b/fs/timerfd.c
+> @@ -284,8 +284,16 @@ static ssize_t timerfd_read(struct file *file,
+> char __user *buf, size_t count,
+>                                         &ctx->t.alarm, ctx->tintv) - 1;
+>                                 alarm_restart(&ctx->t.alarm);
+>                         } else {
+> -                               ticks += hrtimer_forward_now(&ctx->t.tmr,
+> -                                                            ctx->tintv) - 1;
+> +                               u64 nooftimeo = hrtimer_forward_now(&ctx->t.tmr,
+> +                                                                ctx->tintv);
+
+nooftimeo is pretty non-intuitive. The function documentation of
+hrtimer_forward_now() says:
+
+      Returns the number of overruns.
+
+So the obvious variable name is overruns, right?
+
+> +                               /*
+> +                                * ticks shouldn't become zero at this point.
+> +                                * Ignore if hrtimer_forward_now returns 0
+> +                                * due to larger backward time drift.
+
+Again. This explanation does not make any sense at all.
+
+Time does not go backwards, except if it is CLOCK_REALTIME which can be set
+backwards via clock_settime() or settimeofday().
+
+> +                                */
+> +                               if (likely(nooftimeo)) {
+> +                                       ticks += nooftimeo - 1;
+> +                               }
+
+Again: Pointless brackets.
+
+If you disagree with my review comment, then tell me in a reply. If not,
+then fix it. If you decide to ignore my comments, then don't wonder if I
+ignore your patches.
+
+Thanks,
+
+	tglx
