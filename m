@@ -2,89 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E125E8F8A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 03:54:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80B6E8F8B2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:04:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726534AbfHPByt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 21:54:49 -0400
-Received: from smtprelay0201.hostedemail.com ([216.40.44.201]:57239 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726441AbfHPByt (ORCPT
+        id S1726414AbfHPCEx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:04:53 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41134 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfHPCEw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 21:54:49 -0400
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay03.hostedemail.com (Postfix) with ESMTP id E40F28368F04;
-        Fri, 16 Aug 2019 01:54:47 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::,RULES_HIT:41:355:379:599:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1801:2393:2553:2559:2562:2693:2828:2895:2898:2899:2900:2924:2926:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3871:3872:4321:4605:5007:7576:10004:10400:10848:11026:11232:11473:11658:11914:12043:12296:12297:12438:12555:12679:12740:12760:12895:13069:13311:13357:13439:14096:14097:14181:14659:14721:21080:21451:21611:21627:21810:30045:30046:30054:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:28,LUA_SUMMARY:none
-X-HE-Tag: rat37_46c176f4ee23b
-X-Filterd-Recvd-Size: 2840
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf05.hostedemail.com (Postfix) with ESMTPA;
-        Fri, 16 Aug 2019 01:54:46 +0000 (UTC)
-Message-ID: <11b7c586136241512668b23656cbc2e088920117.camel@perches.com>
-Subject: Re: [PATCH v6 1/9] PCI/ERR: Update error status after reset_link()
-From:   Joe Perches <joe@perches.com>
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com
-Date:   Thu, 15 Aug 2019 18:54:44 -0700
-In-Reply-To: <20190815221629.GI253360@google.com>
-References: <cover.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-         <6be594215ae2ea0935d949537bfb84ff9e656a36.1564177080.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-         <20190815221629.GI253360@google.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.5-0ubuntu0.18.10.1 
+        Thu, 15 Aug 2019 22:04:52 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so8249996ota.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Aug 2019 19:04:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6pfybPHYgQpVnLP31HUT6Rq04rce/4KRW2qmC2QL+zw=;
+        b=ZQOEKNXRhZo9Y4S1z9YzupCiWd8wCHyjva9WWCpYVGxSWXgmhUX/PgczqLUjfQAz8I
+         fa5yB9DzjRrzGZ/2oE31G9bhzfR38WrRiF6yv1CtLG4oqV4c0zUOBCAc7U/ZT0O9Ilrl
+         /15sJJC+2aovaMGtM+jpZMFcyOuX7EWX1OFr4XgXyIwDFhlDkOkgGnzv6AAlqx1D5FKw
+         8ycYSSoLLLjiXdz4vHgG074h6mTgN8HANJ3ARLkjJyXBsWL/vDYyRYMI8CqdeMRFUtxn
+         XkZyTb9hNn4V284yXUPS+Lqfyu1BofbuLb0dayf+DYtzjQEjn1gnRutY3aLqKKkT0LXn
+         0sxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6pfybPHYgQpVnLP31HUT6Rq04rce/4KRW2qmC2QL+zw=;
+        b=ZNJp3OXnERE0KN2DcgjtjAWhUl0rNgW+KrlxLt1kWydIn53v9VbaulZtI+g/bbaqV7
+         w/7m5Dx0bMjNooastUbg4QRjYg/FgfXAnXhlujfKwoPU2PJAX2GyVLm1svwUbSEn5U5/
+         gT2sH83OwZ1ESdqnchGexx7SF4OprLqTf3SboDLSpItvI5wktSTtcOEqYh9XS3ltwfLG
+         cYahp56Ot6sd28Yn3lxWoIXQGPX8E0kisivYB2aDgitDFsxv/NVeSShJY5QfDPzU8CJh
+         DkDMQ65RBprp294ZLXPRWIH22bU6jgyaZKsUXQlJIp3RqtdYtQ9HO8Zux2MtED0GjW7V
+         N4VA==
+X-Gm-Message-State: APjAAAXRfn1+LcsZ9K4mMhsDF7T3w5lisiZIx1+BYfw5P4MjkMwdkg3g
+        nWRZmRzq3dPc+4/SvTFG+HqHEPNzYTuRBKBp8Orpxw==
+X-Google-Smtp-Source: APXvYqwuILMgx6RAYZp8/lXzEQQH9dExGmGGIjywFZyq1MtjF7y+Jdoz2WbmvtTdoPvkM9TgVowsk0UXBREVo/Xstt8=
+X-Received: by 2002:a9d:6b1a:: with SMTP id g26mr5980166otp.195.1565921091613;
+ Thu, 15 Aug 2019 19:04:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <20190806192654.138605-1-saravanak@google.com> <20190806192654.138605-2-saravanak@google.com>
+ <CAL_Jsq+BwHSj1XUNp_eY362XnNoOqVTNHqAkvnbgece8ZQE3Qw@mail.gmail.com>
+ <CAGETcx8+EETv6nSu+BEBStKvbmBs+tZZgo1u_Pw8SNu+7Urq1Q@mail.gmail.com> <CAL_JsqLdcn5aZdenLs3RSVCOE1PRNK_qYNmQR=fXPV+ZOQ9+PQ@mail.gmail.com>
+In-Reply-To: <CAL_JsqLdcn5aZdenLs3RSVCOE1PRNK_qYNmQR=fXPV+ZOQ9+PQ@mail.gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Thu, 15 Aug 2019 19:04:15 -0700
+Message-ID: <CAGETcx8K2Ob7f7wchP6Z7Y=XGgX3h535ty62x6b-13-giGyZgA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] of/platform: Disable generic device linking code for PowerPC
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Android Kernel Team <kernel-team@android.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-15 at 17:16 -0500, Bjorn Helgaas wrote:
-> On Fri, Jul 26, 2019 at 02:43:11PM -0700, sathyanarayanan.kuppuswamy@linux.intel.com wrote:
-> > From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-> > 
-> > Commit bdb5ac85777d ("PCI/ERR: Handle fatal error recovery") uses
-> > reset_link() to recover from fatal errors. But, if the reset is
-> > successful there is no need to continue the rest of the error recovery
-> > checks. Also, during fatal error recovery, if the initial value of error
-> > status is PCI_ERS_RESULT_DISCONNECT or PCI_ERS_RESULT_NO_AER_DRIVER then
-> > even after successful recovery (using reset_link()) pcie_do_recovery()
-> > will report the recovery result as failure. So update the status of
-> > error after reset_link().
-[]
-> > diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
-[]
-> > @@ -204,9 +204,13 @@ void pcie_do_recovery(struct pci_dev *dev, enum pci_channel_state state,
-> >  	else
-> >  		pci_walk_bus(bus, report_normal_detected, &status);
-> >  
-> > -	if (state == pci_channel_io_frozen &&
-> > -	    reset_link(dev, service) != PCI_ERS_RESULT_RECOVERED)
-> > -		goto failed;
-> > +	if (state == pci_channel_io_frozen) {
-> > +		status = reset_link(dev, service);
-> > +		if (status != PCI_ERS_RESULT_RECOVERED)
-> > +			goto failed;
-> > +		else
-> > +			goto done;
-> 
-> This will be easier to read without the negation, i.e.,
-> 
->                 if (status == PCI_ERS_RESULT_RECOVERED)
->                         goto done;
->                 else
->                         goto failed;
+On Wed, Aug 14, 2019 at 4:41 PM Rob Herring <robh+dt@kernel.org> wrote:
+>
+> On Tue, Aug 6, 2019 at 4:04 PM Saravana Kannan <saravanak@google.com> wrote:
+> >
+> > On Tue, Aug 6, 2019 at 2:27 PM Rob Herring <robh+dt@kernel.org> wrote:
+> > >
+> > > On Tue, Aug 6, 2019 at 1:27 PM Saravana Kannan <saravanak@google.com> wrote:
+> > > >
+> > > > PowerPC platforms don't use the generic of/platform code to populate the
+> > > > devices from DT.
+> > >
+> > > Yes, they do.
+> >
+> > No they don't. My wording could be better, but they don't use
+> > of_platform_default_populate_init()
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/of/platform.c#n511
+>
+> Right, but the rest of the of/platform code is used (guess where it
+> got moved here from?).
+>
+> > > > Therefore the generic device linking code is never used
+> > > > in PowerPC.  Compile it out to avoid warning about unused functions.
+> > >
+> > > I'd prefer this get disabled on PPC using 'if (IS_ENABLED(CONFIG_PPC))
+> > > return' rather than #ifdefs.
+> >
+> > I'm just moving the existing ifndef some lines above. I don't want to
+> > go change existing #ifndef in this patch. Maybe that should be a
+> > separate patch series that goes and fixes all such code in drivers/of/
+> > or driver/
+>
+> So the initcall was originally just supposed to call
+> of_platform_default_populate(), but it's grown beyond that. That could
+> make things fragile as it is possible for platforms to call
+> of_platform_populate() (directly or indirectly) before
+> of_platform_default_populate_init(). That was supposed to work, but
+> now I think it's getting more fragile.
 
-bikeshed: I think it'd be easier to read without the else
+Can you clarify what's wrong with of_platfrom_populate() being called
+before of_platform_default_populate_init()? If that's what a platform
+wants to do, they can do it? I have some thoughts of my own, but I
+want to hear yours.
+In any case, I'd be happy to help  clean up this initcall if you can
+give me a direction to take it in.
 
-		status = reset_link(dev, service);
-		if (status != PCI_ERS_RESULT_RECOVERED)
-			goto failed;
+> Anyways, I guess this patch is fine for now.
 
-		goto done;
+Thanks.
 
+-Saravana
