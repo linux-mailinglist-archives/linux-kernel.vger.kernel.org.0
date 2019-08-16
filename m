@@ -2,87 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2255190A16
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7432590A1A
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 23:16:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727795AbfHPVOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 17:14:33 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40761 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbfHPVOd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 17:14:33 -0400
-Received: by mail-oi1-f194.google.com with SMTP id h21so5794998oie.7;
-        Fri, 16 Aug 2019 14:14:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4gRR6HvBg6u5veUlkvaSp6+HCcvQCdmIeBVhPgvLg/I=;
-        b=NLghpoLPSElcRSsklqLLctbkIfqC6ZkjLvrSvw60ruskZmUsNtHJ551HeTCg1Pw785
-         UgBb81J34MpcvYUj/YyXgh5X16p9EM+FUvkIh2aPBjOLePmGDHFQfUHAnY6Jia0t627B
-         rjoa/ARNU/U7/0oXkDjPLSz6UrILJQfVZAl9e3nY9olUbwKFSpb0xVoEHDTRQ0yNkpaZ
-         tX9tcTrIOUQVsco6qsakLyEGJpWtyDacswN9pqFvK2WLpG/9VjYZClX9UDnCCuv/I5uZ
-         LIpNJosHsZqJ+1MN3wbyPqZreezLeCddfyuSCAn8ROlyLzOPGzF6X4NNiXW1IWOvM/Ti
-         GO2g==
-X-Gm-Message-State: APjAAAWNgVR7c97BLfUmy8rs+tWBtpiw7S5iAee+EwfNZxRe1jYBsRzz
-        zTsqzC4g4M0smm78sj4WKNMv57M=
-X-Google-Smtp-Source: APXvYqyGpQgU9LoPcwD1U3cdu93f8C8iY9sv3eSKzx9WuZ10PDu6m4tPQlcQpTQ6ajbc+Hs+/Zam7A==
-X-Received: by 2002:a05:6808:903:: with SMTP id w3mr5765893oih.119.1565990071859;
-        Fri, 16 Aug 2019 14:14:31 -0700 (PDT)
-Received: from localhost (ip-173-126-47-137.ftwttx.spcsdns.net. [173.126.47.137])
-        by smtp.gmail.com with ESMTPSA id c11sm1095758otr.54.2019.08.16.14.14.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 14:14:31 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 16:14:30 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Richard Tresidder <rtresidd@electromag.com.au>
-Cc:     sre@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] dt-bindings: power/supply/sbs_sbs-battery: Addition
- of force_load binding Add device tree binding documentation for addition of
- force_load boolean value to allow loading a battery during boot even if not
- present at that time.
-Message-ID: <20190816211430.GA8175@bogus>
-References: <1564037445-22936-1-git-send-email-rtresidd@electromag.com.au>
+        id S1727723AbfHPVQV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 17:16:21 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:50468 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727572AbfHPVQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 17:16:20 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 924EE3C93;
+        Fri, 16 Aug 2019 21:16:20 +0000 (UTC)
+Received: from dhcp-44-196.space.revspace.nl (unknown [10.36.112.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9810F12A41;
+        Fri, 16 Aug 2019 21:16:16 +0000 (UTC)
+From:   Hans de Goede <hdegoede@redhat.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>
+Cc:     Hans de Goede <hdegoede@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, x86@kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] crypto: sha256 - Merge 2 separate C implementations into 1, put into separate library
+Date:   Fri, 16 Aug 2019 23:16:05 +0200
+Message-Id: <20190816211611.2568-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564037445-22936-1-git-send-email-rtresidd@electromag.com.au>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 16 Aug 2019 21:16:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 02:50:45PM +0800, Richard Tresidder wrote:
-> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
-> ---
-> 
-> Notes:
->     Add device tree binding documentation for addition of force_load
->     boolean value to allow loading a battery during boot even if not
->     present at that time.
->     Accompanying patch to drivers/power/supply/sbs-battery.c submitted to linux-pm@vger.kernel.org
-> 
->  Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> index 4e78e51..187d7bb 100644
-> --- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> +++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
-> @@ -15,7 +15,8 @@ Optional properties :
->     after an external change notification.
->   - sbs,battery-detect-gpios : The gpio which signals battery detection and
->     a flag specifying its polarity.
-> -
-> + - sbs,force-load : Allow loading of a hot-pluggable battery when there is no
-> +   GPIO detect available and the module is statically built.
+Hi All,
 
-What's a module? That's Linux specific and nothing to do with the 
-binding. 
+Here is a patch series refactoring the current 2 separate SHA256
+C implementations into 1 and put it into a separate library.
 
-Can't you just force load if sbs,battery-detect-gpios is not present?
+There are 2 reasons for this:
 
-Rob
+1) Remove the code duplication of having 2 separate implementations
+
+2) Offer a separate library SHA256 implementation which can be used
+without having to call crypto_alloc_shash first. This is especially
+useful for use during early boot when crypto_alloc_shash does not
+work yet.
+
+This has been tested on x86, including checking that kecec still works.
+
+This has NOT been tested on s390, if someone with access to s390 can
+test that things still build with this series applied and that
+kexec still works, that would be great.
+
+Regards,
+
+Hans
+
