@@ -2,253 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CC63903B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:12:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 41C5E903B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 16:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727448AbfHPOMM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 10:12:12 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4725 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726032AbfHPOML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:12:11 -0400
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 2CFA7DCCF5BDC3D35796;
-        Fri, 16 Aug 2019 22:11:54 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.439.0; Fri, 16 Aug 2019
- 22:11:47 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <avifishman70@gmail.com>, <tmaimon77@gmail.com>,
-        <tali.perry1@gmail.com>, <venture@google.com>, <yuenn@google.com>,
-        <benjaminfair@google.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <openbmc@lists.ozlabs.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: npcm7xx: remove unused code
-Date:   Fri, 16 Aug 2019 22:11:32 +0800
-Message-ID: <20190816141132.55060-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727377AbfHPOLs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 10:11:48 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36542 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726032AbfHPOLs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 10:11:48 -0400
+Received: by mail-oi1-f196.google.com with SMTP id c15so4897838oic.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 07:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Yssxgr/R6OQdplSnDNsdTRBQMibjMIg4+OgGLQyMPwk=;
+        b=iKfxKoMvF7fYuHqtxhMdeLtiTE/pTTZEGguyp0+hucFHluJ5kX2VIkLSCTNrBBI4hS
+         m75gSd95L78hr4hdAIJz7abvXf9heA1zVnFk/Tff1ZGBb79t7v6ncV9jdxtpQZTpEg9o
+         H6oav0M6pZU1zPqylhHo7uj1Ld1HrZ7uYQ70Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Yssxgr/R6OQdplSnDNsdTRBQMibjMIg4+OgGLQyMPwk=;
+        b=dARUgw4vDOISp7Ovb/6GGs2OZaL+r4yg0XFj/yhdYxIO2DNnRQPRETvFoZLWFd4Cdz
+         Kk8Z7O9TLytYYGfAtNnCM9uOT7KRzxeNynY+4iWigEN4JHa4Beb1BJtqHseEkT6MpW1v
+         aebhX548qslrW/u+tahcY3W0v29Oa4KF3hEcJzyibbAvH/kMT6L175iL/nLbbLen3Y3M
+         8wob0dc5Dz9Bre6oA5FxK18BAN+Vkt4cbmcI+OtkDNtEJ7CuHN0DyIc++fRbdzNqB+td
+         8BfQjRWTkoF1Urut2tF5G8t8KWFI6Av5RJqKtW2DZznpOITf6iB0IuzOfSmzPCH7Epyw
+         Si9Q==
+X-Gm-Message-State: APjAAAWajHwIgQn/OWu39glHRiTw9UoloJHlLApF9qaKrEGrpMvCxbxj
+        BZsiO+Io8xBLLhLNkdiAvnhzfDuWmNmQ57dZYqBXOw==
+X-Google-Smtp-Source: APXvYqx2XgL7KeHyryZ4+8xqmn4BItCVHB9tDtZdlS5rAComTkGY2660h6IEE51SBGH2skdFu1E3ye0pzcKw0PqZrbI=
+X-Received: by 2002:aca:1a0b:: with SMTP id a11mr5297448oia.128.1565964706931;
+ Fri, 16 Aug 2019 07:11:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+References: <20190815174207.GR9477@dhcp22.suse.cz> <20190815182448.GP21596@ziepe.ca>
+ <20190815190525.GS9477@dhcp22.suse.cz> <20190815191810.GR21596@ziepe.ca>
+ <20190815193526.GT9477@dhcp22.suse.cz> <CAKMK7uH42EgdxL18yce-7yay=x=Gb21nBs3nY7RA92Nsd-HCNA@mail.gmail.com>
+ <20190815202721.GV21596@ziepe.ca> <CAKMK7uER0u1TqeJBXarKakphnyZTHOmedOfXXqLGVDE2mE-mAQ@mail.gmail.com>
+ <20190816010036.GA9915@ziepe.ca> <CAKMK7uH0oa10LoCiEbj1NqAfWitbdOa-jQm9hM=iNL-=8gH9nw@mail.gmail.com>
+ <20190816121243.GB5398@ziepe.ca>
+In-Reply-To: <20190816121243.GB5398@ziepe.ca>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Fri, 16 Aug 2019 16:11:34 +0200
+Message-ID: <CAKMK7uHk03OD+N-anPf-ADPzvQJ_NbQXFh5WsVUo-Ewv9vcOAw@mail.gmail.com>
+Subject: Re: [Intel-gfx] [PATCH 2/5] kernel.h: Add non_block_start/end()
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     Michal Hocko <mhocko@kernel.org>, Feng Tang <feng.tang@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Kees Cook <keescook@chromium.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Jann Horn <jannh@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux MM <linux-mm@kvack.org>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        David Rientjes <rientjes@google.com>,
+        Wei Wang <wvw@google.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/clk/clk-npcm7xx.c:365:48: warning:
- npcm7xx_divs_fx defined but not used [-Wunused-const-variable=]
-drivers/clk/clk-npcm7xx.c:438:43: warning:
- npcm7xx_gates defined but not used [-Wunused-const-variable=]
+On Fri, Aug 16, 2019 at 2:12 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+>
+> On Fri, Aug 16, 2019 at 08:20:55AM +0200, Daniel Vetter wrote:
+> > On Fri, Aug 16, 2019 at 3:00 AM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > On Thu, Aug 15, 2019 at 10:49:31PM +0200, Daniel Vetter wrote:
+> > > > On Thu, Aug 15, 2019 at 10:27 PM Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> > > > > On Thu, Aug 15, 2019 at 10:16:43PM +0200, Daniel Vetter wrote:
+> > > > > > So if someone can explain to me how that works with lockdep I can of
+> > > > > > course implement it. But afaics that doesn't exist (I tried to explain
+> > > > > > that somewhere else already), and I'm no really looking forward to
+> > > > > > hacking also on lockdep for this little series.
+> > > > >
+> > > > > Hmm, kind of looks like it is done by calling preempt_disable()
+> > > >
+> > > > Yup. That was v1, then came the suggestion that disabling preemption
+> > > > is maybe not the best thing (the oom reaper could still run for a long
+> > > > time comparatively, if it's cleaning out gigabytes of process memory
+> > > > or what not, hence this dedicated debug infrastructure).
+> > >
+> > > Oh, I'm coming in late, sorry
+> > >
+> > > Anyhow, I was thinking since we agreed this can trigger on some
+> > > CONFIG_DEBUG flag, something like
+> > >
+> > >     /* This is a sleepable region, but use preempt_disable to get debugging
+> > >      * for calls that are not allowed to block for OOM [.. insert
+> > >      * Michal's explanation.. ] */
+> > >     if (IS_ENABLED(CONFIG_DEBUG_ATOMIC_SLEEP) && !mmu_notifier_range_blockable(range))
+> > >         preempt_disable();
+> > >     ops->invalidate_range_start();
+> >
+> > I think we also discussed that, and some expressed concerns it would
+> > change behaviour/timing too much for testing. Since this does does
+> > disable preemption for real, not just for might_sleep.
+>
+> I don't follow, this is a debug kernel, it will have widly different
+> timing.
+>
+> Further the point of this debugging on atomic_sleep is to be as
+> timing-independent as possible since functions with rare sleeps should
+> be guarded by might_sleep() in their common paths.
+>
+> I guess I don't get the push to have some low overhead debugging for
+> this? Is there something special you are looking for?
 
-The two variables are never used, so remove them,
-also remove related type declarations.
+Don't ask me, I'm just trying to get _some_ debugging for this in. I
+don't care one bit how much overhead it has because in our CI our
+debug build has lockdep and everything and it crawls anyway. I started
+out with the preempt_disable/enable thing like you suggested, and a
+few rounds later we're here. We can go back to v1 on this one, but I'd
+prefer to not do the lap too often.
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/clk/clk-npcm7xx.c | 157 ----------------------------------------------
- 1 file changed, 157 deletions(-)
-
-diff --git a/drivers/clk/clk-npcm7xx.c b/drivers/clk/clk-npcm7xx.c
-index 27a86b7..9c5390c 100644
---- a/drivers/clk/clk-npcm7xx.c
-+++ b/drivers/clk/clk-npcm7xx.c
-@@ -100,9 +100,6 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- 	return hw;
- }
- 
--#define NPCM7XX_CLKEN1          (0x00)
--#define NPCM7XX_CLKEN2          (0x28)
--#define NPCM7XX_CLKEN3          (0x30)
- #define NPCM7XX_CLKSEL          (0x04)
- #define NPCM7XX_CLKDIV1         (0x08)
- #define NPCM7XX_CLKDIV2         (0x2C)
-@@ -110,38 +107,7 @@ npcm7xx_clk_register_pll(void __iomem *pllcon, const char *name,
- #define NPCM7XX_PLLCON0         (0x0C)
- #define NPCM7XX_PLLCON1         (0x10)
- #define NPCM7XX_PLLCON2         (0x54)
--#define NPCM7XX_SWRSTR          (0x14)
--#define NPCM7XX_IRQWAKECON      (0x18)
--#define NPCM7XX_IRQWAKEFLAG     (0x1C)
--#define NPCM7XX_IPSRST1         (0x20)
--#define NPCM7XX_IPSRST2         (0x24)
--#define NPCM7XX_IPSRST3         (0x34)
--#define NPCM7XX_WD0RCR          (0x38)
--#define NPCM7XX_WD1RCR          (0x3C)
--#define NPCM7XX_WD2RCR          (0x40)
--#define NPCM7XX_SWRSTC1         (0x44)
--#define NPCM7XX_SWRSTC2         (0x48)
--#define NPCM7XX_SWRSTC3         (0x4C)
--#define NPCM7XX_SWRSTC4         (0x50)
--#define NPCM7XX_CORSTC          (0x5C)
- #define NPCM7XX_PLLCONG         (0x60)
--#define NPCM7XX_AHBCKFI         (0x64)
--#define NPCM7XX_SECCNT          (0x68)
--#define NPCM7XX_CNTR25M         (0x6C)
--
--struct npcm7xx_clk_gate_data {
--	u32 reg;
--	u8 bit_idx;
--	const char *name;
--	const char *parent_name;
--	unsigned long flags;
--	/*
--	 * If this clock is exported via DT, set onecell_idx to constant
--	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
--	 * this specific clock.  Otherwise, set to -1.
--	 */
--	int onecell_idx;
--};
- 
- struct npcm7xx_clk_mux_data {
- 	u8 shift;
-@@ -160,21 +126,6 @@ struct npcm7xx_clk_mux_data {
- 
- };
- 
--struct npcm7xx_clk_div_fixed_data {
--	u8 mult;
--	u8 div;
--	const char *name;
--	const char *parent_name;
--	u8 clk_divider_flags;
--	/*
--	 * If this clock is exported via DT, set onecell_idx to constant
--	 * defined in include/dt-bindings/clock/nuvoton, NPCM7XX-clock.h for
--	 * this specific clock.  Otherwise, set to -1.
--	 */
--	int onecell_idx;
--};
--
--
- struct npcm7xx_clk_div_data {
- 	u32 reg;
- 	u8 shift;
-@@ -361,13 +312,6 @@ static const struct npcm7xx_clk_mux_data npcm7xx_muxes[] __initconst = {
- 	dvcssel_mux_parents, ARRAY_SIZE(dvcssel_mux_parents), 0, -1},
- };
- 
--/* fixed ratio dividers (no register): */
--static const struct npcm7xx_clk_div_fixed_data npcm7xx_divs_fx[] __initconst = {
--	{ 1, 2, NPCM7XX_CLK_S_MC, NPCM7XX_CLK_S_MC_MUX, 0, NPCM7XX_CLK_MC},
--	{ 1, 2, NPCM7XX_CLK_S_PLL1_DIV2, NPCM7XX_CLK_S_PLL1, 0, -1},
--	{ 1, 2, NPCM7XX_CLK_S_PLL2_DIV2, NPCM7XX_CLK_S_PLL2, 0, -1},
--};
--
- /* configurable dividers: */
- static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
- 	{NPCM7XX_CLKDIV1, 28, 3, NPCM7XX_CLK_S_ADC,
-@@ -435,107 +379,6 @@ static const struct npcm7xx_clk_div_data npcm7xx_divs[] __initconst = {
- 
- };
- 
--static const struct npcm7xx_clk_gate_data npcm7xx_gates[] __initconst = {
--	{NPCM7XX_CLKEN1, 31, "smb1-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 30, "smb0-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 29, "smb7-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 28, "smb6-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 27, "adc-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 26, "wdt-gate", NPCM7XX_CLK_S_TIMER, 0},
--	{NPCM7XX_CLKEN1, 25, "usbdev3-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 24, "usbdev6-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 23, "usbdev5-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 22, "usbdev4-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 21, "emc2-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 20, "timer5_9-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 19, "timer0_4-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 18, "pwmm0-gate", NPCM7XX_CLK_S_APB3, 0},
--	{NPCM7XX_CLKEN1, 17, "huart-gate", NPCM7XX_CLK_S_UART, 0},
--	{NPCM7XX_CLKEN1, 16, "smb5-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 15, "smb4-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 14, "smb3-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 13, "smb2-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN1, 12, "mc-gate", NPCM7XX_CLK_S_MC, 0},
--	{NPCM7XX_CLKEN1, 11, "uart01-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 10, "aes-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 9, "peci-gate", NPCM7XX_CLK_S_APB3, 0},
--	{NPCM7XX_CLKEN1, 8, "usbdev2-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 7, "uart23-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 6, "emc1-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 5, "usbdev1-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 4, "shm-gate", NPCM7XX_CLK_S_AHB, 0},
--	/* bit 3 is reserved */
--	{NPCM7XX_CLKEN1, 2, "kcs-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN1, 1, "spi3-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN1, 0, "spi0-gate", NPCM7XX_CLK_S_AHB, 0},
--
--	{NPCM7XX_CLKEN2, 31, "cp-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 30, "tock-gate", NPCM7XX_CLK_S_TOCK, 0},
--	/* bit 29 is reserved */
--	{NPCM7XX_CLKEN2, 28, "gmac1-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 27, "usbif-gate", NPCM7XX_CLK_S_USBIF, 0},
--	{NPCM7XX_CLKEN2, 26, "usbhost-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 25, "gmac2-gate", NPCM7XX_CLK_S_AHB, 0},
--	/* bit 24 is reserved */
--	{NPCM7XX_CLKEN2, 23, "pspi2-gate", NPCM7XX_CLK_S_APB5, 0},
--	{NPCM7XX_CLKEN2, 22, "pspi1-gate", NPCM7XX_CLK_S_APB5, 0},
--	{NPCM7XX_CLKEN2, 21, "3des-gate", NPCM7XX_CLK_S_AHB, 0},
--	/* bit 20 is reserved */
--	{NPCM7XX_CLKEN2, 19, "siox2-gate", NPCM7XX_CLK_S_APB3, 0},
--	{NPCM7XX_CLKEN2, 18, "siox1-gate", NPCM7XX_CLK_S_APB3, 0},
--	/* bit 17 is reserved */
--	{NPCM7XX_CLKEN2, 16, "fuse-gate", NPCM7XX_CLK_S_APB4, 0},
--	/*  bit 15 is reserved */
--	{NPCM7XX_CLKEN2, 14, "vcd-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 13, "ece-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 12, "vdma-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 11, "ahbpcibrg-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 10, "gfxsys-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN2, 9, "sdhc-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 8, "mmc-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN2, 7, "mft7-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 6, "mft6-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 5, "mft5-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 4, "mft4-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 3, "mft3-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 2, "mft2-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 1, "mft1-gate", NPCM7XX_CLK_S_APB4, 0},
--	{NPCM7XX_CLKEN2, 0, "mft0-gate", NPCM7XX_CLK_S_APB4, 0},
--
--	{NPCM7XX_CLKEN3, 31, "gpiom7-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 30, "gpiom6-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 29, "gpiom5-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 28, "gpiom4-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 27, "gpiom3-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 26, "gpiom2-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 25, "gpiom1-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 24, "gpiom0-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 23, "espi-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 22, "smb11-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 21, "smb10-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 20, "smb9-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 19, "smb8-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 18, "smb15-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 17, "rng-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 16, "timer10_14-gate", NPCM7XX_CLK_S_APB1, 0},
--	{NPCM7XX_CLKEN3, 15, "pcirc-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 14, "sececc-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 13, "sha-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 12, "smb14-gate", NPCM7XX_CLK_S_APB2, 0},
--	/* bit 11 is reserved */
--	/* bit 10 is reserved */
--	{NPCM7XX_CLKEN3, 9, "pcimbx-gate", NPCM7XX_CLK_S_AHB, 0},
--	/* bit 8 is reserved */
--	{NPCM7XX_CLKEN3, 7, "usbdev9-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 6, "usbdev8-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 5, "usbdev7-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 4, "usbdev0-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 3, "smb13-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 2, "spix-gate", NPCM7XX_CLK_S_AHB, 0},
--	{NPCM7XX_CLKEN3, 1, "smb12-gate", NPCM7XX_CLK_S_APB2, 0},
--	{NPCM7XX_CLKEN3, 0, "pwmm1-gate", NPCM7XX_CLK_S_APB3, 0},
--};
--
- static DEFINE_SPINLOCK(npcm7xx_clk_lock);
- 
- static void __init npcm7xx_clk_init(struct device_node *clk_np)
+Also, aside from this patch (which is prep for the next) and some
+simple reordering conflicts they're all independent. So if there's no
+way to paint this bikeshed here (technicolor perhaps?) then I'd like
+to get at least the others considered.
+-Daniel
 -- 
-2.7.4
-
-
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
