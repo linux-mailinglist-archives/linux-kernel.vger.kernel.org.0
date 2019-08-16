@@ -2,166 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 705F790102
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 13:57:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B64A39010E
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:04:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727163AbfHPL54 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 07:57:56 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36025 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727092AbfHPL54 (ORCPT
+        id S1727137AbfHPMEI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:04:08 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39709 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727081AbfHPMEI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 07:57:56 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so1305702wrt.3;
-        Fri, 16 Aug 2019 04:57:53 -0700 (PDT)
+        Fri, 16 Aug 2019 08:04:08 -0400
+Received: by mail-pl1-f195.google.com with SMTP id z3so2385526pln.6
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 05:04:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3owt7CIcSpc8cBZykFrs5XYNVBKRHnGIaWwBA3IAOUg=;
-        b=n+RGjsXkn7qujRTwk8aiu8/bBhtBcZVb/be6IIAS5tuj2MIO/85uX4jq+zNdIjO/8t
-         PmrK2Au1oQGF1N7EmhiyitWkXjrebzls+6qiEUcOmAzaYVnolRiZqcmkhkbhhZZI1M1C
-         J/56uGjaQGmHyPBVeOZ5ie9Zb1wmUBMIp7TQCv8twj5jTx7X68e0SfgHJyS63hVsVFUn
-         wgKACA86RZg89Lvt2WsJBOAmV52zl63pbTFpqHn90pZZpyZMmiygdDj4pDfRvU7ExiZz
-         RHzQBU8lfuTBKjOiSJRAzmI2/dNyxNeaJtE0TPFB2WV4XYuM+/jklpHDu7ygWiqKkq3y
-         0O0Q==
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=Vnbhhnw1++XaTWTA5nJ6dQ6jF9kogxUd95oWaUMp6a7kSglfKlG2Zi2FASy8bKD5gN
+         4IZsqvmaOH9GYMv00QQcuqOUCRbGqSD4Pw+eNFeeIA//aEf9ZgNnWY3LFC5jE0hVPI63
+         AjdE4bZSAxEbvjiTbh1+FWcCo8Fa9SRGjp5kASZALm7KecdCkhu3gkkMM37zKMEhqdJL
+         OH6Kj4s+/9apCEue3BVWkLZ1Q+7RVCdfKmUvy5kIl6bL2wTMPQ9/yynsw83jduygmnLZ
+         qY8J5xiqLsbtoSsoz4Th25ruNCDrdG/z5zweFNoGaq8KfIGBYtE74uyG+kaXFoW6PdG7
+         sHPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3owt7CIcSpc8cBZykFrs5XYNVBKRHnGIaWwBA3IAOUg=;
-        b=KP/4Eb0AGotntVsynrxtBMaqd3kvLR0BYfuYt2wc+RA1mjDsZTIBnZwdN3C5fYBkHF
-         5rJbmPi0akRiiWzicbDZ3hPdTmiMI0Ic9ZL9xuyDcdcTJIRmAxnMrRXMfR5cEw+4JwaE
-         QVmzgYV8P9nmMzXZci58QjjoNQoNpyBWxorL4ifWFJIC8RjQ9HI02sqL4wfJXkrJ6Ege
-         A7hv3iEMdyPgL194IuKidQ0rH3hJ/zJX6F9MjvkjfaADVbF2v9iDWFL0xHvtoqG4KedF
-         XGCW5uE42wSie0xghmm4QCwYaVILQuT3emW3upB05JZn4vnCKWUFEt7GDS2LcEoFoGJO
-         Fe9g==
-X-Gm-Message-State: APjAAAWaksIHgTPyB4goEq3K7yHtKmFGhZAhQ9a6fjjAhZV6hogD1xvv
-        D8297rizw3xTeAisUZcuARw=
-X-Google-Smtp-Source: APXvYqxTNqwHq0WVu2D09lrdzA/RLQGrmdozZ6J5eBdQXu18+f9N8PeAwHj98h+nMUCQawcD2DuQ6Q==
-X-Received: by 2002:a5d:4bc1:: with SMTP id l1mr10864468wrt.259.1565956673248;
-        Fri, 16 Aug 2019 04:57:53 -0700 (PDT)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id m23sm7291053wml.41.2019.08.16.04.57.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Aug 2019 04:57:52 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 13:57:50 +0200
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     Maxime Ripard <mripard@kernel.org>
-Cc:     mark.rutland@arm.com, robh+dt@kernel.org, wens@csie.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH] ARM64: dts: allwinner: Add devicetree for pine H64
- modelA evaluation board
-Message-ID: <20190816115750.GA24545@Red>
-References: <20190808084253.10573-1-clabbe.montjoie@gmail.com>
- <20190812094000.ebdmhyxx7xzbevef@flea>
- <20190814131741.GB24324@Red>
- <20190814133322.dawzv3ityakxtqs4@flea>
- <20190816093513.GA25042@Red>
- <20190816113650.hstbi5ntstx3wh4a@flea>
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=y7cIzG0PVrRis126czyvwHkkalaXGhnWuRZIJrhxFOU=;
+        b=SGhcZ4sn9BNV/v1MhNHNEwfZqFL715Q/w25gRhchKL/JvRLymztHdTqB5Byx/kg6Tk
+         laZYNAwwpygeocvkUDxtCUz3GiE8Tt9wuhNLioB+HhEaFrRx/HL+c0nD6LwLE2RTOiuf
+         b/tXB+GJcBJZhwy101B39naPjCakv1Z0EPAn2LFkxU70JosbNgHn+0txljAFy/GTbN5K
+         SXqo5UL4r37FZmzjUfWnUOrU+dkmhJ1eZdW5FEJxi775zji6z9JIWc0+/wYMv/qCr25/
+         CXvHtzRhLnS8gOndSt26xPLiI4469ogLToC6cTP161gxJHWQ3EUVuOa+rr6pixGr2yD8
+         ABLQ==
+X-Gm-Message-State: APjAAAU0mu1QeYhWREtHe5HLXvfPEAXToo23dYYqE0VMG7WgOv3RLD0U
+        9PI9/nLdfDBIZCOI74pNAds+xm3V44Fhm4fneWc=
+X-Google-Smtp-Source: APXvYqzteCWSPNDiqrrPUwxBbarLO11WeIZGP1EwmiO+pnCxvf9n9eLQ281xqf4fKR/gI92FlXo36bC6Jd8STzhk6Dg=
+X-Received: by 2002:a17:902:e6:: with SMTP id a93mr8883953pla.175.1565957047297;
+ Fri, 16 Aug 2019 05:04:07 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816113650.hstbi5ntstx3wh4a@flea>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a17:90a:7f95:0:0:0:0 with HTTP; Fri, 16 Aug 2019 05:04:06
+ -0700 (PDT)
+Reply-To: ayishagddafio@mail.com
+From:   AISHA GADDAFI <vijairaja789@gmail.com>
+Date:   Fri, 16 Aug 2019 05:04:06 -0700
+Message-ID: <CAGZ0r_LPontx9aC+0td4u6LQojw-MqmdbdWXHoDaZ=TzP5VRaQ@mail.gmail.com>
+Subject: Dear Friend (Assalamu Alaikum),
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 01:36:50PM +0200, Maxime Ripard wrote:
-> On Fri, Aug 16, 2019 at 11:35:13AM +0200, Corentin Labbe wrote:
-> > On Wed, Aug 14, 2019 at 03:33:22PM +0200, Maxime Ripard wrote:
-> > > On Wed, Aug 14, 2019 at 03:17:41PM +0200, Corentin Labbe wrote:
-> > > > On Mon, Aug 12, 2019 at 11:40:00AM +0200, Maxime Ripard wrote:
-> > > > > On Thu, Aug 08, 2019 at 10:42:53AM +0200, Corentin Labbe wrote:
-> > > > > > This patch adds the evaluation variant of the model A of the PineH64.
-> > > > > > The model A has the same size of the pine64 and has a PCIE slot.
-> > > > > >
-> > > > > > The only devicetree difference with current pineH64, is the PHY
-> > > > > > regulator.
-> > > > > >
-> > > > > > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
-> > > > > > ---
-> > > > > >  arch/arm64/boot/dts/allwinner/Makefile        |  1 +
-> > > > > >  .../sun50i-h6-pine-h64-modelA-eval.dts        | 26 +++++++++++++++++++
-> > > > > >  2 files changed, 27 insertions(+)
-> > > > > >  create mode 100644 arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
-> > > > > >
-> > > > > > diff --git a/arch/arm64/boot/dts/allwinner/Makefile b/arch/arm64/boot/dts/allwinner/Makefile
-> > > > > > index f6db0611cb85..9a02166cbf72 100644
-> > > > > > --- a/arch/arm64/boot/dts/allwinner/Makefile
-> > > > > > +++ b/arch/arm64/boot/dts/allwinner/Makefile
-> > > > > > @@ -25,3 +25,4 @@ dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-3.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-lite2.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-orangepi-one-plus.dtb
-> > > > > >  dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64.dtb
-> > > > > > +dtb-$(CONFIG_ARCH_SUNXI) += sun50i-h6-pine-h64-modelA-eval.dtb
-> > > > > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
-> > > > > > new file mode 100644
-> > > > > > index 000000000000..d8ff02747efe
-> > > > > > --- /dev/null
-> > > > > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6-pine-h64-modelA-eval.dts
-> > > > > > @@ -0,0 +1,26 @@
-> > > > > > +// SPDX-License-Identifier: (GPL-2.0+ or MIT)
-> > > > > > +/*
-> > > > > > + * Copyright (C) 2019 Corentin Labbe <clabbe.montjoie@gmail.com>
-> > > > > > + */
-> > > > > > +
-> > > > > > +#include "sun50i-h6-pine-h64.dts"
-> > > > > > +
-> > > > > > +/ {
-> > > > > > +	model = "Pine H64 model A evaluation board";
-> > > > > > +	compatible = "pine64,pine-h64-modelA-eval", "allwinner,sun50i-h6";
-> > > > > > +
-> > > > > > +	reg_gmac_3v3: gmac-3v3 {
-> > > > > > +		compatible = "regulator-fixed";
-> > > > > > +		regulator-name = "vcc-gmac-3v3";
-> > > > > > +		regulator-min-microvolt = <3300000>;
-> > > > > > +		regulator-max-microvolt = <3300000>;
-> > > > > > +		startup-delay-us = <100000>;
-> > > > > > +		gpio = <&pio 2 16 GPIO_ACTIVE_HIGH>;
-> > > > > > +		enable-active-high;
-> > > > > > +	};
-> > > > > > +
-> > > > > > +};
-> > > > > > +
-> > > > > > +&emac {
-> > > > > > +	phy-supply = <&reg_gmac_3v3>;
-> > > > > > +};
-> > > > >
-> > > > > I might be missing some context here, but I'm pretty sure that the
-> > > > > initial intent of the pine h64 DTS was to support the model A all
-> > > > > along.
-> > > > >
-> > > >
-> > > > The regulator changed between modelA and B.
-> > > > See this old patchset (supporting modelA) https://patchwork.kernel.org/patch/10539149/ for example.
-> > >
-> > > I'm not sure what your point is, but mine is that everything about the
-> > > model A should be in sun50i-h6-pine-h64.dts.
-> > >
-> >
-> > model A and B are different enough for distinct dtb, (see sub-thread
-> > on HDMI difference for an other difference than PHY regulator)
-> 
-> I don't mind having separate DTBs for model A and model B.
-> 
-> > And clearly, the current dtb is for model B.
-> 
-> That DTS was added almost a year before the model B was announced, and
-> no commit to that file mention the model B, so it's definitely not
-> clear.
+-- 
+Dear Friend (Assalamu Alaikum),
 
-Normal it was added for model A (without any ethernet/HDMI support, so nothing distinct from model B), and the modelB ethernet/HDMI support cames after.
+I came across your e-mail contact prior a private search while in need of
+your assistance. My name is Aisha  Al-Qaddafi a single Mother and a Widow
+with three Children. I am the only biological Daughter of late Libyan
+President (Late Colonel Muammar Gaddafi).
 
-> 
-> > So do you mean that we need to create a new dtb for model B ? (and
-> > hack the current back to model A ?)
-> 
-> I'd prefer not to hack anything, but yes
-> 
+I have investment funds worth Twenty Seven Million Five Hundred Thousand
+United State Dollar ($27.500.000.00 ) and i need a trusted investment
+Manager/Partner because of my current refugee status, however, I am
+interested in you for investment project assistance in your country, may be
+from there, we can build business relationship in the nearest future.
 
-Since model A is not public (only evaluations boards exists), the probability of a production model A is low and the current dtb is perfect for model B , could you reconsider this ?
+I am willing to negotiate investment/business profit sharing ratio with you
+base on the future investment earning profits.
 
+If you are willing to handle this project on my behalf kindly reply urgent
+to enable me provide you more information about the investment funds.
+
+Your Urgent Reply Will Be Appreciated. write me at this email address(
+ayishagddafio@mail.com ) for further discussion.
+
+Best Regards
+Mrs Aisha Al-Qaddafi
+Reply to: ayishagddafio@mail.com
