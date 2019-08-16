@@ -2,57 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 808B390914
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73BD590919
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:58:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727688AbfHPT6C (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 15:58:02 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:38848 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727545AbfHPT6B (ORCPT
+        id S1727697AbfHPT6d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 15:58:33 -0400
+Received: from smtprelay0198.hostedemail.com ([216.40.44.198]:40801 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727585AbfHPT6d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 15:58:01 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 0715A13E2E211;
-        Fri, 16 Aug 2019 12:58:00 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 12:58:00 -0700 (PDT)
-Message-Id: <20190816.125800.1611631994527519662.davem@davemloft.net>
-To:     efremov@linux.com
-Cc:     hkallweit1@gmail.com, joe@perches.com,
-        linux-kernel@vger.kernel.org, nic_swsd@realtek.com,
-        netdev@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: r8169: Update path to the driver
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190814121209.3364-1-efremov@linux.com>
-References: <69fac52e-8464-ea87-e2e5-422ae36a92c8@gmail.com>
-        <20190814121209.3364-1-efremov@linux.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        Fri, 16 Aug 2019 15:58:33 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay06.hostedemail.com (Postfix) with ESMTP id 5FD2E18008646;
+        Fri, 16 Aug 2019 19:58:31 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 2,0,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:800:967:973:982:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:2393:2525:2559:2564:2682:2685:2691:2828:2859:2933:2937:2939:2942:2945:2947:2951:2954:3022:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3870:3872:3873:3874:3934:3936:3938:3941:3944:3947:3950:3953:3956:3959:4321:5007:7903:9025:10004:10400:10471:10848:11232:11658:11914:12043:12050:12114:12297:12438:12555:12740:12760:12895:12986:13069:13142:13230:13255:13311:13357:13439:14096:14097:14180:14181:14659:14721:14819:21080:21451:21627:21811:30041:30054:30060:30070:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.14.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:29,LUA_SUMMARY:none
+X-HE-Tag: mass40_4a1449745f063
+X-Filterd-Recvd-Size: 2860
+Received: from XPS-9350 (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Fri, 16 Aug 2019 19:58:28 +0000 (UTC)
+Message-ID: <ad42da450ccafcb571cca9289dcf52840dbb53d3.camel@perches.com>
+Subject: rfc: treewide scripted patch mechanism? (was: Re: [PATCH] Makefile:
+ Convert -Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough for clang)
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Julia Lawall <julia.lawall@lip6.fr>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Date:   Fri, 16 Aug 2019 12:58:27 -0700
+In-Reply-To: <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+         <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+         <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+         <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+         <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 16 Aug 2019 12:58:01 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Efremov <efremov@linux.com>
-Date: Wed, 14 Aug 2019 15:12:09 +0300
-
-> Update MAINTAINERS record to reflect the filename change.
-> The file was moved in commit 25e992a4603c ("r8169: rename
-> r8169.c to r8169_main.c")
+On Sat, 2019-08-10 at 13:33 -0700, Joe Perches wrote:
+> On Sat, 2019-08-10 at 13:18 -0700, Joe Perches wrote:
+[]
+> > There are classes of patches generated by scripts that have
+> > no real mechanism to be applied today.
+> > 
+> > For instance: global coccinelle scripted changes to use stracpy
+> > https://lore.kernel.org/lkml/alpine.DEB.2.21.1907251747560.2494@hadrien/
+> > 
+> > and trivial scripted changes to MAINTAINERS
+> > https://lore.kernel.org/lkml/6482e6546dc328ec47b07dba9a78a9573ebb3e56.camel@perches.com/
+> > 
+> > that are basically impossible to be applied by anyone but you.
+> > 
+> > Otherwise there are hundreds of little micro patches most of
+> > which would not otherwise be applied.
+> > 
+> > There should be some process available to get these treewide
+> > or difficult to keep up-to-date and apply patches handled.
+> > 
+> > I believe these sorts of scripted patches should ideally
+> > be handled immediately before an RC1 so other trees can be 
+> > synchronized in the simplest way possible.
 > 
-> Cc: Heiner Kallweit <hkallweit1@gmail.com>
-> Cc: nic_swsd@realtek.com
-> Cc: David S. Miller <davem@davemloft.net>
-> Cc: netdev@vger.kernel.org
-> Signed-off-by: Denis Efremov <efremov@linux.com>
+> Hey Stephen
+> 
+> Question for you about a possible -next process change.
+> 
+> Would it be reasonable to have some mechanism to script
+> treewide patches to generate and apply after Andrew Morton's
+> mmotm patches are applied to -next?
+> 
+> This could allow treewide scripted patches to have
+> compilation and test coverage before possibly being
+> applied to Linus' tree.
+> 
+> What would be necessary to allow this?
 
-Applied to 'net' since it's important to keep this uptodate and the
-paths are such that this change is valid there too.
+Ping?
 
-Thanks.
