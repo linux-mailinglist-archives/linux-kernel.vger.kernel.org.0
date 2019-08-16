@@ -2,111 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38B7B90502
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 17:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C67F690509
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 17:56:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727444AbfHPPyX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 11:54:23 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:46779 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727312AbfHPPyW (ORCPT
+        id S1727500AbfHPP4W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 11:56:22 -0400
+Received: from smtp11.infineon.com ([217.10.52.105]:41162 "EHLO
+        smtp11.infineon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727312AbfHPP4V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 11:54:22 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z1so1975919wru.13
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 08:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rjwwQvzZbTAd0PumZ0fpI2ighfSvLNEfTeslgBS5o3c=;
-        b=zen5hFriKrgrhQt7tOYMXw7q1geHpYj6bLTDvLzZgHS0RFMztkPu7eDcJ4HcIIRAC1
-         hTOFeDGYZJGX1SduUZSPtAMY4MkoCurIJoEpeCyQmGXOzkqkx0eF/BYnoJx1htseHBTl
-         B22l2v/Fop1oAl5vXRu6cyfUmoLJ+ZbHwP1fj2+vbjLiYnukTeWjb+s/V3FjHnYGlG2P
-         yYQ9qOQpjRFYJY/douTgJDCGa+t1O6dJ5seBUADnRGBkVeOodHv0EbUYtzkahW06UXqR
-         2UEr841WsMPDcTXJccy8ruUHjE/gih5Rvnw0gMduC4KP3KoUn5co2MFMaFUI37r4nR4Q
-         I+4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rjwwQvzZbTAd0PumZ0fpI2ighfSvLNEfTeslgBS5o3c=;
-        b=UE65PcxKyziKBhXOuh2juRWTV0AcJ2dE/hQkt4iNhG3vdAA70JRGAQ4PKOtYNugwHo
-         pjP+upBvzhTVvJeM+DR3Q4j/iTnWjH0GBx1ld/4oEShSXiz6oBkE9P3go+ZWBusn4zX5
-         wYzz7FwKPiLirhNpZwchDJobWtZnznh4va4DiPHQ0ewcrF8eS82ayCkba+5AMwKDoCKc
-         XCf20U5+p37DCBwD1JTtItk46J9UdzDtvjPqZidgxFfTH1zA+fX1edQxNYYvaUED/o5r
-         Ia5nCWOJML2bbuJ9b38YueBNZrK4TYPT6BQ+0Dfnjllaw9lMBUDbU7lXAN46K3/iJRr9
-         musA==
-X-Gm-Message-State: APjAAAXSlGd1E+y9LEcE/ItRGyFGv8CqG3kfgvX7Eqb06MAF0kYNuYYM
-        aIOj5IfHRPif434+RUHaiVG5SA==
-X-Google-Smtp-Source: APXvYqyQJCwfn9usponeAbAoxdPMgcDAMy29vLoOMKWyIeyL5+AvPp3pVd4OiYXh5ns0XltF0conlw==
-X-Received: by 2002:a5d:4946:: with SMTP id r6mr12650102wrs.266.1565970860895;
-        Fri, 16 Aug 2019 08:54:20 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.googlemail.com with ESMTPSA id a64sm5352000wmf.1.2019.08.16.08.54.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Aug 2019 08:54:19 -0700 (PDT)
-Subject: Re: Re: [PATCH v3 2/4] backlight: Expose brightness curve type
- through sysfs
-To:     Matthias Kaehlcke <mka@chromium.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-References: <20190709190007.91260-1-mka@chromium.org>
- <20190709190007.91260-3-mka@chromium.org>
- <20190807201528.GO250418@google.com>
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-Message-ID: <510f6d8a-71a0-fa6e-33ea-c4a4bfa96607@linaro.org>
-Date:   Fri, 16 Aug 2019 16:54:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Fri, 16 Aug 2019 11:56:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=infineon.com; i=@infineon.com; q=dns/txt; s=IFXMAIL;
+  t=1565970980; x=1597506980;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=/hDSL5+yXqoK9ZsLrgrJU5OIaG5/nQmNtSKAOjdD5Ys=;
+  b=ef5nPX/4oZeFlgML88udlsLtTMgeZjaVLkkV9Hus189mOPSkt0cCmRtD
+   WVxtMZF6tNUUceb1rKrvclGaAwV/Op29gyz+rMbw3k11m0bczEiiJFGpk
+   J4RE92cDfzWj35ysrVax00GPr+rqLfmjX9J+CyoiZGRW7/YES1SKt2bRR
+   s=;
+IronPort-SDR: dXXt6HEMEx/WscydFsl5+VseijR3m7xKZAmj8B3293TXnG4GLAm63P4myX6XzXZoCb58atKAYU
+ NQI14GtphJIeA5xbP6Sbxik23S0sddvb4wz/5zRbHlv2j09zDxtDgYO1HOYvCRcfTP1ilxe8Ea
+ IXLGAcr4mY1eoykPJLaZO+9L22dK2htGOGuUpy/M1WlYPuc//G6pjt0AVh1sOIYiVxZT2lz+yj
+ +DOWYATCiMMcvfajSGrFhYiP2bD1uaCNyi/AWQIswnBlqzo85YWdiC0TQheokBUZqf3LVbJ3Jc
+ ziQ=
+X-SBRS: None
+X-IronPort-AV: E=McAfee;i="6000,8403,9351"; a="130793049"
+X-IronPort-AV: E=Sophos;i="5.64,393,1559512800"; 
+   d="scan'208";a="130793049"
+Received: from unknown (HELO mucxv003.muc.infineon.com) ([172.23.11.20])
+  by smtp11.infineon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 17:56:19 +0200
+Received: from MUCSE708.infineon.com (MUCSE708.infineon.com [172.23.7.82])
+        by mucxv003.muc.infineon.com (Postfix) with ESMTPS;
+        Fri, 16 Aug 2019 17:56:19 +0200 (CEST)
+Received: from [10.154.32.23] (172.23.8.247) by MUCSE708.infineon.com
+ (172.23.7.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.1713.5; Fri, 16
+ Aug 2019 17:56:18 +0200
+Subject: Re: [PATCH v2 1/6] hwrng: core: Freeze khwrng thread during suspend
+To:     Stephen Boyd <swboyd@chromium.org>, Jason Gunthorpe <jgg@ziepe.ca>
+CC:     Peter Huewe <peterhuewe@gmx.de>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-integrity@vger.kernel.org>,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+References: <20190716224518.62556-1-swboyd@chromium.org>
+ <20190716224518.62556-2-swboyd@chromium.org>
+ <20190717113956.GA12119@ziepe.ca>
+ <5d2f4ff9.1c69fb81.3c314.ab00@mx.google.com>
+ <20190717165011.GI12119@ziepe.ca>
+ <5d2f54db.1c69fb81.5720c.dc05@mx.google.com>
+ <5d44be49.1c69fb81.8078a.4d08@mx.google.com>
+From:   Alexander Steffen <Alexander.Steffen@infineon.com>
+Message-ID: <d72750b9-38b8-172f-8902-427fcc3d0a5d@infineon.com>
+Date:   Fri, 16 Aug 2019 17:56:12 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190807201528.GO250418@google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <5d44be49.1c69fb81.8078a.4d08@mx.google.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.23.8.247]
+X-ClientProxiedBy: MUCSE716.infineon.com (172.23.7.67) To
+ MUCSE708.infineon.com (172.23.7.82)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/08/2019 21:15, Matthias Kaehlcke wrote:
-> On Tue, Jul 09, 2019 at 12:00:05PM -0700, Matthias Kaehlcke wrote:
->> Backlight brightness curves can have different shapes. The two main
->> types are linear and non-linear curves. The human eye doesn't
->> perceive linearly increasing/decreasing brightness as linear (see
->> also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
->> linearly to human eye"), hence many backlights use non-linear (often
->> logarithmic) brightness curves. The type of curve currently is opaque
->> to userspace, so userspace often uses more or less reliable heuristics
->> (like the number of brightness levels) to decide whether to treat a
->> backlight device as linear or non-linear.
+On 03.08.2019 00:50, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2019-07-17 10:03:22)
+>> Quoting Jason Gunthorpe (2019-07-17 09:50:11)
+>>> On Wed, Jul 17, 2019 at 09:42:32AM -0700, Stephen Boyd wrote:
 >>
->> Export the type of the brightness curve via the new sysfs attribute
->> 'scale'. The value of the attribute can be 'linear', 'non-linear' or
->> 'unknown'. For devices that don't provide information about the scale
->> of their brightness curve the value of the 'scale' attribute is 'unknown'.
+>> Yes. That's exactly my point. A hwrng that's suspended will fail here
+>> and it's better to just not try until it's guaranteed to have resumed.
 >>
->> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+>>>
+>>> It just seems weird to do this, what about all the other tpm API
+>>> users? Do they have a racy problem with suspend too?
+>>
+>> I haven't looked at them. Are they being called from suspend/resume
+>> paths? I don't think anything for the userspace API can be a problem
+>> because those tasks are all frozen. The only problem would be some
+>> kernel internal API that TPM API exposes. I did a quick grep and I see
+>> things like IMA or the trusted keys APIs that might need a closer look.
+>>
+>> Either way, trying to hold off a TPM operation from the TPM API when
+>> we're suspended isn't really possible. If something like IMA needs to
+>> get TPM data from deep suspend path and it fails because the device is
+>> suspended, all we can do is return an error from TPM APIs and hope the
+>> caller can recover. The fix is probably going to be to change the code
+>> to not call into the TPM API until the hardware has resumed by avoiding
+>> doing anything with the TPM until resume is over. So we're at best able
+>> to make same sort of band-aid here in the TPM API where all we can do is
+>> say -EAGAIN but we can't tell the caller when to try again.
+>>
 > 
-> Daniel (et al): do you have any more comments on this patch/series or
-> is it ready to land?
+> Andrey talked to me a little about this today. Andrey would prefer we
+> don't just let the TPM go into a wonky state if it's used during
+> suspend/resume so that it can stay resilient to errors. Sounds OK to me,
+> but my point still stands that we need to fix the callers.
+> 
+> I'll resurrect the IS_SUSPENDED flag and make it set generically by the
+> tpm_pm_suspend() and tpm_pm_resume() functions and then spit out a big
+> WARN_ON() and return an error value like -EAGAIN if the TPM functions
+> are called when the TPM is suspended. I hope we don't hit the warning
+> message, but if we do then at least we can track it down rather quickly
+> and figure out how to fix the caller instead of just silently returning
+> -EAGAIN and hoping for that to be visible to the user.
 
-I decided to leave it for a long while for others to review since I'm 
-still a tiny bit uneasy about the linear/non-linear terminology.
+There is another use case I see for this functionality: There are ways 
+for user space to upgrade the TPM's firmware via /dev/tpm0 (using e.g. 
+TPM2_FieldUpgradeStart/TPM2_FieldUpgradeData). While upgrading, the 
+normal TPM functionality might not be available (commands return 
+TPM_RC_UPGRADE or other error codes). Even after the upgrade is 
+finished, the TPM might continue to refuse command execution (e.g. with 
+TPM_RC_REBOOT).
 
-However that's my only concern, its fairly minor and I've dragged by 
-feet for more then long enough, so:
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+I'm not sure whether all in-kernel users are prepared to deal correctly 
+with those error codes. But even if they are, it might be better to 
+block them from sending commands in the first place, to not interfere 
+with the upgrade process.
 
+What would you think about a way for a user space upgrade tool to also 
+set this flag, to make the TPM unavailable for everything but the 
+upgrade process?
 
-Daniel.
-
+Alexander
