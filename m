@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8429B8F8FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:34:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01BB78F8E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 04:33:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfHPCeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 15 Aug 2019 22:34:01 -0400
+        id S1726562AbfHPCdE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 15 Aug 2019 22:33:04 -0400
 Received: from mga09.intel.com ([134.134.136.24]:24671 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfHPCdB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Aug 2019 22:33:01 -0400
+        id S1726245AbfHPCdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Aug 2019 22:33:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 19:33:00 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Aug 2019 19:33:02 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,391,1559545200"; 
-   d="scan'208";a="194894469"
+   d="scan'208";a="194894474"
 Received: from genxtest-ykzhao.sh.intel.com ([10.239.143.71])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Aug 2019 19:32:59 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 15 Aug 2019 19:33:01 -0700
 From:   Zhao Yakui <yakui.zhao@intel.com>
 To:     x86@kernel.org, linux-kernel@vger.kernel.org,
         devel@driverdev.osuosl.org
 Cc:     Zhao Yakui <yakui.zhao@intel.com>,
         Jason Chen CJ <jason.cj.chen@intel.com>
-Subject: [RFC PATCH 01/15] x86/acrn: Report X2APIC for ACRN guest
-Date:   Fri, 16 Aug 2019 10:25:42 +0800
-Message-Id: <1565922356-4488-2-git-send-email-yakui.zhao@intel.com>
+Subject: [RFC PATCH 02/15] x86/acrn: Add two APIs to add/remove driver-specific upcall ISR handler
+Date:   Fri, 16 Aug 2019 10:25:43 +0800
+Message-Id: <1565922356-4488-3-git-send-email-yakui.zhao@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
 References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
@@ -36,44 +36,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After lapic is switched from xapic to x2apic mode, it can use the APIC
-MSR register to access local apic register in ACRN guest. This will
-help to remove some traps of lapic access in ACRN guest.
-Report the X2APIC so that the ACRN guest can be switched to x2apic mode.
+After the ACRN hypervisor sends the upcall notify interrupt, the upcall ISR
+handler will be served. Now almost nothing is handled in upcall ISR handler
+except acking EOI.
+The driver-specific ISR handler is registered by the driver, which helps to
+handle the real notification from ACRN hypervisor.
+This is similar to that in XEN/HyperV.
 
 Co-developed-by: Jason Chen CJ <jason.cj.chen@intel.com>
 Signed-off-by: Jason Chen CJ <jason.cj.chen@intel.com>
 Signed-off-by: Zhao Yakui <yakui.zhao@intel.com>
 ---
- arch/x86/kernel/cpu/acrn.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+ arch/x86/include/asm/acrn.h |  3 +++
+ arch/x86/kernel/cpu/acrn.c  | 12 ++++++++++++
+ 2 files changed, 15 insertions(+)
 
+diff --git a/arch/x86/include/asm/acrn.h b/arch/x86/include/asm/acrn.h
+index 4adb13f..857e6244 100644
+--- a/arch/x86/include/asm/acrn.h
++++ b/arch/x86/include/asm/acrn.h
+@@ -8,4 +8,7 @@ extern void acrn_hv_callback_vector(void);
+ #endif
+ 
+ extern void acrn_hv_vector_handler(struct pt_regs *regs);
++
++extern void acrn_setup_intr_irq(void (*handler)(void));
++extern void acrn_remove_intr_irq(void);
+ #endif /* _ASM_X86_ACRN_H */
 diff --git a/arch/x86/kernel/cpu/acrn.c b/arch/x86/kernel/cpu/acrn.c
-index 676022e..95db5c4 100644
+index 95db5c4..a1ce52a 100644
 --- a/arch/x86/kernel/cpu/acrn.c
 +++ b/arch/x86/kernel/cpu/acrn.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <asm/acrn.h>
- #include <asm/apic.h>
-+#include <asm/cpufeatures.h>
- #include <asm/desc.h>
- #include <asm/hypervisor.h>
- #include <asm/irq_regs.h>
-@@ -29,12 +30,7 @@ static void __init acrn_init_platform(void)
- 
- static bool acrn_x2apic_available(void)
- {
--	/*
--	 * x2apic is not supported for now. Future enablement will have to check
--	 * X86_FEATURE_X2APIC to determine whether x2apic is supported in the
--	 * guest.
--	 */
--	return false;
-+	return boot_cpu_has(X86_FEATURE_X2APIC);
+@@ -56,6 +56,18 @@ __visible void __irq_entry acrn_hv_vector_handler(struct pt_regs *regs)
+ 	set_irq_regs(old_regs);
  }
  
- static void (*acrn_intr_handler)(void);
++void acrn_setup_intr_irq(void (*handler)(void))
++{
++	acrn_intr_handler = handler;
++}
++EXPORT_SYMBOL_GPL(acrn_setup_intr_irq);
++
++void acrn_remove_intr_irq(void)
++{
++	acrn_intr_handler = NULL;
++}
++EXPORT_SYMBOL_GPL(acrn_remove_intr_irq);
++
+ const __initconst struct hypervisor_x86 x86_hyper_acrn = {
+ 	.name                   = "ACRN",
+ 	.detect                 = acrn_detect,
 -- 
 2.7.4
 
