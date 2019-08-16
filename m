@@ -2,84 +2,155 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2569490999
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:49:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6677890997
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 22:49:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfHPUtV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 16:49:21 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:43178 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727655AbfHPUtT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 16:49:19 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hyj9l-0000JK-Q7; Fri, 16 Aug 2019 22:49:05 +0200
-Date:   Fri, 16 Aug 2019 22:49:04 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Joel Fernandes <joel@joelfernandes.org>
-cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        rostedt <rostedt@goodmis.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        paulmck <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
-In-Reply-To: <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de>
-References: <241506096.21688.1565977319832.JavaMail.zimbra@efficios.com> <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org> <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727652AbfHPUtN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 16:49:13 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:60832 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727568AbfHPUtN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 16:49:13 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3D3F4301D678;
+        Fri, 16 Aug 2019 20:49:12 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id BF22519C6A;
+        Fri, 16 Aug 2019 20:49:11 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] libnvdimm/security: Tighten scope of nvdimm->busy vs security operations
+References: <156583201347.2815870.4687949334637966672.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <156583202386.2815870.16611751329252858110.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Fri, 16 Aug 2019 16:49:10 -0400
+In-Reply-To: <156583202386.2815870.16611751329252858110.stgit@dwillia2-desk3.amr.corp.intel.com>
+        (Dan Williams's message of "Wed, 14 Aug 2019 18:20:23 -0700")
+Message-ID: <x49zhk8bzuh.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 16 Aug 2019 20:49:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Aug 2019, Joel Fernandes wrote:
-> On Fri, Aug 16, 2019 at 3:19 PM Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Fri, 16 Aug 2019, Mathieu Desnoyers wrote:
-> >
-> > > If you choose not to use READ_ONCE(), then the "load tearing" issue can
-> > > cause similar spurious 1 -> 0 -> 1 transitions near 16-bit counter
-> > > overflow as described above. The "Invented load" also becomes an issue,
-> > > because the compiler could use the loaded value for a branch, and re-load
-> > > that value between two branches which are expected to use the same value,
-> > > effectively generating a corrupted state.
-> > >
-> > > I think we need a statement about whether READ_ONCE/WRITE_ONCE should
-> > > be used in this kind of situation, or if we are fine dealing with the
-> > > awkward compiler side-effects when they will occur.
-> >
-> > The only real downside (apart from readability) of READ_ONCE and
-> > WRITE_ONCE is that they prevent the compiler from optimizing accesses
-> > to the location being read or written.  But if you're just doing a
-> > single access in each place, not multiple accesses, then there's
-> > nothing to optimize anyway.  So there's no real reason not to use
-> > READ_ONCE or WRITE_ONCE.
-> 
-> I am also more on the side of using *_ONCE. To me, by principal, I
-> would be willing to convert any concurrent plain access using _ONCE,
-> just so we don't have to worry about it now or in the future and also
-> documents the access.
+Dan Williams <dan.j.williams@intel.com> writes:
 
-By that argumentation we need to plaster half of the kernel with _ONCE()
-and I'm so not looking forward to the insane amount of script kiddies
-patches to do that.
+> The blanket blocking of all security operations while the DIMM is in
+> active use in a region is too restrictive. The only security operations
+> that need to be aware of the ->busy state are those that mutate the
+> state of data, i.e. erase and overwrite.
+>
+> Refactor the ->busy checks to be applied at the entry common entry point
+> in __security_store() rather than each of the helper routines.
 
-Can we finally put a foot down and tell compiler and standard committee
-people to stop this insanity?
+I'm not sure this buys you much.  Did you test this on actual hardware
+to make sure your assumptions are correct?  I guess the worst case is we
+get an "invalid security state" error back from the firmware....
 
-Thanks,
+Still, what's the motivation for this?
 
-	tglx
+-Jeff
+
+>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  drivers/nvdimm/dimm_devs.c |   33 ++++++++++++++++-----------------
+>  drivers/nvdimm/security.c  |   10 ----------
+>  2 files changed, 16 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/nvdimm/dimm_devs.c b/drivers/nvdimm/dimm_devs.c
+> index 53330625fe07..d837cb9be83d 100644
+> --- a/drivers/nvdimm/dimm_devs.c
+> +++ b/drivers/nvdimm/dimm_devs.c
+> @@ -424,9 +424,6 @@ static ssize_t __security_store(struct device *dev, const char *buf, size_t len)
+>  	unsigned int key, newkey;
+>  	int i;
+>  
+> -	if (atomic_read(&nvdimm->busy))
+> -		return -EBUSY;
+> -
+>  	rc = sscanf(buf, "%"__stringify(SEC_CMD_SIZE)"s"
+>  			" %"__stringify(KEY_ID_SIZE)"s"
+>  			" %"__stringify(KEY_ID_SIZE)"s",
+> @@ -451,23 +448,25 @@ static ssize_t __security_store(struct device *dev, const char *buf, size_t len)
+>  	} else if (i == OP_DISABLE) {
+>  		dev_dbg(dev, "disable %u\n", key);
+>  		rc = nvdimm_security_disable(nvdimm, key);
+> -	} else if (i == OP_UPDATE) {
+> -		dev_dbg(dev, "update %u %u\n", key, newkey);
+> -		rc = nvdimm_security_update(nvdimm, key, newkey, NVDIMM_USER);
+> -	} else if (i == OP_ERASE) {
+> -		dev_dbg(dev, "erase %u\n", key);
+> -		rc = nvdimm_security_erase(nvdimm, key, NVDIMM_USER);
+> +	} else if (i == OP_UPDATE || i == OP_MASTER_UPDATE) {
+> +		dev_dbg(dev, "%s %u %u\n", ops[i].name, key, newkey);
+> +		rc = nvdimm_security_update(nvdimm, key, newkey, i == OP_UPDATE
+> +				? NVDIMM_USER : NVDIMM_MASTER);
+> +	} else if (i == OP_ERASE || i == OP_MASTER_ERASE) {
+> +		dev_dbg(dev, "%s %u\n", ops[i].name, key);
+> +		if (atomic_read(&nvdimm->busy)) {
+> +			dev_dbg(dev, "Unable to secure erase while DIMM active.\n");
+> +			return -EBUSY;
+> +		}
+> +		rc = nvdimm_security_erase(nvdimm, key, i == OP_ERASE
+> +				? NVDIMM_USER : NVDIMM_MASTER);
+>  	} else if (i == OP_OVERWRITE) {
+>  		dev_dbg(dev, "overwrite %u\n", key);
+> +		if (atomic_read(&nvdimm->busy)) {
+> +			dev_dbg(dev, "Unable to overwrite while DIMM active.\n");
+> +			return -EBUSY;
+> +		}
+>  		rc = nvdimm_security_overwrite(nvdimm, key);
+> -	} else if (i == OP_MASTER_UPDATE) {
+> -		dev_dbg(dev, "master_update %u %u\n", key, newkey);
+> -		rc = nvdimm_security_update(nvdimm, key, newkey,
+> -				NVDIMM_MASTER);
+> -	} else if (i == OP_MASTER_ERASE) {
+> -		dev_dbg(dev, "master_erase %u\n", key);
+> -		rc = nvdimm_security_erase(nvdimm, key,
+> -				NVDIMM_MASTER);
+>  	} else
+>  		return -EINVAL;
+>  
+> diff --git a/drivers/nvdimm/security.c b/drivers/nvdimm/security.c
+> index 5862d0eee9db..2166e627383a 100644
+> --- a/drivers/nvdimm/security.c
+> +++ b/drivers/nvdimm/security.c
+> @@ -334,11 +334,6 @@ int nvdimm_security_erase(struct nvdimm *nvdimm, unsigned int keyid,
+>  			|| !nvdimm->sec.flags)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (atomic_read(&nvdimm->busy)) {
+> -		dev_dbg(dev, "Unable to secure erase while DIMM active.\n");
+> -		return -EBUSY;
+> -	}
+> -
+>  	rc = check_security_state(nvdimm);
+>  	if (rc)
+>  		return rc;
+> @@ -380,11 +375,6 @@ int nvdimm_security_overwrite(struct nvdimm *nvdimm, unsigned int keyid)
+>  			|| !nvdimm->sec.flags)
+>  		return -EOPNOTSUPP;
+>  
+> -	if (atomic_read(&nvdimm->busy)) {
+> -		dev_dbg(dev, "Unable to overwrite while DIMM active.\n");
+> -		return -EBUSY;
+> -	}
+> -
+>  	if (dev->driver == NULL) {
+>  		dev_dbg(dev, "Unable to overwrite while DIMM active.\n");
+>  		return -EINVAL;
+>
+> _______________________________________________
+> Linux-nvdimm mailing list
+> Linux-nvdimm@lists.01.org
+> https://lists.01.org/mailman/listinfo/linux-nvdimm
