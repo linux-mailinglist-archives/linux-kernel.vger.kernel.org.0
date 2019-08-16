@@ -2,132 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 00AAA90154
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8DD90163
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 14:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727246AbfHPMYa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 08:24:30 -0400
-Received: from mail-eopbgr150049.outbound.protection.outlook.com ([40.107.15.49]:25875
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727143AbfHPMY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 08:24:29 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=idY1cyXaUHBt1HWm5F512v9X+MSs7CDkVZwMy93Ftnm+UXINrGS/jHsKvzBBYqMpKKoq/A06i5RSxZXhJZi3y934iyIbDQov6M0YunnmHDwy6nEEw9IYqHgVdtq0AFxXn8vHa+e9F06Jr2xA8fxjsnVgXT5zTfN8hyt6ORXXr7MPh7Irl6+7Fq+3oJtNjIxf5Ylt78YrcZIDIPq1kYjxatG43KwTAoXNw6wResGyo0/eL5m/pmTFA6z9re3pMwPwtrv062pmxlhA3F2auLP+oZklGISbjej4zhSvU1u/Z9jXbeUvgf5BjwGNxyDqCZUybQtHM3rRpYzom9shsyx8fQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cJYIOE5xJym+70NFJ7KIu6ayqkfMtXmLpVUuEXah5/w=;
- b=VG08dlcKcXO/Qi42XyZ0xpALa4cGJuV5y8CnM2akeQN75jUiF9+AGpR5xcRYv95+8RXtJYJZj7AYhxGhKeJ/gCW6uMLx2fpF7KcuhvSReh7Kwh0LMEVyHk7ohfEl5JpKmxhlvusv8G7PJ+EmxoZiBxP+qNzINEfFPtXebTVHzLeykImelFIhm988dBl918+ZHw7d3yHRwIIN4Vc+IZQcmaRfpYP7H75LuykmzHj08kO0j65OIw1/DQGJwLNRPJqxao3eTiO+Us7uztTVUZu+Jo91OYm/bxu9ljhi3sqQbfo6bg130ena+2iE65zP3/PWTe9c5gzLqswtp2CXBh+Rtw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
- dkim=pass header.d=mellanox.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cJYIOE5xJym+70NFJ7KIu6ayqkfMtXmLpVUuEXah5/w=;
- b=nCS9yH6R06H9jKAK563o7ttlvecERk82fYLTPybQtdSlsj6+xe9ltE5PDwDHt39aje1zcudua4MNiEGrcJcQrSf1dTu7m8frYyQ5ir57kAFrnPE2Du06emvb7UGwh71U9MeIoE00h9WyFmlTg0Tpi3mZepahPXn56h2rlza8fxQ=
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
- VI1PR05MB5616.eurprd05.prod.outlook.com (20.177.203.92) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Fri, 16 Aug 2019 12:24:25 +0000
-Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1d6:9c67:ea2d:38a7]) by VI1PR05MB4141.eurprd05.prod.outlook.com
- ([fe80::1d6:9c67:ea2d:38a7%6]) with mapi id 15.20.2178.016; Fri, 16 Aug 2019
- 12:24:25 +0000
-From:   Jason Gunthorpe <jgg@mellanox.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Jerome Glisse <jglisse@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Ben Skeggs <bskeggs@redhat.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Ralph Campbell <rcampbell@nvidia.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/15] mm: remove the pgmap field from struct hmm_vma_walk
-Thread-Topic: [PATCH 04/15] mm: remove the pgmap field from struct
- hmm_vma_walk
-Thread-Index: AQHVTHDc5B4IgstYQk6yBJaVfn8xGqbv9wIAgAARNACAAMySgIAJE76AgABlPQCAAGF5AIAAFowAgAHIzYCAABojAIAAAd6AgAAIBgCAAAXLAIAAAlcAgAABmgCAAEFKgIAANiwAgACOWAA=
-Date:   Fri, 16 Aug 2019 12:24:25 +0000
-Message-ID: <20190816122414.GC5412@mellanox.com>
-References: <CAPcyv4g8usp8prJ+1bMtyV1xuedp5FKErBp-N8+KzR=rJ-v0QQ@mail.gmail.com>
- <20190815180325.GA4920@redhat.com>
- <CAPcyv4g4hzcEA=TPYVTiqpbtOoS30ahogRUttCvQAvXQbQjfnw@mail.gmail.com>
- <20190815194339.GC9253@redhat.com>
- <CAPcyv4jid8_=-8hBpn_Qm=c4S8BapL9B9RGT7e9uu303yH=Yqw@mail.gmail.com>
- <20190815203306.GB25517@redhat.com> <20190815204128.GI22970@mellanox.com>
- <CAPcyv4j_Mxbw+T+yXTMdkrMoS_uxg+TXXgTM_EPBJ8XfXKxytA@mail.gmail.com>
- <20190816004053.GB9929@mellanox.com>
- <CAPcyv4gMPVmY59aQAT64jQf9qXrACKOuV=DfVs4sNySCXJhkdA@mail.gmail.com>
-In-Reply-To: <CAPcyv4gMPVmY59aQAT64jQf9qXrACKOuV=DfVs4sNySCXJhkdA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: YTBPR01CA0007.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:14::20) To VI1PR05MB4141.eurprd05.prod.outlook.com
- (2603:10a6:803:4d::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jgg@mellanox.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [156.34.55.100]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: b3c6da16-b7de-485f-133b-08d72244acd8
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR05MB5616;
-x-ms-traffictypediagnostic: VI1PR05MB5616:
-x-microsoft-antispam-prvs: <VI1PR05MB5616D7ED42010F9241692F0ECFAF0@VI1PR05MB5616.eurprd05.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0131D22242
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(376002)(39860400002)(396003)(366004)(136003)(189003)(199004)(2616005)(86362001)(6512007)(7736002)(6506007)(386003)(305945005)(2906002)(229853002)(66066001)(14454004)(71190400001)(71200400001)(66446008)(6436002)(5660300002)(66476007)(66556008)(64756008)(6486002)(66946007)(1076003)(36756003)(4744005)(25786009)(186003)(4326008)(26005)(6246003)(316002)(6916009)(7416002)(102836004)(53936002)(6116002)(52116002)(54906003)(3846002)(33656002)(81156014)(478600001)(81166006)(76176011)(256004)(476003)(8676002)(14444005)(11346002)(8936002)(99286004)(446003)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB5616;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: mellanox.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: aZkmehug+5+JEN4NslXVQoRL/lddKLVuZ56xnkoNM3mlRRM1iDYg8giyqCQ+rqsv3+JshkTMAS3W9U5LeI0HRqKsl1S43Zr3qE/O8ZBVVejOdMMq/D3Fu7xar2O05Yd1rredEABw5axv05P68WM9dv4EMVs7jJTKAe75+OuQ3yM+9MdtMXLOxrWnVry1XlsQZK/kmixAE7cq8G8XEkeHvtrHxSowtp7jwHb5bzLjoCcZTXZZjY67/P8Z74kO5Eo8LDfrECJeDuSh/RMnHNAEI1SkSuUUx+oRLLawpH9cUmYYJ91CfY+SriVH1DF7yMLtxf/WW/h6JKE2U/rpBCnAZ0Gg1V/xfW6MKCaqjHbeJZ/Fh9nbRdaknFcai1YxdKW0bzIGXnhfU9lp4+qaaE6DUb1fRfiEh6HP5HnadKjK//A=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <43A39A5E1EC938439754F1B9A3ACBE6E@eurprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1727520AbfHPMZR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 08:25:17 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:58449 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727403AbfHPMZQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 08:25:16 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7GCP98J2801002
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Fri, 16 Aug 2019 05:25:09 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7GCP98J2801002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2019071901; t=1565958309;
+        bh=WT5AhycWZYysrWH/S8jXTu4DVUQHLY0iSHg50Eu7hO4=;
+        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
+        b=R2oB/ft41B6JrZrw+xQUVHg2kAx+SM5zFwdH7ghqi+ZQeIVymMqMZZgUW1+IhEt5T
+         Yu2fHT5Z4/hj5AVIPJG38szOC5z6bB0ZigyufswCZOXaziqsZHm0XbFzDeCJ9FPYid
+         K8kxYsEp7ZYswomqzIsb90fYLdJT6TMdklozEGh81Op/exrwvWfdsGM29H5vawsIYa
+         tvt72qxOBoFUgf3lqXPvF6YkUStLptnAlBzF7v3ek9uf4Hr3h23tQo4kwOCtzvpb1r
+         KgmpZWU7tjC5l9We9Rsf7cNgkPOGoI3AjuJq6c/HN7dJ+ziIlSh0Mzd63AS4cjcz3q
+         xqINmXP+Y/7Pw==
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7GCP8nK2800999;
+        Fri, 16 Aug 2019 05:25:08 -0700
+Date:   Fri, 16 Aug 2019 05:25:08 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for John Hubbard <tipbot@zytor.com>
+Message-ID: <tip-a90118c445cc7f07781de26a9684d4ec58bfcfd1@git.kernel.org>
+Cc:     hpa@zytor.com, mingo@kernel.org, tglx@linutronix.de,
+        jhubbard@nvidia.com, linux-kernel@vger.kernel.org
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org, hpa@zytor.com,
+          tglx@linutronix.de, jhubbard@nvidia.com
+In-Reply-To: <20190731054627.5627-2-jhubbard@nvidia.com>
+References: <20190731054627.5627-2-jhubbard@nvidia.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/urgent] x86/boot: Save fields explicitly, zero out
+ everything else
+Git-Commit-ID: a90118c445cc7f07781de26a9684d4ec58bfcfd1
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-X-OriginatorOrg: Mellanox.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3c6da16-b7de-485f-133b-08d72244acd8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Aug 2019 12:24:25.0995
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: YUpYwR+jJSKkQAfrI6Lp3gtkUg6E4Ru4V3xRN9XHkNq4GC0s2myrtBg/xfBZTdyh6DDEyWa6d1rPzxxK5bG/5w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB5616
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
+X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
+        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
+        autolearn=no autolearn_force=no version=3.4.2
+X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 08:54:46PM -0700, Dan Williams wrote:
+Commit-ID:  a90118c445cc7f07781de26a9684d4ec58bfcfd1
+Gitweb:     https://git.kernel.org/tip/a90118c445cc7f07781de26a9684d4ec58bfcfd1
+Author:     John Hubbard <jhubbard@nvidia.com>
+AuthorDate: Tue, 30 Jul 2019 22:46:27 -0700
+Committer:  Thomas Gleixner <tglx@linutronix.de>
+CommitDate: Fri, 16 Aug 2019 14:20:00 +0200
 
-> > However, this means we cannot do any processing of ZONE_DEVICE pages
-> > outside the driver lock, so eg, doing any DMA map that might rely on
-> > MEMORY_DEVICE_PCI_P2PDMA has to be done in the driver lock, which is
-> > a bit unfortunate.
->=20
-> Wouldn't P2PDMA use page pins? Not needing to hold a lock over
-> ZONE_DEVICE page operations was one of the motivations for plumbing
-> get_dev_pagemap() with a percpu-ref.
+x86/boot: Save fields explicitly, zero out everything else
 
-hmm_range_fault() doesn't use page pins at all, so if a ZONE_DEVICE
-page comes out of it then it needs to use another locking pattern.
+Recent gcc compilers (gcc 9.1) generate warnings about an out of bounds
+memset, if the memset goes accross several fields of a struct. This
+generated a couple of warnings on x86_64 builds in sanitize_boot_params().
 
-If I follow it all right:
+Fix this by explicitly saving the fields in struct boot_params
+that are intended to be preserved, and zeroing all the rest.
 
-We can do a get_dev_pagemap inside the page_walk and touch the pgmap,
-or we can do the 'device mutex && retry' pattern and touch the pgmap
-in the driver, under that lock.
+[ tglx: Tagged for stable as it breaks the warning free build there as well ]
 
-However in all cases the current get_dev_pagemap()'s in the page walk
-are not necessary, and we can delete them.
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: stable@vger.kernel.org
+Link: https://lkml.kernel.org/r/20190731054627.5627-2-jhubbard@nvidia.com
 
-?
+---
+ arch/x86/include/asm/bootparam_utils.h | 63 ++++++++++++++++++++++++++--------
+ 1 file changed, 48 insertions(+), 15 deletions(-)
 
-Jason
+diff --git a/arch/x86/include/asm/bootparam_utils.h b/arch/x86/include/asm/bootparam_utils.h
+index 101eb944f13c..f5e90a849bca 100644
+--- a/arch/x86/include/asm/bootparam_utils.h
++++ b/arch/x86/include/asm/bootparam_utils.h
+@@ -18,6 +18,20 @@
+  * Note: efi_info is commonly left uninitialized, but that field has a
+  * private magic, so it is better to leave it unchanged.
+  */
++
++#define sizeof_mbr(type, member) ({ sizeof(((type *)0)->member); })
++
++#define BOOT_PARAM_PRESERVE(struct_member)				\
++	{								\
++		.start = offsetof(struct boot_params, struct_member),	\
++		.len   = sizeof_mbr(struct boot_params, struct_member),	\
++	}
++
++struct boot_params_to_save {
++	unsigned int start;
++	unsigned int len;
++};
++
+ static void sanitize_boot_params(struct boot_params *boot_params)
+ {
+ 	/* 
+@@ -35,21 +49,40 @@ static void sanitize_boot_params(struct boot_params *boot_params)
+ 	 * problems again.
+ 	 */
+ 	if (boot_params->sentinel) {
+-		/* fields in boot_params are left uninitialized, clear them */
+-		boot_params->acpi_rsdp_addr = 0;
+-		memset(&boot_params->ext_ramdisk_image, 0,
+-		       (char *)&boot_params->efi_info -
+-			(char *)&boot_params->ext_ramdisk_image);
+-		memset(&boot_params->kbd_status, 0,
+-		       (char *)&boot_params->hdr -
+-		       (char *)&boot_params->kbd_status);
+-		memset(&boot_params->_pad7[0], 0,
+-		       (char *)&boot_params->edd_mbr_sig_buffer[0] -
+-			(char *)&boot_params->_pad7[0]);
+-		memset(&boot_params->_pad8[0], 0,
+-		       (char *)&boot_params->eddbuf[0] -
+-			(char *)&boot_params->_pad8[0]);
+-		memset(&boot_params->_pad9[0], 0, sizeof(boot_params->_pad9));
++		static struct boot_params scratch;
++		char *bp_base = (char *)boot_params;
++		char *save_base = (char *)&scratch;
++		int i;
++
++		const struct boot_params_to_save to_save[] = {
++			BOOT_PARAM_PRESERVE(screen_info),
++			BOOT_PARAM_PRESERVE(apm_bios_info),
++			BOOT_PARAM_PRESERVE(tboot_addr),
++			BOOT_PARAM_PRESERVE(ist_info),
++			BOOT_PARAM_PRESERVE(acpi_rsdp_addr),
++			BOOT_PARAM_PRESERVE(hd0_info),
++			BOOT_PARAM_PRESERVE(hd1_info),
++			BOOT_PARAM_PRESERVE(sys_desc_table),
++			BOOT_PARAM_PRESERVE(olpc_ofw_header),
++			BOOT_PARAM_PRESERVE(efi_info),
++			BOOT_PARAM_PRESERVE(alt_mem_k),
++			BOOT_PARAM_PRESERVE(scratch),
++			BOOT_PARAM_PRESERVE(e820_entries),
++			BOOT_PARAM_PRESERVE(eddbuf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
++			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
++			BOOT_PARAM_PRESERVE(e820_table),
++			BOOT_PARAM_PRESERVE(eddbuf),
++		};
++
++		memset(&scratch, 0, sizeof(scratch));
++
++		for (i = 0; i < ARRAY_SIZE(to_save); i++) {
++			memcpy(save_base + to_save[i].start,
++			       bp_base + to_save[i].start, to_save[i].len);
++		}
++
++		memcpy(boot_params, save_base, sizeof(*boot_params));
+ 	}
+ }
+ 
