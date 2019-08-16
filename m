@@ -2,71 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 95F2E8FFD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:13:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF5658FFD3
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 12:14:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727126AbfHPKNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 06:13:50 -0400
-Received: from sonic311-23.consmr.mail.ne1.yahoo.com ([66.163.188.204]:46718
-        "EHLO sonic311-23.consmr.mail.ne1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727035AbfHPKNu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 06:13:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1565950429; bh=tPdyM4f7Tq8kspt5syr9wxbiHLUxanV8lkCr2Pkkkas=; h=Date:From:Reply-To:Subject:From:Subject; b=KzZIvSlT/tkgHH/H1HsXcwAXCmFM0k71WwppyCFiF8SCh3QhIh6FLSrxBhCkL/DK+juxDoUpasXEtPBry43TrH3UD7Lo25eRrerTaP3GS5SAXW7iF99hs4eg+SRem3aoTaO3narLINvuhfuf97RpnjINR8z3K7zQ8Ofg9avLeW4cVxHkGjlXEIkfY3zHoC6SQmWJOg023TE+MiNWvg8+MpnuZj6K7PTsLV3mtmEbJxShrAQtwEZMLz/yddIl6z1UmLW1qaHG/vfeP6qYAB4KTifxoHQa/m3stxWn6NgCdwN+hDS4IDYl/5HdyMJHBPUo15/scuJzsGTyN3AJYKpGqw==
-X-YMail-OSG: c42ZiIgVM1nJL50rJK1cZjZDtCdll1G1wDkzbCSiZVSsEIpyToBx3fb_G2eMuF2
- GFHJwRateeNws7FK0DbavyhkIDTKoEOsMA6gcHzQnM0QOqJ0saEPX5DV5ysY1o0SarRTs19_y4B6
- VSD8fxT5PfK2_wpyu91AAVgBfjYS2J3GWbh6Afc.CJzfRbvdVzqTqc.GQbvSsqDnYJ91_.RZhCY4
- ZXj3xJwtLEAa6Zpj6ICmnut93XJ3C2mSLuRS9gWV5ugOUUunawBZrh9gi.ZVO9gllwjPwmu0mibR
- Knskz9lhx2n2wtUvuvBAsVr6cNlNxNrKmimIPKo69wNjyvIv6L2eA2CKdRp.md2MTB6cABIrJs2n
- fXghW1U7ZrxEzPTjPQEmBjjMziIa02zrihQH1RVPaXF4.08.PHahOObdBvvWFR21t82jDeMFc0iK
- 5GJPT6WOIhxGnxXQpNjqswveQoJNF2IcADcYrDT2_R76lVaXDP3FyeQnWegG8WCyuWs4dInnQu1i
- WEntt0APfBL3xaSDkKru0hitv2wpz9tEw5gEeyh3rRBtrwD4AVN2C5IYHcPEIysE3SsB5wHqrJy5
- ofMQb8Wu_4KxtIDJ1KVueJEOSOCCpOWIkjGIoHJs5WCyQmdqJxXMe4QYnTMlyeCT2RdANVJLtsav
- 79IR.fOIJWjY9FdMwL24ibju5ZYq20Wrpf9PwrxmYYqERCMGjs3Pj9KMZFD2VOWHnOV9RSmr1J9n
- j8cWXZXZq2.kN2syAkaLN.bb4sYG5ZZqkvDp13YstaXuZm6HP4GptHYMsZ98OfCDD470_QqMHAce
- JUIGcOKZiQtzNWEiw6r21L2kDkf51RZmymLX1JDCm154ZDlPYieYB_NJK6GyC20raD1fo9CbgWER
- hXf0Kk2l1QrfgQMM2KT.zIlJkaV26y0MeOiUrkB7YkTKYpj7l42TTn9j0SvmDDpB.Ww7NgDWj5eN
- 2.gUeZyrhEYKsMraK4YVf5JikZhTuiBJBD_P0nsgPKhRfuwNDAHfAOl_qZ63qqLDisz00.pXagWZ
- DgzShumLlbT02os90oIMAfAGVB6BkJL9x4SvFyranmlwsRzkeGEMSkrAeZcpB9TZgDDbrENpiIWi
- vTHLqhdmJO4Blrp0zTlwIw.4bt3eXFxDMGdoXvFvPzNHOblnnpqMO4U7pz9VSiPPjit62og91tkC
- bZmF1VriuUqSD1OKJKxsqqRRDLBua3_H1EtueIJSsuLQ0ESJoZ1cNl.G.4Z02LXLEgn15hDO4Ubs
- KBoAWvo3cJdb7
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.ne1.yahoo.com with HTTP; Fri, 16 Aug 2019 10:13:49 +0000
-Date:   Fri, 16 Aug 2019 10:13:45 +0000 (UTC)
-From:   Aisha Gaddafi <gaddafi661@gmail.com>
-Reply-To: gaisha983@gmail.com
-Message-ID: <208601980.6195563.1565950425294@mail.yahoo.com>
-Subject: Dear Friend,
+        id S1727148AbfHPKOI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 06:14:08 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40024 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727028AbfHPKOH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 06:14:07 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 7AE0DAB9D;
+        Fri, 16 Aug 2019 10:14:06 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH 0/3] debug_pagealloc improvements through page_owner
+Date:   Fri, 16 Aug 2019 12:13:58 +0200
+Message-Id: <20190816101401.32382-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Friend,
+The debug_pagealloc functionality serves a similar purpose on the page
+allocator level that slub_debug does on the kmalloc level, which is to detect
+bad users. One notable feature that slub_debug has is storing stack traces of
+who last allocated and freed the object. On page level we track allocations via
+page_owner, but that info is discarded when freeing, and we don't track freeing
+at all. This series improves those aspects. With both debug_pagealloc and
+page_owner enabled, we can then get bug reports such as the example in Patch 3.
 
-I came across your e-mail contact prior a private search while in need of 
-your assistance. My name is Aisha  Gaddafi a single Mother and a Widow with 
-three Children. I am the only biological Daughter of late Libyan President 
-(Late Colonel Muammar Gaddafi).
+SLUB debug tracking additionaly stores cpu, pid and timestamp. This could be
+added later, if deemed useful enough to justify the additional page_ext
+structure size.
 
-I have investment funds worth Twenty Seven Million Five Hundred Thousand 
-United State Dollar ($27.500.000.00 ) and i need a trusted investment 
-Manager/Partner because of my current refugee status, however, I am 
-interested in you for investment project assistance in your country, may be 
-from there, we can build business relationship in the nearest future.
+Vlastimil Babka (3):
+  mm, page_owner: record page owner for each subpage
+  mm, page_owner: keep owner info when freeing the page
+  mm, page_owner, debug_pagealloc: save and dump freeing stack trace
 
-I am willing to negotiate investment/business profit sharing ratio with you 
-base on the future investment earning profits.
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ include/linux/page_ext.h                      |   1 +
+ mm/Kconfig.debug                              |   4 +-
+ mm/page_owner.c                               | 123 +++++++++++++-----
+ 4 files changed, 96 insertions(+), 34 deletions(-)
 
-If you are willing to handle this project on my behalf kindly reply urgent 
-to enable me provide you more information about the investment funds.
+-- 
+2.22.0
 
-Your Urgent Reply Will Be Appreciated.
-
-Best Regards
-Mrs Aisha Gaddafi
-(gaisha983@gmail.com)
