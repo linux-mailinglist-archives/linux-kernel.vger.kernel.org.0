@@ -2,174 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CBEF8FE0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:38:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 299AA8FDFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 10:37:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbfHPIhw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 04:37:52 -0400
-Received: from esa2.mentor.iphmx.com ([68.232.141.98]:1938 "EHLO
+        id S1726949AbfHPIhR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 04:37:17 -0400
+Received: from esa2.mentor.iphmx.com ([68.232.141.98]:1919 "EHLO
         esa2.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfHPIhu (ORCPT
+        with ESMTP id S1726810AbfHPIhQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:37:50 -0400
-IronPort-SDR: QHXqsxKNVGMZTzMI0sQgJEMvQS/1YxGrIpq5MlLSTLCxdEUumxSnlIiXJqpPkBJIQB/4iZ2B5V
- mFCTIEJbZzPtOdD6z17XNmTCYvcHUYvtcxYBPNx441VNfvuRr5mu9W5JjWMlDvr6PZ7XxW2+EE
- 2F3itdrOXSXxFwDkNVhEmB17fnA+h3D5VBgxo46qrKtd2Je+a+ww8ds7cY1a5GaTL4fdAmP0KU
- AhER1NdaLTVPxxM9YusvAAmoXU7Oxx3aPCQPKkJWfjefwEmudyy+EZr+yhQziBhBknu+LNRFiY
- sLQ=
+        Fri, 16 Aug 2019 04:37:16 -0400
+X-Greylist: delayed 306 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Aug 2019 04:37:16 EDT
+IronPort-SDR: VmNrKHCByHWrkM4V4KRDR4+Hxrqu1hMZI6D/4tWcIwqjmiavILAkaZ2jHnmYJHNjz1ZpyTsisq
+ SmoYDTD46b9e+oXHKfJKLOc/lPP6LoGNz2i2NwDi93mfXFbrEaKn5mARIcKR3Iuce2gYDg5mXT
+ OjXQcQr6Zsow7mQNmDob6U8FwR3p2QsdQ1s7Ll+8prOh94gs+d50GvIiDlbdj/mcsx/ghaVbWV
+ lwuu17zglNbPB63CJv+8kUdTjaDbD0hm0tXEuk3oJGc1i0u/eCb4IWGAxDpwYfzskErfK+twVS
+ ilY=
 X-IronPort-AV: E=Sophos;i="5.64,391,1559548800"; 
-   d="scan'208";a="40484288"
+   d="scan'208";a="40484352"
 Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
-  by esa2.mentor.iphmx.com with ESMTP; 16 Aug 2019 00:34:46 -0800
-IronPort-SDR: gc3OeUSWoHtEFLIM71heKMSCLciyBspMLFB3ndI+7f7JljMFNudoreDPZ3FOuUBOMcfbnPWvfe
- tFt9NPyHQjGgDKvEB21202eCWGRnYXsX/rAWXSicwDaD7eFSKFrVNk1Qfzxjfj3+MVVoYXHLhh
- 2V609kRBG6kt09HGuJXIEFwwCmK6X0fJwPCt+TaLeAKekk6ri1ERRZuMZRq4+SP3VyxU3hs+lN
- YruYO59hJaCvy1wnrYFrvBrAZgFEEYRHttGID7fgK5n1mhbZ4U5fR9yGd+PYjY269r97BTFhPD
- 7pE=
+  by esa2.mentor.iphmx.com with ESMTP; 16 Aug 2019 00:37:15 -0800
+IronPort-SDR: Tt9VHoDr4caUaTTUn3oLYZMU5Y8pWis5x0HIUll2oqUXLzbUMJ6ZlDxogSs3WpLnYS5fRTF0st
+ yL1ZdOK8cPObsZdEkVuxBWCbRqUtdy7o5/OHGMTGZutUX9Kt3TugbLSfFRRs5Ad3/NNF2sFMsD
+ OlaWlx2BiMjncRA2btmXng8F4pfd6Z+D0YeuFgy25Eu8bwGVLEucJ2pLDjXNeiRDbktIhWmc1T
+ zVBKbcYxxob1yCwAN/gpZKJFbykxnwFKeJyk/qJthvakCxmBSqFVTiVYMQw5JRc4ly6gYP/OMX
+ Z3w=
 From:   Jiada Wang <jiada_wang@mentor.com>
 To:     <nick@shmanahar.org>, <dmitry.torokhov@gmail.com>
 CC:     <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <jiada_wang@mentor.com>, <george_davis@mentor.com>
-Subject: [PATCH v1 31/63] Input: atmel_mxt_ts - add memory access interface via sysfs
-Date:   Fri, 16 Aug 2019 17:34:19 +0900
-Message-ID: <20190816083451.18947-2-jiada_wang@mentor.com>
+Subject: [PATCH v1 45/63] Input: Atmel: improve error handling in mxt_start()
+Date:   Fri, 16 Aug 2019 17:37:06 +0900
+Message-ID: <20190816083724.19341-1-jiada_wang@mentor.com>
 X-Mailer: git-send-email 2.19.2
-In-Reply-To: <20190816083451.18947-1-jiada_wang@mentor.com>
-References: <20190816083451.18947-1-jiada_wang@mentor.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
-X-ClientProxiedBy: SVR-ORW-MBX-07.mgc.mentorg.com (147.34.90.207) To
+X-ClientProxiedBy: svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203) To
  svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nick Dyer <nick.dyer@itdev.co.uk>
+From: Deepak Das <deepak_das@mentor.com>
 
-Atmel maXTouch chips can be addressed via an "Object Based Protocol" which
-defines how i2c registers are mapped to different functions within the
-chips. This interface exposes the register map and allows user-space
-utilities to inspect and alter object configuration, and to view diagnostic
-data, while the device is running.
+mxt_start() does not return error in any of
+the failure cases which will allow input_dev->open()
+to return success even in case of any failure.
 
-Signed-off-by: Nick Dyer <nick.dyer@itdev.co.uk>
-Acked-by: Benson Leung <bleung@chromium.org>
-(cherry picked from ndyer/linux/for-upstream commit 80731e95c888d09b663ad9eeaf4163939bfe17f8)
+This commit modifies mxt_start() to return error
+in failure cases.
+
+Signed-off-by: Deepak Das <deepak_das@mentor.com>
 Signed-off-by: George G. Davis <george_davis@mentor.com>
-[jiada: Fix compilation warnings]
 Signed-off-by: Jiada Wang <jiada_wang@mentor.com>
 ---
- drivers/input/touchscreen/atmel_mxt_ts.c | 74 ++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ drivers/input/touchscreen/atmel_mxt_ts.c | 31 ++++++++++++------------
+ 1 file changed, 16 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/input/touchscreen/atmel_mxt_ts.c b/drivers/input/touchscreen/atmel_mxt_ts.c
-index e317900279ed..05b21c9c0c04 100644
+index ed5b98c067e8..232262736029 100644
 --- a/drivers/input/touchscreen/atmel_mxt_ts.c
 +++ b/drivers/input/touchscreen/atmel_mxt_ts.c
-@@ -335,6 +335,7 @@ struct mxt_data {
- 	u8 t100_aux_ampl;
- 	u8 t100_aux_area;
- 	u8 t100_aux_vect;
-+	struct bin_attribute mem_access_attr;
- 	bool debug_enabled;
- 	u8 max_reportid;
- 	u32 config_crc;
-@@ -3553,6 +3554,56 @@ static ssize_t mxt_debug_enable_store(struct device *dev,
- 	return ret;
- }
+@@ -4043,12 +4043,13 @@ static int mxt_start(struct mxt_data *data)
  
-+static int mxt_check_mem_access_params(struct mxt_data *data, loff_t off,
-+				       size_t *count)
-+{
-+	if (off >= data->mem_size)
-+		return -EIO;
-+
-+	if (off + *count > data->mem_size)
-+		*count = data->mem_size - off;
-+
-+	if (*count > MXT_MAX_BLOCK_WRITE)
-+		*count = MXT_MAX_BLOCK_WRITE;
-+
-+	return 0;
-+}
-+
-+static ssize_t mxt_mem_access_read(struct file *filp, struct kobject *kobj,
-+	struct bin_attribute *bin_attr, char *buf, loff_t off, size_t count)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct mxt_data *data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	ret = mxt_check_mem_access_params(data, off, &count);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (count > 0)
-+		ret = __mxt_read_reg(data->client, off, count, buf);
-+
-+	return ret == 0 ? (ssize_t)count : ret;
-+}
-+
-+static ssize_t mxt_mem_access_write(struct file *filp, struct kobject *kobj,
-+	struct bin_attribute *bin_attr, char *buf, loff_t off,
-+	size_t count)
-+{
-+	struct device *dev = container_of(kobj, struct device, kobj);
-+	struct mxt_data *data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	ret = mxt_check_mem_access_params(data, off, &count);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (count > 0)
-+		ret = __mxt_write_reg(data->client, off, count, buf);
-+
-+	return ret == 0 ? (ssize_t)count : ret;
-+}
-+
- static DEVICE_ATTR(update_fw, S_IWUSR, NULL, mxt_update_fw_store);
+ 	switch (data->suspend_mode) {
+ 	case MXT_SUSPEND_T9_CTRL:
+-		mxt_soft_reset(data);
+-
++		ret = mxt_soft_reset(data);
++		if (ret)
++			break;
+ 		/* Touch enable */
+ 		/* 0x83 = SCANEN | RPTEN | ENABLE */
+-		mxt_write_object(data,
+-				MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0x83);
++		ret = mxt_write_object(data,
++				       MXT_TOUCH_MULTI_T9, MXT_T9_CTRL, 0x83);
+ 		break;
  
- static struct attribute *mxt_fw_attrs[] = {
-@@ -3598,13 +3649,36 @@ static int mxt_sysfs_init(struct mxt_data *data)
- 		return error;
+ 	case MXT_SUSPEND_REGULATOR:
+@@ -4062,27 +4063,26 @@ static int mxt_start(struct mxt_data *data)
+ 		 * Discard any touch messages still in message buffer
+ 		 * from before chip went to sleep
+ 		 */
+-		mxt_process_messages_until_invalid(data);
++		ret = mxt_process_messages_until_invalid(data);
++		if (ret)
++			break;
+ 
+ 		ret = mxt_set_t7_power_cfg(data, MXT_POWER_CFG_RUN);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		/* Recalibrate since chip has been in deep sleep */
+ 		ret = mxt_t6_command(data, MXT_COMMAND_CALIBRATE, 1, false);
+ 		if (ret)
+-			return ret;
++			break;
+ 
+ 		ret = mxt_acquire_irq(data);
+-		if (ret)
+-			return ret;
+-
+-		break;
  	}
  
-+	sysfs_bin_attr_init(&data->mem_access_attr);
-+	data->mem_access_attr.attr.name = "mem_access";
-+	data->mem_access_attr.attr.mode = S_IRUGO | S_IWUSR;
-+	data->mem_access_attr.read = mxt_mem_access_read;
-+	data->mem_access_attr.write = mxt_mem_access_write;
-+	data->mem_access_attr.size = data->mem_size;
-+
-+	error = sysfs_create_bin_file(&client->dev.kobj,
-+				  &data->mem_access_attr);
-+	if (error) {
-+		dev_err(&client->dev, "Failed to create %s\n",
-+			data->mem_access_attr.attr.name);
-+		goto err_remove_sysfs_group;
-+	}
-+
- 	return 0;
-+
-+err_remove_sysfs_group:
-+	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
-+	return error;
+-	data->suspended = false;
++	if (!ret)
++		data->suspended = false;
+ 
+-	return 0;
++	return ret;
  }
  
- static void mxt_sysfs_remove(struct mxt_data *data)
- {
- 	struct i2c_client *client = data->client;
+ static int mxt_stop(struct mxt_data *data)
+@@ -4511,6 +4511,7 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 	struct i2c_client *client = to_i2c_client(dev);
+ 	struct mxt_data *data = i2c_get_clientdata(client);
+ 	struct input_dev *input_dev = data->input_dev;
++	int ret = 0;
  
-+	if (data->mem_access_attr.attr.name)
-+		sysfs_remove_bin_file(&client->dev.kobj,
-+				      &data->mem_access_attr);
-+
- 	sysfs_remove_group(&client->dev.kobj, &mxt_attr_group);
+ 	if (!input_dev)
+ 		return 0;
+@@ -4518,11 +4519,11 @@ static int __maybe_unused mxt_resume(struct device *dev)
+ 	mutex_lock(&input_dev->mutex);
+ 
+ 	if (input_dev->users)
+-		mxt_start(data);
++		ret = mxt_start(data);
+ 
+ 	mutex_unlock(&input_dev->mutex);
+ 
+-	return 0;
++	return ret;
  }
  
+ static SIMPLE_DEV_PM_OPS(mxt_pm_ops, mxt_suspend, mxt_resume);
 -- 
 2.19.2
 
