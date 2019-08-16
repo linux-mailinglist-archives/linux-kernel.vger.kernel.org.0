@@ -2,85 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7652C9090D
-	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:56:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2FCA90910
+	for <lists+linux-kernel@lfdr.de>; Fri, 16 Aug 2019 21:57:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbfHPT4n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 15:56:43 -0400
-Received: from sauhun.de ([88.99.104.3]:48456 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727542AbfHPT4m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 15:56:42 -0400
-Received: from localhost (p54B33308.dip0.t-ipconnect.de [84.179.51.8])
-        by pokefinder.org (Postfix) with ESMTPSA id 8437D4A14FE;
-        Fri, 16 Aug 2019 21:56:40 +0200 (CEST)
-Date:   Fri, 16 Aug 2019 21:56:40 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Cc:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org, linus.walleij@linaro.org,
-        bgolaszewski@baylibre.com, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH 1/3] include: linux: i2c: more helpers for declaring i2c
- drivers
-Message-ID: <20190816195640.GD6886@kunai>
-References: <1560796779-17117-1-git-send-email-info@metux.net>
- <20190621211744.GC950@kunai>
- <c669a041-f025-693a-492a-80ce888db737@metux.net>
- <20190624084427.GA1014@kunai>
- <205d0ef7-d487-006b-d104-88958f40e197@metux.net>
+        id S1727683AbfHPT47 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 15:56:59 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44789 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfHPT46 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 15:56:58 -0400
+Received: by mail-pf1-f194.google.com with SMTP id c81so3615282pfc.11
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 12:56:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=XDxicx1OP6wHEEPTkhNVlA3uTUHqZWelhtfoFqZM2P0=;
+        b=Kt8Af6t2TxX8A/GfqjYGndn7iKVncQRUE/WtDfk34SccDPKUlp8oE0OfzeXlicZgd1
+         MZkAnjryNIIBET4U9oMiljfG5WZQihr426LGa+oGRSZ1UWP3k32khcfHIwNd5Ci+/ZM1
+         gjlslkRx7BZZth5fjw/7UlDQ/wI2WtQ9eJV1E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=XDxicx1OP6wHEEPTkhNVlA3uTUHqZWelhtfoFqZM2P0=;
+        b=ELADBwlAxPX0qwGPa+rcXU6nCIQRgX8sw4SaG3kv08EKEtg8hQMNy1HaG8PQZjfzwk
+         P6kaNR3k26yrfpYH1HMGrlPFzAC9Jf2OXNUesYxbMoZkSU+UehTp17niiZISp6eRGC3N
+         KK9LWB11nhzTyd5PQM2U338yUac1IKZ3tWAdl8bzvQlzZ5WhS9l63Z2L6LMbnp+6dPgJ
+         86Ndi0U7SZTxf1mXuMoY/4Lqos9ABFhp6YYck/rWqmQ2JTu1F2xIiE+s5lk6TWYDsw3A
+         h35bb/NeKPOKSfB3tN7ZZd44HJSoIwJnrTjyueXCaR/HllfpOb7c0boHzZHnZA1PxNab
+         CWQQ==
+X-Gm-Message-State: APjAAAXM22t7gMLcIirNVJrssbO5fcD0A5ht/7Sv+giCy5kXezGTs0+m
+        eK2y/E3KzRSxvPUjuGbNOYsLeerC1nNQ0a6KddIlPdaQTEM2ISBFBNBaJ3T4RzQQVXK4cRG40bP
+        7KxMXg4+Eu7tAmyfXX4yCQCwch0eED21uAIsLqUSO7HAYucPXVPTkoFFSImd9qt9UrmsSCi3omV
+        FgD9c=
+X-Google-Smtp-Source: APXvYqwc8GYCB3OP3WP4dI74ppom+NhRyeIPQBp2bN1x7NdcjYCvPOlHYRPGpuPIMWxIqu5f1ZsFjw==
+X-Received: by 2002:a17:90a:234e:: with SMTP id f72mr8875479pje.121.1565985418002;
+        Fri, 16 Aug 2019 12:56:58 -0700 (PDT)
+Received: from [10.69.45.46] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id u26sm7784201pgl.79.2019.08.16.12.56.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 12:56:57 -0700 (PDT)
+Subject: Re: [PATCH] scsi: lpfc: remove redundant code
+To:     Fuqian Huang <huangfq.daxian@gmail.com>
+Cc:     Dick Kennedy <dick.kennedy@broadcom.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190808013525.13681-1-huangfq.daxian@gmail.com>
+From:   James Smart <james.smart@broadcom.com>
+Message-ID: <32a8659f-cc3e-ae7d-7a38-3ffae3e22a3e@broadcom.com>
+Date:   Fri, 16 Aug 2019 12:56:55 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="eheScQNz3K90DVRs"
-Content-Disposition: inline
-In-Reply-To: <205d0ef7-d487-006b-d104-88958f40e197@metux.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190808013525.13681-1-huangfq.daxian@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---eheScQNz3K90DVRs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
+On 8/7/2019 6:35 PM, Fuqian Huang wrote:
+> Remove the redundant initialization code.
+>
+> Signed-off-by: Fuqian Huang <huangfq.daxian@gmail.com>
+> ---
+>
 
-(Found this mail in the offline draft folder of another laptop)
+Looks good!
 
-> So, then the current approach of using subsys_initcall() can't be
-> changed easily, right now. But planned for the future (or at least
-> not introducing new caes).
+Reviewed-by: James Smart <james.smart@broadcom.com>
 
-Yes.
+-- james
 
-> But: how does that conflict w/ just moving the existing redundant
-> pieces into a helper macro ? The logic stays the same - just using
-> a shorter notation. (assuming my patch isn't buggy ;-)).
-
-It is not conflicting. My thinking is that such helpers, in general,
-scale better and are less error prone. But there is nothing to scale
-here.
-
-
---eheScQNz3K90DVRs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1XCngACgkQFA3kzBSg
-KbYWTRAAjHFuFmxp6ayjp/MNRyXYjcRadDc3TrI200+v/8QzljjpaQ4oBTmXoKPU
-2nqyXXulIQZU9Bfy4IxgNHkbv9X3Au5mC3rJP+Mp/77JfFyk5EDFl2sPWlg2gt2g
-kvgjFTv70bOso6Md3V88f0XppSFDj0rXJ33dMwTaDIEVVGBCE22o6ei0AQZfs5qb
-PS4UtuLBxD3nahjziH6GIbY69CxCOPgXcLY/WVT7FjhyQu+RmZzRVJ9MCJRyE7Nb
-2at41jzk1fMpsAligpgkVGRDLE2yvGgoDwiCWO96SqUsM/8ARmXk8PmHCUsn123G
-MJbtl9D96AkGSKTe3JRXuPkcztAzENWF8en+AT3OfMwuB5aXSv41UTCTEy61SWWV
-eQlCtX5h89NIreEmwU+n0tVpQG5Q0C3ds5toCHyuaXvSHWfucmMVbY/pDyezBuV+
-ON8qCGii7VJpsafs1ggn59bxKJJRRkztN5SVahqUAafIGNGNLZEQAl1S+fmVuEZn
-iadGjmQFnv89hDpniObnVvfV4hPYEaNOfrIDwydGpL4mB/wKLp/xLE+Oz3Qd0Okg
-d4JHRahfTM7Dq2YkWkd25jTkTe4UugGM1kxxOWIwjyYEM7mULa87npP2ZRCboIiv
-CEc8dk3c3Qke9oEtYsQ7SoXuLjtURRSsGgSr+rgQrk0AaMsXNVk=
-=QklQ
------END PGP SIGNATURE-----
-
---eheScQNz3K90DVRs--
