@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 328A290C33
+	by mail.lfdr.de (Postfix) with ESMTP id C642790C34
 	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 04:46:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbfHQCqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 22:46:33 -0400
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:36325 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfHQCqc (ORCPT
+        id S1726129AbfHQCqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 22:46:34 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:45686 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHQCqe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 22:46:32 -0400
-Received: by mail-qk1-f194.google.com with SMTP id d23so6421582qko.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 19:46:31 -0700 (PDT)
+        Fri, 16 Aug 2019 22:46:34 -0400
+Received: by mail-qt1-f194.google.com with SMTP id k13so8179453qtm.12
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 19:46:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
-        h=from:to:subject:date:message-id:mime-version
+        h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=p98dmgBDeDcssd4yKsWE/iQqs5p9wP/9+OXRV1ENewU=;
-        b=JDS9LlpV2ta9byDzMY6b9v39r4r4effVrLjzxfOMxfazK25Y7wTPyhsbXZ66QpIJUP
-         HcGNwuH3KpQVzNhgJ2NNBfm5jg8IhCzp+ffvV+Tc9K2hEPOrg0Kp0/28WE0CWLNhifxT
-         yoJeW3JhBjArtLdX6XkSvzvEyxm8fdUp9hiaD4zeWviKaDpetWIY4AdemrlQA3Z97re2
-         i/qBSDGjjETysQY9urMcD0rH1/EVNndFeiorcfXvA+yr7Dy6VTA65yXhPAXHqX6ip7iz
-         LKOgTkMRtHG5FVjALunMYIuDqiBZBonlVu3APly7gtxaYleUcH+TGcvRZwHxAAu/abCa
-         VPiA==
+        bh=/W9Ma+c4Rolhy4bvMsvhnDmmj8s4aI4sxvLahrmQOEs=;
+        b=IzkXm55G371ze9WVXoK9zad2ACOWDzvok3ySCIMBFTsFQm/1InDzb4H9PlQDZg3B+1
+         91fZTR5nLchedpHW5aMPgbel2ZEnY/4Y6d81TwasXQGUoWl3pwGmSACJDbW/T3nKDssv
+         +h3dvvD8iyrRdZCJ9mha5885pBDWmcYAqYgiE1seOv1ZfRELrnfuyWjc6lHkfNkB8ktJ
+         OywN1d704ZniaPy18rJWm0ZLYmHEL1f2xGaIMRi+uXWwoVQjHADEaYflSmFqXYFC50TK
+         COI8DMNyB3sCcIRHgivG4DS6VQAKx7jm3bktmlgmeRCdmQ4puTVFBSpYFVIiLAL++B8O
+         rYkQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=p98dmgBDeDcssd4yKsWE/iQqs5p9wP/9+OXRV1ENewU=;
-        b=HvHFHt6zgIEfpkVdlkxOZBUwhW7XOOZr2Z0aRSX9DHi3PCKLgTYYKwCQG84L33+ln9
-         IRak7jkPr3yC0BDQm8GYvRwcnosYhTAKctzx0bdfo7iQ4wWjWM2w70wGU8Z1PAWQ6a/d
-         SCli9SfkcY7hMgLpX0qscPEgJUiwO7+UnsJKkWCia/OcH8uy1TVuxOFWb0QJAN9HIkZK
-         sVCiJm0nY4xPCu3KmrTOHKYl6i4T90VBSmFpigxMybYcVwHwsUhakp49ReHmEul+H0CW
-         0tTvxkvrDlJ7Kp8qpRvlwvBH7D1M0Z21SnLaK9HptduJYrhTx6uEy5wVMAAofUczT/d3
-         C/5g==
-X-Gm-Message-State: APjAAAX9tarBhXiFxpMcTOhWAjhPaNkQjkl7VIxr0nh12sSJSpibHS0i
-        HtiYlilGDnQIfkwean8qtq1j7A==
-X-Google-Smtp-Source: APXvYqxk6U1QbP7pDBIw3UpMgdwmknnD6IQo5oeUJswdhs4UX5w4SKba4s8Bv/AQr8d6aSCLhUMxoA==
-X-Received: by 2002:ae9:e707:: with SMTP id m7mr11883927qka.50.1566009991502;
-        Fri, 16 Aug 2019 19:46:31 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=/W9Ma+c4Rolhy4bvMsvhnDmmj8s4aI4sxvLahrmQOEs=;
+        b=BpU72+eg9WDef/VThs1NKtKpaSEmPIiRFcD8xOHlLq8z1GJj2qRQ9nLllMreUvFH9X
+         u+09uFbHhiKYLxINb874klyGmUAPv0pBuuPIfFHys1j2918cyAkcRWe8iziCgvyiu0Ni
+         ndkY8KzhVarcNGGV+x8KJ3NoKOwLklVpMW7hIZMMPkraeAycCO+9cz5w+YplFTDmGYMC
+         huGqseIhbS5aHfXgZxv9Kw4cH2JYVt94Y6Sa8YdulR3yUo/8Kbyef/cPf839VfhFQutx
+         3C5aDP2dPBpEmAUcE4HcJzVosbukYpx5lTxT8WKKKAy/cwIs7lR4M3emtzO8LHFiIvFm
+         e48Q==
+X-Gm-Message-State: APjAAAUV22g3PstRrBSXeG/sDlc5UjeHO8G7oKxdGeXpDsFm+yNU/s9q
+        3tyi2GrKNNyVPpsJ5rs7DTkxMg==
+X-Google-Smtp-Source: APXvYqx1YDVIUM4aXrDf+J+vqbqrtMk2KC2J/YfduCmqN0tJGEM/fwsJ5MGyaogor4fl5Zg9qkbq9Q==
+X-Received: by 2002:ac8:23cf:: with SMTP id r15mr10955016qtr.97.1566009992864;
+        Fri, 16 Aug 2019 19:46:32 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id o9sm3454657qtr.71.2019.08.16.19.46.30
+        by smtp.gmail.com with ESMTPSA id o9sm3454657qtr.71.2019.08.16.19.46.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 19:46:30 -0700 (PDT)
+        Fri, 16 Aug 2019 19:46:32 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -53,10 +53,12 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
         james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org
-Subject: [PATCH v2 00/14] arm64: MMU enabled kexec relocation
-Date:   Fri, 16 Aug 2019 22:46:15 -0400
-Message-Id: <20190817024629.26611-1-pasha.tatashin@soleen.com>
+Subject: [PATCH v2 01/14] kexec: quiet down kexec reboot
+Date:   Fri, 16 Aug 2019 22:46:16 -0400
+Message-Id: <20190817024629.26611-2-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.22.1
+In-Reply-To: <20190817024629.26611-1-pasha.tatashin@soleen.com>
+References: <20190817024629.26611-1-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,101 +66,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Changelog:
-v2:
-	- Fixed hibernate bug reported by James Morse
-	- Addressed comments from James Morse:
-	  * More incremental changes to trans_table
-	  * Removed TRANS_FORCEMAP
-	  * Added kexec reboot data for image with 380M in size.
+Here is a regular kexec command sequence and output:
+=====
+$ kexec --reuse-cmdline -i --load Image
+$ kexec -e
+[  161.342002] kexec_core: Starting new kernel
 
-Enable MMU during kexec relocation in order to improve reboot performance.
+Welcome to Buildroot
+buildroot login:
+=====
 
-If kexec functionality is used for a fast system update, with a minimal
-downtime, the relocation of kernel + initramfs takes a significant portion
-of reboot.
+Even when "quiet" kernel parameter is specified, "kexec_core: Starting
+new kernel" is printed.
 
-The reason for slow relocation is because it is done without MMU, and thus
-not benefiting from D-Cache.
+This message has  KERN_EMERG level, but there is no emergency, it is a
+normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
 
-Performance data
-----------------
-For this experiment, the size of kernel plus initramfs is small, only 25M.
-If initramfs was larger, than the improvements would be greater, as time
-spent in relocation is proportional to the size of relocation.
+Machines that have slow console baud rate benefit from less output.
 
-Previously:
-kernel shutdown	0.022131328s
-relocation	0.440510736s
-kernel startup	0.294706768s
+Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+Reviewed-by: Simon Horman <horms@verge.net.au>
+---
+ kernel/kexec_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Relocation was taking: 58.2% of reboot time
-
-Now:
-kernel shutdown	0.032066576s
-relocation	0.022158152s
-kernel startup	0.296055880s
-
-Now: Relocation takes 6.3% of reboot time
-
-Total reboot is x2.16 times faster.
-
-With bigger userland (fitImage 380M), the reboot time is improved by 3.57s,
-and is reduced from 3.9s down to 0.33s
-
-Previous approaches and discussions
------------------------------------
-https://lore.kernel.org/lkml/20190801152439.11363-1-pasha.tatashin@soleen.com/
-version 1 of this series
-
-https://lore.kernel.org/lkml/20190709182014.16052-1-pasha.tatashin@soleen.com
-reserve space for kexec to avoid relocation, involves changes to generic code
-to optimize a problem that exists on arm64 only:
-
-https://lore.kernel.org/lkml/20190716165641.6990-1-pasha.tatashin@soleen.com
-The first attempt to enable MMU, some bugs that prevented performance
-improvement. The page tables unnecessary configured idmap for the whole
-physical space.
-
-https://lore.kernel.org/lkml/20190731153857.4045-1-pasha.tatashin@soleen.com
-No linear copy, bug with EL2 reboots.
-
-Pavel Tatashin (14):
-  kexec: quiet down kexec reboot
-  arm64, hibernate: create_safe_exec_page cleanup
-  arm64, hibernate: add trans_table public functions
-  arm64, hibernate: move page handling function to new trans_table.c
-  arm64, trans_table: make trans_table_map_page generic
-  arm64, trans_table: add trans_table_create_empty
-  arm64, trans_table: adjust trans_table_create_copy interface
-  arm64, trans_table: add PUD_SECT_RDONLY
-  arm64, trans_table: complete generalization of trans_tables
-  kexec: add machine_kexec_post_load()
-  arm64, kexec: move relocation function setup and clean up
-  arm64, kexec: add expandable argument to relocation function
-  arm64, kexec: configure transitional page table for kexec
-  arm64, kexec: enable MMU during kexec relocation
-
- arch/arm64/Kconfig                     |   4 +
- arch/arm64/include/asm/kexec.h         |  51 ++++-
- arch/arm64/include/asm/pgtable-hwdef.h |   1 +
- arch/arm64/include/asm/trans_table.h   |  64 ++++++
- arch/arm64/kernel/asm-offsets.c        |  14 ++
- arch/arm64/kernel/cpu-reset.S          |   4 +-
- arch/arm64/kernel/cpu-reset.h          |   8 +-
- arch/arm64/kernel/hibernate.c          | 261 ++++++-----------------
- arch/arm64/kernel/machine_kexec.c      | 199 ++++++++++++++----
- arch/arm64/kernel/relocate_kernel.S    | 196 +++++++++---------
- arch/arm64/mm/Makefile                 |   1 +
- arch/arm64/mm/trans_table.c            | 274 +++++++++++++++++++++++++
- kernel/kexec.c                         |   4 +
- kernel/kexec_core.c                    |   8 +-
- kernel/kexec_file.c                    |   4 +
- kernel/kexec_internal.h                |   2 +
- 16 files changed, 755 insertions(+), 340 deletions(-)
- create mode 100644 arch/arm64/include/asm/trans_table.h
- create mode 100644 arch/arm64/mm/trans_table.c
-
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index d5870723b8ad..2c5b72863b7b 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -1169,7 +1169,7 @@ int kernel_kexec(void)
+ 		 * CPU hotplug again; so re-enable it here.
+ 		 */
+ 		cpu_hotplug_enable();
+-		pr_emerg("Starting new kernel\n");
++		pr_notice("Starting new kernel\n");
+ 		machine_shutdown();
+ 	}
+ 
 -- 
 2.22.1
 
