@@ -2,90 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92B2590BBD
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 02:24:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD48790BC5
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 02:35:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfHQAYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 20:24:10 -0400
-Received: from mail-lf1-f52.google.com ([209.85.167.52]:33874 "EHLO
-        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfHQAYK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 20:24:10 -0400
-Received: by mail-lf1-f52.google.com with SMTP id b29so5200607lfq.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 17:24:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=5BCk8bFtxwiRj/dtDmyR2CqB0dW325WAsdwABRHioXU=;
-        b=VdYQLM9o0hIXZUJKTYv3xybe+MsZqxJIUjzUNVfm1RUlRdBYhQrVUul/vKNg8ko5vA
-         NEoyP+Puvvjz1dBlMdQPFr+C4raCP/qeYU1T/W1Mcrul9Xir8cg9HueIcdWihrXMo1vZ
-         NaX5WYv//9KBNNOjWHL2XOcChFQ98YSzXMbVMvyvJ57ypyvQq73Ljzgcp9wcMXkIyMA5
-         oVScKImhM3GnmY2LyIkrNCcBkAXbMOPD/6QKDp8RYZpNuSyhs/GfSHs0zD5qr7lTqqCZ
-         Z7uyyjh8E2QTVMN/+pcXOmmXHrHIAgdtCGbPY+QAyGwfSY6UfOqgbHFE3qeTiJSdbZdA
-         QIGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=5BCk8bFtxwiRj/dtDmyR2CqB0dW325WAsdwABRHioXU=;
-        b=Gv2dpVIYI4V83VAr2E3OV4+pyO6XxFTkzot0iJr1FjDHmDhbllnFtQtBReEuhRqzw2
-         NMI2pCJKPspULgMRuS+fJlbOSv3nqJPEuMWRG8bUsjKMNLX8lS982yKmdCNBmPnrEbqp
-         NTp5RezON2MNXPuIq6QWC3Ai/4UZLzrsYPKAci/e2BdEsklXz7/NK7CpSIIZD/UpI/xm
-         U7+9b2LLFfKdASJutOVa02SZUYz89Ta2QZ2Kq/aInTx6uvz/e+9hfGq4SLn4zq0fRFjC
-         sX2P37EUMtH1ekZlLNqXw3Wvo4jULpZvBpCeLFOOg1xqqO6+afvrE/9wXL16xP65Y9sE
-         lsbQ==
-X-Gm-Message-State: APjAAAUxjV00WnQxC5QaIHIAk69hIZX8BTDc105Iw2HBBE3Gqk3op1rH
-        A9r5YpLGuWxBqDbb2OHhMvk=
-X-Google-Smtp-Source: APXvYqykHZ6nHNGIyr15OwALdLImvl18zWCo0bcVFvKGQDwHSddoOMs4F23dXqxmFol1AU3GPdCs6Q==
-X-Received: by 2002:a19:4c88:: with SMTP id z130mr6588499lfa.149.1566001448127;
-        Fri, 16 Aug 2019 17:24:08 -0700 (PDT)
-Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
-        by smtp.gmail.com with ESMTPSA id 25sm1146633lft.71.2019.08.16.17.24.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Aug 2019 17:24:07 -0700 (PDT)
-From:   Max Filippov <jcmvbkbc@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        id S1726088AbfHQAfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 20:35:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41980 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725988AbfHQAfG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 20:35:06 -0400
+Subject: Re: [PULL 0/1] Xtensa fix for v5.3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566002105;
+        bh=7EoUe3CCPAt8xmkhvStFQGDFk2Mj6wGTGoEowXRtF3o=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=tzwNrk4cwBAApC2rDbBTDyvEN4R0qem0DfUjD6EsCzvr0E3++s4liokP8l7ysIyk3
+         nF5jyNc5oKaAJbqdOtaDOmyYYl1a9Sfgrbcm/mPdtm9gLVkoVOWAuxx9ZQGWOwtVSL
+         cYXTQwSE3sDPAzV49PfajWSz3b5+6Xot5fPeYn+U=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190817002349.28658-1-jcmvbkbc@gmail.com>
+References: <20190817002349.28658-1-jcmvbkbc@gmail.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190817002349.28658-1-jcmvbkbc@gmail.com>
+X-PR-Tracked-Remote: git://github.com/jcmvbkbc/linux-xtensa.git
+ tags/xtensa-20190816
+X-PR-Tracked-Commit-Id: cd8869f4cb257f22b89495ca40f5281e58ba359c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 6e625a1a3f471d63989d3a66cdf6a0c307654848
+Message-Id: <156600210583.524.16585893842032622574.pr-tracker-bot@kernel.org>
+Date:   Sat, 17 Aug 2019 00:35:05 +0000
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
         Chris Zankel <chris@zankel.net>,
         Max Filippov <jcmvbkbc@gmail.com>
-Subject: [PULL 0/1] Xtensa fix for v5.3
-Date:   Fri, 16 Aug 2019 17:23:49 -0700
-Message-Id: <20190817002349.28658-1-jcmvbkbc@gmail.com>
-X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+The pull request you sent on Fri, 16 Aug 2019 17:23:49 -0700:
 
-please pull another small fix for the Xtensa architecture.
+> git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190816
 
-The following changes since commit d45331b00ddb179e291766617259261c112db872:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/6e625a1a3f471d63989d3a66cdf6a0c307654848
 
-  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
-
-are available in the git repository at:
-
-  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190816
-
-for you to fetch changes up to cd8869f4cb257f22b89495ca40f5281e58ba359c:
-
-  xtensa: add missing isync to the cpu_reset TLB code (2019-08-12 15:05:48 -0700)
-
-----------------------------------------------------------------
-Xtensa fixes for v5.3:
-
-- add missing isync into cpu_reset to make sure ITLB changes are
-  effective.
-
-----------------------------------------------------------------
-Max Filippov (1):
-      xtensa: add missing isync to the cpu_reset TLB code
-
- arch/xtensa/kernel/setup.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you!
 
 -- 
-Thanks.
--- Max
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
