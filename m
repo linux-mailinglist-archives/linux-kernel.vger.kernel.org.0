@@ -2,100 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DA7D911CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 17:59:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21A56911CD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 18:00:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfHQPzT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 11:55:19 -0400
-Received: from mail.efficios.com ([167.114.142.138]:43298 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfHQPzT (ORCPT
+        id S1726173AbfHQP7b (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 11:59:31 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:46143 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726013AbfHQP7b (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 11:55:19 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id AF08024A834;
-        Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id IlTT-HoeBecy; Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6328924A831;
-        Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 6328924A831
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1566057317;
-        bh=IXj9aIP4CDlW09NzFVepAs4bAF1HIVB6vbPQmCTYr08=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=LVB7PDYfR1E6QBCi5GqHGYa5CFkQoztNv+GzgMNfSo0hnp75jLCC8zq0+vkqOmxhq
-         eEZvViKz9xSkOVGve6U6axrBmC1EXgUQRNS01RVtMfChuVgPcMfPEH2nY7OOIqP9br
-         +Y2G8LVL/qbmXZ822mkgtQzx5mS64KyyfQa6gbJx1vhwrLQkgnyr4a0B7zowVFjtGx
-         xe2RwgI+8mO/zCEG06/IzzowCC5eiWEe/8o0XrnPSxGE62uBilcKIZsA3J3++sDBTU
-         0QxbF9orwVGu+X3vujBR9VZGv02uFp1mH4p64/V8YqE33DmsqG6Pz5s/5uGD8wmr9h
-         RVcfKh/ryNswQ==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id pM-6Tg_GbXPD; Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 487A324A825;
-        Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-Date:   Sat, 17 Aug 2019 11:55:17 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     rostedt <rostedt@goodmis.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        paulmck <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>
-Message-ID: <1360102474.23943.1566057317249.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20190817112655.2277a9c5@oasis.local.home>
-References: <241506096.21688.1565977319832.JavaMail.zimbra@efficios.com> <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com> <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de> <CAHk-=wh9qDFfWJscAQw_w+obDmZvcE5jWJRdYPKYP6YhgoGgGA@mail.gmail.com> <1642847744.23403.1566005809759.JavaMail.zimbra@efficios.com> <20190816221313.4b05b876@oasis.local.home> <39888715.23900.1566052831673.JavaMail.zimbra@efficios.com> <20190817112655.2277a9c5@oasis.local.home>
-Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
+        Sat, 17 Aug 2019 11:59:31 -0400
+Received: by mail-pg1-f195.google.com with SMTP id m3so3864463pgv.13;
+        Sat, 17 Aug 2019 08:59:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=xIlhVyHBmb3rcCp+KzrwcLo7a20Ei5NLFLjc/pDseU0=;
+        b=cbCTvjIBVb+wS7VLXUoKpVlN88AtzcWy+XNBk1e3ABUE1OyesQ6KdJ8vfYqmtMnIPC
+         BLSK0/1+8k7+BLIHnS8oP6QYJ8UUTzAdilvpCb3MGsDYO18De6mJ/AWTvtGIolUiABY/
+         6azsDVWEoSfqXRdCCiMjaoT1az8eRdMuBk8qt3/SS+TiHIkUO7HXWheQo6tVbRrwBCJf
+         jUSE/AvYDrDIIfnhYZZX/3cxvrf99p1VQZ7GVhV/euYQcWqI8OQE5InvtGbR7l9uF8/6
+         +x9a5dzFh4TZZx9iEugr/QJMMmcgOuYAwrrPHTC863JGtn10RloPL0tex6eoAqgWeP9s
+         HdoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xIlhVyHBmb3rcCp+KzrwcLo7a20Ei5NLFLjc/pDseU0=;
+        b=hiEaxg47gVMef+mM60i/A1iU1pUJHQ+M4UR95TGibRpTVDtSY2zFBlsD2pDCrFQkkw
+         hiTALTHlxawM8jI4BX/IbsBmRFQhqqsWIKzD8PEdyTnQFsHZz3N4/hwCAITQ+3I94T5k
+         3bU2omhCkQlIAQA0GGSY2O0KmdoAD4JY75p7clYBCUQ/Qz8uwKmjGFX/Cj5lj9S10+Vl
+         kgggmOiKx3ipl2/4KJztoorrT/SeGlkRuW3MvmDbPZKehTbAm6R5K3xLG1lwa+AkaQTR
+         PGKoAKWYAHBnlTpeBTtcJ/nAo8yRfJge739KLF/owX7JAUruTaPhqBFWkCtoiUlZyeSZ
+         hItg==
+X-Gm-Message-State: APjAAAXIAT0jh5GjK1FTdPyV+V7C86MFgVkSA0a7NXWkcGuaWEXKeY4M
+        wFA1UDYQ40MQE6Y/jpEEifs=
+X-Google-Smtp-Source: APXvYqx729u4HAZJtk7rY2vqxpnYL8YoY7lKPmX9QdvNVhy7BLwnYGYevQ3WBAFQhnIpcAwTBs+glQ==
+X-Received: by 2002:a62:e806:: with SMTP id c6mr16431028pfi.132.1566057570572;
+        Sat, 17 Aug 2019 08:59:30 -0700 (PDT)
+Received: from localhost (c-73-222-71-142.hsd1.ca.comcast.net. [73.222.71.142])
+        by smtp.gmail.com with ESMTPSA id n128sm9486232pfn.46.2019.08.17.08.59.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Aug 2019 08:59:29 -0700 (PDT)
+Date:   Sat, 17 Aug 2019 08:59:27 -0700
+From:   Richard Cochran <richardcochran@gmail.com>
+To:     Felipe Balbi <felipe.balbi@linux.intel.com>
+Cc:     Christopher S Hall <christopher.s.hall@intel.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] PTP: introduce new versions of IOCTLs
+Message-ID: <20190817155927.GA1540@localhost>
+References: <20190814074712.10684-1-felipe.balbi@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
-Thread-Topic: trace sched switch start/stop racy updates
-Thread-Index: /ttfitEg37QJgo98J+HXx1jpWFojDw==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814074712.10684-1-felipe.balbi@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Aug 17, 2019, at 11:26 AM, rostedt rostedt@goodmis.org wrote:
-
-> On Sat, 17 Aug 2019 10:40:31 -0400 (EDT)
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+On Wed, Aug 14, 2019 at 10:47:11AM +0300, Felipe Balbi wrote:
+> The current version of the IOCTL have a small problem which prevents us
+> from extending the API by making use of reserved fields. In these new
+> IOCTLs, we are now making sure that flags and rsv fields are zero which
+> will allow us to extend the API in the future.
 > 
->> > I'm now even more against adding the READ_ONCE() or WRITE_ONCE().
->> 
->> I'm not convinced by your arguments.
+> Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+> ---
+>  drivers/ptp/ptp_chardev.c      | 58 ++++++++++++++++++++++++++++++++--
+>  include/uapi/linux/ptp_clock.h | 12 +++++++
+>  2 files changed, 68 insertions(+), 2 deletions(-)
 > 
-> Prove to me that there's an issue here beyond theoretical analysis,
-> then I'll consider that patch.
-> 
-> Show me a compiler used to compile the kernel that zeros out the
-> increment. Show me were the race actually occurs.
-> 
-> I think the READ/WRITE_ONCE() is more confusing than helpful. And
-> unneeded churn to the code. And really not needed for something that's
-> not critical to execution.
+> diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
+> index 18ffe449efdf..204212fc3f8c 100644
+> --- a/drivers/ptp/ptp_chardev.c
+> +++ b/drivers/ptp/ptp_chardev.c
+> @@ -123,9 +123,11 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
+>  	struct timespec64 ts;
+>  	int enable, err = 0;
+>  
+> +	memset(&req, 0, sizeof(req));
 
-I'll have to let the authors of the LWN article speak up on this, because
-I have limited time to replicate this investigation myself.
+Nit: please leave a blank line between memset() and switch/case.
 
-Thanks,
+>  	switch (cmd) {
+>  
+>  	case PTP_CLOCK_GETCAPS:
+> +	case PTP_CLOCK_GETCAPS2:
+>  		memset(&caps, 0, sizeof(caps));
+>  		caps.max_adj = ptp->info->max_adj;
+>  		caps.n_alarm = ptp->info->n_alarm;
 
-Mathieu
+Reviewed-by: Richard Cochran <richardcochran@gmail.com>
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
