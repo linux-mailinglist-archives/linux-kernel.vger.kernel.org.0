@@ -2,116 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B2AD90F86
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 10:40:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2B4590F8D
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 10:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfHQIkY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 04:40:24 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:44479 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725925AbfHQIkX (ORCPT
+        id S1726261AbfHQIoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 04:44:24 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:41777 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfHQIoX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 04:40:23 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7H8eAKh3184729
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 17 Aug 2019 01:40:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7H8eAKh3184729
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1566031211;
-        bh=L+ePIe7v6+koOGHVExA53FMzqQm7TQc96yfOl1tYPi0=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=eimec7yupCa67r9VO30kecBKdQ+K4K/h3IWMPy0CAbtD4LRSBi1Ams0GFItXwcxAa
-         fdqRbEUeszwpQRu5GHsWKn0wnxr38OayfNq+XcNXr0zT+JoMtXWW5NsEyqEg2QV3cB
-         xdn4tVPdUM3ckrXkvWEmi+dH+WMfYSoUT7wC0je3IYtzBZPfyt9OIllcXO1t5eYJ5Q
-         BXMahoaOPEy/qBsL/re0KLlcscB4lST+/mQZYBvqDGoPdViEaoWBBK9mO3SUjsXV6j
-         yirnmXVNGmrweerHbZy3Bt3f7Vgd/ECk47/+R1A09DZttYM0YCGIhY15365k4Y6y7f
-         X5q80KtzbGwZg==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7H8e9YV3184726;
-        Sat, 17 Aug 2019 01:40:09 -0700
-Date:   Sat, 17 Aug 2019 01:40:09 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Rahul Tanwar <tipbot@zytor.com>
-Message-ID: <tip-bba10c5cab4ddd8725a7998e064fc72c9770c667@git.kernel.org>
-Cc:     mingo@redhat.com, bp@suse.de, andriy.shevchenko@intel.com,
-        ricardo.neri-calderon@linux.intel.com, tony.luck@intel.com,
-        rafael.j.wysocki@intel.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, hdegoede@redhat.com,
-        mingo@kernel.org, hpa@zytor.com, x86@kernel.org,
-        rahul.tanwar@linux.intel.com
-Reply-To: andriy.shevchenko@intel.com, mingo@redhat.com, bp@suse.de,
-          tony.luck@intel.com, ricardo.neri-calderon@linux.intel.com,
-          tglx@linutronix.de, linux-kernel@vger.kernel.org,
-          rafael.j.wysocki@intel.com, mingo@kernel.org, x86@kernel.org,
-          hpa@zytor.com, rahul.tanwar@linux.intel.com, hdegoede@redhat.com
-In-Reply-To: <f7a0e142faa953a53d5f81f78055e1b3c793b134.1565940653.git.rahul.tanwar@linux.intel.com>
-References: <f7a0e142faa953a53d5f81f78055e1b3c793b134.1565940653.git.rahul.tanwar@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/cpu: Use constant definitions for CPU models
-Git-Commit-ID: bba10c5cab4ddd8725a7998e064fc72c9770c667
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 17 Aug 2019 04:44:23 -0400
+Received: by mail-lf1-f66.google.com with SMTP id 62so5640016lfa.8
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 01:44:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yrUwO9RfFpaVVoxhWFOuepL5hpbjdf+YLX/sIn6Qvw8=;
+        b=GnMXBzCxRXs0q6nwlVqQCebjZx2tEtjUtn7BBOgwI08iIP8yJTDRYaihakhlVjfsAS
+         FhElEv5Vc3dimolG1L91WOW8f5junzLtsfH2N0rKSgMQ2e7ARazvF7A+ilSZWcFl3DF9
+         3O0BNELhuHk35WHom64SoyU87zSWfl3gqNq7Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yrUwO9RfFpaVVoxhWFOuepL5hpbjdf+YLX/sIn6Qvw8=;
+        b=UTlTe6oLgEoVmOhvaKM504MQBRaEKdk1JhdC2WgEhA5ph0BEXuUsp4GC5wvhMGkD+P
+         SZTelHRFZLI80aRgr5JKBPdqy7SDy6PNXIoCvgD3Oc1rZchKlkIdkVh4a+398vco+JoJ
+         Vzw/ua7LWZ3VlPMOrWjbAz/Bxxde+ZhwfeQketNF6XL33EzJYknbP1TOeF29EEgwkrxv
+         rWyaaDiDMugw73p4ceIJWZK3FoG+KHjd3rketx2eJqRmsxlMMaZkJBGa3I+tzF+mKqG/
+         CsX0Uc3JDb4bkv3mqwewU508Edjm10mXWwgLfQ3fNKl/Nxb59PXw7WpB0IKkkmW0hnsi
+         8iTg==
+X-Gm-Message-State: APjAAAX0z3Py9ZcqRCtOnwpKOzIj5L8sQciriSCWkQ4QgAKbS90w1fM0
+        /RoKN7PlstKIardQNgMSXCs8npGKPMg=
+X-Google-Smtp-Source: APXvYqzvVAZ3tj5q3mj41bV4+TBPP4bvUtIXH2lwF/MEXbexwazRUy3qfmFYEHysXXPmVPTft0MFqw==
+X-Received: by 2002:a19:4c88:: with SMTP id z130mr7366525lfa.149.1566031461614;
+        Sat, 17 Aug 2019 01:44:21 -0700 (PDT)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id y66sm1349312lje.61.2019.08.17.01.44.20
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 17 Aug 2019 01:44:20 -0700 (PDT)
+Received: by mail-lj1-f182.google.com with SMTP id u15so7338049ljl.3
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 01:44:20 -0700 (PDT)
+X-Received: by 2002:a2e:8ed5:: with SMTP id e21mr7751314ljl.156.1566031460440;
+ Sat, 17 Aug 2019 01:44:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+References: <241506096.21688.1565977319832.JavaMail.zimbra@efficios.com>
+ <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org>
+ <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com>
+ <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de>
+ <20190816205740.GF10481@google.com> <3c0cb8a2-eba2-7bea-8523-b948253a6804@arm.com>
+ <CAHk-=wi_KeD1M-_-_SU_H92vJ-yNkDnAGhAS=RR1yNNGWKW+aA@mail.gmail.com>
+ <20190817045217.GZ28441@linux.ibm.com> <CAHk-=wiOhiAJVU71968tAND6rrEJSaYPg7DXK6Y6iiz7_RJACw@mail.gmail.com>
+In-Reply-To: <CAHk-=wiOhiAJVU71968tAND6rrEJSaYPg7DXK6Y6iiz7_RJACw@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 17 Aug 2019 01:44:04 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whjEq6uEt0o0Ur9Epa7EKVvEFUVJVFJ+heJCv9ehV7pyA@mail.gmail.com>
+Message-ID: <CAHk-=whjEq6uEt0o0Ur9Epa7EKVvEFUVJVFJ+heJCv9ehV7pyA@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  bba10c5cab4ddd8725a7998e064fc72c9770c667
-Gitweb:     https://git.kernel.org/tip/bba10c5cab4ddd8725a7998e064fc72c9770c667
-Author:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-AuthorDate: Fri, 16 Aug 2019 16:18:57 +0800
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 17 Aug 2019 10:34:09 +0200
+On Sat, Aug 17, 2019 at 1:28 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+>    unsigned int bits = some_global_value;
+>    ...test different bits in in 'bits' ...
+>
+> can easily cause multiple reads (particularly on a CPU that has a
+> "test bits in memory" instruction and a lack of registers.
+>
+> So then doing it as
+>
+>    unsigned int bits = READ_ONCE(some_global_value);
+>    .. test different bits in 'bits'...
 
-x86/cpu: Use constant definitions for CPU models
+Side note: this is likely the best example of actual WRITE_ONCE() use
+too: if you have that global value with multiple bits that actually
+have some interdependencies, then doing
 
-Replace model numbers with their respective macro definitions when
-comparing CPU models.
+    some_global_value = some_complex_expression();
 
-Suggested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
-Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: alan@linux.intel.com
-Cc: cheol.yong.kim@intel.com
-Cc: Hans de Goede <hdegoede@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: qi-ming.wu@intel.com
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/f7a0e142faa953a53d5f81f78055e1b3c793b134.1565940653.git.rahul.tanwar@linux.intel.com
----
- arch/x86/kernel/cpu/intel.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+might be reasonably compiled to do several rmw instructions to update
+'some_global_value'
 
-diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
-index 8d6d92ebeb54..66de4b84c369 100644
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -265,9 +265,9 @@ static void early_init_intel(struct cpuinfo_x86 *c)
- 	/* Penwell and Cloverview have the TSC which doesn't sleep on S3 */
- 	if (c->x86 == 6) {
- 		switch (c->x86_model) {
--		case 0x27:	/* Penwell */
--		case 0x35:	/* Cloverview */
--		case 0x4a:	/* Merrifield */
-+		case INTEL_FAM6_ATOM_SALTWELL_MID:
-+		case INTEL_FAM6_ATOM_SALTWELL_TABLET:
-+		case INTEL_FAM6_ATOM_SILVERMONT_MID:
- 			set_cpu_cap(c, X86_FEATURE_NONSTOP_TSC_S3);
- 			break;
- 		default:
+So then
+
+   WRITE_ONCE(some_global_value, some_complex_expression());
+
+really can be a good thing - it clearly just writes things once, and
+it also documents the whole "write one or the other" value, not some
+mid-way one, when you then look at the READ_ONCE() thing.
+
+But I'm seeing a lot of WRITE_ONCE(x, constantvalue) kind of things
+and don't seem to find a lot of reason to think that they are any
+inherently better than "x = constantvalue".
+
+(In contrast, using "smp_store_release(flag, true)" has inherent
+value, because it actually implies a memory barrier wrt previous
+writes, in ways that WRITE_ONCE() or a direct assignment does not.)
+
+Ok, enough blathering. I think I've made my point.
+
+              Linus
