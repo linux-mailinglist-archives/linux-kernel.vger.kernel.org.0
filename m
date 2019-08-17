@@ -2,73 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCFE990BAA
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 02:13:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 92B2590BBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 02:24:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726279AbfHQAN2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 16 Aug 2019 20:13:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:6694 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfHQANZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Aug 2019 20:13:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Aug 2019 17:13:23 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,395,1559545200"; 
-   d="scan'208";a="168195018"
-Received: from skuppusw-desk.jf.intel.com ([10.54.74.33])
-  by orsmga007.jf.intel.com with ESMTP; 16 Aug 2019 17:13:22 -0700
-From:   sathyanarayanan.kuppuswamy@linux.intel.com
-To:     bhelgaas@google.com
-Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ashok.raj@intel.com, keith.busch@intel.com,
-        sathyanarayanan.kuppuswamy@linux.intel.com
-Subject: [PATCH v6 8/8] PCI: Skip Enhanced Allocation (EA) initialization for VF device
-Date:   Fri, 16 Aug 2019 17:10:22 -0700
-Message-Id: <336c3f97a226f936ee3581b33d40ba00a8a7caa0.1565997310.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <cover.1565997310.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-References: <cover.1565997310.git.sathyanarayanan.kuppuswamy@linux.intel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726080AbfHQAYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 16 Aug 2019 20:24:10 -0400
+Received: from mail-lf1-f52.google.com ([209.85.167.52]:33874 "EHLO
+        mail-lf1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726010AbfHQAYK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Aug 2019 20:24:10 -0400
+Received: by mail-lf1-f52.google.com with SMTP id b29so5200607lfq.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 17:24:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5BCk8bFtxwiRj/dtDmyR2CqB0dW325WAsdwABRHioXU=;
+        b=VdYQLM9o0hIXZUJKTYv3xybe+MsZqxJIUjzUNVfm1RUlRdBYhQrVUul/vKNg8ko5vA
+         NEoyP+Puvvjz1dBlMdQPFr+C4raCP/qeYU1T/W1Mcrul9Xir8cg9HueIcdWihrXMo1vZ
+         NaX5WYv//9KBNNOjWHL2XOcChFQ98YSzXMbVMvyvJ57ypyvQq73Ljzgcp9wcMXkIyMA5
+         oVScKImhM3GnmY2LyIkrNCcBkAXbMOPD/6QKDp8RYZpNuSyhs/GfSHs0zD5qr7lTqqCZ
+         Z7uyyjh8E2QTVMN/+pcXOmmXHrHIAgdtCGbPY+QAyGwfSY6UfOqgbHFE3qeTiJSdbZdA
+         QIGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5BCk8bFtxwiRj/dtDmyR2CqB0dW325WAsdwABRHioXU=;
+        b=Gv2dpVIYI4V83VAr2E3OV4+pyO6XxFTkzot0iJr1FjDHmDhbllnFtQtBReEuhRqzw2
+         NMI2pCJKPspULgMRuS+fJlbOSv3nqJPEuMWRG8bUsjKMNLX8lS982yKmdCNBmPnrEbqp
+         NTp5RezON2MNXPuIq6QWC3Ai/4UZLzrsYPKAci/e2BdEsklXz7/NK7CpSIIZD/UpI/xm
+         U7+9b2LLFfKdASJutOVa02SZUYz89Ta2QZ2Kq/aInTx6uvz/e+9hfGq4SLn4zq0fRFjC
+         sX2P37EUMtH1ekZlLNqXw3Wvo4jULpZvBpCeLFOOg1xqqO6+afvrE/9wXL16xP65Y9sE
+         lsbQ==
+X-Gm-Message-State: APjAAAUxjV00WnQxC5QaIHIAk69hIZX8BTDc105Iw2HBBE3Gqk3op1rH
+        A9r5YpLGuWxBqDbb2OHhMvk=
+X-Google-Smtp-Source: APXvYqykHZ6nHNGIyr15OwALdLImvl18zWCo0bcVFvKGQDwHSddoOMs4F23dXqxmFol1AU3GPdCs6Q==
+X-Received: by 2002:a19:4c88:: with SMTP id z130mr6588499lfa.149.1566001448127;
+        Fri, 16 Aug 2019 17:24:08 -0700 (PDT)
+Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id 25sm1146633lft.71.2019.08.16.17.24.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Aug 2019 17:24:07 -0700 (PDT)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 0/1] Xtensa fix for v5.3
+Date:   Fri, 16 Aug 2019 17:23:49 -0700
+Message-Id: <20190817002349.28658-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+Hi Linus,
 
-As per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced Allocation
-Capability. So skip pci_ea_init() for virtual devices.
+please pull another small fix for the Xtensa architecture.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Keith Busch <keith.busch@intel.com>
-Suggested-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
----
- drivers/pci/pci.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+The following changes since commit d45331b00ddb179e291766617259261c112db872:
 
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 1b27b5af3d55..266600a11769 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3025,6 +3025,13 @@ void pci_ea_init(struct pci_dev *dev)
- 	int offset;
- 	int i;
- 
-+	/*
-+	 * Per PCIe r4.0, sec 9.3.6, VF must not implement Enhanced
-+	 * Allocation Capability.
-+	 */
-+	if (dev->is_virtfn)
-+		return;
-+
- 	/* find PCI EA capability in list */
- 	ea = pci_find_capability(dev, PCI_CAP_ID_EA);
- 	if (!ea)
+  Linux 5.3-rc4 (2019-08-11 13:26:41 -0700)
+
+are available in the git repository at:
+
+  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20190816
+
+for you to fetch changes up to cd8869f4cb257f22b89495ca40f5281e58ba359c:
+
+  xtensa: add missing isync to the cpu_reset TLB code (2019-08-12 15:05:48 -0700)
+
+----------------------------------------------------------------
+Xtensa fixes for v5.3:
+
+- add missing isync into cpu_reset to make sure ITLB changes are
+  effective.
+
+----------------------------------------------------------------
+Max Filippov (1):
+      xtensa: add missing isync to the cpu_reset TLB code
+
+ arch/xtensa/kernel/setup.c | 1 +
+ 1 file changed, 1 insertion(+)
+
 -- 
-2.21.0
-
+Thanks.
+-- Max
