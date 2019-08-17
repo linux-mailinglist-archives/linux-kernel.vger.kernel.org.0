@@ -2,50 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33C949121B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 19:50:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54C2C91219
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 19:50:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726247AbfHQRuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726286AbfHQRuG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Sat, 17 Aug 2019 13:50:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38040 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726023AbfHQRuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726047AbfHQRuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 17 Aug 2019 13:50:06 -0400
-Subject: Re: [GIT PULL] RISC-V updates for v5.3-rc5
+Subject: Re: [PULL REQUEST] i2c for 5.3
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1566064205;
-        bh=78zR3XNz15/8fX/IXVHrbZCn0tf/df5NoeperNcnbQA=;
+        bh=2t+lyry5Y4wnoZlXTYl1k/o9u3/XqVTf6P+EmPonPn0=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=YpKqFhHigEhtgl36cZ9g9tIR0dLIcYYZ1zQS75XWy4+/zVPOAeqZvSeX0SVotWK7S
-         xo9TR+oGdHtrDFRZagXyAyyIS0e6hQXKcqT35UGhDN+sqTi6TT2Rxz40gnSQ6WPGIE
-         NqdM5rvmVHcd07eDaf3B8I84iHE+30O2BEQM3uQE=
+        b=oM/i9Qfx5T6P4L4OYIPCsVp32lyZH4dY2/niJj4oSF6HHR/XHkHak7CXepgrGMvIQ
+         PD//HuNrTe2hbIGt8ks00z5pdZPWxf75vXzRg7wzv74J9Y/i2jJ6k8kZWE+z7ZZyXl
+         qmGFDD6fc0noI/WBFNakL/UUO3IE/aVsdYzV0aug=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <alpine.DEB.2.21.9999.1908161824300.18249@viisi.sifive.com>
-References: <alpine.DEB.2.21.9999.1908161824300.18249@viisi.sifive.com>
+In-Reply-To: <20190817141226.GA2867@kunai>
+References: <20190817141226.GA2867@kunai>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <alpine.DEB.2.21.9999.1908161824300.18249@viisi.sifive.com>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git
- tags/riscv/for-v5.3-rc5
-X-PR-Tracked-Commit-Id: 69703eb9a8ae28a46cd5bce7d69ceeef6273a104
+X-PR-Tracked-Message-Id: <20190817141226.GA2867@kunai>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
+X-PR-Tracked-Commit-Id: 90865a3dc597bd8463efacb749561095ba70b0aa
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2f478b60118f48bf66eaddcca0d23e80f87a682d
-Message-Id: <156606420515.15242.4838104817894309424.pr-tracker-bot@kernel.org>
+X-PR-Merge-Commit-Id: 05c525326957b504561d271f669d3b315930422f
+Message-Id: <156606420535.15242.5094682270620790019.pr-tracker-bot@kernel.org>
 Date:   Sat, 17 Aug 2019 17:50:05 +0000
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-riscv@lists.infradead.org
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peter Rosin <peda@axentia.se>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 16 Aug 2019 18:25:40 -0700 (PDT):
+The pull request you sent on Sat, 17 Aug 2019 16:12:32 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/riscv/linux.git tags/riscv/for-v5.3-rc5
+> git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git i2c/for-current
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2f478b60118f48bf66eaddcca0d23e80f87a682d
+https://git.kernel.org/torvalds/c/05c525326957b504561d271f669d3b315930422f
 
 Thank you!
 
