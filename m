@@ -2,125 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FA939122E
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 20:17:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E58E091233
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 20:20:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfHQSR3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 14:17:29 -0400
-Received: from inca-roads.misterjones.org ([213.251.177.50]:54133 "EHLO
-        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726033AbfHQSR2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 14:17:28 -0400
-Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
-        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.80)
-        (envelope-from <maz@kernel.org>)
-        id 1hz3GL-0002bG-LD; Sat, 17 Aug 2019 20:17:13 +0200
-Date:   Sat, 17 Aug 2019 19:17:10 +0100
-From:   Marc Zyngier <maz@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource()
- to get mux regs
-Message-ID: <20190817191710.539daa01@why>
-In-Reply-To: <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
-References: <20190809093158.7969-1-lkundrak@v3.sk>
-        <20190809093158.7969-6-lkundrak@v3.sk>
-        <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
-        <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
-Organization: Approximate
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726278AbfHQSUc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 14:20:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:42342 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725925AbfHQSUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 14:20:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 50DD5337;
+        Sat, 17 Aug 2019 11:20:31 -0700 (PDT)
+Received: from [10.37.12.25] (unknown [10.37.12.25])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A66F3F706;
+        Sat, 17 Aug 2019 11:20:29 -0700 (PDT)
+Subject: Re: [Xen-devel] [PATCH 07/11] swiotlb-xen: provide a single
+ page-coherent.h header
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Stefano Stabellini <sstabellini@kernel.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        xen-devel@lists.xenproject.org, iommu@lists.linux-foundation.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190816130013.31154-1-hch@lst.de>
+ <20190816130013.31154-8-hch@lst.de>
+ <9a3261c6-5d92-cf6b-1ae8-3a8e8b5ef0d4@arm.com>
+ <20190817065011.GA18599@lst.de>
+From:   Julien Grall <julien.grall@arm.com>
+Message-ID: <21746bbf-618a-d12b-c767-f9e865f4dd20@arm.com>
+Date:   Sat, 17 Aug 2019 19:20:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190817065011.GA18599@lst.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 62.31.163.78
-X-SA-Exim-Rcpt-To: lkundrak@v3.sk, olof@lixom.net, robh+dt@kernel.org, mark.rutland@arm.com, tglx@linutronix.de, jason@lakedaemon.net, kishon@ti.com, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, pavel@ucw.cz
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Aug 2019 20:41:22 +0200
-Lubomir Rintel <lkundrak@v3.sk> wrote:
+Hi Christoph,
 
-> On Fri, 2019-08-09 at 13:12 +0100, Marc Zyngier wrote:
-> > On 09/08/2019 10:31, Lubomir Rintel wrote:  
-> > > The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
-> > > are offsets from intc's base, not addresses on the parent bus. At this
-> > > point it probably can't be fixed.
-> > > 
-> > > On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
-> > > axi bus, and thus of_address_to_resource() won't work. We should treat
-> > > the values as mere integers as opposed to bus addresses.
-> > > 
-> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > > 
-> > > ---
-> > >  drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
-> > >  1 file changed, 11 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> > > index 14618dc0bd396..af9cba4a51c2e 100644
-> > > --- a/drivers/irqchip/irq-mmp.c
-> > > +++ b/drivers/irqchip/irq-mmp.c
-> > > @@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
-> > >  static int __init mmp2_mux_of_init(struct device_node *node,
-> > >  				   struct device_node *parent)
-> > >  {
-> > > -	struct resource res;
-> > >  	int i, ret, irq, j = 0;
-> > >  	u32 nr_irqs, mfp_irq;
-> > > +	u32 reg[4];
-> > >  
-> > >  	if (!parent)
-> > >  		return -ENODEV;
-> > > @@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_node *node,
-> > >  		pr_err("Not found mrvl,intc-nr-irqs property\n");
-> > >  		return -EINVAL;
-> > >  	}
-> > > -	ret = of_address_to_resource(node, 0, &res);
-> > > +
-> > > +	/*
-> > > +	 * For historical reasonsm, the "regs" property of the
-> > > +	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
-> > > +	 * addresses on the parent bus, but offsets from the intc's base.
-> > > +	 * That is why we can't use of_address_to_resource() here.
-> > > +	 */
-> > > +	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));  
-> > 
-> > This will return 0 even if you've read less than your expected 4 u32s.
-> > You may want to try of_property_read_variable_u32_array instead.  
+On 8/17/19 7:50 AM, Christoph Hellwig wrote:
+> On Fri, Aug 16, 2019 at 11:40:43PM +0100, Julien Grall wrote:
+>> I am not sure I agree with this rename. The implementation of the helpers
+>> are very Arm specific as this is assuming Dom0 is 1:1 mapped.
+>>
+>> This was necessary due to the lack of IOMMU on Arm platforms back then.
+>> But this is now a pain to get rid of it on newer platform...
 > 
-> Will it? Unless I'm reading the of_property_read_u32_array()
-> documentation wrong, it suggests that would return -EOVERFLOW in that
-> case.
+> So if you look at the final version of the header after the whole
+> series, what assumes a 1:1 mapping?  It all just is
+> 
+> 	if (pfn_valid())
+> 		local cache sync;
+> 	else
+> 		call into the arch code;
 
-You're appear to be right, and I read it wrong.
+In the context of Xen Arm, the dev_addr is a host physical address. From 
+my understanding pfn_valid() is dealing with a guest physical frame.
+
+Therefore by passing PFN_DOWN(dev_addr) in argument you assume that the 
+host and guest address spaces are the same.
 
 > 
-> It ignores the extra values it the property is larger. I guess that is
-> not a good thing and we still want to use
-> of_property_read_variable_u32_array() though.
+> are you concerned that the local cache sync might have to be split
+> up more for a non-1:1 map in that case?  We could just movea
+> the xen_dma_* routines into the arch instead of __xen_dma, but it
+> really helps to have a common interface header.
+Moving xen_dma_* routines into the arch would be a good option. 
+Although, I would still consider a stub version for arch not requiring 
+specific DMA.
 
-It doesn't hurt to check for all possible problems, specially given
-that this machine doesn't appear to have a mainline DT (and its OF
-implementation looks a bit buggy).
+Cheers,
 
-Thanks,
-
-	M.
 -- 
-Without deviation from the norm, progress is not possible.
+Julien Grall
+
