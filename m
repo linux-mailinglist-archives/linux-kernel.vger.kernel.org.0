@@ -2,247 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6681991257
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 20:37:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C31B91274
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 20:55:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfHQShy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 14:37:54 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:3329 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726089AbfHQShx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 14:37:53 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 469ppP4k12z9v04j;
-        Sat, 17 Aug 2019 20:37:49 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=YeO5al8+; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id wCJBcpLr5dA4; Sat, 17 Aug 2019 20:37:49 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 469ppP3ZXXz9v04h;
-        Sat, 17 Aug 2019 20:37:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566067069; bh=shTzxO63G5e1afDni4SwVP7SQoKLY9nOAPzTF7vaL6A=;
-        h=From:Subject:To:Cc:Date:From;
-        b=YeO5al8+iVcdTxN+Rq4OReDtpI1WUL2UG/LA6HOa/5REDRbTGqaFmcziqS7q6IMeh
-         MWqg7/F8bx1TqfKbx8lJ3MqLathXGMif6Sc2sTHiQDRvc2l/QJCmy2E46G5Eq9QUIs
-         yAoaqjKNQiF8jrwMn3DLCYRmmVOF1bNS7LVWZSpY=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A5C48B7A9;
-        Sat, 17 Aug 2019 20:37:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id gxSB6x_6M-TM; Sat, 17 Aug 2019 20:37:51 +0200 (CEST)
-Received: from localhost.localdomain (unknown [192.168.232.53])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A0F38B790;
-        Sat, 17 Aug 2019 20:37:51 +0200 (CEST)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id D3018106766; Sat, 17 Aug 2019 18:37:50 +0000 (UTC)
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [RFC PATCH] powerpc: use __builtin_trap() in BUG/WARN macros.
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20190817183750.D3018106766@localhost.localdomain>
-Date:   Sat, 17 Aug 2019 18:37:50 +0000 (UTC)
+        id S1726573AbfHQSzB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 14:55:01 -0400
+Received: from dc2-smtprelay2.synopsys.com ([198.182.61.142]:53942 "EHLO
+        smtprelay-out1.synopsys.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726082AbfHQSzA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 14:55:00 -0400
+Received: from mailhost.synopsys.com (mdc-mailhost2.synopsys.com [10.225.0.210])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by smtprelay-out1.synopsys.com (Postfix) with ESMTPS id B5101C0051;
+        Sat, 17 Aug 2019 18:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1566068100; bh=R7aF5EjeHRaz3V0jYhX81XQ4Vx/vUvia+WkrllGMdp8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=klHGs7Wt4qpN//vshsoyUFv7c/QKb7AgVf1s6U8uNN+Lii5AyjIsgob+26b5x3FtC
+         WqL969hl0Bgb694G7TZQRHfkG4EH9C5tSVLfCncajH2KwUWZjbgSTmuLrKI/IeGXTx
+         MrS/DcUZWFe4QlakUt/vrfrdIh6JclcuaChfJs9Jc+hCIRVX9m5s9iJ0rQd+DvZFCc
+         Zn3tyRG4Vt0zA0/3kK0E/x4R3tarPoxpkwtQzW2Yw2ayFH0/mvR7tjb5P87vN3fAo4
+         jzZAlNjZkuctooeqV1aFaIMRxMo7V41PBXqgJBNqphUbI/MQseI6oDyxhEDb0r4LAV
+         C3xuQ+WlPUfGQ==
+Received: from de02dwia024.internal.synopsys.com (de02dwia024.internal.synopsys.com [10.225.19.81])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 60C4CA0057;
+        Sat, 17 Aug 2019 18:54:53 +0000 (UTC)
+From:   Jose Abreu <Jose.Abreu@synopsys.com>
+To:     netdev@vger.kernel.org
+Cc:     Joao Pinto <Joao.Pinto@synopsys.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Jose Abreu <Jose.Abreu@synopsys.com>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next v3 00/12] net: stmmac: Improvements for -next
+Date:   Sat, 17 Aug 2019 20:54:39 +0200
+Message-Id: <cover.1566067802.git.joabreu@synopsys.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The below exemples of use of WARN_ON() show that the result
-is sub-optimal in regard of the capabilities of powerpc.
+Couple of improvements for -next tree. More info in commit logs.
 
-void test_warn1(unsigned long long a)
-{
-	WARN_ON(a);
-}
-
-void test_warn2(unsigned long a)
-{
-	WARN_ON(a);
-}
-
-void test_warn3(unsigned long a, unsigned long b)
-{
-	WARN_ON(a < b);
-}
-
-void test_warn4(unsigned long a, unsigned long b)
-{
-	WARN_ON(!a);
-}
-
-void test_warn5(unsigned long a, unsigned long b)
-{
-	WARN_ON(!a && b);
-}
-
-00000000 <test_warn1>:
-   0:	7c 64 23 78 	or      r4,r3,r4
-   4:	31 24 ff ff 	addic   r9,r4,-1
-   8:	7c 89 21 10 	subfe   r4,r9,r4
-   c:	0f 04 00 00 	twnei   r4,0
-  10:	4e 80 00 20 	blr
-
-00000014 <test_warn2>:
-  14:	31 23 ff ff 	addic   r9,r3,-1
-  18:	7c 69 19 10 	subfe   r3,r9,r3
-  1c:	0f 03 00 00 	twnei   r3,0
-  20:	4e 80 00 20 	blr
-
-00000024 <test_warn3>:
-  24:	7c 84 18 10 	subfc   r4,r4,r3
-  28:	7d 29 49 10 	subfe   r9,r9,r9
-  2c:	7d 29 00 d0 	neg     r9,r9
-  30:	0f 09 00 00 	twnei   r9,0
-  34:	4e 80 00 20 	blr
-
-00000038 <test_warn4>:
-  38:	7c 63 00 34 	cntlzw  r3,r3
-  3c:	54 63 d9 7e 	rlwinm  r3,r3,27,5,31
-  40:	0f 03 00 00 	twnei   r3,0
-  44:	4e 80 00 20 	blr
-
-00000048 <test_warn5>:
-  48:	2f 83 00 00 	cmpwi   cr7,r3,0
-  4c:	39 20 00 00 	li      r9,0
-  50:	41 9e 00 0c 	beq     cr7,5c <test_warn5+0x14>
-  54:	7c 84 00 34 	cntlzw  r4,r4
-  58:	54 89 d9 7e 	rlwinm  r9,r4,27,5,31
-  5c:	0f 09 00 00 	twnei   r9,0
-  60:	4e 80 00 20 	blr
-
-RELOCATION RECORDS FOR [__bug_table]:
-OFFSET   TYPE              VALUE
-00000000 R_PPC_ADDR32      .text+0x0000000c
-0000000c R_PPC_ADDR32      .text+0x0000001c
-00000018 R_PPC_ADDR32      .text+0x00000030
-00000018 R_PPC_ADDR32      .text+0x00000030
-00000024 R_PPC_ADDR32      .text+0x00000040
-00000030 R_PPC_ADDR32      .text+0x0000005c
-
-Using __builtin_trap() instead of inline assembly of twnei/tdnei
-provides a far better result:
-
-00000000 <test_warn1>:
-   0:	7c 64 23 78 	or      r4,r3,r4
-   4:	0f 04 00 00 	twnei   r4,0
-   8:	4e 80 00 20 	blr
-
-0000000c <test_warn2>:
-   c:	0f 03 00 00 	twnei   r3,0
-  10:	4e 80 00 20 	blr
-
-00000014 <test_warn3>:
-  14:	7c 43 20 08 	twllt   r3,r4
-  18:	4e 80 00 20 	blr
-
-0000001c <test_warn4>:
-  1c:	0c 83 00 00 	tweqi   r3,0
-  20:	4e 80 00 20 	blr
-
-00000024 <test_warn5>:
-  24:	2f 83 00 00 	cmpwi   cr7,r3,0
-  28:	41 9e 00 08 	beq     cr7,30 <test_warn5+0xc>
-  2c:	0c 84 00 00 	tweqi   r4,0
-  30:	4e 80 00 20 	blr
-
-RELOCATION RECORDS FOR [__bug_table]:
-OFFSET   TYPE              VALUE
-00000000 R_PPC_ADDR32      .text+0x00000004
-0000000c R_PPC_ADDR32      .text+0x0000000c
-00000018 R_PPC_ADDR32      .text+0x00000014
-00000024 R_PPC_ADDR32      .text+0x0000001c
-00000030 R_PPC_ADDR32      .text+0x0000002c
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/bug.h | 24 ++++++++++++++----------
- 1 file changed, 14 insertions(+), 10 deletions(-)
+Cc: Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Alexandre Torgue <alexandre.torgue@st.com>
+Cc: Jose Abreu <joabreu@synopsys.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
+Cc: netdev@vger.kernel.org
+Cc: linux-stm32@st-md-mailman.stormreply.com
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
 
-diff --git a/arch/powerpc/include/asm/bug.h b/arch/powerpc/include/asm/bug.h
-index fed7e6241349..1a37c8d30b78 100644
---- a/arch/powerpc/include/asm/bug.h
-+++ b/arch/powerpc/include/asm/bug.h
-@@ -44,14 +44,14 @@
- #ifdef CONFIG_DEBUG_BUGVERBOSE
- #define _EMIT_BUG_ENTRY				\
- 	".section __bug_table,\"aw\"\n"		\
--	"2:\t" PPC_LONG "1b, %0\n"		\
-+	"2:\t" PPC_LONG "1b - 4, %0\n"		\
- 	"\t.short %1, %2\n"			\
- 	".org 2b+%3\n"				\
- 	".previous\n"
- #else
- #define _EMIT_BUG_ENTRY				\
- 	".section __bug_table,\"aw\"\n"		\
--	"2:\t" PPC_LONG "1b\n"			\
-+	"2:\t" PPC_LONG "1b - 4\n"			\
- 	"\t.short %2\n"				\
- 	".org 2b+%3\n"				\
- 	".previous\n"
-@@ -64,8 +64,9 @@
-  */
- 
- #define BUG() do {						\
-+	__builtin_trap();					\
- 	__asm__ __volatile__(					\
--		"1:	twi 31,0,0\n"				\
-+		"1:\n"						\
- 		_EMIT_BUG_ENTRY					\
- 		: : "i" (__FILE__), "i" (__LINE__),		\
- 		    "i" (0), "i"  (sizeof(struct bug_entry)));	\
-@@ -77,18 +78,20 @@
- 		if (x)						\
- 			BUG();					\
- 	} else {						\
-+		if (x)						\
-+			__builtin_trap();			\
- 		__asm__ __volatile__(				\
--		"1:	"PPC_TLNEI"	%4,0\n"			\
-+		"1:\n"						\
- 		_EMIT_BUG_ENTRY					\
- 		: : "i" (__FILE__), "i" (__LINE__), "i" (0),	\
--		  "i" (sizeof(struct bug_entry)),		\
--		  "r" ((__force long)(x)));			\
-+		  "i" (sizeof(struct bug_entry)));		\
- 	}							\
- } while (0)
- 
- #define __WARN_FLAGS(flags) do {				\
-+	__builtin_trap();					\
- 	__asm__ __volatile__(					\
--		"1:	twi 31,0,0\n"				\
-+		"1:\n"						\
- 		_EMIT_BUG_ENTRY					\
- 		: : "i" (__FILE__), "i" (__LINE__),		\
- 		  "i" (BUGFLAG_WARNING|(flags)),		\
-@@ -101,13 +104,14 @@
- 		if (__ret_warn_on)				\
- 			__WARN();				\
- 	} else {						\
-+		if (__ret_warn_on)				\
-+			__builtin_trap();			\
- 		__asm__ __volatile__(				\
--		"1:	"PPC_TLNEI"	%4,0\n"			\
-+		"1:\n"			\
- 		_EMIT_BUG_ENTRY					\
- 		: : "i" (__FILE__), "i" (__LINE__),		\
- 		  "i" (BUGFLAG_WARNING|BUGFLAG_TAINT(TAINT_WARN)),\
--		  "i" (sizeof(struct bug_entry)),		\
--		  "r" (__ret_warn_on));				\
-+		  "i" (sizeof(struct bug_entry)));		\
- 	}							\
- 	unlikely(__ret_warn_on);				\
- })
+Jose Abreu (12):
+  net: stmmac: Get correct timestamp values from XGMAC
+  net: stmmac: Prepare to add Split Header support
+  net: stmmac: xgmac: Correctly return that RX descriptor is not last
+    one
+  net: stmmac: Add Split Header support and enable it in XGMAC cores
+  net: stmmac: Add a counter for Split Header packets
+  net: stmmac: dwxgmac: Add Flexible PPS support
+  net: stmmac: Add ethtool register dump for XGMAC cores
+  net: stmmac: Add support for SA Insertion/Replacement in XGMAC cores
+  net: stmmac: selftests: Add tests for SA Insertion/Replacement
+  net: stmmac: xgmac: Add EEE support
+  net: stmmac: Add support for VLAN Insertion Offload
+  net: stmmac: selftests: Add selftest for VLAN TX Offload
+
+ drivers/net/ethernet/stmicro/stmmac/common.h       |  10 +
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2.h     |  56 ++++
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_core.c    | 182 ++++++++++++-
+ .../net/ethernet/stmicro/stmmac/dwxgmac2_descs.c   |  85 +++++-
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c |  31 ++-
+ drivers/net/ethernet/stmicro/stmmac/hwif.h         |  30 +++
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h       |  10 +
+ .../net/ethernet/stmicro/stmmac/stmmac_ethtool.c   |  24 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  | 286 ++++++++++++++++-----
+ .../net/ethernet/stmicro/stmmac/stmmac_selftests.c | 194 +++++++++++++-
+ 10 files changed, 817 insertions(+), 91 deletions(-)
+
 -- 
-2.17.1
+2.7.4
 
