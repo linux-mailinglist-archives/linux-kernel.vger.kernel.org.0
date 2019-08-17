@@ -2,245 +2,194 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 507E190DF3
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:41:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E10290E15
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:44:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfHQHl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 03:41:27 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46793 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725988AbfHQHl1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 03:41:27 -0400
-Received: by mail-pg1-f194.google.com with SMTP id m3so3463584pgv.13
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 00:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2Rwq01trDayAP0H8fPQiQ3OK+pDaf4XqEAWP3N7Fklg=;
-        b=F5/SKrj19TvAFxsRdmKEA3E1BeZi1BZY3gYsu2P/j3rhQrzutx2eFjVCNP2UcPIhA+
-         FSQXkiNrcM+pugWNRaQeKEmMzquzIb3SSU3E5Tajw+Pmc+pM/rQAJdVqnIMZ/QW0vxrK
-         PVJOObQjz0+XWKS1fqZFURZ1eNv+OLkuBEMVt3f6pFrhjDDHJ0j/zxg4x7ldFkaEZdG+
-         dEmeepUCNWBN789PWS9FjS51yz2tegXK5Nt7OGfS0UdDe5QC3xL1E9kv20gUx/I1QGNH
-         mVsEfnydgzmj437xSoPVNj1zKcRxcFoP5pYCpakLtjlQPHC7Yj0fmRfiuFB0dDYvQ/3Z
-         vvBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2Rwq01trDayAP0H8fPQiQ3OK+pDaf4XqEAWP3N7Fklg=;
-        b=gM17542ZxPrZ7D0pxYFGxEHysMs0vU4VFlvwsdqLM0cBkZLgO4hw46XJ/MxOwRhvkg
-         H+hp1eGcWc45z/J6kWmI4KrgnzWAA3c8wIri9VH4jBZou4NSu5+rsIrXtJQJQUIGWSB+
-         rYndmtq2aYOc7lLFXZ0Yo48x3Es/y+FgfHvUVQUfJVO8GY/VYF+klHvMGWGZPRLX3bKU
-         dkufT3ra1ibAoExs1lOpPyYJd3JlmXS8PFLyL3nJ0um5bcmjVzRxulC3RuBh6Z7sTxe0
-         zUBu1Njw1sqw7bz78KjAxLwnB/LPVNGe6BGpPZu9X0BCZL35vHglhebCDcBMMsXj0vdk
-         l3Cw==
-X-Gm-Message-State: APjAAAWubDP70xdIpd68CSjQtoYh9VLtUq96o78Ayq88Nkw+1pxhigsi
-        VDkBE4FkivEILEhwQLRDdnM=
-X-Google-Smtp-Source: APXvYqyLmWb3dQ7qXtS549lXT8H1MYxaTwCa5Dld/jmB2LxOOgdTHnndm9HVYHD4rwkqLpCVKQRotA==
-X-Received: by 2002:a17:90a:b946:: with SMTP id f6mr10986185pjw.86.1566027686217;
-        Sat, 17 Aug 2019 00:41:26 -0700 (PDT)
-Received: from localhost.localdomain ([61.83.141.141])
-        by smtp.gmail.com with ESMTPSA id 5sm7285317pgh.93.2019.08.17.00.41.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2019 00:41:25 -0700 (PDT)
-From:   Sidong Yang <realwakka@gmail.com>
-To:     Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Sidong Yang <realwakka@gmail.com>, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/arm: drop use of drmP.h
-Date:   Sat, 17 Aug 2019 08:41:15 +0100
-Message-Id: <20190817074115.19116-1-realwakka@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726302AbfHQHon (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 03:44:43 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:63190 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfHQHom (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 03:44:42 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 469XJl29Mjz9tyPF;
+        Sat, 17 Aug 2019 09:44:39 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=lqRMJL8p; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id dhoYL34YTQ9e; Sat, 17 Aug 2019 09:44:39 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 469XJl0kJ0z9tyP6;
+        Sat, 17 Aug 2019 09:44:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1566027879; bh=2OB73IPwA1xyGUU/Zm+DsLXHeBY22vrfmhjVU3McqWU=;
+        h=From:Subject:To:Cc:Date:From;
+        b=lqRMJL8p+XRZKMrCrlL434gYKZ/3O8YnAxg0vZ71PqhYy3hY9CRn42EeE8MlOZqZW
+         CRClxTIJ8ReKVExfpLiVmd3NBsA3fYr/Whbzeo8sRw/DvLSA4n6r0XI0PYOg+Wckse
+         t2YLnHrFHto1Qd0NteOYNeMgll20kbdOhjdmXMUw=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 302F08B793;
+        Sat, 17 Aug 2019 09:44:40 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id v7IDuIMBzNPg; Sat, 17 Aug 2019 09:44:40 +0200 (CEST)
+Received: from localhost.localdomain (unknown [192.168.232.53])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id D5ADE8B790;
+        Sat, 17 Aug 2019 09:44:39 +0200 (CEST)
+Received: by localhost.localdomain (Postfix, from userid 0)
+        id 84C6C1056A3; Sat, 17 Aug 2019 07:44:39 +0000 (UTC)
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] btrfs: fix allocation of bitmap pages.
+To:     erhard_f@mailbox.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org
+Message-Id: <20190817074439.84C6C1056A3@localhost.localdomain>
+Date:   Sat, 17 Aug 2019 07:44:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop use of deprecated drmP.h header file.
-Remove drmP.h includes and add some include headers for function or
-struct that used in code.
----
- drivers/gpu/drm/arm/hdlcd_crtc.c    | 2 +-
- drivers/gpu/drm/arm/hdlcd_drv.c     | 6 +++++-
- drivers/gpu/drm/arm/malidp_crtc.c   | 4 +++-
- drivers/gpu/drm/arm/malidp_drv.c    | 4 +++-
- drivers/gpu/drm/arm/malidp_drv.h    | 1 -
- drivers/gpu/drm/arm/malidp_hw.c     | 7 ++++++-
- drivers/gpu/drm/arm/malidp_mw.c     | 2 +-
- drivers/gpu/drm/arm/malidp_planes.c | 4 +++-
- 8 files changed, 22 insertions(+), 8 deletions(-)
+Various notifications of type "BUG kmalloc-4096 () : Redzone
+overwritten" have been observed recently in various parts of
+the kernel. After some time, it has been made a relation with
+the use of BTRFS filesystem.
 
-diff --git a/drivers/gpu/drm/arm/hdlcd_crtc.c b/drivers/gpu/drm/arm/hdlcd_crtc.c
-index a3efa28436ea..8285ff3e9991 100644
---- a/drivers/gpu/drm/arm/hdlcd_crtc.c
-+++ b/drivers/gpu/drm/arm/hdlcd_crtc.c
-@@ -9,7 +9,6 @@
-  *  Implementation of a CRTC class for the HDLCD driver.
-  */
+[   22.809700] BUG kmalloc-4096 (Tainted: G        W        ): Redzone overwritten
+[   22.809971] -----------------------------------------------------------------------------
+
+[   22.810286] INFO: 0xbe1a5921-0xfbfc06cd. First byte 0x0 instead of 0xcc
+[   22.810866] INFO: Allocated in __load_free_space_cache+0x588/0x780 [btrfs] age=22 cpu=0 pid=224
+[   22.811193] 	__slab_alloc.constprop.26+0x44/0x70
+[   22.811345] 	kmem_cache_alloc_trace+0xf0/0x2ec
+[   22.811588] 	__load_free_space_cache+0x588/0x780 [btrfs]
+[   22.811848] 	load_free_space_cache+0xf4/0x1b0 [btrfs]
+[   22.812090] 	cache_block_group+0x1d0/0x3d0 [btrfs]
+[   22.812321] 	find_free_extent+0x680/0x12a4 [btrfs]
+[   22.812549] 	btrfs_reserve_extent+0xec/0x220 [btrfs]
+[   22.812785] 	btrfs_alloc_tree_block+0x178/0x5f4 [btrfs]
+[   22.813032] 	__btrfs_cow_block+0x150/0x5d4 [btrfs]
+[   22.813262] 	btrfs_cow_block+0x194/0x298 [btrfs]
+[   22.813484] 	commit_cowonly_roots+0x44/0x294 [btrfs]
+[   22.813718] 	btrfs_commit_transaction+0x63c/0xc0c [btrfs]
+[   22.813973] 	close_ctree+0xf8/0x2a4 [btrfs]
+[   22.814107] 	generic_shutdown_super+0x80/0x110
+[   22.814250] 	kill_anon_super+0x18/0x30
+[   22.814437] 	btrfs_kill_super+0x18/0x90 [btrfs]
+[   22.814590] INFO: Freed in proc_cgroup_show+0xc0/0x248 age=41 cpu=0 pid=83
+[   22.814841] 	proc_cgroup_show+0xc0/0x248
+[   22.814967] 	proc_single_show+0x54/0x98
+[   22.815086] 	seq_read+0x278/0x45c
+[   22.815190] 	__vfs_read+0x28/0x17c
+[   22.815289] 	vfs_read+0xa8/0x14c
+[   22.815381] 	ksys_read+0x50/0x94
+[   22.815475] 	ret_from_syscall+0x0/0x38
+
+Commit 69d2480456d1 ("btrfs: use copy_page for copying pages instead
+of memcpy") changed the way bitmap blocks are copied. But allthough
+bitmaps have the size of a page, they were allocated with kzalloc().
+
+Most of the time, kzalloc() allocates aligned blocks of memory, so
+copy_page() can be used. But when some debug options like SLAB_DEBUG
+are activated, kzalloc() may return unaligned pointer.
+
+On powerpc, memcpy(), copy_page() and other copying functions use
+'dcbz' instruction which provides an entire zeroed cacheline to avoid
+memory read when the intention is to overwrite a full line. Functions
+like memcpy() are writen to care about partial cachelines at the start
+and end of the destination, but copy_page() assumes it gets pages. As
+pages are naturally cache aligned, copy_page() doesn't care about
+partial lines. This means that when copy_page() is called with a
+misaligned pointer, a few leading bytes are zeroed.
+
+To fix it, allocate bitmaps with get_zeroed_page() instead of kzalloc()
+
+Reported-by: Erhard F. <erhard_f@mailbox.org>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=204371
+Fixes: 69d2480456d1 ("btrfs: use copy_page for copying pages instead of memcpy")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Tested-by: Erhard F. <erhard_f@mailbox.org>
+---
+ fs/btrfs/free-space-cache.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
+index 062be9dde4c6..3229a058e025 100644
+--- a/fs/btrfs/free-space-cache.c
++++ b/fs/btrfs/free-space-cache.c
+@@ -764,7 +764,7 @@ static int __load_free_space_cache(struct btrfs_root *root, struct inode *inode,
+ 		} else {
+ 			ASSERT(num_bitmaps);
+ 			num_bitmaps--;
+-			e->bitmap = kzalloc(PAGE_SIZE, GFP_NOFS);
++			e->bitmap = (void *)get_zeroed_page(GFP_NOFS);
+ 			if (!e->bitmap) {
+ 				kmem_cache_free(
+ 					btrfs_free_space_cachep, e);
+@@ -1881,7 +1881,7 @@ static void free_bitmap(struct btrfs_free_space_ctl *ctl,
+ 			struct btrfs_free_space *bitmap_info)
+ {
+ 	unlink_free_space(ctl, bitmap_info);
+-	kfree(bitmap_info->bitmap);
++	free_page((unsigned long)bitmap_info->bitmap);
+ 	kmem_cache_free(btrfs_free_space_cachep, bitmap_info);
+ 	ctl->total_bitmaps--;
+ 	ctl->op->recalc_thresholds(ctl);
+@@ -2135,7 +2135,7 @@ static int insert_into_bitmap(struct btrfs_free_space_ctl *ctl,
+ 		}
  
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-@@ -19,6 +18,7 @@
- #include <drm/drm_of.h>
- #include <drm/drm_plane_helper.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_vblank.h>
- #include <linux/clk.h>
- #include <linux/of_graph.h>
- #include <linux/platform_data/simplefb.h>
-diff --git a/drivers/gpu/drm/arm/hdlcd_drv.c b/drivers/gpu/drm/arm/hdlcd_drv.c
-index 27c46a2838c5..c2a59712cf46 100644
---- a/drivers/gpu/drm/arm/hdlcd_drv.c
-+++ b/drivers/gpu/drm/arm/hdlcd_drv.c
-@@ -9,6 +9,7 @@
-  *  ARM HDLCD Driver
-  */
+ 		/* allocate the bitmap */
+-		info->bitmap = kzalloc(PAGE_SIZE, GFP_NOFS);
++		info->bitmap = (void *)get_zeroed_page(GFP_NOFS);
+ 		spin_lock(&ctl->tree_lock);
+ 		if (!info->bitmap) {
+ 			ret = -ENOMEM;
+@@ -2146,7 +2146,7 @@ static int insert_into_bitmap(struct btrfs_free_space_ctl *ctl,
  
-+#include <linux/dma-mapping.h>
- #include <linux/module.h>
- #include <linux/spinlock.h>
- #include <linux/clk.h>
-@@ -17,18 +18,21 @@
- #include <linux/list.h>
- #include <linux/of_graph.h>
- #include <linux/of_reserved_mem.h>
-+#include <linux/platform_device.h>
- #include <linux/pm_runtime.h>
+ out:
+ 	if (info) {
+-		kfree(info->bitmap);
++		free_page((unsigned long)info->bitmap);
+ 		kmem_cache_free(btrfs_free_space_cachep, info);
+ 	}
  
--#include <drm/drmP.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_fb_cma_helper.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
-+#include <drm/drm_irq.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_of.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_vblank.h>
+@@ -2802,7 +2802,7 @@ u64 btrfs_alloc_from_cluster(struct btrfs_block_group_cache *block_group,
+ 	if (entry->bytes == 0) {
+ 		ctl->free_extents--;
+ 		if (entry->bitmap) {
+-			kfree(entry->bitmap);
++			free_page((unsigned long)entry->bitmap);
+ 			ctl->total_bitmaps--;
+ 			ctl->op->recalc_thresholds(ctl);
+ 		}
+@@ -3606,7 +3606,7 @@ int test_add_free_space_entry(struct btrfs_block_group_cache *cache,
+ 	}
  
- #include "hdlcd_drv.h"
- #include "hdlcd_regs.h"
-diff --git a/drivers/gpu/drm/arm/malidp_crtc.c b/drivers/gpu/drm/arm/malidp_crtc.c
-index db4451260fff..3735554f61bf 100644
---- a/drivers/gpu/drm/arm/malidp_crtc.c
-+++ b/drivers/gpu/drm/arm/malidp_crtc.c
-@@ -6,11 +6,13 @@
-  * ARM Mali DP500/DP550/DP650 driver (crtc operations)
-  */
+ 	if (!map) {
+-		map = kzalloc(PAGE_SIZE, GFP_NOFS);
++		map = (void *)get_zeroed_page(GFP_NOFS);
+ 		if (!map) {
+ 			kmem_cache_free(btrfs_free_space_cachep, info);
+ 			return -ENOMEM;
+@@ -3635,7 +3635,7 @@ int test_add_free_space_entry(struct btrfs_block_group_cache *cache,
  
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-+#include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
-+#include <drm/drm_vblank.h>
-+
- #include <linux/clk.h>
- #include <linux/pm_runtime.h>
- #include <video/videomode.h>
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index c27ff456eddc..2a13490e5dbb 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -15,17 +15,19 @@
- #include <linux/pm_runtime.h>
- #include <linux/debugfs.h>
+ 	if (info)
+ 		kmem_cache_free(btrfs_free_space_cachep, info);
+-	kfree(map);
++	free_page((unsigned long)map);
+ 	return 0;
+ }
  
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
- #include <drm/drm_crtc.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_fb_helper.h>
- #include <drm/drm_fb_cma_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_modeset_helper.h>
- #include <drm/drm_of.h>
-+#include <drm/drm_vblank.h>
- 
- #include "malidp_drv.h"
- #include "malidp_mw.h"
-diff --git a/drivers/gpu/drm/arm/malidp_drv.h b/drivers/gpu/drm/arm/malidp_drv.h
-index 0a639af8337e..a57edff55f2c 100644
---- a/drivers/gpu/drm/arm/malidp_drv.h
-+++ b/drivers/gpu/drm/arm/malidp_drv.h
-@@ -14,7 +14,6 @@
- #include <linux/mutex.h>
- #include <linux/wait.h>
- #include <linux/spinlock.h>
--#include <drm/drmP.h>
- #include "malidp_hw.h"
- 
- #define MALIDP_CONFIG_VALID_INIT	0
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index 380be66d4c6e..f66d6b4bdaab 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -9,9 +9,14 @@
-  */
- 
- #include <linux/clk.h>
-+#include <linux/delay.h>
- #include <linux/types.h>
- #include <linux/io.h>
--#include <drm/drmP.h>
-+
-+#include <drm/drm_fourcc.h>
-+#include <drm/drm_print.h>
-+#include <drm/drm_vblank.h>
-+
- #include <video/videomode.h>
- #include <video/display_timing.h>
- 
-diff --git a/drivers/gpu/drm/arm/malidp_mw.c b/drivers/gpu/drm/arm/malidp_mw.c
-index 2e812525025d..c2f5ba52c8aa 100644
---- a/drivers/gpu/drm/arm/malidp_mw.c
-+++ b/drivers/gpu/drm/arm/malidp_mw.c
-@@ -10,8 +10,8 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_probe_helper.h>
- #include <drm/drm_fb_cma_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_gem_cma_helper.h>
--#include <drm/drmP.h>
- #include <drm/drm_writeback.h>
- 
- #include "malidp_drv.h"
-diff --git a/drivers/gpu/drm/arm/malidp_planes.c b/drivers/gpu/drm/arm/malidp_planes.c
-index 488375bd133d..3c70a53813bf 100644
---- a/drivers/gpu/drm/arm/malidp_planes.c
-+++ b/drivers/gpu/drm/arm/malidp_planes.c
-@@ -7,11 +7,13 @@
-  */
- 
- #include <linux/iommu.h>
-+#include <linux/platform_device.h>
- 
--#include <drm/drmP.h>
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-+#include <drm/drm_drv.h>
- #include <drm/drm_fb_cma_helper.h>
-+#include <drm/drm_fourcc.h>
- #include <drm/drm_gem_cma_helper.h>
- #include <drm/drm_gem_framebuffer_helper.h>
- #include <drm/drm_plane_helper.h>
 -- 
-2.20.1
+2.17.1
 
