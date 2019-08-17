@@ -2,79 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 140CF90F9B
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 11:08:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FD6D90F96
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 11:01:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726129AbfHQJIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 05:08:46 -0400
-Received: from depni-mx.sinp.msu.ru ([213.131.7.21]:25 "EHLO
-        depni-mx.sinp.msu.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725267AbfHQJIq (ORCPT
+        id S1726087AbfHQJAd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 05:00:33 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:1740 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725889AbfHQJAd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 05:08:46 -0400
-X-Greylist: delayed 523 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Aug 2019 05:08:45 EDT
-Received: from spider (unknown [109.63.188.125])
-        by depni-mx.sinp.msu.ru (Postfix) with ESMTPSA id 54DBD1BF45B;
-        Sat, 17 Aug 2019 12:00:01 +0300 (MSK)
-From:   Serge Belyshev <belyshev@depni.sinp.msu.ru>
-To:     Stuart Little <achirvasub@gmail.com>
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        linux-wireless@vger.kernel.org,
-        Haim Dreyfuss <haim.dreyfuss@intel.com>
-Subject: Re: PROBLEM: 5.3.0-rc* causes iwlwifi failure
-In-Reply-To: <20190817041258.GA1641@chirva-slack.chirva-slack>
-References: <20190817041258.GA1641@chirva-slack.chirva-slack>
-Date:   Sat, 17 Aug 2019 11:59:59 +0300
-Message-ID: <87y2zsf9ps.fsf@depni.sinp.msu.ru>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Sat, 17 Aug 2019 05:00:33 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7H8uwJ1137644
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 05:00:32 -0400
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uedr11818-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 05:00:31 -0400
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Sat, 17 Aug 2019 10:00:29 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Sat, 17 Aug 2019 10:00:26 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7H90Pst49807532
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 17 Aug 2019 09:00:25 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 282265206C;
+        Sat, 17 Aug 2019 09:00:25 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.148])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTPS id 2AA2C52050;
+        Sat, 17 Aug 2019 09:00:24 +0000 (GMT)
+Date:   Sat, 17 Aug 2019 12:00:22 +0300
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Doug Berger <opendmb@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arch : arm : add a criteria for pfn_valid
+References: <1566010813-27219-1-git-send-email-huangzhaoyang@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566010813-27219-1-git-send-email-huangzhaoyang@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19081709-0008-0000-0000-0000030A0077
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081709-0009-0000-0000-00004A281F4C
+Message-Id: <20190817090021.GA10627@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-17_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908170099
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Aug 17, 2019 at 11:00:13AM +0800, Zhaoyang Huang wrote:
+> From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> 
+> pfn_valid can be wrong while the MSB of physical address be trimed as pfn
+> larger than the max_pfn.
 
-> I am on an Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz running Linux
-> x86_64 (Slackware), with a custom-compiled 5.3.0-rc4 (.config
-> attached).
->
-> I am using the Intel wifi adapter on this machine:
->
-> 02:00.0 Network controller: Intel Corporation Device 24fb (rev 10)
->
-> with the iwlwifi driver. I am attaching the output to 'lspci -vv -s
-> 02:00.0' as the file device-info.
->
-> All 5.3.0-rc* versions I have tried (including rc4) cause multiple
-> dmesg iwlwifi-related errors (dmesg attached). Examples:
->
-> iwlwifi 0000:02:00.0: Failed to get geographic profile info -5
-> iwlwifi 0000:02:00.0: Microcode SW error detected.  Restarting 0x82000000
-> iwlwifi 0000:02:00.0: 0x00000038 | BAD_COMMAND
->
+How the overflow of __pfn_to_phys() is related to max_pfn?
+Where is the guarantee that __pfn_to_phys(max_pfn) won't overflow?
+ 
+> Signed-off-by: Zhaoyang Huang <huangzhaoyang@gmail.com>
+> ---
+>  arch/arm/mm/init.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> index c2daabb..9c4d938 100644
+> --- a/arch/arm/mm/init.c
+> +++ b/arch/arm/mm/init.c
+> @@ -177,7 +177,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+>  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+>  int pfn_valid(unsigned long pfn)
+>  {
+> -	return memblock_is_map_memory(__pfn_to_phys(pfn));
+> +	return (pfn > max_pfn) ?
+> +		false : memblock_is_map_memory(__pfn_to_phys(pfn));
+>  }
+>  EXPORT_SYMBOL(pfn_valid);
+>  #endif
+> -- 
+> 1.9.1
+> 
 
-I have my logs filled with similar garbage throughout 5.3-rc*. Also
-since 5.3-rcsomething not only it WARNS in dmesg about firmware failure,
-but completely stops working after suspend/resume cycle.
+-- 
+Sincerely yours,
+Mike.
 
-It looks like that:
-
-commit 4fd445a2c855bbcab81fbe06d110e78dbd974a5b
-Author: Haim Dreyfuss <haim.dreyfuss@intel.com>
-Date:   Thu May 2 11:45:02 2019 +0300
-
-    iwlwifi: mvm: Add log information about SAR status
-    
-    Inform users when SAR status is changing.
-    
-    Signed-off-by: Haim Dreyfuss <haim.dreyfuss@intel.com>
-    Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-
-
-is the culprit. (manually) reverting it on top of 5.3-rc4 makes
-everything work again.
