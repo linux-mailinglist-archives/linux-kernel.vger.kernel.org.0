@@ -2,128 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6336490F99
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 11:05:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B16D490F9F
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 11:14:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726103AbfHQJEp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 05:04:45 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:12830 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725784AbfHQJEp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 05:04:45 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 469Z561HnLz9tyWV;
-        Sat, 17 Aug 2019 11:04:42 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=LZQq9LzK; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 8u0J3v829NZD; Sat, 17 Aug 2019 11:04:42 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 469Z5606bJz9tyWT;
-        Sat, 17 Aug 2019 11:04:42 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566032682; bh=6D6Fw4eHKQRo9SntiTRLQdojFuLMX/qxVXEv1BnUofI=;
-        h=From:Subject:To:Cc:Date:From;
-        b=LZQq9LzKeP6vMUzRlEQpJFCxS3DoJflQdw0cDeSROz8BPSBjLPfAORKGKv5q4zslK
-         rNe1mPHfktUNI/kDqajBCp4KSryl2YLGbGfk9H6IUZqY6ssOKuCbPbTyBXFkKMPqo+
-         Us4iATJdQ2RJnPCl5xIyrHQp26AlkvQp3+HhGCdA=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3B5BA8B793;
-        Sat, 17 Aug 2019 11:04:43 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id tS95EnQl6bXB; Sat, 17 Aug 2019 11:04:43 +0200 (CEST)
-Received: from localhost.localdomain (unknown [192.168.232.53])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 086FC8B790;
-        Sat, 17 Aug 2019 11:04:43 +0200 (CEST)
-Received: by localhost.localdomain (Postfix, from userid 0)
-        id C5FEF106613; Sat, 17 Aug 2019 09:04:42 +0000 (UTC)
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc: optimise WARN_ON()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Segher Boessenkool <segher@kernel.crashing.org>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Message-Id: <20190817090442.C5FEF106613@localhost.localdomain>
-Date:   Sat, 17 Aug 2019 09:04:42 +0000 (UTC)
+        id S1726048AbfHQJO0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 05:14:26 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:43706 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfHQJO0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 05:14:26 -0400
+Received: by mail-ed1-f67.google.com with SMTP id h13so7089434edq.10
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 02:14:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sirr0PNWi30rC1+3FoJFRyHctdtSV+xSzXjml2UEUC4=;
+        b=mvJ529A/blvAFkMU0nkpXUBqz+Yk2QjPFjBP3Sn3pBPDEC6EGRey+JFkd+viVaYzXb
+         8oudACB0vsLfN2fo63EIDmVE7slQCVBLL1vrUgW9cTrxhNPQ9k5QvhhItUIycUSyCFAj
+         xCk/XxFyo2O82cg/ToR2jzwSBfYlJxvXXKgocycw7Kp6Aixk1aW6HxdNmcz7Un6AZY03
+         0LXD+CifY8ayqjXyDsQMH9NuyUDEZ/pf7205OnhWtdvTlWuhXUdkkXmz0lH9GbiVcRbG
+         eDYoN+U44rBrE0dyd+NuYJJD8CNWDUr6Tpuncmhzpxly8nw7lNQaBswAve2VZPN3Y9Bf
+         T7Vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sirr0PNWi30rC1+3FoJFRyHctdtSV+xSzXjml2UEUC4=;
+        b=FPvBMSdjJb3iK6FU6XbXr1W9b+NwtfhX4YMP/fauixIgP/Sso3Vb+Aow0M9MRPOgIO
+         qIyA3jDcMJNEOClD8cfP2wua3lDG4b45u1S9mM6ob0sne9dJvXGpfb2jKkYEDl9xXzvy
+         CRwfQDMks8eI/VzNPu5PH0YUoxZWQCl9QQsgnwss9q3togBO33/bZO7BEWkJS5woJQOU
+         SVB8Qn2zzz1oRynn52zqDrycJue0m1/3u+2buYhRiN4FWbgYiZaUgy+1rEjr6c5+H7vU
+         K7DwJh9LwYtM5u+v5082zQqMO+qYArgvYMGhHrV/BkJnv4MTj7E3d5cmgSH2nY89moLC
+         Ho2w==
+X-Gm-Message-State: APjAAAVgWqvAsPhZUkC/5hozYNJDycJ4beT5c7WLDVbGbBqJpK6FPNzh
+        3oRcvEx2TjhVufSsxSl/yKBr1n2ifa6MT8Bgu0E=
+X-Google-Smtp-Source: APXvYqx8YnCqgmW+SJMM2KxQi7LlM/1/loQXZvtlig2ikAJSeV0lKhadRN+FfbIn1ocNg/q9kdwGfz8QG+DIlsEjpWs=
+X-Received: by 2002:a17:906:2310:: with SMTP id l16mr6536483eja.0.1566033264390;
+ Sat, 17 Aug 2019 02:14:24 -0700 (PDT)
+MIME-Version: 1.0
+References: <1566010813-27219-1-git-send-email-huangzhaoyang@gmail.com> <20190817090021.GA10627@rapoport-lnx>
+In-Reply-To: <20190817090021.GA10627@rapoport-lnx>
+From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date:   Sat, 17 Aug 2019 17:14:13 +0800
+Message-ID: <CAGWkznGs0Y2PCowr2SDRnJrKXk08RS-sptTxhqR=6yo8G3tBnQ@mail.gmail.com>
+Subject: Re: [PATCH] arch : arm : add a criteria for pfn_valid
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Zhaoyang Huang <zhaoyang.huang@unisoc.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Rob Herring <robh@kernel.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Doug Berger <opendmb@gmail.com>,
+        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Unlike BUG_ON(x), WARN_ON(x) uses !!(x) as the trigger
-of the t(d/w)nei instruction instead of using directly the
-value of x.
-
-This leads to GCC adding unnecessary pair of addic/subfe. This was
-revealed after adding a WARN_ON() on top of clear_page() in order
-to detect misaligned destination:
-
-@@ -49,6 +51,8 @@ static inline void clear_page(void *addr)
- {
- 	unsigned int i;
-
-+	WARN_ON((unsigned long)addr & (L1_CACHE_BYTES - 1));
-+
- 	for (i = 0; i < PAGE_SIZE / L1_CACHE_BYTES; i++, addr += L1_CACHE_BYTES)
- 		dcbz(addr);
- }
-
-This resulted on:
-
-0000019c <clear_user_page>:
- 19c:	54 68 06 fe 	clrlwi  r8,r3,27
- 1a0:	31 48 ff ff 	addic   r10,r8,-1
- 1a4:	7d 4a 41 10 	subfe   r10,r10,r8
- 1a8:	0f 0a 00 00 	twnei   r10,0
- 1ac:	39 20 00 80 	li      r9,128
- 1b0:	7d 29 03 a6 	mtctr   r9
- 1b4:	7c 00 1f ec 	dcbz    0,r3
- 1b8:	38 63 00 20 	addi    r3,r3,32
- 1bc:	42 00 ff f8 	bdnz    1b4 <clear_user_page+0x18>
- 1c0:	7c a3 2b 78 	mr      r3,r5
- 1c4:	48 00 00 00 	b       1c4 <clear_user_page+0x28>
-			1c4: R_PPC_REL24	flush_dcache_page
-
-By using (x) instead of !!(x) like BUG_ON() does, the additional
-instructions go away:
-
-0000019c <clear_user_page>:
- 19c:	54 6a 06 fe 	clrlwi  r10,r3,27
- 1a0:	0f 0a 00 00 	twnei   r10,0
- 1a4:	39 20 00 80 	li      r9,128
- 1a8:	7d 29 03 a6 	mtctr   r9
- 1ac:	7c 00 1f ec 	dcbz    0,r3
- 1b0:	38 63 00 20 	addi    r3,r3,32
- 1b4:	42 00 ff f8 	bdnz    1ac <clear_user_page+0x10>
- 1b8:	7c a3 2b 78 	mr      r3,r5
- 1bc:	48 00 00 00 	b       1bc <clear_user_page+0x20>
-			1bc: R_PPC_REL24	flush_dcache_page
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/include/asm/bug.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/powerpc/include/asm/bug.h b/arch/powerpc/include/asm/bug.h
-index fed7e6241349..77074582fe65 100644
---- a/arch/powerpc/include/asm/bug.h
-+++ b/arch/powerpc/include/asm/bug.h
-@@ -107,7 +107,7 @@
- 		: : "i" (__FILE__), "i" (__LINE__),		\
- 		  "i" (BUGFLAG_WARNING|BUGFLAG_TAINT(TAINT_WARN)),\
- 		  "i" (sizeof(struct bug_entry)),		\
--		  "r" (__ret_warn_on));				\
-+		  "r" ((__force long)(x)));			\
- 	}							\
- 	unlikely(__ret_warn_on);				\
- })
--- 
-2.17.1
-
+On Sat, Aug 17, 2019 at 5:00 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Sat, Aug 17, 2019 at 11:00:13AM +0800, Zhaoyang Huang wrote:
+> > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> >
+> > pfn_valid can be wrong while the MSB of physical address be trimed as pfn
+> > larger than the max_pfn.
+>
+> How the overflow of __pfn_to_phys() is related to max_pfn?
+> Where is the guarantee that __pfn_to_phys(max_pfn) won't overflow?
+eg, the invalid pfn value as 0x1bffc0 will pass pfn_valid if there is
+a memory block while the max_pfn is 0xbffc0.
+In ARM64, bellowing condition check will help to
+>
+> > Signed-off-by: Zhaoyang Huang <huangzhaoyang@gmail.com>
+> > ---
+> >  arch/arm/mm/init.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
+> > index c2daabb..9c4d938 100644
+> > --- a/arch/arm/mm/init.c
+> > +++ b/arch/arm/mm/init.c
+> > @@ -177,7 +177,8 @@ static void __init zone_sizes_init(unsigned long min, unsigned long max_low,
+> >  #ifdef CONFIG_HAVE_ARCH_PFN_VALID
+> >  int pfn_valid(unsigned long pfn)
+> >  {
+> > -     return memblock_is_map_memory(__pfn_to_phys(pfn));
+> > +     return (pfn > max_pfn) ?
+> > +             false : memblock_is_map_memory(__pfn_to_phys(pfn));
+> >  }
+> >  EXPORT_SYMBOL(pfn_valid);
+> >  #endif
+> > --
+> > 1.9.1
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
+>
