@@ -2,91 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B075590DA2
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:16:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BAF9C90DA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:20:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbfHQHP4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 03:15:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53194 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfHQHPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 03:15:55 -0400
-Received: from localhost (unknown [171.76.122.58])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CB55720880;
-        Sat, 17 Aug 2019 07:15:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566026154;
-        bh=CE4AEJvu5Hekiw/HsMR351wf16SY1xY2kqztonk4go4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bnEjnPLgiNNg4bURqzWsb9i5145OE7C6QHYiRcq9EdT0yPJ8vUQtjv10TeCB+SrMz
-         2rE6kZ56/Y8k+9yaDfDXB9ztHZALG5d+HI4LAKcrt8x8PGUGZD6gtmaUpy5xLa9qTA
-         1K8U3xu2c9cLnkmq15mkyDvWfsOQVY9VuCz7d3bU=
-Date:   Sat, 17 Aug 2019 12:44:40 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     syzbot <syzbot+6593c6b8c8b66a07cd98@syzkaller.appspotmail.com>,
-        alsa-devel@alsa-project.org, bp@alien8.de,
-        gregkh@linuxfoundation.org, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, mingo@redhat.com, nstange@suse.de,
-        pierre-louis.bossart@linux.intel.com, sanyog.r.kale@intel.com,
-        syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
-        x86@kernel.org, yakui.zhao@intel.com
-Subject: Re: INFO: rcu detected stall in __do_softirq
-Message-ID: <20190817071440.GD12733@vkoul-mobl.Dlink>
-References: <000000000000b4126c059030cfb6@google.com>
- <63c0dc1e-323d-d46e-2d4a-b5b6d6916042@linaro.org>
+        id S1726173AbfHQHUH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 03:20:07 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46596 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfHQHUH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 03:20:07 -0400
+Received: by mail-io1-f65.google.com with SMTP id x4so10749182iog.13
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 00:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tcd-ie.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3gnS0PBpeFma+nR0/93xLJSxk0RZjywB6TYlsGP6x54=;
+        b=iuaKaoZkqD3jS65GkFRQXUesr+iHDQw7qZXVp3ez2fmCt49N//RMqfebteueaUoH+p
+         97zi714OqDL373xaRAuH3dX8FyF/Ggim5AtCytyMJbs8OW1HRJxUvrBWziOojWSjQyyv
+         N8V4gNN86Fa2SkaukvBfzPcjbRwF05BDdxAP0vXBWYtOD0SIpiwB1xkPByOxsAsX+9h1
+         04BQeNXJdFWKxBekEW+jFClh2sgwRA/Wjk7i3VyRYr7XND2lelrmJe56TnoW4qN1h7sB
+         KsNL/98KtTPtlpVSTykKF2Hed4ptAKREhBRKgytLAlnBDShNx9anmljZsQvOgXkrjk/s
+         f08A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3gnS0PBpeFma+nR0/93xLJSxk0RZjywB6TYlsGP6x54=;
+        b=Im2ZfjqtT+gEsw88u5JkK/EL9ZYK9ypTSHysqADOhKZqngV5HIFwhLDAvlwVCHdk8u
+         a//w2EYKNBlOc4zPgYSYuy2J5ydVvnwm/0yQ73G+sDZrZEGR0rsV34i/k7BwW4W3MsMn
+         xFFd+0Q/mWNnKK5vN3LHHYL91VzHIS5YYEadZitTI5axeX9WqzjKu1XBFmcA3/3sdj8G
+         VkaK7j0PLgt7FS885a/RQ0rXbanq/tNkLrHAcaVI6H8zdaUV2QNxOzB56Rn6faMhCEzA
+         WLd9edghcWuh49+vkKD/cqAiE2ULrXmxjhpS8AlRoMWdZ0x2X6bc9x/EKKuevcGEyvog
+         QtIw==
+X-Gm-Message-State: APjAAAUH0Zn2Tf0tsHjdXy120b/g1TjgxROUD8Y5t+IBqcZCw4ErQWWR
+        cXjivPrY/MDW95vp+xOWRfRkION/TwrKOTaLK4i7Cg==
+X-Google-Smtp-Source: APXvYqzi3uE7FL/BNaGBwf9NcctQEJa1uqSCgIDdI7X8T4a271+rNn6qVr2H/9WkS8ckRMiROhEplUC0qpc0vOhpjPg=
+X-Received: by 2002:a02:a18e:: with SMTP id n14mr15977616jah.84.1566026405753;
+ Sat, 17 Aug 2019 00:20:05 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <63c0dc1e-323d-d46e-2d4a-b5b6d6916042@linaro.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190815110944.3579-1-murphyt7@tcd.ie> <20190817033914.4812-1-hdanton@sina.com>
+In-Reply-To: <20190817033914.4812-1-hdanton@sina.com>
+From:   Tom Murphy <murphyt7@tcd.ie>
+Date:   Sat, 17 Aug 2019 08:19:33 +0100
+Message-ID: <CALQxJut_0bjojiFza9bZF26n0+9Vjq8QFqsxgd5Rxag+Qx609Q@mail.gmail.com>
+Subject: Re: [PATCH V5 3/5] iommu/dma-iommu: Handle deferred devices
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        Will Deacon <will@kernel.org>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Andy Gross <agross@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Jean-Philippe Brucker <jean-philippe@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-tegra@vger.kernel.org,
+        virtualization@lists.linux-foundation.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-08-19, 09:55, Srinivas Kandagatla wrote:
-> 
-> 
-> On 16/08/2019 01:10, syzbot wrote:
-> > syzbot has bisected this bug to:
-> > 
-> > commit 2aeac95d1a4cc85aae57ab842d5c3340df0f817f
-> > Author: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > Date:   Tue Jun 11 10:40:41 2019 +0000
-> > 
-> >      soundwire: add module_sdw_driver helper macro
-> 
-> Not sure how adding a macro with no users triggers this rcu stall.
+On Sat, 17 Aug 2019 at 04:39, Hillf Danton <hdanton@sina.com> wrote:
+>
+>
+> On Thu, 15 Aug 2019 12:09:41 +0100 Tom Murphy wrote:
+> >
+> > Handle devices which defer their attach to the iommu in the dma-iommu api
+> >
+> > Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+> > ---
+> >  drivers/iommu/dma-iommu.c | 27 ++++++++++++++++++++++++++-
+> >  1 file changed, 26 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> > index 2712fbc68b28..906b7fa14d3c 100644
+> > --- a/drivers/iommu/dma-iommu.c
+> > +++ b/drivers/iommu/dma-iommu.c
+> > @@ -22,6 +22,7 @@
+> >  #include <linux/pci.h>
+> >  #include <linux/scatterlist.h>
+> >  #include <linux/vmalloc.h>
+> > +#include <linux/crash_dump.h>
+> >
+> >  struct iommu_dma_msi_page {
+> >       struct list_head        list;
+> > @@ -351,6 +352,21 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, dma_addr_t base,
+> >       return iova_reserve_iommu_regions(dev, domain);
+> >  }
+> >
+> > +static int handle_deferred_device(struct device *dev,
+> > +     struct iommu_domain *domain)
+> > +{
+> > +     const struct iommu_ops *ops = domain->ops;
+> > +
+> > +     if (!is_kdump_kernel())
+> > +             return 0;
+> > +
+> > +     if (unlikely(ops->is_attach_deferred &&
+> > +             ops->is_attach_deferred(domain, dev)))
+> > +             return iommu_attach_device(domain, dev);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> >  /**
+> >   * dma_info_to_prot - Translate DMA API directions and attributes to IOMMU API
+> >   *                    page flags.
+> > @@ -463,6 +479,9 @@ static dma_addr_t __iommu_dma_map(struct device *dev, phys_addr_t phys,
+> >       size_t iova_off = iova_offset(iovad, phys);
+> >       dma_addr_t iova;
+> >
+> > +     if (unlikely(handle_deferred_device(dev, domain)))
+> > +             return DMA_MAPPING_ERROR;
+> > +
+> >       size = iova_align(iovad, size + iova_off);
+> >
+> >       iova = iommu_dma_alloc_iova(domain, size, dma_get_mask(dev), dev);
+>
+> iommu_map_atomic() is applied to __iommu_dma_map() in 2/5.
+> Is it an atomic context currently given the mutex_lock() in
+> iommu_attach_device()?
 
-And config used doesn't have soundwire set :D
-> 
-> BTW this was in mainline since rc1.
+I don't see your point here. __iommu_dma_map isn't called from
+iommu_attach_device, why would we care about a mutex in
+iommu_attach_device?
 
-This is caused by something else!
+__iommu_dma_map can be called from an atomic context (it isn't always
+but it does happen). __iommu_dma_map is called by iommu_dma_alloc
+which implements the iommu_dma_ops::alloc function which by design
+needs to be callable from an atomic context. Does that answer your
+question?
 
-> 
-> --srini
-> 
-> > 
-> > bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114b45ee600000
-> > start commit:   882e8691 Add linux-next specific files for 20190801
-> > git tree:       linux-next
-> > final crash:    https://syzkaller.appspot.com/x/report.txt?x=134b45ee600000
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=154b45ee600000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=466b331af3f34e94
-> > dashboard link:
-> > https://syzkaller.appspot.com/bug?extid=6593c6b8c8b66a07cd98
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16b216b2600000
-> > 
-> > Reported-by: syzbot+6593c6b8c8b66a07cd98@syzkaller.appspotmail.com
-> > Fixes: 2aeac95d1a4c ("soundwire: add module_sdw_driver helper macro")
-> > 
-> > For information about bisection process see:
-> > https://goo.gl/tpsmEJ#bisection
-
--- 
-~Vinod
+>
