@@ -2,76 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A6DC90F8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 10:43:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 140CF90F9B
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 11:08:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfHQIna (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 04:43:30 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:44116 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725267AbfHQIn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 04:43:29 -0400
-Received: from zn.tnic (p200300EC2F1E02002895015C0089AD52.dip0.t-ipconnect.de [IPv6:2003:ec:2f1e:200:2895:15c:89:ad52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id F35FA1EC0586;
-        Sat, 17 Aug 2019 10:43:26 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1566031408;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=Ffjx5moF1mWmOC52ipHNM0qufnLdVS38TkGLGqe1n6A=;
-        b=NkHcNC28vgj6t6YfvF1uwIobFlzrwQuK4frQKMchRM+0negFx0yqnJHdMUYAXteNwONXiJ
-        ka0oL0i9nkUlSzgGd0Y5bzfzczZVPKKU22T1t5U3ROOSOCRh6bzNFpBdSP3PoIvn9BySbF
-        P4oU0NtTTL2LZQRHpXdGNzeKIUQhkGo=
-Date:   Sat, 17 Aug 2019 10:44:10 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Andrew Cooper <andrew.cooper3@citrix.com>
-Cc:     "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Chen Yu <yu.c.chen@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] x86/CPU/AMD: Clear RDRAND CPUID bit on AMD family 15h/16h
-Message-ID: <20190817084410.GA15364@zn.tnic>
-References: <776cb5c2d33e7fd0d2893904724c0e52b394f24a.1565817448.git.thomas.lendacky@amd.com>
- <a24a2c7d-cfab-a049-37e8-7260a9063a7c@citrix.com>
- <20190815210547.GL15313@zn.tnic>
- <312b307b-19cc-84f8-97e6-07dbdf07dd12@citrix.com>
+        id S1726129AbfHQJIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 05:08:46 -0400
+Received: from depni-mx.sinp.msu.ru ([213.131.7.21]:25 "EHLO
+        depni-mx.sinp.msu.ru" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbfHQJIq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 05:08:46 -0400
+X-Greylist: delayed 523 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Aug 2019 05:08:45 EDT
+Received: from spider (unknown [109.63.188.125])
+        by depni-mx.sinp.msu.ru (Postfix) with ESMTPSA id 54DBD1BF45B;
+        Sat, 17 Aug 2019 12:00:01 +0300 (MSK)
+From:   Serge Belyshev <belyshev@depni.sinp.msu.ru>
+To:     Stuart Little <achirvasub@gmail.com>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Intel Linux Wireless <linuxwifi@intel.com>,
+        linux-wireless@vger.kernel.org,
+        Haim Dreyfuss <haim.dreyfuss@intel.com>
+Subject: Re: PROBLEM: 5.3.0-rc* causes iwlwifi failure
+In-Reply-To: <20190817041258.GA1641@chirva-slack.chirva-slack>
+References: <20190817041258.GA1641@chirva-slack.chirva-slack>
+Date:   Sat, 17 Aug 2019 11:59:59 +0300
+Message-ID: <87y2zsf9ps.fsf@depni.sinp.msu.ru>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <312b307b-19cc-84f8-97e6-07dbdf07dd12@citrix.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 10:25:24PM +0100, Andrew Cooper wrote:
-> I'm afraid that a number of hypervisors do write-discard, given the
-> propensity of OSes (certainly traditionally) to go poking at bits like
-> this without wrmsr_safe().
-> 
-> You either need to read the MSR back and observe that the bit has really
-> changed, or in this case as Thomas suggests, look at CPUID again (which
-> will likely be the faster option for the non-virtualised case).
 
-One thing I didn't think of when we talked about this: this happens only
-after you resume the hypervisor. And the words "resume the hypervisor"
-already means an improbable use case. Yeah, yeah, one can close the
-laptop lid of her/his F15h or F16h machine while guests are running and
-when the HV resumes, those guests won't get randomness but I can't seem
-to find it in myself to say, uuh, that's an important use case...
+> I am on an Intel(R) Core(TM) i7-7500U CPU @ 2.70GHz running Linux
+> x86_64 (Slackware), with a custom-compiled 5.3.0-rc4 (.config
+> attached).
+>
+> I am using the Intel wifi adapter on this machine:
+>
+> 02:00.0 Network controller: Intel Corporation Device 24fb (rev 10)
+>
+> with the iwlwifi driver. I am attaching the output to 'lspci -vv -s
+> 02:00.0' as the file device-info.
+>
+> All 5.3.0-rc* versions I have tried (including rc4) cause multiple
+> dmesg iwlwifi-related errors (dmesg attached). Examples:
+>
+> iwlwifi 0000:02:00.0: Failed to get geographic profile info -5
+> iwlwifi 0000:02:00.0: Microcode SW error detected.  Restarting 0x82000000
+> iwlwifi 0000:02:00.0: 0x00000038 | BAD_COMMAND
+>
 
--- 
-Regards/Gruss,
-    Boris.
+I have my logs filled with similar garbage throughout 5.3-rc*. Also
+since 5.3-rcsomething not only it WARNS in dmesg about firmware failure,
+but completely stops working after suspend/resume cycle.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+It looks like that:
+
+commit 4fd445a2c855bbcab81fbe06d110e78dbd974a5b
+Author: Haim Dreyfuss <haim.dreyfuss@intel.com>
+Date:   Thu May 2 11:45:02 2019 +0300
+
+    iwlwifi: mvm: Add log information about SAR status
+    
+    Inform users when SAR status is changing.
+    
+    Signed-off-by: Haim Dreyfuss <haim.dreyfuss@intel.com>
+    Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+
+
+is the culprit. (manually) reverting it on top of 5.3-rc4 makes
+everything work again.
