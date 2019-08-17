@@ -2,114 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA88490DDB
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:38:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA6F90DF7
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 09:41:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726295AbfHQHiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 03:38:10 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:43914 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfHQHiK (ORCPT
+        id S1726312AbfHQHlw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 03:41:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52642 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHQHlv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 03:38:10 -0400
-Received: by mail-lf1-f68.google.com with SMTP id c19so5561173lfm.10
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 00:38:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qjmefjZhoyebLftZlaWwOgZmDLyOFDxgkvKQNDD6muU=;
-        b=ROBhpTcYE5sMsKscWoxHvuN7/rDEB2KBhTYVGBrSf8McXkjaPUHTa+vvnR7jS1c/98
-         Yu6WhN2x/RHdyfcAwhc/BsVF52q/Dl9W3Rtsq3Qr7rrbg5HT3lgtH2ByzJiZhVIANWGB
-         WyzMcJJ8ndT8ewyDylRfnDShKXqexN+HkPk/E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qjmefjZhoyebLftZlaWwOgZmDLyOFDxgkvKQNDD6muU=;
-        b=tJcAt2nxTxq1iymErT3ur16UuhtcYMxtfsJPCkWeim8G7iowfABNuq1gZpy4Jgs8dB
-         dOKMRMkHFgAhrWrwoa0egh/eA5SOUs5nVkzd3eFmcDDKKkLRsF45sa3UotOcfPHKnB6l
-         OxK4mgRKtGN44wcOd5NddQ+S3ZKNojCFJyePLA7YuKyWzoiln4ILiHG7pULlOEF+qOws
-         YEuK/eVFP9WUns79Xwf8/KFYMxOjejddskEiHpaPZ2WdzmDOJvcv4Bdu6QWUIRQ2V+8f
-         f8uhkrWpXX9h0sEq8C4pg/dN0vAsQe04asmB9h8VJeRZP0+VFdVXoXT1KEC1LfQ+H0p7
-         Cjtg==
-X-Gm-Message-State: APjAAAXHPYSY+bKYxW1j6FcjyfFpxl78angtJLtMXeUcGyQ3ZJDwBeJk
-        sNaI6zl/7eJov8By8V0wUNv3qp+GzKI=
-X-Google-Smtp-Source: APXvYqwVDkkDkyN4fsGGXgpWmFhQ4hrFfsohg+XQk2g4K71tndpdyho7jOIaTlJ5eqJGASyc9gxgsw==
-X-Received: by 2002:a19:9111:: with SMTP id t17mr7092380lfd.113.1566027486985;
-        Sat, 17 Aug 2019 00:38:06 -0700 (PDT)
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com. [209.85.208.171])
-        by smtp.gmail.com with ESMTPSA id n2sm1282663lfl.62.2019.08.17.00.38.05
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 17 Aug 2019 00:38:05 -0700 (PDT)
-Received: by mail-lj1-f171.google.com with SMTP id x18so7263103ljh.1
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Aug 2019 00:38:05 -0700 (PDT)
-X-Received: by 2002:a2e:3a0e:: with SMTP id h14mr7640810lja.180.1566027485396;
- Sat, 17 Aug 2019 00:38:05 -0700 (PDT)
+        Sat, 17 Aug 2019 03:41:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=5P7q6l8cLYVBLk6RzMIc/f9RS2Ny/Mg2wyKPicXsQd4=; b=OC4+dGp0H/45VJJKGYUPkLy0RY
+        k6gcSgWB0po/ZId7HVXtFUlg46DSxqMftLoGqFt9rlk5hIrrFklVPAzzj9UW92OhWTBNncLBL4+0V
+        nJPHoVO48t6tnoVdbq2idVqHh6dcnuXS+otUp2FsIXpCcs72q+SzNwXMn/1DokeK0zODnBxcwnq2n
+        gKCLKdU6THR+o0cru/sYmNXuI/k6AYki4HRYLooY7yX4s7/tBQpzwylsQo+AkQRxky7CeEmOMDZ2P
+        WMWnibAbFoESGxgTzjWONecz0f9ZllT6KFCDKCIc/Li9Unht6O9a+eeIOtcUDnbOGGTmN+68M5BgZ
+        gTrFoddA==;
+Received: from 089144199030.atnat0008.highway.a1.net ([89.144.199.30] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hytLO-000175-Cc; Sat, 17 Aug 2019 07:41:46 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Arnd Bergmann <arnd@arndb.de>, Guo Ren <guoren@kernel.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Greentime Hu <green.hu@gmail.com>,
+        Vincent Chen <deanbo422@gmail.com>,
+        Guan Xuetao <gxt@pku.edu.cn>, x86@kernel.org
+Cc:     linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        linux-mtd@lists.infradead.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 03/26] m68k, microblaze: remove ioremap_fullcache
+Date:   Sat, 17 Aug 2019 09:32:30 +0200
+Message-Id: <20190817073253.27819-4-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190817073253.27819-1-hch@lst.de>
+References: <20190817073253.27819-1-hch@lst.de>
 MIME-Version: 1.0
-References: <20190808154240.9384-1-hch@lst.de> <CAHk-=wh3jZnD3zaYJpW276WL=N0Vgo4KGW8M2pcFymHthwf0Vg@mail.gmail.com>
- <20190816062751.GA16169@infradead.org> <20190816115735.GB5412@mellanox.com>
- <20190816123258.GA22140@lst.de> <20190816140623.4e3a5f04ea1c08925ac4581f@linux-foundation.org>
- <20190817164124.683d67ff@canb.auug.org.au>
-In-Reply-To: <20190817164124.683d67ff@canb.auug.org.au>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Sat, 17 Aug 2019 00:37:49 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wheUwELKxhouLs4b==w9DxMrCPh2R_FTsTeVi0=d0S_OA@mail.gmail.com>
-Message-ID: <CAHk-=wheUwELKxhouLs4b==w9DxMrCPh2R_FTsTeVi0=d0S_OA@mail.gmail.com>
-Subject: Re: cleanup the walk_page_range interface
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        David Howells <dhowells@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas@shipmail.org>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Steven Price <steven.price@arm.com>,
-        Linux-MM <linux-mm@kvack.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Minchan Kim <minchan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 11:41 PM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> I certainly prefer that method of API change :-)
-> (see the current "keys: Replace uid/gid/perm permissions checking with
-> an ACL" in linux-next
+No callers of this function.
 
-Side note: I will *not* be pulling that again.
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ arch/m68k/include/asm/kmap.h     | 7 -------
+ arch/microblaze/include/asm/io.h | 1 -
+ 2 files changed, 8 deletions(-)
 
-It was broken last time, and without more people reviewing the code,
-I' m not pulling it for 5.4 either even if David has an additional
-commit on top that might have fixed the original problem.
+diff --git a/arch/m68k/include/asm/kmap.h b/arch/m68k/include/asm/kmap.h
+index aac7f045f7f0..03d904fe6087 100644
+--- a/arch/m68k/include/asm/kmap.h
++++ b/arch/m68k/include/asm/kmap.h
+@@ -43,13 +43,6 @@ static inline void __iomem *ioremap_wt(unsigned long physaddr,
+ 	return __ioremap(physaddr, size, IOMAP_WRITETHROUGH);
+ }
+ 
+-#define ioremap_fullcache ioremap_fullcache
+-static inline void __iomem *ioremap_fullcache(unsigned long physaddr,
+-					      unsigned long size)
+-{
+-	return __ioremap(physaddr, size, IOMAP_FULL_CACHING);
+-}
+-
+ #define memset_io memset_io
+ static inline void memset_io(volatile void __iomem *addr, unsigned char val,
+ 			     int count)
+diff --git a/arch/microblaze/include/asm/io.h b/arch/microblaze/include/asm/io.h
+index c7968139486f..86c95b2a1ce1 100644
+--- a/arch/microblaze/include/asm/io.h
++++ b/arch/microblaze/include/asm/io.h
+@@ -40,7 +40,6 @@ extern void iounmap(volatile void __iomem *addr);
+ 
+ extern void __iomem *ioremap(phys_addr_t address, unsigned long size);
+ #define ioremap_nocache(addr, size)		ioremap((addr), (size))
+-#define ioremap_fullcache(addr, size)		ioremap((addr), (size))
+ #define ioremap_wc(addr, size)			ioremap((addr), (size))
+ #define ioremap_wt(addr, size)			ioremap((addr), (size))
+ 
+-- 
+2.20.1
 
-There's still a pending kernel test report on commit f771fde82051
-("keys: Simplify key description management") from another of David's
-pulls for 5.3 - one that didn't get reverted.
-
-David, look in your inbox for a kernel test report about
-
-  kernel BUG at security/keys/keyring.c:1245!
-
-(It's the
-
-        BUG_ON(index_key->desc_len == 0);
-
-line - the line numbers have since changed, and it's line 1304 in the
-current tree).
-
-I'm not sure why _that_ BUG_ON() now triggers, but I wonder if it's
-because 'desc_len' went from a 'size_t' to an 'u8', and now a desc_len
-of 256 is 0. Or something. The point being that there have been too
-many bugs in the pulls and nobody but David apparently ever had
-anything to do with any of the development. This code needs more eyes,
-not more random changes.
-
-So I won't be compounding on that workflow problem next merge window.
-
-                  Linus
