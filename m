@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1DCAA91017
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 12:37:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F7291013
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 12:37:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726239AbfHQKhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 06:37:23 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51588 "EHLO
+        id S1726013AbfHQKhT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 06:37:19 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:51572 "EHLO
         shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725832AbfHQKhU (ORCPT
+        by vger.kernel.org with ESMTP id S1725832AbfHQKhS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 06:37:20 -0400
+        Sat, 17 Aug 2019 06:37:18 -0400
 Received: from [192.168.4.242] (helo=deadeye)
         by shadbolt.decadent.org.uk with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hyw5E-0008PN-Ig; Sat, 17 Aug 2019 11:37:16 +0100
+        id 1hyw5E-0008PJ-G3; Sat, 17 Aug 2019 11:37:16 +0100
 Received: from ben by deadeye with local (Exim 4.92.1)
         (envelope-from <ben@decadent.org.uk>)
-        id 1hyw5E-0005ot-Dn; Sat, 17 Aug 2019 11:37:16 +0100
+        id 1hyw5E-0005oh-9m; Sat, 17 Aug 2019 11:37:16 +0100
 Content-Type: text/plain; charset="UTF-8"
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
 From:   Ben Hutchings <ben@decadent.org.uk>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-CC:     akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, "Jan Kara" <jack@suse.cz>,
-        "zhangyi (F)" <yi.zhang@huawei.com>
+CC:     torvalds@linux-foundation.org, Guenter Roeck <linux@roeck-us.net>,
+        akpm@linux-foundation.org, Denis Kirjanov <kda@linux-powerpc.org>
 Date:   Sat, 17 Aug 2019 11:35:11 +0100
-Message-ID: <lsq.1566038111.2417925@decadent.org.uk>
+Message-ID: <lsq.1566038111.397675943@decadent.org.uk>
 X-Mailer: LinuxStableQueue (scripts by bwh)
 X-Patchwork-Hint: ignore
-Subject: [PATCH 3.16 3/4] ext4: cleanup bh release code in ext4_ind_remove_space()
-In-Reply-To: <lsq.1566038111.397675943@decadent.org.uk>
+Subject: [PATCH 3.16 0/4] 3.16.73-rc1 review
 X-SA-Exim-Connect-IP: 192.168.4.242
 X-SA-Exim-Mail-From: ben@decadent.org.uk
 X-SA-Exim-Scanned: No (on shadbolt.decadent.org.uk); SAEximRunCond expanded to false
@@ -43,164 +41,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.16.73-rc1 review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 3.16.73 release.
+There are 4 patches in this series, which will be posted as responses
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Mon Aug 19 20:00:00 UTC 2019.
+Anything received after that time might be too late.
 
-From: "zhangyi (F)" <yi.zhang@huawei.com>
+All the patches have also been committed to the linux-3.16.y-rc branch of
+https://git.kernel.org/pub/scm/linux/kernel/git/bwh/linux-stable-rc.git .
+A shortlog and diffstat can be found below.
 
-commit 5e86bdda41534e17621d5a071b294943cae4376e upstream.
+Ben.
 
-Currently, we are releasing the indirect buffer where we are done with
-it in ext4_ind_remove_space(), so we can see the brelse() and
-BUFFER_TRACE() everywhere.  It seems fragile and hard to read, and we
-may probably forget to release the buffer some day.  This patch cleans
-up the code by putting of the code which releases the buffers to the
-end of the function.
+-------------
 
-Signed-off-by: zhangyi (F) <yi.zhang@huawei.com>
-Signed-off-by: Theodore Ts'o <tytso@mit.edu>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- fs/ext4/indirect.c | 47 ++++++++++++++++++++++------------------------
- 1 file changed, 22 insertions(+), 25 deletions(-)
+Ben Hutchings (1):
+      tcp: Clear sk_send_head after purging the write queue
+         [not upstream; fixes bug specific to stable]
 
---- a/fs/ext4/indirect.c
-+++ b/fs/ext4/indirect.c
-@@ -1313,6 +1313,7 @@ int ext4_ind_remove_space(handle_t *hand
- 	ext4_lblk_t offsets[4], offsets2[4];
- 	Indirect chain[4], chain2[4];
- 	Indirect *partial, *partial2;
-+	Indirect *p = NULL, *p2 = NULL;
- 	ext4_lblk_t max_block;
- 	__le32 nr = 0, nr2 = 0;
- 	int n = 0, n2 = 0;
-@@ -1354,7 +1355,7 @@ int ext4_ind_remove_space(handle_t *hand
- 		}
- 
- 
--		partial = ext4_find_shared(inode, n, offsets, chain, &nr);
-+		partial = p = ext4_find_shared(inode, n, offsets, chain, &nr);
- 		if (nr) {
- 			if (partial == chain) {
- 				/* Shared branch grows from the inode */
-@@ -1379,13 +1380,11 @@ int ext4_ind_remove_space(handle_t *hand
- 				partial->p + 1,
- 				(__le32 *)partial->bh->b_data+addr_per_block,
- 				(chain+n-1) - partial);
--			BUFFER_TRACE(partial->bh, "call brelse");
--			brelse(partial->bh);
- 			partial--;
- 		}
- 
- end_range:
--		partial2 = ext4_find_shared(inode, n2, offsets2, chain2, &nr2);
-+		partial2 = p2 = ext4_find_shared(inode, n2, offsets2, chain2, &nr2);
- 		if (nr2) {
- 			if (partial2 == chain2) {
- 				/*
-@@ -1415,16 +1414,14 @@ end_range:
- 					   (__le32 *)partial2->bh->b_data,
- 					   partial2->p,
- 					   (chain2+n2-1) - partial2);
--			BUFFER_TRACE(partial2->bh, "call brelse");
--			brelse(partial2->bh);
- 			partial2--;
- 		}
- 		goto do_indirects;
- 	}
- 
- 	/* Punch happened within the same level (n == n2) */
--	partial = ext4_find_shared(inode, n, offsets, chain, &nr);
--	partial2 = ext4_find_shared(inode, n2, offsets2, chain2, &nr2);
-+	partial = p = ext4_find_shared(inode, n, offsets, chain, &nr);
-+	partial2 = p2 = ext4_find_shared(inode, n2, offsets2, chain2, &nr2);
- 
- 	/* Free top, but only if partial2 isn't its subtree. */
- 	if (nr) {
-@@ -1481,15 +1478,7 @@ end_range:
- 					   partial->p + 1,
- 					   partial2->p,
- 					   (chain+n-1) - partial);
--			while (partial > chain) {
--				BUFFER_TRACE(partial->bh, "call brelse");
--				brelse(partial->bh);
--			}
--			while (partial2 > chain2) {
--				BUFFER_TRACE(partial2->bh, "call brelse");
--				brelse(partial2->bh);
--			}
--			return 0;
-+			goto cleanup;
- 		}
- 
- 		/*
-@@ -1504,8 +1493,6 @@ end_range:
- 					   partial->p + 1,
- 					   (__le32 *)partial->bh->b_data+addr_per_block,
- 					   (chain+n-1) - partial);
--			BUFFER_TRACE(partial->bh, "call brelse");
--			brelse(partial->bh);
- 			partial--;
- 		}
- 		if (partial2 > chain2 && depth2 <= depth) {
-@@ -1513,11 +1500,21 @@ end_range:
- 					   (__le32 *)partial2->bh->b_data,
- 					   partial2->p,
- 					   (chain2+n2-1) - partial2);
--			BUFFER_TRACE(partial2->bh, "call brelse");
--			brelse(partial2->bh);
- 			partial2--;
- 		}
- 	}
-+
-+cleanup:
-+	while (p && p > chain) {
-+		BUFFER_TRACE(p->bh, "call brelse");
-+		brelse(p->bh);
-+		p--;
-+	}
-+	while (p2 && p2 > chain2) {
-+		BUFFER_TRACE(p2->bh, "call brelse");
-+		brelse(p2->bh);
-+		p2--;
-+	}
- 	return 0;
- 
- do_indirects:
-@@ -1525,7 +1522,7 @@ do_indirects:
- 	switch (offsets[0]) {
- 	default:
- 		if (++n >= n2)
--			return 0;
-+			break;
- 		nr = i_data[EXT4_IND_BLOCK];
- 		if (nr) {
- 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 1);
-@@ -1533,7 +1530,7 @@ do_indirects:
- 		}
- 	case EXT4_IND_BLOCK:
- 		if (++n >= n2)
--			return 0;
-+			break;
- 		nr = i_data[EXT4_DIND_BLOCK];
- 		if (nr) {
- 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 2);
-@@ -1541,7 +1538,7 @@ do_indirects:
- 		}
- 	case EXT4_DIND_BLOCK:
- 		if (++n >= n2)
--			return 0;
-+			break;
- 		nr = i_data[EXT4_TIND_BLOCK];
- 		if (nr) {
- 			ext4_free_branches(handle, inode, NULL, &nr, &nr+1, 3);
-@@ -1550,5 +1547,5 @@ do_indirects:
- 	case EXT4_TIND_BLOCK:
- 		;
- 	}
--	return 0;
-+	goto cleanup;
- }
+Jason A. Donenfeld (1):
+      siphash: implement HalfSipHash1-3 for hash tables
+         [1ae2324f732c9c4e2fa4ebd885fa1001b70d52e1]
+
+Zhangyi (2):
+      ext4: brelse all indirect buffer in ext4_ind_remove_space()
+         [674a2b27234d1b7afcb0a9162e81b2e53aeef217]
+      ext4: cleanup bh release code in ext4_ind_remove_space()
+         [5e86bdda41534e17621d5a071b294943cae4376e]
+
+ Documentation/siphash.txt |  75 +++++++++++
+ Makefile                  |   4 +-
+ fs/ext4/indirect.c        |  43 ++++---
+ include/linux/siphash.h   |  57 +++++++-
+ include/net/tcp.h         |   3 +
+ lib/siphash.c             | 321 +++++++++++++++++++++++++++++++++++++++++++++-
+ lib/test_siphash.c        |  98 +++++++++++++-
+ 7 files changed, 573 insertions(+), 28 deletions(-)
+
+-- 
+Ben Hutchings
+The obvious mathematical breakthrough [to break modern encryption]
+would be development of an easy way to factor large prime numbers.
+                                                           - Bill Gates
 
