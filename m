@@ -2,133 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0820590CF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 06:32:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A179D90CFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 17 Aug 2019 06:41:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfHQEcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 00:32:20 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:41782 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbfHQEcT (ORCPT
+        id S1726013AbfHQEi5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 00:38:57 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:38103 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHQEi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 00:32:19 -0400
-Received: by mail-io1-f65.google.com with SMTP id j5so10379550ioj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 21:32:19 -0700 (PDT)
+        Sat, 17 Aug 2019 00:38:56 -0400
+Received: by mail-io1-f66.google.com with SMTP id j6so10365525ioa.5
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Aug 2019 21:38:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3ZgzZCpDIRuYNI4rsUcoYKrHpCVfBSnxQC5KIpwxRrk=;
-        b=mqntU7QdosCf34NpRFUhRvfJTPenC0urzJszWL8hgX+lez+r/0/VnstICJ1lHhOFB3
-         36bXJUhUmAB0nApDJFFEqJ6GL73czg3U34yhSv6gjK6vH+N4uXYSDapt1+poh4oBG0Na
-         geW2TddD+7AlnuJQlIGN4MPMI4VrCr8m3l8JGRJvz8ZmfCk7xoIkZLq6zT4Y7xJe/7md
-         vjAyZ4+/kjpXz6xx04FhRQ7N0E51SZibeANTQcu8BQ7XZcBJSvxilCc+jRGhDvo0u+iG
-         Ykpn7Lw4O72tWVc1itxClv7iDmn8NjDmw2RiVDGi11xKUia5xRuotzyl3BewiQstqykJ
-         XhQg==
+        d=sifive.com; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=GtQCwZ2X3Dci9EQCWwa185nLCtMLhK/fJw/6g7BdD+w=;
+        b=X4lTv/YqVm9nOz9kEUBgZsT4AKBufywPYgaDkRVxEoudsf1f+4NUMArTksa2fqaxvf
+         gk5ymABGfU2wu69753L7SvTw1ffiZ9CQrQZZ6OvB6FT/El3qGVUjqgQhmEt6qU5Ow/lI
+         2ykxgHOiN2tvVYnvxUdP0+wUrxBXoRT+4/OyT0VsxsKz7IPiF8U5Xy1dAHKPV5gtH10n
+         pqljDzRCGrAga9Tda150byVBoamxRAz4GYwTD1YF7JhCW6VugRPm+YBLnEF5hWEd9yJO
+         aELgJdCNJjimfJBJoqXpTfRNGrX91gBe0UCv05t5PpDjUeo07NvXqqFtHHxJcIbCVT14
+         QvVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3ZgzZCpDIRuYNI4rsUcoYKrHpCVfBSnxQC5KIpwxRrk=;
-        b=hi757yfwLvw+j9omBZkbf5Nrl/VMrCRhSyF+dPWKJVo8aU9dcANKlxWZptvfjGls/7
-         wB0QasEfMKPJd+iWzW8nacKq9PLOfNKfHs7RxJEaW9tGeKgwAGWKTpkONsRDW3JyTg0w
-         U0bnH9tAnC6YV+nu4JVEtZUgGSIaJHx0GbHdcoOtuOxn9lQufKtavOQn5R1F2tEjrAJt
-         wEmyu2FhgmOaFSpSK9QzyE76/dTl2HSPBiG3EkjmToR+6I8DteK/M04ZPuYWw54Xlzit
-         PMev2khVPfTldbIXVVsYbw3nS0w8XQSCH81TUl6Z+icug93+aQg34o4fB7u0zKc0QtvC
-         Vt5w==
-X-Gm-Message-State: APjAAAUyPu3yFzLTymyjHKRLT7yrh7bvamKAiZhXW+OaN1hTTlssEKir
-        Hi+hG0jSeX9cOV9ikh+lG8I=
-X-Google-Smtp-Source: APXvYqxZ4v+ooEvYx6XqCPFcFfUXrei6ZbQ3InDv2xx+UX4w0j2LaJk6s4+n2vyT+l1L95YnNrZWyg==
-X-Received: by 2002:a02:a492:: with SMTP id d18mr15323165jam.27.1566016338760;
-        Fri, 16 Aug 2019 21:32:18 -0700 (PDT)
-Received: from peng.science.purdue.edu (cos-128-210-107-27.science.purdue.edu. [128.210.107.27])
-        by smtp.googlemail.com with ESMTPSA id q12sm4294754ioh.8.2019.08.16.21.32.17
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=GtQCwZ2X3Dci9EQCWwa185nLCtMLhK/fJw/6g7BdD+w=;
+        b=NHR5qhrlTlG9ZgREeLFQhAIoRoNuTSePVwtRSgltFzOO1/uQhcEGKKWGEHURR+TiU3
+         FBhdfkVDZkm1fcV/CJgtJXEATvPTNKEelkU6znmT+XDv5KHQuD/BzAbA9iH0cZH/yvWn
+         QRNaq11VnqAza/XrV8W7o7torOVv10X5MoJ2PsMZeZn9i4CjGe67Dhx0S0j8cYa29vT6
+         Av38tITNIW4SHx5b2VSMPPutogkjXN204Q6byTISqvI49O5TXT7wFvW7jO4zyx/lhI+4
+         NhCIa8XYoqs1rLMnQ5cjKwRec9rzgL5mt7VftE778QjtuGBWRf6/Jg73MBQy3DEwCzEW
+         pJnw==
+X-Gm-Message-State: APjAAAW3C9w3l/zZhLBsqAZluvtmlKypHIykv6HMUEpSA0qBXVhUPuw6
+        QJ/Skcn9RmK2r06NBqb7G+dspA==
+X-Google-Smtp-Source: APXvYqyemrGz5/yyrhPBXlViihIGtYKX2Y4D4mb8FE5EQ/KLgkxbJNTFXm1Afkdt0tLEFLrOMKEoAQ==
+X-Received: by 2002:a5e:990a:: with SMTP id t10mr14098316ioj.182.1566016735927;
+        Fri, 16 Aug 2019 21:38:55 -0700 (PDT)
+Received: from localhost (c-73-95-159-87.hsd1.co.comcast.net. [73.95.159.87])
+        by smtp.gmail.com with ESMTPSA id s4sm14278009iop.25.2019.08.16.21.38.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 16 Aug 2019 21:32:17 -0700 (PDT)
-From:   Hui Peng <benquike@gmail.com>
-To:     security@kernel.org
-Cc:     Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, Wenwen Wang <wang6495@umn.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        YueHaibing <yuehaibing@huawei.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix an OOB bug in uac_mixer_unit_bmControls
-Date:   Sat, 17 Aug 2019 00:32:07 -0400
-Message-Id: <20190817043208.12433-1-benquike@gmail.com>
-X-Mailer: git-send-email 2.22.1
+        Fri, 16 Aug 2019 21:38:55 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 21:38:54 -0700 (PDT)
+From:   Paul Walmsley <paul.walmsley@sifive.com>
+X-X-Sender: paulw@viisi.sifive.com
+To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>
+cc:     linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@sifive.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org,
+        linux-riscv@lists.infradead.org
+Subject: Re: [PATCH -rcu/dev] Please squash: fixup! rcu/tree: Add basic
+ support for kfree_rcu() batching
+In-Reply-To: <20190817042211.137149-1-joel@joelfernandes.org>
+Message-ID: <alpine.DEB.2.21.9999.1908162131490.18249@viisi.sifive.com>
+References: <20190817042211.137149-1-joel@joelfernandes.org>
+User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-`uac_mixer_unit_get_channels` calls `uac_mixer_unit_bmControls`
-to get pointer to bmControls field. The current implementation of
-`uac_mixer_unit_get_channels` does properly check the size of
-uac_mixer_unit_descriptor descriptor and may allow OOB access
-in `uac_mixer_unit_bmControls`.
+On Sat, 17 Aug 2019, Joel Fernandes (Google) wrote:
 
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Signed-off-by: Hui Peng <benquike@gmail.com>
----
- sound/usb/mixer.c | 25 ++++++++++++++++++-------
- 1 file changed, 18 insertions(+), 7 deletions(-)
+> xchg() on a bool is causing issues on riscv and arm32.
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index b5927c3d5bc0..00e6274a63c3 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -738,28 +738,39 @@ static int get_cluster_channels_v3(struct mixer_build *state, unsigned int clust
- static int uac_mixer_unit_get_channels(struct mixer_build *state,
- 				       struct uac_mixer_unit_descriptor *desc)
- {
--	int mu_channels;
-+	int mu_channels = 0;
- 	void *c;
- 
--	if (desc->bLength < sizeof(*desc))
--		return -EINVAL;
- 	if (!desc->bNrInPins)
- 		return -EINVAL;
--	if (desc->bLength < sizeof(*desc) + desc->bNrInPins)
--		return -EINVAL;
- 
- 	switch (state->mixer->protocol) {
- 	case UAC_VERSION_1:
-+		// limit derived from uac_mixer_unit_bmControls
-+		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 4)
-+			return 0;
-+
-+		mu_channels = uac_mixer_unit_bNrChannels(desc);
-+		break;
-+
- 	case UAC_VERSION_2:
--	default:
--		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 1)
-+		// limit derived from uac_mixer_unit_bmControls
-+		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 6)
- 			return 0; /* no bmControls -> skip */
-+
- 		mu_channels = uac_mixer_unit_bNrChannels(desc);
- 		break;
- 	case UAC_VERSION_3:
-+		// limit derived from uac_mixer_unit_bmControls
-+		if (desc->bLength < sizeof(*desc) + desc->bNrInPins + 2)
-+			return 0; /* no bmControls -> skip */
-+
- 		mu_channels = get_cluster_channels_v3(state,
- 				uac3_mixer_unit_wClusterDescrID(desc));
- 		break;
-+
-+	default:
-+		break;
- 	}
- 
- 	if (!mu_channels)
--- 
-2.22.1
+Indeed, it seems best not to use xchg() on any type that's not 32 bits 
+long or that's not the CPU's native word size.  Probably we should update 
+the documentation.
 
+> Please squash this into the -rcu dev branch to resolve the issue.
+> 
+> Please squash this fix.
+> 
+> Fixes: -rcu dev commit 3cbd3aa7d9c7bdf ("rcu/tree: Add basic support for kfree_rcu() batching")
+> 
+> Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+
+Link: https://lore.kernel.org/lkml/alpine.DEB.2.21.9999.1908161931110.32497@viisi.sifive.com/T/#me9956f66cb611b95d26ae92700e1d901f46e8c59
+Reviewed-by: Paul Walmsley <paul.walmsley@sifive.com>
+
+
+- Paul
