@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4EB9B915F0
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 058FD915EA
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:34:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726798AbfHRJfE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:35:04 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:32919 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726591AbfHRJek (ORCPT
+        id S1726695AbfHRJeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:34:44 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50618 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfHRJel (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:34:40 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p77so559463wme.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:39 -0700 (PDT)
+        Sun, 18 Aug 2019 05:34:41 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so517231wml.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Tg1DLOMsJQjiTIKri8X/vwSYJc+QAfp9dprhf0452G0=;
-        b=yLBQ4i/biurw25qA7X6sHOSPqNtYLI43MAHC8JZkBazu8MLujF0P3WT9P6RlqJYbC7
-         ywsGzZpa8QJS6MKn3DThuYJN65fzYU0eAHntHj3NPx2R7uzIo5SIDc2tYkdE9M50cZ2n
-         GmW+Z3MH5bY70uZE3nbaebaDbTsRXz+u+xDtbYodSDBLaStU2MFafFpGcVpHqRy+v7+5
-         YtvPHXlgdIzR8FZobqRO+m1ADjVGN0G9uFXhV53JuFEDfLtSvo/JKoTvjVvnBzfhhmgp
-         JCo9NW80Fa7n6AzGPv54xrgxSwuy5Jsb14Sh51/drB8DLfm3JJYfWmVLEF3jkpl53yJA
-         F6IQ==
+        bh=JciP+sgA6x3vXVEb6ByrkWLVlRaOQlC3JG7PQh8jt2A=;
+        b=unozXp074XF5Jan16QB+lXoMD/yvOtXVxk/mDNPMre44U1G03QnVVIbI0oKCbGfrF5
+         FZxLMRAnfpuUSU/SGDuRA+0NnwqFDx+GtiBkUNlTcF5JHyY46Pk/gUnS0mr8NJmATAcZ
+         AkeHnBRIyR28LqPYnbUs/b8UPczClNuBj9b+QWd+3w6qTLFR6H4gXK34PobgkmZQWc7p
+         XFB7u9VhSpMg+vVSx3VGFG1pEYs/O8+mel6fQD1/9xWmuzjKswPL/ahQmqXDxmD83Txb
+         3vgXruYYnHJQ644+K16obaYPhg5je3nSo5daAOxtT8Au8RABWGYirfMqRyV/XQE9W3bt
+         Ibaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Tg1DLOMsJQjiTIKri8X/vwSYJc+QAfp9dprhf0452G0=;
-        b=OFJN7ex0gT3hVBYwUPwfbix7VpBFhuSkiXJTfqSSqtiqoxGFt3kHDWT8GKMejeCzjc
-         wb4NfBr/r2fVj05Vevcz8e5+Cc+k3mMQETCcl32l579CKTklm8u8OAR1DQIhNNJRc/AI
-         hG11eRrUA916IFESkoyvgT5wf2cRNEoZJ6nPECl+W7RkOy22h1EBBQgvFGqLUauVXcee
-         z0Dof5WX4JbxiojgqvRjOBEexNAtCY6XU4K+yLOwEgZ/EdSg6VPzuWiimo1seeEQLj1u
-         RN5NRwN/akL9SlBC1h1pX/YZa+SBBxnq609o0KHYgafhiHdMkDl0Cak6yJIRv1LqzjKL
-         rT4w==
-X-Gm-Message-State: APjAAAWIGIpjmHrltK9vkjgfwyTwtSMSIhZBGSsEeyZAVdfwAfphvVn6
-        C9QsrunfTm6Qopm01cRXsISiKzmt+I4=
-X-Google-Smtp-Source: APXvYqyCN2/BZ3on3ZHB7/3Yn8kPyuhUgUqho2UORZ6i2L5YTsiufP6zutTPhouSih4Wq6r20BY0Nw==
-X-Received: by 2002:a7b:c775:: with SMTP id x21mr15532747wmk.90.1566120879060;
+        bh=JciP+sgA6x3vXVEb6ByrkWLVlRaOQlC3JG7PQh8jt2A=;
+        b=KKcBfLjoWSbm6KSe1+cN5kTyrPE2Bs6P50AfhPFqD7QYF1/ynyw6w7YHoIY8GvzLsi
+         E5n+xnj0ExXBtZI4ioBbvmDgXq3NSHRJ+iGPHBV1O7B9ZqA0jrD1Uxg5c/XyDwWeuvEa
+         GBnsl7lWtYz8F90bLl0WZTADxZO0phynn33dOJ/CRwfejuVmE1FpFANQHRJZ3BzNDFKG
+         aLbnvTOpk0q3smn1lIrZHr5JzpwzDElswdeV0bfyerSQPAFTydiLu1cjSnnr+3XK894I
+         F/VbgwST+42VpCKei1oOMr1uvkpBJGAEuTf60HNoGvdK2giFXIy86gFzgZvErw7RDEzp
+         1jrA==
+X-Gm-Message-State: APjAAAVSgqAQ6yfA0Fusir9DDuvav2XH2fYC647KqtEXwXAaih1ppeBb
+        SrYlhSDDVjeGW7JdsMi9RI8zt/cpfdg=
+X-Google-Smtp-Source: APXvYqwhQG7nxXKN+IpbWvw7/+afOd1NcqO5Vplx4tbYrOBAyH3YIbL/8fIvNaAFkiKsYWsxtTN1Ew==
+X-Received: by 2002:a7b:c246:: with SMTP id b6mr15478693wmj.13.1566120879954;
         Sun, 18 Aug 2019 02:34:39 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.38
+        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 02:34:38 -0700 (PDT)
+        Sun, 18 Aug 2019 02:34:39 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Stefan Mavrodiev <stefan@olimex.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 3/7] nvmem: sunxi_sid: fix A64 SID controller support
-Date:   Sun, 18 Aug 2019 10:33:41 +0100
-Message-Id: <20190818093345.29647-4-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 4/7] nvmem: meson-mx-efuse: allow reading data smaller than word_size
+Date:   Sun, 18 Aug 2019 10:33:42 +0100
+Message-Id: <20190818093345.29647-5-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
 References: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
@@ -64,34 +64,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Mavrodiev <stefan@olimex.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Like in H3, A64 SID controller doesn't return correct data
-when using direct access. It appears that on A64, SID needs
-8 bytes of word_size.
+Some Amlogic boards store the Ethernet MAC address inside the eFuse. The
+Ethernet MAC address uses 6 bytes. The existing logic in
+meson_mx_efuse_read() would write beyond the end of the data buffer when
+trying to read data with a size that is not aligned to word_size (4
+bytes on Meson8, Meson8b and Meson8m2).
 
-Workaround is to enable read by registers.
+Calculate the remaining data to copy inside meson_mx_efuse_read() so
+reading 6 bytes doesn't write beyond the end of the data buffer.
 
-Signed-off-by: Stefan Mavrodiev <stefan@olimex.com>
-Acked-by: Chen-Yu Tsai <wens@csie.org>
-Tested-by: Vasily Khoruzhick <anarsoul@gmail.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/sunxi_sid.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/nvmem/meson-mx-efuse.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/sunxi_sid.c b/drivers/nvmem/sunxi_sid.c
-index a079a80ddf2c..e26ef1bbf198 100644
---- a/drivers/nvmem/sunxi_sid.c
-+++ b/drivers/nvmem/sunxi_sid.c
-@@ -186,6 +186,7 @@ static const struct sunxi_sid_cfg sun8i_h3_cfg = {
- static const struct sunxi_sid_cfg sun50i_a64_cfg = {
- 	.value_offset = 0x200,
- 	.size = 0x100,
-+	.need_register_readout = true,
- };
+diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
+index b9f9ce089de9..07c9f38c1c60 100644
+--- a/drivers/nvmem/meson-mx-efuse.c
++++ b/drivers/nvmem/meson-mx-efuse.c
+@@ -155,7 +155,8 @@ static int meson_mx_efuse_read(void *context, unsigned int offset,
+ 		if (err)
+ 			break;
  
- static const struct sunxi_sid_cfg sun50i_h6_cfg = {
+-		memcpy(buf + i, &tmp, efuse->config.word_size);
++		memcpy(buf + i, &tmp,
++		       min_t(size_t, bytes - i, efuse->config.word_size));
+ 	}
+ 
+ 	meson_mx_efuse_mask_bits(efuse, MESON_MX_EFUSE_CNTL1,
 -- 
 2.21.0
 
