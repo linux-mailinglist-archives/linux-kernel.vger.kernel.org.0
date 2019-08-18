@@ -2,74 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18E8C91842
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:06:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 852E791849
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:14:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfHRRGo convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 18 Aug 2019 13:06:44 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:34030 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfHRRGo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 13:06:44 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id ACDE0608311C;
-        Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 08Dg9I0ZhxDq; Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 5FD3D6083139;
-        Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id APNZI9DvhTC0; Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
-Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
-        by lithops.sigma-star.at (Postfix) with ESMTP id E967F608311C;
-        Sun, 18 Aug 2019 19:06:40 +0200 (CEST)
-Date:   Sun, 18 Aug 2019 19:06:40 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     tytso <tytso@mit.edu>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Chao Yu <yuchao0@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Darrick <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-Message-ID: <1897345637.69314.1566148000847.JavaMail.zimbra@nod.at>
-In-Reply-To: <20190818151154.GA32157@mit.edu>
-References: <20190817082313.21040-1-hsiangkao@aol.com> <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1> <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at> <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1> <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at> <20190818090949.GA30276@kroah.com> <790210571.69061.1566120073465.JavaMail.zimbra@nod.at> <20190818151154.GA32157@mit.edu>
-Subject: Re: [PATCH] erofs: move erofs out of staging
+        id S1726911AbfHRROw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 13:14:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725786AbfHRROw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 13:14:52 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50E4C206C1;
+        Sun, 18 Aug 2019 17:14:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566148491;
+        bh=Yw8c9+3onw1UpC97BP+SV018SH390YF//JmW4tbD1Zo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IOwEz44goAFmho5oejHFacREn70pemE6Baf6rLSLSCO+0l0iM9khqgMRSsUx5EtoF
+         diQlZl9YDeS6YOo58G2lJov/7XtWDc938szJfyb3NFkXjEDk/NiZdeE8Fd89ZR7+z0
+         xBro/KwxcyCV+CagcvNpR4cwnb1lEJQUj9n1+RUs=
+Date:   Sun, 18 Aug 2019 18:14:44 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Martyn Welch <martyn.welch@collabora.com>,
+        Sergei M <fizik1@yandex.com>, linux-iio@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][iio-next] iio: light: noa1305: fix missing break in a
+ switch statement
+Message-ID: <20190818181444.55fc35b3@archlinux>
+In-Reply-To: <20190815074339.32380-1-colin.king@canonical.com>
+References: <20190815074339.32380-1-colin.king@canonical.com>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [195.201.40.130]
-X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
-Thread-Topic: erofs: move erofs out of staging
-Thread-Index: F0XqNZSXfHi4RI8aEm4VDowhkFmYng==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ Ursprüngliche Mail -----
-> So holding a file system like EROFS to a higher standard than say,
-> ext4, xfs, or btrfs hardly seems fair.
+On Thu, 15 Aug 2019 08:43:39 +0100
+Colin King <colin.king@canonical.com> wrote:
 
-Nobody claimed that.
+> From: Colin Ian King <colin.king@canonical.com>
+> 
+> There is a missing break for the NOA1305_INTEGR_TIME_400MS case,
+> fix it by adding it in.
+> 
+> Addresses-Coverity: ("Missing break in switch")
+> Fixes: 741172d18e8a ("iio: light: noa1305: Add support for NOA1305")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Hi Colin
+
+Fix already on it's way in.  Was also caught by 0-day.
 
 Thanks,
-//richard
+
+Jonathan
+
+> ---
+>  drivers/iio/light/noa1305.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iio/light/noa1305.c b/drivers/iio/light/noa1305.c
+> index 7b859ae1044d..5ebfbc52f541 100644
+> --- a/drivers/iio/light/noa1305.c
+> +++ b/drivers/iio/light/noa1305.c
+> @@ -85,6 +85,7 @@ static int noa1305_scale(struct noa1305_priv *priv, int *val, int *val2)
+>  	case NOA1305_INTEGR_TIME_400MS:
+>  		*val = 100;
+>  		*val2 = 77 * 4;
+> +		break;
+>  	case NOA1305_INTEGR_TIME_200MS:
+>  		*val = 100;
+>  		*val2 = 77 * 2;
+
