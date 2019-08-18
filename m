@@ -2,91 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 654CC91787
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 17:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F5C49178B
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 17:51:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfHRPrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 11:47:52 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37809 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfHRPrw (ORCPT
+        id S1726806AbfHRPv3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 11:51:29 -0400
+Received: from smtp06.smtpout.orange.fr ([80.12.242.128]:37357 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfHRPv3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 11:47:52 -0400
-Received: by mail-pl1-f195.google.com with SMTP id bj8so4586533plb.4
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 08:47:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=21hbVFGx+8/jzq/lmcXaeMIKxoYnWYEJ5IhsV1Pi6yY=;
-        b=L0q9PVawLVsOvBFxUCXFWKikeyH523goWfKtLidRkTAggugmUrJsK8zyriaLtId/nw
-         OPjJ8rPg8N5hN4B881wlhRSRhkD30WeNu55zqirfcjB1xgCQvezNytqzkyrZln/6Y/4h
-         q1esOQNtQtL53EtbMgc6Zcrwva8ZvVa2HbY2GoHPR7YQ53lSdLO1yyTfaiKAUecYbxrn
-         3xAV0cwZrzxTag6dmsTWnzaI/m99RE46jOq1v9PJVoh9y0rMZOrpAluHVNGCgTIpJ+hE
-         CsTlHpAZiXqv7LJuYx1e6VMmfY4zRf/rEF3pJl3G24sJK9M45hoEdQYy1MNW7MXSv9WI
-         J5JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=21hbVFGx+8/jzq/lmcXaeMIKxoYnWYEJ5IhsV1Pi6yY=;
-        b=svqbT3i4T9Yp1tJ+Djv3/yaJr8yvx1scnNGKdbGNBiy2c6uzWIMyUeBwlf2QWpN9BQ
-         sFwvusqrVhjo5VvAiM6IRePtv/nUyLidrgAAnJwZu6mAoumsolVNVe/OQFyek9EShiRB
-         vCO7ca8z9byWvDDWK5aEb8Edk5HQmXgHaVzOb7XiCmAfAg9TvexXCGCtIe8QZdjo/ZLt
-         GOBE8i2Q0xxjyiqJSE7IL9ifcrn6PqERmv2aVobJp93QDWents3WZeklZR1FcE98vykJ
-         93UL3wISnzB6KcqmeKEAqqgLbkYp6wMSUpdGjo+ew+y5iF100FKY/VOU6WKMA+Zl41kg
-         rhEw==
-X-Gm-Message-State: APjAAAVSL+gklDxDQTcRFnHxx/VFOWDABXEAzCCh/Lxx+ruNwRDtQCTQ
-        8ZiLnfYpNEgcnUA4h+vZpK4=
-X-Google-Smtp-Source: APXvYqxgOdbzTuZqpSIsD/XyuwyyQRunnfBKn90nh/nP/SkQAUAIBCmwLO8lnzsg5zvX/QzvXRi7XQ==
-X-Received: by 2002:a17:902:bb81:: with SMTP id m1mr18764674pls.125.1566143271821;
-        Sun, 18 Aug 2019 08:47:51 -0700 (PDT)
-Received: from raspberrypi ([61.83.141.141])
-        by smtp.gmail.com with ESMTPSA id 1sm15190534pfx.56.2019.08.18.08.47.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 08:47:51 -0700 (PDT)
-Date:   Sun, 18 Aug 2019 16:47:44 +0100
-From:   Sidong Yang <realwakka@gmail.com>
-To:     Sam Ravnborg <sam@ravnborg.org>
-Cc:     Liviu Dudau <liviu.dudau@arm.com>,
-        Brian Starkey <brian.starkey@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH] drm/arm: drop use of drmP.h
-Message-ID: <20190818154744.GA5455@raspberrypi>
-References: <20190817074115.19116-1-realwakka@gmail.com>
- <20190817163549.GA15813@ravnborg.org>
+        Sun, 18 Aug 2019 11:51:29 -0400
+Received: from localhost.localdomain ([92.140.207.10])
+        by mwinf5d11 with ME
+        id qfrR2000c0Dzhgk03frSjN; Sun, 18 Aug 2019 17:51:27 +0200
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Sun, 18 Aug 2019 17:51:27 +0200
+X-ME-IP: 92.140.207.10
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     ralf@linux-mips.org, paul.burton@mips.com, jhogan@kernel.org
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] MIPS: Octeon: Fix a typo in #define OCTOEN_SERIAL_LEN
+Date:   Sun, 18 Aug 2019 17:51:24 +0200
+Message-Id: <20190818155124.3750-1-christophe.jaillet@wanadoo.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190817163549.GA15813@ravnborg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 17, 2019 at 06:35:49PM +0200, Sam Ravnborg wrote:
-> Hi Sidong
-> 
-> On Sat, Aug 17, 2019 at 08:41:15AM +0100, Sidong Yang wrote:
-> > Drop use of deprecated drmP.h header file.
-> > Remove drmP.h includes and add some include headers for function or
-> > struct that used in code.
-> 
-> Thanks for your patch.
-> We already have a similiar patch in drm-misc-next, that
-> drop the use of drmP.h from arm so this patch is obsoleted.
-> 
-> But keep up the spirit and send us other good stuff.
-> 
-> 	Sam
+It should be OCTEON_SERIAL_LEN.
+Update the #define and use it accordingly
 
-Hi Sam.
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+---
+ arch/mips/include/asm/octeon/octeon.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks for reply. I found the patch that you said.
-I'll keep up and try to find other good one.
+diff --git a/arch/mips/include/asm/octeon/octeon.h b/arch/mips/include/asm/octeon/octeon.h
+index 60481502826a..a2e2876357ce 100644
+--- a/arch/mips/include/asm/octeon/octeon.h
++++ b/arch/mips/include/asm/octeon/octeon.h
+@@ -51,7 +51,7 @@ extern void octeon_setup_delays(void);
+ extern void octeon_io_clk_delay(unsigned long);
+ 
+ #define OCTEON_ARGV_MAX_ARGS	64
+-#define OCTOEN_SERIAL_LEN	20
++#define OCTEON_SERIAL_LEN	20
+ 
+ struct octeon_boot_descriptor {
+ #ifdef __BIG_ENDIAN_BITFIELD
+@@ -102,7 +102,7 @@ struct octeon_boot_descriptor {
+ 	uint16_t chip_type;
+ 	uint8_t chip_rev_major;
+ 	uint8_t chip_rev_minor;
+-	char board_serial_number[OCTOEN_SERIAL_LEN];
++	char board_serial_number[OCTEON_SERIAL_LEN];
+ 	uint8_t mac_addr_base[6];
+ 	uint8_t mac_addr_count;
+ 	uint64_t cvmx_desc_vaddr;
+-- 
+2.20.1
 
-Sincerely, 
-Sidong.
