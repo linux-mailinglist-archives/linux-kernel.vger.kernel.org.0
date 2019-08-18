@@ -2,56 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BDB0915EF
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:35:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AB1F915EB
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:34:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfHRJfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:35:00 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40949 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726649AbfHRJem (ORCPT
+        id S1726730AbfHRJeq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:34:46 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50621 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726073AbfHRJen (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:34:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id v19so507141wmj.5
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:41 -0700 (PDT)
+        Sun, 18 Aug 2019 05:34:43 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v15so517263wml.0
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=WdcGXM6KsgrMmjpgvIUKi7bYgw0CC+Ry6Ot0JXzioGU=;
-        b=U4zqhVk21/xwg51bUrRzjzkXoTugoOuVafHhqscFPKECyBWEMTJ2ujMikhpDcRBkbM
-         AZdZ29GClmmu4XxAiQmULe6WUwl55YsBB7Z/ONS1JDCpKhVHup4BXRH0ox7zzko4IeSY
-         xbYclxOGcUmXhEzB7rk4ZObkvm8eKperzVX+bW2NtWM5xFOxWcmTpoDE8fHDn1KULUPj
-         chbgZj6jlv8HLDs7Q9fckoRz3cEVfAESDH0k6YvLlB4b9CLL5ewFLVrZ48M9xNdhhw0j
-         wow70ZVgBixM8/200mc+1kT3crcf0afGBCQ+oY0zVi6j4JRgQb47/bRWFWmuNEV7/B0v
-         GJEQ==
+        bh=3B6AxKAVmhTH5yjifOlS2cxjq6vLW/Jkk4lzyfrHej0=;
+        b=PfiRWyhj3EoaKk4s24rEBm7ogBIuGodXl7gBoK84Adcotull3MSruCNobdbhPjSDmZ
+         GD1ELNu2P9eLsrfZTPMkyIdVhQeMAH76qaNO+JZV00+VuS2H/9sdYrwWEjzRGc0Z1tdP
+         8gsN2kOp3ufy0SuN6yUuF9ur6FC7zevwWPQklPmB/Ir0hn6lXkRymXQovCSAqKx09ztx
+         k+jC66LKglw185k9lJk8BgizZi5oTvWzkmQETG0tmkohdG8wi8EAxd4a4o1QAn9lnWHC
+         9knAnTHHfgty6ThUhkrttHmhlesrHKbb02WMr+mT/wehL2+aLbX3ZlAmzItymUFaYMXV
+         nt8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=WdcGXM6KsgrMmjpgvIUKi7bYgw0CC+Ry6Ot0JXzioGU=;
-        b=AHhEAIKa1UW8T5vBTLrJQtaQOw3ek67LdNzyiOl33W7SV0ZAH25ObN3b2QPZHvBnat
-         M7lGCVtA1wPNxVrsidDQ8gihoh5egrayin/D6fkG4foz2fNrxbcK2j5eL3JNcU6LulZ1
-         uo71jzSH1a7wzZ1ACWei0rlfJpzSrhGKFpIftoeXMfwv9v00icjoF7v0Hsk6EjT499aU
-         IY8GIgBFBi9DOK38/4GdCiFsx8LCBXpSAOZPdzN1ab3cm5kfe2UFbxYmoHxQufJZlznA
-         X8F6v2gfcuSXbb/J1k0ffMpqP5F1D+OGzmtZTVWgvG/zFN3EZIT7nbXHygzVNQ7gUFEj
-         YW+A==
-X-Gm-Message-State: APjAAAWJGOWr4EwPJ1GjTBxp5hiD1KmWd9tehKGAS2mLe3ulK314iQkY
-        GyYG5KbPQUjPj8Sw6aMh+Al0Lw==
-X-Google-Smtp-Source: APXvYqxAKKJKCSOoYvTFWOYN0Pd0EkZ6PZlMBziAKqeMbSlyG/Vl+08iINrmRKiVaQZqzD8OK0ATzQ==
-X-Received: by 2002:a1c:c542:: with SMTP id v63mr14628868wmf.97.1566120880901;
-        Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
+        bh=3B6AxKAVmhTH5yjifOlS2cxjq6vLW/Jkk4lzyfrHej0=;
+        b=oyygkwFU91zcC8DkSKg26LUjmbZj/zJlScCnIXb26vn8Y41+sFrWHfHkrgldLtaAS8
+         WPTzsV9oISBJKnTziO2VdiA+FLjeKyUHyqtIuBWozeLtjmIIv33o8T4u1gWM2muMbj7n
+         CedXrFX927O5z68t93vt8m8tj7IqITPBDPlVb7yUX7yqH1SPmVY9ZAkV72zJD8e3EPCU
+         DMVQhO4H99sa+Y023u/wdt/XgWqaQT5zksr3BJkMjdJxzMvZ+vKLkVRS7RHiAxrxIbHg
+         4ahCfFc42URnVPmhMtGUpXezQHUKY/wUVybuwakNmgmrqyX2k3nsNeSFEe+jDYTAoeFl
+         Dr6w==
+X-Gm-Message-State: APjAAAWPHlvuoedS7WrF0v28Ni2HkVVyRpSK/vSl80yJjWMKI33gH65Q
+        c4r7/RwUoEhoj4tZ8OTL2d89NQ==
+X-Google-Smtp-Source: APXvYqwtA2W/G8LiNZduDB03kgUguKjsViE8hOgX4YrmfUvgW+yQBP5lWy27TJqm1IGFyULuYxoEGQ==
+X-Received: by 2002:a1c:c5c2:: with SMTP id v185mr15935750wmf.161.1566120881919;
+        Sun, 18 Aug 2019 02:34:41 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
         by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
+        Sun, 18 Aug 2019 02:34:41 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
+Cc:     linux-kernel@vger.kernel.org, Fugang Duan <fugang.duan@nxp.com>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 5/7] nvmem: mxs-ocotp: update MODULE_AUTHOR() email address
-Date:   Sun, 18 Aug 2019 10:33:43 +0100
-Message-Id: <20190818093345.29647-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 6/7] dt-bindings: fsl: scu: add new compatible string for ocotp
+Date:   Sun, 18 Aug 2019 10:33:44 +0100
+Message-Id: <20190818093345.29647-7-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
 References: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
@@ -62,29 +62,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <wahrenst@gmx.net>
+From: Fugang Duan <fugang.duan@nxp.com>
 
-The email address listed in MODULE_AUTHOR() will be disabled in the
-near future. Replace it with my private one.
+Add new compatible string "fsl,imx8qm-scu-ocotp" into binding
+doc  for i.MX8 SCU OCOTP driver.
 
-Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Signed-off-by: Fugang Duan <fugang.duan@nxp.com>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/mxs-ocotp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
-index c34d9fecfb10..8e4898dec002 100644
---- a/drivers/nvmem/mxs-ocotp.c
-+++ b/drivers/nvmem/mxs-ocotp.c
-@@ -200,6 +200,6 @@ static struct platform_driver mxs_ocotp_driver = {
- };
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index a575e42f7fec..c149fadc6f47 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -136,7 +136,9 @@ Required properties:
+ OCOTP bindings based on SCU Message Protocol
+ ------------------------------------------------------------
+ Required properties:
+-- compatible:		Should be "fsl,imx8qxp-scu-ocotp"
++- compatible:		Should be one of:
++			"fsl,imx8qm-scu-ocotp",
++			"fsl,imx8qxp-scu-ocotp".
+ - #address-cells:	Must be 1. Contains byte index
+ - #size-cells:		Must be 1. Contains byte length
  
- module_platform_driver(mxs_ocotp_driver);
--MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
-+MODULE_AUTHOR("Stefan Wahren <wahrenst@gmx.net");
- MODULE_DESCRIPTION("driver for OCOTP in i.MX23/i.MX28");
- MODULE_LICENSE("GPL v2");
 -- 
 2.21.0
 
