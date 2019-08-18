@@ -2,93 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB909141E
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 04:20:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FA7491420
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 04:21:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfHRCUd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 17 Aug 2019 22:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfHRCUd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Aug 2019 22:20:33 -0400
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E158217F4;
-        Sun, 18 Aug 2019 02:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566094832;
-        bh=OPY3V0VybgTAW/TfTy5ht1ElPNtB7wmhajw4Ua8nsM4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B8gICytMWtf9sSp2gWth8rJlo7ccG8GmZGksHlQpQZ2aQ2V8qKhezlSer8nu0kLsw
-         IEgo5T4rtcStB86cO09141TYic+/RSvTqgkBH8LFADvO4nfXnVH+lllvshW+iwmFe8
-         3khqevP1orkrp6CPHHDbbrjLKfcmdrkxyX/9Pjfg=
-Received: by mail-wm1-f46.google.com with SMTP id o4so134739wmh.2;
-        Sat, 17 Aug 2019 19:20:32 -0700 (PDT)
-X-Gm-Message-State: APjAAAXneIX53JObRcmTJJKKw3D2DWw5JS3/zs9MEJLrx0/HMiYYnzDo
-        j5YBamMSRi9j2Uj3FwRSqkwVL5/ppiG1muzPEjI=
-X-Google-Smtp-Source: APXvYqzI7WQkVURNqZ2bMcrBH43jaDIpUzhzxYNWBXKHEb1Z1mqumimCqpgOybei9ECXbxr+D02Ru3e1mc41ffC8syc=
-X-Received: by 2002:a1c:1f4e:: with SMTP id f75mr12874929wmf.137.1566094830733;
- Sat, 17 Aug 2019 19:20:30 -0700 (PDT)
+        id S1726497AbfHRCVG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 17 Aug 2019 22:21:06 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39230 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfHRCVG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Aug 2019 22:21:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=rTepqUiIUx2nnEvuuf1IfBTS43BjeweB+IeE+bLV2H0=; b=jA5GcXNq9MfyEvl9UgqfCv2uN
+        KduJxuHrPS02dFDVNAioWXKihTJvtK+MC0OIWgHKRKgWVRh4vlxhFM2sqx+9PkAGFxQrdG3sbHW/Q
+        YLQSj9SqVXiZFbfvnfC2q5R/l8VeTCUNqYUCKj9DL5w+R8UYF9PUDDPy5h54axO+TzRK/pgQQZqmE
+        sKb71/Rdfb4ZEcyOREIhAspSOIeiiM14fnbtnYO7e6jxzsJ7jaEW+encFkdeMqG/W9MaXcZS7Y/zA
+        w/Dgbb9xXuEE95rAY/kK8se2W7Yn2s8XtVyvkFNLYO3smemDaVVdEajDo74CszfjMM7gXz/Flg7uU
+        +/+5Qy5SA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1hzAoR-0001XG-Pw; Sun, 18 Aug 2019 02:20:55 +0000
+Date:   Sat, 17 Aug 2019 19:20:55 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Gao Xiang <hsiangkao@aol.com>
+Cc:     Chao Yu <yuchao0@huawei.com>, Richard Weinberger <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Chao Yu <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] staging: erofs: fix an error handling in
+ erofs_readdir()
+Message-ID: <20190818022055.GA14592@bombadil.infradead.org>
+References: <20190818014835.5874-1-hsiangkao@aol.com>
+ <20190818015631.6982-1-hsiangkao@aol.com>
 MIME-Version: 1.0
-References: <1565868537-17753-1-git-send-email-guoren@kernel.org> <20190816070348.GA13766@infradead.org>
-In-Reply-To: <20190816070348.GA13766@infradead.org>
-From:   Guo Ren <guoren@kernel.org>
-Date:   Sun, 18 Aug 2019 10:20:18 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTTBc3+SnKMbVU4A+tekyjkd_7XUmDCUfNCcA-CZf=JUyg@mail.gmail.com>
-Message-ID: <CAJF2gTTBc3+SnKMbVU4A+tekyjkd_7XUmDCUfNCcA-CZf=JUyg@mail.gmail.com>
-Subject: Re: [PATCH] csky: Fixup ioremap function losing
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        linux-csky@vger.kernel.org, zhang_jian5@dahuatech.com,
-        Guo Ren <ren_guo@c-sky.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190818015631.6982-1-hsiangkao@aol.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thx Christoph,
+On Sun, Aug 18, 2019 at 09:56:31AM +0800, Gao Xiang wrote:
+> @@ -82,8 +82,12 @@ static int erofs_readdir(struct file *f, struct dir_context *ctx)
+>  		unsigned int nameoff, maxsize;
+>  
+>  		dentry_page = read_mapping_page(mapping, i, NULL);
+> -		if (IS_ERR(dentry_page))
+> -			continue;
+> +		if (IS_ERR(dentry_page)) {
+> +			errln("fail to readdir of logical block %u of nid %llu",
+> +			      i, EROFS_V(dir)->nid);
+> +			err = PTR_ERR(dentry_page);
+> +			break;
 
-On Fri, Aug 16, 2019 at 3:03 PM Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Thu, Aug 15, 2019 at 07:28:57PM +0800, guoren@kernel.org wrote:
-> > From: Guo Ren <ren_guo@c-sky.com>
-> >
-> > Implement the following apis to meet usage in different scenarios.
-> >
-> >  - ioremap          (NonCache + StrongOrder)
-> >  - ioremap_nocache  (NonCache + StrongOrder)
-> >  - ioremap_wc       (NonCache + WeakOrder  )
-> >  - ioremap_cache    (   Cache + WeakOrder  )
-> >
-> > Also change flag VM_ALLOC to VM_IOREMAP in get_vm_area_caller.
->
-> Looks generally fine, but two comments:
->
->  - do you have a need for ioremap_cache?  We are generally try to
->    phase it out in favour of memremap, and it is generally only used
->    by arch specific code.
-Yes, some drivers of our customers use ioremap_cache to map phy_addr
-which isn't belong to system memory.
-
->  - I have a big series pending to clean up the mess with our
->    ioremap_* functions, including adding a generic implementation
->    that csky should be able to use.  Unless this patch is urgent it
->    might make sense to rebase it on top.  Here is my current tree, I
->    plan to post it soon:
->
->         http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/generic-ioremap
-I agree to use GENERIC_IOREMAP, but I want to add csky support
-GENERIC_IOREMAP patch by myself.
-You could remove "csky: use generic ioremap" in your patchset first
-and I'll add support GENERIC_IORMAP patch later.
-Then we won't get confilct :)
-
---
-Best Regards
- Guo Ren
-
-ML: https://lore.kernel.org/linux-csky/
+I don't think you want to use the errno that came back from
+read_mapping_page() (which is, I think, always going to be -EIO).
+Rather you want -EFSCORRUPTED, at least if I understand the recent
+patches to ext2/ext4/f2fs/xfs/...
