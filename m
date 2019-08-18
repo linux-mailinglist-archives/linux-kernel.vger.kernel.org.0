@@ -2,434 +2,492 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DF7917BD
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 18:18:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F20B917C4
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 18:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726816AbfHRQSJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 12:18:09 -0400
-Received: from mail-io1-f71.google.com ([209.85.166.71]:38598 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfHRQSI (ORCPT
+        id S1726875AbfHRQWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 12:22:20 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44743 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726089AbfHRQWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 12:18:08 -0400
-Received: by mail-io1-f71.google.com with SMTP id h4so1412312iol.5
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 09:18:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Hmr6LbNPAogYz9M9AWErVSdLPJP6C8NA+lUBffMdXcY=;
-        b=HdpIH2tDQkRV/JW39HwU1RdweT9wU2tHftOrtYSphh8qE4QtTzPddDDEZxt3hpvgNU
-         bqobWWM6mKQCLXRboY5xNUyX4snziOOJuzKGoqDgqbtF1UrxKexXCiXhTEBeWVvEjmGM
-         QonF690ZaDrqiC+qdsQo2zOSv6VAW0aXck+jY+nvyws/X839sY/5BIpntKBioNmgw9VF
-         OHcBgvUa1ff3GJynwWcPG46H2oJjUB2uri+KA0xPulZPrGApgzDQDxIeo7jBdb8fZh9Q
-         2oHevSkb+qOS0NXzMY5a7iJyNNB7sNe932srh7GIsLljDwAx9pBOvGunu6NhNC4Q0ZFW
-         TnTA==
-X-Gm-Message-State: APjAAAWcgQHVCXcdXi3EWlof3lxNVj+kGShIkn5Vn/xM8Vh7jfEKTml4
-        x8NTYbjj6RaD5tz8bbwNbkQ14Qbb9e+cAMZPkIMnptqxtWUm
-X-Google-Smtp-Source: APXvYqzVT6FgCvnwRaYKUVgC+5aUifUjqZ25O99mI97owt1IBKwoVnOwIw1emBhWm7YIg81BCuGOiNNOhD++dgM6N8t6V+yLEIP9
+        Sun, 18 Aug 2019 12:22:17 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzNw8-00089r-GO; Sun, 18 Aug 2019 18:21:44 +0200
+Date:   Sun, 18 Aug 2019 18:21:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv6 23/36] x86/vdso: Allocate timens vdso
+In-Reply-To: <483678c7-7687-5445-f09e-e45e9460d559@gmail.com>
+Message-ID: <alpine.DEB.2.21.1908171709360.1923@nanos.tec.linutronix.de>
+References: <20190815163836.2927-1-dima@arista.com> <20190815163836.2927-24-dima@arista.com> <b719199a-ed91-610b-38bc-015a0749f600@kernel.org> <alpine.DEB.2.21.1908162208190.1923@nanos.tec.linutronix.de> <483678c7-7687-5445-f09e-e45e9460d559@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:7009:: with SMTP id l9mr1217269ioc.160.1566145086587;
- Sun, 18 Aug 2019 09:18:06 -0700 (PDT)
-Date:   Sun, 18 Aug 2019 09:18:06 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008d8eac05906691ac@google.com>
-Subject: possible deadlock in io_submit_one (2)
-From:   syzbot <syzbot+af05535bb79520f95431@syzkaller.appspotmail.com>
-To:     bcrl@kvack.org, linux-aio@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Dmitry,
 
-syzbot found the following crash on:
+On Fri, 16 Aug 2019, Dmitry Safonov wrote:
+> On 8/16/19 9:10 PM, Thomas Gleixner wrote:
+> > On Fri, 16 Aug 2019, Andy Lutomirski wrote:
+> [..]
+> >> I'm unconvinced that any of this magic is wise.  I think you should make a
+> >> special timens vvar page that causes the normal fastpath to fail (using a
+> >> special vclock mode, a special seq value, or a special "last" value) and then
+> >> make the failure path detect that timens is in use and use the timens path.
+> 
+> I see. That's so clever, it haven't come on my mind.
+> Hmm, is that better because of the price of 5-byte NOP?
+> I'm a bit afraid to complicate that seq/vclock logic more..
 
-HEAD commit:    17da61ae Add linux-next specific files for 20190814
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=127712e2600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4733704ca85aaa66
-dashboard link: https://syzkaller.appspot.com/bug?extid=af05535bb79520f95431
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+See below.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+> > My initial suggestion still stands. Do that at compile time. It really does
+> > not matter whether we have another 2 or 3 variants of vdso binaries.
+> > 
+> > Use it and be done with it. No special magic, just straight forward
+> > decisions to use a timens capable VDSO or not.
+> 
+> I believe that was something we did in version 1 of the patches set.
+> It doesn't sound like a rocket science to do, but it resulted in a
+> couple of ugly patches.
+> 
+> The post-attempt notes about downsides of doing it compile-time are:
+> 
+> 1. There is additional .so for each vdso: 64-bit, ia32, x32. The same
+> for every architecture to-be supported. It adds rules in Makefiles. [2]
+> 2. If we still intend to keep setns() working without exec(), function
+> entries on both host/namespace vdso should be aligned to each other [3].
+> That results in a patch to vdso2c to generate offsets [4, 5] and in
+> linker magic to align another vdso [6].
+> 3. As unexpected consequence, we also need to align local functions on
+> vdso [7].
+> 
+> So, it might be all related to my lack of skills, but it seems to bring
+> some big amount of complexity into build process. And in my point of
+> view, major issue is that it would not scale easily when the day will
+> come and there will be a need to introduce another vdso.so. As I didn't
+> want to be the guy that happens to be remembered as "he wrote this
+> unmaintainable pile of garbage", I've taken dynamic patching approach
+> that is done once a boot time.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+af05535bb79520f95431@syzkaller.appspotmail.com
+Fair enough. Did not think about that part.
+ 
+> Regardless, we both with Andrei want to improve the patches set and make
+> it acceptable and easy to maintain in future. I hope, that our effort to
+> do that is visible through evolution of patches. And we're very glad
+> that we've constructive critics and such patient maintainers.
 
-=====================================================
-WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-5.3.0-rc4-next-20190814 #66 Not tainted
------------------------------------------------------
-syz-executor.1/25024 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-ffff8880a374bbe8 (&fiq->waitq){+.+.}, at: spin_lock  
-include/linux/spinlock.h:338 [inline]
-ffff8880a374bbe8 (&fiq->waitq){+.+.}, at: aio_poll fs/aio.c:1748 [inline]
-ffff8880a374bbe8 (&fiq->waitq){+.+.}, at: __io_submit_one fs/aio.c:1822  
-[inline]
-ffff8880a374bbe8 (&fiq->waitq){+.+.}, at: io_submit_one+0xefa/0x2ef0  
-fs/aio.c:1859
+I'm happy to review well written stuff which makes progress and takes
+review comments into account or the submitter discusses them for
+resolution.
 
-and this task is already holding:
-ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq  
-include/linux/spinlock.h:363 [inline]
-ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll  
-fs/aio.c:1746 [inline]
-ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one  
-fs/aio.c:1822 [inline]
-ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at:  
-io_submit_one+0xeb5/0x2ef0 fs/aio.c:1859
-which would create a new lock dependency:
-  (&(&ctx->ctx_lock)->rlock){..-.} -> (&fiq->waitq){+.+.}
+> So, if I'm mistaken in those points about compile-time vdso(s), or you
+> have in mind a plan how-to avoid those, I'd appreciate and rework it to
+> that direction.
 
-but this new dependency connects a SOFTIRQ-irq-safe lock:
-  (&(&ctx->ctx_lock)->rlock){..-.}
+Coming back to Andy's idea. Create your time namespace page as an exact
+copy of the vdso data page. When the page is created do:
 
-... which became SOFTIRQ-irq-safe at:
-   lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-   __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128 [inline]
-   _raw_spin_lock_irq+0x60/0x80 kernel/locking/spinlock.c:167
-   spin_lock_irq include/linux/spinlock.h:363 [inline]
-   free_ioctx_users+0x2d/0x490 fs/aio.c:618
-   percpu_ref_put_many include/linux/percpu-refcount.h:293 [inline]
-   percpu_ref_put include/linux/percpu-refcount.h:309 [inline]
-   percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130 [inline]
-   percpu_ref_switch_to_atomic_rcu+0x4c0/0x570 lib/percpu-refcount.c:165
-   __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-   rcu_do_batch kernel/rcu/tree.c:2157 [inline]
-   rcu_core+0x581/0x1560 kernel/rcu/tree.c:2377
-   rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2386
-   __do_softirq+0x262/0x98c kernel/softirq.c:292
-   invoke_softirq kernel/softirq.c:373 [inline]
-   irq_exit+0x19b/0x1e0 kernel/softirq.c:413
-   exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-   smp_apic_timer_interrupt+0x1a3/0x610 arch/x86/kernel/apic/apic.c:1095
-   apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:830
-   constant_test_bit arch/x86/include/asm/bitops.h:207 [inline]
-   test_bit include/asm-generic/bitops-instrumented.h:238 [inline]
-   test_ti_thread_flag include/linux/thread_info.h:84 [inline]
-   need_resched include/linux/sched.h:1827 [inline]
-   mutex_spin_on_owner+0x7b/0x330 kernel/locking/mutex.c:568
-   mutex_optimistic_spin kernel/locking/mutex.c:673 [inline]
-   __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-   __mutex_lock+0x330/0x13c0 kernel/locking/mutex.c:1103
-   mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-   rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
-   addrconf_dad_work+0xad/0x1150 net/ipv6/addrconf.c:4032
-   process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-   worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-   kthread+0x361/0x430 kernel/kthread.c:255
-   ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+     	 memset(p->vdso_data, 0, sizeof(p->vdso_data));
+     	 p->vdso_data[0].clock_mode = CLOCK_TIMENS;
+	 p->vdso_data[0].seq = 1;
+ 
+	 /* Store the namespace offsets in basetime */
+	 p->vdso_data[0].basetime[CLOCK_MONOTONIC].sec = myns->mono_sec;
+	 p->vdso_data[0].basetime[CLOCK_MONOTONIC].nsec = myns->mono_nsec;
+	 p->vdso_data[0].basetime[CLOCK_BOOTTIME].sec = myns->boot_sec;
+	 p->vdso_data[0].basetime[CLOCK_BOOTTIME].nsec = myns->boot_nsec;
 
-to a SOFTIRQ-irq-unsafe lock:
-  (&fiq->waitq){+.+.}
+     	 p->vdso_data[1].clock_mode = CLOCK_TIMENS;
+	 p->vdso_data[1].seq = 1;
 
-... which became SOFTIRQ-irq-unsafe at:
-...
-   lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-   __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-   _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-   spin_lock include/linux/spinlock.h:338 [inline]
-   flush_bg_queue+0x1f3/0x3c0 fs/fuse/dev.c:415
-   fuse_request_queue_background+0x2f8/0x5a0 fs/fuse/dev.c:676
-   fuse_request_send_background+0x58/0x110 fs/fuse/dev.c:687
-   cuse_send_init fs/fuse/cuse.c:459 [inline]
-   cuse_channel_open+0x5ba/0x830 fs/fuse/cuse.c:519
-   misc_open+0x395/0x4c0 drivers/char/misc.c:141
-   chrdev_open+0x245/0x6b0 fs/char_dev.c:414
-   do_dentry_open+0x4df/0x1250 fs/open.c:797
-   vfs_open+0xa0/0xd0 fs/open.c:914
-   do_last fs/namei.c:3416 [inline]
-   path_openat+0x10e9/0x4630 fs/namei.c:3533
-   do_filp_open+0x1a1/0x280 fs/namei.c:3563
-   do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-   __do_sys_openat fs/open.c:1124 [inline]
-   __se_sys_openat fs/open.c:1118 [inline]
-   __x64_sys_openat+0x9d/0x100 fs/open.c:1118
-   do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+For a normal task the VVAR pages are installed in the normal ordering:
 
-other info that might help us debug this:
+       VVAR
+       PVCLOCK
+       HVCLOCK
+       TIMENS	<- Not really required
 
-  Possible interrupt unsafe locking scenario:
+Now for a timens task you install the pages in the following order
 
-        CPU0                    CPU1
-        ----                    ----
-   lock(&fiq->waitq);
-                                local_irq_disable();
-                                lock(&(&ctx->ctx_lock)->rlock);
-                                lock(&fiq->waitq);
-   <Interrupt>
-     lock(&(&ctx->ctx_lock)->rlock);
+       TIMENS
+       PVCLOCK
+       HVCLOCK
+       VVAR
 
-  *** DEADLOCK ***
+The check for vdso_data->clock_mode is in the unlikely path of the now open
+coded seq begin magic. So for the non-timens case most of the time 'seq' is
+even, so the branch is not taken.
 
-1 lock held by syz-executor.1/25024:
-  #0: ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: spin_lock_irq  
-include/linux/spinlock.h:363 [inline]
-  #0: ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: aio_poll  
-fs/aio.c:1746 [inline]
-  #0: ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at: __io_submit_one  
-fs/aio.c:1822 [inline]
-  #0: ffff88806001fc58 (&(&ctx->ctx_lock)->rlock){..-.}, at:  
-io_submit_one+0xeb5/0x2ef0 fs/aio.c:1859
+If 'seq' is odd, i.e. a concurrent update is in progress, the extra check
+for vdso_data->clock_mode is a non-issue. The task is spin waiting for the
+update to finish and for 'seq' to become even anyway.
 
-the dependencies between SOFTIRQ-irq-safe lock and the holding lock:
--> (&(&ctx->ctx_lock)->rlock){..-.} {
-    IN-SOFTIRQ-W at:
-                     lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-                     __raw_spin_lock_irq  
-include/linux/spinlock_api_smp.h:128 [inline]
-                     _raw_spin_lock_irq+0x60/0x80  
-kernel/locking/spinlock.c:167
-                     spin_lock_irq include/linux/spinlock.h:363 [inline]
-                     free_ioctx_users+0x2d/0x490 fs/aio.c:618
-                     percpu_ref_put_many include/linux/percpu-refcount.h:293  
-[inline]
-                     percpu_ref_put include/linux/percpu-refcount.h:309  
-[inline]
-                     percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130  
-[inline]
-                     percpu_ref_switch_to_atomic_rcu+0x4c0/0x570  
-lib/percpu-refcount.c:165
-                     __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-                     rcu_do_batch kernel/rcu/tree.c:2157 [inline]
-                     rcu_core+0x581/0x1560 kernel/rcu/tree.c:2377
-                     rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2386
-                     __do_softirq+0x262/0x98c kernel/softirq.c:292
-                     invoke_softirq kernel/softirq.c:373 [inline]
-                     irq_exit+0x19b/0x1e0 kernel/softirq.c:413
-                     exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-                     smp_apic_timer_interrupt+0x1a3/0x610  
-arch/x86/kernel/apic/apic.c:1095
-                     apic_timer_interrupt+0xf/0x20  
-arch/x86/entry/entry_64.S:830
-                     constant_test_bit arch/x86/include/asm/bitops.h:207  
-[inline]
-                     test_bit include/asm-generic/bitops-instrumented.h:238  
-[inline]
-                     test_ti_thread_flag include/linux/thread_info.h:84  
-[inline]
-                     need_resched include/linux/sched.h:1827 [inline]
-                     mutex_spin_on_owner+0x7b/0x330  
-kernel/locking/mutex.c:568
-                     mutex_optimistic_spin kernel/locking/mutex.c:673  
-[inline]
-                     __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-                     __mutex_lock+0x330/0x13c0 kernel/locking/mutex.c:1103
-                     mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-                     rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
-                     addrconf_dad_work+0xad/0x1150 net/ipv6/addrconf.c:4032
-                     process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-                     worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-                     kthread+0x361/0x430 kernel/kthread.c:255
-                     ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-    INITIAL USE at:
-                    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-                    __raw_spin_lock_irq include/linux/spinlock_api_smp.h:128  
-[inline]
-                    _raw_spin_lock_irq+0x60/0x80  
-kernel/locking/spinlock.c:167
-                    spin_lock_irq include/linux/spinlock.h:363 [inline]
-                    free_ioctx_users+0x2d/0x490 fs/aio.c:618
-                    percpu_ref_put_many include/linux/percpu-refcount.h:293  
-[inline]
-                    percpu_ref_put include/linux/percpu-refcount.h:309  
-[inline]
-                    percpu_ref_call_confirm_rcu lib/percpu-refcount.c:130  
-[inline]
-                    percpu_ref_switch_to_atomic_rcu+0x4c0/0x570  
-lib/percpu-refcount.c:165
-                    __rcu_reclaim kernel/rcu/rcu.h:222 [inline]
-                    rcu_do_batch kernel/rcu/tree.c:2157 [inline]
-                    rcu_core+0x581/0x1560 kernel/rcu/tree.c:2377
-                    rcu_core_si+0x9/0x10 kernel/rcu/tree.c:2386
-                    __do_softirq+0x262/0x98c kernel/softirq.c:292
-                    invoke_softirq kernel/softirq.c:373 [inline]
-                    irq_exit+0x19b/0x1e0 kernel/softirq.c:413
-                    exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-                    smp_apic_timer_interrupt+0x1a3/0x610  
-arch/x86/kernel/apic/apic.c:1095
-                    apic_timer_interrupt+0xf/0x20  
-arch/x86/entry/entry_64.S:830
-                    constant_test_bit arch/x86/include/asm/bitops.h:207  
-[inline]
-                    test_bit include/asm-generic/bitops-instrumented.h:238  
-[inline]
-                    test_ti_thread_flag include/linux/thread_info.h:84  
-[inline]
-                    need_resched include/linux/sched.h:1827 [inline]
-                    mutex_spin_on_owner+0x7b/0x330 kernel/locking/mutex.c:568
-                    mutex_optimistic_spin kernel/locking/mutex.c:673 [inline]
-                    __mutex_lock_common kernel/locking/mutex.c:959 [inline]
-                    __mutex_lock+0x330/0x13c0 kernel/locking/mutex.c:1103
-                    mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1118
-                    rtnl_lock+0x17/0x20 net/core/rtnetlink.c:72
-                    addrconf_dad_work+0xad/0x1150 net/ipv6/addrconf.c:4032
-                    process_one_work+0x9af/0x1740 kernel/workqueue.c:2269
-                    worker_thread+0x98/0xe40 kernel/workqueue.c:2415
-                    kthread+0x361/0x430 kernel/kthread.c:255
-                    ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
-  }
-  ... key      at: [<ffffffff8ab00360>] __key.54228+0x0/0x40
-  ... acquired at:
-    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-    spin_lock include/linux/spinlock.h:338 [inline]
-    aio_poll fs/aio.c:1748 [inline]
-    __io_submit_one fs/aio.c:1822 [inline]
-    io_submit_one+0xefa/0x2ef0 fs/aio.c:1859
-    __do_sys_io_submit fs/aio.c:1918 [inline]
-    __se_sys_io_submit fs/aio.c:1888 [inline]
-    __x64_sys_io_submit+0x1bd/0x570 fs/aio.c:1888
-    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Patch below. I tested this with the normal order and by installing a
+'timens' page unconditionally for all processes. I'll reply with the timens
+testing hacks so you can see what I did.
 
+The test results are pretty good.
 
-the dependencies between the lock to be acquired
-  and SOFTIRQ-irq-unsafe lock:
--> (&fiq->waitq){+.+.} {
-    HARDIRQ-ON-W at:
-                     lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-                     __raw_spin_lock include/linux/spinlock_api_smp.h:142  
-[inline]
-                     _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-                     spin_lock include/linux/spinlock.h:338 [inline]
-                     flush_bg_queue+0x1f3/0x3c0 fs/fuse/dev.c:415
-                     fuse_request_queue_background+0x2f8/0x5a0  
-fs/fuse/dev.c:676
-                     fuse_request_send_background+0x58/0x110  
-fs/fuse/dev.c:687
-                     cuse_send_init fs/fuse/cuse.c:459 [inline]
-                     cuse_channel_open+0x5ba/0x830 fs/fuse/cuse.c:519
-                     misc_open+0x395/0x4c0 drivers/char/misc.c:141
-                     chrdev_open+0x245/0x6b0 fs/char_dev.c:414
-                     do_dentry_open+0x4df/0x1250 fs/open.c:797
-                     vfs_open+0xa0/0xd0 fs/open.c:914
-                     do_last fs/namei.c:3416 [inline]
-                     path_openat+0x10e9/0x4630 fs/namei.c:3533
-                     do_filp_open+0x1a1/0x280 fs/namei.c:3563
-                     do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-                     __do_sys_openat fs/open.c:1124 [inline]
-                     __se_sys_openat fs/open.c:1118 [inline]
-                     __x64_sys_openat+0x9d/0x100 fs/open.c:1118
-                     do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-                     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    SOFTIRQ-ON-W at:
-                     lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-                     __raw_spin_lock include/linux/spinlock_api_smp.h:142  
-[inline]
-                     _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-                     spin_lock include/linux/spinlock.h:338 [inline]
-                     flush_bg_queue+0x1f3/0x3c0 fs/fuse/dev.c:415
-                     fuse_request_queue_background+0x2f8/0x5a0  
-fs/fuse/dev.c:676
-                     fuse_request_send_background+0x58/0x110  
-fs/fuse/dev.c:687
-                     cuse_send_init fs/fuse/cuse.c:459 [inline]
-                     cuse_channel_open+0x5ba/0x830 fs/fuse/cuse.c:519
-                     misc_open+0x395/0x4c0 drivers/char/misc.c:141
-                     chrdev_open+0x245/0x6b0 fs/char_dev.c:414
-                     do_dentry_open+0x4df/0x1250 fs/open.c:797
-                     vfs_open+0xa0/0xd0 fs/open.c:914
-                     do_last fs/namei.c:3416 [inline]
-                     path_openat+0x10e9/0x4630 fs/namei.c:3533
-                     do_filp_open+0x1a1/0x280 fs/namei.c:3563
-                     do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-                     __do_sys_openat fs/open.c:1124 [inline]
-                     __se_sys_openat fs/open.c:1118 [inline]
-                     __x64_sys_openat+0x9d/0x100 fs/open.c:1118
-                     do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-                     entry_SYSCALL_64_after_hwframe+0x49/0xbe
-    INITIAL USE at:
-                    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-                    __raw_spin_lock include/linux/spinlock_api_smp.h:142  
-[inline]
-                    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-                    spin_lock include/linux/spinlock.h:338 [inline]
-                    flush_bg_queue+0x1f3/0x3c0 fs/fuse/dev.c:415
-                    fuse_request_queue_background+0x2f8/0x5a0  
-fs/fuse/dev.c:676
-                    fuse_request_send_background+0x58/0x110 fs/fuse/dev.c:687
-                    cuse_send_init fs/fuse/cuse.c:459 [inline]
-                    cuse_channel_open+0x5ba/0x830 fs/fuse/cuse.c:519
-                    misc_open+0x395/0x4c0 drivers/char/misc.c:141
-                    chrdev_open+0x245/0x6b0 fs/char_dev.c:414
-                    do_dentry_open+0x4df/0x1250 fs/open.c:797
-                    vfs_open+0xa0/0xd0 fs/open.c:914
-                    do_last fs/namei.c:3416 [inline]
-                    path_openat+0x10e9/0x4630 fs/namei.c:3533
-                    do_filp_open+0x1a1/0x280 fs/namei.c:3563
-                    do_sys_open+0x3fe/0x5d0 fs/open.c:1097
-                    __do_sys_openat fs/open.c:1124 [inline]
-                    __se_sys_openat fs/open.c:1118 [inline]
-                    __x64_sys_openat+0x9d/0x100 fs/open.c:1118
-                    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-                    entry_SYSCALL_64_after_hwframe+0x49/0xbe
-  }
-  ... key      at: [<ffffffff8ab9a180>] __key.45697+0x0/0x40
-  ... acquired at:
-    lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-    __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-    _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-    spin_lock include/linux/spinlock.h:338 [inline]
-    aio_poll fs/aio.c:1748 [inline]
-    __io_submit_one fs/aio.c:1822 [inline]
-    io_submit_one+0xefa/0x2ef0 fs/aio.c:1859
-    __do_sys_io_submit fs/aio.c:1918 [inline]
-    __se_sys_io_submit fs/aio.c:1888 [inline]
-    __x64_sys_io_submit+0x1bd/0x570 fs/aio.c:1888
-    do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-    entry_SYSCALL_64_after_hwframe+0x49/0xbe
+    	 	 Base (upstream)  + VDSO patch	+ timens page
 
+MONO		 30ns 		    30ns 	  32ns
+REAL		 30ns		    30ns	  32ns
+BOOT		 30ns		    30ns	  32ns
+MONOCOARSE	  7ns		     8ns	  10ns
+REALCOARSE	  7ns		     8ns	  10ns
+TAI		 30ns		    30ns	  32ns
+MONORAW		 30ns		    30ns	  32ns
 
-stack backtrace:
-CPU: 0 PID: 25024 Comm: syz-executor.1 Not tainted 5.3.0-rc4-next-20190814  
-#66
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
-  print_bad_irq_dependency kernel/locking/lockdep.c:2095 [inline]
-  check_irq_usage.cold+0x586/0x6fe kernel/locking/lockdep.c:2293
-  check_prev_add kernel/locking/lockdep.c:2480 [inline]
-  check_prevs_add kernel/locking/lockdep.c:2581 [inline]
-  validate_chain kernel/locking/lockdep.c:2971 [inline]
-  __lock_acquire+0x25d0/0x4e70 kernel/locking/lockdep.c:3955
-  lock_acquire+0x190/0x410 kernel/locking/lockdep.c:4487
-  __raw_spin_lock include/linux/spinlock_api_smp.h:142 [inline]
-  _raw_spin_lock+0x2f/0x40 kernel/locking/spinlock.c:151
-  spin_lock include/linux/spinlock.h:338 [inline]
-  aio_poll fs/aio.c:1748 [inline]
-  __io_submit_one fs/aio.c:1822 [inline]
-  io_submit_one+0xefa/0x2ef0 fs/aio.c:1859
-  __do_sys_io_submit fs/aio.c:1918 [inline]
-  __se_sys_io_submit fs/aio.c:1888 [inline]
-  __x64_sys_io_submit+0x1bd/0x570 fs/aio.c:1888
-  do_syscall_64+0xfa/0x760 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x459829
-Code: fd b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f9e07853c78 EFLAGS: 00000246 ORIG_RAX: 00000000000000d1
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000459829
-RDX: 0000000020000440 RSI: 0000000000000001 RDI: 00007f9e07833000
-RBP: 000000000075bf20 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007f9e078546d4
-R13: 00000000004c0c19 R14: 00000000004d3c40 R15: 00000000ffffffff
+So except for the coarse clocks there is no change when the timens page is
+not used, i.e. the regular VVAR page is at the proper place. But that's on
+one machine, a different one showed an effect in the noise range. I'm not
+worried about that as the VDSO behaviour varies depending on micro
+architecture anyway.
 
+With timens enabled the performance hit (cache hot microbenchmark) is
+somewhere in the range of 5-7% when looking at the perf counters
+numbers. The hit for the coarse accessors is larger obviously because the
+overhead is constant time.
 
+I did a quick comparison of the array vs. switch case (what you used for
+your clk_to_ns() helper). The switch case is slower.
+
+So I rather go for the array based approach. It's simpler code and the
+I-cache footprint is smaller and no conditional branches involved.
+
+That means your timens_to_host() and host_to_timens() conversion functions
+should just use that special VDSO page and do the same array based
+unconditional add/sub of the clock specific offset.
+
+Thanks,
+
+	tglx
+
+8<-----------------
+Subject: lib/vdso: Prepare for time namespace support
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Sun, 18 Aug 2019 16:53:06 +0200
+
+To support time namespaces in the vdso with a minimal impact on regular non
+time namespace affected tasks, the namespace handling needs to be hidden in
+a slow path.
+
+The most obvious place is vdso_seq_begin(). If a task belongs to a time
+namespace then the VVAR page which contains the system wide vdso data is
+replaced with a namespace specific page which has the same layout as the
+VVAR page. That page has vdso_data->seq set to 1 to enforce the slow path
+and vdso_data->clock_mode set to VCLOCK_TIMENS to enforce the time
+namespace handling path.
+
+The extra check in the case that vdso_data->seq is odd, e.g. a concurrent
+update of the vdso data is in progress, is not really affecting regular
+tasks which are not part of a time namespace as the task is spin waiting
+for the update to finish and vdso_data->seq to become even again.
+
+If a time namespace task hits that code path, it invokes the corresponding
+time getter function which retrieves the real VVAR page, reads host time
+and then adds the offset for the requested clock which is stored in the
+special VVAR page.
+
+If VDSO time namespace support is disabled the whole magic is compiled out.
+
+Initial testing shows that the disabled case is almost identical to the
+host case which does not take the slow timens path. With the special timens
+page installed the performance hit is constant time and in the range of
+5-7%.
+
+For the vdso functions which are not using the sequence count an
+unconditional check for vdso_data->clock_mode is added which switches to
+the real vdso when the clock_mode is VCLOCK_TIMENS.
+
+Suggested-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ include/linux/time.h    |    6 ++
+ include/vdso/datapage.h |   19 ++++++-
+ lib/vdso/Kconfig        |    6 ++
+ lib/vdso/gettimeofday.c |  128 ++++++++++++++++++++++++++++++++++++++++++++++--
+ 4 files changed, 155 insertions(+), 4 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+--- a/include/linux/time.h
++++ b/include/linux/time.h
+@@ -96,4 +96,10 @@ static inline bool itimerspec64_valid(co
+  */
+ #define time_after32(a, b)	((s32)((u32)(b) - (u32)(a)) < 0)
+ #define time_before32(b, a)	time_after32(a, b)
++
++struct timens_offset {
++	s64	sec;
++	u64	nsec;
++};
++
+ #endif
+--- a/include/vdso/datapage.h
++++ b/include/vdso/datapage.h
+@@ -21,6 +21,8 @@
+ #define CS_RAW		1
+ #define CS_BASES	(CS_RAW + 1)
+ 
++#define VCLOCK_TIMENS	UINT_MAX
++
+ /**
+  * struct vdso_timestamp - basetime per clock_id
+  * @sec:	seconds
+@@ -48,6 +50,7 @@ struct vdso_timestamp {
+  * @mult:		clocksource multiplier
+  * @shift:		clocksource shift
+  * @basetime[clock_id]:	basetime per clock_id
++ * @offset[clock_id]:	time namespace offset per clock_id
+  * @tz_minuteswest:	minutes west of Greenwich
+  * @tz_dsttime:		type of DST correction
+  * @hrtimer_res:	hrtimer resolution
+@@ -55,6 +58,17 @@ struct vdso_timestamp {
+  *
+  * vdso_data will be accessed by 64 bit and compat code at the same time
+  * so we should be careful before modifying this structure.
++ *
++ * @basetime is used to store the base time for the system wide time getter
++ * VVAR page.
++ *
++ * @offset is used by the special time namespace VVAR pages which are
++ * installed instead of the real VVAR page. These namespace pages must set
++ * @seq to 1 and @clock_mode to VLOCK_TIMENS to force the code into the
++ * time namespace slow path. The namespace aware functions retrieve the
++ * real system wide VVAR page, read host time and add the per clock offset.
++ * For clocks which are not affected by time namespace adjustement the
++ * offset must be zero.
+  */
+ struct vdso_data {
+ 	u32			seq;
+@@ -65,7 +79,10 @@ struct vdso_data {
+ 	u32			mult;
+ 	u32			shift;
+ 
+-	struct vdso_timestamp	basetime[VDSO_BASES];
++	union {
++		struct vdso_timestamp	basetime[VDSO_BASES];
++		struct timens_offset	offset[VDSO_BASES];
++	};
+ 
+ 	s32			tz_minuteswest;
+ 	s32			tz_dsttime;
+--- a/lib/vdso/Kconfig
++++ b/lib/vdso/Kconfig
+@@ -33,4 +33,10 @@ config CROSS_COMPILE_COMPAT_VDSO
+ 	  If a 64 bit compiler (i.e. x86_64) can compile the VDSO for
+ 	  32 bit, it does not need to define this parameter.
+ 
++config VDSO_TIMENS
++	bool
++	help
++	  Selected by architectures which support time namespaces in the
++	  VDSO
++
+ endif
+--- a/lib/vdso/gettimeofday.c
++++ b/lib/vdso/gettimeofday.c
+@@ -38,6 +38,51 @@ u64 vdso_calc_delta(u64 cycles, u64 last
+ }
+ #endif
+ 
++#ifndef CONFIG_VDSO_TIMENS
++static __always_inline
++const struct vdso_data *__arch_get_timens_vdso_data(const struct vdso_data *vd)
++{
++	return NULL;
++}
++#endif
++
++static int do_hres_ns(const struct vdso_data *vdns, clockid_t clk,
++		      struct __kernel_timespec *ts)
++{
++	const struct vdso_data *vd = __arch_get_timens_vdso_data(vdns);
++	const struct vdso_timestamp *vdso_ts = &vd->basetime[clk];
++	const struct timens_offset *offs = &vdns->offset[clk];
++	u64 cycles, last, ns;
++	s64 sec;
++	u32 seq;
++
++	do {
++		seq = vdso_read_begin(vd);
++		cycles = __arch_get_hw_counter(vd->clock_mode);
++		ns = vdso_ts->nsec;
++		last = vd->cycle_last;
++		if (unlikely((s64)cycles < 0))
++			return -1;
++
++		ns += vdso_calc_delta(cycles, last, vd->mask, vd->mult);
++		ns >>= vd->shift;
++		sec = vdso_ts->sec;
++	} while (unlikely(vdso_read_retry(vd, seq)));
++
++	/* Add the namespace offset */
++	sec += offs->sec;
++	ns += offs->nsec;
++
++	/*
++	 * Do this outside the loop: a race inside the loop could result
++	 * in __iter_div_u64_rem() being extremely slow.
++	 */
++	ts->tv_sec = sec + __iter_div_u64_rem(ns, NSEC_PER_SEC, &ns);
++	ts->tv_nsec = ns;
++
++	return 0;
++}
++
+ static int do_hres(const struct vdso_data *vd, clockid_t clk,
+ 		   struct __kernel_timespec *ts)
+ {
+@@ -46,7 +91,28 @@ static int do_hres(const struct vdso_dat
+ 	u32 seq;
+ 
+ 	do {
+-		seq = vdso_read_begin(vd);
++		/*
++		 * Open coded to handle VCLOCK_TIMENS. Time namespace
++		 * enabled tasks have a special VVAR page installed which
++		 * has vd->seq set to 1 and vd->clock_mode set to
++		 * VCLOCK_TIMENS. For non time namespace affected tasks
++		 * this does not affect performance because if vd->seq is
++		 * odd, i.e. a concurrent update is in progress the extra
++		 * check for vd->clock_mode is just a few extra
++		 * instructions while spin waiting for vd->seq to become
++		 * even again.
++		 */
++		while (1) {
++			seq = READ_ONCE(vd->seq);
++			if (likely(!(seq & 1)))
++				break;
++			if (IS_ENABLED(CONFIG_VDSO_TIMENS) &&
++			    vd->clock_mode == VCLOCK_TIMENS)
++				return do_hres_ns(vd, clk, ts);
++			cpu_relax();
++		}
++		smp_rmb();
++
+ 		cycles = __arch_get_hw_counter(vd->clock_mode);
+ 		ns = vdso_ts->nsec;
+ 		last = vd->cycle_last;
+@@ -68,6 +134,34 @@ static int do_hres(const struct vdso_dat
+ 	return 0;
+ }
+ 
++static void do_coarse_ns(const struct vdso_data *vdns, clockid_t clk,
++			 struct __kernel_timespec *ts)
++{
++	const struct vdso_data *vd = __arch_get_timens_vdso_data(vdns);
++	const struct vdso_timestamp *vdso_ts = &vd->basetime[clk];
++	const struct timens_offset *offs = &vdns->offset[clk];
++	u64 nsec;
++	s64 sec;
++	s32 seq;
++
++	do {
++		seq = vdso_read_begin(vd);
++		sec = vdso_ts->sec;
++		nsec = vdso_ts->nsec;
++	} while (unlikely(vdso_read_retry(vd, seq)));
++
++	/* Add the namespace offset */
++	sec += offs->sec;
++	nsec += offs->nsec;
++
++	/*
++	 * Do this outside the loop: a race inside the loop could result
++	 * in __iter_div_u64_rem() being extremely slow.
++	 */
++	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
++	ts->tv_nsec = nsec;
++}
++
+ static void do_coarse(const struct vdso_data *vd, clockid_t clk,
+ 		      struct __kernel_timespec *ts)
+ {
+@@ -75,7 +169,23 @@ static void do_coarse(const struct vdso_
+ 	u32 seq;
+ 
+ 	do {
+-		seq = vdso_read_begin(vd);
++		/*
++		 * Open coded to handle VCLOCK_TIMENS. See comment in
++		 * do_hres().
++		 */
++		while (1) {
++			seq = READ_ONCE(vd->seq);
++			if (likely(!(seq & 1)))
++				break;
++			if (IS_ENABLED(CONFIG_VDSO_TIMENS) &&
++			    vd->clock_mode == VCLOCK_TIMENS) {
++				do_coarse_ns(vd, clk, ts);
++				return;
++			}
++			cpu_relax();
++		}
++		smp_rmb();
++
+ 		ts->tv_sec = vdso_ts->sec;
+ 		ts->tv_nsec = vdso_ts->nsec;
+ 	} while (unlikely(vdso_read_retry(vd, seq)));
+@@ -156,6 +266,10 @@ static __maybe_unused int
+ 	}
+ 
+ 	if (unlikely(tz != NULL)) {
++		if (IS_ENABLED(CONFIG_VDSO_TIMENS) &&
++		    vd->clock_mode == VCLOCK_TIMENS)
++			vd = __arch_get_timens_vdso_data(vd);
++
+ 		tz->tz_minuteswest = vd[CS_HRES_COARSE].tz_minuteswest;
+ 		tz->tz_dsttime = vd[CS_HRES_COARSE].tz_dsttime;
+ 	}
+@@ -167,7 +281,12 @@ static __maybe_unused int
+ static __maybe_unused time_t __cvdso_time(time_t *time)
+ {
+ 	const struct vdso_data *vd = __arch_get_vdso_data();
+-	time_t t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
++	time_t t;
++
++	if (IS_ENABLED(CONFIG_VDSO_TIMENS) && vd->clock_mode == VCLOCK_TIMENS)
++		vd = __arch_get_timens_vdso_data(vd);
++
++	t = READ_ONCE(vd[CS_HRES_COARSE].basetime[CLOCK_REALTIME].sec);
+ 
+ 	if (time)
+ 		*time = t;
+@@ -189,6 +308,9 @@ int __cvdso_clock_getres_common(clockid_
+ 	if (unlikely((u32) clock >= MAX_CLOCKS))
+ 		return -1;
+ 
++	if (IS_ENABLED(CONFIG_VDSO_TIMENS) && vd->clock_mode == VCLOCK_TIMENS)
++		vd = __arch_get_timens_vdso_data(vd);
++
+ 	hrtimer_res = READ_ONCE(vd[CS_HRES_COARSE].hrtimer_res);
+ 	/*
+ 	 * Convert the clockid to a bitmask and use it to check which
