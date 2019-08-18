@@ -2,95 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B9E39151A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 08:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 555F691522
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 08:51:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726545AbfHRGkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 02:40:11 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40248 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725786AbfHRGkK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 02:40:10 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z64so3128690ywe.7;
-        Sat, 17 Aug 2019 23:40:10 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=NQ/5tyRI3jdXbSjfHy7ZyjCm7NzWYQeUYMxyiQB6M1o=;
-        b=l7ilRmV6p4oCxqL3EmBI89oNvUWejzBTwy8wIgRGF+iDDgKPl+/o+IJCE6cAzB8yv/
-         8t3N/uLbQtnz7bTVJclE897WmA2MDMzDAgGV839hIpHvmP/sevMXnUtym+XYSlqISxx0
-         GhrpIhYWOp15jH96S5KKSUvjje6ulmgKRosXgg2VHH9yotDsPOR67StEPkPZ/xpRsLFd
-         ZDmrV0BL/RbyqR79CLaJxHY7dD3wgFfYyeSw46Uc7GLigZ6C9KOeCHyy+G7sD3gYjFdw
-         l/7JgjBoeJR/pOqCt5uE0mx3FtWBz7VpSrRYvXQOYsx9zVegZByBrHmGKwuYPXPkyAjZ
-         L0ug==
-X-Gm-Message-State: APjAAAWTSmhBPuT0q9oZpB/orYD0Tl7FxCTIAnSlSN0fN8pJNHYqX2aX
-        2BCrcMMwRogYMjznHFWTZNQ=
-X-Google-Smtp-Source: APXvYqwxrdza2Vm5Vc0ndYx+SuHQoeMX8GKmXom6rOakCaE2A8DWDUBkOe6QuiaAGIjYVNQmNxfYTw==
-X-Received: by 2002:a81:5f82:: with SMTP id t124mr12559223ywb.513.1566110409630;
-        Sat, 17 Aug 2019 23:40:09 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id r19sm2801463ywa.109.2019.08.17.23.40.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sat, 17 Aug 2019 23:40:08 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Benoit Parrot <bparrot@ti.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org (open list:TI VPE/CAL DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] media: ti-vpe: Add cleanup in vpdma_list_cleanup()
-Date:   Sun, 18 Aug 2019 01:40:04 -0500
-Message-Id: <1566110404-3900-1-git-send-email-wenwen@cs.uga.edu>
+        id S1726478AbfHRGvD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 02:51:03 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50336 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726097AbfHRGvD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 02:51:03 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6E0511A0307;
+        Sun, 18 Aug 2019 08:51:01 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 891D71A0004;
+        Sun, 18 Aug 2019 08:50:53 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 22E924031B;
+        Sun, 18 Aug 2019 14:50:44 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, leonard.crestez@nxp.com,
+        abel.vesa@nxp.com, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH RESEND V2 1/7] arm64: dts: imx8mn-ddr4-evk: Add i2c1 support
+Date:   Sun, 18 Aug 2019 02:32:19 -0400
+Message-Id: <1566109945-11149-1-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If an error occurs in this function, no cleanup is executed, leading to
-memory/resource leaks. To fix this issue, introduce two labels to perform
-the cleanup work.
+Enable i2c1 on i.MX8MN DDR4 EVK board.
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/media/platform/ti-vpe/vpdma.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+No changes.
+---
+ arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/media/platform/ti-vpe/vpdma.c b/drivers/media/platform/ti-vpe/vpdma.c
-index fd37d79..53d27cd 100644
---- a/drivers/media/platform/ti-vpe/vpdma.c
-+++ b/drivers/media/platform/ti-vpe/vpdma.c
-@@ -445,23 +445,25 @@ int vpdma_list_cleanup(struct vpdma_data *vpdma, int list_num,
+diff --git a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+index 9b2c172..5fce5b1 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
++++ b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+@@ -50,6 +50,13 @@
+ 		>;
+ 	};
  
- 	ret = vpdma_map_desc_buf(vpdma, &abort_list.buf);
- 	if (ret)
--		return ret;
-+		goto free_desc;
- 	ret = vpdma_submit_descs(vpdma, &abort_list, list_num);
- 	if (ret)
--		return ret;
-+		goto unmap_desc;
++	pinctrl_i2c1: i2c1grp {
++		fsl,pins = <
++			MX8MN_IOMUXC_I2C1_SCL_I2C1_SCL		0x400001c3
++			MX8MN_IOMUXC_I2C1_SDA_I2C1_SDA		0x400001c3
++		>;
++	};
++
+ 	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmc {
+ 		fsl,pins = <
+ 			MX8MN_IOMUXC_SD2_RESET_B_GPIO2_IO19	0x41
+@@ -182,6 +189,13 @@
+ 	};
+ };
  
- 	while (vpdma_list_busy(vpdma, list_num) && --timeout)
- 		;
- 
- 	if (timeout == 0) {
- 		dev_err(&vpdma->pdev->dev, "Timed out cleaning up VPDMA list\n");
--		return -EBUSY;
-+		ret = -EBUSY;
- 	}
- 
-+unmap_desc:
- 	vpdma_unmap_desc_buf(vpdma, &abort_list.buf);
-+free_desc:
- 	vpdma_free_desc_buf(&abort_list.buf);
- 
--	return 0;
-+	return ret;
- }
- EXPORT_SYMBOL(vpdma_list_cleanup);
- 
++&i2c1 {
++	clock-frequency = <400000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_i2c1>;
++	status = "okay";
++};
++
+ &snvs_pwrkey {
+ 	status = "okay";
+ };
 -- 
 2.7.4
 
