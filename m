@@ -2,99 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 539DA9182A
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:03:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A21939181D
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:03:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727265AbfHRRAP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 13:00:15 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42371 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727070AbfHRRAI (ORCPT
+        id S1727144AbfHRQ7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 12:59:54 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:47025 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727119AbfHRQ7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 13:00:08 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i30so5713516pfk.9;
-        Sun, 18 Aug 2019 10:00:08 -0700 (PDT)
+        Sun, 18 Aug 2019 12:59:53 -0400
+Received: by mail-lf1-f67.google.com with SMTP id n19so7235519lfe.13;
+        Sun, 18 Aug 2019 09:59:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=B53kfNAL5bPehU6SpckbeuA1BwDTxczPn/Y5JPnbD6I=;
-        b=hkv+ERgF20ssKIwymu3URWuHg3UvErhauZ06k/0G2LrqPxFB090vLrMGy/+WZBO2ho
-         XSt+Q68y7GmJkE7msre2w2OU38bqK87Adp9b3L+OFdr/MALR1I6O7SHMof+oACZUAvaN
-         6KLPI5KKnDKlR1hJ/DOl7FVx8rk+mSUZ9j/wqitb/xx6Z6iXq3fAkgqdz+sFI+tZV8Jy
-         4G+KvomuB1vGD8b7FNR4afRSFrCSusWeLb+v6N9a+kbdEfFSF0ufKluXKnIjAx1C6qkD
-         B/m3Cl5aZYTnrovlybeFZE5I4QynuGte/X6KW6yDlrYdlAuD5TDLayR1P7Iv+yoTE9p3
-         8XpA==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=V1XLrmrHnxtun5E7MsD/TIJ4RWoKU+eFXlhCg4SB19I=;
+        b=rhnqbmSuOY+3ZUyzlxvqIAPQ1XFULeoa/WbnYJFklorm8v700suEGO7RolfnDsPu0j
+         0sVcYqTlNxP6GIcJigTatwt/g2ces8dcLQZJoZyO4grYu9m4TdhvYOIpZ4kd7KMtW0OR
+         JRrgrKRO61SLRaACmkHAfRujvGQOpqeio/GD+vRfSdVsqqr0FZDEWmhXrP6WUzeBWj17
+         wi/JKS2nekHQTnjdpktZ//KtAKa2QVmU0gvkwAle+NZSOoq/7+4/B6llPitWvk24UmTx
+         YIGjzdzYj3s5xu5+2FB/tLFTfBlRNXS7qifdvOV2G7jNt602TzRGwvIETkne1JYutvwF
+         yoJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=B53kfNAL5bPehU6SpckbeuA1BwDTxczPn/Y5JPnbD6I=;
-        b=amVAWmxMgrUqbqbo2TmI6nrdd8sYOh+Hopwn09tK9EhG0Bx39PqbLoKV43GbfQOcwQ
-         GvfqMM7CDALZJJfK3zGN1eg+q7BULJOBlJmIYU6mvXWhrfau9aETiHOj1ENC8jCYRNjI
-         iwaT7sW/pBXeP4g/ua4LY3uqqHlGAzOvHCQCA6Ycjk3s30ShFsbSsjNigQI60tVNO8T2
-         lNuRjPQB1HW2RE/oXhx9CBTZfVjtFiVgS0wso19/p+6+PBYEGrOSZsGdRelvQ6sLnTC7
-         yS3rxI72CvOZhVGIV7/+reHUdiPYK4piQ0PIo1i26wSaHc2fdugtx3FQHVAijehCGRzi
-         tNSA==
-X-Gm-Message-State: APjAAAVXpMD3dNfMPc4l0Huiwql8YZ2M6npZUxc+5SUp36KTsgn2igVJ
-        cInI87yrawgvKUFZp+m/0fM=
-X-Google-Smtp-Source: APXvYqwCKGjBW16GSAq1uDKuynJzJTBXWLl/QOCsZVV2XmdwJpydRmod7Xpj2D3WUvxWBkEwnteQZA==
-X-Received: by 2002:aa7:8498:: with SMTP id u24mr20671125pfn.61.1566147607698;
-        Sun, 18 Aug 2019 10:00:07 -0700 (PDT)
-Received: from deepa-ubuntu.lan (c-98-234-52-230.hsd1.ca.comcast.net. [98.234.52.230])
-        by smtp.gmail.com with ESMTPSA id b136sm15732831pfb.73.2019.08.18.10.00.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 10:00:07 -0700 (PDT)
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-To:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de
-Subject: [PATCH v8 20/20] isofs: Initialize filesystem timestamp ranges
-Date:   Sun, 18 Aug 2019 09:58:17 -0700
-Message-Id: <20190818165817.32634-21-deepa.kernel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190818165817.32634-1-deepa.kernel@gmail.com>
-References: <20190818165817.32634-1-deepa.kernel@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=V1XLrmrHnxtun5E7MsD/TIJ4RWoKU+eFXlhCg4SB19I=;
+        b=U72Zqg4/J+yhb+XdDtVuX6EG3LfhI3YX5dVPU9KDmk72v2Il/C1A2Gu4zGPONKSK4x
+         GGkrNBq6H4Eh2LnpVpHZGbNzyyb/qyIEitzPmLzs/ay/8aKSxAvNhP5mcjyGQbDGQLfb
+         U8Tr0hNHVc8+yfWE4A42uNTmA8NOw7okWPjH/9TxcVB0Z71QfW51qDrH505R5I39Aak4
+         FTnapV6cnsvbB6c+Fyt1+ESVZI5XhOGDIifsakmqzaCxItHkxlpPJPAR43MpYBgYFGMl
+         MvhBxLb8ECTqh2XeSXLFoNXNbvOA3oHoyV/eIEc50hcV7HVBql0cRhzOEPTCIwfFpDsi
+         7QBA==
+X-Gm-Message-State: APjAAAXNPqAG2ToeDJvale1gdyWVh+UQHnouSWI8q0cDni9ZaSWPLMNw
+        nLyshX1K+uapxjC3Sw8YpconykHFAyUeU7AfUHk=
+X-Google-Smtp-Source: APXvYqwokMINd0UH74GIpnd7io2ObKo5H7IBPFeCJ0QR+2t7jvX04nrJBuQQCcAlAVBzKURgEstM9cKCJfuNVAKHFNo=
+X-Received: by 2002:ac2:484e:: with SMTP id 14mr9995204lfy.50.1566147590405;
+ Sun, 18 Aug 2019 09:59:50 -0700 (PDT)
+MIME-Version: 1.0
+References: <1564515200-5020-1-git-send-email-jrdr.linux@gmail.com>
+ <CAFqt6zb5ySDbkHVpPkOKHTrF8jFuNh=dXtnwPKO6TuEHBCkYgg@mail.gmail.com> <CAFqt6zYsA_0YpZcZ8+LrMEjeWDJ5mwUDJNvqOW1H4ewgKbp+aQ@mail.gmail.com>
+In-Reply-To: <CAFqt6zYsA_0YpZcZ8+LrMEjeWDJ5mwUDJNvqOW1H4ewgKbp+aQ@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Sun, 18 Aug 2019 22:29:38 +0530
+Message-ID: <CAFqt6zYrX-5d8yYVwesYBPWQZK4iXPPv=2w7dqBtHvF9c1WJHA@mail.gmail.com>
+Subject: Re: [PATCH] video: fbdev:via: Remove dead code
+To:     FlorianSchandinat@gmx.de, b.zolnierkie@samsung.com
+Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fill in the appropriate limits to avoid inconsistencies
-in the vfs cached inode times when timestamps are
-outside the permitted range.
+On Mon, Aug 12, 2019 at 5:37 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>
+> On Wed, Aug 7, 2019 at 2:11 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> >
+> > On Wed, Jul 31, 2019 at 12:59 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> > >
+> > > This is dead code since 3.15. If there is no plan to use
+> > > it further, this can be removed forever.
+> > >
+> >
+> > Any comment on this patch ?
+>
+> Any comment on this patch ?
 
-Reference: http://www.ecma-international.org/publications/standards/Ecma-119.htm
+If no comment can we get this in queue for 5.4 ?
 
-Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
----
- fs/isofs/inode.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/isofs/inode.c b/fs/isofs/inode.c
-index 9e30d8703735..62c0462dc89f 100644
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -30,6 +30,9 @@
- #include "isofs.h"
- #include "zisofs.h"
- 
-+/* max tz offset is 13 hours */
-+#define MAX_TZ_OFFSET (52*15*60)
-+
- #define BEQUIET
- 
- static int isofs_hashi(const struct dentry *parent, struct qstr *qstr);
-@@ -801,6 +804,10 @@ static int isofs_fill_super(struct super_block *s, void *data, int silent)
- 	 */
- 	s->s_maxbytes = 0x80000000000LL;
- 
-+	/* ECMA-119 timestamp from 1900/1/1 with tz offset */
-+	s->s_time_min = mktime64(1900, 1, 1, 0, 0, 0) - MAX_TZ_OFFSET;
-+	s->s_time_max = mktime64(U8_MAX+1900, 12, 31, 23, 59, 59) + MAX_TZ_OFFSET;
-+
- 	/* Set this for reference. Its not currently used except on write
- 	   which we don't have .. */
- 
--- 
-2.17.1
-
+>
+> >
+> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> > > ---
+> > >  drivers/video/fbdev/via/via-core.c | 43 --------------------------------------
+> > >  1 file changed, 43 deletions(-)
+> > >
+> > > diff --git a/drivers/video/fbdev/via/via-core.c b/drivers/video/fbdev/via/via-core.c
+> > > index e2b2062..ffa2ca2 100644
+> > > --- a/drivers/video/fbdev/via/via-core.c
+> > > +++ b/drivers/video/fbdev/via/via-core.c
+> > > @@ -221,49 +221,6 @@ void viafb_release_dma(void)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(viafb_release_dma);
+> > >
+> > > -
+> > > -#if 0
+> > > -/*
+> > > - * Copy a single buffer from FB memory, synchronously.  This code works
+> > > - * but is not currently used.
+> > > - */
+> > > -void viafb_dma_copy_out(unsigned int offset, dma_addr_t paddr, int len)
+> > > -{
+> > > -       unsigned long flags;
+> > > -       int csr;
+> > > -
+> > > -       mutex_lock(&viafb_dma_lock);
+> > > -       init_completion(&viafb_dma_completion);
+> > > -       /*
+> > > -        * Program the controller.
+> > > -        */
+> > > -       spin_lock_irqsave(&global_dev.reg_lock, flags);
+> > > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_DONE);
+> > > -       /* Enable ints; must happen after CSR0 write! */
+> > > -       viafb_mmio_write(VDMA_MR0, VDMA_MR_TDIE);
+> > > -       viafb_mmio_write(VDMA_MARL0, (int) (paddr & 0xfffffff0));
+> > > -       viafb_mmio_write(VDMA_MARH0, (int) ((paddr >> 28) & 0xfff));
+> > > -       /* Data sheet suggests DAR0 should be <<4, but it lies */
+> > > -       viafb_mmio_write(VDMA_DAR0, offset);
+> > > -       viafb_mmio_write(VDMA_DQWCR0, len >> 4);
+> > > -       viafb_mmio_write(VDMA_TMR0, 0);
+> > > -       viafb_mmio_write(VDMA_DPRL0, 0);
+> > > -       viafb_mmio_write(VDMA_DPRH0, 0);
+> > > -       viafb_mmio_write(VDMA_PMR0, 0);
+> > > -       csr = viafb_mmio_read(VDMA_CSR0);
+> > > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_START);
+> > > -       spin_unlock_irqrestore(&global_dev.reg_lock, flags);
+> > > -       /*
+> > > -        * Now we just wait until the interrupt handler says
+> > > -        * we're done.
+> > > -        */
+> > > -       wait_for_completion_interruptible(&viafb_dma_completion);
+> > > -       viafb_mmio_write(VDMA_MR0, 0); /* Reset int enable */
+> > > -       mutex_unlock(&viafb_dma_lock);
+> > > -}
+> > > -EXPORT_SYMBOL_GPL(viafb_dma_copy_out);
+> > > -#endif
+> > > -
+> > >  /*
+> > >   * Do a scatter/gather DMA copy from FB memory.  You must have done
+> > >   * a successful call to viafb_request_dma() first.
+> > > --
+> > > 1.9.1
+> > >
