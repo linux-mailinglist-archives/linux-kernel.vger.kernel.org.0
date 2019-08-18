@@ -2,54 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5335391963
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 21:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C99B91971
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 22:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727209AbfHRT7e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 15:59:34 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:47718 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbfHRT7e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 15:59:34 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 1197C143750E0;
-        Sun, 18 Aug 2019 12:59:33 -0700 (PDT)
-Date:   Sun, 18 Aug 2019 12:59:32 -0700 (PDT)
-Message-Id: <20190818.125932.1044566169750919915.davem@davemloft.net>
-To:     tanhuazhong@huawei.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        salil.mehta@huawei.com, yisen.zhuang@huawei.com,
-        linuxarm@huawei.com, jakub.kicinski@netronome.com
-Subject: Re: [PATCH net-next 0/6] net: hns3: add some cleanups & bugfix
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1565942982-12105-1-git-send-email-tanhuazhong@huawei.com>
-References: <1565942982-12105-1-git-send-email-tanhuazhong@huawei.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+        id S1727343AbfHRUGa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 16:06:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727315AbfHRUG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 16:06:29 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEB1E2184D;
+        Sun, 18 Aug 2019 19:47:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566157662;
+        bh=SYTQFmllUj0sRe6eoRt8kPRi0ybZPLwK7ROPJnytxrs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AkEhtMWwz6odUWUzD0q2mHa8tcrGyyp29MpuZcXO1f1n/DIEq/OI+tJuduc5y5U3S
+         7rAbH6F1pRZP1m8ocs4W0u0CR3RSssIjIY1M3Vo6nNl5sjYhjA0OqYt+TsgSXy8n+8
+         N+P3DK3qSKN8Re7bOcv2kuMqO8Gbz2bgjl7Vy5kw=
+Date:   Sun, 18 Aug 2019 20:47:37 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH] tools: iio: add .gitignore
+Message-ID: <20190818204737.1f92ee53@archlinux>
+In-Reply-To: <20190812124141.9108-1-brgl@bgdev.pl>
+References: <20190812124141.9108-1-brgl@bgdev.pl>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Sun, 18 Aug 2019 12:59:33 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Huazhong Tan <tanhuazhong@huawei.com>
-Date: Fri, 16 Aug 2019 16:09:36 +0800
+On Mon, 12 Aug 2019 14:41:41 +0200
+Bartosz Golaszewski <brgl@bgdev.pl> wrote:
 
-> This patch-set includes cleanups and bugfix for the HNS3 ethernet
-> controller driver.
+> From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 > 
-> [patch 01/06 - 03/06] adds some cleanups.
+> The generated files must not be tracked by git. Add a local .gitignore.
 > 
-> [patch 04/06] changes the print level of RAS.
-> 
-> [patch 05/06] fixes a bug related to MAC TNL.
-> 
-> [patch 06/06] adds phy_attached_info().
+> Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Applied to the togreg branch of iio.git and pushed out as testing for
+the autobuilders to play with it.
 
-Series applied, thanks.
+Thanks,
+
+Jonathan
+
+> ---
+>  tools/iio/.gitignore | 4 ++++
+>  1 file changed, 4 insertions(+)
+>  create mode 100644 tools/iio/.gitignore
+> 
+> diff --git a/tools/iio/.gitignore b/tools/iio/.gitignore
+> new file mode 100644
+> index 000000000000..3758202618bd
+> --- /dev/null
+> +++ b/tools/iio/.gitignore
+> @@ -0,0 +1,4 @@
+> +iio_event_monitor
+> +iio_generic_buffer
+> +lsiio
+> +include/
+
