@@ -2,95 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E9A991637
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 12:46:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D8DC9163C
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 12:51:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfHRKqc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 06:46:32 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47671 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbfHRKqb (ORCPT
+        id S1726565AbfHRKvJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 06:51:09 -0400
+Received: from mail-m973.mail.163.com ([123.126.97.3]:55966 "EHLO
+        mail-m973.mail.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfHRKvI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 06:46:31 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 911FD81221; Sun, 18 Aug 2019 12:46:17 +0200 (CEST)
-Date:   Sun, 18 Aug 2019 12:46:29 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Cc:     linux-wireless@vger.kernel.org
-Subject: wifi on Motorola Droid 4 in 5.3-rc2
-Message-ID: <20190818104629.GA27360@amd>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Sun, 18 Aug 2019 06:51:08 -0400
+X-Greylist: delayed 908 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Aug 2019 06:51:07 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=QisNdYsoeTN1WygRtH
+        888heRcRCfaFJynN2qtkQ9Gag=; b=RxyBQGTbXO+YfyWSH03HvOTuvmsoriBHld
+        EN4Khf0UFDZVDoN4odMLyiwSeyH774ceY8f+ErL2XRikupLwOH4IabK1y7QnnHNr
+        WyeCFEhm7NUkseD0lKtyzoRprLwfJAS13ZVBoAvtQbb1YrFt/MCBt1vtKmynxcPW
+        a6393r/D4=
+Received: from localhost.localdomain (unknown [202.112.113.212])
+        by smtp3 (Coremail) with SMTP id G9xpCgD33kz3KVldXa7aCg--.296S3;
+        Sun, 18 Aug 2019 18:35:53 +0800 (CST)
+From:   Pan Bian <bianpan2016@163.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Pan Bian <bianpan2016@163.com>
+Subject: [PATCH] block/bio-integrity: fix mismatched alloc free
+Date:   Sun, 18 Aug 2019 18:35:14 +0800
+Message-Id: <1566124514-3507-1-git-send-email-bianpan2016@163.com>
+X-Mailer: git-send-email 2.7.4
+X-CM-TRANSID: G9xpCgD33kz3KVldXa7aCg--.296S3
+X-Coremail-Antispam: 1Uf129KBjvdXoWrKr1UuFyUtr17GFyfXry8uFg_yoWfCFX_Ga
+        yv9395ArnavFs7Cw12yFy7Ar4vqF4rXr1rXFy2qrWaqFyxAr98AwnrXrn5XF4xWr97Wrnx
+        urWvqwnFqw17KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjDUU5UUUUU==
+X-Originating-IP: [202.112.113.212]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiQAkVclSIcA-HPQAAs3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The function kmalloc rather than mempool_alloc is called to allocate
+memory when the memory pool is unavailable. However, mempool_alloc is
+used to release the memory chunck in both cases when error occurs. This
+patch fixes the bug.
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Pan Bian <bianpan2016@163.com>
+---
+ block/bio-integrity.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Hi!
+diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+index fb95dbb..011dfc8 100644
+--- a/block/bio-integrity.c
++++ b/block/bio-integrity.c
+@@ -75,7 +75,10 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+ 
+ 	return bip;
+ err:
+-	mempool_free(bip, &bs->bio_integrity_pool);
++	if (!bs || !mempool_initialized(&bs->bio_integrity_pool))
++		kfree(bip);
++	else
++		mempool_free(bip, &bs->bio_integrity_pool);
+ 	return ERR_PTR(-ENOMEM);
+ }
+ EXPORT_SYMBOL(bio_integrity_alloc);
+-- 
+2.7.4
 
-First, I guess I should mention that this is first time I'm attempting
-to get wifi going on D4.
-
-I'm getting this:
-
-user@devuan:~/g/ofono$ sudo ifconfig wlan0 down
-user@devuan:~/g/ofono$ sudo ifconfig wlan0 up
-user@devuan:~/g/ofono$ sudo iwlist wlan0 scan
-wlan0     Interface doesn't support scanning.
-
-user@devuan:~/g/ofono$ sudo ifconfig wlan0 down
-user@devuan:~/g/ofono$ sudo iwlist wlan0 scan
-wlan0     Interface doesn't support scanning.
-
-user@devuan:~/g/ofono$
-
-I'm getting this warning during bootup:
-
-[   13.733703] asoc-audio-graph-card soundcard: No GPIO consumer pa
-found
-[   14.279724] wlcore: WARNING Detected unconfigured mac address in
-nvs, derive from fuse instead.
-[   14.293273] wlcore: WARNING Your device performance is not
-optimized.
-[   14.304443] wlcore: WARNING Please use the calibrator tool to
-configure your device.
-[   14.317474] wlcore: loaded
-[   16.977325] motmdm serial0-0: motmdm_dlci_send_command: AT+VERSION=3D
-got MASERATIBP_N_05.25.00R,026.0R,XSAMASR01VRZNA026.0R,???
-
-Any ideas?
-
-Best regards,
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---3V7upXqbjpZ4EhLz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1ZLIUACgkQMOfwapXb+vKeEACeJJ3HEUEGDtIKmgSfesXs0VH+
-NJgAoIr8AhZlKZt6EoTHuPl5lOSxfXNI
-=etkx
------END PGP SIGNATURE-----
-
---3V7upXqbjpZ4EhLz--
