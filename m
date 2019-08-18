@@ -2,149 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 33B29919FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 00:38:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74EAA919FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 00:40:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfHRWit (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 18:38:49 -0400
-Received: from mout2.fh-giessen.de ([212.201.18.46]:53830 "EHLO
-        mout2.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfHRWis (ORCPT
+        id S1726351AbfHRWjb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 18:39:31 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:39735 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfHRWja (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 18:38:48 -0400
-Received: from mx1.fh-giessen.de ([212.201.18.40])
-        by mout2.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hzTot-00006F-7x; Mon, 19 Aug 2019 00:38:39 +0200
-Received: from mailgate-3.its.fh-giessen.de ([212.201.18.34])
-        by mx1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hzTot-00BKMq-28; Mon, 19 Aug 2019 00:38:39 +0200
-Received: from p2e561b42.dip0.t-ipconnect.de ([46.86.27.66] helo=[192.168.1.24])
-        by mailgate-3.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1hzTos-0003g0-O3; Mon, 19 Aug 2019 00:38:38 +0200
-Subject: Re: regression in ath10k dma allocation
-To:     Hillf Danton <hdanton@sina.com>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, kvalo@codeaurora.org,
-        davem@davemloft.net, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
-        tobias.klausmann@freenet.de
-References: <8fe8b415-2d34-0a14-170b-dcb31c162e67@mni.thm.de>
- <20190816164301.GA3629@lst.de>
- <af96ea6a-2b17-9b66-7aba-b7dae5bcbba5@mni.thm.de>
- <20190816222506.GA24413@Asurada-Nvidia.nvidia.com>
- <20190818031328.11848-1-hdanton@sina.com>
-From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-Message-ID: <acd7a4b0-fde8-1aa2-af07-2b469e5d5ca7@mni.thm.de>
-Date:   Mon, 19 Aug 2019 00:38:38 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:70.0) Gecko/20100101
- Thunderbird/70.0a1
+        Sun, 18 Aug 2019 18:39:30 -0400
+Received: by mail-vs1-f65.google.com with SMTP id y62so1735754vsb.6
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 15:39:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=OZX/g1WC+1HQj1XJZ3d7t9md92v0FHRQJ+w2zHRK2Mw=;
+        b=Z2MgkOOBnS1ykN+VYFM+5vMM3HOyLyQ/llIYsCnY5ZA6ySlm7ixZKuAtvuzWaLkjgL
+         +khwUzoXsPp8SmHWdgAotn4/LnSbRceG9sqIcrle02stnBQqCcDeIyqlub+z5aIXRttu
+         k+yT8i3/KOnPSNPI0KHFRkPd2LOhhE2iAxlzCH28vJi0VaDzbuSqkje6GEnSD0WkUhbw
+         MGQ3eagnKRPmkCuwlrpN/gsbGigUUkQ/I8Imfx9RpY5LfVl7JQzIuwpDlOwbSE+NrxIu
+         27gELgd+z54dRWtQaOR2JpF0I1xR6oQpNGudsfGMSIBvHmzM0X7NeSyD9wMasHIxlLrn
+         dKmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=OZX/g1WC+1HQj1XJZ3d7t9md92v0FHRQJ+w2zHRK2Mw=;
+        b=STC/8xpOy14145PNoNLA4+oV1vZFvnjvuEX9M0XDEugHp0WuWg4/Eu/0q6cC7bmIOV
+         mzoQRwVWRjgloKSvOnOERYtkpaq2hQ0/5mBK8DwQiuSOtq53Ez8nhrSpUmt0GLx/7deV
+         47uHy0HgJQNsxz5eXLJVYuersuJPIsi9pvMaqvKAwgijjqEHNuS2EhwMNKBX5eDqcs1W
+         xeXbW8WdpYl2mKZWANvcGAQccZi9pw5Oiacw1AAse/zpytei4to/unTM5EfvrIY0Bn/t
+         4L6TyO6hH9s7qOC6qgL93jd4RVA6B6ypxujMAxb4tJ8qV1ksQZ9s8lLqmMtwLjimRv1B
+         dNeg==
+X-Gm-Message-State: APjAAAU1Nf0ecUibX6D5wfoUmeOtASkJA9tyrxm+05/GTH3pBngbCB6M
+        h+HakpZ9QReLKuH4mHjnugilHJt2F+WX+jCPPcU=
+X-Google-Smtp-Source: APXvYqwACFO2mPwQQsgkEtufyRN685tjVwH7TaTYCMrTls5EvKpEDG9A148GT2cYR+ZQr5NQTRZLM8yRpPligz+tr60=
+X-Received: by 2002:a67:dd91:: with SMTP id i17mr11234784vsk.21.1566167969527;
+ Sun, 18 Aug 2019 15:39:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190818031328.11848-1-hdanton@sina.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Received: by 2002:ab0:2690:0:0:0:0:0 with HTTP; Sun, 18 Aug 2019 15:39:28
+ -0700 (PDT)
+Reply-To: soumailasorgho@yandex.com
+From:   Mr Soumaila Sorgho <nicbenoite@gmail.com>
+Date:   Sun, 18 Aug 2019 15:39:28 -0700
+Message-ID: <CA+ifKVdnCgbwRAcY9yMF9=MZ+uA84TuSJdL_7bQsAH9ysb+8jA@mail.gmail.com>
+Subject: Greetings From Mr. Soumaila Sorgho
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+-- 
+Greetings From Mr. Soumaila Sorgho
 
-On 18.08.19 05:13, Hillf Danton wrote:
-> On Sat, 17 Aug 2019 00:42:48 +0200 Tobias Klausmann wrote:
->> Hi Nicolin,
->>
->> On 17.08.19 00:25, Nicolin Chen wrote:
->>> Hi Tobias
->>>
->>> On Fri, Aug 16, 2019 at 10:16:45PM +0200, Tobias Klausmann wrote:
->>>>> do you have CONFIG_DMA_CMA set in your config?  If not please make sure
->>>>> you have this commit in your testing tree, and if the problem still
->>>>> persists it would be a little odd and we'd have to dig deeper:
->>>>>
->>>>> commit dd3dcede9fa0a0b661ac1f24843f4a1b1317fdb6
->>>>> Author: Nicolin Chen <nicoleotsuka@gmail.com>
->>>>> Date:   Wed May 29 17:54:25 2019 -0700
->>>>>
->>>>>        dma-contiguous: fix !CONFIG_DMA_CMA version of dma_{alloc, free}_contiguous()
->>>> yes CONFIG_DMA_CMA is set (=y, see attached config), the commit you mention
->>>> above is included, if you have any hints how to go forward, please let me
->>>> know!
->>> For CONFIG_DMA_CMA=y, by judging the log with error code -12, I
->>> feel this one should work for you. Would you please check if it
->>> is included or try it out otherwise?
->>>
->>> dma-contiguous: do not overwrite align in dma_alloc_contiguous()
->>> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=c6622a425acd1d2f3a443cd39b490a8777b622d7
->>
->> Thanks for the hint, yet the commit is included and does not fix the
->> problem!
->>
-Hi Hillf,
+    I have a Mutual/Beneficial Business Project that would be
+beneficial to you. I only have two questions to ask of you, if you are
+interested.
 
-i just tested you first hunk (which comes from kernel/dma/direct.c if 
-i'm not mistaken), it did not compile on its own, yet with a tiny bit of 
-work it did, and it does indeed solve the regression. But if using that 
-is the "right" way to do it, not sure, but its not on me to decide.
+1. Can you handle this project?
+2. Can I give you this trust?
 
-Anyway: Thanks for the hint,
+Please note that the deal requires high level of maturity, honesty and
+secrecy. This will involve moving some money from my office, on trust
+to your hands or bank account. Also note that i will do everything to
+make sure that the money is moved as a purely legitimate fund, so you
+will not be exposed to any risk.
 
-Tobias
+I request for your full co-operation. I will give you details and
+procedure when I receive your reply, to commence this transaction, I
+require you to immediately indicate your interest by a return reply. I
+will be waiting for your response in a timely manner.
 
-
-> Hi Tobias
->
-> Two minor diffs below in hope that they might make sense.
->
-> 1, fallback unless dma coherent ok.
->
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -246,6 +246,10 @@ struct page *dma_alloc_contiguous(struct
->   		size_t cma_align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
->   
->   		page = cma_alloc(cma, count, cma_align, gfp & __GFP_NOWARN);
-> +		if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
-> +			dma_free_contiguous(dev, page, size);
-> +			page = NULL;
-> +		}
->   	}
->   
->   	/* Fallback allocation of normal pages */
-> --
->
-> 2, cleanup: cma unless contiguous
->
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -234,18 +234,13 @@ struct page *dma_alloc_contiguous(struct
->   	size_t count = PAGE_ALIGN(size) >> PAGE_SHIFT;
->   	size_t align = get_order(PAGE_ALIGN(size));
->   	struct page *page = NULL;
-> -	struct cma *cma = NULL;
-> -
-> -	if (dev && dev->cma_area)
-> -		cma = dev->cma_area;
-> -	else if (count > 1)
-> -		cma = dma_contiguous_default_area;
->   
->   	/* CMA can be used only in the context which permits sleeping */
-> -	if (cma && gfpflags_allow_blocking(gfp)) {
-> +	if (count > 1 && gfpflags_allow_blocking(gfp)) {
->   		size_t cma_align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
->   
-> -		page = cma_alloc(cma, count, cma_align, gfp & __GFP_NOWARN);
-> +		page = cma_alloc(dev_get_cma_area(dev), count, cma_align,
-> +							gfp & __GFP_NOWARN);
->   		if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
->   			dma_free_contiguous(dev, page, size);
->   			page = NULL;
-> --
->
+Contact  Email: soumailasorgho@yandex.com
+Best Regard,
+Mr. Soumaila Sorgho
