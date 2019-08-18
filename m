@@ -2,22 +2,21 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42A8A91764
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 16:42:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7AA5A91766
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 16:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726821AbfHROlL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 10:41:11 -0400
-Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:34326 "EHLO
-        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfHROlK (ORCPT
+        id S1726829AbfHROnO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 10:43:14 -0400
+Received: from pio-pvt-msa2.bahnhof.se ([79.136.2.41]:46174 "EHLO
+        pio-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbfHROnN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 10:41:10 -0400
-X-Greylist: delayed 435 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Aug 2019 10:41:08 EDT
+        Sun, 18 Aug 2019 10:43:13 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 04C143FA8F;
-        Sun, 18 Aug 2019 16:33:54 +0200 (CEST)
-Authentication-Results: pio-pvt-msa3.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=bMNp5vwb;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 695903F5D7;
+        Sun, 18 Aug 2019 16:33:51 +0200 (CEST)
+Authentication-Results: pio-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=POPU5TJC;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at bahnhof.se
 X-Spam-Flag: NO
@@ -27,33 +26,30 @@ X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
         tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
         DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
         autolearn=ham autolearn_force=no
-Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
-        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Hl06DgOgFEbZ; Sun, 18 Aug 2019 16:33:50 +0200 (CEST)
+Received: from pio-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id nIgg4y8S9GTK; Sun, 18 Aug 2019 16:33:50 +0200 (CEST)
 Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
         (Authenticated sender: mb878879)
-        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 25E013FA80;
+        by pio-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 2D5F13F3E6;
         Sun, 18 Aug 2019 16:33:49 +0200 (CEST)
 Received: from localhost.localdomain.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id 9944B360199;
+        by mail1.shipmail.org (Postfix) with ESMTPSA id B95F9360309;
         Sun, 18 Aug 2019 16:33:49 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1566138829; bh=+gvFllwm2xL1rOjRElI9TJunZdE8KRIVqV6Hn+uXfGc=;
+        t=1566138829; bh=6OlyDR2AfpPPLg+YUceohHTjeWPkzYwbA+F3tv8l/y4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bMNp5vwb74I8dQhEqA65CktFFL/pb3QuCBK8dMfNQxYgONfwTt6s71JZpytrF8YFD
-         9hyrED24JUS4xY748zFe0kkckkZ9ROc4kRQocvce+yHcb83kBrp2RKQ082zNrYqV+B
-         LnozrJvSNFMcBue5t2kCYQE9fSQRpEKK8ReVPvV8=
+        b=POPU5TJCOR3fA0Yx0eBmng4l2dxdEzqjvEiYiBCxfHgBW6a6ycY0mwmOAbi6QSh3f
+         VvxJd+T4KdMjXa0HaZVBRXIzGpm51Bp7otHLY6vALrUDV+Oz6wDancFor72XpxRizS
+         tBiZsXNQBPiXn2ZLJ3eWoPegfWGi9wkmYJXKxZZ0=
 From:   =?UTF-8?q?Thomas=20Hellstr=C3=B6m=20=28VMware=29?= 
         <thomas_os@shipmail.org>
 To:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com
 Cc:     Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
         Doug Covelli <dcovelli@vmware.com>
-Subject: [PATCH 2/4] x86/vmware: Add a header file for hypercall definitions
-Date:   Sun, 18 Aug 2019 16:33:14 +0200
-Message-Id: <20190818143316.4906-3-thomas_os@shipmail.org>
+Subject: [PATCH 3/4] drm/vmwgfx: Update the backdoor call with support for new instructions
+Date:   Sun, 18 Aug 2019 16:33:15 +0200
+Message-Id: <20190818143316.4906-4-thomas_os@shipmail.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190818143316.4906-1-thomas_os@shipmail.org>
 References: <20190818143316.4906-1-thomas_os@shipmail.org>
@@ -66,70 +62,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thomas Hellstrom <thellstrom@vmware.com>
 
-This is intended to be used by drivers using the backdoor, and
-we follow the kvm example using alternatives self-patching to
-choose between vmcall, vmmcall and inl instructions.
+Use the definition provided by include/asm/vmware.h
 
-This patch defines two new x86 cpu feature flags.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: <x86@kernel.org>
 Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
 Reviewed-by: Doug Covelli <dcovelli@vmware.com>
 ---
- MAINTAINERS                        |  1 +
- arch/x86/include/asm/cpufeatures.h |  2 ++
- arch/x86/include/asm/vmware.h      | 13 +++++++++++++
- 3 files changed, 16 insertions(+)
- create mode 100644 arch/x86/include/asm/vmware.h
+ drivers/gpu/drm/vmwgfx/vmwgfx_msg.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1bd7b9c2d146..412206747270 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -17203,6 +17203,7 @@ M:	"VMware, Inc." <pv-drivers@vmware.com>
- L:	virtualization@lists.linux-foundation.org
- S:	Supported
- F:	arch/x86/kernel/cpu/vmware.c
-+F:	arch/x86/include/asm/vmware.h
+diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.h b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.h
+index 4907e50fb20a..7fc3ff63b1a8 100644
+--- a/drivers/gpu/drm/vmwgfx/vmwgfx_msg.h
++++ b/drivers/gpu/drm/vmwgfx/vmwgfx_msg.h
+@@ -32,6 +32,7 @@
+ #ifndef _VMWGFX_MSG_H
+ #define _VMWGFX_MSG_H
  
- VMWARE PVRDMA DRIVER
- M:	Adit Ranadive <aditr@vmware.com>
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 998c2cc08363..69cecc3bc9cb 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -232,6 +232,8 @@
- #define X86_FEATURE_VMMCALL		( 8*32+15) /* Prefer VMMCALL to VMCALL */
- #define X86_FEATURE_XENPV		( 8*32+16) /* "" Xen paravirtual guest */
- #define X86_FEATURE_EPT_AD		( 8*32+17) /* Intel Extended Page Table access-dirty bit */
-+#define X86_FEATURE_VMW_VMCALL		( 8*32+18) /* VMware prefers VMCALL hypercall instruction */
-+#define X86_FEATURE_VMW_VMMCALL		( 8*32+19) /* VMware prefers VMMCALL hypercall instruction */
++#include <asm/vmware.h>
  
- /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
- #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
-diff --git a/arch/x86/include/asm/vmware.h b/arch/x86/include/asm/vmware.h
-new file mode 100644
-index 000000000000..22d2dbfba90f
---- /dev/null
-+++ b/arch/x86/include/asm/vmware.h
-@@ -0,0 +1,13 @@
-+/* SPDX-License-Identifier: GPL-2.0 or MIT */
-+#ifndef _ASM_X86_VMWARE_H
-+#define _ASM_X86_VMWARE_H
-+
-+#include <asm/cpufeatures.h>
-+#include <asm/alternative.h>
-+
-+#define VMWARE_HYPERCALL \
-+	ALTERNATIVE_2(".byte 0xed", \
-+		      ".byte 0x0f, 0x01, 0xc1", X86_FEATURE_VMW_VMCALL,	\
-+		      ".byte 0x0f, 0x01, 0xd9", X86_FEATURE_VMW_VMMCALL)
-+
-+#endif
+ /**
+  * Hypervisor-specific bi-directional communication channel.  Should never
+@@ -57,7 +58,7 @@
+ 		 port_num, magic,		\
+ 		 eax, ebx, ecx, edx, si, di)	\
+ ({						\
+-	asm volatile ("inl %%dx, %%eax;" :	\
++	asm volatile (VMWARE_HYPERCALL :	\
+ 		"=a"(eax),			\
+ 		"=b"(ebx),			\
+ 		"=c"(ecx),			\
 -- 
 2.20.1
 
