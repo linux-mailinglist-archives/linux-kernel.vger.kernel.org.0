@@ -2,57 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FEEA915E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD8E3915F1
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfHRJel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:34:41 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50617 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfHRJej (ORCPT
+        id S1726812AbfHRJfG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:35:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43810 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725786AbfHRJej (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 18 Aug 2019 05:34:39 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v15so517162wml.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:37 -0700 (PDT)
+Received: by mail-wr1-f67.google.com with SMTP id y8so5620098wrn.10
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=QZhMjRQVUEje4pWcMn5B2XzOL8/LIS1Q9fLZX8B7OoI=;
-        b=bf2zep6GD+VRN6hhSFmRjy2pIhRR/mwUeg6DjcBhVNJKQS4Z5PEHtOpb64Rqtf4EYM
-         e6DEBvwS+ip+M5K3vuIvpHj2UjJkM5bFRXtOD9QUEbmrFFBNSfJmkLr+JRQESnMlls3L
-         QENqVfohnM9UjhqfZxL1inzFN52+NlFlg2k6YptPDpBAkpZ7rpMURGhyxyW/lN/maCPb
-         nc+dob8vS0dXb5kA3nYdQseeVPhCahZK/U3KAwrPpCtx8ZVh/8M4DzoiDkGNVWfPJQw3
-         Jq/Cc3fhRdYTN5ym2zpp1krci6nFjn8ztAKb00vM53fLaZP7+Y1o5YSsZw68NdfQJg3K
-         3FBg==
+        bh=+Wzu67dw0GvRFE1y6lo2AReLFisvrnW6U7+9+4cf2Ic=;
+        b=KBIMpCaZRQdho2uz3Qe57wLY1xWbAx4/nAj3DaL4m/UCkymmrI11msMTJFn3+uDEIC
+         0fPE4UaRxeUgs2H47azemWMw80dBEPACxU6K4hDN/VzfBtGtGFLOonCuv8uiK0Rpm21s
+         lnLGbGA2hwNi7IGBRlTk+5fjKxbNemPWIlFBbvNBO83d/RXyRinF6c5D+zF+hHamTUNl
+         8iFKXrarL3KuyfSK46qPy0zlpwG5sgnSCSp1QucNIIfn7pFcLDD5OphMUV6dyySpKyvN
+         ERUEIXrRCdig9n3JnICgpVYntpyMTHM1NX5s1oJIw777ERRI55aYWSSMX7spcgP9bdMV
+         T7JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=QZhMjRQVUEje4pWcMn5B2XzOL8/LIS1Q9fLZX8B7OoI=;
-        b=fEJs0XapoMD1p0yiGsKEmtmnx0/oZxqmltXf0PLSob7ezo+qXrS+ApGJDJzA/I1bIy
-         J4QTquizGLpuJcBkWNpyPcfSfAzEdV3ixdh9douNmKe3KkzlQJ+EHOwWhHT3Hyr1E8kV
-         MQG8v6uMBqUe1lcCflU7Rx/xSftj7F9NcOdSkX1P9uNxlt+BW8308qtq0mEqkyC8mQ5c
-         +ee5hMS6oa3PzEnfknK2KFuAyNT1df22i4bp134omd+jb+d50z7IQicPCjWx3bImCaR8
-         /Ch8WKUYitjMRxwyi/6C6fkIHSADJu+jEP4UOT2wHQswucVT3tO7INxQMZm6XYAVkS+I
-         E0BQ==
-X-Gm-Message-State: APjAAAU6U2w1O3qj20KsM91OHqszSK3Dzpn4Jo6NeGEprYMx7TPhL/e3
-        vVgSx6sClYabUFnysbaC2K08lw==
-X-Google-Smtp-Source: APXvYqxv0sdBufS/JlM7yrMIhyTAi9PqAT+A7XGqZoDDWj+wHkGmlmorC9p8VTyShsfPTfym085sUw==
-X-Received: by 2002:a05:600c:2487:: with SMTP id 7mr15310383wms.141.1566120877029;
-        Sun, 18 Aug 2019 02:34:37 -0700 (PDT)
+        bh=+Wzu67dw0GvRFE1y6lo2AReLFisvrnW6U7+9+4cf2Ic=;
+        b=iEx/qBZ6Tps2YMxYTtFPo+HOazXNOljk0x4n4rKIlLg11oI/NYAnQyfsaGNMAtbgqO
+         LDg1m627FmTmC2OXJwt+xv3LcoirX5TMixYOvojEAkh6Wvp1rQfnDTgUYgjGKkP/IKkt
+         8AjhsrnF5ULHK6I5dEpiymnJr66YRSHWWbLDoJb6cKREX4FHTmMaiM9CctBSpTLLJ1HA
+         8ZxQV5RT9NTOaYhlvfpAdy4OY4unrDduQ2xrkj30FB9N2I21Pabb31WvfodeKxREHZ3C
+         3ihs19hwgRsXFW9yd8MQG9z1EcyPcV8+F2PvipqEflsfnz6Ro9RXIrzaYBRCuGRbuutm
+         hdQA==
+X-Gm-Message-State: APjAAAWbAOJ+g/2o+IdtTC92pmu6q/JZ2UpnGdTxyml5ZjvkTUMWHsAB
+        y9G1MNn07Ijn8Y1mS1/5gB4mvg==
+X-Google-Smtp-Source: APXvYqyu70ePP0dKRJImgiz4bpTFINp67ziwbjNdG+JwEFF+s5x8LPNEY7zLNjWadyTULScmlvogjg==
+X-Received: by 2002:adf:d187:: with SMTP id v7mr10108722wrc.33.1566120878156;
+        Sun, 18 Aug 2019 02:34:38 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.36
+        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 02:34:36 -0700 (PDT)
+        Sun, 18 Aug 2019 02:34:37 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
-        Rob Herring <robh@kernel.org>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 1/7] dt-bindings: imx-ocotp: Add i.MX8MN compatible
-Date:   Sun, 18 Aug 2019 10:33:39 +0100
-Message-Id: <20190818093345.29647-2-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 2/7] nvmem: imx-ocotp: Add i.MX8MN support
+Date:   Sun, 18 Aug 2019 10:33:40 +0100
+Message-Id: <20190818093345.29647-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
 References: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
@@ -65,36 +64,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-Add compatible for i.MX8MN and add i.MX8MM/i.MX8MN to the description.
+i.MX8MN is a new SoC of i.MX8M series, it is similar to i.MX8MM
+in terms of addressing and clock setup, add support for its fuse
+read/write.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvmem/imx-ocotp.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-index 96ffd06d2ca8..904dadf3d07b 100644
---- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-+++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-@@ -2,7 +2,7 @@ Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
+diff --git a/drivers/nvmem/imx-ocotp.c b/drivers/nvmem/imx-ocotp.c
+index 42d4451e7d67..dff2f3c357f5 100644
+--- a/drivers/nvmem/imx-ocotp.c
++++ b/drivers/nvmem/imx-ocotp.c
+@@ -479,6 +479,12 @@ static const struct ocotp_params imx8mm_params = {
+ 	.set_timing = imx_ocotp_set_imx6_timing,
+ };
  
- This binding represents the on-chip eFuse OTP controller found on
- i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6ULL/ULZ, i.MX6SLL,
--i.MX7D/S, i.MX7ULP and i.MX8MQ SoCs.
-+i.MX7D/S, i.MX7ULP, i.MX8MQ, i.MX8MM and i.MX8MN SoCs.
- 
- Required properties:
- - compatible: should be one of
-@@ -16,6 +16,7 @@ Required properties:
- 	"fsl,imx7ulp-ocotp" (i.MX7ULP),
- 	"fsl,imx8mq-ocotp" (i.MX8MQ),
- 	"fsl,imx8mm-ocotp" (i.MX8MM),
-+	"fsl,imx8mn-ocotp" (i.MX8MN),
- 	followed by "syscon".
- - #address-cells : Should be 1
- - #size-cells : Should be 1
++static const struct ocotp_params imx8mn_params = {
++	.nregs = 256,
++	.bank_address_words = 0,
++	.set_timing = imx_ocotp_set_imx6_timing,
++};
++
+ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx6q-ocotp",  .data = &imx6q_params },
+ 	{ .compatible = "fsl,imx6sl-ocotp", .data = &imx6sl_params },
+@@ -490,6 +496,7 @@ static const struct of_device_id imx_ocotp_dt_ids[] = {
+ 	{ .compatible = "fsl,imx7ulp-ocotp", .data = &imx7ulp_params },
+ 	{ .compatible = "fsl,imx8mq-ocotp", .data = &imx8mq_params },
+ 	{ .compatible = "fsl,imx8mm-ocotp", .data = &imx8mm_params },
++	{ .compatible = "fsl,imx8mn-ocotp", .data = &imx8mn_params },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, imx_ocotp_dt_ids);
 -- 
 2.21.0
 
