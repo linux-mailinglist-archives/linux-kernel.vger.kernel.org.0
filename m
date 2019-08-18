@@ -2,82 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8451F915C1
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:10:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5762D915C6
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:11:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726659AbfHRJKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:10:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56994 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfHRJKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:10:25 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E916A21773;
-        Sun, 18 Aug 2019 09:10:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566119424;
-        bh=5U7y42Pt8zr5Hk0ekJwkLhY0BnGV5MzUrNKfva94WKA=;
-        h=Date:From:To:Cc:Subject:From;
-        b=wsPpQyIvarvon+d6qZcTvnadPWQ/6hra6PVJZ46q9oTMwlDKAI5Kuuawa7liCXOrw
-         sxos3HPvsgNi63rvN8bgyC0FH72ImuIHxCuuyiUPhoYViPJzOwKbmH7UO2gpJhSoi0
-         Gy+go4CLoclnK+ojoeIOpjHJIMW6o6YtJBqVCsKo=
-Date:   Sun, 18 Aug 2019 11:10:22 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
-        linux-spdx@vger.kernel.org
-Subject: [GIT PULL] SPDX fixes for 5.3-rc5
-Message-ID: <20190818091022.GA30528@kroah.com>
+        id S1726702AbfHRJK5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:10:57 -0400
+Received: from sonic303-19.consmr.mail.ir2.yahoo.com ([77.238.178.200]:45119
+        "EHLO sonic303-19.consmr.mail.ir2.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726256AbfHRJK4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 05:10:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1566119454; bh=ZfAUnaNRphMc59HzVzbyn4+vzEnKeAS8v5SYfU58LNc=; h=Date:From:To:Cc:Subject:References:In-Reply-To:From:Subject; b=eoVC4BLH16iVVcG5tldg4wUQmUNHIVECVm3o3513+Vf94m19XNOnZhhtbnKc7qoKsChbyMO5EYbj9JYAYjQq7TxxH9KcP2DpMZ0f5Fu3JYLjfN/8XqHYxsik3Xwefa1n0Sk68W7GmMEQGso6Np07TR8Zf7P1RZVMHAtGoDuOA3i5Yi0KWlhDc5+aSsLTkByh2VOCl6cXrtP5hGCJnaXhkL6g07v3tdjiQAkivIw+17XohPl/rCR1u7QuUfQeg0zDnhDJxQQoyKldyFyg4obr9Xt8pbkUdGTIaD/ZkX0SmryVCHMnU/+YUoVajj6FAWlKljEg6zCaNtUnr+Uy4H7MZg==
+X-YMail-OSG: _Be5L30VM1my.19GurkHq7K2IMTdgNZFVfkYv7YpsX09giLsThOZ8.TZ5chJ_fP
+ xPfPULIwoPEBm7W6T5_rgrwj2dUP0SjCF.gUdUjStzBh1o5wYjPoVbP9rGHU7oukc6OdihHnScWb
+ 4XZpWlaFMSBGu0eVvQJCGGt5ygCjkcnstHUklCdA1HRat6V9JKNxWF0Fm52f1TAJ3OWjB7SgJgKl
+ P.9Dw8gTve.KPenzUZFIAj9NMKzjymVGFbeORJ_Q4k6ScRvwhs4GUA1WuFAETQu9bCl92oYD2fHi
+ ZsV4vF9U05IaLh9yIPn6b5LAuG1frL9O04tU0i.SdM8q_.uw6dbB2LICtemKM12CskN8N8p.1jig
+ ROyDTBNwKfcm7xEJtd0YCJIWzS55yMpwUX3CWkagaDPAfX.CZuwNroLddVPkcP3u5Gmn62YENdEr
+ JjeLm2dM8pn_Y2WiZHMmlKG57Mzl2HCwTxFg4jorV_0EpMmrh2dnbeoCKdVPnTjMWuGU8jZpXAkN
+ AuQZOQii6mSP1ehnKM497JmTw4uMC.Xs9wQaPk__CtQQ.8fqA6l0N8SNhZe_ANw9Adkq1T4NkjV0
+ PxoYVsU_kXJFK1yK2.TEPaSPlWK2jcpCzJsVUKS1JXj5F5F5IlhjKeGUvSM6Kf0GV9n84YzxJJn1
+ gTgUjmPCb8e9rLZdkv7iL1v5no_uP72U3BCQoKlrvuGGc2i5WhL6FuVMPpzAWU6LO__7oNZOt.3i
+ Q52ttpIItth0VkIiy8o7Oms6FMe7EUeH6DAtGkf9X0f0Z8lht6RiJLoY68W.ene9C26HG_d0k5W_
+ TH1er_jx1qsQjmTmiHk0BCwfYA.nltzKUosUe_d.2huiA_s9ODcrwesTuye2Nwu7AqqxDcrsDCeK
+ n9ebKN41KN3.wAdZdvlIqzxL.eqWwSrnim4.8Pl2K6O4a4qSPeCRj5U7u5OnOiDC6Jr7oLFa_M.U
+ Kgpua10Kz_jKzZhXOkHiZqJ8k_vsywLd0bxx2ooELzdL0rdvBsJeh1zJwSrMfdXvMZVEL9nSHBLy
+ Q6zQsRLzLFHaPNgRkjyyQZ.yc880xHNR6Iwocx_5h0FRisT5Yep08HYVpo0ykW.1ubfqd9qNtFX5
+ NbVP1WTryoQ38ujFXrGCDDOn4IoWFENK_vGZ91BTRl0WEMmaHEIyrmmktkApDqdLq611pO9pBeMm
+ 1zwcoQch_XlzLqT5pa5f9vXmMZDXA0g5rUphpoYgYHvi1dTAzfFqucxiPjLT09msLRQH0Kn4p.7Z
+ LPunJrCGj20zrNPrY3EJe8l3J.6sWtBXZkV4-
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ir2.yahoo.com with HTTP; Sun, 18 Aug 2019 09:10:54 +0000
+Received: by smtp426.mail.ir2.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 7721cff3e87029626441dfef21e0dc4d;
+          Sun, 18 Aug 2019 09:10:52 +0000 (UTC)
+Date:   Sun, 18 Aug 2019 17:10:38 +0800
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Chao Yu <yuchao0@huawei.com>, Matthew Wilcox <willy@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel <devel@driverdev.osuosl.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Chao Yu <chao@kernel.org>, Miao Xie <miaoxie@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        stable <stable@vger.kernel.org>
+Subject: Re: [PATCH v3 RESEND] staging: erofs: fix an error handling in
+ erofs_readdir()
+Message-ID: <20190818091037.GB17909@hsiangkao-HP-ZHAN-66-Pro-G1>
+References: <20190818030109.GA8225@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190818032111.9862-1-hsiangkao@aol.com>
+ <35138595.69023.1566117213033.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <35138595.69023.1566117213033.JavaMail.zimbra@nod.at>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
+Hi Richard,
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
+On Sun, Aug 18, 2019 at 10:33:33AM +0200, Richard Weinberger wrote:
+> ----- Urspr?ngliche Mail -----
+> > changelog from v2:
+> > - transform EIO to EFSCORRUPTED as suggested by Matthew;
+> 
+> erofs does not define EFSCORRUPTED, so the build fails.
+> At least on Linus' tree as of today.
 
-are available in the Git repository at:
+Thanks for your reply :)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/spdx.git tags/spdx-5.3-rc5
+I write all patches based on staging tree and do more cleanups further
+than Linus' tree, EFSCORRUPTED was already introduced by Pavel days before...
+https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git/commit/?h=staging-testing&id=a6b9b1d5eae61a68085030e50d56265dec5baa94
 
-for you to fetch changes up to 0dda5907b0fc60f72f67f479f224e02c95d06e21:
+which can be fetched from
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git -b staging-next
 
-  i2c: stm32: Use the correct style for SPDX License Identifier (2019-08-05 18:06:10 +0200)
+Thanks,
+Gao Xiang
 
-----------------------------------------------------------------
-SPDX fixes for 5.3-rc5
-
-Here are 4 small SPDX fixes for 5.3-rc5.  A few style fixes for some
-SPDX comments, added an SPDX tag for one file, and fix up some GPL
-boilerplate for another file.
-
-All of these have been in linux-next for a few weeks with no reported
-issues (they are comment changes only, so that's to be expected...)
-
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-----------------------------------------------------------------
-Matthias Maennich (1):
-      coccinelle: api/atomic_as_refcounter: add SPDX License Identifier
-
-Nishad Kamdar (2):
-      intel_th: Use the correct style for SPDX License Identifier
-      i2c: stm32: Use the correct style for SPDX License Identifier
-
-Thomas Huth (1):
-      kernel/configs: Replace GPL boilerplate code with SPDX identifier
-
- drivers/hwtracing/intel_th/msu.h                  |  2 +-
- drivers/hwtracing/intel_th/pti.h                  |  2 +-
- drivers/i2c/busses/i2c-stm32.h                    |  2 +-
- kernel/configs.c                                  | 16 +---------------
- scripts/coccinelle/api/atomic_as_refcounter.cocci |  1 +
- 5 files changed, 5 insertions(+), 18 deletions(-)
+> 
+> Thanks,
+> //richard
