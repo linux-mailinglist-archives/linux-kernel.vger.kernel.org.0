@@ -2,139 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A21939181D
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18E8C91842
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 19:06:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727144AbfHRQ7y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 12:59:54 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:47025 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727119AbfHRQ7x (ORCPT
+        id S1726903AbfHRRGo convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Sun, 18 Aug 2019 13:06:44 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:34030 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfHRRGo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 12:59:53 -0400
-Received: by mail-lf1-f67.google.com with SMTP id n19so7235519lfe.13;
-        Sun, 18 Aug 2019 09:59:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=V1XLrmrHnxtun5E7MsD/TIJ4RWoKU+eFXlhCg4SB19I=;
-        b=rhnqbmSuOY+3ZUyzlxvqIAPQ1XFULeoa/WbnYJFklorm8v700suEGO7RolfnDsPu0j
-         0sVcYqTlNxP6GIcJigTatwt/g2ces8dcLQZJoZyO4grYu9m4TdhvYOIpZ4kd7KMtW0OR
-         JRrgrKRO61SLRaACmkHAfRujvGQOpqeio/GD+vRfSdVsqqr0FZDEWmhXrP6WUzeBWj17
-         wi/JKS2nekHQTnjdpktZ//KtAKa2QVmU0gvkwAle+NZSOoq/7+4/B6llPitWvk24UmTx
-         YIGjzdzYj3s5xu5+2FB/tLFTfBlRNXS7qifdvOV2G7jNt602TzRGwvIETkne1JYutvwF
-         yoJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=V1XLrmrHnxtun5E7MsD/TIJ4RWoKU+eFXlhCg4SB19I=;
-        b=U72Zqg4/J+yhb+XdDtVuX6EG3LfhI3YX5dVPU9KDmk72v2Il/C1A2Gu4zGPONKSK4x
-         GGkrNBq6H4Eh2LnpVpHZGbNzyyb/qyIEitzPmLzs/ay/8aKSxAvNhP5mcjyGQbDGQLfb
-         U8Tr0hNHVc8+yfWE4A42uNTmA8NOw7okWPjH/9TxcVB0Z71QfW51qDrH505R5I39Aak4
-         FTnapV6cnsvbB6c+Fyt1+ESVZI5XhOGDIifsakmqzaCxItHkxlpPJPAR43MpYBgYFGMl
-         MvhBxLb8ECTqh2XeSXLFoNXNbvOA3oHoyV/eIEc50hcV7HVBql0cRhzOEPTCIwfFpDsi
-         7QBA==
-X-Gm-Message-State: APjAAAXNPqAG2ToeDJvale1gdyWVh+UQHnouSWI8q0cDni9ZaSWPLMNw
-        nLyshX1K+uapxjC3Sw8YpconykHFAyUeU7AfUHk=
-X-Google-Smtp-Source: APXvYqwokMINd0UH74GIpnd7io2ObKo5H7IBPFeCJ0QR+2t7jvX04nrJBuQQCcAlAVBzKURgEstM9cKCJfuNVAKHFNo=
-X-Received: by 2002:ac2:484e:: with SMTP id 14mr9995204lfy.50.1566147590405;
- Sun, 18 Aug 2019 09:59:50 -0700 (PDT)
+        Sun, 18 Aug 2019 13:06:44 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id ACDE0608311C;
+        Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 08Dg9I0ZhxDq; Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 5FD3D6083139;
+        Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id APNZI9DvhTC0; Sun, 18 Aug 2019 19:06:41 +0200 (CEST)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+        by lithops.sigma-star.at (Postfix) with ESMTP id E967F608311C;
+        Sun, 18 Aug 2019 19:06:40 +0200 (CEST)
+Date:   Sun, 18 Aug 2019 19:06:40 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     tytso <tytso@mit.edu>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
+        Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Darrick <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+Message-ID: <1897345637.69314.1566148000847.JavaMail.zimbra@nod.at>
+In-Reply-To: <20190818151154.GA32157@mit.edu>
+References: <20190817082313.21040-1-hsiangkao@aol.com> <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1> <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at> <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1> <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at> <20190818090949.GA30276@kroah.com> <790210571.69061.1566120073465.JavaMail.zimbra@nod.at> <20190818151154.GA32157@mit.edu>
+Subject: Re: [PATCH] erofs: move erofs out of staging
 MIME-Version: 1.0
-References: <1564515200-5020-1-git-send-email-jrdr.linux@gmail.com>
- <CAFqt6zb5ySDbkHVpPkOKHTrF8jFuNh=dXtnwPKO6TuEHBCkYgg@mail.gmail.com> <CAFqt6zYsA_0YpZcZ8+LrMEjeWDJ5mwUDJNvqOW1H4ewgKbp+aQ@mail.gmail.com>
-In-Reply-To: <CAFqt6zYsA_0YpZcZ8+LrMEjeWDJ5mwUDJNvqOW1H4ewgKbp+aQ@mail.gmail.com>
-From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Sun, 18 Aug 2019 22:29:38 +0530
-Message-ID: <CAFqt6zYrX-5d8yYVwesYBPWQZK4iXPPv=2w7dqBtHvF9c1WJHA@mail.gmail.com>
-Subject: Re: [PATCH] video: fbdev:via: Remove dead code
-To:     FlorianSchandinat@gmx.de, b.zolnierkie@samsung.com
-Cc:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Originating-IP: [195.201.40.130]
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF60 (Linux)/8.8.12_GA_3809)
+Thread-Topic: erofs: move erofs out of staging
+Thread-Index: F0XqNZSXfHi4RI8aEm4VDowhkFmYng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 5:37 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
->
-> On Wed, Aug 7, 2019 at 2:11 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> >
-> > On Wed, Jul 31, 2019 at 12:59 AM Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> > >
-> > > This is dead code since 3.15. If there is no plan to use
-> > > it further, this can be removed forever.
-> > >
-> >
-> > Any comment on this patch ?
->
-> Any comment on this patch ?
+----- Ursprüngliche Mail -----
+> So holding a file system like EROFS to a higher standard than say,
+> ext4, xfs, or btrfs hardly seems fair.
 
-If no comment can we get this in queue for 5.4 ?
+Nobody claimed that.
 
->
-> >
-> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> > > ---
-> > >  drivers/video/fbdev/via/via-core.c | 43 --------------------------------------
-> > >  1 file changed, 43 deletions(-)
-> > >
-> > > diff --git a/drivers/video/fbdev/via/via-core.c b/drivers/video/fbdev/via/via-core.c
-> > > index e2b2062..ffa2ca2 100644
-> > > --- a/drivers/video/fbdev/via/via-core.c
-> > > +++ b/drivers/video/fbdev/via/via-core.c
-> > > @@ -221,49 +221,6 @@ void viafb_release_dma(void)
-> > >  }
-> > >  EXPORT_SYMBOL_GPL(viafb_release_dma);
-> > >
-> > > -
-> > > -#if 0
-> > > -/*
-> > > - * Copy a single buffer from FB memory, synchronously.  This code works
-> > > - * but is not currently used.
-> > > - */
-> > > -void viafb_dma_copy_out(unsigned int offset, dma_addr_t paddr, int len)
-> > > -{
-> > > -       unsigned long flags;
-> > > -       int csr;
-> > > -
-> > > -       mutex_lock(&viafb_dma_lock);
-> > > -       init_completion(&viafb_dma_completion);
-> > > -       /*
-> > > -        * Program the controller.
-> > > -        */
-> > > -       spin_lock_irqsave(&global_dev.reg_lock, flags);
-> > > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_DONE);
-> > > -       /* Enable ints; must happen after CSR0 write! */
-> > > -       viafb_mmio_write(VDMA_MR0, VDMA_MR_TDIE);
-> > > -       viafb_mmio_write(VDMA_MARL0, (int) (paddr & 0xfffffff0));
-> > > -       viafb_mmio_write(VDMA_MARH0, (int) ((paddr >> 28) & 0xfff));
-> > > -       /* Data sheet suggests DAR0 should be <<4, but it lies */
-> > > -       viafb_mmio_write(VDMA_DAR0, offset);
-> > > -       viafb_mmio_write(VDMA_DQWCR0, len >> 4);
-> > > -       viafb_mmio_write(VDMA_TMR0, 0);
-> > > -       viafb_mmio_write(VDMA_DPRL0, 0);
-> > > -       viafb_mmio_write(VDMA_DPRH0, 0);
-> > > -       viafb_mmio_write(VDMA_PMR0, 0);
-> > > -       csr = viafb_mmio_read(VDMA_CSR0);
-> > > -       viafb_mmio_write(VDMA_CSR0, VDMA_C_ENABLE|VDMA_C_START);
-> > > -       spin_unlock_irqrestore(&global_dev.reg_lock, flags);
-> > > -       /*
-> > > -        * Now we just wait until the interrupt handler says
-> > > -        * we're done.
-> > > -        */
-> > > -       wait_for_completion_interruptible(&viafb_dma_completion);
-> > > -       viafb_mmio_write(VDMA_MR0, 0); /* Reset int enable */
-> > > -       mutex_unlock(&viafb_dma_lock);
-> > > -}
-> > > -EXPORT_SYMBOL_GPL(viafb_dma_copy_out);
-> > > -#endif
-> > > -
-> > >  /*
-> > >   * Do a scatter/gather DMA copy from FB memory.  You must have done
-> > >   * a successful call to viafb_request_dma() first.
-> > > --
-> > > 1.9.1
-> > >
+Thanks,
+//richard
