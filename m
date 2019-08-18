@@ -2,96 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0598C917C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 18:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 719E7917CC
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 18:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726841AbfHRQWR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 12:22:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35550 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726115AbfHRQWQ (ORCPT
+        id S1726884AbfHRQYk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 12:24:40 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:44762 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfHRQYk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 12:22:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=N0aKd3kbobOVM+ja2qXPqQEy6PJXskjZ3fNW6CYKznA=; b=LM+w7i3N+Q7emAXcFs7q/xvtc
-        LwYBK72c0UsD7+mZtVDq2ehkyG8sRdB/QM4oWWhXa7TvYK4mNCXln2gua/Hr0suUTXsMyHjeABY4B
-        LfiObpOBKlFJIUXS5IcHU0+lAfxM9IFPNXLfwQjCjurgwPar/NOd7sJsEnxmJpZoy2nj1QMUCxgkE
-        hibZO4GddXdRUF+BvG5lHCrttPsXkdjjbdBA4RSbWYLE5JJ8vHitpoCCKzfp2k6sZ4KOGLjyF29zh
-        OtL1O2BwpaLQGyhTKkFrbt4yyOfDRQOTEqdXKt22YCxIxcuJJl7M6aoMf9gW9nxwtL3eY9xOl0rKO
-        lyHSgKIYQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hzNwP-0005So-3L; Sun, 18 Aug 2019 16:22:01 +0000
-Date:   Sun, 18 Aug 2019 09:22:01 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Chao Yu <yuchao0@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Darrick <darrick.wong@oracle.com>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818162201.GA16269@infradead.org>
-References: <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
- <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
- <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
- <20190818090949.GA30276@kroah.com>
- <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
- <20190818151154.GA32157@mit.edu>
- <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
+        Sun, 18 Aug 2019 12:24:40 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzNyd-0008Fa-TT; Sun, 18 Aug 2019 18:24:20 +0200
+Date:   Sun, 18 Aug 2019 18:24:18 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Dmitry Safonov <0x7f454c46@gmail.com>
+cc:     Andy Lutomirski <luto@kernel.org>,
+        Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCHv6 23/36] x86/vdso: Allocate timens vdso
+In-Reply-To: <alpine.DEB.2.21.1908171709360.1923@nanos.tec.linutronix.de>
+Message-ID: <alpine.DEB.2.21.1908181823010.1923@nanos.tec.linutronix.de>
+References: <20190815163836.2927-1-dima@arista.com> <20190815163836.2927-24-dima@arista.com> <b719199a-ed91-610b-38bc-015a0749f600@kernel.org> <alpine.DEB.2.21.1908162208190.1923@nanos.tec.linutronix.de> <483678c7-7687-5445-f09e-e45e9460d559@gmail.com>
+ <alpine.DEB.2.21.1908171709360.1923@nanos.tec.linutronix.de>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190818161638.GE1118@sol.localdomain>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 09:16:38AM -0700, Eric Biggers wrote:
-> Ted's observation was about maliciously-crafted filesystems, though, so
-> integrity-only features such as metadata checksums are irrelevant.  Also the
-> filesystem version is irrelevant; anything accepted by the kernel code (even if
-
-I think allowing users to mount file systems (any of ours) without
-privilege is a rather bad idea.  But that doesn't mean we should not be
-as robust as we can.  Optionally disabling support for legacy formats
-at compile and/or runtime is something we should actively look into as
-well.
-
-> it's legacy/deprecated) is open attack surface.
+On Sun, 18 Aug 2019, Thomas Gleixner wrote:
 > 
-> I personally consider it *mandatory* that we deal with this stuff.  But I can
-> understand that we don't do a good job at it, so we shouldn't hold a new
-> filesystem to an unfairly high standard relative to other filesystems...
+> Patch below. I tested this with the normal order and by installing a
+> 'timens' page unconditionally for all processes. I'll reply with the timens
+> testing hacks so you can see what I did.
 
-I very much disagree.  We can't really force anyone to fix up old file
-systems.  But we can very much hold new ones to (slightly) higher
-standards.  Thats the only way to get the average quality up.  Some as
-for things like code style - we can't magically fix up all old stuff,
-but we can and usually do hold new code to higher standards.  (Often not
-to standards as high as I'd personally prefer, btw).
+First hack...
+
+Thanks,
+
+	tglx
+
+8<-----------------
+
+Subject: x86/vdso: Hack to enable time name space  for testing
+From: Thomas Gleixner <tglx@linutronix.de>
+Date: Sun, 18 Aug 2019 16:42:26 +0200
+
+Select CONFIG_VDSO_TIMENS and prepare for the extra magic time namespace
+vvar page. The fault handler is not handling it yet as the path is never
+taken (hopefully)
+
+Not-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+---
+ arch/x86/Kconfig                         |    1 +
+ arch/x86/entry/vdso/vdso-layout.lds.S    |    3 ++-
+ arch/x86/entry/vdso/vdso2c.c             |    3 +++
+ arch/x86/include/asm/vdso.h              |    1 +
+ arch/x86/include/asm/vdso/gettimeofday.h |    9 +++++++++
+ 5 files changed, 16 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -224,6 +224,7 @@ config X86
+ 	select VIRT_TO_BUS
+ 	select X86_FEATURE_NAMES		if PROC_FS
+ 	select PROC_PID_ARCH_STATUS		if PROC_FS
++	select VDSO_TIMENS
+ 
+ config INSTRUCTION_DECODER
+ 	def_bool y
+--- a/arch/x86/entry/vdso/vdso-layout.lds.S
++++ b/arch/x86/entry/vdso/vdso-layout.lds.S
+@@ -16,7 +16,7 @@ SECTIONS
+ 	 * segment.
+ 	 */
+ 
+-	vvar_start = . - 3 * PAGE_SIZE;
++	vvar_start = . - 4 * PAGE_SIZE;
+ 	vvar_page = vvar_start;
+ 
+ 	/* Place all vvars at the offsets in asm/vvar.h. */
+@@ -28,6 +28,7 @@ SECTIONS
+ 
+ 	pvclock_page = vvar_start + PAGE_SIZE;
+ 	hvclock_page = vvar_start + 2 * PAGE_SIZE;
++	timens_page = vvar_start + 3 * PAGE_SIZE;
+ 
+ 	. = SIZEOF_HEADERS;
+ 
+--- a/arch/x86/entry/vdso/vdso2c.c
++++ b/arch/x86/entry/vdso/vdso2c.c
+@@ -75,12 +75,14 @@ enum {
+ 	sym_vvar_page,
+ 	sym_pvclock_page,
+ 	sym_hvclock_page,
++	sym_timens_page,
+ };
+ 
+ const int special_pages[] = {
+ 	sym_vvar_page,
+ 	sym_pvclock_page,
+ 	sym_hvclock_page,
++	sym_timens_page,
+ };
+ 
+ struct vdso_sym {
+@@ -93,6 +95,7 @@ struct vdso_sym required_syms[] = {
+ 	[sym_vvar_page] = {"vvar_page", true},
+ 	[sym_pvclock_page] = {"pvclock_page", true},
+ 	[sym_hvclock_page] = {"hvclock_page", true},
++	[sym_timens_page] = {"timens_page", true},
+ 	{"VDSO32_NOTE_MASK", true},
+ 	{"__kernel_vsyscall", true},
+ 	{"__kernel_sigreturn", true},
+--- a/arch/x86/include/asm/vdso.h
++++ b/arch/x86/include/asm/vdso.h
+@@ -21,6 +21,7 @@ struct vdso_image {
+ 	long sym_vvar_page;
+ 	long sym_pvclock_page;
+ 	long sym_hvclock_page;
++	long sym_timens_page;
+ 	long sym_VDSO32_NOTE_MASK;
+ 	long sym___kernel_sigreturn;
+ 	long sym___kernel_rt_sigreturn;
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -265,6 +265,15 @@ static __always_inline const struct vdso
+ 	return __vdso_data;
+ }
+ 
++/* HACK .... */
++#define VDSO_TIMENS_PAGEOFFSET		(3 * PAGE_SIZE)
++
++static __always_inline
++const struct vdso_data *__arch_get_timens_vdso_data(const struct vdso_data *vd)
++{
++	return (void *)vd + VDSO_TIMENS_PAGEOFFSET;
++}
++
+ /*
+  * x86 specific delta calculation.
+  *
