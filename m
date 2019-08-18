@@ -2,58 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 058FD915EA
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:34:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1BDB0915EF
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:35:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfHRJeo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:34:44 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50618 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfHRJel (ORCPT
+        id S1726783AbfHRJfA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:35:00 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40949 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726649AbfHRJem (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:34:41 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v15so517231wml.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
+        Sun, 18 Aug 2019 05:34:42 -0400
+Received: by mail-wm1-f65.google.com with SMTP id v19so507141wmj.5
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=JciP+sgA6x3vXVEb6ByrkWLVlRaOQlC3JG7PQh8jt2A=;
-        b=unozXp074XF5Jan16QB+lXoMD/yvOtXVxk/mDNPMre44U1G03QnVVIbI0oKCbGfrF5
-         FZxLMRAnfpuUSU/SGDuRA+0NnwqFDx+GtiBkUNlTcF5JHyY46Pk/gUnS0mr8NJmATAcZ
-         AkeHnBRIyR28LqPYnbUs/b8UPczClNuBj9b+QWd+3w6qTLFR6H4gXK34PobgkmZQWc7p
-         XFB7u9VhSpMg+vVSx3VGFG1pEYs/O8+mel6fQD1/9xWmuzjKswPL/ahQmqXDxmD83Txb
-         3vgXruYYnHJQ644+K16obaYPhg5je3nSo5daAOxtT8Au8RABWGYirfMqRyV/XQE9W3bt
-         Ibaw==
+        bh=WdcGXM6KsgrMmjpgvIUKi7bYgw0CC+Ry6Ot0JXzioGU=;
+        b=U4zqhVk21/xwg51bUrRzjzkXoTugoOuVafHhqscFPKECyBWEMTJ2ujMikhpDcRBkbM
+         AZdZ29GClmmu4XxAiQmULe6WUwl55YsBB7Z/ONS1JDCpKhVHup4BXRH0ox7zzko4IeSY
+         xbYclxOGcUmXhEzB7rk4ZObkvm8eKperzVX+bW2NtWM5xFOxWcmTpoDE8fHDn1KULUPj
+         chbgZj6jlv8HLDs7Q9fckoRz3cEVfAESDH0k6YvLlB4b9CLL5ewFLVrZ48M9xNdhhw0j
+         wow70ZVgBixM8/200mc+1kT3crcf0afGBCQ+oY0zVi6j4JRgQb47/bRWFWmuNEV7/B0v
+         GJEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=JciP+sgA6x3vXVEb6ByrkWLVlRaOQlC3JG7PQh8jt2A=;
-        b=KKcBfLjoWSbm6KSe1+cN5kTyrPE2Bs6P50AfhPFqD7QYF1/ynyw6w7YHoIY8GvzLsi
-         E5n+xnj0ExXBtZI4ioBbvmDgXq3NSHRJ+iGPHBV1O7B9ZqA0jrD1Uxg5c/XyDwWeuvEa
-         GBnsl7lWtYz8F90bLl0WZTADxZO0phynn33dOJ/CRwfejuVmE1FpFANQHRJZ3BzNDFKG
-         aLbnvTOpk0q3smn1lIrZHr5JzpwzDElswdeV0bfyerSQPAFTydiLu1cjSnnr+3XK894I
-         F/VbgwST+42VpCKei1oOMr1uvkpBJGAEuTf60HNoGvdK2giFXIy86gFzgZvErw7RDEzp
-         1jrA==
-X-Gm-Message-State: APjAAAVSgqAQ6yfA0Fusir9DDuvav2XH2fYC647KqtEXwXAaih1ppeBb
-        SrYlhSDDVjeGW7JdsMi9RI8zt/cpfdg=
-X-Google-Smtp-Source: APXvYqwhQG7nxXKN+IpbWvw7/+afOd1NcqO5Vplx4tbYrOBAyH3YIbL/8fIvNaAFkiKsYWsxtTN1Ew==
-X-Received: by 2002:a7b:c246:: with SMTP id b6mr15478693wmj.13.1566120879954;
-        Sun, 18 Aug 2019 02:34:39 -0700 (PDT)
+        bh=WdcGXM6KsgrMmjpgvIUKi7bYgw0CC+Ry6Ot0JXzioGU=;
+        b=AHhEAIKa1UW8T5vBTLrJQtaQOw3ek67LdNzyiOl33W7SV0ZAH25ObN3b2QPZHvBnat
+         M7lGCVtA1wPNxVrsidDQ8gihoh5egrayin/D6fkG4foz2fNrxbcK2j5eL3JNcU6LulZ1
+         uo71jzSH1a7wzZ1ACWei0rlfJpzSrhGKFpIftoeXMfwv9v00icjoF7v0Hsk6EjT499aU
+         IY8GIgBFBi9DOK38/4GdCiFsx8LCBXpSAOZPdzN1ab3cm5kfe2UFbxYmoHxQufJZlznA
+         X8F6v2gfcuSXbb/J1k0ffMpqP5F1D+OGzmtZTVWgvG/zFN3EZIT7nbXHygzVNQ7gUFEj
+         YW+A==
+X-Gm-Message-State: APjAAAWJGOWr4EwPJ1GjTBxp5hiD1KmWd9tehKGAS2mLe3ulK314iQkY
+        GyYG5KbPQUjPj8Sw6aMh+Al0Lw==
+X-Google-Smtp-Source: APXvYqxAKKJKCSOoYvTFWOYN0Pd0EkZ6PZlMBziAKqeMbSlyG/Vl+08iINrmRKiVaQZqzD8OK0ATzQ==
+X-Received: by 2002:a1c:c542:: with SMTP id v63mr14628868wmf.97.1566120880901;
+        Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.39
+        by smtp.gmail.com with ESMTPSA id w13sm25042828wre.44.2019.08.18.02.34.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 02:34:39 -0700 (PDT)
+        Sun, 18 Aug 2019 02:34:40 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
+Cc:     linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 4/7] nvmem: meson-mx-efuse: allow reading data smaller than word_size
-Date:   Sun, 18 Aug 2019 10:33:42 +0100
-Message-Id: <20190818093345.29647-5-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 5/7] nvmem: mxs-ocotp: update MODULE_AUTHOR() email address
+Date:   Sun, 18 Aug 2019 10:33:43 +0100
+Message-Id: <20190818093345.29647-6-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
 References: <20190818093345.29647-1-srinivas.kandagatla@linaro.org>
@@ -64,38 +62,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Stefan Wahren <wahrenst@gmx.net>
 
-Some Amlogic boards store the Ethernet MAC address inside the eFuse. The
-Ethernet MAC address uses 6 bytes. The existing logic in
-meson_mx_efuse_read() would write beyond the end of the data buffer when
-trying to read data with a size that is not aligned to word_size (4
-bytes on Meson8, Meson8b and Meson8m2).
+The email address listed in MODULE_AUTHOR() will be disabled in the
+near future. Replace it with my private one.
 
-Calculate the remaining data to copy inside meson_mx_efuse_read() so
-reading 6 bytes doesn't write beyond the end of the data buffer.
-
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/meson-mx-efuse.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/nvmem/mxs-ocotp.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvmem/meson-mx-efuse.c b/drivers/nvmem/meson-mx-efuse.c
-index b9f9ce089de9..07c9f38c1c60 100644
---- a/drivers/nvmem/meson-mx-efuse.c
-+++ b/drivers/nvmem/meson-mx-efuse.c
-@@ -155,7 +155,8 @@ static int meson_mx_efuse_read(void *context, unsigned int offset,
- 		if (err)
- 			break;
+diff --git a/drivers/nvmem/mxs-ocotp.c b/drivers/nvmem/mxs-ocotp.c
+index c34d9fecfb10..8e4898dec002 100644
+--- a/drivers/nvmem/mxs-ocotp.c
++++ b/drivers/nvmem/mxs-ocotp.c
+@@ -200,6 +200,6 @@ static struct platform_driver mxs_ocotp_driver = {
+ };
  
--		memcpy(buf + i, &tmp, efuse->config.word_size);
-+		memcpy(buf + i, &tmp,
-+		       min_t(size_t, bytes - i, efuse->config.word_size));
- 	}
- 
- 	meson_mx_efuse_mask_bits(efuse, MESON_MX_EFUSE_CNTL1,
+ module_platform_driver(mxs_ocotp_driver);
+-MODULE_AUTHOR("Stefan Wahren <stefan.wahren@i2se.com>");
++MODULE_AUTHOR("Stefan Wahren <wahrenst@gmx.net");
+ MODULE_DESCRIPTION("driver for OCOTP in i.MX23/i.MX28");
+ MODULE_LICENSE("GPL v2");
 -- 
 2.21.0
 
