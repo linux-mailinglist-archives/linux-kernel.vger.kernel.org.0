@@ -2,138 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5F7916F8
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 16:00:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A693591725
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 16:05:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726753AbfHROAY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 10:00:24 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46266 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbfHROAY (ORCPT
+        id S1727028AbfHROEs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 10:04:48 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43543 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726962AbfHROEj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 10:00:24 -0400
-Received: by mail-io1-f68.google.com with SMTP id x4so15346579iog.13;
-        Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
+        Sun, 18 Aug 2019 10:04:39 -0400
+Received: by mail-pg1-f193.google.com with SMTP id k3so5372860pgb.10
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 07:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
-        b=bgIJNrZLD9cEQKaX+WWl784pUPlA/tMWOGODRlCV0cwRfljdDw0TQroLAlEh8uMvR7
-         mRRaLCdUQE/DuVODp7dMxuEwKDsVq0zg8btmhZPhV0glEfeilVGnBJOlnXzuUfEBEwSv
-         lDSF11fy3DbrG7VimGQkh1nc/jGSgughWyUnzo3SvMFOpLm5DMx9KxTX+49HSr5ay9+n
-         zQiuA8ep8ndPO8CU4tSO0ANyWPzCPlOhqNXXCIjpu3t+KihQ4gNrjclIVDoWQjqa+RAi
-         aAof1xBUuM09Jdg1Uoumte0u6KtApThoryqZ4uwApj1DYcQt3AO9pKGjCpi0+4UCGY71
-         MgRw==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pPU6BL3O8y0CcD4U4GDbFQvhTODvqmfC8YYOoQmMctY=;
+        b=j6PwknY11koFhKKprvKJo8T+w/tkv8aMDcEqW72UPprD0tFUK5aWuvivrAhdRywSz0
+         vnr8APwHia1kbBYLweM+bYPoBB4nb1B3WCx4EFJzi6Xurp15nHBpiIdEVlmGlWX3MJW3
+         Vz2tAPvm+KUdHYnS89tiI4IxAPEKK9YjInJY+Nip4kicbS0GPxH4zdfB0EB9Xw2TMegk
+         OfuzewohCCElNZ0AyQBKx7oK/vhZyGmCTUbYh946b1nRj/1BKwIibQ0pCaYhSa1lR/dI
+         MojJHZYFoV6E1zbYP097ZTo6niyr2jkxHCb9gQ8cL//3VHS6IPW34/Zmcq2DWPfa6bZk
+         EiIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6Lox1GwVXn3FfNaJc4tSQNHxrlDnE7ZTtqmRrPEy0V0=;
-        b=Dby5ICIi/oaJ8+XFJiXtuEvLDUEfVe00MofwWsYb8KE0VWbUo8uuiat4qo9C/Dap9k
-         Yv488eRXRBNK7MGv2Y7LYr4AaTqb/9g0HIgH3QyNGDyeSsBL05/faQZbGnwDAz9Dejfi
-         1tuMERYdgFPD/OflW2abdfMdkrtrS4NHorzAQCVCcFeECb4kZ7NElkJ4xlZTJqqgToqS
-         xd91V0IK/fpF6CE5PL9OSP86RuOa0tLaAmgg8Vbehlmhka9ek1zVu3758rOMK+wGMXIc
-         PTJjq+v3CHxzmfiISyEf6/zLaatvqUvU0koAuikEuIRa5hYFzt1CcF1DVt7ckgo23LWg
-         feIw==
-X-Gm-Message-State: APjAAAWIw0ESXaqEYF4MikS02+aF3tpAex4AHyctcb233DnfMwqN/gcI
-        C9JhDEgich4KZMhq72miI/bsGk1QanAUXpyr+vo=
-X-Google-Smtp-Source: APXvYqxnImgJgmCUWa7dkjDd15eyh4IYUAjq63iKHeqQEvtSUIUevkYw9wGEuETJFb98Wxh4oq0CLfa0sHPYgtQcbq0=
-X-Received: by 2002:a5d:8599:: with SMTP id f25mr2358917ioj.265.1566136823400;
- Sun, 18 Aug 2019 07:00:23 -0700 (PDT)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pPU6BL3O8y0CcD4U4GDbFQvhTODvqmfC8YYOoQmMctY=;
+        b=XY5T4Ruyl+ycOa5awlZ0iHYbMc8VkzCmvi4/Y0RdgI4VbvM+V2WZpM1aJdiZaD9HQf
+         3nVCkZOJr5VukLbZh008PJC055qlijGyHKYkYpXVVfQOKL5sH9yvcxc+aCxwBVb/optI
+         PlmbZJPIb+VcqXstL8BGSJDFfae0QK2eOVE5VVP4GVpj428CMd5VSyHsr24u11XbOLRt
+         EUKfUVY6GlieGz6SUVcMjigy7FnheMlv5ko3RMm9XX45ccIDb5iytdx24Yp4YdcAxj+g
+         eBrgOy7qWb4K/CjDod/UXbWyWuQ0xy4HlnUzBs9thmepeNbolrCiE+pauktP2k1qbwSd
+         Jpzw==
+X-Gm-Message-State: APjAAAVc+U7DkgonAsMxU77pFIWRg5uMDa06krSPAKPgg1AV4p68pcUz
+        ocim+34no9NYSgu7iAy6p30=
+X-Google-Smtp-Source: APXvYqxGBCMbM5DGVhWamH7zXhTLksoPDhtVCW6VO3A9Y5+hN0n/SQfxJQlFNMILSGatyxWn76AtSw==
+X-Received: by 2002:a62:35c6:: with SMTP id c189mr19805255pfa.96.1566137078834;
+        Sun, 18 Aug 2019 07:04:38 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id v14sm12365894pfm.164.2019.08.18.07.04.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Aug 2019 07:04:37 -0700 (PDT)
+Date:   Sun, 18 Aug 2019 07:04:36 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Andi Kleen <ak@linux.intel.com>,
+        Alexey Budankov <alexey.budankov@linux.intel.com>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH 28/79] libperf: Add perf_cpu_map struct
+Message-ID: <20190818140436.GA21854@roeck-us.net>
+References: <20190721112506.12306-1-jolsa@kernel.org>
+ <20190721112506.12306-29-jolsa@kernel.org>
 MIME-Version: 1.0
-References: <20190730014924.2193-1-deepa.kernel@gmail.com> <20190730014924.2193-20-deepa.kernel@gmail.com>
- <201907292129.AC796230@keescook> <CAK8P3a2rWEciT=PegCYUww-n-3smQHNjvW4duBqoS2PLSGdhYw@mail.gmail.com>
- <CABeXuvrmNkUOH5ZU59Kg4Ge1cFE9nqp9NhTPJjus5KkCrYeC6w@mail.gmail.com> <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
-In-Reply-To: <CAK8P3a3DyWcvOpMsc__CZDmG50MXRisbBt+mTtwWCGKaNgg_Gg@mail.gmail.com>
-From:   Deepa Dinamani <deepa.kernel@gmail.com>
-Date:   Sun, 18 Aug 2019 07:00:12 -0700
-Message-ID: <CABeXuvr=t4zM060UKJBv0nywGkQjK915gvr6bv5=0_EbEctKHg@mail.gmail.com>
-Subject: Re: [PATCH 19/20] pstore: fs superblock limits
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux FS-devel Mailing List <linux-fsdevel@vger.kernel.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190721112506.12306-29-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 2, 2019 at 12:15 AM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Fri, Aug 2, 2019 at 4:26 AM Deepa Dinamani <deepa.kernel@gmail.com> wrote:
-> >
-> > On Tue, Jul 30, 2019 at 12:36 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Tue, Jul 30, 2019 at 6:31 AM Kees Cook <keescook@chromium.org> wrote:
-> > > >
-> > > > On Mon, Jul 29, 2019 at 06:49:23PM -0700, Deepa Dinamani wrote:
-> > > > > Also update the gran since pstore has microsecond granularity.
-> > > >
-> > > > So, I'm fine with this, but technically the granularity depends on the
-> > > > backend storage... many have no actual time keeping, though. My point is,
-> > > > pstore's timestamps are really mostly a lie, but the most common backend
-> > > > (ramoops) is seconds-granularity.
-> > > >
-> > > > So, I'm fine with this, but it's a lie but it's a lie that doesn't
-> > > > matter, so ...
-> > > >
-> > > > Acked-by: Kees Cook <keescook@chromium.org>
-> > > >
-> > > > I'm open to suggestions to improve it...
-> > >
-> > > If we don't care about using sub-second granularity, then setting it
-> > > to one second unconditionally here will make it always use that and
-> > > report it correctly.
-> >
-> > Should this printf in ramoops_write_kmsg_hdr() also be fixed then?
-> >
-> >         RAMOOPS_KERNMSG_HDR "%lld.%06lu-%c\n",
-> >         (time64_t)record->time.tv_sec,
-> >         record->time.tv_nsec / 1000,
-> >         record->compressed ? 'C' : 'D');
-> >     persistent_ram_write(prz, hdr, len);
-> >
-> > ramoops_read_kmsg_hdr() doesn't read this as microseconds. Seems like
-> > a mismatch from above.
->
-> Good catch. This seems to go back to commit 3f8f80f0cfeb ("pstore/ram:
-> Read and write to the 'compressed' flag of pstore"), which introduced the
-> nanosecond read. The write function however has always used
-> microseconds, and that was kept when the implementation changed
-> from timeval to timespec in commit 1e817fb62cd1 ("time: create
-> __getnstimeofday for WARNless calls").
->
-> > If we want to agree that we just want seconds granularity for pstore,
-> > we could replace the tv_nsec part to be all 0's if anybody else is
-> > depending on this format.
-> > I could drop this patch from the series and post that patch seperately.
->
-> We should definitely fix it to not produce a bogus nanosecond value.
-> Whether using full seconds or microsecond resolution is better here,
-> I don't know. It seems that pstore records generally get created
-> with a nanosecond nanosecond accurate timestamp from
-> ktime_get_real_fast_ns() and then truncated to the resolution of the
-> backend, rather than the normal jiffies-accurate inode timestamps that
-> we have for regular file systems.
->
-> This might mean that we do want the highest possible resolution
-> and not further truncate here, in case that information ends
-> up being useful afterwards.
+On Sun, Jul 21, 2019 at 01:24:15PM +0200, Jiri Olsa wrote:
+> Adding perf_cpu_map struct into libperf.
+> 
+> It's added as a declaration into into:
+>   include/perf/cpumap.h
+> which will be included by users.
+> 
+> The perf_cpu_map struct definition is added into:
+>   include/internal/cpumap.h
+> 
+> which is not to be included by users, but shared
+> within perf and libperf.
+> 
+> We tried the total separation of the perf_cpu_map struct
+> in libperf, but it lead to complications and much bigger
+> changes in perf code, so we decided to share the declaration.
+> 
+> Link: http://lkml.kernel.org/n/tip-vhtr6a8apr7vkh2tou0r8896@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
 
-I made a list of granularities used by pstore drivers using pstore_register():
+Hi,
 
-1. efi - seconds
-2. ramoops - microsecond
-3. erst - seconds
-4. powerpc/nvram64 - seconds
+this patch causes out-of-tree builds (make O=<destdir>) to fail.
 
-I will leave pstore granularity at nanoseconds and fix the ramoops read.
+In file included from tools/include/asm/atomic.h:6:0,
+                 from include/linux/atomic.h:5,
+		 from tools/include/linux/refcount.h:41,
+		 from cpumap.c:4: tools/include/asm/../../arch/x86/include/asm/atomic.h:11:10:
+fatal error: asm/cmpxchg.h: No such file or directory
 
--Deepa
+Bisect log attached.
+
+Guenter
+
+---
+# bad: [0c3d3d648b3ed72b920a89bc4fd125e9b7aa5f23] Add linux-next specific files for 20190816
+# good: [d45331b00ddb179e291766617259261c112db872] Linux 5.3-rc4
+git bisect start 'HEAD' 'v5.3-rc4'
+# good: [4e6eaeb715ab76095f7ea03fa5926c7aa541361e] Merge remote-tracking branch 'crypto/master'
+git bisect good 4e6eaeb715ab76095f7ea03fa5926c7aa541361e
+# good: [ef1c67aa73f33a29e3df672998056f18cb51468d] Merge remote-tracking branch 'sound-asoc/for-next'
+git bisect good ef1c67aa73f33a29e3df672998056f18cb51468d
+# bad: [f414a0d92534d55591e3c295f37f8db40d08659a] Merge remote-tracking branch 'char-misc/char-misc-next'
+git bisect bad f414a0d92534d55591e3c295f37f8db40d08659a
+# bad: [07f45358f90398b3bc44914a863317285a5dac55] Merge remote-tracking branch 'tip/auto-latest'
+git bisect bad 07f45358f90398b3bc44914a863317285a5dac55
+# good: [b8c9806513153eb258f565b2f359958a94c93816] Merge remote-tracking branch 'watchdog/master'
+git bisect good b8c9806513153eb258f565b2f359958a94c93816
+# bad: [7b9063c0c1c0b54db5eca8e4c36a926ee6234280] Merge branch 'sched/core'
+git bisect bad 7b9063c0c1c0b54db5eca8e4c36a926ee6234280
+# bad: [03617c22e31f32cbf0e4797e216db898fb898d90] libperf: Add threads to struct perf_evlist
+git bisect bad 03617c22e31f32cbf0e4797e216db898fb898d90
+# good: [5972d1e07bd95c7458e2d7f484391d69008affc7] perf evsel: Rename perf_evsel__open() to evsel__open()
+git bisect good 5972d1e07bd95c7458e2d7f484391d69008affc7
+# bad: [285a30c36d1e18e7e2afa24dae50ba5596be45e7] libperf: Add perf_evlist and perf_evsel structs
+git bisect bad 285a30c36d1e18e7e2afa24dae50ba5596be45e7
+# good: [47f9bccc79cb067103ad5e9790e0d01c94839429] libperf: Add build version support
+git bisect good 47f9bccc79cb067103ad5e9790e0d01c94839429
+# bad: [397721e06e52d017cfdd403f63284ed0995d4caf] libperf: Add perf_cpu_map__dummy_new() function
+git bisect bad 397721e06e52d017cfdd403f63284ed0995d4caf
+# good: [5b7f445d684fc287a2101e29d42d1fee19ae14ff] libperf: Add perf/core.h header
+git bisect good 5b7f445d684fc287a2101e29d42d1fee19ae14ff
+# bad: [959b83c769389b24d64759f60e64c4c62620ff02] libperf: Add perf_cpu_map struct
+git bisect bad 959b83c769389b24d64759f60e64c4c62620ff02
+# good: [a1556f8479ed58b8d5a33aef54578bad0165c7e7] libperf: Add debug output support
+git bisect good a1556f8479ed58b8d5a33aef54578bad0165c7e7
+# first bad commit: [959b83c769389b24d64759f60e64c4c62620ff02] libperf: Add perf_cpu_map struct
