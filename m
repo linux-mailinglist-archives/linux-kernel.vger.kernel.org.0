@@ -2,101 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22C7191947
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 21:33:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C26D9194A
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 21:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727080AbfHRTbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 15:31:49 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41106 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfHRTbt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 15:31:49 -0400
-Received: by mail-qt1-f194.google.com with SMTP id i4so11816098qtj.8;
-        Sun, 18 Aug 2019 12:31:48 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mh5jr1rScriFxNzOWMaKI7sY0Xc2P0AIAoBRXShh9Rg=;
-        b=Gj6jWv4fzuKKYl1FkSbcQyrPfBe7yY1EnI0xOGXESL4nod3/DCcYFZpNwJFc0j/yh5
-         s7rHOmztnhMvg4xDroVqCC1oT3nQPOLC3m7SJRwxrmusnJH3WcI90w86CX1I01yl8vCr
-         HYXuXwCHn8BQY8pDGM/BSygpRPZNV7LWiQmfnuaGUj962uYOMyb/Ep7vbRvivyk6w0PO
-         qTJ76w3Hd/e5VaBg0NQwDBOQ5UaMlAFDP6/hZptOgkwghDi2BfXrIVcKXkax69GJxNOj
-         jz99DFjMC7NMXtA13RFk2bXoxpLjC6M6hAmZwHDIjuy5dBEdegyhwBmtIlE+ZdZTbLq2
-         O7ag==
-X-Gm-Message-State: APjAAAVX2cYNILOclIHD611uSNd/owHVPU7eUiBqYziQ014HKVdOt71d
-        hZCAUjB1I2/mwM7N57++B/dxUyZgl9StTbMbBXk=
-X-Google-Smtp-Source: APXvYqzz3AewI020l+nDXpUq+OQWStAhNnUt/bcyf6+mtzqDW/h8VdaaJlYz7EUAiQl8ug0PnJYJPjQg2gEgg+FtrXk=
-X-Received: by 2002:ad4:4b0c:: with SMTP id r12mr7996213qvw.45.1566156707449;
- Sun, 18 Aug 2019 12:31:47 -0700 (PDT)
+        id S1727119AbfHRTdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 15:33:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47926 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726005AbfHRTdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 15:33:02 -0400
+Received: from archlinux (cpc149474-cmbg20-2-0-cust94.5-4.cable.virginm.net [82.4.196.95])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C10BB21872;
+        Sun, 18 Aug 2019 19:32:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566156781;
+        bh=DH+GvLRI5SnBTvTzB9S0LlBf0DT1Vt1g7eXiDOWIoLg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ooAtLWnay300t1EoLggY/KcqB/RPLVjRKfY1TG4PGTx8k2x5zHCpjCvbANH3SVM4P
+         kU+WDdzGBo5MCv8nT71tb7LMFxD8Mq/U4ten1OLSNhIgsh4izlJ0NDXYwKX555SMZ0
+         NAfPL2qBUVLbDv4AvTx4hD3uMobKBpYH+qGx5/x8=
+Date:   Sun, 18 Aug 2019 20:32:56 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Phil Reid <preid@electromag.com.au>
+Cc:     Martin Kaiser <martin@kaiser.cx>, Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: iio: Is storing output values to non volatile registers
+ something we should do automatically or leave to userspace action. [was Re:
+ [PATCH] iio: potentiometer: max5432: update the non-volatile position]
+Message-ID: <20190818203256.202318d3@archlinux>
+In-Reply-To: <42d99cc8-e59b-6c0b-d1e3-5690b8d1fe53@electromag.com.au>
+References: <20190809160617.21035-1-martin@kaiser.cx>
+        <20190811101137.5bd495e9@archlinux>
+        <20190812103751.gumfzgazlytq5zqm@viti.kaiser.cx>
+        <42d99cc8-e59b-6c0b-d1e3-5690b8d1fe53@electromag.com.au>
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190814204259.120942-1-arnd@arndb.de> <20190814204259.120942-4-arnd@arndb.de>
- <CAHc6FU5n9rBZuH=chOdmGCwyrX-B-Euq8oFrnu3UHHKSm5A5gQ@mail.gmail.com>
-In-Reply-To: <CAHc6FU5n9rBZuH=chOdmGCwyrX-B-Euq8oFrnu3UHHKSm5A5gQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sun, 18 Aug 2019 21:31:31 +0200
-Message-ID: <CAK8P3a3kiyytayaSs2LB=deK0OMs42Ayn4VErhjL6eM3FTGtpw@mail.gmail.com>
-Subject: Re: [PATCH v5 03/18] gfs2: add compat_ioctl support
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Steve Whitehouse <swhiteho@redhat.com>,
-        Jan Kara <jack@suse.cz>, NeilBrown <neilb@suse.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        cluster-devel <cluster-devel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 7:32 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
->
-> On Wed, Aug 14, 2019 at 10:45 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > +       /* These are just misnamed, they actually get/put from/to user an int */
-> > +       switch(cmd) {
-> > +       case FS_IOC32_GETFLAGS:
-> > +               cmd = FS_IOC_GETFLAGS;
-> > +               break;
-> > +       case FS_IOC32_SETFLAGS:
-> > +               cmd = FS_IOC_SETFLAGS;
-> > +               break;
->
-> I'd like the code to be more explicit here:
->
->         case FITRIM:
->         case FS_IOC_GETFSLABEL:
->               break;
->         default:
->               return -ENOIOCTLCMD;
+On Mon, 12 Aug 2019 19:08:12 +0800
+Phil Reid <preid@electromag.com.au> wrote:
 
-I've looked at it again: if we do this, the function actually becomes
-longer than
-the native gfs2_ioctl(). Should we just make a full copy then?
+> G'day Martin / Jonathan,
+> 
+> On 12/08/2019 18:37, Martin Kaiser wrote:
+> > Hi Jonathan,
+> > 
+> > Thus wrote Jonathan Cameron (jic23@kernel.org):
+> >   
+> >> The patch is fine, but I'm wondering about whether we need some element
+> >> of policy control on this restore to current value.  
+> >   
+> >> A few things to take into account.  
+> >   
+> >> * Some devices don't have a non volatile store.  So userspace will be
+> >>    responsible for doing the restore on reboot.
+> >> * This may be one of several related devices, and it may make no sense
+> >>    to restore this one if the others aren't going to be in the same
+> >>    state as before the reboot.
+> >> * Some devices only have non volatile registers for this sort of value
+> >>    (or save to non volatile on removal of power). Hence any policy to
+> >>    not store the value can't apply to this class of device.  
+> > 
+> > I see your point. You'd like a consistent bahaviour across all
+> > potentiometer drivers. Or at least a way for user space to figure out
+> > whether a chip uses non-volatile storage or not.
+> > This property doesn't quite fit into the channel info that are defined
+> > in the arrays in drivers/iio/industrialio-core.c. Is there any other way
+> > to set such a property?
+> >   
+> >> My initial thought is that these probably don't matter that much and
+> >> we should apply this, but I would like to seek input from others!  
+> >   
+> >> I thought there were some other drivers doing similar store to no
+> >> volatile but I can't find one.  
+> > 
+> > drivers/iio/potentiometer/max5481.c and max5487.c do something similar.
+> > 
+> > They use a command to transfer the setting from volatile to non-volatile
+> > register in the spi remove function. I guess that the intention is to
+> > save the current setting when the system is rebooted. However, my
+> > understanding is that the remove function is called only when a module
+> > is unloaded or when user space does explicitly unbind the device from
+> > the bus via sysfs. That's why I tried using the shutdown function
+> > instead.
+> > 
+> > Still, this approach has some disadvantages. For many systems, there's a
+> > soft reboot (shutdown -r) where the driver's shutdown function is called
+> > and a "hard reboot" where the power from the CPU and the potentiometer
+> > chip is removed and reapplied. In this case, the current value would not
+> > be transfered to the non-volatile register.
+> > 
+> > At least for the max5432 family, there's no way to read the current
+> > setting. The only option for user space to have a well-defined setting
+> > is to set the wiper position explicitly at startup.
+> > 
+> > I guess the only sensible way to use a non-volatile register would be a
+> > write operation where user space gets a response about successful
+> > completion.
+> > 
+> > We could have two channels to write to the volatile or to non-volatile
+> > register. Or we stick to one channel and update both volatile and
+> > non-volatile registers when user space changes the value. This assumes
+> > that the setting does not change frequently, which is prabably not true
+> > for all applications...
 
-static long gfs2_compat_ioctl(struct file *filp, unsigned int cmd,
-unsigned long arg)
-{
-        switch(cmd) {
-        case FS_IOC32_GETFLAGS:
-                return gfs2_get_flags(filp, (u32 __user *)arg);
-        case FS_IOC32_SETFLAGS:
-                return gfs2_set_flags(filp, (u32 __user *)arg);
-        case FITRIM:
-                return gfs2_fitrim(filp, (void __user *)arg);
-        case FS_IOC_GETFSLABEL:
-                return gfs2_getlabel(filp, (char __user *)arg);
-        }
+I'm not keen on multiple channels as that is a fairly non obvious interface.
+Definitely want to avoid writing all the time.
 
-        return -ENOTTY;
-}
+> > 
+> > Whatever we come up with, we should at least make the max* chips behave
+> > the same way.
+> >   
+> The AD5272/AD5274 Digital Rheostat has a 50-times limit for programming the NV register.
+> So you want to be real sure that you want to set it.
 
-> Should we feed this through the gfs2 tree?
+Ouch, I new some were limited to a few thousand cycles, but 50 is rather nasty!
 
-A later patch that removes the FITRIM handling from fs/compat_ioctl.c
-depends on it, so I'd like to keep everything together.
+> 
+> I'd rather my system default to a known "safe" value for next boot than
+> set to whatever the last write was. So some kind of policy on setting this would
+> be nice. I personally think it's something that userspace should initiate via an explicit
+> command.
+Agreed. I think we should look at an explicit write.
 
-         Arnd
+Perhaps an extra attribute on the channels?  Hence a shared_by_all version
+could be used when there is only one write command.
+
+> 
+> Writing the NV for the AD5272 is something I planned to add at some stage.
+> But so far the default factory values have worked ok.
+> It'd be nice for cross device consistency for any interface for this.
+> 
+Agreed. This is an area that crept up on me, so we haven't enforced any
+consistency on it yet.  However, we definitely should!
+
+Thanks,
+
+Jonathan
+
