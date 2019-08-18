@@ -2,94 +2,147 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0FB1915BB
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 085D6915C2
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:10:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbfHRJJx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:09:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726208AbfHRJJx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:09:53 -0400
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F3792173B;
-        Sun, 18 Aug 2019 09:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566119392;
-        bh=zJeFs7U/OKJWGGAMgwGEyd/YRXXtatS0kuwxKva2EtI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=0UZqnSyoKKQI2GubQ7wUWVIzzCcywbZk0Vo5WOBVxQoz0OxWGEiiXXyd2WEKHQbN8
-         +nUz3Fi4lJqCIQKluFrSEk+kOlmFp23ugbEb7oiWGNF8pk3mmYPGEdXDrRd6Z4NSDn
-         /sYRTOi+IAPVeIgSOSpwJEki9pCCk8/4CidsmOIE=
-Date:   Sun, 18 Aug 2019 11:09:49 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Richard Weinberger <richard@nod.at>
-Cc:     Gao Xiang <hsiangkao@aol.com>, Jan Kara <jack@suse.cz>,
-        Chao Yu <yuchao0@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Darrick <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>, tytso <tytso@mit.edu>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190818090949.GA30276@kroah.com>
-References: <20190817082313.21040-1-hsiangkao@aol.com>
- <1746679415.68815.1566076790942.JavaMail.zimbra@nod.at>
- <20190817220706.GA11443@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1163995781.68824.1566084358245.JavaMail.zimbra@nod.at>
- <20190817233843.GA16991@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1405781266.69008.1566116210649.JavaMail.zimbra@nod.at>
- <20190818084521.GA17909@hsiangkao-HP-ZHAN-66-Pro-G1>
- <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
+        id S1726677AbfHRJK3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:10:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34748 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfHRJK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 05:10:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=MphDKR16rmuINKbbfuGgsPxlH9912jWufK/S5NE9ukw=; b=nRfc65NdyjJ1PhbhTIl5UZYUBS
+        bKySSGUBNKUyeCZ+kSieoTIMoHgmtFzIivwwhRbjS7AEvuqOvqYeARuAJkQfaq0tgNXjf9cMFkhvU
+        hiVaW5xM2yUQ5g1uNDc5nxwBXbZ42jm0wRBJMHZ18GfbV9WP+TbOkL51BFswG9d4+YIEq63b+zjLr
+        WRyhNPgFSD3K9Nq32PfU1ETICEsWZ9soG7OXenoXTo7RPH1hKIXsvDoeg8zFSQCwlpw2vWKJEraCS
+        k2vYnnKsSk4wrCBBsJctRW2SHUJt8Q2R++jZ1agOOFAIdJMSc/I+IITn90/cEsLvudxE0EgtQaGEn
+        FQkpDrZw==;
+Received: from 213-225-6-198.nat.highway.a1.net ([213.225.6.198] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1hzHCg-0007Yk-L8; Sun, 18 Aug 2019 09:10:23 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Bharata B Rao <bharata@linux.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH 1/4] resource: add a not device managed request_free_mem_region variant
+Date:   Sun, 18 Aug 2019 11:05:54 +0200
+Message-Id: <20190818090557.17853-2-hch@lst.de>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190818090557.17853-1-hch@lst.de>
+References: <20190818090557.17853-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 11:03:53AM +0200, Richard Weinberger wrote:
-> ----- Ursprüngliche Mail -----
-> > I agree with you, but what can we do now is trying our best to fuzz
-> > all the fields.
-> > 
-> > So, what is your opinion about EROFS?
-> 
-> All I'm saying is that you should not blindly trust the disk.
-> 
-> Another thing that raises my attention is in superblock_read():
->         memcpy(sbi->volume_name, layout->volume_name,
->                sizeof(layout->volume_name));
-> 
-> Where do you check whether ->volume_name has a NUL terminator?
-> Currently this field has no user, maybe will add a check upon usage.
-> But this kind of things makes me wonder.
+Factor out the guts of devm_request_free_mem_region so that we can
+implement both a device managed and a manually release version as
+tiny wrappers around it.
 
-You have looked at reiserfs lately, right?  :)
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+---
+ include/linux/ioport.h |  2 ++
+ kernel/resource.c      | 45 +++++++++++++++++++++++++++++-------------
+ 2 files changed, 33 insertions(+), 14 deletions(-)
 
-Not to say that erofs shouldn't be worked on to fix these kinds of
-issues, just that it's not an unheard of thing to trust the disk image.
-Especially for the normal usage model of erofs, where the whole disk
-image is verfied before it is allowed to be mounted as part of the boot
-process.
+diff --git a/include/linux/ioport.h b/include/linux/ioport.h
+index 5b6a7121c9f0..7bddddfc76d6 100644
+--- a/include/linux/ioport.h
++++ b/include/linux/ioport.h
+@@ -297,6 +297,8 @@ static inline bool resource_overlaps(struct resource *r1, struct resource *r2)
+ 
+ struct resource *devm_request_free_mem_region(struct device *dev,
+ 		struct resource *base, unsigned long size);
++struct resource *request_free_mem_region(struct resource *base,
++		unsigned long size, const char *name);
+ 
+ #endif /* __ASSEMBLY__ */
+ #endif	/* _LINUX_IOPORT_H */
+diff --git a/kernel/resource.c b/kernel/resource.c
+index 7ea4306503c5..74877e9d90ca 100644
+--- a/kernel/resource.c
++++ b/kernel/resource.c
+@@ -1644,19 +1644,8 @@ void resource_list_free(struct list_head *head)
+ EXPORT_SYMBOL(resource_list_free);
+ 
+ #ifdef CONFIG_DEVICE_PRIVATE
+-/**
+- * devm_request_free_mem_region - find free region for device private memory
+- *
+- * @dev: device struct to bind the resource to
+- * @size: size in bytes of the device memory to add
+- * @base: resource tree to look in
+- *
+- * This function tries to find an empty range of physical address big enough to
+- * contain the new resource, so that it can later be hotplugged as ZONE_DEVICE
+- * memory, which in turn allocates struct pages.
+- */
+-struct resource *devm_request_free_mem_region(struct device *dev,
+-		struct resource *base, unsigned long size)
++static struct resource *__request_free_mem_region(struct device *dev,
++		struct resource *base, unsigned long size, const char *name)
+ {
+ 	resource_size_t end, addr;
+ 	struct resource *res;
+@@ -1670,7 +1659,10 @@ struct resource *devm_request_free_mem_region(struct device *dev,
+ 				REGION_DISJOINT)
+ 			continue;
+ 
+-		res = devm_request_mem_region(dev, addr, size, dev_name(dev));
++		if (dev)
++			res = devm_request_mem_region(dev, addr, size, name);
++		else
++			res = request_mem_region(addr, size, name);
+ 		if (!res)
+ 			return ERR_PTR(-ENOMEM);
+ 		res->desc = IORES_DESC_DEVICE_PRIVATE_MEMORY;
+@@ -1679,7 +1671,32 @@ struct resource *devm_request_free_mem_region(struct device *dev,
+ 
+ 	return ERR_PTR(-ERANGE);
+ }
++
++/**
++ * devm_request_free_mem_region - find free region for device private memory
++ *
++ * @dev: device struct to bind the resource to
++ * @size: size in bytes of the device memory to add
++ * @base: resource tree to look in
++ *
++ * This function tries to find an empty range of physical address big enough to
++ * contain the new resource, so that it can later be hotplugged as ZONE_DEVICE
++ * memory, which in turn allocates struct pages.
++ */
++struct resource *devm_request_free_mem_region(struct device *dev,
++		struct resource *base, unsigned long size)
++{
++	return __request_free_mem_region(dev, base, size, dev_name(dev));
++}
+ EXPORT_SYMBOL_GPL(devm_request_free_mem_region);
++
++struct resource *request_free_mem_region(struct resource *base,
++		unsigned long size, const char *name)
++{
++	return __request_free_mem_region(NULL, base, size, name);
++}
++EXPORT_SYMBOL_GPL(request_free_mem_region);
++
+ #endif /* CONFIG_DEVICE_PRIVATE */
+ 
+ static int __init strict_iomem(char *str)
+-- 
+2.20.1
 
-thanks,
-
-greg k-h
