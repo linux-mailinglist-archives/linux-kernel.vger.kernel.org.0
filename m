@@ -2,94 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13902915ED
-	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:34:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CB950915F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 18 Aug 2019 11:39:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726767AbfHRJev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 05:34:51 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:42008 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726728AbfHRJer (ORCPT
+        id S1726598AbfHRJje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 05:39:34 -0400
+Received: from mail-wr1-f43.google.com ([209.85.221.43]:39064 "EHLO
+        mail-wr1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfHRJje (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 05:34:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id b16so5623109wrq.9
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:34:46 -0700 (PDT)
+        Sun, 18 Aug 2019 05:39:34 -0400
+Received: by mail-wr1-f43.google.com with SMTP id t16so5633540wra.6
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 02:39:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+t3LQMBsSqNtOgurGKhZ9wHHLkH0/0oqZfvSxZFI7Kc=;
-        b=uttML3RCJoDZnRkarpGajlROiOjlCgdBRarQ0F5FMFCaZ0D2ZSDeoe6m89e45/9Cd3
-         M3wPcFpgIvwV3Y/fuC9wfjXctxXie2swARrs+EXYcJhI8rcpY4H0QlqaTdzkwf4KnHP+
-         eQ0AFmJLrnT3WXl4twdhFDNubbJfvJVg/vY0WASgHxqLAmtPtB4xbBqQHJmHYsWXg8nU
-         3jghdnYoY1SziexIR5V4wckMT+1Fzc1PLKt4KiNQd3h5Yf14I+Ta6fUWk3DumKdZ8nIr
-         WHM32qDx5MQzVr6Ewizcv+SAO9qRdlt3EDZNUo2gWYZyC1odC3LXL1D0TVmPHA6Trv77
-         tuSg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EVpNEoE/BxDZP3AnSrh5KM36/mTZcJaEyBMKciMdmh8=;
+        b=X6wg8g0uyV/acsfF+jItxAWJviTshcEItycKNx190tPdM7j+fZihWpO1P2/2SEk1cE
+         Fyd5B4VDdVOms6IzW1zZ95utc9t91MyU35PrBD3R2WpHdatS3XZSswUS5WiEbIuxD519
+         oq1t5lAcWJREaH7GZrc8AVg71xCgcMAI1n4ys2MhhUE/v7lqDEhw8jWLZrgv/VzWdqCD
+         Kbe8D70/BW+xzC+mxNjB4ayfm6hSJ0j9E2AVjRtL/z3PXkYx1etbWwVjjL8QWM1E3T6Q
+         Ob6aJqGaNKvc/K7d5TPioI1bf30AcX/5Bq5n0ZwUC6JQFFvcQRI2SrfbnXAV5nqONXsC
+         QbYg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=+t3LQMBsSqNtOgurGKhZ9wHHLkH0/0oqZfvSxZFI7Kc=;
-        b=aQGb9XSLj6P/bH9UvoSj+90lp3VX3eouo2sDmRU10eyVcOFIXbPav2BSPQepjHAVCK
-         jv7M01EMms2S/dLlkwjMIOy2Q+d6AtuhndQ9Q612t27inKkhFt4iYowT/wJRbafAh/84
-         u8e8kPrLrw80lxM4q0cU2q3aXniqap/WuOKH8L5QKo7dfY2JETEyiruaR3mqhvp14T+t
-         AwvhXy2+d6ERsxjL9bNWLugFy9aCf23H6S8khYBNQ5+IULN/MGKQkdIz0sHHyciwCqAk
-         iZG4WztfgD7Z4d8FUv+VoBhi/ALIWSTcXiNR7FKLhCuqFiu8zdbH/oqSktkGUlmeByAi
-         +cbw==
-X-Gm-Message-State: APjAAAV3SnYMAKq7raoXRuw7PdKnhmpr55om92VNDJ7Yj0QQNcBljlnR
-        DquPBEKfuiKxBBTt3ylBYWnzgg==
-X-Google-Smtp-Source: APXvYqyDJPoBROgH3mSWPPQRVi3n6qSDQYx/A8Z/krsdoVGn3+rKHtb0XvRz2rf/n5uAvUz1nVx4NQ==
-X-Received: by 2002:a05:6000:12c3:: with SMTP id l3mr20161009wrx.100.1566120885734;
-        Sun, 18 Aug 2019 02:34:45 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id g26sm8352268wmh.32.2019.08.18.02.34.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 18 Aug 2019 02:34:45 -0700 (PDT)
-Subject: Re: [PATCH nvmem v2 0/2] nvmem: imx: add i.MX8QM platform support
-To:     fugang.duan@nxp.com
-Cc:     robh@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        shawnguo@kernel.org, kernel@pengutronix.de,
-        gregkh@linuxfoundation.org, festevam@gmail.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20190807040320.1760-1-fugang.duan@nxp.com>
+        bh=EVpNEoE/BxDZP3AnSrh5KM36/mTZcJaEyBMKciMdmh8=;
+        b=YfZdIdmvqEDikHOtBf6f/bhQNkX9Sfp1HsVMKXwqUwt9zPhMkb6CYN7etcaduCfiWt
+         yVZNAL3lW/sVkThUrtDAeVnqTPdyQeCf+7T2FNmXvuRjmqD9YVDdKArsYTMEYca8xyrY
+         BJRO0B7gzoISAP1eijvadEH+BsY0VssGOHIyxqXE8gGk1dQ3xsv09PEkAPLs38mscQgz
+         AiBOasd7+/7weZSC3i7exibgbLZ1Yi0F4rM7W9j2FW7mdzCy0WpfvxdZZHmv2Hz82k2J
+         oAlEejsXkC7TQm0z/UNCIBQsLDQR2lf/CYU7lAX4v/jYFTUkGI6WugmQIcetNqHQDXrF
+         qZkQ==
+X-Gm-Message-State: APjAAAW5X5v9kW1pkHCfjs80dIGKNeZJMayeQS5hDb5OglGJFQ+bg5Wu
+        r2ihB1vOLHE0Rv3GxdipyVglfckyAII=
+X-Google-Smtp-Source: APXvYqxWo+syJssxQmYPM/XOZJsyOsNTWSqEQ0nnsZ8uMnzOC0IUA2zmC/py5WS12vUy2M1xHhzPHg==
+X-Received: by 2002:a5d:4446:: with SMTP id x6mr20227106wrr.11.1566121172080;
+        Sun, 18 Aug 2019 02:39:32 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id q3sm11520190wma.48.2019.08.18.02.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 18 Aug 2019 02:39:31 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <5c7e5ff3-f453-c765-8795-c392434c7663@linaro.org>
-Date:   Sun, 18 Aug 2019 10:34:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/2] slimbus: patches(set 1) for 5.4
+Date:   Sun, 18 Aug 2019 10:39:00 +0100
+Message-Id: <20190818093902.29993-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190807040320.1760-1-fugang.duan@nxp.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg,
 
+Here are some slimbus patches for 5.4 which includes:
+Two fixes, one to fix the dt node refcount and other
+is to address a coccicheck.
 
-On 07/08/2019 05:03, fugang.duan@nxp.com wrote:
-> From: Fugang Duan <fugang.duan@nxp.com>
-> 
-> The patch set is to add i.MX8QM platform support for i.MX8 SCU
-> OCOTP driver due to i.MX8QM efuse table has some difference with
-> i.MX8QXP platform.
-> 
-> V2:
-> - Add dt-bindings for the new compatible string support.
-> 
-> Fugang Duan (2):
->    nvmem: imx: add i.MX8QM platform support
->    dt-bindings: fsl: scu: add new compatible string for ocotp
-> 
+Can you please queue them up for 5.4.
 
-Applied thanks.
+Thanks,
+srini
 
---srini
->   Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt | 4 +++-
->   drivers/nvmem/imx-ocotp-scu.c                               | 7 +++++++
->   2 files changed, 10 insertions(+), 1 deletion(-)
-> 
+Nishka Dasgupta (1):
+  slimbus: qcom-ngd-ctrl: Add of_node_put() before return
+
+Srinivas Kandagatla (1):
+  slimbus: fix slim_tid_txn()
+
+ drivers/slimbus/qcom-ngd-ctrl.c | 5 ++++-
+ drivers/slimbus/slimbus.h       | 2 +-
+ 2 files changed, 5 insertions(+), 2 deletions(-)
+
+-- 
+2.21.0
+
