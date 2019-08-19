@@ -2,75 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C60A291BB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DDE791BBA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:12:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726151AbfHSEGi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 00:06:38 -0400
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:41630 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfHSEGi (ORCPT
+        id S1726401AbfHSEMF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 00:12:05 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:55541 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfHSEME (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 00:06:38 -0400
-Received: by mail-yb1-f196.google.com with SMTP id n7so148923ybd.8
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:06:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=PPbQdYyCeikWXeCzzJyCalBEj0GFXKEGI6wDSmoOtt0=;
-        b=TuMbiSJ+LiR196k85BhnGwrkna3ZbNm3rLphguZJlMWsqOLNO9QHlrXiwwjZPmHW6P
-         vrfSxzL04JlSPiC/yOL4/TgNJ7kPMygpJf7oYI15WRFYWVUH28fftR0d0ci1jtTJRoZ3
-         bVtx+/Z5dPvpsNVDsFnqJPr4ZUhoGnEcfFttPaMpxANHqaK60XGPbs3V0gPjltJD0Ljm
-         gt7K27sTdgk2r6UFG0IaDT24EMZnINBDh7a9qazmV9ZL2nzW1AFWlYHtdsbcl8A98bjR
-         1qPr2aKsoyZAHeXRmvoBlWuFSCdoJ3OuXt6Lm1GUZQ5xDwFswnUZwGEFHVeG260lDRXe
-         7Dpg==
-X-Gm-Message-State: APjAAAXYKwWidVGinznhVDkGJyNyKnbNTIBaecVQLispuCoZssz4wqvx
-        uv4mPkywCZqGhGA4+Zx7xeo=
-X-Google-Smtp-Source: APXvYqwcvjZFzcZF38VQD30/+EabzvCtJOhM3mSDUJSUUmo/bvyIyKyY9r562Bj79wYPEekrUx0VhQ==
-X-Received: by 2002:a25:c603:: with SMTP id k3mr15008655ybf.409.1566187596936;
-        Sun, 18 Aug 2019 21:06:36 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id l82sm2939148ywb.64.2019.08.18.21.06.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 18 Aug 2019 21:06:36 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] drm/gma500: fix memory/resource leaks
-Date:   Sun, 18 Aug 2019 23:06:17 -0500
-Message-Id: <1566187591-8263-1-git-send-email-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.7.4
+        Mon, 19 Aug 2019 00:12:04 -0400
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id x7J4BxvD001609
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:11:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com x7J4BxvD001609
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566187920;
+        bh=QrreVsZ01rsR4mFyhdi/pB0zBKcJfRD9LLGKPXbjbkw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=vscWVlL9L/ARVdIAmKnqKO/8/NhbMC2S0ZBFbGyNygvLj7iePTGcYBPY+Dfb0wxm6
+         CI9ddD9OoBlrpABUhgcZad3PDf+oeolAcLqkJpX4uuwBEUiKfrV1OfMM4w6NnKx3S2
+         HtAR26+ak12H5vHGad0MSsYLCVB9aMd5N6IgUTRvvLBe+2drdiu1eEWRoU+CXwlgEP
+         cxxrfvovdVrp54gUzRjPOLILcZuRoUm1ofIMb0azJldgYDT0Dz2cECTjTqmjCEKP8X
+         oUvcArvsLa0A0T0RBmI0cIJji+rL88t+Ia//HN+wPurxZCIwCMKUgi1fr7TcDTCSNf
+         4Qa5Iw5uGiN0A==
+X-Nifty-SrcIP: [209.85.221.176]
+Received: by mail-vk1-f176.google.com with SMTP id w20so118509vkd.8
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:11:59 -0700 (PDT)
+X-Gm-Message-State: APjAAAVn7BJu/UO6dI2aChOjruePcaGfYmN+A+LHImif70l44gkt+nn3
+        IYNvu4G27oW2mNv30nKbkXIRS9pb4lldTxmhRmU=
+X-Google-Smtp-Source: APXvYqyPhRFZBOxMlEiYwrFBqfucp8uDz/KObQOE8Oz67guaLP2XFQN+J5QM+ikR7mMGkw29dmD03ZtfPn9A90CXfAY=
+X-Received: by 2002:a1f:7c0e:: with SMTP id x14mr7641286vkc.0.1566187918601;
+ Sun, 18 Aug 2019 21:11:58 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190618030926.30616-1-yamada.masahiro@socionext.com>
+ <1318390798.95477.1560838785550.JavaMail.zimbra@nod.at> <CAK7LNARA62uqi8rkDeJ=zjA6vnruTAH2VGOBd4=sQMhF+FHMLA@mail.gmail.com>
+ <957967732.18164.1561621143523.JavaMail.zimbra@nod.at> <CAK7LNAQLheA3E0UrjirNHzpS2x+xmjc2YCupCBMNoHOwviz6GQ@mail.gmail.com>
+ <1574230514.38485.1563091693340.JavaMail.zimbra@nod.at>
+In-Reply-To: <1574230514.38485.1563091693340.JavaMail.zimbra@nod.at>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 19 Aug 2019 13:11:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATAmk1AxV0kmn6yTsJzSpqTivWHOZy9GjH7J-NL-oBmhQ@mail.gmail.com>
+Message-ID: <CAK7LNATAmk1AxV0kmn6yTsJzSpqTivWHOZy9GjH7J-NL-oBmhQ@mail.gmail.com>
+Subject: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
+To:     Richard Weinberger <richard@nod.at>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In psb_driver_load(), if gma_backlight_init() fails, no cleanup is
-executed, leading to memory/resource leaks. To fix this issue, go to the
-'out_err' label to perform the cleanup work.
+On Sun, Jul 14, 2019 at 5:08 PM Richard Weinberger <richard@nod.at> wrote:
+>
+> ----- Urspr=C3=BCngliche Mail -----
+> > Looks like this trivial patch missed the pull request.
+> >
+> >
+> > My motivation is to make sure UAPI headers
+> > are really compilable in user-space,
+> > and now checked by the following commit:
+> >
+> > commit d6fc9fcbaa655cff2d2be05e16867d1918f78b85
+> > Author: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > Date:   Mon Jul 1 09:58:40 2019 +0900
+> >
+> >    kbuild: compile-test exported headers to ensure they are self-contai=
+ned
+> >
+> >
+> >
+> > Is there a chance for it being merged,
+>
+> Sure. I think it is okay to send it for -rc2.
+>
+> Thanks,
+> //richard
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- drivers/gpu/drm/gma500/psb_drv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/gma500/psb_drv.c b/drivers/gpu/drm/gma500/psb_drv.c
-index 7005f8f..8d264ad 100644
---- a/drivers/gpu/drm/gma500/psb_drv.c
-+++ b/drivers/gpu/drm/gma500/psb_drv.c
-@@ -383,7 +383,7 @@ static int psb_driver_load(struct drm_device *dev, unsigned long flags)
- 	}
- 
- 	if (ret)
--		return ret;
-+		goto out_err;
- 	psb_intel_opregion_enable_asle(dev);
- #if 0
- 	/* Enable runtime pm at last */
--- 
-2.7.4
+This patch missed the fixes pull requests.
+Which version is this targeting for?   v5.4-rc1 ?
 
+
+
+--=20
+Best Regards
+Masahiro Yamada
