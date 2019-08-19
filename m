@@ -2,116 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0A0E91CB9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 07:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FF5391CAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 07:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726649AbfHSFsx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 01:48:53 -0400
-Received: from mga17.intel.com ([192.55.52.151]:30107 "EHLO mga17.intel.com"
+        id S1726400AbfHSFq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 01:46:26 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54355 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfHSFsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 01:48:53 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
+        id S1725536AbfHSFq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 01:46:26 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Aug 2019 22:48:52 -0700
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Aug 2019 22:46:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="206898449"
-Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
-  by fmsmga002.fm.intel.com with ESMTP; 18 Aug 2019 22:48:51 -0700
-Date:   Mon, 19 Aug 2019 13:31:33 +0800
-From:   Wu Hao <hao.wu@intel.com>
-To:     gregkh@linuxfoundation.org, mdf@kernel.org,
-        linux-fpga@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, atull@kernel.org
-Subject: Re: [PATCH v5 0/9] FPGA DFL updates
-Message-ID: <20190819053133.GA31244@hao-dev>
-References: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
+   d="scan'208";a="378084095"
+Received: from genxtest-ykzhao.sh.intel.com (HELO [10.239.143.71]) ([10.239.143.71])
+  by fmsmga006.fm.intel.com with ESMTP; 18 Aug 2019 22:46:24 -0700
+Subject: Re: [RFC PATCH 00/15] acrn: add the ACRN driver module
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Borislav Petkov <bp@alien8.de>, devel@driverdev.osuosl.org,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
+ <20190816063925.GB18980@zn.tnic>
+ <78897bb2-e6eb-cac2-7166-eccb7cd5c959@intel.com>
+ <20190819052505.GA915@kroah.com>
+From:   "Zhao, Yakui" <yakui.zhao@intel.com>
+Message-ID: <291ffa06-731d-d4d1-44f9-32d119303ae4@intel.com>
+Date:   Mon, 19 Aug 2019 13:39:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20190819052505.GA915@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 10:49:55AM +0800, Wu Hao wrote:
-> Hi Greg,
-> 
-> This is v5 patchset which adds more features to FPGA DFL. Marjor changes
-> against v4 are sysfs related code rework to address comments on v4.
-> 
-> Please help to take a look. Thanks!
 
-Hi Greg,
 
-Did you get a chance to take a look at this new version patchset? :)
+On 2019年08月19日 13:25, Greg KH wrote:
+> On Mon, Aug 19, 2019 at 09:44:25AM +0800, Zhao, Yakui wrote:
+>>
+>>
+>> On 2019年08月16日 14:39, Borislav Petkov wrote:
+>>> On Fri, Aug 16, 2019 at 10:25:41AM +0800, Zhao Yakui wrote:
+>>>> The first three patches are the changes under x86/acrn, which adds the
+>>>> required APIs for the driver and reports the X2APIC caps.
+>>>> The remaining patches add the ACRN driver module, which accepts the ioctl
+>>>> from user-space and then communicate with the low-level ACRN hypervisor
+>>>> by using hypercall.
+>>>
+>>> I have a problem with that: you're adding interfaces to arch/x86/ and
+>>> its users go into staging. Why? Why not directly put the driver where
+>>> it belongs, clean it up properly and submit it like everything else is
+>>> submitted?
+>>
+>> Thanks for your reply and the concern.
+>>
+>> After taking a look at several driver examples(gma500, android), it seems
+>> that they are firstly added into drivers/staging/XXX and then moved to
+>> drivers/XXX after the driver becomes mature.
+>> So we refer to this method to upstream ACRN driver part.
+> 
+> Those two examples are probably the worst examples to ever look at :)
+> 
+> The code quality of those submissions was horrible, gma500 took a very
+> long time to clean up and there are parts of the android code that are
+> still in staging to this day.
+> 
+>> If the new driver can also be added by skipping the staging approach,
+>> we will refine it and then submit it in normal process.
+> 
+> That is the normal process, staging should not be needed at all for any
+> code.  It is a fall-back for when the company involved has no idea of
+> how to upstream their code, which should NOT be the case here.
 
-Thanks
-Hao
+Thanks for your explanation.
+
+OK. We will submit it in normal process.
 
 > 
-> Main changes from v4:
->   - convert code to use dev_groups for sysfs entries (#2, #3, #4, #6, #8).
->   - clean up for empty init function after remove sysfs add/remove (#1).
->   - introduce is_visible for sysfs groups (#3, #4, #6, #8).
->   - remove revision sysfs entries (#4, #6, #8).
->   - improve naming on shared functions (#5).
->   - reorganize sysfs entries for port and fme error reporting (#6, #8).
+> thanks,
 > 
-> Main changes from v3:
->   - drop avx512 partail reconfiguration patch for now.
->   - split dfl_fpga_cdev_config_port to 2 functions *_release/assign_port
->     (#1).
->   - split __dfl_fpga_cdev_config_port_vf into 2 functions with locking
->     added (#2).
->   - improve description in sysfs doc to avoid misunderstanding (#3).
->   - switch to boolean in sysfs entry store function (#3).
->   - remove dev_dbg in init/uinit callback function (#7, #9, #11).
->   - remove uinit callback which does does nothing (#8, #9)
+> greg k-h
 > 
-> Main changes from v2:
->   - update kernel version/date in sysfs doc (patch #4, #5, #8, #10, #11).
->   - add back Documentation patch (patch #12).
-> 
-> Main changes from v1:
->   - remove DRV/MODULE_VERSION modifications. (patch #1, #3, #4, #6)
->   - remove argsz from new ioctls. (patch #2)
->   - replace sysfs_create/remove_* with device_add/remove_* for sysfs entries.
->     (patch #5, #8, #11)
-> 
-> Wu Hao (9):
->   fpga: dfl: make init callback optional
->   fpga: dfl: fme: convert platform_driver to use dev_groups
->   fpga: dfl: afu: convert platform_driver to use dev_groups
->   fpga: dfl: afu: add userclock sysfs interfaces.
->   fpga: dfl: afu: expose __afu_port_enable/disable function.
->   fpga: dfl: afu: add error reporting support.
->   fpga: dfl: afu: add STP (SignalTap) support
->   fpga: dfl: fme: add global error reporting support
->   Documentation: fpga: dfl: add descriptions for virtualization and new
->     interfaces.
-> 
->  Documentation/ABI/testing/sysfs-platform-dfl-fme  |  62 ++++
->  Documentation/ABI/testing/sysfs-platform-dfl-port |  53 ++++
->  Documentation/fpga/dfl.rst                        | 105 +++++++
->  drivers/fpga/Makefile                             |   3 +-
->  drivers/fpga/dfl-afu-error.c                      | 230 ++++++++++++++
->  drivers/fpga/dfl-afu-main.c                       | 230 +++++++++++---
->  drivers/fpga/dfl-afu.h                            |   9 +
->  drivers/fpga/dfl-fme-error.c                      | 359 ++++++++++++++++++++++
->  drivers/fpga/dfl-fme-main.c                       |  42 +--
->  drivers/fpga/dfl-fme.h                            |   3 +
->  drivers/fpga/dfl.c                                |  10 +-
->  drivers/fpga/dfl.h                                |   9 +
->  12 files changed, 1041 insertions(+), 74 deletions(-)
->  create mode 100644 drivers/fpga/dfl-afu-error.c
->  create mode 100644 drivers/fpga/dfl-fme-error.c
-> 
-> -- 
-> 1.8.3.1
