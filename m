@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F633951C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40E2951C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:42:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728766AbfHSXlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:41:20 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39315 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728642AbfHSXlS (ORCPT
+        id S1728844AbfHSXlf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 19:41:35 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36337 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728784AbfHSXlX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 19:41:18 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f17so2125327pfn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:41:18 -0700 (PDT)
+        Mon, 19 Aug 2019 19:41:23 -0400
+Received: by mail-pl1-f195.google.com with SMTP id f19so1318379plr.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=YbeJELJt4yIGEhE/X9GRRM8X1m9EGNSNDo3EW/BYEes=;
-        b=fMeKccAI6lBQNvCfoQV4v6qBvMdAH0T9g8CjKXNIx1cPaQ4rQ+1Kq2Ut+2C4eSadkD
-         VUEdvlPJgcmSvF73Z2OB3ZJzh7zLPiZYxPE3eJvCrn7y8Gz8iRR9f8hwnM7a04jlBxbP
-         +qX9jkeutY2O8jjNHf8HVe/7o5331zFJnqeL0=
+        bh=xnYZ9Q3Ni03lDY+Gxs06Jnj2bjWxdv8h8dY+YQg9wa8=;
+        b=OLeyKdbpNpyYPM9XgjdRAnfM1bSv+5+iCu31H3+NiWlknEdtqHRCq0QvE55tojq6k6
+         kcaGLIU/ljCeqdinyfIg01iman04q3p3hc/6hKNXg6vlDOaoTpzusAkYrVetkbdsHLAK
+         dxsabGt3kImG4h/7oXRad4gS80TGmNKo+ew4U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=YbeJELJt4yIGEhE/X9GRRM8X1m9EGNSNDo3EW/BYEes=;
-        b=eIEquQWNE83g9PxtYdYovG0AUWLbEOfJ7NBd6SPxAAMU/2YJysWPko3090pPqrk14T
-         6uAnYC/I5gLY06mJbazqdnF0a+JpTeI5s4D8FZPKJBEw7/RQKyQttee1nLqXD7j4TujH
-         5OJ7O6hjVqiBeya5U+Nqryxfc1ObDQ51ORpNwhxZ/wsiNyx7LI4UwrhWM1pXLtDLzR26
-         dqLLh96WLmFI1ttKSrzehcRIbsE7VROiC8PbVvQZw+RSUBmRfyEtEvnT+cUTAAqgDgLt
-         AvdvfbGuzLCDbvuKJvOAHNjuzYeQQ+cpbjk/PpjwDUmFkZmjsllW/s3ZN6PN4KvFv8CG
-         vk3Q==
-X-Gm-Message-State: APjAAAU7ZFIlzB9ozo+gqXyJQcqyQEfrmSjdzwSc1wZlw9xLtVTqeHJ8
-        7/6MYCCyTtQ3VFxNUATkJ12vdg==
-X-Google-Smtp-Source: APXvYqzsFtbJdhYh/+Iruj5b5YlJcm3VFKU+IRNlxr49ybr/vufBEOgAKggdIWnSj76CjWchhxCTgQ==
-X-Received: by 2002:a65:518a:: with SMTP id h10mr20084317pgq.117.1566258078186;
-        Mon, 19 Aug 2019 16:41:18 -0700 (PDT)
+        bh=xnYZ9Q3Ni03lDY+Gxs06Jnj2bjWxdv8h8dY+YQg9wa8=;
+        b=NyfKoEZxDRGkWvuUuXB/1+LyUI1XOf3E8lQOSWSA960nDNM5xzD6R39lzKkDa8fIy6
+         FAuYr8lg8IACLDhR/gEeNlP4pQjGGxg/YBGv28FgTVuU/uDZ6/P7SJjAonipZYIa2cyC
+         UIEnGqC+M76msFRV8d36C7Ef4fpMMAbpwuV3cs0q55NjLzVzgpMl7MpKd5n27m4JpoY8
+         mmWCAdpyPZhDUF/nXfqiALXzXavPpdIIZSdx0TBfGoYtZFo1satPUxivOv9E2v/i0b8t
+         IbQKRAIG98hq/xk7oUPOcyfuRkJK30H1t9N1uf0BIiJO1SsGaqTYqznMPyS/KqZ55Sz8
+         M8Jg==
+X-Gm-Message-State: APjAAAUR7QL8fd9CjjY0q03nVuJ+KhNmKCvR2PNaxHycEP+3WI7iH6BD
+        +YS+Iz4iJKwrzlR1m1/rKC5ukw==
+X-Google-Smtp-Source: APXvYqzibdVDCRWGdmB6uAvlJwHae1zxguoC1fNttlOxomsizUsBxLKEnrgWQDuAiL0Gbk7j5a9VWw==
+X-Received: by 2002:a17:902:e68f:: with SMTP id cn15mr5738213plb.212.1566258082196;
+        Mon, 19 Aug 2019 16:41:22 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id s16sm18169083pfs.6.2019.08.19.16.41.16
+        by smtp.gmail.com with ESMTPSA id k6sm16830888pfi.12.2019.08.19.16.41.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 16:41:16 -0700 (PDT)
+        Mon, 19 Aug 2019 16:41:20 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     Kees Cook <keescook@chromium.org>,
@@ -55,9 +55,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Borislav Petkov <bp@suse.de>,
         YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/7] bug: Lift "cut here" out of __warn()
-Date:   Mon, 19 Aug 2019 16:41:08 -0700
-Message-Id: <20190819234111.9019-5-keescook@chromium.org>
+Subject: [PATCH 5/7] bug: Clean up helper macros to remove __WARN_TAINT()
+Date:   Mon, 19 Aug 2019 16:41:09 -0700
+Message-Id: <20190819234111.9019-6-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819234111.9019-1-keescook@chromium.org>
 References: <20190819234111.9019-1-keescook@chromium.org>
@@ -66,42 +66,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for cleaning up "cut here", move the "cut here" logic
-up out of __warn() and into callers that pass non-NULL args. For anyone
-looking closely, there are two callers that pass NULL args: one already
-explicitly prints "cut here". The remaining case is covered by how a
-WARN is built, which will be cleaned up in the next patch.
+In preparation for cleaning up "cut here" even more, this removes the
+__WARN_*TAINT() helpers, as they limit the ability to add new BUGFLAG_*
+flags to call sites. They are removed by expanding them into full
+__WARN_FLAGS() calls.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- kernel/panic.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ include/asm-generic/bug.h | 21 +++++++++++----------
+ 1 file changed, 11 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/panic.c b/kernel/panic.c
-index 51efdeb2558e..dc2243429903 100644
---- a/kernel/panic.c
-+++ b/kernel/panic.c
-@@ -551,9 +551,6 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
- {
- 	disable_trace_on_warning();
+diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+index f76efbcbe3b5..6ea8d258cb96 100644
+--- a/include/asm-generic/bug.h
++++ b/include/asm-generic/bug.h
+@@ -62,13 +62,11 @@ struct bug_entry {
+ #endif
  
--	if (args)
--		pr_warn(CUT_HERE);
+ #ifdef __WARN_FLAGS
+-#define __WARN_TAINT(taint)		__WARN_FLAGS(BUGFLAG_TAINT(taint))
+-#define __WARN_ONCE_TAINT(taint)	__WARN_FLAGS(BUGFLAG_ONCE|BUGFLAG_TAINT(taint))
 -
- 	if (file)
- 		pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n",
- 			raw_smp_processor_id(), current->pid, file, line,
-@@ -597,8 +594,9 @@ void warn_slowpath_fmt(const char *file, int line, unsigned taint,
- {
- 	struct warn_args args;
+ #define WARN_ON_ONCE(condition) ({				\
+ 	int __ret_warn_on = !!(condition);			\
+ 	if (unlikely(__ret_warn_on))				\
+-		__WARN_ONCE_TAINT(TAINT_WARN);			\
++		__WARN_FLAGS(BUGFLAG_ONCE |			\
++			     BUGFLAG_TAINT(TAINT_WARN));	\
+ 	unlikely(__ret_warn_on);				\
+ })
+ #endif
+@@ -89,7 +87,7 @@ struct bug_entry {
+  *
+  * Use the versions with printk format strings to provide better diagnostics.
+  */
+-#ifndef __WARN_TAINT
++#ifndef __WARN_FLAGS
+ extern __printf(4, 5)
+ void warn_slowpath_fmt(const char *file, const int line, unsigned taint,
+ 		       const char *fmt, ...);
+@@ -99,11 +97,14 @@ void warn_slowpath_fmt(const char *file, const int line, unsigned taint,
+ 	warn_slowpath_fmt(__FILE__, __LINE__, taint, arg)
+ #else
+ extern __printf(1, 2) void __warn_printk(const char *fmt, ...);
+-#define __WARN() do { \
+-	printk(KERN_WARNING CUT_HERE); __WARN_TAINT(TAINT_WARN); \
+-} while (0)
+-#define __WARN_printf(taint, arg...)					\
+-	do { __warn_printk(arg); __WARN_TAINT(taint); } while (0)
++#define __WARN() do {							\
++		printk(KERN_WARNING CUT_HERE);				\
++		__WARN_FLAGS(BUGFLAG_TAINT(TAINT_WARN));		\
++	} while (0)
++#define __WARN_printf(taint, arg...) do {				\
++		__warn_printk(arg);					\
++		__WARN_FLAGS(BUGFLAG_TAINT(taint));			\
++	} while (0)
+ #endif
  
-+	pr_warn(CUT_HERE);
-+
- 	if (!fmt) {
--		pr_warn(CUT_HERE);
- 		__warn(file, line, __builtin_return_address(0), taint,
- 		       NULL, NULL);
- 		return;
+ /* used internally by panic.c */
 -- 
 2.17.1
 
