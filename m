@@ -2,96 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A6EB794A46
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:34:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B21DB94A70
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:35:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728354AbfHSQdq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 12:33:46 -0400
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43781 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728335AbfHSQdo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:33:44 -0400
-Received: by mail-ed1-f68.google.com with SMTP id h13so2255571edq.10
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 09:33:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yVK+oDacf76Bx/B5cuYpj3efTA3uTCksTraTbtiiMb0=;
-        b=ZEMpBjD1i8baVAX/ysJWrVswsclG5Ad98mIeqTE/tdXxI8qBuXPct792egADG2RR7r
-         4WqNdNKNoNpDzDDyL8S5UElB1wql/7fcm9FEC9kEb9rR1nmCuc33o1Mu3CGfUOO4vaD1
-         fVtFr3LF4sw1xugNbHHRMApJ+dbe8tCgl859HeK8Ezaw612OsfP2u11M5CKtz3i9aYuB
-         raHJWrkU32+i55vWzSvZZhUa2Lorjv/Xn4/PRO2V0oFVOxB+GkW2KnO7ujnITNFll6K/
-         wXTKtGUMyYu2QqZe/sMjFRDDbes+QqWwm1b95GyQAS45k3C2khb54EAK0qO674IRBVq6
-         UlOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yVK+oDacf76Bx/B5cuYpj3efTA3uTCksTraTbtiiMb0=;
-        b=llkz+741Ze1CTMU4t+dviT0WiVpjUib/jetZe/GQOYG+SHlRqI6eplZ1YJvTcvo/n9
-         NBlnfR0h7Y9Pawjn4X8SuJkbDEC9c4jhClUbu80mY7fn5WcHDfKR37tuLgLPd3v6aCMI
-         cM4rUaxWjA/w64AdlVHTLPvvpqIgu2OpdJgPB6B59Px+A2plLfY6WlbgymbWXM3PKMt1
-         hD8+3sl2cZ+EM2Y1BeXgURnXTYyTvQvQ7+6kSvYacEA9gmsTc5Av+C8M6sfNcJR47MbP
-         Zn2FuN0ERcwHg5VnP6nE13rUFE4Wio6Y/h/6rUqvjgSj44FBoCpn0Oh6PyKw9WIrQT2w
-         d9qw==
-X-Gm-Message-State: APjAAAXIGBSP3cz7BzVQUIh3oJnJUWGw39Jin1DCsrefnfCtAM78s9Dy
-        chnMGWTOsrDHKmgjHmnH/mLZX5QsVcPJj8oFeWKDRw==
-X-Google-Smtp-Source: APXvYqyjbCqvgSjNDeQHl6JxdPMDE41wKcHDp+hgvJVj2Py8dcsk85GHr9ynLPCamRht+oDfymAzPK5UbbwLGbxAp2Y=
-X-Received: by 2002:a17:906:ccc1:: with SMTP id ot1mr22297087ejb.156.1566232422354;
- Mon, 19 Aug 2019 09:33:42 -0700 (PDT)
+        id S1727781AbfHSQfJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 12:35:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:10068 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726168AbfHSQfI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 12:35:08 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 09:35:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
+   d="scan'208";a="207057229"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
+  by fmsmga002.fm.intel.com with ESMTP; 19 Aug 2019 09:35:04 -0700
+Date:   Mon, 19 Aug 2019 19:35:05 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v4 3/6] tpm: tpm_tis_spi: Add a pre-transfer callback
+Message-ID: <20190819163505.wnyhgrtg4akiifdn@linux.intel.com>
+References: <20190812223622.73297-1-swboyd@chromium.org>
+ <20190812223622.73297-4-swboyd@chromium.org>
 MIME-Version: 1.0
-References: <20190817024629.26611-1-pasha.tatashin@soleen.com>
- <20190817024629.26611-4-pasha.tatashin@soleen.com> <20190819155824.GE9927@lakrids.cambridge.arm.com>
-In-Reply-To: <20190819155824.GE9927@lakrids.cambridge.arm.com>
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-Date:   Mon, 19 Aug 2019 12:33:31 -0400
-Message-ID: <CA+CK2bD4zE6eieSW2OLQwOQC7=4ncDc8wK6ZjhDO3Dv+BUqnzQ@mail.gmail.com>
-Subject: Re: [PATCH v2 03/14] arm64, hibernate: add trans_table public functions
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     James Morris <jmorris@namei.org>, Sasha Levin <sashal@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        kexec mailing list <kexec@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Catalin Marinas <catalin.marinas@arm.com>, will@kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        James Morse <james.morse@arm.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        linux-mm <linux-mm@kvack.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190812223622.73297-4-swboyd@chromium.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 11:58 AM Mark Rutland <mark.rutland@arm.com> wrote:
->
-> On Fri, Aug 16, 2019 at 10:46:18PM -0400, Pavel Tatashin wrote:
-> > trans_table_create_copy() and trans_table_map_page() are going to be
-> > the basis for public interface of new subsystem that handles page
-> > tables for cases which are between kernels: kexec, and hibernate.
->
-> While the architecture uses the term 'translation table', in the kernel
-> we generally use 'pgdir' or 'pgd' to refer to the tables, so please keep
-> to that naming scheme.
+On Mon, Aug 12, 2019 at 03:36:19PM -0700, Stephen Boyd wrote:
+> Cr50 firmware has a requirement to wait for the TPM to wakeup before
+> sending commands over the SPI bus. Otherwise, the firmware could be in
+> deep sleep and not respond. Add a hook to tpm_tis_spi_transfer() before
+> we start a SPI transfer so we can keep track of the last time the TPM
+> driver accessed the SPI bus.
+> 
+> Cc: Andrey Pronin <apronin@chromium.org>
+> Cc: Duncan Laurie <dlaurie@chromium.org>
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Guenter Roeck <groeck@chromium.org>
+> Cc: Alexander Steffen <Alexander.Steffen@infineon.com>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>  drivers/char/tpm/tpm_tis_spi.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/char/tpm/tpm_tis_spi.c b/drivers/char/tpm/tpm_tis_spi.c
+> index 819602e85b34..93f49b1941f0 100644
+> --- a/drivers/char/tpm/tpm_tis_spi.c
+> +++ b/drivers/char/tpm/tpm_tis_spi.c
+> @@ -44,6 +44,7 @@ struct tpm_tis_spi_phy {
+>  	struct spi_device *spi_device;
+>  	int (*flow_control)(struct tpm_tis_spi_phy *phy,
+>  			    struct spi_transfer *xfer);
+> +	void (*pre_transfer)(struct tpm_tis_spi_phy *phy);
 
-The idea is to have a unique name space for new subsystem of page
-tables that are used between kernels:
-between stage 1 and stage 2 kexec kernel, and similarly between
-kernels during hibernate boot process.
+A callback should have somewhat well defined purpose. A callback named
+as pre_transfer() could have any purpose.
 
-I picked: "trans_table" that stands for transitional page table:
-meaning they are used only during transition between worlds.
-
-All public functions in this subsystem will have trans_table_* prefix,
-and page directory will be named: "trans_table". If this is confusing,
-I can either use a different prefix, or describe what "trans_table"
-stand for in trans_table.h/.c
-
-Thank you,
-Pasha
+/Jarkko
