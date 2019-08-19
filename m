@@ -2,28 +2,28 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 120EC94ED9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:23:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94C1394EE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728372AbfHSUXQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 16:23:16 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:50518 "EHLO
+        id S1728567AbfHSUY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 16:24:26 -0400
+Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:9464 "EHLO
         mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728055AbfHSUXQ (ORCPT
+        by vger.kernel.org with ESMTP id S1728255AbfHSUY0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:23:16 -0400
+        Mon, 19 Aug 2019 16:24:26 -0400
 Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JKLq2o009314;
-        Mon, 19 Aug 2019 20:23:08 GMT
-Received: from g9t5008.houston.hpe.com (g9t5008.houston.hpe.com [15.241.48.72])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2ufy9phees-1
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JKLFKC008222;
+        Mon, 19 Aug 2019 20:23:18 GMT
+Received: from g2t2353.austin.hpe.com (g2t2353.austin.hpe.com [15.233.44.26])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2ufy9phefp-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Aug 2019 20:23:08 +0000
+        Mon, 19 Aug 2019 20:23:18 +0000
 Received: from stormcage.eag.rdlabs.hpecorp.net (stormcage.eag.rdlabs.hpecorp.net [128.162.236.70])
-        by g9t5008.houston.hpe.com (Postfix) with ESMTP id 9092556;
-        Mon, 19 Aug 2019 20:23:06 +0000 (UTC)
+        by g2t2353.austin.hpe.com (Postfix) with ESMTP id 963A182;
+        Mon, 19 Aug 2019 20:23:17 +0000 (UTC)
 Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-        id 580E52014C869; Mon, 19 Aug 2019 15:23:06 -0500 (CDT)
+        id 5E0582014C869; Mon, 19 Aug 2019 15:23:17 -0500 (CDT)
 From:   Kyle Meyer <meyerk@hpe.com>
 Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -34,9 +34,9 @@ Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
         linux-kernel@vger.kernel.org,
         Russ Anderson <russ.anderson@hpe.com>,
         Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH v3 1/6] perf: Refactor svg_build_topology_map
-Date:   Mon, 19 Aug 2019 15:23:03 -0500
-Message-Id: <20190819202303.87876-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
+Subject: [PATCH v3 2/6] perf/util/svghelper: Replace MAX_NR_CPUS with env->nr_cpus_online
+Date:   Mon, 19 Aug 2019 15:23:15 -0500
+Message-Id: <20190819202315.87932-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
 X-Mailer: git-send-email 2.12.3
 X-HPE-SCL: -1
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
@@ -52,9 +52,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Exchange the parameters of svg_build_topology_map with struct perf_env *env and
-adjust the function accordingly. This patch should not change any behavior, it
-is merely refactoring for the following patch.
+env->nr_cpus_online, the number of CPUs online during a record session, can be
+used as a dynamic alternative for MAX_NR_CPUS in svg_build_topology_map. The
+value of env->nr_cpus_online can be passed into str_to_bitmap,
+scan_core_topology, and svg_build_topology_map to replace MAX_NR_CPUS as well.
 
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Ingo Molnar <mingo@redhat.com>
@@ -66,96 +67,104 @@ Cc: linux-kernel@vger.kernel.org
 Cc: Russ Anderson <russ.anderson@hpe.com>
 Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
 ---
- tools/perf/builtin-timechart.c |  5 +----
- tools/perf/util/svghelper.c    | 19 +++++++++++--------
- tools/perf/util/svghelper.h    |  4 +++-
- 3 files changed, 15 insertions(+), 13 deletions(-)
+ tools/perf/util/svghelper.c | 29 +++++++++++++----------------
+ 1 file changed, 13 insertions(+), 16 deletions(-)
 
-diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
-index 7d6a6ecf4e02..1ff81a790931 100644
---- a/tools/perf/builtin-timechart.c
-+++ b/tools/perf/builtin-timechart.c
-@@ -1518,10 +1518,7 @@ static int process_header(struct perf_file_section *section __maybe_unused,
- 		if (!tchart->topology)
- 			break;
- 
--		if (svg_build_topology_map(ph->env.sibling_cores,
--					   ph->env.nr_sibling_cores,
--					   ph->env.sibling_threads,
--					   ph->env.nr_sibling_threads))
-+		if (svg_build_topology_map(&ph->env))
- 			fprintf(stderr, "problem building topology\n");
- 		break;
- 
 diff --git a/tools/perf/util/svghelper.c b/tools/perf/util/svghelper.c
-index ae6a534a7a80..efe642b6c99d 100644
+index efe642b6c99d..c9df3512ee6f 100644
 --- a/tools/perf/util/svghelper.c
 +++ b/tools/perf/util/svghelper.c
-@@ -751,23 +751,26 @@ static int str_to_bitmap(char *s, cpumask_t *b)
- 	return ret;
- }
+@@ -695,7 +695,8 @@ struct topology {
+ 	int sib_thr_nr;
+ };
  
--int svg_build_topology_map(char *sib_core, int sib_core_nr,
--			   char *sib_thr, int sib_thr_nr)
-+int svg_build_topology_map(struct perf_env *env)
+-static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos)
++static void scan_thread_topology(int *map, struct topology *t, int cpu,
++				 int *pos, int max_cpus)
  {
  	int i;
- 	struct topology t;
-+	char *sib_core, *sib_thr;
+ 	int thr;
+@@ -704,28 +705,24 @@ static void scan_thread_topology(int *map, struct topology *t, int cpu, int *pos
+ 		if (!test_bit(cpu, cpumask_bits(&t->sib_thr[i])))
+ 			continue;
  
--	t.sib_core_nr = sib_core_nr;
--	t.sib_thr_nr = sib_thr_nr;
--	t.sib_core = calloc(sib_core_nr, sizeof(cpumask_t));
--	t.sib_thr = calloc(sib_thr_nr, sizeof(cpumask_t));
-+	t.sib_core_nr = env->nr_sibling_cores;
-+	t.sib_thr_nr = env->nr_sibling_threads;
-+	t.sib_core = calloc(env->nr_sibling_cores, sizeof(cpumask_t));
-+	t.sib_thr = calloc(env->nr_sibling_threads, sizeof(cpumask_t));
-+
-+	sib_core = env->sibling_cores;
-+	sib_thr = env->sibling_threads;
+-		for_each_set_bit(thr,
+-				 cpumask_bits(&t->sib_thr[i]),
+-				 MAX_NR_CPUS)
++		for_each_set_bit(thr, cpumask_bits(&t->sib_thr[i]), max_cpus)
+ 			if (map[thr] == -1)
+ 				map[thr] = (*pos)++;
+ 	}
+ }
  
- 	if (!t.sib_core || !t.sib_thr) {
+-static void scan_core_topology(int *map, struct topology *t)
++static void scan_core_topology(int *map, struct topology *t, int max_cpus)
+ {
+ 	int pos = 0;
+ 	int i;
+ 	int cpu;
+ 
+ 	for (i = 0; i < t->sib_core_nr; i++)
+-		for_each_set_bit(cpu,
+-				 cpumask_bits(&t->sib_core[i]),
+-				 MAX_NR_CPUS)
+-			scan_thread_topology(map, t, cpu, &pos);
++		for_each_set_bit(cpu, cpumask_bits(&t->sib_core[i]), max_cpus)
++			scan_thread_topology(map, t, cpu, &pos, max_cpus);
+ }
+ 
+-static int str_to_bitmap(char *s, cpumask_t *b)
++static int str_to_bitmap(char *s, cpumask_t *b, int max_cpus)
+ {
+ 	int i;
+ 	int ret = 0;
+@@ -738,7 +735,7 @@ static int str_to_bitmap(char *s, cpumask_t *b)
+ 
+ 	for (i = 0; i < m->nr; i++) {
+ 		c = m->map[i];
+-		if (c >= MAX_NR_CPUS) {
++		if (c >= max_cpus) {
+ 			ret = -1;
+ 			break;
+ 		}
+@@ -771,7 +768,7 @@ int svg_build_topology_map(struct perf_env *env)
+ 	}
+ 
+ 	for (i = 0; i < env->nr_sibling_cores; i++) {
+-		if (str_to_bitmap(sib_core, &t.sib_core[i])) {
++		if (str_to_bitmap(sib_core, &t.sib_core[i], env->nr_cpus_online)) {
+ 			fprintf(stderr, "topology: can't parse siblings map\n");
+ 			goto exit;
+ 		}
+@@ -780,7 +777,7 @@ int svg_build_topology_map(struct perf_env *env)
+ 	}
+ 
+ 	for (i = 0; i < env->nr_sibling_threads; i++) {
+-		if (str_to_bitmap(sib_thr, &t.sib_thr[i])) {
++		if (str_to_bitmap(sib_thr, &t.sib_thr[i], env->nr_cpus_online)) {
+ 			fprintf(stderr, "topology: can't parse siblings map\n");
+ 			goto exit;
+ 		}
+@@ -788,16 +785,16 @@ int svg_build_topology_map(struct perf_env *env)
+ 		sib_thr += strlen(sib_thr) + 1;
+ 	}
+ 
+-	topology_map = malloc(sizeof(int) * MAX_NR_CPUS);
++	topology_map = malloc(sizeof(int) * env->nr_cpus_online);
+ 	if (!topology_map) {
  		fprintf(stderr, "topology: no memory\n");
  		goto exit;
  	}
  
--	for (i = 0; i < sib_core_nr; i++) {
-+	for (i = 0; i < env->nr_sibling_cores; i++) {
- 		if (str_to_bitmap(sib_core, &t.sib_core[i])) {
- 			fprintf(stderr, "topology: can't parse siblings map\n");
- 			goto exit;
-@@ -776,7 +779,7 @@ int svg_build_topology_map(char *sib_core, int sib_core_nr,
- 		sib_core += strlen(sib_core) + 1;
- 	}
+-	for (i = 0; i < MAX_NR_CPUS; i++)
++	for (i = 0; i < env->nr_cpus_online; i++)
+ 		topology_map[i] = -1;
  
--	for (i = 0; i < sib_thr_nr; i++) {
-+	for (i = 0; i < env->nr_sibling_threads; i++) {
- 		if (str_to_bitmap(sib_thr, &t.sib_thr[i])) {
- 			fprintf(stderr, "topology: can't parse siblings map\n");
- 			goto exit;
-diff --git a/tools/perf/util/svghelper.h b/tools/perf/util/svghelper.h
-index e55338d5c3bd..2add34c75733 100644
---- a/tools/perf/util/svghelper.h
-+++ b/tools/perf/util/svghelper.h
-@@ -4,6 +4,8 @@
+-	scan_core_topology(topology_map, &t);
++	scan_core_topology(topology_map, &t, env->nr_cpus_online);
  
- #include <linux/types.h>
+ 	return 0;
  
-+#include "env.h"
-+
- void open_svg(const char *filename, int cpus, int rows, u64 start, u64 end);
- void svg_ubox(int Yslot, u64 start, u64 end, double height, const char *type, int fd, int err, int merges);
- void svg_lbox(int Yslot, u64 start, u64 end, double height, const char *type, int fd, int err, int merges);
-@@ -28,7 +30,7 @@ void svg_partial_wakeline(u64 start, int row1, char *desc1, int row2, char *desc
- void svg_interrupt(u64 start, int row, const char *backtrace);
- void svg_text(int Yslot, u64 start, const char *text);
- void svg_close(void);
--int svg_build_topology_map(char *sib_core, int sib_core_nr, char *sib_thr, int sib_thr_nr);
-+int svg_build_topology_map(struct perf_env *env);
- 
- extern int svg_page_width;
- extern u64 svg_highlight;
 -- 
 2.12.3
 
