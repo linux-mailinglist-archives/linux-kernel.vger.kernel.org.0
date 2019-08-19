@@ -2,83 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02C5794B43
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:07:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5784594B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:06:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728049AbfHSRGp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 13:06:45 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:37379 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727937AbfHSRGn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:06:43 -0400
-Received: by mail-yb1-f195.google.com with SMTP id t5so669850ybt.4;
-        Mon, 19 Aug 2019 10:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=csGSFDEdSWqw3dz2PgL0VnXwJ2fZOjcWs1UiwIbpOh8=;
-        b=BExNnfSwIIIYOd2fPFOYG/vCFL2tOZqPG9oCAekHhn6/qBPnYcBCfFYgHijbOFgSIV
-         3DGpD6Gy4Yxe5tJ0y7ZDtPSbwdLfyXB8xV8HKV3QZokspTWK+H60PPr6tNBa71zjvjEq
-         rDkPhzkM4GFacH7LMMWGfYsPXnbNLm8sYSaEGxEVpju8hAy7aMBTE3SSceq9PIT7WuWh
-         sTzuvvnJCkLo1WwK+2CpqagEBM4t3E1OIt3MnqcTZn83/B1PR4Re9UMl/PdTgYf/ZlH4
-         UzWl4h+JNq8bi9ol4GaYY7DF3EHEeft6IC54G7JgHD9K3vmdEpTW1LySlpoqUoXgI+qN
-         Gn9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=csGSFDEdSWqw3dz2PgL0VnXwJ2fZOjcWs1UiwIbpOh8=;
-        b=sHU7cJs4W01jLZ0Vqdu7E06NeiO0018UAP+x1maSxwZPnYo8v+j1bHsVnBueq63jyF
-         gJpnW+v/hlFq4tdWPvkET6pmFWM8NzP0TbeUbY05BPP3ZLwKh3S7MmGMc7JvkmayQbBA
-         rPj8oDYQrTU0q1ierW1KEeC2o9b2zU7qjdjuH0JRccE+vL+LAK258JlYgPneI1hXyKTF
-         MuTolEkTkZJ8qRhKcRktGN0trtVzJfqvv2/KqTdbSGc2wnLAUpMZMF1vOpb0yInaQg1W
-         w7CUjHlc3awr1pYo1JaA6jnno3/vVq1X/2r+deSDT1fTk59O0wmRLzoaWd4LoSArnnxS
-         Zr8w==
-X-Gm-Message-State: APjAAAXXGecFJDHpXfeFkbu1HaljbJvRLiI7e1cS1PbO4RmaBp1FRATm
-        D9+htx5EjTHSfczWdcKSgaRWeC/YFD+KLlPJMRQ=
-X-Google-Smtp-Source: APXvYqwQA66V3JZQ8sRo/iPqtTGs+feQWRX34c7uh9WJv+pUv2pSCy/Tkk/vsf3jr7t3twT4WPViCaVg1rYVma41ndA=
-X-Received: by 2002:a25:ed0e:: with SMTP id k14mr17889604ybh.286.1566234402617;
- Mon, 19 Aug 2019 10:06:42 -0700 (PDT)
+        id S1727873AbfHSRGl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 13:06:41 -0400
+Received: from mga09.intel.com ([134.134.136.24]:60682 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726987AbfHSRGl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 13:06:41 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 10:06:41 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
+   d="scan'208";a="353304570"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
+  by orsmga005.jf.intel.com with ESMTP; 19 Aug 2019 10:06:35 -0700
+Date:   Mon, 19 Aug 2019 20:06:35 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
+Subject: Re: [RFC/RFT v4 3/5] KEYS: trusted: create trusted keys subsystem
+Message-ID: <20190819170635.jlxxi6ogbm4s6gcx@linux.intel.com>
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+ <1565682784-10234-4-git-send-email-sumit.garg@linaro.org>
+ <20190819170458.m7adhkji64kta32d@linux.intel.com>
 MIME-Version: 1.0
-References: <20190806213749.20689-1-sashal@kernel.org> <35579e00d27344b853cafea0b29b13c5aaf9e1fc.camel@codethink.co.uk>
-In-Reply-To: <35579e00d27344b853cafea0b29b13c5aaf9e1fc.camel@codethink.co.uk>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Mon, 19 Aug 2019 10:06:32 -0700
-Message-ID: <CAMo8Bf+g68JemdWzc2DQ43JCdO125EzpT9r42WWA48OYAcksag@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.4 01/14] xtensa: fix build for cores with coprocessors
-To:     Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Sasha Levin <sashal@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        "open list:TENSILICA XTENSA PORT (xtensa)" 
-        <linux-xtensa@linux-xtensa.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819170458.m7adhkji64kta32d@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 9:53 AM Ben Hutchings
-<ben.hutchings@codethink.co.uk> wrote:
->
-> On Tue, 2019-08-06 at 17:37 -0400, Sasha Levin wrote:
-> > From: Max Filippov <jcmvbkbc@gmail.com>
-> >
-> > [ Upstream commit e3cacb73e626d885b8cf24103fed0ae26518e3c4 ]
-> >
-> > Assembly entry/return abstraction change didn't add asmmacro.h include
-> > statement to coprocessor.S, resulting in references to undefined macros
-> > abi_entry and abi_ret on cores that define XTENSA_HAVE_COPROCESSORS.
-> > Fix that by including asm/asmmacro.h from the coprocessor.S.
-> [...]
->
-> This seems to be fixing commit d6d5f19e21d9 "xtensa: abstract 'entry'
-> and 'retw' in assembly code" so it wouldn't be needed for any stable
-> branches.
+On Mon, Aug 19, 2019 at 08:04:58PM +0300, Jarkko Sakkinen wrote:
+> On Tue, Aug 13, 2019 at 01:23:02PM +0530, Sumit Garg wrote:
+> > Move existing code to trusted keys subsystem. Also, rename files with
+> > "tpm" as suffix which provides the underlying implementation.
+> > 
+> > Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> > ---
+> >  crypto/asymmetric_keys/asym_tpm.c                       | 2 +-
+> >  include/keys/{trusted.h => trusted_tpm.h}               | 4 ++--
+> >  security/keys/Makefile                                  | 2 +-
+> >  security/keys/trusted-keys/Makefile                     | 7 +++++++
+> >  security/keys/{trusted.c => trusted-keys/trusted-tpm.c} | 2 +-
+> >  5 files changed, 12 insertions(+), 5 deletions(-)
+> >  rename include/keys/{trusted.h => trusted_tpm.h} (98%)
+> >  create mode 100644 security/keys/trusted-keys/Makefile
+> >  rename security/keys/{trusted.c => trusted-keys/trusted-tpm.c} (99%)
+> 
+> Would prefer trusted_tpm.c.
 
-That's correct.
+Actually, trusted_tpm1.c.
 
--- 
-Thanks.
--- Max
+/Jarkko
