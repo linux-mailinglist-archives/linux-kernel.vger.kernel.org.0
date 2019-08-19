@@ -2,63 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C531194E14
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:28:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B51B94E4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:34:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728760AbfHST2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:28:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44210 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728398AbfHST2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:28:35 -0400
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34A83206C1;
-        Mon, 19 Aug 2019 19:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566242915;
-        bh=QdaNHabnQATTellUgHWaDEel6AzbE1D6DIER1HVExlI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gstHmsR7y4n8/TlcmRyVp7fpeg619sFIAkKdJrUKpyNuidXOZ0Lk2zQ9XdKBL/FiR
-         00N2aI8kyV/WO18zFrtUiD0dqUqvPiLfCEpA1F6pZB9zvGSkLS1oDee6m9ucTCoITd
-         /4ttCNaWSW8XhjqnWgVm5er0kEECob/R7MG9qKhQ=
-Received: by mail-qk1-f178.google.com with SMTP id w18so2435458qki.0;
-        Mon, 19 Aug 2019 12:28:35 -0700 (PDT)
-X-Gm-Message-State: APjAAAUH3k+Gk8oEzqAmtxt1VhfmsXRvFormg2SiE5sP6AuSo4Ne/Bp5
-        +kwSS05GcC03D736OK9HG0LOyxx8DamuV3OXdw==
-X-Google-Smtp-Source: APXvYqwY6xx42yDW7hIjSnvmaPLBEK8bzXWhlEUDN0Ijfco/ERLYthPs7Knhxi9ySvKBporN0rhefJyOXaaPA2GTIdg=
-X-Received: by 2002:a37:6944:: with SMTP id e65mr20546914qkc.119.1566242914448;
- Mon, 19 Aug 2019 12:28:34 -0700 (PDT)
+        id S1728507AbfHSTcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:32:13 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7088 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728337AbfHSTcM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 15:32:12 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5af93b0001>; Mon, 19 Aug 2019 12:32:11 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 12:32:11 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 12:32:11 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 19:32:11 +0000
+Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 19:32:11 +0000
+Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
+ to put_user_page*()
+To:     Bharath Vedartham <linux.bhar@gmail.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+CC:     <jglisse@redhat.com>, <ira.weiny@intel.com>,
+        <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
+        <william.kucharski@oracle.com>, <hch@lst.de>,
+        <inux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>
+References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
+ <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
+ <20190819125611.GA5808@hpe.com>
+ <20190819190647.GA6261@bharath12345-Inspiron-5559>
+From:   John Hubbard <jhubbard@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.com>
+Date:   Mon, 19 Aug 2019 12:30:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190816205342.29552-1-jernej.skrabec@siol.net> <20190816205342.29552-2-jernej.skrabec@siol.net>
-In-Reply-To: <20190816205342.29552-2-jernej.skrabec@siol.net>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 19 Aug 2019 14:28:23 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqLWjtGWuVrTQs7ikAQ7vLu26rnkk=Vo0q9punj-fM+UGg@mail.gmail.com>
-Message-ID: <CAL_JsqLWjtGWuVrTQs7ikAQ7vLu26rnkk=Vo0q9punj-fM+UGg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Add compatible for Tanix TX6 board
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190819190647.GA6261@bharath12345-Inspiron-5559>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566243131; bh=O1+zBKqCqZBRfmN9e8CVp5s+/FmYKv98YGRf5sf04P8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=LlnJzVxff7rSopb5VOlbQQEyBfR8LJGnJjJtr6ctEwJXHz9nCk3t12nYZtK9E/pb4
+         NPiVaZegJA4RzmJAZfXJa7RTIcCUj2pDko281vNI4rt3to4zQwE5uNlqU2C8OA/CFw
+         2m5BK32y9ezYhJqt7xsNZ3NB3m53IN01dDOoJ1C8EMqPKaozA3vv9ATO3gQCSdXrwO
+         50OqgKs052g7MMdjIa57lKayaVgPrfP2X8VqXEHSrh9Uqlv6Ek4jDzGP9hX7VTjVRi
+         l/yZp/dyHaFYqUcnIeCalSS9LohslZVRzCGaCO+5vOzl8e2mEx1sYpNhTxj9IsuQfr
+         DzB8xF6Vdu7zQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 3:54 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Add new Oranth Tanix TX6 board compatible string to the bindings
-> documentation.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
+On 8/19/19 12:06 PM, Bharath Vedartham wrote:
+> On Mon, Aug 19, 2019 at 07:56:11AM -0500, Dimitri Sivanich wrote:
+>> Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+> Thanks!
+> 
+> John, would you like to take this patch into your miscellaneous
+> conversions patch set?
+> 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+(+Andrew and Michal, so they know where all this is going.)
+
+Sure, although that conversion series [1] is on a brief hold, because
+there are additional conversions desired, and the API is still under
+discussion. Also, reading between the lines of Michal's response [2]
+about it, I think people would prefer that the next revision include
+the following, for each conversion site:
+
+Conversion of gup/put_page sites:
+
+Before:
+
+	get_user_pages(...);
+	...
+	for each page:
+		put_page();
+
+After:
+	
+	gup_flags |= FOLL_PIN; (maybe FOLL_LONGTERM in some cases)
+	vaddr_pin_user_pages(...gup_flags...)
+	...
+	vaddr_unpin_user_pages(); /* which invokes put_user_page() */
+
+Fortunately, it's not harmful for the simpler conversion from put_page()
+to put_user_page() to happen first, and in fact those have usually led
+to simplifications, paving the way to make it easier to call
+vaddr_unpin_user_pages(), once it's ready. (And showing exactly what
+to convert, too.)
+
+So for now, I'm going to just build on top of Ira's tree, and once the
+vaddr*() API settles down, I'll send out an updated series that attempts
+to include the reviews and ACKs so far (I'll have to review them, but
+make a note that review or ACK was done for part of the conversion),
+and adds the additional gup(FOLL_PIN), and uses vaddr*() wrappers instead of
+gup/pup.
+
+[1] https://lore.kernel.org/r/20190807013340.9706-1-jhubbard@nvidia.com
+
+[2] https://lore.kernel.org/r/20190809175210.GR18351@dhcp22.suse.cz
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
