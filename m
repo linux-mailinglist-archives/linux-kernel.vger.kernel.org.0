@@ -2,125 +2,148 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C603091A76
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 02:30:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E3F91A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 02:38:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbfHSAaH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 20:30:07 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:40290 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726103AbfHSAaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 20:30:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=JhswlMGTzAxtUu2gpPdTP1QD3pZTZewNYaEA8O+81wU=; b=ZxHSxNkUZhK8JxTc+dbjCXc1+G
-        wsjGmV9b3kqycDNgQVhm2lEVOdnj1Ifim0pbTW3yGAiPy+qkR45vQIb5Tsc9Y0pGunFQBIlPbeXhK
-        BoTHadyMMGhJkSPrSxr/VVHuYeUMjfVGmFOmu1ZACXtY/9MXJDx2Cga8lnoS/K3CSgvg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1hzVYV-0002OZ-64; Mon, 19 Aug 2019 02:29:51 +0200
-Date:   Mon, 19 Aug 2019 02:29:51 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Pavel Machek <pavel@ucw.cz>,
-        "David S . Miller" <davem@davemloft.net>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1726388AbfHSAiH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 20:38:07 -0400
+Received: from regular1.263xmail.com ([211.150.70.198]:36486 "EHLO
+        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfHSAiG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 20:38:06 -0400
+X-Greylist: delayed 500 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Aug 2019 20:38:02 EDT
+Received: from kever.yang?rock-chips.com (unknown [192.168.167.160])
+        by regular1.263xmail.com (Postfix) with ESMTP id 0BCDD265;
+        Mon, 19 Aug 2019 08:29:33 +0800 (CST)
+X-263anti-spam: KSV:0;BIG:0;
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-KSVirus-check: 0
+X-ADDR-CHECKED4: 1
+X-ABS-CHECKED: 1
+X-SKE-CHECKED: 1
+X-ANTISPAM-LEVEL: 2
+Received: from [172.16.12.9] (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P912T139738371585792S1566174570916231_;
+        Mon, 19 Aug 2019 08:29:32 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <360de786e17596abca2fbe6c887ae0e9>
+X-RL-SENDER: kever.yang@rock-chips.com
+X-SENDER: yk@rock-chips.com
+X-LOGIN-NAME: kever.yang@rock-chips.com
+X-FST-TO: linux-kernel@vger.kernel.org
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+Subject: Re: [PATCH v2] arm: dts: rockchip: fix vcc_host_5v regulator for usb3
+ host
+To:     Heiko Stuebner <heiko@sntech.de>
+Cc:     linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: Re: [PATCH v6 1/4] dt-bindings: net: phy: Add subnode for LED
- configuration
-Message-ID: <20190819002951.GA8981@lunn.ch>
-References: <20190813191147.19936-1-mka@chromium.org>
- <20190813191147.19936-2-mka@chromium.org>
- <20190816201338.GA1646@bug>
- <20190816220411.GX250418@google.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Tomohiro Mayama <parly-gh@iris.mystia.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+References: <20190815081252.27405-1-kever.yang@rock-chips.com>
+ <2932927.UJgUFA1Pmh@phil>
+From:   Kever Yang <kever.yang@rock-chips.com>
+Message-ID: <208c56e1-bfe0-a982-927d-bdddc3116631@rock-chips.com>
+Date:   Mon, 19 Aug 2019 08:29:31 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816220411.GX250418@google.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <2932927.UJgUFA1Pmh@phil>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 03:04:11PM -0700, Matthias Kaehlcke wrote:
-> On Fri, Aug 16, 2019 at 10:13:38PM +0200, Pavel Machek wrote:
-> > Hi!
-> > 
-> > Please Cc led mailing lists on led issues.
-> 
-> sorry for missing this
-> 
-> > On Tue 2019-08-13 12:11:44, Matthias Kaehlcke wrote:
-> > > The LED behavior of some Ethernet PHYs is configurable. Add an
-> > > optional 'leds' subnode with a child node for each LED to be
-> > > configured. The binding aims to be compatible with the common
-> > > LED binding (see devicetree/bindings/leds/common.txt).
-> > > 
-> > > A LED can be configured to be:
-> > > 
-> > > - 'on' when a link is active, some PHYs allow configuration for
-> > >   certain link speeds
-> > >   speeds
-> > > - 'off'
-> > > - blink on RX/TX activity, some PHYs allow configuration for
-> > >   certain link speeds
-> > > 
-> > > For the configuration to be effective it needs to be supported by
-> > > the hardware and the corresponding PHY driver.
-> > > 
-> > > Suggested-by: Andrew Lunn <andrew@lunn.ch>
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > 
-> > > @@ -173,5 +217,20 @@ examples:
-> > >              reset-gpios = <&gpio1 4 1>;
-> > >              reset-assert-us = <1000>;
-> > >              reset-deassert-us = <2000>;
-> > > +
-> > > +            leds {
-> > > +                #address-cells = <1>;
-> > > +                #size-cells = <0>;
-> > > +
-> > > +                led@0 {
-> > > +                    reg = <0>;
-> > > +                    linux,default-trigger = "phy-link-1g";
-> > > +                };
-> > 
-> > Because this affects us.
-> > 
-> > Is the LED software controllable?
-> 
-> it might be for certain PHYs, integration with the LED framework is
-> not part of this series.
-> 
-> > Or can it do limited subset of triggers you listed?
-> 
-> it depends on the PHY. The one in this series (RTL8211E) only supports
-> a limited subset of the listed triggers.
+Hi Heiko,
 
-Hi Pavel
+On 2019/8/16 下午8:24, Heiko Stuebner wrote:
+> Hi Kever, TL,
+>
+> [added TL Lim for clarification]
+>
+> Am Donnerstag, 15. August 2019, 10:12:52 CEST schrieb Kever Yang:
+>> According to rock64 schemetic V2 and V3, the VCC_HOST_5V output is
+>> controlled by USB_20_HOST_DRV, which is the same as VCC_HOST1_5V.
+> The v1 schematics I have do reference the GPIO0_A0 as controlling this
+> supply, so the big question would be how to handle the different versions.
+>
+> Because adding this would probably break v1 boards in this function.
+>
+> @TL: where v1 boards also sold or were they only used during development?
 
-At the moment, there is no integration with the LED
-subsystem. However, i would like to be prepared for it in the
-future. It will also require some extensions to the LED subsystem.
-These triggers are hardware triggers. We would need to add support for
-LED trigger offload to the hardware, not have Linux blink the LED in
-software. Plus we need per LED triggers, not only global triggers.
-Most Ethernet PHYs also allow on/off state to be set, so they could be
-software controllable, and support the generic triggers Linux has.
 
-It has been on my mind to do this for a while, but i've never had the
-time. It should also be applicable to other subsystems which have
-hardware to blink LEDs. Some serial ports can control LEDs for Rx/Tx
-and flow control. Maybe disk/RAID controllers are configuration how
-they blink there LEDs?
+I have check this with TL when I make this patch, the V1 hardware was 
+never sold and only V2/V3
 
-      Andrew
+are available on the market.
+
+
+Thanks,
+
+- Kever
+
+> If this were the case, we could just apply the patch, not caring about
+> v1 boards, but if v1 boards were also sold to customers there would be
+> more of a problem.
+>
+> Thanks
+> Heiko
+>
+>
+>> Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+>> ---
+>>
+>> Changes in v2:
+>> - remove enable-active-high property
+>>
+>>   arch/arm64/boot/dts/rockchip/rk3328-rock64.dts | 11 ++---------
+>>   1 file changed, 2 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> index 7cfd5ca6cc85..62936b432f9a 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3328-rock64.dts
+>> @@ -34,10 +34,9 @@
+>>   
+>>   	vcc_host_5v: vcc-host-5v-regulator {
+>>   		compatible = "regulator-fixed";
+>> -		enable-active-high;
+>> -		gpio = <&gpio0 RK_PA0 GPIO_ACTIVE_HIGH>;
+>> +		gpio = <&gpio0 RK_PA2 GPIO_ACTIVE_LOW>;
+>>   		pinctrl-names = "default";
+>> -		pinctrl-0 = <&usb30_host_drv>;
+>> +		pinctrl-0 = <&usb20_host_drv>;
+>>   		regulator-name = "vcc_host_5v";
+>>   		regulator-always-on;
+>>   		regulator-boot-on;
+>> @@ -320,12 +319,6 @@
+>>   			rockchip,pins = <0 RK_PA2 RK_FUNC_GPIO &pcfg_pull_none>;
+>>   		};
+>>   	};
+>> -
+>> -	usb3 {
+>> -		usb30_host_drv: usb30-host-drv {
+>> -			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_none>;
+>> -		};
+>> -	};
+>>   };
+>>   
+>>   &sdmmc {
+>>
+>
+>
+>
+>
+
+
