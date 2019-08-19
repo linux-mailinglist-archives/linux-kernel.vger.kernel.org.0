@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 019E59516D
+	by mail.lfdr.de (Postfix) with ESMTP id 6A1409516E
 	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbfHSXD6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:03:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45977 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728915AbfHSXD4 (ORCPT
+        id S1728948AbfHSXD7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 19:03:59 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:33510 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728931AbfHSXD5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 19:03:56 -0400
-Received: by mail-pf1-f193.google.com with SMTP id w26so2069899pfq.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:03:55 -0700 (PDT)
+        Mon, 19 Aug 2019 19:03:57 -0400
+Received: by mail-pg1-f196.google.com with SMTP id n190so2049188pgn.0
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:03:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=RlVlGQamgcAhiognZlubIHGBBs3LgzzJ7vr3338hUrk=;
-        b=zdBI9UDVng410qTgKzO177OK6M21SecuCMx5uW9MNvjhW524TFUeB9k9c5w0mZVy5U
-         zLP0V/VnGsYqFONggfKgNzdVZxAxkd/KeOgKUGNaPZPYUCKaqTjCch9AUcoRpasoh7rW
-         fpm7qeGXfif9V3pT/mK1bncOkPBlBjvmNypsIub3KZLHRDum8pO4lkRT0boZsgu+892S
-         s3c936HBiT31uDogoYO+7N106UbmGnM+OtLriLAoWGPcUTHkvGKlfKjqSrIgyA0gSgto
-         bSyo+rJFJNC8lj1L8HTFRqjL5uQ1IRdqoljPPCI7T57ph2sby0L4ufwZn5YDetRzjeHN
-         i5Vw==
+        bh=5xXqlqGWu5A581PxcE1TU9HQN3Deqwd26JfZ6CBJo3I=;
+        b=i+7JlJtdwvhF0sU+zkXbFNUp/U9CGl0fhE6aCXvRQ6LAEgcqtBgbtAwFQz/f4UShbr
+         o1CilFSSiyAlklLCS4XbjMea207NHBunBUsC+CyfYie1eHyQ1s++OXJaLWv6KBpF0RtQ
+         8MV7AeU1PYnGdfYWDPHg3znzttuK89H8oFUoaN7yfFQoPktS+rX9t4yajotfrLNMrBZ+
+         fC6f1ALQ1sfh81EerbqgsD/GIvBQV5XpD2yaFU6CBT0OeBvhgWlcAGfVc5tf5DEDBvWW
+         J1ttv4bZm9XEjn8k5xoz/VUbWv2c1udxvDVfb4s7xSgW8Wc9dRQyAX85EJzy165ScrLr
+         Dg7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=RlVlGQamgcAhiognZlubIHGBBs3LgzzJ7vr3338hUrk=;
-        b=gWtw+LlblKt6dqtqjLmZ20fzMR3i/3c52aVBg70zWSw+vksTMNxGZXch0bZmDWASpE
-         WZZVPPBWH4dZ8czuOtE2pT3vXZB1mynrsvvPIjkCp7g8isoLLMlk7eFm0eE5t1GeEz25
-         GDQjRWmUcF3vmnQhgf6UFdZH05BuJGMVsCemn0Dt/pMPhMf//Wr6TrqZE4PfA745Wdzc
-         RNcfb40JAGG+NzA7+SD18teYZpU42Hf/IIS4KF0ZGLEnfIiyUtA3irbkxHssmGMGQ1hD
-         HX9RhmODQtRk+urSh+/NRUjDw65umrBv2QzG5v4iar2REfGCucngzLa2JnriBbQLDSvQ
-         WEwA==
-X-Gm-Message-State: APjAAAXmrEmuNtpFL3/4WXtUEisFFyASWEXKM18uPy2cqX8l8u6KPy3o
-        kPuywT+1/iLDfI5ZXF3O7oS307roYyo=
-X-Google-Smtp-Source: APXvYqxgtMpYoYvVT9ZumvlGfO9xbaETlj7Ui2wQmQ0ja3JkQLNInjiOWTTXhPfGdrNZz41LMKTe+w==
-X-Received: by 2002:a65:68c9:: with SMTP id k9mr21640940pgt.17.1566255834582;
-        Mon, 19 Aug 2019 16:03:54 -0700 (PDT)
+        bh=5xXqlqGWu5A581PxcE1TU9HQN3Deqwd26JfZ6CBJo3I=;
+        b=lCbcGOiRwroYJiXulp9uwCVcYqiKXOJtKgig7da2l143S04D1EIkDZS1L8jDYw2N/a
+         4blxyEWnhKS/B5trtEVvVtUDIXFyiiiPoMrygdz4zKJ4iil3CXDGU6ROjmudOjqdutwF
+         XCzXuBi+/saRKvjcmGz9M4nHASaqRsh7GkE5J2iAz/jS9GlIvVM1/fo8S8xfOfwMo333
+         bt92wIm4DmWLwWfc3VDhu7ZamSsINGvvQVO8R7wxaTepiEyLwYporq0r+ueWf3VNNPQr
+         qO4+UBZL+3pQRHVLpCGBjPNYy0n0fS2Qf360weZX5lJ41ql4Au8sbDlBE/M+R/ukc9xy
+         5Gng==
+X-Gm-Message-State: APjAAAXYe+JtyY2dQ7ZOTDMXGQOpvt5EXwMgPrI5Mw4JV1nogq/uHXd1
+        +dKgrxTTlPlsh02puEKJbOqpN9JimFA=
+X-Google-Smtp-Source: APXvYqwfhm7llbkVctWlSDwtfdAvwLhY+YVSQI6Ko11Wl1U5THXL/MpzMgH47+N+G/aXeDPuN1xZxQ==
+X-Received: by 2002:a17:90a:9f46:: with SMTP id q6mr22468018pjv.110.1566255836335;
+        Mon, 19 Aug 2019 16:03:56 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id j15sm17256509pfr.146.2019.08.19.16.03.52
+        by smtp.gmail.com with ESMTPSA id j15sm17256509pfr.146.2019.08.19.16.03.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 16:03:53 -0700 (PDT)
+        Mon, 19 Aug 2019 16:03:55 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v4 19/25] drm: kirin: Add register connect helper functions in drm init
-Date:   Mon, 19 Aug 2019 23:03:15 +0000
-Message-Id: <20190819230321.56480-20-john.stultz@linaro.org>
+Subject: [PATCH v4 20/25] drm: kirin: Rename plane_init and crtc_init
+Date:   Mon, 19 Aug 2019 23:03:16 +0000
+Message-Id: <20190819230321.56480-21-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819230321.56480-1-john.stultz@linaro.org>
 References: <20190819230321.56480-1-john.stultz@linaro.org>
@@ -68,9 +68,10 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Xu YiPing <xuyiping@hisilicon.com>
 
 As part of refactoring the kirin driver to better support
-different hardware revisions, this patch adds a flag to the
-device specific driver data so that we can conditionally
-register the connectors at init.
+different hardware revisions, this patch renames
+ade_crtc/plane_init kirin_plane/crtc_init, as they will later be
+moved to kirin drm drv and shared with the kirin960 hardware
+support.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -84,98 +85,50 @@ Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
 [jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   |  1 +
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   | 43 +++++++++++++++++++
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.h   |  1 +
- 3 files changed, 45 insertions(+)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index 7db2cf93a245..5f39249fd83e 100644
+index 5f39249fd83e..a0cc1285512b 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -1073,6 +1073,7 @@ static struct drm_driver ade_driver = {
+@@ -571,7 +571,7 @@ static const struct drm_crtc_funcs ade_crtc_funcs = {
+ 	.disable_vblank	= ade_crtc_disable_vblank,
  };
  
- struct kirin_drm_data ade_driver_data = {
-+	.register_connects = false,
- 	.num_planes = ADE_CH_NUM,
- 	.prim_plane = ADE_CH1,
- 	.channel_formats = channel_formats,
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index c9faaa848cc6..f92b3f7de5c0 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -98,6 +98,40 @@ static int compare_of(struct device *dev, void *data)
- 	return dev->of_node == data;
- }
- 
-+static int kirin_drm_connectors_register(struct drm_device *dev)
-+{
-+	struct drm_connector *connector;
-+	struct drm_connector *failed_connector;
-+	struct drm_connector_list_iter conn_iter;
-+	int ret;
-+
-+	mutex_lock(&dev->mode_config.mutex);
-+	drm_connector_list_iter_begin(dev, &conn_iter);
-+	drm_for_each_connector_iter(connector, &conn_iter) {
-+		ret = drm_connector_register(connector);
-+		if (ret) {
-+			failed_connector = connector;
-+			goto err;
-+		}
-+	}
-+	drm_connector_list_iter_end(&conn_iter);
-+	mutex_unlock(&dev->mode_config.mutex);
-+
-+	return 0;
-+
-+err:
-+	drm_connector_list_iter_begin(dev, &conn_iter);
-+	drm_for_each_connector_iter(connector, &conn_iter) {
-+		if (failed_connector == connector)
-+			break;
-+		drm_connector_unregister(connector);
-+	}
-+	drm_connector_list_iter_end(&conn_iter);
-+	mutex_unlock(&dev->mode_config.mutex);
-+
-+	return ret;
-+}
-+
- static int kirin_drm_bind(struct device *dev)
+-static int ade_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
++static int kirin_drm_crtc_init(struct drm_device *dev, struct drm_crtc *crtc,
+ 			 struct drm_plane *plane)
  {
- 	struct drm_device *drm_dev;
-@@ -117,8 +151,17 @@ static int kirin_drm_bind(struct device *dev)
+ 	struct device_node *port;
+@@ -892,8 +892,9 @@ static struct drm_plane_funcs ade_plane_funcs = {
+ 	.atomic_destroy_state = drm_atomic_helper_plane_destroy_state,
+ };
  
- 	drm_fbdev_generic_setup(drm_dev, 32);
+-static int ade_plane_init(struct drm_device *dev, struct kirin_plane *kplane,
+-			  enum drm_plane_type type)
++static int kirin_drm_plane_init(struct drm_device *dev,
++				struct kirin_plane *kplane,
++				enum drm_plane_type type)
+ {
+ 	int ret = 0;
  
-+	/* connectors should be registered after drm device register */
-+	if (driver_data->register_connects == true) {
-+		ret = kirin_drm_connectors_register(drm_dev);
-+		if (ret)
-+			goto err_drm_dev_unregister;
-+	}
-+
- 	return 0;
+@@ -1024,13 +1025,13 @@ static int ade_drm_init(struct platform_device *pdev)
+ 		else
+ 			type = DRM_PLANE_TYPE_OVERLAY;
  
-+err_drm_dev_unregister:
-+	drm_dev_unregister(drm_dev);
- err_kms_cleanup:
- 	kirin_drm_kms_cleanup(drm_dev);
- err_drm_dev_put:
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-index fdbfc4a90f22..95f56c9960d5 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-@@ -39,6 +39,7 @@ struct kirin_drm_data {
- 	u32 channel_formats_cnt;
- 	int config_max_width;
- 	int config_max_height;
-+	bool register_connects;
- 	u32 num_planes;
- 	u32 prim_plane;
+-		ret = ade_plane_init(dev, kplane, type);
++		ret = kirin_drm_plane_init(dev, kplane, type);
+ 		if (ret)
+ 			return ret;
+ 	}
  
+ 	/* crtc init */
+-	ret = ade_crtc_init(dev, &kcrtc->base,
++	ret = kirin_drm_crtc_init(dev, &kcrtc->base,
+ 				&ade->planes[ade_driver_data.prim_plane].base);
+ 	if (ret)
+ 		return ret;
 -- 
 2.17.1
 
