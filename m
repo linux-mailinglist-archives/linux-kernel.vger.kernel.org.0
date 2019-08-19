@@ -2,116 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 22ECB9217E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:39:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8970F92193
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:45:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbfHSKjq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 06:39:46 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37319 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfHSKjq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:39:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so986801pgp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 03:39:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=qphoGsTHXUSskf2pKRE//n4CuHLfwr9wJ/jka9mWkIA=;
-        b=L+kee0cRCI8M5izNzivlgVPwdLxWmOOTtNBBV6ID4Quyhk5+IERBAgvrK4C2us9n8l
-         bj73Z4Mx4YBbKfcTo6FXeeE3BihZ1lXKomYW0g7EqcjR/9ZnbUmp8oNBNVrz/x4q0YKg
-         eRPB1SK7lBViPcwiiie1arfJFaZNLBbF33cMoqstHm8l5up1ui9GiUIiu63U9hfihKcM
-         Lh9lhbClAEMviwDmyjYdH3MVushub9l3qdOQ/Kxj2kqxQtW2anWNSKNy6eiqKl7nsMdG
-         knyfOtCIj6dJR5EYb0xVpbvty4SwchMqomrc3WhiUUTbLrryHrqdxatieczbOwbCOvvq
-         zAaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=qphoGsTHXUSskf2pKRE//n4CuHLfwr9wJ/jka9mWkIA=;
-        b=pde2C7UXZSftRkozDab27k6IHbw8oBA+pqLkAnU/1UwGcfK5ynqHTVQMkkvz2YGYK7
-         WDb0KAEPdf/0u0Hs5Ft6X6mx27cUZ3+ZcyHN90rZKXJZ+x/GVAAE7zrnjKMxtnQsL5RL
-         9KDb8iXt2QcgfwS53ByTJ2C7HHhdn3hpOWzKmzzLGoggL5hSxw/y+MlBuEBktOLK5WTi
-         lhOEXyMt26KCc8kzbQpts6SBE6qwDe9TMyfnbTW2s43iC3K4sBSTbrhBf8st89zsvp3e
-         NuGQCoLCy6z6XsXcHkoGCQse083jXG6CTXj8yEwms8ydYd0LIHX7w0WS+RAfj8LTf2Lg
-         hdlw==
-X-Gm-Message-State: APjAAAWlwSmp+KQd6KMvs5vEfQ+TfKlp+X3m3Qk6pBa58M0iUFcyuwyW
-        /tovU0vz+I+65Votq0nGI+uWR+fAj/VSCVozVPc=
-X-Google-Smtp-Source: APXvYqxTdjeLKQn7HKwDqRoRk4jzL6ShzAQ5pBlwUkq3qAXHaYMS2db8boYszKlqULbL7i9uBimraKEmDOgD5BgTYcQ=
-X-Received: by 2002:a63:6eca:: with SMTP id j193mr18892153pgc.74.1566211185659;
- Mon, 19 Aug 2019 03:39:45 -0700 (PDT)
+        id S1726956AbfHSKok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 06:44:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:59695 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfHSKok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:44:40 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 03:44:38 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
+   d="scan'208";a="202256337"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
+  by fmsmga004.fm.intel.com with ESMTP; 19 Aug 2019 03:44:33 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [char-misc-next] mei: me: add Tiger Lake point LP device ID
+Date:   Mon, 19 Aug 2019 13:32:10 +0300
+Message-Id: <20190819103210.32748-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190819100724.30051-1-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190819100724.30051-1-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 19 Aug 2019 13:39:33 +0300
-Message-ID: <CAHp75VfivaaAz1s5AD0BxcTCyO3P0yJUajKh0=WJ6f4w1XkHPg@mail.gmail.com>
-Subject: Re: [PATCH v3 0/3] software node: Introduce software_node_find_by_name()
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 1:08 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> Hi,
->
-> There was still one bug spotted by Andy in v2. The role switch node
-> was not removed in case of an error (patch 2/3). It is now fixed.
+Add Tiger Lake Point device ID for TGP LP.
 
-It would be nice to have immutable branch for these changes. There is
-at least some other activity regard to intel_cht_int33fe driver.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/misc/mei/hw-me-regs.h | 2 ++
+ drivers/misc/mei/pci-me.c     | 2 ++
+ 2 files changed, 4 insertions(+)
 
-> The cover letter from v2:
->
-> This is the second version of this series where I'm introducing that
-> helper.
->
-> Hans and Andy! Because of the changes I made to patch 2/3, I'm not
-> carrying your reviewed-by tags in it. I would appreciate if you
-> could take another look at that patch.
->
-> I added a note to the kernel-doc comment in patch 1/3 that the caller
-> of the helper function needs to release the ref count after use as
-> proposed by Andy.
->
-> In patch 2/3, since we have to now modify the role switch descriptor,
-> I'm filling the structure in stack memory and removing the constant
-> static version. The content of the descriptor is copied during switch
-> registration in any case, so we don't need to store it in the driver.
->
-> I also noticed a bug in 2/3. I never properly destroyed the software
-> node when the mux was removed. That leak is now also fixed.
->
-> thanks,
->
-> Heikki Krogerus (3):
->   software node: Add software_node_find_by_name()
->   usb: roles: intel_xhci: Supplying software node for the role mux
->   platform/x86: intel_cht_int33fe: Use new API to gain access to the
->     role switch
->
->  drivers/base/swnode.c                         | 37 ++++++++++++
->  drivers/platform/x86/intel_cht_int33fe.c      | 57 ++++---------------
->  .../usb/roles/intel-xhci-usb-role-switch.c    | 27 ++++++---
->  include/linux/property.h                      |  4 ++
->  4 files changed, 71 insertions(+), 54 deletions(-)
->
-> --
-> 2.23.0.rc1
->
-
-
+diff --git a/drivers/misc/mei/hw-me-regs.h b/drivers/misc/mei/hw-me-regs.h
+index 6c0173772162..77f7dff7098d 100644
+--- a/drivers/misc/mei/hw-me-regs.h
++++ b/drivers/misc/mei/hw-me-regs.h
+@@ -81,6 +81,8 @@
+ 
+ #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
+ 
++#define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
++
+ #define MEI_DEV_ID_MCC        0x4B70  /* Mule Creek Canyon (EHL) */
+ #define MEI_DEV_ID_MCC_4      0x4B75  /* Mule Creek Canyon 4 (EHL) */
+ 
+diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
+index 563ebd56c3e5..d5a92c6eadb3 100644
+--- a/drivers/misc/mei/pci-me.c
++++ b/drivers/misc/mei/pci-me.c
+@@ -98,6 +98,8 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
+ 
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
+ 
++	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
++
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC, MEI_ME_PCH12_CFG)},
+ 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC_4, MEI_ME_PCH8_CFG)},
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
+2.20.1
+
