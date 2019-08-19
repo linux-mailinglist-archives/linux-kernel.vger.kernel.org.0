@@ -2,69 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 936AE91CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:13:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C0A8091CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:18:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726560AbfHSGNu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 02:13:50 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47856 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725946AbfHSGNt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:13:49 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B9C35382D04232DAEC32;
-        Mon, 19 Aug 2019 14:13:44 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 19 Aug 2019 14:13:34 +0800
-From:   Wei Yongjun <weiyongjun1@huawei.com>
-To:     Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     Wei Yongjun <weiyongjun1@huawei.com>,
-        <etnaviv@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] drm/etnaviv: fix missing unlock on error in etnaviv_iommuv1_context_alloc()
-Date:   Mon, 19 Aug 2019 06:17:33 +0000
-Message-ID: <20190819061733.50023-1-weiyongjun1@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726614AbfHSGSo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 02:18:44 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:17677 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725790AbfHSGSo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 02:18:44 -0400
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id x7J6Iagv004121;
+        Mon, 19 Aug 2019 15:18:36 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com x7J6Iagv004121
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566195517;
+        bh=mdvVTv3n82OSRycPvJ85qAq0gYB/fIX4CdCh4wVf4wU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ohePG+XrOEPALXPBRFYCdboBGdtXD5/QyU5+0N0V8doa2luVnv5O0Oq7+M2erekaj
+         dTAQXgcGDUtGIT9McHuO2Ts4PZL3Qpl8BDcN30PEc2LqL/NtGrpefCQlJUj+jo17/x
+         fukbx5MosWL4V12eXBKWFQbyqQa5MzYPwv9yRW10RP0Igcb4NvLmPvXgOduwyKW7a0
+         nWcUnzwfDjnjchry0/gKMabRmPLHie6QQ+Y/tCNKdVARrXBWCQHzuljkToyvGrcTmV
+         sSlFn52BgebpLSdD2Zz776Poo/ELq5wTaUL0L7aHnDForC0pO77JGH21YQkuiI2hX7
+         vbt8r2MvmhC6g==
+X-Nifty-SrcIP: [209.85.217.50]
+Received: by mail-vs1-f50.google.com with SMTP id b187so450674vsc.9;
+        Sun, 18 Aug 2019 23:18:36 -0700 (PDT)
+X-Gm-Message-State: APjAAAWRW0FmlcVMQjYxYk43hAKs0K3YDbpMCf/MkezhNyf7Ac0mzV1I
+        aUF4nkeRkkXqlAmFEX+sROW2wHgs3ZsBWKIS21E=
+X-Google-Smtp-Source: APXvYqypMbATPlyP1E6U0jX2apM4bwEbu+0F1IzcNo8Wg2XfSUc01fPlXGWMcGBZSfT+K7IwPTyid93NELceB+uKN0s=
+X-Received: by 2002:a05:6102:20c3:: with SMTP id i3mr13217030vsr.155.1566195515660;
+ Sun, 18 Aug 2019 23:18:35 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type:   text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+References: <20190621112306.17769-1-yamada.masahiro@socionext.com> <0e357fa8-3241-4ce4-fae7-d0ad36fb14c6@kernel.org>
+In-Reply-To: <0e357fa8-3241-4ce4-fae7-d0ad36fb14c6@kernel.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 19 Aug 2019 15:17:59 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASrdNwFEEFoy8mH4CnWHN5d8qCw_LeU1St0x1oa9jRNFQ@mail.gmail.com>
+Message-ID: <CAK7LNASrdNwFEEFoy8mH4CnWHN5d8qCw_LeU1St0x1oa9jRNFQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: socfpga: update to new Denali NAND binding
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the missing unlock before return from function etnaviv_iommuv1_context_alloc()
-in the error handling case.
-
-Fixes: 27b67278e007 ("drm/etnaviv: rework MMU handling")
-Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
----
- drivers/gpu/drm/etnaviv/etnaviv_iommu.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-index aac8dbf3ea56..1a7c89a67bea 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_iommu.c
-@@ -140,8 +140,10 @@ etnaviv_iommuv1_context_alloc(struct etnaviv_iommu_global *global)
- 	}
- 
- 	v1_context = kzalloc(sizeof(*v1_context), GFP_KERNEL);
--	if (!v1_context)
-+	if (!v1_context) {
-+		mutex_unlock(&global->lock);
- 		return NULL;
-+	}
- 
- 	v1_context->pgtable_cpu = dma_alloc_wc(global->dev, PT_SIZE,
- 					       &v1_context->pgtable_dma,
+On Tue, Jun 25, 2019 at 12:39 AM Dinh Nguyen <dinguyen@kernel.org> wrote:
+>
+>
+>
+> On 6/21/19 6:23 AM, Masahiro Yamada wrote:
+> > With commit d8e8fd0ebf8b ("mtd: rawnand: denali: decouple controller
+> > and NAND chips"), the Denali NAND controller driver migrated to the
+> > new controller/chip representation.
+> >
+> > Update DT for it.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  arch/arm/boot/dts/socfpga.dtsi                |  2 +-
+> >  arch/arm/boot/dts/socfpga_arria10.dtsi        |  2 +-
+> >  .../boot/dts/socfpga_arria10_socdk_nand.dts   | 20 ++++++++++++-------
+> >  3 files changed, 15 insertions(+), 9 deletions(-)
+> >
+>
+> Applied! Thanks!
+>
+> Dinh
 
 
+You did not send this to upstream for v5.3-rc1.
 
+Which version is this aiming for?
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
