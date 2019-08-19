@@ -2,91 +2,68 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A5A694B55
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:10:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E915294B6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:14:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727982AbfHSRKK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 13:10:10 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44916 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbfHSRKK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:10:10 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t14so1250258plr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 10:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:subject:from:cc:to:user-agent:date;
-        bh=Q5LjT2ulgbJMIcnXziCS32ArOw8FLJpPq0N2+3+iSu4=;
-        b=Jk4dW+/LwN6k/bNAcq0KPPAUpc24H3TC+TLKxUEQ3bhKuFr1oQ8S1aHZXN/CKrI0wV
-         jZd2fO/fFAahPYk4qF+l0SQSdiE8VJGvaCKjTb6Fhwr6ZzF8ddomL3CF/aN2lzXAwHO3
-         /X5T1v7JA4S55Jky3E+HExMyytOt3M4eKTuhk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:subject:from:cc:to
-         :user-agent:date;
-        bh=Q5LjT2ulgbJMIcnXziCS32ArOw8FLJpPq0N2+3+iSu4=;
-        b=Ys/4OmCyShLDnkipXCteaOOq8UZcd7DxvxKbc/M3D1TmV396p4y7eLIBZdapz2RVTA
-         0PP7z0kw2ev9aV3mMuaMj9JP65Y1hWD+vKWmSmRx5zn9c8HZYMAVGupyEYdQgfDvlq0+
-         SBLnpDUMQGImg+Ig1/BagFilT8tfwD4lp1NOg4PIynOX++yFFZisih6aRHpTv7LVBX70
-         I9ssKYom+FaeuaHtiCO6iWfR2VIJvEItXUpxawTy20EXQu7wWz7lKvWPvLC5//7Wapcc
-         OielsqzDb07fYRBs+SnRZJqlQQOe7KnVeGA5R+qmvl7HqBFBt/PBllf1jbFMsrZNZjQZ
-         FQ6g==
-X-Gm-Message-State: APjAAAVis9Y+IMJLRMIdDxkaNic7cKx2Omz1b1pLuMBBXpicPCfF6FS2
-        Uf1UQnEdSQv+yuTISfXpTdOfdg==
-X-Google-Smtp-Source: APXvYqybFuJuc6ce88amVXBCJHbvICuLITkB68+9d3DrSh+8NFW3c8v3hvDLcMGBKhpBmHlYtNP5Lw==
-X-Received: by 2002:a17:902:988d:: with SMTP id s13mr15192166plp.139.1566234609437;
-        Mon, 19 Aug 2019 10:10:09 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id z6sm25497112pgk.18.2019.08.19.10.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 10:10:08 -0700 (PDT)
-Message-ID: <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S1727883AbfHSROd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 13:14:33 -0400
+Received: from mga02.intel.com ([134.134.136.20]:13280 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726918AbfHSROc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 13:14:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 09:56:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
+   d="scan'208";a="179474448"
+Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
+  by fmsmga007.fm.intel.com with ESMTP; 19 Aug 2019 09:56:29 -0700
+Date:   Mon, 19 Aug 2019 19:56:29 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sumit Garg <sumit.garg@linaro.org>
+Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
+        linux-crypto@vger.kernel.org,
+        linux-security-module@vger.kernel.org, dhowells@redhat.com,
+        herbert@gondor.apana.org.au, davem@davemloft.net,
+        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com, arnd@arndb.de,
+        gregkh@linuxfoundation.org, zohar@linux.ibm.com, jmorris@namei.org,
+        serge@hallyn.com, casey@schaufler-ca.com,
+        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
+        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
+Subject: Re: [RFC/RFT v4 1/5] tpm: move tpm_buf code to include/linux/
+Message-ID: <20190819165629.qv7cmg6kiwb6oxig@linux.intel.com>
+References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
+ <1565682784-10234-2-git-send-email-sumit.garg@linaro.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190819164005.evg35d2hcuslbnrj@linux.intel.com>
-References: <20190812223622.73297-1-swboyd@chromium.org> <20190812223622.73297-5-swboyd@chromium.org> <20190819164005.evg35d2hcuslbnrj@linux.intel.com>
-Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other drivers
-From:   Stephen Boyd <swboyd@chromium.org>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 19 Aug 2019 10:10:08 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1565682784-10234-2-git-send-email-sumit.garg@linaro.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-08-19 09:40:05)
-> On Mon, Aug 12, 2019 at 03:36:20PM -0700, Stephen Boyd wrote:
-> > Export a new function, tpm_tis_spi_init(), and the associated
-> > read/write/transfer APIs so that we can create variant drivers based on
-> > the core functionality of this TPM SPI driver. Variant drivers can wrap
-> > the tpm_tis_spi_phy struct with their own struct and override the
-> > behavior of tpm_tis_spi_transfer() by supplying their own flow control
-> > and pre-transfer hooks. This shares the most code between the core
-> > driver and any variants that want to override certain behavior without
-> > cluttering the core driver.
->=20
-> I think this is adding way too much complexity for the purpose. We
-> definitely do want this three layer architecture here.
->=20
-> Instead there should be a single tpm_tis_spi driver that dynamically
-> either TCG or CR50. I rather take some extra bytes in the LKM than
-> the added complexity.
->=20
+On Tue, Aug 13, 2019 at 01:23:00PM +0530, Sumit Garg wrote:
+> Move tpm_buf code to common include/linux/tpm.h header so that it can
+> be reused via other subsystems like trusted keys etc.
+> 
+> Also rename trusted keys TPM 1.x buffer implementation to tpm1_buf to
+> avoid any compilation errors.
+> 
+> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-Ok. I had that patch originally[1]. Do you want me to resend that patch
-and start review over from there?
+A question: did you try to do this as mechanically as you ever could
+or did you do any other code changes? I did go through it but it is
+possible that I missed something.
 
-[1] https://lkml.kernel.org/r/5d2f955d.1c69fb81.35877.7018@mx.google.com
+In this type of changes it is mandatory be extra strict on not doing
+anything extra (the rename you would was not of course extra because
+it was necessary to do).
+
+/Jarkko
