@@ -2,281 +2,209 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECCB792604
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:06:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AB979260B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:06:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727725AbfHSOFH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:05:07 -0400
-Received: from foss.arm.com ([217.140.110.172]:55068 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbfHSOFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:05:04 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 354AC28;
-        Mon, 19 Aug 2019 07:05:04 -0700 (PDT)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30EEB3F718;
-        Mon, 19 Aug 2019 07:05:02 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc:     Steven Price <steven.price@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 9/9] arm64: Retrieve stolen time as paravirtualized guest
-Date:   Mon, 19 Aug 2019 15:04:36 +0100
-Message-Id: <20190819140436.12207-10-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190819140436.12207-1-steven.price@arm.com>
-References: <20190819140436.12207-1-steven.price@arm.com>
+        id S1727832AbfHSOFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:05:22 -0400
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:38139 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727696AbfHSOFU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:05:20 -0400
+Received: from [192.168.2.10] ([46.9.232.237])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id ziHWhHpZgzaKOziHZhrwIU; Mon, 19 Aug 2019 16:05:17 +0200
+Subject: Re: [PATCH v7 8/9] drm: dw-hdmi: use cec_notifier_conn_(un)register
+From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
+To:     Dariusz Marcinkiewicz <darekm@google.com>,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        David Airlie <airlied@linux.ie>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Sam Ravnborg <sam@ravnborg.org>
+References: <20190814104520.6001-1-darekm@google.com>
+ <20190814104520.6001-9-darekm@google.com>
+ <b04edaf8-6116-69ab-fd8f-c28c90f73ad7@xs4all.nl>
+Message-ID: <3ae37c2f-94da-5ad0-a244-ef9658fc35e2@xs4all.nl>
+Date:   Mon, 19 Aug 2019 16:05:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <b04edaf8-6116-69ab-fd8f-c28c90f73ad7@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfOHa1pgQlPJTOC9uHuuHP3RoyBKsmaLsoQ75FecdGtWmRQjv0fvSfIHLzS+FWlABhNpKUVZB7Mp12vFdDYYg3X6ErOgFUfzuJ0hkUZkTi5VApxO6EvsD
+ OxehRQ/1dMoMzOgQfkJpAzrftgLMnOTk6b8E+ohKITpTPCc9LRwccojZP5EiteRYxUojz4aDQH8+ea68FgazKooDivVT02+iHWg4I5ukN8LFCfNmiPH1FGSf
+ dqwTiMYQy+2L6aiB/9RyWTlBqrI8UdzBjbgSxPMW0YzmHfpej8dvW6GuAad8mXF79q9dZBRPNDC75C3TZR3HhlqL7aP0Q05L7vmgXBJJPlUHxe48gK7cOv1/
+ KbKwIqxRtKZutzkLeN0oVuhA9eBtAbYH9Be5F0Q1HcdwjY9o3itzl1h9u34zai2tIV7ewdEYv3Y9vf1oyO9+5H70K2OJFjin3uHgPvtMWX/ajVx+VQ0a6tQa
+ VlRcVj5jGQ8EJ4GazmTYJTfZ9EK6ZxTCx3NfH/t9XqBRsE8VdkfdhoHo1hO0y4BOIWB3J6f+O6ojud4PqOjZY1xG1dV5AVIHA03USA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable paravirtualization features when running under a hypervisor
-supporting the PV_TIME_ST hypercall.
+On 8/19/19 11:32 AM, Hans Verkuil wrote:
+> On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
+>> Use the new cec_notifier_conn_(un)register() functions to
+>> (un)register the notifier for the HDMI connector, and fill in
+>> the cec_connector_info.
+>>
+>> Changes since v6:
+>>         - move cec_notifier_conn_unregister to a bridge detach
+>> 	  function,
+>> 	- add a mutex protecting a CEC notifier.
+>> Changes since v4:
+>> 	- typo fix
+>> Changes since v2:
+>> 	- removed unnecessary NULL check before a call to
+>> 	cec_notifier_conn_unregister,
+>> 	- use cec_notifier_phys_addr_invalidate to invalidate physical
+>> 	address.
+>> Changes since v1:
+>> 	Add memory barrier to make sure that the notifier
+>> 	becomes visible to the irq thread once it is fully
+>> 	constructed.
+>>
+>> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
+> 
+> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-For each (v)CPU, we ask the hypervisor for the location of a shared
-page which the hypervisor will use to report stolen time to us. We set
-pv_time_ops to the stolen time function which simply reads the stolen
-value from the shared page for a VCPU. We guarantee single-copy
-atomicity using READ_ONCE which means we can also read the stolen
-time for another VCPU than the currently running one while it is
-potentially being updated by the hypervisor.
+Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/include/asm/paravirt.h |   9 +-
- arch/arm64/kernel/paravirt.c      | 147 ++++++++++++++++++++++++++++++
- arch/arm64/kernel/time.c          |   3 +
- include/linux/cpuhotplug.h        |   1 +
- 4 files changed, 159 insertions(+), 1 deletion(-)
+Regards,
 
-diff --git a/arch/arm64/include/asm/paravirt.h b/arch/arm64/include/asm/paravirt.h
-index 799d9dd6f7cc..125c26c42902 100644
---- a/arch/arm64/include/asm/paravirt.h
-+++ b/arch/arm64/include/asm/paravirt.h
-@@ -21,6 +21,13 @@ static inline u64 paravirt_steal_clock(int cpu)
- {
- 	return pv_ops.time.steal_clock(cpu);
- }
--#endif
-+
-+int __init kvm_guest_init(void);
-+
-+#else
-+
-+#define kvm_guest_init()
-+
-+#endif // CONFIG_PARAVIRT
- 
- #endif
-diff --git a/arch/arm64/kernel/paravirt.c b/arch/arm64/kernel/paravirt.c
-index 4cfed91fe256..9971513aed73 100644
---- a/arch/arm64/kernel/paravirt.c
-+++ b/arch/arm64/kernel/paravirt.c
-@@ -6,13 +6,160 @@
-  * Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-  */
- 
-+#define pr_fmt(fmt) "kvmarm-pv: " fmt
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/export.h>
-+#include <linux/io.h>
- #include <linux/jump_label.h>
-+#include <linux/printk.h>
-+#include <linux/psci.h>
-+#include <linux/reboot.h>
-+#include <linux/slab.h>
- #include <linux/types.h>
-+
- #include <asm/paravirt.h>
-+#include <asm/pvclock-abi.h>
-+#include <asm/smp_plat.h>
- 
- struct static_key paravirt_steal_enabled;
- struct static_key paravirt_steal_rq_enabled;
- 
- struct paravirt_patch_template pv_ops;
- EXPORT_SYMBOL_GPL(pv_ops);
-+
-+struct kvmarm_stolen_time_region {
-+	struct pvclock_vcpu_stolen_time *kaddr;
-+};
-+
-+static DEFINE_PER_CPU(struct kvmarm_stolen_time_region, stolen_time_region);
-+
-+static bool steal_acc = true;
-+static int __init parse_no_stealacc(char *arg)
-+{
-+	steal_acc = false;
-+	return 0;
-+}
-+early_param("no-steal-acc", parse_no_stealacc);
-+
-+/* return stolen time in ns by asking the hypervisor */
-+static u64 kvm_steal_clock(int cpu)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+
-+	reg = per_cpu_ptr(&stolen_time_region, cpu);
-+	if (!reg->kaddr) {
-+		pr_warn_once("stolen time enabled but not configured for cpu %d\n",
-+			     cpu);
-+		return 0;
-+	}
-+
-+	return le64_to_cpu(READ_ONCE(reg->kaddr->stolen_time));
-+}
-+
-+static int disable_stolen_time_current_cpu(void)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+
-+	reg = this_cpu_ptr(&stolen_time_region);
-+	if (!reg->kaddr)
-+		return 0;
-+
-+	memunmap(reg->kaddr);
-+	memset(reg, 0, sizeof(*reg));
-+
-+	return 0;
-+}
-+
-+static int stolen_time_dying_cpu(unsigned int cpu)
-+{
-+	return disable_stolen_time_current_cpu();
-+}
-+
-+static int init_stolen_time_cpu(unsigned int cpu)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+	struct arm_smccc_res res;
-+
-+	reg = this_cpu_ptr(&stolen_time_region);
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_TIME_ST, &res);
-+
-+	if ((long)res.a0 < 0)
-+		return -EINVAL;
-+
-+	reg->kaddr = memremap(res.a0,
-+			sizeof(struct pvclock_vcpu_stolen_time),
-+			MEMREMAP_WB);
-+
-+	if (reg->kaddr == NULL) {
-+		pr_warn("Failed to map stolen time data structure\n");
-+		return -ENOMEM;
-+	}
-+
-+	if (le32_to_cpu(reg->kaddr->revision) != 0 ||
-+			le32_to_cpu(reg->kaddr->attributes) != 0) {
-+		pr_warn("Unexpected revision or attributes in stolen time data\n");
-+		return -ENXIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int kvm_arm_init_stolen_time(void)
-+{
-+	int ret;
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_ARM_KVMPV_STARTING,
-+				"hypervisor/kvmarm/pv:starting",
-+				init_stolen_time_cpu, stolen_time_dying_cpu);
-+	if (ret < 0)
-+		return ret;
-+	return 0;
-+}
-+
-+static bool has_kvm_steal_clock(void)
-+{
-+	struct arm_smccc_res res;
-+
-+	/* To detect the presence of PV time support we require SMCCC 1.1+ */
-+	if (psci_ops.smccc_version < SMCCC_VERSION_1_1)
-+		return false;
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+			     ARM_SMCCC_HV_PV_FEATURES, &res);
-+
-+	if (res.a0 != SMCCC_RET_SUCCESS)
-+		return false;
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_FEATURES,
-+			     ARM_SMCCC_HV_PV_TIME_ST, &res);
-+
-+	if (res.a0 != SMCCC_RET_SUCCESS)
-+		return false;
-+
-+	return true;
-+}
-+
-+int __init kvm_guest_init(void)
-+{
-+	int ret = 0;
-+
-+	if (!has_kvm_steal_clock())
-+		return 0;
-+
-+	ret = kvm_arm_init_stolen_time();
-+	if (ret)
-+		return ret;
-+
-+	pv_ops.time.steal_clock = kvm_steal_clock;
-+
-+	static_key_slow_inc(&paravirt_steal_enabled);
-+	if (steal_acc)
-+		static_key_slow_inc(&paravirt_steal_rq_enabled);
-+
-+	pr_info("using stolen time PV\n");
-+
-+	return 0;
-+}
-diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
-index 0b2946414dc9..a52aea14c6ec 100644
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -30,6 +30,7 @@
- 
- #include <asm/thread_info.h>
- #include <asm/stacktrace.h>
-+#include <asm/paravirt.h>
- 
- unsigned long profile_pc(struct pt_regs *regs)
- {
-@@ -65,4 +66,6 @@ void __init time_init(void)
- 
- 	/* Calibrate the delay loop directly */
- 	lpj_fine = arch_timer_rate / HZ;
-+
-+	kvm_guest_init();
- }
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 068793a619ca..89d75edb5750 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -136,6 +136,7 @@ enum cpuhp_state {
- 	/* Must be the last timer callback */
- 	CPUHP_AP_DUMMY_TIMER_STARTING,
- 	CPUHP_AP_ARM_XEN_STARTING,
-+	CPUHP_AP_ARM_KVMPV_STARTING,
- 	CPUHP_AP_ARM_CORESIGHT_STARTING,
- 	CPUHP_AP_ARM64_ISNDEP_STARTING,
- 	CPUHP_AP_SMPCFD_DYING,
--- 
-2.20.1
+	Hans
+
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>> ---
+>>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++--------
+>>  1 file changed, 30 insertions(+), 15 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> index 83b94b66e464e..55162c9092f71 100644
+>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+>> @@ -190,6 +190,7 @@ struct dw_hdmi {
+>>  	void (*enable_audio)(struct dw_hdmi *hdmi);
+>>  	void (*disable_audio)(struct dw_hdmi *hdmi);
+>>  
+>> +	struct mutex cec_notifier_mutex;
+>>  	struct cec_notifier *cec_notifier;
+>>  };
+>>  
+>> @@ -2194,6 +2195,8 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>>  	struct dw_hdmi *hdmi = bridge->driver_private;
+>>  	struct drm_encoder *encoder = bridge->encoder;
+>>  	struct drm_connector *connector = &hdmi->connector;
+>> +	struct cec_connector_info conn_info;
+>> +	struct cec_notifier *notifier;
+>>  
+>>  	connector->interlace_allowed = 1;
+>>  	connector->polled = DRM_CONNECTOR_POLL_HPD;
+>> @@ -2207,9 +2210,29 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+>>  
+>>  	drm_connector_attach_encoder(connector, encoder);
+>>  
+>> +	cec_fill_conn_info_from_drm(&conn_info, connector);
+>> +
+>> +	notifier = cec_notifier_conn_register(hdmi->dev, NULL, &conn_info);
+>> +	if (!notifier)
+>> +		return -ENOMEM;
+>> +
+>> +	mutex_lock(&hdmi->cec_notifier_mutex);
+>> +	hdmi->cec_notifier = notifier;
+>> +	mutex_unlock(&hdmi->cec_notifier_mutex);
+>> +
+>>  	return 0;
+>>  }
+>>  
+>> +static void dw_hdmi_bridge_detach(struct drm_bridge *bridge)
+>> +{
+>> +	struct dw_hdmi *hdmi = bridge->driver_private;
+>> +
+>> +	mutex_lock(&hdmi->cec_notifier_mutex);
+>> +	cec_notifier_conn_unregister(hdmi->cec_notifier);
+>> +	hdmi->cec_notifier = NULL;
+>> +	mutex_unlock(&hdmi->cec_notifier_mutex);
+>> +}
+>> +
+>>  static enum drm_mode_status
+>>  dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
+>>  			  const struct drm_display_mode *mode)
+>> @@ -2266,6 +2289,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+>>  
+>>  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+>>  	.attach = dw_hdmi_bridge_attach,
+>> +	.detach = dw_hdmi_bridge_detach,
+>>  	.enable = dw_hdmi_bridge_enable,
+>>  	.disable = dw_hdmi_bridge_disable,
+>>  	.mode_set = dw_hdmi_bridge_mode_set,
+>> @@ -2373,9 +2397,11 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
+>>  				       phy_stat & HDMI_PHY_HPD,
+>>  				       phy_stat & HDMI_PHY_RX_SENSE);
+>>  
+>> -		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
+>> -			cec_notifier_set_phys_addr(hdmi->cec_notifier,
+>> -						   CEC_PHYS_ADDR_INVALID);
+>> +		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0) {
+>> +			mutex_lock(&hdmi->cec_notifier_mutex);
+>> +			cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
+>> +			mutex_unlock(&hdmi->cec_notifier_mutex);
+>> +		}
+>>  	}
+>>  
+>>  	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
+>> @@ -2561,6 +2587,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>>  
+>>  	mutex_init(&hdmi->mutex);
+>>  	mutex_init(&hdmi->audio_mutex);
+>> +	mutex_init(&hdmi->cec_notifier_mutex);
+>>  	spin_lock_init(&hdmi->audio_lock);
+>>  
+>>  	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
+>> @@ -2693,12 +2720,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>>  	if (ret)
+>>  		goto err_iahb;
+>>  
+>> -	hdmi->cec_notifier = cec_notifier_get(dev);
+>> -	if (!hdmi->cec_notifier) {
+>> -		ret = -ENOMEM;
+>> -		goto err_iahb;
+>> -	}
+>> -
+>>  	/*
+>>  	 * To prevent overflows in HDMI_IH_FC_STAT2, set the clk regenerator
+>>  	 * N and cts values before enabling phy
+>> @@ -2796,9 +2817,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
+>>  		hdmi->ddc = NULL;
+>>  	}
+>>  
+>> -	if (hdmi->cec_notifier)
+>> -		cec_notifier_put(hdmi->cec_notifier);
+>> -
+>>  	clk_disable_unprepare(hdmi->iahb_clk);
+>>  	if (hdmi->cec_clk)
+>>  		clk_disable_unprepare(hdmi->cec_clk);
+>> @@ -2820,9 +2838,6 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
+>>  	/* Disable all interrupts */
+>>  	hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
+>>  
+>> -	if (hdmi->cec_notifier)
+>> -		cec_notifier_put(hdmi->cec_notifier);
+>> -
+>>  	clk_disable_unprepare(hdmi->iahb_clk);
+>>  	clk_disable_unprepare(hdmi->isfr_clk);
+>>  	if (hdmi->cec_clk)
+>>
+> 
 
