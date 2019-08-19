@@ -2,105 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 63DF9920BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC84E920C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:54:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfHSJwA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 05:52:00 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:40775 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726594AbfHSJv7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:51:59 -0400
-Received: by mail-pf1-f194.google.com with SMTP id w16so873943pfn.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 02:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=xGqFoegYFFErF3k96plvP+BoToF4gSQapUoW0Zrc4EI=;
-        b=tjBog+GFQi8eVR5IFt2HYmaEBLiJLQHxwfxJD321hYhOdjgK5Z3oqNtUNEwz5/DGUM
-         CgK2pwBoFXfPXDH/+suP2sgFZzD50XlOsXvAZez4WXG03lgGgRVPxog7eKGf5EjlDzna
-         6cIC492iG1do16x4weU/6N/DzEdydwxfFqjgp17sNZsOiNwPlY9dDzaDFb/7KRppt1xh
-         5H/dJvmoYdEwLttrr8+OCIrrbNijeXHXIkqoaF7oWUDtXew+OV5iEODi5hhMFjexa2dT
-         GAZLnxaJobyzQ8g5eE2mEWeChuuIqMtdY08D8RSuhTxX4hxQUt2qSDTYVxXrPZ7Ml5aF
-         wNgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xGqFoegYFFErF3k96plvP+BoToF4gSQapUoW0Zrc4EI=;
-        b=IxYoJLHE/0P5Fdxlgs35s6tXq/hJmdNEjGHUbzK9yLjYc2oouaYjexprmzc5R97hS5
-         meiO4yyeGy9Xmi1qK20rui0ruOA5AqlDtqxDBpXKAGDo8y9Lsb2qbK1L+a0TR2wKtxxW
-         wIEwVd2KqZsCVNlFV8fYY+WhEXk0uCW3klSftP12RsOFB12ES3eU7dQzDe0xo9QKjGiq
-         /qDICTXDK/3OA4FtL+quM46xd6OS1JLmMLd0Y8rxgNCdn4NHBzYS4V2UuDIF40ayo8EK
-         hfYsBJvxAYeuOftl967YHZxSRNKmiZB9ZjLnvrbDOElGK7TnaG9XgIaxypvC74ikKnE9
-         RWVQ==
-X-Gm-Message-State: APjAAAWkQ4KylBpsn5IdHVPmGq7+b5g9u1LkXedMVgzh+swIJy8Vv6Lh
-        RoJcXQqky2+An+fJkq7AN8e8Sg==
-X-Google-Smtp-Source: APXvYqwefojTPrDuHM+2Bz8IW3MPXqRE/59Iakl1TK1LeLtzUvPNSDdCUFmUg0z973E3A07y52xJwg==
-X-Received: by 2002:a17:90a:fd8c:: with SMTP id cx12mr19976973pjb.95.1566208318998;
-        Mon, 19 Aug 2019 02:51:58 -0700 (PDT)
-Received: from localhost ([122.172.76.219])
-        by smtp.gmail.com with ESMTPSA id b126sm2036018pfb.110.2019.08.19.02.51.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 02:51:58 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 15:21:56 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
+        id S1727178AbfHSJwQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:52:16 -0400
+Received: from mail-eopbgr80051.outbound.protection.outlook.com ([40.107.8.51]:59398
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726594AbfHSJwN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 05:52:13 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QwwgMCDC53A9+0By5JlJvtuySR558TI3lzB23xmV5ra+YD80Z+AMRpTGqWyjyZb1Ogy1sySB8wm1U8VRmztp+bK8mW1jROPssr+JBT1E7fQ9P43G3qxQDZ8sm/BQm5BNuxESszbpfIO3Eqr0L057RgZDS+6k5falCCvp/eGvJsmqTowq/Ya1xAKOGgQa8Q9U/nSuDiKQnpLkw8el0l5lZnnmwJvIEHvfcCJKSfbK/8t9XoONsMEPikd3TQVGMgf1VlH9Um/kdkhyfddPQ7kkVdrO8YAkai21go3IcD8CIsTgzL/2xBiUcq5Z7+9tCMcYh75DBG+x9AjWA5bkbxTCzw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PWvmYwrWi++yuYUh5x7JdjZtoqwY+HTCzM9NhhY299A=;
+ b=Ur8aQE5GXBR2JaPDmbZA0TFA8IuKPCliJULO129zyBM3owZ1fr74R2tYq4iZuo0gJJd7np6gz7o+WnZNT99Xs1GKLLMXqRKsdTT2mgto8ighIhyVbrmPGiBpvhENuG+ugJaTknO5M5YNFGWfw0k9CXMO4wkl2KANK9WB19fEfwqaMxuPcFqCtIBRbrQtkiqFCr4PqywhFnN5Bza6f88px85Tkm2Pr6+nGRzrxL8G7Fm6ZXHHaH420Q1TBLWEO3qFIaNkp0CO3cgxuaEiEXXMtblYmB6Wm/bLpub0HunSumxPJ+No+LuuZQFlUJBWOfoHc6OcTwJwzYqNW4xwiMK2Uw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PWvmYwrWi++yuYUh5x7JdjZtoqwY+HTCzM9NhhY299A=;
+ b=N29pGl34SEaUg+tMAqpBopUV9y+dEL9n+JXT0v4BEGCJ32gqCPs1IuXsb//kss4OueiBgE/Iwh7/Tmf3vI2yHmJMR2coHRDrfJkIf4nKlGqc0o2fXoxfCCKyp5XK2+3mB9L8+M0gDloV66ahAnxtFmy8LlIGazGGIN+yGKHB1xY=
+Received: from DB7PR04MB5195.eurprd04.prod.outlook.com (20.176.236.27) by
+ DB7PR04MB5162.eurprd04.prod.outlook.com (20.176.235.74) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Mon, 19 Aug 2019 09:52:09 +0000
+Received: from DB7PR04MB5195.eurprd04.prod.outlook.com
+ ([fe80::e854:ffa9:a285:88a4]) by DB7PR04MB5195.eurprd04.prod.outlook.com
+ ([fe80::e854:ffa9:a285:88a4%5]) with mapi id 15.20.2178.018; Mon, 19 Aug 2019
+ 09:52:09 +0000
+From:   Wen He <wen.he_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        srv_heupstream@mediatek.com, fan.chen@mediatek.com
-Subject: Re: [v4, 1/8] cpufreq: mediatek: change to regulator_get_optional
-Message-ID: <20190819095156.m3iltf5ni3pprrt7@vireshk-i7>
-References: <1565703113-31479-1-git-send-email-andrew-sh.cheng@mediatek.com>
- <1565703113-31479-2-git-send-email-andrew-sh.cheng@mediatek.com>
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "liviu.dudau@arm.com" <liviu.dudau@arm.com>
+Subject: RE: [EXT] Re: [v1 3/3] arm64: dts: ls1028a: Add properties node for
+ Display output pixel clock
+Thread-Topic: [EXT] Re: [v1 3/3] arm64: dts: ls1028a: Add properties node for
+ Display output pixel clock
+Thread-Index: AQHVUPZpmYJZqwqLE06H2mVgmUUN5acCP/uAgAAFdzA=
+Date:   Mon, 19 Aug 2019 09:52:09 +0000
+Message-ID: <DB7PR04MB51951491600141680A1146FDE2A80@DB7PR04MB5195.eurprd04.prod.outlook.com>
+References: <20190812100224.34502-1-wen.he_1@nxp.com>
+ <20190819093159.GJ5999@X250>
+In-Reply-To: <20190819093159.GJ5999@X250>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=wen.he_1@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9e31e15e-3476-45d2-c39a-08d7248ae70f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB7PR04MB5162;
+x-ms-traffictypediagnostic: DB7PR04MB5162:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB51628429D1B993E5514466AAE2A80@DB7PR04MB5162.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0134AD334F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(346002)(376002)(136003)(39860400002)(13464003)(199004)(189003)(6246003)(52536014)(25786009)(76116006)(64756008)(66476007)(14454004)(478600001)(66446008)(66556008)(53936002)(4326008)(6116002)(3846002)(229853002)(2906002)(446003)(76176011)(7696005)(6916009)(102836004)(5660300002)(6506007)(53546011)(7736002)(4744005)(74316002)(55016002)(256004)(26005)(305945005)(33656002)(316002)(71190400001)(71200400001)(86362001)(66946007)(99286004)(186003)(81156014)(81166006)(8676002)(8936002)(54906003)(9686003)(66066001)(6436002)(476003)(11346002)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5162;H:DB7PR04MB5195.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: XAXP7bn8rRvOYKVfHlxN4U5jDFn+JJcn5I+AF0pgMme83jYVEW6NBdFFGR3WM8NJ0s+gckH1R8zS7nPlY1rwnvy3/tMOwKJNV2iW5Mn858+snlfBbOGib7l6A4vazrto6TSjHfG4rfcWX24WyDGhAwUJH5exf5PTolNqyPK81wlN9BbLgob5FCzer5EbLCcc3nOslYy8D1MtTEVXPSDFUa2g9Kyv40RWWPeyKpwpfVYWq6+MSa7Hs82WynWNG0c16ioASd5FNx9ShN5yubg7SAiiFWj+s/h6spI0I879tMvaZ6Lkeg5WJzj/VHq+xl3jKZMzB2d2AvtSA/2llsW71iEy0ZJKPMigbosoLtoS2BjW/6lY2k91Snz/NQhbjlFioucowOd0AD0x9R4pVRPQTg3GYuakrlfdmrbJ6Z98j6E=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565703113-31479-2-git-send-email-andrew-sh.cheng@mediatek.com>
-User-Agent: NeoMutt/20180716-391-311a52
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e31e15e-3476-45d2-c39a-08d7248ae70f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2019 09:52:09.5392
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: CaD5JtD2gpR2oqtJtOSbPC1VLCw3BUI5I2oBjjCLehNKJVtj/WgoQrhKgAAfFP5n2cpmt74b41SglGtVWUlNZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5162
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-08-19, 21:31, Andrew-sh.Cheng wrote:
-> From: "Andrew-sh.Cheng" <andrew-sh.cheng@mediatek.com>
-> 
-> For new mediatek chip mt8183,
-> cci and little cluster share the same buck,
-> so need to modify the attribute of regulator from exclusive to optional
-> 
-> Signed-off-by: Andrew-sh.Cheng <andrew-sh.cheng@mediatek.com>
-> ---
->  drivers/cpufreq/mediatek-cpufreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/cpufreq/mediatek-cpufreq.c b/drivers/cpufreq/mediatek-cpufreq.c
-> index f14f3a85f2f7..a370577ffc73 100644
-> --- a/drivers/cpufreq/mediatek-cpufreq.c
-> +++ b/drivers/cpufreq/mediatek-cpufreq.c
-> @@ -338,7 +338,7 @@ static int mtk_cpu_dvfs_info_init(struct mtk_cpu_dvfs_info *info, int cpu)
->  		goto out_free_resources;
->  	}
->  
-> -	proc_reg = regulator_get_exclusive(cpu_dev, "proc");
-> +	proc_reg = regulator_get_optional(cpu_dev, "proc");
->  	if (IS_ERR(proc_reg)) {
->  		if (PTR_ERR(proc_reg) == -EPROBE_DEFER)
->  			pr_warn("proc regulator for cpu%d not ready, retry.\n",
-
-Applied. Thanks.
-
--- 
-viresh
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU2hhd24gR3VvIDxzaGF3
+bmd1b0BrZXJuZWwub3JnPg0KPiBTZW50OiAyMDE5xOo41MIxOcjVIDE3OjMyDQo+IFRvOiBXZW4g
+SGUgPHdlbi5oZV8xQG54cC5jb20+DQo+IENjOiBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwu
+b3JnPjsgTWljaGFlbCBUdXJxdWV0dGUNCj4gPG10dXJxdWV0dGVAYmF5bGlicmUuY29tPjsgU3Rl
+cGhlbiBCb3lkIDxzYm95ZEBrZXJuZWwub3JnPjsgTWFyaw0KPiBSdXRsYW5kIDxtYXJrLnJ1dGxh
+bmRAYXJtLmNvbT47IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1jbGtAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBMZW8gTGkNCj4gPGxl
+b3lhbmcubGlAbnhwLmNvbT47IGxpdml1LmR1ZGF1QGFybS5jb20NCj4gU3ViamVjdDogW0VYVF0g
+UmU6IFt2MSAzLzNdIGFybTY0OiBkdHM6IGxzMTAyOGE6IEFkZCBwcm9wZXJ0aWVzIG5vZGUgZm9y
+DQo+IERpc3BsYXkgb3V0cHV0IHBpeGVsIGNsb2NrDQo+IA0KPiANCj4gT24gTW9uLCBBdWcgMTIs
+IDIwMTkgYXQgMDY6MDI6MjRQTSArMDgwMCwgV2VuIEhlIHdyb3RlOg0KPiA+IFRoZSBMUzEwMjhB
+IGhhcyBhIGNsb2NrIGRvbWFpbiBQWExDTEswIHVzZWQgZm9yIHRoZSBEaXNwbGF5IG91dHB1dA0K
+PiA+IGludGVyZmFjZSBpbiB0aGUgZGlzcGxheSBjb3JlLCBpbmRlcGVuZGVudCBvZiB0aGUgc3lz
+dGVtIGJ1cw0KPiA+IGZyZXF1ZW5jeSwgZm9yIGZsZXhpYmxlIGNsb2NrIGRlc2lnbi4gVGhpcyBk
+aXNwbGF5IGNvcmUgaGFzIGl0cyBvd24gcGl4ZWwgY2xvY2suDQo+ID4NCj4gPiBUaGlzIHBhdGNo
+IGVuYWJsZSB0aGUgcGl4ZWwgY2xvY2sgcHJvdmlkZXIgb24gdGhlIExTMTAyOEEuDQo+ID4NCj4g
+PiBTaWduZWQtb2ZmLWJ5OiBXZW4gSGUgPHdlbi5oZV8xQG54cC5jb20+DQo+IA0KPiBBcHBsaWVk
+LCB0aGFua3MuDQoNClRoYW5rIHlvdSBmb3IgdGhlIHJldmlldywgU2hhd24uDQoNCkJlc3QgUmVn
+YXJkcywNCldlbg0K
