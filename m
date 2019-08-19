@@ -2,91 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC81291B19
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B57491B14
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:46:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726497AbfHSCqd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 22:46:33 -0400
-Received: from mga18.intel.com ([134.134.136.126]:28880 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726132AbfHSCqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 22:46:33 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Aug 2019 19:46:32 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="261698076"
-Received: from genxtest-ykzhao.sh.intel.com (HELO [10.239.143.71]) ([10.239.143.71])
-  by orsmga001.jf.intel.com with ESMTP; 18 Aug 2019 19:46:31 -0700
-Subject: Re: [RFC PATCH 00/15] acrn: add the ACRN driver module
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Borislav Petkov <bp@alien8.de>, devel@driverdev.osuosl.org,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
- <20190816063925.GB18980@zn.tnic> <20190816070343.GA1368@kroah.com>
-From:   "Zhao, Yakui" <yakui.zhao@intel.com>
-Message-ID: <30d31b78-7da6-5344-6f64-b7273b40f611@intel.com>
-Date:   Mon, 19 Aug 2019 10:39:32 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <20190816070343.GA1368@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S1726330AbfHSCqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 22:46:13 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:42937 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfHSCqN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 22:46:13 -0400
+Received: by mail-yw1-f65.google.com with SMTP id z63so117404ywz.9
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 19:46:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wGyW4pmaDvW/xobvRCheZylYnIK2Mlk/QoBxdqMYERo=;
+        b=O8wURTL7Pmq9H0Brh31yayN5tSkyan97DBe/UbyblOSm+JTV51Fb6CVHedeGIDlmc3
+         RVweYJnqv6WROXoofXdHyMFxiCQ7Ko6rZnPbMwpXr8Zl22Yg+Zrj9kiA0QaD8LplDPNT
+         f4eAeVxCyAmx49bONKY3zPuHTaTn1s9GZZWdo5wDOZzs2OS3fHy2iyAXAAGqmb6ERia6
+         bEOvfh9LLOKzAIP+3jKzEhzJOJdrTLO/KsirtyU8FNbP1E6fbEb7LNHIqPZrnxH0HHW1
+         eX/eH4Z6Y+MxWJWM5rtoH71RyCbJUaFlnSW25OSpnQJqTi87T/6ltkGGw8rQ0FdyBdVf
+         p3Aw==
+X-Gm-Message-State: APjAAAU4zBTxIzHi6oBNUgQlSLdcsrw17C+6NgRqv6YUEnRqk0gAoXmF
+        2cqwTrtaRKhEVw5to4U4SpU=
+X-Google-Smtp-Source: APXvYqxoqUvLyiINr9C0Xyto3ZIWpr93pZJ3NNHxY+/QOIirO6rnDaZKXJlvaGNVhJtf7wrPe/gFbQ==
+X-Received: by 2002:a81:ae55:: with SMTP id g21mr14907282ywk.222.1566182772167;
+        Sun, 18 Aug 2019 19:46:12 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id r9sm2991434ywl.108.2019.08.18.19.46.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 18 Aug 2019 19:46:11 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Frieder Schrempf <frieder.schrempf@kontron.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-mtd@lists.infradead.org (open list:NAND FLASH SUBSYSTEM),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] mtd: rawnand: Fix a memory leak bug
+Date:   Sun, 18 Aug 2019 21:46:04 -0500
+Message-Id: <1566182765-7150-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+In nand_scan_bbt(), a temporary buffer 'buf' is allocated through
+vmalloc(). However, if check_create() fails, 'buf' is not deallocated,
+leading to a memory leak bug. To fix this issue, free 'buf' before
+returning the error.
 
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ drivers/mtd/nand/raw/nand_bbt.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-On 2019年08月16日 15:03, Greg KH wrote:
-> On Fri, Aug 16, 2019 at 08:39:25AM +0200, Borislav Petkov wrote:
->> On Fri, Aug 16, 2019 at 10:25:41AM +0800, Zhao Yakui wrote:
->>> The first three patches are the changes under x86/acrn, which adds the
->>> required APIs for the driver and reports the X2APIC caps.
->>> The remaining patches add the ACRN driver module, which accepts the ioctl
->>> from user-space and then communicate with the low-level ACRN hypervisor
->>> by using hypercall.
->>
->> I have a problem with that: you're adding interfaces to arch/x86/ and
->> its users go into staging. Why? Why not directly put the driver where
->> it belongs, clean it up properly and submit it like everything else is
->> submitted?
->>
->> I don't want to have stuff in arch/x86/ which is used solely by code in
->> staging and the latter is lingering there indefinitely because no one is
->> cleaning it up...
-> 
-> I agree, stuff in drivers/staging/ must be self-contained, with no
-> changes outside of the code's subdirectory needed in order for it to
-> work.  That way it is trivial for us to delete it when it never gets
-> cleaned up :)
+diff --git a/drivers/mtd/nand/raw/nand_bbt.c b/drivers/mtd/nand/raw/nand_bbt.c
+index 2ef15ef..96045d6 100644
+--- a/drivers/mtd/nand/raw/nand_bbt.c
++++ b/drivers/mtd/nand/raw/nand_bbt.c
+@@ -1232,7 +1232,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+ 	if (!td) {
+ 		if ((res = nand_memory_bbt(this, bd))) {
+ 			pr_err("nand_bbt: can't scan flash and build the RAM-based BBT\n");
+-			goto err;
++			goto err_free_bbt;
+ 		}
+ 		return 0;
+ 	}
+@@ -1245,7 +1245,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+ 	buf = vmalloc(len);
+ 	if (!buf) {
+ 		res = -ENOMEM;
+-		goto err;
++		goto err_free_bbt;
+ 	}
+ 
+ 	/* Is the bbt at a given page? */
+@@ -1258,7 +1258,7 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+ 
+ 	res = check_create(this, buf, bd);
+ 	if (res)
+-		goto err;
++		goto err_free_buf;
+ 
+ 	/* Prevent the bbt regions from erasing / writing */
+ 	mark_bbt_region(this, td);
+@@ -1268,7 +1268,9 @@ static int nand_scan_bbt(struct nand_chip *this, struct nand_bbt_descr *bd)
+ 	vfree(buf);
+ 	return 0;
+ 
+-err:
++err_free_buf:
++	vfree(buf);
++err_free_bbt:
+ 	kfree(this->bbt);
+ 	this->bbt = NULL;
+ 	return res;
+-- 
+2.7.4
 
-Thanks for pointing out the rule of drivers/staging.
-The acrn staging driver is one self-contained driver. But it has some 
-dependency on arch/x86/acrn and need to call the APIs in arch/x86/acrn.
-
-If there is no driver,  the API without user had better not be added.
-If API is not added,  the driver can't be compiled correctly.
-The ACRN driver is one new driver. Maybe it will have some bugs and not 
-be mature. So we want to add the driver as the staging.
-
-What is the better approach to handle such scenario?
-
-> 
-> You never say _why_ this should go into drivers/staging/, nor do you
-> have a TODO file like all other staging code that explains exactly what
-> needs to be done to get it out of there.
-
-Ok. The TODO file will be added in next version.
-
-
-> 
-> thanks,
-> 
-> greg k-h
-> 
