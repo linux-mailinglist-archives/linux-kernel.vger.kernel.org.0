@@ -2,141 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 71F6192036
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B3FD92042
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:26:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727376AbfHSJYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 05:24:17 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:47341 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfHSJYQ (ORCPT
+        id S1727409AbfHSJ0T (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:26:19 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33812 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727308AbfHSJ0T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:24:16 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id B65278043B; Mon, 19 Aug 2019 11:24:01 +0200 (CEST)
-Date:   Mon, 19 Aug 2019 11:24:14 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Sebastian Reichel <sre@kernel.org>, nekit1000@gmail.com,
-        mpartap@gmx.net, Merlijn Wajer <merlijn@wizzup.org>,
-        "open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>
-Subject: Re: wifi on Motorola Droid 4 in 5.3-rc2
-Message-ID: <20190819092414.GB21072@amd>
-References: <20190818104629.GA27360@amd>
- <CAOf5uwnUx3mtGGHFGqKB30qcb_AMhMEhHLp2pf-4pUdhi7KP7w@mail.gmail.com>
- <20190818114332.GA32205@amd>
- <CAOf5uwncAHQ-nfFzQhv=T+pyXJ+60_QNT4F11VJg+25GjFFkxQ@mail.gmail.com>
+        Mon, 19 Aug 2019 05:26:19 -0400
+Received: by mail-lj1-f194.google.com with SMTP id x18so1086816ljh.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 02:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KKVW5yULDoWPsPDFlzL5ik05cdljwhyET2JhsabbZbk=;
+        b=wA2NJI4eovu2KpJ16T8gEf1zOYXo4yJ2Y4xCKZyg1F0xC15FaVXCqI5Wua5J882DvI
+         IykJke3OhdZlJwz4Y9+xJqoOHTBlGxM2hzvh5IU5CkHmyf2ecDt5N3dtwiv2IJe4ztrY
+         xari8RXm+Jz8+I2kYOBEzNkyCoZOaihUeuk+QEIMe9eu90E8/Dikt6uObUgDip3Vdt+/
+         Y6yeHs3U5dXuUo3xknHjxlhJYDqviVSrrMbInCzoKb8KJFxrOsuwcGeaIBrpcg7yuzHD
+         w9GESdLzZr43tmaKiFOhA4pjW3ViiEZPbrpcm0S5AWy7vHRM/eSRUhgjL4zuW8BVunM0
+         dfaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KKVW5yULDoWPsPDFlzL5ik05cdljwhyET2JhsabbZbk=;
+        b=P3NmUywRW34eOANqDAEXXw7n4duTVg57aeje4dMGia2bPSGmp7p6BDscpmr/Exz7Fh
+         DMPoayGeVU4SZCnlb1MoCqJqg4Ma5HBEvXYgxYQV7Bu4ViDwNK5eP9pL/G2Lij/YqAL/
+         LwszgY7kWv2eW5v913l1GQFyh7j5BZtAqpzywl82cN+HVUeh0z1YQUSdmw9hEybZqoWU
+         rHmpHG0bdwDqZN3aIWOjTnzJDvqx87OfijKGlb9/ZMPY3QPFF+izX4Kq3xj2VvZn9cok
+         88pp2mQPwi2ay/g0vhM57iFWdmmm/Ji+OUH2R95nvNfv2D3Yu/ITWc6FTgtDnWhBQxDk
+         Xy8A==
+X-Gm-Message-State: APjAAAVqVbP7dvpULaKRXymoSMnuCngJj/6mpV3CqEDdtpjx9AacrLua
+        WuP4KrE+CmoSskXgdPxOX4oafmlm8GcRG+tnioZgcg==
+X-Google-Smtp-Source: APXvYqyHzxFkzDLL9gmE3yy1IAWY1PDNlXP0qVZjADqg4l/veyTO/ljjPuJg/ffd+peUxBo/21B+5u9ysoGXKEhHGJU=
+X-Received: by 2002:a05:651c:153:: with SMTP id c19mr2118768ljd.152.1566206777474;
+ Mon, 19 Aug 2019 02:26:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="IiVenqGWf+H9Y6IX"
-Content-Disposition: inline
-In-Reply-To: <CAOf5uwncAHQ-nfFzQhv=T+pyXJ+60_QNT4F11VJg+25GjFFkxQ@mail.gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20190814103244.92518-1-maco@android.com> <20190814113348.GA525@ming.t460p>
+ <CAB0TPYFzgm7pJvXfYYER6qqHM3J8dU7WXWv8ct51e2CGctydzw@mail.gmail.com>
+In-Reply-To: <CAB0TPYFzgm7pJvXfYYER6qqHM3J8dU7WXWv8ct51e2CGctydzw@mail.gmail.com>
+From:   Martijn Coenen <maco@android.com>
+Date:   Mon, 19 Aug 2019 11:26:06 +0200
+Message-ID: <CAB0TPYEfGYWcUNAZCNAJDAKCUDp+XdiUstS+cDkfeeJe7q8xEw@mail.gmail.com>
+Subject: Re: [PATCH] RFC: loop: Avoid calling blk_mq_freeze_queue() when possible.
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        linux-block <linux-block@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>, kernel-team@android.com,
+        Narayan Kamath <narayan@google.com>,
+        Dario Freni <dariofreni@google.com>,
+        Nikita Ioffe <ioffe@google.com>,
+        Jiyong Park <jiyong@google.com>,
+        Martijn Coenen <maco@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 11:06 AM Martijn Coenen <maco@android.com> wrote:
+> One idea to fix is to call blk_queue_logical_block_size() as part of
+> LOOP_SET_FD, to match the block size of the backing fs in case the
+> backing file is opened with O_DIRECT; you could argue that if the
+> backing file is opened with O_DIRECT, this is what the user wanted
+> anyway. This would allow us to get rid of the latter two ioctl's and
+> already save quite some time.
 
---IiVenqGWf+H9Y6IX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Basically:
 
-Hi!
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index ab7ca5989097a..ad3db72fbd729 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -994,6 +994,12 @@ static int loop_set_fd(struct loop_device *lo,
+fmode_t mode,
+        if (!(lo_flags & LO_FLAGS_READ_ONLY) && file->f_op->fsync)
+                blk_queue_write_cache(lo->lo_queue, true, false);
 
-> > [   13.653778] panel-dsi-cm 58004000.encoder:display: using lookup
-> > tables for GPIO lookup
-> > [   13.661834] panel-dsi-cm 58004000.encoder:display: No GPIO consumer
-> > te found
-> > [   14.756622] ------------[ cut here ]------------
-> > [   14.761352] WARNING: CPU: 0 PID: 20 at
-> > /data/fast/l/k/drivers/net/wireless/ti/wlcore/sdio.c:86
-> > wl12xx_sdio_raw_read+0xa8/0x128
-> > [   14.772888] Modules linked in:
-> > [   14.776062] CPU: 0 PID: 20 Comm: kworker/0:1 Tainted: G        W
-> > 5.3.0-rc4-58571-gdbaece1 #85
-> > [   14.783630] Hardware name: Generic OMAP4 (Flattened Device Tree)
-> > [   14.791381] Workqueue: events request_firmware_work_func
->=20
-> You have a timeout here. Can be that your reset sequence of the wifi
-> is not optimal because
-> is not responding?
++       if(io_is_direct(lo->lo_backing_file) && inode->i_sb->s_bdev) {
++               /* In case of direct I/O, match underlying block size */
++               blk_queue_logical_block_size(lo->lo_queue,
++                               bdev_logical_block_size(inode->i_sb->s_bdev));
++       }
++
+        loop_update_rotational(lo);
+        loop_update_dio(lo);
 
-I tried delays and printks... WL12XX_REG_FUSE_BD_ADDR_1 read fails,
-and retrying does not really help. If you have idea how to debug/fix
-this, let me know...
-
-Best regards,
-								Pavel
-
-diff --git a/drivers/net/wireless/ti/wl12xx/main.c b/drivers/net/wireless/t=
-i/wl12xx/main.c
-index 3c9c623..afb294a 100644
---- a/drivers/net/wireless/ti/wl12xx/main.c
-+++ b/drivers/net/wireless/ti/wl12xx/main.c
-@@ -1505,24 +1505,40 @@ static int wl12xx_get_fuse_mac(struct wl1271 *wl)
- {
- 	u32 mac1, mac2;
- 	int ret;
--
-+=09
-+	mdelay(1);
-+	printk("get_fuse_mac: %d\n", __LINE__);
- 	ret =3D wlcore_set_partition(wl, &wl->ptable[PART_DRPW]);
- 	if (ret < 0)
- 		goto out;
-=20
-+	mdelay(1);
-+	printk("get_fuse_mac: %d\n", __LINE__);
-+	ret =3D wlcore_read32(wl, WL12XX_REG_FUSE_BD_ADDR_1, &mac1);
-+	if (ret < 0) {
-+	printk("get_fuse_mac: X %d\n", __LINE__);
-+	ret =3D wlcore_read32(wl, WL12XX_REG_FUSE_BD_ADDR_1, &mac1);
-+	if (ret < 0) {
-+	printk("get_fuse_mac: XX %d\n", __LINE__);
- 	ret =3D wlcore_read32(wl, WL12XX_REG_FUSE_BD_ADDR_1, &mac1);
- 	if (ret < 0)
- 		goto out;
-+	}
-+	}
-+=09
-=20
-+	printk("get_fuse_mac: %d\n", __LINE__);
- 	ret =3D wlcore_read32(wl, WL12XX_REG_FUSE_BD_ADDR_2, &mac2);
- 	if (ret < 0)
- 		goto out;
-=20
-+	printk("get_fuse_mac: %d\n", __LINE__);
- 	/* these are the two parts of the BD_ADDR */
- 	wl->fuse_oui_addr =3D ((mac2 & 0xffff) << 8) +
- 		((mac1 & 0xff000000) >> 24);
- 	wl->fuse_nic_addr =3D mac1 & 0xffffff;
-=20
-+	printk("get_fuse_mac: %d\n", __LINE__);
- 	ret =3D wlcore_set_partition(wl, &wl->ptable[PART_DOWN]);
-=20
- out:
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---IiVenqGWf+H9Y6IX
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl1aar4ACgkQMOfwapXb+vJb9wCdEMS4069vsm0A0Ev1TelvVMac
-tEUAoMRMPsW6X4ytZQOHwh1J6znBX4KV
-=Zu6g
------END PGP SIGNATURE-----
-
---IiVenqGWf+H9Y6IX--
+>
+> Thanks,
+> Martijn
+>
+> >
+> > Something like the following patch:
+> >
+> > diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+> > index a7461f482467..8791f9242583 100644
+> > --- a/drivers/block/loop.c
+> > +++ b/drivers/block/loop.c
+> > @@ -1015,6 +1015,9 @@ static int loop_set_fd(struct loop_device *lo, fmode_t mode,
+> >          */
+> >         bdgrab(bdev);
+> >         mutex_unlock(&loop_ctl_mutex);
+> > +
+> > +       percpu_ref_switch_to_percpu(&lo->lo_queue->q_usage_counter);
+> > +
+> >         if (partscan)
+> >                 loop_reread_partitions(lo, bdev);
+> >         if (claimed_bdev)
+> > @@ -1171,6 +1174,8 @@ static int __loop_clr_fd(struct loop_device *lo, bool release)
+> >         lo->lo_state = Lo_unbound;
+> >         mutex_unlock(&loop_ctl_mutex);
+> >
+> > +       percpu_ref_switch_to_atomic(&lo->lo_queue->q_usage_counter, NULL);
+> > +
+> >         /*
+> >          * Need not hold loop_ctl_mutex to fput backing file.
+> >          * Calling fput holding loop_ctl_mutex triggers a circular
+> > @@ -2003,6 +2008,12 @@ static int loop_add(struct loop_device **l, int i)
+> >         }
+> >         lo->lo_queue->queuedata = lo;
+> >
+> > +       /*
+> > +        * cheat block layer for not switching to q_usage_counter's
+> > +        * percpu mode before loop becomes Lo_bound
+> > +        */
+> > +       blk_queue_flag_set(QUEUE_FLAG_INIT_DONE, lo->lo_queue);
+> > +
+> >         blk_queue_max_hw_sectors(lo->lo_queue, BLK_DEF_MAX_SECTORS);
+> >
+> >         /*
+> >
+> >
+> > thanks,
+> > Ming
