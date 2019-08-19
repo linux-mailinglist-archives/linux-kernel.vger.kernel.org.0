@@ -2,126 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFE87922D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 13:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8EEC922DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 13:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727504AbfHSLz4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 07:55:56 -0400
-Received: from mga05.intel.com ([192.55.52.43]:56611 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726694AbfHSLzz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 07:55:55 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 04:55:55 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="261820515"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 19 Aug 2019 04:55:52 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 845AE128; Mon, 19 Aug 2019 14:55:51 +0300 (EEST)
-Date:   Mon, 19 Aug 2019 14:55:51 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>, linux-mm@kvack.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, Michal Hocko <mhocko@kernel.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH 1/3] mm, page_owner: record page owner for each subpage
-Message-ID: <20190819115551.xkgnpr7zmaqpuebi@black.fi.intel.com>
-References: <20190816101401.32382-1-vbabka@suse.cz>
- <20190816101401.32382-2-vbabka@suse.cz>
- <20190816140430.aoya6k7qxxrls72h@box>
- <a9344bd6-cdb9-3ad6-5bb1-8eb81650c398@suse.cz>
+        id S1727509AbfHSL4R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 07:56:17 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:37501 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfHSL4Q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 07:56:16 -0400
+Received: by mail-qk1-f195.google.com with SMTP id s14so1111996qkm.4
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 04:56:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=6bYrbiq83MZbJnfgX+gSIa73uIaG9N9eGghywAxsiQM=;
+        b=On2cN0LCRdIdj9vyFXLCU8z1dox0x3p7xHRRWgRt00TxfRlRKuwBTvk4PRhHkonMNH
+         AV5Nf156ORHPCzyy3kpqbbREPWD2jKvU6OOXvnge4qOspHkBZo+2/5zspjHjK8/Fkm/Z
+         sp/bgKRa1uJFGHFj6i05r2hEzxQ+E1T7fohfOzUjvcGmZFWV9pJnC0U7eZ0wlsxakrMJ
+         6I4+v3v4Ys+ctzFjg2FpVbf01RNCuor/RKoA1a/oR1YPlvNcUuCmhUndQQFwg1YHnasi
+         gjxG9F+Ct9FLk+Z4Lnq+DzaHFk2Txsi5VscQqcSL/JKeZ7IHDRUQAv3iqKvru+2BZgkx
+         zVjw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=6bYrbiq83MZbJnfgX+gSIa73uIaG9N9eGghywAxsiQM=;
+        b=Kz7WztR7IsqdLFn6ol7YflXxLXfz2BbfMol8OA9ByU4sBxUqVj2ccmCczVy9X6uUIK
+         W3o+5bFMUWnZToRrBuxha7Y+CvyNi0Qw2uExvce2NASpXfIrHXNdILFvBRIAL1JPkDZ0
+         c/9MqpljJYu1gudJtJI5RggG6HJjVF5X7Z8ZH7YroqnvbPvZckqZOiYQrR6OvMBVzpGV
+         KMl5Ixq2iqMqpqB4uGpoUEzYmKlFD7K8e96ToX2CpU9W/6vNuSYDlS2yZ+iYt7RpZCXR
+         Rx/FxXpzUkbKYl/wC8DvIgilMHZSUjema2R1Db1LTgctDigCTqnoFrdmVIh1U73fcsaq
+         y71g==
+X-Gm-Message-State: APjAAAWAD5qjbkFREz5J1ANkR/582hDMUn4es3l5VR3ALGmavb214c4M
+        ha5qYLO7czZ/pEfL5C+b1/grkzcF7bDe0DWepcw=
+X-Google-Smtp-Source: APXvYqwPkaRM2faRfa6hJyS1rKuB/hpL2FCSbINkLqy0oMnHv50HUpalcDqV1i6Ttaey/qbWTnMN7cSuSGNNYuGN+ZE=
+X-Received: by 2002:a05:620a:144d:: with SMTP id i13mr11273557qkl.197.1566215775701;
+ Mon, 19 Aug 2019 04:56:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a9344bd6-cdb9-3ad6-5bb1-8eb81650c398@suse.cz>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+Received: by 2002:ac8:5148:0:0:0:0:0 with HTTP; Mon, 19 Aug 2019 04:56:14
+ -0700 (PDT)
+Reply-To: susanwilliam152@gmail.com
+From:   Susan William <susanwilliam0152@gmail.com>
+Date:   Mon, 19 Aug 2019 05:56:14 -0600
+Message-ID: <CAP03iwf9JK928QfQqL=JvGGwAXVuoetpsUp-bzyY8HEQs3xK5g@mail.gmail.com>
+Subject: It took a lot of time to finally find you.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 11:46:37AM +0000, Vlastimil Babka wrote:
-> 
-> On 8/16/19 4:04 PM, Kirill A. Shutemov wrote:
-> > On Fri, Aug 16, 2019 at 12:13:59PM +0200, Vlastimil Babka wrote:
-> >> Currently, page owner info is only recorded for the first page of a high-order
-> >> allocation, and copied to tail pages in the event of a split page. With the
-> >> plan to keep previous owner info after freeing the page, it would be benefical
-> >> to record page owner for each subpage upon allocation. This increases the
-> >> overhead for high orders, but that should be acceptable for a debugging option.
-> >>
-> >> The order stored for each subpage is the order of the whole allocation. This
-> >> makes it possible to calculate the "head" pfn and to recognize "tail" pages
-> >> (quoted because not all high-order allocations are compound pages with true
-> >> head and tail pages). When reading the page_owner debugfs file, keep skipping
-> >> the "tail" pages so that stats gathered by existing scripts don't get inflated.
-> >>
-> >> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> > 
-> > Hm. That's all reasonable, but I have a question: do you see how page
-> > owner thing works for THP now?
-> > 
-> > I don't see anything in split_huge_page() path (do not confuse it with
-> > split_page() path) that would copy the information to tail pages. Do you?
->  
-> You're right, it's missing. This patch fixes that and can be added e.g.
-> at the end of the series.
+Dear  Sir,
 
-I would rather put it the first. Possbily with stable@.
+It took a lot of time to finally find you.
 
-> ----8<----
-> From 56ac1b41559eecf52a2d453c49ce66dbbb227c64 Mon Sep 17 00:00:00 2001
-> From: Vlastimil Babka <vbabka@suse.cz>
-> Date: Mon, 19 Aug 2019 13:38:29 +0200
-> Subject: [PATCH] mm, page_owner: handle THP splits correctly
-> 
-> THP splitting path is missing the split_page_owner() call that split_page()
-> has. As a result, split THP pages are wrongly reported in the page_owner file
-> as order-9 pages. Furthermore when the former head page is freed, the remaining
-> former tail pages are not listed in the page_owner file at all. This patch
-> fixes that by adding the split_page_owner() call into __split_huge_page().
-> 
-> Reported-by: Kirill A. Shutemov <kirill@shutemov.name>
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
->  mm/huge_memory.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 738065f765ab..d727a0401484 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -32,6 +32,7 @@
->  #include <linux/shmem_fs.h>
->  #include <linux/oom.h>
->  #include <linux/numa.h>
-> +#include <linux/page_owner.h>
->  
->  #include <asm/tlb.h>
->  #include <asm/pgalloc.h>
-> @@ -2533,6 +2534,8 @@ static void __split_huge_page(struct page *page, struct list_head *list,
->  
->  	remap_page(head);
->  
-> +	split_page_owner(head, HPAGE_PMD_ORDER);
-> +
+I am Susan William from London; I work with Royal Bank of Scotland,
+This letter is highly privileged and it requires your immediate
+attention.
 
-I think it has to be before remap_page(). This way nobody would be able to
-mess with the page until it has valid page_owner.
+You are receiving this letter because your family name connected to a
+deceased client Eng. Micheal,  who was a national of your country.
 
->  	for (i = 0; i < HPAGE_PMD_NR; i++) {
->  		struct page *subpage = head + i;
->  		if (subpage == page)
-> -- 
-> 2.22.0
-> 
+Eng.  Micheal  ,  was involved in a Plane crash with the wife and
+Three children in 2003. Eng.  Micheal  ,  had a fixed-term Deposit
+with our bank which worth 4.7 million Euros. Since the event of the
+Crash, none of his extended family has been located for the claim of
+this money.
+There is urgent need to present a beneficiary to the bank for the
+claim of the inheritance. The bank notified recent to their decision
+to declare the inheritance to the government as their only option
+since there is no available kin of the deceased to inherit the money.
 
--- 
- Kirill A. Shutemov
+Given to your nationality with Eng.  Micheal  ,I want to present you
+to the bank as the beneficiary for the inheritance.
+Forward me your full contact details to enable me call you on phone
+for more details, I will offer you 40% of the total funds once the
+money is transferred into your account OK.
+
+I look forward to your immediate response.
+
+Kind Regards,
+Susan William.
