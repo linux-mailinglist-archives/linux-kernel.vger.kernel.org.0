@@ -2,179 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D6AB091A99
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 03:12:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C19D91AA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 03:22:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726385AbfHSBMp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 21:12:45 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:33682 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfHSBMo (ORCPT
+        id S1726371AbfHSBV5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 21:21:57 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22508 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726132AbfHSBV5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 21:12:44 -0400
-Received: by mail-oi1-f193.google.com with SMTP id q10so139631oij.0
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 18:12:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ov1ZoZUrJZ+JTAyOesjjuMheROZh7OUlKOkkFfcWSmM=;
-        b=PuQO63fcEHlAV3z+KIhb2fK+YHgCVOytT5BLCOUxEG+WOTv/m1l1EbREdhu7BTB1/e
-         2lEugBzzYuQ3RARXhmLl7f0wR52+H+sJ+g6ykRpu9SKtlrG/49lqM/FN2UjOVUSY+7xe
-         yceL8Pc+9u2iDyi1he/C9OV+VDuAq+pcjzjMRfl08R5bZHJmdoBfhlqjj+xmcEyulQzX
-         IzufRym/SicpzSjl4M8Eazo9OzmJJhDWjdSWtvqNXzqydmU1uIom2IWmRScDBduYpfuo
-         +Pl/O6yhmJiolgACWc1FrRVuxo03hRIzb9QB1+l2CyM3SDOPdAtkMJ70gL8hQHZGJ1qr
-         N+aQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ov1ZoZUrJZ+JTAyOesjjuMheROZh7OUlKOkkFfcWSmM=;
-        b=NUy2GMynkyPrCjt8NZ/xkPUBIuTz6ZCHXOoqLGCE2v38zrkKKsUcgEvxj95/lIaTAT
-         BsfduVzQIyAlxAzX3nYea64Qy6mYQ6//f/88GfnpaF0/c78WoySm6akR4+dDurq40bGl
-         W8bVKpenLZJLqp/lucMZKLs6KLjWQEo7Nc/p6uxZYhrIZ5NNdkPtrW/7QmUpEwFTBRiT
-         2dvNzFGrDx3CdFOuE5gL6c2jyzv1GluGpxxNCtawzbN/I9XWENAeSO7pCKCE7SMeHTuS
-         ZyUxqmiryr6N3iei6Hahbnq5XzOoUmgQMY2BvSREZb2GIk0wmepoP6Ao9IZOqyE2jzrA
-         yqhg==
-X-Gm-Message-State: APjAAAX9b2sGJ9Y3Ometiwkjf9kjN1kVT8SqmUDlzl8kXw7C/gl3dyzw
-        u4jDm/RdTumuScO845OGJmXvKBvPhZeQGNlcyFvYaQ==
-X-Google-Smtp-Source: APXvYqwxl7uQW9abq10zcmDLy6ySg2n3jMUJMx+nhGPCckStL47p9PBss4h2uQ1pOsifpVcVP2Fp+jRw01mcnP2OZVc=
-X-Received: by 2002:aca:5b05:: with SMTP id p5mr2043065oib.6.1566177163319;
- Sun, 18 Aug 2019 18:12:43 -0700 (PDT)
+        Sun, 18 Aug 2019 21:21:57 -0400
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7J1GdOs117408
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:21:55 -0400
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2uffa14grp-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:21:55 -0400
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Mon, 19 Aug 2019 02:21:55 +0100
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 19 Aug 2019 02:21:51 +0100
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7J1LoTC51511588
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Aug 2019 01:21:50 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C8BB5B2067;
+        Mon, 19 Aug 2019 01:21:50 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 943B4B205F;
+        Mon, 19 Aug 2019 01:21:50 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.201.199])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 19 Aug 2019 01:21:50 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 3CA4A16C16E2; Sun, 18 Aug 2019 18:21:53 -0700 (PDT)
+Date:   Sun, 18 Aug 2019 18:21:53 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC v2] rcu/tree: Try to invoke_rcu_core() if in_irq() during
+ unlock
+Reply-To: paulmck@linux.ibm.com
+References: <20190818214948.GA134430@google.com>
+ <20190818221210.GP28441@linux.ibm.com>
+ <20190818223230.GA143857@google.com>
+ <20190818223511.GB143857@google.com>
+ <20190818233135.GQ28441@linux.ibm.com>
+ <20190818233839.GA160903@google.com>
 MIME-Version: 1.0
-References: <1870ea18729f93fb36694affaf7e9443733dd988.1564035575.git.baolin.wang@linaro.org>
- <20190727182709.037fc595@archlinux> <CAMz4kuLLSYw0JRLRVN-JegxZcK1bdv4K2m4mVu7oep6xfb+xxg@mail.gmail.com>
- <20190805145037.0a03f21e@archlinux> <CAMz4kuK4GFfOi3vGvFOLdRfmqrwVLDs5CN+Xp_it3jG4=iKi=w@mail.gmail.com>
- <20190811090251.5fbd7d75@archlinux> <CAMz4ku+ansL1RJScmJRsvKR-dJVLNjAZqgTFqRSEJWQSYUy_Sg@mail.gmail.com>
- <20190818202704.69e95a4d@archlinux>
-In-Reply-To: <20190818202704.69e95a4d@archlinux>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 19 Aug 2019 09:12:32 +0800
-Message-ID: <CAMz4ku+k0c3EF5u-tJ6BBD2-78O7UwULzOmxjOs5u9bO_xBcFw@mail.gmail.com>
-Subject: Re: [PATCH] iio: adc: sc27xx: Change to polling mode to read data
-To:     Jonathan Cameron <jic23@kernel.org>
-Cc:     Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        freeman.liu@unisoc.com,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190818233839.GA160903@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 19081901-0072-0000-0000-000004539294
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00011613; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000287; SDB=6.01248841; UDB=6.00659210; IPR=6.01030364;
+ MB=3.00028226; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-19 01:21:53
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19081901-0073-0000-0000-00004CC4B01E
+Message-Id: <20190819012153.GR28441@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-18_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190012
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 at 03:27, Jonathan Cameron <jic23@kernel.org> wrote:
->
-> On Mon, 12 Aug 2019 10:37:44 +0800
-> Baolin Wang <baolin.wang@linaro.org> wrote:
->
-> > On Sun, 11 Aug 2019 at 16:03, Jonathan Cameron <jic23@kernel.org> wrote:
-> > >
-> > > On Tue, 6 Aug 2019 15:39:45 +0800
-> > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> > >
-> > > > Hi Jonathan,
-> > > >
-> > > > On Mon, 5 Aug 2019 at 21:50, Jonathan Cameron <jic23@kernel.org> wrote:
-> > > > >
-> > > > > On Mon, 29 Jul 2019 10:19:48 +0800
-> > > > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > >
-> > > > > > Hi Jonathan,
-> > > > > >
-> > > > > > On Sun, 28 Jul 2019 at 01:27, Jonathan Cameron <jic23@kernel.org> wrote:
-> > > > > > >
-> > > > > > > On Thu, 25 Jul 2019 14:33:50 +0800
-> > > > > > > Baolin Wang <baolin.wang@linaro.org> wrote:
-> > > > > > >
-> > > > > > > > From: Freeman Liu <freeman.liu@unisoc.com>
-> > > > > > > >
-> > > > > > > > On Spreadtrum platform, the headphone will read one ADC channel multiple
-> > > > > > > > times to identify the headphone type, and the headphone identification is
-> > > > > > > > sensitive of the ADC reading time. And we found it will take longer time
-> > > > > > > > to reading ADC data by using interrupt mode comparing with the polling
-> > > > > > > > mode, thus we should change to polling mode to improve the efficiency
-> > > > > > > > of reading data, which can identify the headphone type successfully.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Freeman Liu <freeman.liu@unisoc.com>
-> > > > > > > > Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> > > > > > >
-> > > > > > > Hi,
-> > > > > > >
-> > > > > > > My concerns with this sort of approach is that we may be sacrificing power
-> > > > > > > efficiency for some usecases to support one demanding one.
-> > > > > > >
-> > > > > > > The maximum sleep time is 1 second (I think) which is probably too long
-> > > > > > > to poll a register for in general.
-> > > > > >
-> > > > > > 1 second is the timeout time, that means something wrong when reading
-> > > > > > the data taking 1 second, and we will poll the register status every
-> > > > > > 500 us.
-> > > > > > From the testing, polling mode takes less time than interrupt mode
-> > > > > > when reading ADC data multiple times, so polling mode did not
-> > > > > > sacrifice power
-> > > > > > efficiency.
-> > > > >
-> > > > > Hmm.  I'll go with a probably on that, depends on interrupt response
-> > > > > latency etc so isn't entirely obvious.  Faster response doesn't necessarily
-> > > > > mean lower power.
-> > > > >
-> > > > > >
-> > > > > > > Is there some way we can bound that time and perhaps switch between
-> > > > > > > interrupt and polling modes depending on how long we expect to wait?
-> > > > > >
-> > > > > > I do not think the interrupt mode is needed any more, since the ADC
-> > > > > > reading is so fast enough usually. Thanks.
-> > > > > The reason for interrupts in such devices is usually precisely the opposite.
-> > > > >
-> > > > > You do it because things are slow enough that you can go to sleep
-> > > > > for a long time before the interrupt occurs.
-> > > > >
-> > > > > So question becomes whether there are circumstances in which we are
-> > > > > running with long timescales and would benefit from using interrupts.
-> > > >
-> > > > From our testing, the ADC version time is usually about 100us, it will
-> > > > be faster to get data if we poll every 50us in this case. But if we
-> > > > change to use interrupt mode, it will take millisecond level time to
-> > > > get data. That will cause problems for those time sensitive scenarios,
-> > > > like headphone detection, that's the main reason we can not use
-> > > > interrupt mode.
-> > > >
-> > > > For those non-time-sensitive scenarios, yes, I agree with you, the
-> > > > interrupt mode will get a better power efficiency. But ADC driver can
-> > > > not know what scenarios asked by consumers, so changing to polling
-> > > > mode seems the easiest way to solve the problem, and we've applied
-> > > > this patch in our downstream kernel for a while, we did not see any
-> > > > other problem.
-> > > >
-> > > > Thanks for your comments.
-> > >
-> > > OK. It's not ideal but sometimes such is life ;)
-> >
-> > Thanks for your understanding :)
-> >
-> > >
-> > > So last question - fix or not?  If a fix, can I have a fixes tag
-> > > please.
-> >
-> > This is a bigger patch, I am afraid it can not be merged into stable
-> > kernel, and original code can work at most scenarios. So I think no
-> > need add stable tag for this patch. Thanks.
-> >
-> Fair enough.  Needed a bit of merge effort as crossed with a generic
-> cleanup patch it seems.
->
-> Anyhow, hopefully I got it right.
+On Sun, Aug 18, 2019 at 07:38:39PM -0400, Joel Fernandes wrote:
+> On Sun, Aug 18, 2019 at 04:31:35PM -0700, Paul E. McKenney wrote:
+> > On Sun, Aug 18, 2019 at 06:35:11PM -0400, Joel Fernandes wrote:
+> > > On Sun, Aug 18, 2019 at 06:32:30PM -0400, Joel Fernandes wrote:
+> > > > On Sun, Aug 18, 2019 at 03:12:10PM -0700, Paul E. McKenney wrote:
+> > > > > On Sun, Aug 18, 2019 at 05:49:48PM -0400, Joel Fernandes (Google) wrote:
+> > > > > > When we're in hard interrupt context in rcu_read_unlock_special(), we
+> > > > > > can still benefit from invoke_rcu_core() doing wake ups of rcuc
+> > > > > > threads when the !use_softirq parameter is passed.  This is safe
+> > > > > > to do so because:
+> > > > > > 
+> > > > > > 1. We avoid the scheduler deadlock issues thanks to the deferred_qs bit
+> > > > > > introduced in commit 23634ebc1d94 ("rcu: Check for wakeup-safe
+> > > > > > conditions in rcu_read_unlock_special()") by checking for the same in
+> > > > > > this patch.
+> > > > > > 
+> > > > > > 2. in_irq() implies in_interrupt() which implies raising softirq will
+> > > > > > not do any wake ups.
+> > > > > > 
+> > > > > > The rcuc thread which is awakened will run when the interrupt returns.
+> > > > > > 
+> > > > > > We also honor 25102de ("rcu: Only do rcu_read_unlock_special() wakeups
+> > > > > > if expedited") thus doing the rcuc awakening only when none of the
+> > > > > > following are true:
+> > > > > >   1. Critical section is blocking an expedited GP.
+> > > > > >   2. A nohz_full CPU.
+> > > > > > If neither of these cases are true (exp == false), then the "else" block
+> > > > > > will run to do the irq_work stuff.
+> > > > > > 
+> > > > > > This commit is based on a partial revert of d143b3d1cd89 ("rcu: Simplify
+> > > > > > rcu_read_unlock_special() deferred wakeups") with an additional in_irq()
+> > > > > > check added.
+> > > > > > 
+> > > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > > 
+> > > > > OK, I will bite...  If it is safe to wake up an rcuc kthread, why
+> > > > > is it not safe to do raise_softirq()?
+> > > > 
+> > > > Because raise_softirq should not be done and/or doesn't do anything
+> > > > if use_softirq == false. In fact, RCU_SOFTIRQ doesn't even existing if
+> > > > use_softirq == false. The "else if" condition of this patch uses for
+> > > > use_softirq.
+> > > > 
+> > > > Or, did I miss your point?
+> > 
+> > I am concerned that added "else if" condition might not be sufficient
+> > to eliminate all possible cases of the caller holding a scheduler lock,
+> > which could result in deadlock in the ensuing wakeup.  Might be me missing
+> > something, but such deadlocks have been a recurring problem in the past.
+> 
+> I thought that was the whole point of the
+> rcu_read_unlock_special.b.deferred_qs bit that was introduced in
+> 23634ebc1d94. We are checking that bit in the "else if" here as well. So this
+> should be no less immune to scheduler deadlocks any more than the preceding
+> "else if" where we are checking this bit.
 
-I checked you are right.
+I would have much more confidence in a line of reasoning that led to
+"immune to scheduler deadlocks" than one that led to "no less immune to
+scheduler deadlocks".  ;-)
 
->
-> Pushed out as testing for the autobuilders to play with it.
+> > Also, your commit log's point #2 is "in_irq() implies in_interrupt()
+> > which implies raising softirq will not do any wake ups."  This mention
+> > of softirq seems a bit odd, given that we are going to wake up a rcuc
+> > kthread.  Of course, this did nothing to quell my suspicions.  ;-)
+> 
+> Yes, I should delete this #2 from the changelog since it is not very relevant
+> (I feel now). My point with #2 was that even if were to raise a softirq
+> (which we are not), a scheduler wakeup of ksoftirqd is impossible in this
+> path anyway since in_irq() implies in_interrupt().
 
-Thanks.
+Please!  Could you also add a first-principles explanation of why
+the added condition is immune from scheduler deadlocks?
 
--- 
-Baolin Wang
-Best Regards
+							Thanx, Paul
+
