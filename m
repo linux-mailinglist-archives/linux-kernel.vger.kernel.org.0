@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 81C42924DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:23:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49630924B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:23:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727668AbfHSNXA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 09:23:00 -0400
-Received: from 8bytes.org ([81.169.241.247]:50272 "EHLO theia.8bytes.org"
+        id S1727706AbfHSNXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 09:23:01 -0400
+Received: from 8bytes.org ([81.169.241.247]:50292 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727424AbfHSNXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727537AbfHSNXA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Aug 2019 09:23:00 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id D15E3309; Mon, 19 Aug 2019 15:22:58 +0200 (CEST)
+        id DDBDB1C7; Mon, 19 Aug 2019 15:22:58 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -21,10 +21,12 @@ Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
         linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, Thomas.Lendacky@amd.com,
         Suravee.Suthikulpanit@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 00/11 v3] Cleanup IOMMU passthrough setting (and disable IOMMU Passthrough when SME is active)
-Date:   Mon, 19 Aug 2019 15:22:45 +0200
-Message-Id: <20190819132256.14436-1-joro@8bytes.org>
+Subject: [PATCH 01/11] iommu: Remember when default domain type was set on kernel command line
+Date:   Mon, 19 Aug 2019 15:22:46 +0200
+Message-Id: <20190819132256.14436-2-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190819132256.14436-1-joro@8bytes.org>
+References: <20190819132256.14436-1-joro@8bytes.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -32,71 +34,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-Hi,
+Introduce an extensible concept to remember when certain
+configuration settings for the IOMMU code have been set on
+the kernel command line.
 
-This patch-set started out small to overwrite the default passthrough
-setting (through CONFIG_IOMMU_DEFAULT_PASSTHROUGH=y) when SME is active.
+This will be used later to prevent overwriting these
+settings with other defaults.
 
-But on the way to that Tom reminded me that the current ways to
-configure passthrough/no-passthrough modes for IOMMU on x86 is a mess.
-So I added a few more patches to clean that up a bit, getting rid of the
-iommu_pass_through variable on the way.This information is now kept only
-in iommu code, with helpers to change that setting from architecture
-code.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ drivers/iommu/iommu.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-And of course this patch-set still disables IOMMU Passthrough mode when
-SME is active even when CONFIG_IOMMU_DEFAULT_PASSTHROUGH=y is set.
-
-The reason for that change is that SME with passthrough mode turned out
-to be fragile with devices requiring SWIOTLB, mainly because SWIOTLB has
-a maximum allocation size of 256kb and a limit overall size of the
-bounce buffer.
-
-Therefore having IOMMU in translation mode by default is better when SME
-is active on a system.
-
-Please review.
-
-Thanks,
-
-	Joerg
-
-Changes since v2:
-
-	- Added 'bool cmd_line' parameter to iommu_set_default_*()
-	  functions, so that we correctly recognize iommu=pt/nopt
-	  command line parameters
-
-Changes since v1:
-
-	- Cleaned up the kernel command line parameters to
-	  configure passthrough/translated mode, getting rid
-	  of the global iommu_pass_through variable
-
-Joerg Roedel (11):
-  iommu: Remember when default domain type was set on kernel command line
-  iommu: Add helpers to set/get default domain type
-  iommu: Use Functions to set default domain type in iommu_set_def_domain_type()
-  iommu/amd: Request passthrough mode from IOMMU core
-  iommu/vt-d: Request passthrough mode from IOMMU core
-  x86/dma: Get rid of iommu_pass_through
-  ia64: Get rid of iommu_pass_through
-  iommu: Print default domain type on boot
-  iommu: Set default domain type at runtime
-  iommu: Disable passthrough mode when SME is active
-  Documentation: Update Documentation for iommu.passthrough
-
- Documentation/admin-guide/kernel-parameters.txt |  2 +-
- arch/ia64/include/asm/iommu.h                   |  2 -
- arch/ia64/kernel/pci-dma.c                      |  2 -
- arch/x86/include/asm/iommu.h                    |  1 -
- arch/x86/kernel/pci-dma.c                       | 20 +-----
- drivers/iommu/amd_iommu.c                       |  6 +-
- drivers/iommu/intel-iommu.c                     |  2 +-
- drivers/iommu/iommu.c                           | 93 +++++++++++++++++++++++--
- include/linux/iommu.h                           | 16 +++++
- 9 files changed, 110 insertions(+), 34 deletions(-)
-
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 0c674d80c37f..3361ca5ef769 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -32,6 +32,7 @@ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_IDENTITY;
+ static unsigned int iommu_def_domain_type = IOMMU_DOMAIN_DMA;
+ #endif
+ static bool iommu_dma_strict __read_mostly = true;
++static u32 iommu_cmd_line __read_mostly;
+ 
+ struct iommu_group {
+ 	struct kobject kobj;
+@@ -68,6 +69,18 @@ static const char * const iommu_group_resv_type_string[] = {
+ 	[IOMMU_RESV_SW_MSI]			= "msi",
+ };
+ 
++#define IOMMU_CMD_LINE_DMA_API		BIT(0)
++
++static void iommu_set_cmd_line_dma_api(void)
++{
++	iommu_cmd_line |= IOMMU_CMD_LINE_DMA_API;
++}
++
++static bool __maybe_unused iommu_cmd_line_dma_api(void)
++{
++	return !!(iommu_cmd_line & IOMMU_CMD_LINE_DMA_API);
++}
++
+ #define IOMMU_GROUP_ATTR(_name, _mode, _show, _store)		\
+ struct iommu_group_attribute iommu_group_attr_##_name =		\
+ 	__ATTR(_name, _mode, _show, _store)
+@@ -165,6 +178,8 @@ static int __init iommu_set_def_domain_type(char *str)
+ 	if (ret)
+ 		return ret;
+ 
++	iommu_set_cmd_line_dma_api();
++
+ 	iommu_def_domain_type = pt ? IOMMU_DOMAIN_IDENTITY : IOMMU_DOMAIN_DMA;
+ 	return 0;
+ }
 -- 
 2.16.4
 
