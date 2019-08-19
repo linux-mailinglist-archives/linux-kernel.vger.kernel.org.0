@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C861D948CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:46:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB838948E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727782AbfHSPqL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:46:11 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47752 "EHLO
+        id S1728207AbfHSPrI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:47:08 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47760 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727938AbfHSPpu (ORCPT
+        with ESMTP id S1727941AbfHSPpw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:50 -0400
+        Mon, 19 Aug 2019 11:45:52 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzjqu-0006zS-TA; Mon, 19 Aug 2019 17:45:48 +0200
-Message-Id: <20190819143804.450851157@linutronix.de>
+        id 1hzjqv-0006zi-Ak; Mon, 19 Aug 2019 17:45:49 +0200
+Message-Id: <20190819143804.547264416@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:32:13 +0200
+Date:   Mon, 19 Aug 2019 16:32:14 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -26,7 +26,7 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         John Stultz <john.stultz@linaro.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 32/44] posix-cpu-timers: Provide array based sample functions
+Subject: [patch 33/44] posix-cpu-timers: Make expiry checks array based
 References: <20190819143141.221906747@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,49 +35,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of using task_cputime and doing the addition of utime and stime at
-all call sites, it's way simpler to have a sample array which allows
-indexed based checks against the expiry cache array.
+The expiry cache is an array indexed by clock ids. The new sample functions
+allow to retrieve a corresponding array of samples.
+
+Convert the fastpath expiry checks to make use of the new sample functions
+and do the comparisons on the sample and the expiry array.
+
+Make the check for the expiry array being zero array based as well.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   26 ++++++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ kernel/time/posix-cpu-timers.c |   85 +++++++++++++++++------------------------
+ 1 file changed, 36 insertions(+), 49 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -195,6 +195,32 @@ static u64 cpu_clock_sample(const clocki
- 	return 0;
+@@ -32,7 +32,7 @@ static void posix_cpu_timer_rearm(struct
+ 
+ /*
+  * Called after updating RLIMIT_CPU to run cpu timer and update
+- * tsk->signal->posix_cputimers.cputime_expires expiration cache if
++ * tsk->signal->posix_cputimers.expiries expiration cache if
+  * necessary. Needs siglock protection since other code may update
+  * expiration cache as well.
+  */
+@@ -125,19 +125,9 @@ static void bump_cpu_timer(struct k_itim
+ 	}
  }
  
-+static inline void store_samples(u64 *samples, u64 stime, u64 utime, u64 rtime)
-+{
-+	samples[CPUCLOCK_PROF] = stime + utime;
-+	samples[CPUCLOCK_VIRT] = utime;
-+	samples[CPUCLOCK_SCHED] = rtime;
-+}
+-/**
+- * task_cputime_zero - Check a task_cputime struct for all zero fields.
+- *
+- * @cputime:	The struct to compare.
+- *
+- * Checks @cputime to see if all fields are zero.  Returns true if all fields
+- * are zero, false if any field is nonzero.
+- */
+-static inline int task_cputime_zero(const struct task_cputime *cputime)
++static inline bool expiry_cache_is_zero(const u64 *ec)
+ {
+-	if (!cputime->utime && !cputime->stime && !cputime->sum_exec_runtime)
+-		return 1;
+-	return 0;
++	return !(ec[CPUCLOCK_PROF] | ec[CPUCLOCK_VIRT] | ec[CPUCLOCK_SCHED]);
+ }
+ 
+ static int
+@@ -804,10 +794,10 @@ static void check_thread_timers(struct t
+ 		check_dl_overrun(tsk);
+ 
+ 	/*
+-	 * If cputime_expires is zero, then there are no active
+-	 * per thread CPU timers.
++	 * If the expiry cache is zero, then there are no active per thread
++	 * CPU timers.
+ 	 */
+-	if (task_cputime_zero(&tsk->posix_cputimers.cputime_expires))
++	if (expiry_cache_is_zero(tsk->posix_cputimers.expiries))
+ 		return;
+ 
+ 	task_cputime(tsk, &utime, &stime);
+@@ -853,7 +843,7 @@ static void check_thread_timers(struct t
+ 		}
+ 	}
+ 
+-	if (task_cputime_zero(&tsk->posix_cputimers.cputime_expires))
++	if (expiry_cache_is_zero(tsk->posix_cputimers.expiries))
+ 		tick_dep_clear_task(tsk, TICK_DEP_BIT_POSIX_TIMER);
+ }
+ 
+@@ -976,7 +966,7 @@ static void check_process_timers(struct
+ 	sig->posix_cputimers.expiries[CPUCLOCK_VIRT] = virt_expires;
+ 	sig->posix_cputimers.expiries[CPUCLOCK_SCHED] = sched_expires;
+ 
+-	if (task_cputime_zero(&sig->posix_cputimers.cputime_expires))
++	if (expiry_cache_is_zero(sig->posix_cputimers.expiries))
+ 		stop_process_timers(sig);
+ 
+ 	sig->cputimer.checking_timer = false;
+@@ -1041,26 +1031,23 @@ static void posix_cpu_timer_rearm(struct
+ }
+ 
+ /**
+- * task_cputime_expired - Compare two task_cputime entities.
++ * task_cputimers_expired - Compare two task_cputime entities.
+  *
+- * @sample:	The task_cputime structure to be checked for expiration.
+- * @expires:	Expiration times, against which @sample will be checked.
++ * @samples:	Array of current samples for the CPUCLOCK clocks
++ * @expiries:	Array of expiry values for the CPUCLOCK clocks
+  *
+- * Checks @sample against @expires to see if any field of @sample has expired.
+- * Returns true if any field of the former is greater than the corresponding
+- * field of the latter if the latter field is set.  Otherwise returns false.
++ * Returns true if any mmember of @samples is greater than the corresponding
++ * member of @expiries if that member is non zero. False otherwise
+  */
+-static inline int task_cputime_expired(const struct task_cputime *sample,
+-					const struct task_cputime *expires)
++static inline bool task_cputimers_expired(const u64 *sample, const u64 *expiries)
+ {
+-	if (expires->utime && sample->utime >= expires->utime)
+-		return 1;
+-	if (expires->stime && sample->utime + sample->stime >= expires->stime)
+-		return 1;
+-	if (expires->sum_exec_runtime != 0 &&
+-	    sample->sum_exec_runtime >= expires->sum_exec_runtime)
+-		return 1;
+-	return 0;
++	int i;
 +
-+static void task_sample_cputime(struct task_struct *p, u64 *samples)
-+{
-+	u64 stime, utime;
-+
-+	task_cputime(p, &utime, &stime);
-+	store_samples(samples, stime, utime, p->se.sum_exec_runtime);
-+}
-+
-+static void proc_sample_cputime_atomic(struct task_cputime_atomic *at,
-+				       u64 *samples)
-+{
-+	u64 stime, utime, rtime;
-+
-+	utime = atomic64_read(&at->utime);
-+	stime = atomic64_read(&at->stime);
-+	rtime = atomic64_read(&at->sum_exec_runtime);
-+	store_samples(samples, stime, utime, rtime);
-+}
-+
++	for (i = 0; i < CPUCLOCK_MAX; i++) {
++		if (expiries[i] && sample[i] >= expiries[i])
++			return true;
++	}
++	return false;
+ }
+ 
+ /**
+@@ -1073,18 +1060,17 @@ static inline int task_cputime_expired(c
+  * timers and compare them with the corresponding expiration times.  Return
+  * true if a timer has expired, else return false.
+  */
+-static inline int fastpath_timer_check(struct task_struct *tsk)
++static inline bool fastpath_timer_check(struct task_struct *tsk)
+ {
++	u64 *expiries = tsk->posix_cputimers.expiries;
+ 	struct signal_struct *sig;
+ 
+-	if (!task_cputime_zero(&tsk->posix_cputimers.cputime_expires)) {
+-		struct task_cputime task_sample;
++	if (!expiry_cache_is_zero(expiries)) {
++		u64 samples[CPUCLOCK_MAX];
+ 
+-		task_cputime(tsk, &task_sample.utime, &task_sample.stime);
+-		task_sample.sum_exec_runtime = tsk->se.sum_exec_runtime;
+-		if (task_cputime_expired(&task_sample,
+-					 &tsk->posix_cputimers.cputime_expires))
+-			return 1;
++		task_sample_cputime(tsk, samples);
++		if (task_cputimers_expired(samples, expiries))
++			return true;
+ 	}
+ 
+ 	sig = tsk->signal;
+@@ -1104,19 +1090,20 @@ static inline int fastpath_timer_check(s
+ 	 */
+ 	if (READ_ONCE(sig->cputimer.running) &&
+ 	    !READ_ONCE(sig->cputimer.checking_timer)) {
+-		struct task_cputime group_sample;
++		u64 samples[CPUCLOCK_MAX];
+ 
+-		sample_cputime_atomic(&group_sample, &sig->cputimer.cputime_atomic);
++		proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic,
++					   samples);
+ 
+-		if (task_cputime_expired(&group_sample,
+-					 &sig->posix_cputimers.cputime_expires))
+-			return 1;
++		if (task_cputimers_expired(samples,
++					   sig->posix_cputimers.expiries))
++			return true;
+ 	}
+ 
+ 	if (dl_task(tsk) && tsk->dl.dl_overrun)
+-		return 1;
++		return true;
+ 
+-	return 0;
++	return false;
+ }
+ 
  /*
-  * Set cputime to sum_cputime if sum_cputime > cputime. Use cmpxchg
-  * to avoid race conditions with concurrent updates to cputime.
 
 
