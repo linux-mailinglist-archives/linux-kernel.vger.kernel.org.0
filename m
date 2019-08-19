@@ -2,381 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B389794F49
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:46:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1D194F55
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:49:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728497AbfHSUqZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 16:46:25 -0400
-Received: from mga01.intel.com ([192.55.52.88]:38630 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728409AbfHSUqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:46:20 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 13:46:19 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,406,1559545200"; 
-   d="scan'208";a="202443696"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Aug 2019 13:46:19 -0700
-From:   thor.thayer@linux.intel.com
-To:     mdf@kernel.org, richard.gong@intel.com, agust@denx.de
-Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [RESEND PATCHv4 3/3] fpga: altera-cvp: Add Stratix10 (V2) Support
-Date:   Mon, 19 Aug 2019 15:48:08 -0500
-Message-Id: <1566247688-26070-4-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566247688-26070-1-git-send-email-thor.thayer@linux.intel.com>
-References: <1566247688-26070-1-git-send-email-thor.thayer@linux.intel.com>
+        id S1728404AbfHSUtr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 16:49:47 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:44066 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727769AbfHSUtq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 16:49:46 -0400
+Received: by mail-oi1-f196.google.com with SMTP id k22so2388799oiw.11
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:49:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qJ9ugW0VcpBtWnTjpGs9NEf6Ynixa6UaLJj3OPptk5g=;
+        b=q+P0sD17vIM+mtMUIp1fUF4hdbm3kEwLyQ81ukyHKo+cbSU3vVZMFDoIo37Yhm8U4+
+         q61m4hNpNKA5EmOy2jOKzCnqNYwZOU2okR0EmEdv/VxGpnmjpHJ5C/MAarilBOR6rEiK
+         W3jIcFWkYG9VwqvOLNOteA8qnGNwKHMYcMhux3m85YR3tYqTYUuUWBDlYaHsQj6y0zFX
+         ufgjDRFh2mOozKEpRLsO33nJ6RWj7TqdSwcg5+iIADwuLFANB12x4QuVWAES7h1aIyUX
+         rl6m8aMO9ZtBmsNdyBOQOXb2ATTpi0Mify0eKo9fh3x14GUVHxc6m7xGbkxNDUmqKH0i
+         2Vtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qJ9ugW0VcpBtWnTjpGs9NEf6Ynixa6UaLJj3OPptk5g=;
+        b=kbFf/IczFQ8pVKyYVPnKxD54kke0dqsXc8nJv749eBYk0CNTYsMuio0maX2ENUl1Es
+         WzrgiPArG9ILDC+ZktryXp0P/mp11R1rInVC0EuiOtguhKIIyU4J0q0aNXscDKc9iJqp
+         lxcyRT4HGGBb1Vu0BuWj9COviVxXa38v999HppfyhHXNpoXm2hlKT9A0zoh9Y8A83F1W
+         2d2JQ1oeqduIXbyXHvfOTDVR+mWBz28q2ui5N6pzz7zEB3kgNH2liPB4RtqLVhkdJ75h
+         nftsoj46q2DvKdZptf/fYV1lZrCDkGJhPXrwUvY+9CzgQw3i79Mb4MwpJMKQc2uudB0J
+         GdRw==
+X-Gm-Message-State: APjAAAVW6wgVRU/QBp1BKt+m/oeqOniXHhpKwzT03fa3y9g/WNXS2QZL
+        poVGBG6Cke6hu1sFpc47CFbatS9lRd3utIIx8o6kAA==
+X-Google-Smtp-Source: APXvYqwLgJm79P1VG9mvKLUJli6+cr3P6CNXHG9JdeNFWtwqzalSYpHIofZHk4CrOA+HJ58jgecRJwwKnPqN9EQMkyI=
+X-Received: by 2002:aca:5106:: with SMTP id f6mr15062569oib.69.1566247785258;
+ Mon, 19 Aug 2019 13:49:45 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190724001100.133423-1-saravanak@google.com> <20190724001100.133423-4-saravanak@google.com>
+ <141d2e16-26cc-1f05-1ac0-6784bab5ae88@gmail.com> <CAGETcx-dVnLCRA+1CX47gtZgtwTcrN5KefpjMzh9OJB-BEnqyg@mail.gmail.com>
+ <19c99a6e-51c3-68d7-d1d6-640aae754c14@gmail.com>
+In-Reply-To: <19c99a6e-51c3-68d7-d1d6-640aae754c14@gmail.com>
+From:   Saravana Kannan <saravanak@google.com>
+Date:   Mon, 19 Aug 2019 13:49:09 -0700
+Message-ID: <CAGETcx-XcXZq7YFHsFdzBDniQku9cxFUJL_vBoEKKhCH+cDKRw@mail.gmail.com>
+Subject: Re: [PATCH v7 3/7] of/platform: Add functional dependency link from
+ DT bindings
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        David Collins <collinsd@codeaurora.org>,
+        Android Kernel Team <kernel-team@android.com>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Mon, Aug 19, 2019 at 10:16 AM Frank Rowand <frowand.list@gmail.com> wrote:
+>
+> On 8/15/19 6:50 PM, Saravana Kannan wrote:
+> > On Wed, Aug 7, 2019 at 7:06 PM Frank Rowand <frowand.list@gmail.com> wrote:
+> >>
+> >> On 7/23/19 5:10 PM, Saravana Kannan wrote:
+> >>> Add device-links after the devices are created (but before they are
+> >>> probed) by looking at common DT bindings like clocks and
+> >>> interconnects.
+>
+>
+> < very big snip (lots of comments that deserve answers) >
+>
+>
+> >>
+> >> /**
+> >>  * of_link_property - TODO:
+> >>  * dev:
+> >>  * con_np:
+> >>  * prop:
+> >>  *
+> >>  * TODO...
+> >>  *
+> >>  * Any failed attempt to create a link will NOT result in an immediate return.
+> >>  * of_link_property() must create all possible links even when one of more
+> >>  * attempts to create a link fail.
+> >>
+> >> Why?  isn't one failure enough to prevent probing this device?
+> >> Continuing to scan just results in extra work... which will be
+> >> repeated every time device_link_check_waiting_consumers() is called
+> >
+> > Context:
+> > As I said in the cover letter, avoiding unnecessary probes is just one
+> > of the reasons for this patch. The other (arguably more important)
+>
+> Agree that it is more important.
+>
+>
+> > reason for this patch is to make sure suppliers know that they have
+> > consumers that are yet to be probed. That way, suppliers can leave
+> > their resource on AND in the right state if they were left on by the
+> > bootloader. For example, if a clock was left on and at 200 MHz, the
+> > clock provider needs to keep that clock ON and at 200 MHz till all the
+> > consumers are probed.
+> >
+> > Answer: Let's say a consumer device Z has suppliers A, B and C. If the
+> > linking fails at A and you return immediately, then B and C could
+> > probe and then figure that they have no more consumers (they don't see
+> > a link to Z) and turn off their resources. And Z could fail
+> > catastrophically.
+>
+> Then I think that this approach is fatally flawed in the current implementation.
 
-Add Stratix10 specific functions that use a credit mechanism
-to throttle data to the CvP FIFOs. Add a private structure
-with function pointers for V1 vs V2 functions.
+I'm waiting to hear how it is fatally flawed. But maybe this is just a
+misunderstanding of the problem?
 
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2 Remove inline function declaration
-   Reverse Christmas Tree format for local variables
-   Remove mask from credit calculation
-   Add commment for the delay(1) function in wait_for_credit()
-v3 Fix return code of abstraction function
-   Move reset of current_credit_byte to clear_state().
-   Check return code of credit register read in wait_for_credit()
-   Check return code of clear_state read/write register.
-v4 Implement changes suggested by maintainer.
-      Rename delta_credit to space
-      Simplify credit do-while loop.
-      Change from udelay() to usleep_range()
-      Remove NULL initialization from private structure
-      Use name for Version1 offsets
-   Change current_credit_byte to u32 sent_packets.
-   Changes to Kconfig title and description to support Stratix10.
----
- drivers/fpga/Kconfig      |   6 +-
- drivers/fpga/altera-cvp.c | 187 ++++++++++++++++++++++++++++++++++++++++++----
- 2 files changed, 176 insertions(+), 17 deletions(-)
+In the text below, I'm not sure if you mixing up two different things
+or just that your wording it a bit ambiguous. So pardon my nitpick to
+err on the side of clarity.
 
-diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
-index 474f304ec109..f50956ec1300 100644
---- a/drivers/fpga/Kconfig
-+++ b/drivers/fpga/Kconfig
-@@ -45,11 +45,11 @@ config FPGA_MGR_ALTERA_PS_SPI
- 	  using the passive serial interface over SPI.
- 
- config FPGA_MGR_ALTERA_CVP
--	tristate "Altera Arria-V/Cyclone-V/Stratix-V CvP FPGA Manager"
-+	tristate "Altera CvP FPGA Manager"
- 	depends on PCI
- 	help
--	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V
--	  and Arria 10 Altera FPGAs using the CvP interface over PCIe.
-+	  FPGA manager driver support for Arria-V, Cyclone-V, Stratix-V,
-+	  Arria 10 and Stratix10 Altera FPGAs using the CvP interface over PCIe.
- 
- config FPGA_MGR_ZYNQ_FPGA
- 	tristate "Xilinx Zynq FPGA"
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 3b8386fd32e7..4e0edb60bfba 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -43,16 +43,34 @@
- #define VSE_CVP_PROG_CTRL		0x2c	/* 32bit */
- #define VSE_CVP_PROG_CTRL_CONFIG	BIT(0)
- #define VSE_CVP_PROG_CTRL_START_XFER	BIT(1)
-+#define VSE_CVP_PROG_CTRL_MASK		GENMASK(1, 0)
- 
- #define VSE_UNCOR_ERR_STATUS		0x34	/* 32bit */
- #define VSE_UNCOR_ERR_CVP_CFG_ERR	BIT(5)	/* CVP_CONFIG_ERROR_LATCHED */
- 
-+#define V1_VSEC_OFFSET			0x200	/* Vendor Specific Offset V1 */
-+/* V2 Defines */
-+#define VSE_CVP_TX_CREDITS		0x49	/* 8bit */
-+
-+#define V2_CREDIT_TIMEOUT_US		20000
-+#define V2_CHECK_CREDIT_US		10
-+#define V2_POLL_TIMEOUT_US		1000000
-+#define V2_USER_TIMEOUT_US		500000
-+
-+#define V1_POLL_TIMEOUT_US		10
-+
- #define DRV_NAME		"altera-cvp"
- #define ALTERA_CVP_MGR_NAME	"Altera CvP FPGA Manager"
- 
-+/* Write block sizes */
-+#define ALTERA_CVP_V1_SIZE	4
-+#define ALTERA_CVP_V2_SIZE	4096
-+
- /* Optional CvP config error status check for debugging */
- static bool altera_cvp_chkcfg;
- 
-+struct cvp_priv;
-+
- struct altera_cvp_conf {
- 	struct fpga_manager	*mgr;
- 	struct pci_dev		*pci_dev;
-@@ -61,9 +79,27 @@ struct altera_cvp_conf {
- 					      u32 data);
- 	char			mgr_name[64];
- 	u8			numclks;
-+	u32			sent_packets;
- 	u32			vsec_offset;
-+	const struct cvp_priv	*priv;
- };
- 
-+struct cvp_priv {
-+	void	(*switch_clk)(struct altera_cvp_conf *conf);
-+	int	(*clear_state)(struct altera_cvp_conf *conf);
-+	int	(*wait_credit)(struct fpga_manager *mgr, u32 blocks);
-+	size_t	block_size;
-+	int	poll_time_us;
-+	int	user_time_us;
-+};
-+
-+static int altera_read_config_byte(struct altera_cvp_conf *conf,
-+				   int where, u8 *val)
-+{
-+	return pci_read_config_byte(conf->pci_dev, conf->vsec_offset + where,
-+				    val);
-+}
-+
- static int altera_read_config_dword(struct altera_cvp_conf *conf,
- 				    int where, u32 *val)
- {
-@@ -159,6 +195,73 @@ static int altera_cvp_chk_error(struct fpga_manager *mgr, size_t bytes)
- 	return 0;
- }
- 
-+/*
-+ * CvP Version2 Functions
-+ * Recent Intel FPGAs use a credit mechanism to throttle incoming
-+ * bitstreams and a different method of clearing the state.
-+ */
-+
-+static int altera_cvp_v2_clear_state(struct altera_cvp_conf *conf)
-+{
-+	u32 val;
-+	int ret;
-+
-+	/* Clear the START_XFER and CVP_CONFIG bits */
-+	ret = altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-+	if (ret) {
-+		dev_err(&conf->pci_dev->dev,
-+			"Error reading CVP Program Control Register\n");
-+		return ret;
-+	}
-+
-+	val &= ~VSE_CVP_PROG_CTRL_MASK;
-+	ret = altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
-+	if (ret) {
-+		dev_err(&conf->pci_dev->dev,
-+			"Error writing CVP Program Control Register\n");
-+		return ret;
-+	}
-+
-+	return altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0,
-+				      conf->priv->poll_time_us);
-+}
-+
-+static int altera_cvp_v2_wait_for_credit(struct fpga_manager *mgr,
-+					 u32 blocks)
-+{
-+	u32 timeout = V2_CREDIT_TIMEOUT_US / V2_CHECK_CREDIT_US;
-+	struct altera_cvp_conf *conf = mgr->priv;
-+	int ret;
-+	u8 val;
-+
-+	do {
-+		ret = altera_read_config_byte(conf, VSE_CVP_TX_CREDITS, &val);
-+		if (ret) {
-+			dev_err(&conf->pci_dev->dev,
-+				"Error reading CVP Credit Register\n");
-+			return ret;
-+		}
-+
-+		/* Return if there is space in FIFO */
-+		if (val - (u8)conf->sent_packets)
-+			return 0;
-+
-+		ret = altera_cvp_chk_error(mgr, blocks * ALTERA_CVP_V2_SIZE);
-+		if (ret) {
-+			dev_err(&conf->pci_dev->dev,
-+				"CE Bit error credit reg[0x%x]:sent[0x%x]\n",
-+				val, conf->sent_packets);
-+			return -EAGAIN;
-+		}
-+
-+		/* Limit the check credit byte traffic */
-+		usleep_range(V2_CHECK_CREDIT_US, V2_CHECK_CREDIT_US + 1);
-+	} while (timeout--);
-+
-+	dev_err(&conf->pci_dev->dev, "Timeout waiting for credit\n");
-+	return -ETIMEDOUT;
-+}
-+
- static int altera_cvp_send_block(struct altera_cvp_conf *conf,
- 				 const u32 *data, size_t len)
- {
-@@ -200,10 +303,12 @@ static int altera_cvp_teardown(struct fpga_manager *mgr,
- 	 * - set CVP_NUMCLKS to 1 and then issue CVP_DUMMY_WR dummy
- 	 *   writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf); /* from CVP clock to internal clock */
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
- 
- 	/* STEP 15 - poll CVP_CONFIG_READY bit for 0 with 10us timeout */
--	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0, 10);
-+	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY, 0,
-+				     conf->priv->poll_time_us);
- 	if (ret)
- 		dev_err(&mgr->dev, "CFG_RDY == 0 timeout\n");
- 
-@@ -265,7 +370,18 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	 * STEP 3
- 	 * - set CVP_NUMCLKS to 1 and issue CVP_DUMMY_WR dummy writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf);
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
-+
-+	if (conf->priv->clear_state) {
-+		ret = conf->priv->clear_state(conf);
-+		if (ret) {
-+			dev_err(&mgr->dev, "Problem clearing out state\n");
-+			return ret;
-+		}
-+	}
-+
-+	conf->sent_packets = 0;
- 
- 	/* STEP 4 - set CVP_CONFIG bit */
- 	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-@@ -273,9 +389,10 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	val |= VSE_CVP_PROG_CTRL_CONFIG;
- 	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
- 
--	/* STEP 5 - poll CVP_CONFIG READY for 1 with 10us timeout */
-+	/* STEP 5 - poll CVP_CONFIG READY for 1 with timeout */
- 	ret = altera_cvp_wait_status(conf, VSE_CVP_STATUS_CFG_RDY,
--				     VSE_CVP_STATUS_CFG_RDY, 10);
-+				     VSE_CVP_STATUS_CFG_RDY,
-+				     conf->priv->poll_time_us);
- 	if (ret) {
- 		dev_warn(&mgr->dev, "CFG_RDY == 1 timeout\n");
- 		return ret;
-@@ -285,7 +402,16 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	 * STEP 6
- 	 * - set CVP_NUMCLKS to 1 and issue CVP_DUMMY_WR dummy writes to the HIP
- 	 */
--	altera_cvp_dummy_write(conf);
-+	if (conf->priv->switch_clk)
-+		conf->priv->switch_clk(conf);
-+
-+	if (altera_cvp_chkcfg) {
-+		ret = altera_cvp_chk_error(mgr, 0);
-+		if (ret) {
-+			dev_warn(&mgr->dev, "CFG_RDY == 1 timeout\n");
-+			return ret;
-+		}
-+	}
- 
- 	/* STEP 7 - set START_XFER */
- 	altera_read_config_dword(conf, VSE_CVP_PROG_CTRL, &val);
-@@ -293,11 +419,12 @@ static int altera_cvp_write_init(struct fpga_manager *mgr,
- 	altera_write_config_dword(conf, VSE_CVP_PROG_CTRL, val);
- 
- 	/* STEP 8 - start transfer (set CVP_NUMCLKS for bitstream) */
--	altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
--	val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
--	val |= conf->numclks << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
--	altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
--
-+	if (conf->priv->switch_clk) {
-+		altera_read_config_dword(conf, VSE_CVP_MODE_CTRL, &val);
-+		val &= ~VSE_CVP_MODE_CTRL_NUMCLKS_MASK;
-+		val |= conf->numclks << VSE_CVP_MODE_CTRL_NUMCLKS_OFF;
-+		altera_write_config_dword(conf, VSE_CVP_MODE_CTRL, val);
-+	}
- 	return 0;
- }
- 
-@@ -315,11 +442,22 @@ static int altera_cvp_write(struct fpga_manager *mgr, const char *buf,
- 	done = 0;
- 
- 	while (remaining) {
--		len = min(sizeof(u32), remaining);
-+		/* Use credit throttling if available */
-+		if (conf->priv->wait_credit) {
-+			status = conf->priv->wait_credit(mgr, done);
-+			if (status) {
-+				dev_err(&conf->pci_dev->dev,
-+					"Wait Credit ERR: 0x%x\n", status);
-+				return status;
-+			}
-+		}
-+
-+		len = min(conf->priv->block_size, remaining);
- 		altera_cvp_send_block(conf, data, len);
--		data++;
-+		data += len / sizeof(u32);
- 		done += len;
- 		remaining -= len;
-+		conf->sent_packets++;
- 
- 		/*
- 		 * STEP 10 (optional) and STEP 11
-@@ -369,7 +507,8 @@ static int altera_cvp_write_complete(struct fpga_manager *mgr,
- 
- 	/* STEP 18 - poll PLD_CLK_IN_USE and USER_MODE bits */
- 	mask = VSE_CVP_STATUS_PLD_CLK_IN_USE | VSE_CVP_STATUS_USERMODE;
--	ret = altera_cvp_wait_status(conf, mask, mask, TIMEOUT_US);
-+	ret = altera_cvp_wait_status(conf, mask, mask,
-+				     conf->priv->user_time_us);
- 	if (ret)
- 		dev_err(&mgr->dev, "PLD_CLK_IN_USE|USERMODE timeout\n");
- 
-@@ -383,6 +522,21 @@ static const struct fpga_manager_ops altera_cvp_ops = {
- 	.write_complete	= altera_cvp_write_complete,
- };
- 
-+static const struct cvp_priv cvp_priv_v1 = {
-+	.switch_clk	= altera_cvp_dummy_write,
-+	.block_size	= ALTERA_CVP_V1_SIZE,
-+	.poll_time_us	= V1_POLL_TIMEOUT_US,
-+	.user_time_us	= TIMEOUT_US,
-+};
-+
-+static const struct cvp_priv cvp_priv_v2 = {
-+	.clear_state	= altera_cvp_v2_clear_state,
-+	.wait_credit	= altera_cvp_v2_wait_for_credit,
-+	.block_size	= ALTERA_CVP_V2_SIZE,
-+	.poll_time_us	= V2_POLL_TIMEOUT_US,
-+	.user_time_us	= V2_USER_TIMEOUT_US,
-+};
-+
- static ssize_t chkcfg_show(struct device_driver *dev, char *buf)
- {
- 	return snprintf(buf, 3, "%d\n", altera_cvp_chkcfg);
-@@ -484,6 +638,11 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 	conf->pci_dev = pdev;
- 	conf->write_data = altera_cvp_write_data_iomem;
- 
-+	if (conf->vsec_offset == V1_VSEC_OFFSET)
-+		conf->priv = &cvp_priv_v1;
-+	else
-+		conf->priv = &cvp_priv_v2;
-+
- 	conf->map = pci_iomap(pdev, CVP_BAR, 0);
- 	if (!conf->map) {
- 		dev_warn(&pdev->dev, "Mapping CVP BAR failed\n");
--- 
-2.7.4
+> A device can be added by a module that is loaded.
 
+No, in the example I gave, of_platform_default_populate_init() would
+add all 3 of those devices during arch_initcall_sync().
+
+>  In that case the device
+> was not present at late boot when the suppliers may turn off their resources.
+
+In that case, the _drivers_ for those devices aren't present at late
+boot. So that they can't request to keep the resources on for their
+consumer devices. Since there are no consumer requests on resources,
+the suppliers turn off their resources at late boot (since there isn't
+a better location as of today). The sync_state() call back added in a
+subsequent patche in this series will provide the better location.
+
+> (I am assuming the details since I have not reviewed the patches later in
+> the series that implement this part.)
+>
+> Am I missing something?
+
+I think you are mixing up devices getting added/populated with drivers
+getting loaded as modules?
+
+> If I am wrong, then I'll have more comments for your review replies for
+> patches 2 and 3.
+
+I'll wait for more review replies?
+
+Thanks,
+Saravana
