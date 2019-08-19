@@ -2,126 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82CF3948BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:45:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E5450948D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727647AbfHSPpJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:45:09 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:43218 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726343AbfHSPpJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:09 -0400
-Received: by mail-pf1-f194.google.com with SMTP id v12so1380074pfn.10
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:45:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=zMGg7ZRNK7NfpqI/Qet9Dxr9rbclh2xtbR4hUTFM6IY=;
-        b=GJoHV9QE4xGJAUCqD7zOGEihP3UiAZjpj3bmVElnV3mGgDu9+IBupxqZo5crTOTBSn
-         9E4KUL6HMvh/OBYUcO8Tpulqz8WiyGQenGKjsASlkTFv2dXi8Y/niM3/Z+P7vnlKNIaZ
-         MtFd0UdR9JYH1Lcgtiq3NMGR7NeTcmBx3BytYCkuY0+Mh6In/PjXGCT7JB+YD1Ki2rnw
-         M/YU/3ABnIwEbCJlH3DAt0qAYIkuPOryLlR92BarOXnc/HJERVegrVcC8hFgAU/vJ7Go
-         FvSFH9zA3QmxP0Me+8WMdbNNwakaShO+N+03UzcmCf/+VKatv8Kx3ZtIc9UnmtYKv3wf
-         5kAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zMGg7ZRNK7NfpqI/Qet9Dxr9rbclh2xtbR4hUTFM6IY=;
-        b=aK//9WE2DYL3fPSbahXnySEvs4APTwlck39KDhrzoNPkmb/gzKZD2Gv/IypdN2dtnm
-         HEanonOPe4QjRZElEGwoQLNqwPcuNfKgZE31+Q8SHEg7onJ4J+c1D75qA7CNvX2IBLad
-         mPuoYe7NSIPC7c1/KYgRtPkIamdWWqfodKtCY+0Co+lDdnigY0jPHk8PSbNauwdAhv82
-         D9vXIV8pf/o7YZB/TCDaK1t7qtFsQrc/i7BGRGqKUClbDdg4zaNe7bGGGAD6BtomFP+0
-         mVzArbWalJeRaPlGv6Fu4bCfeM+oAWWtUjnTId0oOZmu/Fv0TEvH7ACNlCWv6wY5VJ0y
-         cwJw==
-X-Gm-Message-State: APjAAAWN79QPesH0QlFh9F0hIZ0TWpwTN0Uk9vzhaCkHwMnytv2WkajC
-        RNy2i+jJKCG8+mVwK+JmWCWaXZwCOO0EK9meK6mwrg==
-X-Google-Smtp-Source: APXvYqyflWC4oeyk4cX94v5k6CQJ/8FEDGgMF+Kmp2ZaCbPDE8MBxb9njXOAWHJ8AnGwbz7Ioq7XIseAIciXEoaHYEw=
-X-Received: by 2002:a63:3006:: with SMTP id w6mr20727946pgw.440.1566229508161;
- Mon, 19 Aug 2019 08:45:08 -0700 (PDT)
-MIME-Version: 1.0
-References: <00eb8ba84205c59cac01b1b47615116a461c302c.1566220355.git.andreyknvl@google.com>
- <20190819150342.sxk3zzxvrxhkpp6j@willie-the-truck> <CAAeHK+xP6HnLJt_RKW67x8nbJLJp5A=av57BfwiFrA88eFn60w@mail.gmail.com>
- <20190819153856.odtneqxfxva2wjgu@willie-the-truck>
-In-Reply-To: <20190819153856.odtneqxfxva2wjgu@willie-the-truck>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Mon, 19 Aug 2019 17:44:56 +0200
-Message-ID: <CAAeHK+zf_VKOttBVfZUdp-ra=uNTx_faCmJkrM81BzgEaOZjSQ@mail.gmail.com>
-Subject: Re: [PATCH ARM] selftests, arm64: fix uninitialized symbol in tags_test.c
-To:     Will Deacon <will@kernel.org>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        kvm@vger.kernel.org,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kostya Serebryany <kcc@google.com>,
-        Khalid Aziz <khalid.aziz@oracle.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Vincenzo Frascino <vincenzo.frascino@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Leon Romanovsky <leon@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dave Martin <Dave.Martin@arm.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Jens Wiklander <jens.wiklander@linaro.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Alexander Deucher <Alexander.Deucher@amd.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        enh <enh@google.com>, Robin Murphy <robin.murphy@arm.com>,
-        Christian Koenig <Christian.Koenig@amd.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728030AbfHSPqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:46:34 -0400
+Received: from gate.crashing.org ([63.228.1.57]:39979 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727993AbfHSPp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:45:58 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7JFjWZd027621;
+        Mon, 19 Aug 2019 10:45:32 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7JFjVsv027620;
+        Mon, 19 Aug 2019 10:45:31 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Mon, 19 Aug 2019 10:45:31 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 3/3] powerpc: use __builtin_trap() in BUG/WARN macros.
+Message-ID: <20190819154531.GM31406@gate.crashing.org>
+References: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr> <20510ce03cc9463f1c9e743c1d93b939de501b53.1566219503.git.christophe.leroy@c-s.fr> <20190819132313.GH31406@gate.crashing.org> <dbafc03a-6eda-d9a3-c451-d242f03b01d9@c-s.fr> <20190819143700.GK31406@gate.crashing.org> <44a19633-f2a9-79f9-da7c-16ba64a66600@c-s.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <44a19633-f2a9-79f9-da7c-16ba64a66600@c-s.fr>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 5:39 PM Will Deacon <will@kernel.org> wrote:
->
-> On Mon, Aug 19, 2019 at 05:16:37PM +0200, Andrey Konovalov wrote:
-> > On Mon, Aug 19, 2019 at 5:03 PM Will Deacon <will@kernel.org> wrote:
-> > >
-> > > On Mon, Aug 19, 2019 at 03:14:42PM +0200, Andrey Konovalov wrote:
-> > > > Fix tagged_ptr not being initialized when TBI is not enabled.
-> > > >
-> > > > Dan Carpenter <dan.carpenter@oracle.com>
-> > >
-> > > Guessing this was Reported-by, or has Dan introduced his own tag now? ;)
+On Mon, Aug 19, 2019 at 05:05:46PM +0200, Christophe Leroy wrote:
+> Le 19/08/2019 à 16:37, Segher Boessenkool a écrit :
+> >On Mon, Aug 19, 2019 at 04:08:43PM +0200, Christophe Leroy wrote:
+> >>Le 19/08/2019 à 15:23, Segher Boessenkool a écrit :
+> >>>On Mon, Aug 19, 2019 at 01:06:31PM +0000, Christophe Leroy wrote:
+> >>>>Note that we keep using an assembly text using "twi 31, 0, 0" for
+> >>>>inconditional traps because GCC drops all code after
+> >>>>__builtin_trap() when the condition is always true at build time.
+> >>>
+> >>>As I said, it can also do this for conditional traps, if it can prove
+> >>>the condition is always true.
+> >>
+> >>But we have another branch for 'always true' and 'always false' using
+> >>__builtin_constant_p(), which don't use __builtin_trap(). Is there
+> >>anything wrong with that ?:
 > >
-> > Oops, yes, Reported-by :)
-> >
-> > >
-> > > Got a link to the report?
-> >
-> > https://www.spinics.net/lists/linux-kselftest/msg09446.html
->
-> Thanks, I'll fix up the commit message and push this out later on. If you
-> get a chance, would you be able to look at the pending changes from
-> Catalin[1], please?
->
-> Will
->
-> [1] https://lkml.kernel.org/r/20190815154403.16473-1-catalin.marinas@arm.com
+> >The compiler might not realise it is constant when it evaluates the
+> >__builtin_constant_p, but only realises it later.  As the documentation
+> >for the builtin says:
+> >   A return of 0 does not indicate that the
+> >   value is _not_ a constant, but merely that GCC cannot prove it is a
+> >   constant with the specified value of the '-O' option.
+> 
+> So you mean GCC would not be able to prove that 
+> __builtin_constant_p(cond) is always true but it would be able to prove 
+> that if (cond)  is always true ?
 
-Sure! I didn't realize some actioned is required from me on those.
-I'll add my Acked-by's. Thanks!
+Not sure what you mean, sorry.
+
+> And isn't there a away to tell GCC that '__builtin_trap()' is 
+> recoverable in our case ?
+
+No, GCC knows that a trap will never fall through.
+
+> >I think it may work if you do
+> >
+> >#define BUG_ON(x) do {						\
+> >	if (__builtin_constant_p(x)) {				\
+> >		if (x)						\
+> >			BUG();					\
+> >	} else {						\
+> >		BUG_ENTRY("", 0);				\
+> >		if (x)						\
+> >			__builtin_trap();			\
+> >	}							\
+> >} while (0)
+> 
+> It doesn't work:
+
+You need to make a BUG_ENTRY so that it refers to the *following* trap
+instruction, if you go this way.
+
+> >I don't know how BUG_ENTRY works exactly.
+> 
+> It's basic, maybe too basic: it adds an inline asm with a label, and 
+> adds a .long in the __bug_table section with the address of that label.
+> 
+> When putting it after the __builtin_trap(), I changed it to using the 
+> address before the one of the label which is always the twxx instruction 
+> as far as I can see.
+> 
+> #define BUG_ENTRY(insn, flags, ...)			\
+> 	__asm__ __volatile__(				\
+> 		"1:	" insn "\n"			\
+> 		".section __bug_table,\"aw\"\n"		\
+> 		"2:\t" PPC_LONG "1b, %0\n"		\
+> 		"\t.short %1, %2\n"			\
+> 		".org 2b+%3\n"				\
+> 		".previous\n"				\
+> 		: : "i" (__FILE__), "i" (__LINE__),	\
+> 		  "i" (flags),				\
+> 		  "i" (sizeof(struct bug_entry)),	\
+> 		  ##__VA_ARGS__)
+
+#define MY_BUG_ENTRY(lab, flags)			\
+	__asm__ __volatile__(				\
+		".section __bug_table,\"aw\"\n"		\
+		"2:\t" PPC_LONG "%4, %0\n"		\
+		"\t.short %1, %2\n"			\
+		".org 2b+%3\n"				\
+		".previous\n"				\
+		: : "i" (__FILE__), "i" (__LINE__),	\
+		  "i" (flags),				\
+		  "i" (sizeof(struct bug_entry)),	\
+		  "i" (lab))
+
+called as
+
+#define BUG_ON(x) do {						\
+	MY_BUG_ENTRY(&&lab, 0);					\
+	lab: if (x)						\
+		__builtin_trap();				\
+} while (0)
+
+not sure how reliable that works -- *if* it works, I just typed that in
+without testing or anything -- but hopefully you get the idea.
+
+
+Segher
