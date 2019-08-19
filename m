@@ -2,165 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F19EE94DFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:27:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C531194E14
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:28:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728884AbfHST1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43334 "EHLO mail.kernel.org"
+        id S1728760AbfHST2h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:28:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728545AbfHST1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:27:21 -0400
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+        id S1728398AbfHST2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 15:28:35 -0400
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C050B22CF8;
-        Mon, 19 Aug 2019 19:27:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 34A83206C1;
+        Mon, 19 Aug 2019 19:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566242840;
-        bh=FF7jXADl84/ZQ3CFgtiednouzYk9TDZ2FJb5brLwjMA=;
+        s=default; t=1566242915;
+        bh=QdaNHabnQATTellUgHWaDEel6AzbE1D6DIER1HVExlI=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=oDhAYrrHJn9W/xjZigWqHbp3pAjlyPSiIZ+wMSAmClpjErlDU92gJfu5ZtVblU0vm
-         AZKL2bXeEoM4hi5dxSThm9D1o6XPFvsW9yysClIH20DK4sdB2VWk7eDTQxdrM+UX2s
-         YreNUFl40iqFlh5518gwvt+Vin7uP9zJZ6FnvWGQ=
-Received: by mail-qk1-f169.google.com with SMTP id s145so2408909qke.7;
-        Mon, 19 Aug 2019 12:27:20 -0700 (PDT)
-X-Gm-Message-State: APjAAAXdodp6NSYFNfRZoe66cFaF5rsTfMJ8SXlzk87fWeJyZlv+T2+Y
-        JVpkqfi2iC21ppbj3+bHcd4nIPHIWYFA5QkaTw==
-X-Google-Smtp-Source: APXvYqxeh9qg21yX5D/sPAgYyZyxr9xFfen80p5g2ityS/6nfAGqpJiGY6uk3XwllPd27PeH9GGXmhU7foKmd/CePTw=
-X-Received: by 2002:a37:d8f:: with SMTP id 137mr21577181qkn.254.1566242839962;
- Mon, 19 Aug 2019 12:27:19 -0700 (PDT)
+        b=gstHmsR7y4n8/TlcmRyVp7fpeg619sFIAkKdJrUKpyNuidXOZ0Lk2zQ9XdKBL/FiR
+         00N2aI8kyV/WO18zFrtUiD0dqUqvPiLfCEpA1F6pZB9zvGSkLS1oDee6m9ucTCoITd
+         /4ttCNaWSW8XhjqnWgVm5er0kEECob/R7MG9qKhQ=
+Received: by mail-qk1-f178.google.com with SMTP id w18so2435458qki.0;
+        Mon, 19 Aug 2019 12:28:35 -0700 (PDT)
+X-Gm-Message-State: APjAAAUH3k+Gk8oEzqAmtxt1VhfmsXRvFormg2SiE5sP6AuSo4Ne/Bp5
+        +kwSS05GcC03D736OK9HG0LOyxx8DamuV3OXdw==
+X-Google-Smtp-Source: APXvYqwY6xx42yDW7hIjSnvmaPLBEK8bzXWhlEUDN0Ijfco/ERLYthPs7Knhxi9ySvKBporN0rhefJyOXaaPA2GTIdg=
+X-Received: by 2002:a37:6944:: with SMTP id e65mr20546914qkc.119.1566242914448;
+ Mon, 19 Aug 2019 12:28:34 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190819034416.45192-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-In-Reply-To: <20190819034416.45192-1-vadivel.muruganx.ramuthevar@linux.intel.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 19 Aug 2019 14:27:09 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL2m-3BJHCSg2pwogyPDbp6yADUP1MQEV6QyZMpgta4xw@mail.gmail.com>
-Message-ID: <CAL_JsqL2m-3BJHCSg2pwogyPDbp6yADUP1MQEV6QyZMpgta4xw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] dt-bindings: phy: intel-emmc-phy: Add new
- compatible for LGM eMMC PHY
-To:     "Ramuthevar,Vadivel MuruganX" 
-        <vadivel.muruganx.ramuthevar@linux.intel.com>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
-        peter.harliman.liem@intel.com
+References: <20190816205342.29552-1-jernej.skrabec@siol.net> <20190816205342.29552-2-jernej.skrabec@siol.net>
+In-Reply-To: <20190816205342.29552-2-jernej.skrabec@siol.net>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 19 Aug 2019 14:28:23 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLWjtGWuVrTQs7ikAQ7vLu26rnkk=Vo0q9punj-fM+UGg@mail.gmail.com>
+Message-ID: <CAL_JsqLWjtGWuVrTQs7ikAQ7vLu26rnkk=Vo0q9punj-fM+UGg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: arm: sunxi: Add compatible for Tanix TX6 board
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 10:44 PM Ramuthevar,Vadivel MuruganX
-<vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
+On Fri, Aug 16, 2019 at 3:54 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
 >
-> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+> Add new Oranth Tanix TX6 board compatible string to the bindings
+> documentation.
 >
-> Add a new compatible to use the host controller driver with the
-> eMMC PHY on Intel's Lightning Mountain SoC.
->
-> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 > ---
->  .../bindings/phy/intel-lgm-emmc-phy.yaml           | 70 ++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/intel-lgm-emmc-phy.yaml
->
-> diff --git a/Documentation/devicetree/bindings/phy/intel-lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel-lgm-emmc-phy.yaml
-> new file mode 100644
-> index 000000000000..52156ff091ad
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/intel-lgm-emmc-phy.yaml
-> @@ -0,0 +1,70 @@
-> +# SPDX-License-Identifier: GPL-2.0
+>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Preference for new bindings is (GPL-2.0-only OR BSD-2-Clause)
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/phy/intel-lgm-emmc-phy.yaml#
-
-Preferred filename is the compatible string (plus .yaml).
-
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Intel LGM e-MMC PHY Device Tree Bindings
-
-LGM is what?
-
-> +
-> +maintainers:
-> +  - Rob Herring <robh+dt@kernel.org>
-> +  - Mark Rutland <mark.rutland@arm.com>
-
-I don't know anything about this h/w. Please put yourself here.
-
-> +
-> +intel,syscon:
-
-This will throw an error with 'make dt_binding_check'...
-
-> +   $ref: /schemas/types.yaml#definitions/phandle
-> +   description:
-> +    - |
-> +      e-MMC phy module connected through chiptop. Phandle to a node that can
-> +      contain the following properties
-> +        * reg, Access the e-MMC, get the base address from syscon.
-> +        * reset, reset the e-MMC module.
-> +
-> +properties:
-> +  "#phy-cells":
-> +    const: 0
-> +
-> +  compatible:
-> +    const: intel,lgm-emmc-phy
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    items:
-> +      - description: e-MMC phy module clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: emmcclk
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +required:
-> +  - "#phy-cells"
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    sysconf: chiptop@e0020000 {
-> +        compatible = "intel,chiptop-lgm", "syscon";
-> +        reg = <0xe0020000 0x100>;
-> +        #reset-cells = <1>;
-> +     };
-> +
-> +  - |
-
-Looks like 1 example to me, not 2.
-
-> +    emmc_phy: emmc_phy {
-> +        compatible = "intel,lgm-emmc-phy";
-> +        intel,syscon = <&sysconf>;
-> +        clocks = <&emmc>;
-> +        clock-names = "emmcclk";
-> +        #phy-cells = <0>;
-> +    };
-> +
-> +...
-> --
-> 2.11.0
->
+Reviewed-by: Rob Herring <robh@kernel.org>
