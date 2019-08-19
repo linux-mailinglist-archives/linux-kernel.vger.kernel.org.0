@@ -2,60 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CBF8794E59
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:34:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 929C994E6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728571AbfHSTeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:34:07 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37600 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbfHSTeH (ORCPT
+        id S1728597AbfHSTgw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:36:52 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39579 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728305AbfHSTgw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:34:07 -0400
-Received: by mail-wr1-f67.google.com with SMTP id z11so9906694wrt.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:34:05 -0700 (PDT)
+        Mon, 19 Aug 2019 15:36:52 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i63so549496wmg.4
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:36:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:subject:to:cc:message-id:date:user-agent:mime-version
-         :content-language:content-transfer-encoding;
-        bh=UbTeYLNvE6MF9HBkLC87bPvKENg/S5WsXk7SvGnVm1s=;
-        b=k65EqeedureUenJxZAcfhD7kW25D6sZTNwr5M5uuQ0rtGlS8UCPX8txs/VLhKiYksB
-         9c15dnqi5VdiUmjgDsgIsaK11h0qQCXFIYDyGnfILUSF3o+25MgATRE3BSNNyDYsjGA1
-         c3t/BSOWLAWd1/M4bmssf1MrnlIRdE2zwqImiumvxA0dJvRoIGtDnL6jR2K7BI1idVqn
-         KaunjuQJU6I+dw9K+dtSQKu9grzFfP9VJfQP3unG+o82ABX0Yb08TBTT94Jiyzu2EPji
-         fN7sA8tn4OLEsBvzKpClA/IDXJ9jdXcTflzEAAWAj0tTp0KBn2/RVCLzCTrgIxcFYs70
-         67Jw==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=avD+mFYlLRhHip31YT9jTe2+g4CZ438qok9kWYIm/Lg=;
+        b=LctgZVBpcZLMdLoRgzt+RYHH3QpCHSI+r0hhU4ALRyZmELsWQglNXjy5OTaAtDYtLc
+         so+YtPCKh4EIdaBHLLUX2/ZUowEy8taauIMgSzKQGTLbXyxGkgDhOpQwJQ3HC+vi66vZ
+         Z7d72DCMqvCxRrQY77+SUPknhdZGizPUlavTI9o9f+zE9pq4i23nY0gCywaBhhxwSQLQ
+         mjbGoHAkWWhjO5H5Hl3xTjXB3S0BtARoruEeAxGZW0eIBYjiIktDm19Y7w4HUW4hpSSs
+         9Re9Lh3M7Oq6r5lbQ+xQlogBN8GAiVqp5XwgLp2SjsARpvyNF8maiAD8fJWuvfz91qMH
+         m1uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:subject:to:cc:message-id:date:user-agent
-         :mime-version:content-language:content-transfer-encoding;
-        bh=UbTeYLNvE6MF9HBkLC87bPvKENg/S5WsXk7SvGnVm1s=;
-        b=qwCiLriPWZoUYkYeLqRENWlymkOgnEriEU4GJAJm8EFXGXeLk+e/SeuHK3C4R21Iue
-         iAzoUbA1JQ0SYifY1ZXJslOG08BblsIjp8TzcKvXNFuJMhU3q9pon5/D81mBA3ykEwlr
-         ghKOzJ+aDZ6VT+PVPlLAyCj/VhOBMLm//gTnMNwJNQEjatF64PjmZd/tgNt9Sn4T2D5A
-         CZCMzPvKJMAK3pBDfg/XNlJg/Qj9+j/XEAV1/hicvCbmqgFgRdthxM79owqxjpC7IqcH
-         A15DvQs2rAjNAdrKcfw6SuguJYSJNjWG2cjoRQ5uSjRINdvUuLFDwinhHbtx6SyIqjVX
-         JBXg==
-X-Gm-Message-State: APjAAAVgfNlLNR3Z/Goo5pwmJJrdAhwq+P5lpQJQWVD7LLduWOwaK8Ts
-        qIVMs5tvB9CWX5l11EvcJrd0bnFq
-X-Google-Smtp-Source: APXvYqxnVNyCzGYR9XNUWZ83n3OQKW8FKEDaN68NKsSAW07OFi0k5eOz+RjWMC9wXEJd5h6UoDcr0w==
-X-Received: by 2002:adf:82cd:: with SMTP id 71mr25217801wrc.265.1566243244689;
-        Mon, 19 Aug 2019 12:34:04 -0700 (PDT)
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=avD+mFYlLRhHip31YT9jTe2+g4CZ438qok9kWYIm/Lg=;
+        b=UG/YkhPUwF7i/gTv18cVBdjU8VlSu4A277yi9z40oeGlMw961hCJdAyF86X2HqPTt8
+         GjtUTO9hPY93GYfcNyex/s3Z02unR2vJ9TE/74snnxqtlOOKBmx8U55RXhBD290Y8Ebk
+         mNlGHnVMA9C+ekZrkeQSROUbKTMj0KodwYmgKOXj6LrCB6EYn9aHhXLPDTbvM08ySh1g
+         inUqF5FsHtC9omKrG/PhQTFREXFMnV4nHNCkv1ZeMC1kEKSzUSplfCFLYFUQEeBKMIga
+         pm/r2Xg33EUOrPd1fkmMlreHz4eKlVtNRIYHVcilKrSmFRysq6vPnSpOnTxU4Bn/tSRi
+         By7A==
+X-Gm-Message-State: APjAAAWKf86b0G3UYYMrGR/xtEb3IIX2kXEAIyCbwhJjE/V8S/dCLZvY
+        kQC8v99zp9rSGyA2mK1FrjAmPHAx
+X-Google-Smtp-Source: APXvYqy58DTI+3r5fYpfA6g9C6MyEnTHM5CdJAVWVJTDlOrqocQhpdqP/HbBYxZO+OegPGRYxEysuw==
+X-Received: by 2002:a7b:ce02:: with SMTP id m2mr9593499wmc.7.1566243410170;
+        Mon, 19 Aug 2019 12:36:50 -0700 (PDT)
 Received: from ?IPv6:2003:ea:8f47:db00:69f9:84c:2cc6:baef? (p200300EA8F47DB0069F9084C2CC6BAEF.dip0.t-ipconnect.de. [2003:ea:8f47:db00:69f9:84c:2cc6:baef])
-        by smtp.googlemail.com with ESMTPSA id f24sm11311303wmc.25.2019.08.19.12.34.03
+        by smtp.googlemail.com with ESMTPSA id l15sm12782894wru.56.2019.08.19.12.36.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 12:34:04 -0700 (PDT)
+        Mon, 19 Aug 2019 12:36:49 -0700 (PDT)
+Subject: [PATCH v2 1/3] x86/irq: improve definition of VECTOR_SHUTDOWN et al
 From:   Heiner Kallweit <hkallweit1@gmail.com>
-Subject: [PATCH v2 0/3] x86/irq: slightly improve handle_irq
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
         "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
 Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Message-ID: <c81f3440-f4cc-65bc-66fd-abe9cb2ec318@gmail.com>
-Date:   Mon, 19 Aug 2019 21:33:59 +0200
+References: <c81f3440-f4cc-65bc-66fd-abe9cb2ec318@gmail.com>
+Message-ID: <146835e8-c086-4e85-7ece-bcba6795e6db@gmail.com>
+Date:   Mon, 19 Aug 2019 21:34:47 +0200
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <c81f3440-f4cc-65bc-66fd-abe9cb2ec318@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -64,26 +67,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When checking something else I stumbled across this code.
-This patch set simplifies it a little bit.
+These values are used with IS_ERR(), so it's more intuitive to define
+them like a standard PTR_ERR() of a negative errno.
 
-v2:
-- patch 2: add "likely" to if clause and reorder it
-- patch 2: For 64bit, remove handle_irq and inline call to generic_handle_irq_desc
+Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
+---
+ arch/x86/include/asm/hw_irq.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Heiner Kallweit (3):
-  x86/irq: improve definition of VECTOR_SHUTDOWN et al
-  x86/irq: factor out IS_ERR_OR_NULL check from platform-specific
-    handle_irq
-  x86/irq: slightly improve do_IRQ
-
- arch/x86/include/asm/hw_irq.h |  4 ++--
- arch/x86/include/asm/irq.h    |  2 +-
- arch/x86/kernel/irq.c         | 11 ++++++++---
- arch/x86/kernel/irq_32.c      |  7 +------
- arch/x86/kernel/irq_64.c      |  9 ---------
- 5 files changed, 12 insertions(+), 21 deletions(-)
-
+diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
+index cbd97e22d..4154bc5f6 100644
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -153,8 +153,8 @@ extern char irq_entries_start[];
+ extern char spurious_entries_start[];
+ 
+ #define VECTOR_UNUSED		NULL
+-#define VECTOR_SHUTDOWN		((void *)~0UL)
+-#define VECTOR_RETRIGGERED	((void *)~1UL)
++#define VECTOR_SHUTDOWN		((void *)-1L)
++#define VECTOR_RETRIGGERED	((void *)-2L)
+ 
+ typedef struct irq_desc* vector_irq_t[NR_VECTORS];
+ DECLARE_PER_CPU(vector_irq_t, vector_irq);
 -- 
 2.22.1
+
 
