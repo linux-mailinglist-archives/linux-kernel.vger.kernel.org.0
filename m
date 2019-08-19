@@ -2,132 +2,180 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 258C39264A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDC959264D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:16:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727206AbfHSOPp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:15:45 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:11932 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfHSOPp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:15:45 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD5433A20F;
-        Mon, 19 Aug 2019 14:15:44 +0000 (UTC)
-Received: from krava (unknown [10.43.17.33])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 07983831A3;
-        Mon, 19 Aug 2019 14:15:40 +0000 (UTC)
-Date:   Mon, 19 Aug 2019 16:15:40 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Jack Wang <jack.wang.usish@gmail.com>
-Cc:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Vince Weaver <vincent.weaver@maine.edu>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH AUTOSEL 4.4 04/14] perf header: Fix divide by zero error
- if f_header.attr_size==0
-Message-ID: <20190819141540.GC9637@krava>
-References: <20190806213749.20689-1-sashal@kernel.org>
- <20190806213749.20689-4-sashal@kernel.org>
- <CA+res+RryNtrD3pydEn1G9HWnkDS780AaBEQQPNRqkx8rSzGJA@mail.gmail.com>
+        id S1727357AbfHSOP5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:15:57 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:42999 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726604AbfHSOPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:15:53 -0400
+Received: by mail-wr1-f67.google.com with SMTP id b16so8896896wrq.9;
+        Mon, 19 Aug 2019 07:15:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=j87XxrbGpr6xFNUbUB58c7Vd8US5+wAqR7A5uKkJmgg=;
+        b=KmRiagLFsj35znGS/BI79vx49mLHVAiBsEdrtjkKEci24tOhfbMClylYAC0o7GqAd5
+         QK6P1pWYW3Kf1Sqiyk8KV/sBOcsuDE25ZweOWBh7KWMsfQ2aDbkhMouqvf69mvWWkBdS
+         5ZPz5AtAhpTD5UHAfFtCQ5yx1u4XY9JVcm5YDHSETM3Ett9vxJ635AdBqUMn6lzEq4ky
+         wtEU9yAYHqWDHLJmZc2W3q0fNudoLIRObTjCRTf2jdfUKAjgMCW/k83+Z26sGnRSMWLD
+         CaU7QDAbzUeOOwboCMZzAXbeHyzYJWUqlfD60jdnlSu5Addh5MwgsT9Aex88bo2Cor+M
+         ciQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=j87XxrbGpr6xFNUbUB58c7Vd8US5+wAqR7A5uKkJmgg=;
+        b=jcIKRPUCe+BPA3+9gzTDJ5QLqRs1mtOM10F4faNkLWxk4Ek9s4YzP+Z+qnpwbdPJH7
+         mXJjJ5Th3DyuP/WimAq6CXDCdY6wZstA1yJuE/bbentAbjUV5iFoMSG5NEMzUxr/xBoQ
+         2bw6t5emJcx69esqgxaAHsvoG7KbHwcLbJxA65S/excQV4vmDoIJX8oH7I6bNf8h+OiU
+         MxIPPQC4DG1GD6c2wdbWLv2MvSCRYsvYFBNLKREmxp685WFgxHPBeFhi3PV80Ot8ivhP
+         ttBxc6kQ2u/+q7GWoJ++gHRyk67doQbyGTGASDdDWSLP9GofU0VXLQ5wfuxiskpwIx79
+         ilcw==
+X-Gm-Message-State: APjAAAW9BbUpJ9pSqDL108aNeetRpMSxOmBhJi8+BwIY8IrLSNYH4Nti
+        cFskL8bVBjnCapglaCijY2c=
+X-Google-Smtp-Source: APXvYqx+FKusv7v6ee8JIs0nlY8aRLz0wUo97s+oVdC9+ytApJ9XpJQO1AY3JozQP4fNeaL0Pt6pAQ==
+X-Received: by 2002:a5d:568e:: with SMTP id f14mr27110440wrv.167.1566224150264;
+        Mon, 19 Aug 2019 07:15:50 -0700 (PDT)
+Received: from [10.83.36.153] ([217.173.96.166])
+        by smtp.gmail.com with ESMTPSA id p10sm12196874wma.8.2019.08.19.07.15.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2019 07:15:49 -0700 (PDT)
+Subject: Re: [PATCHv6 23/36] x86/vdso: Allocate timens vdso
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>
+Cc:     Dmitry Safonov <dima@arista.com>, linux-kernel@vger.kernel.org,
+        Adrian Reber <adrian@lisas.de>,
+        Andrei Vagin <avagin@openvz.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Cyrill Gorcunov <gorcunov@openvz.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Jann Horn <jannh@google.com>, Jeff Dike <jdike@addtoit.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Pavel Emelyanov <xemul@virtuozzo.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Vincenzo Frascino <vincenzo.frascino@arm.com>,
+        containers@lists.linux-foundation.org, criu@openvz.org,
+        linux-api@vger.kernel.org, x86@kernel.org
+References: <20190815163836.2927-1-dima@arista.com>
+ <20190815163836.2927-24-dima@arista.com>
+ <b719199a-ed91-610b-38bc-015a0749f600@kernel.org>
+ <alpine.DEB.2.21.1908162208190.1923@nanos.tec.linutronix.de>
+ <483678c7-7687-5445-f09e-e45e9460d559@gmail.com>
+ <alpine.DEB.2.21.1908171709360.1923@nanos.tec.linutronix.de>
+From:   Dmitry Safonov <0x7f454c46@gmail.com>
+Message-ID: <37f08bfa-0ef8-6df9-e119-e010cdeb9a5a@gmail.com>
+Date:   Mon, 19 Aug 2019 15:15:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <alpine.DEB.2.21.1908171709360.1923@nanos.tec.linutronix.de>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+res+RryNtrD3pydEn1G9HWnkDS780AaBEQQPNRqkx8rSzGJA@mail.gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 19 Aug 2019 14:15:45 +0000 (UTC)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 02:07:53PM +0200, Jack Wang wrote:
-> Sasha Levin <sashal@kernel.org> 于2019年8月6日周二 下午11:39写道：
-> >
-> > From: Vince Weaver <vincent.weaver@maine.edu>
-> >
-> > [ Upstream commit 7622236ceb167aa3857395f9bdaf871442aa467e ]
-> >
-> > So I have been having lots of trouble with hand-crafted perf.data files
-> > causing segfaults and the like, so I have started fuzzing the perf tool.
-> >
-> > First issue found:
-> >
-> > If f_header.attr_size is 0 in the perf.data file, then perf will crash
-> > with a divide-by-zero error.
-> >
-> > Committer note:
-> >
-> > Added a pr_err() to tell the user why the command failed.
-> >
-> > Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-> > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > Cc: Jiri Olsa <jolsa@redhat.com>
-> > Cc: Namhyung Kim <namhyung@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1907231100440.14532@macbook-air
-> > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
-> > ---
-> >  tools/perf/util/header.c | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> >
-> Hi all,
-> 
-> This on cause build failure when I rebased to 4.14.140-rc1 in stable-rc tree.
-> 
->     util/header.c: In function 'perf_session__read_header':
->     util/header.c:2907:10: error: 'data' undeclared (first use in this
-> function); did you mean 'dots'?
->               data->file.path);
->   Should be fixed by:
-> --- a/tools/perf/util/header.c
-> +++ b/tools/perf/util/header.c
-> @@ -2904,7 +2904,7 @@ int perf_session__read_header(struct
-> perf_session *session)
->         if (f_header.attr_size == 0) {
->                 pr_err("ERROR: The %s file's attr size field is 0
-> which is unexpected.\n"
->                        "Was the 'perf record' command properly terminated?\n",
-> -                      data->file.path);
-> +                      file->path);
->                 return -EINVAL;
+Hi Thomas,
 
-seems as good fix for 4.4, we took following commit in 4.15:
-  eae8ad8042d8 perf tools: Add struct perf_data_file
+On 8/18/19 5:21 PM, Thomas Gleixner wrote:
+[..]
+> I'm happy to review well written stuff which makes progress and takes
+> review comments into account or the submitter discusses them for
+> resolution.
 
-that added the file layer
+Thanks again for both your and Andy time!
 
-jirka
-
+[..]
+> Coming back to Andy's idea. Create your time namespace page as an exact
+> copy of the vdso data page. When the page is created do:
 > 
-> Regards,
-> Jack Wang
+>      	 memset(p->vdso_data, 0, sizeof(p->vdso_data));
+>      	 p->vdso_data[0].clock_mode = CLOCK_TIMENS;
+> 	 p->vdso_data[0].seq = 1;
+>  
+> 	 /* Store the namespace offsets in basetime */
+> 	 p->vdso_data[0].basetime[CLOCK_MONOTONIC].sec = myns->mono_sec;
+> 	 p->vdso_data[0].basetime[CLOCK_MONOTONIC].nsec = myns->mono_nsec;
+> 	 p->vdso_data[0].basetime[CLOCK_BOOTTIME].sec = myns->boot_sec;
+> 	 p->vdso_data[0].basetime[CLOCK_BOOTTIME].nsec = myns->boot_nsec;
 > 
-> > diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-> > index 304f5d7101436..0102dd46fb6da 100644
-> > --- a/tools/perf/util/header.c
-> > +++ b/tools/perf/util/header.c
-> > @@ -2591,6 +2591,13 @@ int perf_session__read_header(struct perf_session *session)
-> >                            file->path);
-> >         }
-> >
-> > +       if (f_header.attr_size == 0) {
-> > +               pr_err("ERROR: The %s file's attr size field is 0 which is unexpected.\n"
-> > +                      "Was the 'perf record' command properly terminated?\n",
-> > +                      data->file.path);
-> > +               return -EINVAL;
-> > +       }
-> > +
-> >         nr_attrs = f_header.attrs.size / f_header.attr_size;
-> >         lseek(fd, f_header.attrs.offset, SEEK_SET);
-> >
-> > --
-> > 2.20.1
-> >
+>      	 p->vdso_data[1].clock_mode = CLOCK_TIMENS;
+> 	 p->vdso_data[1].seq = 1;
+> 
+> For a normal task the VVAR pages are installed in the normal ordering:
+> 
+>        VVAR
+>        PVCLOCK
+>        HVCLOCK
+>        TIMENS	<- Not really required
+> 
+> Now for a timens task you install the pages in the following order
+> 
+>        TIMENS
+>        PVCLOCK
+>        HVCLOCK
+>        VVAR
+> 
+> The check for vdso_data->clock_mode is in the unlikely path of the now open
+> coded seq begin magic. So for the non-timens case most of the time 'seq' is
+> even, so the branch is not taken.
+> 
+> If 'seq' is odd, i.e. a concurrent update is in progress, the extra check
+> for vdso_data->clock_mode is a non-issue. The task is spin waiting for the
+> update to finish and for 'seq' to become even anyway.
+> 
+> Patch below. I tested this with the normal order and by installing a
+> 'timens' page unconditionally for all processes. I'll reply with the timens
+> testing hacks so you can see what I did.
+> 
+> The test results are pretty good.
+> 
+>     	 	 Base (upstream)  + VDSO patch	+ timens page
+> 
+> MONO		 30ns 		    30ns 	  32ns
+> REAL		 30ns		    30ns	  32ns
+> BOOT		 30ns		    30ns	  32ns
+> MONOCOARSE	  7ns		     8ns	  10ns
+> REALCOARSE	  7ns		     8ns	  10ns
+> TAI		 30ns		    30ns	  32ns
+> MONORAW		 30ns		    30ns	  32ns
+> 
+> So except for the coarse clocks there is no change when the timens page is
+> not used, i.e. the regular VVAR page is at the proper place. But that's on
+> one machine, a different one showed an effect in the noise range. I'm not
+> worried about that as the VDSO behaviour varies depending on micro
+> architecture anyway.
+> 
+> With timens enabled the performance hit (cache hot microbenchmark) is
+> somewhere in the range of 5-7% when looking at the perf counters
+> numbers. The hit for the coarse accessors is larger obviously because the
+> overhead is constant time.
+> 
+> I did a quick comparison of the array vs. switch case (what you used for
+> your clk_to_ns() helper). The switch case is slower.
+> 
+> So I rather go for the array based approach. It's simpler code and the
+> I-cache footprint is smaller and no conditional branches involved.
+> 
+> That means your timens_to_host() and host_to_timens() conversion functions
+> should just use that special VDSO page and do the same array based
+> unconditional add/sub of the clock specific offset.
+
+I was a bit scarred that clock_mode change would result in some complex
+logic, but your patch showed me that it's definitely not so black as I
+was painting it.
+Will rework the patches set with Andrei based on your and Andy's
+suggestions and patches.
+
+Thanks,
+          Dmitry
