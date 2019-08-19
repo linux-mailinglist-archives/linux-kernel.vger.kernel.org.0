@@ -2,56 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C96EB94D4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1F9C194D4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:57:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbfHSS4h (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 14:56:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:45018 "EHLO mx1.redhat.com"
+        id S1728340AbfHSS5F (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 14:57:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60330 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727957AbfHSS4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:56:36 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1727957AbfHSS5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 14:57:05 -0400
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AB8957F742;
-        Mon, 19 Aug 2019 18:56:36 +0000 (UTC)
-Received: from gondolin (unknown [10.36.116.255])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D0B6918C70;
-        Mon, 19 Aug 2019 18:56:34 +0000 (UTC)
-Date:   Mon, 19 Aug 2019 20:56:32 +0200
-From:   Cornelia Huck <cohuck@redhat.com>
-To:     Tony Krowiak <akrowiak@linux.ibm.com>
-Cc:     linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        freude@de.ibm.com, borntraeger@de.ibm.com,
-        pasic@linux.vnet.ibm.com, frankja@linux.ibm.com,
-        jjherne@linux.ibm.com
-Subject: Re: [PATCH v2] s390: vfio-ap: remove unnecessary calls to disable
- queue interrupts
-Message-ID: <20190819205632.54fe2844.cohuck@redhat.com>
-In-Reply-To: <1566236929-18995-1-git-send-email-akrowiak@linux.ibm.com>
-References: <1566236929-18995-1-git-send-email-akrowiak@linux.ibm.com>
-Organization: Red Hat GmbH
+        by mail.kernel.org (Postfix) with ESMTPSA id F1ABA22CF4;
+        Mon, 19 Aug 2019 18:57:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566241024;
+        bh=PpzftFy+vdiatOV+exGKaz9N/3u/KbCTsM0d09Za0es=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HZQ6yz5NGksGii9M1i5p7wjUL7g8sLBJxRBKY5eopCEtPHL3Ik4FxqTrAXLTdGD51
+         whAWTJqe40JDFzOs2spq+afA1cpJhacz8H2SU/BaA9k0zfEsU67d6ehiAsW3FsCLqQ
+         y1qY5NGFRE6M02bsXI3DQ46CiB4n6Ezxt5lG1Bq4=
+Received: by mail-qt1-f181.google.com with SMTP id y26so3091296qto.4;
+        Mon, 19 Aug 2019 11:57:03 -0700 (PDT)
+X-Gm-Message-State: APjAAAUVy2jzOcVhJr+7/D9hnb5zEFgvQFRuli6uZtbviOp/9Ex05gD7
+        VbJmerdk+zLLctZWXI1f9nicUfx56+j/a22Hvw==
+X-Google-Smtp-Source: APXvYqyem9usStmeAj3X3lcl6uuICrDQDfmec0Vvyrcebdi+L8pRqRmBajRkKgyiE/FrM7aOJG7WZwyRe3W8Eaubi6I=
+X-Received: by 2002:ac8:7593:: with SMTP id s19mr22505378qtq.136.1566241023152;
+ Mon, 19 Aug 2019 11:57:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Mon, 19 Aug 2019 18:56:36 +0000 (UTC)
+References: <20190819182039.24892-1-mripard@kernel.org> <20190819182039.24892-4-mripard@kernel.org>
+In-Reply-To: <20190819182039.24892-4-mripard@kernel.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Mon, 19 Aug 2019 13:56:52 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+wd=z3e72VUP1rkEagrrQu+Cg2Ypqo_ZmBFaZ1LOkRvw@mail.gmail.com>
+Message-ID: <CAL_Jsq+wd=z3e72VUP1rkEagrrQu+Cg2Ypqo_ZmBFaZ1LOkRvw@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] dt-bindings: watchdog: sun4i: Add the watchdog clock
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, devicetree@vger.kernel.org,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 13:48:49 -0400
-Tony Krowiak <akrowiak@linux.ibm.com> wrote:
-
-> When an AP queue is reset (zeroized), interrupts are disabled. The queue
-> reset function currently tries to disable interrupts unnecessarily. This patch
-> removes the unnecessary calls to disable interrupts after queue reset.
-> 
-> Signed-off-by: Tony Krowiak <akrowiak@linux.ibm.com>
+On Mon, Aug 19, 2019 at 1:20 PM Maxime Ripard <mripard@kernel.org> wrote:
+>
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>
+> The Allwinner watchdog has a clock that has been described in some DT, but
+> not all of them.
+>
+> The binding is also completely missing that description. Let's add that
+> property to be consistent.
+>
+> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+>
 > ---
->  drivers/s390/crypto/vfio_ap_ops.c | 21 +++++++++++++++++----
->  1 file changed, 17 insertions(+), 4 deletions(-)
+>
+> Changes from v1:
+>   - New patch
+> ---
+>  .../bindings/watchdog/allwinner,sun4i-a10-wdt.yaml           | 5 +++++
+>  1 file changed, 5 insertions(+)
 
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
