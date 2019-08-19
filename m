@@ -2,111 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA1C94CE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:29:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4413094CEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:30:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728304AbfHSS3q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 14:29:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728067AbfHSS3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:29:45 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AEAB22CF5;
-        Mon, 19 Aug 2019 18:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566239384;
-        bh=9KJGx4BFkLMtrPddjIKIua8/xZfK4VKXBzqHl/frVIw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vObOdoZKBzOLrl+OrfoUeLAklcAUefsz/QYIMD+BcxP8U/tKL8PrRLfKRvwIke1it
-         bKOK0sgBpBpB/vR1zPMm15U3fXNnhL2qvD4McWE+3CuzpONZyhAlXnemnO1a0sBD3q
-         1+jtq4C2psjvM4Wk9hKu2hyqvShaQ1VYqPg6ciM0=
-Content-Type: text/plain; charset="utf-8"
+        id S1728350AbfHSSaG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 14:30:06 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7014 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728159AbfHSSaG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 14:30:06 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5aeaad0003>; Mon, 19 Aug 2019 11:30:05 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 11:30:05 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 11:30:05 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 18:30:05 +0000
+Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 18:30:04 +0000
+Subject: Re: [PATCH v2] checkpatch: add *_NOTIFIER_HEAD as var definition
+To:     Gilad Ben-Yossef <gilad@benyossef.com>,
+        Andy Whitcroft <apw@canonical.com>,
+        Joe Perches <joe@perches.com>
+CC:     Ofir Drang <ofir.drang@arm.com>, <linux-kernel@vger.kernel.org>
+References: <20190819122917.11896-1-gilad@benyossef.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <777c39df-bef3-e095-7299-80f55b50158a@nvidia.com>
+Date:   Mon, 19 Aug 2019 11:28:11 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51952DF4E1EE7FF10A947347E2A80@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190815101613.22872-1-wen.he_1@nxp.com> <20190815101613.22872-2-wen.he_1@nxp.com> <20190816174624.115FC205F4@mail.kernel.org> <DB7PR04MB51952DF4E1EE7FF10A947347E2A80@DB7PR04MB5195.eurprd04.prod.outlook.com>
-Subject: RE: [EXT] Re: [v2 2/3] clk: ls1028a: Add clock driver for Display output interface
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Leo Li <leoyang.li@nxp.com>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Wen He <wen.he_1@nxp.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 19 Aug 2019 11:29:43 -0700
-Message-Id: <20190819182944.4AEAB22CF5@mail.kernel.org>
+In-Reply-To: <20190819122917.11896-1-gilad@benyossef.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566239406; bh=Jb1DdjNDJxDnlJTqH9Z+PLXo3NOtPCtLYKJZYvI+tD0=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=AR+dqbRjBi6fXBg8VaREZztD0w9FDDOwZuwKb6Hbj6TqNztrbIQD7T2/GDglWA5eo
+         KdU5D+ETpxgsrzDoL3japeA8136ahKZ0APDjwuEnYcttpG+vAm+NmAEo+8JYCyGXFI
+         xxqoBI383Hw5G60n+QQT8ljRFukvv+5WMemCCp2zhyhLS63anMJhxG4yx4q91qT3vs
+         Zrm6Ap53oYhvdWhyp5nuNIpJh5tBdAtgF47/IXUMy2+dq6tvKCwQ5RL+zzHWdX4iqz
+         xX+MOqd9zdGkj63fiXSqY7hovbUSw9vcTniOUtUaaDGtqMgN+U2W6qloogBPBODxZY
+         VufAJIBDGcV/Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Wen He (2019-08-19 00:30:49)
-> > Quoting Wen He (2019-08-15 03:16:12)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
-> > > 801fa1cd0321..3c95d8ec31d4 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -223,6 +223,16 @@ config CLK_QORIQ
-> > >           This adds the clock driver support for Freescale QorIQ plat=
-forms
-> > >           using common clock framework.
-> > >
-> > > +config CLK_LS1028A_PLLDIG
-> > > +        bool "Clock driver for LS1028A Display output"
-> > > +       depends on (ARCH_LAYERSCAPE || COMPILE_TEST) && OF
-> >=20
-> > Where is the OF dependency to build anything? Doesn't this still compile
-> > without CONFIG_OF set?
->=20
-> Yes, current included some APIs of the OF, like of_get_parent_name()
+On 8/19/19 5:29 AM, Gilad Ben-Yossef wrote:
+> Add *_NOTIFIER_HEAD as variable definition to avoid code like this:
+> 
+> ATOMIC_NOTIFIER_HEAD(foo);
+> EXPORT_SYMBOL_GPL(foo);
+> 
+>  From triggering the the following warning:
+> WARNING: EXPORT_SYMBOL(foo); should immediately follow its function/variable
+> 
+> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> Changes from v1:
+> - Fixed misposition of braces.
+> - Tested on 1k last commits from Linux tree.
 
-And there isn't a stub API for of_get_parent_name when OF isn't defined?
+Hi Gilad,
 
-> > > +
-> > > +static int plldig_clk_probe(struct platform_device *pdev) {
-> > > +       struct clk_plldig *data;
-> > > +       struct resource *mem;
-> > > +       const char *parent_name;
-> > > +       struct clk_init_data init =3D {};
-> > > +       struct device *dev =3D &pdev->dev;
-> > > +       int ret;
-> > > +
-> > > +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> > > +       if (!data)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +       data->regs =3D devm_ioremap_resource(dev, mem);
-> > > +       if (IS_ERR(data->regs))
-> > > +               return PTR_ERR(data->regs);
-> > > +
-> > > +       init.name =3D dev->of_node->name;
-> > > +       init.ops =3D &plldig_clk_ops;
-> > > +       parent_name =3D of_clk_get_parent_name(dev->of_node, 0);
-> > > +       init.parent_names =3D &parent_name;
-> >=20
-> > Can you use the new way of specifying clk parents with the parent_data
-> > member of clk_init?
->=20
-> Of course, but I don't understand why need recommend to use this member?
-> Is that the member parent_names will be discard in future?
->=20
-> Here are definition of the clk-provider.h
-> /* Only one of the following three should be assigned */
-> const char              * const *parent_names;
-> const struct clk_parent_data    *parent_data;
-> const struct clk_hw             **parent_hws;
->=20
-> For PLLDIG, it only has one parent.
+I re-ran this updated patch, on my local patches that were showing the problem,
+and it is All Better Now. :)  So you can add:
 
-Yes. Can you use clk_parent_data array and specify a DT index of 0 and
-some name that would go into "clock-names" in the .fw_name member?
+     Tested-by: John Hubbard <jhubbard@nvidia.com>
 
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+> 
+>   scripts/checkpatch.pl | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
+> index 93a7edfe0f05..8bc0e753a329 100755
+> --- a/scripts/checkpatch.pl
+> +++ b/scripts/checkpatch.pl
+> @@ -3864,6 +3864,7 @@ sub process {
+>   				^.DEFINE_$Ident\(\Q$name\E\)|
+>   				^.DECLARE_$Ident\(\Q$name\E\)|
+>   				^.LIST_HEAD\(\Q$name\E\)|
+> +				^.${Ident}_NOTIFIER_HEAD\(\Q$name\E\)|
+>   				^.(?:$Storage\s+)?$Type\s*\(\s*\*\s*\Q$name\E\s*\)\s*\(|
+>   				\b\Q$name\E(?:\s+$Attribute)*\s*(?:;|=|\[|\()
+>   			    )/x) {
+> 
