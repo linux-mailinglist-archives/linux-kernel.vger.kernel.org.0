@@ -2,101 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D73EC94AF5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:52:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D2DEB94AED
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:51:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727890AbfHSQwY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 12:52:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:30896 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726918AbfHSQwX (ORCPT
+        id S1728028AbfHSQvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 12:51:14 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40453 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727851AbfHSQvN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:52:23 -0400
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JGqC6Y018281
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:52:22 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ufwbme4u2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:52:22 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.ibm.com>;
-        Mon, 19 Aug 2019 17:52:20 +0100
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 19 Aug 2019 17:52:15 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7JGqEim56557794
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Aug 2019 16:52:14 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8B8AA405F;
-        Mon, 19 Aug 2019 16:52:14 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4A728A4054;
-        Mon, 19 Aug 2019 16:52:14 +0000 (GMT)
-Received: from localhost (unknown [9.85.69.174])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Aug 2019 16:52:14 +0000 (GMT)
-Date:   Mon, 19 Aug 2019 22:22:12 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Subject: Re: [PATCH 4/4] arm64: implement KPROBES_ON_FTRACE
-To:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        =?iso-8859-1?q?Masami=0A?= Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>
-Cc:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-References: <20190819192422.5ed79702@xhacker.debian>
-        <20190819192706.46ce2c1d@xhacker.debian>
-In-Reply-To: <20190819192706.46ce2c1d@xhacker.debian>
+        Mon, 19 Aug 2019 12:51:13 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h3so1232156pls.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 09:51:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PF9Fz7eLOn3KOSJvwuGfd7kZcP+Q82SJirXg7MMKVTc=;
+        b=lHOPAntlcr7DvNNnqvGon8PsmC5KmwzxdXbVCIgrhXAtUPzFHwLR9e4ryWdu1nuSuk
+         Ehdt/HQ565j7tizRT6Sk1evJ+r63wY5/uqERuNIBq7QSjdswgd8o9TlmUxV2sdkzTM6e
+         FKyUhTMwIM0WiojP3BvTlMSmkshvlivGl1p0HdIAq30G3r6AH0HjcXoU8VgRqnnQ0pRj
+         SqLM1uvtl61cfFjNTQUe32kc+gBKyyxdYi4luXvShhmmAtzDlRqCI7EE51g38oJtoMDf
+         0AjjxTRurHFWz9s+7bWl02zAqVcKU56b+6UDVJi8MTf2bAp97Z0w/OfFjF2Qtrv0KA+j
+         WlkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PF9Fz7eLOn3KOSJvwuGfd7kZcP+Q82SJirXg7MMKVTc=;
+        b=nn9XsTIPdBRbksFXbQkWpEMe/p0nSG4N4Sd7yLeA+azfcKCBI/tKs2OsIg7z886pkz
+         q5RDVeT3u+gbRPp4dIrEGpuazCnZ/NoIfE2JjQ8NDzGCOum/CjNUQIqsSPmMSJl5WgH7
+         /a0xpmN8CY44caXTop3xYcj9PDkNsmNSyV0SqhjCThLrr0GVGTYUlvBK1DeHlXz2Uhtp
+         OulKBXDaUFfAlBAnByo/TeIcWv5wDj7LxPznYKO1A7odNB5MsU/08/tj1SBcNZ7FCSOV
+         qRQ/epg6uuSqQHO+IXn6O9GeyW6gw9mChocdJJQBuvxzokIxcEfXLOI/TY+uzEfa4h96
+         r6IQ==
+X-Gm-Message-State: APjAAAXrZ4AanqISO1L9UG+lF9P8ffQApP1r+zZ/rbzz7769Ewz3tBNy
+        dvH+oCnA843hleoWhaRbU+ZnPQ==
+X-Google-Smtp-Source: APXvYqy+GZvqO80ibtH+ku91D+7Ug4tpguKdLphDT0NoWOq2CKeFFjM/+4q4NMDcCteJLySS1DmZEg==
+X-Received: by 2002:a17:902:141:: with SMTP id 59mr24103307plb.324.1566233472771;
+        Mon, 19 Aug 2019 09:51:12 -0700 (PDT)
+Received: from tuxbook-pro (pat_11.qualcomm.com. [192.35.156.11])
+        by smtp.gmail.com with ESMTPSA id i11sm22052392pfk.34.2019.08.19.09.51.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 09:51:11 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 09:52:55 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
+Message-ID: <20190819165255.GA26807@tuxbook-pro>
+References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
+ <20190807234232.27AA720880@mail.kernel.org>
 MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19081916-4275-0000-0000-0000035ACDDB
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19081916-4276-0000-0000-0000386CEB6B
-Message-Id: <1566232996.v8nlwmnjqa.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=591 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190178
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190807234232.27AA720880@mail.kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jisheng Zhang wrote:
-> This patch implements KPROBES_ON_FTRACE for arm64.
-> 
-> ~ # mount -t debugfs debugfs /sys/kernel/debug/
-> ~ # cd /sys/kernel/debug/
-> /sys/kernel/debug # echo 'p _do_fork' > tracing/kprobe_events
-> 
-> before the patch:
-> 
-> /sys/kernel/debug # cat kprobes/list
-> ffffff801009ff7c  k  _do_fork+0x4    [DISABLED]
+On Wed 07 Aug 16:42 PDT 2019, Stephen Boyd wrote:
 
-This looks wrong -- we should not be allowing kprobe to be registered on 
-ftrace address without KPROBES_ON_FTRACE. Is _do_fork+0x4 the location 
-of ftrace entry on arm64?
+> Quoting Jordan Crouse (2019-08-05 13:33:46)
+> > The macro to generate a Bus Controller Manager (BCM) TCS command is used
+> > by the interconnect driver but might also be interesting to other
+> > drivers that need to construct TCS commands for sub processors so move
+> > it out of the sdm845 specific file and into the header.
+> > 
+> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > ---
+> 
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> 
+> Unless this is supposed to be applied by me?
+> 
+> BTW, I wonder why we need an rpm clk driver much at all nowadays, except
+> maybe for the XO clk state. The big user, from what I can tell, is the
+> interconnect driver and we don't use any of the features of the clk
+> framework besides the API to set a frequency. Maybe it would be better
+> to just push push the bus frequency logic into interconnect code, then
+> XO clk is the only thing we need to keep, and it can be a simple on/off
+> thing.
+> 
 
-- Naveen
+There's been a number of cases where we'll need to enable the buffered
+XOs, but perhaps these are handled by other subsystems these days(?)
 
+If so the one case that remains would be the operation of explicitly
+holding CXO enabled during operations such as booting the remoteprocs.
+
+Regards,
+Bjorn
