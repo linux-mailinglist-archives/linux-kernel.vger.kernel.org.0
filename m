@@ -2,100 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 65C2594CF4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0192A94CFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:31:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbfHSSai (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 14:30:38 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:34371 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbfHSSah (ORCPT
+        id S1728405AbfHSSbG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 14:31:06 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:37711 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727769AbfHSSbF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:30:37 -0400
-Received: by mail-io1-f68.google.com with SMTP id s21so6488235ioa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 11:30:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gXEsTOBJnzR8V+Y9Uq0cMUIxlbNrOE1nK5VfshXw+oA=;
-        b=agDss8fdWoE+/7dTtIvtt0v7iNwRZWwbhMX87eSnL3GvmSPNS9dcVy/RSOPqbemdkD
-         Nf/MeqE3RdJUnGIi2gBGTeJViK3jXdlvBDlxNQPiirLBC57rvTQkMDtjz6ZCI6UFNciQ
-         0sAo97GIZ1uK6GDzq5qTNpPLLwzvDcY/TsYkLfnb3pVdMs2xyGznufaWf91YAZal84tS
-         X63WQUez/ijOstMdliJfpmuI4vmpgNeqrCQvl0ITMlGxvQvM/BYn60hdI6VK5O+7xEg3
-         7ryw2nlY+NPPCGQMJrAN2w+FWmQ446AkNy/QaF4QZgRpNW/4i3Ns2In77KUMs+PlLm8+
-         jo5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gXEsTOBJnzR8V+Y9Uq0cMUIxlbNrOE1nK5VfshXw+oA=;
-        b=T1NW8GhN/if+JWD7wOKiAueEg+9yONtxrrL1bJK2dzJxI/yvvxRqpGYytR1hqplz3m
-         cm18yyL+V5UqNjpMR/YqanGZyyGNIdDAy52/DvaSy18ov/aiF7JCtPysJ4Mkm6qv3XNk
-         WK49W1gTNaD1KvV6Ye5XS3K4oj0n7yG9HxJEwNX37LlDlzk1uDArAjmUAt2ljkzfnjpk
-         9RE07uMMLZU/zwr3+wI8TJeEcohmRajnVPYFM7AY2eYAmTwOcnUQ6Y5cOdB1aWRo5BPl
-         aouZlcGtliqflDYtYHWlHpkYYDbfDIvQwLFBMpa6UlU0o+k8cj0YCrnjWpbaQIeohCp6
-         pQ9Q==
-X-Gm-Message-State: APjAAAU9UZr3kcG4YZuzmvyo1ssW2kzl+v7VJEvtjyHuzqRMZvzpbrXp
-        1QJ2ioVOfvERZn8aapfsqVMG7Mt6QMDr696en7xQag==
-X-Google-Smtp-Source: APXvYqx1QYR7L9bAE7CbApiSe8V70bIgNZHt/NR58+gfJ9Vsp7y97IhF6AI4P/vWhRBRCH30OMWGlCIzp2yZWfx97Xo=
-X-Received: by 2002:a02:8794:: with SMTP id t20mr7728050jai.24.1566239436695;
- Mon, 19 Aug 2019 11:30:36 -0700 (PDT)
+        Mon, 19 Aug 2019 14:31:05 -0400
+Received: from [192.168.1.110] ([95.115.39.37]) by mrelayeu.kundenserver.de
+ (mreue108 [212.227.15.183]) with ESMTPSA (Nemesis) id
+ 1MbAUg-1iWdCS1S4e-00bXDX; Mon, 19 Aug 2019 20:30:32 +0200
+Subject: Re: [PATCH v5 0/3] Enable ACPI-defined peripherals on i2c-piix4 SMBus
+To:     acooks@rationali.st, Jean Delvare <jdelvare@suse.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>
+Cc:     Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, platypus-sw@opengear.com,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Will Wagner <willw@carallon.com>
+References: <20190802145109.38dd4045@endymion>
+ <b013c33b-da11-ce5e-08d4-0b24a8575109@metux.net>
+ <db725a3b-7b6e-ac79-ef1c-e601ff45c0f2@rationali.st>
+From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
+Organization: metux IT consult
+Message-ID: <9019cce9-837f-97fc-0f3b-7503b8fc3717@metux.net>
+Date:   Mon, 19 Aug 2019 20:30:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-References: <1565854883-27019-1-git-send-email-pbonzini@redhat.com>
- <1565854883-27019-2-git-send-email-pbonzini@redhat.com> <CALMp9eQcRbMjQ_=jQ=qaYmh1Lavc3PYvm4Qcf3zY+N8j3zZe-w@mail.gmail.com>
- <0e29f624-10f5-7ab5-1823-280f32732b68@redhat.com>
-In-Reply-To: <0e29f624-10f5-7ab5-1823-280f32732b68@redhat.com>
-From:   Jim Mattson <jmattson@google.com>
-Date:   Mon, 19 Aug 2019 11:30:25 -0700
-Message-ID: <CALMp9eT2uo+_tbV=Z3-pyzjU76kaEU-BNvVriEHU6yGMsiy5Dw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] KVM: x86: fix reporting of AMD speculation bug CPUID leaf
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, kvm list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <db725a3b-7b6e-ac79-ef1c-e601ff45c0f2@rationali.st>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:tFzQtVo9IW13IcZLs71jQealC9S0dM4lCdtwZP1a3NELhC/CjWD
+ wi7VrMfHt4DhqCAggTDPHFwkSsIZuRQNgwLdAxNPzgCtBuw410F9KA1bo9KraCG6VgNqNaB
+ 2Z+uy2Fo6gkuwBtquUhHY6rfQdx1WyQnFwv+fTHIw39SNY4w82NDacTfPc5HyiRRy/unOJ7
+ r5TH3jf+8CMbHY/0FocIw==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:WUtUMMcrQzs=:18dH83FuLPYuULNunvTaz+
+ REAN1tq5Ngs+5okiKy7+OElj+UsL7F9KlGUYD7SCfrbEGJ4I4/40CevMOYcGa4owG1uEXwpzU
+ 8ZEA586cr0nxdYMWtw95W3wrT0CUkiMe2YO559TIV1UNFCAztNIXBm8Lo0/gspvdhOljQpDVA
+ +sgW+/vm+ilNz4jVM8JQXBNNMp8+VZyALRXhq6QegKC1LvTOuiDIOFf5HXMCl/cSM80XgIkpY
+ kd7j3FV1FT/LEMJKBKQM9exzLbzzCIspcf45+/taFswpEHM0RdEZKIWCogLcqkpgueOdtaOzQ
+ 5mbIwkaN8RaYxAawySVAY1CozVikHav9x4QVmV5LktLJNn5l6XO6DkSb5D2gqpDhPiJxUgmQw
+ rA4W9L3d6OZXKYEmHlU+jHA0BC5A3RknQxVlujMSEL3J7TqrtZ4Fqu6t2ORvWQBeeywG2+oU2
+ INCcvA8hImHr7CaVg+H27AuqL+Usy8jCXM0GynRz72XAkQ0oQEbvFI4cPkOFZsag4ko4EI0se
+ jgZ/32OqXnpBRH0Wol2ph6NOs2QiEwi6ai2bGI53ukEOGa2uUlLam5/7A8tncDUy+byHkgA69
+ /ZDugPHq76bpvvsK4IHTcmtdGXAdAf3bsV5jCITW2NLcdyylmLeSbpv4c65iWMa5wbqrD4tl+
+ 7sH8yuD9g7C5OKI62+uvy5YKwvgd8Rxn5SSMh5XG5LEMWsNiJOzr65xxm8PW3zC7jUL+qTqWI
+ jL1AdhTrl5MRIlBICW1/tVoq+84vgiJFyPtOW1OlS1MR+BIAYt9ShVMWNX4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 8:18 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->
-> On 16/08/19 23:45, Jim Mattson wrote:
-> > On Thu, Aug 15, 2019 at 12:41 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
-> >>
-> >> The AMD_* bits have to be set from the vendor-independent
-> >> feature and bug flags, because KVM_GET_SUPPORTED_CPUID does not care
-> >> about the vendor and they should be set on Intel processors as well.
-> >> On top of this, SSBD, STIBP and AMD_SSB_NO bit were not set, and
-> >> VIRT_SSBD does not have to be added manually because it is a
-> >> cpufeature that comes directly from the host's CPUID bit.
-> >>
-> >> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> >
-> > On AMD systems, aren't AMD_SSBD, AMD_STIBP, and AMD_SSB_NO set by
-> > inheritance from the host:
-> >
-> > /* cpuid 0x80000008.ebx */
-> > const u32 kvm_cpuid_8000_0008_ebx_x86_features =
-> >         F(WBNOINVD) | F(AMD_IBPB) | F(AMD_IBRS) | F(AMD_SSBD) | F(VIRT_SSBD) |
-> >         F(AMD_SSB_NO) | F(AMD_STIBP) | F(AMD_STIBP_ALWAYS_ON);
-> >
-> > I am curious why the cross-vendor settings go only one way. For
-> > example, you set AMD_STIBP on Intel processors that have STIBP, but
-> > you do not set INTEL_STIBP on AMD processors that have STIBP?
-> > Similarly, you set AMD_SSB_NO for Intel processors that are immune to
-> > SSB, but you do not set IA32_ARCH_CAPABILITIES.SSB_NO for AMD
-> > processors that are immune to SSB?
-> >
-> > Perhaps there is another patch coming for reporting Intel bits on AMD?
->
-> I wasn't going to work on it but yes, they should be.  This patch just
-> fixed what was half-implemented.
+On 11.08.19 04:52, Andrew Cooks wrote:
 
-I'm not sure that the original intent was to enumerate the AMD
-features on Intel hosts, but it seems reasonable to do so.
+Hi,
 
-Should we also populate the AMD cache topology leaf (0x8000001d) on
-Intel hosts? And so on? :-)
+> My initial work is based on a board that is similar to the APU2, but has additional peripherals connected to the smbus, including a NCT7491 thermal monitor/fan controller and PCA6524 GPIO controller. These are simply peripherals on a board variant, not 'platform' devices, so I didn't want to follow the platform driver approach that the APU2 GPIO driver uses.
 
-Reviewed-by: Jim Mattson <jmattson@google.com>
+Why are they not platform devices ?
+
+IMHO, a platform device is something not on a bus that can do the
+probing/enumeration (like eg. pci or usb does).
+
+Can these devices be probed directly by the bus they're connected to,
+or do you have a different definition of the term "platform device" ?
+
+:O
+
+> SMBus (and I2C) peripherals can generally not be enumerated without some firmware support. It is possible to probe for specific devices on the bus (eg sensors-detect) but in general it is not feasible to let every supported device driver probe the bus for its device. ACPI and Devicetree provides the kernel with metadata for the device: type, address, calibrated set points for temperature, etc.
+
+Yes, I know. My question was whether these particular devices - if
+they're in the SoC itself - do need some extra support in BIOS
+(acpi entries, etc), that's not already in aegesa. Or in other words:
+do I need to patch my BIOS ?
+
+I was assuming these devices are in the SoC itself - correct me if
+I'm wrong.
+
+> Since the peripherals are not standard platform devices, they are not described by the ACPI tables provided by Coreboot or AMD, but it's not too difficult to create supplementary device description tables (ACPI) for non-standard devices. These can be added to coreboot, supplied to qemu as additional firmware files (see -acpitable arg), or built into the kernel (see https://www.kernel.org/doc/Documentation/acpi/ssdt-overlays.txt)
+
+Oh, I didn't know about SSDT overlays yet. That's interesting.
+
+Is it also possible to describe things like leds-gpio or gpio-keyboard ?
+Could be a nice idea to trim down my apu2 driver to not much more than
+a piece of configuration (just like we'd do on a DT-based system)
+
+> ACPI may be an ugly abomination, but it's what we're stuck with on x86 and it can only improve when more people get their hands on it.
+
+hmm, I'm planning to introduce DT to x86 (also patch up apu'2 coreboot
+do deliver a DT to the kernel) ... but just lacking time to get my hands
+dirty on this topic.
+
+> You might find it helpful to look at the coreboot source for the APU2 (src/mainboard/pcengines/apu2/gpio_ftns.h)
+
+In which version ?
+
+
+--mtx
+
+-- 
+Enrico Weigelt, metux IT consult
+Free software and Linux embedded engineering
+info@metux.net -- +49-151-27565287
