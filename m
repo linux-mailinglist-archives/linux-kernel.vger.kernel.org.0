@@ -2,108 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4657B92151
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:35:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C2C92166
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:36:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727004AbfHSKec (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 06:34:32 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:53844 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbfHSKec (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:34:32 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7JAXe1I143126;
-        Mon, 19 Aug 2019 10:34:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=+EL2o1Lhk5KY87l4wQICeVkEfT8XHCgRxPSVWeOEdC8=;
- b=DZtMfH7jDzDQtx3nDUNg7fH70qL/cugfKVkYjTNe1a1H121eeipPM+KWxEpG0d1tByxz
- Ke7AuVrOThZTP1QYl0a21NtZa+ARfIvWdUhaHySCS6FtCaZJ+GiLcbsM+zByawtDE0tl
- NhwZ/4Nj9oV++jBtprbidJKOjKK8njCnITq0lqMabiC+YCqeQI8Aq/SgQ+qXzF1B3Dx5
- 62t/tz/L5Vfy2bizy3wO1Ji7FQ8a3wKAOISjjkZCidAcpoWCBWnXgiSPsQoAPl53csqT
- ukerk1XJu2pMMIXHh29o604WSDcHIzkL1ofS4V239QMpUY2bgcTVOCbY+R/QuRKloSTu QQ== 
-Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
-        by userp2120.oracle.com with ESMTP id 2uea7qegv6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Aug 2019 10:34:28 +0000
-Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
-        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7JAYIuB115126;
-        Mon, 19 Aug 2019 10:34:27 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userp3030.oracle.com with ESMTP id 2ue6qec980-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Aug 2019 10:34:27 +0000
-Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7JAYQkT009012;
-        Mon, 19 Aug 2019 10:34:27 GMT
-Received: from kadam (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 19 Aug 2019 03:34:26 -0700
-Date:   Mon, 19 Aug 2019 13:34:17 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Zhao Yakui <yakui.zhao@intel.com>
-Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, Jason Chen CJ <jason.cj.chen@intel.com>
-Subject: Re: [RFC PATCH 15/15] drivers/acrn: add the support of offline SOS
- cpu
-Message-ID: <20190819103417.GD4451@kadam>
-References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
- <1565922356-4488-16-git-send-email-yakui.zhao@intel.com>
+        id S1727335AbfHSKfT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 06:35:19 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:55472 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726477AbfHSKfS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:35:18 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 51609BA7CB78A0572AFD;
+        Mon, 19 Aug 2019 18:35:12 +0800 (CST)
+Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 19 Aug
+ 2019 18:35:03 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH 0/6] staging: erofs: first stage of corrupted compressed images
+Date:   Mon, 19 Aug 2019 18:34:20 +0800
+Message-ID: <20190819103426.87579-1-gaoxiang25@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190819080218.GA42231@138>
+References: <20190819080218.GA42231@138>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565922356-4488-16-git-send-email-yakui.zhao@intel.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9353 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908190121
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9353 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908190121
+Content-Type: text/plain
+X-Originating-IP: [10.140.130.215]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 10:25:56AM +0800, Zhao Yakui wrote:
-> diff --git a/drivers/staging/acrn/acrn_dev.c b/drivers/staging/acrn/acrn_dev.c
-> index 0602125..6868003 100644
-> --- a/drivers/staging/acrn/acrn_dev.c
-> +++ b/drivers/staging/acrn/acrn_dev.c
-> @@ -588,6 +588,41 @@ static const struct file_operations fops = {
->  #define SUPPORT_HV_API_VERSION_MAJOR	1
->  #define SUPPORT_HV_API_VERSION_MINOR	0
->  
-> +static ssize_t
-> +offline_cpu_store(struct device *dev,
-> +			struct device_attribute *attr,
-> +			const char *buf, size_t count)
-> +{
-> +#ifdef CONFIG_X86
-> +	u64 cpu, lapicid;
-> +
-> +	if (kstrtoull(buf, 0, &cpu) < 0)
-> +		return -EINVAL;
+Hi all,
 
-Preserve the error code.
+I have fuzzed EROFS for about a day and observed the following
+issues due to corrupted compression images by my first fuzzer
+(It seems ok for uncompressed images for now). Now it can survive
+for 10+ minutes on my PC (Let me send out what I'm done and
+I will dig it more deeply...)
 
-	ret = kstrtoull(buf, 0, &cpu);
-	if (ret)
-		return ret;
+All the fixes are trivial.
 
-> +
-> +	if (cpu_possible(cpu)) {
+Note that those have dependency on EFSCORRUPTED, so for-next
+is needed and I will manually backport them by hand due to
+many cleanup patches...
 
-You can't pass unchecked cpu values to cpu_possible() or it results in
-an out of bounds read if cpu is >= than nr_cpu_ids.
+Thanks,
+Gao Xiang
 
-regards,
-dan carpenter
+Gao Xiang (6):
+  staging: erofs: some compressed cluster should be submitted for
+    corrupted images
+  staging: erofs: cannot set EROFS_V_Z_INITED_BIT if fill_inode_lazy
+    fails
+  staging: erofs: add two missing erofs_workgroup_put for corrupted
+    images
+  staging: erofs: avoid loop in submit chains
+  staging: erofs: detect potential multiref due to corrupted images
+  staging: erofs: avoid endless loop of invalid lookback distance 0
+
+ drivers/staging/erofs/zdata.c | 46 ++++++++++++++++++++++++++---------
+ drivers/staging/erofs/zmap.c  |  9 +++++--
+ 2 files changed, 42 insertions(+), 13 deletions(-)
+
+-- 
+2.17.1
 
