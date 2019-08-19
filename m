@@ -2,209 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2AB979260B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:06:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F33599260F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:06:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727832AbfHSOFW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:05:22 -0400
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:38139 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727696AbfHSOFU (ORCPT
+        id S1727849AbfHSOFk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:05:40 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39966 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727770AbfHSOFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:05:20 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id ziHWhHpZgzaKOziHZhrwIU; Mon, 19 Aug 2019 16:05:17 +0200
-Subject: Re: [PATCH v7 8/9] drm: dw-hdmi: use cec_notifier_conn_(un)register
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-To:     Dariusz Marcinkiewicz <darekm@google.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        David Airlie <airlied@linux.ie>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-kernel@vger.kernel.org, Sean Paul <seanpaul@chromium.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Sam Ravnborg <sam@ravnborg.org>
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-9-darekm@google.com>
- <b04edaf8-6116-69ab-fd8f-c28c90f73ad7@xs4all.nl>
-Message-ID: <3ae37c2f-94da-5ad0-a244-ef9658fc35e2@xs4all.nl>
-Date:   Mon, 19 Aug 2019 16:05:10 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Mon, 19 Aug 2019 10:05:34 -0400
+Received: by mail-pf1-f193.google.com with SMTP id w16so1232868pfn.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 07:05:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=T3UxKUOZ72VWnnQkB3XywWd1zjsE0svXI0cagmUyoZs=;
+        b=NdMgf9Mvh/iqzzLFR9x9Aa7SMVofRb6bFd1a7mU0I+5Bl878oLfmmuWz7zgmMymQNH
+         HE/V62KfSHt3cADSjza/dXKtyTsdQxsi6srm1SR2FzQSZoYkC6ZN53f1M56K+kwHqjK/
+         nUtCHhui1nDMmHS3a3EzZmX7bm4JrpGwgIqsEcpc72o2sCuTgWgbqXvdOovloYYnQs6W
+         yugyH0T81fx5aBwnJlHeJU81YjjhdnWMjuW/vSEoyuoU6gTHGLjs7Z+F8LU/annLcJxw
+         Pr2ktzgLX9TGWDFEzOd1iVKz33xu+TF+JT74tnb2H24/SySDOdXcTbeNNBqJsTl15iq4
+         UzuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=T3UxKUOZ72VWnnQkB3XywWd1zjsE0svXI0cagmUyoZs=;
+        b=RKscTNI9p37i6E6CtvhuF/uHRAVYPXp2rox5ZKLFztz/Y/W/JpUzKdjFspMThuJ7nc
+         un+9h+Lvaioga5uXSDDArLRtCcC7R++80E3U+OYXCeGTUY4R8Gajf8j/q71mInXt/yli
+         yGObeuTHKnNZ9pPgy6O3mStuPaBvjwePPofgGvDK3GJcKzotjXNh3w4YUJQtHaOV12OG
+         m6lYrPp0dQ6aLWhgP0o2/FRMDKwFqByZCIv825Tnioe4Je1OQw6ln8eDxP15wUhEOgsW
+         2uxFB0PJMxZcK8vIvX+pzMmInaNmZHzVZMjfsWEJAzVh8hBmbhUXAtP+Kry8ceh7tUbp
+         L+Nw==
+X-Gm-Message-State: APjAAAUTKWQporKIC9JN+3wjlOc6wSOMk3fqIbjxSxgZitu8dd8P/6M9
+        sJfCMEcNFJF4sb8fkXI0kwlhS+lN0rLTB7+28UrmQA==
+X-Google-Smtp-Source: APXvYqx4pbIsB+cFpu0G/IqI4DkfdfDjGIBK/bhaAJTV+87+s3gR5xLbvUgBQ8wEn3A9ZynN/j2XHk6NucfBsWzekek=
+X-Received: by 2002:a17:90a:c20f:: with SMTP id e15mr20524366pjt.123.1566223533317;
+ Mon, 19 Aug 2019 07:05:33 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <b04edaf8-6116-69ab-fd8f-c28c90f73ad7@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfOHa1pgQlPJTOC9uHuuHP3RoyBKsmaLsoQ75FecdGtWmRQjv0fvSfIHLzS+FWlABhNpKUVZB7Mp12vFdDYYg3X6ErOgFUfzuJ0hkUZkTi5VApxO6EvsD
- OxehRQ/1dMoMzOgQfkJpAzrftgLMnOTk6b8E+ohKITpTPCc9LRwccojZP5EiteRYxUojz4aDQH8+ea68FgazKooDivVT02+iHWg4I5ukN8LFCfNmiPH1FGSf
- dqwTiMYQy+2L6aiB/9RyWTlBqrI8UdzBjbgSxPMW0YzmHfpej8dvW6GuAad8mXF79q9dZBRPNDC75C3TZR3HhlqL7aP0Q05L7vmgXBJJPlUHxe48gK7cOv1/
- KbKwIqxRtKZutzkLeN0oVuhA9eBtAbYH9Be5F0Q1HcdwjY9o3itzl1h9u34zai2tIV7ewdEYv3Y9vf1oyO9+5H70K2OJFjin3uHgPvtMWX/ajVx+VQ0a6tQa
- VlRcVj5jGQ8EJ4GazmTYJTfZ9EK6ZxTCx3NfH/t9XqBRsE8VdkfdhoHo1hO0y4BOIWB3J6f+O6ojud4PqOjZY1xG1dV5AVIHA03USA==
+References: <20190819114420.2535-1-walter-zh.wu@mediatek.com>
+ <20190819125625.bu3nbrldg7te5kwc@willie-the-truck> <20190819132347.GB9927@lakrids.cambridge.arm.com>
+ <20190819133441.ejomv6cprdcz7hh6@willie-the-truck>
+In-Reply-To: <20190819133441.ejomv6cprdcz7hh6@willie-the-truck>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Mon, 19 Aug 2019 16:05:22 +0200
+Message-ID: <CAAeHK+w7cTGN8SgWQs0bPjPOrizqfUoMnJWTvUkCqv17Qt=3oQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: kasan: fix phys_to_virt() false positive on
+ tag-based kasan
+To:     Will Deacon <will@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Walter Wu <walter-zh.wu@mediatek.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        wsd_upstream@mediatek.com, LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-mediatek@lists.infradead.org,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/19 11:32 AM, Hans Verkuil wrote:
-> On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
->> Use the new cec_notifier_conn_(un)register() functions to
->> (un)register the notifier for the HDMI connector, and fill in
->> the cec_connector_info.
->>
->> Changes since v6:
->>         - move cec_notifier_conn_unregister to a bridge detach
->> 	  function,
->> 	- add a mutex protecting a CEC notifier.
->> Changes since v4:
->> 	- typo fix
->> Changes since v2:
->> 	- removed unnecessary NULL check before a call to
->> 	cec_notifier_conn_unregister,
->> 	- use cec_notifier_phys_addr_invalidate to invalidate physical
->> 	address.
->> Changes since v1:
->> 	Add memory barrier to make sure that the notifier
->> 	becomes visible to the irq thread once it is fully
->> 	constructed.
->>
->> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
-> 
-> Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+On Mon, Aug 19, 2019 at 3:34 PM Will Deacon <will@kernel.org> wrote:
+>
+> On Mon, Aug 19, 2019 at 02:23:48PM +0100, Mark Rutland wrote:
+> > On Mon, Aug 19, 2019 at 01:56:26PM +0100, Will Deacon wrote:
+> > > On Mon, Aug 19, 2019 at 07:44:20PM +0800, Walter Wu wrote:
+> > > > __arm_v7s_unmap() call iopte_deref() to translate pyh_to_virt address,
+> > > > but it will modify pointer tag into 0xff, so there is a false positive.
+> > > >
+> > > > When enable tag-based kasan, phys_to_virt() function need to rewrite
+> > > > its original pointer tag in order to avoid kasan report an incorrect
+> > > > memory corruption.
+> > >
+> > > Hmm. Which tree did you see this on? We've recently queued a load of fixes
+> > > in this area, but I /thought/ they were only needed after the support for
+> > > 52-bit virtual addressing in the kernel.
+> >
+> > I'm seeing similar issues in the virtio blk code (splat below), atop of
+> > the arm64 for-next/core branch. I think this is a latent issue, and
+> > people are only just starting to test with KASAN_SW_TAGS.
+> >
+> > It looks like the virtio blk code will round-trip a SLUB-allocated pointer from
+> > virt->page->virt, losing the per-object tag in the process.
+> >
+> > Our page_to_virt() seems to get a per-page tag, but this only makes
+> > sense if you're dealing with the page allocator, rather than something
+> > like SLUB which carves a page into smaller objects giving each object a
+> > distinct tag.
+> >
+> > Any round-trip of a pointer from SLUB is going to lose the per-object
+> > tag.
+>
+> Urgh, I wonder how this is supposed to work?
+>
+> If we end up having to check the KASAN shadow for *_to_virt(), then why
+> do we need to store anything in the page flags at all? Andrey?
 
-Tested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+As per 2813b9c0 ("kasan, mm, arm64: tag non slab memory allocated via
+pagealloc") we should only save a non-0xff tag in page flags for non
+slab pages.
 
-Regards,
-
-	Hans
-
-> 
-> Regards,
-> 
-> 	Hans
-> 
->> ---
->>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 +++++++++++++++--------
->>  1 file changed, 30 insertions(+), 15 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> index 83b94b66e464e..55162c9092f71 100644
->> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->> @@ -190,6 +190,7 @@ struct dw_hdmi {
->>  	void (*enable_audio)(struct dw_hdmi *hdmi);
->>  	void (*disable_audio)(struct dw_hdmi *hdmi);
->>  
->> +	struct mutex cec_notifier_mutex;
->>  	struct cec_notifier *cec_notifier;
->>  };
->>  
->> @@ -2194,6 +2195,8 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
->>  	struct dw_hdmi *hdmi = bridge->driver_private;
->>  	struct drm_encoder *encoder = bridge->encoder;
->>  	struct drm_connector *connector = &hdmi->connector;
->> +	struct cec_connector_info conn_info;
->> +	struct cec_notifier *notifier;
->>  
->>  	connector->interlace_allowed = 1;
->>  	connector->polled = DRM_CONNECTOR_POLL_HPD;
->> @@ -2207,9 +2210,29 @@ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
->>  
->>  	drm_connector_attach_encoder(connector, encoder);
->>  
->> +	cec_fill_conn_info_from_drm(&conn_info, connector);
->> +
->> +	notifier = cec_notifier_conn_register(hdmi->dev, NULL, &conn_info);
->> +	if (!notifier)
->> +		return -ENOMEM;
->> +
->> +	mutex_lock(&hdmi->cec_notifier_mutex);
->> +	hdmi->cec_notifier = notifier;
->> +	mutex_unlock(&hdmi->cec_notifier_mutex);
->> +
->>  	return 0;
->>  }
->>  
->> +static void dw_hdmi_bridge_detach(struct drm_bridge *bridge)
->> +{
->> +	struct dw_hdmi *hdmi = bridge->driver_private;
->> +
->> +	mutex_lock(&hdmi->cec_notifier_mutex);
->> +	cec_notifier_conn_unregister(hdmi->cec_notifier);
->> +	hdmi->cec_notifier = NULL;
->> +	mutex_unlock(&hdmi->cec_notifier_mutex);
->> +}
->> +
->>  static enum drm_mode_status
->>  dw_hdmi_bridge_mode_valid(struct drm_bridge *bridge,
->>  			  const struct drm_display_mode *mode)
->> @@ -2266,6 +2289,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
->>  
->>  static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
->>  	.attach = dw_hdmi_bridge_attach,
->> +	.detach = dw_hdmi_bridge_detach,
->>  	.enable = dw_hdmi_bridge_enable,
->>  	.disable = dw_hdmi_bridge_disable,
->>  	.mode_set = dw_hdmi_bridge_mode_set,
->> @@ -2373,9 +2397,11 @@ static irqreturn_t dw_hdmi_irq(int irq, void *dev_id)
->>  				       phy_stat & HDMI_PHY_HPD,
->>  				       phy_stat & HDMI_PHY_RX_SENSE);
->>  
->> -		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0)
->> -			cec_notifier_set_phys_addr(hdmi->cec_notifier,
->> -						   CEC_PHYS_ADDR_INVALID);
->> +		if ((phy_stat & (HDMI_PHY_RX_SENSE | HDMI_PHY_HPD)) == 0) {
->> +			mutex_lock(&hdmi->cec_notifier_mutex);
->> +			cec_notifier_phys_addr_invalidate(hdmi->cec_notifier);
->> +			mutex_unlock(&hdmi->cec_notifier_mutex);
->> +		}
->>  	}
->>  
->>  	if (intr_stat & HDMI_IH_PHY_STAT0_HPD) {
->> @@ -2561,6 +2587,7 @@ __dw_hdmi_probe(struct platform_device *pdev,
->>  
->>  	mutex_init(&hdmi->mutex);
->>  	mutex_init(&hdmi->audio_mutex);
->> +	mutex_init(&hdmi->cec_notifier_mutex);
->>  	spin_lock_init(&hdmi->audio_lock);
->>  
->>  	ddc_node = of_parse_phandle(np, "ddc-i2c-bus", 0);
->> @@ -2693,12 +2720,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
->>  	if (ret)
->>  		goto err_iahb;
->>  
->> -	hdmi->cec_notifier = cec_notifier_get(dev);
->> -	if (!hdmi->cec_notifier) {
->> -		ret = -ENOMEM;
->> -		goto err_iahb;
->> -	}
->> -
->>  	/*
->>  	 * To prevent overflows in HDMI_IH_FC_STAT2, set the clk regenerator
->>  	 * N and cts values before enabling phy
->> @@ -2796,9 +2817,6 @@ __dw_hdmi_probe(struct platform_device *pdev,
->>  		hdmi->ddc = NULL;
->>  	}
->>  
->> -	if (hdmi->cec_notifier)
->> -		cec_notifier_put(hdmi->cec_notifier);
->> -
->>  	clk_disable_unprepare(hdmi->iahb_clk);
->>  	if (hdmi->cec_clk)
->>  		clk_disable_unprepare(hdmi->cec_clk);
->> @@ -2820,9 +2838,6 @@ static void __dw_hdmi_remove(struct dw_hdmi *hdmi)
->>  	/* Disable all interrupts */
->>  	hdmi_writeb(hdmi, ~0, HDMI_IH_MUTE_PHY_STAT0);
->>  
->> -	if (hdmi->cec_notifier)
->> -		cec_notifier_put(hdmi->cec_notifier);
->> -
->>  	clk_disable_unprepare(hdmi->iahb_clk);
->>  	clk_disable_unprepare(hdmi->isfr_clk);
->>  	if (hdmi->cec_clk)
->>
-> 
-
+Could you share your .config so I can reproduce this?
