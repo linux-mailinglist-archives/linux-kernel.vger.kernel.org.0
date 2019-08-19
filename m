@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CA4D948F9
+	by mail.lfdr.de (Postfix) with ESMTP id C5FDF948FA
 	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbfHSPrw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:47:52 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47676 "EHLO
+        id S1728267AbfHSPr6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:47:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47682 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727891AbfHSPpq (ORCPT
+        with ESMTP id S1727893AbfHSPpq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Aug 2019 11:45:46 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzjqq-0006wt-GA; Mon, 19 Aug 2019 17:45:44 +0200
-Message-Id: <20190819143803.386913035@linutronix.de>
+        id 1hzjqq-0006xC-Ug; Mon, 19 Aug 2019 17:45:45 +0200
+Message-Id: <20190819143803.479479115@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:32:02 +0200
+Date:   Mon, 19 Aug 2019 16:32:03 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -26,7 +26,7 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         John Stultz <john.stultz@linaro.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 21/44] posix-cpu-timers: Get rid of pointer indirection
+Subject: [patch 22/44] posix-cpu-timers: Sample task times once in expiry check
 References: <20190819143141.221906747@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,149 +35,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the sample functions have no return value anymore, the result can
-simply be returned instead of using pointer indirection.
+Sampling the task times twice does not make sense. Do it once.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   50 ++++++++++++++++++-----------------------
- 1 file changed, 22 insertions(+), 28 deletions(-)
+ kernel/time/posix-cpu-timers.c |   10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -182,22 +182,19 @@ posix_cpu_clock_set(const clockid_t cloc
- /*
-  * Sample a per-thread clock for the given task. clkid is validated.
-  */
--static void cpu_clock_sample(const clockid_t clkid, struct task_struct *p,
--			     u64 *sample)
-+static u64 cpu_clock_sample(const clockid_t clkid, struct task_struct *p)
+@@ -785,9 +785,9 @@ static inline void check_dl_overrun(stru
+ static void check_thread_timers(struct task_struct *tsk,
+ 				struct list_head *firing)
  {
- 	switch (clkid) {
- 	case CPUCLOCK_PROF:
--		*sample = prof_ticks(p);
--		break;
-+		return prof_ticks(p);
- 	case CPUCLOCK_VIRT:
--		*sample = virt_ticks(p);
--		break;
-+		return virt_ticks(p);
- 	case CPUCLOCK_SCHED:
--		*sample = task_sched_runtime(p);
--		break;
-+		return task_sched_runtime(p);
- 	default:
- 		WARN_ON_ONCE(1);
- 	}
-+	return 0;
- }
+-	struct list_head *timers = tsk->cpu_timers;
+ 	struct task_cputime *tsk_expires = &tsk->cputime_expires;
+-	u64 expires;
++	struct list_head *timers = tsk->cpu_timers;
++	u64 expires, stime, utime;
+ 	unsigned long soft;
  
- /*
-@@ -299,8 +296,8 @@ thread_group_start_cputime(struct task_s
-  * held to protect the task traversal on a full update. clkid is already
-  * validated.
-  */
--static void cpu_clock_sample_group(const clockid_t clkid, struct task_struct *p,
--				   u64 *sample, bool start)
-+static u64 cpu_clock_sample_group(const clockid_t clkid, struct task_struct *p,
-+				  bool start)
- {
- 	struct thread_group_cputimer *cputimer = &p->signal->cputimer;
- 	struct task_cputime cputime;
-@@ -316,17 +313,15 @@ static void cpu_clock_sample_group(const
- 
- 	switch (clkid) {
- 	case CPUCLOCK_PROF:
--		*sample = cputime.utime + cputime.stime;
--		break;
-+		return cputime.utime + cputime.stime;
- 	case CPUCLOCK_VIRT:
--		*sample = cputime.utime;
--		break;
-+		return cputime.utime;
- 	case CPUCLOCK_SCHED:
--		*sample = cputime.sum_exec_runtime;
--		break;
-+		return cputime.sum_exec_runtime;
- 	default:
- 		WARN_ON_ONCE(1);
- 	}
-+	return 0;
- }
- 
- static int posix_cpu_clock_get(const clockid_t clock, struct timespec64 *tp)
-@@ -340,9 +335,9 @@ static int posix_cpu_clock_get(const clo
- 		return -EINVAL;
- 
- 	if (CPUCLOCK_PERTHREAD(clock))
--		cpu_clock_sample(clkid, tsk, &t);
-+		t = cpu_clock_sample(clkid, tsk);
- 	else
--		cpu_clock_sample_group(clkid, tsk, &t, false);
-+		t = cpu_clock_sample_group(clkid, tsk, false);
- 	put_task_struct(tsk);
- 
- 	*tp = ns_to_timespec64(t);
-@@ -604,11 +599,10 @@ static int posix_cpu_timer_set(struct k_
- 	 * times (in arm_timer).  With an absolute time, we must
- 	 * check if it's already passed.  In short, we need a sample.
- 	 */
--	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
--		cpu_clock_sample(clkid, p, &val);
--	} else {
--		cpu_clock_sample_group(clkid, p, &val, true);
--	}
-+	if (CPUCLOCK_PERTHREAD(timer->it_clock))
-+		val = cpu_clock_sample(clkid, p);
-+	else
-+		val = cpu_clock_sample_group(clkid, p, true);
- 
- 	if (old) {
- 		if (old_expires == 0) {
-@@ -716,7 +710,7 @@ static void posix_cpu_timer_get(struct k
- 	 * Sample the clock to take the difference with the expiry time.
- 	 */
- 	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
--		cpu_clock_sample(clkid, p, &now);
-+		now = cpu_clock_sample(clkid, p);
- 	} else {
- 		struct sighand_struct *sighand;
- 		unsigned long flags;
-@@ -736,7 +730,7 @@ static void posix_cpu_timer_get(struct k
- 			timer->it.cpu.expires = 0;
- 			return;
- 		} else {
--			cpu_clock_sample_group(clkid, p, &now, false);
-+			now = cpu_clock_sample_group(clkid, p, false);
- 			unlock_task_sighand(p, &flags);
- 		}
- 	}
-@@ -998,7 +992,7 @@ static void posix_cpu_timer_rearm(struct
- 	 * Fetch the current sample and update the timer's expiry time.
- 	 */
- 	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
--		cpu_clock_sample(clkid, p, &now);
-+		now = cpu_clock_sample(clkid, p);
- 		bump_cpu_timer(timer, now);
- 		if (unlikely(p->exit_state))
- 			return;
-@@ -1024,7 +1018,7 @@ static void posix_cpu_timer_rearm(struct
- 			/* If the process is dying, no need to rearm */
- 			goto unlock;
- 		}
--		cpu_clock_sample_group(clkid, p, &now, true);
-+		now = cpu_clock_sample_group(clkid, p, true);
- 		bump_cpu_timer(timer, now);
- 		/* Leave the sighand locked for the call below.  */
- 	}
-@@ -1206,7 +1200,7 @@ void set_process_cpu_timer(struct task_s
- 	if (WARN_ON_ONCE(clock_idx >= CPUCLOCK_SCHED))
+ 	if (dl_task(tsk))
+@@ -800,10 +800,12 @@ static void check_thread_timers(struct t
+ 	if (task_cputime_zero(&tsk->cputime_expires))
  		return;
  
--	cpu_clock_sample_group(clock_idx, tsk, &now, true);
-+	now = cpu_clock_sample_group(clock_idx, tsk, true);
+-	expires = check_timers_list(timers, firing, prof_ticks(tsk));
++	task_cputime(tsk, &utime, &stime);
++
++	expires = check_timers_list(timers, firing, utime + stime);
+ 	tsk_expires->prof_exp = expires;
  
- 	if (oldval) {
- 		/*
+-	expires = check_timers_list(++timers, firing, virt_ticks(tsk));
++	expires = check_timers_list(++timers, firing, utime);
+ 	tsk_expires->virt_exp = expires;
+ 
+ 	tsk_expires->sched_exp = check_timers_list(++timers, firing,
 
 
