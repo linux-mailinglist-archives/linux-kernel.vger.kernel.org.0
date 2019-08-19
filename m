@@ -2,239 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B91C948DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D0879488E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:36:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfHSPqm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:46:42 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47837 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727981AbfHSPp5 (ORCPT
+        id S1726880AbfHSPgC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:36:02 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:40708 "EHLO
+        mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726343AbfHSPgB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:57 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hzjr0-000736-Fb; Mon, 19 Aug 2019 17:45:54 +0200
-Message-Id: <20190819143805.605704599@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:32:25 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 44/44] posix-cpu-timers: Expire timers directly
-References: <20190819143141.221906747@linutronix.de>
+        Mon, 19 Aug 2019 11:36:01 -0400
+Received: by mail-io1-f70.google.com with SMTP id v16so4459799ioh.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:36:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=P6L9CDKY22Ubg5tAzqUjQtuvef1EZedLJotiwn6BTdM=;
+        b=C91CD9IhFY6iX4o9hXsXE6puVRlJoCEcEQbDarFwRCzmcheDEPgHRg9YdIK6aN/7FE
+         pnOgIKPpP1SjYeyDVPnGA5oIqXkG/L2PEtKSmFIk2zVInvDEe7jykizvuzymA8DB0uSl
+         MyZuIx6aF1+lLzMSmEZsaqTj5u+hs09t6vdPjBsj8qfKj+haLS5CagnkOA979VNwWjsM
+         6xYpACTHqHc+ezyynHE+BPEc7hI/gQzyOPQPnL6jxJjeJRD7LQrL5PzIbP4CSdLPfNXi
+         DRXqmpRhovMEAJX2OO1T92A41EIe12aylP9OQhspxzDMBnX/c3xcBfck/vZEWnYLvpbF
+         5ZwA==
+X-Gm-Message-State: APjAAAVJUPebTIV/x8XJw6qB2R9TSNi06lMsV9kczBUiZ9JWlyrt8ZzP
+        oAI7RaP/tJj217CMoY67wmfTr7225L8DCMYo+IaF3Gtol5iM
+X-Google-Smtp-Source: APXvYqw9geeThchpUtjczcpAmQ6P4swTTJP/Tv287kuEgsd+q/52erb9M1Hy5Ok89shir669k4i3r4E2rWJ2elT3zhMweAdx8RGF
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-Received: by 2002:a5e:c918:: with SMTP id z24mr6280032iol.234.1566228960824;
+ Mon, 19 Aug 2019 08:36:00 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 08:36:00 -0700
+In-Reply-To: <1566228274.5663.29.camel@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d8dffc05907a1825@google.com>
+Subject: Re: KASAN: use-after-free Read in iowarrior_disconnect
+From:   syzbot <syzbot+cfe6d93e0abab9a0de05@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, gregkh@linuxfoundation.org,
+        gustavo@embeddedor.com, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        oneukum@suse.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Moving the posix cpu timers from on list to another and then expiring them
-from the second list is avoiding to drop and reacquire sighand lock for
-each timer expiry, but on the other hand it's more complicated code and
-suboptimal for a small number of timers.
+Hello,
 
-Remove the extra list and expire them directly from the rbtree. Tests with
-a large number of timers did not show a difference outside of the noise
-range.
+syzbot has tested the proposed patch but the reproducer still triggered  
+crash:
+possible deadlock in usb_deregister_dev
 
-This also allows to switch the crude heuristics of limiting the expiry of
-timers to 20 for each type to a time based limitation which is way more
-sensible.
+usb 4-1: USB disconnect, device number 2
+======================================================
+WARNING: possible circular locking dependency detected
+5.3.0-rc4+ #1 Not tainted
+------------------------------------------------------
+kworker/1:1/21 is trying to acquire lock:
+00000000bfac431a (minor_rwsem){++++}, at: usb_deregister_dev  
+drivers/usb/core/file.c:238 [inline]
+00000000bfac431a (minor_rwsem){++++}, at: usb_deregister_dev+0x61/0x270  
+drivers/usb/core/file.c:230
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- include/linux/posix-timers.h   |    2 
- kernel/time/posix-cpu-timers.c |   85 +++++++++++++----------------------------
- 2 files changed, 29 insertions(+), 58 deletions(-)
+but task is already holding lock:
+000000007638fa06 (iowarrior_open_disc_lock){+.+.}, at:  
+iowarrior_disconnect+0x45/0x2c0 drivers/usb/misc/iowarrior.c:867
 
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -63,14 +63,12 @@ static inline int clockid_to_fd(const cl
-  * @node:	timerqueue node to queue in the task/sig
-  * @head:	timerqueue head on which this timer is queued
-  * @task:	Pointer to target task
-- * @elist:	List head for the expiry list
-  * @firing:	Timer is currently firing
-  */
- struct cpu_timer {
- 	struct timerqueue_node	node;
- 	struct timerqueue_head	*head;
- 	struct task_struct	*task;
--	struct list_head	elist;
- 	int			firing;
- };
- 
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -723,14 +723,15 @@ static void posix_cpu_timer_get(struct k
- 
- #define MAX_COLLECTED	20
- 
--static u64 collect_timerqueue(struct timerqueue_head *head,
--			      struct list_head *firing, u64 now)
-+static u64 expire_timerqueue(struct timerqueue_head *head, u64 now)
- {
- 	struct timerqueue_node *next;
- 	int i = 0;
- 
- 	while ((next = timerqueue_getnext(head))) {
- 		struct cpu_timer *ctmr;
-+		struct k_itimer *timer;
-+		int cpu_firing;
- 		u64 expires;
- 
- 		ctmr = container_of(next, struct cpu_timer, node);
-@@ -739,23 +740,38 @@ static u64 collect_timerqueue(struct tim
- 		if (++i == MAX_COLLECTED || now < expires)
- 			return expires;
- 
-+		/* Mark is as firing so timer deletion code has to wait */
- 		ctmr->firing = 1;
- 		cpu_timer_dequeue(ctmr);
--		list_add_tail(&ctmr->elist, firing);
-+		spin_unlock(&current->sighand->siglock);
-+
-+		timer = container_of(ctmr, struct k_itimer, it.cpu);
-+		spin_lock(&timer->it_lock);
-+		cpu_firing = timer->it.cpu.firing;
-+		timer->it.cpu.firing = 0;
-+		/*
-+		 * The firing flag is -1 if we collided with a reset
-+		 * of the timer, which already reported this
-+		 * almost-firing as an overrun.  So don't generate an event.
-+		 */
-+		if (likely(cpu_firing >= 0))
-+			cpu_timer_fire(timer);
-+		spin_unlock(&timer->it_lock);
-+
-+		spin_lock(&current->sighand->siglock);
- 	}
- 
- 	return U64_MAX;
- }
- 
--static void collect_posix_cputimers(struct posix_cputimers *pct,
--				    u64 *samples, struct list_head *firing)
-+static void expire_posix_cputimers(struct posix_cputimers *pct, u64 *samples)
- {
- 	struct timerqueue_head *timers = pct->cpu_timers;
- 	u64 *expiries = pct->expiries;
- 	int i;
- 
- 	for (i = 0; i < CPUCLOCK_MAX; i++, timers++)
--		expiries[i] = collect_timerqueue(timers, firing, samples[i]);
-+		expiries[i] = expire_timerqueue(timers, samples[i]);
- }
- 
- static inline void check_dl_overrun(struct task_struct *tsk)
-@@ -785,8 +801,7 @@ static bool check_rlimit(u64 time, u64 l
-  * the tsk->cpu_timers[N] list onto the firing list.  Here we update the
-  * tsk->it_*_expires values to reflect the remaining thread CPU timers.
-  */
--static void check_thread_timers(struct task_struct *tsk,
--				struct list_head *firing)
-+static void expire_thread_timers(struct task_struct *tsk)
- {
- 	struct posix_cputimers *pct = &tsk->posix_cputimers;
- 	u64 samples[CPUCLOCK_MAX];
-@@ -799,7 +814,7 @@ static void check_thread_timers(struct t
- 		return;
- 
- 	task_sample_cputime(tsk, samples);
--	collect_posix_cputimers(pct, samples, firing);
-+	expire_posix_cputimers(pct, samples);
- 
- 	/*
- 	 * Check for the special case thread timers.
-@@ -858,12 +873,9 @@ static void check_cpu_itimer(struct task
- }
- 
- /*
-- * Check for any per-thread CPU timers that have fired and move them
-- * off the tsk->*_timers list onto the firing list.  Per-thread timers
-- * have already been taken off.
-+ * Expire per-process CPU timers
-  */
--static void check_process_timers(struct task_struct *tsk,
--				 struct list_head *firing)
-+static void expire_process_timers(struct task_struct *tsk)
- {
- 	struct signal_struct *const sig = tsk->signal;
- 	struct posix_cputimers *pct = &sig->posix_cputimers;
-@@ -888,7 +900,7 @@ static void check_process_timers(struct
- 	 * so the sample can be taken directly.
- 	 */
- 	proc_sample_cputime_atomic(&sig->cputimer.cputime_atomic, samples);
--	collect_posix_cputimers(pct, samples, firing);
-+	expire_posix_cputimers(pct, samples);
- 
- 	/*
- 	 * Check for the special case process timers.
-@@ -1072,8 +1084,6 @@ static inline bool fastpath_timer_check(
- void run_posix_cpu_timers(void)
- {
- 	struct task_struct *tsk = current;
--	struct k_itimer *timer, *next;
--	LIST_HEAD(firing);
- 
- 	lockdep_assert_irqs_disabled();
- 
-@@ -1101,47 +1111,10 @@ void run_posix_cpu_timers(void)
- 	 */
- 	spin_lock(&tsk->sighand->siglock);
- 
--	/*
--	 * Here we take off tsk->signal->cpu_timers[N] and
--	 * tsk->cpu_timers[N] all the timers that are firing, and
--	 * put them on the firing list.
--	 */
--	check_thread_timers(tsk, &firing);
-+	expire_thread_timers(tsk);
-+	expire_process_timers(tsk);
- 
--	check_process_timers(tsk, &firing);
--
--	/*
--	 * We must release these locks before taking any timer's lock.
--	 * There is a potential race with timer deletion here, as the
--	 * siglock now protects our private firing list.  We have set
--	 * the firing flag in each timer, so that a deletion attempt
--	 * that gets the timer lock before we do will give it up and
--	 * spin until we've taken care of that timer below.
--	 */
- 	spin_unlock(&tsk->sighand->siglock);
--
--	/*
--	 * Now that all the timers on our list have the firing flag,
--	 * no one will touch their list entries but us.  We'll take
--	 * each timer's lock before clearing its firing flag, so no
--	 * timer call will interfere.
--	 */
--	list_for_each_entry_safe(timer, next, &firing, it.cpu.elist) {
--		int cpu_firing;
--
--		spin_lock(&timer->it_lock);
--		list_del_init(&timer->it.cpu.elist);
--		cpu_firing = timer->it.cpu.firing;
--		timer->it.cpu.firing = 0;
--		/*
--		 * The firing flag is -1 if we collided with a reset
--		 * of the timer, which already reported this
--		 * almost-firing as an overrun.  So don't generate an event.
--		 */
--		if (likely(cpu_firing >= 0))
--			cpu_timer_fire(timer);
--		spin_unlock(&timer->it_lock);
--	}
- }
- 
- /*
+which lock already depends on the new lock.
 
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (iowarrior_open_disc_lock){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x8a/0x2a0 drivers/usb/misc/iowarrior.c:600
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #1 (iowarrior_mutex){+.+.}:
+        __mutex_lock_common kernel/locking/mutex.c:930 [inline]
+        __mutex_lock+0x158/0x1360 kernel/locking/mutex.c:1077
+        iowarrior_open+0x23/0x2a0 drivers/usb/misc/iowarrior.c:589
+        usb_open+0x1df/0x270 drivers/usb/core/file.c:48
+        chrdev_open+0x219/0x5c0 fs/char_dev.c:414
+        do_dentry_open+0x494/0x1120 fs/open.c:797
+        do_last fs/namei.c:3416 [inline]
+        path_openat+0x1430/0x3f50 fs/namei.c:3533
+        do_filp_open+0x1a1/0x280 fs/namei.c:3563
+        do_sys_open+0x3c0/0x580 fs/open.c:1089
+        do_syscall_64+0xb7/0x580 arch/x86/entry/common.c:296
+        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+-> #0 (minor_rwsem){++++}:
+        check_prev_add kernel/locking/lockdep.c:2405 [inline]
+        check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+        validate_chain kernel/locking/lockdep.c:2897 [inline]
+        __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+        lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+        down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+        usb_deregister_dev drivers/usb/core/file.c:238 [inline]
+        usb_deregister_dev+0x61/0x270 drivers/usb/core/file.c:230
+        iowarrior_disconnect+0xa8/0x2c0 drivers/usb/misc/iowarrior.c:873
+        usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+        __device_release_driver drivers/base/dd.c:1134 [inline]
+        device_release_driver_internal+0x42f/0x500 drivers/base/dd.c:1165
+        bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+        device_del+0x420/0xb10 drivers/base/core.c:2339
+        usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+        usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+        hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+        hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+        port_event drivers/usb/core/hub.c:5359 [inline]
+        hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+        process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+        worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+        kthread+0x318/0x420 kernel/kthread.c:255
+        ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+
+other info that might help us debug this:
+
+Chain exists of:
+   minor_rwsem --> iowarrior_mutex --> iowarrior_open_disc_lock
+
+  Possible unsafe locking scenario:
+
+        CPU0                    CPU1
+        ----                    ----
+   lock(iowarrior_open_disc_lock);
+                                lock(iowarrior_mutex);
+                                lock(iowarrior_open_disc_lock);
+   lock(minor_rwsem);
+
+  *** DEADLOCK ***
+
+6 locks held by kworker/1:1/21:
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at:  
+__write_once_size include/linux/compiler.h:226 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at:  
+arch_atomic64_set arch/x86/include/asm/atomic64_64.h:34 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at: atomic64_set  
+include/asm-generic/atomic-instrumented.h:855 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at:  
+atomic_long_set include/asm-generic/atomic-long.h:40 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at: set_work_data  
+kernel/workqueue.c:620 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at:  
+set_work_pool_and_clear_pending kernel/workqueue.c:647 [inline]
+  #0: 00000000ffafc5b3 ((wq_completion)usb_hub_wq){+.+.}, at:  
+process_one_work+0x827/0x1530 kernel/workqueue.c:2240
+  #1: 000000005bc0df0d ((work_completion)(&hub->events)){+.+.}, at:  
+process_one_work+0x85b/0x1530 kernel/workqueue.c:2244
+  #2: 00000000f73a9504 (&dev->mutex){....}, at: device_lock  
+include/linux/device.h:1223 [inline]
+  #2: 00000000f73a9504 (&dev->mutex){....}, at: hub_event+0x17c/0x3640  
+drivers/usb/core/hub.c:5387
+  #3: 000000006fe9ca35 (&dev->mutex){....}, at: device_lock  
+include/linux/device.h:1223 [inline]
+  #3: 000000006fe9ca35 (&dev->mutex){....}, at: usb_disconnect+0x91/0x8d0  
+drivers/usb/core/hub.c:2190
+  #4: 0000000044c331cb (&dev->mutex){....}, at:  
+device_release_driver_internal+0x23/0x500 drivers/base/dd.c:1162
+  #5: 000000007638fa06 (iowarrior_open_disc_lock){+.+.}, at:  
+iowarrior_disconnect+0x45/0x2c0 drivers/usb/misc/iowarrior.c:867
+
+stack backtrace:
+CPU: 1 PID: 21 Comm: kworker/1:1 Not tainted 5.3.0-rc4+ #1
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Workqueue: usb_hub_wq hub_event
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0xca/0x13e lib/dump_stack.c:113
+  check_noncircular+0x345/0x3e0 kernel/locking/lockdep.c:1741
+  check_prev_add kernel/locking/lockdep.c:2405 [inline]
+  check_prevs_add kernel/locking/lockdep.c:2507 [inline]
+  validate_chain kernel/locking/lockdep.c:2897 [inline]
+  __lock_acquire+0x1f7c/0x3b50 kernel/locking/lockdep.c:3880
+  lock_acquire+0x127/0x320 kernel/locking/lockdep.c:4412
+  down_write+0x92/0x150 kernel/locking/rwsem.c:1500
+  usb_deregister_dev drivers/usb/core/file.c:238 [inline]
+  usb_deregister_dev+0x61/0x270 drivers/usb/core/file.c:230
+  iowarrior_disconnect+0xa8/0x2c0 drivers/usb/misc/iowarrior.c:873
+  usb_unbind_interface+0x1bd/0x8a0 drivers/usb/core/driver.c:423
+  __device_release_driver drivers/base/dd.c:1134 [inline]
+  device_release_driver_internal+0x42f/0x500 drivers/base/dd.c:1165
+  bus_remove_device+0x2dc/0x4a0 drivers/base/bus.c:556
+  device_del+0x420/0xb10 drivers/base/core.c:2339
+  usb_disable_device+0x211/0x690 drivers/usb/core/message.c:1237
+  usb_disconnect+0x284/0x8d0 drivers/usb/core/hub.c:2199
+  hub_port_connect drivers/usb/core/hub.c:4949 [inline]
+  hub_port_connect_change drivers/usb/core/hub.c:5213 [inline]
+  port_event drivers/usb/core/hub.c:5359 [inline]
+  hub_event+0x1454/0x3640 drivers/usb/core/hub.c:5441
+  process_one_work+0x92b/0x1530 kernel/workqueue.c:2269
+  worker_thread+0x96/0xe20 kernel/workqueue.c:2415
+  kthread+0x318/0x420 kernel/kthread.c:255
+  ret_from_fork+0x24/0x30 arch/x86/entry/entry_64.S:352
+iowarrior 4-1:0.236: I/O-Warror #0 now disconnected
+usb 4-1: new low-speed USB device number 3 using dummy_hcd
+usb 4-1: device descriptor read/all, error -71
+usb 4-1: new low-speed USB device number 4 using dummy_hcd
+usb 4-1: config 0 has an invalid interface number: 236 but max is 2
+usb 4-1: config 0 has an invalid descriptor of length 99, skipping  
+remainder of the config
+usb 4-1: config 0 has 1 interface, different from the descriptor's value: 3
+usb 4-1: config 0 has no interface number 0
+usb 4-1: config 0 interface 236 altsetting 0 endpoint 0x81 is Bulk;  
+changing to Interrupt
+usb 4-1: New USB device found, idVendor=07c0, idProduct=1501,  
+bcdDevice=74.a0
+usb 4-1: New USB device strings: Mfr=0, Product=0, SerialNumber=0
+usb 4-1: config 0 descriptor??
+
+
+Tested on:
+
+commit:         d0847550 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=154c4522600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dbc9c80cc095da19
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11898be2600000
 
