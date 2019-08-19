@@ -2,94 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D588E94F66
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:57:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D69394F83
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:01:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbfHSU5Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 16:57:24 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13096 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727769AbfHSU5X (ORCPT
+        id S1728496AbfHSVBL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:01:11 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:6549 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfHSVBL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:57:23 -0400
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JKv20D119701;
-        Mon, 19 Aug 2019 16:57:19 -0400
-Received: from ppma05wdc.us.ibm.com (1b.90.2fa9.ip4.static.sl-reverse.com [169.47.144.27])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ug2utrvas-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Aug 2019 16:57:19 -0400
-Received: from pps.filterd (ppma05wdc.us.ibm.com [127.0.0.1])
-        by ppma05wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7JKt6W9015898;
-        Mon, 19 Aug 2019 20:57:19 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma05wdc.us.ibm.com with ESMTP id 2ue975tu05-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Aug 2019 20:57:19 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7JKvI4h28770714
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 19 Aug 2019 20:57:18 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 976F0B2066;
-        Mon, 19 Aug 2019 20:57:18 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B39BB205F;
-        Mon, 19 Aug 2019 20:57:18 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 19 Aug 2019 20:57:18 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id E379A16C65B8; Mon, 19 Aug 2019 13:57:22 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 13:57:22 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org
-Subject: Re: [rcu:test 8/35] ERROR: "tick_nohz_full_running"
- [kernel/rcu/rcutorture.ko] undefined!
-Message-ID: <20190819205722.GC28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <201908200229.yCXM9Gp2%lkp@intel.com>
+        Mon, 19 Aug 2019 17:01:11 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5b0e150001>; Mon, 19 Aug 2019 14:01:10 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 14:01:10 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 19 Aug 2019 14:01:10 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 21:01:09 +0000
+Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 21:01:09 +0000
+Subject: Re: [RFC PATCH v2 2/3] mm/gup: introduce FOLL_PIN flag for
+ get_user_pages()
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     Christoph Hellwig <hch@infradead.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Bharath Vedartham" <linux.bhar@gmail.com>
+References: <20190817022419.23304-1-jhubbard@nvidia.com>
+ <20190817022419.23304-3-jhubbard@nvidia.com>
+ <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
+X-Nvconfidentiality: public
+Message-ID: <252677d2-9e98-d4c8-7fe4-26635c05334d@nvidia.com>
+Date:   Mon, 19 Aug 2019 13:59:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201908200229.yCXM9Gp2%lkp@intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=993 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190211
+In-Reply-To: <5a95d15b-f54c-e663-7031-c2bf9b19899e@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566248470; bh=vl1GVCNIrilyALRxb5n0ufm74IES1+XneLPl9dgh6lA=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:X-Nvconfidentiality:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=mM94VwganRCZrt6v6UGZSTEpO6uOcs8kAY0ekNDgsUXL4dZeWkSB7CsGeCRWy6/fR
+         OjEVn4ebUUA62eLB0+2XQSPDLNIAhoNem9MsNvJiq5usLc+e6nHIdIPhtYnw7qJZ03
+         Q4hQ57f4C30ediziBOifrI3wUN9gFsQUtPvY0WdBgYZgo9kYMEq1C1/eHqyOKVL8CW
+         FEg85YzjBn9AdL3FJPxeRBYUQP6RSPnALAT5yduufUXwM9pLEM6p8BT67OxwF8XGjh
+         /6w4lBWLddHMgwcuNVgG6yjU/kLluTlsWO4f+BmWSa6KkgPUVr2rLEq/QdzzK/Ac4z
+         5bg+buL4eKhfQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 02:43:32AM +0800, kbuild test robot wrote:
-> tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/paulmck/linux-rcu.git test
-> head:   b0e7c384ed8a8b5be17376a00e6f22e2d89456b9
-> commit: 14569aa16daa1cd7610624a500ed2750fe341351 [8/35] rcutorture: Force on tick for readers and callback flooders
-> config: x86_64-rhel (attached as .config)
-> compiler: gcc-7 (Debian 7.4.0-10) 7.4.0
-> reproduce:
->         git checkout 14569aa16daa1cd7610624a500ed2750fe341351
->         # save the attached .config to linux build tree
->         make ARCH=x86_64 
-> 
-> If you fix the issue, kindly add following tag
-> Reported-by: kbuild test robot <lkp@intel.com>
-> 
-> All errors (new ones prefixed by >>):
-> 
->    ERROR: "tick_nohz_dep_clear_task" [kernel/rcu/rcutorture.ko] undefined!
->    ERROR: "tick_nohz_dep_set_task" [kernel/rcu/rcutorture.ko] undefined!
-> >> ERROR: "tick_nohz_full_running" [kernel/rcu/rcutorture.ko] undefined!
+On 8/16/19 7:36 PM, John Hubbard wrote:
+> On 8/16/19 7:24 PM, jhubbard@nvidia.com wrote:
+>> From: John Hubbard <jhubbard@nvidia.com>
+>> DKIM-Signature: v=01 a a-sha256; c=0Elaxed/relaxed; d idia.com; s=01;
+>> 	t=1566008674; bh=05Mai0va6k/z2enpQJ4Nfvbj5WByFxGAO1JwdIBbXio	h PGP-Univ=
+ersal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+>> 	 In-Reply-To:References:MIME-Version:X-NVConfidentiality:
+>> 	 Content-Transfer-Encoding:Content-Type;
+>> 	b=C3=96UDSde9XF/IsNteBaYOBWeKiHhWmeU9ekUJNvCviHssBDCtw0T+M/2TlEPEzomIT
+>> 	 fGXzIQNlGN6MXFbaBoyBmF/zjCu02TmTNExbVJ3/5N6PTyOuJFCx9ZN1/5gXsB11m1
+>> 	 xAHIWE+VOZs4qqDeHDBqKZq+FaxQHNvGz0j6lyVBA70TfseNoZqZZrSil8uvaKJwKd
+>> 	 TQ1ht+AGWbw9p610JmaPb4u6o/eV6Ns8Sl3EVnjWWu94T6ISNIaWCiC6wQQF6L1YCH
+>> 	 G5Pjn+0rEjhk6XG4TyLudi5lWp3IVBHd8+WlWlnl+bvLCC55RUAjPJLn7LaVyVdh0F
+>> 	 nLHwm3bN2Jotg
+>=20
+> I cannot readily explain the above email glitch, but I did just now switc=
+h
+> back to mailgw.nvidia.com for this patchset, in order to get the nice beh=
+avior
+> of having "From:" really be my native NVIDIA email address. That's very n=
+ice,
+> but if the glitches happen again, I'll switch back to using gmail for
+> git-send-email.
+>=20
+> Sorry about the weirdness. It does still let you apply the patch, I
+> just now checked on that.
+>=20
 
-This one has been obsoleted by 14569aa16daa ("rcutorture: Force on
-tick for readers and callback flooders") which should have a fix for
-these issues.
+Hi Ira, could you please let me know if you'd like me to repost this patch,=
+ or
+the entire patchset, or if you're able to deal with it as-is? As it stands,=
+ the
+DKIM-Signature cruft above needs to be manually removed, either from the pa=
+tch, or
+from the commit log after applying the patch.
 
-							Thanx, Paul
+Also, as noted in the email thread involving Bharath and sgi-gru [1], I'm
+currently planning on branching from your tree, and continuing the misc
+call site conversions from there. And then just adapting to whatever API
+changes are made to vaddr_*() functions. And the biovec call site conversio=
+ns should
+be based on that as well.
+
+[1] https://lore.kernel.org/r/0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.c=
+om
+
+thanks,
+--=20
+John Hubbard
+NVIDIA
+
