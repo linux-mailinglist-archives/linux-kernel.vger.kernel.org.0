@@ -2,154 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4333B94981
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB7794992
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:14:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727842AbfHSQKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 12:10:49 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38538 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726918AbfHSQKt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:10:49 -0400
-Received: by mail-pg1-f193.google.com with SMTP id e11so1479530pga.5
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 09:10:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=E6039ciGvAkJtk2bP5W5DDCHWOJVGQXphFuaFI9KXQY=;
-        b=JquxouCNihVsOnsP06NJAZ2bclz9qC6IYT9ISYCsoWof5UR8JssFPEeYOdcYMd5Cne
-         ueq5xTc+MUmhq0l7FMg+ThpwDSpcq2durhU0/xddsoU+9v3SyHyEfinBoc4duhzBVoh3
-         pwsJ3zOlj11+tVw6B4Y09ryeAimvgwh1ahjSY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=E6039ciGvAkJtk2bP5W5DDCHWOJVGQXphFuaFI9KXQY=;
-        b=j9OrrgovU8/O/LUw/nUAirhlvV/c/fyauB5AgakT0PxY+Pajf4WIs1sn01zU34tNYl
-         /6KSQ7rYCsSu1rtrBKPbAQq6ILdK4Yk93L/e6BQfbooXVdaaEEAg7IqgOZ2YOL+AmRkE
-         laSdQ7Bnm0rgbcCFkmQGUq7u6z4Ydok6bTUC73I9Tw/J1f+YWsLBmP5qD8wW7txaYGnF
-         Y02KHAyGEqlOw9SblPHsoxeVClI3pWxC8liZ8nJNrjd3Cv/mQhpLH4+OnpPWpxBJ6SSJ
-         JXkI1ux/t6+DXon7gwcrRT9jVrdMde/zA6/rX9Vd73LS3j2hn2kRRF1qa9/PGkz1XUJl
-         HOSQ==
-X-Gm-Message-State: APjAAAXRzeAP8Z24l6gSU5Wyr5Wm9EZT5OK1fcjAVXsKtNlaTU4t36Do
-        l5Tptf+Y+jCogs8pb3IriDUw6Q==
-X-Google-Smtp-Source: APXvYqyImcrwRtODv2CA2ck8Rh3Njq3u5xkUWh8oArL8+4rQjOwoiJ3Hc81/hOzAvkR8QlPieiyV6w==
-X-Received: by 2002:a17:90a:5884:: with SMTP id j4mr22410147pji.142.1566231048482;
-        Mon, 19 Aug 2019 09:10:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i14sm18896938pfq.77.2019.08.19.09.10.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 09:10:47 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 09:10:45 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Borislav Petkov <bp@suse.de>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Paul Burton <paul.burton@mips.com>,
-        Xiaozhou Liu <liuxiaozhou@bytedance.com>,
-        clang-built-linux@googlegroups.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: enable unused-function warnings for W= build
- with Clang
-Message-ID: <201908190910.2E6A18A647@keescook>
-References: <20190819105138.5053-1-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819105138.5053-1-yamada.masahiro@socionext.com>
+        id S1727455AbfHSQOy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 12:14:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:57012 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbfHSQOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 12:14:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A6D44344;
+        Mon, 19 Aug 2019 09:14:53 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id A1B653F718;
+        Mon, 19 Aug 2019 09:14:52 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Alexander Potapenko <glider@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Will Deacon <will.deacon@arm.com>
+Subject: [PATCHv2] lib/test_kasan: add roundtrip tests
+Date:   Mon, 19 Aug 2019 17:14:49 +0100
+Message-Id: <20190819161449.30248-1-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 07:51:38PM +0900, Masahiro Yamada wrote:
-> GCC and Clang have different policy for -Wunused-function; GCC does
-> not report unused-function warnings at all for the functions marked
-> as 'static inline'. Clang does report unused-function warnings if they
-> are defined in source files instead of headers.
-> 
-> We could use Clang for detecting unused functions, but it has been
-> suppressed since commit abb2ea7dfd82 ("compiler, clang: suppress
-> warning for unused static inline functions").
-> 
-> So, we never notice left-over code if functions in .c files are
-> marked as inline.
-> 
-> Let's remove __maybe_unused from the inline macro. As always, it is
-> not a good idea to sprinkle warnings for the normal build. So, these
-> warnings will be shown for the W= build.
-> 
-> If you contribute to code clean-up, please run "make CC=clang W=1"
-> and check -Wunused-function warnings. You will find lots of unused
-> functions.
-> 
-> Some of them are false-positives because the call-sites are disabled
-> by #ifdef. I do not like to abuse the inline keyword for suppressing
-> unused-function warnings because it might affect the compiler's
-> optimization. When I need to fix unused-functions warnings, I prefer
-> adding #ifdef or __maybe_unused to function definitions.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+In several places we need to be able to operate on pointers which have
+gone via a roundtrip:
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+	virt -> {phys,page} -> virt
 
--Kees
+With KASAN_SW_TAGS, we can't preserve the tag for SLUB objects, and the
+{phys,page} -> virt conversion will use KASAN_TAG_KERNEL.
 
-> ---
-> 
->  include/linux/compiler_types.h | 10 ++--------
->  scripts/Makefile.extrawarn     |  1 +
->  2 files changed, 3 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-> index 599c27b56c29..14de8d0162fb 100644
-> --- a/include/linux/compiler_types.h
-> +++ b/include/linux/compiler_types.h
-> @@ -130,10 +130,6 @@ struct ftrace_likely_data {
->  
->  /*
->   * Force always-inline if the user requests it so via the .config.
-> - * GCC does not warn about unused static inline functions for
-> - * -Wunused-function.  This turns out to avoid the need for complex #ifdef
-> - * directives.  Suppress the warning in clang as well by using "unused"
-> - * function attribute, which is redundant but not harmful for gcc.
->   * Prefer gnu_inline, so that extern inline functions do not emit an
->   * externally visible function. This makes extern inline behave as per gnu89
->   * semantics rather than c99. This prevents multiple symbol definition errors
-> @@ -143,11 +139,9 @@ struct ftrace_likely_data {
->   * (which would break users of __always_inline).
->   */
->  #if !defined(CONFIG_OPTIMIZE_INLINING)
-> -#define inline inline __attribute__((__always_inline__)) __gnu_inline \
-> -	__maybe_unused notrace
-> +#define inline inline __attribute__((__always_inline__)) __gnu_inline notrace
->  #else
-> -#define inline inline                                    __gnu_inline \
-> -	__maybe_unused notrace
-> +#define inline inline                                    __gnu_inline notrace
->  #endif
->  
->  #define __inline__ inline
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index a74ce2e3c33e..92f542797e03 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -70,5 +70,6 @@ KBUILD_CFLAGS += -Wno-initializer-overrides
->  KBUILD_CFLAGS += -Wno-format
->  KBUILD_CFLAGS += -Wno-sign-compare
->  KBUILD_CFLAGS += -Wno-format-zero-length
-> +KBUILD_CFLAGS += -Wno-unused-function
->  endif
->  endif
-> -- 
-> 2.17.1
-> 
+This patch adds tests to ensure that this works as expected, without
+false positives which have recently been spotted [1,2] in testing.
 
+[1] https://lore.kernel.org/linux-arm-kernel/20190819114420.2535-1-walter-zh.wu@mediatek.com/
+[2] https://lore.kernel.org/linux-arm-kernel/20190819132347.GB9927@lakrids.cambridge.arm.com/
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Andrey Konovalov <andreyknvl@google.com>
+Tested-by: Andrey Konovalov <andreyknvl@google.com>
+Cc: Alexander Potapenko <glider@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ lib/test_kasan.c | 40 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
+
+Since v1:
+* Spin as a separate patch
+* Fix typo
+* Note examples in commit message.
+
+Mark.
+
+diff --git a/lib/test_kasan.c b/lib/test_kasan.c
+index b63b367a94e8..cf7b93f0d90c 100644
+--- a/lib/test_kasan.c
++++ b/lib/test_kasan.c
+@@ -19,6 +19,8 @@
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
+ 
++#include <asm/page.h>
++
+ /*
+  * Note: test functions are marked noinline so that their names appear in
+  * reports.
+@@ -337,6 +339,42 @@ static noinline void __init kmalloc_uaf2(void)
+ 	kfree(ptr2);
+ }
+ 
++static noinline void __init kfree_via_page(void)
++{
++	char *ptr;
++	size_t size = 8;
++	struct page *page;
++	unsigned long offset;
++
++	pr_info("invalid-free false positive (via page)\n");
++	ptr = kmalloc(size, GFP_KERNEL);
++	if (!ptr) {
++		pr_err("Allocation failed\n");
++		return;
++	}
++
++	page = virt_to_page(ptr);
++	offset = offset_in_page(ptr);
++	kfree(page_address(page) + offset);
++}
++
++static noinline void __init kfree_via_phys(void)
++{
++	char *ptr;
++	size_t size = 8;
++	phys_addr_t phys;
++
++	pr_info("invalid-free false positive (via phys)\n");
++	ptr = kmalloc(size, GFP_KERNEL);
++	if (!ptr) {
++		pr_err("Allocation failed\n");
++		return;
++	}
++
++	phys = virt_to_phys(ptr);
++	kfree(phys_to_virt(phys));
++}
++
+ static noinline void __init kmem_cache_oob(void)
+ {
+ 	char *p;
+@@ -737,6 +775,8 @@ static int __init kmalloc_tests_init(void)
+ 	kmalloc_uaf();
+ 	kmalloc_uaf_memset();
+ 	kmalloc_uaf2();
++	kfree_via_page();
++	kfree_via_phys();
+ 	kmem_cache_oob();
+ 	memcg_accounted_kmem_cache();
+ 	kasan_stack_oob();
 -- 
-Kees Cook
+2.11.0
+
