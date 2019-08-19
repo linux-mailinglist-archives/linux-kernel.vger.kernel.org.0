@@ -2,136 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1A7C91F17
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 10:38:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7410F91F43
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 10:46:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727261AbfHSIiE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 04:38:04 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:41638 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfHSIiD (ORCPT
+        id S1727085AbfHSIqM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 04:46:12 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:45730 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfHSIqM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 04:38:03 -0400
-Received: by mail-wr1-f68.google.com with SMTP id j16so7761955wrr.8
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 01:38:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linbit-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=yo+SdyqZ/O4jXuFjj8QZr2O/7A5RWexuHtaCgMhz+og=;
-        b=ntdlk6mVJT05SvDl8G9rkbVUSwiBi09oFdnJt4ab1t8Mc211HaWcimS5aP/d6EWWB/
-         ltgQmGv2xkM6fMtCmspbvi8CPgoaolEoqEi7S7/g6QPpSS/XjcjuudlJjyAfFl+zUKnZ
-         5FkOnONhEI1x4+t8GMItA+ikzNDYLhMq3m1nmgonF7EIq3HgQbHSgEt6sHoqDELbP2vf
-         omCCF6k6RwMRo+2zf0rx6pfB52zv3Ekb2l6HliGhB4RLBI+dw4Wwx97RvmEg8T4VkWbw
-         qITiQasUJNWwJf/6jujnoEcY1ChkHAvYg84J9FeZ04HlKtrPrx45rpT6S7zQBAFZHtT1
-         D0aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=yo+SdyqZ/O4jXuFjj8QZr2O/7A5RWexuHtaCgMhz+og=;
-        b=Y1Q2DViu91+nJDwBb6GHILa4qFpO3RMtLqHHAhUkQxxbKMAD54cKyEbeS564r9NOnX
-         y5VazYB1PnKZG6ckxCpSPt6JOIw5RJ5I0SJ5s7rAqXALAmW0+f1aeDk/y7fA0kSHa2fM
-         4a95MAyh7TI4fucch0uaWuf8d+p6acvPq1NAJ1ZRrUp+0k2cLouEwUugy1uVSPwkdz+g
-         UwV57Zr1qvfi35MMjab5RLXqZzJCXjCGAbw3vMQzjvQysTq4dK8gXAkMuBX0vw78UFC0
-         CW7AWli3DfdSVm5jomK64RSeXE8AxBmpfW/6RsmdlYF7FBj73v8IPESfb8FDTu24QEIX
-         h/pQ==
-X-Gm-Message-State: APjAAAWD89YmcN/uqNpxamUsY7neKeWgs0r8WkewW4ZIZtAuV7R53BrI
-        Hm2tCJFo9KIfviOZaPYr7jh13w==
-X-Google-Smtp-Source: APXvYqypvER9X0766kDn+Er3VblrpVkzmTxd+/kEnAYu/iDWYOMaqZpjxfXTAy2520/LCRDLpWF3xA==
-X-Received: by 2002:adf:9482:: with SMTP id 2mr25343130wrr.91.1566203881132;
-        Mon, 19 Aug 2019 01:38:01 -0700 (PDT)
-Received: from localhost ([2001:858:107:1:1d81:f726:81fa:b07a])
-        by smtp.gmail.com with ESMTPSA id p69sm13597648wme.36.2019.08.19.01.38.00
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 01:38:00 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 10:37:59 +0200
-From:   Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     Philipp Reisner <philipp.reisner@linbit.com>,
-        David Laight <David.Laight@aculab.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        Steve French <smfrench@gmail.com>,
-        ronnie sahlberg <ronniesahlberg@gmail.com>,
-        Jeff Layton <jlayton@primarydata.com>,
-        linux-cifs <linux-cifs@vger.kernel.org>
-Subject: Re: [PATCH] signal: Allow cifs and drbd to receive their terminating
- signals
-Message-ID: <20190819083759.73ee5zct4yxbyyfd@gintonic.linbit>
-References: <20190729083248.30362-1-christoph.boehmwalder@linbit.com>
- <1761552.9xIroHqhk7@fat-tyre>
- <1fcbb94c5f264c17af3394807438ad50@AcuMS.aculab.com>
- <2789113.VEJ2NpTmzX@fat-tyre>
- <87k1bclpmt.fsf_-_@xmission.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87k1bclpmt.fsf_-_@xmission.com>
-User-Agent: NeoMutt/20171215
+        Mon, 19 Aug 2019 04:46:12 -0400
+Received: from ramsan ([84.194.98.4])
+        by xavier.telenet-ops.be with bizsmtp
+        id qwm82000M05gfCL01wm8Xc; Mon, 19 Aug 2019 10:46:10 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hzdIm-0004GM-5V; Mon, 19 Aug 2019 10:46:08 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hzcad-0003fi-Cb; Mon, 19 Aug 2019 10:00:31 +0200
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Linus Walleij <linusw@kernel.org>, Imre Kaloz <kaloz@openwrt.org>,
+        Krzysztof Halasa <khalasa@piap.pl>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: [PATCH] soc: ixp4xx: Protect IXP4xx SoC drivers by ARCH_IXP4XX || COMPILE_TEST
+Date:   Mon, 19 Aug 2019 10:00:28 +0200
+Message-Id: <20190819080028.13091-1-geert@linux-m68k.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 05:19:38PM -0500, Eric W. Biederman wrote:
-> 
-> My recent to change to only use force_sig for a synchronous events
-> wound up breaking signal reception cifs and drbd.  I had overlooked
-> the fact that by default kthreads start out with all signals set to
-> SIG_IGN.  So a change I thought was safe turned out to have made it
-> impossible for those kernel thread to catch their signals.
-> 
-> Reverting the work on force_sig is a bad idea because what the code
-> was doing was very much a misuse of force_sig.  As the way force_sig
-> ultimately allowed the signal to happen was to change the signal
-> handler to SIG_DFL.  Which after the first signal will allow userspace
-> to send signals to these kernel threads.  At least for
-> wake_ack_receiver in drbd that does not appear actively wrong.
-> 
-> So correct this problem by adding allow_kernel_signal that will allow
-> signals whose siginfo reports they were sent by the kernel through,
-> but will not allow userspace generated signals, and update cifs and
-> drbd to call allow_kernel_signal in an appropriate place so that their
-> thread can receive this signal.
-> 
-> Fixing things this way ensures that userspace won't be able to send
-> signals and cause problems, that it is clear which signals the
-> threads are expecting to receive, and it guarantees that nothing
-> else in the system will be affected.
-> 
-> This change was partly inspired by similar cifs and drbd patches that
-> added allow_signal.
-> 
-> Reported-by: ronnie sahlberg <ronniesahlberg@gmail.com>
-> Reported-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
-> Cc: Steve French <smfrench@gmail.com>
-> Cc: Philipp Reisner <philipp.reisner@linbit.com>
-> Cc: David Laight <David.Laight@ACULAB.COM>
-> Fixes: 247bc9470b1e ("cifs: fix rmmod regression in cifs.ko caused by force_sig changes")
-> Fixes: 72abe3bcf091 ("signal/cifs: Fix cifs_put_tcp_session to call send_sig instead of force_sig")
-> Fixes: fee109901f39 ("signal/drbd: Use send_sig not force_sig")
-> Fixes: 3cf5d076fb4d ("signal: Remove task parameter from force_sig")
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
-> ---
->  drivers/block/drbd/drbd_main.c |  2 ++
->  fs/cifs/connect.c              |  2 +-
->  include/linux/signal.h         | 15 ++++++++++++++-
->  kernel/signal.c                |  5 +++++
->  4 files changed, 22 insertions(+), 2 deletions(-)
-> 
+The move of the IXP4xx SoC drivers exposed their config options on all
+platforms.
 
-Just tested this patch, and I can confirm that it makes DRBD work as
-intended again.
+Fix this by wrapping them inside an ARCH_IXP4XX or COMPILE_TEST block.
 
-Tested-by: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+Fixes: fcf2d8978cd538a5 ("ARM: ixp4xx: Move NPE and QMGR to drivers/soc")
+Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+---
+v2:
+  - Rebased on top of commit ec8f24b7faaf3d47 ("treewide: Add SPDX
+    license identifier - Makefile/Kconfig").
+---
+ drivers/soc/ixp4xx/Kconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
---
-Christoph Böhmwalder
-LINBIT | Keeping the Digital World Running
-DRBD HA —  Disaster Recovery — Software defined Storage
+diff --git a/drivers/soc/ixp4xx/Kconfig b/drivers/soc/ixp4xx/Kconfig
+index de2e62c3310a37d0..e3eb19b85fa4b358 100644
+--- a/drivers/soc/ixp4xx/Kconfig
++++ b/drivers/soc/ixp4xx/Kconfig
+@@ -1,4 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
++if ARCH_IXP4XX || COMPILE_TEST
++
+ menu "IXP4xx SoC drivers"
+ 
+ config IXP4XX_QMGR
+@@ -15,3 +17,5 @@ config IXP4XX_NPE
+ 	  and is automatically selected by Ethernet and HSS drivers.
+ 
+ endmenu
++
++endif
+-- 
+2.17.1
+
