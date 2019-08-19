@@ -2,74 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 949E892750
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:44:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83C6392744
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:44:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbfHSOoU convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 10:44:20 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:56932 "EHLO gloria.sntech.de"
+        id S1727516AbfHSOoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:44:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:55742 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfHSOoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:44:20 -0400
-Received: from c-73-71-116-68.hsd1.ca.comcast.net ([73.71.116.68] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hzisw-0007Hy-Me; Mon, 19 Aug 2019 16:43:50 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Kever Yang <kever.yang@rock-chips.com>
-Cc:     linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        id S1726211AbfHSOoA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:44:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BF7928;
+        Mon, 19 Aug 2019 07:43:59 -0700 (PDT)
+Received: from fuggles.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 293DC3F718;
+        Mon, 19 Aug 2019 07:43:57 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 15:43:55 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     Will Deacon <will@kernel.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
         Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Tomohiro Mayama <parly-gh@iris.mystia.org>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm: dts: rockchip: fix vcc_host_5v regulator for usb3 host
-Date:   Mon, 19 Aug 2019 16:43:45 +0200
-Message-ID: <3811189.poQrIVWTgf@phil>
-In-Reply-To: <208c56e1-bfe0-a982-927d-bdddc3116631@rock-chips.com>
-References: <20190815081252.27405-1-kever.yang@rock-chips.com> <2932927.UJgUFA1Pmh@phil> <208c56e1-bfe0-a982-927d-bdddc3116631@rock-chips.com>
+        Walter Wu <walter-zh.wu@mediatek.com>,
+        wsd_upstream@mediatek.com,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        kasan-dev <kasan-dev@googlegroups.com>,
+        linux-mediatek@lists.infradead.org,
+        Alexander Potapenko <glider@google.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH] arm64: kasan: fix phys_to_virt() false positive on
+ tag-based kasan
+Message-ID: <20190819144355.GD14981@fuggles.cambridge.arm.com>
+References: <20190819114420.2535-1-walter-zh.wu@mediatek.com>
+ <20190819125625.bu3nbrldg7te5kwc@willie-the-truck>
+ <20190819132347.GB9927@lakrids.cambridge.arm.com>
+ <20190819133441.ejomv6cprdcz7hh6@willie-the-truck>
+ <CAAeHK+w7cTGN8SgWQs0bPjPOrizqfUoMnJWTvUkCqv17Qt=3oQ@mail.gmail.com>
+ <20190819142238.2jobs6vabkp2isg2@willie-the-truck>
+ <1ac7eb3e-156f-218c-8c5a-39a05dd46d55@arm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1ac7eb3e-156f-218c-8c5a-39a05dd46d55@arm.com>
+User-Agent: Mutt/1.11.1+86 (6f28e57d73f2) ()
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kever,
-
-Am Montag, 19. August 2019, 02:29:31 CEST schrieb Kever Yang:
-> Hi Heiko,
+On Mon, Aug 19, 2019 at 03:35:16PM +0100, Robin Murphy wrote:
+> On 19/08/2019 15:22, Will Deacon wrote:
+> > On Mon, Aug 19, 2019 at 04:05:22PM +0200, Andrey Konovalov wrote:
+> > > On Mon, Aug 19, 2019 at 3:34 PM Will Deacon <will@kernel.org> wrote:
+> > > > 
+> > > > On Mon, Aug 19, 2019 at 02:23:48PM +0100, Mark Rutland wrote:
+> > > > > On Mon, Aug 19, 2019 at 01:56:26PM +0100, Will Deacon wrote:
+> > > > > > On Mon, Aug 19, 2019 at 07:44:20PM +0800, Walter Wu wrote:
+> > > > > > > __arm_v7s_unmap() call iopte_deref() to translate pyh_to_virt address,
+> > > > > > > but it will modify pointer tag into 0xff, so there is a false positive.
+> > > > > > > 
+> > > > > > > When enable tag-based kasan, phys_to_virt() function need to rewrite
+> > > > > > > its original pointer tag in order to avoid kasan report an incorrect
+> > > > > > > memory corruption.
+> > > > > > 
+> > > > > > Hmm. Which tree did you see this on? We've recently queued a load of fixes
+> > > > > > in this area, but I /thought/ they were only needed after the support for
+> > > > > > 52-bit virtual addressing in the kernel.
+> > > > > 
+> > > > > I'm seeing similar issues in the virtio blk code (splat below), atop of
+> > > > > the arm64 for-next/core branch. I think this is a latent issue, and
+> > > > > people are only just starting to test with KASAN_SW_TAGS.
+> > > > > 
+> > > > > It looks like the virtio blk code will round-trip a SLUB-allocated pointer from
+> > > > > virt->page->virt, losing the per-object tag in the process.
+> > > > > 
+> > > > > Our page_to_virt() seems to get a per-page tag, but this only makes
+> > > > > sense if you're dealing with the page allocator, rather than something
+> > > > > like SLUB which carves a page into smaller objects giving each object a
+> > > > > distinct tag.
+> > > > > 
+> > > > > Any round-trip of a pointer from SLUB is going to lose the per-object
+> > > > > tag.
+> > > > 
+> > > > Urgh, I wonder how this is supposed to work?
+> > > > 
+> > > > If we end up having to check the KASAN shadow for *_to_virt(), then why
+> > > > do we need to store anything in the page flags at all? Andrey?
+> > > 
+> > > As per 2813b9c0 ("kasan, mm, arm64: tag non slab memory allocated via
+> > > pagealloc") we should only save a non-0xff tag in page flags for non
+> > > slab pages.
+> > 
+> > Thanks, that makes sense. Hopefully the patch from Andrey R will solve
+> > both of the reported splats, since I'd not realised they were both on the
+> > kfree() path.
+> > 
+> > > Could you share your .config so I can reproduce this?
+> > 
+> > This is in the iopgtable code, so it's probably pretty tricky to trigger
+> > at runtime unless you have the write IOMMU hardware, unfortunately.
 > 
-> On 2019/8/16 下午8:24, Heiko Stuebner wrote:
-> > Hi Kever, TL,
-> >
-> > [added TL Lim for clarification]
-> >
-> > Am Donnerstag, 15. August 2019, 10:12:52 CEST schrieb Kever Yang:
-> >> According to rock64 schemetic V2 and V3, the VCC_HOST_5V output is
-> >> controlled by USB_20_HOST_DRV, which is the same as VCC_HOST1_5V.
-> > The v1 schematics I have do reference the GPIO0_A0 as controlling this
-> > supply, so the big question would be how to handle the different versions.
-> >
-> > Because adding this would probably break v1 boards in this function.
-> >
-> > @TL: where v1 boards also sold or were they only used during development?
-> 
-> 
-> I have check this with TL when I make this patch, the V1 hardware was 
-> never sold and only V2/V3
-> 
-> are available on the market.
+> If simply freeing any entry from the l2_tables cache is sufficient, then the
+> short-descriptor selftest should do the job, and that ought to run on
+> anything (modulo insane RAM layouts).
 
-Thanks for clearing this up. I've applied this patch for 5.4 now.
+Ok, so that would be defconfig + CONFIG_IOMMU_IO_PGTABLE_ARMV7S +
+CONFIG_IOMMU_IO_PGTABLE_ARMV7S_SELFTEST + KASAN...
 
-Thanks
-Heiko
-
-
-
+Will
