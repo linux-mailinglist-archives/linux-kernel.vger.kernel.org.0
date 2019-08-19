@@ -2,273 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 662D791FFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:21:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0CDFB9200D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727387AbfHSJVZ convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 05:21:25 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:53813 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727335AbfHSJVY (ORCPT
+        id S1727454AbfHSJWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:22:12 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:37221 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727335AbfHSJWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:21:24 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id EC4B7100002;
-        Mon, 19 Aug 2019 09:21:18 +0000 (UTC)
-Date:   Mon, 19 Aug 2019 11:21:18 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: Re: [EXT] Re: [PATCH 4/8] mtd: spinand: enabled parameter page
- support
-Message-ID: <20190819112118.56b2f9ea@xps13>
-In-Reply-To: <MN2PR08MB59511E352AE382D103DA56CBB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-References: <20190722055621.23526-1-sshivamurthy@micron.com>
-        <20190722055621.23526-5-sshivamurthy@micron.com>
-        <20190807114855.35f26229@xps13>
-        <MN2PR08MB59511E352AE382D103DA56CBB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 19 Aug 2019 05:22:09 -0400
+X-UUID: 796730bac6ef4d829f0a303d01b3d6d4-20190819
+X-UUID: 796730bac6ef4d829f0a303d01b3d6d4-20190819
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 37471676; Mon, 19 Aug 2019 17:22:01 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 19 Aug 2019 17:22:00 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 19 Aug 2019 17:22:00 +0800
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+CC:     CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>, mtk01761 <wendell.lin@mediatek.com>,
+        <linux-clk@vger.kernel.org>
+Subject: [PATCHv2 00/11] Add basic SoC Support for Mediatek MT6779 SoC
+Date:   Mon, 19 Aug 2019 17:21:31 +0800
+Message-ID: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
+X-TM-SNTS-SMTP: D2DE206C8813DC47ED7261D11FDE95B6936DD33B5D67B0F8EC1338EF0A6DBB962000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+This patchset is based on v5.3-rc1. Basic SoC support for the new Mediatek
+SoC, MT6779, which targets for smartphone.
 
-Another question for you :)
+It provides ccf, pinctrl, uart, timer, gic...etc.
 
-"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote on
-Mon, 19 Aug 2019 08:51:52 +0000:
+Change History:
 
-> Hi Miquel,
-> 
-> > 
-> > Hi Shiva,
-> > 
-> > shiva.linuxworks@gmail.com wrote on Mon, 22 Jul 2019 07:56:17 +0200:
-> > 
-> > "mtd: spinand: enable parameter page support"
-> >   
-> > > From: Shivamurthy Shastri <sshivamurthy@micron.com>
-> > >
-> > > Some of the SPI NAND devices has parameter page, which is similar to  
-> >                  -             have a  
-> > > ONFI table.  
-> >   regular raw NAND ONFI tables.
-> >   
-> > >
-> > > But, it may not be self sufficient to propagate all the required  
-> >   As it may not be  
-> > > parameters. Fixup function has been added in struct manufacturer to  
-> >             , a fixup        is being added in the manufacturer structure  
-> > > accommodate this.  
-> > 
-> > The fixup function sentence should be dropped from the commit message,
-> > see below.  
-> 
-> Okay, I will create separate patch for fixup function.
-> 
-> >   
-> > >
-> > > Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-> > > ---
-> > >  drivers/mtd/nand/spi/core.c | 134  
-> > ++++++++++++++++++++++++++++++++++++  
-> > >  include/linux/mtd/spinand.h |   3 +
-> > >  2 files changed, 137 insertions(+)
-> > >
-> > > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> > > index 89f6beefb01c..7ae76dab9141 100644
-> > > --- a/drivers/mtd/nand/spi/core.c
-> > > +++ b/drivers/mtd/nand/spi/core.c
-> > > @@ -400,6 +400,131 @@ static int spinand_lock_block(struct  
-> > spinand_device *spinand, u8 lock)  
-> > >  	return spinand_write_reg_op(spinand, REG_BLOCK_LOCK, lock);
-> > >  }
-> > >
-> > > +/**
-> > > + * spinand_read_param_page_op - Read parameter page operation  
-> > 
-> > Again, the name in the doc does not fit the function you describe
-> >   
-> > > + * @spinand: the spinand  
-> >                     SPI-NAND chip
-> > 
-> > Shiva, there are way too much typos and shortcuts in your series.
-> > Please be more careful otherwise we can't focus on the technical
-> > aspects. I am not a native English speaker at all but please, plain
-> > English is not C code. We talk SPI-NAND and not spinand, we say
-> > structure and not struct, acronyms are uppercase, etc.
-> >   
-> 
-> Sorry for the inconvenience caused, I will take care from next time.
-> 
-> > > + * @page: page number where parameter page tables can be found  
-> >                               ^ the  
-> > > + * @buf: buffer used to store the parameter page
-> > > + * @len: length of the buffer
-> > > + *
-> > > + * Read parameter page  
-> >           the  
-> > > + *
-> > > + * Returns 0 on success, a negative error code otherwise.
-> > > + */
-> > > +static int spinand_parameter_page_read(struct spinand_device *spinand,
-> > > +				       u8 page, void *buf, unsigned int len)
-> > > +{
-> > > +	struct spi_mem_op pread_op = SPINAND_PAGE_READ_OP(page);
-> > > +	struct spi_mem_op pread_cache_op =
-> > > +  
-> > 	SPINAND_PAGE_READ_FROM_CACHE_OP(false,  
-> > > +								0,
-> > > +								1,
-> > > +								buf,
-> > > +								len);  
-> > 
-> > That's ok if you cross the 80 characters boundary here. You may put "0,
-> > 1," on the first line and "buf, len);" on the second.
-> >   
-> > > +	u8 feature;
-> > > +	u8 status;
-> > > +	int ret;
-> > > +
-> > > +	if (len && !buf)
-> > > +		return -EINVAL;
-> > > +
-> > > +	ret = spinand_read_reg_op(spinand, REG_CFG,
-> > > +				  &feature);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* CFG_OTP_ENABLE is used to enable parameter page access */
-> > > +	feature |= CFG_OTP_ENABLE;
-> > > +
-> > > +	spinand_write_reg_op(spinand, REG_CFG, feature);
-> > > +
-> > > +	ret = spi_mem_exec_op(spinand->spimem, &pread_op);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = spinand_wait(spinand, &status);
-> > > +	if (ret < 0)
-> > > +		return ret;
-> > > +
-> > > +	ret = spi_mem_exec_op(spinand->spimem, &pread_cache_op);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	ret = spinand_read_reg_op(spinand, REG_CFG,
-> > > +				  &feature);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	feature &= ~CFG_OTP_ENABLE;
-> > > +
-> > > +	spinand_write_reg_op(spinand, REG_CFG, feature);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +  
-> > Add the kernel doc please
-> > 
-> > Change the below function so that it returns 1 if the page was
-> > detected, 0 if it did not, an negative error code otherwise.
-> >   
-> > > +static int spinand_param_page_detect(struct spinand_device *spinand)
-> > > +{
-> > > +	struct mtd_info *mtd = spinand_to_mtd(spinand);
-> > > +	struct nand_memory_organization *memorg;
-> > > +	struct nand_onfi_params *p;
-> > > +	struct nand_device *base = spinand_to_nand(spinand);
-> > > +	int i, ret;
-> > > +
-> > > +	memorg = nanddev_get_memorg(base);
-> > > +
-> > > +	/* Allocate buffer to hold parameter page */
-> > > +	p = kzalloc((sizeof(*p) * 3), GFP_KERNEL);
-> > > +	if (!p)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	ret = spinand_parameter_page_read(spinand, 0x01, p, sizeof(*p) *  
-> > 3);  
-> > > +	if (ret) {
-> > > +		ret = 0;  
-> > 
-> > No, you should return the error in case of error. You will later handle
-> > the fact that there is no parameter page.  
-> 
-> okay.
-> 
-> >   
-> > > +		goto free_param_page;
-> > > +	}
-> > > +
-> > > +	for (i = 0; i < 3; i++) {
-> > > +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)&p[i], 254) ==  
-> >                                                            ^
-> > If you force the parameter page to be 254 bytes long it means you limit
-> > yourself to ONFI standard. That's not a problem, but then you should
-> > mention it in the function name.  
-> 
-> okay, I will mention in kernel doc.
-> 
-> >   
-> > > +				le16_to_cpu(p->crc)) {
-> > > +			if (i)
-> > > +				memcpy(p, &p[i], sizeof(*p));
-> > > +			break;
-> > > +		}
-> > > +	}
-> > > +
-> > > +	if (i == 3) {
-> > > +		const void *srcbufs[3] = {p, p + 1, p + 2};
-> > > +
-> > > +		pr_warn("Could not find a valid ONFI parameter page, trying  
-> > bit-wise majority to recover it\n");  
-> > > +		nand_bit_wise_majority(srcbufs, ARRAY_SIZE(srcbufs), p,
-> > > +				       sizeof(*p));
-> > > +
-> > > +		if (onfi_crc16(ONFI_CRC_BASE, (u8 *)p, 254) !=
-> > > +				le16_to_cpu(p->crc)) {
-> > > +			pr_err("ONFI parameter recovery failed,  
-> > aborting\n");  
-> > > +			goto free_param_page;
-> > > +		}
-> > > +	}  
-> > 
-> > The whole for-loop and the if (i==3) condition is exactly the same as
-> > for raw NANDs and must be extracted in a generic function:
-> > 1/ extract the function from nand/raw/nand_onfi.c and put it in
-> > nand/onfi.c.
-> > 2/ then use it in this patch.  
-> 
-> I have done this intentionally, because in raw NAND case there is function
-> "nand_read_data_op" called inside for-loop. I don't think just for if (i == 3) 
-> it is necessary to create new function.
-> 
-> Let me know if you have different opinion.
+v2:
+1. add Reviewed-by tags
+2. fix checkpatch warnings with strict level
 
-I don't have a strong opinion on that. Boris what do you think? Shall
-we duplicate the code? It's not just about the if condition, it's the
-whole for loop which is very similar.
+v1:
+first patchset
 
 
-Thanks,
-Miquèl
+Mars Cheng (8):
+  dt-bindings: mediatek: add support for mt6779 reference board
+  dt-bindings: mtk-uart: add mt6779 uart bindings
+  dt-bindings: irq: mtk,sysirq: add support for mt6779
+  pinctrl: mediatek: update pinmux defintions for mt6779
+  pinctrl: mediatek: avoid virtual gpio trying to set reg
+  pinctrl: mediatek: add pinctrl support for MT6779 SoC
+  pinctrl: mediatek: add mt6779 eint support
+  arm64: dts: add dts nodes for MT6779
+
+mtk01761 (3):
+  dt-bindings: mediatek: bindings for MT6779 clk
+  clk: mediatek: Add dt-bindings for MT6779 clocks
+  clk: mediatek: Add MT6779 clock support
+
+ .../devicetree/bindings/arm/mediatek.yaml          |    4 +
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,ipesys.txt      |   22 +
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+ .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+ .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
+ arch/arm64/boot/dts/mediatek/Makefile              |    1 +
+ arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi       |   31 +
+ arch/arm64/boot/dts/mediatek/mt6779.dts            |  229 +++
+ drivers/clk/mediatek/Kconfig                       |   56 +
+ drivers/clk/mediatek/Makefile                      |    9 +
+ drivers/clk/mediatek/clk-mt6779-aud.c              |  117 ++
+ drivers/clk/mediatek/clk-mt6779-cam.c              |   66 +
+ drivers/clk/mediatek/clk-mt6779-img.c              |   58 +
+ drivers/clk/mediatek/clk-mt6779-ipe.c              |   60 +
+ drivers/clk/mediatek/clk-mt6779-mfg.c              |   55 +
+ drivers/clk/mediatek/clk-mt6779-mm.c               |  113 ++
+ drivers/clk/mediatek/clk-mt6779-vdec.c             |   67 +
+ drivers/clk/mediatek/clk-mt6779-venc.c             |   58 +
+ drivers/clk/mediatek/clk-mt6779.c                  | 1315 ++++++++++++
+ drivers/pinctrl/mediatek/Kconfig                   |    7 +
+ drivers/pinctrl/mediatek/Makefile                  |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mt6779.c          |  783 ++++++++
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c   |   20 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h   |    1 +
+ drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h      | 2085 ++++++++++++++++++++
+ drivers/pinctrl/mediatek/pinctrl-paris.c           |    3 +
+ include/dt-bindings/clock/mt6779-clk.h             |  436 ++++
+ include/dt-bindings/pinctrl/mt6779-pinfunc.h       | 1242 ++++++++++++
+ 37 files changed, 6851 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-aud.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-cam.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-img.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-ipe.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-mfg.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-mm.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-vdec.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779-venc.c
+ create mode 100644 drivers/clk/mediatek/clk-mt6779.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6779.c
+ create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h
+ create mode 100644 include/dt-bindings/clock/mt6779-clk.h
+ create mode 100644 include/dt-bindings/pinctrl/mt6779-pinfunc.h
+
