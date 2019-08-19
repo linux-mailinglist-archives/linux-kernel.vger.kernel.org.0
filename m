@@ -2,225 +2,184 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13AB092226
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 13:24:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D6B4E92219
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 13:24:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727552AbfHSLWj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 07:22:39 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:47867 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbfHSLWf (ORCPT
+        id S1727448AbfHSLWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 07:22:15 -0400
+Received: from mail-vk1-f202.google.com ([209.85.221.202]:48635 "EHLO
+        mail-vk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfHSLWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 07:22:35 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x7JBM7E94114244
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Mon, 19 Aug 2019 04:22:08 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 terminus.zytor.com x7JBM7E94114244
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-        s=2019071901; t=1566213728;
-        bh=iTq0Qt1POXu8C2JzCGJoRFCzdRhsh147MBhk8KR+y5E=;
-        h=Date:From:Cc:Reply-To:In-Reply-To:References:To:Subject:From;
-        b=BOlBzzoLQFUDG6n3Hy3L4KChScm7xXu3Szjby9DMoq4ueaxptvkCPb21rH1HX3bmb
-         Nkah1/lSMCsIF92m5wagOKr+n0VYyeZ6WlrugUpMfn9OaYmWd/sdZULwNtSy5nDVPb
-         6N4LmT4uWWj/iXZ6qZ9nH/AnOWPx+OsR9k4NDVYBIkAQRoVLZJThjVB875Lm4pg5QZ
-         Fie4/JByQHe7124zulMgLgVkNzmuyi39LERNBBfHCzv7Q53WKrrCZjpzOSWMC7snSG
-         5DJNO1h+hpjxLc6QwugvpebhG4chXtQGFiN/47nwI0tPrLlHLxPFNK5pAIVM/yAL3i
-         ZCtyM+8IiTLwA==
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x7JBM6ZI4114239;
-        Mon, 19 Aug 2019 04:22:06 -0700
-Date:   Mon, 19 Aug 2019 04:22:06 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andrea Righi <tipbot@zytor.com>
-Message-ID: <tip-f1c6ece23729257fb46562ff9224cf5f61b818da@git.kernel.org>
-Cc:     anil.s.keshavamurthy@intel.com, andrea.righi@canonical.com,
-        naveen.n.rao@linux.ibm.com, hpa@zytor.com, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org, davem@davemloft.net,
-        torvalds@linux-foundation.org, mhiramat@kernel.org,
-        peterz@infradead.org, mingo@kernel.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, andrea.righi@canonical.com,
-          naveen.n.rao@linux.ibm.com, anil.s.keshavamurthy@intel.com,
-          peterz@infradead.org, torvalds@linux-foundation.org,
-          mhiramat@kernel.org, mingo@kernel.org,
-          linux-kernel@vger.kernel.org, davem@davemloft.net
-In-Reply-To: <20190812184302.GA7010@xps-13>
-References: <20190812184302.GA7010@xps-13>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] kprobes: Fix potential deadlock in
- kprobe_optimizer()
-Git-Commit-ID: f1c6ece23729257fb46562ff9224cf5f61b818da
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
-X-Spam-Status: No, score=-0.2 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        DATE_IN_FUTURE_96_Q,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF
-        autolearn=no autolearn_force=no version=3.4.2
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on terminus.zytor.com
+        Mon, 19 Aug 2019 07:22:15 -0400
+Received: by mail-vk1-f202.google.com with SMTP id l3so1583498vkb.15
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 04:22:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=H/qRm0Yv2WT0Tluo2TlSkwY77ERd+Um9aUJHvVBJ2fw=;
+        b=u8VhKBhlHqKqYfg6lM/w3mVeWIY44O6IfRohtApAdl6OBvYKXlsy/wbP7e8vHYSWQQ
+         yma1g+6vdVH1md0h+yIF+OMBGA9IbdbueZIBr6ouEOBUffhpzRsu4MAFtRmxG955NxCA
+         kd/bGoC9QEU428qzg/v2PLXz/dTyj8x2wDon6pAvNYYZw5Bsw/tHqSr9yZ+NrSMm2lTj
+         1JvdxkhOn2/pw1K2HpsfUFXJwuwai6Sd5nqLtlOGbcTYDWe4ByY7qxAsWccomN1mH+zq
+         WZMaVbiN25Po4vSVWMkKM7krlNvkDI53kcIpl+93+ivMXgapu3fiv91ZT43uLCeZpjWg
+         OYOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=H/qRm0Yv2WT0Tluo2TlSkwY77ERd+Um9aUJHvVBJ2fw=;
+        b=J2k2BMnRC6ZshXnrcvfWJsoCAI6eJb89x5+ZfEdzU/elFzXPpjscIXlk0ph+Q/J/iU
+         +RvDbzKdkNdSGaOURfBD9ADFifWyDgPe7aGNB6I10FE/3lNoqYEYJIouSLcShlFGiJ5w
+         s6y5N5YSiEVGXc89A0fY1Y+XeOcS/94dvGBV/ZhiGQUQRDGamD6NAXVc1UYZ+vLjvZvE
+         YGlAn3c5J0H9uwyfNG/o4KVC9rA63HGpAF+KNKnpfFBW5vfT8iX2hzoSGG0L/pLaCBvz
+         3fJJh8vhQWu5PAExstG5f+7at7U9CGEWJLEa0w6W6CMFYFXoEowiSXOvJALRO3SawDLg
+         abTA==
+X-Gm-Message-State: APjAAAXTJeBdQVk+WCBGzZzXrru6Brc5zeNMAPMR7LhH9nxt18W+NDNC
+        SCpnSw3TSMtD8zNqsMq/irzdADXmj04=
+X-Google-Smtp-Source: APXvYqxqRO5dF/oI9Clv70/0w+1bLnMh3sTTb9xj5rcbM6BRl2dQUEvm3JnRSUNaVlSTo5mHkCdghtvcaNw=
+X-Received: by 2002:ab0:7c3:: with SMTP id d3mr13166295uaf.131.1566213733887;
+ Mon, 19 Aug 2019 04:22:13 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 13:22:06 +0200
+In-Reply-To: <20190814104520.6001-6-darekm@google.com>
+Message-Id: <20190819112207.57166-1-darekm@google.com>
+Mime-Version: 1.0
+References: <20190814104520.6001-6-darekm@google.com>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH v7.1 5/9] drm: tda998x: use cec_notifier_conn_(un)register
+From:   Dariusz Marcinkiewicz <darekm@google.com>
+To:     dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        hverkuil-cisco@xs4all.nl
+Cc:     Dariusz Marcinkiewicz <darekm@google.com>,
+        Russell King <linux@armlinux.org.uk>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f1c6ece23729257fb46562ff9224cf5f61b818da
-Gitweb:     https://git.kernel.org/tip/f1c6ece23729257fb46562ff9224cf5f61b818da
-Author:     Andrea Righi <andrea.righi@canonical.com>
-AuthorDate: Mon, 12 Aug 2019 20:43:02 +0200
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Mon, 19 Aug 2019 12:22:19 +0200
+Use the new cec_notifier_conn_(un)register() functions to
+(un)register the notifier for the HDMI connector, and fill
+in the cec_connector_info.
 
-kprobes: Fix potential deadlock in kprobe_optimizer()
+Changes since v7:
+	- typo fix
+Changes since v6:
+        - move cec_notifier_conn_unregister to tda998x_bridge_detach,
+	- add a mutex protecting accesses to a CEC notifier.
+Changes since v2:
+	- cec_notifier_phys_addr_invalidate where appropriate,
+	- don't check for NULL notifier before calling
+	cec_notifier_conn_unregister.
+Changes since v1:
+	Add memory barrier to make sure that the notifier
+	becomes visible to the irq thread once it is
+	fully constructed.
 
-lockdep reports the following deadlock scenario:
-
- WARNING: possible circular locking dependency detected
-
- kworker/1:1/48 is trying to acquire lock:
- 000000008d7a62b2 (text_mutex){+.+.}, at: kprobe_optimizer+0x163/0x290
-
- but task is already holding lock:
- 00000000850b5e2d (module_mutex){+.+.}, at: kprobe_optimizer+0x31/0x290
-
- which lock already depends on the new lock.
-
- the existing dependency chain (in reverse order) is:
-
- -> #1 (module_mutex){+.+.}:
-        __mutex_lock+0xac/0x9f0
-        mutex_lock_nested+0x1b/0x20
-        set_all_modules_text_rw+0x22/0x90
-        ftrace_arch_code_modify_prepare+0x1c/0x20
-        ftrace_run_update_code+0xe/0x30
-        ftrace_startup_enable+0x2e/0x50
-        ftrace_startup+0xa7/0x100
-        register_ftrace_function+0x27/0x70
-        arm_kprobe+0xb3/0x130
-        enable_kprobe+0x83/0xa0
-        enable_trace_kprobe.part.0+0x2e/0x80
-        kprobe_register+0x6f/0xc0
-        perf_trace_event_init+0x16b/0x270
-        perf_kprobe_init+0xa7/0xe0
-        perf_kprobe_event_init+0x3e/0x70
-        perf_try_init_event+0x4a/0x140
-        perf_event_alloc+0x93a/0xde0
-        __do_sys_perf_event_open+0x19f/0xf30
-        __x64_sys_perf_event_open+0x20/0x30
-        do_syscall_64+0x65/0x1d0
-        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
- -> #0 (text_mutex){+.+.}:
-        __lock_acquire+0xfcb/0x1b60
-        lock_acquire+0xca/0x1d0
-        __mutex_lock+0xac/0x9f0
-        mutex_lock_nested+0x1b/0x20
-        kprobe_optimizer+0x163/0x290
-        process_one_work+0x22b/0x560
-        worker_thread+0x50/0x3c0
-        kthread+0x112/0x150
-        ret_from_fork+0x3a/0x50
-
- other info that might help us debug this:
-
-  Possible unsafe locking scenario:
-
-        CPU0                    CPU1
-        ----                    ----
-   lock(module_mutex);
-                                lock(text_mutex);
-                                lock(module_mutex);
-   lock(text_mutex);
-
-  *** DEADLOCK ***
-
-As a reproducer I've been using bcc's funccount.py
-(https://github.com/iovisor/bcc/blob/master/tools/funccount.py),
-for example:
-
- # ./funccount.py '*interrupt*'
-
-That immediately triggers the lockdep splat.
-
-Fix by acquiring text_mutex before module_mutex in kprobe_optimizer().
-
-Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: David S. Miller <davem@davemloft.net>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Naveen N. Rao <naveen.n.rao@linux.ibm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: d5b844a2cf50 ("ftrace/x86: Remove possible deadlock between register_kprobe() and ftrace_run_update_code()")
-Link: http://lkml.kernel.org/r/20190812184302.GA7010@xps-13
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
 ---
- kernel/kprobes.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/i2c/tda998x_drv.c | 36 +++++++++++++++++++++----------
+ 1 file changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-index 9873fc627d61..d9770a5393c8 100644
---- a/kernel/kprobes.c
-+++ b/kernel/kprobes.c
-@@ -470,6 +470,7 @@ static DECLARE_DELAYED_WORK(optimizing_work, kprobe_optimizer);
-  */
- static void do_optimize_kprobes(void)
- {
-+	lockdep_assert_held(&text_mutex);
- 	/*
- 	 * The optimization/unoptimization refers online_cpus via
- 	 * stop_machine() and cpu-hotplug modifies online_cpus.
-@@ -487,9 +488,7 @@ static void do_optimize_kprobes(void)
- 	    list_empty(&optimizing_list))
- 		return;
+diff --git a/drivers/gpu/drm/i2c/tda998x_drv.c b/drivers/gpu/drm/i2c/tda998x_drv.c
+index 61e042918a7fc..c6e922cd3c0b5 100644
+--- a/drivers/gpu/drm/i2c/tda998x_drv.c
++++ b/drivers/gpu/drm/i2c/tda998x_drv.c
+@@ -82,6 +82,8 @@ struct tda998x_priv {
+ 	u8 audio_port_enable[AUDIO_ROUTE_NUM];
+ 	struct tda9950_glue cec_glue;
+ 	struct gpio_desc *calib;
++
++	struct mutex cec_notify_mutex;
+ 	struct cec_notifier *cec_notify;
+ };
  
--	mutex_lock(&text_mutex);
- 	arch_optimize_kprobes(&optimizing_list);
--	mutex_unlock(&text_mutex);
+@@ -805,8 +807,11 @@ static irqreturn_t tda998x_irq_thread(int irq, void *data)
+ 				tda998x_edid_delay_start(priv);
+ 			} else {
+ 				schedule_work(&priv->detect_work);
+-				cec_notifier_set_phys_addr(priv->cec_notify,
+-						   CEC_PHYS_ADDR_INVALID);
++
++				mutex_lock(&priv->cec_notify_mutex);
++				cec_notifier_phys_addr_invalidate(
++						priv->cec_notify);
++				mutex_unlock(&priv->cec_notify_mutex);
+ 			}
+ 
+ 			handled = true;
+@@ -1331,6 +1336,8 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
+ 				  struct drm_device *drm)
+ {
+ 	struct drm_connector *connector = &priv->connector;
++	struct cec_connector_info conn_info;
++	struct cec_notifier *notifier;
+ 	int ret;
+ 
+ 	connector->interlace_allowed = 1;
+@@ -1347,6 +1354,16 @@ static int tda998x_connector_init(struct tda998x_priv *priv,
+ 	if (ret)
+ 		return ret;
+ 
++	cec_fill_conn_info_from_drm(&conn_info, connector);
++
++	notifier = cec_notifier_conn_register(priv->cec_glue.parent,
++					      NULL, &conn_info);
++		return -ENOMEM;
++
++	mutex_lock(&priv->cec_notify_mutex);
++	priv->cec_notify = notifier;
++	mutex_unlock(&priv->cec_notify_mutex);
++
+ 	drm_connector_attach_encoder(&priv->connector,
+ 				     priv->bridge.encoder);
+ 
+@@ -1366,6 +1383,11 @@ static void tda998x_bridge_detach(struct drm_bridge *bridge)
+ {
+ 	struct tda998x_priv *priv = bridge_to_tda998x_priv(bridge);
+ 
++	mutex_lock(&priv->cec_notify_mutex);
++	cec_notifier_conn_unregister(priv->cec_notify);
++	priv->cec_notify = NULL;
++	mutex_unlock(&priv->cec_notify_mutex);
++
+ 	drm_connector_cleanup(&priv->connector);
  }
  
- /*
-@@ -500,6 +499,7 @@ static void do_unoptimize_kprobes(void)
- {
- 	struct optimized_kprobe *op, *tmp;
+@@ -1789,9 +1811,6 @@ static void tda998x_destroy(struct device *dev)
+ 	cancel_work_sync(&priv->detect_work);
  
-+	lockdep_assert_held(&text_mutex);
- 	/* See comment in do_optimize_kprobes() */
- 	lockdep_assert_cpus_held();
+ 	i2c_unregister_device(priv->cec);
+-
+-	if (priv->cec_notify)
+-		cec_notifier_put(priv->cec_notify);
+ }
  
-@@ -507,7 +507,6 @@ static void do_unoptimize_kprobes(void)
- 	if (list_empty(&unoptimizing_list))
- 		return;
- 
--	mutex_lock(&text_mutex);
- 	arch_unoptimize_kprobes(&unoptimizing_list, &freeing_list);
- 	/* Loop free_list for disarming */
- 	list_for_each_entry_safe(op, tmp, &freeing_list, list) {
-@@ -524,7 +523,6 @@ static void do_unoptimize_kprobes(void)
- 		} else
- 			list_del_init(&op->list);
+ static int tda998x_create(struct device *dev)
+@@ -1812,6 +1831,7 @@ static int tda998x_create(struct device *dev)
+ 	mutex_init(&priv->mutex);	/* protect the page access */
+ 	mutex_init(&priv->audio_mutex); /* protect access from audio thread */
+ 	mutex_init(&priv->edid_mutex);
++	mutex_init(&priv->cec_notify_mutex);
+ 	INIT_LIST_HEAD(&priv->bridge.list);
+ 	init_waitqueue_head(&priv->edid_delay_waitq);
+ 	timer_setup(&priv->edid_delay_timer, tda998x_edid_delay_done, 0);
+@@ -1916,12 +1936,6 @@ static int tda998x_create(struct device *dev)
+ 		cec_write(priv, REG_CEC_RXSHPDINTENA, CEC_RXSHPDLEV_HPD);
  	}
--	mutex_unlock(&text_mutex);
- }
  
- /* Reclaim all kprobes on the free_list */
-@@ -556,6 +554,7 @@ static void kprobe_optimizer(struct work_struct *work)
- {
- 	mutex_lock(&kprobe_mutex);
- 	cpus_read_lock();
-+	mutex_lock(&text_mutex);
- 	/* Lock modules while optimizing kprobes */
- 	mutex_lock(&module_mutex);
- 
-@@ -583,6 +582,7 @@ static void kprobe_optimizer(struct work_struct *work)
- 	do_free_cleaned_kprobes();
- 
- 	mutex_unlock(&module_mutex);
-+	mutex_unlock(&text_mutex);
- 	cpus_read_unlock();
- 	mutex_unlock(&kprobe_mutex);
- 
+-	priv->cec_notify = cec_notifier_get(dev);
+-	if (!priv->cec_notify) {
+-		ret = -ENOMEM;
+-		goto fail;
+-	}
+-
+ 	priv->cec_glue.parent = dev;
+ 	priv->cec_glue.data = priv;
+ 	priv->cec_glue.init = tda998x_cec_hook_init;
+-- 
+2.23.0.rc1.153.gdeed80330f-goog
+
