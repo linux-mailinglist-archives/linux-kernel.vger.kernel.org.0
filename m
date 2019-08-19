@@ -2,115 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AE1991E47
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:49:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CEF4B91E3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:46:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbfHSHtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:49:17 -0400
-Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:37816 "EHLO
-        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725768AbfHSHtR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:49:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id BA29F3FC0E;
-        Mon, 19 Aug 2019 09:49:14 +0200 (CEST)
-Authentication-Results: ste-pvt-msa2.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=DxAobbEa;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
-        dkim=pass (1024-bit key) header.d=shipmail.org
-Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
-        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0HAfcH4O8cUi; Mon, 19 Aug 2019 09:49:13 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id EA75B3FBF0;
-        Mon, 19 Aug 2019 09:49:12 +0200 (CEST)
-Received: from linlap1.host.shipmail.org (unknown [94.191.144.211])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id F2593360142;
-        Mon, 19 Aug 2019 09:49:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1566200952; bh=wYe1IOQ9iDHjA70JntB0b4pIr8deOWfZxLROEjA/YAI=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DxAobbEacgLm6BMTSfEQQQITyMv9QnsVj2KK5Fur3uH7Yulj3pdcnYpNmm4UtZ1BC
-         uBstnRKnNpcxdJxT06VZ5dtU/Eq3TFtkQXui0t7JGVKf0hAYNPQ+qie/r0cZ9LeSoQ
-         Kg3tiimoKSiHuw10F385TRF5XHn5ROjzNIMqsZLk=
-Subject: Re: [PATCH 2/4] x86/vmware: Add a header file for hypercall
- definitions
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Doug Covelli <dcovelli@vmware.com>
-References: <20190818143316.4906-1-thomas_os@shipmail.org>
- <20190818143316.4906-3-thomas_os@shipmail.org>
- <20190818201942.GC29353@zn.tnic>
- <b8875504-b112-ba5e-13d7-6abb51c01121@shipmail.org>
- <20190819062552.GC4841@zn.tnic>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <970d2bb6-ab29-315f-f5d8-5d11095859af@shipmail.org>
-Date:   Mon, 19 Aug 2019 09:49:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726845AbfHSHpQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:45:16 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3092 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726149AbfHSHpQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:45:16 -0400
+Received: from DGGEMM401-HUB.china.huawei.com (unknown [172.30.72.54])
+        by Forcepoint Email with ESMTP id 44C1AA404B148E78718E;
+        Mon, 19 Aug 2019 15:45:13 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM401-HUB.china.huawei.com (10.3.20.209) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Mon, 19 Aug 2019 15:45:13 +0800
+Received: from 138 (10.175.124.28) by dggeme762-chm.china.huawei.com
+ (10.3.19.108) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 19
+ Aug 2019 15:45:11 +0800
+Date:   Mon, 19 Aug 2019 16:02:18 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Richard Weinberger <richard@nod.at>
+CC:     Gao Xiang <hsiangkao@aol.com>,
+        Christoph Hellwig <hch@infradead.org>, tytso <tytso@mit.edu>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Chao Yu <yuchao0@huawei.com>,
+        Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Darrick <darrick.wong@oracle.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Li Guifu <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] erofs: move erofs out of staging
+Message-ID: <20190819080218.GA42231@138>
+References: <1133002215.69049.1566119033047.JavaMail.zimbra@nod.at>
+ <20190818155812.GB13230@infradead.org>
+ <20190818161638.GE1118@sol.localdomain>
+ <20190818162201.GA16269@infradead.org>
+ <20190818172938.GA14413@sol.localdomain>
+ <20190818174702.GA17633@infradead.org>
+ <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <1559833874.69649.1566200143457.JavaMail.zimbra@nod.at>
 MIME-Version: 1.0
-In-Reply-To: <20190819062552.GC4841@zn.tnic>
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <1559833874.69649.1566200143457.JavaMail.zimbra@nod.at>
+User-Agent: Mutt/1.11.3 (2019-02-01)
+X-Originating-IP: [10.175.124.28]
+X-ClientProxiedBy: dggeme718-chm.china.huawei.com (10.1.199.114) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/19 8:25 AM, Borislav Petkov wrote:
-> On Mon, Aug 19, 2019 at 12:28:05AM +0200, Thomas HellstrÃ¶m (VMware) wrote:
->> Unfortunately we can't use it, because it's unconditionally set on AMD even
->> if the VMware hypervisor
->> doesn't support it (by version or by configuration).
-> AMD sets it because they don't support VMCALL. Nothing stops us from
-> making that conditional depending on what the hypervisor can/supports.
-> I'm thinking it would be even cleaner if we use those two flags:
->
-> X86_FEATURE_VMMCALL
-> X86_FEATURE_VMCALL
->
-> to denote hw support for either one or the other instruction and switch
-> accordingly. Just like KVM does.
->
-> In your case, the HV would set the preferred flag in
-> arch/x86/kernel/cpu/vmware.c - just like the others do in their
-> respective CPU init files - and the alternatives code would switch to it
-> when it runs.
->
-> Or is there more? :)
+Hi Richard,
 
-Yes, unfortunately. I agree this is is the cleanest solution and my 
-first choice. It would work for VMware, but AFAICT it might break setups 
-of other hypervisors running at least the vmmouse driver. Quick googling 
-tells me there are likely QEMU/KVM setups that do this. My thinking is 
-they would have to set X86_FEATURE_VMMCALL on AMD to get the 
-kvm_hypercall right, but that would mean the vmmouse hypercall also uses 
-vmmcall, which they probably haven't implemented (yet). So the safe way 
-would be to use at least XF86_FEATURE_VMW_VMMCALL + XF86_FEATURE_VMCALL 
-until that has happened.
+On Mon, Aug 19, 2019 at 09:35:43AM +0200, Richard Weinberger wrote:
+> ----- Ursprüngliche Mail -----
+> > I have made a simple fuzzer to inject messy in inode metadata,
+> > dir data, compressed indexes and super block,
+> > https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/commit/?h=experimental-fuzzer
+> > 
+> > I am testing with some given dirs and the following script.
+> > Does it look reasonable?
+> 
+> I think that's a very good start. :-)
 
-/Thomas
+I have been testing with this tools for hours, it seems strong
+against corrupted images without compression.
 
+I'm now struggling with corrupted images with compression,
+hopefully most of them can be fixed trivially... I will send
+the bunch of fixes later... Let me dig into it more...
 
->
-> Thx.
->
+Thanks for your reply :-)
 
+Thanks,
+Gao Xiang
+
+> 
+> Thanks,
+> //richard
