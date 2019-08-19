@@ -2,52 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B34B91E36
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:43:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DD3391E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:46:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727057AbfHSHnm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:43:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33628 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725536AbfHSHnl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:43:41 -0400
-Received: from X250 (37.80-203-192.nextgentel.com [80.203.192.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30DD0204EC;
-        Mon, 19 Aug 2019 07:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566200621;
-        bh=pyovwj0ULanQn79gsy+GBs1g4uJGk78tSpphAigMsE4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IqbnLwxiPiSbiKGrG4stTDREeaJ6TT0GyLfMjtpeOl3KBpIrgalkOejkH4ORpdYL+
-         JJDBf7MaDNgaM7/eBWwQF7mii7kb1zBHkHpBPVEyDYfx2hQiZfl6e/m/aQgOdLLIrn
-         9fgTShtw5UU+LaKnrw9JRKh7GzvBoMahDlrfelgw=
-Date:   Mon, 19 Aug 2019 09:43:28 +0200
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Chuanhua Han <chuanhua.han@nxp.com>
-Cc:     leoyang.li@nxp.com, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] arm64: dts: ls1088a: Fix incorrect I2C clock divider
-Message-ID: <20190819074327.GD5999@X250>
-References: <20190806084223.23543-1-chuanhua.han@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190806084223.23543-1-chuanhua.han@nxp.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S1727002AbfHSHqQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:46:16 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:58499 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725846AbfHSHqQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:46:16 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x7J7jZ2B003037;
+        Mon, 19 Aug 2019 16:45:35 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x7J7jZ2B003037
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566200736;
+        bh=PTT95AzOj8pXHNHkWmOjjuSXo/Qr4YIEL7ZDUlRqoLI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=1vPZvMBHbm4/61iUH7vWpiMO59L7MLxOvF2PZ9z6LKpSGoF17OcwcXuFJnlBbdryN
+         ExQDu+RiNlj1w0y+95RChuX9E8UMeEEzPlBwLGqX1viz1FEg9F3bpcOmukREPCAV1B
+         9HoDyGBGKd8HZW3LZySHOuRYvx8KsXQwbVQLwf7RNcQjDHONZWTfMWq7ggiWeahOV0
+         bXhmKKd6rDHLyAik+9RQCYjMLBo3LBaNGO2ZLhZW4ITN+RKyzB4fxGtAIjErNBcYZ8
+         ZfXiy6HYCTelyQ/9QbxEVlCvowXavSpR1OonMECljPPGuS3cHx3veKduicrsLQdNXO
+         3walVUj1I/0ag==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] irqchip: add include guard to irq-partition-percpu.h
+Date:   Mon, 19 Aug 2019 16:45:34 +0900
+Message-Id: <20190819074534.13028-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 04:42:20PM +0800, Chuanhua Han wrote:
-> Ls1088a platform, the i2c input clock is actually platform pll CLK / 8
-> (this is the hardware connection), other clock divider can not get the
-> correct i2c clock, resulting in the output of SCL pin clock is not
-> accurate.
-> 
-> Signed-off-by: Chuanhua Han <chuanhua.han@nxp.com>
+Add a header include guard just in case.
 
-Applied all, thanks.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ include/linux/irqchip/irq-partition-percpu.h | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/include/linux/irqchip/irq-partition-percpu.h b/include/linux/irqchip/irq-partition-percpu.h
+index a783ddb58444..2f6ae7551748 100644
+--- a/include/linux/irqchip/irq-partition-percpu.h
++++ b/include/linux/irqchip/irq-partition-percpu.h
+@@ -4,6 +4,9 @@
+  * Author: Marc Zyngier <marc.zyngier@arm.com>
+  */
+ 
++#ifndef __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H
++#define __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H
++
+ #include <linux/fwnode.h>
+ #include <linux/cpumask.h>
+ #include <linux/irqdomain.h>
+@@ -46,3 +49,5 @@ struct irq_domain *partition_get_domain(struct partition_desc *dsc)
+ 	return NULL;
+ }
+ #endif
++
++#endif /* __LINUX_IRQCHIP_IRQ_PARTITION_PERCPU_H */
+-- 
+2.17.1
+
