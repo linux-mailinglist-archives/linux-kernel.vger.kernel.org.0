@@ -2,67 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADACE91E41
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:46:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AE1991E47
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:49:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfHSHpb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:45:31 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:51448 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725846AbfHSHpa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:45:30 -0400
-Received: from zn.tnic (p200300EC2F04B700DD16340F367BA899.dip0.t-ipconnect.de [IPv6:2003:ec:2f04:b700:dd16:340f:367b:a899])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A116D1EC0B6E;
-        Mon, 19 Aug 2019 09:45:29 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1566200729;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=0dkuKpXpNOV2CcoIwLeUmjN7fWrdSqx1Cdg+eS5av44=;
-        b=DXoq3HNHEGcuz8L5ZvvJ4H0sxCrtY24lnJeXrwKWHwcSJ5j+y890QAxrh9QbHhkMbW9/qZ
-        ay48PC1OsZae02KJhB3+BgzS3uGfP9l1kL3OGjfXyBFVKucuuit5Emq3lj0BjWS97Z0571
-        sqrU9UTmfkjNSb+jqsJeGXD/baBfBu8=
-Date:   Mon, 19 Aug 2019 09:46:14 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     "Zhao, Yakui" <yakui.zhao@intel.com>, devel@driverdev.osuosl.org,
-        Li@osuosl.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        Jason Chen CJ <jason.cj.chen@intel.com>,
-        Liu Shuo <shuo.a.liu@intel.com>, Fei <lei1.li@intel.com>
-Subject: Re: [RFC PATCH 08/15] drivers/acrn: add VM memory management for
- ACRN char device
-Message-ID: <20190819074614.GD4841@zn.tnic>
-References: <1565922356-4488-1-git-send-email-yakui.zhao@intel.com>
- <1565922356-4488-9-git-send-email-yakui.zhao@intel.com>
- <20190816124757.GW1974@kadam>
- <8b909c22-3873-2b5d-4845-1fee1a5d81ce@intel.com>
- <20190819073958.GC4451@kadam>
+        id S1726858AbfHSHtR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:49:17 -0400
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:37816 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfHSHtR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:49:17 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id BA29F3FC0E;
+        Mon, 19 Aug 2019 09:49:14 +0200 (CEST)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=DxAobbEa;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+X-Spam-Flag: NO
+X-Spam-Score: -2.099
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
+        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
+        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
+        autolearn=ham autolearn_force=no
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=shipmail.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 0HAfcH4O8cUi; Mon, 19 Aug 2019 09:49:13 +0200 (CEST)
+Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
+        (Authenticated sender: mb878879)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id EA75B3FBF0;
+        Mon, 19 Aug 2019 09:49:12 +0200 (CEST)
+Received: from linlap1.host.shipmail.org (unknown [94.191.144.211])
+        by mail1.shipmail.org (Postfix) with ESMTPSA id F2593360142;
+        Mon, 19 Aug 2019 09:49:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
+        t=1566200952; bh=wYe1IOQ9iDHjA70JntB0b4pIr8deOWfZxLROEjA/YAI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DxAobbEacgLm6BMTSfEQQQITyMv9QnsVj2KK5Fur3uH7Yulj3pdcnYpNmm4UtZ1BC
+         uBstnRKnNpcxdJxT06VZ5dtU/Eq3TFtkQXui0t7JGVKf0hAYNPQ+qie/r0cZ9LeSoQ
+         Kg3tiimoKSiHuw10F385TRF5XHn5ROjzNIMqsZLk=
+Subject: Re: [PATCH 2/4] x86/vmware: Add a header file for hypercall
+ definitions
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Doug Covelli <dcovelli@vmware.com>
+References: <20190818143316.4906-1-thomas_os@shipmail.org>
+ <20190818143316.4906-3-thomas_os@shipmail.org>
+ <20190818201942.GC29353@zn.tnic>
+ <b8875504-b112-ba5e-13d7-6abb51c01121@shipmail.org>
+ <20190819062552.GC4841@zn.tnic>
+From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Organization: VMware Inc.
+Message-ID: <970d2bb6-ab29-315f-f5d8-5d11095859af@shipmail.org>
+Date:   Mon, 19 Aug 2019 09:49:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190819073958.GC4451@kadam>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190819062552.GC4841@zn.tnic>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 10:39:58AM +0300, Dan Carpenter wrote:
-> On Mon, Aug 19, 2019 at 01:32:54PM +0800, Zhao, Yakui wrote:
-> > In fact as this driver is mainly used for embedded IOT usage, it doesn't
-> > handle the complex cleanup when such error is encountered. Instead the clean
-> > up is handled in free_guest_vm.
-> 
-> A use after free here seems like a potential security problem.  Security
-> matters for IoT...  :(
+On 8/19/19 8:25 AM, Borislav Petkov wrote:
+> On Mon, Aug 19, 2019 at 12:28:05AM +0200, Thomas Hellström (VMware) wrote:
+>> Unfortunately we can't use it, because it's unconditionally set on AMD even
+>> if the VMware hypervisor
+>> doesn't support it (by version or by configuration).
+> AMD sets it because they don't support VMCALL. Nothing stops us from
+> making that conditional depending on what the hypervisor can/supports.
+> I'm thinking it would be even cleaner if we use those two flags:
+>
+> X86_FEATURE_VMMCALL
+> X86_FEATURE_VMCALL
+>
+> to denote hw support for either one or the other instruction and switch
+> accordingly. Just like KVM does.
+>
+> In your case, the HV would set the preferred flag in
+> arch/x86/kernel/cpu/vmware.c - just like the others do in their
+> respective CPU init files - and the alternatives code would switch to it
+> when it runs.
+>
+> Or is there more? :)
 
-Yeah, the "S" in "IoT" stands for security.
+Yes, unfortunately. I agree this is is the cleanest solution and my 
+first choice. It would work for VMware, but AFAICT it might break setups 
+of other hypervisors running at least the vmmouse driver. Quick googling 
+tells me there are likely QEMU/KVM setups that do this. My thinking is 
+they would have to set X86_FEATURE_VMMCALL on AMD to get the 
+kvm_hypercall right, but that would mean the vmmouse hypercall also uses 
+vmmcall, which they probably haven't implemented (yet). So the safe way 
+would be to use at least XF86_FEATURE_VMW_VMMCALL + XF86_FEATURE_VMCALL 
+until that has happened.
 
--- 
-Regards/Gruss,
-    Boris.
+/Thomas
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+
+>
+> Thx.
+>
+
