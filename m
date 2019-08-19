@@ -2,36 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E12592500
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:30:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E67F9250C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:32:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727714AbfHSNac (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 09:30:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47241 "EHLO
+        id S1727623AbfHSNcE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 09:32:04 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47258 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727642AbfHSNac (ORCPT
+        with ESMTP id S1727524AbfHSNcE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:30:32 -0400
+        Mon, 19 Aug 2019 09:32:04 -0400
 Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzhjt-0004ZC-Hq; Mon, 19 Aug 2019 15:30:25 +0200
-Date:   Mon, 19 Aug 2019 15:30:24 +0200 (CEST)
+        id 1hzhlN-0004b4-S3; Mon, 19 Aug 2019 15:31:57 +0200
+Date:   Mon, 19 Aug 2019 15:31:57 +0200 (CEST)
 From:   Thomas Gleixner <tglx@linutronix.de>
-To:     lantianyu1986@gmail.com
-cc:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
-        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
-        sashal@kernel.org, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        x86@kernel.org, michael.h.kelley@microsoft.com,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-hyperv@vger.kernel.org, vkuznets@redhat.com
-Subject: Re: [PATCH V3 1/3] x86/Hyper-V: Fix definition of struct
- hv_vp_assist_page
-In-Reply-To: <20190819131737.26942-2-Tianyu.Lan@microsoft.com>
-Message-ID: <alpine.DEB.2.21.1908191520110.2147@nanos.tec.linutronix.de>
-References: <20190819131737.26942-1-Tianyu.Lan@microsoft.com> <20190819131737.26942-2-Tianyu.Lan@microsoft.com>
+To:     Mike Lothian <mike@fireburn.co.uk>
+cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "H.J. Lu" <hjl.tools@gmail.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>, bhe@redhat.com,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, lijiang@redhat.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        the arch/x86 maintainers <x86@kernel.org>
+Subject: Re: [PATCH v3 1/2] x86/mm: Identify the end of the kernel area to
+ be reserved
+In-Reply-To: <CAHbf0-E9ye1a0uuU4p-bRJhgEpQhceo6X-qR8hoBWoiOHajh2A@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1908191530560.2147@nanos.tec.linutronix.de>
+References: <20190723130513.GA25290@kroah.com> <alpine.DEB.2.21.1907231519430.1659@nanos.tec.linutronix.de> <20190723134454.GA7260@kroah.com> <20190724153416.GA27117@kroah.com> <alpine.DEB.2.21.1907241746010.1791@nanos.tec.linutronix.de> <20190724155735.GC5571@kroah.com>
+ <alpine.DEB.2.21.1907241801320.1791@nanos.tec.linutronix.de> <20190724161634.GB10454@kroah.com> <alpine.DEB.2.21.1907242153320.1791@nanos.tec.linutronix.de> <alpine.DEB.2.21.1907242208590.1791@nanos.tec.linutronix.de> <20190725062447.GB5647@kroah.com>
+ <CAHbf0-FenMwa6uMqpD_fJZLU3YKviOcMe_pBh8oWmUPoUYk_LA@mail.gmail.com> <CAHbf0-GpJY6SGz=9yXEh28vvBuHP-c_fKqP6u60Ag3et6FCPrg@mail.gmail.com> <alpine.DEB.2.21.1908191504570.2147@nanos.tec.linutronix.de>
+ <CAHbf0-E9ye1a0uuU4p-bRJhgEpQhceo6X-qR8hoBWoiOHajh2A@mail.gmail.com>
 User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
@@ -40,22 +46,15 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019, lantianyu1986@gmail.com wrote:
-
-> From: Tianyu Lan <Tianyu.Lan@microsoft.com>
+On Mon, 19 Aug 2019, Mike Lothian wrote:
+>
+> I'm using GCC 9.2, binutils 2.32. I used to use the gold linker but
+> I've just switched back to using ld.bfd based on this discussion
 > 
-> The struct hv_vp_assist_page was defined incorrectly.
-> The "vtl_control" should be u64[3], "nested_enlightenments
+> My .config can be found at:
+> https://raw.githubusercontent.com/FireBurn/KernelStuff/master/dot_config_tip
 
-s/The /The member/
-
-> _control" should be a u64 and there is 7 reserved bytes
-
-s/is/are/
-
-> following "enlighten_vmentry". This patch is to fix it.
-
-git grep 'This patch' Documentation/process/
+Does this combo successfully build 5.2 or is this a general problem?
 
 Thanks,
 
