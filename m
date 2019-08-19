@@ -2,150 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0FC7D91DA6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:16:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3EEC91D9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:16:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726925AbfHSHQ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:16:56 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:33385 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfHSHQz (ORCPT
+        id S1726817AbfHSHQU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:16:20 -0400
+Received: from mx0b-0014ca01.pphosted.com ([208.86.201.193]:14652 "EHLO
+        mx0a-0014ca01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726186AbfHSHQT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:16:55 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so648273pfq.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 00:16:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=whlU2jKeb6W06HKboMelpiZARB7kfwOYMGifREsRS7o=;
-        b=n+kO1OzbnDNabC44hdvAoZ6wWxOeF6J3oy6z/+1xpoK1AKEx/oeTmIcJ/47kuW+vYo
-         TH9NeH/qAQIOhctHs9uE5ifuIC/ZB6LazcH76PyV3RQrSHwAjyWpKxWm9FJZiOFyOKt4
-         SVRkQtzzAxxdceBXUOg4JWj07de3M8XCDbx7w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=whlU2jKeb6W06HKboMelpiZARB7kfwOYMGifREsRS7o=;
-        b=FhCl1zNEaQGpr3DIN58eKBoj2QJalOVAAwSFY7FkccxkByXkvCfnWaSa3vRsteppjU
-         RIe3T2oFoBv3NyhAtKNo/53urWuhmZrwZqmabjW9hL6Sv9iNjHmZFSC0+rhdj4N1BaJI
-         Uv9zhs6A7v+4v5YnDVvlV+l23A5kal6vwHFS4BmADghgFXmZtQXJ9yp2ILwyyhOM/gXe
-         2MY3Mleq+beZKFAEBBErksFamtfTFCst9K4mEVkBap5cqx++mQLnx3+luw7TaxxFhwYT
-         aB0bGwG2QIEeLcZPQEFrQmhjQGgGe2AAb/W0IEFU53eSjz5ivazj6t4rao1cxXDVlQ0A
-         6Bdg==
-X-Gm-Message-State: APjAAAVJm8glVLwXcKAcAicicKX5fQjQ9JjTjGrDUYG6kfq309j1Ssox
-        kYiSer/600YK89e0D3ge4B9Uig==
-X-Google-Smtp-Source: APXvYqwFY2xA6JURjP5ZOBOEfAL1xBbz+vV2fRyvwDoFXo8gURWLM936jFkZ0hWWWKqy5/YP/nJ5VA==
-X-Received: by 2002:a65:614a:: with SMTP id o10mr18316590pgv.407.1566199014955;
-        Mon, 19 Aug 2019 00:16:54 -0700 (PDT)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id y9sm14691341pfn.152.2019.08.19.00.16.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Aug 2019 00:16:54 -0700 (PDT)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Hsin-Yi Wang <hsinyi@chromium.org>,
-        James Morse <james.morse@arm.com>,
-        Andrew Murray <andrew.murray@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH v8 2/3] fdt: add support for rng-seed
-Date:   Mon, 19 Aug 2019 15:16:04 +0800
-Message-Id: <20190819071602.139014-3-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190819071602.139014-1-hsinyi@chromium.org>
-References: <20190819071602.139014-1-hsinyi@chromium.org>
+        Mon, 19 Aug 2019 03:16:19 -0400
+Received: from pps.filterd (m0042333.ppops.net [127.0.0.1])
+        by mx0b-0014ca01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7J7DlYQ020610;
+        Mon, 19 Aug 2019 00:16:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=proofpoint;
+ bh=vufHKKxWYE/lUOX+3AiRWc8sRlXb37jZDWnMQ74KYJs=;
+ b=BTZA2CqATiRJ99qGZKBf1RgQ3MWMRVo1xR8X8+r1jJDFT8sfT9xFaQZnmcqS3NqITRZE
+ fF9z5yzZrBjnBEjK0eM6bGXZpz/b+Y+McJPfypjR4jf7IYa6KfnZV3oeY+C1YVx2Ix8Q
+ Jn+GaCPQoUU0OFmm9gnRwTI1z9PiUDi3Golb5I+KiXICuXGbxg4mluAKHY70WYWaW3Xt
+ pC801jn9Zm22x8p05gc3PFCphEA9MQ1CJ/ABWFEqk3dUoNWDPvbXLJL+cSSv2oYA07b9
+ i28OY2WSti8A5VFl6jzRQBWLMmlqJBDJCVJeQ/Py/5L0h6Ijyf9O1sBRuBW9+80jYbiS IA== 
+Authentication-Results: cadence.com;
+        spf=pass smtp.mailfrom=jank@cadence.com
+Received: from nam04-sn1-obe.outbound.protection.outlook.com (mail-sn1nam04lp2059.outbound.protection.outlook.com [104.47.44.59])
+        by mx0b-0014ca01.pphosted.com with ESMTP id 2ued5wnxhp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 19 Aug 2019 00:16:07 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FqFb4imVva6Ve9NyZE/5TUbp1QhpyNUCDklOYXgZInVZ4Tb94Rok8/rCFtcqSTpg7nDEy7S2ljE7A3TR2qVyTkTz3ouryCNqgWikurOeRxvPaJHi5Ppkim1OObGdlpTTbW6iGiuZxpNPc9wMI9ooIQrkk4oeKyJevjMCHj24IfWaXx/UOhD9dQA15Fh+45SWDW+h3wgfNx+aXWmNyElNpyDvaof9cYyyCB1ILJMYZoBRWJ7A2uGgG6N8ZNElXEISry7ZIE4bnyog7wfPGR/zUMMPmllRBLR1MHw+a4UF8KDqZWSwm8Je0VJrKlrSuBQSU4ai+/UO0iXKuYf83/+wVQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vufHKKxWYE/lUOX+3AiRWc8sRlXb37jZDWnMQ74KYJs=;
+ b=SrhPWZky19WDSK/22/EVPRFsvt6XUlN1XhbJ9VuiN4YhDmz/vHMuJ7UsPQKBI2aEENDpUQUqeVjibNVbWg3pYYM7kklUqN8MwVMAbDO3yZfCu0aBMMIOAcP+5SaeI/dk/AGPA+yDocgBXTSxyQ2HXsiCc9DiIFn5ZzFHCrIL7h5WCxa9/kssPcLUTH/eHvN2zXnoJ9pLkAQ2ft/grZ42d2oFYYbwhxn2wr1/XLQ6OYtxzIYZXNOOh+cP7uhzMVgPjrf6MQmywot2g22iN+HUswro4oeFOroL/UGEgnyaGsX+dkjM35BruqFdZYpQMR0EVVyZY48QXXsbgVLA5DIdow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=cadence.com; dmarc=pass action=none header.from=cadence.com;
+ dkim=pass header.d=cadence.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cadence.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vufHKKxWYE/lUOX+3AiRWc8sRlXb37jZDWnMQ74KYJs=;
+ b=IxPB8BKnyCiGqtjIaoPi/7jNk0bedQwocnV0yJpHrBywI/ZID9nm8slb7R13bdwkHniJeqmS1028CGahiU9CyERg/+vBRnS/66EUToRfAmwOknEQqe8HzuQ5oTN8ngXm9T7aFgk/33tHtuM/IOcSpG7Fe698+8cFwFzuaaJkeIo=
+Received: from CY1PR07MB2521.namprd07.prod.outlook.com (10.167.16.12) by
+ CY1PR07MB2539.namprd07.prod.outlook.com (10.167.8.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.13; Mon, 19 Aug 2019 07:16:04 +0000
+Received: from CY1PR07MB2521.namprd07.prod.outlook.com
+ ([fe80::2cc9:1e25:81ae:bc20]) by CY1PR07MB2521.namprd07.prod.outlook.com
+ ([fe80::2cc9:1e25:81ae:bc20%11]) with mapi id 15.20.2178.018; Mon, 19 Aug
+ 2019 07:16:04 +0000
+From:   Jan Kotas <jank@cadence.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Jan Kotas <jank@cadence.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "mchehab@kernel.org" <mchehab@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/3] media: dt-bindings: Update bindings for Cadence
+ CSI2RX version 2.1
+Thread-Topic: [PATCH 1/3] media: dt-bindings: Update bindings for Cadence
+ CSI2RX version 2.1
+Thread-Index: AQHVQtN9gPRtTjsHTUOk6ph3I74Brab+aoUAgAPLv4A=
+Date:   Mon, 19 Aug 2019 07:16:04 +0000
+Message-ID: <A3DAF408-887A-4913-B620-959BCD4E98D8@global.cadence.com>
+References: <20190725102648.13445-1-jank@cadence.com>
+ <20190725102648.13445-2-jank@cadence.com> <20190816211802.GA12657@bogus>
+In-Reply-To: <20190816211802.GA12657@bogus>
+Accept-Language: en-US, pl-PL
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [185.217.253.59]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c3508351-fa7c-496e-ef6d-08d7247518d2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CY1PR07MB2539;
+x-ms-traffictypediagnostic: CY1PR07MB2539:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CY1PR07MB25395E8FE0BE9C1DFF29D812D0A80@CY1PR07MB2539.namprd07.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:663;
+x-forefront-prvs: 0134AD334F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39850400004)(136003)(396003)(376002)(366004)(346002)(24433001)(199004)(189003)(36092001)(6506007)(71200400001)(64756008)(81166006)(8676002)(91956017)(6436002)(26005)(8936002)(66946007)(478600001)(81156014)(2906002)(99286004)(6246003)(7736002)(53546011)(4326008)(15650500001)(102836004)(76176011)(14454004)(305945005)(11346002)(6916009)(486006)(476003)(71190400001)(229853002)(186003)(76116006)(446003)(86362001)(25786009)(53936002)(316002)(33656002)(66446008)(5660300002)(66476007)(3846002)(4744005)(6512007)(66066001)(6486002)(6116002)(54906003)(66556008)(14444005)(256004);DIR:OUT;SFP:1101;SCL:1;SRVR:CY1PR07MB2539;H:CY1PR07MB2521.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: cadence.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: VlGJRDDqMRdKcr6X8S9DV+ctCcHsAG4NFJAcQ+XbZlPP4ZMovJE4GWsuZuA0cPPchaj/ZAeLejdpxluPVD9iTP7kvBsuEnTF5ZbrUDciLUTmaIcsM46XnAqwOjx7uT1BnDdiAk1HF3VnKdI4h8A4En7RsNiU7pEpVFfOsFCoULMA+tBV1m3f/56r3rKYlJSdv5JKngrGAKML1qh0er/+BZbI5VJ5DItaUygZ4d4LMY7K+Iaclsu/551Zk80PFR1WOCdoHnHUOp5dWi13K+0JUlrg7ZMZgR/kjSni08I3Y2z4LryHetyW5j2g+YMU2HzisJ8PyVZ221q+vmzIZyyvhLGu5+kS7MHEW5m+77SqXQzJn4eneRMy+tNBhFDfcuWj281M6LmCAhNbco3nSRvS1MQVBogClFJ9ICLDcR5b7vE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <727375F62A61604DBA21FABDFB9748E1@namprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: cadence.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3508351-fa7c-496e-ef6d-08d7247518d2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2019 07:16:04.0305
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: d36035c5-6ce6-4662-a3dc-e762e61ae4c9
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 6y//8lD9WYiFt7TEa5iyW1CxbFf3O5gHYW5HqUUswm7vuNvkpJLm4AFJMKHbeBHDApLGYspvwkNqXUdWI0ztxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR07MB2539
+X-Proofpoint-SPF-Result: pass
+X-Proofpoint-SPF-Record: v=spf1 include:spf.smktg.jp include:_spf.salesforce.com
+ include:mktomail.com include:spf-0014ca01.pphosted.com
+ include:spf.protection.outlook.com include:auth.msgapp.com
+ include:spf.mandrillapp.com ~all
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_02:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_check_notspam policy=outbound_check score=0
+ priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0
+ spamscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190083
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introducing a chosen node, rng-seed, which is an entropy that can be
-passed to kernel called very early to increase initial device
-randomness. Bootloader should provide this entropy and the value is
-read from /chosen/rng-seed in DT.
-
-Obtain of_fdt_crc32 for CRC check after early_init_dt_scan_nodes(),
-since early_init_dt_scan_chosen() would modify fdt to erase rng-seed.
-
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
-Change from v7:
-obtain of_fdt_crc32 after early_init_dt_scan_nodes().
----
- drivers/of/fdt.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index 9cdf14b9aaab..97a75996993c 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -24,6 +24,7 @@
- #include <linux/debugfs.h>
- #include <linux/serial_core.h>
- #include <linux/sysfs.h>
-+#include <linux/random.h>
- 
- #include <asm/setup.h>  /* for COMMAND_LINE_SIZE */
- #include <asm/page.h>
-@@ -1044,6 +1045,7 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- {
- 	int l;
- 	const char *p;
-+	const void *rng_seed;
- 
- 	pr_debug("search \"chosen\", depth: %d, uname: %s\n", depth, uname);
- 
-@@ -1078,6 +1080,14 @@ int __init early_init_dt_scan_chosen(unsigned long node, const char *uname,
- 
- 	pr_debug("Command line is: %s\n", (char*)data);
- 
-+	rng_seed = of_get_flat_dt_prop(node, "rng-seed", &l);
-+	if (rng_seed && l > 0) {
-+		add_device_randomness(rng_seed, l);
-+
-+		/* try to clear seed so it won't be found. */
-+		fdt_nop_property(initial_boot_params, node, "rng-seed");
-+	}
-+
- 	/* break now */
- 	return 1;
- }
-@@ -1166,8 +1176,6 @@ bool __init early_init_dt_verify(void *params)
- 
- 	/* Setup flat device-tree pointer */
- 	initial_boot_params = params;
--	of_fdt_crc32 = crc32_be(~0, initial_boot_params,
--				fdt_totalsize(initial_boot_params));
- 	return true;
- }
- 
-@@ -1197,6 +1205,8 @@ bool __init early_init_dt_scan(void *params)
- 		return false;
- 
- 	early_init_dt_scan_nodes();
-+	of_fdt_crc32 = crc32_be(~0, initial_boot_params,
-+				fdt_totalsize(initial_boot_params));
- 	return true;
- }
- 
--- 
-2.20.1
-
+DQoNCj4gT24gMTYgQXVnIDIwMTksIGF0IDIzOjE4LCBSb2IgSGVycmluZyA8cm9iaEBrZXJuZWwu
+b3JnPiB3cm90ZToNCj4gDQo+IA0KPiBPbiBUaHUsIEp1bCAyNSwgMjAxOSBhdCAxMToyNjo0NkFN
+ICswMTAwLCBKYW4gS290YXMgd3JvdGU6DQo+PiBUaGlzIHBhdGNoIGFkZHMgYSBEVCBiaW5kaW5n
+cyBkb2N1bWVudGF0aW9uIGZvcg0KPj4gQ2FkZW5jZSBDU0kyUlggdjIuMSBjb250cm9sbGVyLg0K
+PiANCj4gQW5kIDEuMz8NCg0KT0ssIEnigJlsbCB1cGRhdGUgdGhlIGNvbW1pdCBkZXNjcmlwdGlv
+bi4NCj4+IFJlcXVpcmVkIHByb3BlcnRpZXM6DQo+PiAtICAtIGNvbXBhdGlibGU6IG11c3QgYmUg
+c2V0IHRvICJjZG5zLGNzaTJyeCIgYW5kIGFuIFNvQy1zcGVjaWZpYyBjb21wYXRpYmxlDQo+PiAr
+ICAtIGNvbXBhdGlibGU6IG11c3QgYmUgc2V0IHRvICJjZG5zLGNzaTJyeCIgb3IgImNkbnMsY3Np
+MnJ4LTEuMyINCj4+ICsgICAgZm9yIHZlcnNpb24gMS4zIG9mIHRoZSBjb250cm9sbGVyLCAiY2Ru
+cyxjc2kycngtMi4xIiBmb3IgdjIuMQ0KPj4gKyAgICBhbmQgYW4gU29DLXNwZWNpZmljIGNvbXBh
+dGlibGUNCj4gDQo+IFRoaXMgd29yZGluZyBpcyBub3cgbm90IGNsZWFyIHRoYXQgYW4gU29DLXNw
+ZWNpZmljIGNvbXBhdGlibGUgaXMgYWx3YXlzIA0KPiByZXF1aXJlZCBvciBqdXN0IGZvciAyLjEu
+IFBsZWFzZSBmb3JtYXQgb25lIGNvbXBhdGlibGUgcGVyIGxpbmUuDQoNCk9LLCBJIHdpbGwgZml4
+IGl0IGluIHYyLg0KDQpUaGFuayB5b3UgZm9yIHRoZSBjb21tZW50cy4NCg0KUmVnYXJkcywNCkph
+bg0KDQoNCg==
