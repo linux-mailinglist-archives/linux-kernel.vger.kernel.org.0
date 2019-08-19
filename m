@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0474948EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC838948F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfHSPr3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:47:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47697 "EHLO
+        id S1728262AbfHSPrr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:47:47 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47704 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727902AbfHSPps (ORCPT
+        with ESMTP id S1727907AbfHSPps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Aug 2019 11:45:48 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzjqr-0006xX-NM; Mon, 19 Aug 2019 17:45:45 +0200
-Message-Id: <20190819143803.676155761@linutronix.de>
+        id 1hzjqs-0006xp-2v; Mon, 19 Aug 2019 17:45:46 +0200
+Message-Id: <20190819143803.772511300@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:32:05 +0200
+Date:   Mon, 19 Aug 2019 16:32:06 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -26,7 +26,7 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         John Stultz <john.stultz@linaro.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 24/44] posix-cpu-timers: Create a container struct
+Subject: [patch 25/44] sched: Move struct task_cputime to types.h
 References: <20190819143141.221906747@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -35,227 +35,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Per task/process data of posix CPU timers is all over the place which
-makes the code hard to follow and requires ifdeffery.
-
-Create a container to hold all this information in one place, so data is
-consolidated and the ifdeffery can be confined to the posix timer header
-file and removed from places like fork.
-
-As a first step, move the cpu_timers list head array into the new struct
-and clean up the initializers and simplify fork. The remaining #ifdef in
-fork will be removed later.
+For upcoming posix-timer changes to avoid include recursion hell.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/init_task.h      |   11 -----------
- include/linux/posix-timers.h   |   33 +++++++++++++++++++++++++++++++++
- include/linux/sched.h          |    3 ++-
- include/linux/sched/signal.h   |    4 ++--
- kernel/fork.c                  |   11 ++++-------
- kernel/time/posix-cpu-timers.c |   20 ++++++++++----------
- 6 files changed, 51 insertions(+), 31 deletions(-)
+ include/linux/sched.h       |   17 +----------------
+ include/linux/sched/types.h |   21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 16 deletions(-)
 
---- a/include/linux/init_task.h
-+++ b/include/linux/init_task.h
-@@ -36,17 +36,6 @@ extern struct cred init_cred;
- #define INIT_PREV_CPUTIME(x)
- #endif
- 
--#ifdef CONFIG_POSIX_TIMERS
--#define INIT_CPU_TIMERS(s)						\
--	.cpu_timers = {							\
--		LIST_HEAD_INIT(s.cpu_timers[0]),			\
--		LIST_HEAD_INIT(s.cpu_timers[1]),			\
--		LIST_HEAD_INIT(s.cpu_timers[2]),			\
--	},
--#else
--#define INIT_CPU_TIMERS(s)
--#endif
--
- #define INIT_TASK_COMM "swapper"
- 
- /* Attach to the init_task data structure for proper alignment */
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -62,6 +62,39 @@ static inline int clockid_to_fd(const cl
- 	return ~(clk >> 3);
- }
- 
-+/**
-+ * posix_cputimers - Container for posix CPU timer related data
-+ * @cpu_timers:		List heads to queue posix CPU timers
-+ *
-+ * Used in task_struct and signal_struct
-+ */
-+struct posix_cputimers {
-+	struct list_head	cpu_timers[CPUCLOCK_MAX];
-+};
-+
-+static inline void posix_cputimers_init(struct posix_cputimers *pct)
-+{
-+	INIT_LIST_HEAD(&pct->cpu_timers[0]);
-+	INIT_LIST_HEAD(&pct->cpu_timers[1]);
-+	INIT_LIST_HEAD(&pct->cpu_timers[2]);
-+}
-+
-+#ifdef CONFIG_POSIX_TIMERS
-+/* Init task static initializer */
-+#define INIT_CPU_TIMERLISTS(c)	{					\
-+	LIST_HEAD_INIT(c.cpu_timers[0]),				\
-+	LIST_HEAD_INIT(c.cpu_timers[1]),				\
-+	LIST_HEAD_INIT(c.cpu_timers[2]),				\
-+}
-+
-+#define INIT_CPU_TIMERS(s)						\
-+	.posix_cputimers = {						\
-+		.cpu_timers = INIT_CPU_TIMERLISTS(s.posix_cputimers),	\
-+	},
-+#else
-+#define INIT_CPU_TIMERS(s)
-+#endif
-+
- #define REQUEUE_PENDING 1
- 
- /**
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -28,6 +28,7 @@
+@@ -25,6 +25,7 @@
+ #include <linux/resource.h>
+ #include <linux/latencytop.h>
+ #include <linux/sched/prio.h>
++#include <linux/sched/types.h>
  #include <linux/signal_types.h>
  #include <linux/mm_types_task.h>
  #include <linux/task_io_accounting.h>
-+#include <linux/posix-timers.h>
- #include <linux/rseq.h>
- 
- /* task_struct member predeclarations (sorted alphabetically): */
-@@ -878,7 +879,7 @@ struct task_struct {
- 
- #ifdef CONFIG_POSIX_TIMERS
- 	struct task_cputime		cputime_expires;
--	struct list_head		cpu_timers[3];
-+	struct posix_cputimers		posix_cputimers;
+@@ -245,22 +246,6 @@ struct prev_cputime {
  #endif
+ };
  
- 	/* Process credentials: */
---- a/include/linux/sched/signal.h
-+++ b/include/linux/sched/signal.h
-@@ -9,6 +9,7 @@
- #include <linux/sched/task.h>
- #include <linux/cred.h>
- #include <linux/refcount.h>
-+#include <linux/posix-timers.h>
- 
- /*
-  * Types defining task->signal and task->sighand and APIs using them:
-@@ -151,8 +152,7 @@ struct signal_struct {
- 	/* Earliest-expiration cache. */
- 	struct task_cputime cputime_expires;
- 
--	struct list_head cpu_timers[3];
+-/**
+- * struct task_cputime - collected CPU time counts
+- * @utime:		time spent in user mode, in nanoseconds
+- * @stime:		time spent in kernel mode, in nanoseconds
+- * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
+- *
+- * This structure groups together three kinds of CPU time that are tracked for
+- * threads and thread groups.  Most things considering CPU time want to group
+- * these counts together and treat all three of them in parallel.
+- */
+-struct task_cputime {
+-	u64				utime;
+-	u64				stime;
+-	unsigned long long		sum_exec_runtime;
+-};
 -
-+	struct posix_cputimers posix_cputimers;
- #endif
- 
- 	/* PID/PID hash table linkage. */
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1523,6 +1523,7 @@ void __cleanup_sighand(struct sighand_st
-  */
- static void posix_cpu_timers_init_group(struct signal_struct *sig)
- {
-+	struct posix_cputimers *pct = &sig->posix_cputimers;
- 	unsigned long cpu_limit;
- 
- 	cpu_limit = READ_ONCE(sig->rlim[RLIMIT_CPU].rlim_cur);
-@@ -1531,10 +1532,7 @@ static void posix_cpu_timers_init_group(
- 		sig->cputimer.running = true;
- 	}
- 
--	/* The timer lists. */
--	INIT_LIST_HEAD(&sig->cpu_timers[0]);
--	INIT_LIST_HEAD(&sig->cpu_timers[1]);
--	INIT_LIST_HEAD(&sig->cpu_timers[2]);
-+	posix_cputimers_init(pct);
- }
- #else
- static inline void posix_cpu_timers_init_group(struct signal_struct *sig) { }
-@@ -1649,9 +1647,8 @@ static void posix_cpu_timers_init(struct
- 	tsk->cputime_expires.prof_exp = 0;
- 	tsk->cputime_expires.virt_exp = 0;
- 	tsk->cputime_expires.sched_exp = 0;
--	INIT_LIST_HEAD(&tsk->cpu_timers[0]);
--	INIT_LIST_HEAD(&tsk->cpu_timers[1]);
--	INIT_LIST_HEAD(&tsk->cpu_timers[2]);
+ /* Alternate field names when used on cache expirations: */
+ #define virt_exp			utime
+ #define prof_exp			stime
+--- /dev/null
++++ b/include/linux/sched/types.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_SCHED_TYPES_H
++#define _LINUX_SCHED_TYPES_H
 +
-+	posix_cputimers_init(&tsk->posix_cputimers);
- }
- #else
- static inline void posix_cpu_timers_init(struct task_struct *tsk) { }
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -407,11 +407,11 @@ static void cleanup_timers_list(struct l
-  *
-  * This must be called with the siglock held.
-  */
--static void cleanup_timers(struct list_head *head)
-+static void cleanup_timers(struct posix_cputimers *pct)
- {
--	cleanup_timers_list(head);
--	cleanup_timers_list(++head);
--	cleanup_timers_list(++head);
-+	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_PROF]);
-+	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_VIRT]);
-+	cleanup_timers_list(&pct->cpu_timers[CPUCLOCK_SCHED]);
- }
- 
- /*
-@@ -421,11 +421,11 @@ static void cleanup_timers(struct list_h
-  */
- void posix_cpu_timers_exit(struct task_struct *tsk)
- {
--	cleanup_timers(tsk->cpu_timers);
-+	cleanup_timers(&tsk->posix_cputimers);
- }
- void posix_cpu_timers_exit_group(struct task_struct *tsk)
- {
--	cleanup_timers(tsk->signal->cpu_timers);
-+	cleanup_timers(&tsk->signal->posix_cputimers);
- }
- 
- static inline int expires_gt(u64 expires, u64 new_exp)
-@@ -446,10 +446,10 @@ static void arm_timer(struct k_itimer *t
- 	struct cpu_timer_list *next;
- 
- 	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
--		head = p->cpu_timers;
-+		head = p->posix_cputimers.cpu_timers;
- 		cputime_expires = &p->cputime_expires;
- 	} else {
--		head = p->signal->cpu_timers;
-+		head = p->signal->posix_cputimers.cpu_timers;
- 		cputime_expires = &p->signal->cputime_expires;
- 	}
- 	head += CPUCLOCK_WHICH(timer->it_clock);
-@@ -773,8 +773,8 @@ static inline void check_dl_overrun(stru
- static void check_thread_timers(struct task_struct *tsk,
- 				struct list_head *firing)
- {
-+	struct list_head *timers = tsk->posix_cputimers.cpu_timers;
- 	struct task_cputime *tsk_expires = &tsk->cputime_expires;
--	struct list_head *timers = tsk->cpu_timers;
- 	u64 expires, stime, utime;
- 	unsigned long soft;
- 
-@@ -879,9 +879,9 @@ static void check_process_timers(struct
- 				 struct list_head *firing)
- {
- 	struct signal_struct *const sig = tsk->signal;
-+	struct list_head *timers = sig->posix_cputimers.cpu_timers;
- 	u64 utime, ptime, virt_expires, prof_expires;
- 	u64 sum_sched_runtime, sched_expires;
--	struct list_head *timers = sig->cpu_timers;
- 	struct task_cputime cputime;
- 	unsigned long soft;
- 
++/**
++ * struct task_cputime - collected CPU time counts
++ * @utime:		time spent in user mode, in nanoseconds
++ * @stime:		time spent in kernel mode, in nanoseconds
++ * @sum_exec_runtime:	total time spent on the CPU, in nanoseconds
++ *
++ * This structure groups together three kinds of CPU time that are tracked for
++ * threads and thread groups.  Most things considering CPU time want to group
++ * these counts together and treat all three of them in parallel.
++ */
++struct task_cputime {
++	u64				utime;
++	u64				stime;
++	unsigned long long		sum_exec_runtime;
++};
++
++#endif
 
 
