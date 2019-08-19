@@ -2,91 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC295927E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:04:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CCFED927EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:05:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727806AbfHSPEW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:04:22 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727606AbfHSPEW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:04:22 -0400
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A32EF11A06
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:04:21 +0000 (UTC)
-Received: by mail-wr1-f69.google.com with SMTP id z2so5388184wrt.6
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:04:21 -0700 (PDT)
+        id S1727825AbfHSPFZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:05:25 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:39559 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726366AbfHSPFY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:05:24 -0400
+Received: by mail-pg1-f194.google.com with SMTP id u17so1382899pgi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:05:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:subject:to:cc:references:in-reply-to:mime-version
+         :user-agent:message-id:content-transfer-encoding;
+        bh=2ngrUcm028FTMoHPYwWl4FMwsMbOztEIs+R4QrrR4rw=;
+        b=NpXsGGFiQO2Mz4ORGbsS+ZJTAE+cCEfnpxGV7ZTaS8n+cYKW15FoD17x/Vc1KyFmNH
+         PIDSLvIRG58tREVOAavFge/cofdX4gzRNlE9naek5zb4a89f/kPIGIy+pPd2CIHMli5t
+         dpBhGYbbkDTo9DANgDqNa8zKrZ+xio88LhvAWsdcdNQ20UWUef69za7EvrbIxDQBDFJo
+         jgCu/ZofkAe9DVOZXGNT+y7gpEzMjQQcLgq5vhd7tjWe90JsZefALpQM9YTcVVYnD6A+
+         y7czBeKXh0C3yG8IHs//zk6vWHoi0sMH22tCkTTXHpEI52Zy2pjgK8xTt4SCn9GtawsW
+         7szg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HblrU59w7iq0IMa0UwOfQFmKlzPCrtNFnI+Yo74xiP0=;
-        b=JyHr1+ePYZljUgy0FmE8CtIIfB9gHqE3Dbb6OaNj8xe5r5SkEdbw1xhDWKgws161WL
-         oFCAiSMua+QS7DfVfAMTplu+aM5XBAsiD0ArYRV4bh5BTs8OEL2Piv/WGWqJwc1m4SYy
-         a8ms/9AnktgYzsFBfph+8F5NOdecQ5uibwPuXt7oYepSSn1AzciB1WAbtYrrK7JhiW+R
-         12JBYI0uwB9G98+8aqNZ5hQHTGJmevg3660ysYi8ZJUo165gKSJoTqXCPsMa1ZsBrDyr
-         0jXP0NTe6K+V9F5PZTGGVgQhiMZUI1ZJk5aFgVxxM3M14EfMeXABSD8kUmTdzlQ1zEcq
-         I9jg==
-X-Gm-Message-State: APjAAAUfTdyBlYtPmSKIleqaHW8Uhqk/dbirnaWFUUPTWuLtN00Lxu8w
-        8rCvqR7pN2KbKwSf5ypz7LiHr0ETp0YUhlffUn6NJvBXs/PzF3wbXdvvHNlEEYHigZAotQesDdU
-        nYfc11W0wxpaj4+VhbMg4reAY
-X-Received: by 2002:a1c:e487:: with SMTP id b129mr21681019wmh.93.1566227060297;
-        Mon, 19 Aug 2019 08:04:20 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqzc0OtOrqlpeTuYSxWjcfe1kG3/vPGvpzncWKT+VMlrsoY9w3cJ3MW5RDu5K18iSOaFwLnScg==
-X-Received: by 2002:a1c:e487:: with SMTP id b129mr21680981wmh.93.1566227060020;
-        Mon, 19 Aug 2019 08:04:20 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:8033:56b6:f047:ba4f? ([2001:b07:6468:f312:8033:56b6:f047:ba4f])
-        by smtp.gmail.com with ESMTPSA id r190sm17085048wmf.0.2019.08.19.08.04.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2019 08:04:19 -0700 (PDT)
-Subject: Re: [PATCH RESEND v4 7/9] KVM: VMX: Handle SPP induced vmexit and
- page fault
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com
-Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-8-weijiang.yang@intel.com>
- <5f6ba406-17c4-a552-2352-2ff50569aac0@redhat.com>
-Message-ID: <fb6cd8b4-eee9-6e58-4047-550811bffd58@redhat.com>
-Date:   Mon, 19 Aug 2019 17:04:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
+         :mime-version:user-agent:message-id:content-transfer-encoding;
+        bh=2ngrUcm028FTMoHPYwWl4FMwsMbOztEIs+R4QrrR4rw=;
+        b=SXL54Ak8tBJiMBdD34fVUN/u//yq4K8iIkCrsP4a10NJZIchztzvs0UM+tE327T084
+         BEud+/Q3Rm5df32IsKm2GoFBB0B/Ibr7VPlY1JUPaxtr7zGhUW98U2cH4brqkhpfkERS
+         Dy5VspoBx47jxz1fH0uoY4ddQnrEM7yXDJ8b8dFUafkLemzDzFtCQYU/AHrHgyM7Z+7d
+         JRH7bSGudCKF2R9oAiVJRMyOpT2mGFD943dKq2u/e5FxycR01z0BNWwV02nFHIzQpogI
+         jB1yB3C0PI85i8FHuVsW78IvA7sBF73b8yqH+IVJf9vyqHlKehKZMY3bZ2xAOr07fwn/
+         NoOA==
+X-Gm-Message-State: APjAAAUht8rJoxFzs0j6wQNmVstiVVZ3HknUl9XkZyrJfm+rsNvaUi1d
+        ccvUdmfmwqc/CC8oxUxL1Ks=
+X-Google-Smtp-Source: APXvYqzTv8DMd0Hto6oUfVfrBBvkkCqsCKUum+sxq+xdhkH6KnGHqImWBaBZF1x5ryJuEqdshOhwMQ==
+X-Received: by 2002:a17:90a:bf82:: with SMTP id d2mr10680284pjs.121.1566227123998;
+        Mon, 19 Aug 2019 08:05:23 -0700 (PDT)
+Received: from localhost ([61.68.68.69])
+        by smtp.gmail.com with ESMTPSA id m20sm17596953pff.79.2019.08.19.08.05.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 08:05:23 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 01:05:16 +1000
+From:   Nicholas Piggin <npiggin@gmail.com>
+Subject: Re: [PATCH v3 3/3] powerpc/64: optimise LOAD_REG_IMMEDIATE_SYM()
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Paul Mackerras <paulus@samba.org>
+References: <be2b971c89b1af30d680cedd14e99a83138ef40a.1566223054.git.christophe.leroy@c-s.fr>
+        <92bf50b31f5f78cc76ed055b11a492e8e9e2c731.1566223054.git.christophe.leroy@c-s.fr>
+        <20190819142459.GJ31406@gate.crashing.org>
+In-Reply-To: <20190819142459.GJ31406@gate.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <5f6ba406-17c4-a552-2352-2ff50569aac0@redhat.com>
+User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
+Message-Id: <1566226318.3km27rs0o4.astroid@bobo.none>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/08/19 16:43, Paolo Bonzini wrote:
->> +			/*
->> +			 * Record write protect fault caused by
->> +			 * Sub-page Protection, let VMI decide
->> +			 * the next step.
->> +			 */
->> +			if (spte & PT_SPP_MASK) {
-> Should this be "if (spte & PT_WRITABLE_MASK)" instead?  That is, if the
-> page is already writable, the fault must be an SPP fault.
+Segher Boessenkool's on August 20, 2019 12:24 am:
+> On Mon, Aug 19, 2019 at 01:58:12PM +0000, Christophe Leroy wrote:
+>> -#define LOAD_REG_IMMEDIATE_SYM(reg,expr)	\
+>> -	lis     reg,(expr)@highest;		\
+>> -	ori     reg,reg,(expr)@higher;	\
+>> -	rldicr  reg,reg,32,31;		\
+>> -	oris    reg,reg,(expr)@__AS_ATHIGH;	\
+>> -	ori     reg,reg,(expr)@l;
+>> +#define LOAD_REG_IMMEDIATE_SYM(reg, tmp, expr)	\
+>> +	lis	reg, (expr)@highest;		\
+>> +	lis	tmp, (expr)@__AS_ATHIGH;	\
+>> +	ori	reg, reg, (expr)@higher;	\
+>> +	ori	tmp, reg, (expr)@l;		\
+>> +	rldimi	reg, tmp, 32, 0
+>=20
+> That should be
+>=20
+> #define LOAD_REG_IMMEDIATE_SYM(reg, tmp, expr)	\
+> 	lis	tmp, (expr)@highest;		\
+> 	ori	tmp, tmp, (expr)@higher;	\
+> 	lis	reg, (expr)@__AS_ATHIGH;	\
+> 	ori	reg, reg, (expr)@l;		\
+> 	rldimi	reg, tmp, 32, 0
+>=20
+> (tmp is the high half, reg is the low half, as inputs to that rldimi).
 
-Hmm, no I forgot how SPP works; still, this is *not* correct.  For
-example, if SPP marks part of a page as read-write, but KVM wants to
-write-protect the whole page for access or dirty tracking, that should
-not cause an SPP exit.
+I guess the intention was also to try to fit the independent ops into
+the earliest fetch/issue cycle possible.
 
-So I think that when KVM wants to write-protect the whole page
-(wrprot_ad_disabled_spte) it must also clear PT_SPP_MASK; for example it
-could save it in bit 53 (PT64_SECOND_AVAIL_BITS_SHIFT + 1).  If the
-saved bit is set, fast_page_fault must then set PT_SPP_MASK instead of
-PT_WRITABLE_MASK.  On re-entry this will cause an SPP vmexit;
-fast_page_fault should never trigger an SPP userspace exit on its own,
-all the SPP handling should go through handle_spp.
+#define LOAD_REG_IMMEDIATE_SYM(reg, tmp, expr)	\
+	lis	tmp, (expr)@highest;		\
+	lis	reg, (expr)@__AS_ATHIGH;	\
+	ori	tmp, tmp, (expr)@higher;	\
+	ori	reg, reg, (expr)@l;		\
+	rldimi	reg, tmp, 32, 0
 
-Paolo
+Very cool series though.
+
+Thanks,
+Nick
+=
