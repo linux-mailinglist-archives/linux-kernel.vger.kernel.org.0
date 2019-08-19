@@ -2,144 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E24C79285B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:30:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BCDF5948BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:45:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727341AbfHSPaF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:30:05 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:32805 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726373AbfHSPaE (ORCPT
+        id S1727755AbfHSPpi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:45:38 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47557 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfHSPpi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:30:04 -0400
-Received: by mail-oi1-f194.google.com with SMTP id q10so1611277oij.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:30:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=j8ka/lSpx7x87DLc83+R4USIti/BoN9Ffmdc3jaOX2Q=;
-        b=YbCC/THXJ+jW3CX9FXHClKXeCtKiLUPIuAcslTQaG+QSmimIH99mMK/nFW7Ftl9eQF
-         eDMyAMXlqQzz2qS3NvwOgii1mrdv2rMg1HXXyOTcx1usHidRZyFkmVtsY2ySgpvSqJoa
-         KWUXVre94APcbRzJkR+LWl13Ufg4AltWnGGhsH7wnaPpjq1C2F2QPm8prfNSK9zaCb19
-         WQjUQ5Sioh4i9AkdytmGK5ClbiZRAvEnmdnvGxIQibMG6B0E+VuBhLlTbsyHUEBvy5rp
-         37Gx4fOMHkBIAF9u1Oo5vGmA54Ue429pgpP7/99V+YFAu2vyPhif9dvma00qVEFSWmPz
-         R6xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=j8ka/lSpx7x87DLc83+R4USIti/BoN9Ffmdc3jaOX2Q=;
-        b=OmewtUSVJV6R0t3jPfBTUn2UsMBoD7y7wL0j95RwZMpznjmIUKuGSqXWx6TP+QRjhy
-         THn0d/7CWRk47+rumWwWFDKOPQQX6Q4Sx67fsnHWJuRK3w7apfruPqg0n/sCNWDjayAl
-         kggKVX3yZ4tBqcBT6EGTLWdU+FENc6TqLC9Y1T/K5ERX8BQylgE/orUGgLD3ibjCFXrD
-         lumV8g4x+IuF+IaJ/FUxcbPKX6XR5no05yHKxMY9kmGuqMhknzBLDLn+PQTgbTAP31si
-         EX1BZhJ2btjP5DElTpI34icj+myHi96DvAnHFT0KFw/tmI/iixOIih69ubUNrg4jxd6r
-         6DxA==
-X-Gm-Message-State: APjAAAWmGAornS0cEERhfgkKda9wK4wfeR3BK27L4OXpbSl8w/dWLWzT
-        M4Hl7o+F6+KX+h7ICUMVQHPjbW520Hg4PZKGJJbAHYL9
-X-Google-Smtp-Source: APXvYqydVhuF3ntnoIzw4WdaFZsGX6v0yJ381g5t+kAPdv9EwyYq9UGMZNp6eBqM0v83H75PPht5fdfswl306n8hArw=
-X-Received: by 2002:aca:d60b:: with SMTP id n11mr13195651oig.22.1566228603622;
- Mon, 19 Aug 2019 08:30:03 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190817105102.11732-1-lpf.vector@gmail.com> <d0549e44-a885-2178-3f98-596eff765b3d@suse.cz>
-In-Reply-To: <d0549e44-a885-2178-3f98-596eff765b3d@suse.cz>
-From:   Pengfei Li <lpf.vector@gmail.com>
-Date:   Mon, 19 Aug 2019 23:29:51 +0800
-Message-ID: <CAD7_sbGYGhCTt_rfL8wX-FrXMFpSD_v7zPz9ic1Li6Jurc1ajQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/page_alloc: cleanup __alloc_pages_direct_compact()
-To:     Vlastimil Babka <vbabka@suse.cz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
-        osalvador@suse.de, pavel.tatashin@microsoft.com,
-        Mel Gorman <mgorman@techsingularity.net>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 19 Aug 2019 11:45:38 -0400
+Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtp (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzjqh-0006t8-Lq; Mon, 19 Aug 2019 17:45:35 +0200
+Message-Id: <20190819143141.221906747@linutronix.de>
+User-Agent: quilt/0.65
+Date:   Mon, 19 Aug 2019 16:31:41 +0200
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Frederic Weisbecker <fweisbec@gmail.com>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [patch 00/44] posix-cpu-timers: Cleanup and consolidation
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 9:50 PM Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 8/17/19 12:51 PM, Pengfei Li wrote:
-> > This patch cleans up the if(page).
-> >
-> > No functional change.
-> >
-> > Signed-off-by: Pengfei Li <lpf.vector@gmail.com>
->
-> I don't see much benefit here. The indentation wasn't that bad that it
-> had to be reduced using goto. But the patch is not incorrect so I'm not
-> NACKing.
->
+Folks!
 
-Thanks for your review and comments.
+While working on splitting the posix CPU timer expiry out into task
+context, I took a deeper look at that code.
 
-This patch reduces the number of times the if(page)
-(as the compiler does), and the downside is that there is a goto.
+It contains quite some duplicated code and the abuse of struct task_cputime
+along with the defines to rename the struct members just made my eyes bleed.
 
-If this improves readability, accept it. Otherwise, leave it as it is.
+The following series cleans that up and consolidates and simplifies the
+implementation. The resulting .text is about 15% smaller than the orignal
+one.
 
-Thanks again.
+It's split into small patches to make the review easier as this code is a
+true can of worms and the larger patches I had initially were just an
+invitation to overlook subtle issues.
 
----
-Pengfei
+The series applies on top of:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+
+and is available from git as well:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git WIP.timers/core
+
+Thanks,
+
+	tglx
+
+8<--------------
+ include/linux/alarmtimer.h     |    3 
+ include/linux/init_task.h      |   11 
+ include/linux/posix-timers.h   |  112 +++-
+ include/linux/sched.h          |   26 -
+ include/linux/sched/cputime.h  |   12 
+ include/linux/sched/signal.h   |   13 
+ include/linux/sched/types.h    |   21 
+ include/linux/timerqueue.h     |   10 
+ init/init_task.c               |    2 
+ kernel/fork.c                  |   34 -
+ kernel/sched/rt.c              |    6 
+ kernel/time/alarmtimer.c       |   14 
+ kernel/time/itimer.c           |   11 
+ kernel/time/posix-cpu-timers.c | 1033 ++++++++++++++++++-----------------------
+ kernel/time/posix-timers.c     |   32 -
+ kernel/time/posix-timers.h     |    1 
+ kernel/time/timer.c            |    2 
+ 17 files changed, 659 insertions(+), 684 deletions(-)
 
 
-> > ---
-> >  mm/page_alloc.c | 28 ++++++++++++++++------------
-> >  1 file changed, 16 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> > index 272c6de1bf4e..51f056ac09f5 100644
-> > --- a/mm/page_alloc.c
-> > +++ b/mm/page_alloc.c
-> > @@ -3890,6 +3890,7 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
-> >               enum compact_priority prio, enum compact_result *compact_result)
-> >  {
-> >       struct page *page = NULL;
-> > +     struct zone *zone;
-> >       unsigned long pflags;
-> >       unsigned int noreclaim_flag;
-> >
-> > @@ -3911,23 +3912,26 @@ __alloc_pages_direct_compact(gfp_t gfp_mask, unsigned int order,
-> >        */
-> >       count_vm_event(COMPACTSTALL);
-> >
-> > -     /* Prep a captured page if available */
-> > -     if (page)
-> > +     if (page) {
-> > +             /* Prep a captured page if available */
-> >               prep_new_page(page, order, gfp_mask, alloc_flags);
-> > -
-> > -     /* Try get a page from the freelist if available */
-> > -     if (!page)
-> > +     } else {
-> > +             /* Try get a page from the freelist if available */
-> >               page = get_page_from_freelist(gfp_mask, order, alloc_flags, ac);
-> >
-> > -     if (page) {
-> > -             struct zone *zone = page_zone(page);
-> > -
-> > -             zone->compact_blockskip_flush = false;
-> > -             compaction_defer_reset(zone, order, true);
-> > -             count_vm_event(COMPACTSUCCESS);
-> > -             return page;
-> > +             if (!page)
-> > +                     goto failed;
-> >       }
-> >
-> > +     zone = page_zone(page);
-> > +     zone->compact_blockskip_flush = false;
-> > +     compaction_defer_reset(zone, order, true);
-> > +
-> > +     count_vm_event(COMPACTSUCCESS);
-> > +
-> > +     return page;
-> > +
-> > +failed:
-> >       /*
-> >        * It's bad if compaction run occurs and fails. The most likely reason
-> >        * is that pages exist, but not enough to satisfy watermarks.
-> >
->
