@@ -2,97 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A1191B23
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:54:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 27E8091B4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:56:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726596AbfHSCyT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 22:54:19 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:44743 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726448AbfHSCyL (ORCPT
+        id S1726505AbfHSC4u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 22:56:50 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33893 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726254AbfHSC4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 22:54:11 -0400
-X-UUID: d3a95b4b430c4959ad50ab0a8cea7e06-20190819
-X-UUID: d3a95b4b430c4959ad50ab0a8cea7e06-20190819
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 147742040; Mon, 19 Aug 2019 10:54:03 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 19 Aug 2019 10:54:03 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 19 Aug 2019 10:54:03 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v12 12/12] arm64: dts: add gce node for mt8183
-Date:   Mon, 19 Aug 2019 10:53:59 +0800
-Message-ID: <20190819025359.11381-13-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190819025359.11381-1-bibby.hsieh@mediatek.com>
-References: <20190819025359.11381-1-bibby.hsieh@mediatek.com>
+        Sun, 18 Aug 2019 22:56:50 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so290900pgc.1;
+        Sun, 18 Aug 2019 19:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8KUldHqdiyJfIYKI91smI3BWWSLCesS4OFhanXdAB/8=;
+        b=sXAUC0VsPZ95/x3N+AJoCZaVM9xS1RsBjh1x32rDiJer2EZDEL5FRDXLQhowUIipwZ
+         Ol7LpEgSmYsZX0Q1AC9+esB45wtPow6MUvTI4jY0xqpwXhSDP6M6NxiMMYKpM5/JyUz4
+         nWFYnzpGn8T6XgEfyJZwQzwQry8qtUrCRlvBXvqCdjqU8pxHdxS1DbbMDFhwTazG78Y9
+         25Uo7881pnKWUgzPR9qqHMFInYdW0si0OmvnNnm63a94a6bTX4IIyn4AL6QTebL+9J+Q
+         cmcBhbRNrnhYphMBq7LvfyBfMtZOE82vkXXiVOhQ56qZOpZSLavb3O0lf8sFz3hTlUob
+         LLfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8KUldHqdiyJfIYKI91smI3BWWSLCesS4OFhanXdAB/8=;
+        b=QZ9COTh+vCpgy5V/aG9PBqOSEADWXQMwa5E7KuPwtQdsHSIrpPJU/wc7QooB02r3AM
+         nC+XHwXtFcoxwgN9LOKo460hOwoRSvE7dMuTrCr/KI2tp4XanacQTz3/s7XzT1NzZUFw
+         B6FYyt/B3qGchrnC9YIcgZreeKGDopk+0Oe/LF4Jyf/d8kyFlFIvwXz2RZ/BxWs8kvCY
+         fP3n14mMTJGefgDeHgfJuQG5BVJegRwNxQaEgYkNoVE3VuxWZPOm3QqqkGjvqAPb4Wib
+         2K9nsvM1ch92NsAQ10Ml6USXz43oB0+vknjYcPuqS7Ij0nSd3qmwDYinY/tYpKIHX5kz
+         toTQ==
+X-Gm-Message-State: APjAAAWX1vpFc4Mmr/S7WAZkPNVEcSG4H/XXcd0kafOewrGj0Ny6hYrL
+        TJQUFxB2z42aGNbdWNSHKTA=
+X-Google-Smtp-Source: APXvYqzdebKbzf683EonE73ov8DQqsTH4NZnIqlhEvoNm5ygQFU9oeZxDW4BBWxfXZGqHc12vT2ubQ==
+X-Received: by 2002:a63:595d:: with SMTP id j29mr18224659pgm.134.1566183409576;
+        Sun, 18 Aug 2019 19:56:49 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id s72sm16976535pgc.92.2019.08.18.19.56.47
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Aug 2019 19:56:48 -0700 (PDT)
+Subject: Re: [PATCH v5 2/2] hwmon: pmbus: Add Inspur Power System power supply
+ driver
+To:     Joel Stanley <joel@jms.id.au>, John Wang <wangzqbj@inspur.com>
+Cc:     Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        duanzhijia01@inspur.com, Lei YU <mine260309@gmail.com>
+References: <20190816101944.3586-1-wangzqbj@inspur.com>
+ <CACPK8XegTePdmykMzZHnW=g6hyEGr7jiW3TP8AvdzSwZGr=2gA@mail.gmail.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <8c6a287f-49f0-bb36-71d0-2bce8eb19ff9@roeck-us.net>
+Date:   Sun, 18 Aug 2019 19:56:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 1AE1D54DF288B47D79A5989480B0800B40D815B6C6F2D6DF8A3243EA6FB49F302000:8
-X-MTK:  N
+In-Reply-To: <CACPK8XegTePdmykMzZHnW=g6hyEGr7jiW3TP8AvdzSwZGr=2gA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+On 8/18/19 7:20 PM, Joel Stanley wrote:
+> On Fri, 16 Aug 2019 at 10:19, John Wang <wangzqbj@inspur.com> wrote:
+>>
+>> Add the driver to monitor Inspur Power System power supplies
+>> with hwmon over pmbus.
+>>
+>> This driver adds sysfs attributes for additional power supply data,
+>> including vendor, model, part_number, serial number,
+>> firmware revision, hardware revision, and psu mode(active/standby).
+>>
+>> Signed-off-by: John Wang <wangzqbj@inspur.com>
+> 
+>> +static const struct i2c_device_id ipsps_id[] = {
+>> +       { "inspur_ipsps1", 0 },
+> 
+> Convention would be to use "ipsps" here, instead of "vendor_device"?
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ipsps1, but good catch.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 08274bfcebd8..a81c995bbea9 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -212,6 +213,15 @@
- 			clock-names = "spi", "wrap";
- 		};
- 
-+		gce: mailbox@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
--- 
-2.18.0
+>> +       {}
+>> +};
+>> +MODULE_DEVICE_TABLE(i2c, ipsps_id);
+>> +
+>> +static const struct of_device_id ipsps_of_match[] = {
+>> +       { .compatible = "inspur,ipsps1" },
+>> +       {}
+>> +};
+>> +MODULE_DEVICE_TABLE(of, ipsps_of_match);
+> 
+> Do we need the of match table? I thought the match on the device name
+> from the i2c table would be enough. I will defer to Guenter here
+> though.
+> 
+
+Strictly speaking it is unnecessary, but it is kind of customary to have it.
+The automatic detection also only works if the i2c device ID would be "ipsps1",
+without vendor ID embedded.
+
+I would recomment to have both, but name the i2c device "ipsps1" as you suggested,
+for consistency.
+
+I'll also have to check if we need of_match_ptr below in the assignment of
+of_match_table. Probably not, but it would save a few bytes if CONFIG_OF
+is not enabled.
+
+Thanks,
+Guenter
+
+
+> Assuming the device tables are okay:
+> 
+> Reviewed-by: Joel Stanley <joel@jms.id.au>
+> 
+> Cheers,
+> 
+> Joel
+> 
+>> +
+>> +static struct i2c_driver ipsps_driver = {
+>> +       .driver = {
+>> +               .name = "inspur-ipsps",
+>> +               .of_match_table = ipsps_of_match,
+>> +       },
+>> +       .probe = ipsps_probe,
+>> +       .remove = pmbus_do_remove,
+>> +       .id_table = ipsps_id,
+>> +};
+> 
 
