@@ -2,88 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4A69273E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:43:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 949E892750
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:44:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbfHSOnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:43:31 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:18142 "EHLO mx1.redhat.com"
+        id S1727734AbfHSOoU convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 10:44:20 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:56932 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbfHSOnb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:43:31 -0400
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com [209.85.128.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D7F18C05AA58
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 14:43:30 +0000 (UTC)
-Received: by mail-wm1-f70.google.com with SMTP id n13so312292wmi.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 07:43:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Vy5qJGgg/EWAtVC39C9kZNd1jY+63gY/oCqRox6uDxE=;
-        b=KPxLRI0nh4M7LUHzir23ljmCQAbp9cevw7rwvrHSqJIKd8/VqcqnWfL8qIFw3LgTIm
-         LXc328NhgepbgT8cSeUbSm3/Gfsl41vQDhkSfaHB5Fn+X0UBqF8r1eP1UhhgU6hVCyMo
-         qh4PwPlLJss9rDq15yxHY4iSF7oYGFi3hceVVmgtjZsXtgeaxRXot7Q+PkU9VlhLWo0W
-         acESE8dsTaDGQNapv/rXGNj9dirTaCRgh7LaEnxoao1i9cR7OF64AWS5ECRU3otrM0M0
-         LwQ/fdFKw4dkBe7FlXL+f7ZcMV9RUrVYIG4ePY3mTXdDNTeB+ravNO5qNN5EP2xopbky
-         Ghow==
-X-Gm-Message-State: APjAAAWbtG4U4sYPXFXmwWDWUXH1Htk9hozOOOnhnXXYsJ5vbGEUBLIY
-        CCfmQugHYgM0bqs/hSftGGt5BF4jj0YXYzMg2Oj+urAqc7aSevpJrLycmBo5Ihhd+4fg2usHHef
-        PAesoSIu+h7Bag+6gvzRZ4GSM
-X-Received: by 2002:adf:fc51:: with SMTP id e17mr27848060wrs.348.1566225809326;
-        Mon, 19 Aug 2019 07:43:29 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqxPD8E4pfzsD6lNAVTvslP3BefYn5k7Fw+gz99Gu/AIMAYkfS55sCrwFQGfa1MWklnzgdSsVw==
-X-Received: by 2002:adf:fc51:: with SMTP id e17mr27848027wrs.348.1566225809018;
-        Mon, 19 Aug 2019 07:43:29 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:8033:56b6:f047:ba4f? ([2001:b07:6468:f312:8033:56b6:f047:ba4f])
-        by smtp.gmail.com with ESMTPSA id s19sm16503316wrb.94.2019.08.19.07.43.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2019 07:43:28 -0700 (PDT)
-Subject: Re: [PATCH RESEND v4 7/9] KVM: VMX: Handle SPP induced vmexit and
- page fault
-To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com
-Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-8-weijiang.yang@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <5f6ba406-17c4-a552-2352-2ff50569aac0@redhat.com>
-Date:   Mon, 19 Aug 2019 16:43:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1725536AbfHSOoU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:44:20 -0400
+Received: from c-73-71-116-68.hsd1.ca.comcast.net ([73.71.116.68] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hzisw-0007Hy-Me; Mon, 19 Aug 2019 16:43:50 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Kever Yang <kever.yang@rock-chips.com>
+Cc:     linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Katsuhiro Suzuki <katsuhiro@katsuster.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Tomohiro Mayama <parly-gh@iris.mystia.org>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm: dts: rockchip: fix vcc_host_5v regulator for usb3 host
+Date:   Mon, 19 Aug 2019 16:43:45 +0200
+Message-ID: <3811189.poQrIVWTgf@phil>
+In-Reply-To: <208c56e1-bfe0-a982-927d-bdddc3116631@rock-chips.com>
+References: <20190815081252.27405-1-kever.yang@rock-chips.com> <2932927.UJgUFA1Pmh@phil> <208c56e1-bfe0-a982-927d-bdddc3116631@rock-chips.com>
 MIME-Version: 1.0
-In-Reply-To: <20190814070403.6588-8-weijiang.yang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/08/19 09:04, Yang Weijiang wrote:
-> +			/*
-> +			 * Record write protect fault caused by
-> +			 * Sub-page Protection, let VMI decide
-> +			 * the next step.
-> +			 */
-> +			if (spte & PT_SPP_MASK) {
+Hi Kever,
 
-Should this be "if (spte & PT_WRITABLE_MASK)" instead?  That is, if the
-page is already writable, the fault must be an SPP fault.
+Am Montag, 19. August 2019, 02:29:31 CEST schrieb Kever Yang:
+> Hi Heiko,
+> 
+> On 2019/8/16 下午8:24, Heiko Stuebner wrote:
+> > Hi Kever, TL,
+> >
+> > [added TL Lim for clarification]
+> >
+> > Am Donnerstag, 15. August 2019, 10:12:52 CEST schrieb Kever Yang:
+> >> According to rock64 schemetic V2 and V3, the VCC_HOST_5V output is
+> >> controlled by USB_20_HOST_DRV, which is the same as VCC_HOST1_5V.
+> > The v1 schematics I have do reference the GPIO0_A0 as controlling this
+> > supply, so the big question would be how to handle the different versions.
+> >
+> > Because adding this would probably break v1 boards in this function.
+> >
+> > @TL: where v1 boards also sold or were they only used during development?
+> 
+> 
+> I have check this with TL when I make this patch, the V1 hardware was 
+> never sold and only V2/V3
+> 
+> are available on the market.
 
-Paolo
+Thanks for clearing this up. I've applied this patch for 5.4 now.
 
-> +				fault_handled = true;
-> +				vcpu->run->exit_reason = KVM_EXIT_SPP;
-> +				vcpu->run->spp.addr = gva;
-> +				kvm_skip_emulated_instruction(vcpu);
-> +				break;
-> +			}
-> +
->  			new_spte |= PT_WRITABLE_MASK;
+Thanks
+Heiko
+
+
 
