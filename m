@@ -2,118 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39C4291C17
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:37:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2700291C0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:33:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfHSEhA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 00:37:00 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35782 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfHSEhA (ORCPT
+        id S1726227AbfHSEd1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 00:33:27 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37173 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725536AbfHSEd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 00:37:00 -0400
-Received: by mail-wr1-f68.google.com with SMTP id k2so7193008wrq.2;
-        Sun, 18 Aug 2019 21:36:58 -0700 (PDT)
+        Mon, 19 Aug 2019 00:33:27 -0400
+Received: by mail-pg1-f193.google.com with SMTP id d1so420264pgp.4
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:33:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZUCw4jAs77fJWvJ1Lbk9AJyiu5YLLMkfP4oKtMz1NVw=;
-        b=uYH4KbWl08ZgKEpjhyYlfwvt9PdrFvpKMSKrDB/bHWMyRU+XUtYSStUbBLT5ziwZGl
-         t60r3tqUrSES+VTAuxKq3qBMi3tLrQQNaL0SIigL/02DNaxLMfCrVhVHJ211ZyUXZ2CQ
-         auHG0As1cCwaTCqHlXIhGDIYQWlDA7UERd0CKQTsAQUNqEnPjlbwK2klFMq2mJshC6Qj
-         EBIpU7+XyUzC5g/mNOtUuxvLD/JQM5MPi0R2nfcrpj8ak8j6MXSLzEMQqVf154qbaI3Q
-         XtxeoHtsJPy7cv8bhx/BVrTiyu9jgeKD7IcKIy0KruGZZm/p3HQSrvz3cJG2aFSc+Umi
-         7Mfw==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=72ELnDTzM6YoNYA5xuMcBDOagLAJM+myxC5fFXnFV48=;
+        b=Z9vuTLauhILmFT4izzT0W9vrtgqP/Xr0XOa45NfzQa5oXQEh15wihhLl9XXLTBEyfS
+         PGuiI5f1/qyvjSDjE7/U3rMq8VEh/8Z3XlXNAPid/v+5T/L1dckkH4m68hOzakwYsmiS
+         DR4jU7yr8VWRNYqwux35MvR3ALybBBLxvrJ29v88gCnILUTZNjv07FH4zuXQZiOE4Bek
+         z3AjR4vwfq3poqp2dvl0cnpg6DLBxxeI+YURikqDXfQMxaIYf4C6aFRwebA4kkbqBXYg
+         K4S2rOTLfy9dpAB3cPRCdHq8mO5StS09+MNiM/OJkPQrgAKaNxuLijm3Cni0/J+X5E0K
+         mUrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZUCw4jAs77fJWvJ1Lbk9AJyiu5YLLMkfP4oKtMz1NVw=;
-        b=bWkDL8CL579GUqvVxFdcPOeEvD8g/9YTNR5FFATA0/4DgtD8zCZbux/xOwpzxHRMId
-         P2N2fS7vZzMf6u614sHqfNvW53bWt7kEKglX+0yMw+c4DYFu7kr9WMHubG0tfvzUswN2
-         n+t1chn3iVHAbeaGEQqt7sNi2sjhdTAEf4ej0RUgZ3IBOvtjMjvh6IcBh1qvXlFLDcNi
-         awFlUNvLkmJUTNZawGqDr8XmPM86eMhrneTv6qeYEq1AyuJ+eX/PuTScrqzH7qOMfu7g
-         hG3c7UfKbHo2eO9HBRUsCGxLrIjXOhdBmoY37RXMzRIw+jvs3eAfoyxLv6u10+8u3bqd
-         oXZQ==
-X-Gm-Message-State: APjAAAUBkgeTWcun9KOpTKvGWz1WFsG5mK6f/ohAFvRFOhUh3/4C9r72
-        Ej8sCDxpqIUZexBWrSqx/dY=
-X-Google-Smtp-Source: APXvYqyHKAGqzXXD27TODaxzJH2S8swRrcvJBmyoQQcxyqBVpHYwkStPF7Y+58W+JKHUm4F7neENzA==
-X-Received: by 2002:adf:de02:: with SMTP id b2mr24526170wrm.204.1566189417661;
-        Sun, 18 Aug 2019 21:36:57 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:4f8:222:2f1b::2])
-        by smtp.gmail.com with ESMTPSA id j10sm15218526wrd.26.2019.08.18.21.36.56
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=72ELnDTzM6YoNYA5xuMcBDOagLAJM+myxC5fFXnFV48=;
+        b=kPNSw0QIYHeoI2/ilamAhLNAtwehaXm+G1yk4PC9focXauEVQu9IXzgwAXwYCzvW18
+         SVVYS4x3UEjyvSlMQj6fAlD11v2kgVoCuShkZzHZlqtsh4iErNLiuV2FIJ9a7vLNfqma
+         1dVxDFobMezFGQyyQX1cCA98g39TdNuxNrPiFbf6s7hWePthtlqGcxyoOCKzHOV98Sii
+         WoiuMQDfwQOsAAku1yJB9qsILyI0RV2O3cyPWo2sdPZhxLtGW8ZsMAos6Nh/GuZJsEem
+         idcD8Opz/yoM9bMzM0pUdUWVGoTZkcGfrXTY/FRaEuvdSo+39quDnjPVXUBC2z6xHgtG
+         h69w==
+X-Gm-Message-State: APjAAAX10ghYpT+TnMIQJw+jedLcAHXJZmqZi1l4qEgZUuW2WK26v83p
+        zqb0YyrO9bIIjmkUub6gjf8IGg==
+X-Google-Smtp-Source: APXvYqx0GITYVJU0+6/P8ffsNYIHIW1krQG1LL8IcUsIyyFWccg1orw3OU3X7LPPaX0vGUeYIUGxjA==
+X-Received: by 2002:a63:62c6:: with SMTP id w189mr18101877pgb.312.1566189206207;
+        Sun, 18 Aug 2019 21:33:26 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id f14sm15192021pfn.53.2019.08.18.21.33.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 21:36:56 -0700 (PDT)
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Cc:     Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-        Yonghong Song <yhs@fb.com>, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>
-Subject: [PATCH] test_bpf: Fix a new clang warning about xor-ing two numbers
-Date:   Sun, 18 Aug 2019 21:34:20 -0700
-Message-Id: <20190819043419.68223-1-natechancellor@gmail.com>
-X-Mailer: git-send-email 2.23.0
+        Sun, 18 Aug 2019 21:33:25 -0700 (PDT)
+Date:   Sun, 18 Aug 2019 21:35:08 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        kernel-build-reports@lists.linaro.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org
+Subject: Re: next/master boot: 254 boots: 16 failed, 231 passed with 4
+ offline, 1 untried/unknown, 2 conflicts (next-20190726)
+Message-ID: <20190819043508.GY26807@tuxbook-pro>
+References: <5d3aef79.1c69fb81.111b9.a701@mx.google.com>
+ <20190726134843.GC55803@sirena.org.uk>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190726134843.GC55803@sirena.org.uk>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-r369217 in clang added a new warning about potential misuse of the xor
-operator as an exponentiation operator:
+On Fri 26 Jul 06:48 PDT 2019, Mark Brown wrote:
 
-../lib/test_bpf.c:870:13: warning: result of '10 ^ 300' is 294; did you
-mean '1e300'? [-Wxor-used-as-pow]
-                { { 4, 10 ^ 300 }, { 20, 10 ^ 300 } },
-                       ~~~^~~~~
-                       1e300
-../lib/test_bpf.c:870:13: note: replace expression with '0xA ^ 300' to
-silence this warning
-../lib/test_bpf.c:870:31: warning: result of '10 ^ 300' is 294; did you
-mean '1e300'? [-Wxor-used-as-pow]
-                { { 4, 10 ^ 300 }, { 20, 10 ^ 300 } },
-                                         ~~~^~~~~
-                                         1e300
-../lib/test_bpf.c:870:31: note: replace expression with '0xA ^ 300' to
-silence this warning
+> On Fri, Jul 26, 2019 at 05:18:01AM -0700, kernelci.org bot wrote:
+> 
+> The past few versions of -next failed to boot on apq8096-db820c:
+> 
+> >     defconfig:
+> >         gcc-8:
+> >             apq8096-db820c: 1 failed lab
+> 
+> with an RCU stall towards the end of boot:
+> 
+> 00:03:40.521336  [   18.487538] qcom_q6v5_pas adsp-pil: adsp-pil supply px not found, using dummy regulator
+> 00:04:01.523104  [   39.499613] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> 00:04:01.533371  [   39.499657] rcu: 	2-...!: (0 ticks this GP) idle=9ca/1/0x4000000000000000 softirq=1450/1450 fqs=50
+> 00:04:01.537544  [   39.504689] 	(detected by 0, t=5252 jiffies, g=2425, q=619)
+> 00:04:01.541727  [   39.513539] Task dump for CPU 2:
+> 00:04:01.547929  [   39.519096] seq             R  running task        0   199    198 0x00000000
+> 
+> Full details and logs at:
+> 
+> 	https://kernelci.org/boot/id/5d3aa7ea59b5142ba868890f/
+> 
+> The last version that worked was from the 15th and there seem to be
+> similar issues in mainline since -rc1.
 
-The commit link for this new warning has some good logic behind wanting
-to add it but this instance appears to be a false positive. Adopt its
-suggestion to silence the warning but not change the code. According to
-the differential review link in the clang commit, GCC may eventually
-adopt this warning as well.
+As you might have seen this problem has come and gone on the
+apq8096-db820c and I've finally managed to narrow it down a little bit.
 
-Link: https://github.com/ClangBuiltLinux/linux/issues/643
-Link: https://github.com/llvm/llvm-project/commit/920890e26812f808a74c60ebc14cc636dac661c1
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
----
+The problem first appears on next-20190701, with the introduction of
+CONFIG_RANDOMIZE_BASE in the defconfig, but after further efforts I've
+concluded that disabling kpti removes or hides the problem.
 
-I highly doubt that 1e300 was intented but if it was (or something else
-was), please let me know. Commit history wasn't entirely clear on why
-this expression was used over just a raw number.
+With kpti=no on the command line I've now successfully booted the db820c
+100+ times without problems (a clear improvement from the 75% failure
+rate with kpti=yes).
 
- lib/test_bpf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/test_bpf.c b/lib/test_bpf.c
-index c41705835cba..5ef3eccee27c 100644
---- a/lib/test_bpf.c
-+++ b/lib/test_bpf.c
-@@ -867,7 +867,7 @@ static struct bpf_test tests[] = {
- 		},
- 		CLASSIC,
- 		{ },
--		{ { 4, 10 ^ 300 }, { 20, 10 ^ 300 } },
-+		{ { 4, 0xA ^ 300 }, { 20, 0xA ^ 300 } },
- 	},
- 	{
- 		"SPILL_FILL",
--- 
-2.23.0
+Unfortunately I'm not yet certain why this is causing issues and I'm
+also seeing the same rcu stall on SDA845 under certain (erroneous?)
+conditions (where I don't expect them). 
 
+Regards,
+Bjorn
