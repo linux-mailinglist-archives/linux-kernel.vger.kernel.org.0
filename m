@@ -2,106 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B16492798
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:53:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69DF2927A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:54:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbfHSOxP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:53:15 -0400
-Received: from foss.arm.com ([217.140.110.172]:55902 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726808AbfHSOxO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:53:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E76928;
-        Mon, 19 Aug 2019 07:53:14 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9BB2D3F718;
-        Mon, 19 Aug 2019 07:53:12 -0700 (PDT)
-Subject: Re: [PATCH v2 01/12] irqchip/gic: Rework gic_configure_irq to take
- the full ICFGR base
-To:     Zenghui Yu <yuzenghui@huawei.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        John Garry <john.garry@huawei.com>,
-        linux-kernel@vger.kernel.org,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        linux-arm-kernel@lists.infradead.org
-References: <20190806100121.240767-1-maz@kernel.org>
- <20190806100121.240767-2-maz@kernel.org>
- <a601236c-8128-ca7a-667f-12a4b7cefb89@huawei.com>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <e9129a9e-ebef-7108-d4a3-c91c22eb29a3@kernel.org>
-Date:   Mon, 19 Aug 2019 15:53:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727657AbfHSOyG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:54:06 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:24315 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfHSOyG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:54:06 -0400
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x7JEs0i7031748;
+        Mon, 19 Aug 2019 23:54:01 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x7JEs0i7031748
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566226442;
+        bh=4rGi8J2rUzntz7GIHg2SOoPHDUBssi7TUk7NlAC+Y7k=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mI5bqIlcbGX1RP0whGa+PkKZ0Ot8+XEqRlRuqLPeMYY1VNyl/CXJigA3Cg/QAUgMF
+         0c+Itq63zQGC6FSQWXCVXcRxmTcZq93piWIR8PpXHXSHGLDJQzT9kyqNWkFip/jZ3m
+         KIqaN+9wW/1CeD3HaHxjt0d9WZjlNUfyT++CuYrjyHAxHZOZwZiUoDvbZ7S6k8/4FT
+         mVZx0E1SKvajikuAuk1+ssZo+xklcxrBwH+6SLENERVQfficsd47W5BitXs9MtBQAv
+         80LoYQovprjhbYZtgq1jzVVzrQ+8sJiie+VWC8J65o6B+3VUCosYkSrplSY8IhDCtC
+         bAwB+o1qERPFA==
+X-Nifty-SrcIP: [209.85.217.45]
+Received: by mail-vs1-f45.google.com with SMTP id 62so1359289vsl.5;
+        Mon, 19 Aug 2019 07:54:01 -0700 (PDT)
+X-Gm-Message-State: APjAAAV0jvLwTVaD5PTrHUzg9Q+0Zbgj4DA0n5uMnDfktkqzrjh+tz5x
+        hQkCBPxZEk1kXv43EQR+ERLW3iGR4+wxatXZCg8=
+X-Google-Smtp-Source: APXvYqxCvPdamZU+p02SDF09e1/NvXrn0Hz7DR3KtmzcpTVIO+I0G8oV9tN9ed3CMXFLqH/dKJESxZpEmc6A73VTg4s=
+X-Received: by 2002:a67:e401:: with SMTP id d1mr3659378vsf.215.1566226439982;
+ Mon, 19 Aug 2019 07:53:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <a601236c-8128-ca7a-667f-12a4b7cefb89@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190806063923.1266-1-yamada.masahiro@socionext.com> <20190806063923.1266-2-yamada.masahiro@socionext.com>
+In-Reply-To: <20190806063923.1266-2-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 19 Aug 2019 23:53:24 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATaj9zY1E=7-HU_v_PwiQYs+GP1Y5r19evqUdYaZ7+Hpg@mail.gmail.com>
+Message-ID: <CAK7LNATaj9zY1E=7-HU_v_PwiQYs+GP1Y5r19evqUdYaZ7+Hpg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] kbuild: treat an object as multi-used when $(foo-) is set
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Jani Nikula <jani.nikula@intel.com>,
+        intel-gfx@lists.freedesktop.org, Sam Ravnborg <sam@ravnborg.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19/08/2019 15:26, Zenghui Yu wrote:
-> Hi Marc,
-> 
-> On 2019/8/6 18:01, Marc Zyngier wrote:
->> gic_configure_irq is currently passed the (re)distributor address,
->> to which it applies an a fixed offset to get to the configuration
->> registers. This offset is constant across all GICs, or rather it was
->> until to v3.1...
->>
->> An easy way out is for the individual drivers to pass the base
->> address of the configuration register for the considered interrupt.
->> At the same time, move part of the error handling back to the
->> individual drivers, as things are about to change on that front.
->>
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>   drivers/irqchip/irq-gic-common.c | 14 +++++---------
->>   drivers/irqchip/irq-gic-v3.c     | 11 ++++++++++-
->>   drivers/irqchip/irq-gic.c        | 10 +++++++++-
->>   drivers/irqchip/irq-hip04.c      |  7 ++++++-
->>   4 files changed, 30 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
->> index b0a8215a13fc..6900b6f0921c 100644
->> --- a/drivers/irqchip/irq-gic-common.c
->> +++ b/drivers/irqchip/irq-gic-common.c
->> @@ -63,7 +63,7 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->>   	 * for "irq", depending on "type".
->>   	 */
->>   	raw_spin_lock_irqsave(&irq_controller_lock, flags);
->> -	val = oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
->> +	val = oldval = readl_relaxed(base + confoff);
->>   	if (type & IRQ_TYPE_LEVEL_MASK)
->>   		val &= ~confmask;
->>   	else if (type & IRQ_TYPE_EDGE_BOTH)
->> @@ -83,14 +83,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->>   	 * does not allow us to set the configuration or we are in a
->>   	 * non-secure mode, and hence it may not be catastrophic.
->>   	 */
->> -	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
->> -	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val) {
->> -		if (WARN_ON(irq >= 32))
->> -			ret = -EINVAL;
-> 
-> Since this WARN_ON is dropped, the comment above should also be updated.
-> But what is the reason for deleting it?  (It may give us some points
-> when we fail to set type for SPIs.)
+On Tue, Aug 6, 2019 at 3:40 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Currently, Kbuild treats an object as multi-used when any of
+> $(foo-objs), $(foo-y), $(foo-m) is set. It makes more sense to
+> check $(foo-) as well.
+>
+> In the context of foo-$(CONFIG_FOO_FEATURE1), CONFIG_FOO_FEATURE1
+> could be unset.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-The core code already warns in the case where irq_set_type() fails, and
-the duplication of warnings is pretty superfluous.
+Only this patch applied for now.
 
-Thanks,
 
-	M.
+> ---
+>
+>  scripts/Makefile.lib | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+> index 41c50f9461e5..0a540599823e 100644
+> --- a/scripts/Makefile.lib
+> +++ b/scripts/Makefile.lib
+> @@ -41,9 +41,9 @@ obj-m         := $(filter-out %/, $(obj-m))
+>  # Subdirectories we need to descend into
+>  subdir-ym      := $(sort $(subdir-y) $(subdir-m))
+>
+> -# if $(foo-objs), $(foo-y), or $(foo-m) exists, foo.o is a composite object
+> -multi-used-y := $(sort $(foreach m,$(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))), $(m))))
+> -multi-used-m := $(sort $(foreach m,$(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))), $(m))))
+> +# If $(foo-objs), $(foo-y), $(foo-m), or $(foo-) exists, foo.o is a composite object
+> +multi-used-y := $(sort $(foreach m,$(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-))), $(m))))
+> +multi-used-m := $(sort $(foreach m,$(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m)) $($(m:.o=-))), $(m))))
+>  multi-used   := $(multi-used-y) $(multi-used-m)
+>
+>  # $(subdir-obj-y) is the list of objects in $(obj-y) which uses dir/ to
+> @@ -52,8 +52,8 @@ subdir-obj-y := $(filter %/built-in.a, $(obj-y))
+>
+>  # Replace multi-part objects by their individual parts,
+>  # including built-in.a from subdirectories
+> -real-obj-y := $(foreach m, $(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y))),$($(m:.o=-objs)) $($(m:.o=-y)),$(m)))
+> -real-obj-m := $(foreach m, $(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m))),$($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m)),$(m)))
+> +real-obj-y := $(foreach m, $(obj-y), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-))),$($(m:.o=-objs)) $($(m:.o=-y)),$(m)))
+> +real-obj-m := $(foreach m, $(obj-m), $(if $(strip $($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m)) $($(m:.o=-))),$($(m:.o=-objs)) $($(m:.o=-y)) $($(m:.o=-m)),$(m)))
+>
+>  # DTB
+>  # If CONFIG_OF_ALL_DTBS is enabled, all DT blobs are built
+> --
+> 2.17.1
+>
+
+
 -- 
-Jazz is not dead, it just smells funny...
+Best Regards
+Masahiro Yamada
