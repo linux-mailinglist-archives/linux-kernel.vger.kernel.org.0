@@ -2,158 +2,152 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E48491D1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:31:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E3A91D1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:31:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfHSGaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 02:30:46 -0400
-Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:24619 "EHLO
-        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726174AbfHSGaq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:30:46 -0400
-Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
-        by ATCSQR.andestech.com with ESMTP id x7J6HLhb095426;
-        Mon, 19 Aug 2019 14:17:21 +0800 (GMT-8)
-        (envelope-from nickhu@andestech.com)
-Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
- (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 19 Aug 2019
- 14:29:18 +0800
-Date:   Mon, 19 Aug 2019 14:29:19 +0800
-From:   Nick Hu <nickhu@andestech.com>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-CC:     Palmer Dabbelt <palmer@sifive.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alan Quey-Liang =?utf-8?B?S2FvKOmrmOmtgeiJryk=?= 
-        <alankao@andestech.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "green.hu@gmail.com" <green.hu@gmail.com>,
-        "deanbo422@gmail.com" <deanbo422@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
-        "glider@google.com" <glider@google.com>,
-        "dvyukov@google.com" <dvyukov@google.com>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        =?utf-8?B?6Zui6IG3Wm9uZyBab25nLVhpYW4gTGko5p2O5a6X5oayKQ==?= 
-        <zong@andestech.com>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>
-Subject: Re: [PATCH 1/2] riscv: Add memmove string operation.
-Message-ID: <20190819062919.GA6480@andestech.com>
-References: <mhng-ba92c635-7087-4783-baa5-2a111e0e2710@palmer-si-x1e>
- <alpine.DEB.2.21.9999.1908131921180.19217@viisi.sifive.com>
- <20190814032732.GA8989@andestech.com>
- <alpine.DEB.2.21.9999.1908141002500.18249@viisi.sifive.com>
- <20190815031225.GA5666@andestech.com>
- <alpine.DEB.2.21.9999.1908151124450.18249@viisi.sifive.com>
+        id S1726695AbfHSGaN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 02:30:13 -0400
+Received: from bilbo.ozlabs.org ([203.11.71.1]:50407 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726174AbfHSGaN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 02:30:13 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46BkYt52KJz9sMr;
+        Mon, 19 Aug 2019 16:30:09 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566196210;
+        bh=6ffNc5YKyfeNsMXVYg4F16qohiDqgMUq3zabAzOyfLA=;
+        h=Date:From:To:Cc:Subject:From;
+        b=WCu/wyEmM8UIpzDw+DO8ID14Vg4wXZBCigdrf9qb6OWMxdnCpuCKoMiMjfDbj8Kqs
+         xRVBJqxBWibKk/bVgz0IZjmNM88hBOK8LcD6KqgcCh+vMv+oLte4C40MKhCUGqDTu0
+         EfwSwOtwxQcOWa6x5yg43dCNtmiROcc2uRp8qcl/yR/2/ZUPUla/8xo624zr9KJGLo
+         xIbjn5Do9eQil116F7tn80TvGuprZaOh9oeZUNHszY4rZUYjsZCXXjmu4wljQxs9Ah
+         oFisnMbDVeZpbPRqKaqcGUQ0RCFWXu8wynC2nw9lN6r8gzRfPhqh31BYc8z0C8a9JR
+         450GGtwyW8JeQ==
+Date:   Mon, 19 Aug 2019 16:30:08 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: linux-next: manual merge of the gpio-brgl tree with the gpio tree
+Message-ID: <20190819163008.093911f0@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.9999.1908151124450.18249@viisi.sifive.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Originating-IP: [10.0.15.65]
-X-DNSRBL: 
-X-MAIL: ATCSQR.andestech.com x7J6HLhb095426
+Content-Type: multipart/signed; boundary="Sig_/BtC_YQ5NEzpqMV2nZpwYJi7";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
+--Sig_/BtC_YQ5NEzpqMV2nZpwYJi7
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 15, 2019 at 11:27:51AM -0700, Paul Walmsley wrote:
-> On Thu, 15 Aug 2019, Nick Hu wrote:
-> 
-> > On Wed, Aug 14, 2019 at 10:03:39AM -0700, Paul Walmsley wrote:
-> >
-> > > Thanks for the explanation.  What do you think about Palmer's idea to 
-> > > define a generic C set of KASAN string operations, derived from the newlib 
-> > > code?
-> > 
-> > That sounds good to me. But it should be another topic. We need to investigate
-> > it further about replacing something generic and fundamental in lib/string.c
-> > with newlib C functions.  Some blind spots may exist.  So I suggest, let's
-> > consider KASAN for now.
-> 
-> OK.  Here is the problem for us as maintainers.  You, Palmer, and I all 
-> agree that a C-language version would be better.  We'd rather not merge a 
-> pure assembly-language version unless it had significant advantages, and 
-> right now we're not anticipating that.  So that suggests that a C-language 
-> memmove() is the right way to go.
-> 
-> But if we merge a C-language memmove() into arch/riscv, other kernel 
-> developers would probably ask us why we're doing that, since there's 
-> nothing RISC-V-specific about it.  So do you think you might reconsider 
-> sending patches to add a generic C-language memmove()?
-> 
-> 
-> - Paul
+Hi all,
 
-About pushing mem*() generic, let's start with the reason why in the first place
-KASAN needs re-implement its own string operations:
+Today's linux-next merge of the gpio-brgl tree got a conflict in:
 
-In mm/kasan/common.c:
+  include/linux/gpio/driver.h
 
-	#undef memset
-	void *memset(void *addr, int c, size_t len)
-	{
-		check_memory_region((unsigned long)addr, len, true, _RET_IP_);
+between commit:
 
-		return __memset(addr, c, len);
-	}
+  379ce1ff51aa ("gpio: stubs in headers should be inline")
 
-KASAN would call the string operations with the prefix '__', which should be
-just an alias to the proper one.
+from the gpio tree and commit:
 
-In the past, every architecture that supports KASAN does this in assembly.
-E.g. ARM64:
+  9091373ab7ea ("gpio: remove less important #ifdef around declarations")
 
-In arch/arm64/lib/memset.S:
+from the gpio-brgl tree.
 
-	ENTRY(__memset)
-	ENTRY(memset)
-	...
-	...
-	EXPORT_SYMBOL(memset)
-	EXPORT_SYMBOL(__memset) // export this as an alias
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
 
-In arch/arm64/include/asm/string.h
+--=20
+Cheers,
+Stephen Rothwell
 
-	#define __HAVE_ARCH_MEMSET
-	extern void *memset(void *, int, __kernel_size_t);
-	extern void *__memset(void *, int, __kernel_size_t);
+diff --cc include/linux/gpio/driver.h
+index 72d48a2bab65,f28f534f451a..000000000000
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@@ -20,12 -20,6 +20,8 @@@ struct module
+  enum gpiod_flags;
+  enum gpio_lookup_flags;
+ =20
+- #ifdef CONFIG_GPIOLIB
+-=20
+- #ifdef CONFIG_GPIOLIB_IRQCHIP
+-=20
+ +struct gpio_chip;
+ +
+  /**
+   * struct gpio_irq_chip - GPIO interrupt controller
+   */
+@@@ -530,38 -443,6 +523,35 @@@ struct bgpio_pdata=20
+  	int ngpio;
+  };
+ =20
+ +#ifdef CONFIG_IRQ_DOMAIN_HIERARCHY
+ +
+ +void gpiochip_populate_parent_fwspec_twocell(struct gpio_chip *chip,
+ +					     struct irq_fwspec *fwspec,
+ +					     unsigned int parent_hwirq,
+ +					     unsigned int parent_type);
+ +void gpiochip_populate_parent_fwspec_fourcell(struct gpio_chip *chip,
+ +					      struct irq_fwspec *fwspec,
+ +					      unsigned int parent_hwirq,
+ +					      unsigned int parent_type);
+ +
+ +#else
+ +
+ +static inline void gpiochip_populate_parent_fwspec_twocell(struct gpio_ch=
+ip *chip,
+ +						    struct irq_fwspec *fwspec,
+ +						    unsigned int parent_hwirq,
+ +						    unsigned int parent_type)
+ +{
+ +}
+ +
+ +static inline void gpiochip_populate_parent_fwspec_fourcell(struct gpio_c=
+hip *chip,
+ +						     struct irq_fwspec *fwspec,
+ +						     unsigned int parent_hwirq,
+ +						     unsigned int parent_type)
+ +{
+ +}
+ +
+ +#endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
+ +
+-=20
+- #if IS_ENABLED(CONFIG_GPIO_GENERIC)
+-=20
+  int bgpio_init(struct gpio_chip *gc, struct device *dev,
+  	       unsigned long sz, void __iomem *dat, void __iomem *set,
+  	       void __iomem *clr, void __iomem *dirout, void __iomem *dirin,
 
-Now, if we are going to replace the current string operations with newlib ones
-and let KASAN use them, we must provide something like this:
+--Sig_/BtC_YQ5NEzpqMV2nZpwYJi7
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-In lib/string.c:
-        void *___memset(...)
-        {
-                ...
-        }
+-----BEGIN PGP SIGNATURE-----
 
-In include/linux/string.h:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1aQfAACgkQAVBC80lX
+0GwuXwf/XHu8MMs4Tudmm75YDQyzviiCC3blf5F0hZcuLbgXOfildZlaiahw/Dz6
+EktR/ii3+9COhEMuYrtSm9DV/TS+CLvbylz+VFykjru6q+sEoA0U5MsdRNuekWqa
+oYPYpBwC6XR0WP/tEljXpcbytG5VpwXb8DBYw1ebyZ2DA3injX9gmijKuZ7ZRTcR
+DgOy22gnaY+1Fogj/mG2ft9kNE05cwMPtan4lkKFdS+NJbAlJUYzX5uOZ6TiYGk0
+6xPWqGLdyUHojrnJJbve1/YOldE0no05EU4sNZNZhsBTJmy9JTElEmZP+4WQglCY
+Rd/6z2oN4AEgSfUePIKBJVv4b9f1zg==
+=c2mq
+-----END PGP SIGNATURE-----
 
-	#ifndef __HAVE_ARCH_MEMCPY 
-	#ifdef CONFIG_KASAN
-	static inline void* __memset(...)
-	{
-		___memset(...);
-        }
-	extern void memset(...); // force those who include this header uses the
-					memset wrapped by KASAN
-	#else
-	static inline void *memset(...)
-	{
-		___memset(...);
-	}
-	#endif
-	#endif
-
-Does this look OK to you?
-
-Nick
+--Sig_/BtC_YQ5NEzpqMV2nZpwYJi7--
