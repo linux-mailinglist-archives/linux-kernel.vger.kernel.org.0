@@ -2,127 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B51B94E4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8AC1794E22
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:30:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728507AbfHSTcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:32:13 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:7088 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728337AbfHSTcM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:32:12 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5af93b0001>; Mon, 19 Aug 2019 12:32:11 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 19 Aug 2019 12:32:11 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 12:32:11 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 19:32:11 +0000
-Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 19:32:11 +0000
-Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
- to put_user_page*()
-To:     Bharath Vedartham <linux.bhar@gmail.com>,
-        Dimitri Sivanich <sivanich@hpe.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-CC:     <jglisse@redhat.com>, <ira.weiny@intel.com>,
-        <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
-        <william.kucharski@oracle.com>, <hch@lst.de>,
-        <inux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel-mentees@lists.linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>, Michal Hocko <mhocko@kernel.org>
-References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
- <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
- <20190819125611.GA5808@hpe.com>
- <20190819190647.GA6261@bharath12345-Inspiron-5559>
-From:   John Hubbard <jhubbard@nvidia.com>
-X-Nvconfidentiality: public
-Message-ID: <0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.com>
-Date:   Mon, 19 Aug 2019 12:30:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190819190647.GA6261@bharath12345-Inspiron-5559>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        id S1728519AbfHSTa3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:30:29 -0400
+Received: from mail-eopbgr810131.outbound.protection.outlook.com ([40.107.81.131]:42528
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728404AbfHSTa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 15:30:29 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Orc5IT4TcmVJu0iJzSyFbpC5kybQ/+/jSKjGEqs4auZvPQnlUFOJQ0ak0C7zlrQQnUIkpfbWoJoeO+wuP8nayJ4gXGdmKaa2Q8X8bnmwfWvxpFGCL3ePKX/nn/h7DYkhMxA8zq5t7QyXazprhZwfbqb/2SCDWNkR10eEVTQx5Fr6zs89Gof40zRV41HcqO0iZVJW/PiY/fsbeKf8UI2Lq5V+VfShXi1wOcl/SAmuyTVSGdo+UtqQeJPLkzFJ7TVidTBBvbfSU7JuupClVd5LGY/OOXTNbV810dJY5XPcKiufO5u1ZXuT1lkPN7gR5fvBTmE0vqsAmWEIn1BvotjgtA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XHDPFtQPArFAgS8lhbeIv4YrwaW+gNbD03Sy3SYMnwA=;
+ b=CnkpFQN2/UIxyNwuo4kiBN5+2inWuauO6XAwsLxEvohtlg6cY7Q/KGrgAxgM6J0zIP+RRNerCcx/pbzwHsTtMtWatLa0TDtjkpQCIVCR80gb08vkTzU2WncPQMLr9cy9Uex7K6TuE0rYQiFy+JdqFbXOcHbmcDALPKtmoWpJtqWI3LfecPI7ZobtkBVI+WoNqzChDmbR87SxA74lAxi58j41fyxrhScG/4O3zRWeWsHRu7S2/qny3UasxtTWYlN/9LDuiHBspjRohX57axFsXoaFsFNceBjwUk0CGiL3hvo3uSyW4C4Pvr94LBJX27+As61gaLSLuoti01FBzWLRHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XHDPFtQPArFAgS8lhbeIv4YrwaW+gNbD03Sy3SYMnwA=;
+ b=e6i8vDfoaXeprxJIGifq2kg0hPdrrYs1vYS5OEzGRw1nHjo/laPpNzQUC2tgCh3sra6n36qXtIvmUwgJ1humiz9OHDMIcB0kabMacU5mwIcwEQNZS8TRbMm27MRT9o0x6XTU2zTn0rx888cZMwfIxEMOWpsK/u4rd23qabhBgcE=
+Received: from DM6PR21MB1242.namprd21.prod.outlook.com (20.179.50.86) by
+ DM6PR21MB1145.namprd21.prod.outlook.com (20.179.50.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.11; Mon, 19 Aug 2019 19:30:25 +0000
+Received: from DM6PR21MB1242.namprd21.prod.outlook.com
+ ([fe80::ddd:8e5b:2930:6726]) by DM6PR21MB1242.namprd21.prod.outlook.com
+ ([fe80::ddd:8e5b:2930:6726%9]) with mapi id 15.20.2178.006; Mon, 19 Aug 2019
+ 19:30:25 +0000
+From:   Haiyang Zhang <haiyangz@microsoft.com>
+To:     "sashal@kernel.org" <sashal@kernel.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "saeedm@mellanox.com" <saeedm@mellanox.com>,
+        "leon@kernel.org" <leon@kernel.org>,
+        "eranbe@mellanox.com" <eranbe@mellanox.com>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+CC:     Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH net-next,v2 0/6] Add software backchannel and mlx5e HV VHCA
+ stats
+Thread-Topic: [PATCH net-next,v2 0/6] Add software backchannel and mlx5e HV
+ VHCA stats
+Thread-Index: AQHVVsSMIIWgPx20+EmFaWJFA2ozCQ==
+Date:   Mon, 19 Aug 2019 19:30:25 +0000
+Message-ID: <1566242976-108801-1-git-send-email-haiyangz@microsoft.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566243131; bh=O1+zBKqCqZBRfmN9e8CVp5s+/FmYKv98YGRf5sf04P8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:X-Nvconfidentiality:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=LlnJzVxff7rSopb5VOlbQQEyBfR8LJGnJjJtr6ctEwJXHz9nCk3t12nYZtK9E/pb4
-         NPiVaZegJA4RzmJAZfXJa7RTIcCUj2pDko281vNI4rt3to4zQwE5uNlqU2C8OA/CFw
-         2m5BK32y9ezYhJqt7xsNZ3NB3m53IN01dDOoJ1C8EMqPKaozA3vv9ATO3gQCSdXrwO
-         50OqgKs052g7MMdjIa57lKayaVgPrfP2X8VqXEHSrh9Uqlv6Ek4jDzGP9hX7VTjVRi
-         l/yZp/dyHaFYqUcnIeCalSS9LohslZVRzCGaCO+5vOzl8e2mEx1sYpNhTxj9IsuQfr
-         DzB8xF6Vdu7zQ==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR12CA0059.namprd12.prod.outlook.com
+ (2603:10b6:300:103::21) To DM6PR21MB1242.namprd21.prod.outlook.com
+ (2603:10b6:5:169::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=lkmlhyz@microsoft.com; 
+x-ms-exchange-messagesentrepresentingtype: 2
+x-mailer: git-send-email 1.8.3.1
+x-originating-ip: [13.77.154.182]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 223de19d-8011-455f-4369-08d724dbaf3b
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600158)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM6PR21MB1145;
+x-ms-traffictypediagnostic: DM6PR21MB1145:|DM6PR21MB1145:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR21MB1145364E24D817AC5F5B7F60ACA80@DM6PR21MB1145.namprd21.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4941;
+x-forefront-prvs: 0134AD334F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(346002)(39860400002)(366004)(396003)(136003)(199004)(189003)(52116002)(99286004)(110136005)(14444005)(2201001)(386003)(186003)(6506007)(476003)(71190400001)(10090500001)(22452003)(6116002)(7846003)(6512007)(6392003)(71200400001)(256004)(53936002)(81156014)(8676002)(81166006)(6436002)(4326008)(102836004)(305945005)(4720700003)(26005)(7416002)(7736002)(36756003)(6486002)(486006)(66066001)(3846002)(54906003)(66446008)(66946007)(66556008)(25786009)(14454004)(2501003)(50226002)(8936002)(64756008)(2906002)(5660300002)(2616005)(66476007)(478600001)(10290500003)(316002)(42413003)(921003)(32563001)(142933001)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:DM6PR21MB1145;H:DM6PR21MB1242.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: kICRrbuBiop0uT3WpD5xS/4W2UY5KjDN4tfNnPOQhq/ZdGb4zkO93/1fdEDOMuRfH/vMCbQUKHauPlH0h6nKJ8aMX36jXB49qBUYEO6CNxHv+vT2X1x1Uv2v47z6iEe1U4YBGc32D3uEBFgIPL+oC0pOEIOkC+zYDUEKUUDbcFnHt+j30dUBVl8PD/HMjXsp4mM3znVMAixko9Dpol3OUeM0/wAtaDIsxHevx+pVWFL2roEqkDOvuwmHVovQ7Z3X4uIXR2waedEK6aKOpd3Rv2VzGdfdYvlkJH8lu5D9es4WyRQmO4Y9qsNui7gA8sXnaeJ0T61Us75OMij1VQ8NxfMm/bRrrP/N3ava9cHaRUT2ghcGzx4LbZZ9k3J81wOEffYmYK1mmYrm6DXbGgs5MlXF3cElEB7nzcG+bCzjPqU=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 223de19d-8011-455f-4369-08d724dbaf3b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2019 19:30:25.4507
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7x4bOqZI0uQ0+R7FBH7crFExSiQinq/2YmT1kxBW3FD74qJ871nS5rXW1fVyL4kQrK8HCEEWQDAI4JVRGHGZAA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR21MB1145
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/19 12:06 PM, Bharath Vedartham wrote:
-> On Mon, Aug 19, 2019 at 07:56:11AM -0500, Dimitri Sivanich wrote:
->> Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
-> Thanks!
-> 
-> John, would you like to take this patch into your miscellaneous
-> conversions patch set?
-> 
+This patch set adds paravirtual backchannel in software in pci_hyperv,
+which is required by the mlx5e driver HV VHCA stats agent.
 
-(+Andrew and Michal, so they know where all this is going.)
+The stats agent is responsible on running a periodic rx/tx packets/bytes
+stats update.
 
-Sure, although that conversion series [1] is on a brief hold, because
-there are additional conversions desired, and the API is still under
-discussion. Also, reading between the lines of Michal's response [2]
-about it, I think people would prefer that the next revision include
-the following, for each conversion site:
+Dexuan Cui (1):
+  PCI: hv: Add a paravirtual backchannel in software
 
-Conversion of gup/put_page sites:
+Haiyang Zhang (5):
+  PCI: hv: Add a Hyper-V PCI interface driver for software backchannel
+    interface
+  net/mlx5: Add wrappers for HyperV PCIe operations
+  net/mlx5: Add HV VHCA infrastructure
+  net/mlx5: Add HV VHCA control agent
+  net/mlx5e: Add mlx5e HV VHCA stats agent
 
-Before:
+ MAINTAINERS                                        |   1 +
+ drivers/net/ethernet/mellanox/mlx5/core/Makefile   |   2 +
+ drivers/net/ethernet/mellanox/mlx5/core/en.h       |  13 +
+ .../ethernet/mellanox/mlx5/core/en/hv_vhca_stats.c | 162 +++++++++
+ .../ethernet/mellanox/mlx5/core/en/hv_vhca_stats.h |  25 ++
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c  |   3 +
+ drivers/net/ethernet/mellanox/mlx5/core/lib/hv.c   |  64 ++++
+ drivers/net/ethernet/mellanox/mlx5/core/lib/hv.h   |  22 ++
+ .../net/ethernet/mellanox/mlx5/core/lib/hv_vhca.c  | 371 +++++++++++++++++=
+++++
+ .../net/ethernet/mellanox/mlx5/core/lib/hv_vhca.h  | 104 ++++++
+ drivers/net/ethernet/mellanox/mlx5/core/main.c     |   7 +
+ drivers/pci/Kconfig                                |   1 +
+ drivers/pci/controller/Kconfig                     |   7 +
+ drivers/pci/controller/Makefile                    |   1 +
+ drivers/pci/controller/pci-hyperv-intf.c           |  70 ++++
+ drivers/pci/controller/pci-hyperv.c                | 308 +++++++++++++++++
+ include/linux/hyperv.h                             |  29 ++
+ include/linux/mlx5/driver.h                        |   2 +
+ 18 files changed, 1192 insertions(+)
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/en/hv_vhca_stat=
+s.c
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/en/hv_vhca_stat=
+s.h
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/hv.c
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/hv.h
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/hv_vhca.c
+ create mode 100644 drivers/net/ethernet/mellanox/mlx5/core/lib/hv_vhca.h
+ create mode 100644 drivers/pci/controller/pci-hyperv-intf.c
 
-	get_user_pages(...);
-	...
-	for each page:
-		put_page();
+--=20
+1.8.3.1
 
-After:
-	
-	gup_flags |= FOLL_PIN; (maybe FOLL_LONGTERM in some cases)
-	vaddr_pin_user_pages(...gup_flags...)
-	...
-	vaddr_unpin_user_pages(); /* which invokes put_user_page() */
-
-Fortunately, it's not harmful for the simpler conversion from put_page()
-to put_user_page() to happen first, and in fact those have usually led
-to simplifications, paving the way to make it easier to call
-vaddr_unpin_user_pages(), once it's ready. (And showing exactly what
-to convert, too.)
-
-So for now, I'm going to just build on top of Ira's tree, and once the
-vaddr*() API settles down, I'll send out an updated series that attempts
-to include the reviews and ACKs so far (I'll have to review them, but
-make a note that review or ACK was done for part of the conversion),
-and adds the additional gup(FOLL_PIN), and uses vaddr*() wrappers instead of
-gup/pup.
-
-[1] https://lore.kernel.org/r/20190807013340.9706-1-jhubbard@nvidia.com
-
-[2] https://lore.kernel.org/r/20190809175210.GR18351@dhcp22.suse.cz
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
