@@ -2,252 +2,151 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F177948E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3B13948DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfHSPrU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:47:20 -0400
-Received: from mail.klausen.dk ([174.138.9.187]:43656 "EHLO mail.klausen.dk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727910AbfHSPpt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:49 -0400
-Subject: Re: [PATCH v3 0/8] PM / ACPI: sleep: Additional changes related to
- suspend-to-idle
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=klausen.dk; s=dkim;
-        t=1566229545;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=VHPVcICGJOxJGFNuKHwnQFj41i8YywgMjCbyckw+LBo=;
-        b=aGWQLCf4A3BSvopyQWBEAVrbaVx9JBwYGnDY2mx+LjfJzEKebv9PjBiApdXzjL+YydwzCU
-        KLO0sGc7zBCXis7ve+/cPbo0sGqPl1rSp4Enh2J/nWFIYTrj4+rznQ6tCb4rUaGs1+Epde
-        TPuAh/Pf9y9fMl1JU8I3ipKJwbZpv+A=
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux ACPI <linux-acpi@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rajneesh Bhardwaj <rajneesh.bhardwaj@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Mario Limonciello <mario.limonciello@dell.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>
-References: <5997740.FPbUVk04hV@kreacher>
- <800186a2-e912-3498-f08b-47469bbe8b0d@klausen.dk>
- <CAJZ5v0hfMS6aJP9G=dhZZ+3WTzM8=DzQkdJ7s9W3m5m9Dat5=g@mail.gmail.com>
- <1585707.yWhsc4YUgi@kreacher>
-From:   Kristian Klausen <kristian@klausen.dk>
-Message-ID: <6bf51526-edf3-6698-b251-ef0c94b766fc@klausen.dk>
-Date:   Mon, 19 Aug 2019 17:45:44 +0200
+        id S1728180AbfHSPq4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:46:56 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36292 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728169AbfHSPqz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:46:55 -0400
+Received: by mail-pf1-f196.google.com with SMTP id w2so1393885pfi.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:46:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2elDyP5CP8UUWSk4ZKqOrsu/zDRNWxkhO0IA5jFemb8=;
+        b=fZbShXf23ZX9IZben4HxXfRR7Efl20R3m3cEpVuOyxuDLUhKZKXKwVewpxUGAtOFac
+         +aYrmAcV12EkyKf97ksDJ/tx5bgtyWZjhTxlDnK4JXKJyQo7eHztyx0ow4khf/fvvEEG
+         XNJTJwuRh1uqjKUT1r42R9u4BxWPlS9FfTRzY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2elDyP5CP8UUWSk4ZKqOrsu/zDRNWxkhO0IA5jFemb8=;
+        b=oOmbL0xZg9BG5yNowFN+w2dcKwP5ne2E9eh32xfJPfY/++DOajhDhlAONPq/9uuvU9
+         byvnrPsTi676pdH6V5izsOTyEJzZNRbpL287+nwMQvalnywN47WHnCwmxfTkRsWGS5mK
+         MtQTMu41+rxofuvN/Khk43aTblXqAbZkj3Wk7llGcr3G+R6F8sUmYPC865cAtfiftL2k
+         Ow+37DtQh8PpjE4gwG1ArBGkiY+xrvvVlonfDVB8EK9agIyFgGtS2mRT4KtVMLWjUQ60
+         B+qVUFX2x63F+XsKjfQ+mNKyVfP4C9VFeeHVKTk8Ddc9qnDhc2oVAcmY5Wt/qCbZxx6w
+         SBWA==
+X-Gm-Message-State: APjAAAV6Urs8QOHsZUuSs2i+rSQi5zuWTcFoll1EJO47qEMK+fjChIQ5
+        LoC8PMn42uiVxrMm239FW6+KhPebZvs=
+X-Google-Smtp-Source: APXvYqxcySPnC/2XxhgO0+kAfoWmP0gOuQ/PtygXHxopdN83A3u7yznnhOXp7slt9eAIYAG3Su0DUg==
+X-Received: by 2002:a17:90a:1aab:: with SMTP id p40mr21262920pjp.7.1566229614339;
+        Mon, 19 Aug 2019 08:46:54 -0700 (PDT)
+Received: from localhost ([172.19.216.18])
+        by smtp.gmail.com with ESMTPSA id 65sm23601342pff.148.2019.08.19.08.46.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 08:46:53 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 11:46:36 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Frederic Weisbecker <frederic@kernel.org>,
+        linux-kernel@vger.kernel.org, rcu@vger.kernel.org
+Subject: Re: [PATCH -rcu dev 3/3] RFC: rcu/tree: Read dynticks_nmi_nesting in
+ advance
+Message-ID: <20190819154636.GC117548@google.com>
+References: <20190816025311.241257-1-joel@joelfernandes.org>
+ <20190816025311.241257-3-joel@joelfernandes.org>
+ <20190816162404.GB10481@google.com>
+ <20190816165242.GS28441@linux.ibm.com>
+ <20190819125907.GD27088@lenoir>
+ <20190819142208.GA117378@google.com>
+ <20190819144107.GV28441@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <1585707.yWhsc4YUgi@kreacher>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819144107.GV28441@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19.08.2019 11.05, Rafael J. Wysocki wrote:
-> On Monday, August 19, 2019 9:59:02 AM CEST Rafael J. Wysocki wrote:
->> On Fri, Aug 16, 2019 at 10:26 PM Kristian Klausen <kristian@klausen.dk> wrote:
->>> On 02.08.2019 12.33, Rafael J. Wysocki wrote:
->>>> Hi All,
->>>>
->>>>>> On top of the "Simplify the suspend-to-idle control flow" patch series
->>>>>> posted previously:
->>>>>>
->>>>>> https://lore.kernel.org/lkml/71085220.z6FKkvYQPX@kreacher/
->>>>>>
->>>>>> sanitize the suspend-to-idle flow even further.
->>>>>>
->>>>>> First off, decouple EC wakeup from the LPS0 _DSM processing (patch 1).
->>>>>>
->>>>>> Next, reorder the code to invoke LPS0 _DSM Functions 5 and 6 in the
->>>>>> specification-compliant order with respect to suspending and resuming
->>>>>> devices (patch 2).
->>>>>>
->>>>>> Finally, rearrange lps0_device_attach() (patch 3) and add a command line
->>>>>> switch to prevent the LPS0 _DSM from being used.
->>>>> The v2 is because I found a (minor) bug in patch 1, decided to use a module
->>>>> parameter instead of a kernel command line option in patch 4.  Also, there
->>>>> are 4 new patches:
->>>>>
->>>>> Patch 5: Switch the EC over to polling during "noirq" suspend and back
->>>>> during "noirq" resume.
->>>>>
->>>>> Patch 6: Eliminate acpi_sleep_no_ec_events().
->>>>>
->>>>> Patch 7: Consolidate some EC code depending on PM_SLEEP.
->>>>>
->>>>> Patch 8: Add EC GPE dispatching debug message.
->>>> The v3 is just a rearranged v2 so as to move the post sensitive patch (previous patch 2)
->>>> to the end of the series.   [After applying the full series the code is the same as before.]
->>>>
->>>> For easier testing, the series (along with some previous patches depended on by it)
->>>> is available in the pm-s2idle-testing branch of the linux-pm.git tree at kernel.org:
->>>>
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=pm-s2idle-testing
->>> It was just testing this patch series(461fc1caed55), to see if it would
->>> fix my charging issue
->>> (https://bugzilla.kernel.org/show_bug.cgi?id=201307), which it didn't.
->> It is unlikely to help in that case.
-Do you have any idea what the issue could be?
->>
->>> I did however notice that my laptop (ASUS Zenbook UX430UNR/i7-8550U)
->>> won't wake when opening the lid or pressing a key, the only way to wake
->>> the laptop is pressing the power button.
->>>
->>> I also tested mainline (5.3.0-rc4 b7e7c85dc7b0) and 5.2.8 and the laptop
->>> wakes without issue when the lid is opened or a key is presed.
->>>> Please refer to the changelogs for details.
->> Thanks for your report.
->>
->> I seem to see a similar issue with respect to the lid on one of my
->> test machines, looking into it right now.
-> Well, my lid issue seems to be unrelated as it doesn't result from any patches in the
-> series in question.
->
-> First off, please clone 5.3-rc5 from kernel.org and double check if the issue is not
-> present in that one.
->
-> If that's not the case, merge the pm-s2idle-rework branch from my tree on top of it
-> and retest.
->
-> If you still see the issue then, apply the appended patch (on top of the pm-s2idle-reqork
-> branch ) and, after starting the kernel, do
->
-> # echo 1 > /sys/power/pm_debug_messages
->
-> suspend the system and try to wake it up through all of the ways that stopped working.
->
-> Then, wake it up with the power button, save the output of dmesg and send it to me.
->
-> Thanks!
+On Mon, Aug 19, 2019 at 07:41:08AM -0700, Paul E. McKenney wrote:
+> On Mon, Aug 19, 2019 at 10:22:08AM -0400, Joel Fernandes wrote:
+> > On Mon, Aug 19, 2019 at 02:59:08PM +0200, Frederic Weisbecker wrote:
+> > > On Fri, Aug 16, 2019 at 09:52:42AM -0700, Paul E. McKenney wrote:
+> > > > On Fri, Aug 16, 2019 at 12:24:04PM -0400, Joel Fernandes wrote:
+> > > > > On Thu, Aug 15, 2019 at 10:53:11PM -0400, Joel Fernandes (Google) wrote:
+> > > > > > I really cannot explain this patch, but without it, the "else if" block
+> > > > > > just doesn't execute thus causing the tick's dep mask to not be set and
+> > > > > > causes the tick to be turned off.
+> > > > > > 
+> > > > > > I tried various _ONCE() macros but the only thing that works is this
+> > > > > > patch.
+> > > > > > 
+> > > > > > Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+> > > > > > ---
+> > > > > >  kernel/rcu/tree.c | 3 ++-
+> > > > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > > > > 
+> > > > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > > > index 856d3c9f1955..ac6bcf7614d7 100644
+> > > > > > --- a/kernel/rcu/tree.c
+> > > > > > +++ b/kernel/rcu/tree.c
+> > > > > > @@ -802,6 +802,7 @@ static __always_inline void rcu_nmi_enter_common(bool irq)
+> > > > > >  {
+> > > > > >  	struct rcu_data *rdp = this_cpu_ptr(&rcu_data);
+> > > > > >  	long incby = 2;
+> > > > > > +	int dnn = rdp->dynticks_nmi_nesting;
+> > > > > 
+> > > > > I believe the accidental sign extension / conversion from long to int was
+> > > > > giving me an illusion since things started working well. Changing the 'int
+> > > > > dnn' to 'long dnn' gives similar behavior as without this patch! At least I
+> > > > > know now. Please feel free to ignore this particular RFC patch while I debug
+> > > > > this more (over the weekend or early next week). The first 2 patches are
+> > > > > good, just ignore this one.
+> > > > 
+> > > > Ah, good point on the type!  So you were ending up with zero due to the
+> > > > low-order 32 bits of DYNTICK_IRQ_NONIDLE being zero, correct?  If so,
+> > > > the "!rdp->dynticks_nmi_nesting" instead needs to be something like
+> > > > "rdp->dynticks_nmi_nesting == DYNTICK_IRQ_NONIDLE", which sounds like
+> > > > it is actually worse then the earlier comparison against the constant 2.
+> > > > 
+> > > > Sounds like I should revert the -rcu commit 805a16eaefc3 ("rcu: Force
+> > > > nohz_full tick on upon irq enter instead of exit").
+> > > 
+> > > I can't find that patch so all I can say so far is that its title doesn't
+> > > inspire me much. Do you still need that change for some reason?
+> > 
+> > No we don't need it. Paul's dev branch fixed it by checking DYNTICK_IRQ_NONIDLE:
+> > https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=dev&id=227482fd4f3ede0502b586da28a59971dfbac0b0
+> 
+> Ah, so you have tested reverting this?  If so, thank you very much!
 
-With 5.3-rc5 the laptops wakes up without any issue when pressing a key 
-or opening the lid.
-With v5.3-rc5+pm-s2idle-testing I can only wake the laptop by pressing 
-the power button.
+Just tried reverting, and found a bug if done in the reverted way. Sent you
+email with a proposed change which is essentially the top of tree:
+https://github.com/joelagnel/linux-kernel/commits/rcu/nohz-test-3
 
-dmesg with pm_debug_messages=1 and your patch:
-[   55.646109] PM: suspend entry (s2idle)
-[   55.698559] Filesystems sync: 0.052 seconds
-[   55.698561] PM: Preparing system for sleep (s2idle)
-[   55.700661] Freezing user space processes ... (elapsed 0.210 seconds) 
-done.
-[   55.911494] OOM killer disabled.
-[   55.911495] Freezing remaining freezable tasks ... (elapsed 0.001 
-seconds) done.
-[   55.913192] PM: Suspending system (s2idle)
-[   55.913195] printk: Suspending console(s) (use no_console_suspend to 
-debug)
-[   55.914778] [drm] CT: disabled
-[   55.916057] wlan0: deauthenticating from 64:70:02:a5:fd:02 by local 
-choice (Reason: 3=DEAUTH_LEAVING)
-[   56.045634] sd 2:0:0:0: [sda] Synchronizing SCSI cache
-[   56.046650] sd 2:0:0:0: [sda] Stopping disk
-[   56.287622] PM: suspend of devices complete after 371.285 msecs
-[   56.287627] PM: start suspend of devices complete after 373.684 msecs
-[   56.307155] PM: late suspend of devices complete after 19.477 msecs
-[   56.312479] ACPI: EC: interrupt blocked
-[   56.352761] PM: noirq suspend of devices complete after 45.205 msecs
-[   56.352770] ACPI: \_PR_.PR00: LPI: Device not power manageable
-[   56.352774] ACPI: \_PR_.PR01: LPI: Device not power manageable
-[   56.352776] ACPI: \_PR_.PR02: LPI: Device not power manageable
-[   56.352779] ACPI: \_PR_.PR03: LPI: Device not power manageable
-[   56.352782] ACPI: \_PR_.PR04: LPI: Device not power manageable
-[   56.352785] ACPI: \_PR_.PR05: LPI: Device not power manageable
-[   56.352788] ACPI: \_PR_.PR06: LPI: Device not power manageable
-[   56.352790] ACPI: \_PR_.PR07: LPI: Device not power manageable
-[   56.352793] ACPI: \_SB_.PCI0.GFX0: LPI: Device not power manageable
-[   56.352800] ACPI: \_SB_.PCI0.RP06.PXSX: LPI: Device not power manageable
-[   56.357057] PM: suspend-to-idle
-[   69.338656] PM: Timekeeping suspended for 12.178 seconds
-[   69.338701] PM: irq_pm_check_wakeup: IRQ 9
-[   69.338704] PM: IRQ wakeup: IRQ 9
-[   69.338879] PM: resume from suspend-to-idle
-[   69.371406] ACPI: EC: interrupt unblocked
-[   69.514126] PM: noirq resume of devices complete after 142.668 msecs
-[   69.516007] PM: early resume of devices complete after 1.773 msecs
-[   69.517579] [drm] HuC: Loaded firmware i915/kbl_huc_ver02_00_1810.bin 
-(version 2.0)
-[   69.521691] [drm] GuC: Loaded firmware i915/kbl_guc_32.0.3.bin 
-(version 32.0)
-[   69.521764] [drm] CT: enabled
-[   69.521850] i915 0000:00:02.0: GuC firmware version 32.0
-[   69.521853] i915 0000:00:02.0: GuC submission disabled
-[   69.521855] i915 0000:00:02.0: HuC enabled
-[   69.527165] sd 2:0:0:0: [sda] Starting disk
-[   69.528076] iwlwifi 0000:02:00.0: Applying debug destination 
-EXTERNAL_DRAM
-[   69.661997] iwlwifi 0000:02:00.0: Applying debug destination 
-EXTERNAL_DRAM
-[   69.729645] iwlwifi 0000:02:00.0: FW already configured (0) - 
-re-configuring
-[   69.842657] ata3: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-[   69.844600] ata3.00: configured for UDMA/133
-[   69.949032] PM: resume of devices complete after 432.157 msecs
-[   69.949770] PM: Finishing wakeup.
-[   69.949771] OOM killer enabled.
-[   69.949772] Restarting tasks ...
-[   69.953029] mei_hdcp mei::b638ab7e-94e2-4ea2-a552-d1c54b627f04:01: 
-bound 0000:00:02.0 (ops i915_hdcp_component_ops [i915])
-[   69.953521] done.
-[   70.012592] PM: suspend exit
->
-> ---
->   drivers/acpi/sleep.c        |    4 ++--
->   drivers/base/power/wakeup.c |    2 ++
->   kernel/irq/pm.c             |    2 ++
->   3 files changed, 6 insertions(+), 2 deletions(-)
->
-> Index: linux-pm/drivers/acpi/sleep.c
-> ===================================================================
-> --- linux-pm.orig/drivers/acpi/sleep.c
-> +++ linux-pm/drivers/acpi/sleep.c
-> @@ -1012,9 +1012,9 @@ static void acpi_s2idle_wake(void)
->   		acpi_os_wait_events_complete(); /* synchronize EC GPE processing */
->   		acpi_ec_flush_work();
->   		acpi_os_wait_events_complete(); /* synchronize Notify handling */
-> -	}
->   
-> -	rearm_wake_irq(acpi_sci_irq);
-> +		rearm_wake_irq(acpi_sci_irq);
-> +	}
->   }
->   
->   static void acpi_s2idle_restore_early(void)
-> Index: linux-pm/drivers/base/power/wakeup.c
-> ===================================================================
-> --- linux-pm.orig/drivers/base/power/wakeup.c
-> +++ linux-pm/drivers/base/power/wakeup.c
-> @@ -871,6 +871,8 @@ void pm_wakeup_clear(bool reset)
->   
->   void pm_system_irq_wakeup(unsigned int irq_number)
->   {
-> +	pm_pr_dbg("IRQ wakeup: IRQ %u\n", irq_number);
-> +
->   	if (pm_wakeup_irq == 0) {
->   		pm_wakeup_irq = irq_number;
->   		pm_system_wakeup();
-> Index: linux-pm/kernel/irq/pm.c
-> ===================================================================
-> --- linux-pm.orig/kernel/irq/pm.c
-> +++ linux-pm/kernel/irq/pm.c
-> @@ -15,6 +15,8 @@
->   
->   bool irq_pm_check_wakeup(struct irq_desc *desc)
->   {
-> +	pm_pr_dbg("%s: IRQ %u\n", __func__, irq_desc_get_irq(desc));
-> +
->   	if (irqd_is_wakeup_armed(&desc->irq_data)) {
->   		irqd_clear(&desc->irq_data, IRQD_WAKEUP_ARMED);
->   		desc->istate |= IRQS_SUSPENDED | IRQS_PENDING;
->
->
->
->
->
+Also for Frederick, I wanted to mention why my pure hack above (dnn variable)
+seemed to work. The reason was because of long to int conversion of
+rdp->dynticks_nmi_nesting which I surprisingly did not get a compiler warning
+for. dynticks_nmi_nesting getting converted to int was truncating the
+DYNTICK_IRQ_NONIDLE bit (in fact I believe this was due to the cltq
+instruction in x86). This caused the "else if" condition to always evaluate
+to true and turn off the tick.
+
+Paul, I wanted to see if I can create a repeatable test case for this issue.
+Not a full blown RCU torture test, but something that one could run and get a
+PASS or FAIL. Do you think this could be useful? And what is the best place
+for such a test?
+Essentially the test would be:
+1. Run a test and dump some traces.
+2. Parse the traces and see if things are sane (such as the tick not turning
+   off for this issue).
+3. Report pass or fail.
+
+The other way instead of parsing traces could be, a kernel module that does
+trace_probe_register on various tracepoints and tries to see if the tick
+indeed could stay turned on. Then report pass/fail at the end of the module's
+execution.
+
+thanks,
+
+ - Joel
 
