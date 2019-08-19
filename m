@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BAA3694EE1
+	by mail.lfdr.de (Postfix) with ESMTP id 4C35194EE0
 	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:24:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfHSUXy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 16:23:54 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:43790 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727925AbfHSUXv (ORCPT
+        id S1728482AbfHSUXw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 16:23:52 -0400
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:59400 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728177AbfHSUXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:23:51 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JKMciO029885
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:23:50 -0700
+        Mon, 19 Aug 2019 16:23:50 -0400
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.27/8.16.0.27) with SMTP id x7JKMUpd016159
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:23:49 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=PjbU1g0HSZbfWk9SY2i4q3vRzP7r29TcBmvS+zIkpVo=;
- b=Ti2BFYkF/wEaZGo7sXypSi2BMPkAROZBaphdRnlSsJ47VnxHwY0+Re/C2P+cdQifOPh6
- WDsKukj4pEERPDRhhBQVgPQPZHYxXRtBh03JEz5L1Cu23maWtVmdYJBzEeWZE2bQe2Zv
- /TFGjO8kt4slwxwWh3VrFquwZqtVNZf6ZIU= 
-Received: from mail.thefacebook.com (mailout.thefacebook.com [199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2ug0k28n0p-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:23:50 -0700
-Received: from mx-out.facebook.com (2620:10d:c081:10::13) by
- mail.thefacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA) id 15.1.1713.5;
- Mon, 19 Aug 2019 13:23:49 -0700
+ content-type; s=facebook; bh=tvnASVxjihuxlIS06ZHfA8dvMyq/4mb2sd9rYV6pG1A=;
+ b=iGIy1o5/x6h0kgXeHJefTTUVK+biVDhPQCmtTnsEXxLf2TUgvNgzjpeVxIfl2vGO91Aa
+ HKOg2M24E4rECev3Xby9Lbi7SuXI03OBZAAf1jVFEbJQxD2MgLofNZIJtjErJvoYn0r8
+ lQWop8XwrODgzgpvCEKH7A9U6n/2Vs60WZc= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by m0089730.ppops.net with ESMTP id 2ufypy8vy1-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:23:49 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 19 Aug 2019 13:23:47 -0700
 Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 4990C168A8AD1; Mon, 19 Aug 2019 13:23:47 -0700 (PDT)
+        id 4DB83168A8AD6; Mon, 19 Aug 2019 13:23:47 -0700 (PDT)
 Smtp-Origin-Hostprefix: devvm
 From:   Roman Gushchin <guro@fb.com>
 Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
@@ -39,11 +39,12 @@ CC:     Michal Hocko <mhocko@kernel.org>,
         Johannes Weiner <hannes@cmpxchg.org>,
         <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
         Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        <stable@vger.kernel.org>
 Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v2 2/3] mm: memcontrol: flush percpu slab vmstats on kmem offlining
-Date:   Mon, 19 Aug 2019 13:23:37 -0700
-Message-ID: <20190819202338.363363-3-guro@fb.com>
+Subject: [PATCH v2 3/3] mm: memcontrol: flush percpu vmevents before releasing memcg
+Date:   Mon, 19 Aug 2019 13:23:38 -0700
+Message-ID: <20190819202338.363363-4-guro@fb.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819202338.363363-1-guro@fb.com>
 References: <20190819202338.363363-1-guro@fb.com>
@@ -55,7 +56,7 @@ X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019
 X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
  malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=605 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=901 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1906280000 definitions=main-1908190207
 X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
@@ -63,132 +64,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've noticed that the "slab" value in memory.stat is sometimes 0,
-even if some children memory cgroups have a non-zero "slab" value.
-The following investigation showed that this is the result
-of the kmem_cache reparenting in combination with the per-cpu
-batching of slab vmstats.
+Similar to vmstats, percpu caching of local vmevents leads to an
+accumulation of errors on non-leaf levels.  This happens because some
+leftovers may remain in percpu caches, so that they are never propagated
+up by the cgroup tree and just disappear into nonexistence with on
+releasing of the memory cgroup.
 
-At the offlining some vmstat value may leave in the percpu cache,
-not being propagated upwards by the cgroup hierarchy. It means
-that stats on ancestor levels are lower than actual. Later when
-slab pages are released, the precise number of pages is substracted
-on the parent level, making the value negative. We don't show negative
-values, 0 is printed instead.
+To fix this issue let's accumulate and propagate percpu vmevents values
+before releasing the memory cgroup similar to what we're doing with
+vmstats.
 
-To fix this issue, let's flush percpu slab memcg and lruvec stats
-on memcg offlining. This guarantees that numbers on all ancestor
-levels are accurate and match the actual number of outstanding
-slab pages.
+Since on cpu hotplug we do flush percpu vmstats anyway, we can iterate
+only over online cpus.
 
-Fixes: fb2f2b0adb98 ("mm: memcg/slab: reparent memcg kmem_caches on cgroup removal")
+Fixes: 42a300353577 ("mm: memcontrol: fix recursive statistics correctness & scalabilty")
 Signed-off-by: Roman Gushchin <guro@fb.com>
+Acked-by: Michal Hocko <mhocko@suse.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
 Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: <stable@vger.kernel.org>
 ---
- include/linux/mmzone.h |  5 +++--
- mm/memcontrol.c        | 35 +++++++++++++++++++++++++++--------
- 2 files changed, 30 insertions(+), 10 deletions(-)
+ mm/memcontrol.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 8b5f758942a2..bda20282746b 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -215,8 +215,9 @@ enum node_stat_item {
- 	NR_INACTIVE_FILE,	/*  "     "     "   "       "         */
- 	NR_ACTIVE_FILE,		/*  "     "     "   "       "         */
- 	NR_UNEVICTABLE,		/*  "     "     "   "       "         */
--	NR_SLAB_RECLAIMABLE,
--	NR_SLAB_UNRECLAIMABLE,
-+	NR_SLAB_RECLAIMABLE,	/* Please do not reorder this item */
-+	NR_SLAB_UNRECLAIMABLE,	/* and this one without looking at
-+				 * memcg_flush_percpu_vmstats() first. */
- 	NR_ISOLATED_ANON,	/* Temporary isolated pages from anon lru */
- 	NR_ISOLATED_FILE,	/* Temporary isolated pages from file lru */
- 	WORKINGSET_NODES,
 diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 818165d8de3f..ebd72b80c90b 100644
+index ebd72b80c90b..3137de6a46f0 100644
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -3383,37 +3383,49 @@ static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
+@@ -3430,6 +3430,25 @@ static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg, bool slab_only)
  	}
  }
  
--static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg)
-+static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg, bool slab_only)
++static void memcg_flush_percpu_vmevents(struct mem_cgroup *memcg)
++{
++	unsigned long events[NR_VM_EVENT_ITEMS];
++	struct mem_cgroup *mi;
++	int cpu, i;
++
++	for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
++		events[i] = 0;
++
++	for_each_online_cpu(cpu)
++		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
++			events[i] += raw_cpu_read(
++				memcg->vmstats_percpu->events[i]);
++
++	for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
++		for (i = 0; i < NR_VM_EVENT_ITEMS; i++)
++			atomic_long_add(events[i], &mi->vmevents[i]);
++}
++
+ #ifdef CONFIG_MEMCG_KMEM
+ static int memcg_online_kmem(struct mem_cgroup *memcg)
  {
- 	unsigned long stat[MEMCG_NR_STAT];
- 	struct mem_cgroup *mi;
- 	int node, cpu, i;
-+	int min_idx, max_idx;
+@@ -4860,10 +4879,11 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
+ 	int node;
  
--	for (i = 0; i < MEMCG_NR_STAT; i++)
-+	if (slab_only) {
-+		min_idx = NR_SLAB_RECLAIMABLE;
-+		max_idx = NR_SLAB_UNRECLAIMABLE;
-+	} else {
-+		min_idx = 0;
-+		max_idx = MEMCG_NR_STAT;
-+	}
-+
-+	for (i = min_idx; i < max_idx; i++)
- 		stat[i] = 0;
- 
- 	for_each_online_cpu(cpu)
--		for (i = 0; i < MEMCG_NR_STAT; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			stat[i] += raw_cpu_read(memcg->vmstats_percpu->stat[i]);
- 
- 	for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
--		for (i = 0; i < MEMCG_NR_STAT; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			atomic_long_add(stat[i], &mi->vmstats[i]);
- 
-+	if (!slab_only)
-+		max_idx = NR_VM_NODE_STAT_ITEMS;
-+
- 	for_each_node(node) {
- 		struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
- 		struct mem_cgroup_per_node *pi;
- 
--		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			stat[i] = 0;
- 
- 		for_each_online_cpu(cpu)
--			for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+			for (i = min_idx; i < max_idx; i++)
- 				stat[i] += raw_cpu_read(
- 					pn->lruvec_stat_cpu->count[i]);
- 
- 		for (pi = pn; pi; pi = parent_nodeinfo(pi, node))
--			for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+			for (i = min_idx; i < max_idx; i++)
- 				atomic_long_add(stat[i], &pi->lruvec_stat[i]);
- 	}
- }
-@@ -3467,7 +3479,14 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
- 	if (!parent)
- 		parent = root_mem_cgroup;
- 
-+	/*
-+	 * Deactivate and reparent kmem_caches. Then flush percpu
-+	 * slab statistics to have precise values at the parent and
-+	 * all ancestor levels. It's required to keep slab stats
-+	 * accurate after the reparenting of kmem_caches.
-+	 */
- 	memcg_deactivate_kmem_caches(memcg, parent);
-+	memcg_flush_percpu_vmstats(memcg, true);
- 
- 	kmemcg_id = memcg->kmemcg_id;
- 	BUG_ON(kmemcg_id < 0);
-@@ -4844,7 +4863,7 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
- 	 * Flush percpu vmstats to guarantee the value correctness
+ 	/*
+-	 * Flush percpu vmstats to guarantee the value correctness
++	 * Flush percpu vmstats and vmevents to guarantee the value correctness
  	 * on parent's and all ancestor levels.
  	 */
--	memcg_flush_percpu_vmstats(memcg);
-+	memcg_flush_percpu_vmstats(memcg, false);
+ 	memcg_flush_percpu_vmstats(memcg, false);
++	memcg_flush_percpu_vmevents(memcg);
  	for_each_node(node)
  		free_mem_cgroup_per_node_info(memcg, node);
  	free_percpu(memcg->vmstats_percpu);
