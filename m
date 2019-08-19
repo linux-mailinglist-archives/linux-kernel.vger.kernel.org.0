@@ -2,90 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04B7A92369
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:28:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C199B92370
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727456AbfHSM2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 08:28:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727039AbfHSM2W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:28:22 -0400
-Received: from [192.168.1.74] (75-58-59-55.lightspeed.rlghnc.sbcglobal.net [75.58.59.55])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CFA220843;
-        Mon, 19 Aug 2019 12:28:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566217701;
-        bh=4nNTJ7OlbEkrwoSuv0YafH77Uv/FiulB1zmykNGQe9c=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=uwi6y+1Ng4ZNJpaGOwR3PQhkifllhh17EascGCHt7UPDVfIf0ieMo8vOgQ/N0tcZK
-         pf/8djU8zpN1Pz+fGmOQvrF/6H3/G3DvONYC7zaiWx3EPUHZReyO0zpORlLcrtM8j+
-         sblAfNa2PiKIulpfCl2PLKpXWOlDmn7XuaokeahM=
-Subject: Re: [PATCH v2 2/2] PCI: pciehp: Prevent deadlock on disconnect
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Lukas Wunner <lukas@wunner.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Frederick Lawler <fred@fredlawl.com>,
-        "Gustavo A . R . Silva" <gustavo@embeddedor.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190812143133.75319-1-mika.westerberg@linux.intel.com>
- <20190812143133.75319-2-mika.westerberg@linux.intel.com>
- <ba0380b1-e8d1-890a-82e2-61d0ab6e9cae@kernel.org>
- <20190819085620.GM19908@lahna.fi.intel.com>
-From:   Sinan Kaya <okaya@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=okaya@kernel.org; keydata=
- mQENBFrnOrUBCADGOL0kF21B6ogpOkuYvz6bUjO7NU99PKhXx1MfK/AzK+SFgxJF7dMluoF6
- uT47bU7zb7HqACH6itTgSSiJeSoq86jYoq5s4JOyaj0/18Hf3/YBah7AOuwk6LtV3EftQIhw
- 9vXqCnBwP/nID6PQ685zl3vH68yzF6FVNwbDagxUz/gMiQh7scHvVCjiqkJ+qu/36JgtTYYw
- 8lGWRcto6gr0eTF8Wd8f81wspmUHGsFdN/xPsZPKMw6/on9oOj3AidcR3P9EdLY4qQyjvcNC
- V9cL9b5I/Ud9ghPwW4QkM7uhYqQDyh3SwgEFudc+/RsDuxjVlg9CFnGhS0nPXR89SaQZABEB
- AAG0HVNpbmFuIEtheWEgPG9rYXlhQGtlcm5lbC5vcmc+iQFOBBMBCAA4FiEEYdOlMSE+a7/c
- ckrQvGF4I+4LAFcFAlztcAoCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQvGF4I+4L
- AFfidAf/VKHInxep0Z96iYkIq42432HTZUrxNzG9IWk4HN7c3vTJKv2W+b9pgvBF1SmkyQSy
- 8SJ3Zd98CO6FOHA1FigFyZahVsme+T0GsS3/OF1kjrtMktoREr8t0rK0yKpCTYVdlkHadxmR
- Qs5xLzW1RqKlrNigKHI2yhgpMwrpzS+67F1biT41227sqFzW9urEl/jqGJXaB6GV+SRKSHN+
- ubWXgE1NkmfAMeyJPKojNT7ReL6eh3BNB/Xh1vQJew+AE50EP7o36UXghoUktnx6cTkge0ZS
- qgxuhN33cCOU36pWQhPqVSlLTZQJVxuCmlaHbYWvye7bBOhmiuNKhOzb3FcgT7kBDQRa5zq1
- AQgAyRq/7JZKOyB8wRx6fHE0nb31P75kCnL3oE+smKW/sOcIQDV3C7mZKLf472MWB1xdr4Tm
- eXeL/wT0QHapLn5M5wWghC80YvjjdolHnlq9QlYVtvl1ocAC28y43tKJfklhHiwMNDJfdZbw
- 9lQ2h+7nccFWASNUu9cqZOABLvJcgLnfdDpnSzOye09VVlKr3NHgRyRZa7me/oFJCxrJlKAl
- 2hllRLt0yV08o7i14+qmvxI2EKLX9zJfJ2rGWLTVe3EJBnCsQPDzAUVYSnTtqELu2AGzvDiM
- gatRaosnzhvvEK+kCuXuCuZlRWP7pWSHqFFuYq596RRG5hNGLbmVFZrCxQARAQABiQEfBBgB
- CAAJBQJa5zq1AhsMAAoJELxheCPuCwBX2UYH/2kkMC4mImvoClrmcMsNGijcZHdDlz8NFfCI
- gSb3NHkarnA7uAg8KJuaHUwBMk3kBhv2BGPLcmAknzBIehbZ284W7u3DT9o1Y5g+LDyx8RIi
- e7pnMcC+bE2IJExCVf2p3PB1tDBBdLEYJoyFz/XpdDjZ8aVls/pIyrq+mqo5LuuhWfZzPPec
- 9EiM2eXpJw+Rz+vKjSt1YIhg46YbdZrDM2FGrt9ve3YaM5H0lzJgq/JQPKFdbd5MB0X37Qc+
- 2m/A9u9SFnOovA42DgXUyC2cSbIJdPWOK9PnzfXqF3sX9Aol2eLUmQuLpThJtq5EHu6FzJ7Y
- L+s0nPaNMKwv/Xhhm6Y=
-Message-ID: <3c29d829-0068-7135-ccf8-1a254e1fa253@kernel.org>
-Date:   Mon, 19 Aug 2019 08:28:19 -0400
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727577AbfHSM3X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 08:29:23 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:39525 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727039AbfHSM3W (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 08:29:22 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hzgmj-0002vD-DX; Mon, 19 Aug 2019 14:29:17 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hzgmh-0007dT-8g; Mon, 19 Aug 2019 14:29:15 +0200
+Date:   Mon, 19 Aug 2019 14:29:15 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Daniel Thompson <daniel.thompson@linaro.org>
+Cc:     Matthias Kaehlcke <mka@chromium.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        kernel@pengutronix.de
+Subject: Re: [PATCH v3 2/4] backlight: Expose brightness curve type through
+ sysfs
+Message-ID: <20190819122915.icjszuvnwyjpa75n@pengutronix.de>
+References: <20190709190007.91260-1-mka@chromium.org>
+ <20190709190007.91260-3-mka@chromium.org>
+ <20190816165148.7keg45fmlndr22fl@pengutronix.de>
+ <20190816175157.GT250418@google.com>
+ <20190816194754.ldzjqy2yjonfvaat@pengutronix.de>
+ <20190816211051.GV250418@google.com>
+ <20190819054628.asw3cxp46w3rpml7@pengutronix.de>
+ <20190819095037.h3gig3quyhnzshm7@holly.lan>
+ <20190819102127.wqudnbngottjakf5@pengutronix.de>
+ <20190819111613.2kkn25tmjgyjhbip@holly.lan>
 MIME-Version: 1.0
-In-Reply-To: <20190819085620.GM19908@lahna.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190819111613.2kkn25tmjgyjhbip@holly.lan>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/2019 4:56 AM, Mika Westerberg wrote:
->> There are PCI controllers that won't report presence detect correctly,
->> but still report link active.
-> If that's the case then pciehp_card_present() returns false so we call
-> pciehp_check_link_active() which should work with those controllers.
+On Mon, Aug 19, 2019 at 12:16:13PM +0100, Daniel Thompson wrote:
+> On Mon, Aug 19, 2019 at 12:21:27PM +0200, Uwe Kleine-König wrote:
+> > > > > In an ideal world the backlight interface would be consistent as you
+> > > > > suggest, however there are plenty of existing devices which use the
+> > > > > 'other' scaling (regardless of which is chosen as the 'correct'
+> > > > > one). Userspace still has to deal with these. And changing previously
+> > > > > 'logarithmic' drivers to linear (or viceversa) may 'break' userspace,
+> > > > > when it keeps using its 'old' scaling, which now isn't correct anymore.
+> > > > 
+> > > > It might be subjective, or maybe I'm just too optimistic, but I think if
+> > > > there was no policy before about the meaning of
+> > > > 
+> > > > 	echo 17 > brightness
+> > > > 
+> > > > other than "brighter than lower values and darker than higher ones"
+> > > > introducing (say) the scale is intended to represent a linear brightness
+> > > > curve is ok.
+> > > > 
+> > > > Unless userspace jumps through hoops and tries to identify the actual
+> > > > device it is running on it is wrong on some machines anyhow and we're
+> > > > only shifting the set of affected machines with a tighter policy (until
+> > > > that userspace application is fixed).
+> > > 
+> > > I believe that there are two common approaches by userspace at present:
+> > > 
+> > > 1. Assume the scale is perceptual and we can directly map a slider
+> > >    to the backlight value. This is common simply because most ACPI
+> > >    backlights are perceptual and therefore when tested in a laptop
+> > >    it works OK.
+> > > 
+> > > 2. Assume that is max brightness is small (e.g. ACPI) then the
+> > >    scale is perceptual and if the max brightness is large (e.g.
+> > >    a PWM) then the scale is linear and apply a correction
+> > >    function between the slider and the control.
+> > > 
+> > > That historic baggage makes is diffcult to "just define a standardized
+> > > scale"... especially given that if we selected a standardized scale we
+> > > would probably want a perceptual scale with lots of steps (e.g. break
+> > > the heuristic).
+> > 
+> > With "perceptual" you mean that logarithmic stuff, right?
 > 
-> What I'm missing here?
-> 
+> Human perception is fairly complex so it depends how strict you want to
+> get. At the end of the day what it means is you can map a slider UI
+> component directly to the backlight range and it will feel right. Thus
+> a userspace that maps directly to a slider *is* assuming the scale
+> is perceptual.
 
-You are right. I thought we'd somehow prematurely leave the function.
-That's not the case.
+I have problems to declare something as "the right thing to do" that
+depends on feeling of users. I much prefer to make a technical device
+authoritative here (in this case a device that measures emitted light).
+
+Other than that I don't have enough experience with backlights to judge
+the decisions that have to be done and so will stop my participation in
+this thread now.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
