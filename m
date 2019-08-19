@@ -2,79 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6548391D9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:14:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3AAB91DA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:16:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726812AbfHSHOR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:14:17 -0400
-Received: from mga14.intel.com ([192.55.52.115]:36077 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726174AbfHSHOR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:14:17 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 00:14:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="195475459"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 19 Aug 2019 00:14:14 -0700
-Received: by lahna (sSMTP sendmail emulation); Mon, 19 Aug 2019 10:14:13 +0300
-Date:   Mon, 19 Aug 2019 10:14:13 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Chris Chiu <chiu@endlessm.com>
-Cc:     andriy.shevchenko@linux.intel.com, linus.walleij@linaro.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux@endlessm.com
-Subject: Re: [PATCH] pinctrl: intel: remap the pin number to gpio offset for
- irq enabled pin
-Message-ID: <20190819071413.GI19908@lahna.fi.intel.com>
-References: <20190816093838.81461-1-chiu@endlessm.com>
+        id S1726872AbfHSHQZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:16:25 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46539 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726842AbfHSHQY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:16:24 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m3so652159pgv.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 00:16:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E4I0nwbB40pqeWHoV/798x9f0gje8qISbA2ysVwPz/g=;
+        b=nKH8wqmjGSa2ybP1nrMEitKF8FD0nmeXRfyTNl2aWZ9u6orHOZerLfF6cVI8dyN53/
+         ns2EXlCQSbt15jD3SyExGoFAU3mP0Ug5IEksWy9KuNTa7ImbdIVT7foykXMHqH7dzpBE
+         oMEaq6R/1HyNCKI9vL5mKiZOm/BJbj3bFOj6c=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=E4I0nwbB40pqeWHoV/798x9f0gje8qISbA2ysVwPz/g=;
+        b=Fg81LWSu6F0mGJ5h/KJM4n1sJyM/x2Apgi+WLMa3aCAfw1PbywbSe4MifsFi+2jP3u
+         xdWdJR3V+FSjoW3mPYF2cALt9PInwWOmjCRwa1D0VhFG9FXLRts5fmIjgzVpJ7KkZAzW
+         iCrxMx8MoX8c5QlPyGoKJs5hKs0709Q6M6CPpUG7syORtMtONq7EMqX72asD6z2R67BF
+         qwOFvd8hWvkiKrMy6IRen2IsF5Vgs2KRp6rMv6Wb1KgYN5OJe5HYhEaovzBEnKJuT3iL
+         0CUw6DxpHC2VOfLyNMwONsyAhC/jhfHP4vnFvMXkPBaCmyV1jEUT3EnNRFCJ+AVK5MIw
+         bp9Q==
+X-Gm-Message-State: APjAAAUlLd6YU0gkdbMchfU9FvB/Hvc6D9nYLzFTwUxGkKUUsbA9+mGZ
+        nHTBdXA7AR+ElRQwKpM3D098CQ==
+X-Google-Smtp-Source: APXvYqzQ5bCb1eZQOlrkKJIooCdpG5H+MgNCs58SYiUsllABkx5wib5s+woQ+/e0gQTMuER2i7x9AQ==
+X-Received: by 2002:a62:5883:: with SMTP id m125mr22570389pfb.248.1566198984026;
+        Mon, 19 Aug 2019 00:16:24 -0700 (PDT)
+Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
+        by smtp.gmail.com with ESMTPSA id y9sm14691341pfn.152.2019.08.19.00.16.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 19 Aug 2019 00:16:23 -0700 (PDT)
+From:   Hsin-Yi Wang <hsinyi@chromium.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH v8 0/3] add support for rng-seed
+Date:   Mon, 19 Aug 2019 15:16:00 +0800
+Message-Id: <20190819071602.139014-1-hsinyi@chromium.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816093838.81461-1-chiu@endlessm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 05:38:38PM +0800, Chris Chiu wrote:
-> On Asus X571GT, GPIO 297 is configured as an interrupt and serves
-> for the touchpad. The touchpad will report input events much less
-> than expected after S3 suspend/resume, which results in extremely
-> slow cursor movement. However, the number of interrupts observed
-> from /proc/interrupts increases much more than expected even no
-> touching touchpad.
-> 
-> This is due to the value of PADCFG0 of PIN 225 for the interrupt
-> has been changed from 0x80800102 to 0x80100102. The GPIROUTIOXAPIC
-> is toggled on which results in the spurious interrupts. The PADCFG0
-> of PIN 225 is expected to be saved during suspend, but the 297 is
-> saved instead because the gpiochip_line_is_irq() expect the GPIO
-> offset but what's really passed to it is PIN number. In this case,
-> the /sys/kernel/debug/pinctrl/INT3450:00/gpio-ranges shows
-> 
-> 288: INT3450:00 GPIOS [436 - 459] PINS [216 - 239]
-> 
-> So gpiochip_line_is_irq() returns true for GPIO offset 297, the
-> suspend routine spuriously saves the content for PIN 297 which
-> we expect to save for PIN 225.
+Introducing a chosen node, rng-seed, which is an entropy that can be
+passed to kernel called very early to increase initial device
+randomness. This can be used for adding sufficient initial entropy
+for stack canary. Especially architectures that lack per-stack canary.
 
-Nice work nailing the issue!
+Hsin-Yi Wang (3):
+  arm64: map FDT as RW for early_init_dt_scan()
+  fdt: add support for rng-seed
+  arm64: kexec_file: add rng-seed support
 
-> This commit maps the PIN number to GPIO offset first in the
-> intel_pinctrl_should_save() to make sure the values for the
-> specific PINs can be correctly saved and then restored.
-> 
-> Signed-off-by: Chris Chiu <chiu@endlessm.com>
+ arch/arm64/include/asm/mmu.h           |  2 +-
+ arch/arm64/kernel/kaslr.c              |  5 +----
+ arch/arm64/kernel/machine_kexec_file.c | 18 +++++++++++++++++-
+ arch/arm64/kernel/setup.c              |  9 ++++++++-
+ arch/arm64/mm/mmu.c                    | 15 +--------------
+ drivers/of/fdt.c                       | 14 ++++++++++++--
+ 6 files changed, 40 insertions(+), 23 deletions(-)
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+-- 
+2.20.1
 
-I think this should also have:
-
-Fixes: c538b9436751 ("pinctrl: intel: Only restore pins that are used by the driver")
