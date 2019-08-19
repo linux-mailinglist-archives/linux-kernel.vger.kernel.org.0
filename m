@@ -2,63 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3FC891DCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:27:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 93A2091DD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:30:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726907AbfHSH1i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:27:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50210 "EHLO mail.kernel.org"
+        id S1726945AbfHSH3O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:29:14 -0400
+Received: from mga18.intel.com ([134.134.136.126]:62493 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725768AbfHSH1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:27:38 -0400
-Received: from X250 (37.80-203-192.nextgentel.com [80.203.192.37])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 266852086C;
-        Mon, 19 Aug 2019 07:27:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566199657;
-        bh=SZ9Ao8FfR0PuQ6iPU0Wh/DnaqMF8VJumtYhqVss2EvY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=J5zIXe8voouEL04ALmAx6QxC326GZiAYYGDkZjaM0n+UAjB4B/PDfVrUtLR/y4Jx8
-         AxUgxMLA1VjJZG3dz84Qu0AoKYmld6W6a/SDbtuGmDKJYflXgpO3EsuWETy98HYH17
-         jgcHqPM6Oq/Nd5/1T7dLU3cfrcwNtIO7E+eBLTes=
-Date:   Mon, 19 Aug 2019 09:27:22 +0200
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Anson.Huang@nxp.com, catalin.marinas@arm.com, will@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
-        tglx@linutronix.de, leonard.crestez@nxp.com, aisheng.dong@nxp.com,
-        daniel.baluta@nxp.com, ping.bai@nxp.com, l.stach@pengutronix.de,
-        abel.vesa@nxp.com, andrew.smirnov@gmail.com, ccaione@baylibre.com,
-        angus@akkea.ca, agx@sigxcpu.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V5 5/5] arm64: dts: imx8mm: Enable cpu-idle driver
-Message-ID: <20190819072721.GA5999@X250>
-References: <20190710063056.35689-1-Anson.Huang@nxp.com>
- <20190710063056.35689-5-Anson.Huang@nxp.com>
- <34c03d76-ae61-63b4-153f-3f9911cc962e@linaro.org>
+        id S1726261AbfHSH3O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:29:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 00:27:59 -0700
+X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
+   d="scan'208";a="177797511"
+Received: from paasikivi.fi.intel.com ([10.237.72.42])
+  by fmsmga008-auth.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 00:27:52 -0700
+Received: by paasikivi.fi.intel.com (Postfix, from userid 1000)
+        id 09D1F202FC; Mon, 19 Aug 2019 10:26:22 +0300 (EEST)
+Date:   Mon, 19 Aug 2019 10:26:21 +0300
+From:   Sakari Ailus <sakari.ailus@linux.intel.com>
+To:     Hugues FRUCHET <hugues.fruchet@st.com>
+Cc:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        Yannick FERTRE <yannick.fertre@st.com>,
+        Philippe CORNU <philippe.cornu@st.com>,
+        Mickael GUENE <mickael.guene@st.com>
+Subject: Re: [PATCH v6 2/4] media: stm32-dcmi: trace the supported
+ fourcc/mbus_code
+Message-ID: <20190819072621.GZ6133@paasikivi.fi.intel.com>
+References: <1565790533-10043-1-git-send-email-hugues.fruchet@st.com>
+ <1565790533-10043-3-git-send-email-hugues.fruchet@st.com>
+ <20190816081514.GU6133@paasikivi.fi.intel.com>
+ <fb02573f-991a-18c5-b780-b5fc100da6a8@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <34c03d76-ae61-63b4-153f-3f9911cc962e@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <fb02573f-991a-18c5-b780-b5fc100da6a8@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 06:12:50PM +0200, Daniel Lezcano wrote:
-> 
-> Hi Anson,
-> 
-> sorry for the late review, I've been pretty busy.
-> 
-> If Shawn is ok, I can pick the patches 1-4 in my tree and then this one
-> after you fix the comments below.
+Hi Hugues,
 
-I'm okay, so:
+On Mon, Aug 19, 2019 at 07:23:17AM +0000, Hugues FRUCHET wrote:
+> Hi Sakari,
+> 
+> On 8/16/19 10:15 AM, Sakari Ailus wrote:
+> > Hi Hugues,
+> > 
+> > On Wed, Aug 14, 2019 at 03:48:51PM +0200, Hugues Fruchet wrote:
+> >> Add a trace of the set of supported fourcc/mbus_code which
+> >> intersect between DCMI and source sub-device.
+> >>
+> >> Signed-off-by: Hugues Fruchet <hugues.fruchet@st.com>
+> >> ---
+> >>   drivers/media/platform/stm32/stm32-dcmi.c | 12 ++++++++++--
+> >>   1 file changed, 10 insertions(+), 2 deletions(-)
+> >>
+> >> diff --git a/drivers/media/platform/stm32/stm32-dcmi.c b/drivers/media/platform/stm32/stm32-dcmi.c
+> >> index b462f71..18acecf 100644
+> >> --- a/drivers/media/platform/stm32/stm32-dcmi.c
+> >> +++ b/drivers/media/platform/stm32/stm32-dcmi.c
+> >> @@ -1447,12 +1447,20 @@ static int dcmi_formats_init(struct stm32_dcmi *dcmi)
+> >>   			/* Code supported, have we got this fourcc yet? */
+> >>   			for (j = 0; j < num_fmts; j++)
+> >>   				if (sd_fmts[j]->fourcc ==
+> >> -						dcmi_formats[i].fourcc)
+> >> +						dcmi_formats[i].fourcc) {
+> >>   					/* Already available */
+> >> +					dev_dbg(dcmi->dev, "Skipping fourcc/code: %4.4s/0x%x\n",
+> >> +						(char *)&sd_fmts[j]->fourcc,
+> >> +						mbus_code.code);
+> >>   					break;
+> >> -			if (j == num_fmts)
+> >> +				}
+> >> +			if (j == num_fmts) {
+> >>   				/* New */
+> >>   				sd_fmts[num_fmts++] = dcmi_formats + i;
+> >> +				dev_dbg(dcmi->dev, "Supported fourcc/code: %4.4s/0x%x\n",
+> > 
+> > Over 80 characters per line.
+> > 
+> 
+> This an exception of the "80 chars" in order to be able to grep in 
+> kernel messages:
+> https://www.kernel.org/doc/html/v4.10/process/coding-style.html
+> "However, never break user-visible strings such as printk messages, 
+> because that breaks the ability to grep for them."
+> 
+> This exception is managed in checkpatch.pl (--strict).
 
-Acked-by: Shawn Guo <shawnguo@kernel.org>
+This exception is for cases where wrapping the line in the usual way, e.g.
+at argument boundaries, does not prevent it exceeding 80 characters. But it is
+not the case here.
+
+-- 
+Sakari Ailus
+sakari.ailus@linux.intel.com
