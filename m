@@ -2,103 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07A3691BBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:13:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9690C91BBF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726533AbfHSENG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 00:13:06 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:20030 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfHSENG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 00:13:06 -0400
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id x7J4CkH6025355
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:12:47 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x7J4CkH6025355
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566187967;
-        bh=zawdGZ9ZyNmfYfyUdpwVBwZFTc+KSsHNfxOU2+IVi2E=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TxHlpLPY9q/MvzcpjcY8U9IfHjyyjQwEkvAcj8aewNLTKBJpq0ZqnEs0lFtvhOBxs
-         TGmm1fWQJZwMYdNmQx6qwxFpcAs2TGKEDjSn0nKYTUU40gvwzMry1vT3H9K4LG/TwO
-         NZINvAbSn4FEBSU7ZhUPwmhmtEOuWIjzyNHnjb6dCJE8UYGT6No1Gtbg0vCZo6LYJB
-         T9IsnkPJbfFjgAKmzOPNx3LWsFG3Pd6Mpc8CYj5UOK+sZ9I5bTF/ls/h1JbXlQBbmo
-         yydh0g/9DdVOWgRdERxps/BdxKXNJUKDR7z2XUk/VMr+lvqTEDmrFAiA9CRXyn+ATt
-         aznftmZT4pnKg==
-X-Nifty-SrcIP: [209.85.217.52]
-Received: by mail-vs1-f52.google.com with SMTP id b20so322910vso.1
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:12:47 -0700 (PDT)
-X-Gm-Message-State: APjAAAUgWezgGMDK6Bmwc/XMBGkeALVk2/aFyeWX+fzpzYhgUW9aGPm3
-        cwRBNb3EEOspuSFfqTEc3lb6yc0g8FqQs5mECS4=
-X-Google-Smtp-Source: APXvYqxZWGF3+HnlOCLODkSxLgONq1AiUQ/7Qzg9X7ABdYlPKFtw/zxeBnwxF8hgshBpwXCwlb5WHLuf6u89bG7yL5w=
-X-Received: by 2002:a05:6102:20c3:: with SMTP id i3mr13018980vsr.155.1566187965946;
- Sun, 18 Aug 2019 21:12:45 -0700 (PDT)
+        id S1726370AbfHSEOs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 00:14:48 -0400
+Received: from m12-17.163.com ([220.181.12.17]:48714 "EHLO m12-17.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725308AbfHSEOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 00:14:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=Date:From:Subject:Message-ID:MIME-Version; bh=x0nxG
+        PuZl6OzRvhI9JteYOTIS9V5/De0DOoCRwbKaa0=; b=diS2vgq1plYI9D/2d5FjR
+        jHQknkIjEfCb3tBQF62KjBe3nVG5AMpilVTllP5NLmZsa5OxOglJBUSsp3h3kqUu
+        w6MP/qJRK+f9wmaK5E4i5c84ZjGyjs341lAaX4LAC+UY5TL9Kf13r3seh0ETg0r4
+        98mfjQiCtJ5NswDaIo6Xyo=
+Received: from sise (unknown [202.112.113.212])
+        by smtp13 (Coremail) with SMTP id EcCowADHzAkvIlpdvAaPIg--.63341S2;
+        Mon, 19 Aug 2019 12:14:40 +0800 (CST)
+Date:   Mon, 19 Aug 2019 12:14:39 +0800
+From:   PanBian <bianpan2016@163.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH V2] block/bio-integrity: fix mismatched alloc free
+Message-ID: <20190819041439.GA23459@sise>
+Reply-To: PanBian <bianpan2016@163.com>
+References: <1566176353-20157-1-git-send-email-bianpan2016@163.com>
+ <20190819035613.GC3086@ming.t460p>
 MIME-Version: 1.0
-References: <20190618030926.30616-1-yamada.masahiro@socionext.com>
- <1318390798.95477.1560838785550.JavaMail.zimbra@nod.at> <CAK7LNARA62uqi8rkDeJ=zjA6vnruTAH2VGOBd4=sQMhF+FHMLA@mail.gmail.com>
- <957967732.18164.1561621143523.JavaMail.zimbra@nod.at> <CAK7LNAQLheA3E0UrjirNHzpS2x+xmjc2YCupCBMNoHOwviz6GQ@mail.gmail.com>
- <1574230514.38485.1563091693340.JavaMail.zimbra@nod.at> <CAFLxGvxYa9AZiSLBVeDtXznab41me8jBUMoGNvcMDfAZQ8wr7g@mail.gmail.com>
-In-Reply-To: <CAFLxGvxYa9AZiSLBVeDtXznab41me8jBUMoGNvcMDfAZQ8wr7g@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 19 Aug 2019 13:12:09 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARY6beyondOjsQg-vMFCORoTYYM76drnERHfSYsKu92RA@mail.gmail.com>
-Message-ID: <CAK7LNARY6beyondOjsQg-vMFCORoTYYM76drnERHfSYsKu92RA@mail.gmail.com>
-Subject: Re: [PATCH v2] jffs2: remove C++ style comments from uapi header
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819035613.GC3086@ming.t460p>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-CM-TRANSID: EcCowADHzAkvIlpdvAaPIg--.63341S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7ZFykCFWfGr4rAF1fAFyfCrg_yoW8Gr4Dpw
+        4kKayYkF4jgFyIkF4DA3W3ZF10g34xurWUWr13A34Fy347C3WSgr1q9ryFgry09rWYkrWI
+        yFWYgryqk3s8A3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jVc_fUUUUU=
+X-Originating-IP: [202.112.113.212]
+X-CM-SenderInfo: held01tdqsiiqw6rljoofrz/1tbiQBAWclSIcBkc9QAAso
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 4:14 PM Richard Weinberger
-<richard.weinberger@gmail.com> wrote:
->
-> On Sun, Jul 14, 2019 at 10:08 AM Richard Weinberger <richard@nod.at> wrot=
-e:
-> >
-> > ----- Urspr=C3=BCngliche Mail -----
-> > > Looks like this trivial patch missed the pull request.
-> > >
-> > >
-> > > My motivation is to make sure UAPI headers
-> > > are really compilable in user-space,
-> > > and now checked by the following commit:
-> > >
-> > > commit d6fc9fcbaa655cff2d2be05e16867d1918f78b85
-> > > Author: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > > Date:   Mon Jul 1 09:58:40 2019 +0900
-> > >
-> > >    kbuild: compile-test exported headers to ensure they are self-cont=
-ained
-> > >
-> > >
-> > >
-> > > Is there a chance for it being merged,
->
-> Appled.
->
-> --
+On Mon, Aug 19, 2019 at 11:56:14AM +0800, Ming Lei wrote:
+> On Mon, Aug 19, 2019 at 08:59:13AM +0800, Pan Bian wrote:
+> > The function kmalloc rather than mempool_alloc is called to allocate
+> > memory when the memory pool is unavailable. However, mempool_alloc is
+> > used to release the memory chunck in both cases when error occurs. This
+> > patch fixes the bug.
+> > 
+> > Fixes: 9f060e2231c ("block: Convert integrity to bvec_alloc_bs()")
+> > Signed-off-by: Pan Bian <bianpan2016@163.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> > V2: add Fixes and CC tags
+> > ---
+> >  block/bio-integrity.c | 5 ++++-
+> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/block/bio-integrity.c b/block/bio-integrity.c
+> > index fb95dbb..011dfc8 100644
+> > --- a/block/bio-integrity.c
+> > +++ b/block/bio-integrity.c
+> > @@ -75,7 +75,10 @@ struct bio_integrity_payload *bio_integrity_alloc(struct bio *bio,
+> >  
+> >  	return bip;
+> >  err:
+> > -	mempool_free(bip, &bs->bio_integrity_pool);
+> > +	if (!bs || !mempool_initialized(&bs->bio_integrity_pool))
+> > +		kfree(bip);
+> > +	else
+> > +		mempool_free(bip, &bs->bio_integrity_pool);
+> >  	return ERR_PTR(-ENOMEM);
+> >  }
+> >  EXPORT_SYMBOL(bio_integrity_alloc);
+> 
+> 'err' is still reached in case that 'bs' is valid, so fix nothing.
+
+You are right! It's my fault.
+
+Thanks,
+Pan
+
+> 
+> 
 > Thanks,
-> //richard
+> Ming
 
-
-I checked next-20190819, but I still do not see this patch.
-Where has this patch gone?
-
-
-
---=20
-Best Regards
-Masahiro Yamada
