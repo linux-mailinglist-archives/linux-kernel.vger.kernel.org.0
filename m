@@ -2,74 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8970F92193
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:45:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD4359218C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:41:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbfHSKok (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 06:44:40 -0400
-Received: from mga17.intel.com ([192.55.52.151]:59695 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725790AbfHSKok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:44:40 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 03:44:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="202256337"
-Received: from twinkler-lnx.jer.intel.com ([10.12.91.48])
-  by fmsmga004.fm.intel.com with ESMTP; 19 Aug 2019 03:44:33 -0700
-From:   Tomas Winkler <tomas.winkler@intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alexander Usyskin <alexander.usyskin@intel.com>,
-        linux-kernel@vger.kernel.org,
-        Tomas Winkler <tomas.winkler@intel.com>
-Subject: [char-misc-next] mei: me: add Tiger Lake point LP device ID
-Date:   Mon, 19 Aug 2019 13:32:10 +0300
-Message-Id: <20190819103210.32748-1-tomas.winkler@intel.com>
-X-Mailer: git-send-email 2.20.1
+        id S1727237AbfHSKlg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 06:41:36 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:46798 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726550AbfHSKlg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:41:36 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzf6Q-0001NF-7j; Mon, 19 Aug 2019 12:41:30 +0200
+Date:   Mon, 19 Aug 2019 12:41:29 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+cc:     Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] x86/irq: factor out IS_ERR_OR_NULL check from
+ platfom-specific handle_irq
+In-Reply-To: <e9b4d21d-d9eb-51c5-871e-87e3b69d01ec@gmail.com>
+Message-ID: <alpine.DEB.2.21.1908191236540.1923@nanos.tec.linutronix.de>
+References: <c9b51ac3-b1d6-89a6-e323-4600af22d9de@gmail.com> <e9b4d21d-d9eb-51c5-871e-87e3b69d01ec@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Tiger Lake Point device ID for TGP LP.
+On Sun, 4 Aug 2019, Heiner Kallweit wrote:
+> -
+> -	if (!handle_irq(desc, regs)) {
+> +	if (IS_ERR_OR_NULL(desc)) {
 
-Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
----
- drivers/misc/mei/hw-me-regs.h | 2 ++
- drivers/misc/mei/pci-me.c     | 2 ++
- 2 files changed, 4 insertions(+)
+This really want's an unlikely or preferrably be written as:
 
-diff --git a/drivers/misc/mei/hw-me-regs.h b/drivers/misc/mei/hw-me-regs.h
-index 6c0173772162..77f7dff7098d 100644
---- a/drivers/misc/mei/hw-me-regs.h
-+++ b/drivers/misc/mei/hw-me-regs.h
-@@ -81,6 +81,8 @@
- 
- #define MEI_DEV_ID_ICP_LP     0x34E0  /* Ice Lake Point LP */
- 
-+#define MEI_DEV_ID_TGP_LP     0xA0E0  /* Tiger Lake Point LP */
-+
- #define MEI_DEV_ID_MCC        0x4B70  /* Mule Creek Canyon (EHL) */
- #define MEI_DEV_ID_MCC_4      0x4B75  /* Mule Creek Canyon 4 (EHL) */
- 
-diff --git a/drivers/misc/mei/pci-me.c b/drivers/misc/mei/pci-me.c
-index 563ebd56c3e5..d5a92c6eadb3 100644
---- a/drivers/misc/mei/pci-me.c
-+++ b/drivers/misc/mei/pci-me.c
-@@ -98,6 +98,8 @@ static const struct pci_device_id mei_me_pci_tbl[] = {
- 
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_ICP_LP, MEI_ME_PCH12_CFG)},
- 
-+	{MEI_PCI_DEVICE(MEI_DEV_ID_TGP_LP, MEI_ME_PCH12_CFG)},
-+
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC, MEI_ME_PCH12_CFG)},
- 	{MEI_PCI_DEVICE(MEI_DEV_ID_MCC_4, MEI_ME_PCH8_CFG)},
- 
--- 
-2.20.1
+	if (likely(!IS_ERR_OR_NULL(desc))) {
+		handle_irq(desc);
+	} else {
 
+>  		ack_APIC_irq();
+>  
+>  		if (desc != VECTOR_RETRIGGERED && desc != VECTOR_SHUTDOWN) {
+> @@ -254,6 +253,8 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
+>  		} else {
+>  			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+>  		}
+> +	} else {
+> +		handle_irq(desc, regs);
+>  	}
+>  
+> diff --git a/arch/x86/kernel/irq_64.c b/arch/x86/kernel/irq_64.c
+> index 6bf6517a0..cd4595b71 100644
+> --- a/arch/x86/kernel/irq_64.c
+> +++ b/arch/x86/kernel/irq_64.c
+> @@ -26,13 +26,9 @@
+>  DEFINE_PER_CPU_PAGE_ALIGNED(struct irq_stack, irq_stack_backing_store) __visible;
+>  DECLARE_INIT_PER_CPU(irq_stack_backing_store);
+>  
+> -bool handle_irq(struct irq_desc *desc, struct pt_regs *regs)
+> +void handle_irq(struct irq_desc *desc, struct pt_regs *regs)
+>  {
+> -	if (IS_ERR_OR_NULL(desc))
+> -		return false;
+> -
+>  	generic_handle_irq_desc(desc);
+
+With that the function call does not make any sense for 64bit. So the
+wrapper should be an inline and only for 32bit a function call.
+
+Thanks,
+
+	tglx
