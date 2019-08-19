@@ -2,76 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5E891A87
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 02:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D41D91A8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 02:50:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfHSArr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 20:47:47 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37895 "EHLO
+        id S1726362AbfHSAt7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 20:49:59 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36105 "EHLO
         mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbfHSArr (ORCPT
+        with ESMTP id S1726115AbfHSAt6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 20:47:47 -0400
-Received: by mail-pg1-f195.google.com with SMTP id e11so119618pga.5
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 17:47:47 -0700 (PDT)
+        Sun, 18 Aug 2019 20:49:58 -0400
+Received: by mail-pg1-f195.google.com with SMTP id l21so124891pgm.3;
+        Sun, 18 Aug 2019 17:49:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cucRnTBKV3jSYKkerT+mfhm7morlK8lS/0IZL03R4iw=;
+        b=MMn2e5txwGSFG2EmCGNY6tqxfbyLy+gJc1fqVeiVPtdJUB24aStD2qEwmQQYkw4h23
+         y7B9kdge30sjdM/gVDQEgkElS01Qqv3XkfCCqWolWp3mBBUyvlQy5+8DENSOIydFnPu5
+         6wDxlr89RtapNbRKFh6IdUATJ85tCM+kYx0knnFc9bayczkoyiVrW/PULp17OvyM1Mhi
+         /fzB56TwSqVL6LEX7NftPSmdlsyuaSguEgbAbTf1QaM7Iuh+Hfi/A8Gwm+aSnzA8GhB+
+         DM7M7Zel3mtHwA+0tFBoXjsqXlDDFd62vYDlWNjKHsPdeFvfS1adpfmnnX8Pq4tS18Hl
+         BG1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=0ucN8dYY5G9i42DmmhmlfEYMDNGfWkl/1N/uulaX63U=;
-        b=ZA7AIkOJduBp5xxJxaIUmknJfpCpmOthRWdyUg7JtaHUjOh2YqsqwhDK9iHOZIYIoi
-         xiBJq0TUDesCmP7pazuhDrf+S8DG35YkltZKUL/Oebzc0RjCvJ7wEcgH8FwY7RUP03J+
-         o98XqJAvinIxob4wOzbL6Wntyp7PCPA3WtUJN3Cc1yRkPfK7Q2B94KXQ0f1pZixyIKNU
-         566u4PuQk1DqFEJ2yUUWsrj+GiiTJLZeRoNQalwrYvVIHqLB2NMDdvLffX/ZQ/6Bt3oP
-         x4NZVAcyrA4j76V+JPVcdTTMXnThfCQXoiybJaxCTb3a86KB5Hgacw8Es1jVA7L7KvN4
-         16Iw==
-X-Gm-Message-State: APjAAAUR+ewTkGf1MtCGpy6Vi2NFVqXvxjOH2mIMg4NUN5G62aQ2F7ab
-        0IUpsViqDxUE3V0GSvbEM7+Q3Q==
-X-Google-Smtp-Source: APXvYqxMs72RnwgANqr3dH5Y1saPOVPhoQD5u0UW/JUzUOvCIYa+ZK8lo+IMPiTgIZeWq7k/640c4A==
-X-Received: by 2002:a63:2043:: with SMTP id r3mr17661312pgm.311.1566175666535;
-        Sun, 18 Aug 2019 17:47:46 -0700 (PDT)
-Received: from localhost ([2601:647:5b80:29f7:1bdd:d748:9a4e:8083])
-        by smtp.gmail.com with ESMTPSA id b5sm13488960pfo.149.2019.08.18.17.47.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2019 17:47:45 -0700 (PDT)
-Date:   Sun, 18 Aug 2019 17:47:44 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, linux-fpga@vger.kernel.org
-Subject: [GIT PULL] FPGA Manager (late) change for 5.3-rc6
-Message-ID: <20190819004744.GA20155@archbox>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cucRnTBKV3jSYKkerT+mfhm7morlK8lS/0IZL03R4iw=;
+        b=qiDlV+L+cxfqTwiKGFDKspdcotZlRWXrQUydVQofb+0W1om7UlrPvQVb28pL2Ah9E4
+         9dr1QAQ7weq8pvp+yKv277t29fxpR6TNRujDvj8tf+uj/AXKiMpMQ5ay/rWd64roF4FH
+         GCuKLqXIJklqMnwZYZLBKmYhPFEhKZiinYqsD7bdSxlXPckWPBDpJVdi63awTeddVoF5
+         yn2ytAFvxq2vKmflU3vckyPcCisxg1GP953dWvS8t6J1a1rTOEtyNFrvjaxyyzWzJSv/
+         /FVrps68feILyKeevPv/Zzy2ONbWJaBBfJwSN2WzrhbNnoLiQEDSUnFbu1SNAOeoxbl1
+         biog==
+X-Gm-Message-State: APjAAAVpUVdkADemScEVdr0ERjbVhNzFWYXCaZURoRLLooUZpL5UG5Y0
+        MvkvvoJZTqBHdqd5O8mRqoo=
+X-Google-Smtp-Source: APXvYqwiKMA2YPLoYxJt2c5rD+Q9gp3S9SetoSaaV3CDHf2/V5tH+9zFrhVgTyG6ujQ0r0GCqXhf/A==
+X-Received: by 2002:a17:90a:3465:: with SMTP id o92mr17801177pjb.20.1566175797963;
+        Sun, 18 Aug 2019 17:49:57 -0700 (PDT)
+Received: from [192.168.1.60] (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id z4sm12913675pgp.80.2019.08.18.17.49.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 18 Aug 2019 17:49:56 -0700 (PDT)
+Subject: Re: [PATCH V1 1/1] serial: 8250_pci: Add F81504A series Support
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     gregkh@linuxfoundation.org, jslaby@suse.com, jay.dolan@accesio.com,
+        hslester96@gmail.com, je.yen.tam@ni.com, lkp@intel.com,
+        kai.heng.feng@canonical.com, heikki.krogerus@linux.intel.com,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+        peter_hong@fintek.com.tw,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+References: <1565933249-23076-1-git-send-email-hpeter+linux_kernel@gmail.com>
+ <20190816112644.GF30120@smile.fi.intel.com>
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+Message-ID: <8e052919-b012-ff3f-f108-380d1ce5f7e7@gmail.com>
+Date:   Mon, 19 Aug 2019 08:49:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190816112644.GF30120@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+Hi,
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+Andy Shevchenko 於 2019/8/16 下午 07:26 寫道:
+> On Fri, Aug 16, 2019 at 01:27:29PM +0800, Ji-Ze Hong (Peter Hong) wrote:
+>> Fintek F81504A/508A/512A is PCIE to 4/8/12 UARTs device. It's support
+>> IO/MMIO/PCIE conf to access all functions. The old F81504/508/512 is
+>> only support IO.
+> 
+> We have 8250_fintek.
+> Isn't it a right place to add these?
+> 
 
-are available in the Git repository at:
+The 8250_fintek implements PNP device with id PNP0501.
+Should I also implements PCIe device in this file?
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mdf/linux-fpga.git/ tags/fpga-fixes-for-5.3
-
-for you to fetch changes up to dec43da46f63eb71f519d963ba6832838e4262a3:
-
-  fpga: altera-ps-spi: Fix getting of optional confd gpio (2019-08-18 17:40:02 -0700)
-
-----------------------------------------------------------------
-FPGA Manager fixes for 5.3
-
-A single fix for the altera-ps-spi driver that fixes the behavior when
-the driver receives -EPROBE_DEFER when trying to obtain a GPIO desc.
-
-Signed-off-by: Moritz Fischer <mdf@kernel.org>
-
-----------------------------------------------------------------
-Phil Reid (1):
-      fpga: altera-ps-spi: Fix getting of optional confd gpio
-
- drivers/fpga/altera-ps-spi.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+-- 
+With Best Regards,
+Peter Hong
