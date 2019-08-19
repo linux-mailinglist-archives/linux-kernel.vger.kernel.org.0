@@ -2,125 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7ED29923F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:56:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61C41923F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:56:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727590AbfHSM4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 08:56:00 -0400
-Received: from ozlabs.org ([203.11.71.1]:34807 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbfHSM4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:56:00 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46Bv6z758nz9s3Z;
-        Mon, 19 Aug 2019 22:55:55 +1000 (AEST)
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v1 07/10] powerpc/mm: move iounmap() into ioremap.c and drop __iounmap()
-In-Reply-To: <005a2b9321c10e23ca399e6ff4b19960009561f5.1565726867.git.christophe.leroy@c-s.fr>
-References: <6bc35eca507359075528bc0e55938bc1ce8ee485.1565726867.git.christophe.leroy@c-s.fr> <005a2b9321c10e23ca399e6ff4b19960009561f5.1565726867.git.christophe.leroy@c-s.fr>
-Date:   Mon, 19 Aug 2019 22:55:51 +1000
-Message-ID: <87wof95n6w.fsf@concordia.ellerman.id.au>
+        id S1727631AbfHSM4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 08:56:38 -0400
+Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:15920 "EHLO
+        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726987AbfHSM4i (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 08:56:38 -0400
+Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
+        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JCu9K9030104;
+        Mon, 19 Aug 2019 12:56:13 GMT
+Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
+        by mx0b-002e3701.pphosted.com with ESMTP id 2ufstss30v-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Aug 2019 12:56:13 +0000
+Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
+        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 6A1D65D;
+        Mon, 19 Aug 2019 12:56:12 +0000 (UTC)
+Received: from hpe.com (teo-eag.americas.hpqcorp.net [10.33.152.10])
+        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 824F04A;
+        Mon, 19 Aug 2019 12:56:11 +0000 (UTC)
+Date:   Mon, 19 Aug 2019 07:56:11 -0500
+From:   Dimitri Sivanich <sivanich@hpe.com>
+To:     Bharath Vedartham <linux.bhar@gmail.com>
+Cc:     sivanich@hpe.com, jhubbard@nvidia.com, jglisse@redhat.com,
+        ira.weiny@intel.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        william.kucharski@oracle.com, hch@lst.de,
+        inux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
+ to put_user_page*()
+Message-ID: <20190819125611.GA5808@hpe.com>
+References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
+ <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-HPE-SCL: -1
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christophe Leroy <christophe.leroy@c-s.fr> writes:
-> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-> index 0c23660522ca..57d742509cec 100644
-> --- a/arch/powerpc/mm/ioremap.c
-> +++ b/arch/powerpc/mm/ioremap.c
-> @@ -72,3 +75,31 @@ void __iomem *ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long f
->  	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
+Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+
+On Mon, Aug 19, 2019 at 01:08:54AM +0530, Bharath Vedartham wrote:
+> For pages that were retained via get_user_pages*(), release those pages
+> via the new put_user_page*() routines, instead of via put_page() or
+> release_pages().
+> 
+> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
+> ("mm: introduce put_user_page*(), placeholder versions").
+> 
+> Cc: Ira Weiny <ira.weiny@intel.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Jérôme Glisse <jglisse@redhat.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Dimitri Sivanich <sivanich@sgi.com>
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Cc: William Kucharski <william.kucharski@oracle.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel-mentees@lists.linuxfoundation.org
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
+> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+> ---
+>  drivers/misc/sgi-gru/grufault.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
+> index 4b713a8..61b3447 100644
+> --- a/drivers/misc/sgi-gru/grufault.c
+> +++ b/drivers/misc/sgi-gru/grufault.c
+> @@ -188,7 +188,7 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
+>  	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
+>  		return -EFAULT;
+>  	*paddr = page_to_phys(page);
+> -	put_page(page);
+> +	put_user_page(page);
+>  	return 0;
 >  }
->  EXPORT_SYMBOL(ioremap_prot);
-> +
-> +/*
-> + * Unmap an IO region and remove it from vmalloc'd list.
-> + * Access to IO memory should be serialized by driver.
-> + */
-> +void iounmap(volatile void __iomem *token)
-> +{
-> +	void *addr;
-> +
-> +	/*
-> +	 * If mapped by BATs then there is nothing to do.
-> +	 */
-> +	if (v_block_mapped((unsigned long)token))
-> +		return;
-> +
-> +	if (!slab_is_available())
-> +		return;
-> +
-> +	addr = (void *)((unsigned long __force)PCI_FIX_ADDR(token) & PAGE_MASK);
-> +	if (WARN_ON((unsigned long)addr < IOREMAP_BASE))
-> +		return;
-
-This pops a bunch, as we seem to have various places that want to call
-iounmap(NULL) in error paths, much like kfree().
-
-One example:
-
-[   85.062269] WARNING: CPU: 6 PID: 3643 at arch/powerpc/mm/ioremap.c:97 .iounmap+0x58/0xb0
-[   85.062276] Modules linked in: snd_powermac(+) snd_pcm snd_timer snd soundcore
-[   85.062314] CPU: 6 PID: 3643 Comm: modprobe Tainted: G        W         5.3.0-rc2-gcc-8.2.0-00051-ga8e8d67f314c #655
-[   85.062325] NIP:  c000000000078e08 LR: c000000000078dd0 CTR: c000000000078db0
-[   85.062335] REGS: c0000000f44f6e40 TRAP: 0700   Tainted: G        W          (5.3.0-rc2-gcc-8.2.0-00051-ga8e8d67f314c)
-[   85.062342] MSR:  8000000002029032 <SF,VEC,EE,ME,IR,DR,RI>  CR: 24228884  XER: 00000000
-[   85.062377] CFAR: c000000000339650 IRQMASK: 0 
-               GPR00: c000000000078dd0 c0000000f44f70d0 c000000001a2ff00 0000000000000000 
-               GPR04: c008000000336518 0000000000000000 c000000001a66b80 0000000000000001 
-               GPR08: c0000000013296c8 c00a000080000000 0000000000000001 c00800000032ba08 
-               GPR12: c000000000078db0 c00000003fff8e80 0000000000000004 c008000000350000 
-               GPR16: c000000002637730 c000000000d69868 0000000000000000 c000000002637740 
-               GPR20: c00000000197ad08 0000000000000000 0000000000000100 0000000000000028 
-               GPR24: c0000000f736eac0 c0000000f44f7370 c0000000f5065000 c008000000336510 
-               GPR28: c0000000026aafc8 ffffffffffffffed 0000000000000000 0000000000000000 
-[   85.062554] NIP [c000000000078e08] .iounmap+0x58/0xb0
-[   85.062564] LR [c000000000078dd0] .iounmap+0x20/0xb0
-[   85.062572] Call Trace:
-[   85.062591] [c0000000f44f70d0] [c000000000078dd0] .iounmap+0x20/0xb0 (unreliable)
-[   85.062623] [c0000000f44f7150] [c008000000321e24] .snd_pmac_free+0x164/0x270 [snd_powermac]
-[   85.062709] [c0000000f44f71e0] [c008000000322fa4] .snd_pmac_new+0x884/0xf30 [snd_powermac]
-[   85.062798] [c0000000f44f72f0] [c00800000032015c] .snd_pmac_probe+0x7c/0x450 [snd_powermac]
-[   85.062849] [c0000000f44f73a0] [c0000000007b0628] .platform_drv_probe+0x68/0x100
-[   85.062863] [c0000000f44f7430] [c0000000007aca94] .really_probe+0x144/0x3c0
-[   85.062880] [c0000000f44f74d0] [c0000000007acfe0] .driver_probe_device+0x80/0x170
-[   85.062899] [c0000000f44f7560] [c0000000007a9be4] .bus_for_each_drv+0xb4/0x130
-[   85.062922] [c0000000f44f7610] [c0000000007ac89c] .__device_attach+0x11c/0x1a0
-[   85.062941] [c0000000f44f76c0] [c0000000007ab3d8] .bus_probe_device+0xe8/0x100
-[   85.062961] [c0000000f44f7750] [c0000000007a6164] .device_add+0x504/0x7d0
-[   85.062978] [c0000000f44f7820] [c0000000007b02fc] .platform_device_add+0x14c/0x310
-[   85.062994] [c0000000f44f78c0] [c0000000007b14c0] .platform_device_register_full+0x130/0x210
-[   85.063084] [c0000000f44f7940] [c00800000032b850] .alsa_card_pmac_init+0x80/0xc4 [snd_powermac]
-[   85.063106] [c0000000f44f7a10] [c000000000010e58] .do_one_initcall+0x88/0x448
-[   85.063158] [c0000000f44f7b00] [c0000000002416e4] .do_init_module+0x74/0x2e0
-[   85.063203] [c0000000f44f7ba0] [c000000000243bd4] .load_module+0x20b4/0x26d0
-[   85.063219] [c0000000f44f7cf0] [c000000000244470] .__se_sys_finit_module+0xe0/0x140
-[   85.063237] [c0000000f44f7e20] [c00000000000c46c] system_call+0x5c/0x70
-
-
-
-I think we can just do:
-
-void iounmap(volatile void __iomem *token)
-{
-	void *addr;
-
-	if (!addr)
-        	return;
-
-	...
-
-??
-
-cheers
+>  
+> -- 
+> 2.7.4
+> 
