@@ -2,94 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F8EB950FC
+	by mail.lfdr.de (Postfix) with ESMTP id EE5F0950FD
 	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:42:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbfHSWmG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728729AbfHSWmM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 18:42:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41002 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728469AbfHSWmG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Aug 2019 18:42:06 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44521 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728545AbfHSWmD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 18:42:03 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t14so1651664plr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:42:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=isGEEkXs5KsfPoU6k4xsqF6OzpzQ466lEnl9lP+jev0=;
-        b=FH91SQEXP4CPrRUqTyz7aMJRachrVq+fpfsrCfNSwKOJ5ztW+0RQwsEJ/HFRENwGY9
-         r3AxWH1Ndpkn28AuzgaZztu7EljXF2OQ/5UIXzhXYZFQB246YLJG0uTklIYg+hhaOW4d
-         9lIW4STuFh4kTL8SxCtWE1O7W4kVHTvjrzhuE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=isGEEkXs5KsfPoU6k4xsqF6OzpzQ466lEnl9lP+jev0=;
-        b=baTaHUzNZ1uvNnEP9ZmlFBgfNQYW7e6tUWEh6SJK+UXbAGXo0z4tELU32wF7fMxG0l
-         m1oqYGxmcOHsH51fwnNmhG62kruFR1r3ex81aKXOFDnXQHeG/nKAkSte+VPQIwWU0tvC
-         aju2DczDpl7JUmI2Lhde+EY08EbLQhlfSKvAODVMwj+lhoE3jrtlOdnBV9+Wma9CFJ0Y
-         FwZO7ZrZT8OECLPHh2F3J9Rp3mxjcfZpb6nyfq2RKeANrOcpLRb+czZTSti4ITR23NOM
-         MXve426c+9MIXC8g1yH09TkuUsBTdZEnpBpA4eHeHaOy7JyKRSDT5GugZTnLq8FPHf8X
-         wK3A==
-X-Gm-Message-State: APjAAAWV2/0Lv7n1Gm7FA0wKUcMeHHS9PTFNz2/YQRH7/HhMtnsfZWoY
-        x3g1OTDDB5zgEuUu6J32TP+aLgaZibP1lQ==
-X-Google-Smtp-Source: APXvYqy6XW7GW2bp3WGm3DN5RHuveRy+dsrHMezjp+NUB8YYg6QmMRV/fewR05ENaqE8KLuPlC06nw==
-X-Received: by 2002:a17:902:5a1:: with SMTP id f30mr25405720plf.64.1566254522301;
-        Mon, 19 Aug 2019 15:42:02 -0700 (PDT)
-Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id e9sm16841593pge.39.2019.08.19.15.42.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 15:42:01 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Tri Vo <trong@android.com>
-Subject: [PATCH v4 2/2] PM / wakeup: Unexport wakeup_source_sysfs_{add,remove}()
-Date:   Mon, 19 Aug 2019 15:41:58 -0700
-Message-Id: <20190819224158.62954-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-In-Reply-To: <20190819224158.62954-1-swboyd@chromium.org>
-References: <20190819224158.62954-1-swboyd@chromium.org>
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C32D22070B;
+        Mon, 19 Aug 2019 22:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566254525;
+        bh=FWUSRBqWIkXVrpG41Z3Z/YIYiHI8sow/YeEcRJR6Vcg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Gs1FfhBRXaBHyr57o9oATABoRJjx1zQt3RdMVp1wffmp7eJ9+lY1UBssWFYNeLE7Z
+         /VIS4QU4IxKu3956s1N4Eduku3jyrDEnnb3TgkoiIgNCknepDu5BWsp7R/3w9g+xyF
+         6uWvM3VFvizuyJ+CSQ7L4RdZtk+lNHLg+wv1Mw8w=
+Date:   Mon, 19 Aug 2019 17:42:03 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Kelsey Skunberg <skunberg.kelsey@gmail.com>
+Cc:     linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ddutile@redhat.com, bodong@mellanox.com,
+        linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [Linux-kernel-mentees] [PATCH v3 0/4] PCI: Clean up pci-sysfs.c
+Message-ID: <20190819224203.GV253360@google.com>
+References: <20190813204513.4790-1-skunberg.kelsey@gmail.com>
+ <20190815153352.86143-1-skunberg.kelsey@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190815153352.86143-1-skunberg.kelsey@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-These functions are just used by the PM core, and that isn't modular so
-these functions don't need to be exported. Drop the exports.
+On Thu, Aug 15, 2019 at 09:33:49AM -0600, Kelsey Skunberg wrote:
+> This series is designed to clean up device attributes and permissions in
+> pci-sysfs.c. Then move the sysfs SR-IOV functions from pci-sysfs.c to
+> iov.c for better organization.
+> 
+> Patch 1: Define device attributes with DEVICE_ATTR* instead of __ATTR*.
+> 
+> Patch 2: Change permissions from symbolic to the preferred octal.
+> 
+> Patch 3: Change DEVICE_ATTR() with 0220 permissions to DEVICE_ATTR_WO().
+> 
+> Patch 4: Move sysfs SR-IOV functions to iov.c to keep the feature's code
+> together.
+> 
+> 
+> Patch 1, 2, and 4 will report unusual permissions '0664' used from the
+> following:
+> 
+>   static DEVICE_ATTR(sriov_numvfs, 0664, sriov_numvfs_show,
+>                      sriov_numvfs_store);
+> 
+>   static DEVICE_ATTR(sriov_drivers_autoprobe, 0664,
+>                      sriov_drivers_autoprobe_show,
+>                      sriov_drivers_autoprobe_store);
+> 
+> This series preserves the existing permissions set in:
+> 
+> 
+>   commit 0e7df22401a3 ("PCI: Add sysfs sriov_drivers_autoprobe to control
+>                         VF driver binding")
+> 
+>   commit 1789382a72a5 ("PCI: SRIOV control and status via sysfs")
+> 
+> Either adding a comment verifying permissions are okay or changing the
+> permissions is to be completed with a new patch.
+> 
+> Changes since v1:
+>         Add patch 1 and 2 to fix the way device attributes are defined
+>         and change permissions from symbolic to octal. Patch 4 which moves
+>         sysfs SR-IOV functions to iov.c will then apply cleaner.
+> 
+> Changes since v2:
+> 
+>         Patch 1: Commit log updated. Example shows DEVICE_ATTR_RO()
+>         example instead of DEVICE_ATTR(). DEVICE_ATTR() should be avoided
+>         unless the files have unusual permissions. Changed to reflect a
+>         more encouraged usage.  Also updated regex to be accurate.
+> 
+>         Patch 3: [NEW] Add patch to change DEVICE_ATTR() with 0220
+>         permissions to DEVICE_ATTR_WO().
+> 
+>         Updated series log to reflect new patch and unusual permissions
+>         information.
+> 
+> 
+> Kelsey Skunberg (4):
+>   PCI: sysfs: Define device attributes with DEVICE_ATTR*
+>   PCI: sysfs: Change permissions from symbolic to octal
+>   PCI: sysfs: Change DEVICE_ATTR() to DEVICE_ATTR_WO()
+>   PCI/IOV: Move sysfs SR-IOV functions to iov.c
+> 
+>  drivers/pci/iov.c       | 168 ++++++++++++++++++++++++++++++
+>  drivers/pci/pci-sysfs.c | 223 ++++------------------------------------
+>  drivers/pci/pci.h       |   2 +-
+>  3 files changed, 191 insertions(+), 202 deletions(-)
 
-Fixes: 986845e747af ("PM / wakeup: Show wakeup sources stats in sysfs")
-Cc: Tri Vo <trong@android.com>
-Reviewed-by: Tri Vo <trong@android.com>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/base/power/wakeup_stats.c | 2 --
- 1 file changed, 2 deletions(-)
+Thanks, I applied the new DEVICE_ATTR_WO() patch as the *second* patch
+so the two DEVICE_ATTR patches were together.  I added Greg and Don's
+Reviewed-by to all and Kuppuswamy's to the last.  This is all on
+pci/virtualization for v5.4.
 
-diff --git a/drivers/base/power/wakeup_stats.c b/drivers/base/power/wakeup_stats.c
-index bc5e3945f7a8..c7734914d914 100644
---- a/drivers/base/power/wakeup_stats.c
-+++ b/drivers/base/power/wakeup_stats.c
-@@ -182,7 +182,6 @@ int wakeup_source_sysfs_add(struct device *parent, struct wakeup_source *ws)
- 
- 	return 0;
- }
--EXPORT_SYMBOL_GPL(wakeup_source_sysfs_add);
- 
- /**
-  * pm_wakeup_source_sysfs_add - Add wakeup_source attributes to sysfs
-@@ -205,7 +204,6 @@ void wakeup_source_sysfs_remove(struct wakeup_source *ws)
- {
- 	device_unregister(ws->dev);
- }
--EXPORT_SYMBOL_GPL(wakeup_source_sysfs_remove);
- 
- static int __init wakeup_sources_sysfs_init(void)
- {
--- 
-Sent by a computer through tubes
-
+Bjorn
