@@ -2,174 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B25495132
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:58:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 121529513A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfHSWzj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 18:55:39 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37068 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728438AbfHSWzj (ORCPT
+        id S1728707AbfHSXBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 19:01:09 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:14952 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728123AbfHSXBC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 18:55:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id q22so8020808iog.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:55:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GghJ9osZeYRlwhn9lgUsUo7YRIX+Kbje8amKHVOldwk=;
-        b=foCPBm2sO6lqJhtfvfEMGlgb1jYDxA3fd1zKEcMbyaUSS25p9vaVhA8ZaBzWiTbMfI
-         Ra3VvFUA6yIh/TIVv/UZyDjVD9QBh+6TbAcTFdYdU159SLEmxSOIaDMXUQ1P0PqJQlkw
-         rdE/brBFMwEdNdkIkAAgc3JxsYE0qnHGZBZRLWdSGlTBzIGsR+AGdVlvVd7FlQ77HqSA
-         K0g4EAAkxlgxjau4D7OaKdcOU4saR+h01HOOuQ6rXFZdkSKuptEBn2FLl0jTxcTAkNrh
-         wH9cvjB2fzd8ey/IN0FdVyk/G3+O2gqjEjWSYEshyP9BV9C+5I+AqldRmZiIlETki0gP
-         MKAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GghJ9osZeYRlwhn9lgUsUo7YRIX+Kbje8amKHVOldwk=;
-        b=icci8hKXGO5t5RRjtynwupD6kmNLnzy5gvn1e0283aEVtm89Wo1gB+emtjjOSccA+U
-         /4vBbjiCxDPEYpfZynOWHdbdEFX61hMAgcfveZCir2dHQQvNSx9aazD6aSMvYzY96YOI
-         zkt2CLpant/fmba26p48ImVmBs+piQ7T/ALAlWhCjdNNWb5I3mBwqISWJu5sMdw8veHM
-         TGCBSYBpaCowoTT/mbJv6o+LfkCcxFrsaJ2GpQNvoJgYM7KlSoRhPsYZ4rQ92JWGV+l4
-         dwEXYOzjPPihHW0/G8Ru4RH78FBbNlZnLCPF7yUS5HFdkAKvQe0dYMVWUzApHxM+3bsS
-         2Qug==
-X-Gm-Message-State: APjAAAX0VvU+Zykgfr75NDDqDLmR64bvp6YzKxrreFTdQFLYWogqN6PS
-        XacFAkI6+J7myRqIyUdOVk9wsFFR6KQDtHRuV5wiYQ==
-X-Google-Smtp-Source: APXvYqwU1qqCvobEK1hY7OvjFoqxVgMiFTUVnihXOeQLPEVIjKWBUy90ZkRo/G2mDiqvJiwT4t3piCQRMO9Ia6wmNdI=
-X-Received: by 2002:a05:6638:517:: with SMTP id i23mr203059jar.71.1566255337742;
- Mon, 19 Aug 2019 15:55:37 -0700 (PDT)
+        Mon, 19 Aug 2019 19:01:02 -0400
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JMxm2N014502
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:01:02 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-type; s=facebook;
+ bh=VpSPCuRkw9YjLy32A3fG7gTdrUBWo/zGfrtLtIVsUJs=;
+ b=a2YqjvGnN7k9OvLr3eaEijYPfALwKTQQWZYMzAE5fcR8UqOvu1Y1+XLC8q5QaI6WloAl
+ wUdK2Nv58TnHBYKNUa/KWlfZRSDKXoJyMl+uwhzg4sCZR0wWFEdKwFmILl/GDSnenV9g
+ GpQ+A6BDw9PpmEGaS6JrCS+LvuWULIoYEug= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2ug45p87a6-7
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:01:01 -0700
+Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 19 Aug 2019 16:00:57 -0700
+Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
+        id 6D0D8168C4889; Mon, 19 Aug 2019 16:00:56 -0700 (PDT)
+Smtp-Origin-Hostprefix: devvm
+From:   Roman Gushchin <guro@fb.com>
+Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
+To:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
+        Roman Gushchin <guro@fb.com>
+Smtp-Origin-Cluster: prn2c23
+Subject: [PATCH v3 0/3] vmstats/vmevents flushing
+Date:   Mon, 19 Aug 2019 16:00:51 -0700
+Message-ID: <20190819230054.779745-1-guro@fb.com>
+X-Mailer: git-send-email 2.17.1
+X-FB-Internal: Safe
 MIME-Version: 1.0
-References: <20190815184628.183186-1-yabinc@google.com>
-In-Reply-To: <20190815184628.183186-1-yabinc@google.com>
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-Date:   Mon, 19 Aug 2019 16:55:26 -0600
-Message-ID: <CANLsYkwad9aGKkk_E2e-KPWYD+V9fUNp9og6qk6v-FGYfosMGQ@mail.gmail.com>
-Subject: Re: [PATCH v3] coresight: tmc-etr: Fix perf_data check.
-To:     Yabin Cui <yabinc@google.com>
-Cc:     Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=555 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190227
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Aug 2019 at 12:46, Yabin Cui <yabinc@google.com> wrote:
->
-> When tracing etm data of multiple threads on multiple cpus through
-> perf interface, each cpu has a unique etr_perf_buffer while sharing
-> the same etr device. There is no guarantee that the last cpu starts
-> etm tracing also stops last. This makes perf_data check fail.
->
-> Fix it by checking etr_buf instead of etr_perf_buffer.
-> Also move the code setting and clearing perf_buf to more suitable
-> places.
->
-> Fixes: 3147da92a8a8 ("coresight: tmc-etr: Allocate and free ETR memory buffers for CPU-wide scenarios")
-> Signed-off-by: Yabin Cui <yabinc@google.com>
-> ---
->
-> v2 -> v3:
->   moved place of setting drvdata->perf_buf based on review comment.
->   Also moved place of clearing drvdata->perf_buf from
->   tmc_update_etr_buffer() to tmc_disable_etr_sink() for below
->   situation:
->
->   cpu 0 enable etr device (set perf_buf)
->   cpu 0 update etr buffer (clear perf_buf)
->   cpu 1 enable etr device (perf_buf isn't set because pid set by cpu 0)
->   cpu 0 disable etr device
->   cpu 1 update etr buffer (perf_buf == NULL, check fails)
->
->   To fix it, we need to move clearing perf_buf to the disable function.
->
-> ---
->  drivers/hwtracing/coresight/coresight-tmc-etr.c | 8 ++++----
->  drivers/hwtracing/coresight/coresight-tmc.h     | 6 +++---
->  2 files changed, 7 insertions(+), 7 deletions(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> index 17006705287a..80af313f55d7 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> +++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-> @@ -1484,7 +1484,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
->                 goto out;
->         }
->
-> -       if (WARN_ON(drvdata->perf_data != etr_perf)) {
-> +       if (WARN_ON(drvdata->perf_buf != etr_buf)) {
->                 lost = true;
->                 spin_unlock_irqrestore(&drvdata->spinlock, flags);
->                 goto out;
-> @@ -1496,8 +1496,6 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
->         tmc_sync_etr_buf(drvdata);
->
->         CS_LOCK(drvdata->base);
-> -       /* Reset perf specific data */
-> -       drvdata->perf_data = NULL;
->         spin_unlock_irqrestore(&drvdata->spinlock, flags);
->
->         size = etr_buf->len;
-> @@ -1556,7 +1554,6 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
->         }
->
->         etr_perf->head = PERF_IDX2OFF(handle->head, etr_perf);
-> -       drvdata->perf_data = etr_perf;
->
->         /*
->          * No HW configuration is needed if the sink is already in
-> @@ -1572,6 +1569,7 @@ static int tmc_enable_etr_sink_perf(struct coresight_device *csdev, void *data)
->                 /* Associate with monitored process. */
->                 drvdata->pid = pid;
->                 drvdata->mode = CS_MODE_PERF;
-> +               drvdata->perf_buf = etr_perf->etr_buf;
->                 atomic_inc(csdev->refcnt);
->         }
->
-> @@ -1617,6 +1615,8 @@ static int tmc_disable_etr_sink(struct coresight_device *csdev)
->         /* Dissociate from monitored process. */
->         drvdata->pid = -1;
->         drvdata->mode = CS_MODE_DISABLED;
-> +       /* Reset perf specific data */
-> +       drvdata->perf_buf = NULL;
->
->         spin_unlock_irqrestore(&drvdata->spinlock, flags);
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tmc.h b/drivers/hwtracing/coresight/coresight-tmc.h
-> index 1ed50411cc3c..f9a0c95e9ba2 100644
-> --- a/drivers/hwtracing/coresight/coresight-tmc.h
-> +++ b/drivers/hwtracing/coresight/coresight-tmc.h
-> @@ -178,8 +178,8 @@ struct etr_buf {
->   *             device configuration register (DEVID)
->   * @idr:       Holds etr_bufs allocated for this ETR.
->   * @idr_mutex: Access serialisation for idr.
-> - * @perf_data: PERF buffer for ETR.
-> - * @sysfs_data:        SYSFS buffer for ETR.
-> + * @sysfs_buf: SYSFS buffer for ETR.
-> + * @perf_buf:  PERF buffer for ETR.
->   */
->  struct tmc_drvdata {
->         void __iomem            *base;
-> @@ -202,7 +202,7 @@ struct tmc_drvdata {
->         struct idr              idr;
->         struct mutex            idr_mutex;
->         struct etr_buf          *sysfs_buf;
-> -       void                    *perf_data;
-> +       struct etr_buf          *perf_buf;
->  };
+v3:
+  1) rearranged patches [2/3] and [3/3] to make [1/2] and [2/2] suitable
+  for stable backporting
 
-I have applied your patch.
+v2:
+  1) fixed !CONFIG_MEMCG_KMEM build by moving memcg_flush_percpu_vmstats()
+  and memcg_flush_percpu_vmevents() out of CONFIG_MEMCG_KMEM
+  2) merged add-comments-to-slab-enums-definition patch in
 
-Thanks,
-Mathieu
+Thanks!
 
->
->  struct etr_buf_operations {
-> --
-> 2.23.0.rc1.153.gdeed80330f-goog
->
+Roman Gushchin (3):
+  mm: memcontrol: flush percpu vmstats before releasing memcg
+  mm: memcontrol: flush percpu vmevents before releasing memcg
+  mm: memcontrol: flush percpu slab vmstats on kmem offlining
+
+ include/linux/mmzone.h |  5 +--
+ mm/memcontrol.c        | 79 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+), 2 deletions(-)
+
+-- 
+2.21.0
+
