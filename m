@@ -2,81 +2,158 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB2CA91D19
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:31:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E48491D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:31:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726680AbfHSG3p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 02:29:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725872AbfHSG3o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:29:44 -0400
-Received: from localhost (unknown [122.182.221.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1351520851;
-        Mon, 19 Aug 2019 06:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566196183;
-        bh=ZWpAO8QSDtl6+Jkb5PfpmEgOiBWyUwySwH5wx/nV7b0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Z2eZOcRAIUnvXsUrfpOrZPFzDOBpiYH569dKoyLea3syk6QKVRNI3PMD1NhDjhBFt
-         oBVmW3MPXJO0dCKVD1ZIJljxsWF060pNlQXvw9hHm0YY9pxOB5QuEfCssgG0cYw4K+
-         N9PUF9Jv/oMCDDF6AjTKuH1N0n6whphyHZeRFNzo=
-Date:   Mon, 19 Aug 2019 11:58:21 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
-Message-ID: <20190819062821.GF12733@vkoul-mobl.Dlink>
-References: <20190814122958.4981-1-vkoul@kernel.org>
- <20190814122958.4981-2-vkoul@kernel.org>
- <20190814171946.E9E8D20665@mail.kernel.org>
- <20190816042440.GY12733@vkoul-mobl.Dlink>
- <20190816165812.BC64B2077C@mail.kernel.org>
+        id S1726792AbfHSGaq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 02:30:46 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:24619 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726174AbfHSGaq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 02:30:46 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x7J6HLhb095426;
+        Mon, 19 Aug 2019 14:17:21 +0800 (GMT-8)
+        (envelope-from nickhu@andestech.com)
+Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Mon, 19 Aug 2019
+ 14:29:18 +0800
+Date:   Mon, 19 Aug 2019 14:29:19 +0800
+From:   Nick Hu <nickhu@andestech.com>
+To:     Paul Walmsley <paul.walmsley@sifive.com>
+CC:     Palmer Dabbelt <palmer@sifive.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alan Quey-Liang =?utf-8?B?S2FvKOmrmOmtgeiJryk=?= 
+        <alankao@andestech.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "green.hu@gmail.com" <green.hu@gmail.com>,
+        "deanbo422@gmail.com" <deanbo422@gmail.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "aryabinin@virtuozzo.com" <aryabinin@virtuozzo.com>,
+        "glider@google.com" <glider@google.com>,
+        "dvyukov@google.com" <dvyukov@google.com>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        =?utf-8?B?6Zui6IG3Wm9uZyBab25nLVhpYW4gTGko5p2O5a6X5oayKQ==?= 
+        <zong@andestech.com>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>
+Subject: Re: [PATCH 1/2] riscv: Add memmove string operation.
+Message-ID: <20190819062919.GA6480@andestech.com>
+References: <mhng-ba92c635-7087-4783-baa5-2a111e0e2710@palmer-si-x1e>
+ <alpine.DEB.2.21.9999.1908131921180.19217@viisi.sifive.com>
+ <20190814032732.GA8989@andestech.com>
+ <alpine.DEB.2.21.9999.1908141002500.18249@viisi.sifive.com>
+ <20190815031225.GA5666@andestech.com>
+ <alpine.DEB.2.21.9999.1908151124450.18249@viisi.sifive.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20190816165812.BC64B2077C@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <alpine.DEB.2.21.9999.1908151124450.18249@viisi.sifive.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x7J6HLhb095426
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16-08-19, 09:58, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-08-15 21:24:40)
-> > On 14-08-19, 10:19, Stephen Boyd wrote:
-> > > Quoting Vinod Koul (2019-08-14 05:29:58)
-> > > > Add support for rpmh clocks found in SM8150
-> > > > 
-> > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > > ---
-> > > 
-> > > Patch looks OK, but can you convert this driver to use the new parent
-> > > style and then update the binding to handle it? We can fix the other
-> > > platforms and dts files that use this driver in parallel, but sm8150
-> > > will be forward looking.
-> > 
-> > Yes but that would also impact sdm845 as it uses this driver, so I
-> > wanted to get this one done so that we have support for rpm clock and
-> > then do the conversion.
-> > 
-> > Would that be okay with you to get this in and then I convert this?
-> > 
+Hi Paul,
+
+On Thu, Aug 15, 2019 at 11:27:51AM -0700, Paul Walmsley wrote:
+> On Thu, 15 Aug 2019, Nick Hu wrote:
 > 
-> How does it impact sdm845? The new way of specifying parents supports
-> fallback to legacy string matching.
+> > On Wed, Aug 14, 2019 at 10:03:39AM -0700, Paul Walmsley wrote:
+> >
+> > > Thanks for the explanation.  What do you think about Palmer's idea to 
+> > > define a generic C set of KASAN string operations, derived from the newlib 
+> > > code?
+> > 
+> > That sounds good to me. But it should be another topic. We need to investigate
+> > it further about replacing something generic and fundamental in lib/string.c
+> > with newlib C functions.  Some blind spots may exist.  So I suggest, let's
+> > consider KASAN for now.
+> 
+> OK.  Here is the problem for us as maintainers.  You, Palmer, and I all 
+> agree that a C-language version would be better.  We'd rather not merge a 
+> pure assembly-language version unless it had significant advantages, and 
+> right now we're not anticipating that.  So that suggests that a C-language 
+> memmove() is the right way to go.
+> 
+> But if we merge a C-language memmove() into arch/riscv, other kernel 
+> developers would probably ask us why we're doing that, since there's 
+> nothing RISC-V-specific about it.  So do you think you might reconsider 
+> sending patches to add a generic C-language memmove()?
+> 
+> 
+> - Paul
 
-Yes it does, I have managed to convert this as well as sdm845 and test.
-I will send updates shortly
+About pushing mem*() generic, let's start with the reason why in the first place
+KASAN needs re-implement its own string operations:
 
-Thanks
--- 
-~Vinod
+In mm/kasan/common.c:
+
+	#undef memset
+	void *memset(void *addr, int c, size_t len)
+	{
+		check_memory_region((unsigned long)addr, len, true, _RET_IP_);
+
+		return __memset(addr, c, len);
+	}
+
+KASAN would call the string operations with the prefix '__', which should be
+just an alias to the proper one.
+
+In the past, every architecture that supports KASAN does this in assembly.
+E.g. ARM64:
+
+In arch/arm64/lib/memset.S:
+
+	ENTRY(__memset)
+	ENTRY(memset)
+	...
+	...
+	EXPORT_SYMBOL(memset)
+	EXPORT_SYMBOL(__memset) // export this as an alias
+
+In arch/arm64/include/asm/string.h
+
+	#define __HAVE_ARCH_MEMSET
+	extern void *memset(void *, int, __kernel_size_t);
+	extern void *__memset(void *, int, __kernel_size_t);
+
+Now, if we are going to replace the current string operations with newlib ones
+and let KASAN use them, we must provide something like this:
+
+In lib/string.c:
+        void *___memset(...)
+        {
+                ...
+        }
+
+In include/linux/string.h:
+
+	#ifndef __HAVE_ARCH_MEMCPY 
+	#ifdef CONFIG_KASAN
+	static inline void* __memset(...)
+	{
+		___memset(...);
+        }
+	extern void memset(...); // force those who include this header uses the
+					memset wrapped by KASAN
+	#else
+	static inline void *memset(...)
+	{
+		___memset(...);
+	}
+	#endif
+	#endif
+
+Does this look OK to you?
+
+Nick
