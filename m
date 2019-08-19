@@ -2,102 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17306950AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:22:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E190F950B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728638AbfHSWWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 18:22:11 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46572 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728520AbfHSWWK (ORCPT
+        id S1728687AbfHSWWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 18:22:47 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44069 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728402AbfHSWWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 18:22:10 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j15so3730457qtl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9tF/xHAhZ516dn+gEJYG3pEDOElpvS9fvxoRear+kN4=;
-        b=J7/ASB90A/7LfBNDmG0O3c4ffb8C8mJHLy3tqLBMNl5OZSeKxRxdST+9AEyTDXj/+L
-         tx/IKT3agMO9523a3Vy7bWPEQ0fOd2ABYSyhQOoaM+bTrjDgVDq4ma8TX31a/SU8vvyB
-         l4TJFpr1RR48pgFwTL9eLOhnG6TjzNM/7S3ZaTJri/08mEgECHxLA5zdWtnDv5F4POyR
-         iv/xzAanBU7blocAW93dHdi9/Nh2xt7qwo6tIddVVVQRRkVpdKp/+f0ImnEibu+keKrV
-         m/4y4ianaDFz5RzyUa1yRCvA+fbZmVuOr82Z1W1KZry1w9wY5F2FmRiQ8dUPylFYopGG
-         w30g==
+        Mon, 19 Aug 2019 18:22:46 -0400
+Received: by mail-pf1-f195.google.com with SMTP id c81so2013210pfc.11;
+        Mon, 19 Aug 2019 15:22:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9tF/xHAhZ516dn+gEJYG3pEDOElpvS9fvxoRear+kN4=;
-        b=r2wGaPsrCW9BdlTsAomi2EGwgJ1Zvwgc8wq77ov58Hht9MKzi6eLGmJcgzlkMuBBq9
-         KdXhkVDDlrECDr1YZwUK4+sAvIrkk1TwKZra3EtXqEdUYcTAl2FvMASzheKEWIQHbglm
-         /3bQIBJFFfOJym3P5G0Q5PpHVvXorUi9BSr6AV7y7EHIhuQS8Xc/ttgifdgCpuLmlp/G
-         HP+3uc6wpS4qj7f7Nph3tQjoMbLK5kjE59sTemrI//RQicP9xcfNkv4JwoYGq6RcaR9R
-         ZoSmWHTRKSW9mde8Q2pFgHK94uvp/TiFwzoH48kJkPDcLCxVFlOXxmRH/fHnCzBD0HtQ
-         pVLQ==
-X-Gm-Message-State: APjAAAV0VrzAdCeOq9NNVNonDM7nGT/x3x97EA1jhRILhCzJI4lQlkCX
-        /Cg6U6XPFRAf+s0+JFvzl3/P2w==
-X-Google-Smtp-Source: APXvYqwlVaXmvsZYh+uftkLwzrbh8IfcolFD2S7v7xPBdjUDZP4/+1v3I4BraajlsyoQeHkFdwLneQ==
-X-Received: by 2002:a0c:db88:: with SMTP id m8mr12556600qvk.143.1566253329715;
-        Mon, 19 Aug 2019 15:22:09 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id 145sm8112579qkm.1.2019.08.19.15.22.09
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 15:22:09 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hzq2S-0006eU-N4; Mon, 19 Aug 2019 19:22:08 -0300
-Date:   Mon, 19 Aug 2019 19:22:08 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Bernard Metzler <BMT@zurich.ibm.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Re: Re: Re: Re: Re: [PATCH] RDMA/siw: Fix compiler warnings on
- 32-bit due to u64/pointer abuse
-Message-ID: <20190819222208.GA25513@ziepe.ca>
-References: <20190819135213.GF5058@ziepe.ca>
- <20190819122456.GB5058@ziepe.ca>
- <20190819100526.13788-1-geert@linux-m68k.org>
- <OF7DB4AD51.C58B8A8B-ON0025845B.004A0CF6-0025845B.004AB95C@notes.na.collabserv.com>
- <OFD7D2994B.750F3146-ON0025845B.004D965D-0025845B.004E5577@notes.na.collabserv.com>
- <OFD7C97688.66331960-ON0025845B.005081B6-0025845B.0051AF67@notes.na.collabserv.com>
- <OFB73D0AD1.A2D5DDF4-ON0025845B.00545951-0025845B.00576D84@notes.na.collabserv.com>
- <OFFE3BC87B.CF197FD5-ON0025845B.0059957B-0025845B.005A903D@notes.na.collabserv.com>
- <OF0F37B635.09509188-ON0025845B.005BF4A4-0025845B.0060F5F0@notes.na.collabserv.com>
- <OF399EF474.834C3102-ON0025845B.006D75AA-0025845B.007708F2@notes.na.collabserv.com>
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=+1PDFzdbe/CicguML20QQINdH2qcnon9SYzPrR+XYSY=;
+        b=jswEv1TugrN5lZJDigkV7Pz3cZaWvPsORERCOw9gwJd8aed9bHPWu4w7N/SRdB0nyO
+         U9j/JHHulpCUvPCxItylYWOmQLQeBbc4qcIZyywLWRn4KJjk5t/gE+NjRh/UsLfSUUNn
+         taQ1reKg0YHFMheI1v00cf9AgRzN9NJtHHLkuZj2CMIZiktJtaMxxIgo4E0uGtgD/0x/
+         Dt9sgjeFZbVf7GfQbm6IjHILBfi7V8IygFAj8Sthvwq9OGBkZQ+97eJDFlwsN5yadxab
+         0Cl4S7nOBmDykF7qKOpjL9VRBqq5z0QiEvNzh3OrRZOzr+j60chooCPXyzGKhwlnwY7U
+         is9Q==
+X-Gm-Message-State: APjAAAUlA2amumVjV4SPh7xMDnvAkc9vL4o0jbQxgGDrR8LHPB7v5UPy
+        wVXFaOI1dwmb9dbd6Kd0Mo4=
+X-Google-Smtp-Source: APXvYqzbW3eKMqXrYkNHJkzxIWyPBhhjc7UT7MB7GUnkG+87ImwTQ6A+SwcjFkchT7xpyzPR8oA/Sw==
+X-Received: by 2002:a17:90a:cb89:: with SMTP id a9mr22871575pju.93.1566253365557;
+        Mon, 19 Aug 2019 15:22:45 -0700 (PDT)
+Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
+        by smtp.gmail.com with ESMTPSA id e13sm18775233pff.181.2019.08.19.15.22.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 15:22:43 -0700 (PDT)
+Received: by 42.do-not-panic.com (Postfix, from userid 1000)
+        id 98891402D7; Mon, 19 Aug 2019 22:22:42 +0000 (UTC)
+Date:   Mon, 19 Aug 2019 22:22:42 +0000
+From:   Luis Chamberlain <mcgrof@kernel.org>
+To:     Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>
+Subject: Re: [PATCH 2/3] firmware: add offset to request_firmware_into_buf
+Message-ID: <20190819222242.GT16384@42.do-not-panic.com>
+References: <20190523025113.4605-3-scott.branden@broadcom.com>
+ <20190523055233.GB22946@kroah.com>
+ <15c47e4d-e70d-26bb-9747-0ad0aa81597b@broadcom.com>
+ <20190523165424.GA21048@kroah.com>
+ <44282070-ddaf-3afb-9bdc-4751e3f197ac@broadcom.com>
+ <20190524052258.GB28229@kroah.com>
+ <2f67db0a-27c3-d13c-bbe0-0af5edd4f0da@broadcom.com>
+ <20190801061801.GA4338@kroah.com>
+ <20190801174215.GB16384@42.do-not-panic.com>
+ <74be1aa7-0e10-51dc-bbbf-94bb5f4bf7c4@broadcom.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <OF399EF474.834C3102-ON0025845B.006D75AA-0025845B.007708F2@notes.na.collabserv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <74be1aa7-0e10-51dc-bbbf-94bb5f4bf7c4@broadcom.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 09:40:10PM +0000, Bernard Metzler wrote:
-
-> >It is either an iova & lkey pair, or SGE information is inlined into
-> >the WR ring.
-> >
-> In siw, the reference to any type of memory is kept uninterpreted
-> in the send/receive queue until it gets accessed by a data
-> transfer. The information on what type of memory is being referenced
-> is deducted from the local memory key. As said, this step is
-> being executed only when the actual buffer is to be touched.
-> All it needs before that translation is to keep the 32bit key +
-> length and the up to 64bit address in a work queue element within
-> the send queue.
-> lkey lookup and memory translation + access validation happens
-> after the work queue element left the send/receive queue and a
-> local copy of it is being processed by the kernel driver
-> during RX or TX operations.
+On Thu, Aug 01, 2019 at 11:15:19AM -0700, Scott Branden wrote:
+> Hi Luis,
 > 
-> Inline data is implemented similar to how HW providers do
-> it - user data are copied immediately into the WR array.
+> On 2019-08-01 10:42 a.m., Luis Chamberlain wrote:
+> > On Thu, Aug 01, 2019 at 08:18:01AM +0200, Greg Kroah-Hartman wrote:
+> > > On Wed, Jul 31, 2019 at 05:18:32PM -0700, Scott Branden wrote:
+> > > > Hi Greg,
+> > > > 
+> > > > I am now back from leave to continue this patch.  Comment below.
+> > > > 
+> > > > On 2019-05-23 10:22 p.m., Greg Kroah-Hartman wrote:
+> > > > > On Thu, May 23, 2019 at 10:01:38PM -0700, Scott Branden wrote:
+> > > > > > On 2019-05-23 9:54 a.m., Greg Kroah-Hartman wrote:
+> > > > > > > On Thu, May 23, 2019 at 09:36:02AM -0700, Scott Branden wrote:
+> > > > > > > > Hi Greg,
+> > > > > > > > 
+> > > > > > > > On 2019-05-22 10:52 p.m., Greg Kroah-Hartman wrote:
+> > > > > > > > > On Wed, May 22, 2019 at 07:51:12PM -0700, Scott Branden wrote:
+> > > > > > > > > > Add offset to request_firmware_into_buf to allow for portions
+> > > > > > > > > > of firmware file to be read into a buffer.  Necessary where firmware
+> > > > > > > > > > needs to be loaded in portions from file in memory constrained systems.
+> > > > > > > > > > 
+> > > > > > > > > > Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> > > > > > > > > > ---
+> > > > > > > > > >      drivers/base/firmware_loader/firmware.h |  5 +++
+> > > > > > > > > >      drivers/base/firmware_loader/main.c     | 49 +++++++++++++++++--------
+> > > > > > > > > >      include/linux/firmware.h                |  8 +++-
+> > > > > > > > > >      3 files changed, 45 insertions(+), 17 deletions(-)
+> > > > > > > > > No new firmware test for this new option?  How do we know it even works?
+> > > > > > > > I was unaware there are existing firmware tests.  Please let me know where
+> > > > > > > > these tests exists and I can add a test for this new option.
+> > > > > > > tools/testing/selftests/firmware/
+> > > > > > Unfortunately, there doesn't seem to be a test for the existing
+> > > > > > request_firmware_into_buf api.
+> > > > > Are you sure?  The test is for userspace functionality, there isn't
+> > > > > kernel unit tests here.  You need to verify that you didn't break
+> > > > > existing functionality as well as verify that your new functionality
+> > > > > works.
+> > > > I managed to figure out how to build and run
+> > > > tools/testing/selftest/firmware/fw_run_tests.sh
+> > > > 
+> > > > and my changes don't break existing functionality.
+> > I'm soon going to release something that is going to let you do this
+> > faster and easier, let me know if you had troubles in trying to figure
+> > out how to not regress the kernel using this.
+> 
+> Yes, I had troubles in trying to figure it out.  The kernel build should
+> 
+> create an entire initrd with all the necessary components in it for testing
+> purposes.
+> 
+> And the firmware test will now take me some time to figure out how it all
+> works.
+> 
+> Could you please explain what you are going to release soon?  I don't want
+> to waste
 
-I still don't understand how kernel void *'s are getting into WQEs.
+Sorry for the delay but I promise that I tried hard to get this out ASAP.
 
-Jason
+https://github.com/mcgrof/fw-kdevops
+
+This now can be used to more easily let you start an environment to
+test the firmware API.
+
+Too late for you I gather, but perhaps others can take advantage.
+
+  Luis
