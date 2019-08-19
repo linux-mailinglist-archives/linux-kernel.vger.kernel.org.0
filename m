@@ -2,188 +2,128 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88016926B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C98F4926AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727117AbfHSO3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:29:17 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5158 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726314AbfHSO3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:29:17 -0400
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 90E4EABBEAC6BB8EC53D;
-        Mon, 19 Aug 2019 22:29:13 +0800 (CST)
-Received: from [127.0.0.1] (10.184.12.158) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Mon, 19 Aug 2019
- 22:29:07 +0800
-Subject: Re: [PATCH v2 01/12] irqchip/gic: Rework gic_configure_irq to take
- the full ICFGR base
-To:     Marc Zyngier <maz@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        John Garry <john.garry@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        "Shameerali Kolothum Thodi" <shameerali.kolothum.thodi@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20190806100121.240767-1-maz@kernel.org>
- <20190806100121.240767-2-maz@kernel.org>
-From:   Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <a601236c-8128-ca7a-667f-12a4b7cefb89@huawei.com>
-Date:   Mon, 19 Aug 2019 22:26:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
- Thunderbird/64.0
-MIME-Version: 1.0
-In-Reply-To: <20190806100121.240767-2-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.184.12.158]
-X-CFilter-Loop: Reflected
+        id S1726028AbfHSO1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:27:25 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:39950 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726553AbfHSO1Z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:27:25 -0400
+Received: by mail-io1-f67.google.com with SMTP id t6so4670057ios.7
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 07:27:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=digidescorp.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=R8P35k0UQJjogiM45vdQN2jnqatZkqahOot8zhEBvOA=;
+        b=C71yn3O+tVUgGp34iebMxBFlEYKY5R6egz+a8nPwjIFrrYZQj7NEkmJqILHXVNuraV
+         z8sBN3M48RWzPbmVV4YXWyfLOs6kUmC5mvGoo325X+Wg3P6oEeOohxk4DMM2l+TTVJfr
+         MihiKb+FShaUp9U93XS/AZ0LRPlZm4pWd4n5k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=R8P35k0UQJjogiM45vdQN2jnqatZkqahOot8zhEBvOA=;
+        b=HoW/DEZQ6eI5g44RVxMOMJSwAYWkHvy2TrH48Sjr2aD5o820y6TzNdfqCSGb+reihm
+         XBgwd3U3R/aeG3vj2kmZ4C20c++RfMy+aGFjr8wSXMV44k+AgwWAWBt9XapHFHkLzohe
+         N6izrHEwG0nqxi/wH5RqtgGLPrRBKihFP+kG5OptJFTl0XLQHxaOuwQ1zgpCzlMwryug
+         Gm0/spxnYoUDz66sXippJ5PSAQWJpikK66ny8DzFB4xSPzjmj+dM9m46GVTGeTD/gND0
+         fECUQ2kMVCfJ1Kv6AIXEjHRaxWHogD9HVmI3ADCz6jLgLA94NK5RAl/LbS+6zXteQXAl
+         Q3vA==
+X-Gm-Message-State: APjAAAUf+BTR1k4sEomx0hw/Kc4AKFpqKVWFDrihBr8FUy0STFkuzn6f
+        V8iluiBNcRErO+ADYBFgr236gA==
+X-Google-Smtp-Source: APXvYqyUl7vN5glGFLU0oh31MAE5ukPTM6BNKV46NTUX2Bcajx4wlyYAyTb5nVj546i2DGGGQEs22Q==
+X-Received: by 2002:a02:4005:: with SMTP id n5mr27068009jaa.73.1566224844827;
+        Mon, 19 Aug 2019 07:27:24 -0700 (PDT)
+Received: from iscandar.digidescorp.com (104-51-28-62.lightspeed.cicril.sbcglobal.net. [104.51.28.62])
+        by smtp.googlemail.com with ESMTPSA id v10sm16487537iob.43.2019.08.19.07.27.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 07:27:24 -0700 (PDT)
+From:   "Steven J. Magnani" <steve.magnani@digidescorp.com>
+X-Google-Original-From: "Steven J. Magnani" <steve@digidescorp.com>
+To:     Jan Kara <jack@suse.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Steven J . Magnani" <steve@digidescorp.com>
+Subject: [PATCH] udf: augment owner permissions on new inodes
+Date:   Mon, 19 Aug 2019 09:27:07 -0500
+Message-Id: <20190819142707.18070-1-steve@digidescorp.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
-
-On 2019/8/6 18:01, Marc Zyngier wrote:
-> gic_configure_irq is currently passed the (re)distributor address,
-> to which it applies an a fixed offset to get to the configuration
-> registers. This offset is constant across all GICs, or rather it was
-> until to v3.1...
-> 
-> An easy way out is for the individual drivers to pass the base
-> address of the configuration register for the considered interrupt.
-> At the same time, move part of the error handling back to the
-> individual drivers, as things are about to change on that front.
-> 
-> Signed-off-by: Marc Zyngier <maz@kernel.org>
-> ---
->   drivers/irqchip/irq-gic-common.c | 14 +++++---------
->   drivers/irqchip/irq-gic-v3.c     | 11 ++++++++++-
->   drivers/irqchip/irq-gic.c        | 10 +++++++++-
->   drivers/irqchip/irq-hip04.c      |  7 ++++++-
->   4 files changed, 30 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> index b0a8215a13fc..6900b6f0921c 100644
-> --- a/drivers/irqchip/irq-gic-common.c
-> +++ b/drivers/irqchip/irq-gic-common.c
-> @@ -63,7 +63,7 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->   	 * for "irq", depending on "type".
->   	 */
->   	raw_spin_lock_irqsave(&irq_controller_lock, flags);
-> -	val = oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
-> +	val = oldval = readl_relaxed(base + confoff);
->   	if (type & IRQ_TYPE_LEVEL_MASK)
->   		val &= ~confmask;
->   	else if (type & IRQ_TYPE_EDGE_BOTH)
-> @@ -83,14 +83,10 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->   	 * does not allow us to set the configuration or we are in a
->   	 * non-secure mode, and hence it may not be catastrophic.
->   	 */
-> -	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
-> -	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val) {
-> -		if (WARN_ON(irq >= 32))
-> -			ret = -EINVAL;
-
-Since this WARN_ON is dropped, the comment above should also be updated.
-But what is the reason for deleting it?  (It may give us some points
-when we fail to set type for SPIs.)
+Windows presents files created within Linux as read-only, even when
+permissions in Linux indicate the file should be writable.
 
 
-Thanks,
-zenghui
+UDF defines a slightly different set of basic file permissions than Linux.
+Specifically, UDF has "delete" and "change attribute" permissions for each
+access class (user/group/other). Linux has no equivalents for these.
 
-> -		else
-> -			pr_warn("GIC: PPI%d is secure or misconfigured\n",
-> -				irq - 16);
-> -	}
-> +	writel_relaxed(val, base + confoff);
-> +	if (readl_relaxed(base + confoff) != val)
-> +		ret = -EINVAL;
-> +
->   	raw_spin_unlock_irqrestore(&irq_controller_lock, flags);
->   
->   	if (sync_access)
-> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
-> index 96d927f0f91a..b250e69908f8 100644
-> --- a/drivers/irqchip/irq-gic-v3.c
-> +++ b/drivers/irqchip/irq-gic-v3.c
-> @@ -407,6 +407,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->   	unsigned int irq = gic_irq(d);
->   	void (*rwp_wait)(void);
->   	void __iomem *base;
-> +	int ret;
->   
->   	/* Interrupt configuration for SGIs can't be changed */
->   	if (irq < 16)
-> @@ -425,7 +426,15 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->   		rwp_wait = gic_dist_wait_for_rwp;
->   	}
->   
-> -	return gic_configure_irq(irq, type, base, rwp_wait);
-> +
-> +	ret = gic_configure_irq(irq, type, base + GICD_ICFGR, rwp_wait);
-> +	if (ret && irq < 32) {
-> +		/* Misconfigured PPIs are usually not fatal */
-> +		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
-> +		ret = 0;
-> +	}
-> +
-> +	return ret;
->   }
->   
->   static int gic_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu)
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index e45f45e68720..ab48760acabb 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -291,6 +291,7 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->   {
->   	void __iomem *base = gic_dist_base(d);
->   	unsigned int gicirq = gic_irq(d);
-> +	int ret;
->   
->   	/* Interrupt configuration for SGIs can't be changed */
->   	if (gicirq < 16)
-> @@ -301,7 +302,14 @@ static int gic_set_type(struct irq_data *d, unsigned int type)
->   			    type != IRQ_TYPE_EDGE_RISING)
->   		return -EINVAL;
->   
-> -	return gic_configure_irq(gicirq, type, base, NULL);
-> +	ret = gic_configure_irq(gicirq, type, base + GIC_DIST_CONFIG, NULL);
-> +	if (ret && gicirq < 32) {
-> +		/* Misconfigured PPIs are usually not fatal */
-> +		pr_warn("GIC: PPI%d is secure or misconfigured\n", gicirq - 16);
-> +		ret = 0;
-> +	}
-> +
-> +	return ret;
->   }
->   
->   static int gic_irq_set_vcpu_affinity(struct irq_data *d, void *vcpu)
-> diff --git a/drivers/irqchip/irq-hip04.c b/drivers/irqchip/irq-hip04.c
-> index cf705827599c..1626131834a6 100644
-> --- a/drivers/irqchip/irq-hip04.c
-> +++ b/drivers/irqchip/irq-hip04.c
-> @@ -130,7 +130,12 @@ static int hip04_irq_set_type(struct irq_data *d, unsigned int type)
->   
->   	raw_spin_lock(&irq_controller_lock);
->   
-> -	ret = gic_configure_irq(irq, type, base, NULL);
-> +	ret = gic_configure_irq(irq, type, base + GIC_DIST_CONFIG, NULL);
-> +	if (ret && irq < 32) {
-> +		/* Misconfigured PPIs are usually not fatal */
-> +		pr_warn("GIC: PPI%d is secure or misconfigured\n", irq - 16);
-> +		ret = 0;
-> +	}
->   
->   	raw_spin_unlock(&irq_controller_lock);
->   
-> 
+When the Linux UDF driver creates a file (or directory), no UDF delete or
+change attribute permissions are granted. The lack of delete permission
+appears to cause Windows to mark an item read-only when its permissions
+otherwise indicate that it should be read-write.
 
+Fix this by granting UDF delete and change attribute permissions
+to the owner when creating a new inode.
+
+Reported by: Ty Young
+Signed-off-by: Steven J. Magnani <steve@digidescorp.com>
+---
+--- a/fs/udf/udf_i.h	2019-08-14 07:24:05.029508342 -0500
++++ b/fs/udf/udf_i.h	2019-08-19 08:55:37.797394177 -0500
+@@ -38,6 +38,7 @@ struct udf_inode_info {
+ 	__u32			i_next_alloc_block;
+ 	__u32			i_next_alloc_goal;
+ 	__u32			i_checkpoint;
++	__u32			i_extraPerms;
+ 	unsigned		i_alloc_type : 3;
+ 	unsigned		i_efe : 1;	/* extendedFileEntry */
+ 	unsigned		i_use : 1;	/* unallocSpaceEntry */
+--- a/fs/udf/ialloc.c	2019-08-14 07:24:05.029508342 -0500
++++ b/fs/udf/ialloc.c	2019-08-19 08:33:08.992422457 -0500
+@@ -118,6 +118,7 @@ struct inode *udf_new_inode(struct inode
+ 	iinfo->i_lenAlloc = 0;
+ 	iinfo->i_use = 0;
+ 	iinfo->i_checkpoint = 1;
++	iinfo->i_extraPerms = FE_PERM_U_DELETE | FE_PERM_U_CHATTR;
+ 	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_AD_IN_ICB))
+ 		iinfo->i_alloc_type = ICBTAG_FLAG_AD_IN_ICB;
+ 	else if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
+--- a/fs/udf/inode.c	2019-08-14 07:24:05.029508342 -0500
++++ b/fs/udf/inode.c	2019-08-19 08:42:46.537530051 -0500
+@@ -45,6 +45,10 @@
+ 
+ #define EXTENT_MERGE_SIZE 5
+ 
++#define FE_MAPPED_PERMS	(FE_PERM_U_READ | FE_PERM_U_WRITE | FE_PERM_U_EXEC | \
++			 FE_PERM_G_READ | FE_PERM_G_WRITE | FE_PERM_G_EXEC | \
++			 FE_PERM_O_READ | FE_PERM_O_WRITE | FE_PERM_O_EXEC)
++
+ static umode_t udf_convert_permissions(struct fileEntry *);
+ static int udf_update_inode(struct inode *, int);
+ static int udf_sync_inode(struct inode *inode);
+@@ -1458,6 +1462,8 @@ reread:
+ 	else
+ 		inode->i_mode = udf_convert_permissions(fe);
+ 	inode->i_mode &= ~sbi->s_umask;
++	iinfo->i_extraPerms = le32_to_cpu(fe->permissions) & ~FE_MAPPED_PERMS;
++
+ 	read_unlock(&sbi->s_cred_lock);
+ 
+ 	link_count = le16_to_cpu(fe->fileLinkCount);
+@@ -1691,10 +1697,7 @@ static int udf_update_inode(struct inode
+ 		   ((inode->i_mode & 0070) << 2) |
+ 		   ((inode->i_mode & 0700) << 4);
+ 
+-	udfperms |= (le32_to_cpu(fe->permissions) &
+-		    (FE_PERM_O_DELETE | FE_PERM_O_CHATTR |
+-		     FE_PERM_G_DELETE | FE_PERM_G_CHATTR |
+-		     FE_PERM_U_DELETE | FE_PERM_U_CHATTR));
++	udfperms |= iinfo->i_extraPerms;
+ 	fe->permissions = cpu_to_le32(udfperms);
+ 
+ 	if (S_ISDIR(inode->i_mode) && inode->i_nlink > 0)
