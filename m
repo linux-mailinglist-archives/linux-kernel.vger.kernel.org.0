@@ -2,75 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51F8991E10
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C9591E20
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:43:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727038AbfHSHkL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 03:40:11 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:51298 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbfHSHkL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 03:40:11 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x7J7dc7c023792;
-        Mon, 19 Aug 2019 16:39:38 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x7J7dc7c023792
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566200379;
-        bh=c+9Vkcft9Ze779qh4taIS5mX7dhxMYtBPJmqfP71LWo=;
+        id S1727134AbfHSHl2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:41:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60298 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726211AbfHSHl2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:41:28 -0400
+Received: from localhost.localdomain (unknown [122.182.221.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB99920989;
+        Mon, 19 Aug 2019 07:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566200488;
+        bh=gSE+SJifgMYnoJwAFhNDWjp0CXgY/NibVpypk5/o80w=;
         h=From:To:Cc:Subject:Date:From;
-        b=KUbmCRN2q9VVAJddqck0kPQln6Ux8KdEBZ1xaDe/X/Nz2YdsiAboPveH1hS/X6KKC
-         WtX/Qu90IypYmNBChAI/RGLvaiabPSAvqa6LWZndzOeFcTkPtDXn+0cxfm/4FvCnMs
-         fo4S+PKpC09bQ5YhYQkNXWyZXtas3xP9NE/TwL6xWef62Zn0B9sVow88uKiQcvlNum
-         929oqAw9lIYEdjNyyDyh/rgc5chT971U8ftCUI8wleGWCfU32ufzlbQi+bEiKJ959X
-         vmSglsnjJLCUaghJXIn4wmlbpwnWafnsVMTJ0hnjcOYvvNYPoJKXCJsmQW5O8HYRny
-         Dign3vmd6vtjg==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Pablo Neira Ayuso <pablo@netfilter.org>,
-        netfilter-devel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Florian Westphal <fw@strlen.de>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>, coreteam@netfilter.org
-Subject: [PATCH] netfilter: add include guard to nf_conntrack_h323_types.h
-Date:   Mon, 19 Aug 2019 16:39:27 +0900
-Message-Id: <20190819073927.12296-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        b=ZCguwiU0jt0xDPn6xGFzUvKsCze/65szxaTXtsvzmaKd4g4rZ+bPwdcfeTfG6RPFq
+         NnyZewQAtfbovqsHV1LbvKD17p02uVaf66Sy+zvHlbUtcvuQ/VEoFoyrPPWFAa5Xq0
+         5bz2YI3kKrXLZ0PQw+yUPaMvcO3iOHHPWigCdetc=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] clk: qcom: Add support for SM8150
+Date:   Mon, 19 Aug 2019 13:09:43 +0530
+Message-Id: <20190819073947.17258-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a header include guard just in case.
+Add support for rpm clock controller found in SM8150 and while at it update
+the driver to support parent data clock scheme as suggested by Stephen.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Changes since v2:
+ - Describe parent clocks for rpmhcc
+ - Add support for parent data scheme for rpmhcc
 
- include/linux/netfilter/nf_conntrack_h323_types.h | 5 +++++
- 1 file changed, 5 insertions(+)
+Vinod Koul (4):
+  dt-bindings: clock: Document the parent clocks
+  clk: qcom: clk-rpmh: Convert to parent data scheme
+  dt-bindings: clock: Document SM8150 rpmh-clock compatible
+  clk: qcom: clk-rpmh: Add support for SM8150
 
-diff --git a/include/linux/netfilter/nf_conntrack_h323_types.h b/include/linux/netfilter/nf_conntrack_h323_types.h
-index 7a6871ac8784..74c6f9241944 100644
---- a/include/linux/netfilter/nf_conntrack_h323_types.h
-+++ b/include/linux/netfilter/nf_conntrack_h323_types.h
-@@ -4,6 +4,9 @@
-  * Copyright (c) 2006 Jing Min Zhao <zhaojingmin@users.sourceforge.net>
-  */
- 
-+#ifndef _NF_CONNTRACK_H323_TYPES_H
-+#define _NF_CONNTRACK_H323_TYPES_H
-+
- typedef struct TransportAddress_ipAddress {	/* SEQUENCE */
- 	int options;		/* No use */
- 	unsigned int ip;
-@@ -931,3 +934,5 @@ typedef struct RasMessage {	/* CHOICE */
- 		InfoRequestResponse infoRequestResponse;
- 	};
- } RasMessage;
-+
-+#endif /* _NF_CONNTRACK_H323_TYPES_H */
+ .../bindings/clock/qcom,rpmh-clk.txt          |  7 +++-
+ drivers/clk/qcom/clk-rpmh.c                   | 37 ++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 3 deletions(-)
+
 -- 
-2.17.1
+2.20.1
 
