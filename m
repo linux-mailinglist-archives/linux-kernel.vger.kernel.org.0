@@ -2,351 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CCED692022
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AAA09203A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:25:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfHSJWr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 05:22:47 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:45735 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727308AbfHSJWK (ORCPT
+        id S1727394AbfHSJZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:25:26 -0400
+Received: from mail104.syd.optusnet.com.au ([211.29.132.246]:38302 "EHLO
+        mail104.syd.optusnet.com.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726594AbfHSJZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:22:10 -0400
-X-UUID: b88e023a4a564d059a937317c31e901c-20190819
-X-UUID: b88e023a4a564d059a937317c31e901c-20190819
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <mars.cheng@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1603811483; Mon, 19 Aug 2019 17:22:00 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 19 Aug 2019 17:22:01 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 19 Aug 2019 17:22:01 +0800
-From:   Mars Cheng <mars.cheng@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-CC:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <wsd_upstream@mediatek.com>, mtk01761 <wendell.lin@mediatek.com>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v2 11/11] arm64: dts: add dts nodes for MT6779
-Date:   Mon, 19 Aug 2019 17:21:42 +0800
-Message-ID: <1566206502-4347-12-git-send-email-mars.cheng@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
-In-Reply-To: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+        Mon, 19 Aug 2019 05:25:26 -0400
+Received: from dread.disaster.area (pa49-195-190-67.pa.nsw.optusnet.com.au [49.195.190.67])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id C3A4743DB5F;
+        Mon, 19 Aug 2019 19:25:16 +1000 (AEST)
+Received: from dave by dread.disaster.area with local (Exim 4.92)
+        (envelope-from <david@fromorbit.com>)
+        id 1hzdtZ-0003uw-KP; Mon, 19 Aug 2019 19:24:09 +1000
+Date:   Mon, 19 Aug 2019 19:24:09 +1000
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Michal Hocko <mhocko@suse.com>, linux-xfs@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        linux-ext4@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+Message-ID: <20190819092409.GM7777@dread.disaster.area>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190814101714.GA26273@quack2.suse.cz>
+ <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
+ <20190815130558.GF14313@quack2.suse.cz>
+ <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
+ <20190817022603.GW6129@dread.disaster.area>
+ <20190819063412.GA20455@quack2.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190819063412.GA20455@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.2 cv=P6RKvmIu c=1 sm=1 tr=0
+        a=TR82T6zjGmBjdfWdGgpkDw==:117 a=TR82T6zjGmBjdfWdGgpkDw==:17
+        a=jpOVt7BSZ2e4Z31A5e1TngXxSK0=:19 a=IkcTkHD0fZMA:10 a=FmdZ9Uzk2mMA:10
+        a=7-415B0cAAAA:8 a=uRkhnK3tQF7xzalHlfoA:9 a=qxnrrwIs3tiBhskk:21
+        a=zvn5vesPaJoFCDyj:21 a=QEXdDO2ut3YA:10 a=biEYGPWJfzWAr4FL6Ov7:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-this adds initial MT6779 dts settings fo board support,
-including cpu, gic, timer, ccf, pinctrl, uart...etc.
+On Mon, Aug 19, 2019 at 08:34:12AM +0200, Jan Kara wrote:
+> On Sat 17-08-19 12:26:03, Dave Chinner wrote:
+> > On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
+> > > On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
+> > > > On Wed 14-08-19 11:08:49, Ira Weiny wrote:
+> > > > > On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
+> > > 2) Second reason is that I thought I did not have a good way to tell if the
+> > >    lease was actually in use.  What I mean is that letting the lease go should
+> > >    be ok IFF we don't have any pins...  I was thinking that without John's code
+> > >    we don't have a way to know if there are any pins...  But that is wrong...
+> > >    All we have to do is check
+> > > 
+> > > 	!list_empty(file->file_pins)
+> > > 
+> > > So now with this detail I think you are right, we should be able to hold the
+> > > lease through the struct file even if the process no longer has any
+> > > "references" to it (ie closes and munmaps the file).
+> > 
+> > I really, really dislike the idea of zombie layout leases. It's a
+> > nasty hack for poor application behaviour. This is a "we allow use
+> > after layout lease release" API, and I think encoding largely
+> > untraceable zombie objects into an API is very poor design.
+> > 
+> > From the fcntl man page:
+> > 
+> > LEASES
+> > 	Leases are associated with an open file description (see
+> > 	open(2)).  This means that duplicate file descriptors
+> > 	(created by, for example, fork(2) or dup(2))  re‐ fer  to
+> > 	the  same  lease,  and this lease may be modified or
+> > 	released using any of these descriptors.  Furthermore, the
+> > 	lease is released by either an explicit F_UNLCK operation on
+> > 	any of these duplicate file descriptors, or when all such
+> > 	file descriptors have been closed.
+> > 
+> > Leases are associated with *open* file descriptors, not the
+> > lifetime of the struct file in the kernel. If the application closes
+> > the open fds that refer to the lease, then the kernel does not
+> > guarantee, and the application has no right to expect, that the
+> > lease remains active in any way once the application closes all
+> > direct references to the lease.
+> > 
+> > IOWs, applications using layout leases need to hold the lease fd
+> > open for as long as the want access to the physical file layout. It
+> > is a also a requirement of the layout lease that the holder releases
+> > the resources it holds on the layout before it releases the layout
+> > lease, exclusive lease or not. Closing the fd indicates they do not
+> > need access to the file any more, and so the lease should be
+> > reclaimed at that point.
+> > 
+> > I'm of a mind to make the last close() on a file block if there's an
+> > active layout lease to prevent processes from zombie-ing layout
+> > leases like this. i.e. you can't close the fd until resources that
+> > pin the lease have been released.
+> 
+> Yeah, so this was my initial though as well [1]. But as the discussion in
+> that thread revealed, the problem with blocking last close is that kernel
+> does not really expect close to block. You could easily deadlock e.g. if
+> the process gets SIGKILL, file with lease has fd 10, and the RDMA context
+> holding pages pinned has fd 15.
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/Makefile        |    1 +
- arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi |   31 ++++
- arch/arm64/boot/dts/mediatek/mt6779.dts      |  229 ++++++++++++++++++++++++++
- 3 files changed, 261 insertions(+)
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
+Sure, I did think about this a bit about it before suggesting it :)
 
-diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
-index 458bbc4..53f1c61 100644
---- a/arch/arm64/boot/dts/mediatek/Makefile
-+++ b/arch/arm64/boot/dts/mediatek/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt2712-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6755-evb.dtb
-+dtb-$(CONFIG_ARCH_MEDIATEK) += mt6779-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6795-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-evb.dtb
- dtb-$(CONFIG_ARCH_MEDIATEK) += mt6797-x20-dev.dtb
-diff --git a/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
-new file mode 100644
-index 0000000..164f5cb
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
-@@ -0,0 +1,31 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ */
-+
-+/dts-v1/;
-+#include "mt6779.dtsi"
-+
-+/ {
-+	model = "MediaTek MT6779 EVB";
-+	compatible = "mediatek,mt6779-evb", "mediatek,mt6779";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	memory@40000000 {
-+		device_type = "memory";
-+		reg = <0 0x40000000 0 0x1e800000>;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:921600n8";
-+	};
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/mediatek/mt6779.dts b/arch/arm64/boot/dts/mediatek/mt6779.dts
-new file mode 100644
-index 0000000..daa25b7
---- /dev/null
-+++ b/arch/arm64/boot/dts/mediatek/mt6779.dts
-@@ -0,0 +1,229 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright (c) 2019 MediaTek Inc.
-+ * Author: Mars.C <mars.cheng@mediatek.com>
-+ *
-+ */
-+
-+#include <dt-bindings/clock/mt6779-clk.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+/ {
-+	compatible = "mediatek,mt6779";
-+	interrupt-parent = <&sysirq>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	psci {
-+		compatible = "arm,psci-0.2";
-+		method = "smc";
-+	};
-+
-+	cpus {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		cpu0: cpu@0 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x000>;
-+		};
-+
-+		cpu1: cpu@1 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x100>;
-+		};
-+
-+		cpu2: cpu@2 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x200>;
-+		};
-+
-+		cpu3: cpu@3 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x300>;
-+		};
-+
-+		cpu4: cpu@4 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x400>;
-+		};
-+
-+		cpu5: cpu@5 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a55";
-+			enable-method = "psci";
-+			reg = <0x500>;
-+		};
-+
-+		cpu6: cpu@6 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a75";
-+			enable-method = "psci";
-+			reg = <0x600>;
-+		};
-+
-+		cpu7: cpu@7 {
-+			device_type = "cpu";
-+			compatible = "arm,cortex-a75";
-+			enable-method = "psci";
-+			reg = <0x700>;
-+		};
-+	};
-+
-+	clk26m: oscillator@0 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <26000000>;
-+		clock-output-names = "clk26m";
-+	};
-+
-+	clk32k: oscillator@1 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <32768>;
-+		clock-output-names = "clk32k";
-+	};
-+
-+	uart_clk: dummy26m {
-+		compatible = "fixed-clock";
-+		clock-frequency = <26000000>;
-+		#clock-cells = <0>;
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupt-parent = <&gic>;
-+		interrupts = <GIC_PPI 13 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 14 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 11 IRQ_TYPE_LEVEL_LOW>,
-+			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
-+	};
-+
-+	soc {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		compatible = "simple-bus";
-+		ranges;
-+
-+		gic: interrupt-controller@0c000000 {
-+			compatible = "arm,gic-v3";
-+			#interrupt-cells = <3>;
-+			#address-cells = <2>;
-+			#size-cells = <2>;
-+			#redistributor-regions = <1>;
-+			interrupt-parent = <&gic>;
-+			interrupt-controller;
-+			reg = <0 0x0c000000 0 0x40000>,  /* GICD */
-+			      <0 0x0c040000 0 0x200000>, /* GICR */
-+			      <0 0x0c400000 0 0x2000>,   /* GICC */
-+			      <0 0x0c410000 0 0x1000>,   /* GICH */
-+			      <0 0x0c420000 0 0x2000>;   /* GICV */
-+			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
-+		sysirq: intpol-controller@0c53a650 {
-+			compatible = "mediatek,mt6779-sysirq",
-+				     "mediatek,mt6577-sysirq";
-+			interrupt-controller;
-+			#interrupt-cells = <3>;
-+			interrupt-parent = <&gic>;
-+			reg = <0 0x0c53a650 0 0x50>;
-+		};
-+
-+		topckgen: clock-controller@10000000 {
-+			compatible = "mediatek,mt6779-topckgen", "syscon";
-+			reg = <0 0x10000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		infracfg_ao: clock-controller@10001000 {
-+			compatible = "mediatek,mt6779-infracfg_ao", "syscon";
-+			reg = <0 0x10001000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		apmixed: clock-controller@1000c000 {
-+			compatible = "mediatek,mt6779-apmixed", "syscon";
-+			reg = <0 0x1000c000 0 0xe00>;
-+			#clock-cells = <1>;
-+		};
-+
-+		uart0: serial@11002000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11002000 0 0x400>;
-+			interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+
-+		uart1: serial@11003000 {
-+			compatible = "mediatek,mt6779-uart",
-+				     "mediatek,mt6577-uart";
-+			reg = <0 0x11003000 0 0x400>;
-+			interrupts = <GIC_SPI 116 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&uart_clk>;
-+			status = "disabled";
-+		};
-+
-+		audio: clock-controller@11210000 {
-+			compatible = "mediatek,mt6779-audio", "syscon";
-+			reg = <0 0x11210000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mfgcfg: clock-controller@13fbf000 {
-+			compatible = "mediatek,mt6779-mfgcfg", "syscon";
-+			reg = <0 0x13fbf000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		mmsys: clock-controller@14000000 {
-+			compatible = "mediatek,mt6779-mmsys", "syscon";
-+			reg = <0 0x14000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		imgsys: clock-controller@15020000 {
-+			compatible = "mediatek,mt6779-imgsys", "syscon";
-+			reg = <0 0x15020000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vdecsys: clock-controller@16000000 {
-+			compatible = "mediatek,mt6779-vdecsys", "syscon";
-+			reg = <0 0x16000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		vencsys: clock-controller@17000000 {
-+			compatible = "mediatek,mt6779-vencsys", "syscon";
-+			reg = <0 0x17000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		camsys: clock-controller@1a000000 {
-+			compatible = "mediatek,mt6779-camsys", "syscon";
-+			reg = <0 0x1a000000 0 0x10000>;
-+			#clock-cells = <1>;
-+		};
-+
-+		ipesys: clock-controller@1b000000 {
-+			compatible = "mediatek,mt6779-ipesys", "syscon";
-+			reg = <0 0x1b000000 0 0x1000>;
-+			#clock-cells = <1>;
-+		};
-+
-+	};
-+};
+The last close is an interesting case because the __fput() call
+actually runs from task_work() context, not where the last reference
+is actually dropped. So it already has certain specific interactions
+with signals and task exit processing via task_add_work() and
+task_work_run().
+
+task_add_work() calls set_notify_resume(task), so if nothing else
+triggers when returning to userspace we run this path:
+
+exit_to_usermode_loop()
+  tracehook_notify_resume()
+    task_work_run()
+      __fput()
+	locks_remove_file()
+	  locks_remove_lease()
+	    ....
+
+It's worth noting that locks_remove_lease() does a
+percpu_down_read() which means we can already block in this context
+removing leases....
+
+If there is a signal pending, the task work is run this way (before
+the above notify path):
+
+exit_to_usermode_loop()
+  do_signal()
+    get_signal()
+      task_work_run()
+        __fput()
+
+We can detect this case via signal_pending() and even SIGKILL via
+fatal_signal_pending(), and so we can decide not to block based on
+the fact the process is about to be reaped and so the lease largely
+doesn't matter anymore. I'd argue that it is close and we can't
+easily back out, so we'd only break the block on a fatal signal....
+
+And then, of course, is the call path through do_exit(), which has
+the PF_EXITING task flag set:
+
+do_exit()
+  exit_task_work()
+    task_work_run()
+      __fput()
+
+and so it's easy to avoid blocking in this case, too.
+
+So that leaves just the normal close() syscall exit case, where the
+application has full control of the order in which resources are
+released. We've already established that we can block in this
+context.  Blocking in an interruptible state will allow fatal signal
+delivery to wake us, and then we fall into the
+fatal_signal_pending() case if we get a SIGKILL while blocking.
+
+Hence I think blocking in this case would be OK - it indicates an
+application bug (releasing a lease before releasing the resources)
+but leaves SIGKILL available to administrators to resolve situations
+involving buggy applications.
+
+This requires applications to follow the rules: any process
+that pins physical resources must have an active reference to a
+layout lease, either via a duplicated fd or it's own private lease.
+If the app doesn't play by the rules, it hangs in close() until it
+is killed.
+
+> Or you could wait for another process to
+> release page pins and blocking SIGKILL on that is also bad.
+
+Again, each individual process that pins pages from the layout must
+have it's own active layout lease reference.
+
+> So in the end
+> the least bad solution we've come up with were these "zombie" leases as you
+> call them and tracking them in /proc so that userspace at least has a way
+> of seeing them. But if you can come up with a different solution, I'm
+> certainly not attached to the current one...
+
+It might be the "least bad" solution, but it's still a pretty bad
+one. And one that I don't think is necessary if we simply enforce
+the "process must have active references for the entire time the
+process uses the resource" rule. That's the way file access has
+always worked, I don't see why we should be doing anything different
+for access to the physical layout of files...
+
+Cheers,
+
+Dave.
 -- 
-1.7.9.5
-
+Dave Chinner
+david@fromorbit.com
