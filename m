@@ -2,83 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F64294FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:22:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 47F8394FD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:23:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728616AbfHSVWg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 17:22:36 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:33212 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728360AbfHSVWf (ORCPT
+        id S1728517AbfHSVXG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:23:06 -0400
+Received: from mail-ot1-f50.google.com ([209.85.210.50]:35756 "EHLO
+        mail-ot1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728018AbfHSVXF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:22:35 -0400
-Received: by mail-qk1-f196.google.com with SMTP id w18so2748374qki.0
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 14:22:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=JZfnugbxFKCTAgX+SjmyKnBq8tPs87PzkM/zsjKaKXs=;
-        b=t2etDunKLVvaysLK/TNub3QpKwtT4cFCQCfHd9vvxIgKfDZjKWYMbSiYsYRH35RRfl
-         9uxiUc/gwWrsfQyYaXM0u1JhKO11aHk26NcGcm/b7yMKH73hCOI6buoqxBYWuLhNtoHk
-         Zf9TN0GxNnumlUwakWO8Z1FldAuHyvCGu2BrVuGilsAlMAIzuolQUoiqZjgTp/fjaNAm
-         lLmftRN7ITeNtX3tx8eEaJ48n++74EzDq0rwORG3/BuUQd60rG2zCaOFQO+fbUaQvxfV
-         8oVldt8aJB+e0PLlkSR51RzhqVnXMLB1GJbRAZjgpemE4gOTc39am6EVgMAaTKjuXSmI
-         nTJA==
+        Mon, 19 Aug 2019 17:23:05 -0400
+Received: by mail-ot1-f50.google.com with SMTP id g17so3066482otl.2
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 14:23:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=JZfnugbxFKCTAgX+SjmyKnBq8tPs87PzkM/zsjKaKXs=;
-        b=GwS30sPMiMLYNCwef0LRZaY3kjFnGwcRttEndDTHDmLJpnkhZfayVVJ2YWiCmwZdSK
-         laRS/Lb+QvweMZSnK8cpEpxXRmwr0aLFyo1CYkav6Jgv5glhCljHYVRhak67jT/xnRdB
-         aZUWtcZiL647Mft+FBDd067Fcvj/ueVrXgSOw3yEdg2TOaF0iHhcqbuf5sk5lpd2CA3D
-         hNzmwlSVhJxv3Tvprxr1GHGOqymY22sXzcJvw932x7DmdQwW5EzgYktX8JXGxRz4wWjk
-         7JmcMe6/6dXqcNBwVdEN/iSrSP9+Eeivjj9qUdnPG5JcxDfqPA9nr3vRHOx2tb8Ttko8
-         QntQ==
-X-Gm-Message-State: APjAAAWhdJPiY9VrY8K6HmvDDL3ncy+CYoR4ABjIiwENZze9d7KTE9cL
-        nVNFUzl8XjUp8LgsqZilAoA9bQ==
-X-Google-Smtp-Source: APXvYqyaNmv5f50iHHb4AgzgUkp5/W7VElduaBFjLTRBrB81HRfAVa2X0I3FLvhENFGsEqGFoRSBAg==
-X-Received: by 2002:a37:624b:: with SMTP id w72mr23962001qkb.368.1566249755012;
-        Mon, 19 Aug 2019 14:22:35 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id j78sm7480621qke.102.2019.08.19.14.22.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 14:22:34 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 14:22:28 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     syzbot <syzbot+12638b747fd208f6cff0@syzkaller.appspotmail.com>
-Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
-        davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: KASAN: slab-out-of-bounds Read in tls_write_space
-Message-ID: <20190819142228.7f37bfcf@cakuba.netronome.com>
-In-Reply-To: <0000000000000a5b840576bad225@google.com>
-References: <0000000000000a5b840576bad225@google.com>
-Organization: Netronome Systems, Ltd.
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=mhcxS9SHhvc2vuS8TVLaSTM7jzu2HtphXaxiYUBsdyg=;
+        b=pqdREpQpx3EzYRkrAH2c3ZJ05V6wGg23X2PGZg1kQ23qEh33/H9X8QMEYlOnGBROjj
+         3ynQiWTcq63rv+mouQA0MKYkr0WGjYqmGiLySQhK2CguP5eMyZ7VSgDEJFHYi8ugqHUv
+         ohbrbtpluei8CVNloMg5X83+reF7IopM2fzQsMGr+5HMg9D/sfjRv9kkJ6iQoAZoyApS
+         aggOmo/TJY2NWLF/oe3Imy4MORS7E8vOOAi9zQqcfU5aJaOm8oNkDZf8fMLVZkkGIixu
+         eViyqpbJB1cL+gThcjESuFJkaovSZpGYaYkp+HBtgPpHcQau3/l4dR+sEyd7FWfrM9QQ
+         UK/g==
+X-Gm-Message-State: APjAAAXpXhYE+k386YCSHkIBhJfx0azCAgCm5yylCUUEF28m0W9ufE4m
+        /bJa4bKAwgcRr7/m2YxBaT7KlDOT
+X-Google-Smtp-Source: APXvYqzBKAayT/AnSwfPcGrUj38b/YdUfoh8g9XVswN8WmxHkMDL8mxXrwAPr87NNqXWxAjsYdzcwA==
+X-Received: by 2002:a9d:741a:: with SMTP id n26mr10656928otk.198.1566249784877;
+        Mon, 19 Aug 2019 14:23:04 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id q24sm5911029otl.31.2019.08.19.14.23.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Aug 2019 14:23:04 -0700 (PDT)
+Subject: Re: [PATCH v3] nvme: Add quirk for LiteON CL1 devices running FW
+ 22301111
+To:     Jens Axboe <axboe@kernel.dk>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Keith Busch <kbusch@kernel.org>
+Cc:     Crag Wang <Crag.Wang@dell.com>, sjg@google.com,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-nvme@lists.infradead.org, Ryan Hong <Ryan.Hong@Dell.com>,
+        Jared Dominguez <jared.dominguez@dell.com>,
+        Charles Hyde <charles.hyde@dellteam.com>,
+        Christoph Hellwig <hch@lst.de>
+References: <1565986579-10466-1-git-send-email-mario.limonciello@dell.com>
+ <b4456ee7-6f5d-5968-2167-9900f049e5c6@grimberg.me>
+ <3d01da80-be78-5ca6-6ef2-c0e44840118f@kernel.dk>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <064c6b07-be80-1147-5a16-9a455db988fe@grimberg.me>
+Date:   Mon, 19 Aug 2019 14:23:02 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <3d01da80-be78-5ca6-6ef2-c0e44840118f@kernel.dk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 25 Sep 2018 16:54:03 -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following crash on:
-> 
-> HEAD commit:    bd4d08daeb95 Merge branch 'net-dsa-b53-SGMII-modes-fixes'
-> git tree:       net-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=110b6a1a400000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e79b9299baeb2298
-> dashboard link: https://syzkaller.appspot.com/bug?extid=12638b747fd208f6cff0
-> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=167d9b9e400000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c4003a400000
-> 
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+12638b747fd208f6cff0@syzkaller.appspotmail.com
 
-#syz dup: general protection fault in tls_write_space
+>> Jens, can you please rebase for-linus so we have the needed dependency:
+>> 4eaefe8c621c6195c91044396ed8060c179f7aae
+> 
+> I just did as part of adding a new patch, being pushed out shortly.
+
+Thanks
