@@ -2,134 +2,212 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66C1092362
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:26:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D6A59236A
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:28:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727496AbfHSM0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 08:26:01 -0400
-Received: from mail-eopbgr00095.outbound.protection.outlook.com ([40.107.0.95]:53825
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727128AbfHSM0B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:26:01 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JRbagZl1FJ4I89YtDgUqB+2gOKzlcTtWIxEsQrRI3edXTN+0BCwRjxkaXDeymn629VErQYO3FcMm2J8ZZMp+OeTgii60Jej123ZIBpSEzeH5qNUplD29Jt9dpncxylsx/ybcUMSKsaEUYFOtGNUyBxG70R+LQNEq3J4d1khOs2xsjqWCUiVd6Dnwe24xOiGuvyQQeDWJdt8ZwxuQbP4GaQbXvPGhPbDo7lPPUE2CaMkDcYDl0dM6qWt2ubfCvS/EEouX8MPaH5BgfOuYTp29mN0eyFzt2JbGolhiJJb8BTewVqhQyOLK13T24Nk6nlQiVJAklEMFSSt0YA2dEgqEpg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sAk8OCk7cvB0TFSdbBBh9RF89WkLFSvspN6FpQ1pumI=;
- b=RJl1KkhOw9xHmkAXlSk+aATTurP2tpem6NWXAvR8HA00I1BDIY9Zaf4BGdb8tWGoucnORcgoSBOyhkUr+m5ILRudUE/5elUS0YECFsMdgNBCTKyif0jG6mU+eAU440mKRVu3oEJomUiF3uZFcLIbl4po8phzcOlIElz1w7ftktjSZ6QC4jsngGyLqINvALtkD1GY7Ytm+KyMyQVy/CqFy4xZUfx75FkIoiD8cGRN8moo1nhv7hcLyfhBHyc/XIg+c52aFki5P05jACNH0F0pWrvoxFqvoSwhXmEo1XOGmWONUDfBphBqkr+cH0xZg9YnA9VUt4MirEa/xV450+pxgw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nokia.com; dmarc=pass action=none header.from=nokia.com;
- dkim=pass header.d=nokia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sAk8OCk7cvB0TFSdbBBh9RF89WkLFSvspN6FpQ1pumI=;
- b=Bu5hbAKm+mrfoq6rbWEOjAp4b0cbClRy20yB8pbqz7ujygM5l1fOBQXfXNh/8L5XkYlVw1XyZwFFh/xvyrUm71d/4ZeSLSjkw62pI75HV6UkxOClY5cqrHRMEnxzrQ6g2cIv5G54Gbh445Vwz38J+NqHyXCkHwTgu1vl8g2/ZGI=
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com (52.133.6.141) by
- HE1PR0702MB3642.eurprd07.prod.outlook.com (52.133.6.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.11; Mon, 19 Aug 2019 12:25:53 +0000
-Received: from HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::d90c:c96:8d6a:362d]) by HE1PR0702MB3675.eurprd07.prod.outlook.com
- ([fe80::d90c:c96:8d6a:362d%6]) with mapi id 15.20.2199.011; Mon, 19 Aug 2019
- 12:25:53 +0000
-From:   "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
-To:     "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-        "anna.schumaker@netapp.com" <anna.schumaker@netapp.com>,
-        "trond.myklebust@hammerspace.com" <trond.myklebust@hammerspace.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: nfs4 server stops responding
-Thread-Topic: nfs4 server stops responding
-Thread-Index: AQHVVok9rVIGR5acmEyxP58lNJPUiw==
-Date:   Mon, 19 Aug 2019 12:25:52 +0000
-Message-ID: <eb70e71ba0b1caafb96e136d83aa9c097f2a6930.camel@nokia.com>
-Accept-Language: fi-FI, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tommi.t.rantala@nokia.com; 
-x-originating-ip: [131.228.2.6]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f99654ec-41bb-49d6-152f-08d724a06097
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:HE1PR0702MB3642;
-x-ms-traffictypediagnostic: HE1PR0702MB3642:
-x-microsoft-antispam-prvs: <HE1PR0702MB36420CFB6F6E2E467B6FF5BEB4A80@HE1PR0702MB3642.eurprd07.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0134AD334F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(136003)(366004)(396003)(39860400002)(346002)(376002)(199004)(189003)(110136005)(6512007)(36756003)(2616005)(6116002)(256004)(8936002)(14444005)(2201001)(118296001)(71190400001)(71200400001)(102836004)(486006)(6506007)(186003)(476003)(86362001)(26005)(4326008)(5660300002)(66066001)(2501003)(76116006)(305945005)(7736002)(66946007)(64756008)(66476007)(66446008)(66556008)(53936002)(99286004)(478600001)(316002)(6486002)(81156014)(81166006)(8676002)(6436002)(25786009)(2906002)(3846002)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0702MB3642;H:HE1PR0702MB3675.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4EqXkdSf1ilQhMOb44TPNFmLfIC5IxYjV62K/HyL5gsBpP6w5AWDjts8TWyBWBcT5ErKXc4fA1jr0pijIuvffWs7Cv2t3seVaXYY0K6uDd1+YnC+zJjY8nDNR4nsL4OJnwZdwIIWyPTZGcfVbbiP5swo1MmtI7YBVplmbQeIvLc7z1ZshTxSVwPvOo7Xs/VKG6Np//q/8O08NR3OmWzuxg5fDees1yfEH+Ss43HUL5VaTsbCNFIky4jRLOmNkWxpVlUXcl1ceGHpKhhSe8YQOcXEp6LpHjjRRhEfhWCIj2nSJCl/3pFBF+E7dI9413G3ZrAYI5rByHbUW2vs7BS+43CV42Vmurim5WEYngC0wbsDRJ/FM57YjLON0ohXH1B1CRQTvRwew4P+DnhKT0cvIaUqtlshHg2924y8va2Ep0A=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <15C0CE3A23C0334590213FCCDBB05E88@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f99654ec-41bb-49d6-152f-08d724a06097
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2019 12:25:52.8306
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: RfB4yOBX7PqiyECOif8v6ZljgZ9GzCIesMgtE2QGq5bJ+odnXHil93eJeXsCGM1JpYK4E4c9QQzlVp2K3h0zwmFcSzHRGmhETTHaVRv3aQw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0702MB3642
+        id S1727560AbfHSM22 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 08:28:28 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:37053 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727039AbfHSM21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 08:28:27 -0400
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com [209.85.221.69])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 00F3EC0740CD
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:28:27 +0000 (UTC)
+Received: by mail-wr1-f69.google.com with SMTP id m7so4836253wrw.22
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 05:28:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tSDNac3IpC0XQfaKU1b+CVQPA8G8Z+zM6tWLA7ESmuw=;
+        b=S+MMqXpIKo05uxUzZtIOrsE3OJp52VUBh3ybKOorkrK+aaijzl/eIajLCu/cAXUA/X
+         Y3WsxmU33DbMUXVjlqn/uifC9MVgvCyOo8nXOWDzFFRUvJ40CCX/j0xuGniohjsp0lOg
+         vr3QKmMdONoZhK1gTJPkadASCkFBxlxBFIwbauEyZmRIdgjuhSDKn+QOrUsyc3QZLfkT
+         6KDee8nh52N/pIAyY0TpO5ULFnFNeEC2Uc9lKuqB8ysPSYe4syXiazKxujG9SBRbUHbx
+         ayWPuz37XYf96yt2w+whm7twDaAJTZUF7CzYj6TJNRe2uBTlv5jQXaNoQexy+vUtcK/r
+         CqzA==
+X-Gm-Message-State: APjAAAVxunC4O8YHq0jFDEpyqN/lEejkxGNCvDb3yO5oUWvfiCJ4mVCN
+        3RF+aloEGT7Fqul0KAlJ1ttdCoY+TN1slcRSoYIdYgfSMZvxl4SD9RKAHZ3F4dXYJG7dQzQ5HQl
+        zEyJ9y/70klk/HwXGwLJeuJmH
+X-Received: by 2002:adf:e50b:: with SMTP id j11mr27033326wrm.65.1566217703716;
+        Mon, 19 Aug 2019 05:28:23 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqwbJc9Pv12kuOIGbz/OiAksBhRVlbykjC6o6V6asCfOI5oBSHZNvEVhEHAcN97DlgvE5s8zKw==
+X-Received: by 2002:adf:e50b:: with SMTP id j11mr27033285wrm.65.1566217703342;
+        Mon, 19 Aug 2019 05:28:23 -0700 (PDT)
+Received: from localhost.localdomain.com ([151.29.237.107])
+        by smtp.gmail.com with ESMTPSA id a6sm11074431wmj.15.2019.08.19.05.28.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Aug 2019 05:28:22 -0700 (PDT)
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     tglx@linutronix.de, bigeasy@linutronix.de, rostedt@goodmis.org
+Cc:     linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        williams@redhat.com, Juri Lelli <juri.lelli@redhat.com>
+Subject: [RT PATCH v2] net/xfrm/xfrm_ipcomp: Protect scratch buffer with local_lock
+Date:   Mon, 19 Aug 2019 14:27:31 +0200
+Message-Id: <20190819122731.6600-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8sDQoNCkkgaGF2ZSB0d28gVk1zLCBleHBvcnRpbmcgc29tZSBkaXJlY3RvcmllcyBpbiBv
-bmUgVk06DQojIGNhdCAvZXRjL2V4cG9ydHMNCi9tbnQgMTkyLjE2OC4xLjAvMjQocm8sZnNpZD0w
-LG5vX3N1YnRyZWVfY2hlY2ssc3luYykNCi9tbnQvZXhwb3J0DQoxOTIuMTY4LjEuMC8yNChydyxu
-b19yb290X3NxdWFzaCxzeW5jLG5vX3dkZWxheSxub19zdWJ0cmVlX2NoZWNrKQ0KWy4uLl0NCg0K
-QW5kIE5GUyBtb3VudGluZyBpbiB0aGUgc2Vjb25kIFZNOg0KIyBncmVwIG5mcyAvcHJvYy9tb3Vu
-dHMgDQpzZXJ2ZXI6L2V4cG9ydCAvbW50L2V4cG9ydCBuZnM0DQpydyxyZWxhdGltZSx2ZXJzPTQu
-Mixyc2l6ZT0xMDQ4NTc2LHdzaXplPTEwNDg1NzYsbmFtbGVuPTI1NSwNCmFjcmVnbWluPTEsYWNy
-ZWdtYXg9MSxhY2Rpcm1pbj0xLGFjZGlybWF4PTEsaGFyZCxub3JkaXJwbHVzLA0KcHJvdG89dGNw
-LHRpbWVvPTYwMCxyZXRyYW5zPTIsc2VjPXN5cyxjbGllbnRhZGRyPTE5Mi4xNjguMS4xMSwNCmxv
-Y2FsX2xvY2s9bm9uZSxhZGRyPTE5Mi4xNjguMS4xMCAwIDANClsuLi5dDQoNCklmIEkga2VlcCBz
-b21lIGZpbGUgZGVzY3JpcHRvciBvcGVuIGZvciBzZXZlcmFsIG1pbnV0ZXMgaW4gdGhlIHNlY29u
-ZCBWTSwNCmZvciBleGFtcGxlIGJ5IHJ1bm5pbmcgdGhpczoNCiMgc2xlZXAgMTBtID4vbW50L2V4
-cG9ydC90ZXN0DQoNClRoZW4gcmVzdWx0IGlzIHRoYXQgdGhlIE5GUyBtb3VudCBzdG9wcyByZXNw
-b25kaW5nOiB0aGUgc2xlZXAgcHJvY2Vzcw0KbmV2ZXIgZmluaXNoZWQgYnV0IGlzICJmb3JldmVy
-IiBzdHVjayBpbiAoa2lsbGFibGUpIEQgc3RhdGUsIGFuZCBhbnkgSS9PDQphdHRlbXB0IGZyb20g
-b3RoZXIgcHJvY2Vzc2VzIGluIC9tbnQvZXhwb3J0IG5ldmVyIGZpbmlzaC4NCkl0J3MgYWx3YXlz
-IHJlcHJvZHVjaWJsZSB3aXRoIHRoaXMgc2xlZXAgY29tbWFuZC4NClRvIHJlY292ZXIgdGhlIG1v
-dW50cG9pbnQgSSBuZWVkIHRvIHJlYm9vdCB0aGUgc2Vjb25kIFZNLg0KDQpLZXJuZWwgdmVyc2lv
-biBpcyA1LjMuMC1yYzQgaW4gYm90aCBWTXMuDQpBbHNvIHJlcHJvZHVjaWJsZSB3aXRoIDQuMTQu
-eCBhbmQgNC4xOS54DQoNCiMgcHMgYXV4fGdyZXAgc2xlZXANCnJvb3QgICAgICAyNTI0ICAwLjAg
-IDAuMCAgIDU5MDAgICA2ODggcHRzLzAgICAgRCAgICAxNDowNCAgIDA6MDAgc2xlZXAgNW0NCg0K
-IyBncmVwIC1DMTAwIG5mcyAvcHJvYy8qL3N0YWNrDQovcHJvYy8yNTI0L3N0YWNrOls8MD5dIG5m
-czRfZG9fY2xvc2UrMHg4N2QvMHhiMjAgW25mc3Y0XQ0KL3Byb2MvMjUyNC9zdGFjazpbPDA+XSBf
-X3B1dF9uZnNfb3Blbl9jb250ZXh0KzB4Mjk3LzB4NGYwIFtuZnNdDQovcHJvYy8yNTI0L3N0YWNr
-Ols8MD5dIG5mc19maWxlX3JlbGVhc2UrMHhiZS8weGYwIFtuZnNdDQovcHJvYy8yNTI0L3N0YWNr
-LVs8MD5dIF9fZnB1dCsweDFkZi8weDY5MA0KL3Byb2MvMjUyNC9zdGFjay1bPDA+XSB0YXNrX3dv
-cmtfcnVuKzB4MTIzLzB4MWIwDQovcHJvYy8yNTI0L3N0YWNrLVs8MD5dIGV4aXRfdG9fdXNlcm1v
-ZGVfbG9vcCsweDEyMS8weDE0MA0KL3Byb2MvMjUyNC9zdGFjay1bPDA+XSBkb19zeXNjYWxsXzY0
-KzB4MmQxLzB4MzcwDQovcHJvYy8yNTI0L3N0YWNrLVs8MD5dIGVudHJ5X1NZU0NBTExfNjRfYWZ0
-ZXJfaHdmcmFtZSsweDQ0LzB4YTkNCi0tDQovcHJvYy81NjEvc3RhY2stWzwwPl0gX19ycGNfZXhl
-Y3V0ZSsweDY5Mi8weGIxMCBbc3VucnBjXQ0KL3Byb2MvNTYxL3N0YWNrLVs8MD5dIHJwY19ydW5f
-dGFzaysweDQ1Zi8weDVkMCBbc3VucnBjXQ0KL3Byb2MvNTYxL3N0YWNrOls8MD5dIG5mczRfY2Fs
-bF9zeW5jX3NlcXVlbmNlKzB4MTJhLzB4MjEwIFtuZnN2NF0NCi9wcm9jLzU2MS9zdGFjazpbPDA+
-XSBfbmZzNF9wcm9jX2dldGF0dHIrMHgxOWEvMHgyMDAgW25mc3Y0XQ0KL3Byb2MvNTYxL3N0YWNr
-Ols8MD5dIG5mczRfcHJvY19nZXRhdHRyKzB4ZGEvMHgyMzAgW25mc3Y0XQ0KL3Byb2MvNTYxL3N0
-YWNrOls8MD5dIF9fbmZzX3JldmFsaWRhdGVfaW5vZGUrMHgyZWQvMHg3YTAgW25mc10NCi9wcm9j
-LzU2MS9zdGFjazpbPDA+XSBuZnNfZG9fYWNjZXNzKzB4NjA1LzB4ZDAwIFtuZnNdDQovcHJvYy81
-NjEvc3RhY2s6WzwwPl0gbmZzX3Blcm1pc3Npb24rMHg1MDAvMHg1ZTAgW25mc10NCi9wcm9jLzU2
-MS9zdGFjay1bPDA+XSBpbm9kZV9wZXJtaXNzaW9uKzB4MmRkLzB4M2YwDQovcHJvYy81NjEvc3Rh
-Y2stWzwwPl0gbGlua19wYXRoX3dhbGsucGFydC42MCsweDY4MS8weGU0MA0KL3Byb2MvNTYxL3N0
-YWNrLVs8MD5dIHBhdGhfbG9va3VwYXQuaXNyYS42MysweDFhZi8weDg1MA0KL3Byb2MvNTYxL3N0
-YWNrLVs8MD5dIGZpbGVuYW1lX2xvb2t1cC5wYXJ0Ljc5KzB4MTY1LzB4MzYwDQovcHJvYy81NjEv
-c3RhY2stWzwwPl0gdmZzX3N0YXR4KzB4YjkvMHgxNDANCi9wcm9jLzU2MS9zdGFjay1bPDA+XSBf
-X2RvX3N5c19uZXdzdGF0KzB4NzcvMHhkMA0KL3Byb2MvNTYxL3N0YWNrLVs8MD5dIGRvX3N5c2Nh
-bGxfNjQrMHg5YS8weDM3MA0KL3Byb2MvNTYxL3N0YWNrLVs8MD5dIGVudHJ5X1NZU0NBTExfNjRf
-YWZ0ZXJfaHdmcmFtZSsweDQ0LzB4YTkNCg0KDQpJbiBkbWVzZyBvZiBzZWNvbmQgVk0gc29tZXRp
-bWVzIG5mcyBjb21wbGFpbnRzIGFyZSBzZWVuOg0KDQpbICAzODYuMzYyODk3XSBuZnM6IHNlcnZl
-ciB4eXogbm90IHJlc3BvbmRpbmcsIHN0aWxsIHRyeWluZw0KDQpBbnkgaWRlYXMgd2hhdCdzIGdv
-aW5nIHdyb25nIGhlcmUuLi4/DQoNCi1Ub21taQ0KDQo=
+The following BUG has been reported while running ipsec tests.
+
+ BUG: scheduling while atomic: irq/78-eno3-rx-/12023/0x00000002
+ Modules linked in: ipcomp xfrm_ipcomp ...
+ Preemption disabled at:
+ [<ffffffffc0b29730>] ipcomp_input+0xd0/0x9a0 [xfrm_ipcomp]
+ CPU: 1 PID: 12023 Comm: irq/78-eno3-rx- Kdump: loaded Not tainted [...] #1
+ Hardware name: [...]
+ Call Trace:
+  dump_stack+0x5c/0x80
+  ? ipcomp_input+0xd0/0x9a0 [xfrm_ipcomp]
+  __schedule_bug.cold.81+0x44/0x51
+  __schedule+0x5bf/0x6a0
+  schedule+0x39/0xd0
+  rt_spin_lock_slowlock_locked+0x10e/0x2b0
+  rt_spin_lock_slowlock+0x50/0x80
+  get_page_from_freelist+0x609/0x1560
+  ? zlib_updatewindow+0x5a/0xd0
+  __alloc_pages_nodemask+0xd9/0x280
+  ipcomp_input+0x299/0x9a0 [xfrm_ipcomp]
+  xfrm_input+0x5e3/0x960
+  xfrm4_ipcomp_rcv+0x34/0x50
+  ip_local_deliver_finish+0x22d/0x250
+  ip_local_deliver+0x6d/0x110
+  ? ip_rcv_finish+0xac/0x480
+  ip_rcv+0x28e/0x3f9
+  ? packet_rcv+0x43/0x4c0
+  __netif_receive_skb_core+0xb7c/0xd10
+  ? inet_gro_receive+0x8e/0x2f0
+  netif_receive_skb_internal+0x4a/0x160
+  napi_gro_receive+0xee/0x110
+  tg3_rx+0x2a8/0x810 [tg3]
+  tg3_poll_work+0x3b3/0x830 [tg3]
+  tg3_poll_msix+0x3b/0x170 [tg3]
+  net_rx_action+0x1ff/0x470
+  ? __switch_to_asm+0x41/0x70
+  do_current_softirqs+0x223/0x3e0
+  ? irq_thread_check_affinity+0x20/0x20
+  __local_bh_enable+0x51/0x60
+  irq_forced_thread_fn+0x5e/0x80
+  ? irq_finalize_oneshot.part.45+0xf0/0xf0
+  irq_thread+0x13d/0x1a0
+  ? wake_threads_waitq+0x30/0x30
+  kthread+0x112/0x130
+  ? kthread_create_worker_on_cpu+0x70/0x70
+  ret_from_fork+0x35/0x40
+
+The problem resides in the fact that get_cpu(), called from
+ipcomp_input() disables preemption, and that triggers the scheduling
+while atomic BUG further down the callpath chain of
+get_page_from_freelist(), i.e.,
+
+  ipcomp_input
+    ipcomp_decompress
+      <-- get_cpu()
+      alloc_page(GFP_ATOMIC)
+        alloc_pages(GFP_ATOMIC, 0)
+          alloc_pages_current
+            __alloc_pages_nodemask
+              get_page_from_freelist
+                (try_this_zone:) rmqueue
+                  rmqueue_pcplist
+                    __rmqueue_pcplist
+                      rmqueue_bulk
+                        <-- spin_lock(&zone->lock) - BUG
+
+Fix this by replacing get_cpu() with a local lock to protect
+ipcomp_scratches buffers used by ipcomp_(de)compress().
+
+Suggested-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+
+--
+This v2 applies to v4.19.59-rt24.
+
+v1 -> v2: Use a local lock instead of {get,put}_cpu_light(), as the
+latter doesn't protect against multiple CPUs invoking (de)compress
+function at the same time, thus concurently working on the same scratch
+buffer.
+---
+ net/xfrm/xfrm_ipcomp.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/net/xfrm/xfrm_ipcomp.c b/net/xfrm/xfrm_ipcomp.c
+index a00ec715aa46..3b4a38febf0a 100644
+--- a/net/xfrm/xfrm_ipcomp.c
++++ b/net/xfrm/xfrm_ipcomp.c
+@@ -18,6 +18,7 @@
+ #include <linux/crypto.h>
+ #include <linux/err.h>
+ #include <linux/list.h>
++#include <linux/locallock.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/percpu.h>
+@@ -35,6 +36,7 @@ struct ipcomp_tfms {
+ };
+ 
+ static DEFINE_MUTEX(ipcomp_resource_mutex);
++static DEFINE_LOCAL_IRQ_LOCK(ipcomp_scratches_lock);
+ static void * __percpu *ipcomp_scratches;
+ static int ipcomp_scratch_users;
+ static LIST_HEAD(ipcomp_tfms_list);
+@@ -45,12 +47,14 @@ static int ipcomp_decompress(struct xfrm_state *x, struct sk_buff *skb)
+ 	const int plen = skb->len;
+ 	int dlen = IPCOMP_SCRATCH_SIZE;
+ 	const u8 *start = skb->data;
+-	const int cpu = get_cpu();
+-	u8 *scratch = *per_cpu_ptr(ipcomp_scratches, cpu);
+-	struct crypto_comp *tfm = *per_cpu_ptr(ipcd->tfms, cpu);
+-	int err = crypto_comp_decompress(tfm, start, plen, scratch, &dlen);
+-	int len;
++	u8 *scratch;
++	struct crypto_comp *tfm;
++	int err, len;
+ 
++	local_lock(ipcomp_scratches_lock);
++	scratch = *this_cpu_ptr(ipcomp_scratches);
++	tfm = *this_cpu_ptr(ipcd->tfms);
++	err = crypto_comp_decompress(tfm, start, plen, scratch, &dlen);
+ 	if (err)
+ 		goto out;
+ 
+@@ -103,7 +107,7 @@ static int ipcomp_decompress(struct xfrm_state *x, struct sk_buff *skb)
+ 	err = 0;
+ 
+ out:
+-	put_cpu();
++	local_unlock(ipcomp_scratches_lock);
+ 	return err;
+ }
+ 
+@@ -146,6 +150,7 @@ static int ipcomp_compress(struct xfrm_state *x, struct sk_buff *skb)
+ 	int err;
+ 
+ 	local_bh_disable();
++	local_lock(ipcomp_scratches_lock);
+ 	scratch = *this_cpu_ptr(ipcomp_scratches);
+ 	tfm = *this_cpu_ptr(ipcd->tfms);
+ 	err = crypto_comp_compress(tfm, start, plen, scratch, &dlen);
+@@ -158,12 +163,14 @@ static int ipcomp_compress(struct xfrm_state *x, struct sk_buff *skb)
+ 	}
+ 
+ 	memcpy(start + sizeof(struct ip_comp_hdr), scratch, dlen);
++	local_unlock(ipcomp_scratches_lock);
+ 	local_bh_enable();
+ 
+ 	pskb_trim(skb, dlen + sizeof(struct ip_comp_hdr));
+ 	return 0;
+ 
+ out:
++	local_unlock(ipcomp_scratches_lock);
+ 	local_bh_enable();
+ 	return err;
+ }
+-- 
+2.17.2
+
