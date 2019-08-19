@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4352794DEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:27:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4552A94E02
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:27:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728442AbfHST0R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:26:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41938 "EHLO mail.kernel.org"
+        id S1728901AbfHST1j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:27:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728662AbfHST0K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:26:10 -0400
+        id S1728663AbfHST0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 15:26:11 -0400
 Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4761322CF6;
+        by mail.kernel.org (Postfix) with ESMTPSA id 78E1422DA7;
         Mon, 19 Aug 2019 19:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566242769;
+        s=default; t=1566242770;
         bh=kgJgyL0lhyr3mxrc8eG/4G2XdFkqx4XD8pY1GUjQG9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=S4iSbwGRhGzQJ8Zk83WPR0s0008xKvHCSPCcZtVxbJKXYiFhrKuT9QIId1NVWbTA+
-         YHJpTk0mqChaF3k2jDCxSGCqVtDKOkmRKfsxGrzxU080wnW5wsK2JOt0w7PhydX21V
-         iLd8PXPAfKvMNeqYJTQzsugX0wmiOifR0pgROXw4=
+        b=C2LeFBWTv6Pckb/PSGyFmp2oMoNmofGbD62Wo4o01QzNz+iYcWZW1TjTmtmp5lDsB
+         aVqKFmO80+ZFAF3mdt4joTrbQpiI0wE1FVa13Jk6pAWcyUCo/vxovtSCVgLHKzTSmi
+         vT2x3jGrWMIKN9VK/4bb5WHmnm4mu43Fp1PPs/l0=
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
         lgirdwood@gmail.com, broonie@kernel.org
