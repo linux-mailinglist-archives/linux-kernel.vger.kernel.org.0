@@ -2,104 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61C41923F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B835923F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 14:56:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727631AbfHSM4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 08:56:38 -0400
-Received: from mx0b-002e3701.pphosted.com ([148.163.143.35]:15920 "EHLO
-        mx0b-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726987AbfHSM4i (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 08:56:38 -0400
-Received: from pps.filterd (m0150244.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JCu9K9030104;
-        Mon, 19 Aug 2019 12:56:13 GMT
-Received: from g4t3426.houston.hpe.com (g4t3426.houston.hpe.com [15.241.140.75])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2ufstss30v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Aug 2019 12:56:13 +0000
-Received: from g9t2301.houston.hpecorp.net (g9t2301.houston.hpecorp.net [16.220.97.129])
-        by g4t3426.houston.hpe.com (Postfix) with ESMTP id 6A1D65D;
-        Mon, 19 Aug 2019 12:56:12 +0000 (UTC)
-Received: from hpe.com (teo-eag.americas.hpqcorp.net [10.33.152.10])
-        by g9t2301.houston.hpecorp.net (Postfix) with ESMTP id 824F04A;
-        Mon, 19 Aug 2019 12:56:11 +0000 (UTC)
-Date:   Mon, 19 Aug 2019 07:56:11 -0500
-From:   Dimitri Sivanich <sivanich@hpe.com>
-To:     Bharath Vedartham <linux.bhar@gmail.com>
-Cc:     sivanich@hpe.com, jhubbard@nvidia.com, jglisse@redhat.com,
-        ira.weiny@intel.com, gregkh@linuxfoundation.org, arnd@arndb.de,
-        william.kucharski@oracle.com, hch@lst.de,
-        inux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel-mentees@lists.linuxfoundation.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
- to put_user_page*()
-Message-ID: <20190819125611.GA5808@hpe.com>
-References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
- <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
+        id S1727612AbfHSM4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 08:56:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726987AbfHSM4b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 08:56:31 -0400
+Received: from willie-the-truck (236.31.169.217.in-addr.arpa [217.169.31.236])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 073A7205C9;
+        Mon, 19 Aug 2019 12:56:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566219391;
+        bh=UO4FTZseWCp9eDIq9wbqfeQcfvQgOuhKZNq4SSQZlCA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=G6j37x4gi/6X0L/ntZnqejE/KABlXoc3rhzuaqGTCUYmRqon5h34OLBgOYes5raz7
+         /D4umugtstfQker4f99YG3DdWKtSK+LqlwZWJLF5vfd2dgSPVSF1gZvYXLRoBjdsKm
+         2/iMibknt0kPfzelxOg5ZQteaN74tyOH0e3mBE9A=
+Date:   Mon, 19 Aug 2019 13:56:26 +0100
+From:   Will Deacon <will@kernel.org>
+To:     Walter Wu <walter-zh.wu@mediatek.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        wsd_upstream@mediatek.com, linux-kernel@vger.kernel.org,
+        kasan-dev@googlegroups.com, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] arm64: kasan: fix phys_to_virt() false positive on
+ tag-based kasan
+Message-ID: <20190819125625.bu3nbrldg7te5kwc@willie-the-truck>
+References: <20190819114420.2535-1-walter-zh.wu@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190147
+In-Reply-To: <20190819114420.2535-1-walter-zh.wu@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+On Mon, Aug 19, 2019 at 07:44:20PM +0800, Walter Wu wrote:
+> __arm_v7s_unmap() call iopte_deref() to translate pyh_to_virt address,
+> but it will modify pointer tag into 0xff, so there is a false positive.
+> 
+> When enable tag-based kasan, phys_to_virt() function need to rewrite
+> its original pointer tag in order to avoid kasan report an incorrect
+> memory corruption.
 
-On Mon, Aug 19, 2019 at 01:08:54AM +0530, Bharath Vedartham wrote:
-> For pages that were retained via get_user_pages*(), release those pages
-> via the new put_user_page*() routines, instead of via put_page() or
-> release_pages().
-> 
-> This is part a tree-wide conversion, as described in commit fc1d8e7cca2d
-> ("mm: introduce put_user_page*(), placeholder versions").
-> 
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: John Hubbard <jhubbard@nvidia.com>
-> Cc: Jérôme Glisse <jglisse@redhat.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Dimitri Sivanich <sivanich@sgi.com>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: William Kucharski <william.kucharski@oracle.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: linux-kernel-mentees@lists.linuxfoundation.org
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-> Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> ---
->  drivers/misc/sgi-gru/grufault.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/sgi-gru/grufault.c b/drivers/misc/sgi-gru/grufault.c
-> index 4b713a8..61b3447 100644
-> --- a/drivers/misc/sgi-gru/grufault.c
-> +++ b/drivers/misc/sgi-gru/grufault.c
-> @@ -188,7 +188,7 @@ static int non_atomic_pte_lookup(struct vm_area_struct *vma,
->  	if (get_user_pages(vaddr, 1, write ? FOLL_WRITE : 0, &page, NULL) <= 0)
->  		return -EFAULT;
->  	*paddr = page_to_phys(page);
-> -	put_page(page);
-> +	put_user_page(page);
->  	return 0;
->  }
->  
-> -- 
-> 2.7.4
-> 
+Hmm. Which tree did you see this on? We've recently queued a load of fixes
+in this area, but I /thought/ they were only needed after the support for
+52-bit virtual addressing in the kernel.
+
+Will
