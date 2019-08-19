@@ -2,95 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8098F94964
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3D859496D
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfHSQFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 12:05:04 -0400
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:46627 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726905AbfHSQFE (ORCPT
+        id S1727677AbfHSQHN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 12:07:13 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:40985 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726211AbfHSQHN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:05:04 -0400
-Received: by mail-qt1-f196.google.com with SMTP id j15so2429794qtl.13
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 09:05:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qjbUMhoyRlBrB2pmx0yMahiahDUwqPVaQy5IFCKDGeI=;
-        b=OIqsSXPXZbviyknbeplJa6FF5mEXzPBpNrHBLvf0OMF8gfvJD8rMtRaqC2i40w60Q6
-         0ooems/EWxdnaXQFW36fYWtAjJrDvPcvdsW6YzldSxGpx3VcaW+O5jcOw+TMk3pErFYs
-         OZZSqimYb/Z0K/YmjGgnPZ/vzOFpFweKtucZK/WF6MrI+suDDcwVxza8veuThMPLO+w8
-         iZcaR2srQpXzJdK9bslrKpXDHhWvtPURyDP47vEQxpRHtAqZyKhlwt3L2C9E3lYyY4zl
-         taZGVkxvxGeQwmccmhEEk92+fRCaHGdoUJkldjTeDQ3ZU5qO2nMjLHql3TBAexJxgM+M
-         nBYQ==
+        Mon, 19 Aug 2019 12:07:13 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j16so9284323wrr.8;
+        Mon, 19 Aug 2019 09:07:11 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qjbUMhoyRlBrB2pmx0yMahiahDUwqPVaQy5IFCKDGeI=;
-        b=CIS2+YIE1TARyaq1sfB5JUkdLgKIImrHsJcK5SIc4qgS7Agh9ldd2zAXQUpEuMfAWW
-         42M1AfRMuZ9tFyRDmaeZ5L+s7g81WtmUd9j5Ug3m4tuRteJftyzeMeUjsFbS26SNKavE
-         Nbl7PnJsmNE6CRgWeCZyWBHTs4KzXqdYmUxfk2TWPUvzcPXkD2wn8R3BwrtOLuqE08gd
-         ASRrXXPaOQ0DmCxnccj6+k02YL6Faiatk/nyv9ubjYkA3I7/CgZsWSMZGFr3BrZi3RRi
-         mU3va+J6yW90XiJaArUfEv/4UBG0BMK0Aeh16MyktxS46RH8dfeyS0tZVsvmQRmzfVJA
-         yE0Q==
-X-Gm-Message-State: APjAAAXHdVNlU1PmWgqMqQueMl/zrJG8pBwRcBhP42ewZiRHViidR7dY
-        geTfw7m3PAm9QfB/9hYhoq5/fA==
-X-Google-Smtp-Source: APXvYqztyQOS4b1pKjCeXKm705+A0GDuP5UsZRh4JOIvQy8A9jr5ymKEfXY9yahhCbkDHmMgSpDEMw==
-X-Received: by 2002:aed:3f29:: with SMTP id p38mr21199002qtf.126.1566230703478;
-        Mon, 19 Aug 2019 09:05:03 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-156-34-55-100.dhcp-dynamic.fibreop.ns.bellaliant.net. [156.34.55.100])
-        by smtp.gmail.com with ESMTPSA id p38sm9417040qtc.76.2019.08.19.09.05.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 09:05:02 -0700 (PDT)
-Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
-        (envelope-from <jgg@ziepe.ca>)
-        id 1hzk9W-0007Mr-AA; Mon, 19 Aug 2019 13:05:02 -0300
-Date:   Mon, 19 Aug 2019 13:05:02 -0300
-From:   Jason Gunthorpe <jgg@ziepe.ca>
-To:     Bernard Metzler <BMT@zurich.ibm.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Doug Ledford <dledford@redhat.com>, linux-rdma@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: Re: Re: Re: [PATCH] RDMA/siw: Fix compiler warnings on 32-bit
- due to u64/pointer abuse
-Message-ID: <20190819160502.GI5058@ziepe.ca>
-References: <20190819150723.GH5058@ziepe.ca>
- <20190819141856.GG5058@ziepe.ca>
- <20190819135213.GF5058@ziepe.ca>
- <20190819122456.GB5058@ziepe.ca>
- <20190819100526.13788-1-geert@linux-m68k.org>
- <OF7DB4AD51.C58B8A8B-ON0025845B.004A0CF6-0025845B.004AB95C@notes.na.collabserv.com>
- <OFD7D2994B.750F3146-ON0025845B.004D965D-0025845B.004E5577@notes.na.collabserv.com>
- <OFD7C97688.66331960-ON0025845B.005081B6-0025845B.0051AF67@notes.na.collabserv.com>
- <OFB73D0AD1.A2D5DDF4-ON0025845B.00545951-0025845B.00576D84@notes.na.collabserv.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=zLoUlx1gsYL0OVFSMVjn2c222FNgif7/2WN9cg01ggE=;
+        b=Hdcqy3XN6hh04oX2rDHc/RLpbxvUBAZ6hOwUxNxiCq+nteTqN2fKjL3MtsKltM50TZ
+         59bRudQx4wUU10bsM1m4eLuKNUD89t5R0bQclwq2Y1Ai/wg9ZgAXbsKFq+yLe+1CBbVz
+         lFhX7yORMWjfQe6pVgqfeTPrI9WmSPu1rsjXzxeAq12bgesEn44n5zq3C6f/f36rEbif
+         l+h4HUOpqw51fTxI8QtV/7MPcxWvo/EkjjCx7Rkep/kp4V+p3sU6I3fp2KPmdlQFXk2c
+         xI3STEKC0CgWuJNOUHZSinM8pNEXRnWaRnNc0NX63rtZGV9/YPMAdRor1dvgXZ3Tiqyy
+         SjSw==
+X-Gm-Message-State: APjAAAWiJWuwMKiS8yAMeE3qn4cmnjJf4s/O7ULu5iyt7yuXP+vxlTan
+        /x5rROy3HHTaJxE11ewIsxc=
+X-Google-Smtp-Source: APXvYqzuS9K5M1f90oGwEQxSqTmvmIW4FycvyX/cWqrWPuKOYeqGKO9rprB7+crHuBV0VIsTwvAvpg==
+X-Received: by 2002:a5d:4250:: with SMTP id s16mr28682362wrr.318.1566230830772;
+        Mon, 19 Aug 2019 09:07:10 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id b136sm32442189wme.18.2019.08.19.09.07.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 09:07:09 -0700 (PDT)
+From:   Denis Efremov <efremov@linux.com>
+To:     Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Denis Efremov <efremov@linux.com>, Lukas Wunner <lukas@wunner.de>,
+        sathyanarayanan kuppuswamy 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/4] Simplify PCIe hotplug indicator control
+Date:   Mon, 19 Aug 2019 19:06:39 +0300
+Message-Id: <20190819160643.27998-1-efremov@linux.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OFB73D0AD1.A2D5DDF4-ON0025845B.00545951-0025845B.00576D84@notes.na.collabserv.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 03:54:56PM +0000, Bernard Metzler wrote:
+PCIe defines two optional hotplug indicators: a Power indicator and an
+Attention indicator. Both are controlled by the same register, and each
+can be on, off or blinking. The current interfaces
+(pciehp_green_led_{on,off,blink}() and pciehp_set_attention_status()) are
+non-uniform and require two register writes in many cases where we could
+do one.
 
-> Absolutely. But these addresses are conveyed through the
-> API as unsigned 64 during post_send(), and land in the siw
-> send queue as is. During send queue processing, these addresses
-> must be interpreted according to its context and transformed
-> (casted) back to the callers intention. I frankly do not
-> know what we can do differently... The representation of
-> all addresses as unsigned 64 is given. Sorry for the confusion.
+This patchset introduces the new function pciehp_set_indicators(). It
+allows one to set two indicators with a single register write. All
+calls to previous interfaces (pciehp_green_led_* and
+pciehp_set_attention_status()) are replaced with a new one. Thus,
+the amount of duplicated code for setting indicators is reduced.
 
-send work does not have pointers in it, so I'm confused what this is
-about. Does siw allow userspace to stick an ordinary pointer for the
-SG list?
+Changes in v3:
+  - Changed pciehp_set_indicators() to work with existing
+    PCI_EXP_SLTCTL_* macros
+  - Reworked the inputs validation in pciehp_set_indicators()
+  - Removed pciehp_set_attention_status() and pciehp_green_led_*()
+    completely
 
-The code paths here must be totally different, so there should be
-different types and functions for each case.
+Denis Efremov (4):
+  PCI: pciehp: Add pciehp_set_indicators() to jointly set LED indicators
+  PCI: pciehp: Switch LED indicators with a single write
+  PCI: pciehp: Remove pciehp_set_attention_status()
+  PCI: pciehp: Remove pciehp_green_led_{on,off,blink}()
 
-Jason
+ drivers/pci/hotplug/pciehp.h      |  5 +-
+ drivers/pci/hotplug/pciehp_core.c |  7 ++-
+ drivers/pci/hotplug/pciehp_ctrl.c | 31 +++++++-----
+ drivers/pci/hotplug/pciehp_hpc.c  | 82 ++++++++++---------------------
+ include/uapi/linux/pci_regs.h     |  3 ++
+ 5 files changed, 54 insertions(+), 74 deletions(-)
+
+-- 
+2.21.0
+
