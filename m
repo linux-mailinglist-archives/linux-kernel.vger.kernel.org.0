@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB045924C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:23:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6889924C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:23:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727777AbfHSNXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 09:23:04 -0400
-Received: from 8bytes.org ([81.169.241.247]:50350 "EHLO theia.8bytes.org"
+        id S1727619AbfHSNXD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 09:23:03 -0400
+Received: from 8bytes.org ([81.169.241.247]:50372 "EHLO theia.8bytes.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbfHSNXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727687AbfHSNXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 19 Aug 2019 09:23:01 -0400
 Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 379F8476; Mon, 19 Aug 2019 15:22:59 +0200 (CEST)
+        id 64EF6527; Mon, 19 Aug 2019 15:22:59 +0200 (CEST)
 From:   Joerg Roedel <joro@8bytes.org>
 To:     Joerg Roedel <joro@8bytes.org>
 Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
@@ -21,9 +21,9 @@ Cc:     corbet@lwn.net, tony.luck@intel.com, fenghua.yu@intel.com,
         linux-ia64@vger.kernel.org, iommu@lists.linux-foundation.org,
         linux-kernel@vger.kernel.org, Thomas.Lendacky@amd.com,
         Suravee.Suthikulpanit@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH 03/11] iommu: Use Functions to set default domain type in iommu_set_def_domain_type()
-Date:   Mon, 19 Aug 2019 15:22:48 +0200
-Message-Id: <20190819132256.14436-4-joro@8bytes.org>
+Subject: [PATCH 04/11] iommu/amd: Request passthrough mode from IOMMU core
+Date:   Mon, 19 Aug 2019 15:22:49 +0200
+Message-Id: <20190819132256.14436-5-joro@8bytes.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819132256.14436-1-joro@8bytes.org>
 References: <20190819132256.14436-1-joro@8bytes.org>
@@ -34,34 +34,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-There are functions now to set the default domain type which
-take care of updating other necessary state. Don't open-code
-it in iommu_set_def_domain_type() and use those functions
-instead.
+Get rid of the iommu_pass_through variable and request
+passthrough mode via the new iommu core function.
 
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 ---
- drivers/iommu/iommu.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/iommu/amd_iommu.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 84acd47936ac..3ee50bb22ca2 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -178,9 +178,11 @@ static int __init iommu_set_def_domain_type(char *str)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index b607a92791d3..7434b34d7a94 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -436,7 +436,7 @@ static int iommu_init_device(struct device *dev)
+ 	 * invalid address), we ignore the capability for the device so
+ 	 * it'll be forced to go into translation mode.
+ 	 */
+-	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
++	if ((iommu_default_passthrough() || !amd_iommu_force_isolation) &&
+ 	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
+ 		struct amd_iommu *iommu;
  
--	iommu_set_cmd_line_dma_api();
-+	if (pt)
-+		iommu_set_default_passthrough(true);
-+	else
-+		iommu_set_default_translated(true);
+@@ -2226,7 +2226,7 @@ static int amd_iommu_add_device(struct device *dev)
  
--	iommu_def_domain_type = pt ? IOMMU_DOMAIN_IDENTITY : IOMMU_DOMAIN_DMA;
- 	return 0;
- }
- early_param("iommu.passthrough", iommu_set_def_domain_type);
+ 	BUG_ON(!dev_data);
+ 
+-	if (iommu_pass_through || dev_data->iommu_v2)
++	if (dev_data->iommu_v2)
+ 		iommu_request_dm_for_dev(dev);
+ 
+ 	/* Domains are initialized for this device - have a look what we ended up with */
+@@ -2805,7 +2805,7 @@ int __init amd_iommu_init_api(void)
+ 
+ int __init amd_iommu_init_dma_ops(void)
+ {
+-	swiotlb        = (iommu_pass_through || sme_me_mask) ? 1 : 0;
++	swiotlb        = (iommu_default_passthrough() || sme_me_mask) ? 1 : 0;
+ 	iommu_detected = 1;
+ 
+ 	if (amd_iommu_unmap_flush)
 -- 
 2.16.4
 
