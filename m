@@ -2,93 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 784FC94BA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:30:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 21B3194B9C
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:29:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728077AbfHSR0P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 13:26:15 -0400
-Received: from relay.sw.ru ([185.231.240.75]:36986 "EHLO relay.sw.ru"
+        id S1727994AbfHSRZq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 13:25:46 -0400
+Received: from foss.arm.com ([217.140.110.172]:57722 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727398AbfHSR0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:26:14 -0400
-Received: from [172.16.25.5] (helo=i7.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1hzlPx-000240-5o; Mon, 19 Aug 2019 20:26:05 +0300
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Walter Wu <walter-zh.wu@mediatek.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        stable@vger.kernel.org
-Subject: [PATCH] mm/kasan: Fix false positive invalid-free reports with CONFIG_KASAN_SW_TAGS=y
-Date:   Mon, 19 Aug 2019 20:25:40 +0300
-Message-Id: <20190819172540.19581-1-aryabinin@virtuozzo.com>
-X-Mailer: git-send-email 2.21.0
+        id S1727524AbfHSRZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 13:25:46 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9468C360;
+        Mon, 19 Aug 2019 10:25:45 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 155553F246;
+        Mon, 19 Aug 2019 10:25:44 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 18:25:43 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Krzysztof Wilczynski <kw@linux.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ACPI/PCI: Remove surplus parentheses from a return
+ statement
+Message-ID: <20190819172543.GA23903@e119886-lin.cambridge.arm.com>
+References: <20190819135324.29504-1-kw@linux.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819135324.29504-1-kw@linux.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code like this:
+On Mon, Aug 19, 2019 at 03:53:24PM +0200, Krzysztof Wilczynski wrote:
+> Remove unnecessary parentheses enclosing the value in a return
+> statement in the drivers/acpi/pci_link.c.
+> 
+> Signed-off-by: Krzysztof Wilczynski <kw@linux.com>
+> ---
+>  drivers/acpi/pci_link.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/acpi/pci_link.c b/drivers/acpi/pci_link.c
+> index db11f7771ef1..00a6da2121be 100644
+> --- a/drivers/acpi/pci_link.c
+> +++ b/drivers/acpi/pci_link.c
+> @@ -661,7 +661,7 @@ int acpi_pci_link_allocate_irq(acpi_handle handle, int index, int *triggering,
+>  	ACPI_DEBUG_PRINT((ACPI_DB_INFO,
+>  			  "Link %s is referenced\n",
+>  			  acpi_device_bid(link->device)));
+> -	return (link->irq.active);
+> +	return link->irq.active;
+>  }
+>  
+>  /*
+> @@ -712,7 +712,7 @@ int acpi_pci_link_free_irq(acpi_handle handle)
+>  		acpi_evaluate_object(link->device->handle, "_DIS", NULL, NULL);
+>  
+>  	mutex_unlock(&acpi_link_lock);
+> -	return (link->irq.active);
+> +	return link->irq.active;
 
-	ptr = kmalloc(size, GFP_KERNEL);
-	page = virt_to_page(ptr);
-	offset = offset_in_page(ptr);
-	kfree(page_address(page) + offset);
+It looks like these parentheses were left over after a patch that removed some
+macros:
 
-may produce false-positive invalid-free reports on the kernel with
-CONFIG_KASAN_SW_TAGS=y.
+ ad550d98d3317 ("ACPI: delete tracing macros from drivers/acpi/*.c")
 
-In the example above we loose the original tag assigned to 'ptr',
-so kfree() gets the pointer with 0xFF tag. In kfree() we check that
-0xFF tag is different from the tag in shadow hence print false report.
+I can't see any you've missed so:
 
-Instead of just comparing tags, do the following:
- 1) Check that shadow doesn't contain KASAN_TAG_INVALID. Otherwise it's
-    double-free and it doesn't matter what tag the pointer have.
+Reviewed-by: Andrew Murray <andrew.murray@arm.com>
 
- 2) If pointer tag is different from 0xFF, make sure that tag in the shadow
-    is the same as in the pointer.
 
-Fixes: 7f94ffbc4c6a ("kasan: add hooks implementation for tag-based mode")
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Reported-by: Walter Wu <walter-zh.wu@mediatek.com>
-Reported-by: Mark Rutland <mark.rutland@arm.com>
-Cc: <stable@vger.kernel.org>
----
- mm/kasan/common.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/mm/kasan/common.c b/mm/kasan/common.c
-index 895dc5e2b3d5..3b8cde0cb5b2 100644
---- a/mm/kasan/common.c
-+++ b/mm/kasan/common.c
-@@ -406,8 +406,14 @@ static inline bool shadow_invalid(u8 tag, s8 shadow_byte)
- 	if (IS_ENABLED(CONFIG_KASAN_GENERIC))
- 		return shadow_byte < 0 ||
- 			shadow_byte >= KASAN_SHADOW_SCALE_SIZE;
--	else
--		return tag != (u8)shadow_byte;
-+
-+	/* else CONFIG_KASAN_SW_TAGS: */
-+	if ((u8)shadow_byte == KASAN_TAG_INVALID)
-+		return true;
-+	if ((tag != KASAN_TAG_KERNEL) && (tag != (u8)shadow_byte))
-+		return true;
-+
-+	return false;
- }
- 
- static bool __kasan_slab_free(struct kmem_cache *cache, void *object,
--- 
-2.21.0
-
+>  }
+>  
+>  /* --------------------------------------------------------------------------
+> -- 
+> 2.22.1
+> 
