@@ -2,74 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A373392178
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:37:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0C7092152
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:35:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727468AbfHSKfr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 06:35:47 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5154 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727345AbfHSKfV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:35:21 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 755C8A8FFE39C71DE2F0;
-        Mon, 19 Aug 2019 18:35:17 +0800 (CST)
-Received: from architecture4.huawei.com (10.140.130.215) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Mon, 19 Aug
- 2019 18:35:11 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>, <linux-fsdevel@vger.kernel.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>, <stable@vger.kernel.org>
-Subject: [PATCH 6/6] staging: erofs: avoid endless loop of invalid lookback distance 0
-Date:   Mon, 19 Aug 2019 18:34:26 +0800
-Message-ID: <20190819103426.87579-7-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190819103426.87579-1-gaoxiang25@huawei.com>
-References: <20190819080218.GA42231@138>
- <20190819103426.87579-1-gaoxiang25@huawei.com>
+        id S1727217AbfHSKev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 06:34:51 -0400
+Received: from foss.arm.com ([217.140.110.172]:52222 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726477AbfHSKev (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:34:51 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B538B344;
+        Mon, 19 Aug 2019 03:34:50 -0700 (PDT)
+Received: from [10.1.194.37] (e113632-lin.cambridge.arm.com [10.1.194.37])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 454FC3F706;
+        Mon, 19 Aug 2019 03:34:49 -0700 (PDT)
+Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
+To:     paulmck@linux.ibm.com
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>
+References: <241506096.21688.1565977319832.JavaMail.zimbra@efficios.com>
+ <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de>
+ <20190816205740.GF10481@google.com>
+ <3c0cb8a2-eba2-7bea-8523-b948253a6804@arm.com>
+ <CAHk-=wi_KeD1M-_-_SU_H92vJ-yNkDnAGhAS=RR1yNNGWKW+aA@mail.gmail.com>
+ <20190817045217.GZ28441@linux.ibm.com>
+ <CAHk-=wiOhiAJVU71968tAND6rrEJSaYPg7DXK6Y6iiz7_RJACw@mail.gmail.com>
+ <CAHk-=whjEq6uEt0o0Ur9Epa7EKVvEFUVJVFJ+heJCv9ehV7pyA@mail.gmail.com>
+ <1065930957.23914.1566054178444.JavaMail.zimbra@efficios.com>
+ <600fd72f-11a0-ff1a-c87a-b26349f6f54a@arm.com>
+ <20190817230034.GK28441@linux.ibm.com>
+From:   Valentin Schneider <valentin.schneider@arm.com>
+Message-ID: <d57ed540-2001-724d-ed22-eee35354840f@arm.com>
+Date:   Mon, 19 Aug 2019 11:34:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.140.130.215]
-X-CFilter-Loop: Reflected
+In-Reply-To: <20190817230034.GK28441@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As reported by erofs-utils fuzzer, Lookback distance should
-be a positive number, so it should be actually looked back
-rather than spinning.
 
-Fixes: 02827e1796b3 ("staging: erofs: add erofs_map_blocks_iter")
-Cc: <stable@vger.kernel.org> # 4.19+
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
----
- drivers/staging/erofs/zmap.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/erofs/zmap.c b/drivers/staging/erofs/zmap.c
-index 7408e86823a4..774dacbc5b32 100644
---- a/drivers/staging/erofs/zmap.c
-+++ b/drivers/staging/erofs/zmap.c
-@@ -350,6 +350,12 @@ static int vle_extent_lookback(struct z_erofs_maprecorder *m,
- 
- 	switch (m->type) {
- 	case Z_EROFS_VLE_CLUSTER_TYPE_NONHEAD:
-+		if (unlikely(!m->delta[0])) {
-+			errln("invalid lookback distance 0 at nid %llu",
-+			      vi->nid);
-+			DBG_BUGON(1);
-+			return -EFSCORRUPTED;
-+		}
- 		return vle_extent_lookback(m, m->delta[0]);
- 	case Z_EROFS_VLE_CLUSTER_TYPE_PLAIN:
- 		map->m_flags &= ~EROFS_MAP_ZIPPED;
--- 
-2.17.1
+On 18/08/2019 00:00, Paul E. McKenney wrote:
+[...]
+> Linus noted that he believes that compilers for architectures supporting
+> Linux can be trusted to avoid store-to-load transformations, invented
+> stores, and unnecessary store tearing.  Should these appear, Linus would
+> report a bug against the compiler and expect it to be fixed.
+> 
+>> I'll be honest, it's not 100% clear to me when those optimizations can
+>> actually be done (maybe the branch thingy but the others are dubious), and
+>> it's even less clear when compilers *actually* do it - only that they have
+>> been reported to do it (so it's not made up).
+> 
+> There is significant unclarity inherent in the situation.  The standard
+> says one thing, different compilers do other things, and developers
+> often expect yet a third thing.  And sometimes things change over time,
+> for example, the ca. 2011 dictim against compilers inventing data races.
+> 
+> Hey, they didn't teach me this aspect of software development in school,
+> either.  ;-)
+> 
 
+Gotta keeps things "interesting" somehow, eh...
+
+Thanks for the clarifications.
+
+> 							Thanx, Paul
+> 
