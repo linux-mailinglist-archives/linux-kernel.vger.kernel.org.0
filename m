@@ -2,103 +2,149 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02AE99243E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:06:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F36892443
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 15:06:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfHSNGb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 09:06:31 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:36145 "EHLO pegase1.c-s.fr"
+        id S1727651AbfHSNGf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 09:06:35 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:26013 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727172AbfHSNGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 09:06:30 -0400
+        id S1727551AbfHSNGc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 09:06:32 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46BvM41JzHz9v0nT;
+        by localhost (Postfix) with ESMTP id 46BvM46Dc0z9v0nV;
         Mon, 19 Aug 2019 15:06:24 +0200 (CEST)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=YW6lay7c; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=hW9FcYRa; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id CBp78g9ItGyf; Mon, 19 Aug 2019 15:06:24 +0200 (CEST)
+        with ESMTP id xDsjm5MCL1QQ; Mon, 19 Aug 2019 15:06:24 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46BvM402DHz9v0nR;
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46BvM459zvz9v0nR;
         Mon, 19 Aug 2019 15:06:24 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566219984; bh=WQuwx7YlnB93+CPuHKoWP9rgc1cSC0MKUZb/xbdrYeg=;
-        h=From:Subject:To:Cc:Date:From;
-        b=YW6lay7cttRTenTWMU/GDgf3hMaryTq2zo/YiEUrnqPyr5hcZmzHB5PYNOCKPM03T
-         UqoDRjWE9SK7iV+efC1jRVQ/wa3Xs9X10hVnTwuUkoy3efzCsI4mlkPXTqNlYTTTz+
-         yCUpJLcq5SPhNrD0P3Gcb8V53LOxAju++4g0P0vQ=
+        t=1566219984; bh=KFV/1fdZg0fpwYENKq684+t6u9FVfI/nrP/O7DkpXJU=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=hW9FcYRa8+yW+kCQC74uITpVTbQhGYCpJnmSRE46UEtlXVvmPhI8jc28nvmmfnLXO
+         bggxt7MXPe6oOuzYImFEIDUAjJqYCnwg1ULbrx4ZoLgLzDTuji2XW9MVP0cedXbrg5
+         Tuydr04iIVycyErpxYcu2yL8byt1Qcy6SHWA0+u8=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5CD168B7B7;
-        Mon, 19 Aug 2019 15:06:29 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 36E418B7B7;
+        Mon, 19 Aug 2019 15:06:30 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id sBAC9x2uK6nf; Mon, 19 Aug 2019 15:06:29 +0200 (CEST)
+        with ESMTP id 3sD7BLoLGF8M; Mon, 19 Aug 2019 15:06:30 +0200 (CEST)
 Received: from pc17473vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.230.101])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3D1328B7B6;
-        Mon, 19 Aug 2019 15:06:29 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 1A78D8B7B6;
+        Mon, 19 Aug 2019 15:06:30 +0200 (CEST)
 Received: by pc17473vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 125006B708; Mon, 19 Aug 2019 13:06:28 +0000 (UTC)
-Message-Id: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr>
+        id 1E6E56B708; Mon, 19 Aug 2019 13:06:30 +0000 (UTC)
+Message-Id: <c19a82b37677ace0eebb0dc8c2120373c29c8dd1.1566219503.git.christophe.leroy@c-s.fr>
+In-Reply-To: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr>
+References: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 1/3] powerpc: don't use __WARN() for WARN_ON()
+Subject: [PATCH 2/3] powerpc: refactoring BUG/WARN macros
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        segher@kernel.crashing.org,
-        Drew Davenport <ddavenport@chromium.org>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>
+        segher@kernel.crashing.org
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 19 Aug 2019 13:06:28 +0000 (UTC)
+Date:   Mon, 19 Aug 2019 13:06:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-__WARN() used to just call __WARN_TAINT(TAINT_WARN)
+BUG(), WARN() and friends are using a similar inline
+assembly to implement various traps with various flags.
 
-But a call to printk() has been added in the commit identified below
-to print a "---- cut here ----" line.
+Lets refactor via a new BUG_ENTRY() macro.
 
-This change only applies to warnings using __WARN(), which means
-WARN_ON() where the condition is constant at compile time.
-For WARN_ON() with a non constant condition, the additional line is
-not printed.
-
-In addition, adding a call to printk() forces GCC to add a stack frame
-and save volatile registers. Powerpc has been using traps to implement
-warnings in order to avoid that.
-
-So, call __WARN_TAINT(TAINT_WARN) directly instead of using __WARN()
-in order to restore the previous behaviour.
-
-If one day powerpc wants the decorative "---- cut here ----" line, it
-has to be done in the trap handler, not in the WARN_ON() macro.
-
-Fixes: 6b15f678fb7d ("include/asm-generic/bug.h: fix "cut here" for WARN_ON for __WARN_TAINT architectures")
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/bug.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/include/asm/bug.h | 41 +++++++++++++++--------------------------
+ 1 file changed, 15 insertions(+), 26 deletions(-)
 
 diff --git a/arch/powerpc/include/asm/bug.h b/arch/powerpc/include/asm/bug.h
-index fed7e6241349..3928fdaebb71 100644
+index 3928fdaebb71..dbf7da90f507 100644
 --- a/arch/powerpc/include/asm/bug.h
 +++ b/arch/powerpc/include/asm/bug.h
-@@ -99,7 +99,7 @@
- 	int __ret_warn_on = !!(x);				\
- 	if (__builtin_constant_p(__ret_warn_on)) {		\
- 		if (__ret_warn_on)				\
--			__WARN();				\
-+			__WARN_TAINT(TAINT_WARN);		\
+@@ -57,6 +57,15 @@
+ 	".previous\n"
+ #endif
+ 
++#define BUG_ENTRY(insn, flags, ...)			\
++	__asm__ __volatile__(				\
++		"1:	" insn "\n"			\
++		_EMIT_BUG_ENTRY				\
++		: : "i" (__FILE__), "i" (__LINE__),	\
++		  "i" (flags),				\
++		  "i" (sizeof(struct bug_entry)),	\
++		  ##__VA_ARGS__)
++
+ /*
+  * BUG_ON() and WARN_ON() do their best to cooperate with compile-time
+  * optimisations. However depending on the complexity of the condition
+@@ -64,11 +73,7 @@
+  */
+ 
+ #define BUG() do {						\
+-	__asm__ __volatile__(					\
+-		"1:	twi 31,0,0\n"				\
+-		_EMIT_BUG_ENTRY					\
+-		: : "i" (__FILE__), "i" (__LINE__),		\
+-		    "i" (0), "i"  (sizeof(struct bug_entry)));	\
++	BUG_ENTRY("twi 31, 0, 0", 0);				\
+ 	unreachable();						\
+ } while (0)
+ 
+@@ -77,23 +82,11 @@
+ 		if (x)						\
+ 			BUG();					\
  	} else {						\
- 		__asm__ __volatile__(				\
- 		"1:	"PPC_TLNEI"	%4,0\n"			\
+-		__asm__ __volatile__(				\
+-		"1:	"PPC_TLNEI"	%4,0\n"			\
+-		_EMIT_BUG_ENTRY					\
+-		: : "i" (__FILE__), "i" (__LINE__), "i" (0),	\
+-		  "i" (sizeof(struct bug_entry)),		\
+-		  "r" ((__force long)(x)));			\
++		BUG_ENTRY(PPC_TLNEI " %4, 0", 0, "r" ((__force long)(x)));	\
+ 	}							\
+ } while (0)
+ 
+-#define __WARN_FLAGS(flags) do {				\
+-	__asm__ __volatile__(					\
+-		"1:	twi 31,0,0\n"				\
+-		_EMIT_BUG_ENTRY					\
+-		: : "i" (__FILE__), "i" (__LINE__),		\
+-		  "i" (BUGFLAG_WARNING|(flags)),		\
+-		  "i" (sizeof(struct bug_entry)));		\
+-} while (0)
++#define __WARN_FLAGS(flags) BUG_ENTRY("twi 31, 0, 0", BUGFLAG_WARNING | (flags))
+ 
+ #define WARN_ON(x) ({						\
+ 	int __ret_warn_on = !!(x);				\
+@@ -101,13 +94,9 @@
+ 		if (__ret_warn_on)				\
+ 			__WARN_TAINT(TAINT_WARN);		\
+ 	} else {						\
+-		__asm__ __volatile__(				\
+-		"1:	"PPC_TLNEI"	%4,0\n"			\
+-		_EMIT_BUG_ENTRY					\
+-		: : "i" (__FILE__), "i" (__LINE__),		\
+-		  "i" (BUGFLAG_WARNING|BUGFLAG_TAINT(TAINT_WARN)),\
+-		  "i" (sizeof(struct bug_entry)),		\
+-		  "r" (__ret_warn_on));				\
++		BUG_ENTRY(PPC_TLNEI " %4, 0",			\
++			  BUGFLAG_WARNING | BUGFLAG_TAINT(TAINT_WARN),	\
++			  "r" (__ret_warn_on));	\
+ 	}							\
+ 	unlikely(__ret_warn_on);				\
+ })
 -- 
 2.13.3
 
