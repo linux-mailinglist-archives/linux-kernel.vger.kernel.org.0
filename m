@@ -2,81 +2,83 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8F34C94FD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:24:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 09B2694FCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:22:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728644AbfHSVXu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 17:23:50 -0400
-Received: from mga11.intel.com ([192.55.52.93]:18400 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728463AbfHSVXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:23:49 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 14:23:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,406,1559545200"; 
-   d="scan'208";a="168876419"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga007.jf.intel.com with ESMTP; 19 Aug 2019 14:23:48 -0700
-Date:   Mon, 19 Aug 2019 15:21:45 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Sagi Grimberg <sagi@grimberg.me>
-Cc:     Marta Rybczynska <mrybczyn@kalray.eu>,
-        Christoph Hellwig <hch@lst.de>, axboe <axboe@fb.com>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Samuel Jones <sjones@kalray.eu>,
-        Guillaume Missonnier <gmissonnier@kalray.eu>
-Subject: Re: [PATCH v2] nvme: allow 64-bit results in passthru commands
-Message-ID: <20190819212145.GB11202@localhost.localdomain>
-References: <89520652.56920183.1565948841909.JavaMail.zimbra@kalray.eu>
- <20190816131606.GA26191@lst.de>
- <469829119.56970464.1566198383932.JavaMail.zimbra@kalray.eu>
- <20190819144922.GC6883@localhost.localdomain>
- <1d7819a9-9504-2dc6-fca4-fbde4f99d92c@grimberg.me>
- <20190819185749.GA11202@localhost.localdomain>
- <e639f7ce-5f1a-d4a5-f80e-9bf3bc1ff638@grimberg.me>
+        id S1728607AbfHSVW2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:22:28 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:38736 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728376AbfHSVW2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 17:22:28 -0400
+Received: by mail-qt1-f196.google.com with SMTP id x4so3598551qts.5
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 14:22:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=Eyvjuyl6e+48GXyoQtQ0Bav0v4bio9vejLA0zjYntlQ=;
+        b=SjxVcsjpNDsxMB43E9GO9HuatiRTR2hWaKxQD8EtovL2PQH83fXQqTKsTqm3XPtjjw
+         7Vk4uHZ8mj23l2CPavnsa2zgP50UGD+hS6WWf2mtZT4f6RbRSv39+Snnf+UIBCY6K7Q4
+         7Y0qWNMlPOsng5vAsDaREC00Xx59sfrw9zRmIGpS+I3ZriW8ndH5mDMoatt0NoVf9k13
+         S4DFZqBfy4XdI1Yf0YXF1r7uwXkDkqJYNlk/ifUnyCiSMGWqX+BinsCdifBnzLFAG17/
+         LDl8AybhmMx8kvFkxmGyWxICYwc0oU7PeRMsbXEwRDfE919SpeCAeJj7F91AXpRpF7d9
+         YskA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=Eyvjuyl6e+48GXyoQtQ0Bav0v4bio9vejLA0zjYntlQ=;
+        b=X9JWVd/N+EfRL9CshNkaM6Bgk5+kodxoAIEHp4mC2TQ2GPRQR6byC0GSqQk1uUUoyp
+         hL6ny+FzRdCCshY/KVAVwMDoBtYHEO3ODbjoia+cuOr208JXb4U0Em/izzwtl1a6J0u/
+         JRo6t+xfiE+ADh6ALccKgPniPsXna+0PBZMyMQr5OEVvLkVSgfGTj32V02Qn5aq5h9fm
+         N6M0dD6I6JiOTuEmAqNhrNqJAPmeD5bpa5ASzxReGddEN82sZyJc4/7MRA9ya/fEDtUo
+         szsEDcm7+zOZhKvHHx3Jo98qN6RG+BPsgTOfQrK5g3jGwSmiMI/t7O47u0t2MDN2UEvV
+         ioOg==
+X-Gm-Message-State: APjAAAWXuTReu8zyw9yb3giltRY/vWVdBWY65fqmSPWRocRs4Z0KD+ZF
+        hEU7nnJIy8kaKzw0iFNj5gl++Q==
+X-Google-Smtp-Source: APXvYqwZjrxoURDZUnFvrPAuAYmIucmRL5XJOtPCZmkOlm9gcOGuN4XKpxMjR/HF61FZDPkjdzTfFA==
+X-Received: by 2002:ac8:3258:: with SMTP id y24mr22710720qta.183.1566249747361;
+        Mon, 19 Aug 2019 14:22:27 -0700 (PDT)
+Received: from cakuba.netronome.com ([66.60.152.14])
+        by smtp.gmail.com with ESMTPSA id h13sm7579776qkk.12.2019.08.19.14.22.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 14:22:27 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 14:22:20 -0700
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     syzbot <syzbot+2134b6b74dec9f8c760f@syzkaller.appspotmail.com>
+Cc:     aviadye@mellanox.com, borisp@mellanox.com, davejwatson@fb.com,
+        davem@davemloft.net, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Subject: Re: KASAN: use-after-free Read in tls_write_space
+Message-ID: <20190819142220.264040d8@cakuba.netronome.com>
+In-Reply-To: <0000000000003dab1605704fb71d@google.com>
+References: <0000000000003dab1605704fb71d@google.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e639f7ce-5f1a-d4a5-f80e-9bf3bc1ff638@grimberg.me>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 02:17:44PM -0700, Sagi Grimberg wrote:
+On Fri, 06 Jul 2018 00:36:02 -0700, syzbot wrote:
+> Hello,
 > 
-> >>>> ----- On 16 Aug, 2019, at 15:16, Christoph Hellwig hch@lst.de wrote:
-> >>>>> Sorry for not replying to the earlier version, and thanks for doing
-> >>>>> this work.
-> >>>>>
-> >>>>> I wonder if instead of using our own structure we'd just use
-> >>>>> a full nvme SQE for the input and CQE for that output.  Even if we
-> >>>>> reserve a few fields that means we are ready for any newly used
-> >>>>> field (at least until the SQE/CQE sizes are expanded..).
-> >>>>
-> >>>> We could do that, nvme_command and nvme_completion are already UAPI.
-> >>>> On the other hand that would mean not filling out certain fields like
-> >>>> command_id. Can do an approach like this.
-> >>>
-> >>> Well, we need to pass user space addresses and lengths, which isn't
-> >>> captured in struct nvme_command.
-> >>
-> >> Isn't simply having a 64 variant simpler?
-> > 
-> > Could you provide more details on what you mean by this?
+> syzbot found the following crash on:
 > 
-> Why would we need to pass addresses and lengths if userspace is
-> sending the 64 variant when it is expecting a 64 result?
+> HEAD commit:    1a84d7fdb5fc Merge branch 'mlxsw-Add-resource-scale-tests'
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17dec75c400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=a63be0c83e84d370
+> dashboard link: https://syzkaller.appspot.com/bug?extid=2134b6b74dec9f8c760f
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 > 
-> Or maybe I'm missing something...
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+2134b6b74dec9f8c760f@syzkaller.appspotmail.com
 
-The recommendation was to have user space provide an SQE, i.e. 'struct
-nvme_command', as input to the driver and receive 'struct nvme_completion'
-in response. I am only pointing out that 'struct nvme_command' is
-inappropriate for user space.
+#syz dup: general protection fault in tls_write_space
