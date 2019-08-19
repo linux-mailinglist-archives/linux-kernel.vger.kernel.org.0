@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 28DCB94905
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BE46948F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbfHSPsg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:48:36 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47582 "EHLO
+        id S1727918AbfHSPpr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:45:47 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47585 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbfHSPpl (ORCPT
+        with ESMTP id S1727821AbfHSPpk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:41 -0400
+        Mon, 19 Aug 2019 11:45:40 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzjql-0006uG-49; Mon, 19 Aug 2019 17:45:39 +0200
-Message-Id: <20190819143802.234798688@linutronix.de>
+        id 1hzjql-0006uS-GM; Mon, 19 Aug 2019 17:45:39 +0200
+Message-Id: <20190819143802.331782851@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:31:50 +0200
+Date:   Mon, 19 Aug 2019 16:31:51 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -26,8 +26,8 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         John Stultz <john.stultz@linaro.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 09/44] posix-cpu-timers: Use common permission check in
- posix_cpu_clock_get()
+Subject: [patch 10/44] posix-cpu-timers: Use common permission check in
+ posix_cpu_timer_create()
 References: <20190819143141.221906747@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,83 +36,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace the next slightly different copy of permission checks. That also
-removes the necessarity to check the return value of the sample functions
-because the clock id is already validated.
+Yet another copy of the same thing gone...
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   61 ++++++++++-------------------------------
- 1 file changed, 16 insertions(+), 45 deletions(-)
+ kernel/time/posix-cpu-timers.c |   35 +++--------------------------------
+ 1 file changed, 3 insertions(+), 32 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -289,53 +289,24 @@ static int cpu_clock_sample_group(const
- 	return 0;
- }
- 
--static int posix_cpu_clock_get_task(struct task_struct *tsk,
--				    const clockid_t which_clock,
--				    struct timespec64 *tp)
-+static int posix_cpu_clock_get(const clockid_t clock, struct timespec64 *tp)
+@@ -316,44 +316,15 @@ static int posix_cpu_clock_get(const clo
+  */
+ static int posix_cpu_timer_create(struct k_itimer *new_timer)
  {
--	int err = -EINVAL;
--	u64 rtn;
-+	const clockid_t clkid = CPUCLOCK_WHICH(clock);
-+	struct task_struct *tsk;
-+	u64 t;
-+
-+	tsk = get_task_for_clock(clock);
-+	if (!tsk)
-+		return -EINVAL;
-+
-+	if (CPUCLOCK_PERTHREAD(clock))
-+		cpu_clock_sample(clkid, tsk, &t);
-+	else
-+		cpu_clock_sample_group(clkid, tsk, &t);
-+	put_task_struct(tsk);
+-	int ret = 0;
+-	const pid_t pid = CPUCLOCK_PID(new_timer->it_clock);
+-	struct task_struct *p;
++	struct task_struct *p = get_task_for_clock(new_timer->it_clock);
  
--	if (CPUCLOCK_PERTHREAD(which_clock)) {
--		if (same_thread_group(tsk, current))
--			err = cpu_clock_sample(which_clock, tsk, &rtn);
+-	if (CPUCLOCK_WHICH(new_timer->it_clock) >= CPUCLOCK_MAX)
++	if (!p)
+ 		return -EINVAL;
+ 
+ 	new_timer->kclock = &clock_posix_cpu;
+-
+ 	INIT_LIST_HEAD(&new_timer->it.cpu.entry);
+-
+-	rcu_read_lock();
+-	if (CPUCLOCK_PERTHREAD(new_timer->it_clock)) {
+-		if (pid == 0) {
+-			p = current;
+-		} else {
+-			p = find_task_by_vpid(pid);
+-			if (p && !same_thread_group(p, current))
+-				p = NULL;
+-		}
 -	} else {
--		if (tsk == current || thread_group_leader(tsk))
--			err = cpu_clock_sample_group(which_clock, tsk, &rtn);
+-		if (pid == 0) {
+-			p = current->group_leader;
+-		} else {
+-			p = find_task_by_vpid(pid);
+-			if (p && !has_group_leader_pid(p))
+-				p = NULL;
+-		}
 -	}
--
--	if (!err)
--		*tp = ns_to_timespec64(rtn);
--
--	return err;
--}
--
--
--static int posix_cpu_clock_get(const clockid_t which_clock, struct timespec64 *tp)
--{
--	const pid_t pid = CPUCLOCK_PID(which_clock);
--	int err = -EINVAL;
--
--	if (pid == 0) {
--		/*
--		 * Special case constant value for our own clocks.
--		 * We don't have to do any lookup to find ourselves.
--		 */
--		err = posix_cpu_clock_get_task(current, which_clock, tp);
+ 	new_timer->it.cpu.task = p;
+-	if (p) {
+-		get_task_struct(p);
 -	} else {
--		/*
--		 * Find the given PID, and validate that the caller
--		 * should be able to see it.
--		 */
--		struct task_struct *p;
--		rcu_read_lock();
--		p = find_task_by_vpid(pid);
--		if (p)
--			err = posix_cpu_clock_get_task(p, which_clock, tp);
--		rcu_read_unlock();
+-		ret = -EINVAL;
 -	}
+-	rcu_read_unlock();
 -
--	return err;
-+	*tp = ns_to_timespec64(t);
+-	return ret;
 +	return 0;
  }
  
