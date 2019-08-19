@@ -2,139 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6032394D49
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:57:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4BCC894D58
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:59:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728278AbfHSS4d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 14:56:33 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37249 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727957AbfHSS4c (ORCPT
+        id S1728312AbfHSS7K (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 14:59:10 -0400
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:39728 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbfHSS7K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:56:32 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bj8so1400938plb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 11:56:32 -0700 (PDT)
+        Mon, 19 Aug 2019 14:59:10 -0400
+Received: by mail-vk1-f193.google.com with SMTP id x20so689205vkd.6
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 11:59:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=C0e2APdFMcCL115V7DOVVJSnlHloFclNY39dd69/lO0=;
-        b=WbPRIlO58ztUhi7i2oz12gIxghvYFhvGj5detvHL64ciojw1Jbh1rIUinASAN5D8ZH
-         oktM00ScxqNk41KTkk3qw/+BHQPD4Q3wJeTI1oV2U3gwQatbTu8PX10ZFmAfuarYSyE2
-         ivJrpHi6loe1F9bmEmdOWwWzx2oF50n/ZrQtM=
+        bh=fXNOphaX+y8oyFeRNQ0wqgARKD5Ut7+H76ilztOg7So=;
+        b=LVBvYX/gcgWw5amonPy2m92xaFUOHzEiygj1Vd6/QCdl8ZTOYR2UsUxGcWGTKlTPlY
+         pd8NlXPHdiic+ao0+120qLLkSpaAh1zRE6T2IGM/uEL1LJTFMALZJdAKBpJ3R3OpONK5
+         MEdgjjDJznjB9o3R6z4y/srChFlOlMJsggvtMBlrCb/3nDGxtu5Vj5rmqBVSx/OmHkD2
+         f/N0u7VU2YzfOIvlpmJJikwII6AakgoON9SxddFz8qML14bOVjfOVinzxDh6FTlbpJpl
+         dH8u+p9S2A+JOh4YWQ7zsrTSclw6BKJ7/TR+P9hF0DZar/Bky+Qw85hwtNR+JKsbunuM
+         D3tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=C0e2APdFMcCL115V7DOVVJSnlHloFclNY39dd69/lO0=;
-        b=eDihlBKdB1r2JJ8kdmpT06xUGCZCuNCdsa3hNEDnyMOAeHL8IxVC28lJasJ5/PQXNy
-         iglkFpEpH+pYFC9Eyc2IAOu7XJ3awO1IaWrznX4ZnvwREmuQlDtYCiPBC3trg8zDVEqu
-         eOY2SOaRrcgmTwHboykThFPfrOLA332nw/yikOsaY3ElX8iOP4A6HSEOhZr/xO75HjE6
-         Hy2sbAzOri/GlZ5tXCCkiy0qLc+/XTPqt+y4ZdnquXfa/2UAXcbH3V6hgO3Nm62oyHxt
-         Jpi5uWz3UKrWs9ULu2OyZFhUiKp1el/JHtlxm7z/LT/aBERuEPSh+ByZPVJIR+JnosGN
-         w0XQ==
-X-Gm-Message-State: APjAAAWfhiwGqwBpwNA6Jp7ZqyI0LEYZ5U7WubUT6Y4iSQGgOpXAbmJH
-        2WpAHMQBEhyRI5i4rfKTNS4X0Q==
-X-Google-Smtp-Source: APXvYqxh+E8TFUryXTjcfNmp7eEgV3tGYzniOp22FCvAHtBGpb7ARiJTtlOQVWkRBrXizfRtmjdGHw==
-X-Received: by 2002:a17:902:788b:: with SMTP id q11mr24093153pll.308.1566240655357;
-        Mon, 19 Aug 2019 11:50:55 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id x25sm18660949pfa.90.2019.08.19.11.50.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 11:50:54 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 11:50:49 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Daniel Thompson <daniel.thompson@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Brian Norris <briannorris@chromium.org>,
-        Pavel Machek <pavel@ucw.cz>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Subject: Re: [PATCH v3 2/4] backlight: Expose brightness curve type through
- sysfs
-Message-ID: <20190819185049.GZ250418@google.com>
-References: <20190709190007.91260-1-mka@chromium.org>
- <20190709190007.91260-3-mka@chromium.org>
- <20190807201528.GO250418@google.com>
- <510f6d8a-71a0-fa6e-33ea-c4a4bfa96607@linaro.org>
- <20190816175317.GU250418@google.com>
- <20190819100241.5pctjxmsq6crlale@holly.lan>
+        bh=fXNOphaX+y8oyFeRNQ0wqgARKD5Ut7+H76ilztOg7So=;
+        b=ejCPlLMIEkDob6xeQI/E5j931VIiDjgfrmPa803H5sbHZntkA4lXjPo1URRXWEKiyf
+         s/Y7y07kuuPS5uI6jVCfdZ19DpenLW8+J7ReNYu/rxBMOcP6wPQFcKYJn7q09OLUQUAP
+         JZB2jcn7FqG1/ye5BYk69S8cMXpqkNVkn6KOhbBbLwXEfMXpVpYHcCcysd7p8KUK74xr
+         Zc8gp6xn5X9lOHHeXY+vDxY0t0a/LzBQyypWaD6LuVcIsh5HH9gT3aEFsfYFHNIkFvn7
+         GdTXF2BvE8sgNC0qDGCPbPO2sncxggD1DJFgNLQED1U1Kwuk0zaZrXXpcNcZo8b/bcO3
+         x0SQ==
+X-Gm-Message-State: APjAAAUnkDxBFNqsCeFYDSBBDwRsM0gGyU7LfdfxPpOwxiwM/U4AT79P
+        N7vCTAhAeZWU2KNWd85fxHXqucIjj9k=
+X-Google-Smtp-Source: APXvYqzHU6ucERBErz5EtBBX63jd3J6DoCua7Eqt4bNOZ+HjirAEW6nz7+gJscCtjWR6qB5l0ZNcDg==
+X-Received: by 2002:a0c:fac3:: with SMTP id p3mr11824021qvo.237.1566240658181;
+        Mon, 19 Aug 2019 11:50:58 -0700 (PDT)
+Received: from quaco.ghostprotocols.net (177.206.236.100.dynamic.adsl.gvt.net.br. [177.206.236.100])
+        by smtp.gmail.com with ESMTPSA id j78sm7288915qke.102.2019.08.19.11.50.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 11:50:57 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id C8D2B40340; Mon, 19 Aug 2019 15:50:54 -0300 (-03)
+Date:   Mon, 19 Aug 2019 15:50:54 -0300
+To:     Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc:     Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Coresight ML <coresight@lists.linaro.org>
+Subject: Re: [PATCH 1/2] perf cs-etm: Support sample flags 'insn' and
+ 'insnlen'
+Message-ID: <20190819185054.GB3929@kernel.org>
+References: <20190815082854.18191-1-leo.yan@linaro.org>
+ <CANLsYkx5TanDyztpceZvwf4pZSgoqRMOBgiHcdJxxpnGA9-h-Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190819100241.5pctjxmsq6crlale@holly.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CANLsYkx5TanDyztpceZvwf4pZSgoqRMOBgiHcdJxxpnGA9-h-Q@mail.gmail.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
+Em Mon, Aug 19, 2019 at 12:08:26PM -0600, Mathieu Poirier escreveu:
+> On Thu, 15 Aug 2019 at 02:30, Leo Yan <leo.yan@linaro.org> wrote:
+> >
+> > The synthetic branch and instruction samples are missed to set
+> > instruction related info, thus perf tool fails to display samples with
+> > flags '-F,+insn,+insnlen'.
+> >
+> > CoreSight trace decoder has provided sufficient information to decide
+> > the instruction size based on the isa type: A64/A32 instruction are
+> > 32-bit size, but one exception is the T32 instruction size, which might
+> > be 32-bit or 16-bit.
+> >
+> > This patch handles for these cases and it reads the instruction values
+> > from DSO file; thus can support flags '-F,+insn,+insnlen'.
+ 
+> The code seems to be correct.  I have also tested this patch.
+ 
+> Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-On Mon, Aug 19, 2019 at 11:02:41AM +0100, Daniel Thompson wrote:
-> On Fri, Aug 16, 2019 at 10:53:17AM -0700, Matthias Kaehlcke wrote:
-> > On Fri, Aug 16, 2019 at 04:54:18PM +0100, Daniel Thompson wrote:
-> > > On 07/08/2019 21:15, Matthias Kaehlcke wrote:
-> > > > On Tue, Jul 09, 2019 at 12:00:05PM -0700, Matthias Kaehlcke wrote:
-> > > > > Backlight brightness curves can have different shapes. The two main
-> > > > > types are linear and non-linear curves. The human eye doesn't
-> > > > > perceive linearly increasing/decreasing brightness as linear (see
-> > > > > also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
-> > > > > linearly to human eye"), hence many backlights use non-linear (often
-> > > > > logarithmic) brightness curves. The type of curve currently is opaque
-> > > > > to userspace, so userspace often uses more or less reliable heuristics
-> > > > > (like the number of brightness levels) to decide whether to treat a
-> > > > > backlight device as linear or non-linear.
-> > > > > 
-> > > > > Export the type of the brightness curve via the new sysfs attribute
-> > > > > 'scale'. The value of the attribute can be 'linear', 'non-linear' or
-> > > > > 'unknown'. For devices that don't provide information about the scale
-> > > > > of their brightness curve the value of the 'scale' attribute is 'unknown'.
-> > > > > 
-> > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > > 
-> > > > Daniel (et al): do you have any more comments on this patch/series or
-> > > > is it ready to land?
-> > > 
-> > > I decided to leave it for a long while for others to review since I'm still
-> > > a tiny bit uneasy about the linear/non-linear terminology.
-> > > 
-> > > However that's my only concern, its fairly minor and I've dragged by feet
-> > > for more then long enough, so:
-> > > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
-> > 
-> > Thanks!
-> > 
-> > If you or someone else has another suggestion for the terminology that
-> > we can all agree on I'm happy to change it.
-> 
-> As you will see in my reply to Uwe. The term I tend to adopt when I want
-> to be precise about userspace behaviour is "perceptual" (e.g. that a
-> backlight can be mapped directly to a slider and it will feel right).
-> 
-> However that raises its own concerns: mostly about what is perceptual
-> enough.
-> 
-> Clear the automatic brightness curve support in the PWM driver is
-> perceptual.
-> 
-> To be honest I suspect that in most cases a true logarithmic curve (given a
-> sane exponent) would be perceptual enough. In other words it will feel
-> comfortable with a direct mapped slider and using it for animation
-> won't be too bad.
-> 
-> However when we get right down to it *that* is the information that is
-> actually most useful to userspace: explicit confirmation that the scale
-> can be mapped directly to a slider. I think it also aligned better with
-> Uwe's feedback (e.g. to start working towards having a preferred scale).
+Thanks, applied.
 
-IIUC the conclusion is that there is no need for a string attribute
-because we only need to distinguish between 'perceptual' and
-'non-perceptual'. If that is correct, do you have any preference for
-the attribute name ('perceptual_scale', 'perceptual', ...)?
+- Arnaldo
