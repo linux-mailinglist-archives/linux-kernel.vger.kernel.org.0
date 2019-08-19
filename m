@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EE2AC948C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9230994906
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfHSPpo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:45:44 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:47572 "EHLO
+        id S1728310AbfHSPsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:48:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:47577 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfHSPpk (ORCPT
+        with ESMTP id S1727653AbfHSPpl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:45:40 -0400
+        Mon, 19 Aug 2019 11:45:41 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1hzjqk-0006tz-9b; Mon, 19 Aug 2019 17:45:38 +0200
-Message-Id: <20190819143802.038794711@linutronix.de>
+        id 1hzjqk-0006u6-NW; Mon, 19 Aug 2019 17:45:38 +0200
+Message-Id: <20190819143802.144101420@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Mon, 19 Aug 2019 16:31:48 +0200
+Date:   Mon, 19 Aug 2019 16:31:49 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -26,8 +26,7 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         John Stultz <john.stultz@linaro.org>,
         Frederic Weisbecker <fweisbec@gmail.com>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: [patch 07/44] posix-cpu-timers: Simplify sighand locking in
- run_posix_cpu_timers()
+Subject: [patch 08/44] posix-cpu-timers: Provide task validation functions
 References: <20190819143141.221906747@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -36,89 +35,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-run_posix_cpu_timers() is called from the timer interrupt. The posix timer
-expiry always affects the current task which got interrupted.
+The code contains three slightly different copies of validating whether a
+given clock resolves to a valid task and whether the current caller has
+permissions to access it.
 
-sighand locking is only racy when done on a foreign task, which must use
-lock_task_sighand(). But in case of run_posix_cpu_timers() that's
-pointless.
-
-sighand of a task can only be dropped or changed by the task itself. Drop
-happens in do_exit(), changing sighand happens in execve().
-
-So the timer interrupt can see one of the following states of the current
-task which it interrupted:
-
-   - executing:	sighand is set
-   - exiting:	sighand is either set or NULL
-   - execing:	sighand is either the original one or the new one
-
-The 'check -> lock -> check again' logic in lock_task_sighand() is not
-required here at all. The state cannot change as the interrupted task
-context obviously is not executing instructions.
-
-So the only interesting case here is to check whether current->sighand is
-NULL or not.
-
-Add the check for sighand == NULL right at the beginning and replace
-lock_task_sighand() with a regular spin_lock() invocation along with proper
-comments why this is safe.
+Create central functions. Replace check_clock() as a first step and rename
+it to something sensible.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   26 ++++++++++++++++++++------
- 1 file changed, 20 insertions(+), 6 deletions(-)
+ kernel/time/posix-cpu-timers.c |   65 +++++++++++++++++++++++++++--------------
+ 1 file changed, 44 insertions(+), 21 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -1141,20 +1141,34 @@ void run_posix_cpu_timers(void)
+@@ -35,27 +35,52 @@ void update_rlimit_cpu(struct task_struc
+ 	spin_unlock_irq(&task->sighand->siglock);
+ }
+ 
+-static int check_clock(const clockid_t which_clock)
++/*
++ * Functions for validating access to tasks.
++ */
++static struct task_struct *lookup_task(const pid_t pid, bool thread)
  {
- 	struct task_struct *tsk = current;
- 	struct k_itimer *timer, *next;
--	unsigned long flags;
- 	LIST_HEAD(firing);
+-	int error = 0;
+ 	struct task_struct *p;
+-	const pid_t pid = CPUCLOCK_PID(which_clock);
  
- 	lockdep_assert_irqs_disabled();
+-	if (CPUCLOCK_WHICH(which_clock) >= CPUCLOCK_MAX)
+-		return -EINVAL;
++	if (!pid)
++		return thread ? current : current->group_leader;
  
- 	/*
--	 * The fast path checks that there are no expired thread or thread
--	 * group timers.  If that's so, just return.
-+	 * Verify that sighand exits. If not, the task is exiting and has
-+	 * dropped sighand already. Without sighand, timer expiry is
-+	 * pointless.
- 	 */
--	if (!fastpath_timer_check(tsk))
-+	if (!tsk->sighand)
- 		return;
- 
--	if (!lock_task_sighand(tsk, &flags))
-+	/*
-+	 * Now do a fast check for expired task and group timers. If
-+	 * no expired timers found, return.
-+	 */
-+	if(!fastpath_timer_check(tsk))
- 		return;
+-	if (pid == 0)
+-		return 0;
++	p = find_task_by_vpid(pid);
++	if (!p || p == current)
++		return p;
++	if (thread)
++		return same_thread_group(p, current) ? p : NULL;
++	if (p == current)
++		return p;
++	return has_group_leader_pid(p) ? p : NULL;
++}
 +
-+	/*
-+	 * The timer interrupt hit current. It's verified that sighand
-+	 * exists, so it cannot go away before the timer interrupt returns
-+	 * as only current can remove or change its own sighand in exit()
-+	 * or exec() with sighand lock held and interrupts disabled. Ergo
-+	 * the interrupt can only observe a valid sighand or NULL.
-+	 */
-+	spin_lock(&tsk->sighand->siglock);
++static struct task_struct *__get_task_for_clock(const clockid_t clock,
++						bool getref)
++{
++	const bool thread = !!CPUCLOCK_PERTHREAD(clock);
++	const pid_t pid = CPUCLOCK_PID(clock);
++	struct task_struct *p;
++
++	if (CPUCLOCK_WHICH(clock) >= CPUCLOCK_MAX)
++		return NULL;
+ 
+ 	rcu_read_lock();
+-	p = find_task_by_vpid(pid);
+-	if (!p || !(CPUCLOCK_PERTHREAD(which_clock) ?
+-		   same_thread_group(p, current) : has_group_leader_pid(p))) {
+-		error = -EINVAL;
+-	}
++	p = lookup_task(pid, thread);
++	if (p && getref)
++		get_task_struct(p);
+ 	rcu_read_unlock();
++	return p;
++}
+ 
+-	return error;
++static inline struct task_struct *get_task_for_clock(const clockid_t clock)
++{
++	return __get_task_for_clock(clock, true);
++}
++
++static inline int validate_clock_permissions(const clockid_t clock)
++{
++	return __get_task_for_clock(clock, false) ? 0 : -EINVAL;
+ }
+ 
+ /*
+@@ -125,7 +150,8 @@ static inline u64 virt_ticks(struct task
+ static int
+ posix_cpu_clock_getres(const clockid_t which_clock, struct timespec64 *tp)
+ {
+-	int error = check_clock(which_clock);
++	int error = validate_clock_permissions(which_clock);
++
+ 	if (!error) {
+ 		tp->tv_sec = 0;
+ 		tp->tv_nsec = ((NSEC_PER_SEC + HZ - 1) / HZ);
+@@ -142,20 +168,17 @@ posix_cpu_clock_getres(const clockid_t w
+ }
+ 
+ static int
+-posix_cpu_clock_set(const clockid_t which_clock, const struct timespec64 *tp)
++posix_cpu_clock_set(const clockid_t clock, const struct timespec64 *tp)
+ {
++	int error = validate_clock_permissions(clock);
 +
  	/*
- 	 * Here we take off tsk->signal->cpu_timers[N] and
- 	 * tsk->cpu_timers[N] all the timers that are firing, and
-@@ -1172,7 +1186,7 @@ void run_posix_cpu_timers(void)
- 	 * that gets the timer lock before we do will give it up and
- 	 * spin until we've taken care of that timer below.
+ 	 * You can never reset a CPU clock, but we check for other errors
+ 	 * in the call before failing with EPERM.
  	 */
--	unlock_task_sighand(tsk, &flags);
-+	spin_unlock(&tsk->sighand->siglock);
+-	int error = check_clock(which_clock);
+-	if (error == 0) {
+-		error = -EPERM;
+-	}
+-	return error;
++	return error ? : -EPERM;
+ }
  
- 	/*
- 	 * Now that all the timers on our list have the firing flag,
+-
+ /*
+  * Sample a per-thread clock for the given task.
+  */
 
 
