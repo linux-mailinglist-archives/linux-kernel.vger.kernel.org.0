@@ -2,87 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12B7594CCC
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05BC794CE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 20:29:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728319AbfHSS04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 14:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52100 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727970AbfHSS0z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:26:55 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A950222CF6;
-        Mon, 19 Aug 2019 18:26:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566239214;
-        bh=Ivyitg0Ej4OT9+wlNtHSfddysy0Yzo6f+ai2y1gszXo=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=yKwuiNEaKXSYTOZwJLHBcizgkZa/S9//ofj0LoEwmolfjTUp76LpNj7X/Gw2u9OVT
-         lA2rQ2cnpzqET0Sj2IWzg0jTiYtu6cz3rBpDG/h5df4HVfJVWcUGMAydFgak4HldCg
-         yjvbx6h0fC4neMZWruWmN2spKfWn+0bAiGb0txB4=
-Content-Type: text/plain; charset="utf-8"
+        id S1728433AbfHSS1X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 14:27:23 -0400
+Received: from relay10.mail.gandi.net ([217.70.178.230]:38507 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728340AbfHSS1B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 14:27:01 -0400
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 65A6B240004;
+        Mon, 19 Aug 2019 18:27:00 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     linux-rtc@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH v3 6/9] rtc: pcf2123: remove useless error path goto
+Date:   Mon, 19 Aug 2019 20:26:53 +0200
+Message-Id: <20190819182656.29744-6-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.21.0
+In-Reply-To: <20190819182656.29744-1-alexandre.belloni@bootlin.com>
+References: <20190819182656.29744-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190819165255.GA26807@tuxbook-pro>
-References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org> <20190807234232.27AA720880@mail.kernel.org> <20190819165255.GA26807@tuxbook-pro>
-Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 19 Aug 2019 11:26:53 -0700
-Message-Id: <20190819182654.A950222CF6@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-08-19 09:52:55)
-> On Wed 07 Aug 16:42 PDT 2019, Stephen Boyd wrote:
->=20
-> > Quoting Jordan Crouse (2019-08-05 13:33:46)
-> > > The macro to generate a Bus Controller Manager (BCM) TCS command is u=
-sed
-> > > by the interconnect driver but might also be interesting to other
-> > > drivers that need to construct TCS commands for sub processors so move
-> > > it out of the sdm845 specific file and into the header.
-> > >=20
-> > > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > > ---
-> >=20
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> >=20
-> > Unless this is supposed to be applied by me?
-> >=20
-> > BTW, I wonder why we need an rpm clk driver much at all nowadays, except
-> > maybe for the XO clk state. The big user, from what I can tell, is the
-> > interconnect driver and we don't use any of the features of the clk
-> > framework besides the API to set a frequency. Maybe it would be better
-> > to just push push the bus frequency logic into interconnect code, then
-> > XO clk is the only thing we need to keep, and it can be a simple on/off
-> > thing.
-> >=20
->=20
-> There's been a number of cases where we'll need to enable the buffered
-> XOs, but perhaps these are handled by other subsystems these days(?)
->=20
-> If so the one case that remains would be the operation of explicitly
-> holding CXO enabled during operations such as booting the remoteprocs.
->=20
+kfree_exit only returns ret, remove it. This also fixes the
+devm_regmap_init_spi error case where the probe wouldn't actually fail
+because ret is initialized to 0.
 
-Yes I think the XO (and the buffers) is the only thing that we really
-seem to care about for the clk tree. Otherwise, the sole user is
-interconnect code and thus handling it in the rpmh clk driver doesn't
-really gain us anything. In fact, it just makes it worse because it ties
-the clk tree up with things that could take a while to process on the
-RPM side.
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/rtc/rtc-pcf2123.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/rtc/rtc-pcf2123.c b/drivers/rtc/rtc-pcf2123.c
+index df20dd229140..aef02193dbcc 100644
+--- a/drivers/rtc/rtc-pcf2123.c
++++ b/drivers/rtc/rtc-pcf2123.c
+@@ -390,10 +390,9 @@ static int pcf2123_probe(struct spi_device *spi)
+ 	dev_set_drvdata(&spi->dev, pcf2123);
+ 
+ 	pcf2123->map = devm_regmap_init_spi(spi, &pcf2123_regmap_config);
+-
+ 	if (IS_ERR(pcf2123->map)) {
+ 		dev_err(&spi->dev, "regmap init failed.\n");
+-		goto kfree_exit;
++		return PTR_ERR(pcf2123->map);
+ 	}
+ 
+ 	ret = pcf2123_rtc_read_time(&spi->dev, &tm);
+@@ -401,7 +400,7 @@ static int pcf2123_probe(struct spi_device *spi)
+ 		ret = pcf2123_reset(&spi->dev);
+ 		if (ret < 0) {
+ 			dev_err(&spi->dev, "chip not found\n");
+-			goto kfree_exit;
++			return ret;
+ 		}
+ 	}
+ 
+@@ -414,8 +413,7 @@ static int pcf2123_probe(struct spi_device *spi)
+ 
+ 	if (IS_ERR(rtc)) {
+ 		dev_err(&spi->dev, "failed to register.\n");
+-		ret = PTR_ERR(rtc);
+-		goto kfree_exit;
++		return PTR_ERR(rtc);
+ 	}
+ 
+ 	pcf2123->rtc = rtc;
+@@ -440,9 +438,6 @@ static int pcf2123_probe(struct spi_device *spi)
+ 	pcf2123->rtc->uie_unsupported = 1;
+ 
+ 	return 0;
+-
+-kfree_exit:
+-	return ret;
+ }
+ 
+ #ifdef CONFIG_OF
+-- 
+2.21.0
 
