@@ -2,125 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8F2E94946
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E97394941
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:57:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727880AbfHSP50 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:57:26 -0400
-Received: from conuserg-08.nifty.com ([210.131.2.75]:26890 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726390AbfHSP50 (ORCPT
+        id S1727862AbfHSP45 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:56:57 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:15352 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727353AbfHSP44 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:57:26 -0400
-Received: from grover.flets-west.jp (softbank126125143222.bbtec.net [126.125.143.222]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id x7JFu5LM008800;
-        Tue, 20 Aug 2019 00:56:05 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com x7JFu5LM008800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566230165;
-        bh=4GK43BeKnZv5WyQmgfpb1RfuIr9VmwksRI1v6Lo8THA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=Xh0II7dN9ng2FE6abhAYGvXbe2CwYqlCE054fL0AeQ2SLcgkjj+zDnPUC3ID4Nuv/
-         cpCjIQUzgImo547Tj9TxCySIaXDAUIcoaWA12Zu8Yg2/tFIP+SkoYD74KhRz3MTf8d
-         +XkA4f1QHfPHnbP6cH6IE09aYXLsP/xyLSRpnFgJulQ0agIPz043z+Jy3afwB/j46M
-         xZcL4JZ1Dby9JysSD1xo9yoZvb80EQ4F7GQtJs5sj5ytrKr2K5lHD29mZv3DT3PBNN
-         zGLeb0iB5kZC1i/fyzihUCu9R7JOr79qK53Me8uxIOlaKnSWhAJysY7RjB0NExavs7
-         gAxVJmWBXP1Qg==
-X-Nifty-SrcIP: [126.125.143.222]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [PATCH] ARM: s3c64xx: squash samsung_usb_phy.h into setup-usb-phy.c
-Date:   Tue, 20 Aug 2019 00:56:02 +0900
-Message-Id: <20190819155602.20843-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 19 Aug 2019 11:56:56 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5ac6c70000>; Mon, 19 Aug 2019 08:56:55 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 08:56:54 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 19 Aug 2019 08:56:54 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 15:56:54 +0000
+Received: from [10.2.167.147] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 15:56:53 +0000
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+To:     Vinod Koul <vkoul@kernel.org>
+CC:     Sameer Pujar <spujar@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        <dan.j.williams@intel.com>, <tiwai@suse.com>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sharadg@nvidia.com>, <rlokhande@nvidia.com>, <dramesh@nvidia.com>,
+        <mkumard@nvidia.com>
+References: <23474b74-3c26-3083-be21-4de7731a0e95@nvidia.com>
+ <20190624062609.GV2962@vkoul-mobl>
+ <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+ <75be49ac-8461-0798-b673-431ec527d74f@nvidia.com>
+ <20190719050459.GM12733@vkoul-mobl.Dlink>
+ <3e7f795d-56fb-6a71-b844-2fc2b85e099e@nvidia.com>
+ <20190729061010.GC12733@vkoul-mobl.Dlink>
+ <98954eb3-21f1-6008-f8e1-f9f9b82f87fb@nvidia.com>
+ <20190731151610.GT12733@vkoul-mobl.Dlink>
+ <c0f4de86-423a-35df-3744-40db89f2fdfe@nvidia.com>
+ <20190808123833.GX12733@vkoul-mobl.Dlink>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <a93a472d-b8f7-973f-6068-607492421472@nvidia.com>
+Date:   Mon, 19 Aug 2019 16:56:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190808123833.GX12733@vkoul-mobl.Dlink>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566230215; bh=PuhvZPBAKGFT1rNZtyq++viay+aZnss2mM1vyg8TnK0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=mE+HEY9RJIqIcMDX5kiJU6rb8gBm/bR42R+NQ5a6+lQgJdoHfHKXtJpE2uKkQKVsd
+         xLxxEhGT9M5o+yd5tZTzWfyLNbx2IGM3zz/uBsZjq0qKjuJnHOlklJQo0VoEBxafgX
+         nOFodfExt6tm6qAI1XBVuHQCRcEQrf3RKWRVQMZwWFpSephguedKThyAlGWFED5Gxk
+         hBVUbg9QIPtH0iSmgIO3crewJTxGJ68kfhe+ZISHrGg0p7loRQJLYhyBCqT/QtDNVT
+         QBnYEyDtYzhswoVunnghEl5mR7uD7yLoBYRfmeBZXLvIkXYmXsWLmvbcqt/WrlMXg6
+         SS9hg3lNDgvUw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is only used by arch/arm/mach-s3c64xx/setup-usb-phy.c
 
-$ git grep samsung_usb_phy_type
-include/linux/usb/samsung_usb_phy.h:enum samsung_usb_phy_type {
-$ git grep USB_PHY_TYPE_DEVICE
-arch/arm/mach-s3c64xx/setup-usb-phy.c:  if (type == USB_PHY_TYPE_DEVICE)
-arch/arm/mach-s3c64xx/setup-usb-phy.c:  if (type == USB_PHY_TYPE_DEVICE)
-include/linux/usb/samsung_usb_phy.h:    USB_PHY_TYPE_DEVICE,
-$ git grep USB_PHY_TYPE_HOST
-include/linux/usb/samsung_usb_phy.h:    USB_PHY_TYPE_HOST,
+On 08/08/2019 13:38, Vinod Koul wrote:
+> On 02-08-19, 09:51, Jon Hunter wrote:
+>>
+>> On 31/07/2019 16:16, Vinod Koul wrote:
+>>> On 31-07-19, 10:48, Jon Hunter wrote:
+>>>>
+>>>> On 29/07/2019 07:10, Vinod Koul wrote:
+>>>>> On 23-07-19, 11:24, Sameer Pujar wrote:
+>>>>>>
+>>>>>> On 7/19/2019 10:34 AM, Vinod Koul wrote:
+>>>>>>> On 05-07-19, 11:45, Sameer Pujar wrote:
+>>>>>>>> Hi Vinod,
+>>>>>>>>
+>>>>>>>> What are your final thoughts regarding this?
+>>>>>>> Hi sameer,
+>>>>>>>
+>>>>>>> Sorry for the delay in replying
+>>>>>>>
+>>>>>>> On this, I am inclined to think that dma driver should not be involved.
+>>>>>>> The ADMAIF needs this configuration and we should take the path of
+>>>>>>> dma_router for this piece and add features like this to it
+>>>>>>
+>>>>>> Hi Vinod,
+>>>>>>
+>>>>>> The configuration is needed by both ADMA and ADMAIF. The size is
+>>>>>> configurable
+>>>>>> on ADMAIF side. ADMA needs to know this info and program accordingly.
+>>>>>
+>>>>> Well I would say client decides the settings for both DMA, DMAIF and
+>>>>> sets the peripheral accordingly as well, so client communicates the two
+>>>>> sets of info to two set of drivers
+>>>>
+>>>> That maybe, but I still don't see how the information is passed from the
+>>>> client in the first place. The current problem is that there is no means
+>>>> to pass both a max-burst size and fifo-size to the DMA driver from the
+>>>> client.
+>>>
+>>> So one thing not clear to me is why ADMA needs fifo-size, I thought it
+>>> was to program ADMAIF and if we have client programme the max-burst
+>>> size to ADMA and fifo-size to ADMAIF we wont need that. Can you please
+>>> confirm if my assumption is valid?
+>>
+>> Let me see if I can clarify ...
+>>
+>> 1. The FIFO we are discussing here resides in the ADMAIF module which is
+>>    a separate hardware block the ADMA (although the naming make this
+>>    unclear).
+>>
+>> 2. The size of FIFO in the ADMAIF is configurable and it this is
+>>    configured via the ADMAIF registers. This allows different channels
+>>    to use different FIFO sizes. Think of this as a shared memory that is
+>>    divided into n FIFOs shared between all channels.
+>>
+>> 3. The ADMA, not the ADMAIF, manages the flow to the FIFO and this is
+>>    because the ADMAIF only tells the ADMA when a word has been
+>>    read/written (depending on direction), the ADMAIF does not indicate
+>>    if the FIFO is full, empty, etc. Hence, the ADMA needs to know the
+>>    total FIFO size.
+>>
+>> So the ADMA needs to know the FIFO size so that it does not overrun the
+>> FIFO and we can also set a burst size (less than the total FIFO size)
+>> indicating how many words to transfer at a time. Hence, the two parameters.
+> 
+> Thanks, I confirm this is my understanding as well.
+> 
+> To compare to regular case for example SPI on DMA, SPI driver will
+> calculate fifo size & burst to be used and program dma (burst size) and
+> its own fifos accordingly
+> 
+> So, in your case why should the peripheral driver not calculate the fifo
+> size for both ADMA and ADMAIF and (if required it's own FIFO) and
+> program the two (ADMA and ADMAIF).
+> 
+> What is the limiting factor in this flow is not clear to me.
 
-Actually, 'enum samsung_usb_phy_type' is unused; the 'type' parameter
-has 'int' type. Anyway, there is no need to declare this enum in the
-globally visible header. Squash the header.
+The FIFO size that is configured by the ADMAIF driver needs to be given
+to the ADMA driver so that it can program its registers accordingly. The
+difference here is that both the ADMA and ADMAIF need the FIFO size.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Cheers
+Jon
 
- arch/arm/mach-s3c64xx/setup-usb-phy.c        |  5 +++++
- arch/arm/plat-samsung/include/plat/usb-phy.h |  2 --
- include/linux/usb/samsung_usb_phy.h          | 17 -----------------
- 3 files changed, 5 insertions(+), 19 deletions(-)
- delete mode 100644 include/linux/usb/samsung_usb_phy.h
-
-diff --git a/arch/arm/mach-s3c64xx/setup-usb-phy.c b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-index 46a9e955607f..6aaaa1d8e8b9 100644
---- a/arch/arm/mach-s3c64xx/setup-usb-phy.c
-+++ b/arch/arm/mach-s3c64xx/setup-usb-phy.c
-@@ -15,6 +15,11 @@
- #include "regs-sys.h"
- #include "regs-usb-hsotg-phy.h"
- 
-+enum samsung_usb_phy_type {
-+	USB_PHY_TYPE_DEVICE,
-+	USB_PHY_TYPE_HOST,
-+};
-+
- static int s3c_usb_otgphy_init(struct platform_device *pdev)
- {
- 	struct clk *xusbxti;
-diff --git a/arch/arm/plat-samsung/include/plat/usb-phy.h b/arch/arm/plat-samsung/include/plat/usb-phy.h
-index 6d0c788beb9d..94da89ecbd3b 100644
---- a/arch/arm/plat-samsung/include/plat/usb-phy.h
-+++ b/arch/arm/plat-samsung/include/plat/usb-phy.h
-@@ -7,8 +7,6 @@
- #ifndef __PLAT_SAMSUNG_USB_PHY_H
- #define __PLAT_SAMSUNG_USB_PHY_H __FILE__
- 
--#include <linux/usb/samsung_usb_phy.h>
--
- extern int s5p_usb_phy_init(struct platform_device *pdev, int type);
- extern int s5p_usb_phy_exit(struct platform_device *pdev, int type);
- 
-diff --git a/include/linux/usb/samsung_usb_phy.h b/include/linux/usb/samsung_usb_phy.h
-deleted file mode 100644
-index dc0071741695..000000000000
---- a/include/linux/usb/samsung_usb_phy.h
-+++ /dev/null
-@@ -1,17 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0+
--/*
-- * Copyright (C) 2012 Samsung Electronics Co.Ltd
-- *		http://www.samsung.com/
-- *
-- * Defines phy types for samsung usb phy controllers - HOST or DEIVCE.
-- *
-- * This program is free software; you can redistribute  it and/or modify it
-- * under  the terms of  the GNU General  Public License as published by the
-- * Free Software Foundation;  either version 2 of the  License, or (at your
-- * option) any later version.
-- */
--
--enum samsung_usb_phy_type {
--	USB_PHY_TYPE_DEVICE,
--	USB_PHY_TYPE_HOST,
--};
 -- 
-2.17.1
-
+nvpublic
