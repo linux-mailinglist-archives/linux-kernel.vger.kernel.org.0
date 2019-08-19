@@ -2,99 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A496591B7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 05:33:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 750F591B83
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 05:37:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbfHSDdK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 23:33:10 -0400
-Received: from anchovy2.45ru.net.au ([203.30.46.146]:36981 "EHLO
-        anchovy2.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbfHSDdK (ORCPT
+        id S1726567AbfHSDex (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 23:34:53 -0400
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:41812 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726132AbfHSDex (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 23:33:10 -0400
-Received: (qmail 12459 invoked by uid 5089); 19 Aug 2019 03:33:07 -0000
-Received: by simscan 1.2.0 ppid: 12386, pid: 12387, t: 0.3151s
-         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950 spam: 3.1.4
-X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on anchovy2
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=6.0 tests=ALL_TRUSTED,AWL
-        autolearn=disabled version=3.4.1
-Received: from unknown (HELO ?192.168.0.34?) (rtresidd@electromag.com.au@203.59.235.95)
-  by anchovy3.45ru.net.au with ESMTPA; 19 Aug 2019 03:33:06 -0000
-Subject: Re: [PATCH 1/1] dt-bindings: power/supply/sbs_sbs-battery: Addition
- of force_load binding Add device tree binding documentation for addition of
- force_load boolean value to allow loading a battery during boot even if not
- present at that time.
-To:     Rob Herring <robh@kernel.org>
-Cc:     sre@kernel.org, mark.rutland@arm.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1564037445-22936-1-git-send-email-rtresidd@electromag.com.au>
- <20190816211430.GA8175@bogus>
-From:   Richard Tresidder <rtresidd@electromag.com.au>
-Message-ID: <1baa2fe9-7649-f70a-9076-5b49464ae1cd@electromag.com.au>
-Date:   Mon, 19 Aug 2019 11:33:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190816211430.GA8175@bogus>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-AU
+        Sun, 18 Aug 2019 23:34:53 -0400
+Received: by mail-yw1-f65.google.com with SMTP id i138so142423ywg.8
+        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 20:34:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=uGOYgJda+j4dqh4YXabhCX5Nh2M2wJdXHWQKsrei+A0=;
+        b=XDWU6n/No2ZFBD+Ri2ovihYVYFSc7EixeYmSd9oDPcHUJWNcMIO5zgjEpO44J9M1ho
+         d0LKFlwZpWbu3LVRIdZK1690QaZl7uvR92w9dC0Gy5ykMhLbwhZDDWUiTuBReuSUa9yc
+         q1+V5buwueEP3515+EyQdNOqE5JmYq7EvDron8Uc+SpTkJzua5QW/UpVhp9CWiPZF+rs
+         mw96UAuvh9QZLClRVoIzYoEZstnilBPahl6knUwGZLPCjOxXvNJtarVAPw0JXsYTLSd/
+         7iERARJ6n6p/1P69wutDUK34Qwqk78ZGmZtP1OYr0kl3b3ck2FzNB/8FcqFj966JeUfu
+         1GTg==
+X-Gm-Message-State: APjAAAXTvETdDxa3IdpHAh6+XwmbRB/rysOmFlCcaYBwaf7km1nPjAUM
+        Uida6EeeniKXCQ75colKukw=
+X-Google-Smtp-Source: APXvYqx/Ey+ck+08aUX1naJ+M5Dxnh85vNnbkoHC+QbtC+Md9D2ZDtdB4Divyj/mbjlLXsQOOx/0bg==
+X-Received: by 2002:a81:9144:: with SMTP id i65mr14960039ywg.361.1566185692434;
+        Sun, 18 Aug 2019 20:34:52 -0700 (PDT)
+Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
+        by smtp.gmail.com with ESMTPSA id b66sm537423ywd.110.2019.08.18.20.34.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 18 Aug 2019 20:34:51 -0700 (PDT)
+From:   Wenwen Wang <wenwen@cs.uga.edu>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] drm/gma500: fix memory leaks
+Date:   Sun, 18 Aug 2019 22:34:30 -0500
+Message-Id: <1566185684-8014-1-git-send-email-wenwen@cs.uga.edu>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a force load option when loading the driver as a module.
-This adds the equivalent methodology for the binding path.
-Though I suppose you could in fact just force load if the gpio detect 
-isn't present.
-Thats a good idea, just wasn't the existing driver flow. I can't think 
-of any reason why we couldn't do that though.
+In mdfld_dsi_output_init(), if an error occurs, the execution is directed
+to 'dsi_init_err0' or 'dsi_init_err1'. However, in some cases, some
+previously allocated buffers and resources are not deallocated, leading to
+memory/resource leaks. To fix this issue, revise the labels.
 
-I'll update the patch and resubmit V3
-Will add a note about it in the docs
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
+---
+ drivers/gpu/drm/gma500/mdfld_dsi_output.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-Please note I'd submitted this incorrectly when using our patch script 
-last time, it's now correctly part of the combined patch
-
-Regards
-   Richard Tresidder
-Richard Tresidder
-
-
-**
-On 17/08/2019 5:14 am, Rob Herring wrote:
-> On Thu, Jul 25, 2019 at 02:50:45PM +0800, Richard Tresidder wrote:
->> Signed-off-by: Richard Tresidder <rtresidd@electromag.com.au>
->> ---
->>
->> Notes:
->>      Add device tree binding documentation for addition of force_load
->>      boolean value to allow loading a battery during boot even if not
->>      present at that time.
->>      Accompanying patch to drivers/power/supply/sbs-battery.c submitted to linux-pm@vger.kernel.org
->>
->>   Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
->> index 4e78e51..187d7bb 100644
->> --- a/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
->> +++ b/Documentation/devicetree/bindings/power/supply/sbs_sbs-battery.txt
->> @@ -15,7 +15,8 @@ Optional properties :
->>      after an external change notification.
->>    - sbs,battery-detect-gpios : The gpio which signals battery detection and
->>      a flag specifying its polarity.
->> -
->> + - sbs,force-load : Allow loading of a hot-pluggable battery when there is no
->> +   GPIO detect available and the module is statically built.
-> What's a module? That's Linux specific and nothing to do with the
-> binding.
->
-> Can't you just force load if sbs,battery-detect-gpios is not present?
->
-> Rob
->
->
+diff --git a/drivers/gpu/drm/gma500/mdfld_dsi_output.c b/drivers/gpu/drm/gma500/mdfld_dsi_output.c
+index 03023fa..0cf4121 100644
+--- a/drivers/gpu/drm/gma500/mdfld_dsi_output.c
++++ b/drivers/gpu/drm/gma500/mdfld_dsi_output.c
+@@ -573,13 +573,13 @@ void mdfld_dsi_output_init(struct drm_device *dev,
+ 	if (mdfld_dsi_pkg_sender_init(dsi_connector, pipe)) {
+ 		DRM_ERROR("Package Sender initialization failed on pipe %d\n",
+ 									pipe);
+-		goto dsi_init_err0;
++		goto dsi_init_err1;
+ 	}
+ 
+ 	encoder = mdfld_dsi_dpi_init(dev, dsi_connector, p_vid_funcs);
+ 	if (!encoder) {
+ 		DRM_ERROR("Create DPI encoder failed\n");
+-		goto dsi_init_err1;
++		goto dsi_init_err2;
+ 	}
+ 	encoder->private = dsi_config;
+ 	dsi_config->encoder = encoder;
+@@ -589,14 +589,13 @@ void mdfld_dsi_output_init(struct drm_device *dev,
+ 	return;
+ 
+ 	/*TODO: add code to destroy outputs on error*/
+-dsi_init_err1:
++dsi_init_err2:
+ 	/*destroy sender*/
+ 	mdfld_dsi_pkg_sender_destroy(dsi_connector->pkg_sender);
+-
++dsi_init_err1:
+ 	drm_connector_cleanup(connector);
+-
++dsi_init_err0:
+ 	kfree(dsi_config->fixed_mode);
+ 	kfree(dsi_config);
+-dsi_init_err0:
+ 	kfree(dsi_connector);
+ }
+-- 
+2.7.4
 
