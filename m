@@ -2,102 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D2DEB94AED
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:51:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AFF7494AF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 18:53:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbfHSQvO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 12:51:14 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40453 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727851AbfHSQvN (ORCPT
+        id S1727659AbfHSQxW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 12:53:22 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:59978 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726525AbfHSQxW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 12:51:13 -0400
-Received: by mail-pl1-f194.google.com with SMTP id h3so1232156pls.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 09:51:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PF9Fz7eLOn3KOSJvwuGfd7kZcP+Q82SJirXg7MMKVTc=;
-        b=lHOPAntlcr7DvNNnqvGon8PsmC5KmwzxdXbVCIgrhXAtUPzFHwLR9e4ryWdu1nuSuk
-         Ehdt/HQ565j7tizRT6Sk1evJ+r63wY5/uqERuNIBq7QSjdswgd8o9TlmUxV2sdkzTM6e
-         FKyUhTMwIM0WiojP3BvTlMSmkshvlivGl1p0HdIAq30G3r6AH0HjcXoU8VgRqnnQ0pRj
-         SqLM1uvtl61cfFjNTQUe32kc+gBKyyxdYi4luXvShhmmAtzDlRqCI7EE51g38oJtoMDf
-         0AjjxTRurHFWz9s+7bWl02zAqVcKU56b+6UDVJi8MTf2bAp97Z0w/OfFjF2Qtrv0KA+j
-         WlkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PF9Fz7eLOn3KOSJvwuGfd7kZcP+Q82SJirXg7MMKVTc=;
-        b=nn9XsTIPdBRbksFXbQkWpEMe/p0nSG4N4Sd7yLeA+azfcKCBI/tKs2OsIg7z886pkz
-         q5RDVeT3u+gbRPp4dIrEGpuazCnZ/NoIfE2JjQ8NDzGCOum/CjNUQIqsSPmMSJl5WgH7
-         /a0xpmN8CY44caXTop3xYcj9PDkNsmNSyV0SqhjCThLrr0GVGTYUlvBK1DeHlXz2Uhtp
-         OulKBXDaUFfAlBAnByo/TeIcWv5wDj7LxPznYKO1A7odNB5MsU/08/tj1SBcNZ7FCSOV
-         qRQ/epg6uuSqQHO+IXn6O9GeyW6gw9mChocdJJQBuvxzokIxcEfXLOI/TY+uzEfa4h96
-         r6IQ==
-X-Gm-Message-State: APjAAAXrZ4AanqISO1L9UG+lF9P8ffQApP1r+zZ/rbzz7769Ewz3tBNy
-        dvH+oCnA843hleoWhaRbU+ZnPQ==
-X-Google-Smtp-Source: APXvYqy+GZvqO80ibtH+ku91D+7Ug4tpguKdLphDT0NoWOq2CKeFFjM/+4q4NMDcCteJLySS1DmZEg==
-X-Received: by 2002:a17:902:141:: with SMTP id 59mr24103307plb.324.1566233472771;
-        Mon, 19 Aug 2019 09:51:12 -0700 (PDT)
-Received: from tuxbook-pro (pat_11.qualcomm.com. [192.35.156.11])
-        by smtp.gmail.com with ESMTPSA id i11sm22052392pfk.34.2019.08.19.09.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 09:51:11 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 09:52:55 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
-        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
-Message-ID: <20190819165255.GA26807@tuxbook-pro>
-References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
- <20190807234232.27AA720880@mail.kernel.org>
+        Mon, 19 Aug 2019 12:53:22 -0400
+Received: from [167.98.27.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1hzkuG-00082L-5V; Mon, 19 Aug 2019 17:53:20 +0100
+Message-ID: <35579e00d27344b853cafea0b29b13c5aaf9e1fc.camel@codethink.co.uk>
+Subject: Re: [PATCH AUTOSEL 4.4 01/14] xtensa: fix build for cores with
+ coprocessors
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Cc:     Max Filippov <jcmvbkbc@gmail.com>, linux-xtensa@linux-xtensa.org
+Date:   Mon, 19 Aug 2019 17:53:19 +0100
+In-Reply-To: <20190806213749.20689-1-sashal@kernel.org>
+References: <20190806213749.20689-1-sashal@kernel.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.5-1.1 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807234232.27AA720880@mail.kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 07 Aug 16:42 PDT 2019, Stephen Boyd wrote:
-
-> Quoting Jordan Crouse (2019-08-05 13:33:46)
-> > The macro to generate a Bus Controller Manager (BCM) TCS command is used
-> > by the interconnect driver but might also be interesting to other
-> > drivers that need to construct TCS commands for sub processors so move
-> > it out of the sdm845 specific file and into the header.
-> > 
-> > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > ---
+On Tue, 2019-08-06 at 17:37 -0400, Sasha Levin wrote:
+> From: Max Filippov <jcmvbkbc@gmail.com>
 > 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> [ Upstream commit e3cacb73e626d885b8cf24103fed0ae26518e3c4 ]
 > 
-> Unless this is supposed to be applied by me?
-> 
-> BTW, I wonder why we need an rpm clk driver much at all nowadays, except
-> maybe for the XO clk state. The big user, from what I can tell, is the
-> interconnect driver and we don't use any of the features of the clk
-> framework besides the API to set a frequency. Maybe it would be better
-> to just push push the bus frequency logic into interconnect code, then
-> XO clk is the only thing we need to keep, and it can be a simple on/off
-> thing.
-> 
+> Assembly entry/return abstraction change didn't add asmmacro.h include
+> statement to coprocessor.S, resulting in references to undefined macros
+> abi_entry and abi_ret on cores that define XTENSA_HAVE_COPROCESSORS.
+> Fix that by including asm/asmmacro.h from the coprocessor.S.
+[...]
 
-There's been a number of cases where we'll need to enable the buffered
-XOs, but perhaps these are handled by other subsystems these days(?)
+This seems to be fixing commit d6d5f19e21d9 "xtensa: abstract 'entry'
+and 'retw' in assembly code" so it wouldn't be needed for any stable
+branches.
 
-If so the one case that remains would be the operation of explicitly
-holding CXO enabled during operations such as booting the remoteprocs.
+Ben.
 
-Regards,
-Bjorn
+-- 
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
+
