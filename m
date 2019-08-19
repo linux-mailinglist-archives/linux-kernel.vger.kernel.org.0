@@ -2,68 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E915294B6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51EFE94B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 19:10:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727883AbfHSROd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 13:14:33 -0400
-Received: from mga02.intel.com ([134.134.136.20]:13280 "EHLO mga02.intel.com"
+        id S1728054AbfHSRKd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 13:10:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56986 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726918AbfHSROc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 13:14:32 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 09:56:35 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,405,1559545200"; 
-   d="scan'208";a="179474448"
-Received: from jsakkine-mobl1.tm.intel.com (HELO localhost) ([10.237.50.125])
-  by fmsmga007.fm.intel.com with ESMTP; 19 Aug 2019 09:56:29 -0700
-Date:   Mon, 19 Aug 2019 19:56:29 +0300
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sumit Garg <sumit.garg@linaro.org>
-Cc:     keyrings@vger.kernel.org, linux-integrity@vger.kernel.org,
-        linux-crypto@vger.kernel.org,
-        linux-security-module@vger.kernel.org, dhowells@redhat.com,
-        herbert@gondor.apana.org.au, davem@davemloft.net,
-        peterhuewe@gmx.de, jgg@ziepe.ca, jejb@linux.ibm.com, arnd@arndb.de,
-        gregkh@linuxfoundation.org, zohar@linux.ibm.com, jmorris@namei.org,
-        serge@hallyn.com, casey@schaufler-ca.com,
-        ard.biesheuvel@linaro.org, daniel.thompson@linaro.org,
-        linux-kernel@vger.kernel.org, tee-dev@lists.linaro.org
-Subject: Re: [RFC/RFT v4 1/5] tpm: move tpm_buf code to include/linux/
-Message-ID: <20190819165629.qv7cmg6kiwb6oxig@linux.intel.com>
-References: <1565682784-10234-1-git-send-email-sumit.garg@linaro.org>
- <1565682784-10234-2-git-send-email-sumit.garg@linaro.org>
+        id S1726627AbfHSRKd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 13:10:33 -0400
+Received: from localhost (unknown [122.182.221.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E9C32087E;
+        Mon, 19 Aug 2019 17:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566234632;
+        bh=0Eu0bktvzMys0ZV9UHjJ/Ycrb7Zfo27tEnF7YjB4lw4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=yyrfiaGbp4s0zbvsPiXZaZy0qmFQLqFBMOzsRgqKKbxlu2JRBcSqXFLQiGNESxXWK
+         Bj12aKSZsQ3zUKirWoNIx6V2qttZb9SscKeirW5veWouMV8dr9/CFBhk+jIpok1lJW
+         YhNcbKBFtXE8/6RJbcX4g5khle0UujMtEIctomEU=
+Date:   Mon, 19 Aug 2019 22:39:15 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        sibis@codeaurora.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 03/22] arm64: dts: qcom: sm8150: add tlmm node
+Message-ID: <20190819170915.GH12733@vkoul-mobl.Dlink>
+References: <20190814125012.8700-1-vkoul@kernel.org>
+ <20190814125012.8700-4-vkoul@kernel.org>
+ <20190814170105.027C42063F@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1565682784-10234-2-git-send-email-sumit.garg@linaro.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190814170105.027C42063F@mail.kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 01:23:00PM +0530, Sumit Garg wrote:
-> Move tpm_buf code to common include/linux/tpm.h header so that it can
-> be reused via other subsystems like trusted keys etc.
+On 14-08-19, 10:01, Stephen Boyd wrote:
+> Quoting Vinod Koul (2019-08-14 05:49:53)
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
 > 
-> Also rename trusted keys TPM 1.x buffer implementation to tpm1_buf to
-> avoid any compilation errors.
+> Add some commit text? Or just squash with the first patch? Not sure why
+> it's a different commit.
 > 
-> Suggested-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
+> >  arch/arm64/boot/dts/qcom/sm8150.dtsi | 15 +++++++++++++++
+> >  1 file changed, 15 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > index cd9fcadaeacb..5f2f21270e2d 100644
+> > --- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
+> > @@ -189,6 +189,21 @@
+> >                         };
+> >                 };
+> >  
+> > +               tlmm: pinctrl@3100000 {
+> > +                       compatible = "qcom,sm8150-pinctrl";
+> > +                       reg = <0x03100000 0x300000>,
+> > +                             <0x03500000 0x300000>,
+> > +                             <0x03900000 0x300000>,
+> > +                             <0x03D00000 0x300000>;
+> 
+> Please don't use capitalized hex characters.
 
-A question: did you try to do this as mechanically as you ever could
-or did you do any other code changes? I did go through it but it is
-possible that I missed something.
+Sure, this seems to be only instance where this crept in. Fixed now
 
-In this type of changes it is mandatory be extra strict on not doing
-anything extra (the rename you would was not of course extra because
-it was necessary to do).
-
-/Jarkko
+-- 
+~Vinod
