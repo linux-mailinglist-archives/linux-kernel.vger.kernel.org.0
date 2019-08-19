@@ -2,60 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 253BC95179
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 588F495160
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbfHSXE7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:04:59 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:44366 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728469AbfHSXDb (ORCPT
+        id S1728767AbfHSXDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 19:03:33 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34014 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728752AbfHSXDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 19:03:31 -0400
-Received: by mail-pg1-f195.google.com with SMTP id i18so2024207pgl.11
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:03:30 -0700 (PDT)
+        Mon, 19 Aug 2019 19:03:32 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n9so2044063pgc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:03:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=i6m141WDgWo2fEqKOTQPkh65ch/WaZ2zC8BGag2kGAk=;
-        b=HuR2cIhjFWz+4JWrKq4LPu+TjN9IyLdmlpABHg6FpMPw8pF218Oqvf9YVNMUAgT+ZQ
-         sLeCCgC3vmOwiPEZyMojK3wG0zhYyUADo4mCJA2OUb1yEg4s0eGV/cZUycvnm9GR8fJ0
-         Ufk4ce6n6CJ4LTnq4ttEKktmGl4lTrix5wNVKAGKa8Xxg2a/HdfZwWSMn1XyHStyImMX
-         ArMe/zCWSjcBwhVq+ymr85UBC2LsCmjEKOE/xpvezdW1xE0a1Jxv0cbmaUzMKEduL6Qr
-         I+pUxL83x/pgtjfyBOIACYuCJkkSGW9Wk2kM8d3mX3/9HXqoVqz8XmocHRndfednTYCy
-         VVzg==
+        bh=sMMNrNPEyr5ojRnGMae00OuNvWMz/twMj42dMKt7nWI=;
+        b=v1pVzeLVL4i2QM63LjdIG16cVunIA1wDrcWnGZLbSWTLQuViS6sU6eb1I4/agTCUDc
+         t+ZtZed/2TMX58/fHKD78fEnRgbm335xveJAkCf4IuL/CxHn5fjilap0t8YkgZxLj0qe
+         0bUhKZ5dwWZ0IdOmoETmqGDVV+rLoDNfdFgfidefk3MkiePU1eBGttWbh1PujCbR+A1u
+         dR+mi7XMVr3BzexefjBdeM4Q3RhFtJT5LpJZWYnvW/OimWUTcNTYpKGLdLnhwwHTQjKH
+         8Rw5PJSi5pDJnKmKfkR7Vsm7n+MME4k4sIfpwYhJi5DVvKW126bvgv0PgVOxqlviKzFT
+         /Sdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=i6m141WDgWo2fEqKOTQPkh65ch/WaZ2zC8BGag2kGAk=;
-        b=CMUxgSOcwqZo55KF9Za3b9OY28eepY5fjxvkhJXXW4P3tmGR3g28Eyuhl8YcX99Stp
-         rMxE2ToehU+4XejPwKJe5whOiMgksdNnJfuwEs5VXN85IHvNs4GiK/0OTY9/O2hbL/vr
-         dtZTTS0QddMDbbPnIRJ0zR2X3Pp7wqWi26VC9qiugz+QmrJXril5eW3vG/AQbWHdJEij
-         7dhVkWzPAghCFIlRO84nYEWb1S0sp67yIF5HteBGAzKHxdMagpTag2wy+b4PZew9kjMI
-         MQrP5pSkHXbHnUUhOVaOUSsujWxxx+1bWYI5wXP/mIKSPeXJTr3AvfyCTl/XXzB7p4TK
-         LFAA==
-X-Gm-Message-State: APjAAAWS7QT80g5PdU9K0SYac2gRNE4kTz8RbXlpgqLF9Xwjemtw6prS
-        tHPpaw0aHiEICdqLgcnhW6zSQBXrTpo=
-X-Google-Smtp-Source: APXvYqwG9W4CfZHOjBvxvQuucJnsWPQbrgBVAkuIl+wmQF01BSo9fnI1CCwcy8t95kgUzAi6UtR7Qg==
-X-Received: by 2002:a62:35c6:: with SMTP id c189mr26730739pfa.96.1566255810038;
-        Mon, 19 Aug 2019 16:03:30 -0700 (PDT)
+        bh=sMMNrNPEyr5ojRnGMae00OuNvWMz/twMj42dMKt7nWI=;
+        b=LWPsu2zvd/QNGwc1+KAA349r6fwZcMbmSS9PovP/g2r3/30/ivXIVxc1UI+Snc5rkF
+         ugHOhj8ywqg14QKRehiuSzz41n1zaplIE3jAQYYmKiQicTqKsyGg5Pr0lAK+yGMe5ohd
+         P8jWbKMWwgSUxysld0lMXbJucEhOQthLOzF9uAz+GY14AZk+dIGaaU5dVtiAFHg3P/6W
+         h36vf0X5ZnrUO/A4+gCc7ZjeiDFA5q30u9FHoqlGIdVaJOl2obN4kzngssg0bhYkrPUw
+         dQ6NPw2oESqTZabKotDjMd0jplljN7mIr5TTZ9PU3IZ1t2tHqw9AqIuBhDatAObXw5VL
+         DsJg==
+X-Gm-Message-State: APjAAAWJ291/Rfo5XaOf/2IEutS0UcF5rTLHY9nLQt1I+7ugtA7zfUmi
+        SP+N9RgNI6TEYAG7B+Kcz8mdErkLis8=
+X-Google-Smtp-Source: APXvYqwb1NlOHGixTVWfKWtPeGyyczgYsv1+r1jQRk7O0IlMpAWvAHx5RA2P2qeq/kAH+R2FQKrW1Q==
+X-Received: by 2002:a65:6458:: with SMTP id s24mr21839142pgv.158.1566255811461;
+        Mon, 19 Aug 2019 16:03:31 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id j15sm17256509pfr.146.2019.08.19.16.03.28
+        by smtp.gmail.com with ESMTPSA id j15sm17256509pfr.146.2019.08.19.16.03.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 16:03:29 -0700 (PDT)
+        Mon, 19 Aug 2019 16:03:30 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     John Stultz <john.stultz@linaro.org>,
+Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         Rongrong Zou <zourongrong@gmail.com>,
         Xinliang Liu <z.liuxinliang@hisilicon.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        Sam Ravnborg <sam@ravnborg.org>
-Subject: [PATCH v4 03/25] drm: kirin: Remove unreachable return
-Date:   Mon, 19 Aug 2019 23:02:59 +0000
-Message-Id: <20190819230321.56480-4-john.stultz@linaro.org>
+        Sam Ravnborg <sam@ravnborg.org>,
+        John Stultz <john.stultz@linaro.org>
+Subject: [PATCH v4 04/25] drm: kirin: Remove uncessary parameter indirection
+Date:   Mon, 19 Aug 2019 23:03:00 +0000
+Message-Id: <20190819230321.56480-5-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819230321.56480-1-john.stultz@linaro.org>
 References: <20190819230321.56480-1-john.stultz@linaro.org>
@@ -64,8 +65,13 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'return 0' in kirin_drm_platform_probe() is unreachable
-code, so remove it.
+From: Xu YiPing <xuyiping@hisilicon.com>
+
+In a few functions, we pass in a struct ade_crtc, which we only
+use to get to the underlying struct ade_hw_ctx.
+
+Thus this patch refactors the functions to just take the
+struct ade_hw_ctx directly.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -75,25 +81,68 @@ Cc: dri-devel <dri-devel@lists.freedesktop.org>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 Acked-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Suggested by: Xu YiPing <xuyiping@hisilicon.com>
+Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
+[jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index 204c94c01e3d..fcdd6b1e167d 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -208,8 +208,6 @@ static int kirin_drm_platform_probe(struct platform_device *pdev)
- 	of_node_put(remote);
- 
- 	return component_master_add_with_match(dev, &kirin_drm_ops, match);
--
--	return 0;
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
+index d972342527b8..45351934d919 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
+@@ -210,11 +210,10 @@ static void ade_set_pix_clk(struct ade_hw_ctx *ctx,
+ 	adj_mode->clock = clk_get_rate(ctx->ade_pix_clk) / 1000;
  }
  
- static int kirin_drm_platform_remove(struct platform_device *pdev)
+-static void ade_ldi_set_mode(struct ade_crtc *acrtc,
++static void ade_ldi_set_mode(struct ade_hw_ctx *ctx,
+ 			     struct drm_display_mode *mode,
+ 			     struct drm_display_mode *adj_mode)
+ {
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
+ 	void __iomem *base = ctx->base;
+ 	u32 width = mode->hdisplay;
+ 	u32 height = mode->vdisplay;
+@@ -301,9 +300,8 @@ static void ade_power_down(struct ade_hw_ctx *ctx)
+ 	ctx->power_on = false;
+ }
+ 
+-static void ade_set_medianoc_qos(struct ade_crtc *acrtc)
++static void ade_set_medianoc_qos(struct ade_hw_ctx *ctx)
+ {
+-	struct ade_hw_ctx *ctx = acrtc->ctx;
+ 	struct regmap *map = ctx->noc_regmap;
+ 
+ 	regmap_update_bits(map, ADE0_QOSGENERATOR_MODE,
+@@ -515,7 +513,7 @@ static void ade_crtc_atomic_enable(struct drm_crtc *crtc,
+ 			return;
+ 	}
+ 
+-	ade_set_medianoc_qos(acrtc);
++	ade_set_medianoc_qos(ctx);
+ 	ade_display_enable(acrtc);
+ 	ade_dump_regs(ctx->base);
+ 	drm_crtc_vblank_on(crtc);
+@@ -545,7 +543,7 @@ static void ade_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ 
+ 	if (!ctx->power_on)
+ 		(void)ade_power_up(ctx);
+-	ade_ldi_set_mode(acrtc, mode, adj_mode);
++	ade_ldi_set_mode(ctx, mode, adj_mode);
+ }
+ 
+ static void ade_crtc_atomic_begin(struct drm_crtc *crtc,
+@@ -558,7 +556,7 @@ static void ade_crtc_atomic_begin(struct drm_crtc *crtc,
+ 
+ 	if (!ctx->power_on)
+ 		(void)ade_power_up(ctx);
+-	ade_ldi_set_mode(acrtc, mode, adj_mode);
++	ade_ldi_set_mode(ctx, mode, adj_mode);
+ }
+ 
+ static void ade_crtc_atomic_flush(struct drm_crtc *crtc,
 -- 
 2.17.1
 
