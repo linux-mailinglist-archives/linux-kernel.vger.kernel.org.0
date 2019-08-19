@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F97991B3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57A1691B25
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 04:54:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726783AbfHSCyw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 22:54:52 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:44811 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726186AbfHSCyL (ORCPT
+        id S1726617AbfHSCyW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 22:54:22 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:39664 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726522AbfHSCyP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 22:54:11 -0400
-X-UUID: 711cc049154d441aa253fa77b393a656-20190819
-X-UUID: 711cc049154d441aa253fa77b393a656-20190819
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
+        Sun, 18 Aug 2019 22:54:15 -0400
+X-UUID: 7114061c451b45b19706455eea8306ee-20190819
+X-UUID: 7114061c451b45b19706455eea8306ee-20190819
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1954448429; Mon, 19 Aug 2019 10:54:03 +0800
+        with ESMTP id 595218294; Mon, 19 Aug 2019 10:54:07 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Mon, 19 Aug 2019 10:54:02 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -43,92 +43,117 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v12 07/12] soc: mediatek: cmdq: reorder the parameter
-Date:   Mon, 19 Aug 2019 10:53:54 +0800
-Message-ID: <20190819025359.11381-8-bibby.hsieh@mediatek.com>
+Subject: [PATCH v12 08/12] soc: mediatek: cmdq: change the type of input parameter
+Date:   Mon, 19 Aug 2019 10:53:55 +0800
+Message-ID: <20190819025359.11381-9-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190819025359.11381-1-bibby.hsieh@mediatek.com>
 References: <20190819025359.11381-1-bibby.hsieh@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: 778B834D41414594B95B4BBDA7E93C0CA4C6882DA380D084060AA7C5F29153672000:8
+X-TM-SNTS-SMTP: F8E37FE09CBD2B75409161AA71C3B6EE81DEB9C7FBCD7C6540B8E2DDB03485632000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The order of gce instructions is [subsys offset value]
-so reorder the parameter of cmdq_pkt_write_mask
-and cmdq_pkt_write function.
+According to the cmdq hardware design, the subsys is u8,
+the offset is u16 and the event id is u16.
+This patch changes the type of subsys, offset and event id
+to the correct type.
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/soc/mediatek/mtk-cmdq-helper.c |  6 +++---
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 10 +++++-----
  include/linux/soc/mediatek/mtk-cmdq.h  | 10 +++++-----
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ 2 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index ff9fef5a032b..082b8978651e 100644
+index 082b8978651e..7aa0517ff2f3 100644
 --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
 +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
 @@ -136,7 +136,7 @@ static int cmdq_pkt_append_command(struct cmdq_pkt *pkt, enum cmdq_code code,
  	return 0;
  }
  
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset)
-+int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value)
+-int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value)
++int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value)
  {
  	u32 arg_a = (offset & CMDQ_ARG_A_WRITE_MASK) |
  		    (subsys << CMDQ_SUBSYS_SHIFT);
-@@ -145,8 +145,8 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset)
+@@ -145,8 +145,8 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value)
  }
  EXPORT_SYMBOL(cmdq_pkt_write);
  
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
--			u32 subsys, u32 offset, u32 mask)
-+int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
-+			u32 offset, u32 value, u32 mask)
+-int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
+-			u32 offset, u32 value, u32 mask)
++int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
++			u16 offset, u32 value, u32 mask)
  {
  	u32 offset_mask = offset;
  	int err = 0;
+@@ -161,7 +161,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
+ }
+ EXPORT_SYMBOL(cmdq_pkt_write_mask);
+ 
+-int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
++int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event)
+ {
+ 	u32 arg_b;
+ 
+@@ -181,7 +181,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event)
+ }
+ EXPORT_SYMBOL(cmdq_pkt_wfe);
+ 
+-int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event)
++int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event)
+ {
+ 	if (event >= CMDQ_MAX_EVENT)
+ 		return -EINVAL;
 diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index 4e8899972db4..39d813dde4b4 100644
+index 39d813dde4b4..9618debb9ceb 100644
 --- a/include/linux/soc/mediatek/mtk-cmdq.h
 +++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -60,26 +60,26 @@ void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
- /**
-  * cmdq_pkt_write() - append write command to the CMDQ packet
-  * @pkt:	the CMDQ packet
-- * @value:	the specified target register value
-  * @subsys:	the CMDQ sub system code
-  * @offset:	register offset from CMDQ sub system
-+ * @value:	the specified target register value
+@@ -66,7 +66,7 @@ void cmdq_pkt_destroy(struct cmdq_pkt *pkt);
   *
   * Return: 0 for success; else the error code is returned
   */
--int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 value, u32 subsys, u32 offset);
-+int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value);
+-int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value);
++int cmdq_pkt_write(struct cmdq_pkt *pkt, u8 subsys, u16 offset, u32 value);
  
  /**
   * cmdq_pkt_write_mask() - append write command with mask to the CMDQ packet
-  * @pkt:	the CMDQ packet
-- * @value:	the specified target register value
-  * @subsys:	the CMDQ sub system code
-  * @offset:	register offset from CMDQ sub system
-+ * @value:	the specified target register value
-  * @mask:	the specified target register mask
+@@ -78,8 +78,8 @@ int cmdq_pkt_write(struct cmdq_pkt *pkt, u32 subsys, u32 offset, u32 value);
   *
   * Return: 0 for success; else the error code is returned
   */
--int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 value,
--			u32 subsys, u32 offset, u32 mask);
-+int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
-+			u32 offset, u32 value, u32 mask);
+-int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
+-			u32 offset, u32 value, u32 mask);
++int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u8 subsys,
++			u16 offset, u32 value, u32 mask);
  
  /**
   * cmdq_pkt_wfe() - append wait for event command to the CMDQ packet
+@@ -88,7 +88,7 @@ int cmdq_pkt_write_mask(struct cmdq_pkt *pkt, u32 subsys,
+  *
+  * Return: 0 for success; else the error code is returned
+  */
+-int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
++int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u16 event);
+ 
+ /**
+  * cmdq_pkt_clear_event() - append clear event command to the CMDQ packet
+@@ -97,7 +97,7 @@ int cmdq_pkt_wfe(struct cmdq_pkt *pkt, u32 event);
+  *
+  * Return: 0 for success; else the error code is returned
+  */
+-int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u32 event);
++int cmdq_pkt_clear_event(struct cmdq_pkt *pkt, u16 event);
+ 
+ /**
+  * cmdq_pkt_flush_async() - trigger CMDQ to asynchronously execute the CMDQ
 -- 
 2.18.0
 
