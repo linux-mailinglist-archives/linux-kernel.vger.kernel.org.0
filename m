@@ -2,98 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AEF4894EE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0D3AD94EEF
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 22:27:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728547AbfHSUX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 16:23:59 -0400
-Received: from mx0a-002e3701.pphosted.com ([148.163.147.86]:7884 "EHLO
-        mx0a-002e3701.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728517AbfHSUX4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 16:23:56 -0400
-Received: from pps.filterd (m0134421.ppops.net [127.0.0.1])
-        by mx0b-002e3701.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JKLOrq008379;
-        Mon, 19 Aug 2019 20:23:50 GMT
-Received: from g9t5009.houston.hpe.com (g9t5009.houston.hpe.com [15.241.48.73])
-        by mx0b-002e3701.pphosted.com with ESMTP id 2ufy9phek9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 19 Aug 2019 20:23:50 +0000
-Received: from stormcage.eag.rdlabs.hpecorp.net (unknown [128.162.236.70])
-        by g9t5009.houston.hpe.com (Postfix) with ESMTP id 0C87451;
-        Mon, 19 Aug 2019 20:23:50 +0000 (UTC)
-Received: by stormcage.eag.rdlabs.hpecorp.net (Postfix, from userid 48777)
-        id C0F662014C81E; Mon, 19 Aug 2019 15:23:49 -0500 (CDT)
-From:   Kyle Meyer <meyerk@hpe.com>
-Cc:     Kyle Meyer <meyerk@hpe.com>, Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Russ Anderson <russ.anderson@hpe.com>,
-        Kyle Meyer <kyle.meyer@hpe.com>
-Subject: [PATCH v3 6/6] perf/util/header: Replace MAX_NR_CPUS with cpu__max_cpu
-Date:   Mon, 19 Aug 2019 15:23:48 -0500
-Message-Id: <20190819202348.88140-1-meyerk@stormcage.eag.rdlabs.hpecorp.net>
-X-Mailer: git-send-email 2.12.3
-X-HPE-SCL: -1
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190207
-To:     unlisted-recipients:; (no To-header on input)
+        id S1728348AbfHSU1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 16:27:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34652 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728193AbfHSU1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 16:27:25 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B556A214DA;
+        Mon, 19 Aug 2019 20:27:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566246444;
+        bh=l2ZRAR87AWhFL23hNA1viPVwXGyIJRgMiRFLxXTrW9c=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=XMliCWgDsJlHW9HzSHrP5IMKxoytQCWfKhtVm5uQoZiHC+cSWyhP8SmFkP37/emnE
+         OPmy0u9zIFWLukIM4WmkgGEqcgDjYfNG7QM8H5uwX+OrnQLEzftk37F3NxIJLw9glq
+         lv6sy/wDiVHc/whAMGIZaWe9Mcm/VX3x4lnnpLtA=
+Subject: Re: [PATCH 1/3] test_firmware: add support for
+ request_firmware_into_buf
+To:     Luis Chamberlain <mcgrof@kernel.org>,
+        Scott Branden <scott.branden@broadcom.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        bjorn.andersson@linaro.org,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
+        shuah <shuah@kernel.org>
+References: <20190816000945.29810-1-scott.branden@broadcom.com>
+ <20190816000945.29810-2-scott.branden@broadcom.com>
+ <20190819052434.GP16384@42.do-not-panic.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <c5d53b0a-5c99-8183-6f8b-fa3cac13580e@kernel.org>
+Date:   Mon, 19 Aug 2019 14:27:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20190819052434.GP16384@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function cpu__max_cpu returns the possible number of CPUs as defined in the
-sysfs and can be used as an alternative for MAX_NR_CPUS in write_cache.
-MAX_CACHES is replaced by cpu__max_cpu() * MAX_CACHE_LVL.
+On 8/18/19 11:24 PM, Luis Chamberlain wrote:
+> On Thu, Aug 15, 2019 at 05:09:43PM -0700, Scott Branden wrote:
+>> Add test config into_buf to allow request_firmware_into_buf to be
+>> called instead of request_firmware/request_firmware_direct.  The number
+>> of parameters differ calling request_firmware_into_buf and support
+>> has not been added to test such api in test_firmware until now.
+>>
+>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
+> 
+> Thanks for the patch!
+> 
+> Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+> 
+>    Luis
+> 
 
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: Russ Anderson <russ.anderson@hpe.com>
-Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
----
- tools/perf/util/header.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Greg! Pls let me know if you would like me to take this
+throough my tree. If not,
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index b04c2b6b28b3..16f422bd0acc 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -1121,16 +1121,17 @@ static int build_caches(struct cpu_cache_level caches[], u32 size, u32 *cntp)
- 	return 0;
- }
- 
--#define MAX_CACHES (MAX_NR_CPUS * 4)
-+#define MAX_CACHE_LVL 4
- 
- static int write_cache(struct feat_fd *ff,
- 		       struct evlist *evlist __maybe_unused)
- {
--	struct cpu_cache_level caches[MAX_CACHES];
-+	u32 max_caches = cpu__max_cpu() * MAX_CACHE_LVL;
-+	struct cpu_cache_level caches[max_caches];
- 	u32 cnt = 0, i, version = 1;
- 	int ret;
- 
--	ret = build_caches(caches, MAX_CACHES, &cnt);
-+	ret = build_caches(caches, max_caches, &cnt);
- 	if (ret)
- 		goto out;
- 
--- 
-2.12.3
+Acked-by: Shuah Khan <skhan@linuxfoundation.org>
 
+
+thanks,
+-- Shuah
