@@ -2,89 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E2CE94FD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:23:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD25C94FDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:25:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728639AbfHSVXU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 17:23:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49238 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728018AbfHSVXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:23:20 -0400
-Received: from localhost (unknown [69.71.4.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2C9922CE8;
-        Mon, 19 Aug 2019 21:23:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566249799;
-        bh=3Wg6NFHKKpBSbK1JQfpV0Z+KzBTBs501plCy+K3XQBA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QFM/RQBD3NheayW2hoVztJW9PKN5YydTgSEs0J4apIjMwxmAFdhpMSDDx84SYHHeN
-         LCAEWiDHsWe8huixtSjEhqxlohwG5CiqRnmRJ4DCCf2iIzXYkytT6UhlSOlfuQ4ioH
-         6n84pUKllbGMl0XFxx5cXRd8T4j2FsRxFMuBlQ3M=
-Date:   Mon, 19 Aug 2019 16:23:17 -0500
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-        "open list:ACPI" <linux-acpi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ACPI / PCI: fix a memory leak bug
-Message-ID: <20190819212317.GU253360@google.com>
-References: <1565930002-5524-1-git-send-email-wenwen@cs.uga.edu>
+        id S1728557AbfHSVYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:24:39 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:49479 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728014AbfHSVYj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 17:24:39 -0400
+Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hzp8j-0004hP-Qj; Mon, 19 Aug 2019 23:24:33 +0200
+Date:   Mon, 19 Aug 2019 23:24:33 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     kbuild test robot <lkp@intel.com>
+cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
+Subject: Re: [tip:WIP.timers/core 49/68] include/linux/sched/types.h:16:2:
+ error: unknown type name 'u64'
+In-Reply-To: <201908200518.CGnq3sBO%lkp@intel.com>
+Message-ID: <alpine.DEB.2.21.1908192323180.4008@nanos.tec.linutronix.de>
+References: <201908200518.CGnq3sBO%lkp@intel.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565930002-5524-1-git-send-email-wenwen@cs.uga.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The subject line should give a clue about where the leak is, e.g.,
-
-  ACPI / PCI: fix acpi_pci_irq_enable() memory leak
-
-On Thu, Aug 15, 2019 at 11:33:22PM -0500, Wenwen Wang wrote:
-> In acpi_pci_irq_enable(), 'entry' is allocated by invoking
-> acpi_pci_irq_lookup(). However, it is not deallocated if
-> acpi_pci_irq_valid() returns false, leading to a memory leak. To fix this
-> issue, free 'entry' before returning 0.
-
-I think the corresponding kzalloc() is the one in
-acpi_pci_irq_check_entry().
-
-> Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-> ---
->  drivers/acpi/pci_irq.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+On Tue, 20 Aug 2019, kbuild test robot wrote:
 > 
-> diff --git a/drivers/acpi/pci_irq.c b/drivers/acpi/pci_irq.c
-> index d2549ae..dea8a60 100644
-> --- a/drivers/acpi/pci_irq.c
-> +++ b/drivers/acpi/pci_irq.c
-> @@ -449,8 +449,10 @@ int acpi_pci_irq_enable(struct pci_dev *dev)
->  		 * No IRQ known to the ACPI subsystem - maybe the BIOS /
->  		 * driver reported one, then use it. Exit in any case.
->  		 */
-> -		if (!acpi_pci_irq_valid(dev, pin))
-> +		if (!acpi_pci_irq_valid(dev, pin)) {
-> +			kfree(entry);
->  			return 0;
-> +		}
-
-Looks like we missed this when e237a5518425 ("x86/ACPI/PCI: Recognize
-that Interrupt Line 255 means "not connected"") was merged.
-
-You could add:
-
-Fixes: e237a5518425 ("x86/ACPI/PCI: Recognize that Interrupt Line 255 means "not connected"")
-
->  		if (acpi_isa_register_gsi(dev))
->  			dev_warn(&dev->dev, "PCI INT %c: no GSI\n",
-> -- 
-> 2.7.4
+> All errors (new ones prefixed by >>):
 > 
+>    In file included from <command-line>:0:0:
+
+Huch? What kind of weird include chain is that?
+
+> >> include/linux/sched/types.h:16:2: error: unknown type name 'u64'
+>      u64    utime;
+>      ^~~
+>    include/linux/sched/types.h:17:2: error: unknown type name 'u64'
+>      u64    stime;
+>      ^~~
+
+All (header) files which include that new header have u64 defined.
+
+Thanks,
+
+	tglx
