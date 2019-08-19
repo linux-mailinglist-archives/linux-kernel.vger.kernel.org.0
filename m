@@ -2,89 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 90BDD91B80
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 05:34:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E191491B85
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 05:38:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726562AbfHSDeE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sun, 18 Aug 2019 23:34:04 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:47280 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726162AbfHSDeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Aug 2019 23:34:04 -0400
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 93D60F1F37B7C96B27CA;
-        Mon, 19 Aug 2019 11:33:59 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.439.0; Mon, 19 Aug 2019 11:33:51 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <agross@kernel.org>, <georgi.djakov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <sboyd@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Mao Wenan" <maowenan@huawei.com>
-Subject: [PATCH v2 linux-next] qcom: qcs404: move COMPILE_TEST to INTERCONNECT_QCOM
-Date:   Mon, 19 Aug 2019 11:37:47 +0800
-Message-ID: <20190819033747.38339-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190818010905.7AD602173B@mail.kernel.org>
-References: <20190818010905.7AD602173B@mail.kernel.org>
+        id S1726519AbfHSDiF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sun, 18 Aug 2019 23:38:05 -0400
+Received: from ozlabs.org ([203.11.71.1]:51721 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726261AbfHSDiF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Aug 2019 23:38:05 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46BflG0PC3z9sMr;
+        Mon, 19 Aug 2019 13:38:02 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566185882;
+        bh=pfE96AOV53zCFu3hWt4w3XO1oPkFG1UhK4ts9unRChc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=pYKYbcmqpzDegqPL5gcbTJSqtA6y+7+lz+dU1R33GjKunQQeOUuLxlaMdxgJFLqeK
+         KEtleHNJgcl/22ntH63rHhADVPB4QHb9mGzCiGcICwIIE0mMGOJlHD6nLXo3dHbZ/q
+         LOar0pBB2jVPaqajTBlnOWSplT60sVaR1XqigWtp/V1GRb1i/XQzhiZcPk4PLZuTbd
+         L0T3fE+dHx30gL0Hq9u+4zszi+Ww6g8tZmfWUz7P9rBeGZvdJo832EQBPPigUWtF9A
+         uwnty3dhPXK8RRZx8UcDjxUw+j8UoV8moXSE+SiBoztwhqBTjYqEPeq2RYFTM6Vfwu
+         ya9jR73hhsklA==
+Date:   Mon, 19 Aug 2019 13:38:01 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     James Morris <jmorris@namei.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Garrett <mjg59@google.com>,
+        Casey Schaufler <casey@schaufler-ca.com>
+Subject: Re: linux-next: build failure after merge of the security tree
+Message-ID: <20190819133801.3f5108ed@canb.auug.org.au>
+In-Reply-To: <20190819132119.7349e881@canb.auug.org.au>
+References: <20190812145823.63d77573@canb.auug.org.au>
+        <201908121033.BFBE9516AC@keescook>
+        <20190819132119.7349e881@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/QRI44r81h6.Y+Cx/C24Zn04";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is one compilation error when CONFIG_INTERCONNECT_QCOM_QCS404=y and
-CONFIG_INTERCONNECT_QCOM_SMD_RPM=y, as well as CONFIG_COMPILE_TEST=y,
-but CONFIG_QCOM_SMD_RPM is not set, logs as below:
+--Sig_/QRI44r81h6.Y+Cx/C24Zn04
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-drivers/interconnect/qcom/smd-rpm.o: In function `qcom_icc_rpm_smd_send':
-smd-rpm.c:(.text+0xe4): undefined reference to `qcom_rpm_smd_write'
-Makefile:1071: recipe for target 'vmlinux' failed
-make: *** [vmlinux] Error 1
+Hi James,
 
-This is because
-INTERCONNECT_QCOM_QCS404 depends on QCOM_SMD_RPM || COMPILE_TEST.
-Here CONFIG_COMPILE_TEST=y, so CONFIG_INTERCONNECT_QCOM_SMD_RPM
-is selected. If CONFIG_QCOM_SMD_RPM is not set, then
-qcom_rpm_smd_write() is not defined, and compilation error happen.
-Fix this by moving COMPILE_TEST from CONFIG_INTERCONNECT_QCOM_QCS404 to
-CONFIG_INTERCONNECT_QCOM, qcom's interconnect drivers can be compiled on
-different platform.
+On Mon, 19 Aug 2019 13:21:19 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
+wrote:
+>
+> On Mon, 12 Aug 2019 10:34:17 -0700 Kees Cook <keescook@chromium.org> wrot=
+e:
+> >
+> > On Mon, Aug 12, 2019 at 02:58:23PM +1000, Stephen Rothwell wrote: =20
+> > >=20
+> > > After merging the security tree, today's linux-next build (arm
+> > > multi_v7_defconfig) failed like below.
+> > >=20
+> > > Caused by commit
+> > >=20
+> > >   45d29f9e9b8b ("security: Support early LSMs")
+> > >=20
+> > > I have added the following fix for today:
+> > >=20
+> > > From: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date: Mon, 12 Aug 2019 14:54:20 +1000
+> > > Subject: [PATCH] early_security_init() needs a stub got !CONFIG_SECUR=
+ITY
+                                                          ^^^
+for
 
-Fixes: 5e4e6c4d3ae0 ("interconnect: qcom: Add QCS404 interconnect provider driver")
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- v2: change subject of patch, and move COMPILE_TEST to INTERCONNECT_QCOM.
- drivers/interconnect/qcom/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+If you do decide to apply this patch, please fix the subject typo, thanks :=
+-)
 
-diff --git a/drivers/interconnect/qcom/Kconfig b/drivers/interconnect/qcom/Kconfig
-index 339e8f1..7207248 100644
---- a/drivers/interconnect/qcom/Kconfig
-+++ b/drivers/interconnect/qcom/Kconfig
-@@ -1,14 +1,14 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config INTERCONNECT_QCOM
- 	bool "Qualcomm Network-on-Chip interconnect drivers"
--	depends on ARCH_QCOM
-+	depends on ARCH_QCOM || COMPILE_TEST
- 	help
- 	  Support for Qualcomm's Network-on-Chip interconnect hardware.
- 
- config INTERCONNECT_QCOM_QCS404
- 	tristate "Qualcomm QCS404 interconnect driver"
- 	depends on INTERCONNECT_QCOM
--	depends on QCOM_SMD_RPM || COMPILE_TEST
-+	depends on QCOM_SMD_RPM
- 	select INTERCONNECT_QCOM_SMD_RPM
- 	help
- 	  This is a driver for the Qualcomm Network-on-Chip on qcs404-based
--- 
-2.7.4
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/QRI44r81h6.Y+Cx/C24Zn04
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1aGZkACgkQAVBC80lX
+0GxSVQgAiFpY9Pi7VmIDE/pnpdfJtzjv3hszMpqSNEI6uCR+MNHwZ2YQcWyqRVId
+HIXrFfo1SP9rKX7in1Cnjdjn5D8jZOMXrVpS5s6quQngxQojcbit6hFHo6GGJEoY
+jOrMaEd18UgoJZ3iZDLFOKiSIQ32cvWgZwwd76UgnGGE8ua0fWVeMBCv1eC1uxN3
+logU+tYT705qVxOwq5sOea9ZLo+N+eQoYPXKhfGxdLP9jHMwcf0eIertiS8PfLEd
+hWuR5mZzH5jLaDT47ecioiiNCdOoazJlDg5CsJXU3ujVzKKTkIVMQybghgtW/RUN
+4r93D2YPw/qi+d97Dx82aZ3huMo+iA==
+=OvXx
+-----END PGP SIGNATURE-----
+
+--Sig_/QRI44r81h6.Y+Cx/C24Zn04--
