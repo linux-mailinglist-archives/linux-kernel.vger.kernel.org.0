@@ -2,98 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DA8794945
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:58:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8775094948
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:58:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfHSP5L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:57:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:34291 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726893AbfHSP5K (ORCPT
+        id S1727901AbfHSP6I (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:58:08 -0400
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40209 "EHLO
+        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726390AbfHSP6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:57:10 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n9so1466168pgc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=NZ5M6FokMFIl6JI1d5V5fOCvvX0MiNcfS0qCjnnVOk0=;
-        b=ZuIvppsHpIc2FmTrE/8f5vFkKWid4CEuZ+VUrkFzsyLTuaCWlcgIVqG1RmzwRqd4sF
-         rFOqmcZazBJFJSd1BtLd39wbrnIAjhhJRttSk4bVUqCMcHf4HnejkI1q092sb5FUQZvZ
-         1jeZW3vpwmUoDHJsRTfKjRdpfWGxPDuC53XLI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=NZ5M6FokMFIl6JI1d5V5fOCvvX0MiNcfS0qCjnnVOk0=;
-        b=fTJ0NDvDjn/Nf2RbgUEITG0lgdcUTDZ7ckQoU8IgDkLq0m+LC0GOCRClMM1nDIzWMY
-         CN8oaPktSVPkSTWfrVT378XPm2XPyxKWs+Pj0BqjMFbSOUAgDBsQVmnnNSltjQ67kVWN
-         xIZpQ4WcctonPu39tF8P510rTNn5APu9ByGVi1AEccyTe8GjD06VFLsfhgmzS8wBJHoK
-         4xpZiDVuFOquO4huUkbsIrIQuusc8CnTV089/OYdTrNsyRaTqJnDihtKZUiUOkzBXDUG
-         RpZieAmI0X40LLH0WmZOnIrCDJD87/afa7uwo3tY2EaRQRzg2gVBrna+Y+m9l6ideP5m
-         CQQA==
-X-Gm-Message-State: APjAAAXYCYrFolwtTv4roXV1a2HUWJxwmSL75FFPICvE3ev3XHMsDgGk
-        Wsvgz3zp2Dr2lIVffbzN0AYrleXejgU=
-X-Google-Smtp-Source: APXvYqxNizINK4C3KjWAcmkjymtlIgjrPfi8J5R4M62aV8ysZ95ZCN8P/z5UWObOueWFqscMvfQeow==
-X-Received: by 2002:aa7:8488:: with SMTP id u8mr25314824pfn.229.1566230230189;
-        Mon, 19 Aug 2019 08:57:10 -0700 (PDT)
-Received: from [10.69.45.46] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id n128sm15695152pfn.46.2019.08.19.08.57.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 08:57:09 -0700 (PDT)
-Subject: Re: [PATCH v2] nvme: allow 64-bit results in passthru commands
-To:     Keith Busch <kbusch@kernel.org>,
-        Marta Rybczynska <mrybczyn@kalray.eu>
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Samuel Jones <sjones@kalray.eu>,
-        Guillaume Missonnier <gmissonnier@kalray.eu>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        axboe <axboe@fb.com>, Christoph Hellwig <hch@lst.de>
-References: <89520652.56920183.1565948841909.JavaMail.zimbra@kalray.eu>
- <20190816131606.GA26191@lst.de>
- <469829119.56970464.1566198383932.JavaMail.zimbra@kalray.eu>
- <20190819144922.GC6883@localhost.localdomain>
-From:   James Smart <james.smart@broadcom.com>
-Message-ID: <54e7a40d-a06c-a777-7061-0503051cc6bf@broadcom.com>
-Date:   Mon, 19 Aug 2019 08:57:01 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 19 Aug 2019 11:58:08 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id EF40721F82;
+        Mon, 19 Aug 2019 11:58:06 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 19 Aug 2019 11:58:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=gpIBDU
+        fEZDWpISBZBKSzckdrBhI7tyEF/XdiR6xtils=; b=Dq+rxnHmDSnDxbOUUxbdOI
+        h+DMsDLbSLEG6axCOcFuszM9/qfiF46JqMt0jSysoMi0sbEp1hpNmBKnWwbW3/Qj
+        os4eZWceQFMejicWLvZKjwoum5c+SFDOsCVY6Ajc8yLmnKzoVKMhzYezxEvjMsRo
+        1jOtSiiFfYBuAy1ovQv5jENF838z2O+hJTo58edFJKfHpqQCAni0UiyXOrVrT+Uj
+        /ENsgmjmKRWcjTKKAEzCSYbDs0Nj7gncaZy6iBu3AcGEXh8eaNMkSgxKdxsar3/f
+        NNelLraLR4SfSf0llYc2gnUPScMSgpq5wp0fAWNI916fT5deaw2Ktp6E+OkSb6Bg
+        ==
+X-ME-Sender: <xms:DsdaXb480tNg0T9Y5FKVz6FWrttAwiWluQXV-_jVr-gbdJth0T-m4g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudefledgleeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvuffkfhggtggujggfsehttd
+    ertddtredvnecuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihgu
+    ohhstghhrdhorhhgqeenucfkphepudelfedrgeejrdduieehrddvhedunecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgnecuvehluhhsthgv
+    rhfuihiivgeptd
+X-ME-Proxy: <xmx:DsdaXWEfff4oQh-ZUn1dkI9CMUKz9vMXvMwZvezpH5N6pPxEEklF4Q>
+    <xmx:DsdaXTWAm7GVPHb5PKiLOyKPPL6F7LpcsY-RvG7AE6ZXmEHPTWeVug>
+    <xmx:DsdaXSWFBP5uRjGAZx15SaiMkwpnl8K9jnmO0bHlkphrRlvX8o0_NA>
+    <xmx:DsdaXRxiJZRu_xpoLr_fOa1Xf6TOMVuTT1oVl8fx-055-e5FiS9ouA>
+Received: from localhost (unknown [193.47.165.251])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 69D5F380083;
+        Mon, 19 Aug 2019 11:58:05 -0400 (EDT)
+Date:   Mon, 19 Aug 2019 18:58:03 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     davem@davemloft.net, idosch@mellanox.com, jiri@mellanox.com,
+        mcroce@redhat.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, jakub.kicinski@netronome.com
+Subject: Re: [PATCH net-next] netdevsim: Fix build error without CONFIG_INET
+Message-ID: <20190819155803.GA16864@splinter>
+References: <20190819120825.74460-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20190819144922.GC6883@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819120825.74460-1-yuehaibing@huawei.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 08:08:25PM +0800, YueHaibing wrote:
+> If CONFIG_INET is not set, building fails:
+> 
+> drivers/net/netdevsim/dev.o: In function `nsim_dev_trap_report_work':
+> dev.c:(.text+0x67b): undefined reference to `ip_send_check'
+> 
+> Add CONFIG_INET Kconfig dependency to fix this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: da58f90f11f5 ("netdevsim: Add devlink-trap support")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
+Reviewed-by: Ido Schimmel <idosch@mellanox.com>
 
-On 8/19/2019 7:49 AM, Keith Busch wrote:
-> On Mon, Aug 19, 2019 at 12:06:23AM -0700, Marta Rybczynska wrote:
->> ----- On 16 Aug, 2019, at 15:16, Christoph Hellwig hch@lst.de wrote:
->>> Sorry for not replying to the earlier version, and thanks for doing
->>> this work.
->>>
->>> I wonder if instead of using our own structure we'd just use
->>> a full nvme SQE for the input and CQE for that output.  Even if we
->>> reserve a few fields that means we are ready for any newly used
->>> field (at least until the SQE/CQE sizes are expanded..).
->> We could do that, nvme_command and nvme_completion are already UAPI.
->> On the other hand that would mean not filling out certain fields like
->> command_id. Can do an approach like this.
-> Well, we need to pass user space addresses and lengths, which isn't
-> captured in struct nvme_command.
->
-This is going to be fun.  It's going to have to be a cooperative effort 
-between app and transport. There will always need to be some parts of 
-the SQE filled out by the transport like SGL, command type/subtype bits, 
-as well as dealing with buffers as Keith states. Command ID is another 
-of those fields.
+Thanks for the patch.
 
--- james
-
-
+> ---
+>  drivers/net/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
+> index 48e209e..7bb786e 100644
+> --- a/drivers/net/Kconfig
+> +++ b/drivers/net/Kconfig
+> @@ -505,7 +505,7 @@ source "drivers/net/hyperv/Kconfig"
+>  
+>  config NETDEVSIM
+>  	tristate "Simulated networking device"
+> -	depends on DEBUG_FS
+> +	depends on INET && DEBUG_FS
+>  	select NET_DEVLINK
+>  	help
+>  	  This driver is a developer testing tool and software model that can
+> -- 
+> 2.7.4
+> 
+> 
