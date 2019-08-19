@@ -2,63 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 09B1F9508B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:12:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 62CF395093
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 00:13:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728655AbfHSWL6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 18:11:58 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:49754 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728484AbfHSWL5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 18:11:57 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hzpsV-0005OC-U7; Tue, 20 Aug 2019 00:11:52 +0200
-Date:   Tue, 20 Aug 2019 00:11:50 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     kbuild test robot <lkp@intel.com>
-cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
-Subject: Re: [tip:WIP.timers/core 49/68] include/linux/sched/types.h:16:2:
- error: unknown type name 'u64'
-In-Reply-To: <alpine.DEB.2.21.1908192323180.4008@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1908200008320.4008@nanos.tec.linutronix.de>
-References: <201908200518.CGnq3sBO%lkp@intel.com> <alpine.DEB.2.21.1908192323180.4008@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
+        id S1728583AbfHSWNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 18:13:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33064 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728136AbfHSWNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 18:13:48 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AF79C214DA;
+        Mon, 19 Aug 2019 22:13:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566252827;
+        bh=4OL6nVB0qLhHMLV1A+Hg935diBRpXnS4haw7ngoM9j4=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kI9kp010sbLvA9Ywre7pB5dBfmLhakbFcsuorxWOsdV6NmA+5vidwNG0D1bwcxfD5
+         EJ/hFdkoCAooP46shHMKoYGA4ahBsfgPgTI244f/fzMjmQ5//XKRM3TegfNa+TLMJ2
+         sdG4xBNmgNek2PkqFsbwyptx/+1k3hlw6wZ10qXE=
+Date:   Mon, 19 Aug 2019 15:13:47 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: tmpfs: fixups to use of the new mount API
+Message-Id: <20190819151347.ecbd915060278a70ddeebc91@linux-foundation.org>
+In-Reply-To: <alpine.LSU.2.11.1908191503290.1253@eggly.anvils>
+References: <alpine.LSU.2.11.1908191503290.1253@eggly.anvils>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019, Thomas Gleixner wrote:
-> On Tue, 20 Aug 2019, kbuild test robot wrote:
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> >    In file included from <command-line>:0:0:
-> 
-> Huch? What kind of weird include chain is that?
-> 
-> > >> include/linux/sched/types.h:16:2: error: unknown type name 'u64'
-> >      u64    utime;
-> >      ^~~
-> >    include/linux/sched/types.h:17:2: error: unknown type name 'u64'
-> >      u64    stime;
-> >      ^~~
-> 
-> All (header) files which include that new header have u64 defined.
+On Mon, 19 Aug 2019 15:09:14 -0700 (PDT) Hugh Dickins <hughd@google.com> wrote:
 
-And building sparc64 allmodconfig does not expose this odd failure
-here. The build fails for a reason related to this series, but that's not
-caused by that sched/types.h header.
+> Several fixups to shmem_parse_param() and tmpfs use of new mount API:
+> 
+> mm/shmem.c manages filesystem named "tmpfs": revert "shmem" to "tmpfs"
+> in its mount error messages.
+> 
+> /sys/kernel/mm/transparent_hugepage/shmem_enabled has valid options
+> "deny" and "force", but they are not valid as tmpfs "huge" options.
+> 
+> The "size" param is an alternative to "nr_blocks", and needs to be
+> recognized as changing max_blocks.  And where there's ambiguity, it's
+> better to mention "size" than "nr_blocks" in messages, since "size" is
+> the variant shown in /proc/mounts.
+> 
+> shmem_apply_options() left ctx->mpol as the new mpol, so then it was
+> freed in shmem_free_fc(), and the filesystem went on to use-after-free.
+> 
+> shmem_parse_param() issue "tmpfs: Bad value for '%s'" messages just
+> like fs_parse() would, instead of a different wording.  Where config
+> disables "mpol" or "huge", say "tmpfs: Unsupported parameter '%s'".
 
-Thanks,
+Is this
 
-	tglx
+Fixes: 144df3b288c41 ("vfs: Convert ramfs, shmem, tmpfs, devtmpfs, rootfs to use the new mount API")?
+
+and a Cc:stable is appropriate?
