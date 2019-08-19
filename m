@@ -2,226 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91167926B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D2E2926BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:30:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727352AbfHSO2v (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:28:51 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43846 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726314AbfHSO2v (ORCPT
+        id S1726828AbfHSOaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:30:39 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:41433 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726242AbfHSOaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:28:51 -0400
-Received: by mail-pl1-f195.google.com with SMTP id 4so1046709pld.10
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 07:28:50 -0700 (PDT)
+        Mon, 19 Aug 2019 10:30:39 -0400
+Received: by mail-qk1-f193.google.com with SMTP id g17so1549393qkk.8
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 07:30:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:subject:to:cc:references:in-reply-to:mime-version
-         :user-agent:message-id:content-transfer-encoding;
-        bh=g1/UhsGpab2huoNPYfjYR7z5xJe4sBwu+dlYxZJw49k=;
-        b=jMMAgHS3zoiaNzMEUcmUgjr6gPEABAgsBi6k0p2sQa8P8pHKcQPRrru8ITglJxQ/0X
-         zsy/uqPEE8EGDNTSZiugXTzmq1iu2hHO/tCotMqhdESeN1GjUmmq463qCh88MPL0CEVb
-         zz36GZCHPW+fhZivXCxUZCmpmsgJfPX4cXT24UtQ2cTwcIBJFySECSx6Z5gaw7D51Eym
-         wdu4ZJmpO8t/K1A5F0b/ZqNmsiK88RSUibuOj6D3beExU2y78Bx5wSzd/yww/7HTES4C
-         ByXVWplr1NiberP0x8tGeOljLU3aAT7oBhrzuZqQ0OAGw1pyq841e4AMIgazCkv/ikQZ
-         u4fw==
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HGVSfJgxGndqmKr3AeFrIE719FAYcg4+a2HDtPkh5O4=;
+        b=RI3y7FmX2mzIIqhnSKh8oahmeHBusiOazihAsOl0C+1cz9UUSUz/CthmJd2KrWZPaE
+         v/bHA3DbMV+q6SlUbJ6a7GxvMdpekmVb4mgvmTrllKvDI8zUFa+CIo7uB+x7WbAfDvqK
+         c77/2NsrlI84wbS4FbiPww8S18hQ4mb8iGVgHQ517AzsotOUV24YT0XmKmURWe3FaaCe
+         YiVpe2t12eE+EViJxWxUDVQdXUTH/4sAFcrySFUvSqtQxFlaYTy118pwoqskINuYKnyh
+         CgQ24hvkmTMg/zIxCtmLy05syyQ79I3MRKH+imzUiNL2eNpz5fOncDz+AGoU/doAak+x
+         ySeA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:subject:to:cc:references:in-reply-to
-         :mime-version:user-agent:message-id:content-transfer-encoding;
-        bh=g1/UhsGpab2huoNPYfjYR7z5xJe4sBwu+dlYxZJw49k=;
-        b=taES7oEbbfl2W8dl7bRD5EYEhqIlI8lmZuElc49seG4Xneymck4UUjHykNrvJZulE1
-         WDi9o0wZ4P8bOYubhhszOBEHjY9XppRz7kSOBjB5WPQn251jpITiuCIdfOkZtqy/ruLR
-         zWOwcURR9a0B27ZZOX+VCsDM3Hrb2dndiWSkFPRVm+E5+tjM/OLO48h56096a0qZUgqj
-         o6DgVhbXXaiwzbC5HR7k/B0e9ZFj7R878A7yzujFFXlAX/xOe9ySJo1c339o/e13UP4v
-         xYoVT0qbzm6E0ppBwRMxW9R371hcMsgN9mQEtb0volcZGP2x45z0h83TVAFWp9kPF/3M
-         3Pbg==
-X-Gm-Message-State: APjAAAXFfXaIR1ykAg0A40zbGBChZDtLJ4Lt4rcfT2VFkYUJW6ns3GxJ
-        AJUjNhf13RFN9BSnan5pwY5lONiuHMw=
-X-Google-Smtp-Source: APXvYqyEjr4b6B13UJoHIE8vvVUqnED+Xe2pkMgDtpPBfdCtsyNSFc3mykM+gLpwYyHA6dXGhvbWGg==
-X-Received: by 2002:a17:902:ba14:: with SMTP id j20mr13915360pls.84.1566224930295;
-        Mon, 19 Aug 2019 07:28:50 -0700 (PDT)
-Received: from localhost (193-116-95-121.tpgi.com.au. [193.116.95.121])
-        by smtp.gmail.com with ESMTPSA id k3sm27704498pfg.23.2019.08.19.07.28.48
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HGVSfJgxGndqmKr3AeFrIE719FAYcg4+a2HDtPkh5O4=;
+        b=ttpkBfCMcPbkLysBkt7CJvkvT2GRX9QbjOTkSIgrDF6VQr8WNDA+oLqSoc55AWKO9g
+         p2mrZrwiQpcQTtypb9XXURZSUjKLt3J6qbj6Ue8KZEJ6newsFnA1/qBJxvqJ6UA053nN
+         GiooMjjEsGHTFOO5QS2W8AGUWvBpYb0rkrcDZr0ARRBOQraN3nLveJvwy6dQJ3iZPQ3U
+         VbhWjbD1+rgThzwGO+MLAgsqtNUQsTjthXA1vIu1w9Ax8G2W/1qyOe/3cjqptzcDEfR+
+         XR1IUJC5zumiqf8ZUkSkxpwPPhB16iGIkWvc+lUfm7oXVcaCIbMDli8/8o/BgjMsdzLM
+         s4AA==
+X-Gm-Message-State: APjAAAXdj19YWVkQ4MgjWlBec+AXCU0/veQ159NkXQtnXPLgqiF/bejz
+        ImNFHWHMA0EfqOeieyH2rMY=
+X-Google-Smtp-Source: APXvYqwVqQqccQGWKHL3klQLTXMSVCCqWbbCAeftBXBpPQJIVPq8xfZ1nLxOQ1M197T3f1OwAg3eaw==
+X-Received: by 2002:a37:395:: with SMTP id 143mr21541956qkd.317.1566225038113;
+        Mon, 19 Aug 2019 07:30:38 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id v7sm7039528qte.86.2019.08.19.07.30.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 07:28:49 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 00:28:36 +1000
-From:   Nicholas Piggin <npiggin@gmail.com>
-Subject: Re: [PATCH v10 6/7] powerpc/mce: Handle UE event for memcpy_mcsafe
-To:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Santosh Sivaraj <santosh@fossix.org>
-Cc:     "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        Reza Arbab <arbab@linux.ibm.com>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Chandan Rajendra <chandan@linux.ibm.com>,
-        christophe leroy <christophe.leroy@c-s.fr>,
-        Mahesh Salgaonkar <mahesh@linux.ibm.com>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <20190815003941.18655-1-santosh@fossix.org>
-        <20190815003941.18655-7-santosh@fossix.org>
-In-Reply-To: <20190815003941.18655-7-santosh@fossix.org>
+        Mon, 19 Aug 2019 07:30:37 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id E612140340; Mon, 19 Aug 2019 11:30:34 -0300 (-03)
+Date:   Mon, 19 Aug 2019 11:30:34 -0300
+To:     Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
+        Jiri Olsa <jolsa@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC] perf_sample_id::idx
+Message-ID: <20190819143034.GC29674@kernel.org>
+References: <20190809092736.GA9377@krava>
+ <363DA0ED52042842948283D2FC38E4649C5B1DB0@IRSMSX106.ger.corp.intel.com>
+ <20190809160421.GB9280@kernel.org>
+ <83ff264f-84c3-5372-8976-dd9293d20c6f@intel.com>
 MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Message-Id: <1566224688.g0ntl10a9q.astroid@bobo.none>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <83ff264f-84c3-5372-8976-dd9293d20c6f@intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Santosh Sivaraj's on August 15, 2019 10:39 am:
-> From: Balbir Singh <bsingharora@gmail.com>
->=20
-> If we take a UE on one of the instructions with a fixup entry, set nip
-> to continue execution at the fixup entry. Stop processing the event
-> further or print it.
+Em Mon, Aug 12, 2019 at 12:09:35PM +0300, Adrian Hunter escreveu:
+> On 9/08/19 7:04 PM, Arnaldo Carvalho de Melo wrote:
+> > Em Fri, Aug 09, 2019 at 03:20:14PM +0000, Hunter, Adrian escreveu:
+> > 
+> >> It will be used for AUX area sampling.  A sample will have AUX area
+> >> data that will be queued for decoding, where there are separate queues
+> >> for each CPU (per-cpu tracing) or task (per-thread tracing).  The
+> >> sample ID can be used to lookup 'idx' which is effectively the queue
+> >> number.
+> > 
+> > Would be good to have this as a comment in the perf_sample_id struct
+> > definition :-)
 
-The previous patch added these fixup entries and now you handle them
-here. Which in theory seems to break bisecting. The patches should
-either be merged, or this one moved ahead in the series.
-
-I'm still not entirely happy with the ignore_event thing, but that's
-probably more a symptom of the convoluted way machine check handling
-and reporting is structured. For now it's probably fine.
-
-Reviewed-by: Nicholas Piggin <npiggin@gmail.com>
-
->=20
-> Co-developed-by: Reza Arbab <arbab@linux.ibm.com>
-> Signed-off-by: Reza Arbab <arbab@linux.ibm.com>
-> Signed-off-by: Balbir Singh <bsingharora@gmail.com>
-> Signed-off-by: Santosh Sivaraj <santosh@fossix.org>
-> Reviewed-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Thanks, applied to perf/core.
+ 
+> 
+> >From 45d57bd7b25c9864f21e25534274ea461ff83d9d Mon Sep 17 00:00:00 2001
+> From: Adrian Hunter <adrian.hunter@intel.com>
+> Date: Mon, 12 Aug 2019 12:06:31 +0300
+> Subject: [PATCH] perf tools: Add comment for idx in struct perf_sample_id
+> 
+> 'idx' was added as preparation for AUX area sampling. Add a comment to
+> describe why.
+> 
+> Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 > ---
->  arch/powerpc/include/asm/mce.h  |  4 +++-
->  arch/powerpc/kernel/mce.c       | 16 ++++++++++++++++
->  arch/powerpc/kernel/mce_power.c | 15 +++++++++++++--
->  3 files changed, 32 insertions(+), 3 deletions(-)
->=20
-> diff --git a/arch/powerpc/include/asm/mce.h b/arch/powerpc/include/asm/mc=
-e.h
-> index f3a6036b6bc0..e1931c8c2743 100644
-> --- a/arch/powerpc/include/asm/mce.h
-> +++ b/arch/powerpc/include/asm/mce.h
-> @@ -122,7 +122,8 @@ struct machine_check_event {
->  			enum MCE_UeErrorType ue_error_type:8;
->  			u8		effective_address_provided;
->  			u8		physical_address_provided;
-> -			u8		reserved_1[5];
-> +			u8		ignore_event;
-> +			u8		reserved_1[4];
->  			u64		effective_address;
->  			u64		physical_address;
->  			u8		reserved_2[8];
-> @@ -193,6 +194,7 @@ struct mce_error_info {
->  	enum MCE_Initiator	initiator:8;
->  	enum MCE_ErrorClass	error_class:8;
->  	bool			sync_error;
-> +	bool			ignore_event;
->  };
-> =20
->  #define MAX_MC_EVT	100
-> diff --git a/arch/powerpc/kernel/mce.c b/arch/powerpc/kernel/mce.c
-> index a3b122a685a5..ec4b3e1087be 100644
-> --- a/arch/powerpc/kernel/mce.c
-> +++ b/arch/powerpc/kernel/mce.c
-> @@ -149,6 +149,7 @@ void save_mce_event(struct pt_regs *regs, long handle=
-d,
->  		if (phys_addr !=3D ULONG_MAX) {
->  			mce->u.ue_error.physical_address_provided =3D true;
->  			mce->u.ue_error.physical_address =3D phys_addr;
-> +			mce->u.ue_error.ignore_event =3D mce_err->ignore_event;
->  			machine_check_ue_event(mce);
->  		}
->  	}
-> @@ -266,8 +267,17 @@ static void machine_process_ue_event(struct work_str=
-uct *work)
->  		/*
->  		 * This should probably queued elsewhere, but
->  		 * oh! well
-> +		 *
-> +		 * Don't report this machine check because the caller has a
-> +		 * asked us to ignore the event, it has a fixup handler which
-> +		 * will do the appropriate error handling and reporting.
->  		 */
->  		if (evt->error_type =3D=3D MCE_ERROR_TYPE_UE) {
-> +			if (evt->u.ue_error.ignore_event) {
-> +				__this_cpu_dec(mce_ue_count);
-> +				continue;
-> +			}
-> +
->  			if (evt->u.ue_error.physical_address_provided) {
->  				unsigned long pfn;
-> =20
-> @@ -301,6 +311,12 @@ static void machine_check_process_queued_event(struc=
-t irq_work *work)
->  	while (__this_cpu_read(mce_queue_count) > 0) {
->  		index =3D __this_cpu_read(mce_queue_count) - 1;
->  		evt =3D this_cpu_ptr(&mce_event_queue[index]);
-> +
-> +		if (evt->error_type =3D=3D MCE_ERROR_TYPE_UE &&
-> +		    evt->u.ue_error.ignore_event) {
-> +			__this_cpu_dec(mce_queue_count);
-> +			continue;
-> +		}
->  		machine_check_print_event_info(evt, false, false);
->  		__this_cpu_dec(mce_queue_count);
->  	}
-> diff --git a/arch/powerpc/kernel/mce_power.c b/arch/powerpc/kernel/mce_po=
-wer.c
-> index e74816f045f8..1dd87f6f5186 100644
-> --- a/arch/powerpc/kernel/mce_power.c
-> +++ b/arch/powerpc/kernel/mce_power.c
-> @@ -11,6 +11,7 @@
-> =20
->  #include <linux/types.h>
->  #include <linux/ptrace.h>
-> +#include <linux/extable.h>
->  #include <asm/mmu.h>
->  #include <asm/mce.h>
->  #include <asm/machdep.h>
-> @@ -18,6 +19,7 @@
->  #include <asm/pte-walk.h>
->  #include <asm/sstep.h>
->  #include <asm/exception-64s.h>
-> +#include <asm/extable.h>
-> =20
->  /*
->   * Convert an address related to an mm to a physical address.
-> @@ -559,9 +561,18 @@ static int mce_handle_derror(struct pt_regs *regs,
->  	return 0;
->  }
-> =20
-> -static long mce_handle_ue_error(struct pt_regs *regs)
-> +static long mce_handle_ue_error(struct pt_regs *regs,
-> +				struct mce_error_info *mce_err)
->  {
->  	long handled =3D 0;
-> +	const struct exception_table_entry *entry;
-> +
-> +	entry =3D search_kernel_exception_table(regs->nip);
-> +	if (entry) {
-> +		mce_err->ignore_event =3D true;
-> +		regs->nip =3D extable_fixup(entry);
-> +		return 1;
-> +	}
-> =20
->  	/*
->  	 * On specific SCOM read via MMIO we may get a machine check
-> @@ -594,7 +605,7 @@ static long mce_handle_error(struct pt_regs *regs,
->  				&phys_addr);
-> =20
->  	if (!handled && mce_err.error_type =3D=3D MCE_ERROR_TYPE_UE)
-> -		handled =3D mce_handle_ue_error(regs);
-> +		handled =3D mce_handle_ue_error(regs, &mce_err);
-> =20
->  	save_mce_event(regs, handled, &mce_err, regs->nip, addr, phys_addr);
-> =20
-> --=20
-> 2.21.0
->=20
->=20
-=
+>  tools/perf/util/evsel.h | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+> index cad54e8ba522..ba13eb771775 100644
+> --- a/tools/perf/util/evsel.h
+> +++ b/tools/perf/util/evsel.h
+> @@ -22,6 +22,13 @@ struct perf_sample_id {
+>  	struct hlist_node 	node;
+>  	u64		 	id;
+>  	struct perf_evsel	*evsel;
+> +	/*
+> +	 * 'idx' will be used for AUX area sampling. A sample will have AUX area
+> +	 * data that will be queued for decoding, where there are separate
+> +	 * queues for each CPU (per-cpu tracing) or task (per-thread tracing).
+> +	 * The sample ID can be used to lookup 'idx' which is effectively the
+> +	 * queue number.
+> +	 */
+>  	int			idx;
+>  	int			cpu;
+>  	pid_t			tid;
+> -- 
+> 2.17.1
+
+-- 
+
+- Arnaldo
