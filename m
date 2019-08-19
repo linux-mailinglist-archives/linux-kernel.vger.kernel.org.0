@@ -2,88 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F894927E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:05:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A231D927ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:06:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727262AbfHSPFV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:05:21 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54190 "EHLO mx1.redhat.com"
+        id S1727500AbfHSPGF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:06:05 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:4475 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726366AbfHSPFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:05:20 -0400
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com [209.85.221.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 85C88C08EC01
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:05:20 +0000 (UTC)
-Received: by mail-wr1-f71.google.com with SMTP id q9so5377004wrc.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:05:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bmeTxHw//EIz7MDBf48uvsF9/9rAGn75Ch54N3RQf+c=;
-        b=jzj01HN36MMcpnqFsZEzqjzJHtiNzCQ7IcLAsuiraf0bofPEy/syouSBlXzi0me5JS
-         a8JG+IWALqyByVKLR0Mc4EwAPrxp1GuUTKcFO/XZcQLzhW6a01tFfYwbYProZzGr8Z/r
-         SWOMX6EcREjYYWLl/wE4dFVZboKYC5CPBpP3pmErwFiBaf7VA8+ORK68f8FLW+n5dExj
-         rFLlq2VaaND8Y0Kqd6ZhTd4aktE2EIlkWQG2jd9wGQjZfcf58fifpKSBUIYhSHR1dtvG
-         mYyksveD1wgg0YkUmCMVHxP1uITML74TqOS+X3oCnyqA2uAvLKg0HIToE8gsj3yuXt+O
-         czWA==
-X-Gm-Message-State: APjAAAWd+E7BWzcgjj951iedELUfK9DLfUwFwJz5sEx1dxqDNLQjXiYh
-        SiWM8pembc7uJVOD8o232HNWTUrNEq1z40CfTZ0R8g8a1XChGkgEFOu7OOWD1gR6GSfaosGVt4D
-        bnEiuYG72e0vctDNtOZ4Pn06Y
-X-Received: by 2002:adf:e78c:: with SMTP id n12mr27328055wrm.83.1566227119169;
-        Mon, 19 Aug 2019 08:05:19 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqwswmEoLm6iU6z7NMMScqjY1STar/e01s0ghk+Sod0rrzWGNQUnVO7hfMTZiHRwYAO8dTiwCw==
-X-Received: by 2002:adf:e78c:: with SMTP id n12mr27328013wrm.83.1566227118905;
-        Mon, 19 Aug 2019 08:05:18 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:8033:56b6:f047:ba4f? ([2001:b07:6468:f312:8033:56b6:f047:ba4f])
-        by smtp.gmail.com with ESMTPSA id l62sm13358486wml.13.2019.08.19.08.05.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2019 08:05:18 -0700 (PDT)
-Subject: Re: [PATCH RESEND v4 5/9] KVM: VMX: Add init/set/get functions for
- SPP
-To:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com
-Cc:     mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-6-weijiang.yang@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Message-ID: <e235b490-0932-3ebf-dee0-f3359216ed9f@redhat.com>
-Date:   Mon, 19 Aug 2019 17:05:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        id S1726168AbfHSPGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:06:05 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46By115JXKz9v0lZ;
+        Mon, 19 Aug 2019 17:05:57 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=Vo54OfXd; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id YETEQXL8UOQ4; Mon, 19 Aug 2019 17:05:57 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46By113ycpz9v0lV;
+        Mon, 19 Aug 2019 17:05:57 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1566227157; bh=Pvy/uoRwlQzhWtYHMcSAvYxmZskqAfrju91PELbG3jg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Vo54OfXdn5bt4A2X0NgPS36957r7xxFqdm+9+B/RCCVRDEmMGxy2+ENKEV639kUsc
+         WsnZID5Z6b1qlVQvNgEm62YtbGLfjOXbAEMnqTBKGIR+/JOBqkdWJVAjFUOzp7Hwli
+         sXVUmYV3Xta9PkMtsRDzG4XtyWybzIWupfBIntt0=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2F8048B7BC;
+        Mon, 19 Aug 2019 17:06:03 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id aOMEMrlxlL8H; Mon, 19 Aug 2019 17:06:03 +0200 (CEST)
+Received: from [172.25.230.101] (po15451.idsi0.si.c-s.fr [172.25.230.101])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F29A58B7B9;
+        Mon, 19 Aug 2019 17:06:02 +0200 (CEST)
+Subject: Re: [PATCH 3/3] powerpc: use __builtin_trap() in BUG/WARN macros.
+To:     Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+References: <a6781075192afe0c909ce7d091de7931183a5d93.1566219503.git.christophe.leroy@c-s.fr>
+ <20510ce03cc9463f1c9e743c1d93b939de501b53.1566219503.git.christophe.leroy@c-s.fr>
+ <20190819132313.GH31406@gate.crashing.org>
+ <dbafc03a-6eda-d9a3-c451-d242f03b01d9@c-s.fr>
+ <20190819143700.GK31406@gate.crashing.org>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Message-ID: <44a19633-f2a9-79f9-da7c-16ba64a66600@c-s.fr>
+Date:   Mon, 19 Aug 2019 17:05:46 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190814070403.6588-6-weijiang.yang@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190819143700.GK31406@gate.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/08/19 09:03, Yang Weijiang wrote:
-> +
-> +int kvm_mmu_get_subpages(struct kvm *kvm, struct kvm_subpage *spp_info,
-> +			 bool mmu_locked)
-> +{
-> +	u32 *access = spp_info->access_map;
-> +	gfn_t gfn = spp_info->base_gfn;
-> +	int npages = spp_info->npages;
-> +	struct kvm_memory_slot *slot;
-> +	int i;
-> +	int ret;
-> +
-> +	if (!kvm->arch.spp_active)
-> +	      return -ENODEV;
-> +
-> +	if (!mmu_locked)
-> +	      spin_lock(&kvm->mmu_lock);
-> +
 
-Do not add this argument.  Just lock mmu_lock in the callers.
 
-Paolo
+Le 19/08/2019 à 16:37, Segher Boessenkool a écrit :
+> On Mon, Aug 19, 2019 at 04:08:43PM +0200, Christophe Leroy wrote:
+>> Le 19/08/2019 à 15:23, Segher Boessenkool a écrit :
+>>> On Mon, Aug 19, 2019 at 01:06:31PM +0000, Christophe Leroy wrote:
+>>>> Note that we keep using an assembly text using "twi 31, 0, 0" for
+>>>> inconditional traps because GCC drops all code after
+>>>> __builtin_trap() when the condition is always true at build time.
+>>>
+>>> As I said, it can also do this for conditional traps, if it can prove
+>>> the condition is always true.
+>>
+>> But we have another branch for 'always true' and 'always false' using
+>> __builtin_constant_p(), which don't use __builtin_trap(). Is there
+>> anything wrong with that ?:
+> 
+> The compiler might not realise it is constant when it evaluates the
+> __builtin_constant_p, but only realises it later.  As the documentation
+> for the builtin says:
+>    A return of 0 does not indicate that the
+>    value is _not_ a constant, but merely that GCC cannot prove it is a
+>    constant with the specified value of the '-O' option.
+
+So you mean GCC would not be able to prove that 
+__builtin_constant_p(cond) is always true but it would be able to prove 
+that if (cond)  is always true ?
+
+And isn't there a away to tell GCC that '__builtin_trap()' is 
+recoverable in our case ?
+
+> 
+> (and there should be many more and more serious warnings here).
+> 
+>> #define BUG_ON(x) do {						\
+>> 	if (__builtin_constant_p(x)) {				\
+>> 		if (x)						\
+>> 			BUG();					\
+>> 	} else {						\
+>> 		if (x)						\
+>> 			__builtin_trap();			\
+>> 		BUG_ENTRY("", 0);				\
+>> 	}							\
+>> } while (0)
+> 
+> I think it may work if you do
+> 
+> #define BUG_ON(x) do {						\
+> 	if (__builtin_constant_p(x)) {				\
+> 		if (x)						\
+> 			BUG();					\
+> 	} else {						\
+> 		BUG_ENTRY("", 0);				\
+> 		if (x)						\
+> 			__builtin_trap();			\
+> 	}							\
+> } while (0)
+
+It doesn't work:
+
+void test_bug1(unsigned long long a)
+{
+	BUG_ON(a);
+}
+
+00000090 <test_bug1>:
+   90:	7c 63 23 78 	or      r3,r3,r4
+   94:	0f 03 00 00 	twnei   r3,0
+   98:	4e 80 00 20 	blr
+
+RELOCATION RECORDS FOR [__bug_table]:
+OFFSET   TYPE              VALUE
+00000084 R_PPC_ADDR32      .text+0x00000090
+
+As you see, the relocation in __bug_table points to the 'or' and not to 
+the 'twnei'.
+
+> 
+> or even just
+> 
+> #define BUG_ON(x) do {						\
+> 	BUG_ENTRY("", 0);					\
+> 	if (x)							\
+> 		__builtin_trap();				\
+> 	}							\
+> } while (0)
+> 
+> if BUG_ENTRY can work for the trap insn *after* it.
+> 
+>>> Can you put the bug table asm *before* the __builtin_trap maybe?  That
+>>> should make it all work fine...  If you somehow can tell what machine
+>>> instruction is that trap, anyway.
+>>
+>> And how can I tell that ?
+> 
+> I don't know how BUG_ENTRY works exactly.
+
+It's basic, maybe too basic: it adds an inline asm with a label, and 
+adds a .long in the __bug_table section with the address of that label.
+
+When putting it after the __builtin_trap(), I changed it to using the 
+address before the one of the label which is always the twxx instruction 
+as far as I can see.
+
+#define BUG_ENTRY(insn, flags, ...)			\
+	__asm__ __volatile__(				\
+		"1:	" insn "\n"			\
+		".section __bug_table,\"aw\"\n"		\
+		"2:\t" PPC_LONG "1b, %0\n"		\
+		"\t.short %1, %2\n"			\
+		".org 2b+%3\n"				\
+		".previous\n"				\
+		: : "i" (__FILE__), "i" (__LINE__),	\
+		  "i" (flags),				\
+		  "i" (sizeof(struct bug_entry)),	\
+		  ##__VA_ARGS__)
+
+Christophe
