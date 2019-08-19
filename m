@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CDFB9200D
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C402C92019
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727454AbfHSJWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 05:22:12 -0400
+        id S1727506AbfHSJW3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:22:29 -0400
 Received: from mailgw02.mediatek.com ([210.61.82.184]:37221 "EHLO
         mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727335AbfHSJWJ (ORCPT
+        with ESMTP id S1727398AbfHSJWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:22:09 -0400
-X-UUID: 796730bac6ef4d829f0a303d01b3d6d4-20190819
-X-UUID: 796730bac6ef4d829f0a303d01b3d6d4-20190819
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        Mon, 19 Aug 2019 05:22:11 -0400
+X-UUID: 1bb2bc64cdb54b7b8962f7d6475efcf3-20190819
+X-UUID: 1bb2bc64cdb54b7b8962f7d6475efcf3-20190819
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
         (envelope-from <mars.cheng@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 37471676; Mon, 19 Aug 2019 17:22:01 +0800
+        with ESMTP id 1411708213; Mon, 19 Aug 2019 17:22:00 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Mon, 19 Aug 2019 17:22:00 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
@@ -36,102 +36,44 @@ CC:     CC Hwang <cc.hwang@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <wsd_upstream@mediatek.com>, mtk01761 <wendell.lin@mediatek.com>,
-        <linux-clk@vger.kernel.org>
-Subject: [PATCHv2 00/11] Add basic SoC Support for Mediatek MT6779 SoC
-Date:   Mon, 19 Aug 2019 17:21:31 +0800
-Message-ID: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
+Subject: [PATCH v2 01/11] dt-bindings: mediatek: add support for mt6779 reference board
+Date:   Mon, 19 Aug 2019 17:21:32 +0800
+Message-ID: <1566206502-4347-2-git-send-email-mars.cheng@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-TM-SNTS-SMTP: D2DE206C8813DC47ED7261D11FDE95B6936DD33B5D67B0F8EC1338EF0A6DBB962000:8
 X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset is based on v5.3-rc1. Basic SoC support for the new Mediatek
-SoC, MT6779, which targets for smartphone.
+Update binding document for mt6779 reference board
 
-It provides ccf, pinctrl, uart, timer, gic...etc.
+Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/arm/mediatek.yaml          |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-Change History:
-
-v2:
-1. add Reviewed-by tags
-2. fix checkpatch warnings with strict level
-
-v1:
-first patchset
-
-
-Mars Cheng (8):
-  dt-bindings: mediatek: add support for mt6779 reference board
-  dt-bindings: mtk-uart: add mt6779 uart bindings
-  dt-bindings: irq: mtk,sysirq: add support for mt6779
-  pinctrl: mediatek: update pinmux defintions for mt6779
-  pinctrl: mediatek: avoid virtual gpio trying to set reg
-  pinctrl: mediatek: add pinctrl support for MT6779 SoC
-  pinctrl: mediatek: add mt6779 eint support
-  arm64: dts: add dts nodes for MT6779
-
-mtk01761 (3):
-  dt-bindings: mediatek: bindings for MT6779 clk
-  clk: mediatek: Add dt-bindings for MT6779 clocks
-  clk: mediatek: Add MT6779 clock support
-
- .../devicetree/bindings/arm/mediatek.yaml          |    4 +
- .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
- .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,camsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,ipesys.txt      |   22 +
- .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |    1 +
- .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
- .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
- .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
- .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
- .../interrupt-controller/mediatek,sysirq.txt       |    1 +
- .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
- arch/arm64/boot/dts/mediatek/Makefile              |    1 +
- arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi       |   31 +
- arch/arm64/boot/dts/mediatek/mt6779.dts            |  229 +++
- drivers/clk/mediatek/Kconfig                       |   56 +
- drivers/clk/mediatek/Makefile                      |    9 +
- drivers/clk/mediatek/clk-mt6779-aud.c              |  117 ++
- drivers/clk/mediatek/clk-mt6779-cam.c              |   66 +
- drivers/clk/mediatek/clk-mt6779-img.c              |   58 +
- drivers/clk/mediatek/clk-mt6779-ipe.c              |   60 +
- drivers/clk/mediatek/clk-mt6779-mfg.c              |   55 +
- drivers/clk/mediatek/clk-mt6779-mm.c               |  113 ++
- drivers/clk/mediatek/clk-mt6779-vdec.c             |   67 +
- drivers/clk/mediatek/clk-mt6779-venc.c             |   58 +
- drivers/clk/mediatek/clk-mt6779.c                  | 1315 ++++++++++++
- drivers/pinctrl/mediatek/Kconfig                   |    7 +
- drivers/pinctrl/mediatek/Makefile                  |    1 +
- drivers/pinctrl/mediatek/pinctrl-mt6779.c          |  783 ++++++++
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c   |   20 +
- drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.h   |    1 +
- drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h      | 2085 ++++++++++++++++++++
- drivers/pinctrl/mediatek/pinctrl-paris.c           |    3 +
- include/dt-bindings/clock/mt6779-clk.h             |  436 ++++
- include/dt-bindings/pinctrl/mt6779-pinfunc.h       | 1242 ++++++++++++
- 37 files changed, 6851 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779-evb.dtsi
- create mode 100644 arch/arm64/boot/dts/mediatek/mt6779.dts
- create mode 100644 drivers/clk/mediatek/clk-mt6779-aud.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-cam.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-img.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-ipe.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-mfg.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-mm.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-vdec.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779-venc.c
- create mode 100644 drivers/clk/mediatek/clk-mt6779.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt6779.c
- create mode 100644 drivers/pinctrl/mediatek/pinctrl-mtk-mt6779.h
- create mode 100644 include/dt-bindings/clock/mt6779-clk.h
- create mode 100644 include/dt-bindings/pinctrl/mt6779-pinfunc.h
+diff --git a/Documentation/devicetree/bindings/arm/mediatek.yaml b/Documentation/devicetree/bindings/arm/mediatek.yaml
+index a4ad2eb..4043c50 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek.yaml
++++ b/Documentation/devicetree/bindings/arm/mediatek.yaml
+@@ -48,6 +48,10 @@ properties:
+           - const: mediatek,mt6765
+       - items:
+           - enum:
++              - mediatek,mt6779-evb
++          - const: mediatek,mt6779
++      - items:
++          - enum:
+               - mediatek,mt6795-evb
+           - const: mediatek,mt6795
+       - items:
+-- 
+1.7.9.5
 
