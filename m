@@ -2,74 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 97CA4921B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:53:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0E73921B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 12:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfHSKw5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 06:52:57 -0400
-Received: from mga12.intel.com ([192.55.52.136]:63592 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbfHSKw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 06:52:57 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 03:52:56 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,403,1559545200"; 
-   d="scan'208";a="189498050"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga002.jf.intel.com with ESMTP; 19 Aug 2019 03:52:54 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id AAA49128; Mon, 19 Aug 2019 13:52:53 +0300 (EEST)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
-Subject: [PATCH v1] reset: Remove copy'n'paste redundancy in the comments
-Date:   Mon, 19 Aug 2019 13:52:52 +0300
-Message-Id: <20190819105252.81020-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1727234AbfHSKzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 06:55:21 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:36482 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726477AbfHSKzV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 06:55:21 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 7B24E80B64; Mon, 19 Aug 2019 12:55:06 +0200 (CEST)
+Date:   Mon, 19 Aug 2019 12:55:19 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     jacek.anaszewski@gmail.com, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] leds: lm3532: Add full scale current configuration
+Message-ID: <20190819105519.GG21072@amd>
+References: <20190813181154.6614-1-dmurphy@ti.com>
+ <20190813181154.6614-4-dmurphy@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="Sw7tCqrGA+HQ0/zt"
+Content-Disposition: inline
+In-Reply-To: <20190813181154.6614-4-dmurphy@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It seems the commit bb475230b8e5
-("reset: make optional functions really optional")
-brought couple of redundant lines in the comments.
 
-Drop them here.
+--Sw7tCqrGA+HQ0/zt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cc: Ramiro Oliveira <Ramiro.Oliveira@synopsys.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/reset/core.c | 2 --
- 1 file changed, 2 deletions(-)
+Hi!
 
-diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-index 213ff40dda11..2badff33a0db 100644
---- a/drivers/reset/core.c
-+++ b/drivers/reset/core.c
-@@ -334,7 +334,6 @@ EXPORT_SYMBOL_GPL(reset_control_reset);
-  * internal state to be reset, but must be prepared for this to happen.
-  * Consumers must not use reset_control_reset on shared reset lines when
-  * reset_control_(de)assert has been used.
-- * return 0.
-  *
-  * If rstc is NULL it is an optional reset and the function will just
-  * return 0.
-@@ -393,7 +392,6 @@ EXPORT_SYMBOL_GPL(reset_control_assert);
-  * After calling this function, the reset is guaranteed to be deasserted.
-  * Consumers must not use reset_control_reset on shared reset lines when
-  * reset_control_(de)assert has been used.
-- * return 0.
-  *
-  * If rstc is NULL it is an optional reset and the function will just
-  * return 0.
--- 
-2.23.0.rc1
+> Allow the full scale current to be configured at init.
+> Valid rangles are 5mA->29.8mA.
+>=20
+> Signed-off-by: Dan Murphy <dmurphy@ti.com>
 
+> @@ -121,6 +125,7 @@ struct lm3532_als_data {
+>   * @mode - Mode of the LED string
+>   * @ctrl_brt_pointer - Zone target register that controls the sink
+>   * @num_leds - Number of LED strings are supported in this array
+> + * @full_scale_current - The full-scale current setting for the current =
+sink.
+>   * @led_strings - The LED strings supported in this array
+>   * @label - LED label
+>   */
+> @@ -130,8 +135,9 @@ struct lm3532_led {
+> =20
+>  	int control_bank;
+>  	int mode;
+> -	int ctrl_brt_pointer;
+>  	int num_leds;
+> +	int ctrl_brt_pointer;
+> +	int full_scale_current;
+>  	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
+>  	char label[LED_MAX_NAME_SIZE];
+>  };
+
+No need to move ctrl_brt_pointer... to keep order consistent with docs.=20
+
+> +		fs_current_val =3D led->full_scale_current - LM3532_FS_CURR_MIN /
+> +				 LM3532_FS_CURR_STEP;
+
+The computation is wrong ... needs () AFAICT.
+
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--Sw7tCqrGA+HQ0/zt
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAl1agBcACgkQMOfwapXb+vLmlwCePMg9TFTU7TWJmlid/fNhp/+m
+X/YAn2qt8myzF3DVB+yvRViZfvO8Lbc6
+=fEeD
+-----END PGP SIGNATURE-----
+
+--Sw7tCqrGA+HQ0/zt--
