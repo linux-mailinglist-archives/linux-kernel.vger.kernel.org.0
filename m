@@ -2,43 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46A5B951CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:42:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F633951C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:41:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728858AbfHSXll (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:41:41 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40748 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728759AbfHSXlU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728766AbfHSXlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Mon, 19 Aug 2019 19:41:20 -0400
-Received: by mail-pl1-f196.google.com with SMTP id h3so1725149pls.7
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:41:19 -0700 (PDT)
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39315 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728642AbfHSXlS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 19:41:18 -0400
+Received: by mail-pf1-f193.google.com with SMTP id f17so2125327pfn.6
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:41:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=KrfPYPW7hHpyGdKfhM0Fbj+aqAYec03XNpT7CUlwk48=;
-        b=QnrNmbkOAfu8bxBlGCuJMiF5SR6TGcun3cWqx/xhCswSSSrYf3m83zf7ILnxVROdPw
-         XMcb4j6OAOjtQ9zgwEeaIgrhH8x1wiEGw1ASR2J6zMoeBqqoTljvEV8/PiLUhD0Eu/nh
-         lNkfB0rbkhO91GROHRzAkXN7hjKYzdIGYZ3MI=
+        bh=YbeJELJt4yIGEhE/X9GRRM8X1m9EGNSNDo3EW/BYEes=;
+        b=fMeKccAI6lBQNvCfoQV4v6qBvMdAH0T9g8CjKXNIx1cPaQ4rQ+1Kq2Ut+2C4eSadkD
+         VUEdvlPJgcmSvF73Z2OB3ZJzh7zLPiZYxPE3eJvCrn7y8Gz8iRR9f8hwnM7a04jlBxbP
+         +qX9jkeutY2O8jjNHf8HVe/7o5331zFJnqeL0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=KrfPYPW7hHpyGdKfhM0Fbj+aqAYec03XNpT7CUlwk48=;
-        b=MH0U4HpH56KiXBPghEUfkbjs+++v9V9gvNyQ9ZdWVLgyBoHgcl2Tijb5j2CDkPkXv+
-         gCvHJnYjTL29dRyIxwRwiXVKqA3ZO9jvjIpjtwND33429Uke5nA5Rsk8zIOZVNlNhU/X
-         HU9g1nHns4F9bxrbVAjw8S4iC+dxgudD3uX3w6PNyeTXbCqiW31kyeD+VHqrkpzRneQY
-         1UUcLEvHvD9sdhTjAERDOOqsRwZ6CvETWLV/WfsGcVF/pjBVo01m8Gc2ABG/rensMrbm
-         wtuc9KtegZ08PcvOHjnAb9g1vURCadORB0Kl2Bg+SiNBaZsxxgP1FSy2s7jhJtRY2fgR
-         6f1g==
-X-Gm-Message-State: APjAAAVW+vH4/03W933HRt7umNYHATiNr4U7sLsG5+ieCs28tseOzCkk
-        n/J73L+k3Sx9Tm1khighi4cSuQ==
-X-Google-Smtp-Source: APXvYqygsG7Fmp4twlPCBffxDxd1vDdewld+4/vgBMugHA0mY4ldJc3AQlhlyLfHr+Y64lj9tD0b4Q==
-X-Received: by 2002:a17:902:4643:: with SMTP id o61mr25019254pld.101.1566258079631;
-        Mon, 19 Aug 2019 16:41:19 -0700 (PDT)
+        bh=YbeJELJt4yIGEhE/X9GRRM8X1m9EGNSNDo3EW/BYEes=;
+        b=eIEquQWNE83g9PxtYdYovG0AUWLbEOfJ7NBd6SPxAAMU/2YJysWPko3090pPqrk14T
+         6uAnYC/I5gLY06mJbazqdnF0a+JpTeI5s4D8FZPKJBEw7/RQKyQttee1nLqXD7j4TujH
+         5OJ7O6hjVqiBeya5U+Nqryxfc1ObDQ51ORpNwhxZ/wsiNyx7LI4UwrhWM1pXLtDLzR26
+         dqLLh96WLmFI1ttKSrzehcRIbsE7VROiC8PbVvQZw+RSUBmRfyEtEvnT+cUTAAqgDgLt
+         AvdvfbGuzLCDbvuKJvOAHNjuzYeQQ+cpbjk/PpjwDUmFkZmjsllW/s3ZN6PN4KvFv8CG
+         vk3Q==
+X-Gm-Message-State: APjAAAU7ZFIlzB9ozo+gqXyJQcqyQEfrmSjdzwSc1wZlw9xLtVTqeHJ8
+        7/6MYCCyTtQ3VFxNUATkJ12vdg==
+X-Google-Smtp-Source: APXvYqzsFtbJdhYh/+Iruj5b5YlJcm3VFKU+IRNlxr49ybr/vufBEOgAKggdIWnSj76CjWchhxCTgQ==
+X-Received: by 2002:a65:518a:: with SMTP id h10mr20084317pgq.117.1566258078186;
+        Mon, 19 Aug 2019 16:41:18 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id p3sm13378834pjo.3.2019.08.19.16.41.16
+        by smtp.gmail.com with ESMTPSA id s16sm18169083pfs.6.2019.08.19.16.41.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
         Mon, 19 Aug 2019 16:41:16 -0700 (PDT)
 From:   Kees Cook <keescook@chromium.org>
@@ -55,9 +55,9 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Borislav Petkov <bp@suse.de>,
         YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 3/7] bug: Consolidate warn_slowpath_fmt() usage
-Date:   Mon, 19 Aug 2019 16:41:07 -0700
-Message-Id: <20190819234111.9019-4-keescook@chromium.org>
+Subject: [PATCH 4/7] bug: Lift "cut here" out of __warn()
+Date:   Mon, 19 Aug 2019 16:41:08 -0700
+Message-Id: <20190819234111.9019-5-keescook@chromium.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190819234111.9019-1-keescook@chromium.org>
 References: <20190819234111.9019-1-keescook@chromium.org>
@@ -66,61 +66,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of having a separate helper for no printk output, just
-consolidate the logic into warn_slowpath_fmt().
+In preparation for cleaning up "cut here", move the "cut here" logic
+up out of __warn() and into callers that pass non-NULL args. For anyone
+looking closely, there are two callers that pass NULL args: one already
+explicitly prints "cut here". The remaining case is covered by how a
+WARN is built, which will be cleaned up in the next patch.
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- include/asm-generic/bug.h |  3 +--
- kernel/panic.c            | 14 +++++++-------
- 2 files changed, 8 insertions(+), 9 deletions(-)
+ kernel/panic.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
-index e9166a24b336..f76efbcbe3b5 100644
---- a/include/asm-generic/bug.h
-+++ b/include/asm-generic/bug.h
-@@ -93,9 +93,8 @@ struct bug_entry {
- extern __printf(4, 5)
- void warn_slowpath_fmt(const char *file, const int line, unsigned taint,
- 		       const char *fmt, ...);
--extern void warn_slowpath_null(const char *file, const int line);
- #define WANT_WARN_ON_SLOWPATH
--#define __WARN()		warn_slowpath_null(__FILE__, __LINE__)
-+#define __WARN()		__WARN_printf(TAINT_WARN, NULL)
- #define __WARN_printf(taint, arg...)					\
- 	warn_slowpath_fmt(__FILE__, __LINE__, taint, arg)
- #else
 diff --git a/kernel/panic.c b/kernel/panic.c
-index 4d8b7577c82c..51efdeb2558e 100644
+index 51efdeb2558e..dc2243429903 100644
 --- a/kernel/panic.c
 +++ b/kernel/panic.c
-@@ -597,19 +597,19 @@ void warn_slowpath_fmt(const char *file, int line, unsigned taint,
+@@ -551,9 +551,6 @@ void __warn(const char *file, int line, void *caller, unsigned taint,
+ {
+ 	disable_trace_on_warning();
+ 
+-	if (args)
+-		pr_warn(CUT_HERE);
+-
+ 	if (file)
+ 		pr_warn("WARNING: CPU: %d PID: %d at %s:%d %pS\n",
+ 			raw_smp_processor_id(), current->pid, file, line,
+@@ -597,8 +594,9 @@ void warn_slowpath_fmt(const char *file, int line, unsigned taint,
  {
  	struct warn_args args;
  
-+	if (!fmt) {
-+		pr_warn(CUT_HERE);
-+		__warn(file, line, __builtin_return_address(0), taint,
-+		       NULL, NULL);
-+		return;
-+	}
++	pr_warn(CUT_HERE);
 +
- 	args.fmt = fmt;
- 	va_start(args.args, fmt);
- 	__warn(file, line, __builtin_return_address(0), taint, NULL, &args);
- 	va_end(args.args);
- }
- EXPORT_SYMBOL(warn_slowpath_fmt);
--
--void warn_slowpath_null(const char *file, int line)
--{
--	pr_warn(CUT_HERE);
--	__warn(file, line, __builtin_return_address(0), TAINT_WARN, NULL, NULL);
--}
--EXPORT_SYMBOL(warn_slowpath_null);
- #else
- void __warn_printk(const char *fmt, ...)
- {
+ 	if (!fmt) {
+-		pr_warn(CUT_HERE);
+ 		__warn(file, line, __builtin_return_address(0), taint,
+ 		       NULL, NULL);
+ 		return;
 -- 
 2.17.1
 
