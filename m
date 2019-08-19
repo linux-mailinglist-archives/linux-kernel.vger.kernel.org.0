@@ -2,131 +2,170 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56B1C91C0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:26:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA44991C11
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 06:34:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726347AbfHSE0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 00:26:54 -0400
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:37354 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725536AbfHSE0y (ORCPT
+        id S1726463AbfHSEd7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 00:33:59 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:59192 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725536AbfHSEd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 00:26:54 -0400
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id x7J4QTgN021114
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 13:26:30 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com x7J4QTgN021114
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566188790;
-        bh=OW1zICb/Mc7eyHaJB7F+0jGSnOYmZvCIzJbFodsGuQ4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=nxrHN0YsNDaS/A3TzwVTJrjMWHNoxXx9++LRPbmK0e6NmQju51D+ziozFzOerTSHj
-         0FDE7Q3U+qGXKj1dy2OoRArV11/pokJT/DDuaRqQ6/uC6GSUYvZ4cIgeWkKRjfoZ/1
-         7DQR/dNxYCOoo+1antF+eGJc5hIAyLGd9DRoY/+678+HavcyMMW0xXZin/7ZW+f4RS
-         cAaZ7IdufwJP1y9n4xREqic8O41pXY9z+pqWnkulnsfK7r0FZNm6jC0wXSLkiZY/nr
-         J03R5JjXKPf01oFqRrNM6takc1awzbDl+zo67p3S9SFmy4SdNUKTVEopvwIa9JxkNY
-         DdM/qsZmy8SYQ==
-X-Nifty-SrcIP: [209.85.221.178]
-Received: by mail-vk1-f178.google.com with SMTP id 82so121147vkf.11
-        for <linux-kernel@vger.kernel.org>; Sun, 18 Aug 2019 21:26:29 -0700 (PDT)
-X-Gm-Message-State: APjAAAXSZdLnQG3WXzQpi9AZdfnba45OJNe+IqB5VAIRK8klE/PP8f6g
-        ZyI9miMHyIxzEMES9wGspxDd1iIdMFDX46wON+c=
-X-Google-Smtp-Source: APXvYqyP0Fpi/HcxiJ414/X4VHQkyya1xBYajp/2fXLljetLW55Ed2rsnGbLxediWPOHVe7DHFQxGP0Mc9dQb2Dr/Bk=
-X-Received: by 2002:a1f:ee81:: with SMTP id m123mr2220428vkh.74.1566188788852;
- Sun, 18 Aug 2019 21:26:28 -0700 (PDT)
+        Mon, 19 Aug 2019 00:33:58 -0400
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7J4WRUe020760;
+        Sun, 18 Aug 2019 21:33:44 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=facebook; bh=R09CL+VDzv4Xv7/rzxRA2l0a7YteNog9MKNDLucbhaU=;
+ b=OOWV6Zfng3roDjiR+tVgJD1Xn7pdhhxGb0sZPrV//2DD/4aTr1HO1Xz9Mf+3tNDszEyJ
+ 8ICVXH6d4d1i6biFCOKDrm0kF8ao6oAbF7ffqdLuaBHWFOgLmT+lS5SQKGM4a6uWl3/Z
+ mE2qyxT7JK28FCLNetkelMUa2RNH/Vnhmeg= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com with ESMTP id 2uf1g0akaf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Sun, 18 Aug 2019 21:33:43 -0700
+Received: from ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) by
+ ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Sun, 18 Aug 2019 21:33:42 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (100.104.31.183)
+ by o365-in.thefacebook.com (100.104.36.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
+ via Frontend Transport; Sun, 18 Aug 2019 21:33:42 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DR8eDsxalU7y0TQLQeOTaJ6J/8K24qqry35qbIiGAxBZ37YDcrUrE72zmnZ0v1Luq0MNwKHdOOF6hBtp5LZfA/rGFg2+os2dgofcYSI0Y3KytX3ln7mHMrrPxlCXDfroUTjxbz9mVVNh1uCtupkXsEOnQTKTIvNMzrVfmO0RHsn9GHLvPiArU/wtfSWwWiLTX6lMxDdg6ObEitHnLwXQVFgKj8pnwT6JglzM0V59Cka4j1ZMtz7kKmvjokXwjaiERK1P3bx8794NkqpB0jdaf5VWooZXuiAx4CE3HaVmvtlAPdy7euBtvs94t3CunLUca+aZrQIxDCPXKSc1iiEfhQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R09CL+VDzv4Xv7/rzxRA2l0a7YteNog9MKNDLucbhaU=;
+ b=VdXVz+FlTs+RIV88N5SyWYcz3wFovuRafsBF/smgB8B8gfiLiudtbMLL5SumshnKliQxlBJxzwTdUNECqm9zYOdmfwNbwXQui15sur9oLevZAiKvLs2YgYfqDDvqIPIBvzEl6LMDva3NnWunn3syuvD8Cm8tX536TK5CL23A4AQWMYv/0L3jvXYbRYtt/WqHU0J5p2EQlodKu4ehYFU5ll/zmquxUzP4UlLuZOEuwv1Wz6psjsaP8fhhZHZcPMlsmeVBlt6phR0osVfxcnA1TzG9vSDQ94+xZj+ChQMCC9Mnsv+cic11LxLpkV4X9nXAAbDILn1ASkKVwKSKS/VSlw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
+ header.d=fb.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector2-fb-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=R09CL+VDzv4Xv7/rzxRA2l0a7YteNog9MKNDLucbhaU=;
+ b=YtZ7mlM5zGFlInair+G2kAm36JkasUSvOzcyJF9JnGVEA+bReA2Ng8Wfh8j9k6qNCw0X+vc6USq6HyUkBgpdixi+7Dqifo7pOnTnp0lw6ezbd3FLcchEpvIk2aw/Bxvb+pb/O3W0M2sJgDgwvDbK5/cp1BZPejpYHUW56pvqhi0=
+Received: from CH2PR15MB3686.namprd15.prod.outlook.com (10.255.155.143) by
+ CH2PR15MB3608.namprd15.prod.outlook.com (52.132.228.206) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Mon, 19 Aug 2019 04:33:41 +0000
+Received: from CH2PR15MB3686.namprd15.prod.outlook.com
+ ([fe80::9d88:b74a:48ea:cf6c]) by CH2PR15MB3686.namprd15.prod.outlook.com
+ ([fe80::9d88:b74a:48ea:cf6c%5]) with mapi id 15.20.2178.018; Mon, 19 Aug 2019
+ 04:33:41 +0000
+From:   Ben Wei <benwei@fb.com>
+To:     Ben Wei <benwei@fb.com>
+CC:     "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+        "Samuel Mendoza-Jonas" <sam@mendozajonas.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ben Wei <benwei@fb.com>
+Subject: [PATCH] net/ncsi: add control packet payload to NC-SI commands from
+ netlink
+Thread-Topic: [PATCH] net/ncsi: add control packet payload to NC-SI commands
+ from netlink
+Thread-Index: AdVWRzWK9Wcjcdd/SW6uTu9wV1cgUQ==
+Date:   Mon, 19 Aug 2019 04:33:41 +0000
+Message-ID: <CH2PR15MB368691D280F882864A6D356DA3A80@CH2PR15MB3686.namprd15.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [99.73.36.74]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 491dd55a-a63a-46e8-2d47-08d7245e698e
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:CH2PR15MB3608;
+x-ms-traffictypediagnostic: CH2PR15MB3608:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR15MB36085CA8F3831E4E663ED142A3A80@CH2PR15MB3608.namprd15.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:457;
+x-forefront-prvs: 0134AD334F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(136003)(396003)(376002)(366004)(189003)(199004)(316002)(14444005)(7696005)(99286004)(478600001)(2906002)(66066001)(71200400001)(86362001)(14454004)(54906003)(3846002)(71190400001)(6200100001)(8936002)(6436002)(76116006)(6116002)(66946007)(5660300002)(33656002)(81166006)(8676002)(74316002)(7736002)(186003)(102836004)(26005)(9686003)(55016002)(53936002)(486006)(6506007)(476003)(256004)(4326008)(25786009)(6862004)(305945005)(81156014)(66446008)(64756008)(66556008)(66476007)(52536014);DIR:OUT;SFP:1102;SCL:1;SRVR:CH2PR15MB3608;H:CH2PR15MB3686.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bFLF23k3GuKwiUl1VWXFj74+Jus85Dv5xPidT+fZtlP4wc6AMpIfpjWrlToUiI0kL54CXx+nJzgT0+LuHASbKB87BAodlJNERZt6QsQ83G0ZaDQQ8sewhVMF2h4AF85jUs6eopDiGSfwmTYDlHKbutnY8sy67k83OEd66ED5PV5hi1wrjfFacgosCP/o8ooNgofZgazvOE8D/MAlYzQ0BDnYUyA3xTa7CA9ux0W4KlstsvhYLM9zI6ZKa0bTbHzfLTEqvu0SW5K5WJnueLXtmG6IU9/ao+7wGKWqosdAMQZWP1E26GhlKQfrU3NBYsWZTAvwu7YoLourB6vkpBVVa1g0spyJWLdItFRVdYpt8qIEkSfWgD5RImlfIPHWCBR67ySNsJXAbDTZjx0XPIQJST50fHNE8a6ibuc/IS4frrM=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20190713131642.GU14074@gate.crashing.org> <CAK7LNASBmZxX+U=LS+dgvet96cA3T6Tf_tiAa2vduUV81DEnBw@mail.gmail.com>
- <20190713235430.GZ14074@gate.crashing.org> <87v9w393r5.fsf@concordia.ellerman.id.au>
- <20190715072959.GB20882@gate.crashing.org> <87pnma89ak.fsf@concordia.ellerman.id.au>
- <20190717143811.GL20882@gate.crashing.org> <CAK7LNATesRrJFGZQOkTY+PL7FNyub5FJ0N6NF4s6icdXdPNr+Q@mail.gmail.com>
- <20190717164628.GN20882@gate.crashing.org> <CAK7LNAR7jkq1fAi_=xgsANCkgP2AAej9Yv7RZB3B_cpD7C_71Q@mail.gmail.com>
- <20190718204631.GV20882@gate.crashing.org> <87blxq8zhf.fsf@concordia.ellerman.id.au>
-In-Reply-To: <87blxq8zhf.fsf@concordia.ellerman.id.au>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 19 Aug 2019 13:25:52 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATgOMhr6Fw-ge_ph4Hq-SGuvGTYHDcjd7e4+eb5_Ebw3A@mail.gmail.com>
-Message-ID: <CAK7LNATgOMhr6Fw-ge_ph4Hq-SGuvGTYHDcjd7e4+eb5_Ebw3A@mail.gmail.com>
-Subject: Re: [PATCH] powerpc: remove meaningless KBUILD_ARFLAGS addition
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Segher Boessenkool <segher@kernel.crashing.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Paul Mackerras <paulus@samba.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 491dd55a-a63a-46e8-2d47-08d7245e698e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2019 04:33:41.1456
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aqGFMprVWhlP9ybhUd+iI/LYh9gdIP2VnQnfBXcduEpFI/3pPnNTGrBEXidMCGTN
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR15MB3608
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=907 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190051
+X-FB-Internal: deliver
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This patch adds support for NCSI_CMD_SEND_CMD netlink command to load packe=
+t data payload (up to 16 bytes) to standard NC-SI commands.
 
-On Fri, Jul 19, 2019 at 12:43 PM Michael Ellerman <mpe@ellerman.id.au> wrote:
->
-> Segher Boessenkool <segher@kernel.crashing.org> writes:
-> > On Thu, Jul 18, 2019 at 11:19:58AM +0900, Masahiro Yamada wrote:
-> >> On Thu, Jul 18, 2019 at 1:46 AM Segher Boessenkool
-> >> <segher@kernel.crashing.org> wrote:
-> >> Kbuild always uses thin archives as far as vmlinux is concerned.
-> >>
-> >> But, there are some other call-sites.
-> >>
-> >> masahiro@pug:~/ref/linux$ git grep  '$(AR)' -- :^Documentation :^tools
-> >> arch/powerpc/boot/Makefile:    BOOTAR := $(AR)
-> >> arch/unicore32/lib/Makefile:    $(Q)$(AR) p $(GNU_LIBC_A) $(notdir $@) > $@
-> >> arch/unicore32/lib/Makefile:    $(Q)$(AR) p $(GNU_LIBGCC_A) $(notdir $@) > $@
-> >> lib/raid6/test/Makefile:         $(AR) cq $@ $^
-> >> scripts/Kbuild.include:ar-option = $(call try-run, $(AR) rc$(1)
-> >> "$$TMP",$(1),$(2))
-> >> scripts/Makefile.build:      cmd_ar_builtin = rm -f $@; $(AR)
-> >> rcSTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
-> >> scripts/Makefile.lib:      cmd_ar = rm -f $@; $(AR)
-> >> rcsTP$(KBUILD_ARFLAGS) $@ $(real-prereqs)
-> >>
-> >> Probably, you are interested in arch/powerpc/boot/Makefile.
-> >
-> > That one seems fine actually.  The raid6 one I don't know.
-> >
-> >
-> > My original commit message was
-> >
-> >     Without this, some versions of GNU ar fail to create
-> >     an archive index if the object files it is packing
-> >     together are of a different object format than ar's
-> >     default format (for example, binutils compiled to
-> >     default to 64-bit, with 32-bit objects).
-> >
-> > but I cannot reproduce the problem anymore.  Shortly after my patch the
-> > thin archive code happened to binutils, and that overhauled some other
-> > things, which might have fixed it already?
-> >
-> >> > Yes, I know.  This isn't about built-in.[oa], it is about *other*
-> >> > archives we at least *used to* create.  If we *know* we do not anymore,
-> >> > then this workaround can of course be removed (and good riddance).
-> >>
-> >> If it is not about built-in.[oa],
-> >> which archive are you talking about?
-> >>
-> >> Can you pin-point the one?
-> >
-> > No, not anymore.  Lost in the mists of time, I guess?  I think we'll
-> > just have to file it as "it seems to work fine now".
->
-> Yeah I think so. If someone finds a case it breaks we can fix it then.
->
-> > Thank you (and everyone else) for the time looking at this!
->
-> Likewise.
->
-> cheers
+Packet data will be loaded from NCSI_ATTR_DATA attribute similar to NC-SI O=
+EM commands
 
+Signed-off-by: Ben Wei <benwei@fb.com>
+---
+ net/ncsi/internal.h     | 7 ++++---
+ net/ncsi/ncsi-netlink.c | 9 +++++++++
+ 2 files changed, 13 insertions(+), 3 deletions(-)
 
-So, we agreed to apply this patch, right?
+diff --git a/net/ncsi/internal.h b/net/ncsi/internal.h index 0b3f0673e1a2..=
+4ff442faf5dc 100644
+--- a/net/ncsi/internal.h
++++ b/net/ncsi/internal.h
+@@ -328,9 +328,10 @@ struct ncsi_cmd_arg {
+ 	unsigned short       payload;     /* Command packet payload length */
+ 	unsigned int         req_flags;   /* NCSI request properties       */
+ 	union {
+-		unsigned char  bytes[16]; /* Command packet specific data  */
+-		unsigned short words[8];
+-		unsigned int   dwords[4];
++#define NCSI_MAX_DATA_BYTES 16
++		unsigned char  bytes[NCSI_MAX_DATA_BYTES]; /* Command packet specific da=
+ta  */
++		unsigned short words[NCSI_MAX_DATA_BYTES / sizeof(unsigned short)];
++		unsigned int   dwords[NCSI_MAX_DATA_BYTES / sizeof(unsigned int)];
+ 	};
+ 	unsigned char        *data;       /* NCSI OEM data                 */
+ 	struct genl_info     *info;       /* Netlink information           */
+diff --git a/net/ncsi/ncsi-netlink.c b/net/ncsi/ncsi-netlink.c index 8b386d=
+766e7d..7d2a43f30eb1 100644
+--- a/net/ncsi/ncsi-netlink.c
++++ b/net/ncsi/ncsi-netlink.c
+@@ -459,6 +459,15 @@ static int ncsi_send_cmd_nl(struct sk_buff *msg, struc=
+t genl_info *info)
+ 	nca.payload =3D ntohs(hdr->length);
+ 	nca.data =3D data + sizeof(*hdr);
+=20
++	if (nca.payload <=3D NCSI_MAX_DATA_BYTES) {
++		memcpy(nca.bytes, nca.data, nca.payload);
++	} else {
++		netdev_info(ndp->ndev.dev, "NCSI:payload size %u exceeds max %u\n",
++			    nca.payload, NCSI_MAX_DATA_BYTES);
++		ret =3D -EINVAL;
++		goto out_netlink;
++	}
++
+ 	ret =3D ncsi_xmit_cmd(&nca);
+ out_netlink:
+ 	if (ret !=3D 0) {
+--
+2.17.1
 
-Please let me know if there is some improvement that should be get done.
-
-
--- 
-Best Regards
-Masahiro Yamada
