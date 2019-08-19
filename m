@@ -2,58 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DD25C94FDA
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:25:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A929D94FDB
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:26:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728557AbfHSVYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 17:24:39 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:49479 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728014AbfHSVYj (ORCPT
+        id S1728555AbfHSVZr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:25:47 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36684 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728376AbfHSVZq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:24:39 -0400
-Received: from pd9ef1cb8.dip0.t-ipconnect.de ([217.239.28.184] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hzp8j-0004hP-Qj; Mon, 19 Aug 2019 23:24:33 +0200
-Date:   Mon, 19 Aug 2019 23:24:33 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     kbuild test robot <lkp@intel.com>
-cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org, tipbuild@zytor.com
-Subject: Re: [tip:WIP.timers/core 49/68] include/linux/sched/types.h:16:2:
- error: unknown type name 'u64'
-In-Reply-To: <201908200518.CGnq3sBO%lkp@intel.com>
-Message-ID: <alpine.DEB.2.21.1908192323180.4008@nanos.tec.linutronix.de>
-References: <201908200518.CGnq3sBO%lkp@intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 19 Aug 2019 17:25:46 -0400
+Received: by mail-lf1-f65.google.com with SMTP id j17so2460324lfp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 14:25:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=430WKBjW4qP2Uk2l8iZHrKhfwlDm5+osLr0EqzEZAHs=;
+        b=fTyfVfIRNralvYNpbpTJpVOy3b8MTJyn/tGZ8zgsjoDpI9oLacF1yHV25JyznzKinc
+         Vcwc6hA74L/hwCeSKOOHjCeVmbGIt6HPspQspfzk+0pP5eKghGdOXpEEVpfopUFJ5F4+
+         QAQsi8zcls5F+242WxpDQ90oxtMTQRvh5bUvaiAXK2x7OA/Qjyl4WgARMUP04j092hq4
+         sEkUTiZxFqq447FRsmTy21N95oStWACPS94VJ5YZIID2UFa4ckq9tL2sNeonNbCCRU+d
+         AYPurrr5HvYNdghPSOHOFHGqjyVDGikE8p3+GWXrL34H09oIVyO5XTwKXKxfJMy50Q2/
+         /5Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to:content-transfer-encoding;
+        bh=430WKBjW4qP2Uk2l8iZHrKhfwlDm5+osLr0EqzEZAHs=;
+        b=bPCDtkkAjvK5wG2lZDg2AuJXjg2bXoskboJzDuo8BS9mJAse1YHCUikEmulHZXiirX
+         XUTFvov6b4/C9rEqzU504sgn4LCvRsrup/4emxTs1bO9Yra13BPoHPEnrEwBi8FZF8mM
+         stq30ikMNNIxCZ0/u/yqsZcHvs6ZXdY//5HbqpgZiELWVeBcoKqpeUGfS2qJoRq+RPY/
+         7YSvHpfsNx/DmFG4UIqUSRptQYq23xecG2nTgB3Vn5pOsThZeyFX2iiMVCkTt3dnMgTE
+         dNnvAVY5ARlOIWAeAbzCVtSpQf7Hnfyhr6QEXIrrp9hX7w2YGp4wVhRaO1UClWwPhA5r
+         V73A==
+X-Gm-Message-State: APjAAAVWAAX9baIftvEzt/RXkrF8GEUBGRS8MxQoQnoqbsO4MYchImCs
+        uKf5iLH3eLuZUBnHtDIuoBi4/UiEUVXWogX4ZG4=
+X-Google-Smtp-Source: APXvYqy6fNmz7sK+RCug2+HaNwgye40GzxCCU203NebRrdc3DD7MSsXoDtef5t9f8gq01HAzg5bB6h5FAKcdOtjlT9Y=
+X-Received: by 2002:a19:6557:: with SMTP id c23mr13179348lfj.12.1566249945151;
+ Mon, 19 Aug 2019 14:25:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Reply-To: akgazshak@gmail.com
+Received: by 2002:a19:4b50:0:0:0:0:0 with HTTP; Mon, 19 Aug 2019 14:25:44
+ -0700 (PDT)
+From:   =?UTF-8?Q?=C4=B0shak_BURAKGAZI?= <akgazishak@gmail.com>
+Date:   Mon, 19 Aug 2019 14:25:44 -0700
+X-Google-Sender-Auth: S2dXYxfMrBfMLbgg9R5azsNiQmE
+Message-ID: <CAEgzzmj+dGrsNn42Uq6ZQSehxMiiVj5O4Z2xYHBi_wQcJPFFuw@mail.gmail.com>
+Subject: 
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019, kbuild test robot wrote:
-> 
-> All errors (new ones prefixed by >>):
-> 
->    In file included from <command-line>:0:0:
-
-Huch? What kind of weird include chain is that?
-
-> >> include/linux/sched/types.h:16:2: error: unknown type name 'u64'
->      u64    utime;
->      ^~~
->    include/linux/sched/types.h:17:2: error: unknown type name 'u64'
->      u64    stime;
->      ^~~
-
-All (header) files which include that new header have u64 defined.
-
-Thanks,
-
-	tglx
+15TXmdeZLA0KDQrXnteX15vXlCDXnNep157XldeiINee15vXnSDXkdeT15XXkCLXnCDXqdep15zX
+l9eq15kg15DXnNeZ15vXnSDXp9eV15PXnSDXldeU15TXptei15Qg16nXnNeZINec15LXkdeZINeU
+16TXmden15PXldefINeU15bXlA0K15vXkNefINeR15jXldeo16fXmdeULCDXkNeg15Ag16DXodeU
+INec15fXlteV16gg15DXnNeZLg0KDQrXkdeR16jXm9eUDQrXkNeZ16nXpw0K
