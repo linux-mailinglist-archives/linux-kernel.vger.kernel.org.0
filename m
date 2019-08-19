@@ -2,104 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5B6948F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:48:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DE39492B
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 17:51:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728247AbfHSPrf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 11:47:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:48562 "EHLO mx1.redhat.com"
+        id S1727843AbfHSPuT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 11:50:19 -0400
+Received: from foss.arm.com ([217.140.110.172]:56654 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728001AbfHSPrc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 11:47:32 -0400
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com [209.85.128.71])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EF00611A04
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 15:47:31 +0000 (UTC)
-Received: by mail-wm1-f71.google.com with SMTP id u21so661732wml.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 08:47:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=2BwM2gt3XIGDnUE55uPuC8VdXnMb+eICOKFQy2JHSEs=;
-        b=J88LXLjQCfXEaeraN2LLtJlNDNGXCfx8jGezHWzSD98uYrch5ZE56ZeRM+xGdiZuHj
-         5+rHnnsrhIlp4mixgNs9618vSlRHmDL41sKl6em++eaD1eqeJy5fUv5WfIVpQJYNHSQT
-         TjDxjeH6GvQsrZjwzdVXW94FnS+0SEabgq7B6JJvxR4zmBg+dclCUbv4XD9hfkhhmbuH
-         Ctd8D/Pnm1wQ7rnJCG7n5mYSAT8sZYn+Z30jtH+IQwaGwKH4k7SeTOThFf7D5DRkGctM
-         RWSOtEG5MnrEZ3TK2jnS8lZhusYdqYXvXlVq3Hb2ejIPD/ay6GP1BWJmM89KbiBXKEdi
-         vlKw==
-X-Gm-Message-State: APjAAAVU7DZKEedKEgz2n3hcOa9WYjZiH7+0Beraxgfiv1acTrJQCFJI
-        8MKtQ5x6wKCugVWzGOMXbg54hOpO+Yf+fxQONW7Za3XyQCrepE+qZzGISnByAOKU1Fh2Yknmtgs
-        YNr3o1DuCNdGt2G5APgA4rxDN
-X-Received: by 2002:a5d:554e:: with SMTP id g14mr14753994wrw.68.1566229650310;
-        Mon, 19 Aug 2019 08:47:30 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqyGMz2v0XkLO/bFG03vaFvUHs7obmKDn0vgSAOYGGIjh7PUOHC2RWmyZLFjgAEMZj4po38oyQ==
-X-Received: by 2002:a5d:554e:: with SMTP id g14mr14753954wrw.68.1566229650010;
-        Mon, 19 Aug 2019 08:47:30 -0700 (PDT)
-Received: from ?IPv6:2001:b07:6468:f312:8033:56b6:f047:ba4f? ([2001:b07:6468:f312:8033:56b6:f047:ba4f])
-        by smtp.gmail.com with ESMTPSA id o11sm13245215wmh.46.2019.08.19.08.47.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2019 08:47:29 -0700 (PDT)
-Subject: Re: [PATCH] KVM: VMX: Fix and tweak the comments for VM-Enter
-To:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190815200931.18260-1-sean.j.christopherson@intel.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Message-ID: <aa33f0e1-e999-08b0-8826-0b88f4681561@redhat.com>
-Date:   Mon, 19 Aug 2019 17:47:33 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726211AbfHSPuT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 11:50:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C28B3344;
+        Mon, 19 Aug 2019 08:50:18 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BF6643F718;
+        Mon, 19 Aug 2019 08:50:16 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 16:50:14 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     jmorris@namei.org, sashal@kernel.org, ebiederm@xmission.com,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, catalin.marinas@arm.com, will@kernel.org,
+        linux-arm-kernel@lists.infradead.org, marc.zyngier@arm.com,
+        james.morse@arm.com, vladimir.murzin@arm.com,
+        matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org
+Subject: Re: [PATCH v2 02/14] arm64, hibernate: create_safe_exec_page cleanup
+Message-ID: <20190819155014.GD9927@lakrids.cambridge.arm.com>
+References: <20190817024629.26611-1-pasha.tatashin@soleen.com>
+ <20190817024629.26611-3-pasha.tatashin@soleen.com>
 MIME-Version: 1.0
-In-Reply-To: <20190815200931.18260-1-sean.j.christopherson@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190817024629.26611-3-pasha.tatashin@soleen.com>
+User-Agent: Mutt/1.11.1+11 (2f07cb52) (2018-12-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/08/19 22:09, Sean Christopherson wrote:
-> Fix an incorrect/stale comment regarding the vmx_vcpu pointer, as guest
-> registers are now loaded using a direct pointer to the start of the
-> register array.
+On Fri, Aug 16, 2019 at 10:46:17PM -0400, Pavel Tatashin wrote:
+> create_safe_exec_page() is going to be split into two parts in preparation
+> of moving page table handling code out of hibernate.c
 > 
-> Opportunistically add a comment to document why the vmx_vcpu pointer is
-> needed, its consumption via 'call vmx_update_host_rsp' is rather subtle.
+> Remove allocator parameter, and rename dst to page. Also, remove the
+> goto's, as we can return directly without cleanups.
+
+It would be nice if you could do the goto/allocator/rename changes as
+separate patches, since it's vastly easier to verify each change in
+isolation that way.
+
+What's the point of the rename? It's inconsistent with the phys_dst_addr
+that you leave as-is, so I'm not sure that's worthwhile.
+
 > 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 > ---
->  arch/x86/kvm/vmx/vmenter.S | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm64/kernel/hibernate.c | 60 +++++++++++++++--------------------
+>  1 file changed, 26 insertions(+), 34 deletions(-)
 > 
-> diff --git a/arch/x86/kvm/vmx/vmenter.S b/arch/x86/kvm/vmx/vmenter.S
-> index 4010d519eb8c..751a384c2eb0 100644
-> --- a/arch/x86/kvm/vmx/vmenter.S
-> +++ b/arch/x86/kvm/vmx/vmenter.S
-> @@ -94,7 +94,7 @@ ENDPROC(vmx_vmexit)
->  
->  /**
->   * __vmx_vcpu_run - Run a vCPU via a transition to VMX guest mode
-> - * @vmx:	struct vcpu_vmx *
-> + * @vmx:	struct vcpu_vmx * (forwarded to vmx_update_host_rsp)
->   * @regs:	unsigned long * (to guest registers)
->   * @launched:	%true if the VMCS has been launched
->   *
-> @@ -151,7 +151,7 @@ ENTRY(__vmx_vcpu_run)
->  	mov VCPU_R14(%_ASM_AX), %r14
->  	mov VCPU_R15(%_ASM_AX), %r15
->  #endif
-> -	/* Load guest RAX.  This kills the vmx_vcpu pointer! */
-> +	/* Load guest RAX.  This kills the @regs pointer! */
->  	mov VCPU_RAX(%_ASM_AX), %_ASM_AX
->  
->  	/* Enter guest mode */
-> 
+> diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+> index 9341fcc6e809..96b6f8da7e49 100644
+> --- a/arch/arm64/kernel/hibernate.c
+> +++ b/arch/arm64/kernel/hibernate.c
+> @@ -196,57 +196,51 @@ EXPORT_SYMBOL(arch_hibernation_header_restore);
+>   */
+>  static int create_safe_exec_page(void *src_start, size_t length,
+>  				 unsigned long dst_addr,
+> -				 phys_addr_t *phys_dst_addr,
+> -				 void *(*allocator)(gfp_t mask),
+> -				 gfp_t mask)
+> +				 phys_addr_t *phys_dst_addr)
+>  {
+> -	int rc = 0;
+> +	void *page = (void *)get_safe_page(GFP_ATOMIC);
+> +	pgd_t *trans_table;
 
-Queued, thanks.
+The addition of this trans_table variable wasn't mentioned in the commit
+message...
 
-Paolo
+> +	trans_table = (void *)get_safe_page(GFP_ATOMIC);
+> +	if (!trans_table)
+> +		return -ENOMEM;
+>  
+> -	pgdp = pgd_offset_raw(allocator(mask), dst_addr);
+> +	pgdp = pgd_offset_raw(trans_table, dst_addr);
+
+> -	write_sysreg(phys_to_ttbr(virt_to_phys(pgdp)), ttbr0_el1);
+> +	write_sysreg(phys_to_ttbr(virt_to_phys(trans_table)), ttbr0_el1);
+
+
+... and I guess you're trying to ensure that we program the TTBR with
+the correct base address, without the offset of whatever pgd entry we
+happen to have plumbed in?
+
+I think that's a fix, and should come before any other cleanup or
+rework.
+
+If you can respin that specific change with s/trans_table/pgdir/, that
+would make sense to me.
+
+Thanks,
+Mark.
