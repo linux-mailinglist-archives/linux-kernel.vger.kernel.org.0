@@ -2,22 +2,22 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F66692003
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E7E092006
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:22:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727399AbfHSJWI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 05:22:08 -0400
+        id S1727465AbfHSJWO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:22:14 -0400
 Received: from mailgw01.mediatek.com ([210.61.82.183]:4354 "EHLO
         mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726857AbfHSJWI (ORCPT
+        with ESMTP id S1727364AbfHSJWL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:22:08 -0400
-X-UUID: 9adc7367229041aa9ac70645ef507cb8-20190819
-X-UUID: 9adc7367229041aa9ac70645ef507cb8-20190819
+        Mon, 19 Aug 2019 05:22:11 -0400
+X-UUID: d93311493dca493b984f01ddb7d82a42-20190819
+X-UUID: d93311493dca493b984f01ddb7d82a42-20190819
 Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
         (envelope-from <mars.cheng@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1793102664; Mon, 19 Aug 2019 17:22:00 +0800
+        with ESMTP id 1097062131; Mon, 19 Aug 2019 17:22:00 +0800
 Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
  mtkmbs05n1.mediatek.inc (172.21.101.15) with Microsoft SMTP Server (TLS) id
  15.0.1395.4; Mon, 19 Aug 2019 17:22:01 +0800
@@ -29,17 +29,17 @@ To:     Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
+        "Sean Wang" <sean.wang@kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>
 CC:     CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>,
         <linux-kernel@vger.kernel.org>,
         <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
         <wsd_upstream@mediatek.com>, mtk01761 <wendell.lin@mediatek.com>,
-        <linux-clk@vger.kernel.org>, Mars Cheng <mars.cheng@mediatek.com>
-Subject: [PATCH v2 07/11] pinctrl: mediatek: add mt6779 eint support
-Date:   Mon, 19 Aug 2019 17:21:38 +0800
-Message-ID: <1566206502-4347-8-git-send-email-mars.cheng@mediatek.com>
+        <linux-clk@vger.kernel.org>
+Subject: [PATCH v2 08/11] dt-bindings: mediatek: bindings for MT6779 clk
+Date:   Mon, 19 Aug 2019 17:21:39 +0800
+Message-ID: <1566206502-4347-9-git-send-email-mars.cheng@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
 References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
@@ -51,37 +51,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add driver setting to support mt6779 eint
+From: mtk01761 <wendell.lin@mediatek.com>
 
-Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+This patch adds the binding documentation for
+apmixedsys, audiosys, camsys, imgsys, ipesys,
+infracfg, mfgcfg, mmsys, topckgen, vdecsys,
+and vencsys for Mediatek MT6779.
+
+Signed-off-by: mtk01761 <wendell.lin@mediatek.com>
 ---
- drivers/pinctrl/mediatek/pinctrl-mt6779.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../bindings/arm/mediatek/mediatek,apmixedsys.txt  |    1 +
+ .../bindings/arm/mediatek/mediatek,audsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,camsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,imgsys.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,infracfg.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,ipesys.txt      |   22 ++++++++++++++++++++
+ .../bindings/arm/mediatek/mediatek,mfgcfg.txt      |    1 +
+ .../bindings/arm/mediatek/mediatek,mmsys.txt       |    1 +
+ .../bindings/arm/mediatek/mediatek,topckgen.txt    |    1 +
+ .../bindings/arm/mediatek/mediatek,vdecsys.txt     |    1 +
+ .../bindings/arm/mediatek/mediatek,vencsys.txt     |    1 +
+ 11 files changed, 32 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6779.c b/drivers/pinctrl/mediatek/pinctrl-mt6779.c
-index 145bf22..49ff3cc 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt6779.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt6779.c
-@@ -731,11 +731,19 @@
- 	"iocfg_rt", "iocfg_lt", "iocfg_tl",
- };
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+index 161e63a..ff000cc 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,apmixedsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-apmixedsys"
+ 	- "mediatek,mt2712-apmixedsys", "syscon"
++	- "mediatek,mt6779-apmixedsys", "syscon"
+ 	- "mediatek,mt6797-apmixedsys"
+ 	- "mediatek,mt7622-apmixedsys"
+ 	- "mediatek,mt7623-apmixedsys", "mediatek,mt2701-apmixedsys"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+index 07c9d81..e4ca7b7 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,audsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
  
-+static const struct mtk_eint_hw mt6779_eint_hw = {
-+	.port_mask = 7,
-+	.ports     = 6,
-+	.ap_num    = 209,
-+	.db_cnt    = 16,
-+};
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-audsys", "syscon"
++	- "mediatek,mt6779-audio", "syscon"
+ 	- "mediatek,mt7622-audsys", "syscon"
+ 	- "mediatek,mt7623-audsys", "mediatek,mt2701-audsys", "syscon"
+ 	- "mediatek,mt8183-audiosys", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+index d8930f6..1f4aaa1 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,camsys.txt
+@@ -6,6 +6,7 @@ The MediaTek camsys controller provides various clocks to the system.
+ Required Properties:
+ 
+ - compatible: Should be one of:
++	- "mediatek,mt6779-camsys", "syscon"
+ 	- "mediatek,mt8183-camsys", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+index e3bc4a1..2b693e3 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,imgsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt2712-imgsys", "syscon"
++	- "mediatek,mt6779-imgsys", "syscon"
+ 	- "mediatek,mt6797-imgsys", "syscon"
+ 	- "mediatek,mt7623-imgsys", "mediatek,mt2701-imgsys", "syscon"
+ 	- "mediatek,mt8173-imgsys", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+index a909139..db2f4fd 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,infracfg.txt
+@@ -9,6 +9,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-infracfg", "syscon"
+ 	- "mediatek,mt2712-infracfg", "syscon"
++	- "mediatek,mt6779-infracfg_ao", "syscon"
+ 	- "mediatek,mt6797-infracfg", "syscon"
+ 	- "mediatek,mt7622-infracfg", "syscon"
+ 	- "mediatek,mt7623-infracfg", "mediatek,mt2701-infracfg", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+new file mode 100644
+index 0000000..2ce889b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,ipesys.txt
+@@ -0,0 +1,22 @@
++Mediatek ipesys controller
++============================
 +
- static const struct mtk_pin_soc mt6779_data = {
- 	.reg_cal = mt6779_reg_cals,
- 	.pins = mtk_pins_mt6779,
- 	.npins = ARRAY_SIZE(mtk_pins_mt6779),
- 	.ngrps = ARRAY_SIZE(mtk_pins_mt6779),
-+	.eint_hw = &mt6779_eint_hw,
- 	.gpio_m = 0,
- 	.ies_present = true,
- 	.base_names = mt6779_pinctrl_register_base_names,
++The Mediatek ipesys controller provides various clocks to the system.
++
++Required Properties:
++
++- compatible: Should be one of:
++	- "mediatek,mt6779-ipesys", "syscon"
++- #clock-cells: Must be 1
++
++The ipesys controller uses the common clk binding from
++Documentation/devicetree/bindings/clock/clock-bindings.txt
++The available clocks are defined in dt-bindings/clock/mt*-clk.h.
++
++Example:
++
++ipesys: clock-controller@1b000000 {
++	compatible = "mediatek,mt6779-ipesys", "syscon";
++	reg = <0 0x1b000000 0 0x1000>;
++	#clock-cells = <1>;
++};
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+index 72787e7..ad5f9d2 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mfgcfg.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2712-mfgcfg", "syscon"
++	- "mediatek,mt6779-mfgcfg", "syscon"
+ 	- "mediatek,mt8183-mfgcfg", "syscon"
+ - #clock-cells: Must be 1
+ 
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+index 545eab7..301eefb 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,mmsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt2712-mmsys", "syscon"
++	- "mediatek,mt6779-mmsys", "syscon"
+ 	- "mediatek,mt6797-mmsys", "syscon"
+ 	- "mediatek,mt7623-mmsys", "mediatek,mt2701-mmsys", "syscon"
+ 	- "mediatek,mt8173-mmsys", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+index a023b83..0293d69 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,topckgen.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-topckgen"
+ 	- "mediatek,mt2712-topckgen", "syscon"
++	- "mediatek,mt6779-topckgen", "syscon"
+ 	- "mediatek,mt6797-topckgen"
+ 	- "mediatek,mt7622-topckgen"
+ 	- "mediatek,mt7623-topckgen", "mediatek,mt2701-topckgen"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+index 57176bb..7894558 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vdecsys.txt
+@@ -8,6 +8,7 @@ Required Properties:
+ - compatible: Should be one of:
+ 	- "mediatek,mt2701-vdecsys", "syscon"
+ 	- "mediatek,mt2712-vdecsys", "syscon"
++	- "mediatek,mt6779-vdecsys", "syscon"
+ 	- "mediatek,mt6797-vdecsys", "syscon"
+ 	- "mediatek,mt7623-vdecsys", "mediatek,mt2701-vdecsys", "syscon"
+ 	- "mediatek,mt8173-vdecsys", "syscon"
+diff --git a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+index c9faa62..6a6a14e 100644
+--- a/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
++++ b/Documentation/devicetree/bindings/arm/mediatek/mediatek,vencsys.txt
+@@ -7,6 +7,7 @@ Required Properties:
+ 
+ - compatible: Should be one of:
+ 	- "mediatek,mt2712-vencsys", "syscon"
++	- "mediatek,mt6779-vencsys", "syscon"
+ 	- "mediatek,mt6797-vencsys", "syscon"
+ 	- "mediatek,mt8173-vencsys", "syscon"
+ 	- "mediatek,mt8183-vencsys", "syscon"
 -- 
 1.7.9.5
 
