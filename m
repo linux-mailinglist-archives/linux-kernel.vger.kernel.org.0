@@ -2,93 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C144291D5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 08:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53FD791D7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 09:01:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfHSGyf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 02:54:35 -0400
-Received: from twhmllg4.macronix.com ([211.75.127.132]:59675 "EHLO
-        TWHMLLG4.macronix.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725790AbfHSGye (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 02:54:34 -0400
-Received: from localhost.localdomain ([172.17.195.96])
-        by TWHMLLG4.macronix.com with ESMTP id x7J6sIRK002951;
-        Mon, 19 Aug 2019 14:54:21 +0800 (GMT-8)
-        (envelope-from masonccyang@mxic.com.tw)
-From:   Mason Yang <masonccyang@mxic.com.tw>
-To:     miquel.raynal@bootlin.com, richard@nod.at, marek.vasut@gmail.com,
-        dwmw2@infradead.org, bbrezillon@kernel.org,
-        computersforpeace@gmail.com, vigneshr@ti.com, robh+dt@kernel.org,
-        stefan@agner.ch, mark.rutland@arm.com
-Cc:     lee.jones@linaro.org, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, paul.burton@mips.com,
-        liang.yang@amlogic.com, linux-mtd@lists.infradead.org,
-        masonccyang@mxic.com.tw, anders.roxell@linaro.org,
-        christophe.kerello@st.com, paul@crapouillou.net,
-        devicetree@vger.kernel.org
-Subject: [PATCH v7 2/2] dt-bindings: mtd: Document Macronix raw NAND controller bindings
-Date:   Mon, 19 Aug 2019 15:19:09 +0800
-Message-Id: <1566199149-5669-3-git-send-email-masonccyang@mxic.com.tw>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1566199149-5669-1-git-send-email-masonccyang@mxic.com.tw>
-References: <1566199149-5669-1-git-send-email-masonccyang@mxic.com.tw>
-X-MAIL: TWHMLLG4.macronix.com x7J6sIRK002951
+        id S1726710AbfHSHBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 03:01:01 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:44380 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725946AbfHSHBB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 03:01:01 -0400
+Received: from zn.tnic (p200300EC2F04B700DD16340F367BA899.dip0.t-ipconnect.de [IPv6:2003:ec:2f04:b700:dd16:340f:367b:a899])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3C1751EC0682;
+        Mon, 19 Aug 2019 09:00:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1566198059;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=STGmHCxuW1iqfQWgHdKfCaImyHGjybPIfoZ7OHRH4I4=;
+        b=bTdvnMbc21ae4hKpwFVlSrcnfqjK6oKoPOr1QE8el9SwmauH0OJoXFQv9oVzdRM7PsDyeQ
+        Nn8aCF63ddzdc4RKTfL1L5phtq7zVChnB/SXoJV0bdvVb7QDJsjaAMQkFMBFxnsyfCHK9R
+        FEN/1rUrTUMEGS5ioZxZ4M1QOyF++CM=
+From:   Borislav Petkov <bp@alien8.de>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     x86@kernel.org
+Subject: [PATCH] x86/msr-index: Move AMD MSRs where they belong
+Date:   Mon, 19 Aug 2019 09:01:40 +0200
+Message-Id: <20190819070140.23708-1-bp@alien8.de>
+X-Mailer: git-send-email 2.21.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings used by the Macronix raw NAND controller.
+From: Borislav Petkov <bp@suse.de>
 
-Signed-off-by: Mason Yang <masonccyang@mxic.com.tw>
+... sort them in and fixup comment, while at it.
+
+No functional changes.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: x86@kernel.org
 ---
- .../devicetree/bindings/mtd/mxic-nand.txt          | 36 ++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/mxic-nand.txt
+ arch/x86/include/asm/msr-index.h | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/mtd/mxic-nand.txt b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-new file mode 100644
-index 0000000..46c5529
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/mxic-nand.txt
-@@ -0,0 +1,36 @@
-+Macronix Raw NAND Controller Device Tree Bindings
-+-------------------------------------------------
-+
-+Required properties:
-+- compatible: should be "mxic,multi-itfc-v009-nand-controller"
-+- reg: should contain 1 entry for the registers
-+- #address-cells: should be set to 1
-+- #size-cells: should be set to 0
-+- interrupts: interrupt line connected to this raw NAND controller
-+- clock-names: should contain "ps", "send" and "send_dly"
-+- clocks: should contain 3 phandles for the "ps", "send" and
-+	 "send_dly" clocks
-+
-+Children nodes:
-+- children nodes represent the available NAND chips.
-+
-+See Documentation/devicetree/bindings/mtd/nand-controller.yaml
-+for more details on generic bindings.
-+
-+Example:
-+
-+	nand: nand-controller@43c30000 {
-+		compatible = "mxic,multi-itfc-v009-nand-controller";
-+		reg = <0x43c30000 0x10000>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		interrupts = <GIC_SPI 0x1d IRQ_TYPE_EDGE_RISING>;
-+		clocks = <&clkwizard 0>, <&clkwizard 1>, <&clkc 15>;
-+		clock-names = "send", "send_dly", "ps";
-+
-+		nand@0 {
-+			reg = <0>;
-+			nand-ecc-mode = "soft";
-+			nand-ecc-algo = "bch";
-+		};
-+	};
+diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
+index 6b4fc2788078..f9a01a04c708 100644
+--- a/arch/x86/include/asm/msr-index.h
++++ b/arch/x86/include/asm/msr-index.h
+@@ -375,13 +375,17 @@
+ /* Alternative perfctr range with full access. */
+ #define MSR_IA32_PMC0			0x000004c1
+ 
+-/* AMD64 MSRs. Not complete. See the architecture manual for a more
+-   complete list. */
+-
++/*
++ * AMD64 MSRs. Not complete. See the architecture manual for a more
++ * complete list.
++ */
+ #define MSR_AMD64_PATCH_LEVEL		0x0000008b
+ #define MSR_AMD64_TSC_RATIO		0xc0000104
+ #define MSR_AMD64_NB_CFG		0xc001001f
+ #define MSR_AMD64_PATCH_LOADER		0xc0010020
++#define MSR_AMD_PERF_CTL		0xc0010062
++#define MSR_AMD_PERF_STATUS		0xc0010063
++#define MSR_AMD_PSTATE_DEF_BASE		0xc0010064
+ #define MSR_AMD64_OSVW_ID_LENGTH	0xc0010140
+ #define MSR_AMD64_OSVW_STATUS		0xc0010141
+ #define MSR_AMD64_LS_CFG		0xc0011020
+@@ -560,9 +564,6 @@
+ #define MSR_IA32_PERF_STATUS		0x00000198
+ #define MSR_IA32_PERF_CTL		0x00000199
+ #define INTEL_PERF_CTL_MASK		0xffff
+-#define MSR_AMD_PSTATE_DEF_BASE		0xc0010064
+-#define MSR_AMD_PERF_STATUS		0xc0010063
+-#define MSR_AMD_PERF_CTL		0xc0010062
+ 
+ #define MSR_IA32_MPERF			0x000000e7
+ #define MSR_IA32_APERF			0x000000e8
 -- 
-1.9.1
+2.21.0
 
