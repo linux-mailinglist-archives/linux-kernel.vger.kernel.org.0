@@ -2,167 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3107591FE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC4791FEC
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 11:19:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727430AbfHSJTY convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 05:19:24 -0400
-Received: from relay12.mail.gandi.net ([217.70.178.232]:44895 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727068AbfHSJTY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 05:19:24 -0400
-Received: from xps13 (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: miquel.raynal@bootlin.com)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 5038F20000C;
-        Mon, 19 Aug 2019 09:19:19 +0000 (UTC)
-Date:   Mon, 19 Aug 2019 11:19:18 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     "Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com>
-Cc:     Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        Frieder Schrempf <frieder.schrempf@kontron.de>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Jeff Kletsky <git-commits@allycomm.com>,
-        Chuanhong Guo <gch981213@gmail.com>,
-        liaoweixiong <liaoweixiong@allwinnertech.com>
-Subject: Re: [EXT] Re: [PATCH 6/8] mtd: spinand: micron: Turn driver
- implementation generic
-Message-ID: <20190819111918.6be79570@xps13>
-In-Reply-To: <MN2PR08MB5951F13BC1D1D111681CCB4BB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-References: <20190722055621.23526-1-sshivamurthy@micron.com>
-        <20190722055621.23526-7-sshivamurthy@micron.com>
-        <20190807120408.031b8d1b@xps13>
-        <MN2PR08MB5951F13BC1D1D111681CCB4BB8A80@MN2PR08MB5951.namprd08.prod.outlook.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+        id S1727437AbfHSJTz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 05:19:55 -0400
+Received: from gate.crashing.org ([63.228.1.57]:44547 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725790AbfHSJTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 05:19:55 -0400
+Received: from gate.crashing.org (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id x7J9JVDb002533;
+        Mon, 19 Aug 2019 04:19:32 -0500
+Received: (from segher@localhost)
+        by gate.crashing.org (8.14.1/8.14.1/Submit) id x7J9JVnB002530;
+        Mon, 19 Aug 2019 04:19:31 -0500
+X-Authentication-Warning: gate.crashing.org: segher set sender to segher@kernel.crashing.org using -f
+Date:   Mon, 19 Aug 2019 04:19:31 -0500
+From:   Segher Boessenkool <segher@kernel.crashing.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        clang-built-linux@googlegroups.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Don't add -mabi= flags when building with Clang
+Message-ID: <20190819091930.GZ31406@gate.crashing.org>
+References: <20190818191321.58185-1-natechancellor@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190818191321.58185-1-natechancellor@gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Sun, Aug 18, 2019 at 12:13:21PM -0700, Nathan Chancellor wrote:
+> When building pseries_defconfig, building vdso32 errors out:
+> 
+>   error: unknown target ABI 'elfv1'
+> 
+> Commit 4dc831aa8813 ("powerpc: Fix compiling a BE kernel with a
+> powerpc64le toolchain") added these flags to fix building GCC but
+> clang is multitargeted and does not need these flags. The ABI is
+> properly set based on the target triple, which is derived from
+> CROSS_COMPILE.
 
-I need your opinion on the question below.
+You mean that LLVM does not *allow* you to select a different ABI, or
+different ABI options, you always have to use the default.  (Everything
+else you say is true for GCC as well).
 
-"Shivamurthy Shastri (sshivamurthy)" <sshivamurthy@micron.com> wrote on
-Mon, 19 Aug 2019 09:03:38 +0000:
+(-mabi= does not set a "target ABI", fwiw, it is more subtle; please see
+the documentation.  Unless LLVM is incompatible in that respect as well?)
 
-> Hi Miquel,
-> 
-> > 
-> > Hi Shiva,
-> > 
-> > shiva.linuxworks@gmail.com wrote on Mon, 22 Jul 2019 07:56:19 +0200:
-> >   
-> > > From: Shivamurthy Shastri <sshivamurthy@micron.com>
-> > >  
-> > 
-> > I am not sure the "turn implemenatation generic" title describes what
-> > you do.
-> >   
-> > > Driver is redesigned using parameter page to support Micron SPI NAND
-> > > flashes.  
-> > 
-> > Redesigned is perhaps a bit too much.
-> > 
-> > "  
-> > > The reason why spinand_select_op_variant globalized is that the Micron
-> > > driver no longer calling spinand_match_and_init.
-> > >
-> > > Signed-off-by: Shivamurthy Shastri <sshivamurthy@micron.com>
-> > > ---
-> > >  drivers/mtd/nand/spi/core.c   |  2 +-
-> > >  drivers/mtd/nand/spi/micron.c | 61 +++++++++++++++++++++++++-------  
-> > ---  
-> > >  include/linux/mtd/spinand.h   |  4 +++
-> > >  3 files changed, 49 insertions(+), 18 deletions(-)
-> > >
-> > > diff --git a/drivers/mtd/nand/spi/core.c b/drivers/mtd/nand/spi/core.c
-> > > index 7ae76dab9141..aae715d388b7 100644
-> > > --- a/drivers/mtd/nand/spi/core.c
-> > > +++ b/drivers/mtd/nand/spi/core.c
-> > > @@ -920,7 +920,7 @@ static void spinand_manufacturer_cleanup(struct  
-> > spinand_device *spinand)  
-> > >  		return spinand->manufacturer->ops->cleanup(spinand);
-> > >  }
-> > >
-> > > -static const struct spi_mem_op *
-> > > +const struct spi_mem_op *
-> > >  spinand_select_op_variant(struct spinand_device *spinand,
-> > >  			  const struct spinand_op_variants *variants)
-> > >  {
-> > > diff --git a/drivers/mtd/nand/spi/micron.c  
-> > b/drivers/mtd/nand/spi/micron.c  
-> > > index 95bc5264ebc1..6fde93ec23a1 100644
-> > > --- a/drivers/mtd/nand/spi/micron.c
-> > > +++ b/drivers/mtd/nand/spi/micron.c
-> > > @@ -90,22 +90,10 @@ static int micron_ecc_get_status(struct  
-> > spinand_device *spinand,  
-> > >  	return -EINVAL;
-> > >  }
-> > >
-> > > -static const struct spinand_info micron_spinand_table[] = {
-> > > -	SPINAND_INFO("MT29F2G01ABAGD", 0x24,
-> > > -		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
-> > > -		     NAND_ECCREQ(8, 512),
-> > > -		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
-> > > -					      &write_cache_variants,
-> > > -					      &update_cache_variants),
-> > > -		     0,
-> > > -		     SPINAND_ECCINFO(&micron_ooblayout_ops,
-> > > -				     micron_ecc_get_status)),
-> > > -};
-> > > -  
-> > 
-> > I don't know if it is wise to drop this structure.
-> >   
-> > >  static int micron_spinand_detect(struct spinand_device *spinand)
-> > >  {
-> > > +	const struct spi_mem_op *op;
-> > >  	u8 *id = spinand->id.data;
-> > > -	int ret;
-> > >
-> > >  	/*
-> > >  	 * Micron SPI NAND read ID need a dummy byte,
-> > > @@ -114,16 +102,55 @@ static int micron_spinand_detect(struct  
-> > spinand_device *spinand)  
-> > >  	if (id[1] != SPINAND_MFR_MICRON)
-> > >  		return 0;
-> > >
-> > > -	ret = spinand_match_and_init(spinand, micron_spinand_table,
-> > > -				     ARRAY_SIZE(micron_spinand_table),  
-> > id[2]);
-> > 
-> > I am not sure this is the right solution. I would keep this call and
-> > overwrite what you need to overwrite with the fixup hook.
-> >   
-> 
-> Then, I will have dummy structure like below.
-> 
-> static const struct spinand_info micron_spinand_table[] = {                      
->         SPINAND_INFO(NULL, 0,                                                                    
->                      NAND_MEMORG(0, 0, 0, 0, 0, 0, 0, 0, 0),           
->                      NAND_ECCREQ(0, 0),                                                                       
->                      SPINAND_INFO_OP_VARIANTS(&read_cache_variants,              
->                                               &write_cache_variants,             
->                                               &update_cache_variants),           
->                      0,                                                                                         
->                      SPINAND_ECCINFO(&micron_ooblayout_ops,                      
->                                      micron_ecc_get_status)),                    
-> };                                    
-> 
-> Let me know if you are thinking for different approach.
-> 
 
-Thanks,
-Miquèl
+Segher
