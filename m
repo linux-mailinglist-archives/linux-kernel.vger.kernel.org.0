@@ -2,196 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A5AEF95136
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B02E9515C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 01:05:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728619AbfHSXBB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:01:01 -0400
-Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:32006 "EHLO
-        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728123AbfHSXBB (ORCPT
+        id S1728680AbfHSXC2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 19:02:28 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:35420 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728123AbfHSXC1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 19:01:01 -0400
-Received: from pps.filterd (m0044010.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JMxZmx008747
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:01:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : in-reply-to : references : mime-version :
- content-type; s=facebook; bh=sWhCn1MkVcyl0S66olKX6n9IQ1ill6txaHPzEEn2R9g=;
- b=iQjs/UUW817RLEG3p5C5S6ewog0BovMHswyfRS4UkOwq7s+yg1+tvtFAvzqDT1P5e3Ex
- 8HqHAVdi+4NeFEJcyS9R3GGVR/PQfoP1/aoUREygEfbBKi6da6clwepqHbjT0HtZEiBV
- 7OAs4sQ+Pf+rQ3XUpJr7V+hWwn7LldVja4A= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2ug1vv8veh-4
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 16:01:00 -0700
-Received: from mx-out.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::4) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 19 Aug 2019 16:00:58 -0700
-Received: by devvm2643.prn2.facebook.com (Postfix, from userid 111017)
-        id 7839E168C488F; Mon, 19 Aug 2019 16:00:56 -0700 (PDT)
-Smtp-Origin-Hostprefix: devvm
-From:   Roman Gushchin <guro@fb.com>
-Smtp-Origin-Hostname: devvm2643.prn2.facebook.com
-To:     Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-team@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>
-Smtp-Origin-Cluster: prn2c23
-Subject: [PATCH v3 3/3] mm: memcontrol: flush percpu slab vmstats on kmem offlining
-Date:   Mon, 19 Aug 2019 16:00:54 -0700
-Message-ID: <20190819230054.779745-4-guro@fb.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190819230054.779745-1-guro@fb.com>
-References: <20190819230054.779745-1-guro@fb.com>
-X-FB-Internal: Safe
+        Mon, 19 Aug 2019 19:02:27 -0400
+Received: by mail-qt1-f194.google.com with SMTP id u34so3859164qte.2;
+        Mon, 19 Aug 2019 16:02:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ch4jA9pONjtk/Z4LqeHHWiGHsq1WXCAfEIg/BkBMJiY=;
+        b=QNGqQBLece/JlbbZf3creWkGeaYh7AvYT7t0EHJK1oab8rX45BQRjiWbeP6jFnElJy
+         iW9NKOwdKvdI18OXNbwhCFrALBoSxibgAlsyTJsivjw+XAsAvEuddcDCf59TC4EBzfgf
+         cevSWkwEbWEVKegmjnQf/c3D+Vy2ewv086huz7cOvAIo+ZGp1sWJGI8WegldTrkeG/rB
+         Wr0MaaU+bfrTjXO2f9+Z9kbskqLX/v1tuzb5I/PrkMqd5VBwM57yOVYBb/TjXYPhkYZ6
+         pWBflUwl55dFJKLl7PUYbMvYyzq0fgh0JUx0g0yuTWzmITEWXw/HKlkyNzDbLutAcJ9K
+         CGbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ch4jA9pONjtk/Z4LqeHHWiGHsq1WXCAfEIg/BkBMJiY=;
+        b=XTac4m8YjgjwnpSNxHmTmUxENRwu02rLzNIm6V+NGvVwJQHprti+j4GddpV7LyS4DH
+         Uta8vc/3rUoW4wJ79D2QaxGjhlNLuj3f/hFeFE4G/iP14uxw6Cwm4KtlesddqvUck+Tn
+         jshK/FnYV3PESYL4DfywAfP4Hctw9cSi50NZcmKyaRK7X4/hbrVP6IDbp+eeVYpW+k7I
+         UkM2JPMk/Y0MDYU0wH0ODjr2V4GqT/U2fq3IGVb5ewRLl+tbQNhVHL1QT7QB0fg5m8CC
+         0KhEsGI+ED7es1GwQ1fVdVRywIgsAOCtxtYKkass49GYjSb7vNYXMP3pcATNvXcI7hih
+         ft5w==
+X-Gm-Message-State: APjAAAVpJnZDENzHOiumzVdHtIRSfsSZAtWPVEsMQFx3mRefwPXyQk60
+        2jcOfNrsXl2lbNu/TnZwqj/RxztOEiHha0rOCs8=
+X-Google-Smtp-Source: APXvYqz0oKtLKKMVCnayxkA0wWDlCeW2p/EMH+Dzj4XF0YauoZ24YMthjhbaevwUoelJizSQg1A1J69+Y+/onCzojeY=
+X-Received: by 2002:ac8:1605:: with SMTP id p5mr23151806qtj.79.1566255746695;
+ Mon, 19 Aug 2019 16:02:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=610 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908190227
-X-FB-Internal: deliver
+References: <CALaQ_hruPmgnE5yh_MJLLZ_7sPNEnzX8H-WfR=fBvcfEzfG9Fg@mail.gmail.com>
+ <e616d881-25e2-c295-2a98-b51c8cbcbc81@nextdimension.cc> <CALaQ_hqEZ-kco1esyB4mk0z9Q9Xt1XZsgYKR7gSdF7COERKoOA@mail.gmail.com>
+ <eada38a3-258b-52ff-94a7-b8877899267e@kernel.org> <da6a1b65-cbe5-4e5e-d61c-43644a23da34@kernel.org>
+In-Reply-To: <da6a1b65-cbe5-4e5e-d61c-43644a23da34@kernel.org>
+From:   Nathan Royce <nroycea+kernel@gmail.com>
+Date:   Mon, 19 Aug 2019 18:02:18 -0500
+Message-ID: <CALaQ_hoaoT+fzJZvEjCr6snjQme13LF2aph8cfvBCP5qta_QNQ@mail.gmail.com>
+Subject: Re: Kernel 5.2.8 - au0828 - Tuner Is Busy
+To:     shuah <shuah@kernel.org>
+Cc:     Brad Love <brad@nextdimension.cc>, sean@mess.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I've noticed that the "slab" value in memory.stat is sometimes 0,
-even if some children memory cgroups have a non-zero "slab" value.
-The following investigation showed that this is the result
-of the kmem_cache reparenting in combination with the per-cpu
-batching of slab vmstats.
+(resubmitting due to non "reply-to-all"):
 
-At the offlining some vmstat value may leave in the percpu cache,
-not being propagated upwards by the cgroup hierarchy. It means
-that stats on ancestor levels are lower than actual. Later when
-slab pages are released, the precise number of pages is substracted
-on the parent level, making the value negative. We don't show negative
-values, 0 is printed instead.
+Bugger, I just sent a reply to your last message, but it bounced back with:
+*****
+550 5.7.1 Content-Policy reject msg: The message contains HTML
+subpart, therefore we consider it SPAM or Outlook Virus. TEXT/PLAIN is
+accepted.! BF:<U 0.466751>; S1728494AbfHSVzk
+*****
+I just switched this email to plain-text and will resubmit my previous
+email as plain-text.
 
-To fix this issue, let's flush percpu slab memcg and lruvec stats
-on memcg offlining. This guarantees that numbers on all ancestor
-levels are accurate and match the actual number of outstanding
-slab pages.
+Anyway, yeah, all I did in au0828-cards.c was add my 0x0400 like:
+*****
+ { USB_DEVICE(0x2040, 0x7281),
+.driver_info = AU0828_BOARD_HAUPPAUGE_HVR950Q_MXL },
+{ USB_DEVICE(0x05e1, 0x0400),
+.driver_info = AU0828_BOARD_HAUPPAUGE_WOODBURY },
+{ USB_DEVICE(0x05e1, 0x0480),
+.driver_info = AU0828_BOARD_HAUPPAUGE_WOODBURY },
+{ USB_DEVICE(0x2040, 0x8200),
+.driver_info = AU0828_BOARD_HAUPPAUGE_WOODBURY },
+*****
 
-Fixes: fb2f2b0adb98 ("mm: memcg/slab: reparent memcg kmem_caches on cgroup removal")
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
----
- include/linux/mmzone.h |  5 +++--
- mm/memcontrol.c        | 35 +++++++++++++++++++++++++++--------
- 2 files changed, 30 insertions(+), 10 deletions(-)
+That's all I've ever had to do. I never knew about the quirks-table.h.
+I'll take a look.
+I saw in the log the 0x05e1 addition was made in 2016, but maybe it
+only applies to the Media Controller API change requirement now (thus,
+not having caused any problems in the past since the API wasn't being
+used).
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 8b5f758942a2..bda20282746b 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -215,8 +215,9 @@ enum node_stat_item {
- 	NR_INACTIVE_FILE,	/*  "     "     "   "       "         */
- 	NR_ACTIVE_FILE,		/*  "     "     "   "       "         */
- 	NR_UNEVICTABLE,		/*  "     "     "   "       "         */
--	NR_SLAB_RECLAIMABLE,
--	NR_SLAB_UNRECLAIMABLE,
-+	NR_SLAB_RECLAIMABLE,	/* Please do not reorder this item */
-+	NR_SLAB_UNRECLAIMABLE,	/* and this one without looking at
-+				 * memcg_flush_percpu_vmstats() first. */
- 	NR_ISOLATED_ANON,	/* Temporary isolated pages from anon lru */
- 	NR_ISOLATED_FILE,	/* Temporary isolated pages from file lru */
- 	WORKINGSET_NODES,
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index f98c5293adae..3137de6a46f0 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -3383,37 +3383,49 @@ static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
- 	}
- }
- 
--static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg)
-+static void memcg_flush_percpu_vmstats(struct mem_cgroup *memcg, bool slab_only)
- {
- 	unsigned long stat[MEMCG_NR_STAT];
- 	struct mem_cgroup *mi;
- 	int node, cpu, i;
-+	int min_idx, max_idx;
- 
--	for (i = 0; i < MEMCG_NR_STAT; i++)
-+	if (slab_only) {
-+		min_idx = NR_SLAB_RECLAIMABLE;
-+		max_idx = NR_SLAB_UNRECLAIMABLE;
-+	} else {
-+		min_idx = 0;
-+		max_idx = MEMCG_NR_STAT;
-+	}
-+
-+	for (i = min_idx; i < max_idx; i++)
- 		stat[i] = 0;
- 
- 	for_each_online_cpu(cpu)
--		for (i = 0; i < MEMCG_NR_STAT; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			stat[i] += raw_cpu_read(memcg->vmstats_percpu->stat[i]);
- 
- 	for (mi = memcg; mi; mi = parent_mem_cgroup(mi))
--		for (i = 0; i < MEMCG_NR_STAT; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			atomic_long_add(stat[i], &mi->vmstats[i]);
- 
-+	if (!slab_only)
-+		max_idx = NR_VM_NODE_STAT_ITEMS;
-+
- 	for_each_node(node) {
- 		struct mem_cgroup_per_node *pn = memcg->nodeinfo[node];
- 		struct mem_cgroup_per_node *pi;
- 
--		for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+		for (i = min_idx; i < max_idx; i++)
- 			stat[i] = 0;
- 
- 		for_each_online_cpu(cpu)
--			for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+			for (i = min_idx; i < max_idx; i++)
- 				stat[i] += raw_cpu_read(
- 					pn->lruvec_stat_cpu->count[i]);
- 
- 		for (pi = pn; pi; pi = parent_nodeinfo(pi, node))
--			for (i = 0; i < NR_VM_NODE_STAT_ITEMS; i++)
-+			for (i = min_idx; i < max_idx; i++)
- 				atomic_long_add(stat[i], &pi->lruvec_stat[i]);
- 	}
- }
-@@ -3486,7 +3498,14 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
- 	if (!parent)
- 		parent = root_mem_cgroup;
- 
-+	/*
-+	 * Deactivate and reparent kmem_caches. Then flush percpu
-+	 * slab statistics to have precise values at the parent and
-+	 * all ancestor levels. It's required to keep slab stats
-+	 * accurate after the reparenting of kmem_caches.
-+	 */
- 	memcg_deactivate_kmem_caches(memcg, parent);
-+	memcg_flush_percpu_vmstats(memcg, true);
- 
- 	kmemcg_id = memcg->kmemcg_id;
- 	BUG_ON(kmemcg_id < 0);
-@@ -4863,7 +4882,7 @@ static void __mem_cgroup_free(struct mem_cgroup *memcg)
- 	 * Flush percpu vmstats and vmevents to guarantee the value correctness
- 	 * on parent's and all ancestor levels.
- 	 */
--	memcg_flush_percpu_vmstats(memcg);
-+	memcg_flush_percpu_vmstats(memcg, false);
- 	memcg_flush_percpu_vmevents(memcg);
- 	for_each_node(node)
- 		free_mem_cgroup_per_node_info(memcg, node);
--- 
-2.21.0
+I've never sent in a patch before (anywhere. I just point out a
+problem and let the dev code it in their style). Also I don't want to
+be a bother in case something even that small could somehow break
+something else, especially for something "off-brand"(?).
+I never really minded building the module by itself.
 
+I've just now started the build for linux-5.2.y with the
+quirks-table.h change along with au0828-cards.c.
+Thanks for that heads-up. Hopefully that does the trick (whatever the
+trick/quirk is).
+
+On Mon, Aug 19, 2019 at 4:44 PM shuah <shuah@kernel.org> wrote:
+>
+> On 8/19/19 2:49 PM, shuah wrote:
+> > Hi Nathan,
+> >
+> > Just catching up with this thread. Let me know what you find. Can you
+> > build your own kernel and see what you can find?
+> >
+>
+> You said you make changes to the
+>
+> "Whenever I update my kernel, I edit the
+> ./drivers/media/usb/au0828/au0828-cards.c file adding an entry for my
+> 0x400 device.
+> I've been doing it for years and it's been working fine... until now..."
+>
+> Please send me the changes you make to the file. I see the following
+> WOODBURY devices. I am assuming you add 0x400 entry.
+>
+> { USB_DEVICE(0x05e1, 0x0480),
+>                  .driver_info = AU0828_BOARD_HAUPPAUGE_WOODBURY },
+>          { USB_DEVICE(0x2040, 0x8200),
+>                  .driver_info = AU0828_BOARD_HAUPPAUGE_WOODBURY },
+>
+>
+> There is another table in sound/usb/quirks-table.h for AU0828
+> devices. In addition to 812658d88d26, 66354f18fe5f makes change
+> to this table to add a flag. I see two entries in that table:
+>
+> AU0828_DEVICE(0x05e1, 0x0480, "Hauppauge", "Woodbury"),
+> AU0828_DEVICE(0x2040, 0x8200, "Hauppauge", "Woodbury"),
+>
+> Since these drivers are now coupled doing resource sharing,
+> could it be that with your change to au02828 device table,
+> your changes are bow incomplete.
+>
+> I don't have a Woodbury device though. This is something to
+> try.
+>
+> Did you consider sending patch to add your device variant,
+> so you don't have to keep making this change whenever you
+> go to a new kernel?
+>
+> thanks,
+> -- Shuah
