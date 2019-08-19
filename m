@@ -2,74 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C8AA9926A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E075926B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 16:28:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726839AbfHSOZW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 10:25:22 -0400
-Received: from verein.lst.de ([213.95.11.211]:48105 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726314AbfHSOZV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 10:25:21 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id B1550227A81; Mon, 19 Aug 2019 16:25:16 +0200 (CEST)
-Date:   Mon, 19 Aug 2019 16:25:16 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc:     Christoph Hellwig <hch@lst.de>, iommu@lists.linux-foundation.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Vladimir Murzin <vladimir.murzin@arm.com>,
-        Takashi Iwai <tiwai@suse.de>, Helge Deller <deller@gmx.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Michal Simek <monstr@monstr.eu>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-m68k@lists.linux-m68k.org, linux-parisc@vger.kernel.org,
-        linux-sh@vger.kernel.org, linux-xtensa@linux-xtensa.org,
-        linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/8] parisc: don't set ARCH_NO_COHERENT_DMA_MMAP
-Message-ID: <20190819142516.GA6366@lst.de>
-References: <20190808160005.10325-1-hch@lst.de> <20190808160005.10325-8-hch@lst.de> <1565861152.2963.7.camel@HansenPartnership.com> <20190815105002.GA30805@lst.de>
+        id S1727329AbfHSO2X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 10:28:23 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4729 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726314AbfHSO2X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 10:28:23 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A941860674E86CE3D077;
+        Mon, 19 Aug 2019 22:28:19 +0800 (CST)
+Received: from [127.0.0.1] (10.184.12.158) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Mon, 19 Aug 2019
+ 22:28:09 +0800
+Subject: Re: [PATCH v2 04/12] irqchip/gic-v3: Add ESPI range support
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lokesh Vutla <lokeshvutla@ti.com>,
+        John Garry <john.garry@huawei.com>,
+        <linux-kernel@vger.kernel.org>,
+        "Shameerali Kolothum Thodi" <shameerali.kolothum.thodi@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190806100121.240767-1-maz@kernel.org>
+ <20190806100121.240767-5-maz@kernel.org>
+From:   Zenghui Yu <yuzenghui@huawei.com>
+Message-ID: <9cbd6fc8-3fe9-39fc-10ca-724a1ec06e8d@huawei.com>
+Date:   Mon, 19 Aug 2019 22:25:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:64.0) Gecko/20100101
+ Thunderbird/64.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190815105002.GA30805@lst.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20190806100121.240767-5-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.12.158]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Does my explanation from Thursday make sense or is it completely
-off?  Does the patch description need some update to be less
-confusing to those used to different terminology?
+Hi Marc,
 
-On Thu, Aug 15, 2019 at 12:50:02PM +0200, Christoph Hellwig wrote:
-> Except for the different naming scheme vs the code this matches my
-> assumptions.
+On 2019/8/6 18:01, Marc Zyngier wrote:
+> Add the required support for the ESPI range, which behave exactly like
+> the SPIs of old, only with new funky INTIDs.
 > 
-> In the code we have three cases (and a fourth EISA case mention in
-> comments, but not actually implemented as far as I can tell):
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> ---
+>   drivers/irqchip/irq-gic-v3.c       | 85 ++++++++++++++++++++++++------
+>   include/linux/irqchip/arm-gic-v3.h | 17 +++++-
+>   2 files changed, 85 insertions(+), 17 deletions(-)
 > 
-> arch/parisc/kernel/pci-dma.c says in the top of file comments:
-> 
-> ** AFAIK, all PA7100LC and PA7300LC platforms can use this code.
-> 
-> and the handles two different case.  for cpu_type == pcxl or pcxl2
-> it maps the memory as uncached for dma_alloc_coherent, and for all
-> other cpu types it fails the coherent allocations.
-> 
-> In addition to that there are the ccio and sba iommu drivers, of which
-> according to your above comment one is always present for pa8xxx.
-> 
-> Which brings us back to this patch, which ensures that no cacheable
-> memory is exported to userspace by removing ->mmap from ccio and sba.
-> It then enabled dma_mmap_coherent for the pcxl or pcxl2 case that
-> allocates uncached memory, which dma_mmap_coherent does not work
-> because dma_alloc_coherent already failed for the !pcxl && !pcxl2
-> and thus there is no memory to mmap.
-> 
-> So if the description is too confusing please suggest a better
-> one, I'm a little lost between all these code names and product
-> names (arch/parisc/include/asm/dma-mapping.h uses yet another set).
----end quoted text---
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index db3bdedd7241..1ca4dde32034 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -51,13 +51,16 @@ struct gic_chip_data {
+>   	u32			nr_redist_regions;
+>   	u64			flags;
+>   	bool			has_rss;
+> -	unsigned int		irq_nr;
+>   	struct partition_desc	*ppi_descs[16];
+>   };
+>   
+>   static struct gic_chip_data gic_data __read_mostly;
+>   static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
+>   
+> +#define GIC_ID_NR	(1U << GICD_TYPER_ID_BITS(gic_data.rdists.gicd_typer))
+> +#define GIC_LINE_NR	GICD_TYPER_SPIS(gic_data.rdists.gicd_typer)
+
+This indicates the maximum SPI INTID that the GIC implementation
+supports, should we restrict it to no more than 1020?
+
+ITLinesNumber can be '11111', and I saw the following info on my host:
+     "GICv3: 992 SPIs implemented"
+
+
+Thanks,
+zenghui
+
