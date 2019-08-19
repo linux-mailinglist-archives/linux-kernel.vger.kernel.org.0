@@ -2,167 +2,248 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 084FA94E6E
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:37:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B79A294E69
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 21:36:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728620AbfHSTgz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 15:36:55 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:53406 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728348AbfHSTgx (ORCPT
+        id S1728544AbfHSTgn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 15:36:43 -0400
+Received: from mx0b-00154904.pphosted.com ([148.163.137.20]:12396 "EHLO
+        mx0b-00154904.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728305AbfHSTgn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:36:53 -0400
-Received: by mail-wm1-f67.google.com with SMTP id 10so573169wmp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 12:36:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=w6FPvhjprMb5POGPlxTLY0xDeoCHzd15C3+SY9fdk5k=;
-        b=rJi933eGitU4j9Hvlmyn3s5GN7M6QuID0k/YBCFrMEFcOOvwXfN5lG1ncYtXC5E7bc
-         6XBCoFp6vGxgPB7ODL0XlvpWgnZ+s4vnvRrLUqU6Si0iy48Xn8I4wU9grXXgUB0xhRHt
-         uRKFP2h8J5B/6N8FsoI4ogmK5rREO/X7lwlCzHuWqu1VAgF/SsdVIvU9ePTX8rMGsROA
-         4qbzypT1o9NTfRZAnIY97jS0zv7cdVz6T6rwELaf47GjwuKCwhr2xWoNUY8LV33QIHow
-         vDSasNEG5TinEBxnAzzdxyY0fMR9zSUNlCcndsLtf8S5CQXg1iYAPALDw9pbwDTR3+E4
-         lSpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=w6FPvhjprMb5POGPlxTLY0xDeoCHzd15C3+SY9fdk5k=;
-        b=gP5iKjSM2WIuZClP+AtnDhlY5G1luB1sLSY5bD5Zn0xk82T/zYBa3joPJunIdFQi3g
-         C4UqN5Ql8gm1dZMU0vAk/ra9J7MXPfAdpHLP96Zx7ScGrlHvVV90YTgS/qOcw4seh+T7
-         alqdwHL3yIRYEkxS+IuRuT3PhgTHuC+PFAlDg5YU6LIosRQ8xkFoWUZQFFUxThCsOJo1
-         3T4somwoNWkEtDgwcI5hUhuj5t5A36I81CqIv+c0/vaJUJ9xmMjhosP5tlfji2OulLM9
-         zd/PhKtuhkLMRQxOVdrz6IY39sVKzGpIVEe8Lf9qBWqNSCDym/fVHBlCPf7Hh+vRSzBj
-         t5YQ==
-X-Gm-Message-State: APjAAAUkFqQeOfN8tD+gppWSijRFWJblIuHLESchMoi9n8pEbYOEPS+W
-        BQ/wo5EnNfjDZbv05pIrTFL7iAg3
-X-Google-Smtp-Source: APXvYqway+rAl0bhlS8AKPGhmsqB3SOcfk50aa9go4ahBFZmN1QBYsFfJ6s52yMHdJ91EfvoTnxmTw==
-X-Received: by 2002:a1c:6087:: with SMTP id u129mr21520140wmb.108.1566243411510;
-        Mon, 19 Aug 2019 12:36:51 -0700 (PDT)
-Received: from ?IPv6:2003:ea:8f47:db00:69f9:84c:2cc6:baef? (p200300EA8F47DB0069F9084C2CC6BAEF.dip0.t-ipconnect.de. [2003:ea:8f47:db00:69f9:84c:2cc6:baef])
-        by smtp.googlemail.com with ESMTPSA id e11sm43489470wrc.4.2019.08.19.12.36.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 12:36:51 -0700 (PDT)
-Subject: [PATCH v2 2/3] x86/irq: factor out IS_ERR_OR_NULL check from
- platform-specific handle_irq
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <c81f3440-f4cc-65bc-66fd-abe9cb2ec318@gmail.com>
-Message-ID: <2ec758c7-9aaa-73ab-f083-cc44c86aa741@gmail.com>
-Date:   Mon, 19 Aug 2019 21:36:09 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <c81f3440-f4cc-65bc-66fd-abe9cb2ec318@gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 19 Aug 2019 15:36:43 -0400
+Received: from pps.filterd (m0170394.ppops.net [127.0.0.1])
+        by mx0b-00154904.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JJYqAb006662;
+        Mon, 19 Aug 2019 15:36:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dell.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=smtpout1;
+ bh=KGDbDPyh/u6NV+m28V3SS0BS+72bffPh5srf4gsC0O4=;
+ b=XWxFqxX3daGsVlLFzGKCzgMzM6zy8BLXKpYxzPMAn5KD8e10zKvOtJ72s0nLTaszHd/I
+ L4b+DLFDfLeNk7fHQUrkwX7ThXcIqtNEyfId3A1ugfLXazl93TVd8RoTxKB59y/tykvl
+ iK9YOaBYTL+lCFB0a2Q1ZhXxdw3Orj5c/Oc87hQdd6yt6tn12ewjCOiVXvvIr3PW6MWp
+ Iy8LvIqscCpNhcD9iVMEGU3jPvr/44CKielJHULN1v6crpQnnndrTTS9vYnVxg/gLeRn
+ aKQk8Zekk7j8hihj0xP2GxB7gK8aFtwG+fvAo8r1jdjDX9Ya1LPhEBUFybAG787EPiaf /g== 
+Received: from mx0b-00154901.pphosted.com (mx0b-00154901.pphosted.com [67.231.157.37])
+        by mx0b-00154904.pphosted.com with ESMTP id 2uec570c19-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Aug 2019 15:36:40 -0400
+Received: from pps.filterd (m0134318.ppops.net [127.0.0.1])
+        by mx0a-00154901.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7JJXbo6152504;
+        Mon, 19 Aug 2019 15:36:40 -0400
+Received: from ausxipps306.us.dell.com (AUSXIPPS306.us.dell.com [143.166.148.156])
+        by mx0a-00154901.pphosted.com with ESMTP id 2uec7cycqj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 19 Aug 2019 15:36:40 -0400
+X-LoopCount0: from 10.166.132.134
+X-PREM-Routing: D-Outbound
+X-IronPort-AV: E=Sophos;i="5.60,349,1549951200"; 
+   d="scan'208";a="362564576"
+From:   <Mario.Limonciello@dell.com>
+To:     <mika.westerberg@linux.intel.com>
+CC:     <linux-kernel@vger.kernel.org>, <andreas.noever@gmail.com>,
+        <michael.jamet@intel.com>, <YehezkelShB@gmail.com>,
+        <rjw@rjwysocki.net>, <lenb@kernel.org>, <lukas@wunner.de>,
+        <anthony.wong@canonical.com>, <rajmohan.mani@intel.com>,
+        <raanan.avargil@intel.com>, <David.Laight@aculab.com>,
+        <linux-acpi@vger.kernel.org>
+Subject: RE: [PATCH v3 0/8] thunderbolt: Intel Ice Lake support
+Thread-Topic: [PATCH v3 0/8] thunderbolt: Intel Ice Lake support
+Thread-Index: AQHVVoBozBrF8LXinkuY9L30yxdXE6cCqCcggABtzQD//7HyEIAAFYjQ
+Date:   Mon, 19 Aug 2019 19:36:37 +0000
+Message-ID: <54e61cff57854068bb3f1188a9d12ee6@AUSX13MPC101.AMER.DELL.COM>
+References: <20190819112223.15359-1-mika.westerberg@linux.intel.com>
+ <5486107424db48f2a06ed4c8a81f75b0@AUSX13MPC101.AMER.DELL.COM>
+ <20190819175730.GX19908@lahna.fi.intel.com>
+ <c56451e3ae244acd8a824fbca1322c0c@AUSX13MPC101.AMER.DELL.COM>
+In-Reply-To: <c56451e3ae244acd8a824fbca1322c0c@AUSX13MPC101.AMER.DELL.COM>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Enabled=True;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SiteId=945c199a-83a2-4e80-9f8c-5a91be5752dd;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Owner=Mario_Limonciello@Dell.com;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_SetDate=2019-08-19T18:20:28.5422271Z;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Name=External Public;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_17cb76b2-10b8-4fe1-93d4-2202842406cd_Extended_MSFT_Method=Manual;
+ aiplabel=External Public
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.18.86]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908190197
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908190198
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code can be simplified a little by factoring out the IS_ERR_OR_NULL
-check from the platform-specific handle_irq implementations, and by
-inlining the remaining call to generic_handle_irq_desc for 64bit
-systems.
+> -----Original Message-----
+> From: Limonciello, Mario
+> Sent: Monday, August 19, 2019 1:22 PM
+> To: 'Mika Westerberg'
+> Cc: linux-kernel@vger.kernel.org; andreas.noever@gmail.com;
+> michael.jamet@intel.com; YehezkelShB@gmail.com; rjw@rjwysocki.net;
+> lenb@kernel.org; lukas@wunner.de; anthony.wong@canonical.com;
+> rajmohan.mani@intel.com; raanan.avargil@intel.com; David.Laight@aculab.co=
+m;
+> linux-acpi@vger.kernel.org
+> Subject: RE: [PATCH v3 0/8] thunderbolt: Intel Ice Lake support
+>=20
+> > > I've tested this on a pre-production ICL platform.  This was on top o=
+f 5.3-rc5,
+> > both of
+> > > your patches from -next and this series.
+> > >
+> > > I've run into a problem when using
+> > > a WD19TB that after unplugging it will cause the following to spew in=
+ dmesg:
+> > >
+> > > [ 2198.017003] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
+> > > [ 2198.017005] WARNING: possible recursive locking detected
+> > > [ 2198.017008] 5.3.0-rc5+ #75 Not tainted
+> > > [ 2198.017009] --------------------------------------------
+> > > [ 2198.017012] irq/122-pciehp/121 is trying to acquire lock:
+> > > [ 2198.017015] 00000000801d4de8 (&ctrl->reset_lock){.+.+}, at:
+> > pciehp_check_presence+0x1b/0x80
+> > > [ 2198.017026]
+> > >                but task is already holding lock:
+> > > [ 2198.017028] 000000000899e2eb (&ctrl->reset_lock){.+.+}, at:
+> > pciehp_ist+0xaf/0x1c0
+> > > [ 2198.017033]
+> > >                other info that might help us debug this:
+> > > [ 2198.017035]  Possible unsafe locking scenario:
+> > >
+> > > [ 2198.017037]        CPU0
+> > > [ 2198.017038]        ----
+> > > [ 2198.017041]   lock(&ctrl->reset_lock);
+> > > [ 2198.017044]   lock(&ctrl->reset_lock);
+> > > [ 2198.017046]
+> > >                 *** DEADLOCK ***
+> > >
+> > > [ 2198.017048]  May be due to missing lock nesting notation
+> > >
+> > > [ 2198.017051] 3 locks held by irq/122-pciehp/121:
+> > > [ 2198.017052]  #0: 000000000899e2eb (&ctrl->reset_lock){.+.+}, at:
+> > pciehp_ist+0xaf/0x1c0
+> > > [ 2198.017057]  #1: 0000000069e1fd47 (pci_rescan_remove_lock){+.+.}, =
+at:
+> > pciehp_unconfigure_device+0x41/0x130
+> > > [ 2198.017064]  #2: 0000000046a5bfbf (&dev->mutex){....}, at:
+> > device_release_driver_internal+0x1c/0x1a0
+> > > [ 2198.017071]
+> > >                stack backtrace:
+> > > [ 2198.017075] CPU: 3 PID: 121 Comm: irq/122-pciehp Not tainted 5.3.0=
+-rc5+
+> #75
+> > > [ 2198.017079] Call Trace:
+> > > [ 2198.017089]  dump_stack+0x5e/0x8b
+> > > [ 2198.017096]  __lock_acquire+0x12fe/0x1520
+> > > [ 2198.017102]  lock_acquire+0x9d/0x1a0
+> > > [ 2198.017105]  ? pciehp_check_presence+0x1b/0x80
+> > > [ 2198.017113]  ? pci_restore_standard_config+0x40/0x40
+> > > [ 2198.017118]  down_read+0x3b/0x160
+> > > [ 2198.017121]  ? pciehp_check_presence+0x1b/0x80
+> > > [ 2198.017123]  pciehp_check_presence+0x1b/0x80
+> > > [ 2198.017128]  ? quirk_disable_msi.part.29+0x31/0x31
+> > > [ 2198.017131]  pciehp_resume+0x27/0x30
+> > > [ 2198.017136]  device_for_each_child+0x47/0x90
+> > > [ 2198.017140]  ? pci_restore_standard_config+0x40/0x40
+> > > [ 2198.017145]  pcie_port_device_runtime_resume+0x30/0x50
+> > > [ 2198.017150]  pci_pm_runtime_resume+0x6e/0xc0
+> > > [ 2198.017156]  __rpm_callback+0xb0/0x110
+> > > [ 2198.017161]  ? pci_restore_standard_config+0x40/0x40
+> > > [ 2198.017165]  rpm_callback+0x1f/0x70
+> > > [ 2198.017169]  ? pci_restore_standard_config+0x40/0x40
+> > > [ 2198.017173]  rpm_resume+0x4fe/0x690
+> > > [ 2198.017179]  ? irq_forced_thread_fn+0x70/0x70
+> > > [ 2198.017183]  __pm_runtime_resume+0x47/0x80
+> > > [ 2198.017187]  device_release_driver_internal+0x7c/0x1a0
+> > > [ 2198.017191]  pci_stop_bus_device+0x5d/0x80
+> > > [ 2198.017195]  pci_stop_bus_device+0x2b/0x80
+> > > [ 2198.017198]  pci_stop_and_remove_bus_device+0xe/0x20
+> > > [ 2198.017202]  pciehp_unconfigure_device+0x7c/0x130
+> > > [ 2198.017206]  pciehp_disable_slot+0x69/0x120
+> > > [ 2198.017211]  pciehp_handle_presence_or_link_change+0x7d/0x4b0
+> > > [ 2198.017215]  pciehp_ist+0x12a/0x1c0
+> > > [ 2198.017219]  irq_thread_fn+0x1b/0x60
+> > > [ 2198.017222]  irq_thread+0x15b/0x1c0
+> > > [ 2198.017226]  ? lockdep_hardirqs_on+0x115/0x180
+> > > [ 2198.017229]  ? wake_threads_waitq+0x30/0x30
+> > > [ 2198.017233]  ? irq_thread_dtor+0x90/0x90
+> > > [ 2198.017237]  kthread+0x101/0x140
+> > > [ 2198.017241]  ? kthread_cancel_delayed_work_sync+0x10/0x10
+> > > [ 2198.017245]  ret_from_fork+0x24/0x30
+> > > [ 2198.017897] xhci_hcd 0000:03:00.0: remove, state 1
+> > > [ 2198.017917] usb usb6: USB disconnect, device number 1
+> > > [ 2198.017925] usb 6-2: USB disconnect, device number 2
+> > > [ 2198.017932] usb 6-2.3: USB disconnect, device number 3
+> > > [ 2198.017939] usb 6-2.3.1: USB disconnect, device number 5
+> > > [ 2198.019565] sd 0:0:0:0: [sda] Synchronizing SCSI cache
+> > > [ 2198.019671] sd 0:0:0:0: [sda] Synchronize Cache(10) failed: Result=
+:
+> > hostbyte=3DDID_NO_CONNECT driverbyte=3DDRIVER_OK
+> > > [ 2198.057200] xhci_hcd 0000:03:00.0: xHCI host controller not respon=
+ding,
+> > assume dead
+> > > [ 2198.057227] r8152 6-2.4:1.0 enxd8d090034dcb: Stop submitting intr,=
+ status -
+> > 108
+> > > [ 2198.057574] usb 6-2.4: USB disconnect, device number 4
+> > > [ 2198.074541] xhci_hcd 0000:03:00.0: USB bus 6 deregistered
+> > > [ 2198.074558] xhci_hcd 0000:03:00.0: remove, state 1
+> > > [ 2198.074564] usb usb5: USB disconnect, device number 1
+> > > [ 2198.074566] usb 5-2: USB disconnect, device number 2
+> > > [ 2198.074569] usb 5-2.3: USB disconnect, device number 3
+> > > [ 2198.074571] usb 5-2.3.4: USB disconnect, device number 5
+> > > [ 2198.077367] usb 5-2.3.5: USB disconnect, device number 6
+> > > [ 2198.078488] usb 5-2.5: USB disconnect, device number 4
+> > > [ 2198.080340] xhci_hcd 0000:03:00.0: Host halt failed, -19
+> > > [ 2198.080344] xhci_hcd 0000:03:00.0: Host not accessible, reset fail=
+ed.
+> > > [ 2198.080770] xhci_hcd 0000:03:00.0: USB bus 5 deregistered
+> > > [ 2198.081153] pci 0000:03:00.0: Removing from iommu group 3
+> > > [ 2198.081180] pci_bus 0000:03: busn_res: [bus 03] is released
+> > > [ 2198.081287] pci 0000:02:02.0: Removing from iommu group 3
+> > > [ 2198.081396] pci_bus 0000:04: busn_res: [bus 04-2d] is released
+> > > [ 2198.081509] pci 0000:02:04.0: Removing from iommu group 3
+> > > [ 2198.082273] pci_bus 0000:02: busn_res: [bus 02-2d] is released
+> > > [ 2198.085759] pci 0000:01:00.0: Removing from iommu group 3
+> > > [ 2198.630098] thunderbolt 0-1: device disconnected
+> > >
+> > > Additionally I've found after this I can't get the dock to work by ho=
+tplugging
+> > again
+> > > until I reboot the system.
+> >
+> > Can you try if the following patch helps?
+> >
+> > https://lore.kernel.org/patchwork/patch/1113961/
+>=20
+> I just checked with that patch on top of my previous test kernel, same ca=
+ll trace
+> situation.
 
-Signed-off-by: Heiner Kallweit <hkallweit1@gmail.com>
----
-v2:
-- add "likely" to if clause and reorder it
-- For 64bit, remove handle_irq and inline call to generic_handle_irq_desc
----
- arch/x86/include/asm/irq.h | 2 +-
- arch/x86/kernel/irq.c      | 9 +++++++--
- arch/x86/kernel/irq_32.c   | 7 +------
- arch/x86/kernel/irq_64.c   | 9 ---------
- 4 files changed, 9 insertions(+), 18 deletions(-)
+After checking, this is not introduced by this series, it happens on v5.3-r=
+c5 as well.
+It's a problem in pciehp that will be debugged separately.
 
-diff --git a/arch/x86/include/asm/irq.h b/arch/x86/include/asm/irq.h
-index 8f95686ec..a176f6165 100644
---- a/arch/x86/include/asm/irq.h
-+++ b/arch/x86/include/asm/irq.h
-@@ -34,7 +34,7 @@ extern __visible void smp_kvm_posted_intr_nested_ipi(struct pt_regs *regs);
- extern void (*x86_platform_ipi_callback)(void);
- extern void native_init_IRQ(void);
- 
--extern bool handle_irq(struct irq_desc *desc, struct pt_regs *regs);
-+extern void handle_irq(struct irq_desc *desc, struct pt_regs *regs);
- 
- extern __visible unsigned int do_IRQ(struct pt_regs *regs);
- 
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 4215653f8..f1c8f350d 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -243,8 +243,13 @@ __visible unsigned int __irq_entry do_IRQ(struct pt_regs *regs)
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
- 
- 	desc = __this_cpu_read(vector_irq[vector]);
--
--	if (!handle_irq(desc, regs)) {
-+	if (likely(!IS_ERR_OR_NULL(desc))) {
-+#ifdef CONFIG_X86_32
-+		handle_irq(desc, regs);
-+#else
-+		generic_handle_irq_desc(desc);
-+#endif
-+	} else {
- 		ack_APIC_irq();
- 
- 		if (desc != VECTOR_RETRIGGERED && desc != VECTOR_SHUTDOWN) {
-diff --git a/arch/x86/kernel/irq_32.c b/arch/x86/kernel/irq_32.c
-index fc34816c6..a759ca97c 100644
---- a/arch/x86/kernel/irq_32.c
-+++ b/arch/x86/kernel/irq_32.c
-@@ -148,18 +148,13 @@ void do_softirq_own_stack(void)
- 	call_on_stack(__do_softirq, isp);
- }
- 
--bool handle_irq(struct irq_desc *desc, struct pt_regs *regs)
-+void handle_irq(struct irq_desc *desc, struct pt_regs *regs)
- {
- 	int overflow = check_stack_overflow();
- 
--	if (IS_ERR_OR_NULL(desc))
--		return false;
--
- 	if (user_mode(regs) || !execute_on_irq_stack(overflow, desc)) {
- 		if (unlikely(overflow))
- 			print_stack_overflow();
- 		generic_handle_irq_desc(desc);
- 	}
--
--	return true;
- }
-diff --git a/arch/x86/kernel/irq_64.c b/arch/x86/kernel/irq_64.c
-index 6bf6517a0..12df3a4ab 100644
---- a/arch/x86/kernel/irq_64.c
-+++ b/arch/x86/kernel/irq_64.c
-@@ -26,15 +26,6 @@
- DEFINE_PER_CPU_PAGE_ALIGNED(struct irq_stack, irq_stack_backing_store) __visible;
- DECLARE_INIT_PER_CPU(irq_stack_backing_store);
- 
--bool handle_irq(struct irq_desc *desc, struct pt_regs *regs)
--{
--	if (IS_ERR_OR_NULL(desc))
--		return false;
--
--	generic_handle_irq_desc(desc);
--	return true;
--}
--
- #ifdef CONFIG_VMAP_STACK
- /*
-  * VMAP the backing store with guard pages
--- 
-2.22.1
+So the Thunderbolt portion of this works for me on ICL system.
 
-
+Tested-by: Mario Limonciello <mario.limonciello@dell.com>
