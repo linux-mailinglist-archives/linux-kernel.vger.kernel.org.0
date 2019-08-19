@@ -2,85 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD6CE94F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:00:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69EDD94F89
+	for <lists+linux-kernel@lfdr.de>; Mon, 19 Aug 2019 23:04:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfHSVAI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 17:00:08 -0400
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:40221 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbfHSVAI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 17:00:08 -0400
-Received: by mail-yw1-f66.google.com with SMTP id z64so1378945ywe.7;
-        Mon, 19 Aug 2019 14:00:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=qvztveGCP8rAVOCE3TihtUu+wJQiIJmbl19Afmtoalk=;
-        b=IGOn9j5Q+EOSySGrJfPW5GUAA964uMzTzOIFs/eR5NnC3Scz7O+4CGJgXF48zvvVqE
-         G/tkbFjQX0PcNnjsqGZ0SJAR6C2cD7pW7iAGeGh8ydRjVybGs3kvPIOA6CGqJlX2n6sL
-         N/1zet0hGuyYuP21EygKJaCrjVdajqnrpRnEIAaD29r+7mynGUItc9pI+ZbYvB8DbVRF
-         mofj+spVyV6co80tm8UNWRkhIIFRA2IRar1ajOH1A597Phk3339I+MKgPahr9oi9TTui
-         w99YoD8iyq+wyrtIPPpzexS+5UcZULmqM/hCzDhX7O3xMCUT4FR+kdKnya6uN75/G4up
-         GX7w==
-X-Gm-Message-State: APjAAAUM1xX2lgAd1eUcL9ZL3LKnJIL1V4JmlSocMJ5+lhG8jx/E1u1d
-        rHRP3LDjSWNjz8QO0qBEDAoDyEjOgMuCFA==
-X-Google-Smtp-Source: APXvYqxJyHyzcdoCsBl4lVsAmwLRPbSxcrT4RLy8JeizYa54yMDsl5Z3M6+3dhSh7g/LAvkzx9q74A==
-X-Received: by 2002:a81:918c:: with SMTP id i134mr8802953ywg.65.1566248407313;
-        Mon, 19 Aug 2019 14:00:07 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id l71sm1564543ywl.39.2019.08.19.14.00.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Aug 2019 14:00:06 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Fenghua Yu <fenghua.yu@intel.com>,
-        Jean Delvare <jdelvare@suse.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-hwmon@vger.kernel.org (open list:CORETEMP HARDWARE MONITORING
-        DRIVER), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] hwmon/coretemp: Fix a memory leak bug
-Date:   Mon, 19 Aug 2019 16:00:02 -0500
-Message-Id: <1566248402-6538-1-git-send-email-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.7.4
+        id S1728395AbfHSVDd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 17:03:33 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:56582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728193AbfHSVDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 17:03:33 -0400
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 098F030A5A56;
+        Mon, 19 Aug 2019 21:03:33 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-255.rdu2.redhat.com [10.10.120.255])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F6831001925;
+        Mon, 19 Aug 2019 21:03:30 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <af4cbaaeb54589a5255bd39baf6bacc2b07bf7b5.camel@perches.com>
+References: <af4cbaaeb54589a5255bd39baf6bacc2b07bf7b5.camel@perches.com> <d98d1f0150bec8b69a886f77fc375b8ca9d24262.camel@perches.com> <e77b0f32a2ce97c872eede52c88b84aa78094ae5.1565836130.git.joe@perches.com> <12308.1565876416@warthog.procyon.org.uk> <13106.1565951791@warthog.procyon.org.uk>
+To:     Joe Perches <joe@perches.com>
+Cc:     dhowells@redhat.com, Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Nathan Huckleberry <nhuck@google.com>,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] afs: Move comments after /* fallthrough */
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <30554.1566248610.1@warthog.procyon.org.uk>
+Date:   Mon, 19 Aug 2019 22:03:30 +0100
+Message-ID: <30555.1566248610@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 19 Aug 2019 21:03:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In coretemp_init(), 'zone_devices' is allocated through kcalloc(). However,
-it is not deallocated in the following execution if
-platform_driver_register() fails, leading to a memory leak. To fix this
-issue, introduce the 'outzone' label to free 'zone_devices' before
-returning the error.
+Joe Perches <joe@perches.com> wrote:
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- drivers/hwmon/coretemp.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+>                 /* extract the FID array and its count in two steps */
+> -               /* fall through */
+> +               fallthrough;
+>         case 1:
 
-diff --git a/drivers/hwmon/coretemp.c b/drivers/hwmon/coretemp.c
-index fe6618e..d855c78 100644
---- a/drivers/hwmon/coretemp.c
-+++ b/drivers/hwmon/coretemp.c
-@@ -736,7 +736,7 @@ static int __init coretemp_init(void)
- 
- 	err = platform_driver_register(&coretemp_driver);
- 	if (err)
--		return err;
-+		goto outzone;
- 
- 	err = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "hwmon/coretemp:online",
- 				coretemp_cpu_online, coretemp_cpu_offline);
-@@ -747,6 +747,7 @@ static int __init coretemp_init(void)
- 
- outdrv:
- 	platform_driver_unregister(&coretemp_driver);
-+outzone:
- 	kfree(zone_devices);
- 	return err;
- }
--- 
-2.7.4
+Okay, that doesn't look too bad.  I thought you might be going to combine it
+with the case inside a macro in some way.
 
+David
