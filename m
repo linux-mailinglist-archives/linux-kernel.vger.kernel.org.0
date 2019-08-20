@@ -2,98 +2,50 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D60E952FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28E4E95306
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:13:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728894AbfHTBND (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 21:13:03 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37654 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728615AbfHTBNC (ORCPT
+        id S1728942AbfHTBNo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 21:13:44 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:39068 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728615AbfHTBNn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:13:02 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d1so2192902pgp.4
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 18:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gcg1TIyUzFxxlA81LjYIRwKVzD7/bL5EZdTOuDoC+1c=;
-        b=siW7/+ZlyyfE9Ou+gCBx8jZsWAQa1gTwU28gp29cwjqVTx1Lgad/XphN4RlImfDdOv
-         2BQlIBiItdFsWt/pTfsAqg4mVD9zbX7lIo7ivlWDalIykDndMqvQ5MQIjmMCpTq4Hsvp
-         3SnbKloKR69uZLKl7VpSyLOaJ12YlKEesBZOn2MTWwTJJi+6xqBo10ZeDkeUteptBWA5
-         YXGTjkGaZkOZzEmy1uW4ih1Qwkl/QjvScQ2FQBGiVHz8SqLRXjCI/eSNB4vCMPlwMT+h
-         hs8ZZcmLL+OFda81pzOsomKe7q3/wHBTwSd/PftK7NpqEcZrR+RWov+wVMY1akw/Qq87
-         ndVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gcg1TIyUzFxxlA81LjYIRwKVzD7/bL5EZdTOuDoC+1c=;
-        b=hx2oJB9YCM3U3UZiOefm6HrgMzuq+tkG0Oq2gjHJQZgJbrhiA4dp1pda8pCpAa7iuj
-         urXV/h7P63KBs4plSQHBw9/TrdWTJ0cXhfoMSscx8pVmwZI8U1zr2fbANX8xLFTPpTKZ
-         MUWURdNKnHxsVJR6UUKHn1Vchklhxg3/tVTrNwrj/nZQIFAUgd8/JQMbk1k7gzWHx4WZ
-         OhMFKhMEyejK8xrqCvPum7zPMSeowC/Xb7PYPWyO/8FpFLJn+B0JvYxwY8GUpb0tSC4j
-         QGroaYwYawh54ijVsQGVYT0dP1inAYjIhm8ETtnQFkwWOH9zOycFc00YqdmvZs3Ycc43
-         mQ8Q==
-X-Gm-Message-State: APjAAAWpf/30zvcn4Fl8s/0j7q7OWUrTFZitFpToxzQrUN43iaB3x1iK
-        9eJ7OlMh4t+BCSmgGOetOXwiig==
-X-Google-Smtp-Source: APXvYqwwQuqYwKcfAJzTL9vULrGYrNn4rtFjGuXSylssXZm/xWw6CZLfZ0JVnBWWZ/ZKFRtRSBVZpA==
-X-Received: by 2002:a17:90a:9f4b:: with SMTP id q11mr23242647pjv.105.1566263581995;
-        Mon, 19 Aug 2019 18:13:01 -0700 (PDT)
-Received: from leoy-ThinkPad-X240s (li456-16.members.linode.com. [50.116.10.16])
-        by smtp.gmail.com with ESMTPSA id h42sm2712377pjb.24.2019.08.19.18.12.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 18:13:01 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 09:12:55 +0800
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-Cc:     Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Coresight ML <coresight@lists.linaro.org>
-Subject: Re: [PATCH 1/2] perf cs-etm: Support sample flags 'insn' and
- 'insnlen'
-Message-ID: <20190820011255.GD5599@leoy-ThinkPad-X240s>
-References: <20190815082854.18191-1-leo.yan@linaro.org>
- <CANLsYkx5TanDyztpceZvwf4pZSgoqRMOBgiHcdJxxpnGA9-h-Q@mail.gmail.com>
- <20190819185054.GB3929@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819185054.GB3929@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Mon, 19 Aug 2019 21:13:43 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 26CC914B74FD2;
+        Mon, 19 Aug 2019 18:13:43 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 18:13:42 -0700 (PDT)
+Message-Id: <20190819.181342.1487533301540666622.davem@davemloft.net>
+To:     hayeswang@realtek.com
+Cc:     netdev@vger.kernel.org, nic_swsd@realtek.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] r8152: fix accessing skb after
+ napi_gro_receive
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1394712342-15778-302-Taiwan-albertk@realtek.com>
+References: <1394712342-15778-299-albertk@realtek.com>
+        <1394712342-15778-302-Taiwan-albertk@realtek.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 19 Aug 2019 18:13:43 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 03:50:54PM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Mon, Aug 19, 2019 at 12:08:26PM -0600, Mathieu Poirier escreveu:
-> > On Thu, 15 Aug 2019 at 02:30, Leo Yan <leo.yan@linaro.org> wrote:
-> > >
-> > > The synthetic branch and instruction samples are missed to set
-> > > instruction related info, thus perf tool fails to display samples with
-> > > flags '-F,+insn,+insnlen'.
-> > >
-> > > CoreSight trace decoder has provided sufficient information to decide
-> > > the instruction size based on the isa type: A64/A32 instruction are
-> > > 32-bit size, but one exception is the T32 instruction size, which might
-> > > be 32-bit or 16-bit.
-> > >
-> > > This patch handles for these cases and it reads the instruction values
-> > > from DSO file; thus can support flags '-F,+insn,+insnlen'.
->  
-> > The code seems to be correct.  I have also tested this patch.
->  
-> > Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> Thanks, applied.
+From: Hayes Wang <hayeswang@realtek.com>
+Date: Mon, 19 Aug 2019 11:15:19 +0800
 
-Thanks a lot, Mathieu & Arnaldo.
+> Fix accessing skb after napi_gro_receive which is caused by
+> commit 47922fcde536 ("r8152: support skb_add_rx_frag").
+> 
+> Fixes: 47922fcde536 ("r8152: support skb_add_rx_frag")
+> Signed-off-by: Hayes Wang <hayeswang@realtek.com>
+
+Applied, thanks.
