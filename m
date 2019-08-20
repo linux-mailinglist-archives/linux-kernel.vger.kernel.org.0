@@ -2,93 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF081961FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:09:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF43A96204
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:09:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730530AbfHTOIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:08:22 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:38728 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730501AbfHTOIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:08:21 -0400
-Received: by mail-io1-f68.google.com with SMTP id p12so9980900iog.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:08:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fpwbVMYwxUnibszpYPVBni4D9LBJrSdVRZvq8XMF3dc=;
-        b=S34JO61XhS+u1GLjLFoTUKed6GVRRSgkk3Arpgx8OBkwxsoKRtiCnQQXdc09+4DtHY
-         mbX+nvQfIMniKtrO+zL9vNlQ3VrCRvbep47ibmsFcv52bzUWXaJkCH08iw0XyLM/xehS
-         uupRlRmIVwXIJsfpP4zE2GykQqXmDmBX33GLxBd/STXzc0pGgRlakZSOnM53B1xxkIoe
-         LZ3jV11bWoW9IGZNgh2e+u1eSPggfJ1bH0cPltjml8wFIhvcWhXETP6ZCQphzaboTXmN
-         Oh6VpLXyicoyLZjoSpvg5hE7IjJyflldFgYrxVeRgvcK+0oKeVbXjCcWSxVvPEql4j8b
-         8XAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fpwbVMYwxUnibszpYPVBni4D9LBJrSdVRZvq8XMF3dc=;
-        b=ppczk4wrgwNzeZWddi62ELzJE53O45H4j673jzgqXdW//WT/awX4aoPybUTJjEc/aA
-         3vPYFAODSi+vxEmGq5yimce2vsxEV203ISZICFOP5IDrVGjB+PnAcT+hxF7PlSO/xxwc
-         1oy0oXhN+uOsE+So+G2WrzJuoQ6NotuxVzayRY9AUzLLVXA3cWwj/p8d6hxU8mfzH4ii
-         HI0Mnt9pcO6c/Df6RKqquLrQdqdcX3ASe/VDNnfCW7toxsHEz97lkU4SMBvAxQknQHFZ
-         4hMCJuaPIi+woy2IROFHz1V4mev7wuB53hPSk8egl4TMTaWydDV2fjJCEcbGH0JD4Cvm
-         pu3g==
-X-Gm-Message-State: APjAAAWtiQ0yznqpVZcPCdyZs6Yj/jB/p88bsQ2nI5jPSV9sG/OLp2BT
-        kLta2dBmL0lOGmwR8TcoYYT8ihGkpGeM4qGd1wM=
-X-Google-Smtp-Source: APXvYqzqt6CWsnAUJZOQaWzeo+IS+I+nQxOIPR7m7CFVURAU5XmkaYUTy/8+9wGOBLp/m+OjVQgL/nYA7Z+kXtbaGko=
-X-Received: by 2002:a02:8481:: with SMTP id f1mr3948058jai.112.1566310100786;
- Tue, 20 Aug 2019 07:08:20 -0700 (PDT)
+        id S1730156AbfHTOJd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:09:33 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4736 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729155AbfHTOJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:09:32 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 8ED62CBA83DCFAA8EE97;
+        Tue, 20 Aug 2019 22:09:29 +0800 (CST)
+Received: from [127.0.0.1] (10.202.227.238) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Tue, 20 Aug 2019
+ 22:09:23 +0800
+Subject: Re: [PATCH] docs: mtd: Update spi nor reference driver
+To:     Vignesh Raghavendra <vigneshr@ti.com>,
+        Schrempf Frieder <frieder.schrempf@kontron.de>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>
+References: <1565107583-68506-1-git-send-email-john.garry@huawei.com>
+ <6c4bb892-6cf5-af46-3ace-b333fd47ef14@huawei.com>
+ <9b074db7-b95d-a081-2fba-7b2b82997332@kontron.de>
+ <ab2d3c29-982f-cb13-e2a2-e6d8da8f1438@huawei.com>
+ <b2a475eb-58e6-e7c7-7b8f-b1be04cf27c0@ti.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "richard@nod.at" <richard@nod.at>,
+        wanghuiqiang <wanghuiqiang@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <c5e063e8-5025-8206-f819-6ce5228ef0fb@huawei.com>
+Date:   Tue, 20 Aug 2019 15:09:15 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-References: <20190820030804.8892-1-andrew.smirnov@gmail.com>
-In-Reply-To: <20190820030804.8892-1-andrew.smirnov@gmail.com>
-From:   Chris Healy <cphealy@gmail.com>
-Date:   Tue, 20 Aug 2019 07:08:09 -0700
-Message-ID: <CAFXsbZoaZoM=1ue9vDpHhVgCaoymP=y8qza4U9Hsrh2wzsH_bQ@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100kHz
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc:     linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b2a475eb-58e6-e7c7-7b8f-b1be04cf27c0@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.227.238]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 8:08 PM Andrey Smirnov <andrew.smirnov@gmail.com> wrote:
+On 19/08/2019 05:39, Vignesh Raghavendra wrote:
+> Hi,
 >
-> Fiber-optic module attached to the bus is only rated to work at
-> 100kHz, so drop the bus frequncy to accomodate that.
->
-> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Chris Healy <cphealy@gmail.com>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-kernel@vger.kernel.org
-> ---
->  arch/arm/boot/dts/vf610-zii-cfu1.dts | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/arch/arm/boot/dts/vf610-zii-cfu1.dts b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-> index ff460a1de85a..28732249cfc0 100644
-> --- a/arch/arm/boot/dts/vf610-zii-cfu1.dts
-> +++ b/arch/arm/boot/dts/vf610-zii-cfu1.dts
-> @@ -207,7 +207,7 @@
->  };
->
->  &i2c0 {
-> -       clock-frequency = <400000>;
-> +       clock-frequency = <100000>;
->         pinctrl-names = "default";
->         pinctrl-0 = <&pinctrl_i2c0>;
->         status = "okay";
-> --
-> 2.21.0
->
+> On 16/08/19 3:50 PM, John Garry wrote:
+>> On 06/08/2019 17:40, Schrempf Frieder wrote:
+> [...]
+>>
+>> Hi,
+>>
+>> Could someone kindly advise on the following:
+>>
 
-Reviewed-by: Chris Healy <cphealy@gmail.com>
+Hi Vignesh,
+
+>> I am looking at ACPI support only for an mtd spi nor driver we're
+>> targeting for mainline support.
+>>
+>
+> If its a new driver, please add it under drivers/spi implementing SPI
+> MEM framework.
+> There are few drivers under drivers/spi that can be used as example.
+> (Search for "spi_mem_ops"
+
+Ok, fine. I note that in doing this I would still be using the spi nor 
+framework indirectly through the m25p80 driver.
+
+>> So for the host, I could use a proprietary HID in the DSDT for matching
+>> in the kernel driver.
+>>
+>> About the child spi flash devices, is the recommendation to just use
+>> PRP0001 HID and "jedec,spi-nor" compatible?
+>>
+>
+> I am not quite familiar with ACPI systems, but child flash device should
+> use "jedec,spi-nor" as compatible.
+
+Right, so to use SPI MEM framework, it looks like I will have to use 
+PRP0001 and "jedec,spi-nor" as compatible.
+
+My reluctance in using PRP0001 and compatible "jedec,spi-nor" is how 
+other OS can understand this.
+
+All the best,
+John
+
+>
+> Regards
+> Vignesh
+>
+>> thanks,
+>> John
+>>
+>>
+
