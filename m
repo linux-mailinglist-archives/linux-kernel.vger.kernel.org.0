@@ -2,56 +2,70 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BD4D1956FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 07:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 818B595705
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 07:57:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729220AbfHTF42 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 01:56:28 -0400
-Received: from verein.lst.de ([213.95.11.211]:53805 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728878AbfHTF42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 01:56:28 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id A94A668B02; Tue, 20 Aug 2019 07:56:23 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 07:56:23 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        David Howells <dhowells@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [PATCHv2 2/2] i915: do not leak module ref counter
-Message-ID: <20190820055623.GC27501@lst.de>
-References: <20190820031359.11717-1-sergey.senozhatsky@gmail.com> <20190820031359.11717-2-sergey.senozhatsky@gmail.com>
+        id S1729279AbfHTF4s (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 01:56:48 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:54053 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728878AbfHTF4q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 01:56:46 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hzx8H-000461-0c; Tue, 20 Aug 2019 07:56:37 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1hzx8F-0001zG-ML; Tue, 20 Aug 2019 07:56:35 +0200
+Date:   Tue, 20 Aug 2019 07:56:35 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Sam Shih <sam.shih@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v4 5/10] dt-bindings: pwm: add a property "num-pwms"
+Message-ID: <20190820055635.xru4utnkkvkvsv7l@pengutronix.de>
+References: <1566265225-27452-1-git-send-email-sam.shih@mediatek.com>
+ <1566265225-27452-6-git-send-email-sam.shih@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190820031359.11717-2-sergey.senozhatsky@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1566265225-27452-6-git-send-email-sam.shih@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 12:13:59PM +0900, Sergey Senozhatsky wrote:
-> Always put_filesystem() in i915_gemfs_init().
+On Tue, Aug 20, 2019 at 09:40:20AM +0800, Sam Shih wrote:
+> From: Ryder Lee <ryder.lee@mediatek.com>
 > 
-> Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> ---
->  - v2: rebased (i915 does not remount gemfs anymore)
+> This adds a property "num-pwms" in example so that we could
+> specify the number of PWM channels via device tree.
+> 
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
 
-Which means it real doesn't need its mount anyore, and thus can use
-plain old shmem_file_setup and doesn't need to mess with file system
-types at all.
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-Assuming we find a legitimate rason for why a driver should be able
-to create a kernel mount or a file system type where it doesn't have
-access to the struct file_system_type an API that mount by file system
-name and thus hides the get_fs_type and put_filesystem would be a much
-better API than adding this random export.
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
