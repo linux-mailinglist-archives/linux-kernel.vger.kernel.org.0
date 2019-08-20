@@ -2,226 +2,235 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EA09961F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0140D961EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730476AbfHTOHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:07:48 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:59915 "EHLO pegase1.c-s.fr"
+        id S1730294AbfHTOHS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:07:18 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:30751 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730154AbfHTOHP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:07:15 -0400
+        id S1729672AbfHTOHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:07:16 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46CXfn4CqKz9v0Gj;
-        Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 46CXfp4DJzz9v0Gh;
+        Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=LFUwWUgk; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=LAjTxHEJ; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id XGtgZT23h2WL; Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        with ESMTP id nttQgid0pbse; Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46CXfn2wjsz9v0GZ;
-        Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46CXfp3BBsz9v0GZ;
+        Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566310033; bh=F4vajnIpJaxsa3LCOfDluH5icf182iHp85Z30DDs3k8=;
+        t=1566310034; bh=SBsNMvGsbMMC8XFjes4L70Rdi1s+t6kRWxXgqat2LYU=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=LFUwWUgkrEHvRCxDFf9PyCjhIpq+auBnhJmqNfalRQ8xMVfT9Lej2aSoZRNWMDP6v
-         IAqs8l9ojXzVzES315MTkiETmPObTL3JgVBYBD2uiqdUCpfZ5mHTS5TGs0zperkIhe
-         83col3OcEbNCs98kV24dEubyIewWksriDcn/ml1M=
+        b=LAjTxHEJx9N9jYfbpDE4kpnJ8o/aFDX7HUbL23XHYrCAsdaFgnXI7AF5H4K0dStko
+         3s4t1uCvwJhz5xrdvrzjV7pu4SIby9N4Jw1o5rT+mOh/3Jg04e6N5aiQCbeulOMno7
+         xROrtpW8XKZv7WsxotcnPIrk0sWXzfSmvKde2pvc=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C5BB28B7D1;
-        Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id CB57E8B7C9;
+        Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id xKf9dTwy2trk; Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        with ESMTP id NZen0_zo3DCl; Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 83A808B7C9;
-        Tue, 20 Aug 2019 16:07:13 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 873088B7D0;
+        Tue, 20 Aug 2019 16:07:14 +0200 (CEST)
 Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 6577F6B734; Tue, 20 Aug 2019 14:07:13 +0000 (UTC)
-Message-Id: <5fa3ef069fbd0f152512afaae19e7a60161454cf.1566309262.git.christophe.leroy@c-s.fr>
+        id 6B0536B734; Tue, 20 Aug 2019 14:07:14 +0000 (UTC)
+Message-Id: <6223803ce024d6ab4dfaa919f44098aed5b4bc33.1566309262.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1566309262.git.christophe.leroy@c-s.fr>
 References: <cover.1566309262.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 05/12] powerpc/mm: rework io-workaround invocation.
+Subject: [PATCH v2 06/12] powerpc/mm: move common 32/64 bits ioremap functions
+ into ioremap.c
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
         hch@lst.de
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 20 Aug 2019 14:07:13 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 14:07:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ppc_md.ioremap() is only used for I/O workaround on CELL platform,
-so indirect function call can be avoided.
-
-This patch reworks the io-workaround and ioremap() functions to
-use the global 'io_workaround_inited' flag for the activation
-of io-workaround.
-
-When CONFIG_PPC_IO_WORKAROUNDS or CONFIG_PPC_INDIRECT_MMIO are not
-selected, the I/O workaround ioremap() voids and the global flag is
-not used.
+ioremap(), ioremap_wc() and ioremap_coherent() are now identical on
+PPC32 and PPC64 as iowa_is_active() will always return false on
+PPC32. Move them into a new common location called ioremap.c
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/io-workarounds.h | 20 ++++++++++++++++++++
- arch/powerpc/include/asm/machdep.h        |  2 --
- arch/powerpc/kernel/io-workarounds.c      | 13 +++++--------
- arch/powerpc/mm/pgtable_64.c              | 17 +++++++++--------
- 4 files changed, 34 insertions(+), 18 deletions(-)
+ arch/powerpc/mm/Makefile     |  2 +-
+ arch/powerpc/mm/ioremap.c    | 36 ++++++++++++++++++++++++++++++++++++
+ arch/powerpc/mm/pgtable_32.c | 27 ---------------------------
+ arch/powerpc/mm/pgtable_64.c | 33 ---------------------------------
+ 4 files changed, 37 insertions(+), 61 deletions(-)
+ create mode 100644 arch/powerpc/mm/ioremap.c
 
-diff --git a/arch/powerpc/include/asm/io-workarounds.h b/arch/powerpc/include/asm/io-workarounds.h
-index 01567ea4ceaf..3cce499fbe27 100644
---- a/arch/powerpc/include/asm/io-workarounds.h
-+++ b/arch/powerpc/include/asm/io-workarounds.h
-@@ -8,6 +8,7 @@
- #ifndef _IO_WORKAROUNDS_H
- #define _IO_WORKAROUNDS_H
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index 0f499db315d6..29c682fe9144 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -7,7 +7,7 @@ ccflags-$(CONFIG_PPC64)	:= $(NO_MINIMAL_TOC)
  
-+#ifdef CONFIG_PPC_IO_WORKAROUNDS
- #include <linux/io.h>
- #include <asm/pci-bridge.h>
- 
-@@ -32,4 +33,23 @@ extern int spiderpci_iowa_init(struct iowa_bus *, void *);
- #define SPIDER_PCI_DUMMY_READ		0x0810
- #define SPIDER_PCI_DUMMY_READ_BASE	0x0814
- 
-+#endif
+ obj-y				:= fault.o mem.o pgtable.o mmap.o \
+ 				   init_$(BITS).o pgtable_$(BITS).o \
+-				   pgtable-frag.o \
++				   pgtable-frag.o ioremap.o \
+ 				   init-common.o mmu_context.o drmem.o
+ obj-$(CONFIG_PPC_MMU_NOHASH)	+= nohash/
+ obj-$(CONFIG_PPC_BOOK3S_32)	+= book3s32/
+diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+new file mode 100644
+index 000000000000..7f1d462e7745
+--- /dev/null
++++ b/arch/powerpc/mm/ioremap.c
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +
-+#if defined(CONFIG_PPC_IO_WORKAROUNDS) && defined(CONFIG_PPC_INDIRECT_MMIO)
-+extern bool io_workaround_inited;
++#include <linux/io.h>
++#include <asm/io-workarounds.h>
 +
-+static inline bool iowa_is_active(void)
++void __iomem *ioremap(phys_addr_t addr, unsigned long size)
 +{
-+	return unlikely(io_workaround_inited);
++	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
++	void *caller = __builtin_return_address(0);
++
++	if (iowa_is_active())
++		return iowa_ioremap(addr, size, prot, caller);
++	return __ioremap_caller(addr, size, prot, caller);
 +}
-+#else
-+static inline bool iowa_is_active(void)
++EXPORT_SYMBOL(ioremap);
++
++void __iomem *ioremap_wc(phys_addr_t addr, unsigned long size)
 +{
-+	return false;
++	pgprot_t prot = pgprot_noncached_wc(PAGE_KERNEL);
++	void *caller = __builtin_return_address(0);
++
++	if (iowa_is_active())
++		return iowa_ioremap(addr, size, prot, caller);
++	return __ioremap_caller(addr, size, prot, caller);
 +}
-+#endif
++EXPORT_SYMBOL(ioremap_wc);
 +
-+void __iomem *iowa_ioremap(phys_addr_t addr, unsigned long size,
-+			   pgprot_t prot, void *caller);
++void __iomem *ioremap_coherent(phys_addr_t addr, unsigned long size)
++{
++	pgprot_t prot = pgprot_cached(PAGE_KERNEL);
++	void *caller = __builtin_return_address(0);
 +
- #endif /* _IO_WORKAROUNDS_H */
-diff --git a/arch/powerpc/include/asm/machdep.h b/arch/powerpc/include/asm/machdep.h
-index 3370df4bdaa0..657ec893bdcb 100644
---- a/arch/powerpc/include/asm/machdep.h
-+++ b/arch/powerpc/include/asm/machdep.h
-@@ -31,8 +31,6 @@ struct pci_host_bridge;
- struct machdep_calls {
- 	char		*name;
- #ifdef CONFIG_PPC64
--	void __iomem *	(*ioremap)(phys_addr_t addr, unsigned long size,
--				   pgprot_t prot, void *caller);
- #ifdef CONFIG_PM
- 	void		(*iommu_save)(void);
- 	void		(*iommu_restore)(void);
-diff --git a/arch/powerpc/kernel/io-workarounds.c b/arch/powerpc/kernel/io-workarounds.c
-index fbd2d0007c52..0276bc8c8969 100644
---- a/arch/powerpc/kernel/io-workarounds.c
-+++ b/arch/powerpc/kernel/io-workarounds.c
-@@ -149,8 +149,8 @@ static const struct ppc_pci_io iowa_pci_io = {
- };
++	if (iowa_is_active())
++		return iowa_ioremap(addr, size, prot, caller);
++	return __ioremap_caller(addr, size, prot, caller);
++}
+diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
+index 848ee4a30dd1..3a4972007ec0 100644
+--- a/arch/powerpc/mm/pgtable_32.c
++++ b/arch/powerpc/mm/pgtable_32.c
+@@ -39,24 +39,6 @@ EXPORT_SYMBOL(ioremap_bot);	/* aka VMALLOC_END */
+ extern char etext[], _stext[], _sinittext[], _einittext[];
  
- #ifdef CONFIG_PPC_INDIRECT_MMIO
--static void __iomem *iowa_ioremap(phys_addr_t addr, unsigned long size,
--				  pgprot_t prot, void *caller)
-+void __iomem *iowa_ioremap(phys_addr_t addr, unsigned long size,
-+			   pgprot_t prot, void *caller)
- {
- 	struct iowa_bus *bus;
- 	void __iomem *res = __ioremap_caller(addr, size, prot, caller);
-@@ -163,20 +163,17 @@ static void __iomem *iowa_ioremap(phys_addr_t addr, unsigned long size,
- 	}
- 	return res;
- }
--#else /* CONFIG_PPC_INDIRECT_MMIO */
--#define iowa_ioremap NULL
- #endif /* !CONFIG_PPC_INDIRECT_MMIO */
- 
-+bool io_workaround_inited;
-+
- /* Enable IO workaround */
- static void io_workaround_init(void)
- {
--	static int io_workaround_inited;
+ void __iomem *
+-ioremap(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
 -
- 	if (io_workaround_inited)
- 		return;
- 	ppc_pci_io = iowa_pci_io;
--	ppc_md.ioremap = iowa_ioremap;
--	io_workaround_inited = 1;
-+	io_workaround_inited = true;
- }
+-	return __ioremap_caller(addr, size, prot, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap);
+-
+-void __iomem *
+-ioremap_wc(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_noncached_wc(PAGE_KERNEL);
+-
+-	return __ioremap_caller(addr, size, prot, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap_wc);
+-
+-void __iomem *
+ ioremap_wt(phys_addr_t addr, unsigned long size)
+ {
+ 	pgprot_t prot = pgprot_cached_wthru(PAGE_KERNEL);
+@@ -66,15 +48,6 @@ ioremap_wt(phys_addr_t addr, unsigned long size)
+ EXPORT_SYMBOL(ioremap_wt);
  
- /* Register new bus to support workaround */
+ void __iomem *
+-ioremap_coherent(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_cached(PAGE_KERNEL);
+-
+-	return __ioremap_caller(addr, size, prot, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap_coherent);
+-
+-void __iomem *
+ ioremap_prot(phys_addr_t addr, unsigned long size, unsigned long flags)
+ {
+ 	pte_t pte = __pte(flags);
 diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index 2882419737b9..0a147daeb0f2 100644
+index 0a147daeb0f2..358233ea8d85 100644
 --- a/arch/powerpc/mm/pgtable_64.c
 +++ b/arch/powerpc/mm/pgtable_64.c
-@@ -35,6 +35,7 @@
+@@ -35,7 +35,6 @@
  #include <asm/page.h>
  #include <asm/prom.h>
  #include <asm/io.h>
-+#include <asm/io-workarounds.h>
+-#include <asm/io-workarounds.h>
  #include <asm/mmu_context.h>
  #include <asm/pgtable.h>
  #include <asm/mmu.h>
-@@ -208,8 +209,8 @@ void __iomem * ioremap(phys_addr_t addr, unsigned long size)
- 	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
- 	void *caller = __builtin_return_address(0);
- 
--	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, prot, caller);
-+	if (iowa_is_active())
-+		return iowa_ioremap(addr, size, prot, caller);
- 	return __ioremap_caller(addr, size, prot, caller);
+@@ -204,36 +203,6 @@ void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+ 	return ret;
  }
  
-@@ -218,8 +219,8 @@ void __iomem * ioremap_wc(phys_addr_t addr, unsigned long size)
- 	pgprot_t prot = pgprot_noncached_wc(PAGE_KERNEL);
- 	void *caller = __builtin_return_address(0);
- 
--	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, prot, caller);
-+	if (iowa_is_active())
-+		return iowa_ioremap(addr, size, prot, caller);
- 	return __ioremap_caller(addr, size, prot, caller);
+-void __iomem * ioremap(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
+-	void *caller = __builtin_return_address(0);
+-
+-	if (iowa_is_active())
+-		return iowa_ioremap(addr, size, prot, caller);
+-	return __ioremap_caller(addr, size, prot, caller);
+-}
+-
+-void __iomem * ioremap_wc(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_noncached_wc(PAGE_KERNEL);
+-	void *caller = __builtin_return_address(0);
+-
+-	if (iowa_is_active())
+-		return iowa_ioremap(addr, size, prot, caller);
+-	return __ioremap_caller(addr, size, prot, caller);
+-}
+-
+-void __iomem *ioremap_coherent(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_cached(PAGE_KERNEL);
+-	void *caller = __builtin_return_address(0);
+-
+-	if (iowa_is_active())
+-		return iowa_ioremap(addr, size, prot, caller);
+-	return __ioremap_caller(addr, size, prot, caller);
+-}
+-
+ void __iomem * ioremap_prot(phys_addr_t addr, unsigned long size,
+ 			     unsigned long flags)
+ {
+@@ -278,8 +247,6 @@ void iounmap(volatile void __iomem *token)
+ 	vunmap(addr);
  }
  
-@@ -228,8 +229,8 @@ void __iomem *ioremap_coherent(phys_addr_t addr, unsigned long size)
- 	pgprot_t prot = pgprot_cached(PAGE_KERNEL);
- 	void *caller = __builtin_return_address(0);
- 
--	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, prot, caller);
-+	if (iowa_is_active())
-+		return iowa_ioremap(addr, size, prot, caller);
- 	return __ioremap_caller(addr, size, prot, caller);
- }
- 
-@@ -250,8 +251,8 @@ void __iomem * ioremap_prot(phys_addr_t addr, unsigned long size,
- 	 */
- 	pte = pte_mkprivileged(pte);
- 
--	if (ppc_md.ioremap)
--		return ppc_md.ioremap(addr, size, pte_pgprot(pte), caller);
-+	if (iowa_is_active())
-+		return iowa_ioremap(addr, size, pte_pgprot(pte), caller);
- 	return __ioremap_caller(addr, size, pte_pgprot(pte), caller);
- }
- 
+-EXPORT_SYMBOL(ioremap);
+-EXPORT_SYMBOL(ioremap_wc);
+ EXPORT_SYMBOL(ioremap_prot);
+ EXPORT_SYMBOL(__ioremap_at);
+ EXPORT_SYMBOL(iounmap);
 -- 
 2.13.3
 
