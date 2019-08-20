@@ -2,165 +2,154 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DFD7296B5B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:23:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D57D96B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:24:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbfHTVXH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:23:07 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42203 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbfHTVXG (ORCPT
+        id S1730917AbfHTVYc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:24:32 -0400
+Received: from www62.your-server.de ([213.133.104.62]:55030 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbfHTVYc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:23:06 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1i0Bap-0003EB-OR; Tue, 20 Aug 2019 23:23:03 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1i0Bap-0001UJ-3l; Tue, 20 Aug 2019 23:23:03 +0200
-Date:   Tue, 20 Aug 2019 23:23:03 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH RFC] dt-bindings: regulator: define a mux regulator
-Message-ID: <20190820212303.dhdo7g7kvisgeb3h@pengutronix.de>
-References: <20190820152511.15307-1-u.kleine-koenig@pengutronix.de>
- <CAL_JsqLg19883syn66P6zUkLPpQ8FYpeFj2QYvSp1UsWOhVKyQ@mail.gmail.com>
+        Tue, 20 Aug 2019 17:24:32 -0400
+Received: from sslproxy01.your-server.de ([88.198.220.130])
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1i0Bc5-0007QV-Pz; Tue, 20 Aug 2019 23:24:21 +0200
+Received: from [178.197.249.40] (helo=pc-63.home)
+        by sslproxy01.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1i0Bc5-0006tF-Df; Tue, 20 Aug 2019 23:24:21 +0200
+Subject: Re: [PATCH bpf-next] xsk: proper socket state check in xsk_poll
+To:     =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@gmail.com>
+Cc:     syzbot+c82697e3043781e08802@syzkaller.appspotmail.com,
+        Alexei Starovoitov <ast@kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        bpf <bpf@vger.kernel.org>, David Miller <davem@davemloft.net>,
+        Jesper Dangaard Brouer <hawk@kernel.org>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        John Fastabend <john.fastabend@gmail.com>,
+        Jonathan Lemon <jonathan.lemon@gmail.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Karlsson, Magnus" <magnus.karlsson@intel.com>,
+        Song Liu <songliubraving@fb.com>,
+        syzkaller-bugs@googlegroups.com, Xdp <xdp-newbies@vger.kernel.org>,
+        Yonghong Song <yhs@fb.com>, hdanton@sina.com
+References: <0000000000009167320590823a8c@google.com>
+ <20190820100405.25564-1-bjorn.topel@gmail.com>
+ <beef16bb-a09b-40f1-7dd0-c323b4b89b17@iogearbox.net>
+ <CAJ+HfNj8qNwCpiLBw1eO_ggSf11Qq9323NVOcTS6wtfTm=RWcg@mail.gmail.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <fa423b3d-d9da-7142-c7bf-e202967620ea@iogearbox.net>
+Date:   Tue, 20 Aug 2019 23:24:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <CAJ+HfNj8qNwCpiLBw1eO_ggSf11Qq9323NVOcTS6wtfTm=RWcg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_JsqLg19883syn66P6zUkLPpQ8FYpeFj2QYvSp1UsWOhVKyQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.3/25547/Tue Aug 20 10:27:49 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Rob,
-
-On Tue, Aug 20, 2019 at 11:39:27AM -0500, Rob Herring wrote:
-> On Tue, Aug 20, 2019 at 10:25 AM Uwe Kleine-K�nig
-> <u.kleine-koenig@pengutronix.de> wrote:
-> >
-> > A mux regulator is used to provide current on one of several outputs. It
-> > might look as follows:
-> >
-> >       ,------------.
-> >     --<OUT0     A0 <--
-> >     --<OUT1     A1 <--
-> >     --<OUT2     A2 <--
-> >     --<OUT3        |
-> >     --<OUT4     EN <--
-> >     --<OUT5        |
-> >     --<OUT6     IN <--
-> >     --<OUT7        |
-> >       `------------'
-> >
-> > Depending on which address is encoded on the three address inputs A0, A1
-> > and A2 the current provided on IN is provided on one of the eight
-> > outputs.
-> >
-> > What is new here is that the binding makes use of a #regulator-cells
-> > property. This uses the approach known from other bindings (e.g. gpio)
-> > to allow referencing all eight outputs with phandle arguments. This
-> > requires an extention in of_get_regulator to use a new variant of
-> > of_parse_phandle_with_args that has a cell_count_default parameter that
-> > is used in absence of a $cell_name property. Even if we'd choose to
-> > update all regulator-bindings to add #regulator-cells = <0>; we still
-> > needed something to implement compatibility to the currently defined
-> > bindings.
-> >
-> > Signed-off-by: Uwe Kleine-K�nig <u.kleine-koenig@pengutronix.de>
-> > ---
-> > Hello,
-> >
-> > the obvious alternative is to add (here) eight subnodes to represent the
-> > eight outputs. This is IMHO less pretty, but wouldn't need to introduce
-> > #regulator-cells.
+On 8/20/19 5:29 PM, Björn Töpel wrote:
+> On Tue, 20 Aug 2019 at 16:30, Daniel Borkmann <daniel@iogearbox.net> wrote:
+>> On 8/20/19 12:04 PM, Björn Töpel wrote:
+>>> From: Björn Töpel <bjorn.topel@intel.com>
+>>>
+>>> The poll() implementation for AF_XDP sockets did not perform the
+>>> proper state checks, prior accessing the socket umem. This patch fixes
+>>> that by performing a xsk_is_bound() check.
+>>>
+>>> Suggested-by: Hillf Danton <hdanton@sina.com>
+>>> Reported-by: syzbot+c82697e3043781e08802@syzkaller.appspotmail.com
+>>> Fixes: 77cd0d7b3f25 ("xsk: add support for need_wakeup flag in AF_XDP rings")
+>>> Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
+>>> ---
+>>>    net/xdp/xsk.c | 14 ++++++++++++--
+>>>    1 file changed, 12 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+>>> index ee4428a892fa..08bed5e92af4 100644
+>>> --- a/net/xdp/xsk.c
+>>> +++ b/net/xdp/xsk.c
+>>> @@ -356,13 +356,20 @@ static int xsk_generic_xmit(struct sock *sk, struct msghdr *m,
+>>>        return err;
+>>>    }
+>>>
+>>> +static bool xsk_is_bound(struct xdp_sock *xs)
+>>> +{
+>>> +     struct net_device *dev = READ_ONCE(xs->dev);
+>>> +
+>>> +     return dev && xs->state == XSK_BOUND;
+>>> +}
+>>> +
+>>>    static int xsk_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+>>>    {
+>>>        bool need_wait = !(m->msg_flags & MSG_DONTWAIT);
+>>>        struct sock *sk = sock->sk;
+>>>        struct xdp_sock *xs = xdp_sk(sk);
+>>>
+>>> -     if (unlikely(!xs->dev))
+>>> +     if (unlikely(!xsk_is_bound(xs)))
+>>>                return -ENXIO;
+>>>        if (unlikely(!(xs->dev->flags & IFF_UP)))
+>>>                return -ENETDOWN;
+>>> @@ -383,6 +390,9 @@ static unsigned int xsk_poll(struct file *file, struct socket *sock,
+>>>        struct net_device *dev = xs->dev;
+>>>        struct xdp_umem *umem = xs->umem;
+>>>
+>>> +     if (unlikely(!xsk_is_bound(xs)))
+>>> +             return mask;
+>>> +
+>>>        if (umem->need_wakeup)
+>>>                dev->netdev_ops->ndo_xsk_wakeup(dev, xs->queue_id,
+>>>                                                umem->need_wakeup);
+>>> @@ -417,7 +427,7 @@ static void xsk_unbind_dev(struct xdp_sock *xs)
+>>>    {
+>>>        struct net_device *dev = xs->dev;
+>>>
+>>> -     if (!dev || xs->state != XSK_BOUND)
+>>> +     if (!xsk_is_bound(xs))
+>>>                return;
+>>
+>> I think I'm a bit confused by your READ_ONCE() usage. ;-/ I can see why you're
+>> using it in xsk_is_bound() above, but then at the same time all the other callbacks
+>> like xsk_poll() or xsk_unbind_dev() above have a struct net_device *dev = xs->dev
+>> right before the test. Could you elaborate?
 > 
-> I'm okay with #regulator-cells approach.
+> Yes, now I'm confused as well! Digging deeper... I believe there are a
+> couple of places in xsk.c that do not have
+> READ_ONCE/WRITE_ONCE-correctness. Various xdp_sock members are read
+> lock-less outside the control plane mutex (mutex member of struct
+> xdp_sock). This needs some re-work. I'll look into using the newly
 
-OK, then I will look into that in more detail; unless the regulator guys
-don't agree with this approach of course.
+Right, so even in above two cases, the compiler could have refetched, e.g.
+dev variable could have first been NULL, but xsk_is_bound() later returns
+true.
 
-> > Apart from reg = <..> and a phandle there is (I think) nothing that
-> > needs to be specified in the subnodes because all properties of an
-> > output (apart from the address) apply to all outputs.
-> >
-> > What do you think?
-> >
-> > Best regards
-> > Uwe
-> >
-> >  .../bindings/regulator/mux-regulator.yaml     | 52 +++++++++++++++++++
-> >  1 file changed, 52 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/regulator/mux-regulator.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/regulator/mux-regulator.yaml b/Documentation/devicetree/bindings/regulator/mux-regulator.yaml
-> > new file mode 100644
-> > index 000000000000..f06dbb969090
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/regulator/mux-regulator.yaml
-> > @@ -0,0 +1,52 @@
-> > +# SPDX-License-Identifier: GPL-2.0
+> introduced state member (with corresponding read/write barriers) for
+> this.
 > 
-> (GPL-2.0-only OR BSD-2-Clause) is preferred.
-
-OK.
-
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/regulator/mux-regulator.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: MUX regulators
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: XXX,adb708
+> I'll cook some patch(es) that address this, but first it sounds like I
+> need to reread [1] two, or three times. At least. ;-)
 > 
-> ? I assume you will split this into a common and specific schemas. I
-> suppose there could be differing ways to control the mux just like all
-> other muxes.
-
-Not sure if a specific schema is necessary. I wrote XXX because I was
-offline while I authored the binding and so couldn't determine the right
-vendor to use.
-
-> > +  enable-gpios:
-> > +    maxItems: 1
-> > +
-> > +  address-gpios:
-> > +    description: Array of typically three GPIO pins used to select the
-> > +      regulator's output. The least significant address GPIO must be listed
-> > +      first. The others follow in order of significance.
-> > +    minItems: 1
-> > +
-> > +  "#regulator-cells":
 > 
-> How is this not required?
+> Thanks,
+> Björn
+> 
+> 
+> [1] https://lwn.net/Articles/793253/
+> 
+> 
+>> Thanks,
+>> Daniel
 
-It should. For the RFC patch I didn't took the time to iron all the
-details. My main concern was/is how the binding should look like and if
-an #regulator-cells with a default would be acceptable.
- 
-Best regards and thanks for your feedback,
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-K�nig            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
