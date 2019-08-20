@@ -2,113 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A5C795FCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE9495FD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:19:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729987AbfHTNRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:17:53 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35975 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727006AbfHTNRx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:17:53 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E18FC19FC;
-        Tue, 20 Aug 2019 09:17:51 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 20 Aug 2019 09:17:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=q
-        1zMCHP9N5dVVFnUfRVs/+hK9HwHAxsq2830Gk8Otsg=; b=TKnHxb30U2xLo5RnR
-        KlEyBBAb+ChXyncMtNVmDnLF3EhbIBW6zwW4BUbMpJA8iBZ5R1EfCY5gtOhqtvbN
-        7cnfPLR/vxNLffoxJrjRxpkon7yCCkCPK1pyhjplXtX4I8Jq9HA/+rIQid+SIh7i
-        A2/n3pj7quWpytyiSvRWasKIAPB7/7sKnGG203xhTbkOOJX1TpVTkt+ZujqmlSTl
-        nBi7/kKyP/ed8hP6NA8Fq9NDTD9LNEKmMtyO1TYWA3HAyvoJrISpLW+qEAnF8K7T
-        Lcf8nAneMs1AF5g4iPiM1R7CnwgYbAJI3F4Dg/nhGenlRm1Y9bROVXSxH7pYqxyD
-        3F0rg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=q1zMCHP9N5dVVFnUfRVs/+hK9HwHAxsq2830Gk8Ot
-        sg=; b=P566rOuk25uZ8kvW2Qcy7xPqQAvYpqGna+vaACB0COl254I6sG+rJM8tV
-        og8Fq/f/OM9udD0D3TzgO1xxeOc+GBLa8IUnAYiezLITXVA+SNtOZdbZqX6qYxlp
-        TMLh9jNmz9Mam7DExzTC6n5C4l6ZSOQelzMDaKVrhPu2F4VwIoG5yXX1c5w1u7Pt
-        nX/UC/VAeN3bT0vm31KpIlpZw/o7H/EJ+EcJ+nvNiMKQyBx1SoplMIWhKq+m7rw6
-        gr3qOWX7lGJQXGRyA7AudPZcBGSWp0IfNAuSd8CcUf9nPJ24P9hQqER06VOWXLu0
-        sBNel/sEsBdSWzh3uZrhNZM+IMagg==
-X-ME-Sender: <xms:_vJbXQ5RO5O9O1Rczy5smOCcSkohwcFzrAUqNdmYYmKfsUWO1G3zkA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeguddgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    goufhprghmkfhpqdhouhhtucdlhedttddmnecujfgurhepuffvfhfhkffffgggjggtgfes
-    thejredttdefjeenucfhrhhomhepufgrmhhuvghlucfjohhllhgrnhguuceoshgrmhhuvg
-    hlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtddrudefhedrudegkedrudehuden
-    ucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:_vJbXQLP4-G8J52XBWp3Oa34_OhDPDoTAN1cAfUR217WjvVuk-9gJw>
-    <xmx:_vJbXclwYk_iWxKdsVVnmGdYi1LS2aMU48Q4RjV-T4EW3k6R1X5sXQ>
-    <xmx:_vJbXX_maJBFjW-7ggTBO5hZDoiWM227wr87IFn7VVbempcryJfYRg>
-    <xmx:__JbXWfxxQEm5aSfIkZCk4bK5_ro-AT2199PORzHo8kYpsHUbVPJ2q1jzw4>
-Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C09B1380075;
-        Tue, 20 Aug 2019 09:17:49 -0400 (EDT)
-Subject: Re: [PATCH v4 05/10] ARM: dts: sunxi: a80: Add msgbox node
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190820032311.6506-6-samuel@sholland.org>
- <20190820081528.7g2lo4njkut5lanu@flea>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <f3e3420e-450a-7d41-edf8-776c0cd5a320@sholland.org>
-Date:   Tue, 20 Aug 2019 08:17:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1729985AbfHTNSk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:18:40 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56360 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729409AbfHTNSk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:18:40 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D0EACAC50;
+        Tue, 20 Aug 2019 13:18:38 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: [PATCH v2 0/4] debug_pagealloc improvements through page_owner
+Date:   Tue, 20 Aug 2019 15:18:24 +0200
+Message-Id: <20190820131828.22684-1-vbabka@suse.cz>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190820081528.7g2lo4njkut5lanu@flea>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+v2: also fix THP split handling (added Patch 1) per Kirill
 
-On 8/20/19 3:15 AM, Maxime Ripard wrote:
-> On Mon, Aug 19, 2019 at 10:23:06PM -0500, Samuel Holland wrote:
->> The A80 SoC contains a message box that can be used to send messages and
->> interrupts back and forth between the ARM application CPUs and the ARISC
->> coprocessor. Add a device tree node for it.
->>
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> 
-> I think you mentionned that crust has been tested only on the A64 and
-> the H3/H5, did you test the mailbox on those other SoCs as well?
+The debug_pagealloc functionality serves a similar purpose on the page
+allocator level that slub_debug does on the kmalloc level, which is to detect
+bad users. One notable feature that slub_debug has is storing stack traces of
+who last allocated and freed the object. On page level we track allocations via
+page_owner, but that info is discarded when freeing, and we don't track freeing
+at all. This series improves those aspects. With both debug_pagealloc and
+page_owner enabled, we can then get bug reports such as the example in Patch 4.
 
-No, I only have A64/H3/H5, and recently H6, hardware to test. I've looked
-through the manuals to verify that the registers are all the same, but I haven't
-run the driver on earlier SoCs.
+SLUB debug tracking additionaly stores cpu, pid and timestamp. This could be
+added later, if deemed useful enough to justify the additional page_ext
+structure size.
 
-On 32-bit SoCs, where there's no other user of SRAM A2, it should be easy to get
-the toy firmware running. All you should need to do is:
-  1) Update the MMIO base/clock addresses in drivers/msgbox/sunxi-msgbox.c
-  2) Update the load address in platform/sun50i/include/platform/memory.h
-  3) Load the firmware to SRAM A2 (can be done from a U-Boot shell)
-  4) Initialize the reset vector (algorithm is in tools/test.c:109)
-  5) Deassert AR100 reset (again, these last two steps can be done from U-Boot)
+Vlastimil Babka (4):
+  mm, page_owner: handle THP splits correctly
+  mm, page_owner: record page owner for each subpage
+  mm, page_owner: keep owner info when freeing the page
+  mm, page_owner, debug_pagealloc: save and dump freeing stack trace
 
-Thanks,
-Samuel
+ .../admin-guide/kernel-parameters.txt         |   2 +
+ include/linux/page_ext.h                      |   1 +
+ mm/Kconfig.debug                              |   4 +-
+ mm/huge_memory.c                              |   4 +
+ mm/page_owner.c                               | 123 +++++++++++++-----
+ 5 files changed, 100 insertions(+), 34 deletions(-)
+
+-- 
+2.22.0
+
