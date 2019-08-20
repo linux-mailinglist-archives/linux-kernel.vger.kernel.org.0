@@ -2,167 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7015D96285
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:34:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B5A496289
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:35:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730376AbfHTOeT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:34:19 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:26562 "EHLO pegase1.c-s.fr"
+        id S1730268AbfHTOfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:35:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729762AbfHTOeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:34:17 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46CYFz3CfDz9vBmf;
-        Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=kGBZWl+J; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id 9hx3uDPH-qLC; Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46CYFz1xgBz9vBmb;
-        Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566311655; bh=xOUVOtxYdJqJ3lo0s/K+hdItwxr4U4urlUl4yvu2T/M=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=kGBZWl+JnleiXlG+LHURLi+OPtWDSRbVUSnzLjKQ1sbaN2GTpvnbF34ln/Ct/WiKe
-         GXNstE4yxtQFd01gBhbjf1c9s96TuJYmzycCnsG2hYQ1pfrXS9D59Us5E//ZKZFCvT
-         p/IA2oXJuxbZA/jXoqiJXtuRYYn/oQUesSruMMj8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id A85DB8B7C9;
-        Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 4x1NYA1kjwKS; Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4C9728B7D3;
-        Tue, 20 Aug 2019 16:34:15 +0200 (CEST)
-Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id C73756B735; Tue, 20 Aug 2019 14:34:14 +0000 (UTC)
-Message-Id: <bad41ed02531bb0382420cbab50a0d7153b71767.1566311636.git.christophe.leroy@c-s.fr>
-In-Reply-To: <d60ce8dd3a383c7adbfc322bf1d53d81724a6000.1566311636.git.christophe.leroy@c-s.fr>
-References: <d60ce8dd3a383c7adbfc322bf1d53d81724a6000.1566311636.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v4 3/3] powerpc/64: optimise LOAD_REG_IMMEDIATE_SYM()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        segher@kernel.crashing.org
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 20 Aug 2019 14:34:14 +0000 (UTC)
+        id S1729812AbfHTOfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:35:24 -0400
+Received: from localhost.localdomain (unknown [180.111.132.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B0421214DA;
+        Tue, 20 Aug 2019 14:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566311723;
+        bh=KZ3+f1X6H8F4tdCkHq5J6hMugLIxLtLvPMyf8pCWZmE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=lbMQfYwzX02ZUEfPxZ55RFYYjFcsyixNVlUY5BzWkjRyFeFFIuG1Wj8KYaU6Bh+Ey
+         6U04GCgMt+xEeNt61/UuAEfkx6nZWPxKva44w2TXBEkMDNy81Ou229IhCcBlII+hTF
+         pi0FXkeQ9rna58o/2kEaCIwaoM2USVYrAG9O0PDY=
+From:   Chao Yu <chao@kernel.org>
+To:     jaegeuk@kernel.org
+Cc:     linux-f2fs-devel@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org, Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to avoid corruption during inline conversion
+Date:   Tue, 20 Aug 2019 22:34:22 +0800
+Message-Id: <20190820143422.3458-1-chao@kernel.org>
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Optimise LOAD_REG_IMMEDIATE_SYM() using a temporary register to
-parallelise operations.
+From: Chao Yu <yuchao0@huawei.com>
 
-It reduces the path from 5 to 3 instructions.
+- f2fs_setattr
+ - truncate_setsize (expand i_size)
+  - f2fs_convert_inline_inode
+   - f2fs_convert_inline_page
+    - f2fs_reserve_block
+    - f2fs_get_node_info failed
 
-Suggested-by: Segher Boessenkool <segher@kernel.crashing.org>
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Once we fail in above path, inline flag will remain, however
+- we've reserved one block at inode.i_addr[0]
+- i_size has expanded
 
+Fix error path to avoid inode corruption.
+
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
-v3: new
-v4: fixed the registers of lis/ori to match rldimi args (tmp is upper part, reg is lower part)
----
- arch/powerpc/include/asm/ppc_asm.h   | 12 ++++++------
- arch/powerpc/kernel/exceptions-64e.S | 22 +++++++++++++---------
- arch/powerpc/kernel/head_64.S        |  2 +-
- 3 files changed, 20 insertions(+), 16 deletions(-)
+ fs/f2fs/file.c   | 8 ++++++--
+ fs/f2fs/inline.c | 1 +
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/ppc_asm.h b/arch/powerpc/include/asm/ppc_asm.h
-index 20a00209c965..dd3b191bdcea 100644
---- a/arch/powerpc/include/asm/ppc_asm.h
-+++ b/arch/powerpc/include/asm/ppc_asm.h
-@@ -347,12 +347,12 @@ GLUE(.,name):
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 2284ec706a40..05d60082da3a 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -812,7 +812,8 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 	}
  
- #define LOAD_REG_IMMEDIATE(reg, expr) __LOAD_REG_IMMEDIATE reg, expr
+ 	if (attr->ia_valid & ATTR_SIZE) {
+-		bool to_smaller = (attr->ia_size <= i_size_read(inode));
++		loff_t old_size = i_size_read(inode);
++		bool to_smaller = (attr->ia_size <= old_size);
  
--#define LOAD_REG_IMMEDIATE_SYM(reg,expr)	\
--	lis     reg,(expr)@highest;		\
--	ori     reg,reg,(expr)@higher;	\
--	rldicr  reg,reg,32,31;		\
--	oris    reg,reg,(expr)@__AS_ATHIGH;	\
--	ori     reg,reg,(expr)@l;
-+#define LOAD_REG_IMMEDIATE_SYM(reg, tmp, expr)	\
-+	lis	tmp, (expr)@highest;		\
-+	lis	reg, (expr)@__AS_ATHIGH;	\
-+	ori	tmp, tmp, (expr)@higher;	\
-+	ori	reg, reg, (expr)@l;		\
-+	rldimi	reg, tmp, 32, 0
+ 		down_write(&F2FS_I(inode)->i_gc_rwsem[WRITE]);
+ 		down_write(&F2FS_I(inode)->i_mmap_sem);
+@@ -835,8 +836,11 @@ int f2fs_setattr(struct dentry *dentry, struct iattr *attr)
+ 			/* should convert inline inode here */
+ 			if (!f2fs_may_inline_data(inode)) {
+ 				err = f2fs_convert_inline_inode(inode);
+-				if (err)
++				if (err) {
++					/* recover old i_size */
++					i_size_write(inode, old_size);
+ 					return err;
++				}
+ 			}
+ 			inode->i_mtime = inode->i_ctime = current_time(inode);
+ 		}
+diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+index 78d6ebe165cd..16ebdd4d1f2c 100644
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -131,6 +131,7 @@ int f2fs_convert_inline_page(struct dnode_of_data *dn, struct page *page)
  
- #define LOAD_REG_ADDR(reg,name)			\
- 	ld	reg,name@got(r2)
-diff --git a/arch/powerpc/kernel/exceptions-64e.S b/arch/powerpc/kernel/exceptions-64e.S
-index 898aae6da167..829950b96d29 100644
---- a/arch/powerpc/kernel/exceptions-64e.S
-+++ b/arch/powerpc/kernel/exceptions-64e.S
-@@ -750,12 +750,14 @@ END_FTR_SECTION_IFSET(CPU_FTR_ALTIVEC)
- 	ld	r15,PACATOC(r13)
- 	ld	r14,interrupt_base_book3e@got(r15)
- 	ld	r15,__end_interrupts@got(r15)
--#else
--	LOAD_REG_IMMEDIATE_SYM(r14,interrupt_base_book3e)
--	LOAD_REG_IMMEDIATE_SYM(r15,__end_interrupts)
--#endif
- 	cmpld	cr0,r10,r14
- 	cmpld	cr1,r10,r15
-+#else
-+	LOAD_REG_IMMEDIATE_SYM(r14, r15, interrupt_base_book3e)
-+	cmpld	cr0, r10, r14
-+	LOAD_REG_IMMEDIATE_SYM(r14, r15, __end_interrupts)
-+	cmpld	cr1, r10, r14
-+#endif
- 	blt+	cr0,1f
- 	bge+	cr1,1f
- 
-@@ -820,12 +822,14 @@ kernel_dbg_exc:
- 	ld	r15,PACATOC(r13)
- 	ld	r14,interrupt_base_book3e@got(r15)
- 	ld	r15,__end_interrupts@got(r15)
--#else
--	LOAD_REG_IMMEDIATE_SYM(r14,interrupt_base_book3e)
--	LOAD_REG_IMMEDIATE_SYM(r15,__end_interrupts)
--#endif
- 	cmpld	cr0,r10,r14
- 	cmpld	cr1,r10,r15
-+#else
-+	LOAD_REG_IMMEDIATE_SYM(r14, r15, interrupt_base_book3e)
-+	cmpld	cr0, r10, r14
-+	LOAD_REG_IMMEDIATE_SYM(r14, r15,__end_interrupts)
-+	cmpld	cr1, r10, r14
-+#endif
- 	blt+	cr0,1f
- 	bge+	cr1,1f
- 
-@@ -1449,7 +1453,7 @@ a2_tlbinit_code_start:
- a2_tlbinit_after_linear_map:
- 
- 	/* Now we branch the new virtual address mapped by this entry */
--	LOAD_REG_IMMEDIATE_SYM(r3,1f)
-+	LOAD_REG_IMMEDIATE_SYM(r3, r5, 1f)
- 	mtctr	r3
- 	bctr
- 
-diff --git a/arch/powerpc/kernel/head_64.S b/arch/powerpc/kernel/head_64.S
-index 1fd44761e997..0f2d61af47cc 100644
---- a/arch/powerpc/kernel/head_64.S
-+++ b/arch/powerpc/kernel/head_64.S
-@@ -635,7 +635,7 @@ __after_prom_start:
- 	sub	r5,r5,r11
- #else
- 	/* just copy interrupts */
--	LOAD_REG_IMMEDIATE_SYM(r5, FIXED_SYMBOL_ABS_ADDR(__end_interrupts))
-+	LOAD_REG_IMMEDIATE_SYM(r5, r11, FIXED_SYMBOL_ABS_ADDR(__end_interrupts))
- #endif
- 	b	5f
- 3:
+ 	err = f2fs_get_node_info(fio.sbi, dn->nid, &ni);
+ 	if (err) {
++		f2fs_truncate_data_blocks_range(dn, 1);
+ 		f2fs_put_dnode(dn);
+ 		return err;
+ 	}
 -- 
-2.13.3
+2.22.0
 
