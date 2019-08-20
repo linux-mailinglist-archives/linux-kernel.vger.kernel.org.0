@@ -2,127 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D22295EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:38:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C410B95EF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:38:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729951AbfHTMhq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:37:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39508 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729383AbfHTMhq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:37:46 -0400
-Received: from localhost (unknown [106.201.62.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14F3B22CF7;
-        Tue, 20 Aug 2019 12:37:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566304665;
-        bh=KVRO40K8LpJzjIGn+3A2o1Q+Qh1PnUhVIwtYsn2qK/8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NO3vUFDUX463WH6brpjs4dLrAldhlu8dziuly8uDtxpA7StcPFZjE7HXWTr+ZOnhh
-         KtyA+D+Yml7EpqdI8GFWw1g9zbgdh6Ck+vawGicsbReK+9JfSC/DZl/S3+9WVFTAZP
-         MlxoJASXKv4NrGoNpMQWZ8Cw7BPAfjiGWs/rZ4H8=
-Date:   Tue, 20 Aug 2019 18:06:33 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] arm64: dts: qcom: sm8150-mtp: add base dts file
-Message-ID: <20190820123633.GC12733@vkoul-mobl.Dlink>
-References: <20190820064216.8629-1-vkoul@kernel.org>
- <20190820064216.8629-6-vkoul@kernel.org>
- <20190820122645.GB31261@centauri>
+        id S1730183AbfHTMgs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:36:48 -0400
+Received: from mail-eopbgr150078.outbound.protection.outlook.com ([40.107.15.78]:55719
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730055AbfHTMgr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:36:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d49TK6e1Y9OWSQ5sFW7eMZmx8DofYOInqZc3pD2vYwjznKTv2t7Ab4QIU6+IKnqdVJGiH5CHX6HZs1sr+/O9mocg8PgN/+21uILU0PWHyprlxw9dx4xqJHB8hiZA6/dMiYkxVAs17FdkRbCcyHQXCbbJd15tuNR19c/zyAQvp99U9ZL7kqinYRf8nhjrXpayWVp0lSDsKQddAgcdAvhmCyuJX9z2AGl4pbthzHE7Ah+C9ep3RrihJ+zMdzGvP7kW7yyCRzCSMNT7eF5G66fQ3dkKU8SIZRY+gNpD7cScf/KazXe8nPiCzzfSn4JJNlpMIHAncl0Lg/STJII/s6R30g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G5lW6ZVJMifvtjp+A6LbX1tQh/oG5NkB6LjiBbFbcgA=;
+ b=P25vby3rIO67weB+fYNBkPjjaDipDo3JXkbH6gf4aPByBQM7/umClskaj9P+eIjvjA1zr/5tq6B5SfuOWHMPmu+cx07iMHCmetWtk4iJ4hxpLdDkH56mE46kUq9jf6vNWgsLDD2Vw1eoXQKsXP0rhU9KkLqWepMOvvFjLgPVVEnvJCXx9QqbIbXQe1Di27z4K0y6F3maDLc8iEjCuHE7RFTy4TjNIm3CM/6eHtLvZqfa075Uscsrkh8pmlDGHeyhdSgtVcvAGsIUZZRuXM3yJcK+asH6/AB2LMCZH3idiDze3YnOHK+40Lczn+96V6IyAwHUSHhW0/xsinkNnuOryA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mellanox.com; dmarc=pass action=none header.from=mellanox.com;
+ dkim=pass header.d=mellanox.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=G5lW6ZVJMifvtjp+A6LbX1tQh/oG5NkB6LjiBbFbcgA=;
+ b=Fvf87/FxuhC1NjhNOWkEPQMv2VuCFQELwbtjp7wBrdK3fgg86cibRG3BxtK2yol/5Bmof8JGu8pQYD+CBN5BLHryDGLysP7gfh1pprYleLKIzKIPCaLtuZE2chyrIHGWb/d9PyLJI3y2pb9IDD96ZSshK4QcTRMSWO3D+6Sr8YQ=
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com (10.171.182.144) by
+ VI1PR05MB6462.eurprd05.prod.outlook.com (20.179.24.214) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Tue, 20 Aug 2019 12:36:43 +0000
+Received: from VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7]) by VI1PR05MB4141.eurprd05.prod.outlook.com
+ ([fe80::1d6:9c67:ea2d:38a7%6]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 12:36:43 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+CC:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: Tree for Aug 19 (amdgpu)
+Thread-Topic: linux-next: Tree for Aug 19 (amdgpu)
+Thread-Index: AQHVVvkFv70F6uhlHE+MpL/A8Ss0j6cD+d6A
+Date:   Tue, 20 Aug 2019 12:36:43 +0000
+Message-ID: <20190820123637.GB29225@mellanox.com>
+References: <20190819191832.03f1a579@canb.auug.org.au>
+ <ba3cde82-6163-12e5-2e77-36834454113a@infradead.org>
+ <20190820114554.0e522651@canb.auug.org.au>
+In-Reply-To: <20190820114554.0e522651@canb.auug.org.au>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: YQBPR0101CA0053.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c00:1::30) To VI1PR05MB4141.eurprd05.prod.outlook.com
+ (2603:10a6:803:4d::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [156.34.55.100]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 9a27219f-e288-40ed-58a1-08d7256b0eb9
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR05MB6462;
+x-ms-traffictypediagnostic: VI1PR05MB6462:
+x-microsoft-antispam-prvs: <VI1PR05MB646288B7F984E7ED815EB2D1CFAB0@VI1PR05MB6462.eurprd05.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:397;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(346002)(366004)(136003)(396003)(189003)(199004)(53754006)(478600001)(71190400001)(5024004)(256004)(71200400001)(99286004)(14454004)(76176011)(66476007)(66946007)(6486002)(8676002)(66556008)(81156014)(8936002)(81166006)(25786009)(4326008)(64756008)(66446008)(229853002)(6512007)(6436002)(102836004)(186003)(486006)(5660300002)(6916009)(6246003)(53936002)(66066001)(6116002)(3846002)(6506007)(53546011)(386003)(2616005)(446003)(476003)(1076003)(4744005)(11346002)(2906002)(52116002)(36756003)(54906003)(7736002)(305945005)(316002)(86362001)(26005)(33656002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR05MB6462;H:VI1PR05MB4141.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uhlLIvyV3SABRR+DF5pjB70gqsH70+slsdGH8U1GWtO5cGhuHKgeMkV0wGWltYwnVEHz6P2R28eRYv5A4cFyY5iuMpHUcsm8OcE8CaDlYUakwdQRorsza7iHgC7LMoEY/EDMOYRdvAquuTYmRdkwTwvY6npPTscv/8UBrRBFlUvDZD0swtkcHDEByuHzNUKBIDIje8qpM9Gv0NDMxnu9HaI5sziQu1kkwIlUqAhToPwt+oXA/bBdlL+eYuuePXdpNiCjFX9OxmqleInU5gH6n30YQHbqIZfNQY+0T0jdlnfeiD+BvGF8I/sSbVfP982sRGNk9eSU5a5KQRK8NEgqnaQ5c/oBkmxrA3tMMBeWlIU2R8xX8Foma0BvW4Na2AJJ5bN0nqLGPpX15a+T4U2zjmWK9iyX6ZZFITllf0bkr3U=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <146AD0307B5F9244BBC8DDA184B159E7@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820122645.GB31261@centauri>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a27219f-e288-40ed-58a1-08d7256b0eb9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 12:36:43.7009
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: v3esOl9TUoOBUT+lZNM3sgVnetHnHqU17rO7Z+sPONv4wwgSfwxT+95rBolR+Cawb4F7uJS/ri+f1hdfIN3bxA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR05MB6462
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-08-19, 14:26, Niklas Cassel wrote:
-> On Tue, Aug 20, 2019 at 12:12:13PM +0530, Vinod Koul wrote:
-> > This add base DTS file for sm8150-mtp and enables boot to console, adds
-> > tlmm reserved range, resin node, volume down key and also includes pmic
-> > file.
-> > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/Makefile       |  1 +
-> >  arch/arm64/boot/dts/qcom/sm8150-mtp.dts | 48 +++++++++++++++++++++++++
-> >  2 files changed, 49 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> > index 0a7e5dfce6f7..1964dacaf19b 100644
-> > --- a/arch/arm64/boot/dts/qcom/Makefile
-> > +++ b/arch/arm64/boot/dts/qcom/Makefile
-> > @@ -12,5 +12,6 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r2.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-cheza-r3.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-db845c.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
-> > +dtb-$(CONFIG_ARCH_QCOM)	+= sm8150-mtp.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
-> >  dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-> > diff --git a/arch/arm64/boot/dts/qcom/sm8150-mtp.dts b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-> > new file mode 100644
-> > index 000000000000..80b15f4f07c8
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/sm8150-mtp.dts
-> > @@ -0,0 +1,48 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +// Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
-> > +// Copyright (c) 2019, Linaro Limited
-> > +
-> > +/dts-v1/;
-> > +
-> > +#include "sm8150.dtsi"
-> > +#include "pm8150.dtsi"
-> > +#include "pm8150b.dtsi"
-> > +#include "pm8150l.dtsi"
-> > +
-> > +/ {
-> > +	model = "Qualcomm Technologies, Inc. SM8150 MTP";
-> > +	compatible = "qcom,sm8150-mtp";
-> > +
-> > +	aliases {
-> > +		serial0 = &uart2;
-> > +	};
-> > +
-> > +	chosen {
-> > +		stdout-path = "serial0:115200n8";
-> > +	};
-> > +};
-> > +
-> > +&qupv3_id_1 {
-> > +	status = "okay";
-> > +};
-> > +
-> > +&pon {
-> > +	pwrkey {
-> > +		status = "okay";
-> > +	};
-> > +
-> > +	resin {
-> > +		compatible = "qcom,pm8941-resin";
-> > +		interrupts = <0x0 0x8 1 IRQ_TYPE_EDGE_BOTH>;
-> > +		debounce = <15625>;
-> > +		bias-pull-up;
-> > +		linux,code = <KEY_VOLUMEDOWN>;
-> > +	};
-> > +};
-> 
-> Missing a newline here.
-
-Yup will updated
-
--- 
-~Vinod
+T24gVHVlLCBBdWcgMjAsIDIwMTkgYXQgMTE6NDU6NTRBTSArMTAwMCwgU3RlcGhlbiBSb3Rod2Vs
+bCB3cm90ZToNCj4gSGkgYWxsLA0KPiANCj4gT24gTW9uLCAxOSBBdWcgMjAxOSAxODozNDo0MSAt
+MDcwMCBSYW5keSBEdW5sYXAgPHJkdW5sYXBAaW5mcmFkZWFkLm9yZz4gd3JvdGU6DQo+ID4NCj4g
+PiBPbiA4LzE5LzE5IDI6MTggQU0sIFN0ZXBoZW4gUm90aHdlbGwgd3JvdGU6DQo+ID4gPiBIaSBh
+bGwsDQo+ID4gPiANCj4gPiA+IENoYW5nZXMgc2luY2UgMjAxOTA4MTY6DQo+ID4gPiAgIA0KPiA+
+IA0KPiA+IG9uIHg4Nl82NDoNCj4gPiANCj4gPiAuLi9kcml2ZXJzL2dwdS9kcm0vYW1kL2FtZGdw
+dS9hbWRncHVfZHJ2LmM6IEluIGZ1bmN0aW9uIOKAmGFtZGdwdV9leGl04oCZOg0KPiA+IC4uL2Ry
+aXZlcnMvZ3B1L2RybS9hbWQvYW1kZ3B1L2FtZGdwdV9kcnYuYzoxNDcxOjI6IGVycm9yOiBpbXBs
+aWNpdCBkZWNsYXJhdGlvbiBvZiBmdW5jdGlvbiDigJhtbXVfbm90aWZpZXJfc3luY2hyb25pemXi
+gJk7IGRpZCB5b3UgbWVhbiDigJhfX3N5bmNfc3luY2hyb25pemXigJk/IFstV2Vycm9yPWltcGxp
+Y2l0LWZ1bmN0aW9uLWRlY2xhcmF0aW9uXQ0KPiA+ICAgbW11X25vdGlmaWVyX3N5bmNocm9uaXpl
+KCk7DQo+ID4gICBefn5+fn5+fn5+fn5+fn5+fn5+fn5+fn4NCj4gPiAgIF9fc3luY19zeW5jaHJv
+bml6ZQ0KPiA+IA0KPiA+IA0KPiA+IEZ1bGwgcmFuZGNvbmZpZyBmaWxlIGlzIGF0dGFjaGVkLg0K
+PiANCj4gQ2F1c2VkIGJ5IGNvbW1pdA0KPiANCj4gICA2ODMyYzlkYzgzNTggKCJobW06IHVzZSBt
+bXVfbm90aWZpZXJfZ2V0L3B1dCBmb3IgJ3N0cnVjdCBobW0nIikNCj4gDQo+IGZyb20gdGhlIGht
+bSB0cmVlLg0KPiANCj4gZHJpdmVycy9ncHUvZHJtL2FtZC9hbWRncHUvYW1kZ3B1X2Rydi5jIG5l
+ZWQgdG8gaW5jbHVkZSBsaW51eC9tbXVfbm90aWZpZXIuaA0KDQpBaCB5ZXMsIHRoYW5rcywgaXQg
+aXMgYmVjYXVzZSBvZiAhQ09ORklHX0hNTV9NSVJST1IgaW4gdGhpcw0KcmFuZGNvbmZpZy4gSSd2
+ZSBmaXhlZCBpdCB1cC4NCg0KUmVnYXJkcywNCkphc29uDQoNCg==
