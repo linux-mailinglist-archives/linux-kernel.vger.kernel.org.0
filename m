@@ -2,102 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9952095EBE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:35:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0217795ECD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:36:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730037AbfHTMes (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:34:48 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:45411 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbfHTMer (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:34:47 -0400
-Received: by mail-io1-f67.google.com with SMTP id t3so11712311ioj.12
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 05:34:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=81olWJ9roiVSRuHP2fqvrmXHfWo10yGJXv+JCQOXliI=;
-        b=tk706P5Cou1MizyP1h8CWgCVukuNWhrsgRlX0ez8rnsdPTlZeS+LWQjbIf4IZ9R7pw
-         khkHuB5ee96OE/2TZTeos0PboZfPIdzIZZ3P8hJcgYZqyaYw0RSmSzAepK9PQnGRH3yf
-         Yj2ZFceVn9+9lALgBcm78yWYXp3pCttCggWKNgkGFPSGd+T3Pn4zW5x2O4zM4DS+CCYh
-         5h8eRc4cfFChHe5MI1E12elLQarGr+cyJ6fZQESWX2sfTzVMaFbgHiJMIfIy0VQ0zQgA
-         QGPgqONhiJAm8d7q/4UcfFGCYwn+TqnToGeAREr+XiA3bfxuyjLXnfEK5fdKnI9eHtEm
-         Fe0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=81olWJ9roiVSRuHP2fqvrmXHfWo10yGJXv+JCQOXliI=;
-        b=OCvjZSeONPzAjLMXSAOyFla0m3ayoYwDPnG/tNrjqMuzRt6VR6sSTC25z1gWTHL8V3
-         oqOKZUa7RharCnb4OU9kz7oEGCXzOKcnUQzM7RY6fciQ1hUZhmZYWBpx8ZeAyCtgatwg
-         8NxBqJ1emJT++uMEJgZhkxkVNuS+NPmyDJ1SVLsVFU+VX0ImIUB7TRj/g8DVIpQm70vx
-         4Ms6apLmudx+jbFHRRx8Tz+iKH4p4Utvb6gwJniTVbdbJgt0W0EjM/GU92HULcmuLhWM
-         +NccNDXYx8lYUtBxYscNvV3EmJvIKxQmgOWnrQACDsBt5aTcXUmqvDva/XVkWZ4wJ7Om
-         RPhw==
-X-Gm-Message-State: APjAAAVAEMXiKnfi76Y6gB3pMm5re6n4PAWVXwSZovsmdQu5MB17NrQO
-        MhFCVbZam+D0vA4wfN72VYVYpIj/E/xdxT2foQ==
-X-Google-Smtp-Source: APXvYqymgqWgtRE50NKeUfX7dlt3oD9HgBzMDEMgz+c6OfWLeSqJvmquagFYteTP3RpjM1VPiLEa5SK+XhFB8ewj+sc=
-X-Received: by 2002:a02:952d:: with SMTP id y42mr3469605jah.66.1566304486595;
- Tue, 20 Aug 2019 05:34:46 -0700 (PDT)
+        id S1729924AbfHTMf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:35:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbfHTMfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:35:55 -0400
+Received: from localhost (unknown [106.201.62.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51B3222DA7;
+        Tue, 20 Aug 2019 12:35:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566304555;
+        bh=nJ0mcbMfylwac8G88uFjWYi2IIkTy/0t3muFG+48Pwo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eo5zTxquyKft1fh7Dl1i0gfO749DVg6E05GBvwPBx6Bhjs434sfYJN+6g5kMyzihI
+         ioENbddmBvHJKd7HzIIUPkSg6TFJkg8Yi/9yPOMlCSqok+HisyEC5R4QzOOiDRv78f
+         T6igoogdaQtVfX0wn7HN7TMbfPtP/qdu6bmFnAFk=
+Date:   Tue, 20 Aug 2019 18:04:43 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/8] arm64: dts: qcom: pm8150: Add Base DTS file
+Message-ID: <20190820123443.GA12733@vkoul-mobl.Dlink>
+References: <20190820064216.8629-1-vkoul@kernel.org>
+ <20190820064216.8629-3-vkoul@kernel.org>
+ <20190820122719.GD31261@centauri>
 MIME-Version: 1.0
-References: <2e70a6e2-23a6-dbf2-4911-1e382469c9cb@gmail.com>
- <CAM6Zs0WqdfCv=EGi5qU5w6Dqh2NHQF2y_uF4i57Z9v=NoHHwPA@mail.gmail.com>
- <CAM6Zs0X_TpRPSR9XRikkYxHSA4vZsFr7WH_pEyq6npNjobdRVw@mail.gmail.com>
- <11dc5f68-b253-913a-4219-f6780c8967a0@intel.com> <594c424c-2474-5e2c-9ede-7e7dc68282d5@gmail.com>
- <CAM6Zs0XzBvoNFa5CSAaEEBBJHcxvguZFRqVOVdr5+JDE=PVGVw@mail.gmail.com>
- <alpine.DEB.2.21.1908100811160.7324@nanos.tec.linutronix.de>
- <fbcf3c93-3868-2b0e-b831-43fa68c48d6c@gmail.com> <CAM6Zs0WLQG90EQ+38NE1Nv8bcnbxW8wO4oEfxSuu4dLhfT1YZA@mail.gmail.com>
- <alpine.DEB.2.21.1908121917460.7324@nanos.tec.linutronix.de>
- <CAM6Zs0UoHZyBkY9-RLdO-W+u09RZPbzq-A-K01sHyRkfoEiYTA@mail.gmail.com> <alpine.DEB.2.21.1908150924210.2241@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1908150924210.2241@nanos.tec.linutronix.de>
-From:   Woody Suwalski <terraluna977@gmail.com>
-Date:   Tue, 20 Aug 2019 07:34:35 -0500
-Message-ID: <CAM6Zs0XE8GW-P4Q3YM3KZo-1L+g2wt5QRN+JM3_m1xuwgFDVXQ@mail.gmail.com>
-Subject: Re: Kernel 5.3.x, 5.2.2+: VMware player suspend on 64/32 bit guests
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Woody Suwalski <terraluna977@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820122719.GD31261@centauri>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 2:37 AM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> Woody,
->
-> On Tue, 13 Aug 2019, Woody Suwalski wrote:
-> > On Mon, Aug 12, 2019 at 1:24 PM Thomas Gleixner <tglx@linutronix.de> wrote:
-> > > The ACPI handler is not the culprit. This is either an emulation bug or
-> > > something really strange. Can you please use a WARN_ON() if the loop is
-> > > exited via the timeout so we can see in which context this happens?
-> > >
-> >
-> > B. On 5.3-rc4 problem is gone. I guess it is overall good sign.
->
-> Now the interesting question is what changed between 5.3-rc3 and
-> 5.3-rc4. Could you please try to bisect that?
->
+On 20-08-19, 14:27, Niklas Cassel wrote:
+> On Tue, Aug 20, 2019 at 12:12:10PM +0530, Vinod Koul wrote:
+> > Add base DTS file for pm8150 along with GPIOs, power-on, rtc and vadc
+> > nodes
+> > 
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/pm8150.dtsi | 95 ++++++++++++++++++++++++++++
+> >  1 file changed, 95 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/qcom/pm8150.dtsi
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/pm8150.dtsi b/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> > new file mode 100644
+> > index 000000000000..4a678be46d37
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/qcom/pm8150.dtsi
+> > @@ -0,0 +1,95 @@
+> > +// SPDX-License-Identifier: BSD-3-Clause
+> > +// Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
+> > +// Copyright (c) 2019, Linaro Limited
+> > +
+> > +#include <dt-bindings/input/input.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/spmi/spmi.h>
+> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
+> > +
+> > +&spmi_bus {
+> > +	pm8150_0: pmic@0 {
+> > +		compatible = "qcom,pm8150", "qcom,spmi-pmic";
+> > +		reg = <0x0 SPMI_USID>;
+> > +		#address-cells = <1>;
+> > +		#size-cells = <0>;
+> > +
+> > +		pon: power-on@800 {
+> > +			compatible = "qcom,pm8916-pon";
+> > +			reg = <0x0800>;
+> > +			pwrkey {
+> > +				compatible = "qcom,pm8941-pwrkey";
+> > +				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
+> 
+> Here you use 0 for 3rd cell
+> 
+> > +				debounce = <15625>;
+> > +				bias-pull-up;
+> > +				linux,code = <KEY_POWER>;
+> > +
+> > +				status = "disabled";
+> > +			};
+> > +		};
+> > +
+> > +		pm8150_adc: adc@3100 {
+> > +			compatible = "qcom,spmi-adc5";
+> > +			reg = <0x3100>;
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +			#io-channel-cells = <1>;
+> > +			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
+> 
+> Here you use 0x0 for 3rd cell, be consistent.
 
-Apparently I can not, and frustrated'ingly do not understand it.
-Tried twice, and every time I get it broken to the end of bisection -
-so the fixed-in-5.3-rc4 theory falls apart. Yet if I build cleanly
-5.3-rc4 or -rc5, it works OK.
-Then on a 32 bit system - I first tried with a scaled-down kernel
-(just with the drivers needed in the VM). That one is never working,
-even in rc5. Yet the "full" kernel works OK. So now there is a config
-issue variation on top of other problem?
+Will make it either at this and other places, thanks for pointing!
 
->
-> dpm_suspend_noirq() is called with all CPUs online and interrupts
-> enabled. In that case an interrupt pending in IRR does not make any sense
-> at all. Confused.
->
-For now I use a timeout counter patch - and it is showing 100% irq9
-jammed and needing rescue. And I am even more confused...
-
-Thanks, Woody
+-- 
+~Vinod
