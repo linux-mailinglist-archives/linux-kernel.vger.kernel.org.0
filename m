@@ -2,59 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7398A96082
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D8E96089
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:41:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730409AbfHTNla (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:41:30 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36079 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730384AbfHTNl2 (ORCPT
+        id S1730451AbfHTNln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:41:43 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:39721 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730430AbfHTNll (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:41:28 -0400
-Received: by mail-lf1-f66.google.com with SMTP id j17so4161941lfp.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 06:41:26 -0700 (PDT)
+        Tue, 20 Aug 2019 09:41:41 -0400
+Received: by mail-lj1-f196.google.com with SMTP id x4so5173542ljj.6
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 06:41:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RAAFc3+apg9ghKgSz+2bVCqiXJK62BSpSIfioRn9dmg=;
-        b=MTqrFrq7NfIcYX9hZQL8gHvCMgEAMVDAzMl6TymnK6KbYCaZv69caw+OpIpdvI9Px5
-         gDX4Zxaq2sS7V5U6g6Y/wPqNyTlwjF4jy+xRb9RcnrN+1+KuJ4n09lIPFEtdM8WlqHsh
-         ia6xuVPFx58wyVZKboIoFB4vQsEsMVTB9yIIUxgUBd7I431PQ+F7yu9v2iL3YFwYYgR+
-         HWqVclyuJVe663v+Ns1j9KQ/wgT0wbivkUt1hyUgsaPfOD6Gb5ed0vWf0QBRIQGp52ks
-         Qvr00G+cTcj6ScQunx7eluB+rl8OBiBc8XVMdWN9nWDKOD6Vu21s8yo0bPQeJ4u5lZwE
-         hgng==
+        bh=gNuDQYJVmflL/Wny4LHIdiHjJtChxjlf3zzR+P07bYQ=;
+        b=ZDi1SFp8FXJaCjqmp4zm/ByzXqtJBaAQvabUX02QHSb6SDgYVNy5d57jcfvwyT0dA5
+         8fzbFhHg9LRNWdJpl72dppeSuclNMByTBbZmU1xF7nAeqeBmQRvhlMYjmaiXLE4LV8wa
+         zxoY/hF5DCBbdn3mRlsGF/QKdWdyYmxwOQPdPchKF8HLcZypJV/Ukw61WnY3PsnFAK6u
+         Q+YJvglENuW+ieeSkGQnazSrxJiAcBHbB6uLYLGz1AJ9h/LaCq1SaT3QhJAAHmVF4Fz7
+         Q2G5T+L+zrAQfW0/HE1GXl6UCt7EAtJC8GptIXHJXVjn/yaRqmlb/VYXAa36kix3OPE7
+         AUMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=RAAFc3+apg9ghKgSz+2bVCqiXJK62BSpSIfioRn9dmg=;
-        b=iKlzrOyNvGJnkVMgrZJYqhy3TIMc4d0OJBTANllT+Wc1L6nHWDy5g2BoZxRp7odmuw
-         Hmc3AvLQhhl5Yns/0Pm6efYfId1Rt20gwQsnHfUWVLwnX+rBxwibJjPktW+HxUw3yQnD
-         punPICxLanqzHfHNyKHw+VhQnLaLlLtBOsWglsExUC+EJ23zWwnR8kcNfvImXqc2PD7u
-         UXqGO7TFm31bRdhVJwXrZKMisGap31H+nGY3YsX+rgL1T3rCt6xAzdaENN3u8l8mrSyx
-         fOl7xtuPS9AAaT3COZ8zTO5cderllVRQiND8auLs7bijOPjKE0zrsz10gXBKIZ55txlD
-         KmjQ==
-X-Gm-Message-State: APjAAAXxKuhyX/Ol+VRxiHyh29V0Orelphh/rLaydY15Bc6pZnZx2lIS
-        MYFViDX48Y8cVRzboy7iuXf13g==
-X-Google-Smtp-Source: APXvYqyvwdCS8wFTEeve9kgL335NwHhmLcAkFv5HfhnI2TJSfJ1PR0BGeJVDiZ1r7BJ+GzhNm2aF+g==
-X-Received: by 2002:ac2:4a75:: with SMTP id q21mr14989391lfp.175.1566308486105;
-        Tue, 20 Aug 2019 06:41:26 -0700 (PDT)
+        bh=gNuDQYJVmflL/Wny4LHIdiHjJtChxjlf3zzR+P07bYQ=;
+        b=D6QC0+3gBlYiVebz3PnLeq0DBEvsBFgARIsqscWcJK2Dpoq17sX3Cr34sfwj9iiD5M
+         jaGQb76T5cw5PHFiWppl1OW91jxOAGU83DI5CMRz8EznJME2+jmrMFLbN2wCq388KZ4g
+         DbbHz1q+0NdOaJhYVWqUDRlS6FLzA5dDOxyDuo3CqKKJS4WpRXsmeTyDZxB9VONRs2y1
+         0QQlA50rdhsxJ7FDp5ZUepSN6NBDG2/56S22vB14Rb8AMdofdcZatn5r60MbWIo5yVUJ
+         cmL/tadGsBJeZXuFza8GBm3C75+0QtqwJnER50mNRba1TXoL8JAlMspcyirHiCjyml2v
+         4vfg==
+X-Gm-Message-State: APjAAAXXYmmlH+TP7GEZLzDMie6uacyuZELEGfAzPuJmmw06fMkVHQWu
+        LMAYOX08qNAtDUKlFNHq4jAqow==
+X-Google-Smtp-Source: APXvYqxp8WgHlmWB1TJ1U6T1cdPC1f76z95rZGZ+Y6JhIi2z2/jagdLSnDlzo64tshfBrRxPu29rpQ==
+X-Received: by 2002:a2e:b0cb:: with SMTP id g11mr15447861ljl.76.1566308499392;
+        Tue, 20 Aug 2019 06:41:39 -0700 (PDT)
 Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
-        by smtp.gmail.com with ESMTPSA id d21sm2861682lfc.73.2019.08.20.06.41.24
+        by smtp.gmail.com with ESMTPSA id f22sm2820208ljh.22.2019.08.20.06.41.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 06:41:24 -0700 (PDT)
+        Tue, 20 Aug 2019 06:41:38 -0700 (PDT)
 From:   Anders Roxell <anders.roxell@linaro.org>
-To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com
+To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net
 Cc:     linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
         bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
         Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: bpf: install files test_xdp_vlan.sh
-Date:   Tue, 20 Aug 2019 15:41:21 +0200
-Message-Id: <20190820134121.25728-1-anders.roxell@linaro.org>
+Subject: [PATCH] selftests: bpf: add config fragment BPF_JIT
+Date:   Tue, 20 Aug 2019 15:41:34 +0200
+Message-Id: <20190820134134.25818-1-anders.roxell@linaro.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,36 +61,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When ./test_xdp_vlan_mode_generic.sh runs it complains that it can't
-find file test_xdp_vlan.sh.
+When running test_kmod.sh the following shows up
 
- # selftests: bpf: test_xdp_vlan_mode_generic.sh
- # ./test_xdp_vlan_mode_generic.sh: line 9: ./test_xdp_vlan.sh: No such
- file or directory
+ # sysctl cannot stat /proc/sys/net/core/bpf_jit_enable No such file or directory
+ cannot: stat_/proc/sys/net/core/bpf_jit_enable #
+ # sysctl cannot stat /proc/sys/net/core/bpf_jit_harden No such file or directory
+ cannot: stat_/proc/sys/net/core/bpf_jit_harden #
 
-Rework so that test_xdp_vlan.sh gets installed, added to the variable
-TEST_PROGS_EXTENDED.
+Rework to enable CONFIG_BPF_JIT to solve "No such file or directory"
 
-Fixes: d35661fcf95d ("selftests/bpf: add wrapper scripts for test_xdp_vlan.sh")
 Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
 ---
- tools/testing/selftests/bpf/Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/testing/selftests/bpf/config | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 1faad0c3c3c9..d7968e20463c 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -68,7 +68,8 @@ TEST_PROGS := test_kmod.sh \
- TEST_PROGS_EXTENDED := with_addr.sh \
- 	with_tunnels.sh \
- 	tcp_client.py \
--	tcp_server.py
-+	tcp_server.py \
-+	test_xdp_vlan.sh
- 
- # Compile but not part of 'make run_tests'
- TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr test_skb_cgroup_id_user \
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index f7a0744db31e..5dc109f4c097 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -34,3 +34,4 @@ CONFIG_NET_MPLS_GSO=m
+ CONFIG_MPLS_ROUTING=m
+ CONFIG_MPLS_IPTUNNEL=m
+ CONFIG_IPV6_SIT=m
++CONFIG_BPF_JIT=y
 -- 
 2.20.1
 
