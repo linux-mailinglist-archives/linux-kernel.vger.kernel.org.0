@@ -2,135 +2,145 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0749542B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:17:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CE6895436
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:18:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728955AbfHTCQc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 22:16:32 -0400
-Received: from mail-eopbgr730056.outbound.protection.outlook.com ([40.107.73.56]:23259
-        "EHLO NAM05-DM3-obe.outbound.protection.outlook.com"
+        id S1729081AbfHTCRx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 22:17:53 -0400
+Received: from mail-eopbgr20057.outbound.protection.outlook.com ([40.107.2.57]:49302
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728719AbfHTCQb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 22:16:31 -0400
+        id S1728770AbfHTCRx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 22:17:53 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xdy38XKCmZ6tBeV7NhsA7mEjAYjuletA+Ps2BJbc/5rFEp0ueb8cP9YiOZkyaLZ9yWCy0VZl0jQ0GoBo/+AMg4Pmnk4XR2w+x9EUzn7rJ2PTPN0bwqRfYUsVy8JQoC5ZnJYdOxrpoUPIlqrVb0ubqv9nU+yWK/Yl/WHZnGGgqegwzd++ikbYMpzoEUwWzJ56JZkat2UYlkOHDuNBvITkyyp5MA3WVfITXHAeGV9KHSFqlIyjuxGK8G1/5uyVdfs+M8YkQZ7CpfCy1PtfNMXb9NzcBtCl1AFhNLHBLz0Mo61r4cxA5lvgBIgN5PjS4ifTugAOfyLSJW76AS8Ji8z/hQ==
+ b=DxlsiBHJQSEO/Lj5DeygXacGo2MnEhWqvX2MB6Rgt5S/faMFznruT1VSFCJwpJE6ZaIPr5pRFhuvifN4xNq962B0angBT1fqtWzuo6HOCvLiCEhxuFZ6UGIoJxIyl8lHA2PSlrP0JdUpvYe0yHEmTgjs2WAmFATxHAm6cqTL/AQ35XY3nGFc/X3XoTkVT2CuFr66w5olzLeUWRKpEkAo0FqkLZQ2zMxVX8fP1ITl04tjrd/JXCGiyOKV+LHoVIkIe27+hwf7IjFuqtVqaRsZ7JPTgE3miSJzVpIfcdS5NaaLkb2aClodc5fInOepAGz+vkds1uswvZKzTYTEr5p3OA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+fWn5ZVY+Buvu57kcoMarviNFMpCfcENGk0jXt8qfXw=;
- b=PF/5QxwraYGCsMAMPXt6scaFWurwFr/DDFAhbLZ5Q7umJ4g/FF5JS9qGNRX3GwDony+iX1H76qcwiq3JRFvzhvB68K6jLlYASMPcatXpUsdOfNR112XYXm+NCje3LGm2maqVFLKxtFvC/zM+S3WKJoXxf6nMnSGmKZ3xuPhklf5kofAqKdE+jfXWWrvscHseboQ7ZM3HmcDYGn8F4gNKDhF43Wmrzf4oTgAqqt6yAGW5jaIa/rTOgmSvvBk7uXMi1JVxP9uLQ6BDTKpq9T8JTd9PB4dswDfBfMZMLolWsWqEWxORdJ1MlIzZxen/01TQAarKURTm1TaUv6hLjf78tw==
+ bh=ydOCh/K2z4zEONaG0ij2fsMOXs9+gCmBapYLNzCykV0=;
+ b=bqNc0kCF0FcVuCYMW/YhgWvLg8jyVAMIBXDSt3A7k4p7hgpdjVoqR67QYXDxht/rpkWU72rLNbjPoHb1hfczhR3gFMJMduHyvNfTdUcixXJtd2IDdKWs9Rrc+fCeU/0WkhWQunwQRwKzKH9OJ5OqAA2iIfJ0qtFK/Pe3l/x5HYpk6AmxxBNOPSoc3mDLh6SO7OmynQnyYAe/BTN3/xydND1sc+pe5b4Z3q4Y3wAXhvLBujiFOIyusOMm4uZyrlTmsIshOPzRScRZ8f1XjrUnQluV7w8aegdEh1mtcINDR/p+8xSbgZLJf5g7j+87GvQdynAp+gG3uVkButzDdQHQmA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+fWn5ZVY+Buvu57kcoMarviNFMpCfcENGk0jXt8qfXw=;
- b=RSdXzZbH9JdiJvR5tvsJTsMfndFs+JhKDbSOh83PEdlW7al6a7QRcHc9jRjhGD4D/RurWjTYLiuSrii9b5ECTvLu88eq6EOKWqrS8Pn4bJ4meXxcZjkm2cDD+NZrbTNrjyEJWBUFyfhTQ/bpL0MF0+mESDL58EHbk4J5pz/nN4o=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB3896.namprd03.prod.outlook.com (20.177.124.149) with Microsoft SMTP
+ bh=ydOCh/K2z4zEONaG0ij2fsMOXs9+gCmBapYLNzCykV0=;
+ b=hoU0FQVkxu+pofMkPqL9HQ7lhzyghz7uV304KLH1s1KTjjEM1TX263/3s05i7lfcFReUcTPTui3UZC5519T7NNnwts++oZo9atDjwNc52SSyEmyeJgVkg4yPIXz2uO+xHkaE4LSCbFWGgd9/80sG4/aBCVOVxXVMRwawS2ZQNtM=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB3988.eurprd04.prod.outlook.com (52.134.90.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Tue, 20 Aug 2019 02:16:28 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88%7]) with mapi id 15.20.2157.022; Tue, 20 Aug 2019
- 02:16:28 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-CC:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
+ 15.20.2178.16; Tue, 20 Aug 2019 02:17:46 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 02:17:46 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Subject: Re: [PATCH 4/4] arm64: implement KPROBES_ON_FTRACE
-Thread-Topic: [PATCH 4/4] arm64: implement KPROBES_ON_FTRACE
-Thread-Index: AQHVVoKNUq/zpqtyiEKe+wuBFBglYqcCr98AgACajgA=
-Date:   Tue, 20 Aug 2019 02:16:28 +0000
-Message-ID: <20190820100522.55bc3f42@xhacker.debian>
-References: <20190819192422.5ed79702@xhacker.debian>
-        <20190819192706.46ce2c1d@xhacker.debian>
-        <1566232996.v8nlwmnjqa.naveen@linux.ibm.com>
-In-Reply-To: <1566232996.v8nlwmnjqa.naveen@linux.ibm.com>
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: pll14xx: avoid glitch when set rate
+Thread-Topic: [PATCH] clk: imx: pll14xx: avoid glitch when set rate
+Thread-Index: AQHVVv10E+OF2Euht0ilryFWSAJw8w==
+Date:   Tue, 20 Aug 2019 02:17:46 +0000
+Message-ID: <1566266337-21597-1-git-send-email-peng.fan@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TYAPR01CA0125.jpnprd01.prod.outlook.com
- (2603:1096:404:2d::17) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:134::24)
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR0401CA0023.apcprd04.prod.outlook.com
+ (2603:1096:202:2::33) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+ smtp.mailfrom=peng.fan@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 566d4848-98f9-405c-5850-08d7251468a7
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR03MB3896;
-x-ms-traffictypediagnostic: BYAPR03MB3896:
-x-microsoft-antispam-prvs: <BYAPR03MB38960943AD7B44F0486F98D2EDAB0@BYAPR03MB3896.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-ms-office365-filtering-correlation-id: c5bced0e-c6c1-44bb-5c18-08d725149702
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB3988;
+x-ms-traffictypediagnostic: AM0PR04MB3988:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB39886ACF79389A92288D2BE288AB0@AM0PR04MB3988.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
 x-forefront-prvs: 013568035E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(366004)(396003)(376002)(39850400004)(346002)(189003)(199004)(6506007)(386003)(316002)(7416002)(229853002)(71200400001)(71190400001)(102836004)(26005)(14454004)(6916009)(6486002)(76176011)(6436002)(1076003)(6512007)(486006)(476003)(9686003)(14444005)(52116002)(256004)(4744005)(7736002)(11346002)(54906003)(186003)(5660300002)(99286004)(305945005)(446003)(478600001)(66066001)(8936002)(25786009)(4326008)(3846002)(6116002)(81166006)(81156014)(8676002)(6246003)(2906002)(53936002)(50226002)(66476007)(64756008)(66446008)(66556008)(66946007)(86362001)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3896;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(396003)(376002)(346002)(199004)(189003)(478600001)(52116002)(4326008)(36756003)(86362001)(2201001)(5660300002)(6116002)(66066001)(14444005)(7736002)(256004)(305945005)(14454004)(53936002)(386003)(71200400001)(71190400001)(64756008)(6512007)(8936002)(81166006)(2906002)(81156014)(3846002)(316002)(6486002)(54906003)(6436002)(110136005)(102836004)(6506007)(186003)(99286004)(26005)(476003)(2616005)(44832011)(486006)(66476007)(25786009)(66446008)(50226002)(66556008)(66946007)(8676002)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3988;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 50xz/V+MdxuhdU8rdQ0+VCbgWlydRVZbPL66Tmdqq7Eo/oXA/Kq26lSMh8//f7RwCLaAagMAdxkfL2ZAejM9Bc2refH6DA4RIQK8uELpq9P8EDIzI4ynXYVfjs2gEWHBEhPl/Y97pfLFbhayquCJf4qFnhj3sEgNuRz46JkQqxcr/W+9xCNEh0YshTn6H0godBe6XYNS0en4+v84kXLYm5z+XnsRGxNNSqK4H34+3RYxT6qQo484YAsyr3QWHs1cTnfmK/kSmlXPkskc/6vQuOkIu2UYlTYJNBRxzFLHoxiZxn7vjYnkIEKmCjQ6cpiRDc56CBaFSCFk/i6yeB2vQ/FuACM/Tmxx0BsD2NmTAffO/yJa/p97iOAciTfJbrMx7pDj++aqsTDcaKLau4v9JsOyw2Rtl2qcbj/aqhLcdGs=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <D513D93F6612794EA8269E652E4FC9F8@namprd03.prod.outlook.com>
+x-microsoft-antispam-message-info: UOk8jyx8po7iWgMHcsEHV+YEH+daFBzm8iz0dgsQk6vT600TTqqdmZ2wF+NrBZi48Om9qstReb1Ks77Z5H02Kjxy73RJ8UJnfTp0FgMYnxfXHT4VMEgP1B/C+7Ix1pdHG3wK2EQDZDb7xel5wkfONUHyLhJl+fS4MLmwnKHryrYblqLUBNzu38cO4k7mSX+E3MgFQDKvTENZ2m2Wxupg1+n9oSmFCO+MLykvieZro0vcziuhxW15z5lJA9Y8MeKZor6cFMjDxQwk/uC8kqoO8lwtHPDyoVgMqPEH6d6WS89Bwte8Ss/wBjaukzHAuYZDboF5dDc61P5aRq6yW9oT46sZW8Xb0DUBN0Bc4CZgeTZO6bCNB7cm+UIOxDvVlDbp5CZFMABIPOxi7ivdSXuiC2G1TBD6/OUnGY+ltRUBNrs=
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 566d4848-98f9-405c-5850-08d7251468a7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 02:16:28.3654
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c5bced0e-c6c1-44bb-5c18-08d725149702
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 02:17:46.1031
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XvQOFQFDQin6lhSGmujrZnU7giJKF37UMb5vghHNu0AbuS/zbWra/9IKT3ga+876XJvKRaj6ZaXR1lACuvEcDQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3896
+X-MS-Exchange-CrossTenant-userprincipalname: C4ntTmLDc33kD77HRyloBOMV2gLexn1AxB/B9JDaN5ASW2dW9bP0nCfx5oXme3YPeiKtf/GLLHOElX2fCZSKrg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3988
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 22:22:12 +0530 "Naveen N. Rao" wrote:
+From: Peng Fan <peng.fan@nxp.com>
 
+According to PLL1443XA and PLL1416X spec,
+"When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
+output unstable clock until lock time passes. PLL1416X/PLL1443XA may
+generate a glitch at FOUT."
 
->=20
->=20
-> Jisheng Zhang wrote:
-> > This patch implements KPROBES_ON_FTRACE for arm64.
-> >
-> > ~ # mount -t debugfs debugfs /sys/kernel/debug/
-> > ~ # cd /sys/kernel/debug/
-> > /sys/kernel/debug # echo 'p _do_fork' > tracing/kprobe_events
-> >
-> > before the patch:
-> >
-> > /sys/kernel/debug # cat kprobes/list
-> > ffffff801009ff7c  k  _do_fork+0x4    [DISABLED] =20
->=20
-> This looks wrong -- we should not be allowing kprobe to be registered on
+So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
+In the end of set rate, BYPASS will be cleared.
 
-Yes. I made a mistake when dumping this log. The kernel isn't as clean
-as "before the patch".
+Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-pll14xx.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-
-> ftrace address without KPROBES_ON_FTRACE. Is _do_fork+0x4 the location
-> of ftrace entry on arm64?
-
-Indeed, w/o KPROBES_ON_FTRACE, it should be _do_fork+0x0
-
-Thanks
-
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index b7213023b238..bd072556bc44 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -191,6 +191,10 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, un=
+signed long drate,
+ 	tmp &=3D ~RST_MASK;
+ 	writel_relaxed(tmp, pll->base);
+=20
++	/* Enable BYPASS */
++	tmp |=3D BYPASS_MASK;
++	writel(tmp, pll->base);
++
+ 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
+ 		(rate->sdiv << SDIV_SHIFT);
+ 	writel_relaxed(div_val, pll->base + 0x4);
+@@ -250,6 +254,10 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, un=
+signed long drate,
+ 	tmp &=3D ~RST_MASK;
+ 	writel_relaxed(tmp, pll->base);
+=20
++	/* Enable BYPASS */
++	tmp |=3D BYPASS_MASK;
++	writel_relaxed(tmp, pll->base);
++
+ 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
+ 		(rate->sdiv << SDIV_SHIFT);
+ 	writel_relaxed(div_val, pll->base + 0x4);
+--=20
+2.16.4
 
