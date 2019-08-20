@@ -2,111 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ECA8E963AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:06:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83F29963BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:08:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730167AbfHTPGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:06:24 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35230 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728159AbfHTPGY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:06:24 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 52E5BAE42;
-        Tue, 20 Aug 2019 15:06:23 +0000 (UTC)
-From:   Michal Suchanek <msuchanek@suse.de>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
-        Hari Bathini <hbathini@linux.vnet.ibm.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc/fadump: when fadump is supported register the fadump sysfs files.
-Date:   Tue, 20 Aug 2019 17:06:16 +0200
-Message-Id: <20190820150616.4333-1-msuchanek@suse.de>
-X-Mailer: git-send-email 2.22.0
+        id S1730166AbfHTPIG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:08:06 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:25580 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726663AbfHTPIG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:08:06 -0400
+Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x7KF7iEI015081;
+        Wed, 21 Aug 2019 00:07:44 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x7KF7iEI015081
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566313664;
+        bh=K8iJaWgwlMDK+OlU7YLfgIi/89fs2wcwIBbyV/ut3Xg=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=r0JTMtwS7bXGKh0LzSQe2B6bAJ9gURESWM7orh3U+SJLO/4fBgaO+aiE87pwUbqht
+         pEN6GgSqsHb97mwe0arR1MyTAskOZSNVIgrPcuNiG0s5y0GuAFsU3PTbZknvO9xaCt
+         YiyRCAoINDbpn7NWr3/QUFBZZ4+1Rr6yrvAmk/kdXxYqsJQLGGjuYnQFra1GiU/rsO
+         sKuAl2xCDsFbqb+H2bCKnSxw+XAkJ3+h7mDxPu94D9yqW/YxZbE62ZaTW9n2Nw2a44
+         FNO6p8UWA2D7t1NcMoM5vCbX9RzG7HR2jqa96tNUW1E2DuOSRZ8za98Dusi0fe8ib3
+         K8ml+Ni8Zq2xA==
+X-Nifty-SrcIP: [209.85.217.44]
+Received: by mail-vs1-f44.google.com with SMTP id q16so3757413vsm.2;
+        Tue, 20 Aug 2019 08:07:44 -0700 (PDT)
+X-Gm-Message-State: APjAAAUEHaXha+MPlTu1aaiYNOe6V6hyBqaoPGIIpwdCXLoKupZIgp6J
+        NH1Wgrw/X9sSwpHz2msmSGjca2LGLcVKMpdKaB4=
+X-Google-Smtp-Source: APXvYqzVwIl5c0/FMcWNBbgpHsdWNZyxfvEzTsj5F0N9FyZ7bYyO0hEfQILwoAU1YRJRG5XvsHvtQFt5cgur+TrHfbI=
+X-Received: by 2002:a67:e401:: with SMTP id d1mr7143023vsf.215.1566313663086;
+ Tue, 20 Aug 2019 08:07:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190819200650.18156-1-broonie@kernel.org>
+In-Reply-To: <20190819200650.18156-1-broonie@kernel.org>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 21 Aug 2019 00:07:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARaVoxWVi679JkR1w+m-RRH1PLdvfJc1ba4n2N2bZR_5g@mail.gmail.com>
+Message-ID: <CAK7LNARaVoxWVi679JkR1w+m-RRH1PLdvfJc1ba4n2N2bZR_5g@mail.gmail.com>
+Subject: Re: [PATCH v2] merge_config.sh: Check error codes from make
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Guillaume Tucker <guillaume.tucker@collabora.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently it is not possible to distinguish the case when fadump is
-supported by firmware and disabled in kernel and completely unsupported
-using the kernel sysfs interface. User can investigate the devicetree
-but it is more reasonable to provide sysfs files in case we get some
-fadumpv2 in the future.
+On Tue, Aug 20, 2019 at 5:07 AM Mark Brown <broonie@kernel.org> wrote:
+>
+> When we execute make after merging the configurations we ignore any
+> errors it produces causing whatever is running merge_config.sh to be
+> unaware of any failures.  This issue was noticed by Guillaume Tucker
+> while looking at problems with testing of clang only builds in KernelCI
+> which caused Kbuild to be unable to find a working host compiler.
+>
+> This implementation was suggested by Yamada-san.
+>
+> Suggested-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Reported-by: Guillaume Tucker <guillaume.tucker@collabora.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
-With this patch sysfs files are available whenever fadump is supported
-by firmware.
+Applied to linux-kbuild.
+Thanks.
 
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
----
- arch/powerpc/kernel/fadump.c | 32 ++++++++++++++++++--------------
- 1 file changed, 18 insertions(+), 14 deletions(-)
+>  scripts/kconfig/merge_config.sh | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+> index d924c51d28b7..bec246719aea 100755
+> --- a/scripts/kconfig/merge_config.sh
+> +++ b/scripts/kconfig/merge_config.sh
+> @@ -13,12 +13,12 @@
+>  #  Copyright (c) 2009-2010 Wind River Systems, Inc.
+>  #  Copyright 2011 Linaro
+>
+> +set -e
+> +
+>  clean_up() {
+>         rm -f $TMP_FILE
+>         rm -f $MERGE_FILE
+> -       exit
+>  }
+> -trap clean_up HUP INT TERM
+>
+>  usage() {
+>         echo "Usage: $0 [OPTIONS] [CONFIG [...]]"
+> @@ -110,6 +110,9 @@ TMP_FILE=$(mktemp ./.tmp.config.XXXXXXXXXX)
+>  MERGE_FILE=$(mktemp ./.merge_tmp.config.XXXXXXXXXX)
+>
+>  echo "Using $INITFILE as base"
+> +
+> +trap clean_up EXIT
+> +
+>  cat $INITFILE > $TMP_FILE
+>
+>  # Merge files, printing warnings on overridden values
+> @@ -155,7 +158,6 @@ if [ "$RUNMAKE" = "false" ]; then
+>         echo "#"
+>         echo "# merged configuration written to $KCONFIG_CONFIG (needs make)"
+>         echo "#"
+> -       clean_up
+>         exit
+>  fi
+>
+> @@ -185,5 +187,3 @@ for CFG in $(sed -n -e "$SED_CONFIG_EXP1" -e "$SED_CONFIG_EXP2" $TMP_FILE); do
+>                 echo ""
+>         fi
+>  done
+> -
+> -clean_up
+> --
+> 2.20.1
+>
 
-diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 4eab97292cc2..f35ab2433a9b 100644
---- a/arch/powerpc/kernel/fadump.c
-+++ b/arch/powerpc/kernel/fadump.c
-@@ -1671,13 +1671,9 @@ static void fadump_init_files(void)
-  */
- int __init setup_fadump(void)
- {
--	if (!fw_dump.fadump_enabled)
--		return 0;
--
--	if (!fw_dump.fadump_supported) {
-+	if (!fw_dump.fadump_supported && fw_dump.fadump_enabled) {
- 		printk(KERN_ERR "Firmware-assisted dump is not supported on"
- 			" this hardware\n");
--		return 0;
- 	}
- 
- 	fadump_show_config();
-@@ -1685,18 +1681,26 @@ int __init setup_fadump(void)
- 	 * If dump data is available then see if it is valid and prepare for
- 	 * saving it to the disk.
- 	 */
--	if (fw_dump.dump_active) {
-+	if (fw_dump.fadump_enabled) {
-+		if (fw_dump.dump_active) {
-+			/*
-+			 * if dump process fails then invalidate the
-+			 * registration and release memory before proceeding
-+			 * for re-registration.
-+			 */
-+			if (process_fadump(fdm_active) < 0)
-+				fadump_invalidate_release_mem();
-+		}
- 		/*
--		 * if dump process fails then invalidate the registration
--		 * and release memory before proceeding for re-registration.
-+		 * Initialize the kernel dump memory structure for FAD
-+		 * registration.
- 		 */
--		if (process_fadump(fdm_active) < 0)
--			fadump_invalidate_release_mem();
-+		else if (fw_dump.reserve_dump_area_size)
-+			init_fadump_mem_struct(&fdm,
-+					fw_dump.reserve_dump_area_start);
- 	}
--	/* Initialize the kernel dump memory structure for FAD registration. */
--	else if (fw_dump.reserve_dump_area_size)
--		init_fadump_mem_struct(&fdm, fw_dump.reserve_dump_area_start);
--	fadump_init_files();
-+	if (fw_dump.fadump_supported)
-+		fadump_init_files();
- 
- 	return 1;
- }
+
 -- 
-2.22.0
-
+Best Regards
+Masahiro Yamada
