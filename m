@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 08D9E967D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A15A967D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730594AbfHTRm0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:42:26 -0400
-Received: from mail-wm1-f97.google.com ([209.85.128.97]:52920 "EHLO
-        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730222AbfHTRlH (ORCPT
+        id S1730893AbfHTRmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:42:15 -0400
+Received: from mail-ed1-f98.google.com ([209.85.208.98]:36124 "EHLO
+        mail-ed1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730119AbfHTRlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Aug 2019 13:41:07 -0400
-Received: by mail-wm1-f97.google.com with SMTP id o4so3368487wmh.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
+Received: by mail-ed1-f98.google.com with SMTP id p28so7259624edi.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=0sfeTaSMLRPw6OQW2nsE+rZY6o1t1xUbogKZMDZLLEw=;
-        b=sp4x3ff7myC4LQy/StukRDiXj83Q+joOee+dCx6OHbRx/Vj9Fw7T35EykewuJXSaVB
-         I5Tizb/3W1/7D7/fkqhTf7favYkrvZsEFQP5S7WjzAISTv/m3NrGJYfcO7+Iz+rnUXpm
-         Dj3ywJX4tK4zPyOd1yQTNDf0NTyc5EJcht3XpT7u3dBkftABfw0I/ptbc5lN2zUdNYfW
-         PwH5b9/1Fy553OSfs8vBltAqcshMB29TRBXD4yRu//mPo8ufHE1GfRIR+EW1E/oxgv5t
-         iCRrgoLyI33/UNiu2oQDPpXaecCFf7UC2y4ZKnbdmykIt0tAv3/QLkh+sanH5mrid7ri
-         2T+w==
-X-Gm-Message-State: APjAAAWCWMQmgSLlbLmhdJMycm/cOs8wI7L8iK0cM3YnFDu7qsrsYhU4
-        1APq9IaXJZALVpPeSAQf8HCKEoztA47HKMkfktvz3E9dr+0lXUU9lvvB0iVBIyPu/w==
-X-Google-Smtp-Source: APXvYqyIoehCXJci24dNeS0SujgmrXX94WJNLwdaZsUvlBYtjeo3m37ZNLL3PxpVGQ7oj91dmq6wrflUgmRj
-X-Received: by 2002:a05:600c:2102:: with SMTP id u2mr1243986wml.105.1566322865711;
+        bh=6Cjn1aWqcdZkl7+dMm/bKsnvkfd0nWS0/oSgaIM7Z20=;
+        b=RbBnB9o1Ls3XkIxBZcWmmGpEMwcX/kpw3YfgHYd/QfAb3sFdaQjTslTQjZNw3+ojXv
+         2Ff8eeIEjVrtReAeeWyGeHR9yjzQlf5mo+Jlh+zxhwmPH9+wiVPh+pYvWv2ejAXHKQGY
+         FeNu/2iyPa2hFP+ijoj9uTwDMG9gSMLb9Z0nWWaiB4B+pYTl3mNT10nzkfE3oRzlyY/s
+         qfAlUfLpLz2AoFxnl/O9LNq3n4KJqRzPryM5MlT3bkQx/b0XtFJ00E36kM2NVrPvoUAL
+         VZTi9Qh776lmoWcyUodrtStFej3zQ18qqSctQvF/MOnm1Me/S8mERB3rAe1RbUluYB9f
+         beYw==
+X-Gm-Message-State: APjAAAXLK94Ru2zVuydJbXpo2bHrHRu+cwG9iVSBwLwk+9YFHXio+K4B
+        AaABjjIwDh4TiN7kP59XTa7CiqIFRT403wGjxU/Xeds0T6bJ96sc3iPkCOiPJebbQw==
+X-Google-Smtp-Source: APXvYqxGhF6vo/wtFSr8kkBUl+JAQEj4GArvjlAePwbbDhF95Bb3UIurjXaYDQui+Z1oyf2mQlSgT7de5fwy
+X-Received: by 2002:a17:906:48da:: with SMTP id d26mr27550508ejt.106.1566322865145;
         Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id s11sm3417wmj.44.2019.08.20.10.41.05
+        by smtp-relay.gmail.com with ESMTPS id r3sm294701eds.40.2019.08.20.10.41.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,9 +38,9 @@ Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0881-00032b-EF; Tue, 20 Aug 2019 17:41:05 +0000
+        id 1i0880-00032N-QR; Tue, 20 Aug 2019 17:41:04 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id C46BB274314F; Tue, 20 Aug 2019 18:41:04 +0100 (BST)
+        id 3373B2742B4A; Tue, 20 Aug 2019 18:41:04 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
@@ -48,10 +48,10 @@ Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Fix WSS and SR fields for the A83t" to the asoc tree
-In-Reply-To: <d93f0943cc39d880750daf459a0eeab34c63518e.1566242458.git-series.maxime.ripard@bootlin.com>
+Subject: Applied "ASoC: sun4i-i2s: Remove duplicated quirks structure" to the asoc tree
+In-Reply-To: <5ade5de27d23918c5ef30387c23aead951d5ad64.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174104.C46BB274314F@ypsilon.sirena.org.uk>
+Message-Id: <20190820174104.3373B2742B4A@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:04 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Fix WSS and SR fields for the A83t
+   ASoC: sun4i-i2s: Remove duplicated quirks structure
 
 has been applied to the asoc tree at
 
@@ -85,37 +85,60 @@ to this mail.
 Thanks,
 Mark
 
-From 2e04fc4dbf50195262aa5a2ae6d35baa5b598cae Mon Sep 17 00:00:00 2001
+From 3e9acd7ac6933cdc20c441bbf9a38ed9e42e1490 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:21 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Fix WSS and SR fields for the A83t
+Date: Mon, 19 Aug 2019 21:25:24 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: Remove duplicated quirks structure
 
-The A83t has the same bit fields offsets than the A10 and A31, while this
-was the first device with the new layout, fix that.
+The A83t and H3 have the same quirks, so it doesn't make sense to duplicate
+the quirks structure.
 
-Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/d93f0943cc39d880750daf459a0eeab34c63518e.1566242458.git-series.maxime.ripard@bootlin.com
+Link: https://lore.kernel.org/r/5ade5de27d23918c5ef30387c23aead951d5ad64.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 21 +--------------------
+ 1 file changed, 1 insertion(+), 20 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 29b5eacd3abe..59d809df8d2a 100644
+index 9468584f4eb0..4c636f1cf7dc 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -1048,8 +1048,8 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+@@ -1062,25 +1062,6 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+ 	.set_fmt		= sun8i_i2s_set_soc_fmt,
+ };
+ 
+-static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+-	.has_reset		= true,
+-	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
+-	.sun4i_i2s_regmap	= &sun8i_i2s_regmap_config,
+-	.has_fmt_set_lrck_period = true,
+-	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 8, 8),
+-	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
+-	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
+-	.bclk_dividers		= sun8i_i2s_clk_div,
+-	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
+-	.mclk_dividers		= sun8i_i2s_clk_div,
+-	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
+-	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
+-	.get_sr			= sun8i_i2s_get_sr_wss,
+-	.get_wss		= sun8i_i2s_get_sr_wss,
+-	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
+-	.set_fmt		= sun8i_i2s_set_soc_fmt,
+-};
+-
+ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
+ 	.has_reset		= true,
  	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
- 	.sun4i_i2s_regmap	= &sun4i_i2s_regmap_config,
- 	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 7, 7),
--	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 2, 3),
--	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
-+	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
-+	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
- 	.bclk_dividers		= sun8i_i2s_clk_div,
- 	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
- 	.mclk_dividers		= sun8i_i2s_clk_div,
+@@ -1262,7 +1243,7 @@ static const struct of_device_id sun4i_i2s_match[] = {
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun8i-h3-i2s",
+-		.data = &sun8i_h3_i2s_quirks,
++		.data = &sun8i_a83t_i2s_quirks,
+ 	},
+ 	{
+ 		.compatible = "allwinner,sun50i-a64-codec-i2s",
 -- 
 2.20.1
 
