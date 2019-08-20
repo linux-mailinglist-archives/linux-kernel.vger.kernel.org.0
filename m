@@ -2,77 +2,114 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BDF3996684
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:37:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6603B96665
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:30:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbfHTQhe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:37:34 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38671 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725983AbfHTQhd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:37:33 -0400
-Received: by mail-wm1-f67.google.com with SMTP id m125so3224589wmm.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 09:37:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=E4X7QCNLqGFBsy/7pYjpRVoBo5sZi0bTAtJeoQQ6ohc=;
-        b=RHXI2pd8xSNAOhiPMeC+zKnJLolrcnrYEE8IdqtrRtZm+LTWR2jIdytsHYP772tydL
-         86yw3Dw52LEBYnxuDoSDGwXVa9yxtLMuY9557kTc1/fD2uS5q1/wFfWLoq/phfVdu/Wl
-         IGVblh7ZhuU9PSfx2o6iOygsL3xE8Pf8SDliWe6ptmDUkDyIYJQaTT8fiHEqDRRT/4+x
-         LG4pf1Z3b/SmsVeMVQ/ZXnz4S51tmOaNlcWBV4Efw8uw9a7nd4UOaI6uDsUo1HEYbAsZ
-         gVfsvmRP7I9q+rmxdUuKTMYreWyIhUF1B94aW85wc6ejCH41MJqTCuX1xed1W9AZPRJv
-         o5xw==
-X-Gm-Message-State: APjAAAWSfdm/wXPT67OvvWRFXq7TaU6obSyv0ad1c/RoMTJ9pcHAgAEP
-        8XUDaNdU92M9DmtC6VxdPWg=
-X-Google-Smtp-Source: APXvYqyWdL5QMRDrlWABWdxtx+qi5mJSVMhKc+4wusrmLOkgTE8w+/nuZlj5Jc1f8al4Vo4HPQPOEQ==
-X-Received: by 2002:a1c:2dcf:: with SMTP id t198mr858820wmt.147.1566319051721;
-        Tue, 20 Aug 2019 09:37:31 -0700 (PDT)
-Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id n14sm58485385wra.75.2019.08.20.09.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 09:37:31 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     Jason Wang <jasowang@redhat.com>,
-        virtualization@lists.linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Nadav Amit <namit@vmware.com>
-Subject: [PATCH] mm/balloon_compaction: suppress allocation warnings
-Date:   Tue, 20 Aug 2019 02:16:46 -0700
-Message-Id: <20190820091646.29642-1-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730469AbfHTQaT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:30:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54442 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728344AbfHTQaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 12:30:19 -0400
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C9CD22CE3;
+        Tue, 20 Aug 2019 16:30:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566318617;
+        bh=KymnAe727ILy87L8EAf1U8mLv+nBZNNdGy5iODp5MOM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=eDe8D8mOkxt6Kz0TpZGa8O/1CtWzHWy0JCS9J71kHEp4zEqh4FTOMlBS58n/d2Agm
+         IV1vDDP+f1MMVB2ItdJkHXGpcR8dZvNBxSLPp/bvt4FA6OIsDYcacj62MjHGmr2TkB
+         3yctVmNKKcLVNmORtLwVOdDuVYwVJLTXKgrE91ek=
+Date:   Tue, 20 Aug 2019 09:30:17 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     Alastair D'Silva <alastair@au1.ibm.com>, alastair@d-silva.org,
+        stable@vger.kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Allison Randal <allison@lohutok.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] powerpc: Allow flush_(inval_)dcache_range to work across
+ ranges >4GB
+Message-ID: <20190820163017.GG8214@kroah.com>
+References: <20190815045543.16325-1-alastair@au1.ibm.com>
+ <20190815071924.GA26670@kroah.com>
+ <87mug97uo1.fsf@concordia.ellerman.id.au>
+ <20190816071412.GF1368@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816071412.GF1368@kroah.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no reason to print warnings when balloon page allocation fails,
-as they are expected and can be handled gracefully.  Since VMware
-balloon now uses balloon-compaction infrastructure, and suppressed these
-warnings before, it is also beneficial to suppress these warnings to
-keep the same behavior that the balloon had before.
+On Fri, Aug 16, 2019 at 09:14:12AM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Aug 16, 2019 at 11:42:22AM +1000, Michael Ellerman wrote:
+> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+> > > On Thu, Aug 15, 2019 at 02:55:42PM +1000, Alastair D'Silva wrote:
+> > >> From: Alastair D'Silva <alastair@d-silva.org>
+> > >> 
+> > >> Heads Up: This patch cannot be submitted to Linus's tree, as the affected
+> > >> assembler functions have already been converted to C.
+> > 
+> > That was done in upstream commit:
+> > 
+> > 22e9c88d486a ("powerpc/64: reuse PPC32 static inline flush_dcache_range()")
+> > 
+> > Which is a larger change that we don't want to backport. This patch is a
+> > minimal fix for stable trees.
+> > 
+> > 
+> > >> When calling flush_(inval_)dcache_range with a size >4GB, we were masking
+> > >> off the upper 32 bits, so we would incorrectly flush a range smaller
+> > >> than intended.
+> > >> 
+> > >> This patch replaces the 32 bit shifts with 64 bit ones, so that
+> > >> the full size is accounted for.
+> > >> 
+> > >> Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
+> > >> ---
+> > >>  arch/powerpc/kernel/misc_64.S | 4 ++--
+> > >>  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+> > 
+> > > <formletter>
+> > >
+> > > This is not the correct way to submit patches for inclusion in the
+> > > stable kernel tree.  Please read:
+> > >     https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
+> > > for how to do this properly.
+> > >
+> > > </formletter>
+> > 
+> > Hi Greg,
+> > 
+> > This is "option 3", submit the patch directly, and the patch "deviates
+> > from the original upstream patch" because the upstream patch was a
+> > wholesale conversion from asm to C.
+> > 
+> > This patch applies cleanly to v4.14 and v4.19.
+> > 
+> > The change log should have mentioned which upstream patch it is not a
+> > backport of, is there anything else we should have done differently to
+> > avoid the formletter bot :)
+> 
+> That is exactly what you should have done.  It needs to be VERY explicit
+> as to why this is being submitted different from what upstream did, and
+> to what trees it needs to go to and who is going to be responsible for
+> when it breaks.  And it will break :)
 
-Cc: Jason Wang <jasowang@redhat.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- mm/balloon_compaction.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+And it needs to be done before I can apply it, I've dropped this thread
+from my queue now.
 
-diff --git a/mm/balloon_compaction.c b/mm/balloon_compaction.c
-index 798275a51887..26de020aae7b 100644
---- a/mm/balloon_compaction.c
-+++ b/mm/balloon_compaction.c
-@@ -124,7 +124,8 @@ EXPORT_SYMBOL_GPL(balloon_page_list_dequeue);
- struct page *balloon_page_alloc(void)
- {
- 	struct page *page = alloc_page(balloon_mapping_gfp_mask() |
--				       __GFP_NOMEMALLOC | __GFP_NORETRY);
-+				       __GFP_NOMEMALLOC | __GFP_NORETRY |
-+				       __GFP_NOWARN);
- 	return page;
- }
- EXPORT_SYMBOL_GPL(balloon_page_alloc);
--- 
-2.19.1
+thanks,
 
+greg k-h
