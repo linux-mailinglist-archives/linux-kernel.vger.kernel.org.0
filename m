@@ -2,77 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8608C95E4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:22:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C8DF95E56
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729555AbfHTMWs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:22:48 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:36050 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbfHTMWs (ORCPT
+        id S1729693AbfHTMXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:23:49 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33276 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfHTMXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:22:48 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ao7gt5KDV0ONoTC0rFw7t2x/1w81a5HjQybBH7126vg=; b=AB7uQPTC2CEakdf7eAwGXLP28
-        aDwACv/x1leJU6OwOGwBPPu5fR+Guyg2LNJinEJRErZLkrEhInBv2AhqV3+De0MjRLstaoiuE+xAG
-        /AB6IiMp8m2a2dQSMNpLar1ddu4ty0b7uKxvEavWsdQCnpD6BSr5iRAjDV8BTs1qFKqyXu5EJSdIV
-        KRgtK3GyDmcgK3MEc3wX/VKxpzJKoYsIBrh3j9qZWI9khfjnDpuWAP+TjhBLGP5nyUz7hvOM81BjN
-        dPU2TIoWjPYW9Ehuw8lwPi9D6t685ZctxzRwvRtuGZ4vD68puRcDlDAtIVk009j2+J13qd7FpczAt
-        DP7y3dNgA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i039o-0007Tw-Cc; Tue, 20 Aug 2019 12:22:36 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1F0B1307603;
-        Tue, 20 Aug 2019 14:22:02 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 5DF9B20A999E3; Tue, 20 Aug 2019 14:22:33 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 14:22:33 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-        tony.luck@intel.com, x86@kernel.org, andriy.shevchenko@intel.com,
-        alan@linux.intel.com, ricardo.neri-calderon@linux.intel.com,
-        rafael.j.wysocki@intel.com, linux-kernel@vger.kernel.org,
-        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
-        rahul.tanwar@intel.com
-Subject: Re: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
-Message-ID: <20190820122233.GN2332@hirez.programming.kicks-ass.net>
-References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
- <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
+        Tue, 20 Aug 2019 08:23:49 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x3so3977719lfc.0;
+        Tue, 20 Aug 2019 05:23:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=xzCx8rfipqjiXyNq4gJ4Cz+X4TRNhHPHouMg4toUPfA=;
+        b=lrm/1a9jKxCdouUR+V3WMek7WebdVClaXa9VmrNGP/wuX4w4UO9PrikfyKMOw2h8Ta
+         lwruLbzAGB12q40g9UdcFG2IRX6seldKYPVq5X5PH/fYc471xa4XPEx7Aj1L6ir4cuow
+         HQpDRbZnRsIgcsK58AWwmHZQjaXkvx4Qfv8aITLVSvOjyqZQ/v0enh+QAQAOn0Y5snDh
+         /DFxrqtkSC85KNrdAcNySXeDeFyq34kMEbXatK5I6jPREFGsFcM3Q8B1MWparcA0IUkB
+         +WAD4fApEX5wU9GCEDGZ7LLgGE2IUkp/JhCbn7BA6st5wAH+iiThmBlirNt1bWucFYy8
+         SW0w==
+X-Gm-Message-State: APjAAAXndYK2wWmj6TnvRjFvvTeIqy51s4lLlnlsyEkn6d5/40/qlMTk
+        YqTOt9TT530VNLmG19+pYarZiU9RRkc=
+X-Google-Smtp-Source: APXvYqxFQ2ko1xAoC/Pf3Vfq7Q5vJ1Jrs/WfZsfoPBvNjK7xuCf/JwLwk+dE/Whe5y3+eULYxc2glw==
+X-Received: by 2002:ac2:48b8:: with SMTP id u24mr14915884lfg.170.1566303827572;
+        Tue, 20 Aug 2019 05:23:47 -0700 (PDT)
+Received: from xi.terra (c-51f1e055.07-184-6d6c6d4.bbcust.telenor.se. [85.224.241.81])
+        by smtp.gmail.com with ESMTPSA id q30sm3193284lfd.27.2019.08.20.05.23.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2019 05:23:46 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.92)
+        (envelope-from <johan@kernel.org>)
+        id 1i03Au-0002Fy-JN; Tue, 20 Aug 2019 14:23:44 +0200
+Date:   Tue, 20 Aug 2019 14:23:44 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Lars Poeschel <poeschel@lemonage.de>
+Cc:     Allison Randal <allison@lohutok.net>,
+        Steve Winslow <swinslow@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "open list:NFC SUBSYSTEM" <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v6 6/7] nfc: pn533: Add autopoll capability
+Message-ID: <20190820122344.GK32300@localhost>
+References: <20190820120345.22593-1-poeschel@lemonage.de>
+ <20190820120345.22593-6-poeschel@lemonage.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820120345.22593-6-poeschel@lemonage.de>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 04:18:58PM +0800, Rahul Tanwar wrote:
-> Add a new variant of Intel Atom Airmont CPU model.
+On Tue, Aug 20, 2019 at 02:03:43PM +0200, Lars Poeschel wrote:
+> pn532 devices support an autopoll command, that lets the chip
+> automatically poll for selected nfc technologies instead of manually
+> looping through every single nfc technology the user is interested in.
+> This is faster and less cpu and bus intensive than manually polling.
+> This adds this autopoll capability to the pn533 driver.
 > 
-> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> Cc: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
 > ---
->  arch/x86/include/asm/intel-family.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
-> index 0278aa66ef62..cbbb8250370f 100644
-> --- a/arch/x86/include/asm/intel-family.h
-> +++ b/arch/x86/include/asm/intel-family.h
-> @@ -73,6 +73,7 @@
->  
->  #define INTEL_FAM6_ATOM_AIRMONT		0x4C /* Cherry Trail, Braswell */
->  #define INTEL_FAM6_ATOM_AIRMONT_MID	0x5A /* Moorefield */
-> +#define INTEL_FAM6_ATOM_AIRMONT_NP	0x75 /* Lightning Mountain */
+> Changes in v6:
+> - Rebased the patch series on v5.3-rc5
 
-What's _NP ?
+Just two drive-by comments below.
+
+>  drivers/nfc/pn533/pn533.c | 193 +++++++++++++++++++++++++++++++++++++-
+>  drivers/nfc/pn533/pn533.h |  10 +-
+>  2 files changed, 197 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
+> index a8c756caa678..7e915239222b 100644
+> --- a/drivers/nfc/pn533/pn533.c
+> +++ b/drivers/nfc/pn533/pn533.c
+> @@ -185,6 +185,32 @@ struct pn533_cmd_jump_dep_response {
+>  	u8 gt[];
+>  } __packed;
+>  
+> +struct pn532_autopoll_resp {
+> +	u8 type;
+> +	u8 ln;
+> +	u8 tg;
+> +	u8 tgdata[];
+> +} __packed;
+
+No need for __packed.
+
+> +static int pn533_autopoll_complete(struct pn533 *dev, void *arg,
+> +			       struct sk_buff *resp)
+> +{
+> +	u8 nbtg;
+> +	int rc;
+> +	struct pn532_autopoll_resp *apr;
+> +	struct nfc_target nfc_tgt;
+> +
+> +	if (IS_ERR(resp)) {
+> +		rc = PTR_ERR(resp);
+> +
+> +		nfc_err(dev->dev, "%s  autopoll complete error %d\n",
+> +			__func__, rc);
+> +
+> +		if (rc == -ENOENT) {
+> +			if (dev->poll_mod_count != 0)
+> +				return rc;
+> +			goto stop_poll;
+> +		} else if (rc < 0) {
+> +			nfc_err(dev->dev,
+> +				"Error %d when running autopoll\n", rc);
+> +			goto stop_poll;
+> +		}
+> +	}
+> +
+> +	nbtg = resp->data[0];
+> +	if ((nbtg > 2) || (nbtg <= 0))
+> +		return -EAGAIN;
+> +
+> +	apr = (struct pn532_autopoll_resp *)&resp->data[1];
+> +	while (nbtg--) {
+> +		memset(&nfc_tgt, 0, sizeof(struct nfc_target));
+> +		switch (apr->type) {
+> +		case PN532_AUTOPOLL_TYPE_ISOA:
+> +			dev_dbg(dev->dev, "ISOA");
+
+You forgot the '\n' here and elsewhere (some nfc_err as well).
+
+Johan
