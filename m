@@ -2,119 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A059582E
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 09:21:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AB06F9583C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 09:23:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729417AbfHTHUt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 03:20:49 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39012 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729364AbfHTHUt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 03:20:49 -0400
-Received: by mail-pf1-f193.google.com with SMTP id f17so2825739pfn.6
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 00:20:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=OStUPKo5sN9egAemPnPnKeBI2FmMQ5/hY6tft1KYiXk=;
-        b=DcPV47hlMeDiDYc/zFnnkUIz4niwFiL0MMwy40hlKCp8341i8StydIXRMol8VP79LX
-         rjtYzExU7TFxH/M32x/5x+ZHloiYg73XxwBOh+jVSzmI3HdnXHzhWLfDkArDNrLw1fks
-         ju5LKkVbfpQOjNOyhjwAVWgyuHRFRy9+YDDhY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=OStUPKo5sN9egAemPnPnKeBI2FmMQ5/hY6tft1KYiXk=;
-        b=gP/TyF5WuYcIm/AVdM4rieU+EGhJeH09uW8mZm9NeS1Rm/iBOlUeRxH0eFlTyr3rc9
-         kHN/tbg94tfk2tWX3mUgxgLpTaQru3YyVsUDnMGg/dmPf+TCyMGyzE1lQnjPbZ/OSSuL
-         I8iusvyoIsm/LE5/FxoFbwc919K29tSKhquwkNhLGUfAidG7wCLZ7iNwsYzDHEbJWzFO
-         UlQ+gaqG5k1G4GnaWoFUU1DK++pmPBnHcBflkeLA3VW7BIZRhz9P8PXkZ2SLD1cQeo6j
-         j6dJOB2Mk1zHVeC+QXL9d1gEOglDpBoqqpYR/TG7svAuTv0/1gIp4hczqBgtfajtGoDA
-         FKnA==
-X-Gm-Message-State: APjAAAWPx8FENM54n+ByzBWCv3zXzcO1VGuibVSCumuEbhttkJ2bms+j
-        sVYg3mcG6AlM2s0Ip1Mi9nmJug==
-X-Google-Smtp-Source: APXvYqwWUcjmVD0TwhGffPY2cJEQgD5exrALleD++McO3Q/ZZguhV4uJRUS979nQEXLo9MxExzpSGw==
-X-Received: by 2002:aa7:8b11:: with SMTP id f17mr28566271pfd.19.1566285648592;
-        Tue, 20 Aug 2019 00:20:48 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id t7sm15240967pgp.68.2019.08.20.00.20.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 00:20:47 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 00:20:46 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com
-Subject: Re: [PATCH v8 19/20] pstore: fs superblock limits
-Message-ID: <201908200018.8C876788@keescook>
-References: <20190818165817.32634-1-deepa.kernel@gmail.com>
- <20190818165817.32634-20-deepa.kernel@gmail.com>
+        id S1729339AbfHTHXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 03:23:34 -0400
+Received: from ozlabs.org ([203.11.71.1]:36027 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729047AbfHTHXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 03:23:31 -0400
+Received: by ozlabs.org (Postfix, from userid 1034)
+        id 46CMhx1pKSz9s3Z; Tue, 20 Aug 2019 17:23:29 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     will@kernel.org
+Cc:     linuxppc-dev@ozlabs.org, pcc@google.com,
+        yamada.masahiro@socionext.com, linux-kernel@vger.kernel.org,
+        linux-next@vger.kernel.org
+Subject: [PATCH] powerpc/Makefile: Always pass --synthetic to nm if supported
+Date:   Tue, 20 Aug 2019 17:23:19 +1000
+Message-Id: <20190820072319.2884-1-mpe@ellerman.id.au>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190818165817.32634-20-deepa.kernel@gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 09:58:16AM -0700, Deepa Dinamani wrote:
-> Leaving granularity at 1ns because it is dependent on the specific
-> attached backing pstore module. ramoops has microsecond resolution.
-> 
-> Fix the readback of ramoops fractional timestamp microseconds,
-> which has incorrectly been reporting the value as nanoseconds since
-> 3f8f80f0 ("pstore/ram: Read and write to the 'compressed' flag of pstore").
+Back in 2004 we added logic to arch/ppc64/Makefile to pass
+the --synthetic option to nm, if it was supported by nm.
 
-As such, this should also have:
+Then in 2005 when arch/ppc64 and arch/ppc were merged, the logic to
+add --synthetic was moved inside an #ifdef CONFIG_PPC64 block within
+arch/powerpc/Makefile, and has remained there since.
 
-Fixes: 3f8f80f0cfeb ("pstore/ram: Read and write to the 'compressed' flag of pstore")
+That was fine, though crufty, until recently when a change to
+init/Kconfig added a config time check that uses $(NM). On powerpc
+that leads to an infinite loop because Kconfig uses $(NM) to calculate
+some values, then the powerpc Makefile changes $(NM), which Kconfig
+notices and restarts.
 
-> Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
-> Acked-by: Kees Cook <keescook@chromium.org>
+The original commit that added --synthetic simply said:
+  On new toolchains we need to use nm --synthetic or we miss code
+  symbols.
 
-Also: this is going via some other tree, yes? (Or should I pick this up
-for the pstore tree?)
+And the nm man page says that the --synthetic option causes nm to:
+  Include synthetic symbols in the output. These are special symbols
+  created by the linker for various purposes.
 
-Thanks!
+So it seems safe to always pass --synthetic if nm supports it, ie. on
+32-bit and 64-bit, it just means 32-bit kernels might have more
+symbols reported (and in practice I see no extra symbols). Making it
+unconditional avoids the #ifdef CONFIG_PPC64, which in turn avoids the
+infinite loop.
 
--Kees
+Debugged-by: Peter Collingbourne <pcc@google.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+---
+ arch/powerpc/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-> Cc: anton@enomsg.org
-> Cc: ccross@android.com
-> Cc: keescook@chromium.org
-> Cc: tony.luck@intel.com
-> ---
->  fs/pstore/ram.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-> index 2bb3468fc93a..8caff834f002 100644
-> --- a/fs/pstore/ram.c
-> +++ b/fs/pstore/ram.c
-> @@ -144,6 +144,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
->  	if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu-%c\n%n",
->  		   (time64_t *)&time->tv_sec, &time->tv_nsec, &data_type,
->  		   &header_length) == 3) {
-> +		time->tv_nsec *= 1000;
->  		if (data_type == 'C')
->  			*compressed = true;
->  		else
-> @@ -151,6 +152,7 @@ static int ramoops_read_kmsg_hdr(char *buffer, struct timespec64 *time,
->  	} else if (sscanf(buffer, RAMOOPS_KERNMSG_HDR "%lld.%lu\n%n",
->  			  (time64_t *)&time->tv_sec, &time->tv_nsec,
->  			  &header_length) == 2) {
-> +		time->tv_nsec *= 1000;
->  		*compressed = false;
->  	} else {
->  		time->tv_sec = 0;
-> -- 
-> 2.17.1
-> 
+See the original discussion here: https://lore.kernel.org/lkml/CAMn1gO6P_VfDRjGZb67ZS4Kh0wjTEQi0cbOkmibTokHQOgP7qw@mail.gmail.com/
 
+ 
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index c345b79414a9..403f7e193833 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -39,13 +39,11 @@ endif
+ uname := $(shell uname -m)
+ KBUILD_DEFCONFIG := $(if $(filter ppc%,$(uname)),$(uname),ppc64)_defconfig
+ 
+-ifdef CONFIG_PPC64
+ new_nm := $(shell if $(NM) --help 2>&1 | grep -- '--synthetic' > /dev/null; then echo y; else echo n; fi)
+ 
+ ifeq ($(new_nm),y)
+ NM		:= $(NM) --synthetic
+ endif
+-endif
+ 
+ # BITS is used as extension for files which are available in a 32 bit
+ # and a 64 bit version to simplify shared Makefiles.
 -- 
-Kees Cook
+2.21.0
+
