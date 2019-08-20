@@ -2,182 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49D3D969C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 21:50:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8FE4A969CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 21:53:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730796AbfHTTuC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 15:50:02 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:46073 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbfHTTuC (ORCPT
+        id S1730822AbfHTTxe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 15:53:34 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:60928 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729833AbfHTTx2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 15:50:02 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 51CF160004;
-        Tue, 20 Aug 2019 19:49:59 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 21:49:59 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Frank Wunderlich <frank-w@public-files.de>
-Cc:     linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-        "linux-arm-kernel @ lists . infradead . org Alessandro Zummo" 
-        <a.zummo@towertech.it>, Eddie Huang <eddie.huang@mediatek.com>,
-        Josef Friedl <josef.friedl@speed.at>,
-        Lee Jones <lee.jones@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Tianping Fang <tianping.fang@mediatek.com>
-Subject: Re: [PATCH v6 07/13] rtc: mt6397: improvements of rtc driver
-Message-ID: <20190820194959.GY3545@piout.net>
-References: <20190818135611.7776-1-frank-w@public-files.de>
- <20190818135611.7776-8-frank-w@public-files.de>
+        Tue, 20 Aug 2019 15:53:28 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrIXt074392;
+        Tue, 20 Aug 2019 14:53:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566330798;
+        bh=1Y9+XjYRFLbflyvbX9e5HxjQ1hWCEl4/iaqYE2kemX4=;
+        h=From:To:CC:Subject:Date;
+        b=Rb+6JZPYr59IO1UO6kJUW1G9u+WIezIgkmGJuujLw/QMXUDwpdkciaY78ySDKNmOF
+         dKLVesqMW2FI3JZbe1o5hGvZJkoar2+vi1zu3C7aPuHNpMgsiH7nmUYVpCHzT+B9Fi
+         +DIQzVPvz4WZqJXC7ToQJELFfk/7B6iVdjUY+1uE=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7KJrHIq116193
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 20 Aug 2019 14:53:18 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 20
+ Aug 2019 14:53:17 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 20 Aug 2019 14:53:17 -0500
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7KJrHx3070705;
+        Tue, 20 Aug 2019 14:53:17 -0500
+From:   Dan Murphy <dmurphy@ti.com>
+To:     <jacek.anaszewski@gmail.com>, <pavel@ucw.cz>, <tony@atomide.com>,
+        <sre@kernel.org>, <nekit1000@gmail.com>, <mpartap@gmx.net>,
+        <merlijn@wizzup.org>
+CC:     <linux-leds@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Dan Murphy <dmurphy@ti.com>
+Subject: [PATCH v3 1/5] leds: lm3532: Fix brightness control for i2c mode
+Date:   Tue, 20 Aug 2019 14:53:03 -0500
+Message-ID: <20190820195307.27590-1-dmurphy@ti.com>
+X-Mailer: git-send-email 2.22.0.214.g8dca754b1e
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190818135611.7776-8-frank-w@public-files.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/08/2019 15:56:05+0200, Frank Wunderlich wrote:
-> From: Josef Friedl <josef.friedl@speed.at>
-> 
-> - use regmap_read_poll_timeout to drop while-loop
-> - use devm-api to drop remove-callback
-> 
-> Suggested-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> Signed-off-by: Josef Friedl <josef.friedl@speed.at>
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Fix the brightness control for I2C mode.  Instead of
+changing the full scale current register update the ALS target
+register for the appropriate banks.
 
-> ---
-> changes since v5: none
-> changes since v4: none
-> changes since v3: none
-> changes since v2:
-> - fix allocation after irq-request
-> - compatible for mt6323 in separate commit => part 5
-> ---
->  drivers/rtc/rtc-mt6397.c | 51 +++++++++++++++-------------------------
->  1 file changed, 19 insertions(+), 32 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-mt6397.c b/drivers/rtc/rtc-mt6397.c
-> index c08ee5edf865..9370b7fc9f81 100644
-> --- a/drivers/rtc/rtc-mt6397.c
-> +++ b/drivers/rtc/rtc-mt6397.c
-> @@ -4,16 +4,19 @@
->  * Author: Tianping.Fang <tianping.fang@mediatek.com>
->  */
->  
-> -#include <linux/delay.h>
-> -#include <linux/init.h>
-> +#include <linux/err.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/mfd/mt6397/core.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/rtc.h>
->  #include <linux/mfd/mt6397/rtc.h>
-> +#include <linux/mod_devicetable.h>
->  
->  static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
->  {
-> -	unsigned long timeout = jiffies + HZ;
->  	int ret;
->  	u32 data;
->  
-> @@ -21,19 +24,13 @@ static int mtk_rtc_write_trigger(struct mt6397_rtc *rtc)
->  	if (ret < 0)
->  		return ret;
->  
-> -	while (1) {
-> -		ret = regmap_read(rtc->regmap, rtc->addr_base + RTC_BBPU,
-> -				  &data);
-> -		if (ret < 0)
-> -			break;
-> -		if (!(data & RTC_BBPU_CBUSY))
-> -			break;
-> -		if (time_after(jiffies, timeout)) {
-> -			ret = -ETIMEDOUT;
-> -			break;
-> -		}
-> -		cpu_relax();
-> -	}
-> +	ret = regmap_read_poll_timeout(rtc->regmap,
-> +					rtc->addr_base + RTC_BBPU, data,
-> +					!(data & RTC_BBPU_CBUSY),
-> +					MTK_RTC_POLL_DELAY_US,
-> +					MTK_RTC_POLL_TIMEOUT);
-> +	if (ret < 0)
-> +		dev_err(rtc->dev, "failed to write WRTGE: %d\n", ret);
->  
->  	return ret;
->  }
-> @@ -266,19 +263,19 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  		return rtc->irq;
->  
->  	rtc->regmap = mt6397_chip->regmap;
-> -	rtc->dev = &pdev->dev;
->  	mutex_init(&rtc->lock);
->  
->  	platform_set_drvdata(pdev, rtc);
->  
-> -	rtc->rtc_dev = devm_rtc_allocate_device(rtc->dev);
-> +	rtc->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
->  	if (IS_ERR(rtc->rtc_dev))
->  		return PTR_ERR(rtc->rtc_dev);
->  
-> -	ret = request_threaded_irq(rtc->irq, NULL,
-> -				   mtk_rtc_irq_handler_thread,
-> -				   IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
-> -				   "mt6397-rtc", rtc);
-> +	ret = devm_request_threaded_irq(&pdev->dev, rtc->irq, NULL,
-> +					mtk_rtc_irq_handler_thread,
-> +					IRQF_ONESHOT | IRQF_TRIGGER_HIGH,
-> +					"mt6397-rtc", rtc);
-> +
->  	if (ret) {
->  		dev_err(&pdev->dev, "Failed to request alarm IRQ: %d: %d\n",
->  			rtc->irq, ret);
-> @@ -302,15 +299,6 @@ static int mtk_rtc_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> -static int mtk_rtc_remove(struct platform_device *pdev)
-> -{
-> -	struct mt6397_rtc *rtc = platform_get_drvdata(pdev);
-> -
-> -	free_irq(rtc->irq, rtc);
-> -
-> -	return 0;
-> -}
-> -
->  #ifdef CONFIG_PM_SLEEP
->  static int mt6397_rtc_suspend(struct device *dev)
->  {
-> @@ -349,7 +337,6 @@ static struct platform_driver mtk_rtc_driver = {
->  		.pm = &mt6397_pm_ops,
->  	},
->  	.probe	= mtk_rtc_probe,
-> -	.remove = mtk_rtc_remove,
->  };
->  
->  module_platform_driver(mtk_rtc_driver);
-> -- 
-> 2.17.1
-> 
+In addition clean up some code errors and random misspellings found
+during coding.
 
+Tested on Droid4 as well as LM3532 EVM connected to a BeagleBoneBlack
+
+Fixes: e37a7f8d77e1 ("leds: lm3532: Introduce the lm3532 LED driver")
+Reported-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Dan Murphy <dmurphy@ti.com>
+---
+
+v3 - Removed register define updates - https://lore.kernel.org/patchwork/patch/1114542/
+
+ drivers/leds/leds-lm3532.c | 44 ++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/leds/leds-lm3532.c b/drivers/leds/leds-lm3532.c
+index 646100724971..8132d05f7add 100644
+--- a/drivers/leds/leds-lm3532.c
++++ b/drivers/leds/leds-lm3532.c
+@@ -38,6 +38,9 @@
+ #define LM3532_REG_ZN_2_LO	0x65
+ #define LM3532_REG_ZN_3_HI	0x66
+ #define LM3532_REG_ZN_3_LO	0x67
++#define LM3532_REG_ZONE_TRGT_A	0x70
++#define LM3532_REG_ZONE_TRGT_B	0x75
++#define LM3532_REG_ZONE_TRGT_C	0x7a
+ #define LM3532_REG_MAX		0x7e
+ 
+ /* Contorl Enable */
+@@ -116,6 +119,7 @@ struct lm3532_als_data {
+  * @priv - Pointer the device data structure
+  * @control_bank - Control bank the LED is associated to
+  * @mode - Mode of the LED string
++ * @ctrl_brt_pointer - Zone target register that controls the sink
+  * @num_leds - Number of LED strings are supported in this array
+  * @led_strings - The LED strings supported in this array
+  * @label - LED label
+@@ -126,6 +130,7 @@ struct lm3532_led {
+ 
+ 	int control_bank;
+ 	int mode;
++	int ctrl_brt_pointer;
+ 	int num_leds;
+ 	u32 led_strings[LM3532_MAX_CONTROL_BANKS];
+ 	char label[LED_MAX_NAME_SIZE];
+@@ -339,8 +344,8 @@ static int lm3532_brightness_set(struct led_classdev *led_cdev,
+ 	if (ret)
+ 		goto unlock;
+ 
+-	brightness_reg = LM3532_REG_CTRL_A_BRT + led->control_bank * 2;
+-	brt_val = brt_val / LM3532_BRT_VAL_ADJUST;
++	brightness_reg = LM3532_REG_ZONE_TRGT_A + led->control_bank * 5 +
++			 (led->ctrl_brt_pointer >> 2);
+ 
+ 	ret = regmap_write(led->priv->regmap, brightness_reg, brt_val);
+ 
+@@ -356,8 +361,30 @@ static int lm3532_init_registers(struct lm3532_led *led)
+ 	unsigned int output_cfg_val = 0;
+ 	unsigned int output_cfg_shift = 0;
+ 	unsigned int output_cfg_mask = 0;
++	unsigned int brightness_config_reg;
++	unsigned int brightness_config_val;
+ 	int ret, i;
+ 
++	if (drvdata->enable_gpio)
++		gpiod_direction_output(drvdata->enable_gpio, 1);
++
++	brightness_config_reg = LM3532_REG_ZONE_CFG_A + led->control_bank * 2;
++	/*
++	 * This could be hard coded to the default value but the control
++	 * brightness register may have changed during boot.
++	 */
++	ret = regmap_read(drvdata->regmap, brightness_config_reg,
++			  &led->ctrl_brt_pointer);
++	if (ret)
++		return ret;
++
++	led->ctrl_brt_pointer &= LM3532_ZONE_MASK;
++	brightness_config_val = led->ctrl_brt_pointer | led->mode;
++	ret = regmap_write(drvdata->regmap, brightness_config_reg,
++			   brightness_config_val);
++	if (ret)
++		return ret;
++
+ 	for (i = 0; i < led->num_leds; i++) {
+ 		output_cfg_shift = led->led_strings[i] * 2;
+ 		output_cfg_val |= (led->control_bank << output_cfg_shift);
+@@ -382,7 +409,6 @@ static int lm3532_als_configure(struct lm3532_data *priv,
+ 	struct lm3532_als_data *als = priv->als_data;
+ 	u32 als_vmin, als_vmax, als_vstep;
+ 	int zone_reg = LM3532_REG_ZN_0_HI;
+-	int brightnes_config_reg;
+ 	int ret;
+ 	int i;
+ 
+@@ -411,14 +437,7 @@ static int lm3532_als_configure(struct lm3532_data *priv,
+ 	als->config = (als->als_avrg_time | (LM3532_ENABLE_ALS) |
+ 		(als->als_input_mode << LM3532_ALS_SEL_SHIFT));
+ 
+-	ret = regmap_write(priv->regmap, LM3532_ALS_CONFIG, als->config);
+-	if (ret)
+-		return ret;
+-
+-	brightnes_config_reg = LM3532_REG_ZONE_CFG_A + led->control_bank * 2;
+-
+-	return regmap_update_bits(priv->regmap, brightnes_config_reg,
+-				  LM3532_I2C_CTRL, LM3532_ALS_CTRL);
++	return regmap_write(priv->regmap, LM3532_ALS_CONFIG, als->config);
+ }
+ 
+ static int lm3532_parse_als(struct lm3532_data *priv)
+@@ -634,9 +653,6 @@ static int lm3532_probe(struct i2c_client *client,
+ 		return ret;
+ 	}
+ 
+-	if (drvdata->enable_gpio)
+-		gpiod_direction_output(drvdata->enable_gpio, 1);
+-
+ 	return ret;
+ }
+ 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.22.0.214.g8dca754b1e
+
