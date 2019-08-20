@@ -2,82 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CC796AB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:35:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C4B96AC3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:39:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730619AbfHTUfZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:35:25 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36584 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729156AbfHTUfZ (ORCPT
+        id S1730804AbfHTUi2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:38:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38484 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729156AbfHTUi0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:35:25 -0400
-Received: by mail-oi1-f195.google.com with SMTP id n1so2779611oic.3;
-        Tue, 20 Aug 2019 13:35:24 -0700 (PDT)
+        Tue, 20 Aug 2019 16:38:26 -0400
+Received: by mail-wr1-f68.google.com with SMTP id g17so13766942wrr.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 13:38:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=shZI82Zl0a1vHkFKOP8kqC8vGCDr5oXp88gXw96LLYA=;
-        b=NFpxjJ+Fr7xKPu3L0zKJ8v8AUa/bW/d1wEprP+UsRX34exWwlqD7IpKtKOqqKpQD9+
-         CfCw2hunvnMRDynay6NI5pDYSfExI7YCTLtUdE1Kn9DcBZHZDAcRYq/5jySavs1ez1eC
-         v38+8pNMorc+ONtthB95+DHcpErr/pfWwNbC8OV42t1NeCRxEIH2O73XEmTzXvGknZYf
-         r1GcrhNJi4G1wfFgRPaL0GzTQDm8j9c6fFXIerxDaqhuMzlcJB51WTHVFXQIMX2/f98B
-         25E3zfJwxlMkAE7WtjR/w2bVwPNcbDvC6rzZm04oEqhg6LF9METLL4MhipTAUBt9HM5d
-         oxJA==
+        bh=rg0EeSG7Bm5jsa3UW2wgdDRJHxKBoYiG0TWysIzVlWY=;
+        b=Cx1HrGAEMaeCtHiXxs+M1bsNI1pgf6amva+4Q0ItXlGMK7l9ZvDqZjPKl/NOnE3wYs
+         GXgifJMddlQo+kEcK1fnvftC2NtSUTCUpLySDFjCfJdkQPGG6L+xq9L+jol+KmNwr/eB
+         M39pPCpVUqB0gf2oIjHBic7F8lnYQrU+x7fWsViG1T2Xa4YAccFEmywBSbABn8bdslUK
+         xRNTtjB0e4uPwB6lDYUPv0qXy7GgI2B+TwasFyY0Qo2aKioRIsIwqpkd7h/VkJ5YWV3c
+         lEuMNP1NhkE7oU9adDPccG3eqV+5lh7CVZDgYZQsj7RknnI7RP1ounNNvcGpkYmikA/J
+         eo+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=shZI82Zl0a1vHkFKOP8kqC8vGCDr5oXp88gXw96LLYA=;
-        b=mOVVRo53c3THRPqq577/XLlEPLgXZiwnBnEub0RMnnZcuPVfzzWhmOZexqrux8Z8V3
-         qx4zgbc0Oqp2g04iur4HEPvUd4NKEYlgYVIoiOp1EpkZLhQIgog1B0hUxtVBBnj0gzan
-         /lIpTEu/cvG6YHXH0b7tA7L6nxR9BiWLJYCBakiNQJ44owm0uzskYkOWvvHxa1kNpIjF
-         w37gkG7LeMzpPrROSFsdvXM8D6Or7TnEO7fT9hM8CyfgaTMA2DyIBiu3rP8ltMZnDLui
-         LA42F5U4ixoluW0uejBSAqkBZDMchJZlPBz0US8vFyb6fNYz0ZxGJJJFexPK8x73teA5
-         L4ZQ==
-X-Gm-Message-State: APjAAAUscdMKOzs7GYCEqgon/cc8sYHhoqrKk73WbT8OoI1qQ/Plw6rC
-        D6V0F2KB9YT6tLeBttVri8ipXkUnBBc9Nosb6Dg=
-X-Google-Smtp-Source: APXvYqwF+wqaQaOhsdA099YOhLAMF4+0X9jZXZ57p3A1tskhIG+Cq5/F0EEgHWGCTE9OmycZu1wV62qbVj5Bs+q55M0=
-X-Received: by 2002:a05:6808:8e2:: with SMTP id d2mr1400869oic.47.1566333323830;
- Tue, 20 Aug 2019 13:35:23 -0700 (PDT)
+        bh=rg0EeSG7Bm5jsa3UW2wgdDRJHxKBoYiG0TWysIzVlWY=;
+        b=S10w3EzJOs/BbUF2tMxq5FDMRmx9DkksLckipyJ7ZCSMadU09Seoft7IXaNDpO96yE
+         SGsQia2LY9+eFynnEOQ7CnApJ/fAerI5eOsbezk8UKXFj7ZX6B35f8yF0Z2VQwQ3mXD3
+         b0lqJHyPHtCZ0ZqTK1PwdPqEaJLvzSI76GAUboXlPMfYqb192k3PTHbG/e8gQ0L9TFZe
+         r/uHaRN3NA6tAXIhFuHh6ZojguShXlgPKUByHVy7/MCA+sUqh5nadRTG2ssnt0oRSsHQ
+         yRLHlf+hE8EWq55NH3wHRmTNDEN1y3J8oITuceZDzHfTzGIsQgTjb1EeVLDjEgs66cij
+         fEvQ==
+X-Gm-Message-State: APjAAAV97kPw5hbZV8QLe+YT6hMKoxsoVveeMKFtykGk4+ZnEO027ns5
+        FK7XjPg2bbTedh/28yyWqv0qj2gJdnsvYvpv0pzpeL6b
+X-Google-Smtp-Source: APXvYqxgByFNUhdAX0A7d+Y0VGJlNmcykd/dXgmHsUVsHnRsUBq9o5uEgwus/ju2JbEFk5S8UKGnWaKoF3Bd4UsTGqw=
+X-Received: by 2002:adf:ed4a:: with SMTP id u10mr11200522wro.284.1566333504347;
+ Tue, 20 Aug 2019 13:38:24 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190814142918.11636-1-narmstrong@baylibre.com> <20190814142918.11636-15-narmstrong@baylibre.com>
-In-Reply-To: <20190814142918.11636-15-narmstrong@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 20 Aug 2019 22:35:12 +0200
-Message-ID: <CAFBinCApsk7VhfUBB9Gs5_k1p3-q5RQgfFO_6yjij=kALh9AJg@mail.gmail.com>
-Subject: Re: [PATCH 14/14] arm64: dts: meson: fix boards regulators states format
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
+References: <20190819230321.56480-1-john.stultz@linaro.org> <20190820200141.GA23191@ravnborg.org>
+In-Reply-To: <20190820200141.GA23191@ravnborg.org>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Tue, 20 Aug 2019 13:38:11 -0700
+Message-ID: <CALAqxLXVsqZRrxEMTrYQFpPbGNthJrQ+Gx1EP-uuGFNX0=a_+g@mail.gmail.com>
+Subject: Re: [PATCH v4 00/25] drm: Kirin driver cleanups to prep for Kirin960 support
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Rongrong Zou <zourongrong@gmail.com>,
+        Xinliang Liu <z.liuxinliang@hisilicon.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel <dri-devel@lists.freedesktop.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 4:34 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Tue, Aug 20, 2019 at 1:01 PM Sam Ravnborg <sam@ravnborg.org> wrote:
 >
-> This fixes the following DT schemas check errors:
-> meson-gxbb-odroidc2.dt.yaml: gpio-regulator-tf_io: states:0: Additional items are not allowed (1800000, 1 were unexpected)
-> meson-gxbb-odroidc2.dt.yaml: gpio-regulator-tf_io: states:0: [3300000, 0, 1800000, 1] is too long
-> meson-gxbb-nexbox-a95x.dt.yaml: gpio-regulator: states:0: Additional items are not allowed (3300000, 1 were unexpected)
-> meson-gxbb-nexbox-a95x.dt.yaml: gpio-regulator: states:0: [1800000, 0, 3300000, 1] is too long
-> meson-gxbb-p200.dt.yaml: gpio-regulator: states:0: Additional items are not allowed (3300000, 1 were unexpected)
-> meson-gxbb-p200.dt.yaml: gpio-regulator: states:0: [1800000, 0, 3300000, 1] is too long
-> meson-gxl-s905x-hwacom-amazetv.dt.yaml: gpio-regulator: states:0: Additional items are not allowed (3300000, 1 were unexpected)
-> meson-gxl-s905x-hwacom-amazetv.dt.yaml: gpio-regulator: states:0: [1800000, 0, 3300000, 1] is too long
-> meson-gxbb-p201.dt.yaml: gpio-regulator: states:0: Additional items are not allowed (3300000, 1 were unexpected)
-> meson-gxbb-p201.dt.yaml: gpio-regulator: states:0: [1800000, 0, 3300000, 1] is too long
-> meson-g12b-odroid-n2.dt.yaml: gpio-regulator-tf_io: states:0: Additional items are not allowed (1800000, 1 were unexpected)
-> meson-g12b-odroid-n2.dt.yaml: gpio-regulator-tf_io: states:0: [3300000, 0, 1800000, 1] is too long
-> meson-gxl-s905x-nexbox-a95x.dt.yaml: gpio-regulator: states:0: Additional items are not allowed (3300000, 1 were unexpected)
-> meson-gxl-s905x-nexbox-a95x.dt.yaml: gpio-regulator: states:0: [1800000, 0, 3300000, 1] is too long
+> Hi John.
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> On Mon, Aug 19, 2019 at 11:02:56PM +0000, John Stultz wrote:
+> > Sending this out again, to get it based on drm-misc-next.
+> >
+> > This patchset contains one fix (in the front, so its easier to
+> > eventually backport), and a series of changes from YiPing to
+> > refactor the kirin drm driver so that it can be used on both
+> > kirin620 based devices (like the original HiKey board) as well
+> > as kirin960 based devices (like the HiKey960 board).
+> >
+> > The full kirin960 drm support is still being refactored, but as
+> > this base kirin rework was getting to be substantial, I wanted
+> > to send out the first chunk, so that the review burden wasn't
+> > overwhelming.
+> >
+> > The full HiKey960 patch stack can be found here:
+> >   https://git.linaro.org/people/john.stultz/android-dev.git/log/?h=dev/hikey960-mainline-WIP
+> >
+> > thanks
+> > -john
+> >
+> >
+> > New in v4:
+> > * Rebased to drm-misc-next, minor tweaks to merge changes
+> > * Dropped "drm: kirin: Get rid of drmP.h includes" as similar change
+> >   was already in drm-misc next
+> > * Added acked-by tag from Xinliang
+>
+> There was some checkpatch noises in some of the patches - please verify
+> with "--strict".
 
-note to self: NanoPi K2 and the Le Potato board .dts are already doing
-it "right"
+Ah. Apologies. I had not run with --strict.
+
+> And then the build failed like this:
+>  LD [M]  drivers/gpu/drm/hisilicon/kirin/kirin-drm.o
+> aarch64-linux-gnu-ld: drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.o: in function `init_module':
+> dw_drm_dsi.c:(.init.text+0x0): multiple definition of `init_module'; drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.o:kirin_drm_drv.c:(.init.text+0x0): first defined here
+> aarch64-linux-gnu-ld: drivers/gpu/drm/hisilicon/kirin/dw_drm_dsi.o: in function `cleanup_module':
+> dw_drm_dsi.c:(.exit.text+0x0): multiple definition of `cleanup_module'; drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.o:kirin_drm_drv.c:(.exit.text+0x0): first defined here
+> make[3]: *** [/home/sam/drm/linux.git/scripts/Makefile.build:464: drivers/gpu/drm/hisilicon/kirin/kirin-drm.o] Error 1
+> make[2]: *** [/home/sam/drm/linux.git/scripts/Makefile.build:490: drivers/gpu/drm/hisilicon/kirin] Error 2
+> make[1]: *** [/home/sam/drm/linux.git/Makefile:1776: drivers/gpu/drm/hisilicon/] Error 2
+> make[1]: Leaving directory '/home/sam/drm/linux.git/.build/arm64-allmodconfig'
+> make: *** [Makefile:179: sub-make] Error 2
+>
+> It was a simple allmodconfig build where I did:
+>
+> make drivers/gpu/drm/hisilicon/
+
+Yes, I've not used modules much with the board. I'll fix this up.
+
+> Please fix and resend. I did not look further.
+
+Apologies again, thanks so much for finding these issues! I'll get a
+new series to you shortly once the issues are resolved and I've
+validated things.
+
+thanks
+-john
