@@ -2,82 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82D23954CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:07:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B7A37954D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:09:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729102AbfHTDGo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 23:06:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:35162 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728950AbfHTDGn (ORCPT
+        id S1728974AbfHTDIj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 23:08:39 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:46196 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728770AbfHTDIj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 23:06:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=57X3GzTA6er/rWzLLE+ikSyKId99lgGWLFXTlO3Q1vU=; b=izmFJBS4VHqlxjMsuBdWcP0MD
-        8/ROSNjzUDH0Bt/VmxP/PlECeAfBQMrNp5fRxeDjnVZWKOoiumDZyJb/QhsJGygJR65Oh1jw5Y4XF
-        X2/KLy18535rZiuVI9jDbX9C9G2L0qW87vEWF7ClpOZVyqepPZNO8e8nZhINp5zVJzsQ/ibyx80t9
-        KBYZzQZfUAljid0T6h7GTHKWmv/90Kd82y8LQqcRwTqd4L196oTG2U6OyQPOnv2/VvA69cigUiMqn
-        dcGQ3HFRAvnSzde0xTpgy8Z/Yrd3CwdDY0hJ/B92eqAr32kima9TCNtubDsojQ3QXvuDp7kIsI/2o
-        D0yowuuDg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1hzuTp-0002xI-Pr; Tue, 20 Aug 2019 03:06:41 +0000
-Date:   Mon, 19 Aug 2019 20:06:41 -0700
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        Allison Randal <allison@lohutok.net>,
-        Anup Patel <anup@brainfault.org>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Andreas Schwab <schwab@linux-m68k.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [v2 PATCH] RISC-V: Optimize tlb flush path.
-Message-ID: <20190820030641.GA24946@infradead.org>
-References: <20190820004735.18518-1-atish.patra@wdc.com>
+        Mon, 19 Aug 2019 23:08:39 -0400
+Received: by mail-pl1-f194.google.com with SMTP id c2so1954428plz.13
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 20:08:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oQXeeGH4NH+KvW3vYvA+Nx1Bgh03ehE84T2MSrh9Vas=;
+        b=B3tLyJtTm2TA0hYSaI+H2E8POTbX14nTZz2lb0BO3134Ewsp94i1jyKT6lPoehBxND
+         Qntt2KyYo/A0nYaa/UnmfqW1k8u/2RWYYOpHwv0+IOO/OTHSsaTpm/M0F8/pOd06kRd8
+         3o7w5MaHLnrn+K/+XTxRwsvIcVnsEWyrcGMMHzDimhCUBw56h0+TpDHvGIomaRRzUtcZ
+         quaHYuShFdaTVInv/ymvdCax6KBo01yyAjqn7urD/Wm9q5VlVVEDaNRpKo6JGfU3W1+N
+         yQUBufeDte/SsHAukvKyk7YGc6NIKQrqEzqRHNWHXrub8QiHoR5CCrnRV0bREerbNKdz
+         yNig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oQXeeGH4NH+KvW3vYvA+Nx1Bgh03ehE84T2MSrh9Vas=;
+        b=cj5Ylm7inUaA//hs56AOmuZ0adLUsbbYzUlnMS0yp40B0zL2e+jW12T6kKbpF4L0bQ
+         0S/R8Tfd76VZh8YdRDirkFeTwd0e2/YpeJPKPy5XGTBE7+D1CerwfZDEcURdUFKrrRmM
+         nL57uAQQevhKy4+Iy3RNXB4e4LEsqsYbgJJu7nXWJbL4EPzCyiRgJZH6tDIhrRMstj7H
+         sIC702NoMKQRDHgz6JzpCDycS7m523yRaRfyMo9fnLX4C3f3FMebytR3Sdmj+Adx0n0T
+         82GzEMDUI8Qargw26Ugju/C9V+z0nJcewLzON4IEnci2ZFofDpYc2B1+Jw/fWUrJLv92
+         fkqQ==
+X-Gm-Message-State: APjAAAV2FLQsYObbdSVvGNyEm7JyIAULFgqkm25KzYN8jCtT3Gyjfh72
+        vUWoDfFfItX2xibE3+g8uCI=
+X-Google-Smtp-Source: APXvYqz9UYjUBmx1ljMCAHrt8bWvXlmb1n8GPFsSICAllhOtahyOWgcPHMQTEhHeB2gzzg/C6Yaovg==
+X-Received: by 2002:a17:902:a509:: with SMTP id s9mr26456371plq.310.1566270518183;
+        Mon, 19 Aug 2019 20:08:38 -0700 (PDT)
+Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
+        by smtp.gmail.com with ESMTPSA id e24sm18694863pgk.21.2019.08.19.20.08.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2019 20:08:37 -0700 (PDT)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Chris Healy <cphealy@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100kHz
+Date:   Mon, 19 Aug 2019 20:08:04 -0700
+Message-Id: <20190820030804.8892-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820004735.18518-1-atish.patra@wdc.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 05:47:35PM -0700, Atish Patra wrote:
-> In RISC-V, tlb flush happens via SBI which is expensive.
-> If the target cpumask contains a local hartid, some cost
-> can be saved by issuing a local tlb flush as we do that
-> in OpenSBI anyways. There is also no need of SBI call if
-> cpumask is empty.
-> 
-> Do a local flush first if current cpu is present in cpumask.
-> Invoke SBI call only if target cpumask contains any cpus
-> other than local cpu.
+Fiber-optic module attached to the bus is only rated to work at
+100kHz, so drop the bus frequncy to accomodate that.
 
-Btw, you can use up your 70-ish chars per line for commit logs..
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Chris Healy <cphealy@gmail.com>
+Cc: Fabio Estevam <festevam@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+---
+ arch/arm/boot/dts/vf610-zii-cfu1.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> +	if (cpumask_test_cpu(cpuid, cmask)) {
-> +		/* Save trap cost by issuing a local tlb flush here */
-> +		if ((start == 0 && size == -1) || (size > PAGE_SIZE))
-> +			local_flush_tlb_all();
-> +		else if (size == PAGE_SIZE)
-> +			local_flush_tlb_page(start);
-> +	}
+diff --git a/arch/arm/boot/dts/vf610-zii-cfu1.dts b/arch/arm/boot/dts/vf610-zii-cfu1.dts
+index ff460a1de85a..28732249cfc0 100644
+--- a/arch/arm/boot/dts/vf610-zii-cfu1.dts
++++ b/arch/arm/boot/dts/vf610-zii-cfu1.dts
+@@ -207,7 +207,7 @@
+ };
+ 
+ &i2c0 {
+-	clock-frequency = <400000>;
++	clock-frequency = <100000>;
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_i2c0>;
+ 	status = "okay";
+-- 
+2.21.0
 
-This looks a little odd to m and assumes we never pass a size smaller
-than PAGE_SIZE.  Whule that is probably true, why not something like:
-
-	if (size < PAGE_SIZE && size != -1)
-		local_flush_tlb_page(start);
-	else
-		local_flush_tlb_all();
-
-?
