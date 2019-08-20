@@ -2,97 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 007C69609D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C5AE96181
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:48:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730561AbfHTNmP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:42:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37410 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730542AbfHTNmL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:42:11 -0400
-Received: from sasha-vm.mshome.net (unknown [12.236.144.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4004230F2;
-        Tue, 20 Aug 2019 13:42:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566308530;
-        bh=Z0GHDjmBVeYyAmt7stLeihyxCMotcwHjjtTcPlZKz+Q=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nxwAx0AmvAUj/jbLPNnh2LUGEPjpstGKHv+ai7HsX7wHogvxZ+WLWI1TJybGwnQ1x
-         G9Td75Ik+obEFA9zumjBW2485zowYawBU0rgHmwscr4SNr8pvx4st2s6QPWraJxvfk
-         EZJbYBn8uwftx4OSabkEDQTXVxx/3J153MEoZ5z8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>,
-        linux-hyperv@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 44/44] tools: hv: fix KVP and VSS daemons exit code
-Date:   Tue, 20 Aug 2019 09:40:28 -0400
-Message-Id: <20190820134028.10829-44-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190820134028.10829-1-sashal@kernel.org>
-References: <20190820134028.10829-1-sashal@kernel.org>
+        id S1730536AbfHTNr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:47:56 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:52972 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730143AbfHTNkh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:40:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=B8LOvtinbA79S6NGUvPmiLsFutes9sDZnF3rriD/5Mw=; b=LqgG+2Wdt6591p4WO0+ZJbqG6
+        JVwTerajJO10FChITzDm05wP2VLtJnRRALEsBN7lsG55BOjyn6LJqArhyPi3bXAVRiBtxrTIhVrGR
+        dmyT7Q0/4ozU+NDkCoQ/0z2ri/SOjl8JXuwudo7C/gjOUeWgoXYQh6VKjtldhzkcQ1usxbl+YUCJ8
+        eYICpPUrQ3PQaIjpM7+lIJBtpr13OYextxKSxKz6NELTmP6n+QIOUH/DRp5wUH9Y4G1TJWigSzkWx
+        uLj+hzSg/dfvmLL9uPbxkKLxvFoeoFGigZRqWKfM95/1lnk9qu4wSzinaCZd34957WhaXkdSxjpeI
+        Z98gbhvhA==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i04NE-0002hI-Qz; Tue, 20 Aug 2019 13:40:32 +0000
+Date:   Tue, 20 Aug 2019 06:40:32 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Alex Shi <alex.shi@linux.alibaba.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+Subject: Re: [PATCH 01/14] mm/lru: move pgdat lru_lock into lruvec
+Message-ID: <20190820134032.GA24642@bombadil.infradead.org>
+References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Vladu <avladu@cloudbasesolutions.com>
+On Tue, Aug 20, 2019 at 05:48:24PM +0800, Alex Shi wrote:
+> +++ b/include/linux/mmzone.h
+> @@ -295,6 +295,9 @@ struct zone_reclaim_stat {
+>  
+>  struct lruvec {
+>  	struct list_head		lists[NR_LRU_LISTS];
+> +	/* move lru_lock to per lruvec for memcg */
+> +	spinlock_t			lru_lock;
 
-[ Upstream commit b0995156071b0ff29a5902964a9dc8cfad6f81c0 ]
-
-HyperV KVP and VSS daemons should exit with 0 when the '--help'
-or '-h' flags are used.
-
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
-
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/hv/hv_kvp_daemon.c | 2 ++
- tools/hv/hv_vss_daemon.c | 2 ++
- 2 files changed, 4 insertions(+)
-
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index d7e06fe0270ee..0ce50c319cfd6 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1386,6 +1386,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index efe1e34dd91b4..8f813f5233d48 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -218,6 +218,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
--- 
-2.20.1
-
+This comment makes no sense outside the context of this patch.
