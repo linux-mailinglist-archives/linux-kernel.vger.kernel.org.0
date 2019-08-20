@@ -2,83 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA61995DD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:51:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 54FCE95DE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:54:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729872AbfHTLuL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:50:11 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33057 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729741AbfHTLuL (ORCPT
+        id S1728740AbfHTLyh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:54:37 -0400
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:36082 "EHLO
+        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfHTLyg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:50:11 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n190so3123452pgn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 04:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=V62B7MzFnAQFSzASsarq3v0djmwNSddXSYLopfjS1Eo=;
-        b=ScEWrsJXHGFfgfFMY2FsWP9lREzHrPxfZO9vf5D6sHuSaUmaFMTy3r4xIei2Xn3YGf
-         zBA0axb3AXgu+onhYcy2goP2JUTH9W2S8Uc1ASn4y8PVGf/ELCU1M3phdGE1RBLquzQx
-         AdIPKgETAzzbisuI3l7jTCMBDOSvohxLdXno2aBhpKyPjpTCJ7aPVzD8HxLPgmV5R7Zl
-         Mec6MPgw7hrCnaEUAnKw+DCBl6TAio9THMD80bJxvZDH50kGEVt8OXPW/eKPbJJF47LS
-         Wx30u62HO6/i88zEdENBGt1aDnqr6dDhmV626NFEDA7ytMhNur8YA1+I5swpn6vWWG6m
-         lLfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=V62B7MzFnAQFSzASsarq3v0djmwNSddXSYLopfjS1Eo=;
-        b=S0x7y4EEr/JzWhmELCFxuq+swlUavaduU/BI++BqIILrN2CH1wgHsACy1xQ9X2dtAH
-         r4tLASrbDqhJinJo8Ray+0j2yo1ay2JzDRoQEew3mXTEcpX5Rmc7uShhNWDr6PdCJGVw
-         9gBtMVXjYoFDMWPpLCHFQs1pWWoGUa4CwF6c3eDG2wuK0ZrToW9d0JNZB56iKBsGIqR8
-         EjnHM4lSwZHS4tpCeiqypUUuz462VJmCZaYdQAG2ymP4ChjYhVRhD7vCCt0dUIVe9wNI
-         sx0oEYQBMirzQtOc5+iidKSPoYBUTtL9vH8kOUD2OGSTQuJAzG2zc/flBfbE3SVHB8XT
-         11sw==
-X-Gm-Message-State: APjAAAU10z+CcuPXuWztR7mz59frjmrVlJfPRvzZxwCw+sSd82Zh3eEL
-        hJdajoynVFcbinrrnWhsx1EC
-X-Google-Smtp-Source: APXvYqyIq9u46qpIg74Hhl59xxqv6vSE/u8JTB2HQGcXLhPhYLNXH9xyP2FFRD2/Z8o7wjdiQbI8zg==
-X-Received: by 2002:a63:7205:: with SMTP id n5mr16649825pgc.443.1566301810071;
-        Tue, 20 Aug 2019 04:50:10 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:8e:d798:d100:fbc2:f9c1:80f4])
-        by smtp.googlemail.com with ESMTPSA id e10sm23454832pfj.151.2019.08.20.04.50.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 04:50:08 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     broonie@kernel.org, robh+dt@kernel.org
-Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH] dt-bindings: spi: Fix the number of CS lines documented as an example
-Date:   Tue, 20 Aug 2019 17:20:00 +0530
-Message-Id: <20190820115000.32041-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Aug 2019 07:54:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=OXrOAN6eHe7BZs+9Ca5eeCBnDoTWb1Lr6g97dXXB9WM=; b=zBhndaa/3WKWlHsf0MJPuqHCj
+        6PY8J/VVcKmPQNs6acc0JD/1ZGg/wzvOA4yJFAVUuZDGZAB9c4bsXLac+JNDYQeq5yFscGOydAKcb
+        zfnbMQMthlxg5Q0PpJkhfopzLrmjelIWuCHRen60K9n0doSPf1j03OEWVholwJXwLsuvbiVMPgCe7
+        CcTtQuST7v7WrlFMSTKfuCWM1irdDFhmRccsjDEGQ592LQ9tsx/m39X0y3e3yCX752OL0i0vvlvoO
+        1mDVACdO20hRV1obmq3emxeOJHtKMARL2e8mg2B0Zean+dFnkka7qHVfc8PxvPhOUdOhS7aZqC4Dm
+        KQVZ7a22A==;
+Received: from shell.armlinux.org.uk ([2002:4e20:1eda:1:5054:ff:fe00:4ec]:54734)
+        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <linux@armlinux.org.uk>)
+        id 1i02iO-00020m-Pp; Tue, 20 Aug 2019 12:54:16 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
+        (envelope-from <linux@shell.armlinux.org.uk>)
+        id 1i02iH-0005mO-H2; Tue, 20 Aug 2019 12:54:09 +0100
+Date:   Tue, 20 Aug 2019 12:54:09 +0100
+From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Chester Lin <clin@suse.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
+        "ren_guo@c-sky.com" <ren_guo@c-sky.com>,
+        Juergen Gross <JGross@suse.com>,
+        "geert@linux-m68k.org" <geert@linux-m68k.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "guillaume.gardet@arm.com" <guillaume.gardet@arm.com>,
+        Joey Lee <JLee@suse.com>, Gary Lin <GLin@suse.com>
+Subject: Re: [PATCH] efi/arm: fix allocation failure when reserving the
+ kernel base
+Message-ID: <20190820115409.GO13294@shell.armlinux.org.uk>
+References: <20190802053744.5519-1-clin@suse.com>
+ <CAKv+Gu-yaNYsLQOOcr8srW91-nt-w0e+RBqxXGOagiGGT69n1Q@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-yaNYsLQOOcr8srW91-nt-w0e+RBqxXGOagiGGT69n1Q@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The number of CS lines is mentioned as 2 in the spi-controller binding
-but however in the example, 4 cs-gpios are used. Hence fix that to
-mention 4.
+On Sun, Aug 04, 2019 at 10:57:00AM +0300, Ard Biesheuvel wrote:
+> (The first TEXT_OFFSET bytes are no longer used in practice, which is
+> why putting a reserved region of 4 KB bytes works at the moment, but
+> this is fragile).
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- Documentation/devicetree/bindings/spi/spi-controller.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+That is not correct for 32-bit ARM.  The swapper page table is still
+located 16kiB below the kernel.
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-controller.yaml b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-index a02e2fe2bfb2..732339275848 100644
---- a/Documentation/devicetree/bindings/spi/spi-controller.yaml
-+++ b/Documentation/devicetree/bindings/spi/spi-controller.yaml
-@@ -31,7 +31,7 @@ properties:
-       If that property is used, the number of chip selects will be
-       increased automatically with max(cs-gpios, hardware chip selects).
- 
--      So if, for example, the controller has 2 CS lines, and the
-+      So if, for example, the controller has 4 CS lines, and the
-       cs-gpios looks like this
-         cs-gpios = <&gpio1 0 0>, <0>, <&gpio1 1 0>, <&gpio1 2 0>;
- 
 -- 
-2.17.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
+According to speedtest.net: 11.9Mbps down 500kbps up
