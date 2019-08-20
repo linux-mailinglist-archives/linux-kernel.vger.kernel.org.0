@@ -2,79 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F95395523
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:25:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCCB9552D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:31:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729093AbfHTDY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 23:24:57 -0400
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:45584 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbfHTDY5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 23:24:57 -0400
-Received: by mail-yb1-f195.google.com with SMTP id u32so1444787ybi.12
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 20:24:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=4PBL1bXvyffgnqpG9faUgGd+kgjbdB5K1WLVO2WjDew=;
-        b=GUBytnQtvYblaKV2zZRWWVQcBxrJpYIkERwgzfTea6kYifhPNx73DwpNoml1u74an0
-         m/QSp3plmdxjmuokRqSyeJ9mGFqlEfGHM8Tru9cwcN+1aCR2cK8dFTplhmJlNbHaBPnX
-         8GgBZ4JoGVoKfJTEcxbFyaU031PTtKcELRDvEs+6R4Rw5ApgMOkmGHMOWCvpwu1d3NT9
-         8V9eIhMuN4STTuUkDcJ2I28U4ifCYanAKkVZMvSV6d3zobZ7UslBc8p1ysNAJIWQsGiY
-         cNpW3JFRX+E1rVRo056697qSYCPfWVVZoDYGNxFqM6yXbddUpr4c/lE33H2N2IE9xnQo
-         N8eA==
-X-Gm-Message-State: APjAAAW+rynsN9fnat1ozMIFkWFzysBeXn09xkufvUCIaPTLnTIOIdCH
-        tUX+gXMAYKXFRZ2yiST+LtsGhi+JpG3zfw==
-X-Google-Smtp-Source: APXvYqwjd36M+vpwT56jVjRWh+3YbgE5fUREcpEx9vjB6p47mzp7sGfFmYw2dqsktm+c0GUqDzehjA==
-X-Received: by 2002:a25:324b:: with SMTP id y72mr6698233yby.361.1566271496511;
-        Mon, 19 Aug 2019 20:24:56 -0700 (PDT)
-Received: from localhost.localdomain (24-158-240-219.dhcp.smyr.ga.charter.com. [24.158.240.219])
-        by smtp.gmail.com with ESMTPSA id t63sm3433010ywe.103.2019.08.19.20.24.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 19 Aug 2019 20:24:55 -0700 (PDT)
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     Richard Weinberger <richard@nod.at>,
-        Artem Bityutskiy <dedekind1@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-mtd@lists.infradead.org (open list:UBI FILE SYSTEM (UBIFS)),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ubifs: fix a memory leak bug
-Date:   Mon, 19 Aug 2019 22:24:50 -0500
-Message-Id: <1566271490-8533-1-git-send-email-wenwen@cs.uga.edu>
-X-Mailer: git-send-email 2.7.4
+        id S1729043AbfHTDbk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 23:31:40 -0400
+Received: from mga17.intel.com ([192.55.52.151]:4877 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728898AbfHTDbk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 23:31:40 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 20:31:39 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,407,1559545200"; 
+   d="scan'208";a="183060736"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.65])
+  by orsmga006.jf.intel.com with ESMTP; 19 Aug 2019 20:31:37 -0700
+Date:   Tue, 20 Aug 2019 11:14:19 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Greg KH <gregkh@linuxfoundation.org>, mdf@kernel.org
+Cc:     linux-fpga@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        atull@kernel.org
+Subject: Re: [PATCH v5 0/9] FPGA DFL updates
+Message-ID: <20190820031419.GA25968@hao-dev>
+References: <1565578204-13969-1-git-send-email-hao.wu@intel.com>
+ <20190819053133.GA31244@hao-dev>
+ <20190819205124.GA28978@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819205124.GA28978@kroah.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In __ubifs_node_verify_hmac(), 'hmac' is allocated through kmalloc().
-However, it is not deallocated in the following execution if
-ubifs_node_calc_hmac() fails, leading to a memory leak bug. To fix this
-issue, free 'hmac' before returning the error.
+On Mon, Aug 19, 2019 at 10:51:24PM +0200, Greg KH wrote:
+> On Mon, Aug 19, 2019 at 01:31:33PM +0800, Wu Hao wrote:
+> > On Mon, Aug 12, 2019 at 10:49:55AM +0800, Wu Hao wrote:
+> > > Hi Greg,
+> > > 
+> > > This is v5 patchset which adds more features to FPGA DFL. Marjor changes
+> > > against v4 are sysfs related code rework to address comments on v4.
+> > > 
+> > > Please help to take a look. Thanks!
+> > 
+> > Hi Greg,
+> > 
+> > Did you get a chance to take a look at this new version patchset? :)
+> 
+> I'm not the FPGA maintainer, what about the review from the other one
+> first?  :)
 
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
----
- fs/ubifs/auth.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ubifs/auth.c b/fs/ubifs/auth.c
-index d9af2de..8cdbd53 100644
---- a/fs/ubifs/auth.c
-+++ b/fs/ubifs/auth.c
-@@ -479,8 +479,10 @@ int __ubifs_node_verify_hmac(const struct ubifs_info *c, const void *node,
- 		return -ENOMEM;
- 
- 	err = ubifs_node_calc_hmac(c, node, len, ofs_hmac, hmac);
--	if (err)
-+	if (err) {
-+		kfree(hmac);
- 		return err;
-+	}
- 
- 	err = crypto_memneq(hmac, node + ofs_hmac, hmac_len);
- 
--- 
-2.7.4
+Sure! :)
 
+
+Hi Moritz
+
+Could you please help review these patches? Thanks! :)
+
+Thanks
+Hao
+
+> 
+> thanks,
+> 
+> greg k-h
