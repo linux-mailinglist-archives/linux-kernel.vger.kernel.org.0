@@ -2,100 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D386F953A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DD71953B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:46:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729010AbfHTBoO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 21:44:14 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:41789 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728615AbfHTBoO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:44:14 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g7so2884082oia.8
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 18:44:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hiy2qLGFsI5yCOQjtGw2FlRnrKh/058pTpkwHbYjWn4=;
-        b=Ez1qSTYyLQaCZn2QMhz67IzLc8/urEfYaskSA3mavaP51YH8ju0nHD9GTDngUpbjbP
-         1AiLAnxbvNCGyrPXwBVEu36Q3uaEuDEqiP2VJkxKTCexg2w+ZjewRqlRgykjbOFRlbTH
-         2fLPm9B7vaGcBl10TazsQUg322pErV5Xk4X538qIO8M5JcXIZvaCsR4gzqy01slpxyax
-         4G8CymZh5RFI/0K2keiFQUFWjyvgpPwfdc90TOWyfBZs4Eyt8GPcrfEYWBqURbl8VN06
-         FBPr/5UyLCA35gk26Ovlht9WPFWzb00trqxgpQVrfYqYIqgKxH+fYUvZyy+4n4tgykEC
-         7HdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hiy2qLGFsI5yCOQjtGw2FlRnrKh/058pTpkwHbYjWn4=;
-        b=I5kXnuGjI/S5cxRMoog1qxG6VTMep4fLbT6PUWDh6kRab+UN41pM8TF6i06RV1zoyx
-         YiJ6IDv9XGjHj+uu3qhaZZh0MqMCIstlz6xpJ0MauslKRbAd3P+7Lj/LzSZ6dlxlyEom
-         P6r6wcEPeZB/1gjQoClAwCEPfSRyztFI8budN7AHFyGHYaZcK2l4d+XGgYg6qtAevhuw
-         noIrNBavRIRJZlcsIEJSTI8joE6+wB/jtx3pgSSE1/x4MYBR87ZynsFG5NdXXdTvwYCf
-         5iagM7/fq0tGcrUndVaZ4WjeWVZ1iXcziIXWrAnXmaDriMT38wknM3JTJ6ThO6FDJFFi
-         2sOw==
-X-Gm-Message-State: APjAAAXYul766PfkSMgrwJs/LqH14ML00aBfKyChVTeGxzHKJmc3Ja0e
-        cCNEtLjvESbBDY8Uc+zYJ2e86miKGGAAE4kEW2/c6w==
-X-Google-Smtp-Source: APXvYqxaNpMRYLbfGIBxgJOZMZpvJzzYO44wJfPyyGnlz73jF7wI7dbsRvMZy5tGKZb+Q0OELWHnimWe8R9UTMynpps=
-X-Received: by 2002:aca:be43:: with SMTP id o64mr15940919oif.149.1566265453559;
- Mon, 19 Aug 2019 18:44:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190818090557.17853-1-hch@lst.de> <20190818090557.17853-3-hch@lst.de>
-In-Reply-To: <20190818090557.17853-3-hch@lst.de>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 19 Aug 2019 18:44:02 -0700
-Message-ID: <CAPcyv4iYytOoX3QMRmvNLbroxD0szrVLauXFjnQMvtQOH3as_w@mail.gmail.com>
-Subject: Re: [PATCH 2/4] memremap: remove the dev field in struct dev_pagemap
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Jason Gunthorpe <jgg@mellanox.com>,
-        Bharata B Rao <bharata@linux.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>,
+        id S1728937AbfHTBp6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 21:45:58 -0400
+Received: from ozlabs.org ([203.11.71.1]:48315 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728615AbfHTBp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 21:45:58 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46CDCQ6ZJyz9sDQ;
+        Tue, 20 Aug 2019 11:45:54 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566265555;
+        bh=VQwMdlxVKDS5vPjUh0+7GkwL7+DW7Sa5iJnqk75Apgo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=CdZvnBfBBMv5XrzCT/7etg8QOWlnnhPYgSsbK35TOJaYBcqqkrsh8+E2jxnNPih9z
+         DC9AL0xvSj9BHGO0Dlb1t9I1l9RJquUmxkBJ3Qh5UVGtTn4QSrQGmFL/lzReRj0Ami
+         GANwPVYkqoJXKT3C7odVpzPZFoLI3ly1JTmA+FjGOSoAqIdxYWvYaGHQzK85vpJirR
+         iGXQVL9nKrrhyY8LrehvJ97MIErZHNu/Yt4csiC7dwp7zGfFiP3WhrnU5se/ZsDwNb
+         fo0k6wkcI2DLsor8stmfvv94AzwMmHzNFcRQImQOUZAs+jNbwWIlLIT/lIikrMojQd
+         VKPHnFOsZ+6UA==
+Date:   Tue, 20 Aug 2019 11:45:54 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Ira Weiny <ira.weiny@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        amd-gfx@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Subject: Re: linux-next: Tree for Aug 19 (amdgpu)
+Message-ID: <20190820114554.0e522651@canb.auug.org.au>
+In-Reply-To: <ba3cde82-6163-12e5-2e77-36834454113a@infradead.org>
+References: <20190819191832.03f1a579@canb.auug.org.au>
+        <ba3cde82-6163-12e5-2e77-36834454113a@infradead.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/ST4OoFXdpAP+5=cX8fhr9hW";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 2:12 AM Christoph Hellwig <hch@lst.de> wrote:
+--Sig_/ST4OoFXdpAP+5=cX8fhr9hW
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+On Mon, 19 Aug 2019 18:34:41 -0700 Randy Dunlap <rdunlap@infradead.org> wro=
+te:
 >
-> The dev field in struct dev_pagemap is only used to print dev_name in
-> two places, which are at best nice to have.  Just remove the field
-> and thus the name in those two messages.
->
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> On 8/19/19 2:18 AM, Stephen Rothwell wrote:
+> > Hi all,
+> >=20
+> > Changes since 20190816:
+> >  =20
+>=20
+> on x86_64:
+>=20
+> ../drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c: In function =E2=80=98amdgpu_e=
+xit=E2=80=99:
+> ../drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:1471:2: error: implicit declar=
+ation of function =E2=80=98mmu_notifier_synchronize=E2=80=99; did you mean =
+=E2=80=98__sync_synchronize=E2=80=99? [-Werror=3Dimplicit-function-declarat=
+ion]
+>   mmu_notifier_synchronize();
+>   ^~~~~~~~~~~~~~~~~~~~~~~~
+>   __sync_synchronize
+>=20
+>=20
+> Full randconfig file is attached.
 
-Needs the below as well.
+Caused by commit
 
-/me goes to check if he ever merged the fix to make the unit test
-stuff get built by default with COMPILE_TEST [1]. Argh! Nope, didn't
-submit it for 5.3-rc1, sorry for the thrash.
+  6832c9dc8358 ("hmm: use mmu_notifier_get/put for 'struct hmm'")
 
-You can otherwise add:
+from the hmm tree.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c need to include linux/mmu_notifier.h
+--=20
+Cheers,
+Stephen Rothwell
 
-[1]: https://lore.kernel.org/lkml/156097224232.1086847.9463861924683372741.stgit@dwillia2-desk3.amr.corp.intel.com/
+--Sig_/ST4OoFXdpAP+5=cX8fhr9hW
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
----
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/tools/testing/nvdimm/test/iomap.c
-b/tools/testing/nvdimm/test/iomap.c
-index cd040b5abffe..3f55f2f99112 100644
---- a/tools/testing/nvdimm/test/iomap.c
-+++ b/tools/testing/nvdimm/test/iomap.c
-@@ -132,7 +132,6 @@ void *__wrap_devm_memremap_pages(struct device
-*dev, struct dev_pagemap *pgmap)
-        if (!nfit_res)
-                return devm_memremap_pages(dev, pgmap);
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1bUNIACgkQAVBC80lX
+0GxdzAf/dKMAj82tHRTzFb6SoJlnbnbHSbq1KtBSskLed0d9JATgMuYVT21kYmhx
+uCbRHbfdCHWJrnNqX8+tjhLpWLoj2csw9XwdUz3mU2t0KHFDJmjuu1uA4QO2+MIi
+Lmis+ayt5TNsMd/O40ihMr7k+0fY2EQBIS2VR+KPkPvCSRiAUquEt7OWzAKUSckF
+dA5q9F1vO2emerssEYLN3IFlNCVzwj6pPFaoh5S3Mx3dMt9VuWZD0ERVmdfDHpB9
+KVsSJ43+zI5lA+MgC0ly3XHz9Iud5TIz6o9Lg4EnpzCbqJKmksUMxN4D0vzW8uB+
+9mDrLAJAgyhNcEsfSNG+DcEJspx6cA==
+=Xru4
+-----END PGP SIGNATURE-----
 
--       pgmap->dev = dev;
-        if (!pgmap->ref) {
-                if (pgmap->ops && (pgmap->ops->kill || pgmap->ops->cleanup))
-                        return ERR_PTR(-EINVAL);
+--Sig_/ST4OoFXdpAP+5=cX8fhr9hW--
