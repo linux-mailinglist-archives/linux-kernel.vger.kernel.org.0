@@ -2,108 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CF2495F06
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:39:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7839395EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730064AbfHTMi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:38:58 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:38599 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbfHTMi5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:38:57 -0400
-Received: by mail-pf1-f193.google.com with SMTP id o70so3323812pfg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 05:38:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=0sWRJA7h/2wvrxj+XqUA03JtH59l+JlTt/N+VmW30I0=;
-        b=ba7uMiXKvLyrDvP5gZiTLElxzfuOOwtCwOc0K/kjEXcSNniq9kgrFeMrXJYN399WnZ
-         pnc3dSZcqFLANSFrStaUj2q5CZ6Na04QZlqXUF342Tt2legAfe51dJXfHHqnuOSCdPAb
-         57xHYiQ/dC/sOYsHZpBVZ43PGdt4xAqHOMSU2VaOdVMfhOWC+p7Cdc8+BIvmzQxGfSGD
-         TpeKcP75NCRwXuDL6SNGbIsVDR1ArNvkTH5EQTF2au7HMYZX4g+gXzsYv4yem1b8mTMs
-         Bch6PMuBWNOb6MtWs8aQnEiQlR1kDS4n9c3Khq8ludB+U7tyE8w22xUIlgiXa1jzg0as
-         dUXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=0sWRJA7h/2wvrxj+XqUA03JtH59l+JlTt/N+VmW30I0=;
-        b=AK69nT91SCuDTkzhGWgIO7AmkRUmRLAXGFe44qnrRYz2AiXj1r4ET93Yzi1KEHX+2d
-         yRZIEv7Uobp6REEPafKgYv9GItu4viVVE7B/nm+DX53OleFpXItl/UJiAgjf6N7g2Uwe
-         YrF3POCOVnEoCB6J2aEKc18OaCvQfy9n4E8Vzxg+kBumWqdLBdXCqKIW5V5s+kJ5Asfy
-         CeJd4vWbog3Jlcvf3MpO2DTRmjZcupmkpN/Tog7X8A8tLe3BsNkLs5YOTitakIkavOcw
-         NJqcfFF5GRYaRnzSOihUdXO7C4aF7TM3QxefrQFwMGVkCAYQwrvatuVpRHfWN/yxYPQT
-         Vy6Q==
-X-Gm-Message-State: APjAAAUUeTH95ULmpZxQhmeeLBoXbgZZSRH7RLNYSTaOpcY5M+2+A5GH
-        +J1nOHoUIXrwBY6n/XRPb+OyqQ==
-X-Google-Smtp-Source: APXvYqxOOzhOX8GyoVGFVm71p/3OV4YApHVsr+O832TKFGdLRYB1AHM3ZAz8bAWpUqDsFBcrCIkk9A==
-X-Received: by 2002:a65:68d9:: with SMTP id k25mr24696359pgt.337.1566304737262;
-        Tue, 20 Aug 2019 05:38:57 -0700 (PDT)
-Received: from ?IPv6:240e:362:43e:2200:6d55:ae74:3a5b:9669? ([240e:362:43e:2200:6d55:ae74:3a5b:9669])
-        by smtp.gmail.com with ESMTPSA id a6sm22033421pjv.30.2019.08.20.05.38.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2019 05:38:55 -0700 (PDT)
-Subject: Re: [PATCH 2/2] uacce: add uacce module
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "zhangfei.gao@foxmail.com" <zhangfei.gao@foxmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-accelerators@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Kenneth Lee <liguozhu@hisilicon.com>,
-        Zaibo Xu <xuzaibo@huawei.com>,
-        Zhou Wang <wangzhou1@hisilicon.com>
-References: <1565775265-21212-1-git-send-email-zhangfei.gao@linaro.org>
- <1565775265-21212-3-git-send-email-zhangfei.gao@linaro.org>
- <20190815141225.GC23267@kroah.com>
- <5d5a6757.1c69fb81.e0678.2ab2SMTPIN_ADDED_BROKEN@mx.google.com>
- <20190819102250.GA2030@kroah.com>
-From:   zhangfei <zhangfei.gao@linaro.org>
-Message-ID: <350c937f-faee-f74a-ad76-03532c8648bd@linaro.org>
-Date:   Tue, 20 Aug 2019 20:38:46 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730162AbfHTMgk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:36:40 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4734 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730042AbfHTMgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:36:35 -0400
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 657D8505C93C0B5FABDC;
+        Tue, 20 Aug 2019 20:36:31 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 20 Aug 2019 20:36:24 +0800
+From:   Mao Wenan <maowenan@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <jslaby@suse.com>,
+        <linux-serial@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Mao Wenan" <maowenan@huawei.com>
+Subject: [PATCH linux-next] tty: serial: add dependence for CONFIG_SERIAL_FSL_LINFLEXUART
+Date:   Tue, 20 Aug 2019 20:40:15 +0800
+Message-ID: <20190820124015.28409-1-maowenan@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <20190819102250.GA2030@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When CONFIG_SERIAL_FSL_LINFLEXUART=y and CONFIG_PRINTK is not set,
+one compilation error is found as below:
+drivers/tty/serial/fsl_linflexuart.c: In function linflex_earlycon_putchar:
+drivers/tty/serial/fsl_linflexuart.c:608:31: error: CONFIG_LOG_BUF_SHIFT undeclared
+(first use in this function); did you mean CONFIG_ISA_BUS_API?
+  if (earlycon_buf.len >= 1 << CONFIG_LOG_BUF_SHIFT)
+                               ^~~~~~~~~~~~~~~~~~~~
+                               CONFIG_ISA_BUS_API
+This because CONFIG_LOG_BUF_SHIFT is depended on CONFIG_PRINTK, fix this
+by adding dependence for CONFIG_SERIAL_FSL_LINFLEXUART.
 
+Fixes: b953815b819b ("tty: serial: Add linflexuart driver for S32V234")
+Signed-off-by: Mao Wenan <maowenan@huawei.com>
+---
+ drivers/tty/serial/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-On 2019/8/19 下午6:22, Greg Kroah-Hartman wrote:
-> On Mon, Aug 19, 2019 at 05:09:23PM +0800, zhangfei.gao@foxmail.com wrote:
->> Hi, Greg
->>
->> Thanks for your kind suggestion.
->>
->> On 2019/8/15 下午10:12, Greg Kroah-Hartman wrote:
->>> On Wed, Aug 14, 2019 at 05:34:25PM +0800, Zhangfei Gao wrote:
->>>> diff --git a/include/uapi/misc/uacce.h b/include/uapi/misc/uacce.h
->>>> new file mode 100644
->>>> index 0000000..44a0a5d
->>>> --- /dev/null
->>>> +++ b/include/uapi/misc/uacce.h
->>>> @@ -0,0 +1,44 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->>>> +#ifndef _UAPIUUACCE_H
->>>> +#define _UAPIUUACCE_H
->>>> +
->>>> +#include <linux/types.h>
->>>> +#include <linux/ioctl.h>
->>>> +
->>>> +#define UACCE_CLASS_NAME	"uacce"
->>> Why is this in a uapi file?
->> User app need get attribute from /sys/class,
->> For example: /sys/class/uacce/hisi_zip-0/xxx
->> UACCE_CLASS_NAME here tells app which subsystem to open,
->> /sys/class/subsystem/
-> But that never comes from a uapi file.  No other subsystem does this.
-OK, got it
-Maybe the entry info can come from Documentation/ABI/entries
+diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
+index d9caf3242b25..4789b5d62f63 100644
+--- a/drivers/tty/serial/Kconfig
++++ b/drivers/tty/serial/Kconfig
+@@ -1392,6 +1392,7 @@ config SERIAL_FSL_LPUART_CONSOLE
+ 
+ config SERIAL_FSL_LINFLEXUART
+ 	tristate "Freescale linflexuart serial port support"
++	depends on PRINTK
+ 	select SERIAL_CORE
+ 	help
+ 	  Support for the on-chip linflexuart on some Freescale SOCs.
+-- 
+2.20.1
 
-Thanks
