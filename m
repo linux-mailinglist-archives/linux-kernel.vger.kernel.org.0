@@ -2,89 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 240E3961F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3BA72961FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730444AbfHTOHh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:07:37 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:42038 "EHLO mx1.redhat.com"
+        id S1730508AbfHTOH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:07:59 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:55558 "EHLO ns.iliad.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729960AbfHTOHf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:07:35 -0400
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id BD665A35FE8;
-        Tue, 20 Aug 2019 14:07:34 +0000 (UTC)
-Received: from carbon (ovpn-200-29.brq.redhat.com [10.40.200.29])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B5FC03DE5;
-        Tue, 20 Aug 2019 14:07:30 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 16:07:26 +0200
-From:   Jesper Dangaard Brouer <jbrouer@redhat.com>
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        davem@davemloft.net, jakub.kicinski@netronome.com, hawk@kernel.org,
-        john.fastabend@gmail.com, linux-kselftest@vger.kernel.org,
-        netdev@vger.kernel.org, bpf@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: bpf: install files test_xdp_vlan.sh
-Message-ID: <20190820160726.5a8990c8@carbon>
-In-Reply-To: <20190820134121.25728-1-anders.roxell@linaro.org>
-References: <20190820134121.25728-1-anders.roxell@linaro.org>
-Organization: Red Hat Inc.
+        id S1729988AbfHTOH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:07:57 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 29796205F8;
+        Tue, 20 Aug 2019 16:07:55 +0200 (CEST)
+Received: from [192.168.108.37] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 14B2620554;
+        Tue, 20 Aug 2019 16:07:55 +0200 (CEST)
+Subject: Re: [PATCH] phy: qcom-qmp: Correct ready status, again
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+References: <20190806004256.20152-1-bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <d455b4b3-0ee6-5612-ead9-b0087e11b22e@free.fr>
+Date:   Tue, 20 Aug 2019 16:07:54 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20190806004256.20152-1-bjorn.andersson@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.68]); Tue, 20 Aug 2019 14:07:35 +0000 (UTC)
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Aug 20 16:07:55 2019 +0200 (CEST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019 15:41:21 +0200
-Anders Roxell <anders.roxell@linaro.org> wrote:
+On 06/08/2019 02:42, Bjorn Andersson wrote:
 
-> When ./test_xdp_vlan_mode_generic.sh runs it complains that it can't
-> find file test_xdp_vlan.sh.
+> Despite extensive testing of 885bd765963b ("phy: qcom-qmp: Correct
+> READY_STATUS poll break condition") I failed to conclude that the
+> PHYSTATUS bit of the PCS_STATUS register used in PCIe and USB3 falls as
+> the PHY gets ready. Similar to the prior bug with UFS the code will
+> generally get past the check before the transition and thereby
+> "succeed".
 > 
->  # selftests: bpf: test_xdp_vlan_mode_generic.sh
->  # ./test_xdp_vlan_mode_generic.sh: line 9: ./test_xdp_vlan.sh: No such
->  file or directory
+> Correct the name of the register used PCIe and USB3 PHYs, replace
+> mask_pcs_ready with a constant expression depending on the type of the
+> PHY and check for the appropriate ready state.
 > 
-> Rework so that test_xdp_vlan.sh gets installed, added to the variable
-> TEST_PROGS_EXTENDED.
-> 
-> Fixes: d35661fcf95d ("selftests/bpf: add wrapper scripts for test_xdp_vlan.sh")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> Cc: stable@vger.kernel.org
+> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Cc: Evan Green <evgreen@chromium.org>
+> Cc: Niklas Cassel <niklas.cassel@linaro.org>
+> Reported-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+> Fixes: 885bd765963b ("phy: qcom-qmp: Correct READY_STATUS poll break condition")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
+>  drivers/phy/qualcomm/phy-qcom-qmp.c | 33 ++++++++++++++---------------
+>  1 file changed, 16 insertions(+), 17 deletions(-)
 
-Thanks for catching this!
+FWIW, for msm8998:
 
-Acked-by: Jesper Dangaard Brouer <jbrouer@redhat.com>
+Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 
->  tools/testing/selftests/bpf/Makefile | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-> index 1faad0c3c3c9..d7968e20463c 100644
-> --- a/tools/testing/selftests/bpf/Makefile
-> +++ b/tools/testing/selftests/bpf/Makefile
-> @@ -68,7 +68,8 @@ TEST_PROGS := test_kmod.sh \
->  TEST_PROGS_EXTENDED := with_addr.sh \
->  	with_tunnels.sh \
->  	tcp_client.py \
-> -	tcp_server.py
-> +	tcp_server.py \
-> +	test_xdp_vlan.sh
->  
->  # Compile but not part of 'make run_tests'
->  TEST_GEN_PROGS_EXTENDED = test_libbpf_open test_sock_addr test_skb_cgroup_id_user \
-
-
-
--- 
-Best regards,
-  Jesper Dangaard Brouer
-  MSc.CS, Principal Kernel Engineer at Red Hat
-  LinkedIn: http://www.linkedin.com/in/brouer
+Regards.
