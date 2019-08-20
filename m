@@ -2,84 +2,51 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD9DE95D67
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:32:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03DAA95D77
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:34:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729780AbfHTLcN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:32:13 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:33882 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729748AbfHTLcN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:32:13 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
-        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=ADPA2lmg+8u8Wej/uy5U5FOfipsvTMwf8Euyw2Wf2Io=; b=JCLb4S8NHw7j91f4Eb5VNQHayR
-        tnnTZrbFw7tPPqSknmC15wSki+v6kSasQAxbHOMRYHDnunxCI8QMDLCUNI9bUt/esuaBw18NwyVO0
-        PzOstYfX+mlm20WulNoGvFezEO9Zta+igUaCj8nDkDCWUVeo34FBSkBKP8+HBuzyEG+XoP+5gJ/aW
-        Z9DFON3dIycqbI0/TldZI//RMu0OBFC3Tt4D7BYNUxsA5a3xChMYcb/nG7H/0iOs2su+wsgzWL+tn
-        NYRfY6sKlBshJ7t67TjpOS/RRPTFlfiPkEvh7PzOccNZoNMno50P5TR+TFZHBZGtIDcLzyyk3Out8
-        SJUi5V1A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i02Mw-000240-Fg; Tue, 20 Aug 2019 11:32:06 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1729790AbfHTLeS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:34:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44400 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728409AbfHTLeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:34:17 -0400
+Received: from localhost (unknown [106.201.62.126])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 375FF307456;
-        Tue, 20 Aug 2019 13:31:32 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 609D520E58029; Tue, 20 Aug 2019 13:32:03 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 13:32:03 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH 2/4] x86/vmware: Add a header file for hypercall
- definitions
-Message-ID: <20190820113203.GM2332@hirez.programming.kicks-ass.net>
-References: <20190818143316.4906-1-thomas_os@shipmail.org>
- <20190818143316.4906-3-thomas_os@shipmail.org>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E458205C9;
+        Tue, 20 Aug 2019 11:34:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566300857;
+        bh=3L9toGhQuU952ZKTdXIoZSZdhGEsJbqU7UU8JJflJbs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jWLBXmf3uLZ6y12bj65+lmy1og7zZZpXbRGaJRohqu+o9wPsqMsCQ7j2Z36WY9JFa
+         +cAokijM803MMqDEuS63bUReQHf9xYGkoKh0DW7kRLjISV9NVsqmGk2+5M6AL+79bm
+         wiHCW2OW5Fy1sjcUH5sK060eaiLvN5jRqSvz01RE=
+Date:   Tue, 20 Aug 2019 17:03:06 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        Vinod Koul <vinod.koul@intel.com>, dmaengine@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS: dw axi dmac: Fix typo in a path
+Message-ID: <20190820113306.GU12733@vkoul-mobl.Dlink>
+References: <20190325212809.27891-1-joe@perches.com>
+ <20190813060004.10594-1-efremov@linux.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190818143316.4906-3-thomas_os@shipmail.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190813060004.10594-1-efremov@linux.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 04:33:14PM +0200, Thomas Hellström (VMware) wrote:
+On 13-08-19, 09:00, Denis Efremov wrote:
+> Fix typo (s/dwi-/dw-/) in the directory path.
 
-> +#define VMWARE_HYPERCALL \
-> +	ALTERNATIVE_2(".byte 0xed", \
-> +		      ".byte 0x0f, 0x01, 0xc1", X86_FEATURE_VMW_VMCALL,	\
-> +		      ".byte 0x0f, 0x01, 0xd9", X86_FEATURE_VMW_VMMCALL)
+Applied, thanks
 
-For sanity, could we either add comments, or macros for those
-instrucions?
-
-Something like:
-
-#define INSN_INL	0xed
-#define INSN_VMCALL	0x0f,0x01,0xc1
-#define INSN_VMMCALL	0x0f,0x01,0xd9
-
-#define VMWARE_HYPERCALL \
-	ALTERNATIVE_2(_ASM_MK_NOP(INSN_INL),
-		      _ASM_MK_NOP(INSN_VMCALL), X86_FEATURE_VMCALL,
-		      _ASM_MK_NOP(INSN_VMMCALL), X86_FEATURE_VMMCALL)
-
-With possibly a patch that does 's/_ASM_MK_NOP/_ASM_MK_INSN/' on
-arch/x86/ for further sanity :-)
+-- 
+~Vinod
