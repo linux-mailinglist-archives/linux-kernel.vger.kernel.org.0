@@ -2,177 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E79C963A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:04:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E40F8963B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:07:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729977AbfHTPEb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:04:31 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35742 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726742AbfHTPEa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:04:30 -0400
-Received: by mail-wm1-f67.google.com with SMTP id l2so2977729wmg.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 08:04:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=b/1w5LvL+fBJM0aA0+n6sQkDfXDbUnJO+MNoklWJK6k=;
-        b=s1wwfXpp3IIu5zYLuh/BcfPpG9+/3h93ZL8srfWtCF6/V4AgZTQd88PQVUUcIIceg3
-         iSId+Jf/SelQiNRkah6dq2I28zAviqQCMMKXSS+Xiq3oPHj6m6EgZaG51LEYGQoBnQon
-         G5r+to80gAgDsdFn3J9Kfbq0B/bgkyctwrG6pxNOikJmnb0tEmRvAZqt7d+KRolHHXm7
-         TwWegXMdH5f5PRHcQnm6Izew+8dZ7IHI8eGNOXbrLyLpI01vth6grw8bR/FXPEVPSkrb
-         /Ne4lqEnKF4FHaTQ7a8RZpQ+5N9qvYCSvDIJl5JnoEnpsJiBH737i+GLHjhNBHlYpBlF
-         jP4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=b/1w5LvL+fBJM0aA0+n6sQkDfXDbUnJO+MNoklWJK6k=;
-        b=cwBtVf1RSamfrhBTvdVnNcDln44T401iSZemMv/VIdhVwOWhQw3Sx+0AxF5V+xhlun
-         wDvTod5r3zYk8HYBTgVKPh8B0bHkJntOF00Fc98TlUJVnctNxmrdIBrX8T7T89TF7crU
-         LLuD9HkIOZL9RgeOJuAP20mBW7C4AJtHjUHyl8ZHL0LEdL2ae6ujiEkIH4xxDbxUmzfg
-         0DOGLx3s5Hmf10bmmm00PkHZIXx9Q3xwtNvpu9bc96E7hmCvny8cMJgCDNXCVSHHQFNO
-         aACNTeFT4JBCDMXBSE9WX8OP1KxjsijCXy+C+y8bcfsxftadDYdr61NABDkrKxMlGspC
-         92Kw==
-X-Gm-Message-State: APjAAAWOv6kf0/xh9Pzp0WeESXOmv5dt1TlqGR9El01cJr9VDLiIAQ0D
-        QsRvi3pGw6K54h0dVC5jODKnwA==
-X-Google-Smtp-Source: APXvYqxD2lete8UEuvPIbzlRuBI6fHCtkpp45v8YWanLLfdGYOXLCH+A4P7NECo2rhTeuiIc8MSXJw==
-X-Received: by 2002:a7b:c195:: with SMTP id y21mr498870wmi.16.1566313468179;
-        Tue, 20 Aug 2019 08:04:28 -0700 (PDT)
-Received: from [192.168.0.101] (88-147-37-138.dyn.eolo.it. [88.147.37.138])
-        by smtp.gmail.com with ESMTPSA id f7sm25906746wrf.8.2019.08.20.08.04.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2019 08:04:27 -0700 (PDT)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.4 \(3445.104.8\))
-Subject: Re: [PATCHSET block/for-next] IO cost model based work-conserving
- porportional controller
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <5A63F937-F7B5-4D09-9DB4-C73D6F571D50@linaro.org>
-Date:   Tue, 20 Aug 2019 17:04:25 +0200
-Cc:     Jens Axboe <axboe@kernel.dk>, newella@fb.com, clm@fb.com,
-        Josef Bacik <josef@toxicpanda.com>, dennisz@fb.com,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-block <linux-block@vger.kernel.org>, kernel-team@fb.com,
-        cgroups@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        bpf@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <B5E431F7-549D-4FC4-A098-D074DF9586A1@linaro.org>
-References: <20190614015620.1587672-1-tj@kernel.org>
- <20190614175642.GA657710@devbig004.ftw2.facebook.com>
- <5A63F937-F7B5-4D09-9DB4-C73D6F571D50@linaro.org>
-To:     Tejun Heo <tj@kernel.org>
-X-Mailer: Apple Mail (2.3445.104.8)
+        id S1730199AbfHTPHO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:07:14 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57119 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726879AbfHTPHO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:07:14 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 08:07:13 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="183225260"
+Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
+  by orsmga006.jf.intel.com with ESMTP; 20 Aug 2019 08:07:12 -0700
+Date:   Tue, 20 Aug 2019 09:05:11 -0600
+From:   Keith Busch <kbusch@kernel.org>
+To:     John Garry <john.garry@huawei.com>
+Cc:     Ming Lei <tom.leiming@gmail.com>,
+        "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Busch, Keith" <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme <linux-nvme@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Long Li <longli@microsoft.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        chenxiang <chenxiang66@hisilicon.com>
+Subject: Re: [PATCH 0/3] fix interrupt swamp in NVMe
+Message-ID: <20190820150511.GD11202@localhost.localdomain>
+References: <1566281669-48212-1-git-send-email-longli@linuxonhyperv.com>
+ <CACVXFVPCiTU0mtXKS0fyMccPXN6hAdZNHv6y-f8-tz=FE=BV=g@mail.gmail.com>
+ <fd7d6101-37f4-2d34-f2f7-cfeade610278@huawei.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fd7d6101-37f4-2d34-f2f7-cfeade610278@huawei.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 01:59:32AM -0700, John Garry wrote:
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index e8f7f179bf77..cb483a055512 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -966,9 +966,13 @@ irq_thread_check_affinity(struct irq_desc *desc, 
+> struct irqaction *action)
+>   	 * mask pointer. For CPU_MASK_OFFSTACK=n this is optimized out.
+>   	 */
+>   	if (cpumask_available(desc->irq_common_data.affinity)) {
+> +		struct irq_data *irq_data = &desc->irq_data;
+>   		const struct cpumask *m;
+> 
+> -		m = irq_data_get_effective_affinity_mask(&desc->irq_data);
+> +		if (action->flags & IRQF_IRQ_AFFINITY)
+> +			m = desc->irq_common_data.affinity;
+> +		else
+> +			m = irq_data_get_effective_affinity_mask(irq_data);
+>   		cpumask_copy(mask, m);
+>   	} else {
+>   		valid = false;
+> -- 
+> 2.17.1
+> 
+> As Ming mentioned in that same thread, we could even make this policy 
+> for managed interrupts.
 
-
-> Il giorno 20 ago 2019, alle ore 12:48, Paolo Valente =
-<paolo.valente@linaro.org> ha scritto:
->=20
->=20
->=20
->> Il giorno 14 giu 2019, alle ore 19:56, Tejun Heo <tj@kernel.org> ha =
-scritto:
->>=20
->> On Thu, Jun 13, 2019 at 06:56:10PM -0700, Tejun Heo wrote:
->> ...
->>> The patchset is also available in the following git branch.
->>>=20
->>> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git =
-review-iow
->>=20
->> Updated patchset available in the following branch.  Just build fixes
->> and cosmetic changes for now.
->>=20
->> git://git.kernel.org/pub/scm/linux/kernel/git/tj/cgroup.git =
-review-iow-v2
->>=20
->=20
-> Hi Tejun,
-> I'm running the kernel in your tree above, in an Ubuntu 18.04.
->=20
-> After unmounting the v1 blkio controller that gets mounted at startup
-> I have created v2 root as follows
->=20
-> $ mount -t cgroup2 none /cgroup
->=20
-> Then I have:
-> $ ls /cgroup
-> cgroup.controllers  cgroup.max.descendants  cgroup.stat             =
-cgroup.threads  io.weight.cost_model  system.slice
-> cgroup.max.depth    cgroup.procs            cgroup.subtree_control  =
-init.scope      io.weight.qos         user.slice
->=20
-> But the following command gives no output:
-> $ cat /cgroup/io.weight.qos=20
->=20
-> And, above all,
-> $ echo 1 > /cgroup/io.weight.qos=20
-> bash: echo: write error: Invalid argument
->=20
-> No complain in the kernel log.
->=20
-> What am I doing wrong? How can I make the controller work?
->=20
-
-I made it, sorry for my usual silly questions (for some reason, I
-thought the controller could be enabled globally by just passing a 1).
-
-The problem now is that the controller doesn't seem to work.  I've
-emulated 16 clients doing I/O on a SATA SSD.  One client, the target,
-does random reads, while the remaining 15 clients, the interferers, do
-sequential reads.
-
-Each client is encapsulated in a separate group, but whatever weight
-is assigned to the target group, the latter gets the same, extremely
-low bandwidth.  I have tried with even the maximum weight ratio, i.e.,
-1000 for the target and only 1 for each interferer.  Here are the
-results, compared with BFQ (bandwidth in MB/s):
-
-io.weight   BFQ
-0.2         3.7
-
-I ran this test with the script S/bandwidth-latency/bandwidth-latency.sh
-of the S benchmark suite [1], invoked as follows:
-sudo ./bandwidth-latency.sh -t randread -s none -b weight -n 15 -w 1000 =
--W 1
-
-The above command simply creates groups, assigns weights as follows
-
-echo 1 > /cgroup/InterfererGroup0/io.weight
-echo 1 > /cgroup/InterfererGroup1/io.weight
-...
-echo 1 > /cgroup/InterfererGroup14/io.weight
-echo 1000 > /cgroup/interfered/io.weight
-
-and makes one fio instance generate I/O for each group.  The bandwidth
-reported above is that reported by the fio instance emulating the
-target client.
-
-Am I missing something?
-
-Thanks,
-Paolo
-
-[1] https://github.com/Algodev-github/S
-
-
-> Thanks,
-> Paolo
->=20
->> Thanks.
->>=20
->> --=20
->> tejun
->=20
-
+Ack, I really like this option!
