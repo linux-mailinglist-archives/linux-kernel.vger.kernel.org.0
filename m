@@ -2,203 +2,308 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76B0896A51
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:25:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6596D96A48
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731110AbfHTUZF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:25:05 -0400
-Received: from mout1.fh-giessen.de ([212.201.18.42]:52444 "EHLO
-        mout1.fh-giessen.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731017AbfHTUYm (ORCPT
+        id S1731080AbfHTUYt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:24:49 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:47066 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731053AbfHTUYq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:24:42 -0400
-Received: from mx1.fh-giessen.de ([212.201.18.40])
-        by mout1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1i0AgA-0004lW-LN; Tue, 20 Aug 2019 22:24:30 +0200
-Received: from mailgate-1.its.fh-giessen.de ([212.201.18.15])
-        by mx1.fh-giessen.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1i0AgA-00ENUB-GS; Tue, 20 Aug 2019 22:24:30 +0200
-Received: from p2e561b42.dip0.t-ipconnect.de ([46.86.27.66] helo=[192.168.1.24])
-        by mailgate-1.its.fh-giessen.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.92)
-        (envelope-from <tobias.johannes.klausmann@mni.thm.de>)
-        id 1i0AgA-0008h8-6B; Tue, 20 Aug 2019 22:24:30 +0200
-Subject: Re: regression in ath10k dma allocation
-To:     Christoph Hellwig <hch@lst.de>, Hillf Danton <hdanton@sina.com>
-Cc:     Nicolin Chen <nicoleotsuka@gmail.com>, kvalo@codeaurora.org,
-        davem@davemloft.net, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, m.szyprowski@samsung.com,
-        robin.murphy@arm.com, iommu@lists.linux-foundation.org,
-        tobias.klausmann@freenet.de
-References: <8fe8b415-2d34-0a14-170b-dcb31c162e67@mni.thm.de>
- <20190816164301.GA3629@lst.de>
- <af96ea6a-2b17-9b66-7aba-b7dae5bcbba5@mni.thm.de>
- <20190816222506.GA24413@Asurada-Nvidia.nvidia.com>
- <20190818031328.11848-1-hdanton@sina.com>
- <acd7a4b0-fde8-1aa2-af07-2b469e5d5ca7@mni.thm.de>
- <20190820065833.1628-1-hdanton@sina.com> <20190820071250.GA28968@lst.de>
-From:   Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-Message-ID: <c11b5c86-3c10-35f6-b07e-e090d42d97ed@mni.thm.de>
-Date:   Tue, 20 Aug 2019 22:24:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:70.0) Gecko/20100101
- Thunderbird/70.0a1
+        Tue, 20 Aug 2019 16:24:46 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z51so150033edz.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 13:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google;
+        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d25H8YaXES8D8CXayg5AzS13dfnA0p+MfNTE8L9U9Pc=;
+        b=YzDGv4XO+LwpyyKcJI0OU4N7t8BLXha4wn/3Sv43YldWD0xf7aP4v1aM765ctgROdP
+         5UA0BFANzBJ3/MHYWKBlOTznKQv2McTtf3hst+NBYha3BQ90MgzDB3fWcZM3+t+/3EGL
+         BFNdbUFgnpW9sVM7H/mvhP33Ibzw3ijkNfE0g=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=d25H8YaXES8D8CXayg5AzS13dfnA0p+MfNTE8L9U9Pc=;
+        b=P5NmTRTGRr4nfhYvHWGmr62QtdrVwyIDCDZeFEIXZb9Mte/HwVOmpFm8zgI/ZazlHZ
+         TI3ByFda7P0MKrUDcq+kSZPYZxxiv4c0SFYyTiGHMIdq+PUCcCXDb6tsad8iZn3XOkcw
+         FcmlsRsGgPZhTtTVlg5/Pcr5FN5kO8yjtBfJXbdluRYoLR1c1Ym99hCmq8Xw/qlPkmKi
+         4N5lpr95xQ2wv6wIshMuAB7xCGqkDW/dY3m2g9SKseG+Nrs2HtW1fTLzVqbEfKK0zWqq
+         m9or5dMsfo+fyfOpob9rfYESZm5po9rj5OjxByGp3VWKXY2HbF7a+KUR1HT9GZWGna+4
+         v8ew==
+X-Gm-Message-State: APjAAAX82RsknfU8EoPWFkbRHtgldZtnapIqe6LW9KcpBpZgj1k61UgP
+        WwuFW5V4k4eLP8JWoAy1P5Ew4cW1dbiupw==
+X-Google-Smtp-Source: APXvYqwUbw6adOmUx3fV3Lgun+uXklVCorSduFcswvtjlqc3XkLgvXDCsmhN8i5RTx8u9b4ccpZ5mw==
+X-Received: by 2002:a17:907:390:: with SMTP id ss16mr27164544ejb.46.1566332683690;
+        Tue, 20 Aug 2019 13:24:43 -0700 (PDT)
+Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
+        by smtp.gmail.com with ESMTPSA id gw11sm2770562ejb.29.2019.08.20.13.24.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 13:24:42 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 22:24:40 +0200
+From:   Daniel Vetter <daniel@ffwll.ch>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Linux MM <linux-mm@kvack.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, Feng Tang <feng.tang@intel.com>,
+        Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+Subject: Re: [PATCH 3/4] kernel.h: Add non_block_start/end()
+Message-ID: <20190820202440.GH11147@phenom.ffwll.local>
+Mail-Followup-To: LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Intel Graphics Development <intel-gfx@lists.freedesktop.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>,
+        David Rientjes <rientjes@google.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Wei Wang <wvw@google.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Jann Horn <jannh@google.com>,
+        Feng Tang <feng.tang@intel.com>, Kees Cook <keescook@chromium.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Daniel Vetter <daniel.vetter@intel.com>
+References: <20190820081902.24815-1-daniel.vetter@ffwll.ch>
+ <20190820081902.24815-4-daniel.vetter@ffwll.ch>
 MIME-Version: 1.0
-In-Reply-To: <20190820071250.GA28968@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190820081902.24815-4-daniel.vetter@ffwll.ch>
+X-Operating-System: Linux phenom 5.2.0-2-amd64 
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 10:19:01AM +0200, Daniel Vetter wrote:
+> In some special cases we must not block, but there's not a
+> spinlock, preempt-off, irqs-off or similar critical section already
+> that arms the might_sleep() debug checks. Add a non_block_start/end()
+> pair to annotate these.
+> 
+> This will be used in the oom paths of mmu-notifiers, where blocking is
+> not allowed to make sure there's forward progress. Quoting Michal:
+> 
+> "The notifier is called from quite a restricted context - oom_reaper -
+> which shouldn't depend on any locks or sleepable conditionals. The code
+> should be swift as well but we mostly do care about it to make a forward
+> progress. Checking for sleepable context is the best thing we could come
+> up with that would describe these demands at least partially."
+> 
+> Peter also asked whether we want to catch spinlocks on top, but Michal
+> said those are less of a problem because spinlocks can't have an
+> indirect dependency upon the page allocator and hence close the loop
+> with the oom reaper.
+> 
+> Suggested by Michal Hocko.
+> 
+> v2:
+> - Improve commit message (Michal)
+> - Also check in schedule, not just might_sleep (Peter)
+> 
+> v3: It works better when I actually squash in the fixup I had lying
+> around :-/
+> 
+> v4: Pick the suggestion from Andrew Morton to give non_block_start/end
+> some good kerneldoc comments. I added that other blocking calls like
+> wait_event pose similar issues, since that's the other example we
+> discussed.
+> 
+> Cc: Jason Gunthorpe <jgg@ziepe.ca>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: David Rientjes <rientjes@google.com>
+> Cc: "Christian König" <christian.koenig@amd.com>
+> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Cc: "Jérôme Glisse" <jglisse@redhat.com>
+> Cc: linux-mm@kvack.org
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Wei Wang <wvw@google.com>
+> Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Feng Tang <feng.tang@intel.com>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Randy Dunlap <rdunlap@infradead.org>
+> Cc: linux-kernel@vger.kernel.org
+> Acked-by: Christian König <christian.koenig@amd.com> (v1)
+> Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 
-On 20.08.19 09:12, Christoph Hellwig wrote:
-> On Tue, Aug 20, 2019 at 02:58:33PM +0800, Hillf Danton wrote:
->> On Tue, 20 Aug 2019 05:05:14 +0200 Christoph Hellwig wrote:
->>> Tobias, plase try this patch:
->>>
-> New version below:
->
+Hi Peter,
+
+Iirc you've been involved at least somewhat in discussing this. -mm folks
+are a bit undecided whether these new non_block semantics are a good idea.
+Michal Hocko still is in support, but Andrew Morton and Jason Gunthorpe
+are less enthusiastic. Jason said he's ok with merging the hmm side of
+this if scheduler folks ack. If not, then I'll respin with the
+preempt_disable/enable instead like in v1.
+
+So ack/nack for this from the scheduler side?
+
+Thanks, Daniel
+
 > ---
->  From b8a805e93be5a5662323b8ac61fe686df839c4ac Mon Sep 17 00:00:00 2001
-> From: Christoph Hellwig <hch@lst.de>
-> Date: Tue, 20 Aug 2019 11:45:49 +0900
-> Subject: dma-direct: fix zone selection after an unaddressable CMA allocation
->
-> The new dma_alloc_contiguous hides if we allocate CMA or regular
-> pages, and thus fails to retry a ZONE_NORMAL allocation if the CMA
-> allocation succeeds but isn't addressable.  That means we either fail
-> outright or dip into a small zone that might not succeed either.
->
-> Thanks to Hillf Danton for debugging this issue.
->
-> Fixes: b1d2dc009dec ("dma-contiguous: add dma_{alloc,free}_contiguous() helpers")
-> Reported-by: Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
->   drivers/iommu/dma-iommu.c      |  3 +++
->   include/linux/dma-contiguous.h |  5 +----
->   kernel/dma/contiguous.c        |  9 +++------
->   kernel/dma/direct.c            | 10 +++++++++-
->   4 files changed, 16 insertions(+), 11 deletions(-)
->
-> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-> index d991d40f797f..f68a62c3c32b 100644
-> --- a/drivers/iommu/dma-iommu.c
-> +++ b/drivers/iommu/dma-iommu.c
-> @@ -965,10 +965,13 @@ static void *iommu_dma_alloc_pages(struct device *dev, size_t size,
->   {
->   	bool coherent = dev_is_dma_coherent(dev);
->   	size_t alloc_size = PAGE_ALIGN(size);
-> +	int node = dev_to_node(dev);
->   	struct page *page = NULL;
->   	void *cpu_addr;
->   
->   	page = dma_alloc_contiguous(dev, alloc_size, gfp);
-> +	if (!page)
-> +		page = alloc_pages_node(node, gfp, get_order(alloc_size));
->   	if (!page)
->   		return NULL;
->   
-> diff --git a/include/linux/dma-contiguous.h b/include/linux/dma-contiguous.h
-> index c05d4e661489..03f8e98e3bcc 100644
-> --- a/include/linux/dma-contiguous.h
-> +++ b/include/linux/dma-contiguous.h
-> @@ -160,10 +160,7 @@ bool dma_release_from_contiguous(struct device *dev, struct page *pages,
->   static inline struct page *dma_alloc_contiguous(struct device *dev, size_t size,
->   		gfp_t gfp)
->   {
-> -	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
-> -	size_t align = get_order(PAGE_ALIGN(size));
-> -
-> -	return alloc_pages_node(node, gfp, align);
-> +	return NULL;
->   }
->   
->   static inline void dma_free_contiguous(struct device *dev, struct page *page,
-> diff --git a/kernel/dma/contiguous.c b/kernel/dma/contiguous.c
-> index 2bd410f934b3..e6b450fdbeb6 100644
-> --- a/kernel/dma/contiguous.c
-> +++ b/kernel/dma/contiguous.c
-> @@ -230,9 +230,7 @@ bool dma_release_from_contiguous(struct device *dev, struct page *pages,
->    */
->   struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
->   {
-> -	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
-> -	size_t count = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -	size_t align = get_order(PAGE_ALIGN(size));
-> +	size_t count = size >> PAGE_SHIFT;
->   	struct page *page = NULL;
->   	struct cma *cma = NULL;
->   
-> @@ -243,14 +241,12 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
->   
->   	/* CMA can be used only in the context which permits sleeping */
->   	if (cma && gfpflags_allow_blocking(gfp)) {
-> +		size_t align = get_order(size);
->   		size_t cma_align = min_t(size_t, align, CONFIG_CMA_ALIGNMENT);
->   
->   		page = cma_alloc(cma, count, cma_align, gfp & __GFP_NOWARN);
->   	}
->   
-> -	/* Fallback allocation of normal pages */
-> -	if (!page)
-> -		page = alloc_pages_node(node, gfp, align);
->   	return page;
->   }
->   
-> @@ -258,6 +254,7 @@ struct page *dma_alloc_contiguous(struct device *dev, size_t size, gfp_t gfp)
->    * dma_free_contiguous() - release allocated pages
->    * @dev:   Pointer to device for which the pages were allocated.
->    * @page:  Pointer to the allocated pages.
-> +	int node = dev ? dev_to_node(dev) : NUMA_NO_NODE;
->    * @size:  Size of allocated pages.
->    *
->    * This function releases memory allocated by dma_alloc_contiguous(). As the
-> diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-> index 795c9b095d75..706113c6bebc 100644
-> --- a/kernel/dma/direct.c
-> +++ b/kernel/dma/direct.c
-> @@ -85,6 +85,8 @@ static bool dma_coherent_ok(struct device *dev, phys_addr_t phys, size_t size)
->   struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
->   		dma_addr_t *dma_handle, gfp_t gfp, unsigned long attrs)
->   {
-> +	size_t alloc_size = PAGE_ALIGN(size);
-> +	int node = dev_to_node(dev);
->   	struct page *page = NULL;
->   	u64 phys_mask;
->   
-> @@ -95,8 +97,14 @@ struct page *__dma_direct_alloc_pages(struct device *dev, size_t size,
->   	gfp &= ~__GFP_ZERO;
->   	gfp |= __dma_direct_optimal_gfp_mask(dev, dev->coherent_dma_mask,
->   			&phys_mask);
-> +	page = dma_alloc_contiguous(dev, alloc_size, gfp);
-> +	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
-> +		dma_free_contiguous(dev, page, alloc_size);
-> +		page = NULL;
+>  include/linux/kernel.h | 25 ++++++++++++++++++++++++-
+>  include/linux/sched.h  |  4 ++++
+>  kernel/sched/core.c    | 19 ++++++++++++++-----
+>  3 files changed, 42 insertions(+), 6 deletions(-)
+> 
+> diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+> index 4fa360a13c1e..82f84cfe372f 100644
+> --- a/include/linux/kernel.h
+> +++ b/include/linux/kernel.h
+> @@ -217,7 +217,9 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+>   * might_sleep - annotation for functions that can sleep
+>   *
+>   * this macro will print a stack trace if it is executed in an atomic
+> - * context (spinlock, irq-handler, ...).
+> + * context (spinlock, irq-handler, ...). Additional sections where blocking is
+> + * not allowed can be annotated with non_block_start() and non_block_end()
+> + * pairs.
+>   *
+>   * This is a useful debugging help to be able to catch problems early and not
+>   * be bitten later when the calling function happens to sleep when it is not
+> @@ -233,6 +235,25 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+>  # define cant_sleep() \
+>  	do { __cant_sleep(__FILE__, __LINE__, 0); } while (0)
+>  # define sched_annotate_sleep()	(current->task_state_change = 0)
+> +/**
+> + * non_block_start - annotate the start of section where sleeping is prohibited
+> + *
+> + * This is on behalf of the oom reaper, specifically when it is calling the mmu
+> + * notifiers. The problem is that if the notifier were to block on, for example,
+> + * mutex_lock() and if the process which holds that mutex were to perform a
+> + * sleeping memory allocation, the oom reaper is now blocked on completion of
+> + * that memory allocation. Other blocking calls like wait_event() pose similar
+> + * issues.
+> + */
+> +# define non_block_start() \
+> +	do { current->non_block_count++; } while (0)
+> +/**
+> + * non_block_end - annotate the end of section where sleeping is prohibited
+> + *
+> + * Closes a section opened by non_block_start().
+> + */
+> +# define non_block_end() \
+> +	do { WARN_ON(current->non_block_count-- == 0); } while (0)
+>  #else
+>    static inline void ___might_sleep(const char *file, int line,
+>  				   int preempt_offset) { }
+> @@ -241,6 +262,8 @@ extern void __cant_sleep(const char *file, int line, int preempt_offset);
+>  # define might_sleep() do { might_resched(); } while (0)
+>  # define cant_sleep() do { } while (0)
+>  # define sched_annotate_sleep() do { } while (0)
+> +# define non_block_start() do { } while (0)
+> +# define non_block_end() do { } while (0)
+>  #endif
+>  
+>  #define might_sleep_if(cond) do { if (cond) might_sleep(); } while (0)
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 9f51932bd543..c5630f3dca1f 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -974,6 +974,10 @@ struct task_struct {
+>  	struct mutex_waiter		*blocked_on;
+>  #endif
+>  
+> +#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+> +	int				non_block_count;
+> +#endif
+> +
+>  #ifdef CONFIG_TRACE_IRQFLAGS
+>  	unsigned int			irq_events;
+>  	unsigned long			hardirq_enable_ip;
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 2b037f195473..57245770d6cc 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -3700,13 +3700,22 @@ static noinline void __schedule_bug(struct task_struct *prev)
+>  /*
+>   * Various schedule()-time debugging checks and statistics:
+>   */
+> -static inline void schedule_debug(struct task_struct *prev)
+> +static inline void schedule_debug(struct task_struct *prev, bool preempt)
+>  {
+>  #ifdef CONFIG_SCHED_STACK_END_CHECK
+>  	if (task_stack_end_corrupted(prev))
+>  		panic("corrupted stack end detected inside scheduler\n");
+>  #endif
+>  
+> +#ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+> +	if (!preempt && prev->state && prev->non_block_count) {
+> +		printk(KERN_ERR "BUG: scheduling in a non-blocking section: %s/%d/%i\n",
+> +			prev->comm, prev->pid, prev->non_block_count);
+> +		dump_stack();
+> +		add_taint(TAINT_WARN, LOCKDEP_STILL_OK);
 > +	}
->   again:
-> -	page = dma_alloc_contiguous(dev, size, gfp);
-> +	if (!page)
-> +		page = alloc_pages_node(node, gfp, get_order(alloc_size));
->   	if (page && !dma_coherent_ok(dev, page_to_phys(page), size)) {
->   		dma_free_contiguous(dev, page, size);
->   		page = NULL;
+> +#endif
+> +
+>  	if (unlikely(in_atomic_preempt_off())) {
+>  		__schedule_bug(prev);
+>  		preempt_count_set(PREEMPT_DISABLED);
+> @@ -3813,7 +3822,7 @@ static void __sched notrace __schedule(bool preempt)
+>  	rq = cpu_rq(cpu);
+>  	prev = rq->curr;
+>  
+> -	schedule_debug(prev);
+> +	schedule_debug(prev, preempt);
+>  
+>  	if (sched_feat(HRTICK))
+>  		hrtick_clear(rq);
+> @@ -6570,7 +6579,7 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+>  	rcu_sleep_check();
+>  
+>  	if ((preempt_count_equals(preempt_offset) && !irqs_disabled() &&
+> -	     !is_idle_task(current)) ||
+> +	     !is_idle_task(current) && !current->non_block_count) ||
+>  	    system_state == SYSTEM_BOOTING || system_state > SYSTEM_RUNNING ||
+>  	    oops_in_progress)
+>  		return;
+> @@ -6586,8 +6595,8 @@ void ___might_sleep(const char *file, int line, int preempt_offset)
+>  		"BUG: sleeping function called from invalid context at %s:%d\n",
+>  			file, line);
+>  	printk(KERN_ERR
+> -		"in_atomic(): %d, irqs_disabled(): %d, pid: %d, name: %s\n",
+> -			in_atomic(), irqs_disabled(),
+> +		"in_atomic(): %d, irqs_disabled(): %d, non_block: %d, pid: %d, name: %s\n",
+> +			in_atomic(), irqs_disabled(), current->non_block_count,
+>  			current->pid, current->comm);
+>  
+>  	if (task_stack_end_corrupted(current))
+> -- 
+> 2.23.0.rc1
+> 
 
-I can confirm this resolves the regression!
-
-Tested-by: Tobias Klausmann <tobias.johannes.klausmann@mni.thm.de>
-
-
-Thanks for the work of all involved,
-
-Tobias
-
-
-
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
