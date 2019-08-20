@@ -2,88 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 052B295990
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:29:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 49E0195995
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:29:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729536AbfHTI3P (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:29:15 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54938 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729522AbfHTI3O (ORCPT
+        id S1729554AbfHTI3j (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:29:39 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:34885 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728879AbfHTI3i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:29:14 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p74so1813755wme.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:29:12 -0700 (PDT)
+        Tue, 20 Aug 2019 04:29:38 -0400
+Received: by mail-pl1-f196.google.com with SMTP id gn20so2390116plb.2;
+        Tue, 20 Aug 2019 01:29:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=subject:from:to:references:message-id:date:user-agent:mime-version
-         :in-reply-to:content-language:content-transfer-encoding;
-        bh=VTSW2R99Gpp3ZPuegti+Wid5K/Ptbn+GS7fhEV9UB7Y=;
-        b=cqzZrIti0K7HA+zzORNM1a5F39EziABl3E0hTYPlPqI3ybHQpJaCNrNBOTdVnl2vMu
-         MX8DAAES0sDR74dKpZ27uihKiKzuJ4sNU8pNRLO8rvgcJSwwrThZvOUCE6xCFan1D+Es
-         McQTtGKFtuyhkLxfoebyo2k1yKJHI9/PJva5Bv4Sxj18fZ1GWcRrpfy4i9haC++P0uSR
-         1KBorCQcQWyk6ypOVGf+IKBRSty0NYf9ew5kHWajbuoZMhDa9Q0Ymy219G3AflS+kv0f
-         KqU9ytL8FItys3tnFX+IY3RiW/xoeczCPwplZQBokkZtm0AmRvQtBkC4cMl+EdqMMoGB
-         l4iA==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=89TWE76G7HmT9xAoVwVI29PCwJL0d5XIbmYkxr69FI8=;
+        b=t3hXiMlkVt2zJaCYzY3mwYAXvkxRkUd4IvETXXxhkKsfipfJvPz4EarBK/OHJtQQIV
+         13b93tyXyy2kyraWIoH9SktPh4GrDhWJHNon3rGOf3HPVAmR9ATe29AzLkq/RKXa7uwc
+         iGp0SyOpS2QkotJUPbElXObHvdM2674Yz67VdAA4bVEHtZqRvyosUcA7+0N0JV38apLd
+         c1CKOnB9iVA3xMfyIckwphcO+EMY95NwZ6vWVs/9Cojk2zxVr5Gn3XOw0FVVEYhPCB2N
+         oV6XMWV0DkYS/Ak4LmoFKqqMJF1lCkU6CuXvwX+X4We/kYkF5FKcQXKIR8yn68+KJAA7
+         ICrg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=VTSW2R99Gpp3ZPuegti+Wid5K/Ptbn+GS7fhEV9UB7Y=;
-        b=tR85wxFyjm1dfzpEIP/e0WFT38rpXAxmP0X428VOqxxk7sXIh5wK2X1QPtaOpHNgVO
-         Khw2HytSVlcgOE7As6oKJwTOjQGT/qBZXSHkkGfRoayGhMDldGN0E4cehwZ9QGxQlX94
-         yoYT+I6w3xBhCvecqaasp8OSSvzvesoCy13vOxrR29Z+za/XTHRk22Wnbk155/F6rj5q
-         FkuLQsGhQMM39rQIHn5EIFSauw6poBf8nUYxQhgksYGJud2EIlObZNgosSxazCZ8sqgN
-         rE/kXspxVYDJsNcP2+9YmWozdeRCSZFSRThoCTc0F0CVX9E4veXidlOVo0EvkaxoKkma
-         JeKA==
-X-Gm-Message-State: APjAAAVUhQEzy8c6JbHFCjhQBYDJgo9Ol4wa59heknNjtlIjahOc7qWr
-        u0T1EHlxHTjnfFRbzNulg03R1jdb
-X-Google-Smtp-Source: APXvYqzUD+QBkNWh3KVOat2VCtREXWcnmRQSg/BfK4O9ZeWpEgdWlJUoObWNQrzxrgwZs82GN2Jz1w==
-X-Received: by 2002:a1c:a615:: with SMTP id p21mr24487519wme.121.1566289751650;
-        Tue, 20 Aug 2019 01:29:11 -0700 (PDT)
-Received: from [192.168.1.20] (host109-153-59-46.range109-153.btcentralplus.com. [109.153.59.46])
-        by smtp.googlemail.com with ESMTPSA id o129sm1838587wmb.41.2019.08.20.01.29.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 20 Aug 2019 01:29:10 -0700 (PDT)
-Subject: Re: iwlwifi: microcode SW error detected
-From:   Chris Clayton <chris2553@googlemail.com>
-To:     LKML <linux-kernel@vger.kernel.org>
-References: <42e782e0-78be-b3d4-d222-1a75df35b078@googlemail.com>
- <cdf38da2-def1-cf0d-2d35-f31cc8fe122a@googlemail.com>
-Message-ID: <39c672d9-a95e-65d0-82a4-60fa71317f24@googlemail.com>
-Date:   Tue, 20 Aug 2019 09:29:08 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=89TWE76G7HmT9xAoVwVI29PCwJL0d5XIbmYkxr69FI8=;
+        b=k9bsHaGeTFA+Ksw8+FEE6kq+6/u3R9CNbIfPSBJMxEjFpKNshxyPH8VSjogTlvexup
+         6ooEe6FaonFAsnTnc+99KcPPNVMh6YlQjLAVNviKcc4I9u8y2p1AS4SC2xNjMSth6PTS
+         UYhsVVUbFHyOa7rNHkFgOA/2K5PLb8eNPbcdbs8Tdhpj+f9y2tN3q9pICrXndcoLYfwj
+         BqBPgVfMnC/hRoFpdwDsXA2/Ec2/815a+3Sffm1AzYrmaWaTXIvWdeNmZytAzxZrTpSt
+         8mem52z/QkkFH94a+BPbL5gefSsXzjSRnS6NzxeVzTuWlFqSRwmpM7ljNpzcy7mrUTY6
+         wpmw==
+X-Gm-Message-State: APjAAAWyzwGiiH2azy+ScmWd48dsgj8zbjkP0T4uuc2UZjB7oiA5Ct2b
+        o/yryKd2vVV2aVKDZTyUFcI37rCCpZKVdHzM6uA=
+X-Google-Smtp-Source: APXvYqygm5yiRH3vpF8T5W/PhygCjGZrGfGYrWM5PLTXTvTufF0Xj6dS4Xvx5Zx33oWjUK8S+Fud3s41GC9hvsxlGgI=
+X-Received: by 2002:a17:902:9349:: with SMTP id g9mr26677775plp.262.1566289777626;
+ Tue, 20 Aug 2019 01:29:37 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <cdf38da2-def1-cf0d-2d35-f31cc8fe122a@googlemail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <1566221225-5170-1-git-send-email-xuwei5@hisilicon.com>
+ <CAHp75Vct3qtR5bDF6iALmduKEEq+gNL-btmzQVuWq_hYsmxKhw@mail.gmail.com> <CACRpkdbRZ=88+ooW5jb5vu4Dwsaj7Ce+V5Ked2-bGn0JWpTHfQ@mail.gmail.com>
+In-Reply-To: <CACRpkdbRZ=88+ooW5jb5vu4Dwsaj7Ce+V5Ked2-bGn0JWpTHfQ@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 20 Aug 2019 11:29:25 +0300
+Message-ID: <CAHp75VdZk5F2RTyLbtnD57hNYG3i=Grxd-mBTVOS6yckjr9XbQ@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: pl061: Fix the issue failed to register the ACPI interrtupion
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Thierry Reding <treding@nvidia.com>, Wei Xu <xuwei5@hisilicon.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>, jinying@hisilicon.com,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Tangkunshan <tangkunshan@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 10:12 AM Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+> On Mon, Aug 19, 2019 at 5:07 PM Andy Shevchenko
+> <andy.shevchenko@gmail.com> wrote:
+>
+> > The proper fix is to revert the culprit since we call
+> > acpi_gpiochip_request_interrupts() for all controllers.
+> > Linus, please re-do the approach with IRQ handling,
+>
+> Exactly what do you refer to when you want me to
+> "re-do the approach for IRQ handling"? Do you mean
+> this driver or are you referring to:
+>
+> commit e0d89728981393b7d694bd3419b7794b9882c92d
+> Author: Thierry Reding <treding@nvidia.com>
+> Date:   Tue Nov 7 19:15:54 2017 +0100
+>
+>     gpio: Implement tighter IRQ chip integration
+>
+>     Currently GPIO drivers are required to add the GPIO chip and its
+>     corresponding IRQ chip separately, which can result in a lot of
+>     boilerplate. Use the newly introduced struct gpio_irq_chip, embedded in
+>     struct gpio_chip, that drivers can fill in if they want the GPIO core
+>     to automatically register the IRQ chip associated with a GPIO chip.
+>
+>     Signed-off-by: Thierry Reding <treding@nvidia.com>
+>     Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+>     Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+>
+> The new API introduced by this patch is what I am trying to switch
+> everything over to, because the forked paths inside of gpiolib
+> is causing me a maintenance headache and also increasing
+> the footprint of the library.
+>
+> >  it seems broadly
+> > regress with ACPI enabled platforms.
+>
+> It only becomes a problem if the platform uses ACPI right?
+> But it's a problem if I can't really tell if a driver is using
+> ACPI or not, there is no sign in the pl061 driver that it would
+> be used on ACPI systems until now, so how do I design
+> for it?
+>
+> The problem comes from the problem/mess I am trying to
+> clean up in the first place. So if the new way of registering GPIO
+> irqchips is not working for ACPI, then we have to fix that instead
+> of reverting all attempts to use the new API IMO.
+>
+> Yours,
+> Linus Walleij
 
 
-On 18/08/2019 09:21, Chris Clayton wrote:
-> 
-> 
-> On 17/08/2019 08:19, Chris Clayton wrote:
->> Hi.
->>
->> I just found the following error in the output from dmesg.
->>
->> [ 4023.460058] iwlwifi 0000:02:00.0: Microcode SW error detected. Restarting 0x0.
-> 
-> Since reporting, I've found that this problem is being explored in the thread that starts at
-> https://marc.info/?l=linux-kernel&m=156601519111113.
 
-Mmm, that's a dead link. Don't knwo what happened there but the real link is
-https://marc.info/?l=linux-kernel&m=156265244614126
-
-> 
-> Chris
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
