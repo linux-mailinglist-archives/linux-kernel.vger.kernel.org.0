@@ -2,68 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4C395709
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 07:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4867A95713
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:04:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729178AbfHTF61 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 01:58:27 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfHTF60 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 01:58:26 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hzx9s-0004CX-OO; Tue, 20 Aug 2019 07:58:16 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hzx9s-0001zV-44; Tue, 20 Aug 2019 07:58:16 +0200
-Date:   Tue, 20 Aug 2019 07:58:16 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Sam Shih <sam.shih@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
+        id S1729249AbfHTGEi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:04:38 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:39550 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728960AbfHTGEh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 02:04:37 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id BE5BC1A0059;
+        Tue, 20 Aug 2019 08:04:35 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AC48C1A003B;
+        Tue, 20 Aug 2019 08:04:30 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 31CB9402B7;
+        Tue, 20 Aug 2019 14:04:24 +0800 (SGT)
+From:   Hui Song <hui.song_1@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v4 6/10] dt-bindings: pwm: update bindings for MT7628 SoC
-Message-ID: <20190820055816.nbjah54rzdx72vp5@pengutronix.de>
-References: <1566265225-27452-1-git-send-email-sam.shih@mediatek.com>
- <1566265225-27452-7-git-send-email-sam.shih@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1566265225-27452-7-git-send-email-sam.shih@mediatek.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        Song Hui <hui.song_1@nxp.com>
+Subject: [PATCH v4] arm64: dts: ls1088a: fix gpio node
+Date:   Tue, 20 Aug 2019 13:54:38 +0800
+Message-Id: <20190820055438.43469-1-hui.song_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 09:40:21AM +0800, Sam Shih wrote:
-> From: sam shih <sam.shih@mediatek.com>
-> 
-> This updates bindings for MT7628 pwm controller.
-> 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+From: Song Hui <hui.song_1@nxp.com>
 
-Apart from different capitalisation in Author name and S-o-B, this patch
-looks fine.
+add ls1088a gpio specify compatible.
 
-Best regards
-Uwe
+Signed-off-by: Song Hui <hui.song_1@nxp.com>
+---
+Changes in v4:
+	- update the patch description.
+Changes in v3:
+	- delete the attribute of little-endian.
+Changes in v2:
+	- update the subject.
+ 
 
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index dfbead4..ff669c8 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -269,7 +269,7 @@
+ 		};
+ 
+ 		gpio0: gpio@2300000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			little-endian;
+@@ -280,7 +280,7 @@
+ 		};
+ 
+ 		gpio1: gpio@2310000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <0 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			little-endian;
+@@ -291,7 +291,7 @@
+ 		};
+ 
+ 		gpio2: gpio@2320000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2320000 0x0 0x10000>;
+ 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			little-endian;
+@@ -302,7 +302,7 @@
+ 		};
+ 
+ 		gpio3: gpio@2330000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1088a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2330000 0x0 0x10000>;
+ 			interrupts = <0 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			little-endian;
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.9.5
+
