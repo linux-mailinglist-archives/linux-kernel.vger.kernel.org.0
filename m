@@ -2,73 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BA72961FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A6096201
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:09:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730508AbfHTOH7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:07:59 -0400
-Received: from ns.iliad.fr ([212.27.33.1]:55558 "EHLO ns.iliad.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729988AbfHTOH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:07:57 -0400
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id 29796205F8;
-        Tue, 20 Aug 2019 16:07:55 +0200 (CEST)
-Received: from [192.168.108.37] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id 14B2620554;
-        Tue, 20 Aug 2019 16:07:55 +0200 (CEST)
-Subject: Re: [PATCH] phy: qcom-qmp: Correct ready status, again
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Evan Green <evgreen@chromium.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-References: <20190806004256.20152-1-bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Message-ID: <d455b4b3-0ee6-5612-ead9-b0087e11b22e@free.fr>
-Date:   Tue, 20 Aug 2019 16:07:54 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730537AbfHTOIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:08:46 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45727 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729968AbfHTOIp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:08:45 -0400
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.nyi.internal (Postfix) with ESMTP id 02F9C22281;
+        Tue, 20 Aug 2019 10:08:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Tue, 20 Aug 2019 10:08:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=O7Kzrf
+        ohIuSvPtd1UzngE8AJHpkANJ/fKm2MTfi1JuU=; b=krT8hvBs1ZEc9ptZTRpdZ1
+        2yhlowAcD4n+UQEeOcVg+CTNdLDi5yoj1449hHWtZUvII3GgNsh82ubS8eQXy/PO
+        XCWc0zZ7oxeb+eSWSZVMipNJquR6qkSi1UgbPT7eyTUqjqMuifZnWCH7OfB95Caj
+        g/5PqSPmI5SdsRxjgqAUnfSrOskw0tOVeCmNBsYwXWRimU9uBd7QqwOS3YK47OwL
+        J490bSwEIDVpFlYPtxwhtpNARIvLg9JDWj7FsRNrKnvvmIF68qFgf9fWOg/Vg454
+        X00fjLI8XHYA0yH64vDq9GOYjZSFnpkO7813IXz4ZYG4EphkmjWPYhbpBI6LoCow
+        ==
+X-ME-Sender: <xms:6_5bXU8HOIaQ9hzRMvpBXGoSxMTXj8n-Pbd_O9Sii12pGioCWduO-w>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeguddgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvffukfhfgggtuggjfgesthdtredttdervdenucfhrhhomhepkfguohcu
+    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecukfhppeejle
+    drudejjedrvddurddukedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhes
+    ihguohhstghhrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:6_5bXQ80BC18pZKIbuXj9sVBt1jCYV13BL_IAsTGiUiPlmX7MLpd5w>
+    <xmx:6_5bXVaCUQgkaZBDed6LFbUdQ4hD72U919odT-Cih1p3JyQVwBgFKQ>
+    <xmx:6_5bXRV7yNbwITfrNHXs-WPpSbnEdXUC9AcplshoEE7ism-KKiwt7w>
+    <xmx:7P5bXSiki45pPxWlEbU_Ls9zsSFkZyyZJHHJDYNj5OZ1eo1H9lLRrw>
+Received: from localhost (unknown [79.177.21.180])
+        by mail.messagingengine.com (Postfix) with ESMTPA id BD30D38008A;
+        Tue, 20 Aug 2019 10:08:42 -0400 (EDT)
+Date:   Tue, 20 Aug 2019 17:08:04 +0300
+From:   Ido Schimmel <idosch@idosch.org>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>
+Cc:     YueHaibing <yuehaibing@huawei.com>, davem@davemloft.net,
+        idosch@mellanox.com, jiri@mellanox.com, mcroce@redhat.com,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] netdevsim: Fix build error without CONFIG_INET
+Message-ID: <20190820140804.GA31968@splinter>
+References: <20190819120825.74460-1-yuehaibing@huawei.com>
+ <20190819145900.5d9cc1f3@cakuba.netronome.com>
 MIME-Version: 1.0
-In-Reply-To: <20190806004256.20152-1-bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Aug 20 16:07:55 2019 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819145900.5d9cc1f3@cakuba.netronome.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/08/2019 02:42, Bjorn Andersson wrote:
-
-> Despite extensive testing of 885bd765963b ("phy: qcom-qmp: Correct
-> READY_STATUS poll break condition") I failed to conclude that the
-> PHYSTATUS bit of the PCS_STATUS register used in PCIe and USB3 falls as
-> the PHY gets ready. Similar to the prior bug with UFS the code will
-> generally get past the check before the transition and thereby
-> "succeed".
+On Mon, Aug 19, 2019 at 02:59:00PM -0700, Jakub Kicinski wrote:
+> On Mon, 19 Aug 2019 20:08:25 +0800, YueHaibing wrote:
+> > If CONFIG_INET is not set, building fails:
+> > 
+> > drivers/net/netdevsim/dev.o: In function `nsim_dev_trap_report_work':
+> > dev.c:(.text+0x67b): undefined reference to `ip_send_check'
+> > 
+> > Add CONFIG_INET Kconfig dependency to fix this.
+> > 
+> > Reported-by: Hulk Robot <hulkci@huawei.com>
+> > Fixes: da58f90f11f5 ("netdevsim: Add devlink-trap support")
+> > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 > 
-> Correct the name of the register used PCIe and USB3 PHYs, replace
-> mask_pcs_ready with a constant expression depending on the type of the
-> PHY and check for the appropriate ready state.
+> Hmm.. I'd rather the test module did not have hard dependencies on
+> marginally important config options. We have done a pretty good job
+> so far limiting the requirements though separating the code out at
+> compilation object level. The more tests depend on netdevsim and the
+> more bots we have running tests against randconfig - the more important
+> this is.
 > 
-> Cc: stable@vger.kernel.org
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: Evan Green <evgreen@chromium.org>
-> Cc: Niklas Cassel <niklas.cassel@linaro.org>
-> Reported-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-> Fixes: 885bd765963b ("phy: qcom-qmp: Correct READY_STATUS poll break condition")
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  drivers/phy/qualcomm/phy-qcom-qmp.c | 33 ++++++++++++++---------------
->  1 file changed, 16 insertions(+), 17 deletions(-)
+> This missing reference here is for calculating a checksum over a
+> constant header.. could we perhaps just hard code the checksum?
 
-FWIW, for msm8998:
+Sure. I was AFK today, will send a patch later today when I get home.
 
-Tested-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-
-Regards.
+Thanks
