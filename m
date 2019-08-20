@@ -2,83 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FD4F95C1B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:19:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A933A95C15
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:16:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfHTKRD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 06:17:03 -0400
-Received: from mga02.intel.com ([134.134.136.20]:35575 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729181AbfHTKRC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 06:17:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 03:17:01 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
-   d="scan'208";a="185872320"
-Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by FMSMGA003.fm.intel.com with ESMTP; 20 Aug 2019 03:17:00 -0700
-From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [GIT PULL 0/4] stm class/intel_th: Fixes for v5.3
-Date:   Tue, 20 Aug 2019 13:16:49 +0300
-Message-Id: <20190820101653.74738-1-alexander.shishkin@linux.intel.com>
-X-Mailer: git-send-email 2.23.0.rc1
+        id S1729635AbfHTKQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 06:16:55 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:45453 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728545AbfHTKQy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 06:16:54 -0400
+Received: by mail-pg1-f194.google.com with SMTP id o13so2957328pgp.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 03:16:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=iKtnRnRXyBjoovTvJIaq2YQ2tJPH/EOQqzClVloanFg=;
+        b=DP3SIkcqOUk5qRV022QgDnIYhMRLclsJbQ+iMuhdQeFA6Vy8y4pu0GdWeJS1iSphsx
+         CeoRwgvdNmy74M1YMktAnP+rDB5p8+z0DyOXL+7bgRlbaa0a2dDeCksAHwX41p3+tZz9
+         27L/xSef5k2wR9z7Wx8BP60dtIyYTV6klemVidrjmXK0naEftG6wNr6TmbjhkjmHzx9J
+         /lRhkqxKpuGN0YLZkExZB0TH/hCMF06Z0cPlO+huQc54Riipp5frvylqrLy4I1ICvyaY
+         d6Dy+3Jc4lBSSUVSu+Rk9pWIwtcxzybEywnLMU7/lEVscGrc8tPufM1b7JT9yR4SeG/Y
+         IMkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=iKtnRnRXyBjoovTvJIaq2YQ2tJPH/EOQqzClVloanFg=;
+        b=tQyYkAAxxGEWH3JZufqjIj80gSkk7lLGf9cucwaCNxFVXR+iETPmyZHGVv53RfRkGL
+         YwIKILgepsN+KvNFjBKRPGuzclj6V5sdLIqNO+Cgmz6qO3WT86emHwWRtkSQKY6U6l6d
+         gjOeIccerFJBOcsKCfQ4FUUXnfhk04vODghjx/fG1qqxj4T7CFmvq5JzzR+f1sZt/umC
+         3lff6JNudKdI6SfUwpigx0rIGPsdXz+E05bGhsAvCZ6TPTYIcwOQcQJlSf/+yImf4gGT
+         PQ1hPX3yDKJnWs3cKgS27i/gwPobUtsZ6p6bTBfUTFo6+MVSISqWx825agO7sJuLqhRF
+         UOfQ==
+X-Gm-Message-State: APjAAAVkYW1vEFwTKYznGrH4c2EKhUsx5OgYdm37Wd4jfZem4GhrelYp
+        bRa8YOzQavFQNU+375sXseruJj8p
+X-Google-Smtp-Source: APXvYqwgzcLdn0MCog+xQ170OVRC9VgAYrG0bYTJ3m1jyJ55KFyl9rQ0V/CAuip+wgMOjEC0ZAswxw==
+X-Received: by 2002:a17:90a:b014:: with SMTP id x20mr6255093pjq.60.1566296214062;
+        Tue, 20 Aug 2019 03:16:54 -0700 (PDT)
+Received: from localhost ([175.223.16.125])
+        by smtp.gmail.com with ESMTPSA id k3sm12387515pjo.3.2019.08.20.03.16.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 03:16:53 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 19:16:49 +0900
+From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [RFC PATCH v4 4/9] printk-rb: initialize new descriptors as
+ invalid
+Message-ID: <20190820101649.GC14137@jagdpanzerIV>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-5-john.ogness@linutronix.de>
+ <20190820092337.cudkfdfhsu44vlhh@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820092337.cudkfdfhsu44vlhh@pathway.suse.cz>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On (08/20/19 11:23), Petr Mladek wrote:
+> > is no risk of the descriptor unexpectedly being determined as
+> > valid due to dataring head overflowing/wrapping.
+> 
+> Please, provide more details about the solved race. Is it because
+> some reader could have reference to an invalid (reused) descriptor?
+> Can be these invalid descriptors be member of the list?
 
-These are the fixes that I have for v5.3. One is an actual bugfix that's
-copied to stable, one SPDX header fix and two new PCI IDs. Signed tag
-below, individual patches follow. Please consider applying or pulling.
-Thanks!
+As far as I understand, such descriptors can be on the list:
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+	prb_reserve()
+		assign_desc()
+			// pick a new never used descr
+			i = atomic_fetch_inc(&rb->desc_next_unused);
+			d = &rb->descs[i]
+			dataring_desc_init(&d->desc);
+			return d
+		buf = dataring_push()
+			// the oldest data is reserved, but not commited
+			ret = get_new_lpos()
+			if (ret)
+				dataring_desc_init()
+				return NULL
+		if (!buf)
+			numlist_push()
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+_datablock_valid() has a "desc->begin_lpos == desc->next_lpos" check.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ash/stm.git tags/stm-intel_th-fixes-for-greg-20190820
-
-for you to fetch changes up to 1114218bb49423c2ed6767f0f385f994da71c068:
-
-  intel_th: pci: Add Tiger Lake support (2019-08-20 13:02:59 +0300)
-
-----------------------------------------------------------------
-stm class/intel_th: Fixes for v5.3
-
-These are:
-  * Double-free fix, going back to v4.4.
-  * SPDX license header fix.
-  * 2 new PCI IDs.
-
-----------------------------------------------------------------
-Alexander Shishkin (2):
-      intel_th: pci: Add support for another Lewisburg PCH
-      intel_th: pci: Add Tiger Lake support
-
-Ding Xiang (1):
-      stm class: Fix a double free of stm_source_device
-
-Nishad Kamdar (1):
-      intel_th: Use the correct style for SPDX License Identifier
-
- drivers/hwtracing/intel_th/msu.h |  2 +-
- drivers/hwtracing/intel_th/pci.c | 10 ++++++++++
- drivers/hwtracing/intel_th/pti.h |  2 +-
- drivers/hwtracing/stm/core.c     |  1 -
- 4 files changed, 12 insertions(+), 3 deletions(-)
-
--- 
-2.23.0.rc1
-
+	-ss
