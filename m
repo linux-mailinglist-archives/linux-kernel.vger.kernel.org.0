@@ -2,266 +2,287 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ADE7E95616
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 06:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F9CB95626
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 06:37:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbfHTE0Q (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 00:26:16 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37675 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfHTE0Q (ORCPT
+        id S1729053AbfHTEg6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 00:36:58 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:29566 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728206AbfHTEg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 00:26:16 -0400
-Received: by mail-pg1-f193.google.com with SMTP id d1so2440022pgp.4;
-        Mon, 19 Aug 2019 21:26:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=BOAs8YQrpkx9LCbclh4zUa+NNlVulxSWv8zZAn7Gcts=;
-        b=goMxEvOUrJ34v2kj05/3O0ot1oh0hOgppqKF2ngXdFnxsJcIQTS8C0dq7QskKohqTF
-         HmKCOyxOjbky3y7Cej5Y7rBTMZVqvsIZhsPhRre9fFESjIUILi6yRY1lefEEru9y//VL
-         ofd+2ch9sFPUtNq8HVhl7A7JTDkz2AHRz+IL3XkRnHffIEHpGLx48dNjWPbGPwlqd8Kz
-         bwKTy0JGa+IsTolalFkiMz9C73jHvVrmnoR0lBJWzn5SfRbbqzJMV0hu9pdFiyZr9TiY
-         HNI/Eg8xRP1tlu6cVmjm2enlyA6K8zj1b50rnb58qBUY3VdxZ2QF9V3iQ73Ut592pQ/X
-         dAkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=BOAs8YQrpkx9LCbclh4zUa+NNlVulxSWv8zZAn7Gcts=;
-        b=idc9CGJngDQumd2BAqiQKLq+rKVQRS6X2SQas46cEG5eoag2PfFTSpQC8MxEZP706h
-         CKqv4w/4XFcgQ20DwKURWxF3TRLI8QUsZQZKfSyaTZbG7As7Ha+wfgn3NEFNVQcsMysY
-         GwT/JlTQKpYY6W8WnVlKRzIvzwqOAMdpyKa/ycXPlWWd413kfImk/sfzKEFhC1tbiMVg
-         tjgfGyVKEdGSdNxFhLIiS5MOojoaXUY58M/55+H8hGWIotr5wzPckcykYmoVV+g2eDHk
-         wsO7pSKnhDlBaf4G0cx1P6d27ySaxv3lPfM+tH9Ov91aDVzcN/Ix8v78WNk5DEhknoFU
-         JDvw==
-X-Gm-Message-State: APjAAAUQnj6RqVMUcpJGe2cBYLicCbUmi3mce8ITO4jx85Wcdh5w5oVl
-        qr73qQE0huVxHFLZe17siMs=
-X-Google-Smtp-Source: APXvYqwxsvdQU8SH1HHVjCfzsbvZ/8Jyeac7UK684Qnmk7ZdKIDhsbWD6B+xCj1Dv4jiG2ltIQ1Y+g==
-X-Received: by 2002:a17:90a:bf0e:: with SMTP id c14mr23071202pjs.140.1566275175170;
-        Mon, 19 Aug 2019 21:26:15 -0700 (PDT)
-Received: from [192.168.1.70] (c-73-231-235-122.hsd1.ca.comcast.net. [73.231.235.122])
-        by smtp.gmail.com with ESMTPSA id j5sm17940322pfi.104.2019.08.19.21.26.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 21:26:14 -0700 (PDT)
-Subject: Re: [PATCH v7 3/7] of/platform: Add functional dependency link from
- DT bindings
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-References: <20190724001100.133423-1-saravanak@google.com>
- <20190724001100.133423-4-saravanak@google.com>
- <141d2e16-26cc-1f05-1ac0-6784bab5ae88@gmail.com>
- <CAGETcx-dVnLCRA+1CX47gtZgtwTcrN5KefpjMzh9OJB-BEnqyg@mail.gmail.com>
- <19c99a6e-51c3-68d7-d1d6-640aae754c14@gmail.com>
- <CAGETcx-XcXZq7YFHsFdzBDniQku9cxFUJL_vBoEKKhCH+cDKRw@mail.gmail.com>
- <74931824-f8a1-0435-e00a-5b5cdbe8a8a2@gmail.com>
- <CAGETcx8UHA9kNkjjnBXcf_OYXaaPO9ky60M01Cfz3NFb1c1FZw@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <15ab4fb0-7e69-9cc1-4a79-cff06767f7d9@gmail.com>
-Date:   Mon, 19 Aug 2019 21:26:13 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 20 Aug 2019 00:36:57 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7K4acVL018411
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 00:36:55 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2ug8gb2srd-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 00:36:55 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
+        Tue, 20 Aug 2019 05:36:53 +0100
+Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 20 Aug 2019 05:36:52 +0100
+Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
+        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7K4appQ40173910
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Aug 2019 04:36:51 GMT
+Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 25F165204E;
+        Tue, 20 Aug 2019 04:36:51 +0000 (GMT)
+Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 862135204F;
+        Tue, 20 Aug 2019 04:36:50 +0000 (GMT)
+Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
+        (using TLSv1.2 with cipher AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id DC579A010C;
+        Tue, 20 Aug 2019 14:36:47 +1000 (AEST)
+Subject: Re: [RFC PATCH] powerpc: Convert ____flush_dcache_icache_phys() to C
+From:   "Alastair D'Silva" <alastair@au1.ibm.com>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Tue, 20 Aug 2019 14:36:47 +1000
+In-Reply-To: <de7a813c71c4823797bb351bea8be15acae83be2.1565970465.git.christophe.leroy@c-s.fr>
+References: <de7a813c71c4823797bb351bea8be15acae83be2.1565970465.git.christophe.leroy@c-s.fr>
+Organization: IBM Australia
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.2 (3.32.2-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <CAGETcx8UHA9kNkjjnBXcf_OYXaaPO9ky60M01Cfz3NFb1c1FZw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19082004-0016-0000-0000-000002A09009
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082004-0017-0000-0000-00003300BCEC
+Message-Id: <9887dada07278cb39051941d1a47d50349d9fde0.camel@au1.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=936 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908200047
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/19 5:09 PM, Saravana Kannan wrote:
-> On Mon, Aug 19, 2019 at 2:30 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 8/19/19 1:49 PM, Saravana Kannan wrote:
->>> On Mon, Aug 19, 2019 at 10:16 AM Frank Rowand <frowand.list@gmail.com> wrote:
->>>>
->>>> On 8/15/19 6:50 PM, Saravana Kannan wrote:
->>>>> On Wed, Aug 7, 2019 at 7:06 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>>>>>
->>>>>> On 7/23/19 5:10 PM, Saravana Kannan wrote:
->>>>>>> Add device-links after the devices are created (but before they are
->>>>>>> probed) by looking at common DT bindings like clocks and
->>>>>>> interconnects.
->>>>
->>>>
->>>> < very big snip (lots of comments that deserve answers) >
->>>>
->>>>
->>>>>>
->>>>>> /**
->>>>>>  * of_link_property - TODO:
->>>>>>  * dev:
->>>>>>  * con_np:
->>>>>>  * prop:
->>>>>>  *
->>>>>>  * TODO...
->>>>>>  *
->>>>>>  * Any failed attempt to create a link will NOT result in an immediate return.
->>>>>>  * of_link_property() must create all possible links even when one of more
->>>>>>  * attempts to create a link fail.
->>>>>>
->>>>>> Why?  isn't one failure enough to prevent probing this device?
->>>>>> Continuing to scan just results in extra work... which will be
->>>>>> repeated every time device_link_check_waiting_consumers() is called
->>>>>
->>>>> Context:
->>>>> As I said in the cover letter, avoiding unnecessary probes is just one
->>>>> of the reasons for this patch. The other (arguably more important)
->>>>
->>>> Agree that it is more important.
->>>>
->>>>
->>>>> reason for this patch is to make sure suppliers know that they have
->>>>> consumers that are yet to be probed. That way, suppliers can leave
->>>>> their resource on AND in the right state if they were left on by the
->>>>> bootloader. For example, if a clock was left on and at 200 MHz, the
->>>>> clock provider needs to keep that clock ON and at 200 MHz till all the
->>>>> consumers are probed.
->>>>>
->>>>> Answer: Let's say a consumer device Z has suppliers A, B and C. If the
->>>>> linking fails at A and you return immediately, then B and C could
->>>>> probe and then figure that they have no more consumers (they don't see
->>>>> a link to Z) and turn off their resources. And Z could fail
->>>>> catastrophically.
->>>>
->>>> Then I think that this approach is fatally flawed in the current implementation.
->>>
->>> I'm waiting to hear how it is fatally flawed. But maybe this is just a
->>> misunderstanding of the problem?
->>
->> Fatally flawed because it does not handle modules that add a consumer
->> device when the module is loaded.
+On Fri, 2019-08-16 at 15:52 +0000, Christophe Leroy wrote:
+> Resulting code (8xx with 16 bytes per cacheline and 16k pages)
 > 
-> If you are talking about modules adding child devices of the device
-> they are managing, then that's handled correctly later in the series.
-
-They may or they may not.  I do not know.  I am not going to audit all
-current cases of devices being added to check that relationship and I am
-not going to monitor all future patches that add devices.  Adding devices
-is an existing pattern of behavior that the new feature must be able to
-handle.
-
-I have not looked at patch 6 yet (the place where modules adding child
-devices is handled).  I am guessing that patch 6 could be made more
-general to remove the parent child relationship restriction.
-
+> 0000016c <__flush_dcache_icache_phys>:
+>  16c:	54 63 00 22 	rlwinm  r3,r3,0,0,17
+>  170:	7d 20 00 a6 	mfmsr   r9
+>  174:	39 40 04 00 	li      r10,1024
+>  178:	55 28 07 34 	rlwinm  r8,r9,0,28,26
+>  17c:	7c 67 1b 78 	mr      r7,r3
+>  180:	7d 49 03 a6 	mtctr   r10
+>  184:	7d 00 01 24 	mtmsr   r8
+>  188:	4c 00 01 2c 	isync
+>  18c:	7c 00 18 6c 	dcbst   0,r3
+>  190:	38 63 00 10 	addi    r3,r3,16
+>  194:	42 00 ff f8 	bdnz    18c <__flush_dcache_icache_phys+0x20>
+>  198:	7c 00 04 ac 	hwsync
+>  19c:	7d 49 03 a6 	mtctr   r10
+>  1a0:	7c 00 3f ac 	icbi    0,r7
+>  1a4:	38 e7 00 10 	addi    r7,r7,16
+>  1a8:	42 00 ff f8 	bdnz    1a0 <__flush_dcache_icache_phys+0x34>
+>  1ac:	7c 00 04 ac 	hwsync
+>  1b0:	7d 20 01 24 	mtmsr   r9
+>  1b4:	4c 00 01 2c 	isync
+>  1b8:	4e 80 00 20 	blr
 > 
-> If you are talking about modules adding devices that aren't defined in
-> DT, then right, I'm not trying to handle that. The module needs to
-> make sure it keeps the resources needed for new devices it's adding
-> are in the right state or need to add the right device links.
-
-I am not talking about devices that are not defined in the devicetree.
-
-
+> Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+> ---
+>  This patch is on top of Alastair's series "powerpc: convert cache
+> asm to C"
+>  Patch 3 of that series should touch __flush_dcache_icache_phys and
+> this
+>  patch could come just after patch 3.
 > 
->>> In the text below, I'm not sure if you mixing up two different things
->>> or just that your wording it a bit ambiguous. So pardon my nitpick to
->>> err on the side of clarity.
->>
->> Please do nitpick.  Clarity is good.
->>
->>
->>>
->>>> A device can be added by a module that is loaded.
->>>
->>> No, in the example I gave, of_platform_default_populate_init() would
->>> add all 3 of those devices during arch_initcall_sync().
->>
->> The example you gave does not cover all use cases.
->>
->> There are modules that add devices when the module is loaded.  You can not
->> ignore systems using such modules.
+>  arch/powerpc/include/asm/cacheflush.h |  8 +++++
+>  arch/powerpc/mm/mem.c                 | 55
+> ++++++++++++++++++++++++++++-------
+>  2 files changed, 53 insertions(+), 10 deletions(-)
 > 
-> I'll have to agree to disagree on that. While I understand that the
-> design should be good and I'm happy to work on that, you can't insist
-> that a patch series shouldn't be allowed because it's only improving
-> 99% of the cases and leaves the other 1% in the status quo. You are
-> just going to bring the kernel development to a grinding halt.
+> diff --git a/arch/powerpc/include/asm/cacheflush.h
+> b/arch/powerpc/include/asm/cacheflush.h
+> index 1826bf2cc137..bf4f2dc4eb76 100644
+> --- a/arch/powerpc/include/asm/cacheflush.h
+> +++ b/arch/powerpc/include/asm/cacheflush.h
+> @@ -47,6 +47,14 @@ void flush_icache_user_range(struct vm_area_struct
+> *vma,
+>  				    struct page *page, unsigned long
+> addr,
+>  				    int len);
+>  void flush_dcache_icache_page(struct page *page);
+> +#if defined(CONFIG_PPC32) && !defined(CONFIG_BOOKE)
+> +void __flush_dcache_icache_phys(unsigned long physaddr);
+> +#else
+> +static inline void __flush_dcache_icache_phys(unsigned long
+> physaddr)
+> +{
+> +	BUG();
+> +}
+> +#endif
+>  
+>  /**
+>   * flush_dcache_range(): Write any modified data cache blocks out to
+> memory and invalidate them.
+> diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
+> index 43be99de7c9a..43009f9227c4 100644
+> --- a/arch/powerpc/mm/mem.c
+> +++ b/arch/powerpc/mm/mem.c
+> @@ -402,6 +402,50 @@ void flush_dcache_page(struct page *page)
+>  }
+>  EXPORT_SYMBOL(flush_dcache_page);
+>  
+> +#if defined(CONFIG_PPC32) && !defined(CONFIG_BOOKE)
+> +void __flush_dcache_icache_phys(unsigned long physaddr)
+> +{
+> +	unsigned long bytes = l1_dcache_bytes();
+> +	unsigned long nb = PAGE_SIZE / bytes;
+> +	unsigned long addr = physaddr & PAGE_MASK;
+> +	unsigned long msr, msr0;
+> +	unsigned long loop1 = addr, loop2 = addr;
+> +
+> +	if (cpu_has_feature(CPU_FTR_COHERENT_ICACHE)) {
+> +		/* For a snooping icache, we still need a dummy icbi to
+> purge all the
+> +		 * prefetched instructions from the ifetch buffers. We
+> also need a sync
+> +		 * before the icbi to order the the actual stores to
+> memory that might
+> +		 * have modified instructions with the icbi.
+> +		 */
+> +		mb(); /* sync */
+> +		icbi((void *)addr);
+> +		mb(); /* sync */
+> +		isync();
+> +		return;
+> +	}
+> +	msr0 = mfmsr();
+> +	msr = msr0 & ~MSR_DR;
+> +	asm volatile(
+> +	    "	mtctr %2;"
+> +	    "	mtmsr %3;"
+> +	    "	isync;"
+> +	    "0:	dcbst	0, %0;"
+> +	    "	addi	%0, %0, %4;"
+> +	    "	bdnz	0b;"
+> +	    "	sync;"
+> +	    "	mtctr %2;"
+> +	    "1:	icbi	0, %1;"
+> +	    "	addi	%1, %1, %4;"
+> +	    "	bdnz	1b;"
+> +	    "	sync;"
+> +	    "	mtmsr %5;"
+> +	    "	isync;"
+> +	    : "+r" (loop1), "+r" (loop2)
+> +	    : "r" (nb), "r" (msr), "i" (bytes), "r" (msr0)
+> +	    : "ctr", "memory");
+> +}
+> +#endif
+> +
+>  void flush_dcache_icache_page(struct page *page)
+>  {
+>  #ifdef CONFIG_HUGETLB_PAGE
+> @@ -419,16 +463,7 @@ void flush_dcache_icache_page(struct page *page)
+>  		__flush_dcache_icache(start);
+>  		kunmap_atomic(start);
+>  	} else {
+> -		unsigned long msr = mfmsr();
+> -
+> -		/* Clear the DR bit so that we operate on physical
+> -		 * rather than virtual addresses
+> -		 */
+> -		mtmsr(msr & ~(MSR_DR));
+> -
+> -		__flush_dcache_icache((void *)physaddr);
+> -
+> -		mtmsr(msr);
+> +		__flush_dcache_icache_phys(page_to_pfn(page) <<
+> PAGE_SHIFT);
+>  	}
+>  #endif
+>  }
 
-No, you do not get to disagree on that.  And you are presenting a straw
-man argument.
 
-You are proposing a new feature that contributes fragility and complexity
-to the house of cards that device instantiation and driver probing already
-is.
+Thanks Christophe,
 
-The feature is clever but it is intertwined into an area that is already
-complex and in many cases difficult to work within.
+I'm trying a somewhat different approach that requires less knowledge
+of assembler. Handling of CPU_FTR_COHERENT_ICACHE is outside this
+function. The code below is not a patch as my tree is a bit messy,
+sorry:
 
-I had hoped that the feature was robust enough and generic enough to
-accept.  The proposed feature is a hack to paper over a specific problem
-that you are facing.  I had hoped that the feature would appear generic
-enough that I would not have to regard it as an attempt to paper over
-the real problem.  I have not given up this hope yet but I still am
-quite cautious about this approach to addressing your use case.
+/**
+ * flush_dcache_icache_phys() - Flush a page by it's physical address
+ * @addr: the physical address of the page
+ */
+static void flush_dcache_icache_phys(unsigned long addr)
+{
+	register unsigned long msr;
+	register unsigned long dlines = PAGE_SIZE >> l1_dcache_shift();
+	register unsigned long dbytes = l1_dcache_bytes();
+	register unsigned long ilines = PAGE_SIZE >> l1_icache_shift();
+	register unsigned long ibytes = l1_icache_bytes();
+	register unsigned long i;
+	register unsigned long address = addr;
 
-You have a real bug.  I have told you how to fix the real bug.  And you
-have ignored my suggestion.  (To be honest, I do not know for sure that
-my suggestion is feasible, but on the surface it appears to be.)  Again,
-my suggestion is to have the boot loader pass information to the kernel
-(via a chosen property) telling the kernel which devices the bootloader
-has enabled power to.  The power subsystem would use that information
-early in boot to do a "get" on the power supplier (I am not using precise
-power subsystem terminology, but it should be obvious what I mean).
-The consumer device driver would also have to be aware of the information
-passed via the chosen property because the power subsystem has done the
-"get" on the consumer devices behalf (exactly how the consumer gets
-that information is an implementation detail).  This approach is
-more direct, less subtle, less fragile.
+	/*
+	 * Clear the DR bit so that we operate on physical
+	 * rather than virtual addresses
+	 */
+	msr = mfmsr();
+	mtmsr(msr & ~(MSR_DR));
+
+	/* Write out the data cache */
+	for (i = 0; i < dlines; i++, address += dbytes)
+		dcbst((void *)address);
+
+	/* Invalidate the instruction cache */
+	address = addr;
+	for (i = 0; i < ilines; i++, address += ibytes)
+		icbi((void *)address);
+
+	mtmsr(msr);
+}
+
+void test_flush_phys(unsigned long addr)
+{
+	flush_dcache_icache_phys(addr);
+}
 
 
-> 
->>>
->>>>  In that case the device
->>>> was not present at late boot when the suppliers may turn off their resources.
->>>
->>> In that case, the _drivers_ for those devices aren't present at late
->>> boot. So that they can't request to keep the resources on for their
->>> consumer devices. Since there are no consumer requests on resources,
->>> the suppliers turn off their resources at late boot (since there isn't
->>> a better location as of today). The sync_state() call back added in a
->>> subsequent patche in this series will provide the better location.
->>
->> And the sync_state() call back will not deal with modules that add consumer
->> devices when the module is loaded, correct?
-> 
-> Depends. If it's just more devices from DT, then it'll be fine. If
-> it's not, then the module needs to take care of the needs of devices
-> it's adding.> 
->>>
->>>> (I am assuming the details since I have not reviewed the patches later in
->>>> the series that implement this part.)
->>>>
->>>> Am I missing something?
->>>
->>> I think you are mixing up devices getting added/populated with drivers
->>> getting loaded as modules?
->>
->> Only some modules add devices when they are loaded.  But these modules do
->> exist.
-> 
-> Out of the billions of Android devices, how many do you see this happening in?
+This gives the following assembler (using pmac32_defconfig):
+000003cc <test_flush_phys>:
+ 3cc:   94 21 ff f0     stwu    r1,-16(r1)
+ 3d0:   7d 00 00 a6     mfmsr   r8
+ 3d4:   55 09 07 34     rlwinm  r9,r8,0,28,26
+ 3d8:   7d 20 01 24     mtmsr   r9
+ 3dc:   39 20 00 80     li      r9,128
+ 3e0:   7d 29 03 a6     mtctr   r9
+ 3e4:   39 43 10 00     addi    r10,r3,4096
+ 3e8:   7c 69 1b 78     mr      r9,r3
+ 3ec:   7c 00 48 6c     dcbst   0,r9
+ 3f0:   39 29 00 20     addi    r9,r9,32
+ 3f4:   42 00 ff f8     bdnz    3ec <test_flush_phys+0x20>
+ 3f8:   7c 00 1f ac     icbi    0,r3
+ 3fc:   38 63 00 20     addi    r3,r3,32
+ 400:   7f 8a 18 40     cmplw   cr7,r10,r3
+ 404:   40 9e ff f4     bne     cr7,3f8 <test_flush_phys+0x2c>
+ 408:   7d 00 01 24     mtmsr   r8
+ 40c:   38 21 00 10     addi    r1,r1,16
+ 410:   4e 80 00 20     blr
 
-The Linux kernel is not just used by Android devices.
 
--Frank
-
-> 
-> Thanks,
-> Saravana
-> 
+-- 
+Alastair D'Silva
+Open Source Developer
+Linux Technology Centre, IBM Australia
+mob: 0423 762 819
 
