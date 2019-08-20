@@ -2,82 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E61796B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:19:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B326596B40
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:17:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730955AbfHTVTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:19:44 -0400
-Received: from ozlabs.org ([203.11.71.1]:49629 "EHLO ozlabs.org"
+        id S1730760AbfHTVR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:17:28 -0400
+Received: from mga05.intel.com ([192.55.52.43]:26259 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfHTVTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:19:43 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46CkFn22G5z9s4Y;
-        Wed, 21 Aug 2019 07:19:41 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1566335981;
-        bh=hcUxzUsiChBJ4VT++JpmDf67lPbT67XA0tJypiVpa80=;
-        h=Date:From:To:Cc:Subject:From;
-        b=LEtZk2ifrovCluJChC4OuzeKYfGI0iKFJdnmoK8T1l1ZWjPOBUOukYg+09YJJHS6S
-         uGF8gY8F+xnCD63T6IzwjLh+RRAGY2LsRygvg1KZDrA9RnD7S1m9KfvZqar7x0gQDB
-         NHRTVzbp8FPTbiA6aLKr90jWecTBm2U9fsgc+Tf976hrLfVt4qOkAHMPuu5sWhPsDH
-         FF5td9SQFxwHLfqAq5C6Vv/kGbWwgQNyeUwW92UkMKl3OfcUuOQw6iXToPs3m4G/iU
-         dsTPr/HqqqGFNzR/WQDpUTLUBf/GpP2aLtU6cMa8CP3ZRUacMJX87nRjuUzZC4ffO6
-         Hpz4kcrlAOMSw==
-Date:   Wed, 21 Aug 2019 07:19:39 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Bjorn Helgaas <bhelgaas@google.com>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Haiyang Zhang <haiyangz@microsoft.com>
-Subject: linux-next: Signed-off-by missing for commit in the pci tree
-Message-ID: <20190821071939.11382b44@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/6OLNl3lWoxVMMpMl1hJBE/3";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+        id S1728283AbfHTVR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 17:17:28 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 14:17:27 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,410,1559545200"; 
+   d="scan'208";a="353738858"
+Received: from jacob-builder.jf.intel.com ([10.7.199.155])
+  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2019 14:17:27 -0700
+From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
+To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        David Woodhouse <dwmw2@infradead.org>
+Cc:     Raj Ashok <ashok.raj@intel.com>,
+        "Lu Baolu" <baolu.lu@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: [PATCH] iommu/vt-d: remove global page flush support
+Date:   Tue, 20 Aug 2019 14:21:08 -0700
+Message-Id: <1566336068-39416-1-git-send-email-jacob.jun.pan@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/6OLNl3lWoxVMMpMl1hJBE/3
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Global pages support is removed from VT-d spec 3.0. Since global pages G
+flag only affects first-level paging structures and because DMA request
+with PASID are only supported by VT-d spec. 3.0 and onward, we can
+safely remove global pages support.
 
-Hi all,
+For kernel shared virtual address IOTLB invalidation, PASID
+granularity and page selective within PASID will be used. There is
+no global granularity supported. Without this fix, IOTLB invalidation
+will cause invalid descriptor error in the queued invalidation (QI)
+interface.
 
-Commit
+Reported-by:   Sanjay K Kumar <sanjay.k.kumar@intel.com>
+Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+---
+ drivers/iommu/intel-svm.c   | 36 +++++++++++++++---------------------
+ include/linux/intel-iommu.h |  3 ---
+ 2 files changed, 15 insertions(+), 24 deletions(-)
 
-  c4a29fbba415 ("PCI: hv: Use bytes 4 and 5 from instance ID as the PCI dom=
-ain numbers")
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index c6edef2..55f4128 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -101,24 +101,19 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
+ }
+ 
+ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_dev *sdev,
+-				       unsigned long address, unsigned long pages, int ih, int gl)
++				unsigned long address, unsigned long pages, int ih)
+ {
+ 	struct qi_desc desc;
+ 
+-	if (pages == -1) {
+-		/* For global kernel pages we have to flush them in *all* PASIDs
+-		 * because that's the only option the hardware gives us. Despite
+-		 * the fact that they are actually only accessible through one. */
+-		if (gl)
+-			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+-					QI_EIOTLB_DID(sdev->did) |
+-					QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
+-					QI_EIOTLB_TYPE;
+-		else
+-			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
+-					QI_EIOTLB_DID(sdev->did) |
+-					QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
+-					QI_EIOTLB_TYPE;
++	/*
++	 * Do PASID granu IOTLB invalidation if page selective capability is
++	 * not available.
++	 */
++	if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap)) {
++		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
++			QI_EIOTLB_DID(sdev->did) |
++			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
++			QI_EIOTLB_TYPE;
+ 		desc.qw1 = 0;
+ 	} else {
+ 		int mask = ilog2(__roundup_pow_of_two(pages));
+@@ -128,7 +123,6 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+ 				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
+ 				QI_EIOTLB_TYPE;
+ 		desc.qw1 = QI_EIOTLB_ADDR(address) |
+-				QI_EIOTLB_GL(gl) |
+ 				QI_EIOTLB_IH(ih) |
+ 				QI_EIOTLB_AM(mask);
+ 	}
+@@ -163,13 +157,13 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
+ }
+ 
+ static void intel_flush_svm_range(struct intel_svm *svm, unsigned long address,
+-				  unsigned long pages, int ih, int gl)
++				unsigned long pages, int ih)
+ {
+ 	struct intel_svm_dev *sdev;
+ 
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(sdev, &svm->devs, list)
+-		intel_flush_svm_range_dev(svm, sdev, address, pages, ih, gl);
++		intel_flush_svm_range_dev(svm, sdev, address, pages, ih);
+ 	rcu_read_unlock();
+ }
+ 
+@@ -181,7 +175,7 @@ static void intel_invalidate_range(struct mmu_notifier *mn,
+ 	struct intel_svm *svm = container_of(mn, struct intel_svm, notifier);
+ 
+ 	intel_flush_svm_range(svm, start,
+-			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0, 0);
++			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0);
+ }
+ 
+ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+@@ -204,7 +198,7 @@ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
+ 	rcu_read_lock();
+ 	list_for_each_entry_rcu(sdev, &svm->devs, list) {
+ 		intel_pasid_tear_down_entry(svm->iommu, sdev->dev, svm->pasid);
+-		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
++		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
+ 	}
+ 	rcu_read_unlock();
+ 
+@@ -612,7 +606,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
+ 			 * large and has to be physically contiguous. So it's
+ 			 * hard to be as defensive as we might like. */
+ 			intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
+-			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
++			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
+ 			kfree_rcu(sdev, rcu);
+ 
+ 			if (list_empty(&svm->devs)) {
+diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
+index 682eafa1..f09813f 100644
+--- a/include/linux/intel-iommu.h
++++ b/include/linux/intel-iommu.h
+@@ -350,7 +350,6 @@ enum {
+ #define QI_PC_PASID_SEL		1
+ 
+ #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
+-#define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
+ #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
+ #define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
+ #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
+@@ -386,8 +385,6 @@ enum {
+ #define QI_RESP_INVALID		0x1
+ #define QI_RESP_FAILURE		0xf
+ 
+-#define QI_GRAN_ALL_ALL			0
+-#define QI_GRAN_NONG_ALL		1
+ #define QI_GRAN_NONG_PASID		2
+ #define QI_GRAN_PSI_PASID		3
+ 
+-- 
+2.7.4
 
-is missing a Signed-off-by from its committer.
-
-Also, all the tags should be kept together, please.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/6OLNl3lWoxVMMpMl1hJBE/3
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1cY+sACgkQAVBC80lX
-0Gy54Qf8CSogT6X3S7y9GYoqUeXN+BIqfyHRaWcFN/R7JrxcANevSaNrUmJ6hx13
-Q2QCikuIJKWPU2B1frN+QudzLZkoWVnzY2H3RJGvhbDWGpzJh60TAX5j7a9F8hmz
-J9xJ0gCwnC86BeUx36nj89F2fuuxvlZsctoHJgH38ONuSn0AV/tV4UZ9x2GTVUwp
-TySf6rOtJN1da/539Z3Ck6I/QBk0FiqmxacW4b8SVrQLjfJbUIlyKZdpHavgmDlj
-s6pzhoK4uIIhGGHlDAO/spL77WTevIhWtriWr//T+rNVkVAxj6NHeVsRJIVwRcVp
-Nnh/uRbsUHG7tK2iwRJNwmZW6Ua2KQ==
-=NLtA
------END PGP SIGNATURE-----
-
---Sig_/6OLNl3lWoxVMMpMl1hJBE/3--
