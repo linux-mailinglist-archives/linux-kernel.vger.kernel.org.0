@@ -2,113 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0217795ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:36:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D08E395E9D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:33:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfHTMf4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:35:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfHTMfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:35:55 -0400
-Received: from localhost (unknown [106.201.62.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 51B3222DA7;
-        Tue, 20 Aug 2019 12:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566304555;
-        bh=nJ0mcbMfylwac8G88uFjWYi2IIkTy/0t3muFG+48Pwo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=eo5zTxquyKft1fh7Dl1i0gfO749DVg6E05GBvwPBx6Bhjs434sfYJN+6g5kMyzihI
-         ioENbddmBvHJKd7HzIIUPkSg6TFJkg8Yi/9yPOMlCSqok+HisyEC5R4QzOOiDRv78f
-         T6igoogdaQtVfX0wn7HN7TMbfPtP/qdu6bmFnAFk=
-Date:   Tue, 20 Aug 2019 18:04:43 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] arm64: dts: qcom: pm8150: Add Base DTS file
-Message-ID: <20190820123443.GA12733@vkoul-mobl.Dlink>
-References: <20190820064216.8629-1-vkoul@kernel.org>
- <20190820064216.8629-3-vkoul@kernel.org>
- <20190820122719.GD31261@centauri>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820122719.GD31261@centauri>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+        id S1729835AbfHTMdQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:33:16 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:35021 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729137AbfHTMdP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:33:15 -0400
+Received: by mail-pf1-f195.google.com with SMTP id d85so3322202pfd.2;
+        Tue, 20 Aug 2019 05:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:date:message-id:subject;
+        bh=zvwNQi4BCeuIA14cWZa0cHRt7U/PvcH30olqD0I+BGs=;
+        b=OeF/l51CBLge4/Wv3+5rrj7xno8+xVbhY59avBJvgnt8NCKcSbwr86tAxJLEHTN6Sk
+         kmqX0omOoG3gZMYhUvnhnIEUfbjYqRr1WW5rJ7jqniTU7IIpoRkyyURuMg2AAZ0BkrGL
+         1CkCCnk13NNifXaSziMVFvSi5lRjYban9TJ/WS7CMBjs8ina5EQ01sXjcH84/nvEwQdM
+         XEBQelq7hD9gywe1tT1y4OlmrpJexraQbOUcfXtI/e01zErwP+l83whuTXzWH8yJu3zL
+         1RmQ/hF+IUKSX1DWo1qhc4NLg4K1wDLimdn19QPpAXVpjxX1X7kIr3XJux5ToMq0FOjR
+         gXFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:date:message-id:subject;
+        bh=zvwNQi4BCeuIA14cWZa0cHRt7U/PvcH30olqD0I+BGs=;
+        b=BI2PJhnQGuOpCjIXZwLdfF+vSiR5EgYyL2YTNUGfWOFkbMmcJbyR1FO/ydZDEG1/Rg
+         DPvP8MTiyWk1C9K9+7Ud6FqXrDJtfVUrwNUZI9AU6a5AW+begWSqUtlpOnD8soFFmI+0
+         K+LMXDSU3fMXVS2MgAOSIKDDoO465yVlFBEAC8ELFxm2iwXSQPCABz9eY5Zajt24yz5n
+         Z/BwrXZmOoZjtPH/xl1Bpehg6cZniG6WsG/1tNrSUWSAJYXQ6wk4QBTuy3ZGTOqkxozV
+         dqGQpjuEZKAj//X3UIkKo8P1qJFo5DvAqp5pOh/G17ZuSeCiCD4N2UbTrS7JLp/hesls
+         njKA==
+X-Gm-Message-State: APjAAAX9bkwdJgu9WZMma1SJQcD7Er64/Q9/f39K3vNntKCpOJxfsNrf
+        r22vH5/+Klgai63mFUdi4SWeOsIZ
+X-Google-Smtp-Source: APXvYqwzXZIQ5h8iNoF7/9ju+JjQYuHdT8iC1R4a+hrxV1YRmTnUBfmAlaHmjz3x6+/O3wSReeHT+g==
+X-Received: by 2002:aa7:9ab8:: with SMTP id x24mr29047690pfi.98.1566304394239;
+        Tue, 20 Aug 2019 05:33:14 -0700 (PDT)
+Received: from [127.0.0.1] (l193216.ppp.asahi-net.or.jp. [218.219.193.216])
+        by smtp.gmail.com with ESMTPSA id m34sm20772366pje.5.2019.08.20.05.33.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2019 05:33:13 -0700 (PDT)
+From:   Magnus Damm <magnus.damm@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        geert+renesas@glider.be, daniel.lezcano@linaro.org,
+        linux-renesas-soc@vger.kernel.org, robh+dt@kernel.org,
+        horms+renesas@verge.net.au, Magnus Damm <magnus.damm@gmail.com>,
+        tglx@linutronix.de
+Date:   Tue, 20 Aug 2019 21:34:52 +0900
+Message-Id: <156630449239.17444.11157306180861080402.sendpatchset@octo>
+Subject: [PATCH v2 0/7] renesas, cmt: DT Binding Documentation and Minor Driver Updates V2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20-08-19, 14:27, Niklas Cassel wrote:
-> On Tue, Aug 20, 2019 at 12:12:10PM +0530, Vinod Koul wrote:
-> > Add base DTS file for pm8150 along with GPIOs, power-on, rtc and vadc
-> > nodes
-> > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/pm8150.dtsi | 95 ++++++++++++++++++++++++++++
-> >  1 file changed, 95 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/qcom/pm8150.dtsi
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/pm8150.dtsi b/arch/arm64/boot/dts/qcom/pm8150.dtsi
-> > new file mode 100644
-> > index 000000000000..4a678be46d37
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/qcom/pm8150.dtsi
-> > @@ -0,0 +1,95 @@
-> > +// SPDX-License-Identifier: BSD-3-Clause
-> > +// Copyright (c) 2017-2019, The Linux Foundation. All rights reserved.
-> > +// Copyright (c) 2019, Linaro Limited
-> > +
-> > +#include <dt-bindings/input/input.h>
-> > +#include <dt-bindings/interrupt-controller/irq.h>
-> > +#include <dt-bindings/spmi/spmi.h>
-> > +#include <dt-bindings/iio/qcom,spmi-vadc.h>
-> > +
-> > +&spmi_bus {
-> > +	pm8150_0: pmic@0 {
-> > +		compatible = "qcom,pm8150", "qcom,spmi-pmic";
-> > +		reg = <0x0 SPMI_USID>;
-> > +		#address-cells = <1>;
-> > +		#size-cells = <0>;
-> > +
-> > +		pon: power-on@800 {
-> > +			compatible = "qcom,pm8916-pon";
-> > +			reg = <0x0800>;
-> > +			pwrkey {
-> > +				compatible = "qcom,pm8941-pwrkey";
-> > +				interrupts = <0x0 0x8 0 IRQ_TYPE_EDGE_BOTH>;
-> 
-> Here you use 0 for 3rd cell
-> 
-> > +				debounce = <15625>;
-> > +				bias-pull-up;
-> > +				linux,code = <KEY_POWER>;
-> > +
-> > +				status = "disabled";
-> > +			};
-> > +		};
-> > +
-> > +		pm8150_adc: adc@3100 {
-> > +			compatible = "qcom,spmi-adc5";
-> > +			reg = <0x3100>;
-> > +			#address-cells = <1>;
-> > +			#size-cells = <0>;
-> > +			#io-channel-cells = <1>;
-> > +			interrupts = <0x0 0x31 0x0 IRQ_TYPE_EDGE_RISING>;
-> 
-> Here you use 0x0 for 3rd cell, be consistent.
+renesas, cmt: DT Binding Documentation and Minor Driver Updates V2
 
-Will make it either at this and other places, thanks for pointing!
+[PATCH v2 1/7] dt-bindings: timer: renesas, cmt: Add CMT0234 to sh73a0 and r8a7740
+[PATCH v2 2/7] dt-bindings: timer: renesas, cmt: Update CMT1 on sh73a0 and r8a7740
+[PATCH v2 3/7] dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a7792
+[PATCH v2 4/7] dt-bindings: timer: renesas, cmt: Add CMT0 and CMT1 to r8a77995
+[PATCH v2 5/7] dt-bindings: timer: renesas, cmt: Update R-Car Gen3 CMT1 usage
+[PATCH v2 6/7] clocksource/drivers/sh_cmt: r8a7740 and sh73a0 SoC-specific match
+[PATCH v2 7/7] clocksource/drivers/sh_cmt: Document "cmt-48" as deprecated 
 
--- 
-~Vinod
+This series collect the following rather trivial changes for the CMT driver:
+- Add 32-bit CMT0234 and convert CMT1 DT binding docs on sh73a0 and r8a7740.
+- Add documentation for the CMT on the R-Car Gen2 V2H (r8a7792) SoC.
+- Add missing R-Car Gen3 DT binding documentation for D3 (r8a77995).
+- Update the R-Car Gen3 DT documentation to reflect current usage.
+- Introduce SoC-specific matching in the driver for CMT1 on sh73a0 and sh73a0.
+- Document old "cmt-48" binding as deprecated in the driver.
+
+Since V1 the only update is the addition of reviewed-by from Simon - thanks!
+
+Please see each individual patch for more detailed information.
+
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be> [Patch 3-5]
+Reviewed-by: Rob Herring <robh@kernel.org> [Patch 1-5]
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+---
+
+Developed on top of "renesas-drivers-2019-08-13-v5.3-rc4". Earlier posted as:
+[PATCH 0/7] renesas, cmt: DT Binding Documentation and Minor Driver Updates
+
+ Documentation/devicetree/bindings/timer/renesas,cmt.txt |   42 ++++++++-------
+ drivers/clocksource/sh_cmt.c                            |   14 ++++-
+ 2 files changed, 37 insertions(+), 19 deletions(-)
+
+
