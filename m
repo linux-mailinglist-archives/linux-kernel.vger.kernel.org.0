@@ -2,138 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49B57967C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AC0CD967CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730659AbfHTRlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:41:15 -0400
-Received: from mail-ed1-f98.google.com ([209.85.208.98]:40293 "EHLO
-        mail-ed1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730617AbfHTRlK (ORCPT
+        id S1730799AbfHTRle (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:41:34 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42164 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730680AbfHTRlS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:41:10 -0400
-Received: by mail-ed1-f98.google.com with SMTP id h8so7276439edv.7
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=/mqpDzcS3+X/d+CLoW8OHJyCRQemfYM/MA2QWwnt6tY=;
-        b=HZTXDhTfhbhcadFEV6xcinYQz5nO6x/xVchVTy36Q1gGMf8tyHrSnZBB9TfprojJsf
-         zba+f6R79cjbk7B8VijSj+24UGPsukrmcIfC+7bM8RKwFyQxFtF7YaPB1Pgb8yBrtWRL
-         1Fho5/32z/MfHWz5uh5n11RmbJ9/5dgJYltdJ2uODEOASDaK3cGxBgPku4AfuaiiDg4d
-         T3P0ebps1SW4Na8fNFfVZtqYWOo5sCIbwdPG2XJOK69I8US16+oan6/VR82tsCCGqAW3
-         8zUEmHKH+0czOESWvBhsGs8FGk7Pc6bAAWaZBNaZQNxqujkThhpZr4rsRdpAXz2uP9g/
-         CdGw==
-X-Gm-Message-State: APjAAAW8QWzHW0ZHuyTiWPi2EGrJhRC+6LL/4SBcHoyYK5PtAWKs7UJV
-        fazW2jTQTT18adpN5KdcT7WPZSOJp9/4oj8ScAaplLN3ofs3hAIdouneDiLJvZzvXQ==
-X-Google-Smtp-Source: APXvYqw6Fl7XGGqQfeDN+eZtJ3gDBv05g3yacXEOBc4ciwS8/AVJWQS0dnujn26bMIrIPIF44RLP5sIRzaOO
-X-Received: by 2002:a17:906:28ce:: with SMTP id p14mr27161262ejd.306.1566322868428;
-        Tue, 20 Aug 2019 10:41:08 -0700 (PDT)
-Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id y41sm238580ede.25.2019.08.20.10.41.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 10:41:08 -0700 (PDT)
-X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i0884-00033W-3j; Tue, 20 Aug 2019 17:41:08 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 718392742B4A; Tue, 20 Aug 2019 18:41:07 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, codekipper@gmail.com,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Register regmap and PCM before our component" to the asoc tree
-In-Reply-To: <67e303f37f141ef73ce9ed47d7f831b63c694424.1566242458.git-series.maxime.ripard@bootlin.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190820174107.718392742B4A@ypsilon.sirena.org.uk>
-Date:   Tue, 20 Aug 2019 18:41:07 +0100 (BST)
+        Tue, 20 Aug 2019 13:41:18 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 925D533D;
+        Tue, 20 Aug 2019 19:41:16 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566322876;
+        bh=8TSAbOc99oaocNanYpIuNSjuJymG5rkFZtxYVVqu2wU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oTJV/F9uYWNZIyTdvp2beSi864kYUk09+Kil83mxRJqLnCUfKp6GLjFjFhe+0qzGK
+         j1kpG8z5++Fhw2CUBIXfW/mSDmYrqPfUYpadGJVMau+4lBA6pj6N/V1xvjNsiENKFi
+         XuoF6BLOH+sSnElD/PbT4xEU5K10CwPnYsKDQHMQ=
+Date:   Tue, 20 Aug 2019 20:41:10 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Jacopo Mondi <jacopo@jmondi.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 01/19] dt-bindings: display: renesas,cmm: Add R-Car
+ CMM documentation
+Message-ID: <20190820174110.GH10820@pendragon.ideasonboard.com>
+References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
+ <20190706140746.29132-2-jacopo+renesas@jmondi.org>
+ <CAMuHMdWVzm8yoZSoKZh3MJsaX4jCRXQCbn2x2LAu4UWtb1yYjw@mail.gmail.com>
+ <CAMuHMdWFHDGPSZt2_H_sC9rCKDYBR0XDLn0TGxzPRxZsrOTEHw@mail.gmail.com>
+ <20190820074826.5rdzeqyk6ylpjr7o@uno.localdomain>
+ <CAMuHMdXNJLLRqZCZ5KHkdUKgtwmE-F-s5Vi6P10xHR38n_=HrA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdXNJLLRqZCZ5KHkdUKgtwmE-F-s5Vi6P10xHR38n_=HrA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+Hi Geert,
 
-   ASoC: sun4i-i2s: Register regmap and PCM before our component
+On Tue, Aug 20, 2019 at 09:53:44AM +0200, Geert Uytterhoeven wrote:
+> On Tue, Aug 20, 2019 at 9:47 AM Jacopo Mondi <jacopo@jmondi.org> wrote:
+> > On Mon, Aug 19, 2019 at 03:45:54PM +0200, Geert Uytterhoeven wrote:
+> >> On Mon, Jul 8, 2019 at 9:58 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> >>> On Sat, Jul 6, 2019 at 4:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> >>>> Add device tree bindings documentation for the Renesas R-Car Display
+> >>>> Unit Color Management Module.
+> >>>>
+> >>>> CMM is the image enhancement module available on each R-Car DU video
+> >>>> channel on R-Car Gen2 and Gen3 SoCs (V3H and V3M excluded).
+> >>>>
+> >>>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >>>> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> >>>
+> >>> Thanks for your patch!
+> >>>
+> >>>> --- /dev/null
+> >>>> +++ b/Documentation/devicetree/bindings/display/renesas,cmm.txt
+> >>>> @@ -0,0 +1,25 @@
+> >>>> +* Renesas R-Car Color Management Module (CMM)
+> >>>> +
+> >>>> +Renesas R-Car image enhancement module connected to R-Car DU video channels.
+> >>>> +
+> >>>> +Required properties:
+> >>>> + - compatible: shall be one of:
+> >>>> +   - "renesas,rcar-gen3-cmm"
+> >>>> +   - "renesas,rcar-gen2-cmm"
+> >>>
+> >>> Why do you think you do not need SoC-specific compatible values?
+> >>> What if you discover a different across the R-Car Gen3 line tomorrow?
+> >>> Does the IP block have a version register?
+> >>
+> >> Do you have an answer to these questions?
+> >
+> > It does not seem to me that CMM has any version register, nor there
+> > are differences between the different Gen3 SoCs..
+> >
+> > However, even if we now define a single compatible property for
+> > gen3/gen2 and we later find out one of the SoC needs a soc-specific
+> > property we can safely add it and keep the generic gen3/gen2 one as
+> > fallback.. Does it work for you?
+> 
+> Unfortunately that won't work, as the existing DTBs won't have the
+> soc-specific compatible value.
+> You could still resort to soc_device_match(), but it is better to avoid that.
 
-has been applied to the asoc tree at
+We've had the same discussion over and over for quite a long time :-) I
+wonder, now that we have implemented SoC-specific compatible values for
+many IP cores, how many of them have actually benefited from it ? I'm
+not considering IP cores where we knew from the start that each SoC was
+different (such as pinctrl or clocks for instance), but IP cores where
+we though all SoCs would be handled in the same way. I also wouldn't
+count ES-specific differences, as those are handled by
+soc_device_match() anyway.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From bf283a05c09b58db83afbb1a8a3c6a684c56c1bb Mon Sep 17 00:00:00 2001
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:08 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Register regmap and PCM before our component
-
-So far the regmap and the dmaengine PCM are registered after our component
-has been, which means that our driver isn't properly initialised by then.
-
-Let's fix that.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/67e303f37f141ef73ce9ed47d7f831b63c694424.1566242458.git-series.maxime.ripard@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/sunxi/sun4i-i2s.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 7fa5c61169db..85c3b2c8cd77 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -1148,11 +1148,9 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 			goto err_pm_disable;
- 	}
- 
--	ret = devm_snd_soc_register_component(&pdev->dev,
--					      &sun4i_i2s_component,
--					      &sun4i_i2s_dai, 1);
-+	ret = sun4i_i2s_init_regmap_fields(&pdev->dev, i2s);
- 	if (ret) {
--		dev_err(&pdev->dev, "Could not register DAI\n");
-+		dev_err(&pdev->dev, "Could not initialise regmap fields\n");
- 		goto err_suspend;
- 	}
- 
-@@ -1162,9 +1160,11 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
- 		goto err_suspend;
- 	}
- 
--	ret = sun4i_i2s_init_regmap_fields(&pdev->dev, i2s);
-+	ret = devm_snd_soc_register_component(&pdev->dev,
-+					      &sun4i_i2s_component,
-+					      &sun4i_i2s_dai, 1);
- 	if (ret) {
--		dev_err(&pdev->dev, "Could not initialise regmap fields\n");
-+		dev_err(&pdev->dev, "Could not register DAI\n");
- 		goto err_suspend;
- 	}
- 
 -- 
-2.20.1
+Regards,
 
+Laurent Pinchart
