@@ -2,25 +2,25 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03B7095A4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:50:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6287E95A3E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbfHTIuV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:50:21 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:3362 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729607AbfHTItn (ORCPT
+        id S1729683AbfHTItt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:49:49 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:53586 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729635AbfHTItr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:49:43 -0400
-X-UUID: 6477d9ca1cc64372bfeaa3c3ce6b5bfd-20190820
-X-UUID: 6477d9ca1cc64372bfeaa3c3ce6b5bfd-20190820
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        Tue, 20 Aug 2019 04:49:47 -0400
+X-UUID: 3039ddbd75c24c5ebc3a88d525bb0d78-20190820
+X-UUID: 3039ddbd75c24c5ebc3a88d525bb0d78-20190820
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
         (envelope-from <bibby.hsieh@mediatek.com>)
         (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1466169801; Tue, 20 Aug 2019 16:49:33 +0800
+        with ESMTP id 261966303; Tue, 20 Aug 2019 16:49:39 +0800
 Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 20 Aug 2019 16:49:33 +0800
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 20 Aug 2019 16:49:32 +0800
 Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas08.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
  Transport; Tue, 20 Aug 2019 16:49:32 +0800
@@ -34,7 +34,7 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
+        "Sascha Hauer" <kernel@pengutronix.de>,
         Philipp Zabel <p.zabel@pengutronix.de>,
         Nicolas Boichat <drinkcat@chromium.org>,
         YT Shen <yt.shen@mediatek.com>,
@@ -43,9 +43,9 @@ CC:     Daniel Kurtz <djkurtz@chromium.org>,
         Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
         Houlong Wei <houlong.wei@mediatek.com>,
         <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [RESEND, PATCH v13 05/12] mailbox: mediatek: cmdq: support mt8183 gce function
-Date:   Tue, 20 Aug 2019 16:49:25 +0800
-Message-ID: <20190820084932.22282-6-bibby.hsieh@mediatek.com>
+Subject: [RESEND, PATCH v13 06/12] soc: mediatek: cmdq: clear the event in cmdq initial flow
+Date:   Tue, 20 Aug 2019 16:49:26 +0800
+Message-ID: <20190820084932.22282-7-bibby.hsieh@mediatek.com>
 X-Mailer: git-send-email 2.18.0
 In-Reply-To: <20190820084932.22282-1-bibby.hsieh@mediatek.com>
 References: <20190820084932.22282-1-bibby.hsieh@mediatek.com>
@@ -57,26 +57,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add mt8183 compatible name for supporting gce function
+GCE hardware stored event information in own internal sysram,
+if the initial value in those sysram is not zero value
+it will cause a situation that gce can wait the event immediately
+after client ask gce to wait event but not really trigger the
+corresponding hardware.
+
+In order to make sure that the wait event function is
+exactly correct, we need to clear the sysram value in
+cmdq initial flow.
+
+Fixes: 623a6143a845 ("mailbox: mediatek: Add Mediatek CMDQ driver")
 
 Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
 Reviewed-by: CK Hu <ck.hu@mediatek.com>
 ---
- drivers/mailbox/mtk-cmdq-mailbox.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/mailbox/mtk-cmdq-mailbox.c       | 5 +++++
+ include/linux/mailbox/mtk-cmdq-mailbox.h | 2 ++
+ include/linux/soc/mediatek/mtk-cmdq.h    | 3 ---
+ 3 files changed, 7 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
-index 8fddd26288e8..69daaadc3a5f 100644
+index 69daaadc3a5f..9a6ce9f5a7db 100644
 --- a/drivers/mailbox/mtk-cmdq-mailbox.c
 +++ b/drivers/mailbox/mtk-cmdq-mailbox.c
-@@ -539,6 +539,7 @@ static const struct dev_pm_ops cmdq_pm_ops = {
+@@ -21,6 +21,7 @@
+ #define CMDQ_NUM_CMD(t)			(t->cmd_buf_size / CMDQ_INST_SIZE)
  
- static const struct of_device_id cmdq_of_ids[] = {
- 	{.compatible = "mediatek,mt8173-gce", .data = (void *)16},
-+	{.compatible = "mediatek,mt8183-gce", .data = (void *)24},
- 	{}
- };
+ #define CMDQ_CURR_IRQ_STATUS		0x10
++#define CMDQ_SYNC_TOKEN_UPDATE		0x68
+ #define CMDQ_THR_SLOT_CYCLES		0x30
+ #define CMDQ_THR_BASE			0x100
+ #define CMDQ_THR_SIZE			0x80
+@@ -104,8 +105,12 @@ static void cmdq_thread_resume(struct cmdq_thread *thread)
  
+ static void cmdq_init(struct cmdq *cmdq)
+ {
++	int i;
++
+ 	WARN_ON(clk_enable(cmdq->clock) < 0);
+ 	writel(CMDQ_THR_ACTIVE_SLOT_CYCLES, cmdq->base + CMDQ_THR_SLOT_CYCLES);
++	for (i = 0; i <= CMDQ_MAX_EVENT; i++)
++		writel(i, cmdq->base + CMDQ_SYNC_TOKEN_UPDATE);
+ 	clk_disable(cmdq->clock);
+ }
+ 
+diff --git a/include/linux/mailbox/mtk-cmdq-mailbox.h b/include/linux/mailbox/mtk-cmdq-mailbox.h
+index ccb73422c2fa..911475da7a53 100644
+--- a/include/linux/mailbox/mtk-cmdq-mailbox.h
++++ b/include/linux/mailbox/mtk-cmdq-mailbox.h
+@@ -19,6 +19,8 @@
+ #define CMDQ_WFE_UPDATE			BIT(31)
+ #define CMDQ_WFE_WAIT			BIT(15)
+ #define CMDQ_WFE_WAIT_VALUE		0x1
++/** cmdq event maximum */
++#define CMDQ_MAX_EVENT			0x3ff
+ 
+ /*
+  * CMDQ_CODE_MASK:
+diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+index 54ade13a9b15..4e8899972db4 100644
+--- a/include/linux/soc/mediatek/mtk-cmdq.h
++++ b/include/linux/soc/mediatek/mtk-cmdq.h
+@@ -13,9 +13,6 @@
+ 
+ #define CMDQ_NO_TIMEOUT		0xffffffffu
+ 
+-/** cmdq event maximum */
+-#define CMDQ_MAX_EVENT				0x3ff
+-
+ struct cmdq_pkt;
+ 
+ struct cmdq_client {
 -- 
 2.18.0
 
