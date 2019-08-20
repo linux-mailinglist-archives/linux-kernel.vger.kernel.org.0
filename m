@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCD51967C4
+	by mail.lfdr.de (Postfix) with ESMTP id 49B57967C3
 	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730672AbfHTRlQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:41:16 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:38697 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730615AbfHTRlK (ORCPT
+        id S1730659AbfHTRlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:41:15 -0400
+Received: from mail-ed1-f98.google.com ([209.85.208.98]:40293 "EHLO
+        mail-ed1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730617AbfHTRlK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Aug 2019 13:41:10 -0400
-Received: by mail-wr1-f99.google.com with SMTP id g17so13295200wrr.5
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:08 -0700 (PDT)
+Received: by mail-ed1-f98.google.com with SMTP id h8so7276439edv.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=yCDyVLCiFyaHGZVMltg2SfBdT7xmop4SmEPuiPFwdPM=;
-        b=NSRU/5RRDfG21PgNwEoB6jIUA+kRW6RxJCPyOyeXq5xHvwm75mWu9HmxCTRInTG6u7
-         t0RUUdauMBBRtd7jDRuWtB0hqkxIWTrIX2FCsGU7ZZE2IA+RgizDY9uCq32503Y4PXxI
-         Z5qYOyhs2ARS9OWMigfLkQ7RWzo5+O4WFc4ZNA57BS6aoUdXSNV/gnxPdB62zwuwK0DL
-         IIZwin+H9UKgvQS4mtoMv0uJN380kvOAWNvLqu42mrJInEESwr5Qd3xUZ4ySH4eG1rM3
-         P//iIkN2rYlViO8OLTJ+FeJY8VrtRQHExTi3CBeZomazc9HpHA2XKLhKlUpz8V3lw23T
-         2QtA==
-X-Gm-Message-State: APjAAAWZU3/hzzgnTLVjuHk6jarBVLcU/d/zjMdeqpBMjJjP1RB/faxu
-        cra9HtEzXV10Mp4oFL2QHRAF7ua6nKLO7ES4aIKXvvF4IuJneRo6kPmMh5g6VIoZtQ==
-X-Google-Smtp-Source: APXvYqz5YHpKm90mjMqOxMGkNMOoE2BSG7fts0HS8pd2YGeQKJqMEr3P96B8XrAPliZ9bt9z/gCCJ/bhsYWk
-X-Received: by 2002:adf:e710:: with SMTP id c16mr36940977wrm.292.1566322868040;
+        bh=/mqpDzcS3+X/d+CLoW8OHJyCRQemfYM/MA2QWwnt6tY=;
+        b=HZTXDhTfhbhcadFEV6xcinYQz5nO6x/xVchVTy36Q1gGMf8tyHrSnZBB9TfprojJsf
+         zba+f6R79cjbk7B8VijSj+24UGPsukrmcIfC+7bM8RKwFyQxFtF7YaPB1Pgb8yBrtWRL
+         1Fho5/32z/MfHWz5uh5n11RmbJ9/5dgJYltdJ2uODEOASDaK3cGxBgPku4AfuaiiDg4d
+         T3P0ebps1SW4Na8fNFfVZtqYWOo5sCIbwdPG2XJOK69I8US16+oan6/VR82tsCCGqAW3
+         8zUEmHKH+0czOESWvBhsGs8FGk7Pc6bAAWaZBNaZQNxqujkThhpZr4rsRdpAXz2uP9g/
+         CdGw==
+X-Gm-Message-State: APjAAAW8QWzHW0ZHuyTiWPi2EGrJhRC+6LL/4SBcHoyYK5PtAWKs7UJV
+        fazW2jTQTT18adpN5KdcT7WPZSOJp9/4oj8ScAaplLN3ofs3hAIdouneDiLJvZzvXQ==
+X-Google-Smtp-Source: APXvYqw6Fl7XGGqQfeDN+eZtJ3gDBv05g3yacXEOBc4ciwS8/AVJWQS0dnujn26bMIrIPIF44RLP5sIRzaOO
+X-Received: by 2002:a17:906:28ce:: with SMTP id p14mr27161262ejd.306.1566322868428;
         Tue, 20 Aug 2019 10:41:08 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id y18sm299785wrn.82.2019.08.20.10.41.08
+        by smtp-relay.gmail.com with ESMTPS id y41sm238580ede.25.2019.08.20.10.41.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:08 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,9 +38,9 @@ Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0883-00033J-LP; Tue, 20 Aug 2019 17:41:07 +0000
+        id 1i0884-00033W-3j; Tue, 20 Aug 2019 17:41:08 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 0F796274314E; Tue, 20 Aug 2019 18:41:07 +0100 (BST)
+        id 718392742B4A; Tue, 20 Aug 2019 18:41:07 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
@@ -48,10 +48,10 @@ Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Don't use the oversample to calculate BCLK" to the asoc tree
-In-Reply-To: <c3595e3a9788c2ef2dcc30aa3c8c4953bb5cc249.1566242458.git-series.maxime.ripard@bootlin.com>
+Subject: Applied "ASoC: sun4i-i2s: Register regmap and PCM before our component" to the asoc tree
+In-Reply-To: <67e303f37f141ef73ce9ed47d7f831b63c694424.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174107.0F796274314E@ypsilon.sirena.org.uk>
+Message-Id: <20190820174107.718392742B4A@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:07 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +60,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Don't use the oversample to calculate BCLK
+   ASoC: sun4i-i2s: Register regmap and PCM before our component
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,70 +85,55 @@ to this mail.
 Thanks,
 Mark
 
-From 7df8f9a20196072162d9dc8fe99943f2d35f23d5 Mon Sep 17 00:00:00 2001
+From bf283a05c09b58db83afbb1a8a3c6a684c56c1bb Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:14 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Don't use the oversample to calculate BCLK
+Date: Mon, 19 Aug 2019 21:25:08 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: Register regmap and PCM before our component
 
-The BCLK divider should be calculated using the parameters that actually
-make the BCLK rate: the number of channels, the sampling rate and the
-sample width.
+So far the regmap and the dmaengine PCM are registered after our component
+has been, which means that our driver isn't properly initialised by then.
 
-We've been using the oversample_rate previously because in the former SoCs,
-the BCLK's parent is MCLK, which in turn is being used to generate the
-oversample rate, so we end up with something like this:
+Let's fix that.
 
-oversample = mclk_rate / sampling_rate
-bclk_div = oversample / word_size / channels
-
-So, bclk_div = mclk_rate / sampling_rate / word_size / channels.
-
-And this is actually better, since the oversampling ratio only plays a role
-because the MCLK is its parent, not because of what BCLK is supposed to be.
-
-Furthermore, that assumption of MCLK being the parent has been broken on
-newer SoCs, so let's use the proper formula, and have the parent rate as an
-argument.
-
-Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
-Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
-Fixes: 66ecce332538 ("ASoC: sun4i-i2s: Add compatibility with A64 codec I2S")
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/c3595e3a9788c2ef2dcc30aa3c8c4953bb5cc249.1566242458.git-series.maxime.ripard@bootlin.com
+Link: https://lore.kernel.org/r/67e303f37f141ef73ce9ed47d7f831b63c694424.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 70608fa30bf2..d879db581073 100644
+index 7fa5c61169db..85c3b2c8cd77 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -222,10 +222,11 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
- };
- 
- static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
--				  unsigned int oversample_rate,
-+				  unsigned long parent_rate,
-+				  unsigned int sampling_rate,
- 				  unsigned int word_size)
- {
--	int div = oversample_rate / word_size / 2;
-+	int div = parent_rate / sampling_rate / word_size / 2;
- 	int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(sun4i_i2s_bclk_div); i++) {
-@@ -315,8 +316,8 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
- 		return -EINVAL;
+@@ -1148,11 +1148,9 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+ 			goto err_pm_disable;
  	}
  
--	bclk_div = sun4i_i2s_get_bclk_div(i2s, oversample_rate,
--					  word_size);
-+	bclk_div = sun4i_i2s_get_bclk_div(i2s, i2s->mclk_freq,
-+					  rate, word_size);
- 	if (bclk_div < 0) {
- 		dev_err(dai->dev, "Unsupported BCLK divider: %d\n", bclk_div);
- 		return -EINVAL;
+-	ret = devm_snd_soc_register_component(&pdev->dev,
+-					      &sun4i_i2s_component,
+-					      &sun4i_i2s_dai, 1);
++	ret = sun4i_i2s_init_regmap_fields(&pdev->dev, i2s);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Could not register DAI\n");
++		dev_err(&pdev->dev, "Could not initialise regmap fields\n");
+ 		goto err_suspend;
+ 	}
+ 
+@@ -1162,9 +1160,11 @@ static int sun4i_i2s_probe(struct platform_device *pdev)
+ 		goto err_suspend;
+ 	}
+ 
+-	ret = sun4i_i2s_init_regmap_fields(&pdev->dev, i2s);
++	ret = devm_snd_soc_register_component(&pdev->dev,
++					      &sun4i_i2s_component,
++					      &sun4i_i2s_dai, 1);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Could not initialise regmap fields\n");
++		dev_err(&pdev->dev, "Could not register DAI\n");
+ 		goto err_suspend;
+ 	}
+ 
 -- 
 2.20.1
 
