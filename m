@@ -2,52 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C968096A5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69FFF96A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:26:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731156AbfHTUZj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:25:39 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:40578 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730930AbfHTUZe (ORCPT
+        id S1731182AbfHTU0M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:26:12 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:39818 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730501AbfHTU0K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:25:34 -0400
-Received: by mail-oi1-f194.google.com with SMTP id h21so5157888oie.7;
-        Tue, 20 Aug 2019 13:25:33 -0700 (PDT)
+        Tue, 20 Aug 2019 16:26:10 -0400
+Received: by mail-ot1-f65.google.com with SMTP id b1so6291515otp.6;
+        Tue, 20 Aug 2019 13:26:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=fc34abKerT0nPG4qWNGEOV2EVuAycG0riw7i2ox9yUk=;
-        b=fBkJ88s3Sl7hR+LtD4mnyE9oZ8hFiNp+F82w7KlKpL+WVEQI7PbprE1o1IdqxF20DD
-         9ethXaUt++4J/MSknm0LfoFpFz6ohOgVu5OGErdkm7ebnwY0iiKNiVRaJd+62Xb+4wKw
-         h4Vp3dbaJzV61BQ1eyVK7tP8IPCzVBCg/kjrdfmcEj/1wM7wO6syhJFsabY1J7g8MaRY
-         ulLhBPFe68b3qtaiGHwDPtd7eAv8ofxLidTnefTEit8njByNJyC2pl5Tgxrk+YobaC9h
-         ghA9JjzIJnMpQjLai2jhM0RZK6Tt86viJDXCb4hDOEObm8oW6UpjQ5dJSW/KZ2sk+ZGA
-         gBUQ==
+        bh=twYIezSLU/OVYsbr2IHsXTRqkIzdrg1CxaCIxhHJ0W4=;
+        b=qtPpAFID3Om/7WrfwGpqo+WusqVG/L/xldtmFXjwmBDBEZmr07SFzZG7VMV4hPPY6T
+         AxUYmYp0rbp6n5GApnTmNJegIPzAS061q30gKP+GRDtLijQfhcVO8K+S0nySmiU4tjyl
+         M6wDQKrNRDFX5zV/OV77sPPTnGTk/EKR4uELvVJKK8/ydHprAq88WRHkxwLehgBYHIcK
+         cvUVCbxPC0kwklPJMCtLc51yga3WnVaBWY2AyFu92kffq0ue7XFUU3RHIcJJjxfaVbWo
+         BlLLRxucvDLhYEeU2WIq8WFRiXTLQGcTjjcUpErPK+TJUyMACc9oNF1udZkLzkXBaq7x
+         BU8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=fc34abKerT0nPG4qWNGEOV2EVuAycG0riw7i2ox9yUk=;
-        b=njhsjsmB3B7tN0ZZMGyAH0i5v20hQn6Zc82UNTXet0hceIZDcKNzeMHYaRt3zQ0jXl
-         ASA/H58NjgeOZxh0d/fhwiVveqzGN878FPMoENoGbgfd4K4nLnpCg2fIt/jWdP8bvdV8
-         9c86aehOWJVIMTVZo4uo+BFjpd9myMpcuI4vrzrdcHGW6fn7/5Ia4bP+KQr4DHE6pBM7
-         rZ5duUyCx29TDgZTYdB4/QhY3RveOhen1Xyrh35cW6OuqWwR59Bj29UjAGzYO8sPYR4A
-         2aNSjGiI4+Q1JW4GvUOpQjY+61+TYxhjBl2HRpl1o/Hmcr2da6nAM6stiUgsiq26Ac2V
-         xpsQ==
-X-Gm-Message-State: APjAAAWm0WkD205I/8iFpyifFm6jPyt66AJEVflfUpUBD7hfXbrzkp49
-        1B8F9QgkK8JlxUfNHRbusIHw2gJlUuK1g40dXqlWs0VG
-X-Google-Smtp-Source: APXvYqxo1sZ3HBbbN4X+uoYcquUBFmZBWM+y+N7/M8IBj5mi9mXhFK+scq1wTO0nilDocSU6lZHQGQnDlc1YSx2p0MI=
-X-Received: by 2002:aca:d650:: with SMTP id n77mr1406061oig.129.1566332732940;
- Tue, 20 Aug 2019 13:25:32 -0700 (PDT)
+        bh=twYIezSLU/OVYsbr2IHsXTRqkIzdrg1CxaCIxhHJ0W4=;
+        b=pxNyLexv2CWPqN/U2xKIpezcumTfeppjvJISBAte/rGjTFnanmJ7EBYqY7vA/ls2sD
+         XrE1Oz5AmEHTyHQXbQtXWzLi68Gr3tt5+uOyCfgoqI5uoW+PdX6cR+5hpEHPowyojutH
+         XDooplX3ZQGz36/Jgqt1EiWOdNkvw6JWltNiCZFS1k5X7JDR50Obs6OKGeGX5d/QY29A
+         +/OoE1zWHxyNbOwFo6yA5/o0PeY0hIYgItfB+QVpMMjIE4bz5CPnyfuUxX/k1ADqY092
+         XI6QrcCUcLVITAr1M/zMY39DOk3GwO/y/3+CHsQdRqlfuGdKL9JWnkq8EK/Fa35pHYYh
+         I0cw==
+X-Gm-Message-State: APjAAAXHnwdbH7CeurpFWzdVdOfP6bB6O2LV7WlIWMhQJeMl5A0VLf1+
+        fjLy9El9LijD1RQkCLrkXDr7GAqsZQpzW4bBwMs=
+X-Google-Smtp-Source: APXvYqyerGVLGtwIyjcFiVjLmf45wgZ9hv1MOkh77AdzGvP0Bvu52F28OTfLpnlxRkTfP6wDOTfvooN+in+Ddu5+EGQ=
+X-Received: by 2002:a9d:6c0e:: with SMTP id f14mr22577236otq.6.1566332769966;
+ Tue, 20 Aug 2019 13:26:09 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190814142918.11636-1-narmstrong@baylibre.com> <20190814142918.11636-13-narmstrong@baylibre.com>
-In-Reply-To: <20190814142918.11636-13-narmstrong@baylibre.com>
+References: <20190814142918.11636-1-narmstrong@baylibre.com> <20190814142918.11636-8-narmstrong@baylibre.com>
+In-Reply-To: <20190814142918.11636-8-narmstrong@baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Tue, 20 Aug 2019 22:25:22 +0200
-Message-ID: <CAFBinCCJPm+FjMTK+-Qik4x-UtLibH3FTozHG8gMet0e5Rf9bg@mail.gmail.com>
-Subject: Re: [PATCH 12/14] arm64: dts: meson-gxbb-nanopi-k2: add missing model
+Date:   Tue, 20 Aug 2019 22:25:59 +0200
+Message-ID: <CAFBinCC9LS+-tM80d8EeyhwUJhV65h11e-M8J6UVy1iE1aD9Kg@mail.gmail.com>
+Subject: Re: [PATCH 07/14] arm64: dts: meson-gx: fix periphs bus node name
 To:     Neil Armstrong <narmstrong@baylibre.com>
 Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -58,24 +58,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 4:33 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Wed, Aug 14, 2019 at 4:32 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
 >
 > This fixes the following DT schemas check errors:
-> meson-gxbb-nanopi-k2.dt.yaml: /: 'model' is a required property
+> meson-gxbb-nanopi-k2.dt.yaml: periphs@c8834000: $nodename:0: 'periphs@c8834000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+> meson-gxl-s805x-libretech-ac.dt.yaml: periphs@c8834000: $nodename:0: 'periphs@c8834000' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
 >
 > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
->  arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> index c34c1c90ccb6..1a36d2bd2d21 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxbb-nanopi-k2.dts
-> @@ -10,6 +10,7 @@
->
->  / {
->         compatible = "friendlyarm,nanopi-k2", "amlogic,meson-gxbb";
-> +       model = "Nanopi K2";
-this should be "FriendlyARM NanoPi K2" to be consistent with other
-boards (for example meson-gxbb-odroidc2.dts)
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
