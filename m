@@ -2,62 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2FEC29660A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8C7F96618
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:18:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730383AbfHTQQY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:16:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44512 "EHLO mail.kernel.org"
+        id S1730426AbfHTQS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:18:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47208 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbfHTQQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:16:24 -0400
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        id S1725971AbfHTQS0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 12:18:26 -0400
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A7C922DD6;
-        Tue, 20 Aug 2019 16:16:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D55552339E;
+        Tue, 20 Aug 2019 16:18:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566317783;
-        bh=bq0/jB5m4Jp2FX8tBxSzWeqfhZTnVq066dgi39PlpzE=;
+        s=default; t=1566317905;
+        bh=vSKsKdK9IvnILRtQlA/Vlb4e7VL6KyuijFf6Qr77Vyo=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TClCeVoX+Lao6744v1UtRF8HhC2UQ2O5TO4HnDMwLhBzXPXaXeg3mhBCGKmLEgQD3
-         6PHk/4MEGIVN+wNL1L4SkDQYveyMBVn1UZu/Q3GTwx3vpwjjmAUtB51+m6/ppcbkYa
-         F736nAUWf3TfUAuhGN1ohivoz5Kn+FgeyuP5FVg8=
-Received: by mail-qt1-f179.google.com with SMTP id v38so6677273qtb.0;
-        Tue, 20 Aug 2019 09:16:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAXYKhff/zrZla/ZDVYHpUFsDsf/77UTmukxmDAEL6Y90Y1XJhVH
-        KjATx5OSD0laITt/PT7Q89b7BUkYOzrnlK73aA==
-X-Google-Smtp-Source: APXvYqwp9qLnX0fVBz6JKjNTCRZjs4AvNuGh+ir98aRhQvRHBFS366WOun9yixr1j0KWUOR7JkKRSM8t6XOkoOt3MOs=
-X-Received: by 2002:ac8:7593:: with SMTP id s19mr26991334qtq.136.1566317782530;
- Tue, 20 Aug 2019 09:16:22 -0700 (PDT)
+        b=rRV0pwJXloEA2wNuxVron9horY8auSq1BuVfOvOfOJOzq16YPdKwyCVAqcu741qWd
+         pAcXdP6ctMpLOsa/Yw24IZGOwNDXfnOuP6zZH0C3+NpHKNVUH9JSre1teubo59ATJS
+         1Oohlb7ZuWpnYUulw9Y00xF1uDgKA/YqNNr5VNE4=
+Received: by mail-qt1-f182.google.com with SMTP id y26so6687743qto.4;
+        Tue, 20 Aug 2019 09:18:24 -0700 (PDT)
+X-Gm-Message-State: APjAAAXAOwDMIu7XoaEfwbihkZw2j/zHC88foqRVF8TxiG18yqiggtCJ
+        uBcYD5HLDfwmnBlMNn77SLojrRA4+9P8VM/Veg==
+X-Google-Smtp-Source: APXvYqycMaa214ptNayJBYSEm7y6VToBsSlNqtP2In+5+f5juo9lDSmILxM4UZrWQJSIt7mf+ihWQZGtHJECipi/vbw=
+X-Received: by 2002:a0c:9782:: with SMTP id l2mr15058937qvd.72.1566317903978;
+ Tue, 20 Aug 2019 09:18:23 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190820144052.18269-1-narmstrong@baylibre.com> <20190820144052.18269-6-narmstrong@baylibre.com>
-In-Reply-To: <20190820144052.18269-6-narmstrong@baylibre.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 20 Aug 2019 11:16:10 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKAL0UG2afJgOVjtzgDA9oQ35p9ieSYnzys5OPYU-RvmQ@mail.gmail.com>
-Message-ID: <CAL_JsqKAL0UG2afJgOVjtzgDA9oQ35p9ieSYnzys5OPYU-RvmQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] dt-bindings: arm: amlogic: add SEI Robotics SEI610 bindings
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
+References: <20190820145343.29108-1-megous@megous.com> <20190820145343.29108-2-megous@megous.com>
+In-Reply-To: <20190820145343.29108-2-megous@megous.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 20 Aug 2019 11:18:12 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL-fBA5fV=AwegyGpCKAEHtU1C6MZQX9dNYs0tpL9EbVw@mail.gmail.com>
+Message-ID: <CAL_JsqL-fBA5fV=AwegyGpCKAEHtU1C6MZQX9dNYs0tpL9EbVw@mail.gmail.com>
+Subject: Re: [PATCH 1/6] dt-bindings: net: sun8i-a83t-emac: Add phy-supply property
+To:     Ondrej Jirman <megous@megous.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Jose Abreu <joabreu@synopsys.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
+        linux-stm32@st-md-mailman.stormreply.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 9:41 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+On Tue, Aug 20, 2019 at 9:53 AM <megous@megous.com> wrote:
 >
-> Add the compatible for the Amlogic SM1 Based SEI610 board.
+> From: Ondrej Jirman <megous@megous.com>
 >
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> This is already supported by the driver, but is missing from the
+> bindings.
+
+Really, the supply for the phy should be in the phy's node...
+
+>
+> Signed-off-by: Ondrej Jirman <megous@megous.com>
 > ---
->  Documentation/devicetree/bindings/arm/amlogic.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  .../devicetree/bindings/net/allwinner,sun8i-a83t-emac.yaml    | 4 ++++
+>  1 file changed, 4 insertions(+)
 
 Reviewed-by: Rob Herring <robh@kernel.org>
