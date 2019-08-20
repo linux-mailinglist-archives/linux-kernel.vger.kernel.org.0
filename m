@@ -2,97 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4F28960CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:43:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 558EC960BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:43:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730406AbfHTNnV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:43:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38936 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730812AbfHTNnP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:43:15 -0400
-Received: from sasha-vm.mshome.net (unknown [12.236.144.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D97862332A;
-        Tue, 20 Aug 2019 13:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566308594;
-        bh=pEofJJrfW84xpESYCqibp27+kAhEdaYF7y5nQChBpWA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jxQAWw+7oj6gy39mIygoiTpNAbefF+K+AxSPpnPyRfQI4VLAUS8FptuyJrv3g2xdr
-         kj0VOt2oj98632QpM5u18gC8rxh8h5Bi5GIV1dQcYjS7HRAPWav3ZcEPKw+3fbFG5C
-         36SGgo7UhqoHycv/MlOXBJ6bvgjIRQ+o8PcXwPMg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Vladu <avladu@cloudbasesolutions.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Alessandro Pilotti <apilotti@cloudbasesolutions.com>,
-        linux-hyperv@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 12/12] tools: hv: fix KVP and VSS daemons exit code
-Date:   Tue, 20 Aug 2019 09:42:53 -0400
-Message-Id: <20190820134253.11562-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190820134253.11562-1-sashal@kernel.org>
-References: <20190820134253.11562-1-sashal@kernel.org>
+        id S1730803AbfHTNnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:43:13 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52052 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730755AbfHTNnB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:43:01 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i04Pa-0006ml-5F; Tue, 20 Aug 2019 15:42:58 +0200
+Date:   Tue, 20 Aug 2019 15:42:57 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     =?ISO-8859-15?Q?Thomas_Hellstr=F6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+cc:     Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Doug Covelli <dcovelli@vmware.com>
+Subject: Re: [PATCH 2/4] x86/vmware: Add a header file for hypercall
+ definitions
+In-Reply-To: <597132a4-2514-2f13-5786-b423d82b7fd4@shipmail.org>
+Message-ID: <alpine.DEB.2.21.1908201540400.2223@nanos.tec.linutronix.de>
+References: <20190818143316.4906-1-thomas_os@shipmail.org> <20190818143316.4906-3-thomas_os@shipmail.org> <20190820113203.GM2332@hirez.programming.kicks-ass.net> <597132a4-2514-2f13-5786-b423d82b7fd4@shipmail.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-1285972205-1566308578=:2223"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Vladu <avladu@cloudbasesolutions.com>
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-[ Upstream commit b0995156071b0ff29a5902964a9dc8cfad6f81c0 ]
+--8323329-1285972205-1566308578=:2223
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 
-HyperV KVP and VSS daemons should exit with 0 when the '--help'
-or '-h' flags are used.
+On Tue, 20 Aug 2019, Thomas Hellström (VMware) wrote:
 
-Signed-off-by: Adrian Vladu <avladu@cloudbasesolutions.com>
+> On 8/20/19 1:32 PM, Peter Zijlstra wrote:
+> > On Sun, Aug 18, 2019 at 04:33:14PM +0200, Thomas Hellström (VMware) wrote:
+> > 
+> > > +#define VMWARE_HYPERCALL \
+> > > +	ALTERNATIVE_2(".byte 0xed", \
+> > > +		      ".byte 0x0f, 0x01, 0xc1", X86_FEATURE_VMW_VMCALL,	\
+> > > +		      ".byte 0x0f, 0x01, 0xd9", X86_FEATURE_VMW_VMMCALL)
+> > For sanity, could we either add comments, or macros for those
+> > instrucions?
+> 
+> Hmm. Here I followed and slightly extended what was done in asm/kvm_para.h.
+> 
+> What confuses me a bit is, if it's clarity we're after, why don't people use
+> 
+> #define VMWARE_HYPERCALL 					\
+> 	ALTERNATIVE_2("inl (%%dx)", 				\
+> 		      "vmcall", X86_FEATURE_VMW_VMCALL,		\	
+> 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
+> 
+> Seems to build fine here. Is it fear of old assemblers not supporting, for
+> example vmmcall
 
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Cc: Sasha Levin <sashal@kernel.org>
-Cc: Alessandro Pilotti <apilotti@cloudbasesolutions.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- tools/hv/hv_kvp_daemon.c | 2 ++
- tools/hv/hv_vss_daemon.c | 2 ++
- 2 files changed, 4 insertions(+)
+The requirement for binutils is version >= 2.21. If 2.21 supports vmcall and
+vmmcall all good.
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 62c9a503ae052..0ef215061fb50 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1380,6 +1380,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
-diff --git a/tools/hv/hv_vss_daemon.c b/tools/hv/hv_vss_daemon.c
-index 34031a297f024..514d29966ac67 100644
---- a/tools/hv/hv_vss_daemon.c
-+++ b/tools/hv/hv_vss_daemon.c
-@@ -172,6 +172,8 @@ int main(int argc, char *argv[])
- 			daemonize = 0;
- 			break;
- 		case 'h':
-+			print_usage(argv);
-+			exit(0);
- 		default:
- 			print_usage(argv);
- 			exit(EXIT_FAILURE);
--- 
-2.20.1
+Thanks,
 
+	tglx
+--8323329-1285972205-1566308578=:2223--
