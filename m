@@ -2,243 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 646A895208
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:00:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 05C3295219
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:03:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728755AbfHSX6a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 19:58:30 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:54187 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728554AbfHSX63 (ORCPT
+        id S1728794AbfHTACj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:02:39 -0400
+Received: from esa2.hgst.iphmx.com ([68.232.143.124]:14556 "EHLO
+        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728351AbfHTACi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 19:58:29 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190819235824epoutp022cf90edc5ca798470fde68037ae77d33~8eFtgvFEj2597225972epoutp02X
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 23:58:24 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190819235824epoutp022cf90edc5ca798470fde68037ae77d33~8eFtgvFEj2597225972epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566259104;
-        bh=E+GmfLLHVZyoS88YiGMw3/qgcKxjHoLdHGPGSNkhHwQ=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Fw191GSz3UmRCHkMyYiG937xVNGYAP3E37IHmNHl6KrjslbOvbwTAk3mGtdIdFezF
-         6e8LgCe/F5tL4X3aajq30w7XFb5/uK++oqDzlZB7NGwmMrYpHrfnfnuGHzJRGfLIpt
-         LFFUDqB8LRGGUyXK+qA9puAGQtfZStVvLbh9Hqf8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190819235823epcas1p2ebf5b3268edbc3211f06e190d82e3c0b~8eFtJnXc21719917199epcas1p2Q;
-        Mon, 19 Aug 2019 23:58:23 +0000 (GMT)
-Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 46C9qJ4HHTzMqYll; Mon, 19 Aug
-        2019 23:58:20 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
-        7C.BB.04160.8973B5D5; Tue, 20 Aug 2019 08:58:16 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190819235816epcas1p3c84eeeed578b4d7cdf3bdb73a0ff7fa5~8eFmSqlTd0166901669epcas1p3-;
-        Mon, 19 Aug 2019 23:58:16 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190819235816epsmtrp1c285dc1af80e3fa9aa87e23463e579a1~8eFmRzQJ82153121531epsmtrp1X;
-        Mon, 19 Aug 2019 23:58:16 +0000 (GMT)
-X-AuditID: b6c32a38-b4bff70000001040-e1-5d5b37986a18
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FA.A3.03638.8973B5D5; Tue, 20 Aug 2019 08:58:16 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190819235816epsmtip1aeba185f3baf196e40e80b0eaa5d7e83~8eFmGmes22298422984epsmtip1s;
-        Mon, 19 Aug 2019 23:58:16 +0000 (GMT)
-Subject: Re: [PATCH v6 02/19] PM / devfreq: tegra30: Keep interrupt disabled
- while governor is stopped
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <f02267cb-7299-fcdb-dfff-97ea36ccf2e5@samsung.com>
-Date:   Tue, 20 Aug 2019 09:02:10 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190811212315.12689-3-digetx@gmail.com>
+        Mon, 19 Aug 2019 20:02:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1566259379; x=1597795379;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=TZcS0nUDea+a+6+7Jh2sz6QMkoZG7u5VUqBE5oDjUHU=;
+  b=NRzrRHdWBAQkqaBedulOCHZzijTyIcmoTWNMrJuc7745SNmrNLdPzm8V
+   1YXcCbx8wh49z6KBZu84vFn/LwQEtk2133nNYzUkjrnfFg6Lu2Sl5ahL/
+   fRRxhGsqjCSl/vkFjhUaBYZu9MO5Q6/8HSwjh3xtVfdsPEn7UCGOtjlWQ
+   TvvBgdjcjqCjfd0G700MnVd3xcE7ZE1rBRqYmRGWcCU3yZKANDEfee66k
+   dsAdeeWCXLoY9V6ZRZe05Trb4asha4YTc0fVlRi4xI10P0Zbw07d7USzW
+   dEAqWwaEEdMiyfJYAPQJmCkjAddZF8I1GxCCD7z8bYJNsZlMe9Kjdi+RD
+   w==;
+IronPort-SDR: tsilV5LZVSkHckYgV3A2CZs5kOuEs4e2TpN0loKjJZnk5biBP0jtyzVRq/oh1pRhlmnRAjZQAZ
+ B/55VRbNKWCxM3JdKOvGJiZS1FKVyGm+qa5EDegCQvNty1Os9x79O6lKFRnmBuDAt5I8o5NaiX
+ OEsIpyc+rhxCEVC2W/+FUKA/kCWhKBBSTDU34grE9EXhB5LegWGgwAIh/Eb1IqPG83l239RdWC
+ I1YbocLA/wW8W4mq+99mf8OEv1XrJPNFm1l9UdD33tmLmkKwHZWW1gamdSh4PjEWvRt1nRwK2M
+ oa4=
+X-IronPort-AV: E=Sophos;i="5.64,406,1559491200"; 
+   d="scan'208";a="216586457"
+Received: from mail-co1nam05lp2051.outbound.protection.outlook.com (HELO NAM05-CO1-obe.outbound.protection.outlook.com) ([104.47.48.51])
+  by ob1.hgst.iphmx.com with ESMTP; 20 Aug 2019 08:02:53 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QA5AThGxHDdCUCqEGg6lS3OX0+miyEgC1dwThR6uKlXNvzmMLx8JPjiBcJog+fjSOjxdEgJF2D7OGVRxDpWGh8L1lTkjB8sTzn8Pgce+8UxnvyH4315RSkpteygEp8oTDr7qYGJIHauVI7e79aVz8Kd/7XHOvTJhOdvM6cFquvssVRcLAoYr79AVewPMwUbVNc31MT5O4Mv5SAPoWK3eLOf+b+ASL+a3I/lLd/DGKIJ1gMvH3OyG68XChFYHZchYAQTS55hDCP3Q7R/QYP2It3tVgW6/ww1YniS8XP42xVk9P9qgRJJHtgd9hikUHc3lwrnsH6bRSr0fnP02UWmPKg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TZcS0nUDea+a+6+7Jh2sz6QMkoZG7u5VUqBE5oDjUHU=;
+ b=Uiiu0azmra/rDnbWWQb7RWDqplzYBAitqK3anA6Pd/CTttOTXBChTCH75M7x3a8IBQXEDZueO3vCv79R6ZO0xQUgsn7ygi35wCyQTNU4IumPN2BpVprTkm74p0KEkeFp5/6O58sr4oHJ+UFPjz+VIsa6GQ/ztTSwqel7B5ePcZmq2hGlVeamJjTUvEIyTxJeYSELLDihsVmp90Ingxlq+RdFc0A23dmwoyJuqhd8QlWclrk3BOm4Fb777bCxQIVW/v4hXBh3Kn6zwMNqT1eyhT6XGvUAfAtVwfcwEt9ngutwlBYqUtSvjndetg8FZ+bwjGb48Y6rBaiRXjHvINJ6Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TZcS0nUDea+a+6+7Jh2sz6QMkoZG7u5VUqBE5oDjUHU=;
+ b=Eej2rG7k0GHND6uYDYN8y8z8FzXmNSDeYA84/ousyNzzbTkGx419OaxfBTZ9P1TanKvc6n0EhwKiS90h3d8DWR0mSFoc1GZ8LFmE56gezY/ExsPQaTDeWVeuOHuHofN7uw32VJrAbkuKPMV0eLkE1Mc57KO/x66L72Kcl4O9wBg=
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
+ BYAPR04MB4711.namprd04.prod.outlook.com (52.135.240.26) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Tue, 20 Aug 2019 00:02:31 +0000
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::24ca:5178:5475:9a0e]) by BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::24ca:5178:5475:9a0e%4]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 00:02:31 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "anup@brainfault.org" <anup@brainfault.org>,
+        "hch@infradead.org" <hch@infradead.org>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Anup Patel <Anup.Patel@wdc.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "allison@lohutok.net" <allison@lohutok.net>,
+        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
+        "palmer@sifive.com" <palmer@sifive.com>
+Subject: Re: [PATCH] RISC-V: Issue a local tlb flush if possible.
+Thread-Topic: [PATCH] RISC-V: Issue a local tlb flush if possible.
+Thread-Index: AQHVTxz5XkoGRRVrekixM0/zCIcSeKb3ngaAgACcGwCAAO7ygIADixaAgAXnX4CAAAZPAIAAAFqAgACUswA=
+Date:   Tue, 20 Aug 2019 00:02:31 +0000
+Message-ID: <797e3d1cd06dfc98cca0b595a738d297e9e858be.camel@wdc.com>
+References: <20190810014309.20838-1-atish.patra@wdc.com>
+         <20190812145631.GC26897@infradead.org>
+         <f58814e156b918531f058acfac944abef34f5fb1.camel@wdc.com>
+         <20190813143027.GA31668@infradead.org>
+         <3f55d5878044129a3cbb72b13b712e9a1c218dc7.camel@wdc.com>
+         <20190819144627.GA27061@infradead.org>
+         <CAAhSdy3KLCW540mLVk4F6nAqYP2dYuiGqO4FuwTD1Hra_gHcGg@mail.gmail.com>
+         <20190819151015.GA3316@infradead.org>
+In-Reply-To: <20190819151015.GA3316@infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0hTcRTu5727u1qr29I8GNS6vdBY7Tpnt0gpilgkZPWPGWY3d9vEbXfs
-        bpI9wDTygWlRRl17v+xpaSZLKkELsRdRSWaYhmbOzDAzNCnado387zvnfOd85/s9SExdQ0SQ
-        6XYX77RzVpoIwWsaIrXa40u2pOi8FTrWWx/JXh/oROx+6TzOPs/pU7Kva08S7ODBR4gt+CER
-        7Pt9Vwh2pPY0zhbffEWsCDF62i4i4z2pTWk8mNtPGIurryHjYNXMREVyxnILz5l4p4a3pwmm
-        dLs5jl63KXVVqiFWx2iZpewSWmPnbHwcvTohUbsm3epbitZkcla3L5XIiSK9OH65U3C7eI1F
-        EF1xNO8wWR1LHYtEzia67eZFaYJtGaPTRRt8xG0Zli/d3bjj48ydPWWVWDZqgUIUTAIVA20t
-        Z/FCFEKqKQ+CV1XNQXLwHUHD8G+lHPxE8LXxGfav5W1RqUIuPEDwq/UdIQffEPSWXSb8rGmU
-        BYYHqwKFUOoPgoKR3ECAUXkIOj4UBGYRVBTU9bQEOqZQs6F5uBP5sYqKh1GpNIBxah5cPSop
-        /DiMSoLvHQ0KmTMVmk504X4cTMXC432flH6MUeHQ2nUmSMazIPduGeYXBipPCTV3cpBsYjX0
-        NZeMGZoGvY3VShlHgLfkwBjeDVebHhFycz6C6rqXCrmgh7pLR3wKpE8hEm7VLpbTs+He6Kmx
-        +SrIrhwdW2gy9A8VKfx0fz7/gFqmzIHXHW1Bh9AcaZwdaZwFaZwF6b/YWYRfQ9N5h2gz8yLj
-        iBl/4VUo8GajWA+6/yKhHlEkoiepjMeSU9QKLlPMstUjIDE6VLXzpC+lMnFZu3inkOp0W3mx
-        Hhl8p30YiwhLE3w/wO5KZQzRer2ejWFiDQxDh6vODbMpasrMufgMnnfwzn99QWRwRDbam709
-        E13yrvm8o2hzrf2KI6z/YWPp4wXm4nbN7flz0e238S3r2kP3eK53d1ZKXv2GijcTkp7f6HS3
-        CmG9prKEb5u2axnhfZJpa3hJ1lDj04a1A+IHvcudvLVp1kJak1O+8olqRsFxUJdHl8eudwdf
-        uJjJHs2biPeSFRuFVk/GAI2LFo6Jwpwi9xdDP7IkyQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSnO4M8+hYgyk3pSxeHtK0WP3xMaNF
-        y6xFLBZnm96wW1zeNYfN4nPvEUaLzi+z2CxuN65gs/i5ax6LRd/aS2wOXB477i5h9Ng56y67
-        R2/zOzaPvi2rGD0+b5ILYI3isklJzcksSy3St0vgynj97BlLwUO5ihezNzI3MN6Q6GLk5JAQ
-        MJG43jOVtYuRi0NIYDejxMJ3L1khEpIS0y4eZe5i5ACyhSUOHy6GqHnLKNF1ZS4LSI2wQIbE
-        j8+b2EASIgJNTBKbei+wgzjMAu2MEmu77zJDtGxllDh8+QUbSAubgJbE/hc3wGx+AUWJqz8e
-        M4LYvAJ2Er9nTQWzWQRUJVZOmQV2hqhAhMThHbOgagQlTs58AraaU8BM4mjjU3YQm1lAXeLP
-        vEvMELa4xK0n85kgbHmJ5q2zmScwCs9C0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhglJda
-        rlecmFtcmpeul5yfu4kRHG9aWjsYT5yIP8QowMGoxMPrMS0qVog1say4MvcQowQHs5IIb8Uc
-        oBBvSmJlVWpRfnxRaU5q8SFGaQ4WJXFe+fxjkUIC6YklqdmpqQWpRTBZJg5OqQZG+6jTSTGT
-        57858Fbc+V0zU9ons1l6krNDPG5sOv8p883G+XM68y57Cx+7Wve70iH1yJoPSn7vTrAr+p2/
-        MKlLVYif/yrvet+m/vzF69sX7ZhxZJvqhIRtMo/TXPY4SD251LF7HUO2wKOCiZ4mT/5ecT7o
-        qBi2gevQwpxZ0ZKH+GK5j6zTW1Ltr8RSnJFoqMVcVJwIAO/uJZizAgAA
-X-CMS-MailID: 20190819235816epcas1p3c84eeeed578b4d7cdf3bdb73a0ff7fa5
-X-Msg-Generator: CA
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: d97cf9f6-fa81-4282-b956-08d72501b255
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR04MB4711;
+x-ms-traffictypediagnostic: BYAPR04MB4711:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB471163090DB1C19B6793BC62FAAB0@BYAPR04MB4711.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(4636009)(136003)(346002)(39860400002)(366004)(396003)(376002)(199004)(189003)(110136005)(478600001)(3846002)(6116002)(54906003)(76116006)(4326008)(5660300002)(66946007)(66556008)(66066001)(66476007)(66446008)(25786009)(102836004)(118296001)(6512007)(53936002)(64756008)(6246003)(2906002)(14454004)(316002)(7416002)(71190400001)(99286004)(2616005)(2501003)(305945005)(486006)(476003)(8676002)(8936002)(229853002)(11346002)(446003)(256004)(81156014)(6436002)(81166006)(7736002)(26005)(186003)(86362001)(6506007)(6486002)(36756003)(71200400001)(76176011)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB4711;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: afvscNeV9o9pBfQac2G65nVCzlZideJ+auUNW8RyMtmJ0T15DV/7Am7kQH/1vW0oZGq4iQGK8AegGvyHtb3WZRDY1jf0cZ6L8YhqdnNQ/8PCrip3PvD4n7wpUr7oxbJzyfVZBw0Ks331hh2U+9ynhUavD40iGIG4eZkiog45eTcTus7BMZFK/ThwNBXSzhOp6fmIftiMkOvYqhSDWZfed2TPHPsO8KFrZySFYvhp3hwEBQjVg/X9FEWYCmnMdnn/m6KOfQYLOFEvypKYvPPvQQwhN1t4PopozGBo/1qIagzxO+n2Ec/h7Vsbza7oQgrqXgbjBSC87vdWWs/QqWH+YDRBff60GJmjDCG/D1l3ky+U5Sjf4JVcIKxsr8iVWsdXAUr8DjjUBMcnnySHPqRUu3sGlvl2uWxWA6diOJyw6Eo=
 Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190811212557epcas3p1d5dd6c484e6fc1ed9feb619a24c1b745
-References: <20190811212315.12689-1-digetx@gmail.com>
-        <CGME20190811212557epcas3p1d5dd6c484e6fc1ed9feb619a24c1b745@epcas3p1.samsung.com>
-        <20190811212315.12689-3-digetx@gmail.com>
+Content-ID: <555FADDD74BB684F9EA1BCB6B3332D5E@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d97cf9f6-fa81-4282-b956-08d72501b255
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 00:02:31.2392
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: rAS7NPfeCzDyOvGsk0wIALTmynx1fZ5+UGOlGVAijDq6bcyJ/tjgfMS2zP1ovi4gXisxeHHuIDFtvPUCnvahoQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB4711
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On 19. 8. 12. 오전 6:22, Dmitry Osipenko wrote:
-> There is no real need to keep interrupt always-enabled, will be nicer
-> to keep it disabled while governor is inactive.
-> 
-> Suggested-by: Thierry Reding <thierry.reding@gmail.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 47 ++++++++++++++++---------------
->  1 file changed, 24 insertions(+), 23 deletions(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index a27300f40b0b..8be6a33beb9c 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -11,6 +11,7 @@
->  #include <linux/devfreq.h>
->  #include <linux/interrupt.h>
->  #include <linux/io.h>
-> +#include <linux/irq.h>
->  #include <linux/module.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/platform_device.h>
-> @@ -416,8 +417,6 @@ static void tegra_actmon_start(struct tegra_devfreq *tegra)
->  {
->  	unsigned int i;
->  
-> -	disable_irq(tegra->irq);
-> -
->  	actmon_writel(tegra, ACTMON_SAMPLING_PERIOD - 1,
->  		      ACTMON_GLB_PERIOD_CTRL);
->  
-> @@ -442,8 +441,6 @@ static void tegra_actmon_stop(struct tegra_devfreq *tegra)
->  	}
->  
->  	actmon_write_barrier(tegra);
-> -
-> -	enable_irq(tegra->irq);
->  }
->  
->  static int tegra_devfreq_target(struct device *dev, unsigned long *freq,
-> @@ -552,6 +549,12 @@ static int tegra_governor_event_handler(struct devfreq *devfreq,
->  {
->  	struct tegra_devfreq *tegra = dev_get_drvdata(devfreq->dev.parent);
->  
-> +	/*
-> +	 * Couple device with the governor early as it is needed at
-> +	 * the moment of governor's start (used by ISR).
-> +	 */
-> +	tegra->devfreq = devfreq;
-> +
->  	switch (event) {
->  	case DEVFREQ_GOV_START:
->  		devfreq_monitor_start(devfreq);
-> @@ -586,10 +589,11 @@ static struct devfreq_governor tegra_devfreq_governor = {
->  
->  static int tegra_devfreq_probe(struct platform_device *pdev)
->  {
-> -	struct tegra_devfreq *tegra;
->  	struct tegra_devfreq_device *dev;
-> -	unsigned int i;
-> +	struct tegra_devfreq *tegra;
-> +	struct devfreq *devfreq;
->  	unsigned long rate;
-> +	unsigned int i;
->  	int err;
->  
->  	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
-> @@ -625,6 +629,16 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  	}
->  	tegra->irq = err;
->  
-> +	irq_set_status_flags(tegra->irq, IRQ_NOAUTOEN);
-> +
-> +	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
-> +					actmon_thread_isr, IRQF_ONESHOT,
-> +					"tegra-devfreq", tegra);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
-> +		return err;
-> +	}
-> +
->  	reset_control_assert(tegra->reset);
->  
->  	err = clk_prepare_enable(tegra->clock);
-> @@ -672,28 +686,15 @@ static int tegra_devfreq_probe(struct platform_device *pdev)
->  	}
->  
->  	tegra_devfreq_profile.initial_freq = clk_get_rate(tegra->emc_clock);
-> -	tegra->devfreq = devfreq_add_device(&pdev->dev,
-> -					    &tegra_devfreq_profile,
-> -					    "tegra_actmon",
-> -					    NULL);
-> -	if (IS_ERR(tegra->devfreq)) {
-> -		err = PTR_ERR(tegra->devfreq);
-> +	devfreq = devfreq_add_device(&pdev->dev, &tegra_devfreq_profile,
-> +				     "tegra_actmon", NULL);
-> +	if (IS_ERR(devfreq)) {
-> +		err = PTR_ERR(devfreq);
->  		goto remove_governor;
->  	}
->  
-> -	err = devm_request_threaded_irq(&pdev->dev, tegra->irq, NULL,
-> -					actmon_thread_isr, IRQF_ONESHOT,
-> -					"tegra-devfreq", tegra);
-> -	if (err) {
-> -		dev_err(&pdev->dev, "Interrupt request failed: %d\n", err);
-> -		goto remove_devfreq;
-> -	}
-> -
->  	return 0;
->  
-> -remove_devfreq:
-> -	devfreq_remove_device(tegra->devfreq);
-> -
->  remove_governor:
->  	devfreq_remove_governor(&tegra_devfreq_governor);
->  
-> 
-
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+T24gTW9uLCAyMDE5LTA4LTE5IGF0IDA4OjEwIC0wNzAwLCBoY2hAaW5mcmFkZWFkLm9yZyB3cm90
+ZToNCj4gT24gTW9uLCBBdWcgMTksIDIwMTkgYXQgMDg6Mzk6MDJQTSArMDUzMCwgQW51cCBQYXRl
+bCB3cm90ZToNCj4gPiBJZiB3ZSB3ZXJlIHVzaW5nIEFTSUQgdGhlbiB5ZXMgd2UgZG9uJ3QgbmVl
+ZCB0byBmbHVzaCBhbnl0aGluZw0KPiA+IGJ1dCBjdXJyZW50bHkgd2UgZG9uJ3QgdXNlIEFTSUQg
+ZHVlIHRvIGxhY2sgb2YgSFcgc3VwcG9ydCBhbmQNCj4gPiBIVyBjYW4gY2VydGFpbmx5IGRvIHNw
+ZWN1bGF0aXZlbHkgcGFnZSB0YWJsZSB3YWxrcyBzbyBmbHVzaGluZw0KPiA+IGxvY2FsIFRMQiB3
+aGVuIE1NIG1hc2sgaXMgZW1wdHkgbWlnaHQgaGVscC4NCj4gPiANCj4gPiBUaGlzIGp1c3QgbXkg
+dGhlb3J5IGFuZCB3ZSBuZWVkIHRvIHN0cmVzcyB0ZXN0IG1vcmUuDQo+IA0KPiBXZWxsLCB3aGVu
+IHdlIGNvbnRleHQgc3dpdGNoIGF3YXkgZnJvbSBhIG1tIHdlIGFsd2F5cyBmbHVzaCB0aGUNCj4g
+bG9jYWwgdGxiLiAgU28gZWl0aGVyIHRoZSBtbV9zdHJ1Y3QgaGFzIG5ldmVyIGJlZW4gc2NoZWR1
+bGVkIGluLA0KDQpMb29raW5nIGF0IHRoZSBzdGFjayBkdW1wLCBpdCBsb29rcyBsaWtlIHRoaXMg
+aXMgdGhlIGNhc2UuIGNwdW1hc2sgaXMNCmVtcHR5IHBvc3NpYmx5IGFmdGVyIGEgZm9yay9leGVj
+IHNpdHVhdGlvbiB3aGVyZSBmb3JrZWQgY2hpbGQgaXMgYmVpbmcNCnJlcGxhY2VkIHdpdGggYWN0
+dWFsIHByb2dyYW0gdGhhdCBpcyBhYm91dCB0byBydW4uDQoNCkkgYWxzbyBsb29rZWQgYXQgeDg2
+ICYgcG93ZXJwYyBpbXBsZW1lbnRhdGlvbiB3aGljaCBkb2Vzbid0IHNlZW0gdG8gZG8NCmFueXRo
+aW5nIHNwZWNpYWwgaWYgY3B1bWFzayBpcyBlbXB0eS4NCg0KSSB3aWxsIHNlbmQgYSB2MiB3aXRo
+IG5vIHRsYiBmbHVzaGluZyBpZiBjcHVtYXNrIGlzIGVtcHR5Lg0KDQo+IG9yIHdlIGFscmFkeSBk
+aWQgYSBsb2NhbF90bGJfZmx1c2ggYW5kIHdlIGNvbnRleHQgc3dpdGNoZWQgaXQgdXAuDQoNCg0K
+UmVnYXJkcywNCkF0aXNoDQo=
