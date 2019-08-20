@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5E2B967D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CDAED967CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730850AbfHTRmF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:42:05 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:41216 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730233AbfHTRlH (ORCPT
+        id S1730770AbfHTRl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:41:29 -0400
+Received: from mail-wm1-f98.google.com ([209.85.128.98]:54917 "EHLO
+        mail-wm1-f98.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729639AbfHTRlI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:41:07 -0400
-Received: by mail-wr1-f99.google.com with SMTP id j16so13258421wrr.8
+        Tue, 20 Aug 2019 13:41:08 -0400
+Received: by mail-wm1-f98.google.com with SMTP id p74so3351434wme.4
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=Ykr2ti2nWYJlvFYvrUQQ3egoqvPPKK3gISVOAT9VfWc=;
-        b=AWXAYTZm0R1iI1DRAnhIW2ldoPHH2RLqvttEBto3cPMw4lqb5IP+gRrXkZQ/DPS43i
-         vR69+iWs/7RUIvtQQLxQXIEfHgk2brKom1khgYfJ3+U6s9O/2vcEKNU5LcV50H4BK1iR
-         5Xf0kKw6TTmrR9l4quQrWNHVlwTJMegRpglsyBQK+T722VHt6ASqr0IyLw0fJH48wqws
-         MPOFnR0tYZ+q+sSvh8C3SP2MkBB8hjj083aFGlT1ffFMA32GTt3j05hpLt6L6WaHTXN9
-         mSa1IycGoo11Bd7iulOfWDAtWXCsjZPXALhEVq6lgwRVScAvu2x4cg1rUiYl62E6Sqjz
-         3QeQ==
-X-Gm-Message-State: APjAAAVelEQNAeTDu0tT7gyi27GzbXzYf1UkdJB0BL990t0lxayIquL0
-        Z9VcwSAD7YIkKGf6k1vHU12vd9Hc+I59v02z5IA3AdaXcNZaQjYY58Udujpzda6UVA==
-X-Google-Smtp-Source: APXvYqzA28Vdw32QmqeGXTEfJeos8NeI7FDcQlTUqGBgqqFGRTO65EHp27djzALulPpHRw7nRETO0/dsnLsr
-X-Received: by 2002:adf:fe12:: with SMTP id n18mr35700959wrr.105.1566322865868;
-        Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
+        bh=kKDiaFCwlI0LG0aQF2OZkw6zY1nZxCPFkp4+u3CT6J4=;
+        b=p/EUSRfVFeRTOltVbm5VsG5PAt5ELX8Mw+ve7OS/sCmGq8+M45qAI2RhgStY7ujl37
+         RWz4Ce/WRqz4G6KUBbeIhAqXgCX3FHR6kZr7vzeFedRdivLHUdqnjKSNwr/Q2jqIaKf8
+         +7h7OIklDTDkURrSAY0fz/sC+flnIaO7Jdty23zfg98Rv4mmnqC+aQbQMfvWTMoaqkjD
+         4rcHnqbBk9ovQfOJx8ogm6xsIhMhvNoICge6hPSwpHFoXQez3fas/hcXyUGp5noVuJ8N
+         /Rifg+AD+CfjvuMsIuVLMMGzY0bPMkDQti5l7RhBRWHMqeIyFeKk9iph/jw+Uk33sabV
+         AyPg==
+X-Gm-Message-State: APjAAAWE3busfN0K6qvVeJdGNnKhMDq2zOrNS4tiL6zFUo/Z/PhLLw7R
+        yag4+2yPylkQZmHl5ByK1gR9ZAM63Kds2w3aO/OU7a/KMMVJxovp3zGNHBco7j5Wkg==
+X-Google-Smtp-Source: APXvYqz01JLuHJLn0Dp3nZavjwETeEjksL0n8HDLWQn0OO42CozJjNxHMz07TpXOEgSP5pxKNxvMFZvfsmkH
+X-Received: by 2002:a05:600c:2255:: with SMTP id a21mr1179446wmm.119.1566322866279;
+        Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id h25sm2328wmb.21.2019.08.20.10.41.05
+        by smtp-relay.gmail.com with ESMTPS id x21sm7945wmj.52.2019.08.20.10.41.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
+        Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
 Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0881-00032g-Ju; Tue, 20 Aug 2019 17:41:05 +0000
+        id 1i0882-00032m-0T; Tue, 20 Aug 2019 17:41:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id F371F2742B4A; Tue, 20 Aug 2019 18:41:04 +0100 (BST)
+        id 63827274314E; Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
@@ -48,11 +48,11 @@ Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Fix the LRCK polarity" to the asoc tree
-In-Reply-To: <e03fb6b2a916223070b9f18405b0ef117a452ff4.1566242458.git-series.maxime.ripard@bootlin.com>
+Subject: Applied "ASoC: sun4i-i2s: RX and TX counter registers are swapped" to the asoc tree
+In-Reply-To: <8b26477560ad5fd8f69e037b167c5e61de5c26a3.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174104.F371F2742B4A@ypsilon.sirena.org.uk>
-Date:   Tue, 20 Aug 2019 18:41:04 +0100 (BST)
+Message-Id: <20190820174105.63827274314E@ypsilon.sirena.org.uk>
+Date:   Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Fix the LRCK polarity
+   ASoC: sun4i-i2s: RX and TX counter registers are swapped
 
 has been applied to the asoc tree at
 
@@ -85,68 +85,36 @@ to this mail.
 Thanks,
 Mark
 
-From dd657eae8164f7e4bafe8b875031a7c6c50646a9 Mon Sep 17 00:00:00 2001
+From cf2c0e1ce9544df42170fb921f12da82dc0cc8d6 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:20 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Fix the LRCK polarity
+Date: Mon, 19 Aug 2019 21:25:17 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: RX and TX counter registers are swapped
 
-The LRCK polarity "normal" polarity in the I2S/TDM specs and in the
-Allwinner datasheet are not the same. In the case where the i2s controller
-is being used as the LRCK master, it's pretty clear when looked at under a
-scope.
+The RX and TX counters registers offset have been swapped, fix that.
 
-Let's fix this, and add a comment to clear up as much the confusion as
-possible.
-
-Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
-Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
+Fixes: fa7c0d13cb26 ("ASoC: sunxi: Add Allwinner A10 Digital Audio driver")
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/e03fb6b2a916223070b9f18405b0ef117a452ff4.1566242458.git-series.maxime.ripard@bootlin.com
+Link: https://lore.kernel.org/r/8b26477560ad5fd8f69e037b167c5e61de5c26a3.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index e3eadfe38aaf..29b5eacd3abe 100644
+index 0a7f1d0f7371..53c95e5289f5 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -570,23 +570,29 @@ static int sun8i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
- 	u32 mode, val;
- 	u8 offset;
+@@ -76,8 +76,8 @@
+ #define SUN4I_I2S_CLK_DIV_MCLK_MASK		GENMASK(3, 0)
+ #define SUN4I_I2S_CLK_DIV_MCLK(mclk)			((mclk) << 0)
  
--	/* DAI clock polarity */
-+	/*
-+	 * DAI clock polarity
-+	 *
-+	 * The setup for LRCK contradicts the datasheet, but under a
-+	 * scope it's clear that the LRCK polarity is reversed
-+	 * compared to the expected polarity on the bus.
-+	 */
- 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
- 	case SND_SOC_DAIFMT_IB_IF:
- 		/* Invert both clocks */
--		val = SUN8I_I2S_FMT0_BCLK_POLARITY_INVERTED |
--		      SUN8I_I2S_FMT0_LRCLK_POLARITY_INVERTED;
-+		val = SUN8I_I2S_FMT0_BCLK_POLARITY_INVERTED;
- 		break;
- 	case SND_SOC_DAIFMT_IB_NF:
- 		/* Invert bit clock */
--		val = SUN8I_I2S_FMT0_BCLK_POLARITY_INVERTED;
-+		val = SUN8I_I2S_FMT0_BCLK_POLARITY_INVERTED |
-+		      SUN8I_I2S_FMT0_LRCLK_POLARITY_INVERTED;
- 		break;
- 	case SND_SOC_DAIFMT_NB_IF:
- 		/* Invert frame clock */
--		val = SUN8I_I2S_FMT0_LRCLK_POLARITY_INVERTED;
-+		val = 0;
- 		break;
- 	case SND_SOC_DAIFMT_NB_NF:
--		val = 0;
-+		val = SUN8I_I2S_FMT0_LRCLK_POLARITY_INVERTED;
- 		break;
- 	default:
- 		return -EINVAL;
+-#define SUN4I_I2S_RX_CNT_REG		0x28
+-#define SUN4I_I2S_TX_CNT_REG		0x2c
++#define SUN4I_I2S_TX_CNT_REG		0x28
++#define SUN4I_I2S_RX_CNT_REG		0x2c
+ 
+ #define SUN4I_I2S_TX_CHAN_SEL_REG	0x30
+ #define SUN4I_I2S_CHAN_SEL_MASK			GENMASK(2, 0)
 -- 
 2.20.1
 
