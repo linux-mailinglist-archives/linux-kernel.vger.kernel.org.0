@@ -2,120 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E08149546F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:32:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E2A2695477
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:34:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbfHTCcb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 22:32:31 -0400
-Received: from mail-eopbgr130073.outbound.protection.outlook.com ([40.107.13.73]:28548
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728719AbfHTCca (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 22:32:30 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Lj2VUxGZ4KuyGsBKyvp4g9vuj0uAbhWJzNr3B8DK6e58Xmms+0hbwvD42Fvuv18fluMmaLmxKRKMR+WNE1fGUNLPdV8Jcl/Ow4q6zamrr1FQzezAanUdlzL8jZ6dF3juivLKWnh0nNJAlapNB6XkoKop2jl++LaL9hpVfugT7uySjFSVNCmzJXBEbU++sIS+s98tK2GmfRoAISXkhdVUNTpLD5zhdkFAJ0fzyrKmdpx/2mu1UiD5VNYC69GadqzVO0yNJbb5Vuh6XBRQ+Wu9KAxIN9bAOmDxJ2zAj7YGZrPbhD9oQcM8HtO3xbgQtwE+ObkCOeMMd2YmxHtK/d0lag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tmmw/7RzIjidk3HJdAgvM64Mcbhsj+8O66Ws1WVw7IY=;
- b=mtLNWD5W7Ycszg3G3atnaxeFbXHiA5HLW6jtozTKWInSUO5cfS2O3zKBsvIDt2eZyupUpbJuQ+E1vjD4vAv568Xk3nuEffqkCtiI4MK4B88WncVdgsxwD3JLPEHAgpng+Ddc/PxQbKTY4NX29vIrEWhZ0/Nb7ocvrs6r1gIqA2UZdqFaVjyI6R7F6dud7x0b/1WL9bHq91Tp3SbyBEh4PPeTZrFupaoAlsVNVVXeajPE9PCFo6/qGNJdUUWUbgFuAx4wO/T3QIU2ySHc6os7nhvYsH5PcN0QGFKBZ33WBo/tPnIOTOXxPfrurgoyKk5Ys0wrzS3IU5JM2r/MLtJB9g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Tmmw/7RzIjidk3HJdAgvM64Mcbhsj+8O66Ws1WVw7IY=;
- b=BUHKFxn7WveAG3aF3gG3FrFRG4sHnQlRxo+9mnmVAD7yy6e/XIH1w3zuCPnxLrPok9ZGhdWZjMJjz7qK5qB/2pKQ69Bkf+7TRLJihDvgYkrYikldxcKF1ydasdMALjGwHJ73/YBFnLu3NedxAGRFe0kVYHEabb4LVeKynMEwwYg=
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com (52.134.5.23) by
- VI1PR0402MB3952.eurprd04.prod.outlook.com (52.134.17.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Tue, 20 Aug 2019 02:32:26 +0000
-Received: from VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::8026:902c:16d9:699d]) by VI1PR0402MB3600.eurprd04.prod.outlook.com
- ([fe80::8026:902c:16d9:699d%7]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
- 02:32:26 +0000
-From:   Andy Duan <fugang.duan@nxp.com>
-To:     Andrew Lunn <andrew@lunn.ch>,
-        Marco Hartmann <marco.hartmann@nxp.com>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christian Herber <christian.herber@nxp.com>
-Subject: RE: [EXT] Re: [PATCH net-next 0/1] net: fec: add C45 MDIO read/write
- support
-Thread-Topic: [EXT] Re: [PATCH net-next 0/1] net: fec: add C45 MDIO read/write
- support
-Thread-Index: AQHVVrEbaaUHZXnfyUWEGTy4sTss5acDFLIAgAA3lHA=
-Date:   Tue, 20 Aug 2019 02:32:26 +0000
-Message-ID: <VI1PR0402MB360079EAAE7042048B2F5AC8FFAB0@VI1PR0402MB3600.eurprd04.prod.outlook.com>
-References: <1566234659-7164-1-git-send-email-marco.hartmann@nxp.com>
- <20190819225422.GD29991@lunn.ch>
-In-Reply-To: <20190819225422.GD29991@lunn.ch>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=fugang.duan@nxp.com; 
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f52e6b7a-76e5-479e-cf09-08d72516a3eb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR0402MB3952;
-x-ms-traffictypediagnostic: VI1PR0402MB3952:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR0402MB39527B4D4ABE470311963679FFAB0@VI1PR0402MB3952.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 013568035E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(39860400002)(366004)(189003)(199004)(3846002)(6116002)(66066001)(2906002)(476003)(446003)(102836004)(4744005)(11346002)(6506007)(486006)(52536014)(5660300002)(186003)(6246003)(53936002)(6636002)(7736002)(74316002)(26005)(33656002)(110136005)(54906003)(316002)(305945005)(7696005)(86362001)(71200400001)(71190400001)(478600001)(99286004)(76176011)(14444005)(14454004)(256004)(229853002)(66446008)(64756008)(4326008)(6436002)(9686003)(76116006)(55016002)(66476007)(66946007)(81156014)(66556008)(25786009)(81166006)(8936002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0402MB3952;H:VI1PR0402MB3600.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +HnLp/BrebltwPjhgoD5zy8DZx1ogOynY3WprbvoIqpmsvqJPQiZXHWsK7cTLSTDGzilZLF2gBlvh05uMz0rvm0r6tM11QknJsgjRBPEnj8jSZfVovf5d4kgSH/f2En9zIjBWYUH5JXUn56RVeFRlApRupJFFLDXIC6MM/G6CpPf1PB/Sig5Q9P57Fo/cCkiDFZGidO1q9wp7QWbo5xu1eSKJIb6oz6VEwdjrzOnR2ys6INr2QNjchOZBJVQLV7t+N7F6/p1S7cJihHPULhggakTmcjIqt+/+vHz3sDoxejLAfe5zM/Jd3LujaX17xpkdnH1F5Bqv+A+cLKMIndHctogsxajDLw/X2ZRXfXh+hJueO/b/IKcQUL+JcF0CFs8xt1sQFB0Eum7m9ZN+2a5VY2gJNQWuUQyrYgMpXMCvrM=
-Content-Type: text/plain; charset="us-ascii"
+        id S1729096AbfHTCez (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 22:34:55 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:44033 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728719AbfHTCey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 22:34:54 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.nyi.internal (Postfix) with ESMTP id AC9BF30E0;
+        Mon, 19 Aug 2019 22:34:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Mon, 19 Aug 2019 22:34:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        content-transfer-encoding:content-type:in-reply-to:date:to:cc
+        :subject:from:message-id; s=fm1; bh=UTtjerizdprs5SO9sELd3ccBs2SU
+        qyaWLtKiMRtIKCg=; b=er29fuLUdvd1y7Vd5jcXA52UKTe5juq047EmhDXXdQsg
+        4i0VKXAdXsh4sIPjz2kFlKA4+h8LuMP6+CzWR/K26hK720DDdpLTroG6g4aPpGFV
+        N+/6xBj20VDHHhBh7vb9Go9afTgh2NJvqvinN8sDE6kl4D81xUnTx9jmhza8yRgr
+        OW7r6ak2qnvtX0Bhcc1ACfE9JR+CwBONq/+QrtMoIWuW9JKQiNt616kJSF4CejTe
+        0iUc9RicFQNleToRpDE+8qrOtHqxbwRv1zj9NSkbhHWu8bwd2XYoAsgA6R7+L8Yy
+        hnDXo5i4W7/ilI2zoNSQT3t9bc8REsTPnUO28pd4Jg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=UTtjer
+        izdprs5SO9sELd3ccBs2SUqyaWLtKiMRtIKCg=; b=fynTHJt8XyRPpXxlmDWLvm
+        O1cqz/sy/p5hsH/qu9jkdrpINAJS7QIO0rdSo1Ce6qNTgTdRtuPVFq0yCaZV+PA6
+        UUM04RADWxVzZBf8kmTHtFBGbsX41cgrtf3pQY5dm5qOvFxc59FiXCZfljYPYbmQ
+        qIkxDkPnoqb/uLTVAbiYPvmb2hw4pSqCxnFCiV34RuinYdjoAHa+/5Lu5g4Hlu6F
+        87K6C57/BfRoC/8bi7RRtOBe2bxE9skGXUuTOxHqoj3Bi3gcPIKUBOoKLEZ39r+0
+        Qnt3VuHMtq7PLMzzFvZADt7Kc5EtslLSqJXPNpVJkmj98i27lRV2RErbhzHjJLRA
+        ==
+X-ME-Sender: <xms:TFxbXfG1MMhPF2Vrz8nA2ZCvAKWEKUQgxwec50curP18IB2Onj7_Nw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudegtddgieefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    gfrhhlucfvnfffucdljedtmdenucfjughrpefgtggjfffvuffhkfesthhqredttddtjeen
+    ucfhrhhomhepfdffrghnihgvlhcuighufdcuoegugihusegugihuuhhurdighiiiqeenuc
+    fkphepudelledrvddtuddrieegrddufeehnecurfgrrhgrmhepmhgrihhlfhhrohhmpegu
+    gihusegugihuuhhurdighiiinecuvehluhhsthgvrhfuihiivgeptd
+X-ME-Proxy: <xmx:TFxbXcC_2kE7g-7qPzf5OpP1-YxAvA3w3UlL4T4PEeaAAgPHYNei5w>
+    <xmx:TFxbXcyq4jmx0fZHDrLtQtOs0Xn1wqHJX_4P1vpkdWa_-_SaqSshag>
+    <xmx:TFxbXY5EVJ7vJnRAsbDeusGg6AaMc6-Xt87qjk8UuhUAnYN14FoGug>
+    <xmx:TVxbXQ9FUWi7JBHMkSzeks_Vfj--uDwZlnHLpIF-XptoE4xElD3gsw>
+Received: from localhost (unknown [199.201.64.135])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 6184B380074;
+        Mon, 19 Aug 2019 22:34:51 -0400 (EDT)
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f52e6b7a-76e5-479e-cf09-08d72516a3eb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 02:32:26.4843
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: t4nQtvg+0LbpR8GaIVX1OwxS8zpFBnfWv9Ks6usODFkJ/4v5AMGtQTwQYUuN3mWTBVaY1W1uTz32n22OIRtHyA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0402MB3952
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <CAADnVQ+RKuJB5G+-1fjsE2xLp8CxJMmidd6Qobi_4dXQOWjrow@mail.gmail.com>
+Date:   Mon, 19 Aug 2019 19:34:50 -0700
+To:     "Alexei Starovoitov" <alexei.starovoitov@gmail.com>
+Cc:     "bpf" <bpf@vger.kernel.org>, "Song Liu" <songliubraving@fb.com>,
+        "Yonghong Song" <yhs@fb.com>, "Andrii Nakryiko" <andriin@fb.com>,
+        "Peter Zijlstra" <peterz@infradead.org>,
+        "Ingo Molnar" <mingo@redhat.com>,
+        "Arnaldo Carvalho de Melo" <acme@kernel.org>,
+        "Alexei Starovoitov" <ast@fb.com>,
+        "Alexander Shishkin" <alexander.shishkin@linux.intel.com>,
+        "Jiri Olsa" <jolsa@redhat.com>,
+        "Namhyung Kim" <namhyung@kernel.org>,
+        "LKML" <linux-kernel@vger.kernel.org>,
+        "Kernel Team" <kernel-team@fb.com>
+Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
+ PERF_EVENT_IOC_QUERY_PROBE ioctl
+From:   "Daniel Xu" <dxu@dxuuu.xyz>
+Message-Id: <BWE3UBBDYMGD.26324NSRV46UF@dlxu-fedora-R90QNFJV>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrew Lunn <andrew@lunn.ch>
-> On Mon, Aug 19, 2019 at 05:11:14PM +0000, Marco Hartmann wrote:
-> > As of yet, the Fast Ethernet Controller (FEC) driver only supports
-> > Clause 22 conform MDIO transactions. IEEE 802.3ae Clause 45 defines a
-> > modified MDIO protocol that uses a two staged access model in order to
-> > increase the address space.
+On Mon Aug 19, 2019 at 6:26 PM Alexei Starovoitov wrote:
+> On Fri, Aug 16, 2019 at 3:33 PM Daniel Xu <dxu@dxuuu.xyz> wrote:
 > >
-> > This patch adds support for Clause 45 conform MDIO read and write
-> > operations to the FEC driver.
+> > It's useful to know [uk]probe's nmissed and nhit stats. For example wit=
+h
+> > tracing tools, it's important to know when events may have been lost.
+> > debugfs currently exposes a control file to get this information, but
+> > it is not compatible with probes registered with the perf API.
+> >
+> > While bpf programs may be able to manually count nhit, there is no way
+> > to gather nmissed. In other words, it is currently not possible to
+> > retrieve information about FD-based probes.
+> >
+> > This patch adds a new ioctl that lets users query nmissed (as well as
+> > nhit for completeness). We currently only add support for [uk]probes
+> > but leave the possibility open for other probes like tracepoint.
+> >
+> > Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ...
+> > +int perf_kprobe_event_query(struct perf_event *event, void __user *inf=
+o)
+> > +{
+> > +       struct perf_event_query_probe __user *uquery =3D info;
+> > +       struct perf_event_query_probe query =3D {};
+> > +       struct trace_event_call *call =3D event->tp_event;
+> > +       struct trace_kprobe *tk =3D (struct trace_kprobe *)call->data;
+> > +       u64 ncopy;
+> > +
+> > +       if (!capable(CAP_SYS_ADMIN))
+> > +               return -EPERM;
+> > +       if (copy_from_user(&query, uquery,
+> > +                          offsetofend(struct perf_event_query_probe, s=
+ize)))
+> > +               return -EFAULT;
+> > +
+> > +       ncopy =3D min_t(u64, query.size, sizeof(query));
+> > +       query.nhit =3D trace_kprobe_nhit(tk);
+> > +       query.nmissed =3D tk->rp.kp.nmissed;
+> > +
+> > +       if (copy_to_user(uquery, &query, ncopy))
+> > +               return -EFAULT;
 >=20
-> Hi Marco
->=20
-> Do all versions of the FEC hardware support C45? Or do we need to make us=
-e
-> of the quirk support in this driver to just enable it for some revisions =
-of FEC?
->=20
-> Thanks
->         Andrew
+> shouldn't kernel update query.size before copying back?
+> Otherwise how user space would know which fields
+> were populated?
 
-i.MX legacy platforms like i.MX6/7 series, they doesn't support Write & Rea=
-d Increment.
-But for i.MX8MQ/MM series, it support C45 full features like Write & Read I=
-ncrement.
-
-For the patch itself, it doesn't support Write & Read Increment, so I think=
- the patch doesn't
-need to add quirk support.
-
-Andy
+Ah yes, sorry. Will add that.
