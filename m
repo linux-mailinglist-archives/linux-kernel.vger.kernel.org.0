@@ -2,128 +2,186 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D916F96B45
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:18:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 82BE496B44
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:18:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730913AbfHTVSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:18:52 -0400
-Received: from mail-eopbgr680046.outbound.protection.outlook.com ([40.107.68.46]:65409
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729900AbfHTVSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:18:49 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AkGlmK6//3dQwCuMSJE7Jq/y/75l2Vr67NlKB0RmuVwiXyRmWc84v7/HdFN/2KqE3odHCDJYnTu4upJ85cVqXY4tpREZtzBlk+C+EiQHOB9Gq8nYE1hBwhOQKpOnOlYE2NrmFCZy6GTB9Zx/JNDo1QsSp9wAw/9OCCz2iunQG/5Cfwj7xmpkGTOD0a3/xH2DZRHnZWC5PQxj2tNoDFe6iDcMinx2nXSQyfnKkt+/2eP1ps61z8dVBP0OrBEDn0UjDDDwzv1JJUJ0s/06b9VpXxOAOLPfkmocvTjSUnX0tf97nX/EtpeTigzYiUBrvX8axUHRgWSXeqMM+8Yp/xrY7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9pOeAZzvXzUvvfRo+vaIGMMWB2tK4f2bDWbGMZAkbj4=;
- b=GHKE1Vq0FNiFfuLqZ0xCgLLanjwL2glxGoX4KQNp5CToWbLshvLbRI9Q3irABfHxLYvMaFuNbtisHDbrAMdXUxmY+dhvlgd1K+sPnHfbBFMaILPsespGl6W6ls8oO9uO46KzMUxn3ag628sP4kwXC1tmTmm7St44SrFbADYCG8tQ13LW32sxJA6rdSKs7BgGaQC8cERhc/hT/RpiOIc/5coPXe6FE8/parViwdBMqEvB1lcJXE2Ok1vYsoDKnzxhKUTGMmim+mVlYoiwLjYr9ENfih66v9vWtCkhbcXJqboc2zuiBN1/W8ygbTfJ07941pm6UJx60u7UZ0CzQqkZqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
+        id S1730871AbfHTVSr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:18:47 -0400
+Received: from mail-io1-f66.google.com ([209.85.166.66]:42655 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730833AbfHTVSq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 17:18:46 -0400
+Received: by mail-io1-f66.google.com with SMTP id e20so265100iob.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 14:18:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9pOeAZzvXzUvvfRo+vaIGMMWB2tK4f2bDWbGMZAkbj4=;
- b=gsb4hviy8akl6MaZ4G2T/ZE5wYMnzl3rwwUf3bBcLRUzJUE61pZb4QVvP8IjaOzBbtwg1EqcXPchgV3p3StiEAXc3fTOmnnc3CSETXRq4n3KWq3hLBYfFaN3jYwnBWT3fUHOjezRS18TLg7/FY62+mgrdcfJ4T8Cjo1YH/3WP5g=
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com (20.179.104.150) by
- DM6PR12MB3771.namprd12.prod.outlook.com (10.255.172.212) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Tue, 20 Aug 2019 21:18:04 +0000
-Received: from DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::585:2d27:6e06:f9b0]) by DM6PR12MB3163.namprd12.prod.outlook.com
- ([fe80::585:2d27:6e06:f9b0%7]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
- 21:18:04 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Joerg Roedel <joro@8bytes.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-ia64@vger.kernel.org" <linux-ia64@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH 10/11] iommu: Disable passthrough mode when SME is active
-Thread-Topic: [PATCH 10/11] iommu: Disable passthrough mode when SME is active
-Thread-Index: AQHVVpE+vHJ4RbcyHUW5UFtccLiK3KcEjFuA
-Date:   Tue, 20 Aug 2019 21:18:03 +0000
-Message-ID: <82e00ce5-df71-5b71-cf5d-3de86aa0a1e8@amd.com>
-References: <20190819132256.14436-1-joro@8bytes.org>
- <20190819132256.14436-11-joro@8bytes.org>
-In-Reply-To: <20190819132256.14436-11-joro@8bytes.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0080.namprd05.prod.outlook.com
- (2603:10b6:803:22::18) To DM6PR12MB3163.namprd12.prod.outlook.com
- (2603:10b6:5:182::22)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f004d402-54d1-4de3-4fd3-08d725b3e304
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DM6PR12MB3771;
-x-ms-traffictypediagnostic: DM6PR12MB3771:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DM6PR12MB37718D4248565965DE7D0677ECAB0@DM6PR12MB3771.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:473;
-x-forefront-prvs: 013568035E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(396003)(366004)(346002)(199004)(189003)(6116002)(81166006)(66946007)(3846002)(66556008)(76176011)(7736002)(66066001)(64756008)(66476007)(8936002)(66446008)(36756003)(7416002)(305945005)(5660300002)(99286004)(52116002)(53936002)(446003)(186003)(6506007)(2906002)(6246003)(6512007)(386003)(26005)(478600001)(53546011)(102836004)(31696002)(81156014)(54906003)(11346002)(316002)(25786009)(86362001)(31686004)(14454004)(4326008)(8676002)(6436002)(6486002)(229853002)(14444005)(486006)(256004)(71200400001)(71190400001)(476003)(2616005)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3771;H:DM6PR12MB3163.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: BqXmetQpD5TrsV0PaAmUt4sBpkamhQA3hpnriw6uymaEVDmezxzfhc5FXUI4JENjffMqQrscRtnHjWlegc+M75Uw5jT8cYm6fr7iyeyLD3Xjvrm8qpw4ly4Hf/X7z93xl0uj9RdkwRgqALjnr/VRcrvSGJClIQczEOqzoKX8hVnu/zWAHLvQ637XlWhX3TCEIKcWv5VITZ8dL8AHZzPFrZRLS3AHN1NC8paRdw5OPHLFSvbRgLFgXTPTUUqSwPrriE8vDfsVDUtxNl17Q6es1c7Yu5NLM2rmT1UgSC5Ob9Gcv6OIqDcONgYpQLO83Uj9ADoJyiQMOW4I4MEPVoRHIm2/DZQe4OFz2eJYLnP18gzfFatVgEioXctXTZPeEjKeMJU8/RkrtOx4uu3Zlw0c6YscXGq1qTah9oQontizPdg=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4AEFA134D88B2241B30C6ADF7C3A41A9@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linuxfoundation.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LWCAvFiK/1D9LnaUfXje6ZOCpsw5IK5RjyWqJ1Odmco=;
+        b=QLuPyPJ9EANXkJA/nvF9jai5ojDekcl8q9PgY92nBvkiE8X8MJSTpsYMeSc1mLGFBn
+         jj6TnfK8Xa9NE/CXE4Xbk4TKsej8eX/J0rIfvRDZ0tXwdqPkqBAVnZ6VD7aRpVdfL5S1
+         4pNGo5qomRF9VthpS2wPHzKS+TLYx7o2H6qfU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=LWCAvFiK/1D9LnaUfXje6ZOCpsw5IK5RjyWqJ1Odmco=;
+        b=GRhQAFMtBettmMjI60GgxJxio8gxQEjJzv7hzavvDmp/GRMysdqeEBAo1eB/yHyIeF
+         Sk5JZ2UllxfBQLBGEuVIyULab/Elei5S8tnGuG+rjoIvYnlCy+4M+tS0x5Ltk0g39Mb8
+         WxXrD0/r7+2xSuFHSjvXndd6ZXm2IvCAS9o2zVWtKb29gqZGqCq7dTQ2B35m4scfJyhP
+         1ryioJuELt0RiMzVKWeisB+RbODXscI/9+UZLH2uxNwF0BP1KnRxoFKMjs3j7qpvPvuj
+         YHx9wFhJyyaHw+LNTJKZYdeDMPrX1oedtR2lV63AU08pNmQfvZfLjytr3syyHjKQbYuz
+         k5Ag==
+X-Gm-Message-State: APjAAAUmCWs1KZ2TAQJmVk9yVgeOKnJ6NOXZzd2zeEnJgHSnU3TwH8Xx
+        cq5ImNMC4LKaVqsvgeb5+FoXOw==
+X-Google-Smtp-Source: APXvYqwDygA003E/SV+QYp4iIutR3r8tEjL6vfzEneuXiXAio7oX3BneR2W1jchO48wfbLGyUOIoqg==
+X-Received: by 2002:a6b:90c3:: with SMTP id s186mr9509456iod.114.1566335925862;
+        Tue, 20 Aug 2019 14:18:45 -0700 (PDT)
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net. [24.9.64.241])
+        by smtp.gmail.com with ESMTPSA id e12sm38441135iob.66.2019.08.20.14.18.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 14:18:44 -0700 (PDT)
+From:   Shuah Khan <skhan@linuxfoundation.org>
+To:     mchehab@kernel.org, helen.koike@collabora.com, hverkuil@xs4all.nl,
+        laurent.pinchart@ideasonboard.com, andrealmeid@collabora.com
+Cc:     Shuah Khan <skhan@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: [PATCH v3 0/2] Collapse vimc into single monolithic driver
+Date:   Tue, 20 Aug 2019 15:18:40 -0600
+Message-Id: <cover.1566334362.git.skhan@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f004d402-54d1-4de3-4fd3-08d725b3e304
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 21:18:04.0925
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zl1PfZd5sWvw/Mq3OO1LgJuZOR//jvS2hWc9z/Y6GYFGvLoDOhA1IFC/UIAXYVWB8+SrSJEkSNQoqyMk+Ci1TQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3771
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gOC8xOS8xOSA4OjIyIEFNLCBKb2VyZyBSb2VkZWwgd3JvdGU6DQo+IEZyb206IEpvZXJnIFJv
-ZWRlbCA8anJvZWRlbEBzdXNlLmRlPg0KPiANCj4gVXNpbmcgUGFzc3Rocm91Z2ggbW9kZSB3aGVu
-IFNNRSBpcyBhY3RpdmUgY2F1c2VzIGNlcnRhaW4NCj4gZGV2aWNlcyB0byB1c2UgdGhlIFNXSU9U
-TEIgYm91bmNlIGJ1ZmZlci4gVGhlIGJvdW5jZSBidWZmZXINCj4gY29kZSBoYXMgYW4gdXBwZXIg
-bGltaXQgb2YgMjU2a2IgZm9yIHRoZSBzaXplIG9mIERNQQ0KPiBhbGxvY2F0aW9ucywgd2hpY2gg
-aXMgdG9vIHNtYWxsIGZvciBjZXJ0YWluIGRldmljZXMgYW5kDQo+IGNhdXNlcyB0aGVtIHRvIGZh
-aWwuDQo+IA0KPiBXaXRoIHRoaXMgcGF0Y2ggd2UgZW5hYmxlIElPTU1VIGJ5IGRlZmF1bHQgd2hl
-biBTTUUgaXMNCj4gYWN0aXZlIGluIHRoZSBzeXN0ZW0sIG1ha2luZyB0aGUgZGVmYXVsdCBjb25m
-aWd1cmF0aW9uIHdvcmsNCj4gZm9yIG1vcmUgc3lzdGVtcyB0aGFuIGl0IGRvZXMgbm93Lg0KPiAN
-Cj4gVXNlcnMgdGhhdCBkb24ndCB3YW50IElPTU1VcyB0byBiZSBlbmFibGVkIHN0aWxsIGNhbiBk
-aXNhYmxlDQo+IHRoZW0gd2l0aCBrZXJuZWwgcGFyYW1ldGVycy4NCj4gDQo+IFNpZ25lZC1vZmYt
-Ynk6IEpvZXJnIFJvZWRlbCA8anJvZWRlbEBzdXNlLmRlPg0KDQpSZXZpZXdlZC1ieTogVG9tIExl
-bmRhY2t5IDx0aG9tYXMubGVuZGFja3lAYW1kLmNvbT4NClRlc3RlZC1ieTogVG9tIExlbmRhY2t5
-IDx0aG9tYXMubGVuZGFja3lAYW1kLmNvbT4NCg0KPiAtLS0NCj4gIGRyaXZlcnMvaW9tbXUvaW9t
-bXUuYyB8IDUgKysrKysNCj4gIDEgZmlsZSBjaGFuZ2VkLCA1IGluc2VydGlvbnMoKykNCj4gDQo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lvbW11L2lvbW11LmMgYi9kcml2ZXJzL2lvbW11L2lvbW11
-LmMNCj4gaW5kZXggMDE3NTlkNGFjNzBiLi5lYzE4Yzk2MzBlOTMgMTAwNjQ0DQo+IC0tLSBhL2Ry
-aXZlcnMvaW9tbXUvaW9tbXUuYw0KPiArKysgYi9kcml2ZXJzL2lvbW11L2lvbW11LmMNCj4gQEAg
-LTExOSw2ICsxMTksMTEgQEAgc3RhdGljIGludCBfX2luaXQgaW9tbXVfc3Vic3lzX2luaXQodm9p
-ZCkNCj4gIAkJCWlvbW11X3NldF9kZWZhdWx0X3Bhc3N0aHJvdWdoKGZhbHNlKTsNCj4gIAkJZWxz
-ZQ0KPiAgCQkJaW9tbXVfc2V0X2RlZmF1bHRfdHJhbnNsYXRlZChmYWxzZSk7DQo+ICsNCj4gKwkJ
-aWYgKGlvbW11X2RlZmF1bHRfcGFzc3Rocm91Z2goKSAmJiBzbWVfYWN0aXZlKCkpIHsNCj4gKwkJ
-CXByX2luZm8oIlNNRSBkZXRlY3RlZCAtIERpc2FibGluZyBkZWZhdWx0IElPTU1VIFBhc3N0aHJv
-dWdoXG4iKTsNCj4gKwkJCWlvbW11X3NldF9kZWZhdWx0X3RyYW5zbGF0ZWQoZmFsc2UpOw0KPiAr
-CQl9DQo+ICAJfQ0KPiAgDQo+ICAJcHJfaW5mbygiRGVmYXVsdCBkb21haW4gdHlwZTogJXMgJXNc
-biIsDQo+IA0K
+vimc uses Component API to split the driver into functional components.
+The real hardware resembles a monolith structure than component and
+component structure added a level of complexity making it hard to
+maintain without adding any real benefit.
+
+The sensor is one vimc component that would makes sense to be a separate
+module to closely align with the real hardware. It would be easier to
+collapse vimc into single monolithic driver first and then split the
+sensor off as a separate module.
+
+This patch series removes the component API and makes minimal changes to
+the code base preserving the functional division of the code structure.
+Preserving the functional structure allows us to split the sensor off
+as a separate module in the future.
+
+Major design elements in this change are:
+    - Use existing struct vimc_ent_config and struct vimc_pipeline_config
+      to drive the initialization of the functional components.
+    - Make vimc_device and vimc_ent_config global by moving them to
+      vimc-common.h
+    - Add two new hooks add and rm to initialize and register, unregister
+      and free subdevs.
+    - All component API is now gone and bind and unbind hooks are modified
+      to do "add" and "rm" with minimal changes to just add and rm subdevs.
+    - vimc-core's bind and unbind are now register and unregister.
+    - vimc-core invokes "add" hooks from its vimc_register_devices().
+      The "add" hooks remain the same and register subdevs. They don't
+      create platform devices of their own and use vimc's pdev.dev as
+      their reference device. The "add" hooks save their vimc_ent_device(s)
+      in the corresponding vimc_ent_config.
+    - vimc-core invokes "rm" hooks from its unregister to unregister
+      subdevs and cleanup.
+    - vimc-core invokes "add" and "rm" hooks with pointer to struct
+      vimc_device and the corresponding struct vimc_ent_config pointer.
+
+The following configure and stream test works on all devices.
+
+    media-ctl -d platform:vimc -V '"Sensor A":0[fmt:SBGGR8_1X8/640x480]'
+    media-ctl -d platform:vimc -V '"Debayer A":0[fmt:SBGGR8_1X8/640x480]'
+    media-ctl -d platform:vimc -V '"Sensor B":0[fmt:SBGGR8_1X8/640x480]'
+    media-ctl -d platform:vimc -V '"Debayer B":0[fmt:SBGGR8_1X8/640x480]'
+
+    v4l2-ctl -z platform:vimc -d "RGB/YUV Capture" -v width=1920,height=1440
+    v4l2-ctl -z platform:vimc -d "Raw Capture 0" -v pixelformat=BA81
+    v4l2-ctl -z platform:vimc -d "Raw Capture 1" -v pixelformat=BA81
+
+    v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video1
+    v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video2
+    v4l2-ctl --stream-mmap --stream-count=100 -d /dev/video3
+
+The second patch in the series fixes a general protection fault found
+when rmmod is done while stream is active.
+
+- rmmod while streaming returns vimc is in use
+- rmmod without active stream works correctly
+
+Changes since v2:
+- Rebase to media master on top of vimc reverts. No merge conflicts.
+- Rename "vent" variable to "vcfg" to reflect config and standout
+  from "ved"
+- Error handling when adding subdevs fails to remove already added
+  subdevs, do other clean-up and bail out.
+- No changes to patch 2/2
+
+Changes since v1:
+Patch 1 & 2: (patch 1 in this series)
+- Collapsed the two patches into one
+- Added common defines (vimc_device and vimc_ent_config) to vimc-common.h
+  based on our discussion.
+- Addressed review comments from Helen and Laurent
+- Use vimc-common.h instead of creating a new file.
+- Other minor comments from Helen on int vs. unsigned int and
+  not needing to initialize ret in vimc_add_subdevs()
+Patch 3 (patch 2 in this series):
+- The second patch is the fix for gpf. Updated the patch after looking
+  at the test results from Andre and Helen. This problem is in a common
+  code and impacts all subdevs. The fix addresses the core problem and
+  fixes it. Fix removes pads release from v4l2_device_unregister_subdev()
+  and pads are now released from the sd release handler with all other
+  resources.
+
+Outstanding:
+- Update documentation with the correct topology.
+- There is one outstanding gpf remaining in the unbind path. I will
+  fix that in a separate patch. This is an existing problem and will
+  be easier to fix on top of this patch series.
+
+vimc_print_dot (--print-dot) topology after this change: (no change
+compared to media master)
+digraph board {
+        rankdir=TB
+        n00000001 [label="{{} | Sensor A\n/dev/v4l-subdev0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000001:port0 -> n00000005:port0 [style=bold]
+        n00000001:port0 -> n0000000b [style=bold]
+        n00000003 [label="{{} | Sensor B\n/dev/v4l-subdev1 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000003:port0 -> n00000008:port0 [style=bold]
+        n00000003:port0 -> n0000000f [style=bold]
+        n00000005 [label="{{<port0> 0} | Debayer A\n/dev/v4l-subdev2 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000005:port1 -> n00000015:port0
+        n00000008 [label="{{<port0> 0} | Debayer B\n/dev/v4l-subdev3 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000008:port1 -> n00000015:port0 [style=dashed]
+        n0000000b [label="Raw Capture 0\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
+        n0000000f [label="Raw Capture 1\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
+        n00000013 [label="{{} | RGB/YUV Input\n/dev/v4l-subdev4 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000013:port0 -> n00000015:port0 [style=dashed]
+        n00000015 [label="{{<port0> 0} | Scaler\n/dev/v4l-subdev5 | {<port1> 1}}", shape=Mrecord, style=filled, fillcolor=green]
+        n00000015:port1 -> n00000018 [style=bold]
+        n00000018 [label="RGB/YUV Capture\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
+
+Shuah Khan (2):
+  media: vimc: Collapse component structure into a single monolithic
+    driver
+  media: vimc: Fix gpf in rmmod path when stream is active
+
+ drivers/media/platform/vimc/Makefile       |   7 +-
+ drivers/media/platform/vimc/vimc-capture.c |  79 ++------
+ drivers/media/platform/vimc/vimc-common.c  |   3 +-
+ drivers/media/platform/vimc/vimc-common.h  |  48 +++++
+ drivers/media/platform/vimc/vimc-core.c    | 199 ++++++++-------------
+ drivers/media/platform/vimc/vimc-debayer.c |  68 ++-----
+ drivers/media/platform/vimc/vimc-scaler.c  |  72 ++------
+ drivers/media/platform/vimc/vimc-sensor.c  |  72 ++------
+ 8 files changed, 180 insertions(+), 368 deletions(-)
+
+-- 
+2.20.1
+
