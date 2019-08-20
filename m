@@ -2,88 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5AE96181
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:48:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1CB5596076
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:41:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730536AbfHTNr4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:47:56 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52972 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730143AbfHTNkh (ORCPT
+        id S1730352AbfHTNlO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:41:14 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45763 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730341AbfHTNlM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:40:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=B8LOvtinbA79S6NGUvPmiLsFutes9sDZnF3rriD/5Mw=; b=LqgG+2Wdt6591p4WO0+ZJbqG6
-        JVwTerajJO10FChITzDm05wP2VLtJnRRALEsBN7lsG55BOjyn6LJqArhyPi3bXAVRiBtxrTIhVrGR
-        dmyT7Q0/4ozU+NDkCoQ/0z2ri/SOjl8JXuwudo7C/gjOUeWgoXYQh6VKjtldhzkcQ1usxbl+YUCJ8
-        eYICpPUrQ3PQaIjpM7+lIJBtpr13OYextxKSxKz6NELTmP6n+QIOUH/DRp5wUH9Y4G1TJWigSzkWx
-        uLj+hzSg/dfvmLL9uPbxkKLxvFoeoFGigZRqWKfM95/1lnk9qu4wSzinaCZd34957WhaXkdSxjpeI
-        Z98gbhvhA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i04NE-0002hI-Qz; Tue, 20 Aug 2019 13:40:32 +0000
-Date:   Tue, 20 Aug 2019 06:40:32 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Alex Shi <alex.shi@linux.alibaba.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>, Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-Subject: Re: [PATCH 01/14] mm/lru: move pgdat lru_lock into lruvec
-Message-ID: <20190820134032.GA24642@bombadil.infradead.org>
-References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
- <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
+        Tue, 20 Aug 2019 09:41:12 -0400
+Received: by mail-lf1-f67.google.com with SMTP id a30so4148544lfk.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 06:41:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qKDCjGrUGEITn9keK4O4wSbQw8s60BA2KTQLoKiFzno=;
+        b=NCf+aQCLyOPmICxmwDK6V0Xcg9NK5tJa5uZ4tFopVmo3qpZW6uFwm9JMgevQtG9Qns
+         hGHjeb0UzJ7k09qOfUkp4Tql14PTk9unwPbaHn939zgf4VvQG10w3MfUxWZjjoCKatxl
+         EPG7eYhW6U7R91XYDZNKBKlrBYpL8eES3GJDUgi5sZdP7nqOjqr3C28o5/77BHkLSvqF
+         Fc5OouIJ09I1e4/Qzl0Aw9X/1cvzsuWb4o3+kehRU8k3RCQV2jdLDOmi2XICAYA8O50t
+         UC9Rsy6Wxa5j/F4H6Kjn2u4Dj9hkiAVk1c/6idfukQi4nLlZwGfGWAdkhlgEdvk2An7m
+         3X9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=qKDCjGrUGEITn9keK4O4wSbQw8s60BA2KTQLoKiFzno=;
+        b=BaJJoAGiUdIMCvv2WfFqNK5vIjDLS7MT+RJkHLYplIEcK1zpKhSrsIaF/V1DPmRdGl
+         alM7qwLMLOgCCE5m3gTsRdcWQsUUMyjCNc3Nt8W4N7f3rWbV3fpf94u79u2K/XMr9OGA
+         /R7xQnzKBkCeDEkQRhVVhDd0M6jZXEqe2EohDovkMaEoFT8jRjBp/QktxXnep5OclOw6
+         66OcgHD+zZ0JTld6VbjlJ502kFzb1pnAwCAP32B9NxFV/DSHuXkpg6Z8PRf7I5EKNnzu
+         ZaeMYyIQRlPw4uE4ICVNgu0LlXia9tu1uTTAF1k8QsIQi8XO8zzMDoq7fXBCgnH1/Hd5
+         o4gQ==
+X-Gm-Message-State: APjAAAX1TL/J2mz2wwaPZxxFLb6Fo8+T5v23MQ/8UfpthctmO0IyAKi5
+        EdsafHYGJvRFMyHVov+Em5zs1w==
+X-Google-Smtp-Source: APXvYqxttx78GtX0vd5yiKKkdqsdz1pehalivWVgs1kXk1dF/0y8Iyrv4JOoqygWTduXugZhAZBz6w==
+X-Received: by 2002:a19:a416:: with SMTP id q22mr15652060lfc.145.1566308470396;
+        Tue, 20 Aug 2019 06:41:10 -0700 (PDT)
+Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
+        by smtp.gmail.com with ESMTPSA id d3sm2867007lfb.92.2019.08.20.06.41.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 06:41:09 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     davem@davemloft.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: net: add missing NFT_FWD_NETDEV to config
+Date:   Tue, 20 Aug 2019 15:41:02 +0200
+Message-Id: <20190820134102.25636-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:48:24PM +0800, Alex Shi wrote:
-> +++ b/include/linux/mmzone.h
-> @@ -295,6 +295,9 @@ struct zone_reclaim_stat {
->  
->  struct lruvec {
->  	struct list_head		lists[NR_LRU_LISTS];
-> +	/* move lru_lock to per lruvec for memcg */
-> +	spinlock_t			lru_lock;
+When running xfrm_policy.sh we see the following
 
-This comment makes no sense outside the context of this patch.
+ # sysctl cannot stat /proc/sys/net/ipv4/conf/eth1/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv4/conf/eth1/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv4/conf/veth0/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv4/conf/veth0/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv4/conf/eth1/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv4/conf/eth1/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv4/conf/veth0/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv4/conf/veth0/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv6/conf/eth1/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv6/conf/eth1/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv6/conf/veth0/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv6/conf/veth0/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv6/conf/eth1/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv6/conf/eth1/forwarding #
+ # sysctl cannot stat /proc/sys/net/ipv6/conf/veth0/forwarding No such file or directory
+ cannot: stat_/proc/sys/net/ipv6/conf/veth0/forwarding #
+ # modprobe FATAL Module ip_tables not found in directory /lib/modules/5.3.0-rc5-next-20190820+
+ FATAL: Module_ip_tables #
+ # iptables v1.6.2 can't initialize iptables table `filter' Table does not exist (do you need to insmod?)
+ v1.6.2: can't_initialize #
+
+Rework to enable CONFIG_NF_TABLES_NETDEV and CONFIG_NFT_FWD_NETDEV.
+
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
+ tools/testing/selftests/net/config | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/tools/testing/selftests/net/config b/tools/testing/selftests/net/config
+index b8503a8119b0..e30b0ae5d474 100644
+--- a/tools/testing/selftests/net/config
++++ b/tools/testing/selftests/net/config
+@@ -29,3 +29,5 @@ CONFIG_NET_SCH_FQ=m
+ CONFIG_NET_SCH_ETF=m
+ CONFIG_TEST_BLACKHOLE_DEV=m
+ CONFIG_KALLSYMS=y
++CONFIG_NF_TABLES_NETDEV=y
++CONFIG_NFT_FWD_NETDEV=m
+-- 
+2.20.1
+
