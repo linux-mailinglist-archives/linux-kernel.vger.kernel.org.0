@@ -2,152 +2,407 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A216B95285
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 87AA8952AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:20:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729244AbfHTATm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:19:42 -0400
-Received: from mailout2.samsung.com ([203.254.224.25]:64660 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728786AbfHTATj (ORCPT
+        id S1728909AbfHTASW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:18:22 -0400
+Received: from mail-qk1-f202.google.com ([209.85.222.202]:52509 "EHLO
+        mail-qk1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728888AbfHTAST (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:19:39 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190820001935epoutp0270c5f9890809bc515480d5ceea0d0c80~8eYNfhR-x1299512995epoutp020
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 00:19:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190820001935epoutp0270c5f9890809bc515480d5ceea0d0c80~8eYNfhR-x1299512995epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566260375;
-        bh=tiKuzbBFO1qPnOxWRqi4oSHOWLECBQ8oOkwty0cA6FU=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=E/fXgVUADJZ78+5uW0x+Cny6oJMuBucSHhYEjHsLzVfBMpXJV/3nMW7q07x4o11pf
-         UECHEqUE/fNsAt3RQ28GIovk06Acs4dQJ1cz03oSrjStBPKlofz4FEJOt8j7o5/+ls
-         WYgQSvw9upYHdAiKhn+kxtR+O+8YO+0367j9d3iM=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20190820001935epcas1p2e66a7c771ad6735e0c2adce1f97fd23a~8eYNF9xo00333803338epcas1p2H;
-        Tue, 20 Aug 2019 00:19:35 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.152]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 46CBHm6XfGzMqYly; Tue, 20 Aug
-        2019 00:19:32 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        F8.9C.04075.19C3B5D5; Tue, 20 Aug 2019 09:19:30 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190820001929epcas1p373b9a559be18d326fac7e82b69eb2a2c~8eYHqdI5D1547915479epcas1p3m;
-        Tue, 20 Aug 2019 00:19:29 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190820001929epsmtrp2b339e510f8b32c07efee19eb3198d6ab~8eYHpsbDk0760407604epsmtrp2h;
-        Tue, 20 Aug 2019 00:19:29 +0000 (GMT)
-X-AuditID: b6c32a36-b61ff70000000feb-a8-5d5b3c9154ae
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        A6.05.03638.19C3B5D5; Tue, 20 Aug 2019 09:19:29 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190820001929epsmtip2c11ba8b82385296ba633598e132820e9~8eYHdM6LY2532325323epsmtip2A;
-        Tue, 20 Aug 2019 00:19:29 +0000 (GMT)
-Subject: Re: [PATCH v6 08/19] PM / devfreq: tegra30: Ensure that target freq
- won't overflow
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <c85dbd27-7536-9c51-19a2-fe1c2c6342b9@samsung.com>
-Date:   Tue, 20 Aug 2019 09:23:23 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190811212315.12689-9-digetx@gmail.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmt7vd3Umr28w8DSq79kBhc9e1dSsNqahFBoIQWdi8ucsm7sXu
-        jDICy16OlEwKupmVFvigBNFyQg10PbSHlhSVSUYWZbJKeyjRY9s18r/vfN93zu+c8zsEpmrG
-        1USB08t5nKydwmOk17qStJqTaTtydT0hxDR9eYOYQ0KtlHlwcFTO9HdU48x4eRAxZV8FnBk4
-        UI8zkx01UqbiymM8Q2FqH7yETH5hUG4qLw3hporWRmQab1mQJdtemGbjWAvnSeCc+S5LgdOa
-        Tm3ONq8zG4w6WkOvZFZQCU7WwaVT6zOzNBsK7OGGqITdrL0oTGWxPE+lrEnzuIq8XILNxXvT
-        Kc5tsbtXurU86+CLnFZtvsuxitbpUg1hY16h7WnXYeR+p9hz+Z6+BB0nfIgggFwOz3vifSiG
-        UJHtCJqv/cLFYAxBbeOrqeA7gqcfKjAfUkQzQo/uykXhBoIrAx+lYvAJwdVPNdKIK5bMhfsX
-        XqCIMIf8jaBsshSPCBiZA13+JkkE42QyBN4/i/KzyEXwZOINimAluQb8z/3RQlJyCVx6PRH1
-        x5HbYGyoSyZ6ZkP3meGoR0EaofFEORLrx8OL4fMSES+E0razWKQJIP/gECpplYgzrIcq4SUu
-        4lgYudMqF7EaxkM3pvh90NAdxMXkYwhaA30yUdBD4HKVJLI+jEyC5o4UkV4E/p/nppqYCaFv
-        x2XihpVw7IhKtCRC/9DgVAvzoO5oGX4CUcK0cYRpIwjTRhD+P3YBSRvRXM7NO6wcT7tTp/92
-        C4oea7KxHdU+zOxEJIGoGUrT6e25Khm7m9/r6ERAYNQc5Z7qMKW0sHuLOY/L7Cmyc3wnMoS3
-        XYmp4/Jd4dN3es20IVWv1zPLaaOBpql45cUJJldFWlkvV8hxbs7zL09CKNQlSBhZm96b07Ix
-        rn7JWO3qpZltDS83N93Mzk7JUB8J7pu5osZXkGQ9FwgMBYOqnKZN2lKNZjU/uRj6dGaJ/Nba
-        nkS8GjOc1R74UZUXs+PHrrzeFuPI2/idlcWWwLJqX/eXCpfSdn+g2H391NYam+V2xueTo/Nj
-        +0a37K/7UDncxg1SUt7G0smYh2f/AvbL5RzCAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsWy7bCSvO5Em+hYg5/PeCxWf3zMaNEyaxGL
-        xdmmN+wWl3fNYbP43HuE0aLzyyw2i9uNK9gsfu6ax2LRt/YSmwOnx467Sxg9ds66y+7R2/yO
-        zaNvyypGj8+b5AJYo7hsUlJzMstSi/TtErgyrh1uZSx4xlmx9LRxA2MPRxcjJ4eEgInEu4sn
-        2LsYuTiEBHYzSvSue8sOkZCUmHbxKHMXIweQLSxx+HAxSFhI4C2jxLRtbiC2sECsxJkFtxhB
-        ekUEmpgkNvVeAOtlFoiU6Jm7hQ1i6FZGib6fi1lBEmwCWhL7X9xgA7H5BRQlrv54zAhi8wrY
-        Sey8uZMFxGYRUJVY8vAHE4gtKhAhcXjHLKgaQYmTM5+A1XAKmEmsmtDLCLFMXeLPvEvMELa4
-        xK0n85kgbHmJ5q2zmScwCs9C0j4LScssJC2zkLQsYGRZxSiZWlCcm55bbFhglJdarlecmFtc
-        mpeul5yfu4kRHGFaWjsYT5yIP8QowMGoxMPrMS0qVog1say4MvcQowQHs5IIb8UcoBBvSmJl
-        VWpRfnxRaU5q8SFGaQ4WJXFe+fxjkUIC6YklqdmpqQWpRTBZJg5OqQZGy+la904+/mC9IX2G
-        9y4B0xkrMv6KxbarnboX8Lg3Y99xyyrbAPsnMUuPNTjdPj3bgb3ysnOsdFfTXv9fCsc19pVn
-        vWCflctrYbXFjGtD+83n+/V0mFeL14o0Pr6vWV1V3HyVy/fsxic69dfXLBc+6+GpuTWl6yC3
-        8uTvps9tGmp2H9EtU09QYinOSDTUYi4qTgQAfIr9lqwCAAA=
-X-CMS-MailID: 20190820001929epcas1p373b9a559be18d326fac7e82b69eb2a2c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190811212546epcas1p22be9fefe18908cdd17a518950d296983
-References: <20190811212315.12689-1-digetx@gmail.com>
-        <CGME20190811212546epcas1p22be9fefe18908cdd17a518950d296983@epcas1p2.samsung.com>
-        <20190811212315.12689-9-digetx@gmail.com>
+        Mon, 19 Aug 2019 20:18:19 -0400
+Received: by mail-qk1-f202.google.com with SMTP id r200so5221897qke.19
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:18:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
+         :cc;
+        bh=GpdR12n7rYt+xKYUquK43yf9jnqnYDAVh2zsydRDmxY=;
+        b=c7cnMTCqBpxGa6mtxmSD5UYVRKGed8FFPp7uZdHqlvSVZsVf/97u+HIX7YuWs9HMkB
+         o3d/+6hrVy1CktrdDd1UtOx6jp0GKGTjeS3hD8c7wD9g09oPCDVju4avEfKvGMUEav6U
+         gVrNCtXsLGqHLj6fFzxSMoUmA34FskaSnSo1I6va3obgMuULThlhxt8MzHuEt8E5ffdx
+         U9ZICoZlLcCXfjF5LW4UiBy0zHmdQ8Giha67yaBKdfG1vX2gxEPXPRvbYb0s36UhMRcL
+         YgT64m4GpheSASvnKjkza7WeeVGzDjK4y1xwis2mH/eawICnuySdbNQcnYXSfn1FZWX2
+         1PmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
+         :references:subject:from:to:cc;
+        bh=GpdR12n7rYt+xKYUquK43yf9jnqnYDAVh2zsydRDmxY=;
+        b=qflqCQ6To4OLFIWA5iIww9/x0Y5WnoYVJlw3f9rICds4BnYllBuTBSqNBgnE4qDa7e
+         qzF1umSBMGs1Oj3beG1n7zLLKboLTTEjCO/ZfIjfLbw+2JFSkufvmeC8o2oh7CSu2u5q
+         Sh3tDhq3SsJUV4ofobNjTNv797XAdALBFNlZu0aL00isakWluUQFzKLqzdhO/eP28FGj
+         iVkMWUkOzd2aRxzizS++NhXw4Sr7xWm//F7vu5EpoOBMsTXFUdFMlllbG4mQ1uYPjv84
+         0sKrAJ3GXFvdczCcnzd+CYIdAD64zAj4lBZ8NjJ/6kEWbhuq+EeXc5Y8t24kfrenLlbo
+         gATw==
+X-Gm-Message-State: APjAAAWnCAodoSh3vSA/qw2MB3m9Eji1iBmFTWJem4g2iq5xZlsicigZ
+        CNd5lPWnbRcIGF436lXWLCSAXU97ZF9PGEMXxTS6YQ==
+X-Google-Smtp-Source: APXvYqx0zuSTQUYGTLDPVEGQZKaspbEh8HQhCdZYGLqnmasB3a1UTZ1TB/XHMGn5jQ//chyM4HltYH1scsLi4OJzb8h2bQ==
+X-Received: by 2002:ad4:424e:: with SMTP id l14mr12504424qvq.150.1566260297879;
+ Mon, 19 Aug 2019 17:18:17 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:39 -0700
+In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-4-matthewgarrett@google.com>
+Mime-Version: 1.0
+References: <20190820001805.241928-1-matthewgarrett@google.com>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH V40 03/29] security: Add a static lockdown policy LSM
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Matthew Garrett <matthewgarrett@google.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        David Howells <dhowells@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 19. 8. 12. 오전 6:23, Dmitry Osipenko wrote:
-> We already had few integer overflow bugs, let's limit the freq for
-> consistency.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/devfreq/tegra30-devfreq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/devfreq/tegra30-devfreq.c b/drivers/devfreq/tegra30-devfreq.c
-> index 70dce58212a4..ca499368ee81 100644
-> --- a/drivers/devfreq/tegra30-devfreq.c
-> +++ b/drivers/devfreq/tegra30-devfreq.c
-> @@ -430,7 +430,7 @@ static unsigned long actmon_update_target(struct tegra_devfreq *tegra,
->  	target_freq = dev->avg_count / ACTMON_SAMPLING_PERIOD + dev->boost_freq;
->  	target_freq = tegra_actmon_account_cpu_freq(tegra, dev, target_freq);
->  
-> -	return target_freq;
-> +	return min(target_freq, tegra->max_freq);
+While existing LSMs can be extended to handle lockdown policy,
+distributions generally want to be able to apply a straightforward
+static policy. This patch adds a simple LSM that can be configured to
+reject either integrity or all lockdown queries, and can be configured
+at runtime (through securityfs), boot time (via a kernel parameter) or
+build time (via a kconfig option). Based on initial code by David
+Howells.
 
-Once again, did you meet this case sometimes?
+Signed-off-by: Matthew Garrett <mjg59@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: David Howells <dhowells@redhat.com>
+---
+ .../admin-guide/kernel-parameters.txt         |   9 +
+ include/linux/security.h                      |   3 +
+ security/Kconfig                              |  11 +-
+ security/Makefile                             |   2 +
+ security/lockdown/Kconfig                     |  46 +++++
+ security/lockdown/Makefile                    |   1 +
+ security/lockdown/lockdown.c                  | 169 ++++++++++++++++++
+ 7 files changed, 236 insertions(+), 5 deletions(-)
+ create mode 100644 security/lockdown/Kconfig
+ create mode 100644 security/lockdown/Makefile
+ create mode 100644 security/lockdown/lockdown.c
 
-Usually, we can prevent the overflow of target_freq
-when calculating the target frequency or this style.
-
-I think that if the overflow of target frequency happen frequently,
-it might have the problem of calculation way. 
-
->  }
->  
->  static irqreturn_t actmon_thread_isr(int irq, void *data)
-> 
-
-
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 138f6664b2e2..0f28350f1ee6 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2244,6 +2244,15 @@
+ 	lockd.nlm_udpport=M	[NFS] Assign UDP port.
+ 			Format: <integer>
+ 
++	lockdown=	[SECURITY]
++			{ integrity | confidentiality }
++			Enable the kernel lockdown feature. If set to
++			integrity, kernel features that allow userland to
++			modify the running kernel are disabled. If set to
++			confidentiality, kernel features that allow userland
++			to extract confidential information from the kernel
++			are also disabled.
++
+ 	locktorture.nreaders_stress= [KNL]
+ 			Set the number of locking read-acquisition kthreads.
+ 			Defaults to being automatically set based on the
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 04cf48fab15d..74787335d9ce 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -97,6 +97,9 @@ enum lsm_event {
+  * potentially a moving target. It is easy to misuse this information
+  * in a way that could break userspace. Please be careful not to do
+  * so.
++ *
++ * If you add to this, remember to extend lockdown_reasons in
++ * security/lockdown/lockdown.c.
+  */
+ enum lockdown_reason {
+ 	LOCKDOWN_NONE,
+diff --git a/security/Kconfig b/security/Kconfig
+index 466cc1f8ffed..7c62d446e209 100644
+--- a/security/Kconfig
++++ b/security/Kconfig
+@@ -237,6 +237,7 @@ source "security/apparmor/Kconfig"
+ source "security/loadpin/Kconfig"
+ source "security/yama/Kconfig"
+ source "security/safesetid/Kconfig"
++source "security/lockdown/Kconfig"
+ 
+ source "security/integrity/Kconfig"
+ 
+@@ -276,11 +277,11 @@ endchoice
+ 
+ config LSM
+ 	string "Ordered list of enabled LSMs"
+-	default "yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
+-	default "yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
+-	default "yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
+-	default "yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
+-	default "yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
++	default "lockdown,yama,loadpin,safesetid,integrity,smack,selinux,tomoyo,apparmor" if DEFAULT_SECURITY_SMACK
++	default "lockdown,yama,loadpin,safesetid,integrity,apparmor,selinux,smack,tomoyo" if DEFAULT_SECURITY_APPARMOR
++	default "lockdown,yama,loadpin,safesetid,integrity,tomoyo" if DEFAULT_SECURITY_TOMOYO
++	default "lockdown,yama,loadpin,safesetid,integrity" if DEFAULT_SECURITY_DAC
++	default "lockdown,yama,loadpin,safesetid,integrity,selinux,smack,tomoyo,apparmor"
+ 	help
+ 	  A comma-separated list of LSMs, in initialization order.
+ 	  Any LSMs left off this list will be ignored. This can be
+diff --git a/security/Makefile b/security/Makefile
+index c598b904938f..be1dd9d2cb2f 100644
+--- a/security/Makefile
++++ b/security/Makefile
+@@ -11,6 +11,7 @@ subdir-$(CONFIG_SECURITY_APPARMOR)	+= apparmor
+ subdir-$(CONFIG_SECURITY_YAMA)		+= yama
+ subdir-$(CONFIG_SECURITY_LOADPIN)	+= loadpin
+ subdir-$(CONFIG_SECURITY_SAFESETID)    += safesetid
++subdir-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown
+ 
+ # always enable default capabilities
+ obj-y					+= commoncap.o
+@@ -27,6 +28,7 @@ obj-$(CONFIG_SECURITY_APPARMOR)		+= apparmor/
+ obj-$(CONFIG_SECURITY_YAMA)		+= yama/
+ obj-$(CONFIG_SECURITY_LOADPIN)		+= loadpin/
+ obj-$(CONFIG_SECURITY_SAFESETID)       += safesetid/
++obj-$(CONFIG_SECURITY_LOCKDOWN_LSM)	+= lockdown/
+ obj-$(CONFIG_CGROUP_DEVICE)		+= device_cgroup.o
+ 
+ # Object integrity file lists
+diff --git a/security/lockdown/Kconfig b/security/lockdown/Kconfig
+new file mode 100644
+index 000000000000..7a1d213227a4
+--- /dev/null
++++ b/security/lockdown/Kconfig
+@@ -0,0 +1,46 @@
++config SECURITY_LOCKDOWN_LSM
++	bool "Basic module for enforcing kernel lockdown"
++	depends on SECURITY
++	help
++	  Build support for an LSM that enforces a coarse kernel lockdown
++	  behaviour.
++
++config SECURITY_LOCKDOWN_LSM_EARLY
++	bool "Enable lockdown LSM early in init"
++	depends on SECURITY_LOCKDOWN_LSM
++	help
++	  Enable the lockdown LSM early in boot. This is necessary in order
++	  to ensure that lockdown enforcement can be carried out on kernel
++	  boot parameters that are otherwise parsed before the security
++	  subsystem is fully initialised. If enabled, lockdown will
++	  unconditionally be called before any other LSMs.
++
++choice
++	prompt "Kernel default lockdown mode"
++	default LOCK_DOWN_KERNEL_FORCE_NONE
++	depends on SECURITY_LOCKDOWN_LSM
++	help
++	  The kernel can be configured to default to differing levels of
++	  lockdown.
++
++config LOCK_DOWN_KERNEL_FORCE_NONE
++	bool "None"
++	help
++	  No lockdown functionality is enabled by default. Lockdown may be
++	  enabled via the kernel commandline or /sys/kernel/security/lockdown.
++
++config LOCK_DOWN_KERNEL_FORCE_INTEGRITY
++	bool "Integrity"
++	help
++	 The kernel runs in integrity mode by default. Features that allow
++	 the kernel to be modified at runtime are disabled.
++
++config LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY
++	bool "Confidentiality"
++	help
++	 The kernel runs in confidentiality mode by default. Features that
++	 allow the kernel to be modified at runtime or that permit userland
++	 code to read confidential material held inside the kernel are
++	 disabled.
++
++endchoice
+diff --git a/security/lockdown/Makefile b/security/lockdown/Makefile
+new file mode 100644
+index 000000000000..e3634b9017e7
+--- /dev/null
++++ b/security/lockdown/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_SECURITY_LOCKDOWN_LSM) += lockdown.o
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+new file mode 100644
+index 000000000000..7172ad75496b
+--- /dev/null
++++ b/security/lockdown/lockdown.c
+@@ -0,0 +1,169 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Lock down the kernel
++ *
++ * Copyright (C) 2016 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/security.h>
++#include <linux/export.h>
++#include <linux/lsm_hooks.h>
++
++static enum lockdown_reason kernel_locked_down;
++
++static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
++	[LOCKDOWN_NONE] = "none",
++	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
++	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
++};
++
++static enum lockdown_reason lockdown_levels[] = {LOCKDOWN_NONE,
++						 LOCKDOWN_INTEGRITY_MAX,
++						 LOCKDOWN_CONFIDENTIALITY_MAX};
++
++/*
++ * Put the kernel into lock-down mode.
++ */
++static int lock_kernel_down(const char *where, enum lockdown_reason level)
++{
++	if (kernel_locked_down >= level)
++		return -EPERM;
++
++	kernel_locked_down = level;
++	pr_notice("Kernel is locked down from %s; see man kernel_lockdown.7\n",
++		  where);
++	return 0;
++}
++
++static int __init lockdown_param(char *level)
++{
++	if (!level)
++		return -EINVAL;
++
++	if (strcmp(level, "integrity") == 0)
++		lock_kernel_down("command line", LOCKDOWN_INTEGRITY_MAX);
++	else if (strcmp(level, "confidentiality") == 0)
++		lock_kernel_down("command line", LOCKDOWN_CONFIDENTIALITY_MAX);
++	else
++		return -EINVAL;
++
++	return 0;
++}
++
++early_param("lockdown", lockdown_param);
++
++/**
++ * lockdown_is_locked_down - Find out if the kernel is locked down
++ * @what: Tag to use in notice generated if lockdown is in effect
++ */
++static int lockdown_is_locked_down(enum lockdown_reason what)
++{
++	if (kernel_locked_down >= what) {
++		if (lockdown_reasons[what])
++			pr_notice("Lockdown: %s is restricted; see man kernel_lockdown.7\n",
++				  lockdown_reasons[what]);
++		return -EPERM;
++	}
++
++	return 0;
++}
++
++static struct security_hook_list lockdown_hooks[] __lsm_ro_after_init = {
++	LSM_HOOK_INIT(locked_down, lockdown_is_locked_down),
++};
++
++static int __init lockdown_lsm_init(void)
++{
++#if defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_INTEGRITY)
++	lock_kernel_down("Kernel configuration", LOCKDOWN_INTEGRITY_MAX);
++#elif defined(CONFIG_LOCK_DOWN_KERNEL_FORCE_CONFIDENTIALITY)
++	lock_kernel_down("Kernel configuration", LOCKDOWN_CONFIDENTIALITY_MAX);
++#endif
++	security_add_hooks(lockdown_hooks, ARRAY_SIZE(lockdown_hooks),
++			   "lockdown");
++	return 0;
++}
++
++static ssize_t lockdown_read(struct file *filp, char __user *buf, size_t count,
++			     loff_t *ppos)
++{
++	char temp[80];
++	int i, offset = 0;
++
++	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
++		enum lockdown_reason level = lockdown_levels[i];
++
++		if (lockdown_reasons[level]) {
++			const char *label = lockdown_reasons[level];
++
++			if (kernel_locked_down == level)
++				offset += sprintf(temp+offset, "[%s] ", label);
++			else
++				offset += sprintf(temp+offset, "%s ", label);
++		}
++	}
++
++	/* Convert the last space to a newline if needed. */
++	if (offset > 0)
++		temp[offset-1] = '\n';
++
++	return simple_read_from_buffer(buf, count, ppos, temp, strlen(temp));
++}
++
++static ssize_t lockdown_write(struct file *file, const char __user *buf,
++			      size_t n, loff_t *ppos)
++{
++	char *state;
++	int i, len, err = -EINVAL;
++
++	state = memdup_user_nul(buf, n);
++	if (IS_ERR(state))
++		return PTR_ERR(state);
++
++	len = strlen(state);
++	if (len && state[len-1] == '\n') {
++		state[len-1] = '\0';
++		len--;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(lockdown_levels); i++) {
++		enum lockdown_reason level = lockdown_levels[i];
++		const char *label = lockdown_reasons[level];
++
++		if (label && !strcmp(state, label))
++			err = lock_kernel_down("securityfs", level);
++	}
++
++	kfree(state);
++	return err ? err : n;
++}
++
++static const struct file_operations lockdown_ops = {
++	.read  = lockdown_read,
++	.write = lockdown_write,
++};
++
++static int __init lockdown_secfs_init(void)
++{
++	struct dentry *dentry;
++
++	dentry = securityfs_create_file("lockdown", 0600, NULL, NULL,
++					&lockdown_ops);
++	return PTR_ERR_OR_ZERO(dentry);
++}
++
++core_initcall(lockdown_secfs_init);
++
++#ifdef CONFIG_SECURITY_LOCKDOWN_LSM_EARLY
++DEFINE_EARLY_LSM(lockdown) = {
++#else
++DEFINE_LSM(lockdown) = {
++#endif
++	.name = "lockdown",
++	.init = lockdown_lsm_init,
++};
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.23.0.rc1.153.gdeed80330f-goog
+
