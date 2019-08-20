@@ -2,124 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB44959D1
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:39:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86B9A959F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbfHTIjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:39:19 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43182 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729273AbfHTIjT (ORCPT
+        id S1729440AbfHTIlP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:41:15 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:46358 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728879AbfHTIlP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:39:19 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7K8btc9003386
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 04:39:18 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ugb2qecy7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 04:39:17 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mamatha4@linux.vnet.ibm.com>;
-        Tue, 20 Aug 2019 09:39:15 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 20 Aug 2019 09:39:09 +0100
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7K8d8Sc62587032
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 20 Aug 2019 08:39:08 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B2BE2A405B;
-        Tue, 20 Aug 2019 08:39:08 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 31559A4062;
-        Tue, 20 Aug 2019 08:39:05 +0000 (GMT)
-Received: from oc3276512013.ibm.com (unknown [9.120.237.31])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Tue, 20 Aug 2019 08:39:04 +0000 (GMT)
-Subject: Re: [PATCH]Perf: Return error code for perf_session__new function on
- failure
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        namhyung@kernel.org, kstewart@linuxfoundation.org,
-        gregkh@linuxfoundation.org, jeremie.galarneau@efficios.com,
-        shawn@git.icu, tstoyanov@vmware.com, tglx@linutronix.de,
-        alexey.budankov@linux.intel.com, adrian.hunter@intel.com,
-        songliubraving@fb.com, ravi.bangoria@linux.ibm.com
-References: <20190814092654.7781.81601.stgit@localhost.localdomain>
- <20190815125116.GG30356@krava>
-From:   Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>
-Date:   Tue, 20 Aug 2019 14:09:04 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 20 Aug 2019 04:41:15 -0400
+Received: by mail-wr1-f51.google.com with SMTP id z1so11449566wru.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KYkJZ7ygqpGVyziIAkPglTpFbYkqx1ZCclLUpHigUPc=;
+        b=bfTxW2jv1ZNeSc5mHCdK2zcQw/vzn63re+UOQJv+x3SzSIXCNj48qza9cBPl33mDur
+         fkd7FSvNI6j0nQOMXHlNy2RKNW/OAblqxe7e3Y9a9CD+6+mnxhINF4+inEG08sYdYli7
+         yGUF1VmcEwSQh/uY/uOXHL9L0NQfcBmNFYSlnCmY8/bo+nDUXnnXlOpg40jRsU/FCGLY
+         syOe1ZtHCv9HilqtHXRrilzK079KfD+/+7J1KnrufjX3RmwISfiIlMZ370rda3isfo//
+         A5jasBfjs354i7zIkKR6IdINsDYQsn2ufZj5K52QXgETl25iF1t25rlKXgj7KdQ+QcwA
+         TNbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KYkJZ7ygqpGVyziIAkPglTpFbYkqx1ZCclLUpHigUPc=;
+        b=oZGjnivAcCg3SjGipEhvvnSWB1BdoLkaZWPl3H7UL+Bp9hrQcM+NNdLpB5SLcN0AFR
+         4fO7HfmZ33hz6ZlxwV7b3knz46T20aZsNW8iuTf4EucIPglhY8HEgJiZAHuPaKtfOZ3m
+         Gt2G/utaNSPri3DxbzyKLiR2YKOzQJxF7BcrNec9ui5ApyFuZm6GU5W/6870LsULSaOv
+         4oVd2uGcWuqFL15fkb3tYF31967Z+24Pfgfnyn/4oP0Pwjj0kxB1NWHakkA1O9L0dgwG
+         RxmmV0RSCr2FfbpAB5b0gGwel55sqWqWtvoKRqaoz1Aj16kRHYTgAqWh9IzvYIOGDZ53
+         4uXg==
+X-Gm-Message-State: APjAAAU7TT2gwhdh481t4+8AZn/q1RRz/orLPjf/cHpQsnySzol9kuGo
+        LfAxPOTwdQPPjBhJcae22OrF2w==
+X-Google-Smtp-Source: APXvYqx2KIAs3etJ5JAW81f4A9TpNQ2I/pe1woSnHDb8DN4a16tSMefBVnJ06dg+YaHBCRBfu4g3Uw==
+X-Received: by 2002:adf:fdcc:: with SMTP id i12mr33798582wrs.88.1566290472758;
+        Tue, 20 Aug 2019 01:41:12 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 01:41:11 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        jonas@kwiboo.se, jernej.skrabec@siol.net,
+        boris.brezillon@collabora.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 00/11] drm/bridge: dw-hdmi: implement bus-format negotiation and YUV420 support
+Date:   Tue, 20 Aug 2019 10:40:58 +0200
+Message-Id: <20190820084109.24616-1-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20190815125116.GG30356@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 19082008-4275-0000-0000-0000035B02C4
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082008-4276-0000-0000-0000386D21ED
-Message-Id: <aab6e549-38b3-b18a-003c-9d1d96d7617c@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908200093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jiri Olsa,
+This patchset is based on Boris's "drm: Add support for bus-format negotiation" RFC at [1]
+patchset to implement :
+- basic bus-format negotiation for DW-HDMI
+- advanced HDMI2.0 YUV420 bus-format negotiation for DW-HDMI
 
-Thanks for reviewing the patch..
+And the counterpart implementation in the Amlogic Meson VPU dw-hdmi glue :
+- basic bus-format negotiation to select YUV444 bus-format as DW-HDMI input
+- YUV420 support when HDMI2.0 YUV420 modeset
 
-working on your comments, will post new version ASAP.
+This is a follow-up from the previous attempts :
+- "drm/meson: Add support for HDMI2.0 YUV420 4k60" at [2]
+- "drm/meson: Add support for HDMI2.0 4k60" at [3]
 
+[1] https://patchwork.freedesktop.org/patch/msgid/20190808151150.16336-1-boris.brezillon@collabora.com
+[2] https://patchwork.freedesktop.org/patch/msgid/20190520133753.23871-1-narmstrong@baylibre.com
+[3] https://patchwork.freedesktop.org/patch/msgid/1549022873-40549-1-git-send-email-narmstrong@baylibre.com
 
-On 15/08/19 6:21 PM, Jiri Olsa wrote:
-> On Wed, Aug 14, 2019 at 03:02:18PM +0530, Mamatha Inamdar wrote:
->
-> SNIP
->
->>   		symbol_conf.pid_list_str = strdup(trace->opts.target.pid);
->> diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
->> index ddbcd59..dbc6dc2 100644
->> --- a/tools/perf/util/data-convert-bt.c
->> +++ b/tools/perf/util/data-convert-bt.c
->> @@ -1619,8 +1619,10 @@ int bt_convert__perf2ctf(const char *input, const char *path,
->>   	err = -1;
->>   	/* perf.data session */
->>   	session = perf_session__new(&data, 0, &c.tool);
->> -	if (!session)
->> +	if (IS_ERR(session)) {
->> +		err = PTR_ERR(session);
->>   		goto free_writer;
->> +	}
->>   
->>   	if (c.queue_size) {
->>   		ordered_events__set_alloc_size(&session->ordered_events,
-> I'm getting:
->
->    CC       util/data-convert-bt.o
-> util/data-convert-bt.c: In function ‘bt_convert__perf2ctf’:
-> util/data-convert-bt.c:1622:6: error: implicit declaration of function ‘IS_ERR’; did you mean ‘SIG_ERR’? [-Werror=implicit-function-declaration]
->   1622 |  if (IS_ERR(session)) {
->        |      ^~~~~~
->        |      SIG_ERR
-> util/data-convert-bt.c:1622:6: error: nested extern declaration of ‘IS_ERR’ [-Werror=nested-externs]
-> util/data-convert-bt.c:1623:9: error: implicit declaration of function ‘PTR_ERR’ [-Werror=implicit-function-declaration]
->   1623 |   err = PTR_ERR(session);
->
->
-> jirka
->
+Neil Armstrong (11):
+  fixup! drm/bridge: Add the necessary bits to support bus format
+    negotiation
+  drm/meson: venc: make drm_display_mode const
+  drm/meson: meson_dw_hdmi: switch to drm_bridge_funcs
+  drm/bridge: synopsys: dw-hdmi: add basic bridge_atomic_check
+  drm/bridge: synopsys: dw-hdmi: use negociated bus formats
+  drm/meson: dw-hdmi: stop enforcing input_bus_format
+  drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+  drm/bridge: synopsys: dw-hdmi: add 420 mode format negociation
+  drm/meson: venc: add support for YUV420 setup
+  drm/meson: vclk: add support for YUV420 setup
+  drm/meson: Add YUV420 output support
+
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c |  97 +++++++++++++++-
+ drivers/gpu/drm/drm_bridge.c              |   6 +-
+ drivers/gpu/drm/meson/meson_dw_hdmi.c     | 135 +++++++++++++++++-----
+ drivers/gpu/drm/meson/meson_vclk.c        |  93 +++++++++++----
+ drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
+ drivers/gpu/drm/meson/meson_venc.c        |   8 +-
+ drivers/gpu/drm/meson/meson_venc.h        |  13 ++-
+ drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
+ include/drm/bridge/dw_hdmi.h              |   1 +
+ 9 files changed, 295 insertions(+), 68 deletions(-)
+
+-- 
+2.22.0
 
