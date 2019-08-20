@@ -2,89 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D752596214
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7598C96211
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:12:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730194AbfHTOLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:11:55 -0400
-Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:59739 "EHLO
-        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728248AbfHTOLu (ORCPT
+        id S1730102AbfHTOLt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:11:49 -0400
+Received: from mail-wm1-f45.google.com ([209.85.128.45]:55205 "EHLO
+        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729965AbfHTOLt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:11:50 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=39;SR=0;TI=SMTPD_---0Ta-t.lc_1566310288;
-Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ta-t.lc_1566310288)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Tue, 20 Aug 2019 22:11:31 +0800
-Subject: Re: [PATCH 01/14] mm/lru: move pgdat lru_lock into lruvec
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Oscar Salvador <osalvador@suse.de>,
-        Wei Yang <richard.weiyang@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>,
-        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
-        David Rientjes <rientjes@google.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        swkhack <swkhack@gmail.com>,
-        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Tue, 20 Aug 2019 10:11:49 -0400
+Received: by mail-wm1-f45.google.com with SMTP id p74so2758920wme.4
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=LEqTLls42sbmI5VwKOm6X28Wqd3lNc1FuJ61+Mb/tX8=;
+        b=Cs1pibJ1ZhNLrgABwvSomaLtVuOtZqECaToplmBgiSFFOyALHob2jmunT0LDP2rTLr
+         8xjyBUqopE2eXJdn2ardKgcbFEUxhOAELFlaikQyhvbAgG0ucDYMGZ4iADMDMSqDU+0O
+         3DrLOOguTT2aASkXqOvQzBmF3+MB8NoGMcF7sXLyiTh1vmNTV1OoUqjhx7oDQFt4yavz
+         1jAjzjETMvmWHa8jVtdHXC4xHalXdqlJQA6HMI/uasX0tSY9v7Vv1XeXCA6Iq/FR837h
+         oWZxhnY6V6D1G2GuQJr03LBCC0QDFpnpnYnoN5VfYqEAX02jmT6Ql+PoQjWi1c0x652o
+         74Ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=LEqTLls42sbmI5VwKOm6X28Wqd3lNc1FuJ61+Mb/tX8=;
+        b=kgzY7SbxLN/1XQbUG/LWAhm7t9enKAQlLqFwMQJp1ONtdc9SKecBceN6vzHmAt6mVK
+         G2fW6iTrKuphggBExSiJdWCIRXjG/89jj+UzgWlwEYo2zSaWqw8XXLkr+zojzUUq1tSK
+         vwnTw4CsQRRRwCwDIWZEUd1m/NYPFtegZtQJP+lcOgAhgg6oO56lCAU8/dKRWyms4GZY
+         /elFOxQkcVK17ieTIuMzh36ljgtxMxz0WgEQF6VU8tkoyxbeghN/je1MRkn3y6s2Sv9Z
+         yhShI0eFapPZg7UdwCf2FjfAk7KFaPjon3o6mIM0UtWlXPT5bmswqJXpsASjNHEXCaww
+         mgKg==
+X-Gm-Message-State: APjAAAWT+/1k+nbZC1eXbXjUXNzGTDj3U3rs+oqpRsdRhFM+hgmDS2E1
+        L0G91V1VTspY8AGGG2GcPFCwxqPPniOJrQ==
+X-Google-Smtp-Source: APXvYqzNR58TVo7qQuCIjcdZQJaHL73fv9fbkxk4iC3wqq9XgsSdtNr1AIlJV9iaBdhgSN99G8bkHg==
+X-Received: by 2002:a1c:cfc6:: with SMTP id f189mr240811wmg.18.1566310306618;
+        Tue, 20 Aug 2019 07:11:46 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id r123sm185142wme.7.2019.08.20.07.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Aug 2019 07:11:45 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
+        michal.simek@xilinx.com, linux@roeck-us.net
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
         Colin Ian King <colin.king@canonical.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>, Ira Weiny <ira.weiny@intel.com>,
-        Kirill Tkhai <ktkhai@virtuozzo.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Yafang Shao <laoar.shao@gmail.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>
-References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
- <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
- <20190820134032.GA24642@bombadil.infradead.org>
-From:   Alex Shi <alex.shi@linux.alibaba.com>
-Message-ID: <9980292a-a073-201c-ae06-c8cdbc9f98af@linux.alibaba.com>
-Date:   Tue, 20 Aug 2019 22:11:28 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190820134032.GA24642@bombadil.infradead.org>
-Content-Type: text/plain; charset=gbk
-Content-Transfer-Encoding: 8bit
+        linux-iio@vger.kernel.org,
+        =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Jean Delvare <jdelvare@suse.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+Subject: [PATCH 0/4] iio: adc: ina2xx: Improve device identification
+Date:   Tue, 20 Aug 2019 16:11:37 +0200
+Message-Id: <cover.1566310292.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+the purpose of this series is to improve ina226 identification. On systems
+like Xilinx ZynqMP zcu102 (check dt in the tree) you can find out almost 20
+ina226 chips and it is impossible to find out based on simple ina226 which
+chip is repsonsible for what.
+The series is adding two ways how to improve device identification.
+Please let me know what you think I am happy to do changes in it.
+
+Thanks,
+Michal
 
 
-ÔÚ 2019/8/20 ÏÂÎç9:40, Matthew Wilcox Ð´µÀ:
-> On Tue, Aug 20, 2019 at 05:48:24PM +0800, Alex Shi wrote:
->> +++ b/include/linux/mmzone.h
->> @@ -295,6 +295,9 @@ struct zone_reclaim_stat {
->>  
->>  struct lruvec {
->>  	struct list_head		lists[NR_LRU_LISTS];
->> +	/* move lru_lock to per lruvec for memcg */
->> +	spinlock_t			lru_lock;
-> 
-> This comment makes no sense outside the context of this patch.
-> 
+Michal Simek (4):
+  iio: adc: ina2xx: Define *device_node only once
+  iio: adc: ina2xx: Setup better name then simple ina2xx
+  dt-bindings: Add optional label property for ina2xx
+  iio: adc: ina2xx: Use label proper for device identification
 
-Right, Thanks for point out this. will remove it in v2.
+ .../devicetree/bindings/hwmon/ina2xx.txt          |  2 ++
+ drivers/iio/adc/ina2xx-adc.c                      | 15 +++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
 
-Thanks
-Alex
+-- 
+2.17.1
+
