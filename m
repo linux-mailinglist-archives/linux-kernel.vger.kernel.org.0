@@ -2,153 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE7C95E8F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B339C95E9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:33:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729893AbfHTM3z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:29:55 -0400
-Received: from nbd.name ([46.4.11.11]:44652 "EHLO nbd.name"
+        id S1729788AbfHTMcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:32:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728283AbfHTM3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:29:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
-         s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:
-        MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=9cTelYKzCY4h/VMut/PrWo6Y/INNu9ufCmzyunzn+tc=; b=i1IGA7InYEtcB2AWFiHcBNQSJs
-        IsTsUfRXEOZ2SuqMoJ+qc/2Zlchknim5JLYjtfoUvDrwdk1LNySnasSIKbpV0UhSKVEXmua2++LW8
-        xCSaXLhGdCtI+kbZ1tjL488DSGl7L/4PgfR+xco9tAd3CZEVzXgRJENprduwNvT93waw=;
-Received: from p54ae9443.dip0.t-ipconnect.de ([84.174.148.67] helo=nf.local)
-        by ds12 with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <nbd@nbd.name>)
-        id 1i03Gq-0005YG-1E; Tue, 20 Aug 2019 14:29:52 +0200
-Subject: Re: [PATCH v1 5/6] mt76: fix some checkpatch warnings
-To:     Ryder Lee <ryder.lee@mediatek.com>,
-        Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Cc:     Roy Luo <royluo@google.com>, YF Luo <yf.luo@mediatek.com>,
-        Yiwei Chung <yiwei.chung@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        linux-wireless@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-References: <cover.1563944758.git.ryder.lee@mediatek.com>
- <0afa87cc70b34ee17d6c2247dfc8dac92c36852f.1563944758.git.ryder.lee@mediatek.com>
-From:   Felix Fietkau <nbd@nbd.name>
-Openpgp: preference=signencrypt
-Autocrypt: addr=nbd@nbd.name; prefer-encrypt=mutual; keydata=
- mQGiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
- ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
- Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
- AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
- vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
- wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
- TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
- l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwbQcRmVsaXggRmll
- dGthdSA8bmJkQG5iZC5uYW1lPohgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
- HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
- VrwYTIThkTlQuQINBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
- CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
- VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
- Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
- DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
- wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
- f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
- aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
- FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
- TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabiEkE
- GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCfTKx80VvCR/PvsUlrvdOLsIgeRGAAn1ee
- RjMaxwtSdaCKMw3j33ZbsWS4
-Message-ID: <29c75c5f-6e75-3de4-4e4a-a66f72844733@nbd.name>
-Date:   Tue, 20 Aug 2019 14:29:51 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.8.0
+        id S1728682AbfHTMcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 08:32:53 -0400
+Received: from linux-8ccs (unknown [92.117.154.195])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA95422DA7;
+        Tue, 20 Aug 2019 12:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566304372;
+        bh=kkWGSDRTu3bJPC3boeNU9DuOG4T0m4XIU/oaT9EY2D0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kPQcJgfzrWzv9WVaCu0tn/InaJe16DM3uwQwi8e3VrCIcc6I2VPLyVMhdHY8Hko4X
+         G4sBcgDYG4YUGZKFzbaGnI2c+C2F14uTcg9dHWTrVqiRXZI5VD4B/sXDizB6ppSTIh
+         Jt3QNdt4YIXWIcOfM0wA44u4M+w9NVLkXXSyDstA=
+Date:   Tue, 20 Aug 2019 14:32:47 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: Fix load failure when CONFIG_STRICT_MODULE_RWX
+ is diabled
+Message-ID: <20190820123247.GA4639@linux-8ccs>
+References: <1565421720-316924-1-git-send-email-zhe.he@windriver.com>
+ <20190813175912.GB24753@linux-8ccs.fritz.box>
+ <c7f6d08c-b1ac-2616-332a-d69156811b26@windriver.com>
 MIME-Version: 1.0
-In-Reply-To: <0afa87cc70b34ee17d6c2247dfc8dac92c36852f.1563944758.git.ryder.lee@mediatek.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c7f6d08c-b1ac-2616-332a-d69156811b26@windriver.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.28-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-07-24 10:58, Ryder Lee wrote:
-> --- a/drivers/net/wireless/mediatek/mt76/mt76.h
-> +++ b/drivers/net/wireless/mediatek/mt76/mt76.h
-> @@ -537,25 +537,25 @@ struct mt76_rx_status {
->  	s8 chain_signal[IEEE80211_MAX_CHAINS];
->  };
->  
-> -#define __mt76_rr(dev, ...)	(dev)->bus->rr((dev), __VA_ARGS__)
-> -#define __mt76_wr(dev, ...)	(dev)->bus->wr((dev), __VA_ARGS__)
-> -#define __mt76_rmw(dev, ...)	(dev)->bus->rmw((dev), __VA_ARGS__)
-> -#define __mt76_wr_copy(dev, ...)	(dev)->bus->copy((dev), __VA_ARGS__)
-> +#define __mt76_rr(dev, ...)	((dev)->bus->rr((dev), __VA_ARGS__))
-> +#define __mt76_wr(dev, ...)	((dev)->bus->wr((dev), __VA_ARGS__))
-> +#define __mt76_rmw(dev, ...)	((dev)->bus->rmw((dev), __VA_ARGS__))
-> +#define __mt76_wr_copy(dev, ...)	((dev)->bus->copy((dev), __VA_ARGS__))
->  
->  #define __mt76_set(dev, offset, val)	__mt76_rmw(dev, offset, 0, val)
->  #define __mt76_clear(dev, offset, val)	__mt76_rmw(dev, offset, val, 0)
->  
-> -#define mt76_rr(dev, ...)	(dev)->mt76.bus->rr(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_wr(dev, ...)	(dev)->mt76.bus->wr(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_rmw(dev, ...)	(dev)->mt76.bus->rmw(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_wr_copy(dev, ...)	(dev)->mt76.bus->copy(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_wr_rp(dev, ...)	(dev)->mt76.bus->wr_rp(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_rd_rp(dev, ...)	(dev)->mt76.bus->rd_rp(&((dev)->mt76), __VA_ARGS__)
-> +#define mt76_rr(dev, ...)	((dev)->mt76.bus->rr(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_wr(dev, ...)	((dev)->mt76.bus->wr(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_rmw(dev, ...)	((dev)->mt76.bus->rmw(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_wr_copy(dev, ...)	((dev)->mt76.bus->copy(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_wr_rp(dev, ...)	((dev)->mt76.bus->wr_rp(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_rd_rp(dev, ...)	((dev)->mt76.bus->rd_rp(&((dev)->mt76), __VA_ARGS__))
->  
-> -#define mt76_mcu_send_msg(dev, ...)	(dev)->mt76.mcu_ops->mcu_send_msg(&((dev)->mt76), __VA_ARGS__)
-> -#define __mt76_mcu_send_msg(dev, ...)	(dev)->mcu_ops->mcu_send_msg((dev), __VA_ARGS__)
-> -#define mt76_mcu_restart(dev, ...)	(dev)->mt76.mcu_ops->mcu_restart(&((dev)->mt76))
-> -#define __mt76_mcu_restart(dev, ...)	(dev)->mcu_ops->mcu_restart((dev))
-> +#define mt76_mcu_send_msg(dev, ...)	((dev)->mt76.mcu_ops->mcu_send_msg(&((dev)->mt76), __VA_ARGS__))
-> +#define __mt76_mcu_send_msg(dev, ...)	((dev)->mcu_ops->mcu_send_msg((dev), __VA_ARGS__))
-> +#define mt76_mcu_restart(dev, ...)	((dev)->mt76.mcu_ops->mcu_restart(&((dev)->mt76)))
-> +#define __mt76_mcu_restart(dev, ...)	((dev)->mcu_ops->mcu_restart((dev)))
->  
->  #define mt76_set(dev, offset, val)	mt76_rmw(dev, offset, 0, val)
->  #define mt76_clear(dev, offset, val)	mt76_rmw(dev, offset, val, 0)
-> @@ -569,7 +569,7 @@ struct mt76_rx_status {
->  #define __mt76_rmw_field(_dev, _reg, _field, _val)	\
->  	__mt76_rmw(_dev, _reg, _field, FIELD_PREP(_field, _val))
->  
-> -#define mt76_hw(dev) (dev)->mt76.hw
-> +#define mt76_hw(dev) ((dev)->mt76.hw)
->  
->  bool __mt76_poll(struct mt76_dev *dev, u32 offset, u32 mask, u32 val,
->  		 int timeout);
-> @@ -596,13 +596,13 @@ static inline u16 mt76_rev(struct mt76_dev *dev)
->  #define mt76xx_chip(dev) mt76_chip(&((dev)->mt76))
->  #define mt76xx_rev(dev) mt76_rev(&((dev)->mt76))
->  
-> -#define mt76_init_queues(dev)		(dev)->mt76.queue_ops->init(&((dev)->mt76))
-> -#define mt76_queue_alloc(dev, ...)	(dev)->mt76.queue_ops->alloc(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_tx_queue_skb_raw(dev, ...)	(dev)->mt76.queue_ops->tx_queue_skb_raw(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_tx_queue_skb(dev, ...)	(dev)->mt76.queue_ops->tx_queue_skb(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_queue_rx_reset(dev, ...)	(dev)->mt76.queue_ops->rx_reset(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_queue_tx_cleanup(dev, ...)	(dev)->mt76.queue_ops->tx_cleanup(&((dev)->mt76), __VA_ARGS__)
-> -#define mt76_queue_kick(dev, ...)	(dev)->mt76.queue_ops->kick(&((dev)->mt76), __VA_ARGS__)
-> +#define mt76_init_queues(dev)		((dev)->mt76.queue_ops->init(&((dev)->mt76)))
-> +#define mt76_queue_alloc(dev, ...)	((dev)->mt76.queue_ops->alloc(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_tx_queue_skb_raw(dev, ...)	((dev)->mt76.queue_ops->tx_queue_skb_raw(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_tx_queue_skb(dev, ...)	((dev)->mt76.queue_ops->tx_queue_skb(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_queue_rx_reset(dev, ...)	((dev)->mt76.queue_ops->rx_reset(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_queue_tx_cleanup(dev, ...)	((dev)->mt76.queue_ops->tx_cleanup(&((dev)->mt76), __VA_ARGS__))
-> +#define mt76_queue_kick(dev, ...)	((dev)->mt76.queue_ops->kick(&((dev)->mt76), __VA_ARGS__))
->  
->  static inline struct mt76_channel_state *
->  mt76_channel_state(struct mt76_dev *dev, struct ieee80211_channel *c)
++++ He Zhe [14/08/19 09:56 +0800]:
+>
+>
+>On 8/14/19 1:59 AM, Jessica Yu wrote:
+>> +++ zhe.he@windriver.com [10/08/19 15:22 +0800]:
+>>> From: He Zhe <zhe.he@windriver.com>
+>>>
+>>> When loading modules with CONFIG_ARCH_HAS_STRICT_MODULE_RWX enabled and
+>>> CONFIG_STRICT_MODULE_RWX disabled, the memory allocated for modules would
+>>> not be page-aligned and cause the following BUG during frob_text.
+>>>
+>>> ------------[ cut here ]------------
+>>> kernel BUG at kernel/module.c:1907!
+>>> Internal error: Oops - BUG: 0 [#1] ARM
+>>> Modules linked in:
+>>> CPU: 0 PID: 89 Comm: systemd-modules Not tainted 5.3.0-rc2 #1
+>>> Hardware name: ARM-Versatile (Device Tree Support)
+>>> PC is at frob_text.constprop.0+0x2c/0x40
+>>> LR is at load_module+0x14b4/0x1d28
+>>> pc : [<c0082930>]    lr : [<c0084bb0>]    psr: 20000013
+>>> sp : ce44fe58  ip : 00000000  fp : 00000000
+>>> r10: 00000000  r9 : ce44feb8  r8 : 00000000
+>>> r7 : 00000001  r6 : bf00032c  r5 : ce44ff40  r4 : bf000320
+>>> r3 : bf000400  r2 : 00000fff  r1 : 00000220  r0 : bf000000
+>>> Flags: nzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
+>>> Control: 00093177  Table: 0e4c0000  DAC: 00000051
+>>> Process systemd-modules (pid: 89, stack limit = 0x9fccc8dc)
+>>> Stack: (0xce44fe58 to 0xce450000)
+>>> fe40:                                                       00000000 cf1b05b8
+>>> fe60: 00000001 ce47cf08 bf002754 c07ae5d8 d0a2a484 bf002060 bf0004f8 00000000
+>>> fe80: b6d17910 c017cf1c ce47cf00 d0a29000 ce47cf00 ce44ff34 000014fc 00000000
+>>> fea0: 00000000 00000000 bf00025c 00000001 00000000 00000000 6e72656b 00006c65
+>>> fec0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+>>> fee0: 00000000 00000000 00000000 00000000 00000000 c0ac9048 7fffffff 00000000
+>>> ff00: b6d17910 00000005 0000017b c0009208 ce44e000 00000000 b6ebfe54 c008562c
+>>> ff20: 7fffffff 00000000 00000003 cefd28f8 00000001 d0a29000 000014fc 00000000
+>>> ff40: d0a292cb d0a29380 d0a29000 000014fc d0a29f0c d0a29d90 d0a29a60 00000520
+>>> ff60: 00000710 00000718 00000826 00000000 00000000 00000000 00000708 00000023
+>>> ff80: 00000024 0000001c 00000000 00000016 00000000 c0ac9048 0041c620 00000000
+>>> ffa0: 00000000 c0009000 0041c620 00000000 00000005 b6d17910 00000000 00000000
+>>> ffc0: 0041c620 00000000 00000000 0000017b 0041f078 00000000 004098b0 b6ebfe54
+>>> ffe0: bedb6bc8 bedb6bb8 b6d0f91c b6c945a0 60000010 00000005 00000000 00000000
+>>> [<c0082930>] (frob_text.constprop.0) from [<c0084bb0>] (load_module+0x14b4/0x1d28)
+>>> [<c0084bb0>] (load_module) from [<c008562c>] (sys_finit_module+0xa0/0xc4)
+>>> [<c008562c>] (sys_finit_module) from [<c0009000>] (ret_fast_syscall+0x0/0x50)
+>>> Exception stack(0xce44ffa8 to 0xce44fff0)
+>>> ffa0:                   0041c620 00000000 00000005 b6d17910 00000000 00000000
+>>> ffc0: 0041c620 00000000 00000000 0000017b 0041f078 00000000 004098b0 b6ebfe54
+>>> ffe0: bedb6bc8 bedb6bb8 b6d0f91c b6c945a0
+>>> Code: e7f001f2 e5931008 e1110002 0a000001 (e7f001f2)
+>>> ---[ end trace e904557128d9aed5 ]---
+>>>
+>>> This patch enables page-aligned allocation when
+>>> CONFIG_ARCH_HAS_STRICT_MODULE_RWX is enabled.
+>>>
+>>> Fixes: 93651f80dcb6 ("modules: fix compile error if don't have strict module rwx")
+>>> Signed-off-by: He Zhe <zhe.he@windriver.com>
+>>
+>> Hi!
+>>
+>> I have already committed a fix for this to modules-next and plan to
+>> send a pull request next week.
+>
+>Thanks for pointing out :)
+>
+>https://git.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git/commit/?h=modules-next&id=38f054d549a869f22a02224cd276a27bf14b6171
+>
+>But I'd suggest we should keep the case of "define debug_align(X) (X)" for all
+>the rest arches without CONFIG_HAS_STRICT_MODULE_RWX ability, which would save
+>people who are sensitive to system size a lot of memory when using modules,
+>especially for embedded systems, as this patch did. This seems the original
+>intention of this #ifdef... statement and still valid for now.
+>
+>Zhe
 
-I don't think these changes are making the code any better. The
-corresponding checkpatch warnings might be a false positive.
+Fair enough! Could you please respin this patch and base it on top of
+modules-next? I would like to avoid rebasing the tree. 
 
-- Felix
+Thank you!
+
+Jessica
