@@ -2,73 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B8B0995DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:52:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 19CDC95E0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:00:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729959AbfHTLwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:52:31 -0400
-Received: from smtp2.goneo.de ([85.220.129.33]:52410 "EHLO smtp2.goneo.de"
+        id S1729182AbfHTL74 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:59:56 -0400
+Received: from mga14.intel.com ([192.55.52.115]:43578 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729930AbfHTLw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:52:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp2.goneo.de (Postfix) with ESMTP id 6ED5A23F1FF;
-        Tue, 20 Aug 2019 13:52:26 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -3.121
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.121 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=-0.221, BAYES_00=-1.9] autolearn=ham
-Received: from smtp2.goneo.de ([127.0.0.1])
-        by localhost (smtp2.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id IU0sJtfeQ23X; Tue, 20 Aug 2019 13:52:25 +0200 (CEST)
-Received: from lem-wkst-02.lemonage.de. (hq.lemonage.de [87.138.178.34])
-        by smtp2.goneo.de (Postfix) with ESMTPA id 78E3823F187;
-        Tue, 20 Aug 2019 13:52:25 +0200 (CEST)
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     "GitAuthor: Lars Poeschel" <poeschel@lemonage.de>,
-        netdev@vger.kernel.org (open list:NFC SUBSYSTEM),
-        linux-kernel@vger.kernel.org (open list)
-Cc:     Johan Hovold <johan@kernel.org>
-Subject: [PATCH v6 7/7] nfc: pn532_uart: Make use of pn532 autopoll
-Date:   Tue, 20 Aug 2019 14:03:44 +0200
-Message-Id: <20190820120345.22593-7-poeschel@lemonage.de>
-X-Mailer: git-send-email 2.23.0.rc1
-In-Reply-To: <20190820120345.22593-1-poeschel@lemonage.de>
-References: <20190820120345.22593-1-poeschel@lemonage.de>
+        id S1728731AbfHTL7z (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:59:55 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 04:59:55 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="169060576"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.212.127]) ([10.254.212.127])
+  by orsmga007.jf.intel.com with ESMTP; 20 Aug 2019 04:59:53 -0700
+Subject: Re: [PATCH v5] perf diff: Report noisy for cycles diff
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        Linux-kernel@vger.kernel.org, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com
+References: <20190816021343.27160-1-yao.jin@linux.intel.com>
+ <20190820083447.GA19265@krava>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <5cd84513-77a5-223d-db22-f90aacab740d@linux.intel.com>
+Date:   Tue, 20 Aug 2019 19:59:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190820083447.GA19265@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This switches the pn532 UART phy driver from manually polling to the new
-autopoll mechanism.
 
-Cc: Johan Hovold <johan@kernel.org>
-Signed-off-by: Lars Poeschel <poeschel@lemonage.de>
----
-Changes in v6:
-- Rebased the patch series on v5.3-rc5
 
- drivers/nfc/pn533/uart.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 8/20/2019 4:34 PM, Jiri Olsa wrote:
+> On Fri, Aug 16, 2019 at 10:13:43AM +0800, Jin Yao wrote:
+> 
+> SNIP
+> 
+>>   static void
+>>   hpp__entry_unpair(struct hist_entry *he, int idx, char *buf, size_t size)
+>>   {
+>> @@ -1662,6 +1794,10 @@ static void data__hpp_register(struct data__file *d, int idx)
+>>   		fmt->color = hpp__color_cycles;
+>>   		fmt->sort  = hist_entry__cmp_nop;
+>>   		break;
+>> +	case PERF_HPP_DIFF__CYCLES_HIST:
+>> +		fmt->color = hpp__color_cycles_hist;
+>> +		fmt->sort  = hist_entry__cmp_nop;
+>> +		break;
+>>   	default:
+>>   		fmt->sort  = hist_entry__cmp_nop;
+>>   		break;
+>> @@ -1688,8 +1824,13 @@ static int ui_init(void)
+>>   		 *   PERF_HPP_DIFF__RATIO
+>>   		 *   PERF_HPP_DIFF__WEIGHTED_DIFF
+>>   		 */
+>> -		data__hpp_register(d, i ? compute_2_hpp[compute] :
+>> -					  PERF_HPP_DIFF__BASELINE);
+>> +		if (cycles_hist && i && (compute == COMPUTE_CYCLES)) {
+>> +			data__hpp_register(d, PERF_HPP_DIFF__CYCLES);
+>> +			data__hpp_register(d, PERF_HPP_DIFF__CYCLES_HIST);
+>> +		} else {
+>> +			data__hpp_register(d, i ? compute_2_hpp[compute] :
+>> +						  PERF_HPP_DIFF__BASELINE);
+>> +		}
+> 
+> 
+> hum, why can't it be just like we treat other extra columns:
+> 
+> ---
+> @@ -1687,6 +1823,7 @@ static int ui_init(void)
+>   		 *   PERF_HPP_DIFF__DELTA
+>   		 *   PERF_HPP_DIFF__RATIO
+>   		 *   PERF_HPP_DIFF__WEIGHTED_DIFF
+> +		 *   PERF_HPP_DIFF__CYCLES
+>   		 */
+>   		data__hpp_register(d, i ? compute_2_hpp[compute] :
+>   					  PERF_HPP_DIFF__BASELINE);
+> @@ -1704,6 +1841,9 @@ static int ui_init(void)
+>   		if (show_period)
+>   			data__hpp_register(d, i ? PERF_HPP_DIFF__PERIOD :
+>   						  PERF_HPP_DIFF__PERIOD_BASELINE);
+> +
+> +		if (cycles_hist && i)
+> +			data__hpp_register(d, PERF_HPP_DIFF__CYCLES_HIST);
+> 
+> 
+> thanks,
+> jirka
+> 
 
-diff --git a/drivers/nfc/pn533/uart.c b/drivers/nfc/pn533/uart.c
-index f1cc2354a4fd..e3085e5b2d4c 100644
---- a/drivers/nfc/pn533/uart.c
-+++ b/drivers/nfc/pn533/uart.c
-@@ -254,7 +254,7 @@ static int pn532_uart_probe(struct serdev_device *serdev)
- 	serdev_device_set_flow_control(serdev, false);
- 	pn532->send_wakeup = PN532_SEND_WAKEUP;
- 	timer_setup(&pn532->cmd_timeout, pn532_cmd_timeout, 0);
--	priv = pn53x_common_init(PN533_DEVICE_PN532,
-+	priv = pn53x_common_init(PN533_DEVICE_PN532_AUTOPOLL,
- 				     PN533_PROTO_REQ_ACK_RESP,
- 				     pn532, &uart_phy_ops, NULL,
- 				     &pn532->serdev->dev);
--- 
-2.23.0.rc1
+Hi Jiri,
 
+Yes, thanks, your code is better. Thanks so much!
+
+Thanks
+Jin Yao
