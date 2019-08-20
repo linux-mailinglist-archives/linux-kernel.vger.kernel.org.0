@@ -2,79 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8463396246
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:19:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E41F196236
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730366AbfHTOS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:18:26 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46439 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729975AbfHTOSZ (ORCPT
+        id S1730300AbfHTOQ6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:16:58 -0400
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:36979 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729762AbfHTOQ5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:18:25 -0400
-Received: by mail-io1-f65.google.com with SMTP id x4so12455058iog.13
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:18:25 -0700 (PDT)
+        Tue, 20 Aug 2019 10:16:57 -0400
+Received: by mail-qk1-f193.google.com with SMTP id s14so4605992qkm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:16:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bobcopeland-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=838NPqta13bqgyCrYK41UyrEU6mGcDEerMp5IHrJ4wM=;
-        b=Kfnla0tviD817tYZdPwb2uA2HDNSUtBR12ZbWHcHId5JmtFmbvh8/eGNzF8lr/hr9z
-         v6m3JN+x+i1whykrYHmo3SDPcCeo+TPtpbrUTjsz7UK9NBYN9D/LvEAEGNkZ9rNKVDqs
-         v3bNnyXRY8FlQJtnaBRrJ0CsspH9HuFr3leEIwWOihS+KZU/v+p885SCP2Zb/tiSfAL/
-         UKL4ubb9UNcx8g2dXij6VbAX/IQDJyjiIFvUJWlMiNITg9yPWFz4kwaVlcaW/FHxFqj2
-         mz74NRc9FCLqh/UlYlCOwg8ESbDRfUxKFJTk74LRwbe2wVTn8i9eiF0Kit7hST/BEfq6
-         HuFg==
+        bh=QMyh9ztIFZ0lhgUdkNFIpnrPdlgkiFRw5urtr+XGEug=;
+        b=DkPgdinkoPHN6vp2qSkP+LxgOE6TEi2or5IeRLT0we6/LzN98s4DIwPI/sEs3MMpiB
+         if7hKIOZH5CFc9s9sn0ftKaJMrMLD5Rk49xHY/KeezFdk9aQQutWV0o5uolycr1pOCTU
+         U8SvBXjRhjgE6fWq+dgNUAbp/EIXfvTFCHEeWHEC43ybulldoMQIW6VAQf8TzWXjh/bf
+         TI4wp2COStTqTXMYsifz75CpVL/kXi8s3izVkxNCbcxLLZf69AgunW5wDP1qTw0kQiAJ
+         5PntVwhaTY/llED6V/DBufL46hf+5fwiJh7gyr7BEduAx4wSsEp6AWLGf9fZS50k/WN5
+         sQiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=838NPqta13bqgyCrYK41UyrEU6mGcDEerMp5IHrJ4wM=;
-        b=Or9thGdRWiSYE86bQArKwynXVZfy8tOou7S+F196l9SuEVbfZyv0FsqluwmizOj0TB
-         vH96I8LiNLZbPi2yGoGyiIEiCMkTc6/dX/IyxJ9YqQEM3mIPKWiSmFmTOiw4X6RN05gR
-         fhlLzmYfrdONyyhF3t2e/CbsBZnCuxw90CKLoTLN6DH0YFiDyIfwCTEdmzCvmk3729Eq
-         yqAygjd5i3Z+ufo6VbTbTMSnu3GeJi9uSGwfWSD+otUdrdpd5erWLUo/++F+7+d7f5DG
-         A1HFvsWM0yyGHZW5ewe0A9BEenEFogVef7bZmbHTaMB8aPMmK4FLP72OdHm45WrOYVi3
-         NE7w==
-X-Gm-Message-State: APjAAAVnWPyUSpTCZJrohgPiabQ79oU3uqDSzpbYpAwoI1OLCpLg8wQe
-        +z8qW3XTneO7BsucaOfDsfJiMA==
-X-Google-Smtp-Source: APXvYqxMn8dXUKQs4Sy3kFJi0bntqJbH+OO4y772O0IkJ6aywEqL+s/qAIjPcNlCJoZsqvDtbu/dsQ==
-X-Received: by 2002:a02:8409:: with SMTP id k9mr4036631jah.122.1566310704798;
-        Tue, 20 Aug 2019 07:18:24 -0700 (PDT)
-Received: from hash (CPE30b5c2fb365b-CMa456cc3dfbbf.cpe.net.cable.rogers.com. [99.232.51.173])
-        by smtp.gmail.com with ESMTPSA id m10sm14241474ioj.75.2019.08.20.07.18.23
+        bh=QMyh9ztIFZ0lhgUdkNFIpnrPdlgkiFRw5urtr+XGEug=;
+        b=YvHJsm+IB6ejRDd304X3iexd/RK+ZtlyLvXx4Ek9c0PuLQUKdRCl85nblFuT8a/Qms
+         1sNUyN5S/XlyYg/PUJ09ljgUdD0b7/WYvwPTxEn9VkQJ64D5cgDQq8aZacF7D6IUbLqe
+         JKmQo7e03WECGmopbDuYhSQo5aXxxbpysukEd4Kj4av5XgmIJDvRTlMF6fYnXshP18Qa
+         mr24zkKRKmzMn1mCmprjbxTV39cPmtmnms35qC9EmbI8XtCjOOO83exabq+OHD1TwXH4
+         Ve4N2zfdPSPMSPMxTA+GpJpwTIR98N/oxLW3JkYSyadNhdWr27ngL72F8qilbEhbfdrs
+         yZfQ==
+X-Gm-Message-State: APjAAAVCUd0Le/f3OkCC6XmV6NQbeNlmpVVuVF9Tow2QHPZ9bIqSpODi
+        gBjRV4fXvV7/sqkONIzWxsU=
+X-Google-Smtp-Source: APXvYqyC322Aah00uGUIEpVPwei0Cm4Q1TD+AkzhmYplureTiy4+DDec+gHf1LlJ620h5W0su4vyNg==
+X-Received: by 2002:a37:4997:: with SMTP id w145mr26973916qka.82.1566310615895;
+        Tue, 20 Aug 2019 07:16:55 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([179.97.35.50])
+        by smtp.gmail.com with ESMTPSA id h12sm8321475qkl.63.2019.08.20.07.16.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 07:18:24 -0700 (PDT)
-Received: from bob by hash with local (Exim 4.92)
-        (envelope-from <me@bobcopeland.com>)
-        id 1i04vl-0001YN-Fd; Tue, 20 Aug 2019 10:16:13 -0400
-Date:   Tue, 20 Aug 2019 10:16:13 -0400
-From:   Bob Copeland <me@bobcopeland.com>
-To:     Wenwen Wang <wenwen@cs.uga.edu>
-Cc:     "open list:OMFS FILESYSTEM" <linux-karma-devel@lists.sourceforge.net>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] omfs: Fix a memory leak bug
-Message-ID: <20190820141613.GA5634@localhost>
-References: <1566282180-10485-1-git-send-email-wenwen@cs.uga.edu>
+        Tue, 20 Aug 2019 07:16:55 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 04D7D40340; Tue, 20 Aug 2019 11:16:52 -0300 (-03)
+Date:   Tue, 20 Aug 2019 11:16:52 -0300
+To:     Jiri Olsa <jolsa@kernel.org>
+Cc:     Joe Mario <jmario@redhat.com>, lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Michael Petlan <mpetlan@redhat.com>
+Subject: Re: [PATCH] perf c2c: Display proper cpu count in nodes column
+Message-ID: <20190820141652.GG24428@kernel.org>
+References: <20190820140219.28338-1-jolsa@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566282180-10485-1-git-send-email-wenwen@cs.uga.edu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820140219.28338-1-jolsa@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 01:22:59AM -0500, Wenwen Wang wrote:
-> In omfs_get_imap(), 'sbi->s_imap' is allocated through kcalloc(). However,
-> it is not deallocated in the following execution if 'block' is not less
-> than 'sbi->s_num_blocks', leading to a memory leak bug. To fix this issue,
-> go to the 'nomem_free' label to free 'sbi->s_imap'.
+Em Tue, Aug 20, 2019 at 04:02:19PM +0200, Jiri Olsa escreveu:
+> There's wrong bitmap considered when checking
+> for cpu count of specific node.
+> 
+> We do the needed computation for 'set' variable,
+> but at the end we use the 'c2c_he->cpuset' weight,
+> which shows misleading numbers.
+> 
+> Reported-by: Joe Mario <jmario@redhat.com>
 
-Nice catch, thanks.
+You forgot to add this:
 
-Acked-by: Bob Copeland <me@bobcopeland.com>
+Fixes: 1e181b92a2da ("perf c2c report: Add 'node' sort key")
+
+Can you please confirm that that is the cset being fixed? This helps
+with backporters, stable@, etc.
+
+- Arnaldo
+
+
+> Link: https://lkml.kernel.org/n/tip-9wvrv74n7d4nbgztr74isv5j@git.kernel.org
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  tools/perf/builtin-c2c.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> index f0aae6e13a33..9240c6bf70f5 100644
+> --- a/tools/perf/builtin-c2c.c
+> +++ b/tools/perf/builtin-c2c.c
+> @@ -1106,7 +1106,7 @@ node_entry(struct perf_hpp_fmt *fmt __maybe_unused, struct perf_hpp *hpp,
+>  			break;
+>  		case 1:
+>  		{
+> -			int num = bitmap_weight(c2c_he->cpuset, c2c.cpus_cnt);
+> +			int num = bitmap_weight(set, c2c.cpus_cnt);
+>  			struct c2c_stats *stats = &c2c_he->node_stats[node];
+>  
+>  			ret = scnprintf(hpp->buf, hpp->size, "%2d{%2d ", node, num);
+> -- 
+> 2.21.0
 
 -- 
-Bob Copeland %% https://bobcopeland.com/
+
+- Arnaldo
