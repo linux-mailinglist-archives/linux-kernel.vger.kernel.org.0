@@ -2,121 +2,179 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 175EC96BAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 674B596BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:50:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730973AbfHTVnh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:43:37 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53111 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730811AbfHTVnh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:43:37 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i0Bue-0006Zm-OE; Tue, 20 Aug 2019 23:43:32 +0200
-Date:   Tue, 20 Aug 2019 23:43:26 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Frederic Weisbecker <frederic@kernel.org>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [patch 04/44] posix-cpu-timers: Fixup stale comment
-In-Reply-To: <20190820204803.GH2093@lenoir>
-Message-ID: <alpine.DEB.2.21.1908202331080.2223@nanos.tec.linutronix.de>
-References: <20190819143141.221906747@linutronix.de> <20190819143801.747233612@linutronix.de> <20190820142658.GG2093@lenoir> <alpine.DEB.2.21.1908201946320.2223@nanos.tec.linutronix.de> <20190820204803.GH2093@lenoir>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+        id S1731008AbfHTVuA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:50:00 -0400
+Received: from mga11.intel.com ([192.55.52.93]:58881 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730689AbfHTVuA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 17:50:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 14:49:59 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,410,1559545200"; 
+   d="scan'208";a="378730455"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by fmsmga006.fm.intel.com with ESMTP; 20 Aug 2019 14:49:59 -0700
+Message-ID: <bd4caadd8a9110bbbcfb4e8748d0bb416161d8e3.camel@intel.com>
+Subject: Re: [RFC PATCH 2/2] ELF: Add ELF program property parsing support
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
+Cc:     linux-arch@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jann Horn <jannh@google.com>, "H.J. Lu" <hjl.tools@gmail.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Date:   Tue, 20 Aug 2019 14:40:54 -0700
+In-Reply-To: <1566295063-7387-3-git-send-email-Dave.Martin@arm.com>
+References: <1566295063-7387-1-git-send-email-Dave.Martin@arm.com>
+         <1566295063-7387-3-git-send-email-Dave.Martin@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019, Frederic Weisbecker wrote:
-> On Tue, Aug 20, 2019 at 07:57:37PM +0200, Thomas Gleixner wrote:
-> > On Tue, 20 Aug 2019, Frederic Weisbecker wrote:
-> > > On Mon, Aug 19, 2019 at 04:31:45PM +0200, Thomas Gleixner wrote:
-> > > >  /*
-> > > > - * Clean out CPU timers still ticking when a thread exited.  The task
-> > > > - * pointer is cleared, and the expiry time is replaced with the residual
-> > > > - * time for later timer_gettime calls to return.
-> > > > + * Clean out CPU timers which are still armed when a thread exits. The
-> > > > + * timers are only removed from the list. No other updates are done. The
-> > > > + * corresponding posix timers are still accessible, but cannot be rearmed.
-> > > > + *
-> > > >   * This must be called with the siglock held.
-> > > >   */
-> > > >  static void cleanup_timers(struct list_head *head)
-> > > 
-> > > Indeed and I believe we could avoid that step. We remove the sighand at the same
-> > > time so those can't be accessed anymore anyway.
-> > > 
-> > > exit_itimers() takes care of the last call release and could force remove from
-> > > the list (although it might be taken care of in your series, haven't checked yet):
-> > 
-> > No. The posix timer is not necessarily owned by the exiting task or
-> > process. It can be owned by a different entity which has permissions,
-> > e.g. parent.
-> > 
-> > So those are not in the posix timer list of the exiting task, which gets
-> > cleaned up in exit_itimers(). Those are in the list of the task which armed
-> > the timer. The timer is merily queued in the 'active timers' list of the
-> > exiting task and posix_cpu_timers_exit()/posix_cpu_timers_exit_group()
-> > remove it before the task/signal structs go away.
+On Tue, 2019-08-20 at 10:57 +0100, Dave Martin wrote:
+> ELF program properties will needed for detecting whether to enable
+> optional architecture or ABI features for a new ELF process.
 > 
-> Sure, I understand there's two distinct things here: the owner that queues
-> timers in owner->sig->posix_timers (cleaned in exit_itimers()) and the target that queues
-> in target->[signal->]cputime_expires (cleaned in posix_cpu_timers_exit[_group]().
->
-> So I'm wondering why we bother with posix_cpu_timers_exit[_group]() at
-> all when exit_itimers() could handle the list deletion from
-> target->[signal]->cputime_expires throughout posix_cpu_timer_del() as it
-> already does on targets that still have their sighands.
+> For now, there are no generic properties that we care about, so do
+> nothing unless CONFIG_ARCH_USE_GNU_PROPERTY=y.
+> 
+> Otherwise, the presence of properties using the PT_PROGRAM_PROPERTY
+> phdrs entry (if any), and notify each property to the arch code.
+> 
+> For now, the added code is not used.
+> 
+> Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+> ---
+>  fs/binfmt_elf.c          | 109
+> +++++++++++++++++++++++++++++++++++++++++++++++
+>  fs/compat_binfmt_elf.c   |   4 ++
+>  include/linux/elf.h      |  21 +++++++++
+>  include/uapi/linux/elf.h |   4 ++
+>  4 files changed, 138 insertions(+)
+> 
+> diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> index d4e11b2..52f4b96 100644
+> --- a/fs/binfmt_elf.c
+> +++ b/fs/binfmt_elf.c
+> @@ -39,12 +39,18 @@
+>  #include <linux/sched/coredump.h>
+>  #include <linux/sched/task_stack.h>
+>  #include <linux/sched/cputime.h>
+> +#include <linux/sizes.h>
+> +#include <linux/types.h>
+>  #include <linux/cred.h>
+>  #include <linux/dax.h>
+>  #include <linux/uaccess.h>
+>  #include <asm/param.h>
+>  #include <asm/page.h>
+>  
+> +#ifndef ELF_COMPAT
+> +#define ELF_COMPAT 0
+> +#endif
+> +
+>  #ifndef user_long_t
+>  #define user_long_t long
+>  #endif
+> @@ -690,6 +696,93 @@ static unsigned long randomize_stack_top(unsigned long
+> stack_top)
+>  #endif
+>  }
+>  
+> +static int parse_elf_property(const void **prop, size_t *notesz,
+> +			      struct arch_elf_state *arch)
+> +{
+> +	const struct gnu_property *pr = *prop;
+> +	size_t sz = *notesz;
+> +	int ret;
+> +	size_t step;
+> +
+> +	BUG_ON(sz < sizeof(*pr));
+> +
+> +	if (sizeof(*pr) > sz)
+> +		return -EIO;
+> +
+> +	if (pr->pr_datasz > sz - sizeof(*pr))
+> +		return -EIO;
+> +
+> +	step = round_up(sizeof(*pr) + pr->pr_datasz, elf_gnu_property_align);
+> +	if (step > sz)
+> +		return -EIO;
+> +
+> +	ret = arch_parse_elf_property(pr->pr_type, *prop + sizeof(*pr),
+> +				      pr->pr_datasz, ELF_COMPAT, arch);
+> +	if (ret)
+> +		return ret;
+> +
+> +	*prop += step;
+> +	*notesz -= step;
+> +	return 0;
+> +}
+> +
+> +#define NOTE_DATA_SZ SZ_1K
+> +#define GNU_PROPERTY_TYPE_0_NAME "GNU"
+> +#define NOTE_NAME_SZ (sizeof(GNU_PROPERTY_TYPE_0_NAME))
+> +
+> +static int parse_elf_properties(struct file *f, const struct elf_phdr *phdr,
+> +				struct arch_elf_state *arch)
+> +{
+> +	ssize_t n;
+> +	loff_t pos = phdr->p_offset;
+> +	union {
+> +		struct elf_note nhdr;
+> +		char data[NOTE_DATA_SZ];
+> +	} note;
+> +	size_t off, notesz;
+> +	const void *prop;
+> +	int ret;
+> +
+> +	if (!IS_ENABLED(ARCH_USE_GNU_PROPERTY))
+> +		return 0;
+> +
+> +	BUG_ON(phdr->p_type != PT_GNU_PROPERTY);
+> +
+> +	/* If the properties are crazy large, that's too bad (for now): */
+> +	if (phdr->p_filesz > sizeof(note))
+> +		return -ENOEXEC;
+> +	n = kernel_read(f, &note, phdr->p_filesz, &pos);
+> +
+> +	BUILD_BUG_ON(sizeof(note) < sizeof(note.nhdr) + NOTE_NAME_SZ);
+> +	if (n < 0 || n < sizeof(note.nhdr) + NOTE_NAME_SZ)
+> +		return -EIO;
+> +
+> +	if (note.nhdr.n_type != NT_GNU_PROPERTY_TYPE_0 ||
+> +	    note.nhdr.n_namesz != NOTE_NAME_SZ ||
+> +	    strncmp(note.data + sizeof(note.nhdr),
+> +		    GNU_PROPERTY_TYPE_0_NAME, n - sizeof(note.nhdr)))
+> +		return -EIO;
+> +
+> +	off = round_up(sizeof(note.nhdr) + NOTE_NAME_SZ,
+> +		       elf_gnu_property_align);
+> +	if (off > n)
+> +		return -EIO;
+> +
+> +	prop = (const struct gnu_property *)(note.data + off);
+> +	notesz = n - off;
+> +	if (note.nhdr.n_descsz > notesz)
+> +		return -EIO;
+> +
+> +	while (notesz) {
+> +		BUG_ON(((char *)prop - note.data) % elf_gnu_property_align);
+> +		ret = parse_elf_property(&prop, &notesz, arch);
 
-No it can't do that throughout posix_cpu_timer_del() because exit_itimers()
-can only look at current->signal->posix_timers which does not contain the
-posix timers owned by a different task/process.
-
-We could of course invoke posix_cpu_timers_exit() from exit_itimers() but
-does that buy anything?
- 
-> It would make things more simple to delete the timer off the target from
-> the same caller and place and we could remove posix_cpu_timers_exit*().
-
-We can't. The foreign owned cpu timers are not in cur->signal->posix_timers
-so how should we invoke posix_cpu_timer_del() on them. Only the owner task
-can. The only thing the exiting task can do is to remove the foreign timer
-from it's expiry list which has nothing to do with cur->signal->posix_timers.
-
-cur->signal->posix_timers only contains posix timers which are owned by
-current not those which are owned by a different task and armed on the
-exiting one.
-
-exit_itimers() handles cur->signal->posix_timers, i.e. timers owned by
-current.
-
-posix_cpu_timers_exit() handles timers enqueued on current, which are
-foreign owned timers because exit_itimers() removed those which were owned
-by current already.
-
-posix_cpu_timers_exit_group() handles timers enqueued on current->signal,
-which are foreign owned timers because exit_itimers() removed those which
-were owned by current already.
-
-> Or is there something I'm awkwardly missing as usual? :-) 
-
-I think so :)
+Properties need to be in ascending order.  Can we keep track of it from here.
+Also, can we replace BUG_ON with returning an error.
 
 Thanks,
-
-	tglx
+Yu-cheng
