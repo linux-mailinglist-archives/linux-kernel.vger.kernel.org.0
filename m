@@ -2,80 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 45C4A95BEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:04:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7871895BE8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:03:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfHTKEf convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 20 Aug 2019 06:04:35 -0400
-Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25451 "EHLO
-        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728426AbfHTKEe (ORCPT
+        id S1729691AbfHTKDz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 06:03:55 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:38463 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbfHTKDy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 06:04:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1566295435; cv=none; 
-        d=zoho.com.cn; s=zohoarc; 
-        b=hG2OPW+QxI+5uVRsxmo8lbPUNQvqp2aT4uCT/zKQ8MZPlvCwTPk7kpxB2vyUOR81oD76XWTAy+2KvAFTOl/lJusnWvJ6tuHllKX8kQ2xJEFueCv971EX+C+7GE/Z7RT+2av/hrmdeLwveweiNfo4Z87gtg44eFYQDSEtJL+RCu4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
-        t=1566295435; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=qWDUnb9Mvb2aBEhtl+DI3fDd1UcOPYz2zkXQ59ewVy4=; 
-        b=quNOa9OSA6wqDL+7VzIL2bhP7wco1eXzY9HCFfGE+60tzb0R6NqfFNpX45mVLejGVeSULxONuL+334ezFtJNHPPzqu+3m8khw1si0RXBrToqL2+qbJlU371I3fMevKepbP7oogE3jdYJwo2UOhoUgq1BfivOp34Tj39wiW7778o=
-ARC-Authentication-Results: i=1; mx.zoho.com.cn;
-        dkim=pass  header.i=zoho.com.cn;
-        spf=pass  smtp.mailfrom=cgxu519@zoho.com.cn;
-        dmarc=pass header.from=<cgxu519@zoho.com.cn> header.from=<cgxu519@zoho.com.cn>
-Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by mx.zoho.com.cn
-        with SMTPS id 156629543308886.05180690754912; Tue, 20 Aug 2019 18:03:53 +0800 (CST)
-From:   Chengguang Xu <cgxu519@zoho.com.cn>
-To:     ericvh@gmail.com, lucho@ionkov.net, asmadeus@codewreck.org
-Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
-        Chengguang Xu <cgxu519@zoho.com.cn>
-Message-ID: <20190820100325.10313-1-cgxu519@zoho.com.cn>
-Subject: [PATCH] 9p: avoid attaching writeback_fid on mmap with type PRIVATE
-Date:   Tue, 20 Aug 2019 18:03:25 +0800
-X-Mailer: git-send-email 2.20.1
+        Tue, 20 Aug 2019 06:03:54 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: antoine.tenart@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 244F9240011;
+        Tue, 20 Aug 2019 10:03:51 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 12:03:50 +0200
+From:   Antoine Tenart <antoine.tenart@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "sd@queasysnail.net" <sd@queasysnail.net>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "thomas.petazzoni@bootlin.com" <thomas.petazzoni@bootlin.com>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "allan.nielsen@microchip.com" <allan.nielsen@microchip.com>,
+        "camelia.groza@nxp.com" <camelia.groza@nxp.com>,
+        Simon Edelhaus <Simon.Edelhaus@aquantia.com>,
+        Pavel Belous <Pavel.Belous@aquantia.com>
+Subject: Re: [PATCH net-next v2 6/9] net: macsec: hardware offloading
+ infrastructure
+Message-ID: <20190820100350.GB3292@kwain>
+References: <20190808140600.21477-1-antoine.tenart@bootlin.com>
+ <20190808140600.21477-7-antoine.tenart@bootlin.com>
+ <e96fa4ae-1f2c-c1be-b2d8-060217d8e151@aquantia.com>
+ <20190813085817.GA3200@kwain>
+ <20190813131706.GE15047@lunn.ch>
+ <2e3c2307-d414-a531-26cb-064e05fa01fc@aquantia.com>
+ <20190813162823.GH15047@lunn.ch>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-X-ZohoCNMailClient: External
-Content-Type: text/plain; charset=utf8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190813162823.GH15047@lunn.ch>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently on mmap cache policy, we always attach writeback_fid
-whether mmap type is SHARED or PRIVATE. However, in the use case
-of kata-container which combines 9p(Guest OS) with overlayfs(Host OS),
-this behavior will trigger overlayfs' copy-up when excute command
-inside container.
+Hi Andrew,
 
-Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
----
- fs/9p/vfs_file.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Tue, Aug 13, 2019 at 06:28:23PM +0200, Andrew Lunn wrote:
+> > 1) With current implementation it's impossible to install SW macsec engine onto
+> > the device which supports HW offload. That could be a strong limitation in
+> > cases when user sees HW macsec offload is broken or work differently, and he/she
+> > wants to replace it with SW one.
+> > MACSec is a complex feature, and it may happen something is missing in HW.
+> > Trivial example is 256bit encryption, which is not always a musthave in HW
+> > implementations.
+> 
+> It would also be nice to add extra information to the netlink API to
+> indicate if HW or SW is being used. In other places where we offload
+> to accelerators we have such additional information.
 
-diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-index 4cc966a31cb3..fe7f0bd2048e 100644
---- a/fs/9p/vfs_file.c
-+++ b/fs/9p/vfs_file.c
-@@ -513,6 +513,7 @@ v9fs_mmap_file_mmap(struct file *filp, struct vm_area_struct *vma)
- 	v9inode = V9FS_I(inode);
- 	mutex_lock(&v9inode->v_mutex);
- 	if (!v9inode->writeback_fid &&
-+	    (vma->vm_flags & VM_SHARED) &&
- 	    (vma->vm_flags & VM_WRITE)) {
- 		/*
- 		 * clone a fid and add it to writeback_fid
-@@ -614,6 +615,8 @@ static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
- 			(vma->vm_end - vma->vm_start - 1),
- 	};
- 
-+	if (!(vma->vm_flags & VM_SHARED))
-+		return;
- 
- 	p9_debug(P9_DEBUG_VFS, "9p VMA close, %p, flushing", vma);
- 
+Agreed, in addition to being able to enable/disable the offloading we
+should have a way to know if a MACsec interface is being offloaded or
+not.
+
+Thanks!
+Antoine
+
 -- 
-2.20.1
-
-
-
+Antoine Ténart, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
