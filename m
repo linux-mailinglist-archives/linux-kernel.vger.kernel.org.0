@@ -2,150 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 776F19528B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:19:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD7CB95249
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:19:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729248AbfHTATt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:19:49 -0400
-Received: from mail-pg1-f202.google.com ([209.85.215.202]:55360 "EHLO
-        mail-pg1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729157AbfHTATK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:19:10 -0400
-Received: by mail-pg1-f202.google.com with SMTP id g126so3475472pgc.22
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:19:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=y7A0HibhyhfzIREut3Dwuxy8x8kSL4ALtDSq/DvbdZU=;
-        b=E6L68QxBaU21/SMLGJjUVxfcqlYeoh9KKiuYntVofw3Je/54Bv5YFbSTgASr+mR0Up
-         bRdR94U1mPd4NJbF7fenNctW8EA2R6U5r36ZaVdRqbzVdB805s1Z8hoPo3xgk/bW/FsJ
-         XGISHYMqTtZ5pi0dKMfRWUPYNNUk1ZqQm/dCORAvOZmWxh118qjX/XKjLbG7G80zbnIw
-         5pvIDjlLJdT1xmoZTAVXRxK/LknQgJgzmfo610NNtIpmiWzgk8yIPwNQ3QASW8Irtw+e
-         7Y+74jZkbHXcj5BHnftE099IRg7qujtK3/hCilLV90w5IuGYYe+RYjsvGg1pYHQ8kAZy
-         vZwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=y7A0HibhyhfzIREut3Dwuxy8x8kSL4ALtDSq/DvbdZU=;
-        b=TIwZNhqqV0NB9OlDsLWRKwuc4QT3mbUbEnGRGjm829CVCfmLP3NvudNi+3ak7xVipG
-         pHwlszmq6En45RzxbuGRD8DvrumsVEbqbzL6arkkti2NdyM4AqqJns6MKUKIcSoGbEIb
-         0APVnzVcMQac8TmAU1xBqdOGHa056JX506daVfsWr5ODki8DeBCpDoZQnN+LZ/ALY0FT
-         c7DpEnRR7SVKeCfy2UM3KKBxXJn/qxeclFvUrKh2b1bradxo6h4vNrUJxm/kxgRWZYLs
-         JOt1M/WgepC1Jjncw+wm6r15HtZ7aYDXgRMrOWJdw3RCMIHPvRK51wUy7rinuKwc+ikn
-         aolA==
-X-Gm-Message-State: APjAAAVfpYQ6+E92kenugHWyh4uMSJvaOTkk/S7tuR3yKF+WCJ1WE3hH
-        w1UGV9kCcVy5ZxYhEyKeeJ9mYYDxlmimPCpGeE4PjA==
-X-Google-Smtp-Source: APXvYqxNgzDjWlK9zVX2D1LRxy26StW0LiS4oj6z0C920gpBqNX5FvSjQfD9J9cmE4lXFk1B8ByAYmM4L1IzFMjpRqlxBg==
-X-Received: by 2002:a65:60cd:: with SMTP id r13mr22971318pgv.315.1566260349868;
- Mon, 19 Aug 2019 17:19:09 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:59 -0700
-In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-24-matthewgarrett@google.com>
-Mime-Version: 1.0
-References: <20190820001805.241928-1-matthewgarrett@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 23/29] bpf: Restrict bpf when kernel lockdown is in
- confidentiality mode
-From:   Matthew Garrett <matthewgarrett@google.com>
-To:     jmorris@namei.org
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        David Howells <dhowells@redhat.com>,
-        Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Matthew Garrett <mjg59@google.com>,
-        Kees Cook <keescook@chromium.org>, netdev@vger.kernel.org,
-        Chun-Yi Lee <jlee@suse.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Content-Type: text/plain; charset="UTF-8"
+        id S1728721AbfHTASI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:18:08 -0400
+Received: from ozlabs.org ([203.11.71.1]:39811 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728351AbfHTASI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 20:18:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46CBG53TVsz9s4Y;
+        Tue, 20 Aug 2019 10:18:05 +1000 (AEST)
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v1 08/10] powerpc/mm: move __ioremap_at() and __iounmap_at() into ioremap.c
+In-Reply-To: <84bab66e7afc4b35e2bd460a87b5911c1b0830d2.1565726867.git.christophe.leroy@c-s.fr>
+References: <6bc35eca507359075528bc0e55938bc1ce8ee485.1565726867.git.christophe.leroy@c-s.fr> <84bab66e7afc4b35e2bd460a87b5911c1b0830d2.1565726867.git.christophe.leroy@c-s.fr>
+Date:   Tue, 20 Aug 2019 10:18:00 +1000
+Message-ID: <87tvac666f.fsf@concordia.ellerman.id.au>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+Christophe Leroy <christophe.leroy@c-s.fr> writes:
 
-bpf_read() and bpf_read_str() could potentially be abused to (eg) allow
-private keys in kernel memory to be leaked. Disable them if the kernel
-has been locked down in confidentiality mode.
+> diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
+> index 57d742509cec..889ee656cf64 100644
+> --- a/arch/powerpc/mm/ioremap.c
+> +++ b/arch/powerpc/mm/ioremap.c
+> @@ -103,3 +103,46 @@ void iounmap(volatile void __iomem *token)
+>  	vunmap(addr);
+>  }
+>  EXPORT_SYMBOL(iounmap);
+> +
+> +#ifdef CONFIG_PPC64
+> +/**
+> + * __ioremap_at - Low level function to establish the page tables
+> + *                for an IO mapping
+> + */
+> +void __iomem *__ioremap_at(phys_addr_t pa, void *ea, unsigned long size, pgprot_t prot)
+> +{
+> +	/* We don't support the 4K PFN hack with ioremap */
+> +	if (pgprot_val(prot) & H_PAGE_4K_PFN)
+> +		return NULL;
+> +
+> +	if ((ea + size) >= (void *)IOREMAP_END) {
+> +		pr_warn("Outside the supported range\n");
+> +		return NULL;
+> +	}
+> +
+> +	WARN_ON(pa & ~PAGE_MASK);
+> +	WARN_ON(((unsigned long)ea) & ~PAGE_MASK);
+> +	WARN_ON(size & ~PAGE_MASK);
+> +
+> +	if (ioremap_range((unsigned long)ea, pa, size, prot, NUMA_NO_NODE))
 
-Suggested-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Signed-off-by: Matthew Garrett <mjg59@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-cc: netdev@vger.kernel.org
-cc: Chun-Yi Lee <jlee@suse.com>
-cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: James Morris <jmorris@namei.org>
----
- include/linux/security.h     |  1 +
- kernel/trace/bpf_trace.c     | 10 ++++++++++
- security/lockdown/lockdown.c |  1 +
- 3 files changed, 12 insertions(+)
+This doesn't build.
 
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 0b2529dbf0f4..e604f4c67f03 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -118,6 +118,7 @@ enum lockdown_reason {
- 	LOCKDOWN_INTEGRITY_MAX,
- 	LOCKDOWN_KCORE,
- 	LOCKDOWN_KPROBES,
-+	LOCKDOWN_BPF_READ,
- 	LOCKDOWN_CONFIDENTIALITY_MAX,
- };
- 
-diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
-index 1c9a4745e596..33a954c367f3 100644
---- a/kernel/trace/bpf_trace.c
-+++ b/kernel/trace/bpf_trace.c
-@@ -139,8 +139,13 @@ BPF_CALL_3(bpf_probe_read, void *, dst, u32, size, const void *, unsafe_ptr)
- {
- 	int ret;
- 
-+	ret = security_locked_down(LOCKDOWN_BPF_READ);
-+	if (ret < 0)
-+		goto out;
-+
- 	ret = probe_kernel_read(dst, unsafe_ptr, size);
- 	if (unlikely(ret < 0))
-+out:
- 		memset(dst, 0, size);
- 
- 	return ret;
-@@ -566,6 +571,10 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
- {
- 	int ret;
- 
-+	ret = security_locked_down(LOCKDOWN_BPF_READ);
-+	if (ret < 0)
-+		goto out;
-+
- 	/*
- 	 * The strncpy_from_unsafe() call will likely not fill the entire
- 	 * buffer, but that's okay in this circumstance as we're probing
-@@ -577,6 +586,7 @@ BPF_CALL_3(bpf_probe_read_str, void *, dst, u32, size,
- 	 */
- 	ret = strncpy_from_unsafe(dst, unsafe_ptr, size);
- 	if (unlikely(ret < 0))
-+out:
- 		memset(dst, 0, size);
- 
- 	return ret;
-diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
-index 27b2cf51e443..2397772c56bd 100644
---- a/security/lockdown/lockdown.c
-+++ b/security/lockdown/lockdown.c
-@@ -33,6 +33,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
- 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
- 	[LOCKDOWN_KCORE] = "/proc/kcore access",
- 	[LOCKDOWN_KPROBES] = "use of kprobes",
-+	[LOCKDOWN_BPF_READ] = "use of bpf to read kernel RAM",
- 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
- };
- 
--- 
-2.23.0.rc1.153.gdeed80330f-goog
+Adding ...
 
+extern int ioremap_range(unsigned long ea, phys_addr_t pa, unsigned long size, pgprot_t prot, int nid);
+
+... above, until the next patch, fixes it.
+
+cheers
