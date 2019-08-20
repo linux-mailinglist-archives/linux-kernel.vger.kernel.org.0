@@ -2,88 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 86D8E96089
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:41:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E653E960A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:42:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbfHTNln (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:41:43 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39721 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730430AbfHTNll (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:41:41 -0400
-Received: by mail-lj1-f196.google.com with SMTP id x4so5173542ljj.6
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 06:41:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gNuDQYJVmflL/Wny4LHIdiHjJtChxjlf3zzR+P07bYQ=;
-        b=ZDi1SFp8FXJaCjqmp4zm/ByzXqtJBaAQvabUX02QHSb6SDgYVNy5d57jcfvwyT0dA5
-         8fzbFhHg9LRNWdJpl72dppeSuclNMByTBbZmU1xF7nAeqeBmQRvhlMYjmaiXLE4LV8wa
-         zxoY/hF5DCBbdn3mRlsGF/QKdWdyYmxwOQPdPchKF8HLcZypJV/Ukw61WnY3PsnFAK6u
-         Q+YJvglENuW+ieeSkGQnazSrxJiAcBHbB6uLYLGz1AJ9h/LaCq1SaT3QhJAAHmVF4Fz7
-         Q2G5T+L+zrAQfW0/HE1GXl6UCt7EAtJC8GptIXHJXVjn/yaRqmlb/VYXAa36kix3OPE7
-         AUMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=gNuDQYJVmflL/Wny4LHIdiHjJtChxjlf3zzR+P07bYQ=;
-        b=D6QC0+3gBlYiVebz3PnLeq0DBEvsBFgARIsqscWcJK2Dpoq17sX3Cr34sfwj9iiD5M
-         jaGQb76T5cw5PHFiWppl1OW91jxOAGU83DI5CMRz8EznJME2+jmrMFLbN2wCq388KZ4g
-         DbbHz1q+0NdOaJhYVWqUDRlS6FLzA5dDOxyDuo3CqKKJS4WpRXsmeTyDZxB9VONRs2y1
-         0QQlA50rdhsxJ7FDp5ZUepSN6NBDG2/56S22vB14Rb8AMdofdcZatn5r60MbWIo5yVUJ
-         cmL/tadGsBJeZXuFza8GBm3C75+0QtqwJnER50mNRba1TXoL8JAlMspcyirHiCjyml2v
-         4vfg==
-X-Gm-Message-State: APjAAAXXYmmlH+TP7GEZLzDMie6uacyuZELEGfAzPuJmmw06fMkVHQWu
-        LMAYOX08qNAtDUKlFNHq4jAqow==
-X-Google-Smtp-Source: APXvYqxp8WgHlmWB1TJ1U6T1cdPC1f76z95rZGZ+Y6JhIi2z2/jagdLSnDlzo64tshfBrRxPu29rpQ==
-X-Received: by 2002:a2e:b0cb:: with SMTP id g11mr15447861ljl.76.1566308499392;
-        Tue, 20 Aug 2019 06:41:39 -0700 (PDT)
-Received: from localhost (c-243c70d5.07-21-73746f28.bbcust.telenor.se. [213.112.60.36])
-        by smtp.gmail.com with ESMTPSA id f22sm2820208ljh.22.2019.08.20.06.41.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 06:41:38 -0700 (PDT)
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     shuah@kernel.org, ast@kernel.org, daniel@iogearbox.net
-Cc:     linux-kselftest@vger.kernel.org, netdev@vger.kernel.org,
-        bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Anders Roxell <anders.roxell@linaro.org>
-Subject: [PATCH] selftests: bpf: add config fragment BPF_JIT
-Date:   Tue, 20 Aug 2019 15:41:34 +0200
-Message-Id: <20190820134134.25818-1-anders.roxell@linaro.org>
+        id S1730572AbfHTNmR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:42:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37474 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730557AbfHTNmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:42:15 -0400
+Received: from sasha-vm.mshome.net (unknown [12.236.144.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F43822DD6;
+        Tue, 20 Aug 2019 13:42:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566308535;
+        bh=1fivXv3Xy+71BjwYr1CKkSmG40mAsuBQnNFjG4WErMs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=D88kYfj7ve81YUFW6rq42wsZa7RujQ1kXkQTM96D+hq9O9fv/5TWoHLH3+Pr+rBkJ
+         zvudiUfdMXWFhCCNm/QbFvrRRLDrLOTbyxkjQUx0JEh7CXZWXXpekxd6TNjNG44FmP
+         sgw4yvcp6A/KqzlPGSy15FGde7HGDt7kzCLgERlg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.19 01/27] dmaengine: ste_dma40: fix unneeded variable warning
+Date:   Tue, 20 Aug 2019 09:41:47 -0400
+Message-Id: <20190820134213.11279-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When running test_kmod.sh the following shows up
+From: Arnd Bergmann <arnd@arndb.de>
 
- # sysctl cannot stat /proc/sys/net/core/bpf_jit_enable No such file or directory
- cannot: stat_/proc/sys/net/core/bpf_jit_enable #
- # sysctl cannot stat /proc/sys/net/core/bpf_jit_harden No such file or directory
- cannot: stat_/proc/sys/net/core/bpf_jit_harden #
+[ Upstream commit 5d6fb560729a5d5554e23db8d00eb57cd0021083 ]
 
-Rework to enable CONFIG_BPF_JIT to solve "No such file or directory"
+clang-9 points out that there are two variables that depending on the
+configuration may only be used in an ARRAY_SIZE() expression but not
+referenced:
 
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+drivers/dma/ste_dma40.c:145:12: error: variable 'd40_backup_regs' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+static u32 d40_backup_regs[] = {
+           ^
+drivers/dma/ste_dma40.c:214:12: error: variable 'd40_backup_regs_chan' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+static u32 d40_backup_regs_chan[] = {
+
+Mark these __maybe_unused to shut up the warning.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20190712091357.744515-1-arnd@arndb.de
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/config | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/dma/ste_dma40.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index f7a0744db31e..5dc109f4c097 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -34,3 +34,4 @@ CONFIG_NET_MPLS_GSO=m
- CONFIG_MPLS_ROUTING=m
- CONFIG_MPLS_IPTUNNEL=m
- CONFIG_IPV6_SIT=m
-+CONFIG_BPF_JIT=y
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index f4edfc56f34ef..3d55405c49cac 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -142,7 +142,7 @@ enum d40_events {
+  * when the DMA hw is powered off.
+  * TODO: Add save/restore of D40_DREG_GCC on dma40 v3 or later, if that works.
+  */
+-static u32 d40_backup_regs[] = {
++static __maybe_unused u32 d40_backup_regs[] = {
+ 	D40_DREG_LCPA,
+ 	D40_DREG_LCLA,
+ 	D40_DREG_PRMSE,
+@@ -211,7 +211,7 @@ static u32 d40_backup_regs_v4b[] = {
+ 
+ #define BACKUP_REGS_SZ_V4B ARRAY_SIZE(d40_backup_regs_v4b)
+ 
+-static u32 d40_backup_regs_chan[] = {
++static __maybe_unused u32 d40_backup_regs_chan[] = {
+ 	D40_CHAN_REG_SSCFG,
+ 	D40_CHAN_REG_SSELT,
+ 	D40_CHAN_REG_SSPTR,
 -- 
 2.20.1
 
