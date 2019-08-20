@@ -2,59 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A524095242
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 46E6C9524C
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfHTAOl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:14:41 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33902 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728578AbfHTAOk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:14:40 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 615E6189D6DB;
-        Tue, 20 Aug 2019 00:14:40 +0000 (UTC)
-Received: from ovpn-117-150.phx2.redhat.com (ovpn-117-150.phx2.redhat.com [10.3.117.150])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BF4235D9CD;
-        Tue, 20 Aug 2019 00:14:38 +0000 (UTC)
-Message-ID: <b12aa6442bd12c725beb8e381083e6880dbd9206.camel@redhat.com>
-Subject: Re: [RFC v2] rcu/tree: Try to invoke_rcu_core() if in_irq() during
- unlock
-From:   Scott Wood <swood@redhat.com>
-To:     "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        linux-kernel@vger.kernel.org
-Cc:     Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>, rcu@vger.kernel.org,
-        Steven Rostedt <rostedt@goodmis.org>
-Date:   Mon, 19 Aug 2019 19:14:38 -0500
-In-Reply-To: <20190818214948.GA134430@google.com>
-References: <20190818214948.GA134430@google.com>
-Organization: Red Hat
+        id S1728797AbfHTASM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:18:12 -0400
+Received: from mail-vk1-f201.google.com ([209.85.221.201]:34784 "EHLO
+        mail-vk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728731AbfHTASL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 20:18:11 -0400
+Received: by mail-vk1-f201.google.com with SMTP id l25so939005vkn.1
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:18:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=VwF/91o4aMHrQL5QM73+22fSApAs/2NiXgYkaBxXzFM=;
+        b=CUH1JVMihclalX5q2seurV8HS9Qtk8nNORqI67CyNzpt8f4YKj9PsBh2yhEiLjpN0N
+         Fknxxgr4PJdGVml+Jh2OhZg5E3JvdD0eGWvF5Fmj48bmwNl5sWVh0boqVtCTRu0mQHas
+         1xR/eyrBcny62z5z0RXhFDmY63lItRvyMCbNrGAku/YYgZEVoLwuK/uqG8c8z1Py5OSr
+         A6r1/J/F5nwciw7FJDr6x0eGnjeLDqYrBnU6tU/LRSjombP6Ii7IjYs4x7MFqzCatoKk
+         c5ORjqJyd7wx6vbPsu0EDtwg03Dm+tZqvDQMHo7P8iZ7nhjRLYSJI6ZiO9T9s7fsnTfy
+         eFPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=VwF/91o4aMHrQL5QM73+22fSApAs/2NiXgYkaBxXzFM=;
+        b=pzHKdpkOl198/SYCGzlaDZdUd8wgngflLJ37sXOF5HR6e0lZg6Y0c6bSbvw0pTjq1D
+         IFmi64gscR/FLsika4TDt43lg9FXthrfLxu4dhwYl1sqWp+T4TTSBw17PY503cv47Cxt
+         +cpdh+Yzt6pBarl79O0WZ83SIMCMN86S4bV4uGaExDEy5gDJV2GlAW2wURcs5JVKGUVG
+         eMg7RGqVv+SdouZhpYjEnp475bEGbpSOQhFi1owBqtzeXoR3BD+uhlrQsPydWndh2S4+
+         qbjuwdx10quiGxFnxIo6sl1xTzPmZSL02oYBqavD+fc1NisjqSdF8ztXMidX7jpStnp5
+         Oeog==
+X-Gm-Message-State: APjAAAW+IunpeITTpNDmgCeHoxrUsKLZoMJ5kKGv2/JjuhgcsMZhXuID
+        4K1T/hI65M/6pYrKsnF9OOMAmpUSr2+7XvM+vdeZig==
+X-Google-Smtp-Source: APXvYqz41WMqs6ZJ50zP00x9Ki+LU6ocf63OApf5Deq/yukX6RTwToHjUAj4ZEXRYb662kA7qgoSvA9acMVNeIZGiXQafw==
+X-Received: by 2002:ac5:c801:: with SMTP id y1mr9262710vkl.41.1566260290111;
+ Mon, 19 Aug 2019 17:18:10 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:36 -0700
+Message-Id: <20190820001805.241928-1-matthewgarrett@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
+Subject: [PATCH V40 00/29] Add kernel lockdown functionality
+From:   Matthew Garrett <matthewgarrett@google.com>
+To:     jmorris@namei.org
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5 (3.30.5-1.fc29) 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Tue, 20 Aug 2019 00:14:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-08-18 at 17:49 -0400, Joel Fernandes (Google) wrote:
-> When we're in hard interrupt context in rcu_read_unlock_special(), we
-> can still benefit from invoke_rcu_core() doing wake ups of rcuc
-> threads when the !use_softirq parameter is passed.  This is safe
-> to do so because:
-
-What is the benefit, beyond skipping the irq work overhead?  Is there some
-reason to specifically want the rcuc thread woken rather than just getting
-into the scheduler (and thus rcu_note_context_switch) as soon as possible?
-
--Scott
+After chatting with James in person, I'm resending the full set with the
+fixes merged in in order to avoid any bisect issues. There should be no
+functional changes other than avoiding build failures with some configs,
+and fixing the oops in tracefs.
 
 
