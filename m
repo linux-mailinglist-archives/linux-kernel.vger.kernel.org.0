@@ -2,175 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EFA59578D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:44:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3619B95770
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:43:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfHTGol (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 02:44:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40302 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729273AbfHTGok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 02:44:40 -0400
-Received: from localhost.localdomain (unknown [106.201.62.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F29AF2082F;
-        Tue, 20 Aug 2019 06:44:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566283479;
-        bh=avgQr0nAKi9Nm14cJjqVKLyuHxantFYztUHzrSX7h0w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XjS884YCr3suQERr1OV2u+BcFisAgMI5L9RPSlPLLDrmPAmCmW1gvfuXeiqg/Bomx
-         A1huOWd9tzGWaI4PPyZIFtw1hWHaMDZcb39CDPT0xCUZlKidksbXDhhahKWnCzU/Dw
-         dI2mhyK1p6TUgkYZFxNGfifLwT3cpnlD4iQ72ENs=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <agross@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sibi Sankar <sibis@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 8/8] arm64: dts: qcom: sm8150: Add apps shared nodes
-Date:   Tue, 20 Aug 2019 12:12:16 +0530
-Message-Id: <20190820064216.8629-9-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190820064216.8629-1-vkoul@kernel.org>
-References: <20190820064216.8629-1-vkoul@kernel.org>
+        id S1729276AbfHTGnT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:43:19 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:52522 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfHTGnT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 02:43:19 -0400
+Received: by mail-wm1-f65.google.com with SMTP id o4so1566912wmh.2;
+        Mon, 19 Aug 2019 23:43:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0XAzeGSJHGOFWxURHAOeVeqy4oMuwXyuhlisAQdgna0=;
+        b=HZXaNsEL8FCCPpoPnqPTf47Mly0iJP3FPoxn1xkOIV0e+NDUZZzSP6md8ZoMl3t7XF
+         iDya0/hf8f6Dbe1S75noAW0jeq1omgFaD23GJ9sSotnQu1C5Jki6ZOvoY6qEcTh0p5G9
+         KBGjgcpcIjE/YeklbegBZpp8+c7WoXIiwDmHzNiIDkvN57ZQkRbGeVLSpXsSYnn60ekH
+         v7gpqjNk2zH9CPCfnhN5qqtzH45rT1W3btLlMqJBR48ouSajV4Y68sbSh6hym1HbjwK2
+         1mpOb+wMfwKvYSsAP5sa8UiywXEU1WDg6xzsqg4HDDZe6VnrCryrJVpGGzvKNsjbhtyP
+         1utg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0XAzeGSJHGOFWxURHAOeVeqy4oMuwXyuhlisAQdgna0=;
+        b=WnlWuipd1HaafnAkDwzYzBR8Xda479tyOUe/AUZ/pL3mz38rftYoId6JX8HAGgUrR5
+         ACo4ULSWn3Q35MHX85wKT07+sNraDHKkhBCnVMnDE/PaSxX+LxMj2eUKFqdGMZD75otJ
+         dBirnbaxJzlOgNJnjZ7rjPV2fW/byD49TRw83EmsO4T73LGpDjkQdIrxX0I+1Z6zhbsz
+         f7wDu7aNENolOruGuq4jxij2O75nvnTLtVUjJ7n51Z3f/i0TbE3ERZAOWlcvpFaU0D/u
+         CkDNXVbtMABYFSseHKUA12trwgz1wh4PZ5XmPzplA1X8+JK3JVEtHWcL/QUMfFNg9DO/
+         hDdQ==
+X-Gm-Message-State: APjAAAUABXeS+qU78DmKM2gWYPmKvxbIT3TuuDeamCrALj6ZmPb1asjB
+        EHwNVCXsJ8rnppBoTF1JVDg=
+X-Google-Smtp-Source: APXvYqx9jTVPh7Q3QPN80Pj0XZW1XRowf0FTlGCKaCIZGil7Xt976TZ4+5X7yd1NLmm5g7rpOQmHTA==
+X-Received: by 2002:a05:600c:2192:: with SMTP id e18mr1970515wme.83.1566283397357;
+        Mon, 19 Aug 2019 23:43:17 -0700 (PDT)
+Received: from localhost.localdomain ([151.29.237.107])
+        by smtp.gmail.com with ESMTPSA id c15sm48432264wrb.80.2019.08.19.23.43.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Aug 2019 23:43:16 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 08:43:14 +0200
+From:   Juri Lelli <juri.lelli@gmail.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Juri Lelli <juri.lelli@redhat.com>, tglx@linutronix.de,
+        bigeasy@linutronix.de, linux-rt-users@vger.kernel.org,
+        linux-kernel@vger.kernel.org, williams@redhat.com
+Subject: Re: [RT PATCH v2] net/xfrm/xfrm_ipcomp: Protect scratch buffer with
+ local_lock
+Message-ID: <20190820064314.GC6860@localhost.localdomain>
+References: <20190819122731.6600-1-juri.lelli@redhat.com>
+ <20190819155721.05c878f8@oasis.local.home>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819155721.05c878f8@oasis.local.home>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add apss_shared and apps_rsc including the rpmhcc child node, pmu, SMEM
-nodes
+On 19/08/19 15:57, Steven Rostedt wrote:
+> On Mon, 19 Aug 2019 14:27:31 +0200
+> Juri Lelli <juri.lelli@redhat.com> wrote:
+> 
+> > The following BUG has been reported while running ipsec tests.
+> 
+> Thanks!
+> 
+> I'm still in the process of backporting patches to fix some bugs that
+> showed up with the latest merge of upstream stable. I'll add this to
+> the queue to add.
 
-Co-developed-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Sibi Sankar <sibis@codeaurora.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- arch/arm64/boot/dts/qcom/sm8150.dtsi | 63 ++++++++++++++++++++++++++++
- 1 file changed, 63 insertions(+)
+Great, thank you!
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 8bf4b4c17ae0..cf58b367df28 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -142,12 +142,23 @@
- 		};
- 	};
- 
-+	tcsr_mutex: hwlock {
-+		compatible = "qcom,tcsr-mutex";
-+		syscon = <&tcsr_mutex_regs 0 0x1000>;
-+		#hwlock-cells = <1>;
-+	};
-+
- 	memory@80000000 {
- 		device_type = "memory";
- 		/* We expect the bootloader to fill in the size */
- 		reg = <0 0x80000000 0 0>;
- 	};
- 
-+	pmu {
-+		compatible = "arm,armv8-pmuv3";
-+		interrupts = <GIC_PPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
-@@ -264,6 +275,12 @@
- 		};
- 	};
- 
-+	smem {
-+		compatible = "qcom,smem";
-+		memory-region = <&smem_mem>;
-+		hwlocks = <&tcsr_mutex 3>;
-+	};
-+
- 	soc: soc@0 {
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-@@ -303,6 +320,11 @@
- 			};
- 		};
- 
-+		tcsr_mutex_regs: syscon@1f40000 {
-+			compatible = "syscon";
-+			reg = <0x01f40000 0x40000>;
-+		};
-+
- 		tlmm: pinctrl@3100000 {
- 			compatible = "qcom,sm8150-pinctrl";
- 			reg = <0x03100000 0x300000>,
-@@ -318,6 +340,16 @@
- 			#interrupt-cells = <2>;
- 		};
- 
-+		aoss_qmp: power-controller@c300000 {
-+			compatible = "qcom,sm8150-aoss-qmp";
-+			reg = <0x0c300000 0x100000>;
-+			interrupts = <GIC_SPI 389 IRQ_TYPE_EDGE_RISING>;
-+			mboxes = <&apss_shared 0>;
-+
-+			#clock-cells = <0>;
-+			#power-domain-cells = <1>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			interrupt-controller;
-@@ -327,6 +359,12 @@
- 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-+		apss_shared: mailbox@17c00000 {
-+			compatible = "qcom,sm8150-apss-shared";
-+			reg = <0x17c00000 0x1000>;
-+			#mbox-cells = <1>;
-+		};
-+
- 		timer@17c20000 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
-@@ -386,6 +424,31 @@
- 			};
- 		};
- 
-+		apps_rsc: rsc@18200000 {
-+			label = "apps_rsc";
-+			compatible = "qcom,rpmh-rsc";
-+			reg = <0x18200000 0x10000>,
-+			      <0x18210000 0x10000>,
-+			      <0x18220000 0x10000>;
-+			reg-names = "drv-0", "drv-1", "drv-2";
-+			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+			qcom,tcs-offset = <0xd00>;
-+			qcom,drv-id = <2>;
-+			qcom,tcs-config = <ACTIVE_TCS  2>,
-+					  <SLEEP_TCS   1>,
-+					  <WAKE_TCS    1>,
-+					  <CONTROL_TCS 0>;
-+
-+			rpmhcc: clock-controller {
-+				compatible = "qcom,sm8150-rpmh-clk";
-+				#clock-cells = <1>;
-+				clock-names = "xo";
-+				clocks = <&xo_board>;
-+			};
-+		};
-+
- 		spmi_bus: spmi@c440000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0x0c440000 0x0001100>,
--- 
-2.20.1
+Best,
 
+Juri
