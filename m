@@ -2,242 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A1EF962BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:46:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4EB02962F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:49:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbfHTOqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:46:43 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38900 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729810AbfHTOqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:46:42 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so3528026pfg.5;
-        Tue, 20 Aug 2019 07:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=UrzJtR8JMVHP1TlAT8mApd+wrF+JrOxiBnpPc/9y0io=;
-        b=eLqaZ9NBxbhhMhUVT+HsHYNu0HVL0X+VAs3JFVJef9YllVkDHi7kl1sW/JH78IwNCF
-         GNFMdH/eI3A3GjtT9PGMy74HiGE/a2Qzn2gXS6CfMU/q6h9BRa232Y94gW26lBVv54Xc
-         KnvWgPZIylYS79sBG/Pnb9GxxP5mJp75zt0PSP707jowZHVtwzbw3uqpsp5+qVaj2Iko
-         LjsMR4uETEHfT0dMBSF1XS4CVmwHnv+HVxnthVRW6fB+z+ffGAEp5xf8nlRGdan7v5/3
-         GtOUXo8MRRV1jQuV03YoFIYfKOVs+oNcdLU9qLTaeX4om1ZMWonzh0UMl6DTipuXiV3t
-         iZXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=UrzJtR8JMVHP1TlAT8mApd+wrF+JrOxiBnpPc/9y0io=;
-        b=phj46ZRJBckv+OuMXOtlujHfqyX21YMFGLxqr1CUKiC9LxfNYT3IHWxzpX4FBMu+Wu
-         mbXlbOeXD72P7GgTTyAjwgDhzw46DzNXQr7BpMy5tvQa2axC+sOr+ePfbtHaTnRDgJGD
-         MKfvbezuBQCVjjII0cm83XzE71ckQgnC052Iy5vzHd2WKoLLNt68TOsPTnJ0E8Zj+Fm1
-         pp0MdRQnzYKUtRgRU48+5F/3ZRDfwrI62MY3LXwkeqiEn2jTOzPZWAva89U0D5KDcL+M
-         OX/v4TbAM3OVVzw4+ThjssQBo+sJ/7gr4ZnIjELhBRdGhcspZgv1WGUdP5sXFynYhEhX
-         9YXA==
-X-Gm-Message-State: APjAAAUX0dh79jWxXKdAdyRViblhkVZLrioKgYHTOcbHqdVSx5bkACPJ
-        hV7LL9xGlgT4EBqQCLOG1io=
-X-Google-Smtp-Source: APXvYqxgpCsr32f8kxFLn6hBHvKtbZZS4ETJJc7KdJ4s8sVqWG6zh/FPjhiPCQtwi1cKNC9k+ORHGQ==
-X-Received: by 2002:aa7:9682:: with SMTP id f2mr30161883pfk.256.1566312401956;
-        Tue, 20 Aug 2019 07:46:41 -0700 (PDT)
-Received: from mbalantz-desktop (d206-116-172-62.bchsia.telus.net. [206.116.172.62])
-        by smtp.gmail.com with ESMTPSA id 195sm25043629pfu.75.2019.08.20.07.46.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 07:46:41 -0700 (PDT)
-From:   Mark Balantzyan <mbalant3@gmail.com>
-X-Google-Original-From: Mark Balantzyan <mbalantz@mbalantz-desktop>
-Date:   Tue, 20 Aug 2019 07:46:37 -0700 (PDT)
-To:     sathya.prakash@broadcom.com
-cc:     Mark Balantzyan <mbalant3@gmail.com>, julian.calaby@gmail.com,
-        suganath-prabu.subramani@broadcom.com,
-        MPT-FusionLinux.pdl@broadcom.com, andrianov@ispras.ru,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] lsilogic mpt fusion: mptctl: Fixed race condition
- around mptctl_id variable using mutexes
-In-Reply-To: <CAGRGNgUvZ0-GS=p8uVSEGA1Tca9HNg1W+Zrhc3ugxD2xqf0wBw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1908200725340.18881@mbalantz-desktop>
-References: <20190815100050.3924-1-mbalant3@gmail.com> <CAGRGNgUvZ0-GS=p8uVSEGA1Tca9HNg1W+Zrhc3ugxD2xqf0wBw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730559AbfHTOtC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:49:02 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:43998 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729260AbfHTOtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:49:01 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 6926CECB419C95654477;
+        Tue, 20 Aug 2019 22:47:58 +0800 (CST)
+Received: from lhrphicprd00229.huawei.com (10.123.41.22) by
+ DGGEMS414-HUB.china.huawei.com (10.3.19.214) with Microsoft SMTP Server id
+ 14.3.439.0; Tue, 20 Aug 2019 22:47:49 +0800
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     <linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-efi@vger.kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>, <james.morse@arm.com>
+CC:     <rjw@rjwysocki.net>, <tony.luck@intel.com>, <linuxarm@huawei.com>,
+        <ard.biesheuvel@linaro.org>, <nariman.poushin@linaro.org>,
+        <jcm@redhat.com>, <linux-kernel@vger.kernel.org>,
+        <peter.maydell@linaro.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 0/6 V2] CCIX Protocol error reporting.
+Date:   Tue, 20 Aug 2019 22:47:26 +0800
+Message-ID: <20190820144732.2370-1-Jonathan.Cameron@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.123.41.22]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+Note this will clash with:
+[PATCH RFC 0/4] ACPI: APEI: Add support to notify the vendor specific HW errors
+so a rebase will be needed.
 
-The race condition in the mptctl driver I'm wishing to have 
-confirmed is evidenced by the pair of call chains:
+Changes since V1:
 
-compat_mpctl_ioctl -> compat_mpt_command -> mptctl_do_mpt_command which 
-calls mpt_get_msg_frame(mptctl_id, ioc)
+Addressed comments from James Morse
+- Dropped kernel logging of vendor data. We just push it to the tracepoints.
+- Tidied up this cover letter and added information to address questions
+  raised. Includes removing questions where James and I agreed ;)
 
-and
+Note, this initial series attempts no 'handling' of errors.
+That will follow later.
 
-__mptctl_ioctl -> mpt_fw_download -> mptctl_do_fw_download which calls 
-mpt_put_msg_frame(mptctl_id, iocp, mf) and calls 
-mpt_get_msg_frame(mptctl_id, iocp)
+EFI 2.8 defines a new CPER record Appendix N for CCIX Protocol Error Records
+(PER). www.uefi.org
 
-Since ioctl can be called at any time, accessing of mptctl_id occurs 
-concurrently between threads causing a race.
+These include Protocol Error Record logs which are defined in the
+CCIX 1.0 Base Specification www.ccixconsortium.com.  A public evaluation
+version is now available.
 
-I realize in past messages I've tried to patch by surrounding all 
-instances of mptctl_id with mutexes but I'm focusing this time on one 
-clear instance of the race condition involving the variable mptctl_id, 
-since Julian asks what the exact race condition is with respect to the 
-case.
+Handling of coherency protocol errors is complex and how Linux does this
+will take some time to evolve.  For now, fatal errors are handled via the
+usual means and everything else is reported.
 
-Please let me know the confirmation or not confirmation of this race 
-possibility.
+There are 6 types of error defined, covering:
+* Memory errors
+* Cache errors
+* Address translation unit errors
+* CCIX port errors
+* CCIX link errors
+* Agent internal errors.
 
-Thank you,
-Mark
+These errors are concerned (mostly) wth things happening in the CCIX
+protocol layer.  They are parallel to AER errors which should be only
+concerned with the PCIe layer (which is underneath CCIX).
+The ATS errors break this rule slightly. You may get an error
+occurring that results in problems at both layers of the protocol
+stack and hence have to handle AER and PER errors simultaneously.
 
-On Sun, 18 Aug 2019, Julian Calaby wrote:
+Some of these errors can 'almost' be mapped onto standard existing error
+types but only at the loss of information specific to CCIX such as
+where in the topology they occurred.
 
-> Hi Mark,
->
-> On Thu, Aug 15, 2019 at 8:02 PM Mark Balantzyan <mbalant3@gmail.com> wrote:
->>
->> Certain functions in the driver, such as mptctl_do_fw_download() and
->> mptctl_do_mpt_command(), rely on the instance of mptctl_id, which does the
->> id-ing. There is race condition possible when these functions operate in
->> concurrency. Via, mutexes, the functions are mutually signalled to cooperate.
->>
->> Changelog v2
->>
->> Lacked a version number but added properly terminated else condition at
->> (former) line 2300.
->>
->> Changelog v3
->>
->> Fixes "return -EAGAIN" lines which were erroneously tabbed as if to be guarded
->> by "if" conditions lying above them.
->>
->> Signed-off-by: Mark Balantzyan <mbalant3@gmail.com>
->>
->> ---
->
-> Changelog should be down here after the "---"
->
->>  drivers/message/fusion/mptctl.c | 43 +++++++++++++++++++++++++--------
->>  1 file changed, 33 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/message/fusion/mptctl.c b/drivers/message/fusion/mptctl.c
->> index 4470630d..3270843c 100644
->> --- a/drivers/message/fusion/mptctl.c
->> +++ b/drivers/message/fusion/mptctl.c
->> @@ -816,12 +816,15 @@ mptctl_do_fw_download(int ioc, char __user *ufwbuf, size_t fwlen)
->>
->>                 /*  Valid device. Get a message frame and construct the FW download message.
->>                 */
->> +               mutex_lock(&mpctl_mutex);
->>                 if ((mf = mpt_get_msg_frame(mptctl_id, iocp)) == NULL)
->> -                       return -EAGAIN;
->> +                       mutex_unlock(&mpctl_mutex);
->> +               return -EAGAIN;
->
-> Are you sure this is right?
->
-> 1. We're now exiting early with -EAGAIN regardless of the result of
-> mpt_get_msg_frame()
-> 2. If the result of mpt_get_msg_frame() is not NULL, we don't unlock the mutex
->
-> Do you mean something like:
->
-> - - - - - -
->
-> mutex_lock(&mpctl_mutex);
-> mf = mpt_get_msg_frame(mptctl_id, iocp);
-> mutex_unlock(&mpctl_mutex);
->
-> if (mf == NULL) {
->
-> - - - - - -
->
->> @@ -1889,8 +1894,10 @@ mptctl_do_mpt_command (struct mpt_ioctl_command karg, void __user *mfPtr)
->>
->>         /* Get a free request frame and save the message context.
->>          */
->> +       mutex_lock(&mpctl_mutex);
->>          if ((mf = mpt_get_msg_frame(mptctl_id, ioc)) == NULL)
->> -                return -EAGAIN;
->> +               mutex_unlock(&mpctl_mutex);
->> +        return -EAGAIN;
->
-> Same comments here.
->
->> @@ -2563,7 +2576,9 @@ mptctl_hp_hostinfo(unsigned long arg, unsigned int data_size)
->>         /*
->>          * Gather ISTWI(Industry Standard Two Wire Interface) Data
->>          */
->> +       mutex_lock(&mpctl_mutex);
->>         if ((mf = mpt_get_msg_frame(mptctl_id, ioc)) == NULL) {
->> +       mutex_unlock(&mpctl_mutex);
->
-> This line needs to be indented to match the line below, also we don't
-> unlock the mutex if mpt_get_msg_frame() is not NULL.
->
->> @@ -3010,9 +3027,11 @@ static int __init mptctl_init(void)
->>          *  Install our handler
->>          */
->>         ++where;
->> +       mutex_lock(&mpctl_mutex);
->>         mptctl_id = mpt_register(mptctl_reply, MPTCTL_DRIVER,
->>             "mptctl_reply");
->>         if (!mptctl_id || mptctl_id >= MPT_MAX_PROTOCOL_DRIVERS) {
->> +               mutex_unlock(&mpctl_mutex);
->
-> Why not use a local variable and only update the global variable if it's valid?
->
->>                 printk(KERN_ERR MYNAM ": ERROR: Failed to register with Fusion MPT base driver\n");
->>                 misc_deregister(&mptctl_miscdev);
->>                 err = -EBUSY;
->> @@ -3022,13 +3041,14 @@ static int __init mptctl_init(void)
->>         mptctl_taskmgmt_id = mpt_register(mptctl_taskmgmt_reply, MPTCTL_DRIVER,
->>             "mptctl_taskmgmt_reply");
->>         if (!mptctl_taskmgmt_id || mptctl_taskmgmt_id >= MPT_MAX_PROTOCOL_DRIVERS) {
->> +               mutex_unlock(&mpctl_mutex);
->
-> Same comment here.
->
->> @@ -3044,13 +3064,14 @@ out_fail:
->>  /*=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=*/
->>  static void mptctl_exit(void)
->>  {
->> +       mutex_lock(&mpctl_mutex);
->>         misc_deregister(&mptctl_miscdev);
->>         printk(KERN_INFO MYNAM ": Deregistered /dev/%s @ (major,minor=%d,%d)\n",
->>                          mptctl_miscdev.name, MISC_MAJOR, mptctl_miscdev.minor);
->>
->>         /* De-register event handler from base module */
->>         mpt_event_deregister(mptctl_id);
->> -
->> +
->
-> Please don't add trailing whitespace.
->
-> Did you test this on real hardware? I'd expect it to deadlock and
-> crash almost immediately.
->
-> Also, it might be worthwhile creating accessor functions for the
-> mptctl variables or using atomics, that way the locking doesn't need
-> to be right every time they're used.
->
-> Finally, what's the exact race condition here? Are the functions you
-> reference changing the values of the mptctl variables while other code
-> is using them? These functions appear to be setup functions, so why
-> are those variables being used before the device is fully set up?
-> Single usages of those variables shouldn't be subject to race
-> conditions, so you shouldn't need mutexes around those.
->
-> Thanks,
->
-> -- 
-> Julian Calaby
->
-> Email: julian.calaby@gmail.com
-> Profile: http://www.google.com/profiles/julian.calaby/
->
+The set includes tracepoints to report the errors to RAS Daemon and a patch
+set for RAS Daemon will follow shortly.
+
+Several design decisions that people may disagree with.
+1. Reporting of vendor data.  We have little choice but to do this via a
+   dynamic array as these blocks can take arbitrary size. I had hoped
+   no one would actually use these given the odd mismatch between a
+   standard error structure and non standard element, but there are
+   already designs out there that do use it. James suggested that
+   it made sense to put these in the tracepoints, but we shouldn't spam
+   the kernel log with them (done in V2).
+2. The trade off between explicit tracepoint fields, on which we might
+   want to filter in kernel, and the simplicity of a blob.
+   I have gone for having the whole of the block specific to the PER
+   error type in an opaque blob.
+   The key elements that may be filtered on are the physical address
+   and the source and component fields which allow you to identify
+   faulty devices. Note that you have to know how the devices were
+   enumerated to be able to do so.
+3. Defined 6 new tracepoints rather than cramming everything into one.
+   * They are all defined by the CCIX specification as independent error
+     classes.
+   * Many of them can only be generated by particular types of agent.
+   * The handling required will vary widely depending on types.
+     In the kernel some map cleanly onto existing handling. Keeping the
+     whole flow separate will aide this. They vary by a similar amount
+     in scope to the RAS errors found on an existing system which have
+     independent tracepoints.
+   * Separating them out allows for filtering on the tracepoints by
+     elements that are not shared between them.
+   * Muxing the lot into one record type can lead to ugly code both in
+     kernel and in userspace.
+
+Rasdaemon patches posted.
+https://www.spinics.net/lists/linux-edac/msg10616.html
+
+The following boilerplate is granting rights to the kernel.
+Note that I haven't applied the CCIX copyright notice anywhere in this
+series because we aren't quoting from the specification.  That is
+much more likely to happen in documentation patches than in code.
+
+Like anything else in this series it is open to comment.
+
+This patch is being distributed by the CCIX Consortium, Inc. (CCIX) to
+you and other parties that are participating (the "participants") in the
+Linux kernel with the understanding that the participants will use CCIX's
+name and trademark only when this patch is used in association with the
+Linux kernel and associated user space.
+
+CCIX is also distributing this patch to these participants with the
+understanding that if any portion of the CCIX specification will be
+used or referenced in the Linux kernel, the participants will not modify
+the cited portion of the CCIX specification and will give CCIX proper
+copyright attribution by including the following copyright notice with
+the cited part of the CCIX specification:
+"© 2019 CCIX CONSORTIUM, INC. ALL RIGHTS RESERVED."
+
+Jonathan Cameron (6):
+  efi / ras: CCIX Memory error reporting
+  efi / ras: CCIX Cache error reporting
+  efi / ras: CCIX Address Translation Cache error reporting
+  efi / ras: CCIX Port error reporting
+  efi / ras: CCIX Link error reporting
+  efi / ras: CCIX Agent internal error reporting
+
+ drivers/acpi/apei/Kconfig        |   8 +
+ drivers/acpi/apei/ghes.c         |  59 +++
+ drivers/firmware/efi/Kconfig     |   5 +
+ drivers/firmware/efi/Makefile    |   1 +
+ drivers/firmware/efi/cper-ccix.c | 817 +++++++++++++++++++++++++++++++
+ drivers/firmware/efi/cper.c      |   6 +
+ include/linux/cper.h             | 333 +++++++++++++
+ include/ras/ras_event.h          | 405 +++++++++++++++
+ 8 files changed, 1634 insertions(+)
+ create mode 100644 drivers/firmware/efi/cper-ccix.c
+
+-- 
+2.20.1
+
