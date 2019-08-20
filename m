@@ -2,52 +2,100 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A5D495377
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:35:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 63F2995380
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:40:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728978AbfHTBfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 21:35:53 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:39376 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728627AbfHTBfx (ORCPT
+        id S1728920AbfHTBkz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 21:40:55 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:8543 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728627AbfHTBkz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:35:53 -0400
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id DB90E14A872EE;
-        Mon, 19 Aug 2019 18:35:52 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 18:35:52 -0700 (PDT)
-Message-Id: <20190819.183552.1819321784691078344.davem@davemloft.net>
-To:     marco.hartmann@nxp.com
-Cc:     fugang.duan@nxp.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, christian.herber@nxp.com
-Subject: Re: [PATCH net-next 1/1] fec: add C45 MDIO read/write support
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1566234659-7164-2-git-send-email-marco.hartmann@nxp.com>
-References: <1566234659-7164-1-git-send-email-marco.hartmann@nxp.com>
-        <1566234659-7164-2-git-send-email-marco.hartmann@nxp.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Mon, 19 Aug 2019 18:35:53 -0700 (PDT)
+        Mon, 19 Aug 2019 21:40:55 -0400
+X-UUID: b5b28cb1873b4c70bc178178f04a9a94-20190820
+X-UUID: b5b28cb1873b4c70bc178178f04a9a94-20190820
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1464914703; Tue, 20 Aug 2019 09:40:47 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Tue, 20 Aug 2019 09:40:46 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 20 Aug 2019 09:40:44 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        sam shih <sam.shih@mediatek.com>
+Subject: [PATCH v4 0/10] Add mt7629 and fix mt7628 pwm
+Date:   Tue, 20 Aug 2019 09:40:15 +0800
+Message-ID: <1566265225-27452-1-git-send-email-sam.shih@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-TM-SNTS-SMTP: ED3387D8F7DE73AC5566392D3F826B33B8E936E381F4CE54C56FB2ECCDD154A12000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marco Hartmann <marco.hartmann@nxp.com>
-Date: Mon, 19 Aug 2019 17:11:14 +0000
+From: sam shih <sam.shih@mediatek.com>
 
-> @@ -1767,7 +1770,7 @@ static int fec_enet_mdio_read(struct mii_bus *bus, int mii_id, int regnum)
->  	struct fec_enet_private *fep = bus->priv;
->  	struct device *dev = &fep->pdev->dev;
->  	unsigned long time_left;
-> -	int ret = 0;
-> +	int ret = 0, frame_start, frame_addr, frame_op;
->  
+Changes since v4:
+- Follow reviewer's comments (v3: pwm: mediatek: add a property "num-pwms")
+  Move the changes of droping the check for of_device_get_match_data
+  returning non-NULL to next patch
+- Follow reviewers's comments 
+  (v3: pwm: mediatek: allocate the clks array dynamically)
+  1. use pc->soc->has_clks to check clocks exist or not.
+  2. Add error message when probe() unable to get clks
+- Fixes bug when SoC is old mips which has no complex clock tree.
+if clocks not exist, use the new property from DT to apply period caculation;
+otherwise, use clk_get_rate to get clock frequency and apply period caculation.
 
-Please retain the reverse christmas tree ordering of local variables
-here, thank you.
+Changes since v3:
+- add a new property "clock-frequency" and fix mt7628 pwm
+- add mt7629 pwm support
+
+Changes since v2:
+- use num-pwms instead of mediatek,num-pwms.
+- rename the member from num_pwms to fallback_num_pwms to make it 
+  more obvious that it doesn't represent the actually used value.
+- add a dev_warn and a expressive comment to help other developers 
+  to not start adding num_pwms in the compatible_data.
+
+Changes since v1:
+- add some checks for backwards compatibility.
+
+
+Ryder Lee (6):
+  pwm: mediatek: add a property "num-pwms"
+  pwm: mediatek: allocate the clks array dynamically and fix mt7628 pwm
+  dt-bindings: pwm: add a property "num-pwms"
+  arm64: dts: mt7622: add a property "num-pwms" for PWM node
+  arm: dts: mt7623: add a property "num-pwms" for PWM node
+  dt-bindings: pwm: update bindings for MT7629 SoC
+
+sam shih (4):
+  pwm: mediatek: droping the check for of_device_get_match_data
+  pwm: mediatek: use pwm_mediatek as common prefix
+  dt-bindings: pwm: update bindings for MT7628 SoC
+  arm: dts: mediatek: add mt7629 pwm support
+
+ .../devicetree/bindings/pwm/pwm-mediatek.txt  |  11 +-
+ arch/arm/boot/dts/mt7623.dtsi                 |   1 +
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   1 +
+ drivers/pwm/pwm-mediatek.c                    | 242 ++++++++++--------
+ arch/arm/boot/dts/mt7629.dtsi                 |  16 ++++++++++++++++
+ 5 files changed, 160 insertions(+), 111 deletions(-)
+-- 
+2.17.1
+
