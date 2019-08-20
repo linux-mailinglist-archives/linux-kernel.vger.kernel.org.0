@@ -2,128 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89508964B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EFB0964BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:40:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729851AbfHTPjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:39:47 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45525 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726717AbfHTPjr (ORCPT
+        id S1730332AbfHTPj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:39:59 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:36270 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730179AbfHTPj5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:39:47 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1i06EZ-0001wj-Be; Tue, 20 Aug 2019 17:39:43 +0200
-Message-ID: <1566315581.3030.18.camel@pengutronix.de>
-Subject: Re: [PATCH 2/2] reset: meson-audio-arb: add sm1 support
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Tue, 20 Aug 2019 17:39:41 +0200
-In-Reply-To: <20190820094625.13455-3-jbrunet@baylibre.com>
-References: <20190820094625.13455-1-jbrunet@baylibre.com>
-         <20190820094625.13455-3-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
+        Tue, 20 Aug 2019 11:39:57 -0400
+Received: by mail-pf1-f196.google.com with SMTP id w2so3619233pfi.3;
+        Tue, 20 Aug 2019 08:39:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=1j7H+vhoqJHC4PUQJny3VV4YSdCvAEuiAV/gmPHS1VM=;
+        b=gr2mleZJ9dxVGMuvaPTQCcUBUl//PAfqvwWFfxsVa0PJkB37oeMzidGuiqFHHxwwCO
+         sKe1VLWEF4OugJsqUH66Q/SMlppeRaJZ/SYplA4lezSX2c/D7+tM97atRk6/Qms8gC2h
+         71Ft49he37dOSMEIOFyNPs4Tyx17VqYeoAgm17QIq/pb5iXk+qHwcw8S6epDOOYOjSXj
+         /ZuhZbRhX/AGYyb2k/IGttCikdiAeOO83/An5q7NjGtzs5PxoUV+2nGwSmiu5q98vd0s
+         RiIVw3RrVIbae8dTfY1Tf4LorjtpZe7Ld+RTIvFjb9Zo9UqhcKUcPVj8vcsZVUT0DmwK
+         4SUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=1j7H+vhoqJHC4PUQJny3VV4YSdCvAEuiAV/gmPHS1VM=;
+        b=WqazG427Xa1jeWpHxRA9qyUSmtxsbi64Nn+IyajJs64jj5997PP177ndnhVnGhkjUR
+         lS0nV6qdD3QTyPNYdI+kMM0+f61N0U5vkdf59Z7nhdZbmr3FQuRrgOH1FvyB8Z1mk81v
+         Da/uKj6VVXAQteidsW/NOqSjGiEGckkBlyiwKA2yD5nXb7u7oHk3nQd/cndQzV+yS/wA
+         qq8BDY5z+MINnqtsGe+PvmFbq1C9Q3YoczFOoenbrFV4+c4UGh41oy0goaW8YVvDwcxG
+         K82k3CzyrLCkmK9EwBCgENNKC9QYP0L/aOugflDpK9R0YCDLR/GuP5UaesTnOQxDg5m/
+         WlFQ==
+X-Gm-Message-State: APjAAAVaB9yM2IQwWKvJJEbs01H8nBxlyIVCq0rqqEnz1+VyykoXngUM
+        jWrW98yeVJJ3ajUERWpDSyk=
+X-Google-Smtp-Source: APXvYqyykvp12dfCZS5mTvPsORZ/C+RGO2y6TtmoGJxnglxBRKn3wLFio47kQZwmemnqcRV4KE0biw==
+X-Received: by 2002:aa7:8108:: with SMTP id b8mr31256897pfi.197.1566315596703;
+        Tue, 20 Aug 2019 08:39:56 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id b24sm19013454pfd.91.2019.08.20.08.39.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2019 08:39:56 -0700 (PDT)
+Subject: Re: [RFC PATCH] hwmon: (iio_hwmon) Enable power exporting from IIO
+To:     Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, monstr@monstr.eu
+Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
+References: <71aec0191e0e5f32cc760f95844d8ee215b48c7f.1565616579.git.michal.simek@xilinx.com>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <906edfa3-9e7d-e8cc-29e3-e428b79ed0c2@roeck-us.net>
+Date:   Tue, 20 Aug 2019 08:39:55 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <71aec0191e0e5f32cc760f95844d8ee215b48c7f.1565616579.git.michal.simek@xilinx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jerome,
-
-thank you for the patch. Just one nitpick and one real issue below:
-
-On Tue, 2019-08-20 at 11:46 +0200, Jerome Brunet wrote:
-> Add the new arb reset lines of the SM1 SoC family
+On 8/12/19 6:29 AM, Michal Simek wrote:
+> There is no reason why power channel shouldn't be exported as is done for
+> voltage, current, temperature and humidity.
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> Power channel is available on iio ina226 driver.
+> 
+> Tested on Xilinx ZCU102 board.
+> 
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  drivers/reset/reset-meson-audio-arb.c | 28 ++++++++++++++++++++++++---
->  1 file changed, 25 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/reset/reset-meson-audio-arb.c b/drivers/reset/reset-meson-audio-arb.c
-> index c53a2185a039..72d29dbca45a 100644
-> --- a/drivers/reset/reset-meson-audio-arb.c
-> +++ b/drivers/reset/reset-meson-audio-arb.c
-> @@ -30,6 +30,17 @@ static const unsigned int axg_audio_arb_reset_bits[] = {
->  	[AXG_ARB_FRDDR_C]	= 6,
->  };
->  
-> +static const unsigned int sm1_audio_arb_reset_bits[] = {
-> +	[AXG_ARB_TODDR_A]	= 0,
-> +	[AXG_ARB_TODDR_B]	= 1,
-> +	[AXG_ARB_TODDR_C]	= 2,
-> +	[AXG_ARB_FRDDR_A]	= 4,
-> +	[AXG_ARB_FRDDR_B]	= 5,
-> +	[AXG_ARB_FRDDR_C]	= 6,
-> +	[AXG_ARB_TODDR_D]	= 3,
-> +	[AXG_ARB_FRDDR_D]	= 7,
-> +};
-> +
->  static int meson_audio_arb_update(struct reset_controller_dev *rcdev,
->  				  unsigned long id, bool assert)
->  {
-> @@ -82,8 +93,14 @@ static const struct reset_control_ops meson_audio_arb_rstc_ops = {
->  };
->  
->  static const struct of_device_id meson_audio_arb_of_match[] = {
-> -	{ .compatible = "amlogic,meson-axg-audio-arb", },
-> -	{}
-> +	{
-> +		.compatible = "amlogic,meson-axg-audio-arb",
-> +		.data = axg_audio_arb_reset_bits,
-> +	},
-> +	{
-> +		.compatible = "amlogic,meson-sm1-audio-arb",
-> +		.data = sm1_audio_arb_reset_bits
-> +	}, {}
+> But I don't think values are properly converted. Voltage1 is fine but the
+> rest is IMHO wrong. But this patch should enable power channel to be shown
+> which looks good.
+> 
 
-Only slight preference, I would keep the sentinel on a separate line.
-Your choice.
+No idea what is going on there. I don't really know what "scaled" units
+the iio subsystem reports. power is supposed to be reported to user space
+in micro-Watt. Is that what the scaled value from iio reports ?
 
->  };
->  MODULE_DEVICE_TABLE(of, meson_audio_arb_of_match);
->  
-> @@ -104,10 +121,15 @@ static int meson_audio_arb_remove(struct platform_device *pdev)
->  static int meson_audio_arb_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> +	const unsigned int *data;
->  	struct meson_audio_arb_data *arb;
->  	struct resource *res;
->  	int ret;
->  
-> +	data = of_device_get_match_data(dev);
-> +	if (!data)
-> +		return -EINVAL;
-> +
->  	arb = devm_kzalloc(dev, sizeof(*arb), GFP_KERNEL);
->  	if (!arb)
->  		return -ENOMEM;
-> @@ -126,7 +148,7 @@ static int meson_audio_arb_probe(struct platform_device *pdev)
->  		return PTR_ERR(arb->regs);
->  
->  	spin_lock_init(&arb->lock);
-> -	arb->reset_bits = axg_audio_arb_reset_bits;
-> +	arb->reset_bits = data;
->  	arb->rstc.nr_resets = ARRAY_SIZE(axg_audio_arb_reset_bits);
+Thanks,
+Guenter
 
-Since SM1 has two more resets, this needs to come from device match data
-as well, or the last two resets will be unusable.
+> root@zynqmp-debian:~# iio_info -a && sensors -u
+> Library version: 0.16 (git tag: v0.16)
+> Compiled with backends: local xml ip usb serial
+> Using auto-detected IIO context at URI "local:"
+> IIO context created with local backend.
+> Backend version: 0.16 (git tag: v0.16)
+> Backend description string: Linux zynqmp-debian 5.3.0-rc4-00004-ga7ca33daed22-dirty #41 SMP PREEMPT Mon Aug 12 15:06:58 CEST 2019 aarch64
+> IIO context has 1 attributes:
+> 	local,kernel: 5.3.0-rc4-00004-ga7ca33daed22-dirty
+> IIO context has 1 devices:
+> 	iio:device0: ina226 (buffer capable)
+> 		9 channels found:
+> 			voltage0:  (input, index: 0, format: le:U16/16>>0)
+> 			3 channel-specific attributes found:
+> 				attr  0: integration_time value: 0.001100
+> 				attr  1: raw value: 70
+> 				attr  2: scale value: 0.002500000
+> 			voltage1:  (input, index: 1, format: le:U16/16>>0)
+> 			3 channel-specific attributes found:
+> 				attr  0: integration_time value: 0.001100
+> 				attr  1: raw value: 958
+> 				attr  2: scale value: 1.250000000
+> 			power2:  (input, index: 2, format: le:U16/16>>0)
+> 			2 channel-specific attributes found:
+> 				attr  0: raw value: 3
+> 				attr  1: scale value: 0.006250000
+> 			current3:  (input, index: 3, format: le:U16/16>>0)
+> 			2 channel-specific attributes found:
+> 				attr  0: raw value: 70
+> 				attr  1: scale value: 0.000250000
+> 			timestamp:  (input, index: 4, format: le:S64/64>>0)
+> 			allow:  (input)
+> 			1 channel-specific attributes found:
+> 				attr  0: async_readout value: 0
+> 			oversampling:  (input)
+> 			1 channel-specific attributes found:
+> 				attr  0: ratio value: 4
+> 			sampling:  (input)
+> 			1 channel-specific attributes found:
+> 				attr  0: frequency value: 114
+> 			shunt:  (input)
+> 			1 channel-specific attributes found:
+> 				attr  0: resistor value: 10.000000000
+> 		2 device-specific attributes found:
+> 				attr  0: current_timestamp_clock value: realtime
+> 
+> 				attr  1: integration_time_available value: 0.000140 0.000204 0.000332 0.000588 0.001100 0.002116 0.004156 0.008244
+> 		2 buffer-specific attributes found:
+> 				attr  0: data_available value: 0
+> 				attr  1: watermark value: 1
+> 		1 debug attributes found:
+> 				debug attr  0: direct_reg_access value: 0x4327
+> ina226_fourth-isa-0000
+> Adapter: ISA adapter
+> in1:
+>    in1_input: 0.000
+> in2:
+>    in2_input: 1.198
+> power1:
+>    power1_input: 0.000
+> curr1:
+>    curr1_input: 0.000
+> ---
+>   drivers/hwmon/iio_hwmon.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
+> index f1c2d5faedf0..aedb95fa24e3 100644
+> --- a/drivers/hwmon/iio_hwmon.c
+> +++ b/drivers/hwmon/iio_hwmon.c
+> @@ -59,7 +59,7 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>   	struct iio_hwmon_state *st;
+>   	struct sensor_device_attribute *a;
+>   	int ret, i;
+> -	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1;
+> +	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1, power_i = 1;
+>   	enum iio_chan_type type;
+>   	struct iio_channel *channels;
+>   	struct device *hwmon_dev;
+> @@ -114,6 +114,10 @@ static int iio_hwmon_probe(struct platform_device *pdev)
+>   			n = curr_i++;
+>   			prefix = "curr";
+>   			break;
+> +		case IIO_POWER:
+> +			n = power_i++;
+> +			prefix = "power";
+> +			break;
+>   		case IIO_HUMIDITYRELATIVE:
+>   			n = humidity_i++;
+>   			prefix = "humidity";
+> 
 
->  	arb->rstc.ops = &meson_audio_arb_rstc_ops;
->  	arb->rstc.of_node = dev->of_node;
-
-regards
-Philipp
