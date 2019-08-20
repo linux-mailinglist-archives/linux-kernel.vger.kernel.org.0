@@ -2,56 +2,57 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 42FC2967CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A58F9967C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730783AbfHTRlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:41:31 -0400
-Received: from mail-wm1-f99.google.com ([209.85.128.99]:55369 "EHLO
+        id S1730710AbfHTRlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:41:20 -0400
+Received: from mail-wm1-f99.google.com ([209.85.128.99]:50254 "EHLO
         mail-wm1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730564AbfHTRlI (ORCPT
+        with ESMTP id S1730535AbfHTRlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:41:08 -0400
-Received: by mail-wm1-f99.google.com with SMTP id f72so3346208wmf.5
+        Tue, 20 Aug 2019 13:41:09 -0400
+Received: by mail-wm1-f99.google.com with SMTP id v15so3368922wml.0
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=RSHLf/fk8eaNAk0hQQsquTa2DY6x+xoJ3ov9YVjIq/Q=;
-        b=CVr65blf+W1K2cOwbnEtD3P6Q0B2AvyAOaQINlmHGDh/IKucuTwoQjXMWTtPbVobGL
-         zCadaIwyQYwBZ8KYg7SaTMJ2KqbFSO66xZut10SY+R6fUPZJvl88jSIk+esuzHGImboe
-         JyeMsrS1RnWMXs9KawecLfq3wwfixRtcKTJyY2MRzdp4PlyVrSWWNckRjmnUBsp5Eknq
-         b+u8oP1D1B9cUPQbzOgdx2QokBw42pOez3bMirEkG5MuMunWP2ZrmI9hbml/VYnKTWYt
-         vbUXqyFQMOvUcHDmN5foZmlVNvrDfSOh48KXlsnf12tUVyFhqD42ZwpO+Q9IjTgNoDWw
-         oi1A==
-X-Gm-Message-State: APjAAAWd/JiD3iibJjGCB/RlEqIk6olHrxudqro2tFPyQJlCnqmqGiPT
-        OaIT4uYe3XhqmhtmUiDNdtNC7JMZ2EiMbjDTWVmiHpE6LFXsDZMRvzU/NtrV0ALa5g==
-X-Google-Smtp-Source: APXvYqztnyVmdPDzxrUY5iAQAoCgujNpZ+N7WTCnFZWiqy+hQt9r6xjVGCEkruW8NThu5q8NoyncOQMDxu8F
-X-Received: by 2002:a1c:a852:: with SMTP id r79mr1220178wme.36.1566322866794;
+        bh=42xfaHYXrtQaOSOuSRjND5sC9kwpRwSXeTAD+w9b/4w=;
+        b=GpeqTmEWAkHg321hQrjP1aAyFkwzASpHJhIeoyYnkSUAFcC2ISgDfHsuZdwdiJwunB
+         rmGW5mUR237ipZYeJIfIE7YiSwZVBrRTpX6TLJvlv1M6JScdKM1R3t/yRFf8SUvyVIzS
+         P46FHRUq8soojlDMMiT8G1r9954fu2UO5pNsmolnbBrbkIDg9gqV0EEMxbUM3Rfsint6
+         vlgeGNUopAlp9EQoqyo7DOgy+ePHT+45i3znlVqp3eoQmkXVil+610xI54QjFhc1PefI
+         r6mFcHVgsK9fVLasPxYl86tNwlGWlJPB8LRQSdDMSW6gDkQF7vV3YZq7emkbq8DOo6Il
+         lkFQ==
+X-Gm-Message-State: APjAAAWYB2QdVnl/JDbl3lKsgEyMvAo/47jNSl3XDXdDdoPERVGiYPMv
+        tihmy6wUY6QGGTMj9Y63RXIBLZ3nIwEZFlnS+7GUHlpUOLXZS7Q1ecfh/9Kh9tbAHg==
+X-Google-Smtp-Source: APXvYqyAP4i9z12t9vefzpzMOisA4osPdSpmTbBY4W09A0i0eyHSfHNl/p0AoZuDFNAxNTK2kyK+DJ875aPE
+X-Received: by 2002:a1c:be05:: with SMTP id o5mr1135297wmf.61.1566322866426;
         Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id 61sm291082wra.39.2019.08.20.10.41.06
+        by smtp-relay.gmail.com with ESMTPS id d16sm300941wrx.57.2019.08.20.10.41.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0882-00032u-Fd; Tue, 20 Aug 2019 17:41:06 +0000
+        id 1i0882-00032r-3T; Tue, 20 Aug 2019 17:41:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id C997E2742B4A; Tue, 20 Aug 2019 18:41:05 +0100 (BST)
+        id 96899274314F; Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         Chen-Yu Tsai <wens@csie.org>, codekipper@gmail.com,
         lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Use module clock as BCLK parent on newer SoCs" to the asoc tree
-In-Reply-To: <0b6665be216b3bd0e7bc43724818f05f3f8ee881.1566242458.git-series.maxime.ripard@bootlin.com>
+Subject: Applied "ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs" to the asoc tree
+In-Reply-To: <0e5b4abf06cd3202354315201c6af44caeb20236.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174105.C997E2742B4A@ypsilon.sirena.org.uk>
+Message-Id: <20190820174105.96899274314F@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,7 +61,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Use module clock as BCLK parent on newer SoCs
+   ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs
 
 has been applied to the asoc tree at
 
@@ -85,116 +86,193 @@ to this mail.
 Thanks,
 Mark
 
-From fb19739d7f688142b61d0fca476188c4fd9e937a Mon Sep 17 00:00:00 2001
+From c1d3a921d72bd21f266ca28c15213fbe78160a4b Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:15 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Use module clock as BCLK parent on newer
- SoCs
+Date: Mon, 19 Aug 2019 21:25:16 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs
 
-On the first generation of Allwinner SoCs (A10-A31), the i2s controller was
-using the MCLK as BCLK parent. However, this changed since the introduction
-of the A83t and BCLK now uses the module clock as its parent.
+From: Marcus Cooper <codekipper@gmail.com>
 
-Let's introduce a hook to get the parent rate and use that in our divider
-calculations.
+The clock division dividers have changed between the older (A10/A31) and
+newer (H3, A64, etc) SoCs.
 
-Fixes: 7d2993811a1e ("ASoC: sun4i-i2s: Add support for H3")
-Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
+While this was addressed through an offset on some SoCs, it was missing
+some dividers as well, so the support wasn't perfect. Let's introduce a
+pointer in the quirk structure for the divider calculation functions to use
+so we can have the proper range now.
+
+Signed-off-by: Marcus Cooper <codekipper@gmail.com>
+[Maxime: Fix the commit log, use a field in the quirk structure]
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/0b6665be216b3bd0e7bc43724818f05f3f8ee881.1566242458.git-series.maxime.ripard@bootlin.com
+Link: https://lore.kernel.org/r/0e5b4abf06cd3202354315201c6af44caeb20236.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 63 ++++++++++++++++++++++++++++---------
+ 1 file changed, 49 insertions(+), 14 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 93ea627e2f1f..acfcdb26086a 100644
+index acfcdb26086a..0a7f1d0f7371 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -152,6 +152,7 @@ struct sun4i_i2s_quirks {
+@@ -129,8 +129,6 @@ struct sun4i_i2s;
+  * @has_fmt_set_lrck_period: SoC requires lrclk period to be set.
+  * @reg_offset_txdata: offset of the tx fifo.
+  * @sun4i_i2s_regmap: regmap config to use.
+- * @mclk_offset: Value by which mclkdiv needs to be adjusted.
+- * @bclk_offset: Value by which bclkdiv needs to be adjusted.
+  * @field_clkdiv_mclk_en: regmap field to enable mclk output.
+  * @field_fmt_wss: regmap field to set word select size.
+  * @field_fmt_sr: regmap field to set sample resolution.
+@@ -142,8 +140,6 @@ struct sun4i_i2s_quirks {
+ 	bool				has_fmt_set_lrck_period;
+ 	unsigned int			reg_offset_txdata;	/* TX FIFO */
+ 	const struct regmap_config	*sun4i_i2s_regmap;
+-	unsigned int			mclk_offset;
+-	unsigned int			bclk_offset;
+ 
+ 	/* Register fields for i2s */
+ 	struct reg_field		field_clkdiv_mclk_en;
+@@ -152,6 +148,11 @@ struct sun4i_i2s_quirks {
  	struct reg_field		field_fmt_bclk;
  	struct reg_field		field_fmt_lrclk;
  
-+	unsigned long (*get_bclk_parent_rate)(const struct sun4i_i2s *);
++	const struct sun4i_i2s_clk_div	*bclk_dividers;
++	unsigned int			num_bclk_dividers;
++	const struct sun4i_i2s_clk_div	*mclk_dividers;
++	unsigned int			num_mclk_dividers;
++
+ 	unsigned long (*get_bclk_parent_rate)(const struct sun4i_i2s *);
  	s8	(*get_sr)(const struct sun4i_i2s *, int);
  	s8	(*get_wss)(const struct sun4i_i2s *, int);
- 	int	(*set_chan_cfg)(const struct sun4i_i2s *,
-@@ -207,6 +208,16 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
+@@ -208,6 +209,24 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
  	/* TODO - extend divide ratio supported by newer SoCs */
  };
  
-+static unsigned long sun4i_i2s_get_bclk_parent_rate(const struct sun4i_i2s *i2s)
-+{
-+	return i2s->mclk_freq;
-+}
++static const struct sun4i_i2s_clk_div sun8i_i2s_clk_div[] = {
++	{ .div = 1, .val = 1 },
++	{ .div = 2, .val = 2 },
++	{ .div = 4, .val = 3 },
++	{ .div = 6, .val = 4 },
++	{ .div = 8, .val = 5 },
++	{ .div = 12, .val = 6 },
++	{ .div = 16, .val = 7 },
++	{ .div = 24, .val = 8 },
++	{ .div = 32, .val = 9 },
++	{ .div = 48, .val = 10 },
++	{ .div = 64, .val = 11 },
++	{ .div = 96, .val = 12 },
++	{ .div = 128, .val = 13 },
++	{ .div = 176, .val = 14 },
++	{ .div = 192, .val = 15 },
++};
 +
-+static unsigned long sun8i_i2s_get_bclk_parent_rate(const struct sun4i_i2s *i2s)
-+{
-+	return clk_get_rate(i2s->mod_clk);
-+}
-+
- static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
- 				  unsigned long parent_rate,
+ static unsigned long sun4i_i2s_get_bclk_parent_rate(const struct sun4i_i2s *i2s)
+ {
+ 	return i2s->mclk_freq;
+@@ -223,11 +242,12 @@ static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
  				  unsigned int sampling_rate,
-@@ -259,7 +270,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
  				  unsigned int word_size)
  {
- 	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
--	unsigned int oversample_rate, clk_rate;
-+	unsigned int oversample_rate, clk_rate, bclk_parent_rate;
- 	int bclk_div, mclk_div;
- 	int ret;
++	const struct sun4i_i2s_clk_div *dividers = i2s->variant->bclk_dividers;
+ 	int div = parent_rate / sampling_rate / word_size / 2;
+ 	int i;
  
-@@ -301,7 +312,8 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
+-	for (i = 0; i < ARRAY_SIZE(sun4i_i2s_bclk_div); i++) {
+-		const struct sun4i_i2s_clk_div *bdiv = &sun4i_i2s_bclk_div[i];
++	for (i = 0; i < i2s->variant->num_bclk_dividers; i++) {
++		const struct sun4i_i2s_clk_div *bdiv = &dividers[i];
+ 
+ 		if (bdiv->div == div)
+ 			return bdiv->val;
+@@ -240,11 +260,12 @@ static int sun4i_i2s_get_mclk_div(struct sun4i_i2s *i2s,
+ 				  unsigned long parent_rate,
+ 				  unsigned long mclk_rate)
+ {
++	const struct sun4i_i2s_clk_div *dividers = i2s->variant->mclk_dividers;
+ 	int div = parent_rate / mclk_rate;
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(sun4i_i2s_mclk_div); i++) {
+-		const struct sun4i_i2s_clk_div *mdiv = &sun4i_i2s_mclk_div[i];
++	for (i = 0; i < i2s->variant->num_mclk_dividers; i++) {
++		const struct sun4i_i2s_clk_div *mdiv = &dividers[i];
+ 
+ 		if (mdiv->div == div)
+ 			return mdiv->val;
+@@ -326,10 +347,6 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
  		return -EINVAL;
  	}
  
--	bclk_div = sun4i_i2s_get_bclk_div(i2s, i2s->mclk_freq,
-+	bclk_parent_rate = i2s->variant->get_bclk_parent_rate(i2s);
-+	bclk_div = sun4i_i2s_get_bclk_div(i2s, bclk_parent_rate,
- 					  rate, word_size);
- 	if (bclk_div < 0) {
- 		dev_err(dai->dev, "Unsupported BCLK divider: %d\n", bclk_div);
-@@ -957,6 +969,7 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
+-	/* Adjust the clock division values if needed */
+-	bclk_div += i2s->variant->bclk_offset;
+-	mclk_div += i2s->variant->mclk_offset;
+-
+ 	regmap_write(i2s->regmap, SUN4I_I2S_CLK_DIV_REG,
+ 		     SUN4I_I2S_CLK_DIV_BCLK(bclk_div) |
+ 		     SUN4I_I2S_CLK_DIV_MCLK(mclk_div));
+@@ -969,6 +986,10 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
++	.bclk_dividers		= sun4i_i2s_bclk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
++	.mclk_dividers		= sun4i_i2s_mclk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
+ 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
- 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
-@@ -972,6 +985,7 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
+@@ -985,6 +1006,10 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
++	.bclk_dividers		= sun4i_i2s_bclk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
++	.mclk_dividers		= sun4i_i2s_mclk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
+ 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
- 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
-@@ -987,6 +1001,7 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+@@ -1001,6 +1026,10 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
++	.bclk_dividers		= sun8i_i2s_clk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
++	.mclk_dividers		= sun8i_i2s_clk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
+ 	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
  	.get_sr			= sun8i_i2s_get_sr_wss,
  	.get_wss		= sun8i_i2s_get_sr_wss,
- 	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
-@@ -1005,6 +1020,7 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+@@ -1012,14 +1041,16 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+ 	.has_reset		= true,
+ 	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
+ 	.sun4i_i2s_regmap	= &sun8i_i2s_regmap_config,
+-	.mclk_offset		= 1,
+-	.bclk_offset		= 2,
+ 	.has_fmt_set_lrck_period = true,
+ 	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 8, 8),
+ 	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 19, 19),
-+	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
++	.bclk_dividers		= sun8i_i2s_clk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
++	.mclk_dividers		= sun8i_i2s_clk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
+ 	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
  	.get_sr			= sun8i_i2s_get_sr_wss,
  	.get_wss		= sun8i_i2s_get_sr_wss,
- 	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
-@@ -1020,6 +1036,7 @@ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
+@@ -1036,6 +1067,10 @@ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
++	.bclk_dividers		= sun4i_i2s_bclk_div,
++	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
++	.mclk_dividers		= sun4i_i2s_mclk_div,
++	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
+ 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
- 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
 -- 
 2.20.1
 
