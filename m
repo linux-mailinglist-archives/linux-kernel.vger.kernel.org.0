@@ -2,62 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 76A8E95756
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:34:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2675495762
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:38:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729187AbfHTGel (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 02:34:41 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:44147 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfHTGek (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 02:34:40 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hzxiz-0007Gi-AB; Tue, 20 Aug 2019 08:34:33 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1hzxix-0002vd-6E; Tue, 20 Aug 2019 08:34:31 +0200
-Date:   Tue, 20 Aug 2019 08:34:31 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     alsa-devel@alsa-project.org, Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: uniphier: Fix double reset assersion when
- transitioning to suspend state
-Message-ID: <20190820063431.bveflsr6xtu7637h@pengutronix.de>
-References: <1566281764-14059-1-git-send-email-hayashi.kunihiko@socionext.com>
+        id S1729255AbfHTGiR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:38:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728657AbfHTGiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 02:38:17 -0400
+Received: from localhost (unknown [106.201.62.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 902902082F;
+        Tue, 20 Aug 2019 06:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566283096;
+        bh=7q9OvmKTVE16A1f9USBI2Z4y48V2XyZPDX1+MlMRk6M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1uuGN0QXpbZuftFNkqSmlyRpy1QN4fDbb/tY8GuWZGItqV96iKiizxZss8B5HA+Vj
+         h0rUePlL9Qhse0BI/rnhB6+QV0nfhZSL3w9ZVT6xqj21rnC4hAqTrkSmO4YzSlIhdz
+         Lk3boualjQQi06Yk08e5cMYJgBc2fY+bSOKT5sQA=
+Date:   Tue, 20 Aug 2019 12:07:05 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 22/22] arm64: dts: qcom: sm8150: Add APSS shared mailbox
+Message-ID: <20190820063705.GP12733@vkoul-mobl.Dlink>
+References: <20190814125012.8700-1-vkoul@kernel.org>
+ <20190814125012.8700-23-vkoul@kernel.org>
+ <20190814171743.C38C4206C1@mail.kernel.org>
+ <20190819174107.GM12733@vkoul-mobl.Dlink>
+ <179635ff3f55d5d121008d6193ea4120@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1566281764-14059-1-git-send-email-hayashi.kunihiko@socionext.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <179635ff3f55d5d121008d6193ea4120@codeaurora.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 20-08-19, 11:50, Sibi Sankar wrote:
+> Hey Vinod,
+> 
+> There seems to be a mismatch
+> between the commit description
+> and the dt node (This is the
+> aoss qmp node not the APPS
+> shared node).
 
-just noticed while reading through my linux-arm-kernel folder:
+Thanks for pointing, I have squashed this and other into single patch
+and updated the description
 
-$Subject ~= s/assersion/assertion/
+> 
+> 
+> On 2019-08-19 23:11, Vinod Koul wrote:
+> > On 14-08-19, 10:17, Stephen Boyd wrote:
+> > > Quoting Vinod Koul (2019-08-14 05:50:12)
+> > > > @@ -338,6 +339,16 @@
+> > > >                         #interrupt-cells = <2>;
+> > > >                 };
+> > > >
+> > > > +               aoss_qmp: qmp@c300000 {
+> > > 
+> > > Node name of 'clock-controller', or 'power-controller'?
+> > 
+> > The orignal entry for sdm845 has no such statement, but yes it doesn
+> > makes sense. I am thinking power-controller.. Bjorn?
+> 
+> aoss_qmp registers both pd and
+> clock providers.
 
-Best regards
-Uwe
+Thats correct, I chatted with Bjorn and he recommended we use power-controller
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+~Vinod
