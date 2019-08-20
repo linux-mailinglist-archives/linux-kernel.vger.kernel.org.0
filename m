@@ -2,226 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F7FE96299
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2370E9629B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730350AbfHTOlF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:41:05 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33277 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730223AbfHTOlB (ORCPT
+        id S1730412AbfHTOlN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:41:13 -0400
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:60200 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730282AbfHTOlC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:41:01 -0400
-Received: by mail-wm1-f66.google.com with SMTP id p77so2571978wme.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:40:59 -0700 (PDT)
+        Tue, 20 Aug 2019 10:41:02 -0400
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: RtYos3C75pSxHZT67ddJMU4Xv4szRPm/d00nSVnnTacz+dhngJXBV0t2brAGmfqfBe4fGFJ0LR
+ XwqDpGLXD7AYDV+Mb9pVErr6n7EQfFQXt4Qpv605xJZMn0u/NkkMM5nJzkClVAz63x4RUKS9Uf
+ LEPsY+kR31soBN1xnDcmepNAC6EXiYulMwLr7sbHGYr+/4jQSCQ2z+8010oiLRBPtHQP7lsgV8
+ 6K4lzWT11TlagyzRVum3XzRrvBKdJqghz6yT8XcRhmpQwmm4RuANCanPE0+gTqfBxGpNIxWoAd
+ yQE=
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="45834398"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Aug 2019 07:41:01 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 20 Aug 2019 07:41:00 -0700
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Tue, 20 Aug 2019 07:40:59 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d7qb3sDwyQguufns1GATKJSHxyc6OJ1TilR/tvgiezWomr1j66IKiT3CC5s/jUkW3s2T4BPz263QKJKuylqbc1dokAcuGrFstTXqul9wx/h0aWpUeGvEILXBK7XWTnPLHPBLFdRU6uJ0DYYyu0Wykx/a1NPfZuKM4Figexw4rmLSQj3t0BmNv8ddUZB6h3R/U8R+b117P7oPWSESICFMFV8+tGnSe3I1A9LUMVaVQEaamv9fjmqGkt4U9jnW1vQ4qZfEQa/hHGDWNyYZjtFVZwijyLFHYMGIZAoBo0QVYOjWT6D3OKAqzwyqbVrywq4ASJ4UMtoYKm8oUr3uDuBfqQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xa9S5oSVpPzA2zxWma7Y61tNhlRGPEZDvdqYxj8kqpM=;
+ b=bWe1xg7GX1qV7S050tdCfytaF/Rq/sUz6l7EAzEG5/BhTfQ8/3DY4P1FTUO4cNsC9SNAs/x78tvV7g4IcYspziCcFIyNhiU24fQcHp1vFoEs4jfDcDYib0fQPEyU3l3PlgqSQ2t8SegLU5BNs+Kari9Xaf7ZHlMMy7T/I0/8ogha5XZjA3JFP+xytFGAzRcFiXFOsOCijjFG/OCDXRZ2YPmoLEW1mwrf0LHS9jZRcv7OHfn7lJEm9tKZXXvj8sSqIriga1E2tstywbXtcELdeJ9LENURghr/E2cgo9Acb9rHNmNV0aNXQN25P/Zw9WxLcgab06DmAWm1tBX4KMN0qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jEcCxLSmgTSFx3ThyMxbNKwmPy3h7MyfaKIL/tuCs+o=;
-        b=fhOQYci3oJMJzxCSo05SuNeRhlgenJy4unwnPSN63ArX7CN9qx/wAb6gxBMgmaK3Ma
-         2nIuQ5SyGSqUBqQ9VnUlfrLKGS4qFVEkREcThm8KtrlS5fSncDd1YEvq+GDdz1lItcVF
-         r4EM58t2Ksqx3MVKG4g5BpZFm45exUVruF4kFQXsjnilq80IOg4xAKcRgKZZrs7Ay05k
-         ke9zv+H2sDBRJ3+qEePepPCIZatrgU0OkgTPcZbuUoptyN0OSuRYeKT1kV3NHzkWt0HQ
-         bmb/ZjBTOcw6dx6waSscjub0inQZ5+FqaRfobvkq2ySrOvD0/y5FWJl+6nkv3LPrERrk
-         3CWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jEcCxLSmgTSFx3ThyMxbNKwmPy3h7MyfaKIL/tuCs+o=;
-        b=Zelaj4InYA53QMyGsZchAjw8Na2J76FcfqXrR9o0mpLJpxtMj5QmXGsiCDTq58VmvN
-         DDnglwfQSEIpoj8BqapAnlaidVLQsI+s3XbZMN14RJ4FdDIy91ir3Je4UpaLpZQtxlI6
-         1QqksFHR40NVHXN4yyns+GlMxkf7P+NZeuAPbskRvSiF2mr4erYI11mYQEBEwq7DfPVX
-         8P+TYrGkL5A/Gba2z1ZsLQB9RPd0ahbDttLioL8IE89o/RQ9itYwdrdJzuG76Ss4MlE7
-         G2D3w68XfBySNmBKKVe7yGcsPV226lSJiagkcVepJq/DBOWx9UJTndBupncCFvKqxNLi
-         Ig4Q==
-X-Gm-Message-State: APjAAAUBiNsW30i9aEjEHTKeTvHyL8JVOwezHFlyBTfbjmPeS9Qw7RrM
-        CCgw/zDZLtlliZ6cyQq5zlsFNQ==
-X-Google-Smtp-Source: APXvYqwucYPtb93vwY6IWRK5P1gDI2t3TNyhd8gYdj7YKMSGJWxg816WtltHGhNIE/b7WgxQHbcFmA==
-X-Received: by 2002:a1c:f103:: with SMTP id p3mr378195wmh.18.1566312058745;
-        Tue, 20 Aug 2019 07:40:58 -0700 (PDT)
-Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a18sm21826750wrt.18.2019.08.20.07.40.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 07:40:57 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] soc: amlogic: clk-measure: Add support for SM1
-Date:   Tue, 20 Aug 2019 16:40:49 +0200
-Message-Id: <20190820144052.18269-4-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190820144052.18269-1-narmstrong@baylibre.com>
-References: <20190820144052.18269-1-narmstrong@baylibre.com>
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Xa9S5oSVpPzA2zxWma7Y61tNhlRGPEZDvdqYxj8kqpM=;
+ b=RO6ov3l4BWdzp2cWA2Um5DOQBwapWoI1SfF4iZWxAj74Th8ItcrNM7dVsvnlj0u36bpKh4u93+g7YeDBC8nA5oBVYl/58pSyLy5hIOhpgURydV6FW7o1QKR6yeUkQUAXvzZPG79UEz3AyQbvq1IK3gJyrgKLxNzXWVd7x9kPkds=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB3903.namprd11.prod.outlook.com (10.255.180.78) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Tue, 20 Aug 2019 14:40:50 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 14:40:50 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <Eugeniy.Paltsev@synopsys.com>, <linux-mtd@lists.infradead.org>,
+        <marex@denx.de>
+CC:     <linux-snps-arc@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <Alexey.Brodkin@synopsys.com>,
+        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <richard@nod.at>,
+        <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH v2] mtd: spi-nor: add support for sst26wf016b memory IC
+Thread-Topic: [PATCH v2] mtd: spi-nor: add support for sst26wf016b memory IC
+Thread-Index: AQHVPXIRduqv2sbp0EmPJyLdHxvKlqcET5cA
+Date:   Tue, 20 Aug 2019 14:40:50 +0000
+Message-ID: <c7d2b65a-b821-7a42-ba79-e8d0a80ce970@microchip.com>
+References: <20190718140623.20862-1-Eugeniy.Paltsev@synopsys.com>
+In-Reply-To: <20190718140623.20862-1-Eugeniy.Paltsev@synopsys.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0401CA0006.eurprd04.prod.outlook.com
+ (2603:10a6:800:4a::16) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 82eb20cd-3458-44a5-d9df-08d7257c6515
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB3903;
+x-ms-traffictypediagnostic: MN2PR11MB3903:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <MN2PR11MB390322697D9D9F7CAC8EEF9EF0AB0@MN2PR11MB3903.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:747;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(346002)(39860400002)(396003)(189003)(199004)(53936002)(71200400001)(71190400001)(25786009)(31696002)(110136005)(6436002)(31686004)(6246003)(102836004)(6306002)(4326008)(7736002)(66066001)(6486002)(81156014)(81166006)(386003)(6506007)(86362001)(66946007)(8936002)(305945005)(229853002)(2906002)(54906003)(64756008)(66556008)(66476007)(4744005)(66446008)(6512007)(36756003)(478600001)(7416002)(486006)(186003)(966005)(53546011)(14444005)(26005)(256004)(14454004)(8676002)(5660300002)(76176011)(2501003)(11346002)(99286004)(476003)(2616005)(446003)(52116002)(316002)(6116002)(3846002);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3903;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CDK2zgrFixGSmH48rCvZKxoGC3lgYSXS0Spc5G639Uu7izWQmvmSSHokULUQwFJVx0cffAKeeSa7T23EMog2LK4qgI3eSESuo4Woiz5pGgcPv86aU84TJUFd8VM/WAJ0iKA4S5ml4+9wXPuSKtHygGJfax9EQXQ6T37cVWADCtNsf4OCwyb6nBT+gQJV+Wq0ezWhU/3ZOsCeoNQneHbrS3gd/BEzHyFjbe/mYiF7OdU0EC3nykIKRSthlqtEAq9asIOKrVG6y+6oG5jiwN8SafnxEKpSJnASbjxi6Piqp/qVNo4SRcK/L+WGdcRLp3ZGvbv/kB+uTbpRKqYOJddwjFVZKuvYIaT1qmqiYjYfV/4Tjst1bDKam/wQpHHeOcHqZcuZ+uJbZ4toAwnbK8DOXFEIwc/J0UPYaBNg6QDW/CU=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A03EDBD83440904795BF673225C76F11@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-Network-Message-Id: 82eb20cd-3458-44a5-d9df-08d7257c6515
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 14:40:50.1056
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 8R+fJA4Pkyi5WM7BmCktDQakF+nevRTNi7mWZ419bsywflBQ1FLQSp4aDt6DGwlANt1AlulkQ8JZx3B/VJwCsXBW6izm/uUEqAAJqPULZn4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3903
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the clk-measurer clocks IDs for the Amlogic SM1 SoC family.
-
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/soc/amlogic/meson-clk-measure.c | 134 ++++++++++++++++++++++++
- 1 file changed, 134 insertions(+)
-
-diff --git a/drivers/soc/amlogic/meson-clk-measure.c b/drivers/soc/amlogic/meson-clk-measure.c
-index f09b404b39d3..0fa47d77577d 100644
---- a/drivers/soc/amlogic/meson-clk-measure.c
-+++ b/drivers/soc/amlogic/meson-clk-measure.c
-@@ -357,6 +357,136 @@ static struct meson_msr_id clk_msr_g12a[CLK_MSR_MAX] = {
- 	CLK_MSR_ID(122, "audio_pdm_dclk"),
- };
- 
-+static struct meson_msr_id clk_msr_sm1[CLK_MSR_MAX] = {
-+	CLK_MSR_ID(0, "ring_osc_out_ee_0"),
-+	CLK_MSR_ID(1, "ring_osc_out_ee_1"),
-+	CLK_MSR_ID(2, "ring_osc_out_ee_2"),
-+	CLK_MSR_ID(3, "ring_osc_out_ee_3"),
-+	CLK_MSR_ID(4, "gp0_pll"),
-+	CLK_MSR_ID(5, "gp1_pll"),
-+	CLK_MSR_ID(6, "enci"),
-+	CLK_MSR_ID(7, "clk81"),
-+	CLK_MSR_ID(8, "encp"),
-+	CLK_MSR_ID(9, "encl"),
-+	CLK_MSR_ID(10, "vdac"),
-+	CLK_MSR_ID(11, "eth_tx"),
-+	CLK_MSR_ID(12, "hifi_pll"),
-+	CLK_MSR_ID(13, "mod_tcon"),
-+	CLK_MSR_ID(14, "fec_0"),
-+	CLK_MSR_ID(15, "fec_1"),
-+	CLK_MSR_ID(16, "fec_2"),
-+	CLK_MSR_ID(17, "sys_pll_div16"),
-+	CLK_MSR_ID(18, "sys_cpu_div16"),
-+	CLK_MSR_ID(19, "lcd_an_ph2"),
-+	CLK_MSR_ID(20, "rtc_osc_out"),
-+	CLK_MSR_ID(21, "lcd_an_ph3"),
-+	CLK_MSR_ID(22, "eth_phy_ref"),
-+	CLK_MSR_ID(23, "mpll_50m"),
-+	CLK_MSR_ID(24, "eth_125m"),
-+	CLK_MSR_ID(25, "eth_rmii"),
-+	CLK_MSR_ID(26, "sc_int"),
-+	CLK_MSR_ID(27, "in_mac"),
-+	CLK_MSR_ID(28, "sar_adc"),
-+	CLK_MSR_ID(29, "pcie_inp"),
-+	CLK_MSR_ID(30, "pcie_inn"),
-+	CLK_MSR_ID(31, "mpll_test_out"),
-+	CLK_MSR_ID(32, "vdec"),
-+	CLK_MSR_ID(34, "eth_mpll_50m"),
-+	CLK_MSR_ID(35, "mali"),
-+	CLK_MSR_ID(36, "hdmi_tx_pixel"),
-+	CLK_MSR_ID(37, "cdac"),
-+	CLK_MSR_ID(38, "vdin_meas"),
-+	CLK_MSR_ID(39, "bt656"),
-+	CLK_MSR_ID(40, "arm_ring_osc_out_4"),
-+	CLK_MSR_ID(41, "eth_rx_or_rmii"),
-+	CLK_MSR_ID(42, "mp0_out"),
-+	CLK_MSR_ID(43, "fclk_div5"),
-+	CLK_MSR_ID(44, "pwm_b"),
-+	CLK_MSR_ID(45, "pwm_a"),
-+	CLK_MSR_ID(46, "vpu"),
-+	CLK_MSR_ID(47, "ddr_dpll_pt"),
-+	CLK_MSR_ID(48, "mp1_out"),
-+	CLK_MSR_ID(49, "mp2_out"),
-+	CLK_MSR_ID(50, "mp3_out"),
-+	CLK_MSR_ID(51, "sd_emmc_c"),
-+	CLK_MSR_ID(52, "sd_emmc_b"),
-+	CLK_MSR_ID(53, "sd_emmc_a"),
-+	CLK_MSR_ID(54, "vpu_clkc"),
-+	CLK_MSR_ID(55, "vid_pll_div_out"),
-+	CLK_MSR_ID(56, "wave420l_a"),
-+	CLK_MSR_ID(57, "wave420l_c"),
-+	CLK_MSR_ID(58, "wave420l_b"),
-+	CLK_MSR_ID(59, "hcodec"),
-+	CLK_MSR_ID(60, "arm_ring_osc_out_5"),
-+	CLK_MSR_ID(61, "gpio_msr"),
-+	CLK_MSR_ID(62, "hevcb"),
-+	CLK_MSR_ID(63, "dsi_meas"),
-+	CLK_MSR_ID(64, "spicc_1"),
-+	CLK_MSR_ID(65, "spicc_0"),
-+	CLK_MSR_ID(66, "vid_lock"),
-+	CLK_MSR_ID(67, "dsi_phy"),
-+	CLK_MSR_ID(68, "hdcp22_esm"),
-+	CLK_MSR_ID(69, "hdcp22_skp"),
-+	CLK_MSR_ID(70, "pwm_f"),
-+	CLK_MSR_ID(71, "pwm_e"),
-+	CLK_MSR_ID(72, "pwm_d"),
-+	CLK_MSR_ID(73, "pwm_c"),
-+	CLK_MSR_ID(74, "arm_ring_osc_out_6"),
-+	CLK_MSR_ID(75, "hevcf"),
-+	CLK_MSR_ID(76, "arm_ring_osc_out_7"),
-+	CLK_MSR_ID(77, "rng_ring_osc_0"),
-+	CLK_MSR_ID(78, "rng_ring_osc_1"),
-+	CLK_MSR_ID(79, "rng_ring_osc_2"),
-+	CLK_MSR_ID(80, "rng_ring_osc_3"),
-+	CLK_MSR_ID(81, "vapb"),
-+	CLK_MSR_ID(82, "ge2d"),
-+	CLK_MSR_ID(83, "co_rx"),
-+	CLK_MSR_ID(84, "co_tx"),
-+	CLK_MSR_ID(85, "arm_ring_osc_out_8"),
-+	CLK_MSR_ID(86, "arm_ring_osc_out_9"),
-+	CLK_MSR_ID(87, "mipi_dsi_phy"),
-+	CLK_MSR_ID(88, "cis2_adapt"),
-+	CLK_MSR_ID(89, "hdmi_todig"),
-+	CLK_MSR_ID(90, "hdmitx_sys"),
-+	CLK_MSR_ID(91, "nna_core"),
-+	CLK_MSR_ID(92, "nna_axi"),
-+	CLK_MSR_ID(93, "vad"),
-+	CLK_MSR_ID(94, "eth_phy_rx"),
-+	CLK_MSR_ID(95, "eth_phy_pll"),
-+	CLK_MSR_ID(96, "vpu_b"),
-+	CLK_MSR_ID(97, "cpu_b_tmp"),
-+	CLK_MSR_ID(98, "ts"),
-+	CLK_MSR_ID(99, "arm_ring_osc_out_10"),
-+	CLK_MSR_ID(100, "arm_ring_osc_out_11"),
-+	CLK_MSR_ID(101, "arm_ring_osc_out_12"),
-+	CLK_MSR_ID(102, "arm_ring_osc_out_13"),
-+	CLK_MSR_ID(103, "arm_ring_osc_out_14"),
-+	CLK_MSR_ID(104, "arm_ring_osc_out_15"),
-+	CLK_MSR_ID(105, "arm_ring_osc_out_16"),
-+	CLK_MSR_ID(106, "ephy_test"),
-+	CLK_MSR_ID(107, "au_dac_g128x"),
-+	CLK_MSR_ID(108, "audio_locker_out"),
-+	CLK_MSR_ID(109, "audio_locker_in"),
-+	CLK_MSR_ID(110, "audio_tdmout_c_sclk"),
-+	CLK_MSR_ID(111, "audio_tdmout_b_sclk"),
-+	CLK_MSR_ID(112, "audio_tdmout_a_sclk"),
-+	CLK_MSR_ID(113, "audio_tdmin_lb_sclk"),
-+	CLK_MSR_ID(114, "audio_tdmin_c_sclk"),
-+	CLK_MSR_ID(115, "audio_tdmin_b_sclk"),
-+	CLK_MSR_ID(116, "audio_tdmin_a_sclk"),
-+	CLK_MSR_ID(117, "audio_resample"),
-+	CLK_MSR_ID(118, "audio_pdm_sys"),
-+	CLK_MSR_ID(119, "audio_spdifout_b"),
-+	CLK_MSR_ID(120, "audio_spdifout"),
-+	CLK_MSR_ID(121, "audio_spdifin"),
-+	CLK_MSR_ID(122, "audio_pdm_dclk"),
-+	CLK_MSR_ID(123, "audio_resampled"),
-+	CLK_MSR_ID(124, "earcrx_pll"),
-+	CLK_MSR_ID(125, "earcrx_pll_test"),
-+	CLK_MSR_ID(126, "csi_phy0"),
-+	CLK_MSR_ID(127, "csi2_data"),
-+};
-+
- static int meson_measure_id(struct meson_msr_id *clk_msr_id,
- 			       unsigned int duration)
- {
-@@ -545,6 +675,10 @@ static const struct of_device_id meson_msr_match_table[] = {
- 		.compatible = "amlogic,meson-g12a-clk-measure",
- 		.data = (void *)clk_msr_g12a,
- 	},
-+	{
-+		.compatible = "amlogic,meson-sm1-clk-measure",
-+		.data = (void *)clk_msr_sm1,
-+	},
- 	{ /* sentinel */ }
- };
- 
--- 
-2.22.0
-
+DQoNCk9uIDA3LzE4LzIwMTkgMDU6MDYgUE0sIEV1Z2VuaXkgUGFsdHNldiB3cm90ZToNCj4gRXh0
+ZXJuYWwgRS1NYWlsDQo+IA0KPiANCj4gVGhpcyBjb21taXQgYWRkcyBzdXBwb3J0IGZvciB0aGUg
+U1NUIHNzdDI2d2YwMTZiIGZsYXNoIG1lbW9yeSBJQy4NCj4gVGhpcyBJQyB3YXMgdGVzdGVkIHdp
+dGggICJzbnBzLGR3LWFwYi1zc2kiIFNQSSBjb250cm9sbGVyLg0KPiBXZSBkb24ndCB0ZXN0IGR1
+YWwvcXVhZCByZWFkcyBob3dldmVyIHNzdDI2d2YwMTZiIGZsYXNoJ3MgZGF0YXNoZWV0DQo+IGFk
+dmVydGlzZXMgYm90aCBkdWFsIGFuZCBxdWFkIHJlYWRzIChhbmQgc3VwcG9ydCBvZiBjb3JyZXNw
+b25kaW5nDQo+IGNvbW1hbmRzKQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogRXVnZW5peSBQYWx0c2V2
+IDxFdWdlbml5LlBhbHRzZXZAc3lub3BzeXMuY29tPg0KPiAtLS0NCj4gQ2hhbmdlcyB2MS0+djI6
+DQo+ICAqIGRyb3Agc3N0MjZ3ZjAzMiBzdXBwb3J0IGFzIHVudGVzdGVkDQo+ICAqIGFkZCBub3Rl
+IGFib3V0IFNQSSBjb250cm9sbGVyIHVzZWQgYW5kIGR1YWwvcXVhZCByZWFkcyB0byBjb21taXQN
+Cj4gICAgbWVzc2FnZS4NCj4gDQo+ICBkcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDEg
+Kw0KPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+IA0KDQpXcmFwcGVkIHRvIDgw
+IGNoYXJzIGxpbWl0IGFuZA0KQXBwbGllZCB0byBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9z
+Y20vbGludXgva2VybmVsL2dpdC9tdGQvbGludXguZ2l0LA0Kc3BpLW5vci9uZXh0IGJyYW5jaC4N
+Cg0KVGhhbmtzLA0KdGENCg==
