@@ -2,94 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 760D696ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:48:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B033896AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:52:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730764AbfHTUsH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:48:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729833AbfHTUsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:48:07 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCBC722DD3;
-        Tue, 20 Aug 2019 20:48:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566334086;
-        bh=nqXqcwkwUYZSgLgaalJwI6LSL9l3GM5NS8UsYbR8b7A=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YBYPNYRqcTGM02pYLSV8LRlUC93z2y/9pGUoOX8rduvZ+ezOy3X3xcgAkCZUQuICn
-         gd1+gsJfRPuSwPXFJNpqpAaBKVp9vf0AjQKrjQfUtHFrtf4IkpV6jh6nAcFk3MXEPN
-         3Aig42Jau35TCxD+yT+R1jaAMfXd04o+dLk5shzg=
-Date:   Tue, 20 Aug 2019 22:48:03 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [patch 04/44] posix-cpu-timers: Fixup stale comment
-Message-ID: <20190820204803.GH2093@lenoir>
-References: <20190819143141.221906747@linutronix.de>
- <20190819143801.747233612@linutronix.de>
- <20190820142658.GG2093@lenoir>
- <alpine.DEB.2.21.1908201946320.2223@nanos.tec.linutronix.de>
+        id S1730806AbfHTUwN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:52:13 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:14833 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729833AbfHTUwM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 16:52:12 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5c5d7b0000>; Tue, 20 Aug 2019 13:52:12 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 20 Aug 2019 13:52:11 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 20 Aug 2019 13:52:11 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
+ 2019 20:52:11 +0000
+Received: from [10.2.161.11] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
+ 2019 20:52:11 +0000
+Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
+ to put_user_page*()
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Bharath Vedartham <linux.bhar@gmail.com>,
+        Dimitri Sivanich <sivanich@hpe.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        <jglisse@redhat.com>, <ira.weiny@intel.com>,
+        <gregkh@linuxfoundation.org>, <arnd@arndb.de>,
+        <william.kucharski@oracle.com>, <hch@lst.de>,
+        <inux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
+        <linux-kernel-mentees@lists.linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
+ <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
+ <20190819125611.GA5808@hpe.com>
+ <20190819190647.GA6261@bharath12345-Inspiron-5559>
+ <0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.com>
+ <20190820081820.GI3111@dhcp22.suse.cz>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <2971c5ea-88f2-0f07-e6f5-ad4108f62816@nvidia.com>
+Date:   Tue, 20 Aug 2019 13:50:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908201946320.2223@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190820081820.GI3111@dhcp22.suse.cz>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566334332; bh=U2KQiCj4JLeIQcZ2lUEsNC+lc/DGVG6Kl/YzkvUbakA=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=RRPZh68HK0DqwjIsnJkt7tPRqljVf2slouND6w1LNdDc9znsw46Ls/TkIOVAAtfn4
+         FJqVWnrLJmykzlc241YG7ssQdFE9U3bahyz96+nuP90lxk+MyONdGFJUacAIus0arh
+         X4rXYnxWK1S1bN8P9ZAaf5GMI2F2tk4/TSvgv9FWPQV/MFV1FtA+QBkjlTDKErIOFn
+         MoPkjtJloH0xdk0Gyl3FgirR+77bJ8fgnPj3v307kjTpmVS0ftaeaIeU1lq9iKZw0j
+         eZjVyM6leBWtnB7hltloYIp6rCnjszrTzcf71kiFGX97cPs4tkKSSg5sGq3DV6uTFt
+         mEv0D/jx0fbsQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 07:57:37PM +0200, Thomas Gleixner wrote:
-> On Tue, 20 Aug 2019, Frederic Weisbecker wrote:
-> > On Mon, Aug 19, 2019 at 04:31:45PM +0200, Thomas Gleixner wrote:
-> > >  /*
-> > > - * Clean out CPU timers still ticking when a thread exited.  The task
-> > > - * pointer is cleared, and the expiry time is replaced with the residual
-> > > - * time for later timer_gettime calls to return.
-> > > + * Clean out CPU timers which are still armed when a thread exits. The
-> > > + * timers are only removed from the list. No other updates are done. The
-> > > + * corresponding posix timers are still accessible, but cannot be rearmed.
-> > > + *
-> > >   * This must be called with the siglock held.
-> > >   */
-> > >  static void cleanup_timers(struct list_head *head)
-> > 
-> > Indeed and I believe we could avoid that step. We remove the sighand at the same
-> > time so those can't be accessed anymore anyway.
-> > 
-> > exit_itimers() takes care of the last call release and could force remove from
-> > the list (although it might be taken care of in your series, haven't checked yet):
+On 8/20/19 1:18 AM, Michal Hocko wrote:
+> On Mon 19-08-19 12:30:18, John Hubbard wrote:
+>> On 8/19/19 12:06 PM, Bharath Vedartham wrote:
+>>> On Mon, Aug 19, 2019 at 07:56:11AM -0500, Dimitri Sivanich wrote:
+...
+>> Conversion of gup/put_page sites:
+>>
+>> Before:
+>>
+>> 	get_user_pages(...);
+>> 	...
+>> 	for each page:
+>> 		put_page();
+>>
+>> After:
+>> 	
+>> 	gup_flags |= FOLL_PIN; (maybe FOLL_LONGTERM in some cases)
+>> 	vaddr_pin_user_pages(...gup_flags...)
 > 
-> No. The posix timer is not necessarily owned by the exiting task or
-> process. It can be owned by a different entity which has permissions,
-> e.g. parent.
+> I was hoping that FOLL_PIN would be handled by vaddr_pin_user_pages.
 > 
-> So those are not in the posix timer list of the exiting task, which gets
-> cleaned up in exit_itimers(). Those are in the list of the task which armed
-> the timer. The timer is merily queued in the 'active timers' list of the
-> exiting task and posix_cpu_timers_exit()/posix_cpu_timers_exit_group()
-> remove it before the task/signal structs go away.
 
-Sure, I understand there's two distinct things here: the owner that queues
-timers in owner->sig->posix_timers (cleaned in exit_itimers()) and the target that queues
-in target->[signal->]cputime_expires (cleaned in posix_cpu_timers_exit[_group]().
+Good point: now that we've got the 4 cases summarized, it turns out
+that either FOLL_PIN is required, or there is no need to call
+vaddr_pin_user_pages() at all.  So we can go back to setting FOLL_PIN
+inside it, which is of course much better for maintenance. Great!
 
-So I'm wondering why we bother with posix_cpu_timers_exit[_group]() at all
-when exit_itimers() could handle the list deletion from target->[signal]->cputime_expires
-throughout posix_cpu_timer_del() as it already does on targets that still have
-their sighands.
 
-It would make things more simple to delete the timer off the target from
-the same caller and place and we could remove posix_cpu_timers_exit*().
+>> 	...
+>> 	vaddr_unpin_user_pages(); /* which invokes put_user_page() */
+>>
+>> Fortunately, it's not harmful for the simpler conversion from put_page()
+>> to put_user_page() to happen first, and in fact those have usually led
+>> to simplifications, paving the way to make it easier to call
+>> vaddr_unpin_user_pages(), once it's ready. (And showing exactly what
+>> to convert, too.)
+> 
+> If that makes the later conversion easier then no real objections from
+> me. Assuming that the current put_user_page conversions are correct of
+> course (I have the mlock one and potentials that falls into the same
+> category in mind).
+> 
 
-Or is there something I'm awkwardly missing as usual? :-) 
+Agreed: only correct conversions should be done. Not the incorrect
+ones. ahem.  :)
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
