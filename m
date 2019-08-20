@@ -2,128 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD1F896249
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:19:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C291E9624D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:21:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730235AbfHTOTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:19:48 -0400
-Received: from smtp3.goneo.de ([85.220.129.37]:58500 "EHLO smtp3.goneo.de"
+        id S1730059AbfHTOVB convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 20 Aug 2019 10:21:01 -0400
+Received: from mga04.intel.com ([192.55.52.120]:47343 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729853AbfHTOTs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:19:48 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp3.goneo.de (Postfix) with ESMTP id 9210923FA45;
-        Tue, 20 Aug 2019 16:19:44 +0200 (CEST)
-X-Virus-Scanned: by goneo
-X-Spam-Flag: NO
-X-Spam-Score: -3.042
-X-Spam-Level: 
-X-Spam-Status: No, score=-3.042 tagged_above=-999 tests=[ALL_TRUSTED=-1,
-        AWL=-0.142, BAYES_00=-1.9] autolearn=ham
-Received: from smtp3.goneo.de ([127.0.0.1])
-        by localhost (smtp3.goneo.de [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id ej-nB74Ns0XQ; Tue, 20 Aug 2019 16:19:43 +0200 (CEST)
-Received: from lem-wkst-02.lemonage (hq.lemonage.de [87.138.178.34])
-        by smtp3.goneo.de (Postfix) with ESMTPSA id 8ABEA23F9DE;
-        Tue, 20 Aug 2019 16:19:42 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 16:32:41 +0200
-From:   Lars Poeschel <poeschel@lemonage.de>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Allison Randal <allison@lohutok.net>,
-        Steve Winslow <swinslow@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "open list:NFC SUBSYSTEM" <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v6 6/7] nfc: pn533: Add autopoll capability
-Message-ID: <20190820143240.GA11301@lem-wkst-02.lemonage>
-References: <20190820120345.22593-1-poeschel@lemonage.de>
- <20190820120345.22593-6-poeschel@lemonage.de>
- <20190820122344.GK32300@localhost>
+        id S1728770AbfHTOVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:21:00 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 07:20:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="262181576"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by orsmga001.jf.intel.com with ESMTP; 20 Aug 2019 07:20:50 -0700
+Received: from orsmsx116.amr.corp.intel.com (10.22.240.14) by
+ ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Tue, 20 Aug 2019 07:20:50 -0700
+Received: from orsmsx115.amr.corp.intel.com ([169.254.4.103]) by
+ ORSMSX116.amr.corp.intel.com ([169.254.7.63]) with mapi id 14.03.0439.000;
+ Tue, 20 Aug 2019 07:20:49 -0700
+From:   "Luck, Tony" <tony.luck@intel.com>
+To:     "Shevchenko, Andriy" <andriy.shevchenko@intel.com>
+CC:     Peter Zijlstra <peterz@infradead.org>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "alan@linux.intel.com" <alan@linux.intel.com>,
+        "ricardo.neri-calderon@linux.intel.com" 
+        <ricardo.neri-calderon@linux.intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Qiming" <qi-ming.wu@intel.com>,
+        "Kim, Cheol Yong" <cheol.yong.kim@intel.com>,
+        "Tanwar, Rahul" <rahul.tanwar@intel.com>
+Subject: Re: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
+Thread-Topic: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
+Thread-Index: AQHVVAtPItVoj2QCs0iMi5CgkdSiDKcEcSSA//+RyjWAAH7hAP//mwkO
+Date:   Tue, 20 Aug 2019 14:20:49 +0000
+Message-ID: <60F69B0F-F225-400E-B9D0-AFA69ABE2047@intel.com>
+References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+ <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
+ <20190820122233.GN2332@hirez.programming.kicks-ass.net>
+ <1D9AE27C-D412-412D-8FE8-51B625A7CC98@intel.com>,<20190820132212.GM30120@smile.fi.intel.com>
+In-Reply-To: <20190820132212.GM30120@smile.fi.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820122344.GK32300@localhost>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 02:23:44PM +0200, Johan Hovold wrote:
-> On Tue, Aug 20, 2019 at 02:03:43PM +0200, Lars Poeschel wrote:
 
-> >  drivers/nfc/pn533/pn533.c | 193 +++++++++++++++++++++++++++++++++++++-
-> >  drivers/nfc/pn533/pn533.h |  10 +-
-> >  2 files changed, 197 insertions(+), 6 deletions(-)
-> > 
-> > diff --git a/drivers/nfc/pn533/pn533.c b/drivers/nfc/pn533/pn533.c
-> > index a8c756caa678..7e915239222b 100644
-> > --- a/drivers/nfc/pn533/pn533.c
-> > +++ b/drivers/nfc/pn533/pn533.c
-> > @@ -185,6 +185,32 @@ struct pn533_cmd_jump_dep_response {
-> >  	u8 gt[];
-> >  } __packed;
-> >  
-> > +struct pn532_autopoll_resp {
-> > +	u8 type;
-> > +	u8 ln;
-> > +	u8 tg;
-> > +	u8 tgdata[];
-> > +} __packed;
+> Author: Peter Zijlstra <peterz@infradead.org>
+> Date:   Tue Aug 7 10:17:27 2018 -0700
 > 
-> No need for __packed.
-
-I did a quick test without the __packed and indeed: It worked. I'd
-sworn that it is needed in this place, because this autopoll response is
-data that the nfc chip puts on the serial wire without padding inbetween
-and this struct is used to access this data and without the __packed the
-compiler should be allowed to put padding bytes between the struct
-fields. But it choose to not do it. I am still not shure, why this
-happens, but ok. I can remove the __packed.
-
-> > +static int pn533_autopoll_complete(struct pn533 *dev, void *arg,
-> > +			       struct sk_buff *resp)
-> > +{
-> > +	u8 nbtg;
-> > +	int rc;
-> > +	struct pn532_autopoll_resp *apr;
-> > +	struct nfc_target nfc_tgt;
-> > +
-> > +	if (IS_ERR(resp)) {
-> > +		rc = PTR_ERR(resp);
-> > +
-> > +		nfc_err(dev->dev, "%s  autopoll complete error %d\n",
-> > +			__func__, rc);
-> > +
-> > +		if (rc == -ENOENT) {
-> > +			if (dev->poll_mod_count != 0)
-> > +				return rc;
-> > +			goto stop_poll;
-> > +		} else if (rc < 0) {
-> > +			nfc_err(dev->dev,
-> > +				"Error %d when running autopoll\n", rc);
-> > +			goto stop_poll;
-> > +		}
-> > +	}
-> > +
-> > +	nbtg = resp->data[0];
-> > +	if ((nbtg > 2) || (nbtg <= 0))
-> > +		return -EAGAIN;
-> > +
-> > +	apr = (struct pn532_autopoll_resp *)&resp->data[1];
-> > +	while (nbtg--) {
-> > +		memset(&nfc_tgt, 0, sizeof(struct nfc_target));
-> > +		switch (apr->type) {
-> > +		case PN532_AUTOPOLL_TYPE_ISOA:
-> > +			dev_dbg(dev->dev, "ISOA");
+>    x86/cpu: Sanitize FAM6_ATOM naming
 > 
-> You forgot the '\n' here and elsewhere (some nfc_err as well).
+> 
+> What 2 or 3 or other number means?
 
-I can add them. I will wait a bit for more review comments before
-posting a new patchset.
+In this case I want it to mean “This is an Airmont derived core. Mostly like original Airmont, so you might see some places where we have the same model specific actions. But enough different that it has a new model ID so places where it is different can do something else”.
 
-Thanks so far for your quick review,
-Lars
+-Tony
+
+
