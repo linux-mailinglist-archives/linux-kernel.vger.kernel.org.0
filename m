@@ -2,84 +2,156 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04786961B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B944961B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:56:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730251AbfHTN4c (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:56:32 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46472 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730197AbfHTN4b (ORCPT
+        id S1730195AbfHTN4X (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:56:23 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43088 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730179AbfHTN4W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:56:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=3FZMVIbuRNp32d8JMD1EkMNHi8iS7iY8D8CYQ+VI9+w=; b=QFXgNKpB5rOao8Qx5vOD3t9UB
-        Ab4npiAfKzsEfTNL1y0FugkBkUUDwsk0YCkLIk4JE2kSl5UdnuDlnI+nv+UKRz/yRSYS9m8yaFCwP
-        sJ/rIW+KRkKR2k7rUWAuX9j463kqqEWmrxxNS2fejyZ3zldMrUyttcw4Lvda+h2EB5QlduO/jCKTp
-        zVUUQlX5LM+aBg8HkD2Rt8MhPeXqWN+JwB4uC2UZKM9pmPDEFc5l85bNxqgOnD34vLxO79ABuPt73
-        hCRvdpysPApN+SuqIObefSHXobfBFVrQCWpB55ogSOec+bBCCYRFiu2yuTXLrq6IaGU4zqBGAbn4V
-        RnP7gKe4Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i04cR-0002Sn-0S; Tue, 20 Aug 2019 13:56:15 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id EEAA230768C;
-        Tue, 20 Aug 2019 15:55:40 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1126120A99A00; Tue, 20 Aug 2019 15:56:12 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 15:56:12 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        rostedt <rostedt@goodmis.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        paulmck <paulmck@linux.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
-Message-ID: <20190820135612.GS2332@hirez.programming.kicks-ass.net>
-References: <241506096.21688.1565977319832.JavaMail.zimbra@efficios.com>
- <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org>
- <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com>
- <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de>
- <CAHk-=wh9qDFfWJscAQw_w+obDmZvcE5jWJRdYPKYP6YhgoGgGA@mail.gmail.com>
- <1642847744.23403.1566005809759.JavaMail.zimbra@efficios.com>
- <CAHk-=wgC4+kV9AiLokw7cPP429rKCU+vjA8cWAfyOjC3MtqC4A@mail.gmail.com>
+        Tue, 20 Aug 2019 09:56:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y8so12500557wrn.10
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 06:56:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=wDIyrvQrJ7olDJx41Fmi3P0la+SkzTZEmDdMNDh+30I=;
+        b=gHpXzBj2HL/VekC+rb66mdgaCBKRClLKy21GikAy3/4y5NYI7osptw1VTKx7dbKmgm
+         wTBMtuCGm6J3JkWDmtHxAjvJ7+An0qz0fmggqwT9d75Qt4eKVYsf+UZhGRDxXymwKaRl
+         CgZPfsylKsFcoYik07XFEyQMFuZZlRWgVFhduIAoOAWgXMt4Jw41KIF6HD1vdy8kPdXB
+         A65WjUhS70ecM65suXwwNrL2owGD4dozg0DmiHFH79YckQU9hhBJL4/kgV5YmxnDBdLI
+         SMqg926sVYcMMFdKRJC6uN4odrvDKlRR6Kw5kZoypu/h2BlONSYPV1qtI7nEbBUf2aaw
+         0Duw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=wDIyrvQrJ7olDJx41Fmi3P0la+SkzTZEmDdMNDh+30I=;
+        b=edpCIDjA9PvCx0bzzEgmC9vKolQ+yD/jlL2Z5YTYrrwBFE9S2+r4kbKJPfbUc7qsFu
+         B3R82c4qXjseeWkb/xFWjEKadrIT/j3AyiZfnY2i8QRinqZO0I8moiZu4YQ/RsA8om1a
+         /H17Nhtm6A7LRVodDW2fo3cqu269x8Y8Y2lyb52Iplm+eIcbRY5uhaCDiwiYJPi0Ugir
+         2fgFZD9DzXgCAkrZwEyeUl0cieEUuabO/vEuNdoraVrpaqf2p87lx2q9mYf/7IFsPzrH
+         qEPnuV7bBh2fyTRiU2x7SsvCHv8hgYAwlu/yPpZ5I/zuMua2Hi2d6vniR9aJm6UGowbJ
+         mVpw==
+X-Gm-Message-State: APjAAAWCZsGYJoaxXUZEND18bYGphyfrDyLLP01ozmbmYVO4Z5fCN3B4
+        h2V1gzWUC22I19HDxEJgJ+yydQ==
+X-Google-Smtp-Source: APXvYqzz1/Yz1/10NYh2GUB6nM4DQfiK8JY8XxzUwqSv7W5p2geXhM3XKJZmh4+lXcZIK+QpcDCQww==
+X-Received: by 2002:adf:fdcc:: with SMTP id i12mr35734925wrs.88.1566309380044;
+        Tue, 20 Aug 2019 06:56:20 -0700 (PDT)
+Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
+        by smtp.gmail.com with ESMTPSA id a11sm18644102wrx.59.2019.08.20.06.56.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 06:56:19 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 14:56:17 +0100
+From:   Daniel Thompson <daniel.thompson@linaro.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Jingoo Han <jingoohan1@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-pwm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Pavel Machek <pavel@ucw.cz>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>
+Subject: Re: [PATCH v3 2/4] backlight: Expose brightness curve type through
+ sysfs
+Message-ID: <20190820135617.64urowbu2kwdynib@holly.lan>
+References: <20190709190007.91260-1-mka@chromium.org>
+ <20190709190007.91260-3-mka@chromium.org>
+ <20190807201528.GO250418@google.com>
+ <510f6d8a-71a0-fa6e-33ea-c4a4bfa96607@linaro.org>
+ <20190816175317.GU250418@google.com>
+ <20190819100241.5pctjxmsq6crlale@holly.lan>
+ <20190819185049.GZ250418@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgC4+kV9AiLokw7cPP429rKCU+vjA8cWAfyOjC3MtqC4A@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190819185049.GZ250418@google.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Aug 17, 2019 at 01:08:02AM -0700, Linus Torvalds wrote:
+On Mon, Aug 19, 2019 at 11:50:49AM -0700, Matthias Kaehlcke wrote:
+> Hi Daniel,
+> 
+> On Mon, Aug 19, 2019 at 11:02:41AM +0100, Daniel Thompson wrote:
+> > On Fri, Aug 16, 2019 at 10:53:17AM -0700, Matthias Kaehlcke wrote:
+> > > On Fri, Aug 16, 2019 at 04:54:18PM +0100, Daniel Thompson wrote:
+> > > > On 07/08/2019 21:15, Matthias Kaehlcke wrote:
+> > > > > On Tue, Jul 09, 2019 at 12:00:05PM -0700, Matthias Kaehlcke wrote:
+> > > > > > Backlight brightness curves can have different shapes. The two main
+> > > > > > types are linear and non-linear curves. The human eye doesn't
+> > > > > > perceive linearly increasing/decreasing brightness as linear (see
+> > > > > > also 88ba95bedb79 "backlight: pwm_bl: Compute brightness of LED
+> > > > > > linearly to human eye"), hence many backlights use non-linear (often
+> > > > > > logarithmic) brightness curves. The type of curve currently is opaque
+> > > > > > to userspace, so userspace often uses more or less reliable heuristics
+> > > > > > (like the number of brightness levels) to decide whether to treat a
+> > > > > > backlight device as linear or non-linear.
+> > > > > > 
+> > > > > > Export the type of the brightness curve via the new sysfs attribute
+> > > > > > 'scale'. The value of the attribute can be 'linear', 'non-linear' or
+> > > > > > 'unknown'. For devices that don't provide information about the scale
+> > > > > > of their brightness curve the value of the 'scale' attribute is 'unknown'.
+> > > > > > 
+> > > > > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > > > 
+> > > > > Daniel (et al): do you have any more comments on this patch/series or
+> > > > > is it ready to land?
+> > > > 
+> > > > I decided to leave it for a long while for others to review since I'm still
+> > > > a tiny bit uneasy about the linear/non-linear terminology.
+> > > > 
+> > > > However that's my only concern, its fairly minor and I've dragged by feet
+> > > > for more then long enough, so:
+> > > > Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+> > > 
+> > > Thanks!
+> > > 
+> > > If you or someone else has another suggestion for the terminology that
+> > > we can all agree on I'm happy to change it.
+> > 
+> > As you will see in my reply to Uwe. The term I tend to adopt when I want
+> > to be precise about userspace behaviour is "perceptual" (e.g. that a
+> > backlight can be mapped directly to a slider and it will feel right).
+> > 
+> > However that raises its own concerns: mostly about what is perceptual
+> > enough.
+> > 
+> > Clear the automatic brightness curve support in the PWM driver is
+> > perceptual.
+> > 
+> > To be honest I suspect that in most cases a true logarithmic curve (given a
+> > sane exponent) would be perceptual enough. In other words it will feel
+> > comfortable with a direct mapped slider and using it for animation
+> > won't be too bad.
+> > 
+> > However when we get right down to it *that* is the information that is
+> > actually most useful to userspace: explicit confirmation that the scale
+> > can be mapped directly to a slider. I think it also aligned better with
+> > Uwe's feedback (e.g. to start working towards having a preferred scale).
+> 
+> IIUC the conclusion is that there is no need for a string attribute
+> because we only need to distinguish between 'perceptual' and
+> 'non-perceptual'. If that is correct, do you have any preference for
+> the attribute name ('perceptual_scale', 'perceptual', ...)?
 
-> The data tearing issue is almost a non-issue. We're not going to add
-> WRITE_ONCE() to these kinds of places for no good reason.
+More a summary than a conclusion! There is a reason I have left a bit or
+space for others to comment on this over the last month (and a bit).
 
-Paulmck actually has an example of that somewhere; ISTR that particular
-case actually got fixed by GCC, but I'd really _love_ for some compiler
-people (both GCC and LLVM) to state that their respective compilers will
-not do load/store tearing for machine word sized load/stores.
+To be clear my Reviewed-by: means that I believe that the kernel is better
+with "non-linear/linear/unknown" than without it and that I am comfortable
+the API isn't likely to be a millstone for us.
 
-Without this written guarantee (which supposedly was in older GCC
-manuals but has since gone missing), I'm loathe to rely on it.
+Lee, Jingoo: Either of you care to offer $0.02
 
-Yes, it is very rare, but it is a massive royal pain to debug if/when it
-does do happen.
 
+Daniel.
