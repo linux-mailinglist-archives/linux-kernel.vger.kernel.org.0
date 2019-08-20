@@ -2,99 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 61F8395BE0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:02:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45C4A95BEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:04:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729757AbfHTKCR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 06:02:17 -0400
-Received: from foss.arm.com ([217.140.110.172]:37940 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729452AbfHTKCQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 06:02:16 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E6723344;
-        Tue, 20 Aug 2019 03:02:15 -0700 (PDT)
-Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5C5113F706;
-        Tue, 20 Aug 2019 03:02:12 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 11:02:10 +0100
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v8 22/27] binfmt_elf: Extract .note.gnu.property from an
- ELF file
-Message-ID: <20190820100208.GO10425@arm.com>
-References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
- <20190813205225.12032-23-yu-cheng.yu@intel.com>
+        id S1729729AbfHTKEf convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 20 Aug 2019 06:04:35 -0400
+Received: from sender2-pp-o92.zoho.com.cn ([163.53.93.251]:25451 "EHLO
+        sender2-pp-o92.zoho.com.cn" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728426AbfHTKEe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 06:04:34 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1566295435; cv=none; 
+        d=zoho.com.cn; s=zohoarc; 
+        b=hG2OPW+QxI+5uVRsxmo8lbPUNQvqp2aT4uCT/zKQ8MZPlvCwTPk7kpxB2vyUOR81oD76XWTAy+2KvAFTOl/lJusnWvJ6tuHllKX8kQ2xJEFueCv971EX+C+7GE/Z7RT+2av/hrmdeLwveweiNfo4Z87gtg44eFYQDSEtJL+RCu4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com.cn; s=zohoarc; 
+        t=1566295435; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=qWDUnb9Mvb2aBEhtl+DI3fDd1UcOPYz2zkXQ59ewVy4=; 
+        b=quNOa9OSA6wqDL+7VzIL2bhP7wco1eXzY9HCFfGE+60tzb0R6NqfFNpX45mVLejGVeSULxONuL+334ezFtJNHPPzqu+3m8khw1si0RXBrToqL2+qbJlU371I3fMevKepbP7oogE3jdYJwo2UOhoUgq1BfivOp34Tj39wiW7778o=
+ARC-Authentication-Results: i=1; mx.zoho.com.cn;
+        dkim=pass  header.i=zoho.com.cn;
+        spf=pass  smtp.mailfrom=cgxu519@zoho.com.cn;
+        dmarc=pass header.from=<cgxu519@zoho.com.cn> header.from=<cgxu519@zoho.com.cn>
+Received: from localhost.localdomain (218.18.229.179 [218.18.229.179]) by mx.zoho.com.cn
+        with SMTPS id 156629543308886.05180690754912; Tue, 20 Aug 2019 18:03:53 +0800 (CST)
+From:   Chengguang Xu <cgxu519@zoho.com.cn>
+To:     ericvh@gmail.com, lucho@ionkov.net, asmadeus@codewreck.org
+Cc:     v9fs-developer@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@zoho.com.cn>
+Message-ID: <20190820100325.10313-1-cgxu519@zoho.com.cn>
+Subject: [PATCH] 9p: avoid attaching writeback_fid on mmap with type PRIVATE
+Date:   Tue, 20 Aug 2019 18:03:25 +0800
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190813205225.12032-23-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8BIT
+X-ZohoCNMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 01:52:20PM -0700, Yu-cheng Yu wrote:
-> An ELF file's .note.gnu.property indicates features the executable file
-> can support.  For example, the property GNU_PROPERTY_X86_FEATURE_1_AND
-> indicates the file supports GNU_PROPERTY_X86_FEATURE_1_IBT and/or
-> GNU_PROPERTY_X86_FEATURE_1_SHSTK.
-> 
-> With this patch, if an arch needs to setup features from ELF properties,
-> it needs CONFIG_ARCH_USE_GNU_PROPERTY to be set, and specific
-> arch_parse_property() and arch_setup_property().
-> 
-> For example, for X86_64:
-> 
-> int arch_setup_property(void *ehdr, void *phdr, struct file *f, bool inter)
-> {
-> 	int r;
-> 	uint32_t property;
-> 
-> 	r = get_gnu_property(ehdr, phdr, f, GNU_PROPERTY_X86_FEATURE_1_AND,
-> 			     &property);
-> 	...
-> }
-> 
-> This patch is derived from code provided by H.J. Lu <hjl.tools@gmail.com>.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Currently on mmap cache policy, we always attach writeback_fid
+whether mmap type is SHARED or PRIVATE. However, in the use case
+of kata-container which combines 9p(Guest OS) with overlayfs(Host OS),
+this behavior will trigger overlayfs' copy-up when excute command
+inside container.
 
-[...]
+Signed-off-by: Chengguang Xu <cgxu519@zoho.com.cn>
+---
+ fs/9p/vfs_file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-For the hell of it, I tried implementing an alternate version [1] that
-tries to integrate into the existing ELF loader more directly.
-
-This may or may not be a better approach, but tries to solve some
-issues such as not repeatedly reading and parsing the properties.
-
-Cheers
----Dave
+diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
+index 4cc966a31cb3..fe7f0bd2048e 100644
+--- a/fs/9p/vfs_file.c
++++ b/fs/9p/vfs_file.c
+@@ -513,6 +513,7 @@ v9fs_mmap_file_mmap(struct file *filp, struct vm_area_struct *vma)
+ 	v9inode = V9FS_I(inode);
+ 	mutex_lock(&v9inode->v_mutex);
+ 	if (!v9inode->writeback_fid &&
++	    (vma->vm_flags & VM_SHARED) &&
+ 	    (vma->vm_flags & VM_WRITE)) {
+ 		/*
+ 		 * clone a fid and add it to writeback_fid
+@@ -614,6 +615,8 @@ static void v9fs_mmap_vm_close(struct vm_area_struct *vma)
+ 			(vma->vm_end - vma->vm_start - 1),
+ 	};
+ 
++	if (!(vma->vm_flags & VM_SHARED))
++		return;
+ 
+ 	p9_debug(P9_DEBUG_VFS, "9p VMA close, %p, flushing", vma);
+ 
+-- 
+2.20.1
 
 
-[1] [RFC PATCH 0/2] ELF: Alternate program property parser
-https://lore.kernel.org/lkml/1566295063-7387-1-git-send-email-Dave.Martin@arm.com/
+
