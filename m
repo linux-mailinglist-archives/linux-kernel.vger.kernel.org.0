@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CD27F96CDC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4766996CDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726677AbfHTXG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 19:06:59 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44110 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726608AbfHTXGy (ORCPT
+        id S1726696AbfHTXHA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 19:07:00 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42953 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726646AbfHTXG4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:06:54 -0400
-Received: by mail-pf1-f196.google.com with SMTP id c81so76973pfc.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:54 -0700 (PDT)
+        Tue, 20 Aug 2019 19:06:56 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p3so146287pgb.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9wPcbIoBPT/8L74pQuiXRIt1kMA2rrNdraftIyGCKRU=;
-        b=YIPSVYupeR5GBL+4iP8KgubrHAAyoTX6x00LkJOHx1jvD0oh7M/xQwqeVwTMOWIXSl
-         dZcTZfD+t1RJWSjCmcaq32LJsCbNAz/AqoyzNmpk+vyQiRgfQkMZNLDg2cuk5CE06kYu
-         gYaP/UrYI8prOQAmd6gyd4g9yr2xhR+zAdWTUb9nVzmOmDJ0LkolQ+a5a/HMfu2ZK4le
-         LLbj8fT2Fqx18tTcdS7M6kKWkE0+PH7N5+7UP7ckP0124Fwr2yfo3HnUIcxcSbkCAxo0
-         /ZdKrXBTUkj5c01ATSf05PQAQ4u3sZbsirGuxw3zR8kDDFrChpxxLeJflZz9FcGzERAy
-         yFrQ==
+        bh=Nc0HKvLqdfxQ4XGBrfjKvfOMJNdfixijHmLsJLYaeJM=;
+        b=GJQNBGk5r/2vcoEMF2xMvysOdEQINWPzyB68OUdnEgdsP+PFQgWLf5Gk+wnqCbVE3k
+         MHW9uNhKC7xDRdBUuUzVDyuppOCKAyTs6CRisMkdUpzHFAuqEWKBVDHtGCQ8HUDezlrm
+         5jNCCeZINejwuo60CoS7OfL08l3Ip/8ixVny4TedC7prbf+I6rV2ycGv1kNC5akcGW/f
+         zJUOz4A7khwYlnW4oHgw/iOjwONpuAcsAxi3clf0DSahsstYfsa+zMdU6XE9zKWSmv8g
+         Rn6ljFFKO6eCX3Fh0fQZ//J1FNyRJaWvKVWfgYX2522ZXI197xHpgSjgFi/ZKJImjSOM
+         H7fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=9wPcbIoBPT/8L74pQuiXRIt1kMA2rrNdraftIyGCKRU=;
-        b=tzHm7rMQnsFc19ZDPEHv0SbcaOT9v6bcCigCkdE8OAwk1DaKRTY9z58XeerZU/ZKTM
-         FCBw9FOcXM/Jok08rqt1DP5Xe9uP9jsQ55ybWb3iZIRIwGA8tQCSxUoeibCxc/OkfFtq
-         vZ8/FEJ5e00VRidbqBttLcH2ubVQHIbBZFduxdBSUSHT+5M0fsyJBj4MtaNBrDJKd5yu
-         w+uD3OqOgvXVNAtaY1leXpT2NkYo9SfwMbBhUxs0ZPrmZD/cRPxDz2qjYXx+hAPmzg93
-         C/qaWxzQQmZLJmb1q16Cx8jE4nfd/W9VVyFcT/mOnZ5vo7Wf2Ig+wGkzfGY8n7RbIlUp
-         ntkw==
-X-Gm-Message-State: APjAAAWPOF2UAizGsqSvVAxqyvqxZU97iNeIw/xtqr75DrrBg6r3esqc
-        Bt3dTqy/zSCtqdfw2vsWYHN3MkwhXe8=
-X-Google-Smtp-Source: APXvYqwA2vG86Xa3XTeAfvmUNiasYaGiBQjfDhnTGPdGcYyITx4aN+Pjv6qz3iMqskAQpDZRDQcpYQ==
-X-Received: by 2002:a17:90a:6581:: with SMTP id k1mr2350909pjj.47.1566342413486;
-        Tue, 20 Aug 2019 16:06:53 -0700 (PDT)
+        bh=Nc0HKvLqdfxQ4XGBrfjKvfOMJNdfixijHmLsJLYaeJM=;
+        b=dcnCAWdjvsHHM+31si6BgTtXV/sMlHIpopRcxywxLLQ5jciKSWSIyAieymVgPHJJtu
+         eCI+WFGvhXWO0n1sdTCcPROKcRQWVSEIPoiuOy623e+4Fty1SA87skUnkBzMo7yzZvcy
+         25/YHZAAJrLhD1dySL1yv2LXRZAnSxuhoYWUd/4dywCWEOEeAyk9v1yGSLY6vZeXjNxW
+         aitPizZhqoP16VPJoYdazDSynp8MwTLDFAnRHaU0x/0pfy6P3dob2znDPHxNhiXkmq4+
+         0zpQSYwRq4YvhpSX526qxD3KUrqbhPWrKqojHqkZ//vMUM2dQqlZiOw98/Uf7gL9j3cc
+         ArzQ==
+X-Gm-Message-State: APjAAAX9+bi3WA8RWrcy5fXpHYERurgImobXLVMSVWLyttj0Tk59yKVn
+        SPKdAr/xeco69Uj+eCHeUbHAzzHzwGk=
+X-Google-Smtp-Source: APXvYqyycOrj5QO/qCGc2tAh0Oxqq8tIKtAZe2eG52cV3l89piP4mv+qYGEtbuNk91J/oP8Yz4OZrg==
+X-Received: by 2002:a63:121b:: with SMTP id h27mr451417pgl.335.1566342415194;
+        Tue, 20 Aug 2019 16:06:55 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.51
+        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 16:06:52 -0700 (PDT)
+        Tue, 20 Aug 2019 16:06:53 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v5 16/25] drm: kirin: Move plane number and primay plane in driver data
-Date:   Tue, 20 Aug 2019 23:06:17 +0000
-Message-Id: <20190820230626.23253-17-john.stultz@linaro.org>
+Subject: [PATCH v5 17/25] drm: kirin: Move config max_width and max_height to driver data
+Date:   Tue, 20 Aug 2019 23:06:18 +0000
+Message-Id: <20190820230626.23253-18-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190820230626.23253-1-john.stultz@linaro.org>
 References: <20190820230626.23253-1-john.stultz@linaro.org>
@@ -68,9 +68,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Xu YiPing <xuyiping@hisilicon.com>
 
 As part of refactoring the kirin driver to better support
-different hardware revisions, this patch moves the number of
-planes and the primary plane value to the kirin_drm_data
-structure
+different hardware revisions, this patch moves the max_width
+and max_height values used in kirin_drm_mode_config_inita to
+hardware specific driver data.
 
 This will make it easier to add support for new devices
 via a new kirin_drm_data structure.
@@ -84,88 +84,75 @@ Cc: Sam Ravnborg <sam@ravnborg.org>
 Acked-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
+[jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
-v5: checkpatch --strict whitespace fixups noticed by Sam
----
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 21 ++++++++++++-------
- .../gpu/drm/hisilicon/kirin/kirin_drm_drv.h   |  2 ++
- 2 files changed, 15 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c |  2 ++
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 17 +++++------------
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h |  2 ++
+ 3 files changed, 9 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index 94d74c467a81..a74b2623dbbb 100644
+index a74b2623dbbb..a4cf122375ea 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -35,7 +35,6 @@
- #include "kirin_drm_drv.h"
- #include "kirin_ade_reg.h"
- 
--#define PRIMARY_CH	ADE_CH1 /* primary plane */
- #define OUT_OVLY	ADE_OVLY2 /* output overlay compositor */
- #define ADE_DEBUG	1
- 
-@@ -991,7 +990,7 @@ static int ade_drm_init(struct platform_device *pdev)
- 	struct kirin_plane *kplane;
- 	enum drm_plane_type type;
- 	int ret;
--	int i;
-+	u32 ch;
- 
- 	ade = devm_kzalloc(dev->dev, sizeof(*ade), GFP_KERNEL);
- 	if (!ade) {
-@@ -1015,12 +1014,15 @@ static int ade_drm_init(struct platform_device *pdev)
- 	 * TODO: Now only support primary plane, overlay planes
- 	 * need to do.
- 	 */
--	for (i = 0; i < ADE_CH_NUM; i++) {
--		kplane = &ade->planes[i];
--		kplane->ch = i;
-+	for (ch = 0; ch < ade_driver_data.num_planes; ch++) {
-+		kplane = &ade->planes[ch];
-+		kplane->ch = ch;
- 		kplane->hw_ctx = ctx;
--		type = i == PRIMARY_CH ? DRM_PLANE_TYPE_PRIMARY :
--			DRM_PLANE_TYPE_OVERLAY;
-+
-+		if (ch == ade_driver_data.prim_plane)
-+			type = DRM_PLANE_TYPE_PRIMARY;
-+		else
-+			type = DRM_PLANE_TYPE_OVERLAY;
- 
- 		ret = ade_plane_init(dev, kplane, type);
- 		if (ret)
-@@ -1028,7 +1030,8 @@ static int ade_drm_init(struct platform_device *pdev)
- 	}
- 
- 	/* crtc init */
--	ret = ade_crtc_init(dev, &kcrtc->base, &ade->planes[PRIMARY_CH].base);
-+	ret = ade_crtc_init(dev, &kcrtc->base,
-+			    &ade->planes[ade_driver_data.prim_plane].base);
- 	if (ret)
- 		return ret;
- 
-@@ -1047,6 +1050,8 @@ static const struct drm_mode_config_funcs ade_mode_config_funcs = {
- };
- 
- struct kirin_drm_data ade_driver_data = {
-+	.num_planes = ADE_CH_NUM,
-+	.prim_plane = ADE_CH1,
+@@ -1054,6 +1054,8 @@ struct kirin_drm_data ade_driver_data = {
+ 	.prim_plane = ADE_CH1,
  	.channel_formats = channel_formats,
  	.channel_formats_cnt = ARRAY_SIZE(channel_formats),
++	.config_max_width = 2048,
++	.config_max_height = 2048,
  	.crtc_helper_funcs = &ade_crtc_helper_funcs,
+ 	.crtc_funcs = &ade_crtc_funcs,
+ 	.plane_helper_funcs = &ade_plane_helper_funcs,
+diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+index 25191824b64e..2ab32c2e3f95 100644
+--- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
++++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
+@@ -40,17 +40,6 @@ static int kirin_drm_kms_cleanup(struct drm_device *dev)
+ 	return 0;
+ }
+ 
+-static void kirin_drm_mode_config_init(struct drm_device *dev)
+-{
+-	dev->mode_config.min_width = 0;
+-	dev->mode_config.min_height = 0;
+-
+-	dev->mode_config.max_width = 2048;
+-	dev->mode_config.max_height = 2048;
+-
+-	dev->mode_config.funcs = driver_data->mode_config_funcs;
+-}
+-
+ static int kirin_drm_kms_init(struct drm_device *dev)
+ {
+ 	int ret;
+@@ -59,7 +48,11 @@ static int kirin_drm_kms_init(struct drm_device *dev)
+ 
+ 	/* dev->mode_config initialization */
+ 	drm_mode_config_init(dev);
+-	kirin_drm_mode_config_init(dev);
++	dev->mode_config.min_width = 0;
++	dev->mode_config.min_height = 0;
++	dev->mode_config.max_width = driver_data->config_max_width;
++	dev->mode_config.max_height = driver_data->config_max_width;
++	dev->mode_config.funcs = driver_data->mode_config_funcs;
+ 
+ 	/* display controller init */
+ 	ret = driver_data->init(to_platform_device(dev->dev));
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
-index ce9ddccc67a8..2b660df60293 100644
+index 2b660df60293..43be65f82a03 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.h
 @@ -37,6 +37,8 @@ struct kirin_plane {
  struct kirin_drm_data {
  	const u32 *channel_formats;
  	u32 channel_formats_cnt;
-+	u32 num_planes;
-+	u32 prim_plane;
++	int config_max_width;
++	int config_max_height;
+ 	u32 num_planes;
+ 	u32 prim_plane;
  
- 	const struct drm_crtc_helper_funcs *crtc_helper_funcs;
- 	const struct drm_crtc_funcs *crtc_funcs;
 -- 
 2.17.1
 
