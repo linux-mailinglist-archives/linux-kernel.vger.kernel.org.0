@@ -2,129 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CC0D596232
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8463396246
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:19:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730081AbfHTOQX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:16:23 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:42429 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729762AbfHTOQW (ORCPT
+        id S1730366AbfHTOS0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:18:26 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:46439 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729975AbfHTOSZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:16:22 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 201so4593279qkm.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:16:22 -0700 (PDT)
+        Tue, 20 Aug 2019 10:18:25 -0400
+Received: by mail-io1-f65.google.com with SMTP id x4so12455058iog.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lca.pw; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=HlnA5cT3MhoLNI4slqKCgpslm+Om/tdvlPyUFbt4pJo=;
-        b=iK7u8B7lX8okJIabQspvE76rFRTcLBghvgSdbU77cGp09kyJ/u0B6dqPJfk+N6mWor
-         50ldG3KwN2JYHaFsR0S86hTVWo3uy6QPIdWlHjMEz7V2UrroIIFLeFs43rhnrZXL8ZOV
-         3nP7TENIcCsrUgeos3TnuDubqVEVhgf7XI4o50Q84Ye+GXNsQ9FUUZ/vjvEA9pwfyiWG
-         gDHkUfs2c0gV92qVcdSZborgHKza3d8TxG6z74CjH0kynqdr3ofwOSw1c03KWBWI5tyn
-         pLL/SZwyejoI/c+SZcWkuRhsNWY+XysL7iJk19c9G+A3/GJdoPyfOAtFxmB1L/etPsSJ
-         yC/Q==
+        d=bobcopeland-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=838NPqta13bqgyCrYK41UyrEU6mGcDEerMp5IHrJ4wM=;
+        b=Kfnla0tviD817tYZdPwb2uA2HDNSUtBR12ZbWHcHId5JmtFmbvh8/eGNzF8lr/hr9z
+         v6m3JN+x+i1whykrYHmo3SDPcCeo+TPtpbrUTjsz7UK9NBYN9D/LvEAEGNkZ9rNKVDqs
+         v3bNnyXRY8FlQJtnaBRrJ0CsspH9HuFr3leEIwWOihS+KZU/v+p885SCP2Zb/tiSfAL/
+         UKL4ubb9UNcx8g2dXij6VbAX/IQDJyjiIFvUJWlMiNITg9yPWFz4kwaVlcaW/FHxFqj2
+         mz74NRc9FCLqh/UlYlCOwg8ESbDRfUxKFJTk74LRwbe2wVTn8i9eiF0Kit7hST/BEfq6
+         HuFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=HlnA5cT3MhoLNI4slqKCgpslm+Om/tdvlPyUFbt4pJo=;
-        b=MlOghrEfgBNPOENsO9MY5Anu2VYqEfcDhtBVY0croPHtQChPtyl4cRapm7k1c/a/rV
-         HEwJPPUSVnHrbQ//QTbZOT++T91p8Rsp9NxE4J6h8QgiUt85XEEHGbKh9alKos0H0zrs
-         rM/YPwx7U7z6z0Pa8AzMVjj3hB9CL7D9hB7hA0y2nYBIxdr9nQLot8ZhhjuJPHyQ5kYW
-         tsPZh1Jkpa8ZTlzxeCMlUmSdaJNqu3+3c8VPOO4hKQL4eB9p6P6+05q2LeS6AvSMKgPA
-         1j/a8yFT2kn2JVKZHTHRHpu0eiXhb11fsyBUMHkcK2fvlKCktwjsPYJqn6Q3inEZh6fa
-         LSIw==
-X-Gm-Message-State: APjAAAX0vMX4zQgi3YU/Ryjz4lMJM5YOJe+gGWKFiuqcmX6xGHUM6uI9
-        Si1AWNB03sEHcFBMFsqSgRCPs3VYPYI=
-X-Google-Smtp-Source: APXvYqyhCOg43T9k6UY4W+1a8m3D76TKytIXHr2jOJWaBQFbRfgPY/gjc/lIRdo8noDyP7NtFsNLgA==
-X-Received: by 2002:a37:71c7:: with SMTP id m190mr26539444qkc.47.1566310581515;
-        Tue, 20 Aug 2019 07:16:21 -0700 (PDT)
-Received: from qcai.nay.com (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id a2sm8637862qkd.76.2019.08.20.07.16.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2019 07:16:20 -0700 (PDT)
-From:   Qian Cai <cai@lca.pw>
-To:     mingo@redhat.com
-Cc:     peterz@infradead.org, chiluk+linux@indeed.com, pauld@redhat.com,
-        bsegall@google.com, linux-kernel@vger.kernel.org,
-        Qian Cai <cai@lca.pw>
-Subject: [PATCH -next] sched/fair: fix -Wunused-but-set-variable warnings
-Date:   Tue, 20 Aug 2019 10:15:58 -0400
-Message-Id: <1566310558-29584-1-git-send-email-cai@lca.pw>
-X-Mailer: git-send-email 1.8.3.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=838NPqta13bqgyCrYK41UyrEU6mGcDEerMp5IHrJ4wM=;
+        b=Or9thGdRWiSYE86bQArKwynXVZfy8tOou7S+F196l9SuEVbfZyv0FsqluwmizOj0TB
+         vH96I8LiNLZbPi2yGoGyiIEiCMkTc6/dX/IyxJ9YqQEM3mIPKWiSmFmTOiw4X6RN05gR
+         fhlLzmYfrdONyyhF3t2e/CbsBZnCuxw90CKLoTLN6DH0YFiDyIfwCTEdmzCvmk3729Eq
+         yqAygjd5i3Z+ufo6VbTbTMSnu3GeJi9uSGwfWSD+otUdrdpd5erWLUo/++F+7+d7f5DG
+         A1HFvsWM0yyGHZW5ewe0A9BEenEFogVef7bZmbHTaMB8aPMmK4FLP72OdHm45WrOYVi3
+         NE7w==
+X-Gm-Message-State: APjAAAVnWPyUSpTCZJrohgPiabQ79oU3uqDSzpbYpAwoI1OLCpLg8wQe
+        +z8qW3XTneO7BsucaOfDsfJiMA==
+X-Google-Smtp-Source: APXvYqxMn8dXUKQs4Sy3kFJi0bntqJbH+OO4y772O0IkJ6aywEqL+s/qAIjPcNlCJoZsqvDtbu/dsQ==
+X-Received: by 2002:a02:8409:: with SMTP id k9mr4036631jah.122.1566310704798;
+        Tue, 20 Aug 2019 07:18:24 -0700 (PDT)
+Received: from hash (CPE30b5c2fb365b-CMa456cc3dfbbf.cpe.net.cable.rogers.com. [99.232.51.173])
+        by smtp.gmail.com with ESMTPSA id m10sm14241474ioj.75.2019.08.20.07.18.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 07:18:24 -0700 (PDT)
+Received: from bob by hash with local (Exim 4.92)
+        (envelope-from <me@bobcopeland.com>)
+        id 1i04vl-0001YN-Fd; Tue, 20 Aug 2019 10:16:13 -0400
+Date:   Tue, 20 Aug 2019 10:16:13 -0400
+From:   Bob Copeland <me@bobcopeland.com>
+To:     Wenwen Wang <wenwen@cs.uga.edu>
+Cc:     "open list:OMFS FILESYSTEM" <linux-karma-devel@lists.sourceforge.net>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] omfs: Fix a memory leak bug
+Message-ID: <20190820141613.GA5634@localhost>
+References: <1566282180-10485-1-git-send-email-wenwen@cs.uga.edu>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566282180-10485-1-git-send-email-wenwen@cs.uga.edu>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The linux-next commit "sched/fair: Fix low cpu usage with high
-throttling by removing expiration of cpu-local slices" [1] introduced a
-few compilation warnings,
+On Tue, Aug 20, 2019 at 01:22:59AM -0500, Wenwen Wang wrote:
+> In omfs_get_imap(), 'sbi->s_imap' is allocated through kcalloc(). However,
+> it is not deallocated in the following execution if 'block' is not less
+> than 'sbi->s_num_blocks', leading to a memory leak bug. To fix this issue,
+> go to the 'nomem_free' label to free 'sbi->s_imap'.
 
-kernel/sched/fair.c: In function '__refill_cfs_bandwidth_runtime':
-kernel/sched/fair.c:4365:6: warning: variable 'now' set but not used
-[-Wunused-but-set-variable]
-kernel/sched/fair.c: In function 'start_cfs_bandwidth':
-kernel/sched/fair.c:4992:6: warning: variable 'overrun' set but not used
-[-Wunused-but-set-variable]
+Nice catch, thanks.
 
-Also, __refill_cfs_bandwidth_runtime() does no longer update the
-expiration time, so fix the comments accordingly.
+Acked-by: Bob Copeland <me@bobcopeland.com>
 
-[1] https://lore.kernel.org/lkml/1558121424-2914-1-git-send-email-chiluk+linux@indeed.com/
-
-Signed-off-by: Qian Cai <cai@lca.pw>
----
- kernel/sched/fair.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 84959d3285d1..43d6eb033ca8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4354,21 +4354,16 @@ static inline u64 sched_cfs_bandwidth_slice(void)
- }
- 
- /*
-- * Replenish runtime according to assigned quota and update expiration time.
-- * We use sched_clock_cpu directly instead of rq->clock to avoid adding
-- * additional synchronization around rq->lock.
-+ * Replenish runtime according to assigned quota. We use sched_clock_cpu
-+ * directly instead of rq->clock to avoid adding additional synchronization
-+ * around rq->lock.
-  *
-  * requires cfs_b->lock
-  */
- void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
- {
--	u64 now;
--
--	if (cfs_b->quota == RUNTIME_INF)
--		return;
--
--	now = sched_clock_cpu(smp_processor_id());
--	cfs_b->runtime = cfs_b->quota;
-+	if (cfs_b->quota != RUNTIME_INF)
-+		cfs_b->runtime = cfs_b->quota;
- }
- 
- static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-@@ -4989,15 +4984,12 @@ static void init_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 
- void start_cfs_bandwidth(struct cfs_bandwidth *cfs_b)
- {
--	u64 overrun;
--
- 	lockdep_assert_held(&cfs_b->lock);
- 
- 	if (cfs_b->period_active)
- 		return;
- 
- 	cfs_b->period_active = 1;
--	overrun = hrtimer_forward_now(&cfs_b->period_timer, cfs_b->period);
- 	hrtimer_start_expires(&cfs_b->period_timer, HRTIMER_MODE_ABS_PINNED);
- }
- 
 -- 
-1.8.3.1
-
+Bob Copeland %% https://bobcopeland.com/
