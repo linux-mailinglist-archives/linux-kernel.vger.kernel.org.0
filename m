@@ -2,447 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C871A96B9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:40:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B438B96BA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:44:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730937AbfHTVjd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:39:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37627 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729887AbfHTVjd (ORCPT
+        id S1730915AbfHTVnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:43:11 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53468 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730811AbfHTVnJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:39:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so55676pgp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 14:39:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BPT2HMqCJmLk/KSZfJZIK7XyZlgmy8I3ISOqOedYMYI=;
-        b=TKI8yRBqd0g0PPsEwM0H+yg58Xog7kyVY0HVCnQbyZ3OUHil7pqrh1JF/qk4LJS3/A
-         Bg2epFrla1wiqE98ulul6IBn8GlP72ZEVhCcLIzDBpeD0AeoY1hHx8gL/d0UxEjrD66j
-         vkn5pphxIOIo6WDguN6JWKFMWnhpbMgPl9RIwXeH/Y5U0NimrGIQwE9q3KaQAcJUZMrx
-         rI5Csoy6prj2Eu4fhchV1oAc6mMgdrIxjYF5uAqn0uOp0PPGwe2aDetEP7ruZbWkzzaH
-         tvvvwwkUxRzSBUXksWg65ULWA86T4B4kaBmTuM3BkIzJ32tRXlLk7scJI+N3IWPKVzMH
-         GiMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BPT2HMqCJmLk/KSZfJZIK7XyZlgmy8I3ISOqOedYMYI=;
-        b=fxBklp0itwoy7cPi9BOA4Zy1YqzBASl6AiUX8HuG5mzpUNvYcUY9Vdp4jhuhihERnS
-         yUPOP6lKVtEnrCiUtEK3SqTf/+J/tql5H3MfY1Q3blI0Exp6W4WUiclr/hrufLWknpu1
-         NeGM2WfAaqiGfE/UlXyyip/BlczG4VcoHFKvsPjjFf5+g+oRfqQIMyxJnn9O3NCLmBVr
-         FvPmRZ037QAORP0WR+fIjcAzQFsF6YkqJE548os8fR5uR7u7pQAmFoRb9dCDVD0tU88a
-         L8eLa4yz5GH2SxWKwe/O6JFaUS2Z0CGdlLratNIEwhgpIVvGT8YCID0H/KqlXZD5IgSv
-         1xSw==
-X-Gm-Message-State: APjAAAVINHUuUcHjxFBDABnFwSfQXR5NCJs3v+XWv3/2nJJp3uBeFE63
-        1yzBV13xqzAtf/Qm5ORXc9kEaxwGTLdHQ/kIKV1zeA==
-X-Google-Smtp-Source: APXvYqxBqRgYfUEtazO57CZqaKTQi86iwt735GapPUJErcj4dzigpW0DtRB5m1toDgcJz0LrTBPMNK4aQMgcm4AZVH8=
-X-Received: by 2002:aa7:8085:: with SMTP id v5mr32511807pff.165.1566337171932;
- Tue, 20 Aug 2019 14:39:31 -0700 (PDT)
+        Tue, 20 Aug 2019 17:43:09 -0400
+Received: from 79.184.254.79.ipv4.supernova.orange.pl (79.184.254.79) (HELO kreacher.localnet)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.275)
+ id 9f5a329664f2f650; Tue, 20 Aug 2019 23:43:06 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Matthew Garrett <matthewgarrett@google.com>
+Cc:     jmorris@namei.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        Josh Boyer <jwboyer@fedoraproject.org>,
+        David Howells <dhowells@redhat.com>,
+        Matthew Garrett <mjg59@google.com>,
+        Kees Cook <keescook@chromium.org>, pavel@ucw.cz,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH V40 10/29] hibernate: Disable when the kernel is locked down
+Date:   Tue, 20 Aug 2019 23:43:06 +0200
+Message-ID: <2636170.u2GatYtffq@kreacher>
+In-Reply-To: <20190820001805.241928-11-matthewgarrett@google.com>
+References: <20190820001805.241928-1-matthewgarrett@google.com> <20190820001805.241928-11-matthewgarrett@google.com>
 MIME-Version: 1.0
-References: <20190820194351.107486-1-nhuck@google.com>
-In-Reply-To: <20190820194351.107486-1-nhuck@google.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Tue, 20 Aug 2019 14:39:20 -0700
-Message-ID: <CAKwvOdm+sGyKfAMNbL10ME=DrG5=4d5kvzdMxjNC22JLLr1h=g@mail.gmail.com>
-Subject: Re: [PATCH] ARM: UNWINDER_FRAME_POINTER implementation for Clang
-To:     Nathan Huckleberry <nhuck@google.com>
-Cc:     Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>,
-        =?UTF-8?B?TWlsZXMgQ2hlbiAo6Zmz5rCR5qi6KQ==?= 
-        <miles.chen@mediatek.com>, Tri Vo <trong@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 12:44 PM Nathan Huckleberry <nhuck@google.com> wrote:
->
-> The stackframe setup when compiled with clang is different.
-> Since the stack unwinder expects the gcc stackframe setup it
-> fails to print backtraces. This patch adds support for the
-> clang stackframe setup.
->
-> Link: https://github.com/ClangBuiltLinux/linux/issues/35
-> Cc: clang-built-linux@googlegroups.com
-> Suggested-by: Tri Vo <trong@google.com>
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+On Tuesday, August 20, 2019 2:17:46 AM CEST Matthew Garrett wrote:
+> From: Josh Boyer <jwboyer@fedoraproject.org>
+> 
+> There is currently no way to verify the resume image when returning
+> from hibernate.  This might compromise the signed modules trust model,
+> so until we can work with signed hibernate images we disable it when the
+> kernel is locked down.
+> 
+> Signed-off-by: Josh Boyer <jwboyer@fedoraproject.org>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> Signed-off-by: Matthew Garrett <mjg59@google.com>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
+> Cc: rjw@rjwysocki.net
+> Cc: pavel@ucw.cz
+> cc: linux-pm@vger.kernel.org
+> Signed-off-by: James Morris <jmorris@namei.org>
+
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+
 > ---
-> Changes from RFC
-> * Push extra register to satisfy 8 byte alignment requirement
-> * Add clarifying comments
-> * Separate code into its own file
-
-Thanks for the patch! The added comments and moving the implementation
-to its own file make it easier to review.
-
->
->  arch/arm/Kconfig.debug         |   4 +-
->  arch/arm/Makefile              |   5 +-
->  arch/arm/lib/Makefile          |   8 +-
->  arch/arm/lib/backtrace-clang.S | 224 +++++++++++++++++++++++++++++++++
->  4 files changed, 237 insertions(+), 4 deletions(-)
->  create mode 100644 arch/arm/lib/backtrace-clang.S
->
-> diff --git a/arch/arm/Kconfig.debug b/arch/arm/Kconfig.debug
-> index 85710e078afb..92fca7463e21 100644
-> --- a/arch/arm/Kconfig.debug
-> +++ b/arch/arm/Kconfig.debug
-> @@ -56,7 +56,7 @@ choice
->
->  config UNWINDER_FRAME_POINTER
->         bool "Frame pointer unwinder"
-> -       depends on !THUMB2_KERNEL && !CC_IS_CLANG
-> +       depends on !THUMB2_KERNEL
->         select ARCH_WANT_FRAME_POINTERS
->         select FRAME_POINTER
->         help
-> @@ -1872,7 +1872,7 @@ config DEBUG_UNCOMPRESS
->           When this option is set, the selected DEBUG_LL output method
->           will be re-used for normal decompressor output on multiplatform
->           kernels.
-> -
-> +
-
-Probably can drop the added newline?
-
->
->  config UNCOMPRESS_INCLUDE
->         string
-> diff --git a/arch/arm/Makefile b/arch/arm/Makefile
-> index c3624ca6c0bc..729e223b83fe 100644
-> --- a/arch/arm/Makefile
-> +++ b/arch/arm/Makefile
-> @@ -36,7 +36,10 @@ KBUILD_CFLAGS        += $(call cc-option,-mno-unaligned-access)
->  endif
->
->  ifeq ($(CONFIG_FRAME_POINTER),y)
-> -KBUILD_CFLAGS  +=-fno-omit-frame-pointer -mapcs -mno-sched-prolog
-> +KBUILD_CFLAGS  +=-fno-omit-frame-pointer
-> +  ifeq ($(CONFIG_CC_IS_GCC),y)
-> +  KBUILD_CFLAGS += -mapcs -mno-sched-prolog
-> +  endif
-
-While I can appreciate the indentation, it's unusual to indent
-additional depths of kernel Makefiles.  At least the rest of this file
-does not do so.  Of course, the other Makefile you touch below does
-two spaces.  At least try to keep the file internally consistent, even
-if the kernel itself is inconsistent.
-
->  endif
->
->  ifeq ($(CONFIG_CPU_BIG_ENDIAN),y)
-> diff --git a/arch/arm/lib/Makefile b/arch/arm/lib/Makefile
-> index b25c54585048..e10a769c72ec 100644
-> --- a/arch/arm/lib/Makefile
-> +++ b/arch/arm/lib/Makefile
-> @@ -5,7 +5,7 @@
->  # Copyright (C) 1995-2000 Russell King
->  #
->
-> -lib-y          := backtrace.o changebit.o csumipv6.o csumpartial.o   \
-> +lib-y          := changebit.o csumipv6.o csumpartial.o               \
->                    csumpartialcopy.o csumpartialcopyuser.o clearbit.o \
->                    delay.o delay-loop.o findbit.o memchr.o memcpy.o   \
->                    memmove.o memset.o setbit.o                        \
-> @@ -19,6 +19,12 @@ lib-y                := backtrace.o changebit.o csumipv6.o csumpartial.o   \
->  mmu-y          := clear_user.o copy_page.o getuser.o putuser.o       \
->                    copy_from_user.o copy_to_user.o
->
-> +ifdef CONFIG_CC_IS_CLANG
-> +  lib-y += backtrace-clang.o
-> +else
-> +  lib-y += backtrace.o
-> +endif
-
-The indentation should match the above (from this file).  Looks like 1
-tab after lib-y.  See L34(CONFIG_CPU_32v3) for what I would have
-expected.
-
-> +
->  # using lib_ here won't override already available weak symbols
->  obj-$(CONFIG_UACCESS_WITH_MEMCPY) += uaccess_with_memcpy.o
->
-> diff --git a/arch/arm/lib/backtrace-clang.S b/arch/arm/lib/backtrace-clang.S
-> new file mode 100644
-> index 000000000000..2b02014dbdd1
-> --- /dev/null
-> +++ b/arch/arm/lib/backtrace-clang.S
-> @@ -0,0 +1,224 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + *  linux/arch/arm/lib/backtrace-clang.S
-> + *
-> + *  Copyright (C) 2019 Nathan Huckleberry
-> + *
-> + */
-> +#include <linux/kern_levels.h>
-> +#include <linux/linkage.h>
-> +#include <asm/assembler.h>
-> +               .text
-> +
-> +/* fp is 0 or stack frame */
-
-ah, I see that the reference implementation uses an assembly comment
-here. Ok (sorry for the noise).
-
-> +
-> +#define frame  r4
-> +#define sv_fp  r5
-> +#define sv_pc  r6
-> +#define mask   r7
-> +#define sv_lr   r8
-> +
-> +ENTRY(c_backtrace)
-> +
-> +#if !defined(CONFIG_FRAME_POINTER) || !defined(CONFIG_PRINTK)
-> +               ret     lr
-> +ENDPROC(c_backtrace)
-> +#else
-> +
-> +
-> +/*
-> + * Clang does not store pc or sp in function prologues
-> + *             so we don't know exactly where the function
-> + *             starts.
-> + * We can treat the current frame's lr as the saved pc and the
-> + *             preceding frame's lr as the lr, but we can't
-
-preceding frame's lr as the current frame's lr, ...
-
-> + *             trace the most recent call.
-> + * Inserting a false stack frame allows us to reference the
-> + *             function called last in the stacktrace.
-> + * If the call instruction was a bl we can look at the callers
-> + *             branch instruction to calculate the saved pc.
-> + * We can recover the pc in most cases, but in cases such as
-> + *             calling function pointers we cannot. In this
-> + *             case, default to using the lr. This will be
-> + *             some address in the function, but will not
-> + *             be the function start.
-> + * Unfortunately due to the stack frame layout we can't dump
-> + *              r0 - r3, but these are less frequently saved.
-
-The use of tabs vs spaces in these comments is inconsistent.  Not that
-I can see whitespace, but:
-https://github.com/nickdesaulniers/dotfiles/blob/37359525f5a403b4ed2d3f9d1bbbee2da8ec8115/.vimrc#L35-L41
-Also, I don't think you need to tab indent every line after the first.
-Where did that format come from?
-
-> + *
-> + * Stack frame layout:
-> + *             <larger addresses>
-> + *             saved lr
-> + *    frame => saved fp
-> + *             optionally saved caller registers (r4 - r10)
-> + *             optionally saved arguments (r0 - r3)
-> + *             <top of stack frame>
-> + *             <smaller addresses>
-> + *
-> + * Functions start with the following code sequence:
-> + * corrected pc =>  stmfd sp!, {..., fp, lr}
-> + *                 add fp, sp, #x
-> + *                 stmfd sp!, {r0 - r3} (optional)
-> + *
-> + *
-> + *
-> + *
-> + *
-> + *
-> + * The diagram below shows an example stack setup
-> + *     for dump_stack.
-> + *
-> + * The frame for c_backtrace has pointers to the
-> + *     code of dump_stack. This is why the frame of
-> + *     c_backtrace is used to for the pc calculation
-> + *     of dump_stack. This is why we must move back
-> + *     a frame to print dump_stack.
-> + *
-> + * The stored locals for dump_stack are in dump_stack's
-> + *     frame. This means that to fully print dump_stack's frame
-> + *     we need the both the frame for dump_stack (for locals) and the
-
-we need both the ...
-(There's an extra `the` in the sentence).
-
-> + *     frame that was called by dump_stack (for pc).
-> + *
-> + * To print locals we must know where the function start is. If
-> + *     we read the function prologue opcodes we can determine
-> + *     which variables are stored in the stack frame.
-> + *
-> + * To find the function start of dump_stack we can look at the
-> + *     stored LR of show_stack. It points at the instruction
-> + *     directly after the bl dump_stack. We can then read the
-> + *     offset from the bl opcode to determine where the branch takes us.
-> + *     The address calculated must be the start of dump_stack.
-> + *
-> + * c_backtrace frame           dump_stack:
-> + * {[LR]    }  ============|   ...
-> + * {[FP]    }  =======|    |   bl c_backtrace
-> + *                    |    |=> ...
-> + * {[R4-R10]}         |
-> + * {[R0-R3] }         |        show_stack:
-> + * dump_stack frame   |        ...
-> + * {[LR]    } =============|   bl dump_stack
-> + * {[FP]    } <=======|    |=> ...
-> + * {[R4-R10]}
-> + * {[R0-R3] }
-> + */
-> +
-> +stmfd   sp!, {r4 - r9, fp, lr} @ Save an extra register
-> +                               @ to ensure 8 byte alignment
-> +movs   frame, r0               @ if frame pointer is zero
-> +beq    no_frame                @ we have no stack frames
-> +
-> +tst    r1, #0x10               @ 26 or 32-bit mode?
-> +moveq  mask, #0xfc000003
-
-Should we be using different masks for ARM vs THUMB as per the
-reference implementation?
-
-> +movne  mask, #0                @ mask for 32-bit
-> +
-> +/*
-> + * Switches the current frame to be the frame for dump_stack.
-> + */
-> +               add     frame, sp, #24          @ switch to false frame
-> +for_each_frame:        tst     frame, mask             @ Check for address exceptions
-> +               bne     no_frame
-> +
-> +/*
-> + * sv_fp is the stack frame with the locals for the current considered
-> + *     function.
-> + * sv_pc is the saved lr frame the frame above. This is a pointer to a
-> + *     code address within the current considered function, but
-> + *     it is not the function start. This value gets updated to be
-> + *     the function start later if it is possible.
-> + */
-> +1001:          ldr     sv_pc, [frame, #4]      @ get saved 'pc'
-> +1002:          ldr     sv_fp, [frame, #0]      @ get saved fp
-
-The reference implementation applies the mask to sv_pc and sv_fp.  I
-assume we want to, too?
-
-> +
-> +               teq     sv_fp, #0               @ make sure next frame exists
-> +               beq     no_frame
-> +
-> +/*
-> + * sv_lr is the lr from the function that called the current function. This
-> + *     is a pointer to a code address in the current function's caller.
-> + *     sv_lr-4 is the instruction used to call the current function.
-> + * This sv_lr can be used to calculate the function start if the function
-> + *     was called using a bl instruction. If the function start
-> + *     can be recovered sv_pc is overwritten with the function start.
-> + * If the current function was called using a function pointer we cannot
-> + *     recover the function start and instead continue with sv_pc as
-> + *     an arbitrary value within the current function. If this is the case
-> + *     we cannot print registers for the current function, but the stacktrace
-> + *     is still printed properly.
-> + */
-> +1003:          ldr     sv_lr, [sv_fp, #4]      @ get saved lr from next frame
-> +
-> +               ldr     r0, [sv_lr, #-4]        @ get call instruction
-> +               ldr     r3, .Ldsi+8
-
-I wonder what `dsi` stands for, it could use a better name.  Maybe put
-that mask in a more descriptively named section and use that instead
-of `.Ldsi+8`?
-
-> +               and     r2, r3, r0              @ is this a bl call
-> +               teq     r2, r3
-> +               bne     finished_setup          @ give up if it's not
-> +               and     r0, #0xffffff           @ get call offset 24-bit int
-> +               lsl     r0, r0, #8              @ sign extend offset
-> +               asr     r0, r0, #8
-
-It's too bad this should work for older ARM versions, v6 added
-dedicated instructions for this:
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0489c/Cihfifdd.html
-
-> +               ldr     sv_pc, [sv_fp, #4]      @ get lr address
-> +               add     sv_pc, sv_pc, #-4       @ get call instruction address
-> +               add     sv_pc, sv_pc, #8        @ take care of prefetch
-> +               add     sv_pc, sv_pc, r0, lsl #2 @ find function start
-> +
-> +finished_setup:
-> +
-> +               bic     sv_pc, sv_pc, mask      @ mask PC/LR for the mode
-> +
-> +/*
-> + * Print the function (sv_pc) and where it was called
-> + *     from (sv_lr).
-> + */
-> +1004:          mov     r0, sv_pc
-> +
-> +               mov     r1, sv_lr
-> +               mov     r2, frame
-> +               bic     r1, r1, mask            @ mask PC/LR for the mode
-> +               bl      dump_backtrace_entry
-> +
-> +/*
-> + * Test if the function start is a stmfd instruction
-> + *     to determine which registers were stored in the function
-> + *     prologue.
-> + * If we could not recover the sv_pc because we were called through
-> + *     a function pointer the comparison will fail and no registers
-> + *     will print.
-> + */
-> +1005:          ldr     r1, [sv_pc, #0]         @ if stmfd sp!, {..., fp, lr}
-> +               ldr     r3, .Ldsi               @ instruction exists,
-> +               teq     r3, r1, lsr #11
-> +               ldr     r0, [frame]             @ locals are stored in
-> +                                               @ the preceding frame
-> +               subeq   r0, r0, #4
-> +               bleq    dump_backtrace_stm      @ dump saved registers
-
-Do we need to do anything to test .Ldsi+4? Otherwise looks like we
-define it but don't use it?
-
-> +
-> +/*
-> + * If we are out of frames or if the next frame
-> + *     is invalid.
-> + */
-> +               teq     sv_fp, #0               @ zero saved fp means
-> +               beq     no_frame                @ no further frames
-> +
-> +               cmp     sv_fp, frame            @ next frame must be
-> +               mov     frame, sv_fp            @ above the current frame
-> +               bhi     for_each_frame
-> +
-> +1006:          adr     r0, .Lbad
-> +               mov     r1, frame
-> +               bl      printk
-> +no_frame:      ldmfd   sp!, {r4 - r9, fp, pc}
-> +ENDPROC(c_backtrace)
-> +               .pushsection __ex_table,"a"
-> +               .align  3
-> +               .long   1001b, 1006b
-> +               .long   1002b, 1006b
-> +               .long   1003b, 1006b
-> +               .long   1004b, 1006b
-> +               .long   1005b, 1006b
-> +               .popsection
-> +
-> +.Lbad:         .asciz  "Backtrace aborted due to bad frame pointer <%p>\n"
-> +               .align
-> +.Ldsi:         .word   0xe92d4800 >> 11        @ stmfd sp!, {... fp, lr}
-> +               .word   0xe92d0000 >> 11        @ stmfd sp!, {}
-> +               .word   0x0b000000              @ bl if these bits are set
-> +
-> +#endif
-> --
-> 2.23.0.rc1.153.gdeed80330f-goog
->
+>  include/linux/security.h     | 1 +
+>  kernel/power/hibernate.c     | 3 ++-
+>  security/lockdown/lockdown.c | 1 +
+>  3 files changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index b607a8ac97fe..80ac7fb27aa9 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -106,6 +106,7 @@ enum lockdown_reason {
+>  	LOCKDOWN_MODULE_SIGNATURE,
+>  	LOCKDOWN_DEV_MEM,
+>  	LOCKDOWN_KEXEC,
+> +	LOCKDOWN_HIBERNATION,
+>  	LOCKDOWN_INTEGRITY_MAX,
+>  	LOCKDOWN_CONFIDENTIALITY_MAX,
+>  };
+> diff --git a/kernel/power/hibernate.c b/kernel/power/hibernate.c
+> index cd7434e6000d..3c0a5a8170b0 100644
+> --- a/kernel/power/hibernate.c
+> +++ b/kernel/power/hibernate.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/ctype.h>
+>  #include <linux/genhd.h>
+>  #include <linux/ktime.h>
+> +#include <linux/security.h>
+>  #include <trace/events/power.h>
+>  
+>  #include "power.h"
+> @@ -68,7 +69,7 @@ static const struct platform_hibernation_ops *hibernation_ops;
+>  
+>  bool hibernation_available(void)
+>  {
+> -	return (nohibernate == 0);
+> +	return nohibernate == 0 && !security_locked_down(LOCKDOWN_HIBERNATION);
+>  }
+>  
+>  /**
+> diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+> index aaf30ad351f9..3462f7edcaac 100644
+> --- a/security/lockdown/lockdown.c
+> +++ b/security/lockdown/lockdown.c
+> @@ -21,6 +21,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+>  	[LOCKDOWN_MODULE_SIGNATURE] = "unsigned module loading",
+>  	[LOCKDOWN_DEV_MEM] = "/dev/mem,kmem,port",
+>  	[LOCKDOWN_KEXEC] = "kexec of unsigned images",
+> +	[LOCKDOWN_HIBERNATION] = "hibernation",
+>  	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+>  	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+>  };
+> 
 
 
--- 
-Thanks,
-~Nick Desaulniers
+
+
