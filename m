@@ -2,131 +2,141 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B505796B5F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F09CC96B58
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:21:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbfHTVYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:24:03 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:18329 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728283AbfHTVYD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:24:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566336243; x=1597872243;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
-  b=gDIez0SuoeBYh13v9fqMzfjWiddGm5JyDbUWgc+qPsh5rYaKXuCLuu7W
-   twHOO3ppVCjCpphdjIpT6XQVXJezVu/si3Ntucl5yJLcgQpArI3QlpVWX
-   LEZF653mBazwE7OqXcrwEyF+GIB38HPCFeXwPCGOIjZx7tlNE/tZDbA81
-   Twc1XuKXPEVEtif4mH/D2t13OMR7lb9Aat2YZiXO7gYLNRa4+wpUynOFl
-   OWot0ZlKRjA01Na7RsDRZkxzrZXmJgw1W4SXRiwiWRhOemdp32Kuv2mzv
-   69EQWScTYPVvZoYKMiRWczUNWbtWiegtrXXBVR/QaJ2V0qdRM743/737J
-   g==;
-IronPort-SDR: NcuzmsV02Jo2MVkV6KxNqmlFwsQOtP6/1u47GWhFIV3S41DMEfB03eZRZ8K5MWIghl3aT3NOV3
- JTnOfw2X/ZVwTJWRZ9LJ/rUOrswsWF0sYig1HMlGRyJnsmrViOo1GZzR+nD/RQ7Z3SedclK8Hv
- 6qrafM8qMk8TVSV1zkssDtCaDhXzDJ7m73d6NRYBBbr5raTv46/RkqiWIc2C/RHP8HclgHdTma
- FzHCO92L9eYpiwsIoSIHFEOvve31/t6v4uR0FuEqdgfFDSdWgQh7CfEFzuWGQMmkvizV3k9B3s
- YyA=
-X-IronPort-AV: E=Sophos;i="5.64,410,1559491200"; 
-   d="scan'208";a="116279683"
-Received: from mail-sn1nam02lp2054.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.54])
-  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 05:06:01 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=KEM5AGADuGRZennoeZe/MoSg9k2qgYrEzYkWp11y304V6jHZ9C+MlqPvjW8fkKepsP6RSXjWTTDiJFtK/29j00pSW/SOS1qiNoVrCLuabt87sXMPWC5dg2JbZgJ5RXF+lwX60a3YL0ZrIuAwS/UpCBdl+ox5kn9yIFDJ/KSAS6wOer60G1Zm11n4RGF5B9rj1JwdEVDu3BKulzlBc8C+24DxsAB8J7AXchPpTckvJYr1T3OocZQCj3zFWW0ni4TQHmDov78vNUkblrv9KFmbxmq77d3s+oUFIsvdO32fIwBM0Odu5QSMrLAUIBN3TdrYaXn8rwg/1FtilbQHVmtF7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
- b=HJtIOWj0HQdMqp59PnllPZ7zVVcgdZu12HTKg6VmHEGT3CPnzySCje0QDlujuKWCXo1z9zidHrEGf5FQrdHGt0yI6n7N4MlCEiO5uaWNiDNTEoEeWa3MMZVpne+T7OzHGr03zhet9YrXFD+fs2SGFsyvVkVdyAjmpXX69rAu0GhT5Z3hG8cVlpfa4nmGanKC2InYaBHfRPvr0w/gFER4EwT1uDO9YYEXOtpG7P9BAF3ooovS8YUZ5BYiG+VXMnq12iEBGXI5hT/WyElwjFiirMIVSHUxbRIG0N18XKILX5KrBOI+Wm8kr4eXy3jftSXvvR6A+IyW5jsBEFkG7b+9ow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
- b=fQ+pwtoOBXdkftdobR6ilbXizkz9vXuA5vIVf5h+T1n2VvYRTvWLzZQxVmbSgyZD1h40w774tY8XkalmMLBzSG5RCr13sdKX5uaiXjFgznhkoHQNApkQJe2PwGCjxwQOMcpkaW5IJmziDwPi/gfUfE1dmSNoR0VDHegU7HW1JZI=
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
- BYAPR04MB5558.namprd04.prod.outlook.com (20.178.232.153) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Tue, 20 Aug 2019 21:05:59 +0000
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::24ca:5178:5475:9a0e]) by BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::24ca:5178:5475:9a0e%4]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
- 21:05:59 +0000
-From:   Atish Patra <Atish.Patra@wdc.com>
-To:     "hch@lst.de" <hch@lst.de>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "palmer@sifive.com" <palmer@sifive.com>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 10/15] riscv: poison SBI calls for M-mode
-Thread-Topic: [PATCH 10/15] riscv: poison SBI calls for M-mode
-Thread-Index: AQHVUe6aQdQDddvuSUq1rKYnjWwlLKcEkkMA
-Date:   Tue, 20 Aug 2019 21:05:59 +0000
-Message-ID: <5d45577f9e2a0368a03760ef181266931f21c0d0.camel@wdc.com>
-References: <20190813154747.24256-1-hch@lst.de>
-         <20190813154747.24256-11-hch@lst.de>
-In-Reply-To: <20190813154747.24256-11-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Atish.Patra@wdc.com; 
-x-originating-ip: [199.255.44.250]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 3dcff183-38c5-42ed-18ba-08d725b23373
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR04MB5558;
-x-ms-traffictypediagnostic: BYAPR04MB5558:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR04MB555880F1DDB8A6CCFBE1E995FAAB0@BYAPR04MB5558.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 013568035E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(366004)(346002)(39860400002)(136003)(199004)(189003)(66066001)(14454004)(76176011)(2201001)(2501003)(6246003)(36756003)(86362001)(54906003)(66556008)(66946007)(110136005)(66476007)(81166006)(64756008)(66446008)(4744005)(99286004)(81156014)(316002)(53936002)(6116002)(76116006)(3846002)(71200400001)(8676002)(4326008)(71190400001)(229853002)(118296001)(256004)(186003)(14444005)(6506007)(8936002)(486006)(476003)(478600001)(7736002)(5660300002)(6436002)(6486002)(6512007)(25786009)(11346002)(26005)(305945005)(102836004)(446003)(2906002)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5558;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: +898yo+WO7ozFTVUTmhA6WSXPkyQNVNS7q9I1I6fjyU8t49xnWARFwuYMRdF0eGNKtTE+5LwS2+7YbBmgvezmUAafbuLd8vYjWGk8kRY/YcEqx9cqAcu19OKSP1NNLLuX+vRI7SvyAjabhF7FmygKBpuMYur3Z5ni8tGp151BcYHd3bUbKD9G7cTh6X8m8zELNJpARBpoti6zFhbJFzj1c29RDnQRtAhPbYukUt9Oqp34rl+XwBei6DMcEuIHFpXRJ0Vxu6wzAQCgLD3XA7/xPgkho5SxdF7eGk2buZWaKyZoEgU3LjauDFHcGVB0ls4YK9vqdTa5QXGAky1XjuM80a7UrRn93AUKB6FFj47jNHN/iElCkCR7YpsilG5YasEEh+RdKOoEuBA7+4gp44b1t8e/UaOeVydEfEHlWkmHAE=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <76FCE82106630048BD11578FACFCEF03@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1730865AbfHTVV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:21:27 -0400
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:52925 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728283AbfHTVV1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 17:21:27 -0400
+Received: from [141.14.220.194] (unknown [141.14.220.194])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: buczek)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 084AA201A3C3E;
+        Tue, 20 Aug 2019 23:21:24 +0200 (CEST)
+From:   Donald Buczek <buczek@molgen.mpg.de>
+Subject: /proc/vmcore and wrong PAGE_OFFSET
+To:     iommu@lists.linux-foundation.org, linux-pci@vger.kernel.org,
+        x86@kernel.org, kexec@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <c42060b0-12ae-d170-9ad4-03d85919948c@molgen.mpg.de>
+Date:   Tue, 20 Aug 2019 23:21:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcff183-38c5-42ed-18ba-08d725b23373
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 21:05:59.3282
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PlHy6Q1BRpVDbESzHN0Y9hE8BbdY4EOECJ0z+vpjRMPmmaIQwPO0cqjxG0i90Az/lNy9sU4TqPUaPGpJynnAnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5558
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA4LTEzIGF0IDE3OjQ3ICswMjAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gVGhlcmUgaXMgbm8gU0JJIHdoZW4gd2UgcnVuIGluIE0tbW9kZSwgc28gZmFpbCB0aGUg
-Y29tcGlsZSBmb3IgYW55DQo+IGNvZGUNCj4gdHJ5aW5nIHRvIHVzZSBTQkkgY2FsbHMuDQo+IA0K
-PiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gLS0tDQo+
-ICBhcmNoL3Jpc2N2L2luY2x1ZGUvYXNtL3NiaS5oIHwgNCArKystDQo+ICAxIGZpbGUgY2hhbmdl
-ZCwgMyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJj
-aC9yaXNjdi9pbmNsdWRlL2FzbS9zYmkuaA0KPiBiL2FyY2gvcmlzY3YvaW5jbHVkZS9hc20vc2Jp
-LmgNCj4gaW5kZXggMjExMzRiM2VmNDA0Li4xZTE3ZjA3ZWFkYWYgMTAwNjQ0DQo+IC0tLSBhL2Fy
-Y2gvcmlzY3YvaW5jbHVkZS9hc20vc2JpLmgNCj4gKysrIGIvYXJjaC9yaXNjdi9pbmNsdWRlL2Fz
-bS9zYmkuaA0KPiBAQCAtOCw2ICs4LDcgQEANCj4gIA0KPiAgI2luY2x1ZGUgPGxpbnV4L3R5cGVz
-Lmg+DQo+ICANCj4gKyNpZm5kZWYgQ09ORklHX01fTU9ERQ0KPiAgI2RlZmluZSBTQklfU0VUX1RJ
-TUVSIDANCj4gICNkZWZpbmUgU0JJX0NPTlNPTEVfUFVUQ0hBUiAxDQo+ICAjZGVmaW5lIFNCSV9D
-T05TT0xFX0dFVENIQVIgMg0KPiBAQCAtOTQsNCArOTUsNSBAQCBzdGF0aWMgaW5saW5lIHZvaWQg
-c2JpX3JlbW90ZV9zZmVuY2Vfdm1hX2FzaWQoY29uc3QNCj4gdW5zaWduZWQgbG9uZyAqaGFydF9t
-YXNrLA0KPiAgCVNCSV9DQUxMXzQoU0JJX1JFTU9URV9TRkVOQ0VfVk1BX0FTSUQsIGhhcnRfbWFz
-aywgc3RhcnQsIHNpemUsDQo+IGFzaWQpOw0KPiAgfQ0KPiAgDQo+IC0jZW5kaWYNCj4gKyNlbmRp
-ZiAvKiBDT05GSUdfTV9NT0RFICovDQo+ICsjZW5kaWYgLyogX0FTTV9SSVNDVl9TQklfSCAqLw0K
-DQpSZXZpZXdlZC1ieTogQXRpc2ggUGF0cmEgPGF0aXNoLnBhdHJhQHdkYy5jb20+DQoNCi0tIA0K
-UmVnYXJkcywNCkF0aXNoDQo=
+Dear Linux folks,
+
+I'm investigating a problem, that the crash utility fails to work with our crash dumps:
+
+     buczek@kreios:/mnt$ crash vmlinux crash.vmcore
+     
+     crash 7.2.6
+     Copyright (C) 2002-2019  Red Hat, Inc.
+     Copyright (C) 2004, 2005, 2006, 2010  IBM Corporation
+     Copyright (C) 1999-2006  Hewlett-Packard Co
+     Copyright (C) 2005, 2006, 2011, 2012  Fujitsu Limited
+     Copyright (C) 2006, 2007  VA Linux Systems Japan K.K.
+     Copyright (C) 2005, 2011  NEC Corporation
+     Copyright (C) 1999, 2002, 2007  Silicon Graphics, Inc.
+     Copyright (C) 1999, 2000, 2001, 2002  Mission Critical Linux, Inc.
+     This program is free software, covered by the GNU General Public License,
+     and you are welcome to change it and/or distribute copies of it under
+     certain conditions.  Enter "help copying" to see the conditions.
+     This program has absolutely no warranty.  Enter "help warranty" for details.
+      
+     GNU gdb (GDB) 7.6
+     Copyright (C) 2013 Free Software Foundation, Inc.
+     License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+     This is free software: you are free to change and redistribute it.
+     There is NO WARRANTY, to the extent permitted by law.  Type "show copying"
+     and "show warranty" for details.
+     This GDB was configured as "x86_64-unknown-linux-gnu"...
+     
+     crash: read error: kernel virtual address: ffff89807ff77000  type: "memory section root table"
+
+The crash file is a copy of /dev/vmcore taken by a crashkernel after a sysctl-forced panic.
+
+It looks to me, that  0xffff89807ff77000 is not readable, because the virtual addresses stored in the elf header of the dump file are off by 0x0000008000000000:
+
+     buczek@kreios:/mnt$ readelf -a crash.vmcore | grep LOAD | perl -lane 'printf "%s (%016x)\n",$_,hex($F[2])-hex($F[3])'
+       LOAD           0x000000000000d000 0xffffffff81000000 0x000001007d000000 (fffffeff04000000)
+       LOAD           0x0000000001c33000 0xffff880000001000 0x0000000000001000 (ffff880000000000)
+       LOAD           0x0000000001cc1000 0xffff880000090000 0x0000000000090000 (ffff880000000000)
+       LOAD           0x0000000001cd1000 0xffff880000100000 0x0000000000100000 (ffff880000000000)
+       LOAD           0x0000000001cd2070 0xffff880000100070 0x0000000000100070 (ffff880000000000)
+       LOAD           0x0000000019bd2000 0xffff880038000000 0x0000000038000000 (ffff880000000000)
+       LOAD           0x000000004e6a1000 0xffff88006ffff000 0x000000006ffff000 (ffff880000000000)
+       LOAD           0x000000004e6a2000 0xffff880100000000 0x0000000100000000 (ffff880000000000)
+       LOAD           0x0000001fcda22000 0xffff882080000000 0x0000002080000000 (ffff880000000000)
+       LOAD           0x0000003fcd9a2000 0xffff884080000000 0x0000004080000000 (ffff880000000000)
+       LOAD           0x0000005fcd922000 0xffff886080000000 0x0000006080000000 (ffff880000000000)
+       LOAD           0x0000007fcd8a2000 0xffff888080000000 0x0000008080000000 (ffff880000000000)
+       LOAD           0x0000009fcd822000 0xffff88a080000000 0x000000a080000000 (ffff880000000000)
+       LOAD           0x000000bfcd7a2000 0xffff88c080000000 0x000000c080000000 (ffff880000000000)
+       LOAD           0x000000dfcd722000 0xffff88e080000000 0x000000e080000000 (ffff880000000000)
+       LOAD           0x000000fc4d722000 0xffff88fe00000000 0x000000fe00000000 (ffff880000000000)
+
+(Columns are File offset, Virtual Address, Physical Address and computed offset).
+
+I would expect the offset between the virtual and the physical address to be PAGE_OFFSET, which is 0xffff88800000000 on x86_64, not 0xffff880000000000. Unlike /proc/vmcore, /proc/kcore shows the same physical memory (of the last memory section above) with a correct offset:
+
+     buczek@kreios:/mnt$ sudo readelf -a /proc/kcore | grep 0x000000fe00000000 | perl -lane 'printf "%s (%016x)\n",$_,hex($F[2])-hex($F[3])'
+       LOAD           0x0000097e00004000 0xffff897e00000000 0x000000fe00000000 (ffff888000000000)
+
+The failing address 0xffff89807ff77000 happens to be at the end of the last memory section. It is the mem_section array, which crash wants to load and which is visible in the running system:
+
+     buczek@kreios:/mnt$ sudo gdb vmlinux /proc/kcore
+     [...]
+     (gdb) print mem_section
+     $1 = (struct mem_section **) 0xffff89807ff77000
+     (gdb) print *mem_section
+     $2 = (struct mem_section *) 0xffff88a07f37b000
+     (gdb) print **mem_section
+     $3 = {section_mem_map = 18446719884453740551, pageblock_flags = 0xffff88a07f36f040}
+
+I can read the same information from the crash dump, if I account for the 0x0000008000000000 error:
+
+     buczek@kreios:/mnt$ gdb vmlinux crash.vmcore
+     [...]
+     (gdb) print mem_section
+     $1 = (struct mem_section **) 0xffff89807ff77000
+     (gdb) print *mem_section
+     Cannot access memory at address 0xffff89807ff77000
+     (gdb) set $t=(struct mem_section **) ((char *)mem_section - 0x0000008000000000)
+     (gdb) print *$t
+     $2 = (struct mem_section *) 0xffff88a07f37b000
+     (gdb) set $s=(struct mem_section *)((char *)*$t - 0x0000008000000000 )
+     (gdb) print *$s
+     $3 = {section_mem_map = 18446719884453740551, pageblock_flags = 0xffff88a07f36f040}
+
+In the above example, the running kernel, the crashed kernel and the crashkernel are all the same 4.19.57 compilation. But I've tried with several other versions ( crashkernel 4.4, running kernel from 4.0 to linux master) with the same result.
+
+The machine in the above example has several numa nodes (this is why there are so many LOAD headers). But I've tried this with a small kvm virtual machine and got the same result.
+
+     buczek@kreios:/mnt/linux-4.19.57-286.x86_64/build$ grep RANDOMIZE_BASE .config
+     # CONFIG_RANDOMIZE_BASE is not set
+     buczek@kreios:/mnt/linux-4.19.57-286.x86_64/build$ grep SPARSEMEM .config
+     CONFIG_ARCH_SPARSEMEM_ENABLE=y
+     CONFIG_ARCH_SPARSEMEM_DEFAULT=y
+     CONFIG_SPARSEMEM_MANUAL=y
+     CONFIG_SPARSEMEM=y
+     CONFIG_SPARSEMEM_EXTREME=y
+     CONFIG_SPARSEMEM_VMEMMAP_ENABLE=y
+     CONFIG_SPARSEMEM_VMEMMAP=y
+     buczek@kreios:/mnt/linux-4.19.57-286.x86_64/build$ grep PAGE_TABLE_ISOLATION .config
+     CONFIG_PAGE_TABLE_ISOLATION=y
+
+Any ideas?
+
+Donald
