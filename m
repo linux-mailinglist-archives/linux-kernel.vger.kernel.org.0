@@ -2,252 +2,513 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F70095A1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:47:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1F0795A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:46:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfHTIrF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:47:05 -0400
-Received: from mout.gmx.net ([212.227.15.18]:40111 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728426AbfHTIrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:47:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1566290783;
-        bh=EBVlGBCVrp4icYHnuaKiKD9FrToj2NDpH6MM6Vo97lc=;
-        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=JJV9v6iyMorgp+P5rIi/fp1UTsuXteW+REqL1lFQ/q9FwgPpyT1JeK9yrz0OcSCAi
-         vdcpWM1l3ique3/6TbCXMVFJz0GHQbczRWeMATVE9gv8KPpZya7fJDHY2YA9Rg/9iN
-         GEvYem0LAReXuvfXZ+98mad/N28Ah97KRAhKafeA=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([54.250.245.166]) by mail.gmx.com (mrgmx002
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0Ln897-1iTHBT1qFp-00hQ9d; Tue, 20
- Aug 2019 10:46:23 +0200
-Subject: Re: [PATCH] erofs: move erofs out of staging
-To:     Chao Yu <yuchao0@huawei.com>, Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
+        id S1729402AbfHTIqV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:46:21 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58686 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728426AbfHTIqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 04:46:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D59E3AC26;
+        Tue, 20 Aug 2019 08:46:18 +0000 (UTC)
+Subject: Re: [RFC] mm: Proactive compaction
+To:     Nitin Gupta <nigupta@nvidia.com>, akpm@linux-foundation.org,
+        mgorman@techsingularity.net, mhocko@suse.com,
+        dan.j.williams@intel.com
+Cc:     Yu Zhao <yuzhao@google.com>, Matthew Wilcox <willy@infradead.org>,
+        Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Roman Gushchin <guro@fb.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Li Guifu <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, Pavel Machek <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-References: <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
- <20190818151154.GA32157@mit.edu> <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
- <c6f6de48-2594-05e4-2048-9a9c59c018d7@gmx.com>
- <c9a27e20-33fa-2cad-79f2-ecc26f6f3490@huawei.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=quwenruo.btrfs@gmx.com; prefer-encrypt=mutual; keydata=
- mQENBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAG0IlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT6JAVQEEwEIAD4CGwMFCwkI
- BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWCnQUJCWYC
- bgAKCRDCPZHzoSX+qAR8B/94VAsSNygx1C6dhb1u1Wp1Jr/lfO7QIOK/nf1PF0VpYjTQ2au8
- ihf/RApTna31sVjBx3jzlmpy+lDoPdXwbI3Czx1PwDbdhAAjdRbvBmwM6cUWyqD+zjVm4RTG
- rFTPi3E7828YJ71Vpda2qghOYdnC45xCcjmHh8FwReLzsV2A6FtXsvd87bq6Iw2axOHVUax2
- FGSbardMsHrya1dC2jF2R6n0uxaIc1bWGweYsq0LXvLcvjWH+zDgzYCUB0cfb+6Ib/ipSCYp
- 3i8BevMsTs62MOBmKz7til6Zdz0kkqDdSNOq8LgWGLOwUTqBh71+lqN2XBpTDu1eLZaNbxSI
- ilaVuQENBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
- CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
- /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
- GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
- q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
- ABEBAAGJATwEGAEIACYWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCWdWBrwIbDAUJA8JnAAAK
- CRDCPZHzoSX+qA3xB/4zS8zYh3Cbm3FllKz7+RKBw/ETBibFSKedQkbJzRlZhBc+XRwF61mi
- f0SXSdqKMbM1a98fEg8H5kV6GTo62BzvynVrf/FyT+zWbIVEuuZttMk2gWLIvbmWNyrQnzPl
- mnjK4AEvZGIt1pk+3+N/CMEfAZH5Aqnp0PaoytRZ/1vtMXNgMxlfNnb96giC3KMR6U0E+siA
- 4V7biIoyNoaN33t8m5FwEwd2FQDG9dAXWhG13zcm9gnk63BN3wyCQR+X5+jsfBaS4dvNzvQv
- h8Uq/YGjCoV1ofKYh3WKMY8avjq25nlrhzD/Nto9jHp8niwr21K//pXVA81R2qaXqGbql+zo
-Message-ID: <735b8d15-bcb5-b11b-07c1-0617eb1e5ce9@gmx.com>
-Date:   Tue, 20 Aug 2019 16:46:03 +0800
+        Kees Cook <keescook@chromium.org>,
+        Jann Horn <jannh@google.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Arun KS <arunks@codeaurora.org>,
+        Janne Huttunen <janne.huttunen@nokia.com>,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Khalid Aziz <khalid.aziz@oracle.com>
+References: <20190816214413.15006-1-nigupta@nvidia.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <87634ddc-8bfd-8311-46c4-35f7dc32d42f@suse.cz>
+Date:   Tue, 20 Aug 2019 10:46:17 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <c9a27e20-33fa-2cad-79f2-ecc26f6f3490@huawei.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="4LVjIQCVca5X3T5GkfFKKDlO5YDcA3qer"
-X-Provags-ID: V03:K1:1wqXq/0in6IfAkHB8akysmuzP9uzNyxmHmhAzExPc371ksQFLD8
- Cdt5AwTNnmMiYFAbDW6BkoUQ5T8DnWNT9tDAzkbqTk5jP1Ob1r0WLgr4yca+Ns9SZwjDu2X
- vkxKKN+M7bd6AkuTNBtZViIGlYmC1n9zfAYzXFKoUFCyq4gfVULmvt90V+b5m6SmsjEaHRT
- hA/DT864MFqJJ5XBPvvZw==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:VS2uBzGSQXA=:Njk4aHa8Y50tGMR18ReoZa
- NmXttE2l1C55nPmuFyQrrh62SYMRWm9X36GKiZEoIUeM8TB2xwBr0jydBQe2n05nQ2nbXHpcy
- 6M6eFHMrxuABqWR5lj9RtTBm0ehpbuWw77o/BH+s6WubSMMUJFfBMvIcbFcX6EdMPhgCLVkV8
- 6L/3zLFR0XSDO+betOYm8G2iqOMGuwxvFpGPDfET8a3gs+0fshyAM+RlE0bqUh0yoEYk6za2m
- kvADanb80T+n25MOow/jvMcAFgPLC/73EpuneQV7YAC6Br2oJm4J2g6TH5Mo35Qs6vZaOU3AJ
- pz/t+vHj/48pFWOmGaB7fiyVCNcjryKkjJGwVqKPrk3bDRFKTmRGjUxr2KKBYPuIJpxVrcd+z
- b8l1R/6W1FyGA28UG7HBFj8XjpK0gPyABhSP1Gh+4He+P9pVyU25oFuRg75NQ9mvG/gwSW/fk
- P+EMjqgLsWXozwz5HXCA0xvUoc4mNki53NocP9MphwEKhda/8d6Alfzs8b5w0BZF7sS+eCz0A
- B12SPsbAlkKJAZ4bfHP9Jh2ykxKTrnSn5sPgH+XXIS/5qqx7NXINDWBTfoWfZn3Qec4Jwz3pF
- gcQ6j6uhW/U5vQ04EKEpA22zisTLbtHQCiq5OqVuqDpYjAsPwTbEmWw5afnXdN+fVkKyn0Ske
- buM2LE7dprg0u4Pu4Pu4WTyI6sWB2N094Qx5g14v6Jp+O3zd3+b40IxZCWNORqo4l9MCgUzhb
- Reo94c+tLiLdQwdha4vGge3tUXmfFL5YkMScvWonoSu8oFiY3lNcwyfyqTNvg14xEA0zh5obT
- hBqsMEZ9a/ZQXf58+jSEboVH6xD2Rbx/nwRe18sruv6e2dNt5N8m+DnocbEt5QTeoNi7VIQ19
- Zm6t90xt8S3hy4KOgDo/5FgRMW4AfCpkCoVbM2cLDfnBWNoFrzGnECmze2P/CpKOD47fM3Ev/
- TM9tsKwb45PT7J3d+Z2Iv1J/DVz+jHxboSMOB7KRZv98Um/sFmLOHvV+vPUMo/dw+nfs/0wpW
- wI0RHzpmoCoSU8+hBb/TZySB6WmtIMYliISUA41rGk5osjB5ayEYG1doBHbMtRe3wMriP68g1
- kMV74UgROZsV4NuYqHFk4kOTQaBkNxLm2HUaNpGl0oJ3Cb5LmjolWsxtaFtR3yUobkc9sMRXt
- oMvejVAWWtRNLHha3Q4/6q+M3N6tAjcW3Voxz3hsTcpPuDIA==
+In-Reply-To: <20190816214413.15006-1-nigupta@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---4LVjIQCVca5X3T5GkfFKKDlO5YDcA3qer
-Content-Type: multipart/mixed; boundary="slQR6rSH5UnNorxY9BmaW69TgYDvJmTLN";
- protected-headers="v1"
-From: Qu Wenruo <quwenruo.btrfs@gmx.com>
-To: Chao Yu <yuchao0@huawei.com>, Gao Xiang <hsiangkao@aol.com>,
- "Darrick J. Wong" <darrick.wong@oracle.com>
-Cc: Christoph Hellwig <hch@infradead.org>, "Theodore Y. Ts'o"
- <tytso@mit.edu>, Eric Biggers <ebiggers@kernel.org>,
- Richard Weinberger <richard@nod.at>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jan Kara <jack@suse.cz>,
- Dave Chinner <david@fromorbit.com>, David Sterba <dsterba@suse.cz>,
- Miao Xie <miaoxie@huawei.com>, devel <devel@driverdev.osuosl.org>,
- Stephen Rothwell <sfr@canb.auug.org.au>, Amir Goldstein
- <amir73il@gmail.com>, linux-erofs <linux-erofs@lists.ozlabs.org>,
- Al Viro <viro@zeniv.linux.org.uk>, Jaegeuk Kim <jaegeuk@kernel.org>,
- linux-kernel <linux-kernel@vger.kernel.org>,
- Li Guifu <bluce.liguifu@huawei.com>, Fang Wei <fangwei1@huawei.com>,
- Pavel Machek <pavel@denx.de>, linux-fsdevel <linux-fsdevel@vger.kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- torvalds <torvalds@linux-foundation.org>
-Message-ID: <735b8d15-bcb5-b11b-07c1-0617eb1e5ce9@gmx.com>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-References: <790210571.69061.1566120073465.JavaMail.zimbra@nod.at>
- <20190818151154.GA32157@mit.edu> <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
- <c6f6de48-2594-05e4-2048-9a9c59c018d7@gmx.com>
- <c9a27e20-33fa-2cad-79f2-ecc26f6f3490@huawei.com>
-In-Reply-To: <c9a27e20-33fa-2cad-79f2-ecc26f6f3490@huawei.com>
++CC Khalid Aziz who proposed a different approach:
+https://lore.kernel.org/linux-mm/20190813014012.30232-1-khalid.aziz@oracle.com/T/#u
 
---slQR6rSH5UnNorxY9BmaW69TgYDvJmTLN
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+On 8/16/19 11:43 PM, Nitin Gupta wrote:
+> For some applications we need to allocate almost all memory as
+> hugepages. However, on a running system, higher order allocations can
+> fail if the memory is fragmented. Linux kernel currently does
+> on-demand compaction as we request more hugepages but this style of
+> compaction incurs very high latency. Experiments with one-time full
+> memory compaction (followed by hugepage allocations) shows that kernel
+> is able to restore a highly fragmented memory state to a fairly
+> compacted memory state within <1 sec for a 32G system. Such data
+> suggests that a more proactive compaction can help us allocate a large
+> fraction of memory as hugepages keeping allocation latencies low.
+> 
+> For a more proactive compaction, the approach taken here is to define
+> per page-order external fragmentation thresholds and let kcompactd
+> threads act on these thresholds.
+> 
+> The low and high thresholds are defined per page-order and exposed
+> through sysfs:
+> 
+>   /sys/kernel/mm/compaction/order-[1..MAX_ORDER]/extfrag_{low,high}
+> 
+> Per-node kcompactd thread is woken up every few seconds to check if
+> any zone on its node has extfrag above the extfrag_high threshold for
+> any order, in which case the thread starts compaction in the backgrond
+> till all zones are below extfrag_low level for all orders. By default
+> both these thresolds are set to 100 for all orders which essentially
+> disables kcompactd.
 
-[...]
->=20
-> Yeah, it looks like we need searching more levels mapping to find the f=
-inal
-> physical block address of inode/node/data in btrfs.
->=20
-> IMO, in a little lazy way, we can reform and reuse existed function in
-> btrfs-progs which can find the mapping info of inode/node/data accordin=
-g to
-> specified ino or ino+pg_no.
+Could you define what exactly extfrag is, in the changelog?
 
-Maybe no need to go as deep as ino.
+> To avoid wasting CPU cycles when compaction cannot help, such as when
+> memory is full, we check both, extfrag > extfrag_high and
+> compaction_suitable(zone). This allows kcomapctd thread to stays inactive
+> even if extfrag thresholds are not met.
 
-What about just go physical bytenr? E.g. for XFS/EXT* choose a random
-bytenr. Then verify if that block is used, if not, try again.
+How does it translate to e.g. the number of free pages of order?
 
-If used, check if it's metadata. If not, try again.
-(feel free to corrupt data, in fact btrfs uses some data as space cache,
-so it should make some sense)
+> This patch is largely based on ideas from Michal Hocko posted here:
+> https://lore.kernel.org/linux-mm/20161230131412.GI13301@dhcp22.suse.cz/
+> 
+> Testing done (on x86):
+>  - Set /sys/kernel/mm/compaction/order-9/extfrag_{low,high} = {25, 30}
+>  respectively.
+>  - Use a test program to fragment memory: the program allocates all memory
+>  and then for each 2M aligned section, frees 3/4 of base pages using
+>  munmap.
+>  - kcompactd0 detects fragmentation for order-9 > extfrag_high and starts
+>  compaction till extfrag < extfrag_low for order-9.
+> 
+> The patch has plenty of rough edges but posting it early to see if I'm
+> going in the right direction and to get some early feedback.
 
-If metadata, corrupt that bytenr/bytenr range in the metadata block,
-regenerate checksum, call it a day and let kernel suffer.
+That's a lot of control knobs - how is an admin supposed to tune them to their
+needs?
 
-For btrfs, just do extra physical -> logical convert in the first place,
-then follow the same workflow.
-It should work for any fs as long as it's on single device.
+(keeping the rest for reference)
 
->=20
->>
->> It may depends on the granularity. But definitely a good idea to do so=
+> Signed-off-by: Nitin Gupta <nigupta@nvidia.com>
+> ---
+>  include/linux/compaction.h |  12 ++
+>  mm/compaction.c            | 250 ++++++++++++++++++++++++++++++-------
+>  mm/vmstat.c                |  12 ++
+>  3 files changed, 228 insertions(+), 46 deletions(-)
+> 
+> diff --git a/include/linux/compaction.h b/include/linux/compaction.h
+> index 9569e7c786d3..26bfedbbc64b 100644
+> --- a/include/linux/compaction.h
+> +++ b/include/linux/compaction.h
+> @@ -60,6 +60,17 @@ enum compact_result {
+>  
+>  struct alloc_context; /* in mm/internal.h */
+>  
+> +// "order-%d"
+> +#define COMPACTION_ORDER_STATE_NAME_LEN 16
+> +// Per-order compaction state
+> +struct compaction_order_state {
+> +	unsigned int order;
+> +	unsigned int extfrag_low;
+> +	unsigned int extfrag_high;
+> +	unsigned int extfrag_curr;
+> +	char name[COMPACTION_ORDER_STATE_NAME_LEN];
+> +};
+> +
+>  /*
+>   * Number of free order-0 pages that should be available above given watermark
+>   * to make sure compaction has reasonable chance of not running out of free
+> @@ -90,6 +101,7 @@ extern int sysctl_compaction_handler(struct ctl_table *table, int write,
+>  extern int sysctl_extfrag_threshold;
+>  extern int sysctl_compact_unevictable_allowed;
+>  
+> +extern int extfrag_for_order(struct zone *zone, unsigned int order);
+>  extern int fragmentation_index(struct zone *zone, unsigned int order);
+>  extern enum compact_result try_to_compact_pages(gfp_t gfp_mask,
+>  		unsigned int order, unsigned int alloc_flags,
+> diff --git a/mm/compaction.c b/mm/compaction.c
+> index 952dc2fb24e5..21866b1ad249 100644
+> --- a/mm/compaction.c
+> +++ b/mm/compaction.c
+> @@ -25,6 +25,10 @@
+>  #include <linux/psi.h>
+>  #include "internal.h"
+>  
+> +#ifdef CONFIG_COMPACTION
+> +struct compaction_order_state compaction_order_states[MAX_ORDER+1];
+> +#endif
+> +
+>  #ifdef CONFIG_COMPACTION
+>  static inline void count_compact_event(enum vm_event_item item)
+>  {
+> @@ -1846,6 +1850,49 @@ static inline bool is_via_compact_memory(int order)
+>  	return order == -1;
+>  }
+>  
+> +static int extfrag_wmark_high(struct zone *zone)
+> +{
+> +	int order;
+> +
+> +	for (order = 1; order <= MAX_ORDER; order++) {
+> +		int extfrag = extfrag_for_order(zone, order);
+> +		int threshold = compaction_order_states[order].extfrag_high;
+> +
+> +		if (extfrag > threshold)
+> +			return order;
+> +	}
+> +	return 0;
+> +}
+> +
+> +static bool node_should_compact(pg_data_t *pgdat)
+> +{
+> +	struct zone *zone;
+> +
+> +	for_each_populated_zone(zone) {
+> +		int order = extfrag_wmark_high(zone);
+> +
+> +		if (order && compaction_suitable(zone, order,
+> +				0, zone_idx(zone)) == COMPACT_CONTINUE) {
+> +			return true;
+> +		}
+> +	}
+> +	return false;
+> +}
+> +
+> +static int extfrag_wmark_low(struct zone *zone)
+> +{
+> +	int order;
+> +
+> +	for (order = 1; order <= MAX_ORDER; order++) {
+> +		int extfrag = extfrag_for_order(zone, order);
+> +		int threshold = compaction_order_states[order].extfrag_low;
+> +
+> +		if (extfrag > threshold)
+> +			return order;
+> +	}
+> +	return 0;
+> +}
+> +
+>  static enum compact_result __compact_finished(struct compact_control *cc)
+>  {
+>  	unsigned int order;
+> @@ -1872,7 +1919,7 @@ static enum compact_result __compact_finished(struct compact_control *cc)
+>  			return COMPACT_PARTIAL_SKIPPED;
+>  	}
+>  
+> -	if (is_via_compact_memory(cc->order))
+> +	if (extfrag_wmark_low(cc->zone))
+>  		return COMPACT_CONTINUE;
+>  
+>  	/*
+> @@ -1962,18 +2009,6 @@ static enum compact_result __compaction_suitable(struct zone *zone, int order,
+>  {
+>  	unsigned long watermark;
+>  
+> -	if (is_via_compact_memory(order))
+> -		return COMPACT_CONTINUE;
+> -
+> -	watermark = wmark_pages(zone, alloc_flags & ALLOC_WMARK_MASK);
+> -	/*
+> -	 * If watermarks for high-order allocation are already met, there
+> -	 * should be no need for compaction at all.
+> -	 */
+> -	if (zone_watermark_ok(zone, order, watermark, classzone_idx,
+> -								alloc_flags))
+> -		return COMPACT_SUCCESS;
+> -
+>  	/*
+>  	 * Watermarks for order-0 must be met for compaction to be able to
+>  	 * isolate free pages for migration targets. This means that the
+> @@ -2003,31 +2038,9 @@ enum compact_result compaction_suitable(struct zone *zone, int order,
+>  					int classzone_idx)
+>  {
+>  	enum compact_result ret;
+> -	int fragindex;
+>  
+>  	ret = __compaction_suitable(zone, order, alloc_flags, classzone_idx,
+>  				    zone_page_state(zone, NR_FREE_PAGES));
+> -	/*
+> -	 * fragmentation index determines if allocation failures are due to
+> -	 * low memory or external fragmentation
+> -	 *
+> -	 * index of -1000 would imply allocations might succeed depending on
+> -	 * watermarks, but we already failed the high-order watermark check
+> -	 * index towards 0 implies failure is due to lack of memory
+> -	 * index towards 1000 implies failure is due to fragmentation
+> -	 *
+> -	 * Only compact if a failure would be due to fragmentation. Also
+> -	 * ignore fragindex for non-costly orders where the alternative to
+> -	 * a successful reclaim/compaction is OOM. Fragindex and the
+> -	 * vm.extfrag_threshold sysctl is meant as a heuristic to prevent
+> -	 * excessive compaction for costly orders, but it should not be at the
+> -	 * expense of system stability.
+> -	 */
+> -	if (ret == COMPACT_CONTINUE && (order > PAGE_ALLOC_COSTLY_ORDER)) {
+> -		fragindex = fragmentation_index(zone, order);
+> -		if (fragindex >= 0 && fragindex <= sysctl_extfrag_threshold)
+> -			ret = COMPACT_NOT_SUITABLE_ZONE;
+> -	}
+>  
+>  	trace_mm_compaction_suitable(zone, order, ret);
+>  	if (ret == COMPACT_NOT_SUITABLE_ZONE)
+> @@ -2416,7 +2429,6 @@ static void compact_node(int nid)
+>  		.gfp_mask = GFP_KERNEL,
+>  	};
+>  
+> -
+>  	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
+>  
+>  		zone = &pgdat->node_zones[zoneid];
+> @@ -2493,9 +2505,149 @@ void compaction_unregister_node(struct node *node)
+>  }
+>  #endif /* CONFIG_SYSFS && CONFIG_NUMA */
+>  
+> +#ifdef CONFIG_SYSFS
+> +
+> +#define COMPACTION_ATTR_RO(_name) \
+> +	static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
+> +
+> +#define COMPACTION_ATTR(_name) \
+> +	static struct kobj_attribute _name##_attr = \
+> +		__ATTR(_name, 0644, _name##_show, _name##_store)
+> +
+> +static struct kobject *compaction_kobj;
+> +static struct kobject *compaction_order_kobjs[MAX_ORDER];
+> +
+> +static struct compaction_order_state *kobj_to_compaction_order_state(
+> +						struct kobject *kobj)
+> +{
+> +	int i;
+> +
+> +	for (i = 1; i <= MAX_ORDER; i++) {
+> +		if (compaction_order_kobjs[i] == kobj)
+> +			return &compaction_order_states[i];
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static ssize_t extfrag_store_common(bool is_low, struct kobject *kobj,
+> +		struct kobj_attribute *attr, const char *buf, size_t count)
+> +{
+> +	int err;
+> +	unsigned long input;
+> +	struct compaction_order_state *c = kobj_to_compaction_order_state(kobj);
+> +
+> +	err = kstrtoul(buf, 10, &input);
+> +	if (err)
+> +		return err;
+> +	if (input > 100)
+> +		return -EINVAL;
+> +
+> +	if (is_low)
+> +		c->extfrag_low = input;
+> +	else
+> +		c->extfrag_high = input;
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t extfrag_low_show(struct kobject *kobj,
+> +		struct kobj_attribute *attr, char *buf)
+> +{
+> +	struct compaction_order_state *c = kobj_to_compaction_order_state(kobj);
+> +
+> +	return sprintf(buf, "%u\n", c->extfrag_low);
+> +}
+> +
+> +static ssize_t extfrag_low_store(struct kobject *kobj,
+> +		struct kobj_attribute *attr, const char *buf, size_t count)
+> +{
+> +	return extfrag_store_common(true, kobj, attr, buf, count);
+> +}
+> +COMPACTION_ATTR(extfrag_low);
+> +
+> +static ssize_t extfrag_high_show(struct kobject *kobj,
+> +					struct kobj_attribute *attr, char *buf)
+> +{
+> +	struct compaction_order_state *c = kobj_to_compaction_order_state(kobj);
+> +
+> +	return sprintf(buf, "%u\n", c->extfrag_high);
+> +}
+> +
+> +static ssize_t extfrag_high_store(struct kobject *kobj,
+> +		struct kobj_attribute *attr, const char *buf, size_t count)
+> +{
+> +	return extfrag_store_common(false, kobj, attr, buf, count);
+> +}
+> +COMPACTION_ATTR(extfrag_high);
+> +
+> +static struct attribute *compaction_order_attrs[] = {
+> +	&extfrag_low_attr.attr,
+> +	&extfrag_high_attr.attr,
+> +	NULL,
+> +};
+> +
+> +static const struct attribute_group compaction_order_attr_group = {
+> +	.attrs = compaction_order_attrs,
+> +};
+> +
+> +static int compaction_sysfs_add_order(struct compaction_order_state *c,
+> +	struct kobject *parent, struct kobject **compaction_order_kobjs,
+> +	const struct attribute_group *compaction_order_attr_group)
+> +{
+> +	int retval;
+> +
+> +	compaction_order_kobjs[c->order] =
+> +			kobject_create_and_add(c->name, parent);
+> +	if (!compaction_order_kobjs[c->order])
+> +		return -ENOMEM;
+> +
+> +	retval = sysfs_create_group(compaction_order_kobjs[c->order],
+> +				compaction_order_attr_group);
+> +	if (retval)
+> +		kobject_put(compaction_order_kobjs[c->order]);
+> +
+> +	return retval;
+> +}
+> +
+> +static void __init compaction_sysfs_init(void)
+> +{
+> +	struct compaction_order_state *c;
+> +	int i, err;
+> +
+> +	compaction_kobj = kobject_create_and_add("compaction", mm_kobj);
+> +	if (!compaction_kobj)
+> +		return;
+> +
+> +	for (i = 1; i <= MAX_ORDER; i++) {
+> +		c = &compaction_order_states[i];
+> +		err = compaction_sysfs_add_order(c, compaction_kobj,
+> +					compaction_order_kobjs,
+> +					&compaction_order_attr_group);
+> +		if (err)
+> +			pr_err("compaction: Unable to add state %s", c->name);
+> +	}
+> +}
+> +
+> +static void __init compaction_init_order_states(void)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i <= MAX_ORDER; i++) {
+> +		struct compaction_order_state *c = &compaction_order_states[i];
+> +
+> +		c->order = i;
+> +		c->extfrag_low = 100;
+> +		c->extfrag_high = 100;
+> +		snprintf(c->name, COMPACTION_ORDER_STATE_NAME_LEN,
+> +						"order-%d", i);
+> +	}
+> +}
+> +#endif
+> +
+>  static inline bool kcompactd_work_requested(pg_data_t *pgdat)
+>  {
+> -	return pgdat->kcompactd_max_order > 0 || kthread_should_stop();
+> +	return kthread_should_stop() || node_should_compact(pgdat);
+>  }
+>  
+>  static bool kcompactd_node_suitable(pg_data_t *pgdat)
+> @@ -2527,15 +2679,16 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+>  	int zoneid;
+>  	struct zone *zone;
+>  	struct compact_control cc = {
+> -		.order = pgdat->kcompactd_max_order,
+> -		.search_order = pgdat->kcompactd_max_order,
+> +		.order = -1,
+>  		.total_migrate_scanned = 0,
+>  		.total_free_scanned = 0,
+> -		.classzone_idx = pgdat->kcompactd_classzone_idx,
+> -		.mode = MIGRATE_SYNC_LIGHT,
+> -		.ignore_skip_hint = false,
+> +		.mode = MIGRATE_SYNC,
+> +		.ignore_skip_hint = true,
+> +		.whole_zone = false,
+>  		.gfp_mask = GFP_KERNEL,
+> +		.classzone_idx = MAX_NR_ZONES - 1,
+>  	};
+> +
+>  	trace_mm_compaction_kcompactd_wake(pgdat->node_id, cc.order,
+>  							cc.classzone_idx);
+>  	count_compact_event(KCOMPACTD_WAKE);
+> @@ -2565,7 +2718,6 @@ static void kcompactd_do_work(pg_data_t *pgdat)
+>  		if (kthread_should_stop())
+>  			return;
+>  		status = compact_zone(&cc, NULL);
+> -
+>  		if (status == COMPACT_SUCCESS) {
+>  			compaction_defer_reset(zone, cc.order, false);
+>  		} else if (status == COMPACT_PARTIAL_SKIPPED || status == COMPACT_COMPLETE) {
+> @@ -2650,11 +2802,14 @@ static int kcompactd(void *p)
+>  	pgdat->kcompactd_classzone_idx = pgdat->nr_zones - 1;
+>  
+>  	while (!kthread_should_stop()) {
+> -		unsigned long pflags;
+> +		unsigned long ret, pflags;
+>  
+>  		trace_mm_compaction_kcompactd_sleep(pgdat->node_id);
+> -		wait_event_freezable(pgdat->kcompactd_wait,
+> -				kcompactd_work_requested(pgdat));
+> +		ret = wait_event_freezable_timeout(pgdat->kcompactd_wait,
+> +				kcompactd_work_requested(pgdat),
+> +				msecs_to_jiffies(5000));
+> +		if (!ret)
+> +			continue;
+>  
+>  		psi_memstall_enter(&pflags);
+>  		kcompactd_do_work(pgdat);
+> @@ -2735,6 +2890,9 @@ static int __init kcompactd_init(void)
+>  		return ret;
+>  	}
+>  
+> +	compaction_init_order_states();
+> +	compaction_sysfs_init();
+> +
+>  	for_each_node_state(nid, N_MEMORY)
+>  		kcompactd_run(nid);
+>  	return 0;
+> diff --git a/mm/vmstat.c b/mm/vmstat.c
+> index fd7e16ca6996..e9090a5595d1 100644
+> --- a/mm/vmstat.c
+> +++ b/mm/vmstat.c
+> @@ -1074,6 +1074,18 @@ static int __fragmentation_index(unsigned int order, struct contig_page_info *in
+>  	return 1000 - div_u64( (1000+(div_u64(info->free_pages * 1000ULL, requested))), info->free_blocks_total);
+>  }
+>  
+> +int extfrag_for_order(struct zone *zone, unsigned int order)
+> +{
+> +	struct contig_page_info info;
+> +
+> +	fill_contig_page_info(zone, order, &info);
+> +	if (info.free_pages == 0)
+> +		return 0;
+> +
+> +	return (info.free_pages - (info.free_blocks_suitable << order)) * 100
+> +							/ info.free_pages;
+> +}
+> +
+>  /* Same as __fragmentation index but allocs contig_page_info on stack */
+>  int fragmentation_index(struct zone *zone, unsigned int order)
+>  {
+> 
 
->> in a generic way.
->> Currently we depend on super kind student developers/reporters on such=
-
->=20
-> Yup, I just guess Wen Xu may be interested in working on a generic way =
-to fuzz
-> filesystem, as I know they dig deep in filesystem code when doing fuzz.=
-
-
-Don't forget Yoon Jungyeon, I see more than one times he reported fuzzed
-images with proper reproducer and bugzilla links.
-Even using his personal mail address, not school mail address.
-
-Those guys are really awesome!
-
-> BTW,
-> which impresses me is, constructing checkpoint by injecting one byte, a=
-nd then
-> write a correct recalculated checksum value on that checkpoint, making =
-that
-> checkpoint looks valid...
-
-IIRC F2FS guys may be also investigating a similar mechanism, as they
-also got a hard fight against reports from those awesome reporters.
-
-So such fuzzed image is a new trend for fs development.
-
-Thanks,
-Qu
-
->=20
-> Thanks,
->=20
-
-
---slQR6rSH5UnNorxY9BmaW69TgYDvJmTLN--
-
---4LVjIQCVca5X3T5GkfFKKDlO5YDcA3qer
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEELd9y5aWlW6idqkLhwj2R86El/qgFAl1bs0sACgkQwj2R86El
-/qiHxgf9EuNDrR5H/dHCixK+MxIhu42YyiGiZIYxH9qGLoZN6JLd1FkWYuzGJrlv
-96F5Y50vW6iPslAnlmp3tFdmeEI6IMCiELXZAKjZOzbaba2bdzJWJUG75ZGpdxay
-IUaBIbOsiGealuKPcoEkeU9yzq9CtzoXgbLDt9Y5osokp0cRdzfzRVEUSQ/gj4QE
-EzOVDdNwTZbaaZboFlaSD4hbEgkNFxnq9C3qn4trxe4pVp7oaeK17wi3I1KHXo0Q
-I3griKjozf0Cp6rka4a3nCpZ/ML3busRZclXsLlnbHKGA0gQFpPkUqTrrojZORx4
-wBuwYdhYEWzsLK0+NcDgCe2z/ZRCog==
-=VtSx
------END PGP SIGNATURE-----
-
---4LVjIQCVca5X3T5GkfFKKDlO5YDcA3qer--
