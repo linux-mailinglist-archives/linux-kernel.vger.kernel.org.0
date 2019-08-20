@@ -2,94 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6430495D07
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:16:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 68B0895D0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfHTLQM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:16:12 -0400
-Received: from mout.kundenserver.de ([212.227.17.13]:54133 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728414AbfHTLQL (ORCPT
+        id S1729740AbfHTLQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:16:51 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51640 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728426AbfHTLQv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:16:11 -0400
-Received: from [192.168.1.110] ([95.117.23.32]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M8QBa-1hvcGg03Oq-004QRK; Tue, 20 Aug 2019 13:16:10 +0200
-Subject: Re: [PATCH] input: misc: soc_button_array: use
- platform_device_register_resndata()
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        "Enrico Weigelt, metux IT consult" <info@metux.net>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-References: <1564410372-18506-1-git-send-email-info@metux.net>
- <20190729172313.GA755@penguin>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <6781780e-a01f-a9f4-62fa-c36e105a4b76@metux.net>
-Date:   Tue, 20 Aug 2019 13:16:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Tue, 20 Aug 2019 07:16:51 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i0282-00032z-Rg; Tue, 20 Aug 2019 13:16:42 +0200
+Date:   Tue, 20 Aug 2019 13:16:41 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Peter Zijlstra <peterz@infradead.org>
+cc:     Song Liu <songliubraving@fb.com>, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com, stable@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH] x86/mm/pti: in pti_clone_pgtable() don't increase addr
+ by PUD_SIZE
+In-Reply-To: <20190820100055.GI2332@hirez.programming.kicks-ass.net>
+Message-ID: <alpine.DEB.2.21.1908201315450.2223@nanos.tec.linutronix.de>
+References: <20190820075128.2912224-1-songliubraving@fb.com> <20190820100055.GI2332@hirez.programming.kicks-ass.net>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190729172313.GA755@penguin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:PQPE9hNcWVuDwUGcotS3kp/AOb4M67BDPM5QWpPFH14NjMIsj5T
- 7KR/tRuhB+b0/awpCX5Pffo/iMTmNoSOl3rLe6oibOO4Oi19/0eay18EGtVeBnlHAhTGQ8u
- 7tg2rxg0YTSR3OKzKKAEkDrfObXMXvwCpci7labeqir7WWTVmi+mJo8v2lg8BnBYIVGVdSg
- qeouxYE1Q2nYejqhlMuJQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:0En8AnrOR8o=:SUFmKTawDT3GkJs1TrqqVR
- t9e1bW9t6ZB4p8sE8Rh+v3psE6sT5zza2pUVw7glpYBkU0V6awgiUyr5Y5CiuBwu5jsvcipXV
- gC++9PokfJNV52wuNjZgI+F3jPX2ooGqA5PR+dDtvItw7zBxMwBB1t1jvCeevhEq+NpaROkaA
- lX6OSfYoVmr1KbRCrcrP+Bx6DStgkbxyph8yVwXw4YVCWwuoU7xsPi+fqy7jVTyPr33THjGPW
- AyUuH69gEmZJmPgRaGrs5Hluw0C+GwNL6mtCPUbZa9eQNEd6yCUWmMjpGIsSsqm88tXIvkMbY
- +PdDuU1fXt4Y0ngZ4sNDQE8O2VmIKgUitnLYU2cbIb3n906MXHdKqKvb2qZp0CgOwu8cAJvc5
- OqNT8q+we92VTEwOHcTxiDUhQ5uIMhVZbWQBuJE/Xlb84cErWFlkJn/3f2ncZNu0dpRGe2Ipf
- zkMI0uhQc43po/V9jxZ7W2krFfY0hUQdPRNEo91VTzpmrj2IxdmxVbudJMVJVDkIjO+AtktCX
- Nhd5yc6DzFbHqfFnx8dFufEx4UpDlL2OsseDbqBXAcXshXxeMd1Wm/T/TFB2PSoKp9cAGtRCb
- ASyA7sFoDZbTPO+YxZKwZK4VqW7lFVAvGgQuWPmJyX7vIcCMNe2IdT3bufgucQcV2GbYsP9mx
- qsn90f/HgPI8rUGQehlJzr6/qbO1wgZ+udxCwg6TxCvwDNqV68llDjpTF7HUQwdSZHNu0qpLm
- ZtWehENYpx+Sqw9xoUf160NXaDJZjc8bn4anq6tXvUJ8HhsvXq7TiePUj2A=
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29.07.19 19:23, Dmitry Torokhov wrote:
-
-Hi,
-
-> I wonder if we should pass &pdev->dev instead of NULL here to form
-> proper device hierarchy, now that we have this option.
-
-good point, thanks, fixed in v2.
-
-
->> +		"gpio-keys",
->> +		PLATFORM_DEVID_AUTO,
->> +		NULL,
->> +		0,
->> +		gpio_keys_pdata,
->> +		sizeof(*gpio_keys_pdata));
->> +
->> +	if (IS_ERR(pd)) {
->> +		dev_err(&pdev->dev, "failed registering gpio-keys: %ld\n", PTR_ERR(pd));
->>   		goto err_free_mem;
+On Tue, 20 Aug 2019, Peter Zijlstra wrote:
+> What that code wants to do is skip to the end of the pud, a pmd_size
+> increase will not do that. And right below this, there's a second
+> instance of this exact pattern.
 > 
-> Since you did not assign 'error' value here this goto will result in the
-> function returning 0 even if platform_device_register_resndata() failed.
+> Did I get the below right?
+> 
+> ---
+> diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+> index b196524759ec..32b20b3cb227 100644
+> --- a/arch/x86/mm/pti.c
+> +++ b/arch/x86/mm/pti.c
+> @@ -330,12 +330,14 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
+>  
+>  		pud = pud_offset(p4d, addr);
+>  		if (pud_none(*pud)) {
+> +			addr &= PUD_MASK;
+>  			addr += PUD_SIZE;
 
-Uh, thanks. IMHO it's even worse: 'error' could be uninitialized.
+			round_up(addr, PUD_SIZE);
 
+perhaps?
 
-I'm sending v2 separately.
-
-
-Thanks for your review.
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+>  			continue;
+>  		}
+>  
+>  		pmd = pmd_offset(pud, addr);
+>  		if (pmd_none(*pmd)) {
+> +			addr &= PMD_MASK;
+>  			addr += PMD_SIZE;
+>  			continue;
+>  		}
+> 
