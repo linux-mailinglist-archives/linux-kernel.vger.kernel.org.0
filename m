@@ -2,76 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ABAB96461
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:29:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8277A96469
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:29:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730438AbfHTP3R (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:29:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33652 "EHLO mail.kernel.org"
+        id S1730554AbfHTP3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:29:33 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:45378 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727006AbfHTP3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:29:16 -0400
-Received: from localhost (mobile-107-77-164-38.mobile.att.net [107.77.164.38])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E74C6206BB;
-        Tue, 20 Aug 2019 15:29:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566314956;
-        bh=ZrF9TUCnLV2W4EyJhMQkx9AglXnpvTw/gLkflBdNy/E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rPXezODrzMCa0ELtLvFg+/8kuvfVewd9CKnmLWsyvP9KCvkKNEKm8E0UmY5PlWyjR
-         vcw2TDeAIzRGoogNDjkfcyPuZiCYttlYf12ze1vbgZ7nlokyTNcEpUMzgVjwdCT0hs
-         C2DxoyW6pyDRSJZIx+75oATfpwgFFQ+T6q9qTtsE=
-Date:   Tue, 20 Aug 2019 11:29:15 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <Alexander.Levin@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        KY Srinivasan <kys@microsoft.com>,
-        Michael Kelley <mikelley@microsoft.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] Input: hyperv-keyboard: Use in-place iterator API in the
- channel callback
-Message-ID: <20190820152915.GM30205@sasha-vm>
-References: <1566270066-27546-1-git-send-email-decui@microsoft.com>
- <20190820031805.GO121898@dtor-ws>
+        id S1730292AbfHTP3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:29:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=K7KPnT4B2RzmdYoyeN79Pgg8w00ak1V/OyvQUugvq7o=; b=XTnkpAA6r15dLiAWOYoOCTyj89
+        5nZBXZ8C/7Ve5YmeDns4N5XguLkbXUgI9v6e5JbhetZ4MgP2jwnROHMr7B37n96kYqe37YfHzuOpS
+        wksGpCV6BQalKGpBfFPyI/6/T5D1veciopCzLnueFsOTrGb7QOnPM88EE7h+1nze7AGQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i064f-0006Ig-0N; Tue, 20 Aug 2019 17:29:29 +0200
+Date:   Tue, 20 Aug 2019 17:29:28 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100kHz
+Message-ID: <20190820152928.GK29991@lunn.ch>
+References: <20190820030804.8892-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820031805.GO121898@dtor-ws>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820030804.8892-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 08:18:05PM -0700, dmitry.torokhov@gmail.com wrote:
->On Tue, Aug 20, 2019 at 03:01:23AM +0000, Dexuan Cui wrote:
->> Simplify the ring buffer handling with the in-place API.
->>
->> Also avoid the dynamic allocation and the memory leak in the channel
->> callback function.
->>
->> Signed-off-by: Dexuan Cui <decui@microsoft.com>
->> ---
->>
->> Hi Dmitry, can this patch go through Sasha's hyperv tree:
->> https://git.kernel.org/pub/scm/linux/kernel/git/hyperv/linux.git
->>
->> This is a purely Hyper-V specific change.
->
->Sure, no problem.
->
->Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+On Mon, Aug 19, 2019 at 08:08:04PM -0700, Andrey Smirnov wrote:
+> Fiber-optic module attached to the bus is only rated to work at
+> 100kHz, so drop the bus frequncy to accomodate that.
 
-Queued up for hyperv-fixes, thank you.
+Hi Andrey
 
---
-Thanks,
-Sasha
+Did you review all the other ZII platforms? I could imaging the same
+problem happening else where.
+
+Thanks
+	Andrew
