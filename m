@@ -2,160 +2,288 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED4A995413
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:12:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2508695417
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 04:14:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728919AbfHTCMP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Mon, 19 Aug 2019 22:12:15 -0400
-Received: from mga04.intel.com ([192.55.52.120]:56067 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728627AbfHTCMO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 22:12:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 19:12:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,407,1559545200"; 
-   d="scan'208";a="183045244"
-Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
-  by orsmga006.jf.intel.com with ESMTP; 19 Aug 2019 19:12:13 -0700
-Received: from fmsmsx114.amr.corp.intel.com (10.18.116.8) by
- FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 19 Aug 2019 19:12:13 -0700
-Received: from shsmsx107.ccr.corp.intel.com (10.239.4.96) by
- FMSMSX114.amr.corp.intel.com (10.18.116.8) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Mon, 19 Aug 2019 19:12:12 -0700
-Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.80]) by
- SHSMSX107.ccr.corp.intel.com ([169.254.9.65]) with mapi id 14.03.0439.000;
- Tue, 20 Aug 2019 10:12:11 +0800
-From:   "Zhang, Tina" <tina.zhang@intel.com>
-To:     Alex Williamson <alex.williamson@redhat.com>
-CC:     "intel-gvt-dev@lists.freedesktop.org" 
-        <intel-gvt-dev@lists.freedesktop.org>,
-        "kraxel@redhat.com" <kraxel@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Yuan, Hang" <hang.yuan@intel.com>,
-        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>
-Subject: RE: [PATCH v5 2/6] vfio: Introduce vGPU display irq type
-Thread-Topic: [PATCH v5 2/6] vfio: Introduce vGPU display irq type
-Thread-Index: AQHVU9tUpO+/ySaKfEaxbwCEdeDfRab9uwQAgAWEU9A=
-Date:   Tue, 20 Aug 2019 02:12:10 +0000
-Message-ID: <237F54289DF84E4997F34151298ABEBC876F9AD3@SHSMSX101.ccr.corp.intel.com>
-References: <20190816023528.30210-1-tina.zhang@intel.com>
-        <20190816023528.30210-3-tina.zhang@intel.com>
- <20190816145148.307408dc@x1.home>
-In-Reply-To: <20190816145148.307408dc@x1.home>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNTNmZWI2YzMtZDBhNy00ZmFhLTlmZGItMGY2YmQzMDQ3YjIxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieENzdFN2UVk0WVo3cmtzTGIzNit3bEV5eVQrTzNObkdPZ05VS1lVMFZcL1hud0k1Z3diQkJSUXVVbFZSYUhcL0pVIn0=
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.2.0.6
-dlp-reaction: no-action
-x-originating-ip: [10.239.127.40]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S1729038AbfHTCOX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 22:14:23 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:13574 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728615AbfHTCOU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 22:14:20 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7K2Ca8P056662;
+        Mon, 19 Aug 2019 22:13:48 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ug63v3b8c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Aug 2019 22:13:47 -0400
+Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7K2DeD4059033;
+        Mon, 19 Aug 2019 22:13:47 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ug63v3b80-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 19 Aug 2019 22:13:47 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7K29oJf017948;
+        Tue, 20 Aug 2019 02:13:47 GMT
+Received: from b03cxnp07029.gho.boulder.ibm.com (b03cxnp07029.gho.boulder.ibm.com [9.17.130.16])
+        by ppma04wdc.us.ibm.com with ESMTP id 2ufye02bfh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Aug 2019 02:13:46 +0000
+Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7K2DjQR36307256
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Aug 2019 02:13:45 GMT
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 552B0C6059;
+        Tue, 20 Aug 2019 02:13:45 +0000 (GMT)
+Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24283C6057;
+        Tue, 20 Aug 2019 02:13:42 +0000 (GMT)
+Received: from morokweng.localdomain.com (unknown [9.85.220.248])
+        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 20 Aug 2019 02:13:41 +0000 (GMT)
+From:   Thiago Jung Bauermann <bauerman@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Anshuman Khandual <anshuman.linux@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Mike Anderson <andmike@linux.ibm.com>,
+        Paul Mackerras <paulus@samba.org>,
+        Ram Pai <linuxram@us.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        Thiago Jung Bauermann <bauerman@linux.ibm.com>
+Subject: [PATCH v4 00/16] Secure Virtual Machine Enablement
+Date:   Mon, 19 Aug 2019 23:13:10 -0300
+Message-Id: <20190820021326.6884-1-bauerman@linux.ibm.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_01:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908200018
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+This is a minor update of this patch series. It addresses review comments
+made to v3. Details are in the changelog. The sysfs patch is updated and
+included here but as I mentioned earlier can be postponed. It is marked
+RFC for that reason.
 
-> -----Original Message-----
-> From: Alex Williamson [mailto:alex.williamson@redhat.com]
-> Sent: Saturday, August 17, 2019 4:52 AM
-> To: Zhang, Tina <tina.zhang@intel.com>
-> Cc: intel-gvt-dev@lists.freedesktop.org; kraxel@redhat.com;
-> kvm@vger.kernel.org; linux-kernel@vger.kernel.org; Yuan, Hang
-> <hang.yuan@intel.com>; Lv, Zhiyuan <zhiyuan.lv@intel.com>
-> Subject: Re: [PATCH v5 2/6] vfio: Introduce vGPU display irq type
-> 
-> On Fri, 16 Aug 2019 10:35:24 +0800
-> Tina Zhang <tina.zhang@intel.com> wrote:
-> 
-> > Introduce vGPU specific irq type VFIO_IRQ_TYPE_GFX, and
-> > VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ as the subtype for vGPU display.
-> >
-> > Introduce vfio_irq_info_cap_display_plane_events capability to notify
-> > user space with the vGPU's plane update events
-> >
-> > v2:
-> > - Add VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ description. (Alex & Kechen)
-> > - Introduce vfio_irq_info_cap_display_plane_events. (Gerd & Alex)
-> >
-> > Signed-off-by: Tina Zhang <tina.zhang@intel.com>
-> > ---
-> >  include/uapi/linux/vfio.h | 21 +++++++++++++++++++++
-> >  1 file changed, 21 insertions(+)
-> >
-> > diff --git a/include/uapi/linux/vfio.h b/include/uapi/linux/vfio.h
-> > index d83c9f136a5b..21ac69f0e1a9 100644
-> > --- a/include/uapi/linux/vfio.h
-> > +++ b/include/uapi/linux/vfio.h
-> > @@ -465,6 +465,27 @@ struct vfio_irq_info_cap_type {
-> >  	__u32 subtype;  /* type specific */
-> >  };
-> >
-> > +#define VFIO_IRQ_TYPE_GFX				(1)
-> > +/*
-> > + * vGPU vendor sub-type
-> > + * vGPU device display related interrupts e.g. vblank/pageflip  */
-> > +#define VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ		(1)
-> 
-> If this is a GFX/DISPLAY IRQ, why are we talking about a "vGPU" in the
-> description?  It's not specific to a vGPU implementation, right?  Is this
-> related to a physical display or a virtual display?  If it's related to the GFX
-> PLANE ioctls, it should state that.  It's not well specified what this interrupt
-> signals.  Is it vblank?  Is it pageflip?
-> Is it both?  Neither?  Something else?
+As with the previous version, the patch introducing ucall_norets() (patch 1)
+and the one adding documentation on the Ultravisor (patch 15) are copied
+from v5 of Claudio Carvalho's KVM on Ultravisor series and don't yet address
+the review comments made there. They are included here so that this series
+can stand on its own.
 
-Sorry for the confusion caused here. 
+The patches apply on top of v4 of the <asm/mem_encrypt.h> cleanup series:
 
-The original idea here was to use VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ to notify user space with the display refresh event. The display refresh event is general. When notified, user space can use VFIO_DEVICE_QUERY_GFX_PLANE and VFIO_DEVICE_GET_GFX_DMABUF to get the updated framebuffer, instead of polling them all the time.
+https://lore.kernel.org/linuxppc-dev/20190806044919.10622-1-bauerman@linux.ibm.com/
 
-In order to give user space more choice to do the optimization, vfio_irq_info_cap_display_plane_events is proposed to tell user space the different plane refresh event values. So when notified by VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ, user space can get the value of the eventfd counter and understand which plane the event refresh event comes from and choose to get the framebuffer on that plane instead of all the planes.
+Everything is available in branch ultravisor-secure-vm (applied on top of
+today's powerpc/next) at this repo:
 
-So, from the VFIO user point of view, there is only the display refresh event (i.e. no other events like vblank, pageflip ...). For GTV-g, this display refresh event is implemented by both vblank and pageflip, which is only the implementation thing and can be transparent to the user space. Again sorry about the confusion cased here, I'll correct the comments in the next version.
+https://github.com/bauermann/linux.git
 
-BTW, IIRC, we might also have one question waiting to be replied:
-- Can we just use VFIO_IRQ_TYPE_GFX w/o proposing a new sub type (i.e. VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ)?
-    Well, only if we can agree on that we don't have any other GFX IRQ requirements in future. Otherwise, we might need a sub type to differentiate them.
+Original cover letter below, and changelog at the bottom:
 
-Thanks.
+This series enables Secure Virtual Machines (SVMs) on powerpc. SVMs use the
+Protected Execution Facility (PEF) and request to be migrated to secure
+memory during prom_init() so by default all of their memory is inaccessible
+to the hypervisor. There is an Ultravisor call that the VM can use to
+request certain pages to be made accessible to (or shared with) the
+hypervisor.
 
-BR,
-Tina
-> 
-> > +
-> > +/*
-> > + * Display capability of using one eventfd to notify user space with
-> > +the
-> > + * vGPU's plane update events.
-> > + * cur_event_val: eventfd value stands for cursor plane change event.
-> > + * pri_event_val: eventfd value stands for primary plane change event.
-> > + */
-> > +#define VFIO_IRQ_INFO_CAP_DISPLAY	4
-> > +
-> > +struct vfio_irq_info_cap_display_plane_events {
-> > +	struct vfio_info_cap_header header;
-> > +	__u64 cur_event_val;
-> > +	__u64 pri_event_val;
-> > +};
-> 
-> Again, what display?  Does this reference a GFX plane?  The event_val data is
-> not well specified, examples might be necessary.  They seem to be used as a
-> flag bit, so should we simply define a bit index for the flag rather than a u64
-> value?  Where are the actual events per plane defined?
-> 
-> I'm not sure this patch shouldn't be rolled back into 1, I couldn't find the
-> previous discussion that triggered it to be separate.  Perhaps simply for
-> sharing with the work Eric is doing?  If so, that's fine, but maybe make note
-> of it in the cover letter.  Thanks,
-> 
-> Alex
+The objective of these patches is to have the guest perform this request
+for buffers that need to be accessed by the hypervisor such as the LPPACAs,
+the SWIOTLB memory and the Debug Trace Log.
+
+Patch 3 ("powerpc: Add support for adding an ESM blob to the zImage
+wrapper") is posted as RFC because we are still finalizing the details on
+how the ESM blob will be passed along with the kernel. All other patches are
+(hopefully) in upstreamable shape and don't depend on this patch.
+
+Unfortunately this series still doesn't enable the use of virtio devices in
+the secure guest. This support depends on a discussion that is currently
+ongoing with the virtio community:
+
+https://lore.kernel.org/linuxppc-dev/87womn8inf.fsf@morokweng.localdomain/
+
+I was able to test it using Claudio's patches in the host kernel, booting
+normally using an initramfs for the root filesystem.
+
+This is the command used to start up the guest with QEMU 4.0:
+
+qemu-system-ppc64				\
+	-nodefaults				\
+	-cpu host				\
+	-machine pseries,accel=kvm,kvm-type=HV,cap-htm=off,cap-cfpc=broken,cap-sbbc=broken,cap-ibs=broken \
+	-display none				\
+	-serial mon:stdio			\
+	-smp 1					\
+	-m 4G					\
+	-kernel /root/bauermann/vmlinux		\
+	-initrd /root/bauermann/fs_small.cpio	\
+	-append 'debug'
+
+Changelog
+
+Since v3:
+
+- Patch "powerpc/kernel: Add ucall_norets() ultravisor call handler"
+  - Use updated commit message from Claudio Carvalho's KVM series v5.
+
+- Patch "powerpc: Introduce the MSR_S bit"
+  - Use updated commit message from Claudio Carvalho.
+
+- Patch "powerpc/pseries/svm: Use shared memory for LPPACA structures"
+  - Changed copyright year in <asm/svm.h> to 2018. Suggested by Michael
+    Ellerman.
+
+- Patch "powerpc/pseries/svm: Use shared memory for Debug Trace Log (DTL)"
+  - Changed copyright year in svm.c to 2018. Suggested by Michael Ellerman.
+
+- Patch "powerpc/pseries/svm: Export guest SVM status to user space via sysfs"
+  - Changed to check MSR_S on the current CPU. Suggested by Michael Ellerman.
+  - Added documentation for new sysfs file. Suggested by Michael Ellerman.
+
+- Patch "powerpc/pseries/iommu: Don't use dma_iommu_ops on secure guests"
+  - Changed to only call set_pci_dma_ops() on non-secure guests. Suggested
+    by Christoph Hellwig.
+
+- Patch "powerpc/pseries/svm: Force SWIOTLB for secure guests"
+  - Changed copyright year in <asm/mem_encrypt.h> to 2018. Suggested by
+    Michael Ellerman.
+
+- Patch "Documentation/powerpc: Ultravisor API"
+  - Use updated patch from Claudio Carvalho's KVM series v5.
+
+Since v2:
+
+- Patch "powerpc/kernel: Add ucall_norets() ultravisor call handler"
+  - Borrowed unchanged from Claudio's "kvmppc: Paravirtualize KVM to support
+    ultravisor" series.
+
+- Patch "powerpc/prom_init: Add the ESM call to prom_init"
+  - Briefly mention in the commit message why we pass the kernel base address
+    and FDT to the Enter Secure Mode ultracall. Suggested by Alexey
+    Kardashevskiy.
+  - Use enter_secure_mode() version provided by Segher Boessenkool.
+
+- Patch "powerpc/pseries/svm: Add helpers for UV_SHARE_PAGE and UV_UNSHARE_PAGE"
+  - Use ucall_norets() which doesn't need to be passed a return buffer.
+    Suggested by Alexey Kardashevskiy.
+
+- Patch "powerpc: Introduce the MSR_S bit"
+  - Moved from Claudio's "kvmppc: Paravirtualize KVM to support ultravisor"
+    series to this series.
+
+- Patch "Documentation/powerpc: Ultravisor API"
+  - New patch from Sukadev Bhattiprolu. Will also appear on Claudio's
+    kvmppc series.
+
+Since v1:
+
+- Patch "powerpc/pseries: Introduce option to build secure virtual machines"
+  - Dropped redundant "default n" from CONFIG_PPC_SVM. Suggested by Christoph
+    Hellwig.
+
+- Patch "powerpc: Add support for adding an ESM blob to the zImage wrapper"
+  - Renamed prom_rtas_os_term_hcall() to prom_rtas_hcall(). Suggested by Alexey
+    Kardashevskiy.
+  - In prom_rtas_hcall(), changed prom_printf() calls to prom_debug(), and
+    use H_RTAS constant instead of raw value.
+  - Changed enter_secure_mode() to new ABI passing ucall number in r3.
+    Also changed it to accept kbase argument instead of ESM blob address.
+  - Changed setup_secure_guest() to only make the ESM ultracall if svm=1 was
+    passed on the kernel command line.
+
+- Patch "powerpc/pseries/svm: Unshare all pages before kexecing a new kernel"
+  - New patch from Ram Pai.
+
+- Patch "powerpc/pseries/svm: Force SWIOTLB for secure guests"
+  - No need to define sme_me_mask, sme_active() and sev_active() anymore.
+  - Add definitions for mem_encrypt_active() and force_dma_unencrypted().
+  - Select ARCH_HAS_FORCE_DMA_UNENCRYPTED in CONFIG_PPC_SVM.
+
+Anshuman Khandual (3):
+  powerpc/pseries/svm: Use shared memory for LPPACA structures
+  powerpc/pseries/svm: Use shared memory for Debug Trace Log (DTL)
+  powerpc/pseries/svm: Force SWIOTLB for secure guests
+
+Benjamin Herrenschmidt (1):
+  powerpc: Add support for adding an ESM blob to the zImage wrapper
+
+Claudio Carvalho (1):
+  powerpc/kernel: Add ucall_norets() ultravisor call handler
+
+Ram Pai (3):
+  powerpc/prom_init: Add the ESM call to prom_init
+  powerpc/pseries/svm: Add helpers for UV_SHARE_PAGE and UV_UNSHARE_PAGE
+  powerpc/pseries/svm: Unshare all pages before kexecing a new kernel
+
+Ryan Grimm (2):
+  powerpc/pseries/svm: Export guest SVM status to user space via sysfs
+  powerpc/configs: Enable secure guest support in pseries and ppc64
+    defconfigs
+
+Sukadev Bhattiprolu (3):
+  powerpc: Introduce the MSR_S bit
+  powerpc/pseries/svm: Disable doorbells in SVM guests
+  Documentation/powerpc: Ultravisor API
+
+Thiago Jung Bauermann (3):
+  powerpc/pseries: Introduce option to build secure virtual machines
+  powerpc/pseries: Add and use LPPACA_SIZE constant
+  powerpc/pseries/iommu: Don't use dma_iommu_ops on secure guests
+
+ .../ABI/testing/sysfs-devices-system-cpu      |   10 +
+ .../admin-guide/kernel-parameters.txt         |    5 +
+ Documentation/powerpc/ultravisor.rst          | 1055 +++++++++++++++++
+ arch/powerpc/boot/main.c                      |   41 +
+ arch/powerpc/boot/ops.h                       |    2 +
+ arch/powerpc/boot/wrapper                     |   24 +-
+ arch/powerpc/boot/zImage.lds.S                |    8 +
+ arch/powerpc/configs/ppc64_defconfig          |    1 +
+ arch/powerpc/configs/pseries_defconfig        |    1 +
+ arch/powerpc/include/asm/asm-prototypes.h     |   11 +
+ arch/powerpc/include/asm/mem_encrypt.h        |   26 +
+ arch/powerpc/include/asm/reg.h                |    3 +
+ arch/powerpc/include/asm/svm.h                |   31 +
+ arch/powerpc/include/asm/ultravisor-api.h     |   29 +
+ arch/powerpc/include/asm/ultravisor.h         |   29 +
+ arch/powerpc/kernel/Makefile                  |    3 +
+ arch/powerpc/kernel/machine_kexec_64.c        |    9 +
+ arch/powerpc/kernel/paca.c                    |   52 +-
+ arch/powerpc/kernel/prom_init.c               |   96 ++
+ arch/powerpc/kernel/sysfs.c                   |   20 +
+ arch/powerpc/kernel/ucall.S                   |   20 +
+ arch/powerpc/platforms/pseries/Kconfig        |   14 +
+ arch/powerpc/platforms/pseries/Makefile       |    1 +
+ arch/powerpc/platforms/pseries/iommu.c        |   11 +-
+ arch/powerpc/platforms/pseries/setup.c        |    5 +-
+ arch/powerpc/platforms/pseries/smp.c          |    3 +-
+ arch/powerpc/platforms/pseries/svm.c          |   85 ++
+ 27 files changed, 1584 insertions(+), 11 deletions(-)
+ create mode 100644 Documentation/powerpc/ultravisor.rst
+ create mode 100644 arch/powerpc/include/asm/mem_encrypt.h
+ create mode 100644 arch/powerpc/include/asm/svm.h
+ create mode 100644 arch/powerpc/include/asm/ultravisor-api.h
+ create mode 100644 arch/powerpc/include/asm/ultravisor.h
+ create mode 100644 arch/powerpc/kernel/ucall.S
+ create mode 100644 arch/powerpc/platforms/pseries/svm.c
+
