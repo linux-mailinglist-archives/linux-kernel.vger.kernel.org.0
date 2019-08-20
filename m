@@ -2,123 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4FEC96CDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E7D396CFD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:18:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfHTXGz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 19:06:55 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:35763 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726545AbfHTXGt (ORCPT
+        id S1726266AbfHTXMd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 19:12:33 -0400
+Received: from sender4-of-o55.zoho.com ([136.143.188.55]:21539 "EHLO
+        sender4-of-o55.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbfHTXMd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:06:49 -0400
-Received: by mail-pf1-f195.google.com with SMTP id d85so100721pfd.2
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=3ZdYND6Wl1bRQZobvgDGilBtsFiFe5f8MwN/RoglplU=;
-        b=p+vl6bqwnZBpeaHiyriodr3YU5vPNi6dgqkRp3GiaA9JczUyoLile77Dj2B+BZggDJ
-         NzlvH7CyYBerZlpjYj15RbbWMyJGouIgFI2T2IMOh0Aye5krAxOLBcXbXZaO3fM5C0/h
-         hUUGR5wuWOwGkH10sOSgrfyyEGNPU8PX1FsNAGfHSISAOMQM/dR20jKpSyidDWMVnYU3
-         gEqghkvroFGIBsJ9s+b3i/1R0ZbvMjdA3YSrdWgQJh2pU3bdRUNrB6vTH/T6Y0N7Mt/d
-         /stEefEeTo4i0TNewxUdzqaM15UhIX5rWx63ufnkwEr7MaZcPeaYBa9JWg+w9N+xuwMz
-         VEmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=3ZdYND6Wl1bRQZobvgDGilBtsFiFe5f8MwN/RoglplU=;
-        b=PwynGOp8xrB7mGSASDOe+AMQLJkKDhWcYnv9tYsLrmbkwuIPUsCg58riPKis2nhEYF
-         cyIuGh9G4kjQxqRB/98B+OYNJ/LMG98pJGgwd0swwtfDKTNAjXy7e7cD9Hg2SfZUfyVH
-         vx03EWRelstSowJANJU2z87lVXidWY6/qii6koDpQbFBmMCzZbO6C5/KiPS7MTT6Hn2E
-         uVFTGWFoDMApvPhxljze+p6tyGxlgGxWzvjttxktZgyflZOJKUN70vHZDBdpMCD/b0+F
-         OOggowZOkthLhoXeZqqsKMsbHwIE+vomxLh3yOTDHzvSOcoBSbPIsYENwUHQC3hP7Y9P
-         91Sw==
-X-Gm-Message-State: APjAAAUbcxeGOPo4tE7gtlFsBd++YdwoGBxMooVTbL0iTRAXAw/oQqkK
-        XpTPPUP7t+ruHojW4G6W82c/Yw==
-X-Google-Smtp-Source: APXvYqxALtnddgGMFc2X2U+yCFu2yJS7dzJAjVYSdhFC5iity/GwPzH8lvuhFKcFPxyXSfOTqNZTzg==
-X-Received: by 2002:a17:90b:8ca:: with SMTP id ds10mr2269923pjb.139.1566342408736;
-        Tue, 20 Aug 2019 16:06:48 -0700 (PDT)
-Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
-        by smtp.gmail.com with ESMTPSA id d18sm17691015pgi.40.2019.08.20.16.06.47
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 16:06:48 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] arm64: Add support for Amlogic SM1 SoC Family
-In-Reply-To: <7h4l2bej1c.fsf@baylibre.com>
-References: <20190820144052.18269-1-narmstrong@baylibre.com> <7h4l2bej1c.fsf@baylibre.com>
-Date:   Tue, 20 Aug 2019 16:06:45 -0700
-Message-ID: <7ho90jbfne.fsf@baylibre.com>
+        Tue, 20 Aug 2019 19:12:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1566342745; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=JBLbx18X5OTrA9oojlt/c13sORyikSozbxBL8IdstkC+Bjm+zwjEZV73CM2goiqyZEYfywZcALq+JEs6Rvg2Di0YYmpU08g9viA5q9TBT22WIO7e1/9bLxc3cxWTn7UHWW8mlWSkuLTBMx/NjbLLeIFtNkTtQ1svcoxbNQEdrf0=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1566342745; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=EOQbmm683ZQeRo5IEAuNfp/GUzc+3sakNt4tVfxkZFk=; 
+        b=iTCkeJmWtGC1zM1asYQ1HSMpZz6lT5aGAPhWZzT4eAbF+MTGkkd50DlP1X9ZcJOnYQR0S3UkdyB+voHhSD3pOPneDpbedUhG22znXiWsrEkylePdA0M7s2PwzSvEqMfl1EvpETcZ6+NUl9QCSMzcOxw9e4p7voV5xVoV8+pmX4E=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=brennan.io;
+        spf=pass  smtp.mailfrom=stephen@brennan.io;
+        dmarc=pass header.from=<stephen@brennan.io> header.from=<stephen@brennan.io>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1566342745;
+        s=selector01; d=brennan.io; i=stephen@brennan.io;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        l=1145; bh=EOQbmm683ZQeRo5IEAuNfp/GUzc+3sakNt4tVfxkZFk=;
+        b=ZSlW5UE71QrT7DPTq6myCafxxWn+pT5tyTfaRPQPCuRuqlELATC3S+dnczbQEcov
+        C8a4d0XNlJ6w+oBKW40++1vnsrtgGwikQ3SbY9Twn9zAK740OBl2kpvI971caSiPSJ3
+        BWht5PrKJ6e76R+TTGlIVpS9jO+Vm+q9baGuT2dY=
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2]) by mx.zohomail.com
+        with SMTPS id 1566342744871684.1076553847704; Tue, 20 Aug 2019 16:12:24 -0700 (PDT)
+From:   Stephen Brennan <stephen@brennan.io>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Stephen Brennan <stephen@brennan.io>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, "Tobin C . Harding" <me@tobin.cc>
+Message-ID: <20190820231156.30031-1-stephen@brennan.io>
+Subject: [PATCH 0/3] staging: rtl8192u: coding style fixes in ieee80211
+Date:   Tue, 20 Aug 2019 16:11:53 -0700
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kevin Hilman <khilman@baylibre.com> writes:
+Addressed some spacing, brace placement, and macro alignment in this driver=
+. I
+do not have the relevent hardware, but I verified that the
+drivers/staging/rtl8192u module built between each patch.
 
-> Neil Armstrong <narmstrong@baylibre.com> writes:
->
->> The new Amlogic SM1 SoC Family is a derivative of the Amlogic G12A
->> SoC Family, with the following changes :
->> - Cortex-A55 cores instead of A53
->> - more power domains, including USB & PCIe
->> - a neural network co-processor (NNA)
->> - a CSI input and image processor
->> - some changes in the audio complex, thus not yet enabled
->> - new clocks, for NNA, CSI and a clock tree for each CPU Core
->>
->> This serie does not add support for NNA, CSI, Audio, USB, Display
->> or DVFS, it only aligns with the current G12A Support.
->>
->> With this serie, the SEI610 Board has supported :
->> - Default-boot CPU frequency
->> - Ethernet
->> - LEDs
->> - IR
->> - GPIO Buttons
->> - eMMC
->> - SDCard
->> - SDIO WiFi
->> - UART Bluetooth
->>
->> Audio (HDMI, Embedded HP, MIcs), USB, HDMI, IR Output, & RGB Led
->> would be supported in following patchsets.
->>
->> Dependencies:
->> - g12-common.dtsi from the DVFS patchset at [1]
->>
->> Changes from rfc at [2]:
->> - Removed Power domain patches & display/USB support, will resend separately
->> - Removed applied AO-CEC patches
->> - Fixed clk-measure IDs
->> - Collected reviewed-by tags
->>
->> [1] https://patchwork.kernel.org/cover/11025309/
->> [2] https://patchwork.kernel.org/cover/11025511/
->
-> Series queued for v5.4...
->> Neil Armstrong (6):
->>   soc: amlogic: meson-gx-socinfo: Add SM1 and S905X3 IDs
->>   dt-bindings: soc: amlogic: clk-measure: Add SM1 compatible
->>   soc: amlogic: clk-measure: Add support for SM1
->
-> ... these 3 in v5.4/drivers ...
->
->>   dt-bindings: arm: amlogic: add SM1 bindings
->>   dt-bindings: arm: amlogic: add SEI Robotics SEI610 bindings
->>   arm64: dts: add support for SM1 based SEI Robotics SEI610
->
-> ... and these 3 in v5.4/dt64 with Rob's tag.
+Stephen Brennan (3):
+  staging: rtl8192u: fix OPEN_BRACE errors in ieee80211
+  staging: rtl8192u: fix macro alignment in ieee80211
+  staging: rtl8192u: fix spacing in ieee80211
 
-And I forgot to add that I boot-tested this on an SEI610 as well.
+ drivers/staging/rtl8192u/ieee80211/dot11d.c   |  10 +-
+ .../staging/rtl8192u/ieee80211/ieee80211.h    |  38 +++---
+ .../rtl8192u/ieee80211/ieee80211_crypt.c      |   2 +-
+ .../rtl8192u/ieee80211/ieee80211_crypt_tkip.c |  22 ++--
+ .../rtl8192u/ieee80211/ieee80211_crypt_wep.c  |   4 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 118 ++++++-----------
+ .../rtl8192u/ieee80211/ieee80211_softmac_wx.c |  14 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_tx.c | 121 ++++++++----------
+ .../staging/rtl8192u/ieee80211/ieee80211_wx.c |  35 +++--
+ .../rtl8192u/ieee80211/rtl819x_BAProc.c       |  12 +-
+ .../staging/rtl8192u/ieee80211/rtl819x_HT.h   |  17 ++-
+ .../rtl8192u/ieee80211/rtl819x_TSProc.c       |  14 +-
+ 12 files changed, 174 insertions(+), 233 deletions(-)
 
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+--=20
+2.22.0
+
+
 
