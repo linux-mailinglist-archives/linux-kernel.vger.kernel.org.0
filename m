@@ -2,79 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B1949957A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:49:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7577E95790
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729247AbfHTGtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 02:49:09 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:16467 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfHTGtJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 02:49:09 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1566283744;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=MgN3E8s/3Mj7cEN1rbdygo/AW47MY5ZHyV9Juur5Ve4=;
-        b=n6ZVKF/Ew8NYHv20jCwI/8DAIgKCChmnEHej8BXFCZS/6LO3V9FvSyVl+XrqpevQoH
-        TeNFurnYxns3Z/5/ZyuaVhZeuFm3M1Sh5P2gEoWZbN24Zr0RHy59lKuv8fwh88uTJm1C
-        /5zqDM9CldDKgHd3BE6GwBUqMJ5x+/oLKqzBdlIbzxpjgqH+mMGugeuaXcLKFOk+z7MF
-        e1yFJQDs5Qyk6qgyUYlmj/Bn+VAhyL+my5X4RqJmeyT2iTjuG5bX0k3Cmtf9g8rAfWdQ
-        39y8A9henv4OBNkin6+Mq67EigF3oWBZrKiB6v1Y6xXnzEVNgcFTODwFb8U2kU/kDbkH
-        EiUw==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4gpw8F85YnqKQ+tuXA=="
-X-RZG-CLASS-ID: mo00
-Received: from [192.168.2.133]
-        by smtp.strato.de (RZmta 44.26.1 DYNA|AUTH)
-        with ESMTPSA id V074e8v7K6mbUB7
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Tue, 20 Aug 2019 08:48:37 +0200 (CEST)
+        id S1729228AbfHTGpc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:45:32 -0400
+Received: from mga18.intel.com ([134.134.136.126]:54610 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729024AbfHTGpc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 02:45:32 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Aug 2019 23:45:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,407,1559545200"; 
+   d="scan'208";a="262072785"
+Received: from pl-dbox.sh.intel.com (HELO intel.com) ([10.239.13.128])
+  by orsmga001.jf.intel.com with ESMTP; 19 Aug 2019 23:45:27 -0700
+Date:   Tue, 20 Aug 2019 14:49:34 +0800
+From:   Philip Li <philip.li@intel.com>
+To:     Raphael Gault <raphael.gault@arm.com>
+Cc:     kbuild test robot <lkp@intel.com>, mark.rutland@arm.com,
+        raph.gault+kdev@gmail.com, peterz@infradead.org,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        linux-kernel@vger.kernel.org, acme@kernel.org, mingo@redhat.com,
+        kbuild-all@01.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [kbuild-all] [PATCH v3 4/5] arm64: perf: Enable pmu counter
+ direct access for perf event on armv8
+Message-ID: <20190820064934.GF4479@intel.com>
+References: <20190816125934.18509-5-raphael.gault@arm.com>
+ <201908182002.KAH4UW2w%lkp@intel.com>
+ <a41e1a4b-b082-725a-b24e-9c92f66d174a@arm.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: Lay common foundation to make PVR/SGX work without hacks on OMAP34xx, OMAP36xx, AM335x and potentially OMAP4, OMAP5
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <CAHCN7x+87xTsA3MeHy7kUWU0SU3X8HmSc2wbk5gKvYm1dRNe6A@mail.gmail.com>
-Date:   Tue, 20 Aug 2019 08:48:51 +0200
-Cc:     Merlijn Wajer <merlijn@wizzup.org>,
-        Tony Lindgren <tony@atomide.com>,
-        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        kernel@pyra-handheld.com,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, maemo-leste@lists.dyne.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <04809E3E-A690-4931-B949-1CFDAF407C14@goldelico.com>
-References: <20180108214032.GW3872@atomide.com> <4d99c1ae-7752-949b-7e88-bc8f1dc594a2@wizzup.org> <0C51EC59-9CDC-4196-ACF9-24596C9E61B6@goldelico.com> <FA4520D5-62CB-446D-975C-A1C7B9251517@goldelico.com> <20190212205132.GO5720@atomide.com> <0b00ce0a-969f-e638-8247-c2da96cf7ce6@gmail.com> <20190213004143.GP5720@atomide.com> <480AB632-A544-41E7-95A4-DC354AEBB71A@goldelico.com> <CAKpie0SigGGsQxSU+X-Mz5boy-Xx=3wRNOcrf+F=ehFr3RBi7Q@mail.gmail.com> <092210C3-05DE-4AFB-986F-81BD8F990B67@goldelico.com> <CAKpie0RXM1UC33YFeFy-kAxfGhYGNkw4vUgNTThf-ZCAhPTVXw@mail.gmail.com> <BE23C1E4-2877-49FA-B230-F9C10691B805@goldelico.com> <CAKpie0TSo-8gmDm9_Zw4Sd+kjVVEomp8yA9Vu8qY2U2AcrQc=w@mail.gmail.com> <8A069D96-C65F-43F5-8F54-20019CFB1A8D@goldelico.com> <d0cbfaaf-813e-8803-f90b-931a38396750@wizzup.org> <3A03FF16-C203-43ED-AEEF-0260F6B3331A@goldelico.com> <3b0a5e78-c4c2-1963-bac7-b49496a1e9b9@wizzup.org> <1F942AAB-1648-46C0-ADD5-90F6898778BE@goldelico.com> <84cac9b8-0eff-33f8-464d-4f8045d7db19@wizzup.org> <BFAA7FA6-A352-476A-99F9-02EA663A6AAD@goldelico.com> <CAHCN7x+87xTsA3MeHy7kUWU0SU3X8HmSc2wbk5gKvYm1dRNe6A@mail.gmail.com>
-To:     Adam Ford <aford173@gmail.com>
-X-Mailer: Apple Mail (2.3124)
+Content-Disposition: inline
+In-Reply-To: <a41e1a4b-b082-725a-b24e-9c92f66d174a@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 08:59:33AM +0100, Raphael Gault wrote:
+> Hi,
+> 
+> On 8/18/19 1:37 PM, kbuild test robot wrote:
+> > Hi Raphael,
+> > 
+> > Thank you for the patch! Yet something to improve:
+> > 
+> > [auto build test ERROR on linus/master]
+> > [cannot apply to v5.3-rc4 next-20190816]
+> > [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> This patchset was based on linux-next/master and note linus
+thanks for the input, we will look for how to find better base to test.
 
-> Am 19.08.2019 um 21:43 schrieb Adam Ford <aford173@gmail.com>:
->=20
->> Thanks to the help from the Pyra community, I was able to get a =
-(binary) reference
->> implementation using DRM that works on Pyra/OMAP5. At least the =
-gles1test1.
->=20
-> just a question,
->=20
-> If DRM is working, does that mean it works without needing the =
-overhead of X?
-
-Yes, we have to kill X11 to successfully run the gles1test1. An =
-interesting question
-will be how to mix both... E.g. have a 3D rendering in a window =
-controlled by some
-window manager.=
+> 
+> Thanks,
+> 
+> -- 
+> Raphael Gault
+> _______________________________________________
+> kbuild-all mailing list
+> kbuild-all@lists.01.org
+> https://lists.01.org/mailman/listinfo/kbuild-all
