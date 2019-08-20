@@ -2,140 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AD30596A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C13D496A21
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:22:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730654AbfHTUVs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:21:48 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37325 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbfHTUVs (ORCPT
+        id S1730840AbfHTUWF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:22:05 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:43795 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730704AbfHTUWE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:21:48 -0400
-Received: by mail-wr1-f65.google.com with SMTP id z11so13697671wrt.4;
-        Tue, 20 Aug 2019 13:21:46 -0700 (PDT)
+        Tue, 20 Aug 2019 16:22:04 -0400
+Received: by mail-oi1-f196.google.com with SMTP id y8so5153087oih.10;
+        Tue, 20 Aug 2019 13:22:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=nchB5IQJ4eCth7WRS+xQ6t/J7ftCZRuwWmTvIH98SPY=;
+        b=ux3qmG5nOv6RqqUO/UrNs19nFUZIDIKIO7BX6LX3OPX2OxfXe+uFPOLooSObQ2w0ds
+         EnvmG4AXd+88LnBogF6v/DuNpOpLiH/uQQhgqL6OE+HkMmiATORfDcDAo1/QqMcDf6Z0
+         +MKk8OVRri9it0A2iMQcts7O4hCeME79BXEQFWKiKhtpHCnHPk0N+fcfL/KaVTrdtHw8
+         yuXCZ5qSq1ZdP8rPyXspMQYC1XIGKbr0y8lGSBlaRcn+0JRvFYQWy0M2RDqqpjMyTdHK
+         qYpasjQT1u954Rd2Led1/R7OQQkQ8HxJNZe4TL05ptOv87/+rZ4LAF+3FKtJT5K1fA01
+         G8rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r3oQd3uU78t7jol5OH8zsEKRAT1+YNvIt09DwZoiSlQ=;
-        b=BXj6+jxYGHxugtXVZwsoR6k0/wt7d72eVsvAXplVzY1QXMTb6JYOBgXAL62VM4aY3J
-         d3hgJOe0FUoSu0UcQHZLkJ0UpUm7i4F6o68AOkIJoUarbJFPvj0bMeaiTAYDdn6xcBG4
-         PjpUPHYCVGNEJ0s4EFvH6lXdyhzukuImjhIAKtqEWX4pv+n7g4rvFrWryoZduQgfu4ki
-         VxwiQANOyYJlICaBkWy0MuwgkEN5eZnPX7Bp8InmJ7D5B4pNLtMDkLaRigOgxudtIyNA
-         M+uOkWDX7SFC1/P/5AKz8xyZlbzWwoSpljryyIlyJZuk8NNRUL6o+Wg+akH6mFUt6Rqn
-         wBUA==
-X-Gm-Message-State: APjAAAUu95UBSWYFxp98BMhK4v5e7NHf4cX5tt08i8XSWS2S5rNT/ICB
-        M96In3p4zjiRk5Evdt8KA00=
-X-Google-Smtp-Source: APXvYqwqYsz8ttcqaewkZkkOJpX4/RTeqO4MzB+KxEbH1U4y9n7I3g2XwPfP8FXlpiiZdiIdPZbsMQ==
-X-Received: by 2002:adf:e94e:: with SMTP id m14mr38108277wrn.230.1566332505727;
-        Tue, 20 Aug 2019 13:21:45 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.124])
-        by smtp.googlemail.com with ESMTPSA id c187sm1943526wmd.39.2019.08.20.13.21.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 13:21:45 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 22:21:42 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v6 3/4] dt-bindings: arm: fsl: Add Kontron i.MX6UL N6310
- compatibles
-Message-ID: <20190820202142.GA15866@kozik-lap>
-References: <1566315318-30320-1-git-send-email-krzk@kernel.org>
- <1566315318-30320-3-git-send-email-krzk@kernel.org>
- <CAL_JsqJLSZ50tdFcdPFc2ifcDoFZFuw=SoKsunzjtAhZ-11fBg@mail.gmail.com>
- <CAJKOXPfkNcWw9sunwXGRz42jOL0cdRC-iiHLtWCYvo5oxCMwFQ@mail.gmail.com>
- <CAL_JsqKAH6n1sMoWOhfiHKxgREr-EN1tw0QtC1H8Fm=a7PNzOA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=nchB5IQJ4eCth7WRS+xQ6t/J7ftCZRuwWmTvIH98SPY=;
+        b=pCdaIO07fahr11gfgC2dK7BXpFdGmszoyKA8Fa3iZokyif9DvVJk/1YZsHX7Swg74Q
+         XtGvtAZV2aszqP6QqvKacSsJMdW/Nhd3mVWOxwgGQRQp+lEYdEFGqMCctNIc7xYYrRUC
+         Rx8fyWa/IF6rhCY4X1UK278Adnf4aA+PVAm3CmvvKPqw5bmLGGQABxf9/ZA0CNmAyOJx
+         BYR4979bbhkRMCx5CK0hV4YaEPUhpN3hxc4n6+wRHSehJCwiFimZR0BTnrP853QtAbqw
+         mI4QgOP6nEGv+ve3ibeFoQaOeoiFlx1nCNqi5afdPYbi6Veq3rQRRiYi9lGtZot/WLQE
+         SIYw==
+X-Gm-Message-State: APjAAAWDJooJX53WmPwf3Ja0Ht7UsaDWdUqW7JQNGJL/iSoKnLOUvm6A
+        q6OpEHrT/lPgMBln4dZNIaf3j0UBREBxM8nH9g4=
+X-Google-Smtp-Source: APXvYqxumwUgslc50+vHGLyx2kOQnH2aNwLHVp9M4yP8Dwkeo7QcsJKJWf1GmXl+B6DS9UwRECTx1xxWxPS0jw31bp4=
+X-Received: by 2002:aca:d650:: with SMTP id n77mr1398101oig.129.1566332523693;
+ Tue, 20 Aug 2019 13:22:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqKAH6n1sMoWOhfiHKxgREr-EN1tw0QtC1H8Fm=a7PNzOA@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190814142918.11636-1-narmstrong@baylibre.com> <20190814142918.11636-4-narmstrong@baylibre.com>
+In-Reply-To: <20190814142918.11636-4-narmstrong@baylibre.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 20 Aug 2019 22:21:52 +0200
+Message-ID: <CAFBinCDvLHrfy4_kSc4ne6Au_+gdC6Z6BX16KamPO_=rcYaDqw@mail.gmail.com>
+Subject: Re: [PATCH 03/14] arm64: dts: meson-gx: fix reset controller compatible
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     khilman@baylibre.com, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 03:04:57PM -0500, Rob Herring wrote:
-> On Tue, Aug 20, 2019 at 1:36 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> >
-> > On Tue, 20 Aug 2019 at 18:59, Rob Herring <robh+dt@kernel.org> wrote:
-> > >
-> > > On Tue, Aug 20, 2019 at 10:35 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > Add the compatibles for Kontron i.MX6UL N6310 SoM and boards.
-> > > >
-> > > > Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> > > >
-> > > > ---
-> > > >
-> > > > Changes since v5:
-> > > > New patch
-> > > > ---
-> > > >  Documentation/devicetree/bindings/arm/fsl.yaml | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > index 7294ac36f4c0..d07b3c06d7cf 100644
-> > > > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-> > > > @@ -161,6 +161,9 @@ properties:
-> > > >          items:
-> > > >            - enum:
-> > > >                - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
-> > > > +              - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
-> > > > +              - kontron,imx6ul-n6310-s    # Kontron N6310 S Board
-> > > > +              - kontron,imx6ul-n6310-s-43 # Kontron N6310 S 43 Board
-> > >
-> > > This doesn't match what is in your dts files. Run 'make dtbs_check' and see.
-> >
-> > You mean the name does not match? I thought that '#' is a comment in YAML...
-> 
-> No, the number of compatible strings is the problem.
-
-I see. If I understand the schema correctly, this should look like:
-
-diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
-index 7294ac36f4c0..eb263d1ccf13 100644
---- a/Documentation/devicetree/bindings/arm/fsl.yaml
-+++ b/Documentation/devicetree/bindings/arm/fsl.yaml
-@@ -161,6 +161,22 @@ properties:
-         items:
-           - enum:
-               - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
-+              - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
-+          - const: fsl,imx6ul
-+
-+      - description: Kontron N6310 S Board
-+        items:
-+          - enum:
-+              - kontron,imx6ul-n6310-s
-+          - const: kontron,imx6ul-n6310-som
-+          - const: fsl,imx6ul
-+
-+      - description: Kontron N6310 S 43 Board
-+        items:
-+          - enum:
-+              - kontron,imx6ul-n6310-s-43
-+          - const: kontron,imx6ul-n6310-s
-+          - const: kontron,imx6ul-n6310-som
-           - const: fsl,imx6ul
-
-       - description: i.MX6ULL based Boards
-
-
-It passes the dtbs_check. Is it correct?
-
-Best regards,
-Krzysztof
-
+On Wed, Aug 14, 2019 at 4:29 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+> This fixes the following DT schemas check errors:
+> meson-gxbb-nanopi-k2.dt.yaml: reset-controller@4404: compatible:0: 'amlogic,meson-gx-reset' is not one of ['amlogic,meson8b-reset', 'amlogic,meson-gxbb-reset', 'amlogic,meson-axg-reset']
+>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
