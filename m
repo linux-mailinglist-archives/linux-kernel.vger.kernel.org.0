@@ -2,71 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2200E95D96
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:40:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01DA695DA0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:42:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729737AbfHTLkF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:40:05 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:51719 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729428AbfHTLkF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:40:05 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i02Uc-0003ZY-PC; Tue, 20 Aug 2019 13:40:02 +0200
-Date:   Tue, 20 Aug 2019 13:40:02 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Michael Kelley <mikelley@microsoft.com>
-cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "boqun.feng" <boqun.feng@gmail.com>,
-        kimbrownkd <kimbrownkd@gmail.com>
-Subject: Re: [Patch v2 1/1] genirq: Properly pair kobject_del with
- kobject_add
-In-Reply-To: <1566264330-8609-1-git-send-email-mikelley@microsoft.com>
-Message-ID: <alpine.DEB.2.21.1908201337420.2223@nanos.tec.linutronix.de>
-References: <1566264330-8609-1-git-send-email-mikelley@microsoft.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1729802AbfHTLmS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:42:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729771AbfHTLmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:42:18 -0400
+Received: from localhost (unknown [106.201.62.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 201E2214DA;
+        Tue, 20 Aug 2019 11:42:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566301337;
+        bh=3hAXI1PeAZZhCXXrvlgihDZlqD2jxXKi7DAm5+kp95Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gbFe5xweEkT3MMN6vCPPCTh8ym/rWhrbBLG9rD8I171gzZJb5ZmYNes5gc8lT25tk
+         Tvir7XBjTp6KKVBNvlpOE/7H9rX5ivMjeT3OqudnnlAiUSHPa/ocEWCEX4gpABt0BW
+         VpS1+7wFKq2foBbwXcaxiZzBumupmjvpTdH7e64g=
+Date:   Tue, 20 Aug 2019 17:11:05 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Mao Wenan <maowenan@huawei.com>
+Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH v2 linux-next 0/2] change mux_configure32() to static
+Message-ID: <20190820114105.GW12733@vkoul-mobl.Dlink>
+References: <20190814072105.144107-1-maowenan@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190814072105.144107-1-maowenan@huawei.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019, Michael Kelley wrote:
+On 14-08-19, 15:21, Mao Wenan wrote:
+> First patch is to make mux_configure32() static to avoid sparse warning,
+> the second patch is to chage alignment of two functions.
 
-> If alloc_descs fails before irq_sysfs_init has run, free_desc in the
-> cleanup path will call kobject_del even though the kobject has not
-> been added with kobject_add. Fix this by adding a new irq_sysfs_del
-> function (within the #ifdef CONFIG_SYSFS) that conditionally calls
-> kobject_del based on whether irq_sysfs_init has run.
+The subsystem name is "dmaengine" please use that in future, I have
+fixed that and applied
+
+> v2: change subject from "drivers: dma: Fix sparse warning for mux_configure32"
+> to "drivers: dma: make mux_configure32 static", and cleanup the log. And add 
+> one patch to change alignment of two functions. 
 > 
-> This problem surfaced because commit aa30f47cf666
-> ("kobject: Add support for default attribute groups to kobj_type")
-> makes kobject_del stricter about pairing with kobject_add. If the
-> pairing is incorrrect, a WARNING and backtrace occur in
-> sysfs_remove_group because there is no parent.
+> Mao Wenan (2):
+>   drivers: dma: make mux_configure32 static
+>   drivers: dma: change alignment of mux_configure32 and
+>     fsl_edma_chan_mux
 > 
-> Signed-off-by: Michael Kelley <mikelley@microsoft.com>
-> ---
-> Changes in v2:
-> * Fix compile error by creating a separate irq_sysfs_del function
->   to do the conditional call to kobject_del, so that all references
->   to irq_kobj_base are under the #ifdef CONFIG_SYSFS.
+>  drivers/dma/fsl-edma-common.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> -- 
+> 2.20.1
 
-Too late. I already fixed that up in the same way yesterday night:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=irq/urgent&id=d0ff14fdc987303aeeb7de6f1bd72c3749ae2a9b
-
-The tip commit bot seems not to work right now, so you didn't get a notice.
-
-Thanks,
-
-	tglx
+-- 
+~Vinod
