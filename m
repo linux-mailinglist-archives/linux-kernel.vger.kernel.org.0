@@ -2,451 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E6F952A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:20:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4ADAC952A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:20:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728968AbfHTASf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:18:35 -0400
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:49171 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728954AbfHTASc (ORCPT
+        id S1729252AbfHTAUI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:20:08 -0400
+Received: from mail-qk1-f201.google.com ([209.85.222.201]:43039 "EHLO
+        mail-qk1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728970AbfHTASr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:18:32 -0400
-Received: by mail-pf1-f201.google.com with SMTP id s10so3519176pfd.16
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:18:31 -0700 (PDT)
+        Mon, 19 Aug 2019 20:18:47 -0400
+Received: by mail-qk1-f201.google.com with SMTP id m2so5228852qkk.10
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:18:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=bC7ewIpOD7kKRv4zgEwcJ/YudS1s9NTZWLzeTQRmanE=;
-        b=URfPq3ODlEY2xBjCdcYfrSPpu5TgIjKf8zYvzddN03jGNVkCBho81L6lWf1m027tUQ
-         HkA1v54fNVgVAY5G5597pvwIpHxmuqdLgZX56kdiMWiLQjHN3h6tcmJxQkjKQfGBaDuy
-         2ENi4+VmUWVTHHDq/fCJNxRwsmp4hVzFCDF43Sh+PJ1o+U57tsaoSNlbtGS8O+LHjcco
-         irvf5qbgvO+/1IWbmyFQ4cte+zOHPxJf/KT3TsLI+vwOcLgnz3RwAICV07tJHoDfP2YZ
-         cMAzwfG+gQXXsNMVB7md0Tp0mE6ngM71Yks5gtjVGhb7PvMZ1F2Mrguz08HumraiPB9q
-         qEaw==
+        bh=cqqNQcjxZKCBbJrhwZmXlaL29Q1qsVjTwEkp4+lUxdU=;
+        b=BO4kQ0935/Y6yDgFnhcP8U6VvEnTvdTFa/3/fszoNSnRJF6dFBqhAjx6db960YfW0K
+         qw9yz47/8ZyE7El9zyKrpX6FxYTqfCOL/KV4sKWwPji/sOlAKKSZJGMnIfy08kBE/oZj
+         5Ow1ygy8tsS7ANpFzOe7Kp1U16F48xU8m+P1WFrA1xc3bLm6Jgh5b9hFkkh5oaITb+Ji
+         sWSWe0i1edcvaMRxj6V14kv8WeQFfDfQM3JvK0bj3fESox4Fnq9hVhynGXjBbP3l99Ut
+         R8L+pMW90KxNobngtePTakpHnAIOlPcoCK4QFSrTWkmEbbuLhqiAbOcS0Cx5ErD3vfgm
+         UIiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=bC7ewIpOD7kKRv4zgEwcJ/YudS1s9NTZWLzeTQRmanE=;
-        b=e2bvXWsIsR+S6QejViN3NgQMEL9sepZV1uiMqQiTFf0O7wi6k2SF6haMHf4kqsIOpf
-         F7hz/g5GP/M3q+3XpDn6hNx6jRFyDFBDBwP0m0xRsin9cwU1LX1A5JX32plLOhnoybWv
-         F/NrwmlYSJxj9rEC6wHGFqHJR0c7yghGJTLrIefMELUsGaGkwUNgq3VtkmwSl4zereAF
-         wuifp3twIyTFVX6I68ygI9Uw2mS7C1a64VsO/2MLnzhBpr0BvG5PaHF2QzQzLZaubzLh
-         mMWwB5STIRAvVePkf8uks7mhvPI7KX+HV0VYq2KSm09cCnAjPz3TatHNvVr0V0e1grki
-         IoEg==
-X-Gm-Message-State: APjAAAXJOAB6mC1J4Kv+6PdMMwQ+CVmtVtqg/HvE5Ys1giM6W14Z2VTw
-        BsfgoVBhoQvd0n+T8MQwHbCQMVX88k36qvmLrgBRWQ==
-X-Google-Smtp-Source: APXvYqwIhWHZGyd8iGulecMwl621eBwYwjIu2poTs2trYo9QmU74aijoZ+0dXwjmZLzmdC5xxDfld7Wqi+WYZt4J1YODpw==
-X-Received: by 2002:a63:2043:: with SMTP id r3mr22349910pgm.311.1566260311059;
- Mon, 19 Aug 2019 17:18:31 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:17:44 -0700
+        bh=cqqNQcjxZKCBbJrhwZmXlaL29Q1qsVjTwEkp4+lUxdU=;
+        b=CYHuD6GoiWK+u2/9wgafCIBjWGz6PvnXeGa0iIKpQVJGlkFcyqgMgKUo/rsP/RdLBH
+         2ktm99d2lIzpaMJhcta4JhWMKMKXXLMLkPY/J9OrflkkFivfjI5abv5E8u7Lc6bZfniT
+         6ZWUGQt1tIZqRq7xLD/SDo4Mlpok2bIFImSBuF/cPHHWijgW+KigpLnK4e7iFNN+GW5k
+         xHP8Ym0ed+4W9M9pQagdnKMyEOb2cpC1QGC4sat3AknTdCJ+7qVZVCRz0OJLNWd+n6tP
+         3fWTs0jwVjG3plhRD51qJiwbbdD5kxRunPOiwZid2CpSP6hSzpk+ztuP9hyc//roGpYZ
+         8P0g==
+X-Gm-Message-State: APjAAAXDhqdKICiZ/36N4guKNNnurC0ynjBYZ1Yqxj1n6zSkw14op2cI
+        Hg9/bmZjuZBJFVtArIeOcc5g0d4FyjPryqjdvNPDgA==
+X-Google-Smtp-Source: APXvYqxswIM8pnBZTf4JSFzJH5iVwegnGiEXZPza+6Bn5dQaguOlalUfABkzQuHVZ7Yhx2xki+lP2+gvBt9AxTPDA6C5Hw==
+X-Received: by 2002:a05:620a:1413:: with SMTP id d19mr23052964qkj.341.1566260326602;
+ Mon, 19 Aug 2019 17:18:46 -0700 (PDT)
+Date:   Mon, 19 Aug 2019 17:17:50 -0700
 In-Reply-To: <20190820001805.241928-1-matthewgarrett@google.com>
-Message-Id: <20190820001805.241928-9-matthewgarrett@google.com>
+Message-Id: <20190820001805.241928-15-matthewgarrett@google.com>
 Mime-Version: 1.0
 References: <20190820001805.241928-1-matthewgarrett@google.com>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH V40 08/29] kexec_file: split KEXEC_VERIFY_SIG into KEXEC_SIG
- and KEXEC_SIG_FORCE
+Subject: [PATCH V40 14/29] ACPI: Limit access to custom_method when the kernel
+ is locked down
 From:   Matthew Garrett <matthewgarrett@google.com>
 To:     jmorris@namei.org
 Cc:     linux-security-module@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        Jiri Bohac <jbohac@suse.cz>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Matthew Garrett <mjg59@google.com>,
         David Howells <dhowells@redhat.com>,
-        Matthew Garrett <mjg59@google.com>, kexec@lists.infradead.org
+        Kees Cook <keescook@chromium.org>, linux-acpi@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Bohac <jbohac@suse.cz>
+From: Matthew Garrett <mjg59@srcf.ucam.org>
 
-This is a preparatory patch for kexec_file_load() lockdown.  A locked down
-kernel needs to prevent unsigned kernel images from being loaded with
-kexec_file_load().  Currently, the only way to force the signature
-verification is compiling with KEXEC_VERIFY_SIG.  This prevents loading
-usigned images even when the kernel is not locked down at runtime.
+custom_method effectively allows arbitrary access to system memory, making
+it possible for an attacker to circumvent restrictions on module loading.
+Disable it if the kernel is locked down.
 
-This patch splits KEXEC_VERIFY_SIG into KEXEC_SIG and KEXEC_SIG_FORCE.
-Analogous to the MODULE_SIG and MODULE_SIG_FORCE for modules, KEXEC_SIG
-turns on the signature verification but allows unsigned images to be
-loaded.  KEXEC_SIG_FORCE disallows images without a valid signature.
-
-Signed-off-by: Jiri Bohac <jbohac@suse.cz>
-Signed-off-by: David Howells <dhowells@redhat.com>
 Signed-off-by: Matthew Garrett <mjg59@google.com>
-cc: kexec@lists.infradead.org
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+cc: linux-acpi@vger.kernel.org
+Signed-off-by: James Morris <jmorris@namei.org>
 ---
- arch/arm64/Kconfig                      |  6 +--
- arch/s390/Kconfig                       |  2 +-
- arch/s390/configs/debug_defconfig       |  2 +-
- arch/s390/configs/defconfig             |  2 +-
- arch/s390/configs/performance_defconfig |  2 +-
- arch/s390/kernel/kexec_elf.c            |  4 +-
- arch/s390/kernel/kexec_image.c          |  4 +-
- arch/s390/kernel/machine_kexec_file.c   |  4 +-
- arch/x86/Kconfig                        | 20 ++++++---
- arch/x86/kernel/ima_arch.c              |  4 +-
- crypto/asymmetric_keys/verify_pefile.c  |  4 +-
- include/linux/kexec.h                   |  4 +-
- kernel/kexec_file.c                     | 60 +++++++++++++++++++++----
- security/integrity/ima/Kconfig          |  2 +-
- security/integrity/ima/ima_main.c       |  2 +-
- 15 files changed, 88 insertions(+), 34 deletions(-)
+ drivers/acpi/custom_method.c | 6 ++++++
+ include/linux/security.h     | 1 +
+ security/lockdown/lockdown.c | 1 +
+ 3 files changed, 8 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 697ea0510729..f940500a941b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -961,7 +961,7 @@ config KEXEC_FILE
- 	  for kernel and initramfs as opposed to list of segments as
- 	  accepted by previous system call.
+diff --git a/drivers/acpi/custom_method.c b/drivers/acpi/custom_method.c
+index b2ef4c2ec955..7031307becd7 100644
+--- a/drivers/acpi/custom_method.c
++++ b/drivers/acpi/custom_method.c
+@@ -9,6 +9,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/debugfs.h>
+ #include <linux/acpi.h>
++#include <linux/security.h>
  
--config KEXEC_VERIFY_SIG
-+config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
- 	depends on KEXEC_FILE
- 	help
-@@ -976,13 +976,13 @@ config KEXEC_VERIFY_SIG
- config KEXEC_IMAGE_VERIFY_SIG
- 	bool "Enable Image signature verification support"
- 	default y
--	depends on KEXEC_VERIFY_SIG
-+	depends on KEXEC_SIG
- 	depends on EFI && SIGNED_PE_FILE_VERIFICATION
- 	help
- 	  Enable Image signature verification support.
+ #include "internal.h"
  
- comment "Support for PE file signature verification disabled"
--	depends on KEXEC_VERIFY_SIG
-+	depends on KEXEC_SIG
- 	depends on !EFI || !SIGNED_PE_FILE_VERIFICATION
+@@ -29,6 +30,11 @@ static ssize_t cm_write(struct file *file, const char __user * user_buf,
  
- config CRASH_DUMP
-diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-index 109243fdb6ec..c4a423f30d49 100644
---- a/arch/s390/Kconfig
-+++ b/arch/s390/Kconfig
-@@ -555,7 +555,7 @@ config ARCH_HAS_KEXEC_PURGATORY
- 	def_bool y
- 	depends on KEXEC_FILE
- 
--config KEXEC_VERIFY_SIG
-+config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
- 	depends on KEXEC_FILE && SYSTEM_DATA_VERIFICATION
- 	help
-diff --git a/arch/s390/configs/debug_defconfig b/arch/s390/configs/debug_defconfig
-index b0920b35f87b..525e0a6addb9 100644
---- a/arch/s390/configs/debug_defconfig
-+++ b/arch/s390/configs/debug_defconfig
-@@ -64,7 +64,7 @@ CONFIG_NUMA=y
- CONFIG_PREEMPT=y
- CONFIG_HZ_100=y
- CONFIG_KEXEC_FILE=y
--CONFIG_KEXEC_VERIFY_SIG=y
-+CONFIG_KEXEC_SIG=y
- CONFIG_EXPOLINE=y
- CONFIG_EXPOLINE_AUTO=y
- CONFIG_MEMORY_HOTPLUG=y
-diff --git a/arch/s390/configs/defconfig b/arch/s390/configs/defconfig
-index c59b922cb6c5..4c37279acdb4 100644
---- a/arch/s390/configs/defconfig
-+++ b/arch/s390/configs/defconfig
-@@ -39,7 +39,7 @@ CONFIG_NR_CPUS=256
- CONFIG_NUMA=y
- CONFIG_HZ_100=y
- CONFIG_KEXEC_FILE=y
--CONFIG_KEXEC_VERIFY_SIG=y
-+CONFIG_KEXEC_SIG=y
- CONFIG_CRASH_DUMP=y
- CONFIG_HIBERNATION=y
- CONFIG_PM_DEBUG=y
-diff --git a/arch/s390/configs/performance_defconfig b/arch/s390/configs/performance_defconfig
-index 09aa5cb14873..158ad0f0d433 100644
---- a/arch/s390/configs/performance_defconfig
-+++ b/arch/s390/configs/performance_defconfig
-@@ -65,7 +65,7 @@ CONFIG_NR_CPUS=512
- CONFIG_NUMA=y
- CONFIG_HZ_100=y
- CONFIG_KEXEC_FILE=y
--CONFIG_KEXEC_VERIFY_SIG=y
-+CONFIG_KEXEC_SIG=y
- CONFIG_EXPOLINE=y
- CONFIG_EXPOLINE_AUTO=y
- CONFIG_MEMORY_HOTPLUG=y
-diff --git a/arch/s390/kernel/kexec_elf.c b/arch/s390/kernel/kexec_elf.c
-index 6d0635ceddd0..9b4f37a4edf1 100644
---- a/arch/s390/kernel/kexec_elf.c
-+++ b/arch/s390/kernel/kexec_elf.c
-@@ -130,7 +130,7 @@ static int s390_elf_probe(const char *buf, unsigned long len)
- const struct kexec_file_ops s390_kexec_elf_ops = {
- 	.probe = s390_elf_probe,
- 	.load = s390_elf_load,
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC__SIG
- 	.verify_sig = s390_verify_sig,
--#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+#endif /* CONFIG_KEXEC_SIG */
- };
-diff --git a/arch/s390/kernel/kexec_image.c b/arch/s390/kernel/kexec_image.c
-index 58318bf89fd9..af23eff5774d 100644
---- a/arch/s390/kernel/kexec_image.c
-+++ b/arch/s390/kernel/kexec_image.c
-@@ -59,7 +59,7 @@ static int s390_image_probe(const char *buf, unsigned long len)
- const struct kexec_file_ops s390_kexec_image_ops = {
- 	.probe = s390_image_probe,
- 	.load = s390_image_load,
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- 	.verify_sig = s390_verify_sig,
--#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+#endif /* CONFIG_KEXEC_SIG */
- };
-diff --git a/arch/s390/kernel/machine_kexec_file.c b/arch/s390/kernel/machine_kexec_file.c
-index fbdd3ea73667..c0f33ba49a9a 100644
---- a/arch/s390/kernel/machine_kexec_file.c
-+++ b/arch/s390/kernel/machine_kexec_file.c
-@@ -22,7 +22,7 @@ const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	NULL,
- };
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- /*
-  * Module signature information block.
-  *
-@@ -90,7 +90,7 @@ int s390_verify_sig(const char *kernel, unsigned long kernel_len)
- 				      VERIFYING_MODULE_SIGNATURE,
- 				      NULL, NULL);
- }
--#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+#endif /* CONFIG_KEXEC_SIG */
- 
- static int kexec_file_update_purgatory(struct kimage *image,
- 				       struct s390_load_data *data)
-diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-index 2bbbd4d1ba31..cd41998aa6e6 100644
---- a/arch/x86/Kconfig
-+++ b/arch/x86/Kconfig
-@@ -2006,20 +2006,30 @@ config KEXEC_FILE
- config ARCH_HAS_KEXEC_PURGATORY
- 	def_bool KEXEC_FILE
- 
--config KEXEC_VERIFY_SIG
-+config KEXEC_SIG
- 	bool "Verify kernel signature during kexec_file_load() syscall"
- 	depends on KEXEC_FILE
- 	---help---
--	  This option makes kernel signature verification mandatory for
--	  the kexec_file_load() syscall.
- 
--	  In addition to that option, you need to enable signature
-+	  This option makes the kexec_file_load() syscall check for a valid
-+	  signature of the kernel image.  The image can still be loaded without
-+	  a valid signature unless you also enable KEXEC_SIG_FORCE, though if
-+	  there's a signature that we can check, then it must be valid.
-+
-+	  In addition to this option, you need to enable signature
- 	  verification for the corresponding kernel image type being
- 	  loaded in order for this to work.
- 
-+config KEXEC_SIG_FORCE
-+	bool "Require a valid signature in kexec_file_load() syscall"
-+	depends on KEXEC_SIG
-+	---help---
-+	  This option makes kernel signature verification mandatory for
-+	  the kexec_file_load() syscall.
-+
- config KEXEC_BZIMAGE_VERIFY_SIG
- 	bool "Enable bzImage signature verification support"
--	depends on KEXEC_VERIFY_SIG
-+	depends on KEXEC_SIG
- 	depends on SIGNED_PE_FILE_VERIFICATION
- 	select SYSTEM_TRUSTED_KEYRING
- 	---help---
-diff --git a/arch/x86/kernel/ima_arch.c b/arch/x86/kernel/ima_arch.c
-index 64b973f0e985..b98890894731 100644
---- a/arch/x86/kernel/ima_arch.c
-+++ b/arch/x86/kernel/ima_arch.c
-@@ -66,9 +66,9 @@ bool arch_ima_get_secureboot(void)
- 
- /* secureboot arch rules */
- static const char * const sb_arch_rules[] = {
--#if !IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
-+#if !IS_ENABLED(CONFIG_KEXEC_SIG)
- 	"appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig",
--#endif /* CONFIG_KEXEC_VERIFY_SIG */
-+#endif /* CONFIG_KEXEC_SIG */
- 	"measure func=KEXEC_KERNEL_CHECK",
- #if !IS_ENABLED(CONFIG_MODULE_SIG)
- 	"appraise func=MODULE_CHECK appraise_type=imasig",
-diff --git a/crypto/asymmetric_keys/verify_pefile.c b/crypto/asymmetric_keys/verify_pefile.c
-index 3b303fe2f061..cc9dbcecaaca 100644
---- a/crypto/asymmetric_keys/verify_pefile.c
-+++ b/crypto/asymmetric_keys/verify_pefile.c
-@@ -96,7 +96,7 @@ static int pefile_parse_binary(const void *pebuf, unsigned int pelen,
- 
- 	if (!ddir->certs.virtual_address || !ddir->certs.size) {
- 		pr_debug("Unsigned PE binary\n");
--		return -EKEYREJECTED;
-+		return -ENODATA;
- 	}
- 
- 	chkaddr(ctx->header_size, ddir->certs.virtual_address,
-@@ -403,6 +403,8 @@ static int pefile_digest_pe(const void *pebuf, unsigned int pelen,
-  *  (*) 0 if at least one signature chain intersects with the keys in the trust
-  *	keyring, or:
-  *
-+ *  (*) -ENODATA if there is no signature present.
-+ *
-  *  (*) -ENOPKG if a suitable crypto module couldn't be found for a check on a
-  *	chain.
-  *
-diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-index b9b1bc5f9669..58b27c7bdc2b 100644
---- a/include/linux/kexec.h
-+++ b/include/linux/kexec.h
-@@ -125,7 +125,7 @@ typedef void *(kexec_load_t)(struct kimage *image, char *kernel_buf,
- 			     unsigned long cmdline_len);
- typedef int (kexec_cleanup_t)(void *loader_data);
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- typedef int (kexec_verify_sig_t)(const char *kernel_buf,
- 				 unsigned long kernel_len);
- #endif
-@@ -134,7 +134,7 @@ struct kexec_file_ops {
- 	kexec_probe_t *probe;
- 	kexec_load_t *load;
- 	kexec_cleanup_t *cleanup;
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- 	kexec_verify_sig_t *verify_sig;
- #endif
- };
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index ef7b951a8087..972931201995 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -88,7 +88,7 @@ int __weak arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	return kexec_image_post_load_cleanup_default(image);
- }
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
-+#ifdef CONFIG_KEXEC_SIG
- static int kexec_image_verify_sig_default(struct kimage *image, void *buf,
- 					  unsigned long buf_len)
- {
-@@ -177,6 +177,51 @@ void kimage_file_post_load_cleanup(struct kimage *image)
- 	image->image_loader_data = NULL;
- }
- 
-+#ifdef CONFIG_KEXEC_SIG
-+static int
-+kimage_validate_signature(struct kimage *image)
-+{
-+	const char *reason;
+ 	struct acpi_table_header table;
+ 	acpi_status status;
 +	int ret;
 +
-+	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
-+					   image->kernel_buf_len);
-+	switch (ret) {
-+	case 0:
-+		break;
-+
-+		/* Certain verification errors are non-fatal if we're not
-+		 * checking errors, provided we aren't mandating that there
-+		 * must be a valid signature.
-+		 */
-+	case -ENODATA:
-+		reason = "kexec of unsigned image";
-+		goto decide;
-+	case -ENOPKG:
-+		reason = "kexec of image with unsupported crypto";
-+		goto decide;
-+	case -ENOKEY:
-+		reason = "kexec of image with unavailable key";
-+	decide:
-+		if (IS_ENABLED(CONFIG_KEXEC_SIG_FORCE)) {
-+			pr_notice("%s rejected\n", reason);
-+			return ret;
-+		}
-+
-+		return 0;
-+
-+		/* All other errors are fatal, including nomem, unparseable
-+		 * signatures and signature check failures - even if signatures
-+		 * aren't required.
-+		 */
-+	default:
-+		pr_notice("kernel signature verification failed (%d).\n", ret);
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- /*
-  * In file mode list of segments is prepared by kernel. Copy relevant
-  * data from user space, do error checking, prepare segment list
-@@ -186,7 +231,7 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 			     const char __user *cmdline_ptr,
- 			     unsigned long cmdline_len, unsigned flags)
- {
--	int ret = 0;
-+	int ret;
- 	void *ldata;
- 	loff_t size;
- 
-@@ -205,14 +250,11 @@ kimage_file_prepare_segments(struct kimage *image, int kernel_fd, int initrd_fd,
- 	if (ret)
- 		goto out;
- 
--#ifdef CONFIG_KEXEC_VERIFY_SIG
--	ret = arch_kexec_kernel_verify_sig(image, image->kernel_buf,
--					   image->kernel_buf_len);
--	if (ret) {
--		pr_debug("kernel signature verification failed.\n");
-+#ifdef CONFIG_KEXEC_SIG
-+	ret = kimage_validate_signature(image);
-+
++	ret = security_locked_down(LOCKDOWN_ACPI_TABLES);
 +	if (ret)
- 		goto out;
--	}
--	pr_debug("kernel signature verification successful.\n");
- #endif
- 	/* It is possible that there no initramfs is being loaded */
- 	if (!(flags & KEXEC_FILE_NO_INITRAMFS)) {
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 2692c7358c2c..32cd25fa44a5 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -160,7 +160,7 @@ config IMA_APPRAISE
++		return ret;
  
- config IMA_ARCH_POLICY
-         bool "Enable loading an IMA architecture specific policy"
--        depends on KEXEC_VERIFY_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-+        depends on KEXEC_SIG || IMA_APPRAISE && INTEGRITY_ASYMMETRIC_KEYS
-         default n
-         help
-           This option enables loading an IMA architecture specific policy
-diff --git a/security/integrity/ima/ima_main.c b/security/integrity/ima/ima_main.c
-index f556e6c18f9b..1cffda4412b7 100644
---- a/security/integrity/ima/ima_main.c
-+++ b/security/integrity/ima/ima_main.c
-@@ -541,7 +541,7 @@ int ima_load_data(enum kernel_load_data_id id)
- 
- 	switch (id) {
- 	case LOADING_KEXEC_IMAGE:
--		if (IS_ENABLED(CONFIG_KEXEC_VERIFY_SIG)
-+		if (IS_ENABLED(CONFIG_KEXEC_SIG)
- 		    && arch_ima_get_secureboot()) {
- 			pr_err("impossible to appraise a kernel image without a file descriptor; try using kexec_file_load syscall.\n");
- 			return -EACCES;
+ 	if (!(*ppos)) {
+ 		/* parse the table header to get the table length */
+diff --git a/include/linux/security.h b/include/linux/security.h
+index 010637a79eac..390e39395112 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -110,6 +110,7 @@ enum lockdown_reason {
+ 	LOCKDOWN_PCI_ACCESS,
+ 	LOCKDOWN_IOPORT,
+ 	LOCKDOWN_MSR,
++	LOCKDOWN_ACPI_TABLES,
+ 	LOCKDOWN_INTEGRITY_MAX,
+ 	LOCKDOWN_CONFIDENTIALITY_MAX,
+ };
+diff --git a/security/lockdown/lockdown.c b/security/lockdown/lockdown.c
+index b1c1c72440d5..6d44db0ddffa 100644
+--- a/security/lockdown/lockdown.c
++++ b/security/lockdown/lockdown.c
+@@ -25,6 +25,7 @@ static char *lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1] = {
+ 	[LOCKDOWN_PCI_ACCESS] = "direct PCI access",
+ 	[LOCKDOWN_IOPORT] = "raw io port access",
+ 	[LOCKDOWN_MSR] = "raw MSR access",
++	[LOCKDOWN_ACPI_TABLES] = "modifying ACPI tables",
+ 	[LOCKDOWN_INTEGRITY_MAX] = "integrity",
+ 	[LOCKDOWN_CONFIDENTIALITY_MAX] = "confidentiality",
+ };
 -- 
 2.23.0.rc1.153.gdeed80330f-goog
 
