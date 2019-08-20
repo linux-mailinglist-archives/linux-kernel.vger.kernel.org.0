@@ -2,216 +2,283 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C0F2953E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:56:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 38A84953F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 03:58:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728949AbfHTB4Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 21:56:25 -0400
-Received: from szxga01-in.huawei.com ([45.249.212.187]:3942 "EHLO huawei.com"
+        id S1729021AbfHTB6H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 21:58:07 -0400
+Received: from mail-eopbgr710055.outbound.protection.outlook.com ([40.107.71.55]:32205
+        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728647AbfHTB4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 21:56:25 -0400
-Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.57])
-        by Forcepoint Email with ESMTP id C61FAB30F28E0AFC2348;
-        Tue, 20 Aug 2019 09:56:21 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Tue, 20 Aug 2019 09:56:21 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Tue, 20 Aug 2019 09:56:20 +0800
-Date:   Tue, 20 Aug 2019 09:55:41 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Qu Wenruo <quwenruo.btrfs@gmx.com>
-CC:     Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Eric Biggers <ebiggers@kernel.org>,
-        "Richard Weinberger" <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, Chao Yu <yuchao0@huawei.com>,
-        Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Li Guifu" <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] erofs: move erofs out of staging
-Message-ID: <20190820015541.GA159846@architecture4>
-References: <20190818155812.GB13230@infradead.org>
- <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
-MIME-Version: 1.0
+        id S1728647AbfHTB6G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 19 Aug 2019 21:58:06 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Vk38Odj5qInHOviNZpK1wBd10zHr/qvIE+Uma6e7w3fUikoEIW0wQP0wEFCKe01Mf8ZvvcfTlP6r037Z/XA5/9XUrP75u4cN5jkcuKUI1Is+vADr+twacpnxp4btx6WV4APcKNEb4aYwJMSOnUH+mptoD1wh1U53FJOzB7La9PPhnTB5q668FzkS+lzh59nWPchNXBMY3bRoqLFwswqSBs8KiK3jl9thEjkc3idZjfq9GPhsC+6E4Kc058IaqxTE29EyDl/KwPFR/ebx8wHi27f0AyWcmMBGuh8BaT/1ZfSIicV3a8Td5NUaf6qCirVcnqP7wysT/6H6t+xRwj79EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g2MATPfSP8THj1xuoWNFuGlXfMpsF7oeT1vB4j0bu8s=;
+ b=RBFCvC9DdN9vQociXREQKi0kt1t3urItUpXcNHkrWDsXrfFuMAQsB6tJA+wS7cSqLiKkgk0ONr4FSCUTA4CXcTFavgRrGAHLaJTvCL0o2ozWwiBqN9rar1jXsMqJLzcA/xsGcT5fdL38+wyUDvyLErX7dyTxxWRWiB7Mvm8BI0VACZmzAHDds9RTQOveGdisG/5P5KFLtpx6dlqi/MnTgFTPWAUAMC7Wg67xvtTIHZ0P5AO3Ks+M6YxduCoK5PF7ETbIwZ5+RD/UPP9Q9sWcyQlCui1EOAL8iqGe91dAhDFCztm6I/KVR/K/Ea5EqfjOglN9hGcElfIhfG6VxdUrZw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=synaptics.com; dmarc=pass action=none
+ header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=g2MATPfSP8THj1xuoWNFuGlXfMpsF7oeT1vB4j0bu8s=;
+ b=D+2Z0hiCiCcSAynR/rL64GBN1i12VvhF7KjruZCVzlze6y9LpRhDH9qQak243t2BqWCNReEY1e/XGm08CSS58d9FZBL3dAEJRUy7r6nrpMs2DCOUUxzGU+8SoBtn3SFAenQ9EJJydg9oyeSwm5bPsjVPnAwBBv+6X9llEa+aPCs=
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
+ BYAPR03MB4102.namprd03.prod.outlook.com (20.177.184.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Tue, 20 Aug 2019 01:56:23 +0000
+Received: from BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a517:3578:67bf:6c88]) by BYAPR03MB4773.namprd03.prod.outlook.com
+ ([fe80::a517:3578:67bf:6c88%7]) with mapi id 15.20.2157.022; Tue, 20 Aug 2019
+ 01:56:23 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Masami Hiramatsu <mhiramat@kernel.org>
+CC:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] kprobes: move kprobe_ftrace_handler() from x86 and
+ make it weak
+Thread-Topic: [PATCH 3/4] kprobes: move kprobe_ftrace_handler() from x86 and
+ make it weak
+Thread-Index: AQHVVoJ3Rba7zgg07UOxNWPFwAx1QKcDKYSAgAAbSoA=
+Date:   Tue, 20 Aug 2019 01:56:23 +0000
+Message-ID: <20190820094515.323b0c75@xhacker.debian>
+References: <20190819192422.5ed79702@xhacker.debian>
+        <20190819192628.5f550074@xhacker.debian>
+        <20190820090735.a55e7d0b685adecf68fdb55b@kernel.org>
+In-Reply-To: <20190820090735.a55e7d0b685adecf68fdb55b@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [124.74.246.114]
+x-clientproxiedby: TY2PR0101CA0040.apcprd01.prod.exchangelabs.com
+ (2603:1096:404:8000::26) To BYAPR03MB4773.namprd03.prod.outlook.com
+ (2603:10b6:a03:134::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5636b3a8-187a-4567-5a0d-08d725119aa7
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR03MB4102;
+x-ms-traffictypediagnostic: BYAPR03MB4102:
+x-microsoft-antispam-prvs: <BYAPR03MB41026769236AE81C4D005CF9EDAB0@BYAPR03MB4102.namprd03.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(346002)(136003)(376002)(366004)(39850400004)(189003)(199004)(486006)(8936002)(6486002)(7416002)(66066001)(54906003)(7736002)(316002)(305945005)(8676002)(86362001)(81166006)(81156014)(6116002)(6916009)(11346002)(50226002)(3846002)(71200400001)(71190400001)(4326008)(476003)(446003)(99286004)(256004)(14444005)(14454004)(2906002)(102836004)(52116002)(66946007)(6246003)(26005)(53936002)(1076003)(9686003)(6512007)(64756008)(76176011)(66476007)(66556008)(66446008)(229853002)(478600001)(25786009)(186003)(386003)(6506007)(6436002)(5660300002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB4102;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: mJukGuhjplPD9fZInEfs4pUOH8JS/vw8fO1vQnKoi4J2B+2mnhUXW0ZdLpQED9DriG+rwBdnT/XlaEj5JTOeEHoZaDtemAA/uLh3SZZQewrHL9xznX7OI0AwqD1Xk3YE2PbQ8QXAcBbutrvyXMtJkDAr2d1sSwTdF5BjanOUs8r6aSGOs5go5tQCMWh/BVgkqQS9lio/kX0Ej4qV4GJYHHPxwbkFI85EEQ/JRqhduvPiMqTDNSRg7ZztVA5ij5VjcOCR7xzEIBioteHHJQj47G0MzSL5vB2JpMdCQ6SpCuE7QV4wBU61Km28C02DeJShwElppaed9eyzzHnxLBYX++g7DnW3qQpyTE0ZgZB385//MtpbMQylTnQRAjdTMrKIPLUw2swCZ1L2a84xkylJObGtqEvQUQiklCRW3BJU1qc=
+x-ms-exchange-transport-forked: True
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+Content-ID: <4927522ADCDC1F4096E473DF64A16AEE@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5636b3a8-187a-4567-5a0d-08d725119aa7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 01:56:23.7234
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: oZPC+fCIAxkc+UJCnArRbpAWg5aJgTSJiACkBZC4prGurvYh1kXMm7+VWFWDP6MsPl+Eh70cGObqcf32pp5rwQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB4102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Qu,
+On Tue, 20 Aug 2019 09:07:35 +0900 Masami Hiramatsu  wrote:
 
-On Tue, Aug 20, 2019 at 08:55:32AM +0800, Qu Wenruo wrote:
-> [...]
-> >>> I have made a simple fuzzer to inject messy in inode metadata,
-> >>> dir data, compressed indexes and super block,
-> >>> https://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs-utils.git/commit/?h=experimental-fuzzer
-> >>>
-> >>> I am testing with some given dirs and the following script.
-> >>> Does it look reasonable?
-> >>>
-> >>> # !/bin/bash
-> >>>
-> >>> mkdir -p mntdir
-> >>>
-> >>> for ((i=0; i<1000; ++i)); do
-> >>> 	mkfs/mkfs.erofs -F$i testdir_fsl.fuzz.img testdir_fsl > /dev/null 2>&1
-> >>
-> >> mkfs fuzzes the image? Er....
-> > 
-> > Thanks for your reply.
-> > 
-> > First, This is just the first step of erofs fuzzer I wrote yesterday night...
-> > 
-> >>
-> >> Over in XFS land we have an xfs debugging tool (xfs_db) that knows how
-> >> to dump (and write!) most every field of every metadata type.  This
-> >> makes it fairly easy to write systematic level 0 fuzzing tests that
-> >> check how well the filesystem reacts to garbage data (zeroing,
-> >> randomizing, oneing, adding and subtracting small integers) in a field.
-> >> (It also knows how to trash entire blocks.)
-> 
-> The same tool exists for btrfs, although lacks the write ability, but
-> that dump is more comprehensive and a great tool to learn the on-disk
-> format.
-> 
-> 
-> And for the fuzzing defending part, just a few kernel releases ago,
-> there is none for btrfs, and now we have a full static verification
-> layer to cover (almost) all on-disk data at read and write time.
-> (Along with enhanced runtime check)
-> 
-> We have covered from vague values inside tree blocks and invalid/missing
-> cross-ref find at runtime.
-> 
-> Currently the two layered check works pretty fine (well, sometimes too
-> good to detect older, improper behaved kernel).
-> - Tree blocks with vague data just get rejected by verification layer
->   So that all members should fit on-disk format, from alignment to
->   generation to inode mode.
-> 
->   The error will trigger a good enough (TM) error message for developer
->   to read, and if we have other copies, we retry other copies just as
->   we hit a bad copy.
-> 
-> - At runtime, we have much less to check
->   Only cross-ref related things can be wrong now. since everything
->   inside a single tree block has already be checked.
-> 
-> In fact, from my respect of view, such read time check should be there
-> from the very beginning.
-> It acts kinda of a on-disk format spec. (In fact, by implementing the
-> verification layer itself, it already exposes a lot of btrfs design
-> trade-offs)
-> 
-> Even for a fs as complex (buggy) as btrfs, we only take 1K lines to
-> implement the verification layer.
-> So I'd like to see every new mainlined fs to have such ability.
+>=20
+>=20
+> Hi Jisheng,
 
-It's already on our schedule, but we have limited manpower. Rome was
-not built in a day, as I mentioned eariler, we are doing our best.
+Hi,
 
-In principle, all the new Linux features on-disk can build their
-debugging tools, not only for file systems. You can hardly let your
-newborn baby go to university immediately.
+>=20
+> On Mon, 19 Aug 2019 11:37:32 +0000
+> Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
+>=20
+> > This code could be reused. So move it from x86 to common code. =20
+>=20
+> Yes, it can be among some arch, but at first, please make your
+> architecture implementation. After making sure that is enough
+> stable, we will optimize (consolidate) the code.
 
-We're developping out of our interests for Linux community (our
-high level bosses care nothing except for money, you know) and
-we hope to better join in and contribute to Linux community, we need
-more time to enrich our eco-system in our spare time.
+Got it. I will duplicate the function firstly then make the consolidation
+as a TODO.
 
-All HUAWEI smartphone products will continue using this filesystem,
-and its performance and stability is proven by our 10+ millions
-products, and maintaining this filesystem is one of our paid jobs.
+>=20
+> For example,
+> > -             /* Kprobe handler expects regs->ip =3D ip + 1 as breakpoi=
+nt hit */
+> > -             instruction_pointer_set(regs, ip + sizeof(kprobe_opcode_t=
+)); =20
+>=20
+> This may depend on arch implementation of kprobes.
 
-> 
-> > 
-> > Actually, compared with XFS, EROFS has rather simple on-disk format.
-> > What we inject one time is quite deterministic.
-> > 
-> > The first step just purposely writes some random fuzzed data to
-> > the base inode metadata, compressed indexes, or dir data field
-> > (one round one field) to make it validity and coverability.
-> > 
-> >>
-> >> You might want to write such a debugging tool for erofs so that you can
-> >> take apart crashed images to get a better idea of what went wrong, and
-> >> to write easy fuzzing tests.
-> > 
-> > Yes, we will do such a debugging tool of course. Actually Li Guifu is now
-> > developping a erofs-fuse to support old linux versions or other OSes for
-> > archiveing only use, we will base on that code to develop a better fuzzer
-> > tool as well.
-> 
-> Personally speaking, debugging tool is way more important than a running
-> kernel module/fuse.
-> It's human trying to write the code, most of time is spent educating
-> code readers, thus debugging tool is way more important than dead cold code.
+Indeed, for arm64, would be as simple as s/ip/pc.=20
 
-Debugging tools and erofs-fuse share common code, that is to parse
-the filesystem. That was the main point that I want to say.
+Thanks
 
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> Qu
-> > 
-> > Thanks,
-> > Gao Xiang
-> > 
-> >>
-> >> --D
-> >>
-> >>> 	umount mntdir
-> >>> 	mount -t erofs -o loop testdir_fsl.fuzz.img mntdir
-> >>> 	for j in `find mntdir -type f`; do
-> >>> 		md5sum $j > /dev/null
-> >>> 	done
-> >>> done
-> >>>
-> >>> Thanks,
-> >>> Gao Xiang
-> >>>
-> >>>>
-> >>>> Thanks,
-> >>>> Gao Xiang
-> >>>>
-> 
-
-
+>=20
+> Could you make a copy and update comments on arm64?
+>=20
+> Thank you,
+>=20
+> >
+> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+> > ---
+> >  arch/x86/kernel/kprobes/ftrace.c | 44 --------------------------------
+> >  kernel/kprobes.c                 | 44 ++++++++++++++++++++++++++++++++
+> >  2 files changed, 44 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/arch/x86/kernel/kprobes/ftrace.c b/arch/x86/kernel/kprobes=
+/ftrace.c
+> > index c2ad0b9259ca..91ae1e3e65f7 100644
+> > --- a/arch/x86/kernel/kprobes/ftrace.c
+> > +++ b/arch/x86/kernel/kprobes/ftrace.c
+> > @@ -12,50 +12,6 @@
+> >
+> >  #include "common.h"
+> >
+> > -/* Ftrace callback handler for kprobes -- called under preepmt disabed=
+ */
+> > -void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
+> > -                        struct ftrace_ops *ops, struct pt_regs *regs)
+> > -{
+> > -     struct kprobe *p;
+> > -     struct kprobe_ctlblk *kcb;
+> > -
+> > -     /* Preempt is disabled by ftrace */
+> > -     p =3D get_kprobe((kprobe_opcode_t *)ip);
+> > -     if (unlikely(!p) || kprobe_disabled(p))
+> > -             return;
+> > -
+> > -     kcb =3D get_kprobe_ctlblk();
+> > -     if (kprobe_running()) {
+> > -             kprobes_inc_nmissed_count(p);
+> > -     } else {
+> > -             unsigned long orig_ip =3D instruction_pointer(regs);
+> > -             /* Kprobe handler expects regs->ip =3D ip + 1 as breakpoi=
+nt hit */
+> > -             instruction_pointer_set(regs, ip + sizeof(kprobe_opcode_t=
+));
+> > -
+> > -             __this_cpu_write(current_kprobe, p);
+> > -             kcb->kprobe_status =3D KPROBE_HIT_ACTIVE;
+> > -             if (!p->pre_handler || !p->pre_handler(p, regs)) {
+> > -                     /*
+> > -                      * Emulate singlestep (and also recover regs->ip)
+> > -                      * as if there is a 5byte nop
+> > -                      */
+> > -                     instruction_pointer_set(regs,
+> > -                             (unsigned long)p->addr + MCOUNT_INSN_SIZE=
+);
+> > -                     if (unlikely(p->post_handler)) {
+> > -                             kcb->kprobe_status =3D KPROBE_HIT_SSDONE;
+> > -                             p->post_handler(p, regs, 0);
+> > -                     }
+> > -                     instruction_pointer_set(regs, orig_ip);
+> > -             }
+> > -             /*
+> > -              * If pre_handler returns !0, it changes regs->ip. We hav=
+e to
+> > -              * skip emulating post_handler.
+> > -              */
+> > -             __this_cpu_write(current_kprobe, NULL);
+> > -     }
+> > -}
+> > -NOKPROBE_SYMBOL(kprobe_ftrace_handler);
+> > -
+> >  int arch_prepare_kprobe_ftrace(struct kprobe *p)
+> >  {
+> >       p->ainsn.insn =3D NULL;
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index f8400753a8a9..479148ee1822 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -960,6 +960,50 @@ static struct kprobe *alloc_aggr_kprobe(struct kpr=
+obe *p)
+> >  #endif /* CONFIG_OPTPROBES */
+> >
+> >  #ifdef CONFIG_KPROBES_ON_FTRACE
+> > +/* Ftrace callback handler for kprobes -- called under preepmt disabed=
+ */
+> > +void __weak kprobe_ftrace_handler(unsigned long ip, unsigned long pare=
+nt_ip,
+> > +                               struct ftrace_ops *ops, struct pt_regs =
+*regs)
+> > +{
+> > +     struct kprobe *p;
+> > +     struct kprobe_ctlblk *kcb;
+> > +
+> > +     /* Preempt is disabled by ftrace */
+> > +     p =3D get_kprobe((kprobe_opcode_t *)ip);
+> > +     if (unlikely(!p) || kprobe_disabled(p))
+> > +             return;
+> > +
+> > +     kcb =3D get_kprobe_ctlblk();
+> > +     if (kprobe_running()) {
+> > +             kprobes_inc_nmissed_count(p);
+> > +     } else {
+> > +             unsigned long orig_ip =3D instruction_pointer(regs);
+> > +             /* Kprobe handler expects regs->ip =3D ip + 1 as breakpoi=
+nt hit */
+> > +             instruction_pointer_set(regs, ip + sizeof(kprobe_opcode_t=
+));
+> > +
+> > +             __this_cpu_write(current_kprobe, p);
+> > +             kcb->kprobe_status =3D KPROBE_HIT_ACTIVE;
+> > +             if (!p->pre_handler || !p->pre_handler(p, regs)) {
+> > +                     /*
+> > +                      * Emulate singlestep (and also recover regs->ip)
+> > +                      * as if there is a 5byte nop
+> > +                      */
+> > +                     instruction_pointer_set(regs,
+> > +                             (unsigned long)p->addr + MCOUNT_INSN_SIZE=
+);
+> > +                     if (unlikely(p->post_handler)) {
+> > +                             kcb->kprobe_status =3D KPROBE_HIT_SSDONE;
+> > +                             p->post_handler(p, regs, 0);
+> > +                     }
+> > +                     instruction_pointer_set(regs, orig_ip);
+> > +             }
+> > +             /*
+> > +              * If pre_handler returns !0, it changes regs->ip. We hav=
+e to
+> > +              * skip emulating post_handler.
+> > +              */
+> > +             __this_cpu_write(current_kprobe, NULL);
+> > +     }
+> > +}
+> > +NOKPROBE_SYMBOL(kprobe_ftrace_handler);
+> > +
+> >  static struct ftrace_ops kprobe_ftrace_ops __read_mostly =3D {
+> >       .func =3D kprobe_ftrace_handler,
+> >       .flags =3D FTRACE_OPS_FL_SAVE_REGS | FTRACE_OPS_FL_IPMODIFY,
+> > --
+> > 2.23.0.rc1
+> > =20
+>=20
+>=20
+> --
+> Masami Hiramatsu <mhiramat@kernel.org>
 
