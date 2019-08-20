@@ -2,104 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 176FF965FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 448CF96616
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:17:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729812AbfHTQOB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:14:01 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38720 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725971AbfHTQOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:14:00 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e11so3513237pga.5;
-        Tue, 20 Aug 2019 09:14:00 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rfpTxm0NAlEy8xKy4wmYmwInXk2X4QMQ21G/QjPhbGQ=;
-        b=CsgDlslaxLWx9+hIAAZXrW6hCZmgvxBNwrkKUshqVcu9c+zBYyOnbn/hieCN02EmYy
-         bshIHdLNgg1ffOvfVjduqeYRcTzO2lf2gv027lpc3idtDg2S6pVA558VPcHeHcCjMNcM
-         +p+kLlnXCwjKjpi9Q4+vBiiQzygzvJKJ9jwDMcdcCrtmQ9gDkZnlwjY6WQVIgqmtXZcO
-         EvLcC0tdaenxc68SmNpMgs+XWQBgsFvIIGPx1SXz3OO/L6E/8L1kxbWdQfZUSEb/nput
-         rGZg6W5WXPdjdJeXV6afUnLlBTP5nF647MTMl5FMND6VR7GS5/Tt5NVnaY9hUY78NU3/
-         QSjw==
-X-Gm-Message-State: APjAAAXrPRSHDhUOMzOyOUJ24f2C1xPmVGf1O9nwZkUyOqUtYbBqjiRA
-        r4rCfAjH0onN7gk73dBMPTE=
-X-Google-Smtp-Source: APXvYqxTIV3zuOXqQRI/JI1qaV7Iq/Y4nRwsb5qOUjTnvGS327RD0amGzW/WoGsdRxyFRjBQUAbgOA==
-X-Received: by 2002:a65:514c:: with SMTP id g12mr25438710pgq.76.1566317639818;
-        Tue, 20 Aug 2019 09:13:59 -0700 (PDT)
-Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id u23sm19759252pgj.58.2019.08.20.09.13.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 09:13:59 -0700 (PDT)
-From:   Nadav Amit <namit@vmware.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        Nadav Amit <namit@vmware.com>, stable@vger.kernel.org,
-        Logan Gunthorpe <logang@deltatee.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH] iommu/vt-d: Fix wrong analysis whether devices share the same bus
-Date:   Tue, 20 Aug 2019 01:53:17 -0700
-Message-Id: <20190820085317.29458-1-namit@vmware.com>
-X-Mailer: git-send-email 2.17.1
+        id S1730401AbfHTQRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:17:43 -0400
+Received: from mga07.intel.com ([134.134.136.100]:58739 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725971AbfHTQRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 12:17:42 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 09:17:40 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="169130943"
+Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
+  by orsmga007.jf.intel.com with ESMTP; 20 Aug 2019 09:17:39 -0700
+Message-ID: <fb058c3d56bb070706aa5f8502b4d8f0da265b74.camel@intel.com>
+Subject: Re: [PATCH v8 18/27] mm: Introduce do_mmap_locked()
+From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Balbir Singh <bsingharora@gmail.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Eugene Syromiatnikov <esyr@redhat.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Date:   Tue, 20 Aug 2019 09:08:34 -0700
+In-Reply-To: <20190820010200.GI1916@linux.intel.com>
+References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
+         <20190813205225.12032-19-yu-cheng.yu@intel.com>
+         <20190820010200.GI1916@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-set_msi_sid_cb() is used to determine whether device aliases share the
-same bus, but it can provide false indications that aliases use the same
-bus when in fact they do not. The reason is that set_msi_sid_cb()
-assumes that pdev is fixed, while actually pci_for_each_dma_alias() can
-call fn() when pdev is set to a subordinate device.
+On Mon, 2019-08-19 at 18:02 -0700, Sean Christopherson wrote:
+> On Tue, Aug 13, 2019 at 01:52:16PM -0700, Yu-cheng Yu wrote:
+> > There are a few places that need do_mmap() with mm->mmap_sem held.
+> > Create an in-line function for that.
+> > 
+> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> > ---
+> >  include/linux/mm.h | 18 ++++++++++++++++++
+> >  1 file changed, 18 insertions(+)
+> > 
+> > diff --git a/include/linux/mm.h b/include/linux/mm.h
+> > index bc58585014c9..275c385f53c6 100644
+> > --- a/include/linux/mm.h
+> > +++ b/include/linux/mm.h
+> > @@ -2394,6 +2394,24 @@ static inline void mm_populate(unsigned long addr,
+> > unsigned long len)
+> >  static inline void mm_populate(unsigned long addr, unsigned long len) {}
+> >  #endif
+> >  
+> > +static inline unsigned long do_mmap_locked(struct file *file,
+> > +	unsigned long addr, unsigned long len, unsigned long prot,
+> > +	unsigned long flags, vm_flags_t vm_flags, struct list_head *uf)
+> > +{
+> > +	struct mm_struct *mm = current->mm;
+> > +	unsigned long populate;
+> > +
+> > +	down_write(&mm->mmap_sem);
+> > +	addr = do_mmap(file, addr, len, prot, flags, vm_flags, 0,
+> > +		       &populate, uf);
+> > +	up_write(&mm->mmap_sem);
+> > +
+> > +	if (populate)
+> > +		mm_populate(addr, populate);
+> > +
+> > +	return addr;
+> > +}
+> 
+> Any reason not to put this in cet.c, as suggested by PeterZ?  All of the
+> calls from CET have identical params except for @len, e.g. you can add
+> 'static unsigned long cet_mmap(unsigned long len)' and bury most of the
+> copy-paste code in there.
+> 
+> https://lkml.kernel.org/r/20190607074707.GD3463@hirez.programming.kicks-ass.ne
+> t
 
-As a result, running an VM on ESX with VT-d emulation enabled can
-results in the log warning such as:
+Yes, I will do that.  I thought this would be useful in other places, but
+currently only in mpx.c.
 
-  DMAR: [INTR-REMAP] Request device [00:11.0] fault index 3b [fault reason 38] Blocked an interrupt request due to source-id verification failure
-
-This seems to cause additional ata errors such as:
-  ata3.00: qc timeout (cmd 0xa1)
-  ata3.00: failed to IDENTIFY (I/O error, err_mask=0x4)
-
-These timeouts also cause boot to be much longer and other errors.
-
-Fix it by checking comparing the alias with the previous one instead.
-
-Fixes: 3f0c625c6ae71 ("iommu/vt-d: Allow interrupts from the entire bus for aliased devices")
-Cc: stable@vger.kernel.org
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: David Woodhouse <dwmw2@infradead.org>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- drivers/iommu/intel_irq_remapping.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 4786ca061e31..81e43c1df7ec 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -376,13 +376,13 @@ static int set_msi_sid_cb(struct pci_dev *pdev, u16 alias, void *opaque)
- {
- 	struct set_msi_sid_data *data = opaque;
- 
-+	if (data->count == 0 || PCI_BUS_NUM(alias) == PCI_BUS_NUM(data->alias))
-+		data->busmatch_count++;
-+
- 	data->pdev = pdev;
- 	data->alias = alias;
- 	data->count++;
- 
--	if (PCI_BUS_NUM(alias) == pdev->bus->number)
--		data->busmatch_count++;
--
- 	return 0;
- }
- 
--- 
-2.17.1
-
+Yu-cheng
