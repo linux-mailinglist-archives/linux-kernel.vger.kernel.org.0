@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93BC7969DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F21B969E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:00:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730651AbfHTUAC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:00:02 -0400
-Received: from mail-oi1-f177.google.com ([209.85.167.177]:47048 "EHLO
-        mail-oi1-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729833AbfHTUAB (ORCPT
+        id S1730735AbfHTUAF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:00:05 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:46553 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729833AbfHTUAD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:00:01 -0400
-Received: by mail-oi1-f177.google.com with SMTP id t24so5077358oij.13;
-        Tue, 20 Aug 2019 13:00:01 -0700 (PDT)
+        Tue, 20 Aug 2019 16:00:03 -0400
+Received: by mail-oi1-f196.google.com with SMTP id t24so5077455oij.13;
+        Tue, 20 Aug 2019 13:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ZDc44D7UBCU6lZkBAhG6OsPyET2iKNUIgty+ONWJ5wc=;
-        b=J/ccD5MzEcQN0PR1vuM18SbRMYlsRZ3XXGbowLZBFA945XE5DwdSLi3+LuyELou/x/
-         BcGgKq9NgjqbJn7sN3FWpwvOPgBSXgxatR9ucgO2PLtp6zL/ZD8Aciri0UphDQac3p8i
-         UTIUHFQy0l00OSDZXiA7tnYXWWS2Tgdad8jbS1VM2dShe0PJQHgujxLPeXNkvKw9IlGf
-         iA8fKxxDRsi6yXrvlDOH0QYZ4EtZWPOhC+qN+rtDL2y11QbDjDs6f9Tb5jEryGb/gao0
-         kALAzUfDLKKyUrlw7beD0artjchvD4gE207nC6BT5QUqpANKI34MW2LcZWNzdQv9fNMP
-         6P4g==
-X-Gm-Message-State: APjAAAXjuVrUl5cmRuN3qm7vunCTRyQyDSNjOGQx/tEah/Lac99jHKL/
-        VaQfUuOsinlbi3du/QWUJEDMzTM=
-X-Google-Smtp-Source: APXvYqy7ABj6PAM1ans8JlyuFy8KcvBasov7Q2HA1O8HNtR+sbTOpMGz0GyFMVhMTYjrsA0J2eSweQ==
-X-Received: by 2002:aca:540b:: with SMTP id i11mr1232727oib.50.1566331200453;
-        Tue, 20 Aug 2019 13:00:00 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=xp1mwVvsj/2inAIwWOULguGqWOlKMJGQ9M60Vravw4Q=;
+        b=m7d+UAE96rfk2Np8Vi2TTVexXRhEOyEX5oT5LH56A3Rodnu0sgfc7433unj9PQJ8hL
+         Mbon+ITmHFDCYgMyuy2ArOw0tDpcG5i2LHUkilJG0tQY+zdlURpFJU7vOb8Ldve5NY2O
+         pQZXLNKoD0cG/BRkLMEIElAoRJ+h5zjcCp+HeUiamV9iQWb/yBwE2DBZ/GtSaCTYo/dO
+         38nW7sTP3o6C9aKBGDLgSpVokN9TnXL4cTTq0T73K7tJ47Kq7wTtffNO6L3atgbvL+SS
+         pJOmTxZy9kpUj9trVCeBacYzcZwlHmAw7qJ5RddtWS90tllvg5xQ4EVp7lfaPiDEW7Wq
+         Bkrw==
+X-Gm-Message-State: APjAAAWdOwcqnc3BnuRWl2VO8DARaqbwy7ka5R/6HGVoUy+ykoAR5OOp
+        dBrDqTY8Ft09lxyYMzv6FqgucEI=
+X-Google-Smtp-Source: APXvYqx5YB2qhcqioK+5whT74eUq0jYOHbPAnb1saLP8Njx6ijPIYaMXdLlXobw8s+lAyGInzVZssw==
+X-Received: by 2002:aca:ec87:: with SMTP id k129mr1268913oih.80.1566331202439;
+        Tue, 20 Aug 2019 13:00:02 -0700 (PDT)
 Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id e22sm5082159oii.7.2019.08.20.12.59.59
+        by smtp.googlemail.com with ESMTPSA id e22sm5082159oii.7.2019.08.20.13.00.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 12:59:59 -0700 (PDT)
+        Tue, 20 Aug 2019 13:00:00 -0700 (PDT)
 From:   Rob Herring <robh@kernel.org>
 To:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org
 Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
@@ -41,10 +41,12 @@ Cc:     Maxime Ripard <maxime.ripard@free-electrons.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
         Tomeu Vizoso <tomeu.vizoso@collabora.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] dt-bindings: Convert Arm Mali GPUs to DT schema
-Date:   Tue, 20 Aug 2019 14:59:56 -0500
-Message-Id: <20190820195959.6126-1-robh@kernel.org>
+Subject: [PATCH 1/3] dt-bindings: Convert Arm Mali Midgard GPU to DT schema
+Date:   Tue, 20 Aug 2019 14:59:57 -0500
+Message-Id: <20190820195959.6126-2-robh@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190820195959.6126-1-robh@kernel.org>
+References: <20190820195959.6126-1-robh@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -52,34 +54,312 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series converts the various Arm Mali GPU bindings to use the DT
-schema format.
+Convert the Arm Midgard GPU binding to DT schema format.
 
-The Midgard and Bifrost bindings generate warnings on 'interrupt-names'
-because there's all different ordering. The Utgard binding generates 
-warnings on Rockchip platforms because 'clock-names' order is reversed.
-
-Rob
-
-Rob Herring (3):
-  dt-bindings: Convert Arm Mali Midgard GPU to DT schema
-  dt-bindings: Convert Arm Mali Bifrost GPU to DT schema
-  dt-bindings: Convert Arm Mali Utgard GPU to DT schema
-
- .../bindings/gpu/arm,mali-bifrost.txt         |  92 ----------
- .../bindings/gpu/arm,mali-bifrost.yaml        | 115 ++++++++++++
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
  .../bindings/gpu/arm,mali-midgard.txt         | 119 -------------
- .../bindings/gpu/arm,mali-midgard.yaml        | 165 +++++++++++++++++
- .../bindings/gpu/arm,mali-utgard.txt          | 129 --------------
- .../bindings/gpu/arm,mali-utgard.yaml         | 166 ++++++++++++++++++
- 6 files changed, 446 insertions(+), 340 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-bifrost.yaml
+ .../bindings/gpu/arm,mali-midgard.yaml        | 165 ++++++++++++++++++
+ 2 files changed, 165 insertions(+), 119 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
  create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
- delete mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-utgard.txt
- create mode 100644 Documentation/devicetree/bindings/gpu/arm,mali-utgard.yaml
 
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
+deleted file mode 100644
+index 9b298edec5b2..000000000000
+--- a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.txt
++++ /dev/null
+@@ -1,119 +0,0 @@
+-ARM Mali Midgard GPU
+-====================
+-
+-Required properties:
+-
+-- compatible :
+-  * Must contain one of the following:
+-    + "arm,mali-t604"
+-    + "arm,mali-t624"
+-    + "arm,mali-t628"
+-    + "arm,mali-t720"
+-    + "arm,mali-t760"
+-    + "arm,mali-t820"
+-    + "arm,mali-t830"
+-    + "arm,mali-t860"
+-    + "arm,mali-t880"
+-  * which must be preceded by one of the following vendor specifics:
+-    + "allwinner,sun50i-h6-mali"
+-    + "amlogic,meson-gxm-mali"
+-    + "samsung,exynos5433-mali"
+-    + "rockchip,rk3288-mali"
+-    + "rockchip,rk3399-mali"
+-
+-- reg : Physical base address of the device and length of the register area.
+-
+-- interrupts : Contains the three IRQ lines required by Mali Midgard devices.
+-
+-- interrupt-names : Contains the names of IRQ resources in the order they were
+-  provided in the interrupts property. Must contain: "job", "mmu", "gpu".
+-
+-
+-Optional properties:
+-
+-- clocks : Phandle to clock for the Mali Midgard device.
+-
+-- clock-names : Specify the names of the clocks specified in clocks
+-  when multiple clocks are present.
+-    * core: clock driving the GPU itself (When only one clock is present,
+-      assume it's this clock.)
+-    * bus: bus clock for the GPU
+-
+-- mali-supply : Phandle to regulator for the Mali device. Refer to
+-  Documentation/devicetree/bindings/regulator/regulator.txt for details.
+-
+-- operating-points-v2 : Refer to Documentation/devicetree/bindings/opp/opp.txt
+-  for details.
+-
+-- #cooling-cells: Refer to Documentation/devicetree/bindings/thermal/thermal.txt
+-  for details.
+-
+-- resets : Phandle of the GPU reset line.
+-
+-Vendor-specific bindings
+-------------------------
+-
+-The Mali GPU is integrated very differently from one SoC to
+-another. In order to accommodate those differences, you have the option
+-to specify one more vendor-specific compatible, among:
+-
+-- "allwinner,sun50i-h6-mali"
+-  Required properties:
+-  - clocks : phandles to core and bus clocks
+-  - clock-names : must contain "core" and "bus"
+-  - resets: phandle to GPU reset line
+-
+-- "amlogic,meson-gxm-mali"
+-  Required properties:
+-  - resets : Should contain phandles of :
+-    + GPU reset line
+-    + GPU APB glue reset line
+-
+-Example for a Mali-T760:
+-
+-gpu@ffa30000 {
+-	compatible = "rockchip,rk3288-mali", "arm,mali-t760";
+-	reg = <0xffa30000 0x10000>;
+-	interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
+-		     <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+-	interrupt-names = "job", "mmu", "gpu";
+-	clocks = <&cru ACLK_GPU>;
+-	mali-supply = <&vdd_gpu>;
+-	operating-points-v2 = <&gpu_opp_table>;
+-	power-domains = <&power RK3288_PD_GPU>;
+-	#cooling-cells = <2>;
+-};
+-
+-gpu_opp_table: opp_table0 {
+-	compatible = "operating-points-v2";
+-
+-	opp@533000000 {
+-		opp-hz = /bits/ 64 <533000000>;
+-		opp-microvolt = <1250000>;
+-	};
+-	opp@450000000 {
+-		opp-hz = /bits/ 64 <450000000>;
+-		opp-microvolt = <1150000>;
+-	};
+-	opp@400000000 {
+-		opp-hz = /bits/ 64 <400000000>;
+-		opp-microvolt = <1125000>;
+-	};
+-	opp@350000000 {
+-		opp-hz = /bits/ 64 <350000000>;
+-		opp-microvolt = <1075000>;
+-	};
+-	opp@266000000 {
+-		opp-hz = /bits/ 64 <266000000>;
+-		opp-microvolt = <1025000>;
+-	};
+-	opp@160000000 {
+-		opp-hz = /bits/ 64 <160000000>;
+-		opp-microvolt = <925000>;
+-	};
+-	opp@100000000 {
+-		opp-hz = /bits/ 64 <100000000>;
+-		opp-microvolt = <912500>;
+-	};
+-};
+diff --git a/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+new file mode 100644
+index 000000000000..24c4af74fb8d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpu/arm,mali-midgard.yaml
+@@ -0,0 +1,165 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/gpu/arm,mali-midgard.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ARM Mali Midgard GPU
++
++maintainers:
++  - Rob Herring <robh@kernel.org>
++
++properties:
++  $nodename:
++    pattern: '^gpu@[a-f0-9]+$'
++  compatible:
++    oneOf:
++      - items:
++          - enum:
++             - allwinner,sun50i-h6-mali
++          - const: arm,mali-t720
++      - items:
++          - enum:
++             - amlogic,meson-gxm-mali
++          - const: arm,mali-t820
++      - items:
++          - enum:
++             - rockchip,rk3288-mali
++          - const: arm,mali-t760
++      - items:
++          - enum:
++             - rockchip,rk3399-mali
++          - const: arm,mali-t860
++      - items:
++          - enum:
++             - samsung,exynos5433-mali
++          - const: arm,mali-t760
++
++          # "arm,mali-t604"
++          # "arm,mali-t624"
++          # "arm,mali-t628"
++          # "arm,mali-t830"
++          # "arm,mali-t880"
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    items:
++      - description: Job interrupt
++      - description: MMU interrupt
++      - description: GPU interrupt
++
++  interrupt-names:
++    items:
++      - const: job
++      - const: mmu
++      - const: gpu
++
++  clocks:
++    minItems: 1
++    maxItems: 2
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: core
++      - const: bus
++
++  mali-supply:
++    maxItems: 1
++
++  resets:
++    minItems: 1
++    maxItems: 2
++
++  operating-points-v2: true
++
++  "#cooling-cells":
++    const: 2
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - interrupt-names
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: allwinner,sun50i-h6-mali
++    then:
++      properties:
++        clocks:
++          minItems: 2
++      required:
++        - clocks
++        - clock-names
++        - resets
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: amlogic,meson-gxm-mali
++    then:
++      properties:
++        resets:
++          minItems: 2
++      required:
++        - resets
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++
++    gpu@ffa30000 {
++      compatible = "rockchip,rk3288-mali", "arm,mali-t760";
++      reg = <0xffa30000 0x10000>;
++      interrupts = <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>,
++             <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>,
++             <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++      interrupt-names = "job", "mmu", "gpu";
++      clocks = <&cru 0>;
++      mali-supply = <&vdd_gpu>;
++      operating-points-v2 = <&gpu_opp_table>;
++      power-domains = <&power 0>;
++      #cooling-cells = <2>;
++    };
++
++    gpu_opp_table: opp_table0 {
++      compatible = "operating-points-v2";
++
++      opp@533000000 {
++        opp-hz = /bits/ 64 <533000000>;
++        opp-microvolt = <1250000>;
++      };
++      opp@450000000 {
++        opp-hz = /bits/ 64 <450000000>;
++        opp-microvolt = <1150000>;
++      };
++      opp@400000000 {
++        opp-hz = /bits/ 64 <400000000>;
++        opp-microvolt = <1125000>;
++      };
++      opp@350000000 {
++        opp-hz = /bits/ 64 <350000000>;
++        opp-microvolt = <1075000>;
++      };
++      opp@266000000 {
++        opp-hz = /bits/ 64 <266000000>;
++        opp-microvolt = <1025000>;
++      };
++      opp@160000000 {
++        opp-hz = /bits/ 64 <160000000>;
++        opp-microvolt = <925000>;
++      };
++      opp@100000000 {
++        opp-hz = /bits/ 64 <100000000>;
++        opp-microvolt = <912500>;
++      };
++    };
++
++...
 -- 
 2.20.1
 
