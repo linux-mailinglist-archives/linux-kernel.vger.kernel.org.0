@@ -2,96 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 24612959C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:38:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ABB44959D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:39:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfHTIhX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:37:23 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:26618 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729198AbfHTIgq (ORCPT
+        id S1729455AbfHTIjT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:39:19 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43182 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729273AbfHTIjT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:36:46 -0400
-X-UUID: 0fa21d81daf148139048d6e16bda6b72-20190820
-X-UUID: 0fa21d81daf148139048d6e16bda6b72-20190820
-Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
-        (envelope-from <bibby.hsieh@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1168790692; Tue, 20 Aug 2019 16:36:36 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 20 Aug 2019 16:36:37 +0800
-Received: from mtkslt209.mediatek.inc (10.21.15.96) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 20 Aug 2019 16:36:36 +0800
-From:   Bibby Hsieh <bibby.hsieh@mediatek.com>
-To:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, CK HU <ck.hu@mediatek.com>
-CC:     Daniel Kurtz <djkurtz@chromium.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        YT Shen <yt.shen@mediatek.com>,
-        Daoyuan Huang <daoyuan.huang@mediatek.com>,
-        Jiaguang Zhang <jiaguang.zhang@mediatek.com>,
-        Dennis-YC Hsieh <dennis-yc.hsieh@mediatek.com>,
-        Houlong Wei <houlong.wei@mediatek.com>,
-        <ginny.chen@mediatek.com>, Bibby Hsieh <bibby.hsieh@mediatek.com>
-Subject: [PATCH v13 12/12] arm64: dts: add gce node for mt8183
-Date:   Tue, 20 Aug 2019 16:36:35 +0800
-Message-ID: <20190820083635.5404-13-bibby.hsieh@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190820083635.5404-1-bibby.hsieh@mediatek.com>
-References: <20190820083635.5404-1-bibby.hsieh@mediatek.com>
+        Tue, 20 Aug 2019 04:39:19 -0400
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7K8btc9003386
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 04:39:18 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ugb2qecy7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 04:39:17 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mamatha4@linux.vnet.ibm.com>;
+        Tue, 20 Aug 2019 09:39:15 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 20 Aug 2019 09:39:09 +0100
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7K8d8Sc62587032
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Aug 2019 08:39:08 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B2BE2A405B;
+        Tue, 20 Aug 2019 08:39:08 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 31559A4062;
+        Tue, 20 Aug 2019 08:39:05 +0000 (GMT)
+Received: from oc3276512013.ibm.com (unknown [9.120.237.31])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Tue, 20 Aug 2019 08:39:04 +0000 (GMT)
+Subject: Re: [PATCH]Perf: Return error code for perf_session__new function on
+ failure
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        mingo@redhat.com, alexander.shishkin@linux.intel.com,
+        namhyung@kernel.org, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, jeremie.galarneau@efficios.com,
+        shawn@git.icu, tstoyanov@vmware.com, tglx@linutronix.de,
+        alexey.budankov@linux.intel.com, adrian.hunter@intel.com,
+        songliubraving@fb.com, ravi.bangoria@linux.ibm.com
+References: <20190814092654.7781.81601.stgit@localhost.localdomain>
+ <20190815125116.GG30356@krava>
+From:   Mamatha Inamdar <mamatha4@linux.vnet.ibm.com>
+Date:   Tue, 20 Aug 2019 14:09:04 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+In-Reply-To: <20190815125116.GG30356@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 19082008-4275-0000-0000-0000035B02C4
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19082008-4276-0000-0000-0000386D21ED
+Message-Id: <aab6e549-38b3-b18a-003c-9d1d96d7617c@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908200093
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add gce device node for mt8183
+Hi Jiri Olsa,
 
-Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
----
- arch/arm64/boot/dts/mediatek/mt8183.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Thanks for reviewing the patch..
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-index 08274bfcebd8..a81c995bbea9 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/clock/mt8183-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/interrupt-controller/irq.h>
-+#include <dt-bindings/gce/mt8183-gce.h>
- 
- / {
- 	compatible = "mediatek,mt8183";
-@@ -212,6 +213,15 @@
- 			clock-names = "spi", "wrap";
- 		};
- 
-+		gce: mailbox@10238000 {
-+			compatible = "mediatek,mt8183-gce";
-+			reg = <0 0x10238000 0 0x4000>;
-+			interrupts = <GIC_SPI 162 IRQ_TYPE_LEVEL_LOW>;
-+			#mbox-cells = <3>;
-+			clocks = <&infracfg CLK_INFRA_GCE>;
-+			clock-names = "gce";
-+		};
-+
- 		uart0: serial@11002000 {
- 			compatible = "mediatek,mt8183-uart",
- 				     "mediatek,mt6577-uart";
--- 
-2.18.0
+working on your comments, will post new version ASAP.
+
+
+On 15/08/19 6:21 PM, Jiri Olsa wrote:
+> On Wed, Aug 14, 2019 at 03:02:18PM +0530, Mamatha Inamdar wrote:
+>
+> SNIP
+>
+>>   		symbol_conf.pid_list_str = strdup(trace->opts.target.pid);
+>> diff --git a/tools/perf/util/data-convert-bt.c b/tools/perf/util/data-convert-bt.c
+>> index ddbcd59..dbc6dc2 100644
+>> --- a/tools/perf/util/data-convert-bt.c
+>> +++ b/tools/perf/util/data-convert-bt.c
+>> @@ -1619,8 +1619,10 @@ int bt_convert__perf2ctf(const char *input, const char *path,
+>>   	err = -1;
+>>   	/* perf.data session */
+>>   	session = perf_session__new(&data, 0, &c.tool);
+>> -	if (!session)
+>> +	if (IS_ERR(session)) {
+>> +		err = PTR_ERR(session);
+>>   		goto free_writer;
+>> +	}
+>>   
+>>   	if (c.queue_size) {
+>>   		ordered_events__set_alloc_size(&session->ordered_events,
+> I'm getting:
+>
+>    CC       util/data-convert-bt.o
+> util/data-convert-bt.c: In function ‘bt_convert__perf2ctf’:
+> util/data-convert-bt.c:1622:6: error: implicit declaration of function ‘IS_ERR’; did you mean ‘SIG_ERR’? [-Werror=implicit-function-declaration]
+>   1622 |  if (IS_ERR(session)) {
+>        |      ^~~~~~
+>        |      SIG_ERR
+> util/data-convert-bt.c:1622:6: error: nested extern declaration of ‘IS_ERR’ [-Werror=nested-externs]
+> util/data-convert-bt.c:1623:9: error: implicit declaration of function ‘PTR_ERR’ [-Werror=implicit-function-declaration]
+>   1623 |   err = PTR_ERR(session);
+>
+>
+> jirka
+>
 
