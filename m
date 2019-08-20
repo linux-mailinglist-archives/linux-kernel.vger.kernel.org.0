@@ -2,47 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A8CCA95EEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:38:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4075E95ED4
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:36:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730145AbfHTMgX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:36:23 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:56513 "EHLO
+        id S1730111AbfHTMgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:36:03 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:42861 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728248AbfHTMgA (ORCPT
+        with ESMTP id S1729967AbfHTMgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Aug 2019 08:36:00 -0400
 Received: from orion.localdomain ([95.117.23.32]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MqJZl-1icflV3Ut1-00nQ3O; Tue, 20 Aug 2019 14:35:50 +0200
+ 1M7KG2-1huZBr0qDc-007iuL; Tue, 20 Aug 2019 14:35:51 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com,
         linus.walleij@linaro.org, linux-ide@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 4/9] drivers: ata: ahci_xgene: use devm_platform_ioremap_resource()
-Date:   Tue, 20 Aug 2019 14:35:43 +0200
-Message-Id: <1566304548-19972-4-git-send-email-info@metux.net>
+Subject: [PATCH 5/9] drivers: ata: libahci_platform: use devm_platform_ioremap_resource()
+Date:   Tue, 20 Aug 2019 14:35:44 +0200
+Message-Id: <1566304548-19972-5-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:EGVdhOvit0epxFckX90tJLb4dXT1lQ105Bt+j9X+HPLLELoBJKC
- 1CsSnhwaJs3yJkZPHY5z3RtvocKSa/XejFWKSPl4s5dvP4piKFrpvs3Dz2b54Nzx1d3Qa4T
- TfimFi+xF3cZnOod8gfrP/E1u7QQb9LaoN5a8XEGdctUySujPF1z0Z66fNDJ7KXsitcOb51
- cBt5WNZsemgbkUb5hFUKA==
+X-Provags-ID: V03:K1:E53USeu0msk8V5JROorIHFiw3hhReQm1qeQl+190LDziCoEZe/q
+ e51UrpeLsIFx9XrX0aHBeif5Danuxs5BuvDzxtGL4l4a9+XloRNHawuRIEJ+JOkEbmt3Z8C
+ MwTdltLxsRdpr0ieB+e1OyFfM5EusTZXxXkW+R65zbClBUyprwMxPEpz/1li5OhFvDpieFq
+ hTNb4vv3W58v46DpXqBtQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3zvMyjGQ2ws=:GlCH8QROjQWMSD+gNDBjkm
- 3nKW9qtGRIICF+YnnVsDRKminnWxEVic35yRp5PGWALoIpPqK4g07PoiYAvVucHw+iuNTe80r
- 30KrQcaHyRS9/XVipWO2/HEaIwxtPuVOPmQUXuLd3OfBY4Y5mbLADrX0G3Vt0qMXOFNfy5qIZ
- WEmMr/eeQU/YrbI1rT7KogjaVlBY/ni0c5rx9QH8E9djEn2Uz1LJYKNWlDj21C7zYjey6Y0BG
- vZDoZQmPeivZU858Zs+EfQ7EIf0fPRrnIi2IeNpTrnLrMu//fvyM+4G+W8AcHnISJJ0BeQDT2
- yc8RI7VRg6O8wFjc3iuDiHq/JHlEcO9qsnv9a/nccXJ0nELHzppweCZpdxF/5ZN0gaf4FASsr
- DwdxMyAuG7A1oka8Pcb/NSGwuOSSNLNUheJSPmdRxN07iBDzrcNe6AuoD3voqpoCQpavTxzd6
- R0lnOn3KRmmxISNn/W6peNdQ6MAS1qgcO+U3l5MmBmb29KN+1gQp1rv55zH7AuZW40+x2pJsG
- aljzXQIbGmdiyMXDK20FhCfKLl+kR8oW3bUYExnvpdpApCO2HbeLTEdtyU0eAHL5DNZlrd1e8
- mzKGtATAdrjhHVUzkzqdS20O9sdL2TP673RoobgeeKsWlM6XRjkljM++lkHQ3InWJM3+oNcna
- GhDvzds8eS4iz0rSG+pShpYAFcSFm1kv3ffKjKcdFLlR8GcjODoyThzjbglPbkujLZ5nCj5hb
- I1BPfBSSypmImS/vza0t5LPyF+ANdxhbqdqB0w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:59+lD87P/+o=:9QytcjZkcB6aQuq2+wkjhD
+ 7V/UbSs6LuZJMicjDLLtzsdXWFSfgp5ZzlqcoWwnfqk5BWXcwNirOeBhZrK8QgSAep4pEZT3R
+ ErmHCg/1Q6n7GibuGVXliab2UkJgQV9rcmlE5WdZzNqJ6x2uMlDa7gC5FvDhhbxD3PJg+Gu55
+ Q4On8KNmik5d+2NdrkRWO3daGtzZ9qEnFK/b+DoipR6qr9UftKO7qHTYTx4+n2hOdAvtdgwjD
+ wVGOvzlrfBcR/TwHNOGBD/j6LM+S9owklOU1WZwADLVuKnOiuXS5Zch40ukvx3vP1I1OMUGPW
+ vzUasehQnQQmGf+ZPsdKrL54vmzbO6QYIgaQ/n/6wzqElPHikO8NoWOBD0pfsx6Qnisbb1nD5
+ eRZGBxffeYrUXikdZYTpfm4ycG1Lh05EwZyUKPG8P/Q+4tmJkbrgRhYWjzNnW7lRp48rEXORY
+ 0bMN4CdqRztlZVv87tA310ACRtn+95lwyDf7kVT+XaXe/j92/dkFOoCJlLKa0fgrXMQVcR/Do
+ HeU61AZEmua8ENAd41Pk59kCy4IoQeo2gusg4rOCZXHBf9iT0AiG0N1WTC/hENiaPyZqxOsCg
+ H89IpQlpW3sljzwGKWFhQWrVDT/ZVVzA0/9nsKLNqVbGsmHzq/SWav6Gfki5M4kYWiXI52BJO
+ xc8WqEJM0kx2/l2wm0CzFRhn8g/jBPJpozOhXseN0+epzVRTUCvqz1ukXMR/bHbp0pxzT6xmw
+ fy5l9k0jgne8wCnLflPx4BEMdiTYWeyVyWdpVOh1mk66U9B/Mptd70wMwWSaofHOpza9DzlqH
+ lSWO8j1V+OpAgYscJTRfac+Un6XfA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -53,60 +54,23 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/ahci_xgene.c | 21 +++++++--------------
- 1 file changed, 7 insertions(+), 14 deletions(-)
+ drivers/ata/libahci_platform.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/ata/ahci_xgene.c b/drivers/ata/ahci_xgene.c
-index 16246c8..5391f5d 100644
---- a/drivers/ata/ahci_xgene.c
-+++ b/drivers/ata/ahci_xgene.c
-@@ -739,7 +739,6 @@ static int xgene_ahci_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct ahci_host_priv *hpriv;
- 	struct xgene_ahci_context *ctx;
--	struct resource *res;
- 	const struct of_device_id *of_devid;
- 	enum xgene_ahci_version version = XGENE_AHCI_V1;
- 	const struct ata_port_info *ppi[] = { &xgene_ahci_v1_port_info,
-@@ -759,31 +758,25 @@ static int xgene_ahci_probe(struct platform_device *pdev)
- 	ctx->dev = dev;
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index 9e9583a..3d84be8 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -408,8 +408,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
  
- 	/* Retrieve the IP core resource */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	ctx->csr_core = devm_ioremap_resource(dev, res);
-+	ctx->csr_core = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(ctx->csr_core))
- 		return PTR_ERR(ctx->csr_core);
+ 	devres_add(dev, hpriv);
  
- 	/* Retrieve the IP diagnostic resource */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	ctx->csr_diag = devm_ioremap_resource(dev, res);
-+	ctx->csr_diag = devm_platform_ioremap_resource(pdev, 2);
- 	if (IS_ERR(ctx->csr_diag))
- 		return PTR_ERR(ctx->csr_diag);
- 
- 	/* Retrieve the IP AXI resource */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 3);
--	ctx->csr_axi = devm_ioremap_resource(dev, res);
-+	ctx->csr_axi = devm_platform_ioremap_resource(pdev, 3);
- 	if (IS_ERR(ctx->csr_axi))
- 		return PTR_ERR(ctx->csr_axi);
- 
- 	/* Retrieve the optional IP mux resource */
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 4);
--	if (res) {
--		void __iomem *csr = devm_ioremap_resource(dev, res);
--		if (IS_ERR(csr))
--			return PTR_ERR(csr);
--
--		ctx->csr_mux = csr;
-+	ctx->csr_mux = csr = devm_platform_ioremap_resource(pdev, 4);
-+	if (IS_ERR(ctx->csr_mux)) {
-+		dev_info(&pdev->dev, "cant get ip mux resource (optional)");
-+		ctx->csr_mux = NULL;
- 	}
- 
- 	of_devid = of_match_device(xgene_ahci_of_match, dev);
+-	hpriv->mmio = devm_ioremap_resource(dev,
+-			      platform_get_resource(pdev, IORESOURCE_MEM, 0));
++	hpriv->mmio = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hpriv->mmio)) {
+ 		rc = PTR_ERR(hpriv->mmio);
+ 		goto err_out;
 -- 
 1.9.1
 
