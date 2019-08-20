@@ -2,59 +2,72 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1286B954F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:20:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66ACA9551A
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 05:23:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728950AbfHTDUF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 23:20:05 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38008 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728647AbfHTDUF (ORCPT
+        id S1729263AbfHTDXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 23:23:49 -0400
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:56153 "EHLO
+        new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728734AbfHTDXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 23:20:05 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so2448735pfg.5
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 20:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fh6tIiEv0zJCLKpGDGUD3lhAE/UdGuL0cohxSYv7X6Y=;
-        b=bQ0Dfme4RHc8MbBQdhndPG7oN46WssQZ9776bzrfeF2+bZI3N0ScdM2tX7ddr0gh/0
-         AXQdtH/sADUXENW1Vo9FtE4j/YjibXaQ8nQLdgV5YrhiQ6go6725QFh1U+nUMJf7dL7t
-         Fa3Qo2p8Jm8WuEzQCIQ98nCj5kgnhNzYh1eYRs8UY5LX/BLFBwU5hOVr5LAjfFkLvLPq
-         oCn2UrJCygQKR3LRMke9vlfzJqpMUW8J+DKzD9XHCeK8ge0xgl7q8Sl1v2XXkW3x0/mg
-         Ec9tXygwNpqbwckNKOHAn0Svb7p5+T4GF/LfxwxW0gGryFjM3b3KjLMRq+eFBCvBwmLi
-         5Wxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=fh6tIiEv0zJCLKpGDGUD3lhAE/UdGuL0cohxSYv7X6Y=;
-        b=cAP120pvWHME7alxwEv6+nk69vqrTGdwpDSuRLCVGtqS7dy2s281yuWfLO6YU33pfx
-         /I7kyisgGMos13zWXhGzm9RBzq6wGfJ1gjI3kCnCuqbVLpe3LvX6/mzOoGHHNyFnBDKG
-         flZZDrXAE5rF2UrSCvbftATI0er2WBIIN7zt1G8B5+2h0FaBAfjTWEY5klpkmJ5yRj12
-         CcaZwiM8EcVIjNUQE46paNLtkeairM9LjVnnrmx/qnkh9OyAlJ+TlqJowZsm7+VQZ3ag
-         cKKcSMGICjYXpXsnuy1BzOgsyiQ6f4kxIYO175GO3UWw0Xh+r7BdXb0F3/RMfnQ9ZaaR
-         FGaw==
-X-Gm-Message-State: APjAAAWCDYi893xVg7HAFqm6ugLzybah0pUcj1K3tGWMeRAXyBushy+/
-        otGb+q9bknHqTTR0sS88Afw=
-X-Google-Smtp-Source: APXvYqwxADzQNLa+SFEuwXalUyCiVcCEzis3PXmwQrsbtrNme0Qotb4Ol3qYKYuWxkTnBA/ZpsqkOw==
-X-Received: by 2002:a17:90a:2ecb:: with SMTP id h11mr16861705pjs.108.1566271204531;
-        Mon, 19 Aug 2019 20:20:04 -0700 (PDT)
-Received: from localhost.lan (c-67-185-54-80.hsd1.wa.comcast.net. [67.185.54.80])
-        by smtp.gmail.com with ESMTPSA id s67sm16155665pjb.8.2019.08.19.20.20.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 20:20:03 -0700 (PDT)
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: vf610-zii-dev-rev-b: Drop redundant I2C properties
-Date:   Mon, 19 Aug 2019 20:19:52 -0700
-Message-Id: <20190820031952.14804-1-andrew.smirnov@gmail.com>
+        Mon, 19 Aug 2019 23:23:14 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 893FA3510;
+        Mon, 19 Aug 2019 23:23:12 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 19 Aug 2019 23:23:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        from:to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=9DYoy8NT9Ve7hFzyo3H6iPPmEA
+        CpZOYKDnCzHCSrpbQ=; b=4M37PdQBCN/w6RTxxDoqh8EXYO5p4e3lRIbFwuRFpx
+        xFN2vbw5G1DuPYMDJ1SKOpVrLfHxkdl3X1G93HgwHSVioOg63/micK86dWFRw0jE
+        vaqJYzCDGdu+x39wFXjpqrOiR/NhEn20fAr4IK8z8hlRx+f5QLvyaimyef1UIiHJ
+        dmtFD/e7m1BT+Rskj6EmHduJcxLiF/6ROGf6EZvhY8/s4iF2a7crTfu2jEKVQPTy
+        LfxHV7DHBzGcaf7yaAw5+spV95x/NMnvnr04a1llb7nDlU8lQdtBh5Ma4D/yv8U5
+        Sm4cPMmg8HVQCHsaGSTe4KbOUnxaf+MoHkF2RWnNdPMQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=9DYoy8NT9Ve7hFzyo
+        3H6iPPmEACpZOYKDnCzHCSrpbQ=; b=Ygys0yOa27lYONkNyUqaJ0xRhBRCmHouO
+        ms0Y9NviXXDmwmyFFRZtHxj2stQLzwDLXHdkRhvQmNjmQamB9Lt/GmYGWFSCuGt5
+        n2uZvPm6IL2dgWkpoWHFpa1pyt23On0FQqzm+ThHUznjz1WSUZDd6AhEISvd06aH
+        AB4xiqmXfMYfRm+6JyS9FnQ8Kkwjdg4NAAL/VPhriLCaFQosPXnT3raPYR9OEGGi
+        EEb7BWIHHLSB7U7dPeYO7fSYKrXp1R1d/bsbwGAKRn6DSyWMtRM102ZOh5hQOz1z
+        Iqo+agaukFYVOBs9FA9WhZRB/oNzv4KMBILau1z4OW/kkfkLthW+w==
+X-ME-Sender: <xms:n2dbXXEsXSS3x9kPpQyV5o-MSjkYRIZ7XSamxV-ILJqOTLVT1lRI6Q>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudegtddgjeegucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
+    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucffohhmrg
+    hinhepghhithhhuhgsrdgtohhmnecukfhppeejtddrudefhedrudegkedrudehudenucfr
+    rghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:n2dbXYln6shx_YGrmWhxqsz81-p18uZ7tYpm7TgAYtv8kuOGZxR23A>
+    <xmx:n2dbXUIYyiaFSA3_N0Wwa1XupWFv3RvXEnr4yh08WP97zQPaz_HUBA>
+    <xmx:n2dbXZaprr3dAZARO1jWYZSAVXq4JIY_y51SyJn4LhIn5vayVF31-A>
+    <xmx:oGdbXYmoo9G4d1TqUl-0LKunnaY7WbhJIp0i1S3cgTwMYlpCcHdeYQ>
+Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 38A688005C;
+        Mon, 19 Aug 2019 23:23:10 -0400 (EDT)
+From:   Samuel Holland <samuel@sholland.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
+Subject: [PATCH v4 00/10] Allwinner sunxi message box support
+Date:   Mon, 19 Aug 2019 22:23:01 -0500
+Message-Id: <20190820032311.6506-1-samuel@sholland.org>
 X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -63,47 +76,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop redundant I2C properties that are already specified in
-vf610-zii-dev.dtsi
+This series adds support for the "hardware message box" in sun8i, sun9i,
+and sun50i SoCs, used for communication with the ARISC management
+processor (the platform's equivalent of the ARM SCP). The end goal is to
+use the arm_scpi driver as a client, communicating with firmware running
+on the AR100 CPU, or to use the mailbox to forward NMIs that the
+firmware picks up from R_INTC.
 
-Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Chris Healy <cphealy@gmail.com>
-Cc: Fabio Estevam <festevam@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
----
- arch/arm/boot/dts/vf610-zii-dev-rev-b.dts | 10 ----------
- 1 file changed, 10 deletions(-)
+Unfortunately, the ARM SCPI client no longer works with this driver
+since it now exposes all 8 hardware FIFOs individually. The SCPI client
+could be made to work (and I posted proof-of-concept code to that effect
+with v1 of this series), but that is a low priority, as Linux does not
+directly use SCPI with the current firmware version; all SCPI use goes
+through ATF via PSCI.
 
-diff --git a/arch/arm/boot/dts/vf610-zii-dev-rev-b.dts b/arch/arm/boot/dts/vf610-zii-dev-rev-b.dts
-index 48086c5e8549..e500911ce0a5 100644
---- a/arch/arm/boot/dts/vf610-zii-dev-rev-b.dts
-+++ b/arch/arm/boot/dts/vf610-zii-dev-rev-b.dts
-@@ -323,11 +323,6 @@
- };
- 
- &i2c0 {
--	clock-frequency = <100000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c0>;
--	status = "okay";
--
- 	gpio5: io-expander@20 {
- 		compatible = "nxp,pca9554";
- 		reg = <0x20>;
-@@ -350,11 +345,6 @@
- };
- 
- &i2c2 {
--	clock-frequency = <100000>;
--	pinctrl-names = "default";
--	pinctrl-0 = <&pinctrl_i2c2>;
--	status = "okay";
--
- 	tca9548@70 {
- 		compatible = "nxp,pca9548";
- 		pinctrl-0 = <&pinctrl_i2c_mux_reset>;
+As requested in the comments to v3 of this patchset, a demo client is
+provided in the final patch. This demo goes along with a toy firmware
+which shows that the driver does indeed work for two-way communication
+on all channels. To build the firmware component, run:
+
+  git clone https://github.com/crust-firmware/meta meta
+  git clone -b mailbox-demo https://github.com/crust-firmware/crust meta/crust
+  cd meta
+  make
+
+That will by default produce a U-Boot + ATF + SCP firmware image in
+[meta/]build/pinebook/u-boot-sunxi-with-spl.bin. See the top-level
+README.md for more information, such as cross-compiler setup.
+
+I've now used this driver with three separate clients over the past two
+years, and they all work. If there are no remaining concerns with the
+driver, I'd like it to get merged.
+
+Even without the driver, the clock patches (1-2) can go in at any time.
+
+Changes from v3:
+  - Rebased on sunxi-next
+  - Added Rob's Reviewed-by for patch 3
+  - Fixed a crash when receiving a message on a disabled channel
+  - Cleaned up some comments/formatting in the driver
+  - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
+  - Removed the irqchip example (no longer relevant to the fw design)
+  - Added a demo/example client that uses the driver and a toy firmware
+
+Changes from v2:
+  - Merge patches 1-3
+  - Add a comment in the code explaining the CLK_IS_CRITICAL usage
+  - Add a patch to mark the AR100 clocks as critical
+  - Use YAML for the device tree binding
+  - Include a not-for-merge example usage of the mailbox
+
+Changes from v1:
+  - Marked message box clocks as critical instead of hacks in the driver
+  - 8 unidirectional channels instead of 4 bidirectional pairs
+  - Use per-SoC compatible strings and an A31 fallback compatible
+  - Dropped the mailbox framework patch
+  - Include DT patches for SoCs that document the message box
+
+Samuel Holland (10):
+  clk: sunxi-ng: Mark msgbox clocks as critical
+  clk: sunxi-ng: Mark AR100 clocks as critical
+  dt-bindings: mailbox: Add a sunxi message box binding
+  mailbox: sunxi-msgbox: Add a new mailbox driver
+  ARM: dts: sunxi: a80: Add msgbox node
+  ARM: dts: sunxi: a83t: Add msgbox node
+  ARM: dts: sunxi: h3/h5: Add msgbox node
+  arm64: dts: allwinner: a64: Add msgbox node
+  arm64: dts: allwinner: h6: Add msgbox node
+  [DO NOT MERGE] drivers: firmware: msgbox demo
+
+ .../mailbox/allwinner,sunxi-msgbox.yaml       |  79 +++++
+ arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+ arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  34 ++
+ arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |  24 ++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c            |   2 +-
+ drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
+ drivers/firmware/Kconfig                      |   6 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/sunxi_msgbox_demo.c          | 307 +++++++++++++++++
+ drivers/mailbox/Kconfig                       |  10 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/sunxi-msgbox.c                | 323 ++++++++++++++++++
+ 22 files changed, 842 insertions(+), 9 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
+ create mode 100644 drivers/firmware/sunxi_msgbox_demo.c
+ create mode 100644 drivers/mailbox/sunxi-msgbox.c
+
 -- 
 2.21.0
-
