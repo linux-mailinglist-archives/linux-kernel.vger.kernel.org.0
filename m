@@ -2,80 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B760964D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DF22964DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:44:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbfHTPm5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:42:57 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:45993 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730203AbfHTPm4 (ORCPT
+        id S1730101AbfHTPoV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:44:21 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:59791 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727077AbfHTPoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:42:56 -0400
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1i06HZ-0002QY-82; Tue, 20 Aug 2019 17:42:49 +0200
-Message-ID: <1566315769.3030.20.camel@pengutronix.de>
-Subject: Re: [PATCH v2 2/3] Documentation: media: Describe
- V4L2_CID_UNIT_CELL_SIZE
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Tue, 20 Aug 2019 17:42:49 +0200
-In-Reply-To: <20190820094027.4144-2-ribalda@kernel.org>
-References: <20190820094027.4144-1-ribalda@kernel.org>
-         <20190820094027.4144-2-ribalda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+        Tue, 20 Aug 2019 11:44:21 -0400
+X-Originating-IP: 90.65.161.137
+Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id BDB841BF207;
+        Tue, 20 Aug 2019 15:44:18 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 17:44:18 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Alexander Dahl <ada@thorsis.com>
+Cc:     linux-rt-users@vger.kernel.org,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [ANNOUNCE] v5.2.9-rt3
+Message-ID: <20190820154418.GM3545@piout.net>
+References: <20190816153616.fbridfzjkmfg4dnr@linutronix.de>
+ <2182739.9IRgZpf3R8@ada>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2182739.9IRgZpf3R8@ada>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2019-08-20 at 11:40 +0200, Ricardo Ribalda Delgado wrote:
-> New control to pass to userspace the width/height of a pixel. Which is
-> needed for calibration and lens selection.
+Hi,
+
+On 19/08/2019 13:03:51+0200, Alexander Dahl wrote:
+> Hei hei,
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  Documentation/media/uapi/v4l/ext-ctrls-camera.rst | 8 ++++++++
->  1 file changed, 8 insertions(+)
+> just tried to compile this v5.2.9-rt3 for SAMA5D27-SOM1-EK1 based on 
+> arch/arm/configs/sama5_defconfig and with running oldconfig and selecting 
+> defaults, but that fails if CONFIG_ATMEL_TCB_CLKSRC_USE_SLOW_CLOCK is not set. 
 > 
-> diff --git a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> index 51c1d5c9eb00..b43047d4e7a1 100644
-> --- a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> +++ b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
-> @@ -510,6 +510,14 @@ enum v4l2_scene_mode -
->      value down. A value of zero stops the motion if one is in progress
->      and has no effect otherwise.
->  
-> +``V4L2_CID_UNIT_CELL_SIZE (struct)``
-> +    This control returns the unit cell size in nanometres. The struct provides
-> +    the width and the height in separated fields to take into consideration
-> +    asymmetric pixels and/or hardware binning.
-> +    The unit cell consist on the whole area of the pixel, sensitive and
-> +    non-sensitive.
+> I think this is due to changes for Atmel TCLIB in v5.2 and the not yet adapted 
+> RT patch "clocksource: TCLIB: Allow higher clock rates for clock events", 
+> right?
 
-"consists of", otherwise this looks unambiguous to me.
+Patch clocksource-tclib-allow-higher-clockrates.patch needs to be
+changed so:
 
-I'm not sure if it is required to add a table for struct v4l2_area,
-similarly to the other compound controls.
+ret = setup_clkevents(tc, best_divisor_idx);
 
-> +    This control is required for automatic calibration sensors/cameras.
-> +
->  .. [#f1]
->     This control may be changed to a menu control in the future, if more
->     options are required.
+becomes
 
-regards
-Philipp
+ret = setup_clkevents(&tc, best_divisor_idx);
+
+
+Also, I would think clocksource-tclib-add-proper-depend.patch could be
+dropped. Instead, setup_clkevents should use atmel_tcb_divisors. It
+would then be necessary to move its declaration before the function.
+
+Sebastian, can you take care of that or do you expect a patch? In the
+latter case, do you want a patch for the patch?
+
+> 
+> What's the recommended setting of this option for RT?
+> 
+
+Using the slow clock, will make the platform wakeup less frequently,
+having a higher clock rate will give a better clockevent resolution.
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
