@@ -2,164 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 58B5C95C6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:41:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C938095C74
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:43:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729585AbfHTKlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 06:41:20 -0400
-Received: from mail-eopbgr720088.outbound.protection.outlook.com ([40.107.72.88]:35936
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728842AbfHTKlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 06:41:19 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cDz0jHFoSzRzxT9J6T/yVh7Z//SQrRbX2QMKSqWKMBxX9w73UYR+f6AnDV+G1agZY9l1IwuaqR6XdKHkygI/JePTJFWVIAC32zOMUGus/nM20ibCU9nAijv+trTaUdFBgp7YnOg6jSZq3QhLo+ahCC8u4NsISSAEZgSYaJlYdbwWTSERbS2r84xsWXaPeuv4lS2bkb73my6EnP4tH3nGwUiip2MQLn+OdSnABnaBXFYXhqqj4eiNw2+xbS9feO/mSQFSkvVyJaMX4oGsAtZUlytHdQNXeGt4zLLRav8txDTViQLj3sZ+tOY53yz6vu7I3optpXLPSyaSD7jLOPVXFA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/1B0ttXKBUVnx709ARvmQLu2Rz1k/Y6tXYiVQl/mg8Y=;
- b=CSfcRT1Gz0c7xDLTa/WNAj+cbBODWtPtpt6mIoq+bVuRwYZVhqwXv7e1gA5CrSbRieaim7jwOYua98FOMwhaZIzxzbsmb1FFHsFjZj4wkDr3RXv9ZQ+vNhAGb0CHWAFmHYUOi+eDjGmU5Rfr+uTYHzkZ+NBe3TjsmlpyYWwgWFI6Y2ftTVPw6yTL/PKSFD0ax/U3nMotxSeb+OHPkwGWo+WsBMMcNkax3zgWiS9cXgC9PYg82NW4YjlS2UgGq7Q6obaF3VOS/x4Nt/AE5mfE3rNCNyFVj612vCRM61uluGmIj7jougDjJs8wXJb+TXeX/7y9xcceTINV/yUp5dXksA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/1B0ttXKBUVnx709ARvmQLu2Rz1k/Y6tXYiVQl/mg8Y=;
- b=OmLW5u4GQrQVWtPWMNbsK9m3VzAJO/c59M1mtFtMTwyFgxzK46u4OYYQFunmiaF7oDRJVW3dHm8+Y2i5hPKv6lLfO1J35hHn4yr8Q1Op3dSxqZ+D4wUrvLOb4gIuANqA4dbmgO6sacKHy8hWd9RnG3xXmnKQ5J5rpJIvCaqi2xA=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB3575.namprd03.prod.outlook.com (52.135.213.28) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Tue, 20 Aug 2019 10:41:16 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88%7]) with mapi id 15.20.2157.022; Tue, 20 Aug 2019
- 10:41:15 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-CC:     Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
+        id S1729667AbfHTKnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 06:43:31 -0400
+Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:37854 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728842AbfHTKna (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 06:43:30 -0400
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+        by mx0a-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7KAT3s2032243;
+        Tue, 20 Aug 2019 05:42:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ content-transfer-encoding : in-reply-to; s=PODMain02222019;
+ bh=tKddglLlEJjgTvK9D3i7V32OoZf4zpI5sSiWD8Ezgn4=;
+ b=B1z0cTMfvfBeS4y5yEe4nhH31JDgDSh8YyUx4rYzwFgadSLKp5hL3j3ZaEHJagxWQLQz
+ AWkpeFwpNZErKYZpSn1K8XKHtDA4GZro/KGZiqEyaDky+IM5JvktYc7n+OeifVDjHtBx
+ 3GJvwhwU/rbLk2zmdtoJeKI0oKOrCkk+IpMSpf4vRY4sO1YK/yvYw/T2Svmw8yt+q8MB
+ PYgsf2/iBCGlLHFUs5DPFBbumNNnNmiBAsHiQlnX+IJ3evT9b2RV8v9Uxqsa6pe6hdOt
+ JxvMzLx7xKu/eczm4mTlcjchWrlUM4qnbnla3A6jTlxn8+xZNbIlt8zeF5NeeO1Rv7gU nw== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0a-001ae601.pphosted.com with ESMTP id 2uef01devv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Tue, 20 Aug 2019 05:42:12 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 20 Aug
+ 2019 11:42:10 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Tue, 20 Aug 2019 11:42:10 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 848042BA;
+        Tue, 20 Aug 2019 10:42:10 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 10:42:10 +0000
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
+To:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
+CC:     <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Allison Randal <allison@lohutok.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] kprobes: adjust kprobe addr for KPROBES_ON_FTRACE
-Thread-Topic: [PATCH v2 2/3] kprobes: adjust kprobe addr for KPROBES_ON_FTRACE
-Thread-Index: AQHVVwrOlWp5wQEBs0CTmAwXsgLkUqcD0kYAgAAEH4A=
-Date:   Tue, 20 Aug 2019 10:41:15 +0000
-Message-ID: <20190820183009.1ef539cf@xhacker.debian>
-References: <20190820113928.1971900c@xhacker.debian>
-        <20190820114224.0c8963c4@xhacker.debian>
-        <1566295437.yqnot2qd2e.naveen@linux.ibm.com>
-In-Reply-To: <1566295437.yqnot2qd2e.naveen@linux.ibm.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TY1PR01CA0199.jpnprd01.prod.outlook.com (2603:1096:403::29)
- To BYAPR03MB4773.namprd03.prod.outlook.com (2603:10b6:a03:134::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f866b5f0-b77f-4903-288a-08d7255aed5a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR03MB3575;
-x-ms-traffictypediagnostic: BYAPR03MB3575:
-x-microsoft-antispam-prvs: <BYAPR03MB35756448ADC24DC97CDD6242EDAB0@BYAPR03MB3575.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 013568035E
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(39860400002)(366004)(376002)(396003)(199004)(189003)(25786009)(5660300002)(64756008)(86362001)(486006)(26005)(71190400001)(66446008)(71200400001)(66556008)(6436002)(66066001)(66476007)(66946007)(476003)(386003)(6506007)(256004)(8676002)(102836004)(6486002)(186003)(53936002)(9686003)(6512007)(14454004)(6916009)(50226002)(81156014)(76176011)(4326008)(8936002)(1076003)(81166006)(229853002)(14444005)(7416002)(446003)(11346002)(6246003)(478600001)(305945005)(316002)(2906002)(6116002)(3846002)(54906003)(7736002)(52116002)(99286004)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3575;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: yNsIplS3g5erwKNDe9Aggwv3WmPANboGhCnndv/Qe1uyDEssCCzsMEcKkryrH39KnzPVoUhAV67xYtqKNGTNM7br4bJMOhsPXeNa2xfUIO+qRZHBKr6l/gTyAG4IO0k3D+K71MRf4lsvw5MO+ng5/Gwc93bIXm5J11b5C0KsQwPIkHA0MdgsHki2zsevh2HeqVTZHtt02i67bPURSGfMQ2UfGSSs7itrsisnhaTTtjvlQXWLJP7hiWhB+89En/abmhFLjvkYio/ENgHVHwq2qR4Hcz7msOYHmvUuZdmyCrvj7tMeRDki+bgOQoUMSFxC9C2Fx32848dvo3C47e3eLP7me26KVB+TNrEk4CYNIIXShGFhkaZ9oy2W+a0DwIwNB4xxJgKvBKOjOAZtxDdb9/2ux+5/jYlNU2rp3LoG7tU=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1998460293D9114B826D762A1BF42427@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        zhong jiang <zhongjiang@huawei.com>,
+        <patches@opensource.cirrus.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] ASoC: wm8904: fix typo in DAPM kcontrol name
+Message-ID: <20190820104210.GF10308@ediswmail.ad.cirrus.com>
+References: <f95ae1085f9f3c137a122c4d95728711613c15f7.1566297120.git.mirq-linux@rere.qmqm.pl>
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f866b5f0-b77f-4903-288a-08d7255aed5a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 10:41:15.8066
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zBnrU2yGql1LAGQ+PPp8P6UPzymYEoUTgjy44oIfuK57af7izoPhLaG/eBQi3Sm0kfGjm1X+S+QGdFI4tZ+mWg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3575
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f95ae1085f9f3c137a122c4d95728711613c15f7.1566297120.git.mirq-linux@rere.qmqm.pl>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 clxscore=1011
+ mlxlogscore=892 bulkscore=0 adultscore=0 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1906280000 definitions=main-1908200111
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 20 Aug 2019 15:45:24 +0530 "Naveen N. Rao" wrote:
+On Tue, Aug 20, 2019 at 12:33:29PM +0200, Michał Mirosław wrote:
+> Trivial fix for typo in "Capture Inverting Mux"es' name.
+> 
+> Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+> ---
 
->=20
->=20
-> Jisheng Zhang wrote:
-> > For KPROBES_ON_FTRACE case, we need to adjust the kprobe's addr
-> > correspondingly.
-> >
-> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> > ---
-> >  kernel/kprobes.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > index 9873fc627d61..3fd2f68644da 100644
-> > --- a/kernel/kprobes.c
-> > +++ b/kernel/kprobes.c
-> > @@ -1484,15 +1484,19 @@ static inline int check_kprobe_rereg(struct kpr=
-obe *p)
-> >
-> >  int __weak arch_check_ftrace_location(struct kprobe *p)
-> >  {
-> > -     unsigned long ftrace_addr;
-> > +     unsigned long ftrace_addr, addr =3D (unsigned long)p->addr;
-> >
-> > -     ftrace_addr =3D ftrace_location((unsigned long)p->addr);
-> > +#ifdef CONFIG_KPROBES_ON_FTRACE
-> > +     addr =3D ftrace_call_adjust(addr);
-> > +#endif =20
->=20
-> Looking at the commit message for patch 3/3, it looks like you want the
-> probe to be placed on ftrace entry by default, and this patch seems to
-> be aimed at that.
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Yeah.
-
->=20
-> If so, this is not the right approach. As I mentioned previously, you
-> would want to over-ride kprobe_lookup_name(). This ensures that the
-> address is changed only if the user provided a symbol, and not if the
-> user wanted to probe at a very specific address. See commit
-
-Great! Now I understand the reason.
-
-> 24bd909e94776 ("powerpc/kprobes: Prefer ftrace when probing function
-> entry").
-
-Now, I got your meaning. You are right. I will update the patch in newer
-version.
-
-Thanks a lot!
-
->=20
-> If this patch is for some other purpose, then it isn't clear from the
-> commit log. Please provide a better explanation.
->=20
->=20
-> - Naveen
->=20
-
+Thanks,
+Charles
