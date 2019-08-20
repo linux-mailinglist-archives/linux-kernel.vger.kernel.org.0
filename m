@@ -2,85 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EC78F95AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 11:10:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF2595ABB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 11:13:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729476AbfHTJKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 05:10:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37704 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728698AbfHTJKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 05:10:25 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EBB09ADDA;
-        Tue, 20 Aug 2019 09:10:22 +0000 (UTC)
-From:   Andreas Schwab <schwab@suse.de>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        David Miller <davem@davemloft.net>,
-        Yash Shah <yash.shah@sifive.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel\@vger.kernel.org List" <linux-kernel@vger.kernel.org>,
-        linux-riscv@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Petr =?utf-8?Q?=C5=A0tetiar?= <ynezz@true.cz>,
-        Sachin Ghadi <sachin.ghadi@sifive.com>
-Subject: Re: [PATCH 2/3] macb: Update compatibility string for SiFive FU540-C000
-References: <1563534631-15897-1-git-send-email-yash.shah@sifive.com>
-        <1563534631-15897-2-git-send-email-yash.shah@sifive.com>
-        <4075b955-a187-6fd7-a2e6-deb82b5d4fb6@microchip.com>
-        <CAJ2_jOEHoh+D76VpAoVq3XnpAZEQxdQtaVX5eiKw5X4r+ypKVw@mail.gmail.com>
-        <alpine.DEB.2.21.9999.1908131142150.5033@viisi.sifive.com>
-X-Yow:  Are we live or on tape?
-Date:   Tue, 20 Aug 2019 11:10:20 +0200
-In-Reply-To: <alpine.DEB.2.21.9999.1908131142150.5033@viisi.sifive.com> (Paul
-        Walmsley's message of "Tue, 13 Aug 2019 11:42:49 -0700 (PDT)")
-Message-ID: <mvm5zmskxs3.fsf@suse.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2.90 (gnu/linux)
+        id S1729521AbfHTJMh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 05:12:37 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:51213 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728771AbfHTJMg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 05:12:36 -0400
+Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos.glx-home)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1i00Bp-00089o-HM; Tue, 20 Aug 2019 11:12:29 +0200
+Date:   Tue, 20 Aug 2019 11:12:13 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Song Liu <songliubraving@fb.com>
+cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@fb.com, stable@vger.kernel.org,
+        Joerg Roedel <jroedel@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] x86/mm/pti: in pti_clone_pgtable() don't increase addr
+ by PUD_SIZE
+In-Reply-To: <20190820075128.2912224-1-songliubraving@fb.com>
+Message-ID: <alpine.DEB.2.21.1908201106260.2223@nanos.tec.linutronix.de>
+References: <20190820075128.2912224-1-songliubraving@fb.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Aug 13 2019, Paul Walmsley <paul.walmsley@sifive.com> wrote:
+On Tue, 20 Aug 2019, Song Liu wrote:
 
-> Dave, Nicolas,
->
-> On Mon, 22 Jul 2019, Yash Shah wrote:
->
->> On Fri, Jul 19, 2019 at 5:36 PM <Nicolas.Ferre@microchip.com> wrote:
->> >
->> > On 19/07/2019 at 13:10, Yash Shah wrote:
->> > > Update the compatibility string for SiFive FU540-C000 as per the new
->> > > string updated in the binding doc.
->> > > Reference: https://lkml.org/lkml/2019/7/17/200
->> >
->> > Maybe referring to lore.kernel.org is better:
->> > https://lore.kernel.org/netdev/CAJ2_jOFEVZQat0Yprg4hem4jRrqkB72FKSeQj4p8P5KA-+rgww@mail.gmail.com/
->> 
->> Sure. Will keep that in mind for future reference.
->> 
->> >
->> > > Signed-off-by: Yash Shah <yash.shah@sifive.com>
->> >
->> > Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
->> 
->> Thanks.
->
-> Am assuming you'll pick this up for the -net tree for v5.4-rc1 or earlier.
-> If not, please let us know.
+> pti_clone_pgtable() increases addr by PUD_SIZE for pud_none(*pud) case.
+> This is not accurate because addr may not be PUD_SIZE aligned.
 
-This is still missing in v5.4-rc5, which means that networking is broken.
+You fail to explain how this happened. The code before the 32bit support
+did always increase by PMD_SIZE. The 32bit support broke that.
+ 
+> In our x86_64 kernel, pti_clone_pgtable() fails to clone 7 PMDs because
+> of this issuse, including PMD for the irq entry table. For a memcache
+> like workload, this introduces about 4.5x more iTLB-load and about 2.5x
+> more iTLB-load-misses on a Skylake CPU.
 
-Andreas.
+This information is largely irrelevant. What matters is the fact that this
+got broken and incorrectly forwards the address by PUD_SIZE which is wrong
+if address is not PUD_SIZE aligned.
 
--- 
-Andreas Schwab, SUSE Labs, schwab@suse.de
-GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
-"And now for something completely different."
+> This patch fixes this issue by adding PMD_SIZE to addr for pud_none()
+> case.
+
+  git grep 'This patch' Documentation/process/submitting-patches.rst
+
+> Cc: stable@vger.kernel.org # v4.19+
+> Fixes: 16a3fe634f6a ("x86/mm/pti: Clone kernel-image on PTE level for 32 bit")
+> Signed-off-by: Song Liu <songliubraving@fb.com>
+> Cc: Joerg Roedel <jroedel@suse.de>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> ---
+>  arch/x86/mm/pti.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/mm/pti.c b/arch/x86/mm/pti.c
+> index b196524759ec..5a67c3015f59 100644
+> --- a/arch/x86/mm/pti.c
+> +++ b/arch/x86/mm/pti.c
+> @@ -330,7 +330,7 @@ pti_clone_pgtable(unsigned long start, unsigned long end,
+>  
+>  		pud = pud_offset(p4d, addr);
+>  		if (pud_none(*pud)) {
+> -			addr += PUD_SIZE;
+> +			addr += PMD_SIZE;
+
+The right fix is to skip forward to the next PUD boundary instead of doing
+this in a loop with PMD_SIZE increments.
+
+Thanks,
+
+	tglx
+
