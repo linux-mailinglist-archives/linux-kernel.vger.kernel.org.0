@@ -2,68 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CB19624F
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6312296266
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:27:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730136AbfHTOVf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:21:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728770AbfHTOVf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:21:35 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D987C10C0527;
-        Tue, 20 Aug 2019 14:21:34 +0000 (UTC)
-Received: from krava (unknown [10.43.17.33])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 05F496092F;
-        Tue, 20 Aug 2019 14:21:32 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 16:21:32 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Joe Mario <jmario@redhat.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Michael Petlan <mpetlan@redhat.com>
-Subject: Re: [PATCH] perf c2c: Display proper cpu count in nodes column
-Message-ID: <20190820142132.GI24105@krava>
-References: <20190820140219.28338-1-jolsa@kernel.org>
- <20190820141652.GG24428@kernel.org>
+        id S1730353AbfHTO11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:27:27 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:44765 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728770AbfHTO11 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:27:27 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04420;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=36;SR=0;TI=SMTPD_---0Ta-z0CR_1566310900;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ta-z0CR_1566310900)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 20 Aug 2019 22:21:42 +0800
+Subject: Re: [PATCH 14/14] mm/lru: fix the comments of lru_lock
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Tejun Heo <tj@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Ira Weiny <ira.weiny@intel.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Jann Horn <jannh@google.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Ralph Campbell <rcampbell@nvidia.com>,
+        "Tobin C. Harding" <tobin@kernel.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Arun KS <arunks@codeaurora.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Hugh Dickins <hughd@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1566294517-86418-15-git-send-email-alex.shi@linux.alibaba.com>
+ <20190820140019.GB24642@bombadil.infradead.org>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <bf8be185-e757-cf05-999d-56bfb83f1bc9@linux.alibaba.com>
+Date:   Tue, 20 Aug 2019 22:21:39 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820141652.GG24428@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Tue, 20 Aug 2019 14:21:34 +0000 (UTC)
+In-Reply-To: <20190820140019.GB24642@bombadil.infradead.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 11:16:52AM -0300, Arnaldo Carvalho de Melo wrote:
-> Em Tue, Aug 20, 2019 at 04:02:19PM +0200, Jiri Olsa escreveu:
-> > There's wrong bitmap considered when checking
-> > for cpu count of specific node.
-> > 
-> > We do the needed computation for 'set' variable,
-> > but at the end we use the 'c2c_he->cpuset' weight,
-> > which shows misleading numbers.
-> > 
-> > Reported-by: Joe Mario <jmario@redhat.com>
-> 
-> You forgot to add this:
-> 
-> Fixes: 1e181b92a2da ("perf c2c report: Add 'node' sort key")
-> 
-> Can you please confirm that that is the cset being fixed? This helps
-> with backporters, stable@, etc.
 
-oops sry, yes, that's correct commit
 
-thanks,
-jirka
+ÔÚ 2019/8/20 ÏÂÎç10:00, Matthew Wilcox Ð´µÀ:
+> On Tue, Aug 20, 2019 at 05:48:37PM +0800, Alex Shi wrote:
+>> @@ -159,7 +159,7 @@ static inline bool free_area_empty(struct free_area *area, int migratetype)
+>>  struct pglist_data;
+>>  
+>>  /*
+>> - * zone->lock and the zone lru_lock are two of the hottest locks in the kernel.
+>> + * zone->lock and the lru_lock are two of the hottest locks in the kernel.
+>>   * So add a wild amount of padding here to ensure that they fall into separate
+>>   * cachelines.  There are very few zone structures in the machine, so space
+>>   * consumption is not a concern here.
+> 
+> But after this patch series, the lru lock is no longer stored in the zone.
+> So this comment makes no sense.
+
+Yes, It's need reconsider here. thanks for opoint out.
+
+> 
+>> @@ -295,7 +295,7 @@ struct zone_reclaim_stat {
+>>  
+>>  struct lruvec {
+>>  	struct list_head		lists[NR_LRU_LISTS];
+>> -	/* move lru_lock to per lruvec for memcg */
+>> +	/* perf lruvec lru_lock for memcg */
+> 
+> What does the word 'perf' mean here?
+
+sorry for typo, could be s/perf/per/ here.
+
+Thanks
+Alex
+
+ 
