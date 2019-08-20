@@ -2,62 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F1B0D9621D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:12:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43A0896217
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:12:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730418AbfHTOML (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:12:11 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:37047 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730128AbfHTOLw (ORCPT
+        id S1730339AbfHTOL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:11:56 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:37000 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730214AbfHTOLy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:11:52 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z11so12571599wrt.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:11:51 -0700 (PDT)
+        Tue, 20 Aug 2019 10:11:54 -0400
+Received: by mail-wm1-f67.google.com with SMTP id d16so2798623wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 07:11:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=monstr-eu.20150623.gappssmtp.com; s=20150623;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=FGBKHCq8FJWMnIUa/LWFL4TzsPl3MOXhcThUateMRtc=;
-        b=f3bIV3SrHFrMQrtixm3U82rRcligpygZElE9yXd5V8V9ltf6yCrcMipHXrommhcqfw
-         TFOHb/OanU4gCVrKHQ4rz/c+Lfhl0tvYf7X1dwxm6Wgsb0V3lZi6+l3NjxduRxirIBhg
-         hWW408Mo9CNtLPe2K1XsYTiZwLTBeRtkzcdT6kM94Gw7kC4ZCx5uxEncz8qyBoj/iayH
-         QSjw5kDf4YeSbhEFMhXZb9Y5o+cnR5cHW72PjEkakxrM2G28a8rEre+NOZ/qpC3DNmKh
-         lUQzqHDbg+0ReV5HhEvmxRDpMVa7i8/eh+1DlHByywQhWXJivmNVoag839ISQcYEypA3
-         OXhA==
+        bh=3A3veAm3Lpp8I1KUBVdHNM6t1y4gslFCu/nH33gQzj0=;
+        b=UlFn4EbMZAEbKFED6p6zZZVirxz5HsF1OJcSpQzIPznev4XNwDnsO1YHKvTkKPcJjB
+         3Ot35pW+7Hx6vbjXtLW6iLwRbjAHWbP+UcL3NfR0Vu/YAtXP3ELGvHb8/Vlcabio7nkf
+         A9HTYmV3seHnrCTYdOhhrJcZXhU14qiDN2lAyQJ/0P+Vab9OcyJdra63NyeUudUjdTtW
+         QLCAGVc5LB3PFzKuYyQmiJlaW0U0bZhY3MLwfPVPPesGkhjJBudkidVOh69hERvRZVfU
+         Gf9mB086LUk6W1geanUZYyKuUBpilDfDen4K+fe0FtRb3bWFLlUktGHDf4XJiKPPHk8f
+         Mv2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:in-reply-to:references;
-        bh=FGBKHCq8FJWMnIUa/LWFL4TzsPl3MOXhcThUateMRtc=;
-        b=O6GaBRP8xf88MwzHA8JPh0o085bpP67X/Ik+7ZH/GkHB87yE8CuzBRwStlLQtS8RMV
-         KJld3KdQTQBNOa0x1ZweKDL7/WHL1CyGwStXUjGpWNv2QbHZKY23KVJy7v3Sur+e+sv4
-         wYU3EWFZmjHMKLXNj+on2waYglr9OyQQWXKUxDV52zAM96O0rYUOgr68O++fOplJ5nWp
-         6gEt8AXjyn12uXJ1magbJ8hBULMqR67i5WhG9AYWc1I+vg+ETLpeS+bJ937M5PwdHiYy
-         tbS/N4SKut+sJk9x/EtqbhNnMx9PTg9xHY1hhPhYTw0qPWMEwgNmcUkijZ7vKmWoZ307
-         m4lw==
-X-Gm-Message-State: APjAAAVTtibCZYEMIijh2TzsZA8cldKub5cSKpjt0Bmqu1EIlsZni/Ia
-        FmHYCcQDu4BRXsxQrzMqCcNZorYYY5tIUA==
-X-Google-Smtp-Source: APXvYqxobUNDMTRwNWh7KrFllFIt6Sw6gQaq/G0HklprIHThax3CILx4Cq6GYMtvbluPatyRvV4Qqw==
-X-Received: by 2002:adf:ef05:: with SMTP id e5mr34863140wro.158.1566310310222;
-        Tue, 20 Aug 2019 07:11:50 -0700 (PDT)
+        bh=3A3veAm3Lpp8I1KUBVdHNM6t1y4gslFCu/nH33gQzj0=;
+        b=bpfeBwJaquUk29kV///IXX1Ik8ZHQF1xnJ6US5eMtV1/PR+q+4UjVU+ymSBBqbIL8d
+         gwsOk2wHdpRolMwC4SLjaWNzclfFeqQMGDY4NYviS6imcuJwpgYt8/xSLEm/uBdTgeC7
+         zqrsh4R2MjOTvJnVljCzhs5kriF9LseufbjTUN+lWhcsszSjydBE47g06vq4lwHNiMYF
+         eDg0uOwdki4QWmve5NqlAnNLLnRntSPvKL7T700DnfRs7ISSIgReMc4DBIhVrEq6psiD
+         OpD3pu/vJfwSd4+s/Le5/pyrP6gTY7pR4ABzIorTeHtn3JVCM38V5PVUByDTbuuqS1W/
+         8y2A==
+X-Gm-Message-State: APjAAAVEScQaWopJ02Ww80VbIP5XcWiD6RWjmi/cgig3t1fJ0GhGOe/a
+        xqRdDdyGcAskf8wTrMcLy8fztzpb2BYhwg==
+X-Google-Smtp-Source: APXvYqxjghaCyCbikfVIF7P9kVbfPe71/TZPk84eJm5nxA4vZdhH9MGYRrqrXJuh7H9rsOBBIiEuuw==
+X-Received: by 2002:a1c:d185:: with SMTP id i127mr207839wmg.63.1566310312089;
+        Tue, 20 Aug 2019 07:11:52 -0700 (PDT)
 Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
-        by smtp.gmail.com with ESMTPSA id u186sm229705wmu.26.2019.08.20.07.11.49
+        by smtp.gmail.com with ESMTPSA id f13sm10145717wrr.5.2019.08.20.07.11.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 07:11:49 -0700 (PDT)
+        Tue, 20 Aug 2019 07:11:51 -0700 (PDT)
 From:   Michal Simek <michal.simek@xilinx.com>
 To:     linux-kernel@vger.kernel.org, monstr@monstr.eu,
         michal.simek@xilinx.com, linux@roeck-us.net
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        linux-iio@vger.kernel.org,
-        =?UTF-8?q?Stefan=20Br=C3=BCns?= <stefan.bruens@rwth-aachen.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Jonathan Cameron <jic23@kernel.org>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Hartmut Knaack <knaack.h@gmx.de>
-Subject: [PATCH 2/4] iio: adc: ina2xx: Setup better name then simple ina2xx
-Date:   Tue, 20 Aug 2019 16:11:39 +0200
-Message-Id: <e1a9d7c5f94a4942a97a242e530a3bfdda8bbc74.1566310292.git.michal.simek@xilinx.com>
+Cc:     linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Jean Delvare <jdelvare@suse.com>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 3/4] dt-bindings: Add optional label property for ina2xx
+Date:   Tue, 20 Aug 2019 16:11:40 +0200
+Message-Id: <3c56deb8cc1842d2915b203e622be1eb442414de.1566310292.git.michal.simek@xilinx.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1566310292.git.michal.simek@xilinx.com>
 References: <cover.1566310292.git.michal.simek@xilinx.com>
@@ -68,56 +65,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On systems with multiple ina2xx chips it is impossible to find out which
-iio device is which one based on probe order. That's why it is necessary to
-setup better name based on possition.
-The patch is reusing dev_name which is setup by core with client->name.
-
-name char array was setup to 128 byte length to correspond the same name
-length by HID device.
-
-Before this patch:
-iio:device9: ina226 (buffer capable)
-After:
-iio:device9: ina226-3-004a (buffer capable)
+Using optional "label" property is adding an option to user to use better
+name for device identification.
 
 Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
 
-Also id->name can be used as prefix. On ina226 output is the same.
+ Documentation/devicetree/bindings/hwmon/ina2xx.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Also I am happy to change that space for name will be dynamicky allocated
-to save a space if needed.
----
- drivers/iio/adc/ina2xx-adc.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
-index 37058d9c2054..7c7c63677bf4 100644
---- a/drivers/iio/adc/ina2xx-adc.c
-+++ b/drivers/iio/adc/ina2xx-adc.c
-@@ -146,6 +146,7 @@ struct ina2xx_chip_info {
- 	int range_vbus; /* Bus voltage maximum in V */
- 	int pga_gain_vshunt; /* Shunt voltage PGA gain */
- 	bool allow_async_readout;
-+	char name[128];
- };
+diff --git a/Documentation/devicetree/bindings/hwmon/ina2xx.txt b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+index 02af0d94e921..d15bf7e46fd7 100644
+--- a/Documentation/devicetree/bindings/hwmon/ina2xx.txt
++++ b/Documentation/devicetree/bindings/hwmon/ina2xx.txt
+@@ -14,6 +14,8 @@ Optional properties:
  
- static const struct ina2xx_config ina2xx_config[] = {
-@@ -1027,7 +1028,12 @@ static int ina2xx_probe(struct i2c_client *client,
- 		indio_dev->num_channels = ARRAY_SIZE(ina219_channels);
- 		indio_dev->info = &ina219_info;
- 	}
--	indio_dev->name = id->name;
-+
-+	/* Compose chip name to unified i2c format */
-+	snprintf(chip->name, sizeof(chip->name), "%s-%s",
-+		 client->name, dev_name(&client->dev));
-+
-+	indio_dev->name = chip->name;
- 	indio_dev->setup_ops = &ina2xx_setup_ops;
+ - shunt-resistor
+ 	Shunt resistor value in micro-Ohm
++- label
++	Symbolic name for a power monitor
  
- 	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
+ Example:
+ 
 -- 
 2.17.1
 
