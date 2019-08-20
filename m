@@ -2,166 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B82D9622B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:15:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0707396234
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:17:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730240AbfHTOOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:14:33 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46390 "EHLO mx1.suse.de"
+        id S1730237AbfHTOQz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:16:55 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4737 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729975AbfHTOOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:14:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 044FBAC50;
-        Tue, 20 Aug 2019 14:14:30 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 16:14:29 +0200
-From:   Petr Mladek <pmladek@suse.com>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: assign_desc() barriers: Re: [RFC PATCH v4 1/9] printk-rb: add a
- new printk ringbuffer implementation
-Message-ID: <20190820141429.hkrnynmr5ou4lem2@pathway.suse.cz>
-References: <20190807222634.1723-1-john.ogness@linutronix.de>
- <20190807222634.1723-2-john.ogness@linutronix.de>
- <20190820082253.ybys4fsakxxdvahx@pathway.suse.cz>
+        id S1729762AbfHTOQy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:16:54 -0400
+Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B7B5DFB8E5CA0C1399FE;
+        Tue, 20 Aug 2019 22:16:51 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS412-HUB.china.huawei.com
+ (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Tue, 20 Aug 2019
+ 22:16:41 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <idosch@mellanox.com>, <jiri@mellanox.com>,
+        <mcroce@redhat.com>, <jakub.kicinski@netronome.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 net-next] netdevsim: Fix build error without CONFIG_INET
+Date:   Tue, 20 Aug 2019 22:14:46 +0800
+Message-ID: <20190820141446.71604-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190819120825.74460-1-yuehaibing@huawei.com>
+References: <20190819120825.74460-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820082253.ybys4fsakxxdvahx@pathway.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 2019-08-20 10:22:53, Petr Mladek wrote:
-> On Thu 2019-08-08 00:32:26, John Ogness wrote:
-> > --- /dev/null
-> > +++ b/kernel/printk/ringbuffer.c
-> > +/**
-> > + * assign_desc() - Assign a descriptor to the caller.
-> > + *
-> > + * @e: The entry structure to store the assigned descriptor to.
-> > + *
-> > + * Find an available descriptor to assign to the caller. First it is checked
-> > + * if the tail descriptor from the committed list can be recycled. If not,
-> > + * perhaps a never-used descriptor is available. Otherwise, data blocks will
-> > + * be invalidated until the tail descriptor from the committed list can be
-> > + * recycled.
-> > + *
-> > + * Assigned descriptors are invalid until data has been reserved for them.
-> > + *
-> > + * Return: true if a descriptor was assigned, otherwise false.
-> > + *
-> > + * This will only fail if it was not possible to invalidate data blocks in
-> > + * order to recycle a descriptor. This can happen if a writer has reserved but
-> > + * not yet committed data and that reserved data is currently the oldest data.
-> > + */
-> > +static bool assign_desc(struct prb_reserved_entry *e)
-> > +{
-> > +	struct printk_ringbuffer *rb = e->rb;
-> > +	struct prb_desc *d;
-> > +	struct nl_node *n;
-> > +	unsigned long i;
-> > +
-> > +	for (;;) {
-> > +		/*
-> > +		 * jA:
-> > +		 *
-> > +		 * Try to recycle a descriptor on the committed list.
-> > +		 */
-> > +		n = numlist_pop(&rb->nl);
-> > +		if (n) {
-> > +			d = container_of(n, struct prb_desc, list);
-> > +			break;
-> > +		}
-> > +
-> > +		/* Fallback to static never-used descriptors. */
-> > +		if (atomic_read(&rb->desc_next_unused) < DESCS_COUNT(rb)) {
-> > +			i = atomic_fetch_inc(&rb->desc_next_unused);
-> > +			if (i < DESCS_COUNT(rb)) {
-> > +				d = &rb->descs[i];
-> > +				atomic_long_set(&d->id, i);
-> > +				break;
-> > +			}
-> > +		}
-> > +
-> > +		/*
-> > +		 * No descriptor available. Make one available for recycling
-> > +		 * by invalidating data (which some descriptor will be
-> > +		 * referencing).
-> > +		 */
-> > +		if (!dataring_pop(&rb->dr))
-> > +			return false;
-> > +	}
-> > +
-> > +	/*
-> > +	 * jB:
-> > +	 *
-> > +	 * Modify the descriptor ID so that users of the descriptor see that
-> > +	 * it has been recycled. A _release() is used so that prb_getdesc()
-> > +	 * callers can see all data ringbuffer updates after issuing a
-> > +	 * pairing smb_rmb(). See iA for details.
-> > +	 *
-> > +	 * Memory barrier involvement:
-> > +	 *
-> > +	 * If dB->iA reads from jB, then dI reads the same value as
-> > +	 * jA->cD->hA.
-> > +	 *
-> > +	 * Relies on:
-> > +	 *
-> > +	 * RELEASE from jA->cD->hA to jB
-> > +	 *    matching
-> > +	 * RMB between dB->iA and dI
-> > +	 */
-> > +	atomic_long_set_release(&d->id, atomic_long_read(&d->id) +
-> > +				DESCS_COUNT(rb));
-> 
-> atomic_long_set_release() might be a bit confusing here.
-> There is no related acquire.
-> 
-> In fact, d->id manipulation has barriers from both sides:
-> 
->   + smp_rmb() before so that all reads are finished before
->     the id is updated (release)
+If CONFIG_INET is not set, building fails:
 
-Uh, this statement does not make sense. The read barrier is not
-needed here. Instead the readers need it.
+drivers/net/netdevsim/dev.o: In function `nsim_dev_trap_report_work':
+dev.c:(.text+0x67b): undefined reference to `ip_send_check'
 
-Well, we might need a write barrier before d->id manipulation.
-It should be in numlist_pop() after successfully updating nl->tail_id.
-It will allow readers to detect that the desriptor is being reused
-(not in valid tail_id..head_id range) before we start manipulating it.
+Use ip_fast_csum instead of ip_send_check to avoid
+dependencies on CONFIG_INET.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: da58f90f11f5 ("netdevsim: Add devlink-trap support")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use ip_fast_csum instead of ip_send_check
+---
+ drivers/net/netdevsim/dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/net/netdevsim/dev.c b/drivers/net/netdevsim/dev.c
+index c5b0261..39cdb6c 100644
+--- a/drivers/net/netdevsim/dev.c
++++ b/drivers/net/netdevsim/dev.c
+@@ -389,7 +389,8 @@ static struct sk_buff *nsim_dev_trap_skb_build(void)
+ 	iph->ihl = 0x5;
+ 	iph->tot_len = htons(tot_len);
+ 	iph->ttl = 100;
+-	ip_send_check(iph);
++	iph->check = 0;
++	iph->check = ip_fast_csum((unsigned char *)iph, iph->ihl);
+ 
+ 	udph = skb_put_zero(skb, sizeof(struct udphdr) + data_len);
+ 	get_random_bytes(&udph->source, sizeof(u16));
+-- 
+2.7.4
 
 
->   + smp_wmb() after so that the new ID is written before other
->     related values are modified (acquire).
-> 
-> The smp_wmb() barrier is in prb_reserve(). I would move it here.
-
-This still makes sense. I would move the write barrier from
-prb_reserve() here.
-
-
-Sigh, I have to admit that I am not familiar with the _acquire(),
-_release(), and _relaxed() variants of the atomic operations.
-
-They probably make it easier to implement some locking API.
-I am not sure how to use it here. This code implements a complex
-interlock between several variables. I mean that several variables
-lock each other in a cycle, like a state machine? In each case,
-it is not a simple locking where we check state of a single
-variable.
-
-Best Regards,
-Petr
