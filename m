@@ -2,130 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6659895799
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:46:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B1949957A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:49:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfHTGq0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 02:46:26 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33932 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727006AbfHTGq0 (ORCPT
+        id S1729247AbfHTGtJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:49:09 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:16467 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfHTGtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 02:46:26 -0400
-Received: by mail-pf1-f195.google.com with SMTP id b24so2782169pfp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 23:46:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=mucqo3LhMIR4tStl5Pm2qj0Empc+I33Wun9fYdjBSPM=;
-        b=0KkU5zF60DRo+9X3lGke27qW9hs3yRwLPnoCZ3y6IAPV7s+2TS6zAunFGSuQuxAacA
-         xTXNumLhGhu4n34dFKQs1GHCc4NzsniRsD96828abf9v+xKpqxx2y4SInBHdLOwfqgS+
-         aMniF/c25Oh4f46fA7Qsdc61lSYXNy1DY6bb+Dtynp8LVrxX0sMKIEkLgWTUcgsV36B6
-         wo5efXJ9I9hMNsu0U34A/hP2h5BmIPUOKo79hjMPd1By03SoEHd/bBMLy3q1/ai6APcs
-         jd7XSHUGmg8fNpDhf585GMmTL6sSbg4t4Uee8OGpctUM4BASYKLT85uwzXzGeOGC7O0q
-         ktkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=mucqo3LhMIR4tStl5Pm2qj0Empc+I33Wun9fYdjBSPM=;
-        b=PBdF0jMJKpn21UA7CKJOInWbF1vNtliPd2Ucoq1THMt5tLijI/brXcdu/conHhzSQM
-         Chi3GF0wuILC3h9xBl608P1z6K8k7J6VPtzUk1uFJit65/ncGhtlEhPnPI/69k8Fb2CZ
-         fYRkkzpBOBw2/umJdGKSpDj9vN0b0j2DrTPAkswxpEbRIjw4JTCnqSStwgdOQgIyPKh4
-         4IkE/nknJ/AtxNawq/qV3bqF73wzOhPyXAQ8gYRuv0wsEC4pG9R0apxXe5J5hGAGVn4J
-         6EWWXIcvtvzkZDDEN59TH2mY8HCm8H4EERc1ESOhy3dVcOxAp/dcm4UB0GmCOjzdDZCQ
-         Fhvg==
-X-Gm-Message-State: APjAAAVKs+SWam12qjIaYu//GU2CqBhettPBV3Ck2L4lFn/ADlzSAWxY
-        FCzsajhDFwXVT5XLmRZSGypk5w==
-X-Google-Smtp-Source: APXvYqw0tPluysh6L9scDAcw2L4bPHCiB+Z6GVsEHlW64BqIv285puFdvNVEkR01mDkaycc23m5kUA==
-X-Received: by 2002:a17:90a:3be5:: with SMTP id e92mr25187011pjc.86.1566283585731;
-        Mon, 19 Aug 2019 23:46:25 -0700 (PDT)
-Received: from limbo.local (123-204-46-122.static.seed.net.tw. [123.204.46.122])
-        by smtp.gmail.com with ESMTPSA id e7sm18678827pfn.72.2019.08.19.23.46.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 23:46:24 -0700 (PDT)
-From:   Daniel Drake <drake@endlessm.com>
-To:     aros@gmx.com
-Cc:     linux-kernel@vger.kernel.org, linux@endlessm.com,
-        hadess@hadess.net, hannes@cmpxchg.org
-Subject: Re: Let's talk about the elephant in the room - the Linux kernel's inability to gracefully handle low memory pressure
-Date:   Tue, 20 Aug 2019 14:46:20 +0800
-Message-Id: <20190820064620.5119-1-drake@endlessm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <d9802b6a-949b-b327-c4a6-3dbca485ec20@gmx.com>
-References: <d9802b6a-949b-b327-c4a6-3dbca485ec20@gmx.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 20 Aug 2019 02:49:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1566283744;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=MgN3E8s/3Mj7cEN1rbdygo/AW47MY5ZHyV9Juur5Ve4=;
+        b=n6ZVKF/Ew8NYHv20jCwI/8DAIgKCChmnEHej8BXFCZS/6LO3V9FvSyVl+XrqpevQoH
+        TeNFurnYxns3Z/5/ZyuaVhZeuFm3M1Sh5P2gEoWZbN24Zr0RHy59lKuv8fwh88uTJm1C
+        /5zqDM9CldDKgHd3BE6GwBUqMJ5x+/oLKqzBdlIbzxpjgqH+mMGugeuaXcLKFOk+z7MF
+        e1yFJQDs5Qyk6qgyUYlmj/Bn+VAhyL+my5X4RqJmeyT2iTjuG5bX0k3Cmtf9g8rAfWdQ
+        39y8A9henv4OBNkin6+Mq67EigF3oWBZrKiB6v1Y6xXnzEVNgcFTODwFb8U2kU/kDbkH
+        EiUw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4gpw8F85YnqKQ+tuXA=="
+X-RZG-CLASS-ID: mo00
+Received: from [192.168.2.133]
+        by smtp.strato.de (RZmta 44.26.1 DYNA|AUTH)
+        with ESMTPSA id V074e8v7K6mbUB7
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Tue, 20 Aug 2019 08:48:37 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: Lay common foundation to make PVR/SGX work without hacks on OMAP34xx, OMAP36xx, AM335x and potentially OMAP4, OMAP5
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CAHCN7x+87xTsA3MeHy7kUWU0SU3X8HmSc2wbk5gKvYm1dRNe6A@mail.gmail.com>
+Date:   Tue, 20 Aug 2019 08:48:51 +0200
+Cc:     Merlijn Wajer <merlijn@wizzup.org>,
+        Tony Lindgren <tony@atomide.com>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-omap <linux-omap@vger.kernel.org>,
+        kernel@pyra-handheld.com,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, maemo-leste@lists.dyne.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <04809E3E-A690-4931-B949-1CFDAF407C14@goldelico.com>
+References: <20180108214032.GW3872@atomide.com> <4d99c1ae-7752-949b-7e88-bc8f1dc594a2@wizzup.org> <0C51EC59-9CDC-4196-ACF9-24596C9E61B6@goldelico.com> <FA4520D5-62CB-446D-975C-A1C7B9251517@goldelico.com> <20190212205132.GO5720@atomide.com> <0b00ce0a-969f-e638-8247-c2da96cf7ce6@gmail.com> <20190213004143.GP5720@atomide.com> <480AB632-A544-41E7-95A4-DC354AEBB71A@goldelico.com> <CAKpie0SigGGsQxSU+X-Mz5boy-Xx=3wRNOcrf+F=ehFr3RBi7Q@mail.gmail.com> <092210C3-05DE-4AFB-986F-81BD8F990B67@goldelico.com> <CAKpie0RXM1UC33YFeFy-kAxfGhYGNkw4vUgNTThf-ZCAhPTVXw@mail.gmail.com> <BE23C1E4-2877-49FA-B230-F9C10691B805@goldelico.com> <CAKpie0TSo-8gmDm9_Zw4Sd+kjVVEomp8yA9Vu8qY2U2AcrQc=w@mail.gmail.com> <8A069D96-C65F-43F5-8F54-20019CFB1A8D@goldelico.com> <d0cbfaaf-813e-8803-f90b-931a38396750@wizzup.org> <3A03FF16-C203-43ED-AEEF-0260F6B3331A@goldelico.com> <3b0a5e78-c4c2-1963-bac7-b49496a1e9b9@wizzup.org> <1F942AAB-1648-46C0-ADD5-90F6898778BE@goldelico.com> <84cac9b8-0eff-33f8-464d-4f8045d7db19@wizzup.org> <BFAA7FA6-A352-476A-99F9-02EA663A6AAD@goldelico.com> <CAHCN7x+87xTsA3MeHy7kUWU0SU3X8HmSc2wbk5gKvYm1dRNe6A@mail.gmail.com>
+To:     Adam Ford <aford173@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-Artem S. Tashkinov wrote:
-> Once you hit a situation when opening a new tab requires more RAM than
-> is currently available, the system will stall hard. You will barely  be
-> able to move the mouse pointer. Your disk LED will be flashing
-> incessantly (I'm not entirely sure why). You will not be able to run new
-> applications or close currently running ones.
-> 
-> This little crisis may continue for minutes or even longer. I think
-> that's not how the system should behave in this situation. I believe
-> something must be done about that to avoid this stall.
+> Am 19.08.2019 um 21:43 schrieb Adam Ford <aford173@gmail.com>:
+>=20
+>> Thanks to the help from the Pyra community, I was able to get a =
+(binary) reference
+>> implementation using DRM that works on Pyra/OMAP5. At least the =
+gles1test1.
+>=20
+> just a question,
+>=20
+> If DRM is working, does that mean it works without needing the =
+overhead of X?
 
-Thanks for reviving this discussion. Indeed, this is a real pain point in
-the Linux experience.
-
-For Endless, we sunk some time into this and emerged with psi being the best
-solution we could find. The way it works on a time basis seems very appropriate
-when what we're ultimately interested in is maintaining desktop UI interactivity.
-With psi enabled in the kernel, we add a small userspace daemon to kill a process
-when psi reports that *all* userspace tasks are being blocked on kernel memory
-management work for (at least) 1 second in a 10 second period.
-
-https://github.com/endlessm/eos-boot-helper/blob/master/psi-monitor/psi-monitor.c
-
-To share our results so far, despite this daemon being a quick initial
-implementation, we find that it is bringing excellent results, no more memory
-pressure hangs. The system recovers in less than 30 seconds, usually in more
-like 10-15 seconds. Sadly a process got killed along the way, but that's a lot
-better than the user having no option other than pulling the plug.
-The system may not always recover to a totally smooth state, but the
-responsiveness to mouse movements and clicks is still decent, so at that point
-the user can close some more windows to restore full UI performance again. 
-
-There's just one issue we've seen so far: a single report of psi reporting
-memory pressure on a desktop system with 4GB RAM which is only running
-the normal desktop components plus a single gmail tab in the web browser.
-psi occasionally reports high memory pressure, so then psi-monitor steps in and
-kills the browser tab, which seems erroneous. We haven't had a chance to look at
-this in detail yet. Here's a log from the kernel OOM killer showing the memory and
-process state at this point.
-https://gist.github.com/dsd/b338bab0206dcce78263f6bb87de7d4a
-
-> I'm almost sure some sysctl parameters could be changed to avoid this
-> situation but something tells me this could be done for everyone and
-> made default because some non tech-savvy users will just give up on
-> Linux if they ever get in a situation like this and they won't be keen
-> or even be able to Google for solutions.
-
-As you anticipated, myself and others already jumped in with solutions
-appropriate for tech-savvy users. Getting solutions widely deployed is indeed
-another important aspect to tackle.
-
-If you're curious to see how this can look from a "just works" standpoint, you
-might be interested in downloading Endless (www.endlessos.com) and running your
-tests there; we have the above solution running and active out of the box.
-
-Bastien Nocera has recently adapted and extended our solution, presumably
-with an eye towards getting this more widely deployed as a standard part
-of the Linux desktop.
-https://gitlab.freedesktop.org/hadess/low-memory-monitor/
-
-And if there is a meaningful way to make the kernel behave better, that would
-obviously be of huge value too.
-
-Thanks
-Daniel
+Yes, we have to kill X11 to successfully run the gles1test1. An =
+interesting question
+will be how to mix both... E.g. have a 3D rendering in a window =
+controlled by some
+window manager.=
