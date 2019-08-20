@@ -2,48 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4075E95ED4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:36:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 558BE95EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:36:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730111AbfHTMgD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:36:03 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:42861 "EHLO
+        id S1730138AbfHTMgS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:36:18 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:40927 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729967AbfHTMgA (ORCPT
+        with ESMTP id S1729965AbfHTMgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Aug 2019 08:36:00 -0400
 Received: from orion.localdomain ([95.117.23.32]) by mrelayeu.kundenserver.de
  (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M7KG2-1huZBr0qDc-007iuL; Tue, 20 Aug 2019 14:35:51 +0200
+ 1MZk5x-1hn3562KTn-00Wr6k; Tue, 20 Aug 2019 14:35:51 +0200
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     axboe@kernel.dk, hdegoede@redhat.com, b.zolnierkie@samsung.com,
         linus.walleij@linaro.org, linux-ide@vger.kernel.org,
         linux-tegra@vger.kernel.org
-Subject: [PATCH 5/9] drivers: ata: libahci_platform: use devm_platform_ioremap_resource()
-Date:   Tue, 20 Aug 2019 14:35:44 +0200
-Message-Id: <1566304548-19972-5-git-send-email-info@metux.net>
+Subject: [PATCH 6/9] drivers: ata: pata_bk3710: use devm_platform_ioremap_resource()
+Date:   Tue, 20 Aug 2019 14:35:45 +0200
+Message-Id: <1566304548-19972-6-git-send-email-info@metux.net>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1566304548-19972-1-git-send-email-info@metux.net>
 References: <1566304548-19972-1-git-send-email-info@metux.net>
-X-Provags-ID: V03:K1:E53USeu0msk8V5JROorIHFiw3hhReQm1qeQl+190LDziCoEZe/q
- e51UrpeLsIFx9XrX0aHBeif5Danuxs5BuvDzxtGL4l4a9+XloRNHawuRIEJ+JOkEbmt3Z8C
- MwTdltLxsRdpr0ieB+e1OyFfM5EusTZXxXkW+R65zbClBUyprwMxPEpz/1li5OhFvDpieFq
- hTNb4vv3W58v46DpXqBtQ==
+X-Provags-ID: V03:K1:2hBSmJV62+8u86tNoFA272pxYClBqiHKGxotWvy/XhYayx1Y/OK
+ saJTNeaWvrZH8a1EFkpQx8p4VUzxTAomxyK8/n3PecRs1dZGlXSdFjN+gElbNsVpg/Ja6Yk
+ ZeAbca1JaNJHCorW5Nr+k4g1YXLzsYHpkDsyYOlLWF+z0BU6kroO3bURRxmZfEZYPBcNjgg
+ mRqsrM4lcvh05JQW+FcZQ==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:59+lD87P/+o=:9QytcjZkcB6aQuq2+wkjhD
- 7V/UbSs6LuZJMicjDLLtzsdXWFSfgp5ZzlqcoWwnfqk5BWXcwNirOeBhZrK8QgSAep4pEZT3R
- ErmHCg/1Q6n7GibuGVXliab2UkJgQV9rcmlE5WdZzNqJ6x2uMlDa7gC5FvDhhbxD3PJg+Gu55
- Q4On8KNmik5d+2NdrkRWO3daGtzZ9qEnFK/b+DoipR6qr9UftKO7qHTYTx4+n2hOdAvtdgwjD
- wVGOvzlrfBcR/TwHNOGBD/j6LM+S9owklOU1WZwADLVuKnOiuXS5Zch40ukvx3vP1I1OMUGPW
- vzUasehQnQQmGf+ZPsdKrL54vmzbO6QYIgaQ/n/6wzqElPHikO8NoWOBD0pfsx6Qnisbb1nD5
- eRZGBxffeYrUXikdZYTpfm4ycG1Lh05EwZyUKPG8P/Q+4tmJkbrgRhYWjzNnW7lRp48rEXORY
- 0bMN4CdqRztlZVv87tA310ACRtn+95lwyDf7kVT+XaXe/j92/dkFOoCJlLKa0fgrXMQVcR/Do
- HeU61AZEmua8ENAd41Pk59kCy4IoQeo2gusg4rOCZXHBf9iT0AiG0N1WTC/hENiaPyZqxOsCg
- H89IpQlpW3sljzwGKWFhQWrVDT/ZVVzA0/9nsKLNqVbGsmHzq/SWav6Gfki5M4kYWiXI52BJO
- xc8WqEJM0kx2/l2wm0CzFRhn8g/jBPJpozOhXseN0+epzVRTUCvqz1ukXMR/bHbp0pxzT6xmw
- fy5l9k0jgne8wCnLflPx4BEMdiTYWeyVyWdpVOh1mk66U9B/Mptd70wMwWSaofHOpza9DzlqH
- lSWO8j1V+OpAgYscJTRfac+Un6XfA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:KMsYP2dbA/k=:XHmq4ec6/xJN39WmCgSXba
+ eZ6aftXlVkctcroCRteJUeED3pplyY8SuNb3A3iL4M9GBTAaXJ0BJUj32JlqA+9I/3ZWKMPcn
+ TFPI0sQ9ZrVhw6bh2RFdJf86xYtC+CSs+GAwMDMuCDOVTlRxufV6AYTNI95v5DaQGRdHhK+8B
+ LxsXr/Zn2ZSI040f60PwPEnhzaf8IqfYj+ptvZxmjTdX4DagDid2ETEkNEzWldAvXPRPCSSXC
+ RGB3TFNXmNvyi8VYTQRTjttLsoijREMldkw/wuiWjLBrun4pjLINS4wb/V/YJv2EL2g8qXQll
+ z11w84cI2BRArthiJLpYWmCquvzmtr0PEXXK46Tw7bKcdUaCbYwa59jsC9zRlCUnQP6W0eTPd
+ MrEBIb/SGkTiJGK5clBaM+0FAz66vbQ3RZP/wastoWoU/PJzdwOPwtGoUU+AhxWs/qZ9wR+3c
+ oGEqynCQmwhQvgaK+GRsO9SNii65SDgPsHPFErHSFhjdVLryHht8WoQb/NCP8QkCswEVFjMgH
+ PgtNC/fsC6qHWm/2vGcAWWE9ECkCdpR5dePLfcFdSvL3X6tD/b3WaAYh/DKIOgP5H9WBLCXtq
+ KYG42QJiZ9RlxnSis75XopehvKPMRPh9ocvHXYOSi5wfUoTTSc/wBkcJOZLgHYM+O2i/R4VUa
+ 13DByy+Pk/lUGE+mHGIhoTiJoWeVFFvpklxUhq26+InOs5gqO8xvzGN+bqcYiQxGBZYfyaRKd
+ AWrJ6cdwgQiew7zj2/V8t7E5TYevNhoFZZZJng==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -54,23 +53,38 @@ and devm_ioremap_resource() together.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
- drivers/ata/libahci_platform.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/ata/pata_bk3710.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index 9e9583a..3d84be8 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -408,8 +408,7 @@ struct ahci_host_priv *ahci_platform_get_resources(struct platform_device *pdev,
+diff --git a/drivers/ata/pata_bk3710.c b/drivers/ata/pata_bk3710.c
+index fad95cf..92b036d 100644
+--- a/drivers/ata/pata_bk3710.c
++++ b/drivers/ata/pata_bk3710.c
+@@ -291,7 +291,6 @@ static void pata_bk3710_chipinit(void __iomem *base)
+ static int __init pata_bk3710_probe(struct platform_device *pdev)
+ {
+ 	struct clk *clk;
+-	struct resource *mem;
+ 	struct ata_host *host;
+ 	struct ata_port *ap;
+ 	void __iomem *base;
+@@ -310,15 +309,13 @@ static int __init pata_bk3710_probe(struct platform_device *pdev)
+ 	/* NOTE:  round *down* to meet minimum timings; we count in clocks */
+ 	ideclk_period = 1000000000UL / rate;
  
- 	devres_add(dev, hpriv);
+-	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-
+ 	irq = platform_get_irq(pdev, 0);
+ 	if (irq < 0) {
+ 		pr_err(DRV_NAME ": failed to get IRQ resource\n");
+ 		return irq;
+ 	}
  
--	hpriv->mmio = devm_ioremap_resource(dev,
--			      platform_get_resource(pdev, IORESOURCE_MEM, 0));
-+	hpriv->mmio = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(hpriv->mmio)) {
- 		rc = PTR_ERR(hpriv->mmio);
- 		goto err_out;
+-	base = devm_ioremap_resource(&pdev->dev, mem);
++	base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(base))
+ 		return PTR_ERR(base);
+ 
 -- 
 1.9.1
 
