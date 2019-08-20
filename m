@@ -2,425 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 89D4895BEB
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:04:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88D8695BF6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 12:05:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729714AbfHTKES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 06:04:18 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41024 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728414AbfHTKER (ORCPT
+        id S1729775AbfHTKFB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 06:05:01 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36341 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728414AbfHTKFA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 06:04:17 -0400
-Received: by mail-pg1-f195.google.com with SMTP id x15so2944644pgg.8;
-        Tue, 20 Aug 2019 03:04:17 -0700 (PDT)
+        Tue, 20 Aug 2019 06:05:00 -0400
+Received: by mail-pl1-f194.google.com with SMTP id f19so2096289plr.3;
+        Tue, 20 Aug 2019 03:04:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=bLqrk/tJ6HaSh5Kqmkrfo1Vko3U+KTsZ4BRq0qQ1+uo=;
-        b=qyt85IqhDUjVtIu682MQf+etR/KFHpWtTLiY2UTvXNkX//7ZSBAG7tJm85T22Idmf0
-         rKv8tXT2HFMew9UWc3eXSJMERhlrumbUc5jYv8enIeuq4mqmqV7ePYsc7I0upOvOEMGQ
-         X1P84ZMkQhBa10CI3I/qhpvnHBLkSwH5rNhcz/fOu5roaFWkmubiEBIbb1chNeWIzRXT
-         ptaupjzTx8mwyat9R8IeGY+HMQzvQHGIYXdWaZNdyqmtm0OctcmiPKkHk/m8TgyuL7wF
-         PUdBF89cKTd3LziZ53WKVcBSKBL3Qioq0UR1AS+sdJ/gw4/LcetqDcICYA+Huoxhh4wA
-         22ZA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Rj7SDym9UNxyg0oSA1OfNeIBnB06iO8MD1npAu2+BTI=;
+        b=JtxtXgiVKCdj2zs5yiCEZ1rb2h6TGGbtd1BbgNGzkqTztKQhEWYmE6Jqk/73FBDcUx
+         4sBlBKTihdiMJR/PLabdINYC5RoZxzXHYlOVTJDqqEa/6kGdZItMPfzYNx8F3Ny3urDy
+         BX5/bCANsTwNA9aKKSJeCl/KmsU9F934H0EWSUxtWdk6FW7u4CQJTn9lcIFNIeJoCX8D
+         N2Qs2+eKE9a6gQAVCJOtLeHOVYDgJt6Pg1I2W0GaO6qQQVZUiZyyB4K6YoGXBMhuF15H
+         hUE7lO/IHljvng6B9MXGWmB0pcdbJLRSjN/+UdetUIcGnNY9lpDN/F5K6WlzOJkgFzB/
+         x5ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=bLqrk/tJ6HaSh5Kqmkrfo1Vko3U+KTsZ4BRq0qQ1+uo=;
-        b=Wa9q2LgDvXjo2K9H4Tupul+P54zz5DvGjBAuAm+buNFI52iUmz0/7A4Ko7aX0EIgCb
-         EfhtVlZ1JdmWVU0BPPHJCUuuMHz3ertD4MyGlaM9xPJlW7HlmT+F+vvzbiky7vzaspIw
-         dWLdjri/lCzwWAgM4KFhcVeM8hfcELRqoQRu9XWyjmzEgEi0AEv2ZyBCiBXlxcutwb1H
-         dVavc1BAskKYj7EFye5HKUb6+wlWNAAqo6gzBxhdmjMFs4J1zzXUBmIaRHuY5uxSXiGz
-         jt5b2+dHGp+pjHcK0I3gKidHNyDUF71R4DqeQ6dLd9CFPjdAeVjhOqztiTnFtv2MAEHx
-         RIXA==
-X-Gm-Message-State: APjAAAXWnqJUjS5RsELNaiZK/D3vRF6y9ed5sYzMSHM6x9/mviYqtDMS
-        HUxdvhw6vFZK6Rc1g4/x6XsaEISy4OY=
-X-Google-Smtp-Source: APXvYqzGHuah8Q9VFmyIGiCJeAc0oVaDOw73AdbDrnxMcij4g77NMYNidARDSdHog3APp7wNza/6+w==
-X-Received: by 2002:aa7:8dcc:: with SMTP id j12mr29320651pfr.137.1566295456791;
-        Tue, 20 Aug 2019 03:04:16 -0700 (PDT)
-Received: from localhost.localdomain ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id n185sm17912855pga.16.2019.08.20.03.04.14
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Rj7SDym9UNxyg0oSA1OfNeIBnB06iO8MD1npAu2+BTI=;
+        b=szgkW24OvZ8BqmEVW2Cxmx6SCeqe3wf+AskofwMtNRlkP3H17OzDcIFm+sK5+iTIuY
+         gslVB3uuK+NeWiTPIMZY3Yc5ZLnFtmgxBJ9lmJOlWEFVWD2irGJ9z23Spq6yW0lAyQOs
+         tt2wY+kQQYWcEcnPCPmowR8DKS/EIgafc0knkSLmtcIBzD9qz7rzY0KjuQ9wjVOrTBmL
+         yMlraxX+uUkRHRfN24JiwGeeclbSVfDkPGOHcHlq1HkOGd8B6spqRbBRfkAuzFNw60ZX
+         OfRH/oq6uT92FErYFV63gv/sYbvLnc8G2W3PGi9dmoJ3+lEZZXtR6IlXI96yhmp2qyYv
+         EA0Q==
+X-Gm-Message-State: APjAAAWrGgxGCMlCJs7Ut97tufq5KBIvuJg+XzXl1erH0figDAzTfF9s
+        nEF14iwo13+PQmCMVUEXaJM=
+X-Google-Smtp-Source: APXvYqy+/CbGkRnUzDNk57X5X3BHv5GNk/qLIHNfAWzPlLXSaatbk93fURQJsdlf3TYSO/YYPt58kA==
+X-Received: by 2002:a17:902:7d82:: with SMTP id a2mr28078362plm.57.1566295499426;
+        Tue, 20 Aug 2019 03:04:59 -0700 (PDT)
+Received: from btopel-mobl.ger.intel.com ([192.55.54.42])
+        by smtp.gmail.com with ESMTPSA id c2sm9078201pjs.13.2019.08.20.03.04.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 03:04:16 -0700 (PDT)
-From:   Kever Yang <kever.yang@rock-chips.com>
-To:     heiko@sntech.de
-Cc:     linux-rockchip@lists.infradead.org,
-        Kever Yang <kever.yang@rock-chips.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: dts: rockchip: remove rk3288 fennec board support
-Date:   Tue, 20 Aug 2019 18:03:52 +0800
-Message-Id: <20190820100353.17728-1-kever.yang@rock-chips.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 20 Aug 2019 03:04:58 -0700 (PDT)
+From:   =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn.topel@gmail.com>
+To:     syzbot+c82697e3043781e08802@syzkaller.appspotmail.com,
+        ast@kernel.org, daniel@iogearbox.net, netdev@vger.kernel.org
+Cc:     bjorn.topel@intel.com, bpf@vger.kernel.org, davem@davemloft.net,
+        hawk@kernel.org, jakub.kicinski@netronome.com,
+        john.fastabend@gmail.com, jonathan.lemon@gmail.com, kafai@fb.com,
+        linux-kernel@vger.kernel.org, magnus.karlsson@intel.com,
+        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
+        xdp-newbies@vger.kernel.org, yhs@fb.com, hdanton@sina.com
+Subject: [PATCH bpf-next] xsk: proper socket state check in xsk_poll
+Date:   Tue, 20 Aug 2019 12:04:05 +0200
+Message-Id: <20190820100405.25564-1-bjorn.topel@gmail.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <0000000000009167320590823a8c@google.com>
+References: <0000000000009167320590823a8c@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since there is no one using this board, remove it.
+From: Björn Töpel <bjorn.topel@intel.com>
 
-Signed-off-by: Kever Yang <kever.yang@rock-chips.com>
+The poll() implementation for AF_XDP sockets did not perform the
+proper state checks, prior accessing the socket umem. This patch fixes
+that by performing a xsk_is_bound() check.
+
+Suggested-by: Hillf Danton <hdanton@sina.com>
+Reported-by: syzbot+c82697e3043781e08802@syzkaller.appspotmail.com
+Fixes: 77cd0d7b3f25 ("xsk: add support for need_wakeup flag in AF_XDP rings")
+Signed-off-by: Björn Töpel <bjorn.topel@intel.com>
 ---
+ net/xdp/xsk.c | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
- arch/arm/boot/dts/rk3288-fennec.dts | 347 ----------------------------
- 1 file changed, 347 deletions(-)
- delete mode 100644 arch/arm/boot/dts/rk3288-fennec.dts
-
-diff --git a/arch/arm/boot/dts/rk3288-fennec.dts b/arch/arm/boot/dts/rk3288-fennec.dts
-deleted file mode 100644
-index 4847cf902a15..000000000000
---- a/arch/arm/boot/dts/rk3288-fennec.dts
-+++ /dev/null
-@@ -1,347 +0,0 @@
--// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
--
--/dts-v1/;
--
--#include "rk3288.dtsi"
--
--/ {
--	model = "Rockchip RK3288 Fennec Board";
--	compatible = "rockchip,rk3288-fennec", "rockchip,rk3288";
--
--	memory@0 {
--		reg = <0x0 0x0 0x0 0x80000000>;
--		device_type = "memory";
--	};
--
--	ext_gmac: external-gmac-clock {
--		compatible = "fixed-clock";
--		#clock-cells = <0>;
--		clock-frequency = <125000000>;
--		clock-output-names = "ext_gmac";
--	};
--
--	vcc_sys: vsys-regulator {
--		compatible = "regulator-fixed";
--		regulator-name = "vcc_sys";
--		regulator-min-microvolt = <5000000>;
--		regulator-max-microvolt = <5000000>;
--		regulator-always-on;
--		regulator-boot-on;
--	};
--};
--
--&cpu0 {
--	cpu0-supply = <&vdd_cpu>;
--};
--
--&emmc {
--	bus-width = <8>;
--	cap-mmc-highspeed;
--	non-removable;
--	pinctrl-names = "default";
--	pinctrl-0 = <&emmc_clk &emmc_cmd &emmc_pwr &emmc_bus8>;
--	status = "okay";
--};
--
--&gmac {
--	assigned-clocks = <&cru SCLK_MAC>;
--	assigned-clock-parents = <&ext_gmac>;
--	clock_in_out = "input";
--	pinctrl-names = "default";
--	pinctrl-0 = <&rgmii_pins>, <&phy_rst>, <&phy_pmeb>, <&phy_int>;
--	phy-supply = <&vcc_lan>;
--	phy-mode = "rgmii";
--	snps,reset-active-low;
--	snps,reset-delays-us = <0 10000 1000000>;
--	snps,reset-gpio = <&gpio4 RK_PB0 GPIO_ACTIVE_LOW>;
--	tx_delay = <0x30>;
--	rx_delay = <0x10>;
--	status = "okay";
--};
--
--&gpu {
--	mali-supply = <&vdd_gpu>;
--	status = "okay";
--};
--
--&hdmi {
--	status = "okay";
--};
--
--&i2c0 {
--	status = "okay";
--	clock-frequency = <400000>;
--
--	rk808: pmic@1b {
--		compatible = "rockchip,rk808";
--		reg = <0x1b>;
--		interrupt-parent = <&gpio0>;
--		interrupts = <RK_PA4 IRQ_TYPE_LEVEL_LOW>;
--		#clock-cells = <1>;
--		clock-output-names = "xin32k", "rk808-clkout2";
--		pinctrl-names = "default";
--		pinctrl-0 = <&pmic_int &global_pwroff>;
--		rockchip,system-power-controller;
--		wakeup-source;
--
--		vcc1-supply = <&vcc_sys>;
--		vcc2-supply = <&vcc_sys>;
--		vcc3-supply = <&vcc_sys>;
--		vcc4-supply = <&vcc_sys>;
--		vcc6-supply = <&vcc_sys>;
--		vcc7-supply = <&vcc_sys>;
--		vcc8-supply = <&vcc_io>;
--		vcc9-supply = <&vcc_io>;
--		vcc10-supply = <&vcc_io>;
--		vcc11-supply = <&vcc_io>;
--		vcc12-supply = <&vcc_io>;
--		vddio-supply = <&vcc_io>;
--
--		regulators {
--			vdd_cpu: DCDC_REG1 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <750000>;
--				regulator-max-microvolt = <1350000>;
--				regulator-name = "vdd_arm";
--				regulator-state-mem {
--					regulator-off-in-suspend;
--				};
--			};
--
--			vdd_gpu: DCDC_REG2 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <850000>;
--				regulator-max-microvolt = <1250000>;
--				regulator-name = "vdd_gpu";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1000000>;
--				};
--			};
--
--			vcc_ddr: DCDC_REG3 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-name = "vcc_ddr";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--				};
--			};
--
--			vcc_io: DCDC_REG4 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-name = "vcc_io";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <3300000>;
--				};
--			};
--
--			vccio_pmu: LDO_REG1 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-name = "vccio_pmu";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <3300000>;
--				};
--			};
--
--			vcca_33: LDO_REG2 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <3300000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-name = "vcca_33";
--				regulator-state-mem {
--					regulator-off-in-suspend;
--				};
--			};
--
--			vdd_10: LDO_REG3 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1000000>;
--				regulator-name = "vdd_10";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1000000>;
--				};
--			};
--
--			vcc_wl: LDO_REG4 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-name = "vcc_wl";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1800000>;
--				};
--			};
--
--			vccio_sd: LDO_REG5 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <3300000>;
--				regulator-name = "vccio_sd";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <3300000>;
--				};
--			};
--
--			vdd10_lcd: LDO_REG6 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1000000>;
--				regulator-max-microvolt = <1000000>;
--				regulator-name = "vdd10_lcd";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1000000>;
--				};
--			};
--
--			vcc_18: LDO_REG7 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-name = "vcc_18";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1800000>;
--				};
--			};
--
--			vcc18_lcd: LDO_REG8 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-min-microvolt = <1800000>;
--				regulator-max-microvolt = <1800000>;
--				regulator-name = "vcc18_lcd";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--					regulator-suspend-microvolt = <1800000>;
--				};
--			};
--
--			vcc_sd: SWITCH_REG1 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-name = "vcc_sd";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--				};
--			};
--
--			vcc_lan: SWITCH_REG2 {
--				regulator-always-on;
--				regulator-boot-on;
--				regulator-name = "vcc_lan";
--				regulator-state-mem {
--					regulator-on-in-suspend;
--				};
--			};
--		};
--	};
--};
--
--&pinctrl {
--	pcfg_output_high: pcfg-output-high {
--		output-high;
--	};
--
--	pcfg_output_low: pcfg-output-low {
--		output-low;
--	};
--
--	pcfg_pull_none_drv_8ma: pcfg-pull-none-drv-8ma {
--		drive-strength = <8>;
--	};
--
--	pcfg_pull_up_drv_8ma: pcfg-pull-up-drv-8ma {
--		bias-pull-up;
--		drive-strength = <8>;
--	};
--
--	gmac {
--		phy_int: phy-int {
--			rockchip,pins = <0 RK_PB1 RK_FUNC_GPIO &pcfg_pull_up>;
--		};
--
--		phy_pmeb: phy-pmeb {
--			rockchip,pins = <0 RK_PB0 RK_FUNC_GPIO &pcfg_pull_up>;
--		};
--
--		phy_rst: phy-rst {
--			rockchip,pins = <4 RK_PB0 RK_FUNC_GPIO &pcfg_output_high>;
--		};
--	};
--
--	pmic {
--		pmic_int: pmic-int {
--			rockchip,pins = <0 RK_PA4 RK_FUNC_GPIO &pcfg_pull_up>;
--		};
--	};
--
--	usbphy {
--		host_drv: host-drv {
--			rockchip,pins = <0 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
--		};
--	};
--};
--
--&uart2 {
--	status = "okay";
--};
--
--&usbphy {
--	pinctrl-names = "default";
--	pinctrl-0 = <&host_drv>;
--	vbus_drv-gpios = <&gpio0 RK_PB6 GPIO_ACTIVE_HIGH>;
--	status = "okay";
--};
--
--&usb_host0_ehci {
--	status = "okay";
--};
--
--&usb_host1 {
--	status = "okay";
--};
--
--&usb_otg {
--	status = "okay";
--};
--
--&usb_hsic {
--	status = "okay";
--};
--
--&vopb {
--	status = "okay";
--};
--
--&vopb_mmu {
--	status = "okay";
--};
--
--&vopl {
--	status = "okay";
--};
--
--&vopl_mmu {
--	status = "okay";
--};
+diff --git a/net/xdp/xsk.c b/net/xdp/xsk.c
+index ee4428a892fa..08bed5e92af4 100644
+--- a/net/xdp/xsk.c
++++ b/net/xdp/xsk.c
+@@ -356,13 +356,20 @@ static int xsk_generic_xmit(struct sock *sk, struct msghdr *m,
+ 	return err;
+ }
+ 
++static bool xsk_is_bound(struct xdp_sock *xs)
++{
++	struct net_device *dev = READ_ONCE(xs->dev);
++
++	return dev && xs->state == XSK_BOUND;
++}
++
+ static int xsk_sendmsg(struct socket *sock, struct msghdr *m, size_t total_len)
+ {
+ 	bool need_wait = !(m->msg_flags & MSG_DONTWAIT);
+ 	struct sock *sk = sock->sk;
+ 	struct xdp_sock *xs = xdp_sk(sk);
+ 
+-	if (unlikely(!xs->dev))
++	if (unlikely(!xsk_is_bound(xs)))
+ 		return -ENXIO;
+ 	if (unlikely(!(xs->dev->flags & IFF_UP)))
+ 		return -ENETDOWN;
+@@ -383,6 +390,9 @@ static unsigned int xsk_poll(struct file *file, struct socket *sock,
+ 	struct net_device *dev = xs->dev;
+ 	struct xdp_umem *umem = xs->umem;
+ 
++	if (unlikely(!xsk_is_bound(xs)))
++		return mask;
++
+ 	if (umem->need_wakeup)
+ 		dev->netdev_ops->ndo_xsk_wakeup(dev, xs->queue_id,
+ 						umem->need_wakeup);
+@@ -417,7 +427,7 @@ static void xsk_unbind_dev(struct xdp_sock *xs)
+ {
+ 	struct net_device *dev = xs->dev;
+ 
+-	if (!dev || xs->state != XSK_BOUND)
++	if (!xsk_is_bound(xs))
+ 		return;
+ 
+ 	xs->state = XSK_UNBOUND;
 -- 
-2.17.1
+2.20.1
 
