@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C732D96CE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CADE696CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726189AbfHTXIC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 19:08:02 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44187 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726028AbfHTXGg (ORCPT
+        id S1726400AbfHTXGk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 19:06:40 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46125 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726357AbfHTXGi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:06:36 -0400
-Received: by mail-pl1-f194.google.com with SMTP id t14so209763plr.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:36 -0700 (PDT)
+        Tue, 20 Aug 2019 19:06:38 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m3so134958pgv.13
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=sMMNrNPEyr5ojRnGMae00OuNvWMz/twMj42dMKt7nWI=;
-        b=IB7XgmYvkwQEJtHZlzt4hH6T5NopJkfBoayNv/GodStcZXxTvSt35M0eDDE9K3LV2X
-         t34RV1DW6QSCYi7l5B5gjU/nC/lzfgqYLQUgPK/FHUm7Q90eU6Xs99OSlhMpSBUAFZu/
-         Yimi+ol1E2NCdt3K/+oziOzE6uaD+OHWte422JmbCriql6H9kOHQKD/tsCDvM56LPSqq
-         xcAGaApq98JTw0Q04lqdwrHP703sVt3Vds/7vEiDMpD3keehlJIiDsFeg+/lMwH4ucqu
-         0nxmOsfgPHJW/SjDgWdvnebrKFcXAhGduTdxDSkzdCzBM1GIttYl8RXIDDS2rgs60whC
-         iuUg==
+        bh=IcvzzFr1yUCqUm7igC+fhVBaiFn8HJOuskJ5pNSj2cg=;
+        b=s6WQ7sISarwjn/LoXRuWTs7T9mI5glGbXZ8EsPI3bJI84uER1hU+D4STDBevGNYS3Z
+         eOvv5irY6DvPeWzChsKAuakSVEFkiW8fIPj9iEVuzTxRkakHzBvVbJl0FlVpnSJenv9d
+         oUJ9gN9hBHJudtKn5GBt22PjFXTs1PV+hJA8u6D32MuR5+IQjqNaFWUvr7EnYQyDfM4e
+         gRcM1L8/KdxdVssB84zN+ICvvYZKBrcOQUwjy8cozJJY6u/J9LfaZoSSyXmW9cieqa08
+         AwWuH+bjNzMQG0fL+nLfeolv/+EHIUXxixtM7d/daNtzOmFYkW4AB5qLThiEB2YXp4Ay
+         CTgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=sMMNrNPEyr5ojRnGMae00OuNvWMz/twMj42dMKt7nWI=;
-        b=IdII09aObfmDcZPVxXpStqhGt1UUE6bXTDsoiWDnhV+9zjQyqOkhjVtAnvfjvWfqoC
-         WhA9LezXlsH9l4oos7+RnIpwqVnwL1jEDnTNJHNEFWBoAjYa/FZBSjm6Vw9TMBfh4vHg
-         rtWUKsSZGNszbm+5Y6DFoendJAL331+WMv98UXGNBR2l1skR5v+GB6kXn3xFHFxFHHpM
-         k0YaumB5QIxhMWs6Z97FCSCeETQW+3y3ZZF/d6UABZiztj/9dZ08f+3QNEFYAqww3iog
-         pAb/VE0lQhLUbFB+J5UFXBclqQaUW+bycy129whGSOSSgFJTQ3T0f6kSq68eCkQ3StRO
-         CtIg==
-X-Gm-Message-State: APjAAAUU8UtMLzwr+MHSHnr044DDcfQwDC9kMD4/WmEsLJ7k7KiVGJjv
-        h/MWJR53NbsNPx6RgiBvAC+gwf1Erx4=
-X-Google-Smtp-Source: APXvYqxvBHkagafXH1CnZDG8/J2NJtGYyNSNZb9XstBXBy84ZynIq7jqLkNKO8FL/LW4w2k+JTFkdA==
-X-Received: by 2002:a17:902:1105:: with SMTP id d5mr31408400pla.197.1566342395612;
-        Tue, 20 Aug 2019 16:06:35 -0700 (PDT)
+        bh=IcvzzFr1yUCqUm7igC+fhVBaiFn8HJOuskJ5pNSj2cg=;
+        b=YISrKbxOyOAiNISD3HH3hwrCSUDSCHt0YQPlZ43OPNFMKuYsPC2+NhSiJyYD/+AG8O
+         HG7qfhDIwlalbjY8xT0LvZd/RSrMa5sCIUkASo+dRv07WtrOUHFGDbBJywc53iCE9db/
+         0SVK1mdwWBBONjBlEKeLol0MUqwrsHbrtr1Yjn2IfWwVFpFydFBnNfFk2YxLNpIV0hGm
+         Pozm2AXyiDzLyFhNIcmGp5uRu5KNCwccfUA0PExTbYSZ7+LxGAq0lWyRVMpPb4B+A/kW
+         l2bcm/HMAMwLyOGv4C5dQ3JeHJwJnM7MhRleNGBdrRMsf47EWME5SLIn5QE7yv4P7bgu
+         TIWQ==
+X-Gm-Message-State: APjAAAVf/Aoj1X6iRwQjwdpUwJnPiGK65J5uxJsw205Pha7XfjWvYBVe
+        XTex5sM8CcOBetljkh2YViyYijhzLao=
+X-Google-Smtp-Source: APXvYqwhPnpN+NIoIIfhZvjoBsWXfZaXDVMAu7KdrUCnG//Qro9vlYsd9RANeyEKSV9ZPwGORsOy6w==
+X-Received: by 2002:a63:5b23:: with SMTP id p35mr26142289pgb.366.1566342397025;
+        Tue, 20 Aug 2019 16:06:37 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.34
+        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 16:06:34 -0700 (PDT)
+        Tue, 20 Aug 2019 16:06:36 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v5 04/25] drm: kirin: Remove uncessary parameter indirection
-Date:   Tue, 20 Aug 2019 23:06:05 +0000
-Message-Id: <20190820230626.23253-5-john.stultz@linaro.org>
+Subject: [PATCH v5 05/25] drm: kirin: Remove out_format from ade_crtc
+Date:   Tue, 20 Aug 2019 23:06:06 +0000
+Message-Id: <20190820230626.23253-6-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190820230626.23253-1-john.stultz@linaro.org>
 References: <20190820230626.23253-1-john.stultz@linaro.org>
@@ -67,11 +67,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xu YiPing <xuyiping@hisilicon.com>
 
-In a few functions, we pass in a struct ade_crtc, which we only
-use to get to the underlying struct ade_hw_ctx.
+As part of refactoring the kirin driver to better support
+different hardware revisions, this patch removes the out_format
+field in the struct ade_crtc, which was only ever set to
+LDI_OUT_RGB_888.
 
-Thus this patch refactors the functions to just take the
-struct ade_hw_ctx directly.
+Thus this patch removes the field and instead directly uses
+LDI_OUT_RGB_888.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -85,64 +87,52 @@ Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
 [jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 9 +++------
+ 1 file changed, 3 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index d972342527b8..45351934d919 100644
+index 45351934d919..65f1a57f7304 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -210,11 +210,10 @@ static void ade_set_pix_clk(struct ade_hw_ctx *ctx,
- 	adj_mode->clock = clk_get_rate(ctx->ade_pix_clk) / 1000;
+@@ -60,7 +60,6 @@ struct ade_crtc {
+ 	struct ade_hw_ctx *ctx;
+ 	struct work_struct display_reset_wq;
+ 	bool enable;
+-	u32 out_format;
+ };
+ 
+ struct ade_plane {
+@@ -383,11 +382,10 @@ static irqreturn_t ade_irq_handler(int irq, void *data)
+ 	return IRQ_HANDLED;
  }
  
--static void ade_ldi_set_mode(struct ade_crtc *acrtc,
-+static void ade_ldi_set_mode(struct ade_hw_ctx *ctx,
- 			     struct drm_display_mode *mode,
- 			     struct drm_display_mode *adj_mode)
+-static void ade_display_enable(struct ade_crtc *acrtc)
++static void ade_display_enable(struct ade_hw_ctx *ctx)
  {
 -	struct ade_hw_ctx *ctx = acrtc->ctx;
  	void __iomem *base = ctx->base;
- 	u32 width = mode->hdisplay;
- 	u32 height = mode->vdisplay;
-@@ -301,9 +300,8 @@ static void ade_power_down(struct ade_hw_ctx *ctx)
- 	ctx->power_on = false;
- }
+-	u32 out_fmt = acrtc->out_format;
++	u32 out_fmt = LDI_OUT_RGB_888;
  
--static void ade_set_medianoc_qos(struct ade_crtc *acrtc)
-+static void ade_set_medianoc_qos(struct ade_hw_ctx *ctx)
- {
--	struct ade_hw_ctx *ctx = acrtc->ctx;
- 	struct regmap *map = ctx->noc_regmap;
- 
- 	regmap_update_bits(map, ADE0_QOSGENERATOR_MODE,
-@@ -515,7 +513,7 @@ static void ade_crtc_atomic_enable(struct drm_crtc *crtc,
- 			return;
+ 	/* enable output overlay compositor */
+ 	writel(ADE_ENABLE, base + ADE_OVLYX_CTL(OUT_OVLY));
+@@ -514,7 +512,7 @@ static void ade_crtc_atomic_enable(struct drm_crtc *crtc,
  	}
  
--	ade_set_medianoc_qos(acrtc);
-+	ade_set_medianoc_qos(ctx);
- 	ade_display_enable(acrtc);
+ 	ade_set_medianoc_qos(ctx);
+-	ade_display_enable(acrtc);
++	ade_display_enable(ctx);
  	ade_dump_regs(ctx->base);
  	drm_crtc_vblank_on(crtc);
-@@ -545,7 +543,7 @@ static void ade_crtc_mode_set_nofb(struct drm_crtc *crtc)
+ 	acrtc->enable = true;
+@@ -1024,7 +1022,6 @@ static int ade_drm_init(struct platform_device *pdev)
+ 	ctx = &ade->ctx;
+ 	acrtc = &ade->acrtc;
+ 	acrtc->ctx = ctx;
+-	acrtc->out_format = LDI_OUT_RGB_888;
  
- 	if (!ctx->power_on)
- 		(void)ade_power_up(ctx);
--	ade_ldi_set_mode(acrtc, mode, adj_mode);
-+	ade_ldi_set_mode(ctx, mode, adj_mode);
- }
- 
- static void ade_crtc_atomic_begin(struct drm_crtc *crtc,
-@@ -558,7 +556,7 @@ static void ade_crtc_atomic_begin(struct drm_crtc *crtc,
- 
- 	if (!ctx->power_on)
- 		(void)ade_power_up(ctx);
--	ade_ldi_set_mode(acrtc, mode, adj_mode);
-+	ade_ldi_set_mode(ctx, mode, adj_mode);
- }
- 
- static void ade_crtc_atomic_flush(struct drm_crtc *crtc,
+ 	ret = ade_dts_parse(pdev, ctx);
+ 	if (ret)
 -- 
 2.17.1
 
