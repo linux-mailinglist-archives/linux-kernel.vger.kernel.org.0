@@ -2,80 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F54196265
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:27:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 75CB096268
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:27:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730329AbfHTO1Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:27:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728993AbfHTO1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:27:23 -0400
-Received: from localhost (unknown [12.166.174.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B16B20673;
-        Tue, 20 Aug 2019 14:27:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566311243;
-        bh=Iwya4qZUeHZo7ltQ89CLtHgTwsaGF1egVo8XR40Ji3M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tA+RMhLM0LK0uPo3UUj60+g3qBWRRaa9rGZOdZBvkIhJPW0FdBWHtcbbpCLMVar3C
-         5G/5vL/gf5JmHlL7kNQsqXxS50ztLGJyfHoROdNbZE/DxkgY8vVyQkLON5lmyfSrlQ
-         dbYDUPVahaQFdOkzYUj18F4oOqr9g21bQnw8pOvE=
-Date:   Tue, 20 Aug 2019 07:27:22 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nishad Kamdar <nishadkamdar@gmail.com>,
-        Joe Perches <joe@perches.com>
-Subject: Re: [PATCH AUTOSEL 5.2 09/44] intel_th: Use the correct style for
- SPDX License Identifier
-Message-ID: <20190820142722.GA816@kroah.com>
-References: <20190820134028.10829-1-sashal@kernel.org>
- <20190820134028.10829-9-sashal@kernel.org>
+        id S1730375AbfHTO15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:27:57 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:47596 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728770AbfHTO15 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:27:57 -0400
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Tudor.Ambarus@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="Tudor.Ambarus@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Tudor.Ambarus@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; spf=Pass smtp.mailfrom=Tudor.Ambarus@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: Z76A+xReMfmXVWlUywhJzDVDO2eleQOIOHh0I6tGjZq6+oBqMkYlh2/oggzE5tmc/zEfwG9t2V
+ pZGL/t1A6d9s8YmZlbC7zLVbR+PUmYXw4FlyXYGxulNU9vmXDTi1w31E2zKRGlhf7DUi+Qg83d
+ vz5r3eAVsuNb2i6n+/Kjo8shMUQbBJCxFHGuN+1XH6nC3lUAw4tCjYmjtBpGngSc4ztwuxy8qc
+ vkfal6qkYt2bP4jRDra78uJnBLLhpKU5O6y4+uyNoK03VYdIr7LS+AfGs4mYwHmscnmPpM1ecv
+ J8k=
+X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
+   d="scan'208";a="44940251"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Aug 2019 07:27:56 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 20 Aug 2019 07:27:54 -0700
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.72) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5 via Frontend
+ Transport; Tue, 20 Aug 2019 07:27:54 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Hxy2ixSI5rKN11ISZ/nAaTMtBuV7LreYBkFn6IN1/mIjFyG3kOX0WrF5U/zMx5Mb41h3tV9iKZoYrUVsQ3XTBjb23v3x6b75JxH7/31Vqf5vHmHbGe2GYpTqj5x4Lh1l89E8WY7u0uZ8aHbcxfgL+7xDAzPEJHvwH64w8AurITNBqVh6n5RDEIGnVczJTGELZsuPLQAf0Dsa30EDhDIv3u/FVgU8Y9TaA/nRCTzPtRKql+k6BkKGtrXymCt1DZHLedZLTTYWVMinSCZgvPH7mHIAFlAh0Z8L7hKjG18Y9hj2O9UU7g7/AmaUc6E5NfcFZf60vi6jeu+uBypJcUuCGg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cxmURSRQCT7QXxYe7VoM4+0YvcnBmYJ2X7G+SRvmQQ0=;
+ b=BZ2Gs/Hr7HP89mtRUZ+X1tvdIvbISJ46GldDK/EXqZhdSE75TkA4JhB6foIJE3VaKDe5bNk/SNebwBAtj4+cyPRzkrCmr19EInWYo9+XrWS1zwOtGBAxGAllFQeR2nH0O3K5qxiFruzNwbrZTJliJ+xz0yBm34UW//MXBeLA6aQDN9Bv943RzBEFA4K79dChIg2kzL+7ty/G87ipiPtcRCce7H3iALFsCdp/6d6iyaP7HUzO2elyT/WUSo5ENwIWHm+Eo4RLVWArYmUw8qp9sc6lE9uJf5RvHTNJDXPZBvcAEodwile2vkU9SOtrVFcjaL86gvYsxhIC3rmJQVl/FQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cxmURSRQCT7QXxYe7VoM4+0YvcnBmYJ2X7G+SRvmQQ0=;
+ b=Hcphfi3X+N278gBsi07fpCgBSCEcG7mayR8JG52FqfEPV1lu15GjnNlBZrHPsK1eJvdH3ZjGgBhwh+3Xo4w4Ml3FaI+H6oqwZkhAT7lraXgNfZEjs5IDzp7DT7nlM55v8vwqJ1AQHOw1/98Fh/DGrlmajTuSnIUj+/JIhBOMis0=
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com (52.135.39.157) by
+ MN2PR11MB3902.namprd11.prod.outlook.com (10.255.180.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Tue, 20 Aug 2019 14:27:54 +0000
+Received: from MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5]) by MN2PR11MB4448.namprd11.prod.outlook.com
+ ([fe80::70c3:e929:4da2:60a5%7]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 14:27:54 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <avifishman70@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <miquel.raynal@bootlin.com>,
+        <richard@nod.at>, <vigneshr@ti.com>, <joel@jms.id.au>,
+        <linux-mtd@lists.infradead.org>
+CC:     <openbmc@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <tmaimon77@gmail.com>
+Subject: Re: [PATCH v2] mtd: spi-nor: Add Winbond w25q256jvm
+Thread-Topic: [PATCH v2] mtd: spi-nor: Add Winbond w25q256jvm
+Thread-Index: AQHVRq+si21hV/W8IkmhTrNYaeTiY6cEOX8A
+Date:   Tue, 20 Aug 2019 14:27:54 +0000
+Message-ID: <0f86aed8-3f24-fee7-61a7-968b69dee107@microchip.com>
+References: <20190730081832.271125-1-avifishman70@gmail.com>
+In-Reply-To: <20190730081832.271125-1-avifishman70@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR04CA0054.eurprd04.prod.outlook.com
+ (2603:10a6:802:2::25) To MN2PR11MB4448.namprd11.prod.outlook.com
+ (2603:10b6:208:193::29)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: faf57603-7794-4ee0-8137-08d7257a9690
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MN2PR11MB3902;
+x-ms-traffictypediagnostic: MN2PR11MB3902:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <MN2PR11MB3902402FE2270CF17E99C890F0AB0@MN2PR11MB3902.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2887;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39860400002)(396003)(346002)(366004)(136003)(199004)(189003)(2906002)(2201001)(478600001)(7736002)(6116002)(6512007)(3846002)(31686004)(305945005)(76176011)(6436002)(86362001)(31696002)(6306002)(966005)(7416002)(229853002)(5660300002)(26005)(14444005)(256004)(25786009)(14454004)(6486002)(316002)(53936002)(110136005)(4744005)(54906003)(4326008)(6246003)(66066001)(186003)(36756003)(99286004)(8936002)(102836004)(66446008)(66476007)(81166006)(81156014)(64756008)(66556008)(71190400001)(71200400001)(11346002)(53546011)(2501003)(6506007)(486006)(476003)(2616005)(8676002)(386003)(66946007)(52116002)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:MN2PR11MB3902;H:MN2PR11MB4448.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: /6sxK0VyCJ7thlbJBAzoEljOsSsOzVl4B1Q3VI/zVBCOBfRSLKZxFoUV3cFO83iCsMeisMmwLkT4Wy+afJ3QFDDNDzxA2UlFLgrYtfMS8KU3DJpj4/ydmmG6RoScA9PuZyIoHGOcoRR5nOK4P/3IzcyVrh6qVWdM0K7EwHata0i2Sat3OJWk9nutf/dpxBVQVemKBwFFUMMKPze9wGVk0+aKwt1FvKLSZbgDZiOqXBAThg79wxHgVn1qZcQtrMnb5o1IPGbdxImzAUb48ZZ8SU2IjVgLbYXKCNvbh4bBe3YhURlSpFalljvcHQGyy/ySOmoUGOhLXLdJO/Dnfv8h95Dud5cC4K7QM5mkRdIkcsFO5OSjotlkvjmzry4Ng2BRU2XtDOifprb5GOG2+yvgMBnP/3PyWvC7dyt7lnIC8tY=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B3B5DF9CE8F61A4DB38F1205E86E1131@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820134028.10829-9-sashal@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-MS-Exchange-CrossTenant-Network-Message-Id: faf57603-7794-4ee0-8137-08d7257a9690
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 14:27:54.0943
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RKW5Pt7qcHDpNcxRz9NChKwePvoGkxmWchSeUGCXWmjTesFz8jCjmcRgxfOOElRABWOllcYDQt/xGRRjbsWPFpGrl/z7ktXNIDSg0Hyth9w=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB3902
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 09:39:53AM -0400, Sasha Levin wrote:
-> From: Nishad Kamdar <nishadkamdar@gmail.com>
-> 
-> [ Upstream commit fac7b714c514fcc555541e1d6450c694b0a5f8d3 ]
-> 
-> This patch corrects the SPDX License Identifier style
-> in header files related to Drivers for Intel(R) Trace Hub
-> controller.
-> For C header files Documentation/process/license-rules.rst
-> mandates C-like comments (opposed to C source files where
-> C++ style should be used)
-> 
-> Changes made by using a script provided by Joe Perches here:
-> https://lkml.org/lkml/2019/2/7/46
-> 
-> Suggested-by: Joe Perches <joe@perches.com>
-> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/hwtracing/intel_th/msu.h | 2 +-
->  drivers/hwtracing/intel_th/pti.h | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-
-Not really a stable patch at all, unless you want to start backporting
-all SPDX changes (hint, NO we do not!)  :)
-
-please drop this from everywhere.
-
-And what triggered this?  It's just comment changes, shouldn't the
-autobot know to ignore those?
-
-thanks,
-
-greg k-h
+DQoNCk9uIDA3LzMwLzIwMTkgMTE6MTggQU0sIEF2aSBGaXNobWFuIHdyb3RlOg0KPiBFeHRlcm5h
+bCBFLU1haWwNCj4gDQo+IA0KPiBTaW1pbGFyIHRvIHcyNXEyNTYgKGJlc2lkZXMgbm90IHN1cHBv
+cnRpbmcgUVBJIG1vZGUpIGJ1dCB3aXRoIGRpZmZlcmVudCBJRC4NCj4gVGhlICJKVk0iIHN1ZmZp
+eCBpcyBpbiB0aGUgZGF0YXNoZWV0Lg0KPiBUaGUgZGF0YXNoZWV0IGluZGljYXRlcyBEVUFMIGFu
+ZCBRVUFEIGFyZSBzdXBwb3J0ZWQuDQo+IGh0dHBzOi8vd3d3LndpbmJvbmQuY29tL3Jlc291cmNl
+LWZpbGVzL3cyNXEyNTZqdiUyMHNwaSUyMHJldmklMjAxMDIzMjAxOCUyMHBsdXMucGRmDQo+IA0K
+PiBTaWduZWQtb2ZmLWJ5OiBBdmkgRmlzaG1hbiA8YXZpZmlzaG1hbjcwQGdtYWlsLmNvbT4NCj4g
+LS0tDQo+ICBkcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDIgKysNCj4gIDEgZmlsZSBj
+aGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gDQoNCkFwcGxpZWQgdG8gaHR0cHM6Ly9naXQua2Vy
+bmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tlcm5lbC9naXQvbXRkL2xpbnV4LmdpdCwNCnNwaS1ub3Iv
+bmV4dCBicmFuY2guDQoNClRoYW5rcywNCnRhDQoNCg==
