@@ -2,65 +2,64 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 79EC995D72
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:34:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03D9795D90
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:39:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729760AbfHTLeH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:34:07 -0400
-Received: from bmailout3.hostsharing.net ([176.9.242.62]:54515 "EHLO
-        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728409AbfHTLeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:34:06 -0400
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        id S1729792AbfHTLiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:38:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45362 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729421AbfHTLiK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:38:10 -0400
+Received: from localhost (unknown [106.201.62.126])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
-        by bmailout3.hostsharing.net (Postfix) with ESMTPS id 7A90310564D67;
-        Tue, 20 Aug 2019 13:34:04 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-        id 172A1522475; Tue, 20 Aug 2019 13:34:04 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 13:34:04 +0200
-From:   Lukas Wunner <lukas@wunner.de>
-To:     Mario.Limonciello@dell.com
-Cc:     mika.westerberg@linux.intel.com, linux-kernel@vger.kernel.org,
-        andreas.noever@gmail.com, michael.jamet@intel.com,
-        YehezkelShB@gmail.com, rjw@rjwysocki.net, lenb@kernel.org,
-        anthony.wong@canonical.com, rajmohan.mani@intel.com,
-        raanan.avargil@intel.com, David.Laight@ACULAB.COM,
-        linux-acpi@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] thunderbolt: Intel Ice Lake support
-Message-ID: <20190820113404.pm6qvqakdkcwdpat@wunner.de>
-References: <20190819112223.15359-1-mika.westerberg@linux.intel.com>
- <5486107424db48f2a06ed4c8a81f75b0@AUSX13MPC101.AMER.DELL.COM>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEC2620C01;
+        Tue, 20 Aug 2019 11:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566301089;
+        bh=AciBUPAu82B05NczuPVQfEs6Tmsa+FH1VhYXzvvho/Q=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zF8X7uV6Hg53HHI9pdfroR8XXMuq0Q6El9vcBuwaMcYwes4jW79F273FbuFLKZ0iq
+         VSHWNVD/sWh4lPihmtX9tRHsunPmkp+6VDLFIP3k8cUJ5Vo0LkvLEiSV2RYrtLe8RG
+         GmQTd9h7GGcqNAXS5fcOTA236lOWgYk/KE/7N7ck=
+Date:   Tue, 20 Aug 2019 17:06:57 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Nathan Huckleberry <nhuck@google.com>
+Cc:     dan.j.williams@intel.com, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2] dmaengine: mv_xor_v2: Fix -Wshift-negative-value
+Message-ID: <20190820113657.GV12733@vkoul-mobl.Dlink>
+References: <CAKwvOdkAJcOCGvveBYaDD2kf4vx7m=b+Nxyn3_n=9aCBapzDcw@mail.gmail.com>
+ <20190813173448.109859-1-nhuck@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <5486107424db48f2a06ed4c8a81f75b0@AUSX13MPC101.AMER.DELL.COM>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190813173448.109859-1-nhuck@google.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 04:29:35PM +0000, Mario.Limonciello@dell.com wrote:
-> I've run into a problem when using
-> a WD19TB that after unplugging it will cause the following to spew in dmesg:
+On 13-08-19, 10:34, Nathan Huckleberry wrote:
+> Clang produces the following warning
 > 
-> [ 2198.017003] ============================================
-> [ 2198.017005] WARNING: possible recursive locking detected
-> [ 2198.017008] 5.3.0-rc5+ #75 Not tainted
-> [ 2198.017009] --------------------------------------------
-> [ 2198.017012] irq/122-pciehp/121 is trying to acquire lock:
-> [ 2198.017015] 00000000801d4de8 (&ctrl->reset_lock){.+.+}, at: pciehp_check_presence+0x1b/0x80
-> [ 2198.017026] 
->                but task is already holding lock:
-> [ 2198.017028] 000000000899e2eb (&ctrl->reset_lock){.+.+}, at: pciehp_ist+0xaf/0x1c0
+> drivers/dma/mv_xor_v2.c:264:40: warning: shifting a negative signed value
+> 	is undefined [-Wshift-negative-value]
+>         reg &= (~MV_XOR_V2_DMA_IMSG_THRD_MASK <<
+> 	MV_XOR_V2_DMA_IMSG_THRD_SHIFT);
+>                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
+> drivers/dma/mv_xor_v2.c:271:46: warning: shifting a negative signed value
+> 	is undefined [-Wshift-negative-value]
+>         reg &= (~MV_XOR_V2_DMA_IMSG_TIMER_THRD_MASK <<
+>                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ ^
+> 
+> Upon further investigation MV_XOR_V2_DMA_IMSG_THRD_SHIFT and
+> MV_XOR_V2_DMA_IMSG_TIMER_THRD_SHIFT are both 0. Since shifting by 0 does
+> nothing, these variables can be removed.
 
-This was first reported by Theodore in April and appears to be a
-false positive:
+Applied, thanks
 
-https://lore.kernel.org/linux-pci/20190402083257.kyqmirq4ovzscxsv@wunner.de/
-
-Thanks,
-
-Lukas
+-- 
+~Vinod
