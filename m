@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B4EB959FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 53E22959F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729616AbfHTIlj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:41:39 -0400
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:50806 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbfHTIlY (ORCPT
+        id S1729569AbfHTIl1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:41:27 -0400
+Received: from mail-wr1-f51.google.com ([209.85.221.51]:41928 "EHLO
+        mail-wr1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729531AbfHTIlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:41:24 -0400
-Received: by mail-wm1-f42.google.com with SMTP id v15so1862853wml.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:23 -0700 (PDT)
+        Tue, 20 Aug 2019 04:41:25 -0400
+Received: by mail-wr1-f51.google.com with SMTP id j16so11457562wrr.8
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=iCcz7VXT3Rri0q0plV0Ks3VAIbY+L7u5e09ODRK9afA=;
-        b=TcWzIbs5Rei+udJAkxpcwt14stzXHw97HeoQj79gXS/ZY41E2XJs/7vFgp/XK+eTM0
-         NFCACfqCTQ8n/vElqSW4uyboi8Q8ADALAv6vSifu1BxC+TbdCe0WjHUFzbST6eHrO8Lz
-         NpKJlSlaryAW5mF6/5cfwz4smy3O6FFuwaDS6ltdxwcHpVGzQ7LFhtlSfv+TGqqUohNc
-         JBelFVLTIV2qsgXvugyflMbrxU51p+g2QTqw8sr0hz8DHgiyonGi7DmUmgdGYrrh97nk
-         BvT/+CSERG7XYXlWb6CPp7OlLnVvdeQ3TrD+vWsPzkLUhsd8j2ezlz8Sai33AZRngEcx
-         /G/g==
+        bh=7CqeKSTem021QoPp6JMnzxB9YluOu4hz8452YyClyt8=;
+        b=2BWi2Jq51jt3oPw7UPWuxQyqpGWZKI70o4EjJXih00uU8MIkxMjYRAWRXzAKWwJwM3
+         GaeHHXClhv1khlSjvruQwPO5tR2CE8TwMygb4TMdXoMnwtKaKSr8Yk5YhBWfpL0jGRGB
+         YjBJiUbK8BUfb3g0ykPqVihuxE5NzQs3qcyPOfgjEUBl85xR+q8B9qRwAVxGqWTSQmKp
+         U6+RmYehn7/s90A+vHmqOYmglQp8Nz/SRe0te9BBhKvYVI/ogOufQtOEfQBpoEPE6bHt
+         iKkjhxc6x0DT72d+apRYr9yPu2N4tD305l++30hathlf6pZxh7KXz1MJ2POltmnwg+ik
+         V3pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=iCcz7VXT3Rri0q0plV0Ks3VAIbY+L7u5e09ODRK9afA=;
-        b=S20b9y89qZ+nPGAUgBUMPNO9USeUw+BH6jkBBL1Nn6fFBE6yf0fclNWDWeCmh2uTJO
-         4MDySZ5SdblFZnd7XSpDm4dGSnwNjhMAy3xQnoaRocAfdFOZWAS1FIzJrVxFprOl1jSx
-         pLumPlYtm/eZqIOsZk15UL6EZyhXrTsjqhGAWR3EtdNn0Wd8vNIFb+wfT83qMLsXUUDn
-         DGK/CS0sDIooNtbhnvbrlJOdP1zwfR+GLQeA0Uogd7LxObXsgzAyWS3cyEdgBWLhai+u
-         QsE04FTSKDG4onVd4keESl8TnjHfdgv6qw9itGYGPanLQ100CVF/nYti0vgeRsthuM7I
-         6ulw==
-X-Gm-Message-State: APjAAAVy/cLhhLhr5VBb9T8J9RQjnIfCiPJN2zh86VwVPGWsxvY+xlGT
-        wXdI1AAEsdvYVK1d0areWtJ2Sg==
-X-Google-Smtp-Source: APXvYqyEU0PHQl+WTxPI5Y4mWZdoYQS8xETpRbqo/vMyfB2rVnuBI82wdg4WuZX2RO+0DThTBm2nhw==
-X-Received: by 2002:a1c:7513:: with SMTP id o19mr15982869wmc.126.1566290482352;
-        Tue, 20 Aug 2019 01:41:22 -0700 (PDT)
+        bh=7CqeKSTem021QoPp6JMnzxB9YluOu4hz8452YyClyt8=;
+        b=HTuNtysm/Ww4F93qpOxAWxeObjUGILbaJT95tUV50Sbrpl3TxH0761Rt1WG8Mi8O+N
+         /FyTuq8HnVIUQ6GzFnp08eicOBOF+pGs1UBqpWY5HhsviAmbQsIyJZvV48vOsmqW7kGJ
+         RFnVIO5f5NdXwAdIFqR3VqghNFJLgiCku7TydUJjIDlJN9fPKDMj4eZcdLezQGZVxnM8
+         pdDZOUM3e6/4rHvqcHvd+zHMfIA7Q+xJfZAsZIrM7tU2QGZPIWpnkOxpMhxrBLGtTr37
+         NmyHr7C5njKiLLVbBK9sm4SChE/zUs5UbGa1WtY+9yMarPQGjC7o+PlAZNlIeYS+XXM+
+         lKGw==
+X-Gm-Message-State: APjAAAXpkLrGk8IN0oswhMETWtohGqs1duRApLU4nCeYbdqL+YXyUu/c
+        KLBHg1DX63mSFo6FAY7qwWIE/w==
+X-Google-Smtp-Source: APXvYqyeY205T67m+BbcYhK3smYHwphV4Tyn7CKS0K7OP65pmIueJKbfUILQJODLQ0EjvD26NCVBYw==
+X-Received: by 2002:adf:ee4f:: with SMTP id w15mr32742798wro.337.1566290483453;
+        Tue, 20 Aug 2019 01:41:23 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.21
+        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 01:41:21 -0700 (PDT)
+        Tue, 20 Aug 2019 01:41:22 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         jonas@kwiboo.se, jernej.skrabec@siol.net,
@@ -52,9 +52,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC 08/11] drm/bridge: synopsys: dw-hdmi: add 420 mode format negociation
-Date:   Tue, 20 Aug 2019 10:41:06 +0200
-Message-Id: <20190820084109.24616-9-narmstrong@baylibre.com>
+Subject: [RFC 09/11] drm/meson: venc: add support for YUV420 setup
+Date:   Tue, 20 Aug 2019 10:41:07 +0200
+Message-Id: <20190820084109.24616-10-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190820084109.24616-1-narmstrong@baylibre.com>
 References: <20190820084109.24616-1-narmstrong@baylibre.com>
@@ -65,82 +65,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add special negociation case for 420 HDMI2.0 format.
+This patch adds encoding support for the YUV420 output from the
+Amlogic Meson SoCs Video Processing Unit to the HDMI Controller.
 
-In this case the DW-HDMI CSC cannot handle 420 data, and must be
-in passthrought, thus input_bus_cfg must be output_bus_cfg.
+The YUV420 is obtained by generating a YUV444 pixel stream like
+the classic HDMI display modes, but then the Video Encoder output
+can be configured to down-sample the YUV444 pixel stream to a YUV420
+stream.
 
-Add support for handling a specific 8/10/12/16 variant in the connector
-bus_formats if specified.
+In addition if pixel stream down-sampling, the Y Cb Cr components must
+also be mapped differently to align with the HDMI2.0 specifications.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 45 ++++++++++++++++++-----
- 1 file changed, 36 insertions(+), 9 deletions(-)
+ drivers/gpu/drm/meson/meson_dw_hdmi.c |  3 ++-
+ drivers/gpu/drm/meson/meson_venc.c    |  6 ++++--
+ drivers/gpu/drm/meson/meson_venc.h    | 11 +++++++++++
+ 3 files changed, 17 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index cb560b231d74..b96119c6fad2 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -2213,23 +2213,50 @@ static int dw_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
- 				       struct drm_connector_state *conn_state)
+diff --git a/drivers/gpu/drm/meson/meson_dw_hdmi.c b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+index fb09592eba3e..2b278ee75100 100644
+--- a/drivers/gpu/drm/meson/meson_dw_hdmi.c
++++ b/drivers/gpu/drm/meson/meson_dw_hdmi.c
+@@ -719,7 +719,8 @@ static void meson_venc_hdmi_encoder_mode_set(struct drm_bridge *bridge,
+ 	DRM_DEBUG_DRIVER("\"%s\" vic %d\n", mode->name, vic);
+ 
+ 	/* VENC + VENC-DVI Mode setup */
+-	meson_venc_hdmi_mode_set(priv, vic, mode);
++	meson_venc_hdmi_mode_set(priv, vic, ycrcb_map, false,
++				 MESON_VENC_MAP_CB_Y_CR);
+ 
+ 	/* VCLK Set clock */
+ 	dw_hdmi_set_vclk(dw_hdmi, mode);
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index c8e9840ad450..ec2723822552 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -946,6 +946,8 @@ bool meson_venc_hdmi_venc_repeat(int vic)
+ EXPORT_SYMBOL_GPL(meson_venc_hdmi_venc_repeat);
+ 
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
++			      unsigned int ycrcb_map,
++			      bool yuv420_mode,
+ 			      const struct drm_display_mode *mode)
  {
- 	struct dw_hdmi *hdmi = bridge->driver_private;
-+	struct drm_connector *conn = conn_state->connector;
-+	struct drm_display_info *info = &conn->display_info;
-+	struct drm_display_mode *mode = &crtc_state->mode;
-+	bool is_hdmi2_sink = info->hdmi.scdc.supported;
- 	int ret;
+ 	union meson_hdmi_venc_mode *vmode = NULL;
+@@ -1496,8 +1498,8 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+ 	writel_relaxed((use_enci ? 1 : 2) |
+ 		       (mode->flags & DRM_MODE_FLAG_PHSYNC ? 1 << 2 : 0) |
+ 		       (mode->flags & DRM_MODE_FLAG_PVSYNC ? 1 << 3 : 0) |
+-		       4 << 5 |
+-		       (venc_repeat ? 1 << 8 : 0) |
++		       (ycrcb_map << 5) |
++		       (venc_repeat || yuv420_mode ? 1 << 8 : 0) |
+ 		       (hdmi_repeat ? 1 << 12 : 0),
+ 		       priv->io_base + _REG(VPU_HDMI_SETTING));
  
--	ret = drm_atomic_bridge_choose_output_bus_cfg(bridge_state, crtc_state,
--						      conn_state);
--	if (ret)
--		return ret;
-+	/*
-+	 * If the current mode enforces 4:2:0, force the output but format
-+	 * or use the connector bus formats if a non 8bit 4:2:0 format
-+	 * is provided.
-+	 */
-+	if (drm_mode_is_420_only(info, mode) ||
-+		(!is_hdmi2_sink && drm_mode_is_420_also(info, mode))) {
-+		if (info->num_bus_formats && info->bus_formats &&
-+		    hdmi_bus_fmt_is_yuv420(info->bus_formats[0]))
-+			bridge_state->output_bus_cfg.fmt = info->bus_formats[0];
-+		else
-+			bridge_state->output_bus_cfg.fmt =
-+					MEDIA_BUS_FMT_UYYVYY8_0_5X24;
-+	} else {
-+		ret = drm_atomic_bridge_choose_output_bus_cfg(bridge_state,
-+							      crtc_state,
-+							      conn_state);
-+		if (ret)
-+			return ret;
-+	}
+diff --git a/drivers/gpu/drm/meson/meson_venc.h b/drivers/gpu/drm/meson/meson_venc.h
+index 1abdcbdf51c0..88ded5451c49 100644
+--- a/drivers/gpu/drm/meson/meson_venc.h
++++ b/drivers/gpu/drm/meson/meson_venc.h
+@@ -23,6 +23,15 @@ enum {
+ 	MESON_VENC_MODE_HDMI,
+ };
+ 
++enum {
++	MESON_VENC_MAP_CR_Y_CB = 0,
++	MESON_VENC_MAP_Y_CB_CR,
++	MESON_VENC_MAP_Y_CR_CB,
++	MESON_VENC_MAP_CB_CR_Y,
++	MESON_VENC_MAP_CB_Y_CR,
++	MESON_VENC_MAP_CR_CB_Y,
++};
 +
-+	if (hdmi_bus_fmt_is_yuv420(bridge_state->output_bus_cfg.fmt)) {
-+		/* The DW-HDMI CSC cannot interpolate and decimate in 4:2:0 */
-+		bridge_state->input_bus_cfg.fmt =
-+			bridge_state->output_bus_cfg.fmt;
-+	} else {
-+		ret = drm_atomic_bridge_choose_input_bus_cfg(bridge_state,
-+				                             crtc_state,
-+							     conn_state);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	dev_dbg(hdmi->dev, "selected output format %x\n",
- 			bridge_state->output_bus_cfg.fmt);
- 
- 	hdmi->hdmi_data.enc_out_bus_format = bridge_state->output_bus_cfg.fmt;
- 
--	ret = drm_atomic_bridge_choose_input_bus_cfg(bridge_state, crtc_state,
--						      conn_state);
--	if (ret)
--		return ret;
--
- 	dev_dbg(hdmi->dev, "selected input format %x\n",
- 			bridge_state->input_bus_cfg.fmt);
+ struct meson_cvbs_enci_mode {
+ 	unsigned int mode_tag;
+ 	unsigned int hso_begin; /* HSO begin position */
+@@ -60,6 +69,8 @@ extern struct meson_cvbs_enci_mode meson_cvbs_enci_ntsc;
+ void meson_venci_cvbs_mode_set(struct meson_drm *priv,
+ 			       struct meson_cvbs_enci_mode *mode);
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
++			      unsigned int ycrcb_map,
++			      bool yuv420_mode,
+ 			      const struct drm_display_mode *mode);
+ unsigned int meson_venci_get_field(struct meson_drm *priv);
  
 -- 
 2.22.0
