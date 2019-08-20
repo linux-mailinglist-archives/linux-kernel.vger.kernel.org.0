@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A58F9967C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 849D8967C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730710AbfHTRlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:41:20 -0400
-Received: from mail-wm1-f99.google.com ([209.85.128.99]:50254 "EHLO
-        mail-wm1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730535AbfHTRlJ (ORCPT
+        id S1730729AbfHTRlW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:41:22 -0400
+Received: from mail-wm1-f97.google.com ([209.85.128.97]:34397 "EHLO
+        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730573AbfHTRlJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 20 Aug 2019 13:41:09 -0400
-Received: by mail-wm1-f99.google.com with SMTP id v15so3368922wml.0
+Received: by mail-wm1-f97.google.com with SMTP id e8so2925273wme.1
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=42xfaHYXrtQaOSOuSRjND5sC9kwpRwSXeTAD+w9b/4w=;
-        b=GpeqTmEWAkHg321hQrjP1aAyFkwzASpHJhIeoyYnkSUAFcC2ISgDfHsuZdwdiJwunB
-         rmGW5mUR237ipZYeJIfIE7YiSwZVBrRTpX6TLJvlv1M6JScdKM1R3t/yRFf8SUvyVIzS
-         P46FHRUq8soojlDMMiT8G1r9954fu2UO5pNsmolnbBrbkIDg9gqV0EEMxbUM3Rfsint6
-         vlgeGNUopAlp9EQoqyo7DOgy+ePHT+45i3znlVqp3eoQmkXVil+610xI54QjFhc1PefI
-         r6mFcHVgsK9fVLasPxYl86tNwlGWlJPB8LRQSdDMSW6gDkQF7vV3YZq7emkbq8DOo6Il
-         lkFQ==
-X-Gm-Message-State: APjAAAWYB2QdVnl/JDbl3lKsgEyMvAo/47jNSl3XDXdDdoPERVGiYPMv
-        tihmy6wUY6QGGTMj9Y63RXIBLZ3nIwEZFlnS+7GUHlpUOLXZS7Q1ecfh/9Kh9tbAHg==
-X-Google-Smtp-Source: APXvYqyAP4i9z12t9vefzpzMOisA4osPdSpmTbBY4W09A0i0eyHSfHNl/p0AoZuDFNAxNTK2kyK+DJ875aPE
-X-Received: by 2002:a1c:be05:: with SMTP id o5mr1135297wmf.61.1566322866426;
+        bh=4KEDSqMrfto1Bnr/+6J8zxC3Yhv3Jrf5qHFIHdfMRpE=;
+        b=UblZsfKUrqCvVP/gc+grCmqUtGzzbLt/zsOya5sKDjInBpWshGMSks10pnOa6F9qE8
+         VtMDFxWgPG0MJSuexB0/Vn3GrT/YKiN+uJ+yfSfEqjSTZTOm7pz64Dy/4MllTA0dv4VH
+         NU8KV20g4VQnXbtBO4uXZ4ma8+pgyFzpLfurcsalMPmLaGvrWxHP2pPcXXUt8uPx/I9A
+         OGqHxoBk4oziaiRFtsXGWRz3tDx50sSvvqbo5TvEgPTlOilNfSCzLuoVmliMvYr17SUi
+         lEDm34WTrIIcZqnexL2QA/ptlSCLwBU3GNm+olt8GaG41HXeMjFuVo4lBvr6XguhLzoR
+         ez/A==
+X-Gm-Message-State: APjAAAXYpKh93/HPRc6dG3yb/m4Jg0NIgobiN4+W1rWpAIBzKc+/yceS
+        IHXW4sInYOamswIfhf7TJOOikNrlhb0YLSZYZK4xyMU41uZZfBNorc/AGH/zHiy3Ag==
+X-Google-Smtp-Source: APXvYqxk7L6oNu47pibQ6SHWV1tBM71NTJniRY0LK2KN9Ekh++COKqP/f9oNJ4TNkpuZPwM3gpYM1QYYHSFH
+X-Received: by 2002:a1c:7619:: with SMTP id r25mr1232461wmc.153.1566322866845;
         Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id d16sm300941wrx.57.2019.08.20.10.41.06
+        by smtp-relay.gmail.com with ESMTPS id d26sm333440wrb.30.2019.08.20.10.41.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:06 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,21 +38,20 @@ Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0882-00032r-3T; Tue, 20 Aug 2019 17:41:06 +0000
+        id 1i0882-00032z-GU; Tue, 20 Aug 2019 17:41:06 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 96899274314F; Tue, 20 Aug 2019 18:41:05 +0100 (BST)
+        id 08800274314C; Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
         Chen-Yu Tsai <wens@csie.org>, codekipper@gmail.com,
         lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Marcus Cooper <codekipper@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
         Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs" to the asoc tree
-In-Reply-To: <0e5b4abf06cd3202354315201c6af44caeb20236.1566242458.git-series.maxime.ripard@bootlin.com>
+Subject: Applied "ASoC: sun4i-i2s: Move the format configuration to a callback" to the asoc tree
+In-Reply-To: <dc818644c3e40734e7a97247c994b1fca1c3c047.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174105.96899274314F@ypsilon.sirena.org.uk>
+Message-Id: <20190820174106.08800274314C@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:05 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -61,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs
+   ASoC: sun4i-i2s: Move the format configuration to a callback
 
 has been applied to the asoc tree at
 
@@ -86,193 +85,375 @@ to this mail.
 Thanks,
 Mark
 
-From c1d3a921d72bd21f266ca28c15213fbe78160a4b Mon Sep 17 00:00:00 2001
+From 71137bcd0a9a778f9407a3bee46c62fcccee4f83 Mon Sep 17 00:00:00 2001
 From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:16 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Fix the MCLK and BCLK dividers on newer SoCs
+Date: Mon, 19 Aug 2019 21:25:12 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: Move the format configuration to a callback
 
-From: Marcus Cooper <codekipper@gmail.com>
+The two main generations of our I2S controller require a slightly different
+format configuration, mostly because of a quite different register layout
+and some additional registers being needed on the newer generation.
 
-The clock division dividers have changed between the older (A10/A31) and
-newer (H3, A64, etc) SoCs.
+This used to be controlled through a bunch of booleans, however this proved
+to be quite impractical, especially since a bunch of SoCs forgot to set
+those parameters and therefore were broken from that point of view.
 
-While this was addressed through an offset on some SoCs, it was missing
-some dividers as well, so the support wasn't perfect. Let's introduce a
-pointer in the quirk structure for the divider calculation functions to use
-so we can have the proper range now.
-
-Signed-off-by: Marcus Cooper <codekipper@gmail.com>
-[Maxime: Fix the commit log, use a field in the quirk structure]
+Fixes: 21faaea1343f ("ASoC: sun4i-i2s: Add support for A83T")
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/0e5b4abf06cd3202354315201c6af44caeb20236.1566242458.git-series.maxime.ripard@bootlin.com
+Link: https://lore.kernel.org/r/dc818644c3e40734e7a97247c994b1fca1c3c047.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 63 ++++++++++++++++++++++++++++---------
- 1 file changed, 49 insertions(+), 14 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 199 +++++++++++++++++++-----------------
+ 1 file changed, 106 insertions(+), 93 deletions(-)
 
 diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index acfcdb26086a..0a7f1d0f7371 100644
+index 42e45c9a947a..93ea627e2f1f 100644
 --- a/sound/soc/sunxi/sun4i-i2s.c
 +++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -129,8 +129,6 @@ struct sun4i_i2s;
+@@ -93,6 +93,11 @@
+ #define SUN8I_I2S_CTRL_BCLK_OUT			BIT(18)
+ #define SUN8I_I2S_CTRL_LRCK_OUT			BIT(17)
+ 
++#define SUN8I_I2S_CTRL_MODE_MASK		GENMASK(5, 4)
++#define SUN8I_I2S_CTRL_MODE_RIGHT		(2 << 4)
++#define SUN8I_I2S_CTRL_MODE_LEFT		(1 << 4)
++#define SUN8I_I2S_CTRL_MODE_PCM			(0 << 4)
++
+ #define SUN8I_I2S_FMT0_LRCK_PERIOD_MASK		GENMASK(17, 8)
+ #define SUN8I_I2S_FMT0_LRCK_PERIOD(period)	((period - 1) << 8)
+ 
+@@ -121,9 +126,7 @@ struct sun4i_i2s;
+  * struct sun4i_i2s_quirks - Differences between SoC variants.
+  *
+  * @has_reset: SoC needs reset deasserted.
+- * @has_slave_select_bit: SoC has a bit to enable slave mode.
   * @has_fmt_set_lrck_period: SoC requires lrclk period to be set.
+- * @has_chsel_offset: SoC uses offset for selecting dai operational mode.
   * @reg_offset_txdata: offset of the tx fifo.
   * @sun4i_i2s_regmap: regmap config to use.
-- * @mclk_offset: Value by which mclkdiv needs to be adjusted.
-- * @bclk_offset: Value by which bclkdiv needs to be adjusted.
-  * @field_clkdiv_mclk_en: regmap field to enable mclk output.
-  * @field_fmt_wss: regmap field to set word select size.
+  * @mclk_offset: Value by which mclkdiv needs to be adjusted.
+@@ -133,13 +136,10 @@ struct sun4i_i2s;
   * @field_fmt_sr: regmap field to set sample resolution.
-@@ -142,8 +140,6 @@ struct sun4i_i2s_quirks {
+  * @field_fmt_bclk: regmap field to set clk polarity.
+  * @field_fmt_lrclk: regmap field to set frame polarity.
+- * @field_fmt_mode: regmap field to set the operational mode.
+  */
+ struct sun4i_i2s_quirks {
+ 	bool				has_reset;
+-	bool				has_slave_select_bit;
  	bool				has_fmt_set_lrck_period;
+-	bool				has_chsel_offset;
  	unsigned int			reg_offset_txdata;	/* TX FIFO */
  	const struct regmap_config	*sun4i_i2s_regmap;
--	unsigned int			mclk_offset;
--	unsigned int			bclk_offset;
- 
- 	/* Register fields for i2s */
- 	struct reg_field		field_clkdiv_mclk_en;
-@@ -152,6 +148,11 @@ struct sun4i_i2s_quirks {
+ 	unsigned int			mclk_offset;
+@@ -151,12 +151,12 @@ struct sun4i_i2s_quirks {
+ 	struct reg_field		field_fmt_sr;
  	struct reg_field		field_fmt_bclk;
  	struct reg_field		field_fmt_lrclk;
+-	struct reg_field		field_fmt_mode;
  
-+	const struct sun4i_i2s_clk_div	*bclk_dividers;
-+	unsigned int			num_bclk_dividers;
-+	const struct sun4i_i2s_clk_div	*mclk_dividers;
-+	unsigned int			num_mclk_dividers;
-+
- 	unsigned long (*get_bclk_parent_rate)(const struct sun4i_i2s *);
  	s8	(*get_sr)(const struct sun4i_i2s *, int);
  	s8	(*get_wss)(const struct sun4i_i2s *, int);
-@@ -208,6 +209,24 @@ static const struct sun4i_i2s_clk_div sun4i_i2s_mclk_div[] = {
- 	/* TODO - extend divide ratio supported by newer SoCs */
+ 	int	(*set_chan_cfg)(const struct sun4i_i2s *,
+ 				const struct snd_pcm_hw_params *);
++	int	(*set_fmt)(const struct sun4i_i2s *, unsigned int);
  };
  
-+static const struct sun4i_i2s_clk_div sun8i_i2s_clk_div[] = {
-+	{ .div = 1, .val = 1 },
-+	{ .div = 2, .val = 2 },
-+	{ .div = 4, .val = 3 },
-+	{ .div = 6, .val = 4 },
-+	{ .div = 8, .val = 5 },
-+	{ .div = 12, .val = 6 },
-+	{ .div = 16, .val = 7 },
-+	{ .div = 24, .val = 8 },
-+	{ .div = 32, .val = 9 },
-+	{ .div = 48, .val = 10 },
-+	{ .div = 64, .val = 11 },
-+	{ .div = 96, .val = 12 },
-+	{ .div = 128, .val = 13 },
-+	{ .div = 176, .val = 14 },
-+	{ .div = 192, .val = 15 },
-+};
+ struct sun4i_i2s {
+@@ -176,7 +176,6 @@ struct sun4i_i2s {
+ 	struct regmap_field	*field_fmt_sr;
+ 	struct regmap_field	*field_fmt_bclk;
+ 	struct regmap_field	*field_fmt_lrclk;
+-	struct regmap_field	*field_fmt_mode;
+ 
+ 	const struct sun4i_i2s_quirks	*variant;
+ };
+@@ -465,52 +464,117 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
+ 				      params_width(params));
+ }
+ 
+-static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++static int sun4i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
++				 unsigned int fmt)
+ {
+-	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
+ 	u32 val;
+-	u32 offset = 0;
+-	u32 bclk_polarity = SUN4I_I2S_FMT0_POLARITY_NORMAL;
+-	u32 lrclk_polarity = SUN4I_I2S_FMT0_POLARITY_NORMAL;
+ 
+ 	/* DAI Mode */
+ 	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
+ 	case SND_SOC_DAIFMT_I2S:
+ 		val = SUN4I_I2S_FMT0_FMT_I2S;
+-		offset = 1;
+ 		break;
 +
- static unsigned long sun4i_i2s_get_bclk_parent_rate(const struct sun4i_i2s *i2s)
- {
- 	return i2s->mclk_freq;
-@@ -223,11 +242,12 @@ static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
- 				  unsigned int sampling_rate,
- 				  unsigned int word_size)
- {
-+	const struct sun4i_i2s_clk_div *dividers = i2s->variant->bclk_dividers;
- 	int div = parent_rate / sampling_rate / word_size / 2;
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(sun4i_i2s_bclk_div); i++) {
--		const struct sun4i_i2s_clk_div *bdiv = &sun4i_i2s_bclk_div[i];
-+	for (i = 0; i < i2s->variant->num_bclk_dividers; i++) {
-+		const struct sun4i_i2s_clk_div *bdiv = &dividers[i];
- 
- 		if (bdiv->div == div)
- 			return bdiv->val;
-@@ -240,11 +260,12 @@ static int sun4i_i2s_get_mclk_div(struct sun4i_i2s *i2s,
- 				  unsigned long parent_rate,
- 				  unsigned long mclk_rate)
- {
-+	const struct sun4i_i2s_clk_div *dividers = i2s->variant->mclk_dividers;
- 	int div = parent_rate / mclk_rate;
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(sun4i_i2s_mclk_div); i++) {
--		const struct sun4i_i2s_clk_div *mdiv = &sun4i_i2s_mclk_div[i];
-+	for (i = 0; i < i2s->variant->num_mclk_dividers; i++) {
-+		const struct sun4i_i2s_clk_div *mdiv = &dividers[i];
- 
- 		if (mdiv->div == div)
- 			return mdiv->val;
-@@ -326,10 +347,6 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
+ 	case SND_SOC_DAIFMT_LEFT_J:
+ 		val = SUN4I_I2S_FMT0_FMT_LEFT_J;
+ 		break;
++
+ 	case SND_SOC_DAIFMT_RIGHT_J:
+ 		val = SUN4I_I2S_FMT0_FMT_RIGHT_J;
+ 		break;
++
+ 	default:
+-		dev_err(dai->dev, "Unsupported format: %d\n",
+-			fmt & SND_SOC_DAIFMT_FORMAT_MASK);
  		return -EINVAL;
  	}
  
--	/* Adjust the clock division values if needed */
--	bclk_div += i2s->variant->bclk_offset;
--	mclk_div += i2s->variant->mclk_offset;
+-	if (i2s->variant->has_chsel_offset) {
+-		/*
+-		 * offset being set indicates that we're connected to an i2s
+-		 * device, however offset is only used on the sun8i block and
+-		 * i2s shares the same setting with the LJ format. Increment
+-		 * val so that the bit to value to write is correct.
+-		 */
+-		if (offset > 0)
+-			val++;
+-		/* blck offset determines whether i2s or LJ */
+-		regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
+-				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
+-				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
 -
- 	regmap_write(i2s->regmap, SUN4I_I2S_CLK_DIV_REG,
- 		     SUN4I_I2S_CLK_DIV_BCLK(bclk_div) |
- 		     SUN4I_I2S_CLK_DIV_MCLK(mclk_div));
-@@ -969,6 +986,10 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
+-		regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
+-				   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
+-				   SUN8I_I2S_TX_CHAN_OFFSET(offset));
++	regmap_update_bits(i2s->regmap, SUN4I_I2S_FMT0_REG,
++			   SUN4I_I2S_FMT0_FMT_MASK, val);
++
++	/* DAI clock master masks */
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBS_CFS:
++		/* BCLK and LRCLK master */
++		val = SUN4I_I2S_CTRL_MODE_MASTER;
++		break;
++
++	case SND_SOC_DAIFMT_CBM_CFM:
++		/* BCLK and LRCLK slave */
++		val = SUN4I_I2S_CTRL_MODE_SLAVE;
++		break;
++
++	default:
++		return -EINVAL;
+ 	}
++	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
++			   SUN4I_I2S_CTRL_MODE_MASK, val);
++	return 0;
++}
+ 
+-	regmap_field_write(i2s->field_fmt_mode, val);
++static int sun8i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
++				 unsigned int fmt)
++{
++	u32 mode, val;
++	u8 offset;
++
++	/* DAI Mode */
++	switch (fmt & SND_SOC_DAIFMT_FORMAT_MASK) {
++	case SND_SOC_DAIFMT_I2S:
++		mode = SUN8I_I2S_CTRL_MODE_LEFT;
++		offset = 1;
++		break;
++
++	case SND_SOC_DAIFMT_LEFT_J:
++		mode = SUN8I_I2S_CTRL_MODE_LEFT;
++		offset = 0;
++		break;
++
++	case SND_SOC_DAIFMT_RIGHT_J:
++		mode = SUN8I_I2S_CTRL_MODE_RIGHT;
++		offset = 0;
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
++			   SUN8I_I2S_CTRL_MODE_MASK, mode);
++	regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
++			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
++			   SUN8I_I2S_TX_CHAN_OFFSET(offset));
++	regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
++			   SUN8I_I2S_TX_CHAN_OFFSET_MASK,
++			   SUN8I_I2S_TX_CHAN_OFFSET(offset));
++
++	/* DAI clock master masks */
++	switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
++	case SND_SOC_DAIFMT_CBS_CFS:
++		/* BCLK and LRCLK master */
++		val = SUN8I_I2S_CTRL_BCLK_OUT |	SUN8I_I2S_CTRL_LRCK_OUT;
++		break;
++
++	case SND_SOC_DAIFMT_CBM_CFM:
++		/* BCLK and LRCLK slave */
++		val = 0;
++		break;
++
++	default:
++		return -EINVAL;
++	}
++
++	regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
++			   SUN8I_I2S_CTRL_BCLK_OUT | SUN8I_I2S_CTRL_LRCK_OUT,
++			   val);
++
++	return 0;
++}
++
++static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
++{
++	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	u32 bclk_polarity = SUN4I_I2S_FMT0_POLARITY_NORMAL;
++	u32 lrclk_polarity = SUN4I_I2S_FMT0_POLARITY_NORMAL;
++	int ret;
+ 
+ 	/* DAI clock polarity */
+ 	switch (fmt & SND_SOC_DAIFMT_INV_MASK) {
+@@ -538,50 +602,10 @@ static int sun4i_i2s_set_fmt(struct snd_soc_dai *dai, unsigned int fmt)
+ 	regmap_field_write(i2s->field_fmt_bclk, bclk_polarity);
+ 	regmap_field_write(i2s->field_fmt_lrclk, lrclk_polarity);
+ 
+-	if (i2s->variant->has_slave_select_bit) {
+-		/* DAI clock master masks */
+-		switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-		case SND_SOC_DAIFMT_CBS_CFS:
+-			/* BCLK and LRCLK master */
+-			val = SUN4I_I2S_CTRL_MODE_MASTER;
+-			break;
+-		case SND_SOC_DAIFMT_CBM_CFM:
+-			/* BCLK and LRCLK slave */
+-			val = SUN4I_I2S_CTRL_MODE_SLAVE;
+-			break;
+-		default:
+-			dev_err(dai->dev, "Unsupported slave setting: %d\n",
+-				fmt & SND_SOC_DAIFMT_MASTER_MASK);
+-			return -EINVAL;
+-		}
+-		regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
+-				   SUN4I_I2S_CTRL_MODE_MASK,
+-				   val);
+-	} else {
+-		/*
+-		 * The newer i2s block does not have a slave select bit,
+-		 * instead the clk pins are configured as inputs.
+-		 */
+-		/* DAI clock master masks */
+-		switch (fmt & SND_SOC_DAIFMT_MASTER_MASK) {
+-		case SND_SOC_DAIFMT_CBS_CFS:
+-			/* BCLK and LRCLK master */
+-			val = SUN8I_I2S_CTRL_BCLK_OUT |
+-				SUN8I_I2S_CTRL_LRCK_OUT;
+-			break;
+-		case SND_SOC_DAIFMT_CBM_CFM:
+-			/* BCLK and LRCLK slave */
+-			val = 0;
+-			break;
+-		default:
+-			dev_err(dai->dev, "Unsupported slave setting: %d\n",
+-				fmt & SND_SOC_DAIFMT_MASTER_MASK);
+-			return -EINVAL;
+-		}
+-		regmap_update_bits(i2s->regmap, SUN4I_I2S_CTRL_REG,
+-				   SUN8I_I2S_CTRL_BCLK_OUT |
+-				   SUN8I_I2S_CTRL_LRCK_OUT,
+-				   val);
++	ret = i2s->variant->set_fmt(i2s, fmt);
++	if (ret) {
++		dev_err(dai->dev, "Unsupported format configuration\n");
++		return ret;
+ 	}
+ 
+ 	/* Set significant bits in our FIFOs */
+@@ -933,11 +957,10 @@ static const struct sun4i_i2s_quirks sun4i_a10_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.bclk_dividers		= sun4i_i2s_bclk_div,
-+	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
-+	.mclk_dividers		= sun4i_i2s_mclk_div,
-+	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
- 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
+-	.has_slave_select_bit	= true,
+-	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
-@@ -985,6 +1006,10 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
+ 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
++	.set_fmt		= sun4i_i2s_set_soc_fmt,
+ };
+ 
+ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
+@@ -949,11 +972,10 @@ static const struct sun4i_i2s_quirks sun6i_a31_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.bclk_dividers		= sun4i_i2s_bclk_div,
-+	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
-+	.mclk_dividers		= sun4i_i2s_mclk_div,
-+	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
- 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
+-	.has_slave_select_bit	= true,
+-	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
-@@ -1001,6 +1026,10 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+ 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
++	.set_fmt		= sun4i_i2s_set_soc_fmt,
+ };
+ 
+ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
+@@ -965,11 +987,10 @@ static const struct sun4i_i2s_quirks sun8i_a83t_i2s_quirks = {
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.bclk_dividers		= sun8i_i2s_clk_div,
-+	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
-+	.mclk_dividers		= sun8i_i2s_clk_div,
-+	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
- 	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
+-	.has_slave_select_bit	= true,
+-	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
  	.get_sr			= sun8i_i2s_get_sr_wss,
  	.get_wss		= sun8i_i2s_get_sr_wss,
-@@ -1012,14 +1041,16 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
- 	.has_reset		= true,
- 	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
- 	.sun4i_i2s_regmap	= &sun8i_i2s_regmap_config,
--	.mclk_offset		= 1,
--	.bclk_offset		= 2,
+ 	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
++	.set_fmt		= sun8i_i2s_set_soc_fmt,
+ };
+ 
+ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+@@ -979,32 +1000,30 @@ static const struct sun4i_i2s_quirks sun8i_h3_i2s_quirks = {
+ 	.mclk_offset		= 1,
+ 	.bclk_offset		= 2,
  	.has_fmt_set_lrck_period = true,
+-	.has_chsel_offset	= true,
  	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 8, 8),
  	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 2),
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 6),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 19, 19),
-+	.bclk_dividers		= sun8i_i2s_clk_div,
-+	.num_bclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
-+	.mclk_dividers		= sun8i_i2s_clk_div,
-+	.num_mclk_dividers	= ARRAY_SIZE(sun8i_i2s_clk_div),
- 	.get_bclk_parent_rate	= sun8i_i2s_get_bclk_parent_rate,
+-	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_CTRL_REG, 4, 5),
  	.get_sr			= sun8i_i2s_get_sr_wss,
  	.get_wss		= sun8i_i2s_get_sr_wss,
-@@ -1036,6 +1067,10 @@ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
+ 	.set_chan_cfg		= sun8i_i2s_set_chan_cfg,
++	.set_fmt		= sun8i_i2s_set_soc_fmt,
+ };
+ 
+ static const struct sun4i_i2s_quirks sun50i_a64_codec_i2s_quirks = {
+ 	.has_reset		= true,
+ 	.reg_offset_txdata	= SUN8I_I2S_FIFO_TX_REG,
+ 	.sun4i_i2s_regmap	= &sun4i_i2s_regmap_config,
+-	.has_slave_select_bit	= true,
+ 	.field_clkdiv_mclk_en	= REG_FIELD(SUN4I_I2S_CLK_DIV_REG, 7, 7),
+ 	.field_fmt_wss		= REG_FIELD(SUN4I_I2S_FMT0_REG, 2, 3),
  	.field_fmt_sr		= REG_FIELD(SUN4I_I2S_FMT0_REG, 4, 5),
  	.field_fmt_bclk		= REG_FIELD(SUN4I_I2S_FMT0_REG, 6, 6),
  	.field_fmt_lrclk	= REG_FIELD(SUN4I_I2S_FMT0_REG, 7, 7),
-+	.bclk_dividers		= sun4i_i2s_bclk_div,
-+	.num_bclk_dividers	= ARRAY_SIZE(sun4i_i2s_bclk_div),
-+	.mclk_dividers		= sun4i_i2s_mclk_div,
-+	.num_mclk_dividers	= ARRAY_SIZE(sun4i_i2s_mclk_div),
- 	.get_bclk_parent_rate	= sun4i_i2s_get_bclk_parent_rate,
+-	.field_fmt_mode		= REG_FIELD(SUN4I_I2S_FMT0_REG, 0, 1),
  	.get_sr			= sun4i_i2s_get_sr,
  	.get_wss		= sun4i_i2s_get_wss,
+ 	.set_chan_cfg		= sun4i_i2s_set_chan_cfg,
++	.set_fmt		= sun4i_i2s_set_soc_fmt,
+ };
+ 
+ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+@@ -1040,12 +1059,6 @@ static int sun4i_i2s_init_regmap_fields(struct device *dev,
+ 	if (IS_ERR(i2s->field_fmt_lrclk))
+ 		return PTR_ERR(i2s->field_fmt_lrclk);
+ 
+-	i2s->field_fmt_mode =
+-			devm_regmap_field_alloc(dev, i2s->regmap,
+-						i2s->variant->field_fmt_mode);
+-	if (IS_ERR(i2s->field_fmt_mode))
+-		return PTR_ERR(i2s->field_fmt_mode);
+-
+ 	return 0;
+ }
+ 
 -- 
 2.20.1
 
