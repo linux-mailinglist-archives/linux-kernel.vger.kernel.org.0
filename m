@@ -2,98 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6609C96976
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 21:29:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3C9B496977
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 21:29:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730987AbfHTT3B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 15:29:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41796 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730979AbfHTT26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 15:28:58 -0400
-Received: from quaco.ghostprotocols.net (177.206.236.100.dynamic.adsl.gvt.net.br [177.206.236.100])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B3302339D;
-        Tue, 20 Aug 2019 19:28:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566329337;
-        bh=BNM201EwE+W3GCuwJIDAW80iWdyUHoTYonWoW9RFml0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XbF+xeAZJh9tuwpQe6r6NGuSsoRLM6NgKcOERr85obBdZ8AaFbHuEqG6/VvP9Z8aO
-         zai8tY0dMCC0KfW2prhPuQxGKQa0+HJU10sPlRmD9QrzU8a3MFLkgCaYyAE+Hd+uVz
-         TnldASKst5RkILM68JIbUkCm1p9ereOeLHf0xk+s=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Clark Williams <williams@redhat.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        Jiri Olsa <jolsa@redhat.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Alexey Budankov <alexey.budankov@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Michael Petlan <mpetlan@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 17/17] libperf: Fix arch include paths
-Date:   Tue, 20 Aug 2019 16:27:33 -0300
-Message-Id: <20190820192733.19180-18-acme@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190820192733.19180-1-acme@kernel.org>
-References: <20190820192733.19180-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1730747AbfHTT31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 15:29:27 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:50084 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730273AbfHTT31 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 15:29:27 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 3AA9F146D389B;
+        Tue, 20 Aug 2019 12:29:26 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 12:29:25 -0700 (PDT)
+Message-Id: <20190820.122925.1080288470348205792.davem@davemloft.net>
+To:     haiyangz@microsoft.com
+Cc:     sashal@kernel.org, saeedm@mellanox.com, leon@kernel.org,
+        eranbe@mellanox.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+        kys@microsoft.com, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next,v2 2/6] PCI: hv: Add a Hyper-V PCI interface
+ driver for software backchannel interface
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <1566242976-108801-3-git-send-email-haiyangz@microsoft.com>
+References: <1566242976-108801-1-git-send-email-haiyangz@microsoft.com>
+        <1566242976-108801-3-git-send-email-haiyangz@microsoft.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Tue, 20 Aug 2019 12:29:26 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@redhat.com>
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Mon, 19 Aug 2019 19:30:47 +0000
 
-Guenter Roeck reported problem with compilation when the ARCH is
-specified:
+> +static void __exit exit_hv_pci_intf(void)
+> +{
+> +	pr_info("unloaded\n");
+> +}
+> +
+> +static int __init init_hv_pci_intf(void)
+> +{
+> +	pr_info("loaded\n");
+> +
 
-  $ make ARCH=x86_64
-  In file included from tools/include/asm/atomic.h:6:0,
-                   from include/linux/atomic.h:5,
-                   from tools/include/linux/refcount.h:41,
-                   from cpumap.c:4: tools/include/asm/../../arch/x86/include/asm/atomic.h:11:10:
-  fatal error: asm/cmpxchg.h: No such file or directory
+Clogging up the logs with useless messages like this is inappropriate.
+Please remove these pr_info() calls.
 
-The problem is that we don't use SRCARCH (the sanitized ARCH version)
-and we don't get the proper include path.
-
-Reported-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Guenter Roeck <linux@roeck-us.net>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Fixes: 314350491810 ("libperf: Make libperf.a part of the perf build")
-Link: http://lkml.kernel.org/r/20190820124624.GG24105@krava
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/lib/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/perf/lib/Makefile b/tools/perf/lib/Makefile
-index 8a9ae50818e4..a67efb8d9d39 100644
---- a/tools/perf/lib/Makefile
-+++ b/tools/perf/lib/Makefile
-@@ -59,7 +59,7 @@ else
-   CFLAGS := -g -Wall
- endif
- 
--INCLUDES = -I$(srctree)/tools/perf/lib/include -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(ARCH)/include/ -I$(srctree)/tools/arch/$(ARCH)/include/uapi -I$(srctree)/tools/include/uapi
-+INCLUDES = -I$(srctree)/tools/perf/lib/include -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/ -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
- 
- # Append required CFLAGS
- override CFLAGS += $(EXTRA_WARNINGS)
--- 
-2.21.0
-
+Also, all of these symbols should probably be GPL exported.
