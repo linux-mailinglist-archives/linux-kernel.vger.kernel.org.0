@@ -2,46 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF6EF9594D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 278C895950
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:20:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729474AbfHTITN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:19:13 -0400
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:42837 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729378AbfHTITL (ORCPT
+        id S1729512AbfHTITX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:19:23 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:33394 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729312AbfHTITN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:19:11 -0400
-Received: by mail-ed1-f66.google.com with SMTP id m44so5342135edd.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:19:10 -0700 (PDT)
+        Tue, 20 Aug 2019 04:19:13 -0400
+Received: by mail-ed1-f65.google.com with SMTP id s15so5349726edx.0
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:19:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ffwll.ch; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wgia7qPSXicnYInuL6+gfr2cdFlvKPNwuVbgz5GenZE=;
-        b=YWxeLKHfVQ6n9wGxXuRJAn+g9qtmHMwaPzmYfWe8BYeYvBhhpUOFVNbgUl+9qLpP7T
-         PHmTFDTMVPwsO/1+PqoKETqfMC0QoEs4IGQgsATXmRfGgRNSHR4/V73LAd/yZFEVWK1y
-         s1kPTUoWam517FLtcOhvQSucIJxk+akolMA3M=
+        bh=HRs5HpBA3qSqFe5qnt1LL6h0B7I2hzSM+r7A2DpfdeU=;
+        b=H3IaTIIKcnZxd8XaCn8QCH9mcrNGjOx/ak2ybd66H0ki331clYHFNQzkO0bKWcuXsr
+         Mq6+jU/jrdI7HQWeHyhaTDSfFkUDTPsmPa++H2SDWnl1ZAvHNh4YpUIn825O4i0/plh8
+         z09eHCYqJKERfRBDZg/Pr+cpNjod1qv2vMJ8w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wgia7qPSXicnYInuL6+gfr2cdFlvKPNwuVbgz5GenZE=;
-        b=gwqIzxpNOhpZuqvBqYLXhpcUbH7AuHbv2Prd4NSZbF/5sBTap+8YOy9dpWAj0+ntwk
-         n+plzRYn5Lgp3ll716XyxChze3g9q/7drElGXww4s0mcO/CJW1cmsEkl9cH5rgWRBxbI
-         6yQFwCDIuG6+Wr7mAjl1GHcUkwy6GZ3DYcc/oGu381YuitmG70gnfXfwxhQgS5Rc+V4t
-         KmNvQoFceC0ZFttYXJX5jL74KfwssvqB6mPA3ypaYITYgZZ8usmgHga0ynWjKVZk3Kcr
-         mCiEiMAKpXqgB+5hULi1Vs/15uw25aYrBMYCkzIbvt9Haug/pewUjt+vgeiLz6ToScA9
-         yfzw==
-X-Gm-Message-State: APjAAAUVo3Lo1B5lCDlxWlXt2h2+OeJYvE3BqUx/F5PY1luUMZ8JlQ4X
-        FjyyoLMUgNbReMnVwx4+YA8x/NgZ0sOAnw==
-X-Google-Smtp-Source: APXvYqyu/f8bVTg3bBh5ZePWB9S7yhhKk9kHLLvI/rN0zBooM1KCXKcqbAcEp76HXAnJ5MeGWWnWww==
-X-Received: by 2002:aa7:d813:: with SMTP id v19mr29744820edq.45.1566289149643;
-        Tue, 20 Aug 2019 01:19:09 -0700 (PDT)
+        bh=HRs5HpBA3qSqFe5qnt1LL6h0B7I2hzSM+r7A2DpfdeU=;
+        b=DjL3cxSFzyAS9ww6tiZ0CMWuzbzP3r3nvMbPL223Ma+hw3ZYWsl+2+b1Ou3PMllYjh
+         aD8GdsGBbIsA6lteqnLPW6KN2I59nuRfYQ7k5fsYdX4T2tRTSWr2Uk7cuPQ9fKpWNqrZ
+         x4hbrwBzSXunZKewMCUOfa9su0dIc+jE0NwyS1qhVuntzUvGIyh0wNSEZ6wsYCkkLbaA
+         77FUcGW9sVI/etH3h6Llm3U6m/uM2t4VSB/VUe8X5U12dW0E7o2llFgANrtP+a8KI6bT
+         xP9Dpm1Rokaaim6NCgG48jOiVBJDxE48Nxz3G69CNgH+aE5r9tEtmMJBWkrZo4T6OF8y
+         pj/g==
+X-Gm-Message-State: APjAAAXW4Hc9IydreQRGPOsD273iTsbnJEx93SxPWNUsVE1ArBJ+srIs
+        tAVTR481jgAqoPVLp2QFvCkgD2drm1oB2A==
+X-Google-Smtp-Source: APXvYqzwk/VVcEGb/uEJb+MjHFqWnLqThVvSK3PFeDiC0L0cxhC/+XJhzn783w4kD3r5dKVWby8hcQ==
+X-Received: by 2002:aa7:c498:: with SMTP id m24mr12784881edq.277.1566289150887;
+        Tue, 20 Aug 2019 01:19:10 -0700 (PDT)
 Received: from phenom.ffwll.local ([2a02:168:569e:0:3106:d637:d723:e855])
-        by smtp.gmail.com with ESMTPSA id fj15sm2469623ejb.78.2019.08.20.01.19.08
+        by smtp.gmail.com with ESMTPSA id fj15sm2469623ejb.78.2019.08.20.01.19.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 01:19:08 -0700 (PDT)
+        Tue, 20 Aug 2019 01:19:10 -0700 (PDT)
 From:   Daniel Vetter <daniel.vetter@ffwll.ch>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Linux MM <linux-mm@kvack.org>,
@@ -58,9 +58,9 @@ Cc:     Linux MM <linux-mm@kvack.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mike Rapoport <rppt@linux.vnet.ibm.com>,
         Daniel Vetter <daniel.vetter@intel.com>
-Subject: [PATCH 1/4] mm, notifier: Add a lockdep map for invalidate_range_start/end
-Date:   Tue, 20 Aug 2019 10:18:59 +0200
-Message-Id: <20190820081902.24815-2-daniel.vetter@ffwll.ch>
+Subject: [PATCH 2/4] mm, notifier: Prime lockdep
+Date:   Tue, 20 Aug 2019 10:19:00 +0200
+Message-Id: <20190820081902.24815-3-daniel.vetter@ffwll.ch>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20190820081902.24815-1-daniel.vetter@ffwll.ch>
 References: <20190820081902.24815-1-daniel.vetter@ffwll.ch>
@@ -72,39 +72,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a similar idea to the fs_reclaim fake lockdep lock. It's
-fairly easy to provoke a specific notifier to be run on a specific
-range: Just prep it, and then munmap() it.
+We want to teach lockdep that mmu notifiers can be called from direct
+reclaim paths, since on many CI systems load might never reach that
+level (e.g. when just running fuzzer or small functional tests).
 
-A bit harder, but still doable, is to provoke the mmu notifiers for
-all the various callchains that might lead to them. But both at the
-same time is really hard to reliable hit, especially when you want to
-exercise paths like direct reclaim or compaction, where it's not
-easy to control what exactly will be unmapped.
+Motivated by a discussion with Jason.
 
-By introducing a lockdep map to tie them all together we allow lockdep
-to see a lot more dependencies, without having to actually hit them
-in a single challchain while testing.
-
-On Jason's suggestion this is is rolled out for both
-invalidate_range_start and invalidate_range_end. They both have the
-same calling context, hence we can share the same lockdep map. Note
-that the annotation for invalidate_ranage_start is outside of the
-mm_has_notifiers(), to make sure lockdep is informed about all paths
-leading to this context irrespective of whether mmu notifiers are
-present for a given context. We don't do that on the
-invalidate_range_end side to avoid paying the overhead twice, there
-the lockdep annotation is pushed down behind the mm_has_notifiers()
-check.
-
-v2: Use lock_map_acquire/release() like fs_reclaim, to avoid confusion
-with this being a real mutex (Chris Wilson).
-
-v3: Rebase on top of Glisse's arg rework.
-
-v4: Also annotate invalidate_range_end (Jason Gunthorpe)
-Also annotate invalidate_range_start_nonblock, I somehow missed that
-one in the first version.
+I've put the annotation into mmu_notifier_register since only when we
+have mmu notifiers registered is there any point in teaching lockdep
+about them. Also, we already have a kmalloc(, GFP_KERNEL), so this is
+safe.
 
 Cc: Jason Gunthorpe <jgg@ziepe.ca>
 Cc: Chris Wilson <chris@chris-wilson.co.uk>
@@ -119,83 +96,27 @@ Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
 Cc: linux-mm@kvack.org
 Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 ---
- include/linux/mmu_notifier.h | 8 ++++++++
- mm/mmu_notifier.c            | 9 +++++++++
- 2 files changed, 17 insertions(+)
+ mm/mmu_notifier.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/include/linux/mmu_notifier.h b/include/linux/mmu_notifier.h
-index b6c004bd9f6a..39a86b77a939 100644
---- a/include/linux/mmu_notifier.h
-+++ b/include/linux/mmu_notifier.h
-@@ -42,6 +42,10 @@ enum mmu_notifier_event {
- 
- #ifdef CONFIG_MMU_NOTIFIER
- 
-+#ifdef CONFIG_LOCKDEP
-+extern struct lockdep_map __mmu_notifier_invalidate_range_start_map;
-+#endif
-+
- /*
-  * The mmu notifier_mm structure is allocated and installed in
-  * mm->mmu_notifier_mm inside the mm_take_all_locks() protected
-@@ -310,19 +314,23 @@ static inline void mmu_notifier_change_pte(struct mm_struct *mm,
- static inline void
- mmu_notifier_invalidate_range_start(struct mmu_notifier_range *range)
- {
-+	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	if (mm_has_notifiers(range->mm)) {
- 		range->flags |= MMU_NOTIFIER_RANGE_BLOCKABLE;
- 		__mmu_notifier_invalidate_range_start(range);
- 	}
-+	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
- }
- 
- static inline int
- mmu_notifier_invalidate_range_start_nonblock(struct mmu_notifier_range *range)
- {
-+	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	if (mm_has_notifiers(range->mm)) {
- 		range->flags &= ~MMU_NOTIFIER_RANGE_BLOCKABLE;
- 		return __mmu_notifier_invalidate_range_start(range);
- 	}
-+	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
- 	return 0;
- }
- 
 diff --git a/mm/mmu_notifier.c b/mm/mmu_notifier.c
-index 16f1cbc775d0..d12e3079e7a4 100644
+index d12e3079e7a4..538d3bb87f9b 100644
 --- a/mm/mmu_notifier.c
 +++ b/mm/mmu_notifier.c
-@@ -21,6 +21,13 @@
- /* global SRCU for all MMs */
- DEFINE_STATIC_SRCU(srcu);
+@@ -256,6 +256,13 @@ static int do_mmu_notifier_register(struct mmu_notifier *mn,
  
-+#ifdef CONFIG_LOCKDEP
-+struct lockdep_map __mmu_notifier_invalidate_range_start_map = {
-+	.name = "mmu_notifier_invalidate_range_start"
-+};
-+EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_start_map);
-+#endif
+ 	BUG_ON(atomic_read(&mm->mm_users) <= 0);
+ 
++	if (IS_ENABLED(CONFIG_LOCKDEP)) {
++		fs_reclaim_acquire(GFP_KERNEL);
++		lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
++		lock_map_release(&__mmu_notifier_invalidate_range_start_map);
++		fs_reclaim_release(GFP_KERNEL);
++	}
 +
- /*
-  * This function allows mmu_notifier::release callback to delay a call to
-  * a function that will free appropriate resources. The function must be
-@@ -197,6 +204,7 @@ void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *range,
- 	struct mmu_notifier *mn;
- 	int id;
- 
-+	lock_map_acquire(&__mmu_notifier_invalidate_range_start_map);
- 	id = srcu_read_lock(&srcu);
- 	hlist_for_each_entry_rcu(mn, &range->mm->mmu_notifier_mm->list, hlist) {
- 		/*
-@@ -220,6 +228,7 @@ void __mmu_notifier_invalidate_range_end(struct mmu_notifier_range *range,
- 			mn->ops->invalidate_range_end(mn, range);
- 	}
- 	srcu_read_unlock(&srcu, id);
-+	lock_map_release(&__mmu_notifier_invalidate_range_start_map);
- }
- EXPORT_SYMBOL_GPL(__mmu_notifier_invalidate_range_end);
- 
+ 	ret = -ENOMEM;
+ 	mmu_notifier_mm = kmalloc(sizeof(struct mmu_notifier_mm), GFP_KERNEL);
+ 	if (unlikely(!mmu_notifier_mm))
 -- 
 2.23.0.rc1
 
