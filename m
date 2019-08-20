@@ -2,48 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F5D496CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 708B896CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfHTXHH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 19:07:07 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37755 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726741AbfHTXHE (ORCPT
+        id S1726841AbfHTXHU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 19:07:20 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:42519 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726669AbfHTXHG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:07:04 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so159738pgp.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:07:04 -0700 (PDT)
+        Tue, 20 Aug 2019 19:07:06 -0400
+Received: by mail-pf1-f193.google.com with SMTP id i30so82741pfk.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:07:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=kPTZRFMdlMvsVJLbNqEMp+KDg1p/2/PzTgB54sSjI/U=;
-        b=zyuDY+Dz9GS/ATmdo/KHEQi19IecSLdC2e6bTsUgY8jsteM9oMqvfXbaXAc221LP31
-         yDMUOoUvjo/Bi9oOEz3JmkMbJIZIbvDJ9NOb6jy85smlKiLm+/XLeT245/yjrermAOY5
-         IJyQFysEf15/jxU+Cv4Idz8tX4x6CfhARclR4mJwN+/o4teAp1RCRWNuFLhU2HFq8L/t
-         Lvdu//m4AfDM1ZNAvfH7KbtLSJKvmK/agBLsSJHP/82IzWM8RBUtf8i6T+OerKLYFRho
-         R7ljI1474mWznSb+KYDK0/c9Y5HW1lvd6goCAFrlpf9zCKH0OPMwy5y9GB7i73I8Zk/g
-         9prQ==
+        bh=MVBS6s/BS2iml31wX2/Rhd0nBzLwsiOkYjbfOZWZ4tw=;
+        b=jeM2fPkbWnWSTtEljReDIHFfsfeHVQ01JqHJ9u2ShkYBcp+/+8KYKxqhYw3vJRtfW7
+         QVPqk/3z38c4SPs8IzrPnm7uelkN5fbYcTCsyH17RHuZSVSNJXpYSnlPXTbgSEIDg3fz
+         WI4Gu4RCVWN4uYRfzbWWXuHkT8DjXxSIKW/THCwmlSZIvU+aYIPe1yQ3f/BooYC1qeex
+         Lgt5cV4PIgRLXnc7Xq4BkU2nuYMxZJ6yp0zDEMhyBn83wAsR6t5j9l8Cl+GBvNrG5kPV
+         NPU0owlbQoPnSXK0TefSdAMsPcnLzi1X8CgwVKhtVh/K0uhgD62tZfDXhaW381uj/zNt
+         upbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=kPTZRFMdlMvsVJLbNqEMp+KDg1p/2/PzTgB54sSjI/U=;
-        b=tBMEAhCTB54qRmeil+1J8qcanJA+/L7fEMT+H1DAPJc9TZuOTOkAVato652+WuT+R8
-         eNi5Q8CAuxd6SudpYVtb4bCRA8PGHiXeTFOoCeJFcBezYNm2L5r00ojQkMzbx1lrQJV7
-         TZVjU/qaexXbIe2SI7YU2zIQUowmsToCCmFd3Yj4pByKFcmKI6IA01UC6oHu4tF0AuOE
-         EACg35PAt0BOG63BGEiE5q0/FClUsa/jpf0RxleDgvHQAeXfLEYZyNZBn1ly5Yn7iiJj
-         30yjWkV6MXIoTQI/+AjQUlev2PKGF/CxeXDUDd5qML2WpYwte8AE3vYDQCk9y4QtV+qW
-         j23w==
-X-Gm-Message-State: APjAAAUr1TpabIBEAuwf2jTe+X+u06IljZjPc7zm87p2Cx2Z8kvgg44R
-        UfZ0Sn2L9JBgiqXq4E/CDgIM3n++E8c=
-X-Google-Smtp-Source: APXvYqwPWi3hV1aULI47BdH1J86xCw7uOXUE660dq+vqeuPuIugq7A8By+kPCr/L6d0RdR//xPBKqQ==
-X-Received: by 2002:aa7:8488:: with SMTP id u8mr33269995pfn.229.1566342423834;
-        Tue, 20 Aug 2019 16:07:03 -0700 (PDT)
+        bh=MVBS6s/BS2iml31wX2/Rhd0nBzLwsiOkYjbfOZWZ4tw=;
+        b=Zhen4wEDgUu9V9m41X3vod1HNFMPoO0OU5eAVaEAqS6LZmJXn4g62pbrmo+892n8bm
+         vyasB/Gaj5epGFtD7pE882vEc9BvtLj5iSwLPVDg8XSmQw4ybCjm9HJfty6N97R//dHE
+         b6LZQS9MiRP9AhNsN2JsYCb3ArLzhFjqRx2RIfmsWqeJZDyABb4OqkSTDcQnwGcnzmPP
+         Z+B6dmRDJLJ2u+wfGWJ+T7bmlbmvkasn7sMcbeMhwUZqWP+x/8IXFy+OJSLK9tA0gZlJ
+         DvuSwTpEDhbH34PUyeKJS9ONJOxYGFraaoV5yAeeKU0cphcYm8lf75E46L5L0Kldsc4l
+         eXFA==
+X-Gm-Message-State: APjAAAWBNAYp0pib0XkZkiMdrw4RnmML5InDBb12cyQrEjxNSH9EiH3g
+        MJzOxzWbvkRIgUoNPiTnJYozVeZUl0g=
+X-Google-Smtp-Source: APXvYqwG9+bnLD4/Mpplbe8yIuvH+GlW31O8nnLcR91y1DkSlFoAAJKR0LUsiNpcJoVraKcZf5ZvIg==
+X-Received: by 2002:a62:76d5:: with SMTP id r204mr32005336pfc.252.1566342425396;
+        Tue, 20 Aug 2019 16:07:05 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.07.02
+        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.07.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 16:07:03 -0700 (PDT)
+        Tue, 20 Aug 2019 16:07:04 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
 Cc:     Xu YiPing <xuyiping@hisilicon.com>,
@@ -54,9 +54,9 @@ Cc:     Xu YiPing <xuyiping@hisilicon.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
         Sam Ravnborg <sam@ravnborg.org>,
         John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v5 21/25] drm: kirin: Fix dev->driver_data setting
-Date:   Tue, 20 Aug 2019 23:06:22 +0000
-Message-Id: <20190820230626.23253-22-john.stultz@linaro.org>
+Subject: [PATCH v5 22/25] drm: kirin: Make driver_data variable non-global
+Date:   Tue, 20 Aug 2019 23:06:23 +0000
+Message-Id: <20190820230626.23253-23-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190820230626.23253-1-john.stultz@linaro.org>
 References: <20190820230626.23253-1-john.stultz@linaro.org>
@@ -68,10 +68,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Xu YiPing <xuyiping@hisilicon.com>
 
 As part of refactoring the kirin driver to better support
-different hardware revisions, this patch changes the
-dev->driver_data to point to a drm_device, not ade_data.
-
-Thus we set the driver data to drm device after alloc.
+different hardware revisions, this patch changes the driver_data
+value to not be a global variable. Instead the driver_data value
+is accessed via the of_device_get_match_data() when needed.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -85,43 +84,102 @@ Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
 [jstultz: Reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 1 -
- drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c | 3 +--
- 2 files changed, 1 insertion(+), 3 deletions(-)
+v5: checkpatch --strict whitespace fixups noticed by Sam
+---
+ .../gpu/drm/hisilicon/kirin/kirin_drm_drv.c   | 43 +++++++++++--------
+ 1 file changed, 24 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index e390b1b657b8..d8e40fcff386 100644
---- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-+++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -999,7 +999,6 @@ static int ade_drm_init(struct platform_device *pdev)
- 		DRM_ERROR("failed to alloc ade_data\n");
- 		return -ENOMEM;
- 	}
--	platform_set_drvdata(pdev, ade);
- 
- 	ctx = ade_hw_ctx_alloc(pdev, &ade->crtc.base);
- 	if (IS_ERR(ctx)) {
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-index 68de8838da3c..7f8d4539b1a9 100644
+index 7f8d4539b1a9..f5df88378591 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_drv.c
-@@ -44,8 +44,6 @@ static int kirin_drm_kms_init(struct drm_device *dev)
+@@ -29,18 +29,9 @@
+ 
+ #include "kirin_drm_drv.h"
+ 
+-static struct kirin_drm_data *driver_data;
+ 
+-static int kirin_drm_kms_cleanup(struct drm_device *dev)
+-{
+-	drm_kms_helper_poll_fini(dev);
+-	driver_data->cleanup(to_platform_device(dev->dev));
+-	drm_mode_config_cleanup(dev);
+-
+-	return 0;
+-}
+-
+-static int kirin_drm_kms_init(struct drm_device *dev)
++static int kirin_drm_kms_init(struct drm_device *dev,
++			      const struct kirin_drm_data *driver_data)
  {
  	int ret;
  
--	dev_set_drvdata(dev->dev, dev);
--
- 	/* dev->mode_config initialization */
- 	drm_mode_config_init(dev);
- 	dev->mode_config.min_width = 0;
-@@ -140,6 +138,7 @@ static int kirin_drm_bind(struct device *dev)
+@@ -96,6 +87,21 @@ static int compare_of(struct device *dev, void *data)
+ 	return dev->of_node == data;
+ }
+ 
++static int kirin_drm_kms_cleanup(struct drm_device *dev)
++{
++	const struct kirin_drm_data *driver_data;
++
++	drm_kms_helper_poll_fini(dev);
++
++	driver_data = of_device_get_match_data(dev->dev);
++	if (driver_data->cleanup)
++		driver_data->cleanup(to_platform_device(dev->dev));
++
++	drm_mode_config_cleanup(dev);
++
++	return 0;
++}
++
+ static int kirin_drm_connectors_register(struct drm_device *dev)
+ {
+ 	struct drm_connector *connector;
+@@ -132,15 +138,21 @@ static int kirin_drm_connectors_register(struct drm_device *dev)
+ 
+ static int kirin_drm_bind(struct device *dev)
+ {
++	struct kirin_drm_data *driver_data;
+ 	struct drm_device *drm_dev;
+ 	int ret;
+ 
++	driver_data = (struct kirin_drm_data *)of_device_get_match_data(dev);
++	if (!driver_data)
++		return -EINVAL;
++
  	drm_dev = drm_dev_alloc(driver_data->driver, dev);
  	if (IS_ERR(drm_dev))
  		return PTR_ERR(drm_dev);
-+	dev_set_drvdata(dev, drm_dev);
+ 	dev_set_drvdata(dev, drm_dev);
  
- 	ret = kirin_drm_kms_init(drm_dev);
+-	ret = kirin_drm_kms_init(drm_dev);
++	/* display controller init */
++	ret = kirin_drm_kms_init(drm_dev, driver_data);
  	if (ret)
+ 		goto err_drm_dev_put;
+ 
+@@ -190,12 +202,6 @@ static int kirin_drm_platform_probe(struct platform_device *pdev)
+ 	struct component_match *match = NULL;
+ 	struct device_node *remote;
+ 
+-	driver_data = (struct kirin_drm_data *)of_device_get_match_data(dev);
+-	if (!driver_data) {
+-		DRM_ERROR("failed to get dt id data\n");
+-		return -EINVAL;
+-	}
+-
+ 	remote = of_graph_get_remote_node(np, 0, 0);
+ 	if (!remote)
+ 		return -ENODEV;
+@@ -209,7 +215,6 @@ static int kirin_drm_platform_probe(struct platform_device *pdev)
+ static int kirin_drm_platform_remove(struct platform_device *pdev)
+ {
+ 	component_master_del(&pdev->dev, &kirin_drm_ops);
+-	driver_data = NULL;
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
