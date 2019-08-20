@@ -2,82 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 558EC960BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:43:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C332B960F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:44:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730803AbfHTNnN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:43:13 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52052 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730755AbfHTNnB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:43:01 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i04Pa-0006ml-5F; Tue, 20 Aug 2019 15:42:58 +0200
-Date:   Tue, 20 Aug 2019 15:42:57 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     =?ISO-8859-15?Q?Thomas_Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-cc:     Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH 2/4] x86/vmware: Add a header file for hypercall
- definitions
-In-Reply-To: <597132a4-2514-2f13-5786-b423d82b7fd4@shipmail.org>
-Message-ID: <alpine.DEB.2.21.1908201540400.2223@nanos.tec.linutronix.de>
-References: <20190818143316.4906-1-thomas_os@shipmail.org> <20190818143316.4906-3-thomas_os@shipmail.org> <20190820113203.GM2332@hirez.programming.kicks-ass.net> <597132a4-2514-2f13-5786-b423d82b7fd4@shipmail.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1730250AbfHTNoM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:44:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39026 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730826AbfHTNnS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:43:18 -0400
+Received: from sasha-vm.mshome.net (unknown [12.236.144.82])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7DBCE22DA7;
+        Tue, 20 Aug 2019 13:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566308597;
+        bh=0Am0qtdNwSQg3Bskun8I7pWCiq0uX0Ute1NE12kHESs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=raDt/mLxCZACRJPbLPpOkg8bg71QTxKg2hK3N98UPJhwB56ls4f2LxZ0fW02cHJwo
+         gI8xSKR724JR0rP8VzMwN/62fGXwg8cRZQGfxbGzDt6p13lj3kYhupJsaKiTa48aUV
+         WK+R2XeV5EiU4RXpQHxUt13D3PuX8sLqpxwkaieQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org, clang-built-linux@googlegroups.com
+Subject: [PATCH AUTOSEL 4.9 1/7] dmaengine: ste_dma40: fix unneeded variable warning
+Date:   Tue, 20 Aug 2019 09:43:09 -0400
+Message-Id: <20190820134315.11720-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323329-1285972205-1566308578=:2223"
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+From: Arnd Bergmann <arnd@arndb.de>
 
---8323329-1285972205-1566308578=:2223
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+[ Upstream commit 5d6fb560729a5d5554e23db8d00eb57cd0021083 ]
 
-On Tue, 20 Aug 2019, Thomas Hellström (VMware) wrote:
+clang-9 points out that there are two variables that depending on the
+configuration may only be used in an ARRAY_SIZE() expression but not
+referenced:
 
-> On 8/20/19 1:32 PM, Peter Zijlstra wrote:
-> > On Sun, Aug 18, 2019 at 04:33:14PM +0200, Thomas Hellström (VMware) wrote:
-> > 
-> > > +#define VMWARE_HYPERCALL \
-> > > +	ALTERNATIVE_2(".byte 0xed", \
-> > > +		      ".byte 0x0f, 0x01, 0xc1", X86_FEATURE_VMW_VMCALL,	\
-> > > +		      ".byte 0x0f, 0x01, 0xd9", X86_FEATURE_VMW_VMMCALL)
-> > For sanity, could we either add comments, or macros for those
-> > instrucions?
-> 
-> Hmm. Here I followed and slightly extended what was done in asm/kvm_para.h.
-> 
-> What confuses me a bit is, if it's clarity we're after, why don't people use
-> 
-> #define VMWARE_HYPERCALL 					\
-> 	ALTERNATIVE_2("inl (%%dx)", 				\
-> 		      "vmcall", X86_FEATURE_VMW_VMCALL,		\	
-> 		      "vmmcall", X86_FEATURE_VMW_VMMCALL)
-> 
-> Seems to build fine here. Is it fear of old assemblers not supporting, for
-> example vmmcall
+drivers/dma/ste_dma40.c:145:12: error: variable 'd40_backup_regs' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+static u32 d40_backup_regs[] = {
+           ^
+drivers/dma/ste_dma40.c:214:12: error: variable 'd40_backup_regs_chan' is not needed and will not be emitted [-Werror,-Wunneeded-internal-declaration]
+static u32 d40_backup_regs_chan[] = {
 
-The requirement for binutils is version >= 2.21. If 2.21 supports vmcall and
-vmmcall all good.
+Mark these __maybe_unused to shut up the warning.
 
-Thanks,
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Link: https://lore.kernel.org/r/20190712091357.744515-1-arnd@arndb.de
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/dma/ste_dma40.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-	tglx
---8323329-1285972205-1566308578=:2223--
+diff --git a/drivers/dma/ste_dma40.c b/drivers/dma/ste_dma40.c
+index 8684d11b29bba..68b41daab3a8f 100644
+--- a/drivers/dma/ste_dma40.c
++++ b/drivers/dma/ste_dma40.c
+@@ -142,7 +142,7 @@ enum d40_events {
+  * when the DMA hw is powered off.
+  * TODO: Add save/restore of D40_DREG_GCC on dma40 v3 or later, if that works.
+  */
+-static u32 d40_backup_regs[] = {
++static __maybe_unused u32 d40_backup_regs[] = {
+ 	D40_DREG_LCPA,
+ 	D40_DREG_LCLA,
+ 	D40_DREG_PRMSE,
+@@ -211,7 +211,7 @@ static u32 d40_backup_regs_v4b[] = {
+ 
+ #define BACKUP_REGS_SZ_V4B ARRAY_SIZE(d40_backup_regs_v4b)
+ 
+-static u32 d40_backup_regs_chan[] = {
++static __maybe_unused u32 d40_backup_regs_chan[] = {
+ 	D40_CHAN_REG_SSCFG,
+ 	D40_CHAN_REG_SSELT,
+ 	D40_CHAN_REG_SSPTR,
+-- 
+2.20.1
+
