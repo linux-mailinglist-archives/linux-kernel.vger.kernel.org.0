@@ -2,165 +2,144 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BA9695234
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:08:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E9A395224
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:06:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728864AbfHTAHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:07:51 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17228 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728828AbfHTAHt (ORCPT
+        id S1728815AbfHTAGG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:06:06 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38704 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728580AbfHTAGG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:07:49 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5b39d20003>; Mon, 19 Aug 2019 17:07:46 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 19 Aug 2019 17:07:47 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 17:07:47 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
- 2019 00:07:46 +0000
-Received: from [10.2.161.11] (172.20.13.39) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
- 2019 00:07:46 +0000
-Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
-To:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
-CC:     Ira Weiny <ira.weiny@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Theodore Ts'o" <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
-        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
-        <linux-mm@kvack.org>
-References: <20190809225833.6657-1-ira.weiny@intel.com>
- <20190814101714.GA26273@quack2.suse.cz>
- <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
- <20190815130558.GF14313@quack2.suse.cz>
- <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
- <20190817022603.GW6129@dread.disaster.area>
- <20190819063412.GA20455@quack2.suse.cz>
- <20190819092409.GM7777@dread.disaster.area>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <ae64491b-85f8-eeca-14e8-2f09caf8abd2@nvidia.com>
-Date:   Mon, 19 Aug 2019 17:05:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Mon, 19 Aug 2019 20:06:06 -0400
+Received: by mail-pl1-f194.google.com with SMTP id m12so1761486plt.5
+        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=qQOXa0QSQ8+7zZiklPWl3hCCcZsK+hqnhGUid1sWCU8=;
+        b=wGnT9m7b9TR7M7i9MBlpKp6tEOWrDHxiWt77j4NAxEsRfJe/itBFxWCAr7XoUItxbK
+         zeP9aFQ/wUJgiuSXIObMoXTjG6xFILJo8WmbIVvsE5IjpT1xQJFvDTJZ3z9i/ICG6t8D
+         uZaiGVv8m+1cLepmoqsGHfcQsLCUNHsZ9uNwR7v0MTQsEjqeYijC80kN1yZM9T3qTo6B
+         rlAISdOA/qwXYZCWu+6AsxlF/iAM/+nKcaZRPxMa9Knikvh7y4CWffTaqOc4tGUB5m74
+         7cmuPVfGzBzCBA3wPl/JaYvwFeFl7dIz68XgvMUL4rVTW3O35pUyCwAtKvqFTer9YMkZ
+         mGhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=qQOXa0QSQ8+7zZiklPWl3hCCcZsK+hqnhGUid1sWCU8=;
+        b=NaLRBNuGxBNHJvePJO92Fkf1Xs4D7Cw0rxuuPk7q9plzJp9yfXgDKQPTQZt8aKZyzC
+         38xlVLqamavOFs4qdpqNuj36TyieULyZCw9JBO5o52rUvd7oeeXrGzVznpuDU96IgUDB
+         IFXQTCJ4TUCyWbGjIkvUqxaEFgPbpP2hO6ou1uG+p69UI/eXIa8TWvjEhXexkghXtT55
+         rYi4dvh79mJT1Bmm/o/DZuX8n+Z/GjpzestsGm0Cqc7vr7boZJ/jF0kPg1Nc5wmTtcRd
+         k6p/xFj9jGafVIq24zsKn9wEIJZkfdpHjuI3QZCx31bv+Tyds3NIZgg7qhJJb7zGhBH4
+         Hdzg==
+X-Gm-Message-State: APjAAAUrA7JnsunxGHx1LPwItf+PnkV9rRaizmdAxOk9JflhzBORqnAh
+        MrDUBzESEPBoGWe39uUpn21Yrg==
+X-Google-Smtp-Source: APXvYqxODMOaWdUOfaqCWz58eCyX2XpNVazF2y31NY989nA8wv08oSs0Wv5q/o/p1dAhx7h45OxnQA==
+X-Received: by 2002:a17:902:6f10:: with SMTP id w16mr2661912plk.143.1566259565283;
+        Mon, 19 Aug 2019 17:06:05 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:35:cf9b:bad:702c])
+        by smtp.gmail.com with ESMTPSA id e129sm6062949pfa.92.2019.08.19.17.06.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 19 Aug 2019 17:06:04 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     jbrunet@baylibre.com, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [RFC 02/11] dt-bindings: power: amlogic, meson-gx-pwrc: Add SM1 bindings
+In-Reply-To: <CAFBinCAT1JaK6ksD9OzCK_wEEWJdaZL2vLzGeCzVVbz9V67btQ@mail.gmail.com>
+References: <20190701104705.18271-1-narmstrong@baylibre.com> <20190701104705.18271-3-narmstrong@baylibre.com> <CAFBinCAT1JaK6ksD9OzCK_wEEWJdaZL2vLzGeCzVVbz9V67btQ@mail.gmail.com>
+Date:   Mon, 19 Aug 2019 17:05:56 -0700
+Message-ID: <7h1rxgvgyj.fsf@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190819092409.GM7777@dread.disaster.area>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566259666; bh=LvsaO/W/E/mixOshAJzHMebgelNBff1xUMLnLN/pLvo=;
-        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
-         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
-         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=NsArZvwEDvm66ilI2A1eoZO1p7yAFDlWQdBa+cdoJUp6xnObqdh93g35BKg+RAtqq
-         5uv3Rpv0MuFMd/RYZ+O+Jeptq6JJ6o3taZk4nS4LtTZnX4hTh9GqjKQbTdHTwW9HVp
-         BL9NB7wfaZ5V4qvIsbaf4YFIY9zcb6TByHfWZ9IgOXgD8Wbil7W1m8ED+j7+rcnkQl
-         R38dD9UnwVcboo7pgRnIY03uxeSGgS/jha4G1NHtzdfKimjXq5O1uAc177Y0Z1cbBj
-         hv8AgOnUWOj++DPbwNeuv9z8Ol83AEAbe60Oaxg1fbVgjXs2MuIf4ZQL7pw0cVuDcY
-         izLC9uCreFx8A==
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/19/19 2:24 AM, Dave Chinner wrote:
-> On Mon, Aug 19, 2019 at 08:34:12AM +0200, Jan Kara wrote:
->> On Sat 17-08-19 12:26:03, Dave Chinner wrote:
->>> On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
->>>> On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
->>>>> On Wed 14-08-19 11:08:49, Ira Weiny wrote:
->>>>>> On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
-...
-> The last close is an interesting case because the __fput() call
-> actually runs from task_work() context, not where the last reference
-> is actually dropped. So it already has certain specific interactions
-> with signals and task exit processing via task_add_work() and
-> task_work_run().
-> 
-> task_add_work() calls set_notify_resume(task), so if nothing else
-> triggers when returning to userspace we run this path:
-> 
-> exit_to_usermode_loop()
->    tracehook_notify_resume()
->      task_work_run()
->        __fput()
-> 	locks_remove_file()
-> 	  locks_remove_lease()
-> 	    ....
-> 
-> It's worth noting that locks_remove_lease() does a
-> percpu_down_read() which means we can already block in this context
-> removing leases....
-> 
-> If there is a signal pending, the task work is run this way (before
-> the above notify path):
-> 
-> exit_to_usermode_loop()
->    do_signal()
->      get_signal()
->        task_work_run()
->          __fput()
-> 
-> We can detect this case via signal_pending() and even SIGKILL via
-> fatal_signal_pending(), and so we can decide not to block based on
-> the fact the process is about to be reaped and so the lease largely
-> doesn't matter anymore. I'd argue that it is close and we can't
-> easily back out, so we'd only break the block on a fatal signal....
-> 
-> And then, of course, is the call path through do_exit(), which has
-> the PF_EXITING task flag set:
-> 
-> do_exit()
->    exit_task_work()
->      task_work_run()
->        __fput()
-> 
-> and so it's easy to avoid blocking in this case, too.
+Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
 
-Any thoughts about sockets? I'm looking at net/xdp/xdp_umem.c which pins
-memory with FOLL_LONGTERM, and wondering how to make that work here.
+> Hi Neil,
+>
+> On Mon, Jul 1, 2019 at 12:48 PM Neil Armstrong <narmstrong@baylibre.com> wrote:
+> [...]
+>> +General Purpose Power Controller
+>> +--------------------------------
+>>
+>> +The Amlogic SM1 SoCs embeds a General Purpose Power Controller used
+>> +to control the power domain for, at least, the USB PHYs and PCIe
+>> +peripherals.
+> AFAIK each binding document should only describe one IP block.
+> this one seems to be new / different
+>
+> should it get it's own file?
+> also should it be a .yaml binding?
 
-These are close to files, in how they're handled, but just different
-enough that it's not clear to me how to make work with this system.
+I don't think this is a new IP block.  Comparing across the various
+(64-bit) SoCs, it seems to be very similar across all SoCs.
 
+>> +
+>> +Device Tree Bindings:
+>> +---------------------
+>> +
+>> +Required properties:
+>> +- compatible: should be one of the following :
+>> +       - "amlogic,meson-sm1-pwrc" for the Meson SM1 SoCs
+>> +- #power-domain-cells: should be 0
+>> +- amlogic,hhi-sysctrl: phandle to the HHI sysctrl node
+>> +
+>> +Parent node should have the following properties :
+>> +- compatible: "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd"
+>> +- reg: base address and size of the AO system control register space.
+>> +
+>> +
+>> +Example:
+>> +-------
+>> +
+>> +ao_sysctrl: sys-ctrl@0 {
+>> +       compatible = "amlogic,meson-gx-ao-sysctrl", "syscon", "simple-mfd";
+>> +       reg =  <0x0 0x0 0x0 0x100>;
+>> +
+>> +       pwrc: power-controller {
+>> +               compatible = "amlogic,meson-sm1-pwrc";
+>> +               #power-domain-cells = <1>;
+>> +               amlogic,hhi-sysctrl = <&hhi>;
+>> +       };
+>> +};
+>
+> I'm not sure that we want to mix HHI and AO power domains in one driver again
 
-> 
-> So that leaves just the normal close() syscall exit case, where the
-> application has full control of the order in which resources are
-> released. We've already established that we can block in this
-> context.  Blocking in an interruptible state will allow fatal signal
-> delivery to wake us, and then we fall into the
-> fatal_signal_pending() case if we get a SIGKILL while blocking.
-> 
-> Hence I think blocking in this case would be OK - it indicates an
-> application bug (releasing a lease before releasing the resources)
-> but leaves SIGKILL available to administrators to resolve situations
-> involving buggy applications.
-> 
-> This requires applications to follow the rules: any process
-> that pins physical resources must have an active reference to a
-> layout lease, either via a duplicated fd or it's own private lease.
-> If the app doesn't play by the rules, it hangs in close() until it
-> is killed.
+We're not mixing here. These are all EE domains.  They just have some
+control registers in the AO memory region.
 
-+1 for these rules, assuming that we can make them work. They are
-easy to explain and intuitive.
+> back in March I asked a few questions about modelling the power
+> domains and Kevin explained that we can implement them hierarchical:
+> [0]
+> unfortunately I didn't have the time to work on this - however, now
+> that we implement a new driver: should we follow this hierarchical
+> approach?
 
+The more I look at this, I don't think we have a commpelling need to
+model them hierarchically.  The main reason being is that of the 3
+top-level domains I listed[0], we can only managing the EE domains in the
+kernel.  It doesn't make sense to model/manage AO domains because, well,
+they are always-on (AO).  The CPU domains are managed my the PSCI
+firmware, and we don't/won't have any control over that.
 
-thanks,
--- 
-John Hubbard
-NVIDIA
+For that reason, I think it makes the most sense to have a generic
+driver that handles all the EE domains.
+
+IMO, the SM1 driver that Neil wrote in patch 4 of this series is 80%
+there.  If we generalize that little more, it can be quite easily used
+for all the EE domains.
+
+Kevin
+
+[0] http://lists.infradead.org/pipermail/linux-amlogic/2019-March/010512.html
+
