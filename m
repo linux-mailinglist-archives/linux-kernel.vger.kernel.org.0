@@ -2,221 +2,117 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18D9896100
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02095960F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:44:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbfHTNof (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:44:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38684 "EHLO mail.kernel.org"
+        id S1730604AbfHTNoY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:44:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730770AbfHTNnF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:43:05 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+        id S1730799AbfHTNnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:43:11 -0400
+Received: from sasha-vm.mshome.net (unknown [12.236.144.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 813CC22DD6;
-        Tue, 20 Aug 2019 13:43:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47E8422DA9;
+        Tue, 20 Aug 2019 13:43:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566308583;
-        bh=uOe278BjeSCVm0Yvei9g6yy3Td/QVwv+YDoMYSyE7WI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lSKbMSq0zejsWFJB1YSbXkWt+wsyx6hcibSOB+QrXjLDEZe3NefjzgvbnvtzXva5i
-         r+3h/HqS1Z1FhE29o+ORgaO9bsvYJH0IlyWcY+v6KOmbra+KbIzZHeOf4nZTD7ctNA
-         /Ed6ObdmQCBjAU4kWIwbyzEVCPsUUQpDMT81DJMU=
-Received: by mail-qk1-f172.google.com with SMTP id w18so4502334qki.0;
-        Tue, 20 Aug 2019 06:43:03 -0700 (PDT)
-X-Gm-Message-State: APjAAAWPwI11cDuSS5vWVLFLUfrKFeWFZ9zWwQdzEgg40HvCX8lRCwzC
-        CeSs0oyYadUAZzZcYsD1yuJ+Sj2qHiqU8EXBBA==
-X-Google-Smtp-Source: APXvYqxwnJs7OpFe00kgqK1JKcgVrR8tZM4OnOWTaEasRUoo9hbARCNCIplqORq2OIAVk3yZ6vHkZYPL4FHNsyPWpMQ=
-X-Received: by 2002:a37:6944:: with SMTP id e65mr23792510qkc.119.1566308582630;
- Tue, 20 Aug 2019 06:43:02 -0700 (PDT)
+        s=default; t=1566308590;
+        bh=TEL9wBgPW75cphadyHMqEYnF7SZMdviPo/Asrg6Z0v4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=y07fiW++il7IORTY6E4MyXIGJ1PIEJZQISr1h6dvJb6ZydQc26M+VsZ51Dwfrg9K+
+         vTC96Zmk/jM+sjS4/4V/Y7EiPnMzpXWypkRgQR03aG/NnhlvwkoBZUyEcpDktoBnxg
+         YJr6Sn0AmdX51pSPpx2PRcD8dRzClqwxTNQG6pMs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Y.C. Chen" <yc_chen@aspeedtech.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Dave Airlie <airlied@redhat.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 10/12] drm/ast: Fixed reboot test may cause system hanged
+Date:   Tue, 20 Aug 2019 09:42:51 -0400
+Message-Id: <20190820134253.11562-10-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190820134253.11562-1-sashal@kernel.org>
+References: <20190820134253.11562-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <cover.1566208109.git.eswara.kota@linux.intel.com> <5e6ee1245ee53a7726103a8de7c11a37ad99fbd6.1566208109.git.eswara.kota@linux.intel.com>
-In-Reply-To: <5e6ee1245ee53a7726103a8de7c11a37ad99fbd6.1566208109.git.eswara.kota@linux.intel.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 20 Aug 2019 08:42:51 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+pvKHtw-ARRbNW-xReQ2MVNan8z3tfJbx4taGDCvEr5g@mail.gmail.com>
-Message-ID: <CAL_Jsq+pvKHtw-ARRbNW-xReQ2MVNan8z3tfJbx4taGDCvEr5g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: PCI: intel: Add YAML schemas for the
- PCIe RC controller
-To:     Dilip Kota <eswara.kota@linux.intel.com>
-Cc:     Jingoo Han <jingoohan1@gmail.com>,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>,
-        linux-pci@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@intel.com>,
-        cheol.yong.kim@intel.com, chuanhua.lei@linux.intel.com,
-        qi-ming.wu@intel.com
-Content-Type: text/plain; charset="UTF-8"
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 4:40 AM Dilip Kota <eswara.kota@linux.intel.com> wrote:
->
-> The Intel PCIe RC controller is Synopsys Designware
-> based PCIe core. Add YAML schemas for PCIe in RC mode
-> present in Intel Universal Gateway soc.
+From: "Y.C. Chen" <yc_chen@aspeedtech.com>
 
-Run 'make dt_binding_check' and fix all the warnings.
+[ Upstream commit 05b439711f6ff8700e8660f97a1179650778b9cb ]
 
->
-> Signed-off-by: Dilip Kota <eswara.kota@linux.intel.com>
-> ---
->  .../devicetree/bindings/pci/intel-pcie.yaml        | 133 +++++++++++++++++++++
->  1 file changed, 133 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pci/intel-pcie.yaml
->
-> diff --git a/Documentation/devicetree/bindings/pci/intel-pcie.yaml b/Documentation/devicetree/bindings/pci/intel-pcie.yaml
-> new file mode 100644
-> index 000000000000..80caaaba5e2c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pci/intel-pcie.yaml
-> @@ -0,0 +1,133 @@
-> +# SPDX-License-Identifier: GPL-2.0
+There is another thread still access standard VGA I/O while loading drm driver.
+Disable standard VGA I/O decode to avoid this issue.
 
-(GPL-2.0-only OR BSD-2-Clause) is preferred for new bindings.
+Signed-off-by: Y.C. Chen <yc_chen@aspeedtech.com>
+Reviewed-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Signed-off-by: Dave Airlie <airlied@redhat.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/1523410059-18415-1-git-send-email-yc_chen@aspeedtech.com
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/ast/ast_main.c | 5 ++++-
+ drivers/gpu/drm/ast/ast_mode.c | 2 +-
+ drivers/gpu/drm/ast/ast_post.c | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pci/intel-pcie.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Intel AXI bus based PCI express root complex
-> +
-> +maintainers:
-> +  - Dilip Kota <eswara.kota@linux.intel.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: intel,lgm-pcie
-> +
-> +  device_type:
-> +    const: pci
-> +
-> +  "#address-cells":
-> +    const: 3
-> +
-> +  "#size-cells":
-> +    const: 2
-> +
-> +  reg:
-> +    items:
-> +      - description: Controller control and status registers.
-> +      - description: PCIe configuration registers.
-> +      - description: Controller application registers.
-> +
-> +  reg-names:
-> +    items:
-> +      - const: dbi
-> +      - const: config
-> +      - const: app
-> +
-> +  ranges:
-> +    description: Ranges for the PCI memory and I/O regions.
-> +
-> +  resets:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: PCIe registers interface clock.
-> +
-> +  phys:
-> +    maxItems: 1
-> +
-> +  phy-names:
-> +    const: phy
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  num-lanes:
-> +    description: Number of lanes to use for this port.
-> +
-> +  linux,pci-domain:
-> +    description: PCI domain ID.
-> +
-> +  interrupts:
-> +    description: PCIe core integrated miscellaneous interrupt.
-> +
-> +  interrupt-map-mask:
-> +    description: Standard PCI IRQ mapping properties.
-> +
-> +  interrupt-map:
-> +    description: Standard PCI IRQ mapping properties.
-> +
-> +  max-link-speed:
-> +    description: Specify PCI Gen for link capability.
-> +
-> +  bus-range:
-> +    description: Range of bus numbers associated with this controller.
-> +
-> +  intel,rst-interval:
+diff --git a/drivers/gpu/drm/ast/ast_main.c b/drivers/gpu/drm/ast/ast_main.c
+index 373700c05a00f..224fa1ef87ff9 100644
+--- a/drivers/gpu/drm/ast/ast_main.c
++++ b/drivers/gpu/drm/ast/ast_main.c
+@@ -131,8 +131,8 @@ static int ast_detect_chip(struct drm_device *dev, bool *need_post)
+ 
+ 
+ 	/* Enable extended register access */
+-	ast_enable_mmio(dev);
+ 	ast_open_key(ast);
++	ast_enable_mmio(dev);
+ 
+ 	/* Find out whether P2A works or whether to use device-tree */
+ 	ast_detect_config_mode(dev, &scu_rev);
+@@ -576,6 +576,9 @@ void ast_driver_unload(struct drm_device *dev)
+ {
+ 	struct ast_private *ast = dev->dev_private;
+ 
++	/* enable standard VGA decode */
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x04);
++
+ 	ast_release_firmware(dev);
+ 	kfree(ast->dp501_fw_addr);
+ 	ast_mode_fini(dev);
+diff --git a/drivers/gpu/drm/ast/ast_mode.c b/drivers/gpu/drm/ast/ast_mode.c
+index 343867b182dd8..a09fafa270822 100644
+--- a/drivers/gpu/drm/ast/ast_mode.c
++++ b/drivers/gpu/drm/ast/ast_mode.c
+@@ -600,7 +600,7 @@ static int ast_crtc_mode_set(struct drm_crtc *crtc,
+ 		return -EINVAL;
+ 	ast_open_key(ast);
+ 
+-	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
+ 
+ 	ast_set_std_reg(crtc, adjusted_mode, &vbios_mode);
+ 	ast_set_crtc_reg(crtc, adjusted_mode, &vbios_mode);
+diff --git a/drivers/gpu/drm/ast/ast_post.c b/drivers/gpu/drm/ast/ast_post.c
+index f7d421359d564..c1d1ac51d1c20 100644
+--- a/drivers/gpu/drm/ast/ast_post.c
++++ b/drivers/gpu/drm/ast/ast_post.c
+@@ -46,7 +46,7 @@ void ast_enable_mmio(struct drm_device *dev)
+ {
+ 	struct ast_private *ast = dev->dev_private;
+ 
+-	ast_set_index_reg_mask(ast, AST_IO_CRTC_PORT, 0xa1, 0xff, 0x04);
++	ast_set_index_reg(ast, AST_IO_CRTC_PORT, 0xa1, 0x06);
+ }
+ 
+ 
+-- 
+2.20.1
 
-Use 'reset-assert-us'
-
-> +    description: |
-> +      Device reset interval in ms. Some devices need an interval upto 500ms.
-> +      By default it is 100ms.
-> +
-> +required:
-> +  - compatible
-> +  - device_type
-> +  - reg
-> +  - reg-names
-> +  - ranges
-> +  - resets
-> +  - clocks
-> +  - phys
-> +  - phy-names
-> +  - reset-gpios
-> +  - num-lanes
-> +  - linux,pci-domain
-> +  - interrupts
-> +  - interrupt-map
-> +  - interrupt-map-mask
-> +
-> +examples:
-> +  - |
-> +    pcie10:pcie@d0e00000 {
-> +      compatible = "intel,lgm-pcie";
-> +      device_type = "pci";
-> +      #address-cells = <3>;
-> +      #size-cells = <2>;
-> +      reg = <
-> +            0xd0e00000 0x1000
-> +            0xd2000000 0x800000
-> +            0xd0a41000 0x1000
-> +            >;
-> +      reg-names = "dbi", "config", "app";
-> +      linux,pci-domain = <0>;
-> +      max-link-speed = <4>;
-> +      bus-range = <0x00 0x08>;
-> +      interrupt-parent = <&ioapic1>;
-> +      interrupts = <67 1>;
-> +      interrupt-map-mask = <0 0 0 0x7>;
-> +      interrupt-map = <0 0 0 1 &ioapic1 27 1>,
-> +                      <0 0 0 2 &ioapic1 28 1>,
-> +                      <0 0 0 3 &ioapic1 29 1>,
-> +                      <0 0 0 4 &ioapic1 30 1>;
-> +      ranges = <0x02000000 0 0xd4000000 0xd4000000 0 0x04000000>;
-> +      resets = <&rcu0 0x50 0>;
-> +      clocks = <&cgu0 LGM_GCLK_PCIE10>;
-> +      phys = <&cb0phy0>;
-> +      phy-names = "phy";
-> +    };
-> +
-> +    &pcie10 {
-
-Don't show this soc/board split in examples. Just combine to one node.
-
-> +      status = "okay";
-> +      intel,rst-interval = <100>;
-> +      reset-gpios = <&gpio0 3 GPIO_ACTIVE_LOW>;
-> +      num-lanes = <2>;
-> +    };
-> --
-> 2.11.0
->
