@@ -2,61 +2,60 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2021196CD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5E9996CD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 01:11:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726519AbfHTXGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1726541AbfHTXGs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 20 Aug 2019 19:06:48 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32848 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbfHTXGo (ORCPT
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:37886 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726470AbfHTXGp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 19:06:44 -0400
-Received: by mail-pg1-f195.google.com with SMTP id n190so169923pgn.0
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:43 -0700 (PDT)
+        Tue, 20 Aug 2019 19:06:45 -0400
+Received: by mail-pf1-f195.google.com with SMTP id 129so95155pfa.4
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 16:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=IHOpC8CLMCy6vYTMkD3TApEoOIR8Z3RyhkmjOSjWV48=;
-        b=Lf3X1kiV6Q+88ALsWCTXpUPKE3BXimIMLls1hjiLvA+69eGl5zRh7EytASAO1J72oH
-         Opd16Ho9fTavo08W9QtWEH0ivz4UelAAjsLR1AWdxgi0arlaoSOnE216Hm2g67F/0+N3
-         umGrniElDd5TBOo82p/a1vzDMo4xb9eY15B94Esn6GLXZwTNlwBCnU0+m0W0DMzkcs1N
-         h+W16udncU+Jx955N0uLwOwNJ83OLYC/1ssJL4qLKuJI+2WrclJIlr9qiLA+QvwK8Hbk
-         gRrePxJrP6z6mHRedFi5bhbzujcM+2b7X8j8q0VzcJBskcODPiwvx06rQ6n/IOJoR5tw
-         Bcig==
+        bh=UWiGXBfNJ86mDn5vZAb7KTs6jR4hl8/Ldv9PC03GxK8=;
+        b=im5eLTodcpvNyYnvYfKclfPWmk5IUJ/g/C/c2m9NEVUHIuNQ2eHed4taHOze1kwaBw
+         /k5jCxwp3/XS53RsLk0B+/s9PsXzJe0e8yPuOysMN2KjnMRvjRhKfGLDX1VQiUZAlEI7
+         TRJtpAwNUF1f94QjOU7ib737yMsqAJcLaC1kALQ/6RNW7ZZK6ezT0QikKFBhc9qzo0Yz
+         LXEPg0he5RI7DAmFAkAzsMDnAU7mSbxjUctQ+S5tiZsx7tVs+LKORaMe0PTposQ+jkHI
+         /HkmmQMM5WoBkTZMu906bIuDQjRD24C2/Rv2zLAM8RO1NAt832o5zjIL6Nk3y9TIk0fd
+         kfwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=IHOpC8CLMCy6vYTMkD3TApEoOIR8Z3RyhkmjOSjWV48=;
-        b=mD7to6mRprf587+dCKgJVGse/NhF+LG3qrLpIeFAM82W9mKtyfqqlFy0s+pT8h9XIt
-         uTVCzyNKcapdy8cb+EZe+TTUVhG5SVm+rrqogsF4RYboSiuFQRYPlMeTq6I9H8F4ubyY
-         eUvX+JzLGMZ18iHVkcuuPgvF6tee6ZdIwNyGGO8MKdHMRz3WotwlmeIt/WJlZbUr4OYk
-         w36N3Xb5Z4LMkMnUiq72Ws3wFdCdSNV+MNTJqH5WCPf1kpqe2RLW64CtPJP0VYRnHypc
-         4tjger+/iWiZon228v/RfDHkNaJGlA3GsBzxBf9YLlu65b+3PFvfIrfpIXUNSIOa4JgH
-         dTMA==
-X-Gm-Message-State: APjAAAVr4/J1sKumFNF5F9EUBkzZGyPSEm3tmPOEhoDGGis9HOD/ouoJ
-        yAAlumHwOWvJvE5gmTr0L7zkWK/9QGU=
-X-Google-Smtp-Source: APXvYqwFyS1sAlRP8XG80pzzyhQTF9viVgJhczs8w38ldtloeV/kE7MMCAlmSY0+sBENvGQCc7gM0A==
-X-Received: by 2002:a17:90a:ae15:: with SMTP id t21mr2369044pjq.50.1566342402912;
-        Tue, 20 Aug 2019 16:06:42 -0700 (PDT)
+        bh=UWiGXBfNJ86mDn5vZAb7KTs6jR4hl8/Ldv9PC03GxK8=;
+        b=UXtgpz8ljCgVBJdlcnfi5i7uFi+t+P8JK7ur778FoPjSTg5+ZdRGiLM6CROv+mYH8o
+         YyhNZWA5ZqxaUDIigGG/HBOhKrHpMPoTwZRDk6UtHVd9MeUdaplnjanZRpQe/3vh5UUe
+         2vi6IvL9YgvEXKNpmaRSLNWfhUoOO3DYU8zB4aZNtBlbeIeLEI9hK5bI/bDvB0gbAHbq
+         UaU++wg9n5TrUw3McRm5lpH9Pd95b6GTMqsUw3ym4BEy/DEs79eHwkeYZw0NvFzgw2Ie
+         Docs9vDkXPmWs/Bg5H0GWnH4d59dvHyCBi3XIZKpC2Y9fl38gM6Aik4wwa2zRlYThalm
+         cmmQ==
+X-Gm-Message-State: APjAAAVgRX7a6S7vbbPFCUNOBFRyMGHOsGkstZ2u6chfA3aEmtHZGgS7
+        ebnE+EXecXCYqchyNROz/cQVDtA3Q0w=
+X-Google-Smtp-Source: APXvYqyc1r8mZYOYYKLNm/N/REvq5aLrho9hXyYPn+B42LLFv7FF3gqKsZoKqWWkrt98E7/Z/+qnqw==
+X-Received: by 2002:a17:90a:8d86:: with SMTP id d6mr2371628pjo.94.1566342404395;
+        Tue, 20 Aug 2019 16:06:44 -0700 (PDT)
 Received: from localhost.localdomain ([2601:1c2:680:1319:692:26ff:feda:3a81])
-        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.41
+        by smtp.gmail.com with ESMTPSA id q4sm27564747pff.183.2019.08.20.16.06.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 16:06:42 -0700 (PDT)
+        Tue, 20 Aug 2019 16:06:43 -0700 (PDT)
 From:   John Stultz <john.stultz@linaro.org>
 To:     lkml <linux-kernel@vger.kernel.org>
-Cc:     Xu YiPing <xuyiping@hisilicon.com>,
+Cc:     John Stultz <john.stultz@linaro.org>,
         Rongrong Zou <zourongrong@gmail.com>,
         Xinliang Liu <z.liuxinliang@hisilicon.com>,
         David Airlie <airlied@linux.ie>,
         Daniel Vetter <daniel@ffwll.ch>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        John Stultz <john.stultz@linaro.org>
-Subject: [PATCH v5 09/25] drm: kirin: Move request irq handle in ade hw ctx alloc
-Date:   Tue, 20 Aug 2019 23:06:10 +0000
-Message-Id: <20190820230626.23253-10-john.stultz@linaro.org>
+        Sam Ravnborg <sam@ravnborg.org>
+Subject: [PATCH v5 10/25] drm: kirin: Move workqueue to ade_hw_ctx structure
+Date:   Tue, 20 Aug 2019 23:06:11 +0000
+Message-Id: <20190820230626.23253-11-john.stultz@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190820230626.23253-1-john.stultz@linaro.org>
 References: <20190820230626.23253-1-john.stultz@linaro.org>
@@ -65,16 +64,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xu YiPing <xuyiping@hisilicon.com>
-
-As part of refactoring the kirin driver to better support
-different hardware revisions, this patch modifies the
-initialization routines so the devm_request_irq() function
-is called as part of the allocation function.
-
-This will be needed in the future when we will have different
-allocation functions to allocate hardware specific hw_ctx
-structures, which will setup the vblank irq differently.
+The workqueue used to reset the display when we hit an LDI
+underflow error is ADE specific, so since this patch series
+works to make the kirin_crtc structure more generic, move the
+workqueue to the ade_hw_ctx structure instead.
 
 Cc: Rongrong Zou <zourongrong@gmail.com>
 Cc: Xinliang Liu <z.liuxinliang@hisilicon.com>
@@ -84,93 +77,73 @@ Cc: dri-devel <dri-devel@lists.freedesktop.org>
 Cc: Sam Ravnborg <sam@ravnborg.org>
 Acked-by: Xinliang Liu <z.liuxinliang@hisilicon.com>
 Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
-Signed-off-by: Xu YiPing <xuyiping@hisilicon.com>
-[jstultz: reworded commit message]
 Signed-off-by: John Stultz <john.stultz@linaro.org>
 ---
-v5: checkpatch --strict whitespace fixups noticed by Sam
----
- .../gpu/drm/hisilicon/kirin/kirin_drm_ade.c   | 29 +++++++++++--------
- 1 file changed, 17 insertions(+), 12 deletions(-)
+ drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-index ecb507985fea..d0a7c1d0adbe 100644
+index d0a7c1d0adbe..da9f477679a3 100644
 --- a/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
 +++ b/drivers/gpu/drm/hisilicon/kirin/kirin_drm_ade.c
-@@ -54,6 +54,8 @@ struct ade_hw_ctx {
+@@ -52,6 +52,7 @@ struct ade_hw_ctx {
+ 	struct clk *media_noc_clk;
+ 	struct clk *ade_pix_clk;
  	struct reset_control *reset;
++	struct work_struct display_reset_wq;
  	bool power_on;
  	int irq;
-+
-+	struct drm_crtc *crtc;
+ 
+@@ -61,7 +62,6 @@ struct ade_hw_ctx {
+ struct kirin_crtc {
+ 	struct drm_crtc base;
+ 	void *hw_ctx;
+-	struct work_struct display_reset_wq;
+ 	bool enable;
  };
  
- struct kirin_crtc {
-@@ -358,9 +360,9 @@ static void drm_underflow_wq(struct work_struct *work)
+@@ -349,9 +349,9 @@ static void ade_crtc_disable_vblank(struct drm_crtc *crtc)
  
- static irqreturn_t ade_irq_handler(int irq, void *data)
+ static void drm_underflow_wq(struct work_struct *work)
  {
--	struct kirin_crtc *kcrtc = data;
--	struct ade_hw_ctx *ctx = kcrtc->hw_ctx;
--	struct drm_crtc *crtc = &kcrtc->base;
-+	struct ade_hw_ctx *ctx = data;
-+	struct drm_crtc *crtc = ctx->crtc;
-+	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
+-	struct kirin_crtc *acrtc = container_of(work, struct kirin_crtc,
++	struct ade_hw_ctx *ctx = container_of(work, struct ade_hw_ctx,
+ 					      display_reset_wq);
+-	struct drm_device *drm_dev = (&acrtc->base)->dev;
++	struct drm_device *drm_dev = ctx->crtc->dev;
+ 	struct drm_atomic_state *state;
+ 
+ 	state = drm_atomic_helper_suspend(drm_dev);
+@@ -362,7 +362,6 @@ static irqreturn_t ade_irq_handler(int irq, void *data)
+ {
+ 	struct ade_hw_ctx *ctx = data;
+ 	struct drm_crtc *crtc = ctx->crtc;
+-	struct kirin_crtc *kcrtc = to_kirin_crtc(crtc);
  	void __iomem *base = ctx->base;
  	u32 status;
  
-@@ -951,12 +953,14 @@ static int ade_plane_init(struct drm_device *dev, struct kirin_plane *kplane,
- 	return 0;
- }
- 
--static void *ade_hw_ctx_alloc(struct platform_device *pdev)
-+static void *ade_hw_ctx_alloc(struct platform_device *pdev,
-+			      struct drm_crtc *crtc)
- {
- 	struct resource *res;
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = pdev->dev.of_node;
- 	struct ade_hw_ctx *ctx = NULL;
-+	int ret;
- 
- 	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
- 	if (!ctx) {
-@@ -1006,6 +1010,14 @@ static void *ade_hw_ctx_alloc(struct platform_device *pdev)
- 		return ERR_PTR(-ENODEV);
+@@ -379,7 +378,7 @@ static irqreturn_t ade_irq_handler(int irq, void *data)
+ 		ade_update_bits(base + LDI_INT_CLR, UNDERFLOW_INT_EN_OFST,
+ 				MASK(1), 1);
+ 		DRM_ERROR("LDI underflow!");
+-		schedule_work(&kcrtc->display_reset_wq);
++		schedule_work(&ctx->display_reset_wq);
  	}
  
-+	/* vblank irq init */
-+	ret = devm_request_irq(dev, ctx->irq, ade_irq_handler,
-+			       IRQF_SHARED, dev->driver->name, ctx);
-+	if (ret)
-+		return ERR_PTR(-EIO);
-+
-+	ctx->crtc = crtc;
-+
+ 	return IRQ_HANDLED;
+@@ -1016,6 +1015,7 @@ static void *ade_hw_ctx_alloc(struct platform_device *pdev,
+ 	if (ret)
+ 		return ERR_PTR(-EIO);
+ 
++	INIT_WORK(&ctx->display_reset_wq, drm_underflow_wq);
+ 	ctx->crtc = crtc;
+ 
  	return ctx;
- }
- 
-@@ -1027,7 +1039,7 @@ static int ade_drm_init(struct platform_device *pdev)
- 	}
- 	platform_set_drvdata(pdev, ade);
- 
--	ctx = ade_hw_ctx_alloc(pdev);
-+	ctx = ade_hw_ctx_alloc(pdev, &ade->crtc.base);
- 	if (IS_ERR(ctx)) {
- 		DRM_ERROR("failed to initialize kirin_priv hw ctx\n");
- 		return -EINVAL;
-@@ -1059,15 +1071,8 @@ static int ade_drm_init(struct platform_device *pdev)
+@@ -1071,8 +1071,6 @@ static int ade_drm_init(struct platform_device *pdev)
  	if (ret)
  		return ret;
  
--	/* vblank irq init */
--	ret = devm_request_irq(dev->dev, ctx->irq, ade_irq_handler,
--			       IRQF_SHARED, dev->driver->name, kcrtc);
--
- 	INIT_WORK(&kcrtc->display_reset_wq, drm_underflow_wq);
- 
--	if (ret)
--		return ret;
+-	INIT_WORK(&kcrtc->display_reset_wq, drm_underflow_wq);
 -
  	return 0;
  }
