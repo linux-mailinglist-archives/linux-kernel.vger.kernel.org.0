@@ -2,112 +2,353 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 448CF96616
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 327A6965F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730401AbfHTQRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:17:43 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58739 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725971AbfHTQRm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:17:42 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 09:17:40 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
-   d="scan'208";a="169130943"
-Received: from yyu32-desk1.sc.intel.com ([10.144.153.205])
-  by orsmga007.jf.intel.com with ESMTP; 20 Aug 2019 09:17:39 -0700
-Message-ID: <fb058c3d56bb070706aa5f8502b4d8f0da265b74.camel@intel.com>
-Subject: Re: [PATCH v8 18/27] mm: Introduce do_mmap_locked()
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        Dave Martin <Dave.Martin@arm.com>
-Date:   Tue, 20 Aug 2019 09:08:34 -0700
-In-Reply-To: <20190820010200.GI1916@linux.intel.com>
-References: <20190813205225.12032-1-yu-cheng.yu@intel.com>
-         <20190813205225.12032-19-yu-cheng.yu@intel.com>
-         <20190820010200.GI1916@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1-2 
-Mime-Version: 1.0
+        id S1730096AbfHTQLH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:11:07 -0400
+Received: from out30-57.freemail.mail.aliyun.com ([115.124.30.57]:55581 "EHLO
+        out30-57.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728770AbfHTQLH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 12:11:07 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R611e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Ta-zIHW_1566317443;
+Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Ta-zIHW_1566317443)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Aug 2019 00:10:47 +0800
+Subject: Re: [v5 PATCH 4/4] mm: thp: make deferred split shrinker memcg aware
+To:     Kirill Tkhai <ktkhai@virtuozzo.com>,
+        kirill.shutemov@linux.intel.com, hannes@cmpxchg.org,
+        mhocko@suse.com, hughd@google.com, shakeelb@google.com,
+        rientjes@google.com, cai@lca.pw, akpm@linux-foundation.org
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <1565144277-36240-1-git-send-email-yang.shi@linux.alibaba.com>
+ <1565144277-36240-5-git-send-email-yang.shi@linux.alibaba.com>
+ <c60410b0-96ec-a663-6887-4fccd648a4d7@virtuozzo.com>
+From:   Yang Shi <yang.shi@linux.alibaba.com>
+Message-ID: <17b99fc9-552f-56ae-15f1-ba290f49b492@linux.alibaba.com>
+Date:   Tue, 20 Aug 2019 09:10:41 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <c60410b0-96ec-a663-6887-4fccd648a4d7@virtuozzo.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-08-19 at 18:02 -0700, Sean Christopherson wrote:
-> On Tue, Aug 13, 2019 at 01:52:16PM -0700, Yu-cheng Yu wrote:
-> > There are a few places that need do_mmap() with mm->mmap_sem held.
-> > Create an in-line function for that.
-> > 
-> > Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> > ---
-> >  include/linux/mm.h | 18 ++++++++++++++++++
-> >  1 file changed, 18 insertions(+)
-> > 
-> > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > index bc58585014c9..275c385f53c6 100644
-> > --- a/include/linux/mm.h
-> > +++ b/include/linux/mm.h
-> > @@ -2394,6 +2394,24 @@ static inline void mm_populate(unsigned long addr,
-> > unsigned long len)
-> >  static inline void mm_populate(unsigned long addr, unsigned long len) {}
-> >  #endif
-> >  
-> > +static inline unsigned long do_mmap_locked(struct file *file,
-> > +	unsigned long addr, unsigned long len, unsigned long prot,
-> > +	unsigned long flags, vm_flags_t vm_flags, struct list_head *uf)
-> > +{
-> > +	struct mm_struct *mm = current->mm;
-> > +	unsigned long populate;
-> > +
-> > +	down_write(&mm->mmap_sem);
-> > +	addr = do_mmap(file, addr, len, prot, flags, vm_flags, 0,
-> > +		       &populate, uf);
-> > +	up_write(&mm->mmap_sem);
-> > +
-> > +	if (populate)
-> > +		mm_populate(addr, populate);
-> > +
-> > +	return addr;
-> > +}
-> 
-> Any reason not to put this in cet.c, as suggested by PeterZ?  All of the
-> calls from CET have identical params except for @len, e.g. you can add
-> 'static unsigned long cet_mmap(unsigned long len)' and bury most of the
-> copy-paste code in there.
-> 
-> https://lkml.kernel.org/r/20190607074707.GD3463@hirez.programming.kicks-ass.ne
-> t
 
-Yes, I will do that.  I thought this would be useful in other places, but
-currently only in mpx.c.
 
-Yu-cheng
+On 8/20/19 4:06 AM, Kirill Tkhai wrote:
+> On 07.08.2019 05:17, Yang Shi wrote:
+>> Currently THP deferred split shrinker is not memcg aware, this may cause
+>> premature OOM with some configuration. For example the below test would
+>> run into premature OOM easily:
+>>
+>> $ cgcreate -g memory:thp
+>> $ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
+>> $ cgexec -g memory:thp transhuge-stress 4000
+>>
+>> transhuge-stress comes from kernel selftest.
+>>
+>> It is easy to hit OOM, but there are still a lot THP on the deferred
+>> split queue, memcg direct reclaim can't touch them since the deferred
+>> split shrinker is not memcg aware.
+>>
+>> Convert deferred split shrinker memcg aware by introducing per memcg
+>> deferred split queue.  The THP should be on either per node or per memcg
+>> deferred split queue if it belongs to a memcg.  When the page is
+>> immigrated to the other memcg, it will be immigrated to the target
+>> memcg's deferred split queue too.
+>>
+>> Reuse the second tail page's deferred_list for per memcg list since the
+>> same THP can't be on multiple deferred split queues.
+>>
+>> Cc: Kirill Tkhai <ktkhai@virtuozzo.com>
+>> Cc: Johannes Weiner <hannes@cmpxchg.org>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+>> Cc: Hugh Dickins <hughd@google.com>
+>> Cc: Shakeel Butt <shakeelb@google.com>
+>> Cc: David Rientjes <rientjes@google.com>
+>> Cc: Qian Cai <cai@lca.pw>
+>> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+>> Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+> Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
+>
+> But, please, see below one small suggestion.
+>
+>> ---
+>>   include/linux/huge_mm.h    |  9 ++++++
+>>   include/linux/memcontrol.h |  4 +++
+>>   include/linux/mm_types.h   |  1 +
+>>   mm/huge_memory.c           | 76 +++++++++++++++++++++++++++++++++++++++-------
+>>   mm/memcontrol.c            | 24 +++++++++++++++
+>>   5 files changed, 103 insertions(+), 11 deletions(-)
+>>
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 45ede62..61c9ffd 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -267,6 +267,15 @@ static inline bool thp_migration_supported(void)
+>>   	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
+>>   }
+>>   
+>> +static inline struct list_head *page_deferred_list(struct page *page)
+>> +{
+>> +	/*
+>> +	 * Global or memcg deferred list in the second tail pages is
+>> +	 * occupied by compound_head.
+>> +	 */
+>> +	return &page[2].deferred_list;
+>> +}
+>> +
+>>   #else /* CONFIG_TRANSPARENT_HUGEPAGE */
+>>   #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
+>>   #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
+>> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+>> index 5771816..cace365 100644
+>> --- a/include/linux/memcontrol.h
+>> +++ b/include/linux/memcontrol.h
+>> @@ -312,6 +312,10 @@ struct mem_cgroup {
+>>   	struct list_head event_list;
+>>   	spinlock_t event_list_lock;
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	struct deferred_split deferred_split_queue;
+>> +#endif
+>> +
+>>   	struct mem_cgroup_per_node *nodeinfo[0];
+>>   	/* WARNING: nodeinfo must be the last member here */
+>>   };
+>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+>> index 3a37a89..156640c 100644
+>> --- a/include/linux/mm_types.h
+>> +++ b/include/linux/mm_types.h
+>> @@ -139,6 +139,7 @@ struct page {
+>>   		struct {	/* Second tail page of compound page */
+>>   			unsigned long _compound_pad_1;	/* compound_head */
+>>   			unsigned long _compound_pad_2;
+>> +			/* For both global and memcg */
+>>   			struct list_head deferred_list;
+>>   		};
+>>   		struct {	/* Page table pages */
+>> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+>> index e0d8e08..c9a596e 100644
+>> --- a/mm/huge_memory.c
+>> +++ b/mm/huge_memory.c
+>> @@ -495,11 +495,25 @@ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
+>>   	return pmd;
+>>   }
+>>   
+>> -static inline struct list_head *page_deferred_list(struct page *page)
+>> +#ifdef CONFIG_MEMCG
+>> +static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+>>   {
+>> -	/* ->lru in the tail pages is occupied by compound_head. */
+>> -	return &page[2].deferred_list;
+>> +	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
+>> +	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
+>> +
+>> +	if (memcg)
+>> +		return &memcg->deferred_split_queue;
+>> +	else
+>> +		return &pgdat->deferred_split_queue;
+>> +}
+>> +#else
+>> +static inline struct deferred_split *get_deferred_split_queue(struct page *page)
+>> +{
+>> +	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
+>> +
+>> +	return &pgdat->deferred_split_queue;
+>>   }
+>> +#endif
+>>   
+>>   void prep_transhuge_page(struct page *page)
+>>   {
+>> @@ -2658,7 +2672,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>>   {
+>>   	struct page *head = compound_head(page);
+>>   	struct pglist_data *pgdata = NODE_DATA(page_to_nid(head));
+>> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>> +	struct deferred_split *ds_queue = get_deferred_split_queue(page);
+>>   	struct anon_vma *anon_vma = NULL;
+>>   	struct address_space *mapping = NULL;
+>>   	int count, mapcount, extra_pins, ret;
+>> @@ -2794,8 +2808,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+>>   
+>>   void free_transhuge_page(struct page *page)
+>>   {
+>> -	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
+>> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>> +	struct deferred_split *ds_queue = get_deferred_split_queue(page);
+>>   	unsigned long flags;
+>>   
+>>   	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>> @@ -2809,17 +2822,37 @@ void free_transhuge_page(struct page *page)
+>>   
+>>   void deferred_split_huge_page(struct page *page)
+>>   {
+>> -	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
+>> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>> +	struct deferred_split *ds_queue = get_deferred_split_queue(page);
+>> +#ifdef CONFIG_MEMCG
+>> +	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
+>> +#endif
+>>   	unsigned long flags;
+>>   
+>>   	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
+>>   
+>> +	/*
+>> +	 * The try_to_unmap() in page reclaim path might reach here too,
+>> +	 * this may cause a race condition to corrupt deferred split queue.
+>> +	 * And, if page reclaim is already handling the same page, it is
+>> +	 * unnecessary to handle it again in shrinker.
+>> +	 *
+>> +	 * Check PageSwapCache to determine if the page is being
+>> +	 * handled by page reclaim since THP swap would add the page into
+>> +	 * swap cache before calling try_to_unmap().
+>> +	 */
+>> +	if (PageSwapCache(page))
+>> +		return;
+>> +
+>>   	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>>   	if (list_empty(page_deferred_list(page))) {
+>>   		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
+>>   		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
+>>   		ds_queue->split_queue_len++;
+>> +#ifdef CONFIG_MEMCG
+>> +		if (memcg)
+>> +			memcg_set_shrinker_bit(memcg, page_to_nid(page),
+>> +					       deferred_split_shrinker.id);
+>> +#endif
+>>   	}
+>>   	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+>>   }
+>> @@ -2827,8 +2860,19 @@ void deferred_split_huge_page(struct page *page)
+>>   static unsigned long deferred_split_count(struct shrinker *shrink,
+>>   		struct shrink_control *sc)
+>>   {
+>> +	struct deferred_split *ds_queue;
+>>   	struct pglist_data *pgdata = NODE_DATA(sc->nid);
+>> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>> +
+>> +#ifdef CONFIG_MEMCG
+>> +	if (!sc->memcg) {
+>> +		ds_queue = &pgdata->deferred_split_queue;
+>> +		return READ_ONCE(ds_queue->split_queue_len);
+>> +	}
+>> +
+>> +	ds_queue = &sc->memcg->deferred_split_queue;
+>> +#else
+>> +	ds_queue = &pgdata->deferred_split_queue;
+>> +#endif
+>>   	return READ_ONCE(ds_queue->split_queue_len);
+>>   }
+> Can we write this a little more compact?
+>
+> 	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>
+> #ifdef CONFIG_MEMCG
+> 	if (sc->memcg)
+> 		ds_queue = &sc->memcg->deferred_split_queue;
+> #endif
+
+Yes, sure.
+
+>
+> Or just introduce a helper (something like get_sc_deferred_split_queue).
+> The same is in .scan method.
+
+A helper sounds fine too, but IMHO I don't see to much benefit since 
+just _count and _scan would call them.
+
+>
+>>   
+>> @@ -2836,12 +2880,21 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>   		struct shrink_control *sc)
+>>   {
+>>   	struct pglist_data *pgdata = NODE_DATA(sc->nid);
+>> -	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+>> +	struct deferred_split *ds_queue;
+>>   	unsigned long flags;
+>>   	LIST_HEAD(list), *pos, *next;
+>>   	struct page *page;
+>>   	int split = 0;
+>>   
+>> +#ifdef CONFIG_MEMCG
+>> +	if (sc->memcg)
+>> +		ds_queue = &sc->memcg->deferred_split_queue;
+>> +	else
+>> +		ds_queue = &pgdata->deferred_split_queue;
+>> +#else
+>> +	ds_queue = &pgdata->deferred_split_queue;
+>> +#endif
+>> +
+>>   	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+>>   	/* Take pin on all head pages to avoid freeing them under us */
+>>   	list_for_each_safe(pos, next, &ds_queue->split_queue) {
+>> @@ -2888,7 +2941,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>>   	.count_objects = deferred_split_count,
+>>   	.scan_objects = deferred_split_scan,
+>>   	.seeks = DEFAULT_SEEKS,
+>> -	.flags = SHRINKER_NUMA_AWARE,
+>> +	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE |
+>> +		 SHRINKER_NONSLAB,
+>>   };
+>>   
+>>   #ifdef CONFIG_DEBUG_FS
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>> index d90ded1..da4a411 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>> @@ -4698,6 +4698,11 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
+>>   #ifdef CONFIG_CGROUP_WRITEBACK
+>>   	INIT_LIST_HEAD(&memcg->cgwb_list);
+>>   #endif
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
+>> +	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
+>> +	memcg->deferred_split_queue.split_queue_len = 0;
+>> +#endif
+>>   	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
+>>   	return memcg;
+>>   fail:
+>> @@ -5071,6 +5076,14 @@ static int mem_cgroup_move_account(struct page *page,
+>>   		__mod_memcg_state(to, NR_WRITEBACK, nr_pages);
+>>   	}
+>>   
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	if (compound && !list_empty(page_deferred_list(page))) {
+>> +		spin_lock(&from->deferred_split_queue.split_queue_lock);
+>> +		list_del_init(page_deferred_list(page));
+>> +		from->deferred_split_queue.split_queue_len--;
+>> +		spin_unlock(&from->deferred_split_queue.split_queue_lock);
+>> +	}
+>> +#endif
+>>   	/*
+>>   	 * It is safe to change page->mem_cgroup here because the page
+>>   	 * is referenced, charged, and isolated - we can't race with
+>> @@ -5079,6 +5092,17 @@ static int mem_cgroup_move_account(struct page *page,
+>>   
+>>   	/* caller should have done css_get */
+>>   	page->mem_cgroup = to;
+>> +
+>> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>> +	if (compound && list_empty(page_deferred_list(page))) {
+>> +		spin_lock(&to->deferred_split_queue.split_queue_lock);
+>> +		list_add_tail(page_deferred_list(page),
+>> +			      &to->deferred_split_queue.split_queue);
+>> +		to->deferred_split_queue.split_queue_len++;
+>> +		spin_unlock(&to->deferred_split_queue.split_queue_lock);
+>> +	}
+>> +#endif
+>> +
+>>   	spin_unlock_irqrestore(&from->move_lock, flags);
+>>   
+>>   	ret = 0;
+>>
+
