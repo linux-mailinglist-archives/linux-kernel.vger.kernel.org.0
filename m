@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1D4959F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE03959FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfHTIlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:41:20 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40719 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728879AbfHTIlS (ORCPT
+        id S1729652AbfHTIlt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:41:49 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51809 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729362AbfHTIlU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:41:18 -0400
-Received: by mail-wr1-f68.google.com with SMTP id c3so11473425wrd.7
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:17 -0700 (PDT)
+        Tue, 20 Aug 2019 04:41:20 -0400
+Received: by mail-wm1-f65.google.com with SMTP id k1so1569484wmi.1
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=v/P7EPY/5dFnAu48qok6WuTbpIx9NhM57Lx/BDC712I=;
-        b=Dh96VTcdKSYsPtHoUVhk6WnhZCKFnnDXqYAmwZcjUGC7ZNgCjOEf2Nw6MfwCRFKwP7
-         eyvQ1yz5Zo+b0UQ7cK3D0IK4GkzB2LcfCQAePhADH80JV2GfPBqHV3B+gosFO/mAZHlp
-         n0S/fS5KDLYrxB3iqYsm9BIKpoUOYeOkIvetgOsmBqRPGIKiaFewZ1/2jiHQH16tX6Vr
-         QodWkgcNycOgk5PpYLSJ9evdkceGKQ16vZi8PUrbGjvLORS/Zv4ONO6QOpsXEmqPiKBM
-         mu+VcXUnTQkKGhOtVXwZUfy+msoASCTetYn4dFpELiaHzaa8ZtQ5VHFUgwP5bDbmfDw8
-         nleA==
+        bh=Ycv/jEAcG3fpQBCVUPoq40RlT152vTGJJ9rC2v/DC0k=;
+        b=f0FCu+YadoOWZOTl9Q8ohbQYHrR/ljKMMnNVHieeC41h1iNxHf8GVQge9XGOmeNHAQ
+         4ZIo/RnvS/rn2ixKimc4ElXf5cZWHA7gU97MTm/HcvNnzWnzAERVaZ082klnN9fxKdGA
+         cwTBAydF9wPfXYgyltwV57QcP277fVJZNEGIdppn4mCe2S3zxG9aeExprdISzUZfwnJA
+         tbmmELvVM9IzDrKG6PgPV7hdzgxjEXqhsyajUz6FJEvqirxI/AWB9L33SHVNebMyYVpH
+         LMwgQDGDA1onUh9PJ3imhw++67Oah+1OVTk9iOyRsZqHGbdzvbWmyqcGjZu7GqQ6I1Zj
+         Eipw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=v/P7EPY/5dFnAu48qok6WuTbpIx9NhM57Lx/BDC712I=;
-        b=BZ/foXUj55ikls4rFm7DxvqzJOXijkekS3DdQEImuAMlLvJLUyScVm37/Chg5HZ4Zs
-         9zAdCTdDdqpyO+2VsVM8Qk9AWGYiIOfWMuLd5HCJf3sqIhtrIqCdPouNlEebsoTS9qdI
-         pWSyQ5I8ZRKqxPyWx4jWcbtZUDA8ScfnhH2Y54dQhvJmTAea1NCSF2F/emjnlYJHH5Fw
-         EonEtlP8ayeiu314Z+n06vSOt9Qs5eNYFy6P8J1DCOcl7lB/RXfahG0M7zb7y0OUkGgl
-         DkBxhrfoYqEwkZ3vdTVu2sg9HMby0LNNABsaeHziERcdIBrx9ciGWJ8meag3SFjSJSWD
-         OyGg==
-X-Gm-Message-State: APjAAAWdQcy5xQK4fHgiO8TmVqn1Jmf5JAAEH6CB2o5dfoQ5oCMmpS1a
-        IygZYa9HRDDKTLiWmQkLlk/m7w==
-X-Google-Smtp-Source: APXvYqyMi9fjn35RKMqKCT0Cl9gAsZF/NvpZhgd2Tspcloatig8wnB73W94dlxJXp3kNJjco7rN/Gw==
-X-Received: by 2002:a5d:424a:: with SMTP id s10mr25270321wrr.55.1566290477062;
-        Tue, 20 Aug 2019 01:41:17 -0700 (PDT)
+        bh=Ycv/jEAcG3fpQBCVUPoq40RlT152vTGJJ9rC2v/DC0k=;
+        b=TCQBJoa2CaP4IsI27HHPi5W30FfY4K9OeWKPUDCYz8q+Hx0wwQxSUo7xuVUkzxNI2v
+         au3SrPROcmsyaa4kpKn+EmKWktJY5i7HjASYOCYeWFFaTNnPfdtQXatVKuf+dg0HtCoF
+         TMbo2SWKqw1hnnJEOVZfJeRstD+DDvcnY1DXSdpxhUfEAdQx+lXBxHNhTd50VTtTxdIM
+         hfiODM5ta6gAZYjJt6duCuycSlhie/Raf6PU12q/WnL3wXe15b86AD1VsFEyYso48p9Z
+         W0wdjoHx5uqa9HCNT4/xhw7MWpYkOcez5Yfpm4a2Y27x0YZPaTlUhHCJ/e7P0WY4tnSf
+         V+ew==
+X-Gm-Message-State: APjAAAX2eoYxzJvVnBPZ/cSnHM4ZMffnAADVr4N9sIsPabdfuomjVCNI
+        MG3M1lJDarEaxciG5WjXcxP+8A==
+X-Google-Smtp-Source: APXvYqyJ/Fb2DsUH/6cVhm+iFgTQdtXlAWWQu27sKwrNSMuyXTmwD1BnbW+wDn/iYur4lTijf0q8dg==
+X-Received: by 2002:a7b:cb8e:: with SMTP id m14mr25350146wmi.10.1566290478169;
+        Tue, 20 Aug 2019 01:41:18 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.15
+        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 01:41:16 -0700 (PDT)
+        Tue, 20 Aug 2019 01:41:17 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
         jonas@kwiboo.se, jernej.skrabec@siol.net,
@@ -52,9 +52,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC 04/11] drm/bridge: synopsys: dw-hdmi: add basic bridge_atomic_check
-Date:   Tue, 20 Aug 2019 10:41:02 +0200
-Message-Id: <20190820084109.24616-5-narmstrong@baylibre.com>
+Subject: [RFC 05/11] drm/bridge: synopsys: dw-hdmi: use negociated bus formats
+Date:   Tue, 20 Aug 2019 10:41:03 +0200
+Message-Id: <20190820084109.24616-6-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190820084109.24616-1-narmstrong@baylibre.com>
 References: <20190820084109.24616-1-narmstrong@baylibre.com>
@@ -65,100 +65,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add all the supported input and output formats to the bridge
-input_bus_caps and output_bus_caps, and add a very simple atomic check
-implementation to negociate output and input bus formats.
+Use the negociated bus formats from the atomic check function if
+the input and output formats are non NULL, otherwise fallback to
+the plat_data->input_bus_format or the default MEDIA_BUS_FMT_RGB888_1X24
+bus format.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 53 +++++++++++++++++++++++
- 1 file changed, 53 insertions(+)
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-index b4901b174a90..121c2167ee20 100644
+index 121c2167ee20..316823abdd00 100644
 --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
 +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
-@@ -91,6 +91,24 @@ static const u16 csc_coeff_rgb_in_eitu709[3][4] = {
- 	{ 0x6756, 0x78ab, 0x2000, 0x0200 }
- };
+@@ -1968,11 +1968,10 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	hdmi->hdmi_data.video_mode.mpixelrepetitionoutput = 0;
+ 	hdmi->hdmi_data.video_mode.mpixelrepetitioninput = 0;
  
-+static const u32 dw_hdmi_bus_fmts[] = {
-+	MEDIA_BUS_FMT_RGB888_1X24,
-+	MEDIA_BUS_FMT_RGB101010_1X30,
-+	MEDIA_BUS_FMT_RGB121212_1X36,
-+	MEDIA_BUS_FMT_RGB161616_1X48,
-+	MEDIA_BUS_FMT_YUV8_1X24,
-+	MEDIA_BUS_FMT_YUV10_1X30,
-+	MEDIA_BUS_FMT_YUV12_1X36,
-+	MEDIA_BUS_FMT_YUV16_1X48,
-+	MEDIA_BUS_FMT_UYVY8_1X16,
-+	MEDIA_BUS_FMT_UYVY10_1X20,
-+	MEDIA_BUS_FMT_UYVY12_1X24,
-+	MEDIA_BUS_FMT_UYYVYY8_0_5X24,
-+	MEDIA_BUS_FMT_UYYVYY10_0_5X30,
-+	MEDIA_BUS_FMT_UYYVYY12_0_5X36,
-+	MEDIA_BUS_FMT_UYYVYY16_0_5X48,
-+};
-+
- struct hdmi_vmode {
- 	bool mdataenablepolarity;
+-	/* TOFIX: Get input format from plat data or fallback to RGB888 */
+ 	if (hdmi->plat_data->input_bus_format)
+ 		hdmi->hdmi_data.enc_in_bus_format =
+ 			hdmi->plat_data->input_bus_format;
+-	else
++	else if (!hdmi->hdmi_data.enc_in_bus_format)
+ 		hdmi->hdmi_data.enc_in_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
  
-@@ -2190,6 +2208,33 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
- 	.get_modes = dw_hdmi_connector_get_modes,
- };
+ 	/* TOFIX: Get input encoding from plat data or fallback to none */
+@@ -1982,8 +1981,8 @@ static int dw_hdmi_setup(struct dw_hdmi *hdmi, struct drm_display_mode *mode)
+ 	else
+ 		hdmi->hdmi_data.enc_in_encoding = V4L2_YCBCR_ENC_DEFAULT;
  
-+static int dw_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
-+				       struct drm_bridge_state *bridge_state,
-+				       struct drm_crtc_state *crtc_state,
-+				       struct drm_connector_state *conn_state)
-+{
-+	struct dw_hdmi *hdmi = bridge->driver_private;
-+	int ret;
-+
-+	ret = drm_atomic_bridge_choose_output_bus_cfg(bridge_state, crtc_state,
-+						      conn_state);
-+	if (ret)
-+		return ret;
-+
-+	dev_dbg(hdmi->dev, "selected output format %x\n",
-+			bridge_state->output_bus_cfg.fmt);
-+
-+	ret = drm_atomic_bridge_choose_input_bus_cfg(bridge_state, crtc_state,
-+						      conn_state);
-+	if (ret)
-+		return ret;
-+
-+	dev_dbg(hdmi->dev, "selected input format %x\n",
-+			bridge_state->input_bus_cfg.fmt);
-+
-+	return 0;
-+}
-+
- static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
- {
- 	struct dw_hdmi *hdmi = bridge->driver_private;
-@@ -2267,6 +2312,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+-	/* TOFIX: Default to RGB888 output format */
+-	hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
++	if (!hdmi->hdmi_data.enc_out_bus_format)
++		hdmi->hdmi_data.enc_out_bus_format = MEDIA_BUS_FMT_RGB888_1X24;
  
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
- 	.attach = dw_hdmi_bridge_attach,
-+	.atomic_check = dw_hdmi_bridge_atomic_check,
- 	.enable = dw_hdmi_bridge_enable,
- 	.disable = dw_hdmi_bridge_disable,
- 	.mode_set = dw_hdmi_bridge_mode_set,
-@@ -2733,6 +2779,13 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 	hdmi->hdmi_data.pix_repet_factor = 0;
+ 	hdmi->hdmi_data.hdcp_enable = 0;
+@@ -2224,6 +2223,8 @@ static int dw_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
+ 	dev_dbg(hdmi->dev, "selected output format %x\n",
+ 			bridge_state->output_bus_cfg.fmt);
  
- 	hdmi->bridge.driver_private = hdmi;
- 	hdmi->bridge.funcs = &dw_hdmi_bridge_funcs;
-+	hdmi->bridge.input_bus_caps.supported_fmts = dw_hdmi_bus_fmts;
-+	hdmi->bridge.input_bus_caps.num_supported_fmts =
-+					ARRAY_SIZE(dw_hdmi_bus_fmts);
-+	hdmi->bridge.output_bus_caps.supported_fmts = dw_hdmi_bus_fmts;
-+	hdmi->bridge.output_bus_caps.num_supported_fmts =
-+					ARRAY_SIZE(dw_hdmi_bus_fmts);
++	hdmi->hdmi_data.enc_out_bus_format = bridge_state->output_bus_cfg.fmt;
 +
- #ifdef CONFIG_OF
- 	hdmi->bridge.of_node = pdev->dev.of_node;
- #endif
+ 	ret = drm_atomic_bridge_choose_input_bus_cfg(bridge_state, crtc_state,
+ 						      conn_state);
+ 	if (ret)
+@@ -2232,6 +2233,8 @@ static int dw_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
+ 	dev_dbg(hdmi->dev, "selected input format %x\n",
+ 			bridge_state->input_bus_cfg.fmt);
+ 
++	hdmi->hdmi_data.enc_in_bus_format = bridge_state->input_bus_cfg.fmt;
++
+ 	return 0;
+ }
+ 
 -- 
 2.22.0
 
