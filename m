@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B46967D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 72B1A967DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730881AbfHTRmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:42:13 -0400
-Received: from mail-wm1-f100.google.com ([209.85.128.100]:55369 "EHLO
-        mail-wm1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729351AbfHTRlH (ORCPT
+        id S1730916AbfHTRmf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:42:35 -0400
+Received: from mail-wr1-f97.google.com ([209.85.221.97]:37515 "EHLO
+        mail-wr1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729852AbfHTRlG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:41:07 -0400
-Received: by mail-wm1-f100.google.com with SMTP id f72so3346101wmf.5
+        Tue, 20 Aug 2019 13:41:06 -0400
+Received: by mail-wr1-f97.google.com with SMTP id z11so13269671wrt.4
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=JrwceyLHFU0hgmI9AovAhbDEUxaznzklC8RnSS8SPlk=;
-        b=LlU4Ha0Di+4hwWlXkS3KpMHzYWt3yMKySWjBdVRlmCjCAjpmsHl+rEermnyHI+R+mt
-         CKpMH1lCpcZCUZC2urK9eqlcbm4WjX/Tc0BxrTmvV+pmnWHP5OuEJb/+73xeHx6XtytS
-         behXpjLl4kt/dsRzUON5qqAstwUCLMKLVVJaPPbfFRBLCDktWWipleQST3vDO0I6Ppyo
-         0HJviY1QccOpr0dgIaMpg2jJ/Lc1lqbwl/XHORFO7Qw1q/QlTpQnieMxjESZDQ4B11/w
-         ZhyUz/emg4o9bf7qxMINMcPtWsotGT+PqKvyPFXzGXQVqKi/rprhp66GmUay1Y9G9hUH
-         QiVQ==
-X-Gm-Message-State: APjAAAW7PDwRCYFQc0QfIeEIbgC/MzkmLIf55Ac40UwJ93j8RQbiqS+T
-        Z/sEDLRt4ljgfTNqTsnZDMz0zxt9DjnVdWgyZe9MCPVYM5aV4oDqpD2nWixfXT2BNw==
-X-Google-Smtp-Source: APXvYqwt7YVlyRrKGvChY8x1oTFlBpL2kQBuLGyaEcaYtjIZNlgsflzi26I4H8MbINCByU9/IZByXAw5KxRD
-X-Received: by 2002:a1c:6387:: with SMTP id x129mr1209622wmb.166.1566322864444;
+        bh=ABCcOn5GHJ8lNU8EGGWNRlyaGFZyomNizJdK6sCFsYs=;
+        b=CQlaT8ArlBYtIeUz/WUb7BzZ3sXN8Uk+o/FfEEtt9ebsjd60Yj612BIf98yp2pQ4Y8
+         ApgJssA/lmJC9/lk+fKTD9QTq4MMRrEp5HXCr2UrTtIfrAgfk10m11u1xPJY8IugoUrE
+         zgSoEaj9052c9x+C6SGCgxK9FXbyPakNtE5F7BmCuYWmQVelxU0K9ErKxTtGnn1YEfId
+         T8tTaLPIkG+7UTS3Jig2451DKSH55/FChYEtcyMOFZIVseIeKESTpc6Q8StN1Ez3St78
+         Du1wSgmwDDZEBfra8Fbt1ORdG8b96+XEBWfQCC/unTil/ZChnTSwLcRfT5h6K9pmP2fa
+         nULQ==
+X-Gm-Message-State: APjAAAXkuGxErHpYbQlwdMqJKWxCd8klCHknOer/wwGwATNLERPL8mQ+
+        LZBRA3HyqKWJegYHFE4SMDJKH5P1A0Yl55h/QG2eGXSyA0Gu5RXiOzpRbQOv8jwVgA==
+X-Google-Smtp-Source: APXvYqya89xuBIGdtG+azWgCNH3nH0mRaN7p+fQCVe4tmxScBaCkLVxmDB+YfrCLKVXwVasNjDM2XMTuqfy0
+X-Received: by 2002:adf:82cd:: with SMTP id 71mr31193025wrc.265.1566322864760;
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id 204sm1639wmc.24.2019.08.20.10.41.04
+        by smtp-relay.gmail.com with ESMTPS id x12sm314086wrv.41.2019.08.20.10.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,20 +38,20 @@ Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i087z-00032C-UU; Tue, 20 Aug 2019 17:41:04 +0000
+        id 1i0880-00032F-Fp; Tue, 20 Aug 2019 17:41:04 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 225022742B4A; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
+        id C506D274314F; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Cc:     alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
-        broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, ludovic.desroches@microchip.com,
-        Mark Brown <broonie@kernel.org>, nicolas.ferre@microchip.com,
-        perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in master mode" to the asoc tree
-In-Reply-To: <20190820162411.24836-4-codrin.ciubotariu@microchip.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
+        Chen-Yu Tsai <wens@csie.org>, codekipper@gmail.com,
+        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        Maxime Ripard <mripard@kernel.org>
+Subject: Applied "ASoC: sun4i-i2s: Support more channels" to the asoc tree
+In-Reply-To: <27d9de5cd56f3a544851b8cd8af08bf836d19637.1566242458.git-series.maxime.ripard@bootlin.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174103.225022742B4A@ypsilon.sirena.org.uk>
+Message-Id: <20190820174103.C506D274314F@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in master mode
+   ASoC: sun4i-i2s: Support more channels
 
 has been applied to the asoc tree at
 
@@ -85,169 +85,84 @@ to this mail.
 Thanks,
 Mark
 
-From c9cff337eab394c4dc8b128dde7308a1dd2e653a Mon Sep 17 00:00:00 2001
-From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Tue, 20 Aug 2019 19:24:11 +0300
-Subject: [PATCH] ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in
- master mode
+From bbf9a127abca4aac5cc75f882bc7efcc398e86ae Mon Sep 17 00:00:00 2001
+From: Maxime Ripard <maxime.ripard@bootlin.com>
+Date: Mon, 19 Aug 2019 21:25:26 +0200
+Subject: [PATCH] ASoC: sun4i-i2s: Support more channels
 
-This controller supports capture and playback running at the same time,
-with the limitation that both capture and playback must be configured the
-same way (sample rate, sample format, number of channels, etc). For this,
-we have to assure that the configuration registers look the same when
-capture and playback are initiated.
-This patch fixes a bug in which the controller is in master mode and the
-hw_params() callback fails for the second audio stream. The fail occurs
-because the divisors are calculated after comparing the configuration
-registers for capture and playback. The fix consists in calculating the
-divisors before comparing the configuration registers. BCLK and LRC are
-then configured and started only if the controller is not already running.
+We've been limited to 2 channels in the driver while the controller
+supports from 1 to 8 channels, in both capture and playback. let's remove
+the hardcoded checks and numbers, and extend the range of channel numbers
+we can use.
 
-Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Link: https://lore.kernel.org/r/20190820162411.24836-4-codrin.ciubotariu@microchip.com
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Link: https://lore.kernel.org/r/27d9de5cd56f3a544851b8cd8af08bf836d19637.1566242458.git-series.maxime.ripard@bootlin.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/atmel/mchp-i2s-mcc.c | 70 ++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 33 deletions(-)
+ sound/soc/sunxi/sun4i-i2s.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
 
-diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
-index 86495883ca3f..9a406144b18f 100644
---- a/sound/soc/atmel/mchp-i2s-mcc.c
-+++ b/sound/soc/atmel/mchp-i2s-mcc.c
-@@ -392,11 +392,11 @@ static int mchp_i2s_mcc_clk_get_rate_diff(struct clk *clk,
+diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
+index 6b172dfbc25d..9e691baee1e8 100644
+--- a/sound/soc/sunxi/sun4i-i2s.c
++++ b/sound/soc/sunxi/sun4i-i2s.c
+@@ -400,9 +400,6 @@ static int sun4i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
+ {
+ 	unsigned int channels = params_channels(params);
+ 
+-	if (channels != 2)
+-		return -EINVAL;
+-
+ 	/* Map the channels for playback and capture */
+ 	regmap_write(i2s->regmap, SUN4I_I2S_TX_CHAN_MAP_REG, 0x76543210);
+ 	regmap_write(i2s->regmap, SUN4I_I2S_RX_CHAN_MAP_REG, 0x00003210);
+@@ -423,9 +420,6 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
+ {
+ 	unsigned int channels = params_channels(params);
+ 
+-	if (channels != 2)
+-		return -EINVAL;
+-
+ 	/* Map the channels for playback and capture */
+ 	regmap_write(i2s->regmap, SUN8I_I2S_TX_CHAN_MAP_REG, 0x76543210);
+ 	regmap_write(i2s->regmap, SUN8I_I2S_RX_CHAN_MAP_REG, 0x76543210);
+@@ -458,6 +452,7 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
+ 			       struct snd_soc_dai *dai)
+ {
+ 	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
++	unsigned int channels = params_channels(params);
+ 	int ret, sr, wss;
+ 	u32 width;
+ 
+@@ -490,7 +485,7 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
+ 	regmap_field_write(i2s->field_fmt_sr, sr);
+ 
+ 	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
+-				      2, params_width(params));
++				      channels, params_width(params));
  }
  
- static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
--				    unsigned int bclk, unsigned int *mra)
-+				    unsigned int bclk, unsigned int *mra,
-+				    unsigned long *best_rate)
- {
- 	unsigned long clk_rate;
- 	unsigned long lcm_rate;
--	unsigned long best_rate = 0;
- 	unsigned long best_diff_rate = ~0;
- 	unsigned int sysclk;
- 	struct clk *best_clk = NULL;
-@@ -423,7 +423,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 	     (clk_rate == bclk || clk_rate / (bclk * 2) <= GENMASK(5, 0));
- 	     clk_rate += lcm_rate) {
- 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->gclk, clk_rate,
--						     &best_clk, &best_rate,
-+						     &best_clk, best_rate,
- 						     &best_diff_rate);
- 		if (ret) {
- 			dev_err(dev->dev, "gclk error for rate %lu: %d",
-@@ -437,7 +437,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 		}
- 
- 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->pclk, clk_rate,
--						     &best_clk, &best_rate,
-+						     &best_clk, best_rate,
- 						     &best_diff_rate);
- 		if (ret) {
- 			dev_err(dev->dev, "pclk error for rate %lu: %d",
-@@ -459,33 +459,17 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 
- 	dev_dbg(dev->dev, "source CLK is %s with rate %lu, diff %lu\n",
- 		best_clk == dev->pclk ? "pclk" : "gclk",
--		best_rate, best_diff_rate);
--
--	/* set the rate */
--	ret = clk_set_rate(best_clk, best_rate);
--	if (ret) {
--		dev_err(dev->dev, "unable to set rate %lu to %s: %d\n",
--			best_rate, best_clk == dev->pclk ? "PCLK" : "GCLK",
--			ret);
--		return ret;
--	}
-+		*best_rate, best_diff_rate);
- 
- 	/* Configure divisors */
- 	if (dev->sysclk)
--		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(best_rate / (2 * sysclk));
--	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(best_rate / (2 * bclk));
-+		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(*best_rate / (2 * sysclk));
-+	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(*best_rate / (2 * bclk));
- 
--	if (best_clk == dev->gclk) {
-+	if (best_clk == dev->gclk)
- 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_GCLK;
--		ret = clk_prepare(dev->gclk);
--		if (ret < 0)
--			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
--		else
--			dev->gclk_use = 1;
--	} else {
-+	else
- 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_PCLK;
--		dev->gclk_use = 0;
--	}
- 
- 	return 0;
- }
-@@ -502,6 +486,7 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 				  struct snd_pcm_hw_params *params,
- 				  struct snd_soc_dai *dai)
- {
-+	unsigned long rate = 0;
- 	struct mchp_i2s_mcc_dev *dev = snd_soc_dai_get_drvdata(dai);
- 	u32 mra = 0;
- 	u32 mrb = 0;
-@@ -640,6 +625,17 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
-+	if (set_divs) {
-+		bclk_rate = frame_length * params_rate(params);
-+		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra,
-+					       &rate);
-+		if (ret) {
-+			dev_err(dev->dev,
-+				"unable to configure the divisors: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	/*
- 	 * If we are already running, the wanted setup must be
- 	 * the same with the one that's currently ongoing
-@@ -656,19 +652,27 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 		return 0;
- 	}
- 
--	/* Save the number of channels to know what interrupts to enable */
--	dev->channels = channels;
--
--	if (set_divs) {
--		bclk_rate = frame_length * params_rate(params);
--		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra);
-+	if (mra & MCHP_I2SMCC_MRA_SRCCLK_GCLK && !dev->gclk_use) {
-+		/* set the rate */
-+		ret = clk_set_rate(dev->gclk, rate);
- 		if (ret) {
--			dev_err(dev->dev, "unable to configure the divisors: %d\n",
--				ret);
-+			dev_err(dev->dev,
-+				"unable to set rate %lu to GCLK: %d\n",
-+				rate, ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare(dev->gclk);
-+		if (ret < 0) {
-+			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
- 			return ret;
- 		}
-+		dev->gclk_use = 1;
- 	}
- 
-+	/* Save the number of channels to know what interrupts to enable */
-+	dev->channels = channels;
-+
- 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
- 	if (ret < 0)
- 		return ret;
+ static int sun4i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+@@ -814,15 +809,15 @@ static struct snd_soc_dai_driver sun4i_i2s_dai = {
+ 	.probe = sun4i_i2s_dai_probe,
+ 	.capture = {
+ 		.stream_name = "Capture",
+-		.channels_min = 2,
+-		.channels_max = 2,
++		.channels_min = 1,
++		.channels_max = 8,
+ 		.rates = SNDRV_PCM_RATE_8000_192000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
+ 	.playback = {
+ 		.stream_name = "Playback",
+-		.channels_min = 2,
+-		.channels_max = 2,
++		.channels_min = 1,
++		.channels_max = 8,
+ 		.rates = SNDRV_PCM_RATE_8000_192000,
+ 		.formats = SNDRV_PCM_FMTBIT_S16_LE,
+ 	},
 -- 
 2.20.1
 
