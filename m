@@ -2,73 +2,107 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 49746964BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:40:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D87B2964C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:40:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730440AbfHTPkK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:40:10 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:39588 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729351AbfHTPkK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:40:10 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2399A10576D3;
-        Tue, 20 Aug 2019 15:40:10 +0000 (UTC)
-Received: from localhost (holly.tpb.lab.eng.brq.redhat.com [10.43.134.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4DF9A1000324;
-        Tue, 20 Aug 2019 15:40:08 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 17:40:05 +0200
-From:   Miroslav Lichvar <mlichvar@redhat.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Hubert Feurstein <h.feurstein@gmail.com>,
-        netdev <netdev@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Vladimir Oltean <olteanv@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH net-next v3 2/4] net: mdio: add PTP offset compensation
- to mdiobus_write_sts
-Message-ID: <20190820154005.GM891@localhost>
-References: <20190820084833.6019-1-hubert.feurstein@vahle.at>
- <20190820084833.6019-3-hubert.feurstein@vahle.at>
- <20190820094903.GI891@localhost>
- <CAFfN3gW-4avfnrV7t-2nC+cVt3sgMD33L44P4PGU-MCAtuR+XA@mail.gmail.com>
- <20190820142537.GL891@localhost>
- <20190820152306.GJ29991@lunn.ch>
+        id S1730514AbfHTPkZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:40:25 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729351AbfHTPkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:40:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gRJOmusDWoXEQYfCQFpFagMRy6iugEndhzclUCUMHWA=; b=ImbRGxqfPuKYOho8dmzojZLzu
+        ctVIsg7lB0TBjYVpbs1Acq91W9lt/XV5ZJCnU6hFcS+6LoE+Kc5lTLG2ChSvZ++IeMV2fViGIcwwc
+        uXc8s53/NBrglK9Glpz+ZlHKCyok1UomR2of042aABI7zHdek4QN+7fn35XcllyZT+/lGiJ//tFn1
+        +bz+UPOtmaBwrzY/isgAcRQijc+qLtzigI5Eyhn4hfY6t+moZgECGcuPyUPfw3fIXEYyY2PkZqFGt
+        yYcVner6hgBZfMb18cnE8BhfFyGCPSrmiVmPcpPrhxFnybrjJQ4pm11nk7zF7wqyogmbIWWGXCbfo
+        zlPIl9JJw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i06F5-0001P6-FF; Tue, 20 Aug 2019 15:40:18 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7A8EA30768C;
+        Tue, 20 Aug 2019 17:39:40 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id C11D520A21FD0; Tue, 20 Aug 2019 17:40:11 +0200 (CEST)
+Date:   Tue, 20 Aug 2019 17:40:11 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Luck, Tony" <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] MAINTAINERS, x86/CPU: Tony Luck will maintain
+ asm/intel-family.h
+Message-ID: <20190820154011.GY2332@hirez.programming.kicks-ass.net>
+References: <20190814234030.30817-1-tony.luck@intel.com>
+ <20190815075822.GC15313@zn.tnic>
+ <20190815172159.GA4935@agluck-desk2.amr.corp.intel.com>
+ <20190815175455.GJ15313@zn.tnic>
+ <20190815183055.GA6847@agluck-desk2.amr.corp.intel.com>
+ <alpine.DEB.2.21.1908152217070.1908@nanos.tec.linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190820152306.GJ29991@lunn.ch>
-User-Agent: Mutt/1.12.0 (2019-05-25)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Tue, 20 Aug 2019 15:40:10 +0000 (UTC)
+In-Reply-To: <alpine.DEB.2.21.1908152217070.1908@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:23:06PM +0200, Andrew Lunn wrote:
-> > - take a second "post" system timestamp after the completion
-> 
-> For this hardware, completion is an interrupt, which has a lot of
-> jitter on it. But this hardware is odd, in that it uses an
-> interrupt. Every other MDIO bus controller uses polled IO, with an
-> mdelay(10) or similar between each poll. So the jitter is going to be
-> much larger.
+On Thu, Aug 15, 2019 at 10:22:07PM +0200, Thomas Gleixner wrote:
 
-I think a large jitter is ok in this case. We just need to timestamp
-something that we know for sure happened after the PHC timestamp. It
-should have no impact on the offset and its stability, just the
-reported delay. A test with phc2sys should be able to confirm that.
-phc2sys selects the measurement with the shortest delay, which has
-least uncertainty. I'd say that applies to both interrupt and polling.
+> We have the following existing _SHORT variants:
 
-If it is difficult to specify the minimum interrupt delay, I'd still
-prefer an overly pessimistic interval assuming a zero delay.
+> _G
+> _GT3E
 
--- 
-Miroslav Lichvar
+Those two are special SOCs due to 'extra graphics bits on', and I
+suppose we could collate them. That said; I'm not sure NHM_G ever
+shipped, I'm looking at a wikipedia page that says both Auburndale and
+Havendale got scrapped.
+
+> _EP
+> _EX
+
+Both are historical, intel is no longer making that distinction and
+current chips will have _X.
+
+> _CORE
+> _DESKTOP
+
+These two and no _SHORT should/could be collated, I think.
+
+> _ULT
+> _MOBILE
+
+I suspect these two are the same.
+
+> _XEON_D
+
+Bit unfortunate that; we use _XEON_D for big microservers and ATOM_*_X
+for small microservers. So there's room for improvement here by unifying
+this.
+
+> _MID
+
+That one lived for 4 atom generations, but afaict it's no longer alive.
+
+> _NNPI
+> _TABLET
+
+These are so far one offs, not sure about the future.
+
+> _PLUS
+
+Like said in the other email, that one is not actually a _SHORT at all,
+but rather the uarch is 'Goldmont Plus'
