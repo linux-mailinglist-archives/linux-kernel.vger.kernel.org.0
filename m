@@ -2,73 +2,65 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2E196742
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:19:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3297996746
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:19:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730212AbfHTRQC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:16:02 -0400
-Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:49301 "EHLO
-        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1725971AbfHTRQC (ORCPT
+        id S1729820AbfHTRRM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:17:12 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:52695 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfHTRRM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:16:02 -0400
-Received: from callcc.thunk.org (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7KHFpXU001417
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 20 Aug 2019 13:15:53 -0400
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 75AC9420843; Tue, 20 Aug 2019 13:15:50 -0400 (EDT)
-Date:   Tue, 20 Aug 2019 13:15:50 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Sebastian Duda <sebastian.duda@fau.de>
-Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com
-Subject: Re: Status of Subsystems
-Message-ID: <20190820171550.GE10232@mit.edu>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sebastian Duda <sebastian.duda@fau.de>,
-        Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
-        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com
-References: <2529f953-305f-414b-5969-d03bf20892c4@fau.de>
- <20190820131422.2navbg22etf7krxn@pali>
- <3cf18665-7669-a33c-a718-e0917fa6d1b9@fau.de>
+        Tue, 20 Aug 2019 13:17:12 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1i07kO-0003dS-KN; Tue, 20 Aug 2019 19:16:40 +0200
+Date:   Tue, 20 Aug 2019 19:16:40 +0200
+From:   Sebastian Siewior <bigeasy@linutronix.de>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Julia Cartwright <julia@ni.com>, Jan Kara <jack@suse.cz>,
+        Theodore Tso <tytso@mit.edu>,
+        Matthew Wilcox <willy@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Jan Kara <jack@suse.com>, Mark Fasheh <mark@fasheh.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Joel Becker <jlbec@evilplan.org>
+Subject: Re: [patch V2 0/7] fs: Substitute bit-spinlocks for PREEMPT_RT and
+ debugging
+Message-ID: <20190820171640.elgrbetjivvk7zti@linutronix.de>
+References: <20190801010126.245731659@linutronix.de>
+ <20190802075612.GA20962@infradead.org>
+ <alpine.DEB.2.21.1908021107090.2285@nanos.tec.linutronix.de>
+ <20190806061119.GA17492@infradead.org>
+ <alpine.DEB.2.21.1908080858460.2882@nanos.tec.linutronix.de>
+ <20190808072807.GA25259@infradead.org>
+ <alpine.DEB.2.21.1908080953170.2882@nanos.tec.linutronix.de>
+ <20190810081834.GB30426@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3cf18665-7669-a33c-a718-e0917fa6d1b9@fau.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190810081834.GB30426@infradead.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 03:56:24PM +0200, Sebastian Duda wrote:
+On 2019-08-10 01:18:34 [-0700], Christoph Hellwig wrote:
+> > > Does SLUB work on -rt at all?
+> > 
+> > It's the only allocator we support with a few tweaks :)
 > 
-> so the status of the files is inherited from the subsystem `INPUT MULTITOUCH
-> (MT) PROTOCOL`?
-> 
-> Is it the same with the subsystem `NOKIA N900 POWER SUPPLY DRIVERS`
-> (respectively `POWER SUPPLY CLASS/SUBSYSTEM and DRIVERS`)?
+> What do you do about this particular piece of code there?
 
-Note that the definitions of "subsystems" is not necessarily precise.
-So assuming there is a strict subclassing and inheritance might not be
-a perfect assumption.  There are some files which have no official
-owner, and there are also some files which may be modified by more
-than one subsystem.
+This part remains untouched. This "lock" is acquired within ->list_lock
+which is a raw_spinlock_t and disables preemption/interrupts on -RT.
 
-We certainly don't talk about "inheritance" when we talk about
-maintainers and sub-maintainers.  Furthermore, the relationships,
-processes, and workflows between a particular maintainer and their
-submaintainers can be unique to a particular maintainer.
-
-We define these terms to be convenient for Linux development, and like
-many human institutions, they can be flexible and messy.  The goal was
-*not* define things so it would be convenient for academics writing
-papers --- like insects under glass.
-
-Cheers,
-
-						- Ted
-
+Sebastian
