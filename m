@@ -2,117 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F40F95CD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 89C3F95CE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:07:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729747AbfHTLFS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:05:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58200 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729553AbfHTLFS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:05:18 -0400
-Received: from tleilax.poochiereds.net (68-20-15-154.lightspeed.rlghnc.sbcglobal.net [68.20.15.154])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFF55205C9;
-        Tue, 20 Aug 2019 11:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566299116;
-        bh=T0rmHh8w3H3bwdXLru7KFY2A/8hjJcNt2eMc9MdFvoU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=OWYdJNUzSee+UuIh6LQ3YFru0x6seE2TTCifysIDGNOjR8O4ScYkdj2Vrw5S/JeTB
-         qmDzLYeDaoNBfNwX5IDihFikAWZqI1dzLhII85Qm3JJy6zIH2yIFue45EEMtXZPwcN
-         fgzdH+WlULgP+SUhyw7NDBScX/I9XuZMIU+ITkEg=
-Message-ID: <27d1943a0027cb4f658334fad8dc880df133c22d.camel@kernel.org>
-Subject: Re: [PATCH v8 00/20] vfs: Add support for timestamp limits
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Deepa Dinamani <deepa.kernel@gmail.com>, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, y2038@lists.linaro.org,
-        arnd@arndb.de, adilger.kernel@dilger.ca, adrian.hunter@intel.com,
-        aivazian.tigran@gmail.com, al@alarsen.net,
-        anna.schumaker@netapp.com, anton@enomsg.org,
-        asmadeus@codewreck.org, ccross@android.com,
-        ceph-devel@vger.kernel.org, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, darrick.wong@oracle.com,
-        dedekind1@gmail.com, devel@lists.orangefs.org, dsterba@suse.com,
-        dushistov@mail.ru, dwmw2@infradead.org, ericvh@gmail.com,
-        gregkh@linuxfoundation.org, hch@infradead.org, hch@lst.de,
-        hirofumi@mail.parknet.co.jp, hubcap@omnibond.com,
-        idryomov@gmail.com, jack@suse.com, jaegeuk@kernel.org,
-        jaharkes@cs.cmu.edu, jfs-discussion@lists.sourceforge.net,
-        jlbec@evilplan.org, keescook@chromium.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-karma-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-ntfs-dev@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        lucho@ionkov.net, luisbg@kernel.org, martin@omnibond.com,
-        me@bobcopeland.com, mikulas@artax.karlin.mff.cuni.cz,
-        nico@fluxnic.net, phillip@squashfs.org.uk,
-        reiserfs-devel@vger.kernel.org, richard@nod.at, sage@redhat.com,
-        salah.triki@gmail.com, sfrench@samba.org, shaggy@kernel.org,
-        tj@kernel.org, tony.luck@intel.com,
-        trond.myklebust@hammerspace.com, tytso@mit.edu,
-        v9fs-developer@lists.sourceforge.net, yuchao0@huawei.com,
-        zyan@redhat.com
-Date:   Tue, 20 Aug 2019 07:05:10 -0400
-In-Reply-To: <20190818165817.32634-1-deepa.kernel@gmail.com>
-References: <20190818165817.32634-1-deepa.kernel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S1729770AbfHTLG2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:06:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43836 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728283AbfHTLG1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:06:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id CD029AE9A;
+        Tue, 20 Aug 2019 11:06:25 +0000 (UTC)
+Subject: Re: [PATCH] btrfs: fix allocation of bitmap pages.
+To:     Christoph Hellwig <hch@infradead.org>, dsterba@suse.cz,
+        Christophe Leroy <christophe.leroy@c-s.fr>,
+        erhard_f@mailbox.org, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+        stable@vger.kernel.org
+References: <20190817074439.84C6C1056A3@localhost.localdomain>
+ <20190819174600.GN24086@twin.jikos.cz> <20190820023031.GC9594@infradead.org>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <6f99b73c-db8f-8135-b827-0a135734d7da@suse.cz>
+Date:   Tue, 20 Aug 2019 13:06:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190820023031.GC9594@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-08-18 at 09:57 -0700, Deepa Dinamani wrote:
-> The series is an update and a more complete version of the
-> previously posted series at
-> https://lore.kernel.org/linux-fsdevel/20180122020426.2988-1-deepa.kernel@gmail.com/
+On 8/20/19 4:30 AM, Christoph Hellwig wrote:
+> On Mon, Aug 19, 2019 at 07:46:00PM +0200, David Sterba wrote:
+>> Another thing that is lost is the slub debugging support for all
+>> architectures, because get_zeroed_pages lacking the red zones and sanity
+>> checks.
+>> 
+>> I find working with raw pages in this code a bit inconsistent with the
+>> rest of btrfs code, but that's rather minor compared to the above.
+>> 
+>> Summing it up, I think that the proper fix should go to copy_page
+>> implementation on architectures that require it or make it clear what
+>> are the copy_page constraints.
 > 
-> Thanks to Arnd Bergmann for doing a few preliminary reviews.
-> They helped me fix a few issues I had overlooked.
-> 
-> The limits (sometimes granularity also) for the filesystems updated here are according to the
-> following table:
-> 
-> File system   Time type                      Start year Expiration year Granularity
-> cramfs        fixed                          0          0
-> romfs         fixed                          0          0
-> pstore        ascii seconds (27 digit ascii) S64_MIN    S64_MAX         1
-> coda          INT64                          S64_MIN    S64_MAX         1
-> omfs          64-bit milliseconds            0          U64_MAX/ 1000   NSEC_PER_MSEC
-> befs          unsigned 48-bit seconds        0          0xffffffffffff  alloc_super
-> bfs           unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> efs           unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> ext2          signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-> ext3          signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-> ext4 (old)    signed 32-bit seconds          S32_MIN    S32_MAX         alloc_super
-> ext4 (extra)  34-bit seconds, 30-bit ns      S32_MIN    0x37fffffff	1
-> freevxfs      u32 secs/usecs                 0          U32_MAX         alloc_super
-> jffs2         unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> jfs           unsigned 32-bit seconds/ns     0          U32_MAX         1
-> minix         unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> orangefs      u64 seconds                    0          U64_MAX         alloc_super
-> qnx4          unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> qnx6          unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> reiserfs      unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> squashfs      unsigned 32-bit seconds        0          U32_MAX         alloc_super
-> ufs1          signed 32-bit seconds          S32_MIN    S32_MAX         NSEC_PER_SEC
-> ufs2          signed 64-bit seconds/u32 ns   S64_MIN    S64_MAX         1
-> xfs           signed 32-bit seconds/ns       S32_MIN    S32_MAX         1
-> ceph          unsigned 32-bit second/ns      0          U32_MAX         1000
+> The whole point of copy_page is to copy exactly one page and it makes
+> sense to assume that is aligned.  A sane memcpy would use the same
+> underlying primitives as well after checking they fit.  So I think the
+> prime issue here is btrfs' use of copy_page instead of memcpy.  The
+> secondary issue is slub fucking up alignments for no good reason.  We
+> just got bitten by that crap again in XFS as well :(
 
-Looks reasonable, overall.
+Meh, I should finally get back to https://lwn.net/Articles/787740/ right
 
-Note that the granularity changed recently for cephfs. See commit
-0f7cf80ae96c2a (ceph: initialize superblock s_time_gran to 1).
-
-In any case, you can add my Acked-by
-
--- 
-Jeff Layton <jlayton@kernel.org>
 
