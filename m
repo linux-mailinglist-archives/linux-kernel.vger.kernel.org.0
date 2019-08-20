@@ -2,169 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B326596B40
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:17:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B505796B5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 23:24:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbfHTVR2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 17:17:28 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26259 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728283AbfHTVR2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 17:17:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 14:17:27 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,410,1559545200"; 
-   d="scan'208";a="353738858"
-Received: from jacob-builder.jf.intel.com ([10.7.199.155])
-  by orsmga005.jf.intel.com with ESMTP; 20 Aug 2019 14:17:27 -0700
-From:   Jacob Pan <jacob.jun.pan@linux.intel.com>
-To:     Joerg Roedel <joro@8bytes.org>, iommu@lists.linux-foundation.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        David Woodhouse <dwmw2@infradead.org>
-Cc:     Raj Ashok <ashok.raj@intel.com>,
-        "Lu Baolu" <baolu.lu@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>
-Subject: [PATCH] iommu/vt-d: remove global page flush support
-Date:   Tue, 20 Aug 2019 14:21:08 -0700
-Message-Id: <1566336068-39416-1-git-send-email-jacob.jun.pan@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1730877AbfHTVYD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 17:24:03 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:18329 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728283AbfHTVYD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 17:24:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1566336243; x=1597872243;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
+  b=gDIez0SuoeBYh13v9fqMzfjWiddGm5JyDbUWgc+qPsh5rYaKXuCLuu7W
+   twHOO3ppVCjCpphdjIpT6XQVXJezVu/si3Ntucl5yJLcgQpArI3QlpVWX
+   LEZF653mBazwE7OqXcrwEyF+GIB38HPCFeXwPCGOIjZx7tlNE/tZDbA81
+   Twc1XuKXPEVEtif4mH/D2t13OMR7lb9Aat2YZiXO7gYLNRa4+wpUynOFl
+   OWot0ZlKRjA01Na7RsDRZkxzrZXmJgw1W4SXRiwiWRhOemdp32Kuv2mzv
+   69EQWScTYPVvZoYKMiRWczUNWbtWiegtrXXBVR/QaJ2V0qdRM743/737J
+   g==;
+IronPort-SDR: NcuzmsV02Jo2MVkV6KxNqmlFwsQOtP6/1u47GWhFIV3S41DMEfB03eZRZ8K5MWIghl3aT3NOV3
+ JTnOfw2X/ZVwTJWRZ9LJ/rUOrswsWF0sYig1HMlGRyJnsmrViOo1GZzR+nD/RQ7Z3SedclK8Hv
+ 6qrafM8qMk8TVSV1zkssDtCaDhXzDJ7m73d6NRYBBbr5raTv46/RkqiWIc2C/RHP8HclgHdTma
+ FzHCO92L9eYpiwsIoSIHFEOvve31/t6v4uR0FuEqdgfFDSdWgQh7CfEFzuWGQMmkvizV3k9B3s
+ YyA=
+X-IronPort-AV: E=Sophos;i="5.64,410,1559491200"; 
+   d="scan'208";a="116279683"
+Received: from mail-sn1nam02lp2054.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.54])
+  by ob1.hgst.iphmx.com with ESMTP; 21 Aug 2019 05:06:01 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KEM5AGADuGRZennoeZe/MoSg9k2qgYrEzYkWp11y304V6jHZ9C+MlqPvjW8fkKepsP6RSXjWTTDiJFtK/29j00pSW/SOS1qiNoVrCLuabt87sXMPWC5dg2JbZgJ5RXF+lwX60a3YL0ZrIuAwS/UpCBdl+ox5kn9yIFDJ/KSAS6wOer60G1Zm11n4RGF5B9rj1JwdEVDu3BKulzlBc8C+24DxsAB8J7AXchPpTckvJYr1T3OocZQCj3zFWW0ni4TQHmDov78vNUkblrv9KFmbxmq77d3s+oUFIsvdO32fIwBM0Odu5QSMrLAUIBN3TdrYaXn8rwg/1FtilbQHVmtF7g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
+ b=HJtIOWj0HQdMqp59PnllPZ7zVVcgdZu12HTKg6VmHEGT3CPnzySCje0QDlujuKWCXo1z9zidHrEGf5FQrdHGt0yI6n7N4MlCEiO5uaWNiDNTEoEeWa3MMZVpne+T7OzHGr03zhet9YrXFD+fs2SGFsyvVkVdyAjmpXX69rAu0GhT5Z3hG8cVlpfa4nmGanKC2InYaBHfRPvr0w/gFER4EwT1uDO9YYEXOtpG7P9BAF3ooovS8YUZ5BYiG+VXMnq12iEBGXI5hT/WyElwjFiirMIVSHUxbRIG0N18XKILX5KrBOI+Wm8kr4eXy3jftSXvvR6A+IyW5jsBEFkG7b+9ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
+ header.d=wdc.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bP4qBRGapV4ymu3uf0w1jeMF96Qmio3sLxjMEhqISSY=;
+ b=fQ+pwtoOBXdkftdobR6ilbXizkz9vXuA5vIVf5h+T1n2VvYRTvWLzZQxVmbSgyZD1h40w774tY8XkalmMLBzSG5RCr13sdKX5uaiXjFgznhkoHQNApkQJe2PwGCjxwQOMcpkaW5IJmziDwPi/gfUfE1dmSNoR0VDHegU7HW1JZI=
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
+ BYAPR04MB5558.namprd04.prod.outlook.com (20.178.232.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Tue, 20 Aug 2019 21:05:59 +0000
+Received: from BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::24ca:5178:5475:9a0e]) by BYAPR04MB3990.namprd04.prod.outlook.com
+ ([fe80::24ca:5178:5475:9a0e%4]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 21:05:59 +0000
+From:   Atish Patra <Atish.Patra@wdc.com>
+To:     "hch@lst.de" <hch@lst.de>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "palmer@sifive.com" <palmer@sifive.com>
+CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 10/15] riscv: poison SBI calls for M-mode
+Thread-Topic: [PATCH 10/15] riscv: poison SBI calls for M-mode
+Thread-Index: AQHVUe6aQdQDddvuSUq1rKYnjWwlLKcEkkMA
+Date:   Tue, 20 Aug 2019 21:05:59 +0000
+Message-ID: <5d45577f9e2a0368a03760ef181266931f21c0d0.camel@wdc.com>
+References: <20190813154747.24256-1-hch@lst.de>
+         <20190813154747.24256-11-hch@lst.de>
+In-Reply-To: <20190813154747.24256-11-hch@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Atish.Patra@wdc.com; 
+x-originating-ip: [199.255.44.250]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3dcff183-38c5-42ed-18ba-08d725b23373
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR04MB5558;
+x-ms-traffictypediagnostic: BYAPR04MB5558:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <BYAPR04MB555880F1DDB8A6CCFBE1E995FAAB0@BYAPR04MB5558.namprd04.prod.outlook.com>
+wdcipoutbound: EOP-TRUE
+x-ms-oob-tlc-oobclassifiers: OLM:5797;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(366004)(346002)(39860400002)(136003)(199004)(189003)(66066001)(14454004)(76176011)(2201001)(2501003)(6246003)(36756003)(86362001)(54906003)(66556008)(66946007)(110136005)(66476007)(81166006)(64756008)(66446008)(4744005)(99286004)(81156014)(316002)(53936002)(6116002)(76116006)(3846002)(71200400001)(8676002)(4326008)(71190400001)(229853002)(118296001)(256004)(186003)(14444005)(6506007)(8936002)(486006)(476003)(478600001)(7736002)(5660300002)(6436002)(6486002)(6512007)(25786009)(11346002)(26005)(305945005)(102836004)(446003)(2906002)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5558;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: +898yo+WO7ozFTVUTmhA6WSXPkyQNVNS7q9I1I6fjyU8t49xnWARFwuYMRdF0eGNKtTE+5LwS2+7YbBmgvezmUAafbuLd8vYjWGk8kRY/YcEqx9cqAcu19OKSP1NNLLuX+vRI7SvyAjabhF7FmygKBpuMYur3Z5ni8tGp151BcYHd3bUbKD9G7cTh6X8m8zELNJpARBpoti6zFhbJFzj1c29RDnQRtAhPbYukUt9Oqp34rl+XwBei6DMcEuIHFpXRJ0Vxu6wzAQCgLD3XA7/xPgkho5SxdF7eGk2buZWaKyZoEgU3LjauDFHcGVB0ls4YK9vqdTa5QXGAky1XjuM80a7UrRn93AUKB6FFj47jNHN/iElCkCR7YpsilG5YasEEh+RdKOoEuBA7+4gp44b1t8e/UaOeVydEfEHlWkmHAE=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <76FCE82106630048BD11578FACFCEF03@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcff183-38c5-42ed-18ba-08d725b23373
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 21:05:59.3282
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: PlHy6Q1BRpVDbESzHN0Y9hE8BbdY4EOECJ0z+vpjRMPmmaIQwPO0cqjxG0i90Az/lNy9sU4TqPUaPGpJynnAnQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5558
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Global pages support is removed from VT-d spec 3.0. Since global pages G
-flag only affects first-level paging structures and because DMA request
-with PASID are only supported by VT-d spec. 3.0 and onward, we can
-safely remove global pages support.
-
-For kernel shared virtual address IOTLB invalidation, PASID
-granularity and page selective within PASID will be used. There is
-no global granularity supported. Without this fix, IOTLB invalidation
-will cause invalid descriptor error in the queued invalidation (QI)
-interface.
-
-Reported-by:   Sanjay K Kumar <sanjay.k.kumar@intel.com>
-Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
----
- drivers/iommu/intel-svm.c   | 36 +++++++++++++++---------------------
- include/linux/intel-iommu.h |  3 ---
- 2 files changed, 15 insertions(+), 24 deletions(-)
-
-diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
-index c6edef2..55f4128 100644
---- a/drivers/iommu/intel-svm.c
-+++ b/drivers/iommu/intel-svm.c
-@@ -101,24 +101,19 @@ int intel_svm_finish_prq(struct intel_iommu *iommu)
- }
- 
- static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_dev *sdev,
--				       unsigned long address, unsigned long pages, int ih, int gl)
-+				unsigned long address, unsigned long pages, int ih)
- {
- 	struct qi_desc desc;
- 
--	if (pages == -1) {
--		/* For global kernel pages we have to flush them in *all* PASIDs
--		 * because that's the only option the hardware gives us. Despite
--		 * the fact that they are actually only accessible through one. */
--		if (gl)
--			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
--					QI_EIOTLB_DID(sdev->did) |
--					QI_EIOTLB_GRAN(QI_GRAN_ALL_ALL) |
--					QI_EIOTLB_TYPE;
--		else
--			desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
--					QI_EIOTLB_DID(sdev->did) |
--					QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
--					QI_EIOTLB_TYPE;
-+	/*
-+	 * Do PASID granu IOTLB invalidation if page selective capability is
-+	 * not available.
-+	 */
-+	if (pages == -1 || !cap_pgsel_inv(svm->iommu->cap)) {
-+		desc.qw0 = QI_EIOTLB_PASID(svm->pasid) |
-+			QI_EIOTLB_DID(sdev->did) |
-+			QI_EIOTLB_GRAN(QI_GRAN_NONG_PASID) |
-+			QI_EIOTLB_TYPE;
- 		desc.qw1 = 0;
- 	} else {
- 		int mask = ilog2(__roundup_pow_of_two(pages));
-@@ -128,7 +123,6 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
- 				QI_EIOTLB_GRAN(QI_GRAN_PSI_PASID) |
- 				QI_EIOTLB_TYPE;
- 		desc.qw1 = QI_EIOTLB_ADDR(address) |
--				QI_EIOTLB_GL(gl) |
- 				QI_EIOTLB_IH(ih) |
- 				QI_EIOTLB_AM(mask);
- 	}
-@@ -163,13 +157,13 @@ static void intel_flush_svm_range_dev (struct intel_svm *svm, struct intel_svm_d
- }
- 
- static void intel_flush_svm_range(struct intel_svm *svm, unsigned long address,
--				  unsigned long pages, int ih, int gl)
-+				unsigned long pages, int ih)
- {
- 	struct intel_svm_dev *sdev;
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(sdev, &svm->devs, list)
--		intel_flush_svm_range_dev(svm, sdev, address, pages, ih, gl);
-+		intel_flush_svm_range_dev(svm, sdev, address, pages, ih);
- 	rcu_read_unlock();
- }
- 
-@@ -181,7 +175,7 @@ static void intel_invalidate_range(struct mmu_notifier *mn,
- 	struct intel_svm *svm = container_of(mn, struct intel_svm, notifier);
- 
- 	intel_flush_svm_range(svm, start,
--			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0, 0);
-+			      (end - start + PAGE_SIZE - 1) >> VTD_PAGE_SHIFT, 0);
- }
- 
- static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
-@@ -204,7 +198,7 @@ static void intel_mm_release(struct mmu_notifier *mn, struct mm_struct *mm)
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(sdev, &svm->devs, list) {
- 		intel_pasid_tear_down_entry(svm->iommu, sdev->dev, svm->pasid);
--		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
-+		intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
- 	}
- 	rcu_read_unlock();
- 
-@@ -612,7 +606,7 @@ int intel_svm_unbind_mm(struct device *dev, int pasid)
- 			 * large and has to be physically contiguous. So it's
- 			 * hard to be as defensive as we might like. */
- 			intel_pasid_tear_down_entry(iommu, dev, svm->pasid);
--			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0, !svm->mm);
-+			intel_flush_svm_range_dev(svm, sdev, 0, -1, 0);
- 			kfree_rcu(sdev, rcu);
- 
- 			if (list_empty(&svm->devs)) {
-diff --git a/include/linux/intel-iommu.h b/include/linux/intel-iommu.h
-index 682eafa1..f09813f 100644
---- a/include/linux/intel-iommu.h
-+++ b/include/linux/intel-iommu.h
-@@ -350,7 +350,6 @@ enum {
- #define QI_PC_PASID_SEL		1
- 
- #define QI_EIOTLB_ADDR(addr)	((u64)(addr) & VTD_PAGE_MASK)
--#define QI_EIOTLB_GL(gl)	(((u64)gl) << 7)
- #define QI_EIOTLB_IH(ih)	(((u64)ih) << 6)
- #define QI_EIOTLB_AM(am)	(((u64)am) & 0x3f)
- #define QI_EIOTLB_PASID(pasid) 	(((u64)pasid) << 32)
-@@ -386,8 +385,6 @@ enum {
- #define QI_RESP_INVALID		0x1
- #define QI_RESP_FAILURE		0xf
- 
--#define QI_GRAN_ALL_ALL			0
--#define QI_GRAN_NONG_ALL		1
- #define QI_GRAN_NONG_PASID		2
- #define QI_GRAN_PSI_PASID		3
- 
--- 
-2.7.4
-
+T24gVHVlLCAyMDE5LTA4LTEzIGF0IDE3OjQ3ICswMjAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
+ZToNCj4gVGhlcmUgaXMgbm8gU0JJIHdoZW4gd2UgcnVuIGluIE0tbW9kZSwgc28gZmFpbCB0aGUg
+Y29tcGlsZSBmb3IgYW55DQo+IGNvZGUNCj4gdHJ5aW5nIHRvIHVzZSBTQkkgY2FsbHMuDQo+IA0K
+PiBTaWduZWQtb2ZmLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gLS0tDQo+
+ICBhcmNoL3Jpc2N2L2luY2x1ZGUvYXNtL3NiaS5oIHwgNCArKystDQo+ICAxIGZpbGUgY2hhbmdl
+ZCwgMyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJj
+aC9yaXNjdi9pbmNsdWRlL2FzbS9zYmkuaA0KPiBiL2FyY2gvcmlzY3YvaW5jbHVkZS9hc20vc2Jp
+LmgNCj4gaW5kZXggMjExMzRiM2VmNDA0Li4xZTE3ZjA3ZWFkYWYgMTAwNjQ0DQo+IC0tLSBhL2Fy
+Y2gvcmlzY3YvaW5jbHVkZS9hc20vc2JpLmgNCj4gKysrIGIvYXJjaC9yaXNjdi9pbmNsdWRlL2Fz
+bS9zYmkuaA0KPiBAQCAtOCw2ICs4LDcgQEANCj4gIA0KPiAgI2luY2x1ZGUgPGxpbnV4L3R5cGVz
+Lmg+DQo+ICANCj4gKyNpZm5kZWYgQ09ORklHX01fTU9ERQ0KPiAgI2RlZmluZSBTQklfU0VUX1RJ
+TUVSIDANCj4gICNkZWZpbmUgU0JJX0NPTlNPTEVfUFVUQ0hBUiAxDQo+ICAjZGVmaW5lIFNCSV9D
+T05TT0xFX0dFVENIQVIgMg0KPiBAQCAtOTQsNCArOTUsNSBAQCBzdGF0aWMgaW5saW5lIHZvaWQg
+c2JpX3JlbW90ZV9zZmVuY2Vfdm1hX2FzaWQoY29uc3QNCj4gdW5zaWduZWQgbG9uZyAqaGFydF9t
+YXNrLA0KPiAgCVNCSV9DQUxMXzQoU0JJX1JFTU9URV9TRkVOQ0VfVk1BX0FTSUQsIGhhcnRfbWFz
+aywgc3RhcnQsIHNpemUsDQo+IGFzaWQpOw0KPiAgfQ0KPiAgDQo+IC0jZW5kaWYNCj4gKyNlbmRp
+ZiAvKiBDT05GSUdfTV9NT0RFICovDQo+ICsjZW5kaWYgLyogX0FTTV9SSVNDVl9TQklfSCAqLw0K
+DQpSZXZpZXdlZC1ieTogQXRpc2ggUGF0cmEgPGF0aXNoLnBhdHJhQHdkYy5jb20+DQoNCi0tIA0K
+UmVnYXJkcywNCkF0aXNoDQo=
