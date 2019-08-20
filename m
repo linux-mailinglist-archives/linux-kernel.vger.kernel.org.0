@@ -2,35 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93A3C967D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E016C967C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730896AbfHTRmY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:42:24 -0400
-Received: from mail-wr1-f97.google.com ([209.85.221.97]:39147 "EHLO
-        mail-wr1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730092AbfHTRlH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730569AbfHTRlH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Tue, 20 Aug 2019 13:41:07 -0400
-Received: by mail-wr1-f97.google.com with SMTP id t16so13258098wra.6
+Received: from mail-ed1-f97.google.com ([209.85.208.97]:39683 "EHLO
+        mail-ed1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729833AbfHTRlG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 13:41:06 -0400
+Received: by mail-ed1-f97.google.com with SMTP id g8so7266285edm.6
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=rEm//JA9Ode+pkJQsVxasRJPsyZWnLEZfrP5SRv2v4A=;
-        b=Sgjac72jG7d162s7vmzb/kEOm/+6qVx3KaBvr2KgbWYv6U+hqEx0/RkB8nj/FKDfkD
-         Tih2dqVnKV9gPfCppkkhEobgmxWm+r/B5xb2C/WYqAuXzv+bQEUCecujSHNIkSc5kdnY
-         +EvMFaYJgFlZ97W3ht12lW7KeVPjhSadA9+qKArEAUN/P/QMNwRnCoYAVAdETylzHnob
-         NBlwKydMavMd0Ucsk/t4rLQuFtKwbQ7FyqgYaJGVBTBJi1UuCa0hTbnD8dcjrVHdTdxb
-         1/uUv4T+RQAXKJTqh/hIuRnppgd0CjKrlqn8eOMtBfyOntMP3OaZOEDtBtWDl34ilomM
-         T91A==
-X-Gm-Message-State: APjAAAUleShD9GqQIFYYRzDeBWKzOv6CAia/f0y+G5cHAEbC1wxi/fx7
-        qOvjzQRugeDCct5LoHKbhtrBGVPGOQKhg+6oC1o6e0k6D/4J98ciHgnMBWSwaHyz5A==
-X-Google-Smtp-Source: APXvYqx2NvCEqcvM7LJG+fzCYUWBys0UGZitIliEf8ce3MjbJm4BQPX76bNDLkREPboSx+tHL788Fsk8liDZ
-X-Received: by 2002:a5d:55cf:: with SMTP id i15mr36897292wrw.151.1566322864978;
+        bh=W8Kj656ZzAu9ZCWcFyzALBjAvF+qnepQqiVrSJyXBEw=;
+        b=aAFc41mMUX81i+1BfABRO4seQX6HsPmginlIwkX6A59UwQqvyMXfgViqZKIZ3StB50
+         HSxJCZ7AFYlMXQT0JjCRzk6qgujC9tlhOB8LraB6pzFy6KbDGRWzf3PMbMe1DtcUSEJk
+         3YpMn6bTPijLCcHAahytkP5LbDT+EsbCrZcwhommKUMQc/9FU9gu5Rd2yvKcsL1aZUjq
+         H3HEXjWAZqebDYAM+zpPSKQmU2TRFJYepRRPey8W5WA/HvmlouCn0O7o/9eP7/ec1Ehf
+         4MRkqfkrG0NzAtz64tezduyZtiOu6NMnx2OmItM1/u3nAtw1RP7XQdPyw8b69ycxGHkU
+         Q9Mg==
+X-Gm-Message-State: APjAAAW2T/2QjWg5+v2FlIma140dpJvcXfYyaWlIyJ9tsa1UEJdWgz7/
+        I77e9tyM6/Y5jmfDy5HZMrHQBt1nFX08lL7IxtKUQqURJao5Pi0TjrFKReNPc26nbQ==
+X-Google-Smtp-Source: APXvYqycUJGNwyDQAqgE9ikjjh0O2ad6gVXSpxvz0n3pOCKBILB1jeJoM8Yz5wKLX5S7xlfpyPxZQ/c1gXEv
+X-Received: by 2002:a50:9999:: with SMTP id m25mr32699134edb.183.1566322864685;
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id a4sm313012wro.12.2019.08.20.10.41.04
+        by smtp-relay.gmail.com with ESMTPS id f3sm221529edx.19.2019.08.20.10.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
@@ -38,20 +38,20 @@ Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0880-00032I-L5; Tue, 20 Aug 2019 17:41:04 +0000
+        id 1i0880-00032E-8q; Tue, 20 Aug 2019 17:41:04 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 006C12743150; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
+        id 8E819274314E; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        Chen-Yu Tsai <wens@csie.org>, codekipper@gmail.com,
-        lgirdwood@gmail.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>
-Subject: Applied "ASoC: sun4i-i2s: Pass the channels number as an argument" to the asoc tree
-In-Reply-To: <48887cf7abfaab6597db233b24d7a088a913e48a.1566242458.git-series.maxime.ripard@bootlin.com>
+To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Cc:     alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
+        broonie@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, ludovic.desroches@microchip.com,
+        Mark Brown <broonie@kernel.org>, nicolas.ferre@microchip.com,
+        perex@perex.cz, tiwai@suse.com
+Subject: Applied "ASoC: mchp-i2s-mcc: Fix unprepare of GCLK" to the asoc tree
+In-Reply-To: <20190820162411.24836-2-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174104.006C12743150@ypsilon.sirena.org.uk>
+Message-Id: <20190820174103.8E819274314E@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +60,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: sun4i-i2s: Pass the channels number as an argument
+   ASoC: mchp-i2s-mcc: Fix unprepare of GCLK
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,68 +85,57 @@ to this mail.
 Thanks,
 Mark
 
-From 0083a507a78fdfa868acc0709408b59e72488a61 Mon Sep 17 00:00:00 2001
-From: Maxime Ripard <maxime.ripard@bootlin.com>
-Date: Mon, 19 Aug 2019 21:25:25 +0200
-Subject: [PATCH] ASoC: sun4i-i2s: Pass the channels number as an argument
+From 988b59467b2b14523a266957affbe9eca3e99fc9 Mon Sep 17 00:00:00 2001
+From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Date: Tue, 20 Aug 2019 19:24:09 +0300
+Subject: [PATCH] ASoC: mchp-i2s-mcc: Fix unprepare of GCLK
 
-The channels number have been hardcoded to 2 so far, while the controller
-supports more than that.
+If hw_free() gets called after hw_params(), GCLK remains prepared,
+preventing further use of it. This patch fixes this by unpreparing the
+clock in hw_free() or if hw_params() gets an error.
 
-Remove the instance where it has been hardcoded to compute the BCLK
-divider, and pass it through as an argument to ease further support of more
-channels.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-Link: https://lore.kernel.org/r/48887cf7abfaab6597db233b24d7a088a913e48a.1566242458.git-series.maxime.ripard@bootlin.com
+Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Link: https://lore.kernel.org/r/20190820162411.24836-2-codrin.ciubotariu@microchip.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/sunxi/sun4i-i2s.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ sound/soc/atmel/mchp-i2s-mcc.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-index 4c636f1cf7dc..6b172dfbc25d 100644
---- a/sound/soc/sunxi/sun4i-i2s.c
-+++ b/sound/soc/sunxi/sun4i-i2s.c
-@@ -238,10 +238,11 @@ static unsigned long sun8i_i2s_get_bclk_parent_rate(const struct sun4i_i2s *i2s)
- static int sun4i_i2s_get_bclk_div(struct sun4i_i2s *i2s,
- 				  unsigned long parent_rate,
- 				  unsigned int sampling_rate,
-+				  unsigned int channels,
- 				  unsigned int word_size)
- {
- 	const struct sun4i_i2s_clk_div *dividers = i2s->variant->bclk_dividers;
--	int div = parent_rate / sampling_rate / word_size / 2;
-+	int div = parent_rate / sampling_rate / word_size / channels;
- 	int i;
+diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
+index 86495883ca3f..319f975586f1 100644
+--- a/sound/soc/atmel/mchp-i2s-mcc.c
++++ b/sound/soc/atmel/mchp-i2s-mcc.c
+@@ -670,8 +670,13 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 	}
  
- 	for (i = 0; i < i2s->variant->num_bclk_dividers; i++) {
-@@ -286,6 +287,7 @@ static bool sun4i_i2s_oversample_is_valid(unsigned int oversample)
- 
- static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
- 				  unsigned int rate,
-+				  unsigned int channels,
- 				  unsigned int word_size)
- {
- 	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-@@ -333,7 +335,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
- 
- 	bclk_parent_rate = i2s->variant->get_bclk_parent_rate(i2s);
- 	bclk_div = sun4i_i2s_get_bclk_div(i2s, bclk_parent_rate,
--					  rate, word_size);
-+					  rate, channels, word_size);
- 	if (bclk_div < 0) {
- 		dev_err(dai->dev, "Unsupported BCLK divider: %d\n", bclk_div);
- 		return -EINVAL;
-@@ -488,7 +490,7 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
- 	regmap_field_write(i2s->field_fmt_sr, sr);
- 
- 	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
--				      params_width(params));
-+				      2, params_width(params));
+ 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
+-	if (ret < 0)
++	if (ret < 0) {
++		if (dev->gclk_use) {
++			clk_unprepare(dev->gclk);
++			dev->gclk_use = 0;
++		}
+ 		return ret;
++	}
+ 	return regmap_write(dev->regmap, MCHP_I2SMCC_MRB, mrb);
  }
  
- static int sun4i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
+@@ -708,9 +713,13 @@ static int mchp_i2s_mcc_hw_free(struct snd_pcm_substream *substream,
+ 		regmap_write(dev->regmap, MCHP_I2SMCC_CR, MCHP_I2SMCC_CR_CKDIS);
+ 
+ 		if (dev->gclk_running) {
+-			clk_disable_unprepare(dev->gclk);
++			clk_disable(dev->gclk);
+ 			dev->gclk_running = 0;
+ 		}
++		if (dev->gclk_use) {
++			clk_unprepare(dev->gclk);
++			dev->gclk_use = 0;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
 2.20.1
 
