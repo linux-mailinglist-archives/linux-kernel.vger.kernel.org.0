@@ -2,93 +2,163 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AACA2959D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:41:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6D1D4959F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbfHTIlD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:41:03 -0400
-Received: from mga18.intel.com ([134.134.136.126]:63414 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728879AbfHTIlD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:41:03 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 01:41:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
-   d="scan'208";a="172385728"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.6]) ([10.239.13.6])
-  by orsmga008.jf.intel.com with ESMTP; 20 Aug 2019 01:41:00 -0700
-Subject: Re: [kbuild-all] [PATCH] fix odd_ptr_err.cocci warnings
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>, alsa-devel@alsa-project.org,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Mark Brown <broonie@kernel.org>, kbuild-all@01.org
-References: <alpine.DEB.2.21.1908091229140.2946@hadrien>
- <20190809123112.GC3963@sirena.co.uk>
- <88ac4c79-5ce3-3f1a-5f6e-3928a30a1ef5@ti.com>
- <alpine.DEB.2.21.1908091519400.2946@hadrien>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <297e44a8-e08d-ddf2-e5e8-b532965b4a8d@intel.com>
-Date:   Tue, 20 Aug 2019 16:41:02 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1729514AbfHTIlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:41:20 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40719 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728879AbfHTIlS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 04:41:18 -0400
+Received: by mail-wr1-f68.google.com with SMTP id c3so11473425wrd.7
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=v/P7EPY/5dFnAu48qok6WuTbpIx9NhM57Lx/BDC712I=;
+        b=Dh96VTcdKSYsPtHoUVhk6WnhZCKFnnDXqYAmwZcjUGC7ZNgCjOEf2Nw6MfwCRFKwP7
+         eyvQ1yz5Zo+b0UQ7cK3D0IK4GkzB2LcfCQAePhADH80JV2GfPBqHV3B+gosFO/mAZHlp
+         n0S/fS5KDLYrxB3iqYsm9BIKpoUOYeOkIvetgOsmBqRPGIKiaFewZ1/2jiHQH16tX6Vr
+         QodWkgcNycOgk5PpYLSJ9evdkceGKQ16vZi8PUrbGjvLORS/Zv4ONO6QOpsXEmqPiKBM
+         mu+VcXUnTQkKGhOtVXwZUfy+msoASCTetYn4dFpELiaHzaa8ZtQ5VHFUgwP5bDbmfDw8
+         nleA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=v/P7EPY/5dFnAu48qok6WuTbpIx9NhM57Lx/BDC712I=;
+        b=BZ/foXUj55ikls4rFm7DxvqzJOXijkekS3DdQEImuAMlLvJLUyScVm37/Chg5HZ4Zs
+         9zAdCTdDdqpyO+2VsVM8Qk9AWGYiIOfWMuLd5HCJf3sqIhtrIqCdPouNlEebsoTS9qdI
+         pWSyQ5I8ZRKqxPyWx4jWcbtZUDA8ScfnhH2Y54dQhvJmTAea1NCSF2F/emjnlYJHH5Fw
+         EonEtlP8ayeiu314Z+n06vSOt9Qs5eNYFy6P8J1DCOcl7lB/RXfahG0M7zb7y0OUkGgl
+         DkBxhrfoYqEwkZ3vdTVu2sg9HMby0LNNABsaeHziERcdIBrx9ciGWJ8meag3SFjSJSWD
+         OyGg==
+X-Gm-Message-State: APjAAAWdQcy5xQK4fHgiO8TmVqn1Jmf5JAAEH6CB2o5dfoQ5oCMmpS1a
+        IygZYa9HRDDKTLiWmQkLlk/m7w==
+X-Google-Smtp-Source: APXvYqyMi9fjn35RKMqKCT0Cl9gAsZF/NvpZhgd2Tspcloatig8wnB73W94dlxJXp3kNJjco7rN/Gw==
+X-Received: by 2002:a5d:424a:: with SMTP id s10mr25270321wrr.55.1566290477062;
+        Tue, 20 Aug 2019 01:41:17 -0700 (PDT)
+Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 01:41:16 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        jonas@kwiboo.se, jernej.skrabec@siol.net,
+        boris.brezillon@collabora.com
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: [RFC 04/11] drm/bridge: synopsys: dw-hdmi: add basic bridge_atomic_check
+Date:   Tue, 20 Aug 2019 10:41:02 +0200
+Message-Id: <20190820084109.24616-5-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190820084109.24616-1-narmstrong@baylibre.com>
+References: <20190820084109.24616-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1908091519400.2946@hadrien>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter,
+Add all the supported input and output formats to the bridge
+input_bus_caps and output_bus_caps, and add a very simple atomic check
+implementation to negociate output and input bus formats.
 
-We have updated to only send the reports to you, please see 
-https://github.com/intel/lkp-tests/blob/master/repo/linux/omap-audio
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 53 +++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-Best Regards,
-Rong Chen
-
-On 8/9/19 9:21 PM, Julia Lawall wrote:
->
-> On Fri, 9 Aug 2019, Peter Ujfalusi wrote:
->
->>
->> On 09/08/2019 15.31, Mark Brown wrote:
->>> On Fri, Aug 09, 2019 at 12:30:46PM +0200, Julia Lawall wrote:
->>>
->>>> tree:   https://github.com/omap-audio/linux-audio peter/ti-linux-4.19.y/wip
->>>> head:   62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a
->>>> commit: 62c9c1442c8f61ca93e62e1a9d8318be0abd9d9a [34/34] j721e new machine driver wip
->>>> :::::: branch date: 20 hours ago
->>>> :::::: commit date: 20 hours ago
->>>>
->>>>   j721e-evm.c |    4 ++--
->>>>   1 file changed, 2 insertions(+), 2 deletions(-)
->>>>
->>>> --- a/sound/soc/ti/j721e-evm.c
->>>> +++ b/sound/soc/ti/j721e-evm.c
->>>> @@ -283,7 +283,7 @@ static int j721e_get_clocks(struct platf
->>> This file isn't upstream, it's only in the TI BSP.
->> Yes, it is not upstream, but the fix is valid.
->>
->> Julia: is it possible to direct these notifications only to me from
->> https://github.com/omap-audio/linux-audio.git ?
->>
->> It mostly carries TI BSP stuff and my various for upstream branches nowdays.
-> Please discuss it with the kbuild people.  They should be able to set it
-> up as you want.
->
-> You can try lkp@intel.com
->
-> julia
-> _______________________________________________
-> kbuild-all mailing list
-> kbuild-all@lists.01.org
-> https://lists.01.org/mailman/listinfo/kbuild-all
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+index b4901b174a90..121c2167ee20 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
+@@ -91,6 +91,24 @@ static const u16 csc_coeff_rgb_in_eitu709[3][4] = {
+ 	{ 0x6756, 0x78ab, 0x2000, 0x0200 }
+ };
+ 
++static const u32 dw_hdmi_bus_fmts[] = {
++	MEDIA_BUS_FMT_RGB888_1X24,
++	MEDIA_BUS_FMT_RGB101010_1X30,
++	MEDIA_BUS_FMT_RGB121212_1X36,
++	MEDIA_BUS_FMT_RGB161616_1X48,
++	MEDIA_BUS_FMT_YUV8_1X24,
++	MEDIA_BUS_FMT_YUV10_1X30,
++	MEDIA_BUS_FMT_YUV12_1X36,
++	MEDIA_BUS_FMT_YUV16_1X48,
++	MEDIA_BUS_FMT_UYVY8_1X16,
++	MEDIA_BUS_FMT_UYVY10_1X20,
++	MEDIA_BUS_FMT_UYVY12_1X24,
++	MEDIA_BUS_FMT_UYYVYY8_0_5X24,
++	MEDIA_BUS_FMT_UYYVYY10_0_5X30,
++	MEDIA_BUS_FMT_UYYVYY12_0_5X36,
++	MEDIA_BUS_FMT_UYYVYY16_0_5X48,
++};
++
+ struct hdmi_vmode {
+ 	bool mdataenablepolarity;
+ 
+@@ -2190,6 +2208,33 @@ static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs =
+ 	.get_modes = dw_hdmi_connector_get_modes,
+ };
+ 
++static int dw_hdmi_bridge_atomic_check(struct drm_bridge *bridge,
++				       struct drm_bridge_state *bridge_state,
++				       struct drm_crtc_state *crtc_state,
++				       struct drm_connector_state *conn_state)
++{
++	struct dw_hdmi *hdmi = bridge->driver_private;
++	int ret;
++
++	ret = drm_atomic_bridge_choose_output_bus_cfg(bridge_state, crtc_state,
++						      conn_state);
++	if (ret)
++		return ret;
++
++	dev_dbg(hdmi->dev, "selected output format %x\n",
++			bridge_state->output_bus_cfg.fmt);
++
++	ret = drm_atomic_bridge_choose_input_bus_cfg(bridge_state, crtc_state,
++						      conn_state);
++	if (ret)
++		return ret;
++
++	dev_dbg(hdmi->dev, "selected input format %x\n",
++			bridge_state->input_bus_cfg.fmt);
++
++	return 0;
++}
++
+ static int dw_hdmi_bridge_attach(struct drm_bridge *bridge)
+ {
+ 	struct dw_hdmi *hdmi = bridge->driver_private;
+@@ -2267,6 +2312,7 @@ static void dw_hdmi_bridge_enable(struct drm_bridge *bridge)
+ 
+ static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
+ 	.attach = dw_hdmi_bridge_attach,
++	.atomic_check = dw_hdmi_bridge_atomic_check,
+ 	.enable = dw_hdmi_bridge_enable,
+ 	.disable = dw_hdmi_bridge_disable,
+ 	.mode_set = dw_hdmi_bridge_mode_set,
+@@ -2733,6 +2779,13 @@ __dw_hdmi_probe(struct platform_device *pdev,
+ 
+ 	hdmi->bridge.driver_private = hdmi;
+ 	hdmi->bridge.funcs = &dw_hdmi_bridge_funcs;
++	hdmi->bridge.input_bus_caps.supported_fmts = dw_hdmi_bus_fmts;
++	hdmi->bridge.input_bus_caps.num_supported_fmts =
++					ARRAY_SIZE(dw_hdmi_bus_fmts);
++	hdmi->bridge.output_bus_caps.supported_fmts = dw_hdmi_bus_fmts;
++	hdmi->bridge.output_bus_caps.num_supported_fmts =
++					ARRAY_SIZE(dw_hdmi_bus_fmts);
++
+ #ifdef CONFIG_OF
+ 	hdmi->bridge.of_node = pdev->dev.of_node;
+ #endif
+-- 
+2.22.0
 
