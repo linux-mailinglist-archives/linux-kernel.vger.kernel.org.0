@@ -2,228 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AF67996641
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:25:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 247829663B
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730590AbfHTQZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:25:00 -0400
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:41572 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730548AbfHTQY6 (ORCPT
+        id S1730153AbfHTQYn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:24:43 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:44816 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725971AbfHTQYn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:24:58 -0400
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: aFji5dW+I/aW1uJ68pXVxk3YkM2nOrhXauZi1r3/fqZ5u+7X/UBgr88KGpJ42V5Kl5kBNgCZhT
- Z9LY2AQs1YvZQk9VHWzuXLFrY5XucSJ+6srzf9od2uEKnMuQiJhBwT23cZm1SQe4mCZBIHUiYN
- yqmilAUguI/n4Ofvphe+2ql+GHyEMcC3LSYl7l4+vyOXTysYuh+dRqiBrnqUpXBVMey5qfrJdj
- Aw/4ID4rBcL6yjET0N7loQXZh9NArVOuhXKozgvfWPxVnPdYBZuS1h9YEsdsXR1nRKY1ivPh+2
- i5g=
-X-IronPort-AV: E=Sophos;i="5.64,408,1559545200"; 
-   d="scan'208";a="44306438"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Aug 2019 09:24:58 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Tue, 20 Aug 2019 09:24:56 -0700
-Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Tue, 20 Aug 2019 09:24:54 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <alsa-devel@alsa-project.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: [PATCH 3/3] ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in master mode
-Date:   Tue, 20 Aug 2019 19:24:11 +0300
-Message-ID: <20190820162411.24836-4-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190820162411.24836-1-codrin.ciubotariu@microchip.com>
-References: <20190820162411.24836-1-codrin.ciubotariu@microchip.com>
+        Tue, 20 Aug 2019 12:24:43 -0400
+Received: by mail-pg1-f194.google.com with SMTP id i18so3517727pgl.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 09:24:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rtMtxwDFxfWyDwI2VJqXw7UwN79Bf7nonGtI8wZ/AV8=;
+        b=H9A7VyZ+AkTGb6fh3lCfYFGef3H3WPjC2RH9jX+XiptcELpZO/IVJTMVyT/Sf+dan4
+         weppXZXhDW1iXlZiUi9HyLv0TBydmXbI3zPIZVbjCAoURMxwCDt8a2NtMYgypF1CQVn2
+         GlCPw+7OQLfLpiS8IbIi31vp55DWdGaBbCrQVXg/73mzxpSao9JWB1WzD/IhP3260bX5
+         5mpugFVHPCO5zvNjd7SrMXBvGliNdJOHt8A2c6JGgk4vMq6RFMvShQZ7QfFAHUxKGKo8
+         ER9tanSNhKNj9azM984ZKZlcnPL8HHkvpGy8wxMfgD5b3vJGcLrzzls2YVUElDPhKvB9
+         zONg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rtMtxwDFxfWyDwI2VJqXw7UwN79Bf7nonGtI8wZ/AV8=;
+        b=ibSrRQdaM6Hoo1uOvGVNn9F5EbJk0rT0UbNGhG5AegN4VwO2YBdGD9pp4eKE9Ifm56
+         KJuO3yjLVHZl4YjXbaCQxbDU4OHtEMzEtHSxvf5ZAtEQ9nb0xz4tYoJROjAzr/igtmt1
+         uYP3Z+zmESMlNAoNpm7nAKkrSwzp6d05wRMkZKpr+eww1d9pKPzvqBR1Yvp6WJf6BMAn
+         0/1Yw3MS+WP3jCniuLZcJUEGmWZWbjIBWcc45+dcaoTmOhLWU13YCTCFdpechZrud9Mo
+         jcz75HPmN+7KWpsdWDIelfBxgkMMOK1fO32LwUHbX3STc9HC37LicLELzEbb1AZGAef/
+         KAsQ==
+X-Gm-Message-State: APjAAAWVwmE8jUHyuHycm948Iu9AQEPDZEXVhYo7CyJ/+OYKR16WIiP2
+        kpSXClIb+KyZl8u4zyXsXVo=
+X-Google-Smtp-Source: APXvYqye5R5yNp/QaiKoJoPnfGJSyMAFG3pnY1LWDO29qhAN2U+W/GyrfTDuBR3N7CFkLUvF8H4MWQ==
+X-Received: by 2002:a63:9e43:: with SMTP id r3mr25940504pgo.148.1566318282238;
+        Tue, 20 Aug 2019 09:24:42 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.36])
+        by smtp.gmail.com with ESMTPSA id 203sm31373737pfz.107.2019.08.20.09.24.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2019 09:24:41 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 21:54:32 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Dimitri Sivanich <sivanich@hpe.com>,
+        Andrew Morton <akpm@linux-foundation.org>, jglisse@redhat.com,
+        ira.weiny@intel.com, gregkh@linuxfoundation.org, arnd@arndb.de,
+        william.kucharski@oracle.com, hch@lst.de,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel-mentees@lists.linuxfoundation.org,
+        Michal Hocko <mhocko@kernel.org>
+Subject: Re: [Linux-kernel-mentees][PATCH v6 1/2] sgi-gru: Convert put_page()
+ to put_user_page*()
+Message-ID: <20190820162432.GB5153@bharath12345-Inspiron-5559>
+References: <1566157135-9423-1-git-send-email-linux.bhar@gmail.com>
+ <1566157135-9423-2-git-send-email-linux.bhar@gmail.com>
+ <20190819125611.GA5808@hpe.com>
+ <20190819190647.GA6261@bharath12345-Inspiron-5559>
+ <0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0c2ad29b-934c-ec30-66c3-b153baf1fba5@nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This controller supports capture and playback running at the same time,
-with the limitation that both capture and playback must be configured the
-same way (sample rate, sample format, number of channels, etc). For this,
-we have to assure that the configuration registers look the same when
-capture and playback are initiated.
-This patch fixes a bug in which the controller is in master mode and the
-hw_params() callback fails for the second audio stream. The fail occurs
-because the divisors are calculated after comparing the configuration
-registers for capture and playback. The fix consists in calculating the
-divisors before comparing the configuration registers. BCLK and LRC are
-then configured and started only if the controller is not already running.
+On Mon, Aug 19, 2019 at 12:30:18PM -0700, John Hubbard wrote:
+> On 8/19/19 12:06 PM, Bharath Vedartham wrote:
+> >On Mon, Aug 19, 2019 at 07:56:11AM -0500, Dimitri Sivanich wrote:
+> >>Reviewed-by: Dimitri Sivanich <sivanich@hpe.com>
+> >Thanks!
+> >
+> >John, would you like to take this patch into your miscellaneous
+> >conversions patch set?
+> >
+> 
+> (+Andrew and Michal, so they know where all this is going.)
+> 
+> Sure, although that conversion series [1] is on a brief hold, because
+> there are additional conversions desired, and the API is still under
+> discussion. Also, reading between the lines of Michal's response [2]
+> about it, I think people would prefer that the next revision include
+> the following, for each conversion site:
+> 
+> Conversion of gup/put_page sites:
+> 
+> Before:
+> 
+> 	get_user_pages(...);
+> 	...
+> 	for each page:
+> 		put_page();
+> 
+> After:
+> 	
+> 	gup_flags |= FOLL_PIN; (maybe FOLL_LONGTERM in some cases)
+> 	vaddr_pin_user_pages(...gup_flags...)
+> 	...
+> 	vaddr_unpin_user_pages(); /* which invokes put_user_page() */
+> 
+> Fortunately, it's not harmful for the simpler conversion from put_page()
+> to put_user_page() to happen first, and in fact those have usually led
+> to simplifications, paving the way to make it easier to call
+> vaddr_unpin_user_pages(), once it's ready. (And showing exactly what
+> to convert, too.)
+> 
+> So for now, I'm going to just build on top of Ira's tree, and once the
+> vaddr*() API settles down, I'll send out an updated series that attempts
+> to include the reviews and ACKs so far (I'll have to review them, but
+> make a note that review or ACK was done for part of the conversion),
+> and adds the additional gup(FOLL_PIN), and uses vaddr*() wrappers instead of
+> gup/pup.
+> 
+> [1] https://lore.kernel.org/r/20190807013340.9706-1-jhubbard@nvidia.com
+> 
+> [2] https://lore.kernel.org/r/20190809175210.GR18351@dhcp22.suse.cz
+> 
+Cc' lkml(I missed out the 'l' in this series). 
 
-Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
- sound/soc/atmel/mchp-i2s-mcc.c | 70 ++++++++++++++++++----------------
- 1 file changed, 37 insertions(+), 33 deletions(-)
+sounds good. It makes sense to keep the entire gup in the kernel rather
+than to expose it outside. 
 
-diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
-index ab7d5f98e759..befc2a3a05b0 100644
---- a/sound/soc/atmel/mchp-i2s-mcc.c
-+++ b/sound/soc/atmel/mchp-i2s-mcc.c
-@@ -392,11 +392,11 @@ static int mchp_i2s_mcc_clk_get_rate_diff(struct clk *clk,
- }
- 
- static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
--				    unsigned int bclk, unsigned int *mra)
-+				    unsigned int bclk, unsigned int *mra,
-+				    unsigned long *best_rate)
- {
- 	unsigned long clk_rate;
- 	unsigned long lcm_rate;
--	unsigned long best_rate = 0;
- 	unsigned long best_diff_rate = ~0;
- 	unsigned int sysclk;
- 	struct clk *best_clk = NULL;
-@@ -423,7 +423,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 	     (clk_rate == bclk || clk_rate / (bclk * 2) <= GENMASK(5, 0));
- 	     clk_rate += lcm_rate) {
- 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->gclk, clk_rate,
--						     &best_clk, &best_rate,
-+						     &best_clk, best_rate,
- 						     &best_diff_rate);
- 		if (ret) {
- 			dev_err(dev->dev, "gclk error for rate %lu: %d",
-@@ -437,7 +437,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 		}
- 
- 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->pclk, clk_rate,
--						     &best_clk, &best_rate,
-+						     &best_clk, best_rate,
- 						     &best_diff_rate);
- 		if (ret) {
- 			dev_err(dev->dev, "pclk error for rate %lu: %d",
-@@ -459,33 +459,17 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
- 
- 	dev_dbg(dev->dev, "source CLK is %s with rate %lu, diff %lu\n",
- 		best_clk == dev->pclk ? "pclk" : "gclk",
--		best_rate, best_diff_rate);
--
--	/* set the rate */
--	ret = clk_set_rate(best_clk, best_rate);
--	if (ret) {
--		dev_err(dev->dev, "unable to set rate %lu to %s: %d\n",
--			best_rate, best_clk == dev->pclk ? "PCLK" : "GCLK",
--			ret);
--		return ret;
--	}
-+		*best_rate, best_diff_rate);
- 
- 	/* Configure divisors */
- 	if (dev->sysclk)
--		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(best_rate / (2 * sysclk));
--	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(best_rate / (2 * bclk));
-+		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(*best_rate / (2 * sysclk));
-+	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(*best_rate / (2 * bclk));
- 
--	if (best_clk == dev->gclk) {
-+	if (best_clk == dev->gclk)
- 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_GCLK;
--		ret = clk_prepare(dev->gclk);
--		if (ret < 0)
--			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
--		else
--			dev->gclk_use = 1;
--	} else {
-+	else
- 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_PCLK;
--		dev->gclk_use = 0;
--	}
- 
- 	return 0;
- }
-@@ -502,6 +486,7 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 				  struct snd_pcm_hw_params *params,
- 				  struct snd_soc_dai *dai)
- {
-+	unsigned long rate = 0;
- 	struct mchp_i2s_mcc_dev *dev = snd_soc_dai_get_drvdata(dai);
- 	u32 mra = 0;
- 	u32 mrb = 0;
-@@ -640,6 +625,17 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 		return -EINVAL;
- 	}
- 
-+	if (set_divs) {
-+		bclk_rate = frame_length * params_rate(params);
-+		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra,
-+					       &rate);
-+		if (ret) {
-+			dev_err(dev->dev,
-+				"unable to configure the divisors: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	/*
- 	 * If we are already running, the wanted setup must be
- 	 * the same with the one that's currently ongoing
-@@ -656,19 +652,27 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
- 		return 0;
- 	}
- 
--	/* Save the number of channels to know what interrupts to enable */
--	dev->channels = channels;
--
--	if (set_divs) {
--		bclk_rate = frame_length * params_rate(params);
--		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra);
-+	if (mra & MCHP_I2SMCC_MRA_SRCCLK_GCLK && !dev->gclk_use) {
-+		/* set the rate */
-+		ret = clk_set_rate(dev->gclk, rate);
- 		if (ret) {
--			dev_err(dev->dev, "unable to configure the divisors: %d\n",
--				ret);
-+			dev_err(dev->dev,
-+				"unable to set rate %lu to GCLK: %d\n",
-+				rate, ret);
-+			return ret;
-+		}
-+
-+		ret = clk_prepare(dev->gclk);
-+		if (ret < 0) {
-+			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
- 			return ret;
- 		}
-+		dev->gclk_use = 1;
- 	}
- 
-+	/* Save the number of channels to know what interrupts to enable */
-+	dev->channels = channels;
-+
- 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
- 	if (ret < 0) {
- 		if (dev->gclk_use) {
--- 
-2.20.1
+I ll make sure to checkout the emails on vaddr*() API and pace my work
+on it accordingly.
 
+Thank you
+Bharath
+> thanks,
+> -- 
+> John Hubbard
+> NVIDIA
