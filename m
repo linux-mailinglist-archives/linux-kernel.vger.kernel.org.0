@@ -2,65 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7248B95CD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:04:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E5E895CE2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 13:07:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfHTLEn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 07:04:43 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:35528 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728503AbfHTLEm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:04:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ts4v6M3z2r4Kl3nDDDGqpuSc/Z0cqjuzGtxOIWMF0Kc=; b=ZNAvkO1mOiFhEryFwP2Jdiacm
-        +Tk9lxLBZlHhJJd5TysLQeLIAKZ9St7JOu+CnhgtxoIz5uYQNDBpDq+Dap0+cM2piopslwxnlKi6g
-        0YMq+OFgJoCHkUcVw4ZhWHcUYAEIVt3q6mYc+yu/5F06wxobZl4/+bMeaPxZ8RteCC92Fa59CXbE3
-        6+wxxnEMDKMjIx8flfhZAyzuEKIeVLhD6keJ5ftJVILpAhak1qL5hYyYfPGrfIPa+KbYX6NSGo1VA
-        u1nIsZg1GVmGH/SZeUzf4zr5uEw2TdhBpD5D1vRXtkpUv/2Sl5OEMyuXcAoaYv0OPfdR8KTsSy+qY
-        KnJVqwzMg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i01wH-0006ny-Ti; Tue, 20 Aug 2019 11:04:34 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        id S1729618AbfHTLGX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 07:06:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728283AbfHTLGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:06:23 -0400
+Received: from localhost (unknown [106.201.62.126])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1EA2A307456;
-        Tue, 20 Aug 2019 13:03:58 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 1930820B342B1; Tue, 20 Aug 2019 13:04:30 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 13:04:30 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     c00423981 <caomeng5@huawei.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpustat: print watchdog time and statistics of soft and
- hard interrupts in soft lockup scenes
-Message-ID: <20190820110430.GL2332@hirez.programming.kicks-ass.net>
-References: <60319e82-3c2b-ff24-4ba7-4d58048130ff@huawei.com>
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7D8720C01;
+        Tue, 20 Aug 2019 11:06:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566299182;
+        bh=zBcLo7GWdvo53ZL+qOqtR0PxkMh9A+yzuLf6IeQfgWE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vn4zeb13X6Id2TNzE5NpHZ9mBPZidwghpE4QL05SPMEilxDSOTDFS11uc6/MPCPVE
+         yD/7atDqfthj1WUL8LciYesQcWmMUa2v2FOFCuUQlx8cDx/e9juk7JtVeHJnG2HNex
+         +MdSEX1SM6t2ZYi/dECR2k9r0tU4E5OzprD5tqFE=
+Date:   Tue, 20 Aug 2019 16:35:10 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Jon Hunter <jonathanh@nvidia.com>
+Cc:     Sameer Pujar <spujar@nvidia.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>,
+        dan.j.williams@intel.com, tiwai@suse.com,
+        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+        sharadg@nvidia.com, rlokhande@nvidia.com, dramesh@nvidia.com,
+        mkumard@nvidia.com
+Subject: Re: [PATCH] [RFC] dmaengine: add fifo_size member
+Message-ID: <20190820110510.GQ12733@vkoul-mobl.Dlink>
+References: <e9e822da-1cb9-b510-7639-43407fda8321@nvidia.com>
+ <75be49ac-8461-0798-b673-431ec527d74f@nvidia.com>
+ <20190719050459.GM12733@vkoul-mobl.Dlink>
+ <3e7f795d-56fb-6a71-b844-2fc2b85e099e@nvidia.com>
+ <20190729061010.GC12733@vkoul-mobl.Dlink>
+ <98954eb3-21f1-6008-f8e1-f9f9b82f87fb@nvidia.com>
+ <20190731151610.GT12733@vkoul-mobl.Dlink>
+ <c0f4de86-423a-35df-3744-40db89f2fdfe@nvidia.com>
+ <20190808123833.GX12733@vkoul-mobl.Dlink>
+ <a93a472d-b8f7-973f-6068-607492421472@nvidia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <60319e82-3c2b-ff24-4ba7-4d58048130ff@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <a93a472d-b8f7-973f-6068-607492421472@nvidia.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 03:12:24PM +0800, c00423981 wrote:
-> +static u64 cpustat_curr_cputime(int cpu, int index)
-> +{
-> +	u64 time;
-> +
-> +	if (index == CPUTIME_IDLE)
-> +		time = get_idle_time(cpu);
-> +	else if (index == CPUTIME_IOWAIT)
-> +		time = get_iowait_time(cpu);
+On 19-08-19, 16:56, Jon Hunter wrote:
+> >>>>>>> On this, I am inclined to think that dma driver should not be involved.
+> >>>>>>> The ADMAIF needs this configuration and we should take the path of
+> >>>>>>> dma_router for this piece and add features like this to it
+> >>>>>>
+> >>>>>> Hi Vinod,
+> >>>>>>
+> >>>>>> The configuration is needed by both ADMA and ADMAIF. The size is
+> >>>>>> configurable
+> >>>>>> on ADMAIF side. ADMA needs to know this info and program accordingly.
+> >>>>>
+> >>>>> Well I would say client decides the settings for both DMA, DMAIF and
+> >>>>> sets the peripheral accordingly as well, so client communicates the two
+> >>>>> sets of info to two set of drivers
+> >>>>
+> >>>> That maybe, but I still don't see how the information is passed from the
+> >>>> client in the first place. The current problem is that there is no means
+> >>>> to pass both a max-burst size and fifo-size to the DMA driver from the
+> >>>> client.
+> >>>
+> >>> So one thing not clear to me is why ADMA needs fifo-size, I thought it
+> >>> was to program ADMAIF and if we have client programme the max-burst
+> >>> size to ADMA and fifo-size to ADMAIF we wont need that. Can you please
+> >>> confirm if my assumption is valid?
+> >>
+> >> Let me see if I can clarify ...
+> >>
+> >> 1. The FIFO we are discussing here resides in the ADMAIF module which is
+> >>    a separate hardware block the ADMA (although the naming make this
+> >>    unclear).
+> >>
+> >> 2. The size of FIFO in the ADMAIF is configurable and it this is
+> >>    configured via the ADMAIF registers. This allows different channels
+> >>    to use different FIFO sizes. Think of this as a shared memory that is
+> >>    divided into n FIFOs shared between all channels.
+> >>
+> >> 3. The ADMA, not the ADMAIF, manages the flow to the FIFO and this is
+> >>    because the ADMAIF only tells the ADMA when a word has been
+> >>    read/written (depending on direction), the ADMAIF does not indicate
+> >>    if the FIFO is full, empty, etc. Hence, the ADMA needs to know the
+> >>    total FIFO size.
+> >>
+> >> So the ADMA needs to know the FIFO size so that it does not overrun the
+> >> FIFO and we can also set a burst size (less than the total FIFO size)
+> >> indicating how many words to transfer at a time. Hence, the two parameters.
+> > 
+> > Thanks, I confirm this is my understanding as well.
+> > 
+> > To compare to regular case for example SPI on DMA, SPI driver will
+> > calculate fifo size & burst to be used and program dma (burst size) and
+> > its own fifos accordingly
+> > 
+> > So, in your case why should the peripheral driver not calculate the fifo
+> > size for both ADMA and ADMAIF and (if required it's own FIFO) and
+> > program the two (ADMA and ADMAIF).
+> > 
+> > What is the limiting factor in this flow is not clear to me.
+> 
+> The FIFO size that is configured by the ADMAIF driver needs to be given
+> to the ADMA driver so that it can program its registers accordingly. The
+> difference here is that both the ADMA and ADMAIF need the FIFO size.
 
-NAK; don't add new users of this terminally broken interface.
+Can you please help describing what it is programming using the FIFO
+size of ADMAIF?
+
+Thanks
+-- 
+~Vinod
