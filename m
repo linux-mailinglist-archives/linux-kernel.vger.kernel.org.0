@@ -2,47 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0000B959F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DA969959F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 10:43:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729479AbfHTIlS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 04:41:18 -0400
-Received: from mail-wr1-f47.google.com ([209.85.221.47]:35957 "EHLO
-        mail-wr1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729362AbfHTIlQ (ORCPT
+        id S1729543AbfHTIlY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 04:41:24 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:44549 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729378AbfHTIlR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 04:41:16 -0400
-Received: by mail-wr1-f47.google.com with SMTP id r3so11486519wrt.3
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:14 -0700 (PDT)
+        Tue, 20 Aug 2019 04:41:17 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p17so11448229wrf.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 01:41:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=L5KPw5d284IbrMAoTx1V+ek9Af8RjMLhhCTcT5HNr1o=;
-        b=OTazuxgSobVpwG3fC5+kdrt2Vu/JKNOMsnyB8TitxtwiNZe5WhU5jRqZ8oB4dvEg7d
-         aCvt1U6J6NPjB9ORiM+F64aSI5HS9V1gXEkGNnNsbLJkNPsRQNIXTSbMJJ+9aJO4Dn/x
-         iE1+jC9Fw7+x263Uz+F2byJSR9LeKUG8XQJBd4/M7vsU7hjLy31Xr091fVDS6ZAIvu4H
-         jUI6Ui6icqsYUqrBmSoZkE6K7IZHhbuMOaf5VxYYkUKNv/vD24G+mngDEwmcq3Jv6LzT
-         pndCIbuE6B/zyThbR0KhFYn1H3iQpZVaLQtKMHu5Oy7kON5GchddvzlN3zi5QyOsSfVP
-         rSAg==
+        bh=S4Y3CFbjNwiB1B+iBEVNDBDAoCejxlfh6zI1Bb1qZiE=;
+        b=ASry5ZM5cg4Mj7+Gov+BV86kT6tt0zwKyCPGbFJdX0/Lu8alE9juf83M9UoeBkkeMB
+         7MOHArPNau4G6zacpVCwL6YanyGVnykHAo6AKLPTc6nr6Do11bWbvxXmz7gk+b0rRy1A
+         057DmSveWUXIDbN+clUhL+CxZGzO02unnS1XjPema2TJsi+MLlS6Rre6rr6N5uQ6unfX
+         i4BzCDk2w6HSnBrYZbXbEeF1XvwHq/9JvV9B/7TXjHWseEVbgJC98KycMoegfyn96+Aj
+         R2GkIg5HbW+iLN6G0lfxavZCaKoKJACnK0IPZ59zh776aY5aGWBVMrGYzdZPl+t8Vs1m
+         yEcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=L5KPw5d284IbrMAoTx1V+ek9Af8RjMLhhCTcT5HNr1o=;
-        b=bUHNwDcjQhxxKfe7XOx7+hzK6T7RA9uVAl+i7Vc/3LQyubh2dnUBK0sspbdnXQKR8p
-         8tUAEQwbRUxpTeGC3WC+lyYCm2ElI3aBfHOcGzWSalpqAsc8fUeHBlDWCCGdhFlOwNQ4
-         /+iYGdZzwHTeRHNOUW3yA9SUA1xxPbOCRz832DpjlsdS6+1jFewXps9pHeAsaDR+pZw/
-         fLCq0sqH1g7RD8rvqCwAzKBk6A4OIczzFtNs6jg0MlmVgZL4yTaNvHeavu0aDzyj4v2O
-         hmXLce7wlL7KSZW1or6TYVS9sYjxtEBdVGe9319t/3CqeghDB7jKZtybZVK0FjA8yvq4
-         FJ2w==
-X-Gm-Message-State: APjAAAVcDw9EWc2OBmxOq2qMqX0GzC56aTQLLVQozKU0L9d1XRNzlg7Y
-        HUTDI8U5S3L5xpVQAbsLB8Wsuw==
-X-Google-Smtp-Source: APXvYqzPgvUubcWqtUwShfydVe+2jVHgqlhH1mD4p0zOrAFDM3WZ70Ezpo0RWAwQj8DuZOeWm5T2xw==
-X-Received: by 2002:a5d:5388:: with SMTP id d8mr32354386wrv.299.1566290473617;
-        Tue, 20 Aug 2019 01:41:13 -0700 (PDT)
+        bh=S4Y3CFbjNwiB1B+iBEVNDBDAoCejxlfh6zI1Bb1qZiE=;
+        b=B0nVt0Pj/9b9eoZioaCIEXq82hN0SoJ/OQNiV+x51qd+Tijn4aMFY1ltypvY++87an
+         LS6HEqhmU7LGB4F45t/0dpcHSNG+HU/sPnGk0LfLdVm9x72Mfg2vD6Vvw4MJyizBMe3v
+         Ipp7LsrzVC1l3uDOmis1daTpUWf7lH+SeF/VAB6gWNvNSWFNmO/FU50tTOE9Sa7oeb3R
+         Zb8aPrQnKbah7v7CI6x1com9A5OSTUpIdK5P5WU/oWu14yGRdN1Rsr+571vnVNUVLkZf
+         USn9u4sHw5JKrVu+lconRVeicmprzEQyL2gFSRkRztAeCl1ut2uLvdgmohrK/9m8rrwW
+         WIyg==
+X-Gm-Message-State: APjAAAW95RKheX7Mywt9zMckzxBAiUR0FSpznqmUsRakp79fZvzQkKua
+        acP2zN3Lm8qpXnpJXOmtZ0h/IQ==
+X-Google-Smtp-Source: APXvYqzVElNN6koqJa/MLyjtNn8tuQ5nmvel1gG2X/S1bupBdsBf82IjRZrX2thxmiDzXrm5ehO8tQ==
+X-Received: by 2002:adf:ee4f:: with SMTP id w15mr32742170wro.337.1566290474464;
+        Tue, 20 Aug 2019 01:41:14 -0700 (PDT)
 Received: from bender.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.12
+        by smtp.gmail.com with ESMTPSA id g2sm34275648wru.27.2019.08.20.01.41.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 01:41:13 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
@@ -52,9 +52,9 @@ To:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org
-Subject: [RFC 01/11] fixup! drm/bridge: Add the necessary bits to support bus format negotiation
-Date:   Tue, 20 Aug 2019 10:40:59 +0200
-Message-Id: <20190820084109.24616-2-narmstrong@baylibre.com>
+Subject: [RFC 02/11] drm/meson: venc: make drm_display_mode const
+Date:   Tue, 20 Aug 2019 10:41:00 +0200
+Message-Id: <20190820084109.24616-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190820084109.24616-1-narmstrong@baylibre.com>
 References: <20190820084109.24616-1-narmstrong@baylibre.com>
@@ -65,44 +65,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +	} else if (b->num_supported_fmts > 1 && b->supported_fmts) {
-> +		*selected_bus_fmt = b->supported_fmts[0];
-> +		return 0;
-
-Here, `!a->num_supported_fmts &&` is missing otherwise this code will
-select b->supported_fmts[0] whatever the supported formats of a.
-
-> +	} else if (a->num_supported_fmts > 1 && a->supported_fmts) {
-> +		*selected_bus_fmt = a->supported_fmts[0];
-> +		return 0;
-
-Here, `!b->num_supported_fmts &&` is missing otherwise this code will
-select a->supported_fmts[0] whatever the supported formats of b.
+Before switching to bridge funcs, make sure drm_display_mode is passed
+as const to the venc functions.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/gpu/drm/drm_bridge.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/meson/meson_venc.c | 2 +-
+ drivers/gpu/drm/meson/meson_venc.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
-index 5f0925467292..82fe7728fcd1 100644
---- a/drivers/gpu/drm/drm_bridge.c
-+++ b/drivers/gpu/drm/drm_bridge.c
-@@ -615,10 +615,12 @@ int drm_find_best_bus_format(const struct drm_bus_caps *a,
- 	if (!a->num_supported_fmts && !b->num_supported_fmts) {
- 		*selected_bus_fmt = 0;
- 		return 0;
--	} else if (b->num_supported_fmts > 1 && b->supported_fmts) {
-+	} else if (!a->num_supported_fmts &&
-+		   b->num_supported_fmts > 1 && b->supported_fmts) {
- 		*selected_bus_fmt = b->supported_fmts[0];
- 		return 0;
--	} else if (a->num_supported_fmts > 1 && a->supported_fmts) {
-+	} else if (!b->num_supported_fmts &&
-+		   a->num_supported_fmts > 1 && a->supported_fmts) {
- 		*selected_bus_fmt = a->supported_fmts[0];
- 		return 0;
- 	} else if (!a->num_supported_fmts || !a->supported_fmts ||
+diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+index 3d4791798ae0..c8e9840ad450 100644
+--- a/drivers/gpu/drm/meson/meson_venc.c
++++ b/drivers/gpu/drm/meson/meson_venc.c
+@@ -946,7 +946,7 @@ bool meson_venc_hdmi_venc_repeat(int vic)
+ EXPORT_SYMBOL_GPL(meson_venc_hdmi_venc_repeat);
+ 
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+-			      struct drm_display_mode *mode)
++			      const struct drm_display_mode *mode)
+ {
+ 	union meson_hdmi_venc_mode *vmode = NULL;
+ 	union meson_hdmi_venc_mode vmode_dmt;
+diff --git a/drivers/gpu/drm/meson/meson_venc.h b/drivers/gpu/drm/meson/meson_venc.h
+index 576768bdd08d..1abdcbdf51c0 100644
+--- a/drivers/gpu/drm/meson/meson_venc.h
++++ b/drivers/gpu/drm/meson/meson_venc.h
+@@ -60,7 +60,7 @@ extern struct meson_cvbs_enci_mode meson_cvbs_enci_ntsc;
+ void meson_venci_cvbs_mode_set(struct meson_drm *priv,
+ 			       struct meson_cvbs_enci_mode *mode);
+ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+-			      struct drm_display_mode *mode);
++			      const struct drm_display_mode *mode);
+ unsigned int meson_venci_get_field(struct meson_drm *priv);
+ 
+ void meson_venc_enable_vsync(struct meson_drm *priv);
 -- 
 2.22.0
 
