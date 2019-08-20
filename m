@@ -2,126 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8011295220
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:06:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BA9695234
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 02:08:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbfHTAFE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Mon, 19 Aug 2019 20:05:04 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:36476 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728578AbfHTAFD (ORCPT
+        id S1728864AbfHTAHv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Mon, 19 Aug 2019 20:07:51 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17228 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728828AbfHTAHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 19 Aug 2019 20:05:03 -0400
-Received: by mail-qt1-f195.google.com with SMTP id z4so4010523qtc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 19 Aug 2019 17:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=netronome-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=EqawCVMNR5ggkVvM3Y8TbC/GggOP05ogNA2z4zWjBzA=;
-        b=W2ZnE/pxltTX4kXiXH96rp142zmXmi2sD4mi6KTNLHIp3seAnOcVlhN0dqf6iMWn4x
-         RXqhV3hcByajFyP9UJKzVpbTZspbLawweQJWhwe3YVlJ9g6iW/KPDZSemRIltIlOeQd+
-         D4/1LhNRdtgfjVEKONKun8bNqwtRTvgHPDMkXzVPA0J2HEQXzUN6X9+92PixFL6TLsS7
-         w4BHqL/BJNcqkSmJdFS9cLDFS3btD9pC/aDz8ko6Nyg3I7POzUYsEM+U4ZGMWiJP0nM4
-         8po2viFqcGLQLq9Y1lRGyNujerL0eRYMcYunMrGhW5kYC79Y93PRe8Kc2lL8EtKmxnM1
-         MPAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=EqawCVMNR5ggkVvM3Y8TbC/GggOP05ogNA2z4zWjBzA=;
-        b=RmVU7ufzQb1G2GVldfjwgf/ShyXDM8j4P/BOKVsJOeSQmEQlCz3WSOnMCS/SzL0P8J
-         ICweONvWJbYbETDiyytJjl3m/fVI8u6WTAPSMlbzRce4t3fMttfE9JGfFDQf6Qa7zA8f
-         EGNU+gbjsZC3M4lDbz0+UrVNJe22Sy8cc3yrMSKHF7cexc79SZXfroFPUW5N0Vbiojtv
-         RFYpOeBaGz3a0K/Iei3IfAFWA3cxtZk/VuB9ukPh6L0N7Td39tgxO1dErHEFttQOyAnl
-         3vdUxrsWnvFRMgCLgFSkXIIWKMzTaHqpw363ubKTZkoHyy4uCddzH4CZQ1snvcsjAh9r
-         LeKw==
-X-Gm-Message-State: APjAAAWYLoanjGpl84gE9pg2A5uddsJvR0q8dgMUEu4bzIsjGFTva6a9
-        2d6DIfgobBAGAeRQ3S6Qq7uT/Q==
-X-Google-Smtp-Source: APXvYqwSt09bYAD/GaUVUI3fSb7OlzA8CcLokwjOvHc1e2U7D7S/CCp818w1Esqb0twyjrhfoLDxUw==
-X-Received: by 2002:a0c:b209:: with SMTP id x9mr2784510qvd.217.1566259502266;
-        Mon, 19 Aug 2019 17:05:02 -0700 (PDT)
-Received: from cakuba.netronome.com ([66.60.152.14])
-        by smtp.gmail.com with ESMTPSA id o27sm7646908qkm.37.2019.08.19.17.05.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 17:05:02 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 17:04:53 -0700
-From:   Jakub Kicinski <jakub.kicinski@netronome.com>
-To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Evgeniy Polyakov <zbr@ioremap.net>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-input@vger.kernel.org, netdev@vger.kernel.org,
-        linux-rtc@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v5 11/17] net: sgi: ioc3-eth: no need to stop queue
- set_multicast_list
-Message-ID: <20190819170440.37ff18d4@cakuba.netronome.com>
-In-Reply-To: <20190819163144.3478-12-tbogendoerfer@suse.de>
-References: <20190819163144.3478-1-tbogendoerfer@suse.de>
-        <20190819163144.3478-12-tbogendoerfer@suse.de>
-Organization: Netronome Systems, Ltd.
+        Mon, 19 Aug 2019 20:07:49 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5b39d20003>; Mon, 19 Aug 2019 17:07:46 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 17:07:47 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 17:07:47 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
+ 2019 00:07:46 +0000
+Received: from [10.2.161.11] (172.20.13.39) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 20 Aug
+ 2019 00:07:46 +0000
+Subject: Re: [RFC PATCH v2 00/19] RDMA/FS DAX truncate proposal V1,000,002 ;-)
+To:     Dave Chinner <david@fromorbit.com>, Jan Kara <jack@suse.cz>
+CC:     Ira Weiny <ira.weiny@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Michal Hocko <mhocko@suse.com>,
+        <linux-xfs@vger.kernel.org>, <linux-rdma@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-nvdimm@lists.01.org>, <linux-ext4@vger.kernel.org>,
+        <linux-mm@kvack.org>
+References: <20190809225833.6657-1-ira.weiny@intel.com>
+ <20190814101714.GA26273@quack2.suse.cz>
+ <20190814180848.GB31490@iweiny-DESK2.sc.intel.com>
+ <20190815130558.GF14313@quack2.suse.cz>
+ <20190816190528.GB371@iweiny-DESK2.sc.intel.com>
+ <20190817022603.GW6129@dread.disaster.area>
+ <20190819063412.GA20455@quack2.suse.cz>
+ <20190819092409.GM7777@dread.disaster.area>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <ae64491b-85f8-eeca-14e8-2f09caf8abd2@nvidia.com>
+Date:   Mon, 19 Aug 2019 17:05:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190819092409.GM7777@dread.disaster.area>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566259666; bh=LvsaO/W/E/mixOshAJzHMebgelNBff1xUMLnLN/pLvo=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=NsArZvwEDvm66ilI2A1eoZO1p7yAFDlWQdBa+cdoJUp6xnObqdh93g35BKg+RAtqq
+         5uv3Rpv0MuFMd/RYZ+O+Jeptq6JJ6o3taZk4nS4LtTZnX4hTh9GqjKQbTdHTwW9HVp
+         BL9NB7wfaZ5V4qvIsbaf4YFIY9zcb6TByHfWZ9IgOXgD8Wbil7W1m8ED+j7+rcnkQl
+         R38dD9UnwVcboo7pgRnIY03uxeSGgS/jha4G1NHtzdfKimjXq5O1uAc177Y0Z1cbBj
+         hv8AgOnUWOj++DPbwNeuv9z8Ol83AEAbe60Oaxg1fbVgjXs2MuIf4ZQL7pw0cVuDcY
+         izLC9uCreFx8A==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 19 Aug 2019 18:31:34 +0200, Thomas Bogendoerfer wrote:
-> netif_stop_queue()/netif_wake_qeue() aren't needed for changing
-> multicast filters. Use spinlocks instead for proper protection
-> of private struct.
->=20
-> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> ---
->  drivers/net/ethernet/sgi/ioc3-eth.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/net/ethernet/sgi/ioc3-eth.c b/drivers/net/ethernet/s=
-gi/ioc3-eth.c
-> index d862f28887f9..7f85a3bfef14 100644
-> --- a/drivers/net/ethernet/sgi/ioc3-eth.c
-> +++ b/drivers/net/ethernet/sgi/ioc3-eth.c
-> @@ -1542,8 +1542,7 @@ static void ioc3_set_multicast_list(struct net_devi=
-ce *dev)
->  	struct netdev_hw_addr *ha;
->  	u64 ehar =3D 0;
-> =20
-> -	netif_stop_queue(dev);				/* Lock out others. */
-> -
-> +	spin_lock_irq(&ip->ioc3_lock);
+On 8/19/19 2:24 AM, Dave Chinner wrote:
+> On Mon, Aug 19, 2019 at 08:34:12AM +0200, Jan Kara wrote:
+>> On Sat 17-08-19 12:26:03, Dave Chinner wrote:
+>>> On Fri, Aug 16, 2019 at 12:05:28PM -0700, Ira Weiny wrote:
+>>>> On Thu, Aug 15, 2019 at 03:05:58PM +0200, Jan Kara wrote:
+>>>>> On Wed 14-08-19 11:08:49, Ira Weiny wrote:
+>>>>>> On Wed, Aug 14, 2019 at 12:17:14PM +0200, Jan Kara wrote:
+...
+> The last close is an interesting case because the __fput() call
+> actually runs from task_work() context, not where the last reference
+> is actually dropped. So it already has certain specific interactions
+> with signals and task exit processing via task_add_work() and
+> task_work_run().
+> 
+> task_add_work() calls set_notify_resume(task), so if nothing else
+> triggers when returning to userspace we run this path:
+> 
+> exit_to_usermode_loop()
+>    tracehook_notify_resume()
+>      task_work_run()
+>        __fput()
+> 	locks_remove_file()
+> 	  locks_remove_lease()
+> 	    ....
+> 
+> It's worth noting that locks_remove_lease() does a
+> percpu_down_read() which means we can already block in this context
+> removing leases....
+> 
+> If there is a signal pending, the task work is run this way (before
+> the above notify path):
+> 
+> exit_to_usermode_loop()
+>    do_signal()
+>      get_signal()
+>        task_work_run()
+>          __fput()
+> 
+> We can detect this case via signal_pending() and even SIGKILL via
+> fatal_signal_pending(), and so we can decide not to block based on
+> the fact the process is about to be reaped and so the lease largely
+> doesn't matter anymore. I'd argue that it is close and we can't
+> easily back out, so we'd only break the block on a fatal signal....
+> 
+> And then, of course, is the call path through do_exit(), which has
+> the PF_EXITING task flag set:
+> 
+> do_exit()
+>    exit_task_work()
+>      task_work_run()
+>        __fput()
+> 
+> and so it's easy to avoid blocking in this case, too.
 
-What does this lock protect? =F0=9F=A4=94 No question that stopping TX queu=
-es
-makes little sense, but this function is only called from
-ndo_set_rx_mode(), so with rtnl_lock held.=20
+Any thoughts about sockets? I'm looking at net/xdp/xdp_umem.c which pins
+memory with FOLL_LONGTERM, and wondering how to make that work here.
 
-I thought it may protect ip->emcr, but that one is accessed with no
-locking from the ioc3_timer() -> ioc3_setup_duplex() path..
+These are close to files, in how they're handled, but just different
+enough that it's not clear to me how to make work with this system.
 
->  	if (dev->flags & IFF_PROMISC) {			/* Set promiscuous.  */
->  		ip->emcr |=3D EMCR_PROMISC;
->  		writel(ip->emcr, &regs->emcr);
-> @@ -1572,7 +1571,7 @@ static void ioc3_set_multicast_list(struct net_devi=
-ce *dev)
->  		writel(ip->ehar_l, &regs->ehar_l);
->  	}
-> =20
-> -	netif_wake_queue(dev);			/* Let us get going again. */
-> +	spin_unlock_irq(&ip->ioc3_lock);
->  }
-> =20
->  module_pci_driver(ioc3_driver);
 
+> 
+> So that leaves just the normal close() syscall exit case, where the
+> application has full control of the order in which resources are
+> released. We've already established that we can block in this
+> context.  Blocking in an interruptible state will allow fatal signal
+> delivery to wake us, and then we fall into the
+> fatal_signal_pending() case if we get a SIGKILL while blocking.
+> 
+> Hence I think blocking in this case would be OK - it indicates an
+> application bug (releasing a lease before releasing the resources)
+> but leaves SIGKILL available to administrators to resolve situations
+> involving buggy applications.
+> 
+> This requires applications to follow the rules: any process
+> that pins physical resources must have an active reference to a
+> layout lease, either via a duplicated fd or it's own private lease.
+> If the app doesn't play by the rules, it hangs in close() until it
+> is killed.
+
++1 for these rules, assuming that we can make them work. They are
+easy to explain and intuitive.
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
