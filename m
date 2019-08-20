@@ -2,140 +2,164 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC38C95B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 11:46:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C511B95B73
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 11:47:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729646AbfHTJqf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 05:46:35 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41100 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729599AbfHTJqd (ORCPT
+        id S1729631AbfHTJra (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 05:47:30 -0400
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:47179 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728771AbfHTJra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 05:46:33 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j16so11669438wrr.8
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 02:46:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OCqVb1b3ky6iQzAtUB0i7OFFbduthR84Csc9ahGaOQU=;
-        b=Sc66PKmnhvSczvFG4A+2IsY4y788+71RHz17he6fqbGBB7lV2eetN+bT1iC6s+Nt+I
-         oJASVWmdfkn7D49IDGS3xpbFWAe29TgnxL50murfoXlijNtsx86Ii1AdRSK/WoGfEIOb
-         5DSIIYeFO6ud7bPIe6OaDxaPP6l8lGhXajospvzpWeUst3j1/MMgVdsO2QO0NrRIh7dl
-         ACu8TT71vzZ4AIRTucs2hPUGGUzWHSyV68rlhNpZHwXoRRZFm+1G3VoPkwmFsvQj8XcO
-         MKxIW4NC7LyvMlfcU3kHRADKDeuleLnsmwJ+AEf38aMAW9o8qZhQdbm1N9KPMY40XrAS
-         uT7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OCqVb1b3ky6iQzAtUB0i7OFFbduthR84Csc9ahGaOQU=;
-        b=Eo4IoZa06f/eZ43DSKle7theaqs56IJpAK1k8TCoDV2Yh/54ZLkJYxTIqw3u1gk1u6
-         SI4UHYHtdEd2cZ5Nt4seev/aY+EsF/JmAh3hBUvQ5dDIY/47VRvAQzXGnQslq0oG2Tlw
-         0RFCktPL3w1fuU2kwY1LmzPIStyzvV51/NUoYBWEavmbVr6WgomsxUuPKI6Cw5GgsBGn
-         yx3G/khp1S7uFBDVQEtCA4G1ou/3phxm4YW94muxjZf6cAWZP/W8lHC3Lyny1t78c9UH
-         cFdDaukVOlJEgMJ6gwj4z1VNyi2jrw1eSyBQRJ1ZqTCPoAUFoIb2yQawoBFRHBuyP3C6
-         LrmQ==
-X-Gm-Message-State: APjAAAXO5SHWcFeEAhXQMgN9wfJIwhDJytNtt0n87oXkDnqunG7ulUgV
-        I//NM0Fc1Z8ujBHeGH65sF5iOg==
-X-Google-Smtp-Source: APXvYqw3tlq5yvBtrHDp0eeORLI4XXpzdTgTQ9X/0q31O3NVubVX/vqO+if/abH98mEREbLMHw7SNQ==
-X-Received: by 2002:a5d:6ad0:: with SMTP id u16mr33820477wrw.84.1566294391450;
-        Tue, 20 Aug 2019 02:46:31 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id o17sm15958305wrx.60.2019.08.20.02.46.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 02:46:31 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] reset: meson-audio-arb: add sm1 support
-Date:   Tue, 20 Aug 2019 11:46:25 +0200
-Message-Id: <20190820094625.13455-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190820094625.13455-1-jbrunet@baylibre.com>
-References: <20190820094625.13455-1-jbrunet@baylibre.com>
+        Tue, 20 Aug 2019 05:47:30 -0400
+X-UUID: 35c9006ec5fb4bbe89972341c253ab9b-20190820
+X-UUID: 35c9006ec5fb4bbe89972341c253ab9b-20190820
+Received: from mtkcas35.mediatek.inc [(172.27.4.253)] by mailgw01.mediatek.com
+        (envelope-from <houlong.wei@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 556568846; Tue, 20 Aug 2019 17:47:18 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 20 Aug
+ 2019 17:47:12 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Tue, 20 Aug 2019 17:47:11 +0800
+Message-ID: <1566294433.24117.19.camel@mhfsdcap03>
+Subject: Re: [RESEND, PATCH v13 11/12] soc: mediatek: cmdq: add
+ cmdq_dev_get_client_reg function
+From:   houlong wei <houlong.wei@mediatek.com>
+To:     Bibby Hsieh <bibby.hsieh@mediatek.com>
+CC:     Jassi Brar <jassisinghbrar@gmail.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        CK Hu =?UTF-8?Q?=28=E8=83=A1=E4=BF=8A=E5=85=89=29?= 
+        <ck.hu@mediatek.com>, "Daniel Kurtz" <djkurtz@chromium.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        srv_heupstream <srv_heupstream@mediatek.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        "Nicolas Boichat" <drinkcat@chromium.org>,
+        YT Shen =?UTF-8?Q?=28=E6=B2=88=E5=B2=B3=E9=9C=86=29?= 
+        <Yt.Shen@mediatek.com>,
+        Daoyuan Huang =?UTF-8?Q?=28=E9=BB=83=E9=81=93=E5=8E=9F=29?= 
+        <Daoyuan.Huang@mediatek.com>,
+        Jiaguang Zhang =?UTF-8?Q?=28=E5=BC=A0=E5=8A=A0=E5=B9=BF=29?= 
+        <Jiaguang.Zhang@mediatek.com>,
+        Dennis-YC Hsieh =?UTF-8?Q?=28=E8=AC=9D=E5=AE=87=E5=93=B2=29?= 
+        <Dennis-YC.Hsieh@mediatek.com>,
+        Ginny Chen =?UTF-8?Q?=28=E9=99=B3=E6=B2=BB=E5=82=91=29?= 
+        <ginny.chen@mediatek.com>, <houlong.wei@mediatek.com>
+Date:   Tue, 20 Aug 2019 17:47:13 +0800
+In-Reply-To: <20190820084932.22282-12-bibby.hsieh@mediatek.com>
+References: <20190820084932.22282-1-bibby.hsieh@mediatek.com>
+         <20190820084932.22282-12-bibby.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 19F0B51F11D00E4BF64D21CFC255C9982F54076338FC708A02C7A792C47C71E82000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the new arb reset lines of the SM1 SoC family
+On Tue, 2019-08-20 at 16:49 +0800, Bibby Hsieh wrote:
+> GCE cannot know the register base address, this function
+> can help cmdq client to get the cmdq_client_reg structure.
+> 
+> Signed-off-by: Bibby Hsieh <bibby.hsieh@mediatek.com>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> ---
+>  drivers/soc/mediatek/mtk-cmdq-helper.c | 29 ++++++++++++++++++++++++++
+>  include/linux/soc/mediatek/mtk-cmdq.h  | 21 +++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> index c53f8476c68d..80f75a1075b4 100644
+> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
+> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> @@ -27,6 +27,35 @@ struct cmdq_instruction {
+>  	u8 op;
+>  };
+>  
+> +int cmdq_dev_get_client_reg(struct device *dev,
+> +			    struct cmdq_client_reg *client_reg, int idx)
+> +{
+> +	struct of_phandle_args spec;
+> +	int err;
+> +
+> +	if (!client_reg)
+> +		return -ENOENT;
+> +
+> +	err = of_parse_phandle_with_fixed_args(dev->of_node,
+> +					       "mediatek,gce-client-reg",
+> +					       3, idx, &spec);
+> +	if (err < 0) {
+> +		dev_err(dev,
+> +			"error %d can't parse gce-client-reg property (%d)",
+> +			err, idx);
+> +
+> +		return err;
+> +	}
+> +
+> +	client_reg->subsys = (u8)spec.args[0];
+> +	client_reg->offset = (u16)spec.args[1];
+> +	client_reg->size = (u16)spec.args[2];
+> +	of_node_put(spec.np);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL(cmdq_dev_get_client_reg);
+> +
+>  static void cmdq_client_timeout(struct timer_list *t)
+>  {
+>  	struct cmdq_client *client = from_timer(client, t, timer);
+> diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+> index a345870a6d10..02ddd60b212f 100644
+> --- a/include/linux/soc/mediatek/mtk-cmdq.h
+> +++ b/include/linux/soc/mediatek/mtk-cmdq.h
+> @@ -15,6 +15,12 @@
+>  
+>  struct cmdq_pkt;
+>  
+> +struct cmdq_client_reg {
+> +	u8 subsys;
+> +	u16 offset;
+> +	u16 size;
+> +};
+> +
+>  struct cmdq_client {
+>  	spinlock_t lock;
+>  	u32 pkt_cnt;
+> @@ -24,6 +30,21 @@ struct cmdq_client {
+>  	u32 timeout_ms; /* in unit of microsecond */
+>  };
+>  
+> +/**
+> + * cmdq_dev_get_client_reg() - parse cmdq client reg from the device
+> + *			       node of CMDQ client
+> + * @dev:	device of CMDQ mailbox client
+> + * @client_reg: CMDQ client reg pointer
+> + * @idx:	the index of desired reg
+> + *
+> + * Return: 0 for success; else the error code is returned
+> + *
+> + * Help CMDQ client parsing the cmdq client reg
+> + * from the device node of CMDQ client.
+> + */
+> +int cmdq_dev_get_client_reg(struct device *dev,
+> +			    struct cmdq_client_reg *client_reg, int idx);
+> +
+>  /**
+>   * cmdq_mbox_create() - create CMDQ mailbox client and channel
+>   * @dev:	device of CMDQ mailbox client
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/reset/reset-meson-audio-arb.c | 28 ++++++++++++++++++++++++---
- 1 file changed, 25 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/reset/reset-meson-audio-arb.c b/drivers/reset/reset-meson-audio-arb.c
-index c53a2185a039..72d29dbca45a 100644
---- a/drivers/reset/reset-meson-audio-arb.c
-+++ b/drivers/reset/reset-meson-audio-arb.c
-@@ -30,6 +30,17 @@ static const unsigned int axg_audio_arb_reset_bits[] = {
- 	[AXG_ARB_FRDDR_C]	= 6,
- };
- 
-+static const unsigned int sm1_audio_arb_reset_bits[] = {
-+	[AXG_ARB_TODDR_A]	= 0,
-+	[AXG_ARB_TODDR_B]	= 1,
-+	[AXG_ARB_TODDR_C]	= 2,
-+	[AXG_ARB_FRDDR_A]	= 4,
-+	[AXG_ARB_FRDDR_B]	= 5,
-+	[AXG_ARB_FRDDR_C]	= 6,
-+	[AXG_ARB_TODDR_D]	= 3,
-+	[AXG_ARB_FRDDR_D]	= 7,
-+};
-+
- static int meson_audio_arb_update(struct reset_controller_dev *rcdev,
- 				  unsigned long id, bool assert)
- {
-@@ -82,8 +93,14 @@ static const struct reset_control_ops meson_audio_arb_rstc_ops = {
- };
- 
- static const struct of_device_id meson_audio_arb_of_match[] = {
--	{ .compatible = "amlogic,meson-axg-audio-arb", },
--	{}
-+	{
-+		.compatible = "amlogic,meson-axg-audio-arb",
-+		.data = axg_audio_arb_reset_bits,
-+	},
-+	{
-+		.compatible = "amlogic,meson-sm1-audio-arb",
-+		.data = sm1_audio_arb_reset_bits
-+	}, {}
- };
- MODULE_DEVICE_TABLE(of, meson_audio_arb_of_match);
- 
-@@ -104,10 +121,15 @@ static int meson_audio_arb_remove(struct platform_device *pdev)
- static int meson_audio_arb_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	const unsigned int *data;
- 	struct meson_audio_arb_data *arb;
- 	struct resource *res;
- 	int ret;
- 
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return -EINVAL;
-+
- 	arb = devm_kzalloc(dev, sizeof(*arb), GFP_KERNEL);
- 	if (!arb)
- 		return -ENOMEM;
-@@ -126,7 +148,7 @@ static int meson_audio_arb_probe(struct platform_device *pdev)
- 		return PTR_ERR(arb->regs);
- 
- 	spin_lock_init(&arb->lock);
--	arb->reset_bits = axg_audio_arb_reset_bits;
-+	arb->reset_bits = data;
- 	arb->rstc.nr_resets = ARRAY_SIZE(axg_audio_arb_reset_bits);
- 	arb->rstc.ops = &meson_audio_arb_rstc_ops;
- 	arb->rstc.of_node = dev->of_node;
--- 
-2.21.0
+Reviewed-by: Houlong Wei <houlong.wei@mediatek.com>
 
