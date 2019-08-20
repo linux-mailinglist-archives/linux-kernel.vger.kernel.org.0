@@ -2,139 +2,134 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7579C9640D
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FC5B9641D
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:20:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730527AbfHTPTj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:19:39 -0400
-Received: from vps.xff.cz ([195.181.215.36]:32850 "EHLO vps.xff.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730430AbfHTPTi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:19:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1566314376; bh=P46Ks+pSwFh8evjNR4bT2iq74D9QpPdX+LOP4bcJrNU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=S0zEwvsraRLL0ynpgWwffXnzhAvK37c2ssuZ1jfScVV5/W/7DvdbJ9nEYAiW5Fpbe
-         yNcm7wJWYtw9eK2ZU69+TU6nxJ6YCFBmeEEJuBU03A2Kx2uWma0OiQ0ib2NGHf6YwM
-         PkDZleYTPeFKpkCHOkfBo3lLRsf/s/t7kmrQyt6w=
-From:   megous@megous.com
-To:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Cc:     Ondrej Jirman <megous@megous.com>, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: [PATCH v2 3/3] arm64: dts: sun50i-h6: Add support for RTC and fix the clock tree
-Date:   Tue, 20 Aug 2019 17:19:34 +0200
-Message-Id: <20190820151934.3860-4-megous@megous.com>
-In-Reply-To: <20190820151934.3860-1-megous@megous.com>
-References: <20190820151934.3860-1-megous@megous.com>
+        id S1730100AbfHTPU3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:20:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40732 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728277AbfHTPU3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:20:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=lTrxKJWJ1V5+H9Zx2GoSJdvehR3qwMhTd7GGcPVOEKw=; b=FKNBOHiL6fP7kr6OuoTLQFekYS
+        fHpSlNehy9ddqSFiY4WutN1Qxf+NwMUUwcAXzQo83E1o5m2Tbtah1DEhxfN1yjItmRTOHM7fiBzlD
+        yvhtLlL8ryStM8SD8v1Bjl9RdeehvCisC+rs/ePeftKPPmTP8OCEhFYA+vU9lBZZOsxhXzjZMJ2if
+        TTdIvtGZGLTDZCCrKXWs7atQPgNArKJaZntr8BGuWzj5JjtnPs866/Pwf2ffSyezjlJGxj1fpJ6CY
+        HXoE9pKPQxGv59sYVRoEmr50yjbiaNc2YfqGqBK9hFX6t4Gj5vYeCp+JWYVPCfw+gNo9Xa7hCPXdg
+        u/koS1qg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i05vu-0001KK-VL; Tue, 20 Aug 2019 15:20:27 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D2ACE3075FF;
+        Tue, 20 Aug 2019 17:19:53 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 22AB720CF5B03; Tue, 20 Aug 2019 17:20:25 +0200 (CEST)
+Date:   Tue, 20 Aug 2019 17:20:25 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        tglx@linutronix.de
+Subject: Re: [PATCH] sched/core: Schedule new worker even if PI-blocked
+Message-ID: <20190820152025.GU2349@hirez.programming.kicks-ass.net>
+References: <20190816160626.12742-1-bigeasy@linutronix.de>
+ <20190820135014.GQ2332@hirez.programming.kicks-ass.net>
+ <20190820145926.jhnpwiicv73z6ol3@linutronix.de>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190820145926.jhnpwiicv73z6ol3@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ondrej Jirman <megous@megous.com>
+On Tue, Aug 20, 2019 at 04:59:26PM +0200, Sebastian Andrzej Siewior wrote:
+> On 2019-08-20 15:50:14 [+0200], Peter Zijlstra wrote:
+> > On Fri, Aug 16, 2019 at 06:06:26PM +0200, Sebastian Andrzej Siewior wrote:
+> > > If a task is PI-blocked (blocking on sleeping spinlock) then we don't want to
+> > > schedule a new kworker if we schedule out due to lock contention because !RT
+> > > does not do that as well.
+> > 
+> >  s/as well/either/
+> > 
+> > > A spinning spinlock disables preemption and a worker
+> > > does not schedule out on lock contention (but spin).
+> > 
+> > I'm not much liking this; it means that rt_mutex and mutex have
+> > different behaviour, and there are 'normal' rt_mutex users in the tree.
+> 
+> There isc RCU (boosting) and futex. I'm sceptical about the i2c users…
 
-This patch adds RTC node and fixes the clock properties and nodes
-to reflect the real clock tree.
+Well, yes, I too was/am sceptical, but it was tglx who twisted my arm
+and said the i2c people were right and rt_mutex is/should-be a generic
+usable interface.
 
-The device nodes for the internal oscillator and osc32k are removed,
-as these clocks are now provided by the RTC device. Clock references
-are fixed accordingly, too.
+This then resulted in the futex specific interface and lockdep support
+for rt_mutex:
 
-Signed-off-by: Ondrej Jirman <megous@megous.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 30 +++++++++++---------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+  5293c2efda37 ("futex,rt_mutex: Provide futex specific rt_mutex API")
+  f5694788ad8d ("rt_mutex: Add lockdep annotations")
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 67b732e34091..67f920e0fc33 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -56,14 +56,6 @@
- 		status = "disabled";
- 	};
- 
--	iosc: internal-osc-clk {
--		#clock-cells = <0>;
--		compatible = "fixed-clock";
--		clock-frequency = <16000000>;
--		clock-accuracy = <300000000>;
--		clock-output-names = "iosc";
--	};
--
- 	osc24M: osc24M_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
-@@ -71,11 +63,11 @@
- 		clock-output-names = "osc24M";
- 	};
- 
--	osc32k: osc32k_clk {
-+	ext_osc32k: ext_osc32k_clk {
- 		#clock-cells = <0>;
- 		compatible = "fixed-clock";
- 		clock-frequency = <32768>;
--		clock-output-names = "osc32k";
-+		clock-output-names = "ext_osc32k";
- 	};
- 
- 	psci {
-@@ -197,7 +189,7 @@
- 		ccu: clock@3001000 {
- 			compatible = "allwinner,sun50i-h6-ccu";
- 			reg = <0x03001000 0x1000>;
--			clocks = <&osc24M>, <&osc32k>, <&iosc>;
-+			clocks = <&osc24M>, <&rtc 0>, <&rtc 2>;
- 			clock-names = "hosc", "losc", "iosc";
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -236,7 +228,7 @@
- 				     <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 59 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&ccu CLK_APB1>, <&osc24M>, <&osc32k>;
-+			clocks = <&ccu CLK_APB1>, <&osc24M>, <&rtc 0>;
- 			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			#gpio-cells = <3>;
-@@ -710,10 +702,20 @@
- 			};
- 		};
- 
-+		rtc: rtc@7000000 {
-+			compatible = "allwinner,sun50i-h6-rtc";
-+			reg = <0x07000000 0x400>;
-+			interrupts = <GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>;
-+			clock-output-names = "osc32k", "osc32k-out", "iosc";
-+			clocks = <&ext_osc32k>;
-+			#clock-cells = <1>;
-+		};
-+
- 		r_ccu: clock@7010000 {
- 			compatible = "allwinner,sun50i-h6-r-ccu";
- 			reg = <0x07010000 0x400>;
--			clocks = <&osc24M>, <&osc32k>, <&iosc>,
-+			clocks = <&osc24M>, <&rtc 0>, <&rtc 2>,
- 				 <&ccu CLK_PLL_PERIPH0>;
- 			clock-names = "hosc", "losc", "iosc", "pll-periph";
- 			#clock-cells = <1>;
-@@ -741,7 +743,7 @@
- 			reg = <0x07022000 0x400>;
- 			interrupts = <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
- 				     <GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>;
--			clocks = <&r_ccu CLK_R_APB1>, <&osc24M>, <&osc32k>;
-+			clocks = <&r_ccu CLK_R_APB1>, <&osc24M>, <&rtc 0>;
- 			clock-names = "apb", "hosc", "losc";
- 			gpio-controller;
- 			#gpio-cells = <3>;
--- 
-2.22.1
+> > > On RT the RW-semaphore implementation uses an rtmutex so
+> > > tsk_is_pi_blocked() will return true if a task blocks on it. In this case we
+> > > will now start a new worker
+> > 
+> > I'm confused, by bailing out early it does _NOT_ start a new worker; or
+> > am I reading it wrong?
+> 
+> s@now@not@. Your eyes work good, soory for that.
 
+All good, just trying to make sense of things :-)
+
+> > > --- a/kernel/sched/core.c
+> > > +++ b/kernel/sched/core.c
+> > > @@ -3945,7 +3945,7 @@ void __noreturn do_task_dead(void)
+> > >  
+> > >  static inline void sched_submit_work(struct task_struct *tsk)
+> > >  {
+> > > -	if (!tsk->state || tsk_is_pi_blocked(tsk))
+> > > +	if (!tsk->state)
+> > >  		return;
+> > >  
+> > >  	/*
+
+So this part actually makes rt_mutex less special and is good.
+
+> > > @@ -3961,6 +3961,9 @@ static inline void sched_submit_work(str
+> > >  		preempt_enable_no_resched();
+> > >  	}
+> > >  
+> > > +	if (tsk_is_pi_blocked(tsk))
+> > > +		return;
+> > > +
+> > >  	/*
+> > >  	 * If we are going to sleep and we have plugged IO queued,
+> > >  	 * make sure to submit it to avoid deadlocks.
+> > 
+> > What do we need that clause for? Why is pi_blocked special _at_all_?
+> 
+> so !RT the scheduler does nothing special if a task blocks on sleeping
+> lock. 
+> If I remember correctly then blk_schedule_flush_plug() is the problem.
+> It may require a lock which is held by the task. 
+> It may hold A and wait for B while another task has B and waits for A. 
+> If my memory does bot betray me then ext+jbd can lockup without this.
+
+And am I right in thinking that that, again, is specific to the
+sleeping-spinlocks from PREEMPT_RT? Is there really nothing else that
+identifies those more specifically? It's been a while since I looked at
+them.
+
+Also, I suppose it would be really good to put that in a comment.
