@@ -2,102 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D54D96671
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:32:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CBFEE96674
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 18:33:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730184AbfHTQce (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 12:32:34 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:42431 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729672AbfHTQcd (ORCPT
+        id S1730191AbfHTQd2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 12:33:28 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:45431 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727272AbfHTQd1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 12:32:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b16so13058140wrq.9
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 09:32:32 -0700 (PDT)
+        Tue, 20 Aug 2019 12:33:27 -0400
+Received: by mail-pl1-f195.google.com with SMTP id y8so3020585plr.12
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 09:33:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wzFwBxJwNYVFz8c23UR6EVA4QWVFqmII5gU+JmWuczE=;
-        b=UVuz+pt2vpL53mRHNmJ1TU5lEwmqvpAXHYMHYAuJ3MR3nGicW67xSDcxejCOHaChSn
-         UxPNWcr4L2TAJk3Xipd3O7/xHpg9t/yJmTmR0/aPF3QIWtv9tg2DqcIQ4EJ3jZm4wsUV
-         hFlG7wocFSEg6zjiqAtU5WUmZyezDVH1mXwTQfJwrUzEaePzW4+vK+A9jfOiTJebaG6b
-         S+w4UblzXJLp/M4k/NYD40/x7Smfg5Op6MQqThvRO34g37kPVzeRGySFW+FXGMZ5PSQs
-         8J19gTKqWWZ3Irun4ynV1p8TuMjnmYBhBDtY/aWQHNSFyJpmyHiQFtj/gueWk1khKcSa
-         BmxA==
+         :content-disposition:content-transfer-encoding:in-reply-to;
+        bh=sA90vJz/rbgCroFZTlA5Yw1nyMDsyVq6b6DiHDXrFY0=;
+        b=cYzXk3DwZRgs8EAm1g3fVOu+Z4tn7HOv+jpf9QjbsWzX4NXP/Z29Kf/EIhyFPgdmft
+         Si0gk/LKQoYihhNVviMseqNHT7bZIno7OfUiaUQT8FNXEofq/Hb8qW2iYXeJRTGao4nM
+         GzveFF2KwG+Ju5sJ4Qx1kUpEovl+vjfCLefZk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wzFwBxJwNYVFz8c23UR6EVA4QWVFqmII5gU+JmWuczE=;
-        b=Yqyrgt8zoCYkWTEl67kykHPml3e8e1MMtbOVoI97CaiiyxrfRwcCIQNKMouPWfCiid
-         LfSMrxdf+WLc58jG7DBLWm9ZkYjTn+sDpF5QUKJJRzr6f2BJd6jpbs/2mmF4kKgneTHm
-         El4u5VPmBcr98xgsGZqW4D4psP73LkGeLRtq0Q2ZDT1due0IzVSOyXF4UC40UmpAHiit
-         p6E+XrAB4vStpTWjYG5pOvg8UO5ubCI9u1O2Yx4bwL8if0OugRBrk05t3G+kALi0CD4L
-         bymKYfS1CeyGMa0eMHodl0ZDyZEdF+aRMFXAVoQGTlnfmoAey0Cg2Kca1FqgPzVu5MVI
-         NeIg==
-X-Gm-Message-State: APjAAAUAlPB09uwDngkPV1sU2vcyrmDl3yZ5ydooMdqZ56gzJ+GA9B3L
-        CT+wU78vFxdimUdUYwjbRYsPzg==
-X-Google-Smtp-Source: APXvYqxZeEQOGmvTSeY3NAXBX2ijAVwVyFh7cjQfFiojdkB4QWK59zEazcrFVniEAzKjEwyVc8J9Qw==
-X-Received: by 2002:a05:6000:10cf:: with SMTP id b15mr35124310wrx.180.1566318751477;
-        Tue, 20 Aug 2019 09:32:31 -0700 (PDT)
-Received: from holly.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id g12sm20431627wrv.9.2019.08.20.09.32.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 09:32:30 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 17:32:28 +0100
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc:     linux-i2c@vger.kernel.org, Lee Jones <lee.jones@linaro.org>,
-        Jingoo Han <jingoohan1@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to;
+        bh=sA90vJz/rbgCroFZTlA5Yw1nyMDsyVq6b6DiHDXrFY0=;
+        b=HoF0QoY8gz4SqXU1HtOHgNoyeFD5JFZXtrUjnacD4SyxC2pKuot+yZ0b8gHBI+EGFg
+         v26i26IgvWG8ABlv34dnuypLelORhgzvGlTdZkz8bXU5B2CfiCvlwK2gu/D6EHxQGuVR
+         SE1xoo2OP+V/kY1qN/SdMAx9hI2zgvozZEmcOcf2d8GKzBVMDrjRpu+C6M+M+qNPnGNW
+         5o5+cyYecoZwcBSRigZYkVBz/tQbgQaSiHwMZvVhd0+LYM/D4cvvb/+ybiN8insSgW0m
+         aQ1RVBg6uB2pAAcUZ41A60RhA9mn/+k+q7q06pR73JFr+ujtm6mecTeGeK1y6wpeA9p7
+         qDvQ==
+X-Gm-Message-State: APjAAAWwWscnCehraPF0729zUdP/mJH3q45RC9KcaaRstXNrz7jyyr70
+        Ximlu6oHbSpVptoYD5GPh2ZCGg==
+X-Google-Smtp-Source: APXvYqx4X45g/9btjXSwOQ8+vS4u4nyT4b+SMjnqVb14XmUKxYG0eultJtMyH7UZAgK2dx58sZ7n0A==
+X-Received: by 2002:a17:902:8d95:: with SMTP id v21mr29689291plo.267.1566318807022;
+        Tue, 20 Aug 2019 09:33:27 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 33sm17723932pgy.22.2019.08.20.09.33.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Aug 2019 09:33:26 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 09:33:24 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Drew Davenport <ddavenport@chromium.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Feng Tang <feng.tang@intel.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        YueHaibing <yuehaibing@huawei.com>, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] video: backlight: tosa_lcd: drop check because
- i2c_unregister_device() is NULL safe
-Message-ID: <20190820163228.xuz7su6psovp6pkp@holly.lan>
-References: <20190820153439.7638-1-wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH 7/7] bug: Move WARN_ON() "cut here" into exception handler
+Message-ID: <201908200908.6437DF5@keescook>
+References: <20190819234111.9019-1-keescook@chromium.org>
+ <20190819234111.9019-8-keescook@chromium.org>
+ <20190820100638.GK2332@hirez.programming.kicks-ass.net>
+ <06ba33fd-27cc-3816-1cdf-70616b1782dd@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190820153439.7638-1-wsa+renesas@sang-engineering.com>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <06ba33fd-27cc-3816-1cdf-70616b1782dd@c-s.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 05:34:39PM +0200, Wolfram Sang wrote:
-> No need to check the argument of i2c_unregister_device() because the
-> function itself does it.
-> 
-> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
+On Tue, Aug 20, 2019 at 12:58:49PM +0200, Christophe Leroy wrote:
+> Le 20/08/2019 à 12:06, Peter Zijlstra a écrit :
+> > On Mon, Aug 19, 2019 at 04:41:11PM -0700, Kees Cook wrote:
+> > 
+> > > diff --git a/include/asm-generic/bug.h b/include/asm-generic/bug.h
+> > > index 588dd59a5b72..da471fcc5487 100644
+> > > --- a/include/asm-generic/bug.h
+> > > +++ b/include/asm-generic/bug.h
+> > > @@ -10,6 +10,7 @@
+> > >   #define BUGFLAG_WARNING		(1 << 0)
+> > >   #define BUGFLAG_ONCE		(1 << 1)
+> > >   #define BUGFLAG_DONE		(1 << 2)
+> > > +#define BUGFLAG_PRINTK		(1 << 3)
+> > >   #define BUGFLAG_TAINT(taint)	((taint) << 8)
+> > >   #define BUG_GET_TAINT(bug)	((bug)->flags >> 8)
+> > >   #endif
+> > 
+> > > diff --git a/lib/bug.c b/lib/bug.c
+> > > index 1077366f496b..6c22e8a6f9de 100644
+> > > --- a/lib/bug.c
+> > > +++ b/lib/bug.c
+> > > @@ -181,6 +181,15 @@ enum bug_trap_type report_bug(unsigned long bugaddr, struct pt_regs *regs)
+> > >   		}
+> > >   	}
+> > > +	/*
+> > > +	 * BUG() and WARN_ON() families don't print a custom debug message
+> > > +	 * before triggering the exception handler, so we must add the
+> > > +	 * "cut here" line now. WARN() issues its own "cut here" before the
+> > > +	 * extra debugging message it writes before triggering the handler.
+> > > +	 */
+> > > +	if ((bug->flags & BUGFLAG_PRINTK) == 0)
+> > > +		printk(KERN_DEFAULT CUT_HERE);
+> > 
+> > I'm not loving that BUGFLAG_PRINTK name, BUGFLAG_CUT_HERE makes more
+> > sense to me.
 
-Reviewed-by: Daniel Thompson <daniel.thompson@linaro.org>
+That's fine -- easy rename. :)
 
+> Actually it would be BUGFLAG_NO_CUT_HERE then, otherwise all arches not
+> using the generic macros will have to add the flag to get the "cut here"
+> line.
 
-> ---
-> Build tested only, buildbot is happy, too.
-> 
-> Please apply to your tree.
-> 
->  drivers/video/backlight/tosa_lcd.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/video/backlight/tosa_lcd.c b/drivers/video/backlight/tosa_lcd.c
-> index 65cb7578776f..29af8e27b6e5 100644
-> --- a/drivers/video/backlight/tosa_lcd.c
-> +++ b/drivers/video/backlight/tosa_lcd.c
-> @@ -222,8 +222,7 @@ static int tosa_lcd_remove(struct spi_device *spi)
->  {
->  	struct tosa_lcd_data *data = spi_get_drvdata(spi);
->  
-> -	if (data->i2c)
-> -		i2c_unregister_device(data->i2c);
-> +	i2c_unregister_device(data->i2c);
->  
->  	tosa_lcd_tg_off(data);
->  
-> -- 
-> 2.20.1
-> 
+I am testing for the lack of the flag (so that only the
+CONFIG_GENERIC_BUG with __WARN_FLAGS case needs to set it). I was
+thinking of the flag to mean "this reporting flow has already issued
+cut-here". It sounds like it would be more logical to have it named
+BUGFLAG_NO_CUT_HERE to mean "do not issue a cut-here; it has already
+happened"? I will update the patch.
+
+Thanks!
+
+-- 
+Kees Cook
