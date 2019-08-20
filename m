@@ -2,109 +2,112 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0924A96375
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EF717963A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:03:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730647AbfHTO7c convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Tue, 20 Aug 2019 10:59:32 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:52346 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730636AbfHTO73 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:59:29 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1i05bb-0000ic-08; Tue, 20 Aug 2019 16:59:27 +0200
-Date:   Tue, 20 Aug 2019 16:59:26 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        tglx@linutronix.de
-Subject: Re: [PATCH] sched/core: Schedule new worker even if PI-blocked
-Message-ID: <20190820145926.jhnpwiicv73z6ol3@linutronix.de>
-References: <20190816160626.12742-1-bigeasy@linutronix.de>
- <20190820135014.GQ2332@hirez.programming.kicks-ass.net>
+        id S1729762AbfHTPDb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:03:31 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:45830 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725971AbfHTPDb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:03:31 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8662C047B6E;
+        Tue, 20 Aug 2019 15:03:30 +0000 (UTC)
+Received: from x1.home (ovpn-116-99.phx2.redhat.com [10.3.116.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4F05118220;
+        Tue, 20 Aug 2019 15:03:27 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 09:03:27 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     "kraxel@redhat.com" <kraxel@redhat.com>
+Cc:     "Zhang, Tina" <tina.zhang@intel.com>,
+        "intel-gvt-dev@lists.freedesktop.org" 
+        <intel-gvt-dev@lists.freedesktop.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Yuan, Hang" <hang.yuan@intel.com>,
+        "Lv, Zhiyuan" <zhiyuan.lv@intel.com>
+Subject: Re: [PATCH v5 2/6] vfio: Introduce vGPU display irq type
+Message-ID: <20190820090327.27cfb414@x1.home>
+In-Reply-To: <20190820072030.kgjjiysxgs3yj25j@sirius.home.kraxel.org>
+References: <20190816023528.30210-1-tina.zhang@intel.com>
+        <20190816023528.30210-3-tina.zhang@intel.com>
+        <20190816145148.307408dc@x1.home>
+        <237F54289DF84E4997F34151298ABEBC876F9AD3@SHSMSX101.ccr.corp.intel.com>
+        <20190820072030.kgjjiysxgs3yj25j@sirius.home.kraxel.org>
+Organization: Red Hat
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190820135014.GQ2332@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 20 Aug 2019 15:03:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-20 15:50:14 [+0200], Peter Zijlstra wrote:
-> On Fri, Aug 16, 2019 at 06:06:26PM +0200, Sebastian Andrzej Siewior wrote:
-> > If a task is PI-blocked (blocking on sleeping spinlock) then we don't want to
-> > schedule a new kworker if we schedule out due to lock contention because !RT
-> > does not do that as well.
-> 
->  s/as well/either/
-> 
-> > A spinning spinlock disables preemption and a worker
-> > does not schedule out on lock contention (but spin).
-> 
-> I'm not much liking this; it means that rt_mutex and mutex have
-> different behaviour, and there are 'normal' rt_mutex users in the tree.
+On Tue, 20 Aug 2019 09:20:30 +0200
+"kraxel@redhat.com" <kraxel@redhat.com> wrote:
 
-There isc RCU (boosting) and futex. I'm sceptical about the i2c users…
-
-> > On RT the RW-semaphore implementation uses an rtmutex so
-> > tsk_is_pi_blocked() will return true if a task blocks on it. In this case we
-> > will now start a new worker
-> 
-> I'm confused, by bailing out early it does _NOT_ start a new worker; or
-> am I reading it wrong?
-
-s@now@not@. Your eyes work good, soory for that.
-
-> > which may deadlock if one worker is waiting on
-> > progress from another worker.
-> 
-> > Since a RW-semaphore starts a new worker on !RT, we should do the same on RT.
+> > > > +#define VFIO_IRQ_TYPE_GFX				(1)
+> > > > +/*
+> > > > + * vGPU vendor sub-type
+> > > > + * vGPU device display related interrupts e.g. vblank/pageflip  */
+> > > > +#define VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ		(1)  
+> > > 
+> > > If this is a GFX/DISPLAY IRQ, why are we talking about a "vGPU" in the
+> > > description?  It's not specific to a vGPU implementation, right?  Is this
+> > > related to a physical display or a virtual display?  If it's related to the GFX
+> > > PLANE ioctls, it should state that.  It's not well specified what this interrupt
+> > > signals.  Is it vblank?  Is it pageflip?
+> > > Is it both?  Neither?  Something else?  
 > > 
-> > XFS is able to trigger this deadlock.
+> > Sorry for the confusion caused here. 
 > > 
-> > Allow to schedule new worker if the current worker is PI-blocked.
-> 
-> Which contradicts earlier parts of this changelog.
-> 
-> > Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-> > ---
-> >  kernel/sched/core.c |    5 ++++-
-> >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > The original idea here was to use VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ to
+> > notify user space with the display refresh event. The display refresh
+> > event is general. When notified, user space can use
+> > VFIO_DEVICE_QUERY_GFX_PLANE and VFIO_DEVICE_GET_GFX_DMABUF to get the
+> > updated framebuffer, instead of polling them all the time.
 > > 
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -3945,7 +3945,7 @@ void __noreturn do_task_dead(void)
-> >  
-> >  static inline void sched_submit_work(struct task_struct *tsk)
-> >  {
-> > -	if (!tsk->state || tsk_is_pi_blocked(tsk))
-> > +	if (!tsk->state)
-> >  		return;
-> >  
-> >  	/*
-> > @@ -3961,6 +3961,9 @@ static inline void sched_submit_work(str
-> >  		preempt_enable_no_resched();
-> >  	}
-> >  
-> > +	if (tsk_is_pi_blocked(tsk))
-> > +		return;
-> > +
-> >  	/*
-> >  	 * If we are going to sleep and we have plugged IO queued,
-> >  	 * make sure to submit it to avoid deadlocks.
+> > In order to give user space more choice to do the optimization,
+> > vfio_irq_info_cap_display_plane_events is proposed to tell user space
+> > the different plane refresh event values. So when notified by
+> > VFIO_IRQ_SUBTYPE_GFX_DISPLAY_IRQ, user space can get the value of the
+> > eventfd counter and understand which plane the event refresh event
+> > comes from and choose to get the framebuffer on that plane instead of
+> > all the planes.
+> > 
+> > So, from the VFIO user point of view, there is only the display
+> > refresh event (i.e. no other events like vblank, pageflip ...). For
+> > GTV-g, this display refresh event is implemented by both vblank and
+> > pageflip, which is only the implementation thing and can be
+> > transparent to the user space. Again sorry about the confusion cased
+> > here, I'll correct the comments in the next version.  
 > 
-> What do we need that clause for? Why is pi_blocked special _at_all_?
+> All this should be explained in a comment for the IRQ in the header file.
 
-so !RT the scheduler does nothing special if a task blocks on sleeping
-lock. 
-If I remember correctly then blk_schedule_flush_plug() is the problem.
-It may require a lock which is held by the task. 
-It may hold A and wait for B while another task has B and waits for A. 
-If my memory does bot betray me then ext+jbd can lockup without this.
+Yes, Tina's update and your clarification all make sense to me, but it
+needs to be specified in the header how this is supposed to work, what
+events get signaled and what the user is intended to do in response to
+that signal.  The information is all here, it just needs to be included
+in the uapi definition.  Thanks,
 
-Sebastian
+Alex
+
+> Key point for the API is that (a) this is a "the display should be
+> updated" event and (b) this covers all display updates, i.e. user space
+> can stop the display update timer and fully depend on getting
+> notifications if an update is needed.
+> 
+> That GTV-g watches guest pageflips is an implementation detail.  Should
+> nvidia support this they will probably do something completely
+> different.  As far I know they render the guest display to some
+> framebuffer at something like 10fps, so it would make sense for them to
+> send an event each time they refreshed the framebuffer.
+> 
+> Also note the relationships (cur_event_val is for DRM_PLANE_TYPE_CURSOR
+> updates and pri_event_val for DRM_PLANE_TYPE_PRIMARY).
+
