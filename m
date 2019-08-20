@@ -2,182 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFB0964BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:40:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F34AB964C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:40:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730332AbfHTPj7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:39:59 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:36270 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730179AbfHTPj5 (ORCPT
+        id S1730610AbfHTPk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:40:29 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:38306 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730571AbfHTPk2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:39:57 -0400
-Received: by mail-pf1-f196.google.com with SMTP id w2so3619233pfi.3;
-        Tue, 20 Aug 2019 08:39:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=1j7H+vhoqJHC4PUQJny3VV4YSdCvAEuiAV/gmPHS1VM=;
-        b=gr2mleZJ9dxVGMuvaPTQCcUBUl//PAfqvwWFfxsVa0PJkB37oeMzidGuiqFHHxwwCO
-         sKe1VLWEF4OugJsqUH66Q/SMlppeRaJZ/SYplA4lezSX2c/D7+tM97atRk6/Qms8gC2h
-         71Ft49he37dOSMEIOFyNPs4Tyx17VqYeoAgm17QIq/pb5iXk+qHwcw8S6epDOOYOjSXj
-         /ZuhZbRhX/AGYyb2k/IGttCikdiAeOO83/An5q7NjGtzs5PxoUV+2nGwSmiu5q98vd0s
-         RiIVw3RrVIbae8dTfY1Tf4LorjtpZe7Ld+RTIvFjb9Zo9UqhcKUcPVj8vcsZVUT0DmwK
-         4SUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=1j7H+vhoqJHC4PUQJny3VV4YSdCvAEuiAV/gmPHS1VM=;
-        b=WqazG427Xa1jeWpHxRA9qyUSmtxsbi64Nn+IyajJs64jj5997PP177ndnhVnGhkjUR
-         lS0nV6qdD3QTyPNYdI+kMM0+f61N0U5vkdf59Z7nhdZbmr3FQuRrgOH1FvyB8Z1mk81v
-         Da/uKj6VVXAQteidsW/NOqSjGiEGckkBlyiwKA2yD5nXb7u7oHk3nQd/cndQzV+yS/wA
-         qq8BDY5z+MINnqtsGe+PvmFbq1C9Q3YoczFOoenbrFV4+c4UGh41oy0goaW8YVvDwcxG
-         K82k3CzyrLCkmK9EwBCgENNKC9QYP0L/aOugflDpK9R0YCDLR/GuP5UaesTnOQxDg5m/
-         WlFQ==
-X-Gm-Message-State: APjAAAVaB9yM2IQwWKvJJEbs01H8nBxlyIVCq0rqqEnz1+VyykoXngUM
-        jWrW98yeVJJ3ajUERWpDSyk=
-X-Google-Smtp-Source: APXvYqyykvp12dfCZS5mTvPsORZ/C+RGO2y6TtmoGJxnglxBRKn3wLFio47kQZwmemnqcRV4KE0biw==
-X-Received: by 2002:aa7:8108:: with SMTP id b8mr31256897pfi.197.1566315596703;
-        Tue, 20 Aug 2019 08:39:56 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id b24sm19013454pfd.91.2019.08.20.08.39.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 20 Aug 2019 08:39:56 -0700 (PDT)
-Subject: Re: [RFC PATCH] hwmon: (iio_hwmon) Enable power exporting from IIO
-To:     Michal Simek <michal.simek@xilinx.com>,
-        linux-kernel@vger.kernel.org, monstr@monstr.eu
-Cc:     linux-hwmon@vger.kernel.org, Jean Delvare <jdelvare@suse.com>
-References: <71aec0191e0e5f32cc760f95844d8ee215b48c7f.1565616579.git.michal.simek@xilinx.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <906edfa3-9e7d-e8cc-29e3-e428b79ed0c2@roeck-us.net>
-Date:   Tue, 20 Aug 2019 08:39:55 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Tue, 20 Aug 2019 11:40:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=TzzmrCVOXyvBOTNRP9SWeKlsVPWPMGTuDrIfC6EXHsQ=; b=feMQ4R2MwZctjB8DNdf+vrUw0r
+        c9bB/CFotIe6cEg9z7wIjgnXUf5Hn/a2TIKSDThgVDP7D0pZRi25ohlzhwDOnrl/9117TRBEE+R1H
+        dmQDzar1U7B0oD63jY1DteeXJQLRZOsvdNc+ueng/sEqwG4EYV/bTRZOt3x7pd3EqkVPgXUKxotmt
+        i+ev+54e17UY3HLkHwjZbaoSzYbF6pqxVivfu0JpkFsOgPHgNQOBSc8ah4SzTTt7zXPkubBicUEkt
+        eaXEZkN1kykcfpG5UDaTMHYBeVql0Odpub8diRRl6oeJZUHTJo+tsSVB4+AuLW0IMGBDWulu5edxo
+        ixVX2xrQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i05Zq-0000sX-Pi; Tue, 20 Aug 2019 14:57:38 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 5E346307603;
+        Tue, 20 Aug 2019 16:57:04 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id A7B7B20A978FE; Tue, 20 Aug 2019 16:57:35 +0200 (CEST)
+Date:   Tue, 20 Aug 2019 16:57:35 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     Rahul Tanwar <rahul.tanwar@linux.intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "Shevchenko, Andriy" <andriy.shevchenko@intel.com>,
+        "alan@linux.intel.com" <alan@linux.intel.com>,
+        "ricardo.neri-calderon@linux.intel.com" 
+        <ricardo.neri-calderon@linux.intel.com>,
+        "Wysocki, Rafael J" <rafael.j.wysocki@intel.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wu, Qiming" <qi-ming.wu@intel.com>,
+        "Kim, Cheol Yong" <cheol.yong.kim@intel.com>,
+        "Tanwar, Rahul" <rahul.tanwar@intel.com>
+Subject: Re: [PATCH v2 2/3] x86/cpu: Add new Intel Atom CPU model name
+Message-ID: <20190820145735.GW2332@hirez.programming.kicks-ass.net>
+References: <cover.1565940653.git.rahul.tanwar@linux.intel.com>
+ <83345984845d24b6ce97a32bef21cd0bbdffc86d.1565940653.git.rahul.tanwar@linux.intel.com>
+ <20190820122233.GN2332@hirez.programming.kicks-ass.net>
+ <1D9AE27C-D412-412D-8FE8-51B625A7CC98@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <71aec0191e0e5f32cc760f95844d8ee215b48c7f.1565616579.git.michal.simek@xilinx.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1D9AE27C-D412-412D-8FE8-51B625A7CC98@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/12/19 6:29 AM, Michal Simek wrote:
-> There is no reason why power channel shouldn't be exported as is done for
-> voltage, current, temperature and humidity.
+On Tue, Aug 20, 2019 at 12:48:05PM +0000, Luck, Tony wrote:
 > 
-> Power channel is available on iio ina226 driver.
+> >> +#define INTEL_FAM6_ATOM_AIRMONT_NP    0x75 /* Lightning Mountain */
+> > 
+> > What's _NP ?
 > 
-> Tested on Xilinx ZCU102 board.
+> Network Processor. But that is too narrow a descriptor. This is going to be used in
+> other areas besides networking. 
 > 
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
-> ---
-> 
-> But I don't think values are properly converted. Voltage1 is fine but the
-> rest is IMHO wrong. But this patch should enable power channel to be shown
-> which looks good.
-> 
+> I’m contemplating calling it AIRMONT2
 
-No idea what is going on there. I don't really know what "scaled" units
-the iio subsystem reports. power is supposed to be reported to user space
-in micro-Watt. Is that what the scaled value from iio reports ?
+What would describe the special sause that warranted a new SOC? If this
+thing is marketed as 'Network Processor' then I suppose we can actually
+use it, esp. if we're going to see this more, like the MID thing -- that
+lived for a while over multiple uarchs.
 
-Thanks,
-Guenter
-
-> root@zynqmp-debian:~# iio_info -a && sensors -u
-> Library version: 0.16 (git tag: v0.16)
-> Compiled with backends: local xml ip usb serial
-> Using auto-detected IIO context at URI "local:"
-> IIO context created with local backend.
-> Backend version: 0.16 (git tag: v0.16)
-> Backend description string: Linux zynqmp-debian 5.3.0-rc4-00004-ga7ca33daed22-dirty #41 SMP PREEMPT Mon Aug 12 15:06:58 CEST 2019 aarch64
-> IIO context has 1 attributes:
-> 	local,kernel: 5.3.0-rc4-00004-ga7ca33daed22-dirty
-> IIO context has 1 devices:
-> 	iio:device0: ina226 (buffer capable)
-> 		9 channels found:
-> 			voltage0:  (input, index: 0, format: le:U16/16>>0)
-> 			3 channel-specific attributes found:
-> 				attr  0: integration_time value: 0.001100
-> 				attr  1: raw value: 70
-> 				attr  2: scale value: 0.002500000
-> 			voltage1:  (input, index: 1, format: le:U16/16>>0)
-> 			3 channel-specific attributes found:
-> 				attr  0: integration_time value: 0.001100
-> 				attr  1: raw value: 958
-> 				attr  2: scale value: 1.250000000
-> 			power2:  (input, index: 2, format: le:U16/16>>0)
-> 			2 channel-specific attributes found:
-> 				attr  0: raw value: 3
-> 				attr  1: scale value: 0.006250000
-> 			current3:  (input, index: 3, format: le:U16/16>>0)
-> 			2 channel-specific attributes found:
-> 				attr  0: raw value: 70
-> 				attr  1: scale value: 0.000250000
-> 			timestamp:  (input, index: 4, format: le:S64/64>>0)
-> 			allow:  (input)
-> 			1 channel-specific attributes found:
-> 				attr  0: async_readout value: 0
-> 			oversampling:  (input)
-> 			1 channel-specific attributes found:
-> 				attr  0: ratio value: 4
-> 			sampling:  (input)
-> 			1 channel-specific attributes found:
-> 				attr  0: frequency value: 114
-> 			shunt:  (input)
-> 			1 channel-specific attributes found:
-> 				attr  0: resistor value: 10.000000000
-> 		2 device-specific attributes found:
-> 				attr  0: current_timestamp_clock value: realtime
-> 
-> 				attr  1: integration_time_available value: 0.000140 0.000204 0.000332 0.000588 0.001100 0.002116 0.004156 0.008244
-> 		2 buffer-specific attributes found:
-> 				attr  0: data_available value: 0
-> 				attr  1: watermark value: 1
-> 		1 debug attributes found:
-> 				debug attr  0: direct_reg_access value: 0x4327
-> ina226_fourth-isa-0000
-> Adapter: ISA adapter
-> in1:
->    in1_input: 0.000
-> in2:
->    in2_input: 1.198
-> power1:
->    power1_input: 0.000
-> curr1:
->    curr1_input: 0.000
-> ---
->   drivers/hwmon/iio_hwmon.c | 6 +++++-
->   1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hwmon/iio_hwmon.c b/drivers/hwmon/iio_hwmon.c
-> index f1c2d5faedf0..aedb95fa24e3 100644
-> --- a/drivers/hwmon/iio_hwmon.c
-> +++ b/drivers/hwmon/iio_hwmon.c
-> @@ -59,7 +59,7 @@ static int iio_hwmon_probe(struct platform_device *pdev)
->   	struct iio_hwmon_state *st;
->   	struct sensor_device_attribute *a;
->   	int ret, i;
-> -	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1;
-> +	int in_i = 1, temp_i = 1, curr_i = 1, humidity_i = 1, power_i = 1;
->   	enum iio_chan_type type;
->   	struct iio_channel *channels;
->   	struct device *hwmon_dev;
-> @@ -114,6 +114,10 @@ static int iio_hwmon_probe(struct platform_device *pdev)
->   			n = curr_i++;
->   			prefix = "curr";
->   			break;
-> +		case IIO_POWER:
-> +			n = power_i++;
-> +			prefix = "power";
-> +			break;
->   		case IIO_HUMIDITYRELATIVE:
->   			n = humidity_i++;
->   			prefix = "humidity";
-> 
-
+Note that for the big cores we added the NNPI thing, which was for
+Neural Network Processing something.
