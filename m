@@ -2,45 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 53431967BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4B46967D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 19:42:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730497AbfHTRlG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 13:41:06 -0400
-Received: from mail-ed1-f100.google.com ([209.85.208.100]:46610 "EHLO
-        mail-ed1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729639AbfHTRlG (ORCPT
+        id S1730881AbfHTRmN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 13:42:13 -0400
+Received: from mail-wm1-f100.google.com ([209.85.128.100]:55369 "EHLO
+        mail-wm1-f100.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729351AbfHTRlH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 13:41:06 -0400
-Received: by mail-ed1-f100.google.com with SMTP id z51so7252994edz.13
+        Tue, 20 Aug 2019 13:41:07 -0400
+Received: by mail-wm1-f100.google.com with SMTP id f72so3346101wmf.5
         for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 10:41:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=tZ1DiiOuBDIZzhX5DI1K9yRxUbP4c3jFKWVGax/+oTo=;
-        b=T16cOS+9csBtbiEZGZxyUJzvg5X3qEVCKPtBuWD7k8G0gtiSVRGVk0AAFP0DUZkYiX
-         E2pyaWRPmWIl6KUYl1xv41S9ke2fK59/PDrOzdp86N4beHf4lrqDBJ4OVtwRiT3bBylU
-         PW9bt3RdQvyBDfRxwx6uznfOZ8+aUsuCYKQ0lPiPEkLF2rrJcC8YLZkdtQkpnQTaKg2y
-         GeYc6XseyqhARhKxYg+ZzbhwG5lcONf6CS85ZTGh7y5RNYRxyci4qZ44VL2NATSkONAs
-         uD8IyTkVNDzKFrJxZHCtr8z+gc1SwMBn68t6c9i2+yA0aeZ+2TvYebFfM1VgqQqzUOKW
-         M2Ow==
-X-Gm-Message-State: APjAAAWampulXswCW96sFJnxZTopW7LzbGw/dzzbtD0DHkjqmtsqPyzj
-        5nMcZi7MXnNwR/tWV5B8WsIf38D6dV8WkDoCAdtVbqkDkllYOtR4Q0YIAob7fjTdZA==
-X-Google-Smtp-Source: APXvYqxVYvjEkq1/WSs8U8kEZNNOw7hDX+wh+QkVqHWzvLXv7WNIzxVWanjlBkaNjXmBxHv7sdku2GIhZpZV
-X-Received: by 2002:a50:d0c2:: with SMTP id g2mr32456105edf.251.1566322864514;
+        bh=JrwceyLHFU0hgmI9AovAhbDEUxaznzklC8RnSS8SPlk=;
+        b=LlU4Ha0Di+4hwWlXkS3KpMHzYWt3yMKySWjBdVRlmCjCAjpmsHl+rEermnyHI+R+mt
+         CKpMH1lCpcZCUZC2urK9eqlcbm4WjX/Tc0BxrTmvV+pmnWHP5OuEJb/+73xeHx6XtytS
+         behXpjLl4kt/dsRzUON5qqAstwUCLMKLVVJaPPbfFRBLCDktWWipleQST3vDO0I6Ppyo
+         0HJviY1QccOpr0dgIaMpg2jJ/Lc1lqbwl/XHORFO7Qw1q/QlTpQnieMxjESZDQ4B11/w
+         ZhyUz/emg4o9bf7qxMINMcPtWsotGT+PqKvyPFXzGXQVqKi/rprhp66GmUay1Y9G9hUH
+         QiVQ==
+X-Gm-Message-State: APjAAAW7PDwRCYFQc0QfIeEIbgC/MzkmLIf55Ac40UwJ93j8RQbiqS+T
+        Z/sEDLRt4ljgfTNqTsnZDMz0zxt9DjnVdWgyZe9MCPVYM5aV4oDqpD2nWixfXT2BNw==
+X-Google-Smtp-Source: APXvYqwt7YVlyRrKGvChY8x1oTFlBpL2kQBuLGyaEcaYtjIZNlgsflzi26I4H8MbINCByU9/IZByXAw5KxRD
+X-Received: by 2002:a1c:6387:: with SMTP id x129mr1209622wmb.166.1566322864444;
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id c21sm343874edx.37.2019.08.20.10.41.04
+        by smtp-relay.gmail.com with ESMTPS id 204sm1639wmc.24.2019.08.20.10.41.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Tue, 20 Aug 2019 10:41:04 -0700 (PDT)
 X-Relaying-Domain: sirena.org.uk
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <broonie@sirena.co.uk>)
-        id 1i0880-00032D-0B; Tue, 20 Aug 2019 17:41:04 +0000
+        id 1i087z-00032C-UU; Tue, 20 Aug 2019 17:41:04 +0000
 Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 5B7A3274314C; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
+        id 225022742B4A; Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 From:   Mark Brown <broonie@kernel.org>
 To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 Cc:     alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
@@ -48,10 +48,10 @@ Cc:     alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
         linux-kernel@vger.kernel.org, ludovic.desroches@microchip.com,
         Mark Brown <broonie@kernel.org>, nicolas.ferre@microchip.com,
         perex@perex.cz, tiwai@suse.com
-Subject: Applied "ASoC: mchp-i2s-mcc: Wait for RX/TX RDY only if controller is running" to the asoc tree
-In-Reply-To: <20190820162411.24836-3-codrin.ciubotariu@microchip.com>
+Subject: Applied "ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in master mode" to the asoc tree
+In-Reply-To: <20190820162411.24836-4-codrin.ciubotariu@microchip.com>
 X-Patchwork-Hint: ignore
-Message-Id: <20190820174103.5B7A3274314C@ypsilon.sirena.org.uk>
+Message-Id: <20190820174103.225022742B4A@ypsilon.sirena.org.uk>
 Date:   Tue, 20 Aug 2019 18:41:03 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -60,11 +60,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: mchp-i2s-mcc: Wait for RX/TX RDY only if controller is running
+   ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in master mode
 
 has been applied to the asoc tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.3
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -85,75 +85,169 @@ to this mail.
 Thanks,
 Mark
 
-From 0f6fc97501b790c971b11b52a654009d21c45238 Mon Sep 17 00:00:00 2001
+From c9cff337eab394c4dc8b128dde7308a1dd2e653a Mon Sep 17 00:00:00 2001
 From: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Date: Tue, 20 Aug 2019 19:24:10 +0300
-Subject: [PATCH] ASoC: mchp-i2s-mcc: Wait for RX/TX RDY only if controller is
- running
+Date: Tue, 20 Aug 2019 19:24:11 +0300
+Subject: [PATCH] ASoC: mchp-i2s-mcc: Fix simultaneous capture and playback in
+ master mode
 
-Since hw_free() can be called multiple times and not just after a stop
-trigger command, we should check whether the RX or TX ready interrupt was
-truly enabled previously. For this, we assure that the condition of the
-wait event is always true, except when RX/TX interrupts are enabled.
+This controller supports capture and playback running at the same time,
+with the limitation that both capture and playback must be configured the
+same way (sample rate, sample format, number of channels, etc). For this,
+we have to assure that the configuration registers look the same when
+capture and playback are initiated.
+This patch fixes a bug in which the controller is in master mode and the
+hw_params() callback fails for the second audio stream. The fail occurs
+because the divisors are calculated after comparing the configuration
+registers for capture and playback. The fix consists in calculating the
+divisors before comparing the configuration registers. BCLK and LRC are
+then configured and started only if the controller is not already running.
 
 Fixes: 7e0cdf545a55 ("ASoC: mchp-i2s-mcc: add driver for I2SC Multi-Channel Controller")
 Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Link: https://lore.kernel.org/r/20190820162411.24836-3-codrin.ciubotariu@microchip.com
+Link: https://lore.kernel.org/r/20190820162411.24836-4-codrin.ciubotariu@microchip.com
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/atmel/mchp-i2s-mcc.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
+ sound/soc/atmel/mchp-i2s-mcc.c | 70 ++++++++++++++++++----------------
+ 1 file changed, 37 insertions(+), 33 deletions(-)
 
 diff --git a/sound/soc/atmel/mchp-i2s-mcc.c b/sound/soc/atmel/mchp-i2s-mcc.c
-index 319f975586f1..ab7d5f98e759 100644
+index 86495883ca3f..9a406144b18f 100644
 --- a/sound/soc/atmel/mchp-i2s-mcc.c
 +++ b/sound/soc/atmel/mchp-i2s-mcc.c
-@@ -691,22 +691,24 @@ static int mchp_i2s_mcc_hw_free(struct snd_pcm_substream *substream,
- 		err = wait_event_interruptible_timeout(dev->wq_txrdy,
- 						       dev->tx_rdy,
- 						       msecs_to_jiffies(500));
-+		if (err == 0) {
-+			dev_warn_once(dev->dev,
-+				      "Timeout waiting for Tx ready\n");
-+			regmap_write(dev->regmap, MCHP_I2SMCC_IDRA,
-+				     MCHP_I2SMCC_INT_TXRDY_MASK(dev->channels));
-+			dev->tx_rdy = 1;
-+		}
- 	} else {
- 		err = wait_event_interruptible_timeout(dev->wq_rxrdy,
- 						       dev->rx_rdy,
- 						       msecs_to_jiffies(500));
+@@ -392,11 +392,11 @@ static int mchp_i2s_mcc_clk_get_rate_diff(struct clk *clk,
+ }
+ 
+ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
+-				    unsigned int bclk, unsigned int *mra)
++				    unsigned int bclk, unsigned int *mra,
++				    unsigned long *best_rate)
+ {
+ 	unsigned long clk_rate;
+ 	unsigned long lcm_rate;
+-	unsigned long best_rate = 0;
+ 	unsigned long best_diff_rate = ~0;
+ 	unsigned int sysclk;
+ 	struct clk *best_clk = NULL;
+@@ -423,7 +423,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
+ 	     (clk_rate == bclk || clk_rate / (bclk * 2) <= GENMASK(5, 0));
+ 	     clk_rate += lcm_rate) {
+ 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->gclk, clk_rate,
+-						     &best_clk, &best_rate,
++						     &best_clk, best_rate,
+ 						     &best_diff_rate);
+ 		if (ret) {
+ 			dev_err(dev->dev, "gclk error for rate %lu: %d",
+@@ -437,7 +437,7 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
+ 		}
+ 
+ 		ret = mchp_i2s_mcc_clk_get_rate_diff(dev->pclk, clk_rate,
+-						     &best_clk, &best_rate,
++						     &best_clk, best_rate,
+ 						     &best_diff_rate);
+ 		if (ret) {
+ 			dev_err(dev->dev, "pclk error for rate %lu: %d",
+@@ -459,33 +459,17 @@ static int mchp_i2s_mcc_config_divs(struct mchp_i2s_mcc_dev *dev,
+ 
+ 	dev_dbg(dev->dev, "source CLK is %s with rate %lu, diff %lu\n",
+ 		best_clk == dev->pclk ? "pclk" : "gclk",
+-		best_rate, best_diff_rate);
+-
+-	/* set the rate */
+-	ret = clk_set_rate(best_clk, best_rate);
+-	if (ret) {
+-		dev_err(dev->dev, "unable to set rate %lu to %s: %d\n",
+-			best_rate, best_clk == dev->pclk ? "PCLK" : "GCLK",
+-			ret);
+-		return ret;
 -	}
--
--	if (err == 0) {
--		u32 idra;
--
--		dev_warn_once(dev->dev, "Timeout waiting for %s\n",
--			      is_playback ? "Tx ready" : "Rx ready");
--		if (is_playback)
--			idra = MCHP_I2SMCC_INT_TXRDY_MASK(dev->channels);
++		*best_rate, best_diff_rate);
+ 
+ 	/* Configure divisors */
+ 	if (dev->sysclk)
+-		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(best_rate / (2 * sysclk));
+-	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(best_rate / (2 * bclk));
++		*mra |= MCHP_I2SMCC_MRA_IMCKDIV(*best_rate / (2 * sysclk));
++	*mra |= MCHP_I2SMCC_MRA_ISCKDIV(*best_rate / (2 * bclk));
+ 
+-	if (best_clk == dev->gclk) {
++	if (best_clk == dev->gclk)
+ 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_GCLK;
+-		ret = clk_prepare(dev->gclk);
+-		if (ret < 0)
+-			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
 -		else
--			idra = MCHP_I2SMCC_INT_RXRDY_MASK(dev->channels);
--		regmap_write(dev->regmap, MCHP_I2SMCC_IDRA, idra);
-+		if (err == 0) {
-+			dev_warn_once(dev->dev,
-+				      "Timeout waiting for Rx ready\n");
-+			regmap_write(dev->regmap, MCHP_I2SMCC_IDRA,
-+				     MCHP_I2SMCC_INT_RXRDY_MASK(dev->channels));
-+			dev->rx_rdy = 1;
-+		}
+-			dev->gclk_use = 1;
+-	} else {
++	else
+ 		*mra |= MCHP_I2SMCC_MRA_SRCCLK_PCLK;
+-		dev->gclk_use = 0;
+-	}
+ 
+ 	return 0;
+ }
+@@ -502,6 +486,7 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 				  struct snd_pcm_hw_params *params,
+ 				  struct snd_soc_dai *dai)
+ {
++	unsigned long rate = 0;
+ 	struct mchp_i2s_mcc_dev *dev = snd_soc_dai_get_drvdata(dai);
+ 	u32 mra = 0;
+ 	u32 mrb = 0;
+@@ -640,6 +625,17 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 		return -EINVAL;
  	}
  
- 	if (!mchp_i2s_mcc_is_running(dev)) {
-@@ -818,6 +820,8 @@ static int mchp_i2s_mcc_dai_probe(struct snd_soc_dai *dai)
++	if (set_divs) {
++		bclk_rate = frame_length * params_rate(params);
++		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra,
++					       &rate);
++		if (ret) {
++			dev_err(dev->dev,
++				"unable to configure the divisors: %d\n", ret);
++			return ret;
++		}
++	}
++
+ 	/*
+ 	 * If we are already running, the wanted setup must be
+ 	 * the same with the one that's currently ongoing
+@@ -656,19 +652,27 @@ static int mchp_i2s_mcc_hw_params(struct snd_pcm_substream *substream,
+ 		return 0;
+ 	}
  
- 	init_waitqueue_head(&dev->wq_txrdy);
- 	init_waitqueue_head(&dev->wq_rxrdy);
-+	dev->tx_rdy = 1;
-+	dev->rx_rdy = 1;
+-	/* Save the number of channels to know what interrupts to enable */
+-	dev->channels = channels;
+-
+-	if (set_divs) {
+-		bclk_rate = frame_length * params_rate(params);
+-		ret = mchp_i2s_mcc_config_divs(dev, bclk_rate, &mra);
++	if (mra & MCHP_I2SMCC_MRA_SRCCLK_GCLK && !dev->gclk_use) {
++		/* set the rate */
++		ret = clk_set_rate(dev->gclk, rate);
+ 		if (ret) {
+-			dev_err(dev->dev, "unable to configure the divisors: %d\n",
+-				ret);
++			dev_err(dev->dev,
++				"unable to set rate %lu to GCLK: %d\n",
++				rate, ret);
++			return ret;
++		}
++
++		ret = clk_prepare(dev->gclk);
++		if (ret < 0) {
++			dev_err(dev->dev, "unable to prepare GCLK: %d\n", ret);
+ 			return ret;
+ 		}
++		dev->gclk_use = 1;
+ 	}
  
- 	snd_soc_dai_init_dma_data(dai, &dev->playback, &dev->capture);
- 
++	/* Save the number of channels to know what interrupts to enable */
++	dev->channels = channels;
++
+ 	ret = regmap_write(dev->regmap, MCHP_I2SMCC_MRA, mra);
+ 	if (ret < 0)
+ 		return ret;
 -- 
 2.20.1
 
