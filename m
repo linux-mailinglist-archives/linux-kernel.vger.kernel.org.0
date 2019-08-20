@@ -2,200 +2,602 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 93880961F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 649DF961EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:08:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730460AbfHTOHm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:07:42 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:30751 "EHLO pegase1.c-s.fr"
+        id S1730365AbfHTOHZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:07:25 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:59915 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730261AbfHTOHS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:07:18 -0400
+        id S1730305AbfHTOHU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 10:07:20 -0400
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46CXfr4Wtyz9v0Gm;
-        Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        by localhost (Postfix) with ESMTP id 46CXfs5W4yz9v0Gb;
+        Tue, 20 Aug 2019 16:07:17 +0200 (CEST)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=flXY65AR; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=KyPuUkHb; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id zU4CGkziDTV7; Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        with ESMTP id zEHvrqKgPkFc; Tue, 20 Aug 2019 16:07:17 +0200 (CEST)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46CXfr3TS1z9v0GZ;
-        Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46CXfs4R5Fz9v0GZ;
+        Tue, 20 Aug 2019 16:07:17 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566310036; bh=x8VWVbLglUfZvDgFPEwd+UI41aIksg/nsGXzHa+iqag=;
+        t=1566310037; bh=oUO/aDmyjEB3lGKHxHc/AqAaeUwretvJKpCO5WCYLmQ=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=flXY65ARrL3U15jyKxwZdYb1o0LWQDA3EhhdOoRd0yOkO20N6/F0PjTQcBm9/q0zo
-         K/Tgc5glSnXrxzODbgiex4sf8aNdv+2+V+iF2tn4UngXgRXOPYvasNE2K3DXr6fWuE
-         KlcQYLqk881newtvemiG4mm50L4RBg4Logk+vfp8=
+        b=KyPuUkHbU5g0xV+Iaz7Vjms3iYjgbvbMxhSWW7DqoY8vIH4qADRGUX4gTJUI/61SS
+         EBgAbggjUpbYTTCqghFKwDT+TwXvoUmNHCTxnz9XJ8y6+aaOYbiw7eX/YTu/UuBxa4
+         us17SNjpODDw45OLdNLWFzlNTWY3Myys2LJ29Orw=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id D8D8E8B7D0;
-        Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0403B8B7D0;
+        Tue, 20 Aug 2019 16:07:18 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id raTOMNIGGy8G; Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        with ESMTP id PFSeScEpjoQU; Tue, 20 Aug 2019 16:07:17 +0200 (CEST)
 Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9605D8B7C9;
-        Tue, 20 Aug 2019 16:07:16 +0200 (CEST)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 9F6188B7C9;
+        Tue, 20 Aug 2019 16:07:17 +0200 (CEST)
 Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 785A86B734; Tue, 20 Aug 2019 14:07:16 +0000 (UTC)
-Message-Id: <920eebfd9f36f14c79d1755847f5bf7c83703bdd.1566309262.git.christophe.leroy@c-s.fr>
+        id 7E3676B734; Tue, 20 Aug 2019 14:07:17 +0000 (UTC)
+Message-Id: <b5c8b02ccefd4ede64c61b53cf64fb5dacb35740.1566309263.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1566309262.git.christophe.leroy@c-s.fr>
 References: <cover.1566309262.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH v2 08/12] powerpc/mm: make ioremap_bot common to all
+Subject: [PATCH v2 09/12] powerpc/mm: Move ioremap functions out of
+ pgtable_32/64.c
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
         hch@lst.de
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Tue, 20 Aug 2019 14:07:16 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 14:07:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop multiple definitions of ioremap_bot and make one common to
-all subarches.
+Create ioremap_32.c and ioremap_64.c and move respective ioremap
+functions out of pgtable_32.c and pgtable_64.c
 
-Only CONFIG_PPC_BOOK3E_64 had a global static init value for
-ioremap_bot. Now ioremap_bot is set in early_init_mmu_global().
+In the meantime, fix a few comments and changes a printk() to
+pr_warn(). Also fix a few oversplitted lines.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/book3s/32/pgtable.h | 2 --
- arch/powerpc/include/asm/book3s/64/pgtable.h | 1 -
- arch/powerpc/include/asm/nohash/32/pgtable.h | 2 --
- arch/powerpc/include/asm/pgtable.h           | 2 ++
- arch/powerpc/mm/ioremap.c                    | 3 +++
- arch/powerpc/mm/mmu_decl.h                   | 1 -
- arch/powerpc/mm/nohash/tlb.c                 | 2 ++
- arch/powerpc/mm/pgtable_32.c                 | 3 ---
- arch/powerpc/mm/pgtable_64.c                 | 3 ---
- 9 files changed, 7 insertions(+), 12 deletions(-)
+ arch/powerpc/mm/Makefile     |   2 +-
+ arch/powerpc/mm/ioremap_32.c | 104 +++++++++++++++++++++++++++++++++++
+ arch/powerpc/mm/ioremap_64.c | 123 +++++++++++++++++++++++++++++++++++++++++
+ arch/powerpc/mm/pgtable_32.c |  99 ---------------------------------
+ arch/powerpc/mm/pgtable_64.c | 128 +------------------------------------------
+ 5 files changed, 229 insertions(+), 227 deletions(-)
+ create mode 100644 arch/powerpc/mm/ioremap_32.c
+ create mode 100644 arch/powerpc/mm/ioremap_64.c
 
-diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
-index 838de59f6754..aa1bc5f8da90 100644
---- a/arch/powerpc/include/asm/book3s/32/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
-@@ -201,8 +201,6 @@ int map_kernel_page(unsigned long va, phys_addr_t pa, pgprot_t prot);
- #include <linux/sched.h>
- #include <linux/threads.h>
+diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+index 29c682fe9144..5e147986400d 100644
+--- a/arch/powerpc/mm/Makefile
++++ b/arch/powerpc/mm/Makefile
+@@ -7,7 +7,7 @@ ccflags-$(CONFIG_PPC64)	:= $(NO_MINIMAL_TOC)
  
--extern unsigned long ioremap_bot;
--
- /* Bits to mask out from a PGD to get to the PUD page */
- #define PGD_MASKED_BITS		0
- 
-diff --git a/arch/powerpc/include/asm/book3s/64/pgtable.h b/arch/powerpc/include/asm/book3s/64/pgtable.h
-index 8308f32e9782..11819e3c755e 100644
---- a/arch/powerpc/include/asm/book3s/64/pgtable.h
-+++ b/arch/powerpc/include/asm/book3s/64/pgtable.h
-@@ -289,7 +289,6 @@ extern unsigned long __kernel_io_end;
- #define KERN_IO_END __kernel_io_end
- 
- extern struct page *vmemmap;
--extern unsigned long ioremap_bot;
- extern unsigned long pci_io_base;
- #endif /* __ASSEMBLY__ */
- 
-diff --git a/arch/powerpc/include/asm/nohash/32/pgtable.h b/arch/powerpc/include/asm/nohash/32/pgtable.h
-index 0284f8f5305f..7ce2a7c9fade 100644
---- a/arch/powerpc/include/asm/nohash/32/pgtable.h
-+++ b/arch/powerpc/include/asm/nohash/32/pgtable.h
-@@ -11,8 +11,6 @@
- #include <asm/mmu.h>			/* For sub-arch specific PPC_PIN_SIZE */
- #include <asm/asm-405.h>
- 
--extern unsigned long ioremap_bot;
--
- #ifdef CONFIG_44x
- extern int icache_44x_need_flush;
- #endif
-diff --git a/arch/powerpc/include/asm/pgtable.h b/arch/powerpc/include/asm/pgtable.h
-index c58ba7963688..c54bb68c1354 100644
---- a/arch/powerpc/include/asm/pgtable.h
-+++ b/arch/powerpc/include/asm/pgtable.h
-@@ -68,6 +68,8 @@ extern pgd_t swapper_pg_dir[];
- 
- extern void paging_init(void);
- 
-+extern unsigned long ioremap_bot;
+ obj-y				:= fault.o mem.o pgtable.o mmap.o \
+ 				   init_$(BITS).o pgtable_$(BITS).o \
+-				   pgtable-frag.o ioremap.o \
++				   pgtable-frag.o ioremap.o ioremap_$(BITS).o \
+ 				   init-common.o mmu_context.o drmem.o
+ obj-$(CONFIG_PPC_MMU_NOHASH)	+= nohash/
+ obj-$(CONFIG_PPC_BOOK3S_32)	+= book3s32/
+diff --git a/arch/powerpc/mm/ioremap_32.c b/arch/powerpc/mm/ioremap_32.c
+new file mode 100644
+index 000000000000..fb43ba71aa54
+--- /dev/null
++++ b/arch/powerpc/mm/ioremap_32.c
+@@ -0,0 +1,104 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
 +
- /*
-  * kern_addr_valid is intended to indicate whether an address is a valid
-  * kernel address.  Most 32-bit archs define it as always true (like this)
-diff --git a/arch/powerpc/mm/ioremap.c b/arch/powerpc/mm/ioremap.c
-index 3d388aaa3ee6..eaf5f8a4a63f 100644
---- a/arch/powerpc/mm/ioremap.c
-+++ b/arch/powerpc/mm/ioremap.c
-@@ -3,6 +3,9 @@
- #include <linux/io.h>
- #include <asm/io-workarounds.h>
- 
-+unsigned long ioremap_bot;
-+EXPORT_SYMBOL(ioremap_bot);
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
 +
- void __iomem *ioremap(phys_addr_t addr, unsigned long size)
- {
- 	pgprot_t prot = pgprot_noncached(PAGE_KERNEL);
-diff --git a/arch/powerpc/mm/mmu_decl.h b/arch/powerpc/mm/mmu_decl.h
-index 32c1a191c28a..6ee64d5e2824 100644
---- a/arch/powerpc/mm/mmu_decl.h
-+++ b/arch/powerpc/mm/mmu_decl.h
-@@ -108,7 +108,6 @@ extern u8 early_hash[];
- 
- #endif /* CONFIG_PPC32 */
- 
--extern unsigned long ioremap_bot;
- extern unsigned long __max_low_memory;
- extern phys_addr_t __initial_memory_limit_addr;
- extern phys_addr_t total_memory;
-diff --git a/arch/powerpc/mm/nohash/tlb.c b/arch/powerpc/mm/nohash/tlb.c
-index bf60983a58c7..696f568253a0 100644
---- a/arch/powerpc/mm/nohash/tlb.c
-+++ b/arch/powerpc/mm/nohash/tlb.c
-@@ -703,6 +703,8 @@ static void __init early_init_mmu_global(void)
- 	 * for use by the TLB miss code
- 	 */
- 	linear_map_top = memblock_end_of_DRAM();
++#include <mm/mmu_decl.h>
 +
-+	ioremap_bot = IOREMAP_BASE;
- }
- 
- static void __init early_mmu_set_memory_limit(void)
++void __iomem *ioremap_wt(phys_addr_t addr, unsigned long size)
++{
++	pgprot_t prot = pgprot_cached_wthru(PAGE_KERNEL);
++
++	return __ioremap_caller(addr, size, prot, __builtin_return_address(0));
++}
++EXPORT_SYMBOL(ioremap_wt);
++
++void __iomem *
++__ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *caller)
++{
++	unsigned long v, i;
++	phys_addr_t p;
++	int err;
++
++	/*
++	 * Choose an address to map it to.
++	 * Once the vmalloc system is running, we use it.
++	 * Before then, we use space going down from IOREMAP_TOP
++	 * (ioremap_bot records where we're up to).
++	 */
++	p = addr & PAGE_MASK;
++	size = PAGE_ALIGN(addr + size) - p;
++
++	/*
++	 * If the address lies within the first 16 MB, assume it's in ISA
++	 * memory space
++	 */
++	if (p < 16 * 1024 * 1024)
++		p += _ISA_MEM_BASE;
++
++#ifndef CONFIG_CRASH_DUMP
++	/*
++	 * Don't allow anybody to remap normal RAM that we're using.
++	 * mem_init() sets high_memory so only do the check after that.
++	 */
++	if (slab_is_available() && p <= virt_to_phys(high_memory - 1) &&
++	    page_is_ram(__phys_to_pfn(p))) {
++		pr_warn("%s(): phys addr 0x%llx is RAM lr %ps\n", __func__,
++			(unsigned long long)p, __builtin_return_address(0));
++		return NULL;
++	}
++#endif
++
++	if (size == 0)
++		return NULL;
++
++	/*
++	 * Is it already mapped?  Perhaps overlapped by a previous
++	 * mapping.
++	 */
++	v = p_block_mapped(p);
++	if (v)
++		goto out;
++
++	if (slab_is_available()) {
++		struct vm_struct *area;
++		area = get_vm_area_caller(size, VM_IOREMAP, caller);
++		if (area == 0)
++			return NULL;
++		area->phys_addr = p;
++		v = (unsigned long)area->addr;
++	} else {
++		v = (ioremap_bot -= size);
++	}
++
++	/*
++	 * Should check if it is a candidate for a BAT mapping
++	 */
++
++	err = 0;
++	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
++		err = map_kernel_page(v + i, p + i, prot);
++	if (err) {
++		if (slab_is_available())
++			vunmap((void *)v);
++		return NULL;
++	}
++
++out:
++	return (void __iomem *)(v + ((unsigned long)addr & ~PAGE_MASK));
++}
++
++void iounmap(volatile void __iomem *addr)
++{
++	/*
++	 * If mapped by BATs then there is nothing to do.
++	 * Calling vfree() generates a benign warning.
++	 */
++	if (v_block_mapped((unsigned long)addr))
++		return;
++
++	if (addr > high_memory && (unsigned long)addr < ioremap_bot)
++		vunmap((void *)(PAGE_MASK & (unsigned long)addr));
++}
++EXPORT_SYMBOL(iounmap);
+diff --git a/arch/powerpc/mm/ioremap_64.c b/arch/powerpc/mm/ioremap_64.c
+new file mode 100644
+index 000000000000..57f3b096143c
+--- /dev/null
++++ b/arch/powerpc/mm/ioremap_64.c
+@@ -0,0 +1,123 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++
++#include <linux/io.h>
++#include <linux/slab.h>
++#include <linux/vmalloc.h>
++
++int __weak ioremap_range(unsigned long ea, phys_addr_t pa, unsigned long size,
++			 pgprot_t prot, int nid)
++{
++	unsigned long i;
++
++	for (i = 0; i < size; i += PAGE_SIZE) {
++		int err = map_kernel_page(ea + i, pa + i, prot);
++		if (err) {
++			if (slab_is_available())
++				unmap_kernel_range(ea, size);
++			else
++				WARN_ON_ONCE(1); /* Should clean up */
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++/**
++ * Low level function to establish the page tables for an IO mapping
++ */
++void __iomem *__ioremap_at(phys_addr_t pa, void *ea, unsigned long size, pgprot_t prot)
++{
++	/* We don't support the 4K PFN hack with ioremap */
++	if (pgprot_val(prot) & H_PAGE_4K_PFN)
++		return NULL;
++
++	if ((ea + size) >= (void *)IOREMAP_END) {
++		pr_warn("Outside the supported range\n");
++		return NULL;
++	}
++
++	WARN_ON(pa & ~PAGE_MASK);
++	WARN_ON(((unsigned long)ea) & ~PAGE_MASK);
++	WARN_ON(size & ~PAGE_MASK);
++
++	if (ioremap_range((unsigned long)ea, pa, size, prot, NUMA_NO_NODE))
++		return NULL;
++
++	return (void __iomem *)ea;
++}
++EXPORT_SYMBOL(__ioremap_at);
++
++/**
++ * Low level function to tear down the page tables for an IO mapping. This is
++ * used for mappings that are manipulated manually, like partial unmapping of
++ * PCI IOs or ISA space.
++ */
++void __iounmap_at(void *ea, unsigned long size)
++{
++	WARN_ON(((unsigned long)ea) & ~PAGE_MASK);
++	WARN_ON(size & ~PAGE_MASK);
++
++	unmap_kernel_range((unsigned long)ea, size);
++}
++EXPORT_SYMBOL(__iounmap_at);
++
++void __iomem *__ioremap_caller(phys_addr_t addr, unsigned long size,
++			       pgprot_t prot, void *caller)
++{
++	phys_addr_t paligned;
++	void __iomem *ret;
++
++	/*
++	 * Choose an address to map it to. Once the vmalloc system is running,
++	 * we use it. Before that, we map using addresses going up from
++	 * ioremap_bot.  vmalloc will use the addresses from IOREMAP_BASE
++	 * through ioremap_bot.
++	 */
++	paligned = addr & PAGE_MASK;
++	size = PAGE_ALIGN(addr + size) - paligned;
++
++	if (size == 0 || paligned == 0)
++		return NULL;
++
++	if (slab_is_available()) {
++		struct vm_struct *area;
++
++		area = __get_vm_area_caller(size, VM_IOREMAP, ioremap_bot,
++					    IOREMAP_END, caller);
++		if (area == NULL)
++			return NULL;
++
++		area->phys_addr = paligned;
++		ret = __ioremap_at(paligned, area->addr, size, prot);
++	} else {
++		ret = __ioremap_at(paligned, (void *)ioremap_bot, size, prot);
++		if (ret)
++			ioremap_bot += size;
++	}
++
++	if (ret)
++		ret += addr & ~PAGE_MASK;
++	return ret;
++}
++
++/*
++ * Unmap an IO region and remove it from vmalloc'd list.
++ * Access to IO memory should be serialized by driver.
++ */
++void iounmap(volatile void __iomem *token)
++{
++	void *addr;
++
++	if (!slab_is_available())
++		return;
++
++	addr = (void *)((unsigned long __force)PCI_FIX_ADDR(token) & PAGE_MASK);
++
++	if ((unsigned long)addr < ioremap_bot) {
++		pr_warn("Attempt to iounmap early bolted mapping at 0x%p\n", addr);
++		return;
++	}
++	vunmap(addr);
++}
++EXPORT_SYMBOL(iounmap);
 diff --git a/arch/powerpc/mm/pgtable_32.c b/arch/powerpc/mm/pgtable_32.c
-index b0f2d45da232..daab57c78b22 100644
+index daab57c78b22..6223d4c17301 100644
 --- a/arch/powerpc/mm/pgtable_32.c
 +++ b/arch/powerpc/mm/pgtable_32.c
-@@ -33,9 +33,6 @@
+@@ -27,7 +27,6 @@
+ #include <asm/pgtable.h>
+ #include <asm/pgalloc.h>
+ #include <asm/fixmap.h>
+-#include <asm/io.h>
+ #include <asm/setup.h>
+ #include <asm/sections.h>
  
- #include <mm/mmu_decl.h>
+@@ -35,104 +34,6 @@
  
--unsigned long ioremap_bot;
--EXPORT_SYMBOL(ioremap_bot);	/* aka VMALLOC_END */
--
  extern char etext[], _stext[], _sinittext[], _einittext[];
  
- void __iomem *
+-void __iomem *
+-ioremap_wt(phys_addr_t addr, unsigned long size)
+-{
+-	pgprot_t prot = pgprot_cached_wthru(PAGE_KERNEL);
+-
+-	return __ioremap_caller(addr, size, prot, __builtin_return_address(0));
+-}
+-EXPORT_SYMBOL(ioremap_wt);
+-
+-void __iomem *
+-__ioremap_caller(phys_addr_t addr, unsigned long size, pgprot_t prot, void *caller)
+-{
+-	unsigned long v, i;
+-	phys_addr_t p;
+-	int err;
+-
+-	/*
+-	 * Choose an address to map it to.
+-	 * Once the vmalloc system is running, we use it.
+-	 * Before then, we use space going down from IOREMAP_TOP
+-	 * (ioremap_bot records where we're up to).
+-	 */
+-	p = addr & PAGE_MASK;
+-	size = PAGE_ALIGN(addr + size) - p;
+-
+-	/*
+-	 * If the address lies within the first 16 MB, assume it's in ISA
+-	 * memory space
+-	 */
+-	if (p < 16*1024*1024)
+-		p += _ISA_MEM_BASE;
+-
+-#ifndef CONFIG_CRASH_DUMP
+-	/*
+-	 * Don't allow anybody to remap normal RAM that we're using.
+-	 * mem_init() sets high_memory so only do the check after that.
+-	 */
+-	if (slab_is_available() && p <= virt_to_phys(high_memory - 1) &&
+-	    page_is_ram(__phys_to_pfn(p))) {
+-		pr_warn("%s(): phys addr 0x%llx is RAM lr %ps\n", __func__,
+-			(unsigned long long)p, __builtin_return_address(0));
+-		return NULL;
+-	}
+-#endif
+-
+-	if (size == 0)
+-		return NULL;
+-
+-	/*
+-	 * Is it already mapped?  Perhaps overlapped by a previous
+-	 * mapping.
+-	 */
+-	v = p_block_mapped(p);
+-	if (v)
+-		goto out;
+-
+-	if (slab_is_available()) {
+-		struct vm_struct *area;
+-		area = get_vm_area_caller(size, VM_IOREMAP, caller);
+-		if (area == 0)
+-			return NULL;
+-		area->phys_addr = p;
+-		v = (unsigned long) area->addr;
+-	} else {
+-		v = (ioremap_bot -= size);
+-	}
+-
+-	/*
+-	 * Should check if it is a candidate for a BAT mapping
+-	 */
+-
+-	err = 0;
+-	for (i = 0; i < size && err == 0; i += PAGE_SIZE)
+-		err = map_kernel_page(v + i, p + i, prot);
+-	if (err) {
+-		if (slab_is_available())
+-			vunmap((void *)v);
+-		return NULL;
+-	}
+-
+-out:
+-	return (void __iomem *) (v + ((unsigned long)addr & ~PAGE_MASK));
+-}
+-
+-void iounmap(volatile void __iomem *addr)
+-{
+-	/*
+-	 * If mapped by BATs then there is nothing to do.
+-	 * Calling vfree() generates a benign warning.
+-	 */
+-	if (v_block_mapped((unsigned long)addr))
+-		return;
+-
+-	if (addr > high_memory && (unsigned long) addr < ioremap_bot)
+-		vunmap((void *) (PAGE_MASK & (unsigned long)addr));
+-}
+-EXPORT_SYMBOL(iounmap);
+-
+ static void __init *early_alloc_pgtable(unsigned long size)
+ {
+ 	void *ptr = memblock_alloc(size, size);
 diff --git a/arch/powerpc/mm/pgtable_64.c b/arch/powerpc/mm/pgtable_64.c
-index 2b9078e1bc43..d865e053052d 100644
+index d865e053052d..e78832dce7bb 100644
 --- a/arch/powerpc/mm/pgtable_64.c
 +++ b/arch/powerpc/mm/pgtable_64.c
-@@ -98,9 +98,6 @@ unsigned long __pte_frag_nr;
- EXPORT_SYMBOL(__pte_frag_nr);
- unsigned long __pte_frag_size_shift;
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+- *  This file contains ioremap and related functions for 64-bit machines.
++ *  This file contains pgtable related functions for 64-bit machines.
+  *
+  *  Derived from arch/ppc64/mm/init.c
+  *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)
+@@ -34,7 +34,6 @@
+ #include <asm/pgalloc.h>
+ #include <asm/page.h>
+ #include <asm/prom.h>
+-#include <asm/io.h>
+ #include <asm/mmu_context.h>
+ #include <asm/pgtable.h>
+ #include <asm/mmu.h>
+@@ -100,131 +99,6 @@ unsigned long __pte_frag_size_shift;
  EXPORT_SYMBOL(__pte_frag_size_shift);
--unsigned long ioremap_bot;
--#else /* !CONFIG_PPC_BOOK3S_64 */
--unsigned long ioremap_bot = IOREMAP_BASE;
  #endif
  
- int __weak ioremap_range(unsigned long ea, phys_addr_t pa, unsigned long size, pgprot_t prot, int nid)
+-int __weak ioremap_range(unsigned long ea, phys_addr_t pa, unsigned long size, pgprot_t prot, int nid)
+-{
+-	unsigned long i;
+-
+-	for (i = 0; i < size; i += PAGE_SIZE) {
+-		int err = map_kernel_page(ea + i, pa + i, prot);
+-		if (err) {
+-			if (slab_is_available())
+-				unmap_kernel_range(ea, size);
+-			else
+-				WARN_ON_ONCE(1); /* Should clean up */
+-			return err;
+-		}
+-	}
+-
+-	return 0;
+-}
+-
+-/**
+- * __ioremap_at - Low level function to establish the page tables
+- *                for an IO mapping
+- */
+-void __iomem *__ioremap_at(phys_addr_t pa, void *ea, unsigned long size, pgprot_t prot)
+-{
+-	/* We don't support the 4K PFN hack with ioremap */
+-	if (pgprot_val(prot) & H_PAGE_4K_PFN)
+-		return NULL;
+-
+-	if ((ea + size) >= (void *)IOREMAP_END) {
+-		pr_warn("Outside the supported range\n");
+-		return NULL;
+-	}
+-
+-	WARN_ON(pa & ~PAGE_MASK);
+-	WARN_ON(((unsigned long)ea) & ~PAGE_MASK);
+-	WARN_ON(size & ~PAGE_MASK);
+-
+-	if (ioremap_range((unsigned long)ea, pa, size, prot, NUMA_NO_NODE))
+-		return NULL;
+-
+-	return (void __iomem *)ea;
+-}
+-
+-/**
+- * __iounmap_from - Low level function to tear down the page tables
+- *                  for an IO mapping. This is used for mappings that
+- *                  are manipulated manually, like partial unmapping of
+- *                  PCI IOs or ISA space.
+- */
+-void __iounmap_at(void *ea, unsigned long size)
+-{
+-	WARN_ON(((unsigned long)ea) & ~PAGE_MASK);
+-	WARN_ON(size & ~PAGE_MASK);
+-
+-	unmap_kernel_range((unsigned long)ea, size);
+-}
+-
+-void __iomem * __ioremap_caller(phys_addr_t addr, unsigned long size,
+-				pgprot_t prot, void *caller)
+-{
+-	phys_addr_t paligned;
+-	void __iomem *ret;
+-
+-	/*
+-	 * Choose an address to map it to.
+-	 * Once the imalloc system is running, we use it.
+-	 * Before that, we map using addresses going
+-	 * up from ioremap_bot.  imalloc will use
+-	 * the addresses from ioremap_bot through
+-	 * IMALLOC_END
+-	 * 
+-	 */
+-	paligned = addr & PAGE_MASK;
+-	size = PAGE_ALIGN(addr + size) - paligned;
+-
+-	if ((size == 0) || (paligned == 0))
+-		return NULL;
+-
+-	if (slab_is_available()) {
+-		struct vm_struct *area;
+-
+-		area = __get_vm_area_caller(size, VM_IOREMAP,
+-					    ioremap_bot, IOREMAP_END,
+-					    caller);
+-		if (area == NULL)
+-			return NULL;
+-
+-		area->phys_addr = paligned;
+-		ret = __ioremap_at(paligned, area->addr, size, prot);
+-	} else {
+-		ret = __ioremap_at(paligned, (void *)ioremap_bot, size, prot);
+-		if (ret)
+-			ioremap_bot += size;
+-	}
+-
+-	if (ret)
+-		ret += addr & ~PAGE_MASK;
+-	return ret;
+-}
+-
+-/*  
+- * Unmap an IO region and remove it from imalloc'd list.
+- * Access to IO memory should be serialized by driver.
+- */
+-void iounmap(volatile void __iomem *token)
+-{
+-	void *addr;
+-
+-	if (!slab_is_available())
+-		return;
+-	
+-	addr = (void *) ((unsigned long __force)
+-			 PCI_FIX_ADDR(token) & PAGE_MASK);
+-	if ((unsigned long)addr < ioremap_bot) {
+-		printk(KERN_WARNING "Attempt to iounmap early bolted mapping"
+-		       " at 0x%p\n", addr);
+-		return;
+-	}
+-	vunmap(addr);
+-}
+-
+-EXPORT_SYMBOL(__ioremap_at);
+-EXPORT_SYMBOL(iounmap);
+-EXPORT_SYMBOL(__iounmap_at);
+-
+ #ifndef __PAGETABLE_PUD_FOLDED
+ /* 4 level page table */
+ struct page *pgd_page(pgd_t pgd)
 -- 
 2.13.3
 
