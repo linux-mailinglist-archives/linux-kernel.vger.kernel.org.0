@@ -2,111 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D445A957E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 09:11:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DB318957F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 09:13:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729310AbfHTHLq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 03:11:46 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:50919 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728777AbfHTHLq (ORCPT
+        id S1729343AbfHTHMT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 03:12:19 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:45010 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729203AbfHTHMS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 03:11:46 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id A19A340002;
-        Tue, 20 Aug 2019 07:11:42 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 09:11:42 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 02/10] clk: sunxi-ng: Mark AR100 clocks as critical
-Message-ID: <20190820071142.2bgfsnt75xfeyusp@flea>
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190820032311.6506-3-samuel@sholland.org>
+        Tue, 20 Aug 2019 03:12:18 -0400
+Received: by mail-lj1-f196.google.com with SMTP id e24so4094782ljg.11
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 00:12:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=HHSoqWKZEGvJJ3+or43k3Z7aZ0JM++edMhoQlijfvls=;
+        b=VwuASG2RtKyMhxNLREWp421hmIqGZ521c56swV/Ot1Rmmo369Vat8gqvMuAkadMD6t
+         FmKFqdcsB6UzQT0DifyJW4Z7hm1fVoMPU5RFTlMtdPVX0u6u3sJp34Ib7iQTQo3LBrDx
+         jii1kap3+W20kvr6AHOfLCFFEgML4W9rrcMSXcq0OTNJGMJIjosVGwjzfSDFZjI55zuV
+         HTmpqVNvjrOZUCRcmNf6lHkbvdoO3zzUCVWTq5Zeuiwr8+SjtUmyF1XnyYXGurmr5MSX
+         nHwGFXZTHrXdySpLKbUrZmnA9xXlqVqPxZp08uSHbRmmRiWI6EokTiZBOd37z1KwEN4U
+         ty0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=HHSoqWKZEGvJJ3+or43k3Z7aZ0JM++edMhoQlijfvls=;
+        b=FiJ6pWP02FIjRu64XJAv2dTX9q111cYUTI0l6V/I6C9QEne4Fl/pc9GtF1PyCYBtZj
+         bu3hzebl2bj3tHQpu4/FwxSJ7BJuROpRZIK61490wcqvxM33nzdfY+0GsS5Pd7px0FyJ
+         Gm7/aYb0jzP1ZKUHuHLHNlKaMpeXWytIb/uppWYNu+OcYsdaLOIztqtFYmY1TTGJgY8B
+         kis0YOy2ia9LTzU3/YWjCXx6vv4YyfSU/LCyDAeqLhmsuZ6uGUIcfPYCsm5M825peZ63
+         pBsGGhjU0VN/Cz5L+DnYebZIcm8uiSFTV/4MGSQw2qd5xy9UBaH03vYznav8rRGiNfAx
+         /OKg==
+X-Gm-Message-State: APjAAAVvKXFx3JBZ0BeCWFsqrEbsarPOxwo6hFeSU672OiOsgnolhctb
+        xcIBEIIqwfZVJYvBAJ433RF64mchww/RZb+oHTO+wA==
+X-Google-Smtp-Source: APXvYqzvOU/pXCt+Y4om2H2xOwRjllpQArHaRTouxDBCQgr1luDhMaWUq5i1R1z6lbicAftr6o4Jr+oiaQox7/zjQ3Y=
+X-Received: by 2002:a05:651c:28c:: with SMTP id b12mr14924495ljo.69.1566285136324;
+ Tue, 20 Aug 2019 00:12:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i7cnfwqz3x4wuuzw"
-Content-Disposition: inline
-In-Reply-To: <20190820032311.6506-3-samuel@sholland.org>
-User-Agent: NeoMutt/20180716
+References: <1566221225-5170-1-git-send-email-xuwei5@hisilicon.com> <CAHp75Vct3qtR5bDF6iALmduKEEq+gNL-btmzQVuWq_hYsmxKhw@mail.gmail.com>
+In-Reply-To: <CAHp75Vct3qtR5bDF6iALmduKEEq+gNL-btmzQVuWq_hYsmxKhw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 20 Aug 2019 09:12:04 +0200
+Message-ID: <CACRpkdbRZ=88+ooW5jb5vu4Dwsaj7Ce+V5Ked2-bGn0JWpTHfQ@mail.gmail.com>
+Subject: Re: [PATCH v3] gpio: pl061: Fix the issue failed to register the ACPI interrtupion
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Thierry Reding <treding@nvidia.com>
+Cc:     Wei Xu <xuwei5@hisilicon.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm Mailing List <linux-arm-kernel@lists.infradead.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Shameerali Kolothum Thodi 
+        <shameerali.kolothum.thodi@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        John Garry <john.garry@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        Shiju Jose <shiju.jose@huawei.com>, jinying@hisilicon.com,
+        Zhangyi ac <zhangyi.ac@huawei.com>,
+        "Liguozhu (Kenneth)" <liguozhu@hisilicon.com>,
+        Tangkunshan <tangkunshan@huawei.com>,
+        huangdaode <huangdaode@hisilicon.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Aug 19, 2019 at 5:07 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
 
---i7cnfwqz3x4wuuzw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> The proper fix is to revert the culprit since we call
+> acpi_gpiochip_request_interrupts() for all controllers.
+> Linus, please re-do the approach with IRQ handling,
 
-Hi,
+Exactly what do you refer to when you want me to
+"re-do the approach for IRQ handling"? Do you mean
+this driver or are you referring to:
 
-On Mon, Aug 19, 2019 at 10:23:03PM -0500, Samuel Holland wrote:
-> On sun8i, sun9i, and sun50i SoCs, system suspend/resume support requires
-> firmware running on the AR100 coprocessor (the "SCP"). Such firmware can
-> provide additional features, such as thermal monitoring and poweron/off
-> support for boards without a PMIC.
->
-> Since the AR100 may be running critical firmware, even if Linux does not
-> know about it or directly interact with it (all requests may go through
-> an intermediary interface such as PSCI), Linux must not turn off its
-> clock.
->
-> At this time, such power management firmware only exists for the A64 and
-> H5 SoCs.  However, it makes sense to take care of all CCU drivers now
-> for consistency, and to ease the transition in the future once firmware
-> is ported to the other SoCs.
->
-> Leaving the clock running is safe even if no firmware is present, since
-> the AR100 stays in reset by default. In most cases, the AR100 clock is
-> kept enabled by Linux anyway, since it is the parent of all APB0 bus
-> peripherals. This change only prevents Linux from turning off the AR100
-> clock in the rare case that no peripherals are in use.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+commit e0d89728981393b7d694bd3419b7794b9882c92d
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Tue Nov 7 19:15:54 2017 +0100
 
-So I'm not really sure where you want to go with this.
+    gpio: Implement tighter IRQ chip integration
 
-That clock is only useful where you're having a firmware running on
-the AR100, and that firmware would have a device tree node of its own,
-where we could list the clocks needed for the firmware to keep
-running, if it ever runs. If the driver has not been compiled in /
-loaded, then we don't care either.
+    Currently GPIO drivers are required to add the GPIO chip and its
+    corresponding IRQ chip separately, which can result in a lot of
+    boilerplate. Use the newly introduced struct gpio_irq_chip, embedded in
+    struct gpio_chip, that drivers can fill in if they want the GPIO core
+    to automatically register the IRQ chip associated with a GPIO chip.
 
-But more fundamentally, if we're going to use SCPI, then those clocks
-will not be handled by that driver anyway, but by the firmware, right?
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+    Acked-by: Grygorii Strashko <grygorii.strashko@ti.com>
+    Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-So I'm not really sure that we should do it statically this way, and
-that we should do it at all.
+The new API introduced by this patch is what I am trying to switch
+everything over to, because the forked paths inside of gpiolib
+is causing me a maintenance headache and also increasing
+the footprint of the library.
 
-Maxime
+>  it seems broadly
+> regress with ACPI enabled platforms.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+It only becomes a problem if the platform uses ACPI right?
+But it's a problem if I can't really tell if a driver is using
+ACPI or not, there is no sign in the pl061 driver that it would
+be used on ACPI systems until now, so how do I design
+for it?
 
---i7cnfwqz3x4wuuzw
-Content-Type: application/pgp-signature; name="signature.asc"
+The problem comes from the problem/mess I am trying to
+clean up in the first place. So if the new way of registering GPIO
+irqchips is not working for ACPI, then we have to fix that instead
+of reverting all attempts to use the new API IMO.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVudLgAKCRDj7w1vZxhR
-xUA2AP9aAfcTGshTf2qlHF7BN2TrmF218A9337dfKfbyq+0aCAD7Bcox3Vtd+uUp
-V0EntkOUoyN+OLRb+3kD0UVgB/gcBwM=
-=xm76
------END PGP SIGNATURE-----
-
---i7cnfwqz3x4wuuzw--
+Yours,
+Linus Walleij
