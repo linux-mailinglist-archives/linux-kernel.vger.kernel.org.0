@@ -2,95 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D7FDB97066
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:32:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 151F29707F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:48:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbfHUDb7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 23:31:59 -0400
-Received: from ajax.cs.uga.edu ([128.192.4.6]:43718 "EHLO ajax.cs.uga.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726907AbfHUDb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 23:31:59 -0400
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-        (authenticated bits=0)
-        by ajax.cs.uga.edu (8.14.4/8.14.4) with ESMTP id x7L3Vusd068100
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 20 Aug 2019 23:31:57 -0400
-Received: by mail-lf1-f42.google.com with SMTP id 62so650317lfa.8;
-        Tue, 20 Aug 2019 20:31:57 -0700 (PDT)
-X-Gm-Message-State: APjAAAURX9vk+ObwhABU89VU/fOEgkDJcYNO52tCywDjS7SF54Rhnr6k
-        i57LECGG4Ig6WJJ2sfDd8siitaliYaiMeqaiKi4=
-X-Google-Smtp-Source: APXvYqw2kV8aq5c/ZjYqNiCZFLfPbiTcII9+3u8CHm4ZyowA9u+Ct/Oug7TnOdSWBQnmZAMbfnRMzcq4ufIN3kx9kkI=
-X-Received: by 2002:ac2:48b8:: with SMTP id u24mr16902642lfg.170.1566358316201;
- Tue, 20 Aug 2019 20:31:56 -0700 (PDT)
-MIME-Version: 1.0
-References: <1565930002-5524-1-git-send-email-wenwen@cs.uga.edu> <20190819212317.GU253360@google.com>
-In-Reply-To: <20190819212317.GU253360@google.com>
-From:   Wenwen Wang <wenwen@cs.uga.edu>
-Date:   Tue, 20 Aug 2019 23:31:20 -0400
-X-Gmail-Original-Message-ID: <CAAa=b7dw3w9C5_A_kypw-g7+JBz8uHGQ7_=CVVq1LrhiFEBY7Q@mail.gmail.com>
-Message-ID: <CAAa=b7dw3w9C5_A_kypw-g7+JBz8uHGQ7_=CVVq1LrhiFEBY7Q@mail.gmail.com>
-Subject: Re: [PATCH] ACPI / PCI: fix a memory leak bug
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
-        "open list:ACPI" <linux-acpi@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Wenwen Wang <wenwen@cs.uga.edu>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727070AbfHUDsB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 23:48:01 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34667 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726601AbfHUDsA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 23:48:00 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n9so517244pgc.1;
+        Tue, 20 Aug 2019 20:48:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=SrFWC17xwJEJa4p6/Sn5RGFtwj8GJ2HsGVtuMd6BeF0=;
+        b=H6nCqaybrrOeV9XvO7rt6Q3es1Zko3lz2dO9Ruy9O7q2eDWqZEQ9y6fLuUzqca/i9g
+         xjDTfyN4Sm4uhsz3UADSDm4eziMTV+WCv1gwp0+jSK6B5txqOO1UIsj3twmuWbqE+Y1S
+         L9LvJevNIjvPyrgwySEtz32/NaFx6YNtzXa5s41IMngBawzItd8LwuMa9+QlnGHEG4p4
+         NQoEcUZubz3+xrlbO71oIV37aO5yAXqHSpz6p9MvI+/2SzBdSn8foR0Frs34A0+bXxKH
+         PRiMxxKVJOCTFuOppQdsTBaU6aGKpFh1JODVeEWIsa8tqLVkvkC3MmNZAjMOcD9SNnaW
+         8yZg==
+X-Gm-Message-State: APjAAAVjQqFAD9IL1MG0WBgwfNJF1Rze0Uer2b52wD3C1HRD5ZP8lwQm
+        FhPt2v2RLYxegm9xmKQNriTf0xIJL8t5sg==
+X-Google-Smtp-Source: APXvYqxnVHzSylWdbGFrfTRQIBfuFgjU/wa/Q5L6gf8yTQNp7Kq6vOaWdHQINUtasyA8c/pHoVwnAw==
+X-Received: by 2002:a17:90a:33ed:: with SMTP id n100mr3307855pjb.19.1566359279798;
+        Tue, 20 Aug 2019 20:47:59 -0700 (PDT)
+Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
+        by smtp.gmail.com with ESMTPSA id j12sm20315167pff.4.2019.08.20.20.47.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 20:47:59 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Francois Rigault <rigault.francois@gmail.com>,
+        Nadav Amit <namit@vmware.com>,
+        Jorgen Hansen <jhansen@vmware.com>,
+        Adit Ranadive <aditr@vmware.com>,
+        Alexios Zavras <alexios.zavras@intel.com>,
+        Vishnu DASA <vdasa@vmware.com>, stable@vger.kernel.org
+Subject: [PATCH] VMCI: Release resource if the work is already queued
+Date:   Tue, 20 Aug 2019 13:26:38 -0700
+Message-Id: <20190820202638.49003-1-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 5:23 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
->
-> The subject line should give a clue about where the leak is, e.g.,
->
->   ACPI / PCI: fix acpi_pci_irq_enable() memory leak
->
-> On Thu, Aug 15, 2019 at 11:33:22PM -0500, Wenwen Wang wrote:
-> > In acpi_pci_irq_enable(), 'entry' is allocated by invoking
-> > acpi_pci_irq_lookup(). However, it is not deallocated if
-> > acpi_pci_irq_valid() returns false, leading to a memory leak. To fix this
-> > issue, free 'entry' before returning 0.
->
-> I think the corresponding kzalloc() is the one in
-> acpi_pci_irq_check_entry().
->
-> > Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-> > ---
-> >  drivers/acpi/pci_irq.c | 4 +++-
-> >  1 file changed, 3 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/acpi/pci_irq.c b/drivers/acpi/pci_irq.c
-> > index d2549ae..dea8a60 100644
-> > --- a/drivers/acpi/pci_irq.c
-> > +++ b/drivers/acpi/pci_irq.c
-> > @@ -449,8 +449,10 @@ int acpi_pci_irq_enable(struct pci_dev *dev)
-> >                * No IRQ known to the ACPI subsystem - maybe the BIOS /
-> >                * driver reported one, then use it. Exit in any case.
-> >                */
-> > -             if (!acpi_pci_irq_valid(dev, pin))
-> > +             if (!acpi_pci_irq_valid(dev, pin)) {
-> > +                     kfree(entry);
-> >                       return 0;
-> > +             }
->
-> Looks like we missed this when e237a5518425 ("x86/ACPI/PCI: Recognize
-> that Interrupt Line 255 means "not connected"") was merged.
->
-> You could add:
->
-> Fixes: e237a5518425 ("x86/ACPI/PCI: Recognize that Interrupt Line 255 means "not connected"")
->
-> >               if (acpi_isa_register_gsi(dev))
-> >                       dev_warn(&dev->dev, "PCI INT %c: no GSI\n",
-> > --
-> > 2.7.4
-> >
+Francois reported that VMware balloon gets stuck after a balloon reset,
+when the VMCI doorbell is removed. A similar error can occur when the
+balloon driver is removed with the following splat:
 
-Thanks for your comments and suggestions! I will rework the patch.
+[ 1088.622000] INFO: task modprobe:3565 blocked for more than 120 seconds.
+[ 1088.622035]       Tainted: G        W         5.2.0 #4
+[ 1088.622087] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[ 1088.622205] modprobe        D    0  3565   1450 0x00000000
+[ 1088.622210] Call Trace:
+[ 1088.622246]  __schedule+0x2a8/0x690
+[ 1088.622248]  schedule+0x2d/0x90
+[ 1088.622250]  schedule_timeout+0x1d3/0x2f0
+[ 1088.622252]  wait_for_completion+0xba/0x140
+[ 1088.622320]  ? wake_up_q+0x80/0x80
+[ 1088.622370]  vmci_resource_remove+0xb9/0xc0 [vmw_vmci]
+[ 1088.622373]  vmci_doorbell_destroy+0x9e/0xd0 [vmw_vmci]
+[ 1088.622379]  vmballoon_vmci_cleanup+0x6e/0xf0 [vmw_balloon]
+[ 1088.622381]  vmballoon_exit+0x18/0xcc8 [vmw_balloon]
+[ 1088.622394]  __x64_sys_delete_module+0x146/0x280
+[ 1088.622408]  do_syscall_64+0x5a/0x130
+[ 1088.622410]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1088.622415] RIP: 0033:0x7f54f62791b7
+[ 1088.622421] Code: Bad RIP value.
+[ 1088.622421] RSP: 002b:00007fff2a949008 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[ 1088.622426] RAX: ffffffffffffffda RBX: 000055dff8b55d00 RCX: 00007f54f62791b7
+[ 1088.622426] RDX: 0000000000000000 RSI: 0000000000000800 RDI: 000055dff8b55d68
+[ 1088.622427] RBP: 000055dff8b55d00 R08: 00007fff2a947fb1 R09: 0000000000000000
+[ 1088.622427] R10: 00007f54f62f5cc0 R11: 0000000000000206 R12: 000055dff8b55d68
+[ 1088.622428] R13: 0000000000000001 R14: 000055dff8b55d68 R15: 00007fff2a94a3f0
 
-Wenwen
+The cause for the bug is that when the "delayed" doorbell is invoked, it
+takes a reference on the doorbell entry and schedules work that is
+supposed to run the appropriate code and drop the doorbell entry
+reference. The code ignores the fact that if the work is already queued,
+it will not be scheduled to run one more time. As a result one of the
+references would not be dropped. When the code waits for the reference
+to get to zero, during balloon reset or module removal, it gets stuck.
+
+Fix it. Drop the reference if schedule_work() indicates that the work is
+already queued.
+
+Note that this bug got more apparent (or apparent at all) due to
+commit ce664331b248 ("vmw_balloon: VMCI_DOORBELL_SET does not check status").
+
+Fixes: 83e2ec765be03 ("VMCI: doorbell implementation.")
+Reported-by: Francois Rigault <rigault.francois@gmail.com>
+Cc: Jorgen Hansen <jhansen@vmware.com>
+Cc: Adit Ranadive <aditr@vmware.com>
+Cc: Alexios Zavras <alexios.zavras@intel.com>
+Cc: Vishnu DASA <vdasa@vmware.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ drivers/misc/vmw_vmci/vmci_doorbell.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/vmw_vmci/vmci_doorbell.c b/drivers/misc/vmw_vmci/vmci_doorbell.c
+index bad89b6e0802..345addd9306d 100644
+--- a/drivers/misc/vmw_vmci/vmci_doorbell.c
++++ b/drivers/misc/vmw_vmci/vmci_doorbell.c
+@@ -310,7 +310,8 @@ int vmci_dbell_host_context_notify(u32 src_cid, struct vmci_handle handle)
+ 
+ 	entry = container_of(resource, struct dbell_entry, resource);
+ 	if (entry->run_delayed) {
+-		schedule_work(&entry->work);
++		if (!schedule_work(&entry->work))
++			vmci_resource_put(resource);
+ 	} else {
+ 		entry->notify_cb(entry->client_data);
+ 		vmci_resource_put(resource);
+@@ -361,7 +362,8 @@ static void dbell_fire_entries(u32 notify_idx)
+ 		    atomic_read(&dbell->active) == 1) {
+ 			if (dbell->run_delayed) {
+ 				vmci_resource_get(&dbell->resource);
+-				schedule_work(&dbell->work);
++				if (!schedule_work(&dbell->work))
++					vmci_resource_put(&dbell->resource);
+ 			} else {
+ 				dbell->notify_cb(dbell->client_data);
+ 			}
+-- 
+2.19.1
+
