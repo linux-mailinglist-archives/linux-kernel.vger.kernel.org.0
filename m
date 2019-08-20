@@ -2,123 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3223396AE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:50:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C094D96AEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 22:53:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730646AbfHTUur (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 16:50:47 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34176 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729833AbfHTUuq (ORCPT
+        id S1730738AbfHTUxh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 16:53:37 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:25324 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727358AbfHTUxg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 16:50:46 -0400
-Received: by mail-ot1-f65.google.com with SMTP id c7so15527otp.1;
-        Tue, 20 Aug 2019 13:50:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=eLoUGZm6D8m9/EJ/SkCyN6iwOIcb5VgQEWDNQI8zDKE=;
-        b=fZ5enmOvP91Ks5N45qztcaExa/OV3qFg5xEjg1ZNEW9/SAUcW2OdgW1NzE0JOTyDDr
-         Xe63+mza8LUupQ9448hVAGa4IUhoO2mHt66crid/XPUDcqLLW3+H0nlnHs+hew7J8D9W
-         jqXIrbCu3ILavDy0DT4b/SYuvF0hUSkDOhCJTPYwMsmKJtfHDF8oc5txPbcC6QIRvcpS
-         LgEdpKc6NZOy8mQv+0CJN8+zBDWSjza6i00ksagzMSbR+U7gi1jGgKewPd6U6AFfZ0x4
-         3VhafMY3Vsfb0EjHLYSj4zGHDBNfwrDaeYqrSZxsqarNaenwd43UvF9jBOJ2t1pbifO9
-         5NOw==
-X-Gm-Message-State: APjAAAUOUv9WnPr4Msg0ncDLQZ/HGVFaSsQNDTu8AAR7+4IQJ9OjF7NE
-        tGRn5eCBAY+1BLKszXgo2kwVKLk=
-X-Google-Smtp-Source: APXvYqxtgnb5L4TBNkOwQTLKE63x8Ly0s6rJRJ76zgwVqBO3fZBKGhbNwbaaDrxl5C/q/AFZvQhQhA==
-X-Received: by 2002:a05:6830:15cc:: with SMTP id j12mr23049070otr.64.1566334245580;
-        Tue, 20 Aug 2019 13:50:45 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id s24sm7220113otd.81.2019.08.20.13.50.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 13:50:44 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 15:50:44 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Paul Burton <paul.burton@mips.com>, od@zcrc.me,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: Document JZ47xx VPU auxiliary
- processor
-Message-ID: <20190820205044.GA1223@bogus>
-References: <20190729183109.18283-1-paul@crapouillou.net>
+        Tue, 20 Aug 2019 16:53:36 -0400
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7KKpoXw144999;
+        Tue, 20 Aug 2019 16:52:53 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ugms59bcv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Aug 2019 16:52:53 -0400
+Received: from m0098394.ppops.net (m0098394.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7KKpvbe146132;
+        Tue, 20 Aug 2019 16:52:53 -0400
+Received: from ppma02dal.us.ibm.com (a.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.10])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2ugms59bcb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Aug 2019 16:52:53 -0400
+Received: from pps.filterd (ppma02dal.us.ibm.com [127.0.0.1])
+        by ppma02dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7KKnWIY004191;
+        Tue, 20 Aug 2019 20:52:52 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma02dal.us.ibm.com with ESMTP id 2ue976a9kn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Tue, 20 Aug 2019 20:52:52 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7KKqpYa51708406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Tue, 20 Aug 2019 20:52:51 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 489A9B205F;
+        Tue, 20 Aug 2019 20:52:51 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 2AD64B2066;
+        Tue, 20 Aug 2019 20:52:51 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 20 Aug 2019 20:52:51 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 61F8016C246B; Tue, 20 Aug 2019 13:52:52 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 13:52:52 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rostedt <rostedt@goodmis.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
+Message-ID: <20190820205252.GY28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org>
+ <CAEXW_YQrh42N5bYMmQJCFb6xa0nwXH8jmZMEAnGVBMjGF8wR1Q@mail.gmail.com>
+ <alpine.DEB.2.21.1908162245440.1923@nanos.tec.linutronix.de>
+ <20190816205740.GF10481@google.com>
+ <3c0cb8a2-eba2-7bea-8523-b948253a6804@arm.com>
+ <CAHk-=wi_KeD1M-_-_SU_H92vJ-yNkDnAGhAS=RR1yNNGWKW+aA@mail.gmail.com>
+ <20190817045217.GZ28441@linux.ibm.com>
+ <20190820140116.GT2332@hirez.programming.kicks-ass.net>
+ <20190820203135.GX28441@linux.ibm.com>
+ <20190820203939.GV2349@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190729183109.18283-1-paul@crapouillou.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820203939.GV2349@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908200188
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jul 29, 2019 at 02:31:07PM -0400, Paul Cercueil wrote:
-> Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from
-> Ingenic is a second Xburst MIPS CPU very similar to the main core.
-> This document describes the devicetree bindings for this auxiliary
-> processor.
+On Tue, Aug 20, 2019 at 10:39:39PM +0200, Peter Zijlstra wrote:
+> On Tue, Aug 20, 2019 at 01:31:35PM -0700, Paul E. McKenney wrote:
+> > On Tue, Aug 20, 2019 at 04:01:16PM +0200, Peter Zijlstra wrote:
 > 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
+> > > We really should get the compiler folks to give us a
+> > > -fno-pointer-provenance. Waiting on the standards committee to get their
+> > > act together seems unlikely, esp. given that some people actually seem
+> > > to _want_ this nonsense :/
+> > 
+> > The reason that they want it is to enable some significant optimizations
+> > in numerical code on the one hand and in heavily templated C++ code on
+> > the other.  Neither of which has much bearing on kernel code.
+> > 
+> > Interested in coming to the next C standards committee meeting in October
+> > to help me push for this?  ;-)
 > 
-> Notes:
->     v2: Update TCSM0 address in example
-> 
->  .../bindings/remoteproc/ingenic,vpu.txt       | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> new file mode 100644
-> index 000000000000..576f9e582780
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
-> @@ -0,0 +1,36 @@
-> +* Ingenic JZ47xx auxiliary processor
-> +
-> +Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs from Ingenic
-> +is a second Xburst MIPS CPU very similar to the main core.
-> +This document describes the devicetree bindings for this auxiliary processor.
-> +
-> +Required properties:
-> +- compatible: Should be "ingenic,jz4770-vpu-rproc"
-> +- reg: Must contain the registers location and length for:
-> +  * the auxiliary processor,
-> +  * the Tightly Coupled Shared Memory 0 (TCSM0),
-> +  * the Tightly Coupled Shared Memory 1 (TCSM1),
-> +  * the shared SRAM.
-> +- reg-names: Must contain "aux", "tcsm0", "tcsm1", "sram".
-> +- clocks: Clock specifier for the AUX and VPU clocks.
-> +- clock-names: Must contain "aux", "vpu".
-> +- interrupts: Interrupt specifier for the VPU hardware block.
-> +
-> +Example:
-> +
-> +vpu: cpu@132a0000 {
+> How about we try and get some compiler folks together at plumbers and
+> bribe them with beer? Once we have our compiler knob, we happy :-)
 
-cpu is reserved for CPUs under /cpus/. Use video-codec or video-decoder 
-or ?? It's not clear what type of video processing this does.
+C'mon, Peter!  Where is your sense of self-destruction???  ;-)
 
-> +	compatible = "ingenic,jz4770-vpu-rproc";
-> +
-> +	reg = <0x132a0000 0x20 /* AUX */
-> +		   0x132b0000 0x4000 /* TCSM0 */
-> +		   0x132c0000 0xc000 /* TCSM1 */
-> +		   0x132f0000 0x7000 /* SRAM */
-> +	>;
-> +	reg-names = "aux", "tcsm0", "tcsm1", "sram";
-> +
-> +	clocks = <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
-> +	clock-names = "aux", "vpu";
-> +
-> +	interrupt-parent = <&cpuintc>;
-> +	interrupts = <3>;
-> +};
-> -- 
-> 2.21.0.593.g511ec345e18
-> 
+But yes, if nothing else there is a Toolchains MC [1].  Which happens to
+have a topic entitled "Potential impact/benefit/detriment of recently
+developed GCC optimizations on the kernel", now that you mention it.
+Looking forward to seeing you in Lisbon!
+
+						Thanx, Paul
+
+[1] https://linuxplumbersconf.org/event/4/sessions/45/#20190909
