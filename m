@@ -2,115 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1490C9620A
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:10:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D752596214
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 16:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730279AbfHTOKU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 10:10:20 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:54868 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729961AbfHTOKT (ORCPT
+        id S1730194AbfHTOLz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 10:11:55 -0400
+Received: from out30-42.freemail.mail.aliyun.com ([115.124.30.42]:59739 "EHLO
+        out30-42.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728248AbfHTOLu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 10:10:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WxJHVEIViyfLMpz7Bciv2LYQmHsR4TQVABk3sc5cjOo=; b=HJ8RIXtgA/NW9zIEuLeqQQ4he
-        PS3CT9l7gQnY9EfnSxKf6utYeSIO11MucaJBBElhzPTsFy3HzMSF3225Dtp7pgI/1pXdrH/RcqNXg
-        ToxnU6REp0h+jvHGUPU1Ti/JbrxN2cVo0xRijx6d9Bcmh3u7DKKJfbkux6MRAk5zobvLDBq0bGE8X
-        JyV8dDASuD7bnMC+dTvWywnM1uafn77LHgm59OenA++cYZzNrZc1brkb6WWkPjoqNqzmmyKix6VV6
-        qAVGE8Pl2Ev95VWu/933ECrklE+nF1MSplOWOhE2zMxWGGMmK0dUcGNA5moRnm1sfih4FHOzvMdSO
-        1dSQDcXjQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i04q0-0001vM-Ch; Tue, 20 Aug 2019 14:10:16 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 1EAA0307456;
-        Tue, 20 Aug 2019 16:09:43 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 58F3E20A99A14; Tue, 20 Aug 2019 16:10:14 +0200 (CEST)
-Date:   Tue, 20 Aug 2019 16:10:14 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kan.liang@linux.intel.com
-Cc:     mingo@redhat.com, acme@kernel.org, linux-kernel@vger.kernel.org,
-        eranian@google.com, ak@linux.intel.com
-Subject: Re: [PATCH] perf/x86: Consider pinned events for group validation
-Message-ID: <20190820141014.GU2332@hirez.programming.kicks-ass.net>
-References: <1565977750-76693-1-git-send-email-kan.liang@linux.intel.com>
+        Tue, 20 Aug 2019 10:11:50 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07486;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=39;SR=0;TI=SMTPD_---0Ta-t.lc_1566310288;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ta-t.lc_1566310288)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Tue, 20 Aug 2019 22:11:31 +0800
+Subject: Re: [PATCH 01/14] mm/lru: move pgdat lru_lock into lruvec
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Oscar Salvador <osalvador@suse.de>,
+        Wei Yang <richard.weiyang@gmail.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Arun KS <arunks@codeaurora.org>, Qian Cai <cai@lca.pw>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>,
+        David Rientjes <rientjes@google.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        swkhack <swkhack@gmail.com>,
+        "Potyra, Stefan" <Stefan.Potyra@elektrobit.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Colin Ian King <colin.king@canonical.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, Ira Weiny <ira.weiny@intel.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Yafang Shao <laoar.shao@gmail.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>
+References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
+ <1566294517-86418-2-git-send-email-alex.shi@linux.alibaba.com>
+ <20190820134032.GA24642@bombadil.infradead.org>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <9980292a-a073-201c-ae06-c8cdbc9f98af@linux.alibaba.com>
+Date:   Tue, 20 Aug 2019 22:11:28 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1565977750-76693-1-git-send-email-kan.liang@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190820134032.GA24642@bombadil.infradead.org>
+Content-Type: text/plain; charset=gbk
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 10:49:10AM -0700, kan.liang@linux.intel.com wrote:
-> From: Kan Liang <kan.liang@linux.intel.com>
+
+
+ÔÚ 2019/8/20 ÏÂÎç9:40, Matthew Wilcox Ð´µÀ:
+> On Tue, Aug 20, 2019 at 05:48:24PM +0800, Alex Shi wrote:
+>> +++ b/include/linux/mmzone.h
+>> @@ -295,6 +295,9 @@ struct zone_reclaim_stat {
+>>  
+>>  struct lruvec {
+>>  	struct list_head		lists[NR_LRU_LISTS];
+>> +	/* move lru_lock to per lruvec for memcg */
+>> +	spinlock_t			lru_lock;
 > 
-> perf stat -M metrics relies on weak groups to reject unschedulable
-> groups and run them as non-groups.
-> This uses the group validation code in the kernel. Unfortunately
-> that code doesn't take pinned events, such as the NMI watchdog, into
-> account. So some groups can pass validation, but then later still
-> never schedule.
-
-But if you first create the group and then a pinned event it 'works',
-which is inconsistent and makes all this timing dependent.
-
-> @@ -2011,9 +2011,11 @@ static int validate_event(struct perf_event *event)
->   */
->  static int validate_group(struct perf_event *event)
->  {
-> +	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
->  	struct perf_event *leader = event->group_leader;
->  	struct cpu_hw_events *fake_cpuc;
-> -	int ret = -EINVAL, n;
-> +	struct perf_event *pinned_event;
-> +	int ret = -EINVAL, n, i;
->  
->  	fake_cpuc = allocate_fake_cpuc();
->  	if (IS_ERR(fake_cpuc))
-> @@ -2033,6 +2035,24 @@ static int validate_group(struct perf_event *event)
->  	if (n < 0)
->  		goto out;
->  
-> +	/*
-> +	 * The new group must can be scheduled
-> +	 * together with current pinned events.
-> +	 * Otherwise, it will never get a chance
-> +	 * to be scheduled later.
-
-That's wrapped short; also I don't think it is sufficient; what if you
-happen to have a pinned event on CPU1 (and not others) and happen to run
-validation for a new CPU1 event on CPUn ?
-
-Also; per that same; it is broken, you're accessing the cpu-local cpuc
-without serialization.
-
-> +	 */
-> +	for (i = 0; i < cpuc->n_events; i++) {
-> +		pinned_event = cpuc->event_list[i];
-> +		if (WARN_ON_ONCE(!pinned_event))
-> +			continue;
-> +		if (!pinned_event->attr.pinned)
-> +			continue;
-> +		fake_cpuc->n_events = n;
-> +		n = collect_events(fake_cpuc, pinned_event, false);
-> +		if (n < 0)
-> +			goto out;
-> +	}
-> +
->  	fake_cpuc->n_events = 0;
->  	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
->  
-> -- 
-> 2.7.4
+> This comment makes no sense outside the context of this patch.
 > 
+
+Right, Thanks for point out this. will remove it in v2.
+
+Thanks
+Alex
