@@ -2,67 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6FD9495FEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:24:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60E2E95FF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 15:24:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729905AbfHTNW4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 09:22:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58748 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728248AbfHTNW4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 09:22:56 -0400
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730047AbfHTNXb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 09:23:31 -0400
+Received: from mx-rz-2.rrze.uni-erlangen.de ([131.188.11.21]:58485 "EHLO
+        mx-rz-2.rrze.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728248AbfHTNXb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 09:23:31 -0400
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE9D4230F2;
-        Tue, 20 Aug 2019 13:22:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566307374;
-        bh=1rIuBeM0IKRvdxc6b3vVTRd4MHIEw3Zx6tXCfzXBOSg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=QXM0kFthGloCUwKOn6dugqf5hkxzFjGs8/hVqkmCPXzPSWHg4rqs24kTAZvq0N/iM
-         qQ5FfkfHuZ6f8jKZRFce1YCkYOgf/AYFA9AMIxneISXaVEc58bqH6zYfbhTN1SYRZW
-         VbjXYYrnTjz/pCEmjFpTzACDhwifbFP6FDDfUYFU=
-Received: by mail-qt1-f173.google.com with SMTP id v38so5952492qtb.0;
-        Tue, 20 Aug 2019 06:22:54 -0700 (PDT)
-X-Gm-Message-State: APjAAAXFxFb4Pa45fvMxwpe1GOoRFhnQ3w1Tm/2JVFpIrAZ/lzA673MV
-        H9PimIu12thUsOvfKmaonv0RmsY3kvKGkbBUOA==
-X-Google-Smtp-Source: APXvYqwoF+4NBHbc+mh4/cjAOzetDrnx/H6ki3UR8XHIUfmV3E4baxFQHmkTVztJFcWEl8hMkWIGS/6m5JfOpGYIGhc=
-X-Received: by 2002:ad4:4050:: with SMTP id r16mr14444599qvp.200.1566307373963;
- Tue, 20 Aug 2019 06:22:53 -0700 (PDT)
+        by mx-rz-2.rrze.uni-erlangen.de (Postfix) with ESMTPS id 46CWhK379PzPk9r;
+        Tue, 20 Aug 2019 15:23:29 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2013;
+        t=1566307409; bh=BxZImDV6BlbvPHA92gmLrkRnXj5dPxu62gW8SlF7G7o=;
+        h=From:Subject:To:Cc:Date:From:To:CC:Subject;
+        b=fAvpwIv/WZl+hu8gSJaP+zYQCU1KnTq8XWEnlWsEkloQ1mgSEUbBivjIbJYkRKkRu
+         M4GFPD+PfGoF4O0zagcLg0v7ffqP+4MWkrKFW1RlKO/Lja3V5pGhv4w6h2t+QiZk9N
+         3dZvZuBEpZJIgZzxSusj1m/rQ3gJ7jNKXWpde+AmKVwt9Qc+zXCb/VWvnlFmCMustY
+         RwcCDg9hlzRLR7KA4CMuqYy4N+A9CcPXDQKWaYFEfK6w6eKdMEURwx4cskBANlu4IJ
+         zUHfu+rU0qsJosfFOnO5X6XH1oMvLfj03ZdbL0uhsDHhE3pZE/OtAIq7/TymgnRe+B
+         I057B2n63Rk/Q==
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 109.41.192.99
+Received: from [192.168.43.238] (ip-109-41-192-99.web.vodafone.de [109.41.192.99])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: U2FsdGVkX198FXRVDZeSOd/yGZlSwh2MSmzQV7o2K6g=)
+        by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 46CWhG6N19zPjvd;
+        Tue, 20 Aug 2019 15:23:26 +0200 (CEST)
+From:   Sebastian Duda <sebastian.duda@fau.de>
+Subject: Status of Subsystems - I2C/SMBUS ISMT DRIVER
+To:     Seth Heasley <seth.heasley@intel.com>,
+        Neil Horman <nhorman@tuxdriver.com>
+Cc:     linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+        lukas.bulwahn@gmail.com
+Message-ID: <97bcaca4-22f8-e17e-55b0-a19443c27bef@fau.de>
+Date:   Tue, 20 Aug 2019 15:23:25 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190819234840.37786-1-john.stultz@linaro.org>
-In-Reply-To: <20190819234840.37786-1-john.stultz@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Tue, 20 Aug 2019 08:22:41 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+oxy0z283FO8D9FV7xsEX+AsonUx2Feqk8AiDAOmy9=w@mail.gmail.com>
-Message-ID: <CAL_Jsq+oxy0z283FO8D9FV7xsEX+AsonUx2Feqk8AiDAOmy9=w@mail.gmail.com>
-Subject: Re: [PATCH 0/3] dt-bindings for lima support on HiKey
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Peter Griffin <peter.griffin@linaro.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 6:48 PM John Stultz <john.stultz@linaro.org> wrote:
->
-> Peter sent a patchset out back in April to enable Lima support
-> on HiKey, but there's not been much action on it since since.
->
-> I've been carrying the patchset in my tree, and figured I'd send
-> out just these three dt-bindings changes just so hopefully they
-> can go in and the dependent driver changes can be more easily
-> pushed later on.
+Hello Seth,
+hello Neil,
 
-As it's all binding changes, I've applied them to the DT tree.
+in my master thesis, I'm using the association of subsystems to 
+maintainers/reviewers and its status given in the MAINTAINERS file.
+During the research I noticed that there are several subsystems without 
+a status in the maintainers file. One of them is the subsystem 
+`I2C/SMBUS ISMT DRIVER` where you're mentioned as reviewers.
 
-Rob
+Is it intended not to mention a status for your subsystems?
+What is the current status of your subsystem?
+
+Kind regards
+Sebastian Duda
