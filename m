@@ -2,69 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 349A696408
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2FDA096411
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 17:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730407AbfHTPTe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 11:19:34 -0400
-Received: from szxga04-in.huawei.com ([45.249.212.190]:5166 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729956AbfHTPTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 11:19:33 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EADE958FF6C9E88FE42E;
-        Tue, 20 Aug 2019 23:19:28 +0800 (CST)
-Received: from szxyal004123181.china.huawei.com (10.65.65.77) by
- DGGEMS401-HUB.china.huawei.com (10.3.19.201) with Microsoft SMTP Server id
- 14.3.439.0; Tue, 20 Aug 2019 23:19:27 +0800
-From:   Dongxu Liu <liudongxu3@huawei.com>
-To:     <davem@davemloft.net>, <kuznet@ms2.inr.ac.ru>,
-        <yoshfuji@linux-ipv6.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH] net: Fix detection for IPv4 duplicate address.
-Date:   Tue, 20 Aug 2019 23:19:05 +0800
-Message-ID: <20190820151905.13148-1-liudongxu3@huawei.com>
-X-Mailer: git-send-email 2.12.0.windows.1
+        id S1730471AbfHTPTi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 11:19:38 -0400
+Received: from vps.xff.cz ([195.181.215.36]:32796 "EHLO vps.xff.cz"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729137AbfHTPTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 11:19:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
+        t=1566314375; bh=3n0q7CBc9P4bQG/G0hfq9MsM1NWknDFFdma8+IRC/cg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=RqPDvgDPVzlnaRwp8M3IghFK1wQglwVFc5+QYKZLLecgLDG5Wil2dozlnMco/EYls
+         /tTRCmZRHy22lpoHwy9E9Fr/ySqpCuyc55Qs9fnt0P+1UVmbOrWTAtsc86mOFmndqh
+         t3CYfwOjHBGp7SjGsGvlX8D7XF7SfRw54iJgeEMc=
+From:   megous@megous.com
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Cc:     Ondrej Jirman <megous@megous.com>, linux-rtc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: [PATCH v2 0/3] Add basic support for RTC on Allwinner H6 SoC
+Date:   Tue, 20 Aug 2019 17:19:31 +0200
+Message-Id: <20190820151934.3860-1-megous@megous.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.65.65.77]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The network sends an ARP REQUEST packet to determine
-whether there is a host with the same IP.
-The source IP address of the packet is 0.
-However, Windows may also send the source IP address
-to determine, then the source IP address is equal to
-the destination IP address.
+From: Ondrej Jirman <megous@megous.com>
 
-Signed-off-by: Dongxu Liu <liudongxu3@huawei.com>
----
- net/ipv4/arp.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+I went through the datasheets for H6 and H5, and compared the differences.
+RTCs are largely similar, but not entirely compatible. Incompatibilities
+are in details not yet implemented by the rtc driver though.
 
-diff --git a/net/ipv4/arp.c b/net/ipv4/arp.c
-index 05eb42f..944f8e8 100644
---- a/net/ipv4/arp.c
-+++ b/net/ipv4/arp.c
-@@ -800,8 +800,11 @@ static int arp_process(struct net *net, struct sock *sk, struct sk_buff *skb)
- 			    iptunnel_metadata_reply(skb_metadata_dst(skb),
- 						    GFP_ATOMIC);
- 
--	/* Special case: IPv4 duplicate address detection packet (RFC2131) */
--	if (sip == 0) {
-+/* Special case: IPv4 duplicate address detection packet (RFC2131).
-+ * Linux usually sends zero to detect duplication, and windows may
-+ * send a same ip (not zero, sip equal to tip) to do this detection.
-+ */
-+	if (sip == 0 || sip == tip) {
- 		if (arp->ar_op == htons(ARPOP_REQUEST) &&
- 		    inet_addr_type_dev_table(net, dev, tip) == RTN_LOCAL &&
- 		    !arp_ignore(in_dev, sip, tip))
+I also corrected the clock tree in H6 DTSI.
+
+This patchset is necessary for implementing the WiFi/Bluetooth support
+on boards using H6 SoC.
+
+There was some discussion previously of describing HOSC, DCXO and XO
+oscillators and clocks as part of RTC in DT, but I decided against it
+because it's not necessary, becuse information that would be provided
+as a part of DT can already be determined at runtime from RTC registers,
+so this woudn't add any value and would only introduce complications
+to the driver. See: https://patchwork.kernel.org/cover/10898083/
+
+Please take a look.
+
+
+Thank you and regards,
+  Ondrej Jirman
+
+
+Changes in v2:
+- bindings converted to yaml
+- added reviewed by tags
+
+Ondrej Jirman (3):
+  dt-bindings: Add compatible for H6 RTC
+  rtc: sun6i: Add support for H6 RTC
+  arm64: dts: sun50i-h6: Add support for RTC and fix the clock tree
+
+ .../bindings/rtc/allwinner,sun6i-a31-rtc.yaml | 13 ++++++
+ arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 30 +++++++-------
+ drivers/rtc/rtc-sun6i.c                       | 40 ++++++++++++++++++-
+ 3 files changed, 67 insertions(+), 16 deletions(-)
+
 -- 
-2.12.3
-
+2.22.1
 
