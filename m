@@ -2,119 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4036395EFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:38:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CF2495F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 14:39:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729986AbfHTMiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 08:38:22 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:40425 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729383AbfHTMiW (ORCPT
+        id S1730064AbfHTMi6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 08:38:58 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38599 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbfHTMi5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 08:38:22 -0400
-Received: by mail-pg1-f196.google.com with SMTP id w10so3184787pgj.7;
-        Tue, 20 Aug 2019 05:38:21 -0700 (PDT)
+        Tue, 20 Aug 2019 08:38:57 -0400
+Received: by mail-pf1-f193.google.com with SMTP id o70so3323812pfg.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 05:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nPEeXkHVugtuWFlIz8GtMsMv1+S0Lha6cbNZpxpRArU=;
-        b=LJOIlwqNYHXD7cHZ6EOsmob8xvknsOMLrMfO5zhrO/hlOWCbl9oRhwtm6GgYdix2xu
-         er230DjbgsQiYIUvGeSCtB/XU+iCevsrploFnAK3HjojGToNX3MeX+f3z/WRg2j1Q7xa
-         vUTX4He41+Um9Hj+tyTyBgDEwdDaMgrIqsgXJom2/xdfqHRguDhVy+xCHIRVJUg35sw2
-         v39oOT5FZyi8moTwiCsatiaiE1FMrKTuHTp/hDmSNmT68FzLGFXSH8cJpKBoqkVfqXIF
-         kN8k2VksGohU40xiIxRPVyFZ9SpWPms3lbT/tIhWAMUB9tF+4pGAzRm8ZMgvLl5RqOOF
-         cEUA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=0sWRJA7h/2wvrxj+XqUA03JtH59l+JlTt/N+VmW30I0=;
+        b=ba7uMiXKvLyrDvP5gZiTLElxzfuOOwtCwOc0K/kjEXcSNniq9kgrFeMrXJYN399WnZ
+         pnc3dSZcqFLANSFrStaUj2q5CZ6Na04QZlqXUF342Tt2legAfe51dJXfHHqnuOSCdPAb
+         57xHYiQ/dC/sOYsHZpBVZ43PGdt4xAqHOMSU2VaOdVMfhOWC+p7Cdc8+BIvmzQxGfSGD
+         TpeKcP75NCRwXuDL6SNGbIsVDR1ArNvkTH5EQTF2au7HMYZX4g+gXzsYv4yem1b8mTMs
+         Bch6PMuBWNOb6MtWs8aQnEiQlR1kDS4n9c3Khq8ludB+U7tyE8w22xUIlgiXa1jzg0as
+         dUXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nPEeXkHVugtuWFlIz8GtMsMv1+S0Lha6cbNZpxpRArU=;
-        b=rsDxLZB8Ol9Z1JkEpKv7TqgFOIFUX4cgnQormXapeQlUs3p+J3FLlwJG+1Bqsd/b4F
-         5pSJ/xOmZJWEa/I5klFwN3Qyj0W1gee4GIFxuqg5fk1r2mbrPq0aBX0m1CFhCKqzaDjp
-         MWODilI6oa5T4UyWSdyHTSKkWsv8JIwLsHHgezGtibP8u2ZKMQwLuxL6I0wyPIpUWWEX
-         S7LW0blJQTZOCYA3ijcvYPXMEGEuskGuTg+sMcPtsDjnHRwpw1l36FKO0LEdL75Ny28V
-         K+rg2+6zEZIpGSsIE0Qg32lFnILS2VgKyfSj+g4ZW5YiW/rdqfdYylGIC4n+ZmpQpwmQ
-         LwWA==
-X-Gm-Message-State: APjAAAUd3nO+H5mBxAhsL321nsAJBJQlIUzSS98G9UsaVvwEZt3faF5a
-        aMXxrrOM1Y+F8z8IKqnWQJ61qiLin4FDPv1KxnQ=
-X-Google-Smtp-Source: APXvYqwggjmfndZ9vdx+84JSw4dPC+8rQAoRcmAZ/Rgr8ykhjxqa0jdGrCOY5Bb3JWVdr8YvApTm37u9Tm5cVXV+lE4=
-X-Received: by 2002:a65:5043:: with SMTP id k3mr25355913pgo.406.1566304701388;
- Tue, 20 Aug 2019 05:38:21 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=0sWRJA7h/2wvrxj+XqUA03JtH59l+JlTt/N+VmW30I0=;
+        b=AK69nT91SCuDTkzhGWgIO7AmkRUmRLAXGFe44qnrRYz2AiXj1r4ET93Yzi1KEHX+2d
+         yRZIEv7Uobp6REEPafKgYv9GItu4viVVE7B/nm+DX53OleFpXItl/UJiAgjf6N7g2Uwe
+         YrF3POCOVnEoCB6J2aEKc18OaCvQfy9n4E8Vzxg+kBumWqdLBdXCqKIW5V5s+kJ5Asfy
+         CeJd4vWbog3Jlcvf3MpO2DTRmjZcupmkpN/Tog7X8A8tLe3BsNkLs5YOTitakIkavOcw
+         NJqcfFF5GRYaRnzSOihUdXO7C4aF7TM3QxefrQFwMGVkCAYQwrvatuVpRHfWN/yxYPQT
+         Vy6Q==
+X-Gm-Message-State: APjAAAUUeTH95ULmpZxQhmeeLBoXbgZZSRH7RLNYSTaOpcY5M+2+A5GH
+        +J1nOHoUIXrwBY6n/XRPb+OyqQ==
+X-Google-Smtp-Source: APXvYqxOOzhOX8GyoVGFVm71p/3OV4YApHVsr+O832TKFGdLRYB1AHM3ZAz8bAWpUqDsFBcrCIkk9A==
+X-Received: by 2002:a65:68d9:: with SMTP id k25mr24696359pgt.337.1566304737262;
+        Tue, 20 Aug 2019 05:38:57 -0700 (PDT)
+Received: from ?IPv6:240e:362:43e:2200:6d55:ae74:3a5b:9669? ([240e:362:43e:2200:6d55:ae74:3a5b:9669])
+        by smtp.gmail.com with ESMTPSA id a6sm22033421pjv.30.2019.08.20.05.38.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 20 Aug 2019 05:38:55 -0700 (PDT)
+Subject: Re: [PATCH 2/2] uacce: add uacce module
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "zhangfei.gao@foxmail.com" <zhangfei.gao@foxmail.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-accelerators@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Kenneth Lee <liguozhu@hisilicon.com>,
+        Zaibo Xu <xuzaibo@huawei.com>,
+        Zhou Wang <wangzhou1@hisilicon.com>
+References: <1565775265-21212-1-git-send-email-zhangfei.gao@linaro.org>
+ <1565775265-21212-3-git-send-email-zhangfei.gao@linaro.org>
+ <20190815141225.GC23267@kroah.com>
+ <5d5a6757.1c69fb81.e0678.2ab2SMTPIN_ADDED_BROKEN@mx.google.com>
+ <20190819102250.GA2030@kroah.com>
+From:   zhangfei <zhangfei.gao@linaro.org>
+Message-ID: <350c937f-faee-f74a-ad76-03532c8648bd@linaro.org>
+Date:   Tue, 20 Aug 2019 20:38:46 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190819131737.26942-1-Tianyu.Lan@microsoft.com>
- <20190819131737.26942-3-Tianyu.Lan@microsoft.com> <alpine.DEB.2.21.1908191522390.2147@nanos.tec.linutronix.de>
-In-Reply-To: <alpine.DEB.2.21.1908191522390.2147@nanos.tec.linutronix.de>
-From:   Tianyu Lan <lantianyu1986@gmail.com>
-Date:   Tue, 20 Aug 2019 20:38:11 +0800
-Message-ID: <CAOLK0pxPKh3Gr8TVPqGernoHSTY=UyjwjqC4wEyR=Vo500ygFQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] KVM/Hyper-V: Add new KVM cap KVM_CAP_HYPERV_DIRECT_TLBFLUSH
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim Krcmar <rkrcmar@redhat.com>, corbet@lwn.net,
-        KY Srinivasan <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "the arch/x86 maintainers" <x86@kernel.org>,
-        michael.h.kelley@microsoft.com,
-        Tianyu Lan <Tianyu.Lan@microsoft.com>,
-        kvm <kvm@vger.kernel.org>, linux-doc@vger.kernel.org,
-        "linux-kernel@vger kernel org" <linux-kernel@vger.kernel.org>,
-        linux-hyperv@vger.kernel.org,
-        Vitaly Kuznetsov <vkuznets@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190819102250.GA2030@kroah.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thomas:
-               Thanks for your review. Will fix your comment in the
-next version.
-
-On Mon, Aug 19, 2019 at 9:27 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->
-> On Mon, 19 Aug 2019, lantianyu1986@gmail.com wrote:
->
-> > From: Tianyu Lan <Tianyu.Lan@microsoft.com>
-> >
-> > This patch adds
->
-> Same git grep command as before
->
-> >  new KVM cap KVM_CAP_HYPERV_DIRECT_TLBFLUSH and let
->
-> baseball cap? Please do not use weird acronyms. This is text and there is
-> not limitation on characters.
->
-> > user space to enable direct tlb flush function when only Hyper-V
-> > hypervsior capability is exposed to VM.
->
-> Sorry, but I'm not understanding this sentence.
->
-> > This patch also adds
->
-> Once more
->
-> > enable_direct_tlbflush callback in the struct kvm_x86_ops and
-> > platforms may use it to implement direct tlb flush support.
->
-> Please tell in the changelog WHY you are doing things not what. The what is
-> obviously in the patch.
->
-> So you want to explain what you are trying to achieve and why it is
-> useful. Then you can add a short note about what you are adding, but not at
-> the level of detail which is available from the diff itself.
->
-> Thanks,
->
->         tglx
 
 
+On 2019/8/19 下午6:22, Greg Kroah-Hartman wrote:
+> On Mon, Aug 19, 2019 at 05:09:23PM +0800, zhangfei.gao@foxmail.com wrote:
+>> Hi, Greg
+>>
+>> Thanks for your kind suggestion.
+>>
+>> On 2019/8/15 下午10:12, Greg Kroah-Hartman wrote:
+>>> On Wed, Aug 14, 2019 at 05:34:25PM +0800, Zhangfei Gao wrote:
+>>>> diff --git a/include/uapi/misc/uacce.h b/include/uapi/misc/uacce.h
+>>>> new file mode 100644
+>>>> index 0000000..44a0a5d
+>>>> --- /dev/null
+>>>> +++ b/include/uapi/misc/uacce.h
+>>>> @@ -0,0 +1,44 @@
+>>>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>>>> +#ifndef _UAPIUUACCE_H
+>>>> +#define _UAPIUUACCE_H
+>>>> +
+>>>> +#include <linux/types.h>
+>>>> +#include <linux/ioctl.h>
+>>>> +
+>>>> +#define UACCE_CLASS_NAME	"uacce"
+>>> Why is this in a uapi file?
+>> User app need get attribute from /sys/class,
+>> For example: /sys/class/uacce/hisi_zip-0/xxx
+>> UACCE_CLASS_NAME here tells app which subsystem to open,
+>> /sys/class/subsystem/
+> But that never comes from a uapi file.  No other subsystem does this.
+OK, got it
+Maybe the entry info can come from Documentation/ABI/entries
 
---
-Best regards
-Tianyu Lan
+Thanks
