@@ -2,91 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E58D49576C
-	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:42:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A418595773
+	for <lists+linux-kernel@lfdr.de>; Tue, 20 Aug 2019 08:44:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729224AbfHTGmK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 02:42:10 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38316 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfHTGmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 02:42:10 -0400
-Received: by mail-wm1-f66.google.com with SMTP id m125so1549369wmm.3;
-        Mon, 19 Aug 2019 23:42:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EVxFeA8hyDYWAhFuzK0XsOFXkFtEPR9uwLn/TZ8pG/s=;
-        b=e4WRMyRe7HkG7zrmCB9sXvTU2QWJdYkt+Lw4lQS9VZaczTGNQw7VmIHnxlAheqfwOe
-         NBSMCdetTgi2FrNlPg7udZJFH1nJPiPXahvRIhSqy9o1NtMqzphPvtgLW11Qm5tWD4+s
-         yWontLf44o1EJGjyqi0Uid2qKVY4FoA+Alzo3xj7n3kQ0SLOTRx7+2rSNI5QS5MZSqn8
-         o8UJn4tQG/y8h/Joq8QSu65TLz9Z1vqBPa+sYH9FEx4rnM3VtQdD9ewbO5gVTXrFfeu/
-         92NsFeKH64fW8NlqsHxEj6jXgmyzK7s9TFhBb2IUpQLDNTsOMVHd3/OL2oPeTyXtpk80
-         HIcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EVxFeA8hyDYWAhFuzK0XsOFXkFtEPR9uwLn/TZ8pG/s=;
-        b=GOfdIJ+ZcVPYyyIIjsA+PmzILAe4QSmcu2ngnBEeZEGYPww5VKuWbxZtD9tbPgJNdO
-         kQiq5y2+J1Rbe09NfAE5dI0hsikdrUYovBvPScKEBSEjwgWeJVZVNENwjA9DbgaPQ4TI
-         kC/7uReTqkU11NQYJOrw7CzwLag6nTpPFfysJjiwB6mXfAIeaOQ8aEOnntYSALoUNv/N
-         41Xiln2glOAGHz2x6l3tjZZeWE4VwYwyJsQiLeRcYBvXKNHVgwj8UUOQONPxmexrpMh/
-         QWzA8O4y2WtNiJxVbzowEWwkfe2wheQGXV2FlnmJxSWA0Yn+Ml3O0yQFV3AsNkPKe8gW
-         JlOg==
-X-Gm-Message-State: APjAAAXRoNwOv32T6mWTbp5p9y3b9IIGSjgaI3Crw6mWDAGvV6PowF1A
-        c6dfjakhZfl9XBYYxL+WoCo=
-X-Google-Smtp-Source: APXvYqwmJJ/VEbwWYnKm/g5V5nrrZFl+M2P/0Zn8sMgZjJcOfvlxy4LTQM53HoJGjzpbTJ7LGZNZ8A==
-X-Received: by 2002:a7b:c091:: with SMTP id r17mr22383277wmh.74.1566283327707;
-        Mon, 19 Aug 2019 23:42:07 -0700 (PDT)
-Received: from localhost.localdomain ([151.29.237.107])
-        by smtp.gmail.com with ESMTPSA id 2sm17673955wrg.83.2019.08.19.23.42.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 19 Aug 2019 23:42:06 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 08:42:03 +0200
-From:   Juri Lelli <juri.lelli@gmail.com>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Juri Lelli <juri.lelli@redhat.com>, kbuild-all@01.org,
-        tglx@linutronix.de, bigeasy@linutronix.de, rostedt@goodmis.org,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-        williams@redhat.com
-Subject: Re: [RT PATCH v2] net/xfrm/xfrm_ipcomp: Protect scratch buffer with
- local_lock
-Message-ID: <20190820064203.GB6860@localhost.localdomain>
-References: <20190819122731.6600-1-juri.lelli@redhat.com>
- <201908201356.Pffozrxv%lkp@intel.com>
+        id S1729282AbfHTGoH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 02:44:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39636 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727006AbfHTGoG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 02:44:06 -0400
+Received: from localhost.localdomain (unknown [106.201.62.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EFD42082F;
+        Tue, 20 Aug 2019 06:44:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566283445;
+        bh=Jd2ZX4IRBSlGCuFa51BCoCuCBXEaAFKnv7QFFL4FX8I=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ft1oAu5WDUvfv7JjmfnxRggHcfadNIUAuw0yowy1m5npVAv+7f5OSfiw60tMSRDEV
+         nBmz5LXx0DGwECcK+fjFiS/EQeKXLq/IU0ikWIAxz5uFRqmJ9LZxLmbKIltjy3PCJz
+         3JqfIH/2iE1jngiAAxBwIUY8v/js53MfjvhrdCvc=
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Andy Gross <agross@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sibi Sankar <sibis@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] arm64: dts: qcom: sm8150: Add SM8150 DTS
+Date:   Tue, 20 Aug 2019 12:12:08 +0530
+Message-Id: <20190820064216.8629-1-vkoul@kernel.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201908201356.Pffozrxv%lkp@intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series adds DTS for SM8150, PMIC PM8150, PM8150B, PM8150L and
+the MTP for SM8150.
 
-On 20/08/19 13:35, kbuild test robot wrote:
-> Hi Juri,
-> 
-> Thank you for the patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [cannot apply to v5.3-rc5 next-20190819]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Changes in v2:
+ - Squash patches
+ - Fix comments given by Stephen namely, lowercase for hext numbers,
+   making rpmhcc have xo_board as parent, rename pon controller to
+   power-on controller, make pmic nodes as disabled etc.
+ - removed the dependency on clk defines and use raw numbers
 
-This seems to be indeed the case, as this patch is for RT v4.19-rt
-stable tree:
+Vinod Koul (8):
+  arm64: dts: qcom: sm8150: add base dts file
+  arm64: dts: qcom: pm8150: Add Base DTS file
+  arm64: dts: qcom: pm8150b: Add Base DTS file
+  arm64: dts: qcom: pm8150l: Add Base DTS file
+  arm64: dts: qcom: sm8150-mtp: add base dts file
+  arm64: dts: qcom: sm8150-mtp: Add regulators
+  arm64: dts: qcom: sm8150: Add reserved-memory regions
+  arm64: dts: qcom: sm8150: Add apps shared nodes
 
-git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git v4.19-rt
+ arch/arm64/boot/dts/qcom/Makefile       |   1 +
+ arch/arm64/boot/dts/qcom/pm8150.dtsi    |  95 +++++
+ arch/arm64/boot/dts/qcom/pm8150b.dtsi   |  84 +++++
+ arch/arm64/boot/dts/qcom/pm8150l.dtsi   |  78 ++++
+ arch/arm64/boot/dts/qcom/sm8150-mtp.dts | 375 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sm8150.dtsi    | 479 ++++++++++++++++++++++++
+ 6 files changed, 1112 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/pm8150.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/pm8150b.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/pm8150l.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8150-mtp.dts
+ create mode 100644 arch/arm64/boot/dts/qcom/sm8150.dtsi
 
-I was under the impression that putting "RT" on the subject line (before
-PATCH) would prevent build bot to pick this up, but maybe something
-else/different is needed?
+-- 
+2.20.1
 
-Thanks,
-
-Juri
