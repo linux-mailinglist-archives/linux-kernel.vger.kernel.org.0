@@ -2,118 +2,150 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 699A598379
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:47:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 565DF983A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:51:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729324AbfHUSpl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:45:41 -0400
-Received: from mail-io1-f50.google.com ([209.85.166.50]:45688 "EHLO
-        mail-io1-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728485AbfHUSpl (ORCPT
+        id S1728716AbfHUSvV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:51:21 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:12599 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfHUSvV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:45:41 -0400
-Received: by mail-io1-f50.google.com with SMTP id t3so6597421ioj.12;
-        Wed, 21 Aug 2019 11:45:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=duQPXWUKXzTpnq5PHDEhf2NqP5Llzhi/XFfpphsmqjU=;
-        b=L6FY9vzaBHRCAZYmxoZof75tLMPCcbAO25iZ8TM7YHT7GQgCn5Oue/I4FMO1+AgGQw
-         O4RVoUO/nfudouztdHAFP6z3QsMO8TChOTKTSjuCSNKtFBdvHGCA2sIjBgt3U6m43YWO
-         G6HRXNpVkLegX/TRH/sYFob0bQcNiW4eD6dIjVVSpMYDEPhqc51QPj+q1uHAxRJ8isAx
-         ml+rqCisSZbBHMQLYYMWmqF3VcKVNUgGC8h5QgOl3xhvi3rEMUNbjuHEGMYmspCFSjBr
-         p9u4S406vCRGh7lkWHvpiitM/YZ4eeYp/cSim32cciTGAjYirgZqKfruvXpsQ+PTk3wA
-         q95w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=duQPXWUKXzTpnq5PHDEhf2NqP5Llzhi/XFfpphsmqjU=;
-        b=VGQUlmDxopsf3eHpyf5fCt1m+tLW002nP9UsahvqJL5SrMhwkTrYI5eGXZcFKuBJ26
-         gZG1VARBo2BwYKSy4s8KX0ytDKX0V7iP3j2Z+toPZ5aueWUQkeY35kp76K+FRYrtOEZd
-         joIHJ525isZHW+lpICJUFIxTHA5e+FdgSThOmiuEo1LAOR2yk4PtR32zrXTDxidlmDLP
-         uW0xbNiU0trogsBbkYb/si4MRhuq/YK8+3+YJOkm5Bh8k9H+3zBYcm6oRs3K9areKTpX
-         ePuFEFgynlB/qZoH6V/iLb9gFH2duRIunq4Vv5EmME42fshhojdqf5xPWX/EkDT7NmTs
-         O0rA==
-X-Gm-Message-State: APjAAAUleop4vaPqJd52DdVo2j/HKVcqQydiolTyZmvPgATVPR63jUtJ
-        LG3GAys3gGYn0sI5QTXmTjWGCCygQP9eO2dDmuM=
-X-Google-Smtp-Source: APXvYqyGAGYNFuygKmKAmNDZnx4kR7duWeE9isnUp7UbCKAotJ0lnyYV0P6bcQyMgDhDh4obZ0RjoJXVkMYr4nCtX7E=
-X-Received: by 2002:a5e:db0a:: with SMTP id q10mr33382306iop.58.1566413140158;
- Wed, 21 Aug 2019 11:45:40 -0700 (PDT)
+        Wed, 21 Aug 2019 14:51:21 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5d92a70001>; Wed, 21 Aug 2019 11:51:19 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 21 Aug 2019 11:51:19 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 21 Aug 2019 11:51:19 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 18:51:19 +0000
+Received: from [10.2.161.131] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 18:51:18 +0000
+Subject: Re: Boot failure due to: x86/boot: Save fields explicitly, zero out
+ everything else
+To:     Neil MacLeod <neil@nmacleod.com>
+CC:     "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        "Borislav Petkov" <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>
+References: <CAFbqK8m=F_90531wTiwKT4J0R+EC-3ZmqHtKCwA_2th_nVYrpg@mail.gmail.com>
+ <900a48bf-c9fc-09bd-52a3-9e16ff8baa19@nvidia.com>
+ <CAFbqK8kWUdoEStTRe+a4mk9dMf4W4vk7aZhT_uTqS6jgAqYJ0A@mail.gmail.com>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <0091d78f-7add-f435-52ca-ccffedebf9a4@nvidia.com>
+Date:   Wed, 21 Aug 2019 11:49:23 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190818140838.GC30291@darkstar.musicnaut.iki.fi> <20190821183123.GC26759@pendragon.ideasonboard.com>
-In-Reply-To: <20190821183123.GC26759@pendragon.ideasonboard.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 21 Aug 2019 13:45:28 -0500
-Message-ID: <CAHCN7xLEiH6PttR6707dSVvi4N4qZM9UyXj4b-TUqOJSboi71g@mail.gmail.com>
-Subject: Re: OMAP DRM regression on N900
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAFbqK8kWUdoEStTRe+a4mk9dMf4W4vk7aZhT_uTqS6jgAqYJ0A@mail.gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566413479; bh=0z9O/+D59xIBY8tVYgXl6FqEXreUHsd+z7KnCnrrdBQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=BRVoQSTtE2NPH7LU/6wIwVlXdkOm4RBgVttkV8ZCubSW6qPB9ysgUB8eEKgjQrcfE
+         XfkbLaEEBQ/ydLOevgjCTI+RqQ7ejZTyAZ9MrqyAMx3D56yFemMNcfXIsyPXdeS83l
+         Uq078hjSdJXeszoYIqYcdXhCoV5ItJIDk7bxLreHPdPU8UkTWGEWy+dPqN/8wmgLjD
+         TJAeWG6FutmFtqCaH9egFB6ImT1UbUImbv2OCFx7fifkHyZscktUakZdf5IG029euU
+         P8RIWgm1ahkG0NhARWncaaHIl6+GXjwN0TZVDtnOZ7v26YZBfUSVqpV1AXJ/jppyOu
+         2w9kYo1komQvQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 1:37 PM Laurent Pinchart
-<laurent.pinchart@ideasonboard.com> wrote:
->
-> Hi Aaro,
->
-> On Sun, Aug 18, 2019 at 05:08:38PM +0300, Aaro Koskinen wrote:
-> > Hi,
-> >
-> > I haven't got display working on N900 since v5.1. Bisected to:
-> >
-> > d17eb4537a7eb16da9eafbfd5717e12b45b77251 is the first bad commit
-> > commit d17eb4537a7eb16da9eafbfd5717e12b45b77251
-> > Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > Date:   Wed Sep 12 19:41:31 2018 +0300
-> >
-> >     drm/omap: Factor out common init/cleanup code for output devices
->
-> Sorry :-(
->
-> I'll send a tentative fix, I'd appreciate if you could test it.
+On 8/21/19 11:32 AM, Neil MacLeod wrote:
+> Hi John
+> 
+> I can test any patches given a link to the diff, and am happy to do so.
+> 
+> If I've understood your suggestion correctly, I will try commenting
+> out all of the entries, then add them back one-by-one until I get a
+> non-booting situation. I'll let you know how I get on.
+> 
 
-Can you point me to this patch?  I was in the process of
-troubleshooting both a DM37, OMAP35 and AM35 board who all have blank
-screens.  I'd like to try this patch too.
+I was actually going the other direction. Note that the BOOT_PARAM_PRESERVE
+entries indicate what *not* to zero out. So if you remove them all, then
+everything gets zeroed, including lots of critical fields, and you
+definitely won't boot up. (The tricky part is we don't yet know whether
+fields are missing, need to be added--or both.)
 
-thank you,
+So I was heading toward adding most (but not all--important) of these fields,
+as BOOT_PARAM_PRESERVE entries, as a first bisect step. Let me work that up
+and post a patch for that.
 
-adam
+struct boot_params {
+	struct screen_info screen_info;			/* 0x000 */
+	struct apm_bios_info apm_bios_info;		/* 0x040 */
+	__u8  _pad2[4];					/* 0x054 */
+	__u64  tboot_addr;				/* 0x058 */
+	struct ist_info ist_info;			/* 0x060 */
+	__u64 acpi_rsdp_addr;				/* 0x070 */
+	__u8  _pad3[8];					/* 0x078 */
+	__u8  hd0_info[16];	/* obsolete! */		/* 0x080 */
+	__u8  hd1_info[16];	/* obsolete! */		/* 0x090 */
+	struct sys_desc_table sys_desc_table; /* obsolete! */	/* 0x0a0 */
+	struct olpc_ofw_header olpc_ofw_header;		/* 0x0b0 */
+	__u32 ext_ramdisk_image;			/* 0x0c0 */
+	__u32 ext_ramdisk_size;				/* 0x0c4 */
+	__u32 ext_cmd_line_ptr;				/* 0x0c8 */
+	__u8  _pad4[116];				/* 0x0cc */
+	struct edid_info edid_info;			/* 0x140 */
+	struct efi_info efi_info;			/* 0x1c0 */
+	__u32 alt_mem_k;				/* 0x1e0 */
+	__u32 scratch;		/* Scratch field! */	/* 0x1e4 */
+	__u8  e820_entries;				/* 0x1e8 */
+	__u8  eddbuf_entries;				/* 0x1e9 */
+	__u8  edd_mbr_sig_buf_entries;			/* 0x1ea */
+	__u8  kbd_status;				/* 0x1eb */
+	__u8  secure_boot;				/* 0x1ec */
+	__u8  _pad5[2];					/* 0x1ed */
+	/*
+	 * The sentinel is set to a nonzero value (0xff) in header.S.
+	 *
+	 * A bootloader is supposed to only take setup_header and put
+	 * it into a clean boot_params buffer. If it turns out that
+	 * it is clumsy or too generous with the buffer, it most
+	 * probably will pick up the sentinel variable too. The fact
+	 * that this variable then is still 0xff will let kernel
+	 * know that some variables in boot_params are invalid and
+	 * kernel should zero out certain portions of boot_params.
+	 */
+	__u8  sentinel;					/* 0x1ef */
+	__u8  _pad6[1];					/* 0x1f0 */
+	struct setup_header hdr;    /* setup header */	/* 0x1f1 */
+	__u8  _pad7[0x290-0x1f1-sizeof(struct setup_header)];
+	__u32 edd_mbr_sig_buffer[EDD_MBR_SIG_MAX];	/* 0x290 */
+	struct boot_e820_entry e820_table[E820_MAX_ENTRIES_ZEROPAGE]; /* 0x2d0 */
+	__u8  _pad8[48];				/* 0xcd0 */
+	struct edd_info eddbuf[EDDMAXNR];		/* 0xd00 */
+	__u8  _pad9[276];				/* 0xeec */
+} __attribute__((packed));
 
->
-> > looks like with this commit I get only the TV out:
-> >
-> > $ ls -l /sys/class/drm/
-> > total 0
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 card0 -> ../../devices/platform/omapdrm.0/drm/card0
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 card0-SVIDEO-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-SVIDEO-1
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 renderD128 -> ../../devices/platform/omapdrm.0/drm/renderD128
-> > -r--r--r--    1 root     root          4096 Aug 18 16:15 version
-> >
-> > with the previous commit both outputs are there:
-> >
-> > $ ls -l /sys/class/drm/
-> > total 0
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0 -> ../../devices/platform/omapdrm.0/drm/card0
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0-LVDS-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-LVDS-1
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0-SVIDEO-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-SVIDEO-1
-> > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 renderD128 -> ../../devices/platform/omapdrm.0/drm/renderD128
-> > -r--r--r--    1 root     root          4096 Aug 18 16:28 version
-> >
-> > Used .config below.
->
-> [snip]
->
-> --
-> Regards,
->
-> Laurent Pinchart
+
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
+
+
+> The OS I'm testing is LibreELEC, which is a custom x86_64 build, and
+> this hasn't shown any problems on this Skylake i5 NUC in all the years
+> I've been using it as a test system (since at least 4.15.y). So far
+> 5.3-rc has been trouble-free until 5.3-rc5. As I mentioned in the bug,
+> I've been able to boot 5.3-rc5 from a USB memory stick, but can't boot
+> 5.3-rc5 from the internal M2 drive unless I revert this commit.
+> 
