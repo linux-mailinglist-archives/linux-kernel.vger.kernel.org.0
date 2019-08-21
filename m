@@ -2,70 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F9549747B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 10:15:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B688974A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 10:22:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727339AbfHUINl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 04:13:41 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:43964 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726217AbfHUINl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 04:13:41 -0400
-Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id B0828844EB881BAF5AAA;
-        Wed, 21 Aug 2019 16:13:39 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS412-HUB.china.huawei.com
- (10.3.19.212) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
- 16:13:32 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <marek.behun@nic.cz>, <gregkh@linuxfoundation.org>,
-        <linus.walleij@linaro.org>, <arnd@arndb.de>
-CC:     <linux-kernel@vger.kernel.org>, Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH -next] moxtet: remove set but not used variable 'dummy'
-Date:   Wed, 21 Aug 2019 16:34:22 +0800
-Message-ID: <20190821083422.45334-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1727324AbfHUIWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 04:22:41 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:56395 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727107AbfHUIWl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 04:22:41 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 628481BF206;
+        Wed, 21 Aug 2019 08:22:39 +0000 (UTC)
+Date:   Wed, 21 Aug 2019 09:31:54 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Rob Herring <robh@kernel.org>
+Cc:     devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Heiko Stuebner <heiko@sntech.de>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Tomeu Vizoso <tomeu.vizoso@collabora.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] dt-bindings: Convert Arm Mali GPUs to DT schema
+Message-ID: <20190821073154.jnqv4sysoyorv7vo@flea>
+References: <20190820195959.6126-1-robh@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ye7watdg3ithuyxt"
+Content-Disposition: inline
+In-Reply-To: <20190820195959.6126-1-robh@kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
 
-drivers/bus/moxtet.c: In function moxtet_remove:
-drivers/bus/moxtet.c:822:6: warning: variable dummy set but not used
-[-Wunused-but-set-variable]
+--ye7watdg3ithuyxt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
----
- drivers/bus/moxtet.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Hi Rob,
 
-diff --git a/drivers/bus/moxtet.c b/drivers/bus/moxtet.c
-index 1ee4570e7e17..baccf7609357 100644
---- a/drivers/bus/moxtet.c
-+++ b/drivers/bus/moxtet.c
-@@ -819,7 +819,6 @@ static int moxtet_probe(struct spi_device *spi)
- static int moxtet_remove(struct spi_device *spi)
- {
- 	struct moxtet *moxtet = spi_get_drvdata(spi);
--	int dummy;
- 
- 	free_irq(moxtet->dev_irq, moxtet);
- 
-@@ -827,7 +826,7 @@ static int moxtet_remove(struct spi_device *spi)
- 
- 	moxtet_unregister_debugfs(moxtet);
- 
--	dummy = device_for_each_child(moxtet->dev, NULL, __unregister);
-+	device_for_each_child(moxtet->dev, NULL, __unregister);
- 
- 	mutex_destroy(&moxtet->lock);
- 
--- 
-2.17.2
+On Tue, Aug 20, 2019 at 02:59:56PM -0500, Rob Herring wrote:
+> This series converts the various Arm Mali GPU bindings to use the DT
+> schema format.
+>
+> The Midgard and Bifrost bindings generate warnings on 'interrupt-names'
+> because there's all different ordering. The Utgard binding generates
+> warnings on Rockchip platforms because 'clock-names' order is reversed.
 
+Thank for taking care of that one, it was on my radar but I didn't
+really want to actually do it :)
+
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--ye7watdg3ithuyxt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVzzagAKCRDj7w1vZxhR
+xeOoAP0fDHwGDG+Pp7I7jUWueHcugddYVgoBEitC7+EXWXCGywD/cyBgtgtPE19N
+g0eZSCfigQtpIBBde4Gqm9+94pYLnwI=
+=UmRS
+-----END PGP SIGNATURE-----
+
+--ye7watdg3ithuyxt--
