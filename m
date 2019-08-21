@@ -2,113 +2,160 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0985898703
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ECDA798711
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:22:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729721AbfHUWSS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 18:18:18 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46122 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729168AbfHUWSS (ORCPT
+        id S1731122AbfHUWWU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 18:22:20 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:36860 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731104AbfHUWWT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 18:18:18 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c2so2104044plz.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:18:17 -0700 (PDT)
+        Wed, 21 Aug 2019 18:22:19 -0400
+Received: by mail-io1-f67.google.com with SMTP id o9so7926441iom.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:22:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uRWHH/aM+UkPunAeZEcYoWrVH4+5skxbUg+WumsRgVA=;
-        b=XtzUgNUMdbn+u28A49CH+Fcb4+5NG6wGPAdq2AbB4sJce30mABw9IZ91C2OoBtQmPT
-         1wai5Q5IauNOff/9NU/6X8bDfc4tRI8v5Gy8YouagyzD4J5wS+IgfZK2Fz0Bnm7UW4VW
-         6vDrZ+IXSjxoeF1UvAYMJqxklW88OErPfGZxjtVBpLfUBZoH6fY8o9/zGk+sAkvTnZgh
-         oQ51I6L0ZrHD/xe49onARlEvlcfccpy/Ba1n8TkKA/NgozcxReNxSEtqKJOe+ThEu0Hd
-         CyaejOjbCTcvijgnq3nok3FNLdOYE5kFCR8gGYyXPVC87I6+h92hqpz+Ep6NARlyZBes
-         UK5g==
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=1n1EqLNQaVBykjrc6gwB/kJFS9Ls04rvVpImZ/x3es0=;
+        b=CYsF6BJGJdSPA7AbVCKU7VpXyzx9FVJZzR3CqqYlqbawduDvrFSyZo6ah0QQ6MHy9A
+         qAqzbTq6NujyUK4lznGOC3JS0N/DJegldMLMpihJ7TPdki7dqCRPgxGMCcuwqBuFIbgv
+         1bcaZPiwfAjo7aaoIbJ8Sn/udLpisl62i8aXL//XnSpvoIg3VuQIIaeymrcwdBeQxr7D
+         7OskJ2JihhelcLKVLvUbePycluFv3HcEY2T6yWj9JSJveiM9fDr8/7woLK+QlNdeqf2J
+         QEjpkA2taXlg+ai+QRi51Q4S0I1VImxTfSdYxmBKxA6UXk7PKKIMCjS9e4HuhGQzwFSq
+         a0Jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uRWHH/aM+UkPunAeZEcYoWrVH4+5skxbUg+WumsRgVA=;
-        b=EMgtV23Tg+LK/KxPUa3UfCTCnSMmcsb4c8oA99qjpdxQLOoEVqOHCVkLD2h7nrATtK
-         l2Ru1inWeI56oxZTKu+x1veI65xJhiD8tgGfeXzBwTJdn4pUUznaM60cNAXOxOTI669W
-         TDPKvbZgO0P0muuw8LvhwgdHzvUZj08M0FvLBqb2iRb7aLRwknecy9uLPKqKEbX2gYGA
-         TVKrHTGnPHbcTkxO1G0H2+dtXqqnUvbBC6c1mD3U/jeP4NAPiFeD2E3lCMXeVsx4bwts
-         +2sKUeCqNLCWK1HmZhtmkynR61VicbgLeMYtEtxUmf6E9DI36r0MlLF87vhnp0CohkKY
-         v4NA==
-X-Gm-Message-State: APjAAAXh05YbWpkFJAMR3CkpO4aQAPyj35rvhSxWZS53s0lxMoE3Ru9V
-        T/U4NYT1Qqjj/GvEbsjYGuQldw==
-X-Google-Smtp-Source: APXvYqxka50xMeSwMF1x/gmisRV3YfDJPdcEkDCUcQ9pUic4vCYwsXw9Y8y4zlmCzrTnTh9KjATPNg==
-X-Received: by 2002:a17:902:f096:: with SMTP id go22mr36907820plb.58.1566425896980;
-        Wed, 21 Aug 2019 15:18:16 -0700 (PDT)
-Received: from google.com ([2620:15c:2cd:202:668d:6035:b425:3a3a])
-        by smtp.gmail.com with ESMTPSA id a11sm848491pju.2.2019.08.21.15.18.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 15:18:15 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 15:18:14 -0700
-From:   Michel Lespinasse <walken@google.com>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/3] augmented rbtree: add new
- RB_DECLARE_CALLBACKS_MAX macro
-Message-ID: <20190821221814.GB99147@google.com>
-References: <20190702075819.34787-1-walken@google.com>
- <20190702075819.34787-3-walken@google.com>
- <20190702160913.ptg4p2jyb6ih43hb@linux-r8p5>
- <CANN689HVDJXKEwB80yPAVwvRwnV4HfiucQVAho=dupKM_iKozw@mail.gmail.com>
- <20190814000616.sd4mxwsewhqqz6ra@linux-r8p5>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=1n1EqLNQaVBykjrc6gwB/kJFS9Ls04rvVpImZ/x3es0=;
+        b=dFGHhcBcFU+2oDXcxK5Huw35/+OOqV85pJBl0XUX07tJYMu+zCghb/TkZoKCBWgl7k
+         Q1C7SQVMVmcXv9tSHAmLY2RziKcQ3mRf10iqRwBOFtR5XoUq02WUHRIHLHTgFGsxcPMe
+         XAy4WQwnCkkbZf0Gj97E9RiJiGYPxKGyTf7dDmXGXRR6VenWBZKOcdrBcjm6MfOCHZIf
+         kx17hpXvjfiGxXMMwnQqERRt9qlhmrE1R8f/G9kvz69FBpUyqtfT4TF63mBQzpdtV8dA
+         RWWP/kqTCjcfXqiuHnXMQyBfr3jT3U+1iL31WgLi303qK+gYT4DPes5MUP/iVsfPcIwF
+         p3Sg==
+X-Gm-Message-State: APjAAAVIvtmfYghRIvQHjBrJJuM53TG9xyf0IcJyvxJ5x8yN+8R4zE0f
+        YbkSd+5Ev0iKd4niT0eH/ylHOcq1NKARX60ZcPQkfw==
+X-Google-Smtp-Source: APXvYqzvag+OaQujSvk5p6H9EQ7CwvYSnMX/0Cx6iGEf7IytGcg/9JK5V/Tm+mb8GzPjJP8pE0g5ezJKByyL9zPUvY8=
+X-Received: by 2002:a5d:8484:: with SMTP id t4mr7355672iom.5.1566426138770;
+ Wed, 21 Aug 2019 15:22:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814000616.sd4mxwsewhqqz6ra@linux-r8p5>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190821001445.32114-1-echron@arista.com> <alpine.DEB.2.21.1908202024300.141379@chino.kir.corp.google.com>
+ <20190821064732.GW3111@dhcp22.suse.cz> <alpine.DEB.2.21.1908210017320.177871@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1908210017320.177871@chino.kir.corp.google.com>
+From:   Edward Chron <echron@arista.com>
+Date:   Wed, 21 Aug 2019 15:22:07 -0700
+Message-ID: <CAM3twVQ4Z7dOx+bFn3O6ERstQ4wm3ojhM624NVzc=CAZw1OUUA@mail.gmail.com>
+Subject: Re: [PATCH] mm/oom: Add oom_score_adj value to oom Killed process message
+To:     David Rientjes <rientjes@google.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 05:06:16PM -0700, Davidlohr Bueso wrote:
-> On Tue, 02 Jul 2019, Michel Lespinasse wrote:
-> > - The majority of interval tree users (though either the
-> > interval_tree.h or the interval_tree_generic.h API) do not store any
-> > overlapping intervals, and as such they really don't have any reason
-> > to use an augmented rbtree in the first place. This seems to be true
-> > for at least drivers/gpu/drm/amd/amdgpu/amdgpu_mn.c,
-> > drivers/gpu/drm/amd/amdgpu/amdgpu_vm.c, drivers/gpu/drm/drm_mm.c,
-> > drivers/gpu/drm/radeon/radeon_mn.c,
-> > drivers/infiniband/hw/usnic/usnic_uiom_interval_tree.c, and probably
-> > (not 100% sure) also drivers/infiniband/hw/hfi1/mmu_rb.c and
-> > drivers/vhost/vhost.c. I think the reason they do that is because they
-> > like to have the auto-generated insert / remove / iter functions
-> > rather than writing their own as they would have to do through the
-> > base rbtree API. Not necessarily a huge problem but it is annoying
-> > when working on inteval tree to consider that the data structure is
-> > not optimal for most of its users.
-> 
-> I think the patch I sent earlier will add to your unhappiness.
+On Wed, Aug 21, 2019 at 12:19 AM David Rientjes <rientjes@google.com> wrote:
+>
+> On Wed, 21 Aug 2019, Michal Hocko wrote:
+>
+> > > vm.oom_dump_tasks is pretty useful, however, so it's curious why you
+> > > haven't left it enabled :/
+> >
+> > Because it generates a lot of output potentially. Think of a workload
+> > with too many tasks which is not uncommon.
+>
+> Probably better to always print all the info for the victim so we don't
+> need to duplicate everything between dump_tasks() and dump_oom_summary().
+>
+> Edward, how about this?
+>
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -420,11 +420,17 @@ static int dump_task(struct task_struct *p, void *arg)
+>   * State information includes task's pid, uid, tgid, vm size, rss,
+>   * pgtables_bytes, swapents, oom_score_adj value, and name.
+>   */
+> -static void dump_tasks(struct oom_control *oc)
+> +static void dump_tasks(struct oom_control *oc, struct task_struct *victim)
+>  {
+>         pr_info("Tasks state (memory values in pages):\n");
+>         pr_info("[  pid  ]   uid  tgid total_vm      rss pgtables_bytes swapents oom_score_adj name\n");
+>
+> +       /* If vm.oom_dump_tasks is disabled, only show the victim */
+> +       if (!sysctl_oom_dump_tasks) {
+> +               dump_task(victim, oc);
+> +               return;
+> +       }
+> +
+>         if (is_memcg_oom(oc))
+>                 mem_cgroup_scan_tasks(oc->memcg, dump_task, oc);
+>         else {
+> @@ -465,8 +471,8 @@ static void dump_header(struct oom_control *oc, struct task_struct *p)
+>                 if (is_dump_unreclaim_slabs())
+>                         dump_unreclaimable_slab();
+>         }
+> -       if (sysctl_oom_dump_tasks)
+> -               dump_tasks(oc);
+> +       if (p || sysctl_oom_dump_tasks)
+> +               dump_tasks(oc, p);
+>         if (p)
+>                 dump_oom_summary(oc, p);
+>  }
 
-Not really, I think the pat conversion is a good idea though I am
-confused about the interval definitions (open or closed ?) in your
-patch set.
+I would be willing to accept this, though as Michal mentions in his
+post, it would be very helpful to have the oom_score_adj on the Killed
+process message.
 
-> > - The intervals are represented as [start, last], where most
-> > everything else in the kernel uses [start, end[ (with last == end -
-> > 1). The reason it was done that way was for stabbing queries - I
-> > thought these would be nicer to represent as a [stab, stab] interval
-> > rather than [stab, stab+1[. But, things didn't turn out that way
-> > because of huge pages, and we end up with stabbing queries in the
-> > [stab, stab + page_size - 1] format, at which point we could just as
-> > easily go for [stab, stab + page_size[ representation. Having looked
-> > into it, my understanding is that *all* current users of the interval
-> > tree API would be better served if the intervals were represented as
-> > [start, end[ like everywhere else in the kernel.
+One reason for that is that the Killed process message is the one
+message that is printed with error priority (pr_err)
+and so that message can be filtered out and sent to notify support
+that an OOM event occurred.
+Putting any information that can be shared in that message is useful
+from my experience as it the initial point of triage for an OOM event.
+Even if the full log with per user process is available it the
+starting point for triage for an OOM event.
 
-Do you have any thoughts about changing the interval tree definitions
-to use half-open intervals like everywhere else in the kernel ?
+So from my perspective I would be happy having both, with David's
+proposal providing a bit of extra information as shown here:
 
--- 
-Michel "Walken" Lespinasse
-A program is never fully debugged until the last user dies.
+Jul 21 20:07:48 linuxserver kernel: [  pid  ]   uid  tgid total_vm
+ rss pgtables_bytes swapents oom_score_adj name
+Jul 21 20:07:48 linuxserver kernel: [    547]     0   547    31664
+615             299008              0                       0
+systemd-journal
+
+The OOM Killed process message will print as:
+
+Jul 21 20:07:48 linuxserver kernel: Out of memory: Killed process 2826
+(oomprocs) total-vm:1056800kB, anon-rss:1052784kB, file-rss:4kB,
+shmem-rss:0kB oom_score_adj:1000
+
+But if only one one output change is allowed I'd favor the Killed
+process message since that can be singled due to it's print priority
+and forwarded.
+
+By the way, right now there is redundancy in that the Killed process
+message is printing vm, rss even if vm.oom_dump_tasks is enabled.
+I don't see why that is a big deal.
+It is very useful to have all the information that is there.
+Wouldn't mind also having pgtables too but we would be able to get
+that from the output of dump_task if that is enabled.
+
+If it is acceptable to also add the dump_task for the killed process
+for !sysctl_oom_dump_tasks I can repost the patch including that as
+well.
+
+Thank-you,
+
+Edward Chron
+Arista Networks
