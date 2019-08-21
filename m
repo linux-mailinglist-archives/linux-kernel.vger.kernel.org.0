@@ -2,77 +2,101 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EB72198395
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:50:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 690A1983AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:51:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728582AbfHUSu2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:50:28 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:35974 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbfHUSu2 (ORCPT
+        id S1728863AbfHUSvf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:51:35 -0400
+Received: from perceval.ideasonboard.com ([213.167.242.64]:60450 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfHUSvf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:50:28 -0400
-Received: by mail-oi1-f194.google.com with SMTP id n1so2414821oic.3;
-        Wed, 21 Aug 2019 11:50:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=75tYGq2XrByjJlPCQ5rRvEjYYw5HsWA3W1b4A6YisAI=;
-        b=FUVb8X0pr6kfkPi5uiLIytHIQ5LXBacTCiTp3UDtjvjLG3azwuBUSpiTEBQ6mKlpb6
-         j1Z78ZqWRjQRZGFHYUmgIDZTTrtm6+6xTKyjnXk7ZUxPEhlMW/qC4xAX1PU+ms0Xl//G
-         Tyip964e7RImcmrjvUCynWgFj/8Dar7PbBQBHmOGRRtviC1rX3Shnf+nbT1OS1Vq/CnM
-         i3TjH1i90iNOdy0yH34vLBg0uXN9XgqrjtmhG9slgMJOrZ+c+buu7bzfFfyHBlslIbFM
-         oNMBJxb4MzroEQAV33R2HYNWGQ9mtvoQ35PmcdaElgVbjidj7OzbjDzg89Wb3W8RY8vw
-         YDMQ==
-X-Gm-Message-State: APjAAAVLfDRgMPaBBJeDuZKRIDayAVbqJf+BsfCYlmW4BQcI27TadCxE
-        qSJcbCMeG1qK6l2VR5Ma1Q==
-X-Google-Smtp-Source: APXvYqysc72bbOfLeYkR0WFQ+GexfuCxG/CQGQ6YNhCh2IAPEbKVPiDCUf/3re0fLc39lGLwK4aaYg==
-X-Received: by 2002:aca:b70b:: with SMTP id h11mr1136628oif.107.1566413426876;
-        Wed, 21 Aug 2019 11:50:26 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id d66sm7037232otb.47.2019.08.21.11.50.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 11:50:26 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 13:50:25 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Mars Cheng <mars.cheng@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
-        Wendell Lin <wendell.lin@mediatek.com>,
-        Ivan Tseng <ivan.tseng@mediatek.com>,
-        Andy Teng <andy.teng@mediatek.com>
-Subject: Re: [PATCH 04/11] pinctrl: mediatek: update pinmux defintions for
- mt6779
-Message-ID: <20190821185025.GA18525@bogus>
-References: <1564996320-10897-1-git-send-email-mars.cheng@mediatek.com>
- <1564996320-10897-5-git-send-email-mars.cheng@mediatek.com>
+        Wed, 21 Aug 2019 14:51:35 -0400
+Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D726153E;
+        Wed, 21 Aug 2019 20:51:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1566413493;
+        bh=uyEkXtlwR/bW4mOjE8+U4TKPedBfZX8cpfEwLT8Arss=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FF/X3xYQOw4kUXu+3AkovRkLqS3XRZhVDwJVAQmjew1baXRT2W50pkhZxQbAyUMql
+         bFZqI4LJrNAwSpYSOQHMWGKq1ul4nRz7DOVbhnzdNU4n+YNg7yyEDPXC7Tm4HYjyRw
+         kbl7mIOdrLrfdfxsca+iXx8/hxgGvl6XLVE5wfmQ=
+Date:   Wed, 21 Aug 2019 21:51:27 +0300
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Adam Ford <aford173@gmail.com>
+Cc:     Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: OMAP DRM regression on N900
+Message-ID: <20190821185127.GD26759@pendragon.ideasonboard.com>
+References: <20190818140838.GC30291@darkstar.musicnaut.iki.fi>
+ <20190821183123.GC26759@pendragon.ideasonboard.com>
+ <CAHCN7xLEiH6PttR6707dSVvi4N4qZM9UyXj4b-TUqOJSboi71g@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1564996320-10897-5-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <CAHCN7xLEiH6PttR6707dSVvi4N4qZM9UyXj4b-TUqOJSboi71g@mail.gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 05:11:53PM +0800, Mars Cheng wrote:
-> Add devicetree bindings for Mediatek mt6779 SoC Pin Controller.
+Hi Adam,
 
-checkpatch.pl reports typo in subject.
-
-Otherwise,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+On Wed, Aug 21, 2019 at 01:45:28PM -0500, Adam Ford wrote:
+> On Wed, Aug 21, 2019 at 1:37 PM Laurent Pinchart wrote:
+> > On Sun, Aug 18, 2019 at 05:08:38PM +0300, Aaro Koskinen wrote:
+> > > Hi,
+> > >
+> > > I haven't got display working on N900 since v5.1. Bisected to:
+> > >
+> > > d17eb4537a7eb16da9eafbfd5717e12b45b77251 is the first bad commit
+> > > commit d17eb4537a7eb16da9eafbfd5717e12b45b77251
+> > > Author: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > Date:   Wed Sep 12 19:41:31 2018 +0300
+> > >
+> > >     drm/omap: Factor out common init/cleanup code for output devices
+> >
+> > Sorry :-(
+> >
+> > I'll send a tentative fix, I'd appreciate if you could test it.
 > 
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
-> Signed-off-by: Andy Teng <andy.teng@mediatek.com>
-> ---
->  include/dt-bindings/pinctrl/mt6779-pinfunc.h | 1242 ++++++++++++++++++++++++++
->  1 file changed, 1242 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/mt6779-pinfunc.h
+> Can you point me to this patch?  I was in the process of
+> troubleshooting both a DM37, OMAP35 and AM35 board who all have blank
+> screens.  I'd like to try this patch too.
+
+https://lists.freedesktop.org/archives/dri-devel/2019-August/232222.html
+
+I forgot to CC linux-omap, I'll bounce the patch to do so now.
+
+> > > looks like with this commit I get only the TV out:
+> > >
+> > > $ ls -l /sys/class/drm/
+> > > total 0
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 card0 -> ../../devices/platform/omapdrm.0/drm/card0
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 card0-SVIDEO-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-SVIDEO-1
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:15 renderD128 -> ../../devices/platform/omapdrm.0/drm/renderD128
+> > > -r--r--r--    1 root     root          4096 Aug 18 16:15 version
+> > >
+> > > with the previous commit both outputs are there:
+> > >
+> > > $ ls -l /sys/class/drm/
+> > > total 0
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0 -> ../../devices/platform/omapdrm.0/drm/card0
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0-LVDS-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-LVDS-1
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 card0-SVIDEO-1 -> ../../devices/platform/omapdrm.0/drm/card0/card0-SVIDEO-1
+> > > lrwxrwxrwx    1 root     root             0 Aug 18 16:28 renderD128 -> ../../devices/platform/omapdrm.0/drm/renderD128
+> > > -r--r--r--    1 root     root          4096 Aug 18 16:28 version
+> > >
+> > > Used .config below.
+> >
+> > [snip]
+
+-- 
+Regards,
+
+Laurent Pinchart
