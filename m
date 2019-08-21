@@ -2,44 +2,47 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C1B0C978CB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:05:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1081C978D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:07:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727266AbfHUMFy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:05:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726353AbfHUMFy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:05:54 -0400
+        id S1727742AbfHUMHs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:07:48 -0400
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:56273 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfHUMHr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:07:47 -0400
+X-Originating-IP: 86.250.200.211
 Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6825C2089E;
-        Wed, 21 Aug 2019 12:05:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566389153;
-        bh=2FRrclBMVAhxORSkvx15JbwCjv+rECZrE3tmzTI6fjQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IbIaUibt98RW+BrZlXwdHPhbsgLQ9iOj11mOxlw6Yjy1yayKkHC4aRDGmudrko7Kx
-         noHVlKvbF69kchSJz2ghinFmicUmJh1uuf7G/o7kEBUZrBsJJqDiDMperYLvKafvYv
-         b1eKr/vXsFluy6CmtTWTuLDHZlYoB+K02En2rqBs=
-Date:   Wed, 21 Aug 2019 14:05:51 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Sergey Suloev <ssuloev@orpaltech.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, lgirdwood@gmail.com,
-        broonie@kernel.org, codekipper@gmail.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 20/21] ASoC: sun4i-i2s: Add support for TDM slots
-Message-ID: <20190821120551.r4b3h4nnet357wem@flea>
-References: <cover.e08aa7e33afe117e1fa8f017119d465d47c98016.1566242458.git-series.maxime.ripard@bootlin.com>
- <26392af30b3e7b31ee48d5b867d45be8675db046.1566242458.git-series.maxime.ripard@bootlin.com>
- <c311e88a-fdd2-8a01-275e-675d98dc90ba@orpaltech.com>
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id BE9C9E0004;
+        Wed, 21 Aug 2019 12:07:43 +0000 (UTC)
+Date:   Wed, 21 Aug 2019 14:07:43 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 03/10] dt-bindings: mailbox: Add a sunxi message box
+ binding
+Message-ID: <20190821120743.hihurpkjancgacs6@flea>
+References: <20190820032311.6506-1-samuel@sholland.org>
+ <20190820032311.6506-4-samuel@sholland.org>
+ <20190820071456.if5lyb4t3em77svl@flea>
+ <8947f4d1-3bb4-11b8-b114-5016339514b8@sholland.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hsc5ca3rnlaanrdu"
+        protocol="application/pgp-signature"; boundary="yj7riia4gph2tfyk"
 Content-Disposition: inline
-In-Reply-To: <c311e88a-fdd2-8a01-275e-675d98dc90ba@orpaltech.com>
+In-Reply-To: <8947f4d1-3bb4-11b8-b114-5016339514b8@sholland.org>
 User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -47,140 +50,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---hsc5ca3rnlaanrdu
+--yj7riia4gph2tfyk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
-
-On Tue, Aug 20, 2019 at 08:46:30AM +0300, Sergey Suloev wrote:
-> Hi, Maxime,
+On Tue, Aug 20, 2019 at 08:04:26AM -0500, Samuel Holland wrote:
+> On 8/20/19 2:14 AM, Maxime Ripard wrote:
+> > Hi,
+> >
+> > On Mon, Aug 19, 2019 at 10:23:04PM -0500, Samuel Holland wrote:
+> >> This mailbox hardware is present in Allwinner sun8i, sun9i, and sun50i
+> >> SoCs. Add a device tree binding for it.
+> >>
+> >> Reviewed-by: Rob Herring <robh@kernel.org>
+> >> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> >> ---
+> >>  .../mailbox/allwinner,sunxi-msgbox.yaml       | 79 +++++++++++++++++++
+> >>  1 file changed, 79 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
+> >
+> > So we merged a bunch of schemas already, with the convention that the
+> > name was the first compatible to use that binding.
+> >
+> > That would be allwinner,sun6i-a31-msgbox.yaml in that case
 >
-> On 8/19/19 10:25 PM, Maxime Ripard wrote:
-> > From: Maxime Ripard <maxime.ripard@bootlin.com>
-> >
-> > The i2s controller supports TDM, for up to 8 slots. Let's support the TDM
-> > API.
-> >
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > ---
-> >   sound/soc/sunxi/sun4i-i2s.c | 40 ++++++++++++++++++++++++++++++++------
-> >   1 file changed, 34 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/sound/soc/sunxi/sun4i-i2s.c b/sound/soc/sunxi/sun4i-i2s.c
-> > index 0dac09814b65..4f76daeaaed7 100644
-> > --- a/sound/soc/sunxi/sun4i-i2s.c
-> > +++ b/sound/soc/sunxi/sun4i-i2s.c
-> > @@ -168,6 +168,8 @@ struct sun4i_i2s {
-> >   	struct reset_control *rst;
-> >   	unsigned int	mclk_freq;
-> > +	unsigned int	slots;
-> > +	unsigned int	slot_width;
-> >   	struct snd_dmaengine_dai_dma_data	capture_dma_data;
-> >   	struct snd_dmaengine_dai_dma_data	playback_dma_data;
-> > @@ -287,7 +289,7 @@ static bool sun4i_i2s_oversample_is_valid(unsigned int oversample)
-> >   static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
-> >   				  unsigned int rate,
-> > -				  unsigned int channels,
-> > +				  unsigned int slots,
-> >   				  unsigned int word_size)
-> >   {
-> >   	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> > @@ -335,7 +337,7 @@ static int sun4i_i2s_set_clk_rate(struct snd_soc_dai *dai,
-> >   	bclk_parent_rate = i2s->variant->get_bclk_parent_rate(i2s);
-> >   	bclk_div = sun4i_i2s_get_bclk_div(i2s, bclk_parent_rate,
-> > -					  rate, channels, word_size);
-> > +					  rate, slots, word_size);
-> >   	if (bclk_div < 0) {
-> >   		dev_err(dai->dev, "Unsupported BCLK divider: %d\n", bclk_div);
-> >   		return -EINVAL;
-> > @@ -419,6 +421,10 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
-> >   				  const struct snd_pcm_hw_params *params)
-> >   {
-> >   	unsigned int channels = params_channels(params);
-> > +	unsigned int slots = channels;
-> > +
-> > +	if (i2s->slots)
-> > +		slots = i2s->slots;
-> >   	/* Map the channels for playback and capture */
-> >   	regmap_write(i2s->regmap, SUN8I_I2S_TX_CHAN_MAP_REG, 0x76543210);
-> > @@ -428,7 +434,6 @@ static int sun8i_i2s_set_chan_cfg(const struct sun4i_i2s *i2s,
-> >   	regmap_update_bits(i2s->regmap, SUN8I_I2S_TX_CHAN_SEL_REG,
-> >   			   SUN4I_I2S_CHAN_SEL_MASK,
-> >   			   SUN4I_I2S_CHAN_SEL(channels));
-> > -
-> >   	regmap_update_bits(i2s->regmap, SUN8I_I2S_RX_CHAN_SEL_REG,
-> >   			   SUN4I_I2S_CHAN_SEL_MASK,
-> >   			   SUN4I_I2S_CHAN_SEL(channels));
-> > @@ -452,10 +457,18 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
-> >   			       struct snd_soc_dai *dai)
-> >   {
-> >   	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> > +	unsigned int word_size = params_width(params);
-> >   	unsigned int channels = params_channels(params);
-> > +	unsigned int slots = channels;
-> >   	int ret, sr, wss;
-> >   	u32 width;
-> > +	if (i2s->slots)
-> > +		slots = i2s->slots;
-> > +
-> > +	if (i2s->slot_width)
-> > +		word_size = i2s->slot_width;
-> > +
-> >   	ret = i2s->variant->set_chan_cfg(i2s, params);
-> >   	if (ret < 0) {
-> >   		dev_err(dai->dev, "Invalid channel configuration\n");
-> > @@ -477,15 +490,14 @@ static int sun4i_i2s_hw_params(struct snd_pcm_substream *substream,
-> >   	if (sr < 0)
-> >   		return -EINVAL;
-> > -	wss = i2s->variant->get_wss(i2s, params_width(params));
-> > +	wss = i2s->variant->get_wss(i2s, word_size);
-> >   	if (wss < 0)
-> >   		return -EINVAL;
-> >   	regmap_field_write(i2s->field_fmt_wss, wss);
-> >   	regmap_field_write(i2s->field_fmt_sr, sr);
-> > -	return sun4i_i2s_set_clk_rate(dai, params_rate(params),
-> > -				      channels, params_width(params));
-> > +	return sun4i_i2s_set_clk_rate(dai, params_rate(params), slots, word_size);
-> >   }
-> >   static int sun4i_i2s_set_soc_fmt(const struct sun4i_i2s *i2s,
-> > @@ -785,10 +797,26 @@ static int sun4i_i2s_set_sysclk(struct snd_soc_dai *dai, int clk_id,
-> >   	return 0;
-> >   }
-> > +static int sun4i_i2s_set_tdm_slot(struct snd_soc_dai *dai,
-> > +				  unsigned int tx_mask, unsigned int rx_mask,
-> > +				  int slots, int slot_width)
-> > +{
-> > +	struct sun4i_i2s *i2s = snd_soc_dai_get_drvdata(dai);
-> > +
-> > +	if (slots > 8)
-> > +		return -EINVAL;
-> > +
-> > +	i2s->slots = slots;
-> > +	i2s->slot_width = slot_width;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >   static const struct snd_soc_dai_ops sun4i_i2s_dai_ops = {
-> >   	.hw_params	= sun4i_i2s_hw_params,
-> >   	.set_fmt	= sun4i_i2s_set_fmt,
-> >   	.set_sysclk	= sun4i_i2s_set_sysclk,
-> > +	.set_tdm_slot	= sun4i_i2s_set_tdm_slot,
-> >   	.trigger	= sun4i_i2s_trigger,
-> >   };
->
-> it seems like you forgot to implement sun4i_i2s_dai_ops.set_bclk_ratio
-> because, as I far as I understand, it should alter tdm slots functionality
-> indirectly.
+> Okay, I'll rename the binding and driver (and Kconfig symbol?).
 
-As far as I can see, while this indeed changes a few things on the TDM
-setup, it's optional, orthogonal and it has a single user in the tree
-(some intel platform card).
-
-So I'd say that if someone ever needs it, we can have it, but it's not
-a blocker.
-
+Yep, thanks!
 Maxime
 
 --
@@ -188,15 +84,15 @@ Maxime Ripard, Bootlin
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---hsc5ca3rnlaanrdu
+--yj7riia4gph2tfyk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV0znwAKCRDj7w1vZxhR
-xRAgAP9EHPMB6Hx7FqcfcszC8f7EF/uLx9RlJGciIrJpOQnKcwEAuaxLthvSNVh/
-RddPDN3sljHZtOQBGhyVmlCuwyQoUAk=
-=iCnK
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV00DwAKCRDj7w1vZxhR
+xR3QAP4uQpZfAOxXPnBEZQVDzwkMpjeJHL0oHyLSa2q695BzKQEA+XYUt7uuVPcp
+6l8M8wf6Q1kamKS9IXXV4732b0h59Ao=
+=rNyV
 -----END PGP SIGNATURE-----
 
---hsc5ca3rnlaanrdu--
+--yj7riia4gph2tfyk--
