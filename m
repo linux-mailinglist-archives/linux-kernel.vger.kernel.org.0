@@ -2,181 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8248F97FC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:14:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9989B97FCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:17:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728489AbfHUQOe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:14:34 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:10344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727222AbfHUQOe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:14:34 -0400
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7LG5hft074632
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 12:14:32 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uh81xv6r0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 12:14:32 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 21 Aug 2019 17:14:31 +0100
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Aug 2019 17:14:26 +0100
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7LGEPaa54460926
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Aug 2019 16:14:25 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C858EB2068;
-        Wed, 21 Aug 2019 16:14:25 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 983EEB205F;
-        Wed, 21 Aug 2019 16:14:25 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Aug 2019 16:14:25 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5276E16C65BA; Wed, 21 Aug 2019 09:14:26 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 09:14:26 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Joel Fernandes, Google" <joel@joelfernandes.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        rostedt <rostedt@goodmis.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
-Reply-To: paulmck@linux.ibm.com
-References: <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org>
- <1642847744.23403.1566005809759.JavaMail.zimbra@efficios.com>
- <CAHk-=wgC4+kV9AiLokw7cPP429rKCU+vjA8cWAfyOjC3MtqC4A@mail.gmail.com>
- <20190820135612.GS2332@hirez.programming.kicks-ass.net>
- <20190820202932.GW28441@linux.ibm.com>
- <20190821103200.kpufwtviqhpbuv2n@willie-the-truck>
- <20190821132310.GC28441@linux.ibm.com>
- <20190821153325.GD2349@hirez.programming.kicks-ass.net>
- <52600272.1909.1566402523680.JavaMail.zimbra@efficios.com>
+        id S1728849AbfHUQQk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:16:40 -0400
+Received: from mail-eopbgr10045.outbound.protection.outlook.com ([40.107.1.45]:8117
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726828AbfHUQQj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:16:39 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=BE86Kyq/B1nkGEtSlIJbc1n4pJRMbEaxYTYuIve5hH+c22LgO+fgnZ0RojRbfLCBM7lt8l+4EiEH3EqiqFFHpI9j1Vyg/avT1d2Nk+NUMlGFtFV7LmXwTpdGDsa/Aac6REGfCRslQqLmIKZWBefMTFiAwfWIahJRLfjn/vnCEC6oh1yGZRrdUYSmTAkDW597BfLZO8uFaICXm7OXeXHrJTwQ6jdglLWagoj6Aa3mVXmQlig84jJRnesIuyW3GvG/eW3irjiGymcHyxmDNyJWPiynkXQ/O/cv4gMWXh0ii49Ezglcg3WPbjQyUYku8S6r5MzdxtCS4vDmVazwnrrn9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/TGkgoElw0knAwgl5PTJkk82A64yXG7L4CgduFmH6xE=;
+ b=VhhhqqkobPCAUwAut/04Wy87XdAuIBqcg/dKlnF0r87bkH8Z/NpInIGpjzXenldSrEfhxB/PsjJO1dkWPlsdx6Sx/IYuCli5UB1u0KtRF18qZM1JjN0wRKoCpbNYU9D5pGRvF8L+TOwURxRJhLC5tUwBweQGCawpsdGMvcX278GOZXr3ydzDrIBXkMBd3uO+u+gsF/lRt6uYmisMRLJ+1r6ZspcmkgnbgMqKbfcv0iF7QlJgoHvWy6SGZnu2VdgX53yA1+xdYOeQOaIpdx+NKlFZr+jF+2kp24SK8kEEUFmEJ+urmXGfFpWlw/fpDqxLD9179OynC91NxXfRaOwF0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/TGkgoElw0knAwgl5PTJkk82A64yXG7L4CgduFmH6xE=;
+ b=eFukYABAW9o4OTNtMlKzSyY7/Q6ZnbhOpcnOnE1JCeRQFlphFe8CQlA0R+y/CIAnw5BEh8YX8/HXNGskBlPrM/8aR/1+1QEoSjH3VEpKYkNz6BV9sOwJGAO2Gf0UUpYTil3YOLKmX5JikwPdUcBQR97M7bemZ2ZzKA/ldAx0NpA=
+Received: from AM6PR0402MB3798.eurprd04.prod.outlook.com (52.133.29.29) by
+ AM6PR0402MB3349.eurprd04.prod.outlook.com (52.133.18.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Wed, 21 Aug 2019 16:16:32 +0000
+Received: from AM6PR0402MB3798.eurprd04.prod.outlook.com
+ ([fe80::9de1:26ec:59e5:32fc]) by AM6PR0402MB3798.eurprd04.prod.outlook.com
+ ([fe80::9de1:26ec:59e5:32fc%5]) with mapi id 15.20.2178.020; Wed, 21 Aug 2019
+ 16:16:32 +0000
+From:   Christian Herber <christian.herber@nxp.com>
+To:     David Miller <davem@davemloft.net>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>
+CC:     "andrew@lunn.ch" <andrew@lunn.ch>,
+        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Re: [PATCH v2 net-next 0/1] Add BASE-T1 PHY support
+Thread-Topic: Re: [PATCH v2 net-next 0/1] Add BASE-T1 PHY support
+Thread-Index: AQHVWDvLLmDgCDHYx0GZluZJmkZkZA==
+Date:   Wed, 21 Aug 2019 16:16:32 +0000
+Message-ID: <AM6PR0402MB37983B7CA4DC2EF962D75D0886AA0@AM6PR0402MB3798.eurprd04.prod.outlook.com>
+References: <20190819151940.27756-1-christian.herber@nxp.com>
+ <20190820.122234.1290995026664280862.davem@davemloft.net>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=christian.herber@nxp.com; 
+x-originating-ip: [217.111.68.82]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c37c23ca-4fcf-4d7a-a1b7-08d72652ee67
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR0402MB3349;
+x-ms-traffictypediagnostic: AM6PR0402MB3349:
+x-ms-exchange-purlcount: 1
+x-microsoft-antispam-prvs: <AM6PR0402MB334909E7847EB8219207093286AA0@AM6PR0402MB3349.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0136C1DDA4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(189003)(199004)(8676002)(71190400001)(74316002)(55016002)(7736002)(305945005)(6306002)(9686003)(71200400001)(33656002)(25786009)(3846002)(44832011)(14454004)(110136005)(486006)(52536014)(2501003)(5660300002)(476003)(54906003)(4744005)(76116006)(91956017)(66946007)(66476007)(53936002)(66446008)(26005)(55236004)(6436002)(186003)(102836004)(2906002)(45080400002)(229853002)(446003)(6506007)(53546011)(966005)(7696005)(4326008)(8936002)(256004)(76176011)(86362001)(99286004)(66556008)(66066001)(6246003)(64756008)(498600001)(6116002)(81156014)(81166006)(14444005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR0402MB3349;H:AM6PR0402MB3798.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: M5WDIabyHLJpcmqy6Zi7RagFAkg/kIRzxqn8YqPMJfpJ3AcPeHj4V1Ke2We1SLfoTvAtF821oEo5wOeHmTvfy0vvJqFkEOLAY16NVC4sMT1YJTm7WdWdS2p/4LiXi7eJ24QGlv0BDpv36WiWc8SqKD5d1gI0HteXis5Y+IzXx0QYbpiZevvBURbKwNSkRLdcLo75TsMZgUHxBJcEBVFY7VbSsQwTLIbQYgLaPLQY5Eq0jhgchI/rusypx9GE8A38/LIAQBf2Gn/xZryMqMbi95viAYKKcYeGScFFQrh9z1z9Lkuv/0hK6bOcXUdpVA1ZDXRmsn5eN0YVH9d7kdtuZelQy59mQ4Lmn1gOshonEBl2iHWdYDHxQpr70TauxsUYqQwMdtY0phLr3BX9quyvvSY+ixPI86fZ21U+xh5gCQk=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <52600272.1909.1566402523680.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19082116-2213-0000-0000-000003BE7CD7
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00011629; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000287; SDB=6.01250059; UDB=6.00659956; IPR=6.01031613;
- MB=3.00028262; MTD=3.00000008; XFM=3.00000015; UTC=2019-08-21 16:14:30
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082116-2214-0000-0000-00005FB85AB8
-Message-Id: <20190821161426.GK28441@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=919 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908210167
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c37c23ca-4fcf-4d7a-a1b7-08d72652ee67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 16:16:32.3288
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZvtGO8F90X3V5fQdIqlIZZVwhjcuX7vzxlWJCQvaAFERNWLZKCjLgMLAo2LZsW8fPnEjCExWsZ3Uhy2ZULyb4KytP1JBCI90wHuJvPN//uc=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR0402MB3349
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 11:48:43AM -0400, Mathieu Desnoyers wrote:
-> ----- On Aug 21, 2019, at 8:33 AM, Peter Zijlstra peterz@infradead.org wrote:
-> 
-> > On Wed, Aug 21, 2019 at 06:23:10AM -0700, Paul E. McKenney wrote:
-> >> On Wed, Aug 21, 2019 at 11:32:01AM +0100, Will Deacon wrote:
-> > 
-> >> > and so it is using a store-pair instruction to reduce the complexity in
-> >> > the immediate generation. Thus, the 64-bit store will only have 32-bit
-> >> > atomicity. In fact, this is scary because if I change bar to:
-> >> > 
-> >> > void bar(u64 *x)
-> >> > {
-> >> > 	*(volatile u64 *)x = 0xabcdef10abcdef10;
-> >> > }
-> >> > 
-> >> > then I get:
-> >> > 
-> >> > bar:
-> >> > 	mov	w1, 61200
-> >> > 	movk	w1, 0xabcd, lsl 16
-> >> > 	str	w1, [x0]
-> >> > 	str	w1, [x0, 4]
-> >> > 	ret
-> >> > 
-> >> > so I'm not sure that WRITE_ONCE would even help :/
-> >> 
-> >> Well, I can have the LWN article cite your email, then.  So thank you
-> >> very much!
-> >> 
-> >> Is generation of this code for a 64-bit volatile store considered a bug?
-> >> Or does ARMv8 exclude the possibility of 64-bit MMIO registers?  And I
-> >> would guess that Thomas and Linus would ask a similar bugginess question
-> >> for normal stores.  ;-)
-> > 
-> > I'm calling this a compiler bug; the way I understand volatile this is
-> > very much against the intentended use case. That is, this is buggy even
-> > on UP vs signals or MMIO.
-> 
-> And here is a simpler reproducer on my gcc-8.3.0 (aarch64) compiled with O2:
-> 
-> volatile unsigned long a;
->  
-> void fct(void)
-> {
->         a = 0x1234567812345678ULL;
-> }
-> 
-> void fct(void)
-> {
->         a = 0x1234567812345678ULL;
->    0:   90000000        adrp    x0, 8 <fct+0x8>
->    4:   528acf01        mov     w1, #0x5678                     // #22136
->    8:   72a24681        movk    w1, #0x1234, lsl #16
->    c:   f9400000        ldr     x0, [x0]
->   10:   b9000001        str     w1, [x0]
->   14:   b9000401        str     w1, [x0, #4]
-> }
->   18:   d65f03c0        ret
-> 
-> And the non-volatile case uses stp (is it a single store to memory ?):
-> 
-> unsigned long a;
->   
-> void fct(void)
-> {
->         a = 0x1234567812345678ULL;
-> }
-> 
-> void fct(void)
-> {
->         a = 0x1234567812345678ULL;
->    0:   90000000        adrp    x0, 8 <fct+0x8>
->    4:   528acf01        mov     w1, #0x5678                     // #22136
->    8:   72a24681        movk    w1, #0x1234, lsl #16
->    c:   f9400000        ldr     x0, [x0]
->   10:   29000401        stp     w1, w1, [x0]
-> }
->   14:   d65f03c0        ret
-> 
-> It would probably be a good idea to audit other architectures, since this
-> is done by the compiler backend.
-
-That does seem like a very good idea!
-
-							Thanx, Paul
-
+On 20.08.2019 21:22, David Miller wrote:=0A=
+> =0A=
+> From: Christian Herber <christian.herber@nxp.com>=0A=
+> Date: Mon, 19 Aug 2019 15:19:52 +0000=0A=
+> =0A=
+>> v1 patchset can be found here: https://eur01.safelinks.protection.outloo=
+k.com/?url=3Dhttps%3A%2F%2Flkml.org%2Flkml%2F2019%2F8%2F15%2F626&amp;data=
+=3D02%7C01%7Cchristian.herber%40nxp.com%7Ccbb5f329425240eda10a08d725a3c305%=
+7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C1%7C637019257604516613&amp;sdata=
+=3DIdBZbqGgA0upPZZrBQSxPL%2Fh7Tn4BtYA4%2FfS6dZngWU%3D&amp;reserved=3D0=0A=
+> =0A=
+> Please expand and clarify your commit messages as requested by Heiner=0A=
+> in his feedback to v1.=0A=
+> =0A=
+=0A=
+Hi David, Heiner,=0A=
+=0A=
+could you please be specific what to add? The discussion was on various =0A=
+topics. Agree that it would probably help to add some more clarity, but =0A=
+it would be good if you can specify your expectation in this.=0A=
+=0A=
+Christian=0A=
