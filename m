@@ -2,125 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6708496EEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA4F596EFB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:40:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726807AbfHUBeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 21:34:13 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4741 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726484AbfHUBeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 21:34:13 -0400
-Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7E40CECFBE302ADD17A5;
-        Wed, 21 Aug 2019 09:34:10 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
- 2019 09:34:04 +0800
-Subject: Re: [PATCH] erofs: move erofs out of staging
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Gao Xiang <hsiangkao@aol.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Li Guifu" <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-References: <20190818161638.GE1118@sol.localdomain>
- <20190818162201.GA16269@infradead.org>
- <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
- <20190820155623.GA10232@mit.edu>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <9d8f88ee-4b81-bdfa-b0d7-9c7d5d54e70a@huawei.com>
-Date:   Wed, 21 Aug 2019 09:34:02 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <20190820155623.GA10232@mit.edu>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+        id S1726912AbfHUBjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 21:39:47 -0400
+Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25534 "EHLO
+        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfHUBjr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 21:39:47 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1566351579; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=fp8j31Xa/U150l7Y6Fbp1R1Sgruh3tmrn7l8PPam2TDipyKsUCznK+wYJYB0oLjpxnKqrj1iBni6Yyb6QccD2kgnL9VySTEr8RDZ0fY+EJRTQSB6TtIGb3K7aZY5v0IVgxmLaSA8m9C3snw9nszXo7vK9Gr6D5+VZ9DmDjzMufY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1566351579; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=X1s7c/q2LhXifg1IRo4YM5sxau9UteN88ivBRni95ns=; 
+        b=akJ+PnPqyhzoo0FohsHlhOFPprxL8hWejLAIkEahbv7t/ZQBUJ5PrCSijBmgiBM6W9Dg5r1aE7I6+cr9fknT0DRXj3xeG8RWqe+sAKPrTXWMgsKLPWJ6lCsHLXeaZRWn3DUPPZiXGCDztsVLfUdnqFSfpCt8Oj7MqInou2fUsD4=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=kontais@zoho.com;
+        dmarc=pass header.from=<kontais@zoho.com> header.from=<kontais@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=knMUgmONZ2y/YuDnv7B7dUtCXn8BCbophzl4idit5x/E7rEhfi4A9PzcP1aSMu3bfcbBSQqgJxba
+    tJTQJl9+V2oW/czn9qtl1hoaSjPXsYEzn4SapA+3X+28AGv3LyVa  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1566351579;
+        s=zm2019; d=zoho.com; i=kontais@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=1322;
+        bh=X1s7c/q2LhXifg1IRo4YM5sxau9UteN88ivBRni95ns=;
+        b=Lq+ncVyE9B0GiDGyQwLxVAJe2SkVKTdmQ24y96S+aHwDOwAPnX9ExnIR7aEtAhe+
+        dW5Z7lXicQVW/7DdSaJUIQEe5HVyhwSBl1zBbuj6LMVoUB52IP7ouSkzRlPOP36ECmo
+        AirHUhjOybKTub605M8Tzlqh1vhHcJCQUXGpdyqc=
+Received: from dev31.localdomain (103.244.59.4 [103.244.59.4]) by mx.zohomail.com
+        with SMTPS id 1566351578120361.08327538001834; Tue, 20 Aug 2019 18:39:38 -0700 (PDT)
+From:   Zhang Tao <kontais@zoho.com>
+To:     agk@redhat.com, snitzer@redhat.com
+Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        Zhang Tao <zhangtao27@lenovo.com>
+Subject: [PATCH] dm table: fix a potential array out of bounds
+Date:   Wed, 21 Aug 2019 09:33:31 +0800
+Message-Id: <1566351211-13280-1-git-send-email-kontais@zoho.com>
+X-Mailer: git-send-email 1.8.3.1
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/20 23:56, Theodore Y. Ts'o wrote:
-> The reason why there needs to be at least some file system specific
-> code for fuzz testing is because for efficiency's sake, you don't want
-> to fuzz every single bit in the file system, but just the ones which
-> are most interesting (e.g., the metadata blocks).  For file systems
-> which use checksum to protect against accidental corruption, the file
-> system fuzzer needs to also fix up the checksums (since you can be
-> sure malicious attackers will do this).
+From: Zhang Tao <zhangtao27@lenovo.com>
 
-Yup, IMO, if we really want such tool, it needs to:
-- move all generic fuzz codes (trigger random fuzzing in meta/data area) into
-that tool, and
-- make filesystem generic fs_meta/file_node lookup/inject/pack function as a
-callback, such as
- * .find_fs_sb
- * .inject_fs_sb
- * .pack_fs_sb
- * .find_fs_bitmap
- * .inject_fs_bitmap
- * .find_fs_inode_bitmap
- * .inject_fs_inode_bitmap
- * .find_inode_by_num
- * .inject_inode
- * .pack_inode
- * .find_tree_node_by_level
-...
-then specific filesystem can fill the callback to tell how the tool can locate a
-field in inode or a metadata in tree node and then trigger the designed fuzz.
+allocate num + 1 for target and offset array, n_highs need num + 1
+elements, the last element will be used for node lookup in function
+dm_table_find_target.
 
-It will be easier to rewrite whole generic fwk for each filesystem, because
-existed filesystem userspace tool should has included above callback's detail
-codes...
+Signed-off-by: Zhang Tao <zhangtao27@lenovo.com>
+---
+ drivers/md/dm-table.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-> On Tue, Aug 20, 2019 at 10:24:11AM +0800, Chao Yu wrote:
->> filesystem fill the tool's callback to seek a node/block and supported fields
->> can be fuzzed in inode.
+diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
+index 7b6c3ee..fd7f604 100644
+--- a/drivers/md/dm-table.c
++++ b/drivers/md/dm-table.c
+@@ -160,20 +160,22 @@ static int alloc_targets(struct dm_table *t, unsigned int num)
+ {
+ 	sector_t *n_highs;
+ 	struct dm_target *n_targets;
++	unsigned int alloc_num;
+ 
+ 	/*
+ 	 * Allocate both the target array and offset array at once.
+ 	 * Append an empty entry to catch sectors beyond the end of
+ 	 * the device.
+ 	 */
+-	n_highs = (sector_t *) dm_vcalloc(num + 1, sizeof(struct dm_target) +
++	alloc_num = num + 1;
++	n_highs = (sector_t *) dm_vcalloc(alloc_num, sizeof(struct dm_target) +
+ 					  sizeof(sector_t));
+ 	if (!n_highs)
+ 		return -ENOMEM;
+ 
+-	n_targets = (struct dm_target *) (n_highs + num);
++	n_targets = (struct dm_target *) (n_highs + alloc_num);
+ 
+-	memset(n_highs, -1, sizeof(*n_highs) * num);
++	memset(n_highs, -1, sizeof(*n_highs) * alloc_num);
+ 	vfree(t->highs);
+ 
+ 	t->num_allocated = num;
+-- 
+1.8.3.1
 
-> 
-> What you *can* do is to make the file system specific portion of the
-> work as small as possible.  Great work in this area is Professor Kim's
-> Janus[1][2] and Hydra[2] work.  (Hydra is about to be published at SOSP 19,
-> and was partially funded from a Google Faculty Research Work.)
-> 
-> [1] https://taesoo.kim/pubs/2019/xu:janus.pdf
-> [2] https://github.com/sslab-gatech/janus
-> [3] https://github.com/sslab-gatech/hydra
 
-Thanks for the information!
-
-It looks like janus and hydra alreay have generic compress/decompress function
-across different filesystems, it's really a good job, I do think it may be the
-one once it becomes more generic.
-
-Thanks
-
-> 
