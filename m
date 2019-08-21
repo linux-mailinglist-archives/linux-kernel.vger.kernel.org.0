@@ -2,124 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 559E398168
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 19:36:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C5EC9816C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 19:37:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729942AbfHURgp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 13:36:45 -0400
-Received: from esa6.hgst.iphmx.com ([216.71.154.45]:42449 "EHLO
-        esa6.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727037AbfHURgo (ORCPT
+        id S1729988AbfHURg5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 13:36:57 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40612 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728535AbfHURg5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:36:44 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566409004; x=1597945004;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=B+0NsIVRJ2doDRYMsxNuGKhsZan7npRyH3nPkIOHjTc=;
-  b=eNz9goSMVk64Xq9fNRssLokIbmXhAjmDOrZLJcxJ8TkYvGgqFhcmwEPT
-   yvJZBAbcbcf4tLTztfSXAIGyHD0zxJirGOrOOWvsMtv7ryngxN0kMmvV7
-   WVlJey3q3DLRcL94jSexL1ZP++nBHhClvwiKxek60DucQg59ogiaK6h7U
-   UGfGTiL4f/aY3LNC1Oy5E4MxLuS8oEVyOZZGfwbeAaRnsQe+IbK+QpN2u
-   N+M1FpRDOlWOE0SpF5UZZwARkWE7HaKgyhLywjQwO++TCCt2KX4oxLlPP
-   ZtAeetFv/KrdpJnh/G2mp5UTAXox10dyUofwyg7dpLlJfi0M+78i/CJE6
-   g==;
-IronPort-SDR: JW2giqcwh7gMKYkXGRkG+iYD4dHicyUBti1quWMxRTDzzLh8lcaQ5590uFSiOa2xfeTSOsnu1A
- qyx62ym6IiKriRNk2dAl7XywifrIqJvfZmigqD1RuvPDqiKoLHCNFPeHDCb9gOVxct8/Z75w42
- ovhV5YG/nWO5CKcjd02SMsyfTXMpENiRxzAIjWMAXl1wUDfdugY/6am9AnuVwPw6TK5SlOSV8Q
- +sDQW+71Wo3gR8gz2GZhtHTmzLMVfMHRGE2q+HDAleyXy8ydISaUOhs3k234cbPM0vVnz+Ba0Y
- 1WY=
-X-IronPort-AV: E=Sophos;i="5.64,412,1559491200"; 
-   d="scan'208";a="117952154"
-Received: from mail-sn1nam02lp2056.outbound.protection.outlook.com (HELO NAM02-SN1-obe.outbound.protection.outlook.com) ([104.47.36.56])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Aug 2019 01:36:43 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=adFkrXdZKpwOwQaLVueRHc45kpimiMUkZVCuarcKX68GZ/ivurt7Egum10mMOQT2tyItGnF5Jx547Cb8bZJfPST5+RVQf/qhD1CGInVi2YDjgiUYIO4PR6VYHlFVkr2agicqPEn3YNxbs7EO1WQdgOnMtL9UAjcEYauun2Sr3AWxE52S70BgO1oVOHkQN4U87T8Jl/YVjE18OWnI6RgJhrYnXYyNZ6V0Yo5Qgva8F8CA8GjOSru5+LdUW9mSaJ1fE1kDDb5ehpm4NvfEbfaCJN3q8A6BfTOPKK3VoonySAqj8hE0Mir0b+ngDVrFwZbOYlDyilXRwHEPJFePZeD77w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B+0NsIVRJ2doDRYMsxNuGKhsZan7npRyH3nPkIOHjTc=;
- b=V6Ay0L+704ETIvnaPpjKPKeEc9Vy7HBuYU/ehbUFPOcx0syoHAEC4PfkSWsvpLZ72GGEaw6aKiJ7rCVh0a1LIPnnztnGvnP3R0HU6oq6Bu8gKdgl6h2WR7HEaTVlrGHgWrxDsTUO9bX0YMo7F1KTAZL13yOvzF+n4wVlgpzFP09sfP0HcM919AIVJW1yXIwWy2mWREm9IK5ZptYH1isjViUp8WtcfvVFoB+LcKeGev8QGuj7HWn5oi47xzuQOBBoiRpDRqrCFohy48KVG27Qwt+lzg6LjEZUIc/wGpR2V/A+MAfZHrY/X2kKSul59X7XyLzaqAGNcaAUck5ZFMkI4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
+        Wed, 21 Aug 2019 13:36:57 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c5so2777632wmb.5;
+        Wed, 21 Aug 2019 10:36:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=B+0NsIVRJ2doDRYMsxNuGKhsZan7npRyH3nPkIOHjTc=;
- b=lltjjhyPpWQtvh7IMLM/a/XzrTJWmzX3qyzq3mOmb4I1MG79wcOq403YxE1kt0TfiKakkTos1VRZuaza3xezn8/ZGhdKOX1qEjdux4dge8wNIMafbpQ+d0jgVAIuEYJa4/tqAppZP+9+YxiAYDEFEGyeeV9fnp5LPgHkG6aBcyw=
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com (52.135.215.29) by
- BYAPR04MB5575.namprd04.prod.outlook.com (20.178.232.202) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Wed, 21 Aug 2019 17:36:42 +0000
-Received: from BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::24ca:5178:5475:9a0e]) by BYAPR04MB3990.namprd04.prod.outlook.com
- ([fe80::24ca:5178:5475:9a0e%4]) with mapi id 15.20.2178.018; Wed, 21 Aug 2019
- 17:36:42 +0000
-From:   Atish Patra <Atish.Patra@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>
-CC:     "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "schwab@linux-m68k.org" <schwab@linux-m68k.org>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "anup@brainfault.org" <anup@brainfault.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [v2 PATCH] RISC-V: Optimize tlb flush path.
-Thread-Topic: [v2 PATCH] RISC-V: Optimize tlb flush path.
-Thread-Index: AQHVVvDfUBJCIAOoL0y7jXfLdcYugacFsGAAgAAvuoA=
-Date:   Wed, 21 Aug 2019 17:36:41 +0000
-Message-ID: <fc023b76c2d7685c067660d298613379c95b27e3.camel@wdc.com>
-References: <20190820004735.18518-1-atish.patra@wdc.com>
-         <20190821144552.GB4925@infradead.org>
-In-Reply-To: <20190821144552.GB4925@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Atish.Patra@wdc.com; 
-x-originating-ip: [199.255.44.175]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 164c4931-1993-4450-0c7e-08d7265e2126
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BYAPR04MB5575;
-x-ms-traffictypediagnostic: BYAPR04MB5575:
-x-microsoft-antispam-prvs: <BYAPR04MB55752AC02FD0DFFA43457819FAAA0@BYAPR04MB5575.namprd04.prod.outlook.com>
-wdcipoutbound: EOP-TRUE
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(39860400002)(396003)(346002)(376002)(199004)(189003)(36756003)(476003)(66066001)(3846002)(25786009)(186003)(6486002)(6916009)(1730700003)(256004)(11346002)(6506007)(2616005)(2351001)(81156014)(86362001)(8676002)(446003)(53936002)(71200400001)(486006)(81166006)(478600001)(102836004)(4326008)(316002)(2906002)(26005)(71190400001)(66556008)(6512007)(305945005)(8936002)(4744005)(7736002)(6116002)(6246003)(99286004)(76176011)(14454004)(76116006)(66946007)(5640700003)(66446008)(64756008)(66476007)(54906003)(118296001)(6436002)(229853002)(2501003)(5660300002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR04MB5575;H:BYAPR04MB3990.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 8DzVnHzqhdzLs+q4oHnRFj+A9teR1HXgCmhHl1BivXOjCi0DI7FJctkuMXezbZiztzBfkK04lqTgh/TVv4Z0kQ7UzqyRVxGW5DZBKET9JPMkJdxkNVKXXX89uLbwt6486AbEu7cN1X8tudxtC3IYmuZX5jKMntztbkdUMe75bG3sO3xumak4ouhY0ay+lOPFln/h+bT3X3apIbXCfEpDje/JmnX+yReAf8IDFOCp8oZVsM0WmU43IMxWjR3gxdCoWRQyWxhgr91XQaTS5VLvuH6B+1Xt+WSUkx3aENRUyETKOiu/GI/Kr/izn3XM8E9AyLFcaUKrsejaTLRcYfg2fke0Ot5DEh3kyqCHEh6Vk2v9coIZnlio1hPcIaCL2OoxlBn8PZ3//MDG+tgz0tcjNgnwrVZudgGKb3PdLIrM6os=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <446A4B7D7611124C9F33A40FA32D4225@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 164c4931-1993-4450-0c7e-08d7265e2126
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 17:36:41.9748
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jqcqpCiYyfOAnIyfXzgFgR9Jw8PxFfoyz7LWx26tuCVrhnuSRV6rHHXooNVeGlDG4pTMzM+Mgprrny5L0Xvogw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR04MB5575
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=smhXu1L5t6GuvxXpM02oEkcG3qy/NF91cs0u42tWNQM=;
+        b=Z7SZLu+1OWPt/QYrEf3gyDmxq2SiRh/WlDoNoD9cXWQW8PfO6Bg2S6A72046Wbb69b
+         fuqPMdlWe2O0FipE/J1iPyhMAOp7BTcYSDB51HiqDqy9fDCeQ/seS7z0aTYhrcPhDsEd
+         iK52/paX6q2MJNbM35hzjgnq3X6nebfa9TLxD+KLpSlw+bWeXUQnGfF8nI6xKw+ELGbs
+         wWr5BIRKIPEdW/826poZAbTrS7mUqW9Oh5ixr04Z8t8TXEy3WsIAnUYcBh0THUSdoWWw
+         jwyempdtrYCOpPNfUUkuw4gNXiuA5KV11Ej5F9qL4lZ6DMhAsM7pEZM2igDG2A4aGTO7
+         NdpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=smhXu1L5t6GuvxXpM02oEkcG3qy/NF91cs0u42tWNQM=;
+        b=DKy0LCB2LVqwtAyd4Op0oZW0/X/7GJQ3MPANVt50XikgDRX86eQF8gW5U4i5WZPRoP
+         CXx/kQE7Ae2HkCuputTDqs/y0DKW0tbTa37e22c1nZ70Ly8S7NooJBuCJatfW1fr3SR7
+         aqtXXidLqgBiCVEvo7cpo3Iloxtn9LNwQGocJin1QgB3kTma1VnXi2vssTfDeP+RNUyb
+         YRxVdpb2DT139v/omDBjlB3HE6i7R8vE7lThB+kLw6IvpX2NgnU4sMqgg1An/kgCMEb0
+         DMXniCZM0cBJ9JlAbSUIpIjXAioi1208zHGRMuz5pS3l7oiQwIDW7WA4g8vsGp4vueAh
+         rUWQ==
+X-Gm-Message-State: APjAAAXym44ZtrQwMsbSRPR1pIYK0eOWlpbFv0tIJaKdf+/ZNMHCxrIM
+        19zBqjvHYD4HUwEzkumYua0=
+X-Google-Smtp-Source: APXvYqyXNaXwSC85caOVq0J3S9SmTrgdefplsopEPHCiE6o/zPmn3cLlBkTYVCg6pWayt8sHC4PbyA==
+X-Received: by 2002:a1c:9ad8:: with SMTP id c207mr1246531wme.145.1566409014779;
+        Wed, 21 Aug 2019 10:36:54 -0700 (PDT)
+Received: from 640k.localdomain.com ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id 2sm1109217wmz.16.2019.08.21.10.36.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 10:36:53 -0700 (PDT)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for Linux 5.3-rc6
+Date:   Wed, 21 Aug 2019 19:36:50 +0200
+Message-Id: <1566409010-50104-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTA4LTIxIGF0IDA3OjQ1IC0wNzAwLCBoY2hAaW5mcmFkZWFkLm9yZyB3cm90
-ZToNCj4gQnR3LCBmb3IgdGhlIG5leHQgdmVyc2lvbiBpdCBhbHNvIG1pZ2h0IG1ha2Ugc2Vuc2Ug
-dG8gZG8gb25lDQo+IG9wdGltaXphdGlvbiBhdCBhIHRpbWUuICBFLmcuIHRoZSBlbXB0eSBjcHVt
-YXNrIG9uZSBhcyB0aGUNCj4gZmlyc3QgcGF0Y2gsIHRoZSBsb2NhbCBjcHUgZGlyZWN0bHkgb25l
-IG5leHQsIGFuZCB0aGUgdGhyZXNob2xkDQo+IGJhc2VkIGZ1bGwgZmx1c2ggYXMgYSB0aGlyZC4N
-Cg0Kb2sgc3VyZS4gSSB3aWxsIHJlZmFjdG9yIG15IG9wdGltaXphdGlvbiBwYXRjaCBhbmQgcmVt
-b3ZlIHRoZSBiYXNlDQpwYXRjaChtb3ZpbmcgdGhlIGZ1bmN0aW9ucyBmcm9tIGhlYWRlciB0byB0
-bGJmbHVzaC5jKSBhcyB5b3UgaGF2ZQ0KYWxyZWFkeSBzZW50IGl0IG91dC4NCg0KLS0gDQpSZWdh
-cmRzLA0KQXRpc2gNCg==
+Linus,
+
+The following changes since commit a738b5e75b4c13be3485c82eb62c30047aa9f164:
+
+  Merge tag 'kvmarm-fixes-for-5.3-2' of git://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm into HEAD (2019-08-09 16:53:50 +0200)
+
+are available in the git repository at:
+
+
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to e4427372398c31f57450565de277f861a4db5b3b:
+
+  selftests/kvm: make platform_info_test pass on AMD (2019-08-21 19:08:18 +0200)
+
+----------------------------------------------------------------
+* A couple bugfixes, and mostly selftests changes.
+
+----------------------------------------------------------------
+Miaohe Lin (1):
+      KVM: x86: svm: remove redundant assignment of var new_entry
+
+Paolo Bonzini (7):
+      MAINTAINERS: change list for KVM/s390
+      MAINTAINERS: add KVM x86 reviewers
+      selftests: kvm: do not try running the VM in vmx_set_nested_state_test
+      selftests: kvm: provide common function to enable eVMCS
+      selftests: kvm: fix vmx_set_nested_state_test
+      selftests: kvm: fix state save/load on processors without XSAVE
+      Revert "KVM: x86/mmu: Zap only the relevant pages when removing a memslot"
+
+Radim Krcmar (1):
+      kvm: x86: skip populating logical dest map if apic is not sw enabled
+
+Vitaly Kuznetsov (1):
+      selftests/kvm: make platform_info_test pass on AMD
+
+ MAINTAINERS                                        | 19 +++++++------
+ arch/x86/kvm/lapic.c                               |  5 ++++
+ arch/x86/kvm/mmu.c                                 | 33 +---------------------
+ arch/x86/kvm/svm.c                                 |  1 -
+ tools/testing/selftests/kvm/include/evmcs.h        |  2 ++
+ tools/testing/selftests/kvm/lib/x86_64/processor.c | 16 +++++++----
+ tools/testing/selftests/kvm/lib/x86_64/vmx.c       | 20 +++++++++++++
+ tools/testing/selftests/kvm/x86_64/evmcs_test.c    | 15 ++--------
+ tools/testing/selftests/kvm/x86_64/hyperv_cpuid.c  | 12 +++-----
+ .../selftests/kvm/x86_64/platform_info_test.c      |  2 +-
+ .../kvm/x86_64/vmx_set_nested_state_test.c         | 32 +++++++++------------
+ 11 files changed, 69 insertions(+), 88 deletions(-)
