@@ -2,88 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A56D8975AB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 11:12:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E900C975B0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 11:12:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfHUJIk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 05:08:40 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:44985 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727041AbfHUJIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 05:08:39 -0400
-Received: by mail-pf1-f194.google.com with SMTP id c81so1002456pfc.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 02:08:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:subject:date:message-id:in-reply-to:references;
-        bh=EpNyefDvziRpVKagmeTe6/DY7qk9smhH+f//3Sqbad0=;
-        b=dQsp2Dw2bertAm4zumWxD9PMW6WBKigYQx9sgBL6jxtTVSIeEX98WKxQ4hPjNdkb2N
-         CbtwwheE9joXr/a2e/xg0CdTt5ZlfsecT3J+FeeXP2a6QonRnp4J1RMPMrjm8ZSPLeHh
-         nYeuIctAUIbJEK3C1IXTrvE+IyNiEAiY0AjVPHcIWeSpUKLfCv2NlRGsdRLxl3myZHeu
-         qT65RPXcM+C+1ne4IF0+faAgxnpLc4zVbjnlvsQOSlY99IiFSSYFwbJjnelaFdISbU8s
-         gzaIljkMD/hnJGPTEuJouI835NBnLV+7WXsfuNgZAPd8OFpJILPEVTCiQLazw19YNpPB
-         S49Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
-         :references;
-        bh=EpNyefDvziRpVKagmeTe6/DY7qk9smhH+f//3Sqbad0=;
-        b=TaucuSanhx1PgtqBGveGRygpbk0klkkBMRdqqQibcpFWvb/S6RcFFk9q2W1UF8U8QE
-         S6gfshJAIhmvQu2k8nPF/v4OfMC5l+UJa5lvVtrX/zysSdOFj7LqPpZJfgJUTE/+FQ4I
-         yFiboTKVoIJkXbJ9C83Glku4Oqgv7l5XNACPzxmgGEYGonWz42w8maB0HSFUrhPs31y5
-         mci4r7whfb1CFoOjzLXLYGxJAKWcjMHblFP29pFKkfM82mThIcpq3imbcJdnpoPvVKOq
-         +Ag9wgVO00+snenqJbBWCW6gC6RpG6cLzMdAQ7kyFJeWnsSp6Gzu2dyaFCKO2K5cQI4A
-         p7/w==
-X-Gm-Message-State: APjAAAVFpNBiUcRZvHX2fhhA3WtMJFMxeNocN2vFQ9IAQW6C6DPYFTzL
-        xKoAeKkwnU6D04ebpr+M9BLA2gVSwocShg==
-X-Google-Smtp-Source: APXvYqyKArjR2xo71GWtZw1TUowFuYt0l6yVGhFp4LeYfdoCxutYVSWM6jVKK2L6RPGuOF5l6U4+1g==
-X-Received: by 2002:aa7:8602:: with SMTP id p2mr34278306pfn.138.1566378518653;
-        Wed, 21 Aug 2019 02:08:38 -0700 (PDT)
-Received: from localhost ([114.143.126.83])
-        by smtp.gmail.com with ESMTPSA id x128sm39525090pfd.52.2019.08.21.02.08.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Aug 2019 02:08:37 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, rui.zhang@intel.com,
-        linux-pm@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Add Amit Kucheria as reviewer for thermal
-Date:   Wed, 21 Aug 2019 14:38:31 +0530
-Message-Id: <dc11c8ac0892ac14f4fe66ed5336bf32d26e27c9.1566377984.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1566377984.git.amit.kucheria@linaro.org>
-References: <cover.1566377984.git.amit.kucheria@linaro.org>
+        id S1727181AbfHUJKW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 05:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726537AbfHUJKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 05:10:22 -0400
+Received: from localhost (unknown [106.201.100.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8F9B622CF7;
+        Wed, 21 Aug 2019 09:10:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566378621;
+        bh=W9CJXEr9ZkiNKd2KgCE+lVmTvH2ChSyocXu1r1dXMXM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=lGxA0HKW+pO5EmaAU5VHVO9k08vuiGjEf0lotHaARtvj8B27zro+4/zK1TGcH9V4y
+         2wKV+KmxOtiolr/P4cIowle0i+7VrHfuttRd2hvF1R7eyr4vkobK28CzGkzPMm7gob
+         RFHJt/LPOe1e3p92Jo7PqbooGHa9h4V/5smLax7E=
+Date:   Wed, 21 Aug 2019 14:39:09 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     robh+dt@kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
+        pierre-louis.bossart@linux.intel.com, devicetree@vger.kernel.org,
+        lgirdwood@gmail.com, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190821090909.GJ12733@vkoul-mobl.Dlink>
+References: <20190809133407.25918-1-srinivas.kandagatla@linaro.org>
+ <20190809133407.25918-2-srinivas.kandagatla@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809133407.25918-2-srinivas.kandagatla@linaro.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Amit Kucheria as the reviewer for thermal as he would like to
-participate in the review process effort for the thermal framework.
+On 09-08-19, 14:34, Srinivas Kandagatla wrote:
+> This patch adds bindings for Soundwire Slave devices that includes how
+> SoundWire enumeration address and Link ID are used to represented in
+> SoundWire slave device tree nodes.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
-Hi thermal maintainers, I'd like to help out with reviewing patches to the
-thermal framework. I respectfully submit this patch for you to consider
-adding me to the MAINTAINERS file as a reviewer so I get cc'ed on the
-patches.
+Rob does this look good to you, I intent to apply the soundwire parts
 
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  .../devicetree/bindings/soundwire/slave.txt   | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/soundwire/slave.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/soundwire/slave.txt b/Documentation/devicetree/bindings/soundwire/slave.txt
+> new file mode 100644
+> index 000000000000..201f65d2fafa
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
+> @@ -0,0 +1,51 @@
+> +SoundWire slave device bindings.
+> +
+> +SoundWire is a 2-pin multi-drop interface with data and clock line.
+> +It facilitates development of low cost, efficient, high performance systems.
+> +
+> +SoundWire slave devices:
+> +Every SoundWire controller node can contain zero or more child nodes
+> +representing slave devices on the bus. Every SoundWire slave device is
+> +uniquely determined by the enumeration address containing 5 fields:
+> +SoundWire Version, Instance ID, Manufacturer ID, Part ID
+> +and Class ID for a device. Addition to below required properties,
+> +child nodes can have device specific bindings.
+> +
+> +Required properties:
+> +- compatible:	 "sdw<LinkID><VersionID><InstanceID><MFD><PID><CID>".
+> +		  Is the textual representation of SoundWire Enumeration
+> +		  address along with Link ID. compatible string should contain
+> +		  SoundWire Link ID, SoundWire Version ID, Instance ID,
+> +		  Manufacturer ID, Part ID and Class ID in order
+> +		  represented as above and shall be in lower-case hexadecimal
+> +		  with leading zeroes. Vaild sizes of these fields are
+> +		  LinkID is 1 nibble,
+> +		  Version ID is 1 nibble
+> +		  Instance ID in 1 nibble
+> +		  MFD in 4 nibbles
+> +		  PID in 4 nibbles
+> +		  CID is 2 nibbles
+> +
+> +		  Version number '0x1' represents SoundWire 1.0
+> +		  Version number '0x2' represents SoundWire 1.1
+> +		  ex: "sdw0110217201000" represents 0 LinkID,
+> +		  SoundWire 1.0 version slave with Instance ID 1.
+> +		  More Information on detail of encoding of these fields can be
+> +		  found in MIPI Alliance DisCo & SoundWire 1.0 Specifications.
+> +
+> +SoundWire example for Qualcomm's SoundWire controller:
+> +
+> +soundwire@c2d0000 {
+> +	compatible = "qcom,soundwire-v1.5.0"
+> +	reg = <0x0c2d0000 0x2000>;
+> +
+> +	spkr_left:wsa8810-left{
+> +		compatible = "sdw0110217201000";
+> +		...
+> +	};
+> +
+> +	spkr_right:wsa8810-right{
+> +		compatible = "sdw0120217201000";
+> +		...
+> +	};
+> +};
+> -- 
+> 2.21.0
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e81e60bd7c26..75c510270eb2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15896,6 +15896,7 @@ THERMAL
- M:	Zhang Rui <rui.zhang@intel.com>
- M:	Eduardo Valentin <edubezval@gmail.com>
- R:	Daniel Lezcano <daniel.lezcano@linaro.org>
-+R:	Amit Kucheria <amit.kucheria@verdurent.com>
- L:	linux-pm@vger.kernel.org
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/rzhang/linux.git
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/evalenti/linux-soc-thermal.git
 -- 
-2.17.1
-
+~Vinod
