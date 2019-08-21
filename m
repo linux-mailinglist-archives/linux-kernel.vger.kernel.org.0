@@ -2,205 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 515B497859
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:54:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7D6AC978A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:58:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfHULx7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 07:53:59 -0400
-Received: from mga05.intel.com ([192.55.52.43]:26485 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726330AbfHULx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 07:53:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 04:53:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="186211278"
-Received: from stinkbox.fi.intel.com (HELO stinkbox) ([10.237.72.174])
-  by FMSMGA003.fm.intel.com with SMTP; 21 Aug 2019 04:53:55 -0700
-Received: by stinkbox (sSMTP sendmail emulation); Wed, 21 Aug 2019 14:53:55 +0300
-Date:   Wed, 21 Aug 2019 14:53:55 +0300
-From:   Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
-To:     Lyude Paul <lyude@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        Sean Paul <sean@poorly.run>
-Subject: Re: [PATCH v2] drm: Bump encoder limit from 32 to 64
-Message-ID: <20190821115355.GH5942@intel.com>
-References: <20190821001656.32577-1-lyude@redhat.com>
+        id S1727060AbfHULz3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 07:55:29 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35005 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfHULz3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 07:55:29 -0400
+Received: by mail-wm1-f65.google.com with SMTP id l2so1855297wmg.0
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 04:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KcUkbB1oJAzAeUPVtJdwFSVIzZDZ5ZeL5UV3cYaJ4Uo=;
+        b=sdVMTEFZMbSfY285XeoA6H7quYwLJdPYIKQmnG7KUeYKqYiD2iy8LdwWG1VqWhZYr5
+         DGjCZpvV97yFFsDkrm/9rcQ5fTO/SUNwA9FXGdBlAUhlo6ir8uZfv7fJeg8N6TCw2uqa
+         niPWPvEXoAfftj+IarHWB8eXj+XtfCKe1J3mm+ddPyDo6prlL+rSWW8ejDbPBdDA4K/2
+         70vUw5FxcaUx4P9ved1IuitGn8S3uJmns5h5hd/lIrgF3wJcedyPekDg63GWwl6zh6Z9
+         IVDI39+vHNdc5bQao1LmsSpUUtxRDQAicTAcfvRltSBqfgJpV0GvXibqDEZJ1gL2ApPf
+         Fmgw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KcUkbB1oJAzAeUPVtJdwFSVIzZDZ5ZeL5UV3cYaJ4Uo=;
+        b=DySDjeH58+v2RqIj9XWw3OlVbIrj7vGrK6uEQ7G3KJJsUyFup2NOfk1kNWZbwBMqLi
+         hzeBtdt3e63J6Kl3swlqrB23C6/WYVjQoEPq2Pywi/GZi5PFCw9DZ3u4MhqRWSFAHimA
+         xemBNvhq2+BK1jkUki+H53VqANSB5haB8I5nbHcBGdemkAL6+/5EdQJpRg3V/hmecKmt
+         J+YMIWgR2BXWIo/DH1mORPMSxjWPk1JjUEgVDVZ2XnUcqaaSM4ETCIPsdqZEeLTFb/1f
+         z+1BtTMg1qXlmEx1fIboAaR1+5wjOuqQAFgusCnsZYyL1IsnXmAxYgqn8EA+/z7qdSUX
+         GpBg==
+X-Gm-Message-State: APjAAAXRwyl18n0ggqQ5v7R4ydoBzKuI4gfdS7rFuz7rFVnCTU2KAHLp
+        BDfzUIUOJ9MqZly6WgsYb0o=
+X-Google-Smtp-Source: APXvYqwunuwr2KDBPIxE6ORT5hP4MncsNPzCGpYDpTideW+0/Ep7oYAVY9cvDl3PxN9oqw7yNLeNbA==
+X-Received: by 2002:a7b:c3d0:: with SMTP id t16mr6063320wmj.25.1566388526985;
+        Wed, 21 Aug 2019 04:55:26 -0700 (PDT)
+Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
+        by smtp.gmail.com with ESMTPSA id o16sm28419234wrp.23.2019.08.21.04.55.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 04:55:25 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 13:55:23 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Ben Skeggs <skeggsb@gmail.com>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        ML dri-devel <dri-devel@lists.freedesktop.org>,
+        ML nouveau <nouveau@lists.freedesktop.org>,
+        intel-gfx <intel-gfx@lists.freedesktop.org>,
+        linux-kernel@vger.kernel.org, amd-gfx@lists.freedesktop.org,
+        linux-graphics-maintainer@vmware.com,
+        Ben Skeggs <bskeggs@redhat.com>,
+        spice-devel@lists.freedesktop.org
+Subject: Re: [Nouveau] [Intel-gfx] [PATCH v6 08/17] drm/ttm: use gem vma_node
+Message-ID: <20190821115523.GA21839@ulmo>
+References: <20190805140119.7337-1-kraxel@redhat.com>
+ <20190805140119.7337-9-kraxel@redhat.com>
+ <20190813151115.GA29955@ulmo>
+ <20190814055827.6hrxj6daovxxnnvw@sirius.home.kraxel.org>
+ <20190814093524.GA31345@ulmo>
+ <20190814101411.lj3p6zjzbjvnnjf4@sirius.home.kraxel.org>
+ <CACAvsv5Rar9F=Wf-9HBpndY4QaQZcGCx05j0esvV9pitM=JoGg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="lrZ03NoBR/3+SXJZ"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190821001656.32577-1-lyude@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CACAvsv5Rar9F=Wf-9HBpndY4QaQZcGCx05j0esvV9pitM=JoGg@mail.gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 08:16:55PM -0400, Lyude Paul wrote:
-> Assuming that GPUs would never have even close to 32 separate video
-> encoders is quite honestly a pretty reasonable assumption. Unfortunately
-> we do not live in a reasonable world, as it looks like it is actually
-> possible to find devices that will create more drm_encoder objects then
-> this. Case in point: the ThinkPad P71's discrete GPU, which exposes 1
-> eDP port and 5 DP ports. On the P71, nouveau attempts to create one
-> encoder for the eDP port, and two encoders for each DP++/USB-C port
-> along with 4 MST encoders for each DP port. This comes out to 35
-> different encoders. Unfortunately, this can't really be optimized to
-> make less encoders either.
-> 
-> So, what if we bumped the limit to 64? Unfortunately this has one very
-> awkward drawback: we already expose 32-bit bitmasks for encoders to
-> userspace in drm_encoder->possible_clones. Yikes. While cloning is still
-> (rarely) used in certain modern video hardware, it's mostly used in
-> situations where memory bandwidth is so limited that it's not possible
-> to scan out from 2 CRTCs at once.
-> 
-> So, let's try to compromise here: allow encoders with indexes <32 to
-> have non-zero values in drm_encoder->possible_clones, and don't allow
-> encoders with higher indexes to set drm_encoder->possible_clones to a
-> non-zero value. This allows us to avoid breaking UAPI and keep things
-> working sanely for hardware which still uses cloning, while still being
-> able to bump up the encoder limit.
-> 
-> This also fixes driver probing for nouveau on the ThinkPad P71.
-> 
-> Changes since v1:
-> * Move index+possible_clones check out of drm_encoder_init() and into
->   drm_encoder_register_all(), since encoder->possible_clones can get
->   changed any time before registration - Daniel Vetter
-> * Update the commit message a bit to accurately reflect modern day usage
->   of hardware cloning, which as Daniel Stone pointed out is apparently a
->   thing
-> 
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> Cc: nouveau@lists.freedesktop.org
-> ---
->  drivers/gpu/drm/drm_atomic.c  |  2 +-
->  drivers/gpu/drm/drm_encoder.c | 12 ++++++++++--
->  include/drm/drm_crtc.h        |  2 +-
->  include/drm/drm_encoder.h     | 20 +++++++++++++++-----
->  4 files changed, 27 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-> index 419381abbdd1..27ce988ef0cc 100644
-> --- a/drivers/gpu/drm/drm_atomic.c
-> +++ b/drivers/gpu/drm/drm_atomic.c
-> @@ -392,7 +392,7 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
->  	drm_printf(p, "\tcolor_mgmt_changed=%d\n", state->color_mgmt_changed);
->  	drm_printf(p, "\tplane_mask=%x\n", state->plane_mask);
->  	drm_printf(p, "\tconnector_mask=%x\n", state->connector_mask);
-> -	drm_printf(p, "\tencoder_mask=%x\n", state->encoder_mask);
-> +	drm_printf(p, "\tencoder_mask=%llx\n", state->encoder_mask);
->  	drm_printf(p, "\tmode: " DRM_MODE_FMT "\n", DRM_MODE_ARG(&state->mode));
->  
->  	if (crtc->funcs->atomic_print_state)
-> diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-> index 7fb47b7b8b44..9d443b45ebba 100644
-> --- a/drivers/gpu/drm/drm_encoder.c
-> +++ b/drivers/gpu/drm/drm_encoder.c
-> @@ -71,6 +71,14 @@ int drm_encoder_register_all(struct drm_device *dev)
->  	int ret = 0;
->  
->  	drm_for_each_encoder(encoder, dev) {
-> +		/*
-> +		 * Since possible_clones has been exposed to userspace as a
-> +		 * 32bit bitmask, we don't allow creating encoders with an
-> +		 * index >=32 which are capable of cloning
-> +		 */
-> +		if (WARN_ON(encoder->index >= 32 && encoder->possible_clones))
-> +			return -EINVAL;
 
-I believe possible_clones was supposed to include the encoder itself. Not
-really sure why though. I guess we've now decided that it's OK not to do 
-that?
+--lrZ03NoBR/3+SXJZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-git grep tells me drm_atomic_helper.c has some uses of drm_encoder_mask()
-that need to be looked at.
+On Wed, Aug 21, 2019 at 04:33:58PM +1000, Ben Skeggs wrote:
+> On Wed, 14 Aug 2019 at 20:14, Gerd Hoffmann <kraxel@redhat.com> wrote:
+> >
+> >   Hi,
+> >
+> > > > Changing the order doesn't look hard.  Patch attached (untested, have no
+> > > > test hardware).  But maybe I missed some detail ...
+> > >
+> > > I came up with something very similar by splitting up nouveau_bo_new()
+> > > into allocation and initialization steps, so that when necessary the GEM
+> > > object can be initialized in between. I think that's slightly more
+> > > flexible and easier to understand than a boolean flag.
+> >
+> > Yes, that should work too.
+> >
+> > Acked-by: Gerd Hoffmann <kraxel@redhat.com>
+> Acked-by: Ben Skeggs <bskeggs@redhat.com>
 
-> +
->  		if (encoder->funcs->late_register)
->  			ret = encoder->funcs->late_register(encoder);
->  		if (ret)
-> @@ -112,8 +120,8 @@ int drm_encoder_init(struct drm_device *dev,
->  {
->  	int ret;
->  
-> -	/* encoder index is used with 32bit bitmasks */
-> -	if (WARN_ON(dev->mode_config.num_encoder >= 32))
-> +	/* encoder index is used with 64bit bitmasks */
-> +	if (WARN_ON(dev->mode_config.num_encoder >= 64))
->  		return -EINVAL;
->  
->  	ret = drm_mode_object_add(dev, &encoder->base, DRM_MODE_OBJECT_ENCODER);
-> diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-> index 7d14c11bdc0a..fd0b2438c3d5 100644
-> --- a/include/drm/drm_crtc.h
-> +++ b/include/drm/drm_crtc.h
-> @@ -210,7 +210,7 @@ struct drm_crtc_state {
->  	 * @encoder_mask: Bitmask of drm_encoder_mask(encoder) of encoders
->  	 * attached to this CRTC.
->  	 */
-> -	u32 encoder_mask;
-> +	u64 encoder_mask;
->  
->  	/**
->  	 * @adjusted_mode:
-> diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-> index 70cfca03d812..3f9cb65694e1 100644
-> --- a/include/drm/drm_encoder.h
-> +++ b/include/drm/drm_encoder.h
-> @@ -159,7 +159,15 @@ struct drm_encoder {
->  	 * encoders can be used in a cloned configuration, they both should have
->  	 * each another bits set.
->  	 *
-> -	 * In reality almost every driver gets this wrong.
-> +	 * In reality almost every driver gets this wrong, and most modern
-> +	 * display hardware does not have support for cloning. As well, while we
-> +	 * expose this mask to userspace as 32bits long, we do sure purely to
-> +	 * avoid breaking pre-existing UAPI since the limitation on the number
-> +	 * of encoders has been increased from 32 bits to 64 bits. In order to
-> +	 * maintain functionality for drivers which do actually support cloning,
-> +	 * we only allow cloning with encoders that have an index <32. Encoders
-> +	 * with indexes higher than 32 are not allowed to specify a non-zero
-> +	 * value here.
->  	 *
->  	 * Note that since encoder objects can't be hotplugged the assigned indices
->  	 * are stable and hence known before registering all objects.
-> @@ -198,13 +206,15 @@ static inline unsigned int drm_encoder_index(const struct drm_encoder *encoder)
->  }
->  
->  /**
-> - * drm_encoder_mask - find the mask of a registered ENCODER
-> + * drm_encoder_mask - find the mask of a registered encoder
->   * @encoder: encoder to find mask for
->   *
-> - * Given a registered encoder, return the mask bit of that encoder for an
-> - * encoder's possible_clones field.
-> + * Returns:
-> + * A bit mask with the nth bit set, where n is the index of the encoder. Take
-> + * care when using this, as the DRM UAPI only allows for 32 bit encoder masks
-> + * while internally encoder masks are 64 bits.
->   */
-> -static inline u32 drm_encoder_mask(const struct drm_encoder *encoder)
-> +static inline u64 drm_encoder_mask(const struct drm_encoder *encoder)
->  {
->  	return 1 << drm_encoder_index(encoder);
->  }
-> -- 
-> 2.21.0
-> 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+Thanks guys, applied to drm-misc-next.
 
--- 
-Ville Syrjälä
-Intel
+Thierry
+
+--lrZ03NoBR/3+SXJZ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1dMSYACgkQ3SOs138+
+s6H8fQ/9F4UBF0EhVBpcsMNo5HI1kJ8KEkbiNqUWwZEh/kPLyWXoFWSWvA5FG+rP
+521CfufMmyezTHxOkPww6VEUsgaV9yEl00jqIhclgA43sBeDziR4XGzGmA/hpdpc
+ky8L49+C8mfoICLHeBjOSbSHoPhv7EqS1w8CtZkCZkf1nApk/R71bbYk6iz8zCCY
+dhZo6PGTJMpOoEQtryLjL2NJxvJe57zzsltRKxl9uEnjeDF0LRzqHYZ1Lt/mvRMn
+hXMXC1H+jOtP4p7OtP8zE6oM7desaJ2h4jXF1v1/AZHNUxQYtRohHNrYXBDqfQF5
+stLLdOjynZ8rcjhObmi3GeLbVeD2wEQJ7Qp7OgTwqbHnE4wXmAYD4KuKboJrQI8t
+0Hd25epBD/CHDgn7Kqoj8DRy5NArmeCGRDHVuFYF45utaectO7IzaxRD5zLRs6Q5
+vAA0fiy8JVs6ppQ6B9GtlQcXEKbmywLhBAzHb/Q7hukhppOhS+BxZO0FASdPmPnH
+0kjoVG0oz9oH8X/ciqubGIAUkrq+SP+OnPVvg1zGfAkxLSUTDKMZ4ZmP2vlrRzaf
+KFbFX02Gu+VDe/o7Pcf9F8pDlWS+jQL6KN+PFo2tkGP8HvouRsIagyzY/AJD0xuP
+Bb3DKPgm8W5/ggiLoiTbXz+CUWR25Hm2vBU/CZ9Uv9KBPgv95bA=
+=lGaC
+-----END PGP SIGNATURE-----
+
+--lrZ03NoBR/3+SXJZ--
