@@ -2,148 +2,182 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B374898021
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:31:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D78189802A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:32:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729322AbfHUQbZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:31:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54398 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726828AbfHUQbZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:31:25 -0400
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7AE1216F4;
-        Wed, 21 Aug 2019 16:31:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566405084;
-        bh=bnh8CvEnQy9X0C5bvrBrKiyeazRpnmEBbeppLigN01M=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=A4JP0whayHrqiYOVBAWhgwbz5C2crsOyLMmFmTDTd7JmlLqBoHVPOp8AmaE/1WVZb
-         qbiKfKwz6zTugTqA4BeGM5x2S/cC/2VQ6ZqyC+RbVmgXCBkcdZy+3+qTpkbBelEqD+
-         3hLuketMdtBNM/br/RWxkKZxlQJv0TzWM7p3ilEY=
-Received: by mail-lf1-f41.google.com with SMTP id c19so2253749lfm.10;
-        Wed, 21 Aug 2019 09:31:23 -0700 (PDT)
-X-Gm-Message-State: APjAAAXiQBL/fm5vFy7w4TFjV35xzIUeMo+LISKo94OC/jcRc+q0XLVD
-        B90ZOi7Y74+1V6VmJ0HQtSK5dt+Gs/9hgTnU01M=
-X-Google-Smtp-Source: APXvYqz/fVv8SO2SRb1xcvEP45J5/AL+mqd7uc/GSC0z3wrtoDQ5760ULyRWZHOO/9MnwlPhYhVrEsf9IJ0s9M8anYQ=
-X-Received: by 2002:ac2:44ce:: with SMTP id d14mr19154003lfm.143.1566405082035;
- Wed, 21 Aug 2019 09:31:22 -0700 (PDT)
+        id S1729433AbfHUQcY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:32:24 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:35074 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbfHUQcX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:32:23 -0400
+Received: by mail-pl1-f193.google.com with SMTP id gn20so1612108plb.2;
+        Wed, 21 Aug 2019 09:32:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=pDSd7SGk/DY6GuxuuavhgDxlL+IufA63dRDI3AQTbS4=;
+        b=UcVOc4tBUOwmoJfipEg8MeVlXJDmigZScACSk87Msp47DaE/lPpGmF06Lcg7rzyoGE
+         AqSxpFcQfVTKoSxtyA4vu6ZwnMIVz8YSGtAFerKUX9kK7h5WLLm+pIb6rd0o75bBwOKb
+         mWL7kOqv6CwibF4Gi1nFzhpmogzAyGUpVMFO/FZzZTM98xbRhROy0FxH4aT4U/+J/yTv
+         iB4yPOwCZxlKJBndqDhwJ4t6FHiIowZWYgcB5q3/EAPwzn8U11OEwlE40+MpW4C4Rc/L
+         Fc4iFUWO4EtoZA1YDKE86WFDr/KIfj21I1BUzYUsOwoZPIQnN+rCFUuMKOC9yVSUDE3D
+         yfjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=pDSd7SGk/DY6GuxuuavhgDxlL+IufA63dRDI3AQTbS4=;
+        b=EfjpA4IU3p7FquzVq/5dwH7qvvVP/lsQPve2HY0VFmxFmRU51V8zeWXG0rjpvwgRSm
+         eUwZWKVVEge8aN9SFaJIFZSNeyfl13wYmbQtzeccULTLKVbApczQL/4OWirwzG6CnboK
+         0MBCBE+F99f0zOXjvakvQICIhPS0j5Bzcg4miafqIYFySFdRAzkjBAosnBL17XMHqQYh
+         UH5K3X8oEo+qEB2WCI2nPqz5ZEIhmQ7paK/TL/tLWQCD4Q8PMLLnAX6yzGXd9OGe+dez
+         1yMtscGy2XKMapbCA7N/678wXzx9O0nmyc40SqrxL0n9Q9EtZD8bStyVTlReBz+4MtVD
+         G1zQ==
+X-Gm-Message-State: APjAAAWeiIoeDB3ngN+Fmk5nlBBmqPlrZq5ZOJLzRFFEHEvCuzhYhGpQ
+        SnBE6YxXclyo0nFle2PW2Vq848NeV3E=
+X-Google-Smtp-Source: APXvYqygLt6JnGdpnnQo0Yur5Q+gq4DxiD8HmafW1pMiWWteLsUUEZ3r2fvMrKKz1FF5ZBiKAnkR8w==
+X-Received: by 2002:a17:902:d70a:: with SMTP id w10mr32715980ply.251.1566405142614;
+        Wed, 21 Aug 2019 09:32:22 -0700 (PDT)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id o130sm29917759pfg.171.2019.08.21.09.32.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 09:32:21 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 09:32:20 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ivan Mikhaylov <i.mikhaylov@yadro.com>
+Cc:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        linux-watchdog@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Alexander Amelkin <a.amelkin@yadro.com>
+Subject: Re: [PATCH 3/3] watchdog/aspeed: add support for dual boot
+Message-ID: <20190821163220.GA11547@roeck-us.net>
+References: <1f2cd155057e5ab0cdb20a9a11614bbb09bb49ad.camel@yadro.com>
 MIME-Version: 1.0
-References: <20190819121720.31345-1-ribalda@kernel.org> <20190819121720.31345-3-ribalda@kernel.org>
- <20190821161523.6lckivpwiihpl35z@uno.localdomain>
-In-Reply-To: <20190821161523.6lckivpwiihpl35z@uno.localdomain>
-From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date:   Wed, 21 Aug 2019 18:31:05 +0200
-X-Gmail-Original-Message-ID: <CAPybu_3QzD4t7c4BXLcxAwYbuKUoAmJY8foPQLm=XKzgD7W+Dw@mail.gmail.com>
-Message-ID: <CAPybu_3QzD4t7c4BXLcxAwYbuKUoAmJY8foPQLm=XKzgD7W+Dw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] media: imx214: Add new control with V4L2_CID_PIXEL_SIZE
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1f2cd155057e5ab0cdb20a9a11614bbb09bb49ad.camel@yadro.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo
+On Wed, Aug 21, 2019 at 06:57:43PM +0300, Ivan Mikhaylov wrote:
+> Set WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION into WDT_CLEAR_TIMEOUT_STATUS
+> to clear out boot code source and re-enable access to the primary SPI flash
+> chip while booted via wdt2 from the alternate chip.
+> 
+> AST2400 datasheet says:
+> "In the 2nd flash booting mode, all the address mapping to CS0# would be
+> re-directed to CS1#. And CS0# is not accessable under this mode. To access
+> CS0#, firmware should clear the 2nd boot mode register in the WDT2 status
+> register WDT30.bit[1]."
 
+Is there reason to not do this automatically when loading the module
+in alt-boot mode ? What means does userspace have to determine if CS0
+or CS1 is active at any given time ? If there is reason to ever have CS1
+active instead of CS0, what means would userspace have to enable it ?
 
-On Wed, Aug 21, 2019 at 6:14 PM Jacopo Mondi <jacopo@jmondi.org> wrote:
->
-> Hi Ricardo,
->
-> On Mon, Aug 19, 2019 at 02:17:20PM +0200, Ricardo Ribalda Delgado wrote:
-> > According to the product brief, the unit cell size is 1120 nanometers^2.
->
-> Should this information come from DT ?
+If userspace can not really determine if CS1 or CS0 is active, all it could
+ever do was to enable CS0 to be in a deterministic state. If so, it doesn't
+make sense to ever have CS1 active, and re-enabling CS0 could be automatic.
 
-I do not think so. You cannot change this value and it needs to be
-defined also in sensors/cameras that might not have a DT, like a usb
-webcam.
+Similar, if CS1 can ever be enabled, there is no means for userspace to ensure
+that some other application did not re-enable CS0 while it believes that CS1
+is enabled. If there is no means for userspace to enable CS1, it can never be
+sure what is enabled (because some other entity may have enabled CS0 while
+userspace just thought that CS1 is still enabled). Again, the only means
+to guarantee a well defined state would be to explicitly enable CS0 and provive
+no means to enable CS1. Again, this could be done during boot, not requiring
+an explicit request from userspace.
 
-It would be like adding to the DT the min/max exposure time...
+> 
+> Signed-off-by: Ivan Mikhaylov <i.mikhaylov@yadro.com>
+> ---
+>  drivers/watchdog/aspeed_wdt.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/watchdog/aspeed_wdt.c b/drivers/watchdog/aspeed_wdt.c
+> index cc71861e033a..858e62f1c7ba 100644
+> --- a/drivers/watchdog/aspeed_wdt.c
+> +++ b/drivers/watchdog/aspeed_wdt.c
+> @@ -53,6 +53,8 @@ MODULE_DEVICE_TABLE(of, aspeed_wdt_of_table);
+>  #define   WDT_CTRL_ENABLE		BIT(0)
+>  #define WDT_TIMEOUT_STATUS	0x10
+>  #define   WDT_TIMEOUT_STATUS_BOOT_SECONDARY	BIT(1)
+> +#define WDT_CLEAR_TIMEOUT_STATUS	0x14
+> +#define   WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION	BIT(0)
+>  
+>  /*
+>   * WDT_RESET_WIDTH controls the characteristics of the external pulse (if
+> @@ -165,6 +167,29 @@ static int aspeed_wdt_restart(struct watchdog_device *wdd,
+>  	return 0;
+>  }
+>  
+> +static ssize_t access_cs0_store(struct device *dev,
+> +			      struct device_attribute *attr,
+> +			      const char *buf, size_t size)
+> +{
+> +	struct aspeed_wdt *wdt = dev_get_drvdata(dev);
+> +
+> +	if (unlikely(!wdt))
+> +		return -ENODEV;
+> +
 
-But of course we can discuss it ;)
+How would this ever happen, and how / where is drvdata set to NULL ?
 
-Best regards
+> +	writel(WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION,
+> +			wdt->base + WDT_CLEAR_TIMEOUT_STATUS);
+> +	wdt->wdd.bootstatus |= WDIOF_EXTERN1;
 
->
-> I'm asking as I've a series in review that adds an helper that
-> collectes dt properties and register controls for them. It currently
-> only supports the newly proposed camera location control, but there
-> might be others like the rotation, for which we already have a DT
-> property.
->
-> https://patchwork.kernel.org/project/linux-media/list/?series=160901
->
-> This new one is indeed an HW property of the sensor, I wonder if
-> having it in the firmware interface would make any sense or not...
->
-> Thanks
->   j
->
-> >
-> > https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
-> >
-> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > ---
-> >  drivers/media/i2c/imx214.c | 23 +++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >
-> > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > index 159a3a604f0e..b2f6bd2d8d7d 100644
-> > --- a/drivers/media/i2c/imx214.c
-> > +++ b/drivers/media/i2c/imx214.c
-> > @@ -47,6 +47,7 @@ struct imx214 {
-> >       struct v4l2_ctrl *pixel_rate;
-> >       struct v4l2_ctrl *link_freq;
-> >       struct v4l2_ctrl *exposure;
-> > +     struct v4l2_ctrl *pixel_size;
-> >
-> >       struct regulator_bulk_data      supplies[IMX214_NUM_SUPPLIES];
-> >
-> > @@ -941,6 +942,26 @@ static int __maybe_unused imx214_resume(struct device *dev)
-> >       return ret;
-> >  }
-> >
-> > +static void pixel_size_init(const struct v4l2_ctrl *ctrl, u32 idx,
-> > +                  union v4l2_ctrl_ptr ptr)
-> > +{
-> > +     ptr.p_pixel_size->width = 1120;
-> > +     ptr.p_pixel_size->height = 1120;
-> > +}
-> > +
-> > +static const struct v4l2_ctrl_type_ops pixel_size_ops = {
-> > +     .init = pixel_size_init,
-> > +};
-> > +
-> > +static struct v4l2_ctrl *new_pixel_size_ctrl(struct v4l2_ctrl_handler *handler)
-> > +{
-> > +     static struct v4l2_ctrl_config ctrl = {
-> > +             .id = V4L2_CID_PIXEL_SIZE,
-> > +             .type_ops = &pixel_size_ops,
-> > +     };
-> > +
-> > +     return v4l2_ctrl_new_custom(handler, &ctrl, NULL);
-> > +}
-> >  static int imx214_probe(struct i2c_client *client)
-> >  {
-> >       struct device *dev = &client->dev;
-> > @@ -1029,6 +1050,8 @@ static int imx214_probe(struct i2c_client *client)
-> >                                            V4L2_CID_EXPOSURE,
-> >                                            0, 3184, 1, 0x0c70);
-> >
-> > +     imx214->pixel_size = new_pixel_size_ctrl(&imx214->ctrls);
-> > +
-> >       ret = imx214->ctrls.error;
-> >       if (ret) {
-> >               dev_err(&client->dev, "%s control init failed (%d)\n",
-> > --
-> > 2.23.0.rc1
-> >
+The variable reflects the _boot status_. It should not change after booting.
+
+> +
+> +	return size;
+> +}
+> +static DEVICE_ATTR_WO(access_cs0);
+> +
+> +static struct attribute *bswitch_attrs[] = {
+> +	&dev_attr_access_cs0.attr,
+> +	NULL
+> +};
+> +ATTRIBUTE_GROUPS(bswitch);
+> +
+>  static const struct watchdog_ops aspeed_wdt_ops = {
+>  	.start		= aspeed_wdt_start,
+>  	.stop		= aspeed_wdt_stop,
+> @@ -223,6 +248,9 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>  
+>  	wdt->ctrl = WDT_CTRL_1MHZ_CLK;
+>  
+> +	if (of_property_read_bool(np, "aspeed,alt-boot"))
+> +		wdt->wdd.groups = bswitch_groups;
+> +
+Why does this have to be separate to the existing evaluation of
+aspeed,alt-boot, and why does the existing code not work ?
+
+Also, is it guaranteed that this does not interfer with existing
+support for alt-boot ?
+
+>  	/*
+>  	 * Control reset on a per-device basis to ensure the
+>  	 * host is not affected by a BMC reboot
+> @@ -309,6 +337,8 @@ static int aspeed_wdt_probe(struct platform_device *pdev)
+>  	if (status & WDT_TIMEOUT_STATUS_BOOT_SECONDARY)
+>  		wdt->wdd.bootstatus = WDIOF_CARDRESET;
+>  
+> +	dev_set_drvdata(dev, wdt);
+> +
+>  	return devm_watchdog_register_device(dev, &wdt->wdd);
+>  }
+>  
+> -- 
+> 2.20.1
+> 
+> 
