@@ -2,139 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F09F970D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 06:13:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7393B970E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 06:14:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727578AbfHUEN1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 00:13:27 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:47151 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727345AbfHUENY (ORCPT
+        id S1727629AbfHUEOd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 00:14:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:54868 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726693AbfHUEOd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 00:13:24 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x7L4CeQE002060;
-        Wed, 21 Aug 2019 13:12:43 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x7L4CeQE002060
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566360764;
-        bh=06l9SB7v5ILNMn5J9bc9p5rJeGZsTfbhbNdQ8XoOG0c=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yWW1+L8I1XCIs628NU6dXbN1JpXVgGa9lCVYdjp/ScCfzZQSUxPV0PwRnETmrqy/y
-         BByYlO59aDg0VprgA2PGszaeFB58MGpOeyIt6qeiSNz8wWeIaNtwR9bm4NotQe5T8a
-         VXsus2w8/O/cqkMWzXWxe7g7nC+JR9AD7Lq9Gt1R8c4gJ2E+ekNKEzc3/IWtsnOkEs
-         0F4qBsvJ5hQTI81EQ/uwCDzwidqFahybRK+sQfLkS/XT4QZ5rGlsux+0sLhbd8C03Q
-         G6doNGfHAlto9L9vULFcwFjle5XABXdhtM+V2/NEUA8nyoiH/T7BdQtkePHOjLmhHO
-         xtJg5XBwEqr7w==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] video/logo: move pnmtologo tool to drivers/video/logo/ from scripts/
-Date:   Wed, 21 Aug 2019 13:12:37 +0900
-Message-Id: <20190821041237.23197-5-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190821041237.23197-1-yamada.masahiro@socionext.com>
-References: <20190821041237.23197-1-yamada.masahiro@socionext.com>
+        Wed, 21 Aug 2019 00:14:33 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L4DvZE120885;
+        Wed, 21 Aug 2019 04:14:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : subject : to :
+ cc : references : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2019-08-05;
+ bh=e3kgDvccVDLzNMMeR9/zH2eW+3aMX6c/MhJZaprZC3E=;
+ b=AO1lwW7GB+SWC6UPk9BqflMxYl14SNqeX+eyW3uvmZUOzdDTu47HI0bDdNgfDT6NXNQP
+ 7aHQrgyy5FBkfD4ui/eDYnz/ywy0+Cksn3IyiwqxTbgH7wg/0DKIFk2iRvkvriey1wvM
+ UFy33uW2amPTLoZVlGFWR5aGWJ6VSOR/sNsDmBDxIa/PyLcaTuCADvO0PUKK77nVOISc
+ kDsElmn5RyYZeqYmS0sYT57vxMED0MoQ3DNRcFcRv2kfifLsJ/wYknivca4EbhZcFaqb
+ 2jTs7aD7WhJRYGo77E7TJjZRL6WSVTO3P4f2ZcgRNyBWZ37DSd/rwb4H3agPD5kex4ir 8A== 
+Received: from userp3030.oracle.com (userp3030.oracle.com [156.151.31.80])
+        by userp2120.oracle.com with ESMTP id 2uea7qtjje-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 04:14:22 +0000
+Received: from pps.filterd (userp3030.oracle.com [127.0.0.1])
+        by userp3030.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L4D9n0141955;
+        Wed, 21 Aug 2019 04:14:22 GMT
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userp3030.oracle.com with ESMTP id 2ug1ga34eb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 21 Aug 2019 04:14:22 +0000
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7L4EKYn029840;
+        Wed, 21 Aug 2019 04:14:20 GMT
+Received: from [192.168.1.218] (/98.229.125.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 20 Aug 2019 21:14:19 -0700
+From:   Daniel Jordan <daniel.m.jordan@oracle.com>
+Subject: Re: [PATCH 1/2] padata: always acquire cpu_hotplug_lock before
+ pinst->lock
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190809192857.26585-1-daniel.m.jordan@oracle.com>
+ <20190815051518.GB24982@gondor.apana.org.au>
+Message-ID: <f25cc77e-d467-c7a9-415c-eb9f46ac8493@oracle.com>
+Date:   Wed, 21 Aug 2019 00:14:19 -0400
+MIME-Version: 1.0
+In-Reply-To: <20190815051518.GB24982@gondor.apana.org.au>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908210044
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908210044
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This tool is only used by drivers/video/logo/Makefile. No reason to
-keep it in scripts/.
+[sorry for late reply, moved to new place in past week]
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+On 8/15/19 1:15 AM, Herbert Xu wrote:
+> On Fri, Aug 09, 2019 at 03:28:56PM -0400, Daniel Jordan wrote:
+>> padata doesn't take cpu_hotplug_lock and pinst->lock in a consistent
+>> order.  Which should be first?  CPU hotplug calls into padata with
+>> cpu_hotplug_lock already held, so it should have priority.
+> 
+> Yeah this is clearly a bug but I think we need tackle something
+> else first.
+>   
+>> diff --git a/kernel/padata.c b/kernel/padata.c
+>> index b60cc3dcee58..d056276a96ce 100644
+>> --- a/kernel/padata.c
+>> +++ b/kernel/padata.c
+>> @@ -487,9 +487,7 @@ static void __padata_stop(struct padata_instance *pinst)
+>>   
+>>   	synchronize_rcu();
+>>   
+>> -	get_online_cpus();
+>>   	padata_flush_queues(pinst->pd);
+>> -	put_online_cpus();
+>>   }
+> 
+> As I pointed earlier, the whole concept of flushing the queues is
+> suspect.  So we should tackle that first and it may obviate the need
+> to do get_online_cpus completely if the flush call disappears.
+>
+> My main worry is that you're adding an extra lock around synchronize_rcu
+> and that is always something that should be done only after careful
+> investigation.
 
-Changes in v2: None
+Agreed, padata_stop may not need to do get_online_cpus() if we stop an instance in a way that plays well with async crypto.
 
- drivers/video/logo/.gitignore               |  1 +
- drivers/video/logo/Makefile                 | 10 +++++-----
- {scripts => drivers/video/logo}/pnmtologo.c |  0
- scripts/.gitignore                          |  1 -
- scripts/Makefile                            |  2 --
- 5 files changed, 6 insertions(+), 8 deletions(-)
- rename {scripts => drivers/video/logo}/pnmtologo.c (100%)
+I'll try fixing the flushing with Steffen's refcounting idea assuming he hasn't already started on that.  So we're on the same page, the problem is that if padata's ->parallel() punts to a cryptd thread, flushing the parallel work will return immediately without necessarily indicating the parallel job is finished, so flushing is pointless and padata_replace needs to wait till the instance's refcount drops to 0.  Did I get it right?
 
-diff --git a/drivers/video/logo/.gitignore b/drivers/video/logo/.gitignore
-index e48355f538fa..9dda1b26b2e4 100644
---- a/drivers/video/logo/.gitignore
-+++ b/drivers/video/logo/.gitignore
-@@ -5,3 +5,4 @@
- *_vga16.c
- *_clut224.c
- *_gray256.c
-+pnmtologo
-diff --git a/drivers/video/logo/Makefile b/drivers/video/logo/Makefile
-index 7d672d40bf01..bcda657493a4 100644
---- a/drivers/video/logo/Makefile
-+++ b/drivers/video/logo/Makefile
-@@ -18,19 +18,19 @@ obj-$(CONFIG_SPU_BASE)			+= logo_spe_clut224.o
- 
- # How to generate logo's
- 
--pnmtologo := scripts/pnmtologo
-+hostprogs-y := pnmtologo
- 
- # Create commands like "pnmtologo -t mono -n logo_mac_mono -o ..."
- quiet_cmd_logo = LOGO    $@
--      cmd_logo = $(pnmtologo) -t $(lastword $(subst _, ,$*)) -n $* -o $@ $<
-+      cmd_logo = $(obj)/pnmtologo -t $(lastword $(subst _, ,$*)) -n $* -o $@ $<
- 
--$(obj)/%.c: $(src)/%.pbm $(pnmtologo) FORCE
-+$(obj)/%.c: $(src)/%.pbm $(obj)/pnmtologo FORCE
- 	$(call if_changed,logo)
- 
--$(obj)/%.c: $(src)/%.ppm $(pnmtologo) FORCE
-+$(obj)/%.c: $(src)/%.ppm $(obj)/pnmtologo FORCE
- 	$(call if_changed,logo)
- 
--$(obj)/%.c: $(src)/%.pgm $(pnmtologo) FORCE
-+$(obj)/%.c: $(src)/%.pgm $(obj)/pnmtologo FORCE
- 	$(call if_changed,logo)
- 
- # generated C files
-diff --git a/scripts/pnmtologo.c b/drivers/video/logo/pnmtologo.c
-similarity index 100%
-rename from scripts/pnmtologo.c
-rename to drivers/video/logo/pnmtologo.c
-diff --git a/scripts/.gitignore b/scripts/.gitignore
-index 17f8cef88fa8..4aa1806c59c2 100644
---- a/scripts/.gitignore
-+++ b/scripts/.gitignore
-@@ -4,7 +4,6 @@
- bin2c
- conmakehash
- kallsyms
--pnmtologo
- unifdef
- recordmcount
- sortextable
-diff --git a/scripts/Makefile b/scripts/Makefile
-index 16bcb8087899..709df809f892 100644
---- a/scripts/Makefile
-+++ b/scripts/Makefile
-@@ -4,7 +4,6 @@
- # the kernel for the build process.
- # ---------------------------------------------------------------------------
- # kallsyms:      Find all symbols in vmlinux
--# pnmttologo:    Convert pnm files to logo files
- # conmakehash:   Create chartable
- # conmakehash:	 Create arrays for initializing the kernel console tables
- 
-@@ -12,7 +11,6 @@ HOST_EXTRACFLAGS += -I$(srctree)/tools/include
- 
- hostprogs-$(CONFIG_BUILD_BIN2C)  += bin2c
- hostprogs-$(CONFIG_KALLSYMS)     += kallsyms
--hostprogs-$(CONFIG_LOGO)         += pnmtologo
- hostprogs-$(CONFIG_VT)           += conmakehash
- hostprogs-$(BUILD_C_RECORDMCOUNT) += recordmcount
- hostprogs-$(CONFIG_BUILDTIME_EXTABLE_SORT) += sortextable
--- 
-2.17.1
-
+Daniel
