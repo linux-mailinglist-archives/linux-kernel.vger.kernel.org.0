@@ -2,182 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 92B3296E1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A42B896E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:18:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726595AbfHUARH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 20:17:07 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:59074 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726151AbfHUARH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 20:17:07 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 61D37308427D;
-        Wed, 21 Aug 2019 00:17:06 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74B8460BF3;
-        Wed, 21 Aug 2019 00:17:02 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm: Bump encoder limit from 32 to 64
-Date:   Tue, 20 Aug 2019 20:16:55 -0400
-Message-Id: <20190821001656.32577-1-lyude@redhat.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 21 Aug 2019 00:17:06 +0000 (UTC)
+        id S1726527AbfHUASu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 20:18:50 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:34972 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726372AbfHUASu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 20:18:50 -0400
+Received: by mail-pl1-f194.google.com with SMTP id gn20so312927plb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 17:18:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=57gZcRfgDGHX2fT3IVW27Y0VYhsGx0ciLsG0pvlDHNg=;
+        b=Y+y5p8B0lzLHuW5kG8ttgFqeebFNxTZObxgwNZkCBWf+QQLk00bDixWY6RzBduTqFe
+         edkSMEFNdGWiMeFMUGvE8Ae01qK/32fR2gRIRFVPzil18srA2XfLmQjEsfo8mzvUMVbA
+         RL/7fcoiT827dXrb1ZWE6jpZ+ICelcQjWSlgt/twGBWHQp5Cl8AM1QMACZULkNzs57ED
+         5xs/UTcKuYOkLDepi0uEoAzSc3ZgBU7E1IWpHOc+3KYCRw7OL4sY1yGjY8zlOahyLHS0
+         7PdiWY1g4wEPPteK4PzrROEZ5K4ceX8WLZKAQhJgfIvYYIswBZXC7qYGmhxFijfxG4VM
+         j8hQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=57gZcRfgDGHX2fT3IVW27Y0VYhsGx0ciLsG0pvlDHNg=;
+        b=X3TXCrl1Z48v0Z/3/gCGpxS8ib/q7WY4VIUUKjUpcGcUK1U8DTW5hTc2Pnn2eO/fuQ
+         SRkJ3P156G5gXb8EcpTOIm3UWffX7TrPBL5a9VrZc8j1E02dFyFAi0VgnGtKuE+smVaS
+         6UM9nNfwIIHI9GliTTOWRB8ZmdSWixLddOFd44jx9CJ/7MDQSaaG7PvaYwJ3KN+zSn30
+         WjxWr4B6SX9SfhyEzQk+0BpmaYsUanxrZsiE0rWV61n+dFmJUUksAPZNnu9OCd8kAsQg
+         GiXAMBZlzYrwV+s/sLQWMytr5XofFO+aNVKHBGPyrNwJAEMaGCe3u+Xz6Ne8YbUUubbt
+         clww==
+X-Gm-Message-State: APjAAAX3jHhgel/W+0qp82zOwMPA4a0hBFhYBR1MJIIbrSz5VUGPisoj
+        72HQKbWCBXWngDAiCozYhUY=
+X-Google-Smtp-Source: APXvYqxQmbLxyDLbT0LkOLDX9rn36HoZ95N9Vdi5ziVyq4qecfy7S6EgpHIvECqUKI4WrFTEsbf1Iw==
+X-Received: by 2002:a17:902:346:: with SMTP id 64mr31089028pld.151.1566346729667;
+        Tue, 20 Aug 2019 17:18:49 -0700 (PDT)
+Received: from localhost.localdomain (wsip-184-188-36-2.sd.sd.cox.net. [184.188.36.2])
+        by smtp.googlemail.com with ESMTPSA id g2sm18806323pfm.32.2019.08.20.17.18.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 20 Aug 2019 17:18:49 -0700 (PDT)
+From:   Caitlyn <caitlynannefinn@gmail.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Caitlyn <caitlynannefinn@gmail.com>,
+        "Tobin C . Harding" <me@tobin.cc>, linux-erofs@lists.ozlabs.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Submitting my first patch series (Checkpatch fixes)
+Date:   Tue, 20 Aug 2019 20:18:18 -0400
+Message-Id: <1566346700-28536-1-git-send-email-caitlynannefinn@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Assuming that GPUs would never have even close to 32 separate video
-encoders is quite honestly a pretty reasonable assumption. Unfortunately
-we do not live in a reasonable world, as it looks like it is actually
-possible to find devices that will create more drm_encoder objects then
-this. Case in point: the ThinkPad P71's discrete GPU, which exposes 1
-eDP port and 5 DP ports. On the P71, nouveau attempts to create one
-encoder for the eDP port, and two encoders for each DP++/USB-C port
-along with 4 MST encoders for each DP port. This comes out to 35
-different encoders. Unfortunately, this can't really be optimized to
-make less encoders either.
+Hello!
 
-So, what if we bumped the limit to 64? Unfortunately this has one very
-awkward drawback: we already expose 32-bit bitmasks for encoders to
-userspace in drm_encoder->possible_clones. Yikes. While cloning is still
-(rarely) used in certain modern video hardware, it's mostly used in
-situations where memory bandwidth is so limited that it's not possible
-to scan out from 2 CRTCs at once.
+This patch series cleans up some checkpatch fixes in erofs. The patches
+include balancing conditional braces and fixing some indentation. No testing
+done, all patches build and checkpath cleanly.
 
-So, let's try to compromise here: allow encoders with indexes <32 to
-have non-zero values in drm_encoder->possible_clones, and don't allow
-encoders with higher indexes to set drm_encoder->possible_clones to a
-non-zero value. This allows us to avoid breaking UAPI and keep things
-working sanely for hardware which still uses cloning, while still being
-able to bump up the encoder limit.
+Caitlyn (2):
+  staging/erofs/xattr.h: Fixed misaligned function arguments.
+  staging/erofs: Balanced braces around a few conditional statements.
 
-This also fixes driver probing for nouveau on the ThinkPad P71.
+ drivers/staging/erofs/inode.c     |  4 ++--
+ drivers/staging/erofs/unzip_vle.c | 12 ++++++------
+ drivers/staging/erofs/xattr.h     |  6 +++---
+ 3 files changed, 11 insertions(+), 11 deletions(-)
 
-Changes since v1:
-* Move index+possible_clones check out of drm_encoder_init() and into
-  drm_encoder_register_all(), since encoder->possible_clones can get
-  changed any time before registration - Daniel Vetter
-* Update the commit message a bit to accurately reflect modern day usage
-  of hardware cloning, which as Daniel Stone pointed out is apparently a
-  thing
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Cc: nouveau@lists.freedesktop.org
----
- drivers/gpu/drm/drm_atomic.c  |  2 +-
- drivers/gpu/drm/drm_encoder.c | 12 ++++++++++--
- include/drm/drm_crtc.h        |  2 +-
- include/drm/drm_encoder.h     | 20 +++++++++++++++-----
- 4 files changed, 27 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
-index 419381abbdd1..27ce988ef0cc 100644
---- a/drivers/gpu/drm/drm_atomic.c
-+++ b/drivers/gpu/drm/drm_atomic.c
-@@ -392,7 +392,7 @@ static void drm_atomic_crtc_print_state(struct drm_printer *p,
- 	drm_printf(p, "\tcolor_mgmt_changed=%d\n", state->color_mgmt_changed);
- 	drm_printf(p, "\tplane_mask=%x\n", state->plane_mask);
- 	drm_printf(p, "\tconnector_mask=%x\n", state->connector_mask);
--	drm_printf(p, "\tencoder_mask=%x\n", state->encoder_mask);
-+	drm_printf(p, "\tencoder_mask=%llx\n", state->encoder_mask);
- 	drm_printf(p, "\tmode: " DRM_MODE_FMT "\n", DRM_MODE_ARG(&state->mode));
- 
- 	if (crtc->funcs->atomic_print_state)
-diff --git a/drivers/gpu/drm/drm_encoder.c b/drivers/gpu/drm/drm_encoder.c
-index 7fb47b7b8b44..9d443b45ebba 100644
---- a/drivers/gpu/drm/drm_encoder.c
-+++ b/drivers/gpu/drm/drm_encoder.c
-@@ -71,6 +71,14 @@ int drm_encoder_register_all(struct drm_device *dev)
- 	int ret = 0;
- 
- 	drm_for_each_encoder(encoder, dev) {
-+		/*
-+		 * Since possible_clones has been exposed to userspace as a
-+		 * 32bit bitmask, we don't allow creating encoders with an
-+		 * index >=32 which are capable of cloning
-+		 */
-+		if (WARN_ON(encoder->index >= 32 && encoder->possible_clones))
-+			return -EINVAL;
-+
- 		if (encoder->funcs->late_register)
- 			ret = encoder->funcs->late_register(encoder);
- 		if (ret)
-@@ -112,8 +120,8 @@ int drm_encoder_init(struct drm_device *dev,
- {
- 	int ret;
- 
--	/* encoder index is used with 32bit bitmasks */
--	if (WARN_ON(dev->mode_config.num_encoder >= 32))
-+	/* encoder index is used with 64bit bitmasks */
-+	if (WARN_ON(dev->mode_config.num_encoder >= 64))
- 		return -EINVAL;
- 
- 	ret = drm_mode_object_add(dev, &encoder->base, DRM_MODE_OBJECT_ENCODER);
-diff --git a/include/drm/drm_crtc.h b/include/drm/drm_crtc.h
-index 7d14c11bdc0a..fd0b2438c3d5 100644
---- a/include/drm/drm_crtc.h
-+++ b/include/drm/drm_crtc.h
-@@ -210,7 +210,7 @@ struct drm_crtc_state {
- 	 * @encoder_mask: Bitmask of drm_encoder_mask(encoder) of encoders
- 	 * attached to this CRTC.
- 	 */
--	u32 encoder_mask;
-+	u64 encoder_mask;
- 
- 	/**
- 	 * @adjusted_mode:
-diff --git a/include/drm/drm_encoder.h b/include/drm/drm_encoder.h
-index 70cfca03d812..3f9cb65694e1 100644
---- a/include/drm/drm_encoder.h
-+++ b/include/drm/drm_encoder.h
-@@ -159,7 +159,15 @@ struct drm_encoder {
- 	 * encoders can be used in a cloned configuration, they both should have
- 	 * each another bits set.
- 	 *
--	 * In reality almost every driver gets this wrong.
-+	 * In reality almost every driver gets this wrong, and most modern
-+	 * display hardware does not have support for cloning. As well, while we
-+	 * expose this mask to userspace as 32bits long, we do sure purely to
-+	 * avoid breaking pre-existing UAPI since the limitation on the number
-+	 * of encoders has been increased from 32 bits to 64 bits. In order to
-+	 * maintain functionality for drivers which do actually support cloning,
-+	 * we only allow cloning with encoders that have an index <32. Encoders
-+	 * with indexes higher than 32 are not allowed to specify a non-zero
-+	 * value here.
- 	 *
- 	 * Note that since encoder objects can't be hotplugged the assigned indices
- 	 * are stable and hence known before registering all objects.
-@@ -198,13 +206,15 @@ static inline unsigned int drm_encoder_index(const struct drm_encoder *encoder)
- }
- 
- /**
-- * drm_encoder_mask - find the mask of a registered ENCODER
-+ * drm_encoder_mask - find the mask of a registered encoder
-  * @encoder: encoder to find mask for
-  *
-- * Given a registered encoder, return the mask bit of that encoder for an
-- * encoder's possible_clones field.
-+ * Returns:
-+ * A bit mask with the nth bit set, where n is the index of the encoder. Take
-+ * care when using this, as the DRM UAPI only allows for 32 bit encoder masks
-+ * while internally encoder masks are 64 bits.
-  */
--static inline u32 drm_encoder_mask(const struct drm_encoder *encoder)
-+static inline u64 drm_encoder_mask(const struct drm_encoder *encoder)
- {
- 	return 1 << drm_encoder_index(encoder);
- }
 -- 
-2.21.0
+2.7.4
 
