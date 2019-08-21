@@ -2,89 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 44A3E96F5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:19:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D8996F74
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:27:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726936AbfHUCTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:19:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53574 "EHLO mail.kernel.org"
+        id S1727091AbfHUC0z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:26:55 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:60812 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfHUCTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:19:47 -0400
-Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C84EE22DA7;
-        Wed, 21 Aug 2019 02:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566353986;
-        bh=99ObL1cP+jG7BwJuhGr2xRiHMfm0AyVNnY16uyz8mng=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ru6a2+QADULs0wwoFX4YQsebNK/5qd6Kk+kCW16FnuAC9nOB84MNYRAHcouXWGbFA
-         jxDDlseEOkfLWKdjTvog2K/cs7Lp3dY0OF8fKx5O3Mim0AfBj86ctChYFeQLuM/7Lu
-         fYDzulv0SOkwznjOgALPI+7qG9dTtb1IsoG+OBUU=
-Date:   Tue, 20 Aug 2019 19:19:42 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-erofs@lists.ozlabs.org, Miao Xie <miaoxie@huawei.com>,
-        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5/6] staging: erofs: detect potential multiref due to
- corrupted images
-Message-ID: <20190821021942.GA14087@kroah.com>
-References: <20190819080218.GA42231@138>
- <20190819103426.87579-1-gaoxiang25@huawei.com>
- <20190819103426.87579-6-gaoxiang25@huawei.com>
- <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1726586AbfHUC0w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:26:52 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CA1931A04CA;
+        Wed, 21 Aug 2019 04:26:49 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 834AE1A004C;
+        Wed, 21 Aug 2019 04:26:41 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 366AE402DB;
+        Wed, 21 Aug 2019 10:26:31 +0800 (SGT)
+From:   Anson Huang <Anson.Huang@nxp.com>
+To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
+        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, linux@armlinux.org.uk,
+        otavio@ossystems.com.br, leonard.crestez@nxp.com,
+        schnitzeltony@gmail.com, u.kleine-koenig@pengutronix.de,
+        jan.tuerk@emtrion.com, linux-watchdog@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Linux-imx@nxp.com
+Subject: [PATCH V3 1/4] dt-bindings: watchdog: Add i.MX7ULP bindings
+Date:   Tue, 20 Aug 2019 22:07:55 -0400
+Message-Id: <1566353278-1884-1-git-send-email-Anson.Huang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 10:57:42PM +0800, Chao Yu wrote:
-> On 2019-8-19 18:34, Gao Xiang wrote:
-> > As reported by erofs-utils fuzzer, currently, multiref
-> > (ondisk deduplication) hasn't been supported for now,
-> > we should forbid it properly.
-> > 
-> > Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
-> > Cc: <stable@vger.kernel.org> # 4.19+
-> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-> > ---
-> >  drivers/staging/erofs/zdata.c | 16 ++++++++++++++--
-> >  1 file changed, 14 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
-> > index aae2f2b8353f..5b6fef5181af 100644
-> > --- a/drivers/staging/erofs/zdata.c
-> > +++ b/drivers/staging/erofs/zdata.c
-> > @@ -816,8 +816,16 @@ static int z_erofs_decompress_pcluster(struct super_block *sb,
-> >  			pagenr = z_erofs_onlinepage_index(page);
-> >  
-> >  		DBG_BUGON(pagenr >= nr_pages);
-> > -		DBG_BUGON(pages[pagenr]);
-> >  
-> > +		/*
-> > +		 * currently EROFS doesn't support multiref(dedup),
-> > +		 * so here erroring out one multiref page.
-> > +		 */
-> > +		if (unlikely(pages[pagenr])) {
-> > +			DBG_BUGON(1);
-> > +			SetPageError(pages[pagenr]);
-> > +			z_erofs_onlinepage_endio(pages[pagenr]);
-> 
-> Should set err meanwhile?
+Add the watchdog bindings for Freescale i.MX7ULP.
 
-I've skipped this patch in this series for now, and applied the rest.
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+---
+No changes.
+---
+ .../bindings/watchdog/fsl-imx7ulp-wdt.txt          | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
 
-thanks,
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+new file mode 100644
+index 0000000..d83fc5c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.txt
+@@ -0,0 +1,22 @@
++* Freescale i.MX7ULP Watchdog Timer (WDT) Controller
++
++Required properties:
++- compatible : Should be "fsl,imx7ulp-wdt"
++- reg : Should contain WDT registers location and length
++- interrupts : Should contain WDT interrupt
++- clocks: Should contain a phandle pointing to the gated peripheral clock.
++
++Optional properties:
++- timeout-sec : Contains the watchdog timeout in seconds
++
++Examples:
++
++wdog1: wdog@403d0000 {
++	compatible = "fsl,imx7ulp-wdt";
++	reg = <0x403d0000 0x10000>;
++	interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
++	assigned-clocks-parents = <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>;
++	timeout-sec = <40>;
++};
+-- 
+2.7.4
 
-greg k-h
