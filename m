@@ -2,137 +2,191 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 963F3971A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 07:34:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C2671971A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 07:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727324AbfHUFev (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 01:34:51 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:46254 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727075AbfHUFev (ORCPT
+        id S1727346AbfHUFmx convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Wed, 21 Aug 2019 01:42:53 -0400
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:39200 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727097AbfHUFmw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 01:34:51 -0400
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7L5WkW8014790;
-        Wed, 21 Aug 2019 01:34:24 -0400
-Received: from nam04-co1-obe.outbound.protection.outlook.com (mail-co1nam04lp2055.outbound.protection.outlook.com [104.47.45.55])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2ug3mab7aq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 21 Aug 2019 01:34:24 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=c6I9DeXQTRRyQ5iSK61PKJ1vLABreRlp41e9VQT8DFJnIuwIoNlK2/JtYwFkMX0kHY7BUylPBY0+9DDLFV7WvuuWPGi2XAk5fa10S4yydubgTKO/f+S2KwHoI+p6phNr0qONyFTDosyv7FsSL3RuDx0eJjYmNHayI+SYbC7XCFgETG+R0xfQJRMP7VOTcq/Qo4ErjjkQa/hAXmQvy2ThtaWOCJHtN22ArwbR3FMDlcEzUYNc05icf1OXaA69x8pyR/k1X2juznLOe4nmGNvB6VDmhTDN+IG9dfxD1++TRYPpwoNfrl4xqXZBc3L17NGVBQwIN+xntt/pfwTbUDp3qQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xirPD+rtCNe8bUBn60WGSNnSAEPRvXka5c2bYpCjF8A=;
- b=Cb1ovSu1TI/p8/LFLTf7c+su3TTlPDAUqspE54EviGcmRYvlNMQyJlFjKv1id/GkVi5tr/3ZITuX8R0rqWYc23bsEgkqssdQhwVLDfQgoLOP6d57h0nppfHJSPaXG8UG3ZWuuC1lVveCP2XKSI8QOSnbGNkH/I5Aj6tV4ntK1W+tMg/3Bl56x8ZaefXBHbAe3fAwRdEAoBaJFaljSfSfs8RlUV62y3O09oGbv0No4Y10AbXFZRSB4I/IKLnx3bE7neQMcKzt+C9sIBTrm0ZGRgAXz85tJwsiarFKIfCOmQ6PFgm+0jlueRBGWXbLGP3Fgr85cXD/TTJRjP3KflAC7Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analog.com; dmarc=pass action=none header.from=analog.com;
- dkim=pass header.d=analog.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xirPD+rtCNe8bUBn60WGSNnSAEPRvXka5c2bYpCjF8A=;
- b=WjjyvMXb2XQmV/c0bpDVwNXAqsAQo4cjBjmPwXMQ95cQ3eTpx5vQtQPpegmMk/V6sIoAXyhOi2S8DvE506R3GPq7QfSr+ay9gXuEh28pijw+8Rh/Yp6O30VSmyCTwK+YpNZ+I3UDh1jtzKiHOjAqJjes7hn2fHCQagQB6Lq61Tg=
-Received: from BN8PR03MB4770.namprd03.prod.outlook.com (20.179.64.223) by
- BN8PR03MB4868.namprd03.prod.outlook.com (20.178.223.79) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Wed, 21 Aug 2019 05:34:22 +0000
-Received: from BN8PR03MB4770.namprd03.prod.outlook.com
- ([fe80::d096:6c2e:91ac:39bb]) by BN8PR03MB4770.namprd03.prod.outlook.com
- ([fe80::d096:6c2e:91ac:39bb%6]) with mapi id 15.20.2178.018; Wed, 21 Aug 2019
- 05:34:22 +0000
-From:   "Togorean, Bogdan" <Bogdan.Togorean@analog.com>
-To:     "daniel@ffwll.ch" <daniel@ffwll.ch>,
-        "sam@ravnborg.org" <sam@ravnborg.org>
-CC:     "Laurent.pinchart@ideasonboard.com" 
-        <Laurent.pinchart@ideasonboard.com>,
-        "a.hajda@samsung.com" <a.hajda@samsung.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        Wed, 21 Aug 2019 01:42:52 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id x7L5fP8t013248
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 21 Aug 2019 14:41:25 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7L5fPie027570;
+        Wed, 21 Aug 2019 14:41:25 +0900
+Received: from mail01b.kamome.nec.co.jp (mail01b.kamome.nec.co.jp [10.25.43.2])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id x7L5fPMY031987;
+        Wed, 21 Aug 2019 14:41:25 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-7746119; Wed, 21 Aug 2019 14:39:05 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0439.000; Wed,
+ 21 Aug 2019 14:39:04 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Wanpeng Li <kernellwp@gmail.com>
+CC:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Punit Agrawal" <punit.agrawal@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "allison@lohutok.net" <allison@lohutok.net>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "matt.redfearn@thinci.com" <matt.redfearn@thinci.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 2/2] drm: bridge: adv7511: Add support for ADV7535
-Thread-Topic: [PATCH v2 2/2] drm: bridge: adv7511: Add support for ADV7535
-Thread-Index: AQHVTr0hmVnX1zVUNEq8UIbUXOMh2qby78kAgA9LnQCAAB3GAIABctKAgAGM+wA=
-Date:   Wed, 21 Aug 2019 05:34:22 +0000
-Message-ID: <ccba9a66c6d5db8a295353b16084c6a1199f31dc.camel@analog.com>
-References: <20190809141611.9927-1-bogdan.togorean@analog.com>
-         <20190809141611.9927-3-bogdan.togorean@analog.com>
-         <20190809152510.GA23265@ravnborg.org>
-         <c99cfbd3dc45bb02618e7653c33022f3553e1cce.camel@analog.com>
-         <20190819104616.GA15890@ravnborg.org>
-         <20190820085329.GC11147@phenom.ffwll.local>
-In-Reply-To: <20190820085329.GC11147@phenom.ffwll.local>
-Accept-Language: en-US
-Content-Language: en-US
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Xiao Guangrong <xiaoguangrong@tencent.com>,
+        "lidongchen@tencent.com" <lidongchen@tencent.com>,
+        "yongkaiwu@tencent.com" <yongkaiwu@tencent.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Hugh Dickins <hughd@google.com>
+Subject: Re: ##freemail## Re: [PATCH v2] mm: hwpoison: disable memory error
+ handling on 1GB hugepage
+Thread-Topic: ##freemail## Re: [PATCH v2] mm: hwpoison: disable memory error
+ handling on 1GB hugepage
+Thread-Index: AQHVFnaoUuMkT7+k5kKGu78GtXiXKKaVCtaAgG58OYCAAXqfAA==
+Date:   Wed, 21 Aug 2019 05:39:04 +0000
+Message-ID: <20190821053904.GA23349@hori.linux.bs1.fc.nec.co.jp>
+References: <87inbbjx2w.fsf@e105922-lin.cambridge.arm.com>
+ <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp>
+ <87fu6bfytm.fsf@e105922-lin.cambridge.arm.com>
+ <20180208121749.0ac09af2b5a143106f339f55@linux-foundation.org>
+ <87wozhvc49.fsf@concordia.ellerman.id.au>
+ <e673f38a-9e5f-21f6-421b-b3cb4ff02e91@oracle.com>
+ <CANRm+CxAgWVv5aVzQ0wdP_A7QQgqfy7nN_SxyaactG7Mnqfr2A@mail.gmail.com>
+ <f79d828c-b0b4-8a20-c316-a13430cfb13c@oracle.com>
+ <20190610235045.GB30991@hori.linux.bs1.fc.nec.co.jp>
+ <CANRm+CwwPv52k7pWiErYwFHV=_6kCdiyXZkT3QT6ef_UJagt9A@mail.gmail.com>
+In-Reply-To: <CANRm+CwwPv52k7pWiErYwFHV=_6kCdiyXZkT3QT6ef_UJagt9A@mail.gmail.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [137.71.226.54]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9f362487-0ebb-4c4e-3897-08d725f938d0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:BN8PR03MB4868;
-x-ms-traffictypediagnostic: BN8PR03MB4868:
-x-microsoft-antispam-prvs: <BN8PR03MB4868B74300A53F9EEA69AA5A9BAA0@BN8PR03MB4868.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(39860400002)(396003)(346002)(136003)(189003)(199004)(476003)(446003)(11346002)(2616005)(486006)(478600001)(14454004)(6512007)(186003)(316002)(110136005)(229853002)(54906003)(99286004)(26005)(7416002)(71190400001)(71200400001)(6506007)(5660300002)(102836004)(76116006)(305945005)(6246003)(86362001)(4326008)(8676002)(36756003)(81166006)(81156014)(66066001)(118296001)(6116002)(3846002)(2501003)(91956017)(64756008)(66476007)(7736002)(66946007)(66446008)(66556008)(256004)(76176011)(6436002)(6486002)(53936002)(8936002)(25786009)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR03MB4868;H:BN8PR03MB4770.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: analog.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: MyJSq99kDTZJVqBlKWe4npJjPySNVQQpC9aDMxhIg2vM+MHM4ucW8mowSmSWnXHp0eVnSNwSXwCp2yJdyL60K6PHyGlE4DxdNACIDaY4GO44hW1S4xAyjp5ldXT10+buKPRyiP0YRd5OlEHJQspCHCS4k8ziWTlUCMmnHsHsm05RJ7etBNo5C33aat0Cso9HxhJ51iTiAjgv7R6gYPC4CWSNq2U5gi4XPMjqBtbn5jn/zDEkTNamhC0Bv0Pb/+7efB09OOqB3Nka1xS/fK4pUOCIGPiy2T8QThO6SF01BGbVVGKe0Wp3qKTMk0FNkgFNYU9HG5BZC6pdKopl4u6LotPna0Qj2upnVsUuHXCthMFOym30MJmj6h66mgPgzDTfqzRy4HC//Dh2aAetL+YJ4WIatqyssugZ/GmR6CASGMM=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <98805991ABBC544694582903F3984374@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+x-originating-ip: [10.34.125.150]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <44D254A2BDC35E41B1EA6CD19B17F3BF@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9f362487-0ebb-4c4e-3897-08d725f938d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 05:34:22.3990
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BtkERW8I/SAbf12VW+l0wW38HszfxW5RGbylTOfZrjTj0qlFuFsqjzyBI4IhwhNJOhn0jYvB9b5liHySKjrzE1L5hbUQco+j77cK3fK9vOw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR03MB4868
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_02:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908210060
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVHVlLCAyMDE5LTA4LTIwIGF0IDEwOjUzICswMjAwLCBEYW5pZWwgVmV0dGVyIHdyb3RlOg0K
-PiBbRXh0ZXJuYWxdDQo+IA0KPiBPbiBNb24sIEF1ZyAxOSwgMjAxOSBhdCAxMjo0NjoxNlBNICsw
-MjAwLCBTYW0gUmF2bmJvcmcgd3JvdGU6DQo+ID4gSGkgQm9nZGFuLg0KPiA+IA0KPiA+ID4gPiA+
-ICAJCWFkdjc1MzNfZGV0YWNoX2RzaShhZHY3NTExKTsNCj4gPiA+ID4gPiAgCWkyY191bnJlZ2lz
-dGVyX2RldmljZShhZHY3NTExLT5pMmNfY2VjKTsNCj4gPiA+ID4gPiAgCWlmIChhZHY3NTExLT5j
-ZWNfY2xrKQ0KPiA+ID4gPiA+IEBAIC0xMjY2LDggKzEyNzgsOSBAQCBzdGF0aWMgY29uc3Qgc3Ry
-dWN0IGkyY19kZXZpY2VfaWQNCj4gPiA+ID4gPiBhZHY3NTExX2kyY19pZHNbXSA9IHsNCj4gPiA+
-ID4gPiAgCXsgImFkdjc1MTEiLCBBRFY3NTExIH0sDQo+ID4gPiA+ID4gIAl7ICJhZHY3NTExdyIs
-IEFEVjc1MTEgfSwNCj4gPiA+ID4gPiAgCXsgImFkdjc1MTMiLCBBRFY3NTExIH0sDQo+ID4gPiA+
-ID4gLSNpZmRlZiBDT05GSUdfRFJNX0kyQ19BRFY3NTMzDQo+ID4gPiA+ID4gKyNpZmRlZiBDT05G
-SUdfRFJNX0kyQ19BRFY3NTN4DQo+ID4gPiA+ID4gIAl7ICJhZHY3NTMzIiwgQURWNzUzMyB9LA0K
-PiA+ID4gPiA+ICsJeyAiYWR2NzUzNSIsIEFEVjc1MzUgfSwNCj4gPiA+ID4gPiAgI2VuZGlmDQo+
-ID4gPiA+IA0KPiA+ID4gPiBUaGlzIGlmZGVmIG1heSBub3QgYmUgbmVlZGVkPz8NCj4gPiA+ID4g
-SWYgd2UgZGlkIG5vdCBnZXQgdGhpcyB0eXBlIHdlIHdpbGwgbm90IGxvb2sgaXQgdXAuDQo+ID4g
-PiBCdXQgaWYgd2UgaGF2ZSBkZWZpbmVkIGluIERUIGFkdjc1MzMvNSBkZXZpY2UgYnV0DQo+ID4g
-PiBDT05GSUdfRFJNX0kyQ19BRFY3NTN4IG5vdCBzZWxlY3RlZCBwcm9iZSB3aWxsIGZhaWwgd2l0
-aCBFTk9ERVYuDQo+ID4gPiBUaGF0DQo+ID4gPiB3b3VsZCBiZSBvaz8NCj4gPiANCj4gPiBXaGF0
-IGRvIHdlIGdhaW4gZnJvbSB0aGlzIGNvbXBsZXhpdHkgaW4gdGhlIGVuZC4NCj4gPiBXaHkgbm90
-IGxldCB0aGUgZHJpdmVyIGFsd2F5cyBzdXBwb3J0IGFsbCB2YXJpYW50cy4NCj4gPiANCj4gPiBJ
-ZiB0aGlzIHJlc3VsdCBpbiBhIHNpbXBsZXIgZHJpdmVyLCBhbmQgbGVzcyBjaG9pY2VzIGluIEtj
-b25maWcNCj4gPiB0aGVuIGl0IGlzIGEgd2luLXdpbi4NCj4gDQo+IFllYWggaW4gZ2VuZXJhbCB3
-ZSBkb24ndCBLY29uZmlnIHdpdGhpbiBkcml2ZXJzIGluIGRybSB0byBkaXNhYmxlDQo+IHNwZWNp
-ZmljDQo+IGNvZGUtcGF0aHMuIEl0J3Mgbm90IHdvcnRoIHRoZSBwYWluLg0KQWNrLA0KVGhhbmsg
-eW91IGZvciBjbGFyaWZpY2F0aW9uLiBXaWxsIHJlbW92ZSBpbiBWMy4NCj4gLURhbmllbA0K
+On Tue, Aug 20, 2019 at 03:03:55PM +0800, Wanpeng Li wrote:
+> Cc Mel Gorman, Kirill, Dave Hansen,
+> On Tue, 11 Jun 2019 at 07:51, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+> >
+> > On Wed, May 29, 2019 at 04:31:01PM -0700, Mike Kravetz wrote:
+> > > On 5/28/19 2:49 AM, Wanpeng Li wrote:
+> > > > Cc Paolo,
+> > > > Hi all,
+> > > > On Wed, 14 Feb 2018 at 06:34, Mike Kravetz <mike.kravetz@oracle.com> wrote:
+> > > >>
+> > > >> On 02/12/2018 06:48 PM, Michael Ellerman wrote:
+> > > >>> Andrew Morton <akpm@linux-foundation.org> writes:
+> > > >>>
+> > > >>>> On Thu, 08 Feb 2018 12:30:45 +0000 Punit Agrawal <punit.agrawal@arm.com> wrote:
+> > > >>>>
+> > > >>>>>>
+> > > >>>>>> So I don't think that the above test result means that errors are properly
+> > > >>>>>> handled, and the proposed patch should help for arm64.
+> > > >>>>>
+> > > >>>>> Although, the deviation of pud_huge() avoids a kernel crash the code
+> > > >>>>> would be easier to maintain and reason about if arm64 helpers are
+> > > >>>>> consistent with expectations by core code.
+> > > >>>>>
+> > > >>>>> I'll look to update the arm64 helpers once this patch gets merged. But
+> > > >>>>> it would be helpful if there was a clear expression of semantics for
+> > > >>>>> pud_huge() for various cases. Is there any version that can be used as
+> > > >>>>> reference?
+> > > >>>>
+> > > >>>> Is that an ack or tested-by?
+> > > >>>>
+> > > >>>> Mike keeps plaintively asking the powerpc developers to take a look,
+> > > >>>> but they remain steadfastly in hiding.
+> > > >>>
+> > > >>> Cc'ing linuxppc-dev is always a good idea :)
+> > > >>>
+> > > >>
+> > > >> Thanks Michael,
+> > > >>
+> > > >> I was mostly concerned about use cases for soft/hard offline of huge pages
+> > > >> larger than PMD_SIZE on powerpc.  I know that powerpc supports PGD_SIZE
+> > > >> huge pages, and soft/hard offline support was specifically added for this.
+> > > >> See, 94310cbcaa3c "mm/madvise: enable (soft|hard) offline of HugeTLB pages
+> > > >> at PGD level"
+> > > >>
+> > > >> This patch will disable that functionality.  So, at a minimum this is a
+> > > >> 'heads up'.  If there are actual use cases that depend on this, then more
+> > > >> work/discussions will need to happen.  From the e-mail thread on PGD_SIZE
+> > > >> support, I can not tell if there is a real use case or this is just a
+> > > >> 'nice to have'.
+> > > >
+> > > > 1GB hugetlbfs pages are used by DPDK and VMs in cloud deployment, we
+> > > > encounter gup_pud_range() panic several times in product environment.
+> > > > Is there any plan to reenable and fix arch codes?
+> > >
+> > > I too am aware of slightly more interest in 1G huge pages.  Suspect that as
+> > > Intel MMU capacity increases to handle more TLB entries there will be more
+> > > and more interest.
+> > >
+> > > Personally, I am not looking at this issue.  Perhaps Naoya will comment as
+> > > he know most about this code.
+> >
+> > Thanks for forwarding this to me, I'm feeling that memory error handling
+> > on 1GB hugepage is demanded as real use case.
+> >
+> > >
+> > > > In addition, https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kvm/mmu.c#n3213
+> > > > The memory in guest can be 1GB/2MB/4K, though the host-backed memory
+> > > > are 1GB hugetlbfs pages, after above PUD panic is fixed,
+> > > > try_to_unmap() which is called in MCA recovery path will mark the PUD
+> > > > hwpoison entry. The guest will vmexit and retry endlessly when
+> > > > accessing any memory in the guest which is backed by this 1GB poisoned
+> > > > hugetlbfs page. We have a plan to split this 1GB hugetblfs page by 2MB
+> > > > hugetlbfs pages/4KB pages, maybe file remap to a virtual address range
+> > > > which is 2MB/4KB page granularity, also split the KVM MMU 1GB SPTE
+> > > > into 2MB/4KB and mark the offensive SPTE w/ a hwpoison flag, a sigbus
+> > > > will be delivered to VM at page fault next time for the offensive
+> > > > SPTE. Is this proposal acceptable?
+> > >
+> > > I am not sure of the error handling design, but this does sound reasonable.
+> >
+> > I agree that that's better.
+> >
+> > > That block of code which potentially dissolves a huge page on memory error
+> > > is hard to understand and I'm not sure if that is even the 'normal'
+> > > functionality.  Certainly, we would hate to waste/poison an entire 1G page
+> > > for an error on a small subsection.
+> >
+> > Yes, that's not practical, so we need at first establish the code base for
+> > 2GB hugetlb splitting and then extending it to 1GB next.
+> 
+> I found it is not easy to split. There is a unique hugetlb page size
+> that is associated with a mounted hugetlbfs filesystem, file remap to
+> 2MB/4KB will break this. How about hard offline 1GB hugetlb page as
+> what has already done in soft offline, replace the corrupted 1GB page
+> by new 1GB page through page migration, the offending/corrupted area
+> in the original 1GB page doesn't need to be copied into the new page,
+> the offending/corrupted area in new page can keep full zero just as it
+> is clear during hugetlb page fault, other sub-pages of the original
+> 1GB page can be freed to buddy system. The sigbus signal is sent to
+> userspace w/ offending/corrupted virtual address, and signal code,
+> userspace should take care this.
+
+Splitting hugetlb is simply hard, IMHO. THP splitting is done by years
+of effort by many great kernel develpers, and I don't think doing similar
+development on hugetlb is a good idea.  I thought of converting hugetlb
+into thp, but maybe it's not an easy task either.
+"Hard offlining via soft offlining" approach sounds new and promising to me.
+I guess we don't need a large patchset to do this. So, thanks for the idea!
+
+- Naoya
