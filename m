@@ -2,171 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E782096F3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:09:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E3B096F58
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:19:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfHUCJT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:09:19 -0400
-Received: from mail-eopbgr750089.outbound.protection.outlook.com ([40.107.75.89]:18670
-        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        id S1727030AbfHUCSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:18:14 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:53904 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726673AbfHUCJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:09:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=EkJf9SJjTeFdjKCd8yRtxLX/lUBs63l5SYrDfkQZG4cDcFKpq8aillHgPxVyxfjtTrTuJEFmeYwbizG2hOYOyatCZ7TByI3xntt7jzIpYVyqlHtnandfw3JAqozB7RQk9Z7rh+BWQAV2GDhRWc4WbbUallQiTy7HnyX4Quh+48+KNtJVmQX/SA004wIdSQEvcd2ArceCYeejMDk1uVEH26ksHugN88rr7ocj2GR++9NTKDKnBhfCQlQANfhzGGuqPqzygcvwSQeNUAM8JDjYhVZrYjcBGrRM+K/ZVNmBOIppriGNK+X4SnC+ngEFnYio3AhrCSOQbPxdYYgXklW4WA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rg5V4KIiFC4h1rp2jN9bS9pv2shUGDwX3sNbL4AKjTI=;
- b=fQhn+7BJBTO0zTn4zQVvHVfPyFgGnLs0robF1w6xQGXR72zaokXuIF4NJKhlqxo6IWIvbZqdcimcivyw5arNqmkddbU1616VTZcmSqzwb90/mA5CZlwdPYY+RqxpEEyQ6jztmEuXb4vnUd9aXy3CA2UPSBaS/AYVfAJLqXbUsUtczRXVuaijfU10KwfY69cktexG80yLHkShuP6tuzvpV7mpZa2nyOp5z3xuSiN6HIs9GXp3tvM0n7unXIdhtvIPcPvnGl0LceBlMKlOB9IWd68bYMOG5wnZbZQf73EGsCaQDMKM8d1YJpxOnEK4uKomIMOEa1evQ7cHfA+WsLpehA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=synaptics.com; dmarc=pass action=none
- header.from=synaptics.com; dkim=pass header.d=synaptics.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector2-Synaptics-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Rg5V4KIiFC4h1rp2jN9bS9pv2shUGDwX3sNbL4AKjTI=;
- b=euKxpOo8JV3NKIFZJwokdEIuCg7qrVQMY9Rka9B6eaqFaxrDxLizH2NIuKs3x3QFI3GdkAPmMlGw/HkYlB7/BGI3fGTgGIuRiMod/mBUZta+rlOxOLJGu0fUEJ5K+fEVoP7yL0fTFJLPXaF57JtxzaJVskB0fJSO3NHcxfviPJA=
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com (20.179.92.152) by
- BYAPR03MB3574.namprd03.prod.outlook.com (52.135.213.27) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Wed, 21 Aug 2019 02:09:11 +0000
-Received: from BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88]) by BYAPR03MB4773.namprd03.prod.outlook.com
- ([fe80::a517:3578:67bf:6c88%7]) with mapi id 15.20.2157.022; Wed, 21 Aug 2019
- 02:09:10 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-CC:     Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Will Deacon <will@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "x86@kernel.org" <x86@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 1/3] kprobes/x86: use instruction_pointer and
- instruction_pointer_set
-Thread-Topic: [PATCH v2 1/3] kprobes/x86: use instruction_pointer and
- instruction_pointer_set
-Thread-Index: AQHVVwqiEXrXfYjUc0SG3b0/wT6us6cDu4YAgACFhgCAAJchgIAAAL+A
-Date:   Wed, 21 Aug 2019 02:09:10 +0000
-Message-ID: <20190821095527.729b2b0d@xhacker.debian>
-References: <20190820113928.1971900c@xhacker.debian>
-        <20190820114109.4624d56b@xhacker.debian>
-        <alpine.DEB.2.21.1908201050370.2223@nanos.tec.linutronix.de>
-        <20190820165152.20275268@xhacker.debian>
-        <20190821105247.f0236d2c04b2c0c4d4e1847e@kernel.org>
-In-Reply-To: <20190821105247.f0236d2c04b2c0c4d4e1847e@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [124.74.246.114]
-x-clientproxiedby: TYAPR01CA0210.jpnprd01.prod.outlook.com
- (2603:1096:404:29::30) To BYAPR03MB4773.namprd03.prod.outlook.com
- (2603:10b6:a03:134::24)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 67fd10f7-a471-4cc1-3f3c-08d725dc8e3d
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BYAPR03MB3574;
-x-ms-traffictypediagnostic: BYAPR03MB3574:
-x-microsoft-antispam-prvs: <BYAPR03MB3574972D034A5BEBA292D3CEEDAA0@BYAPR03MB3574.namprd03.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(346002)(376002)(366004)(396003)(39860400002)(54534003)(189003)(199004)(478600001)(76176011)(102836004)(14454004)(53936002)(316002)(7736002)(7416002)(1076003)(25786009)(446003)(11346002)(2906002)(476003)(4326008)(486006)(26005)(54906003)(52116002)(6246003)(99286004)(86362001)(386003)(6506007)(305945005)(186003)(6916009)(66946007)(8936002)(8676002)(66446008)(5660300002)(64756008)(71200400001)(256004)(14444005)(66556008)(66476007)(71190400001)(6116002)(66066001)(3846002)(6486002)(229853002)(50226002)(6512007)(9686003)(6436002)(81156014)(81166006)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR03MB3574;H:BYAPR03MB4773.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: iETVAJMaw8V7kKA66OhWKk8NhTg4JHz/JgWRLQP10VQnzgDquJ17BaZjXmfS6XQg45n98dh2nz2W6cg3X/qCJXzqxJx3dqDJsGtqwwis58NtFRh3pjFhCKXDwHqLJF4tfGvVWsuNn8sltyTLH7OKmk/9zMw4Aj10CyT0/7JEQq2Rm6nMIYqDq4izlvv0fqMoFPeCdcDEZnv+MgcGoYXpr51D4eb/+kFm71UUfuDGMa7c9EslyOYZVDhO+qTZNDzYcnLs5j1CoyKgLguQkTo7jH8tvRNBZI0ffZBUC6qipiEAVRH8c7bwlvWRQB2RiVFXVTMerO2ueEvPLWCegwWHr70ybGGOy1UvLm+T3MFW4L/rKDwcgISJU/FLS3K78VHLb5d/V12Rc9tAALTC+WMmsPVucc/oo9nyPdOrBbkeY/I=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0201144BB45AB64793AC6F3ED43EFCDF@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S1726329AbfHUCSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:18:14 -0400
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 875DA282536BF636B30A;
+        Wed, 21 Aug 2019 09:57:36 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
+ 2019 09:57:30 +0800
+Subject: Re: [PATCH] erofs: move erofs out of staging
+To:     "Darrick J. Wong" <darrick.wong@oracle.com>
+CC:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Gao Xiang <hsiangkao@aol.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Eric Biggers" <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, "Dave Chinner" <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Li Guifu" <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+References: <20190818172938.GA14413@sol.localdomain>
+ <20190818174702.GA17633@infradead.org>
+ <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190819160923.GG15198@magnolia>
+ <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
+ <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
+ <20190820155623.GA10232@mit.edu>
+ <9d8f88ee-4b81-bdfa-b0d7-9c7d5d54e70a@huawei.com>
+ <20190821014818.GB1037422@magnolia>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <8ae23b55-eb3f-e6e8-4cfb-5ce2885d8ff8@huawei.com>
+Date:   Wed, 21 Aug 2019 09:57:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 67fd10f7-a471-4cc1-3f3c-08d725dc8e3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 02:09:10.6615
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zJPNmnEX7RMFUaDOm9sVUWc+KcP7rYY1TYtLSvq9K18I1NviyHWMfGhH5OIWoqvro026lLNg60bKKVkafc1nng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR03MB3574
+In-Reply-To: <20190821014818.GB1037422@magnolia>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 2019/8/21 9:48, Darrick J. Wong wrote:
+> On Wed, Aug 21, 2019 at 09:34:02AM +0800, Chao Yu wrote:
+>> On 2019/8/20 23:56, Theodore Y. Ts'o wrote:
+>>> The reason why there needs to be at least some file system specific
+>>> code for fuzz testing is because for efficiency's sake, you don't want
+>>> to fuzz every single bit in the file system, but just the ones which
+>>> are most interesting (e.g., the metadata blocks).  For file systems
+>>> which use checksum to protect against accidental corruption, the file
+>>> system fuzzer needs to also fix up the checksums (since you can be
+>>> sure malicious attackers will do this).
+>>
+>> Yup, IMO, if we really want such tool, it needs to:
+>> - move all generic fuzz codes (trigger random fuzzing in meta/data area) into
+>> that tool, and
+>> - make filesystem generic fs_meta/file_node lookup/inject/pack function as a
+>> callback, such as
+>>  * .find_fs_sb
+>>  * .inject_fs_sb
+>>  * .pack_fs_sb
+> 
+> What about group descriptors?  AG headers?  The AGFLWTFBBQLOL?
+> 
+>>  * .find_fs_bitmap
+>>  * .inject_fs_bitmap
+> 
+> Probably want an find/inject for log blocks too.
+> 
+> Oh, wait, XFS doesn't log blocks like jbd2 does. :) :)
 
-On Wed, 21 Aug 2019 10:52:47 +0900 Masami Hiramatsu wrote:
->=20
->=20
-> Hi Jisheng,
->=20
-> On Tue, 20 Aug 2019 09:02:59 +0000
-> Jisheng Zhang <Jisheng.Zhang@synaptics.com> wrote:
->=20
-> > Hi Thomas,
-> >
-> > On Tue, 20 Aug 2019 10:53:58 +0200 (CEST) Thomas Gleixner wrote:
-> > =20
-> > >
-> > >
-> > > On Tue, 20 Aug 2019, Jisheng Zhang wrote:
-> > > =20
-> > > > This is to make the x86 kprobe_ftrace_handler() more common so that
-> > > > the code could be reused in future. =20
-> > >
-> > > While I agree with the change in general, I can't find anything which
-> > > reuses that code. So the change log is pretty useless and I have no i=
-dea
-> > > how this is related to the rest of the series. =20
-> >
-> > In v1, this code is moved from x86 to common kprobes.c [1]
-> > But I agree with Masami, consolidation could be done when arm64 kprobes
-> > on ftrace is stable. =20
->=20
-> We'll revisit to consolidate the code after we got 3rd or 4th clones.
->=20
-> >
-> > In v2, actually, the arm64 version's kprobe_ftrace_handler() is the sam=
-e
-> > as x86's, the only difference is comment, e.g
-> >
-> > /* Kprobe handler expects regs->ip =3D ip + 1 as breakpoint hit */
-> >
-> > while in arm64
-> >
-> > /* Kprobe handler expects regs->pc =3D ip + 1 as breakpoint hit */ =20
->=20
-> As Peter pointed, on arm64, is that really 1 or 4 bytes?
-> This part is heavily depends on the processor software-breakpoint
-> implementation.
+Yes, I admit that I should miss a lot of fs meta type here, but that's just a
+simple example here, we should not treat it as a full design.... :)
 
-Per my understanding, the "+1" here means "+ one kprobe_opcode_t".
+> 
+>>  * .find_fs_inode_bitmap
+>>  * .inject_fs_inode_bitmap
+> 
+> XFS has an inode bitmap? ;)
 
->=20
-> >
-> >
-> > W/ above, any suggestion about the suitable change log? =20
->=20
-> I think you just need to keep the first half of the description.
-> Since this patch itself is not related to the series, could you update
-> the description and resend it as a single cleanup patch out of the series=
-?
->=20
+We can leave callback as NULL? ;)
 
-Got it. Will do today.
+> 
+> (This is why there's no generic fuzz tool; every fs is different enough
+> that doing so would be sort of a mess.)
 
-Thanks a lot
+Yes, I just wonder if there is any possible we can save some redundant work.
+
+> 
+> ((Granted, you could also look at how xfstests uses the xfs_db fuzz
+> command so at least it would be systematic...))
+Okay, I will check that.
+
+Thanks,
+
+> 
+>>  * .find_inode_by_num
+>>  * .inject_inode
+>>  * .pack_inode
+>>  * .find_tree_node_by_level
+>> ...
+> 
+> What about the name/value btrees?  (Ok, I'll stop now.)
+> 
+> --D
+> 
+>> then specific filesystem can fill the callback to tell how the tool can locate a
+>> field in inode or a metadata in tree node and then trigger the designed fuzz.
+>>
+>> It will be easier to rewrite whole generic fwk for each filesystem, because
+>> existed filesystem userspace tool should has included above callback's detail
+>> codes...
+>>
+>>> On Tue, Aug 20, 2019 at 10:24:11AM +0800, Chao Yu wrote:
+>>>> filesystem fill the tool's callback to seek a node/block and supported fields
+>>>> can be fuzzed in inode.
+>>
+>>>
+>>> What you *can* do is to make the file system specific portion of the
+>>> work as small as possible.  Great work in this area is Professor Kim's
+>>> Janus[1][2] and Hydra[2] work.  (Hydra is about to be published at SOSP 19,
+>>> and was partially funded from a Google Faculty Research Work.)
+>>>
+>>> [1] https://taesoo.kim/pubs/2019/xu:janus.pdf
+>>> [2] https://github.com/sslab-gatech/janus
+>>> [3] https://github.com/sslab-gatech/hydra
+>>
+>> Thanks for the information!
+>>
+>> It looks like janus and hydra alreay have generic compress/decompress function
+>> across different filesystems, it's really a good job, I do think it may be the
+>> one once it becomes more generic.
+>>
+>> Thanks
+>>
+>>>
+> .
+> 
