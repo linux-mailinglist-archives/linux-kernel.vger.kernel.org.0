@@ -2,119 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D033497F42
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:44:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FBA297F1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:40:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728799AbfHUPoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:44:34 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36992 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfHUPoe (ORCPT
+        id S1729065AbfHUPjl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:39:41 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:57814 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727037AbfHUPjj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:44:34 -0400
-Received: by mail-pg1-f195.google.com with SMTP id d1so1535838pgp.4;
-        Wed, 21 Aug 2019 08:44:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=rpekFqyZj3l++WQEb7CaA2EK93VudltOovvbUJ4E8Hk=;
-        b=LP6mKtvxisckWHY8p7xJJz6IneM36EXGa2X4VysZ5bTanqqYgZpoMXx3/dfy8rAain
-         nEXI1vDMvVFN16Hz2tdkHpicjVyCm+Fk5ax3ZnOup3blLuJcxjuB7gbLPtNHj5w2YjQK
-         eLgaTDg6EjEj0V1PLT7XDxkCmoqNhKJ2WkWuikfLbe1/g+/kF3TfXh2Ht0mc8sNo/LKR
-         cOMVAQz0tfbE2EewNkpAAJUgIzVFnqeYAEPEM4YhmY3aIa+tPmZNkKLhfkrpF168YMpi
-         hXQaMj2Lz8DATsJqgB4LQ2zw8Ug+i4CZA8Rkrji2TITrCmJ4qYRGjuFe8z7pwPJp2IeD
-         U7OQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=rpekFqyZj3l++WQEb7CaA2EK93VudltOovvbUJ4E8Hk=;
-        b=Fas90mKMlHwK9BqxfLjZuvm6FKa3Cm5qs1h504g5Igil6NAwob4p9FDp5yHbZqv3LI
-         R1LmILQifIrraV7AvN62owtBPMeM18xWQ0Y7QfTLG8ebRIifyQTKLHZNUO7u20L0/WNE
-         gGb9qqxcsT1J5ucks6Ra+Ls3h1gOokDmcXDEodFgw4Gb6aWqsohJOl7jj6ZbwMOz9WNB
-         dA+wePpMryeSlOkLiSRFkTkv526NnqO/0c9C04N6GBJe4whDiin4PrvpGAKpqsBlUb5J
-         vGwxVGfflyhDXi//9XPBCWfPfntMjGoAisOWDJOHhVLjYb0GG/xf+BNDqjKfChHEKlvm
-         4lVA==
-X-Gm-Message-State: APjAAAUxbeGms+qlFh8bVBTa3KgGRXx1Fu02WXtTMi8H7oMndBCTyGes
-        gdogytEIYZrtM8PClfM7hTE=
-X-Google-Smtp-Source: APXvYqz1i4DT2loqS6ywADscFmkdWQr9CzJdfaAjI7m57Ak+9WrzsLRlfByHabNBrs3E+jHne9VPnQ==
-X-Received: by 2002:a62:76d5:: with SMTP id r204mr35736589pfc.252.1566402273255;
-        Wed, 21 Aug 2019 08:44:33 -0700 (PDT)
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net. [184.188.36.2])
-        by smtp.gmail.com with ESMTPSA id d18sm20130408pgi.40.2019.08.21.08.44.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 21 Aug 2019 08:44:32 -0700 (PDT)
-Date:   Tue, 20 Aug 2019 22:09:25 -0700
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        linux-input@vger.kernel.org, Doug Covelli <dcovelli@vmware.com>
-Subject: Re: [PATCH 4/4] input/vmmouse: Update the backdoor call with support
- for new instructions
-Message-ID: <20190821050925.GA566@penguin>
-References: <20190818143316.4906-1-thomas_os@shipmail.org>
- <20190818143316.4906-5-thomas_os@shipmail.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190818143316.4906-5-thomas_os@shipmail.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Wed, 21 Aug 2019 11:39:39 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190821153937euoutp027b885684c861967cec2c7dcf99f70f4d~8_ky4g60u0737007370euoutp02A
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:39:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190821153937euoutp027b885684c861967cec2c7dcf99f70f4d~8_ky4g60u0737007370euoutp02A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566401977;
+        bh=vl9eeLzvbk1o5YyBvdLkkw/r624gziAnAOA5EeDC/C8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=OJBz3zUn3JTFvtdIi98ThEJuc2009ab28/ZnAeMjOZi9IdpI31cr6PyduT5VNW8N8
+         f00FYwFCIlfC19albLJhtZFJDgjX0T6ub1iT409k1gVOScX5zXc20o7AqnyLv6QtWt
+         0hWhIxQnrNHYSTE9H1/qhFsGyYrptc3hb3tMa+iQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190821153937eucas1p16714ac390b5c31100b9dff2a51b476cf~8_kyKcICu1998619986eucas1p1p;
+        Wed, 21 Aug 2019 15:39:37 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id E3.50.04469.8B56D5D5; Wed, 21
+        Aug 2019 16:39:36 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05~8_kxSIdoF2217422174eucas1p2e;
+        Wed, 21 Aug 2019 15:39:36 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190821153935eusmtrp23caa3591e86f9cb41173542d1d732cee~8_kxEBkA31715517155eusmtrp2H;
+        Wed, 21 Aug 2019 15:39:35 +0000 (GMT)
+X-AuditID: cbfec7f2-54fff70000001175-a2-5d5d65b87058
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id A3.2B.04166.7B56D5D5; Wed, 21
+        Aug 2019 16:39:35 +0100 (BST)
+Received: from AMDC3061.DIGITAL.local (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190821153935eusmtip222d51bebca59adb50083fb20061c5e17~8_kwh5lPE0822808228eusmtip2Q;
+        Wed, 21 Aug 2019 15:39:35 +0000 (GMT)
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+To:     krzk@kernel.org
+Cc:     kgene@kernel.org, pankaj.dubey@samsung.com,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com, m.szyprowski@samsung.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+Subject: [PATCH v2] soc: samsung: Select missing dependency for
+ EXYNOS_CHIPID
+Date:   Wed, 21 Aug 2019 17:39:26 +0200
+Message-Id: <20190821153926.12297-1-s.nawrocki@samsung.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190821150711.31398-1-s.nawrocki@samsung.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpgleLIzCtJLcpLzFFi42LZduznOd0dqbGxBksm6FtsnLGe1aL/8Wtm
+        i/PnN7BbbHp8jdXi8q45bBYzzu9jslh75C67xaKtX9gtDr9pZ3Xg9Ni0qpPNY/OSeo++LasY
+        PT5vkgtgieKySUnNySxLLdK3S+DKeLC0n62gmbXi1sVulgbGaSxdjJwcEgImEjMfHmHqYuTi
+        EBJYwShx8OVdRgjnC6PEm13PmCGcz4wS06bsgWtpn3ufHSKxnFFiwamt7HAtK5deYAOpYhMw
+        lOg92scIYosICEvcW7ocrIhZ4A+jRPO9vawgCWEBf4njB68xgdgsAqoSZ96cBGvgFbCW6D/Z
+        wwyxTl5i9YYDYDangI3Euy1roM74zCbx/4IChO0isfDaaah6YYlXx7ewQ9gyEv93zgf7TkKg
+        mVGiZ/dtdghnAqPE/eMLGCGqrCUOH78IdBEH0HmaEut36UOEHSXO7v8NFpYQ4JO48VYQJMwM
+        ZE7aNp0ZIswr0dEmBFGtIvF71XQmCFtKovvJfxaIEg+Jw794IOHTzyjxdvpspgmM8rMQdi1g
+        ZFzFKJ5aWpybnlpsmJdarlecmFtcmpeul5yfu4kRmC5O/zv+aQfj10tJhxgFOBiVeHgn6MbG
+        CrEmlhVX5h5ilOBgVhLhrZgTFSvEm5JYWZValB9fVJqTWnyIUZqDRUmct5rhQbSQQHpiSWp2
+        ampBahFMlomDU6qBcavysy3Rtxviezr/2bvycFcLZJ16sEfnn1xHrI7Ej4IpbjdnrRNdHun0
+        YVGayoW83x53VSI9ZUOzr9zlVekMWVwqn8Q7R0e+51iIu0aVa/cSSbWDP+7JzrquvPp7VbDb
+        b8WrC41m1sTd1vHfMOXnBGu5hsNiLm99z0q5fixyb4oIVPmxzGenEktxRqKhFnNRcSIAn4Cg
+        zRMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrILMWRmVeSWpSXmKPExsVy+t/xe7rbU2NjDR6/MLLYOGM9q0X/49fM
+        FufPb2C32PT4GqvF5V1z2CxmnN/HZLH2yF12i0Vbv7BbHH7TzurA6bFpVSebx+Yl9R59W1Yx
+        enzeJBfAEqVnU5RfWpKqkJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRv
+        l6CX8WBpP1tBM2vFrYvdLA2M01i6GDk5JARMJNrn3mfvYuTiEBJYyihxY8sVIIcDKCElMb9F
+        CaJGWOLPtS42iJpPjBIbp69gBEmwCRhK9B7tA7NFgIruLV0ONohZoIVJYuWvJWwgCWEBX4lz
+        p94xg9gsAqoSZ96cBGvgFbCW6D/ZwwyxQV5i9YYDYDangI3Euy1rwK4TAqq5/uoh2wRGvgWM
+        DKsYRVJLi3PTc4sN9YoTc4tL89L1kvNzNzECg3fbsZ+bdzBe2hh8iFGAg1GJh3eCbmysEGti
+        WXFl7iFGCQ5mJRHeijlRsUK8KYmVValF+fFFpTmpxYcYTYGOmsgsJZqcD4ysvJJ4Q1NDcwtL
+        Q3Njc2MzCyVx3g6BgzFCAumJJanZqakFqUUwfUwcnFINjM139qxlvCBh9/FozOzCjZVTViyP
+        DL3fXhj+dFZPRrWbg83SJmdd+e6nj2zE7eteML3u42dRNbpx5Wd6zz9ZLcHAvYLvVVKP3NQ0
+        en3r0JTwp+f3PWd/YzvllUPi4etnlgQvC+T8ktW+/oqaQ2HA1FM3pxhMPSjg8LZhrmJNeNy0
+        FQw+qtdNxZRYijMSDbWYi4oTAf7DBVx0AgAA
+X-CMS-MailID: 20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05
+References: <20190821150711.31398-1-s.nawrocki@samsung.com>
+        <CGME20190821153936eucas1p22cd1a6105806cb5ad7b43252852fec05@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Aug 18, 2019 at 04:33:16PM +0200, Thomas Hellström (VMware) wrote:
-> From: Thomas Hellstrom <thellstrom@vmware.com>
-> 
-> Use the definition provided by include/asm/vmware.h
-> 
-> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Cc: <linux-input@vger.kernel.org>
-> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
-> Reviewed-by: Doug Covelli <dcovelli@vmware.com>
+The chipid driver uses the MFD syscon API but it was not covered
+properly in Kconfig.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+---
+ drivers/soc/samsung/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Please feel free to merge with the rest of the patches introducing
-VMWARE_HYPERCALL.
-
-> ---
->  drivers/input/mouse/vmmouse.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/input/mouse/vmmouse.c b/drivers/input/mouse/vmmouse.c
-> index 871e5b5ab129..0c7707c7bede 100644
-> --- a/drivers/input/mouse/vmmouse.c
-> +++ b/drivers/input/mouse/vmmouse.c
-> @@ -16,6 +16,7 @@
->  #include <linux/slab.h>
->  #include <linux/module.h>
->  #include <asm/hypervisor.h>
-> +#include <asm/vmware.h>
->  
->  #include "psmouse.h"
->  #include "vmmouse.h"
-> @@ -84,7 +85,7 @@ struct vmmouse_data {
->  #define VMMOUSE_CMD(cmd, in1, out1, out2, out3, out4)	\
->  ({							\
->  	unsigned long __dummy1, __dummy2;		\
-> -	__asm__ __volatile__ ("inl %%dx" :		\
-> +	__asm__ __volatile__ (VMWARE_HYPERCALL :	\
->  		"=a"(out1),				\
->  		"=b"(out2),				\
->  		"=c"(out3),				\
-> -- 
-> 2.20.1
-> 
-
-Thanks.
-
+diff --git a/drivers/soc/samsung/Kconfig b/drivers/soc/samsung/Kconfig
+index 2905f5262197..33ad0de2de3c 100644
+--- a/drivers/soc/samsung/Kconfig
++++ b/drivers/soc/samsung/Kconfig
+@@ -10,6 +10,7 @@ if SOC_SAMSUNG
+ config EXYNOS_CHIPID
+ 	bool "Exynos Chipid controller driver" if COMPILE_TEST
+ 	depends on ARCH_EXYNOS || COMPILE_TEST
++	select MFD_SYSCON
+ 	select SOC_BUS
+ 
+ config EXYNOS_PMU
 -- 
-Dmitry
+2.17.1
+
