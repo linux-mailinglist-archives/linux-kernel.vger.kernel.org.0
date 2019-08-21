@@ -2,69 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 47078983C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F374C983D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:00:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728953AbfHUSzV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:55:21 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36436 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728175AbfHUSzU (ORCPT
+        id S1729079AbfHUS4i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:56:38 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14194 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729038AbfHUS4i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:55:20 -0400
-Received: by mail-oi1-f193.google.com with SMTP id n1so2426811oic.3;
-        Wed, 21 Aug 2019 11:55:19 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rERMOO22DxL02BmdSf/5QgCf7VKhnIC3ZuuGwFUZfRU=;
-        b=kH+R7HOlv9Dp1/c58GFwAcnfN9n1mScgZ7tR8fxs1ZUkaLF0OPRH5xDTwxwz/mkWO/
-         06H2DCu+QYkc+2GLyPcN0ZW8ocmNiX7S8ION/CJci5wr9dN92/ELz+rUSDxY66qsRPiX
-         7hCs+4H4s9RAMEmky2hbNLSP56CC8if1JYO+gX2T6ssQxN49+sHXOv/ca+Xxko43a8Lv
-         5JyCp22I65k2+ZN5Bj53aR4CDBYAWe0IpE1QSmh1uBUl356wRW/0UltmWK56qHrPsdR8
-         /Ogd5TFSvb88rYGTZp4zxesfIODmNekFdpzyrm2RVeYnBbeIn3SpX1vXCxnbbH5ycE/e
-         tWaA==
-X-Gm-Message-State: APjAAAUOaIEMlPgl4mFCdLCquBZDwWBsLMEN0BxNK5VazZruS04R5Wa0
-        nJYbqp6a3mMae8U7mjs96w==
-X-Google-Smtp-Source: APXvYqz3JEcVbf68CAFziNoluNLQIdlZjFRfx0/mCbuwzLOzZfuB14oQi8LCeZrqjqzIB3eeM0xdWQ==
-X-Received: by 2002:aca:dbc3:: with SMTP id s186mr1125505oig.179.1566413719162;
-        Wed, 21 Aug 2019 11:55:19 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h33sm8044610otb.55.2019.08.21.11.55.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 11:55:18 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 13:55:18 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Fabien Parent <fparent@baylibre.com>
-Cc:     robh+dt@kernel.org, matthias.bgg@gmail.com,
-        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Fabien Parent <fparent@baylibre.com>
-Subject: Re: [PATCH] dt-bindings: rng: mtk-rng: Add documentation for MT8516
-Message-ID: <20190821185518.GA32228@bogus>
-References: <20190805130215.20499-1-fparent@baylibre.com>
+        Wed, 21 Aug 2019 14:56:38 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5d93e60000>; Wed, 21 Aug 2019 11:56:38 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 21 Aug 2019 11:56:37 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Wed, 21 Aug 2019 11:56:37 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 18:56:37 +0000
+Received: from [10.2.161.131] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 21 Aug
+ 2019 18:56:37 +0000
+Subject: Re: Boot failure due to: x86/boot: Save fields explicitly, zero out
+ everything else
+To:     Thomas Gleixner <tglx@linutronix.de>
+CC:     Neil MacLeod <neil@nmacleod.com>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Ingo Molnar" <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <gregkh@linuxfoundation.org>
+References: <CAFbqK8m=F_90531wTiwKT4J0R+EC-3ZmqHtKCwA_2th_nVYrpg@mail.gmail.com>
+ <900a48bf-c9fc-09bd-52a3-9e16ff8baa19@nvidia.com>
+ <alpine.DEB.2.21.1908212047140.1983@nanos.tec.linutronix.de>
+X-Nvconfidentiality: public
+From:   John Hubbard <jhubbard@nvidia.com>
+Message-ID: <5b9b4c36-c28b-1644-61fe-dbdfe3c4a1d2@nvidia.com>
+Date:   Wed, 21 Aug 2019 11:54:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190805130215.20499-1-fparent@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.DEB.2.21.1908212047140.1983@nanos.tec.linutronix.de>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566413798; bh=59TbhX++fURQ6IB6sU9SaGJ90qlX21B5kkUFNbRHcNY=;
+        h=X-PGP-Universal:Subject:To:CC:References:X-Nvconfidentiality:From:
+         Message-ID:Date:User-Agent:MIME-Version:In-Reply-To:
+         X-Originating-IP:X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=TwmH/qbb31K20tbA0upbxLrQ+eDSkIqweaP8EXTvOiePYRHEbHaeWeEkAFjMCFni+
+         HjZugrSxPNA8TSqVK+iIFLPpv6Zlo3HJx6+ENVknN4bzAi4WeTyhAvDy2hj1nkFGgc
+         z9mEkyTGjssl1Oohe+4qrvtCCDkNdfArS4Y2jag6i8edskt0nhJ1+razhjQbpTDZ8H
+         vPVsnWVuH+hyXhGcIxvRNv4YZNWlmBNj+z5r/D09eq9ZKx5UdYhUenQm9u77/5gYNx
+         CyuActTxqx0eqzH3w7HtyKrlYrO88SVnLcMOZB9TjC/fVDsGNiKn90wW0s8FZDMUHW
+         Y8vdqv4+FohMQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon,  5 Aug 2019 15:02:15 +0200, Fabien Parent wrote:
-> This commit adds the device-tree documentation for the RNG IP on the
-> MediaTek MT8516 SoC.
+On 8/21/19 11:51 AM, Thomas Gleixner wrote:
+> On Wed, 21 Aug 2019, John Hubbard wrote:
+>> On 8/21/19 10:05 AM, Neil MacLeod wrote:
+>> static void sanitize_boot_params(struct boot_params *boot_params)
+>> {
+>> ...
+>> 		const struct boot_params_to_save to_save[] = {
+>> 			BOOT_PARAM_PRESERVE(screen_info),
+>> 			BOOT_PARAM_PRESERVE(apm_bios_info),
+>> 			BOOT_PARAM_PRESERVE(tboot_addr),
+>> 			BOOT_PARAM_PRESERVE(ist_info),
+>> 			BOOT_PARAM_PRESERVE(acpi_rsdp_addr),
+>> 			BOOT_PARAM_PRESERVE(hd0_info),
+>> 			BOOT_PARAM_PRESERVE(hd1_info),
+>> 			BOOT_PARAM_PRESERVE(sys_desc_table),
+>> 			BOOT_PARAM_PRESERVE(olpc_ofw_header),
+>> 			BOOT_PARAM_PRESERVE(efi_info),
+>> 			BOOT_PARAM_PRESERVE(alt_mem_k),
+>> 			BOOT_PARAM_PRESERVE(scratch),
+>> 			BOOT_PARAM_PRESERVE(e820_entries),
+>> 			BOOT_PARAM_PRESERVE(eddbuf_entries),
+>> 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buf_entries),
+>> 			BOOT_PARAM_PRESERVE(edd_mbr_sig_buffer),
+>> 			BOOT_PARAM_PRESERVE(e820_table),
+>> 			BOOT_PARAM_PRESERVE(eddbuf),
+>> 		};
 > 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/rng/mtk-rng.txt | 1 +
->  1 file changed, 1 insertion(+)
+> I think I spotted it:
+> 
+> -               boot_params->acpi_rsdp_addr = 0;
+> 
+> + 			BOOT_PARAM_PRESERVE(acpi_rsdp_addr),
+> 
+> And it does not preserve 'hdr'
+> 
+> Grr. I surely was too tired when staring at this last time.
 > 
 
-Applied, thanks.
+ohhh man, that's embarrassing. Especially hdr, which was the center of
+the whole thing...sigh. Patch coming shortly.
 
-Rob
+
+thanks,
+-- 
+John Hubbard
+NVIDIA
