@@ -2,180 +2,389 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6CEE098353
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:44:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9DF29837C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:47:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728636AbfHUSoI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:44:08 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:54026 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728511AbfHUSoH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:44:07 -0400
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7LIXmLw030294;
-        Wed, 21 Aug 2019 11:43:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type : content-id
- : content-transfer-encoding : mime-version; s=facebook;
- bh=ZF82EjY/seItOsECRLqLxB69TEhoMdDBTLlaBG9AjI8=;
- b=hFRSSPAi4kqyQ3XwUuuE09zaL7csdbXfztXKIC58NOQmKrPDGFygzpPjL9shHbm5nKIe
- hM4yYpSzU9pEQGYkjSRlqPgK2T0CJ37u/7DsoJbgDJ/TUJIUbLH9beeni0AvSUCvzrz4
- WLGnYEYzipNAA406qzcZasjGmyrgdC2DkMA= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com with ESMTP id 2uh867s21v-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-        Wed, 21 Aug 2019 11:43:54 -0700
-Received: from ash-exhub101.TheFacebook.com (2620:10d:c0a8:82::e) by
- ash-exhub203.TheFacebook.com (2620:10d:c0a8:83::5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Wed, 21 Aug 2019 11:43:53 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (100.104.31.183)
- by o365-in.thefacebook.com (100.104.35.173) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Wed, 21 Aug 2019 11:43:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hA4BNgzzxvcI98+xYVrKoaFz4wp8NG2vV6ZeYKrIfGbqHpgP0snMbPrWjxIEt/smqNb1vhLFUBuZKcdfuMFO1s98LfK6EhFbGOP4gCbcZnzftmmqCIxW9TZY5PO0Gz8OL4lvQZz5ABvNrpOrUh0yeYDvXU+qNMKUJa7KVH8ILmOJ+RPikBM2oaBhGkbjCid1J499nwW1HpaZwjBZ7iYB3OtDTkI5F8Obmt1fe02eNPLm9VEoZBHv6tVsjs553qLNAY/AuCPo4wJRemqfM8Jk3sX2nvmlx9ctLwhCYuRHQ9QUl3Oayu3PhbygBs17VRx3z7D+q2lhr9IxiGfUMQY+Qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZF82EjY/seItOsECRLqLxB69TEhoMdDBTLlaBG9AjI8=;
- b=HC9KPFeLlpJqMfBv5f+vO5GKNy1hkhQXkNR++Itq5lWeDs6lzTo3gNfj2nR5gI7ga4amHe2iZ0uPSj/H2CpJ/K/5nZeIECwxHqDF9tklmh4YDhpaspARFgTkaqNpN/mldxsejNKEFfKV61CMxxFRUn2X9QOekdCREIXQTIakrvangkaYoW9ea2WZZ0tETYPdEszKp2qUm8wZ3h/UC3CUEFHbukNkwHhPIYRYDaGHAj3ILddLe/aU4n5xXE4UN7lHpIiIxeaB3WJAl2G4SzBdDGoajSDeS6swP5a8yq04d1DPNV/1oH7r/0vN2xQBQbtEXOfuiW6HJHj10pCiEhIqZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=fb.com; dmarc=pass action=none header.from=fb.com; dkim=pass
- header.d=fb.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
- s=selector2-fb-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZF82EjY/seItOsECRLqLxB69TEhoMdDBTLlaBG9AjI8=;
- b=S9JXzYIMngACeB5lxazX9KKviYBRZZY+5njhYtuCbcGYCQBFSn4Bu2L9Mwi76p90PoJIlsEJixpe7RSmL+gXeLeuFhJVbP0ZADrbEEMXPTHMvbBo+A4xRDzB8lJjZuk9Z6uB/ZhNoYKkg2vb0u6WYvPOJkWoMOwVVsLcmNEKboY=
-Received: from BYAPR15MB3384.namprd15.prod.outlook.com (20.179.59.17) by
- BYAPR15MB2661.namprd15.prod.outlook.com (20.179.156.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Wed, 21 Aug 2019 18:43:49 +0000
-Received: from BYAPR15MB3384.namprd15.prod.outlook.com
- ([fe80::d95b:271:fa7e:e978]) by BYAPR15MB3384.namprd15.prod.outlook.com
- ([fe80::d95b:271:fa7e:e978%5]) with mapi id 15.20.2178.020; Wed, 21 Aug 2019
- 18:43:49 +0000
-From:   Yonghong Song <yhs@fb.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-CC:     Daniel Xu <dxu@dxuuu.xyz>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Song Liu <songliubraving@fb.com>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>
-Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
- PERF_EVENT_IOC_QUERY_PROBE ioctl
-Thread-Topic: [PATCH v3 bpf-next 1/4] tracing/probe: Add
- PERF_EVENT_IOC_QUERY_PROBE ioctl
-Thread-Index: AQHVWBDfYHIXKLzjJEaHryqNNkv52KcFXMkAgACQf4CAAANPgA==
-Date:   Wed, 21 Aug 2019 18:43:49 +0000
-Message-ID: <5ecdcd72-255d-26d1-baf3-dc64498753c2@fb.com>
-References: <20190820144503.GV2332@hirez.programming.kicks-ass.net>
- <BWENHQJIN885.216UOYEIWNGFU@dlxu-fedora-R90QNFJV>
- <20190821110856.GB2349@hirez.programming.kicks-ass.net>
- <62874df3-cae0-36a1-357f-b59484459e52@fb.com>
- <20190821183155.GE2349@hirez.programming.kicks-ass.net>
-In-Reply-To: <20190821183155.GE2349@hirez.programming.kicks-ass.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR13CA0044.namprd13.prod.outlook.com
- (2603:10b6:300:95::30) To BYAPR15MB3384.namprd15.prod.outlook.com
- (2603:10b6:a03:10e::17)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [2620:10d:c090:200::2:f330]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: bbd2d10d-87ca-4c62-15d7-08d726678169
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:BYAPR15MB2661;
-x-ms-traffictypediagnostic: BYAPR15MB2661:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BYAPR15MB266109363152EC07B59DA9C1D3AA0@BYAPR15MB2661.namprd15.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1751;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(366004)(396003)(376002)(39860400002)(136003)(199004)(189003)(36756003)(64756008)(7416002)(81156014)(66556008)(386003)(14454004)(81166006)(6506007)(54906003)(53546011)(478600001)(52116002)(31686004)(2906002)(6512007)(76176011)(71200400001)(5660300002)(31696002)(6116002)(186003)(102836004)(6436002)(6486002)(66446008)(6246003)(316002)(86362001)(8936002)(71190400001)(4326008)(53936002)(256004)(8676002)(2616005)(6916009)(46003)(229853002)(486006)(66476007)(66946007)(446003)(7736002)(5024004)(25786009)(476003)(99286004)(305945005)(11346002);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB2661;H:BYAPR15MB3384.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: fb.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 4bXSgARJQXUjD421AD/kzFZH17qImeVWB+1lEb42IJHdltk1fvA1eVg+aMr/WYIGrFVLzQBU4uhA+AmY9tP6p0dYCd7Adfo2+JxdGrYiKcxT9taVLo2+r5P7vULHxg5fKPwCEcG4uGbD5aT6Q3T5E6gW4hz+jMpTA5rPBvTU6GTZswShw98kdz+uh1CGncSU0k+9/nGHi0AgBAbJ4cnuBjvmQE+zEQ9bV4sxUZrr25qQoZ0A3RCfsQdwd7885n3poiMZZ8GsHsuWVooY9evEKsWaiOyCHUGXycGsJoI7z2nfSiKRSlknfzBT6uvNvu5SgOaYngR535GNwR6x7YMRG9LTQlX/cF0wavVtOeLSXzmWaDcs7+elvh+dpsDA47VwnayH3PtioktUM8fuwy/492pjZl/l/YLxjbS3OtWVwQg=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E33811E1312E6D41A5C997F352A1FE8B@namprd15.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729413AbfHUSpp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:45:45 -0400
+Received: from mout.web.de ([217.72.192.78]:35403 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728062AbfHUSpo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 14:45:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1566413112;
+        bh=Eokj4/dGveTY43m2jdkJoZSE3kMn9PBFEqOcaiphGUM=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=jutwR2eiz2109XM8V3rCnhid4vnGN6tiNemZlrlGaQk/3LXtp+LOtLX7xT22Ebc3Y
+         NzCFOeTaWPAAQA07usj5LYV64t+60SbsUAbItdTqjUcueTbtloKVxZmvbv36sEE6MY
+         d7lT1xuXvfoV+84WR7ne+Q2oAudlJ3alV34aPfxs=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.9.44]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M9XUJ-1i6KcZ1cND-00D02j; Wed, 21
+ Aug 2019 20:45:12 +0200
+To:     netdev@vger.kernel.org, Alexios Zavras <alexios.zavras@intel.com>,
+        Allison Randal <allison@lohutok.net>,
+        Armijn Hemel <armijn@tjaldur.nl>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Fuqian Huang <huangfq.daxian@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        Kangjie Lu <kjlu@umn.edu>, Karsten Keil <isdn@linux-pingi.de>,
+        Thomas Gleixner <tglx@linutronix.de>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: =?UTF-8?Q?=5bPATCH=5d_mISDN=3a_Delete_unnecessary_checks_before_the?=
+ =?UTF-8?B?IG1hY3JvIGNhbGwg4oCcZGV2X2tmcmVlX3NrYuKAnQ==?=
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Message-ID: <689e51d5-9a43-45a4-5d33-75a34eba928a@web.de>
+Date:   Wed, 21 Aug 2019 20:45:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbd2d10d-87ca-4c62-15d7-08d726678169
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 18:43:49.2898
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 88nKzxg/zogw0YNCv5cfQ+6LTVpEcO6wBgp/nOK0IBb0gxoJD+ET3JhEdeoOsYEM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB2661
-X-OriginatorOrg: fb.com
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=fb_default_notspam policy=fb_default score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908210182
-X-FB-Internal: deliver
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:tfdwBbPeOWePy27r9PwGdU/kLMoC3bUX8xhhCbRIdhXGahPB0zo
+ vMnMaiFtA63rO08Zph4PUaAyrRO3urn+8dt3+mZu4EzI96xTKRpCw5enexlJPCSijDNT9Zn
+ Kl4yTeWAPlv9NguJr8qpehigosRFxIF1gOq0WIuV+kHWPtg5Dn7464KvSnTSgG/OlPhTMuZ
+ 5kRFQuITC5a4/kyLxmUDA==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:v9JPFSz4oDU=:HaemPJ8cg82mByc7200lAV
+ XBCAvpfhGT+OQj/P0SlBW9bA1o7J/rPfRecyVxXzHtJnxf1dI1DQWlgys2+gvUGx/XkLLEUSG
+ BGco5sbANVUK1cvEET3rOnf4GqOOmdmVJGF2kcyjyznKvJtZvMzNTsyW7pRyVjFwkrTz8vdFS
+ kyl4FuhyGRcGHLonJetTHuFkMk6wsezRf7fEirf0v2miR/+hlLuL1s+Htgkb0tAWGpmFb+mud
+ 2+uj2HAOIOd1h7/VUTpe4pCZ1wjjHTL2Ek8AMrfN/IW7oITuD7xixgAA8YuuVKhd0buCpp4E8
+ ACEY8lSi+Pf9/QBEYZWAr7MjI9zAn5ZqwkTaQ0R57eJ4jaa5I4MlPTmp2JGZKcXL89FYgO05x
+ Nlu0dZNeHdW21s8pIYS+/TanRCtrMNl8dr3vRYPrLFxQRKTGrA0S26Tp8nXuxISKnBwa4kY5P
+ fwoR5THacvtjVL3r21RGzBpH+8UeCGWiYu8PFmxPmlAnDmd4kyKrI4g2h3j2KprMd+kDhdU2/
+ sQz89wOsYgdAEmAtzY6RoX6u6eMPYXitqbW175UHUDrTSFKsEP6sqZePpZOX3T01NV2dkUV7S
+ YznwprNG7XvpSydrUnbLU2VwIt7IYhB7LcJ2xzKZq4M+osYV+VteyblvXOW4Fe2ufIAm9+JtI
+ QvZ3WUBNIkFPb1/UNTxAFB2/bI2gVnX8jOSzhwaBpE0d9dAcBl2AazVnJCsvi2vJvtjBL+mFE
+ DAYRr3+yYNPTe9vhpsqS68MfJ3XlfmqbKzJPzImniDGlCuLLBVejqH/5/li37ybX/n9gJRm3h
+ gM2074i2nPJemOK+rO3kGUlhiHAhLUJZde+pATQgHF5a+oXzN+lsvf4DOPNTEldFozs4FhHVT
+ zMO4AgAtXtG4OFT1azxlYjswrqfahhSmlgiZAIDBJzaUDdlYXxrzsKs1ip2ndRSQFd7NKdpB0
+ JuUvVXkeM5jak3VoRf5RraqWaSJbTliZu0UrfnTxfWkduyZo4zEAFa1svLAsJlVuOEQKS4VDY
+ mH4L6dGFFeQDErZ7BU0h8OlSfQh8RaLTgnILwX8hFmB33RTTMQL6x+lQXEKGHiBEKv4gRZKsJ
+ 4qkohW4eW/uzxIyShRSDDP+UYLQrVdmgqHDTHMgpSE89RawVqcViIqFHKfoSflwYCc2010lyx
+ /V0TQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDgvMjEvMTkgMTE6MzEgQU0sIFBldGVyIFppamxzdHJhIHdyb3RlOg0KPiBPbiBXZWQs
-IEF1ZyAyMSwgMjAxOSBhdCAwNDo1NDo0N1BNICswMDAwLCBZb25naG9uZyBTb25nIHdyb3RlOg0K
-Pj4gQ3VycmVudGx5LCBpbiBrZXJuZWwvdHJhY2UvYnBmX3RyYWNlLmMsIHdlIGhhdmUNCj4+DQo+
-PiB1bnNpZ25lZCBpbnQgdHJhY2VfY2FsbF9icGYoc3RydWN0IHRyYWNlX2V2ZW50X2NhbGwgKmNh
-bGwsIHZvaWQgKmN0eCkNCj4+IHsNCj4+ICAgICAgICAgICB1bnNpZ25lZCBpbnQgcmV0Ow0KPj4N
-Cj4+ICAgICAgICAgICBpZiAoaW5fbm1pKCkpIC8qIG5vdCBzdXBwb3J0ZWQgeWV0ICovDQo+PiAg
-ICAgICAgICAgICAgICAgICByZXR1cm4gMTsNCj4+DQo+PiAgICAgICAgICAgcHJlZW1wdF9kaXNh
-YmxlKCk7DQo+Pg0KPj4gICAgICAgICAgIGlmICh1bmxpa2VseShfX3RoaXNfY3B1X2luY19yZXR1
-cm4oYnBmX3Byb2dfYWN0aXZlKSAhPSAxKSkgew0KPiANCj4gWWVzLCBJJ20gYXdhcmUgb2YgdGhh
-dC4NCj4gDQo+PiBJbiB0aGUgYWJvdmUsIHRoZSBldmVudHMgd2l0aCBicGYgcHJvZ3JhbSBhdHRh
-Y2hlZCB3aWxsIGJlIG1pc3NlZA0KPj4gaWYgdGhlIGNvbnRleHQgaXMgbm1pIGludGVycnVwdCwg
-b3IgaWYgc29tZSByZWN1cnNpb24gaGFwcGVucyBldmVuIHdpdGgNCj4+IHRoZSBzYW1lIG9yIGRp
-ZmZlcmVudCBicGYgcHJvZ3JhbXMuDQo+PiBJbiBjYXNlIG9mIHJlY3Vyc2lvbiwgdGhlIGV2ZW50
-cyB3aWxsIG5vdCBiZSBzZW50IHRvIHJpbmcgYnVmZmVyLg0KPiANCj4gQW5kIHdoaWxlIHRoYXQg
-aXMgc2lnbmlmaWNhbnRseSB3b3JzZSB0aGFuIHdoYXQgZnRyYWNlL3BlcmYgaGF2ZSwgaXQgaXMN
-Cj4gZnVuZGFtZW50YWxseSB0aGUgc2FtZSB0aGluZy4NCj4gDQo+IHBlcmYgYWxsb3dzIChhbmQg
-aWlyYyBmdHJhY2UgZG9lcyB0b28pIDQgbmVzdGVkIGNvbnRleHQgcGVyIENQVQ0KPiAodGFzayxz
-b2Z0aXJxLGlycSxubWkpIGJ1dCBhbnkgcmVjdXJzaW9uIHdpdGhpbiB0aG9zZSBjb250ZXh0IGFu
-ZCB3ZQ0KPiBkcm9wIHN0dWZmLg0KPiANCj4gVGhlIEJQRiBzdHVmZiBpcyBqdXN0IG1vcmUgZWFn
-ZXIgdG8gZHJvcCB0aGluZ3Mgb24gdGhlIGZsb29yLCBidXQgaXQgaXMNCj4gZnVuZGFtZW50YWxs
-eSB0aGUgc2FtZS4NCj4gDQo+PiBBIGxvdCBvZiBicGYtYmFzZWQgdHJhY2luZyBwcm9ncmFtcyB1
-c2VzIG1hcHMgdG8gY29tbXVuaWNhdGUgYW5kDQo+PiBkbyBub3QgYWxsb2NhdGUgcmluZyBidWZm
-ZXIgYXQgYWxsLg0KPiANCj4gU28gZXh0ZW5kaW5nIFBFUkZfUkVDT1JEX0xPU1QgZG9lc24ndCB3
-b3JrLiBCdXQgUEVSRl9GT1JNQVRfTE9TVCBtaWdodA0KPiBzdGlsbCB3b3JrIGZpbmU7IGJ1dCB5
-b3UgZ2V0IHRvIGltcGxlbWVudCBpdCBmb3IgYWxsIHNvZnR3YXJlIGV2ZW50cy4NCg0KQ291bGQg
-eW91IGdpdmUgbW9yZSBzcGVjaWZpY3MgYWJvdXQgUEVSRl9GT1JNQVRfTE9TVD8gR29vZ2xpbmcg
-DQoiUEVSRl9GT1JNQVRfTE9TVCIgb25seSB5aWVsZHMgdHdvIGVtYWlscyB3aGljaCB3ZSBhcmUg
-ZGlzY3Vzc2luZyBoZXJlIDotKA0KDQo+IA0KPj4gTWF5YmUgd2UgY2FuIHN0aWxsIHVzZSBpb2N0
-bCBiYXNlZCBhcHByb2FjaCB3aGljaCBpcyBsaWdodCB3ZWlnaHRlZA0KPj4gY29tcGFyZWQgdG8g
-cmluZyBidWZmZXIgYXBwcm9hY2g/IElmIGEgZmQgaGFzIGJwZiBhdHRhY2hlZCwgbmhpdC9ubWlz
-c2VzDQo+PiBtZWFucyB0aGUga3Byb2JlIGlzIHByb2Nlc3NlZCBieSBicGYgcHJvZ3JhbSBvciBu
-b3QuDQo+IA0KPiBUaGVyZSBpcyBub3RoaW5nIGtwcm9iZSBzcGVjaWZpYyBoZXJlLiBLcHJvYmVz
-IGp1c3QgYXBwZWFyIHRvIGJlIHRoZQ0KPiBvbmx5IG9uZSBhY3R1YWxseSBhY2NvdW50aW5nIHRo
-ZSByZWN1cnNpb24gY2FzZXMsIGJ1dCBldmVyeW9uZSBoYXMNCj4gdGhlbS4NCg0KU29ycnkgdG8g
-YmUgc3BlY2lmaWMsIGtwcm9iZSBpcyBqdXN0IGFuIGV4YW1wbGUsIEkgYWN0dWFsbHkgcmVmZXJz
-IHRvIA0KYW55IHBlcmYgZXZlbnQgd2hlcmUgYnBmIGNhbiBhdHRhY2ggdG8sIHdoaWNoIHRoZW9y
-ZXRpY2FsbHkgYXJlIGFueQ0KcGVyZiBldmVudHMgd2hpY2ggY2FuIGJlIG9wZW5lZCB3aXRoICJw
-ZXJmX2V2ZW50X29wZW4iIHN5c2NhbGwgYWx0aG91Z2ggDQpzb21lIG9mIHRoZW0gKGUuZy4sIHNv
-ZnR3YXJlIGV2ZW50cz8pIG1heSBub3QgaGF2ZSBicGYgcnVubmluZyBob29rcyB5ZXQuDQoNCj4g
-DQo+PiBDdXJyZW50bHksIGZvciBkZWJ1Z2ZzLCB0aGUgbmhpdC9ubWlzc2VzIGluZm8gaXMgZXhw
-b3NlZCBhdA0KPj4ge2t8dX1wcm9iZV9wcm9maWxlLiBBbHRlcm5hdGl2ZSwgd2UgY291bGQgZXhw
-b3NlIHRoZSBuaGl0L25taXNzZXMNCj4+IGluIC9wcm9jL3NlbGYvZmRpbmZvLzxmZD4uIFVzZXIg
-Y2FuIHF1ZXJ5IHRoaXMgaW50ZXJmYWNlIHRvDQo+PiBnZXQgbnVtYmVycy4NCj4gDQo+IE5vLCB3
-ZSdyZSBub3QgYWRkaW5nIHN0dWZmIHRvIHByb2NmcyBmb3IgdGhpcy4NCg0KTm8gcHJvYmxlbS4g
-SnVzdCBhIHN1Z2dlc3Rpb24uDQo=
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Aug 2019 20:10:56 +0200
+
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the shown calls is not needed.
+
+This issue was detected by using the Coccinelle software.
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/isdn/hardware/mISDN/avmfritz.c  |  3 +--
+ drivers/isdn/hardware/mISDN/hfcpci.c    |  6 ++----
+ drivers/isdn/hardware/mISDN/mISDNipac.c | 12 ++++--------
+ drivers/isdn/hardware/mISDN/mISDNisar.c |  3 +--
+ drivers/isdn/hardware/mISDN/netjet.c    |  3 +--
+ drivers/isdn/hardware/mISDN/w6692.c     |  9 +++------
+ drivers/isdn/mISDN/l1oip_core.c         |  3 +--
+ drivers/isdn/mISDN/layer2.c             |  9 +++------
+ drivers/isdn/mISDN/stack.c              |  6 ++----
+ drivers/isdn/mISDN/tei.c                |  6 ++----
+ 10 files changed, 20 insertions(+), 40 deletions(-)
+
+diff --git a/drivers/isdn/hardware/mISDN/avmfritz.c b/drivers/isdn/hardwar=
+e/mISDN/avmfritz.c
+index 81f2b183acc8..1137dd152b5c 100644
+=2D-- a/drivers/isdn/hardware/mISDN/avmfritz.c
++++ b/drivers/isdn/hardware/mISDN/avmfritz.c
+@@ -509,8 +509,7 @@ HDLC_irq_xpr(struct bchannel *bch)
+ 	if (bch->tx_skb && bch->tx_idx < bch->tx_skb->len) {
+ 		hdlc_fill_fifo(bch);
+ 	} else {
+-		if (bch->tx_skb)
+-			dev_kfree_skb(bch->tx_skb);
++		dev_kfree_skb(bch->tx_skb);
+ 		if (get_next_bframe(bch)) {
+ 			hdlc_fill_fifo(bch);
+ 			test_and_clear_bit(FLG_TX_EMPTY, &bch->Flags);
+diff --git a/drivers/isdn/hardware/mISDN/hfcpci.c b/drivers/isdn/hardware/=
+mISDN/hfcpci.c
+index 4a069582fc6b..2330a7d24267 100644
+=2D-- a/drivers/isdn/hardware/mISDN/hfcpci.c
++++ b/drivers/isdn/hardware/mISDN/hfcpci.c
+@@ -1119,8 +1119,7 @@ tx_birq(struct bchannel *bch)
+ 	if (bch->tx_skb && bch->tx_idx < bch->tx_skb->len)
+ 		hfcpci_fill_fifo(bch);
+ 	else {
+-		if (bch->tx_skb)
+-			dev_kfree_skb(bch->tx_skb);
++		dev_kfree_skb(bch->tx_skb);
+ 		if (get_next_bframe(bch))
+ 			hfcpci_fill_fifo(bch);
+ 	}
+@@ -1132,8 +1131,7 @@ tx_dirq(struct dchannel *dch)
+ 	if (dch->tx_skb && dch->tx_idx < dch->tx_skb->len)
+ 		hfcpci_fill_dfifo(dch->hw);
+ 	else {
+-		if (dch->tx_skb)
+-			dev_kfree_skb(dch->tx_skb);
++		dev_kfree_skb(dch->tx_skb);
+ 		if (get_next_dframe(dch))
+ 			hfcpci_fill_dfifo(dch->hw);
+ 	}
+diff --git a/drivers/isdn/hardware/mISDN/mISDNipac.c b/drivers/isdn/hardwa=
+re/mISDN/mISDNipac.c
+index f915399d75ca..bca880213e91 100644
+=2D-- a/drivers/isdn/hardware/mISDN/mISDNipac.c
++++ b/drivers/isdn/hardware/mISDN/mISDNipac.c
+@@ -190,8 +190,7 @@ isac_rme_irq(struct isac_hw *isac)
+ #endif
+ 		}
+ 		WriteISAC(isac, ISAC_CMDR, 0x80);
+-		if (isac->dch.rx_skb)
+-			dev_kfree_skb(isac->dch.rx_skb);
++		dev_kfree_skb(isac->dch.rx_skb);
+ 		isac->dch.rx_skb =3D NULL;
+ 	} else {
+ 		count =3D ReadISAC(isac, ISAC_RBCL) & 0x1f;
+@@ -210,8 +209,7 @@ isac_xpr_irq(struct isac_hw *isac)
+ 	if (isac->dch.tx_skb && isac->dch.tx_idx < isac->dch.tx_skb->len) {
+ 		isac_fill_fifo(isac);
+ 	} else {
+-		if (isac->dch.tx_skb)
+-			dev_kfree_skb(isac->dch.tx_skb);
++		dev_kfree_skb(isac->dch.tx_skb);
+ 		if (get_next_dframe(&isac->dch))
+ 			isac_fill_fifo(isac);
+ 	}
+@@ -464,8 +462,7 @@ isacsx_rme_irq(struct isac_hw *isac)
+ 			isac->dch.err_crc++;
+ #endif
+ 		WriteISAC(isac, ISACX_CMDRD, ISACX_CMDRD_RMC);
+-		if (isac->dch.rx_skb)
+-			dev_kfree_skb(isac->dch.rx_skb);
++		dev_kfree_skb(isac->dch.rx_skb);
+ 		isac->dch.rx_skb =3D NULL;
+ 	} else {
+ 		count =3D ReadISAC(isac, ISACX_RBCLD) & 0x1f;
+@@ -1012,8 +1009,7 @@ hscx_xpr(struct hscx_hw *hx)
+ 	if (hx->bch.tx_skb && hx->bch.tx_idx < hx->bch.tx_skb->len) {
+ 		hscx_fill_fifo(hx);
+ 	} else {
+-		if (hx->bch.tx_skb)
+-			dev_kfree_skb(hx->bch.tx_skb);
++		dev_kfree_skb(hx->bch.tx_skb);
+ 		if (get_next_bframe(&hx->bch)) {
+ 			hscx_fill_fifo(hx);
+ 			test_and_clear_bit(FLG_TX_EMPTY, &hx->bch.Flags);
+diff --git a/drivers/isdn/hardware/mISDN/mISDNisar.c b/drivers/isdn/hardwa=
+re/mISDN/mISDNisar.c
+index fd5c52f37802..4a3e748a1c26 100644
+=2D-- a/drivers/isdn/hardware/mISDN/mISDNisar.c
++++ b/drivers/isdn/hardware/mISDN/mISDNisar.c
+@@ -690,8 +690,7 @@ send_next(struct isar_ch *ch)
+ 			}
+ 		}
+ 	}
+-	if (ch->bch.tx_skb)
+-		dev_kfree_skb(ch->bch.tx_skb);
++	dev_kfree_skb(ch->bch.tx_skb);
+ 	if (get_next_bframe(&ch->bch)) {
+ 		isar_fill_fifo(ch);
+ 		test_and_clear_bit(FLG_TX_EMPTY, &ch->bch.Flags);
+diff --git a/drivers/isdn/hardware/mISDN/netjet.c b/drivers/isdn/hardware/=
+mISDN/netjet.c
+index 4e30affd1a7c..61caa7e50b9a 100644
+=2D-- a/drivers/isdn/hardware/mISDN/netjet.c
++++ b/drivers/isdn/hardware/mISDN/netjet.c
+@@ -605,8 +605,7 @@ bc_next_frame(struct tiger_ch *bc)
+ 	if (bc->bch.tx_skb && bc->bch.tx_idx < bc->bch.tx_skb->len) {
+ 		fill_dma(bc);
+ 	} else {
+-		if (bc->bch.tx_skb)
+-			dev_kfree_skb(bc->bch.tx_skb);
++		dev_kfree_skb(bc->bch.tx_skb);
+ 		if (get_next_bframe(&bc->bch)) {
+ 			fill_dma(bc);
+ 			test_and_clear_bit(FLG_TX_EMPTY, &bc->bch.Flags);
+diff --git a/drivers/isdn/hardware/mISDN/w6692.c b/drivers/isdn/hardware/m=
+ISDN/w6692.c
+index 2402608dc98d..bad55fdacd36 100644
+=2D-- a/drivers/isdn/hardware/mISDN/w6692.c
++++ b/drivers/isdn/hardware/mISDN/w6692.c
+@@ -356,8 +356,7 @@ handle_rxD(struct w6692_hw *card) {
+ 			card->dch.err_rx++;
+ #endif
+ 		}
+-		if (card->dch.rx_skb)
+-			dev_kfree_skb(card->dch.rx_skb);
++		dev_kfree_skb(card->dch.rx_skb);
+ 		card->dch.rx_skb =3D NULL;
+ 		WriteW6692(card, W_D_CMDR, W_D_CMDR_RACK | W_D_CMDR_RRST);
+ 	} else {
+@@ -376,8 +375,7 @@ handle_txD(struct w6692_hw *card) {
+ 	if (card->dch.tx_skb && card->dch.tx_idx < card->dch.tx_skb->len) {
+ 		W6692_fill_Dfifo(card);
+ 	} else {
+-		if (card->dch.tx_skb)
+-			dev_kfree_skb(card->dch.tx_skb);
++		dev_kfree_skb(card->dch.tx_skb);
+ 		if (get_next_dframe(&card->dch))
+ 			W6692_fill_Dfifo(card);
+ 	}
+@@ -636,8 +634,7 @@ send_next(struct w6692_ch *wch)
+ 	if (wch->bch.tx_skb && wch->bch.tx_idx < wch->bch.tx_skb->len) {
+ 		W6692_fill_Bfifo(wch);
+ 	} else {
+-		if (wch->bch.tx_skb)
+-			dev_kfree_skb(wch->bch.tx_skb);
++		dev_kfree_skb(wch->bch.tx_skb);
+ 		if (get_next_bframe(&wch->bch)) {
+ 			W6692_fill_Bfifo(wch);
+ 			test_and_clear_bit(FLG_TX_EMPTY, &wch->bch.Flags);
+diff --git a/drivers/isdn/mISDN/l1oip_core.c b/drivers/isdn/mISDN/l1oip_co=
+re.c
+index 447f241467bd..b57dcb834594 100644
+=2D-- a/drivers/isdn/mISDN/l1oip_core.c
++++ b/drivers/isdn/mISDN/l1oip_core.c
+@@ -1254,8 +1254,7 @@ release_card(struct l1oip *hc)
+ 			mISDN_freebchannel(hc->chan[ch].bch);
+ 			kfree(hc->chan[ch].bch);
+ #ifdef REORDER_DEBUG
+-			if (hc->chan[ch].disorder_skb)
+-				dev_kfree_skb(hc->chan[ch].disorder_skb);
++			dev_kfree_skb(hc->chan[ch].disorder_skb);
+ #endif
+ 		}
+ 	}
+diff --git a/drivers/isdn/mISDN/layer2.c b/drivers/isdn/mISDN/layer2.c
+index 68a481516729..5bf7fcb282c4 100644
+=2D-- a/drivers/isdn/mISDN/layer2.c
++++ b/drivers/isdn/mISDN/layer2.c
+@@ -900,8 +900,7 @@ l2_disconnect(struct FsmInst *fi, int event, void *arg=
+)
+ 	send_uframe(l2, NULL, DISC | 0x10, CMD);
+ 	mISDN_FsmDelTimer(&l2->t203, 1);
+ 	restart_t200(l2, 2);
+-	if (skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(skb);
+ }
+
+ static void
+@@ -1722,8 +1721,7 @@ l2_set_own_busy(struct FsmInst *fi, int event, void =
+*arg)
+ 		enquiry_cr(l2, RNR, RSP, 0);
+ 		test_and_clear_bit(FLG_ACK_PEND, &l2->flag);
+ 	}
+-	if (skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(skb);
+ }
+
+ static void
+@@ -1736,8 +1734,7 @@ l2_clear_own_busy(struct FsmInst *fi, int event, voi=
+d *arg)
+ 		enquiry_cr(l2, RR, RSP, 0);
+ 		test_and_clear_bit(FLG_ACK_PEND, &l2->flag);
+ 	}
+-	if (skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(skb);
+ }
+
+ static void
+diff --git a/drivers/isdn/mISDN/stack.c b/drivers/isdn/mISDN/stack.c
+index fa2237e7bcf8..27aa32914425 100644
+=2D-- a/drivers/isdn/mISDN/stack.c
++++ b/drivers/isdn/mISDN/stack.c
+@@ -75,8 +75,7 @@ send_socklist(struct mISDN_sock_list *sl, struct sk_buff=
+ *skb)
+ 			cskb =3D NULL;
+ 	}
+ 	read_unlock(&sl->lock);
+-	if (cskb)
+-		dev_kfree_skb(cskb);
++	dev_kfree_skb(cskb);
+ }
+
+ static void
+@@ -134,8 +133,7 @@ send_layer2(struct mISDNstack *st, struct sk_buff *skb=
+)
+ 	}
+ out:
+ 	mutex_unlock(&st->lmutex);
+-	if (skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(skb);
+ }
+
+ static inline int
+diff --git a/drivers/isdn/mISDN/tei.c b/drivers/isdn/mISDN/tei.c
+index a4fa594e1caf..59d28cb19738 100644
+=2D-- a/drivers/isdn/mISDN/tei.c
++++ b/drivers/isdn/mISDN/tei.c
+@@ -1328,10 +1328,8 @@ mgr_bcast(struct mISDNchannel *ch, struct sk_buff *=
+skb)
+ 	}
+ out:
+ 	read_unlock_irqrestore(&mgr->lock, flags);
+-	if (cskb)
+-		dev_kfree_skb(cskb);
+-	if (skb)
+-		dev_kfree_skb(skb);
++	dev_kfree_skb(cskb);
++	dev_kfree_skb(skb);
+ 	return 0;
+ }
+
+=2D-
+2.23.0
+
