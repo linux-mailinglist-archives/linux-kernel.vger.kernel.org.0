@@ -2,613 +2,165 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39B6598479
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:32:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95B1A98495
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfHUTb0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 15:31:26 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57385 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730293AbfHUTbR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:31:17 -0400
-Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtp (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i0WK9-0004Hg-3g; Wed, 21 Aug 2019 21:31:13 +0200
-Message-Id: <20190821192922.835676817@linutronix.de>
-User-Agent: quilt/0.65
-Date:   Wed, 21 Aug 2019 21:09:25 +0200
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     LKML <linux-kernel@vger.kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [patch V2 38/38] posix-cpu-timers: Utilize timerqueue for storage
-References: <20190821190847.665673890@linutronix.de>
+        id S1730576AbfHUTdC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 15:33:02 -0400
+Received: from mout.web.de ([217.72.192.78]:56811 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729847AbfHUTas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 15:30:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1566415815;
+        bh=3lpmHRFKH7F6csdOCSSofXDaB6xUBXTTVPtUFzk3mTQ=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=Q+kKxxvSwaDq2hNsdqqQrOm0qV1rsKFBiQ7a1GulpVT2UVzmbzl7oh3lKHKkt6M9z
+         E6d3O3w/XwSZErQI3NY7EW7gG7i9JmKCNISmfMyhtvU4gYX5PIdoLGLeHzenYBi61N
+         cwZsSLQzkC8FCf9M28INRuUM3S7LCZEMxN7mzz7k=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.48.9.44]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MFc1h-1i3Z7j3v5p-00Ef3a; Wed, 21
+ Aug 2019 21:30:15 +0200
+To:     linux-can@vger.kernel.org, netdev@vger.kernel.org,
+        Allison Randal <allison@lohutok.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Enrico Weigelt <lkml@metux.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        Sean Nyekjaer <sean@geanix.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Weitao Hou <houweitaoo@gmail.com>,
+        Wolfgang Grandegger <wg@grandegger.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: =?UTF-8?Q?=5bPATCH=5d_can=3a_Delete_unnecessary_checks_before_the_m?=
+ =?UTF-8?B?YWNybyBjYWxsIOKAnGRldl9rZnJlZV9za2LigJ0=?=
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <27674907-fd2a-7f0c-84fd-d8b5124739a9@web.de>
+Date:   Wed, 21 Aug 2019 21:30:11 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:3UUCaBDFFXjC3jkkiegfpEDT3e0kV/rF33z4mztvCPFs1e+I4pH
+ zE8g62+GO6s/2u/BI4gYuH9TCH3+5p+Dx3QormIx/6A8L4RBX8L5Z7vvvuMPXZN72tXg8mr
+ r9cN2+Bsoy2dtsuafeNJ/xmo9CCpg6dTQWouoQYc3OXtPMPU0OeJ3kq5tG+I47JVIzuCys+
+ 6uiya24Xc8uHJnkoi82yQ==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:mABiV/a9xtY=:gyp8l8IKQUYwASclxPRe5P
+ CUhnE9HbmTH6u7c7VY6vQbal2VQKbfh9lBTQo6pB4ekLGFDQrCTG1p4Q1BFRhKGXdVQc8ZsAL
+ BySH2RUwLNKhv39T7nMGa/Wvuju71HwZgn/qNQgiV4liV0Dfntf0XuZ1JykeqASgFGXzurcJD
+ vmd/DbQQaVBm9y3LxWYGbDdBl3/eFV/TZs0QCmkTNtg6LX6BxZLzMsDqCkRa5Ly0++C9b+3Un
+ WxpvT1s+ZOCTZ0MHa5/VHecliRKqYSRFKokrJt+yaT+MF25i8QuTI8HbtRbYe2CzpOJkpNIIT
+ TpaH5NpAQWPvU6YhiWnhtagTyjglB5K2jfPAXcAhAjy9bqAQ0duFVepHIx9FWnMH6boID1WXz
+ L5pSaRqa4jL6pr4upr2BDs2dDleRqvO/SYbq1VryW6XIg486L8pO2Pgt7ory4N5lN64sRkyMY
+ yXUUvGByATsTEHIYQS5UX61ReJ9Hho+iSOf377Yn7KEY4i+ycXvQFcesMJD+PREcOQN/f4z3V
+ H9zWkdJ/rYB7Q5NdegrMDGhrxfe1sNT3YGaK/JApHWNJXmUBPhOswm4OqnLaMioVX3RqH+4hD
+ nvhF7J/4yTkCP5zZ7uaSmpN1XFDlX6Qsl11rrcaHo6BIKBEX6dlsLFmFmAuByrbs51gSLLWiN
+ omPPXpNGccAboqcOUc8+n3qpxiPPKFdBgzzFtOVAMoMVb2QIwibKC8Z/de5EOQV7eYOOXpJVE
+ IjjaXGGDAe8tq1w/JBCICAQnxYZHRtvP/dgFCQjol4OsinzryAOXN3ayuLiS9nilpwQdTWRnN
+ M/2KL0mkyTyHQtVy6G4+yth8+4x2yb9mKACakfpdVtsg1zuS0UEuxBsHMiC2REKZK/soASgHk
+ Zp0+p6UoNXMSBS9soIuC53Eg5jQ1fFQDaDYip4uimylmQ6sIjCu9VL75Qdd1NAQXl9699GZ3H
+ Vt1++gPq4TZjLwfbCM/V0mLINvMeoK1vyo7eyB4g0G4+VKlqhC5xfUiTLod+PBbTPcJXmOo0W
+ KlW1b49m7PoZsz6YZwp13M57WfYwrTcMFBak/ajqfy9ugcnEKAAeetHBQ2dMpNWS61nCPzz5Q
+ Yn4m0KNZdGtfsS/On2aojRkO08/vcGy5mxX6hAErOZGV+0q8/zKXT9aohsLdDzjBSPE3yiqRn
+ 43d5g=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Using a linear O(N) search for timer insertion affects execution time and
-D-cache footprint badly with a larger number of timers.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 21 Aug 2019 21:16:15 +0200
 
-Switch the storage to a timerqueue which is already used for hrtimers and
-alarmtimers. It does not affect the size of struct k_itimer as it.alarm is
-still larger.
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the shown calls is not needed.
 
-The extra list head for the expiry list will go away later once the expiry
-is moved into task work context.
+This issue was detected by using the Coccinelle software.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
-V2: Adopt to the per clock base struct
----
- include/linux/posix-timers.h   |   65 ++++++++++----
- include/linux/timerqueue.h     |   10 ++
- kernel/time/posix-cpu-timers.c |  183 ++++++++++++++++++++---------------------
- 3 files changed, 150 insertions(+), 108 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/net/can/spi/hi311x.c  | 3 +--
+ drivers/net/can/spi/mcp251x.c | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -5,17 +5,11 @@
- #include <linux/spinlock.h>
- #include <linux/list.h>
- #include <linux/alarmtimer.h>
-+#include <linux/timerqueue.h>
- 
- struct kernel_siginfo;
- struct task_struct;
- 
--struct cpu_timer_list {
--	struct list_head entry;
--	u64 expires;
--	struct task_struct *task;
--	int firing;
--};
--
- /*
-  * Bit fields within a clockid:
-  *
-@@ -65,13 +59,57 @@ static inline int clockid_to_fd(const cl
- #ifdef CONFIG_POSIX_TIMERS
- 
- /**
-+ * cpu_timer - Posix CPU timer representation for k_itimer
-+ * @node:	timerqueue node to queue in the task/sig
-+ * @head:	timerqueue head on which this timer is queued
-+ * @task:	Pointer to target task
-+ * @elist:	List head for the expiry list
-+ * @firing:	Timer is currently firing
-+ */
-+struct cpu_timer {
-+	struct timerqueue_node	node;
-+	struct timerqueue_head	*head;
-+	struct task_struct	*task;
-+	struct list_head	elist;
-+	int			firing;
-+};
-+
-+static inline bool cpu_timer_requeue(struct cpu_timer *ctmr)
-+{
-+	return timerqueue_add(ctmr->head, &ctmr->node);
-+}
-+
-+static inline bool cpu_timer_enqueue(struct timerqueue_head *head,
-+				     struct cpu_timer *ctmr)
-+{
-+	ctmr->head = head;
-+	return timerqueue_add(head, &ctmr->node);
-+}
-+
-+static inline void cpu_timer_dequeue(struct cpu_timer *ctmr)
-+{
-+	if (!RB_EMPTY_NODE(&ctmr->node.node))
-+		timerqueue_del(ctmr->head, &ctmr->node);
-+}
-+
-+static inline u64 cpu_timer_getexpires(struct cpu_timer *ctmr)
-+{
-+	return ctmr->node.expires;
-+}
-+
-+static inline void cpu_timer_setexpires(struct cpu_timer *ctmr, u64 exp)
-+{
-+	ctmr->node.expires = exp;
-+}
-+
-+/**
-  * posix_cputimer_base - Container per posix CPU clock
-  * @nextevt:		Earliest-expiration cache
-- * @cpu_timers:		List heads to queue posix CPU timers
-+ * @tqhead:		timerqueue head for cpu_timers
-  */
- struct posix_cputimer_base {
- 	u64			nextevt;
--	struct list_head	cpu_timers;
-+	struct timerqueue_head	tqhead;
- };
- 
- /**
-@@ -92,14 +130,10 @@ struct posix_cputimers {
- 
- static inline void posix_cputimers_init(struct posix_cputimers *pct)
- {
--	pct->timers_active = 0;
--	pct->expiry_active = 0;
-+	memset(pct->bases, 0, sizeof(pct->bases));
- 	pct->bases[0].nextevt = U64_MAX;
- 	pct->bases[1].nextevt = U64_MAX;
- 	pct->bases[2].nextevt = U64_MAX;
--	INIT_LIST_HEAD(&pct->bases[0].cpu_timers);
--	INIT_LIST_HEAD(&pct->bases[1].cpu_timers);
--	INIT_LIST_HEAD(&pct->bases[2].cpu_timers);
- }
- 
- void posix_cputimers_group_init(struct posix_cputimers *pct, u64 cpu_limit);
-@@ -113,7 +147,6 @@ static inline void posix_cputimers_rt_wa
- /* Init task static initializer */
- #define INIT_CPU_TIMERBASE(b) {						\
- 	.nextevt	= U64_MAX,					\
--	.cpu_timers	= LIST_HEAD_INIT(b.cpu_timers),			\
- }
- 
- #define INIT_CPU_TIMERBASES(b) {					\
-@@ -182,7 +215,7 @@ struct k_itimer {
- 		struct {
- 			struct hrtimer	timer;
- 		} real;
--		struct cpu_timer_list	cpu;
-+		struct cpu_timer	cpu;
- 		struct {
- 			struct alarm	alarmtimer;
- 		} alarm;
---- a/include/linux/timerqueue.h
-+++ b/include/linux/timerqueue.h
-@@ -43,6 +43,16 @@ static inline void timerqueue_init(struc
- 	RB_CLEAR_NODE(&node->node);
- }
- 
-+static inline bool timerqueue_node_queued(struct timerqueue_node *node)
-+{
-+	return !RB_EMPTY_NODE(&node->node);
-+}
-+
-+static inline bool timerqueue_node_expires(struct timerqueue_node *node)
-+{
-+	return node->expires;
-+}
-+
- static inline void timerqueue_init_head(struct timerqueue_head *head)
- {
- 	head->rb_root = RB_ROOT_CACHED;
---- a/kernel/time/posix-cpu-timers.c
-+++ b/kernel/time/posix-cpu-timers.c
-@@ -96,19 +96,19 @@ static inline int validate_clock_permiss
-  * Update expiry time from increment, and increase overrun count,
-  * given the current clock sample.
-  */
--static void bump_cpu_timer(struct k_itimer *timer, u64 now)
-+static u64 bump_cpu_timer(struct k_itimer *timer, u64 now)
- {
-+	u64 delta, incr, expires = timer->it.cpu.node.expires;
- 	int i;
--	u64 delta, incr;
- 
- 	if (!timer->it_interval)
--		return;
-+		return expires;
- 
--	if (now < timer->it.cpu.expires)
--		return;
-+	if (now < expires)
-+		return expires;
- 
- 	incr = timer->it_interval;
--	delta = now + incr - timer->it.cpu.expires;
-+	delta = now + incr - expires;
- 
- 	/* Don't use (incr*2 < delta), incr*2 might overflow. */
- 	for (i = 0; incr < delta - incr; i++)
-@@ -118,10 +118,11 @@ static void bump_cpu_timer(struct k_itim
- 		if (delta < incr)
- 			continue;
- 
--		timer->it.cpu.expires += incr;
-+		timer->it.cpu.node.expires += incr;
- 		timer->it_overrun += 1LL << i;
- 		delta -= incr;
- 	}
-+	return timer->it.cpu.node.expires;
- }
- 
- /* Check whether all cache entries contain U64_MAX, i.e. eternal expiry time */
-@@ -365,7 +366,7 @@ static int posix_cpu_timer_create(struct
- 		return -EINVAL;
- 
- 	new_timer->kclock = &clock_posix_cpu;
--	INIT_LIST_HEAD(&new_timer->it.cpu.entry);
-+	timerqueue_init(&new_timer->it.cpu.node);
- 	new_timer->it.cpu.task = p;
- 	return 0;
- }
-@@ -378,10 +379,11 @@ static int posix_cpu_timer_create(struct
-  */
- static int posix_cpu_timer_del(struct k_itimer *timer)
- {
--	int ret = 0;
--	unsigned long flags;
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+	struct task_struct *p = ctmr->task;
- 	struct sighand_struct *sighand;
--	struct task_struct *p = timer->it.cpu.task;
-+	unsigned long flags;
-+	int ret = 0;
- 
- 	if (WARN_ON_ONCE(!p))
- 		return -EINVAL;
-@@ -393,15 +395,15 @@ static int posix_cpu_timer_del(struct k_
- 	sighand = lock_task_sighand(p, &flags);
- 	if (unlikely(sighand == NULL)) {
- 		/*
--		 * We raced with the reaping of the task.
--		 * The deletion should have cleared us off the list.
-+		 * This raced with the reaping of the task. The exit cleanup
-+		 * should have removed this timer from the timer queue.
- 		 */
--		WARN_ON_ONCE(!list_empty(&timer->it.cpu.entry));
-+		WARN_ON_ONCE(ctmr->head || timerqueue_node_queued(&ctmr->node));
- 	} else {
- 		if (timer->it.cpu.firing)
- 			ret = TIMER_RETRY;
- 		else
--			list_del(&timer->it.cpu.entry);
-+			cpu_timer_dequeue(ctmr);
- 
- 		unlock_task_sighand(p, &flags);
- 	}
-@@ -412,12 +414,12 @@ static int posix_cpu_timer_del(struct k_
- 	return ret;
- }
- 
--static void cleanup_timers_list(struct list_head *head)
-+static void cleanup_timerqueue(struct timerqueue_head *head)
- {
--	struct cpu_timer_list *timer, *next;
-+	struct timerqueue_node *node;
- 
--	list_for_each_entry_safe(timer, next, head, entry)
--		list_del_init(&timer->entry);
-+	while ((node = timerqueue_getnext(head)))
-+		timerqueue_del(head, node);
- }
- 
- /*
-@@ -429,9 +431,9 @@ static void cleanup_timers_list(struct l
-  */
- static void cleanup_timers(struct posix_cputimers *pct)
- {
--	cleanup_timers_list(&pct->bases[CPUCLOCK_PROF].cpu_timers);
--	cleanup_timers_list(&pct->bases[CPUCLOCK_VIRT].cpu_timers);
--	cleanup_timers_list(&pct->bases[CPUCLOCK_SCHED].cpu_timers);
-+	cleanup_timerqueue(&pct->bases[CPUCLOCK_PROF].tqhead);
-+	cleanup_timerqueue(&pct->bases[CPUCLOCK_VIRT].tqhead);
-+	cleanup_timerqueue(&pct->bases[CPUCLOCK_SCHED].tqhead);
- }
- 
- /*
-@@ -454,28 +456,18 @@ void posix_cpu_timers_exit_group(struct
-  */
- static void arm_timer(struct k_itimer *timer)
- {
--	struct cpu_timer_list *const nt = &timer->it.cpu;
- 	int clkidx = CPUCLOCK_WHICH(timer->it_clock);
--	struct task_struct *p = timer->it.cpu.task;
--	u64 newexp = timer->it.cpu.expires;
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+	u64 newexp = cpu_timer_getexpires(ctmr);
-+	struct task_struct *p = ctmr->task;
- 	struct posix_cputimer_base *base;
--	struct list_head *head, *listpos;
--	struct cpu_timer_list *next;
- 
- 	if (CPUCLOCK_PERTHREAD(timer->it_clock))
- 		base = p->posix_cputimers.bases + clkidx;
- 	else
- 		base = p->signal->posix_cputimers.bases + clkidx;
- 
--	listpos = head = &base->cpu_timers;
--	list_for_each_entry(next,head, entry) {
--		if (nt->expires < next->expires)
--			break;
--		listpos = &next->entry;
--	}
--	list_add(&nt->entry, listpos);
--
--	if (listpos != head)
-+	if (!cpu_timer_enqueue(&base->tqhead, ctmr))
- 		return;
- 
- 	/*
-@@ -498,24 +490,26 @@ static void arm_timer(struct k_itimer *t
-  */
- static void cpu_timer_fire(struct k_itimer *timer)
- {
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+
- 	if ((timer->it_sigev_notify & ~SIGEV_THREAD_ID) == SIGEV_NONE) {
- 		/*
- 		 * User don't want any signal.
- 		 */
--		timer->it.cpu.expires = 0;
-+		cpu_timer_setexpires(ctmr, 0);
- 	} else if (unlikely(timer->sigq == NULL)) {
- 		/*
- 		 * This a special case for clock_nanosleep,
- 		 * not a normal timer from sys_timer_create.
- 		 */
- 		wake_up_process(timer->it_process);
--		timer->it.cpu.expires = 0;
-+		cpu_timer_setexpires(ctmr, 0);
- 	} else if (!timer->it_interval) {
- 		/*
- 		 * One-shot timer.  Clear it as soon as it's fired.
- 		 */
- 		posix_timer_event(timer, 0);
--		timer->it.cpu.expires = 0;
-+		cpu_timer_setexpires(ctmr, 0);
- 	} else if (posix_timer_event(timer, ++timer->it_requeue_pending)) {
- 		/*
- 		 * The signal did not get queued because the signal
-@@ -539,10 +533,11 @@ static int posix_cpu_timer_set(struct k_
- {
- 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
- 	u64 old_expires, new_expires, old_incr, val;
--	struct task_struct *p = timer->it.cpu.task;
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+	struct task_struct *p = ctmr->task;
- 	struct sighand_struct *sighand;
- 	unsigned long flags;
--	int ret;
-+	int ret = 0;
- 
- 	if (WARN_ON_ONCE(!p))
- 		return -EINVAL;
-@@ -562,22 +557,21 @@ static int posix_cpu_timer_set(struct k_
- 	 * If p has just been reaped, we can no
- 	 * longer get any information about it at all.
- 	 */
--	if (unlikely(sighand == NULL)) {
-+	if (unlikely(sighand == NULL))
- 		return -ESRCH;
--	}
- 
- 	/*
- 	 * Disarm any old timer after extracting its expiry time.
- 	 */
--
--	ret = 0;
- 	old_incr = timer->it_interval;
--	old_expires = timer->it.cpu.expires;
-+	old_expires = cpu_timer_getexpires(ctmr);
-+
- 	if (unlikely(timer->it.cpu.firing)) {
- 		timer->it.cpu.firing = -1;
- 		ret = TIMER_RETRY;
--	} else
--		list_del_init(&timer->it.cpu.entry);
-+	} else {
-+		cpu_timer_dequeue(ctmr);
-+	}
- 
- 	/*
- 	 * We need to sample the current value to convert the new
-@@ -598,18 +592,16 @@ static int posix_cpu_timer_set(struct k_
- 			old->it_value.tv_nsec = 0;
- 		} else {
- 			/*
--			 * Update the timer in case it has
--			 * overrun already.  If it has,
--			 * we'll report it as having overrun
--			 * and with the next reloaded timer
--			 * already ticking, though we are
--			 * swallowing that pending
--			 * notification here to install the
--			 * new setting.
-+			 * Update the timer in case it has overrun already.
-+			 * If it has, we'll report it as having overrun and
-+			 * with the next reloaded timer already ticking,
-+			 * though we are swallowing that pending
-+			 * notification here to install the new setting.
- 			 */
--			bump_cpu_timer(timer, val);
--			if (val < timer->it.cpu.expires) {
--				old_expires = timer->it.cpu.expires - val;
-+			u64 exp = bump_cpu_timer(timer, val);
-+
-+			if (val < exp) {
-+				old_expires = exp - val;
- 				old->it_value = ns_to_timespec64(old_expires);
- 			} else {
- 				old->it_value.tv_nsec = 1;
-@@ -638,7 +630,7 @@ static int posix_cpu_timer_set(struct k_
- 	 * For a timer with no notification action, we don't actually
- 	 * arm the timer (we'll just fake it for timer_gettime).
- 	 */
--	timer->it.cpu.expires = new_expires;
-+	cpu_timer_setexpires(ctmr, new_expires);
- 	if (new_expires != 0 && val < new_expires) {
- 		arm_timer(timer);
- 	}
-@@ -680,8 +672,9 @@ static int posix_cpu_timer_set(struct k_
- static void posix_cpu_timer_get(struct k_itimer *timer, struct itimerspec64 *itp)
- {
- 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
--	struct task_struct *p = timer->it.cpu.task;
--	u64 now;
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+	u64 now, expires = cpu_timer_getexpires(ctmr);
-+	struct task_struct *p = ctmr->task;
- 
- 	if (WARN_ON_ONCE(!p))
- 		return;
-@@ -691,7 +684,7 @@ static void posix_cpu_timer_get(struct k
- 	 */
- 	itp->it_interval = ktime_to_timespec64(timer->it_interval);
- 
--	if (!timer->it.cpu.expires)
-+	if (!expires)
- 		return;
- 
- 	/*
-@@ -713,9 +706,9 @@ static void posix_cpu_timer_get(struct k
- 			/*
- 			 * The process has been reaped.
- 			 * We can't even collect a sample any more.
--			 * Call the timer disarmed, nothing else to do.
-+			 * Disarm the timer, nothing else to do.
- 			 */
--			timer->it.cpu.expires = 0;
-+			cpu_timer_setexpires(ctmr, 0);
- 			return;
- 		} else {
- 			now = cpu_clock_sample_group(clkid, p, false);
-@@ -723,8 +716,8 @@ static void posix_cpu_timer_get(struct k
- 		}
- 	}
- 
--	if (now < timer->it.cpu.expires) {
--		itp->it_value = ns_to_timespec64(timer->it.cpu.expires - now);
-+	if (now < expires) {
-+		itp->it_value = ns_to_timespec64(expires - now);
- 	} else {
- 		/*
- 		 * The timer should have expired already, but the firing
-@@ -735,37 +728,41 @@ static void posix_cpu_timer_get(struct k
- 	}
- }
- 
--static unsigned long long
--check_timers_list(struct list_head *timers,
--		  struct list_head *firing,
--		  unsigned long long curr)
--{
--	int maxfire = 20;
--
--	while (!list_empty(timers)) {
--		struct cpu_timer_list *t;
-+#define MAX_COLLECTED	20
- 
--		t = list_first_entry(timers, struct cpu_timer_list, entry);
--
--		if (!--maxfire || curr < t->expires)
--			return t->expires;
-+static u64 collect_timerqueue(struct timerqueue_head *head,
-+			      struct list_head *firing, u64 now)
-+{
-+	struct timerqueue_node *next;
-+	int i = 0;
- 
--		t->firing = 1;
--		list_move_tail(&t->entry, firing);
-+	while ((next = timerqueue_getnext(head))) {
-+		struct cpu_timer *ctmr;
-+		u64 expires;
-+
-+		ctmr = container_of(next, struct cpu_timer, node);
-+		expires = cpu_timer_getexpires(ctmr);
-+		/* Limit the number of timers to expire at once */
-+		if (++i == MAX_COLLECTED || now < expires)
-+			return expires;
-+
-+		ctmr->firing = 1;
-+		cpu_timer_dequeue(ctmr);
-+		list_add_tail(&ctmr->elist, firing);
- 	}
- 
- 	return U64_MAX;
- }
- 
--static void collect_posix_cputimers(struct posix_cputimers *pct,
--				    u64 *samples, struct list_head *firing)
-+static void collect_posix_cputimers(struct posix_cputimers *pct, u64 *samples,
-+				    struct list_head *firing)
- {
- 	struct posix_cputimer_base *base = pct->bases;
- 	int i;
- 
- 	for (i = 0; i < CPUCLOCK_MAX; i++, base++) {
--		base->nextevt = check_timers_list(&base->cpu_timers, firing,
--						   samples[i]);
-+		base->nextevt = collect_timerqueue(&base->tqhead, firing,
-+						    samples[i]);
- 	}
- }
- 
-@@ -948,7 +945,8 @@ static void check_process_timers(struct
- static void posix_cpu_timer_rearm(struct k_itimer *timer)
- {
- 	clockid_t clkid = CPUCLOCK_WHICH(timer->it_clock);
--	struct task_struct *p = timer->it.cpu.task;
-+	struct cpu_timer *ctmr = &timer->it.cpu;
-+	struct task_struct *p = ctmr->task;
- 	struct sighand_struct *sighand;
- 	unsigned long flags;
- 	u64 now;
-@@ -980,7 +978,7 @@ static void posix_cpu_timer_rearm(struct
- 			 * The process has been reaped.
- 			 * We can't even collect a sample any more.
- 			 */
--			timer->it.cpu.expires = 0;
-+			cpu_timer_setexpires(ctmr, 0);
- 			return;
- 		} else if (unlikely(p->exit_state) && thread_group_empty(p)) {
- 			/* If the process is dying, no need to rearm */
-@@ -1124,11 +1122,11 @@ void run_posix_cpu_timers(void)
- 	 * each timer's lock before clearing its firing flag, so no
- 	 * timer call will interfere.
- 	 */
--	list_for_each_entry_safe(timer, next, &firing, it.cpu.entry) {
-+	list_for_each_entry_safe(timer, next, &firing, it.cpu.elist) {
- 		int cpu_firing;
- 
- 		spin_lock(&timer->it_lock);
--		list_del_init(&timer->it.cpu.entry);
-+		list_del_init(&timer->it.cpu.elist);
- 		cpu_firing = timer->it.cpu.firing;
- 		timer->it.cpu.firing = 0;
- 		/*
-@@ -1203,6 +1201,7 @@ static int do_cpu_nanosleep(const clocki
- 	timer.it_overrun = -1;
- 	error = posix_cpu_timer_create(&timer);
- 	timer.it_process = current;
-+
- 	if (!error) {
- 		static struct itimerspec64 zero_it;
- 		struct restart_block *restart;
-@@ -1218,7 +1217,7 @@ static int do_cpu_nanosleep(const clocki
- 		}
- 
- 		while (!signal_pending(current)) {
--			if (timer.it.cpu.expires == 0) {
-+			if (!cpu_timer_getexpires(&timer.it.cpu)) {
- 				/*
- 				 * Our timer fired and was reset, below
- 				 * deletion can not fail.
-@@ -1240,7 +1239,7 @@ static int do_cpu_nanosleep(const clocki
- 		/*
- 		 * We were interrupted by a signal.
- 		 */
--		expires = timer.it.cpu.expires;
-+		expires = cpu_timer_getexpires(&timer.it.cpu);
- 		error = posix_cpu_timer_set(&timer, 0, &zero_it, &it);
- 		if (!error) {
- 			/*
+diff --git a/drivers/net/can/spi/hi311x.c b/drivers/net/can/spi/hi311x.c
+index 03a711c3221b..7c7c7e78214c 100644
+=2D-- a/drivers/net/can/spi/hi311x.c
++++ b/drivers/net/can/spi/hi311x.c
+@@ -184,8 +184,7 @@ static void hi3110_clean(struct net_device *net)
 
+ 	if (priv->tx_skb || priv->tx_len)
+ 		net->stats.tx_errors++;
+-	if (priv->tx_skb)
+-		dev_kfree_skb(priv->tx_skb);
++	dev_kfree_skb(priv->tx_skb);
+ 	if (priv->tx_len)
+ 		can_free_echo_skb(priv->net, 0);
+ 	priv->tx_skb =3D NULL;
+diff --git a/drivers/net/can/spi/mcp251x.c b/drivers/net/can/spi/mcp251x.c
+index 12358f06d194..1c496d2adb45 100644
+=2D-- a/drivers/net/can/spi/mcp251x.c
++++ b/drivers/net/can/spi/mcp251x.c
+@@ -274,8 +274,7 @@ static void mcp251x_clean(struct net_device *net)
+
+ 	if (priv->tx_skb || priv->tx_len)
+ 		net->stats.tx_errors++;
+-	if (priv->tx_skb)
+-		dev_kfree_skb(priv->tx_skb);
++	dev_kfree_skb(priv->tx_skb);
+ 	if (priv->tx_len)
+ 		can_free_echo_skb(priv->net, 0);
+ 	priv->tx_skb =3D NULL;
+=2D-
+2.23.0
 
