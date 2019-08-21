@@ -2,134 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3093B98062
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:40:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFD3198072
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:45:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729635AbfHUQkW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:40:22 -0400
-Received: from mail-eopbgr740050.outbound.protection.outlook.com ([40.107.74.50]:36480
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728806AbfHUQkV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:40:21 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=CGoZQgouupDfIir+/5mJ1/R3uopSUtorDpE9Ui1XJ7fCaPpj/HoV+AnZFs4WEWkR214dVyxJhc4jS/0oDfHhH4EmoNWpTtI0FhszVEUz48cR8hdfWCxUJYF9hsUSN59VV6WFmkKtxiy6LFcyN/KVziQ/jo38Ei87C5n/OwtkGZcK6jIk/G2Jg84Auf807XAawAUnvHsdevo0B4sKIr3M/oylVVLM8UQCDZDQ3ReLHStuvGLXbR093C5z461YVFUma+N4GXA5gbUTEWSOqE59Vpta/Ljhi7zv6KYDlwKiUWZe7+92TnLGzOvfKaHEL26ZcCw/W9es/rd3N81c+8+bxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9rtp3Ew6Kpy4cdQ5VZ++tCWTBw64TnggvE7WoWuO0Y=;
- b=IyW3v1xW/L9xOviPSZczkq9eP+Y/d2ODhg1JtB4ua7SKCbdKITV8AmyTDcJ3XpFF4323nSOKAWZiHKGJM+y8hVhckHwBVY70/qQMBNq4iMiTnyY7uH7jWwC/6d9uTERwYy531B/WgFrDF9Jn+0GJrPPN6BTYOWwUGxsfaIp9aQsI2JAeFrKF6HiifkJLqW2jM/wL2O4RgFN3cvU6RLP2UJ8FQswWtjkeRMACn8TX7T23Gz72zvdn5iLVP4eHatHBeq3feWk7Pvnh9V+2gb5j8b/GW0M/l2Z74F41sR6AsDgsivmKVIzmuxR6fAFvMhADvkFSOXdnOBV4f4f4XiCFog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=m9rtp3Ew6Kpy4cdQ5VZ++tCWTBw64TnggvE7WoWuO0Y=;
- b=oEGFc3ZEqvjIr6+h0C6S8xm26uRbo/dCRz7sHbRWy1fTRZvDglbYzqWORY7RAsXacfjBA8pZhUcL3iifudrTlUBlA0gZ6CBURMrMmsEpaxxBX+wFnujHrFcdgQwKnBwtVU/HeyuAHTcLog8o6RAhS2sPrLN7LpHwd/Z2Iz66pYI=
-Received: from CY4PR1201MB0230.namprd12.prod.outlook.com (10.172.79.7) by
- CY4PR1201MB0055.namprd12.prod.outlook.com (10.172.77.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Wed, 21 Aug 2019 16:40:17 +0000
-Received: from CY4PR1201MB0230.namprd12.prod.outlook.com
- ([fe80::540f:1eae:7e3a:c6b2]) by CY4PR1201MB0230.namprd12.prod.outlook.com
- ([fe80::540f:1eae:7e3a:c6b2%5]) with mapi id 15.20.2178.020; Wed, 21 Aug 2019
- 16:40:16 +0000
-From:   Harry Wentland <hwentlan@amd.com>
-To:     Nathan Chancellor <natechancellor@gmail.com>,
-        "Wentland, Harry" <Harry.Wentland@amd.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>
-CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH] drm/amd/display: Fix 32-bit divide error in
- wait_for_alt_mode
-Thread-Topic: [PATCH] drm/amd/display: Fix 32-bit divide error in
- wait_for_alt_mode
-Thread-Index: AQHVV7MFnH4uDS8chUOr/aJXK/7Tz6cFzskA
-Date:   Wed, 21 Aug 2019 16:40:15 +0000
-Message-ID: <f594d746-9eaf-76fe-d380-bb033cce06f8@amd.com>
-References: <20190820235713.3429-1-natechancellor@gmail.com>
-In-Reply-To: <20190820235713.3429-1-natechancellor@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [165.204.55.250]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-x-clientproxiedby: YTBPR01CA0008.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:14::21) To CY4PR1201MB0230.namprd12.prod.outlook.com
- (2603:10b6:910:1e::7)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Harry.Wentland@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 9cd013a6-0dae-4070-01fa-08d726563bd9
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:CY4PR1201MB0055;
-x-ms-traffictypediagnostic: CY4PR1201MB0055:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <CY4PR1201MB0055B3DE9DC2077BC38A75188CAA0@CY4PR1201MB0055.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(396003)(346002)(376002)(136003)(189003)(199004)(4326008)(76176011)(8676002)(81156014)(81166006)(14444005)(256004)(31696002)(486006)(6636002)(3846002)(52116002)(54906003)(316002)(7736002)(99286004)(64756008)(66446008)(66946007)(110136005)(6116002)(58126008)(305945005)(25786009)(8936002)(2906002)(31686004)(66476007)(478600001)(66556008)(6246003)(45080400002)(53546011)(386003)(6512007)(65806001)(65956001)(66066001)(6506007)(2616005)(71200400001)(71190400001)(14454004)(53936002)(186003)(6436002)(36756003)(102836004)(26005)(476003)(6486002)(5660300002)(11346002)(446003)(229853002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR1201MB0055;H:CY4PR1201MB0230.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 78xTGTOR1X21oSt1xp11/okXNgU6F83Ngm4/rQz7I89sVmMI7hI25O+7j3qmaXYxUL9FHBA7SEOy9zq8bJz+6coS+ifGb6MVRCZOYgRo2uuFVCW7jO/7qghveuRw0+I9MAVxoKQc2xapOxcZnugeVK34/2NjewJGgYSuVxZy0EZOSfAiu5b1793MW+HGJKcTGbT0Ri/KgRUoienpJhEh9Md8D0DmfegzzUZcUGzkRr/Ci4TAlrStIaTdg916i8SdupgqJWOyU98kFcmCppJBheimu46lgopeVU+kUVOraIsqABHiWBJqrK9tMKEFcAudn/F3Mv0zCvZ2Invpzw/BxiuoHMfmGzh5CPX2BSExXLQPL0h8j1CLZilxFrTJLQe/A2dfDb2siyKeL6OZzSTFDCATbfNsxstG31yt8z2bPLw=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <46A377C5DAB0164096A7EC287785F1DF@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1729205AbfHUQnG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:43:06 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44068 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbfHUQnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:43:06 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 51A0D89AC8;
+        Wed, 21 Aug 2019 16:43:05 +0000 (UTC)
+Received: from [10.10.125.147] (ovpn-125-147.rdu2.redhat.com [10.10.125.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 334325DA32;
+        Wed, 21 Aug 2019 16:43:04 +0000 (UTC)
+Subject: Re: [PATCH v2] nbd: fix possible page fault for nbd disk
+To:     xiubli@redhat.com, josef@toxicpanda.com, axboe@kernel.dk
+References: <20190821115753.3911-1-xiubli@redhat.com>
+Cc:     linux-block@vger.kernel.org, nbd@other.debian.org,
+        linux-kernel@vger.kernel.org
+From:   Mike Christie <mchristi@redhat.com>
+Message-ID: <5D5D7497.9020203@redhat.com>
+Date:   Wed, 21 Aug 2019 11:43:03 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.6.0
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9cd013a6-0dae-4070-01fa-08d726563bd9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 16:40:15.7714
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: KT+u574U4ZAjO+FwcPmx5IBAkK35L8yvvPhOD+VerWvt5N8Y24r61k/gYN9tjLRyKS00xA6LQVZzE/Gydklv2g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR1201MB0055
+In-Reply-To: <20190821115753.3911-1-xiubli@redhat.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 21 Aug 2019 16:43:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMjAxOS0wOC0yMCA3OjU3IHAubS4sIE5hdGhhbiBDaGFuY2VsbG9yIHdyb3RlOg0KPiBXaGVu
-IGJ1aWxkaW5nIGFybTMyIGFsbHllc2NvbmZpZzoNCj4gDQo+IGxkLmxsZDogZXJyb3I6IHVuZGVm
-aW5lZCBzeW1ib2w6IF9fYWVhYmlfdWxkaXZtb2QNCj4+Pj4gcmVmZXJlbmNlZCBieSBkY19saW5r
-LmMNCj4+Pj4gZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9jb3JlL2RjX2xpbmsubzood2FpdF9mb3Jf
-YWx0X21vZGUpIGluIGFyY2hpdmUgZHJpdmVycy9idWlsdC1pbi5hDQo+Pj4+IHJlZmVyZW5jZWQg
-YnkgZGNfbGluay5jDQo+Pj4+IGdwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvY29yZS9kY19saW5rLm86
-KHdhaXRfZm9yX2FsdF9tb2RlKSBpbiBhcmNoaXZlIGRyaXZlcnMvYnVpbHQtaW4uYQ0KPiANCj4g
-dGltZV90YWtlbl9pbl9ucyBpcyBvZiB0eXBlIHVuc2lnbmVkIGxvbmcgbG9uZyBzbyB3ZSBuZWVk
-IHRvIHVzZSBkaXZfdTY0DQo+IHRvIGF2b2lkIHRoaXMgZXJyb3IuDQo+IA0KPiBGaXhlczogYjVi
-MWY0NTU0OTA0ICgiZHJtL2FtZC9kaXNwbGF5OiBFbmFibGUgdHlwZSBDIGhvdHBsdWciKQ0KPiBS
-ZXBvcnRlZC1ieTogUmFuZHkgRHVubGFwIDxyZHVubGFwQGluZnJhZGVhZC5vcmc+DQo+IFNpZ25l
-ZC1vZmYtYnk6IE5hdGhhbiBDaGFuY2VsbG9yIDxuYXRlY2hhbmNlbGxvckBnbWFpbC5jb20+DQoN
-ClJldmlld2VkLWJ5OiBIYXJyeSBXZW50bGFuZCA8aGFycnkud2VudGxhbmRAYW1kLmNvbT4NCg0K
-SGFycnkNCg0KPiAtLS0NCj4gIGRyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9jb3JlL2Rj
-X2xpbmsuYyB8IDQgKystLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBk
-ZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3Bs
-YXkvZGMvY29yZS9kY19saW5rLmMgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvY29y
-ZS9kY19saW5rLmMNCj4gaW5kZXggZjJkNzhkN2IwODllLi44NjM0OTIzYjQ0NDQgMTAwNjQ0DQo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hbWQvZGlzcGxheS9kYy9jb3JlL2RjX2xpbmsuYw0KPiAr
-KysgYi9kcml2ZXJzL2dwdS9kcm0vYW1kL2Rpc3BsYXkvZGMvY29yZS9kY19saW5rLmMNCj4gQEAg
-LTcyMSw3ICs3MjEsNyBAQCBib29sIHdhaXRfZm9yX2FsdF9tb2RlKHN0cnVjdCBkY19saW5rICps
-aW5rKQ0KPiAgCQkJdGltZV90YWtlbl9pbl9ucyA9IGRtX2dldF9lbGFwc2VfdGltZV9pbl9ucygN
-Cj4gIAkJCQlsaW5rLT5jdHgsIGZpbmlzaF90aW1lc3RhbXAsIGVudGVyX3RpbWVzdGFtcCk7DQo+
-ICAJCQlEQ19MT0dfV0FSTklORygiQWx0IG1vZGUgZW50ZXJlZCBmaW5pc2hlZCBhZnRlciAlbGx1
-IG1zXG4iLA0KPiAtCQkJCSAgICAgICB0aW1lX3Rha2VuX2luX25zIC8gMTAwMDAwMCk7DQo+ICsJ
-CQkJICAgICAgIGRpdl91NjQodGltZV90YWtlbl9pbl9ucywgMTAwMDAwMCkpOw0KPiAgCQkJcmV0
-dXJuIHRydWU7DQo+ICAJCX0NCj4gIA0KPiBAQCAtNzMwLDcgKzczMCw3IEBAIGJvb2wgd2FpdF9m
-b3JfYWx0X21vZGUoc3RydWN0IGRjX2xpbmsgKmxpbmspDQo+ICAJdGltZV90YWtlbl9pbl9ucyA9
-IGRtX2dldF9lbGFwc2VfdGltZV9pbl9ucyhsaW5rLT5jdHgsIGZpbmlzaF90aW1lc3RhbXAsDQo+
-ICAJCQkJCQkgICAgZW50ZXJfdGltZXN0YW1wKTsNCj4gIAlEQ19MT0dfV0FSTklORygiQWx0IG1v
-ZGUgaGFzIHRpbWVkIG91dCBhZnRlciAlbGx1IG1zXG4iLA0KPiAtCQkJdGltZV90YWtlbl9pbl9u
-cyAvIDEwMDAwMDApOw0KPiArCQkJZGl2X3U2NCh0aW1lX3Rha2VuX2luX25zLCAxMDAwMDAwKSk7
-DQo+ICAJcmV0dXJuIGZhbHNlOw0KPiAgfQ0KPiAgDQo+IA0K
+On 08/21/2019 06:57 AM, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+> 
+> When the NBD_CFLAG_DESTROY_ON_DISCONNECT flag is set and at the same
+> time when the socket is closed due to the server daemon is restarted,
+> just before the last DISCONNET is totally done if we start a new connection
+> by using the old nbd_index, there will be crashing randomly, like:
+> 
+> <3>[  110.151949] block nbd1: Receive control failed (result -32)
+> <1>[  110.152024] BUG: unable to handle page fault for address: 0000058000000840
+> <1>[  110.152063] #PF: supervisor read access in kernel mode
+> <1>[  110.152083] #PF: error_code(0x0000) - not-present page
+> <6>[  110.152094] PGD 0 P4D 0
+> <4>[  110.152106] Oops: 0000 [#1] SMP PTI
+> <4>[  110.152120] CPU: 0 PID: 6698 Comm: kworker/u5:1 Kdump: loaded Not tainted 5.3.0-rc4+ #2
+> <4>[  110.152136] Hardware name: Red Hat KVM, BIOS 0.5.1 01/01/2011
+> <4>[  110.152166] Workqueue: knbd-recv recv_work [nbd]
+> <4>[  110.152187] RIP: 0010:__dev_printk+0xd/0x67
+> <4>[  110.152206] Code: 10 e8 c5 fd ff ff 48 8b 4c 24 18 65 48 33 0c 25 28 00 [...]
+> <4>[  110.152244] RSP: 0018:ffffa41581f13d18 EFLAGS: 00010206
+> <4>[  110.152256] RAX: ffffa41581f13d30 RBX: ffff96dd7374e900 RCX: 0000000000000000
+> <4>[  110.152271] RDX: ffffa41581f13d20 RSI: 00000580000007f0 RDI: ffffffff970ec24f
+> <4>[  110.152285] RBP: ffffa41581f13d80 R08: ffff96dd7fc17908 R09: 0000000000002e56
+> <4>[  110.152299] R10: ffffffff970ec24f R11: 0000000000000003 R12: ffff96dd7374e900
+> <4>[  110.152313] R13: 0000000000000000 R14: ffff96dd7374e9d8 R15: ffff96dd6e3b02c8
+> <4>[  110.152329] FS:  0000000000000000(0000) GS:ffff96dd7fc00000(0000) knlGS:0000000000000000
+> <4>[  110.152362] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> <4>[  110.152383] CR2: 0000058000000840 CR3: 0000000067cc6002 CR4: 00000000001606f0
+> <4>[  110.152401] Call Trace:
+> <4>[  110.152422]  _dev_err+0x6c/0x83
+> <4>[  110.152435]  nbd_read_stat.cold+0xda/0x578 [nbd]
+> <4>[  110.152448]  ? __switch_to_asm+0x34/0x70
+> <4>[  110.152468]  ? __switch_to_asm+0x40/0x70
+> <4>[  110.152478]  ? __switch_to_asm+0x34/0x70
+> <4>[  110.152491]  ? __switch_to_asm+0x40/0x70
+> <4>[  110.152501]  ? __switch_to_asm+0x34/0x70
+> <4>[  110.152511]  ? __switch_to_asm+0x40/0x70
+> <4>[  110.152522]  ? __switch_to_asm+0x34/0x70
+> <4>[  110.152533]  recv_work+0x35/0x9e [nbd]
+> <4>[  110.152547]  process_one_work+0x19d/0x340
+> <4>[  110.152558]  worker_thread+0x50/0x3b0
+> <4>[  110.152568]  kthread+0xfb/0x130
+> <4>[  110.152577]  ? process_one_work+0x340/0x340
+> <4>[  110.152609]  ? kthread_park+0x80/0x80
+> <4>[  110.152637]  ret_from_fork+0x35/0x40
+> 
+> This is very easy to reproduce by running the nbd-runner.
+> 
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  drivers/block/nbd.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
+> index e21d2ded732b..b07b4452d696 100644
+> --- a/drivers/block/nbd.c
+> +++ b/drivers/block/nbd.c
+> @@ -112,6 +112,8 @@ struct nbd_device {
+>  	struct list_head list;
+>  	struct task_struct *task_recv;
+>  	struct task_struct *task_setup;
+> +
+> +	bool shutting_down;
+>  };
+>  
+>  #define NBD_CMD_REQUEUED	1
+> @@ -230,8 +232,8 @@ static void nbd_put(struct nbd_device *nbd)
+>  	if (refcount_dec_and_mutex_lock(&nbd->refs,
+>  					&nbd_index_mutex)) {
+>  		idr_remove(&nbd_index_idr, nbd->index);
+> -		mutex_unlock(&nbd_index_mutex);
+>  		nbd_dev_remove(nbd);
+> +		mutex_unlock(&nbd_index_mutex);
+>  	}
+>  }
+>  
+> @@ -1103,6 +1105,7 @@ static int nbd_disconnect(struct nbd_device *nbd)
+>  
+>  	dev_info(disk_to_dev(nbd->disk), "NBD_DISCONNECT\n");
+>  	set_bit(NBD_DISCONNECT_REQUESTED, &config->runtime_flags);
+> +	nbd->shutting_down = true;
+>  	send_disconnects(nbd);
+>  	return 0;
+>  }
+> @@ -1761,6 +1764,12 @@ static int nbd_genl_connect(struct sk_buff *skb, struct genl_info *info)
+>  		mutex_unlock(&nbd_index_mutex);
+>  		return -EINVAL;
+>  	}
+> +
+> +	if (nbd->shutting_down) {
+> +		mutex_unlock(&nbd_index_mutex);
+> +		goto again;
+> +	}
+
+How does shutting_down get set back to false for the case where
+NBD_CFLAG_DESTROY_ON_DISCONNECT is not set, we have done a
+nbd_disconnect and now the connect has the nbd index of that existing
+device. It seems like the flag is going to be stuck as set.
