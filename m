@@ -2,91 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D140C97C6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:21:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E8EEF97C7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:21:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729425AbfHUOVD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:21:03 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38515 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729318AbfHUOU7 (ORCPT
+        id S1729561AbfHUOVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:21:22 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:38876 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729506AbfHUOVM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:20:59 -0400
-Received: by mail-wm1-f68.google.com with SMTP id m125so2330156wmm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 07:20:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=zGF5jUzlLHUnpyLwcU0i8JE40DhyIcPvkvE+Vwkjv+o=;
-        b=06ddO7CxS5O0YGXLovcrz6ShwhrUNh32lhm+fF4sdfT11snt54gRQTEkde2KNoHgW2
-         VN+pbM/Ob/Yz8tb0A1vrQBmhDK9TgBzPRMMtuSJa2Cljse+5o87tcbUpdAy+V6t3dCDy
-         uv3XaX7I9jSEobPiLPbDXqS57w0ULNezpjHDYWCiPvmES6DZDzpFUnJj2KwIB1p6+UX/
-         GLusvZ1HQxwffMQgnNfhnH7ONfRDlrKvJHVlzn6WA1Ph2DE7S8IV/XD9aGRXt7RYpu9b
-         Kn2P9n5OX+/ZMEAgA8pC0lLb+dlIfJINmbCK58erbgGo0LcL2uSsn1Ae61PN3XhfvS07
-         Z6+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=zGF5jUzlLHUnpyLwcU0i8JE40DhyIcPvkvE+Vwkjv+o=;
-        b=czp42KMo9g3TLeeYl6p+3d8ecuLNB5Zw55wgyO9HogL0NO13dmtBM6R5hSNTeFPbEs
-         bKB7VsDbQ/mqvSCfktvnUUfvSQ2PVi1DSQBToqihmSFu0UF/azyPQZY1oDNNApzscgAV
-         4eQINZ9OvDce95185ae3WumtuA4vorWmykD0zqcKNdQSzw8qdb5N/JzhyKSpB3Ns85Jh
-         Jn0nZwz7+ahC+UVjkW1hTUbQjHv00+HvV5Q6fhZscUfVnmwlVkZBph730oj4pSvGuvUP
-         gvApKC8NitpediaV9JQborD5CivREs/+X8E1DU+qW4Rf/Ssvb09nEzuVM/kQqH/wCZyh
-         kJgQ==
-X-Gm-Message-State: APjAAAUuqfp/ZqocI3XxJT2NiUdqn919qGi/TEkKFfU66ptSsDAjPrOs
-        xEHJRAYX+KJkwUP1krIJSJgSSw==
-X-Google-Smtp-Source: APXvYqxO0x8vMs0kU/VpvxdkH1TDg/46izp4XAK/663X31Vn4UFZsfKpt4KBDqQ1dNWeNPRLTcr4yw==
-X-Received: by 2002:a7b:c241:: with SMTP id b1mr270320wmj.165.1566397257177;
-        Wed, 21 Aug 2019 07:20:57 -0700 (PDT)
-Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id o9sm33418939wrm.88.2019.08.21.07.20.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 07:20:56 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 04/14] arm64: dts: meson-gx: fix spifc compatible
-Date:   Wed, 21 Aug 2019 16:20:33 +0200
-Message-Id: <20190821142043.14649-5-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190821142043.14649-1-narmstrong@baylibre.com>
-References: <20190821142043.14649-1-narmstrong@baylibre.com>
+        Wed, 21 Aug 2019 10:21:12 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7LEKdOu103001;
+        Wed, 21 Aug 2019 09:20:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566397239;
+        bh=+HM46ZHoTYeCIzkWA3/7GYFT9x7XR/6vN+mvTfJEuGM=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=AwJp61CxMuh/qZ6Z+tt0Y3XIVJTR8NR/JOFGvkInTK8WHKNLAOblxPaZs1gbMHBH2
+         gCViEdyiz7/J2xVKY8lN4o+Xa8KbtC902F1BRuwi8jLvYAvHa16J0Ztdj2cP50H5Sq
+         64Fz7arbNcsJ5SyYImnG0oVRSWZomjS39rBK7wRM=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7LEKd30088773
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Aug 2019 09:20:39 -0500
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 21
+ Aug 2019 09:20:38 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 21 Aug 2019 09:20:38 -0500
+Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7LEKZtD117153;
+        Wed, 21 Aug 2019 09:20:36 -0500
+Subject: Re: [PATCH net-next] net: ethernet: ti: use
+ devm_platform_ioremap_resource() to simplify code
+To:     YueHaibing <yuehaibing@huawei.com>, <davem@davemloft.net>,
+        <ivan.khoronzhuk@linaro.org>, <andrew@lunn.ch>, <ynezz@true.cz>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20190821124850.9592-1-yuehaibing@huawei.com>
+From:   Grygorii Strashko <grygorii.strashko@ti.com>
+Message-ID: <0a978de8-4b6e-d17d-7184-ce37aa7d1077@ti.com>
+Date:   Wed, 21 Aug 2019 17:20:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190821124850.9592-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This fixes the following DT schemas check errors:
-meson-gxl-s805x-libretech-ac.dt.yaml: spi@8c80: compatible:0: 'amlogic,meson-gx-spifc' is not one of ['amlogic,meson6-spifc', 'amlogic,meson-gxbb-spifc']
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-index 5b3dfd03c3d3..e2cdc9fce21c 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
-@@ -317,7 +317,7 @@
- 			};
- 
- 			spifc: spi@8c80 {
--				compatible = "amlogic,meson-gx-spifc", "amlogic,meson-gxbb-spifc";
-+				compatible = "amlogic,meson-gxbb-spifc";
- 				reg = <0x0 0x08c80 0x0 0x80>;
- 				#address-cells = <1>;
- 				#size-cells = <0>;
+On 21/08/2019 15:48, YueHaibing wrote:
+> Use devm_platform_ioremap_resource() to simplify the code a bit.
+> This is detected by coccinelle.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>   drivers/net/ethernet/ti/cpsw.c | 5 ++---
+>   1 file changed, 2 insertions(+), 3 deletions(-)
+>
+
+Thank you.
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
 -- 
-2.22.0
-
+Best regards,
+grygorii
