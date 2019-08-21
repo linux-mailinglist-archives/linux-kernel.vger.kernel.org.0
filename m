@@ -2,135 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF9DB976C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:14:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4FB7E976C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:14:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727780AbfHUKMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:12:10 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:33088 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfHUKMJ (ORCPT
+        id S1727346AbfHUKOL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:14:11 -0400
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:44353 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725283AbfHUKOL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:12:09 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7LAC6hW037490;
-        Wed, 21 Aug 2019 05:12:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566382326;
-        bh=WNO04hK4EhcDleF0FXAgtkk2jCq84VoSQz9dZLs15O0=;
-        h=From:To:CC:Subject:Date;
-        b=E29dEd83zaZhDw5xBCNJzTwnO1xluZUhiiTMmv1bg4nVlJw48r4D5HBGR5igMseg2
-         CZpfnngfNnissZYmVKrf9SuMs4jlWJ5ZsMzs+qCb1d0La7hWHTimnpZhGOSdbKNNE/
-         wXZ+YCeZOPx/oTpKJ0S0cHfs8vOHAma+QUeN0bQI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7LAC6Lt003432
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Aug 2019 05:12:06 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 21
- Aug 2019 05:12:05 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 21 Aug 2019 05:12:05 -0500
-Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7LAC3o8085916;
-        Wed, 21 Aug 2019 05:12:04 -0500
-From:   Roger Quadros <rogerq@ti.com>
-To:     <balbi@kernel.org>, <stern@rowland.harvard.edu>
-CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
-Subject: [PATCH] usb: gadget: udc: core: Fix error case while binding pending gadget drivers
-Date:   Wed, 21 Aug 2019 13:12:01 +0300
-Message-ID: <20190821101201.5377-1-rogerq@ti.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 21 Aug 2019 06:14:11 -0400
+Received: by mail-vs1-f68.google.com with SMTP id c7so970054vse.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 03:14:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=YV0Mapzpl7vHl0AY9N3/j1vQFAH2JwkZO5aFE7Bjbh4=;
+        b=Uz/EqWQQVLpW28e3fQRA1uW1iZMoX0Ck4QJ99JghqPw2/Whc0d8HKwwbI0zCAOcr/I
+         ol/BT5einXdN+BD/C+XfqzJkv5qKZ0F67gGBWkuCsOIu/snViKe5+BfsPbo3JVkL4fwf
+         VtDk/kP/CF2PxoYtU8c5fR+AInFiN3uyNfANzS5BEN+M5MuMj6+ByCIJjPGVXM0BHAdD
+         /BsGM4w5OtTH5iIf1GxchN03vNjrE/kWVv3PB/OkQyh39UnMKKVelxUZYSTeBIUjWlKA
+         WNusT1/yFufqAQpPunJXnw9zXZGCjEKEW8RcNnxllyEK9CdkmHjw/0+osruiaW37cHTx
+         7wZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=YV0Mapzpl7vHl0AY9N3/j1vQFAH2JwkZO5aFE7Bjbh4=;
+        b=WhiLJKdfwq3S4W6h4swuFaIYzfg/Vf9aChVLnH8fB3+CN73IXjhvICL5Wm3cCs12VQ
+         4oDm2kA6L7fUPi1WThLXdbSUt/aRh0mvWLOhI/m0u+juJEP/IFWF6zcXkr114miyFe/N
+         Vv54hn3dhLHB8wutw+qH13ywxDGI6yjHyv1gOogNog8FrMPJdzHjHPmSEHLREKtrV9zI
+         10riLdyi713I69FzvxxfKGkCxVaMVXN4VV06uUT0en6JmT1rVwRQfnhcPcXEc7QU/a+E
+         m0Sih4736J68T/HBRuENHV3qJjAHi2xqaiv2IIT3IJPnZxDEf2klQ2M7OgVW3YbMEhiC
+         A1UQ==
+X-Gm-Message-State: APjAAAX+Nn5FIRchJl4EPbcmHLGfP1ywQ8bmCxk6EfN0GGfYN0oxdr2S
+        aVp039K/PLlvwyhrU6jwNCFpRXjWJV9wdAJLdOY=
+X-Google-Smtp-Source: APXvYqw0J/5IxvrGh8QJBpVTBxnsBIB5BdroCs6oc9cnJPrEYcBlmpNhYkjVxZdbvqE0Aely8x79rIRu4nVKvQ4yUSc=
+X-Received: by 2002:a67:cf0c:: with SMTP id y12mr20813066vsl.146.1566382450534;
+ Wed, 21 Aug 2019 03:14:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Received: by 2002:ab0:57:0:0:0:0:0 with HTTP; Wed, 21 Aug 2019 03:14:10 -0700 (PDT)
+Reply-To: yesben300@gmail.com
+From:   ATM CARD DEPT CENTRE <ksanduru2040@gmail.com>
+Date:   Wed, 21 Aug 2019 11:14:10 +0100
+Message-ID: <CAEnSmYs7w82pLTPjrrHyO_23KK5qjnSG+Et+QwHbdyvnT+F2gA@mail.gmail.com>
+Subject: URGENT RESPONSE YOUR CARD PAYMENT
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If binding a pending gadget driver fails we should not
-remove it from the pending driver list, otherwise it
-will cause a segmentation fault later when the gadget driver is
-unloaded.
+Attn: Fund Beneficiary
 
-Test case:
+This is the 2nd time i am sending you this notification letter
+regarding your abandoned ATM Visa Card valued sum of US$9,500.000.00
+and i have not
+received any positive respond from you or asking a suggestion on how
+you wish to receive your ATM Visa Card. Once again; I am Mr. Martins
+Bright, the new director of ATM Head of Operation United Bank For
+Africa PLC,
 
-- Make sure no UDC is available
-- modprobe g_mass_storage file=wrongfile
-- Load UDC driver so it becomes available
-	lun0: unable to open backing file: wrongfile
-- modprobe -r g_mass_storage
+I resumed to this office on the 2nd of November 2018 and during my
+official research I discovered an abandoned ATM Visa card valued sum
+of $9,500.000.00 belonging to you as the rightfully intimate
+beneficiary.
 
-[   60.900431] Unable to handle kernel paging request at virtual address dead000000000108
-[   60.908346] Mem abort info:
-[   60.911145]   ESR = 0x96000044
-[   60.914227]   Exception class = DABT (current EL), IL = 32 bits
-[   60.920162]   SET = 0, FnV = 0
-[   60.923217]   EA = 0, S1PTW = 0
-[   60.926354] Data abort info:
-[   60.929228]   ISV = 0, ISS = 0x00000044
-[   60.933058]   CM = 0, WnR = 1
-[   60.936011] [dead000000000108] address between user and kernel address ranges
-[   60.943136] Internal error: Oops: 96000044 [#1] PREEMPT SMP
-[   60.948691] Modules linked in: g_mass_storage(-) usb_f_mass_storage libcomposite xhci_plat_hcd xhci_hcd usbcore ti_am335x_adc kfifo_buf omap_rng cdns3 rng_core udc_core crc32_ce xfrm_user crct10dif_ce snd_so6
-[   60.993995] Process modprobe (pid: 834, stack limit = 0x00000000c2aebc69)
-[   61.000765] CPU: 0 PID: 834 Comm: modprobe Not tainted 4.19.59-01963-g065f42a60499 #92
-[   61.008658] Hardware name: Texas Instruments SoC (DT)
-[   61.014472] pstate: 60000005 (nZCv daif -PAN -UAO)
-[   61.019253] pc : usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
-[   61.025503] lr : usb_gadget_unregister_driver+0x30/0x108 [udc_core]
-[   61.031750] sp : ffff00001338fda0
-[   61.035049] x29: ffff00001338fda0 x28: ffff800846d40000
-[   61.040346] x27: 0000000000000000 x26: 0000000000000000
-[   61.045642] x25: 0000000056000000 x24: 0000000000000800
-[   61.050938] x23: ffff000008d7b0d0 x22: ffff0000088b07c8
-[   61.056234] x21: ffff000001100000 x20: ffff000002020260
-[   61.061530] x19: ffff0000010ffd28 x18: 0000000000000000
-[   61.066825] x17: 0000000000000000 x16: 0000000000000000
-[   61.072121] x15: 0000000000000000 x14: 0000000000000000
-[   61.077417] x13: ffff000000000000 x12: ffffffffffffffff
-[   61.082712] x11: 0000000000000030 x10: 7f7f7f7f7f7f7f7f
-[   61.088008] x9 : fefefefefefefeff x8 : 0000000000000000
-[   61.093304] x7 : ffffffffffffffff x6 : 000000000000ffff
-[   61.098599] x5 : 8080000000000000 x4 : 0000000000000000
-[   61.103895] x3 : ffff000001100020 x2 : ffff800846d40000
-[   61.109190] x1 : dead000000000100 x0 : dead000000000200
-[   61.114486] Call trace:
-[   61.116922]  usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
-[   61.122828]  usb_composite_unregister+0x10/0x18 [libcomposite]
-[   61.128643]  msg_cleanup+0x18/0xfce0 [g_mass_storage]
-[   61.133682]  __arm64_sys_delete_module+0x17c/0x1f0
-[   61.138458]  el0_svc_common+0x90/0x158
-[   61.142192]  el0_svc_handler+0x2c/0x80
-[   61.145926]  el0_svc+0x8/0xc
-[   61.148794] Code: eb03003f d10be033 54ffff21 a94d0281 (f9000420)
-[   61.154869] ---[ end trace afb22e9b637bd9a7 ]---
-Segmentation fault
+I tried to know why this ATM Visa Card has not been released to you
+but I was told by the UBA Bank management that the former director of
+ATM head of
+operation that left this office three months ago withhold your Card
+for his own personal use without knowing that his evil plans towards
+diverting your
+fund will be discovered.
 
-Signed-off-by: Roger Quadros <rogerq@ti.com>
----
- drivers/usb/gadget/udc/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Now that your ATM Visa Card is still available and ready for your
+receiving, you can come down here to our Bank to pick up your Card
+direct from my
+office or alternatively it can be arranged ship to your address
+through any registered reliable Courier Service Company that you will
+take care of the Courier
+Charge,hope it is cleared and accepted by you?
 
-diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
-index 7cf34beb50df..c272c8014772 100644
---- a/drivers/usb/gadget/udc/core.c
-+++ b/drivers/usb/gadget/udc/core.c
-@@ -1142,7 +1142,7 @@ static int check_pending_gadget_drivers(struct usb_udc *udc)
- 		if (!driver->udc_name || strcmp(driver->udc_name,
- 						dev_name(&udc->dev)) == 0) {
- 			ret = udc_bind_to_driver(udc, driver);
--			if (ret != -EPROBE_DEFER)
-+			if (!ret)
- 				list_del(&driver->pending);
- 			break;
- 		}
--- 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+In this case, you are required to forward the following information:
 
+1, Your full name and address:---
+2, Your direct phone number for easy communication:---
+3, Identification card or passport:-----
+4, Your Occupation:-----
+
+Your direct telephone number and address will be needed and more
+details of your ATM Visa Card payment will be made known to you as
+soon as I receive
+your swift positive response.
+
+Contact me on this below email address;
+
+E-mail address:==== ( yesben300@gmail.com )
+
+Telephone number:=== (+234) 701638756
+Contact person:=== Mr.Martins  Bright
+
+Do not hesitate to call me on (+234) 7016738790 as soon as you read this mail.
+Thanks for your co-operation and i wait for your kind positive respond.
+
+Yours Faithfully,
+Mr.Martins  Bright
