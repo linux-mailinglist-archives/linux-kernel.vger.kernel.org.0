@@ -2,92 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 995B098473
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:32:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20360984A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:41:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730313AbfHUTbP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 15:31:15 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45444 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730184AbfHUTbH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:31:07 -0400
-Received: by mail-ot1-f65.google.com with SMTP id m24so3135536otp.12;
-        Wed, 21 Aug 2019 12:31:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=P+mIfgwF/Dx2fvxKM3KDec35UT4pGef1zpaBcJAd0yE=;
-        b=PUXY5/aAwqR7vNQWrircfHZtgN0Y6oxXxEgo6apwP6AGELCwtjJ2GOYbLjGze9cPTD
-         BDVp42PRI4aRcw3fFG5+iSPnG7Zb7+2jl8zafYvOg04ZlxtxHPSc7155+L0KaTL1nVgw
-         7NAIoynEqnbGKvnikY9PuQD8ikvq/QjrxcrRZ38NbFQ7iqBWWcsuKb7cHRGJMgzJVgBA
-         XiQJWSzodoq4wX03JBgyXp8DEZQtg7AeM27q0tVK6b+ZOIq3a+opDjGYZexXpF9+7Pyn
-         Zn5xDjS6g1NNhG+zW9O4qBinJRswS+0BYJxmAhFcNjOM0n2Jk5HP05vEik6ZD6dmPC5h
-         W1FA==
-X-Gm-Message-State: APjAAAUEqZ8f7Q/ibHeOqFIXYwld4MK03ijCg01YR3xyp73jeXHFmtoH
-        QdPZwYCvZEXmNHVbcFkxaw==
-X-Google-Smtp-Source: APXvYqw6uPnGkUwS9jVi2LxBcn0vQmq1CDVBqNIUieYulJDWQvedafQd3o4SAYeZa+ky0wbndYwwYQ==
-X-Received: by 2002:a9d:7e6:: with SMTP id 93mr28714164oto.143.1566415866696;
-        Wed, 21 Aug 2019 12:31:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id v17sm4961879ote.62.2019.08.21.12.31.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 12:31:06 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 14:31:05 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Guillaume La Roque <glaroque@baylibre.com>
-Cc:     daniel.lezcano@linaro.org, khilman@baylibre.com,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 1/6] dt-bindings: thermal: Add DT bindings
- documentation for Amlogic Thermal
-Message-ID: <20190821193105.GA25977@bogus>
-References: <20190806130506.8753-1-glaroque@baylibre.com>
- <20190806130506.8753-2-glaroque@baylibre.com>
+        id S1729748AbfHUTiI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 15:38:08 -0400
+Received: from onstation.org ([52.200.56.107]:44742 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726903AbfHUTiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 15:38:08 -0400
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 9F3763E8A5;
+        Wed, 21 Aug 2019 19:38:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1566416287;
+        bh=LSVMcf7/+Pknk2oK/dA6jgWSlxEz5JclLfuEyMQqBPU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AgNS2jBGyjrDVg8BiTYs7QD8K9ZV/zJULU6ZU0wLGrkKstvXZev3WHs+2hCnP7kRS
+         UzzmJ0Teje4fLdu0g+FqrkuJw1h/I3Tu3/BNEgcheQY2Sb3FCIn/kg02xgYXuUBUmr
+         zV+oUFSs9oXkZS8HdOR/rLSnJnylV6FghyCS0uKI=
+Date:   Wed, 21 Aug 2019 15:38:06 -0400
+From:   Brian Masney <masneyb@onstation.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     agross@kernel.org, robdclark@gmail.com, sean@poorly.run,
+        bjorn.andersson@linaro.org, airlied@linux.ie, daniel@ffwll.ch,
+        mark.rutland@arm.com, jonathan@marek.ca,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        devicetree@vger.kernel.org, jcrouse@codeaurora.org
+Subject: Re: [PATCH v5 2/7] dt-bindings: display: msm: gmu: add optional
+ ocmem property
+Message-ID: <20190821193806.GA17476@onstation.org>
+References: <20190806002229.8304-1-masneyb@onstation.org>
+ <20190806002229.8304-3-masneyb@onstation.org>
+ <20190821192602.GA16243@bogus>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190806130506.8753-2-glaroque@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190821192602.GA16243@bogus>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 06, 2019 at 03:05:01PM +0200, Guillaume La Roque wrote:
-> Adding the devicetree binding documentation for the Amlogic temperature
-> sensor found in the Amlogic Meson G12 SoCs.
-> the G12A  and G12B SoCs are supported.
+On Wed, Aug 21, 2019 at 02:26:02PM -0500, Rob Herring wrote:
+> On Mon, Aug 05, 2019 at 08:22:24PM -0400, Brian Masney wrote:
+> > Some A3xx and A4xx Adreno GPUs do not have GMEM inside the GPU core and
+> > must use the On Chip MEMory (OCMEM) in order to be functional. Add the
+> > optional ocmem property to the Adreno Graphics Management Unit bindings.
+> > 
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > ---
+> > Changes since v4:
+> > - None
+> > 
+> > Changes since v3:
+> > - correct link to qcom,ocmem.yaml
+> > 
+> > Changes since v2:
+> > - Add a3xx example with OCMEM
+> > 
+> > Changes since v1:
+> > - None
+> > 
+> >  .../devicetree/bindings/display/msm/gmu.txt   | 50 +++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/display/msm/gmu.txt b/Documentation/devicetree/bindings/display/msm/gmu.txt
+> > index 90af5b0a56a9..672d557caba4 100644
+> > --- a/Documentation/devicetree/bindings/display/msm/gmu.txt
+> > +++ b/Documentation/devicetree/bindings/display/msm/gmu.txt
+> > @@ -31,6 +31,10 @@ Required properties:
+> >  - iommus: phandle to the adreno iommu
+> >  - operating-points-v2: phandle to the OPP operating points
+> >  
+> > +Optional properties:
+> > +- ocmem: phandle to the On Chip Memory (OCMEM) that's present on some Snapdragon
+> > +         SoCs. See Documentation/devicetree/bindings/sram/qcom,ocmem.yaml.
 > 
-> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-> ---
->  .../bindings/thermal/amlogic,thermal.yaml     | 54 +++++++++++++++++++
->  1 file changed, 54 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+> Sigh, to repeat my comment on v1 and v3:
 > 
-> diff --git a/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> new file mode 100644
-> index 000000000000..d25e59113398
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-> @@ -0,0 +1,54 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/thermal/amlogic,thermal.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Amlogic Thermal
-> +
-> +maintainers:
-> +  - Guillaume La Roque <glaroque@baylibre.com>
-> +
-> +description: Binding for Amlogic Thermal Driver
+> We already have a couple of similar properties. Lets standardize on
+> 'sram' as that is what TI already uses.
 
-Bindings are for h/w blocks, not drivers.
+I also had the path wrong then in those older versions. It was
+previously in the soc namespace instead of the sram namespace. I didn't
+realize that you also wanted to change the name of the property as well.
+Sorry about the confusion on my part.
 
-Other than that nit,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+Brian
