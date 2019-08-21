@@ -2,165 +2,110 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3B096F58
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:19:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5191D96F43
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:10:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfHUCSO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:18:14 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:53904 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726329AbfHUCSO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:18:14 -0400
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 875DA282536BF636B30A;
-        Wed, 21 Aug 2019 09:57:36 +0800 (CST)
-Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
- (10.3.19.203) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
- 2019 09:57:30 +0800
-Subject: Re: [PATCH] erofs: move erofs out of staging
-To:     "Darrick J. Wong" <darrick.wong@oracle.com>
-CC:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Qu Wenruo <quwenruo.btrfs@gmx.com>,
-        Gao Xiang <hsiangkao@aol.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Eric Biggers" <ebiggers@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        Jan Kara <jack@suse.cz>, "Dave Chinner" <david@fromorbit.com>,
-        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
-        devel <devel@driverdev.osuosl.org>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Amir Goldstein <amir73il@gmail.com>,
-        linux-erofs <linux-erofs@lists.ozlabs.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Jaegeuk Kim" <jaegeuk@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Li Guifu" <bluce.liguifu@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        "Andrew Morton" <akpm@linux-foundation.org>,
-        torvalds <torvalds@linux-foundation.org>
-References: <20190818172938.GA14413@sol.localdomain>
- <20190818174702.GA17633@infradead.org>
- <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
- <20190819160923.GG15198@magnolia>
- <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
- <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
- <20190820155623.GA10232@mit.edu>
- <9d8f88ee-4b81-bdfa-b0d7-9c7d5d54e70a@huawei.com>
- <20190821014818.GB1037422@magnolia>
-From:   Chao Yu <yuchao0@huawei.com>
-Message-ID: <8ae23b55-eb3f-e6e8-4cfb-5ce2885d8ff8@huawei.com>
-Date:   Wed, 21 Aug 2019 09:57:28 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727145AbfHUCKZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:10:25 -0400
+Received: from anchovy1.45ru.net.au ([203.30.46.145]:60366 "EHLO
+        anchovy1.45ru.net.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726869AbfHUCKZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:10:25 -0400
+Received: (qmail 30310 invoked by uid 5089); 21 Aug 2019 02:10:22 -0000
+Received: by simscan 1.2.0 ppid: 30163, pid: 30164, t: 0.0600s
+         scanners: regex: 1.2.0 attach: 1.2.0 clamav: 0.88.3/m:40/d:1950
+Received: from unknown (HELO ?192.168.0.128?) (preid@electromag.com.au@203.59.235.95)
+  by anchovy1.45ru.net.au with ESMTPA; 21 Aug 2019 02:10:22 -0000
+Subject: Re: [PATCH 2/4] iio: adc: ina2xx: Setup better name then simple
+ ina2xx
+To:     Michal Simek <michal.simek@xilinx.com>,
+        linux-kernel@vger.kernel.org, monstr@monstr.eu, linux@roeck-us.net
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        linux-iio@vger.kernel.org,
+        =?UTF-8?Q?Stefan_Br=c3=bcns?= <stefan.bruens@rwth-aachen.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Jonathan Cameron <jic23@kernel.org>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Hartmut Knaack <knaack.h@gmx.de>
+References: <cover.1566310292.git.michal.simek@xilinx.com>
+ <e1a9d7c5f94a4942a97a242e530a3bfdda8bbc74.1566310292.git.michal.simek@xilinx.com>
+From:   Phil Reid <preid@electromag.com.au>
+Message-ID: <1c96bed1-2651-3667-3573-2167cd788bd7@electromag.com.au>
+Date:   Wed, 21 Aug 2019 10:10:18 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190821014818.GB1037422@magnolia>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
+In-Reply-To: <e1a9d7c5f94a4942a97a242e530a3bfdda8bbc74.1566310292.git.michal.simek@xilinx.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-AU
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/8/21 9:48, Darrick J. Wong wrote:
-> On Wed, Aug 21, 2019 at 09:34:02AM +0800, Chao Yu wrote:
->> On 2019/8/20 23:56, Theodore Y. Ts'o wrote:
->>> The reason why there needs to be at least some file system specific
->>> code for fuzz testing is because for efficiency's sake, you don't want
->>> to fuzz every single bit in the file system, but just the ones which
->>> are most interesting (e.g., the metadata blocks).  For file systems
->>> which use checksum to protect against accidental corruption, the file
->>> system fuzzer needs to also fix up the checksums (since you can be
->>> sure malicious attackers will do this).
->>
->> Yup, IMO, if we really want such tool, it needs to:
->> - move all generic fuzz codes (trigger random fuzzing in meta/data area) into
->> that tool, and
->> - make filesystem generic fs_meta/file_node lookup/inject/pack function as a
->> callback, such as
->>  * .find_fs_sb
->>  * .inject_fs_sb
->>  * .pack_fs_sb
+On 20/08/2019 22:11, Michal Simek wrote:
+> On systems with multiple ina2xx chips it is impossible to find out which
+> iio device is which one based on probe order. That's why it is necessary to
+> setup better name based on possition.
+> The patch is reusing dev_name which is setup by core with client->name.
 > 
-> What about group descriptors?  AG headers?  The AGFLWTFBBQLOL?
+> name char array was setup to 128 byte length to correspond the same name
+> length by HID device.
 > 
->>  * .find_fs_bitmap
->>  * .inject_fs_bitmap
-> 
-> Probably want an find/inject for log blocks too.
-> 
-> Oh, wait, XFS doesn't log blocks like jbd2 does. :) :)
+> Before this patch:
+> iio:device9: ina226 (buffer capable)
+> After:
+> iio:device9: ina226-3-004a (buffer capable)
 
-Yes, I admit that I should miss a lot of fs meta type here, but that's just a
-simple example here, we should not treat it as a full design.... :)
+Could this break existing user space code that's just looking for just ina226.
+I2c bus numbers aren't all that great at id'ing devices either. It's better than
+nothing but depending on what cards we have plugged into our system the same device gets
+a different bus number.
+
 
 > 
->>  * .find_fs_inode_bitmap
->>  * .inject_fs_inode_bitmap
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
 > 
-> XFS has an inode bitmap? ;)
+> Also id->name can be used as prefix. On ina226 output is the same.
+> 
+> Also I am happy to change that space for name will be dynamicky allocated
+> to save a space if needed.
+> ---
+>   drivers/iio/adc/ina2xx-adc.c | 8 +++++++-
+>   1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/iio/adc/ina2xx-adc.c b/drivers/iio/adc/ina2xx-adc.c
+> index 37058d9c2054..7c7c63677bf4 100644
+> --- a/drivers/iio/adc/ina2xx-adc.c
+> +++ b/drivers/iio/adc/ina2xx-adc.c
+> @@ -146,6 +146,7 @@ struct ina2xx_chip_info {
+>   	int range_vbus; /* Bus voltage maximum in V */
+>   	int pga_gain_vshunt; /* Shunt voltage PGA gain */
+>   	bool allow_async_readout;
+> +	char name[128];
+>   };
+>   
+>   static const struct ina2xx_config ina2xx_config[] = {
+> @@ -1027,7 +1028,12 @@ static int ina2xx_probe(struct i2c_client *client,
+>   		indio_dev->num_channels = ARRAY_SIZE(ina219_channels);
+>   		indio_dev->info = &ina219_info;
+>   	}
+> -	indio_dev->name = id->name;
+> +
+> +	/* Compose chip name to unified i2c format */
+> +	snprintf(chip->name, sizeof(chip->name), "%s-%s",
+> +		 client->name, dev_name(&client->dev));
+> +
+> +	indio_dev->name = chip->name;
+>   	indio_dev->setup_ops = &ina2xx_setup_ops;
+>   
+>   	buffer = devm_iio_kfifo_allocate(&indio_dev->dev);
+> 
 
-We can leave callback as NULL? ;)
 
-> 
-> (This is why there's no generic fuzz tool; every fs is different enough
-> that doing so would be sort of a mess.)
-
-Yes, I just wonder if there is any possible we can save some redundant work.
-
-> 
-> ((Granted, you could also look at how xfstests uses the xfs_db fuzz
-> command so at least it would be systematic...))
-Okay, I will check that.
-
-Thanks,
-
-> 
->>  * .find_inode_by_num
->>  * .inject_inode
->>  * .pack_inode
->>  * .find_tree_node_by_level
->> ...
-> 
-> What about the name/value btrees?  (Ok, I'll stop now.)
-> 
-> --D
-> 
->> then specific filesystem can fill the callback to tell how the tool can locate a
->> field in inode or a metadata in tree node and then trigger the designed fuzz.
->>
->> It will be easier to rewrite whole generic fwk for each filesystem, because
->> existed filesystem userspace tool should has included above callback's detail
->> codes...
->>
->>> On Tue, Aug 20, 2019 at 10:24:11AM +0800, Chao Yu wrote:
->>>> filesystem fill the tool's callback to seek a node/block and supported fields
->>>> can be fuzzed in inode.
->>
->>>
->>> What you *can* do is to make the file system specific portion of the
->>> work as small as possible.  Great work in this area is Professor Kim's
->>> Janus[1][2] and Hydra[2] work.  (Hydra is about to be published at SOSP 19,
->>> and was partially funded from a Google Faculty Research Work.)
->>>
->>> [1] https://taesoo.kim/pubs/2019/xu:janus.pdf
->>> [2] https://github.com/sslab-gatech/janus
->>> [3] https://github.com/sslab-gatech/hydra
->>
->> Thanks for the information!
->>
->> It looks like janus and hydra alreay have generic compress/decompress function
->> across different filesystems, it's really a good job, I do think it may be the
->> one once it becomes more generic.
->>
->> Thanks
->>
->>>
-> .
-> 
+-- 
+Regards
+Phil Reid
