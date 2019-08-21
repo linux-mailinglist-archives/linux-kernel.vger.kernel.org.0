@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4DA289852A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:05:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BF289852E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:06:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730495AbfHUUFq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 16:05:46 -0400
+        id S1730561AbfHUUGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 16:06:01 -0400
 Received: from mga09.intel.com ([134.134.136.24]:53248 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730451AbfHUUFm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 16:05:42 -0400
+        id S1730476AbfHUUFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 16:05:44 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 13:05:42 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 13:05:44 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="196069779"
+   d="scan'208";a="196069786"
 Received: from smasango-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.252.139.100])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 13:05:40 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 13:05:42 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 07/11] soundwire: intel: improve .config_stream callback, add .free_stream
-Date:   Wed, 21 Aug 2019 15:05:17 -0500
-Message-Id: <20190821200521.17283-8-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 08/11] soundwire: intel: add prepare support in sdw dai driver
+Date:   Wed, 21 Aug 2019 15:05:18 -0500
+Message-Id: <20190821200521.17283-9-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
 References: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
@@ -45,78 +45,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rander Wang <rander.wang@linux.intel.com>
 
-We need the link_id as a parameter for the config callback, and we
-also need a matching free callback in case any resources need to be
-released.
+It gets sdw runtime information from dai to prepare stream.
 
 Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/intel.c           | 19 +++++++++++++++++--
- include/linux/soundwire/sdw_intel.h |  4 +++-
- 2 files changed, 20 insertions(+), 3 deletions(-)
+ drivers/soundwire/intel.c | 17 +++++++++++++++++
+ 1 file changed, 17 insertions(+)
 
 diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 0001f433e848..529d7bc693d1 100644
+index 529d7bc693d1..b9ce13d01334 100644
 --- a/drivers/soundwire/intel.c
 +++ b/drivers/soundwire/intel.c
-@@ -578,17 +578,31 @@ intel_pdi_alh_configure(struct sdw_intel *sdw, struct sdw_cdns_pdi *pdi)
- static int intel_config_stream(struct sdw_intel *sdw,
- 			       struct snd_pcm_substream *substream,
- 			       struct snd_soc_dai *dai,
--			       struct snd_pcm_hw_params *hw_params, int link_id)
-+			       struct snd_pcm_hw_params *hw_params,
-+			       int link_id, int alh_stream_id)
- {
- 	struct sdw_intel_link_res *res = sdw->res;
- 
- 	if (res->ops && res->ops->config_stream && res->arg)
- 		return res->ops->config_stream(res->arg,
--				substream, dai, hw_params, link_id);
-+					       substream, dai, hw_params,
-+					       link_id, alh_stream_id);
- 
- 	return -EIO;
+@@ -769,6 +769,21 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
+ 	return ret;
  }
  
-+static int intel_free_stream(struct sdw_intel *sdw,
-+			     struct snd_pcm_substream *substream,
-+			     struct snd_soc_dai *dai,
-+			     int link_id)
++static int intel_prepare(struct snd_pcm_substream *substream,
++			 struct snd_soc_dai *dai)
 +{
-+	if (sdw->res->ops && sdw->res->ops->free_stream && sdw->res->arg)
-+		return sdw->res->ops->free_stream(sdw->res->arg,
-+						  substream, dai, link_id);
++	struct sdw_cdns_dma_data *dma;
 +
-+	return 0;
++	dma = snd_soc_dai_get_dma_data(dai, substream);
++	if (!dma) {
++		dev_err(dai->dev, "failed to get dma data in %s",
++			__func__);
++		return -EIO;
++	}
++
++	return sdw_prepare_stream(dma->stream);
 +}
 +
- /*
-  * bank switch routines
-  */
-@@ -718,6 +732,7 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
+ static int
+ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
+ {
+@@ -825,6 +840,7 @@ static int intel_pdm_set_sdw_stream(struct snd_soc_dai *dai,
+ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
+ 	.startup = intel_startup,
+ 	.hw_params = intel_hw_params,
++	.prepare = intel_prepare,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pcm_set_sdw_stream,
+@@ -832,6 +848,7 @@ static const struct snd_soc_dai_ops intel_pcm_dai_ops = {
  
- 	/* Inform DSP about PDI stream number */
- 	ret = intel_config_stream(sdw, substream, dai, params,
-+				  sdw->instance,
- 				  pdi->intel_alh_id);
- 	if (ret)
- 		goto error;
-diff --git a/include/linux/soundwire/sdw_intel.h b/include/linux/soundwire/sdw_intel.h
-index c9427cb6020b..c5a2caf3a9d5 100644
---- a/include/linux/soundwire/sdw_intel.h
-+++ b/include/linux/soundwire/sdw_intel.h
-@@ -12,7 +12,9 @@
-  */
- struct sdw_intel_ops {
- 	int (*config_stream)(void *arg, void *substream,
--			     void *dai, void *hw_params, int stream_num);
-+			     void *dai, void *hw_params,
-+			     int link_id, int alh_stream_id);
-+	int (*free_stream)(void *arg, void *substream, void *dai, int link_id);
- };
- 
- /**
+ static const struct snd_soc_dai_ops intel_pdm_dai_ops = {
+ 	.hw_params = intel_hw_params,
++	.prepare = intel_prepare,
+ 	.hw_free = intel_hw_free,
+ 	.shutdown = intel_shutdown,
+ 	.set_sdw_stream = intel_pdm_set_sdw_stream,
 -- 
 2.20.1
 
