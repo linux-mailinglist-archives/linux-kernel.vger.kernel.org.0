@@ -2,97 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 719499773E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:36:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3A3B9776B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:44:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfHUKgU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:36:20 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45570 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726798AbfHUKgT (ORCPT
+        id S1728460AbfHUKoA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:44:00 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35084 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728239AbfHUKnX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:36:19 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Tldozir3hxCrQJu+NVCjOH2d97IbRf87LUeutIb5FiQ=; b=jG6t86WOSVCNMaVwDWUGZo2pL
-        Ux37bTeG8CrV32myBhFEv6CAH0d1zEmj6bsdXlLKCMfo4PsBCY/kXY+3hIfnoHgFB7BnfsPY3YpZW
-        T/qnYlRnJFfK3Ou2KHD4WUZHLvabb6fjd5IIPNtTx9bTcFh/QA0iIGizeimXpkSFCa1WUAcDhuvLT
-        0m1oSxXBLjxmVcRiou6DBmxgGvSmUJ/22qCssvX0UctgH2YjM8y4tgDQSjRoXryTPPm7E7qoEJpsE
-        WlXxCBlGpbdUpzaDiN3UHGzAhq1k1esOrDfvAqMkpgbXUEEPgFph7zDVq0mNX4etitjxggI83Jlzq
-        YP5WL3Sjw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0NyD-00052V-Ae; Wed, 21 Aug 2019 10:36:01 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id D351D306B81;
-        Wed, 21 Aug 2019 12:35:27 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 7EE1F20A21FCB; Wed, 21 Aug 2019 12:35:59 +0200 (CEST)
-Date:   Wed, 21 Aug 2019 12:35:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Long Li <longli@microsoft.com>
-Cc:     "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] nvme: complete request in work queue on CPU with
- flooded interrupts
-Message-ID: <20190821103559.GZ2349@hirez.programming.kicks-ass.net>
-References: <1566281669-48212-1-git-send-email-longli@linuxonhyperv.com>
- <1566281669-48212-4-git-send-email-longli@linuxonhyperv.com>
- <20190820095240.GH2332@hirez.programming.kicks-ass.net>
- <CY4PR21MB0741A817BEB880C8DC526ECFCEAA0@CY4PR21MB0741.namprd21.prod.outlook.com>
+        Wed, 21 Aug 2019 06:43:23 -0400
+Received: by mail-io1-f67.google.com with SMTP id i22so3580632ioh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 03:43:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=21mfaxXpzzpcpjFxLsuOaE64M3Kk3ik/0tTAJe54ZzM=;
+        b=T1To62xzjvEzr+9ni5+lpN2/GgC8rIsJ+fA7ZZG22Eib4BoVxDScW9e1mqvuWFc3Tt
+         8/TUJ1PcvRC7h0FtQJP7KCPLUXakXY8sZjMnMC0HoAZW9AQs+9cNJGiHbPMyuhWALN3H
+         AxKQvPM3cJdyFLqk78GlGCjS/fnp+HKZJGVZXAll95v7op+6lFP2nBem63fteWtn1G7M
+         vuRBZ9F2DPrCF2YviqYUCo3rGBb4dVeV9CydJ1Q8Wlhx5gXzgDauAp2ItU0qeCdKdJBn
+         30n9Ndn3jEBd3+f8rRS+NDForNpmmj3Wgbmiox77JD4ghaAdl7k/ZPakI46yskWOw1Tv
+         66gA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=21mfaxXpzzpcpjFxLsuOaE64M3Kk3ik/0tTAJe54ZzM=;
+        b=prI5Sxnv0z6qebM+tkaKYyd6Q3B5T5CsKeADq+hQ/NDJOW142GbhGrPwdfmMj4aq0n
+         1fwqLZdIY7US+0pcUser4XRaop1c66jQILpC4LWbdstelIQf2P6tG7IYGwa7qlpabXVX
+         DJKKAgvttl1dOg3BsEtTGk8M8/Kmi/WsHCM31LTZcYagnqS0C518cwy2hKePw9hPldWa
+         Tj1kzvVRcLUY4QXsG3WRj4uIXudIPanuTd1+pL2bqOcxGRhESsFnBp+fIKoPkdsAazwR
+         Q1g0k/EztiGPyZ+fPHzqsS+mKWHnQCVhtEfVSZc3DobnZbg3Qoehk8BIBXOLaWY87vQn
+         p7nw==
+X-Gm-Message-State: APjAAAXksVMO+8l417/Gu1Q3xae0aWWfsBHusrqG0Plwn6faOa3yAo9C
+        /ZThQ+oZjR+0IJrpUJpo3Iopyregn2jaBDcYwQ==
+X-Google-Smtp-Source: APXvYqwW95LjpMO9piBiCEl4iZLPGgAKcSDCHDXwI9uuYqLMnZH3/UMptPpMLWSQk2fEzw/SOVaaxgRnFzC+JtGR5cg=
+X-Received: by 2002:a05:6638:303:: with SMTP id w3mr8829447jap.103.1566384202422;
+ Wed, 21 Aug 2019 03:43:22 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CY4PR21MB0741A817BEB880C8DC526ECFCEAA0@CY4PR21MB0741.namprd21.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190729170354.202374-1-avifishman70@gmail.com> <744188a1-d11a-7edc-79cd-e3c7dbcf6e86@linaro.org>
+In-Reply-To: <744188a1-d11a-7edc-79cd-e3c7dbcf6e86@linaro.org>
+From:   Avi Fishman <avifishman70@gmail.com>
+Date:   Wed, 21 Aug 2019 13:42:27 +0300
+Message-ID: <CAKKbWA72VX4LnLM0on2=bj787J53GUwkh6PTU2+0fvP+gPu+Xg@mail.gmail.com>
+Subject: Re: [PATCH] [v5] clocksource/drivers/npcm: fix GENMASK and timer operation
+To:     Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc:     Tomer Maimon <tmaimon77@gmail.com>,
+        Tali Perry <tali.perry1@gmail.com>,
+        Patrick Venture <venture@google.com>,
+        Nancy Yuen <yuenn@google.com>,
+        Benjamin Fair <benjaminfair@google.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 08:37:55AM +0000, Long Li wrote:
-> >>>Subject: Re: [PATCH 3/3] nvme: complete request in work queue on CPU
-> >>>with flooded interrupts
-> >>>
-> >>>On Mon, Aug 19, 2019 at 11:14:29PM -0700, longli@linuxonhyperv.com
-> >>>wrote:
-> >>>> From: Long Li <longli@microsoft.com>
-> >>>>
-> >>>> When a NVMe hardware queue is mapped to several CPU queues, it is
-> >>>> possible that the CPU this hardware queue is bound to is flooded by
-> >>>> returning I/O for other CPUs.
-> >>>>
-> >>>> For example, consider the following scenario:
-> >>>> 1. CPU 0, 1, 2 and 3 share the same hardware queue 2. the hardware
-> >>>> queue interrupts CPU 0 for I/O response 3. processes from CPU 1, 2 and
-> >>>> 3 keep sending I/Os
-> >>>>
-> >>>> CPU 0 may be flooded with interrupts from NVMe device that are I/O
-> >>>> responses for CPU 1, 2 and 3. Under heavy I/O load, it is possible
-> >>>> that CPU 0 spends all the time serving NVMe and other system
-> >>>> interrupts, but doesn't have a chance to run in process context.
-> >>>
-> >>>Ideally -- and there is some code to affect this, the load-balancer will move
-> >>>tasks away from this CPU.
-> >>>
-> >>>> To fix this, CPU 0 can schedule a work to complete the I/O request
-> >>>> when it detects the scheduler is not making progress. This serves multiple
-> >>>purposes:
-> >>>
-> >>>Suppose the task waiting for the IO completion is a RT task, and you've just
-> >>>queued it to a regular work. This is an instant priority inversion.
-> 
-> This is a choice. We can either not "lock up" the CPU, or finish the I/O on time from IRQ handler. I think throttling only happens in extreme conditions, which is rare. The purpose is to make the whole system responsive and happy.
+Thanks Daniel,
 
-Can you please use a sane MUA.. this is unreadable garbage.
+It seems more clear now :)
+
+Good to know about the need for Fixes tag.
+
+On Wed, Aug 21, 2019 at 1:11 PM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 29/07/2019 19:03, Avi Fishman wrote:
+> > NPCM7XX_Tx_OPER GENMASK bits where wrong,
+> > Since NPCM7XX_REG_TICR0 register reset value of those bits was 0,
+> > it did not cause an issue.
+> > in npcm7xx_timer_oneshot() the original NPCM7XX_REG_TCSR0 register was
+> > read again after masking it with ~NPCM7XX_Tx_OPER so the masking didn't
+> > take effect.
+> >
+> > npcm7xx_timer_periodic() was not wrong but it wrote to NPCM7XX_REG_TICR=
+0
+> > in a middle of read modify write to NPCM7XX_REG_TCSR0 which is
+> > confusing.
+> > npcm7xx_timer_oneshot() did wrong calculation
+> >
+> > Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+>
+> I've applied the patch and massaged the changelog [1].
+>
+> Let me know if you disagree with it.
+>
+> Please, in the future take care of adding the Fixes tag.
+>
+> Thanks
+>
+>   -- Daniel
+>
+> [1]
+> https://git.linaro.org/people/daniel.lezcano/linux.git/commit/?h=3Dclocke=
+vents/next&id=3Da5f6679fc81e42fcbef0184770d8a3b04c0f153e
+>
+> > ---
+> >  drivers/clocksource/timer-npcm7xx.c | 9 +++------
+> >  1 file changed, 3 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/=
+timer-npcm7xx.c
+> > index 8a30da7f083b..9780ffd8010e 100644
+> > --- a/drivers/clocksource/timer-npcm7xx.c
+> > +++ b/drivers/clocksource/timer-npcm7xx.c
+> > @@ -32,7 +32,7 @@
+> >  #define NPCM7XX_Tx_INTEN             BIT(29)
+> >  #define NPCM7XX_Tx_COUNTEN           BIT(30)
+> >  #define NPCM7XX_Tx_ONESHOT           0x0
+> > -#define NPCM7XX_Tx_OPER                      GENMASK(27, 3)
+> > +#define NPCM7XX_Tx_OPER                      GENMASK(28, 27)
+> >  #define NPCM7XX_Tx_MIN_PRESCALE              0x1
+> >  #define NPCM7XX_Tx_TDR_MASK_BITS     24
+> >  #define NPCM7XX_Tx_MAX_CNT           0xFFFFFF
+> > @@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct clock_event_d=
+evice *evt)
+> >
+> >       val =3D readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+> >       val &=3D ~NPCM7XX_Tx_OPER;
+> > -
+> > -     val =3D readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+> >       val |=3D NPCM7XX_START_ONESHOT_Tx;
+> >       writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
+> >
+> > @@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct clock_even=
+t_device *evt)
+> >       struct timer_of *to =3D to_timer_of(evt);
+> >       u32 val;
+> >
+> > +     writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0=
+);
+> > +
+> >       val =3D readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
+> >       val &=3D ~NPCM7XX_Tx_OPER;
+> > -
+> > -     writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0=
+);
+> >       val |=3D NPCM7XX_START_PERIODIC_Tx;
+> > -
+> >       writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
+> >
+> >       return 0;
+> >
+>
+>
+> --
+>  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for A=
+RM SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
+>
+
+
+--=20
+Regards,
+Avi
