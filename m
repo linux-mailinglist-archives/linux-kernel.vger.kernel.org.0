@@ -2,70 +2,63 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FFD197D6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B53D297D56
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729510AbfHUOox (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:44:53 -0400
-Received: from relay8-d.mail.gandi.net ([217.70.183.201]:57355 "EHLO
-        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728608AbfHUOox (ORCPT
+        id S1729355AbfHUOl7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:41:59 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47074 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727696AbfHUOl6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:44:53 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: antoine.tenart@bootlin.com)
-        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id 0CBD61BF20F;
-        Wed, 21 Aug 2019 14:44:50 +0000 (UTC)
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     davem@davemloft.net, grygorii.strashko@ti.com
-Cc:     Antoine Tenart <antoine.tenart@bootlin.com>,
-        netdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        linux-kernel@vger.kernel.org, maxime.chevallier@bootlin.com
-Subject: [PATCH net] net: cpsw: fix NULL pointer exception in the probe error path
-Date:   Wed, 21 Aug 2019 16:41:23 +0200
-Message-Id: <20190821144123.22248-1-antoine.tenart@bootlin.com>
-X-Mailer: git-send-email 2.21.0
+        Wed, 21 Aug 2019 10:41:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WLdMgKL9F4ocb2m4Cezobxzumw/uB2f+PsOX+jMhtPE=; b=nVaIIUy0Jo14WrISgLM5s81Z4
+        9NFOmGL1jKZT/zUwvWM3PnHzXOKdp7Ckwr9tQkwdURuIES6vU4HodYBX4L+k50ZmIyeF4QLj6qxbN
+        tGHAe/vaBlsQwJjvnGvH/NgKx9aurnHiVTJTqiQzYs7C2/21qN2d+QykemIv447kCe8p9VZSBh3EI
+        dmWs0lAEq5xyRsgmz22xKgl6fUdTzCoXwDA8dM/0oZgt3s2GumpPthNVVTTabTy7QeCKv2wxymaMp
+        Lyri0QzhTWYExzHvefFUL5NRYka5K22/a+k5HtaZxW8ILW2b2qwVI+J4AjH/abv+h4gO1WM+GrxY+
+        OhFdM6IiQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
+        id 1i0RoA-00044n-UA; Wed, 21 Aug 2019 14:41:54 +0000
+Date:   Wed, 21 Aug 2019 07:41:54 -0700
+From:   "hch@infradead.org" <hch@infradead.org>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     "anup@brainfault.org" <anup@brainfault.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hch@infradead.org" <hch@infradead.org>,
+        "schwab@linux-m68k.org" <schwab@linux-m68k.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "allison@lohutok.net" <allison@lohutok.net>
+Subject: Re: [v2 PATCH] RISC-V: Optimize tlb flush path.
+Message-ID: <20190821144154.GA4925@infradead.org>
+References: <20190820004735.18518-1-atish.patra@wdc.com>
+ <CAAhSdy3uQ=CSg4pHb_BYCEOh_MMTyLf8SW2o9SCn0UZDYwgGpg@mail.gmail.com>
+ <171bb233718ba2897fa5fd48853721108825d22c.camel@wdc.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <171bb233718ba2897fa5fd48853721108825d22c.camel@wdc.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In certain cases when the probe function fails the error path calls
-cpsw_remove_dt() before calling platform_set_drvdata(). This is an
-issue as cpsw_remove_dt() uses platform_get_drvdata() to retrieve the
-cpsw_common data and leds to a NULL pointer exception. This patches
-fixes it by calling platform_set_drvdata() earlier in the probe.
+On Tue, Aug 20, 2019 at 08:29:47PM +0000, Atish Patra wrote:
+> Sounds good to me. Christoph has already mm/tlbflush.c in his mmu
+> series. I will rebase on top of it.
 
-Fixes: 83a8471ba255 ("net: ethernet: ti: cpsw: refactor probe to group common hw initialization")
-Reported-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Signed-off-by: Antoine Tenart <antoine.tenart@bootlin.com>
----
- drivers/net/ethernet/ti/cpsw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 32a89744972d..a46b8b2e44e1 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -2775,6 +2775,7 @@ static int cpsw_probe(struct platform_device *pdev)
- 	if (!cpsw)
- 		return -ENOMEM;
- 
-+	platform_set_drvdata(pdev, cpsw);
- 	cpsw->dev = dev;
- 
- 	mode = devm_gpiod_get_array_optional(dev, "mode", GPIOD_OUT_LOW);
-@@ -2879,7 +2880,6 @@ static int cpsw_probe(struct platform_device *pdev)
- 		goto clean_cpts;
- 	}
- 
--	platform_set_drvdata(pdev, cpsw);
- 	priv = netdev_priv(ndev);
- 	priv->cpsw = cpsw;
- 	priv->ndev = ndev;
--- 
-2.21.0
-
+It was't really intended for the nommu series but for the native
+clint prototype.  But the nommu series grew so many cleanups and
+micro-optimizations by now that I think I'll split those into
+another prep series and will include a version of this.
