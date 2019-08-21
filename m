@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 272B498494
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:36:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C9B98490
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:36:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730562AbfHUTdA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 15:33:00 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57158 "EHLO
+        id S1730542AbfHUTcx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 15:32:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57171 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729858AbfHUTas (ORCPT
+        with ESMTP id S1729893AbfHUTat (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 15:30:48 -0400
+        Wed, 21 Aug 2019 15:30:49 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1i0WJh-0004A5-Q7; Wed, 21 Aug 2019 21:30:45 +0200
-Message-Id: <20190821192919.869350319@linutronix.de>
+        id 1i0WJi-0004AS-Jh; Wed, 21 Aug 2019 21:30:46 +0200
+Message-Id: <20190821192919.960966884@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Aug 2019 21:08:54 +0200
+Date:   Wed, 21 Aug 2019 21:08:55 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -27,8 +27,8 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         Frederic Weisbecker <frederic@kernel.org>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>,
         Christoph Hellwig <hch@lst.de>
-Subject: [patch V2 07/38] posix-cpu-timers: Rename thread_group_cputimer() and
- make it static
+Subject: [patch V2 08/38] posix-cpu-timers: Consolidate thread group sample
+ code
 References: <20190821190847.665673890@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,68 +37,145 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-thread_group_cputimer() is a complete misnomer. The function does two things:
+cpu_clock_sample_group() and cpu_timer_sample_group() are almost the
+same. Before the rename one called thread_group_cputimer() and the other
+thread_group_cputime(). Really intuitive function names.
 
- - For arming process wide timers it makes sure that the atomic time
-   storage is up to date. If no cpu timer is armed yet, then the atomic
-   time storage is not updated by the scheduler for performance reasons.
-
-   In that case a full summing up of all threads needs to be done and the
-   update needs to be enabled.
-
-- Samples the current time into the caller supplied storage.
-
-Rename it to thread_group_start_cputime(), make it static and fixup the
-callsite.
+Consolidate the functions and also avoid the thread traversal when
+the thread group's accounting is already active.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- include/linux/sched/cputime.h  |    1 -
- kernel/time/posix-cpu-timers.c |   17 +++++++++++++++--
- 2 files changed, 15 insertions(+), 3 deletions(-)
+V2: Fixed typos
+---
+ kernel/time/posix-cpu-timers.c |   59 +++++++++++++----------------------------
+ 1 file changed, 20 insertions(+), 39 deletions(-)
 
---- a/include/linux/sched/cputime.h
-+++ b/include/linux/sched/cputime.h
-@@ -61,7 +61,6 @@ extern void cputime_adjust(struct task_c
-  * Thread group CPU time accounting.
-  */
- void thread_group_cputime(struct task_struct *tsk, struct task_cputime *times);
--void thread_group_cputimer(struct task_struct *tsk, struct task_cputime *times);
- void thread_group_sample_cputime(struct task_struct *tsk, struct task_cputime *times);
- 
- /*
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -253,7 +253,20 @@ void thread_group_sample_cputime(struct
- 	sample_cputime_atomic(times, &cputimer->cputime_atomic);
+@@ -294,29 +294,37 @@ thread_group_start_cputime(struct task_s
  }
  
--void thread_group_cputimer(struct task_struct *tsk, struct task_cputime *times)
-+/**
-+ * thread_group_start_cputime - Start cputime and return a sample
-+ * @tsk:	Task for which cputime needs to be started
-+ * @iimes:	Storage for time samples
-+ *
-+ * The thread group cputime accouting is avoided when there are no posix
-+ * CPU timers armed. Before starting a timer it's required to check whether
-+ * the time accounting is active. If not, a full update of the atomic
-+ * accounting store needs to be done and the accounting enabled.
-+ *
-+ * Updates @times with an uptodate sample of the thread group cputimes.
-+ */
-+static void
-+thread_group_start_cputime(struct task_struct *tsk, struct task_cputime *times)
+ /*
+- * Sample a process (thread group) clock for the given group_leader task.
+- * Must be called with task sighand lock held for safe while_each_thread()
+- * traversal.
++ * Sample a process (thread group) clock for the given task clkid. If the
++ * group's cputime accounting is already enabled, read the atomic
++ * store. Otherwise a full update is required.  Task's sighand lock must be
++ * held to protect the task traversal on a full update.
+  */
+ static int cpu_clock_sample_group(const clockid_t which_clock,
+ 				  struct task_struct *p,
+-				  u64 *sample)
++				  u64 *sample, bool start)
  {
- 	struct thread_group_cputimer *cputimer = &tsk->signal->cputimer;
- 	struct task_cputime sum;
-@@ -536,7 +549,7 @@ static int cpu_timer_sample_group(const
- {
++	struct thread_group_cputimer *cputimer = &p->signal->cputimer;
  	struct task_cputime cputime;
  
--	thread_group_cputimer(p, &cputime);
-+	thread_group_start_cputime(p, &cputime);
++	if (!READ_ONCE(cputimer->running)) {
++		if (start)
++			thread_group_start_cputime(p, &cputime);
++		else
++			thread_group_cputime(p, &cputime);
++	} else {
++		sample_cputime_atomic(&cputime, &cputimer->cputime_atomic);
++	}
++
  	switch (CPUCLOCK_WHICH(which_clock)) {
  	default:
  		return -EINVAL;
+ 	case CPUCLOCK_PROF:
+-		thread_group_cputime(p, &cputime);
+ 		*sample = cputime.utime + cputime.stime;
+ 		break;
+ 	case CPUCLOCK_VIRT:
+-		thread_group_cputime(p, &cputime);
+ 		*sample = cputime.utime;
+ 		break;
+ 	case CPUCLOCK_SCHED:
+-		thread_group_cputime(p, &cputime);
+ 		*sample = cputime.sum_exec_runtime;
+ 		break;
+ 	}
+@@ -336,7 +344,7 @@ static int posix_cpu_clock_get(const clo
+ 	if (CPUCLOCK_PERTHREAD(clock))
+ 		cpu_clock_sample(clkid, tsk, &t);
+ 	else
+-		cpu_clock_sample_group(clkid, tsk, &t);
++		cpu_clock_sample_group(clkid, tsk, &t, false);
+ 	put_task_struct(tsk);
+ 
+ 	*tp = ns_to_timespec64(t);
+@@ -540,33 +548,6 @@ static void cpu_timer_fire(struct k_itim
+ }
+ 
+ /*
+- * Sample a process (thread group) timer for the given group_leader task.
+- * Must be called with task sighand lock held for safe while_each_thread()
+- * traversal.
+- */
+-static int cpu_timer_sample_group(const clockid_t which_clock,
+-				  struct task_struct *p, u64 *sample)
+-{
+-	struct task_cputime cputime;
+-
+-	thread_group_start_cputime(p, &cputime);
+-	switch (CPUCLOCK_WHICH(which_clock)) {
+-	default:
+-		return -EINVAL;
+-	case CPUCLOCK_PROF:
+-		*sample = cputime.utime + cputime.stime;
+-		break;
+-	case CPUCLOCK_VIRT:
+-		*sample = cputime.utime;
+-		break;
+-	case CPUCLOCK_SCHED:
+-		*sample = cputime.sum_exec_runtime;
+-		break;
+-	}
+-	return 0;
+-}
+-
+-/*
+  * Guts of sys_timer_settime for CPU timers.
+  * This is called with the timer locked and interrupts disabled.
+  * If we return TIMER_RETRY, it's necessary to release the timer's lock
+@@ -627,7 +608,7 @@ static int posix_cpu_timer_set(struct k_
+ 	if (CPUCLOCK_PERTHREAD(timer->it_clock)) {
+ 		cpu_clock_sample(timer->it_clock, p, &val);
+ 	} else {
+-		cpu_timer_sample_group(timer->it_clock, p, &val);
++		cpu_clock_sample_group(timer->it_clock, p, &val, true);
+ 	}
+ 
+ 	if (old) {
+@@ -755,7 +736,7 @@ static void posix_cpu_timer_get(struct k
+ 			timer->it.cpu.expires = 0;
+ 			return;
+ 		} else {
+-			cpu_timer_sample_group(timer->it_clock, p, &now);
++			cpu_clock_sample_group(timer->it_clock, p, &now, false);
+ 			unlock_task_sighand(p, &flags);
+ 		}
+ 	}
+@@ -1042,7 +1023,7 @@ static void posix_cpu_timer_rearm(struct
+ 			/* If the process is dying, no need to rearm */
+ 			goto unlock;
+ 		}
+-		cpu_timer_sample_group(timer->it_clock, p, &now);
++		cpu_clock_sample_group(timer->it_clock, p, &now, true);
+ 		bump_cpu_timer(timer, now);
+ 		/* Leave the sighand locked for the call below.  */
+ 	}
+@@ -1211,7 +1192,7 @@ void set_process_cpu_timer(struct task_s
+ 	if (WARN_ON_ONCE(clock_idx >= CPUCLOCK_SCHED))
+ 		return;
+ 
+-	ret = cpu_timer_sample_group(clock_idx, tsk, &now);
++	ret = cpu_clock_sample_group(clock_idx, tsk, &now, true);
+ 
+ 	if (oldval && ret != -EINVAL) {
+ 		/*
 
 
