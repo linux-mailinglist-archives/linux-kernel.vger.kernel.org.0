@@ -2,117 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CDB1098057
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:39:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4983F98083
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfHUQji (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:39:38 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34036 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727480AbfHUQjh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:39:37 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g128so2102156oib.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 09:39:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=sxCC5PNKFq1qlMlDHX2114JmkBHkuOiSN9kijvV45PM=;
-        b=bNl2JxK9BfMRTnsM4weeTx56/CjtDoDrOyTngIhjMguPbCGnPkzn/7nZLdVuQwqdnU
-         /BoK7QZm4kB21Vjv6YeZVPLzmlWCYj1zWh+OL7Mc2+w/+lQy620mJhfCJaZa5n+LAEJL
-         PIQbxTPSyRZKVnkgiKbCS62O+dMvWqbBoDtnmfq5sPqPi09RD9CmDD37K9HqHbgfe97R
-         pwzNItpK+lTulH3AJB8BlJjiUNnMa3gLind9oPrEADRSg9ckrLMf0G6J91ncw5nX+EmI
-         Fk3I4X+90jSRhqhzD+RGdkFBRFkGXwqPfPX4Xctgb/UIT3319MTqjUsnoUa+6+4rVjgV
-         pTcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=sxCC5PNKFq1qlMlDHX2114JmkBHkuOiSN9kijvV45PM=;
-        b=CMg78nsaQvo7ZwfOma3W/pgLrrRhv5jw26osLxGw3fTEY1tEcPkj5MDG7CVPpANMym
-         W9Y33vm3c++1PAM5d3gUskNaV8ULJgoDFPIoqqoBoTjzdOGlalxjW3iwR+Mt6hwnVC8j
-         5akdWVYFom6/o2ymxAF7l+4URSoQjrYThzNX3jnbC/oAdOXqTnSx27MRFs+g3hjrHMm0
-         RfR9f7mg+RGd585rgC4N7v5vYkGetktoFdQ3uxZKD0Q3J4aWNWl4d7U8QIyJqzwxugGk
-         3NV5+CcnFKhSNXvUMMAsHWCcTthcMsyN1LLWumH+dr4FsB4j0qfxbwvXQn9v2aKvNhyu
-         6fgg==
-X-Gm-Message-State: APjAAAVGVC5Vqh1EabZmuHd4PY4eBOUB16snttuZkQhD0Xo3a7eqYHaj
-        fEywB0wxWi07Aw56zONug7N8sTn4irYAoLt30/ZMwQZ2IAY=
-X-Google-Smtp-Source: APXvYqxHIoe+PIEIlnKGzCMCFlcO6qhjhxZbk8ZDmvMG8MgTWgDKHiZYxnzNVxw78jlsDE9DqcOG70I9ndAioOPJCA4=
-X-Received: by 2002:aca:5f45:: with SMTP id t66mr647829oib.111.1566405576805;
- Wed, 21 Aug 2019 09:39:36 -0700 (PDT)
+        id S1729508AbfHUQqo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:46:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59620 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727862AbfHUQqo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:46:44 -0400
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3487D22D6D;
+        Wed, 21 Aug 2019 16:46:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566406003;
+        bh=WQ2BlRv9mAl/kq+zQd+AH1qq87Y+Uvy3hDKIZvT8V28=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=V+bfxgzitOAgmD3JoQz1FwTEvVsSra+bN8CblJi8UOvJ1nxyg0FOHGtPtAo758uIN
+         b0c1KihRa1iKO2CDB3W4YkzKzYugI9s0tXhUxYuWu8tkx5bHWcqAyWfxUaerqSwdWL
+         DwkJKMGD+XsH0HINst1IbsxbD8j3b5Ykc9ZEMbqg=
+Date:   Wed, 21 Aug 2019 09:32:24 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nayna Jain <nayna@linux.ibm.com>
+Cc:     linuxppc-dev@ozlabs.org, linux-efi@vger.kernel.org,
+        linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>
+Subject: Re: [PATCH v2 4/4] powerpc: load firmware trusted keys into kernel
+ keyring
+Message-ID: <20190821163224.GC28571@kroah.com>
+References: <1566400103-18201-1-git-send-email-nayna@linux.ibm.com>
+ <1566400103-18201-5-git-send-email-nayna@linux.ibm.com>
 MIME-Version: 1.0
-References: <20190315130035.6a8f16e9@narunkot> <20190316031831.GA2499@kroah.com>
- <20190706200857.22918345@narunkot> <20190707065710.GA5560@kroah.com>
- <20190712083819.GA8862@kroah.com> <20190712092319.wmke4i7zqzr26tly@function>
- <20190713004623.GA9159@gregn.net> <20190725035352.GA7717@gregn.net>
- <875znqhia0.fsf@cmbmachine.messageid.invalid> <m3sgqucs1x.wl-covici@ccs.covici.com>
-In-Reply-To: <m3sgqucs1x.wl-covici@ccs.covici.com>
-From:   Okash Khawaja <okash.khawaja@gmail.com>
-Date:   Wed, 21 Aug 2019 09:39:25 -0700
-Message-ID: <CAOtcWM0qynSjnF6TtY_s7a51B7JweDb7jwdxStEmPvB9tJFU4Q@mail.gmail.com>
-Subject: Re: [HELP REQUESTED from the community] Was: Staging status of speakup
-To:     "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>, Gregory Nowak <greg@gregn.net>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simon Dickson <simonhdickson@gmail.com>,
-        John Covici <covici@ccs.covici.com>,
-        linux-kernel@vger.kernel.org,
-        Samuel Thibault <samuel.thibault@ens-lyon.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566400103-18201-5-git-send-email-nayna@linux.ibm.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 3:49 AM John Covici <covici@ccs.covici.com> wrote:
->
-> I think the program is genmap, I  have it in my init sequence, but I
-> am not sure it does anything at this point.
->
-> On Thu, 25 Jul 2019 00:04:07 -0400,
-> Chris Brannon wrote:
-> >
-> > Gregory Nowak <greg@gregn.net> writes:
-> >
-> > > keymap
-> > > I believe this is the currently active kernel keymap. I'm not sure of
-> > > the format, probably what dumpkeys(1) and showkey(1) use. Echoing
-> > > different values here should allow for remapping speakup's review
-> > > commands besides remapping the keyboard as a whole.
-> >
-> > AFAIK the Speakup keymap is just for remapping keys to Speakup
-> > functions.  It's a binary format, not related to dumpkeys etc.  You need
-> > a special program to compile a textual keymap into something that can be
-> > loaded into /sys/accessibility/speakup/keymap.  I may have source for
-> > that lying around here somewhere.  This is "here there be dragons"
-> > territory.  I think the only specification of the format is in the
-> > source code.
-> >
-> > -- Chris
-> > _______________________________________________
-> > Speakup mailing list
-> > Speakup@linux-speakup.org
-> > http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
->
-> --
-> Your life is like a penny.  You're going to lose it.  The question is:
-> How do
-> you spend it?
->
->          John Covici wb2una
->          covici@ccs.covici.com
-> _______________________________________________
-> Speakup mailing list
-> Speakup@linux-speakup.org
-> http://linux-speakup.org/cgi-bin/mailman/listinfo/speakup
+On Wed, Aug 21, 2019 at 11:08:23AM -0400, Nayna Jain wrote:
+> The keys used to verify the Host OS kernel are managed by OPAL as secure
+> variables. This patch loads the verification keys into the .platform
+> keyring and revocation keys into .blacklist keyring. This enables
+> verification and loading of the kernels signed by the boot time keys which
+> are trusted by firmware.
+> 
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> ---
+>  security/integrity/Kconfig                    |  9 ++
+>  security/integrity/Makefile                   |  3 +
+>  .../integrity/platform_certs/load_powerpc.c   | 94 +++++++++++++++++++
+>  3 files changed, 106 insertions(+)
+>  create mode 100644 security/integrity/platform_certs/load_powerpc.c
+> 
+> diff --git a/security/integrity/Kconfig b/security/integrity/Kconfig
+> index 0bae6adb63a9..2b4109c157e2 100644
+> --- a/security/integrity/Kconfig
+> +++ b/security/integrity/Kconfig
+> @@ -72,6 +72,15 @@ config LOAD_IPL_KEYS
+>         depends on S390
+>         def_bool y
+>  
+> +config LOAD_PPC_KEYS
+> +	bool "Enable loading of platform and revocation keys for POWER"
+> +	depends on INTEGRITY_PLATFORM_KEYRING
+> +	depends on PPC_SECURE_BOOT
+> +	def_bool y
 
+def_bool y only for things that the system will not boot if it is not
+enabled because you added a new feature.  Otherwise just do not set the
+default.
 
-Hi Greg N,
+> +	help
+> +	  Enable loading of db keys to the .platform keyring and dbx keys to
+> +	  the .blacklist keyring for powerpc based platforms.
+> +
+>  config INTEGRITY_AUDIT
+>  	bool "Enables integrity auditing support "
+>  	depends on AUDIT
+> diff --git a/security/integrity/Makefile b/security/integrity/Makefile
+> index 525bf1d6e0db..9eeb6b053de3 100644
+> --- a/security/integrity/Makefile
+> +++ b/security/integrity/Makefile
+> @@ -14,6 +14,9 @@ integrity-$(CONFIG_LOAD_UEFI_KEYS) += platform_certs/efi_parser.o \
+>  				      platform_certs/load_uefi.o \
+>  				      platform_certs/keyring_handler.o
+>  integrity-$(CONFIG_LOAD_IPL_KEYS) += platform_certs/load_ipl_s390.o
+> +integrity-$(CONFIG_LOAD_PPC_KEYS) += platform_certs/efi_parser.o \
+> +					 platform_certs/load_powerpc.o \
+> +					 platform_certs/keyring_handler.o
+>  $(obj)/load_uefi.o: KBUILD_CFLAGS += -fshort-wchar
+  
+>  subdir-$(CONFIG_IMA)			+= ima
+> diff --git a/security/integrity/platform_certs/load_powerpc.c b/security/integrity/platform_certs/load_powerpc.c
+> new file mode 100644
+> index 000000000000..f4d869171062
+> --- /dev/null
+> +++ b/security/integrity/platform_certs/load_powerpc.c
+> @@ -0,0 +1,94 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2019 IBM Corporation
+> + * Author: Nayna Jain <nayna@linux.ibm.com>
+> + *
+> + * load_powernv.c
 
-Would like to send this as a patch as Greg K-H suggested? If not, I
-can do that with your email in Authored-by: tag?
+That's not the name of this file :(
 
-Thanks,
-Okash
+And the perfect example of why you NEVER have the name of the file in
+the file itself, as it's not needed and easy to get wrong :)
+
+thanks,
+
+greg k-h
