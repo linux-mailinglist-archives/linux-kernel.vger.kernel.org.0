@@ -2,78 +2,77 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4C3F987FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:40:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F49D98800
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:40:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730699AbfHUXk3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 19:40:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43390 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728042AbfHUXk2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 19:40:28 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DD7C20679;
-        Wed, 21 Aug 2019 23:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566430828;
-        bh=+CNXH/YxO0+xYUHfQSQYl0jxnaQ4+3blOslpsgjcy3E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=JLTM+GdYCppcfSlbg3BT1PvIHeY+zwCwjTBswS5Rjcj1j8sY58qhk4NPLOC8iHezM
-         MyYO0D8ZhiWmdcJleScK3F7OleSyuJRVL/yoeMUSX1OD3UbeHNyvaUg8cs8CKekzYB
-         bA5kNXSAI67djFP9i0oGl+d3FqnJm/3bsj8sshfk=
-Date:   Thu, 22 Aug 2019 01:40:25 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [patch V2 02/38] posix-cpu-timers: Use common permission check
- in posix_cpu_clock_get()
-Message-ID: <20190821234024.GE22020@lenoir>
-References: <20190821190847.665673890@linutronix.de>
- <20190821192919.414813172@linutronix.de>
+        id S1730767AbfHUXkj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 19:40:39 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44881 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728042AbfHUXki (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 19:40:38 -0400
+Received: by mail-pl1-f195.google.com with SMTP id t14so2220964plr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 16:40:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=PdGmstYjj4UcbwNUp869OtVuxov1WvQjhoAxWHt7vJo=;
+        b=mzfyNIBHNRCTGRIjuIu6tTYOToZwmVVnG633lROYmZz407Fg369qEh433GRk9g46qr
+         qZET8vlULsVr/1I0eG4WGKcI+worE3kCeP24qFF+KIORfCcaQs8wyob4PbLoMIm1XpDf
+         WanKKGUVelZOnpW4sKm+nFUXJMthRLptAYWZmioldfobL4WbEeKjQzxZq4uhY3SxNFuD
+         N3vUAk0TwaNsSApmgBV3FFc/UXPQrBiGaG02+d+yUDGbCdSRiN8TghsG86TSNeadztFI
+         cT9z4ZPH3G821E42COUqMezutD91ivm1ulCeE0SkybxPehAzaryyXVVOA6mOBtYcSZOu
+         pVAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=PdGmstYjj4UcbwNUp869OtVuxov1WvQjhoAxWHt7vJo=;
+        b=t+hA98yrhtpiTNYhLnuoxWsNzfkxmMyYnLQH/YTCMJk6KAsGeNX2VLjvpqD38ldCid
+         1tvo2wQEm/iMcPgRUefJx6O0tjuO73rUJvykQuynO1X1d2Irv93rDfVtIGdNrs04Wut+
+         P0HkRab1NKQHegEMg4DKCvTmFE57ayNlYV5IeFJCri3Oe3LHiv23YYc2EXIqSSwUOYUh
+         dCPiWKgvbyMMzbQNcFVZ86BNlHmTbfQJVMESULlesf8Hq9YpMRu7+2h6wx2aMF+um3NV
+         zZYyIMKLtFxRHm+/yvwfilsquTl2Sney8NOq/9ZaWkcuQrRn3UoS1+2LBQhRrzVZWKCK
+         gGGw==
+X-Gm-Message-State: APjAAAUE3DVI/1jNdktal2oAnMXdjMhTKDC53sKVU8Rgv89Sk+6qdhRY
+        sD+p8BycPkrYUOI7NT5o56ZPSQ==
+X-Google-Smtp-Source: APXvYqzBpl28fBuk/sy46hFZ1+kwlWBC/dMV3X0jeBb3i46IAc+BgSafaFw9tf/2hKy8B3vf8N/ceQ==
+X-Received: by 2002:a17:902:e592:: with SMTP id cl18mr5064788plb.291.1566430837336;
+        Wed, 21 Aug 2019 16:40:37 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id e17sm1122052pjt.6.2019.08.21.16.40.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Aug 2019 16:40:36 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Guillaume La Roque <glaroque@baylibre.com>, rui.zhang@intel.com,
+        edubezval@gmail.com, daniel.lezcano@linaro.org
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: Re: [PATCH v4 1/6] dt-bindings: thermal: Add DT bindings documentation for Amlogic Thermal
+In-Reply-To: <20190821222421.30242-2-glaroque@baylibre.com>
+References: <20190821222421.30242-1-glaroque@baylibre.com> <20190821222421.30242-2-glaroque@baylibre.com>
+Date:   Wed, 21 Aug 2019 16:40:35 -0700
+Message-ID: <7hef1e5bpo.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821192919.414813172@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:08:49PM +0200, Thomas Gleixner wrote:
-> Replace the next slightly different copy of permission checks. That also
-> removes the necessarity to check the return value of the sample functions
-> because the clock id is already validated.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  kernel/time/posix-cpu-timers.c |   61 ++++++++++-------------------------------
->  1 file changed, 16 insertions(+), 45 deletions(-)
-> 
-> --- a/kernel/time/posix-cpu-timers.c
-> +++ b/kernel/time/posix-cpu-timers.c
-> @@ -289,53 +289,24 @@ static int cpu_clock_sample_group(const
->  	return 0;
->  }
->  
-> -static int posix_cpu_clock_get_task(struct task_struct *tsk,
-> -				    const clockid_t which_clock,
-> -				    struct timespec64 *tp)
-> +static int posix_cpu_clock_get(const clockid_t clock, struct timespec64 *tp)
->  {
-> -	int err = -EINVAL;
-> -	u64 rtn;
-> +	const clockid_t clkid = CPUCLOCK_WHICH(clock);
+Guillaume La Roque <glaroque@baylibre.com> writes:
 
-So I guess you later remove the CPUCLOCK_WHICH() from cpu_clock_sample*()
-and turn them to void.
+> Adding the devicetree binding documentation for the Amlogic temperature
+> sensor found in the Amlogic Meson G12 SoCs.
+> the G12A  and G12B SoCs are supported.
+>
+> Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+nit: put your sign-off at the end.  The tags you collect from
+reviewers/testers should go first.
+
+Kevin
