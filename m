@@ -2,23 +2,23 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 713349848C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:36:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1DB898465
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 21:31:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730517AbfHUTca (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 15:32:30 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:57224 "EHLO
+        id S1730113AbfHUTa6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 15:30:58 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:57229 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfHUTay (ORCPT
+        with ESMTP id S1730048AbfHUTay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Aug 2019 15:30:54 -0400
 Received: from localhost ([127.0.0.1] helo=nanos.tec.linutronix.de)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <tglx@linutronix.de>)
-        id 1i0WJo-0004CJ-GL; Wed, 21 Aug 2019 21:30:52 +0200
-Message-Id: <20190821192920.639878168@linutronix.de>
+        id 1i0WJp-0004CV-Al; Wed, 21 Aug 2019 21:30:53 +0200
+Message-Id: <20190821192920.729298382@linutronix.de>
 User-Agent: quilt/0.65
-Date:   Wed, 21 Aug 2019 21:09:02 +0200
+Date:   Wed, 21 Aug 2019 21:09:03 +0200
 From:   Thomas Gleixner <tglx@linutronix.de>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
@@ -27,8 +27,7 @@ Cc:     Oleg Nesterov <oleg@redhat.com>, Ingo Molnar <mingo@kernel.org>,
         Frederic Weisbecker <frederic@kernel.org>,
         Anna-Maria Behnsen <anna-maria@linutronix.de>,
         Christoph Hellwig <hch@lst.de>
-Subject: [patch V2 15/38] posix-cpu-timers: Sample task times once in expiry
- check
+Subject: [patch V2 16/38] posix-cpu-timers: Move prof/virt_ticks into caller
 References: <20190821190847.665673890@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -37,41 +36,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sampling the task times twice does not make sense. Do it once.
+The functions have only one caller left. No point in having them.
+
+Move the almost duplicated code into the caller and simplify it.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 ---
- kernel/time/posix-cpu-timers.c |   10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+ kernel/time/posix-cpu-timers.c |   30 +++++++++---------------------
+ 1 file changed, 9 insertions(+), 21 deletions(-)
 
 --- a/kernel/time/posix-cpu-timers.c
 +++ b/kernel/time/posix-cpu-timers.c
-@@ -785,9 +785,9 @@ static inline void check_dl_overrun(stru
- static void check_thread_timers(struct task_struct *tsk,
- 				struct list_head *firing)
+@@ -130,23 +130,6 @@ static inline int task_cputime_zero(cons
+ 	return 0;
+ }
+ 
+-static inline u64 prof_ticks(struct task_struct *p)
+-{
+-	u64 utime, stime;
+-
+-	task_cputime(p, &utime, &stime);
+-
+-	return utime + stime;
+-}
+-static inline u64 virt_ticks(struct task_struct *p)
+-{
+-	u64 utime, stime;
+-
+-	task_cputime(p, &utime, &stime);
+-
+-	return utime;
+-}
+-
+ static int
+ posix_cpu_clock_getres(const clockid_t which_clock, struct timespec64 *tp)
  {
--	struct list_head *timers = tsk->cpu_timers;
- 	struct task_cputime *tsk_expires = &tsk->cputime_expires;
--	u64 expires;
-+	struct list_head *timers = tsk->cpu_timers;
-+	u64 expires, stime, utime;
- 	unsigned long soft;
- 
- 	if (dl_task(tsk))
-@@ -800,10 +800,12 @@ static void check_thread_timers(struct t
- 	if (task_cputime_zero(&tsk->cputime_expires))
- 		return;
- 
--	expires = check_timers_list(timers, firing, prof_ticks(tsk));
-+	task_cputime(tsk, &utime, &stime);
+@@ -184,13 +167,18 @@ posix_cpu_clock_set(const clockid_t cloc
+  */
+ static u64 cpu_clock_sample(const clockid_t clkid, struct task_struct *p)
+ {
++	u64 utime, stime;
 +
-+	expires = check_timers_list(timers, firing, utime + stime);
- 	tsk_expires->prof_exp = expires;
- 
--	expires = check_timers_list(++timers, firing, virt_ticks(tsk));
-+	expires = check_timers_list(++timers, firing, utime);
- 	tsk_expires->virt_exp = expires;
- 
- 	tsk_expires->sched_exp = check_timers_list(++timers, firing,
++	if (clkid == CPUCLOCK_SCHED)
++		return task_sched_runtime(p);
++
++	task_cputime(p, &utime, &stime);
++
+ 	switch (clkid) {
+ 	case CPUCLOCK_PROF:
+-		return prof_ticks(p);
++		return utime + stime;
+ 	case CPUCLOCK_VIRT:
+-		return virt_ticks(p);
+-	case CPUCLOCK_SCHED:
+-		return task_sched_runtime(p);
++		return utime;
+ 	default:
+ 		WARN_ON_ONCE(1);
+ 	}
 
 
