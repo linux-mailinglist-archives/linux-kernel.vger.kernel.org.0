@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F2FA198528
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:05:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D820D98529
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730458AbfHUUFm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 16:05:42 -0400
+        id S1730478AbfHUUFo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 16:05:44 -0400
 Received: from mga09.intel.com ([134.134.136.24]:53248 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730272AbfHUUFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 16:05:39 -0400
+        id S1730401AbfHUUFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 16:05:40 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 13:05:38 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 13:05:40 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="196069761"
+   d="scan'208";a="196069768"
 Received: from smasango-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.252.139.100])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 13:05:37 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 13:05:38 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
@@ -30,9 +30,9 @@ Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
         Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
         Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 05/11] soundwire: intel: don't filter out PDI0/1
-Date:   Wed, 21 Aug 2019 15:05:15 -0500
-Message-Id: <20190821200521.17283-6-pierre-louis.bossart@linux.intel.com>
+Subject: [RFC PATCH 06/11] soundwire: cadence_master: improve PDI allocation
+Date:   Wed, 21 Aug 2019 15:05:16 -0500
+Message-Id: <20190821200521.17283-7-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
 References: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
@@ -43,114 +43,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PDI0/1 are reserved for Bulk and filtered out in the existing code.
-That leads to endless confusions on whether the index is the raw or
-corrected one. In addition we will need support for Bulk at some point
-so it's just simpler to expose those PDIs and not use it for now than
-try to be smart unless we have to remove the smarts.
+From: Bard Liao <yung-chuan.liao@linux.intel.com>
 
-This patch requires a topology change to use PDIs starting at offset 2
-explicitly.
+PDI number should match dai->id, there is no need to track if a PDI is
+allocated or not.
 
-Note that there is a known discrepancy between hardware documentation
-and what ALH stream works in practice, future fixes are likely.
-
+Signed-off-by: Bard Liao <yung-chuan.liao@linux.intel.com>
 Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 ---
- drivers/soundwire/cadence_master.c | 29 +++++++++++------------------
- 1 file changed, 11 insertions(+), 18 deletions(-)
+ drivers/soundwire/cadence_master.c | 27 ++++++++++++++-------------
+ drivers/soundwire/cadence_master.h |  4 +---
+ drivers/soundwire/intel.c          |  5 ++---
+ 3 files changed, 17 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/soundwire/cadence_master.c b/drivers/soundwire/cadence_master.c
-index fcab2e2f4249..8510d4ee8044 100644
+index 8510d4ee8044..1e8cc14fc2ec 100644
 --- a/drivers/soundwire/cadence_master.c
 +++ b/drivers/soundwire/cadence_master.c
-@@ -183,9 +183,6 @@ MODULE_PARM_DESC(cdns_mcp_int_mask, "Cadence MCP IntMask");
- #define CDNS_DEFAULT_SSP_INTERVAL		0x18
- #define CDNS_TX_TIMEOUT				2000
+@@ -875,7 +875,6 @@ static int cdns_allocate_pdi(struct sdw_cdns *cdns,
  
--#define CDNS_PCM_PDI_OFFSET			0x2
--#define CDNS_PDM_PDI_OFFSET			0x6
--
- #define CDNS_SCP_RX_FIFOLEVEL			0x2
+ 	for (i = 0; i < num; i++) {
+ 		pdi[i].num = i + pdi_offset;
+-		pdi[i].assigned = false;
+ 	}
  
- /*
-@@ -295,11 +292,7 @@ static int cdns_reg_show(struct seq_file *s, void *data)
- 	ret += scnprintf(buf + ret, RD_BUF - ret,
- 			 "\nDPn B0 Registers\n");
- 
--	/*
--	 * in sdw_cdns_pdi_init() we filter out the Bulk PDIs,
--	 * so the indices need to be corrected again
--	 */
--	num_ports = cdns->num_ports + CDNS_PCM_PDI_OFFSET;
-+	num_ports = cdns->num_ports;
- 
- 	for (i = 0; i < num_ports; i++) {
- 		ret += scnprintf(buf + ret, RD_BUF - ret,
-@@ -912,11 +905,8 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
- 	/* Allocate PDIs for PCMs */
- 	stream = &cdns->pcm;
- 
--	/* First two PDIs are reserved for bulk transfers */
--	if (stream->num_bd < CDNS_PCM_PDI_OFFSET)
--		return -EINVAL;
--	stream->num_bd -= CDNS_PCM_PDI_OFFSET;
--	offset = CDNS_PCM_PDI_OFFSET;
-+	/* we allocate PDI0 and PDI1 which are used for Bulk */
-+	offset = 0;
- 
- 	ret = cdns_allocate_pdi(cdns, &stream->bd,
- 				stream->num_bd, offset);
-@@ -934,6 +924,9 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
- 
- 	ret = cdns_allocate_pdi(cdns, &stream->out,
- 				stream->num_out, offset);
-+
-+	offset += stream->num_out;
-+
- 	if (ret)
- 		return ret;
- 
-@@ -943,7 +936,6 @@ int sdw_cdns_pdi_init(struct sdw_cdns *cdns,
- 
- 	/* Allocate PDIs for PDMs */
- 	stream = &cdns->pdm;
--	offset = CDNS_PDM_PDI_OFFSET;
- 	ret = cdns_allocate_pdi(cdns, &stream->bd,
- 				stream->num_bd, offset);
- 	if (ret)
-@@ -1240,12 +1232,13 @@ EXPORT_SYMBOL(cdns_set_sdw_stream);
-  * Find and return a free PDI for a given PDI array
+ 	*stream = pdi;
+@@ -1229,21 +1228,20 @@ EXPORT_SYMBOL(cdns_set_sdw_stream);
+  * @num: Number of PDIs
+  * @pdi: PDI instances
+  *
+- * Find and return a free PDI for a given PDI array
++ * Find a PDI for a given PDI array. The PDI num and dai_id are
++ * expected to match, return NULL otherwise.
   */
  static struct sdw_cdns_pdi *cdns_find_pdi(struct sdw_cdns *cdns,
-+					  unsigned int offset,
+ 					  unsigned int offset,
  					  unsigned int num,
- 					  struct sdw_cdns_pdi *pdi)
+-					  struct sdw_cdns_pdi *pdi)
++					  struct sdw_cdns_pdi *pdi,
++					  int dai_id)
  {
  	int i;
  
--	for (i = 0; i < num; i++) {
-+	for (i = offset; i < num; i++) {
- 		if (pdi[i].assigned)
- 			continue;
- 		pdi[i].assigned = true;
-@@ -1295,13 +1288,13 @@ struct sdw_cdns_pdi *sdw_cdns_alloc_pdi(struct sdw_cdns *cdns,
+-	for (i = offset; i < num; i++) {
+-		if (pdi[i].assigned)
+-			continue;
+-		pdi[i].assigned = true;
+-		return &pdi[i];
+-	}
++	for (i = offset; i < offset + num; i++)
++		if (pdi[i].num == dai_id)
++			return &pdi[i];
+ 
+ 	return NULL;
+ }
+@@ -1283,18 +1281,21 @@ EXPORT_SYMBOL(sdw_cdns_config_stream);
+  */
+ struct sdw_cdns_pdi *sdw_cdns_alloc_pdi(struct sdw_cdns *cdns,
+ 					struct sdw_cdns_streams *stream,
+-					u32 ch, u32 dir)
++					u32 ch, u32 dir, int dai_id)
+ {
  	struct sdw_cdns_pdi *pdi = NULL;
  
  	if (dir == SDW_DATA_DIR_RX)
--		pdi = cdns_find_pdi(cdns, stream->num_in, stream->in);
-+		pdi = cdns_find_pdi(cdns, 0, stream->num_in, stream->in);
+-		pdi = cdns_find_pdi(cdns, 0, stream->num_in, stream->in);
++		pdi = cdns_find_pdi(cdns, 0, stream->num_in, stream->in,
++				    dai_id);
  	else
--		pdi = cdns_find_pdi(cdns, stream->num_out, stream->out);
-+		pdi = cdns_find_pdi(cdns, 0, stream->num_out, stream->out);
+-		pdi = cdns_find_pdi(cdns, 0, stream->num_out, stream->out);
++		pdi = cdns_find_pdi(cdns, 0, stream->num_out, stream->out,
++				    dai_id);
  
  	/* check if we found a PDI, else find in bi-directional */
  	if (!pdi)
--		pdi = cdns_find_pdi(cdns, stream->num_bd, stream->bd);
-+		pdi = cdns_find_pdi(cdns, 2, stream->num_bd, stream->bd);
+-		pdi = cdns_find_pdi(cdns, 2, stream->num_bd, stream->bd);
++		pdi = cdns_find_pdi(cdns, 2, stream->num_bd, stream->bd,
++				    dai_id);
  
  	if (pdi) {
  		pdi->l_ch_num = 0;
+diff --git a/drivers/soundwire/cadence_master.h b/drivers/soundwire/cadence_master.h
+index 43493fc3d2ee..001457cbe5ad 100644
+--- a/drivers/soundwire/cadence_master.h
++++ b/drivers/soundwire/cadence_master.h
+@@ -8,7 +8,6 @@
+ /**
+  * struct sdw_cdns_pdi: PDI (Physical Data Interface) instance
+  *
+- * @assigned: pdi assigned
+  * @num: pdi number
+  * @intel_alh_id: link identifier
+  * @l_ch_num: low channel for PDI
+@@ -18,7 +17,6 @@
+  * @type: stream type, PDM or PCM
+  */
+ struct sdw_cdns_pdi {
+-	bool assigned;
+ 	int num;
+ 	int intel_alh_id;
+ 	int l_ch_num;
+@@ -155,7 +153,7 @@ int sdw_cdns_get_stream(struct sdw_cdns *cdns,
+ 			u32 ch, u32 dir);
+ struct sdw_cdns_pdi *sdw_cdns_alloc_pdi(struct sdw_cdns *cdns,
+ 					struct sdw_cdns_streams *stream,
+-					u32 ch, u32 dir);
++					u32 ch, u32 dir, int dai_id);
+ void sdw_cdns_config_stream(struct sdw_cdns *cdns,
+ 			    u32 ch, u32 dir, struct sdw_cdns_pdi *pdi);
+ 
+diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
+index e21c994d46b9..0001f433e848 100644
+--- a/drivers/soundwire/intel.c
++++ b/drivers/soundwire/intel.c
+@@ -700,11 +700,10 @@ static int intel_hw_params(struct snd_pcm_substream *substream,
+ 	if (dma->stream_type == SDW_STREAM_PDM)
+ 		pcm = false;
+ 
+-	/* FIXME: We would need to get PDI info from topology */
+ 	if (pcm)
+-		pdi = sdw_cdns_alloc_pdi(cdns, &cdns->pcm, ch, dir);
++		pdi = sdw_cdns_alloc_pdi(cdns, &cdns->pcm, ch, dir, dai->id);
+ 	else
+-		pdi = sdw_cdns_alloc_pdi(cdns, &cdns->pdm, ch, dir);
++		pdi = sdw_cdns_alloc_pdi(cdns, &cdns->pdm, ch, dir, dai->id);
+ 
+ 	if (!pdi) {
+ 		ret = -EINVAL;
 -- 
 2.20.1
 
