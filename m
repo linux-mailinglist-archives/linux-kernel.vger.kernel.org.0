@@ -2,20 +2,20 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0378A971A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 07:41:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61E34971A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 07:44:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727258AbfHUFl3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 01:41:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:53711 "EHLO
+        id S1727397AbfHUFnH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 01:43:07 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:53723 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726907AbfHUFl2 (ORCPT
+        with ESMTP id S1726907AbfHUFnG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 01:41:28 -0400
+        Wed, 21 Aug 2019 01:43:06 -0400
 Received: from localhost ([127.0.0.1] helo=vostro.local)
         by Galois.linutronix.de with esmtp (Exim 4.80)
         (envelope-from <john.ogness@linutronix.de>)
-        id 1i0JMx-0003X7-RM; Wed, 21 Aug 2019 07:41:15 +0200
+        id 1i0JOe-0003aJ-D2; Wed, 21 Aug 2019 07:43:00 +0200
 From:   John Ogness <john.ogness@linutronix.de>
 To:     Petr Mladek <pmladek@suse.com>
 Cc:     linux-kernel@vger.kernel.org,
@@ -28,13 +28,12 @@ Cc:     linux-kernel@vger.kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: numlist_pop(): Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
+Subject: Re: comments style: Re: [RFC PATCH v4 1/9] printk-rb: add a new printk ringbuffer implementation
 References: <20190807222634.1723-1-john.ogness@linutronix.de>
         <20190807222634.1723-2-john.ogness@linutronix.de>
-        <20190820081518.3r3cagzggtifsvhz@pathway.suse.cz>
-Date:   Wed, 21 Aug 2019 07:41:13 +0200
-Message-ID: <87pnkzf53a.fsf@linutronix.de>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        <20190820085554.deuejmxn4kbqnq7n@pathway.suse.cz>
+Date:   Wed, 21 Aug 2019 07:42:57 +0200
+Message-ID: <87h86bf50e.fsf@linutronix.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Sender: linux-kernel-owner@vger.kernel.org
@@ -44,116 +43,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2019-08-20, Petr Mladek <pmladek@suse.com> wrote:
 >> --- /dev/null
->> +++ b/kernel/printk/numlist.c
+>> +++ b/kernel/printk/dataring.c
 >> +/**
->> + * numlist_pop() - Remove the oldest node from the list.
+>> + * _datablock_valid() - Check if given positions yield a valid data block.
 >> + *
->> + * @nl: The numbered list from which to remove the tail node.
+>> + * @dr:         The associated data ringbuffer.
 >> + *
->> + * The tail node can only be removed if two conditions are satisfied:
+>> + * @head_lpos:  The newest data logical position.
 >> + *
->> + * * The node is not the only node on the list.
->> + * * The node is not busy.
+>> + * @tail_lpos:  The oldest data logical position.
 >> + *
->> + * If, during this function, another task removes the tail, this function
->> + * will try again with the new tail.
+>> + * @begin_lpos: The beginning logical position of the data block to check.
 >> + *
->> + * Return: The removed node or NULL if the tail node cannot be removed.
->> + */
->> +struct nl_node *numlist_pop(struct numlist *nl)
->> +{
->> +	unsigned long tail_id;
->> +	unsigned long next_id;
->> +	unsigned long r;
->> +
->> +	/* cA: #1 */
->> +	tail_id = atomic_long_read(&nl->tail_id);
->> +
->> +	for (;;) {
->> +		/* cB */
->> +		while (!numlist_read(nl, tail_id, NULL, &next_id)) {
->> +			/*
->> +			 * @tail_id is invalid. Try again with an
->> +			 * updated value.
->> +			 */
->> +
->> +			cpu_relax();
->> +
->> +			/* cA: #2 */
->> +			tail_id = atomic_long_read(&nl->tail_id);
->> +		}
+>> + * @next_lpos:  The logical position of the next adjacent data block.
+>> + *              This value is used to identify the end of the data block.
+>> + *
 >
-> The above while-cycle basically does the same as the upper for-cycle.
-> It tries again with freshly loaded nl->tail_id. The following code
-> looks easier to follow:
->
-> 	do {
-> 		tail_id = atomic_long_read(&nl->tail_id);
->
-> 		/*
-> 		 * Read might fail when the tail node has been removed
-> 		 * and reused in parallel.
-> 		 */
-> 		if (!numlist_read(nl, tail_id, NULL, &next_id))
-> 			continue;
->
-> 		/* Make sure the node is not the only node on the list. */
-> 		if (next_id == tail_id)
-> 			return NULL;
->
-> 		/* cC: Make sure the node is not busy. */
-> 		if (nl->busy(tail_id, nl->busy_arg))
-> 			return NULL;
->
-> 	while (atomic_long_cmpxchg_relaxed(&nl->tail_id, tail_id, next_id) !=
-> 			tail_id);
->
-> 	/* This should never fail. The node is ours. */
-> 	return nl->node(tail_id, nl->node_arg);
+> Please remove the empty lines between arguments description. They make
+> the comments too scattered.
 
-You will see that pattern in several cmpxchg() loops. The reason I chose
-to do it that way was so that I could make use of the return value of
-the failed cmpcxhg(). This avoids an unnecessary LOAD and establishes a
-data dependency between the failed cmpxchg() and the following
-numlist_read(). I suppose none of that matters since we only care about
-the case where cmpxchg() is successful.
+Your feedback is contradicting what PeterZ requested[0]. Particularly
+when multiple lines are involved with a description, I find the spacing
+helpful. I've grown to like the spacing, but I won't fight for it.
 
-I agree that your variation is easier to read.
+>> +	/*
+>> +	 * dB:
+>> +	 *
+>> +	 * When a writer has completed accessing its data block, it sets the
+>> +	 * @id thus making the data block available for invalidation. This
+>> +	 * _acquire() ensures that this task sees all data ringbuffer and
+>> +	 * descriptor values seen by the writer as @id was set. This is
+>> +	 * necessary to ensure that the data block can be correctly identified
+>> +	 * as valid (i.e. @begin_lpos, @next_lpos, @head_lpos are at least the
+>> +	 * values seen by that writer, which yielded a valid data block at
+>> +	 * that time). It is not enough to rely on the address dependency of
+>> +	 * @desc to @id because @head_lpos is not depedent on @id. This pairs
+>> +	 * with the _release() in dataring_datablock_setid().
+>
+> This human readable description is really useful.
+>
+>> +	 *
+>> +	 * Memory barrier involvement:
+>> +	 *
+>> +	 * If dB reads from gA, then dC reads from fG.
+>> +	 * If dB reads from gA, then dD reads from fH.
+>> +	 * If dB reads from gA, then dE reads from fE.
+>> +	 *
+>> +	 * Note that if dB reads from gA, then dC cannot read from fC.
+>> +	 * Note that if dB reads from gA, then dD cannot read from fD.
+>> +	 *
+>> +	 * Relies on:
+>> +	 *
+>> +	 * RELEASE from fG to gA
+>> +	 *    matching
+>> +	 * ADDRESS DEP. from dB to dC
+>> +	 *
+>> +	 * RELEASE from fH to gA
+>> +	 *    matching
+>> +	 * ADDRESS DEP. from dB to dD
+>> +	 *
+>> +	 * RELEASE from fE to gA
+>> +	 *    matching
+>> +	 * ACQUIRE from dB to dE
+>> +	 */
+>
+> But I am not sure how much this is useful.
 
->> +		/* Make sure the node is not the only node on the list. */
->> +		if (next_id == tail_id)
->> +			return NULL;
+When I was first implementing RFCv3, the "human-readable" text version
+was very useful for me. However, now it is the formal descriptions that
+I find more useful. They provide the proof and a far more detailed
+description.
+
+> It would take ages to decrypt all these shortcuts (signs) and
+> translate them into something human readable. Also it might get
+> outdated easily.
+>
+> That said, I haven't found yet if there was a system in all
+> the shortcuts. I mean if they can be descrypted easily
+> out of head. Also I am not familiar with the notation
+> of the dependencies.
+
+I'll respond to this part in Sergey's followup post.
+
+> If this is really needed then I am really scared of some barriers
+> that guard too many things. This one is a good example.
+>
+>> +	desc = dr->getdesc(smp_load_acquire(&db->id), dr->getdesc_arg);
+
+The variable's value (in this case db->id) is doing the guarding. The
+barriers ensure that db->id is read first (and set last).
+
 >> +
->> +		/*
->> +		 * cC:
->> +		 *
->> +		 * Make sure the node is not busy.
->> +		 */
->> +		if (nl->busy(tail_id, nl->busy_arg))
->> +			return NULL;
+>> +	/* dD: */
+>
+> It would be great if all these shortcuts (signs) are followed with
+> something human readable. Few words might be enough.
+
+I'll respond to this part in Sergey's followup post.
+
+>> +	next_lpos = READ_ONCE(desc->next_lpos);
 >> +
->> +		r = atomic_long_cmpxchg_relaxed(&nl->tail_id,
->> +						tail_id, next_id);
->> +		if (r == tail_id)
->> +			break;
->> +
->> +		/* cA: #3 */
->> +		tail_id = r;
+>> +	if (!_datablock_valid(dr,
+>> +			      /* dE: */
+>> +			      atomic_long_read(&dr->head_lpos),
+>> +			      tail_lpos, begin_lpos, next_lpos)) {
+>> +		/* Another task has already invalidated the data block. */
+>> +		goto out;
 >> +	}
 >> +
->> +	return nl->node(tail_id, nl->node_arg);
+>> +
+>> +++ b/kernel/printk/numlist.c
+>> +bool numlist_read(struct numlist *nl, unsigned long id, unsigned long *seq,
+>> +		  unsigned long *next_id)
+>> +
+>> +	struct nl_node *n;
+>> +
+>> +	n = nl->node(id, nl->node_arg);
+>> +	if (!n)
+>> +		return false;
+>> +
+>> +	if (seq) {
+>> +		/*
+>> +		 * aA:
+>> +		 *
+>> +		 * Adresss dependency on @id.
+>> +		 */
 >
-> If I get it correctly, the above nl->node() call should never fail.
-> The node has been removed from the list and nobody else could
-> touch it. It is pretty useful information and it might be worth
-> mention it in a comment.
+> This is too scattered. If we really need so many shortcuts (signs)
+> then we should find a better style. The following looks perfectly
+> fine to me:
+>
+> 		/* aA: Adresss dependency on @id. */
 
-You are correct and I will add a comment.
+I'll respond to this part in Sergey's followup post.
 
-> PS: I am scratching my head around the patchset. I'll try Peter's
-> approach and comment independent things is separate mails.
-
-I think it is an excellent approach. Especially when discussing the
-memory barriers.
+>> +		*seq = READ_ONCE(n->seq);
+>> +	}
+>> +
+>> +	if (next_id) {
+>> +		/*
+>> +		 * aB:
+>> +		 *
+>> +		 * Adresss dependency on @id.
+>> +		 */
+>> +		*next_id = READ_ONCE(n->next_id);
+>> +	}
+>> +
 
 John Ogness
+
+[0] https://lkml.kernel.org/r/20190618111215.GO3436@hirez.programming.kicks-ass.net
