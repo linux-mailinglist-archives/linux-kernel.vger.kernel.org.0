@@ -2,108 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 456F697092
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:56:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4703F97088
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:53:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfHUD4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 23:56:00 -0400
-Received: from 2.152.176.113.dyn.user.ono.com ([2.152.176.113]:36802 "EHLO
-        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727343AbfHUDz5 (ORCPT
+        id S1727234AbfHUDxC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 23:53:02 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:37766 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbfHUDxC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 23:55:57 -0400
-X-Greylist: delayed 1074 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Aug 2019 23:55:56 EDT
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
-        ; s=201908; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
-        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
-        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=Y/aHT4MYLaye6HK+sQi6zX4qI4fkCoiILg3MznRvPso=; b=msEuF30t8SwyqIY71h/bo34ebC
-        oZgNFChUPgMS3OvuOXcpTZj434SxKIDn31LeeZZ16jQM/wECsWgZPrbYIY3Ruwal8Q0MBvFlxl8sr
-        INOGtofV2CcTLl3bMFJsUPIFo7Rs160RCYu6za+5LvaDKJt3sLL2mHBw+SvqwIgdkrRA/pw4KYVpK
-        6c8to36xOCQQjKBrfL+lSAcBFALvcZCoOB87gqeqw/395wwrgI847+IXHmGyBJgoVVMtAJQo2I3AH
-        zrCNcfdbUiN4UGGqxMCBfscx6DGpxb1YA740zKnHBNB2pt7PkiHo6GjCIbKVeynPvJ14gQR9DYDIy
-        M0PbxzrQ==;
-Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
-        (envelope-from <guillem@hadrons.org>)
-        id 1i0HSK-0003gy-H2; Wed, 21 Aug 2019 05:38:40 +0200
-From:   Guillem Jover <guillem@hadrons.org>
-To:     linux-aio@kvack.org
-Cc:     Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
-Date:   Wed, 21 Aug 2019 05:38:20 +0200
-Message-Id: <20190821033820.14155-1-guillem@hadrons.org>
-X-Mailer: git-send-email 2.20.1
+        Tue, 20 Aug 2019 23:53:02 -0400
+Received: by mail-wm1-f68.google.com with SMTP id d16so624943wme.2
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 20:53:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Q866pfLZUUGzykCVlgEKOZZOziqbhijhD1KhBLgHDuA=;
+        b=CC01joeanbShowTYisfRKQQ61kAqiysEDe7KMhHsnvznkhCvA0zOqJJ3ZLtNn9TzNR
+         d4q11HxmhCYM5xBMBbmm/7OPjW5vwv/MNCer3+ZWkpumdjU9siisBaMAaJVEBXnFDOje
+         BFI3q5R0PpiqBxvKVcxTuRSpQntslzKq3jtR2aldxgBB+zHHA5GG+brSqjTztNsmm2dZ
+         Wa4Voa1vfrl7cagd03kgcjwZbJXGmwO1u9NK0CcoOIgTt42geUwgVkA977wX2Nkkawth
+         RjbTy+5+7/G4T1cDWvaAS3nLUi9GQWtaZ1T/t8tBFXAR096gRYYUGmTlkQngJU0/xfoQ
+         kbbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Q866pfLZUUGzykCVlgEKOZZOziqbhijhD1KhBLgHDuA=;
+        b=mbSjEOueFyU4c7H9Y/KDVc7i7VnTeT/8/YRCtIHPNuJ2H1/B7LpNRMu78NAb8uWQr5
+         19Uv6in58Z1w8MH39au5zEo+CWWHogERznkECHnlmUkGD8n6bvbTvb17nv9Msnyhx89V
+         2Ft3ZJHY0/zSRqsuErNQfloy85iuYGvaNyM7909BcqHEZdQ8kywd+BJZogkvkEcoJcXK
+         JasS1QDhMOOU9cVDNpq2+Geiq8vzKyBMUAdAq40sJIkjzUcAyd7v01YD+Ix6lPFfSdrQ
+         IHQJ2Iu7GVT1aUv0KeWIs1PIK9jpiVxmYKg6ghYyHoTAcsH4Lkv5n0blMlikh4DntTP3
+         P8nA==
+X-Gm-Message-State: APjAAAVoUAnxPbfBlgi+fm6rOIZBYnehGzP05Rb9wvFsfFcfJ/NjHamt
+        MQvKwBy5z/tmdrp2DpMH1k4eJX2QOLezvh5bn8IR5A==
+X-Google-Smtp-Source: APXvYqzDZPixEa7x5dg6CFkkM3l2F1MJKZKytyiRjSYnXVT5ZH6+qKWyalba8BS/+Y8qD7J/UcdZL695Rb+CDBmimGQ=
+X-Received: by 2002:a1c:3d89:: with SMTP id k131mr3004134wma.24.1566359579978;
+ Tue, 20 Aug 2019 20:52:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190820004735.18518-1-atish.patra@wdc.com> <mvmh86cl1o3.fsf@linux-m68k.org>
+ <b2510462b55ffd93dba0c1b7cc28f9eef3089b50.camel@wdc.com> <20190820092207.GA26271@infradead.org>
+ <76467815b464709f4c899444c957d921ebac87db.camel@wdc.com> <20190821012921.GA30187@andestech.com>
+ <20190821014052.GA25550@infradead.org>
+In-Reply-To: <20190821014052.GA25550@infradead.org>
+From:   Anup Patel <anup@brainfault.org>
+Date:   Wed, 21 Aug 2019 09:22:48 +0530
+Message-ID: <CAAhSdy0GX9BbayYScsm2_Mvi0hDH-y0UVvTWFGLbKY-rE8TfZQ@mail.gmail.com>
+Subject: Re: [v2 PATCH] RISC-V: Optimize tlb flush path.
+To:     "hch@infradead.org" <hch@infradead.org>
+Cc:     Alan Kao <alankao@andestech.com>,
+        Atish Patra <Atish.Patra@wdc.com>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "schwab@linux-m68k.org" <schwab@linux-m68k.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "allison@lohutok.net" <allison@lohutok.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This type is used to pass the sigset_t from userland to the kernel,
-but it was using the kernel native pointer type for the member
-representing the compat userland pointer to the userland sigset_t.
+On Wed, Aug 21, 2019 at 7:10 AM hch@infradead.org <hch@infradead.org> wrote:
+>
+> On Wed, Aug 21, 2019 at 09:29:22AM +0800, Alan Kao wrote:
+> > IMHO, this approach should be avoided because CLINT is compatible to but
+> >  not mandatory in the privileged spec.  In other words, it is possible that
+> > a Linux-capable RISC-V platform does not contain a CLINT component but
+> > rely on some other mechanism to deal with SW/timer interrupts.
+>
+> Hi Alan,
+>
+> at this point the above is just a prototype showing the performance
+> improvement if we can inject IPIs and timer interrups directly from
+> S-mode and delivered directly to S-mode.  It is based on a copy of
+> the clint IPI block currently used by SiFive, qemu, Ariane and Kendryte.
+>
+> If the experiment works out (which I think it does), I'd like to
+> define interfaces for the unix platform spec to make something like
+> this available.  My current plan for that is to have one DT node
+> each for the IPI registers, timer cmp and time val register each
+> as MMIO regions.  This would fit the current clint block but also
+> allow other register layouts.  Is that something you'd be fine with?
+> If not do you have another proposal?  (note that eventually the
+> dicussion should move to the unix platform spec list, but now that
+> I have you here we can at least brain storm a bit).
 
-This messes up the layout, and makes the kernel eat up both the
-userland pointer and the size members into the kernel pointer, and
-then reads garbage into the kernel sigsetsize. Which makes the sigset_t
-size consistency check fail, and consequently the syscall always
-returns -EINVAL.
+I agree that IPI mechanism should be standardized for RISC-V but I
+don't support the idea of mandating CLINT as part of the UNIX
+platform spec. For example, the AndesTech SOC does not use CLINT
+instead they have PLMT for per-HART timer and PLICSW for per-HART
+IPIs.
 
-This breaks both libaio and strace on 32-bit userland running on 64-bit
-kernels. And there are apparently no users in the wild of the current
-broken layout (at least according to codesearch.debian.org and a brief
-check over github.com search). So it looks safe to fix this directly
-in the kernel, instead of either letting userland deal with this
-permanently with the additional overhead or trying to make the syscall
-infer what layout userland used, even though this is also being worked
-around in libaio to temporarily cope with kernels that have not yet
-been fixed.
+IMHO, we can also think of:
+RISC-V Timer Extension - For per-HART timer access to M-mode
+and S-mode
+RISC-V IPI Extension - HART IPI injection
 
-We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
-
-Fixes: 7a074e96 ("aio: implement io_pgetevents")
-Signed-off-by: Guillem Jover <guillem@hadrons.org>
----
- fs/aio.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/aio.c b/fs/aio.c
-index 01e0fb9ae45a..056f291bc66f 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
- #ifdef CONFIG_COMPAT
- 
- struct __compat_aio_sigset {
--	compat_sigset_t __user	*sigmask;
-+	compat_uptr_t		sigmask;
- 	compat_size_t		sigsetsize;
- };
- 
-@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
-@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
- 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
- 		return -EFAULT;
- 
--	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
-+	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
- 	if (ret)
- 		return ret;
- 
--- 
-2.23.0
-
+Regards,
+Anup
