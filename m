@@ -2,298 +2,202 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BF820978A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33CA997852
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:51:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728241AbfHULzF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 07:55:05 -0400
-Received: from mail-vs1-f74.google.com ([209.85.217.74]:56175 "EHLO
-        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728199AbfHULzD (ORCPT
+        id S1727237AbfHULvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 07:51:42 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:49031 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfHULvl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 07:55:03 -0400
-Received: by mail-vs1-f74.google.com with SMTP id s72so615815vss.22
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 04:55:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc:content-transfer-encoding;
-        bh=ALxGfvRXdmbGtlmXxys2ao74GC6bY40UmqO1RMzwV3c=;
-        b=BB+B1cynrJTIjRUmdwFTrf471xENpbMGYMHqBQtaW3NPyeEHxaY8A4Iafcf1TF/mZn
-         OXIQ4TWMabQFcspFJLwPwl15L31HK4OKG0stYx6y4zWPKZ/++HVLWQtxM9EBUu/RKrd6
-         dmT0RRyYs/kHMvcdbgS56d4g7mbh4CyLgDvHATC1cPmY/Q/nMT3tepGglRKyA/6kjNs8
-         ChilfULl/9ygU0aUvyRAkEnhEh8yqkuE1vJaOZloaUklpW2AfQEwLeBG5+pcbE51S/bH
-         Y2WV2tp5rrGGJRzU1DlYSmHzWrn50n4eUxYbdkZP/FN19p2Lw+TdKX7b2N2q3UAMS9uw
-         Aprw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc:content-transfer-encoding;
-        bh=ALxGfvRXdmbGtlmXxys2ao74GC6bY40UmqO1RMzwV3c=;
-        b=ivSSELjeFRvGZf2sRUeBn9KE2jysCvxebexsLPAt15O040Q5bFOkupJc08htths1oB
-         a6+65qWKJbQ4bIuU4X2qUAoBy1xNOUFarLt6mi7FYmBrtCpuzkhyWDOGgABYo+iHHO3Q
-         dsj5C3OMguNC1/r4sAmE4lRSoegEr81wdzojWmxRhKyWpDothN95/ZXxoU7mkTcGZKVY
-         1NnV0QJBO5zcrq+t3iERg2k3gukHKiS/Yk3ehvt8kmh6Ij3U4MMK6yhvKn0PhW/p0gbs
-         +i2rgbn9bI/naFiW4gDncPHsEbENuaiDyi+U5xeb8n48vdNjbdGNNcefFTr1YXiBsPGf
-         QU+A==
-X-Gm-Message-State: APjAAAUV7vSc8iDMgaU/g49qS+CnGnLvcNX9SyEIBOMC6wpfc10WTMmu
-        LbDk9fhJqqDjOPX047+Tr3kxi+SS5GrO1PfFB80ZlvaP7hhchit1svu6Vh4V7IrQ2OjJcXODG5/
-        akx5y9N5m7E0sAlUKZBMlVYcwHwf6zJiIzJqZHq7Wx0QOEKw0oUVOe8Ogos8l/JI6D/J7CbHEFF
-        c=
-X-Google-Smtp-Source: APXvYqyQ7AQRoAeQP+Ypa9ZViPo4fE1LYnY2Q8MWSM1uPSggydYnV/3xKKjgSpT4NFAFCXwbS+whv2bLLCyZOw==
-X-Received: by 2002:a67:e906:: with SMTP id c6mr20280699vso.82.1566388501903;
- Wed, 21 Aug 2019 04:55:01 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 12:49:25 +0100
-In-Reply-To: <20190821114955.12788-1-maennich@google.com>
-Message-Id: <20190821114955.12788-11-maennich@google.com>
-Mime-Version: 1.0
-References: <20190813121733.52480-1-maennich@google.com> <20190821114955.12788-1-maennich@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH v3 10/11] RFC: usb-storage: export symbols in USB_STORAGE namespace
-From:   Matthias Maennich <maennich@google.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@android.com, maennich@google.com, arnd@arndb.de,
-        geert@linux-m68k.org, gregkh@linuxfoundation.org, hpa@zytor.com,
-        jeyu@kernel.org, joel@joelfernandes.org,
-        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
-        maco@android.com, maco@google.com, michal.lkml@markovi.net,
-        mingo@redhat.com, oneukum@suse.com, pombredanne@nexb.com,
-        sam@ravnborg.org, sspatil@google.com, stern@rowland.harvard.edu,
-        tglx@linutronix.de, usb-storage@lists.one-eyed-alien.net,
-        x86@kernel.org, yamada.masahiro@socionext.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Wed, 21 Aug 2019 07:51:41 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190821115140euoutp013bd4a11536fe13c5e2f0b733268b889e~87dwpYKs22494924949euoutp01Q
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 11:51:40 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190821115140euoutp013bd4a11536fe13c5e2f0b733268b889e~87dwpYKs22494924949euoutp01Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566388300;
+        bh=yBUfjQ3nbvD06XyHTq2L/29JP/gh9G+IfMlftFMxlxw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=IM6rtdtePLhd+o/hEJEbCru8yapgntN3Ok8U6EAh2Ij9+rgx2IkTQwCzlvyoaogje
+         mNa7+KxlA7PzhCsi2/cwiwSki5SdTjg2iiWihaJA3I04NKfmulfdb1It5nTWae+Kz1
+         V3Ta66QFmICvgUJS+5UpLzIgL7gHkkjXpirgUiKQ=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190821115139eucas1p2b64dcab05491e1fcc9b9db48c7562a28~87dvzbRyS2160221602eucas1p2_;
+        Wed, 21 Aug 2019 11:51:39 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 62.7F.04374.B403D5D5; Wed, 21
+        Aug 2019 12:51:39 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190821115138eucas1p1d5934e448f84b6c0ae1f76636e64ade4~87du-2Vee2007520075eucas1p1N;
+        Wed, 21 Aug 2019 11:51:38 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190821115138eusmtrp1985e650b0806b83f355f9f80b5c968fa~87du9sOmS3221232212eusmtrp1z;
+        Wed, 21 Aug 2019 11:51:38 +0000 (GMT)
+X-AuditID: cbfec7f5-92d689c000001116-3e-5d5d304bf851
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id D9.30.04117.A403D5D5; Wed, 21
+        Aug 2019 12:51:38 +0100 (BST)
+Received: from [106.120.51.71] (unknown [106.120.51.71]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190821115137eusmtip171d2e3bfcf321ec53b4221eaec8b2998~87duRUGk22315023150eusmtip1i;
+        Wed, 21 Aug 2019 11:51:37 +0000 (GMT)
+Subject: Re: [PATCH v3 2/9] soc: samsung: Convert exynos-chipid driver to
+ use the regmap API
+To:     Sylwester Nawrocki <snawrocki@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        robh+dt@kernel.org, vireshk@kernel.org, devicetree@vger.kernel.org,
+        kgene@kernel.org, pankaj.dubey@samsung.com,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-pm@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Message-ID: <72eea1ea-2433-2f76-6265-5851554e845d@samsung.com>
+Date:   Wed, 21 Aug 2019 13:51:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.6.1
+MIME-Version: 1.0
+In-Reply-To: <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHfXzfvXsdTp5m4cmicF3oQmoY9lAiSn0Y+CUIorRpM1/UvG9q
+        WkqmlWmZa9LFqVhRXhbVmrc0stKhieGKtJuZlpc0XSiusryQ26vkt98553/O+R84LCXpFriy
+        kbGJnDJWES1lRHRty5+ObQGecrnnsyKazGpahKTU2CEgZ7S3aJLfP0oRk0kvJIb+twLypqGY
+        IZN5RkSumxrtSY5Fy5B7xh4huVVjEZKzT4xC0jyWLSDZgyMUqeprYfywbPqvBskMuhxGVnX7
+        lCwv6wcju1StQ7JJw5p9TKDIJ4yLjkzmlB6+R0QRmTVdTPwMpAwPP6Qy0JhzLnJgAe+AF22j
+        glwkYiW4AsG4umghsCDIqh5lrCoJnkTQ82rlYsf77gs0LypHMFGTyfCBGUHXY7W9VeWMg+Gz
+        scjWvRwfgDsDalsHhfNpKGsaF1oLDN4Fl7N1yMpi7Av6ggnKyjTeAIbBD7SVV+CD0NuiF/Ca
+        ZdBWOGDLO8zrBztnbXMo7AIfB0rteV4LdeZiird6moUpzX6e98Iv/d2FvDN8b60W8rwa2gsu
+        2swBvo9g9vwwxQd1CMoL5hhetRuaW1/Pu2DnN2yGBw0eVgTsD53PvXh0gvfmZbwFJ9DUXqP4
+        tBjOn5PwMzaCvkzPLG7Nra+k1EiqXXKYdskx2iXHaP+vvYFoHXLhklQx4ZzKK5Y77q5SxKiS
+        YsPdj8bFGND8y7XPtf58hBpnQpsQZpHUUazeJpdLBIpkVWpMEwKWki4XpxQHyiXiMEXqCU4Z
+        F6JMiuZUTWgVS0tdxCft+oIkOFyRyEVxXDynXKzasw6uGWi1xl39UnTN21F2Bqd7lXjr1sR7
+        b5WkDimn64nfN9NIJ1PiGeATmnahcF1QQNSxCnNvWsWHsCnLzrEyO7PbJ9P6B4fNCZ9+5Pjd
+        LBkKOaQoUs8kZqV3CyLc9jhdLbTzb40SOaLk4B6PYeHXlKc+m74csfzuupLwztVN99Wzku53
+        ldKqCMX2LZRSpfgH/Kvpcm4DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsVy+t/xu7peBrGxBieOSFr8nXSM3WL+kXOs
+        Fi2zFrFY9D9+zWxx/vwGdotNj6+xWlzeNYfN4nPvEUaLGef3MVl0fpnFZrH2yF12i0Vbv7Bb
+        tO49wm5x+E07q0X705fMFpsfHGNzEPD4/WsSo8emVZ1sHpuX1Hv0Nr9j8+jbsorR4/MmuQC2
+        KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27BL2Mpq1X
+        2Qr+SFS8eLGRuYHxjXAXIyeHhICJxI3b3SxdjFwcQgJLGSVWzt3A1sXIAZSQkTi+vgyiRlji
+        z7UuNoia14wSdzeeYQZJCAvESSy7/4wdxBYRCJPYNPEq2CBmgYksEn1zNjOCJIQEPjBJXFpY
+        CWKzCVhJTGxfBRbnFbCT2DD5I9ggFgFViU1Pb7KA2KICERJn3q9ggagRlDg58wmYzQlU//TK
+        X7BlzALqEn/mXWKGsMUlbj2ZzwRhy0tsfzuHeQKj0Cwk7bOQtMxC0jILScsCRpZVjCKppcW5
+        6bnFRnrFibnFpXnpesn5uZsYgXG97djPLTsYu94FH2IU4GBU4uGdoBsbK8SaWFZcmXuIUYKD
+        WUmEt2JOVKwQb0piZVVqUX58UWlOavEhRlOg5yYyS4km5wNTTl5JvKGpobmFpaG5sbmxmYWS
+        OG+HwMEYIYH0xJLU7NTUgtQimD4mDk6pBsbqmAnvo6aLGKyP3WkbaKdyiD+A2Zvv+tV5C8vF
+        //jJFMbOvNzGPCUk9LBn2vVMldLJ38/NZrihfuldajrv/g1X+F9On/FQI+uMuMJ757MOmukc
+        D5K3edcdYXy36BPzMlXWhVJ51jNTTX/VFVZKmWSU7Jt/VyP36upg4bCnUw7XHmrLfTDlygol
+        luKMREMt5qLiRACNWWY6AQMAAA==
+X-CMS-MailID: 20190821115138eucas1p1d5934e448f84b6c0ae1f76636e64ade4
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c
+References: <20190813150827.31972-1-s.nawrocki@samsung.com>
+        <CGME20190813150852eucas1p2be4c0ab5ec2c079e3daf1af24283b27c@eucas1p2.samsung.com>
+        <20190813150827.31972-3-s.nawrocki@samsung.com>
+        <b5359603-b337-dcd8-b025-ca7dff5f4a06@nvidia.com>
+        <CAJKOXPf597CMx=M2JmSTWe2GzBfcHFefgzSJbJ+njZGp-WfR1A@mail.gmail.com>
+        <1e428c8e-f4b5-0810-77f9-2c899c040fc7@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modules using these symbols are required to explicitly import the
-namespace. This patch was generated with the following steps and serves
-as a reference to use the symbol namespace feature:
 
- 1) Define DEFAULT_SYMBOL_NAMESPACE in the corresponding Makefile
- 2) make  (see warnings during modpost about missing imports)
- 3) make nsdeps
+Hi,
 
-Instead of a DEFAULT_SYMBOL_NAMESPACE definition, the EXPORT_SYMBOL_NS
-variants can be used to explicitly specify the namespace. The advantage
-of the method used here is that newly added symbols are automatically
-exported and existing ones are exported without touching their
-respective EXPORT_SYMBOL macro expansion.
+On 8/20/19 11:38 PM, Sylwester Nawrocki wrote:
+> On 8/20/19 21:37, Krzysztof Kozlowski wrote:
+>>>> diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+> 
+>>>> @@ -51,29 +48,24 @@ static const char * __init product_id_to_soc_id(unsigned int product_id)
+>>>>   int __init exynos_chipid_early_init(void)
+>>>>   {
+>>>>        struct soc_device_attribute *soc_dev_attr;
+>>>> -     void __iomem *exynos_chipid_base;
+>>>>        struct soc_device *soc_dev;
+>>>>        struct device_node *root;
+>>>> -     struct device_node *np;
+>>>> +     struct regmap *regmap;
+>>>>        u32 product_id;
+>>>>        u32 revision;
+>>>> +     int ret;
+>>>>
+>>>> -     /* look up for chipid node */
+>>>> -     np = of_find_compatible_node(NULL, NULL, "samsung,exynos4210-chipid");
+>>>> -     if (!np)
+>>>> -             return -ENODEV;
+>>>> -
+>>>> -     exynos_chipid_base = of_iomap(np, 0);
+>>>> -     of_node_put(np);
+>>>> -
+>>>> -     if (!exynos_chipid_base) {
+>>>> -             pr_err("Failed to map SoC chipid\n");
+>>>> -             return -ENXIO;
+>>>> +     regmap = syscon_regmap_lookup_by_compatible("samsung,exynos4210-chipid");
+>>>> +     if (IS_ERR(regmap)) {
+>>>> +             pr_err("Failed to get CHIPID regmap\n");
+>>>> +             return PTR_ERR(regmap);
+>>>>        }
+>>> Following this change, I am now seeing the above error on our Tegra
+>>> boards where this driver is enabled. This is triggering a kernel
+>>> warnings test we have to fail. Hence, I don't think that you can remove
+>>> the compatible node test here, unless you have a better way to determine
+>>> if this is a samsung device.
+>>
+>> Right, this is really wrong... I missed that it is not a probe but
+>> early init. And this init will be called on every board... Probably it
+>> should be converted to a regular driver.
 
-Signed-off-by: Matthias Maennich <maennich@google.com>
----
- drivers/usb/storage/Makefile        | 2 ++
- drivers/usb/storage/alauda.c        | 1 +
- drivers/usb/storage/cypress_atacb.c | 1 +
- drivers/usb/storage/datafab.c       | 1 +
- drivers/usb/storage/ene_ub6250.c    | 1 +
- drivers/usb/storage/freecom.c       | 1 +
- drivers/usb/storage/isd200.c        | 1 +
- drivers/usb/storage/jumpshot.c      | 1 +
- drivers/usb/storage/karma.c         | 1 +
- drivers/usb/storage/onetouch.c      | 1 +
- drivers/usb/storage/realtek_cr.c    | 1 +
- drivers/usb/storage/sddr09.c        | 1 +
- drivers/usb/storage/sddr55.c        | 1 +
- drivers/usb/storage/shuttle_usbat.c | 1 +
- drivers/usb/storage/uas.c           | 1 +
- 15 files changed, 16 insertions(+)
+Early initialization is needed for SoC driver to be used from within
+arch/arm/mach-exynos/ and _initcall() usage is the usual way for SoC
+drivers to be initialized:
 
-diff --git a/drivers/usb/storage/Makefile b/drivers/usb/storage/Makefile
-index a67ddcbb4e24..46635fa4a340 100644
---- a/drivers/usb/storage/Makefile
-+++ b/drivers/usb/storage/Makefile
-@@ -8,6 +8,8 @@
-=20
- ccflags-y :=3D -I $(srctree)/drivers/scsi
-=20
-+ccflags-y +=3D -DDEFAULT_SYMBOL_NAMESPACE=3DUSB_STORAGE
-+
- obj-$(CONFIG_USB_UAS)		+=3D uas.o
- obj-$(CONFIG_USB_STORAGE)	+=3D usb-storage.o
-=20
-diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
-index 6b8edf6178df..ddab2cd3d2e7 100644
---- a/drivers/usb/storage/alauda.c
-+++ b/drivers/usb/storage/alauda.c
-@@ -36,6 +36,7 @@
- MODULE_DESCRIPTION("Driver for Alauda-based card readers");
- MODULE_AUTHOR("Daniel Drake <dsd@gentoo.org>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- /*
-  * Status bytes
-diff --git a/drivers/usb/storage/cypress_atacb.c b/drivers/usb/storage/cypr=
-ess_atacb.c
-index 4825902377eb..a6f3267bbef6 100644
---- a/drivers/usb/storage/cypress_atacb.c
-+++ b/drivers/usb/storage/cypress_atacb.c
-@@ -22,6 +22,7 @@
- MODULE_DESCRIPTION("SAT support for Cypress USB/ATA bridges with ATACB");
- MODULE_AUTHOR("Matthieu Castet <castet.matthieu@free.fr>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- /*
-  * The table of devices
-diff --git a/drivers/usb/storage/datafab.c b/drivers/usb/storage/datafab.c
-index 09353be199be..588818483f4b 100644
---- a/drivers/usb/storage/datafab.c
-+++ b/drivers/usb/storage/datafab.c
-@@ -54,6 +54,7 @@
- MODULE_DESCRIPTION("Driver for Datafab USB Compact Flash reader");
- MODULE_AUTHOR("Jimmie Mayfield <mayfield+datafab@sackheads.org>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- struct datafab_info {
- 	unsigned long   sectors;	/* total sector count */
-diff --git a/drivers/usb/storage/ene_ub6250.c b/drivers/usb/storage/ene_ub6=
-250.c
-index c26129d5b943..8b1b73065421 100644
---- a/drivers/usb/storage/ene_ub6250.c
-+++ b/drivers/usb/storage/ene_ub6250.c
-@@ -26,6 +26,7 @@
-=20
- MODULE_DESCRIPTION("Driver for ENE UB6250 reader");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
- MODULE_FIRMWARE(SD_INIT1_FIRMWARE);
- MODULE_FIRMWARE(SD_INIT2_FIRMWARE);
- MODULE_FIRMWARE(SD_RW_FIRMWARE);
-diff --git a/drivers/usb/storage/freecom.c b/drivers/usb/storage/freecom.c
-index 4f542df37a44..34e7eaff1174 100644
---- a/drivers/usb/storage/freecom.c
-+++ b/drivers/usb/storage/freecom.c
-@@ -29,6 +29,7 @@
- MODULE_DESCRIPTION("Driver for Freecom USB/IDE adaptor");
- MODULE_AUTHOR("David Brown <usb-storage@davidb.org>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- #ifdef CONFIG_USB_STORAGE_DEBUG
- static void pdump(struct us_data *us, void *ibuffer, int length);
-diff --git a/drivers/usb/storage/isd200.c b/drivers/usb/storage/isd200.c
-index 2b474d60b4db..c4da3fd6eff9 100644
---- a/drivers/usb/storage/isd200.c
-+++ b/drivers/usb/storage/isd200.c
-@@ -53,6 +53,7 @@
- MODULE_DESCRIPTION("Driver for In-System Design, Inc. ISD200 ASIC");
- MODULE_AUTHOR("Bj=C3=B6rn Stenberg <bjorn@haxx.se>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- static int isd200_Initialization(struct us_data *us);
-=20
-diff --git a/drivers/usb/storage/jumpshot.c b/drivers/usb/storage/jumpshot.=
-c
-index 917f170c4124..229bf0c1afc9 100644
---- a/drivers/usb/storage/jumpshot.c
-+++ b/drivers/usb/storage/jumpshot.c
-@@ -51,6 +51,7 @@
- MODULE_DESCRIPTION("Driver for Lexar \"Jumpshot\" Compact Flash reader");
- MODULE_AUTHOR("Jimmie Mayfield <mayfield+usb@sackheads.org>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- /*
-  * The table of devices
-diff --git a/drivers/usb/storage/karma.c b/drivers/usb/storage/karma.c
-index 395cf8fb5870..05cec81dcd3f 100644
---- a/drivers/usb/storage/karma.c
-+++ b/drivers/usb/storage/karma.c
-@@ -23,6 +23,7 @@
- MODULE_DESCRIPTION("Driver for Rio Karma");
- MODULE_AUTHOR("Bob Copeland <me@bobcopeland.com>, Keith Bennett <keith@mcs=
-.st-and.ac.uk>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- #define RIO_PREFIX "RIOP\x00"
- #define RIO_PREFIX_LEN 5
-diff --git a/drivers/usb/storage/onetouch.c b/drivers/usb/storage/onetouch.=
-c
-index 39a5009a41a6..a989fe930e21 100644
---- a/drivers/usb/storage/onetouch.c
-+++ b/drivers/usb/storage/onetouch.c
-@@ -25,6 +25,7 @@
- MODULE_DESCRIPTION("Maxtor USB OneTouch hard drive button driver");
- MODULE_AUTHOR("Nick Sillik <n.sillik@temple.edu>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- #define ONETOUCH_PKT_LEN        0x02
- #define ONETOUCH_BUTTON         KEY_PROG1
-diff --git a/drivers/usb/storage/realtek_cr.c b/drivers/usb/storage/realtek=
-_cr.c
-index cc794e25a0b6..edbe419053d6 100644
---- a/drivers/usb/storage/realtek_cr.c
-+++ b/drivers/usb/storage/realtek_cr.c
-@@ -35,6 +35,7 @@
- MODULE_DESCRIPTION("Driver for Realtek USB Card Reader");
- MODULE_AUTHOR("wwang <wei_wang@realsil.com.cn>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- static int auto_delink_en =3D 1;
- module_param(auto_delink_en, int, S_IRUGO | S_IWUSR);
-diff --git a/drivers/usb/storage/sddr09.c b/drivers/usb/storage/sddr09.c
-index bc9da736bdfc..51bcd4a43690 100644
---- a/drivers/usb/storage/sddr09.c
-+++ b/drivers/usb/storage/sddr09.c
-@@ -47,6 +47,7 @@
- MODULE_DESCRIPTION("Driver for SanDisk SDDR-09 SmartMedia reader");
- MODULE_AUTHOR("Andries Brouwer <aeb@cwi.nl>, Robert Baruch <autophile@star=
-band.net>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- static int usb_stor_sddr09_dpcm_init(struct us_data *us);
- static int sddr09_transport(struct scsi_cmnd *srb, struct us_data *us);
-diff --git a/drivers/usb/storage/sddr55.c b/drivers/usb/storage/sddr55.c
-index b8527c55335b..ba955d65eb0e 100644
---- a/drivers/usb/storage/sddr55.c
-+++ b/drivers/usb/storage/sddr55.c
-@@ -29,6 +29,7 @@
- MODULE_DESCRIPTION("Driver for SanDisk SDDR-55 SmartMedia reader");
- MODULE_AUTHOR("Simon Munton");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- /*
-  * The table of devices
-diff --git a/drivers/usb/storage/shuttle_usbat.c b/drivers/usb/storage/shut=
-tle_usbat.c
-index 854498e1012c..54aa1392c9ca 100644
---- a/drivers/usb/storage/shuttle_usbat.c
-+++ b/drivers/usb/storage/shuttle_usbat.c
-@@ -48,6 +48,7 @@
- MODULE_DESCRIPTION("Driver for SCM Microsystems (a.k.a. Shuttle) USB-ATAPI=
- cable");
- MODULE_AUTHOR("Daniel Drake <dsd@gentoo.org>, Robert Baruch <autophile@sta=
-rband.net>");
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
-=20
- /* Supported device types */
- #define USBAT_DEV_HP8200	0x01
-diff --git a/drivers/usb/storage/uas.c b/drivers/usb/storage/uas.c
-index 047c5922618f..bf80d6f81f58 100644
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -1219,5 +1219,6 @@ static struct usb_driver uas_driver =3D {
- module_usb_driver(uas_driver);
-=20
- MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(USB_STORAGE);
- MODULE_AUTHOR(
- 	"Hans de Goede <hdegoede@redhat.com>, Matthew Wilcox and Sarah Sharp");
---=20
-2.23.0.rc1.153.gdeed80330f-goog
+drivers/soc/amlogic/meson-gx-socinfo.c
+drivers/soc/amlogic/meson-mx-socinfo.c
+drivers/soc/atmel/soc.c
+drivers/soc/bcm/brcmstb/common.c
+drivers/soc/imx/soc-imx-scu.c
+drivers/soc/imx/soc-imx8.c
+drivers/soc/renesas/renesas-soc.c
+drivers/soc/tegra/fuse/fuse-tegra.c
+drivers/soc/ux500/ux500-soc-id.c
+drivers/soc/versatile/soc-integrator.c
+drivers/soc/versatile/soc-integrator.c
 
+The only SoC drivers that are regular drivers are:
+
+drivers/soc/fsl/guts.c
+drivers/soc/versatile/soc-realview.c
+
+> I'm also inclined to have it converted to a regular driver.  We already
+> have "exynos-asv" driver matching on the chipid node (patch 3/9). 
+> The ASV patches will not be merged soon anyway, all this needs some more
+> thought. Krzysztof, can we abandon the chipid patches for now? Your
+
+chipid driver is good and useful on its own. The preferred solution
+IMHO would be to just revert "soc: samsung: Convert exynos-chipid
+driver to use the regmap API" commit.
+
+> pull request doesn't appear to be merged to arm-soc yet. Sorry about
+> that.
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
