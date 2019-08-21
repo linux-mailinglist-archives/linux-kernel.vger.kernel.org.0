@@ -2,222 +2,136 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D14798832
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 02:00:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 26CC798846
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 02:01:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731043AbfHVAAD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 20:00:03 -0400
-Received: from mail-eopbgr770075.outbound.protection.outlook.com ([40.107.77.75]:25798
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730985AbfHVAAC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 20:00:02 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dYQf4dkb3qljus9h5k+456kWqpBP1ULefDyjgk1oPy4E8ef4NYXNjAHQ8d3iiDleBBYFGOekdxL6KlMVqIp3Hb02yPlV9W/Z96pGLzpIcxPuYdfQFHig7+WMZtlHuCrQgELt6s6RAtinFMDUxXXPctBfpaW6yN78uvbuOHKMsF8QRlmTjRkPmMTBXpo7bBUIyYFqpcEyfcxGMnnVcTvnZl0uNqFJwOuN5sOGSKSY/dSFedTL67Jf4ERyTLh2/3Tnq/YUlIDc/es21Yz70uw8nFyvGoTqjMcu2fREwCJ36M807UI+Z8UdcqRQ6Mhi0l+H2UCfAyPrIuLhrM2hLhL8vA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7CKow1jegGiDFt0Qvf0oEC6i8dyO1SeXhitG8JVp7I=;
- b=YeEIIFKUJFk0CGRl6ZpV1OxnbYSoqwwZT0MTvYlC34DjbwvTpWxZaBDDbhkJNhydOEQh6w5IFhGQmZhb9IKVcNy+gQQhHgivJuJJdmW4Ik/XFRZ8h4ybdnr5FgoIHSA5J6RJjGKcCu3QdcQLzrVidWxPebm7vht3SQpYCKkpriTTI5eaOot5MGdGweUxlIrkFIuTnvQfs1Us9pXW21O2J2DBVfB9DXbFoMsLymYVG8/atYcyHufFiL4h13IK49fyLIti5CwiTGfwKaEu6Ys36z+EAp2wVZDZhsM4RJLYhg33CgS2f4GZinI9R+XPYDX6KccxDCWT50+672H0bBMIzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector2-amdcloud-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O7CKow1jegGiDFt0Qvf0oEC6i8dyO1SeXhitG8JVp7I=;
- b=pzJXPkW6W9cHaV0S1DTeqUHQfIRbkS8JQaUDjcUrX8lxHt3+TnZsN20B7ec0ZyZsf6A6VwO7mevQH6s05+wL9ZINoAbVtKMAK1jpsrqZsc4X1CBAYKpIUm+ZArfPeak5X2PhERIUuXXaIgZUf6Z6UJiYUGrpiZbUzUL20jpoO9Q=
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com (52.135.103.16) by
- SN6PR12MB2815.namprd12.prod.outlook.com (52.135.107.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Wed, 21 Aug 2019 23:59:58 +0000
-Received: from SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::d0b4:a849:c22b:3b53]) by SN6PR12MB2639.namprd12.prod.outlook.com
- ([fe80::d0b4:a849:c22b:3b53%2]) with mapi id 15.20.2178.020; Wed, 21 Aug 2019
- 23:59:58 +0000
-From:   "Ghannam, Yazen" <Yazen.Ghannam@amd.com>
-To:     "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>
-CC:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@alien8.de" <bp@alien8.de>
-Subject: [PATCH v3 3/8] EDAC/amd64: Initialize DIMM info for systems with more
- than two channels
-Thread-Topic: [PATCH v3 3/8] EDAC/amd64: Initialize DIMM info for systems with
- more than two channels
-Thread-Index: AQHVWHyIDoXglb097EC3hpkcG3/nbg==
-Date:   Wed, 21 Aug 2019 23:59:57 +0000
-Message-ID: <20190821235938.118710-4-Yazen.Ghannam@amd.com>
-References: <20190821235938.118710-1-Yazen.Ghannam@amd.com>
-In-Reply-To: <20190821235938.118710-1-Yazen.Ghannam@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN2PR01CA0006.prod.exchangelabs.com (2603:10b6:804:2::16)
- To SN6PR12MB2639.namprd12.prod.outlook.com (2603:10b6:805:6f::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Yazen.Ghannam@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.17.1
-x-originating-ip: [165.204.78.2]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c65b91f9-88eb-4a8b-b617-08d72693ab0e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:SN6PR12MB2815;
-x-ms-traffictypediagnostic: SN6PR12MB2815:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <SN6PR12MB2815E4457876FAE210357401F8AA0@SN6PR12MB2815.namprd12.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 0136C1DDA4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(366004)(136003)(376002)(39860400002)(189003)(199004)(6486002)(8936002)(6436002)(81156014)(99286004)(50226002)(8676002)(26005)(81166006)(52116002)(2906002)(6916009)(53936002)(5640700003)(476003)(54906003)(66946007)(25786009)(66476007)(386003)(64756008)(66446008)(66556008)(186003)(2351001)(446003)(11346002)(316002)(6506007)(6512007)(6306002)(2616005)(486006)(102836004)(14444005)(36756003)(478600001)(71190400001)(256004)(86362001)(2501003)(1076003)(4326008)(5660300002)(7736002)(305945005)(6116002)(3846002)(966005)(71200400001)(76176011)(66066001)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR12MB2815;H:SN6PR12MB2639.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: IdkAuhYbQwQkbE98l91Ed4vuA2C7tZfrqgFRmUzLUoc0f7vTn/3Ydq3BmcwqXR0fDBUGRfSyXhMW/+JYbp1s16OZ/vbOiJywFnOsTl9uKGHOhF1dOaLB2bOHO9pDU1bgn95sYjT3X9bdMUN2SQDnkCIp2wAuTtx+7h5TZAv5kwpfKeXzincDJvYsSAoqhDzKs1wDB0gJWSKEc2rbx2g2q1LGuC8PwWcizrsMiAdPFejSgIgP4Fv8srZbhw6Vh5nVzOrXfSe6dNPA+PCUOd/M7FoJ6xm4rok3w7WPlFmT+BUKPEaQmtxv1f9l//M2a/LLM6vf39jzafXdf2GphtewhGhWJD/IruMhu8NehhBiLUlDVEvBSSPDP8Kfg+uv0rfXgQoCt9s1T8MrS0qYXpnT8WpK3Dt6UpVNGf+XKy0+PLY=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1730558AbfHVABR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 20:01:17 -0400
+Received: from mga04.intel.com ([192.55.52.120]:7312 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728304AbfHVABR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 20:01:17 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 17:01:16 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,414,1559545200"; 
+   d="scan'208";a="190379464"
+Received: from skuppusw-desk.jf.intel.com (HELO skuppusw-desk.amr.corp.intel.com) ([10.54.74.33])
+  by orsmga002.jf.intel.com with ESMTP; 21 Aug 2019 17:01:16 -0700
+Date:   Wed, 21 Aug 2019 16:58:24 -0700
+From:   Kuppuswamy Sathyanarayanan 
+        <sathyanarayanan.kuppuswamy@linux.intel.com>
+To:     Denis Efremov <efremov@linux.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Lukas Wunner <lukas@wunner.de>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/4] PCI: pciehp: Add pciehp_set_indicators() to
+ jointly set LED indicators
+Message-ID: <20190821235824.GC28404@skuppusw-desk.amr.corp.intel.com>
+Reply-To: sathyanarayanan.kuppuswamy@linux.intel.com
+References: <20190819160643.27998-1-efremov@linux.com>
+ <20190819160643.27998-2-efremov@linux.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c65b91f9-88eb-4a8b-b617-08d72693ab0e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 23:59:57.2538
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xcBNBQcRnNCL9fhVnWb7gs2zN6PanguhRrHVr5acN3kuzaq6UpkH4yq7CoKgckgC+lNpliFYegIiY2De69Et1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR12MB2815
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819160643.27998-2-efremov@linux.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yazen Ghannam <yazen.ghannam@amd.com>
+On Mon, Aug 19, 2019 at 07:06:40PM +0300, Denis Efremov wrote:
+> Add pciehp_set_indicators() to set power and attention indicators with a
+> single register write. Thus, avoiding waiting twice for Command Complete.
+> 
+> Signed-off-by: Denis Efremov <efremov@linux.com>
+> ---
+>  drivers/pci/hotplug/pciehp.h     |  1 +
+>  drivers/pci/hotplug/pciehp_hpc.c | 29 +++++++++++++++++++++++++++++
+>  include/uapi/linux/pci_regs.h    |  2 ++
+>  3 files changed, 32 insertions(+)
+> 
+> diff --git a/drivers/pci/hotplug/pciehp.h b/drivers/pci/hotplug/pciehp.h
+> index 8c51a04b8083..0e272bf3deb4 100644
+> --- a/drivers/pci/hotplug/pciehp.h
+> +++ b/drivers/pci/hotplug/pciehp.h
+> @@ -167,6 +167,7 @@ int pciehp_power_on_slot(struct controller *ctrl);
+>  void pciehp_power_off_slot(struct controller *ctrl);
+>  void pciehp_get_power_status(struct controller *ctrl, u8 *status);
+>  
+> +void pciehp_set_indicators(struct controller *ctrl, int pwr, int attn);
+>  void pciehp_set_attention_status(struct controller *ctrl, u8 status);
+>  void pciehp_get_latch_status(struct controller *ctrl, u8 *status);
+>  int pciehp_query_power_fault(struct controller *ctrl);
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+> index bd990e3371e3..5474b9854a7f 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -443,6 +443,35 @@ void pciehp_set_attention_status(struct controller *ctrl, u8 value)
+>  		 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, slot_cmd);
+>  }
+>  
+> +void pciehp_set_indicators(struct controller *ctrl, int pwr, int attn)
+> +{
+> +	u16 cmd = 0, mask = 0;
+> +
+> +	if (PWR_LED(ctrl))
+> +		switch (pwr) {
+> +		case PCI_EXP_SLTCTL_PWR_IND_ON:
+> +		case PCI_EXP_SLTCTL_PWR_IND_BLINK:
+> +		case PCI_EXP_SLTCTL_PWR_IND_OFF:
+> +			cmd |= pwr;
+> +			mask |= PCI_EXP_SLTCTL_PIC;
+> +		}
+> +
+> +	if (ATTN_LED(ctrl))
+> +		switch (attn) {
+> +		case PCI_EXP_SLTCTL_ATTN_IND_ON:
+> +		case PCI_EXP_SLTCTL_ATTN_IND_BLINK:
+> +		case PCI_EXP_SLTCTL_ATTN_IND_OFF:
+> +			cmd |= attn;
+> +			mask |= PCI_EXP_SLTCTL_AIC;
+> +		}
+> +
+> +	if (cmd) {
+> +		pcie_write_cmd_nowait(ctrl, cmd, mask);
+> +		ctrl_dbg(ctrl, "%s: SLOTCTRL %x write cmd %x\n", __func__,
+> +			 pci_pcie_cap(ctrl->pcie->port) + PCI_EXP_SLTCTL, cmd);
+> +	}
+> +}
+> +
+>  void pciehp_green_led_on(struct controller *ctrl)
+>  {
+>  	if (!PWR_LED(ctrl))
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index f28e562d7ca8..291788b58f3a 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -591,10 +591,12 @@
+>  #define  PCI_EXP_SLTCTL_CCIE	0x0010	/* Command Completed Interrupt Enable */
+>  #define  PCI_EXP_SLTCTL_HPIE	0x0020	/* Hot-Plug Interrupt Enable */
+>  #define  PCI_EXP_SLTCTL_AIC	0x00c0	/* Attention Indicator Control */
+> +#define  PCI_EXP_SLTCTL_ATTN_IND_NONE  0x0    /* Attention Indicator noop */
+>  #define  PCI_EXP_SLTCTL_ATTN_IND_ON    0x0040 /* Attention Indicator on */
+>  #define  PCI_EXP_SLTCTL_ATTN_IND_BLINK 0x0080 /* Attention Indicator blinking */
+>  #define  PCI_EXP_SLTCTL_ATTN_IND_OFF   0x00c0 /* Attention Indicator off */
+>  #define  PCI_EXP_SLTCTL_PIC	0x0300	/* Power Indicator Control */
+> +#define  PCI_EXP_SLTCTL_PWR_IND_NONE   0x0    /* Power Indicator noop */
+Nitpick: Since the current patch does not use it, May be you can create a
+new patch for these #defines ? or you could add some info about its
+usage in comment section.
+>  #define  PCI_EXP_SLTCTL_PWR_IND_ON     0x0100 /* Power Indicator on */
+>  #define  PCI_EXP_SLTCTL_PWR_IND_BLINK  0x0200 /* Power Indicator blinking */
+>  #define  PCI_EXP_SLTCTL_PWR_IND_OFF    0x0300 /* Power Indicator off */
+> -- 
+> 2.21.0
+> 
 
-Currently, the DIMM info for AMD Family 17h systems is initialized in
-init_csrows(). This function is shared with legacy systems, and it has a
-limit of two channel support.
-
-This prevents initialization of the DIMM info for a number of ranks, so
-there will be missing ranks in the EDAC sysfs.
-
-Create a new init_csrows_df() for Family17h+ and revert init_csrows()
-back to pre-Family17h support.
-
-Loop over all channels in the new function in order to support systems
-with more than two channels.
-
-Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
----
-Link:
-https://lkml.kernel.org/r/20190709215643.171078-4-Yazen.Ghannam@amd.com
-
-v2->v3:
-* Drop Fixes: tag.
-* Add x8 DRAM device case.
-
-v1->v2:
-* No change.
-
- drivers/edac/amd64_edac.c | 66 ++++++++++++++++++++++++++++++---------
- 1 file changed, 52 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
-index 0e8b2137edbb..001dc85122e9 100644
---- a/drivers/edac/amd64_edac.c
-+++ b/drivers/edac/amd64_edac.c
-@@ -2837,6 +2837,49 @@ static u32 get_csrow_nr_pages(struct amd64_pvt *pvt,=
- u8 dct, int csrow_nr_orig)
- 	return nr_pages;
- }
-=20
-+static int init_csrows_df(struct mem_ctl_info *mci)
-+{
-+	struct amd64_pvt *pvt =3D mci->pvt_info;
-+	enum edac_type edac_mode =3D EDAC_NONE;
-+	enum dev_type dev_type =3D DEV_UNKNOWN;
-+	struct dimm_info *dimm;
-+	int empty =3D 1;
-+	u8 umc, cs;
-+
-+	if (mci->edac_ctl_cap & EDAC_FLAG_S16ECD16ED) {
-+		edac_mode =3D EDAC_S16ECD16ED;
-+		dev_type =3D DEV_X16;
-+	} else if (mci->edac_ctl_cap & EDAC_FLAG_S8ECD8ED) {
-+		edac_mode =3D EDAC_S8ECD8ED;
-+		dev_type =3D DEV_X8;
-+	} else if (mci->edac_ctl_cap & EDAC_FLAG_S4ECD4ED) {
-+		edac_mode =3D EDAC_S4ECD4ED;
-+		dev_type =3D DEV_X4;
-+	} else if (mci->edac_ctl_cap & EDAC_FLAG_SECDED) {
-+		edac_mode =3D EDAC_SECDED;
-+	}
-+
-+	for_each_umc(umc) {
-+		for_each_chip_select(cs, umc, pvt) {
-+			if (!csrow_enabled(cs, umc, pvt))
-+				continue;
-+
-+			empty =3D 0;
-+			dimm =3D mci->csrows[cs]->channels[umc]->dimm;
-+
-+			edac_dbg(1, "MC node: %d, csrow: %d\n",
-+					pvt->mc_node_id, cs);
-+
-+			dimm->nr_pages =3D get_csrow_nr_pages(pvt, umc, cs);
-+			dimm->mtype =3D pvt->dram_type;
-+			dimm->edac_mode =3D edac_mode;
-+			dimm->dtype =3D dev_type;
-+		}
-+	}
-+
-+	return empty;
-+}
-+
- /*
-  * Initialize the array of csrow attribute instances, based on the values
-  * from pci config hardware registers.
-@@ -2851,15 +2894,16 @@ static int init_csrows(struct mem_ctl_info *mci)
- 	int nr_pages =3D 0;
- 	u32 val;
-=20
--	if (!pvt->umc) {
--		amd64_read_pci_cfg(pvt->F3, NBCFG, &val);
-+	if (pvt->umc)
-+		return init_csrows_df(mci);
-+
-+	amd64_read_pci_cfg(pvt->F3, NBCFG, &val);
-=20
--		pvt->nbcfg =3D val;
-+	pvt->nbcfg =3D val;
-=20
--		edac_dbg(0, "node %d, NBCFG=3D0x%08x[ChipKillEccCap: %d|DramEccEn: %d]\n=
-",
--			 pvt->mc_node_id, val,
--			 !!(val & NBCFG_CHIPKILL), !!(val & NBCFG_ECC_ENABLE));
--	}
-+	edac_dbg(0, "node %d, NBCFG=3D0x%08x[ChipKillEccCap: %d|DramEccEn: %d]\n"=
-,
-+		 pvt->mc_node_id, val,
-+		 !!(val & NBCFG_CHIPKILL), !!(val & NBCFG_ECC_ENABLE));
-=20
- 	/*
- 	 * We iterate over DCT0 here but we look at DCT1 in parallel, if needed.
-@@ -2896,13 +2940,7 @@ static int init_csrows(struct mem_ctl_info *mci)
- 		edac_dbg(1, "Total csrow%d pages: %u\n", i, nr_pages);
-=20
- 		/* Determine DIMM ECC mode: */
--		if (pvt->umc) {
--			if (mci->edac_ctl_cap & EDAC_FLAG_S4ECD4ED)
--				edac_mode =3D EDAC_S4ECD4ED;
--			else if (mci->edac_ctl_cap & EDAC_FLAG_SECDED)
--				edac_mode =3D EDAC_SECDED;
--
--		} else if (pvt->nbcfg & NBCFG_ECC_ENABLE) {
-+		if (pvt->nbcfg & NBCFG_ECC_ENABLE) {
- 			edac_mode =3D (pvt->nbcfg & NBCFG_CHIPKILL)
- 					? EDAC_S4ECD4ED
- 					: EDAC_SECDED;
---=20
-2.17.1
-
+-- 
+-- 
+Sathyanarayanan Kuppuswamy
+Linux kernel developer
