@@ -2,148 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E9E5D977D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:21:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B02D977CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:20:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727836AbfHULVu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 07:21:50 -0400
-Received: from mga09.intel.com ([134.134.136.24]:48472 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727211AbfHULVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 07:21:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 04:21:48 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="181000285"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by orsmga003.jf.intel.com with ESMTP; 21 Aug 2019 04:21:46 -0700
-Subject: Re: Subject: [PATCH V7 1/3] mmc: sdhci-pci-o2micro: Change O2 Host
- PLL and DLL register name
-To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>,
-        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "max.huang@bayhbutech.com" <max.huang@bayhbutech.com>
-References: <1566252529-5074-1-git-send-email-shirley.her@bayhubtech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <3003d633-ac5a-be61-585b-02f96613c070@intel.com>
-Date:   Wed, 21 Aug 2019 14:20:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727383AbfHULUp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 07:20:45 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43043 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfHULUp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 07:20:45 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 4so1165282pld.10
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 04:20:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sj3vybXlMQvoxOUao0lktce4iPTDPPDmKNm+ajxk4V8=;
+        b=I6B98DFnHujHQRvScmKkTNQY/o0aPuSa3GXtxYHjX+adoN//FqCUcVSxhNV91lcj3X
+         lMy3WtpEhhxi7MCEYfUxPbJHkzc+KE24cPGttnEqcKiD8H2z33nJ0Q7BBauJf11ufcoG
+         X9GpedEX3o5N+I7Epw1Tqydnkzkj3kFMFNPE1HeNC4QIQdRB3EYd9WQmDZUl1Yclisqe
+         VbeUSL+fTpxFAjVuXNA/DO2aHBBy4ecq7IINPGanWffC19pBXkxu7UfMbcLjcVMRc9PB
+         qCYfi9TIj5G0kkoKpUpAmizaT+mLRI024X+lDqS3lCMZBB5pEibQQpQitG1mMnlF9UOw
+         q29A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sj3vybXlMQvoxOUao0lktce4iPTDPPDmKNm+ajxk4V8=;
+        b=BczYIoZID5d76K8Y4aSZ9MxS4IEYJIU754niq18G9GZARMQJ9C/VzyCHUjzR52hapo
+         q3jcTuscGgESRlJU/DP3oAXCiN/77F4/hBCPDhTbXx7VSxE8GbptfXI2zxz2cklPYZnV
+         cpwV8TxijnzBSVZpszCeDa6cIMYL8Nnw5RodUQ3GZfMMNOKFWQ6JwpFlPeuWJ6MEeyyb
+         8YVnpBLuIgNM3y+SdE5/z4qTWBBC2QYoI5y3RbLGLZmlFKtZFehj6f53twxeA8hM938W
+         TSj7EJkxJ8jhfS/7WBwRH8T4nB5MOXSt726faR05eWzt1qjeS9zIyOUEClK9ZGweQNCE
+         WZeQ==
+X-Gm-Message-State: APjAAAVj0n3k7I0sMLWicdJdrAoqDKn6rAUMYa6DpvRJF0qFvMOM+9uf
+        8dZ7rVv5h3jAuFSOAb6ueM9dxCqC
+X-Google-Smtp-Source: APXvYqxLiwCbAhT6RtH96Edu0QuVNZ1lhSIMtzvsvplPUfEHlZPyPQkfpkiazOsNH/utUt5+AqbYxQ==
+X-Received: by 2002:a17:902:110b:: with SMTP id d11mr7155736pla.84.1566386444549;
+        Wed, 21 Aug 2019 04:20:44 -0700 (PDT)
+Received: from iZj6chx1xj0e0buvshuecpZ ([47.75.1.235])
+        by smtp.gmail.com with ESMTPSA id w26sm27216990pfq.100.2019.08.21.04.20.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Aug 2019 04:20:43 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 19:20:40 +0800
+From:   Peng Liu <iwtbavbm@gmail.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com
+Subject: Re: [PATCH] sched/fair: eliminate redundant code in sched_slice()
+Message-ID: <20190821112040.GA32150@iZj6chx1xj0e0buvshuecpZ>
+References: <20190816141202.GA3135@iZj6chx1xj0e0buvshuecpZ>
+ <20190820135055.GR2332@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <1566252529-5074-1-git-send-email-shirley.her@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820135055.GR2332@hirez.programming.kicks-ass.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/08/19 1:08 AM, Shirley Her (SC) wrote:
-> Change O2 Host PLL and DLL register name
+On Tue, Aug 20, 2019 at 03:50:55PM +0200, Peter Zijlstra wrote:
+> On Fri, Aug 16, 2019 at 10:12:02PM +0800, Peng Liu wrote:
+> > Since sched_slice() is used in high frequency,
+> > small change should also make sense.
 > 
-> Signed-off-by:Shirley Her <shirley.her@bayhubtech.com>
+> An actual Changelog would also make sense; but alas.
 
-Please do not prefix the subject by "Subject: "
-Please put a space after Signed-off-by:
+Thanks for your time!
 
-> ---
-> change in v7:
->  1. change subject
-> 
-> change in V6:
->  1. change subject and commit message to match the patch
->  2. change register name O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
-> 
-> change in V5:
->  1. split 2 patches into 3 patches
->  2. make dll_adjust_count start from 0
->  3. fix ret overwritten issue
->  4. use break instead of goto
-> 
-> change in V4:
->  1. add a bug fix for V3
-> 
-> change in V3:
->  1. add more explanation in dll_recovery and execute_tuning function
->  2. move dll_adjust_count to O2_host struct
->  3. fix some coding style error
->  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
-> 
-> change in V2:
->  1. use usleep_range instead of udelay
->  2. move dll_adjust_count to sdhci-pci-o2micro.c
-> 
-> chagne in V1:
->  1. add error recovery function to relock DLL with correct phase
->  2. retuning HS200 after DLL locked
-> ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 16 ++++++++--------
->  1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index 9dc4548..b3a33d9 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -51,7 +51,7 @@
->  #define O2_SD_VENDOR_SETTING2	0x1C8
->  #define O2_SD_HW_TUNING_DISABLE	BIT(4)
->  
-> -#define O2_PLL_WDT_CONTROL1	0x1CC
-> +#define O2_PLL_DLL_WDT_CONTROL1	0x1CC
->  #define  O2_PLL_FORCE_ACTIVE	BIT(18)
->  #define  O2_PLL_LOCK_STATUS	BIT(14)
->  #define  O2_PLL_SOFT_RESET	BIT(12)
-> @@ -316,23 +316,23 @@ static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
->  	u32 scratch32;
->  
->  	/* PLL software reset */
-> -	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
->  	scratch32 |= O2_PLL_SOFT_RESET;
-> -	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
->  	udelay(1);
->  	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> -	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
->  
->  	/* PLL force active */
->  	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
->  
->  	/* Wait max 20 ms */
->  	timeout = ktime_add_ms(ktime_get(), 20);
->  	while (1) {
->  		bool timedout = ktime_after(ktime_get(), timeout);
->  
-> -		scratch = sdhci_readw(host, O2_PLL_WDT_CONTROL1);
-> +		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
->  		if (scratch & O2_PLL_LOCK_STATUS)
->  			break;
->  		if (timedout) {
-> @@ -350,9 +350,9 @@ static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
->  
->  out:
->  	/* Cancel PLL force active */
-> -	scratch32 = sdhci_readl(host, O2_PLL_WDT_CONTROL1);
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
->  	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_WDT_CONTROL1);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
->  }
->  
->  static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> 
+About the changelog, I admit that it makes little improvement to the whole,
+It is a so *short* function, I also don't think it can produce any visible
+improvement through any kernel test tools. But as you can see, the redundant
+intermediate operation indeed exists. There's no reason to let it exist any
+more - make code clear and easy to understand if possible.
 
+Best Regards,
+Liu
