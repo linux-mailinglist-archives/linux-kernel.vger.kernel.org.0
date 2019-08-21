@@ -2,81 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5490B97FDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:20:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D0D397FE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:22:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729090AbfHUQUZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:20:25 -0400
-Received: from mga07.intel.com ([134.134.136.100]:48365 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728194AbfHUQUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:20:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 09:20:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="330069428"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
-  by orsmga004.jf.intel.com with ESMTP; 21 Aug 2019 09:20:24 -0700
-Message-ID: <1b68045227e852fb2f250d0ec858ae006490123f.camel@linux.intel.com>
-Subject: Re: [PATCH] tools/power: intel-speed-select:  Fix a read overflow
- in isst_set_tdp_level_msr()
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date:   Wed, 21 Aug 2019 09:20:24 -0700
-In-Reply-To: <20190821071403.GG26957@mwanda>
-References: <20190821071403.GG26957@mwanda>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-3.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1728969AbfHUQWL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:22:11 -0400
+Received: from outgoing-auth-1.mit.edu ([18.9.28.11]:56373 "EHLO
+        outgoing.mit.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727975AbfHUQWL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:22:11 -0400
+Received: from callcc.thunk.org (75-104-87-59.mobility.exede.net [75.104.87.59] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id x7LGLQaP017370
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Aug 2019 12:21:33 -0400
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 2CA8742049E; Wed, 21 Aug 2019 12:21:26 -0400 (EDT)
+Date:   Wed, 21 Aug 2019 12:21:26 -0400
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Hsin-Yi Wang <hsinyi@chromium.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v8 2/3] fdt: add support for rng-seed
+Message-ID: <20190821162126.GA2713@mit.edu>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Hsin-Yi Wang <hsinyi@chromium.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        James Morse <james.morse@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Jun Yao <yaojun8558363@gmail.com>, Yu Zhao <yuzhao@google.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Kees Cook <keescook@chromium.org>
+References: <20190819071602.139014-1-hsinyi@chromium.org>
+ <20190819071602.139014-3-hsinyi@chromium.org>
+ <20190819181349.GE10349@mit.edu>
+ <CAJMQK-ghQ8weMerXW7t0DFZTAg_c5M80Yp5DTAtyY2LA7YpS1A@mail.gmail.com>
+ <CAKv+Gu_qJUU2hRujjv6e5yPqPQXRXokBU_2mSGD3civ2d2+xhw@mail.gmail.com>
+ <CAJMQK-hdYz+pW5QL41nXkZAX1qiRynaWg7cne48qCaQsuPrSCg@mail.gmail.com>
+ <CAKv+Gu-kp-LqCCx=h2TJxzns4KpM-UEjz3md0u3hbVOyp+iFtA@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKv+Gu-kp-LqCCx=h2TJxzns4KpM-UEjz3md0u3hbVOyp+iFtA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-08-21 at 10:14 +0300, Dan Carpenter wrote:
-> The isst_send_msr_command() function will read 8 bytes but we are
-> passing an address to an int (4 bytes) so it results in a read
-> overflow.
+On Wed, Aug 21, 2019 at 09:39:28AM +0300, Ard Biesheuvel wrote:
 > 
-> Fixes: 3fb4f7cd472c ("tools/power/x86: A tool to validate Intel Speed
-> Select commands")
-> Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-
-> ---
->  tools/power/x86/intel-speed-select/isst-core.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Whether to trust the firmware provided entropy is a policy decision,
+> and typically, we try to avoid dictating policy in the kernel, and
+> instead, we try to provide a sane default but give the user control
+> over it.
 > 
-> diff --git a/tools/power/x86/intel-speed-select/isst-core.c
-> b/tools/power/x86/intel-speed-select/isst-core.c
-> index 8de4ac39a008..f724322856ed 100644
-> --- a/tools/power/x86/intel-speed-select/isst-core.c
-> +++ b/tools/power/x86/intel-speed-select/isst-core.c
-> @@ -190,6 +190,7 @@ int isst_get_get_trl(int cpu, int level, int
-> avx_level, int *trl)
->  
->  int isst_set_tdp_level_msr(int cpu, int tdp_level)
->  {
-> +	unsigned long long level = tdp_level;
->  	int ret;
->  
->  	debug_printf("cpu: tdp_level via MSR %d\n", cpu, tdp_level);
-> @@ -202,8 +203,7 @@ int isst_set_tdp_level_msr(int cpu, int
-> tdp_level)
->  	if (tdp_level > 2)
->  		return -1; /* invalid value */
->  
-> -	ret = isst_send_msr_command(cpu, 0x64b, 1,
-> -				    (unsigned long long *)&tdp_level);
-> +	ret = isst_send_msr_command(cpu, 0x64b, 1, &level);
->  	if (ret)
->  		return ret;
->  
+> So in this case, we should probably introduce
+> add_firmware_randomness() with a Kconfig/cmdline option pair to decide
+> whether it should be trusted or not (or reuse the one we have for
+> trusting RDRAND etc)
 
+I'd call it add_bootloader_randomness(), since we are trusting the
+*bootloader*; it's the bootloader which is vouching for the security /
+validity of the passed-in entropy.  Furthermore, the bootloader on
+some architectures might be fetching directly from some secure
+element.
+
+And for that reason, I'd use a different Kconfig/cmdline option pair
+than the one used for trusting CPU-provided randomness.
+
+						- Ted
