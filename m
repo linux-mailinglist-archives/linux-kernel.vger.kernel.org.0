@@ -2,36 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F52B9808B
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2BD49808E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:47:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729644AbfHUQri (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:47:38 -0400
+        id S1729672AbfHUQrm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:47:42 -0400
 Received: from mga04.intel.com ([192.55.52.120]:35655 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727416AbfHUQrh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:47:37 -0400
+        id S1727416AbfHUQri (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:47:38 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 09:47:37 -0700
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 09:47:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="181083817"
+   d="scan'208";a="181083823"
 Received: from unknown (HELO pbossart-mobl3.intel.com) ([10.252.139.119])
-  by orsmga003.jf.intel.com with ESMTP; 21 Aug 2019 09:47:35 -0700
+  by orsmga003.jf.intel.com with ESMTP; 21 Aug 2019 09:47:37 -0700
 From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
 To:     alsa-devel@alsa-project.org
 Cc:     tiwai@suse.de, broonie@kernel.org, devicetree@vger.kernel.org,
         Xiubo.Lee@gmail.com, shengjiu.wang@nxp.com,
         linux-kernel@vger.kernel.org, nicoleotsuka@gmail.com,
         robh+dt@kernel.org, linux-imx@nxp.com, viorel.suman@nxp.com,
-        festevam@gmail.com,
+        festevam@gmail.com, Daniel Baluta <daniel.baluta@nxp.com>,
+        Rob Herring <robh@kernel.org>,
         Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: [PATCH v2 0/3] ASoC: SOF: initial support for i.MX8
-Date:   Wed, 21 Aug 2019 11:47:27 -0500
-Message-Id: <20190821164730.7385-1-pierre-louis.bossart@linux.intel.com>
+Subject: [PATCH v2 1/3] dt-bindings: dsp: fsl: Add DSP core binding support
+Date:   Wed, 21 Aug 2019 11:47:28 -0500
+Message-Id: <20190821164730.7385-2-pierre-louis.bossart@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190821164730.7385-1-pierre-louis.bossart@linux.intel.com>
+References: <20190821164730.7385-1-pierre-louis.bossart@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -39,34 +42,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The reviews for these patches took place already on mailing lists and
-GitHub, and the code is already integrated in the SOF tree (along with
-dependencies already accepted in the i.MX tree)
+From: Daniel Baluta <daniel.baluta@nxp.com>
 
-Changes since v1:
-As agreed with Daniel and Mark, this v2 series includes the DT
-bindings (Fixed 'compatible' typo in examples)
-The SAI/ESAI support was merged separately so dropped from this set.
+This describes the DSP device tree node.
 
-Daniel Baluta (3):
-  dt-bindings: dsp: fsl: Add DSP core binding support
-  ASoC: SOF: Add OF DSP device support
-  ASoC: SOF: imx: Add i.MX8 HW support
-
- .../devicetree/bindings/dsp/fsl,dsp.yaml      |  88 ++++
- sound/soc/sof/Kconfig                         |  11 +
- sound/soc/sof/Makefile                        |   4 +
- sound/soc/sof/imx/Kconfig                     |  22 +
- sound/soc/sof/imx/Makefile                    |   4 +
- sound/soc/sof/imx/imx8.c                      | 394 ++++++++++++++++++
- sound/soc/sof/sof-of-dev.c                    | 143 +++++++
- 7 files changed, 666 insertions(+)
+Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+---
+ .../devicetree/bindings/dsp/fsl,dsp.yaml      | 88 +++++++++++++++++++
+ 1 file changed, 88 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
- create mode 100644 sound/soc/sof/imx/Kconfig
- create mode 100644 sound/soc/sof/imx/Makefile
- create mode 100644 sound/soc/sof/imx/imx8.c
- create mode 100644 sound/soc/sof/sof-of-dev.c
 
+diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+new file mode 100644
+index 000000000000..3248595dc93c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+@@ -0,0 +1,88 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/dsp/fsl,dsp.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP i.MX8 DSP core
++
++maintainers:
++  - Daniel Baluta <daniel.baluta@nxp.com>
++
++description: |
++  Some boards from i.MX8 family contain a DSP core used for
++  advanced pre- and post- audio processing.
++
++properties:
++  compatible:
++    enum:
++      - fsl,imx8qxp-dsp
++
++  reg:
++    description: Should contain register location and length
++
++  clocks:
++    items:
++      - description: ipg clock
++      - description: ocram clock
++      - description: core clock
++
++  clock-names:
++    items:
++      - const: ipg
++      - const: ocram
++      - const: core
++
++  power-domains:
++    description:
++      List of phandle and PM domain specifier as documented in
++      Documentation/devicetree/bindings/power/power_domain.txt
++    maxItems: 4
++
++  mboxes:
++    description:
++      List of <&phandle type channel> - 2 channels for TXDB, 2 channels for RXDB
++      (see mailbox/fsl,mu.txt)
++    maxItems: 4
++
++  mbox-names:
++    items:
++      - const: txdb0
++      - const: txdb1
++      - const: rxdb0
++      - const: rxdb1
++
++  memory-region:
++    description:
++       phandle to a node describing reserved memory (System RAM memory)
++       used by DSP (see bindings/reserved-memory/reserved-memory.txt)
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - power-domains
++  - mboxes
++  - mbox-names
++  - memory-region
++
++examples:
++  - |
++    #include <dt-bindings/firmware/imx/rsrc.h>
++    #include <dt-bindings/clock/imx8-clock.h>
++    dsp@596e8000 {
++        compatible = "fsl,imx8qxp-dsp";
++        reg = <0x596e8000 0x88000>;
++        clocks = <&adma_lpcg IMX_ADMA_LPCG_DSP_IPG_CLK>,
++                 <&adma_lpcg IMX_ADMA_LPCG_OCRAM_IPG_CLK>,
++                 <&adma_lpcg IMX_ADMA_LPCG_DSP_CORE_CLK>;
++        clock-names = "ipg", "ocram", "core";
++        power-domains = <&pd IMX_SC_R_MU_13A>,
++                        <&pd IMX_SC_R_MU_13B>,
++                        <&pd IMX_SC_R_DSP>,
++                        <&pd IMX_SC_R_DSP_RAM>;
++        mbox-names = "txdb0", "txdb1", "rxdb0", "rxdb1";
++        mboxes = <&lsio_mu13 2 0>, <&lsio_mu13 2 1>, <&lsio_mu13 3 0>, <&lsio_mu13 3 1>;
++    };
 -- 
 2.20.1
 
