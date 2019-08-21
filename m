@@ -2,767 +2,862 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E9596F66
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:23:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A48B696F6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfHUCXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:23:12 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37133 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfHUCXL (ORCPT
+        id S1727137AbfHUC06 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:26:58 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:42292 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727072AbfHUC0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:23:11 -0400
-Received: by mail-ot1-f65.google.com with SMTP id f17so643975otq.4
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 19:23:10 -0700 (PDT)
+        Tue, 20 Aug 2019 22:26:54 -0400
+Received: by mail-pl1-f194.google.com with SMTP id y1so444790plp.9
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 19:26:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eW9Ru5zNRouLMEU/Ql6nyuqNsnniesQvqCadv1lbMe8=;
-        b=q/YnC9rmbigX5xWh8RpcD02LWM45bYIA4D2T9RQ5J7tOVojmGiQDYiliM7irO422gt
-         Pm+mq0el8jVaOmYPHymRXpkEkITQneRVb45fevCc12CCgNMX9HXuLXlRk0Fccpn7Ru/S
-         /TghC54wxtwVN/tHFj0IP6tbqlgrciuvCRTFHTjcGgGiKYS5KgJxVoIuaQsqwDmJooVE
-         Gq+DH4u7OxGfEgkvOUhVDE0CbqJlCcO8Go0k2/2JuidCzWHznQA/wkonllB1r4m/Ib5N
-         qoYAw8ICaqI8rXXFrPC3cKaz+goTKPxtbpZVvVaH3j0hpFqyEoyI4OD+vV45OH8gUVck
-         FXRA==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0YkjWwjVU2KJmE7cbX2tm4G/gv6+OeV38KTursS7TsA=;
+        b=s5Hg5dMUkluzWEkDW4ETccUU59RY025L6GdXIcFGgF74au2iROquRZodXwjtvjT3GZ
+         86mWY3iIQATC6SwOViHISGDMbA8Qp2gyAk41tuufp4hq7zopx2RDQ3wOrgH2EyxylGm8
+         gUmzB2j951oLTSK9ixf9bNt+SEZFhtQfB9IV1l4W7erZ11O/P4OROmSjxhrXrz+fLlVj
+         ry4Kv+tUPGm5fHwfpZECViUBAfDcZxtKUECd3YLy862/yXjfYPkCCLOMjjGriv8zO2Jb
+         VWQzzyEVoxXLJeCq3F2TtmwwtvakJj0OavS7jspJouOWCLLTyQ7H+BuiKD4bZeOgAgIe
+         F9tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eW9Ru5zNRouLMEU/Ql6nyuqNsnniesQvqCadv1lbMe8=;
-        b=MWdQJPudL6HctNp4zfHwsOJb874rSLnElI4n2EI2XcnBfRoD9VReVl3FbcBE5Q9Wem
-         XhIzUd2/DPtpVtEWofN5gSvYgzBiAlwls1ro9ImXw8Tbhr2JacKjFbXvp/udOIrIk9aZ
-         pj2EoMXPapsBPNrcSHld09MZU69nQVDKG7eIEypVOdsFmXMrnhx5cDfqBkhOQy0qwRuf
-         8Nb762j7TstfZ1HOvc2IjTPgGzdXjY5ZTQfbKWoTLKcVXGkpedyEiLGQNMlI5bBDXcoe
-         Wr4hmANWjxkGhy5HIYI0OL+kemOzXYyq8pW8eqR22v5HPpbBGJDfKFXeDnr5hn6CnlWT
-         fKZQ==
-X-Gm-Message-State: APjAAAWXxlSgZ+pc/c6EQkkSwfrv+B+djhNn7+jKtBiWtfFPQvQPDNSp
-        r5gmFfOlnXjPeSmirDKXCTH+EMkq8SHWZAStlL6LKA==
-X-Google-Smtp-Source: APXvYqycZwOHTswF/2B0uWVEz6pKCAS2PtwpIhTV3383cbLeWWmbMDABO+F+n+NJnlQLzhziljUsRtTY4GGjEcLLt/8=
-X-Received: by 2002:a9d:6b1a:: with SMTP id g26mr6694232otp.195.1566354189633;
- Tue, 20 Aug 2019 19:23:09 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0YkjWwjVU2KJmE7cbX2tm4G/gv6+OeV38KTursS7TsA=;
+        b=qraGYpjzoKdpS96FbLwCxR5aAUF0SwwpyYeuzctM8ldbBm6k4Y0qzB9JsCQp3u3ub+
+         e1cwg5Lge3rkrt8igfe0k4TvIxgmX7p3i4UcoYe7ThwMpwutNHLururJnURekMFIito0
+         u+Aw7oq3Nq7utC25FaXFlkShx0G9iQUEed7Jx477qmS/iobxvvMXJ2dUHpDc4mHpfWcd
+         iL195JVZzq82tvIqQBxq010uHM2vAyrc8DRaRua47E+nPOeea5HlPUggWv9/R9FbEDek
+         yRWAOtavfxwX6Lr/kaoMJolWZ9T25ODboyHuBzTAemRSO9y6viJznEUwK0MchKZMCyYT
+         JDvQ==
+X-Gm-Message-State: APjAAAVfFgQX5lpHNWoCQCyrsakDZ5YjmIaYzcLVSEIq0vsvkjQr6o8Y
+        RfK9ERPBC1/+IhWoYHZcsJUt
+X-Google-Smtp-Source: APXvYqx7ZJ6QL+HNbR9/zFYWKoAd946iB/yEzn2wLA2LyiKFFhIZ3UPDQ544YLaXfQM5VF/xh8btvg==
+X-Received: by 2002:a17:902:9689:: with SMTP id n9mr32031724plp.241.1566354413377;
+        Tue, 20 Aug 2019 19:26:53 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2405:204:7101:175:ddd7:6c31:ebc7:37e8])
+        by smtp.gmail.com with ESMTPSA id v7sm23673857pff.87.2019.08.20.19.26.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 20 Aug 2019 19:26:51 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 07:56:40 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, thomas.liau@actions-semi.com,
+        linux-actions@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 5/7] mmc: Add Actions Semi Owl SoCs SD/MMC driver
+Message-ID: <20190821022640.GA2709@Mani-XPS-13-9360>
+References: <20190608195317.6336-1-manivannan.sadhasivam@linaro.org>
+ <20190608195317.6336-6-manivannan.sadhasivam@linaro.org>
+ <CAPDyKFqE1Vnmq4yeoQxjgOZTTrA_k7jAZHwq5RExX4hS-rTftw@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190724001100.133423-1-saravanak@google.com> <20190724001100.133423-2-saravanak@google.com>
- <32a8abd2-b6a4-67df-eee9-0f006310e81e@gmail.com> <CAGETcx8Q27+Jnz+rHtt33muMV6U+S3cmKh02Ok_Ds_ZzfBqhrg@mail.gmail.com>
- <522e8375-5070-f579-6509-3e44fe66768e@gmail.com> <CAGETcx-9Bera+nU-3=ZNpHqdqKxO0TmNuVUsCMQ-yDm1VXn5zA@mail.gmail.com>
- <a4c139c1-c9d1-3e5a-f47f-cd790b42da1f@gmail.com> <CAGETcx-J7+d3pcArMZvO5zQbUhAhRW+1=FUf7C1fV9-QhkckBw@mail.gmail.com>
- <6028b35b-a4ca-18de-84c6-4a22dbd987c9@gmail.com>
-In-Reply-To: <6028b35b-a4ca-18de-84c6-4a22dbd987c9@gmail.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Tue, 20 Aug 2019 19:22:33 -0700
-Message-ID: <CAGETcx9Er1OixsHoWSDmQ2tYAqRu0Lbv243ziiyLL1nJoHcpig@mail.gmail.com>
-Subject: Re: [PATCH v7 1/7] driver core: Add support for linking devices
- during device addition
-To:     Frank Rowand <frowand.list@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqE1Vnmq4yeoQxjgOZTTrA_k7jAZHwq5RExX4hS-rTftw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 6:07 PM Frank Rowand <frowand.list@gmail.com> wrote:
->
-> On 8/20/19 3:10 PM, Saravana Kannan wrote:
-> > On Mon, Aug 19, 2019 at 9:25 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> >>
-> >> On 8/19/19 5:00 PM, Saravana Kannan wrote:
-> >>> On Sun, Aug 18, 2019 at 8:38 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> >>>>
-> >>>> On 8/15/19 6:50 PM, Saravana Kannan wrote:
-> >>>>> On Wed, Aug 7, 2019 at 7:04 PM Frank Rowand <frowand.list@gmail.com> wrote:
-> >>>>>>
-> >>>>>>> Date: Tue, 23 Jul 2019 17:10:54 -0700
-> >>>>>>> Subject: [PATCH v7 1/7] driver core: Add support for linking devices during
-> >>>>>>>  device addition
-> >>>>>>> From: Saravana Kannan <saravanak@google.com>
-> >>>>>>>
-> >>>>>>> When devices are added, the bus might want to create device links to track
-> >>>>>>> functional dependencies between supplier and consumer devices. This
-> >>>>>>> tracking of supplier-consumer relationship allows optimizing device probe
-> >>>>>>> order and tracking whether all consumers of a supplier are active. The
-> >>>>>>> add_links bus callback is added to support this.
-> >>>>>>
-> >>>>>> Change above to:
-> >>>>>>
-> >>>>>> When devices are added, the bus may create device links to track which
-> >>>>>> suppliers a consumer device depends upon.  This
-> >>>>>> tracking of supplier-consumer relationship may be used to defer probing
-> >>>>>> the driver of a consumer device before the driver(s) for its supplier device(s)
-> >>>>>> are probed.  It may also be used by a supplier driver to determine if
-> >>>>>> all of its consumers have been successfully probed.
-> >>>>>> The add_links bus callback is added to create the supplier device links
-> >>>>>>
-> >>>>>>>
-> >>>>>>> However, when consumer devices are added, they might not have a supplier
-> >>>>>>> device to link to despite needing mandatory resources/functionality from
-> >>>>>>> one or more suppliers. A waiting_for_suppliers list is created to track
-> >>>>>>> such consumers and retry linking them when new devices get added.
-> >>>>>>
-> >>>>>> Change above to:
-> >>>>>>
-> >>>>>> If a supplier device has not yet been created when the consumer device attempts
-> >>>>>> to link it, the consumer device is added to the wait_for_suppliers list.
-> >>>>>> When supplier devices are created, the supplier device link will be added to
-> >>>>>> the relevant consumer devices on the wait_for_suppliers list.
-> >>>>>>
-> >>>>>
-> >>>>> I'll take these commit text suggestions if we decide to revert the
-> >>>>> entire series at the end of this review.
-> >>>>>
-> >>>>>>>
-> >>>>>>> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> >>>>>>> ---
-> >>>>>>>  drivers/base/core.c    | 83 ++++++++++++++++++++++++++++++++++++++++++
-> >>>>>>>  include/linux/device.h | 14 +++++++
-> >>>>>>>  2 files changed, 97 insertions(+)
-> >>>>>>>
-> >>>>>>> diff --git a/drivers/base/core.c b/drivers/base/core.c
-> >>>>>>> index da84a73f2ba6..1b4eb221968f 100644
-> >>>>>>> --- a/drivers/base/core.c
-> >>>>>>> +++ b/drivers/base/core.c
-> >>>>>>> @@ -44,6 +44,8 @@ early_param("sysfs.deprecated", sysfs_deprecated_setup);
-> >>>>>>>  #endif
-> >>>>>>>
-> >>>>>>>  /* Device links support. */
-> >>>>>>> +static LIST_HEAD(wait_for_suppliers);
-> >>>>>>> +static DEFINE_MUTEX(wfs_lock);
-> >>>>>>>
-> >>>>>>>  #ifdef CONFIG_SRCU
-> >>>>>>>  static DEFINE_MUTEX(device_links_lock);
-> >>>>>>> @@ -401,6 +403,51 @@ struct device_link *device_link_add(struct device *consumer,
-> >>>>>>>  }
-> >>>>>>>  EXPORT_SYMBOL_GPL(device_link_add);
-> >>>>>>>
-> >>>>>>> +/**
-> >>>>>>
-> >>>>>>> + * device_link_wait_for_supplier - Mark device as waiting for supplier
-> >>>>>>
-> >>>>>>     * device_link_wait_for_supplier - Add device to wait_for_suppliers list
-> >>>>>
-> >>>>
-> >>>> As a meta-comment, I found this series very hard to understand in the context
-> >>>> of reading the new code for the first time.  When I read the code again in
-> >>>> six months or a year or two years it will not be in near term memory and it
-> >>>> will be as if I am reading it for the first time.  A lot of my suggestions
-> >>>> for changes of names are in that context -- the current names may be fine
-> >>>> when one has recently read the code, but not so much when trying to read
-> >>>> the whole thing again with a blank mind.
-> >>>
-> >>> Thanks for the context.
-> >>>
-> >>>> The code also inherits a good deal of complexity because it does not stand
-> >>>> alone in a nice discrete chunk, but instead delicately weaves into a more
-> >>>> complex body of code.
-> >>>
-> >>> I'll take this as a compliment :)
-> >>
-> >> Please do!
-> >>
-> >>
-> >>>
-> >>>> When I was trying to understand the code, I wrote a lot of additional
-> >>>> comments within my reply email to provide myself context, information
-> >>>> about various things, and questions that I needed to answer (or if I
-> >>>> could not answer to then ask you).  Then I ended up being able to remove
-> >>>> many of those notes before sending the reply.
-> >>>>
-> >>>>
-> >>>>> I intentionally chose "Mark device..." because that's a better
-> >>>>> description of the semantics of the function instead of trying to
-> >>>>> describe the implementation. Whether I'm using a linked list or some
-> >>>>> other data structure should not be the one line documentation of a
-> >>>>> function. Unless the function is explicitly about operating on that
-> >>>>> specific data structure.
-> >>>>
-> >>>> I agree with the intent of trying to describe the semantics of a function,
-> >>>> especially at the API level where other systems (or drivers) would be using
-> >>>> the function.  But for this case the function is at the implementation level
-> >>>> and describing explicitly what it is doing makes this much more readable for
-> >>>> me.
-> >>>
-> >>> Are you distinguishing between API level vs implementation level based
-> >>> on the function being "static"/not exported? I believe the earlier
-> >>
-> >> No, being static helps say a function is not API, but an function that is
-> >> not static may be intended to be used in a limited and constrained manner.
-> >> I distinguished based on the usage of the function.
-> >>
-> >>
-> >>> version of this series had this function as an exported API. So maybe
-> >>> that's why I had it as "Mark device".
-> >>>
-> >>>> I also find "Mark device" to be vague and not descriptive of what the
-> >>>> intent is.
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>>> + * @consumer: Consumer device
-> >>>>>>> + *
-> >>>>>>> + * Marks the consumer device as waiting for suppliers to become available. The
-> >>>>>>> + * consumer device will never be probed until it's unmarked as waiting for
-> >>>>>>> + * suppliers. The caller is responsible for adding the link to the supplier
-> >>>>>>> + * once the supplier device is present.
-> >>>>>>> + *
-> >>>>>>> + * This function is NOT meant to be called from the probe function of the
-> >>>>>>> + * consumer but rather from code that creates/adds the consumer device.
-> >>>>>>> + */
-> >>>>>>> +static void device_link_wait_for_supplier(struct device *consumer)
-> >>>>>>> +{
-> >>>>>>> +     mutex_lock(&wfs_lock);
-> >>>>>>> +     list_add_tail(&consumer->links.needs_suppliers, &wait_for_suppliers);
-> >>>>>>> +     mutex_unlock(&wfs_lock);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>> +/**
-> >>>>>>
-> >>>>>>
-> >>>>>>> + * device_link_check_waiting_consumers - Try to remove from supplier wait list
-> >>>>>>> + *
-> >>>>>>> + * Loops through all consumers waiting on suppliers and tries to add all their
-> >>>>>>> + * supplier links. If that succeeds, the consumer device is unmarked as waiting
-> >>>>>>> + * for suppliers. Otherwise, they are left marked as waiting on suppliers,
-> >>>>>>> + *
-> >>>>>>> + * The add_links bus callback is expected to return 0 if it has found and added
-> >>>>>>> + * all the supplier links for the consumer device. It should return an error if
-> >>>>>>> + * it isn't able to do so.
-> >>>>>>> + *
-> >>>>>>> + * The caller of device_link_wait_for_supplier() is expected to call this once
-> >>>>>>> + * it's aware of potential suppliers becoming available.
-> >>>>>>
-> >>>>>> Change above comment to:
-> >>>>>>
-> >>>>>>     * device_link_add_supplier_links - add links from consumer devices to
-> >>>>>>     *                                  supplier devices, leaving any consumer
-> >>>>>>     *                                  with inactive suppliers on the
-> >>>>>>     *                                  wait_for_suppliers list
-> >>>>>
-> >>>>> I didn't know that the first one line comment could span multiple
-> >>>>> lines. Good to know.
-> >>>>>
-> >>>>>
-> >>>>>>     * Scan all consumer devices in the devicetree.
-> >>>>>
-> >>>>> This function doesn't have anything to do with devicetree. I've
-> >>>>> intentionally kept all OF related parts out of the driver/core because
-> >>>>> I hope that other busses can start using this feature too. So I can't
-> >>>>> take this bit.
-> >>>>
-> >>>> My comment is left over from when I was taking notes, trying to understand the
-> >>>> code.
-> >>>>
-> >>>> At the moment, only devicetree is used as a source of the dependency information.
-> >>>> The comment would better be re-phrased as:
-> >>>>
-> >>>>         * Scan all consumer devices in the firmware description of the hardware topology
-> >>>>
-> >>>
-> >>> Ok
-> >>>
-> >>>> I did not ask why this feature is tied to _only_ the platform bus, but will now.
-> >>>
-> >>> Because devicetree and platform bus the only ones I'm familiar with.
-> >>> If other busses want to add this, I'd be happy to help with code
-> >>> and/or direction/review. But I won't pretend to know anything about
-> >>> ACPI.
-> >>
-> >> Sorry, you don't get to ignore other buses because you are not familiar
-> >> with them.
+Hi Ulf,
+
+Sorry for the delay!
+
+On Mon, Jul 22, 2019 at 03:41:59PM +0200, Ulf Hansson wrote:
+> On Sat, 8 Jun 2019 at 21:54, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
 > >
-> > It's important that I don't design out other buses -- which I don't.
-> > But why would you want someone who has no idea of ACPI to write code
-> > for it? It's a futile effort that's going to be rejected by people who
-> > know ACPI anyway.
->
-> ACPI is not a bus.
->
-> Devicetree is not a bus.
->
-> A devicetree can contain multiple buses in the topology that is described.
-
-I understand these aren't busses. But most devices from ACPI and DT
-get put on acpi bus or platform bus? So I was trying to just handle
-platform bus since that's the majority of the use cases I run into as
-part of Android. Anyway, see comments further below. I think we are
-lining up now.
-
+> > Add SD/MMC driver for Actions Semi Owl SoCs. This driver currently
+> > supports standard, high speed, SDR12, SDR25 and SDR50. DDR50 mode is
+> > supported but it is untested. There is no SDIO support for now.
 > >
-> >> I am not aware of any reason to exclude devices that on other buses and your
-> >> answer below does not provide a valid technical reason why the new feature is
-> >> correct when it excludes all other buses.
-> >>>
-> >>>> I do not know of any reason that a consumer / supplier relationship can not be
-> >>>> between devices on different bus types.  Do you know of such a reason?
-> >>>
-> >>> Yes, it's hypothetically possible. But I haven't seen such a
-> >>> relationship being defined in DT. Nor somewhere else where this might
-> >>> be captured. So, how common/realistic is it?
-> >>
-> >> It is entirely legal.  I have no idea how common it is but that is not a valid
-> >> reason to exclude other buses from the feature.
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/mmc/host/Kconfig   |   8 +
+> >  drivers/mmc/host/Makefile  |   1 +
+> >  drivers/mmc/host/owl-mmc.c | 705 +++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 714 insertions(+)
+> >  create mode 100644 drivers/mmc/host/owl-mmc.c
 > >
-> > I'm not going to write code for a hypothetical hardware scenario. Find
-> > one supported in upstream, show me that it'll benefit from this series
-> > and tell me how to interpret the dependency graph and then we'll talk
-> > about writing code for that.
->
-> You don't get to implement a general feature in a way that only supports
-> a subset of potential devicetree users.  Note the word "general".  This is
-> not a small isolated feature.
->
-> Now, am I being inconsistent if I say that it is ok for the feature to
-> only support devicetree systems, or only support ACPI systems?  I'll
-> have to ponder that.
->
-> But I don't think the question of only platform buses or all buses needs
-> to be resolved because I don't think that the add_links function is a bus
-> specific function.  The add_links function is specific to devicetree or
-> ACPI.
->
-> We seem to be talking past each other on this point right now.  I don't now
-> how to get our minds to the same place, but let's keep trying.
-
-See my reply further below. That should address some of the concerns
-as "buses" won't be a concern anymore. Having said that, the main
-point I was making here is that I can't design for a hypothetical case
-that has no example with a proper definition of what's the expected
-behavior.
-
+> > diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> > index 931770f17087..7ae65eff26a4 100644
+> > --- a/drivers/mmc/host/Kconfig
+> > +++ b/drivers/mmc/host/Kconfig
+> > @@ -1006,3 +1006,11 @@ config MMC_SDHCI_AM654
+> >           If you have a controller with this interface, say Y or M here.
 > >
-> >>>>>
-> >>>>>>  For any supplier device that
-> >>>>>>     * is not already linked to the consumer device, add the supplier to the
-> >>>>>>     * consumer device's device links.
-> >>>>>>     *
-> >>>>>>     * If all of a consumer device's suppliers are available then the consumer
-> >>>>>>     * is removed from the wait_for_suppliers list (if previously on the list).
-> >>>>>>     * Otherwise the consumer is added to the wait_for_suppliers list (if not
-> >>>>>>     * already on the list).
-> >>>>>
-> >>>>> Honestly, I don't think this is any better than what I already have.
-> >>>>
-> >>>> Note that my version of these comments was written while I was reading the code,
-> >>>> and did not have any big picture understanding yet.  This will likely also be
-> >>>> the mind set of most everyone who reads this code in the future, once it is
-> >>>> woven into the kernel.
-> >>>>
-> >>>> If you don't like the change, I can revisit it in a later version of the
-> >>>> patch set.
-> >>>
-> >>> I'll take in all the ones I feel are reasonable or don't feel strongly
-> >>> about. We can revisit the rest later.
-> >>>
-> >>>>>
-> >>>>>>     * The add_links bus callback must return 0 if it has found and added all
-> >>>>>>     * the supplier links for the consumer device. It must return an error if
-> >>>>>>     * it is not able to do so.
-> >>>>>>     *
-> >>>>>>     * The caller of device_link_wait_for_supplier() is expected to call this once
-> >>>>>>     * it is aware of potential suppliers becoming available.
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>>> + */
-> >>>>>>> +static void device_link_check_waiting_consumers(void)
-> >>>>>>
-> >>>>>> Function name is misleading and hides side effects.
-> >>>>>>
-> >>>>>> I have not come up with a name that does not hide side effects, but a better
-> >>>>>> name would be:
-> >>>>>>
-> >>>>>>    device_link_add_supplier_links()
-> >>>>>
-> >>>>> I kinda agree that it could afford a better name. The current name is
-> >>>>> too similar to device_links_check_suppliers() and I never liked that.
-> >>>>
-> >>>> Naming new fields or variables related to device links looks pretty
-> >>>> challenging to me, because of the desire to be part of device links
-> >>>> and not a wart pasted on the side.  So I share the pain in trying
-> >>>> to find good names.
-> >>>>
-> >>>>>
-> >>>>> Maybe device_link_add_missing_suppliers()?
-> >>>>
-> >>>> My first reaction was "yes, that sounds good".  But then I stopped and
-> >>>> tried to read the name out of context.  The name is not adding the
-> >>>> missing suppliers, it is saving the information that a supplier is
-> >>>> not yet available (eg, is "missing").  I struggled in coming up with
-> >>
-> >> Reading what you say below, and looking at the code again, what I say
-> >> in that sentence is backwards.  It is not adding the missing supplier
-> >> device links, it is instead adding existing supplier device inks.
-> >>
-> >>
-> >>>> the name that I suggested.  We can keep thinking.
-> >>>
-> >>> No, this function _IS_ about adding links to suppliers. These
-> >>
-> >> You are mis-reading what I wrote.  I said the function "is not adding
-> >> the missing suppliers".  You are converting that to "is not adding
-> >> links to the missing suppliers".
-> >>
-> >> My suggested name was hinting "add_supplier_links", which is what you
-> >> say it does below.  The name you suggest is hinting "add_missing_suppliers".
-> >> Do you see the difference?
+> >           If unsure, say N.
+> > +
+> > +config MMC_OWL
+> > +       tristate "Actions Semi Owl SD/MMC Host Controller support"
+> > +       depends on HAS_DMA
+> > +       depends on ARCH_ACTIONS || COMPILE_TEST
+> > +       help
+> > +         This selects support for the SD/MMC Host Controller on
+> > +         Actions Semi Owl SoCs.
+> > diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+> > index 73578718f119..41a0b1728389 100644
+> > --- a/drivers/mmc/host/Makefile
+> > +++ b/drivers/mmc/host/Makefile
+> > @@ -73,6 +73,7 @@ obj-$(CONFIG_MMC_SUNXI)               += sunxi-mmc.o
+> >  obj-$(CONFIG_MMC_USDHI6ROL0)   += usdhi6rol0.o
+> >  obj-$(CONFIG_MMC_TOSHIBA_PCI)  += toshsd.o
+> >  obj-$(CONFIG_MMC_BCM2835)      += bcm2835.o
+> > +obj-$(CONFIG_MMC_OWL)          += owl-mmc.o
 > >
-> > Yeah, which is why I said earlier that I didn't want to repeat "links"
-> > twice in a function name. As in
-> > device_links_add_missing_supplier_links() has too many "links". In the
-> > context of device_links_, "add missing suppliers" means "add missing
-> > supplier links". Anyway, I think we can come back to figuring out a
-> > good name once we agree on the more important discussions further
-> > below.
->
-> Yes, later is fine.  This is a detail.
->
+> >  obj-$(CONFIG_MMC_REALTEK_PCI)  += rtsx_pci_sdmmc.o
+> >  obj-$(CONFIG_MMC_REALTEK_USB)  += rtsx_usb_sdmmc.o
+> > diff --git a/drivers/mmc/host/owl-mmc.c b/drivers/mmc/host/owl-mmc.c
+> > new file mode 100644
+> > index 000000000000..8158ebedb2a4
+> > --- /dev/null
+> > +++ b/drivers/mmc/host/owl-mmc.c
+> > @@ -0,0 +1,705 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Actions Semi Owl SoCs SD/MMC driver
+> > + *
+> > + * Copyright (c) 2014 Actions Semi Inc.
+> > + * Copyright (c) 2019 Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > + *
+> > + * TODO: SDIO support
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/delay.h>
+> > +#include <linux/dmaengine.h>
+> > +#include <linux/dma-direction.h>
+> > +#include <linux/dma-mapping.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/mmc/host.h>
+> > +#include <linux/mmc/slot-gpio.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/reset.h>
+> > +#include <linux/spinlock.h>
+> > +
+> > +/*
+> > + * SDC registers
+> > + */
+> > +#define OWL_REG_SD_EN                  0x0000
+> > +#define OWL_REG_SD_CTL                 0x0004
+> > +#define OWL_REG_SD_STATE               0x0008
+> > +#define OWL_REG_SD_CMD                 0x000c
+> > +#define OWL_REG_SD_ARG                 0x0010
+> > +#define OWL_REG_SD_RSPBUF0             0x0014
+> > +#define OWL_REG_SD_RSPBUF1             0x0018
+> > +#define OWL_REG_SD_RSPBUF2             0x001c
+> > +#define OWL_REG_SD_RSPBUF3             0x0020
+> > +#define OWL_REG_SD_RSPBUF4             0x0024
+> > +#define OWL_REG_SD_DAT                 0x0028
+> > +#define OWL_REG_SD_BLK_SIZE            0x002c
+> > +#define OWL_REG_SD_BLK_NUM             0x0030
+> > +#define OWL_REG_SD_BUF_SIZE            0x0034
+> > +
+> > +/* SD_EN Bits */
+> > +#define OWL_SD_EN_RANE                 BIT(31)
+> > +#define OWL_SD_EN_RAN_SEED(x)          (((x) & 0x3f) << 24)
+> > +#define OWL_SD_EN_S18EN                        BIT(12)
+> > +#define OWL_SD_EN_RESE                 BIT(10)
+> > +#define OWL_SD_EN_DAT1_S               BIT(9)
+> > +#define OWL_SD_EN_CLK_S                        BIT(8)
+> > +#define OWL_SD_ENABLE                  BIT(7)
+> > +#define OWL_SD_EN_BSEL                 BIT(6)
+> > +#define OWL_SD_EN_SDIOEN               BIT(3)
+> > +#define OWL_SD_EN_DDREN                        BIT(2)
+> > +#define OWL_SD_EN_DATAWID(x)           (((x) & 0x3) << 0)
+> > +
+> > +/* SD_CTL Bits */
+> > +#define OWL_SD_CTL_TOUTEN              BIT(31)
+> > +#define OWL_SD_CTL_TOUTCNT(x)          (((x) & 0x7f) << 24)
+> > +#define OWL_SD_CTL_DELAY_MSK           GENMASK(23, 16)
+> > +#define OWL_SD_CTL_RDELAY(x)           (((x) & 0xf) << 20)
+> > +#define OWL_SD_CTL_WDELAY(x)           (((x) & 0xf) << 16)
+> > +#define OWL_SD_CTL_CMDLEN              BIT(13)
+> > +#define OWL_SD_CTL_SCC                 BIT(12)
+> > +#define OWL_SD_CTL_TCN(x)              (((x) & 0xf) << 8)
+> > +#define OWL_SD_CTL_TS                  BIT(7)
+> > +#define OWL_SD_CTL_LBE                 BIT(6)
+> > +#define OWL_SD_CTL_C7EN                        BIT(5)
+> > +#define OWL_SD_CTL_TM(x)               (((x) & 0xf) << 0)
+> > +
+> > +#define OWL_SD_DELAY_LOW_CLK           0x0f
+> > +#define OWL_SD_DELAY_MID_CLK           0x0a
+> > +#define OWL_SD_DELAY_HIGH_CLK          0x09
+> > +#define OWL_SD_RDELAY_DDR50            0x0a
+> > +#define OWL_SD_WDELAY_DDR50            0x08
+> > +
+> > +/* SD_STATE Bits */
+> > +#define OWL_SD_STATE_DAT1BS            BIT(18)
+> > +#define OWL_SD_STATE_SDIOB_P           BIT(17)
+> > +#define OWL_SD_STATE_SDIOB_EN          BIT(16)
+> > +#define OWL_SD_STATE_TOUTE             BIT(15)
+> > +#define OWL_SD_STATE_BAEP              BIT(14)
+> > +#define OWL_SD_STATE_MEMRDY            BIT(12)
+> > +#define OWL_SD_STATE_CMDS              BIT(11)
+> > +#define OWL_SD_STATE_DAT1AS            BIT(10)
+> > +#define OWL_SD_STATE_SDIOA_P           BIT(9)
+> > +#define OWL_SD_STATE_SDIOA_EN          BIT(8)
+> > +#define OWL_SD_STATE_DAT0S             BIT(7)
+> > +#define OWL_SD_STATE_TEIE              BIT(6)
+> > +#define OWL_SD_STATE_TEI               BIT(5)
+> > +#define OWL_SD_STATE_CLNR              BIT(4)
+> > +#define OWL_SD_STATE_CLC               BIT(3)
+> > +#define OWL_SD_STATE_WC16ER            BIT(2)
+> > +#define OWL_SD_STATE_RC16ER            BIT(1)
+> > +#define OWL_SD_STATE_CRC7ER            BIT(0)
+> > +
+> > +struct owl_mmc_host {
+> > +       struct device *dev;
+> > +       struct reset_control *reset;
+> > +       void __iomem *base;
+> > +       struct clk *clk;
+> > +       struct completion sdc_complete;
+> > +       spinlock_t lock;
+> > +       int irq;
+> > +       u32 clock;
+> > +       bool ddr_50;
+> > +
+> > +       enum dma_data_direction dma_dir;
+> > +       struct dma_chan *dma;
+> > +       struct dma_async_tx_descriptor *desc;
+> > +       struct dma_slave_config dma_cfg;
+> > +       struct completion dma_complete;
+> > +
+> > +       struct mmc_host *mmc;
+> > +       struct mmc_request *mrq;
+> > +       struct mmc_command *cmd;
+> > +       struct mmc_data *data;
+> > +};
+> > +
+> > +static inline void mmc_writel(struct owl_mmc_host *owl_host, u32 reg, u32 data)
+> > +{
+> > +       writel(data, owl_host->base + reg);
+> > +}
+> > +
+> > +static inline u32 mmc_readl(struct owl_mmc_host *owl_host, u32 reg)
+> > +{
+> > +       return readl(owl_host->base + reg);
+> > +}
+> 
+> Please drop these wrappers, as they don't make the code more readable.
+> 
+
+Okay.
+
+> > +
+> > +static void mmc_update_reg(void __iomem *reg, unsigned int val, bool state)
+> 
+> Please use the "owl" as prefix for function names, that makes it more
+> consistent.
+> 
+
+Okay.
+
+> > +{
+> > +       unsigned int regval;
+> > +
+> > +       regval = readl(reg);
+> 
+> Rather than reading the register here, perhaps you could use a
+> variable for caching the register value. Thus avoiding to read the
+> register for every update.
+> 
+
+Some of the registers are non cacheable, for instance STATE register.
+So, I'll keep this as it is.
+
+Thanks,
+Mani
+
+> 
+> > +
+> > +       if (state)
+> > +               regval |= val;
+> > +       else
+> > +               regval &= ~val;
+> > +
+> > +       writel(regval, reg);
+> > +}
+> > +
+> > +static irqreturn_t owl_irq_handler(int irq, void *devid)
+> > +{
+> > +       struct owl_mmc_host *owl_host = devid;
+> > +       unsigned long flags;
+> > +       u32 state;
+> > +
+> > +       spin_lock_irqsave(&owl_host->lock, flags);
+> > +
+> > +       state = mmc_readl(owl_host, OWL_REG_SD_STATE);
+> > +       if (state & OWL_SD_STATE_TEI) {
+> > +               state = mmc_readl(owl_host, OWL_REG_SD_STATE);
+> > +               state |= OWL_SD_STATE_TEI;
+> > +               mmc_writel(owl_host, OWL_REG_SD_STATE, state);
+> > +               complete(&owl_host->sdc_complete);
+> > +       }
+> > +
+> > +       spin_unlock_irqrestore(&owl_host->lock, flags);
+> > +
+> > +       return IRQ_HANDLED;
+> > +}
+> > +
+> > +static void owl_mmc_finish_request(struct owl_mmc_host *owl_host)
+> > +{
+> > +       struct mmc_request *mrq = owl_host->mrq;
+> > +       struct mmc_data *data = mrq->data;
+> > +
+> > +       /* Should never be NULL */
+> > +       WARN_ON(!mrq);
+> > +
+> > +       owl_host->mrq = NULL;
+> > +
+> > +       if (data)
+> > +               dma_unmap_sg(owl_host->dma->device->dev, data->sg, data->sg_len,
+> > +                            owl_host->dma_dir);
+> > +
+> > +       /* Finally finish request */
+> > +       mmc_request_done(owl_host->mmc, mrq);
+> > +}
+> > +
+> > +static void owl_mmc_send_cmd(struct owl_mmc_host *owl_host,
+> > +                            struct mmc_command *cmd,
+> > +                            struct mmc_data *data)
+> > +{
+> > +       u32 mode, state, resp[2];
+> > +       u32 cmd_rsp_mask = 0;
+> > +
+> > +       init_completion(&owl_host->sdc_complete);
+> > +
+> > +       switch (mmc_resp_type(cmd)) {
+> > +       case MMC_RSP_NONE:
+> > +               mode = OWL_SD_CTL_TM(0);
+> > +               break;
+> > +
+> > +       case MMC_RSP_R1:
+> > +               if (data) {
+> > +                       if (data->flags & MMC_DATA_READ)
+> > +                               mode = OWL_SD_CTL_TM(4);
+> > +                       else
+> > +                               mode = OWL_SD_CTL_TM(5);
+> > +               } else {
+> > +                       mode = OWL_SD_CTL_TM(1);
+> > +               }
+> > +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
+> > +
+> > +               break;
+> > +
+> > +       case MMC_RSP_R1B:
+> > +               mode = OWL_SD_CTL_TM(3);
+> > +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
+> > +               break;
+> > +
+> > +       case MMC_RSP_R2:
+> > +               mode = OWL_SD_CTL_TM(2);
+> > +               cmd_rsp_mask = OWL_SD_STATE_CLNR | OWL_SD_STATE_CRC7ER;
+> > +               break;
+> > +
+> > +       case MMC_RSP_R3:
+> > +               mode = OWL_SD_CTL_TM(1);
+> > +               cmd_rsp_mask = OWL_SD_STATE_CLNR;
+> > +               break;
+> > +
+> > +       default:
+> > +               dev_warn(owl_host->dev, "Unknown MMC command\n");
+> > +               cmd->error = -EINVAL;
+> > +               return;
+> > +       }
+> > +
+> > +       /* Keep current WDELAY and RDELAY */
+> > +       mode |= (mmc_readl(owl_host, OWL_REG_SD_CTL) & (0xff << 16));
+> > +
+> > +       /* Start to send corresponding command type */
+> > +       mmc_writel(owl_host, OWL_REG_SD_ARG, cmd->arg);
+> > +       mmc_writel(owl_host, OWL_REG_SD_CMD, cmd->opcode);
+> > +
+> > +       /* Set LBE to send clk at the end of last read block */
+> > +       if (data) {
+> > +               mode |= (OWL_SD_CTL_TS | OWL_SD_CTL_LBE | 0x64000000);
+> > +       } else {
+> > +               mode &= ~(OWL_SD_CTL_TOUTEN | OWL_SD_CTL_LBE);
+> > +               mode |= OWL_SD_CTL_TS;
+> > +       }
+> > +
+> > +       owl_host->cmd = cmd;
+> > +
+> > +       /* Start transfer */
+> > +       mmc_writel(owl_host, OWL_REG_SD_CTL, mode);
+> > +
+> > +       if (data)
+> > +               return;
+> > +
+> > +       if (!wait_for_completion_timeout(&owl_host->sdc_complete, 30 * HZ)) {
+> > +               dev_err(owl_host->dev, "CMD interrupt timeout\n");
+> > +               cmd->error = -ETIMEDOUT;
+> > +               return;
+> > +       }
+> > +
+> > +       state = mmc_readl(owl_host, OWL_REG_SD_STATE);
+> > +       if (mmc_resp_type(cmd) & MMC_RSP_PRESENT) {
+> > +               if (cmd_rsp_mask & state) {
+> > +                       if (state & OWL_SD_STATE_CLNR) {
+> > +                               dev_err(owl_host->dev, "Error CMD_NO_RSP\n");
+> > +                               cmd->error = -EILSEQ;
+> > +                               return;
+> > +                       }
+> > +
+> > +                       if (state & OWL_SD_STATE_CRC7ER) {
+> > +                               dev_err(owl_host->dev, "Error CMD_RSP_CRC\n");
+> > +                               cmd->error = -EILSEQ;
+> > +                               return;
+> > +                       }
+> > +               }
+> > +
+> > +               if (mmc_resp_type(cmd) & MMC_RSP_136) {
+> > +                       cmd->resp[3] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF0);
+> > +                       cmd->resp[2] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF1);
+> > +                       cmd->resp[1] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF2);
+> > +                       cmd->resp[0] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF3);
+> > +               } else {
+> > +                       resp[0] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF0);
+> > +                       resp[1] = mmc_readl(owl_host, OWL_REG_SD_RSPBUF1);
+> > +                       cmd->resp[0] = resp[1] << 24 | resp[0] >> 8;
+> > +                       cmd->resp[1] = resp[1] >> 8;
+> > +               }
+> > +       }
+> > +}
+> > +
+> > +static void owl_mmc_dma_complete(void *param)
+> > +{
+> > +       struct owl_mmc_host *owl_host = param;
+> > +       struct mmc_data *data = owl_host->data;
+> > +
+> > +       if (data)
+> > +               complete(&owl_host->dma_complete);
+> > +}
+> > +
+> > +static int owl_mmc_prepare_data(struct owl_mmc_host *owl_host,
+> > +                               struct mmc_data *data)
+> > +{
+> > +       u32 total;
+> > +
+> > +       mmc_update_reg(owl_host->base + OWL_REG_SD_EN, OWL_SD_EN_BSEL, true);
+> > +       mmc_writel(owl_host, OWL_REG_SD_BLK_NUM, data->blocks);
+> > +       mmc_writel(owl_host, OWL_REG_SD_BLK_SIZE, data->blksz);
+> > +       total = data->blksz * data->blocks;
+> > +
+> > +       if (total < 512)
+> > +               mmc_writel(owl_host, OWL_REG_SD_BUF_SIZE, total);
+> > +       else
+> > +               mmc_writel(owl_host, OWL_REG_SD_BUF_SIZE, 512);
+> > +
+> > +       if (data->flags & MMC_DATA_WRITE) {
+> > +               owl_host->dma_dir = DMA_TO_DEVICE;
+> > +               owl_host->dma_cfg.direction = DMA_MEM_TO_DEV;
+> > +       } else {
+> > +               owl_host->dma_dir = DMA_FROM_DEVICE;
+> > +               owl_host->dma_cfg.direction = DMA_DEV_TO_MEM;
+> > +       }
+> > +
+> > +       dma_map_sg(owl_host->dma->device->dev, data->sg,
+> > +                  data->sg_len, owl_host->dma_dir);
+> > +
+> > +       dmaengine_slave_config(owl_host->dma, &owl_host->dma_cfg);
+> > +       owl_host->desc = dmaengine_prep_slave_sg(owl_host->dma, data->sg,
+> > +                                                data->sg_len,
+> > +                                                owl_host->dma_cfg.direction,
+> > +                                                DMA_PREP_INTERRUPT |
+> > +                                                DMA_CTRL_ACK);
+> > +       if (!owl_host->desc) {
+> > +               dev_err(owl_host->dev, "Can't prepare slave sg\n");
+> > +               return -EBUSY;
+> > +       }
+> > +
+> > +       owl_host->data = data;
+> > +
+> > +       owl_host->desc->callback = owl_mmc_dma_complete;
+> > +       owl_host->desc->callback_param = (void *)owl_host;
+> > +       data->error = 0;
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static void owl_mmc_request(struct mmc_host *mmc, struct mmc_request *mrq)
+> > +{
+> > +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
+> > +       struct mmc_data *data = mrq->data;
+> > +       int ret;
+> > +
+> > +       owl_host->mrq = mrq;
+> > +       if (mrq->data) {
+> > +               ret = owl_mmc_prepare_data(owl_host, data);
+> > +               if (ret < 0) {
+> > +                       data->error = ret;
+> > +                       goto err_out;
+> > +               }
+> > +
+> > +               init_completion(&owl_host->dma_complete);
+> > +               dmaengine_submit(owl_host->desc);
+> > +               dma_async_issue_pending(owl_host->dma);
+> > +       }
+> > +
+> > +       owl_mmc_send_cmd(owl_host, mrq->cmd, data);
+> > +
+> > +       if (data) {
+> > +               if (!wait_for_completion_timeout(&owl_host->sdc_complete,
+> > +                                                10 * HZ)) {
+> > +                       dev_err(owl_host->dev, "CMD interrupt timeout\n");
+> > +                       mrq->cmd->error = -ETIMEDOUT;
+> > +                       dmaengine_terminate_all(owl_host->dma);
+> > +                       goto err_out;
+> > +               }
+> > +
+> > +               if (!wait_for_completion_timeout(&owl_host->dma_complete,
+> > +                                                5 * HZ)) {
+> > +                       dev_err(owl_host->dev, "DMA interrupt timeout\n");
+> > +                       mrq->cmd->error = -ETIMEDOUT;
+> > +                       dmaengine_terminate_all(owl_host->dma);
+> > +                       goto err_out;
+> > +               }
+> > +
+> > +               if (data->stop)
+> > +                       owl_mmc_send_cmd(owl_host, data->stop, NULL);
+> > +
+> > +               data->bytes_xfered = data->blocks * data->blksz;
+> > +       }
+> > +
+> > +err_out:
+> > +       owl_mmc_finish_request(owl_host);
+> > +}
+> > +
+> > +static int owl_mmc_set_clk_rate(struct owl_mmc_host *owl_host,
+> > +                               unsigned int rate)
+> > +{
+> > +       unsigned long clk_rate;
+> > +       int ret;
+> > +       u32 reg;
+> > +
+> > +       reg = mmc_readl(owl_host, OWL_REG_SD_CTL);
+> > +       reg &= ~OWL_SD_CTL_DELAY_MSK;
+> > +
+> > +       /* Set RDELAY and WDELAY based on the clock */
+> > +       if (rate <= 1000000) {
+> > +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
+> > +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_LOW_CLK) |
+> > +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_LOW_CLK));
+> > +       } else if ((rate > 1000000) && (rate <= 26000000)) {
+> > +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
+> > +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_MID_CLK) |
+> > +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_MID_CLK));
+> > +       } else if ((rate > 26000000) && (rate <= 52000000) && !owl_host->ddr_50) {
+> > +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
+> > +                      OWL_SD_CTL_RDELAY(OWL_SD_DELAY_HIGH_CLK) |
+> > +                      OWL_SD_CTL_WDELAY(OWL_SD_DELAY_HIGH_CLK));
+> > +       /* DDR50 mode has special delay chain */
+> > +       } else if ((rate > 26000000) && (rate <= 52000000) && owl_host->ddr_50) {
+> > +               mmc_writel(owl_host, OWL_REG_SD_CTL, reg |
+> > +                      OWL_SD_CTL_RDELAY(OWL_SD_RDELAY_DDR50) |
+> > +                      OWL_SD_CTL_WDELAY(OWL_SD_WDELAY_DDR50));
+> > +       } else {
+> > +               dev_err(owl_host->dev, "SD clock rate not supported\n");
+> > +               return -EINVAL;
+> > +       }
+> > +
+> > +       clk_rate = clk_round_rate(owl_host->clk, rate << 1);
+> > +       ret = clk_set_rate(owl_host->clk, clk_rate);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static void owl_mmc_set_clk(struct owl_mmc_host *owl_host, struct mmc_ios *ios)
+> > +{
+> > +       if (!ios->clock)
+> > +               return;
+> > +
+> > +       owl_host->clock = ios->clock;
+> > +       owl_mmc_set_clk_rate(owl_host, ios->clock);
+> > +}
+> > +
+> > +static void owl_mmc_set_bus_width(struct owl_mmc_host *owl_host,
+> > +                                 struct mmc_ios *ios)
+> > +{
+> > +       u32 reg;
+> > +
+> > +       reg = mmc_readl(owl_host, OWL_REG_SD_EN);
+> > +       reg &= ~0x03;
+> > +       switch (ios->bus_width) {
+> > +       case MMC_BUS_WIDTH_1:
+> > +               break;
+> > +       case MMC_BUS_WIDTH_4:
+> > +               reg |= OWL_SD_EN_DATAWID(1);
+> > +               break;
+> > +       case MMC_BUS_WIDTH_8:
+> > +               reg |= OWL_SD_EN_DATAWID(2);
+> > +               break;
+> > +       }
+> > +
+> > +       mmc_writel(owl_host, OWL_REG_SD_EN, reg);
+> > +}
+> > +
+> > +static void owl_mmc_ctr_reset(struct owl_mmc_host *owl_host)
+> > +{
+> > +       reset_control_assert(owl_host->reset);
+> > +       udelay(20);
+> > +       reset_control_deassert(owl_host->reset);
+> > +}
+> > +
+> > +static void owl_mmc_power_on(struct owl_mmc_host *owl_host)
+> > +{
+> > +       u32 mode;
+> > +
+> > +       init_completion(&owl_host->sdc_complete);
+> > +
+> > +       /* Enable transfer end IRQ */
+> > +       mmc_update_reg(owl_host->base + OWL_REG_SD_STATE,
+> > +                      OWL_SD_STATE_TEIE, true);
+> > +
+> > +       /* Send init clk */
+> > +       mode = (mmc_readl(owl_host, OWL_REG_SD_CTL) & (0xff << 16));
+> > +       mode |= OWL_SD_CTL_TS | OWL_SD_CTL_TCN(5) | OWL_SD_CTL_TM(8);
+> > +       mmc_writel(owl_host, OWL_REG_SD_CTL, mode);
+> > +
+> > +       if (!wait_for_completion_timeout(&owl_host->sdc_complete, HZ)) {
+> > +               dev_err(owl_host->dev, "CMD interrupt timeout\n");
+> > +               return;
+> > +       }
+> > +}
+> > +
+> > +static void owl_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+> > +{
+> > +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
+> > +
+> > +       switch (ios->power_mode) {
+> > +       case MMC_POWER_UP:
+> > +               dev_dbg(owl_host->dev, "Powering card up\n");
+> > +
+> > +               /* Reset the SDC controller to clear all previous states */
+> > +               owl_mmc_ctr_reset(owl_host);
+> > +               clk_prepare_enable(owl_host->clk);
+> > +               mmc_writel(owl_host, OWL_REG_SD_EN, OWL_SD_ENABLE |
+> > +                          OWL_SD_EN_RESE);
+> > +
+> > +               break;
+> > +
+> > +       case MMC_POWER_ON:
+> > +               dev_dbg(owl_host->dev, "Powering card on\n");
+> > +               owl_mmc_power_on(owl_host);
+> > +
+> > +               break;
+> > +
+> > +       case MMC_POWER_OFF:
+> > +               dev_dbg(owl_host->dev, "Powering card off\n");
+> > +               clk_disable_unprepare(owl_host->clk);
+> > +
+> > +               return;
+> > +
+> > +       default:
+> > +               dev_dbg(owl_host->dev, "Ignoring unknown card power state\n");
+> > +               break;
+> > +       }
+> > +
+> > +       if (ios->clock != owl_host->clock)
+> > +               owl_mmc_set_clk(owl_host, ios);
+> > +
+> > +       owl_mmc_set_bus_width(owl_host, ios);
+> > +
+> > +       /* Enable DDR mode if requested */
+> > +       if (ios->timing == MMC_TIMING_UHS_DDR50) {
+> > +               owl_host->ddr_50 = 1;
+> > +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
+> > +                              OWL_SD_EN_DDREN, true);
+> > +       } else {
+> > +               owl_host->ddr_50 = 0;
+> > +       }
+> > +}
+> > +
+> > +static int owl_mmc_start_signal_voltage_switch(struct mmc_host *mmc,
+> > +                                              struct mmc_ios *ios)
+> > +{
+> > +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
+> > +
+> > +       /* It is enough to change the pad ctrl bit for voltage switch */
+> > +       switch (ios->signal_voltage) {
+> > +       case MMC_SIGNAL_VOLTAGE_330:
+> > +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
+> > +                              OWL_SD_EN_S18EN, false);
+> > +               break;
+> > +       case MMC_SIGNAL_VOLTAGE_180:
+> > +               mmc_update_reg(owl_host->base + OWL_REG_SD_EN,
+> > +                              OWL_SD_EN_S18EN, true);
+> > +               break;
+> > +       default:
+> > +               return -ENOTSUPP;
+> > +       }
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct mmc_host_ops owl_mmc_ops = {
+> > +       .request        = owl_mmc_request,
+> > +       .set_ios        = owl_mmc_set_ios,
+> > +       .get_ro         = mmc_gpio_get_ro,
+> > +       .get_cd         = mmc_gpio_get_cd,
+> > +       .start_signal_voltage_switch = owl_mmc_start_signal_voltage_switch,
+> > +};
+> > +
+> > +static int owl_mmc_probe(struct platform_device *pdev)
+> > +{
+> > +       struct owl_mmc_host *owl_host;
+> > +       struct mmc_host *mmc;
+> > +       struct resource *res;
+> > +       int ret;
+> > +
+> > +       mmc = mmc_alloc_host(sizeof(struct owl_mmc_host), &pdev->dev);
+> > +       if (!mmc) {
+> > +               dev_err(&pdev->dev, "mmc alloc host failed\n");
+> > +               return -ENOMEM;
+> > +       }
+> > +       platform_set_drvdata(pdev, mmc);
+> > +
+> > +       owl_host = mmc_priv(mmc);
+> > +       owl_host->dev = &pdev->dev;
+> > +       owl_host->mmc = mmc;
+> > +       spin_lock_init(&owl_host->lock);
+> > +
+> > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > +       owl_host->base = devm_ioremap_resource(&pdev->dev, res);
+> > +       if (IS_ERR(owl_host->base)) {
+> > +               dev_err(&pdev->dev, "Failed to remap registers\n");
+> > +               ret = PTR_ERR(owl_host->base);
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       owl_host->clk = devm_clk_get(&pdev->dev, NULL);
+> > +       if (IS_ERR(owl_host->clk)) {
+> > +               dev_err(&pdev->dev, "No clock defined\n");
+> > +               ret = PTR_ERR(owl_host->clk);
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       owl_host->reset = devm_reset_control_get_exclusive(&pdev->dev, NULL);
+> > +       if (IS_ERR(owl_host->reset)) {
+> > +               dev_err(&pdev->dev, "Could not get reset control\n");
+> > +               ret = PTR_ERR(owl_host->reset);
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       mmc->ops                = &owl_mmc_ops;
+> > +       mmc->max_blk_count      = 512;
+> > +       mmc->max_blk_size       = 512;
+> > +       mmc->max_segs           = 256;
+> > +       mmc->max_seg_size       = 262144;
+> > +       mmc->max_req_size       = 262144;
+> > +       /* 100kHz ~ 52MHz */
+> > +       mmc->f_min              = 100000;
+> > +       mmc->f_max              = 52000000;
+> > +       mmc->caps              |= MMC_CAP_MMC_HIGHSPEED | MMC_CAP_SD_HIGHSPEED |
+> > +                                 MMC_CAP_4_BIT_DATA;
+> > +       mmc->caps2              = (MMC_CAP2_BOOTPART_NOACC | MMC_CAP2_NO_SDIO);
+> > +       mmc->ocr_avail          = MMC_VDD_32_33 | MMC_VDD_33_34 |
+> > +                                 MMC_VDD_165_195;
+> > +
+> > +       ret = mmc_of_parse(mmc);
+> > +       if (ret)
+> > +               goto err_free_host;
+> > +
+> > +       pdev->dev.coherent_dma_mask = DMA_BIT_MASK(32);
+> > +       pdev->dev.dma_mask = &pdev->dev.coherent_dma_mask;
+> > +       owl_host->dma = dma_request_slave_channel(&pdev->dev, "mmc");
+> > +       if (!owl_host->dma) {
+> > +               dev_err(owl_host->dev, "Failed to get external DMA channel.\n");
+> > +               ret = -ENXIO;
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       dev_info(&pdev->dev, "Using %s for DMA transfers\n",
+> > +                dma_chan_name(owl_host->dma));
+> > +
+> > +       owl_host->dma_cfg.src_addr = res->start + OWL_REG_SD_DAT;
+> > +       owl_host->dma_cfg.dst_addr = res->start + OWL_REG_SD_DAT;
+> > +       owl_host->dma_cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> > +       owl_host->dma_cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> > +       owl_host->dma_cfg.device_fc = false;
+> > +
+> > +       owl_host->irq = platform_get_irq(pdev, 0);
+> > +       if (owl_host->irq < 0) {
+> > +               ret = -EINVAL;
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       ret = devm_request_irq(&pdev->dev, owl_host->irq, owl_irq_handler,
+> > +                              0, dev_name(&pdev->dev), owl_host);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "Failed to request irq %d\n",
+> > +                       owl_host->irq);
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       ret = mmc_add_host(mmc);
+> > +       if (ret) {
+> > +               dev_err(&pdev->dev, "Failed to add host\n");
+> > +               goto err_free_host;
+> > +       }
+> > +
+> > +       dev_dbg(&pdev->dev, "Owl MMC Controller Initialized\n");
+> > +
+> > +       return 0;
+> > +
+> > +err_free_host:
+> > +       mmc_free_host(mmc);
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +static int owl_mmc_remove(struct platform_device *pdev)
+> > +{
+> > +       struct mmc_host *mmc = platform_get_drvdata(pdev);
+> > +       struct owl_mmc_host *owl_host = mmc_priv(mmc);
+> > +
+> > +       mmc_remove_host(mmc);
+> > +       disable_irq(owl_host->irq);
+> > +       mmc_free_host(mmc);
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +static const struct of_device_id owl_mmc_of_match[] = {
+> > +       {.compatible = "actions,owl-mmc",},
+> > +       { /* sentinel */ }
+> > +};
+> > +MODULE_DEVICE_TABLE(of, owl_mmc_of_match);
+> > +
+> > +static struct platform_driver owl_mmc_driver = {
+> > +       .driver = {
+> > +               .name   = "owl_mmc",
+> > +               .of_match_table = of_match_ptr(owl_mmc_of_match),
+> > +       },
+> > +       .probe          = owl_mmc_probe,
+> > +       .remove         = owl_mmc_remove,
+> > +};
+> > +module_platform_driver(owl_mmc_driver);
+> > +
+> > +MODULE_DESCRIPTION("Actions Semi Owl SoCs SD/MMC Driver");
+> > +MODULE_AUTHOR("Actions Semi");
+> > +MODULE_AUTHOR("Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.17.1
 > >
-> >>> consumers were "saved" as "not yet having the supplier" earlier by
-> >>> device_link_wait_for_supplier(). This function doesn't do that. This
-> >>> function is just trying to see if those missing suppliers are present
-> >>> now and if so adding a link to them from the "saved" consumers. I
-> >>> think device_link_add_missing_suppliers() is actually a pretty good
-> >>> name. Let me know what you think now.
-> >>>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>> I don't think we need "links" repeated twice in the function name.
-> >>>>
-> >>>> Yeah, I didn't like that either.
-> >>>>
-> >>>>
-> >>>>> With this suggestion, what side effect is hidden in your opinion? That
-> >>>>> the fully linked consumer is removed from the "waiting for suppliers"
-> >>>>> list?
-> >>>>
-> >>>> The side effect is that the function does not merely do a check.  It also
-> >>>> adds missing suppliers to a list.
-> >>>
-> >>> No, it doesn't do that. I can't keep a list of things that aren't
-> >>> allocated yet :). In the whole patch series, we only keep a list of things
-> >>> (consumers) that are waiting on other things (missing suppliers).
-> >>
-> >> OK, as I noted above, I stated that backwards.  It is adding links for
-> >> existing suppliers, not for the missing suppliers.
-> >>
-> >>>
-> >>>>>
-> >>>>> Maybe device_link_try_removing_from_wfs()?
-> >>>>
-> >>>> I like that, other than the fact that it still does not provide a clue
-> >>>> that the function is potentially adding suppliers to a list.
-> >>>
-> >>> It doesn't. How would you add a supplier device to a list if the
-> >>> device itself isn't there? :)
-> >>
-> >> Again, that should be existing suppliers, as you noted.  But the point stands
-> >> that the function is potentially adding links.
-> >>
-> >>
-> >>>
-> >>>>  I think
-> >>>> part of the challenge is that the function does two things: (1) a check,
-> >>>> and (2) potentially adding missing suppliers to a list.  Maybe a simple
-> >>>> one line comment at the call site, something like:
-> >>>>
-> >>>>    /* adds missing suppliers to wfs */
-> >>>>
-> >>>>
-> >>>>>
-> >>>>> I'll wait for us to agree on a better name here before I change this.
-> >>>>>
-> >>>>>>> +{
-> >>>>>>> +     struct device *dev, *tmp;
-> >>>>>>> +
-> >>>>>>> +     mutex_lock(&wfs_lock);
-> >>>>>>> +     list_for_each_entry_safe(dev, tmp, &wait_for_suppliers,
-> >>>>>>> +                              links.needs_suppliers)
-> >>>>>>> +             if (!dev->bus->add_links(dev))
-> >>>>>>> +                     list_del_init(&dev->links.needs_suppliers);
-> >>>>>>
-> >>>>>> Empties dev->links.needs_suppliers, but does not remove dev from
-> >>>>>> wait_for_suppliers list.  Where does that happen?
-> >>>>>
-> >>>>> I'll chalk this up to you having a long day or forgetting your coffee
-> >>>>> :) list_del_init() does both of those things because needs_suppliers
-> >>>>> is the node and wait_for_suppliers is the list.
-> >>>>
-> >>>> Yes, brain mis-fire on my part.  I'll have to go back and look at the
-> >>>> list related code again.
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>> +     mutex_unlock(&wfs_lock);
-> >>>>>>> +}
-> >>>>>>> +
-> >>>>>>>  static void device_link_free(struct device_link *link)
-> >>>>>>>  {
-> >>>>>>>       while (refcount_dec_not_one(&link->rpm_active))
-> >>>>>>> @@ -535,6 +582,19 @@ int device_links_check_suppliers(struct device *dev)
-> >>>>>>>       struct device_link *link;
-> >>>>>>>       int ret = 0;
-> >>>>>>>
-> >>>>>>> +     /*
-> >>>>>>> +      * If a device is waiting for one or more suppliers (in
-> >>>>>>> +      * wait_for_suppliers list), it is not ready to probe yet. So just
-> >>>>>>> +      * return -EPROBE_DEFER without having to check the links with existing
-> >>>>>>> +      * suppliers.
-> >>>>>>> +      */
-> >>>>>>
-> >>>>>> Change comment to:
-> >>>>>>
-> >>>>>>         /*
-> >>>>>>          * Device waiting for supplier to become available is not allowed
-> >>>>>>          * to probe
-> >>>>>>          */
-> >>>>>
-> >>>>> Po-tay-to. Po-tah-to? I think my comment is just as good.
-> >>>>
-> >>>> If just as good and shorter, then better.
-> >>>>
-> >>>> Also the original says "it is not ready to probe".  That is not correct.  It
-> >>>> is ready to probe, it is just that the probe attempt will return -EPROBE_DEFER.
-> >>>> Nit picky on my part, but tiny things like that mean I have to think harder.
-> >>>> I have to think "why is it not ready to probe?".  Maybe my version should have
-> >>>> instead been something like:
-> >>>>
-> >>>>         * Device waiting for supplier to become available will return
-> >>>>         * -EPROBE_DEFER if probed.  Avoid the unneeded processing.
-> >>>>
-> >>>>>
-> >>>>>>> +     mutex_lock(&wfs_lock);
-> >>>>>>> +     if (!list_empty(&dev->links.needs_suppliers)) {
-> >>>>>>> +             mutex_unlock(&wfs_lock);
-> >>>>>>> +             return -EPROBE_DEFER;
-> >>>>>>> +     }
-> >>>>>>> +     mutex_unlock(&wfs_lock);
-> >>>>>>> +
-> >>>>>>>       device_links_write_lock();
-> >>>>>>
-> >>>>>> Update Documentation/driver-api/device_link.rst to reflect the
-> >>>>>> check of &dev->links.needs_suppliers in device_links_check_suppliers().
-> >>>>>
-> >>>>> Thanks! Will do.
-> >>>>>
-> >>>>>>
-> >>>>>>>
-> >>>>>>>       list_for_each_entry(link, &dev->links.suppliers, c_node) {
-> >>>>>>> @@ -812,6 +872,10 @@ static void device_links_purge(struct device *dev)
-> >>>>>>>  {
-> >>>>>>>       struct device_link *link, *ln;
-> >>>>>>>
-> >>>>>>> +     mutex_lock(&wfs_lock);
-> >>>>>>> +     list_del(&dev->links.needs_suppliers);
-> >>>>>>> +     mutex_unlock(&wfs_lock);
-> >>>>>>> +
-> >>>>>>>       /*
-> >>>>>>>        * Delete all of the remaining links from this device to any other
-> >>>>>>>        * devices (either consumers or suppliers).
-> >>>>>>> @@ -1673,6 +1737,7 @@ void device_initialize(struct device *dev)
-> >>>>>>>  #endif
-> >>>>>>>       INIT_LIST_HEAD(&dev->links.consumers);
-> >>>>>>>       INIT_LIST_HEAD(&dev->links.suppliers);
-> >>>>>>> +     INIT_LIST_HEAD(&dev->links.needs_suppliers);
-> >>>>>>>       dev->links.status = DL_DEV_NO_DRIVER;
-> >>>>>>>  }
-> >>>>>>>  EXPORT_SYMBOL_GPL(device_initialize);
-> >>>>>>> @@ -2108,6 +2173,24 @@ int device_add(struct device *dev)
-> >>>>>>>                                            BUS_NOTIFY_ADD_DEVICE, dev);
-> >>>>>>>
-> >>>>>>>       kobject_uevent(&dev->kobj, KOBJ_ADD);
-> >>>>>>
-> >>>>>>> +
-> >>>>>>> +     /*
-> >>>>>>> +      * Check if any of the other devices (consumers) have been waiting for
-> >>>>>>> +      * this device (supplier) to be added so that they can create a device
-> >>>>>>> +      * link to it.
-> >>>>>>> +      *
-> >>>>>>> +      * This needs to happen after device_pm_add() because device_link_add()
-> >>>>>>> +      * requires the supplier be registered before it's called.
-> >>>>>>> +      *
-> >>>>>>> +      * But this also needs to happe before bus_probe_device() to make sure
-> >>>>>>> +      * waiting consumers can link to it before the driver is bound to the
-> >>>>>>> +      * device and the driver sync_state callback is called for this device.
-> >>>>>>> +      */
-> >>>>>>
-> >>>>>>         /*
-> >>>>>>          * Add links to dev from any dependent consumer that has dev on it's
-> >>>>>>          * list of needed suppliers
-> >>>>>
-> >>>>> There is no list of needed suppliers.
-> >>>>
-> >>>> "the other devices (consumers) have been waiting for this device (supplier)".
-> >>>> Isn't that a list of needed suppliers?
-> >>>
-> >>> No, that's a list of consumers that needs_suppliers.
-> >>>
-> >>>>>
-> >>>>>> (links.needs_suppliers).  Device_pm_add()
-> >>>>>>          * must have previously registered dev to allow the links to be added.
-> >>>>>>          *
-> >>>>>>          * The consumer links must be created before dev is probed because the
-> >>>>>>          * sync_state callback for dev will use the consumer links.
-> >>>>>>          */
-> >>>>>
-> >>>>> I think what I wrote is just as clear.
-> >>>>
-> >>>> The original comment is vague.  It does not explain why consumer links must be
-> >>>> created before the probe.  I had to go off and read other code to determine
-> >>>> why that is true.
-> >>>>
-> >>>> And again, brevity is better if otherwise just as clear.
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>>
-> >>>>>>> +     device_link_check_waiting_consumers();
-> >>>>>>> +
-> >>>>>>> +     if (dev->bus && dev->bus->add_links && dev->bus->add_links(dev))
-> >>>>>>> +             device_link_wait_for_supplier(dev);
-> >>>>>>> +
-> >>>>>>>       bus_probe_device(dev);
-> >>>>>>>       if (parent)
-> >>>>>>>               klist_add_tail(&dev->p->knode_parent,
-> >>>>>>> diff --git a/include/linux/device.h b/include/linux/device.h
-> >>>>>>> index c330b75c6c57..5d70babb7462 100644
-> >>>>>>> --- a/include/linux/device.h
-> >>>>>>> +++ b/include/linux/device.h
-> >>>>>>> @@ -78,6 +78,17 @@ extern void bus_remove_file(struct bus_type *, struct bus_attribute *);
-> >>>>>>>   *           -EPROBE_DEFER it will queue the device for deferred probing.
-> >>>>>>>   * @uevent:  Called when a device is added, removed, or a few other things
-> >>>>>>>   *           that generate uevents to add the environment variables.
-> >>>>>>
-> >>>>>>> + * @add_links:       Called, perhaps multiple times per device, after a device is
-> >>>>>>> + *           added to this bus.  The function is expected to create device
-> >>>>>>> + *           links to all the suppliers of the input device that are
-> >>>>>>> + *           available at the time this function is called.  As in, the
-> >>>>>>> + *           function should NOT stop at the first failed device link if
-> >>>>>>> + *           other unlinked supplier devices are present in the system.
-> >>>>>>
-> >>>>>> * @add_links:   Called after a device is added to this bus.
-> >>>>>
-> >>>>> Why are you removing the "perhaps multiple times" part? that's true
-> >>>>> and that's how some of the other ops are documented.
-> >>>>
-> >>>> I didn't remove it.  I rephrased it with a little bit more explanation as
-> >>>> "If some suppliers are not yet available, this function will be
-> >>>> called again when the suppliers become available." (below).
-> >>>>
-> >>>>
-> >>>>>
-> >>>>>>  The function is
-> >>>>>> *               expected to create device links to all the suppliers of the
-> >>>>>> *               device that are available at the time this function is called.
-> >>>>>> *               The function must NOT stop at the first failed device link if
-> >>>>>> *               other unlinked supplier devices are present in the system.
-> >>>>>> *               If some suppliers are not yet available, this function will be
-> >>>>>> *               called again when the suppliers become available.
-> >>>>>>
-> >>>>>> but add_links() not needed, so moving this comment to of_link_to_suppliers()
-> >>>>>
-> >>>>> Sorry, I'm not sure I understand. Can you please explain what you are
-> >>>>> trying to say? of_link_to_suppliers() is just one implementation of
-> >>>>> add_links(). The comment above is try for any bus trying to implement
-> >>>>> add_links().
-> >>>>
-> >>>> This is conflating bus with the source of the firmware description of the
-> >>>> hardware topology.  For drivers that use various APIs to access firmware
-> >>>> description of topology that may be either devicetree or ACPI the access
-> >>>> is done via fwnode_operations, based on struct device.fwnode (if I recall
-> >>>> properly).
-> >>>>
-> >>>> I failed to completely address why add_links() is not needed.  The answer
-> >>>> is that there should be a single function called for all buses.  Then
-> >>>> the proper firmware data source would be accessed via a struct fwnode_operations.
-> >>>>
-> >>>> I think I left this out because I had not yet asked why this feature is
-> >>>> tied only to the platform bus.  Which I asked earlier in this reply.
-> >>>
-> >>> Thanks for the pointer about fwnode and fwnode_operations. I wasn't
-> >>> aware of those. I see where you are going with this. I see a couple of
-> >>> problems with this approach though:
-> >>>
-> >>> 1. How you interpret the properties of a fwnode is specific to the fw
-> >>> type. The clocks DT property isn't going to have the same definition
-> >>> in ACPI or some other firmware. Heck, I don't know if ACPI even has a
-> >>> clocks like property. So have one function to parse all the FW types
-> >>> doesn't make a lot of sense.
-> >>
-> >> The functions in fwnode_operations are specific to the proper firmware.
-> >> So there is a set of functions in a struct fwnode_operations for
-> >> devicetree that only know about devicetree.  And there is a different
-> >> variable of type fwnode_operations that is initialized with ACPI
-> >> specific functions.
-> >
-> > Yes, I understand how ops work :) So I have one ops (fwnode ops) to
-> > call that will read a property from DT or ACPI depending on where that
-> > specific device's firmware is from. But that's not my point here.
-> >
-> > My point is that clock bindings in DT are under a "clocks" property
-> > that lists references (phandles) to the supplier. But in ACPI, the
-> > property might be called "clk" and could list references to actual
-> > clock IDs. So, you can't have one piece of code that works for all
-> > firmware even if I have one ops that can read properties from any
-> > firmware.
-> >
-> > I'll still have to know what type the underlying firmware is before I
-> > try to interpret the properties. So having one function that parses DT
-> > and ACPI and whatever else would be a terrible and unnecessary design.
->
-> You have already implemented the devicetree function, which is
-> of_link_to_suppliers().  The devicetree fwnode_operations would have
-> a pointer to of_link_to_suppliers().
-
-Ah, I didn't realize you were asking me to add to the fwnode ops. I
-thought you wanted me to handle this at the driver core level by
-moving of_link_to_suppliers to driver core and replacing of_* APIs
-with fwnode ops. And that seemed like a terrible idea. Glad you
-weren't suggesting that.
-
-I'm definitely open to adding a add_links to fwnode ops, but I'm not
-sure if fwnode ops changes are frowned upon or not. I'll still need
-the device specific edit_links() but that's a separate issue.
-
-> If ACPI support is added, there would be an analogous ACPI aware function
-> that would essentially do the same thing that of_link_to_suppliers()
-> does.  This would be in the ACPI version of fwnode_operations.
-
-Agreed. As long as you don't ask me to implement the ACPI ops :)
-
-> There would not be a single function that is both devicetree aware and
-> ACPI aware.
-
-Great.
-
-> >>> 2. If this common code is implemented as part of driver/base/, then at
-> >>> a minimum, I'll have to check if a fwnode is a DT node before I start
-> >>> interpreting the properties of a device's fwnode. But that means I'll
-> >>> have to include linux/of.h to use is_of_node(). I don't like having
-> >>> driver/base code depend on OF or platform or ACPI headers.
-> >>
-> >> You just use the function in the device's fwnode_operations (I think,
-> >> I would have to go look at the precise way the code works because it
-> >> has been quite a while since I've looked at it).
-> >
-> > Because you missed my point in (1) you are missing my point in (2).
-> > I'll wait for your updated reply.
->
-> We are still talking at cross purposes.  If my reply to (1) does not
-> change that, I'll have to go dig into how the fwnode framework figures
-> out which set of fwnode_operations to use for each device.
-
-I think we are lining up better now. But still have some more to go :)
-
-Having said that, I'd still like to meet your tomorrow if that's
-possible (see Greg's email).
-
--Saravana
