@@ -2,109 +2,307 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FFA4977CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A958977D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:22:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727658AbfHULVM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 07:21:12 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55288 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfHULVM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 07:21:12 -0400
-Received: from p5de0b6c5.dip0.t-ipconnect.de ([93.224.182.197] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1i0Off-0002N8-Dv; Wed, 21 Aug 2019 13:20:55 +0200
-Date:   Wed, 21 Aug 2019 13:20:53 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, tony.luck@intel.com,
-        x86@kernel.org, andriy.shevchenko@intel.com, alan@linux.intel.com,
-        rppt@linux.ibm.com, linux-kernel@vger.kernel.org,
-        qi-ming.wu@intel.com, cheol.yong.kim@intel.com,
-        rahul.tanwar@intel.com
-Subject: Re: [PATCH] x86/apic: Update virtual irq base for DT/OF based system
- as well
-In-Reply-To: <7b4db9f3-21da-5b5e-e219-0170e812a015@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1908211235180.2223@nanos.tec.linutronix.de>
-References: <20190821081330.1187-1-rahul.tanwar@linux.intel.com> <alpine.DEB.2.21.1908211028030.2223@nanos.tec.linutronix.de> <7b4db9f3-21da-5b5e-e219-0170e812a015@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        id S1727862AbfHULWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 07:22:15 -0400
+Received: from mga04.intel.com ([192.55.52.120]:8476 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726749AbfHULWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 07:22:14 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 04:22:14 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
+   d="scan'208";a="181000445"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
+  by orsmga003.jf.intel.com with ESMTP; 21 Aug 2019 04:22:11 -0700
+Subject: Re: Subject: [PATCH V7 2/3] mmc: sdhci-pci-o2micro: Move functions in
+ preparation to fix DLL lock phase shift issue
+To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
+        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>,
+        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
+        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
+        "max.huang@bayhbutech.com" <max.huang@bayhbutech.com>
+References: <1566252561-5144-1-git-send-email-shirley.her@bayhubtech.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <571fe95f-25b5-1369-5537-ff483d5c7fdc@intel.com>
+Date:   Wed, 21 Aug 2019 14:20:59 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+In-Reply-To: <1566252561-5144-1-git-send-email-shirley.her@bayhubtech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 21 Aug 2019, Tanwar, Rahul wrote:
-> On 21/8/2019 4:34 PM, Thomas Gleixner wrote:
+On 20/08/19 1:09 AM, Shirley Her (SC) wrote:
+> Move functions in preparation to fix DLL lock phase shift issue
 > 
-> > Secondly, this link is irrelevant. ioapic_dynirq_base has nothing to do
-> > with virtual IRQ number 0. It's a boundary for the dynamic allocation of
-> > virtual interrupt numbers so that the core allocator does not pick
-> > interrupts out of the IOAPIC's fixed interrupt number space.
-> > 
-> > This can be legitimately 0 when IOAPIC is not enabled at all.
-> > 
-> > Can you please explain what kind of problem you were seing and what this
-> > really fixes?
->
-> The problem is that device tree infrastructure considers 0 IRQ value as
-> invalid/error value whereas for ACPI, 0 is a valid value.
+> Signed-off-by:Shirley Her <shirley.her@bayhubtech.com>
 
-Sure.
+Please do not prefix the subject by "Subject: "
+Please put a space after Signed-off-by:
 
-> Without this change, the problem that we see is that the first driver
-> using of_irq_get_xx() or its variants fails because of 0 IRQ number. With
-> this change, allocated IRQ number is never 0 so it works ok.
-
-Well, this still is not a proper explanation. Just because it works does
-not make it correct in the first place.
-
-ioapic_dynirq_base is pretty much irrelevant for a DT machine. The reason
-why it exists is that for regular BIOS the interrupt numbers are hard
-mapped to the IOAPIC pins. ioapic_dynirq_base is used to protect this hard
-mapped interrupt number space. The core allocator does not allocate from
-that space unless it is explicitely told to do so, which is the case for
-IOAPIC_DOMAIN_STRICT where the allocation tells the core to allocate the
-associated GSI number.
-
-On DT the interrupt number is irrelevant as DT describes the irq controller
-and the pin to which a device is connected and does not make assumptions
-about the interrupt number. So the core can freely allocate any available
-interrupt number except 0. That's already prevented in the core code.
-
-But x86 implements arch_dynirq_lower_bound() which overrides the core limit
-and because ioapic_dynirq_base is zero in the DT case it allows VIRQ 0 to
-be allocated which then causes of_irq*() to fail.
-
-So your change prevents that by excluding the 'GSI' range from allocation,
-which means that the first irq number which is handed out is 24, assumed
-you have one IOAPIC with 24 pins.
-
-That's fine as the interrupt number space is big enough, but it needs
-
-    - a coherent explanation in the changelog
-
-    - proper comments to that effect in the code
-
-Also this is presumably a stable candidate and needs a Fixes: ... tag.
-
-Thanks,
-
-	tglx
-
-
-
-
-
-
-
-
-
+> ---
+> change in V7:
+>  1. change subject to match the patch
+>  2. move functions in preparation to fix DLL lock phase shift issue
+> 
+> change in V6:
+>  1. change subject and commit message to match the patch
+>  2. modify the get CD status functions
+>  3. re-arrange the order of some functions
+> 
+> change in V5:
+>  1. split 2 patches into 3 patches
+>  2. make dll_adjust_count start from 0
+>  3. fix ret overwritten issue
+>  4. use break instead of goto
+> 
+> change in V4:
+>  1. add a bug fix for V3
+> 
+> change in V3:
+>  1. add more explanation in dll_recovery and execute_tuning function
+>  2. move dll_adjust_count to O2_host struct
+>  3. fix some coding style error
+>  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
+> 
+> change in V2:
+>  1. use usleep_range instead of udelay
+>  2. move dll_adjust_count to sdhci-pci-o2micro.c
+> 
+> chagne in V1:
+>  1. add error recovery function to relock DLL with correct phase
+>  2. retuning HS200 after DLL locked
+> ---
+>  drivers/mmc/host/sdhci-pci-o2micro.c | 186 +++++++++++++++++------------------
+>  1 file changed, 93 insertions(+), 93 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
+> index b3a33d9..021e481 100644
+> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
+> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
+> @@ -58,6 +58,99 @@
+>  
+>  #define O2_SD_DETECT_SETTING 0x324
+>  
+> +static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
+> +{
+> +	ktime_t timeout;
+> +	u32 scratch32;
+> +
+> +	/* Wait max 50 ms */
+> +	timeout = ktime_add_ms(ktime_get(), 50);
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
+> +		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
+> +		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
+> +			break;
+> +
+> +		if (timedout) {
+> +			pr_err("%s: Card Detect debounce never finished.\n",
+> +			       mmc_hostname(host->mmc));
+> +			sdhci_dumpregs(host);
+> +			return;
+> +		}
+> +		udelay(10);
+> +	}
+> +}
+> +
+> +static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
+> +{
+> +	ktime_t timeout;
+> +	u16 scratch;
+> +	u32 scratch32;
+> +
+> +	/* PLL software reset */
+> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> +	scratch32 |= O2_PLL_SOFT_RESET;
+> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> +	udelay(1);
+> +	scratch32 &= ~(O2_PLL_SOFT_RESET);
+> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> +
+> +	/* PLL force active */
+> +	scratch32 |= O2_PLL_FORCE_ACTIVE;
+> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> +
+> +	/* Wait max 20 ms */
+> +	timeout = ktime_add_ms(ktime_get(), 20);
+> +	while (1) {
+> +		bool timedout = ktime_after(ktime_get(), timeout);
+> +
+> +		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
+> +		if (scratch & O2_PLL_LOCK_STATUS)
+> +			break;
+> +		if (timedout) {
+> +			pr_err("%s: Internal clock never stabilised.\n",
+> +			       mmc_hostname(host->mmc));
+> +			sdhci_dumpregs(host);
+> +			goto out;
+> +		}
+> +		udelay(10);
+> +	}
+> +
+> +	/* Wait for card detect finish */
+> +	udelay(1);
+> +	sdhci_o2_wait_card_detect_stable(host);
+> +
+> +out:
+> +	/* Cancel PLL force active */
+> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> +	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
+> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> +}
+> +
+> +static int sdhci_o2_get_cd(struct mmc_host *mmc)
+> +{
+> +	struct sdhci_host *host = mmc_priv(mmc);
+> +
+> +	sdhci_o2_enable_internal_clock(host);
+> +
+> +	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+> +}
+> +
+> +static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+> +{
+> +	u32 scratch_32;
+> +	pci_read_config_dword(chip->pdev,
+> +			      O2_SD_PLL_SETTING, &scratch_32);
+> +
+> +	scratch_32 &= 0x0000FFFF;
+> +	scratch_32 |= value;
+> +
+> +	pci_write_config_dword(chip->pdev,
+> +			       O2_SD_PLL_SETTING, scratch_32);
+> +}
+> +
+>  static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
+>  {
+>  	u16 reg;
+> @@ -136,19 +229,6 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
+>  	return 0;
+>  }
+>  
+> -static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
+> -{
+> -	u32 scratch_32;
+> -	pci_read_config_dword(chip->pdev,
+> -			      O2_SD_PLL_SETTING, &scratch_32);
+> -
+> -	scratch_32 &= 0x0000FFFF;
+> -	scratch_32 |= value;
+> -
+> -	pci_write_config_dword(chip->pdev,
+> -			       O2_SD_PLL_SETTING, scratch_32);
+> -}
+> -
+>  static void o2_pci_led_enable(struct sdhci_pci_chip *chip)
+>  {
+>  	int ret;
+> @@ -284,86 +364,6 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
+>  	host->irq = pci_irq_vector(chip->pdev, 0);
+>  }
+>  
+> -static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
+> -{
+> -	ktime_t timeout;
+> -	u32 scratch32;
+> -
+> -	/* Wait max 50 ms */
+> -	timeout = ktime_add_ms(ktime_get(), 50);
+> -	while (1) {
+> -		bool timedout = ktime_after(ktime_get(), timeout);
+> -
+> -		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
+> -		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
+> -		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
+> -			break;
+> -
+> -		if (timedout) {
+> -			pr_err("%s: Card Detect debounce never finished.\n",
+> -			       mmc_hostname(host->mmc));
+> -			sdhci_dumpregs(host);
+> -			return;
+> -		}
+> -		udelay(10);
+> -	}
+> -}
+> -
+> -static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
+> -{
+> -	ktime_t timeout;
+> -	u16 scratch;
+> -	u32 scratch32;
+> -
+> -	/* PLL software reset */
+> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> -	scratch32 |= O2_PLL_SOFT_RESET;
+> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> -	udelay(1);
+> -	scratch32 &= ~(O2_PLL_SOFT_RESET);
+> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> -
+> -	/* PLL force active */
+> -	scratch32 |= O2_PLL_FORCE_ACTIVE;
+> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> -
+> -	/* Wait max 20 ms */
+> -	timeout = ktime_add_ms(ktime_get(), 20);
+> -	while (1) {
+> -		bool timedout = ktime_after(ktime_get(), timeout);
+> -
+> -		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
+> -		if (scratch & O2_PLL_LOCK_STATUS)
+> -			break;
+> -		if (timedout) {
+> -			pr_err("%s: Internal clock never stabilised.\n",
+> -			       mmc_hostname(host->mmc));
+> -			sdhci_dumpregs(host);
+> -			goto out;
+> -		}
+> -		udelay(10);
+> -	}
+> -
+> -	/* Wait for card detect finish */
+> -	udelay(1);
+> -	sdhci_o2_wait_card_detect_stable(host);
+> -
+> -out:
+> -	/* Cancel PLL force active */
+> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
+> -	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
+> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
+> -}
+> -
+> -static int sdhci_o2_get_cd(struct mmc_host *mmc)
+> -{
+> -	struct sdhci_host *host = mmc_priv(mmc);
+> -
+> -	sdhci_o2_enable_internal_clock(host);
+> -
+> -	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
+> -}
+> -
+>  static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
+>  {
+>  	/* Enable internal clock */
+> 
 
