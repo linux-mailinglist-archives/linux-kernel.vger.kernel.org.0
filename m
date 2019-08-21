@@ -2,89 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 524BA9870E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:22:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5CD998724
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:24:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731100AbfHUWWM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 18:22:12 -0400
-Received: from vserver.gregn.net ([174.136.110.154]:43724 "EHLO
-        vserver.gregn.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731023AbfHUWWM (ORCPT
+        id S1731084AbfHUWY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 18:24:26 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34911 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729760AbfHUWYZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 18:22:12 -0400
-Received: from vbox.gregn.net (unknown [IPv6:2001:470:d:6c5:6ccc:a12a:8d2e:4f7])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by vserver.gregn.net (Postfix) with ESMTPSA id 702AE6E2;
-        Wed, 21 Aug 2019 15:22:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=gregn.net; s=default;
-        t=1566426131; bh=144Ohs+i0Q11OCQeediSILhYP4LPx0bUH56q3gXaKrY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nV+cWVQmXrejg6AE9X7t2ZjZb7Qj1BYYfkz6+ujg5sznVDYfC7KcswQg2O19hSbrM
-         0kogOgMWe17p/voMqsZUMogjFXdls+VZWlH+RYfup/dOC1WlAgJ/XxlC7gA7rb02R3
-         b4gNMLF+u8bej+jToajN7LDtLlUPSWa/d6u6+q5KuqAkecHVztniLeMhnm/lCspvlF
-         7Xutc7YMcQnRBqrfbmdVMpb9wq0tH0x9fs+x9IwIUcGYvmqn0co8mp5COh5obE/CHP
-         XnbRtJTwZRRyyedV412XyK+GFi7ceK5nT2wuaqkyYm2mGIV4JoPyXbhmSjPTdRmctl
-         CG1I9Y50TEnnA==
-Received: from greg by vbox.gregn.net with local (Exim 4.84_2)
-        (envelope-from <greg@gregn.net>)
-        id 1i0YzZ-0001Up-I9; Wed, 21 Aug 2019 15:22:09 -0700
-Date:   Wed, 21 Aug 2019 15:22:09 -0700
-From:   Gregory Nowak <greg@gregn.net>
-To:     "Speakup is a screen review system for Linux." 
-        <speakup@linux-speakup.org>
-Cc:     devel@driverdev.osuosl.org,
-        Simon Dickson <simonhdickson@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, John Covici <covici@ccs.covici.com>
-Subject: Re: [HELP REQUESTED from the community] Was: Staging status of
- speakup
-Message-ID: <20190821222209.GA4577@gregn.net>
-References: <20190316031831.GA2499@kroah.com>
- <20190706200857.22918345@narunkot>
- <20190707065710.GA5560@kroah.com>
- <20190712083819.GA8862@kroah.com>
- <20190712092319.wmke4i7zqzr26tly@function>
- <20190713004623.GA9159@gregn.net>
- <20190725035352.GA7717@gregn.net>
- <875znqhia0.fsf@cmbmachine.messageid.invalid>
- <m3sgqucs1x.wl-covici@ccs.covici.com>
- <CAOtcWM0qynSjnF6TtY_s7a51B7JweDb7jwdxStEmPvB9tJFU4Q@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOtcWM0qynSjnF6TtY_s7a51B7JweDb7jwdxStEmPvB9tJFU4Q@mail.gmail.com>
-X-PGP-Key: http://www.gregn.net/pubkey.asc
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-Virus-Scanned: clamav-milter 0.100.3 at vserver
-X-Virus-Status: Clean
+        Wed, 21 Aug 2019 18:24:25 -0400
+Received: by mail-wr1-f66.google.com with SMTP id k2so3503973wrq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:24:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=Tu9KiiAh5enRZaMkZDdS91LeJuxWDEGtNB1BXoc97Zg=;
+        b=MRkGRrhQlHfQ4yRktSubadPo620IAnB1HEqxZ63PsnGWczv4vMBpyYL+U3jWj8imdN
+         TxKxhI1RoA4lSnao8+T628uV9XJ2zMCFbkTmz+x3apzNy2ZZ5lF3UTo/pFbxEJb5QF8b
+         ahDlvtEoYZISmIyZ1JuvSWZUKwo9uRlXDEOjDKhevdNOhCrvWIEFNrDlKMGTo81pI/WD
+         jUCGVzEJtrl0lPYHRsjzzLSaOD5tbPhuY7JZwOHI08ubbCBjArReNeJnFo5JVshGIjhW
+         F+JW8LIam4PDS/wHLtRR0EB0Dq2blhJkUK4BeZzZ8mVNyNyKlQy8Tc9lh10UG6JOx36g
+         oQfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Tu9KiiAh5enRZaMkZDdS91LeJuxWDEGtNB1BXoc97Zg=;
+        b=pKDYrwoKzOtAY8XRkojTlDwSKBgeFiiesVmvPXFn9go4fgQRxCA6bnql2KbW5EfONj
+         oXTMnXqJM7FfVJQ4UAn7gd9vnCJEvKCk8KJb6Jbv55T+X5TKKjsKqZtSL+6S58Hy4Uc2
+         I1sMyYeVpSQo3HOVZ5r9ScRGidsnsHRZrf5scHl6N3jbnEs95pPodFf6mwZr3u20gXv9
+         g0vBzBfAyif1x0Hq2aaUeWRiszSjQ0Wq/meuNb7XlmRnSGqg4mDc0OVNlyAI42uRuuHi
+         oNqGSpBuajj3pKTqqVijxO24qTbiulr53wLm/iTSbO7b0vDRqTGy4EERoQmFAQ1Cb8Zl
+         QLcA==
+X-Gm-Message-State: APjAAAXJ+f6PIbNy97JfsnSBsUf6Pp8DgVgPUVNWO5s3JMomZPT+d2Dc
+        1+/Ngy1q+fRfsOtiN6cTJ+ClPQ==
+X-Google-Smtp-Source: APXvYqwuyBB5WVfIOuZTlZUthOH4h97E4lnN5LJWiB3SBt+5ZWcNYajWVaLszb1NxfgZMOPqseCrRw==
+X-Received: by 2002:adf:ea87:: with SMTP id s7mr13201417wrm.256.1566426263630;
+        Wed, 21 Aug 2019 15:24:23 -0700 (PDT)
+Received: from localhost.localdomain ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
+        by smtp.gmail.com with ESMTPSA id f197sm3548549wme.22.2019.08.21.15.24.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 15:24:22 -0700 (PDT)
+From:   Guillaume La Roque <glaroque@baylibre.com>
+To:     rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org
+Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH v4 0/6] Add support of New Amlogic temperature sensor for G12 SoCs
+Date:   Thu, 22 Aug 2019 00:24:15 +0200
+Message-Id: <20190821222421.30242-1-glaroque@baylibre.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:39:25AM -0700, Okash Khawaja wrote:
-> Hi Greg N,
-> 
-> Would like to send this as a patch as Greg K-H suggested? If not, I
-> can do that with your email in Authored-by: tag?
-> 
-> Thanks,
-> Okash
+This patchs series add support of New Amlogic temperature sensor and minimal
+thermal zone for SEI510 and ODROID-N2 boards.
 
-Hi Okash and all,
-feel free to submit the patch with my email in the Authored-by:
-tag if that's OK. Thanks, and good luck on your presentation.
+First implementation was doing on IIO[1] but after comments i move on thermal framework.
+Formulas and calibration values come from amlogic.
 
-Greg
+Changes since v3:
+  - Add cooling map and trip point for hot type
+  - move compatible on g12a instead of g12 to be aligned with others
+  - add all reviewer, sorry for this mistake
 
+Changes since v2:
+  - fix yaml documention
+  - remove unneeded status variable for temperature-sensor node
+  - rework driver after Martin review
+  - add some information in commit message
+
+Changes since v1:
+  - fix enum vs const in documentation
+  - fix error with thermal-sensor-cells value set to 1 instead of 0
+  - add some dependencies needed to add cooling-maps
+
+Dependencies :
+- patch 3,4 & 5: depends on Neil's patch and series :
+              - missing dwc2 phy-names[2]
+              - patchsets to add DVFS on G12a[3] which have deps on [4] and [5]
+
+[1] https://lore.kernel.org/linux-amlogic/20190604144714.2009-1-glaroque@baylibre.com/
+[2] https://lore.kernel.org/linux-amlogic/20190625123647.26117-1-narmstrong@baylibre.com/
+[3] https://lore.kernel.org/linux-amlogic/20190729132622.7566-1-narmstrong@baylibre.com/
+[4] https://lore.kernel.org/linux-amlogic/20190731084019.8451-5-narmstrong@baylibre.com/
+[5] https://lore.kernel.org/linux-amlogic/20190729132622.7566-3-narmstrong@baylibre.com/
+
+
+Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
+
+Guillaume La Roque (6):
+  dt-bindings: thermal: Add DT bindings documentation for Amlogic
+    Thermal
+  thermal: amlogic: Add thermal driver to support G12 SoCs
+  arm64: dts: amlogic: g12: add temperature sensor
+  arm64: dts: meson: sei510: Add minimal thermal zone
+  arm64: dts: amlogic: odroid-n2: add minimal thermal zone
+  MAINTAINERS: add entry for Amlogic Thermal driver
+
+ .../bindings/thermal/amlogic,thermal.yaml     |  54 +++
+ MAINTAINERS                                   |   9 +
+ .../boot/dts/amlogic/meson-g12-common.dtsi    |  20 ++
+ .../boot/dts/amlogic/meson-g12a-sei510.dts    |  70 ++++
+ .../boot/dts/amlogic/meson-g12b-odroid-n2.dts |  76 ++++
+ drivers/thermal/Kconfig                       |  11 +
+ drivers/thermal/Makefile                      |   1 +
+ drivers/thermal/amlogic_thermal.c             | 335 ++++++++++++++++++
+ 8 files changed, 576 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
+ create mode 100644 drivers/thermal/amlogic_thermal.c
 
 -- 
-web site: http://www.gregn.net
-gpg public key: http://www.gregn.net/pubkey.asc
-skype: gregn1
-(authorization required, add me to your contacts list first)
-If we haven't been in touch before, e-mail me before adding me to your contacts.
+2.17.1
 
---
-Free domains: http://www.eu.org/ or mail dns-manager@EU.org
