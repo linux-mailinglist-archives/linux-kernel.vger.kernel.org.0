@@ -2,131 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 350029866C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 23:16:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D43279864C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 23:11:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730838AbfHUVQT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 17:16:19 -0400
-Received: from mx6.ucr.edu ([138.23.62.71]:41824 "EHLO mx6.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727629AbfHUVQT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 17:16:19 -0400
-X-Greylist: delayed 426 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Aug 2019 17:16:18 EDT
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1566422178; x=1597958178;
-  h=from:to:cc:subject:date:message-id;
-  bh=cBdSPmFTN1DOzz1EeXVkXTHdBWMI8uVVtsHBkBxazoQ=;
-  b=XAN67aA8hwBJ71ULZIHGlLOWYdw2A5myYHCrNercMBKNX06z+fynkxfT
-   EcbmWMxSWXas0VNjg9hnLFYJRg8J1qo/Mfnz2dCo7s7FsjKDNvO2ase66
-   TO0erfGIJ+x6qUHxaomlcmbOAHCFD/GHBKMtQ69hPUIy3EXbu1BSMyxyG
-   f1sGNlwc2hhkzJB9TGjvci3PqMineO2cZQWQGgtYM/6G4KKUHWyyAoJh/
-   NrxKsAImki6+HxNm1xAXEO7Wuil0tzqfihy8ox+oXUCBVsYs57Ryy3g7k
-   2KfZZ+0VMch4gjSWXQNengFKSKELjXVloyPqAj386mWBL4i+lBDq8EqfZ
-   w==;
-IronPort-SDR: J9Uq8DN2wkXveoU4cJjJ9RGytFb9e8wKvvanGk8deGDuUyzCsk9bC325fZcNGeWOwtXkBnLFEA
- elHfwJJBKsMWG+HRm76Dp6BSHsZpTYpJ17WCAu5t1LIrcjkukushh9kg6U1z/MqsOGTCDxOIjE
- XxuxhjEyZ/na/mGHpB0A4M9mD+duOyItpJhkvBxzf2CQvyYo+NYUowAK8YmQgfy1NPH9kaYcxG
- gE1Vcn8hWZbw7IvBAfb8Xstmcz3SzWe98Z7eAG/ooKON17L73GycxUKY0O3ymrwT0/8xoSpjT8
- EyU=
-IronPort-PHdr: =?us-ascii?q?9a23=3AywLkjRU5XHwQethDbf2tw13kyoPV8LGtZVwlr6?=
- =?us-ascii?q?E/grcLSJyIuqrYYx2At8tkgFKBZ4jH8fUM07OQ7/m6HzVcut3Y7SFKWacPfi?=
- =?us-ascii?q?dNsd8RkQ0kDZzNImzAB9muURYHGt9fXkRu5XCxPBsdMs//Y1rPvi/6tmZKSV?=
- =?us-ascii?q?3wOgVvO+v6BJPZgdip2OCu4Z3TZBhDiCagbb9oIxi6sBvdutMLjYZtJKs9xQ?=
- =?us-ascii?q?bFr3tMdu9L2W5mOFWfkgrm6Myt5pBj6SNQu/wg985ET6r3erkzQKJbAjo7LW?=
- =?us-ascii?q?07/dXnuhbfQwSB4HscSXgWnQFTAwfZ9hH6X4z+vTX8u+FgxSSVJ8z2TbQzWT?=
- =?us-ascii?q?S/86dmTQLjhSkbOzIl9mzcl9d9h7xHrh2/uxN/wpbUYICLO/p4YqPdZs4RSW?=
- =?us-ascii?q?5YUspMSyBNHoawYo0KD+oAJuZYtIj9p10BrRCjGweiHf7kyjFJhnDo2a01zv?=
- =?us-ascii?q?kqHQXI0QA8Gt4DtmnfotfoO6cISe27zLfGwyjNYf1V3jnw85TEfgw7rP2QR7?=
- =?us-ascii?q?98bdbdxE8yHA3FlFWQronlMiuX2eQMsmmb7/dgVeWygGMgqwBwozivyd0tio?=
- =?us-ascii?q?XVmo4YxEvJ9Thlz4YvP9G3VlN0YcO9HZZWqiqUNJN2T9s8T210vCs20L4LtJ?=
- =?us-ascii?q?6hcCQU1ZgqyATTZ+Kbf4SU+h7vSeecLDNiiH57dr+yhwy+/Vahx+HmVMS531?=
- =?us-ascii?q?BHpTdfnNbWrHACzRnT59CCSvt640iuxy6C1xvW6uFYOUA0krfbK4I5zr4wiJ?=
- =?us-ascii?q?UTtUPDEzfzmErsja+Wclwo+vCs6+j6e7nmqIGQO5Nohg3kPaQuncu/Aes8Mg?=
- =?us-ascii?q?cQRWSU5eO81Lj78U34RrVFkOE2n7HHvJzGIckXvK20Dg9P3oo99hqyAC2q3M?=
- =?us-ascii?q?oEkXUbNF5FfQiIj4ntO1HAOvD4CvK/jkyskTZqx/DJJLzhDonRInXNi7rhYK?=
- =?us-ascii?q?py61RGxAUt0N9f+opYCqsdL/LrRk/xqNvYAwc9Mwy1xebnFdp82podWW2RGK?=
- =?us-ascii?q?+ZNr3dsVuT6+IxLOmDepUVtCz+K/c7/f7ui2E2mVsHcamux5sXZyPwMO5hJh?=
- =?us-ascii?q?CoYGjsn9BJRXYYvgM/FLSxoECJS3hea2vkDPF03S0yFI/zVdSLfYuqmrHUmX?=
- =?us-ascii?q?jjEw=3D=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2FXGgC4sV1dgMjWVdFkHgEGBwaBZ4M?=
- =?us-ascii?q?FUkwQh2mFMoZTAQEBBoNAKIc1GHGFeIMIgWOFOwEIAQEBDAEBGxICAQGBBIM?=
- =?us-ascii?q?7gl8jOBMCBQEBBQECAQEGBAEBAhABAQkNCQgnhTAMgjopgUxfNQsWFVKBFQE?=
- =?us-ascii?q?FATUiOYJHAYF2FAWeD4EDPIwjM4N3hH8BCAyBSQkBCIEihxWEWYEQgQeDbnO?=
- =?us-ascii?q?CSIUbgkQEgS4BAQGUNJVvAQYCAYILFIFvhHmNRSeDHoEOiRSLBQEtg36dTYN?=
- =?us-ascii?q?xAgoHBg8hgUaBek0lgWwKgUQJgnGGBIgpHzOBCIxCAQ?=
-X-IPAS-Result: =?us-ascii?q?A2FXGgC4sV1dgMjWVdFkHgEGBwaBZ4MFUkwQh2mFMoZTA?=
- =?us-ascii?q?QEBBoNAKIc1GHGFeIMIgWOFOwEIAQEBDAEBGxICAQGBBIM7gl8jOBMCBQEBB?=
- =?us-ascii?q?QECAQEGBAEBAhABAQkNCQgnhTAMgjopgUxfNQsWFVKBFQEFATUiOYJHAYF2F?=
- =?us-ascii?q?AWeD4EDPIwjM4N3hH8BCAyBSQkBCIEihxWEWYEQgQeDbnOCSIUbgkQEgS4BA?=
- =?us-ascii?q?QGUNJVvAQYCAYILFIFvhHmNRSeDHoEOiRSLBQEtg36dTYNxAgoHBg8hgUaBe?=
- =?us-ascii?q?k0lgWwKgUQJgnGGBIgpHzOBCIxCAQ?=
-X-IronPort-AV: E=Sophos;i="5.64,414,1559545200"; 
-   d="scan'208";a="71679617"
-Received: from mail-pl1-f200.google.com ([209.85.214.200])
-  by smtpmx6.ucr.edu with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 14:09:12 -0700
-Received: by mail-pl1-f200.google.com with SMTP id j12so2215309pll.14
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 14:09:10 -0700 (PDT)
+        id S1730730AbfHUVLG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 17:11:06 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:41192 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728433AbfHUVLF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 17:11:05 -0400
+Received: by mail-oi1-f196.google.com with SMTP id g7so2726575oia.8;
+        Wed, 21 Aug 2019 14:11:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=KPS5jpp4Ywj8sRwhNiLpJFreklEq0lOjofl+ZAU4qJQ=;
-        b=fP2P9c6QtOb4rICOZCLfCmswWdP6JE71EpL9m9gquay7BiIBmZpLt0QBD96kaEAklf
-         O7tDh1NYgJEX0s0/pXpWCMoSzLANxRWdT7lnv1LoGzlwOg6KEWnliAuVeUBtOYQvZeEC
-         tocjcJIsfQsFNB9vwUBxVXAnJdd3gr9cIJB80uIY3KlzbOF5426i6uf8ACz+gdSlbOJF
-         pLTNQ4BZ07Vtb/whCa82AnLVruT3KcB3HzdcEWLkb/FkjQbpiLEV+TTLzu69GLuCeNuu
-         jkUU9JuT8s545mRoAZwTgtIqyXlqbWz68lDuFLTrYiPS9pVfAhYTwevaUOfGTs+5tM4z
-         KiIA==
-X-Gm-Message-State: APjAAAXcu6GwVMkZfhDe7PN+ja/2+kCO6A9eFerg43cyX85HuDirloLT
-        0PUzHL5gYZFG61PPe8FdPOeGSix2UGSZpdv/7JJqRqqCrgitT2bYBHuOZ/i1gqV1IFIoQ200TkB
-        nlft0EmfdtDhZ2AzW1QwpNub5gg==
-X-Received: by 2002:a63:b555:: with SMTP id u21mr31205060pgo.222.1566421748841;
-        Wed, 21 Aug 2019 14:09:08 -0700 (PDT)
-X-Google-Smtp-Source: APXvYqypPungdy54NKD8FgZtyzscW8+eeQZFviA3kiXY7Ju80sT8SoAvChCE+gSfywI+XS44rMNfaQ==
-X-Received: by 2002:a63:b555:: with SMTP id u21mr31205024pgo.222.1566421748376;
-        Wed, 21 Aug 2019 14:09:08 -0700 (PDT)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id m37sm4782555pjb.0.2019.08.21.14.09.06
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=WRsSuAZz6QfRjgNZ8P6+tSp6lptZDI8kWZHn7cMGurw=;
+        b=n+ISQv0qXFpd58yYWcUbrG0e0MoQ7HIJtg0rMXnzW94EI6zF9gZXM6+gehybL8i39O
+         SnTubL7QV4MtLgfYGzPDunFhRVVzaxVyPAv4JY0k0eGh2QAsnZ4s2MwmGKXUrIlGwwd4
+         zyRrktMJIA2ApFBUAzuoUQRPlMAlTQPfeIrHGu9XPFrkmIFfk8Gar5G2SZzEB3geCNRV
+         lYrvmzDnVj2gOr5uWem1PAuFrGqT4m9YjCBGaAtKQmURl3mOyM4HMHgDccP1sWv2MaX2
+         C3ew/iJjfd8OLCntLRvObtIxbtkdE0FvPOUi3OCWVQ+ZZ3bJZ1xvBXWsMsmwj6kqXUC3
+         Ig+Q==
+X-Gm-Message-State: APjAAAVHS/fb2yxsz75R0Ar6mvxOcANd+wT7Jec4KAr6VpG6FBlW/xDz
+        e2ww42DThrrGIOzpmmYMiA==
+X-Google-Smtp-Source: APXvYqxSDZHs4c1PVvP+wjeXiVw6s6Xa1KEl627aBD7it4c2vHLG2m+iz6Z0UmTJ9EmpncnD8q2VwA==
+X-Received: by 2002:aca:4950:: with SMTP id w77mr1468364oia.28.1566421864593;
+        Wed, 21 Aug 2019 14:11:04 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v5sm8184684otk.64.2019.08.21.14.11.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 14:09:07 -0700 (PDT)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Mike Isely <isely@pobox.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] [media] pvrusb2: qctrl.flag will be uninitlaized if cx2341x_ctrl_query() returns error code
-Date:   Wed, 21 Aug 2019 14:09:31 -0700
-Message-Id: <20190821210931.9621-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Wed, 21 Aug 2019 14:11:04 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 16:11:03 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 03/19] dt-bindings: mrvl,intc: Add a MMP3 interrupt
+ controller
+Message-ID: <20190821211103.GA32263@bogus>
+References: <20190809093158.7969-1-lkundrak@v3.sk>
+ <20190809093158.7969-4-lkundrak@v3.sk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190809093158.7969-4-lkundrak@v3.sk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Inside function ctrl_cx2341x_getv4lflags(), qctrl.flag
-will be uninitlaized if cx2341x_ctrl_query() returns -EINVAL.
-However, it will be used in the later if statement, which is
-potentially unsafe.
+On Fri, Aug 09, 2019 at 11:31:42AM +0200, Lubomir Rintel wrote:
+> Similar to MMP2 one, but has an extra range for the other core. The
+> muxes stay the same.
+> 
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> ---
+>  .../interrupt-controller/mrvl,intc.txt        | 23 ++++++++++++++-----
+>  1 file changed, 17 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
+> index 608fee15a4cfc..41c131d026f94 100644
+> --- a/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
+> +++ b/Documentation/devicetree/bindings/interrupt-controller/mrvl,intc.txt
+> @@ -1,13 +1,15 @@
+>  * Marvell MMP Interrupt controller
+>  
+>  Required properties:
+> -- compatible : Should be "mrvl,mmp-intc", "mrvl,mmp2-intc" or
+> -  "mrvl,mmp2-mux-intc"
+> +- compatible : Should be "mrvl,mmp-intc", "mrvl,mmp2-intc",
+> +  "marvell,mmp3-intc", "mrvl,mmp2-mux-intc"
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
----
- drivers/media/usb/pvrusb2/pvrusb2-hdw.c | 1 +
- 1 file changed, 1 insertion(+)
+Reformat to 1 valid combination per line.
 
-diff --git a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-index ad5b25b89699..1fa05971316a 100644
---- a/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-+++ b/drivers/media/usb/pvrusb2/pvrusb2-hdw.c
-@@ -793,6 +793,7 @@ static unsigned int ctrl_cx2341x_getv4lflags(struct pvr2_ctrl *cptr)
- 	struct v4l2_queryctrl qctrl;
- 	struct pvr2_ctl_info *info;
- 	qctrl.id = cptr->info->v4l_id;
-+	memset(&qctr, 0, sizeof(qctrl))
- 	cx2341x_ctrl_query(&cptr->hdw->enc_ctl_state,&qctrl);
- 	/* Strip out the const so we can adjust a function pointer.  It's
- 	   OK to do this here because we know this is a dynamically created
--- 
-2.17.1
+>  - reg : Address and length of the register set of the interrupt controller.
+>    If the interrupt controller is intc, address and length means the range
+> -  of the whole interrupt controller. If the interrupt controller is mux-intc,
+> -  address and length means one register. Since address of mux-intc is in the
+> -  range of intc. mux-intc is secondary interrupt controller.
+> +  of the whole interrupt controller. The "marvell,mmp3-intc" controller
+> +  also has a secondary range for the second CPU core.  If the interrupt
+> +  controller is mux-intc, address and length means one register. Since
+> +  address of mux-intc is in the range of intc. mux-intc is secondary
+> +  interrupt controller.
+>  - reg-names : Name of the register set of the interrupt controller. It's
+>    only required in mux-intc interrupt controller.
+>  - interrupts : Should be the port interrupt shared by mux interrupts. It's
+> @@ -20,7 +22,7 @@ Required properties:
+>  - mrvl,clr-mfp-irq : Specifies the interrupt that needs to clear MFP edge
+>    detection first.
+>  
+> -Example:
+> +Examples:
+>  	intc: interrupt-controller@d4282000 {
+>  		compatible = "mrvl,mmp2-intc";
+>  		interrupt-controller;
+> @@ -29,6 +31,15 @@ Example:
+>  		mrvl,intc-nr-irqs = <64>;
+>  	};
+>  
+> +	intc: interrupt-controller@d4282000 {
 
+What's special about this to warrant another example. Examples aren't 
+supposed to be an enumeration of all possible dts entries.
+
+> +		compatible = "marvell,mmp3-intc";
+> +		interrupt-controller;
+> +		#interrupt-cells = <1>;
+> +		reg = <0xd4282000 0x1000>,
+> +		      <0xd4284000 0x100>;
+> +		mrvl,intc-nr-irqs = <64>;
+> +	};
+> +
+>  	intcmux4@d4282150 {
+>  		compatible = "mrvl,mmp2-mux-intc";
+>  		interrupts = <4>;
+> -- 
+> 2.21.0
+> 
