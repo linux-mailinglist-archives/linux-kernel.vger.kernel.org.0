@@ -2,82 +2,132 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B3CF9867A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 23:19:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E02E9867C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 23:19:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730871AbfHUVTO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 17:19:14 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:44851 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726852AbfHUVTN (ORCPT
+        id S1730886AbfHUVTl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 17:19:41 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53720 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726852AbfHUVTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 17:19:13 -0400
-Received: by mail-ot1-f65.google.com with SMTP id w4so3431585ote.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 14:19:13 -0700 (PDT)
+        Wed, 21 Aug 2019 17:19:41 -0400
+Received: by mail-wm1-f65.google.com with SMTP id 10so3533856wmp.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 14:19:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=XNaGnPLBrYlAHfoGjy0jKQo/KIqdraCEqQpwAJaDfZU=;
-        b=MEhR2yVK+cHcSU73EA3M3dyMOAgOj7D3nI+YPXaGxSwTZiUCZ1Rw1S6JbULv7d2ik9
-         kLu/xa3WKIXCsRZjuowKb+0A36mMHEwq9XRM9V0XsJqey0+sZrH/rZIAB0eJgkbBuN36
-         sqsbmunqzDd7gZN+OO5EWKAXI0vULks30NWeGbL41aVtlRfM6UE7YGUaQdg2rKeiYSAx
-         ic2f/9tx9xan26o7ETAUvnBa18Km1gwKI5IqQwTf0GmaOtTePve0oCmdF7Jcjz6ayVzh
-         J2rdrU68g5fpRTxyNol9z28hzEdkrTsC+sovIgTg+rNvpNJDt4x7O8moySvinZ/5e4tb
-         FhlA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=dbzkg0dehYA9XxXBy/tRWEwtyB89ujck03vcqauhtxk=;
+        b=M41c94fBiRx04YN/D9LqPjJsO6altoSy7hmpL7ol/za2grZjkRDhSLO5v0GE4oqFcr
+         sB1NADhpZQEX8bu+8z3ngPuXvDNMCnvmraEJ3pjT7pO4D7RFtsLKvpACV3d+wRTcbYS3
+         kXiyqcUDbRVLfqAFOu1aQWi9KhSGOs/D7bXZH5FbeWTIBEsiE3Gq6Uasu8AoiGFjkegK
+         gGauvlV6DC3y9og3jEJhbnL9tuYDdQ6Cj/qw58OVHgjo81rXZQTbiI8lu/htArVrxzmf
+         go8bSDnidovR7Jy0DAm4NoDj/6PEdoI+wObbt2hwoh0VjwVbN95CdgNGGKyfL19/k8sP
+         KHbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=XNaGnPLBrYlAHfoGjy0jKQo/KIqdraCEqQpwAJaDfZU=;
-        b=KeS894GClnlRRzML+Rx+hOzm0/r33VhO+8/g/sqChfSU15wwLuK9rkVSwWL+ZJ14rk
-         h8iz5n9HDdu0OLz2W42Qd8oRNC6LCQRoD3gMBIxYG6uNDExx9T5kq3sgZ+YFg+QitX/G
-         Zs4bp5CP8D5Lk4xi4VF1n5L2LyKyjlScYHRDQYObAXjIsT/yDFFlZjWqmmrC5L3I28B8
-         wbU68qtPgsFI1jzKy3PhYIN37LcvIe4mWxtBPd3gWqv5jmANooGoJPK5UIaXDPa0t7Bs
-         aoMFGWSYDPRLjDNCoOWX1HRsVJ9m9N0oM5hSm7r53CTbhsOPZoMGAKGvhcx68Z8xIflY
-         KncA==
-X-Gm-Message-State: APjAAAVsBv7YHABETVI4fjT4l6lF+fywS8Q6bGaSD7BRAqntJ/UBnQlu
-        NXNAJU1sfkf+3FJdGOlEJirbYMAqQKG2UR48YRY=
-X-Google-Smtp-Source: APXvYqy19Yq0C60JdEiKCNsORIOgQuP31vyjRHd5LybdfxpFYBc7fVN8rE3xs4lEQHY6Cxx9a2/WCrtXM4gqhBvRlp0=
-X-Received: by 2002:a9d:675a:: with SMTP id w26mr29277099otm.179.1566422353377;
- Wed, 21 Aug 2019 14:19:13 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=dbzkg0dehYA9XxXBy/tRWEwtyB89ujck03vcqauhtxk=;
+        b=L9uqBYxdspWSKoUFYOrXflWTzT1k9A4iLiosCzczLvka7qYaeEIaZNwuS40y+1vVi4
+         OKQM3ULn9zKWK2kMjIkHhk60naeSMGTVSSRE+85dGGyRKuczpsImmCvZJQ21ZGk4jDZO
+         0qIomhlRt7rxkicABiOZjLNNLoDkIVGASSIxdGb08kJ7QNi6sTT5GVkN54676Zc8aDzM
+         t4Zh4U7lrPDIIEB9ymu8C/7T2qgHpuJ0+AWwR7nD1oF0YxxwHg7RsbjNiE3oEm3LZebG
+         j4dqjUgZhVgTXy4loaGeiR3UuTKfCrjYfjan0bIetNIs8Z39hCYN9qA/3Bkay5nmQO90
+         NdHQ==
+X-Gm-Message-State: APjAAAXKOpB4qqX686pxujycMwaHXH+HRT3LsWR6txCPF4Qh+rkQ7gmP
+        0t5AYoyu2xy5GbxCrNWP1YcymA==
+X-Google-Smtp-Source: APXvYqz8RJbRsGB3Mt8HsUVbL8cKiur8eRibcotSAhwTRu5jFrKEfBVKTcGp7K5dPJ2MRLuU5YWVug==
+X-Received: by 2002:a7b:c649:: with SMTP id q9mr2156413wmk.108.1566422379282;
+        Wed, 21 Aug 2019 14:19:39 -0700 (PDT)
+Received: from ?IPv6:2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca? ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
+        by smtp.gmail.com with ESMTPSA id c11sm19183554wrs.86.2019.08.21.14.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 14:19:38 -0700 (PDT)
+Subject: Re: [PATCH v3 0/6] Add support of New Amlogic temperature sensor for
+ G12 SoCs
+To:     Christian Hewitt <christianshewitt@gmail.com>
+Cc:     daniel.lezcano@linaro.org, khilman@baylibre.com,
+        devicetree@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-pm@vger.kernel.org
+References: <20190806130506.8753-1-glaroque@baylibre.com>
+ <357FACA6-6EAC-4E9D-B6F7-4D8D0D59A20A@gmail.com>
+From:   guillaume La Roque <glaroque@baylibre.com>
+Message-ID: <9a63d585-69b1-c9b2-8092-51361ff41991@baylibre.com>
+Date:   Wed, 21 Aug 2019 23:19:37 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Received: by 2002:a4a:e708:0:0:0:0:0 with HTTP; Wed, 21 Aug 2019 14:19:13
- -0700 (PDT)
-Reply-To: stellerbarid@barid.com
-From:   "Mrs. Stellar Maoris" <mrsbeccy8@gmail.com>
-Date:   Wed, 21 Aug 2019 14:19:13 -0700
-Message-ID: <CAHU1do1fcPvktUzuGo4b2WQUXt3_RTFtm8usvUeh3LdN2mv2dg@mail.gmail.com>
-Subject: Hello Dear Friend.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <357FACA6-6EAC-4E9D-B6F7-4D8D0D59A20A@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Dear Friend.
+Hi Christian,
 
-I=E2=80=99m  Mrs. Stellar Maoris  a manger in  HSBC  bank  of  Spain Madrid=
-, I
-am sending
-this brief letter  to seek for  your partnership and long term relationship=
-,
-I have an important and urgent issue I want to discuss with you privately a=
-bout
-Transaction fund worth the sum of $9.5m America dollars left by most
-of the greedy
-Asia Kuwait politician in our bank here in Spain Madrid A fund which
-suppose to have been use to develop the continent.
 
-If you know that you can invest this fund into profitable business in
-your country by the end we shall have 50%50 share each, kindly get
-back to me for more detail and procedures.
+thanks for testing on this 3 boards.
 
-Your urgent respond will be highly appreciated
-Awaiting to hear from you asap.
-My Regard.
-Stellar Maoris
-Email: stellerbarid@barid.com
-Phone Number:  +34(62) 768 5146
+
+guillaume
+
+On 8/14/19 2:24 PM, Christian Hewitt wrote:
+> On 6 Aug 2019, at 5:05 pm, Guillaume La Roque <glaroque@baylibre.com> wrote:
+>> This patchs series add support of New Amlogic temperature sensor and minimal
+>> thermal zone for SEI510 and ODROID-N2 boards.
+>>
+>> First implementation was doing on IIO[1] but after comments i move on thermal framework.
+>> Formulas and calibration values come from amlogic.
+>>
+>> Changes since v2:
+>>  - fix yaml documention 
+>>  - remove unneeded status variable for temperature-sensor node
+>>  - rework driver after Martin review
+>>  - add some information in commit message
+>>
+>> Changes since v1:
+>>  - fix enum vs const in documentation
+>>  - fix error with thermal-sensor-cells value set to 1 instead of 0
+>>  - add some dependencies needed to add cooling-maps
+>>
+>> Dependencies :
+>> - patch 3,4 & 5: depends on Neil's patch and series :
+>>              - missing dwc2 phy-names[2]
+>>              - patchsets to add DVFS on G12a[3] which have deps on [4] and [5]
+>>
+>> [1] https://lore.kernel.org/linux-amlogic/20190604144714.2009-1-glaroque@baylibre.com/
+>> [2] https://lore.kernel.org/linux-amlogic/20190625123647.26117-1-narmstrong@baylibre.com/
+>> [3] https://lore.kernel.org/linux-amlogic/20190729132622.7566-1-narmstrong@baylibre.com/
+>> [4] https://lore.kernel.org/linux-amlogic/20190731084019.8451-5-narmstrong@baylibre.com/
+>> [5] https://lore.kernel.org/linux-amlogic/20190729132622.7566-3-narmstrong@baylibre.com/
+>>
+>> Guillaume La Roque (6):
+>>  dt-bindings: thermal: Add DT bindings documentation for Amlogic
+>>    Thermal
+>>  thermal: amlogic: Add thermal driver to support G12 SoCs
+>>  arm64: dts: amlogic: g12: add temperature sensor
+>>  arm64: dts: meson: sei510: Add minimal thermal zone
+>>  arm64: dts: amlogic: odroid-n2: add minimal thermal zone
+>>  MAINTAINERS: add entry for Amlogic Thermal driver
+> Tested-by: Christian Hewitt <christianshewitt@gmail.com>
+>
+> I’ve tested this series with Odroid N2 and Khadas VIM3, X96-Max. Patches to add
+> support for VIM3/X96-max will be submitted once the driver is merged.
+>
+> VIM3:~ # dmesg | grep thermal
+> [    0.046375] thermal_sys: Registered thermal governor 'step_wise'
+>
+> VIM3:~ # cat /sys/devices/virtual/thermal/thermal_zone0/temp
+> 51300
+>
+> VIM3:~ # cat /sys/devices/virtual/thermal/thermal_zone1/temp
+> 52800
+>
+> Christian
