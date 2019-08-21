@@ -2,229 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE53A97FB5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B475097FC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:14:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbfHUQK0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:10:26 -0400
-Received: from relay5-d.mail.gandi.net ([217.70.183.197]:58161 "EHLO
-        relay5-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728194AbfHUQKZ (ORCPT
+        id S1729005AbfHUQNB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:13:01 -0400
+Received: from mail-io1-f72.google.com ([209.85.166.72]:52596 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfHUQNB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:10:25 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay5-d.mail.gandi.net (Postfix) with ESMTPSA id 3716F1C0006;
-        Wed, 21 Aug 2019 16:10:21 +0000 (UTC)
-Date:   Wed, 21 Aug 2019 18:11:50 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] media: add pixel_size control
-Message-ID: <20190821161150.hcbxzxcjvbkoqyb3@uno.localdomain>
-References: <20190819121720.31345-1-ribalda@kernel.org>
+        Wed, 21 Aug 2019 12:13:01 -0400
+Received: by mail-io1-f72.google.com with SMTP id q5so3073287iof.19
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 09:13:00 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=Yd53F92BJf3zn8wGZ0U/s186p5/9JYi4U18PT1EI33k=;
+        b=lc5tRNWUv3dNTPbqlZ4f6hHbgZhSeI02daPeDZFWictr4m8lDRM0SGkd1gjHXU9LZo
+         1Bz/ocHJ6yCutrmBEhsSD4EAtS5C2l2k3x1WZgtKuToewUoSJXfnJBbnNms8qSO8WZwb
+         GXoM+lWMqikPXaCjIxd2wr9F3tDnuD6KwqSB5QViGCW0pt+BtVI9u+1R4/ep1VsAok3A
+         59+i6pTwN0au4GFgh2Jb0I2P8jUXWoYBwJIWBQnLm6IjEBzr1NSDxMtzjR9zb7sw5qjn
+         cFUtgP8kObIjTLBy40jyIhI4/moj8mvh2/Hhb4txz5nq+zpxK+LaLZTv38nTZf0CtzWs
+         fKNA==
+X-Gm-Message-State: APjAAAV264GPCV+HEdyPojHXbjVK5r2JyUhtTJ5JMgQaVUTE9y4/2FJ0
+        4fFDtGD/U7earqRdG9Tfpo67w+zOJx4NGn+b/710w8W6ZxVn
+X-Google-Smtp-Source: APXvYqxcWw4L/Vqh6e7csZoUh1Wfmtb8A9sqnIV6jLU54MAVbBAkuO9AjSyCECyy2tXi/H0bOGqXzMrcgTX9GXvsiDZcYJ+jvrY/
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i2qbawnsbkak4g6z"
-Content-Disposition: inline
-In-Reply-To: <20190819121720.31345-1-ribalda@kernel.org>
-User-Agent: NeoMutt/20180716
+X-Received: by 2002:a5d:9681:: with SMTP id m1mr6432416ion.291.1566403980448;
+ Wed, 21 Aug 2019 09:13:00 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 09:13:00 -0700
+In-Reply-To: <Pine.LNX.4.44L0.1908211152230.1816-100000@iolanthe.rowland.org>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d45a4c0590a2d8bd@google.com>
+Subject: Re: KASAN: slab-out-of-bounds Read in hidraw_ioctl
+From:   syzbot <syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com>
+To:     andreyknvl@google.com, benjamin.tissoires@redhat.com,
+        jikos@kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        stern@rowland.harvard.edu, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
---i2qbawnsbkak4g6z
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+syzbot has tested the proposed patch and the reproducer did not trigger  
+crash:
 
-Hi Ricardo,
+Reported-and-tested-by:  
+syzbot+5a6c4ec678a0c6ee84ba@syzkaller.appspotmail.com
 
-On Mon, Aug 19, 2019 at 02:17:18PM +0200, Ricardo Ribalda Delgado wrote:
-> This control returns the pixel size in nanometres. The struct provides
-> the width and the height in separated fields to take into consideration
-> asymmetric pixels and/or hardware binning.
-> This control is required for automatic calibration of the sensor.
->
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  drivers/media/v4l2-core/v4l2-ctrls.c | 11 +++++++++++
->  include/media/v4l2-ctrls.h           |  2 ++
->  include/uapi/linux/v4l2-controls.h   |  3 +++
->  include/uapi/linux/videodev2.h       | 11 +++++++++++
->  4 files changed, 27 insertions(+)
->
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index cd1ae016706f..a3a0086c96ff 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -978,6 +978,7 @@ const char *v4l2_ctrl_get_name(u32 id)
->  	case V4L2_CID_AUTO_FOCUS_RANGE:		return "Auto Focus, Range";
->  	case V4L2_CID_PAN_SPEED:		return "Pan, Speed";
->  	case V4L2_CID_TILT_SPEED:		return "Tilt, Speed";
-> +	case V4L2_CID_PIXEL_SIZE:		return "Pixel Size";
+Tested on:
 
-Is this a camera class control or an image source one ?
-Also, isn't pixel size a bit too generic? I would somehow specify this is
-the physical pixel size
+commit:         e96407b4 usb-fuzzer: main usb gadget fuzzer driver
+git tree:       https://github.com/google/kasan.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfa2c18fb6a8068e
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13dca42e600000
 
->
->  	/* FM Radio Modulator controls */
->  	/* Keep the order of the 'case's the same as in v4l2-controls.h! */
-> @@ -1357,6 +1358,9 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_MPEG_VIDEO_VP8_FRAME_HEADER:
->  		*type = V4L2_CTRL_TYPE_VP8_FRAME_HEADER;
->  		break;
-> +	case V4L2_CID_PIXEL_SIZE:
-> +		*type = V4L2_CTRL_TYPE_PIXEL_SIZE;
-
-Isn't this a read-only control?
-
-> +		break;
->  	default:
->  		*type = V4L2_CTRL_TYPE_INTEGER;
->  		break;
-> @@ -1423,6 +1427,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
->  	case V4L2_CID_RDS_RX_TRAFFIC_ANNOUNCEMENT:
->  	case V4L2_CID_RDS_RX_TRAFFIC_PROGRAM:
->  	case V4L2_CID_RDS_RX_MUSIC_SPEECH:
-> +	case V4L2_CID_PIXEL_SIZE:
->  		*flags |= V4L2_CTRL_FLAG_READ_ONLY;
-
-Ah yes, you set flags here... I don't get why we have two switches
-here.. Anyway, I would set both type and flags in a single case,
-otherwise one should jump back and forth...
-
->  		break;
->  	case V4L2_CID_RF_TUNER_PLL_LOCK:
-> @@ -1705,6 +1710,9 @@ static int std_validate_compound(const struct v4l2_ctrl *ctrl, u32 idx,
->  	case V4L2_CTRL_TYPE_FWHT_PARAMS:
->  		break;
->
-> +	case V4L2_CTRL_TYPE_PIXEL_SIZE:
-> +		break;
-> +
->  	case V4L2_CTRL_TYPE_H264_SPS:
->  	case V4L2_CTRL_TYPE_H264_PPS:
->  	case V4L2_CTRL_TYPE_H264_SCALING_MATRIX:
-> @@ -2403,6 +2411,9 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
->  	case V4L2_CTRL_TYPE_VP8_FRAME_HEADER:
->  		elem_size = sizeof(struct v4l2_ctrl_vp8_frame_header);
->  		break;
-> +	case V4L2_CTRL_TYPE_PIXEL_SIZE:
-> +		elem_size = sizeof(struct v4l2_pixel_size);
-> +		break;
->  	default:
->  		if (type < V4L2_CTRL_COMPOUND_TYPES)
->  			elem_size = sizeof(s32);
-> diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-> index 570ff4b0205a..63de780398b8 100644
-> --- a/include/media/v4l2-ctrls.h
-> +++ b/include/media/v4l2-ctrls.h
-> @@ -50,6 +50,7 @@ struct poll_table_struct;
->   * @p_h264_slice_params:	Pointer to a struct v4l2_ctrl_h264_slice_params.
->   * @p_h264_decode_params:	Pointer to a struct v4l2_ctrl_h264_decode_params.
->   * @p_vp8_frame_header:		Pointer to a VP8 frame header structure.
-> + * @p_pixel_size:		Pointer to a pixel_size value.
->   * @p:				Pointer to a compound value.
->   */
->  union v4l2_ctrl_ptr {
-> @@ -68,6 +69,7 @@ union v4l2_ctrl_ptr {
->  	struct v4l2_ctrl_h264_slice_params *p_h264_slice_params;
->  	struct v4l2_ctrl_h264_decode_params *p_h264_decode_params;
->  	struct v4l2_ctrl_vp8_frame_header *p_vp8_frame_header;
-> +	struct v4l2_pixel_size *p_pixel_size;
->  	void *p;
->  };
->
-> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-> index a2669b79b294..13f0410df4c6 100644
-> --- a/include/uapi/linux/v4l2-controls.h
-> +++ b/include/uapi/linux/v4l2-controls.h
-> @@ -912,6 +912,9 @@ enum v4l2_auto_focus_range {
->  #define V4L2_CID_PAN_SPEED			(V4L2_CID_CAMERA_CLASS_BASE+32)
->  #define V4L2_CID_TILT_SPEED			(V4L2_CID_CAMERA_CLASS_BASE+33)
->
-> +#define V4L2_CID_PIXEL_SIZE			(V4L2_CID_CAMERA_CLASS_BASE+34)
-> +
-> +
-
-Double empty line
-
->  /* FM Modulator class control IDs */
->
->  #define V4L2_CID_FM_TX_CLASS_BASE		(V4L2_CTRL_CLASS_FM_TX | 0x900)
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 2427bc4d8eba..21f4846dca0b 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -422,6 +422,11 @@ struct v4l2_fract {
->  	__u32   denominator;
->  };
->
-> +struct v4l2_pixel_size {
-
-I wonder if instead of defining a 'pixel size' this shouldn't be a
-more generic v4l2_size or something similar. Or even a v4l2_rect with
-left=top=0.
-
-> +	__u32   width;
-> +	__u32   height;
-> +};
-> +
->  /**
->    * struct v4l2_capability - Describes V4L2 device caps returned by VIDIOC_QUERYCAP
->    *
-> @@ -1718,6 +1723,12 @@ enum v4l2_ctrl_type {
->  	V4L2_CTRL_TYPE_U8	     = 0x0100,
->  	V4L2_CTRL_TYPE_U16	     = 0x0101,
->  	V4L2_CTRL_TYPE_U32	     = 0x0102,
-> +	/*
-> +	 * V4L2_CTRL_TYPE_MPEG2_SLICE_PARAMS = 0x0103,
-> +	 * V4L2_CTRL_TYPE_MPEG2_QUANTIZATION = 0x0104,
-> +	 * V4L2_CTRL_TYPE_FWHT_PARAMS = 0x0105,
-> +	 */
-
-leftovers ?
-
-> +	V4L2_CTRL_TYPE_PIXEL_SIZE    = 0x0106,
-
-I don't see other compound controls with a custom payload adding their
-types here. What am I missing?
-
-Thanks
-  j
-
->  };
->
->  /*  Used in the VIDIOC_QUERYCTRL ioctl for querying controls */
-> --
-> 2.23.0.rc1
->
-
---i2qbawnsbkak4g6z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1dbUYACgkQcjQGjxah
-VjzMSg//T3Z0Pn/MM4rl0d9E08+UhovwymM92g/k2giBnTTDmLyZSanh4wJ5z95z
-CcySqDqSdsgk4oe7BSMR3+kaK/O0M9o7wkzNUIzpgT0H2zPIkhLo4rkYN97W2XCj
-eVIcUkdK0YSRpJLUYXP4PyTYMNhwwmP8ugCtfnhdMnVP5ly5H/jHcH9PVlBUVpaq
-qrZVRmfzX7N6jt5L3QE7EMXnH0OouQuZRE7c0RqcRYkFwtsyDtu7Wc9cfAxQGKW2
-Udkx387YTsLGTvh3TgVyiR28fonYxfo48lj8YPM49O53stwsqgMeg667UJ6HPzko
-RY6QUwbz9Yo5ThnMhfIRqIP88wPTYyd+gls8Hs6PJ+LZx5AGYavfBvtWI15NuRSc
-+VKrN9s2pqrO4SJsZvtxR0P4he6SeGPNDjozLv2rgtrJDlWstPKe97fwoRWBhFwd
-xb8dHGD6LD5X6bDiJNWFNs5gMti3lMH92CfXC36S2OktV40EVAXWQCryQWohH3cm
-hvFbS8odj2AvXP+1ogErP5QgZe4iI+kDct1kUxt1TjE3iWjbvIENpjgTU9WUvM70
-VY6YcW58J1vk+DZHORiEbB5lA/8cDeoWYSVTROKq9FPrfGxOybwzLzcVfo5N37QO
-JaPhMfm1TLiecZV2w8KdpdfHsEJF3QEGDy9pBztLV/B8FCw7xA0=
-=+EdP
------END PGP SIGNATURE-----
-
---i2qbawnsbkak4g6z--
+Note: testing is done by a robot and is best-effort only.
