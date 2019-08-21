@@ -2,223 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A8779769E
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:03:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F29F976AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:07:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727467AbfHUKDZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:03:25 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:51486 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725283AbfHUKDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:03:24 -0400
-Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 286FFA91F63E2A9D8B5C;
-        Wed, 21 Aug 2019 18:03:22 +0800 (CST)
-Received: from [127.0.0.1] (10.202.227.238) by DGGEMS404-HUB.china.huawei.com
- (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
- 18:03:15 +0800
-Subject: Re: [PATCH 0/3] fix interrupt swamp in NVMe
-To:     Ming Lei <ming.lei@redhat.com>, Long Li <longli@microsoft.com>
-References: <1566281669-48212-1-git-send-email-longli@linuxonhyperv.com>
- <CACVXFVPCiTU0mtXKS0fyMccPXN6hAdZNHv6y-f8-tz=FE=BV=g@mail.gmail.com>
- <fd7d6101-37f4-2d34-f2f7-cfeade610278@huawei.com>
- <CY4PR21MB0741D1CD295AD572548E61D1CEAA0@CY4PR21MB0741.namprd21.prod.outlook.com>
- <20190821094406.GA28391@ming.t460p>
-CC:     Ming Lei <tom.leiming@gmail.com>,
-        "longli@linuxonhyperv.com" <longli@linuxonhyperv.com>,
-        Jens Axboe <axboe@fb.com>, Sagi Grimberg <sagi@grimberg.me>,
-        chenxiang <chenxiang66@hisilicon.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-nvme <linux-nvme@lists.infradead.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "Thomas Gleixner" <tglx@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-From:   John Garry <john.garry@huawei.com>
-Message-ID: <1a647622-d9cf-9c70-f990-e5606e60842b@huawei.com>
-Date:   Wed, 21 Aug 2019 11:03:07 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.3.0
+        id S1726869AbfHUKHz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:07:55 -0400
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36681 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725268AbfHUKHy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 06:07:54 -0400
+Received: by mail-ed1-f67.google.com with SMTP id p28so2292934edi.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 03:07:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to;
+        bh=6xuaUoymaHMkgIhDw49+4gApN04EvywADT2DkTWXhFU=;
+        b=YNpyTlqDSQnmHoy79wXX/SWSRGKFlRrkLtzx9BBgkhWdUhCNfRVYSF1/xTrhHlPzvQ
+         Gp8jCJePf536bW5zmcLD1ToWLrAzXwg4yvUQ8EOAU/jTChHPozLIgF8lUd6WZALUzll+
+         oCoZxj/N97shFU5Zsi0Keo7cxhi8JKL43XZEnQY8OY1t+2/tkQS8WF5ANKA+VyCRf+Pz
+         EWZ6m1u0ObRqPCw0Q4w2o3ahRKaKNur80/dtiKxpYvupYqCTrs0SmXo1lfFtEJei8PXg
+         gn89nQmnqPwZS+Uft/ylyFgDwSq4aPOMyctxDZqHdbTMBwzEX31L6BHnuYvCrWr3HtT2
+         gynQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to;
+        bh=6xuaUoymaHMkgIhDw49+4gApN04EvywADT2DkTWXhFU=;
+        b=g4qQxonViUbKZdFDrApNT7GQGQpRSZFcNUFvutU7dwWPHLBCNzFYg50ajBH/DZHiXF
+         476KGdB6GOX4KqyLXTfUF9oOVVWa0N/k5FrrRyXo9F0NbzEdQyJDy//+bRhBcMGr5mQP
+         WxCIo80ZanGvs+qlEsb9ha50ra1TpPU+nB477FxPJpMZPyy04XvconFQzwBtk6yaV+Li
+         2Q/m6yrpXcmtFkhHnIzsYuSftyR8DfZmC6nFEJ5fUgqlec0a1+i7eMYIaeFBNjxUlUQt
+         WJY/RKARzJlSkib5KxoOFp4HjMtejWqGD/y4F6BwQkGisW8xKhN66YvzP+bkURWhjOmF
+         9a8w==
+X-Gm-Message-State: APjAAAVYoeRB8JmNkXX31pdDR9CThrhtZXCMbW5Qb/pin7kVWhOLf/K1
+        y4b4NyrZXscQ1DpAReqnvPacEmy0QDj+vpSiBQQ=
+X-Google-Smtp-Source: APXvYqx37zIHVXFza+texxMXkgFTvwkw4GsQyS8egw+IQEgrrr+MGzu3aiyphw8QEXQeOoUcANCc254JcEbe91lLrpM=
+X-Received: by 2002:a50:8f81:: with SMTP id y1mr35427087edy.181.1566382073271;
+ Wed, 21 Aug 2019 03:07:53 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190821094406.GA28391@ming.t460p>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.227.238]
-X-CFilter-Loop: Reflected
+Received: by 2002:a17:906:4044:0:0:0:0 with HTTP; Wed, 21 Aug 2019 03:07:52
+ -0700 (PDT)
+Reply-To: davidnolan326@gmail.com
+From:   Father David Nolan <teamservice1221@gmail.com>
+Date:   Wed, 21 Aug 2019 11:07:52 +0100
+Message-ID: <CAJaNAos_Sdz=nL8Mq4Azg4A0bKM_YXP9sTsHcg67Er3uH+-MEg@mail.gmail.com>
+Subject: Dear Beloved
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/08/2019 10:44, Ming Lei wrote:
-> On Wed, Aug 21, 2019 at 07:47:44AM +0000, Long Li wrote:
->>>>> Subject: Re: [PATCH 0/3] fix interrupt swamp in NVMe
->>>>>
->>>>> On 20/08/2019 09:25, Ming Lei wrote:
->>>>>> On Tue, Aug 20, 2019 at 2:14 PM <longli@linuxonhyperv.com> wrote:
->>>>>>>
->>>>>>> From: Long Li <longli@microsoft.com>
->>>>>>>
->>>>>>> This patch set tries to fix interrupt swamp in NVMe devices.
->>>>>>>
->>>>>>> On large systems with many CPUs, a number of CPUs may share one
->>>>> NVMe
->>>>>>> hardware queue. It may have this situation where several CPUs are
->>>>>>> issuing I/Os, and all the I/Os are returned on the CPU where the
->>>>> hardware queue is bound to.
->>>>>>> This may result in that CPU swamped by interrupts and stay in
->>>>>>> interrupt mode for extended time while other CPUs continue to issue
->>>>>>> I/O. This can trigger Watchdog and RCU timeout, and make the system
->>>>> unresponsive.
->>>>>>>
->>>>>>> This patch set addresses this by enforcing scheduling and throttling
->>>>>>> I/O when CPU is starved in this situation.
->>>>>>>
->>>>>>> Long Li (3):
->>>>>>>   sched: define a function to report the number of context switches on a
->>>>>>>     CPU
->>>>>>>   sched: export idle_cpu()
->>>>>>>   nvme: complete request in work queue on CPU with flooded interrupts
->>>>>>>
->>>>>>>  drivers/nvme/host/core.c | 57
->>>>>>> +++++++++++++++++++++++++++++++++++++++-
->>>>>>>  drivers/nvme/host/nvme.h |  1 +
->>>>>>>  include/linux/sched.h    |  2 ++
->>>>>>>  kernel/sched/core.c      |  7 +++++
->>>>>>>  4 files changed, 66 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> Another simpler solution may be to complete request in threaded
->>>>>> interrupt handler for this case. Meantime allow scheduler to run the
->>>>>> interrupt thread handler on CPUs specified by the irq affinity mask,
->>>>>> which was discussed by the following link:
->>>>>>
->>>>>>
->>>>> https://nam06.safelinks.protection.outlook.com/?url=https%3A%2F%2Flor
->>>>> e
->>>>>> .kernel.org%2Flkml%2Fe0e9478e-62a5-ca24-3b12-
->>>>> 58f7d056383e%40huawei.com
->>>>>> %2F&amp;data=02%7C01%7Clongli%40microsoft.com%7Cc7f46d3e273f45
->>>>> 176d1c08
->>>>>>
->>>>> d7254cc69e%7C72f988bf86f141af91ab2d7cd011db47%7C1%7C0%7C6370188
->>>>> 8401588
->>>>>>
->>>>> 9866&amp;sdata=h5k6HoGoyDxuhmDfuKLZUwgmw17PU%2BT%2FCbawfxV
->>>>> Er3U%3D&amp;
->>>>>> reserved=0
->>>>>>
->>>>>> Could you try the above solution and see if the lockup can be avoided?
->>>>>> John Garry
->>>>>> should have workable patch.
->>>>>
->>>>> Yeah, so we experimented with changing the interrupt handling in the SCSI
->>>>> driver I maintain to use a threaded handler IRQ handler plus patch below,
->>>>> and saw a significant throughput boost:
->>>>>
->>>>> --->8
->>>>>
->>>>> Subject: [PATCH] genirq: Add support to allow thread to use hard irq affinity
->>>>>
->>>>> Currently the cpu allowed mask for the threaded part of a threaded irq
->>>>> handler will be set to the effective affinity of the hard irq.
->>>>>
->>>>> Typically the effective affinity of the hard irq will be for a single cpu. As such,
->>>>> the threaded handler would always run on the same cpu as the hard irq.
->>>>>
->>>>> We have seen scenarios in high data-rate throughput testing that the cpu
->>>>> handling the interrupt can be totally saturated handling both the hard
->>>>> interrupt and threaded handler parts, limiting throughput.
->>>>>
->>>>> Add IRQF_IRQ_AFFINITY flag to allow the driver requesting the threaded
->>>>> interrupt to decide on the policy of which cpu the threaded handler may run.
->>>>>
->>>>> Signed-off-by: John Garry <john.garry@huawei.com>
->>
->> Thanks for pointing me to this patch. This fixed the interrupt swamp and make the system stable.
->>
->> However I'm seeing reduced performance when using threaded interrupts.
->>
->> Here are the test results on a system with 80 CPUs and 10 NVMe disks (32 hardware queues for each disk)
->> Benchmark tool is FIO, I/O pattern: 4k random reads on all NVMe disks, with queue depth = 64, num of jobs = 80, direct=1
->>
->> With threaded interrupts: 1320k IOPS
->> With just interrupts: 3720k IOPS
->> With just interrupts and my patch: 3700k IOPS
->
-> This gap looks too big wrt. threaded interrupts vs. interrupts.
->
->>
->> At the peak IOPS, the overall CPU usage is at around 98-99%. I think the cost of doing wake up and context switch for NVMe threaded IRQ handler takes some CPU away.
->>
->
-> In theory, it shouldn't be so because most of times the thread should be running
-> on CPUs of this hctx, and the wakeup cost shouldn't be so big. Maybe there is
-> performance problem somewhere wrt. threaded interrupt.
->
-> Could you share us your test script and environment? I will see if I can
-> reproduce it in my environment.
->
->> In this test, I made the following change to make use of IRQF_IRQ_AFFINITY for NVMe:
->>
->> diff --git a/drivers/pci/irq.c b/drivers/pci/irq.c
->> index a1de501a2729..3fb30d16464e 100644
->> --- a/drivers/pci/irq.c
->> +++ b/drivers/pci/irq.c
->> @@ -86,7 +86,7 @@ int pci_request_irq(struct pci_dev *dev, unsigned int nr, irq_handler_t handler,
->>         va_list ap;
->>         int ret;
->>         char *devname;
->> -       unsigned long irqflags = IRQF_SHARED;
->> +       unsigned long irqflags = IRQF_SHARED | IRQF_IRQ_AFFINITY;
->>
->>         if (!handler)
->>                 irqflags |= IRQF_ONESHOT;
->>
->
-> I don't see why IRQF_IRQ_AFFINITY is needed.
->
-> John, could you explain it a bit why you need changes on IRQF_IRQ_AFFINITY?
+-- 
+ Dear Beloved,
 
-Hi Ming,
+I'm Reverend Father David Nolan, I was born in Brooklyn, NYC, 1970, I
+was ordained into the Catholic Priesthood.
 
-The patch I shared was my original solution, based on the driver setting 
-flag IRQF_IRQ_AFFINITY to request the threaded handler uses the irq 
-affinity mask for the handler cpu allowed mask.
+Please take your time to read this message, although we have never met
+before, this is no spam, It's a real message sent to you. I know also
+that you will be amazed at the level of trust that I am willing to
+place in a person that I have never seen nor spoken with.
 
-If we want to make this decision based only on whether the irq is 
-managed or not, then we can drop the flag and just make the change as 
-you suggest, below.
+I have been a catholic priest for over 22 years. I had a heart surgery
+on the 23-11-2017 and the Doctors have informed me that I cannot live
+longer; I had a serious bleeding after the operation.
 
-Thanks,
-John
+I have decided to will to you all the money which was deposited in my
+bank account by a dying elderly woman in my congregation the total sum
+of $5,970,000.00 (Five million Nine Hundred and seventy Thousand US
+DOLLARS).
 
->
-> The following patch should be enough:
->
-> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-> index e8f7f179bf77..1e7cffc1c20c 100644
-> --- a/kernel/irq/manage.c
-> +++ b/kernel/irq/manage.c
-> @@ -968,7 +968,11 @@ irq_thread_check_affinity(struct irq_desc *desc, struct irqaction *action)
->  	if (cpumask_available(desc->irq_common_data.affinity)) {
->  		const struct cpumask *m;
->
-> -		m = irq_data_get_effective_affinity_mask(&desc->irq_data);
-> +		if (irqd_affinity_is_managed(&desc->irq_data))
-> +			m = desc->irq_common_data.affinity;
-> +		else
-> +			m = irq_data_get_effective_affinity_mask(
-> +					&desc->irq_data);
->  		cpumask_copy(mask, m);
->  	} else {
->  		valid = false;
->
->
-> Thanks,
-> Ming
->
-> .
->
+I want you to use this sum to make the world a better place for the
+poor and less privileged, help the needy and also help your family
+members.
 
+I took this decision because I was raised in an Orphanage so I don't
+have relatives and presently, I'm hospitalized in Cabinet Medical Le
+Sacre Coeur, where I am undergoing treatment. That's why I have
+decided to contact you so that you can make good use of the money
+which I will to you.
 
+Regards,
+Reverend Father David Nolan
