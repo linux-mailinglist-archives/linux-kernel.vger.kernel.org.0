@@ -2,105 +2,197 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D229097324
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 09:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 622CA9732B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 09:15:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfHUHOO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 03:14:14 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:44934 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727504AbfHUHOO (ORCPT
+        id S1728199AbfHUHPt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 03:15:49 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34675 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727504AbfHUHPs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 03:14:14 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L7DiYf087377;
-        Wed, 21 Aug 2019 07:14:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : mime-version : content-type; s=corp-2019-08-05;
- bh=2P4kNV5f2bdRIjdmMi0NVT3ayqfEeBJ0buEu0sEHelA=;
- b=hOJj2K/7bj8BlIDAFJp6J7fBEtTE+nqLHKwTNcuUtz86WpBSM+zqRcEpa5Y+P/EWDnnQ
- RIzBFeYdrUC3gC5lpm7UewwTkgVom/ERg9mjqb/Y91AgwDMhgLRteL77SEQI6xkqtYMf
- hPWSDs7roAsiSMh4n4wHG91ZeqFP8HxYcIrPyi1WqDeNkYBZGEALWsLe7SqtzJfSwaln
- Bu6NloHak4NreE8LL2ti9GICN1YW3PAjvmSorPUr5kiJVv6uXcAjndcu1XeIbFYPuZM5
- eZDNhcqXn7kUeoXRBGwPm57wqyf4BZ0c8Q3MeS28BZvptyHadGvJXULTvSm3METlHs/N jA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by aserp2120.oracle.com with ESMTP id 2ue9hpkbe3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Aug 2019 07:14:11 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7L7DACq166327;
-        Wed, 21 Aug 2019 07:14:11 GMT
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserp3020.oracle.com with ESMTP id 2ugj7pk00t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Aug 2019 07:14:11 +0000
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7L7EA2Z029385;
-        Wed, 21 Aug 2019 07:14:10 GMT
-Received: from mwanda (/41.57.98.10)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 21 Aug 2019 00:14:09 -0700
-Date:   Wed, 21 Aug 2019 10:14:03 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH] tools/power: intel-speed-select:  Fix a read overflow in
- isst_set_tdp_level_msr()
-Message-ID: <20190821071403.GG26957@mwanda>
+        Wed, 21 Aug 2019 03:15:48 -0400
+Received: by mail-ot1-f68.google.com with SMTP id c7so1155522otp.1;
+        Wed, 21 Aug 2019 00:15:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jxVrA9CxsKiHpry0a7lxkK1MkSc5DTM9n5l3rc6J8H4=;
+        b=jdhoHtICe2dI2FIvxxNwDJO/W5Lgr/+yZHISXd4hOER1yMlHqsMfnRny1RvnKH1rtK
+         sK7F9H42Wh0n7poIog3d/lQHiIbqH3j15kS8chxT28zUtgmus/9Jr3OU5erAn9oQVLXf
+         m00i1zqXLMb2SoB4BoyVHVqb2HCBjpSumg7CCNZ/xXq9/Mni5ZxuL0VRtbedP6N9UxnM
+         Z1Yhfmu9M/r9/Olv/nSpp/PMzFFQ6F2c/Xz1MXo7vego2f9iow8Fa2uOPWHDZxEenTwA
+         Hf9Z1c5I/o+D6IbMgR0IVSaHdZd4INEydaLSsgzmN9j9XlNCllmI64soG1HW/IDQVIza
+         iZNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jxVrA9CxsKiHpry0a7lxkK1MkSc5DTM9n5l3rc6J8H4=;
+        b=HgkiIXVwUF4agGmJaY5x6AYofblj4TyzuNCFDUaJxRiRtAQIZ81ib+V/L3Jm7tsZn5
+         6DjK2IkyKOKKaWbvtgQLel+x7zaan4dnFm6JF9oKDw+xDqHCjhjeBrV7PbU5rJXyeKxN
+         vs/4Cnt1YcQ9Hdj14YzBtcoqR0CRWogJpSbkViSChse3M74JjcqNnAd3p7ZL32L2QCXL
+         iaWyFWq3Z9BX6UWOJgP9Jnn0/EfhMEQzYmBkFwtYKSPcYTekjOHbyY0oH9cfhGZc8x2c
+         FIlXvdwST1siOEurXPIemEzlBis8bq5ewHqJZcuusQGHK/p9LI62atTGBClCcz1FaXNz
+         zcKQ==
+X-Gm-Message-State: APjAAAUK8KQWNN9oCWayKNUa/XWO+9jw7YFhh2WpFanOr+m8waF77gud
+        pohQ3lh+Q4P72CbrdlzkD6vFoPb4pIYqzLezSXs=
+X-Google-Smtp-Source: APXvYqxLUwsSfJV3VbPtnGgIvbcaJ7kxCf3byp0ch+vdnLw6VbQJGMVMTusoxKmL21/xyqIFuy22JYrj1wzW5rjZaSI=
+X-Received: by 2002:a9d:4590:: with SMTP id x16mr23501917ote.254.1566371747851;
+ Wed, 21 Aug 2019 00:15:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908210078
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908210078
+References: <87inbbjx2w.fsf@e105922-lin.cambridge.arm.com> <20180207011455.GA15214@hori1.linux.bs1.fc.nec.co.jp>
+ <87fu6bfytm.fsf@e105922-lin.cambridge.arm.com> <20180208121749.0ac09af2b5a143106f339f55@linux-foundation.org>
+ <87wozhvc49.fsf@concordia.ellerman.id.au> <e673f38a-9e5f-21f6-421b-b3cb4ff02e91@oracle.com>
+ <CANRm+CxAgWVv5aVzQ0wdP_A7QQgqfy7nN_SxyaactG7Mnqfr2A@mail.gmail.com>
+ <f79d828c-b0b4-8a20-c316-a13430cfb13c@oracle.com> <20190610235045.GB30991@hori.linux.bs1.fc.nec.co.jp>
+ <CANRm+CwwPv52k7pWiErYwFHV=_6kCdiyXZkT3QT6ef_UJagt9A@mail.gmail.com> <20190821053904.GA23349@hori.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20190821053904.GA23349@hori.linux.bs1.fc.nec.co.jp>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Wed, 21 Aug 2019 15:15:15 +0800
+Message-ID: <CANRm+CxQ8bVBtfkP9Dmysx3C3bgE3UfO8rOuW5BzkQKbf36CRQ@mail.gmail.com>
+Subject: Re: ##freemail## Re: [PATCH v2] mm: hwpoison: disable memory error
+ handling on 1GB hugepage
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     Mike Kravetz <mike.kravetz@oracle.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Punit Agrawal <punit.agrawal@arm.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        kvm <kvm@vger.kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Xiao Guangrong <xiaoguangrong@tencent.com>,
+        "lidongchen@tencent.com" <lidongchen@tencent.com>,
+        "yongkaiwu@tencent.com" <yongkaiwu@tencent.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        Hugh Dickins <hughd@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The isst_send_msr_command() function will read 8 bytes but we are
-passing an address to an int (4 bytes) so it results in a read overflow.
+On Wed, 21 Aug 2019 at 13:41, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+>
+> On Tue, Aug 20, 2019 at 03:03:55PM +0800, Wanpeng Li wrote:
+> > Cc Mel Gorman, Kirill, Dave Hansen,
+> > On Tue, 11 Jun 2019 at 07:51, Naoya Horiguchi <n-horiguchi@ah.jp.nec.com> wrote:
+> > >
+> > > On Wed, May 29, 2019 at 04:31:01PM -0700, Mike Kravetz wrote:
+> > > > On 5/28/19 2:49 AM, Wanpeng Li wrote:
+> > > > > Cc Paolo,
+> > > > > Hi all,
+> > > > > On Wed, 14 Feb 2018 at 06:34, Mike Kravetz <mike.kravetz@oracle.com> wrote:
+> > > > >>
+> > > > >> On 02/12/2018 06:48 PM, Michael Ellerman wrote:
+> > > > >>> Andrew Morton <akpm@linux-foundation.org> writes:
+> > > > >>>
+> > > > >>>> On Thu, 08 Feb 2018 12:30:45 +0000 Punit Agrawal <punit.agrawal@arm.com> wrote:
+> > > > >>>>
+> > > > >>>>>>
+> > > > >>>>>> So I don't think that the above test result means that errors are properly
+> > > > >>>>>> handled, and the proposed patch should help for arm64.
+> > > > >>>>>
+> > > > >>>>> Although, the deviation of pud_huge() avoids a kernel crash the code
+> > > > >>>>> would be easier to maintain and reason about if arm64 helpers are
+> > > > >>>>> consistent with expectations by core code.
+> > > > >>>>>
+> > > > >>>>> I'll look to update the arm64 helpers once this patch gets merged. But
+> > > > >>>>> it would be helpful if there was a clear expression of semantics for
+> > > > >>>>> pud_huge() for various cases. Is there any version that can be used as
+> > > > >>>>> reference?
+> > > > >>>>
+> > > > >>>> Is that an ack or tested-by?
+> > > > >>>>
+> > > > >>>> Mike keeps plaintively asking the powerpc developers to take a look,
+> > > > >>>> but they remain steadfastly in hiding.
+> > > > >>>
+> > > > >>> Cc'ing linuxppc-dev is always a good idea :)
+> > > > >>>
+> > > > >>
+> > > > >> Thanks Michael,
+> > > > >>
+> > > > >> I was mostly concerned about use cases for soft/hard offline of huge pages
+> > > > >> larger than PMD_SIZE on powerpc.  I know that powerpc supports PGD_SIZE
+> > > > >> huge pages, and soft/hard offline support was specifically added for this.
+> > > > >> See, 94310cbcaa3c "mm/madvise: enable (soft|hard) offline of HugeTLB pages
+> > > > >> at PGD level"
+> > > > >>
+> > > > >> This patch will disable that functionality.  So, at a minimum this is a
+> > > > >> 'heads up'.  If there are actual use cases that depend on this, then more
+> > > > >> work/discussions will need to happen.  From the e-mail thread on PGD_SIZE
+> > > > >> support, I can not tell if there is a real use case or this is just a
+> > > > >> 'nice to have'.
+> > > > >
+> > > > > 1GB hugetlbfs pages are used by DPDK and VMs in cloud deployment, we
+> > > > > encounter gup_pud_range() panic several times in product environment.
+> > > > > Is there any plan to reenable and fix arch codes?
+> > > >
+> > > > I too am aware of slightly more interest in 1G huge pages.  Suspect that as
+> > > > Intel MMU capacity increases to handle more TLB entries there will be more
+> > > > and more interest.
+> > > >
+> > > > Personally, I am not looking at this issue.  Perhaps Naoya will comment as
+> > > > he know most about this code.
+> > >
+> > > Thanks for forwarding this to me, I'm feeling that memory error handling
+> > > on 1GB hugepage is demanded as real use case.
+> > >
+> > > >
+> > > > > In addition, https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/x86/kvm/mmu.c#n3213
+> > > > > The memory in guest can be 1GB/2MB/4K, though the host-backed memory
+> > > > > are 1GB hugetlbfs pages, after above PUD panic is fixed,
+> > > > > try_to_unmap() which is called in MCA recovery path will mark the PUD
+> > > > > hwpoison entry. The guest will vmexit and retry endlessly when
+> > > > > accessing any memory in the guest which is backed by this 1GB poisoned
+> > > > > hugetlbfs page. We have a plan to split this 1GB hugetblfs page by 2MB
+> > > > > hugetlbfs pages/4KB pages, maybe file remap to a virtual address range
+> > > > > which is 2MB/4KB page granularity, also split the KVM MMU 1GB SPTE
+> > > > > into 2MB/4KB and mark the offensive SPTE w/ a hwpoison flag, a sigbus
+> > > > > will be delivered to VM at page fault next time for the offensive
+> > > > > SPTE. Is this proposal acceptable?
+> > > >
+> > > > I am not sure of the error handling design, but this does sound reasonable.
+> > >
+> > > I agree that that's better.
+> > >
+> > > > That block of code which potentially dissolves a huge page on memory error
+> > > > is hard to understand and I'm not sure if that is even the 'normal'
+> > > > functionality.  Certainly, we would hate to waste/poison an entire 1G page
+> > > > for an error on a small subsection.
+> > >
+> > > Yes, that's not practical, so we need at first establish the code base for
+> > > 2GB hugetlb splitting and then extending it to 1GB next.
+> >
+> > I found it is not easy to split. There is a unique hugetlb page size
+> > that is associated with a mounted hugetlbfs filesystem, file remap to
+> > 2MB/4KB will break this. How about hard offline 1GB hugetlb page as
+> > what has already done in soft offline, replace the corrupted 1GB page
+> > by new 1GB page through page migration, the offending/corrupted area
+> > in the original 1GB page doesn't need to be copied into the new page,
+> > the offending/corrupted area in new page can keep full zero just as it
+> > is clear during hugetlb page fault, other sub-pages of the original
+> > 1GB page can be freed to buddy system. The sigbus signal is sent to
+> > userspace w/ offending/corrupted virtual address, and signal code,
+> > userspace should take care this.
+>
+> Splitting hugetlb is simply hard, IMHO. THP splitting is done by years
+> of effort by many great kernel develpers, and I don't think doing similar
+> development on hugetlb is a good idea.  I thought of converting hugetlb
+> into thp, but maybe it's not an easy task either.
+> "Hard offlining via soft offlining" approach sounds new and promising to me.
+> I guess we don't need a large patchset to do this. So, thanks for the idea!
 
-Fixes: 3fb4f7cd472c ("tools/power/x86: A tool to validate Intel Speed Select commands")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
----
- tools/power/x86/intel-speed-select/isst-core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Good, I will wait a while, and start to cook the patches if there is
+no opposite of voice.
 
-diff --git a/tools/power/x86/intel-speed-select/isst-core.c b/tools/power/x86/intel-speed-select/isst-core.c
-index 8de4ac39a008..f724322856ed 100644
---- a/tools/power/x86/intel-speed-select/isst-core.c
-+++ b/tools/power/x86/intel-speed-select/isst-core.c
-@@ -190,6 +190,7 @@ int isst_get_get_trl(int cpu, int level, int avx_level, int *trl)
- 
- int isst_set_tdp_level_msr(int cpu, int tdp_level)
- {
-+	unsigned long long level = tdp_level;
- 	int ret;
- 
- 	debug_printf("cpu: tdp_level via MSR %d\n", cpu, tdp_level);
-@@ -202,8 +203,7 @@ int isst_set_tdp_level_msr(int cpu, int tdp_level)
- 	if (tdp_level > 2)
- 		return -1; /* invalid value */
- 
--	ret = isst_send_msr_command(cpu, 0x64b, 1,
--				    (unsigned long long *)&tdp_level);
-+	ret = isst_send_msr_command(cpu, 0x64b, 1, &level);
- 	if (ret)
- 		return ret;
- 
--- 
-2.20.1
-
+Regards,
+Wanpeng Li
