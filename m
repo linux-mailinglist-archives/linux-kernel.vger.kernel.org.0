@@ -2,181 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F95A978EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:11:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B720978E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:11:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728054AbfHUMKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:10:32 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:1631 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbfHUMKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:10:32 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 08DF22F30D9;
-        Wed, 21 Aug 2019 12:10:32 +0000 (UTC)
-Received: from laptop.redhat.com (ovpn-116-105.ams2.redhat.com [10.36.116.105])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 521D35C541;
-        Wed, 21 Aug 2019 12:10:26 +0000 (UTC)
-From:   Eric Auger <eric.auger@redhat.com>
-To:     eric.auger.pro@gmail.com, eric.auger@redhat.com, joro@8bytes.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        dwmw2@infradead.org, shameerali.kolothum.thodi@huawei.com,
-        alex.williamson@redhat.com, robin.murphy@arm.com, hch@infradead.org
-Subject: [PATCH v3] iommu: revisit iommu_insert_resv_region() implementation
-Date:   Wed, 21 Aug 2019 14:09:40 +0200
-Message-Id: <20190821120940.22337-1-eric.auger@redhat.com>
+        id S1728006AbfHUMJz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:09:55 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40072 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727448AbfHUMJy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:09:54 -0400
+Received: by mail-pl1-f194.google.com with SMTP id h3so1236403pls.7
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:09:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=;
+        b=1mTbly5hNN6suDS+BwBXn5tZNQRoJv3U+6eGIZWkxOpX8gp4MfK0srbyshCamPl8cE
+         oynbwAZaUVd3iYuDw/fFqllqnUyyMdhGmWDFTWD0+uRBHO1RABomqwNTPTloesNaBCP/
+         OF0wNlT1X2HUApuEYt9hqsB3ukfCOmKOxQ9VlFGyTVla9DArrhzV46cf0e1hqSL0Em1S
+         kMKT+OUOB39Lc9u+MllIcA6W2VixaWAmIOOCqIPym//+KF+bJLzrXd5uXWfD6RF+tn8O
+         fEItbmLNgpz+3xyfCw5xuoCb8BCqv/jPsevOVEPakCBbt5mOdjvlnK19JQHJXISJTFII
+         +AuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UT6yE/roxwyyBSRfLOwrFlilraLjBXjoNWJQAsldDVo=;
+        b=bi40x9zNIBQ9O3OhHhg9U2w9WFXTXMuHZD1MbooOSVKnF2vr6uUn0p23ZmVgfeljDS
+         AUIfMjVHdwvfu999Xiu0J3jGlRYscn84y22lVg91iGLDnXQIIF9Xox0oxJsP1w3qFDpq
+         ChWhEnEwBlv7JinEhLSnVoKIBcdbjnxJvjZwcXbG/O9XLFMtBzSY8FA2BPnbb2ZtvIGx
+         ABjqoxncDK3RM8jG7Qty2xIURq8nR2frpqs6xTxEALc4+RAUc2SYxMZsxL39sN8RFWFe
+         AuAO7r9m8kmY+e+bsEQHYfrYEJMGsKFR1xuBykCW7lbW5wvjv7pv3weCYNvSSONofF1l
+         QlrQ==
+X-Gm-Message-State: APjAAAXULZob+sshrYmpadBlgLT4fZyfpBa0kLGDNlX/W+YbwD0EwKOf
+        6a80gEU21iZ/SHKOd7KoDxic8g==
+X-Google-Smtp-Source: APXvYqxsoe31YiWALXWqRLHXasZTZR3nM8GXNUHwTUUu4EkoxYDPJeCxhjU4HkYSZ/HpLNbIJ9AOOg==
+X-Received: by 2002:a17:902:a410:: with SMTP id p16mr17723995plq.150.1566389394293;
+        Wed, 21 Aug 2019 05:09:54 -0700 (PDT)
+Received: from [192.168.1.188] (66.29.164.166.static.utbb.net. [66.29.164.166])
+        by smtp.gmail.com with ESMTPSA id z4sm22521476pfg.166.2019.08.21.05.09.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 05:09:53 -0700 (PDT)
+Subject: Re: [PATCH 5/9] block: support diskcipher
+To:     "boojin.kim" <boojin.kim@samsung.com>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     'Herbert Xu' <herbert@gondor.apana.org.au>,
+        "'David S. Miller'" <davem@davemloft.net>,
+        'Eric Biggers' <ebiggers@kernel.org>,
+        "'Theodore Y. Ts'o'" <tytso@mit.edu>, 'Chao Yu' <chao@kernel.org>,
+        'Jaegeuk Kim' <jaegeuk@kernel.org>,
+        'Andreas Dilger' <adilger.kernel@dilger.ca>,
+        dm-devel@redhat.com, 'Mike Snitzer' <snitzer@redhat.com>,
+        'Alasdair Kergon' <agk@redhat.com>,
+        'Krzysztof Kozlowski' <krzk@kernel.org>,
+        'Kukjin Kim' <kgene@kernel.org>,
+        'Jaehoon Chung' <jh80.chung@samsung.com>,
+        'Ulf Hansson' <ulf.hansson@linaro.org>,
+        linux-crypto@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-mmc@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-arm-kernel@lists.infradead.org, linux-fsdevel@vger.kernel.org
+References: <CGME20190821064226epcas2p2835b8a9084988b79107e54abfc5e7dab@epcas2p2.samsung.com>
+ <004101d557eb$98b00060$ca100120$@samsung.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <6ea5e5db-4dd4-719f-3b3e-b89099636ea6@kernel.dk>
+Date:   Wed, 21 Aug 2019 06:09:50 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 21 Aug 2019 12:10:32 +0000 (UTC)
+In-Reply-To: <004101d557eb$98b00060$ca100120$@samsung.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current implementation is recursive and in case of allocation
-failure the existing @regions list is altered. A non recursive
-version looks better for maintainability and simplifies the
-error handling. We use a separate stack for overlapping segment
-merging. The elements are sorted by start address and then by
-type, if their start address match.
+On 8/21/19 12:42 AM, boojin.kim wrote:
+> This patch supports crypto information to be maintained via BIO
+> and passed to the storage driver.
+> 
+> To do this, 'bi_aux_private', 'REQ_CYPTE' and 'bi_dun' are added
+> to the block layer.
+> 
+> 'bi_aux_private' is added for loading additional private information into
+> BIO.
+> 'REQ_CRYPT' is added to distinguish that bi_aux_private is being used
+> for diskcipher.
+> F2FS among encryption users uses DUN(device unit number) as
+> the IV(initial vector) for cryptographic operations.
+> DUN is stored in 'bi_dun' of bi_iter as a specific value for each BIO.
+> 
+> Before attempting to merge the two BIOs, the operation is also added to
+> verify that the crypto information contained in two BIOs is consistent.
 
-Note this new implementation may change the region order of
-appearance in /sys/kernel/iommu_groups/<n>/reserved_regions
-files but this order has never been documented, see
-commit bc7d12b91bd3 ("iommu: Implement reserved_regions
-iommu-group sysfs file").
+This isn't going to happen. With this, and the inline encryption
+proposed by Google, we'll bloat the bio even more. At least the Google
+approach didn't include bio iter changes as well.
 
-Signed-off-by: Eric Auger <eric.auger@redhat.com>
+Please work it out between yourselves so we can have a single, clean
+abstraction that works for both.
 
----
-
-v2 -> v3:
-- use LIST_HEAD(stack)
-- remove found local variables
-
-v1 -> v2:
-- adapt the algo so that we don't need to move elements of
-  other types to different list and sort by address and then by
-  type
----
- drivers/iommu/iommu.c | 96 +++++++++++++++++++++----------------------
- 1 file changed, 47 insertions(+), 49 deletions(-)
-
-diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
-index 0c674d80c37f..edd622525796 100644
---- a/drivers/iommu/iommu.c
-+++ b/drivers/iommu/iommu.c
-@@ -229,60 +229,58 @@ static ssize_t iommu_group_show_name(struct iommu_group *group, char *buf)
-  * @new: new region to insert
-  * @regions: list of regions
-  *
-- * The new element is sorted by address with respect to the other
-- * regions of the same type. In case it overlaps with another
-- * region of the same type, regions are merged. In case it
-- * overlaps with another region of different type, regions are
-- * not merged.
-+ * Elements are sorted by start address and overlapping segments
-+ * of the same type are merged.
-  */
--static int iommu_insert_resv_region(struct iommu_resv_region *new,
--				    struct list_head *regions)
-+int iommu_insert_resv_region(struct iommu_resv_region *new,
-+			     struct list_head *regions)
- {
--	struct iommu_resv_region *region;
--	phys_addr_t start = new->start;
--	phys_addr_t end = new->start + new->length - 1;
--	struct list_head *pos = regions->next;
-+	struct iommu_resv_region *iter, *tmp, *nr, *top;
-+	LIST_HEAD(stack);
- 
--	while (pos != regions) {
--		struct iommu_resv_region *entry =
--			list_entry(pos, struct iommu_resv_region, list);
--		phys_addr_t a = entry->start;
--		phys_addr_t b = entry->start + entry->length - 1;
--		int type = entry->type;
--
--		if (end < a) {
--			goto insert;
--		} else if (start > b) {
--			pos = pos->next;
--		} else if ((start >= a) && (end <= b)) {
--			if (new->type == type)
--				return 0;
--			else
--				pos = pos->next;
--		} else {
--			if (new->type == type) {
--				phys_addr_t new_start = min(a, start);
--				phys_addr_t new_end = max(b, end);
--				int ret;
--
--				list_del(&entry->list);
--				entry->start = new_start;
--				entry->length = new_end - new_start + 1;
--				ret = iommu_insert_resv_region(entry, regions);
--				kfree(entry);
--				return ret;
--			} else {
--				pos = pos->next;
--			}
--		}
--	}
--insert:
--	region = iommu_alloc_resv_region(new->start, new->length,
--					 new->prot, new->type);
--	if (!region)
-+	nr = iommu_alloc_resv_region(new->start, new->length,
-+				     new->prot, new->type);
-+	if (!nr)
- 		return -ENOMEM;
- 
--	list_add_tail(&region->list, pos);
-+	/* First add the new element based on start address sorting */
-+	list_for_each_entry(iter, regions, list) {
-+		if (nr->start < iter->start ||
-+		    (nr->start == iter->start && nr->type <= iter->type))
-+			break;
-+	}
-+	list_add_tail(&nr->list, &iter->list);
-+
-+	/* Merge overlapping segments of type nr->type in @regions, if any */
-+	list_for_each_entry_safe(iter, tmp, regions, list) {
-+		phys_addr_t top_end, iter_end = iter->start + iter->length - 1;
-+
-+		/* no merge needed on elements of different types than @nr */
-+		if (iter->type != nr->type) {
-+			list_move_tail(&iter->list, &stack);
-+			continue;
-+		}
-+
-+		/* look for the last stack element of same type as @iter */
-+		list_for_each_entry_reverse(top, &stack, list)
-+			if (top->type == iter->type)
-+				goto check_overlap;
-+
-+		list_move_tail(&iter->list, &stack);
-+		continue;
-+
-+check_overlap:
-+		top_end = top->start + top->length - 1;
-+
-+		if (iter->start > top_end + 1) {
-+			list_move_tail(&iter->list, &stack);
-+		} else {
-+			top->length = max(top_end, iter_end) - top->start + 1;
-+			list_del(&iter->list);
-+			kfree(iter);
-+		}
-+	}
-+	list_splice(&stack, regions);
- 	return 0;
- }
- 
 -- 
-2.20.1
+Jens Axboe
 
