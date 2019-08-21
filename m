@@ -2,76 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D806096F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:27:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A13C596F65
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:21:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727153AbfHUC1E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:27:04 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57822 "EHLO inva021.nxp.com"
+        id S1727057AbfHUCUy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:20:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727090AbfHUC05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:26:57 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3A07A2004DF;
-        Wed, 21 Aug 2019 04:26:55 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E2DEF20007F;
-        Wed, 21 Aug 2019 04:26:46 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 96E7A40319;
-        Wed, 21 Aug 2019 10:26:36 +0800 (SGT)
-From:   Anson Huang <Anson.Huang@nxp.com>
-To:     wim@linux-watchdog.org, linux@roeck-us.net, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com, linux@armlinux.org.uk,
-        otavio@ossystems.com.br, leonard.crestez@nxp.com,
-        schnitzeltony@gmail.com, u.kleine-koenig@pengutronix.de,
-        jan.tuerk@emtrion.com, linux-watchdog@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1726329AbfHUCUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:20:54 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 73FE522DA7;
+        Wed, 21 Aug 2019 02:20:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566354053;
+        bh=dDoqvH7cPzQlNadZ1kurjVq8FKDUwOC07P/MNENXjcE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ERs0FPZ6ROQFeuR6nRwEIBq51RHhUufLJZdwWs5Avr0dFyy3EUWFq5NTKrCKNKQ88
+         blWQ4OZqcLYjvUXxWnoGao/HrZEnAZl/p9TM1Gh8TLlb7rq/tdW291kjPslJ5q/C1s
+         dLLblfKRd9F+OzlcWOwQfuSKk1tcJ0ssd/l3HUCo=
+Date:   Tue, 20 Aug 2019 19:20:48 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Caitlyn <caitlynannefinn@gmail.com>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
         linux-kernel@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH V3 4/4] ARM: dts: imx7ulp: Add wdog1 node
-Date:   Tue, 20 Aug 2019 22:07:58 -0400
-Message-Id: <1566353278-1884-4-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566353278-1884-1-git-send-email-Anson.Huang@nxp.com>
-References: <1566353278-1884-1-git-send-email-Anson.Huang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Subject: Re: [PATCH 1/2] staging/erofs/xattr.h: Fixed misaligned function
+ arguments.
+Message-ID: <20190821022048.GA26373@kroah.com>
+References: <1566346700-28536-1-git-send-email-caitlynannefinn@gmail.com>
+ <1566346700-28536-2-git-send-email-caitlynannefinn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566346700-28536-2-git-send-email-caitlynannefinn@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add wdog1 node to support watchdog driver.
+On Tue, Aug 20, 2019 at 08:18:19PM -0400, Caitlyn wrote:
+> Indented some function arguments to fix checkpath warnings.
+> 
+> Signed-off-by: Caitlyn <caitlynannefinn@gmail.com>
+> ---
+>  drivers/staging/erofs/xattr.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
-No changes.
----
- arch/arm/boot/dts/imx7ulp.dtsi | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+Hi,
 
-diff --git a/arch/arm/boot/dts/imx7ulp.dtsi b/arch/arm/boot/dts/imx7ulp.dtsi
-index 6859a3a..1fdb5a35 100644
---- a/arch/arm/boot/dts/imx7ulp.dtsi
-+++ b/arch/arm/boot/dts/imx7ulp.dtsi
-@@ -264,6 +264,16 @@
- 			#clock-cells = <1>;
- 		};
- 
-+		wdog1: wdog@403d0000 {
-+			compatible = "fsl,imx7ulp-wdt";
-+			reg = <0x403d0000 0x10000>;
-+			interrupts = <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
-+			assigned-clocks = <&pcc2 IMX7ULP_CLK_WDG1>;
-+			assigned-clocks-parents = <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>;
-+			timeout-sec = <40>;
-+		};
-+
- 		pcc2: clock-controller@403f0000 {
- 			compatible = "fsl,imx7ulp-pcc2";
- 			reg = <0x403f0000 0x10000>;
--- 
-2.7.4
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- It looks like you did not use your "real" name for the patch on either
+  the Signed-off-by: line, or the From: line (both of which have to
+  match).  Please read the kernel file, Documentation/SubmittingPatches
+  for how to do this correctly.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
