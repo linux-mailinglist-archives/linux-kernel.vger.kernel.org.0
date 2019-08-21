@@ -2,71 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC1E96E93
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56DAB96E94
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:54:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfHUAxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 20:53:00 -0400
-Received: from mga09.intel.com ([134.134.136.24]:36686 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726254AbfHUAxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 20:53:00 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Aug 2019 17:52:59 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,410,1559545200"; 
-   d="scan'208";a="178350826"
-Received: from richard.sh.intel.com (HELO localhost) ([10.239.159.54])
-  by fmsmga008.fm.intel.com with ESMTP; 20 Aug 2019 17:52:57 -0700
-Date:   Wed, 21 Aug 2019 08:52:34 +0800
-From:   Wei Yang <richardw.yang@linux.intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Wei Yang <richardw.yang@linux.intel.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        akpm@linux-foundation.org, mgorman@techsingularity.net,
-        osalvador@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm/mmap.c: extract __vma_unlink_list as counter part
- for __vma_link_list
-Message-ID: <20190821005234.GA5540@richard>
-Reply-To: Wei Yang <richardw.yang@linux.intel.com>
-References: <20190814021755.1977-1-richardw.yang@linux.intel.com>
- <20190814021755.1977-3-richardw.yang@linux.intel.com>
- <20190814051611.GA1958@infradead.org>
- <20190814065703.GA6433@richard>
- <2c5cdffd-f405-23b8-98f5-37b95ca9b027@suse.cz>
- <20190820172629.GB4949@bombadil.infradead.org>
+        id S1726882AbfHUAxX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 20:53:23 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47702 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726254AbfHUAxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 20:53:22 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 90AFC6EB68EC1F723933;
+        Wed, 21 Aug 2019 08:53:20 +0800 (CST)
+Received: from [127.0.0.1] (10.133.217.137) by DGGEMS401-HUB.china.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
+ 08:53:18 +0800
+Subject: Re: [PATCH] userfaultfd_release: always remove uffd flags and clear
+ vm_userfaultfd_ctx
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     linux-mm <linux-mm@kvack.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Jann Horn <jannh@google.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        <linux-kernel@vger.kernel.org>
+References: <d4583416-5e4a-95e7-a08a-32bf2c9a95fb@huawei.com>
+ <20190820160237.GB4983@redhat.com>
+From:   Kefeng Wang <wangkefeng.wang@huawei.com>
+Message-ID: <d2bf0b99-2cdd-7868-e5ad-8c2cad4681c2@huawei.com>
+Date:   Wed, 21 Aug 2019 08:53:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820172629.GB4949@bombadil.infradead.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190820160237.GB4983@redhat.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.133.217.137]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 10:26:29AM -0700, Matthew Wilcox wrote:
->On Wed, Aug 14, 2019 at 11:19:37AM +0200, Vlastimil Babka wrote:
->> On 8/14/19 8:57 AM, Wei Yang wrote:
->> > On Tue, Aug 13, 2019 at 10:16:11PM -0700, Christoph Hellwig wrote:
->> >>Btw, is there any good reason we don't use a list_head for vma linkage?
->> > 
->> > Not sure, maybe there is some historical reason?
->> 
->> Seems it was single-linked until 2010 commit 297c5eee3724 ("mm: make the vma
->> list be doubly linked") and I guess it was just simpler to add the vm_prev link.
->> 
->> Conversion to list_head might be an interesting project for some "advanced
->> beginner" in the kernel :)
+
+On 2019/8/21 0:02, Oleg Nesterov wrote:
+> userfaultfd_release() should clear vm_flags/vm_userfaultfd_ctx even
+> if mm->core_state != NULL.
 >
->I'm working to get rid of vm_prev and vm_next, so it would probably be
->wasted effort.
+> Otherwise a page fault can see userfaultfd_missing() == T and use an
+> already freed userfaultfd_ctx.
+>
+> Reported-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> Fixes: 04f5866e41fb ("coredump: fix race condition between mmget_not_zero()/get_task_mm() and core dumping")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+> ---
+>  fs/userfaultfd.c | 25 +++++++++++++------------
+>  1 file changed, 13 insertions(+), 12 deletions(-)
 
-You mean replace it with list_head?
+Tested on lts4.4 and 5.3-rc4, Thanks.
 
--- 
-Wei Yang
-Help you, Help me
+
