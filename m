@@ -2,118 +2,81 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D2B5978FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:15:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B73F97904
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:16:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbfHUMPn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:15:43 -0400
-Received: from mail-ed1-f97.google.com ([209.85.208.97]:46830 "EHLO
-        mail-ed1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727063AbfHUMPf (ORCPT
+        id S1727642AbfHUMQP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:16:15 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43592 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726785AbfHUMQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:15:35 -0400
-Received: by mail-ed1-f97.google.com with SMTP id z51so2640501edz.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:15:34 -0700 (PDT)
+        Wed, 21 Aug 2019 08:16:14 -0400
+Received: by mail-ot1-f68.google.com with SMTP id e12so1795198otp.10;
+        Wed, 21 Aug 2019 05:16:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:message-id:date;
-        bh=or+cvsSg6ceM9i70D6UPLNnCbWB/HWcr9PNQOtNGKXI=;
-        b=J8Vf8pLsZ4EiGqXNKHuT7l8WwEEvDNmqhGTj/bu+qrCZ2/A2X6ov8HYmd0h0Zw0SMF
-         brPw7UtG5Z7oSK8TBrUN3zYjC7EIFNkNIItU6Izhy+GRSq7qEcneH61LC5eAgi08kv2X
-         9tHMRmEykQljdjVN3MjlvVnTm4a0dGq4wQ358ljknS1em9da42Bvz/9ngYah8mvnBRXM
-         R6BJVXrjLsd7A0RmHWy+fubhVWThIMXtgT5Uw6PgizUJuVCbpiqWiV5NUm3B8NLbmpoi
-         w42zRQPAQTgMdqJnVUTjdMW9LdiX/I4SNvUtRi+vDJ8Wfh7mtIybl9TPJ35C7BK3TS5M
-         GG0A==
-X-Gm-Message-State: APjAAAVb47FlOP+s6/GVzlTz/KPo+ciLnxIwEj5uZx6PJoH6OCLNWBYX
-        tGnXesFkFFGH5Lt1jB4QWWgtHztb2iScHijK7ns4CXQu2fB7CQUUZRSma34gClk2CA==
-X-Google-Smtp-Source: APXvYqwnL6a2+Wqqe4N5q5Qp5yJbqPQ85mdzWn2tird1yFrGVdQAYor3bqrwIaYpo5lJWM5SLTNhALLptlV9
-X-Received: by 2002:a17:906:6c90:: with SMTP id s16mr31271826ejr.62.1566389733773;
-        Wed, 21 Aug 2019 05:15:33 -0700 (PDT)
-Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id n20sm115894ejr.72.2019.08.21.05.15.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 05:15:33 -0700 (PDT)
-X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1i0PWX-00077D-F7; Wed, 21 Aug 2019 12:15:33 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id B2DC62742FCD; Wed, 21 Aug 2019 13:15:32 +0100 (BST)
-From:   Mark Brown <broonie@kernel.org>
-To:     Daniel Baluta <daniel.baluta@nxp.com>
-Cc:     alsa-devel@alsa-project.org, broonie@kernel.org,
-        devicetree@vger.kernel.org, festevam@gmail.com, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        nicoleotsuka@gmail.com, perex@perex.cz, robh+dt@kernel.org,
-        shengjiu.wang@nxp.com, viorel.suman@nxp.com, Xiubo.Lee@gmail.com
-Subject: Applied "ASoC: dt-bindings: Introduce compatible string for imx8qm" to the asoc tree
-In-Reply-To: <20190814082911.665-3-daniel.baluta@nxp.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190821121532.B2DC62742FCD@ypsilon.sirena.org.uk>
-Date:   Wed, 21 Aug 2019 13:15:32 +0100 (BST)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JM8+7Ec7A9MDZFRreGMwQwNOR9ozJM3D4xQgDyyrkY8=;
+        b=hgRNU+yACEowbjcxbWTnCEEK+U31A9QLlckVkwbHgQ6fQR0vHXqRlS0VVM3LTPat+Z
+         kvHbA8rBGMUUYHwXntgh8DyBYrGE82Vk3EEpEJvvQ1jBxvH280MjAniRo9IVk+tcWfWf
+         fiP8wGwZhUOZ492PoyEH7J2xypRfg7fGsLHg5G1q+aCDC/jyz6lghD3/l/96SIi8D9wy
+         3/KgI+fOoPg1+cfSwWpjgW909LBWcECPOe0jFTPyQEB/zmohKRLUOZn2Pgkopodr3mBL
+         uVi0GMWfPu5bo+t+hw9tPZRp7YaWJQZYG4qlJ9HAQUuPPAJOmCMz2qI4UYPpna9C2FEH
+         6Chg==
+X-Gm-Message-State: APjAAAXfZ+/YNUJrUw/EJrLg08gC78iRUfUjlRhj8Mr0+yWZIVfPJnBr
+        UuWqESpWXLmJfBf2cYTMxivIpxR+1si9sP9/5KM=
+X-Google-Smtp-Source: APXvYqwp73cyWDJ24i8HRDQI70zVub6GzQTzwRLYNV8E2VXhehGjEEulwajAQyMYsZSNEAJiaw5euZ2SPNlpndY3P2g=
+X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr26414408otk.145.1566389774076;
+ Wed, 21 Aug 2019 05:16:14 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190706140746.29132-1-jacopo+renesas@jmondi.org> <20190706140746.29132-4-jacopo+renesas@jmondi.org>
+In-Reply-To: <20190706140746.29132-4-jacopo+renesas@jmondi.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 21 Aug 2019 14:16:02 +0200
+Message-ID: <CAMuHMdVXQaqFg-m3a4xTiKLWQLz+itKQgGEBAQpHtG+MkTNzQw@mail.gmail.com>
+Subject: Re: [PATCH v2 03/19] arm64: renesas: Update 'vsps' property
+To:     Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Koji Matsuoka <koji.matsuoka.xm@renesas.com>, muroya@ksk.co.jp,
+        VenkataRajesh.Kalakodima@in.bosch.com,
+        Harsha.ManjulaMallikarjun@in.bosch.com,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        DRI Development <dri-devel@lists.freedesktop.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Sat, Jul 6, 2019 at 4:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
+> Update the 'vsps' property in the R-Car Gen3 SoC device tree files to
+> match what's in in the documentation example.
 
-   ASoC: dt-bindings: Introduce compatible string for imx8qm
+double in (no worries, I'll fix that up myself)
 
-has been applied to the asoc tree at
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-5.4
+Thanks!
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v5.4.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+BTW, any plans to add channel indices to the vsps properties in the
+remaining DTS files?
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Gr{oetje,eeting}s,
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+                        Geert
 
-Thanks,
-Mark
-
-From c1fe93581ae9d85c3a783b5fad21912bb88a0f34 Mon Sep 17 00:00:00 2001
-From: Daniel Baluta <daniel.baluta@nxp.com>
-Date: Wed, 14 Aug 2019 11:29:11 +0300
-Subject: [PATCH] ASoC: dt-bindings: Introduce compatible string for imx8qm
-
-Register map for i.MX8QM is similar with i.MX6 series. Integration
-of SAI IP into i.MX8QM SOC features a FIFO size of 64 X 32 bits samples.
-
-Signed-off-by: Daniel Baluta <daniel.baluta@nxp.com>
-Link: https://lore.kernel.org/r/20190814082911.665-3-daniel.baluta@nxp.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- Documentation/devicetree/bindings/sound/fsl-sai.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/sound/fsl-sai.txt b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-index e61c0dc1fc0b..0dc83cc4a236 100644
---- a/Documentation/devicetree/bindings/sound/fsl-sai.txt
-+++ b/Documentation/devicetree/bindings/sound/fsl-sai.txt
-@@ -9,7 +9,8 @@ Required properties:
- 
-   - compatible		: Compatible list, contains "fsl,vf610-sai",
- 			  "fsl,imx6sx-sai", "fsl,imx6ul-sai",
--			  "fsl,imx7ulp-sai" or "fsl,imx8mq-sai".
-+			  "fsl,imx7ulp-sai", "fsl,imx8mq-sai" or
-+			  "fsl,imx8qm-sai".
- 
-   - reg			: Offset and length of the register set for the device.
- 
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
