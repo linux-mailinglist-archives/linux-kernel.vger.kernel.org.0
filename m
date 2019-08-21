@@ -2,81 +2,52 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E1258985A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:33:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A705985AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:36:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729765AbfHUUd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 16:33:56 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:43907 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726998AbfHUUd4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 16:33:56 -0400
-Received: by mail-ot1-f65.google.com with SMTP id e12so3319364otp.10;
-        Wed, 21 Aug 2019 13:33:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qddeoYMCExSrGP0Z53XPfFm7HJjj7gnNcVMHSsnjg6k=;
-        b=Ta3529WtkXF6AqLEpIBRXK+4g98Gf8f4aAHE9ZCK4H7KtGs+Q3cGmUsSwwEkioMQzW
-         F3zuPr5gdVxuC1AhTtrTzVBBUGEMr4OryskNh6Bw0d4H0zizCz3etXqBW4HPE5/iF/az
-         PRR0unBboEU4P/6Nu1iKw8aBwCULEaJm2zHBpGYq+8nM8VraLTbNsaxzoJcDcZi3Miyx
-         042YNNpqaJqMffNwwUYt8zAzRG9IClj8iPeHShMUaqCLYppJW8TUh0rkaXDboHkDs9dv
-         o02gAuXKDa7e1fFlua6vJVHr3K+jEJByP5P1S1PBnZ+fHQekFX0PI2AaBRzzmQNc83cI
-         M2Bg==
-X-Gm-Message-State: APjAAAUWADW3/PD1Wd6Lir8cglVKvA2oSodXTcKGzmQjjCxI/ysDEBXC
-        zWTsDJDjXyF2Zd1xicLy+w==
-X-Google-Smtp-Source: APXvYqxhu2sMRWnxO1/JyTvViI5ZgZxKPzyjavAq7Q7nYMVfG75BxtNwatC+amOPfMkRDOIRBTP9hg==
-X-Received: by 2002:a9d:77c4:: with SMTP id w4mr28980235otl.40.1566419634795;
-        Wed, 21 Aug 2019 13:33:54 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m26sm6204580oie.58.2019.08.21.13.33.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 13:33:54 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 15:33:53 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Saravana Kannan <saravanak@google.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        vincent.guittot@linaro.org, seansw@qti.qualcomm.com,
-        daidavid1@codeaurora.org, adharmap@codeaurora.org,
-        Rajendra Nayak <rnayak@codeaurora.org>, sibis@codeaurora.org,
-        bjorn.andersson@linaro.org, evgreen@chromium.org,
-        kernel-team@android.com, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 1/3] dt-bindings: opp: Introduce opp-peak-kBps and
-  opp-avg-kBps bindings
-Message-ID: <20190821203353.GA11783@bogus>
-References: <20190807223111.230846-1-saravanak@google.com>
- <20190807223111.230846-2-saravanak@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190807223111.230846-2-saravanak@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1730138AbfHUUfC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 16:35:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42000 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729962AbfHUUfC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 16:35:02 -0400
+Subject: Re: [GIT PULL] nfsd bugfixes for 5.3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566419701;
+        bh=f2vThZms9ade6ULNLIYBpJ1ksg1haTxzagrJMrBGACw=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=xzqbnHsQmRYPjwrXdzw8uHtUga6MTUW3/HUBEdHV1bnXCDztSzkoeggrlMokqCatx
+         Wvw0w05qZ48fO3AGUfKx+O9i+4ymfG5aQqyuCSt5Z7FqY/TJxGIblUFi3cJl2nufOc
+         Y3EusHHUuDq6kbiuYJ89D/z+XzHK8ghScKBvsRMk=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190821150646.GC22104@fieldses.org>
+References: <20190821150646.GC22104@fieldses.org>
+X-PR-Tracked-List-Id: <linux-nfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190821150646.GC22104@fieldses.org>
+X-PR-Tracked-Remote: git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.3-1
+X-PR-Tracked-Commit-Id: 78e70e780b289ff59ec33a9f9c1fcecaf17a46e1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 2babd34df2294a72df02dc4a3745df3408147eba
+Message-Id: <156641970165.4116.17330431153924630328.pr-tracker-bot@kernel.org>
+Date:   Wed, 21 Aug 2019 20:35:01 +0000
+To:     bfields@fieldses.org (J. Bruce Fields)
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  7 Aug 2019 15:31:09 -0700, Saravana Kannan wrote:
-> Interconnects often quantify their performance points in terms of
-> bandwidth. So, add opp-peak-kBps (required) and opp-avg-kBps (optional) to
-> allow specifying Bandwidth OPP tables in DT.
-> 
-> opp-peak-kBps is a required property that replaces opp-hz for Bandwidth OPP
-> tables.
-> 
-> opp-avg-kBps is an optional property that can be used in Bandwidth OPP
-> tables.
-> 
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  Documentation/devicetree/bindings/opp/opp.txt     | 15 ++++++++++++---
->  .../devicetree/bindings/property-units.txt        |  4 ++++
->  2 files changed, 16 insertions(+), 3 deletions(-)
-> 
+The pull request you sent on Wed, 21 Aug 2019 11:06:46 -0400:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> git://linux-nfs.org/~bfields/linux.git tags/nfsd-5.3-1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/2babd34df2294a72df02dc4a3745df3408147eba
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
