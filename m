@@ -2,151 +2,129 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E3F798027
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:32:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EA8AF98018
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:31:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729368AbfHUQcU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:32:20 -0400
-Received: from mslow2.mail.gandi.net ([217.70.178.242]:43846 "EHLO
-        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbfHUQcU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:32:20 -0400
-Received: from relay2-d.mail.gandi.net (unknown [217.70.183.194])
-        by mslow2.mail.gandi.net (Postfix) with ESMTP id 9225C3A0666;
-        Wed, 21 Aug 2019 16:14:16 +0000 (UTC)
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 5776540007;
-        Wed, 21 Aug 2019 16:13:54 +0000 (UTC)
-Date:   Wed, 21 Aug 2019 18:15:23 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: imx214: Add new control with
- V4L2_CID_PIXEL_SIZE
-Message-ID: <20190821161523.6lckivpwiihpl35z@uno.localdomain>
-References: <20190819121720.31345-1-ribalda@kernel.org>
- <20190819121720.31345-3-ribalda@kernel.org>
+        id S1728984AbfHUQ3M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:29:12 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42990 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726828AbfHUQ3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:29:12 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5AC227F752;
+        Wed, 21 Aug 2019 16:29:11 +0000 (UTC)
+Received: from [10.36.118.29] (unknown [10.36.118.29])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DB03960126;
+        Wed, 21 Aug 2019 16:29:04 +0000 (UTC)
+Subject: Re: [PATCH] mm/balloon_compaction: suppress allocation warnings
+To:     Nadav Amit <namit@vmware.com>
+Cc:     "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20190820091646.29642-1-namit@vmware.com>
+ <ba01ec8c-19c3-847c-a315-2f70f4b1fe31@redhat.com>
+ <5BBC6CB3-2DCD-4A95-90C9-7C23482F9B32@vmware.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <85c72875-278f-fbab-69c9-92dc1873d407@redhat.com>
+Date:   Wed, 21 Aug 2019 18:29:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="hqaeubgbfew7wbst"
-Content-Disposition: inline
-In-Reply-To: <20190819121720.31345-3-ribalda@kernel.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <5BBC6CB3-2DCD-4A95-90C9-7C23482F9B32@vmware.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.71]); Wed, 21 Aug 2019 16:29:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 21.08.19 18:23, Nadav Amit wrote:
+>> On Aug 21, 2019, at 9:05 AM, David Hildenbrand <david@redhat.com> wrote:
+>>
+>> On 20.08.19 11:16, Nadav Amit wrote:
+>>> There is no reason to print warnings when balloon page allocation fails,
+>>> as they are expected and can be handled gracefully.  Since VMware
+>>> balloon now uses balloon-compaction infrastructure, and suppressed these
+>>> warnings before, it is also beneficial to suppress these warnings to
+>>> keep the same behavior that the balloon had before.
+>>
+>> I am not sure if that's a good idea. The allocation warnings are usually
+>> the only trace of "the user/admin did something bad because he/she tried
+>> to inflate the balloon to an unsafe value". Believe me, I processed a
+>> couple of such bugreports related to virtio-balloon and the warning were
+>> very helpful for that.
+> 
+> Ok, so a message is needed, but does it have to be a generic frightening
+> warning?
+> 
+> How about using __GFP_NOWARN, and if allocation do something like:
+> 
+>   pr_warn(“Balloon memory allocation failed”);
+> 
+> Or even something more informative? This would surely be less intimidating
+> for common users.
+> 
 
---hqaeubgbfew7wbst
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+ratelimit would make sense :)
 
-Hi Ricardo,
+And yes, this would certainly be nicer.
 
-On Mon, Aug 19, 2019 at 02:17:20PM +0200, Ricardo Ribalda Delgado wrote:
-> According to the product brief, the unit cell size is 1120 nanometers^2.
+-- 
 
-Should this information come from DT ?
+Thanks,
 
-I'm asking as I've a series in review that adds an helper that
-collectes dt properties and register controls for them. It currently
-only supports the newly proposed camera location control, but there
-might be others like the rotation, for which we already have a DT
-property.
-
-https://patchwork.kernel.org/project/linux-media/list/?series=160901
-
-This new one is indeed an HW property of the sensor, I wonder if
-having it in the firmware interface would make any sense or not...
-
-Thanks
-  j
-
->
-> https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
->
-> Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> ---
->  drivers/media/i2c/imx214.c | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 159a3a604f0e..b2f6bd2d8d7d 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -47,6 +47,7 @@ struct imx214 {
->  	struct v4l2_ctrl *pixel_rate;
->  	struct v4l2_ctrl *link_freq;
->  	struct v4l2_ctrl *exposure;
-> +	struct v4l2_ctrl *pixel_size;
->
->  	struct regulator_bulk_data	supplies[IMX214_NUM_SUPPLIES];
->
-> @@ -941,6 +942,26 @@ static int __maybe_unused imx214_resume(struct device *dev)
->  	return ret;
->  }
->
-> +static void pixel_size_init(const struct v4l2_ctrl *ctrl, u32 idx,
-> +		     union v4l2_ctrl_ptr ptr)
-> +{
-> +	ptr.p_pixel_size->width = 1120;
-> +	ptr.p_pixel_size->height = 1120;
-> +}
-> +
-> +static const struct v4l2_ctrl_type_ops pixel_size_ops = {
-> +	.init = pixel_size_init,
-> +};
-> +
-> +static struct v4l2_ctrl *new_pixel_size_ctrl(struct v4l2_ctrl_handler *handler)
-> +{
-> +	static struct v4l2_ctrl_config ctrl = {
-> +		.id = V4L2_CID_PIXEL_SIZE,
-> +		.type_ops = &pixel_size_ops,
-> +	};
-> +
-> +	return v4l2_ctrl_new_custom(handler, &ctrl, NULL);
-> +}
->  static int imx214_probe(struct i2c_client *client)
->  {
->  	struct device *dev = &client->dev;
-> @@ -1029,6 +1050,8 @@ static int imx214_probe(struct i2c_client *client)
->  					     V4L2_CID_EXPOSURE,
->  					     0, 3184, 1, 0x0c70);
->
-> +	imx214->pixel_size = new_pixel_size_ctrl(&imx214->ctrls);
-> +
->  	ret = imx214->ctrls.error;
->  	if (ret) {
->  		dev_err(&client->dev, "%s control init failed (%d)\n",
-> --
-> 2.23.0.rc1
->
-
---hqaeubgbfew7wbst
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1dbhsACgkQcjQGjxah
-VjwFzQ//cejLSt5kyeGMDJXBZdhAv4HpOaPRqHTO63BDgy1AdXVAfRziWShlRDdZ
-IlJ7owMefKxLYduoTeSZp+shQd9BS/C3HnMVY+P12gL86WcGVwRab7LwMTuciDfy
-PmF20w+4rg1CCAkHfbO9Y1uJbuDQNXqn/jWogjHJ2OhyRnUuZ/1R8elQTtzRo7F+
-chM5NE6raCfZRZRDOuWgyRJWWyjGaaltaN33Q1PfApfDv1pyTYNWpDkuvRgQevqQ
-O+QkOwYkagYhzd8k48+fUpL07oWBOkDiXENP4i3fq9Z8aYSn5C3xuofNd+GDLjRI
-lp5pAbG4b0K94YQh9IAkRFx3r25A47ywIzGsWbT+Qy/etIP5b/CbTwsLzM/UcZ+9
-85b3nxAEd+EFmPOSoYNkPG7AFld+CtiB8GzU/dxhcIIvnyPX98C/iPG5ziTU9Tpi
-bHN9k6EskgDRkjWV7Rngqg58lbkdgdBAo7sgON2R2L1hgzyWUYDZ5+VMgbK4kl0e
-NVB2xbEyKLSClTr81FZsbg4u7hMs5ias6dwaGMvepVoPjJvavxNmZT75kTh4uwsq
-ZOjhebFKfMxZUmRikPec/nG/Lhs6A9+IZsRVGlej1ETgaFhs7+tafzXxgpSEGGYn
-ys+QdcHVKO2tMIQxPl9qHmGeNdqWhhk0m7HzV/jd3ZqWiIIeIRA=
-=yxQy
------END PGP SIGNATURE-----
-
---hqaeubgbfew7wbst--
+David / dhildenb
