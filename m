@@ -2,82 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 04AD49799F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:39:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EEF7979A5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:39:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbfHUMi3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:38:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37580 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbfHUMi3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:38:29 -0400
-Received: from localhost (unknown [12.166.174.13])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0FC32089E;
-        Wed, 21 Aug 2019 12:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566391107;
-        bh=sCxkjrOqV57cy9uehYLVUiLv2/5xf/s9hWA1KgEO/zY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YvNB0DEXeJX0C4y6pAs/Ikxe+iWbn0NYX1w9XyUVftx7+QxTbsd0JlCLeJVVgSO1w
-         OdqIKdXLdNwBsLfdb4sDjC6Fk0IsUhVwpLJ6FfnQVXKLy8OFfUM7HH4F7aw8BFuLGH
-         zhddpjzYMXmInjG+3pqc4UVgZK9d0Tx0q8w83Dio=
-Date:   Wed, 21 Aug 2019 05:38:27 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Matthias Maennich <maennich@google.com>
-Cc:     linux-kernel@vger.kernel.org, kernel-team@android.com,
-        arnd@arndb.de, geert@linux-m68k.org, hpa@zytor.com,
-        jeyu@kernel.org, joel@joelfernandes.org,
-        kstewart@linuxfoundation.org, linux-arch@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-        linux-modules@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-usb@vger.kernel.org, lucas.de.marchi@gmail.com,
-        maco@android.com, maco@google.com, michal.lkml@markovi.net,
-        mingo@redhat.com, oneukum@suse.com, pombredanne@nexb.com,
-        sam@ravnborg.org, sspatil@google.com, stern@rowland.harvard.edu,
-        tglx@linutronix.de, usb-storage@lists.one-eyed-alien.net,
-        x86@kernel.org, yamada.masahiro@socionext.com
-Subject: Re: [PATCH v3 10/11] RFC: usb-storage: export symbols in USB_STORAGE
- namespace
-Message-ID: <20190821123827.GB4059@kroah.com>
-References: <20190813121733.52480-1-maennich@google.com>
- <20190821114955.12788-1-maennich@google.com>
- <20190821114955.12788-11-maennich@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821114955.12788-11-maennich@google.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1728502AbfHUMjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:39:23 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44734 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfHUMjX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:39:23 -0400
+Received: by mail-pl1-f193.google.com with SMTP id t14so1263790plr.11
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:39:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=omDwMrCmxk+7Xa7lFfgeuxa3H+tBB5SvsVtJ1gAu9m8=;
+        b=Yozs2A9rBctqQEgyDcF4/wFS7L1lIhPOEhmkSZGKBb+/DVB8bYA74yRG4BfC1dwOKf
+         p5EeZ+bWwbyVI++xjdHKzEnuXMnRtCKxmFTh+mxSzxwVxjEpvg+Fo42PrIegTm8lMHng
+         Q0qbZ0l7GAmn94mbT7jEDSCPV0YKeb6jYQyuECAVQZToh3w7hdS41XgnsmlK9NKlYuB/
+         VkL9D62LOk33Jgk7gQolCOInt4TwTo9RWQmzu9GD/I0dphlCHyrpUFD5mjUCcrUd5uja
+         ZS/un4d/SI3xRV4auwVYlkw5PU8kE5CNsrehWc9bR/pmR0c1tafl4kXHdjcCqZk+WPPq
+         68aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=omDwMrCmxk+7Xa7lFfgeuxa3H+tBB5SvsVtJ1gAu9m8=;
+        b=DXeehz2VAs8s63wpNV9BAXhKKbKE+HGkgjQOJniXBIAQExYLh2k49OslqsojpR60N2
+         v0T4RYU1tktwB4YXtJd8AG3B6aE6kzoZizOIwfnQb0+82Wgw1atbS5D+QyVEm4wZ8Vhn
+         G18Ww7GV5QBOlf9bHHcKHeXsQR/eXLgwv0vSJcCWgf5n+x/7SrCa+1rG6PCadQWngNnx
+         CuRxbBcSU7W7agq4EDCWgHRKg9CvxGBEDwt30HP8m8sMEqPuxAlzAPoLxleLg6SNxOMH
+         aR+PUoOLpMAsZ7Zzq0BcdmT70l+tvEkOUKwhE6vuIvsh9xYjsf3VcA6uCbRFtVR+C28q
+         Y3fg==
+X-Gm-Message-State: APjAAAW3q/obcQAgbhgalz6N96/KRHcaZ+eYyxewyrG9WOT36CI++uLz
+        v2ajRA+IRk3AfvZOnONoRRs082NV3BwHgQ==
+X-Google-Smtp-Source: APXvYqy/uq6IK56H1aAY+ntEWpdXMXT6TaOjGPzJX2cRoieHDupaniomQNOmSqUC4nn11JMjtCrXnA==
+X-Received: by 2002:a17:902:7d8b:: with SMTP id a11mr33463555plm.306.1566391162920;
+        Wed, 21 Aug 2019 05:39:22 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id i124sm25677411pfe.61.2019.08.21.05.39.19
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 21 Aug 2019 05:39:22 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com
+Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, cixi.geng@unisoc.com,
+        lanqing.liu@unisoc.com, baolin.wang@linaro.org,
+        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] serial: sprd: Add loopback function support
+Date:   Wed, 21 Aug 2019 20:39:09 +0800
+Message-Id: <1275cd9968f1ceb5ac049cc23f1e508025cd552f.1566375260.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:49:25PM +0100, Matthias Maennich wrote:
-> Modules using these symbols are required to explicitly import the
-> namespace. This patch was generated with the following steps and serves
-> as a reference to use the symbol namespace feature:
-> 
->  1) Define DEFAULT_SYMBOL_NAMESPACE in the corresponding Makefile
->  2) make  (see warnings during modpost about missing imports)
->  3) make nsdeps
-> 
-> Instead of a DEFAULT_SYMBOL_NAMESPACE definition, the EXPORT_SYMBOL_NS
-> variants can be used to explicitly specify the namespace. The advantage
-> of the method used here is that newly added symbols are automatically
-> exported and existing ones are exported without touching their
-> respective EXPORT_SYMBOL macro expansion.
-> 
-> Signed-off-by: Matthias Maennich <maennich@google.com>
+Add loopback function support for Spreadtrum serial controller.
 
-This looks good to me.  This can be included with the rest of this
-series when/if it goes through the kbuild or module tree:
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+ drivers/tty/serial/sprd_serial.c |   10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
+index 73d71a4..85fc57c 100644
+--- a/drivers/tty/serial/sprd_serial.c
++++ b/drivers/tty/serial/sprd_serial.c
+@@ -79,6 +79,7 @@
+ /* control register 1 */
+ #define SPRD_CTL1		0x001C
+ #define SPRD_DMA_EN		BIT(15)
++#define SPRD_LOOPBACK_EN	BIT(14)
+ #define RX_HW_FLOW_CTL_THLD	BIT(6)
+ #define RX_HW_FLOW_CTL_EN	BIT(7)
+ #define TX_HW_FLOW_CTL_EN	BIT(8)
+@@ -164,7 +165,14 @@ static unsigned int sprd_get_mctrl(struct uart_port *port)
+ 
+ static void sprd_set_mctrl(struct uart_port *port, unsigned int mctrl)
+ {
+-	/* nothing to do */
++	u32 val = serial_in(port, SPRD_CTL1);
++
++	if (mctrl & TIOCM_LOOP)
++		val |= SPRD_LOOPBACK_EN;
++	else
++		val &= ~SPRD_LOOPBACK_EN;
++
++	serial_out(port, SPRD_CTL1, val);
+ }
+ 
+ static void sprd_stop_rx(struct uart_port *port)
+-- 
+1.7.9.5
 
-Actually, which tree will this be going through?
-
-thanks,
-
-greg k-h
