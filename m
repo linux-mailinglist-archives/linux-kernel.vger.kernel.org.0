@@ -2,164 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5912E979F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:52:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 10462979F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:52:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfHUMun (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:50:43 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39412 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728278AbfHUMun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:50:43 -0400
-Received: by mail-wm1-f65.google.com with SMTP id i63so2019246wmg.4
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R1ZeBH6k7hXHTFCxcBeavggaz5+YUTkL68fy29AXhgQ=;
-        b=sMojcc0WLz/UbOqVUepBFozrnGHOb2W4rwo0PDyUz4x/IGrtIQFqEBmuSNCwq47KOr
-         y1/moqXT8NaOlWk1R6Vp1yEmOjmbf2X+eB93pV+7bL50mHBOCxT/4+8ubYLz/zE4iAXR
-         3l8zAFhwXp8eDj5BzNi3bUsM7ztUfdqhC50uDBb6/rKBtXELxx8WOtOWRDNFxITGcnjH
-         y0KaAA89zGlSGZMAAZK29rGGA6Jaz39g0UslMxBW3PhSmpOgzwXU4IdcGc7gjsDp7B1p
-         x/VbCOri4Vcqi36+tTuRB+jCrKIAnwEYanNqodio3Cm+A/yy78OPr0HmJkXRwwt4XFQq
-         czlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=R1ZeBH6k7hXHTFCxcBeavggaz5+YUTkL68fy29AXhgQ=;
-        b=nbla9lQ0SRYxw+J4nd4AXTEGWWoWs5wM2e7IKnFzi/GgHpY1L3uWZeIVetZCDHYoxk
-         7uwMQMyW51FQq+Fj1qcLSqFtivOSFhZcff8oscVLosUN+i/8jPAI+kos5p4qPbB9cnhb
-         aov5FHJIwEODOQFNyH9p/pGTDh4raMkrYOzxsdMDCsOypGgIcUwo/RdGGZo1+/P7xc0L
-         jH4Q1K+97Hdd2TumghV+iffYx4q/HGRr4fvihqnBX103ilQsVPKDiPw7GzmrimETV80y
-         sP1aICMiPUq/9RB/11KYtAtPi+cRzMpRSGZ/9CvrAVLN2qAvUDfMPcyjqJFXDpS+fI/e
-         zfTg==
-X-Gm-Message-State: APjAAAXcnr73VecscR89y2RVs25Ccscsv470hiHXWMNCCYzbWp0weWfH
-        LlWZTVWQq2gCVZcAlBjT1evIBQ==
-X-Google-Smtp-Source: APXvYqzbpniP6/hX5IuqfoWXg2mDNQNg9FKJhXLse3/XokYGAy4A992gHe2IUNjAEDot+PyYABhIvQ==
-X-Received: by 2002:a05:600c:114e:: with SMTP id z14mr5741330wmz.161.1566391841270;
-        Wed, 21 Aug 2019 05:50:41 -0700 (PDT)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id x20sm48439471wrg.10.2019.08.21.05.50.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 05:50:40 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     agross@kernel.org
-Cc:     bjorn.andersson@linaro.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH] arm64: sdm845: add adsp and cdsp fastrpc nodes
-Date:   Wed, 21 Aug 2019 13:50:35 +0100
-Message-Id: <20190821125035.7616-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.21.0
+        id S1728567AbfHUMwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:52:14 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4746 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbfHUMwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:52:14 -0400
+Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 6811BDEE7C763584CA04;
+        Wed, 21 Aug 2019 20:52:10 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS414-HUB.china.huawei.com
+ (10.3.19.214) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
+ 20:52:02 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <will@kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] via-rhine: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 21 Aug 2019 20:50:50 +0800
+Message-ID: <20190821125050.67652-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add fastrpc compute context bank nodes to both cdsp and adsp.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- arch/arm64/boot/dts/qcom/sdm845.dtsi | 74 ++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+ drivers/net/ethernet/via/via-rhine.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-index 9be6acb0650e..9476e5f6e65f 100644
---- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-@@ -483,6 +483,25 @@
- 			label = "lpass";
- 			qcom,remote-pid = <2>;
- 			mboxes = <&apss_shared 8>;
-+			fastrpc {
-+				compatible = "qcom,fastrpc";
-+				qcom,glink-channels = "fastrpcglink-apps-dsp";
-+				label = "adsp";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				compute-cb@3 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <3>;
-+					iommus = <&apps_smmu 0x1823 0x0>;
-+				};
-+
-+				compute-cb@4 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <4>;
-+					iommus = <&apps_smmu 0x1824 0x0>;
-+				};
-+			};
- 		};
- 	};
+diff --git a/drivers/net/ethernet/via/via-rhine.c b/drivers/net/ethernet/via/via-rhine.c
+index ab55416..ed12dbd 100644
+--- a/drivers/net/ethernet/via/via-rhine.c
++++ b/drivers/net/ethernet/via/via-rhine.c
+@@ -1127,15 +1127,13 @@ static int rhine_init_one_platform(struct platform_device *pdev)
+ 	const struct of_device_id *match;
+ 	const u32 *quirks;
+ 	int irq;
+-	struct resource *res;
+ 	void __iomem *ioaddr;
  
-@@ -512,6 +531,61 @@
- 			label = "turing";
- 			qcom,remote-pid = <5>;
- 			mboxes = <&apss_shared 4>;
-+			fastrpc {
-+				compatible = "qcom,fastrpc";
-+				qcom,glink-channels = "fastrpcglink-apps-dsp";
-+				label = "cdsp";
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				compute-cb@1 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <1>;
-+					iommus = <&apps_smmu 0x1401 0x30>;
-+				};
-+
-+				compute-cb@2 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <2>;
-+					iommus = <&apps_smmu 0x1402 0x30>;
-+				};
-+
-+				compute-cb@3 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <3>;
-+					iommus = <&apps_smmu 0x1403 0x30>;
-+				};
-+
-+				compute-cb@4 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <4>;
-+					iommus = <&apps_smmu 0x1404 0x30>;
-+				};
-+
-+				compute-cb@5 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <5>;
-+					iommus = <&apps_smmu 0x1405 0x30>;
-+				};
-+
-+				compute-cb@6 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <6>;
-+					iommus = <&apps_smmu 0x1406 0x30>;
-+				};
-+
-+				compute-cb@7 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <7>;
-+					iommus = <&apps_smmu 0x1407 0x30>;
-+				};
-+
-+				compute-cb@8 {
-+					compatible = "qcom,fastrpc-compute-cb";
-+					reg = <8>;
-+					iommus = <&apps_smmu 0x1408 0x30>;
-+				};
-+			};
- 		};
- 	};
+ 	match = of_match_device(rhine_of_tbl, &pdev->dev);
+ 	if (!match)
+ 		return -EINVAL;
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	ioaddr = devm_ioremap_resource(&pdev->dev, res);
++	ioaddr = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(ioaddr))
+ 		return PTR_ERR(ioaddr);
  
 -- 
-2.21.0
+2.7.4
+
 
