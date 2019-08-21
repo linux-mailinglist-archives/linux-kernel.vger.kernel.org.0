@@ -2,78 +2,62 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DC01C97F3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0814397F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:45:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728746AbfHUPoG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:44:06 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46746 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727553AbfHUPoG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:44:06 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p13so2188944qkg.13;
-        Wed, 21 Aug 2019 08:44:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=WsaM9eIl3JXCekJs4SyvVa1WU1qEuim85t6paiIn/CI=;
-        b=gBwwCIlRoRsncPrLfulxtiNtBqDslrrk01qoUakj7ROxgUCe2Z1Jkie5QrOYx6cy1t
-         ittH90Nf5mi+zTDNL+DT/YD22t+Gq4e4G1xT2KXF/IWYBadFqyiJVb1YtkbDxqokGJbz
-         2FUoS6prtlCz8ZqXUlLW/C+7dfISWWedqHkc26+Sgeb1Mqp2ByRaRx/BYT26Raskd9fG
-         dZjhnF77bE+uuLLYKItQJogKGqIj7IlYf1ScdYDDqpVrQjz0D4D0XBpaB0hrYBHvxLq/
-         4vetyes91YzvtHonebCbwxVB9w4U7blReA094/muNGax4e8R6EiuBSsk9XlEvN3/ON/Q
-         mn7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WsaM9eIl3JXCekJs4SyvVa1WU1qEuim85t6paiIn/CI=;
-        b=FL+kYhAHDCr1z9tg7egO3tgoYVjsPgTrnQQmMOatTqndvwWqAaKNNlF/Yipv0TltsH
-         MBVwMrY3JWhOpcZKrisU9Hski//xTqISoSTseS34Qm7C5Cp8HYJwXvC4tghkglklZvnx
-         SFirOgQi++FUUDMJkpdfv7Zl87uD5SrPFT1oDNJ4r+Cxcki6iDFnCRlISwrr7O3tAF+l
-         3YQkUJOOyFiqiIj9Tn4P7xPxVbD0Dd+/Wo13cQ8aMy94i2+8kPqp5ips1+nZ6GAMCfvX
-         6NCL3jotSMn4A+/Y/Sq7xrL//4prXptLf7ymxsi6sAF+2UbRYC0y63cIiRQ9zAODYvBl
-         6Lzw==
-X-Gm-Message-State: APjAAAX6tuADOYs0IVz6qnfo19mpwuv7i8crTjwqE39CNzkfKKghU/0R
-        gXBSJkjLoQofoBxSoNP8lTs=
-X-Google-Smtp-Source: APXvYqyoo7O4zfbKH6+h9K44hSm5hrR8vMIas7kYusKUQEoRDkhQgiXDaxkhQ2c9BF00wPuPLVmdAw==
-X-Received: by 2002:a37:8c07:: with SMTP id o7mr16922667qkd.491.1566402245255;
-        Wed, 21 Aug 2019 08:44:05 -0700 (PDT)
-Received: from localhost ([2620:10d:c091:500::1:1f05])
-        by smtp.gmail.com with ESMTPSA id r4sm10171491qtt.90.2019.08.21.08.44.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Aug 2019 08:44:04 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 08:44:02 -0700
-From:   Tejun Heo <tj@kernel.org>
-To:     Fam Zheng <zhengfeiran@bytedance.com>
-Cc:     linux-kernel@vger.kernel.org, axboe@kernel.dk, fam@euphon.net,
-        paolo.valente@linaro.org, duanxiongchun@bytedance.com,
-        linux-block@vger.kernel.org, cgroups@vger.kernel.org,
-        zhangjiachen.jc@bytedance.com
-Subject: Re: [PATCH v2 3/3] bfq: Add per-device weight
-Message-ID: <20190821154402.GI2263813@devbig004.ftw2.facebook.com>
-References: <20190805063807.9494-1-zhengfeiran@bytedance.com>
- <20190805063807.9494-4-zhengfeiran@bytedance.com>
+        id S1728808AbfHUPpB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:45:01 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:49132 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727581AbfHUPpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 11:45:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=d2ipJgskj1KEFwtR3VC5y7DGS2nKxHaE3OCt1pU7bQs=; b=rDR4iBM6F7m5OGmABrNkpFJyBo
+        ItjdBWifYVfJw+pPyL5pd+WkwAK2B9yDLmVb5JNyapKyvXN/KCc9Tr+LcZq3k0rk/L0Va8hx+xKlz
+        4HG7FjZDKOVGNRriFTRPpZEgxmcT/UYFiwUx/PrhxKPsTyBPHQU+zty8TUmiu1DHuAmw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i0Sn9-00060h-P0; Wed, 21 Aug 2019 17:44:55 +0200
+Date:   Wed, 21 Aug 2019 17:44:55 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>, linux-kernel@vger.kernel.org,
+        Chris Healy <cphealy@gmail.com>
+Subject: Re: [PATCH v2] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100 kHz
+Message-ID: <20190821154455.GD22091@lunn.ch>
+References: <20190821013936.12223-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190805063807.9494-4-zhengfeiran@bytedance.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20190821013936.12223-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 05, 2019 at 02:38:07PM +0800, Fam Zheng wrote:
-> Signed-off-by: Fam Zheng <zhengfeiran@bytedance.com>
+On Tue, Aug 20, 2019 at 06:39:36PM -0700, Andrey Smirnov wrote:
+> Fiber-optic modules attached to the bus are only rated to work at
+> 100 kHz, so decrease the bus frequency to accommodate that.
+> 
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-kernel@vger.kernel.org
 
-Looks good to me.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
- Acked-by: Tejun Heo <tj@kernel.org>
+I took a quick look at some of the SFP standards. 100KHz is part of
+the standard. So we should try to remember to keep an eye of this as
+other boards are merged.
 
-Thanks.
-
--- 
-tejun
+    Andrew
