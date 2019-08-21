@@ -2,74 +2,96 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0292978FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:16:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 582E5978F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:15:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728050AbfHUMPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:15:55 -0400
-Received: from szxga05-in.huawei.com ([45.249.212.191]:4744 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726894AbfHUMPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:15:55 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 9B3DE709F13984C0D1AA;
-        Wed, 21 Aug 2019 20:15:51 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
- 20:15:45 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <agross@kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <sibis@codeaurora.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] cpufreq: qcom-hw: remove set but not used variable 'prev_cc'
-Date:   Wed, 21 Aug 2019 20:14:45 +0800
-Message-ID: <20190821121445.72588-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1727874AbfHUMPF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:15:05 -0400
+Received: from mail-wm1-f97.google.com ([209.85.128.97]:33908 "EHLO
+        mail-wm1-f97.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726593AbfHUMPE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:15:04 -0400
+Received: by mail-wm1-f97.google.com with SMTP id e8so4653849wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:15:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VGZTPAwEFySlPPXASsZQPbUHcTae/+X/wRKQPmmsLlA=;
+        b=efD0Wdmw1Kx/huExEsZZNhcqFjlt7Y7l1HxqwYBujhC1clW4zQJKGS/VynEcZmY8mF
+         L2dMseC8sEQ9y3eDJ+N29vwbfJ4j8hXe2DDIwK6xP0oZ5ZMr57AvuPMTnaARLy/xh2kQ
+         yF12oaLKHv5kTuOeKHHmbIH+QuJyt69BLWOG8bAOdDJBVH8LR4wN+3XsTvGVWtr8MMBs
+         z93jlMmKkdmLUwj4f2iKmDbh6Yt2Msda4WKgCKtlaXbvpL94f8wJcKnGFF/JYt5UFxZ0
+         MO1LwBL+htYxv5H0cyN8HxAXts0wpyGedhTVrP78x+mrXj4X3n/mmwZwL1I1zh08fKVA
+         r2Nw==
+X-Gm-Message-State: APjAAAV3kaJQr3P3BSRtiblr1D9mrxHgBA18U5tqS5tSfiIvDH6R9Scf
+        rjOLlpbmzKKm8ixSIvbyJhXHWDj0s3dQGYve14CmA+2G/u1ao+FCVV0Ox4nrWwVUTQ==
+X-Google-Smtp-Source: APXvYqx72VjNla/WwnS7IIJyQhWoevv0baJnS50eIJ+ckMwP5dp6AWm1BTVGmWHpbrM+BQLgBUNjnoOjjbBg
+X-Received: by 2002:a1c:b6d4:: with SMTP id g203mr5774547wmf.100.1566389702638;
+        Wed, 21 Aug 2019 05:15:02 -0700 (PDT)
+Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
+        by smtp-relay.gmail.com with ESMTPS id w10sm327537wre.38.2019.08.21.05.15.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 05:15:02 -0700 (PDT)
+X-Relaying-Domain: sirena.org.uk
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=ypsilon.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1i0PW2-00076s-8u; Wed, 21 Aug 2019 12:15:02 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 7E7CB2742FCD; Wed, 21 Aug 2019 13:15:00 +0100 (BST)
+Date:   Wed, 21 Aug 2019 13:15:00 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, lgirdwood@gmail.com,
+        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
+        codekipper@gmail.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 21/21] ASoC: sun4i-i2s: Add support for DSP formats
+Message-ID: <20190821121500.GI5128@sirena.co.uk>
+References: <cover.e08aa7e33afe117e1fa8f017119d465d47c98016.1566242458.git-series.maxime.ripard@bootlin.com>
+ <74cc9562e056627e14f186089d349022b65f59e7.1566242458.git-series.maxime.ripard@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="5uO961YFyoDlzFnP"
+Content-Disposition: inline
+In-Reply-To: <74cc9562e056627e14f186089d349022b65f59e7.1566242458.git-series.maxime.ripard@bootlin.com>
+X-Cookie: Sic transit gloria Monday!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-drivers/cpufreq/qcom-cpufreq-hw.c: In function qcom_cpufreq_hw_read_lut:
-drivers/cpufreq/qcom-cpufreq-hw.c:89:38: warning:
- variable prev_cc set but not used [-Wunused-but-set-variable]
 
-It is not used since commit 3003e75a5045 ("cpufreq:
-qcom-hw: Update logic to detect turbo frequency")
+--5uO961YFyoDlzFnP
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/cpufreq/qcom-cpufreq-hw.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On Mon, Aug 19, 2019 at 09:25:28PM +0200, Maxime Ripard wrote:
+> From: Maxime Ripard <maxime.ripard@bootlin.com>
+>=20
+> In addition to the I2S format, the controller also supports the DSP_*
+> formats.
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
-index 3eea197..a9ae2f8 100644
---- a/drivers/cpufreq/qcom-cpufreq-hw.c
-+++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-@@ -86,7 +86,7 @@ static int qcom_cpufreq_hw_read_lut(struct device *cpu_dev,
- 				    struct cpufreq_policy *policy,
- 				    void __iomem *base)
- {
--	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0, freq;
-+	u32 data, src, lval, i, core_count, prev_freq = 0, freq;
- 	u32 volt;
- 	struct cpufreq_frequency_table	*table;
- 
-@@ -139,7 +139,6 @@ static int qcom_cpufreq_hw_read_lut(struct device *cpu_dev,
- 			break;
- 		}
- 
--		prev_cc = core_count;
- 		prev_freq = freq;
- 	}
- 
--- 
-2.7.4
+This doesn't seem to apply against current code, please check and
+resend.
 
+--5uO961YFyoDlzFnP
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1dNcMACgkQJNaLcl1U
+h9D3iQf/bXRJ2E8Ojq2kL+wJHey9oZmklhShBIGtZToXjBYiLvXOKxDZF0oAkhMI
+gEFuZrDp/IDMtsTlXJ3OGhenBm6x6gQH+H2aTrUetM5G88JZ4c8kpJbG2s7Fvgvh
+AE/yrrimb4wSW4LVbrmoe4e0N9M4V8VkG23BeJUBkQ3FVkcfTgVfLyoEdR+cvTlJ
+Qyx58lTPdnnjkiW8df6XpND3ecO0sEyhdyJcNfLPNU/iXTuyK4wI30zujrwdRTyF
+fJAfg4uzwkBDP3/vMftf6RwwDmK56MfRkeLYicwHkOTVWZsyht7TFuqW7k74Uy1J
+UUaqo75QN/JdI7QkSurXjhmilrAIdw==
+=cEmS
+-----END PGP SIGNATURE-----
+
+--5uO961YFyoDlzFnP--
