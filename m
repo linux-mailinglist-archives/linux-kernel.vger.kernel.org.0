@@ -2,49 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17CD798300
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:33:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBBC4982F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:33:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730043AbfHUSdb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:33:31 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:46497 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729111AbfHUScI (ORCPT
+        id S1729349AbfHUScM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:32:12 -0400
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:39643 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729293AbfHUScJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:32:08 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p13so2695853qkg.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 11:32:08 -0700 (PDT)
+        Wed, 21 Aug 2019 14:32:09 -0400
+Received: by mail-qk1-f194.google.com with SMTP id 125so2726528qkl.6
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 11:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=soleen.com; s=google;
         h=from:to:subject:date:message-id:in-reply-to:references:mime-version
          :content-transfer-encoding;
-        bh=KZlSM1+HYlx5AabYJySSHWoh4S6JQNg+E/eloF1WuIo=;
-        b=EAK9aWCollpH9xmdUtaiVBS6Ul8Grpce2v4a96pxnxYp2IBX8da/99b/wGOvABGtwu
-         YGsbf5Rf/sZVH8SNTtDy0XpnvFV5C9IC9WYVDSpYpMbwVzm7ArMz9PW52kFErZTTXCsL
-         WTyBvzhkpiiRAQw8xhZCkbesGdEv3+KaY8OAZ6E7bzieO3RZcGtLLT0Pz48c7wl8J3Zh
-         tOImm/Vrp/7Gj+QIPxNlt0oaaMZyfLcgYRPH40jynE+MITM4+xI0XYdvt3v88kfQeRO6
-         7KdjAnbtkEeJP3UjA9HD358p6hLYn9PO5svHWmEYjnXYtYqKE97d1nQSshP1W53Wo27L
-         IM5g==
+        bh=sBcmTKCPArGqx1dLEuzw7dGqn3biKX2D2IdqnHxnWGU=;
+        b=X2bYtpl73i+ZQotUx4rPisykcv7elNg3338iVDx51XS8IAesuAET+FJOq1+cDPHG3r
+         9rXZdHhqVDL3/xQGl5vT6Oz1ojz+sochUryLWNC1UkgH72k4uApv4TU3RPAclgoyyqhi
+         PtlrcnmGLE9h7VsHDPnkFYU5m0ABJTH/PIiWiIwSHa0+lVdUA+kmwFkX7o0khAOFTlSO
+         mjutz0tdYRK2G5NUrq7EhUcZ2mAb37l6c2Nnbno0RHr3dhJsbHYDZXP896fB8kwPSIjI
+         1XE3mEsJ/pqIbN/NdSziIya/6qdVEfThdKypQFpVlOqjbOH3B1UilgXm0yfhqpBaYVAs
+         eABw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=KZlSM1+HYlx5AabYJySSHWoh4S6JQNg+E/eloF1WuIo=;
-        b=J/Czn4rb+VhESB69NVZqsX52xmjU48d6t9b64RAbpPCsT2w49DuDy/dIazQJ1Iidxx
-         94xwtWiXAH/4gLJvSgK08f8N2GIf5vq0niwgCdTy7Cwwp6TzvKui9AD75HMDeixJVKeO
-         QTsR/fzHVW60iL28VEwGYzt+AVzFE+DThJuB9DC0zKNeSRj2SrqczNbGzI2NMhO7IY8F
-         0AKafAwP2oMxkaHTLcVnEqU+8SzBhKvXzYdJGj+BCSuOJCTQWgWpTQh//xHZyV/+I5Y6
-         XIWyn/0b7g3sF8Ss75AfLkOwtlqA8G4+Noma2q/VrKZIsVfgzeu0WMBmUs3gnzNxD+ZK
-         3MxQ==
-X-Gm-Message-State: APjAAAUVOr5ZSX+Cvmr1sCFEOvmDvHPDX35RmC2YAduCb5kj8ZxFSBlK
-        DyPTeNiMKxQt/tLq4W5qM9+ZS0l7WDs=
-X-Google-Smtp-Source: APXvYqxa+1nBillHVTD1wUyey0q2i0nGT/ot1gRBODj0C6eDdzfP5MOz2GYbi9GTD87ibQ+3R7pbkA==
-X-Received: by 2002:a05:620a:4d4:: with SMTP id 20mr30837041qks.95.1566412327681;
-        Wed, 21 Aug 2019 11:32:07 -0700 (PDT)
+        bh=sBcmTKCPArGqx1dLEuzw7dGqn3biKX2D2IdqnHxnWGU=;
+        b=XnKv6ncNGfIGmzTkemlYZQj539jmFw2cLu2fDDo02GBqrOZaJScUYKoNfiuLqs1u4J
+         Mr/C7/5VyYpiPaX2xzPgH7s1a1srZaXxD3seHMMIt5xI7aCw39jB2Co25bFleJutlM/R
+         lpC1PXmkE/W8eQl/8/f6GycwaPArdJi1onDsaR2y2ixu/qPaIp3BSsNgUjABZAQ55tPq
+         rQfybDPf3j7GtUcwPRELcqi2S4J/fanvEu7eD1wU522/rgD5EevRC7XCgsCgkiSTkaVl
+         yiqL7eNLrbE2TrgjNgFhS9Ts5Nt4LRf8MI9s2ylafbvj2/98FronSAwDEBP5LYs72N9K
+         LPww==
+X-Gm-Message-State: APjAAAXM9W4yV1mXHAMwrDQFj3Mz6a/URpiIffcyLuYLw1XDlFB45M2m
+        N4fQQJWFpc26loaCydAyi3qaug==
+X-Google-Smtp-Source: APXvYqwTD5jDmCNqAlhQx5bPMjXa8Ne5sUA8XkdytBk284LEJsuvSjr3IvAfqjwgKcf+e9prxBD89g==
+X-Received: by 2002:a37:6290:: with SMTP id w138mr31111453qkb.139.1566412329038;
+        Wed, 21 Aug 2019 11:32:09 -0700 (PDT)
 Received: from localhost.localdomain (c-73-69-118-222.hsd1.nh.comcast.net. [73.69.118.222])
-        by smtp.gmail.com with ESMTPSA id q13sm10443332qkm.120.2019.08.21.11.32.06
+        by smtp.gmail.com with ESMTPSA id q13sm10443332qkm.120.2019.08.21.11.32.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 11:32:07 -0700 (PDT)
+        Wed, 21 Aug 2019 11:32:08 -0700 (PDT)
 From:   Pavel Tatashin <pasha.tatashin@soleen.com>
 To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         ebiederm@xmission.com, kexec@lists.infradead.org,
@@ -54,9 +54,9 @@ To:     pasha.tatashin@soleen.com, jmorris@namei.org, sashal@kernel.org,
         james.morse@arm.com, vladimir.murzin@arm.com,
         matthias.bgg@gmail.com, bhsharma@redhat.com, linux-mm@kvack.org,
         mark.rutland@arm.com
-Subject: [PATCH v3 01/17] kexec: quiet down kexec reboot
-Date:   Wed, 21 Aug 2019 14:31:48 -0400
-Message-Id: <20190821183204.23576-2-pasha.tatashin@soleen.com>
+Subject: [PATCH v3 02/17] arm64, hibernate: use get_safe_page directly
+Date:   Wed, 21 Aug 2019 14:31:49 -0400
+Message-Id: <20190821183204.23576-3-pasha.tatashin@soleen.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190821183204.23576-1-pasha.tatashin@soleen.com>
 References: <20190821183204.23576-1-pasha.tatashin@soleen.com>
@@ -67,43 +67,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Here is a regular kexec command sequence and output:
-=====
-$ kexec --reuse-cmdline -i --load Image
-$ kexec -e
-[  161.342002] kexec_core: Starting new kernel
+create_safe_exec_page is a local function that uses the
+get_safe_page() to allocate page table and pages and one pages
+that is getting mapped.
 
-Welcome to Buildroot
-buildroot login:
-=====
-
-Even when "quiet" kernel parameter is specified, "kexec_core: Starting
-new kernel" is printed.
-
-This message has  KERN_EMERG level, but there is no emergency, it is a
-normal kexec operation, so quiet it down to appropriate KERN_NOTICE.
-
-Machines that have slow console baud rate benefit from less output.
+Remove the allocator related arguments, and use get_safe_page
+directly, as it is done in other local functions in this
+file.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
-Reviewed-by: Simon Horman <horms@verge.net.au>
 ---
- kernel/kexec_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/hibernate.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index d5870723b8ad..2c5b72863b7b 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -1169,7 +1169,7 @@ int kernel_kexec(void)
- 		 * CPU hotplug again; so re-enable it here.
- 		 */
- 		cpu_hotplug_enable();
--		pr_emerg("Starting new kernel\n");
-+		pr_notice("Starting new kernel\n");
- 		machine_shutdown();
- 	}
+diff --git a/arch/arm64/kernel/hibernate.c b/arch/arm64/kernel/hibernate.c
+index 9341fcc6e809..4bb4d17a6a7c 100644
+--- a/arch/arm64/kernel/hibernate.c
++++ b/arch/arm64/kernel/hibernate.c
+@@ -196,16 +196,14 @@ EXPORT_SYMBOL(arch_hibernation_header_restore);
+  */
+ static int create_safe_exec_page(void *src_start, size_t length,
+ 				 unsigned long dst_addr,
+-				 phys_addr_t *phys_dst_addr,
+-				 void *(*allocator)(gfp_t mask),
+-				 gfp_t mask)
++				 phys_addr_t *phys_dst_addr)
+ {
+ 	int rc = 0;
+ 	pgd_t *pgdp;
+ 	pud_t *pudp;
+ 	pmd_t *pmdp;
+ 	pte_t *ptep;
+-	unsigned long dst = (unsigned long)allocator(mask);
++	unsigned long dst = get_safe_page(GFP_ATOMIC);
  
+ 	if (!dst) {
+ 		rc = -ENOMEM;
+@@ -215,9 +213,9 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 	memcpy((void *)dst, src_start, length);
+ 	__flush_icache_range(dst, dst + length);
+ 
+-	pgdp = pgd_offset_raw(allocator(mask), dst_addr);
++	pgdp = pgd_offset_raw((void *)get_safe_page(GFP_ATOMIC), dst_addr);
+ 	if (pgd_none(READ_ONCE(*pgdp))) {
+-		pudp = allocator(mask);
++		pudp = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!pudp) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -227,7 +225,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 
+ 	pudp = pud_offset(pgdp, dst_addr);
+ 	if (pud_none(READ_ONCE(*pudp))) {
+-		pmdp = allocator(mask);
++		pmdp = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!pmdp) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -237,7 +235,7 @@ static int create_safe_exec_page(void *src_start, size_t length,
+ 
+ 	pmdp = pmd_offset(pudp, dst_addr);
+ 	if (pmd_none(READ_ONCE(*pmdp))) {
+-		ptep = allocator(mask);
++		ptep = (void *)get_safe_page(GFP_ATOMIC);
+ 		if (!ptep) {
+ 			rc = -ENOMEM;
+ 			goto out;
+@@ -523,8 +521,7 @@ int swsusp_arch_resume(void)
+ 	 */
+ 	rc = create_safe_exec_page(__hibernate_exit_text_start, exit_size,
+ 				   (unsigned long)hibernate_exit,
+-				   &phys_hibernate_exit,
+-				   (void *)get_safe_page, GFP_ATOMIC);
++				   &phys_hibernate_exit);
+ 	if (rc) {
+ 		pr_err("Failed to create safe executable page for hibernate_exit code.\n");
+ 		goto out;
 -- 
 2.23.0
 
