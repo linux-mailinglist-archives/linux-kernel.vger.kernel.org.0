@@ -2,77 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46C6E96EE8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:30:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6708496EEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfHUBaV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 21:30:21 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:44568 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726307AbfHUBaV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 21:30:21 -0400
-Received: by mail-io1-f66.google.com with SMTP id j4so1254817iop.11
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 18:30:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ql4bDp9akkC2eYEgVdQtfHfIcbcIz1+2SiZ0bqUwLUw=;
-        b=OxTQsHEP0dDqmmVMCe3oBUxWQwvJO5G99idissr/h4II8KuDkg6jf/s1TRHFy83rhW
-         EISzsvSYe/tpDyywmNyAKh6Nwb4saSN2QzJY3N4LIdaFx6mgmQDtLaGMqHGG7Yh6ROLN
-         0AhDzhKVCt9I8083AFvCKaT4sNSq7W+44lync4/MFsF9+Yi4RwtLZbeTiaFr2tsEar0y
-         T9mFcEo3kYf403ZrnU8psSaa3wIU50mKa7w/kMW7W8z7EitaqSLs1RfIhKmhbGAOqFoy
-         rlLtgkdev+TEMMSw1uMkn2wdc7gwqRKua0oWcnY7EzoOlTooQj125wKlfe2MEy0G2l59
-         CISA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ql4bDp9akkC2eYEgVdQtfHfIcbcIz1+2SiZ0bqUwLUw=;
-        b=EolRkH4CXzkSdSwoR8tPvfjOoLtx0FZSIdIZ4mJcRIDsPuzyGFdvThqgGiYPoPRIQS
-         NCBvh3Eum4xX5a8INgEJ9XAmD9a6Anjws9JWidYYCsFQchzg5I78UZ5Ce0iPef3R4ow9
-         tJmgdbI7ZvFyBL8Kjq86txTjWrBxe3tpc/c6GG98SRra2Yj8M0mxgixuj6BwC/sG6T+1
-         IAEQEddxJ3da/el7c66co9Zx7FRLwbUWBGsgNnMArDObLJSKeRtUX7X2VRK98wl8G31z
-         sikwj7E/rIxDg19/PUc2/Anf5PNb/utYi4xQs6t3AIwTNY4jtPV5dIK+/qJDaehf+KxO
-         VlYw==
-X-Gm-Message-State: APjAAAWuSCEBFF7SbTF/6HMHVq4otOeTQyfSAV8t9sEyrBmaXUuH+LtZ
-        wIOFWILa5QOPuZ5DT+6sLeIE0wCEbOJCIX+fRO0=
-X-Google-Smtp-Source: APXvYqxM7PuKzWWFvwyH4B0/s2RGGx7iGV2vBmZvO23sXqMNw+GwHtyU2euHgmpvq14IJTaYOpR+mUk769oZAdR6qAk=
-X-Received: by 2002:a5d:9711:: with SMTP id h17mr2795781iol.280.1566351020454;
- Tue, 20 Aug 2019 18:30:20 -0700 (PDT)
+        id S1726807AbfHUBeN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 21:34:13 -0400
+Received: from szxga05-in.huawei.com ([45.249.212.191]:4741 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726484AbfHUBeN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 21:34:13 -0400
+Received: from DGGEMS401-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 7E40CECFBE302ADD17A5;
+        Wed, 21 Aug 2019 09:34:10 +0800 (CST)
+Received: from [10.134.22.195] (10.134.22.195) by smtp.huawei.com
+ (10.3.19.201) with Microsoft SMTP Server (TLS) id 14.3.439.0; Wed, 21 Aug
+ 2019 09:34:04 +0800
+Subject: Re: [PATCH] erofs: move erofs out of staging
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Qu Wenruo <quwenruo.btrfs@gmx.com>,
+        Gao Xiang <hsiangkao@aol.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
+        David Sterba <dsterba@suse.cz>, Miao Xie <miaoxie@huawei.com>,
+        devel <devel@driverdev.osuosl.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Amir Goldstein <amir73il@gmail.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Jaegeuk Kim" <jaegeuk@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Li Guifu" <bluce.liguifu@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>, "Pavel Machek" <pavel@denx.de>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        torvalds <torvalds@linux-foundation.org>
+References: <20190818161638.GE1118@sol.localdomain>
+ <20190818162201.GA16269@infradead.org>
+ <20190818172938.GA14413@sol.localdomain>
+ <20190818174702.GA17633@infradead.org>
+ <20190818181654.GA1617@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190818201405.GA27398@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <20190819160923.GG15198@magnolia>
+ <20190819203051.GA10075@hsiangkao-HP-ZHAN-66-Pro-G1>
+ <bdb91cbf-985b-5a2c-6019-560b79739431@gmx.com>
+ <ad62636f-ef1b-739f-42cc-28d9d7ed86da@huawei.com>
+ <20190820155623.GA10232@mit.edu>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <9d8f88ee-4b81-bdfa-b0d7-9c7d5d54e70a@huawei.com>
+Date:   Wed, 21 Aug 2019 09:34:02 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20190820030804.8892-1-andrew.smirnov@gmail.com> <d735e851-cddf-f069-37f1-d27b013f3213@free.fr>
-In-Reply-To: <d735e851-cddf-f069-37f1-d27b013f3213@free.fr>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Tue, 20 Aug 2019 18:30:08 -0700
-Message-ID: <CAHQ1cqFpZ9beTJHLfdveUuYKks52GRD7ccnXLXudxmnd5Dk7Dw@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100kHz
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Chris Healy <cphealy@gmail.com>,
-        Fabio Estevam <festevam@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190820155623.GA10232@mit.edu>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 7:41 AM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
->
-> On 20/08/2019 05:08, Andrey Smirnov wrote:
->
-> > Fiber-optic module attached to the bus is only rated to work at
-> > 100kHz, so drop the bus frequncy to accomodate that.
->
-> s/100kHz/100 kHz
-> s/frequncy/frequency
-> s/accomodate/accommodate
->
+On 2019/8/20 23:56, Theodore Y. Ts'o wrote:
+> The reason why there needs to be at least some file system specific
+> code for fuzz testing is because for efficiency's sake, you don't want
+> to fuzz every single bit in the file system, but just the ones which
+> are most interesting (e.g., the metadata blocks).  For file systems
+> which use checksum to protect against accidental corruption, the file
+> system fuzzer needs to also fix up the checksums (since you can be
+> sure malicious attackers will do this).
 
-Will fix in v2.
+Yup, IMO, if we really want such tool, it needs to:
+- move all generic fuzz codes (trigger random fuzzing in meta/data area) into
+that tool, and
+- make filesystem generic fs_meta/file_node lookup/inject/pack function as a
+callback, such as
+ * .find_fs_sb
+ * .inject_fs_sb
+ * .pack_fs_sb
+ * .find_fs_bitmap
+ * .inject_fs_bitmap
+ * .find_fs_inode_bitmap
+ * .inject_fs_inode_bitmap
+ * .find_inode_by_num
+ * .inject_inode
+ * .pack_inode
+ * .find_tree_node_by_level
+...
+then specific filesystem can fill the callback to tell how the tool can locate a
+field in inode or a metadata in tree node and then trigger the designed fuzz.
 
-Thanks,
-Andrey Smirnov
+It will be easier to rewrite whole generic fwk for each filesystem, because
+existed filesystem userspace tool should has included above callback's detail
+codes...
+
+> On Tue, Aug 20, 2019 at 10:24:11AM +0800, Chao Yu wrote:
+>> filesystem fill the tool's callback to seek a node/block and supported fields
+>> can be fuzzed in inode.
+
+> 
+> What you *can* do is to make the file system specific portion of the
+> work as small as possible.  Great work in this area is Professor Kim's
+> Janus[1][2] and Hydra[2] work.  (Hydra is about to be published at SOSP 19,
+> and was partially funded from a Google Faculty Research Work.)
+> 
+> [1] https://taesoo.kim/pubs/2019/xu:janus.pdf
+> [2] https://github.com/sslab-gatech/janus
+> [3] https://github.com/sslab-gatech/hydra
+
+Thanks for the information!
+
+It looks like janus and hydra alreay have generic compress/decompress function
+across different filesystems, it's really a good job, I do think it may be the
+one once it becomes more generic.
+
+Thanks
+
+> 
