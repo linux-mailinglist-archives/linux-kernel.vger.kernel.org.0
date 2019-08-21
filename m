@@ -2,98 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D55F59879F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8C1798797
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:02:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731328AbfHUXDY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 19:03:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35324 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730030AbfHUXDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 19:03:23 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D14322CF7;
-        Wed, 21 Aug 2019 23:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566428602;
-        bh=9xymVfLvURIdrrXnRgIzVOXPkG9fl//dJdGvIZ5p5qE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t4tyhnNFnyZG85s82mA3DAO2DCfN2vBuG6DEjNXS8kAb6reStIXjKUXRX0RN4oC16
-         JOhIEQGJwRIcN+xSJl9/eFmT09u397jTtwT8hLrlVGE1c14diysPn/rORTb7mO2kDv
-         YmEnpoheaMaiCXNjKf5SMMqu+zsEFVBIzf+NSYqk=
-Date:   Thu, 22 Aug 2019 01:03:20 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [patch V2 01/38] posix-cpu-timers: Provide task validation
- functions
-Message-ID: <20190821230319.GD22020@lenoir>
-References: <20190821190847.665673890@linutronix.de>
- <20190821192919.326097175@linutronix.de>
- <20190821223356.GC22020@lenoir>
+        id S1731297AbfHUXCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 19:02:12 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36826 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731286AbfHUXCL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 19:02:11 -0400
+Received: by mail-pl1-f193.google.com with SMTP id f19so2187594plr.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 16:02:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=NpuoQpLKK7WyEkPSccJxDwY6STNHznjukxBqZ31nzB4=;
+        b=OzsNA61dc5J+KQA9dM2aHRJYNGKNDPTCblKWMfh4/UWZQleUwplGb5CCKwPToD2cAx
+         FcMT/7tDtdVWavTPAWVuj5i6ncwyz/OL+I5ZYxCGCVDAQc6/h0IbKyyzsHuaenGNWz2t
+         kVRQWGtQDOvlsg9SnUnKU5a8c7Rl2oVR03N89QrWEiFdqERXBcO8tLGd2qenDJtofH/S
+         CTg+KgIqan+qgQUiT+ijzNLnvIBfAYWyyggsooT7jNIIwN8LTAHCRtPosnqlYk1Tdn29
+         +heKXNQ+NGewltTzenkU+cpu5vI4OJ5qup2kjb28r5SW2hZ961Aw8oyEZV0ZfLcP/dxf
+         WLzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=NpuoQpLKK7WyEkPSccJxDwY6STNHznjukxBqZ31nzB4=;
+        b=Cm6joGwINjH0ZrH9haVypshIGZeIpvmHEpVw4lxrJyN1l9gtdH9lAfRA63fm3NQsHk
+         XHfLgq+v9lB58tUfllaqZfOJ4aqEZjCxzuW9SKsj5zgt84moi8ylYWqbr9q/ZLCOsE1q
+         N2Ok4Dh+Ah2ZLa7RAgejT6g58FAGRgYhgwf4omFI+2ysk+AglvosYCcK/Iwug6zhBtAP
+         oOWFWM+cVPEt3TwBADEZWmw8tV10OqsGnJpqiETaq/ZTXVxLPsnk/RkBqN0HoAsa1E/t
+         8X4WKsU+T+6ViZjc9z34/hv3dYyRBZQzjthOIvUfiw92NbsRNoJ3Po1EOTCTdHzr46Ic
+         l2bw==
+X-Gm-Message-State: APjAAAV/q6V7r3p/wDGAkjlqscxX/0pAwLqbXUWnHgywZ85JlxwposTC
+        fqp7AaYYifQkVaECwF1xeyq87A==
+X-Google-Smtp-Source: APXvYqxkzHLGY8L8dgDlNxoq4G+xKv8wVs2YvpjbObYmqSCZZWIvjwfgn1krBkgU0vu+qoeM1SVaXg==
+X-Received: by 2002:a17:902:4201:: with SMTP id g1mr36449071pld.300.1566428530503;
+        Wed, 21 Aug 2019 16:02:10 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id 67sm968321pjo.29.2019.08.21.16.02.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 16:02:09 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 16:03:56 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Sibi Sankar <sibis@codeaurora.org>
+Cc:     robh+dt@kernel.org, vkoul@kernel.org, aneela@codeaurora.org,
+        mark.rutland@arm.com, agross@kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        clew@codeaurora.org
+Subject: Re: [PATCH v2 0/7] Add support for Qualcomm SM8150 and SC7180 SoCs
+Message-ID: <20190821230356.GB1892@tuxbook-pro>
+References: <20190807070957.30655-1-sibis@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190821223356.GC22020@lenoir>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190807070957.30655-1-sibis@codeaurora.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 12:33:56AM +0200, Frederic Weisbecker wrote:
-> On Wed, Aug 21, 2019 at 09:08:48PM +0200, Thomas Gleixner wrote:
-> > The code contains three slightly different copies of validating whether a
-> > given clock resolves to a valid task and whether the current caller has
-> > permissions to access it.
-> > 
-> > Create central functions. Replace check_clock() as a first step and rename
-> > it to something sensible.
-> > 
-> > Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> > ---
-> >  kernel/time/posix-cpu-timers.c |   65 +++++++++++++++++++++++++++--------------
-> >  1 file changed, 44 insertions(+), 21 deletions(-)
-> > 
-> > --- a/kernel/time/posix-cpu-timers.c
-> > +++ b/kernel/time/posix-cpu-timers.c
-> > @@ -35,27 +35,52 @@ void update_rlimit_cpu(struct task_struc
-> >  	spin_unlock_irq(&task->sighand->siglock);
-> >  }
-> >  
-> > -static int check_clock(const clockid_t which_clock)
-> > +/*
-> > + * Functions for validating access to tasks.
-> > + */
-> > +static struct task_struct *lookup_task(const pid_t pid, bool thread)
-> >  {
-> > -	int error = 0;
-> >  	struct task_struct *p;
-> > -	const pid_t pid = CPUCLOCK_PID(which_clock);
-> >  
-> > -	if (CPUCLOCK_WHICH(which_clock) >= CPUCLOCK_MAX)
-> > -		return -EINVAL;
-> > +	if (!pid)
-> > +		return thread ? current : current->group_leader;
-> >  
-> > -	if (pid == 0)
-> > -		return 0;
-> > +	p = find_task_by_vpid(pid);
-> > +	if (!p || p == current)
-> > +		return p;
+On Wed 07 Aug 00:09 PDT 2019, Sibi Sankar wrote:
+
+> This patch series adds SCM, APSS shared mailbox and QMP AOSS PD/clock
+> support on SM8150 and SC7180 SoCs.
 > 
-> What if (p == current && !thread && !has_group_leader_pid(p)) ?
+> v2:
+>  * re-arrange the compatible lists in sort order
+> 
 
-Ah looking at the next patch, posix_cpu_clock_get_task() and posix_cpu_clock_getres()
-had different ad-hoc checks for this specific case.
+Applied patches 1-3 and 6-7.
 
-clock_getres() used to return -EINVAL while clock_get() doesn't care. They certainly should
-agree in their behaviour. I'm not sure which one is correct. It probably doesn't matter much.
+Regards,
+Bjorn
+
+> Sibi Sankar (7):
+>   soc: qcom: smem: Update max processor count
+>   dt-bindings: firmware: scm: re-order compatible list
+>   dt-bindings: firmware: scm: Add SM8150 and SC7180 support
+>   dt-bindings: mailbox: Add APSS shared for SM8150 and SC7180 SoCs
+>   mailbox: qcom: Add support for Qualcomm SM8150 and SC7180 SoCs
+>   dt-bindings: soc: qcom: aoss: Add SM8150 and SC7180 support
+>   soc: qcom: aoss: Add AOSS QMP support
+> 
+>  Documentation/devicetree/bindings/firmware/qcom,scm.txt      | 4 +++-
+>  .../devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt    | 2 ++
+>  Documentation/devicetree/bindings/soc/qcom/qcom,aoss-qmp.txt | 5 ++++-
+>  drivers/mailbox/qcom-apcs-ipc-mailbox.c                      | 2 ++
+>  drivers/soc/qcom/qcom_aoss.c                                 | 2 ++
+>  drivers/soc/qcom/smem.c                                      | 2 +-
+>  6 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> -- 
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+> 
