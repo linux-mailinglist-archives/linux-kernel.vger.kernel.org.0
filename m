@@ -2,94 +2,166 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F60097F59
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4C6B197F5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:49:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728995AbfHUPsa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:48:30 -0400
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:29549 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728840AbfHUPs3 (ORCPT
+        id S1729206AbfHUPsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:48:46 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45314 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728459AbfHUPsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:48:29 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 319A93F6FD;
-        Wed, 21 Aug 2019 17:48:26 +0200 (CEST)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=shipmail.org header.i=@shipmail.org header.b=ecCdMDUX;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-X-Spam-Flag: NO
-X-Spam-Score: -2.099
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.099 tagged_above=-999 required=6.31
-        tests=[BAYES_00=-1.9, DKIM_SIGNED=0.1, DKIM_VALID=-0.1,
-        DKIM_VALID_AU=-0.1, DKIM_VALID_EF=-0.1, URIBL_BLOCKED=0.001]
-        autolearn=ham autolearn_force=no
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5_BESL_KmbX2; Wed, 21 Aug 2019 17:48:25 +0200 (CEST)
-Received: from mail1.shipmail.org (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        (Authenticated sender: mb878879)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id B41E23F6DC;
-        Wed, 21 Aug 2019 17:48:24 +0200 (CEST)
-Received: from localhost.localdomain (h-205-35.A357.priv.bahnhof.se [155.4.205.35])
-        by mail1.shipmail.org (Postfix) with ESMTPSA id EB2EA3602D6;
-        Wed, 21 Aug 2019 17:48:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=shipmail.org; s=mail;
-        t=1566402504; bh=fcgSl5DKVkYug+EcSMguajG35Q4SWrsZPSDglOO5M/I=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ecCdMDUXP+o2fIzs4cRai9GmFjJWyqXjqO7bcLjHnOTjhjkzH167yNCB8CYywNbMi
-         iEf4XMgEk9k4bQsljRIdtpdEucWmIkckNcA7e1O+aDpOe82ub7qGTfMIyfPepJB51+
-         OIn5udOtHF0ggr4ekNoMg9EaTOS+dRcgZCrPxZFE=
-Subject: Re: [PATCH 4/4] input/vmmouse: Update the backdoor call with support
- for new instructions
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
-        Thomas Hellstrom <thellstrom@vmware.com>,
-        linux-input@vger.kernel.org, Doug Covelli <dcovelli@vmware.com>
-References: <20190818143316.4906-1-thomas_os@shipmail.org>
- <20190818143316.4906-5-thomas_os@shipmail.org> <20190821050925.GA566@penguin>
-From:   =?UTF-8?Q?Thomas_Hellstr=c3=b6m_=28VMware=29?= 
-        <thomas_os@shipmail.org>
-Organization: VMware Inc.
-Message-ID: <027a55d6-ab26-ef9c-bd89-93a38f96160b@shipmail.org>
-Date:   Wed, 21 Aug 2019 17:48:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Wed, 21 Aug 2019 11:48:46 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 784882CAD29;
+        Wed, 21 Aug 2019 11:48:44 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id mKb2H5X-fXvj; Wed, 21 Aug 2019 11:48:44 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id ED4C02CAD26;
+        Wed, 21 Aug 2019 11:48:43 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ED4C02CAD26
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1566402524;
+        bh=raMzDsvLp2MJ0A1zw+jKNPt3gxA/18NTfDpige5zLCY=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=jRqX+OjZQ6VhTLFZHTptD7xsc3YuLNYTya2TMd6WSqBIyN1tKztU7CLM3LSQ0kybQ
+         DfDziPTvjxbLtwDQTqxyNwKBYdIh03/Pr6vabmpHkVoigfBJv2YVx7QXickH3JGZjs
+         FktrhJ2DWoLRYNnrto5ss/FTRkyIdmROakhtfsm3g681aBTJNvjjLEQvO+t1+D6OTv
+         LreQUem9N10M+M/UqZuk1Q0/Oq/zjEY903C76NU9gCNJeHDdKUyhxJNU3azSFFRqYP
+         vNU72FQYu0kd1GwtFod/ah2fum0GrQLPj2HWDJAm/Enw14HILvg5gcQ1IA5FHa2MLs
+         FPpGeww027mEg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id FFjmIk5DJO4F; Wed, 21 Aug 2019 11:48:43 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id D48832CAD1C;
+        Wed, 21 Aug 2019 11:48:43 -0400 (EDT)
+Date:   Wed, 21 Aug 2019 11:48:43 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     paulmck <paulmck@linux.ibm.com>, Will Deacon <will@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Joel Fernandes, Google" <joel@joelfernandes.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        rostedt <rostedt@goodmis.org>,
+        Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Howells <dhowells@redhat.com>
+Message-ID: <52600272.1909.1566402523680.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190821153325.GD2349@hirez.programming.kicks-ass.net>
+References: <Pine.LNX.4.44L0.1908161505400.1525-100000@iolanthe.rowland.org> <1642847744.23403.1566005809759.JavaMail.zimbra@efficios.com> <CAHk-=wgC4+kV9AiLokw7cPP429rKCU+vjA8cWAfyOjC3MtqC4A@mail.gmail.com> <20190820135612.GS2332@hirez.programming.kicks-ass.net> <20190820202932.GW28441@linux.ibm.com> <20190821103200.kpufwtviqhpbuv2n@willie-the-truck> <20190821132310.GC28441@linux.ibm.com> <20190821153325.GD2349@hirez.programming.kicks-ass.net>
+Subject: Re: [PATCH 1/1] Fix: trace sched switch start/stop racy updates
 MIME-Version: 1.0
-In-Reply-To: <20190821050925.GA566@penguin>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.15_GA_3829 (ZimbraWebClient - FF68 (Linux)/8.8.15_GA_3829)
+Thread-Topic: trace sched switch start/stop racy updates
+Thread-Index: vUNKpvAVCmtLIvMwU3k3Nuab82BXLA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/21/19 7:09 AM, Dmitry Torokhov wrote:
-> On Sun, Aug 18, 2019 at 04:33:16PM +0200, Thomas Hellström (VMware) wrote:
->> From: Thomas Hellstrom <thellstrom@vmware.com>
->>
->> Use the definition provided by include/asm/vmware.h
->>
->> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->> Cc: <linux-input@vger.kernel.org>
->> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
->> Reviewed-by: Doug Covelli <dcovelli@vmware.com>
-> Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
->
-> Please feel free to merge with the rest of the patches introducing
-> VMWARE_HYPERCALL.
+----- On Aug 21, 2019, at 8:33 AM, Peter Zijlstra peterz@infradead.org wrote:
 
-Thanks, Dmitry!
+> On Wed, Aug 21, 2019 at 06:23:10AM -0700, Paul E. McKenney wrote:
+>> On Wed, Aug 21, 2019 at 11:32:01AM +0100, Will Deacon wrote:
+> 
+>> > and so it is using a store-pair instruction to reduce the complexity in
+>> > the immediate generation. Thus, the 64-bit store will only have 32-bit
+>> > atomicity. In fact, this is scary because if I change bar to:
+>> > 
+>> > void bar(u64 *x)
+>> > {
+>> > 	*(volatile u64 *)x = 0xabcdef10abcdef10;
+>> > }
+>> > 
+>> > then I get:
+>> > 
+>> > bar:
+>> > 	mov	w1, 61200
+>> > 	movk	w1, 0xabcd, lsl 16
+>> > 	str	w1, [x0]
+>> > 	str	w1, [x0, 4]
+>> > 	ret
+>> > 
+>> > so I'm not sure that WRITE_ONCE would even help :/
+>> 
+>> Well, I can have the LWN article cite your email, then.  So thank you
+>> very much!
+>> 
+>> Is generation of this code for a 64-bit volatile store considered a bug?
+>> Or does ARMv8 exclude the possibility of 64-bit MMIO registers?  And I
+>> would guess that Thomas and Linus would ask a similar bugginess question
+>> for normal stores.  ;-)
+> 
+> I'm calling this a compiler bug; the way I understand volatile this is
+> very much against the intentended use case. That is, this is buggy even
+> on UP vs signals or MMIO.
 
-I have a version 2 of the patch were the only difference is that edx is 
-initialized to zero which is default for vmcall / vmmcall. Can I use 
-your ack for that one as well?
+And here is a simpler reproducer on my gcc-8.3.0 (aarch64) compiled with O2:
+
+volatile unsigned long a;
+ 
+void fct(void)
+{
+        a = 0x1234567812345678ULL;
+}
+
+void fct(void)
+{
+        a = 0x1234567812345678ULL;
+   0:   90000000        adrp    x0, 8 <fct+0x8>
+   4:   528acf01        mov     w1, #0x5678                     // #22136
+   8:   72a24681        movk    w1, #0x1234, lsl #16
+   c:   f9400000        ldr     x0, [x0]
+  10:   b9000001        str     w1, [x0]
+  14:   b9000401        str     w1, [x0, #4]
+}
+  18:   d65f03c0        ret
+
+And the non-volatile case uses stp (is it a single store to memory ?):
+
+unsigned long a;
+  
+void fct(void)
+{
+        a = 0x1234567812345678ULL;
+}
+
+void fct(void)
+{
+        a = 0x1234567812345678ULL;
+   0:   90000000        adrp    x0, 8 <fct+0x8>
+   4:   528acf01        mov     w1, #0x5678                     // #22136
+   8:   72a24681        movk    w1, #0x1234, lsl #16
+   c:   f9400000        ldr     x0, [x0]
+  10:   29000401        stp     w1, w1, [x0]
+}
+  14:   d65f03c0        ret
+
+It would probably be a good idea to audit other architectures, since this
+is done by the compiler backend.
 
 Thanks,
 
-Thomas
+Mathieu
 
 
+
+
+
+
+
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
