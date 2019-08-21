@@ -2,188 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 15E7F97BB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 15:58:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0FE6297B56
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 15:54:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729370AbfHUN5u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 09:57:50 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:12969 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1728608AbfHUN5t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 09:57:49 -0400
-X-UUID: 706f111d285045c2b0588a1c6c804fa0-20190821
-X-UUID: 706f111d285045c2b0588a1c6c804fa0-20190821
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <yong.wu@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1541045567; Wed, 21 Aug 2019 21:57:41 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 21 Aug 2019 21:57:38 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 21 Aug 2019 21:57:37 +0800
-From:   Yong Wu <yong.wu@mediatek.com>
-To:     Joerg Roedel <joro@8bytes.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Tomasz Figa <tfiga@google.com>,
-        <linux-mediatek@lists.infradead.org>,
-        <srv_heupstream@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
+        id S1728724AbfHUNy2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 09:54:28 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:42176 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727696AbfHUNy0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 09:54:26 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 832E3FF73DB123757664;
+        Wed, 21 Aug 2019 21:54:21 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
+ 21:54:12 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <peppe.cavallaro@st.com>,
+        <alexandre.torgue@st.com>, <joabreu@synopsys.com>,
+        <khilman@baylibre.com>, <mcoquelin.stm32@gmail.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux-foundation.org>, <yong.wu@mediatek.com>,
-        <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
-        <anan.sun@mediatek.com>, Matthias Kaehlcke <mka@chromium.org>,
-        <cui.zhang@mediatek.com>, <chao.hao@mediatek.com>,
-        <ming-fan.chen@mediatek.com>
-Subject: [PATCH v10 23/23] iommu/mediatek: Clean up struct mtk_smi_iommu
-Date:   Wed, 21 Aug 2019 21:53:26 +0800
-Message-ID: <1566395606-7975-24-git-send-email-yong.wu@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1566395606-7975-1-git-send-email-yong.wu@mediatek.com>
-References: <1566395606-7975-1-git-send-email-yong.wu@mediatek.com>
+        <linux-amlogic@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] net: stmmac: dwmac-meson: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 21 Aug 2019 21:54:06 +0800
+Message-ID: <20190821135406.26200-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
-X-MTK:  N
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the "struct mtk_smi_iommu" to simplify the code since it has only
-one item in it right now.
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
-Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/iommu/mtk_iommu.c    | 4 ++--
- drivers/iommu/mtk_iommu.h    | 6 +++---
- drivers/iommu/mtk_iommu_v1.c | 4 ++--
- drivers/memory/mtk-smi.c     | 6 +++---
- include/soc/mediatek/smi.h   | 4 ----
- 5 files changed, 10 insertions(+), 14 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/iommu/mtk_iommu.c b/drivers/iommu/mtk_iommu.c
-index cc81de2..400066d 100644
---- a/drivers/iommu/mtk_iommu.c
-+++ b/drivers/iommu/mtk_iommu.c
-@@ -278,7 +278,7 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
- 	for (i = 0; i < fwspec->num_ids; ++i) {
- 		larbid = MTK_M4U_TO_LARB(fwspec->ids[i]);
- 		portid = MTK_M4U_TO_PORT(fwspec->ids[i]);
--		larb_mmu = &data->smi_imu.larb_imu[larbid];
-+		larb_mmu = &data->larb_imu[larbid];
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
+index 88eb169..bbc16b5 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.c
+@@ -46,7 +46,6 @@ static int meson6_dwmac_probe(struct platform_device *pdev)
+ 	struct plat_stmmacenet_data *plat_dat;
+ 	struct stmmac_resources stmmac_res;
+ 	struct meson_dwmac *dwmac;
+-	struct resource *res;
+ 	int ret;
  
- 		dev_dbg(dev, "%s iommu port: %d\n",
- 			enable ? "enable" : "disable", portid);
-@@ -680,7 +680,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 			of_node_put(larbnode);
- 			return -EPROBE_DEFER;
- 		}
--		data->smi_imu.larb_imu[id].dev = &plarbdev->dev;
-+		data->larb_imu[id].dev = &plarbdev->dev;
- 
- 		component_match_add_release(dev, &match, release_of,
- 					    compare_of, larbnode);
-diff --git a/drivers/iommu/mtk_iommu.h b/drivers/iommu/mtk_iommu.h
-index 56b579c..fc0f16e 100644
---- a/drivers/iommu/mtk_iommu.h
-+++ b/drivers/iommu/mtk_iommu.h
-@@ -56,7 +56,6 @@ struct mtk_iommu_data {
- 	struct mtk_iommu_suspend_reg	reg;
- 	struct mtk_iommu_domain		*m4u_dom;
- 	struct iommu_group		*m4u_group;
--	struct mtk_smi_iommu		smi_imu;      /* SMI larb iommu info */
- 	bool                            enable_4GB;
- 	bool				tlb_flush_active;
- 
-@@ -64,6 +63,7 @@ struct mtk_iommu_data {
- 	const struct mtk_iommu_plat_data *plat_data;
- 
- 	struct list_head		list;
-+	struct mtk_smi_larb_iommu	larb_imu[MTK_LARB_NR_MAX];
- };
- 
- static inline int compare_of(struct device *dev, void *data)
-@@ -80,14 +80,14 @@ static inline int mtk_iommu_bind(struct device *dev)
- {
- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
- 
--	return component_bind_all(dev, &data->smi_imu);
-+	return component_bind_all(dev, &data->larb_imu);
- }
- 
- static inline void mtk_iommu_unbind(struct device *dev)
- {
- 	struct mtk_iommu_data *data = dev_get_drvdata(dev);
- 
--	component_unbind_all(dev, &data->smi_imu);
-+	component_unbind_all(dev, &data->larb_imu);
- }
- 
- #endif
-diff --git a/drivers/iommu/mtk_iommu_v1.c b/drivers/iommu/mtk_iommu_v1.c
-index 3922358..860926c 100644
---- a/drivers/iommu/mtk_iommu_v1.c
-+++ b/drivers/iommu/mtk_iommu_v1.c
-@@ -206,7 +206,7 @@ static void mtk_iommu_config(struct mtk_iommu_data *data,
- 	for (i = 0; i < fwspec->num_ids; ++i) {
- 		larbid = mt2701_m4u_to_larb(fwspec->ids[i]);
- 		portid = mt2701_m4u_to_port(fwspec->ids[i]);
--		larb_mmu = &data->smi_imu.larb_imu[larbid];
-+		larb_mmu = &data->larb_imu[larbid];
- 
- 		dev_dbg(dev, "%s iommu port: %d\n",
- 			enable ? "enable" : "disable", portid);
-@@ -610,7 +610,7 @@ static int mtk_iommu_probe(struct platform_device *pdev)
- 			}
- 		}
- 
--		data->smi_imu.larb_imu[larb_nr].dev = &plarbdev->dev;
-+		data->larb_imu[larb_nr].dev = &plarbdev->dev;
- 		component_match_add_release(dev, &match, release_of,
- 					    compare_of, larb_spec.np);
- 		larb_nr++;
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index d6dc62f..439d7d8 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -143,13 +143,13 @@ void mtk_smi_larb_put(struct device *larbdev)
- mtk_smi_larb_bind(struct device *dev, struct device *master, void *data)
- {
- 	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
--	struct mtk_smi_iommu *smi_iommu = data;
-+	struct mtk_smi_larb_iommu *larb_mmu = data;
- 	unsigned int         i;
- 
- 	for (i = 0; i < MTK_LARB_NR_MAX; i++) {
--		if (dev == smi_iommu->larb_imu[i].dev) {
-+		if (dev == larb_mmu[i].dev) {
- 			larb->larbid = i;
--			larb->mmu = &smi_iommu->larb_imu[i].mmu;
-+			larb->mmu = &larb_mmu[i].mmu;
- 			return 0;
- 		}
+ 	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
+@@ -63,8 +62,7 @@ static int meson6_dwmac_probe(struct platform_device *pdev)
+ 		goto err_remove_config_dt;
  	}
-diff --git a/include/soc/mediatek/smi.h b/include/soc/mediatek/smi.h
-index 6f0b00c..5a34b87 100644
---- a/include/soc/mediatek/smi.h
-+++ b/include/soc/mediatek/smi.h
-@@ -20,10 +20,6 @@ struct mtk_smi_larb_iommu {
- 	unsigned int   mmu;
- };
  
--struct mtk_smi_iommu {
--	struct mtk_smi_larb_iommu larb_imu[MTK_LARB_NR_MAX];
--};
--
- /*
-  * mtk_smi_larb_get: Enable the power domain and clocks for this local arbiter.
-  *                   It also initialize some basic setting(like iommu).
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	dwmac->reg = devm_ioremap_resource(&pdev->dev, res);
++	dwmac->reg = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(dwmac->reg)) {
+ 		ret = PTR_ERR(dwmac->reg);
+ 		goto err_remove_config_dt;
 -- 
-1.9.1
+2.7.4
+
 
