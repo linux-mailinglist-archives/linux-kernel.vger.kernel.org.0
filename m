@@ -2,108 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AB1BA98091
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:47:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0A38980A9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:50:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729729AbfHUQrq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:47:46 -0400
-Received: from mga17.intel.com ([192.55.52.151]:56846 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729703AbfHUQro (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:47:44 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 09:47:44 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="196031589"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 09:47:41 -0700
-Received: from andy by smile with local (Exim 4.92.1)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1i0Tlq-0002mP-Dl; Wed, 21 Aug 2019 19:47:38 +0300
-Date:   Wed, 21 Aug 2019 19:47:38 +0300
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, tony.luck@intel.com, x86@kernel.org,
-        alan@linux.intel.com, rppt@linux.ibm.com,
-        linux-kernel@vger.kernel.org, qi-ming.wu@intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
-Subject: Re: [PATCH] x86/apic: Update virtual irq base for DT/OF based system
- as well
-Message-ID: <20190821164738.GA30120@smile.fi.intel.com>
-References: <20190821081330.1187-1-rahul.tanwar@linux.intel.com>
- <alpine.DEB.2.21.1908211028030.2223@nanos.tec.linutronix.de>
- <7b4db9f3-21da-5b5e-e219-0170e812a015@linux.intel.com>
- <alpine.DEB.2.21.1908211235180.2223@nanos.tec.linutronix.de>
- <20190821123451.GY30120@smile.fi.intel.com>
- <alpine.DEB.2.21.1908211510390.2223@nanos.tec.linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1908211510390.2223@nanos.tec.linutronix.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1729125AbfHUQuZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:50:25 -0400
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:46158 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726828AbfHUQuY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:50:24 -0400
+Received: by mail-pl1-f196.google.com with SMTP id c2so1619767plz.13
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 09:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=vOsVwGQVH1pTZWvq9RI6vtuGHBdFwAhJmBlw43kNz3A=;
+        b=FQ72VsxxF827h9uCn8Oe0rXRQviu1GeO5KJ5ZnYaHmnTcsTrXDgA02aZoVxzzwkPnK
+         81t2/yP7/Lh7Oh0Aaia/sF/5LwkDv02xopWWgzbOzZzAZd50EtXiTyl8ujxFMnINCVbf
+         bJ18EY9IEauG17V36C72VrrrR0kF4F4iVOvPaEMCscYx0I/5U/sbOdyuxpKJXLf5d0Rf
+         d2do7MjrXdckd/cq/oaogcJm7m5J+Gz6XdjW9V/Ug+yxW5JpExkHXtgAIen8MeJGo0lG
+         +FspHDWBgJD0uJsy6EzwKkTQVTW7XYSVSxALZ8pbx0knLRoUVrbw+gJL0q6j+RM8EH2V
+         NCjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vOsVwGQVH1pTZWvq9RI6vtuGHBdFwAhJmBlw43kNz3A=;
+        b=tIBi56EJtyan1sWqLxu1zKdiO5RHO3g23w/sEyzVP1Nwo8kLemZ0s2RgOUh0GrS4sE
+         q86p3HHVr0/0XUhq5i2G7AONBWXFwE48XRnq23MIj2UqOLU7wTZz1f7ON+Skx8Qu9BEU
+         8pVd1JowcIoqWjN22rcg1Pk7SFc5Yb3dpCZUjUWhj/DQ/Ekuax+uSLj14A1HJBklG6sL
+         OA7fdyql/jWt0m2JckdSkX+04AulHZcWtyA+E40KvNwCELxtVxNwqqtT7cVhlFTL5cS7
+         Y0JObIsGeuP9Dfc78izNT6sWylezFdnQUjoK4Y9qAIgIg3IQGXnOf4Xu3Y55uH4wmCVi
+         NwqQ==
+X-Gm-Message-State: APjAAAVlHrb4gbb0w+uzmGlvjyoaLQ8IW/3ly1ii+64UIO36FVk0xmsT
+        ibvwuchWb2oHuoxIcQpkSv0=
+X-Google-Smtp-Source: APXvYqysov090aoIXmaNouZ7wKZfGapTlQ8KNwROhLrDyXYtHem3aHvFouvEGUr5PJrADORE+bfYHg==
+X-Received: by 2002:a17:902:33a5:: with SMTP id b34mr2368689plc.286.1566406224148;
+        Wed, 21 Aug 2019 09:50:24 -0700 (PDT)
+Received: from localhost.localdomain (M106072039032.v4.enabler.ne.jp. [106.72.39.32])
+        by smtp.gmail.com with ESMTPSA id j187sm33956245pfg.178.2019.08.21.09.50.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 09:50:23 -0700 (PDT)
+From:   Tokunori Ikegami <ikegami.t@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     Tokunori Ikegami <ikegami.t@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>,
+        Liu Jian <liujian56@huawei.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] mtd: cfi_cmdset_0002: Fix do_erase_chip() to get chip as erasing mode
+Date:   Thu, 22 Aug 2019 01:46:51 +0900
+Message-Id: <20190821164655.5860-1-ikegami.t@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 03:16:31PM +0200, Thomas Gleixner wrote:
-> On Wed, 21 Aug 2019, Andy Shevchenko wrote:
-> > On Wed, Aug 21, 2019 at 01:20:53PM +0200, Thomas Gleixner wrote:
-> > > But x86 implements arch_dynirq_lower_bound() which overrides the core limit
-> > > and because ioapic_dynirq_base is zero in the DT case it allows VIRQ 0 to
-> > > be allocated which then causes of_irq*() to fail.
-> > > 
-> > > So your change prevents that by excluding the 'GSI' range from allocation,
-> > > which means that the first irq number which is handed out is 24, assumed
-> > > you have one IOAPIC with 24 pins.
-> > 
-> > I have tested this on the ACPI-based system where we have 55 lines of IOAPIC,
-> > no PIC, and some GPIO lines. Overall I see that nr_irqs is 512 and shifting
-> > by 55 freezes 10% of the space for nothing. Luckily we have SPARSE_IRQS
-> > selected for any X86, so, it wouldn't waste memory.
-> >
-> > I think we may do slightly better if we just limit the change to the certain
-> > cases.
-> 
-> For DT we can actually avoid that completely. See below.
-> 
-> For ACPI not unfortunately as the stupid GSI mapping is hard coded.
+The chip state is set to erasing by the function after getting chip.
+So it should be to get chip as erasing mode at first.
+But previously it was to get chip as writing mode then fix as erasing.
 
-The below works better for my case, so, if you are going with that
-Tested-by: Andy Shevchenko <andriy.shevchenko@intel.com>
+Signed-off-by: Tokunori Ikegami <ikegami.t@gmail.com>
+Cc: linux-mtd@lists.infradead.org
+---
+ drivers/mtd/chips/cfi_cmdset_0002.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> Thanks,
-> 
-> 	tglx
-> 
-> 8<-------------
-> --- a/arch/x86/kernel/apic/io_apic.c
-> +++ b/arch/x86/kernel/apic/io_apic.c
-> @@ -2438,7 +2438,13 @@ unsigned int arch_dynirq_lower_bound(uns
->  	 * dmar_alloc_hwirq() may be called before setup_IO_APIC(), so use
->  	 * gsi_top if ioapic_dynirq_base hasn't been initialized yet.
->  	 */
-> -	return ioapic_initialized ? ioapic_dynirq_base : gsi_top;
-> +	if (!ioapic_initialized)
-> +		return gsi_top;
-> +	/*
-> +	 * For DT enabled machines ioapic_dynirq_base is irrelevant and not
-> +	 * updated. So simply return @from if ioapic_dynirq_base == 0.
-> +	 */
-> +	return ioapic_dynirq_base ? : from;
->  }
->  
->  #ifdef CONFIG_X86_32
-
+diff --git a/drivers/mtd/chips/cfi_cmdset_0002.c b/drivers/mtd/chips/cfi_cmdset_0002.c
+index f4da7bd552e9..74b07a0bdaa2 100644
+--- a/drivers/mtd/chips/cfi_cmdset_0002.c
++++ b/drivers/mtd/chips/cfi_cmdset_0002.c
+@@ -2344,7 +2344,7 @@ static int __xipram do_erase_chip(struct map_info *map, struct flchip *chip)
+ 	adr = cfi->addr_unlock1;
+ 
+ 	mutex_lock(&chip->mutex);
+-	ret = get_chip(map, chip, adr, FL_WRITING);
++	ret = get_chip(map, chip, adr, FL_ERASING);
+ 	if (ret) {
+ 		mutex_unlock(&chip->mutex);
+ 		return ret;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.11.0
 
