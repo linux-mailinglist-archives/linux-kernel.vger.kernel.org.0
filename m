@@ -2,102 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C4DF1978EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:11:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CF3F978F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:12:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728024AbfHUMKV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:10:21 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:33681 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfHUMKV (ORCPT
+        id S1728065AbfHUMLr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:11:47 -0400
+Received: from mail1.bemta24.messagelabs.com ([67.219.250.209]:59783 "EHLO
+        mail1.bemta24.messagelabs.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726484AbfHUMLr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:10:21 -0400
-Received: from [192.168.1.110] ([77.2.122.154]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MhToz-1iVbb30aX5-00eeYg; Wed, 21 Aug 2019 14:10:14 +0200
-Subject: Re: Status of Subsystems
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sebastian Duda <sebastian.duda@fau.de>,
-        =?UTF-8?Q?Pali_Roh=c3=a1r?= <pali.rohar@gmail.com>,
-        linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com
-References: <2529f953-305f-414b-5969-d03bf20892c4@fau.de>
- <20190820131422.2navbg22etf7krxn@pali>
- <3cf18665-7669-a33c-a718-e0917fa6d1b9@fau.de>
- <20190820171550.GE10232@mit.edu>
-From:   "Enrico Weigelt, metux IT consult" <lkml@metux.net>
-Organization: metux IT consult
-Message-ID: <57a7ae11-282f-8b93-355c-4bc839f76b23@metux.net>
-Date:   Wed, 21 Aug 2019 14:10:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux i686 on x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
-MIME-Version: 1.0
-In-Reply-To: <20190820171550.GE10232@mit.edu>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Wed, 21 Aug 2019 08:11:47 -0400
+Received: from [67.219.251.53] (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256 bits))
+        by server-2.bemta.az-c.us-west-2.aws.symcld.net id F6/2C-30481-FF43D5D5; Wed, 21 Aug 2019 12:11:43 +0000
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrDKsWRWlGSWpSXmKPExsXi5LtOQPefSWy
+  sQe8ac4uHV/0tVk3dyWKx6fE1VouuXyuZLS7vmsNm8Xf7JhaLF1vELdqOHWN14PDYOesuu8em
+  VZ1sHneu7WHz2Lyk3mPjux1MHv1/DTw+b5ILYI9izcxLyq9IYM042LiTrWAec8XVCwfZGhhnM
+  HcxcnEICaxilJi+6SY7hLOXUeLMimUsXYycHGwC5hLTDh8Es0UELCT+TZgL1sEs8ItJ4tOOA0
+  wgCWGBMInXc1ayQhSFS7xe8psNwraSuHVsGyOIzSKgKjH35HtmEJtXwFfixuxPYDVCAjUSkyf
+  9ZAexOQXsJE6fmgQ2h1FAVmLl+dNgvcwC4hK3nswH2yUhICCxZM95ZghbVOLl43+sELaCxIIL
+  X4EO5QCq15RYv0sfolVRYkr3Q3aItYISJ2c+YYFYqybRNmcC8wRG0VlINsxC6J6FpHsWku4Fj
+  CyrGM2TijLTM0pyEzNzdA0NDHQNDY10DY3Ndc0s9RKrdJP1Sot1y1OLS3SN9BLLi/WKK3OTc1
+  L08lJLNjECoziloNN1B+P+WW/0DjFKcjApifKeUYmNFeJLyk+pzEgszogvKs1JLT7EKMPBoST
+  Ba2IMlBMsSk1PrUjLzAEmFJi0BAePkgjvXSOgNG9xQWJucWY6ROoUozHHhJdzFzFzHJm7dBGz
+  EEtefl6qlDjvH5BSAZDSjNI8uEGwRHeJUVZKmJeRgYFBiKcgtSg3swRV/hWjOAejkjDvHZB7e
+  DLzSuD2vQI6hQnolN2HI0FOKUlESEk1MNV1bzmx+TDj7m9vk86tefZYfvaaV281E4S98pdbm3
+  P8MhHnaLnnte98xJmfE81v8mjcmLXOnaXEyervw/kfvLtiiyIk5VdNfP2zLG1P9beX39m/b/Z
+  +vqNFbYdFzbR150KtvC6eZ8x19ftRGWiy4tCNgFVPWBS4uFZbtT1mcDr6THCRTu/8leEsv47v
+  2b2MoWB59C2NiOXSyn4HXP9dXZgb3/BOL93bcIXN+6qF3jOSeib1+ficFsx/sbbw0213D6Egk
+  RNKbnc3TXya816Kv/Ds67z7akwvDr7W3rq4JtF8inWgtMjq22bcFVMTTXcxfKj3TD6grFEsaR
+  z6IH8W66/FlWzSDA2nZgRvn2h/Y7kSS3FGoqEWc1FxIgB4MB1D7wMAAA==
+X-Env-Sender: Jose.DiazdeGrenu@digi.com
+X-Msg-Ref: server-19.tower-365.messagelabs.com!1566389501!14255!1
+X-Originating-IP: [66.77.174.16]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.43.9; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 22255 invoked from network); 21 Aug 2019 12:11:42 -0000
+Received: from owa.digi.com (HELO MCL-VMS-XCH01.digi.com) (66.77.174.16)
+  by server-19.tower-365.messagelabs.com with ECDHE-RSA-AES256-SHA384 encrypted SMTP; 21 Aug 2019 12:11:42 -0000
+Received: from DOR-VMS-XCH01.digi.com (10.49.8.98) by MCL-VMS-XCH01.digi.com
+ (10.5.8.49) with Microsoft SMTP Server (TLS) id 14.3.468.0; Wed, 21 Aug 2019
+ 07:11:41 -0500
+Received: from DOR-SMS-XCH01.digi.com ([fe80::894b:3bdc:74ae:6efc]) by
+ DOR-VMS-XCH01.digi.com ([fe80::c47f:be41:1dc7:5ab8%11]) with mapi id
+ 14.03.0468.000; Wed, 21 Aug 2019 14:11:39 +0200
+From:   "Diaz de Grenu, Jose" <Jose.DiazdeGrenu@digi.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+CC:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "linux-imx@nxp.com" <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 0/2] nvmem: imx-ocotp: allow reads with arbitrary size
+ and offset
+Thread-Topic: [PATCH 0/2] nvmem: imx-ocotp: allow reads with arbitrary size
+ and offset
+Thread-Index: AQHVQWvhEud7zccX5U+rMC/CtlWS8Kbt2KgAgBfWu0A=
+Date:   Wed, 21 Aug 2019 12:11:38 +0000
+Message-ID: <0B2EBCD48D33654381E736352034C70C025D80A9@dor-sms-xch01.digi.com>
+References: <1563895963-19526-1-git-send-email-Jose.DiazdeGrenu@digi.com>
+ <771a6f0a-3cc2-da20-2439-9a91dd2bf9d2@linaro.org>
+In-Reply-To: <771a6f0a-3cc2-da20-2439-9a91dd2bf9d2@linaro.org>
+Accept-Language: es-ES, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:TC3Ok5ZKV1kdcB6z/l30Nr6PZl/zacyPMh9CBmQC8HoUGej80en
- vtkvXaMegYa23e220OZnf8ar/37AWWkuJJE7s7MijZjWlHD6XpKr0IBhGaX9UF7pscu4gju
- K8jbSYa0EwI4BQOfFSkoafhv8PfxdE+rS9ZTnbaLL71p2OUBwt6JZj1O7s4sAn1lso/QW+1
- rey7rYTz+yEVivxz0dDTQ==
-X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:rCFpNU5h/1w=:E0k6zX1BQOXIiPmFoU0PTF
- 7LzX6V5XdPgT39XpRdMOIbHRsc35/aTz6vv6zwPrbbUZOuU9ABiHBxHuwm8NqaECGvZ1y6MDA
- Juq2zQfkKQczhV+rr9hNEx/Lpf4MpdlptyFfWiXNkCkFrftLE2yIF3Lj3RzrDEdFgFTq17ZsI
- JdKhnXAWkETQ/wZfTZGOeciZZYB7n1d4EZDTEbuZtDKsNzvXSLQvo0AWqyT53fp2HD7H3prTG
- VVNGAmNpcb57FPcMA1FN1Z9VGPUBkCWhMASschWVPfuvZQRj8YYJs+gvpvDtD8vdK3YromtvE
- 8nT2f9cioTbN+jzDgcKTvfLZZ9lFXa3c7EeXLDhUjrPTgckdMPOgS/nKnSVV7dmsAQyMuMmzK
- qZ2S5lTpO2rBmwnnGKB2KVHS/hc3RdTnbCOABqNQzsgtkK6HafBRbpJdVryXYsVdv63a5Ot4c
- FlMvLyNb3UhBxf+MP8OOTfH5lzVpD5LHk3kgHBhdO5b+i7Zm5/CpECTNb7DDBIyFMMUUEuDo1
- e4rG71dQNp304f+FhlZEoV8n8ceoUSqJuo1sh8Opn2GDZeMY5idwTY57A64zkvUSWaiCuBQPT
- 1aGLgCqR89MDWXl99VVVhwpowVTepw08I3N5vXzd4CSlMG4XnU/5nPuAu5zfE+ATUw8+NM8cE
- eQPI+1CvWLBSxrso9HzQ54QLDM5dR2BNWEmJPCqI6gy6WE02eY2PYofR/1BCoKs4muoZHMrzJ
- IRJEs/gpHf1e9cZqTbV+R7IxVVpHwaRCb46YQktgF5gUpxeNaNj11eqE5mk=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.101.2.178]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20.08.19 19:15, Theodore Y. Ts'o wrote:
-
-Hi,
-
-> There are some files which have no official
-> owner, and there are also some files which may be modified by more
-> than one subsystem.
-
-hmm, wouldn't it be better to alway have explicit maintainers ?
-
-I recall some discussion few weeks ago on some of my patches, where it
-turned out that amm acts as fallback for a lot of code that doesn't have
-a maintainer.
-
-@Sebastian: maybe you could also create reports for quickly identifying
-those cases.
-
-> We certainly don't talk about "inheritance" when we talk about
-> maintainers and sub-maintainers. 
-
-What's the exact definition of the term "sub-maintainer" ?
-
-Somebody who's maintaining some defined part of something bigger
-(eg. a driver within some subsystem, some platform within some
-arch, etc) or kinda deputee maintainer ?
-
-> Furthermore, the relationships,
-> processes, and workflows between a particular maintainer and their
-> submaintainers can be unique to a particular maintainer.
-
-Can we somehow find some (semi-formal) description for those
-relationships and workflows, so it's easier to learn about them
-when some is new to some particular area ?
-
-(I'd volounteer maintaining such documentation, if the individual
-maintainers feed me the necessary information ;-)).
-
-
---mtx
-
--- 
-Enrico Weigelt, metux IT consult
-Free software and Linux embedded engineering
-info@metux.net -- +49-151-27565287
+T24gMDYvMDgvMjAxOSAxMjowNiBTcmluaXZhcyBLYW5kYWdhdGxhIHdyb3RlOg0KPiBBbnlvbmUg
+Zm9ybSBJTVggY2FuIHRlc3QgdGhpcyBwYXRjaHNldCBiZWZvcmUgSSBwdXNoIHRoaXMgb3V0Pw0K
+Pg0KPiBUaGFua3MsDQo+IHNyaW5pDQoNCkp1c3QgZm9yIHRoZSByZWNvcmQsIEkgdGVzdGVkIHRo
+aXMgb24gYW4gaS5NWDZVTCBiYXNlZCBib2FyZC4NCg0KTGV0IG1lIGtub3cgaWYgdGhlcmUgaXMg
+c29tZXRoaW5nIEkgY2FuIGRvIHRvIGZhY2lsaXRhdGUgdGhlIHRlc3RpbmcgdG8gYW55b25lIGZy
+b20gSU1YLg0KDQpUaGFua3MuDQo=
