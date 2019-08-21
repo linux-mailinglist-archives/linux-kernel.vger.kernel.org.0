@@ -2,63 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 14E8F978DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:09:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3F95A978EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:11:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfHUMJV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:09:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56240 "EHLO mail.kernel.org"
+        id S1728054AbfHUMKc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:10:32 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:1631 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfHUMJV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:09:21 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726693AbfHUMKc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:10:32 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C33ED22CE3;
-        Wed, 21 Aug 2019 12:09:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566389360;
-        bh=0VzLeFR/PHh6E07hYxzyNL353yYnSiOtYQCAFycHbos=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=KcQKw+Upz+WhAGg2QhszMT8QfHA0UnF9DTR5wJrUpnQrgV2BPwNGTtVXMhaIk3C8f
-         wUaOH+upi7Gh5uZX8l28i7+kG5JGt5bjWfMAK/xp5El2wSdj2BImZJopQGHoMln59O
-         xiptaYql5MFQVt3hjT9peYdz6wMxgePdyTy9l3SE=
-Date:   Wed, 21 Aug 2019 14:09:18 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>
-Subject: Re: [patch 07/44] posix-cpu-timers: Simplify sighand locking in
- run_posix_cpu_timers()
-Message-ID: <20190821120912.GD16213@lenoir>
-References: <20190819143141.221906747@linutronix.de>
- <20190819143802.038794711@linutronix.de>
+        by mx1.redhat.com (Postfix) with ESMTPS id 08DF22F30D9;
+        Wed, 21 Aug 2019 12:10:32 +0000 (UTC)
+Received: from laptop.redhat.com (ovpn-116-105.ams2.redhat.com [10.36.116.105])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 521D35C541;
+        Wed, 21 Aug 2019 12:10:26 +0000 (UTC)
+From:   Eric Auger <eric.auger@redhat.com>
+To:     eric.auger.pro@gmail.com, eric.auger@redhat.com, joro@8bytes.org,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
+        dwmw2@infradead.org, shameerali.kolothum.thodi@huawei.com,
+        alex.williamson@redhat.com, robin.murphy@arm.com, hch@infradead.org
+Subject: [PATCH v3] iommu: revisit iommu_insert_resv_region() implementation
+Date:   Wed, 21 Aug 2019 14:09:40 +0200
+Message-Id: <20190821120940.22337-1-eric.auger@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190819143802.038794711@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 21 Aug 2019 12:10:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 04:31:48PM +0200, Thomas Gleixner wrote:
-> run_posix_cpu_timers() is called from the timer interrupt. The posix timer
-> expiry always affects the current task which got interrupted.
-> 
-> sighand locking is only racy when done on a foreign task, which must use
-> lock_task_sighand(). But in case of run_posix_cpu_timers() that's
-> pointless.
-> 
-> sighand of a task can only be dropped or changed by the task itself. Drop
-> happens in do_exit()
+Current implementation is recursive and in case of allocation
+failure the existing @regions list is altered. A non recursive
+version looks better for maintainability and simplifies the
+error handling. We use a separate stack for overlapping segment
+merging. The elements are sorted by start address and then by
+type, if their start address match.
 
-Well, that's only in case of autoreap. Otherwise this is dropped by the reaper.
+Note this new implementation may change the region order of
+appearance in /sys/kernel/iommu_groups/<n>/reserved_regions
+files but this order has never been documented, see
+commit bc7d12b91bd3 ("iommu: Implement reserved_regions
+iommu-group sysfs file").
 
-> changing sighand happens in execve().
+Signed-off-by: Eric Auger <eric.auger@redhat.com>
+
+---
+
+v2 -> v3:
+- use LIST_HEAD(stack)
+- remove found local variables
+
+v1 -> v2:
+- adapt the algo so that we don't need to move elements of
+  other types to different list and sort by address and then by
+  type
+---
+ drivers/iommu/iommu.c | 96 +++++++++++++++++++++----------------------
+ 1 file changed, 47 insertions(+), 49 deletions(-)
+
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index 0c674d80c37f..edd622525796 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -229,60 +229,58 @@ static ssize_t iommu_group_show_name(struct iommu_group *group, char *buf)
+  * @new: new region to insert
+  * @regions: list of regions
+  *
+- * The new element is sorted by address with respect to the other
+- * regions of the same type. In case it overlaps with another
+- * region of the same type, regions are merged. In case it
+- * overlaps with another region of different type, regions are
+- * not merged.
++ * Elements are sorted by start address and overlapping segments
++ * of the same type are merged.
+  */
+-static int iommu_insert_resv_region(struct iommu_resv_region *new,
+-				    struct list_head *regions)
++int iommu_insert_resv_region(struct iommu_resv_region *new,
++			     struct list_head *regions)
+ {
+-	struct iommu_resv_region *region;
+-	phys_addr_t start = new->start;
+-	phys_addr_t end = new->start + new->length - 1;
+-	struct list_head *pos = regions->next;
++	struct iommu_resv_region *iter, *tmp, *nr, *top;
++	LIST_HEAD(stack);
+ 
+-	while (pos != regions) {
+-		struct iommu_resv_region *entry =
+-			list_entry(pos, struct iommu_resv_region, list);
+-		phys_addr_t a = entry->start;
+-		phys_addr_t b = entry->start + entry->length - 1;
+-		int type = entry->type;
+-
+-		if (end < a) {
+-			goto insert;
+-		} else if (start > b) {
+-			pos = pos->next;
+-		} else if ((start >= a) && (end <= b)) {
+-			if (new->type == type)
+-				return 0;
+-			else
+-				pos = pos->next;
+-		} else {
+-			if (new->type == type) {
+-				phys_addr_t new_start = min(a, start);
+-				phys_addr_t new_end = max(b, end);
+-				int ret;
+-
+-				list_del(&entry->list);
+-				entry->start = new_start;
+-				entry->length = new_end - new_start + 1;
+-				ret = iommu_insert_resv_region(entry, regions);
+-				kfree(entry);
+-				return ret;
+-			} else {
+-				pos = pos->next;
+-			}
+-		}
+-	}
+-insert:
+-	region = iommu_alloc_resv_region(new->start, new->length,
+-					 new->prot, new->type);
+-	if (!region)
++	nr = iommu_alloc_resv_region(new->start, new->length,
++				     new->prot, new->type);
++	if (!nr)
+ 		return -ENOMEM;
+ 
+-	list_add_tail(&region->list, pos);
++	/* First add the new element based on start address sorting */
++	list_for_each_entry(iter, regions, list) {
++		if (nr->start < iter->start ||
++		    (nr->start == iter->start && nr->type <= iter->type))
++			break;
++	}
++	list_add_tail(&nr->list, &iter->list);
++
++	/* Merge overlapping segments of type nr->type in @regions, if any */
++	list_for_each_entry_safe(iter, tmp, regions, list) {
++		phys_addr_t top_end, iter_end = iter->start + iter->length - 1;
++
++		/* no merge needed on elements of different types than @nr */
++		if (iter->type != nr->type) {
++			list_move_tail(&iter->list, &stack);
++			continue;
++		}
++
++		/* look for the last stack element of same type as @iter */
++		list_for_each_entry_reverse(top, &stack, list)
++			if (top->type == iter->type)
++				goto check_overlap;
++
++		list_move_tail(&iter->list, &stack);
++		continue;
++
++check_overlap:
++		top_end = top->start + top->length - 1;
++
++		if (iter->start > top_end + 1) {
++			list_move_tail(&iter->list, &stack);
++		} else {
++			top->length = max(top_end, iter_end) - top->start + 1;
++			list_del(&iter->list);
++			kfree(iter);
++		}
++	}
++	list_splice(&stack, regions);
+ 	return 0;
+ }
+ 
+-- 
+2.20.1
+
