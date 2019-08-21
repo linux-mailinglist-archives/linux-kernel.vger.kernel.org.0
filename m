@@ -2,129 +2,95 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A21496E29
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:19:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61D1496E30
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726652AbfHUATq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 20:19:46 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49468 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726215AbfHUATp (ORCPT
+        id S1726665AbfHUAUs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 20:20:48 -0400
+Received: from smtprelay0094.hostedemail.com ([216.40.44.94]:55756 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726215AbfHUAUs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 20:19:45 -0400
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7L0HZ3x088923
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 20:19:44 -0400
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2ugsw9tws8-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 20:19:44 -0400
-Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alastair@au1.ibm.com>;
-        Wed, 21 Aug 2019 01:19:42 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 21 Aug 2019 01:19:38 +0100
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7L0Jc6Z35193336
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 21 Aug 2019 00:19:38 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E3BD711C050;
-        Wed, 21 Aug 2019 00:19:37 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 913BB11C054;
-        Wed, 21 Aug 2019 00:19:37 +0000 (GMT)
-Received: from ozlabs.au.ibm.com (unknown [9.192.253.14])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 21 Aug 2019 00:19:37 +0000 (GMT)
-Received: from adsilva.ozlabs.ibm.com (haven.au.ibm.com [9.192.254.114])
-        (using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.au.ibm.com (Postfix) with ESMTPSA id 4207EA00E7;
-        Wed, 21 Aug 2019 10:19:36 +1000 (AEST)
-From:   "Alastair D'Silva" <alastair@au1.ibm.com>
-To:     alastair@d-silva.org
-Cc:     stable@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Allison Randal <allison@lohutok.net>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc: Allow flush_(inval_)dcache_range to work across ranges >4GB
-Date:   Wed, 21 Aug 2019 10:19:27 +1000
-X-Mailer: git-send-email 2.21.0
+        Tue, 20 Aug 2019 20:20:48 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 3D9DE181D33FC;
+        Wed, 21 Aug 2019 00:20:46 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Spam-Summary: 10,1,0,,d41d8cd98f00b204,joe@perches.com,:::::::::::::,RULES_HIT:41:355:379:599:800:960:973:988:989:1260:1277:1311:1313:1314:1345:1359:1437:1515:1516:1518:1534:1541:1593:1594:1711:1730:1747:1777:1792:1963:2393:2553:2559:2562:2828:3138:3139:3140:3141:3142:3353:3622:3865:3866:3867:3868:3871:3872:3873:3874:4321:4605:5007:8603:10004:10394:10400:10471:10848:11026:11232:11473:11658:11914:12043:12114:12297:12663:12740:12760:12895:13069:13255:13311:13357:13439:14181:14659:14721:21080:21451:21627:21789:21944:30054:30060:30070:30090:30091,0,RBL:23.242.196.136:@perches.com:.lbl8.mailshell.net-62.8.0.180 64.201.201.201,CacheIP:none,Bayesian:0.5,0.5,0.5,Netcheck:none,DomainCache:0,MSF:not bulk,SPF:fn,MSBL:0,DNSBL:neutral,Custom_rules:0:0:0,LFtime:31,LUA_SUMMARY:none
+X-HE-Tag: crush78_7af148c290837
+X-Filterd-Recvd-Size: 3059
+Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 21 Aug 2019 00:20:44 +0000 (UTC)
+Message-ID: <edd8efd53fadd07992f804cc595c6ae5fdb60e73.camel@perches.com>
+Subject: Re: rfc: treewide scripted patch mechanism? (was: Re: [PATCH]
+ Makefile: Convert -Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough
+ for clang)QUILT
+From:   Joe Perches <joe@perches.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Date:   Tue, 20 Aug 2019 17:20:43 -0700
+In-Reply-To: <CAHk-=wgqQKoAnhmhGE-2PBFt7oQs9LLAATKbYa573UO=DPBE0Q@mail.gmail.com>
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+         <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+         <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+         <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+         <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
+         <ad42da450ccafcb571cca9289dcf52840dbb53d3.camel@perches.com>
+         <20190820092451.791c85e5@canb.auug.org.au>
+         <14723fccc2c3362cc045df17fc8554f37c8a8529.camel@perches.com>
+         <CAHk-=wgqQKoAnhmhGE-2PBFt7oQs9LLAATKbYa573UO=DPBE0Q@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.32.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19082100-0012-0000-0000-00000340E12D
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082100-0013-0000-0000-0000217B06CB
-Message-Id: <20190821001929.4253-1-alastair@au1.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-20_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908210002
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alastair D'Silva <alastair@d-silva.org>
+On Tue, 2019-08-20 at 16:28 -0700, Linus Torvalds wrote:
+> On Mon, Aug 19, 2019 at 5:08 PM Joe Perches <joe@perches.com> wrote:
+> > 2: would be Julia Lawall's stracpy change done
+> > with coccinelle: (attached)
+> 
+> I'm not actually convinced about stracpy() and friends.
+> 
+> It seems to be yet another badly thought out string interface, and
+> there are now so many of them that no human being can keep track of
+> them.
+> 
+> The "badly thought out" part is that it (like the original strlcpy
+> garbage from BSD) thinks that there is only one size that matters -
+> the destination.
+> 
+> Yes, we fixed part of the "source is also limited" with strscpy(). It
+> didn't fix the problem with different size limits, but at least it
+> fixed the fundamentally broken assumption that the source has no size
+> limit at all.
 
-The upstream commit:
-22e9c88d486a ("powerpc/64: reuse PPC32 static inline flush_dcache_range()")
-has a similar effect, but since it is a rewrite of the assembler to C, is
-too invasive for stable. This patch is a minimal fix to address the issue in
-assembler.
+Umm, btw: have you actually looked at stracpy?
 
-This patch applies cleanly to v5.2, v4.19 & v4.14.
+It's just a convenience wrapper around strscpy
+and dest must be a char array and its size
+does not need to be specified as a somewhat
+useless argument otherwise prone to misuse.
 
-When calling flush_(inval_)dcache_range with a size >4GB, we were masking
-off the upper 32 bits, so we would incorrectly flush a range smaller
-than intended.
+#define stracpy(dest, src)						\
+({									\
+	size_t count = ARRAY_SIZE(dest);				\
+	BUILD_BUG_ON(!(__same_type(dest, char[]) ||			\
+		       __same_type(dest, unsigned char[]) ||		\
+		       __same_type(dest, signed char[])));		\
+									\
+	strscpy(dest, src, count);					\
+})
 
-This patch replaces the 32 bit shifts with 64 bit ones, so that
-the full size is accounted for.
-
-Changelog:
-v2
-  - Add related upstream commit
-
-Signed-off-by: Alastair D'Silva <alastair@d-silva.org>
----
- arch/powerpc/kernel/misc_64.S | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/powerpc/kernel/misc_64.S b/arch/powerpc/kernel/misc_64.S
-index 1ad4089dd110..d4d096f80f4b 100644
---- a/arch/powerpc/kernel/misc_64.S
-+++ b/arch/powerpc/kernel/misc_64.S
-@@ -130,7 +130,7 @@ _GLOBAL_TOC(flush_dcache_range)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5		/* ensure we get enough */
- 	lwz	r9,DCACHEL1LOGBLOCKSIZE(r10)	/* Get log-2 of dcache block size */
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	beqlr				/* nothing to do? */
- 	mtctr	r8
- 0:	dcbst	0,r6
-@@ -148,7 +148,7 @@ _GLOBAL(flush_inval_dcache_range)
- 	subf	r8,r6,r4		/* compute length */
- 	add	r8,r8,r5		/* ensure we get enough */
- 	lwz	r9,DCACHEL1LOGBLOCKSIZE(r10)/* Get log-2 of dcache block size */
--	srw.	r8,r8,r9		/* compute line count */
-+	srd.	r8,r8,r9		/* compute line count */
- 	beqlr				/* nothing to do? */
- 	sync
- 	isync
--- 
-2.21.0
+I sent several patches for those misuses.
 
