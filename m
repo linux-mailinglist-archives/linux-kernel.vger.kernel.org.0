@@ -2,110 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F6CF97EEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A88D397EED
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:38:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730061AbfHUPgm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:36:42 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35565 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730002AbfHUPgk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:36:40 -0400
-Received: by mail-pl1-f194.google.com with SMTP id gn20so1530127plb.2;
-        Wed, 21 Aug 2019 08:36:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bU5dLSJ35u6Bc3f/Z8UK4KjZIowhKbGPaLIlOlO9BhQ=;
-        b=e9XRegtx2T5/e+EyraTykJJsAX5TrMpT3p/QgxCT00RPnE4ToK70gJoh1Y0WFJWSLY
-         zDoLyDdoWRh/QzLOGtgOgQtJcb7LD6M9ftcJ9GQNghZVgg1imiXyBlU+LtdZVry/w/lV
-         4D0T7cCQiWsAolm3jmhpB6gNjToS7C/jzSSdQ6FsDO+P+oJLptCF4E/2oNt577BEiNvr
-         5WZMUJnroUCxcJXbSE1+OrxidBI62E4USySFN4vCy58DtlMTYs359/raXKXTRDm1/gZN
-         T7TPsvPcO6UxVhyjp7I+Fy4cQA4zapyu3Si0Kz1PDEtBPTOHwhRRb6brgDYm1MuOlwbX
-         kM7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bU5dLSJ35u6Bc3f/Z8UK4KjZIowhKbGPaLIlOlO9BhQ=;
-        b=YJqC4Ajxp8bcHh59FAvNI/TbnG9WRiwlnCZDMMcLc/4nsXZ+zk8HT4E6TbIK+zhW+Q
-         tsXgDeam+WwxjeALlsfnaJpSU+krYniANg5qlf/fK9H8P0c3dTdexosRM66PizAqGNiw
-         LNYoL7DonVwVOXHTym4p1F4zHMp74aDfZrL1oSu4t92ERRflh792faHjQFMQUPiuCSC0
-         hyxxnqrL4VPvkvzf8Y7fWmKIl7773LAErPjIiZjiRShyCKlOc/+JeUS5iHEjDxb8EEt+
-         mvXr0BC94Oryu2YjjGEDMV2dPB7bholH283QGrIXx4Q2lcsHWnx6XJrx+OSYGK0rebJa
-         hUcQ==
-X-Gm-Message-State: APjAAAUE5w+8+2eQXxaoKmZTbIKIBV+oEVBTmgsDV+os8Zh9JWdgI6zg
-        o4SH3eEtyoActH0LCvkRob2vOqkT
-X-Google-Smtp-Source: APXvYqznq9ryDWqFwBT1mchJS5I30ZywXEQEi/az8vBCk4OtbrFfSOQOZVxLTuzTa+oAN5fc3zjogg==
-X-Received: by 2002:a17:902:834c:: with SMTP id z12mr20462410pln.8.1566401799789;
-        Wed, 21 Aug 2019 08:36:39 -0700 (PDT)
-Received: from [192.168.43.210] (mobile-166-137-176-042.mycingular.net. [166.137.176.42])
-        by smtp.gmail.com with ESMTPSA id t9sm29730588pgj.89.2019.08.21.08.36.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Aug 2019 08:36:39 -0700 (PDT)
-Subject: Re: [PATCH v7 1/7] driver core: Add support for linking devices
- during device addition
-To:     Saravana Kannan <saravanak@google.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        David Collins <collinsd@codeaurora.org>,
-        Android Kernel Team <kernel-team@android.com>
-References: <20190724001100.133423-1-saravanak@google.com>
- <20190724001100.133423-2-saravanak@google.com>
- <32a8abd2-b6a4-67df-eee9-0f006310e81e@gmail.com>
- <CAGETcx8Q27+Jnz+rHtt33muMV6U+S3cmKh02Ok_Ds_ZzfBqhrg@mail.gmail.com>
- <522e8375-5070-f579-6509-3e44fe66768e@gmail.com>
- <CAGETcx-9Bera+nU-3=ZNpHqdqKxO0TmNuVUsCMQ-yDm1VXn5zA@mail.gmail.com>
- <a4c139c1-c9d1-3e5a-f47f-cd790b42da1f@gmail.com>
- <CAGETcx-J7+d3pcArMZvO5zQbUhAhRW+1=FUf7C1fV9-QhkckBw@mail.gmail.com>
-From:   Frank Rowand <frowand.list@gmail.com>
-Message-ID: <915b49b5-5511-afa2-d3d6-e4ede94d40be@gmail.com>
-Date:   Wed, 21 Aug 2019 08:36:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730086AbfHUPhO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:37:14 -0400
+Received: from foss.arm.com ([217.140.110.172]:60322 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728848AbfHUPhO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 11:37:14 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6C3FB337;
+        Wed, 21 Aug 2019 08:37:13 -0700 (PDT)
+Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 609123F718;
+        Wed, 21 Aug 2019 08:37:11 -0700 (PDT)
+From:   Steven Price <steven.price@arm.com>
+To:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
+Cc:     Steven Price <steven.price@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        James Morse <james.morse@arm.com>,
+        Julien Thierry <julien.thierry.kdev@gmail.com>,
+        Suzuki K Pouloze <suzuki.poulose@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3 00/10] arm64: Stolen time support
+Date:   Wed, 21 Aug 2019 16:36:46 +0100
+Message-Id: <20190821153656.33429-1-steven.price@arm.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAGETcx-J7+d3pcArMZvO5zQbUhAhRW+1=FUf7C1fV9-QhkckBw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 8/20/19 3:10 PM, Saravana Kannan wrote:
-> On Mon, Aug 19, 2019 at 9:25 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>
->> On 8/19/19 5:00 PM, Saravana Kannan wrote:
->>> On Sun, Aug 18, 2019 at 8:38 PM Frank Rowand <frowand.list@gmail.com> wrote:
->>>>
+This series add support for paravirtualized time for arm64 guests and
+KVM hosts following the specification in Arm's document DEN 0057A:
 
-< snip >
+https://developer.arm.com/docs/den0057/a
 
->>>
->>> 3. The supplier info doesn't always need to come from a firmware. So I
->>> don't want to limit it to that?
->>
->> If you can find another source of topology info, then I would expect
->> that another set of fwnode_operations functions would be created
->> for the info source.
-> 
-> The other source could just be C files in the kernel. Using fwnodes
-> for that would be hacky. But let's sort (1) and (2) out first.
-> 
+It implements support for stolen time, allowing the guest to
+identify time when it is forcibly not executing.
 
-< snip >
+It doesn't implement support for Live Physical Time (LPT) as there are
+some concerns about the overheads and approach in the above
+specification, and I expect an updated version of the specification to
+be released soon with just the stolen time parts.
 
-Just a piece of trivia.  I got curious enough about this to search.
-There is a third type of fwnode, software nodes.
+NOTE: Patches 8 and 9 will conflict with Mark Rutland's series[1] cleaning
+up the SMCCC conduit. I do feel that the addition of an _invoke() call
+makes a number of call sites cleaner and it should be possible to
+integrate both this and Mark's other cleanups.
 
-See commit 59abd83672f70cac4b6bf9b237506c5bc6837606 for a description.
+[1] https://lore.kernel.org/linux-arm-kernel/20190809132245.43505-1-mark.rutland@arm.com/
 
--Frank
+Also available as a git tree:
+git://linux-arm.org/linux-sp.git stolen_time/v3
+
+Changes from v2:
+https://lore.kernel.org/lkml/20190819140436.12207-1-steven.price@arm.com/
+ * Switched from using gfn_to_hva_cache to a new macro kvm_put_guest()
+   that can provide the single-copy atomicity required (on arm64). This
+   macro is added in patch 4.
+ * Tidied up the locking for kvm_update_stolen_time().
+   pagefault_disable() was unnecessary and the caller didn't need to
+   take kvm->srcu as the function does it itself.
+ * Removed struct kvm_arch_pvtime from the arm implementation, replaced
+   instead with inline static functions which are empty for arm.
+ * Fixed a few checkpatch --strict warnings.
+
+Changes from v1:
+https://lore.kernel.org/lkml/20190802145017.42543-1-steven.price@arm.com/
+ * Host kernel no longer allocates the stolen time structure, instead it
+   is allocated by user space. This means the save/restore functionality
+   can be removed.
+ * Refactored the code so arm has stub implementations and to avoid
+   initcall
+ * Rebased to pick up Documentation/{virt->virtual} change
+ * Bunch of typo fixes
+
+Christoffer Dall (1):
+  KVM: arm/arm64: Factor out hypercall handling from PSCI code
+
+Steven Price (9):
+  KVM: arm64: Document PV-time interface
+  KVM: arm64: Implement PV_FEATURES call
+  KVM: Implement kvm_put_guest()
+  KVM: arm64: Support stolen time reporting via shared structure
+  KVM: Allow kvm_device_ops to be const
+  KVM: arm64: Provide a PV_TIME device to user space
+  arm/arm64: Provide a wrapper for SMCCC 1.1 calls
+  arm/arm64: Make use of the SMCCC 1.1 wrapper
+  arm64: Retrieve stolen time as paravirtualized guest
+
+ Documentation/virt/kvm/arm/pvtime.txt | 100 ++++++++++++++
+ arch/arm/include/asm/kvm_host.h       |  30 +++++
+ arch/arm/kvm/Makefile                 |   2 +-
+ arch/arm/kvm/handle_exit.c            |   2 +-
+ arch/arm/mm/proc-v7-bugs.c            |  13 +-
+ arch/arm64/include/asm/kvm_host.h     |  28 +++-
+ arch/arm64/include/asm/paravirt.h     |   9 +-
+ arch/arm64/include/asm/pvclock-abi.h  |  17 +++
+ arch/arm64/include/uapi/asm/kvm.h     |   8 ++
+ arch/arm64/kernel/cpu_errata.c        |  80 ++++-------
+ arch/arm64/kernel/paravirt.c          | 148 +++++++++++++++++++++
+ arch/arm64/kernel/time.c              |   3 +
+ arch/arm64/kvm/Kconfig                |   1 +
+ arch/arm64/kvm/Makefile               |   2 +
+ arch/arm64/kvm/handle_exit.c          |   4 +-
+ include/kvm/arm_hypercalls.h          |  43 ++++++
+ include/kvm/arm_psci.h                |   2 +-
+ include/linux/arm-smccc.h             |  58 ++++++++
+ include/linux/cpuhotplug.h            |   1 +
+ include/linux/kvm_host.h              |  28 +++-
+ include/linux/kvm_types.h             |   2 +
+ include/uapi/linux/kvm.h              |   2 +
+ virt/kvm/arm/arm.c                    |  11 ++
+ virt/kvm/arm/hypercalls.c             |  68 ++++++++++
+ virt/kvm/arm/psci.c                   |  84 +-----------
+ virt/kvm/arm/pvtime.c                 | 182 ++++++++++++++++++++++++++
+ virt/kvm/kvm_main.c                   |   6 +-
+ 27 files changed, 780 insertions(+), 154 deletions(-)
+ create mode 100644 Documentation/virt/kvm/arm/pvtime.txt
+ create mode 100644 arch/arm64/include/asm/pvclock-abi.h
+ create mode 100644 include/kvm/arm_hypercalls.h
+ create mode 100644 virt/kvm/arm/hypercalls.c
+ create mode 100644 virt/kvm/arm/pvtime.c
+
+-- 
+2.20.1
+
