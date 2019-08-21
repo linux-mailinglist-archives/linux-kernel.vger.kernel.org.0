@@ -2,101 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B3F129852D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:06:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7778E98531
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 22:07:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730550AbfHUUF4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 16:05:56 -0400
-Received: from mga09.intel.com ([134.134.136.24]:53248 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730517AbfHUUFt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 16:05:49 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 13:05:49 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="196069801"
-Received: from smasango-mobl1.amr.corp.intel.com (HELO pbossart-mobl3.intel.com) ([10.252.139.100])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 13:05:47 -0700
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-To:     alsa-devel@alsa-project.org
-Cc:     linux-kernel@vger.kernel.org, tiwai@suse.de, broonie@kernel.org,
-        vkoul@kernel.org, gregkh@linuxfoundation.org, jank@cadence.com,
-        srinivas.kandagatla@linaro.org, slawomir.blauciak@intel.com,
-        Bard liao <yung-chuan.liao@linux.intel.com>,
-        Rander Wang <rander.wang@linux.intel.com>,
-        Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Sanyog Kale <sanyog.r.kale@intel.com>
-Subject: [RFC PATCH 11/11] soundwire: intel: free all resources on hw_free()
-Date:   Wed, 21 Aug 2019 15:05:21 -0500
-Message-Id: <20190821200521.17283-12-pierre-louis.bossart@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
-References: <20190821200521.17283-1-pierre-louis.bossart@linux.intel.com>
+        id S1730287AbfHUUHJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 16:07:09 -0400
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:42403 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbfHUUHI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 16:07:08 -0400
+Received: by mail-qt1-f196.google.com with SMTP id t12so4612151qtp.9;
+        Wed, 21 Aug 2019 13:07:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:date:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=ncn6eYm4JSkQlweNtA3S5RYrt/VpHG9HsAGzGWdObeM=;
+        b=cATKvr0xSWCkFzxywIUjL6lQn9V6IunbrJZkXS/gQl+YK0zoqooppTi4ndkH/MW5g2
+         kFlCNBoe6jvpzfU3jL0u3XiuF8XilYu35MqtRxfEaR9igu+1JDRG+fbAUOC/H3KZ9lOE
+         +UhP6sD25uXWkBRrDaaTXaSmihyzfD4aDPa6hBxwExsVBkWTyn08gw73lP54nORkWBw+
+         7x6XRzMenV+sFHT2Tuo3e6e6/j75sdpz8Y7Q3NKsnICEd4u0sKLS5cxzC39xVUanvnYy
+         Y4fRdyXDbvaWN64K+P7+V0tLZKZleGLRYmSx8cJ3OSTNv6L6Xl2ApAGESnHMHC7d2yF7
+         Cc2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ncn6eYm4JSkQlweNtA3S5RYrt/VpHG9HsAGzGWdObeM=;
+        b=JGGqx8jecws5Aw9eYYbYglzyLHTlkSGSzAPbVk/Sb9bZuGJOrzVdhtw4RKt3kbJYmQ
+         hP9TvHfMiiHKv5zxSASo3ujmMx0AeZs8G0l1iSpphTfbapQ6Y3kCcRPlfFKmDfad/Mo8
+         qDcZ2vzYV7TFIphb9uHVuVHlci8hhxKyKdMOY4ycj8dcRBGyPbINBZpNOzO8bJoKnJLK
+         lPHGp00WhXRuBQ9rX+xLARJ305DMGeTXK9NwyB396xkC3oT1FwKUVOUieQKKfwUiTRVw
+         lqz6/SJjV8ZnkYXgvF34C72SiPPmd1K+y/Xc2sxl+LLTk64eTITlFCCdZmArpQ5ducjB
+         3oZg==
+X-Gm-Message-State: APjAAAWzmGskZ9/R+2yXHdZ0N31dMW1drpskBFeirzC9IbqvagWHADlj
+        n57adlZS+wht/hK5q+U+Rzo8EgBdJ30=
+X-Google-Smtp-Source: APXvYqzFBpvKYFLywp49wq7pnQMywApD6zvVMaIqNjWR9zl6SZTds2nNI0IEyhyUbFu++TjNucYitw==
+X-Received: by 2002:aed:2a86:: with SMTP id t6mr32542840qtd.391.1566418027658;
+        Wed, 21 Aug 2019 13:07:07 -0700 (PDT)
+Received: from quaco.ghostprotocols.net ([177.195.211.175])
+        by smtp.gmail.com with ESMTPSA id t13sm10559914qkm.117.2019.08.21.13.07.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 13:07:06 -0700 (PDT)
+From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
+X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 30FE140340; Wed, 21 Aug 2019 17:07:01 -0300 (-03)
+Date:   Wed, 21 Aug 2019 17:07:01 -0300
+To:     Yonghong Song <yhs@fb.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>, Daniel Xu <dxu@dxuuu.xyz>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        Song Liu <songliubraving@fb.com>,
+        Andrii Nakryiko <andriin@fb.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        Alexei Starovoitov <ast@fb.com>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
+ PERF_EVENT_IOC_QUERY_PROBE ioctl
+Message-ID: <20190821200701.GI3929@kernel.org>
+References: <20190820144503.GV2332@hirez.programming.kicks-ass.net>
+ <BWENHQJIN885.216UOYEIWNGFU@dlxu-fedora-R90QNFJV>
+ <20190821110856.GB2349@hirez.programming.kicks-ass.net>
+ <62874df3-cae0-36a1-357f-b59484459e52@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <62874df3-cae0-36a1-357f-b59484459e52@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rander Wang <rander.wang@linux.intel.com>
-
-Make sure all calls to the SoundWire stream API are done and involve
-callback
-
-Signed-off-by: Rander Wang <rander.wang@linux.intel.com>
-Signed-off-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
----
- drivers/soundwire/intel.c | 21 +++++++++++++++++++--
- 1 file changed, 19 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/soundwire/intel.c b/drivers/soundwire/intel.c
-index 336203303480..60bc5f33afbf 100644
---- a/drivers/soundwire/intel.c
-+++ b/drivers/soundwire/intel.c
-@@ -879,6 +879,7 @@ static int
- intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- {
- 	struct sdw_cdns *cdns = snd_soc_dai_get_drvdata(dai);
-+	struct sdw_intel *sdw = cdns_to_intel(cdns);
- 	struct sdw_cdns_dma_data *dma;
- 	int ret;
+Em Wed, Aug 21, 2019 at 04:54:47PM +0000, Yonghong Song escreveu:
+> Arnaldo has a question on bcc mailing list about the hit/miss
+> counting of bpf program missed to process events.
  
-@@ -886,12 +887,28 @@ intel_hw_free(struct snd_pcm_substream *substream, struct snd_soc_dai *dai)
- 	if (!dma)
- 		return -EIO;
- 
-+	ret = sdw_deprepare_stream(dma->stream);
-+	if (ret) {
-+		dev_err(dai->dev, "sdw_deprepare_stream: failed %d", ret);
-+		return ret;
-+	}
-+
- 	ret = sdw_stream_remove_master(&cdns->bus, dma->stream);
--	if (ret < 0)
-+	if (ret < 0) {
- 		dev_err(dai->dev, "remove master from stream %s failed: %d\n",
- 			dma->stream->name, ret);
-+		return ret;
-+	}
- 
--	return ret;
-+	ret = intel_free_stream(sdw, substream, dai, sdw->instance);
-+	if (ret < 0) {
-+		dev_err(dai->dev, "intel_free_stream: failed %d", ret);
-+		return ret;
-+	}
-+
-+	sdw_release_stream(dma->stream);
-+
-+	return 0;
- }
- 
- static void intel_shutdown(struct snd_pcm_substream *substream,
--- 
-2.20.1
+> https://lists.iovisor.org/g/iovisor-dev/message/1783
 
+PERF_FORMAT_LOST seems to be a good answer to that? See my other reply
+to this thread.
+
+- Arnaldo
