@@ -2,117 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B99C96EE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:29:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 252E996EEA
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:30:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726967AbfHUB3L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 21:29:11 -0400
-Received: from gateway32.websitewelcome.com ([192.185.145.107]:38479 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726463AbfHUB3K (ORCPT
+        id S1726984AbfHUBaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 21:30:39 -0400
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:25685 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726307AbfHUBaj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 21:29:10 -0400
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 1638E19C90
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 20:29:09 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 0FQyiD2qSdnCe0FQzicDvJ; Tue, 20 Aug 2019 20:29:09 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=OOSEwVTKo/XTobrljC1e2coQRLkYFj8WzE8FMIs5SyI=; b=XH+mBmWD2RAMJ8JYeWMJ1U/HPf
-        KoNO6ZClPAZwK86TOehOSlEP62WhxzMdphsN+VFDwuETB8qIELEA83UWLX0kV36H61kNPiY1hvhkL
-        +5LiUGmxxXwSdiNGPx2cSgFg+9335X8Cg8iSCtwt73VKwkQnxACLytZp+e0jSt+32TVqk5vqmXOKW
-        XPqpCrKPbLkpSRq4F7WBFTBZrsnGTl4v7OLDfDFLGVdy1jiDuAuOdcdVlGWHL7QC4RAL/miBo0+B4
-        kbb6ALif+LFUvxpNWsAHZkbIqm13eY54Ct3gzvFMNwQpRmiivRw1KRg6IwRAAlbTSXBU8ZRY0QKxR
-        HNj2xjDw==;
-Received: from cablelink-187-160-61-9.pcs.intercable.net ([187.160.61.9]:54391 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i0FQx-000vE1-WA; Tue, 20 Aug 2019 20:29:08 -0500
-Date:   Tue, 20 Aug 2019 20:29:07 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Vineet Gupta <vgupta@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] ARC: unwind: Mark expected switch fall-through
-Message-ID: <20190821012907.GA29165@embeddedor>
+        Tue, 20 Aug 2019 21:30:39 -0400
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x7L1HIrU040654;
+        Wed, 21 Aug 2019 09:17:18 +0800 (GMT-8)
+        (envelope-from alankao@andestech.com)
+Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Wed, 21 Aug 2019
+ 09:29:22 +0800
+Date:   Wed, 21 Aug 2019 09:29:22 +0800
+From:   Alan Kao <alankao@andestech.com>
+To:     Atish Patra <Atish.Patra@wdc.com>
+CC:     "hch@infradead.org" <hch@infradead.org>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "anup@brainfault.org" <anup@brainfault.org>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "schwab@linux-m68k.org" <schwab@linux-m68k.org>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "allison@lohutok.net" <allison@lohutok.net>
+Subject: Re: [v2 PATCH] RISC-V: Optimize tlb flush path.
+Message-ID: <20190821012921.GA30187@andestech.com>
+References: <20190820004735.18518-1-atish.patra@wdc.com>
+ <mvmh86cl1o3.fsf@linux-m68k.org>
+ <b2510462b55ffd93dba0c1b7cc28f9eef3089b50.camel@wdc.com>
+ <20190820092207.GA26271@infradead.org>
+ <76467815b464709f4c899444c957d921ebac87db.camel@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.160.61.9
-X-Source-L: No
-X-Exim-ID: 1i0FQx-000vE1-WA
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: cablelink-187-160-61-9.pcs.intercable.net (embeddedor) [187.160.61.9]:54391
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <76467815b464709f4c899444c957d921ebac87db.camel@wdc.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x7L1HIrU040654
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mark switch cases where we are expecting to fall through.
+On Tue, Aug 20, 2019 at 08:28:36PM +0000, Atish Patra wrote:
+> On Tue, 2019-08-20 at 02:22 -0700, hch@infradead.org wrote:
+> > On Tue, Aug 20, 2019 at 08:42:19AM +0000, Atish Patra wrote:
+> > > cmask NULL is pretty common case and we would  be unnecessarily
+> > > executing bunch of instructions everytime while not saving much.
+> > > Kernel
+> > > still have to make an SBI call and OpenSBI is doing a local flush
+> > > anyways.
+> > > 
+> > > Looking at the code again, I think we can just use cpumask_weight
+> > > and
+> > > do local tlb flush only if local cpu is the only cpu present. 
+> > > 
+> > > Otherwise, it will just fall through and call
+> > > sbi_remote_sfence_vma().
+> > 
+> > Maybe it is just time to split the different cases at a higher level.
+> > The idea to multiple everything onto a single function always seemed
+> > odd to me.
+> > 
+> > FYI, here is what I do for the IPI based tlbflush for the native S-
+> > mode
+> > clint prototype, which seems much easier to understand:
+> > 
+> > http://git.infradead.org/users/hch/riscv.git/commitdiff/ea4067ae61e20fcfcf46a6f6bd1cc25710ce3afe
+> 
+> This does seem a lot cleaner to me. We can reuse some of the code for
+> this patch as well. Based on NATIVE_CLINT configuration, it will send
+> an IPI or SBI call.
 
-This patch fixes the following warnings (Building: haps_hs_defconfig arc):
+IMHO, this approach should be avoided because CLINT is compatible to but
+ not mandatory in the privileged spec.  In other words, it is possible that
+a Linux-capable RISC-V platform does not contain a CLINT component but
+rely on some other mechanism to deal with SW/timer interrupts.
 
-arch/arc/kernel/unwind.c: In function ‘read_pointer’:
-./include/linux/compiler.h:328:5: warning: this statement may fall through [-Wimplicit-fallthrough=]
-  do {        \
-     ^
-./include/linux/compiler.h:338:2: note: in expansion of macro ‘__compiletime_assert’
-  __compiletime_assert(condition, msg, prefix, suffix)
-  ^~~~~~~~~~~~~~~~~~~~
-./include/linux/compiler.h:350:2: note: in expansion of macro ‘_compiletime_assert’
-  _compiletime_assert(condition, msg, __compiletime_assert_, __LINE__)
-  ^~~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:39:37: note: in expansion of macro ‘compiletime_assert’
- #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(cond), msg)
-                                     ^~~~~~~~~~~~~~~~~~
-./include/linux/build_bug.h:50:2: note: in expansion of macro ‘BUILD_BUG_ON_MSG’
-  BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
-  ^~~~~~~~~~~~~~~~
-arch/arc/kernel/unwind.c:573:3: note: in expansion of macro ‘BUILD_BUG_ON’
-   BUILD_BUG_ON(sizeof(u32) != sizeof(value));
-   ^~~~~~~~~~~~
-arch/arc/kernel/unwind.c:575:2: note: here
-  case DW_EH_PE_native:
-  ^~~~
+> 
+> I can rebase my patch on top of yours and I can send it together or you
+> can include in your series.
+> 
+> Let me know your preference.
+> 
+> -- 
+> Regards,
+> Atish
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/arc/kernel/unwind.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/arch/arc/kernel/unwind.c b/arch/arc/kernel/unwind.c
-index 445e4d702f43..dc05a63516f5 100644
---- a/arch/arc/kernel/unwind.c
-+++ b/arch/arc/kernel/unwind.c
-@@ -572,6 +572,7 @@ static unsigned long read_pointer(const u8 **pLoc, const void *end,
- #else
- 		BUILD_BUG_ON(sizeof(u32) != sizeof(value));
- #endif
-+		/* Fall through */
- 	case DW_EH_PE_native:
- 		if (end < (const void *)(ptr.pul + 1))
- 			return 0;
--- 
-2.23.0
-
+Best,
+Alan
