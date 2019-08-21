@@ -2,90 +2,59 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A54E696F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:59:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3705696F25
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:00:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfHUB7o (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 21:59:44 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:44602 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfHUB7n (ORCPT
+        id S1727122AbfHUCAj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:00:39 -0400
+Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41849 "EHLO
+        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726512AbfHUCAi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 21:59:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=rWwsYJQ7D6AU2lknQBcPDgMRmmPDyzGmI77nZ/As6Qc=; b=mwXcinp/PmkUL7Wt694ZzAc2Y
-        KBLZ5ZdKajc1Wqx1nuxmOrHIiZspSmqYohKsR0rNOVAnhb/Npbu4fbll8cUaLeQpMdXjpopfGtaIm
-        UG+6WHTVdE6iZa9vQisX7e4Br6h1ySeD5wNbn9qoUqbbDS+KW/2ddA6t5jStBkj4KTWq7FFwzTM0/
-        fFI007H4fhDik/zbBuryqPLTgY0LMUNwXOoHYAiGET8gjJJF0ibCx+HC3mL8/suuDB9Z7FdiqNAvn
-        /zHf4ejx79OkYhyqIMt7pqcMtGqFJk4TFUCR0HO0lnD+dc8TTbJ9HVMBYz8r/NauZIFrMIATqArH9
-        h54FU5v9w==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0FuV-0007s6-8q; Wed, 21 Aug 2019 01:59:39 +0000
-Date:   Tue, 20 Aug 2019 18:59:39 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richardw.yang@linux.intel.com>
-Cc:     Vlastimil Babka <vbabka@suse.cz>,
-        Christoph Hellwig <hch@infradead.org>,
-        akpm@linux-foundation.org, mgorman@techsingularity.net,
-        osalvador@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] mm/mmap.c: extract __vma_unlink_list as counter part
- for __vma_link_list
-Message-ID: <20190821015939.GA28819@bombadil.infradead.org>
-References: <20190814021755.1977-1-richardw.yang@linux.intel.com>
- <20190814021755.1977-3-richardw.yang@linux.intel.com>
- <20190814051611.GA1958@infradead.org>
- <20190814065703.GA6433@richard>
- <2c5cdffd-f405-23b8-98f5-37b95ca9b027@suse.cz>
- <20190820172629.GB4949@bombadil.infradead.org>
- <20190821005234.GA5540@richard>
- <20190821005417.GC18776@bombadil.infradead.org>
- <20190821012244.GA13653@richard>
+        Tue, 20 Aug 2019 22:00:38 -0400
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e07417;MF=alex.shi@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0Ta0UEVw_1566352833;
+Received: from IT-FVFX43SYHV2H.local(mailfrom:alex.shi@linux.alibaba.com fp:SMTPD_---0Ta0UEVw_1566352833)
+          by smtp.aliyun-inc.com(127.0.0.1);
+          Wed, 21 Aug 2019 10:00:33 +0800
+Subject: Re: [PATCH 00/14] per memcg lru_lock
+To:     Hugh Dickins <hughd@google.com>, Michal Hocko <mhocko@kernel.org>
+Cc:     Cgroups <cgroups@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux MM <linux-mm@kvack.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Tejun Heo <tj@kernel.org>, Shakeel Butt <shakeelb@google.com>,
+        Yu Zhao <yuzhao@google.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>
+References: <1566294517-86418-1-git-send-email-alex.shi@linux.alibaba.com>
+ <20190820104532.GP3111@dhcp22.suse.cz>
+ <CALvZod7-dL90jwd2pywpaD8NfUByVU9Y809+RfvJABGdRASYUg@mail.gmail.com>
+ <alpine.LSU.2.11.1908201038260.1286@eggly.anvils>
+From:   Alex Shi <alex.shi@linux.alibaba.com>
+Message-ID: <e9ac9c8c-15c1-8365-5c39-285c6d7b07a6@linux.alibaba.com>
+Date:   Wed, 21 Aug 2019 10:00:33 +0800
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821012244.GA13653@richard>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+In-Reply-To: <alpine.LSU.2.11.1908201038260.1286@eggly.anvils>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:22:44AM +0800, Wei Yang wrote:
-> On Tue, Aug 20, 2019 at 05:54:17PM -0700, Matthew Wilcox wrote:
-> >On Wed, Aug 21, 2019 at 08:52:34AM +0800, Wei Yang wrote:
-> >> On Tue, Aug 20, 2019 at 10:26:29AM -0700, Matthew Wilcox wrote:
-> >> >On Wed, Aug 14, 2019 at 11:19:37AM +0200, Vlastimil Babka wrote:
-> >> >> On 8/14/19 8:57 AM, Wei Yang wrote:
-> >> >> > On Tue, Aug 13, 2019 at 10:16:11PM -0700, Christoph Hellwig wrote:
-> >> >> >>Btw, is there any good reason we don't use a list_head for vma linkage?
-> >> >> > 
-> >> >> > Not sure, maybe there is some historical reason?
-> >> >> 
-> >> >> Seems it was single-linked until 2010 commit 297c5eee3724 ("mm: make the vma
-> >> >> list be doubly linked") and I guess it was just simpler to add the vm_prev link.
-> >> >> 
-> >> >> Conversion to list_head might be an interesting project for some "advanced
-> >> >> beginner" in the kernel :)
-> >> >
-> >> >I'm working to get rid of vm_prev and vm_next, so it would probably be
-> >> >wasted effort.
-> >> 
-> >> You mean replace it with list_head?
-> >
-> >No, replace the rbtree with a new tree.  https://lwn.net/Articles/787629/
-> 
-> Sounds interesting.
-> 
-> While I am not sure the plan is settled down, and how long it would take to
-> replace the rb_tree with maple tree. I guess it would probably take some time
-> to get merged upstream.
-> 
-> IMHO, it would be good to have this cleanup in current kernel. Do you agree?
 
-The three cleanups you've posted are fine.  Doing more work (ie the
-list_head) seems like wasted effort to me.
+
+在 2019/8/21 上午2:24, Hugh Dickins 写道:
+> I'll set aside what I'm doing, and switch to rebasing ours to v5.3-rc
+> and/or mmotm.  Then compare with what Alex has, to see if there's any
+> good reason to prefer one to the other: if no good reason to prefer ours,
+> I doubt we shall bother to repost, but just use it as basis for helping
+> to review or improve Alex's.
+
+For your review, my patchset are pretty straight and simple. It just use per lruvec lru_lock to replace necessary pgdat lru_lock. just this. 
+We could talk more after I back to work. :)
+
+Thanks alot!
+Alex
