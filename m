@@ -2,156 +2,172 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E028497C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:18:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A99DF97C5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:18:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729345AbfHUORv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:17:51 -0400
-Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:7912 "EHLO
-        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728981AbfHUORs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:17:48 -0400
-Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
-        by mx0b-00128a01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7LEFt4X026159;
-        Wed, 21 Aug 2019 10:17:11 -0400
-Received: from nam01-bn3-obe.outbound.protection.outlook.com (mail-bn3nam01lp2055.outbound.protection.outlook.com [104.47.33.55])
-        by mx0b-00128a01.pphosted.com with ESMTP id 2ug3mac2wd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Wed, 21 Aug 2019 10:17:11 -0400
+        id S1729373AbfHUOSs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:18:48 -0400
+Received: from mail-eopbgr20052.outbound.protection.outlook.com ([40.107.2.52]:52590
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729230AbfHUOSs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 10:18:48 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AQk6rVYfCOHb9kYWYp2ZohlBOJjFXWOrE6piCCBu9pjGzWdad5dUjGMRoFK9VmvJXEqcNDmIXrrPe3i5uNmggathcu9u3lZ2k7NGyClg0/1krgzMHE6iVKzfhKbi49GQz65XQjfI91owsYwS2T9XsoeE5ggLNyRz22Jdw8m/7qxdwiHjtMCQseW5BywheX/9KzfbW5FaqL/vjkWyZXs4XbwryfboJo6VoK/pEvRNsJ5DofUlEBc1FYf6uUMxFVAUfZb3Ed6FlY2CKREnLwzxm0qpZKrkNLJ/tfNIEQku22AXivWWE6c8Iuobm64C4dSDdYw+L1wpWbTyw+xmOUxdbw==
+ b=Z2DbPQ2VbJvMx1kdbyXYqoKT/3ls0+ovrXWs13Zch5uwAbKkhNCcyyoItEXh6hai8EWfx405eUe+JNBMauE8cqovsihaHDbOzYCBw9Esu8I44gg4pqwefw1i93TVFe4zgu5EOcBV2o89hAQpC1TUUn63gT3NTsynuqdsmSN64MiBjtKYLbhdoYekZ9NfcTdtG/Lpv66t2fdng832RkuHMb6hwnv7Vanuc53I+reMWmNe8dYZj6Ck+ohpeBqiYtUwmhTafgpzk/97W/DBa5Wg/aPsWGEgqjuArCILx9CvE3pckD8IPUnjDfXV3wXnsH6uUrb3JEhJJ/USUxL0PWqxaw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bh9sSZWrstr07mS0w9mNVsQBVCj7BgAlH0eJ4glJsM8=;
- b=n1K1aHikKuTEuLPo/ZzXOoVF7wbKSj9rWirIYh+dzwh4mXA8TD3HS61eG3dtAIt9M084gu0ejQG2HujX+YUdlooIstccJzeoBkbltZmApTpqSzOadQ3Jkp0QJaitMhXzhgY4SFZoZWJKn44QEPrBKgR8l7brq9rcvIJSQnDHhchS5Bd70YCHFfeEVm2rcY0BFxuiAQ7QOpeEc7Dwe8iyuO0+3088unKJR93KjEhEVAPJNJFbJMRJzDWVkEGet8nf/Deo59K4Eok+P0MyzngMj+MFhihbqBQKTG72oIxdMd+Hkx70IvuE96F0CREdwUt2sOQxAMqGfxjrvgIG4B4N1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 137.71.25.55) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=analog.com;
- dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
- not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
+ bh=hQgb4h3tli12W7C65ehs3kmbP1Va0bFBWrSpOX328WM=;
+ b=NTtChAPVx4lOGnoGKoWap8Djr3rXXduA8rZACD7A6g/Y1F7+gTQWPDWOyIMEpRWHyBS9I1JLq6xJfoZgOdxs9xbqkDXT/yFZFmzXosfoKEIhKCHg0S92GRB6mVaURt3o9Nf9qm7xsbvMv/xybPpqta0PJ6vxeJh+avvfhumKEqWAz9qQbHOhwIqJukhXXSUCoZpbvSkfo6/Bp77j8p9/IOJ3+pR+It2AAWIYkSdbJGx9aaulw3lJMyNlFWqCp21Y2kvcnvyZvYrfohzA5bREhf37kxGV7ibjsc3+sTXs3io+Ee745R4I6Aj6SfHZvgaIkJ0sfE9gmZ6wmb+v/WT/SA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bh9sSZWrstr07mS0w9mNVsQBVCj7BgAlH0eJ4glJsM8=;
- b=WV7qnMpia10DBoYixEw8PugnngaZxQ6wP7j8b/zXo/wss7UbAQXRoez5Xk1KsUIbIQyeb/vV6YXpc1bMPRfSPi7Vdymw1bIP5TOHHYgTDGL0QLw/FKVAA6oaly8JjwgZcZCo9kYBUphzFG6v4h1Fms1HEeV3ueeVjv10dUwhhIg=
-Received: from CY4PR03CA0088.namprd03.prod.outlook.com (2603:10b6:910:4d::29)
- by DM5PR03MB2553.namprd03.prod.outlook.com (2603:10b6:3:41::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2178.16; Wed, 21 Aug
- 2019 14:17:08 +0000
-Received: from BL2NAM02FT010.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e46::200) by CY4PR03CA0088.outlook.office365.com
- (2603:10b6:910:4d::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.2178.16 via Frontend
- Transport; Wed, 21 Aug 2019 14:17:08 +0000
-Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
- 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
- client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
-Received: from nwd2mta1.analog.com (137.71.25.55) by
- BL2NAM02FT010.mail.protection.outlook.com (10.152.77.53) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2178.16
- via Frontend Transport; Wed, 21 Aug 2019 14:17:08 +0000
-Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id x7LEH4YD005682
-        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
-        Wed, 21 Aug 2019 07:17:04 -0700
-Received: from ben-Latitude-E6540.ad.analog.com (10.48.65.163) by
- NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 21 Aug 2019 10:17:07 -0400
-From:   Beniamin Bia <beniamin.bia@analog.com>
-To:     <jic23@kernel.org>
-CC:     <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <knaack.h@gmx.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>,
-        <mark.rutland@arm.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <paulmck@linux.ibm.com>,
-        <mchehab+samsung@kernel.org>, <linus.walleij@linaro.org>,
-        <nicolas.ferre@microchip.com>, <biabeniamin@outlook.com>,
-        Beniamin Bia <beniamin.bia@analog.com>
-Subject: [PATCH v3 4/4] dt-bindings: iio: adc: Add AD7606B ADC documentation
-Date:   Wed, 21 Aug 2019 17:16:56 +0300
-Message-ID: <20190821141656.4815-4-beniamin.bia@analog.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190821141656.4815-1-beniamin.bia@analog.com>
-References: <20190821141656.4815-1-beniamin.bia@analog.com>
+ bh=hQgb4h3tli12W7C65ehs3kmbP1Va0bFBWrSpOX328WM=;
+ b=R1o1vhthUGizInDfFXH1sj7Xk72za6urLR1paRadLfyaUdZc1XW6RbuTQfa+o86euVJiXP0kdixpy14sJmHnA56u7D/aefnl70732Dl081RN1E1swNAC8Asqn5ZMTZOumy+3QmN1MzWZOQqm5uK4igCR2qR2otpRC/8/hFprSfA=
+Received: from VI1PR04MB4015.eurprd04.prod.outlook.com (10.171.182.24) by
+ VI1PR04MB4573.eurprd04.prod.outlook.com (20.177.55.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Wed, 21 Aug 2019 14:18:43 +0000
+Received: from VI1PR04MB4015.eurprd04.prod.outlook.com
+ ([fe80::9c4f:262d:db31:e339]) by VI1PR04MB4015.eurprd04.prod.outlook.com
+ ([fe80::9c4f:262d:db31:e339%4]) with mapi id 15.20.2178.018; Wed, 21 Aug 2019
+ 14:18:43 +0000
+From:   Ashish Kumar <ashish.kumar@nxp.com>
+To:     Mark Brown <broonie@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>
+Subject: RE: [EXT] Re: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add
+ ls2080a compatibility string to bindings
+Thread-Topic: [EXT] Re: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add
+ ls2080a compatibility string to bindings
+Thread-Index: AQHVUcEk+xwdBczP/06jXTHXcyeTPqcFfYEAgAAn5gA=
+Date:   Wed, 21 Aug 2019 14:18:43 +0000
+Message-ID: <VI1PR04MB401528B4F92DAD98385EF53395AA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
+References: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
+ <20190821110640.GC5128@sirena.co.uk>
+In-Reply-To: <20190821110640.GC5128@sirena.co.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=ashish.kumar@nxp.com; 
+x-originating-ip: [92.120.0.6]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 5daf5742-fd08-4402-2ac7-08d726427918
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4573;
+x-ms-traffictypediagnostic: VI1PR04MB4573:
+x-ms-exchange-purlcount: 2
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB45736CD9561CE592EC01E71495AA0@VI1PR04MB4573.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8273;
+x-forefront-prvs: 0136C1DDA4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(136003)(346002)(376002)(396003)(189003)(199004)(13464003)(102836004)(5660300002)(53546011)(966005)(478600001)(186003)(52536014)(6506007)(99286004)(66946007)(66556008)(64756008)(66446008)(110136005)(66476007)(71200400001)(71190400001)(54906003)(14454004)(316002)(76116006)(26005)(9686003)(66066001)(86362001)(6306002)(486006)(74316002)(476003)(81156014)(11346002)(2906002)(33656002)(81166006)(8676002)(8936002)(6436002)(55016002)(256004)(229853002)(25786009)(4326008)(44832011)(76176011)(7696005)(2501003)(6246003)(6116002)(53936002)(3846002)(14444005)(7736002)(305945005)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4573;H:VI1PR04MB4015.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: vo+uH4MwhPVqwghaxsPeXBuU7pIHeE2Nnd+sAwal6HDYfnE9jBqcs+diOj3thiHH39Qmifu7keK2ujv6EcH31dwtdKmDPpKFFDp6yiRe9MoGOu/vowHx1AFfWHehNBQDJF+nuJe/fV2Eo+fWv0WO2yEMGqrLD+6puaCMFKZUjiXWDVl8dmMFJQGKAPgtR+Fw76GBIMOogpPWvFZ9WYIv/KwCe02MYeTD3nyBxHkC7PNX+6HIasZFp237LHT0YtP+KNEi9jhkWaT5s8CED3ukpx1PIiUbRwOAigqy1mq1R5EzjMwWYUo6J8FJF6EzF/DnxBu27HqCDr34bFOBEyjXka9qpYEQbiMBb6/lGffgFiWEgWNnPd3wmDByXdoVRC/ZeK6XRIgY9LeP2s2QXCAywYc7d9YTH1F3LVVzJvCdlKg=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ADIRoutedOnPrem: True
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(346002)(376002)(136003)(2980300002)(199004)(189003)(44832011)(305945005)(54906003)(106002)(2616005)(2351001)(486006)(476003)(446003)(51416003)(7696005)(11346002)(316002)(126002)(107886003)(14444005)(1076003)(4326008)(186003)(5660300002)(26005)(6666004)(356004)(70586007)(966005)(70206006)(76176011)(336012)(426003)(16586007)(36756003)(8936002)(86362001)(50466002)(48376002)(47776003)(6916009)(50226002)(2906002)(8676002)(7636002)(7416002)(478600001)(6306002)(246002);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR03MB2553;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 469d2330-1e7a-4c9e-f8d0-08d72642401e
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(4709080)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328);SRVR:DM5PR03MB2553;
-X-MS-TrafficTypeDiagnostic: DM5PR03MB2553:
-X-MS-Exchange-PUrlCount: 3
-X-Microsoft-Antispam-PRVS: <DM5PR03MB2553E35A76F48E93A5B44A70F0AA0@DM5PR03MB2553.namprd03.prod.outlook.com>
-X-MS-Oob-TLC-OOBClassifiers: OLM:6108;
-X-Forefront-PRVS: 0136C1DDA4
-X-MS-Exchange-SenderADCheck: 1
-X-Microsoft-Antispam-Message-Info: f95nOJpPZ9ImLLRkPOjiy7WdOGiBcEkd5puhsiDBU0+NMUQqD27aSTej2Hd2Z/XVz4XqgpI0dJ9MUOT+173lK4aKQp5WDCx0UEym0EKy7bhj3FBP++wZrQl/5zistpBCv/3OmsR8X3YRcNEmEH53hbWAK5VFHMW2WnvhEsx6+xF/W+Ag0cYQd1TGW2lGeWJdrRgDBMOrEZvYsnf5d9JzmzrPQN8LxfRr4kGqGmNAl6KFijetjWgkeZaL5kIxXb7lKez9N5Slj8hYtUCFJwQsesg2QKcY7OxkdUg7O69LflrchSHzfVxlY2VE+WU6TjDTbcTjjS9x/JYftHVUXJodQcrPAjgma//DSiHbDCqkrKAR8VNCboW3zrAkoVlvGaeQuO9Qyu12x3O4eHHNUCFgI2c3Czk4XToddfxXb5XLZZk=
-X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Aug 2019 14:17:08.0622
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5daf5742-fd08-4402-2ac7-08d726427918
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Aug 2019 14:18:43.6509
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 469d2330-1e7a-4c9e-f8d0-08d72642401e
-X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR03MB2553
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-21_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908210156
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 7urDO9tzip+F4nqpNQaMeKw/b3lHamSStmE67kuNW+bnJiWIM55CukAmikEzzVWBUkR1EuWgrxzxTr26LFroKQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4573
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Documentation for AD7606B Analog to Digital Converter and software
-mode was added.
 
-Signed-off-by: Beniamin Bia <beniamin.bia@analog.com>
----
-Changes in v3:
--nothing changed
 
- Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> -----Original Message-----
+> From: Mark Brown <broonie@kernel.org>
+> Sent: Wednesday, August 21, 2019 4:37 PM
+> To: Ashish Kumar <ashish.kumar@nxp.com>
+> Cc: linux-kernel@vger.kernel.org; linux-spi@vger.kernel.org;
+> devicetree@vger.kernel.org; robh+dt@kernel.org; mark.rutland@arm.com;
+> linux-next@vger.kernel.org; Kuldeep Singh <kuldeep.singh@nxp.com>
+> Subject: [EXT] Re: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add ls2=
+080a
+> compatibility string to bindings
+>=20
+> On Tue, Aug 13, 2019 at 03:53:09PM +0530, Ashish Kumar wrote:
+>=20
+> > There are 2 version of QSPI-IP, according to which controller
+> > registers sets can be big endian or little endian.There are some other
+> > minor changes like RX fifo depth etc.
+> >
+> > The big endian version uses driver compatible "fsl,ls1021a-qspi" and
+> > little endian version uses driver compatible "fsl,ls2080a-qspi"
+>=20
+> I'm not seeing the corresponding code changes anywhere?  I'd at least
+> expect to see the compatibles added, and it sounds like some actual code
+> updates are needed.
+Hi Mark,
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-index 509dbe9c84d2..2afe31747a70 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
-@@ -13,6 +13,7 @@ maintainers:
- description: |
-   Analog Devices AD7606 Simultaneous Sampling ADC
-   https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606_7606-6_7606-4.pdf
-+  https://www.analog.com/media/en/technical-documentation/data-sheets/AD7606B.pdf
-   https://www.analog.com/media/en/technical-documentation/data-sheets/AD7616.pdf
- 
- properties:
-@@ -22,6 +23,7 @@ properties:
-       - adi,ad7606-8
-       - adi,ad7606-6
-       - adi,ad7606-4
-+      - adi,ad7606b
-       - adi,ad7616
- 
-   reg:
-@@ -87,7 +89,7 @@ properties:
- 
-   adi,sw-mode:
-     description:
--      Software mode of operation, so far available only for ad7616.
-+      Software mode of operation, so far available only for ad7616 and ad7606B.
-       It is enabled when all three oversampling mode pins are connected to
-       high level. The device is configured by the corresponding registers. If the
-       adi,oversampling-ratio-gpios property is defined, then the driver will set the
--- 
-2.17.1
+Snippet from driver spi-fsl-qspi.c
+static const struct of_device_id fsl_qspi_dt_ids[] =3D {
+        { .compatible =3D "fsl,vf610-qspi", .data =3D &vybrid_data, },
+        { .compatible =3D "fsl,imx6sx-qspi", .data =3D &imx6sx_data, },
+        { .compatible =3D "fsl,imx7d-qspi", .data =3D &imx7d_data, },
+        { .compatible =3D "fsl,imx6ul-qspi", .data =3D &imx6ul_data, },
+        { .compatible =3D "fsl,ls1021a-qspi", .data =3D &ls1021a_data, },
+        { .compatible =3D "fsl,ls2080a-qspi", .data =3D &ls2080a_data, },
+        { /* sentinel */ }
+};
+I had previously sent dts patch based out of Shawn's tree with dependency o=
+n these dt binding patch. To which Shawn had replied to get dependency patc=
+h accepted first before sending this dts change.
+Reference conversion can be viewed here [1],[2].
 
+This compatible can be seen here: file arch/arm64/boot/dts/freescale/fsl-ls=
+208xa.dtsi
+
+Snippet from previous dts patch based on Shawn tree, I will send next versi=
+on on this patch after dt-bindings are updated
+arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/bo=
+ot/dts/freescale/fsl-ls208xa.dtsi
+index d7e78dcd153d..8e5ba513b24f 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -606,7 +606,7 @@
+=20
+ 		qspi: spi@20c0000 {
+ 			status =3D "disabled";
+-			compatible =3D "fsl,ls2080a-qspi", "fsl,ls1021a-qspi";
++			compatible =3D "fsl,ls2080a-qspi";
+ 			#address-cells =3D <1>;
+ 			#size-cells =3D <0>;
+ 			reg =3D <0x0 0x20c0000 0x0 0x10000>,
+>=20
+> Please use subject lines matching the style for the subsystem.  This make=
+s it
+> easier for people to identify relevant patches.
+Could you please guide more, or point to documentation to follow sub-system=
+ style.
+dt-bindings: spi: spi-fsl-qspi: Add ls2080a-qspi compatibility string to bi=
+ndings=20
+Is this a better now? if yes, I will send next version
+
+[1]: https://www.spinics.net/lists/arm-kernel/msg727403.html
+[2]: https://patchwork.kernel.org/patch/10192103/
+
+Regards
+Ashish
