@@ -2,71 +2,108 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 82AD097080
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:48:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 456F697092
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 05:56:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727200AbfHUDsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 23:48:51 -0400
-Received: from mail-oi1-f180.google.com ([209.85.167.180]:46833 "EHLO
-        mail-oi1-f180.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726601AbfHUDsv (ORCPT
+        id S1727423AbfHUD4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 23:56:00 -0400
+Received: from 2.152.176.113.dyn.user.ono.com ([2.152.176.113]:36802 "EHLO
+        pulsar.hadrons.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727343AbfHUDz5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 23:48:51 -0400
-Received: by mail-oi1-f180.google.com with SMTP id t24so541467oij.13
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 20:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DNeO2I5P7X1Lbvd2VIQqSVnNMPmHOfkiBxbwoy7aOis=;
-        b=azVQoxxsK3C5RN9SSDKAjKCwrJ0JFXMJwQyItUs9Zy8d7o/ESF6YdgOmKmQLYJQfoM
-         RKK84QFCZEtiDvhegDfz+K5VcCdHPfSJbbsrn/uYTzBivfivh2rnieZqD4+C6NFv8WuK
-         hqEkJJmFhXlZJlacoTpIc1YMg7/eLH6ogRIy5nFBGMaYRTn9qKE3AlRE65skc7cy7R0Y
-         R15phWfS3qXDepRKz7kscbeL3M4soYteIn3Ozk6sHIgMAUnPK010dtqpJgk0JDNtPaeS
-         ahmjzFe/Ra1AERPQnu+ocANaEttZ1yfR+9uSmMnHrzq+8pMTxSM+qD8pUTdc4v2B+mvJ
-         1Fxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DNeO2I5P7X1Lbvd2VIQqSVnNMPmHOfkiBxbwoy7aOis=;
-        b=VbGZDqHn1n95/HwrqVYGUGu4IRJLUooJHFasd3IaAJRFcxnYAp4b5ldPcgvs0TDUlG
-         OBoWiMqmY5SpJ7KqlTCytlaO5W2Cg2puykU310dXXEQLwjhHhrvD2Ir3p0uTALvFsyAI
-         hyAnpO15nz8FTLHNsGVp1yTB2vpeariotAeZhb9BKV3Jg2sbFZWwqTNOWuAXNlvV4/v5
-         MU0dEPuUTeQMI7puuxnqu8wlGEnVqeWu1SfSM0pzHzEjtZL6z00TL/bkp2wv3cDo292o
-         QKVHbFKzLHuVNjZEBclXItWCbAD98brOGU9iCbrVKzl2q3UeqnaLrsjYH96RQaZF3x9+
-         xQ4g==
-X-Gm-Message-State: APjAAAWKTNsmA+76ZLSj+9Pw0ilqcljg1lgeqQyx1EBqNtg30AmuvgXM
-        0NZVqCetSjdtg0S17k39i+Y+aZNPB+5UNPEHGzMgSg==
-X-Google-Smtp-Source: APXvYqzAxxh0GTyz2p6TU6M3TxnFZxOT+XsgGtpQK1Nfz7TEWwmtVmKCu8mBDHODmhXoIT1MWpOrBWDCDod/7kCyI+k=
-X-Received: by 2002:aca:d558:: with SMTP id m85mr2482178oig.0.1566359330468;
- Tue, 20 Aug 2019 20:48:50 -0700 (PDT)
+        Tue, 20 Aug 2019 23:55:57 -0400
+X-Greylist: delayed 1074 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Aug 2019 23:55:56 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hadrons.org
+        ; s=201908; h=Content-Transfer-Encoding:MIME-Version:Message-Id:Date:Subject:
+        Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:Content-Description:
+        Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+        In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=Y/aHT4MYLaye6HK+sQi6zX4qI4fkCoiILg3MznRvPso=; b=msEuF30t8SwyqIY71h/bo34ebC
+        oZgNFChUPgMS3OvuOXcpTZj434SxKIDn31LeeZZ16jQM/wECsWgZPrbYIY3Ruwal8Q0MBvFlxl8sr
+        INOGtofV2CcTLl3bMFJsUPIFo7Rs160RCYu6za+5LvaDKJt3sLL2mHBw+SvqwIgdkrRA/pw4KYVpK
+        6c8to36xOCQQjKBrfL+lSAcBFALvcZCoOB87gqeqw/395wwrgI847+IXHmGyBJgoVVMtAJQo2I3AH
+        zrCNcfdbUiN4UGGqxMCBfscx6DGpxb1YA740zKnHBNB2pt7PkiHo6GjCIbKVeynPvJ14gQR9DYDIy
+        M0PbxzrQ==;
+Received: from guillem by pulsar.hadrons.org with local (Exim 4.92)
+        (envelope-from <guillem@hadrons.org>)
+        id 1i0HSK-0003gy-H2; Wed, 21 Aug 2019 05:38:40 +0200
+From:   Guillem Jover <guillem@hadrons.org>
+To:     linux-aio@kvack.org
+Cc:     Christoph Hellwig <hch@lst.de>, Jeff Moyer <jmoyer@redhat.com>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] aio: Fix io_pgetevents() struct __compat_aio_sigset layout
+Date:   Wed, 21 Aug 2019 05:38:20 +0200
+Message-Id: <20190821033820.14155-1-guillem@hadrons.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <72e41dc2-b4cf-a5dd-a365-d26ba1257ef9@oracle.com>
-In-Reply-To: <72e41dc2-b4cf-a5dd-a365-d26ba1257ef9@oracle.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Tue, 20 Aug 2019 20:48:39 -0700
-Message-ID: <CAPcyv4iPuTpk9bifyX5yQxO8gT0fRhYXPrwk-obazWA=Dou3iQ@mail.gmail.com>
-Subject: Re: kernel panic in 5.3-rc5, nfsd_reply_cache_stats_show+0x11
-To:     Jane Chu <jane.chu@oracle.com>
-Cc:     CHUCK_LEVER <chuck.lever@oracle.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        linux-nfs@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 6:39 PM <jane.chu@oracle.com> wrote:
->
-> Hi,
->
-> Apology if there is a better channel reporting the issue, if so, please
-> let me know.
->
-> I just saw below regression in 5.3-rc5 kernel, but not in 5.2-rc7 or
-> earlier kernels.
+This type is used to pass the sigset_t from userland to the kernel,
+but it was using the kernel native pointer type for the member
+representing the compat userland pointer to the userland sigset_t.
 
-Is the error stable enough to bisect?
+This messes up the layout, and makes the kernel eat up both the
+userland pointer and the size members into the kernel pointer, and
+then reads garbage into the kernel sigsetsize. Which makes the sigset_t
+size consistency check fail, and consequently the syscall always
+returns -EINVAL.
+
+This breaks both libaio and strace on 32-bit userland running on 64-bit
+kernels. And there are apparently no users in the wild of the current
+broken layout (at least according to codesearch.debian.org and a brief
+check over github.com search). So it looks safe to fix this directly
+in the kernel, instead of either letting userland deal with this
+permanently with the additional overhead or trying to make the syscall
+infer what layout userland used, even though this is also being worked
+around in libaio to temporarily cope with kernels that have not yet
+been fixed.
+
+We use a proper compat_uptr_t instead of a compat_sigset_t pointer.
+
+Fixes: 7a074e96 ("aio: implement io_pgetevents")
+Signed-off-by: Guillem Jover <guillem@hadrons.org>
+---
+ fs/aio.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 01e0fb9ae45a..056f291bc66f 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -2179,7 +2179,7 @@ SYSCALL_DEFINE5(io_getevents_time32, __u32, ctx_id,
+ #ifdef CONFIG_COMPAT
+ 
+ struct __compat_aio_sigset {
+-	compat_sigset_t __user	*sigmask;
++	compat_uptr_t		sigmask;
+ 	compat_size_t		sigsetsize;
+ };
+ 
+@@ -2204,7 +2204,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
+ 
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -2239,7 +2239,7 @@ COMPAT_SYSCALL_DEFINE6(io_pgetevents_time64,
+ 	if (usig && copy_from_user(&ksig, usig, sizeof(ksig)))
+ 		return -EFAULT;
+ 
+-	ret = set_compat_user_sigmask(ksig.sigmask, ksig.sigsetsize);
++	ret = set_compat_user_sigmask(compat_ptr(ksig.sigmask), ksig.sigsetsize);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.23.0
+
