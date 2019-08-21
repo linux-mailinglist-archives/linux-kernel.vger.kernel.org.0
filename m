@@ -2,307 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1A958977D7
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 972E7977D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 13:21:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfHULWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 07:22:15 -0400
-Received: from mga04.intel.com ([192.55.52.120]:8476 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726749AbfHULWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 07:22:14 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 04:22:14 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="181000445"
-Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.122]) ([10.237.72.122])
-  by orsmga003.jf.intel.com with ESMTP; 21 Aug 2019 04:22:11 -0700
-Subject: Re: Subject: [PATCH V7 2/3] mmc: sdhci-pci-o2micro: Move functions in
- preparation to fix DLL lock phase shift issue
-To:     "Shirley Her (SC)" <shirley.her@bayhubtech.com>,
-        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc:     "Chevron Li (WH)" <chevron.li@bayhubtech.com>,
-        "Shaper Liu (WH)" <shaper.liu@bayhubtech.com>,
-        "Louis Lu (TP)" <louis.lu@bayhubtech.com>,
-        "Xiaoguang Yu (WH)" <xiaoguang.yu@bayhubtech.com>,
-        "max.huang@bayhbutech.com" <max.huang@bayhbutech.com>
-References: <1566252561-5144-1-git-send-email-shirley.her@bayhubtech.com>
-From:   Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Message-ID: <571fe95f-25b5-1369-5537-ff483d5c7fdc@intel.com>
-Date:   Wed, 21 Aug 2019 14:20:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727717AbfHULVg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 07:21:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:34912 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727211AbfHULVg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 07:21:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Zn3ejhAASFSRg1tK+lTcY6WiRVoDmLTbMDhh5WUo4kM=; b=WIeV35zBNqv7yPM8SA3WzOWgm
+        KyQ5IiHHuhQirkKsaIvQm/Y8yQ8vsoHh7OuEeD6xl2KQ12MPzYrEimbiLPzTXeuQHe+g3SY+7INJT
+        Icz6HmwoWk0uWsRPaj0J+zWOJp2Ymk0R3WqQ1O5JacQbSLDjhHAk0oBmWul6X5of5iU3ttecLv6U0
+        GcdxgmkYWl482jrmlDTD65sYgeFk2/+dKrS5HLrYFCVMWDGsps3whjkgRHU1tHdJ49jwR1/SMZXI4
+        QgPQv3ptU0ausBAgtZ7ZXIXmIf5qflNCqVpxgit7eMp96E/tDL46yve9crbyWhe2frxcW5ZTkGRTv
+        QgthHe+uw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i0Og0-0003Jk-OB; Wed, 21 Aug 2019 11:21:16 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 0A219307602;
+        Wed, 21 Aug 2019 13:20:42 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9F63020A21FC6; Wed, 21 Aug 2019 13:21:13 +0200 (CEST)
+Date:   Wed, 21 Aug 2019 13:21:13 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Ingo Molnar <mingo@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Christoph Hellwig <hch@lst.de>, kan.liang@intel.com,
+        Rik van Riel <riel@surriel.com>,
+        Will Deacon <will@kernel.org>
+Subject: Re: [PATCH 1/9] sched/core: add is_kthread() helper
+Message-ID: <20190821112113.GA2332@hirez.programming.kicks-ass.net>
+References: <20190814104131.20190-1-mark.rutland@arm.com>
+ <20190814104131.20190-2-mark.rutland@arm.com>
+ <CAMuHMdV_hZ-uMmKdqEutLL5+XkhhcKdSaurMUS2N46AhZwDNKQ@mail.gmail.com>
+ <20190814113232.GE17931@lakrids.cambridge.arm.com>
+ <20190819085213.GA15409@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1566252561-5144-1-git-send-email-shirley.her@bayhubtech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819085213.GA15409@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/08/19 1:09 AM, Shirley Her (SC) wrote:
-> Move functions in preparation to fix DLL lock phase shift issue
-> 
-> Signed-off-by:Shirley Her <shirley.her@bayhubtech.com>
+On Mon, Aug 19, 2019 at 10:52:13AM +0200, Ingo Molnar wrote:
+> * Mark Rutland <mark.rutland@arm.com> wrote:
+> > On Wed, Aug 14, 2019 at 01:26:43PM +0200, Geert Uytterhoeven wrote:
+> > > On Wed, Aug 14, 2019 at 12:43 PM Mark Rutland <mark.rutland@arm.com> wrote:
 
-Please do not prefix the subject by "Subject: "
-Please put a space after Signed-off-by:
+> > > > +static inline bool is_kthread(const struct task_struct *p)
+> > > > +{
+> > > > +       return !!(p->flags & PF_KTHREAD);
+> > > 
+> > > The !! is not really needed.
+> > > Probably you followed is_idle_task() above (where it's also not needed).
+> > 
+> > Indeed! I'm aware of the implicit bool conversion, but kept that for
+> > consistency.
+> > 
+> > Peter, Ingo, do you have a preference?
+> 
+> So the !! pattern is useful where the return value is an integer (i.e. 
+> there's a risk of non-bool use) - but the return value is an explicit 
+> bool here, so !! is IMO an entirely superfluous obfuscation.
 
-> ---
-> change in V7:
->  1. change subject to match the patch
->  2. move functions in preparation to fix DLL lock phase shift issue
-> 
-> change in V6:
->  1. change subject and commit message to match the patch
->  2. modify the get CD status functions
->  3. re-arrange the order of some functions
-> 
-> change in V5:
->  1. split 2 patches into 3 patches
->  2. make dll_adjust_count start from 0
->  3. fix ret overwritten issue
->  4. use break instead of goto
-> 
-> change in V4:
->  1. add a bug fix for V3
-> 
-> change in V3:
->  1. add more explanation in dll_recovery and execute_tuning function
->  2. move dll_adjust_count to O2_host struct
->  3. fix some coding style error
->  4. renaming O2_PLL_WDT_CONTROL1 TO O2_PLL_DLL_WDT_CONTROL1
-> 
-> change in V2:
->  1. use usleep_range instead of udelay
->  2. move dll_adjust_count to sdhci-pci-o2micro.c
-> 
-> chagne in V1:
->  1. add error recovery function to relock DLL with correct phase
->  2. retuning HS200 after DLL locked
-> ---
->  drivers/mmc/host/sdhci-pci-o2micro.c | 186 +++++++++++++++++------------------
->  1 file changed, 93 insertions(+), 93 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-pci-o2micro.c b/drivers/mmc/host/sdhci-pci-o2micro.c
-> index b3a33d9..021e481 100644
-> --- a/drivers/mmc/host/sdhci-pci-o2micro.c
-> +++ b/drivers/mmc/host/sdhci-pci-o2micro.c
-> @@ -58,6 +58,99 @@
->  
->  #define O2_SD_DETECT_SETTING 0x324
->  
-> +static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u32 scratch32;
-> +
-> +	/* Wait max 50 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 50);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> +		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
-> +		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
-> +			break;
-> +
-> +		if (timedout) {
-> +			pr_err("%s: Card Detect debounce never finished.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			return;
-> +		}
-> +		udelay(10);
-> +	}
-> +}
-> +
-> +static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
-> +{
-> +	ktime_t timeout;
-> +	u16 scratch;
-> +	u32 scratch32;
-> +
-> +	/* PLL software reset */
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> +	scratch32 |= O2_PLL_SOFT_RESET;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +	udelay(1);
-> +	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +
-> +	/* PLL force active */
-> +	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +
-> +	/* Wait max 20 ms */
-> +	timeout = ktime_add_ms(ktime_get(), 20);
-> +	while (1) {
-> +		bool timedout = ktime_after(ktime_get(), timeout);
-> +
-> +		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
-> +		if (scratch & O2_PLL_LOCK_STATUS)
-> +			break;
-> +		if (timedout) {
-> +			pr_err("%s: Internal clock never stabilised.\n",
-> +			       mmc_hostname(host->mmc));
-> +			sdhci_dumpregs(host);
-> +			goto out;
-> +		}
-> +		udelay(10);
-> +	}
-> +
-> +	/* Wait for card detect finish */
-> +	udelay(1);
-> +	sdhci_o2_wait_card_detect_stable(host);
-> +
-> +out:
-> +	/* Cancel PLL force active */
-> +	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> +	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> +	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> +}
-> +
-> +static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> +{
-> +	struct sdhci_host *host = mmc_priv(mmc);
-> +
-> +	sdhci_o2_enable_internal_clock(host);
-> +
-> +	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
-> +}
-> +
-> +static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
-> +{
-> +	u32 scratch_32;
-> +	pci_read_config_dword(chip->pdev,
-> +			      O2_SD_PLL_SETTING, &scratch_32);
-> +
-> +	scratch_32 &= 0x0000FFFF;
-> +	scratch_32 |= value;
-> +
-> +	pci_write_config_dword(chip->pdev,
-> +			       O2_SD_PLL_SETTING, scratch_32);
-> +}
-> +
->  static void sdhci_o2_set_tuning_mode(struct sdhci_host *host)
->  {
->  	u16 reg;
-> @@ -136,19 +229,6 @@ static int sdhci_o2_execute_tuning(struct mmc_host *mmc, u32 opcode)
->  	return 0;
->  }
->  
-> -static void o2_pci_set_baseclk(struct sdhci_pci_chip *chip, u32 value)
-> -{
-> -	u32 scratch_32;
-> -	pci_read_config_dword(chip->pdev,
-> -			      O2_SD_PLL_SETTING, &scratch_32);
-> -
-> -	scratch_32 &= 0x0000FFFF;
-> -	scratch_32 |= value;
-> -
-> -	pci_write_config_dword(chip->pdev,
-> -			       O2_SD_PLL_SETTING, scratch_32);
-> -}
-> -
->  static void o2_pci_led_enable(struct sdhci_pci_chip *chip)
->  {
->  	int ret;
-> @@ -284,86 +364,6 @@ static void sdhci_pci_o2_enable_msi(struct sdhci_pci_chip *chip,
->  	host->irq = pci_irq_vector(chip->pdev, 0);
->  }
->  
-> -static void sdhci_o2_wait_card_detect_stable(struct sdhci_host *host)
-> -{
-> -	ktime_t timeout;
-> -	u32 scratch32;
-> -
-> -	/* Wait max 50 ms */
-> -	timeout = ktime_add_ms(ktime_get(), 50);
-> -	while (1) {
-> -		bool timedout = ktime_after(ktime_get(), timeout);
-> -
-> -		scratch32 = sdhci_readl(host, SDHCI_PRESENT_STATE);
-> -		if ((scratch32 & SDHCI_CARD_PRESENT) >> SDHCI_CARD_PRES_SHIFT
-> -		    == (scratch32 & SDHCI_CD_LVL) >> SDHCI_CD_LVL_SHIFT)
-> -			break;
-> -
-> -		if (timedout) {
-> -			pr_err("%s: Card Detect debounce never finished.\n",
-> -			       mmc_hostname(host->mmc));
-> -			sdhci_dumpregs(host);
-> -			return;
-> -		}
-> -		udelay(10);
-> -	}
-> -}
-> -
-> -static void sdhci_o2_enable_internal_clock(struct sdhci_host *host)
-> -{
-> -	ktime_t timeout;
-> -	u16 scratch;
-> -	u32 scratch32;
-> -
-> -	/* PLL software reset */
-> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> -	scratch32 |= O2_PLL_SOFT_RESET;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -	udelay(1);
-> -	scratch32 &= ~(O2_PLL_SOFT_RESET);
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -
-> -	/* PLL force active */
-> -	scratch32 |= O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -
-> -	/* Wait max 20 ms */
-> -	timeout = ktime_add_ms(ktime_get(), 20);
-> -	while (1) {
-> -		bool timedout = ktime_after(ktime_get(), timeout);
-> -
-> -		scratch = sdhci_readw(host, O2_PLL_DLL_WDT_CONTROL1);
-> -		if (scratch & O2_PLL_LOCK_STATUS)
-> -			break;
-> -		if (timedout) {
-> -			pr_err("%s: Internal clock never stabilised.\n",
-> -			       mmc_hostname(host->mmc));
-> -			sdhci_dumpregs(host);
-> -			goto out;
-> -		}
-> -		udelay(10);
-> -	}
-> -
-> -	/* Wait for card detect finish */
-> -	udelay(1);
-> -	sdhci_o2_wait_card_detect_stable(host);
-> -
-> -out:
-> -	/* Cancel PLL force active */
-> -	scratch32 = sdhci_readl(host, O2_PLL_DLL_WDT_CONTROL1);
-> -	scratch32 &= ~O2_PLL_FORCE_ACTIVE;
-> -	sdhci_writel(host, scratch32, O2_PLL_DLL_WDT_CONTROL1);
-> -}
-> -
-> -static int sdhci_o2_get_cd(struct mmc_host *mmc)
-> -{
-> -	struct sdhci_host *host = mmc_priv(mmc);
-> -
-> -	sdhci_o2_enable_internal_clock(host);
-> -
-> -	return !!(sdhci_readl(host, SDHCI_PRESENT_STATE) & SDHCI_CARD_PRESENT);
-> -}
-> -
->  static void sdhci_o2_enable_clk(struct sdhci_host *host, u16 clk)
->  {
->  	/* Enable internal clock */
-> 
+Yeah, no real preference, for giggles, (_Bool) also seems to work.
 
