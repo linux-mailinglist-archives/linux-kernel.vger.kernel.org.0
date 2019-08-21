@@ -2,75 +2,94 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879B4982B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:24:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 767FA982CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:31:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729168AbfHUSYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:24:48 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:42665 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfHUSYr (ORCPT
+        id S1728835AbfHUSax (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:30:53 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:52254 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfHUSax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:24:47 -0400
-Received: by mail-ot1-f67.google.com with SMTP id j7so2962577ota.9;
-        Wed, 21 Aug 2019 11:24:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=xj642LOUuahy+rYAJ7XSvVLcFTloxyknrp7w0AGW3JQ=;
-        b=LdoA16fh5oNqbW5smx5/Id2AzmtiAZWsNCNoujMtpTZ1B43ozOuBjlq1OO8i05qXUU
-         5FoH9bVE3GKevqM+P2ohZlqZJ3hk2cVhpML3lTjoYSNtZmejdFjO941VxXg0Fl1ot8B5
-         Jrnj/TmosYCZBYj1k3iPhoLQUI2iyZa7tP1iJlZGvL3+xrOk4yHvE+QW2P3rS7/m0PMU
-         HOI70FYYBWJGdwO8Da18pQPpAGVLn2WlG9/wrpEezgq0ooWFO2dBCYrm0Gwwk0Hn+28V
-         QliO0lCxFMoVC3btWmuk7wBZwRFyOdXVDG3Wdn9LL2zo9GPbclxAQSRzLYDykE0lh4Od
-         dcxg==
-X-Gm-Message-State: APjAAAVO4S/VEeR9gFea1YRq+7dD5gjaYymjDUY+Ho2k84MqWJLV97yu
-        zB5laTd/C7HHumVgNP0oCw==
-X-Google-Smtp-Source: APXvYqzn+v4yVCzNPWIXhmRz3AdMu+fycoMKN7LNNf8XGpK3Hy8shxP66dzdzXor5TPJ4npISlu7dQ==
-X-Received: by 2002:a9d:5c11:: with SMTP id o17mr10969493otk.107.1566411886789;
-        Wed, 21 Aug 2019 11:24:46 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id i17sm6178004oik.32.2019.08.21.11.24.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 11:24:45 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 13:24:45 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v2] dt-bindings: arm-boards: Update pointer to ARM CPU
- bindings
-Message-ID: <20190821182445.GA9101@bogus>
-References: <20190731114201.7884-1-geert+renesas@glider.be>
+        Wed, 21 Aug 2019 14:30:53 -0400
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:b93f:9fae:b276:a89a])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 9AD3C2699FC;
+        Wed, 21 Aug 2019 19:30:51 +0100 (BST)
+Date:   Wed, 21 Aug 2019 20:30:47 +0200
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     a.hajda@samsung.com, Laurent.pinchart@ideasonboard.com,
+        jonas@kwiboo.se, jernej.skrabec@siol.net,
+        linux-amlogic@lists.infradead.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC 00/11] drm/bridge: dw-hdmi: implement bus-format
+ negotiation and YUV420 support
+Message-ID: <20190821203047.06730da4@collabora.com>
+In-Reply-To: <20190820084109.24616-1-narmstrong@baylibre.com>
+References: <20190820084109.24616-1-narmstrong@baylibre.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731114201.7884-1-geert+renesas@glider.be>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jul 2019 13:42:01 +0200, Geert Uytterhoeven wrote:
-> The ARM CPU DT bindings were converted from plain text to YAML, but not
-> all referrers were updated.
+On Tue, 20 Aug 2019 10:40:58 +0200
+Neil Armstrong <narmstrong@baylibre.com> wrote:
+
+> This patchset is based on Boris's "drm: Add support for bus-format negotiation" RFC at [1]
+
+Small clarification. Neil's work in based on a slightly different
+version of my RFC [4] (I plan to post a v2 very soon).
+
+> patchset to implement :
+> - basic bus-format negotiation for DW-HDMI
+> - advanced HDMI2.0 YUV420 bus-format negotiation for DW-HDMI
 > 
-> Fixes: 672951cbd1b70a9e ("dt-bindings: arm: Convert cpu binding to json-schema")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> ---
-> v2:
->   - Add Acked-by.
-> ---
->  Documentation/devicetree/bindings/arm/arm-boards | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> And the counterpart implementation in the Amlogic Meson VPU dw-hdmi glue :
+> - basic bus-format negotiation to select YUV444 bus-format as DW-HDMI input
+> - YUV420 support when HDMI2.0 YUV420 modeset
+> 
+> This is a follow-up from the previous attempts :
+> - "drm/meson: Add support for HDMI2.0 YUV420 4k60" at [2]
+> - "drm/meson: Add support for HDMI2.0 4k60" at [3]
+> 
+> [1] https://patchwork.freedesktop.org/patch/msgid/20190808151150.16336-1-boris.brezillon@collabora.com
+> [2] https://patchwork.freedesktop.org/patch/msgid/20190520133753.23871-1-narmstrong@baylibre.com
+> [3] https://patchwork.freedesktop.org/patch/msgid/1549022873-40549-1-git-send-email-narmstrong@baylibre.com
+
+[4]https://github.com/bbrezillon/linux-0day/commits/drm-bridge-busfmt-2
+
+> 
+> Neil Armstrong (11):
+>   fixup! drm/bridge: Add the necessary bits to support bus format
+>     negotiation
+>   drm/meson: venc: make drm_display_mode const
+>   drm/meson: meson_dw_hdmi: switch to drm_bridge_funcs
+>   drm/bridge: synopsys: dw-hdmi: add basic bridge_atomic_check
+>   drm/bridge: synopsys: dw-hdmi: use negociated bus formats
+>   drm/meson: dw-hdmi: stop enforcing input_bus_format
+>   drm/bridge: dw-hdmi: allow ycbcr420 modes for >= 0x200a
+>   drm/bridge: synopsys: dw-hdmi: add 420 mode format negociation
+>   drm/meson: venc: add support for YUV420 setup
+>   drm/meson: vclk: add support for YUV420 setup
+>   drm/meson: Add YUV420 output support
+> 
+>  drivers/gpu/drm/bridge/synopsys/dw-hdmi.c |  97 +++++++++++++++-
+>  drivers/gpu/drm/drm_bridge.c              |   6 +-
+>  drivers/gpu/drm/meson/meson_dw_hdmi.c     | 135 +++++++++++++++++-----
+>  drivers/gpu/drm/meson/meson_vclk.c        |  93 +++++++++++----
+>  drivers/gpu/drm/meson/meson_vclk.h        |   7 +-
+>  drivers/gpu/drm/meson/meson_venc.c        |   8 +-
+>  drivers/gpu/drm/meson/meson_venc.h        |  13 ++-
+>  drivers/gpu/drm/meson/meson_venc_cvbs.c   |   3 +-
+>  include/drm/bridge/dw_hdmi.h              |   1 +
+>  9 files changed, 295 insertions(+), 68 deletions(-)
 > 
 
-Applied, thanks.
-
-Rob
