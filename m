@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FCBE97514
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 10:34:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E18097512
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 10:34:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfHUIdt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 04:33:49 -0400
+        id S1727848AbfHUIdk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 04:33:40 -0400
 Received: from mga18.intel.com ([134.134.136.126]:34007 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727842AbfHUIdh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 04:33:37 -0400
+        id S1727816AbfHUIdj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 04:33:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 01:33:37 -0700
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 01:33:38 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="195953482"
+   d="scan'208";a="195953490"
 Received: from ahunter-desktop.fi.intel.com ([10.237.72.122])
-  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 01:33:35 -0700
+  by fmsmga001.fm.intel.com with ESMTP; 21 Aug 2019 01:33:37 -0700
 From:   Adrian Hunter <adrian.hunter@intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>
 Cc:     Jiri Olsa <jolsa@redhat.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] perf scripts python: exported-sql-viewer.py: Tidy up Call tree call_time
-Date:   Wed, 21 Aug 2019 11:32:14 +0300
-Message-Id: <20190821083216.1340-5-adrian.hunter@intel.com>
+Subject: [PATCH 5/6] perf scripts python: exported-sql-viewer.py: Add ability for Call tree to open at a specified task and time
+Date:   Wed, 21 Aug 2019 11:32:15 +0300
+Message-Id: <20190821083216.1340-6-adrian.hunter@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190821083216.1340-1-adrian.hunter@intel.com>
 References: <20190821083216.1340-1-adrian.hunter@intel.com>
@@ -35,67 +35,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Record call_time on tree nodes and re-name the misnamed "count" parameter.
+Add ability for Call tree to open at a specified task and time.
 
 Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
 ---
- tools/perf/scripts/python/exported-sql-viewer.py | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ .../scripts/python/exported-sql-viewer.py     | 44 ++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/tools/perf/scripts/python/exported-sql-viewer.py b/tools/perf/scripts/python/exported-sql-viewer.py
-index 0dcc9a03b1b0..06b8d55977bc 100755
+index 06b8d55977bc..a5af52f422e6 100755
 --- a/tools/perf/scripts/python/exported-sql-viewer.py
 +++ b/tools/perf/scripts/python/exported-sql-viewer.py
-@@ -794,15 +794,16 @@ class CallGraphModel(CallGraphModelBase):
+@@ -1094,7 +1094,7 @@ class CallGraphWindow(TreeWindowBase):
  
- class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ class CallTreeWindow(TreeWindowBase):
  
--	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item):
-+	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item):
- 		super(CallTreeLevelTwoPlusItemBase, self).__init__(glb, params, row, parent_item)
- 		self.comm_id = comm_id
- 		self.thread_id = thread_id
- 		self.calls_id = calls_id
-+		self.call_time = call_time
-+		self.time = time
- 		self.insn_cnt = insn_cnt
- 		self.cyc_cnt = cyc_cnt
- 		self.branch_count = branch_count
--		self.time = time
+-	def __init__(self, glb, parent=None):
++	def __init__(self, glb, parent=None, thread_at_time=None):
+ 		super(CallTreeWindow, self).__init__(parent)
  
- 	def Select(self):
- 		self.query_done = True
-@@ -839,17 +840,17 @@ class CallTreeLevelTwoPlusItemBase(CallGraphLevelItemBase):
+ 		self.model = LookupCreateModel("Call Tree", lambda x=glb: CallTreeModel(x))
+@@ -1112,6 +1112,48 @@ class CallTreeWindow(TreeWindowBase):
  
- class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
+ 		AddSubWindow(glb.mainwindow.mdi_area, self, "Call Tree")
  
--	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, count, time, insn_cnt, cyc_cnt, branch_count, parent_item):
--		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, time, insn_cnt, cyc_cnt, branch_count, parent_item)
-+	def __init__(self, glb, params, row, comm_id, thread_id, calls_id, name, dso, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item):
-+		super(CallTreeLevelThreeItem, self).__init__(glb, params, row, comm_id, thread_id, calls_id, call_time, time, insn_cnt, cyc_cnt, branch_count, parent_item)
- 		dso = dsoname(dso)
- 		if self.params.have_ipc:
- 			insn_pcnt = PercentToOneDP(insn_cnt, parent_item.insn_cnt)
- 			cyc_pcnt = PercentToOneDP(cyc_cnt, parent_item.cyc_cnt)
- 			br_pcnt = PercentToOneDP(branch_count, parent_item.branch_count)
- 			ipc = CalcIPC(cyc_cnt, insn_cnt)
--			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(insn_cnt), insn_pcnt, str(cyc_cnt), cyc_pcnt, ipc, str(branch_count), br_pcnt ]
-+			self.data = [ name, dso, str(call_time), str(time), PercentToOneDP(time, parent_item.time), str(insn_cnt), insn_pcnt, str(cyc_cnt), cyc_pcnt, ipc, str(branch_count), br_pcnt ]
- 		else:
--			self.data = [ name, dso, str(count), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
-+			self.data = [ name, dso, str(call_time), str(time), PercentToOneDP(time, parent_item.time), str(branch_count), PercentToOneDP(branch_count, parent_item.branch_count) ]
- 		self.dbid = calls_id
++		if thread_at_time:
++			self.DisplayThreadAtTime(*thread_at_time)
++
++	def DisplayThreadAtTime(self, comm_id, thread_id, time):
++		parent = QModelIndex()
++		for dbid in (comm_id, thread_id):
++			found = False
++			n = self.model.rowCount(parent)
++			for row in xrange(n):
++				child = self.model.index(row, 0, parent)
++				if child.internalPointer().dbid == dbid:
++					found = True
++					self.view.setCurrentIndex(child)
++					parent = child
++					break
++			if not found:
++				return
++		found = False
++		while True:
++			n = self.model.rowCount(parent)
++			if not n:
++				return
++			last_child = None
++			for row in xrange(n):
++				child = self.model.index(row, 0, parent)
++				child_call_time = child.internalPointer().call_time
++				if child_call_time < time:
++					last_child = child
++				elif child_call_time == time:
++					self.view.setCurrentIndex(child)
++					return
++				elif child_call_time > time:
++					break
++			if not last_child:
++				if not found:
++					child = self.model.index(0, 0, parent)
++					self.view.setCurrentIndex(child)
++				return
++			found = True
++			self.view.setCurrentIndex(last_child)
++			parent = last_child
++
+ # Child data item  finder
  
- # Call tree data model level two item
-@@ -857,7 +858,7 @@ class CallTreeLevelThreeItem(CallTreeLevelTwoPlusItemBase):
- class CallTreeLevelTwoItem(CallTreeLevelTwoPlusItemBase):
- 
- 	def __init__(self, glb, params, row, comm_id, thread_id, pid, tid, parent_item):
--		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, 0, 0, parent_item)
-+		super(CallTreeLevelTwoItem, self).__init__(glb, params, row, comm_id, thread_id, 0, 0, 0, 0, 0, 0, parent_item)
- 		if self.params.have_ipc:
- 			self.data = [str(pid) + ":" + str(tid), "", "", "", "", "", "", "", "", "", "", ""]
- 		else:
+ class ChildDataItemFinder():
 -- 
 2.17.1
 
