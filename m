@@ -2,80 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E8EEF97C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:21:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E7797C7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:21:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729561AbfHUOVW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:21:22 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:38876 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729506AbfHUOVM (ORCPT
+        id S1729446AbfHUOVF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:21:05 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35812 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729386AbfHUOVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:21:12 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7LEKdOu103001;
-        Wed, 21 Aug 2019 09:20:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566397239;
-        bh=+HM46ZHoTYeCIzkWA3/7GYFT9x7XR/6vN+mvTfJEuGM=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=AwJp61CxMuh/qZ6Z+tt0Y3XIVJTR8NR/JOFGvkInTK8WHKNLAOblxPaZs1gbMHBH2
-         gCViEdyiz7/J2xVKY8lN4o+Xa8KbtC902F1BRuwi8jLvYAvHa16J0Ztdj2cP50H5Sq
-         64Fz7arbNcsJ5SyYImnG0oVRSWZomjS39rBK7wRM=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7LEKd30088773
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 21 Aug 2019 09:20:39 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 21
- Aug 2019 09:20:38 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 21 Aug 2019 09:20:38 -0500
-Received: from [10.250.98.116] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7LEKZtD117153;
-        Wed, 21 Aug 2019 09:20:36 -0500
-Subject: Re: [PATCH net-next] net: ethernet: ti: use
- devm_platform_ioremap_resource() to simplify code
-To:     YueHaibing <yuehaibing@huawei.com>, <davem@davemloft.net>,
-        <ivan.khoronzhuk@linaro.org>, <andrew@lunn.ch>, <ynezz@true.cz>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20190821124850.9592-1-yuehaibing@huawei.com>
-From:   Grygorii Strashko <grygorii.strashko@ti.com>
-Message-ID: <0a978de8-4b6e-d17d-7184-ce37aa7d1077@ti.com>
-Date:   Wed, 21 Aug 2019 17:20:34 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 21 Aug 2019 10:21:01 -0400
+Received: by mail-wr1-f66.google.com with SMTP id k2so2247402wrq.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 07:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=VmjppQ9kSJIbmhrJG4zlGsF2GtCs0UQY5wgxZMdQ2C8=;
+        b=qe/OLHqYfp7Cha4Xtsn+k5Rie/1zqnA6BkAn3UbobgKnv99doCcDfCsT9raoT3DwWT
+         Duhbp2Hwv0aRCwQfhGw5tpmTAmWOdGnULdiMCy1yEbqByk2k1lKkTFiC7zmAO5gUqxAP
+         3Et7hXC7VNpt42QmpSkjWQEYIJAM8GvqXKv5Ho5g04tcn1eIaUVzTQ5NKz0E373InoI3
+         zRHRK62m8CFRYBP7dJloJs3OSI4her46DbZH5FpPa/cYLZKzTHBAt6dzB1I/84vjA3rH
+         wJoKT6EGUV2Ye9SNj2kpA9pguKVzpJndsNGqN45Lle5YHxz651jNSUvzeGORzqbmC9JL
+         aFDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=VmjppQ9kSJIbmhrJG4zlGsF2GtCs0UQY5wgxZMdQ2C8=;
+        b=lPmik7/O5tAGonL3qTK4+o+9r6cXeIzg3HBYpff1H78qdIaGefTDNK3nnzG3Md1UnN
+         LgF4SpjDvhn10V5U9BHK8n9nS1+rKlWq6Qvh+cKiYkvxr+0IBpGyI3wg3+bQoGyH3sDA
+         COjiMTjaVZHfkKZ875g7nc/XPDBiiEHgotoP1nviqfsgwpbLdYhu1pdGl1ruWTcYYcKY
+         juMkvx169W+XENVzSIqhTq1fZi/J0Vy8n3sJ3rqt5MXUMlzBLWwoMn1i1a3c74p1JqF1
+         x8YLWqvW9QHHMEcThyooyU2Kr/HRKF9Z3g03V+ExPu6IUBzrB7NlMhvM5PWSaF4zVY+w
+         GJ4A==
+X-Gm-Message-State: APjAAAW5gG9b+0J9msvGi7MEmJE2Af7vmyEKfCeZryYoZxNG1V6LhKf0
+        fZ835YcVUN4dON8r9R6FjIP1Ew==
+X-Google-Smtp-Source: APXvYqyuJkv1+UxkiRrWbP6jf1b1y5tgQuhS+XTokxV95Wiw+0BUZP4OEBBqYv5ZWcVHzVadhPsHZw==
+X-Received: by 2002:adf:eac3:: with SMTP id o3mr688501wrn.264.1566397259055;
+        Wed, 21 Aug 2019 07:20:59 -0700 (PDT)
+Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id o9sm33418939wrm.88.2019.08.21.07.20.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 07:20:58 -0700 (PDT)
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     khilman@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 05/14] arm64: dts: meson-gx: fix watchdog compatible
+Date:   Wed, 21 Aug 2019 16:20:34 +0200
+Message-Id: <20190821142043.14649-6-narmstrong@baylibre.com>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190821142043.14649-1-narmstrong@baylibre.com>
+References: <20190821142043.14649-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190821124850.9592-1-yuehaibing@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This fixes the following DT schemas check errors:
+meson-gxbb-nanopi-k2.dt.yaml: watchdog@98d0: compatible:0: 'amlogic,meson-gx-wdt' is not one of ['amlogic,meson-gxbb-wdt']
+meson-gxl-s805x-libretech-ac.dt.yaml: watchdog@98d0: compatible:0: 'amlogic,meson-gx-wdt' is not one of ['amlogic,meson-gxbb-wdt']
 
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-gx.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 21/08/2019 15:48, YueHaibing wrote:
-> Use devm_platform_ioremap_resource() to simplify the code a bit.
-> This is detected by coccinelle.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->   drivers/net/ethernet/ti/cpsw.c | 5 ++---
->   1 file changed, 2 insertions(+), 3 deletions(-)
->
-
-Thank you.
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+index e2cdc9fce21c..00215ece17c8 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-gx.dtsi
+@@ -325,7 +325,7 @@
+ 			};
+ 
+ 			watchdog@98d0 {
+-				compatible = "amlogic,meson-gx-wdt", "amlogic,meson-gxbb-wdt";
++				compatible = "amlogic,meson-gxbb-wdt";
+ 				reg = <0x0 0x098d0 0x0 0x10>;
+ 				clocks = <&xtal>;
+ 			};
 -- 
-Best regards,
-grygorii
+2.22.0
+
