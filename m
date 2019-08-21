@@ -2,88 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 88D8D97C75
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:21:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF9697CAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:23:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729538AbfHUOVQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:21:16 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:35115 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729508AbfHUOVM (ORCPT
+        id S1729050AbfHUOXl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:23:41 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:34537 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728822AbfHUOXk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:21:12 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C3576240011;
-        Wed, 21 Aug 2019 14:21:10 +0000 (UTC)
-Date:   Wed, 21 Aug 2019 16:21:10 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     Alexander Dahl <ada@thorsis.com>, linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v5.2.9-rt3
-Message-ID: <20190821142110.GC27031@piout.net>
-References: <20190816153616.fbridfzjkmfg4dnr@linutronix.de>
- <2182739.9IRgZpf3R8@ada>
- <20190820154418.GM3545@piout.net>
- <20190821132553.gjvya5lu6j2dfyo5@linutronix.de>
+        Wed, 21 Aug 2019 10:23:40 -0400
+Received: by mail-wm1-f65.google.com with SMTP id e8so4901438wme.1
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 07:23:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=MeIRz49zUSO101yPFPumFneaHmwYwtM51Tjr9Kb8Aoc=;
+        b=FPTPr7AKFoEAtJgw6aZDY4psgNxe05guV8dT7zFJ9913dGTRk3fLE0lZXb7/GTqzsB
+         P1bJQCjPBEJXJ/2KUYAlCeFRRodlogIj47rjwM4J0xuscc6QoD/rs0Yt3PMuZE+mcUbW
+         jiCu9DNVIbZMkcj9TyV5RmLrlg90kXmveak6lOp3obcnjQe7hi1NeQTFjWZeMaiHF44Y
+         aVxuzJawYw+hVCIKFDqKkGvOImgavxfN+RoJCLq6G40aCx/NOLUNbJnf3M0X8EzOilVL
+         Q9riJeCWGx2TYavo/bSf5gMWJiHqgjxm+HbE7JxVry6GE0StuvkapL9qz+poy6Cicj6F
+         v+yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=MeIRz49zUSO101yPFPumFneaHmwYwtM51Tjr9Kb8Aoc=;
+        b=h+zHozjjmNAXmy0l1Q6zBC4aIQn0nzbz/vT/s2neX+WWBUjdT7QaOs8fecVJYGoMVg
+         PNZ4VLEvSPNg/oNFjVIg7Pa3shyK7W0cp5NYTwCtcpz46dwtlGDWajDKOBganPGnnsZg
+         0gUYBrj1Y0FG5ttFfJfP8D2t6X3em45UNykNQpSqrvUTQNcr9ThNT45FgWxQ4Hwl07Zp
+         PHCYKO/39ChZKj9wkuaSAjN33pvpqpuur4cIczG/1yB8Z+PGhvGqtlkfQO+VBihpLF8M
+         dpL4ZcvKmE5gROZHE/qCVpdMloGcVBXOs9cnP6diqBIbh2QmAAEU2G0HZXcins+QGtbd
+         7MfA==
+X-Gm-Message-State: APjAAAVbOw8scRw3I5cyw0VYsBjd0MBEfC0t3iayHtO5J04VEvoH/rSQ
+        vXMsej21xUy7pooAqdo0e8sv40R54J292Q==
+X-Google-Smtp-Source: APXvYqwKv6z6o5Sk44ujawNmgG37hFb2xCKq/VmQ3+kEMXDniE7TAfGXz/6GUulwX1aX76dOAmZ/zw==
+X-Received: by 2002:a05:600c:23cd:: with SMTP id p13mr322550wmb.86.1566397417626;
+        Wed, 21 Aug 2019 07:23:37 -0700 (PDT)
+Received: from [192.168.1.62] (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id x20sm48967944wrg.10.2019.08.21.07.23.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 21 Aug 2019 07:23:36 -0700 (PDT)
+Subject: Re: [PATCH 0/2] arm64: dts: meson: g12a: add tdm resets
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>
+Cc:     linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190820121551.18398-1-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ mQENBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAG0KE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT6JATsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIW5AQ0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAYkBHwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8guQINBFYnf6QBEADQ+wBYa+X2n/xIQz/RUoGHf84Jm+yTqRT43t7sO48/cBW9vAn9
+ GNwnJ3HRJWKATW0ZXrCr40ES/JqM1fUTfiFDB3VMdWpEfwOAT1zXS+0rX8yljgsWR1UvqyEP
+ 3xN0M/40Zk+rdmZKaZS8VQaXbveaiWMEmY7sBV3QvgOzB7UF2It1HwoCon5Y+PvyE3CguhBd
+ 9iq5iEampkMIkbA3FFCpQFI5Ai3BywkLzbA3ZtnMXR8Qt9gFZtyXvFQrB+/6hDzEPnBGZOOx
+ zkd/iIX59SxBuS38LMlhPPycbFNmtauOC0DNpXCv9ACgC9tFw3exER/xQgSpDVc4vrL2Cacr
+ wmQp1k9E0W+9pk/l8S1jcHx03hgCxPtQLOIyEu9iIJb27TjcXNjiInd7Uea195NldIrndD+x
+ 58/yU3X70qVY+eWbqzpdlwF1KRm6uV0ZOQhEhbi0FfKKgsYFgBIBchGqSOBsCbL35f9hK/JC
+ 6LnGDtSHeJs+jd9/qJj4WqF3x8i0sncQ/gszSajdhnWrxraG3b7/9ldMLpKo/OoihfLaCxtv
+ xYmtw8TGhlMaiOxjDrohmY1z7f3rf6njskoIXUO0nabun1nPAiV1dpjleg60s3OmVQeEpr3a
+ K7gR1ljkemJzM9NUoRROPaT7nMlNYQL+IwuthJd6XQqwzp1jRTGG26J97wARAQABiQM+BBgB
+ AgAJBQJWJ3+kAhsCAikJEBaat7Gkz/iuwV0gBBkBAgAGBQJWJ3+kAAoJEHfc29rIyEnRk6MQ
+ AJDo0nxsadLpYB26FALZsWlN74rnFXth5dQVQ7SkipmyFWZhFL8fQ9OiIoxWhM6rSg9+C1w+
+ n45eByMg2b8H3mmQmyWztdI95OxSREKwbaXVapCcZnv52JRjlc3DoiiHqTZML5x1Z7lQ1T3F
+ 8o9sKrbFO1WQw1+Nc91+MU0MGN0jtfZ0Tvn/ouEZrSXCE4K3oDGtj3AdC764yZVq6CPigCgs
+ 6Ex80k6QlzCdVP3RKsnPO2xQXXPgyJPJlpD8bHHHW7OLfoR9DaBNympfcbQJeekQrTvyoASw
+ EOTPKE6CVWrcQIztUp0WFTdRGgMK0cZB3Xfe6sOp24PQTHAKGtjTHNP/THomkH24Fum9K3iM
+ /4Wh4V2eqGEgpdeSp5K+LdaNyNgaqzMOtt4HYk86LYLSHfFXywdlbGrY9+TqiJ+ZVW4trmui
+ NIJCOku8SYansq34QzYM0x3UFRwff+45zNBEVzctSnremg1mVgrzOfXU8rt+4N1b2MxorPF8
+ 619aCwVP7U16qNSBaqiAJr4e5SNEnoAq18+1Gp8QsFG0ARY8xp+qaKBByWES7lRi3QbqAKZf
+ yOHS6gmYo9gBmuAhc65/VtHMJtxwjpUeN4Bcs9HUpDMDVHdfeRa73wM+wY5potfQ5zkSp0Jp
+ bxnv/cRBH6+c43stTffprd//4Hgz+nJcCgZKtCYIAPkUxABC85ID2CidzbraErVACmRoizhT
+ KR2OiqSLW2x4xdmSiFNcIWkWJB6Qdri0Fzs2dHe8etD1HYaht1ZhZ810s7QOL7JwypO8dscN
+ KTEkyoTGn6cWj0CX+PeP4xp8AR8ot4d0BhtUY34UPzjE1/xyrQFAdnLd0PP4wXxdIUuRs0+n
+ WLY9Aou/vC1LAdlaGsoTVzJ2gX4fkKQIWhX0WVk41BSFeDKQ3RQ2pnuzwedLO94Bf6X0G48O
+ VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <69a85842-3933-3965-9f4b-9d6a8432f766@baylibre.com>
+Date:   Wed, 21 Aug 2019 16:23:36 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821132553.gjvya5lu6j2dfyo5@linutronix.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190820121551.18398-1-jbrunet@baylibre.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/08/2019 15:25:54+0200, Sebastian Andrzej Siewior wrote:
-> On 2019-08-20 17:44:18 [+0200], Alexandre Belloni wrote:
-> > Hi,
-> Hi,
+On 20/08/2019 14:15, Jerome Brunet wrote:
+> This patchset adds the dedicated reset of the tdm formatters which
+> have been added on the g12a SoC family. Using these help with the channel
+> mapping when the formatter uses more than 1 i2s lane.
 > 
-> > On 19/08/2019 13:03:51+0200, Alexander Dahl wrote:
-> > > Hei hei,
-> > > 
-> > > just tried to compile this v5.2.9-rt3 for SAMA5D27-SOM1-EK1 based on 
-> > > arch/arm/configs/sama5_defconfig and with running oldconfig and selecting 
-> > > defaults, but that fails if CONFIG_ATMEL_TCB_CLKSRC_USE_SLOW_CLOCK is not set. 
-> > > 
-> > > I think this is due to changes for Atmel TCLIB in v5.2 and the not yet adapted 
-> > > RT patch "clocksource: TCLIB: Allow higher clock rates for clock events", 
-> > > right?
-> > 
-> > Patch clocksource-tclib-allow-higher-clockrates.patch needs to be
-> > changed so:
-> > 
-> > ret = setup_clkevents(tc, best_divisor_idx);
-> > 
-> > becomes
-> > 
-> > ret = setup_clkevents(&tc, best_divisor_idx);
-> > 
+> Kevin, please note that to build, this patchset depends on the new reset
+> bindings of the audio clock controller. I've prepared a tag for you [0]
 > 
-> I will fix that locally.
+> [0]: git://github.com/BayLibre/clk-meson.git - clk-meson-dt-v5.4-2
 > 
-> > Also, I would think clocksource-tclib-add-proper-depend.patch could be
-> > dropped. Instead, setup_clkevents should use atmel_tcb_divisors. It
-> > would then be necessary to move its declaration before the function.
-> > 
-> > Sebastian, can you take care of that or do you expect a patch? In the
-> > latter case, do you want a patch for the patch?
+> Jerome Brunet (2):
+>   arm64: dts: meson: g12a: audio clock controller provides resets
+>   arm64: dts: meson: g12a: add reset to tdm formatters
 > 
-> For the second part I would appreciate a patch. I can then drop
-> clocksource-tclib-add-proper-depend.patch if it is not an issue.
+>  arch/arm64/boot/dts/amlogic/meson-g12a.dtsi | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 > 
 
-I'm not sure it is worth it as the issue is introduced by
-clocksource-tclib-allow-higher-clockrates.patch. Shouldn't we fix it
-directly?
+For the serie,
 
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+
+Neil
