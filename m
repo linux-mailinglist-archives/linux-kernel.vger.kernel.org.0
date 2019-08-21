@@ -2,92 +2,139 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F3FA69873C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:24:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 613FB98758
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731195AbfHUWYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 18:24:37 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42000 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731165AbfHUWYc (ORCPT
+        id S1731228AbfHUWZ0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 18:25:26 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:35691 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728995AbfHUWZ0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 18:24:32 -0400
-Received: by mail-wr1-f66.google.com with SMTP id b16so3466823wrq.9
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:24:31 -0700 (PDT)
+        Wed, 21 Aug 2019 18:25:26 -0400
+Received: by mail-io1-f67.google.com with SMTP id i22so7939040ioh.2
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=60yWYtJLk0Xp9SLelz+MaI60GmV6Utt18fBkUyG2qxM=;
-        b=KJG2eemyCR3ZMbuekyI3MbIiJ81wrfp8NRjrwX0zZ7oMU2Tkk8yLrW3jJTGbAl/5k2
-         Sm69ZxmQP0OqEps0eURzAy9Ian/sT322RExh+edk4NxWuBzMSUuwcDptsNtfsEKgPk2d
-         ZB2R9eUNlO7qSm0ZNdV48+p/qivyjeW6rkY9LpWv0xsGpo01wPiPsRkkuO5xobtg9rHm
-         qw7P00OFPIldzDSTTMtWryFtEyScZ0a276vYE+SqPzFM82tubBrakI/AYpizDrZcN2Fh
-         tfGTvH+0bZEtkvXH3H7B9OYgmcs9pieyPM1aTXPJos47Imcr1a94Ze4xHd4liyWt35u9
-         5qSg==
+        d=arista.com; s=googlenew;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Oy2sEaeUKQmIQDPnRHPvhcv2oR+KrijeR8lZYw8C0/k=;
+        b=CSPe5oLS5GCxhgWQHq7yG/45Wg9e/dcWfFbvVFUOIsEVMJdZpfA/aKz+r7CI1beOsg
+         86MdsJUsnV+wsOxFltJkf3VxoPs3AeT+rO9MHIufSAnfPYcJGgCo9VCu3C791QS2ksW8
+         fnVsI6EvzYRseYPoUwiicdAuYpiIrE3mZ4LUbeQYrGq+ffvzPF1WozYb9yFaPKcDXFlt
+         VuF0CNfyYEmTcstqpLwpCtL6a1vV4HLPjueD8ZFRQAECGw5vNqbeZn/Sdt/LBlFb/FlP
+         BykJ83k8VyhtKxLpHT1xX3wXOfcpZR2LPiidgFv/MpUnsXkVKkuChZE46KTAO+DgvcFq
+         KKJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=60yWYtJLk0Xp9SLelz+MaI60GmV6Utt18fBkUyG2qxM=;
-        b=TyjHVFvqkLzuQvI31ZahMDcpOdMrqNq+DO6pXoacMYtjCwuyG1vIne0IbGLT8JFwPe
-         ESnK59ZcbueTppJLU/xrqD2B3xc50W+m899ZPDvhc1F21T2aNHnzPk9xdG0ixbj+9PXW
-         1heg6L1J5HBa894vvbZ6SUmxctwuu0ha4osH3FAqiKMJUNr5WFQTz1jluzPcL+OSnF9s
-         4sMgIkGHyRJ0Au0oEfiMPgUCtdpoykic+tdrWuGG6SRumdnU5gb/Ag6fDPlnwML/Puy7
-         tU+9xnBBaiEZHjqZ17EDB7tZfVA/bnR6xO82F+NvR20obcf2oufM6oK/rm4FeLo5kIv6
-         vPsg==
-X-Gm-Message-State: APjAAAUME4/snpTiCbbVVN/rmylNr1HL62laWJevBwXscIfoNSGNo+vm
-        h5xTyfIPMjifa9BDEx9OTuyiNA==
-X-Google-Smtp-Source: APXvYqwht9LxVlp9IlMJVSETg91KaKJdV8dNDW+36WtFIIU2sF1g0DYgdyCLqNQoYIb7xJh8BnZBXg==
-X-Received: by 2002:adf:c7cb:: with SMTP id y11mr36896014wrg.281.1566426270465;
-        Wed, 21 Aug 2019 15:24:30 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:cb1d:6e7:d500:82a9:347a:43f3:d2ca])
-        by smtp.gmail.com with ESMTPSA id f197sm3548549wme.22.2019.08.21.15.24.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 15:24:30 -0700 (PDT)
-From:   Guillaume La Roque <glaroque@baylibre.com>
-To:     rui.zhang@intel.com, edubezval@gmail.com, daniel.lezcano@linaro.org
-Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH v4 6/6] MAINTAINERS: add entry for Amlogic Thermal driver
-Date:   Thu, 22 Aug 2019 00:24:21 +0200
-Message-Id: <20190821222421.30242-7-glaroque@baylibre.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190821222421.30242-1-glaroque@baylibre.com>
-References: <20190821222421.30242-1-glaroque@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Oy2sEaeUKQmIQDPnRHPvhcv2oR+KrijeR8lZYw8C0/k=;
+        b=qmIrB8dtxGKHJWhViexTiDs/5o6/oI0gFaYLNbfIVMTnjNvn4Bta12YAsSjWaR7N35
+         /t5ijQnCzofKhzYQqDviSR78VNpGxzbg2Q9o7StP4qm5e5ZiAXGEKH/mzVczSuhi3N5J
+         f6Nez9Pu+5u3Ol8FhNsnopPR5neetmhVfSZsS+6mlZZVbqBkA/YVdNMPS4tTmkzV/4lx
+         N/WEITqrXzdYIbBThF8wYtgc4XXhQ7vLueOobB5vWhkxYMPCFS+VOeL+qeq5R7/JKuIH
+         gOf4cXai7pfyMgwP3r3nx+mCER5+pnp0upm3/KDjzmlfcS72HdAJY91DrHf9OlHL57tu
+         J2ww==
+X-Gm-Message-State: APjAAAWB5y7j6MJf6lzw88LrEoPWb9t8RI6awiAtn0k+sD9M9l7lxPKx
+        plylOzSLO2Rp2PuhUp5I7B/t4JP8X47RmO7YpOTAnQ==
+X-Google-Smtp-Source: APXvYqxogVj5UGWnLw3ZYO4+aHd3dAgmuZTb+9ASSNDaOafz38TIIp6+hr7TuauJyMcZe39gLj9RHKEIQTyQ3LHEXRE=
+X-Received: by 2002:a5e:8e0d:: with SMTP id a13mr38379962ion.28.1566426325439;
+ Wed, 21 Aug 2019 15:25:25 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190821001445.32114-1-echron@arista.com> <alpine.DEB.2.21.1908202024300.141379@chino.kir.corp.google.com>
+In-Reply-To: <alpine.DEB.2.21.1908202024300.141379@chino.kir.corp.google.com>
+From:   Edward Chron <echron@arista.com>
+Date:   Wed, 21 Aug 2019 15:25:13 -0700
+Message-ID: <CAM3twVSfO7Z-fgHxy0CDgnJ33X6OgRzbrF+210QSGfPF4mxEuQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/oom: Add oom_score_adj value to oom Killed process message
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add myself as maintainer for Amlogic Thermal driver.
+On Tue, Aug 20, 2019 at 8:25 PM David Rientjes <rientjes@google.com> wrote:
+>
+> On Tue, 20 Aug 2019, Edward Chron wrote:
+>
+> > For an OOM event: print oom_score_adj value for the OOM Killed process to
+> > document what the oom score adjust value was at the time the process was
+> > OOM Killed. The adjustment value can be set by user code and it affects
+> > the resulting oom_score so it is used to influence kill process selection.
+> >
+> > When eligible tasks are not printed (sysctl oom_dump_tasks = 0) printing
+> > this value is the only documentation of the value for the process being
+> > killed. Having this value on the Killed process message documents if a
+> > miscconfiguration occurred or it can confirm that the oom_score_adj
+> > value applies as expected.
+> >
+> > An example which illustates both misconfiguration and validation that
+> > the oom_score_adj was applied as expected is:
+> >
+> > Aug 14 23:00:02 testserver kernel: Out of memory: Killed process 2692
+> >  (systemd-udevd) total-vm:1056800kB, anon-rss:1052760kB, file-rss:4kB,
+> >  shmem-rss:0kB oom_score_adj:1000
+> >
+> > The systemd-udevd is a critical system application that should have an
+> > oom_score_adj of -1000. Here it was misconfigured to have a adjustment
+> > of 1000 making it a highly favored OOM kill target process. The output
+> > documents both the misconfiguration and the fact that the process
+> > was correctly targeted by OOM due to the miconfiguration. Having
+> > the oom_score_adj on the Killed message ensures that it is documented.
+> >
+> > Signed-off-by: Edward Chron <echron@arista.com>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+>
+> Acked-by: David Rientjes <rientjes@google.com>
+>
+> vm.oom_dump_tasks is pretty useful, however, so it's curious why you
+> haven't left it enabled :/
+>
+> > diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> > index eda2e2a0bdc6..c781f73b6cd6 100644
+> > --- a/mm/oom_kill.c
+> > +++ b/mm/oom_kill.c
+> > @@ -884,12 +884,13 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+> >        */
+> >       do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+> >       mark_oom_victim(victim);
+> > -     pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+> > +     pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB oom_score_adj:%ld\n",
+> >               message, task_pid_nr(victim), victim->comm,
+> >               K(victim->mm->total_vm),
+> >               K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+> >               K(get_mm_counter(victim->mm, MM_FILEPAGES)),
+> > -             K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
+> > +             K(get_mm_counter(victim->mm, MM_SHMEMPAGES)),
+> > +             (long)victim->signal->oom_score_adj);
+> >       task_unlock(victim);
+> >
+> >       /*
+>
+> Nit: why not just use %hd and avoid the cast to long?
 
-Signed-off-by: Guillaume La Roque <glaroque@baylibre.com>
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
----
- MAINTAINERS | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Sorry I may have accidently top posted my response to this. Here is
+where my response should go:
+-----------------------------------------------------------------------------------------------------------------------------------
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index fb2b12f75c37..299f27d11058 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -15910,6 +15910,15 @@ F:	Documentation/driver-api/thermal/cpu-cooling-api.rst
- F:	drivers/thermal/cpu_cooling.c
- F:	include/linux/cpu_cooling.h
- 
-+THERMAL DRIVER FOR AMLOGIC SOCS
-+M:	Guillaume La Roque <glaroque@baylibre.com>
-+L:	linux-pm@vger.kernel.org
-+L:	linux-amlogic@lists.infradead.org
-+W:	http://linux-meson.com/
-+S:	Supported
-+F:	drivers/thermal/amlogic_thermal.c
-+F:	Documentation/devicetree/bindings/thermal/amlogic,thermal.yaml
-+
- THINKPAD ACPI EXTRAS DRIVER
- M:	Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>
- L:	ibm-acpi-devel@lists.sourceforge.net
--- 
-2.17.1
+Good point, I can post this with your correction.
 
+I will add your Acked-by: David Rientjes <rientjes@google.com>
+
+I am adding your Acked-by to the revised patch as this is what Michal
+asked me to do (so I assume that is what I should do).
+
+Should I post as a separate fix again or simply post here?
+
+I'll post here and if you prefer a fresh submission, let me know and
+I'll do that.
+
+Thank-you for reviewing this patch.
