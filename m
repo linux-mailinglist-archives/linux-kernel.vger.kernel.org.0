@@ -2,76 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8FBF797AB1
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 15:26:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D26CB97AB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 15:26:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728914AbfHUN0B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 09:26:01 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:55714 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728007AbfHUNZ7 (ORCPT
+        id S1728953AbfHUN0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 09:26:40 -0400
+Received: from esa1.mentor.iphmx.com ([68.232.129.153]:40784 "EHLO
+        esa1.mentor.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727696AbfHUN0k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 09:25:59 -0400
-Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
-        (envelope-from <bigeasy@linutronix.de>)
-        id 1i0Qcc-0004vS-8Y; Wed, 21 Aug 2019 15:25:54 +0200
-Date:   Wed, 21 Aug 2019 15:25:54 +0200
-From:   Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Alexander Dahl <ada@thorsis.com>, linux-rt-users@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>
-Subject: Re: [ANNOUNCE] v5.2.9-rt3
-Message-ID: <20190821132553.gjvya5lu6j2dfyo5@linutronix.de>
-References: <20190816153616.fbridfzjkmfg4dnr@linutronix.de>
- <2182739.9IRgZpf3R8@ada>
- <20190820154418.GM3545@piout.net>
+        Wed, 21 Aug 2019 09:26:40 -0400
+IronPort-SDR: 7j2Z56FFfIepJyetTZovoxgviVJOH7ipw3hJQMdBeVoPswvP5Ti4MNfOcxb3AWgQL34enU5IJY
+ r5wAMHittg4puQiq+vUegD2ITNodIFy0Kqg8B348eavI8F1NC0q6v1eYQMBBwY2bsYjEBqbBZU
+ o5BBAFJYCleyE/66vtzoZTR1dNHDZxpkpwuf7PCUpjo6XukvcwVUCclIi3Yz28SC4BXdLRCqnp
+ BpfgFwGEuoGFrKO6vseINY8iWOEcSbBbA3eehKui5StzwGqglksVA3z/dqLZlNRMr5QE6GBvRS
+ CIk=
+X-IronPort-AV: E=Sophos;i="5.64,412,1559548800"; 
+   d="scan'208";a="42441806"
+Received: from orw-gwy-02-in.mentorg.com ([192.94.38.167])
+  by esa1.mentor.iphmx.com with ESMTP; 21 Aug 2019 05:26:39 -0800
+IronPort-SDR: 0Vak9Dte74vvmXy+EK/D6kEgdUPzQJTOQHvY9KYoCb8EXdCalOfxT9m75zsu3YrybU+jjvqRyG
+ Y49rCq9p82P/N3Mhm+etbys7AMIWIjM40tdKmSmf4O3k+xmRB9Z9UhW+AXyZ5zkGn+tnvDLrXs
+ smweiatWLsRpA+YdlxyCHYMa94L+agNIN/7L6be8AO+ckym/qW5i4DdvE6ndESeadDbBfX37Mw
+ eRRWgqRGkTiR/LmzST43hS64Dm39UQ5+B5o0szZXW1jYwJ//ZK1lq1KFewI0Pm9VPIaNa6bCWX
+ WmY=
+Subject: Re: [PATCH v1 03/63] Input: atmel_mxt_ts - only read messages in
+ mxt_acquire_irq() when necessary
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+CC:     <nick@shmanahar.org>, <linux-input@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <george_davis@mentor.com>
+References: <20190816082952.17985-1-jiada_wang@mentor.com>
+ <20190816082952.17985-4-jiada_wang@mentor.com>
+ <20190816171622.GF121898@dtor-ws>
+From:   Jiada Wang <jiada_wang@mentor.com>
+Message-ID: <558e1227-7671-0838-d4e0-f234833c0973@mentor.com>
+Date:   Wed, 21 Aug 2019 22:26:31 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190820154418.GM3545@piout.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190816171622.GF121898@dtor-ws>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: svr-orw-mbx-02.mgc.mentorg.com (147.34.90.202) To
+ svr-orw-mbx-03.mgc.mentorg.com (147.34.90.203)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-08-20 17:44:18 [+0200], Alexandre Belloni wrote:
-> Hi,
-Hi,
+Hi Dmitry
 
-> On 19/08/2019 13:03:51+0200, Alexander Dahl wrote:
-> > Hei hei,
-> > 
-> > just tried to compile this v5.2.9-rt3 for SAMA5D27-SOM1-EK1 based on 
-> > arch/arm/configs/sama5_defconfig and with running oldconfig and selecting 
-> > defaults, but that fails if CONFIG_ATMEL_TCB_CLKSRC_USE_SLOW_CLOCK is not set. 
-> > 
-> > I think this is due to changes for Atmel TCLIB in v5.2 and the not yet adapted 
-> > RT patch "clocksource: TCLIB: Allow higher clock rates for clock events", 
-> > right?
+On 2019/08/17 2:16, Dmitry Torokhov wrote:
+> On Fri, Aug 16, 2019 at 05:28:52PM +0900, Jiada Wang wrote:
+>> From: Nick Dyer <nick.dyer@itdev.co.uk>
+>>
+>> The workaround of reading all messages until an invalid is received is a
+>> way of forcing the CHG line high, which means that when using
+>> edge-triggered interrupts the interrupt can be acquired.
+>>
+>> With level-triggered interrupts the workaround is unnecessary.
+>>
+>> Also, most recent maXTouch chips have a feature called RETRIGEN which, when
+>> enabled, reasserts the interrupt line every cycle if there are messages
+>> waiting. This also makes the workaround unnecessary.
+>>
+>> Note: the RETRIGEN feature is only in some firmware versions/chips, it's
+>> not valid simply to enable the bit.
 > 
-> Patch clocksource-tclib-allow-higher-clockrates.patch needs to be
-> changed so:
+> Instead of trying to work around of misconfiguration for IRQ/firmware,
+> can we simply error out of probe if we see a level interrupt with
+> !RETRIGEN firmware?
 > 
-> ret = setup_clkevents(tc, best_divisor_idx);
-> 
-> becomes
-> 
-> ret = setup_clkevents(&tc, best_divisor_idx);
-> 
+I think for old firmwares, which doesn't support RETRIGEN feature, this 
+workaround is needed, otherwise we will break all old firmwares, which 
+configured with edge-triggered IRQ
 
-I will fix that locally.
+for recent firmwares which support RETRIGEN feature, we can fail probe, 
+if RETRIGEN is not enabled, and configured with edge-triggered IRQ.
 
-> Also, I would think clocksource-tclib-add-proper-depend.patch could be
-> dropped. Instead, setup_clkevents should use atmel_tcb_divisors. It
-> would then be necessary to move its declaration before the function.
+what is your thought?
+
+Thanks,
+Jiada
+> Thanks.
 > 
-> Sebastian, can you take care of that or do you expect a patch? In the
-> latter case, do you want a patch for the patch?
-
-For the second part I would appreciate a patch. I can then drop
-clocksource-tclib-add-proper-depend.patch if it is not an issue.
-
-Sebastian
