@@ -2,117 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37532975FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 11:24:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F3B06975FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 11:24:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfHUJX7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 05:23:59 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34499 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726617AbfHUJX6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 05:23:58 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n9so988875pgc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 02:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=WXbOIV/PPnZXH5Oc2xbiQaU6gpzCgh5LD6kBid8zVsA=;
-        b=k6ZdTrjOyX6/Zkg+v/eumDTkOMoX0cDzEk/+N+cSipXCBUg5Ewl+I/0l4ynujhqCze
-         N4ohG9Ii1D8knSNi6L0Ec6olYpTIHsnQTKQwMgrD0IF4x91LPIAsOqVVYi3zOqB18jbH
-         wrSyWUytB6HonPktkMHa2K9hd9dELtUJrBdEsxUVFu+JhUjBkXx9RENqcp2ncHHI06Hl
-         DdL7PXSKO2tu5z9HmL2agE6Ktw1i6OMSMeOFUC2L/L1JrpISjas4YAoRJNS1rjsm6+v2
-         CpjdbO2zACkVLoREccR+o0Y98SummfnKh258G9S0vOkRxtpKcp6oCjOfzn6NKlCJiHAP
-         NV0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=WXbOIV/PPnZXH5Oc2xbiQaU6gpzCgh5LD6kBid8zVsA=;
-        b=co+6K9kEpdDmiWVw/jxzoHS31wI43OBkMx/omOd32IpfZK4bLX4Lb6LgNaBXzsGmD7
-         cM9skhcMUwHeUOK+rJboE1pAeRdlcSQStdH5PtaRTM0fMqOt3qFT2p9cpbVIJ0a4HgrF
-         Dwc7b+SFwnFMK+eWzgnfPA6qVcAE2pWC0J8bdY1hwWk4wEUFkam+p8vpYLCM0oITEvOF
-         qmWvnb02qAYjfK2xSAwqlzLGJUy0E+ylxFPASZHevsCICMiAdLukcsTccBfNWmH2VozP
-         ZFIEgFoYSR84S/Px3tdeoTNzWQnG9HlnEi47Uof2THuPyT7XxTxviZOycUiHbHjU6YAt
-         4/bw==
-X-Gm-Message-State: APjAAAUXww3zN5X2cgUzLus50fbk1NA0UMHu5hjY7X+1rpto1ikndvAH
-        zxaFip17m565ke4N0ypr+PmImw==
-X-Google-Smtp-Source: APXvYqzunXgF31zpY1az1veH6ySJAQHsK32XBPJ//0IqOBTv828KbyMMDM8C1V6Iwrp5vB7Bf2/XWg==
-X-Received: by 2002:a62:fb15:: with SMTP id x21mr35726157pfm.233.1566379437943;
-        Wed, 21 Aug 2019 02:23:57 -0700 (PDT)
-Received: from buildserver-90.open-silicon.com ([114.143.65.226])
-        by smtp.googlemail.com with ESMTPSA id s7sm25721327pfb.138.2019.08.21.02.23.53
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Aug 2019 02:23:57 -0700 (PDT)
-From:   Yash Shah <yash.shah@sifive.com>
-To:     robh+dt@kernel.org, mark.rutland@arm.com, paul.walmsley@sifive.com
-Cc:     palmer@sifive.com, aou@eecs.berkeley.edu, bmeng.cn@gmail.com,
-        sagar.kadam@sifive.com, devicetree@vger.kernel.org,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        sachin.ghadi@sifive.com, Yash Shah <yash.shah@sifive.com>
-Subject: [PATCH] riscv: dts: Add DT support for SiFive FU540 PWM driver
-Date:   Wed, 21 Aug 2019 14:53:40 +0530
-Message-Id: <1566379420-26762-1-git-send-email-yash.shah@sifive.com>
-X-Mailer: git-send-email 1.9.1
+        id S1727125AbfHUJYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 05:24:16 -0400
+Received: from foss.arm.com ([217.140.110.172]:55040 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726617AbfHUJYP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 05:24:15 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9824428;
+        Wed, 21 Aug 2019 02:24:14 -0700 (PDT)
+Received: from e108454-lin.cambridge.arm.com (e108454-lin.cambridge.arm.com [10.1.196.50])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8AADA3F706;
+        Wed, 21 Aug 2019 02:24:13 -0700 (PDT)
+From:   Julien Grall <julien.grall@arm.com>
+To:     linux-rt-users@vger.kernel.org
+Cc:     tglx@linutronix.de, linux-kernel@vger.kernel.org, maz@kernel.org,
+        bigeasy@linutronix.de, rostedt@goodmis.org,
+        Julien Grall <julien.grall@arm.com>
+Subject: [RT PATCH 0/3] hrtimer: RT fixes for hrtimer_grab_expiry_lock()
+Date:   Wed, 21 Aug 2019 10:24:06 +0100
+Message-Id: <20190821092409.13225-1-julien.grall@arm.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the PWM DT node in SiFive FU540 soc-specific DT file.
-Enable the PWM nodes in HiFive Unleashed board-specific DT file.
+Hi all,
 
-Signed-off-by: Yash Shah <yash.shah@sifive.com>
----
- arch/riscv/boot/dts/sifive/fu540-c000.dtsi          | 19 +++++++++++++++++++
- arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts |  8 ++++++++
- 2 files changed, 27 insertions(+)
+This small series contains a few fixes for the hrtimer code in RT linux
+(v5.2.9-rt3-rebase).
 
-diff --git a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-index 42b5ec2..bb422db 100644
---- a/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-+++ b/arch/riscv/boot/dts/sifive/fu540-c000.dtsi
-@@ -230,6 +230,25 @@
- 			#size-cells = <0>;
- 			status = "disabled";
- 		};
-+		pwm0: pwm@10020000 {
-+			compatible = "sifive,pwm0";
-+			reg = <0x0 0x10020000 0x0 0x1000>;
-+			interrupt-parent = <&plic0>;
-+			interrupts = <42 43 44 45>;
-+			clocks = <&prci PRCI_CLK_TLCLK>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
-+		pwm1: pwm@10021000 {
-+			compatible = "sifive,pwm0";
-+			reg = <0x0 0x10021000 0x0 0x1000>;
-+			interrupt-parent = <&plic0>;
-+			interrupts = <46 47 48 49>;
-+			reg-names = "control";
-+			clocks = <&prci PRCI_CLK_TLCLK>;
-+			#pwm-cells = <3>;
-+			status = "disabled";
-+		};
- 
- 	};
- };
-diff --git a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-index 93d68cb..104d334 100644
---- a/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-+++ b/arch/riscv/boot/dts/sifive/hifive-unleashed-a00.dts
-@@ -85,3 +85,11 @@
- 		reg = <0>;
- 	};
- };
-+
-+&pwm0 {
-+	status = "okay";
-+};
-+
-+&pwm1 {
-+	status = "okay";
-+};
+The patch #2 contains a error I managed to reproduce. The other two are
+were found while looking at the code.
+
+Cheers,
+
+Julien Grall (3):
+  hrtimer: Use READ_ONCE to access timer->base in
+    hrimer_grab_expiry_lock()
+  hrtimer: Don't grab the expiry lock for non-soft hrtimer
+  hrtimer: Prevent using uninitialized spin_lock in
+    hrtimer_grab_expiry_lock()
+
+ kernel/time/hrtimer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
 -- 
-1.9.1
+2.11.0
 
