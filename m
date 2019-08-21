@@ -2,201 +2,201 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0040297D43
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:39:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 94DE997D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 16:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729563AbfHUOix (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 10:38:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38562 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729486AbfHUOiv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 10:38:51 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4FAA923403;
-        Wed, 21 Aug 2019 14:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566398330;
-        bh=pn/uJER7PFGwozA06AW0T66hI7CzN2YyTKZKxVMBqDI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tfqHRJ8r0kVu25YN0mX/BohJ7zvMI4cZvdjhVn3triarWc6pdhCQS5fOh7RLu+I6Y
-         GiGb02oaRiAK/0qGHoFOS7duS5c6K3jHWTMapuQPuFs5w4NuW9nRxqtsit3esz8W2H
-         iWTIyEy+zShd4uG9YVw8fAOrS5LI6xIN5//WFap0=
-From:   Maxime Ripard <mripard@kernel.org>
-To:     linux@roeck-us.net, wim@linux-watchdog.org
-Cc:     linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: [PATCH RESEND v2 6/6] ARM: dts: sunxi: Add missing watchdog clocks
-Date:   Wed, 21 Aug 2019 16:38:35 +0200
-Message-Id: <20190821143835.7294-6-mripard@kernel.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190821143835.7294-1-mripard@kernel.org>
-References: <20190821143835.7294-1-mripard@kernel.org>
+        id S1729582AbfHUOjB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 10:39:01 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43922 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729486AbfHUOjA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 10:39:00 -0400
+Received: by mail-pf1-f193.google.com with SMTP id v12so1559114pfn.10
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 07:38:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=77fm/A9akH2UeKK5kqjedVz5UwQucyOjCl8zUOpU7ug=;
+        b=fbhpcO1R/fWG5Nm83IjVkCrIVKDZKS9V3sxTqyAYhrtBBZgTcnRMeCgZ7AEZtMv9QV
+         muoqBmGHJOAB30JSIFiMevxhiFaVCwCiGKt5VsnwGx4h5rlman8F6jwMXyr837SFPA5m
+         z8DMm1PYsQBjfM2jyqzPUvTVWBFsZT4673K8Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=77fm/A9akH2UeKK5kqjedVz5UwQucyOjCl8zUOpU7ug=;
+        b=AT7md91pN/gRUKfblz978ohKGeXU+Mo7SL3hl3Z6dL0OA/+1hXIdz9/JiWOiifNYbB
+         bGPmUSWKHWGbkzCcihRL2QopI0BpHOCh1y12O//PoaophvC1QM5TKkV+NHsZXHXtGBN1
+         ALUGBqOx1dSeG9uKFlyKbcZTNtGdup3u0ZE5Hd0PxnYEyFGKfii0kAxa8A2snVF5eHEY
+         irvX6OpejGktJDwRJyV0SUlM+gnPbf7Vea0pRNiH+ksW84ecT313Fev0NcvQizth31ZL
+         N3YH1hg2+W8huK3Y84v5/IYqTHRezptgi6FUeRV7HZhcXCaina8KtRSJY8Znus1mO2ag
+         Nj5Q==
+X-Gm-Message-State: APjAAAV7pH9Y+n99TmqzTwKjg9Q9NPpL18vn5IYPf/Yk3hijr2WZJsH2
+        etr+ACv8AiXAh4twW1szYOCj8LYL/fA=
+X-Google-Smtp-Source: APXvYqyfukO3Q7fY8oZ+mbVO5pNBBsRPg8mGVGh1yKUWHCyu0WsgWz8Az7J6QCS2p2e/X1OmC6mOZA==
+X-Received: by 2002:a63:7b18:: with SMTP id w24mr29511178pgc.328.1566398339050;
+        Wed, 21 Aug 2019 07:38:59 -0700 (PDT)
+Received: from localhost ([172.19.216.18])
+        by smtp.gmail.com with ESMTPSA id o24sm133521pjq.8.2019.08.21.07.38.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 07:38:58 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 10:38:41 -0400
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        rcu@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>
+Subject: Re: [RFC v2] rcu/tree: Try to invoke_rcu_core() if in_irq() during
+ unlock
+Message-ID: <20190821143841.GC147977@google.com>
+References: <20190818223511.GB143857@google.com>
+ <20190818233135.GQ28441@linux.ibm.com>
+ <20190818233839.GA160903@google.com>
+ <20190819012153.GR28441@linux.ibm.com>
+ <20190819014143.GB160903@google.com>
+ <20190819014623.GC160903@google.com>
+ <20190819022927.GS28441@linux.ibm.com>
+ <20190819125757.GA6946@linux.ibm.com>
+ <20190819143314.GT28441@linux.ibm.com>
+ <20190819154143.GA18470@linux.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190819154143.GA18470@linux.ibm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+On Mon, Aug 19, 2019 at 08:41:43AM -0700, Paul E. McKenney wrote:
+> On Mon, Aug 19, 2019 at 07:33:14AM -0700, Paul E. McKenney wrote:
+> > On Mon, Aug 19, 2019 at 05:57:57AM -0700, Paul E. McKenney wrote:
+> > > On Sun, Aug 18, 2019 at 07:29:27PM -0700, Paul E. McKenney wrote:
+> > > > On Sun, Aug 18, 2019 at 09:46:23PM -0400, Joel Fernandes wrote:
+> > > > > On Sun, Aug 18, 2019 at 09:41:43PM -0400, Joel Fernandes wrote:
+> > > > > > On Sun, Aug 18, 2019 at 06:21:53PM -0700, Paul E. McKenney wrote:
+> > > > > [snip]
+> > > > > > > > > Also, your commit log's point #2 is "in_irq() implies in_interrupt()
+> > > > > > > > > which implies raising softirq will not do any wake ups."  This mention
+> > > > > > > > > of softirq seems a bit odd, given that we are going to wake up a rcuc
+> > > > > > > > > kthread.  Of course, this did nothing to quell my suspicions.  ;-)
+> > > > > > > > 
+> > > > > > > > Yes, I should delete this #2 from the changelog since it is not very relevant
+> > > > > > > > (I feel now). My point with #2 was that even if were to raise a softirq
+> > > > > > > > (which we are not), a scheduler wakeup of ksoftirqd is impossible in this
+> > > > > > > > path anyway since in_irq() implies in_interrupt().
+> > > > > > > 
+> > > > > > > Please!  Could you also add a first-principles explanation of why
+> > > > > > > the added condition is immune from scheduler deadlocks?
+> > > > > > 
+> > > > > > Sure I can add an example in the change log, however I was thinking of this
+> > > > > > example which you mentioned:
+> > > > > > https://lore.kernel.org/lkml/20190627173831.GW26519@linux.ibm.com/
+> > > > > > 
+> > > > > > 	previous_reader()
+> > > > > > 	{
+> > > > > > 		rcu_read_lock();
+> > > > > > 		do_something(); /* Preemption happened here. */
+> > > > > > 		local_irq_disable(); /* Cannot be the scheduler! */
+> > > > > > 		do_something_else();
+> > > > > > 		rcu_read_unlock();  /* Must defer QS, task still queued. */
+> > > > > > 		do_some_other_thing();
+> > > > > > 		local_irq_enable();
+> > > > > > 	}
+> > > > > > 
+> > > > > > 	current_reader() /* QS from previous_reader() is still deferred. */
+> > > > > > 	{
+> > > > > > 		local_irq_disable();  /* Might be the scheduler. */
+> > > > > > 		do_whatever();
+> > > > > > 		rcu_read_lock();
+> > > > > > 		do_whatever_else();
+> > > > > > 		rcu_read_unlock();  /* Must still defer reporting QS. */
+> > > > > > 		do_whatever_comes_to_mind();
+> > > > > > 		local_irq_enable();
+> > > > > > 	}
+> > > > > > 
+> > > > > > One modification of the example could be, previous_reader() could also do:
+> > > > > > 	previous_reader()
+> > > > > > 	{
+> > > > > > 		rcu_read_lock();
+> > > > > > 		do_something_that_takes_really_long(); /* causes need_qs in
+> > > > > > 							  the unlock_special_union to be set */
+> > > > > > 		local_irq_disable(); /* Cannot be the scheduler! */
+> > > > > > 		do_something_else();
+> > > > > > 		rcu_read_unlock();  /* Must defer QS, task still queued. */
+> > > > > > 		do_some_other_thing();
+> > > > > > 		local_irq_enable();
+> > > > > > 	}
+> > > > > 
+> > > > > The point you were making in that thread being, current_reader() ->
+> > > > > rcu_read_unlock() -> rcu_read_unlock_special() would not do any wakeups
+> > > > > because previous_reader() sets the deferred_qs bit.
+> > > > > 
+> > > > > Anyway, I will add all of this into the changelog.
+> > > > 
+> > > > Examples are good, but what makes it so that there are no examples of
+> > > > its being unsafe?
+> > > > 
+> > > > And a few questions along the way, some quick quiz, some more serious.
+> > > > Would it be safe if it checked in_interrupt() instead of in_irq()?
+> > > > If not, should the in_interrupt() in the "if" condition preceding the
+> > > > added "else if" be changed to in_irq()?  Would it make sense to add an
+> > > > "|| !irqs_were_disabled" do your new "else if" condition?  Would the
+> > > > body of the "else if" actually be executed in current mainline?
+> > > > 
+> > > > In an attempt to be at least a little constructive, I am doing some
+> > > > testing of this patch overnight, along with a WARN_ON_ONCE() to see if
+> > > > that invoke_rcu_core() is ever reached.
+> > > 
+> > > And that WARN_ON_ONCE() never triggered in two-hour rcutorture runs of
+> > > TREE01, TREE02, TREE03, and TREE09.  (These are the TREE variants in
+> > > CFLIST that have CONFIG_PREEMPT=y.)
+> > > 
+> > > This of course raises other questions.  But first, do you see that code
+> > > executing in your testing?
+> > 
+> > Never mind!  Idiot here forgot the "--bootargs rcutree.use_softirq"...
+> 
+> So this time I ran the test this way:
+> 
+> tools/testing/selftests/rcutorture/bin/kvm.sh --cpus 8 --duration 10 --configs "TREE01 TREE02 TREE03 TREE09" --bootargs "rcutree.use_softirq=0"
+> 
+> Still no splats.  Though only 10-minute runs instead of the two-hour runs
+> I did last night.  (Got other stuff I need to do, sorry!)
+> 
+> My test version of your patch is shown below.  Please let me know if I messed
+> something up.
 
-The watchdog has a clock on all our SoCs, but it wasn't always listed.
-Add it to the devicetree where it's missing.
+I think you also need to pass rcutorture.irqreader=1 ?
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Otherwise seems all readers happen in process context AFAICS.
 
----
+thanks,
 
-Changes from v1:
-  - New patch
----
- arch/arm/boot/dts/sun4i-a10.dtsi              | 1 +
- arch/arm/boot/dts/sun5i.dtsi                  | 1 +
- arch/arm/boot/dts/sun6i-a31.dtsi              | 1 +
- arch/arm/boot/dts/sun7i-a20.dtsi              | 1 +
- arch/arm/boot/dts/sun8i-a23-a33.dtsi          | 1 +
- arch/arm/boot/dts/sun8i-r40.dtsi              | 1 +
- arch/arm/boot/dts/sun8i-v3s.dtsi              | 1 +
- arch/arm/boot/dts/sunxi-h3-h5.dtsi            | 1 +
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 1 +
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  | 2 ++
- 10 files changed, 11 insertions(+)
+ - Joel
 
-diff --git a/arch/arm/boot/dts/sun4i-a10.dtsi b/arch/arm/boot/dts/sun4i-a10.dtsi
-index eed9fcb46185..ce823c44e98a 100644
---- a/arch/arm/boot/dts/sun4i-a10.dtsi
-+++ b/arch/arm/boot/dts/sun4i-a10.dtsi
-@@ -816,6 +816,7 @@
- 			compatible = "allwinner,sun4i-a10-wdt";
- 			reg = <0x01c20c90 0x10>;
- 			interrupts = <24>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		rtc: rtc@1c20d00 {
-diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
-index 29a825f7afd1..cfb1efc8828c 100644
---- a/arch/arm/boot/dts/sun5i.dtsi
-+++ b/arch/arm/boot/dts/sun5i.dtsi
-@@ -601,6 +601,7 @@
- 			compatible = "allwinner,sun4i-a10-wdt";
- 			reg = <0x01c20c90 0x10>;
- 			interrupts = <24>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		ir0: ir@1c21800 {
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index cba8864bb8f9..bbeb743633c6 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -745,6 +745,7 @@
- 			compatible = "allwinner,sun6i-a31-wdt";
- 			reg = <0x01c20ca0 0x20>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		spdif: spdif@1c21000 {
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 8e31ed4a297c..ddaafde0e2d6 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -1116,6 +1116,7 @@
- 			compatible = "allwinner,sun4i-a10-wdt";
- 			reg = <0x01c20c90 0x10>;
- 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		rtc: rtc@1c20d00 {
-diff --git a/arch/arm/boot/dts/sun8i-a23-a33.dtsi b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-index 954489b4ec66..52eed0ae3607 100644
---- a/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23-a33.dtsi
-@@ -452,6 +452,7 @@
- 			compatible = "allwinner,sun6i-a31-wdt";
- 			reg = <0x01c20ca0 0x20>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		pwm: pwm@1c21400 {
-diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r40.dtsi
-index f1be554b5894..bde068111b85 100644
---- a/arch/arm/boot/dts/sun8i-r40.dtsi
-+++ b/arch/arm/boot/dts/sun8i-r40.dtsi
-@@ -405,6 +405,7 @@
- 			compatible = "allwinner,sun4i-a10-wdt";
- 			reg = <0x01c20c90 0x10>;
- 			interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		uart0: serial@1c28000 {
-diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v3s.dtsi
-index ddbcc28dc541..23ba56df38f7 100644
---- a/arch/arm/boot/dts/sun8i-v3s.dtsi
-+++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
-@@ -339,6 +339,7 @@
- 			compatible = "allwinner,sun6i-a31-wdt";
- 			reg = <0x01c20ca0 0x20>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		lradc: lradc@1c22800 {
-diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-index 224e105a994a..eba190b3f9de 100644
---- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-+++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-@@ -574,6 +574,7 @@
- 			compatible = "allwinner,sun6i-a31-wdt";
- 			reg = <0x01c20ca0 0x20>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		spdif: spdif@1c21000 {
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index ddb6f11e89df..69128a6dfc46 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -1169,6 +1169,7 @@
- 				     "allwinner,sun6i-a31-wdt";
- 			reg = <0x01c20ca0 0x20>;
- 			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-index 67b732e34091..e304b110e7a3 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-@@ -225,6 +225,7 @@
- 				     "allwinner,sun6i-a31-wdt";
- 			reg = <0x030090a0 0x20>;
- 			interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 			/* Broken on some H6 boards */
- 			status = "disabled";
- 		};
-@@ -725,6 +726,7 @@
- 				     "allwinner,sun6i-a31-wdt";
- 			reg = <0x07020400 0x20>;
- 			interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&osc24M>;
- 		};
- 
- 		r_intc: interrupt-controller@7021000 {
--- 
-2.21.0
 
+> 							Thanx, Paul
+> 
+> ------------------------------------------------------------------------
+> 
+> diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+> index 2defc7fe74c3..abf2fbba2568 100644
+> --- a/kernel/rcu/tree_plugin.h
+> +++ b/kernel/rcu/tree_plugin.h
+> @@ -621,6 +621,10 @@ static void rcu_read_unlock_special(struct task_struct *t)
+>  			// Using softirq, safe to awaken, and we get
+>  			// no help from enabling irqs, unlike bh/preempt.
+>  			raise_softirq_irqoff(RCU_SOFTIRQ);
+> +		} else if (exp && in_irq() && !use_softirq &&
+> +			   !t->rcu_read_unlock_special.b.deferred_qs) {
+> +			WARN_ON_ONCE(1); // Live code?
+> +			invoke_rcu_core();
+>  		} else {
+>  			// Enabling BH or preempt does reschedule, so...
+>  			// Also if no expediting or NO_HZ_FULL, slow is OK.
