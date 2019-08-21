@@ -2,352 +2,87 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 217F4987B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:15:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 306B2987BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 01:17:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731368AbfHUXP1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 19:15:27 -0400
-Received: from mail-pl1-f201.google.com ([209.85.214.201]:47761 "EHLO
-        mail-pl1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728049AbfHUXP1 (ORCPT
+        id S1731387AbfHUXRr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 19:17:47 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44719 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729841AbfHUXRr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 19:15:27 -0400
-Received: by mail-pl1-f201.google.com with SMTP id j12so2409586pll.14
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 16:15:26 -0700 (PDT)
+        Wed, 21 Aug 2019 19:17:47 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c81so2470644pfc.11;
+        Wed, 21 Aug 2019 16:17:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:in-reply-to:message-id:mime-version:references:subject:from:to
-         :cc;
-        bh=uPz28r4pp6bS4pf4oimcoF6Q5mHSemPcex9edLQ7rcQ=;
-        b=dorlkDOYvSJeySUiRXM6PkXCXwTRDM7mnmbA+VYnhUwpZlhThUp0gCiSA2/wi9oP1A
-         1pJu0BG97YuMJRyHe0mbD7PDMKHHzscOW1r/bnaaY8E/qRtH7+oqB5RjSUqU/5IGrthl
-         DPLmYqj20Zh2hl/Zf3G4IeX6sgtJHfYF9nrl73lHQF/k5of0ywoo5aYgyDQYA06z+BPq
-         oaVZZGVWEqHys50Zjxg+0QWa8m6i0wW76+7EZe3NSGnew/cdto6FTPRMQ+pB0pRJ/Dgr
-         etaMaPgUtAxwyXRn215N/O8HI151kv49Sr38mDz5ZU9ElQEpOAO0f4Spc48M35u8pfpz
-         Rq2g==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=FU7aS4c8r3DI9MJLtX68651RnQQMYkzHAkQK9w3MzVU=;
+        b=fFY4wLbH+FYNp84w0k7iuK4xp6dwv4nZRC4+jQ+HSAwiOC4QufpOen8rbWwZZzj7/X
+         NaBOQg52Yd6O+k200QyeIFiYVzHO9M8KbdqgFhXqooVcsJp9h0ZFHFoCUXscBBeBocxZ
+         AK/JKWB5+1IAPHwHp+C8GwBUsH97+tjqaFNIWOH838M81iUqqqLLwHExSdR7380APYVn
+         pFhazFS0zPDwN3clTNXTDZB48uOGhXetcDmUXHktigoisOiBiE1VcD+WcYTGsQgOmGM0
+         SSp9acGbbczoUz6425h2uYLsXItDSDBY6Y54fodEhdo0VwplJzgp9hqYVv3F3HPsupba
+         qM1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:in-reply-to:message-id:mime-version
-         :references:subject:from:to:cc;
-        bh=uPz28r4pp6bS4pf4oimcoF6Q5mHSemPcex9edLQ7rcQ=;
-        b=bryDR2s7FRgKAqQJrW/snoD/5mR1zOeCE6bHiYGOQna9JD26mkhT/YQYIfv4BMx2CR
-         JQpZfWALydKOlwA4ZoRuNrFO+TM5ywet6IIkVO631XvlJGTxme5ePl3OxkaV1PIaZM3E
-         KOcqTCSVBxyLdyuVOxlU3B7348IPnTUSPYPyfnVbOylBOQmeLDpkC4W550VW2mLq5t7T
-         XWPhd7chiNC2X/BDigoScLwjwHcYUbUQUtv5hlYXgluVkB40GlvIZUYWqN957Ehlxr7M
-         pXxVyQjIhs9t6hXIYIi3QSO62drKGhbx9kP7iRGjI6dWfuiZ9s8Ja4M+AqonIUVZEq2R
-         l88g==
-X-Gm-Message-State: APjAAAVY+Y2VjSlR2uuQUE+I4xGBfhWeKd/pJ1Ah/m0p+4TxFXJukWJR
-        XntrP//60ZNhcH4xOo2+Jl5SWME476SI
-X-Google-Smtp-Source: APXvYqyVaCgjWGyolNEhMURfAYyYlFKy2b2EOlRXDUI9OZMSZqpLW9+nyfqREU+EhTJWpdPd7DWps/cw6DM8
-X-Received: by 2002:a63:2a41:: with SMTP id q62mr25091848pgq.444.1566429325943;
- Wed, 21 Aug 2019 16:15:25 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 16:15:13 -0700
-In-Reply-To: <20190821231513.36454-1-rajatja@google.com>
-Message-Id: <20190821231513.36454-2-rajatja@google.com>
-Mime-Version: 1.0
-References: <20190821231513.36454-1-rajatja@google.com>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-Subject: [PATCH 2/2] PCI/AER: Split the AER stats into multiple sysfs attributes
-From:   Rajat Jain <rajatja@google.com>
-To:     gregkh@linuxfoundation.com, Bjorn Helgaas <bhelgaas@google.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FU7aS4c8r3DI9MJLtX68651RnQQMYkzHAkQK9w3MzVU=;
+        b=GnDRVuERlfqUQ+TibnemggYiFBURoaGj6TmUl90v9WFwbHEnGBSRs142cTILzdcSQ8
+         4kCuBRcPUzgxQ7xKtTWJXs/Vg+l4Reg3fFNOcAaqLdScH/4nG3C2KV96ODzWVx/joh1f
+         e78xu1nDm1/f9j40Uv+UouB34Ks05aQnzg3JzZYphdshWnYzar31C44gu9IgocNg4DES
+         T0YAZfROCAqFQLoRfLNvviRYStDBK+AN8JMJaVGNb+giTdRg0naEjo4VIICSZCl07Olc
+         kb2IRKriraMMsyj0ewoEKj1C1HGieH6ISn0KsabV4TYOQs2GpAx/+C5Q56aH4yKqvAkh
+         M3Sg==
+X-Gm-Message-State: APjAAAXu6f5AdWjg3mk4B3dvH3ud7DX/zDCVFoY1xUKXsaw3nkBy3EfM
+        /Y5Met8ObkBCNud0JN03Zp2yBDpE
+X-Google-Smtp-Source: APXvYqxTQXZanuOiof2/sVzu3XHROVEXvykvg7UR5Ydi0eoMxQhnQ2zV/+5ZczfLwx+FHIKHaIsjSQ==
+X-Received: by 2002:a17:90a:2525:: with SMTP id j34mr2479573pje.11.1566429465655;
+        Wed, 21 Aug 2019 16:17:45 -0700 (PDT)
+Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id q69sm1250493pjb.0.2019.08.21.16.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 16:17:44 -0700 (PDT)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK)
+Subject: [PATCH] cpufreq: Print driver name if cpufreq_suspend() fails
+Date:   Wed, 21 Aug 2019 16:16:32 -0700
+Message-Id: <20190821231632.29133-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Split the AER stats into multiple sysfs atributes. Note that
-this changes the ABI of the AER stats, but hopefully, there
-aren't active users that need to change. This is how the AERs
-are being exposed now:
+Instead of printing the policy, which is incidentally a kernel pointer,
+so with limited interest, print the cpufreq driver name that failed to
+be suspend, which is more useful for debugging.
 
-localhost /sys/devices/pci0000:00/0000:00:1c.0/aer_stats # ls -l
-total 0
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit0_RxErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit12_Timeout
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit13_NonFatalErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit14_CorrIntErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit15_HeaderOF
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit6_BadTLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit7_BadDLLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 correctable_bit8_Rollover
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit0_Undefined
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit12_TLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit13_FCP
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit14_CmpltTO
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit15_CmpltAbrt
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit16_UnxCmplt
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit17_RxOF
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit18_MalfTLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit19_ECRC
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit20_UnsupReq
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit21_ACSViol
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit22_UncorrIntErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit23_BlockedTLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit24_AtomicOpBlocked
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit25_TLPBlockedErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit26_PoisonTLPBlocked
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit4_DLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 fatal_bit5_SDES
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit0_Undefined
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit12_TLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit13_FCP
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit14_CmpltTO
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit15_CmpltAbrt
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit16_UnxCmplt
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit17_RxOF
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit18_MalfTLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit19_ECRC
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit20_UnsupReq
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit21_ACSViol
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit22_UncorrIntErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit23_BlockedTLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit24_AtomicOpBlocked
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit25_TLPBlockedErr
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit26_PoisonTLPBlocked
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit4_DLP
--r--r--r--. 1 root root 4096 Aug 20 16:35 nonfatal_bit5_SDES
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_cor
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_fatal
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_device_err_nonfatal
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_cor
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_fatal
--r--r--r--. 1 root root 4096 Aug 20 16:35 total_rootport_err_nonfatal
-localhost /sys/devices/pci0000:00/0000:00:1c.0/aer_stats #
-
-Each file is has a single counter value. Single file containing all
-stats was frowned upon and discussed here:
-https://lkml.org/lkml/2019/6/28/220
-
-Signed-off-by: Rajat Jain <rajatja@google.com>
+Fixes: 2f0aea936360 ("cpufreq: suspend governors on system suspend/hibernate")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 ---
-I personally think that this makes it a little overwhelming for a human,
-e.g. I could look at total but don't exactly know while file to look at
-next in order to drill down. But I couldn't think of any other way. Some
-problems I'd have liked to fix but they require deeper surgery:
+ drivers/cpufreq/cpufreq.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-* Now each PCI device sysfs node will have a sub-directory called aer_stats.
-  (The subdirectory will have attributes only if it supports AER, but
-   the sub directory will always be present). 
-
-* This patch isn't re-using the strings array like it was using earlier.
-  I thought of adding the attribute group at run time, so it will take
-  care of both the problems, but can only do that after device_add() call,
-  I think.
-
-If we are comfortable introducing a call to a new function
-pci_aer_stats_init() after call to device_add() in in pci_device_add(),
-the above problems can be fixed.
-
- drivers/pci/pcie/aer.c | 166 +++++++++++++++++++++++++++++------------
- 1 file changed, 119 insertions(+), 47 deletions(-)
-
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 68060a290291..11f3158cfdf5 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -570,42 +570,66 @@ static const char *aer_agent_string[] = {
- 	"Transmitter ID"
- };
+diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+index c28ebf2810f1..330d789f81fc 100644
+--- a/drivers/cpufreq/cpufreq.c
++++ b/drivers/cpufreq/cpufreq.c
+@@ -1807,8 +1807,8 @@ void cpufreq_suspend(void)
+ 		}
  
--#define aer_stats_dev_attr(name, stats_array, strings_array,		\
--			   total_string, total_field)			\
-+#define aer_stats_dev_attr(type, bitnum, stats_array, name)		\
- 	static ssize_t							\
--	name##_show(struct device *dev, struct device_attribute *attr,	\
--		     char *buf)						\
-+	type##_bit##bitnum##_##name##_show(struct device *dev,		\
-+				      struct device_attribute *attr,	\
-+				      char *buf)			\
- {									\
--	unsigned int i;							\
--	char *str = buf;						\
- 	struct pci_dev *pdev = to_pci_dev(dev);				\
--	u64 *stats = pdev->aer_stats->stats_array;			\
--									\
--	for (i = 0; i < ARRAY_SIZE(strings_array); i++) {		\
--		if (strings_array[i])					\
--			str += sprintf(str, "%s %llu\n",		\
--				       strings_array[i], stats[i]);	\
--		else if (stats[i])					\
--			str += sprintf(str, #stats_array "_bit[%d] %llu\n",\
--				       i, stats[i]);			\
--	}								\
--	str += sprintf(str, "TOTAL_%s %llu\n", total_string,		\
--		       pdev->aer_stats->total_field);			\
--	return str-buf;							\
-+	return sprintf(buf, "%llu\n",					\
-+		       pdev->aer_stats->stats_array[bitnum]);		\
- }									\
--static DEVICE_ATTR_RO(name)
--
--aer_stats_dev_attr(aer_dev_correctable, dev_cor_errs,
--		   aer_correctable_error_string, "ERR_COR",
--		   dev_total_cor_errs);
--aer_stats_dev_attr(aer_dev_fatal, dev_fatal_errs,
--		   aer_uncorrectable_error_string, "ERR_FATAL",
--		   dev_total_fatal_errs);
--aer_stats_dev_attr(aer_dev_nonfatal, dev_nonfatal_errs,
--		   aer_uncorrectable_error_string, "ERR_NONFATAL",
--		   dev_total_nonfatal_errs);
--
--#define aer_stats_rootport_attr(name, field)				\
-+static DEVICE_ATTR_RO(type##_bit##bitnum##_##name)
-+
-+aer_stats_dev_attr(correctable, 0, dev_cor_errs, RxErr);
-+aer_stats_dev_attr(correctable, 6, dev_cor_errs, BadTLP);
-+aer_stats_dev_attr(correctable, 7, dev_cor_errs, BadDLLP);
-+aer_stats_dev_attr(correctable, 8, dev_cor_errs, Rollover);
-+aer_stats_dev_attr(correctable, 12, dev_cor_errs, Timeout);
-+aer_stats_dev_attr(correctable, 13, dev_cor_errs, NonFatalErr);
-+aer_stats_dev_attr(correctable, 14, dev_cor_errs, CorrIntErr);
-+aer_stats_dev_attr(correctable, 15, dev_cor_errs, HeaderOF);
-+
-+aer_stats_dev_attr(fatal, 0, dev_fatal_errs, Undefined);
-+aer_stats_dev_attr(fatal, 4, dev_fatal_errs, DLP);
-+aer_stats_dev_attr(fatal, 5, dev_fatal_errs, SDES);
-+aer_stats_dev_attr(fatal, 12, dev_fatal_errs, TLP);
-+aer_stats_dev_attr(fatal, 13, dev_fatal_errs, FCP);
-+aer_stats_dev_attr(fatal, 14, dev_fatal_errs, CmpltTO);
-+aer_stats_dev_attr(fatal, 15, dev_fatal_errs, CmpltAbrt);
-+aer_stats_dev_attr(fatal, 16, dev_fatal_errs, UnxCmplt);
-+aer_stats_dev_attr(fatal, 17, dev_fatal_errs, RxOF);
-+aer_stats_dev_attr(fatal, 18, dev_fatal_errs, MalfTLP);
-+aer_stats_dev_attr(fatal, 19, dev_fatal_errs, ECRC);
-+aer_stats_dev_attr(fatal, 20, dev_fatal_errs, UnsupReq);
-+aer_stats_dev_attr(fatal, 21, dev_fatal_errs, ACSViol);
-+aer_stats_dev_attr(fatal, 22, dev_fatal_errs, UncorrIntErr);
-+aer_stats_dev_attr(fatal, 23, dev_fatal_errs, BlockedTLP);
-+aer_stats_dev_attr(fatal, 24, dev_fatal_errs, AtomicOpBlocked);
-+aer_stats_dev_attr(fatal, 25, dev_fatal_errs, TLPBlockedErr);
-+aer_stats_dev_attr(fatal, 26, dev_fatal_errs, PoisonTLPBlocked);
-+
-+aer_stats_dev_attr(nonfatal, 0, dev_nonfatal_errs, Undefined);
-+aer_stats_dev_attr(nonfatal, 4, dev_nonfatal_errs, DLP);
-+aer_stats_dev_attr(nonfatal, 5, dev_nonfatal_errs, SDES);
-+aer_stats_dev_attr(nonfatal, 12, dev_nonfatal_errs, TLP);
-+aer_stats_dev_attr(nonfatal, 13, dev_nonfatal_errs, FCP);
-+aer_stats_dev_attr(nonfatal, 14, dev_nonfatal_errs, CmpltTO);
-+aer_stats_dev_attr(nonfatal, 15, dev_nonfatal_errs, CmpltAbrt);
-+aer_stats_dev_attr(nonfatal, 16, dev_nonfatal_errs, UnxCmplt);
-+aer_stats_dev_attr(nonfatal, 17, dev_nonfatal_errs, RxOF);
-+aer_stats_dev_attr(nonfatal, 18, dev_nonfatal_errs, MalfTLP);
-+aer_stats_dev_attr(nonfatal, 19, dev_nonfatal_errs, ECRC);
-+aer_stats_dev_attr(nonfatal, 20, dev_nonfatal_errs, UnsupReq);
-+aer_stats_dev_attr(nonfatal, 21, dev_nonfatal_errs, ACSViol);
-+aer_stats_dev_attr(nonfatal, 22, dev_nonfatal_errs, UncorrIntErr);
-+aer_stats_dev_attr(nonfatal, 23, dev_nonfatal_errs, BlockedTLP);
-+aer_stats_dev_attr(nonfatal, 24, dev_nonfatal_errs, AtomicOpBlocked);
-+aer_stats_dev_attr(nonfatal, 25, dev_nonfatal_errs, TLPBlockedErr);
-+aer_stats_dev_attr(nonfatal, 26, dev_nonfatal_errs, PoisonTLPBlocked);
-+
-+#define aer_stats_total_attr(name, field)				\
- 	static ssize_t							\
- 	name##_show(struct device *dev, struct device_attribute *attr,	\
- 		     char *buf)						\
-@@ -615,20 +639,67 @@ aer_stats_dev_attr(aer_dev_nonfatal, dev_nonfatal_errs,
- }									\
- static DEVICE_ATTR_RO(name)
+ 		if (cpufreq_driver->suspend && cpufreq_driver->suspend(policy))
+-			pr_err("%s: Failed to suspend driver: %p\n", __func__,
+-				policy);
++			pr_err("%s: Failed to suspend driver: %s\n", __func__,
++				cpufreq_driver->name);
+ 	}
  
--aer_stats_rootport_attr(aer_rootport_total_err_cor,
--			 rootport_total_cor_errs);
--aer_stats_rootport_attr(aer_rootport_total_err_fatal,
--			 rootport_total_fatal_errs);
--aer_stats_rootport_attr(aer_rootport_total_err_nonfatal,
--			 rootport_total_nonfatal_errs);
-+aer_stats_total_attr(total_device_err_cor, dev_total_cor_errs);
-+aer_stats_total_attr(total_device_err_fatal, dev_total_fatal_errs);
-+aer_stats_total_attr(total_device_err_nonfatal, dev_total_nonfatal_errs);
-+aer_stats_total_attr(total_rootport_err_cor, rootport_total_cor_errs);
-+aer_stats_total_attr(total_rootport_err_fatal, rootport_total_fatal_errs);
-+aer_stats_total_attr(total_rootport_err_nonfatal, rootport_total_nonfatal_errs);
- 
- static struct attribute *aer_stats_attrs[] __ro_after_init = {
--	&dev_attr_aer_dev_correctable.attr,
--	&dev_attr_aer_dev_fatal.attr,
--	&dev_attr_aer_dev_nonfatal.attr,
--	&dev_attr_aer_rootport_total_err_cor.attr,
--	&dev_attr_aer_rootport_total_err_fatal.attr,
--	&dev_attr_aer_rootport_total_err_nonfatal.attr,
-+	&dev_attr_correctable_bit0_RxErr.attr,
-+	&dev_attr_correctable_bit6_BadTLP.attr,
-+	&dev_attr_correctable_bit7_BadDLLP.attr,
-+	&dev_attr_correctable_bit8_Rollover.attr,
-+	&dev_attr_correctable_bit12_Timeout.attr,
-+	&dev_attr_correctable_bit13_NonFatalErr.attr,
-+	&dev_attr_correctable_bit14_CorrIntErr.attr,
-+	&dev_attr_correctable_bit15_HeaderOF.attr,
-+
-+	&dev_attr_fatal_bit0_Undefined.attr,
-+	&dev_attr_fatal_bit4_DLP.attr,
-+	&dev_attr_fatal_bit5_SDES.attr,
-+	&dev_attr_fatal_bit12_TLP.attr,
-+	&dev_attr_fatal_bit13_FCP.attr,
-+	&dev_attr_fatal_bit14_CmpltTO.attr,
-+	&dev_attr_fatal_bit15_CmpltAbrt.attr,
-+	&dev_attr_fatal_bit16_UnxCmplt.attr,
-+	&dev_attr_fatal_bit17_RxOF.attr,
-+	&dev_attr_fatal_bit18_MalfTLP.attr,
-+	&dev_attr_fatal_bit19_ECRC.attr,
-+	&dev_attr_fatal_bit20_UnsupReq.attr,
-+	&dev_attr_fatal_bit21_ACSViol.attr,
-+	&dev_attr_fatal_bit22_UncorrIntErr.attr,
-+	&dev_attr_fatal_bit23_BlockedTLP.attr,
-+	&dev_attr_fatal_bit24_AtomicOpBlocked.attr,
-+	&dev_attr_fatal_bit25_TLPBlockedErr.attr,
-+	&dev_attr_fatal_bit26_PoisonTLPBlocked.attr,
-+
-+	&dev_attr_nonfatal_bit0_Undefined.attr,
-+	&dev_attr_nonfatal_bit4_DLP.attr,
-+	&dev_attr_nonfatal_bit5_SDES.attr,
-+	&dev_attr_nonfatal_bit12_TLP.attr,
-+	&dev_attr_nonfatal_bit13_FCP.attr,
-+	&dev_attr_nonfatal_bit14_CmpltTO.attr,
-+	&dev_attr_nonfatal_bit15_CmpltAbrt.attr,
-+	&dev_attr_nonfatal_bit16_UnxCmplt.attr,
-+	&dev_attr_nonfatal_bit17_RxOF.attr,
-+	&dev_attr_nonfatal_bit18_MalfTLP.attr,
-+	&dev_attr_nonfatal_bit19_ECRC.attr,
-+	&dev_attr_nonfatal_bit20_UnsupReq.attr,
-+	&dev_attr_nonfatal_bit21_ACSViol.attr,
-+	&dev_attr_nonfatal_bit22_UncorrIntErr.attr,
-+	&dev_attr_nonfatal_bit23_BlockedTLP.attr,
-+	&dev_attr_nonfatal_bit24_AtomicOpBlocked.attr,
-+	&dev_attr_nonfatal_bit25_TLPBlockedErr.attr,
-+	&dev_attr_nonfatal_bit26_PoisonTLPBlocked.attr,
-+
-+	&dev_attr_total_device_err_cor.attr,
-+	&dev_attr_total_device_err_fatal.attr,
-+	&dev_attr_total_device_err_nonfatal.attr,
-+	&dev_attr_total_rootport_err_cor.attr,
-+	&dev_attr_total_rootport_err_fatal.attr,
-+	&dev_attr_total_rootport_err_nonfatal.attr,
- 	NULL
- };
- 
-@@ -641,9 +712,9 @@ static umode_t aer_stats_attrs_are_visible(struct kobject *kobj,
- 	if (!pdev->aer_stats)
- 		return 0;
- 
--	if ((a == &dev_attr_aer_rootport_total_err_cor.attr ||
--	     a == &dev_attr_aer_rootport_total_err_fatal.attr ||
--	     a == &dev_attr_aer_rootport_total_err_nonfatal.attr) &&
-+	if ((a == &dev_attr_total_rootport_err_cor.attr ||
-+	     a == &dev_attr_total_rootport_err_fatal.attr ||
-+	     a == &dev_attr_total_rootport_err_nonfatal.attr) &&
- 	    pci_pcie_type(pdev) != PCI_EXP_TYPE_ROOT_PORT)
- 		return 0;
- 
-@@ -651,6 +722,7 @@ static umode_t aer_stats_attrs_are_visible(struct kobject *kobj,
- }
- 
- const struct attribute_group aer_stats_attr_group = {
-+	.name = "aer_stats",
- 	.attrs  = aer_stats_attrs,
- 	.is_visible = aer_stats_attrs_are_visible,
- };
+ suspend:
 -- 
-2.23.0.rc1.153.gdeed80330f-goog
+2.17.1
 
