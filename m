@@ -2,71 +2,75 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 141D3982AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 879B4982B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 20:24:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729009AbfHUSWm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 14:22:42 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43192 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726858AbfHUSWl (ORCPT
+        id S1729168AbfHUSYs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 14:24:48 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42665 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbfHUSYr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 14:22:41 -0400
-Received: by mail-oi1-f194.google.com with SMTP id y8so2320740oih.10;
-        Wed, 21 Aug 2019 11:22:41 -0700 (PDT)
+        Wed, 21 Aug 2019 14:24:47 -0400
+Received: by mail-ot1-f67.google.com with SMTP id j7so2962577ota.9;
+        Wed, 21 Aug 2019 11:24:47 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=24bxusEy7OGK0yD569NBwn/iQPay+uifjMYbDYpvsFY=;
-        b=IgxmilMM7XW+LKjNNz/5YqDHZaX8FeWXmTy/GFl56tzjm5WjYdDdJm76mCQfpOwxC6
-         s8uuOc7VNjyx4imIUNtV1EN1RAlEJBkwNveYsZCaWpLxu9+txP5SFuP/BJBM3fP8ed7a
-         VaQHiNjTtAFIVV3QggN9n+o6t+oCQfzXQi15Cb1Lojf5EquqP8dFfmx6T7GkOn39+5dN
-         9y9j3U1A52aZcJZdDGxtSS53kJhbCZuWo7hfjLbVsuo82wFYjXgjYcge6OpVsSnfCzbC
-         nYe+mMXFyKVIhYtp79zTwY3vQAPIS0JOz7ohaKOM12gBcSnzKUpinyqkfVFRD0/rzAV5
-         fcrA==
-X-Gm-Message-State: APjAAAX7fiU37ykDCnhDmypGk/AmhIwI2zPgosJdY2jVpJzHa2neEvpe
-        w6dm7G/8wtJslr667FP7fg==
-X-Google-Smtp-Source: APXvYqyLyQNfTVZJAKDfvhBkeGQm8bVlglybzAEDYd7thHFToO2QW74A/RKErYiojY/6bQytG+Mv6w==
-X-Received: by 2002:aca:ea45:: with SMTP id i66mr1042078oih.17.1566411760576;
-        Wed, 21 Aug 2019 11:22:40 -0700 (PDT)
+        bh=xj642LOUuahy+rYAJ7XSvVLcFTloxyknrp7w0AGW3JQ=;
+        b=LdoA16fh5oNqbW5smx5/Id2AzmtiAZWsNCNoujMtpTZ1B43ozOuBjlq1OO8i05qXUU
+         5FoH9bVE3GKevqM+P2ohZlqZJ3hk2cVhpML3lTjoYSNtZmejdFjO941VxXg0Fl1ot8B5
+         Jrnj/TmosYCZBYj1k3iPhoLQUI2iyZa7tP1iJlZGvL3+xrOk4yHvE+QW2P3rS7/m0PMU
+         HOI70FYYBWJGdwO8Da18pQPpAGVLn2WlG9/wrpEezgq0ooWFO2dBCYrm0Gwwk0Hn+28V
+         QliO0lCxFMoVC3btWmuk7wBZwRFyOdXVDG3Wdn9LL2zo9GPbclxAQSRzLYDykE0lh4Od
+         dcxg==
+X-Gm-Message-State: APjAAAVO4S/VEeR9gFea1YRq+7dD5gjaYymjDUY+Ho2k84MqWJLV97yu
+        zB5laTd/C7HHumVgNP0oCw==
+X-Google-Smtp-Source: APXvYqzn+v4yVCzNPWIXhmRz3AdMu+fycoMKN7LNNf8XGpK3Hy8shxP66dzdzXor5TPJ4npISlu7dQ==
+X-Received: by 2002:a9d:5c11:: with SMTP id o17mr10969493otk.107.1566411886789;
+        Wed, 21 Aug 2019 11:24:46 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r125sm6654866oif.3.2019.08.21.11.22.40
+        by smtp.gmail.com with ESMTPSA id i17sm6178004oik.32.2019.08.21.11.24.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 11:22:40 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 13:22:39 -0500
+        Wed, 21 Aug 2019 11:24:45 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 13:24:45 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-usb@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        Srinath Mannam <srinath.mannam@broadcom.com>
-Subject: Re: [PATCH v2 4/5] dt-bindings: usb-xhci: Add platform specific
- compatible for Stingray xHCI
-Message-ID: <20190821182239.GA5760@bogus>
-References: <1564568395-9980-1-git-send-email-srinath.mannam@broadcom.com>
- <1564568395-9980-5-git-send-email-srinath.mannam@broadcom.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2] dt-bindings: arm-boards: Update pointer to ARM CPU
+ bindings
+Message-ID: <20190821182445.GA9101@bogus>
+References: <20190731114201.7884-1-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1564568395-9980-5-git-send-email-srinath.mannam@broadcom.com>
+In-Reply-To: <20190731114201.7884-1-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 31 Jul 2019 15:49:54 +0530, Srinath Mannam wrote:
-> Add Platform specific compatible, because xHCI of this SoC has an issue
-> with HS port which has to reset on disconnect event.
+On Wed, 31 Jul 2019 13:42:01 +0200, Geert Uytterhoeven wrote:
+> The ARM CPU DT bindings were converted from plain text to YAML, but not
+> all referrers were updated.
 > 
-> Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> Fixes: 672951cbd1b70a9e ("dt-bindings: arm: Convert cpu binding to json-schema")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
 > ---
->  Documentation/devicetree/bindings/usb/usb-xhci.txt | 1 +
->  1 file changed, 1 insertion(+)
+> v2:
+>   - Add Acked-by.
+> ---
+>  Documentation/devicetree/bindings/arm/arm-boards | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Applied, thanks.
+
+Rob
