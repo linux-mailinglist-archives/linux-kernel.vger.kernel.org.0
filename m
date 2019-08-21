@@ -2,62 +2,89 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C991C96F55
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:18:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44A3E96F5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:19:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfHUCRn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:17:43 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53830 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfHUCRm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:17:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x0KsQxDJ6UzbBe97a0jSJDgAMBuv/qkUKnrZnnyaHkk=; b=VKHzMGGz4ESmSfpJnl8OA8mFc
-        a1QmyFZ6npDIF7i3DJx2ZoZHrOMl93Pxn6aTTpZdyTXjUrK9LBzjuTfHPcDSyfQQmCGO1Edvh1y/n
-        cQ7QmZv+RavMPkwmqz2UX+5FXsixpThM3u7GhHm3cToF0xyjFesuAEgnXrkWLj87seYgpuabQZF0W
-        p3pal6vpIjVv3NOwYbjWEcd+klxulnR0QVpxo0Al6xGCOgzUs0aB+uPbXYNAXama48B2YI1tLIkf6
-        1hGcxEwrEjOGLaQrI2HdYJgPRl/rdpX1Ht+EVhK0sX61l9WPhxTUGU/RMyZEF3ynaegkpdwqrObAi
-        kw0h0Exxw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0GBx-0003dA-VB; Wed, 21 Aug 2019 02:17:41 +0000
-Date:   Tue, 20 Aug 2019 19:17:41 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     guoren@kernel.org
-Cc:     arnd@arndb.de, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-csky@vger.kernel.org,
-        douzhk@nationalchip.com, Guo Ren <ren_guo@c-sky.com>
-Subject: Re: [PATCH 3/3] csky: Support kernel non-aligned access
-Message-ID: <20190821021741.GB32710@infradead.org>
-References: <1566304469-5601-1-git-send-email-guoren@kernel.org>
- <1566304469-5601-3-git-send-email-guoren@kernel.org>
+        id S1726936AbfHUCTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:19:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53574 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726329AbfHUCTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:19:47 -0400
+Received: from localhost (li1825-44.members.linode.com [172.104.248.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C84EE22DA7;
+        Wed, 21 Aug 2019 02:19:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566353986;
+        bh=99ObL1cP+jG7BwJuhGr2xRiHMfm0AyVNnY16uyz8mng=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Ru6a2+QADULs0wwoFX4YQsebNK/5qd6Kk+kCW16FnuAC9nOB84MNYRAHcouXWGbFA
+         jxDDlseEOkfLWKdjTvog2K/cs7Lp3dY0OF8fKx5O3Mim0AfBj86ctChYFeQLuM/7Lu
+         fYDzulv0SOkwznjOgALPI+7qG9dTtb1IsoG+OBUU=
+Date:   Tue, 20 Aug 2019 19:19:42 -0700
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Chao Yu <chao@kernel.org>
+Cc:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
+        devel@driverdev.osuosl.org, linux-fsdevel@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-erofs@lists.ozlabs.org, Miao Xie <miaoxie@huawei.com>,
+        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 5/6] staging: erofs: detect potential multiref due to
+ corrupted images
+Message-ID: <20190821021942.GA14087@kroah.com>
+References: <20190819080218.GA42231@138>
+ <20190819103426.87579-1-gaoxiang25@huawei.com>
+ <20190819103426.87579-6-gaoxiang25@huawei.com>
+ <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566304469-5601-3-git-send-email-guoren@kernel.org>
-User-Agent: Mutt/1.11.4 (2019-03-13)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <f302710e-0c7f-8695-d692-be0c01c431ea@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 08:34:29PM +0800, guoren@kernel.org wrote:
-> From: Guo Ren <ren_guo@c-sky.com>
+On Mon, Aug 19, 2019 at 10:57:42PM +0800, Chao Yu wrote:
+> On 2019-8-19 18:34, Gao Xiang wrote:
+> > As reported by erofs-utils fuzzer, currently, multiref
+> > (ondisk deduplication) hasn't been supported for now,
+> > we should forbid it properly.
+> > 
+> > Fixes: 3883a79abd02 ("staging: erofs: introduce VLE decompression support")
+> > Cc: <stable@vger.kernel.org> # 4.19+
+> > Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> > ---
+> >  drivers/staging/erofs/zdata.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/staging/erofs/zdata.c b/drivers/staging/erofs/zdata.c
+> > index aae2f2b8353f..5b6fef5181af 100644
+> > --- a/drivers/staging/erofs/zdata.c
+> > +++ b/drivers/staging/erofs/zdata.c
+> > @@ -816,8 +816,16 @@ static int z_erofs_decompress_pcluster(struct super_block *sb,
+> >  			pagenr = z_erofs_onlinepage_index(page);
+> >  
+> >  		DBG_BUGON(pagenr >= nr_pages);
+> > -		DBG_BUGON(pages[pagenr]);
+> >  
+> > +		/*
+> > +		 * currently EROFS doesn't support multiref(dedup),
+> > +		 * so here erroring out one multiref page.
+> > +		 */
+> > +		if (unlikely(pages[pagenr])) {
+> > +			DBG_BUGON(1);
+> > +			SetPageError(pages[pagenr]);
+> > +			z_erofs_onlinepage_endio(pages[pagenr]);
 > 
-> We prohibit non-aligned access in kernel mode, but some special NIC
-> driver needs to support kernel-state unaligned access. For example,
-> when the bus does not support unaligned access, IP header parsing
-> will cause non-aligned access and driver does not recopy the skb
-> buffer to dma for performance reasons.
-> 
-> Added kernel_enable & user_enable to control unaligned access and
-> added kernel_count  & user_count for statistical unaligned access.
+> Should set err meanwhile?
 
-If the NIC drivers requires this it is buggy.  Kernel code must
-use the get_unaligned* / put_unaligned* helpers for that.
+I've skipped this patch in this series for now, and applied the rest.
+
+thanks,
+
+greg k-h
