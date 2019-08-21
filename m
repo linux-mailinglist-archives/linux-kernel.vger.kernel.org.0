@@ -2,105 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0EB579795A
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 74DAC9797A
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:32:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728219AbfHUMaj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:30:39 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:53047 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726371AbfHUMai (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:30:38 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id B0B90100007;
-        Wed, 21 Aug 2019 12:30:35 +0000 (UTC)
-Date:   Wed, 21 Aug 2019 14:30:35 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 04/10] mailbox: sunxi-msgbox: Add a new mailbox driver
-Message-ID: <20190821123035.tl4aakijjhw3bwbk@flea>
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190820032311.6506-5-samuel@sholland.org>
- <20190820111825.2w55fleehrnon27u@core.my.home>
- <bc09e14c-1cf5-8124-fc34-c651b78577ce@sholland.org>
+        id S1728327AbfHUMck (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:32:40 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:52346 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726835AbfHUMck (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:32:40 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AA12EC60DE1C73105FDE;
+        Wed, 21 Aug 2019 20:32:35 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
+ 20:32:27 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <davem@davemloft.net>, <thomas.lendacky@amd.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH net-next] amd-xgbe: use devm_platform_ioremap_resource() to simplify code
+Date:   Wed, 21 Aug 2019 20:32:03 +0800
+Message-ID: <20190821123203.71404-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="mrpxrcur5riymvjn"
-Content-Disposition: inline
-In-Reply-To: <bc09e14c-1cf5-8124-fc34-c651b78577ce@sholland.org>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use devm_platform_ioremap_resource() to simplify the code a bit.
+This is detected by coccinelle.
 
---mrpxrcur5riymvjn
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/net/ethernet/amd/xgbe/xgbe-platform.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-On Tue, Aug 20, 2019 at 08:07:53AM -0500, Samuel Holland wrote:
-> On 8/20/19 6:18 AM, Ond=C5=99ej Jirman wrote:
-> >> +	reset =3D devm_reset_control_get(dev, NULL);
-> >> +	if (IS_ERR(reset)) {
-> >> +		ret =3D PTR_ERR(reset);
-> >> +		dev_err(dev, "Failed to get reset control: %d\n", ret);
-> >> +		goto err_disable_unprepare;
-> >> +	}
-> >> +
-> >> +	ret =3D reset_control_deassert(reset);
-> >> +	if (ret) {
-> >> +		dev_err(dev, "Failed to deassert reset: %d\n", ret);
-> >> +		goto err_disable_unprepare;
-> >> +	}
-> >
-> > You need to assert the reset again from now on, in error paths. devm
-> > will not do that for you.
->
-> I know, and that's intentional. This same message box device is used for =
-ATF to
-> communicate with SCP firmware (on a different channel). This could be hap=
-pening
-> on a different core while Linux is running. So Linux is not allowed to de=
-assert
-> the reset. clk_disable_unprepare() is only okay because the clock is mark=
-ed as
-> critical.
+diff --git a/drivers/net/ethernet/amd/xgbe/xgbe-platform.c b/drivers/net/ethernet/amd/xgbe/xgbe-platform.c
+index dce9e59..4ebd241 100644
+--- a/drivers/net/ethernet/amd/xgbe/xgbe-platform.c
++++ b/drivers/net/ethernet/amd/xgbe/xgbe-platform.c
+@@ -301,7 +301,6 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	struct xgbe_prv_data *pdata;
+ 	struct device *dev = &pdev->dev;
+ 	struct platform_device *phy_pdev;
+-	struct resource *res;
+ 	const char *phy_mode;
+ 	unsigned int phy_memnum, phy_irqnum;
+ 	unsigned int dma_irqnum, dma_irqend;
+@@ -353,8 +352,7 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	/* Obtain the mmio areas for the device */
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	pdata->xgmac_regs = devm_ioremap_resource(dev, res);
++	pdata->xgmac_regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pdata->xgmac_regs)) {
+ 		dev_err(dev, "xgmac ioremap failed\n");
+ 		ret = PTR_ERR(pdata->xgmac_regs);
+@@ -363,8 +361,7 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	if (netif_msg_probe(pdata))
+ 		dev_dbg(dev, "xgmac_regs = %p\n", pdata->xgmac_regs);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+-	pdata->xpcs_regs = devm_ioremap_resource(dev, res);
++	pdata->xpcs_regs = devm_platform_ioremap_resource(pdev, 1);
+ 	if (IS_ERR(pdata->xpcs_regs)) {
+ 		dev_err(dev, "xpcs ioremap failed\n");
+ 		ret = PTR_ERR(pdata->xpcs_regs);
+@@ -373,8 +370,8 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	if (netif_msg_probe(pdata))
+ 		dev_dbg(dev, "xpcs_regs  = %p\n", pdata->xpcs_regs);
+ 
+-	res = platform_get_resource(phy_pdev, IORESOURCE_MEM, phy_memnum++);
+-	pdata->rxtx_regs = devm_ioremap_resource(dev, res);
++	pdata->rxtx_regs = devm_platform_ioremap_resource(phy_pdev,
++							  phy_memnum++);
+ 	if (IS_ERR(pdata->rxtx_regs)) {
+ 		dev_err(dev, "rxtx ioremap failed\n");
+ 		ret = PTR_ERR(pdata->rxtx_regs);
+@@ -383,8 +380,8 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	if (netif_msg_probe(pdata))
+ 		dev_dbg(dev, "rxtx_regs  = %p\n", pdata->rxtx_regs);
+ 
+-	res = platform_get_resource(phy_pdev, IORESOURCE_MEM, phy_memnum++);
+-	pdata->sir0_regs = devm_ioremap_resource(dev, res);
++	pdata->sir0_regs = devm_platform_ioremap_resource(phy_pdev,
++							  phy_memnum++);
+ 	if (IS_ERR(pdata->sir0_regs)) {
+ 		dev_err(dev, "sir0 ioremap failed\n");
+ 		ret = PTR_ERR(pdata->sir0_regs);
+@@ -393,8 +390,8 @@ static int xgbe_platform_probe(struct platform_device *pdev)
+ 	if (netif_msg_probe(pdata))
+ 		dev_dbg(dev, "sir0_regs  = %p\n", pdata->sir0_regs);
+ 
+-	res = platform_get_resource(phy_pdev, IORESOURCE_MEM, phy_memnum++);
+-	pdata->sir1_regs = devm_ioremap_resource(dev, res);
++	pdata->sir1_regs = devm_platform_ioremap_resource(phy_pdev,
++							  phy_memnum++);
+ 	if (IS_ERR(pdata->sir1_regs)) {
+ 		dev_err(dev, "sir1 ioremap failed\n");
+ 		ret = PTR_ERR(pdata->sir1_regs);
+-- 
+2.7.4
 
-I agree with Ondrej that since this is clearly not the standard use of
-the API, this must have a big comment explaining why we're doing it
-this way.
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---mrpxrcur5riymvjn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV05awAKCRDj7w1vZxhR
-xbIJAP9yrpmQb5VASu0xwjQKiF8z6Qkk63ohQogxkr2k66hwcAEAulMS7ROeVRrO
-iA0Lo17qVmuTaZnBbSFPofjTOChqgAQ=
-=0XW2
------END PGP SIGNATURE-----
-
---mrpxrcur5riymvjn--
