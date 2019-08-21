@@ -2,80 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D56CB97785
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:46:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5600B97789
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfHUKqv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:46:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60716 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726351AbfHUKqu (ORCPT
+        id S1726935AbfHUKr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:47:59 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:38820 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726227AbfHUKr7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:46:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=pQ2Wv/KrpNQLYBZ94T0F4LpmsjFVcLACEl2TET9qJzw=; b=iKZudid9Djsq/hKG3KK+PUj33
-        7A60449jHZXVtMRzMaKQqDPA1iwfOrRSl7dy/3WMDEsOo47k7WzBjhvG3PAbziLfhDQAAYPGtmeL0
-        e5nyIjeDLpi9SNBVmzdfOn9INaGwtXA5OQRBoJN5voGV95JaNNGuZ8Vz/YV7v5605opAEWzxdBg/N
-        WpFyBDRozoOSYS7G6R3+Nso3qGwo+5QmH+sMLYVHTjiby39FRvoWwzjhCEVsA5wcN3d2p2QiNSsQY
-        Z79bOEqEdbtGmWbTKQupd4tuiYHaoFrmmGn/DxPZdmlcXKI9n8VKSuIkXCY1js6NDVWI8kPD8LSa2
-        teGmLRB0w==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0O8c-0000Uh-2Q; Wed, 21 Aug 2019 10:46:46 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 4C6C9307456;
-        Wed, 21 Aug 2019 12:46:12 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id E0F9620C3BF31; Wed, 21 Aug 2019 12:46:43 +0200 (CEST)
-Date:   Wed, 21 Aug 2019 12:46:43 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     c00423981 <caomeng5@huawei.com>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cpustat: print watchdog time and statistics of soft and
- hard interrupts in soft lockup scenes
-Message-ID: <20190821104643.GA2349@hirez.programming.kicks-ass.net>
-References: <60319e82-3c2b-ff24-4ba7-4d58048130ff@huawei.com>
- <20190820110430.GL2332@hirez.programming.kicks-ass.net>
- <4eb6b499-b6b0-602a-ae89-0c1dceaa5088@huawei.com>
+        Wed, 21 Aug 2019 06:47:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1566384475; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=bCAftt3lJ09+T5g6O8rgBlvklX6m4wsgkMOQe1tylGQ=;
+        b=etrBidu99dqcPni2DzX+1LekMpTbWLg2CzthJsiYXn5GFm0I9aILx7OGWMnWHW7FJFmVFU
+        s666lbabp6Q709Lxw4JvMVyeLtuFPnYNxhGOPayz1UhuvaCQkMAy7XSZPpWCG3S1DZtWbB
+        VPyMOdqq8827JcgFK5dPmMpdV0xicEQ=
+Date:   Wed, 21 Aug 2019 12:47:39 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/3] dt-bindings: Document JZ47xx VPU auxiliary
+ processor
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ohad Ben-Cohen <ohad@wizery.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Paul Burton <paul.burton@mips.com>, od@zcrc.me,
+        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Message-Id: <1566384459.1884.0@crapouillou.net>
+In-Reply-To: <20190820205044.GA1223@bogus>
+References: <20190729183109.18283-1-paul@crapouillou.net>
+        <20190820205044.GA1223@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4eb6b499-b6b0-602a-ae89-0c1dceaa5088@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob,
 
-A: Because it messes up the order in which people normally read text.
-Q: Why is top-posting such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing in e-mail?
 
-On Wed, Aug 21, 2019 at 04:26:17PM +0800, c00423981 wrote:
-> Sorry, I cannot understand this problem accurately. I try to understand it and I guess what you want
-> to express is that the return value type should be cputime64_t but not u64, just like as follows:
-> 
-> +static cputime64_t cpustat_curr_cputime(int cpu, int index)
-> +{
-> +	cputime64_t time;
-> +
-> +	if (index == CPUTIME_IDLE)
-> +		time = get_idle_time(cpu);
-> +	else if (index == CPUTIME_IOWAIT)
-> +		time = get_iowait_time(cpu);
-> 
-> I don't know if I understand it correctly. Looking forward to your answer.
+Le mar. 20 ao=FBt 2019 =E0 22:50, Rob Herring <robh@kernel.org> a =E9crit :
+> On Mon, Jul 29, 2019 at 02:31:07PM -0400, Paul Cercueil wrote:
+>>  Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs=20
+>> from
+>>  Ingenic is a second Xburst MIPS CPU very similar to the main core.
+>>  This document describes the devicetree bindings for this auxiliary
+>>  processor.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>>=20
+>>  Notes:
+>>      v2: Update TCSM0 address in example
+>>=20
+>>   .../bindings/remoteproc/ingenic,vpu.txt       | 36=20
+>> +++++++++++++++++++
+>>   1 file changed, 36 insertions(+)
+>>   create mode 100644=20
+>> Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+>>=20
+>>  diff --git=20
+>> a/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt=20
+>> b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+>>  new file mode 100644
+>>  index 000000000000..576f9e582780
+>>  --- /dev/null
+>>  +++ b/Documentation/devicetree/bindings/remoteproc/ingenic,vpu.txt
+>>  @@ -0,0 +1,36 @@
+>>  +* Ingenic JZ47xx auxiliary processor
+>>  +
+>>  +Inside the Video Processing Unit (VPU) of the recent JZ47xx SoCs=20
+>> from Ingenic
+>>  +is a second Xburst MIPS CPU very similar to the main core.
+>>  +This document describes the devicetree bindings for this auxiliary=20
+>> processor.
+>>  +
+>>  +Required properties:
+>>  +- compatible: Should be "ingenic,jz4770-vpu-rproc"
+>>  +- reg: Must contain the registers location and length for:
+>>  +  * the auxiliary processor,
+>>  +  * the Tightly Coupled Shared Memory 0 (TCSM0),
+>>  +  * the Tightly Coupled Shared Memory 1 (TCSM1),
+>>  +  * the shared SRAM.
+>>  +- reg-names: Must contain "aux", "tcsm0", "tcsm1", "sram".
+>>  +- clocks: Clock specifier for the AUX and VPU clocks.
+>>  +- clock-names: Must contain "aux", "vpu".
+>>  +- interrupts: Interrupt specifier for the VPU hardware block.
+>>  +
+>>  +Example:
+>>  +
+>>  +vpu: cpu@132a0000 {
+>=20
+> cpu is reserved for CPUs under /cpus/. Use video-codec or=20
+> video-decoder
+> or ?? It's not clear what type of video processing this does.
 
-get_iowait_time(cpu) is terminally broken, see commit:
+Hardware decode and encode of mpeg-2 and h264. I guess I'll use=20
+'video-decoder' then.
 
-  e33a9bba85a8 ("sched/core: move IO scheduling accounting from io_schedule_timeout() into scheduler")
+
+>=20
+>>  +	compatible =3D "ingenic,jz4770-vpu-rproc";
+>>  +
+>>  +	reg =3D <0x132a0000 0x20 /* AUX */
+>>  +		   0x132b0000 0x4000 /* TCSM0 */
+>>  +		   0x132c0000 0xc000 /* TCSM1 */
+>>  +		   0x132f0000 0x7000 /* SRAM */
+>>  +	>;
+>>  +	reg-names =3D "aux", "tcsm0", "tcsm1", "sram";
+>>  +
+>>  +	clocks =3D <&cgu JZ4770_CLK_AUX>, <&cgu JZ4770_CLK_VPU>;
+>>  +	clock-names =3D "aux", "vpu";
+>>  +
+>>  +	interrupt-parent =3D <&cpuintc>;
+>>  +	interrupts =3D <3>;
+>>  +};
+>>  --
+>>  2.21.0.593.g511ec345e18
+>>=20
+
+=
+
