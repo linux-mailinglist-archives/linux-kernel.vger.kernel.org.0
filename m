@@ -2,111 +2,119 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E615297F08
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:39:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D033497F42
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:44:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730253AbfHUPhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:37:51 -0400
-Received: from vps0.lunn.ch ([185.16.172.187]:49066 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729352AbfHUPht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:37:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=xuBrmteC5AYtTtwM4c0/q/0f+0lPdxUwwmCp9CFt+9M=; b=YrdLKKCmA4/6woR3hIeUZHQxq7
-        kyE3TevbpdsOOEaHwfN3v/P2QzgOWi+s2iyYsmtn3yJXTV5uXeyRJtD6BUl15Ynmx8hn6dR7hhAk2
-        uYrBeJ4z+3i/a/ErtyLSAWa1fGUZt/20xbTlp4bpIFhakXjUli92V032szvaxkYMRAFo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1i0Sg8-0005rs-Ug; Wed, 21 Aug 2019 17:37:40 +0200
-Date:   Wed, 21 Aug 2019 17:37:40 +0200
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Marco Hartmann <marco.hartmann@nxp.com>
-Cc:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Christian Herber <christian.herber@nxp.com>
-Subject: Re: [PATCH v2 net] Add genphy_c45_config_aneg() function to phy-c45.c
-Message-ID: <20190821153740.GB22091@lunn.ch>
-References: <1566385208-23523-1-git-send-email-marco.hartmann@nxp.com>
+        id S1728799AbfHUPoe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:44:34 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36992 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727553AbfHUPoe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 11:44:34 -0400
+Received: by mail-pg1-f195.google.com with SMTP id d1so1535838pgp.4;
+        Wed, 21 Aug 2019 08:44:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=rpekFqyZj3l++WQEb7CaA2EK93VudltOovvbUJ4E8Hk=;
+        b=LP6mKtvxisckWHY8p7xJJz6IneM36EXGa2X4VysZ5bTanqqYgZpoMXx3/dfy8rAain
+         nEXI1vDMvVFN16Hz2tdkHpicjVyCm+Fk5ax3ZnOup3blLuJcxjuB7gbLPtNHj5w2YjQK
+         eLgaTDg6EjEj0V1PLT7XDxkCmoqNhKJ2WkWuikfLbe1/g+/kF3TfXh2Ht0mc8sNo/LKR
+         cOMVAQz0tfbE2EewNkpAAJUgIzVFnqeYAEPEM4YhmY3aIa+tPmZNkKLhfkrpF168YMpi
+         hXQaMj2Lz8DATsJqgB4LQ2zw8Ug+i4CZA8Rkrji2TITrCmJ4qYRGjuFe8z7pwPJp2IeD
+         U7OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=rpekFqyZj3l++WQEb7CaA2EK93VudltOovvbUJ4E8Hk=;
+        b=Fas90mKMlHwK9BqxfLjZuvm6FKa3Cm5qs1h504g5Igil6NAwob4p9FDp5yHbZqv3LI
+         R1LmILQifIrraV7AvN62owtBPMeM18xWQ0Y7QfTLG8ebRIifyQTKLHZNUO7u20L0/WNE
+         gGb9qqxcsT1J5ucks6Ra+Ls3h1gOokDmcXDEodFgw4Gb6aWqsohJOl7jj6ZbwMOz9WNB
+         dA+wePpMryeSlOkLiSRFkTkv526NnqO/0c9C04N6GBJe4whDiin4PrvpGAKpqsBlUb5J
+         vGwxVGfflyhDXi//9XPBCWfPfntMjGoAisOWDJOHhVLjYb0GG/xf+BNDqjKfChHEKlvm
+         4lVA==
+X-Gm-Message-State: APjAAAUxbeGms+qlFh8bVBTa3KgGRXx1Fu02WXtTMi8H7oMndBCTyGes
+        gdogytEIYZrtM8PClfM7hTE=
+X-Google-Smtp-Source: APXvYqz1i4DT2loqS6ywADscFmkdWQr9CzJdfaAjI7m57Ak+9WrzsLRlfByHabNBrs3E+jHne9VPnQ==
+X-Received: by 2002:a62:76d5:: with SMTP id r204mr35736589pfc.252.1566402273255;
+        Wed, 21 Aug 2019 08:44:33 -0700 (PDT)
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net. [184.188.36.2])
+        by smtp.gmail.com with ESMTPSA id d18sm20130408pgi.40.2019.08.21.08.44.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 21 Aug 2019 08:44:32 -0700 (PDT)
+Date:   Tue, 20 Aug 2019 22:09:25 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Thomas =?iso-8859-1?Q?Hellstr=F6m_=28VMware=29?= 
+        <thomas_os@shipmail.org>
+Cc:     linux-kernel@vger.kernel.org, pv-drivers@vmware.com,
+        Thomas Hellstrom <thellstrom@vmware.com>,
+        linux-input@vger.kernel.org, Doug Covelli <dcovelli@vmware.com>
+Subject: Re: [PATCH 4/4] input/vmmouse: Update the backdoor call with support
+ for new instructions
+Message-ID: <20190821050925.GA566@penguin>
+References: <20190818143316.4906-1-thomas_os@shipmail.org>
+ <20190818143316.4906-5-thomas_os@shipmail.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1566385208-23523-1-git-send-email-marco.hartmann@nxp.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190818143316.4906-5-thomas_os@shipmail.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 11:00:46AM +0000, Marco Hartmann wrote:
-> Commit 34786005eca3 ("net: phy: prevent PHYs w/o Clause 22 regs from calling
-> genphy_config_aneg") introduced a check that aborts phy_config_aneg()
-> if the phy is a C45 phy.
-> This causes phy_state_machine() to call phy_error() so that the phy
-> ends up in PHY_HALTED state.
+On Sun, Aug 18, 2019 at 04:33:16PM +0200, Thomas Hellström (VMware) wrote:
+> From: Thomas Hellstrom <thellstrom@vmware.com>
 > 
-> Instead of returning -EOPNOTSUPP, call genphy_c45_config_aneg()
-> (analogous to the C22 case) so that the state machine can run
-> correctly.
+> Use the definition provided by include/asm/vmware.h
 > 
-> genphy_c45_config_aneg() closely resembles mv3310_config_aneg()
-> in drivers/net/phy/marvell10g.c, excluding vendor specific
-> configurations for 1000BaseT.
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: <linux-input@vger.kernel.org>
+> Signed-off-by: Thomas Hellstrom <thellstrom@vmware.com>
+> Reviewed-by: Doug Covelli <dcovelli@vmware.com>
 
-> +/**
-> + * genphy_c45_config_aneg - restart auto-negotiation or forced setup
-> + * @phydev: target phy_device struct
-> + *
-> + * Description: If auto-negotiation is enabled, we configure the
-> + *   advertising, and then restart auto-negotiation.  If it is not
-> + *   enabled, then we force a configuration.
-> + */
-> +int genphy_c45_config_aneg(struct phy_device *phydev)
-> +{
-> +	bool changed = false;
-> +	int ret;
-> +
-> +	if (phydev->autoneg == AUTONEG_DISABLE)
-> +		return genphy_c45_pma_setup_forced(phydev);
-> +
-> +	ret = genphy_c45_an_config_aneg(phydev);
-> +	if (ret < 0)
-> +		return ret;
-> +	if (ret > 0)
-> +		changed = true;
-> +
-> +	return genphy_c45_check_and_restart_aneg(phydev, changed);
-> +}
-> +EXPORT_SYMBOL_GPL(genphy_c45_config_aneg);
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-The vendor parts for 1000BaseT makes this interesting. Do we expect to
-see an C45 PHYs which don't support 1000BaseT? I think that
-unlikely. So all C45 PHYs are going to implement their own config_aneg
-callback so they can set their vendor registers for 1000BaseT.
+Please feel free to merge with the rest of the patches introducing
+VMWARE_HYPERCALL.
 
-> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-> index f3adea9ef400..74c4e15ebe52 100644
-> --- a/drivers/net/phy/phy.c
-> +++ b/drivers/net/phy/phy.c
-> @@ -507,7 +507,7 @@ static int phy_config_aneg(struct phy_device *phydev)
->  	 * allowed to call genphy_config_aneg()
->  	 */
->  	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
-> -		return -EOPNOTSUPP;
-> +		return genphy_c45_config_aneg(phydev);
+> ---
+>  drivers/input/mouse/vmmouse.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/mouse/vmmouse.c b/drivers/input/mouse/vmmouse.c
+> index 871e5b5ab129..0c7707c7bede 100644
+> --- a/drivers/input/mouse/vmmouse.c
+> +++ b/drivers/input/mouse/vmmouse.c
+> @@ -16,6 +16,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/module.h>
+>  #include <asm/hypervisor.h>
+> +#include <asm/vmware.h>
 >  
->  	return genphy_config_aneg(phydev);
+>  #include "psmouse.h"
+>  #include "vmmouse.h"
+> @@ -84,7 +85,7 @@ struct vmmouse_data {
+>  #define VMMOUSE_CMD(cmd, in1, out1, out2, out3, out4)	\
+>  ({							\
+>  	unsigned long __dummy1, __dummy2;		\
+> -	__asm__ __volatile__ ("inl %%dx" :		\
+> +	__asm__ __volatile__ (VMWARE_HYPERCALL :	\
+>  		"=a"(out1),				\
+>  		"=b"(out2),				\
+>  		"=c"(out3),				\
+> -- 
+> 2.20.1
+> 
 
-So here we should be calling the driver config_aneg function. It can
-then call genphy_c45_config_aneg(phydev) to do the generic parts.
+Thanks.
 
-Heiner, what do you think?
-
-	Andrew
+-- 
+Dmitry
