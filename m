@@ -2,45 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E0859876F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:38:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5364F98778
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 00:38:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731242AbfHUWiK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 18:38:10 -0400
-Received: from mail-io1-f70.google.com ([209.85.166.70]:46095 "EHLO
+        id S1731268AbfHUWie (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 18:38:34 -0400
+Received: from mail-io1-f70.google.com ([209.85.166.70]:34482 "EHLO
         mail-io1-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729857AbfHUWiJ (ORCPT
+        with ESMTP id S1731100AbfHUWiJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Aug 2019 18:38:09 -0400
-Received: by mail-io1-f70.google.com with SMTP id e17so4202825ioh.13
+Received: by mail-io1-f70.google.com with SMTP id u84so4239312iod.1
         for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 15:38:08 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=BTtJUMszNrujEPFC3wQT6l7FYC6eZ4EtPS5uVqWHKZc=;
-        b=I8oSaEOJqFDx341OJW9MLiF0XBdqIaSU2uODgnq2CARsvzYITPa/mfLXnkAbWxrRR+
-         Yp2b7BIYYZ45adX9xY39smxz4gbceymLAZnNL3oUp23aBdHV6nYvffiRp8nb9V3dpJsz
-         zoYuu+Mx+erHSvqKKATir4SAWK5Z9OGNmoYWnHk++V9UOeRCdKt5oS4uxNqGpI35cdxk
-         Gq/oZBoUKAh8FMrBSngs0UwOtc3fJDRkCzwhbSC5nYynE3VOV2d3872K/+I68+LedFNx
-         Jb1i1SkTOXxxHmSgdx0n7dBd6c2bjU5MFLyitD9T2uaimrVIZ7uBmvC24xdDsl7Z3n7W
-         +fRQ==
-X-Gm-Message-State: APjAAAWzhgToYmfOx2G1YnQvssgppgaypTGMeH4lXOQ7zLf1p6cJnDRt
-        tjdSXca+KmI7VEGlQl8JkRD03/PbWICUXIG6cnaSG4tBgYmN
-X-Google-Smtp-Source: APXvYqzOluyNlTC3a21ScZvzJi76nxi43xLQVkD9qQOF0Qspti0r4r1Pja6nog2TC39cP1WafA+H4oMWutoHWRL5P1FhBGMyCnCU
+        bh=OvcLDGlyZApcuXSWwLIJL3Pm5pdGHjKfI+ox2HXsl2s=;
+        b=Eo2pAtoR3hOPL3QNfKqvzlNnn9f0es3LwkvENS6Y0L0HK557+hR9tXQEEnTfHM6Rqr
+         wPrM4g41pafQoDEmhsOdK0Jc/NnIL4M828Ge+XqPJmtoE8D7//w7g2FLvISerHoJqhlM
+         ZoL1WvjXjedlYv59SExcoAqt7rMip+jDBeumqKHZ7gV3/2MCvIHLG035zVq810PwBO47
+         yp96JBuEUo5m0W6r4ivxsxgvP6BsmrWCUflrbkt2Hg/DY7VSilNHaTZozCIuueYTzO9J
+         R/OjNnHHdW6hH5g86fcBQYBeGBItXw7TdwlDHpXnfNYKlJrSptm2kUIVWzwQHoxTZoLY
+         LE1A==
+X-Gm-Message-State: APjAAAWr/yQkn3moI1GwDEhcz/1B/eLoCXxXYzIyK4zvXIWvTE9vH2Z9
+        R4E3i5OouB+/vQ1fqykNXH+FNB5FdcxpyidqNKDl9pkwKqyk
+X-Google-Smtp-Source: APXvYqzF6S4ovYIYizRMwKjYTxeAyYAFuZ3RLPgkDuWmKuaomtU0MLwdY0zj/iSpH2Nmhra60tQ1pRLr2dt1szURo0+kIj/j+tKV
 MIME-Version: 1.0
-X-Received: by 2002:a02:1441:: with SMTP id 62mr13101565jag.21.1566427087791;
- Wed, 21 Aug 2019 15:38:07 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 15:38:07 -0700
+X-Received: by 2002:a5e:a90f:: with SMTP id c15mr1900814iod.41.1566427088386;
+ Wed, 21 Aug 2019 15:38:08 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 15:38:08 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000226dc30590a83a39@google.com>
-Subject: KMSAN: uninit-value in batadv_iv_send_outstanding_bat_ogm_packet
-From:   syzbot <syzbot+355cab184197dbbfa384@syzkaller.appspotmail.com>
-To:     a@unstable.cc, b.a.t.m.a.n@lists.open-mesh.org,
-        davem@davemloft.net, glider@google.com,
-        linux-kernel@vger.kernel.org, mareklindner@neomailbox.ch,
-        netdev@vger.kernel.org, sw@simonwunderlich.de,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <0000000000002b81b70590a83ad7@google.com>
+Subject: KASAN: null-ptr-deref Write in queue_work_on
+From:   syzbot <syzbot+017e491ae13c0068598a@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-can@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mkl@pengutronix.de,
+        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        wg@grandegger.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -51,101 +50,74 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    61ccdad1 Revert "drm/bochs: Use shadow buffer for bochs fr..
-git tree:       https://github.com/google/kmsan.git master
-console output: https://syzkaller.appspot.com/x/log.txt?x=13d6909c600000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27abc558ecb16a3b
-dashboard link: https://syzkaller.appspot.com/bug?extid=355cab184197dbbfa384
-compiler:       clang version 9.0.0 (/home/glider/llvm/clang  
-80fee25776c2fb61e74c1ecb1a523375c2500b69)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1612b9d2600000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11d388ac600000
+HEAD commit:    6e625a1a Merge tag 'xtensa-20190816' of git://github.com/j..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=174e04ac600000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3ff364e429585cf2
+dashboard link: https://syzkaller.appspot.com/bug?extid=017e491ae13c0068598a
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1327d9e2600000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16c4fc4c600000
+
+Bisection is inconclusive: the first bad commit could be any of:
+
+569dbb88 Linux 4.13
+  that is not the commit
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17520702600000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+355cab184197dbbfa384@syzkaller.appspotmail.com
+Reported-by: syzbot+017e491ae13c0068598a@syzkaller.appspotmail.com
 
 ==================================================================
-BUG: KMSAN: uninit-value in batadv_iv_ogm_send_to_if  
-net/batman-adv/bat_iv_ogm.c:317 [inline]
-BUG: KMSAN: uninit-value in batadv_iv_ogm_emit  
-net/batman-adv/bat_iv_ogm.c:383 [inline]
-BUG: KMSAN: uninit-value in  
-batadv_iv_send_outstanding_bat_ogm_packet+0x6cd/0xcc0  
-net/batman-adv/bat_iv_ogm.c:1657
-CPU: 1 PID: 290 Comm: kworker/u4:7 Not tainted 5.3.0-rc3+ #17
+BUG: KASAN: null-ptr-deref in test_and_set_bit  
+include/asm-generic/bitops-instrumented.h:143 [inline]
+BUG: KASAN: null-ptr-deref in queue_work_on+0xa6/0x210  
+kernel/workqueue.c:1517
+Write of size 8 at addr 0000000000000050 by task syz-executor935/9691
+
+CPU: 0 PID: 9691 Comm: syz-executor935 Not tainted 5.3.0-rc4+ #113
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-Workqueue: bat_events batadv_iv_send_outstanding_bat_ogm_packet
 Call Trace:
   __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x191/0x1f0 lib/dump_stack.c:113
-  kmsan_report+0x162/0x2d0 mm/kmsan/kmsan_report.c:109
-  __msan_warning+0x75/0xe0 mm/kmsan/kmsan_instr.c:294
-  batadv_iv_ogm_send_to_if net/batman-adv/bat_iv_ogm.c:317 [inline]
-  batadv_iv_ogm_emit net/batman-adv/bat_iv_ogm.c:383 [inline]
-  batadv_iv_send_outstanding_bat_ogm_packet+0x6cd/0xcc0  
-net/batman-adv/bat_iv_ogm.c:1657
-  process_one_work+0x1572/0x1ef0 kernel/workqueue.c:2269
-  worker_thread+0x111b/0x2460 kernel/workqueue.c:2415
-  kthread+0x4b5/0x4f0 kernel/kthread.c:256
-  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:355
-
-Uninit was created at:
-  kmsan_save_stack_with_flags+0x37/0x70 mm/kmsan/kmsan.c:187
-  kmsan_internal_alloc_meta_for_pages+0x123/0x510 mm/kmsan/kmsan_hooks.c:114
-  kmsan_alloc_page+0x7a/0xf0 mm/kmsan/kmsan_hooks.c:244
-  __alloc_pages_nodemask+0x142d/0x5fa0 mm/page_alloc.c:4768
-  __alloc_pages include/linux/gfp.h:475 [inline]
-  __alloc_pages_node include/linux/gfp.h:488 [inline]
-  alloc_pages_node include/linux/gfp.h:502 [inline]
-  __page_frag_cache_refill mm/page_alloc.c:4843 [inline]
-  page_frag_alloc+0x35b/0x890 mm/page_alloc.c:4873
-  __napi_alloc_skb+0x195/0x980 net/core/skbuff.c:519
-  napi_alloc_skb include/linux/skbuff.h:2808 [inline]
-  page_to_skb+0x134/0x1150 drivers/net/virtio_net.c:384
-  receive_mergeable drivers/net/virtio_net.c:924 [inline]
-  receive_buf+0xe7b/0x8810 drivers/net/virtio_net.c:1033
-  virtnet_receive drivers/net/virtio_net.c:1323 [inline]
-  virtnet_poll+0x666/0x19d0 drivers/net/virtio_net.c:1428
-  napi_poll net/core/dev.c:6347 [inline]
-  net_rx_action+0x74b/0x1950 net/core/dev.c:6413
-  __do_softirq+0x4a1/0x83a kernel/softirq.c:293
-  invoke_softirq kernel/softirq.c:375 [inline]
-  irq_exit+0x230/0x280 kernel/softirq.c:416
-  exiting_irq arch/x86/include/asm/apic.h:537 [inline]
-  do_IRQ+0x20d/0x3a0 arch/x86/kernel/irq.c:259
-  ret_from_intr+0x0/0x33
-  kmsan_get_shadow_origin_ptr+0x6/0x3a0 mm/kmsan/kmsan.c:656
-  __msan_metadata_ptr_for_load_8+0x10/0x20 mm/kmsan/kmsan_instr.c:55
-  compound_head include/linux/compiler.h:206 [inline]
-  PageReferenced include/linux/page-flags.h:315 [inline]
-  mark_page_accessed+0x30c/0xa00 mm/swap.c:391
-  touch_buffer fs/buffer.c:60 [inline]
-  __find_get_block+0x1681/0x19e0 fs/buffer.c:1303
-  __getblk_gfp+0xc5/0x1080 fs/buffer.c:1321
-  sb_getblk include/linux/buffer_head.h:325 [inline]
-  __ext4_get_inode_loc+0x647/0x1c80 fs/ext4/inode.c:4611
-  ext4_get_inode_loc fs/ext4/inode.c:4726 [inline]
-  ext4_reserve_inode_write+0x15d/0x430 fs/ext4/inode.c:5919
-  ext4_mark_inode_dirty+0x2dd/0xca0 fs/ext4/inode.c:6071
-  ext4_dirty_inode+0x187/0x1d0 fs/ext4/inode.c:6110
-  __mark_inode_dirty+0x486/0x1380 fs/fs-writeback.c:2170
-  mark_inode_dirty include/linux/fs.h:2138 [inline]
-  generic_write_end+0x3f7/0x460 fs/buffer.c:2164
-  ext4_da_write_end+0x1050/0x1240 fs/ext4/inode.c:3217
-  generic_perform_write+0x618/0x990 mm/filemap.c:3341
-  __generic_file_write_iter+0x421/0xa30 mm/filemap.c:3459
-  ext4_file_write_iter+0xc97/0x2010 fs/ext4/file.c:270
-  call_write_iter include/linux/fs.h:1870 [inline]
-  new_sync_write fs/read_write.c:483 [inline]
-  __vfs_write+0xa2c/0xcb0 fs/read_write.c:496
-  vfs_write+0x481/0x920 fs/read_write.c:558
-  ksys_write+0x265/0x430 fs/read_write.c:611
-  __do_sys_write fs/read_write.c:623 [inline]
-  __se_sys_write+0x92/0xb0 fs/read_write.c:620
-  __x64_sys_write+0x4a/0x70 fs/read_write.c:620
-  do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:297
-  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+  dump_stack+0x172/0x1f0 lib/dump_stack.c:113
+  __kasan_report.cold+0x5/0x36 mm/kasan/report.c:486
+  kasan_report+0x12/0x17 mm/kasan/common.c:612
+  check_memory_region_inline mm/kasan/generic.c:185 [inline]
+  check_memory_region+0x134/0x1a0 mm/kasan/generic.c:192
+  __kasan_check_write+0x14/0x20 mm/kasan/common.c:98
+  test_and_set_bit include/asm-generic/bitops-instrumented.h:143 [inline]
+  queue_work_on+0xa6/0x210 kernel/workqueue.c:1517
+  queue_work include/linux/workqueue.h:490 [inline]
+  schedule_work include/linux/workqueue.h:548 [inline]
+  slcan_write_wakeup+0x66/0x90 drivers/net/can/slcan.c:348
+  tty_wakeup+0xe9/0x120 drivers/tty/tty_io.c:535
+  pty_unthrottle+0x37/0x60 drivers/tty/pty.c:95
+  tty_unthrottle+0xab/0x110 drivers/tty/tty_ioctl.c:139
+  __tty_perform_flush+0x1b3/0x200 drivers/tty/tty_ioctl.c:861
+  n_tty_ioctl_helper+0x1cc/0x3b0 drivers/tty/tty_ioctl.c:937
+  n_tty_ioctl+0x59/0x370 drivers/tty/n_tty.c:2466
+  tty_ioctl+0xaf9/0x14f0 drivers/tty/tty_io.c:2666
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:509 [inline]
+  do_vfs_ioctl+0xdb6/0x13e0 fs/ioctl.c:696
+  ksys_ioctl+0xab/0xd0 fs/ioctl.c:713
+  __do_sys_ioctl fs/ioctl.c:720 [inline]
+  __se_sys_ioctl fs/ioctl.c:718 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:718
+  do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x446859
+Code: e8 9c b4 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb 07 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f17a0a3fd18 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00000000006dbc38 RCX: 0000000000446859
+RDX: 0000000000000000 RSI: 000000000000540b RDI: 0000000000000003
+RBP: 00000000006dbc30 R08: 00007f17a0a40700 R09: 0000000000000000
+R10: 00007f17a0a40700 R11: 0000000000000246 R12: 00000000006dbc3c
+R13: 00007ffdfd0bdb5f R14: 00007f17a0a409c0 R15: 20c49ba5e353f7cf
 ==================================================================
 
 
@@ -156,5 +128,6 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this bug report. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 syzbot can test patches for this bug, for details see:
 https://goo.gl/tpsmEJ#testing-patches
