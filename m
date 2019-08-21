@@ -2,76 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 17912981E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 19:57:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20DC89821B
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 19:59:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730100AbfHUR5k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 13:57:40 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:41972 "EHLO mx1.redhat.com"
+        id S1730513AbfHUR64 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 13:58:56 -0400
+Received: from mga09.intel.com ([134.134.136.24]:36081 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729817AbfHUR5j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 13:57:39 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 56A4E106BB2C;
-        Wed, 21 Aug 2019 17:57:39 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.158])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2D0FF5DC1E;
-        Wed, 21 Aug 2019 17:57:39 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id DCA92223D0F; Wed, 21 Aug 2019 13:57:32 -0400 (EDT)
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org
-Cc:     virtio-fs@redhat.com, vgoyal@redhat.com, miklos@szeredi.hu,
-        stefanha@redhat.com, dgilbert@redhat.com
-Subject: [PATCH 19/19] fuse: Take inode lock for dax inode truncation
-Date:   Wed, 21 Aug 2019 13:57:20 -0400
-Message-Id: <20190821175720.25901-20-vgoyal@redhat.com>
-In-Reply-To: <20190821175720.25901-1-vgoyal@redhat.com>
-References: <20190821175720.25901-1-vgoyal@redhat.com>
+        id S1730505AbfHUR6x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 13:58:53 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 10:58:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
+   d="scan'208";a="172851343"
+Received: from kumarsh1-mobl.ger.corp.intel.com (HELO localhost) ([10.249.33.104])
+  by orsmga008.jf.intel.com with ESMTP; 21 Aug 2019 10:58:47 -0700
+Date:   Wed, 21 Aug 2019 20:58:46 +0300
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stephen Boyd <swboyd@chromium.org>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
+        linux-integrity@vger.kernel.org,
+        Andrey Pronin <apronin@chromium.org>,
+        Duncan Laurie <dlaurie@chromium.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Alexander Steffen <Alexander.Steffen@infineon.com>
+Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other
+ drivers
+Message-ID: <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
+References: <20190812223622.73297-1-swboyd@chromium.org>
+ <20190812223622.73297-5-swboyd@chromium.org>
+ <20190819164005.evg35d2hcuslbnrj@linux.intel.com>
+ <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.64]); Wed, 21 Aug 2019 17:57:39 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a file is opened with O_TRUNC, we need to make sure that any other
-DAX operation is not in progress. DAX expects i_size to be stable.
+On Mon, Aug 19, 2019 at 10:10:08AM -0700, Stephen Boyd wrote:
+> Quoting Jarkko Sakkinen (2019-08-19 09:40:05)
+> > On Mon, Aug 12, 2019 at 03:36:20PM -0700, Stephen Boyd wrote:
+> > > Export a new function, tpm_tis_spi_init(), and the associated
+> > > read/write/transfer APIs so that we can create variant drivers based on
+> > > the core functionality of this TPM SPI driver. Variant drivers can wrap
+> > > the tpm_tis_spi_phy struct with their own struct and override the
+> > > behavior of tpm_tis_spi_transfer() by supplying their own flow control
+> > > and pre-transfer hooks. This shares the most code between the core
+> > > driver and any variants that want to override certain behavior without
+> > > cluttering the core driver.
+> > 
+> > I think this is adding way too much complexity for the purpose. We
+> > definitely do want this three layer architecture here.
+> > 
+> > Instead there should be a single tpm_tis_spi driver that dynamically
+> > either TCG or CR50. I rather take some extra bytes in the LKM than
+> > the added complexity.
+> > 
+> 
+> Ok. I had that patch originally[1]. Do you want me to resend that patch
+> and start review over from there?
+> 
+> [1] https://lkml.kernel.org/r/5d2f955d.1c69fb81.35877.7018@mx.google.com
 
-In fuse_iomap_begin() we check for i_size at multiple places and we expect
-i_size to not change.
+What if:
 
-Another problem is, if we setup a mapping in fuse_iomap_begin(), and
-file gets truncated and dax read/write happens, KVM currently hangs.
-It tries to fault in a page which does not exist on host (file got
-truncated). It probably requries fixing in KVM.
+1. You mostly use this solution but have it as a separate source module
+   only.
+2. Use TPM_IS_CR50 only once to bind the callbacks.
 
-So for now, take inode lock. Once KVM is fixed, we might have to
-have a look at it again.
-
-Signed-off-by: Vivek Goyal <vgoyal@redhat.com>
----
- fs/fuse/file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index e369a1f92d85..794c55131bd0 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -524,7 +524,7 @@ int fuse_open_common(struct inode *inode, struct file *file, bool isdir)
- 	int err;
- 	bool lock_inode = (file->f_flags & O_TRUNC) &&
- 			  fc->atomic_o_trunc &&
--			  fc->writeback_cache;
-+			  (fc->writeback_cache || IS_DAX(inode));
- 
- 	err = generic_file_open(inode, file);
- 	if (err)
--- 
-2.20.1
-
+/Jarkko
