@@ -2,69 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D394596E7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01AB496E84
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:45:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfHUAmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 20:42:44 -0400
-Received: from verein.lst.de ([213.95.11.211]:32992 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfHUAmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 20:42:44 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 7B5F168B20; Wed, 21 Aug 2019 02:42:41 +0200 (CEST)
-Date:   Wed, 21 Aug 2019 02:42:41 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     Atish Patra <Atish.Patra@wdc.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/15] riscv: provide native clint access for M-mode
-Message-ID: <20190821004241.GA20250@lst.de>
-References: <20190813154747.24256-1-hch@lst.de> <20190813154747.24256-9-hch@lst.de> <fa0570285684e03587ee8f09b86f0d058d757c55.camel@wdc.com>
+        id S1726857AbfHUAnr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 20:43:47 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35936 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfHUAnr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 20:43:47 -0400
+Received: by mail-lj1-f195.google.com with SMTP id u15so499242ljl.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 17:43:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FajnE/5GS1R2x5f3KG7EhW3STXyEPWL5jLH+s75xMBQ=;
+        b=OgGbnwzdMlBAxLB0nXPGR8lubUdwdOMnk2GEOoXr3ylU9Q4sYetMQAd0uyU6IRIorM
+         6UooosusQb98US54SL+QLtui7+wSkw1J+s0FbmhwlQnB3R+SnqoFoBEwQDU+caRSgP7i
+         oQM5/7n/2VIdCOuSgZodegRcjr5fApTWthAQY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FajnE/5GS1R2x5f3KG7EhW3STXyEPWL5jLH+s75xMBQ=;
+        b=Gj3WIAkZfnEsP+ZGqxYsXV9x5bU4E9wmprxaHvBF55iQmQj7ls/kUs87M9ct33sZt6
+         H6If5P5+/9kugmkzY5gKmhnwHZ1olaEnhmzTJTldF+nnefF2msCsR3CmKmXGATqbBo2X
+         TusblRPA6Iszkzx2s3SzoQIpwNbKOpwrk5umndIxEihcgrS7nobUabx5NWXejrrWWpFp
+         R52SHldVYwo+PggA9qpubFjyY3MhafJJy0dfjWlXVWFTQEbr2h0VoZuE6xsQvHXqD+4p
+         /NCJB9MEGbccUK5Lt1JJXmSRsj/ZkDi1XNqP4BAbpfWQvupKtZkaS7FZadNenKYQvpaH
+         RZXQ==
+X-Gm-Message-State: APjAAAVM+1WInpUxhNVZhKbwWBhCTVjzlAu2otCGtHSn7JMDHxM9Keqf
+        AXnRz0nn5RzzS4pCKzwwZoPyDPowNZ4=
+X-Google-Smtp-Source: APXvYqwfJAxtWlK19MS8brHPmPL9NypzLU6waFXJ79P4fATuYVIyqEOhBE9rns8+58FCz8Pt9H1UNA==
+X-Received: by 2002:a2e:8ec6:: with SMTP id e6mr16632438ljl.192.1566348224758;
+        Tue, 20 Aug 2019 17:43:44 -0700 (PDT)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com. [209.85.167.51])
+        by smtp.gmail.com with ESMTPSA id z25sm3050014lfi.51.2019.08.20.17.43.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2019 17:43:44 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id j17so457638lfp.3
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 17:43:43 -0700 (PDT)
+X-Received: by 2002:a19:c20b:: with SMTP id l11mr16880592lfc.106.1566348223500;
+ Tue, 20 Aug 2019 17:43:43 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fa0570285684e03587ee8f09b86f0d058d757c55.camel@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+References: <c0005a09c89c20093ac699c97e7420331ec46b01.camel@perches.com>
+ <9c7a79b4d21aea52464d00c8fa4e4b92638560b6.camel@perches.com>
+ <CAHk-=wiL7jqYNfYrNikgBw3byY+Zn37-8D8yR=WUu0x=_2BpZA@mail.gmail.com>
+ <6a5f470c1375289908c37632572c4aa60d6486fa.camel@perches.com>
+ <4398924f28a58fca296d101dae11e7accce80656.camel@perches.com>
+ <ad42da450ccafcb571cca9289dcf52840dbb53d3.camel@perches.com>
+ <20190820092451.791c85e5@canb.auug.org.au> <14723fccc2c3362cc045df17fc8554f37c8a8529.camel@perches.com>
+ <CAHk-=wgqQKoAnhmhGE-2PBFt7oQs9LLAATKbYa573UO=DPBE0Q@mail.gmail.com> <edd8efd53fadd07992f804cc595c6ae5fdb60e73.camel@perches.com>
+In-Reply-To: <edd8efd53fadd07992f804cc595c6ae5fdb60e73.camel@perches.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 20 Aug 2019 17:43:27 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg8vLmmwTGhXM51NpSWJW8RFEAKoXxG0Hu_Q9Uwbjj8kw@mail.gmail.com>
+Message-ID: <CAHk-=wg8vLmmwTGhXM51NpSWJW8RFEAKoXxG0Hu_Q9Uwbjj8kw@mail.gmail.com>
+Subject: Re: rfc: treewide scripted patch mechanism? (was: Re: [PATCH]
+ Makefile: Convert -Wimplicit-fallthrough=3 to just -Wimplicit-fallthrough for clang)QUILT
+To:     Joe Perches <joe@perches.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        clang-built-linux@googlegroups.com,
+        Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:24:31AM +0000, Atish Patra wrote:
-> > +static inline void clint_set_timer(unsigned long delta)
-> > +{
-> > +	writeq_relaxed(clint_read_timer() + delta,
-> > +		clint_time_cmp +
-> > cpuid_to_hartid_map(smp_processor_id()));'
-> 
-> This is not compatible with 32 bit mode. IIRC, timecmp is a 64 bit on
-> RV32 as well. Here is the implementation in OpenSBI.
+On Tue, Aug 20, 2019 at 5:20 PM Joe Perches <joe@perches.com> wrote:
+>
+> Umm, btw: have you actually looked at stracpy?
 
-writeq alwasy writes 64-bit anyway, but the deltas is just 32-bit
-per the Linux clocksource API.
+Yes, Joe, I have.
 
-> > +static inline cycles_t get_cycles(void)
-> > +{
-> > +#ifdef CONFIG_64BIT
-> > +	return readq_relaxed(clint_time_val);
-> > +#else
-> > +	return readl_relaxed(clint_time_val);
-> > +#endif
-> 
-> Same comment as above. Both RV32 & RV64 bit have 64 bit have 64 bit
-> precission for timer val. You have to read 32 bits at a time and "or"
-> them to get 64 bit value. Here is the implementation from OpenSBI
+What part of "there are now so many of them that no human being can
+keep track of them" didn't you see as a problem?
 
-But the Linux API is only going to read 32-bits of that, same as
-for the rdtime pseudo-instruction used by the current SBI-based code.
+How many broken string functions are we going to do, adding yet
+another one when you notice that the _last_ one wasn't great?
 
-Note that I've reworked this area a bit for v4, which I'm going to
-send out soon, including cleanups to the existing code to make a few
-of these things more obvious:
+We never seem to remove the broken ones. We just add yet another one,
+and have a never-ending jumble of random letters.
 
-http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-nommu.4
+I would seriously suggest doing something like
+
+   copy_string( dst, dstsize, src, srcsize, FLAGS );
+
+where FLAGS migth be "pad" or whatever. Make it return the size of the
+resulting string, because while it can be convenient to pass 'dst" on,
+it's not useful.
+
+And then maybe just add the helper macro that turns an array into a
+"pointer, size" combination, rather than yet another letter jumble.
+
+            Linus
