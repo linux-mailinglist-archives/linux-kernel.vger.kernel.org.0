@@ -2,124 +2,69 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1964196E82
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:45:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D394596E7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 02:42:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfHUAnL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 20:43:11 -0400
-Received: from mxhk.zte.com.cn ([63.217.80.70]:8004 "EHLO mxhk.zte.com.cn"
+        id S1726664AbfHUAmo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 20:42:44 -0400
+Received: from verein.lst.de ([213.95.11.211]:32992 "EHLO verein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726193AbfHUAnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 20:43:11 -0400
-Received: from mse-fl1.zte.com.cn (unknown [10.30.14.238])
-        by Forcepoint Email with ESMTPS id D07814679584F6934D3D;
-        Wed, 21 Aug 2019 08:43:07 +0800 (CST)
-Received: from notes_smtp.zte.com.cn (notessmtp.zte.com.cn [10.30.1.239])
-        by mse-fl1.zte.com.cn with ESMTP id x7L0g2Aj077465;
-        Wed, 21 Aug 2019 08:42:02 +0800 (GMT-8)
-        (envelope-from zhang.lin16@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019082108422087-3081849 ;
-          Wed, 21 Aug 2019 08:42:20 +0800 
-From:   zhanglin <zhang.lin16@zte.com.cn>
-To:     davem@davemloft.net
-Cc:     ast@kernel.org, daniel@iogearbox.net, kafai@fb.com,
-        songliubraving@fb.com, yhs@fb.com, willemb@google.com,
-        edumazet@google.com, deepa.kernel@gmail.com, arnd@arndb.de,
-        dh.herrmann@gmail.com, gnault@redhat.com, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-        xue.zhihong@zte.com.cn, wang.yi59@zte.com.cn,
-        jiang.xuexin@zte.com.cn, zhanglin <zhang.lin16@zte.com.cn>
-Subject: [PATCH v2] sock: fix potential memory leak in proto_register()
-Date:   Wed, 21 Aug 2019 08:42:38 +0800
-Message-Id: <1566348158-43942-1-git-send-email-zhang.lin16@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-08-21 08:42:20,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-08-21 08:42:06,
-        Serialize complete at 2019-08-21 08:42:06
-X-MAIL: mse-fl1.zte.com.cn x7L0g2Aj077465
+        id S1726193AbfHUAmo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 20:42:44 -0400
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 7B5F168B20; Wed, 21 Aug 2019 02:42:41 +0200 (CEST)
+Date:   Wed, 21 Aug 2019 02:42:41 +0200
+From:   "hch@lst.de" <hch@lst.de>
+To:     Atish Patra <Atish.Patra@wdc.com>
+Cc:     "hch@lst.de" <hch@lst.de>,
+        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+        "palmer@sifive.com" <palmer@sifive.com>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 08/15] riscv: provide native clint access for M-mode
+Message-ID: <20190821004241.GA20250@lst.de>
+References: <20190813154747.24256-1-hch@lst.de> <20190813154747.24256-9-hch@lst.de> <fa0570285684e03587ee8f09b86f0d058d757c55.camel@wdc.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa0570285684e03587ee8f09b86f0d058d757c55.camel@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If protocols registered exceeded PROTO_INUSE_NR, prot will be
-added to proto_list, but no available bit left for prot in
-proto_inuse_idx.
+On Wed, Aug 21, 2019 at 12:24:31AM +0000, Atish Patra wrote:
+> > +static inline void clint_set_timer(unsigned long delta)
+> > +{
+> > +	writeq_relaxed(clint_read_timer() + delta,
+> > +		clint_time_cmp +
+> > cpuid_to_hartid_map(smp_processor_id()));'
+> 
+> This is not compatible with 32 bit mode. IIRC, timecmp is a 64 bit on
+> RV32 as well. Here is the implementation in OpenSBI.
 
-Signed-off-by: zhanglin <zhang.lin16@zte.com.cn>
----
- net/core/sock.c | 24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+writeq alwasy writes 64-bit anyway, but the deltas is just 32-bit
+per the Linux clocksource API.
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index bc3512f230a3..c7ae32705705 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -3139,16 +3139,17 @@ static __init int net_inuse_init(void)
- 
- core_initcall(net_inuse_init);
- 
--static void assign_proto_idx(struct proto *prot)
-+static int assign_proto_idx(struct proto *prot)
- {
- 	prot->inuse_idx = find_first_zero_bit(proto_inuse_idx, PROTO_INUSE_NR);
- 
- 	if (unlikely(prot->inuse_idx == PROTO_INUSE_NR - 1)) {
- 		pr_err("PROTO_INUSE_NR exhausted\n");
--		return;
-+		return -ENOSPC;
- 	}
- 
- 	set_bit(prot->inuse_idx, proto_inuse_idx);
-+	return 0;
- }
- 
- static void release_proto_idx(struct proto *prot)
-@@ -3157,8 +3158,9 @@ static void release_proto_idx(struct proto *prot)
- 		clear_bit(prot->inuse_idx, proto_inuse_idx);
- }
- #else
--static inline void assign_proto_idx(struct proto *prot)
-+static inline int assign_proto_idx(struct proto *prot)
- {
-+	return 0;
- }
- 
- static inline void release_proto_idx(struct proto *prot)
-@@ -3243,18 +3245,24 @@ int proto_register(struct proto *prot, int alloc_slab)
- 	}
- 
- 	mutex_lock(&proto_list_mutex);
-+	if (assign_proto_idx(prot)) {
-+		mutex_unlock(&proto_list_mutex);
-+		goto out_free_timewait_sock_slab_name;
-+	}
- 	list_add(&prot->node, &proto_list);
--	assign_proto_idx(prot);
- 	mutex_unlock(&proto_list_mutex);
- 	return 0;
- 
- out_free_timewait_sock_slab_name:
--	kfree(prot->twsk_prot->twsk_slab_name);
-+	if (alloc_slab && prot->twsk_prot)
-+		kfree(prot->twsk_prot->twsk_slab_name);
- out_free_request_sock_slab:
--	req_prot_cleanup(prot->rsk_prot);
-+	if (alloc_slab) {
-+		req_prot_cleanup(prot->rsk_prot);
- 
--	kmem_cache_destroy(prot->slab);
--	prot->slab = NULL;
-+		kmem_cache_destroy(prot->slab);
-+		prot->slab = NULL;
-+	}
- out:
- 	return -ENOBUFS;
- }
--- 
-2.17.1
+> > +static inline cycles_t get_cycles(void)
+> > +{
+> > +#ifdef CONFIG_64BIT
+> > +	return readq_relaxed(clint_time_val);
+> > +#else
+> > +	return readl_relaxed(clint_time_val);
+> > +#endif
+> 
+> Same comment as above. Both RV32 & RV64 bit have 64 bit have 64 bit
+> precission for timer val. You have to read 32 bits at a time and "or"
+> them to get 64 bit value. Here is the implementation from OpenSBI
 
+But the Linux API is only going to read 32-bits of that, same as
+for the rdtime pseudo-instruction used by the current SBI-based code.
+
+Note that I've reworked this area a bit for v4, which I'm going to
+send out soon, including cleanups to the existing code to make a few
+of these things more obvious:
+
+http://git.infradead.org/users/hch/riscv.git/shortlog/refs/heads/riscv-nommu.4
