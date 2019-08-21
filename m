@@ -2,24 +2,24 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 69B40976F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F39E976E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfHUKQv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:16:51 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:44760 "EHLO inva020.nxp.com"
+        id S1728007AbfHUKQ2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:16:28 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:45772 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbfHUKQY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:16:24 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 95FB81A00C1;
-        Wed, 21 Aug 2019 12:16:23 +0200 (CEST)
+        id S1727910AbfHUKQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 06:16:26 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 552A3200241;
+        Wed, 21 Aug 2019 12:16:24 +0200 (CEST)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8A2DC1A007D;
-        Wed, 21 Aug 2019 12:16:23 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 481CA200005;
+        Wed, 21 Aug 2019 12:16:24 +0200 (CEST)
 Received: from fsr-ub1664-120.ea.freescale.net (fsr-ub1664-120.ea.freescale.net [10.171.82.81])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id D170820612;
-        Wed, 21 Aug 2019 12:16:22 +0200 (CEST)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 98DB920612;
+        Wed, 21 Aug 2019 12:16:23 +0200 (CEST)
 From:   Robert Chiras <robert.chiras@nxp.com>
 To:     =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>,
         Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
@@ -34,9 +34,9 @@ Cc:     Pengutronix Kernel Team <kernel@pengutronix.de>,
         NXP Linux Team <linux-imx@nxp.com>,
         dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/15] dt-bindings: display: Add max-memory-bandwidth property for mxsfb
-Date:   Wed, 21 Aug 2019 13:15:50 +0300
-Message-Id: <1566382555-12102-11-git-send-email-robert.chiras@nxp.com>
+Subject: [PATCH v3 11/15] drm/mxsfb: Update mxsfb to support LCD reset
+Date:   Wed, 21 Aug 2019 13:15:51 +0300
+Message-Id: <1566382555-12102-12-git-send-email-robert.chiras@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566382555-12102-1-git-send-email-robert.chiras@nxp.com>
 References: <1566382555-12102-1-git-send-email-robert.chiras@nxp.com>
@@ -46,30 +46,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new optional property 'max-memory-bandwidth', to limit the maximum
-bandwidth used by the MXSFB_DRM driver.
+The eLCDIF controller has control pin for the external LCD reset pin.
+Add support for it and assert this pin in enable and de-assert it in
+disable.
 
 Signed-off-by: Robert Chiras <robert.chiras@nxp.com>
 ---
- Documentation/devicetree/bindings/display/mxsfb.txt | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/mxsfb/mxsfb_crtc.c | 14 ++++++++++----
+ drivers/gpu/drm/mxsfb/mxsfb_regs.h |  2 ++
+ 2 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/mxsfb.txt b/Documentation/devicetree/bindings/display/mxsfb.txt
-index 472e1ea..c8dca50 100644
---- a/Documentation/devicetree/bindings/display/mxsfb.txt
-+++ b/Documentation/devicetree/bindings/display/mxsfb.txt
-@@ -14,6 +14,11 @@ Required properties:
-     - "pix" for the LCDIF block clock
-     - (MX6SX-only) "axi", "disp_axi" for the bus interface clock
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+index 1be29f5..a4ba368 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
++++ b/drivers/gpu/drm/mxsfb/mxsfb_crtc.c
+@@ -224,9 +224,12 @@ static void mxsfb_enable_controller(struct mxsfb_drm_private *mxsfb)
+ 		clk_prepare_enable(mxsfb->clk_disp_axi);
+ 	clk_prepare_enable(mxsfb->clk);
  
-+Optional properties:
-+- max-memory-bandwidth: maximum bandwidth in bytes per second that the
-+	controller can handle; if not present, the memory
-+	interface is fast enough to handle all possible video modes
+-	if (mxsfb->devdata->ipversion >= 4)
++	if (mxsfb->devdata->ipversion >= 4) {
+ 		writel(CTRL2_OUTSTANDING_REQS(REQ_16),
+ 		       mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
++		/* Assert LCD Reset bit */
++		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_SET);
++	}
+ 
+ 	/* If it was disabled, re-enable the mode again */
+ 	writel(CTRL_DOTCLK_MODE, mxsfb->base + LCDC_CTRL + REG_SET);
+@@ -244,11 +247,14 @@ static void mxsfb_disable_controller(struct mxsfb_drm_private *mxsfb)
+ {
+ 	u32 reg;
+ 
+-	if (mxsfb->devdata->ipversion >= 4)
++	writel(CTRL_RUN, mxsfb->base + LCDC_CTRL + REG_CLR);
 +
- Required sub-nodes:
-   - port: The connection to an encoder chip.
++	if (mxsfb->devdata->ipversion >= 4) {
+ 		writel(CTRL2_OUTSTANDING_REQS(0x7),
+ 		       mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
+-
+-	writel(CTRL_RUN, mxsfb->base + LCDC_CTRL + REG_CLR);
++		/* De-assert LCD Reset bit */
++		writel(CTRL2_LCD_RESET, mxsfb->base + LCDC_V4_CTRL2 + REG_CLR);
++	}
  
+ 	/*
+ 	 * Even if we disable the controller here, it will still continue
+diff --git a/drivers/gpu/drm/mxsfb/mxsfb_regs.h b/drivers/gpu/drm/mxsfb/mxsfb_regs.h
+index dc4daa0..0f63ba1 100644
+--- a/drivers/gpu/drm/mxsfb/mxsfb_regs.h
++++ b/drivers/gpu/drm/mxsfb/mxsfb_regs.h
+@@ -108,6 +108,8 @@
+ #define CTRL2_LINE_PATTERN_BGR	5
+ #define CTRL2_LINE_PATTERN_CLR	7
+ 
++#define CTRL2_LCD_RESET			BIT(0)
++
+ #define TRANSFER_COUNT_SET_VCOUNT(x)	REG_PUT((x), 31, 16)
+ #define TRANSFER_COUNT_GET_VCOUNT(x)	REG_GET((x), 31, 16)
+ #define TRANSFER_COUNT_SET_HCOUNT(x)	REG_PUT((x), 15, 0)
 -- 
 2.7.4
 
