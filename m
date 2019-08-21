@@ -2,91 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D33497EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:39:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C960497EEB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730143AbfHUPh1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:37:27 -0400
-Received: from foss.arm.com ([217.140.110.172]:60398 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730133AbfHUPhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:37:23 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84E53337;
-        Wed, 21 Aug 2019 08:37:22 -0700 (PDT)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82F743F718;
-        Wed, 21 Aug 2019 08:37:20 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc:     Steven Price <steven.price@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/10] KVM: Implement kvm_put_guest()
-Date:   Wed, 21 Aug 2019 16:36:50 +0100
-Message-Id: <20190821153656.33429-5-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190821153656.33429-1-steven.price@arm.com>
-References: <20190821153656.33429-1-steven.price@arm.com>
+        id S1730076AbfHUPhD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:37:03 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37825 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729287AbfHUPhD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 11:37:03 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so2149816lfh.4
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 08:37:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2619U9Tm5TYEgcBQkA05KbEPScI41FeuQa1aH7Sw3kQ=;
+        b=M/JE1rZZm/RfbqUxzJX37QJ/vamqziXn2XHNDm0iZw1yd9BEhyNhUIiTk3/KAhR54O
+         Y9PwNHb97zozoLcuUnc46BF0qDf6vA9b/F4w36fsU4uTtjjANfXa/vz/qSZ6leZcV1Mq
+         UvlMpumI9H33UjgxfvjEMHRYeTpcfDa+S9yLLhIY0T5Hkz4MK+2zpOxo0PLE5/FOI4tV
+         62pqd8EQo5WVNke4HmUwGQBrnWc+pi2V9UB082jC2pEynBpKZqbjRk9zV05e/pXaOWCA
+         rdvRY9J97Qr3Le4nJQfBpDoKXxG9vH6d6pCChNzkfbez6FOgfuABS4iKn3Wu8pEaG1Au
+         MDKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2619U9Tm5TYEgcBQkA05KbEPScI41FeuQa1aH7Sw3kQ=;
+        b=hoS9co+RZpGeaH6P+LBpZae5WatZEEtq4kUlNOT1Xm8HoxY230jkwbiR8jo6/aoh3d
+         b1XYrHR80EAFtXb8+di7PTkxU61BFhWgw8704AH3nQJwg30IbOGKgZBWUyFcu2E0HbpQ
+         0F4KGGEszZwvgvIBjoJ87jWu3vSzWqkZNplNJZ+HNe0FniGggvLZXIhKrX3eCVj75u1L
+         cF9fR4tMC4Gs+oYj7ahKx6qTS7BEs14o48eHVJrPZDoUKsxJ26LwFsHe4d1b5x5MG6Dw
+         3/qMuvWrNcIAVapgeExPjHZOdY9gnjJpJ0pKOZ0NhnoOhmwIgr/msvjjdUt+1bebRIdY
+         LH0w==
+X-Gm-Message-State: APjAAAUAKUMd0T+fkB6+07WTSzKaI7aitA/BtTW5g25kDOz2mwkAizgO
+        eJiHg/PzHmunsJ3HXBmDFamB6H/UBywE66pUBH8b
+X-Google-Smtp-Source: APXvYqwqThu91Iy3zjtydclgxUMDIcs4QNLzXbu5HbIKVhlNSP6g2YCGmjVSAy6XIf80VuoG1dcRm55IgYUdgInPglU=
+X-Received: by 2002:ac2:4c37:: with SMTP id u23mr437303lfq.119.1566401821240;
+ Wed, 21 Aug 2019 08:37:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4997df37-4a80-5cf5-effc-0a6f040c4528@huawei.com>
+In-Reply-To: <4997df37-4a80-5cf5-effc-0a6f040c4528@huawei.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Wed, 21 Aug 2019 11:36:50 -0400
+Message-ID: <CAHC9VhS_DCBRX6kkmiSYBzq+ELN2AYRypRN6vR_J1+JOi2FDvw@mail.gmail.com>
+Subject: Re: [Question] audit_names use after delete in audit_filter_inodes
+To:     Chen Wandun <chenwandun@huawei.com>
+Cc:     linux-kernel@vger.kernel.org, linux-audit@redhat.com,
+        Eric Paris <eparis@redhat.com>,
+        Kefeng Wang <wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-kvm_put_guest() is analogous to put_user() - it writes a single value to
-the guest physical address. The implementation is built upon put_user()
-and so it has the same single copy atomic properties.
+On Wed, Aug 21, 2019 at 5:31 AM Chen Wandun <chenwandun@huawei.com> wrote:
+>
+> Hi,
+> Recently, I hit a use after delete in audit_filter_inodes,
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- include/linux/kvm_host.h | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+...
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index fcb46b3374c6..e154a1897e20 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -746,6 +746,30 @@ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
- 				  unsigned long len);
- int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
- 			      gpa_t gpa, unsigned long len);
-+
-+#define __kvm_put_guest(kvm, gfn, offset, value, type)			\
-+({									\
-+	unsigned long __addr = gfn_to_hva(kvm, gfn);			\
-+	type __user *__uaddr = (type __user *)(__addr + offset);	\
-+	int __ret = 0;							\
-+									\
-+	if (kvm_is_error_hva(__addr))					\
-+		__ret = -EFAULT;					\
-+	else								\
-+		__ret = put_user(value, __uaddr);			\
-+	if (!__ret)							\
-+		mark_page_dirty(kvm, gfn);				\
-+	__ret;								\
-+})
-+
-+#define kvm_put_guest(kvm, gpa, value, type)				\
-+({									\
-+	gpa_t __gpa = gpa;						\
-+	struct kvm *__kvm = kvm;					\
-+	__kvm_put_guest(__kvm, __gpa >> PAGE_SHIFT,			\
-+			offset_in_page(__gpa), (value), type);		\
-+})
-+
- int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len);
- int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len);
- struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn);
+> the call stack is below:
+> [321315.077117] CPU: 6 PID: 8944 Comm: DefSch0100 Tainted: G           OE  ----V-------   3.10.0-327.62.59.83.w75.x86_64 #1
+> [321315.077117] Hardware name: OpenStack Foundation OpenStack Nova, BIOS rel-1.8.1-0-g4adadbd-20170107_142945-9_64_246_229 04/01/2014
+
+It looks like this is a vendor kernel and not an upstream kernel, yes?
+ Assuming that is the case I would suggest you contact your distro for
+help/debugging/support; we simply don't know enough about your kernel
+(what patches are included, how was it built/configured/etc.) to
+comment with any certainty.
+
+Linux Kernels based on v3.10.0 are extremely old from an upstream
+perspective, with a number of fixes and changes to the audit subsystem
+since v3.10.0 was released.  If you see the same problem on a modern
+upstream kernel please let us know, we'll be happy to help.
+
 -- 
-2.20.1
-
+paul moore
+www.paul-moore.com
