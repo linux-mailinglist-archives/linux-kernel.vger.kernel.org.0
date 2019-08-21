@@ -2,210 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A27B3976BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:14:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CF9DB976C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 12:14:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbfHUKLZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 06:11:25 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38763 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726217AbfHUKLY (ORCPT
+        id S1727780AbfHUKMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 06:12:10 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:33088 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726217AbfHUKMJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 06:11:24 -0400
-Received: by mail-wm1-f66.google.com with SMTP id m125so1522556wmm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 03:11:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jrQICpWLHoOKA51TYZF4wdTk0Hlmd2hBlo/FIA7QGZo=;
-        b=CbIXVfFOJtxVCS5XepCddU8NQviPa3DQa8nyoEesyWgIjk6D5VIcUZaIsYZ2DAS+Gr
-         JA33INSo73e5TAHFo9cfpfia9/DQ2mwhkI7Vnh3ukcrQpW9TlvOxe+pa2+XZs7GGNCNV
-         20wDnqOW+pUnZXjnVRxrEPeU1OZY8xPBeLhpA73VnwnfIZMypEMvP4REs5nbPUOeT199
-         4YzL6S1BuCCVQtv7kZhi/PZqfdJOoeaAfmDjMSUsf0rh5IUU+iCNnF2DfsmAGg0RMMwT
-         ij/hk/IU+MRWcIW8aGXTaFL369V28xSKp7dKMfzXZrY2m9tGqgyfjuVFZIo8Ye/dg5xE
-         T6bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jrQICpWLHoOKA51TYZF4wdTk0Hlmd2hBlo/FIA7QGZo=;
-        b=i7/UiY2gEB+7VGDIW5ttjcbZcotkpqwAVZ7qUB7NxUn8qdbTO9xU785Jkw0jOmELa7
-         zsBl54edqaiUVxfl+V9DUSIUo7uUY/QOPd0ZSQPLcNZO3s23t13UDZKX2RQhUo7ryr3+
-         0RzyIVB02PFwpT3gRiVzwXIoZcVEfGydTIpqXzXvi3k2Rpo/N5Is5bfsYoVg8pneWRvO
-         quCo/HBrju5/PdCtgADhOfWi7+WPhNDJY69TlnkhFLzG3pee9GrnJ/7C6y/ZFs0CdjQA
-         msbzoTzv3kBI0cR09hAs7JSLqAYf+QrD2E57G4nIMtm1jACT7q/ANy9n2y3gOLR26TET
-         3gqA==
-X-Gm-Message-State: APjAAAV8YbK1Gb5+AkZ/YAw/Sk6q28LDAhA+YAeBBgUCiZ5dx6dE5gfL
-        k6oNT6eQGh5MiX1TfOS+I82Rvp6Z03M=
-X-Google-Smtp-Source: APXvYqx0sNB68Mm6o9HSmvk7JqddxmMKASpcf5LTH54kQGLwEPYaUXWQnB2VHdsRg6nGBHNbhcWnhg==
-X-Received: by 2002:a1c:a503:: with SMTP id o3mr4898652wme.37.1566382280840;
-        Wed, 21 Aug 2019 03:11:20 -0700 (PDT)
-Received: from ?IPv6:2a01:e34:ed2f:f020:9c18:ddf6:f0bb:53f8? ([2a01:e34:ed2f:f020:9c18:ddf6:f0bb:53f8])
-        by smtp.googlemail.com with ESMTPSA id u129sm3575299wmb.12.2019.08.21.03.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Aug 2019 03:11:20 -0700 (PDT)
-Subject: Re: [PATCH] [v5] clocksource/drivers/npcm: fix GENMASK and timer
- operation
-To:     Avi Fishman <avifishman70@gmail.com>, tmaimon77@gmail.com,
-        tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
-        benjaminfair@google.com, tglx@linutronix.de
-Cc:     openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org
-References: <20190729170354.202374-1-avifishman70@gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=daniel.lezcano@linaro.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <744188a1-d11a-7edc-79cd-e3c7dbcf6e86@linaro.org>
-Date:   Wed, 21 Aug 2019 12:11:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Wed, 21 Aug 2019 06:12:09 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7LAC6hW037490;
+        Wed, 21 Aug 2019 05:12:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566382326;
+        bh=WNO04hK4EhcDleF0FXAgtkk2jCq84VoSQz9dZLs15O0=;
+        h=From:To:CC:Subject:Date;
+        b=E29dEd83zaZhDw5xBCNJzTwnO1xluZUhiiTMmv1bg4nVlJw48r4D5HBGR5igMseg2
+         CZpfnngfNnissZYmVKrf9SuMs4jlWJ5ZsMzs+qCb1d0La7hWHTimnpZhGOSdbKNNE/
+         wXZ+YCeZOPx/oTpKJ0S0cHfs8vOHAma+QUeN0bQI=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7LAC6Lt003432
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 21 Aug 2019 05:12:06 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 21
+ Aug 2019 05:12:05 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 21 Aug 2019 05:12:05 -0500
+Received: from lta0400828a.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7LAC3o8085916;
+        Wed, 21 Aug 2019 05:12:04 -0500
+From:   Roger Quadros <rogerq@ti.com>
+To:     <balbi@kernel.org>, <stern@rowland.harvard.edu>
+CC:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@ti.com>
+Subject: [PATCH] usb: gadget: udc: core: Fix error case while binding pending gadget drivers
+Date:   Wed, 21 Aug 2019 13:12:01 +0300
+Message-ID: <20190821101201.5377-1-rogerq@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <20190729170354.202374-1-avifishman70@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29/07/2019 19:03, Avi Fishman wrote:
-> NPCM7XX_Tx_OPER GENMASK bits where wrong,
-> Since NPCM7XX_REG_TICR0 register reset value of those bits was 0,
-> it did not cause an issue.
-> in npcm7xx_timer_oneshot() the original NPCM7XX_REG_TCSR0 register was
-> read again after masking it with ~NPCM7XX_Tx_OPER so the masking didn't
-> take effect.
-> 
-> npcm7xx_timer_periodic() was not wrong but it wrote to NPCM7XX_REG_TICR0
-> in a middle of read modify write to NPCM7XX_REG_TCSR0 which is
-> confusing.
-> npcm7xx_timer_oneshot() did wrong calculation
-> 
-> Signed-off-by: Avi Fishman <avifishman70@gmail.com>
+If binding a pending gadget driver fails we should not
+remove it from the pending driver list, otherwise it
+will cause a segmentation fault later when the gadget driver is
+unloaded.
 
-I've applied the patch and massaged the changelog [1].
+Test case:
 
-Let me know if you disagree with it.
+- Make sure no UDC is available
+- modprobe g_mass_storage file=wrongfile
+- Load UDC driver so it becomes available
+	lun0: unable to open backing file: wrongfile
+- modprobe -r g_mass_storage
 
-Please, in the future take care of adding the Fixes tag.
+[   60.900431] Unable to handle kernel paging request at virtual address dead000000000108
+[   60.908346] Mem abort info:
+[   60.911145]   ESR = 0x96000044
+[   60.914227]   Exception class = DABT (current EL), IL = 32 bits
+[   60.920162]   SET = 0, FnV = 0
+[   60.923217]   EA = 0, S1PTW = 0
+[   60.926354] Data abort info:
+[   60.929228]   ISV = 0, ISS = 0x00000044
+[   60.933058]   CM = 0, WnR = 1
+[   60.936011] [dead000000000108] address between user and kernel address ranges
+[   60.943136] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+[   60.948691] Modules linked in: g_mass_storage(-) usb_f_mass_storage libcomposite xhci_plat_hcd xhci_hcd usbcore ti_am335x_adc kfifo_buf omap_rng cdns3 rng_core udc_core crc32_ce xfrm_user crct10dif_ce snd_so6
+[   60.993995] Process modprobe (pid: 834, stack limit = 0x00000000c2aebc69)
+[   61.000765] CPU: 0 PID: 834 Comm: modprobe Not tainted 4.19.59-01963-g065f42a60499 #92
+[   61.008658] Hardware name: Texas Instruments SoC (DT)
+[   61.014472] pstate: 60000005 (nZCv daif -PAN -UAO)
+[   61.019253] pc : usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
+[   61.025503] lr : usb_gadget_unregister_driver+0x30/0x108 [udc_core]
+[   61.031750] sp : ffff00001338fda0
+[   61.035049] x29: ffff00001338fda0 x28: ffff800846d40000
+[   61.040346] x27: 0000000000000000 x26: 0000000000000000
+[   61.045642] x25: 0000000056000000 x24: 0000000000000800
+[   61.050938] x23: ffff000008d7b0d0 x22: ffff0000088b07c8
+[   61.056234] x21: ffff000001100000 x20: ffff000002020260
+[   61.061530] x19: ffff0000010ffd28 x18: 0000000000000000
+[   61.066825] x17: 0000000000000000 x16: 0000000000000000
+[   61.072121] x15: 0000000000000000 x14: 0000000000000000
+[   61.077417] x13: ffff000000000000 x12: ffffffffffffffff
+[   61.082712] x11: 0000000000000030 x10: 7f7f7f7f7f7f7f7f
+[   61.088008] x9 : fefefefefefefeff x8 : 0000000000000000
+[   61.093304] x7 : ffffffffffffffff x6 : 000000000000ffff
+[   61.098599] x5 : 8080000000000000 x4 : 0000000000000000
+[   61.103895] x3 : ffff000001100020 x2 : ffff800846d40000
+[   61.109190] x1 : dead000000000100 x0 : dead000000000200
+[   61.114486] Call trace:
+[   61.116922]  usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
+[   61.122828]  usb_composite_unregister+0x10/0x18 [libcomposite]
+[   61.128643]  msg_cleanup+0x18/0xfce0 [g_mass_storage]
+[   61.133682]  __arm64_sys_delete_module+0x17c/0x1f0
+[   61.138458]  el0_svc_common+0x90/0x158
+[   61.142192]  el0_svc_handler+0x2c/0x80
+[   61.145926]  el0_svc+0x8/0xc
+[   61.148794] Code: eb03003f d10be033 54ffff21 a94d0281 (f9000420)
+[   61.154869] ---[ end trace afb22e9b637bd9a7 ]---
+Segmentation fault
 
-Thanks
+Signed-off-by: Roger Quadros <rogerq@ti.com>
+---
+ drivers/usb/gadget/udc/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-  -- Daniel
-
-[1]
-https://git.linaro.org/people/daniel.lezcano/linux.git/commit/?h=clockevents/next&id=a5f6679fc81e42fcbef0184770d8a3b04c0f153e
-
-> ---
->  drivers/clocksource/timer-npcm7xx.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-npcm7xx.c b/drivers/clocksource/timer-npcm7xx.c
-> index 8a30da7f083b..9780ffd8010e 100644
-> --- a/drivers/clocksource/timer-npcm7xx.c
-> +++ b/drivers/clocksource/timer-npcm7xx.c
-> @@ -32,7 +32,7 @@
->  #define NPCM7XX_Tx_INTEN		BIT(29)
->  #define NPCM7XX_Tx_COUNTEN		BIT(30)
->  #define NPCM7XX_Tx_ONESHOT		0x0
-> -#define NPCM7XX_Tx_OPER			GENMASK(27, 3)
-> +#define NPCM7XX_Tx_OPER			GENMASK(28, 27)
->  #define NPCM7XX_Tx_MIN_PRESCALE		0x1
->  #define NPCM7XX_Tx_TDR_MASK_BITS	24
->  #define NPCM7XX_Tx_MAX_CNT		0xFFFFFF
-> @@ -84,8 +84,6 @@ static int npcm7xx_timer_oneshot(struct clock_event_device *evt)
->  
->  	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
->  	val &= ~NPCM7XX_Tx_OPER;
-> -
-> -	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
->  	val |= NPCM7XX_START_ONESHOT_Tx;
->  	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
->  
-> @@ -97,12 +95,11 @@ static int npcm7xx_timer_periodic(struct clock_event_device *evt)
->  	struct timer_of *to = to_timer_of(evt);
->  	u32 val;
->  
-> +	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
-> +
->  	val = readl(timer_of_base(to) + NPCM7XX_REG_TCSR0);
->  	val &= ~NPCM7XX_Tx_OPER;
-> -
-> -	writel(timer_of_period(to), timer_of_base(to) + NPCM7XX_REG_TICR0);
->  	val |= NPCM7XX_START_PERIODIC_Tx;
-> -
->  	writel(val, timer_of_base(to) + NPCM7XX_REG_TCSR0);
->  
->  	return 0;
-> 
-
-
+diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+index 7cf34beb50df..c272c8014772 100644
+--- a/drivers/usb/gadget/udc/core.c
++++ b/drivers/usb/gadget/udc/core.c
+@@ -1142,7 +1142,7 @@ static int check_pending_gadget_drivers(struct usb_udc *udc)
+ 		if (!driver->udc_name || strcmp(driver->udc_name,
+ 						dev_name(&udc->dev)) == 0) {
+ 			ret = udc_bind_to_driver(udc, driver);
+-			if (ret != -EPROBE_DEFER)
++			if (!ret)
+ 				list_del(&driver->pending);
+ 			break;
+ 		}
 -- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
 
