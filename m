@@ -2,96 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6EEF7979A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:39:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1587F979C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:44:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbfHUMjX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 08:39:23 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:44734 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726484AbfHUMjX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:39:23 -0400
-Received: by mail-pl1-f193.google.com with SMTP id t14so1263790plr.11
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 05:39:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=omDwMrCmxk+7Xa7lFfgeuxa3H+tBB5SvsVtJ1gAu9m8=;
-        b=Yozs2A9rBctqQEgyDcF4/wFS7L1lIhPOEhmkSZGKBb+/DVB8bYA74yRG4BfC1dwOKf
-         p5EeZ+bWwbyVI++xjdHKzEnuXMnRtCKxmFTh+mxSzxwVxjEpvg+Fo42PrIegTm8lMHng
-         Q0qbZ0l7GAmn94mbT7jEDSCPV0YKeb6jYQyuECAVQZToh3w7hdS41XgnsmlK9NKlYuB/
-         VkL9D62LOk33Jgk7gQolCOInt4TwTo9RWQmzu9GD/I0dphlCHyrpUFD5mjUCcrUd5uja
-         ZS/un4d/SI3xRV4auwVYlkw5PU8kE5CNsrehWc9bR/pmR0c1tafl4kXHdjcCqZk+WPPq
-         68aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=omDwMrCmxk+7Xa7lFfgeuxa3H+tBB5SvsVtJ1gAu9m8=;
-        b=DXeehz2VAs8s63wpNV9BAXhKKbKE+HGkgjQOJniXBIAQExYLh2k49OslqsojpR60N2
-         v0T4RYU1tktwB4YXtJd8AG3B6aE6kzoZizOIwfnQb0+82Wgw1atbS5D+QyVEm4wZ8Vhn
-         G18Ww7GV5QBOlf9bHHcKHeXsQR/eXLgwv0vSJcCWgf5n+x/7SrCa+1rG6PCadQWngNnx
-         CuRxbBcSU7W7agq4EDCWgHRKg9CvxGBEDwt30HP8m8sMEqPuxAlzAPoLxleLg6SNxOMH
-         aR+PUoOLpMAsZ7Zzq0BcdmT70l+tvEkOUKwhE6vuIvsh9xYjsf3VcA6uCbRFtVR+C28q
-         Y3fg==
-X-Gm-Message-State: APjAAAW3q/obcQAgbhgalz6N96/KRHcaZ+eYyxewyrG9WOT36CI++uLz
-        v2ajRA+IRk3AfvZOnONoRRs082NV3BwHgQ==
-X-Google-Smtp-Source: APXvYqy/uq6IK56H1aAY+ntEWpdXMXT6TaOjGPzJX2cRoieHDupaniomQNOmSqUC4nn11JMjtCrXnA==
-X-Received: by 2002:a17:902:7d8b:: with SMTP id a11mr33463555plm.306.1566391162920;
-        Wed, 21 Aug 2019 05:39:22 -0700 (PDT)
-Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
-        by smtp.gmail.com with ESMTPSA id i124sm25677411pfe.61.2019.08.21.05.39.19
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Aug 2019 05:39:22 -0700 (PDT)
-From:   Baolin Wang <baolin.wang@linaro.org>
-To:     gregkh@linuxfoundation.org, jslaby@suse.com
-Cc:     orsonzhai@gmail.com, zhang.lyra@gmail.com, cixi.geng@unisoc.com,
-        lanqing.liu@unisoc.com, baolin.wang@linaro.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] serial: sprd: Add loopback function support
-Date:   Wed, 21 Aug 2019 20:39:09 +0800
-Message-Id: <1275cd9968f1ceb5ac049cc23f1e508025cd552f.1566375260.git.baolin.wang@linaro.org>
-X-Mailer: git-send-email 1.7.9.5
+        id S1728125AbfHUMow (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 08:44:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:34052 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726835AbfHUMov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:44:51 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 8AC5CFC93AB497548E20;
+        Wed, 21 Aug 2019 20:28:24 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
+ 20:28:17 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <gregkh@linuxfoundation.org>, <turnerzdp@gmail.com>,
+        <contact@christina-quast.de>, <ebiggers@google.com>
+CC:     <linux-kernel@vger.kernel.org>, <devel@driverdev.osuosl.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] staging: rtl8192e: remove set but not used variable 'data_len'
+Date:   Wed, 21 Aug 2019 20:28:02 +0800
+Message-ID: <20190821122802.44028-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add loopback function support for Spreadtrum serial controller.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+ In function ieee80211_ccmp_encrypt:
+drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_ccmp.c:162:6:
+ warning: variable data_len set but not used [-Wunused-but-set-variable]
+
+It is not used since commit 5ee5265674ce ("staging:
+rtl8192e: rtllib_crypt_ccmp.c: Use crypto API ccm(aes)")
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/tty/serial/sprd_serial.c |   10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ drivers/staging/rtl8192e/rtllib_crypt_ccmp.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/sprd_serial.c b/drivers/tty/serial/sprd_serial.c
-index 73d71a4..85fc57c 100644
---- a/drivers/tty/serial/sprd_serial.c
-+++ b/drivers/tty/serial/sprd_serial.c
-@@ -79,6 +79,7 @@
- /* control register 1 */
- #define SPRD_CTL1		0x001C
- #define SPRD_DMA_EN		BIT(15)
-+#define SPRD_LOOPBACK_EN	BIT(14)
- #define RX_HW_FLOW_CTL_THLD	BIT(6)
- #define RX_HW_FLOW_CTL_EN	BIT(7)
- #define TX_HW_FLOW_CTL_EN	BIT(8)
-@@ -164,7 +165,14 @@ static unsigned int sprd_get_mctrl(struct uart_port *port)
- 
- static void sprd_set_mctrl(struct uart_port *port, unsigned int mctrl)
+diff --git a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+index 44ec45d..0cbf4a1 100644
+--- a/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
++++ b/drivers/staging/rtl8192e/rtllib_crypt_ccmp.c
+@@ -153,7 +153,7 @@ static int ccmp_init_iv_and_aad(struct rtllib_hdr_4addr *hdr,
+ static int rtllib_ccmp_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
  {
--	/* nothing to do */
-+	u32 val = serial_in(port, SPRD_CTL1);
-+
-+	if (mctrl & TIOCM_LOOP)
-+		val |= SPRD_LOOPBACK_EN;
-+	else
-+		val &= ~SPRD_LOOPBACK_EN;
-+
-+	serial_out(port, SPRD_CTL1, val);
- }
+ 	struct rtllib_ccmp_data *key = priv;
+-	int data_len, i;
++	int i;
+ 	u8 *pos;
+ 	struct rtllib_hdr_4addr *hdr;
+ 	struct cb_desc *tcb_desc = (struct cb_desc *)(skb->cb +
+@@ -163,7 +163,6 @@ static int rtllib_ccmp_encrypt(struct sk_buff *skb, int hdr_len, void *priv)
+ 	    skb->len < hdr_len)
+ 		return -1;
  
- static void sprd_stop_rx(struct uart_port *port)
+-	data_len = skb->len - hdr_len;
+ 	pos = skb_push(skb, CCMP_HDR_LEN);
+ 	memmove(pos, pos + CCMP_HDR_LEN, hdr_len);
+ 	pos += hdr_len;
 -- 
-1.7.9.5
+2.7.4
+
 
