@@ -2,282 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C95A97F07
+	by mail.lfdr.de (Postfix) with ESMTP id E615297F08
 	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 17:39:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfHUPhm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 11:37:42 -0400
-Received: from foss.arm.com ([217.140.110.172]:60520 "EHLO foss.arm.com"
+        id S1730253AbfHUPhv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 11:37:51 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:49066 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730208AbfHUPhg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 11:37:36 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E434A360;
-        Wed, 21 Aug 2019 08:37:35 -0700 (PDT)
-Received: from e112269-lin.arm.com (e112269-lin.cambridge.arm.com [10.1.196.133])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1CE13F718;
-        Wed, 21 Aug 2019 08:37:33 -0700 (PDT)
-From:   Steven Price <steven.price@arm.com>
-To:     Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu
-Cc:     Steven Price <steven.price@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Russell King <linux@armlinux.org.uk>,
-        James Morse <james.morse@arm.com>,
-        Julien Thierry <julien.thierry.kdev@gmail.com>,
-        Suzuki K Pouloze <suzuki.poulose@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 10/10] arm64: Retrieve stolen time as paravirtualized guest
-Date:   Wed, 21 Aug 2019 16:36:56 +0100
-Message-Id: <20190821153656.33429-11-steven.price@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190821153656.33429-1-steven.price@arm.com>
-References: <20190821153656.33429-1-steven.price@arm.com>
+        id S1729352AbfHUPht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 11:37:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=xuBrmteC5AYtTtwM4c0/q/0f+0lPdxUwwmCp9CFt+9M=; b=YrdLKKCmA4/6woR3hIeUZHQxq7
+        kyE3TevbpdsOOEaHwfN3v/P2QzgOWi+s2iyYsmtn3yJXTV5uXeyRJtD6BUl15Ynmx8hn6dR7hhAk2
+        uYrBeJ4z+3i/a/ErtyLSAWa1fGUZt/20xbTlp4bpIFhakXjUli92V032szvaxkYMRAFo=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1i0Sg8-0005rs-Ug; Wed, 21 Aug 2019 17:37:40 +0200
+Date:   Wed, 21 Aug 2019 17:37:40 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Marco Hartmann <marco.hartmann@nxp.com>
+Cc:     "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christian Herber <christian.herber@nxp.com>
+Subject: Re: [PATCH v2 net] Add genphy_c45_config_aneg() function to phy-c45.c
+Message-ID: <20190821153740.GB22091@lunn.ch>
+References: <1566385208-23523-1-git-send-email-marco.hartmann@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566385208-23523-1-git-send-email-marco.hartmann@nxp.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enable paravirtualization features when running under a hypervisor
-supporting the PV_TIME_ST hypercall.
+On Wed, Aug 21, 2019 at 11:00:46AM +0000, Marco Hartmann wrote:
+> Commit 34786005eca3 ("net: phy: prevent PHYs w/o Clause 22 regs from calling
+> genphy_config_aneg") introduced a check that aborts phy_config_aneg()
+> if the phy is a C45 phy.
+> This causes phy_state_machine() to call phy_error() so that the phy
+> ends up in PHY_HALTED state.
+> 
+> Instead of returning -EOPNOTSUPP, call genphy_c45_config_aneg()
+> (analogous to the C22 case) so that the state machine can run
+> correctly.
+> 
+> genphy_c45_config_aneg() closely resembles mv3310_config_aneg()
+> in drivers/net/phy/marvell10g.c, excluding vendor specific
+> configurations for 1000BaseT.
 
-For each (v)CPU, we ask the hypervisor for the location of a shared
-page which the hypervisor will use to report stolen time to us. We set
-pv_time_ops to the stolen time function which simply reads the stolen
-value from the shared page for a VCPU. We guarantee single-copy
-atomicity using READ_ONCE which means we can also read the stolen
-time for another VCPU than the currently running one while it is
-potentially being updated by the hypervisor.
+> +/**
+> + * genphy_c45_config_aneg - restart auto-negotiation or forced setup
+> + * @phydev: target phy_device struct
+> + *
+> + * Description: If auto-negotiation is enabled, we configure the
+> + *   advertising, and then restart auto-negotiation.  If it is not
+> + *   enabled, then we force a configuration.
+> + */
+> +int genphy_c45_config_aneg(struct phy_device *phydev)
+> +{
+> +	bool changed = false;
+> +	int ret;
+> +
+> +	if (phydev->autoneg == AUTONEG_DISABLE)
+> +		return genphy_c45_pma_setup_forced(phydev);
+> +
+> +	ret = genphy_c45_an_config_aneg(phydev);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret > 0)
+> +		changed = true;
+> +
+> +	return genphy_c45_check_and_restart_aneg(phydev, changed);
+> +}
+> +EXPORT_SYMBOL_GPL(genphy_c45_config_aneg);
 
-Signed-off-by: Steven Price <steven.price@arm.com>
----
- arch/arm64/include/asm/paravirt.h |   9 +-
- arch/arm64/kernel/paravirt.c      | 148 ++++++++++++++++++++++++++++++
- arch/arm64/kernel/time.c          |   3 +
- include/linux/cpuhotplug.h        |   1 +
- 4 files changed, 160 insertions(+), 1 deletion(-)
+The vendor parts for 1000BaseT makes this interesting. Do we expect to
+see an C45 PHYs which don't support 1000BaseT? I think that
+unlikely. So all C45 PHYs are going to implement their own config_aneg
+callback so they can set their vendor registers for 1000BaseT.
 
-diff --git a/arch/arm64/include/asm/paravirt.h b/arch/arm64/include/asm/paravirt.h
-index 799d9dd6f7cc..125c26c42902 100644
---- a/arch/arm64/include/asm/paravirt.h
-+++ b/arch/arm64/include/asm/paravirt.h
-@@ -21,6 +21,13 @@ static inline u64 paravirt_steal_clock(int cpu)
- {
- 	return pv_ops.time.steal_clock(cpu);
- }
--#endif
-+
-+int __init kvm_guest_init(void);
-+
-+#else
-+
-+#define kvm_guest_init()
-+
-+#endif // CONFIG_PARAVIRT
- 
- #endif
-diff --git a/arch/arm64/kernel/paravirt.c b/arch/arm64/kernel/paravirt.c
-index 4cfed91fe256..ea8dbbbd3293 100644
---- a/arch/arm64/kernel/paravirt.c
-+++ b/arch/arm64/kernel/paravirt.c
-@@ -6,13 +6,161 @@
-  * Author: Stefano Stabellini <stefano.stabellini@eu.citrix.com>
-  */
- 
-+#define pr_fmt(fmt) "kvmarm-pv: " fmt
-+
-+#include <linux/arm-smccc.h>
-+#include <linux/cpuhotplug.h>
- #include <linux/export.h>
-+#include <linux/io.h>
- #include <linux/jump_label.h>
-+#include <linux/printk.h>
-+#include <linux/psci.h>
-+#include <linux/reboot.h>
-+#include <linux/slab.h>
- #include <linux/types.h>
-+
- #include <asm/paravirt.h>
-+#include <asm/pvclock-abi.h>
-+#include <asm/smp_plat.h>
- 
- struct static_key paravirt_steal_enabled;
- struct static_key paravirt_steal_rq_enabled;
- 
- struct paravirt_patch_template pv_ops;
- EXPORT_SYMBOL_GPL(pv_ops);
-+
-+struct kvmarm_stolen_time_region {
-+	struct pvclock_vcpu_stolen_time *kaddr;
-+};
-+
-+static DEFINE_PER_CPU(struct kvmarm_stolen_time_region, stolen_time_region);
-+
-+static bool steal_acc = true;
-+static int __init parse_no_stealacc(char *arg)
-+{
-+	steal_acc = false;
-+	return 0;
-+}
-+
-+early_param("no-steal-acc", parse_no_stealacc);
-+
-+/* return stolen time in ns by asking the hypervisor */
-+static u64 kvm_steal_clock(int cpu)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+
-+	reg = per_cpu_ptr(&stolen_time_region, cpu);
-+	if (!reg->kaddr) {
-+		pr_warn_once("stolen time enabled but not configured for cpu %d\n",
-+			     cpu);
-+		return 0;
-+	}
-+
-+	return le64_to_cpu(READ_ONCE(reg->kaddr->stolen_time));
-+}
-+
-+static int disable_stolen_time_current_cpu(void)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+
-+	reg = this_cpu_ptr(&stolen_time_region);
-+	if (!reg->kaddr)
-+		return 0;
-+
-+	memunmap(reg->kaddr);
-+	memset(reg, 0, sizeof(*reg));
-+
-+	return 0;
-+}
-+
-+static int stolen_time_dying_cpu(unsigned int cpu)
-+{
-+	return disable_stolen_time_current_cpu();
-+}
-+
-+static int init_stolen_time_cpu(unsigned int cpu)
-+{
-+	struct kvmarm_stolen_time_region *reg;
-+	struct arm_smccc_res res;
-+
-+	reg = this_cpu_ptr(&stolen_time_region);
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_TIME_ST, &res);
-+
-+	if ((long)res.a0 < 0)
-+		return -EINVAL;
-+
-+	reg->kaddr = memremap(res.a0,
-+			      sizeof(struct pvclock_vcpu_stolen_time),
-+			      MEMREMAP_WB);
-+
-+	if (!reg->kaddr) {
-+		pr_warn("Failed to map stolen time data structure\n");
-+		return -ENOMEM;
-+	}
-+
-+	if (le32_to_cpu(reg->kaddr->revision) != 0 ||
-+	    le32_to_cpu(reg->kaddr->attributes) != 0) {
-+		pr_warn("Unexpected revision or attributes in stolen time data\n");
-+		return -ENXIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int kvm_arm_init_stolen_time(void)
-+{
-+	int ret;
-+
-+	ret = cpuhp_setup_state(CPUHP_AP_ARM_KVMPV_STARTING,
-+				"hypervisor/kvmarm/pv:starting",
-+				init_stolen_time_cpu, stolen_time_dying_cpu);
-+	if (ret < 0)
-+		return ret;
-+	return 0;
-+}
-+
-+static bool has_kvm_steal_clock(void)
-+{
-+	struct arm_smccc_res res;
-+
-+	/* To detect the presence of PV time support we require SMCCC 1.1+ */
-+	if (psci_ops.smccc_version < SMCCC_VERSION_1_1)
-+		return false;
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_ARCH_FEATURES_FUNC_ID,
-+			     ARM_SMCCC_HV_PV_FEATURES, &res);
-+
-+	if (res.a0 != SMCCC_RET_SUCCESS)
-+		return false;
-+
-+	arm_smccc_1_1_invoke(ARM_SMCCC_HV_PV_FEATURES,
-+			     ARM_SMCCC_HV_PV_TIME_ST, &res);
-+
-+	if (res.a0 != SMCCC_RET_SUCCESS)
-+		return false;
-+
-+	return true;
-+}
-+
-+int __init kvm_guest_init(void)
-+{
-+	int ret = 0;
-+
-+	if (!has_kvm_steal_clock())
-+		return 0;
-+
-+	ret = kvm_arm_init_stolen_time();
-+	if (ret)
-+		return ret;
-+
-+	pv_ops.time.steal_clock = kvm_steal_clock;
-+
-+	static_key_slow_inc(&paravirt_steal_enabled);
-+	if (steal_acc)
-+		static_key_slow_inc(&paravirt_steal_rq_enabled);
-+
-+	pr_info("using stolen time PV\n");
-+
-+	return 0;
-+}
-diff --git a/arch/arm64/kernel/time.c b/arch/arm64/kernel/time.c
-index 0b2946414dc9..a52aea14c6ec 100644
---- a/arch/arm64/kernel/time.c
-+++ b/arch/arm64/kernel/time.c
-@@ -30,6 +30,7 @@
- 
- #include <asm/thread_info.h>
- #include <asm/stacktrace.h>
-+#include <asm/paravirt.h>
- 
- unsigned long profile_pc(struct pt_regs *regs)
- {
-@@ -65,4 +66,6 @@ void __init time_init(void)
- 
- 	/* Calibrate the delay loop directly */
- 	lpj_fine = arch_timer_rate / HZ;
-+
-+	kvm_guest_init();
- }
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 068793a619ca..89d75edb5750 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -136,6 +136,7 @@ enum cpuhp_state {
- 	/* Must be the last timer callback */
- 	CPUHP_AP_DUMMY_TIMER_STARTING,
- 	CPUHP_AP_ARM_XEN_STARTING,
-+	CPUHP_AP_ARM_KVMPV_STARTING,
- 	CPUHP_AP_ARM_CORESIGHT_STARTING,
- 	CPUHP_AP_ARM64_ISNDEP_STARTING,
- 	CPUHP_AP_SMPCFD_DYING,
--- 
-2.20.1
+> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
+> index f3adea9ef400..74c4e15ebe52 100644
+> --- a/drivers/net/phy/phy.c
+> +++ b/drivers/net/phy/phy.c
+> @@ -507,7 +507,7 @@ static int phy_config_aneg(struct phy_device *phydev)
+>  	 * allowed to call genphy_config_aneg()
+>  	 */
+>  	if (phydev->is_c45 && !(phydev->c45_ids.devices_in_package & BIT(0)))
+> -		return -EOPNOTSUPP;
+> +		return genphy_c45_config_aneg(phydev);
+>  
+>  	return genphy_config_aneg(phydev);
 
+So here we should be calling the driver config_aneg function. It can
+then call genphy_c45_config_aneg(phydev) to do the generic parts.
+
+Heiner, what do you think?
+
+	Andrew
