@@ -2,100 +2,103 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D652D96F89
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:37:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8958596F86
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 04:32:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfHUChB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 22:37:01 -0400
-Received: from gateway30.websitewelcome.com ([192.185.151.58]:24274 "EHLO
-        gateway30.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726193AbfHUChA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 22:37:00 -0400
-X-Greylist: delayed 1229 seconds by postgrey-1.27 at vger.kernel.org; Tue, 20 Aug 2019 22:37:00 EDT
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway30.websitewelcome.com (Postfix) with ESMTP id EDD8C5211
-        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 21:16:30 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 0GAoiclmv4FKp0GAoiiPd8; Tue, 20 Aug 2019 21:16:30 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=0+iQb8olkCCmveYCwGlywQYawyBRRIxSwndogIaqQ6w=; b=bolcoLQXm633fxCXN8Eio23eEC
-        vMRn+bUr57rvQjBO+vW+4MDADvf6Vtbs0oJsayU6/GKalI+UthEDpUA6+3YDs2//IOIJqFXtP0Nex
-        MzWHCtKAzAv6vypR8dw1ivprC3VY3MsTARtSBeLCPJPYjQwgUSXISEGXmhzZpulvDBVGrKKXGC/aH
-        S/qcBA7iWs1hsDssQN7QwXHedaFlIGAJ0muKOv59tE3yucp06E5bKmwnu9YPluMpNAGexzuHvTCGW
-        3y4WTwrk8gTmXLloBIZrJ3RdVg+Kd0dOLZX1vVByjCDUt/VMejgKcqoE5WLQaRd52HzzXYg5XGVaf
-        3Tmgr3/A==;
-Received: from [187.192.11.120] (port=52370 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1i0GAn-001KA5-4q; Tue, 20 Aug 2019 21:16:29 -0500
-Date:   Tue, 20 Aug 2019 21:16:27 -0500
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Felipe Balbi <balbi@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Sylvain Lemieux <slemieux.tyco@gmail.com>
-Cc:     linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] usb: udc: lpc32xx: silence fall-through warning
-Message-ID: <20190821021627.GA2679@embeddedor>
+        id S1726866AbfHUCcI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 22:32:08 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:3098 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726512AbfHUCcI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 20 Aug 2019 22:32:08 -0400
+Received: from DGGEMM406-HUB.china.huawei.com (unknown [172.30.72.57])
+        by Forcepoint Email with ESMTP id AAA6243E135E022D3262;
+        Wed, 21 Aug 2019 10:32:03 +0800 (CST)
+Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
+ DGGEMM406-HUB.china.huawei.com (10.3.20.214) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Wed, 21 Aug 2019 10:32:03 +0800
+Received: from architecture4 (10.140.130.215) by
+ dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Wed, 21 Aug 2019 10:32:02 +0800
+Date:   Wed, 21 Aug 2019 10:31:22 +0800
+From:   Gao Xiang <gaoxiang25@huawei.com>
+To:     Joe Perches <joe@perches.com>
+CC:     Caitlyn <caitlynannefinn@gmail.com>, Chao Yu <yuchao0@huawei.com>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Tobin C . Harding" <me@tobin.cc>, <linux-erofs@lists.ozlabs.org>,
+        <devel@driverdev.osuosl.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] staging/erofs: Balanced braces around a few
+ conditional statements.
+Message-ID: <20190821023122.GA159802@architecture4>
+References: <1566346700-28536-1-git-send-email-caitlynannefinn@gmail.com>
+ <1566346700-28536-3-git-send-email-caitlynannefinn@gmail.com>
+ <7aaca457a3d3feb951082d0659eec568a908971f.camel@perches.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
+In-Reply-To: <7aaca457a3d3feb951082d0659eec568a908971f.camel@perches.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.192.11.120
-X-Source-L: No
-X-Exim-ID: 1i0GAn-001KA5-4q
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [187.192.11.120]:52370
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-Originating-IP: [10.140.130.215]
+X-ClientProxiedBy: dggeme713-chm.china.huawei.com (10.1.199.109) To
+ dggeme762-chm.china.huawei.com (10.3.19.108)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Silence the following fall-through warning by adding a break statement:
+On Tue, Aug 20, 2019 at 07:26:46PM -0700, Joe Perches wrote:
+> On Tue, 2019-08-20 at 20:18 -0400, Caitlyn wrote:
+> > Balanced braces to fix some checkpath warnings in inode.c and
+> > unzip_vle.c
+> []
+> > diff --git a/drivers/staging/erofs/unzip_vle.c b/drivers/staging/erofs/unzip_vle.c
+> []
+> > @@ -915,21 +915,21 @@ static int z_erofs_vle_unzip(struct super_block *sb,
+> >  	mutex_lock(&work->lock);
+> >  	nr_pages = work->nr_pages;
+> >  
+> > -	if (likely(nr_pages <= Z_EROFS_VLE_VMAP_ONSTACK_PAGES))
+> > +	if (likely(nr_pages <= Z_EROFS_VLE_VMAP_ONSTACK_PAGES)) {
+> >  		pages = pages_onstack;
+> > -	else if (nr_pages <= Z_EROFS_VLE_VMAP_GLOBAL_PAGES &&
+> > -		 mutex_trylock(&z_pagemap_global_lock))
+> > +	} else if (nr_pages <= Z_EROFS_VLE_VMAP_GLOBAL_PAGES &&
+> > +		 mutex_trylock(&z_pagemap_global_lock)) {
+> 
+> Extra space after tab
 
-drivers/usb/gadget/udc/lpc32xx_udc.c:2230:3: warning: this statement may
-fall through [-Wimplicit-fallthrough=]
+There is actually balanced braces in linux-next.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/staging/erofs/zdata.c#n762
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- drivers/usb/gadget/udc/lpc32xx_udc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> >  		pages = z_pagemap_global;
+> > -	else {
+> > +	} else {
+> >  repeat:
+> >  		pages = kvmalloc_array(nr_pages, sizeof(struct page *),
+> >  				       GFP_KERNEL);
+> >  
+> >  		/* fallback to global pagemap for the lowmem scenario */
+> >  		if (unlikely(!pages)) {
+> > -			if (nr_pages > Z_EROFS_VLE_VMAP_GLOBAL_PAGES)
+> > +			if (nr_pages > Z_EROFS_VLE_VMAP_GLOBAL_PAGES) {
+> >  				goto repeat;
+> > -			else {
+> > +			} else {
+> 
+> Unnecessary else
 
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index e3f67023d935..606c8bc52db5 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -2264,7 +2264,7 @@ static void udc_handle_ep0_setup(struct lpc32xx_udc *udc)
- 		default:
- 			break;
- 		}
--
-+		break;
- 
- 	case USB_REQ_SET_ADDRESS:
- 		if (reqtype == (USB_TYPE_STANDARD | USB_RECIP_DEVICE)) {
--- 
-2.23.0
+There is not the "goto repeat" in linux-next anymore.
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/staging/erofs/zdata.c#n765
 
+Thanks,
+Gao Xiang
+
+> 
+> >  				mutex_lock(&z_pagemap_global_lock);
+> >  				pages = z_pagemap_global;
+> >  			}
+> 
+> 
