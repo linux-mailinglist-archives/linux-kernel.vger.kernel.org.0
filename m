@@ -2,84 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 681659805D
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:40:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C691798063
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 18:40:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729614AbfHUQkD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 12:40:03 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:41180 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729380AbfHUQkD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 12:40:03 -0400
-Received: by mail-pf1-f193.google.com with SMTP id 196so1774518pfz.8
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 09:40:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VUVIcvKRAxchzzIboABzY4R0ISYxco2N8kvTRtaX2No=;
-        b=qNUYZ3ayTlf/+efR18tsC2cdgYlaL+V64+bHpwBKeAOvUI02sHoSgR9WQ8Ndc6QwuZ
-         qX7mv+wHlSrKxF8S48uzMfYMzp+1x5EtPKNuSZFj2GaEwfDZ9ILYpf8PaUwlxinG6vEC
-         n+TEXB6jCJPemwoDI+JzRsitP8jtHNO0JACKuMZ9gyHRadCl4kqtPhau02Jx96LDLsW0
-         aT6gDNIPoQ4asedEhowXd03uvdJVk9ycdLTekzxhbRamYUgSH27n8D6psoMw/96X8toL
-         VgUWELVs8RBmBu0SlA7rqY0ZOdljucwYL0q2/E838xRQ1UvdR1JpgcMIas1wDj3AmoD6
-         0UHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VUVIcvKRAxchzzIboABzY4R0ISYxco2N8kvTRtaX2No=;
-        b=a3HjzwDPDddXudxA8OyqcJGkyxsN7vqyJQb1i1kFWOR786vs4M591yP25Qi9wzzKRG
-         fMxTvxt8CPbKZeq5bmvFZAWMPL07tqhY5Yr/RJdod4HtYZWnIOSrsK1NpCfpjku9x3cT
-         84Juy3wz93RfmgSBmd+4t4u69GGWEvXPg3wXSEfXHhuMmTf+meFyo4t1+e5Gdei/KX+v
-         h2aqGyXVUwQOj9lCWcKZaZOqQ9WynfHuBq8lavzBUHTY0egk1si+adv0bmyvTE/RsBgB
-         VYnwozDHHC6gr2djsPqvAPUX6MkbERrVSuoxYY6z+eQ889oQs9gAjDz+Puupwy+k1hzn
-         gNOg==
-X-Gm-Message-State: APjAAAWg3v5/SCYoJdDN5ThmPe53M3wvFSdWhe1p1ZrtnypgAu+sSBTb
-        esr9qD16GaH3g8uUiAVcw8bEr40LtpLXhGeUwJiZHaJQEQPsvA==
-X-Google-Smtp-Source: APXvYqxObByY71HuxPnyU08sUAGGvZX2iThJJB5iiD03WIZb1eORrogkr5nLL2kPV/CD4qzWueFyCPez88tPXcYIJ6E=
-X-Received: by 2002:a65:4b8b:: with SMTP id t11mr29817121pgq.130.1566405602118;
- Wed, 21 Aug 2019 09:40:02 -0700 (PDT)
+        id S1729659AbfHUQkd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 12:40:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57608 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728806AbfHUQkd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 12:40:33 -0400
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27AE22339F;
+        Wed, 21 Aug 2019 16:40:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566405632;
+        bh=eLVhmjLNhIMLZZjdqWDukswrRlkV0kuXO3dS9QrC/aU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=IdqhTaUrH8ylMxq2eaVChVjp1DLFMiNAP91pxJOzldiPcbNQ1FLreYnx8wWl5YtIK
+         EsjjJj69ldHa/PgtAsQw7+NgLs1xqf+0XnGGTYXRfNPLdAe/N9vPCppd6gVvMRllRD
+         weTqJ/6/+iGvy6EpFqWFjL3xf2DxzQ8EnzjwjnY0=
+Received: by mail-lf1-f48.google.com with SMTP id b17so2292799lff.7;
+        Wed, 21 Aug 2019 09:40:32 -0700 (PDT)
+X-Gm-Message-State: APjAAAX3xqocWgcOf5RgBzc13tgMYxSN2beSrRi5rwfyqzQTmAUqnuii
+        J/e1znW5SMdLX4HLNwojn1tqOOiJKhaoftn8jkY=
+X-Google-Smtp-Source: APXvYqwT/36UbVBX6mo7+xkO8e2JanFOODu9B3xjLG9XlzyxH4yIuiugMn/CvKnM9WXnCEWyDwVmzXHNJGzCDTOl6Lg=
+X-Received: by 2002:a19:82c3:: with SMTP id e186mr18643045lfd.18.1566405630317;
+ Wed, 21 Aug 2019 09:40:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <Pine.LNX.4.44L0.1908211218550.1816-100000@iolanthe.rowland.org> <00000000000040fec90590a33230@google.com>
-In-Reply-To: <00000000000040fec90590a33230@google.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Wed, 21 Aug 2019 18:39:50 +0200
-Message-ID: <CAAeHK+xhxhdJecq=HMLbZySTxzT_JTvMWdXojTnCdJ+OU2w4Ew@mail.gmail.com>
-Subject: Re: KASAN: use-after-free Read in hidraw_ioctl
-To:     syzbot <syzbot+ded1794a717e3b235226@syzkaller.appspotmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <20190820094027.4144-1-ribalda@kernel.org> <20190820094027.4144-2-ribalda@kernel.org>
+ <1566315769.3030.20.camel@pengutronix.de>
+In-Reply-To: <1566315769.3030.20.camel@pengutronix.de>
+From:   Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date:   Wed, 21 Aug 2019 18:40:13 +0200
+X-Gmail-Original-Message-ID: <CAPybu_0bNN7E6wqYXZkFC=5y=rHxteHVsMd0moeVWb7m8yy3NA@mail.gmail.com>
+Message-ID: <CAPybu_0bNN7E6wqYXZkFC=5y=rHxteHVsMd0moeVWb7m8yy3NA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] Documentation: media: Describe V4L2_CID_UNIT_CELL_SIZE
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        linux-media <linux-media@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 6:38 PM syzbot
-<syzbot+ded1794a717e3b235226@syzkaller.appspotmail.com> wrote:
->
-> Hello,
->
-> syzbot has tested the proposed patch and the reproducer did not trigger
-> crash:
->
-> Reported-and-tested-by:
-> syzbot+ded1794a717e3b235226@syzkaller.appspotmail.com
->
-> Tested on:
->
-> commit:         e96407b4 usb-fuzzer: main usb gadget fuzzer driver
-> git tree:       https://github.com/google/kasan.git
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=792eb47789f57810
-> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=126b9da6600000
->
-> Note: testing is done by a robot and is best-effort only.
+Hi Philipp
 
-Let's dup this bug into the other one:
+On Tue, Aug 20, 2019 at 5:42 PM Philipp Zabel <p.zabel@pengutronix.de> wrote:
+>
+> On Tue, 2019-08-20 at 11:40 +0200, Ricardo Ribalda Delgado wrote:
+> > New control to pass to userspace the width/height of a pixel. Which is
+> > needed for calibration and lens selection.
+> >
+> > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
+> > ---
+> >  Documentation/media/uapi/v4l/ext-ctrls-camera.rst | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+> > diff --git a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > index 51c1d5c9eb00..b43047d4e7a1 100644
+> > --- a/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > +++ b/Documentation/media/uapi/v4l/ext-ctrls-camera.rst
+> > @@ -510,6 +510,14 @@ enum v4l2_scene_mode -
+> >      value down. A value of zero stops the motion if one is in progress
+> >      and has no effect otherwise.
+> >
+> > +``V4L2_CID_UNIT_CELL_SIZE (struct)``
+> > +    This control returns the unit cell size in nanometres. The struct provides
+> > +    the width and the height in separated fields to take into consideration
+> > +    asymmetric pixels and/or hardware binning.
+> > +    The unit cell consist on the whole area of the pixel, sensitive and
+> > +    non-sensitive.
+>
+> "consists of", otherwise this looks unambiguous to me.
+>
+Thanks, fixing on v3. Will send after I get more feedback
 
-#syz dup: KASAN: slab-out-of-bounds Read in hidraw_ioctl
+
+
+> I'm not sure if it is required to add a table for struct v4l2_area,
+> similarly to the other compound controls.
+>
+> > +    This control is required for automatic calibration sensors/cameras.
+> > +
+> >  .. [#f1]
+> >     This control may be changed to a menu control in the future, if more
+> >     options are required.
+>
+> regards
+> Philipp
