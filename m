@@ -2,62 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 138F4973CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 09:46:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF260973DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 09:50:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfHUHqN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 03:46:13 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42010 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726224AbfHUHqM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 03:46:12 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9760FDF27863EA7C08B9;
-        Wed, 21 Aug 2019 15:46:10 +0800 (CST)
-Received: from huawei.com (10.175.124.28) by DGGEMS409-HUB.china.huawei.com
- (10.3.19.209) with Microsoft SMTP Server id 14.3.439.0; Wed, 21 Aug 2019
- 15:46:02 +0800
-From:   Jason Yan <yanaijie@huawei.com>
-To:     <leoyang.li@nxp.com>, <roy.pledge@nxp.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <madalin.bucur@nxp.com>,
-        <linux-kernel@vger.kernel.org>
-CC:     Jason Yan <yanaijie@huawei.com>
-Subject: [PATCH] soc/fsl/qbman: fix return value error in bm_shutdown_pool()
-Date:   Wed, 21 Aug 2019 16:06:49 +0800
-Message-ID: <20190821080649.34133-1-yanaijie@huawei.com>
-X-Mailer: git-send-email 2.17.2
+        id S1726462AbfHUHuE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 03:50:04 -0400
+Received: from mail.ispras.ru ([83.149.199.45]:50720 "EHLO mail.ispras.ru"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726028AbfHUHuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 03:50:04 -0400
+X-Greylist: delayed 459 seconds by postgrey-1.27 at vger.kernel.org; Wed, 21 Aug 2019 03:50:03 EDT
+Received: from localhost.localdomain (broadband-188-32-48-208.ip.moscow.rt.ru [188.32.48.208])
+        by mail.ispras.ru (Postfix) with ESMTPSA id 1679B540081;
+        Wed, 21 Aug 2019 10:42:23 +0300 (MSK)
+From:   Denis Efremov <efremov@ispras.ru>
+To:     akpm@linux-foundation.org
+Cc:     Denis Efremov <efremov@ispras.ru>,
+        Akinobu Mita <akinobu.mita@gmail.com>, Jan Kara <jack@suse.cz>,
+        Matthew Wilcox <matthew@wil.cx>, linux-kernel@vger.kernel.org,
+        dm-devel@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-media@vger.kernel.org, Erdem Tumurov <erdemus@gmail.com>,
+        Vladimir Shelekhov <vshel@iis.nsk.su>
+Subject: [PATCH] lib/memweight.c: optimize by inlining bitmap_weight()
+Date:   Wed, 21 Aug 2019 10:42:00 +0300
+Message-Id: <20190821074200.2203-1-efremov@ispras.ru>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit 0505d00c8dba ("soc/fsl/qbman: Cleanup buffer pools if BMan was
-initialized prior to bootup") defined a new variable to store the return
-error, but forgot to return this value at the end of the function.
+This patch inlines bitmap_weight() call. Thus, removing the BUG_ON,
+and 'longs to bits -> bits to longs' conversion by directly calling
+hweight_long().
 
-Fixes: 0505d00c8dba ("soc/fsl/qbman: Cleanup buffer pools if BMan was initialized prior to bootup")
-Signed-off-by: Jason Yan <yanaijie@huawei.com>
+./scripts/bloat-o-meter lib/memweight.o.old lib/memweight.o.new
+add/remove: 0/0 grow/shrink: 0/1 up/down: 0/-10 (-10)
+Function                                     old     new   delta
+memweight                                    162     152     -10
+
+Co-developed-by: Erdem Tumurov <erdemus@gmail.com>
+Co-developed-by: Vladimir Shelekhov <vshel@iis.nsk.su>
+Signed-off-by: Erdem Tumurov <erdemus@gmail.com>
+Signed-off-by: Vladimir Shelekhov <vshel@iis.nsk.su>
+Signed-off-by: Denis Efremov <efremov@ispras.ru>
 ---
- drivers/soc/fsl/qbman/bman.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/memweight.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/fsl/qbman/bman.c b/drivers/soc/fsl/qbman/bman.c
-index f4fb527d8301..c5dd026fe889 100644
---- a/drivers/soc/fsl/qbman/bman.c
-+++ b/drivers/soc/fsl/qbman/bman.c
-@@ -660,7 +660,7 @@ int bm_shutdown_pool(u32 bpid)
- 	}
- done:
- 	put_affine_portal();
--	return 0;
-+	return err;
- }
+diff --git a/lib/memweight.c b/lib/memweight.c
+index 94dd72ccaa7f..f050b2b4c5e2 100644
+--- a/lib/memweight.c
++++ b/lib/memweight.c
+@@ -20,11 +20,13 @@ size_t memweight(const void *ptr, size_t bytes)
  
- struct gen_pool *bm_bpalloc;
+ 	longs = bytes / sizeof(long);
+ 	if (longs) {
+-		BUG_ON(longs >= INT_MAX / BITS_PER_LONG);
+-		ret += bitmap_weight((unsigned long *)bitmap,
+-				longs * BITS_PER_LONG);
++		const unsigned long *bitmap_long =
++			(const unsigned long *)bitmap;
++
+ 		bytes -= longs * sizeof(long);
+-		bitmap += longs * sizeof(long);
++		for (; longs > 0; longs--, bitmap_long++)
++			ret += hweight_long(*bitmap_long);
++		bitmap = (const unsigned char *)bitmap_long;
+ 	}
+ 	/*
+ 	 * The reason that this last loop is distinct from the preceding
 -- 
-2.17.2
+2.21.0
 
