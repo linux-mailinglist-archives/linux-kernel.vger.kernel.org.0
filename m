@@ -2,32 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4FDD979DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:48:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 56F0F979E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 14:48:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728404AbfHUMsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S1728362AbfHUMsJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Wed, 21 Aug 2019 08:48:09 -0400
-Received: from mga07.intel.com ([134.134.136.100]:30844 "EHLO mga07.intel.com"
+Received: from mga07.intel.com ([134.134.136.100]:30849 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726478AbfHUMsF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 08:48:05 -0400
+        id S1726513AbfHUMsH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 08:48:07 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 05:48:05 -0700
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 05:48:06 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.64,412,1559545200"; 
-   d="scan'208";a="207724892"
+   d="scan'208";a="207724900"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga002.fm.intel.com with ESMTP; 21 Aug 2019 05:48:03 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 21 Aug 2019 05:48:05 -0700
 From:   Alexander Shishkin <alexander.shishkin@linux.intel.com>
 To:     Peter Zijlstra <a.p.zijlstra@chello.nl>
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Subject: [PATCH v0 1/6] perf/x86/intel/pt: Clean up ToPA allocation path
-Date:   Wed, 21 Aug 2019 15:47:22 +0300
-Message-Id: <20190821124727.73310-2-alexander.shishkin@linux.intel.com>
+Subject: [PATCH v0 2/6] perf/x86/intel/pt: Use helpers to obtain ToPA entry size
+Date:   Wed, 21 Aug 2019 15:47:23 +0300
+Message-Id: <20190821124727.73310-3-alexander.shishkin@linux.intel.com>
 X-Mailer: git-send-email 2.23.0.rc1
 In-Reply-To: <20190821124727.73310-1-alexander.shishkin@linux.intel.com>
 References: <20190821124727.73310-1-alexander.shishkin@linux.intel.com>
@@ -38,100 +38,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the allocation parameters are passed as function arguments,
-while the CPU number for per-cpu allocation is passed via the buffer
-object. There's no reason for this.
-
-Pass the CPU as a function argument instead.
+There are a few places in the PT driver that need to obtain the size of
+a ToPA entry, some of them for the current ToPA entry in the buffer.
+Use helpers for those, to make the lines shorter and more readable.
 
 Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 ---
- arch/x86/events/intel/pt.c | 15 +++++++--------
- arch/x86/events/intel/pt.h |  2 --
- 2 files changed, 7 insertions(+), 10 deletions(-)
+ arch/x86/events/intel/pt.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/arch/x86/events/intel/pt.c b/arch/x86/events/intel/pt.c
-index a7318c29242e..b029f32edae2 100644
+index b029f32edae2..831163a1b41a 100644
 --- a/arch/x86/events/intel/pt.c
 +++ b/arch/x86/events/intel/pt.c
-@@ -670,7 +670,7 @@ static bool topa_table_full(struct topa *topa)
-  *
-  * Return:	0 on success or error code.
-  */
--static int topa_insert_pages(struct pt_buffer *buf, gfp_t gfp)
-+static int topa_insert_pages(struct pt_buffer *buf, int cpu, gfp_t gfp)
- {
- 	struct topa *topa = buf->last;
- 	int order = 0;
-@@ -681,7 +681,7 @@ static int topa_insert_pages(struct pt_buffer *buf, gfp_t gfp)
- 		order = page_private(p);
+@@ -572,6 +572,7 @@ struct topa {
  
- 	if (topa_table_full(topa)) {
--		topa = topa_alloc(buf->cpu, gfp);
-+		topa = topa_alloc(cpu, gfp);
- 		if (!topa)
- 			return -ENOMEM;
+ /* make -1 stand for the last table entry */
+ #define TOPA_ENTRY(t, i) ((i) == -1 ? &(t)->table[(t)->last] : &(t)->table[(i)])
++#define TOPA_ENTRY_SIZE(t, i) (sizes(TOPA_ENTRY((t), (i))->size))
  
-@@ -1061,20 +1061,20 @@ static void pt_buffer_fini_topa(struct pt_buffer *buf)
-  * @size:	Total size of all regions within this ToPA.
-  * @gfp:	Allocation flags.
-  */
--static int pt_buffer_init_topa(struct pt_buffer *buf, unsigned long nr_pages,
--			       gfp_t gfp)
-+static int pt_buffer_init_topa(struct pt_buffer *buf, int cpu,
-+			       unsigned long nr_pages, gfp_t gfp)
- {
- 	struct topa *topa;
- 	int err;
- 
--	topa = topa_alloc(buf->cpu, gfp);
-+	topa = topa_alloc(cpu, gfp);
- 	if (!topa)
- 		return -ENOMEM;
- 
- 	topa_insert_table(buf, topa);
- 
- 	while (buf->nr_pages < nr_pages) {
--		err = topa_insert_pages(buf, gfp);
-+		err = topa_insert_pages(buf, cpu, gfp);
- 		if (err) {
- 			pt_buffer_fini_topa(buf);
- 			return -ENOMEM;
-@@ -1124,13 +1124,12 @@ pt_buffer_setup_aux(struct perf_event *event, void **pages,
- 	if (!buf)
- 		return NULL;
- 
--	buf->cpu = cpu;
- 	buf->snapshot = snapshot;
- 	buf->data_pages = pages;
- 
- 	INIT_LIST_HEAD(&buf->tables);
- 
--	ret = pt_buffer_init_topa(buf, nr_pages, GFP_KERNEL);
-+	ret = pt_buffer_init_topa(buf, cpu, nr_pages, GFP_KERNEL);
- 	if (ret) {
- 		kfree(buf);
- 		return NULL;
-diff --git a/arch/x86/events/intel/pt.h b/arch/x86/events/intel/pt.h
-index 63fe4063fbd6..8de8ed089697 100644
---- a/arch/x86/events/intel/pt.h
-+++ b/arch/x86/events/intel/pt.h
-@@ -53,7 +53,6 @@ struct pt_pmu {
  /**
-  * struct pt_buffer - buffer configuration; one buffer per task_struct or
-  *		cpu, depending on perf event configuration
-- * @cpu:	cpu for per-cpu allocation
-  * @tables:	list of ToPA tables in this buffer
-  * @first:	shorthand for first topa table
-  * @last:	shorthand for last topa table
-@@ -71,7 +70,6 @@ struct pt_pmu {
-  * @topa_index:	table of topa entries indexed by page offset
+  * topa_alloc() - allocate page-sized ToPA table
+@@ -771,7 +772,7 @@ static void pt_update_head(struct pt *pt)
+ 
+ 	/* offset of the current output region within this table */
+ 	for (topa_idx = 0; topa_idx < buf->cur_idx; topa_idx++)
+-		base += sizes(buf->cur->table[topa_idx].size);
++		base += TOPA_ENTRY_SIZE(buf->cur, topa_idx);
+ 
+ 	if (buf->snapshot) {
+ 		local_set(&buf->data_size, base);
+@@ -800,7 +801,7 @@ static void *pt_buffer_region(struct pt_buffer *buf)
   */
- struct pt_buffer {
--	int			cpu;
- 	struct list_head	tables;
- 	struct topa		*first, *last, *cur;
- 	unsigned int		cur_idx;
+ static size_t pt_buffer_region_size(struct pt_buffer *buf)
+ {
+-	return sizes(buf->cur->table[buf->cur_idx].size);
++	return TOPA_ENTRY_SIZE(buf->cur, buf->cur_idx);
+ }
+ 
+ /**
+@@ -830,7 +831,7 @@ static void pt_handle_status(struct pt *pt)
+ 		 * know.
+ 		 */
+ 		if (!intel_pt_validate_hw_cap(PT_CAP_topa_multiple_entries) ||
+-		    buf->output_off == sizes(TOPA_ENTRY(buf->cur, buf->cur_idx)->size)) {
++		    buf->output_off == pt_buffer_region_size(buf)) {
+ 			perf_aux_output_flag(&pt->handle,
+ 			                     PERF_AUX_FLAG_TRUNCATED);
+ 			advance++;
+@@ -925,8 +926,7 @@ static int pt_buffer_reset_markers(struct pt_buffer *buf,
+ 	unsigned long idx, npages, wakeup;
+ 
+ 	/* can't stop in the middle of an output region */
+-	if (buf->output_off + handle->size + 1 <
+-	    sizes(TOPA_ENTRY(buf->cur, buf->cur_idx)->size)) {
++	if (buf->output_off + handle->size + 1 < pt_buffer_region_size(buf)) {
+ 		perf_aux_output_flag(handle, PERF_AUX_FLAG_TRUNCATED);
+ 		return -EINVAL;
+ 	}
+@@ -1032,7 +1032,7 @@ static void pt_buffer_reset_offsets(struct pt_buffer *buf, unsigned long head)
+ 	buf->cur = (struct topa *)((unsigned long)buf->topa_index[pg] & PAGE_MASK);
+ 	buf->cur_idx = ((unsigned long)buf->topa_index[pg] -
+ 			(unsigned long)buf->cur) / sizeof(struct topa_entry);
+-	buf->output_off = head & (sizes(buf->cur->table[buf->cur_idx].size) - 1);
++	buf->output_off = head & (pt_buffer_region_size(buf) - 1);
+ 
+ 	local64_set(&buf->head, head);
+ 	local_set(&buf->data_size, 0);
 -- 
 2.23.0.rc1
 
