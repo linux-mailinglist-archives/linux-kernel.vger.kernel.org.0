@@ -2,97 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA4F596EFB
-	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:40:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DE89996EF6
+	for <lists+linux-kernel@lfdr.de>; Wed, 21 Aug 2019 03:40:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfHUBjr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Tue, 20 Aug 2019 21:39:47 -0400
-Received: from sender4-pp-o95.zoho.com ([136.143.188.95]:25534 "EHLO
-        sender4-pp-o95.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726463AbfHUBjr (ORCPT
+        id S1726827AbfHUBfx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Tue, 20 Aug 2019 21:35:53 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:38360 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726484AbfHUBfx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 20 Aug 2019 21:39:47 -0400
-ARC-Seal: i=1; a=rsa-sha256; t=1566351579; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=fp8j31Xa/U150l7Y6Fbp1R1Sgruh3tmrn7l8PPam2TDipyKsUCznK+wYJYB0oLjpxnKqrj1iBni6Yyb6QccD2kgnL9VySTEr8RDZ0fY+EJRTQSB6TtIGb3K7aZY5v0IVgxmLaSA8m9C3snw9nszXo7vK9Gr6D5+VZ9DmDjzMufY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1566351579; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=X1s7c/q2LhXifg1IRo4YM5sxau9UteN88ivBRni95ns=; 
-        b=akJ+PnPqyhzoo0FohsHlhOFPprxL8hWejLAIkEahbv7t/ZQBUJ5PrCSijBmgiBM6W9Dg5r1aE7I6+cr9fknT0DRXj3xeG8RWqe+sAKPrTXWMgsKLPWJ6lCsHLXeaZRWn3DUPPZiXGCDztsVLfUdnqFSfpCt8Oj7MqInou2fUsD4=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=kontais@zoho.com;
-        dmarc=pass header.from=<kontais@zoho.com> header.from=<kontais@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=knMUgmONZ2y/YuDnv7B7dUtCXn8BCbophzl4idit5x/E7rEhfi4A9PzcP1aSMu3bfcbBSQqgJxba
-    tJTQJl9+V2oW/czn9qtl1hoaSjPXsYEzn4SapA+3X+28AGv3LyVa  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1566351579;
-        s=zm2019; d=zoho.com; i=kontais@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id; l=1322;
-        bh=X1s7c/q2LhXifg1IRo4YM5sxau9UteN88ivBRni95ns=;
-        b=Lq+ncVyE9B0GiDGyQwLxVAJe2SkVKTdmQ24y96S+aHwDOwAPnX9ExnIR7aEtAhe+
-        dW5Z7lXicQVW/7DdSaJUIQEe5HVyhwSBl1zBbuj6LMVoUB52IP7ouSkzRlPOP36ECmo
-        AirHUhjOybKTub605M8Tzlqh1vhHcJCQUXGpdyqc=
-Received: from dev31.localdomain (103.244.59.4 [103.244.59.4]) by mx.zohomail.com
-        with SMTPS id 1566351578120361.08327538001834; Tue, 20 Aug 2019 18:39:38 -0700 (PDT)
-From:   Zhang Tao <kontais@zoho.com>
-To:     agk@redhat.com, snitzer@redhat.com
-Cc:     dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        Zhang Tao <zhangtao27@lenovo.com>
-Subject: [PATCH] dm table: fix a potential array out of bounds
-Date:   Wed, 21 Aug 2019 09:33:31 +0800
-Message-Id: <1566351211-13280-1-git-send-email-kontais@zoho.com>
-X-Mailer: git-send-email 1.8.3.1
-X-ZohoMailClient: External
+        Tue, 20 Aug 2019 21:35:53 -0400
+Received: by mail-io1-f68.google.com with SMTP id p12so1357533iog.5
+        for <linux-kernel@vger.kernel.org>; Tue, 20 Aug 2019 18:35:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZDgziPohWADEElmbUwXxheNxG1YHZXMADSP7m0rXEeM=;
+        b=TDro1+YOlLRwEz2x+hVIva0NLZYpDkw3j6J/eDF3Hi98b1r+Z3u35q2AKgmdeacGhM
+         2XKwKFQPXHWH8lSSJQNwFvrPa20kWXAzZr+ruKlkZmdxiKKxTE6fOwCfH+wMTI2xSX9K
+         6tfNv6efBXqYkBavG8PB+p4aLfz6cL+Bh/00xe3T4ZibXeo/Ub5B9sF+2AINBHF9agcG
+         TogAsURqAWC5l6AKTFHqyrpweZMgZKmSm+KkXT926gKOyqKWcSNB3jgX9t3y7f9VigIH
+         tH1Voekk3JuyeBXs+74IygFEjxl/+CkyKKIgXIF+1g03uy4t0CkM3zKg6xL2l6BBlt0O
+         yThg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZDgziPohWADEElmbUwXxheNxG1YHZXMADSP7m0rXEeM=;
+        b=FxKClTILl4e7CwsH1/l1i7zr98Js5n57Y6BHasYLXNAuOS693mDU1bNaQpT9Tb2ive
+         3TTT93L5j6E8Jlhw2WiZK7VUn4IQ2EO2++mER/1TkBL4AXFhmsIIhN/iqdD7GGJiEBLY
+         28YHTE1cyay70oSVIk+GgUWaPRu1TUOBfR7guo26iwm4Uf2ZQeH5fQoHyJBEnDrbO0PH
+         WpZV9cq8LZgppLJFwcl0OdPjJmXcVe8WaXZCA9NEit521Ai5aAUSHZklFXkHrs+C+wdZ
+         CN+A4HOug9hp9aHpJsZQDevqLH4Dd7Dz8HtfS1gRu9h6b9sa4bE4tw7l2kX3JQCP2MLY
+         3cIg==
+X-Gm-Message-State: APjAAAU+s13jytDZAJ+lYCgi5HPpoFjLK0juTwrYLAmCtW6qumtlYMy1
+        g3zSZOAZW0LjnMS3RMqEZeJBF289sVxFyeTioc4=
+X-Google-Smtp-Source: APXvYqzGkWkC1ql6DLZKPAVJGxobBSSWVEse2A37iCP/RxU0eQUfxK/dzMTVThVz57XsmXKb4DJnE8wZpvnDg7w1K4M=
+X-Received: by 2002:a6b:720e:: with SMTP id n14mr37064857ioc.139.1566351352532;
+ Tue, 20 Aug 2019 18:35:52 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190820030804.8892-1-andrew.smirnov@gmail.com> <20190820152928.GK29991@lunn.ch>
+In-Reply-To: <20190820152928.GK29991@lunn.ch>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Tue, 20 Aug 2019 18:35:40 -0700
+Message-ID: <CAHQ1cqHhF6_2Mx3B=w7GEUWDa0RegpUwe=ETCr71PXsDjKRJDQ@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: vf610-zii-cfu1: Slow I2C0 down to 100kHz
+To:     Andrew Lunn <andrew@lunn.ch>
+Cc:     linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Chris Healy <cphealy@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhang Tao <zhangtao27@lenovo.com>
+On Tue, Aug 20, 2019 at 8:29 AM Andrew Lunn <andrew@lunn.ch> wrote:
+>
+> On Mon, Aug 19, 2019 at 08:08:04PM -0700, Andrey Smirnov wrote:
+> > Fiber-optic module attached to the bus is only rated to work at
+> > 100kHz, so drop the bus frequncy to accomodate that.
+>
+> Hi Andrey
+>
+> Did you review all the other ZII platforms? I could imaging the same
+> problem happening else where.
+>
 
-allocate num + 1 for target and offset array, n_highs need num + 1
-elements, the last element will be used for node lookup in function
-dm_table_find_target.
+Yes, AFAICT, fiber-optic modules are present only on SCU4
+(vf610-zii-scu4-aib.dts), CFU1 (vf610-zii-cfu1.dts) and VF610 Dev
+board rev. B/C (vf610-zii-dev*.dts[i]). Of all three only CFU1 has
+corresponding I2C bus running @ 400 kHz.
 
-Signed-off-by: Zhang Tao <zhangtao27@lenovo.com>
----
- drivers/md/dm-table.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/md/dm-table.c b/drivers/md/dm-table.c
-index 7b6c3ee..fd7f604 100644
---- a/drivers/md/dm-table.c
-+++ b/drivers/md/dm-table.c
-@@ -160,20 +160,22 @@ static int alloc_targets(struct dm_table *t, unsigned int num)
- {
- 	sector_t *n_highs;
- 	struct dm_target *n_targets;
-+	unsigned int alloc_num;
- 
- 	/*
- 	 * Allocate both the target array and offset array at once.
- 	 * Append an empty entry to catch sectors beyond the end of
- 	 * the device.
- 	 */
--	n_highs = (sector_t *) dm_vcalloc(num + 1, sizeof(struct dm_target) +
-+	alloc_num = num + 1;
-+	n_highs = (sector_t *) dm_vcalloc(alloc_num, sizeof(struct dm_target) +
- 					  sizeof(sector_t));
- 	if (!n_highs)
- 		return -ENOMEM;
- 
--	n_targets = (struct dm_target *) (n_highs + num);
-+	n_targets = (struct dm_target *) (n_highs + alloc_num);
- 
--	memset(n_highs, -1, sizeof(*n_highs) * num);
-+	memset(n_highs, -1, sizeof(*n_highs) * alloc_num);
- 	vfree(t->highs);
- 
- 	t->num_allocated = num;
--- 
-1.8.3.1
-
-
+Thanks,
+Andrey Smirnov
