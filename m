@@ -2,35 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 35A7E99D8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 37FB399D7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405369AbfHVRnk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:43:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43374 "EHLO mail.kernel.org"
+        id S2391623AbfHVRXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403952AbfHVRX1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:27 -0400
+        id S2391489AbfHVRXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:30 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B23D823402;
-        Thu, 22 Aug 2019 17:23:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5A2812341B;
+        Thu, 22 Aug 2019 17:23:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494606;
-        bh=Mh1/bHNMSZxjSXWuCew94BhzmXBwks+dNsCioYr3Aqg=;
+        s=default; t=1566494610;
+        bh=B1oks3VphFC6eY+dHHTJW0whY8yniblTcnUEBpNvQcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p45DeVPgnsbK1OL3M7JfnGKVXjNHe1Utfs9CqAuyoYoaHSKc+fh6sCeg4STvr+lqO
-         FCNDEEN1DnSSqhcBGt+epB0ok4gHXOx+MwL3iikmCgCUgVWG0PRLnZxrqktTYQbcTJ
-         5paCWfm2dzIUSNoy1bzvAzz169dtICCgfF/v11+4=
+        b=k+Ki9OYt0lTkF+jf0bkOksDYHE2sBl0DW+n3lG+XfVRK/CW+xSNr45YiSW91bgJl9
+         NHVgWeX8OPSCJp3L5qYo4C06yHXpjrKiDrJ1uSRXGuS4Zzax4rhQSv0llhxtMCkQcj
+         TfPsEyWnjlxDWTq8TJgzCUW1duRaGFYkOcB4S+So=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 003/103] sound: fix a memory leak bug
-Date:   Thu, 22 Aug 2019 10:17:51 -0700
-Message-Id: <20190822171728.674067039@linuxfoundation.org>
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 4.9 004/103] x86/mm: Check for pfn instead of page in vmalloc_sync_one()
+Date:   Thu, 22 Aug 2019 10:17:52 -0700
+Message-Id: <20190822171728.769271248@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -43,39 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+From: Joerg Roedel <jroedel@suse.de>
 
-commit c7cd7c748a3250ca33509f9235efab9c803aca09 upstream.
+commit 51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0 upstream.
 
-In sound_insert_unit(), the controlling structure 's' is allocated through
-kmalloc(). Then it is added to the sound driver list by invoking
-__sound_insert_unit(). Later on, if __register_chrdev() fails, 's' is
-removed from the list through __sound_remove_unit(). If 'index' is not less
-than 0, -EBUSY is returned to indicate the error. However, 's' is not
-deallocated on this execution path, leading to a memory leak bug.
+Do not require a struct page for the mapped memory location because it
+might not exist. This can happen when an ioremapped region is mapped with
+2MB pages.
 
-To fix the above issue, free 's' before -EBUSY is returned.
-
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/20190719184652.11391-2-joro@8bytes.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/sound_core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/x86/mm/fault.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/sound_core.c
-+++ b/sound/sound_core.c
-@@ -287,7 +287,8 @@ retry:
- 				goto retry;
- 			}
- 			spin_unlock(&sound_loader_lock);
--			return -EBUSY;
-+			r = -EBUSY;
-+			goto fail;
- 		}
- 	}
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -279,7 +279,7 @@ static inline pmd_t *vmalloc_sync_one(pg
+ 	if (!pmd_present(*pmd))
+ 		set_pmd(pmd, *pmd_k);
+ 	else
+-		BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
++		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
  
+ 	return pmd_k;
+ }
 
 
