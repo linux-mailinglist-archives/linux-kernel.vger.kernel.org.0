@@ -2,60 +2,86 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E161C98B07
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 07:59:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 778FA98B11
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 07:59:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731515AbfHVF4S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 01:56:18 -0400
-Received: from helcar.hmeau.com ([216.24.177.18]:58396 "EHLO fornost.hmeau.com"
+        id S1731552AbfHVF6E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 01:58:04 -0400
+Received: from helcar.hmeau.com ([216.24.177.18]:58452 "EHLO fornost.hmeau.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731501AbfHVF4S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 01:56:18 -0400
+        id S1731523AbfHVF6C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 01:58:02 -0400
 Received: from gondolin.me.apana.org.au ([192.168.0.6] helo=gondolin.hengli.com.au)
         by fornost.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1i0g4j-0002xI-Jj; Thu, 22 Aug 2019 15:55:57 +1000
+        id 1i0g6K-00030i-Oa; Thu, 22 Aug 2019 15:57:36 +1000
 Received: from herbert by gondolin.hengli.com.au with local (Exim 4.80)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1i0g4g-00011l-Br; Thu, 22 Aug 2019 15:55:54 +1000
-Date:   Thu, 22 Aug 2019 15:55:54 +1000
+        id 1i0g6G-00013W-Es; Thu, 22 Aug 2019 15:57:32 +1000
+Date:   Thu, 22 Aug 2019 15:57:32 +1000
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Denis Efremov <efremov@linux.com>
-Cc:     linux-kernel@vger.kernel.org, joe@perches.com,
-        Breno =?iso-8859-1?Q?Leit=E3o?= <leitao@debian.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
-        Dan Streetman <ddstreet@ieee.org>, linux-crypto@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: nx crypto: Fix typo in a filepath
-Message-ID: <20190822055554.GD3860@gondor.apana.org.au>
-References: <20190325212654.26627-1-joe@perches.com>
- <20190813060610.13550-1-efremov@linux.com>
+To:     Hans de Goede <hdegoede@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Eric Biggers <ebiggers@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-crypto@vger.kernel.org, x86@kernel.org,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] crypto: sha256 - Merge 2 separate C
+ implementations into 1, put into separate library
+Message-ID: <20190822055732.GI3860@gondor.apana.org.au>
+References: <20190817142435.8532-1-hdegoede@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190813060610.13550-1-efremov@linux.com>
+In-Reply-To: <20190817142435.8532-1-hdegoede@redhat.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 09:06:10AM +0300, Denis Efremov wrote:
-> Fix typo in nx_debugfs.c filepath. File extension changed from .h to .c
-> The file nx_debugfs.h never existed.
+On Sat, Aug 17, 2019 at 04:24:28PM +0200, Hans de Goede wrote:
+> Hi All,
 > 
-> Cc: Breno Leitão <leitao@debian.org>
-> Cc: Nayna Jain <nayna@linux.ibm.com>
-> Cc: Paulo Flabiano Smorigo <pfsmorigo@gmail.com>
-> Cc: Dan Streetman <ddstreet@ieee.org>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: linux-crypto@vger.kernel.org
-> Signed-off-by: Denis Efremov <efremov@linux.com>
-> ---
->  MAINTAINERS | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Here is v2 of my patch series refactoring the current 2 separate SHA256
+> C implementations into 1 and put it into a separate library.
+> 
+> There are 3 reasons for this:
+> 
+> 1) Remove the code duplication of having 2 separate implementations
+> 
+> 2) Offer a separate library SHA256 implementation which can be used
+> without having to call crypto_alloc_shash first. This is especially
+> useful for use during early boot when crypto_alloc_shash does not
+> work yet.
+> 
+> 3) Having the purgatory code using the same code as the crypto subsys means
+> that the purgratory code will be tested by the crypto subsys selftests.
+> 
+> This has been tested on x86, including checking that kecec still works.
+> 
+> This has NOT been tested on s390, if someone with access to s390 can
+> test that things still build with this series applied and that
+> kexec still works, that would be great.
+> 
+> Changes in v2:
+> - Use put_unaligned_be32 to store the hash to allow callers to use an
+>   unaligned buffer for storing the hash
+> - Add a comment to include/crypto/sha256.h explaining that these functions
+>   now may be used outside of the purgatory too (and that using the crypto
+>   API instead is preferred)
+> - Add sha224 support to the lib/crypto/sha256 library code
+> - Make crypto/sha256_generic.c not only use sha256_transform from
+>   lib/crypto/sha256.c but also switch it to using sha256_init, sha256_update
+>   and sha256_final from there so that the crypto subsys selftests fully test
+>   the lib/crypto/sha256.c implementation
 
-Patch applied.  Thanks.
+All applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
