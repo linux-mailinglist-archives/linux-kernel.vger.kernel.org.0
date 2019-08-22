@@ -2,120 +2,116 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 867C999FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:21:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34FD799FD0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:23:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404071AbfHVTVp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:21:45 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59344 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731916AbfHVTVp (ORCPT
+        id S1733141AbfHVTXB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:23:01 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:58394 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730693AbfHVTXA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:21:45 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7MJF9XY045451;
-        Thu, 22 Aug 2019 15:21:34 -0400
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhxpk62g8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Aug 2019 15:21:34 -0400
-Received: from m0098393.ppops.net (m0098393.ppops.net [127.0.0.1])
-        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7MJG2vA050160;
-        Thu, 22 Aug 2019 15:21:33 -0400
-Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhxpk62f8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Aug 2019 15:21:33 -0400
-Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
-        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7MJFtQa019589;
-        Thu, 22 Aug 2019 19:21:32 GMT
-Received: from b01cxnp22035.gho.pok.ibm.com (b01cxnp22035.gho.pok.ibm.com [9.57.198.25])
-        by ppma04wdc.us.ibm.com with ESMTP id 2ufye0k76t-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 22 Aug 2019 19:21:32 +0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7MJLVUb48234924
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Aug 2019 19:21:32 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E1598B2065;
-        Thu, 22 Aug 2019 19:21:31 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C084DB2064;
-        Thu, 22 Aug 2019 19:21:31 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Aug 2019 19:21:31 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id EBA5816C3888; Thu, 22 Aug 2019 12:21:32 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 12:21:32 -0700
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-        joel@joelfernandes.org, parri.andrea@gmail.com,
-        byungchul.park@lge.com, peterz@infradead.org, mojha@codeaurora.org,
-        ice_yangxiao@163.com, efremov@linux.com, edumazet@google.com
-Subject: Re: [GIT PULL rcu/next + tools/memory-model] RCU and LKMM commits
- for 5.4
-Message-ID: <20190822192132.GJ28441@linux.ibm.com>
-Reply-To: paulmck@linux.ibm.com
-References: <20190822151811.GA8894@linux.ibm.com>
- <20190822185429.GA110910@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822185429.GA110910@gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_12:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908220165
+        Thu, 22 Aug 2019 15:23:00 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=CR/FnPjPw9RxgXe6hqu+ANuYh3/MYIEKK4pmVfMFOyQ=; b=dRg3YZQAXNnG
+        LXHfomQPnHhELOYtSDYM3S1A1dOTPzeSGSVUVJK11qBePQ6m+rLkV9nArPja00obLmhNKrrZiaKVq
+        v68z7suBN9A00SfJbgHyhr9DXJNBhYTR70rAUefgX45kntxvi+qm6y7z6pUtKWC+S0mULFaN3Xo5S
+        b/ZIA=;
+Received: from 92.40.26.78.threembb.co.uk ([92.40.26.78] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i0sff-00080M-Q8; Thu, 22 Aug 2019 19:22:55 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id EC64ED02CB0; Thu, 22 Aug 2019 20:22:54 +0100 (BST)
+From:   Mark Brown <broonie@kernel.org>
+To:     Ashish Kumar <Ashish.Kumar@nxp.com>
+Cc:     Ashish Kumar <ashish.kumar@nxp.com>, broonie@kernel.org,
+        devicetree@vger.kernel.org, Han Xu <han.xu@nxp.com>,
+        Kuldeep Singh <kuldeep.singh@nxp.com>,
+        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+        linux-spi@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        mark.rutland@arm.com, robh+dt@kernel.org
+Subject: Applied "spi: spi-fsl-qspi: Add ls2080a compatibility string to bindings" to the spi tree
+In-Reply-To:  <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
+X-Patchwork-Hint: ignore
+Message-Id: <20190822192254.EC64ED02CB0@fitzroy.sirena.org.uk>
+Date:   Thu, 22 Aug 2019 20:22:54 +0100 (BST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 08:54:29PM +0200, Ingo Molnar wrote:
+The patch
 
-[ . . . ]
+   spi: spi-fsl-qspi: Add ls2080a compatibility string to bindings
 
-> Pulled into tip:core/rcu, thanks a lot Paul!
+has been applied to the spi tree at
 
-Thank you!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-> The merge commit is a bit non-standard:
-> 
->   07f038a408fb: Merge LKMM and RCU commits
-> 
-> but clear enough IMHO. Usually we try to keep this format:
-> 
->   6c06b66e957c: Merge branch 'X' into Y
-> 
-> even for internal merge commits.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-Please accept my apologies!  How about as shown below?  If this works
-for you, I will rebase my development commits on top this merge commit
-in order to make sure I don't revert back to my old format for next
-merge window.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Ah, speaking of reminding me...  There is likely to be one more small RCU
-commit requested by the RISC-V guys.  If testing and review goes well,
-I will send you a pull request for it by the middle of next week.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-							Thanx, Paul
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-------------------------------------------------------------------------
+Thanks,
+Mark
 
-commit 864866f469d90bb7044a7e47b0168a2c143de4d4
-Merge: cfcdef5e3046 6738ff85c3ee
-Author: Paul E. McKenney <paulmck@linux.ibm.com>
-Date:   Thu Aug 22 12:09:20 2019 -0700
+From be28f76b7e8ffaf04690e30fd17683d8afea1fd9 Mon Sep 17 00:00:00 2001
+From: Ashish Kumar <Ashish.Kumar@nxp.com>
+Date: Tue, 13 Aug 2019 15:53:09 +0530
+Subject: [PATCH] spi: spi-fsl-qspi: Add ls2080a compatibility string to
+ bindings
 
-    Merge branch 'lkmm.2019.08.09a' into HEAD
-    
-    lkmm.2019.08.09a: Linux-kernel memory-model updates.
+There are 2 version of QSPI-IP, according to which controller registers sets
+can be big endian or little endian.There are some other minor changes like
+RX fifo depth etc.
+
+The big endian version uses driver compatible "fsl,ls1021a-qspi" and
+little endian version uses driver compatible "fsl,ls2080a-qspi"
+
+Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
+Signed-off-by: Ashish Kumar <ashish.kumar@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Han Xu <han.xu@nxp.com>
+Link: https://lore.kernel.org/r/1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+index 1b23cfd7b39b..69dc5d57b1ef 100644
+--- a/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
++++ b/Documentation/devicetree/bindings/spi/spi-fsl-qspi.txt
+@@ -3,9 +3,8 @@
+ Required properties:
+   - compatible : Should be "fsl,vf610-qspi", "fsl,imx6sx-qspi",
+ 		 "fsl,imx7d-qspi", "fsl,imx6ul-qspi",
+-		 "fsl,ls1021a-qspi"
++		 "fsl,ls1021a-qspi", "fsl,ls2080a-qspi"
+ 		 or
+-		 "fsl,ls2080a-qspi" followed by "fsl,ls1021a-qspi",
+ 		 "fsl,ls1043a-qspi" followed by "fsl,ls1021a-qspi"
+   - reg : the first contains the register location and length,
+           the second contains the memory mapping address and length
+-- 
+2.20.1
 
