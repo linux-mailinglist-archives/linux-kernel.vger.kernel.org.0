@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 619FB99D03
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A27399CB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:36:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404991AbfHVRjG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:39:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45688 "EHLO mail.kernel.org"
+        id S2391577AbfHVRgb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:36:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404162AbfHVRYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:19 -0400
+        id S2391584AbfHVRYu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:50 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7CAC23400;
-        Thu, 22 Aug 2019 17:24:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 164EE23407;
+        Thu, 22 Aug 2019 17:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494658;
-        bh=M9oSlkNrPBEj8KJA4XQkLxsl4QF+2z9r0fl09esqPzI=;
+        s=default; t=1566494690;
+        bh=rc15NeYvlXykM6VbKkqFX1suUXQMOYBp3/zAI8e9sJY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gB1N/F59pwFsiYnUCOPj4RNAxbRAG5vjS10w4+9etOGIJMQAYVejzP7wqp1Vee/8C
-         ZNQ7G2QaLg7tR7y6518homfdCGV+b2vFGBt54YLkl6mOO91WpeypMrdjqBTYi1F2sv
-         nHKBFyVep35J5/3zsg5ezEKTStVJ7ZAvnNqUTJGo=
+        b=T6WvYc014RKxEG2bI9VRxhVig4VOsBJxIWb2SQPxXo6GuQsHJI+k8G/X8pyLwpPCW
+         WrUOCu6A/v/JHyW0xbSQ4NZi+Q+5Kez2USfJ0KwMxhLbFg6Ut1lSJpjs7Xh+YsFhTc
+         meLQ5kNf9wvKixTQ0+mlX0eSZ7uG1+R/KWjYxMTM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 083/103] USB: core: Fix races in character device registration and deregistraion
-Date:   Thu, 22 Aug 2019 10:19:11 -0700
-Message-Id: <20190822171732.351246670@linuxfoundation.org>
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 37/71] IB/core: Add mitigation for Spectre V1
+Date:   Thu, 22 Aug 2019 10:19:12 -0700
+Message-Id: <20190822171729.519810766@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,89 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+[ Upstream commit 61f259821dd3306e49b7d42a3f90fb5a4ff3351b ]
 
-commit 303911cfc5b95d33687d9046133ff184cf5043ff upstream.
+Some processors may mispredict an array bounds check and
+speculatively access memory that they should not. With
+a user supplied array index we like to play things safe
+by masking the value with the array size before it is
+used as an index.
 
-The syzbot fuzzer has found two (!) races in the USB character device
-registration and deregistration routines.  This patch fixes the races.
-
-The first race results from the fact that usb_deregister_dev() sets
-usb_minors[intf->minor] to NULL before calling device_destroy() on the
-class device.  This leaves a window during which another thread can
-allocate the same minor number but will encounter a duplicate name
-error when it tries to register its own class device.  A typical error
-message in the system log would look like:
-
-    sysfs: cannot create duplicate filename '/class/usbmisc/ldusb0'
-
-The patch fixes this race by destroying the class device first.
-
-The second race is in usb_register_dev().  When that routine runs, it
-first allocates a minor number, then drops minor_rwsem, and then
-creates the class device.  If the device creation fails, the minor
-number is deallocated and the whole routine returns an error.  But
-during the time while minor_rwsem was dropped, there is a window in
-which the minor number is allocated and so another thread can
-successfully open the device file.  Typically this results in
-use-after-free errors or invalid accesses when the other thread closes
-its open file reference, because the kernel then tries to release
-resources that were already deallocated when usb_register_dev()
-failed.  The patch fixes this race by keeping minor_rwsem locked
-throughout the entire routine.
-
-Reported-and-tested-by: syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1908121607590.1659-100000@iolanthe.rowland.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Link: https://lore.kernel.org/r/20190731043957.GA1600@agluck-desk2.amr.corp.intel.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/file.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/user_mad.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/core/file.c
-+++ b/drivers/usb/core/file.c
-@@ -191,9 +191,10 @@ int usb_register_dev(struct usb_interfac
- 		intf->minor = minor;
- 		break;
+diff --git a/drivers/infiniband/core/user_mad.c b/drivers/infiniband/core/user_mad.c
+index 6511cb21f6e20..4a137bf584b04 100644
+--- a/drivers/infiniband/core/user_mad.c
++++ b/drivers/infiniband/core/user_mad.c
+@@ -49,6 +49,7 @@
+ #include <linux/sched.h>
+ #include <linux/semaphore.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -856,11 +857,14 @@ static int ib_umad_unreg_agent(struct ib_umad_file *file, u32 __user *arg)
+ 
+ 	if (get_user(id, arg))
+ 		return -EFAULT;
++	if (id >= IB_UMAD_MAX_AGENTS)
++		return -EINVAL;
+ 
+ 	mutex_lock(&file->port->file_mutex);
+ 	mutex_lock(&file->mutex);
+ 
+-	if (id >= IB_UMAD_MAX_AGENTS || !__get_agent(file, id)) {
++	id = array_index_nospec(id, IB_UMAD_MAX_AGENTS);
++	if (!__get_agent(file, id)) {
+ 		ret = -EINVAL;
+ 		goto out;
  	}
--	up_write(&minor_rwsem);
--	if (intf->minor < 0)
-+	if (intf->minor < 0) {
-+		up_write(&minor_rwsem);
- 		return -EXFULL;
-+	}
- 
- 	/* create a usb class device for this usb interface */
- 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
-@@ -201,12 +202,11 @@ int usb_register_dev(struct usb_interfac
- 				      MKDEV(USB_MAJOR, minor), class_driver,
- 				      "%s", kbasename(name));
- 	if (IS_ERR(intf->usb_dev)) {
--		down_write(&minor_rwsem);
- 		usb_minors[minor] = NULL;
- 		intf->minor = -1;
--		up_write(&minor_rwsem);
- 		retval = PTR_ERR(intf->usb_dev);
- 	}
-+	up_write(&minor_rwsem);
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(usb_register_dev);
-@@ -232,12 +232,12 @@ void usb_deregister_dev(struct usb_inter
- 		return;
- 
- 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
-+	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 
- 	down_write(&minor_rwsem);
- 	usb_minors[intf->minor] = NULL;
- 	up_write(&minor_rwsem);
- 
--	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 	intf->usb_dev = NULL;
- 	intf->minor = -1;
- 	destroy_usb_class();
+-- 
+2.20.1
+
 
 
