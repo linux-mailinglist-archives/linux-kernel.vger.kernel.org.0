@@ -2,236 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A01799BD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 70ECE99B1F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404891AbfHVR1y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:27:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51720 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404694AbfHVR0T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:26:19 -0400
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FA0D2342D;
-        Thu, 22 Aug 2019 17:26:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494778;
-        bh=HbukhNalGNd0Odx9QHwxwVx6kz5VOOa/9EQ6p79Con0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t9XoqOi78sx+1dEXmo4EQE6K1cP7KozQf+C5cKOAPzxZ9Bg7m9FqzXMwiaIk2JcdM
-         8qc/N7W/DjmdiZFYkOTI4/SjwX1dc3FhUGdc1youHwgbIwhXnbIwsKaHhieyHVFsR3
-         4a1fqUr8UtRyOQF7+kTlAhp5eKcEE70EItINkMOA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Maxim Mikityanskiy <maximmi@mellanox.com>,
-        Tariq Toukan <tariqt@mellanox.com>,
-        Saeed Mahameed <saeedm@mellanox.com>
-Subject: [PATCH 4.19 84/85] net/mlx5e: Use flow keys dissector to parse packets for ARFS
-Date:   Thu, 22 Aug 2019 10:19:57 -0700
-Message-Id: <20190822171734.692796969@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
-User-Agent: quilt/0.66
+        id S2388549AbfHVRV1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:21:27 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:33242 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730997AbfHVRV0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:21:26 -0400
+Received: by mail-io1-f68.google.com with SMTP id z3so13513311iog.0;
+        Thu, 22 Aug 2019 10:21:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aLr+sd5BMRYCClHI4smsxLPlBWSdoS3nfQ+XpNRCO6U=;
+        b=bLz1UxSg3goHpLmdM1XGhxTgPMZasAb3H3QPWRN13W+SCAgmQtFI59RkBF9I1BoCJ3
+         gfRTGkAtZBHs5sOF5tM7Khx4mYb3AP6M7MXD1f6xuIe8/SXnKS9oo6RYV4MIkKamVuru
+         iVoY5Ljg7iov3VuRbjauI0Sg79O0/G3qyJde2n4wkKIl+nVzSEmRKCBB/Xn0DC0g39Um
+         f/x0pzC3lDmi3nSbI6X+6MNSUMXbIPZ7/Z9BEpkck9KXUKhTqFXZ7gFl0cQT9jNgWi9/
+         9BSNLwRyKkqqgogpRFtZkWxcmAqawm1GyV4bX/86wQZFTQ+ME0Q6GpJFGHPkG6DfwaOV
+         5mfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aLr+sd5BMRYCClHI4smsxLPlBWSdoS3nfQ+XpNRCO6U=;
+        b=CH4vkIMzBCzE7R5qYyDv8neBVUs3bnmISBIMKfI/9a6en9Zql5v+C6+5IOXKFTCFDA
+         Heb4bxDonvtkfFT7ZCiJWOJcS3RWlExcmy/AXbRb9paNtxQMI9exR/m2LXTifhuCBsf/
+         a2MSVYpkuYnM1hYydAcmV0nEIpndz0uGIQZkpxjH18TToupsTpc1pCaY8A/YXW586EK/
+         yThtaBNLHAf0wZWALAEWSzqhk35gYkDqSOSlhsHZCPNpGg3mXWLggUm7WdoDgyGz2abs
+         0jYFuQZiYn6GkgyVjyt0ZQgxAl4V377BjvCUcKSqXaLOxffR5vQpDYot3XM0nso8Dj1K
+         yMqw==
+X-Gm-Message-State: APjAAAX9jT/ojJqiNKAsDEMeU5cYtULPyfypXicAs/Cum98mIMffW+tv
+        XnBXgq1nbQbyijvqYItexF3sh/G1UMK4DG/oHZY=
+X-Google-Smtp-Source: APXvYqykF88NuCgoRLHTX/hVhk0s0dNsXSMT17jlWltng3t8DPaOm3ksoWuywjYftSzM8MoX7TQAYwNO1f30b9Sh0cI=
+X-Received: by 2002:a5d:8908:: with SMTP id b8mr965993ion.237.1566494485368;
+ Thu, 22 Aug 2019 10:21:25 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <CGME20190822171243eucas1p12213f2239d6c36be515dade41ed7470b@eucas1p1.samsung.com>
+ <20190822171237.20798-1-i.maximets@samsung.com>
+In-Reply-To: <20190822171237.20798-1-i.maximets@samsung.com>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Thu, 22 Aug 2019 10:21:14 -0700
+Message-ID: <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
+Subject: Re: [PATCH net v3] ixgbe: fix double clean of tx descriptors with xdp
+To:     Ilya Maximets <i.maximets@samsung.com>
+Cc:     Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        Eelco Chaudron <echaudro@redhat.com>,
+        William Tu <u9012063@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxim Mikityanskiy <maximmi@mellanox.com>
+On Thu, Aug 22, 2019 at 10:12 AM Ilya Maximets <i.maximets@samsung.com> wrote:
+>
+> Tx code doesn't clear the descriptors' status after cleaning.
+> So, if the budget is larger than number of used elems in a ring, some
+> descriptors will be accounted twice and xsk_umem_complete_tx will move
+> prod_tail far beyond the prod_head breaking the completion queue ring.
+>
+> Fix that by limiting the number of descriptors to clean by the number
+> of used descriptors in the tx ring.
+>
+> 'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
+> 'ixgbe_xsk_clean_tx_ring()' since we're allowed to directly use
+> 'next_to_clean' and 'next_to_use' indexes.
+>
+> Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
+> Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
+> ---
+>
+> Version 3:
+>   * Reverted some refactoring made for v2.
+>   * Eliminated 'budget' for tx clean.
+>   * prefetch returned.
+>
+> Version 2:
+>   * 'ixgbe_clean_xdp_tx_irq()' refactored to look more like
+>     'ixgbe_xsk_clean_tx_ring()'.
+>
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c | 29 ++++++++------------
+>  1 file changed, 11 insertions(+), 18 deletions(-)
 
-[ Upstream commit 405b93eb764367a670e729da18e54dc42db32620 ]
+Thanks for addressing my concerns.
 
-The current ARFS code relies on certain fields to be set in the SKB
-(e.g. transport_header) and extracts IP addresses and ports by custom
-code that parses the packet. The necessary SKB fields, however, are not
-always set at that point, which leads to an out-of-bounds access. Use
-skb_flow_dissect_flow_keys() to get the necessary information reliably,
-fix the out-of-bounds access and reuse the code.
-
-Fixes: 18c908e477dc ("net/mlx5e: Add accelerated RFS support")
-Signed-off-by: Maxim Mikityanskiy <maximmi@mellanox.com>
-Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
-Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c |   97 +++++++---------------
- 1 file changed, 34 insertions(+), 63 deletions(-)
-
---- a/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/en_arfs.c
-@@ -437,12 +437,6 @@ arfs_hash_bucket(struct arfs_table *arfs
- 	return &arfs_t->rules_hash[bucket_idx];
- }
- 
--static u8 arfs_get_ip_proto(const struct sk_buff *skb)
--{
--	return (skb->protocol == htons(ETH_P_IP)) ?
--		ip_hdr(skb)->protocol : ipv6_hdr(skb)->nexthdr;
--}
--
- static struct arfs_table *arfs_get_table(struct mlx5e_arfs_tables *arfs,
- 					 u8 ip_proto, __be16 etype)
- {
-@@ -599,31 +593,9 @@ out:
- 	arfs_may_expire_flow(priv);
- }
- 
--/* return L4 destination port from ip4/6 packets */
--static __be16 arfs_get_dst_port(const struct sk_buff *skb)
--{
--	char *transport_header;
--
--	transport_header = skb_transport_header(skb);
--	if (arfs_get_ip_proto(skb) == IPPROTO_TCP)
--		return ((struct tcphdr *)transport_header)->dest;
--	return ((struct udphdr *)transport_header)->dest;
--}
--
--/* return L4 source port from ip4/6 packets */
--static __be16 arfs_get_src_port(const struct sk_buff *skb)
--{
--	char *transport_header;
--
--	transport_header = skb_transport_header(skb);
--	if (arfs_get_ip_proto(skb) == IPPROTO_TCP)
--		return ((struct tcphdr *)transport_header)->source;
--	return ((struct udphdr *)transport_header)->source;
--}
--
- static struct arfs_rule *arfs_alloc_rule(struct mlx5e_priv *priv,
- 					 struct arfs_table *arfs_t,
--					 const struct sk_buff *skb,
-+					 const struct flow_keys *fk,
- 					 u16 rxq, u32 flow_id)
- {
- 	struct arfs_rule *rule;
-@@ -638,19 +610,19 @@ static struct arfs_rule *arfs_alloc_rule
- 	INIT_WORK(&rule->arfs_work, arfs_handle_work);
- 
- 	tuple = &rule->tuple;
--	tuple->etype = skb->protocol;
-+	tuple->etype = fk->basic.n_proto;
-+	tuple->ip_proto = fk->basic.ip_proto;
- 	if (tuple->etype == htons(ETH_P_IP)) {
--		tuple->src_ipv4 = ip_hdr(skb)->saddr;
--		tuple->dst_ipv4 = ip_hdr(skb)->daddr;
-+		tuple->src_ipv4 = fk->addrs.v4addrs.src;
-+		tuple->dst_ipv4 = fk->addrs.v4addrs.dst;
- 	} else {
--		memcpy(&tuple->src_ipv6, &ipv6_hdr(skb)->saddr,
-+		memcpy(&tuple->src_ipv6, &fk->addrs.v6addrs.src,
- 		       sizeof(struct in6_addr));
--		memcpy(&tuple->dst_ipv6, &ipv6_hdr(skb)->daddr,
-+		memcpy(&tuple->dst_ipv6, &fk->addrs.v6addrs.dst,
- 		       sizeof(struct in6_addr));
- 	}
--	tuple->ip_proto = arfs_get_ip_proto(skb);
--	tuple->src_port = arfs_get_src_port(skb);
--	tuple->dst_port = arfs_get_dst_port(skb);
-+	tuple->src_port = fk->ports.src;
-+	tuple->dst_port = fk->ports.dst;
- 
- 	rule->flow_id = flow_id;
- 	rule->filter_id = priv->fs.arfs.last_filter_id++ % RPS_NO_FILTER;
-@@ -661,37 +633,33 @@ static struct arfs_rule *arfs_alloc_rule
- 	return rule;
- }
- 
--static bool arfs_cmp_ips(struct arfs_tuple *tuple,
--			 const struct sk_buff *skb)
-+static bool arfs_cmp(const struct arfs_tuple *tuple, const struct flow_keys *fk)
- {
--	if (tuple->etype == htons(ETH_P_IP) &&
--	    tuple->src_ipv4 == ip_hdr(skb)->saddr &&
--	    tuple->dst_ipv4 == ip_hdr(skb)->daddr)
--		return true;
--	if (tuple->etype == htons(ETH_P_IPV6) &&
--	    (!memcmp(&tuple->src_ipv6, &ipv6_hdr(skb)->saddr,
--		     sizeof(struct in6_addr))) &&
--	    (!memcmp(&tuple->dst_ipv6, &ipv6_hdr(skb)->daddr,
--		     sizeof(struct in6_addr))))
--		return true;
-+	if (tuple->src_port != fk->ports.src || tuple->dst_port != fk->ports.dst)
-+		return false;
-+	if (tuple->etype != fk->basic.n_proto)
-+		return false;
-+	if (tuple->etype == htons(ETH_P_IP))
-+		return tuple->src_ipv4 == fk->addrs.v4addrs.src &&
-+		       tuple->dst_ipv4 == fk->addrs.v4addrs.dst;
-+	if (tuple->etype == htons(ETH_P_IPV6))
-+		return !memcmp(&tuple->src_ipv6, &fk->addrs.v6addrs.src,
-+			       sizeof(struct in6_addr)) &&
-+		       !memcmp(&tuple->dst_ipv6, &fk->addrs.v6addrs.dst,
-+			       sizeof(struct in6_addr));
- 	return false;
- }
- 
- static struct arfs_rule *arfs_find_rule(struct arfs_table *arfs_t,
--					const struct sk_buff *skb)
-+					const struct flow_keys *fk)
- {
- 	struct arfs_rule *arfs_rule;
- 	struct hlist_head *head;
--	__be16 src_port = arfs_get_src_port(skb);
--	__be16 dst_port = arfs_get_dst_port(skb);
- 
--	head = arfs_hash_bucket(arfs_t, src_port, dst_port);
-+	head = arfs_hash_bucket(arfs_t, fk->ports.src, fk->ports.dst);
- 	hlist_for_each_entry(arfs_rule, head, hlist) {
--		if (arfs_rule->tuple.src_port == src_port &&
--		    arfs_rule->tuple.dst_port == dst_port &&
--		    arfs_cmp_ips(&arfs_rule->tuple, skb)) {
-+		if (arfs_cmp(&arfs_rule->tuple, fk))
- 			return arfs_rule;
--		}
- 	}
- 
- 	return NULL;
-@@ -704,20 +672,24 @@ int mlx5e_rx_flow_steer(struct net_devic
- 	struct mlx5e_arfs_tables *arfs = &priv->fs.arfs;
- 	struct arfs_table *arfs_t;
- 	struct arfs_rule *arfs_rule;
-+	struct flow_keys fk;
-+
-+	if (!skb_flow_dissect_flow_keys(skb, &fk, 0))
-+		return -EPROTONOSUPPORT;
- 
--	if (skb->protocol != htons(ETH_P_IP) &&
--	    skb->protocol != htons(ETH_P_IPV6))
-+	if (fk.basic.n_proto != htons(ETH_P_IP) &&
-+	    fk.basic.n_proto != htons(ETH_P_IPV6))
- 		return -EPROTONOSUPPORT;
- 
- 	if (skb->encapsulation)
- 		return -EPROTONOSUPPORT;
- 
--	arfs_t = arfs_get_table(arfs, arfs_get_ip_proto(skb), skb->protocol);
-+	arfs_t = arfs_get_table(arfs, fk.basic.ip_proto, fk.basic.n_proto);
- 	if (!arfs_t)
- 		return -EPROTONOSUPPORT;
- 
- 	spin_lock_bh(&arfs->arfs_lock);
--	arfs_rule = arfs_find_rule(arfs_t, skb);
-+	arfs_rule = arfs_find_rule(arfs_t, &fk);
- 	if (arfs_rule) {
- 		if (arfs_rule->rxq == rxq_index) {
- 			spin_unlock_bh(&arfs->arfs_lock);
-@@ -725,8 +697,7 @@ int mlx5e_rx_flow_steer(struct net_devic
- 		}
- 		arfs_rule->rxq = rxq_index;
- 	} else {
--		arfs_rule = arfs_alloc_rule(priv, arfs_t, skb,
--					    rxq_index, flow_id);
-+		arfs_rule = arfs_alloc_rule(priv, arfs_t, &fk, rxq_index, flow_id);
- 		if (!arfs_rule) {
- 			spin_unlock_bh(&arfs->arfs_lock);
- 			return -ENOMEM;
-
-
+Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
