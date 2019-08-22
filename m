@@ -2,46 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B21A989F6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 05:48:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF0D989FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 05:49:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730621AbfHVDsq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 23:48:46 -0400
-Received: from verein.lst.de ([213.95.11.211]:43326 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727894AbfHVDsp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 23:48:45 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 0F4D568C4E; Thu, 22 Aug 2019 05:48:42 +0200 (CEST)
-Date:   Thu, 22 Aug 2019 05:48:41 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Christoph Hellwig <hch@lst.de>, josh@joshtriplett.org,
-        rcu@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rcu: don't include <linux/ktime.h> in rcutiny.h
-Message-ID: <20190822034841.GA13668@lst.de>
-References: <20190822015343.4058-1-hch@lst.de> <20190822030200.GX28441@linux.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822030200.GX28441@linux.ibm.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1730804AbfHVDtu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 23:49:50 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:37838 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728470AbfHVDtu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 23:49:50 -0400
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4FC92151A20BB;
+        Wed, 21 Aug 2019 20:49:49 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 20:49:48 -0700 (PDT)
+Message-Id: <20190821.204948.907885435812375741.davem@davemloft.net>
+To:     h.feurstein@gmail.com
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andrew@lunn.ch, richardcochran@gmail.com, mlichvar@redhat.com,
+        vivien.didelot@gmail.com, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, olteanv@gmail.com, fugang.duan@nxp.com
+Subject: Re: [PATCH net-next v3 0/4] Improve phc2sys precision for
+ mv88e6xxx switch in combination with imx6-fec
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20190820084833.6019-1-hubert.feurstein@vahle.at>
+References: <20190820084833.6019-1-hubert.feurstein@vahle.at>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 21 Aug 2019 20:49:49 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 08:02:00PM -0700, Paul E. McKenney wrote:
-> On Thu, Aug 22, 2019 at 10:53:43AM +0900, Christoph Hellwig wrote:
-> > The kbuild reported a built failure due to a header loop when RCUTINY is
-> > enabled with my pending riscv-nommu port.  Switch rcutiny.h to only
-> > include the minimal required header to get HZ instead.
-> > 
-> > Signed-off-by: Christoph Hellwig <hch@lst.de>
-> 
-> Queued for review and testing, thank you!
-> 
-> Do you need this in v5.4?  My normal workflow would put it into v5.5.
+From: Hubert Feurstein <h.feurstein@gmail.com>
+Date: Tue, 20 Aug 2019 10:48:29 +0200
 
-I hope the riscv-nommu coe gets merges for 5.4, so if we could queue
-it up for that I'd appreciate it.
+> From: Hubert Feurstein <h.feurstein@gmail.com>
+> 
+> Changelog:
+>  v3: mv88e6xxx_smi_indirect_write: forward ptp_sts only on the last write
+>      Copied Miroslav Lichvar because of PTP offset compensation patch
+>  v2: Added patch for PTP offset compensation
+>      Removed mdiobus_write_sts as there was no user
+>      Removed ptp_sts_supported-boolean and introduced flags instead
+> 
+> With this patchset the phc2sys synchronisation precision improved to +/-555ns on
+> an IMX6DL with an MV88E6220 switch attached.
+> 
+> This patchset takes into account the comments from the following discussions:
+> - https://lkml.org/lkml/2019/8/2/1364
+> - https://lkml.org/lkml/2019/8/5/169
+> 
+> Patch 01 adds the required infrastructure in the MDIO layer.
+> Patch 02 adds additional PTP offset compensation.
+> Patch 03 adds support for the PTP_SYS_OFFSET_EXTENDED ioctl in the mv88e6xxx driver.
+> Patch 04 adds support for the PTP system timestamping in the imx-fec driver.
+
+It looks like there is still some active discussion about these changes and
+there will likely be another spin.
