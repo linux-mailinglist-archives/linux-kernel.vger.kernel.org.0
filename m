@@ -2,92 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B5CB099429
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC61199430
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:49:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388039AbfHVMsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:48:39 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41013 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732590AbfHVMsj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:48:39 -0400
-Received: by mail-lj1-f195.google.com with SMTP id m24so5404706ljg.8
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:48:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:from:date:message-id:subject:to
-         :content-transfer-encoding;
-        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
-        b=gu6RY87SUJc2miUSpULIutQNQXrH/4Z6JRSjjd9ciadFmY40YQUxeW/WFjdX6QkZoj
-         wiQ9QexgqNAt1AbcZ6iqt0LpHxU/dI9dzplFCF6YuIczRrsqREMvn13NgiYgs2SZGBW3
-         pr7m4zfHGBwRPZqSEJUTHfv60P2ZeNqmtsc66de/MNe6bTvSezDa4D90cCqiOmJwh4Gi
-         GV3aZZF8vcaOXyL/XRkTgxyGuUx/oIiRFdAmWpnXAQInBwUAmB9q489V63JVSw4r6EmB
-         zZzpnTxA18En4eoeBn0Mcy5jWYVq87bznIzt1YZGibJjL5RMl72egm/vqOX+M6xEKOZa
-         JbfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
-         :subject:to:content-transfer-encoding;
-        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
-        b=POHvu4NkRAmhSGs+Mwpjip5eqWw2f0GUxV4WVmNT4CKVPFQX4A5TLhGmN4+LU9tAPG
-         DOtje9XsVt9Wle9qH4ihnTFYyR7He59/qyD6BmSzas7nd4RgO3JPmyVXzsywVW5v6WpR
-         C/qFcLKzsjNo8wLMiZz++5O8iRmiQidruF9KP5iQIFLzahZW66RfqKWNssFKYht9o7nb
-         +zi5iZBTKsSdk7M134+aXP12E8qf8eygMd/rPXXqdmiT/jt7pDTct/m88yJ7HqQDzCpR
-         XPozpTnEY0uvW8Mgjt0hMJypl+qknhqEbk2/0vvuarkKIajPRVSkScAyt444HyrM3iSd
-         b/uA==
-X-Gm-Message-State: APjAAAUYT8srqI6uCLPdjDLLgCr2bR/CdePDb3PNW7jqA0iPzzuukTRI
-        OSESyNdDDzCyhEJHxqlyx0U10vu3A2DkhJv+sq8=
-X-Google-Smtp-Source: APXvYqzHwCs1SSQgeNw+YDGu9XyECT5YBOKqGAOTqfRZCIOmD0CgThrHPaDhjaxZ2RtpLX8TbuaPzYf4GBtpagGi3g8=
-X-Received: by 2002:a2e:8455:: with SMTP id u21mr21169533ljh.20.1566478117470;
- Thu, 22 Aug 2019 05:48:37 -0700 (PDT)
+        id S1731615AbfHVMtQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:49:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731062AbfHVMtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:49:16 -0400
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6995423400;
+        Thu, 22 Aug 2019 12:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566478155;
+        bh=2jaWBCrOQ0yuu85NYyiu721Y016fScbcX6gjgMxXnr0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=2bQAAPqDuCPhfPuMs0tpE6vN3uBcdrm2yVjXtOoUGIvVHTuwP6ecLZlheBZf8pGdC
+         AKIgU2DTTyLlFCkps6leFmpCukseM6ZGo6V9LcUyhkuYagvHPBqQD8COGECKgknWXl
+         nTFDC0KYYkwVolMTHw1xIp2ICCmpYV/E4vZ+yJDw=
+Received: by mail-qk1-f179.google.com with SMTP id s14so4972623qkm.4;
+        Thu, 22 Aug 2019 05:49:15 -0700 (PDT)
+X-Gm-Message-State: APjAAAWelSbP6IBp8/k+Ti9gmmREG2OjD3ZTm/9VI0Iyrw3ZnHqJceFS
+        RAOhtXqaSpAjPSvAHZEigJwXdkcvmyDTGnUyJA==
+X-Google-Smtp-Source: APXvYqyBMDyPkKQlrL4F7PdNmYQzAWJgtlXak0rnzRNH21bjRVARC3G2rMD+eLD5LmndSLSMbzDZswfGkzeJi1x6FMY=
+X-Received: by 2002:a37:4941:: with SMTP id w62mr3533362qka.119.1566478154602;
+ Thu, 22 Aug 2019 05:49:14 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab3:6a0f:0:0:0:0:0 with HTTP; Thu, 22 Aug 2019 05:48:36
- -0700 (PDT)
-Reply-To: eku.lawfirm@gmail.com
-From:   "Law firm(Eku and Associates)" <ezeobodo1@gmail.com>
-Date:   Thu, 22 Aug 2019 12:48:36 +0000
-Message-ID: <CAN-_bTaowtnR-MosSFDBy9Zt=CDwXZ-Ck_vqb_tzG6nokVBK-w@mail.gmail.com>
-Subject: MY $25,000,000.00 INVESTMENT PROPOSAL WITH YOU AND IN YOUR COUNTRY.
-To:     undisclosed-recipients:;
+References: <20190822102843.47964-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+In-Reply-To: <20190822102843.47964-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 22 Aug 2019 07:49:02 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJEW0UDqYDTvOeRsZh9WJTeT99JZP8PtkvbnBU2dhYJEQ@mail.gmail.com>
+Message-ID: <CAL_JsqJEW0UDqYDTvOeRsZh9WJTeT99JZP8PtkvbnBU2dhYJEQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: phy: intel-emmc-phy: Add YAML schema
+ for LGM eMMC PHY
+To:     "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Andy Shevchenko <andriy.shevchenko@intel.com>,
+        cheol.yong.kim@intel.com, qi-ming.wu@intel.com,
+        peter.harliman.liem@intel.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=20
-Dear,
-With due respect this is not spam or Scam mail, because I have
-contacted you before and there was no response from you,I apologise if
-the contents of this mail are contrary to your moral ethics, which I
-feel may be of great disturbance to your person, but please treat this
-with absolute confidentiality, believing that this email reaches you
-in good faith. My contacting you is not a mistake or a coincidence
-because God can use any person known or unknown to accomplish great
-things.
-I am a lawyer and I have an investment business proposal to offer you.
-It is not official but should be considered as legal and confidential
-business. I have a customer's deposit of $US25 million dollars ready
-to be moved for investment if you can partner with us. We are ready to
-offer you 10% of this total amount as your compensation for supporting
-the transaction to completion. If you are interested to help me please
-reply me with your full details as stated below:
-(1) Your full names:
-(2) Your address:
-(3) Your occupation:
-(4) Your mobile telephone number:
-(5) Your nationality:
-(6) Your present location:
-(7) Your age:
-So that I will provide you more details on what to do and what is
-required for successful completion.
-Note: DO NOT REPLY ME IF YOU ARE NOT INTERESTED AND WITHOUT THE ABOVE
-MENTIONED DETAILS
+On Thu, Aug 22, 2019 at 5:28 AM Ramuthevar,Vadivel MuruganX
+<vadivel.muruganx.ramuthevar@linux.intel.com> wrote:
+>
+> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+>
+> Add a YAML schema to use the host controller driver with the
+> eMMC PHY on Intel's Lightning Mountain SoC.
+>
+> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
+> ---
+> changes in v4:
+>   - As per Rob's review: validate 5.2 and 5.3
+>   - drop unrelated items.
+>
+> changes in v3:
+>   - resolve 'make dt_binding_check' warnings
+>
+> changes in v2:
+>   As per Rob Herring review comments, the following updates
+>  - change GPL-2.0 -> (GPL-2.0-only OR BSD-2-Clause)
+>  - filename is the compatible string plus .yaml
+>  - LGM: Lightning Mountain
+>  - update maintainer
+>  - add intel,syscon under property list
+>  - keep one example instead of two
+> ---
+>  .../bindings/phy/intel,lgm-emmc-phy.yaml           | 50 ++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
 
-Sinc=C3=A8rement v=C3=B4tre,
-Avocat Etienne Eku Esq.(Lawfirm)
-Procureur principal. De Cabinet d=E2=80=99avocats de l=E2=80=99Afrique de l=
-=E2=80=99ouest.
-Skype:westafricalawfirm
+Reviewed-by: Rob Herring <robh@kernel.org>
