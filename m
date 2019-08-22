@@ -2,119 +2,422 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 244E298ABC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 07:06:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E37E298ACF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 07:18:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731401AbfHVFGO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 01:06:14 -0400
-Received: from pegase1.c-s.fr ([93.17.236.30]:6731 "EHLO pegase1.c-s.fr"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731356AbfHVFGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 01:06:06 -0400
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 46DXYR1J3Hz9tygb;
-        Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=BkpRitEX; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id S6X_i_dSBXy6; Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 46DXYR05QWz9tygX;
-        Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1566450363; bh=uczfUv3hnybC8UExT8P+EcZ1T/EfN1469uNM/tj0H6A=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BkpRitEX2o9PA/vIhLtEKfnzZrsui3ZJjjWvIrcsMx8koUrySSY8ivASlF+09RAmP
-         gpQNLFiBZl0emVtdPbxh36E+GPgwgdtx8Z58713B2SOY/bBxOro9H3JL+W0PBXwq51
-         u3FbR9+kV/GAGVJV2G9iLn2uQj+gOjf0GagmOvC8=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id C728F8B791;
-        Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id erEJnxsK7q5p; Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-Received: from [192.168.4.90] (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 69A0D8B752;
-        Thu, 22 Aug 2019 07:06:03 +0200 (CEST)
-Subject: Re: [RFC PATCH] powerpc: Convert ____flush_dcache_icache_phys() to C
-To:     Alastair D'Silva <alastair@au1.ibm.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <de7a813c71c4823797bb351bea8be15acae83be2.1565970465.git.christophe.leroy@c-s.fr>
- <9887dada07278cb39051941d1a47d50349d9fde0.camel@au1.ibm.com>
- <a0ad8dd8-2f5d-256d-9e88-e9c236335bb8@c-s.fr>
- <fcc94e7f347c3759a1698444239a7250b22cde7d.camel@au1.ibm.com>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Message-ID: <c22dfd19-872a-afe1-40c6-82e11b0af9e1@c-s.fr>
-Date:   Thu, 22 Aug 2019 07:06:03 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729857AbfHVFSe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 01:18:34 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46817 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727310AbfHVFSd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 01:18:33 -0400
+Received: by mail-pg1-f196.google.com with SMTP id m3so2775216pgv.13;
+        Wed, 21 Aug 2019 22:18:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=iXHNUccWqFsxDsUpEA4HFgfiuRoSIsxb+X2sAiYxRTk=;
+        b=e7vWV5uDWAhyQNNIHSNsC9RR7as+xpmRdW3F4zNo/fcykfjsq0/qaVSv6cHTGjye8/
+         8L68/iWvnNkEin/Lab4aT5ssrdor5mVkgYZuQNJXkB2rbjB6DRVanfzaUkwZ7k0TxWDs
+         VRAJewy0wOe/M6lnUe3s8W9MRFxma2+u1/f3mvqI3snQEPZGbyfCMNlgr02jucPnJIBA
+         Hel5Ib7ZEbz4M70oo50xHMqxAXHvzNHsRk0Xejllr4WyXhPt29lKxw4frKrAsf3LG3Al
+         LdFyNAP37TKnIx1lGi5Ek1ZqKdKgs0H6z7IpvzyR0svz6DvGmwfk9llG42A71ZKL/EbE
+         uphg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=iXHNUccWqFsxDsUpEA4HFgfiuRoSIsxb+X2sAiYxRTk=;
+        b=HJzu6t3PVeBEw0xKf11PIosLEMRkE+VQNGYzEK6lQTpg4edPl+GJbhs7uTDk0l8ra/
+         Ku+LZw7bPEE6Xz5owPMului1y6SI1ehHvC0WoK/MoBEUEC1CxQ4kNNJ1QZjLnh7Clz5x
+         iH9r46xq626oW8zITADjGE/U35S48/f4fMcY1F9thphCeOcvLYtFH+cl8Hpi1I5w98qm
+         i1QGFZ5LN2pnSTvVnBuukuKnhyAoDD7XCOkBPkDHK3wkMExtXFEJsOze7dbznEpikuyC
+         QFYfaxoJFoZWMnS+vvBVhLjCdEi0zTqo0KQi+nONZ4Rav9X3gC+pw1LBy9Lcub51I6Ka
+         lvDg==
+X-Gm-Message-State: APjAAAXlib8KOIUrqcBgzSEzgX8sT8fte6FQMKY78sw9LEDHKaJqPPQ0
+        T34D13UfrSczI0pwxG7J6hk=
+X-Google-Smtp-Source: APXvYqyAGqb/LU7PAogJtMNpNOTBuRVQDjjsalnYDNzZv6RnYRVYukBbxuxf3taPJrNsuQqyBxJv+w==
+X-Received: by 2002:a63:b46:: with SMTP id a6mr32689753pgl.235.1566451112386;
+        Wed, 21 Aug 2019 22:18:32 -0700 (PDT)
+Received: from wafer.ozlabs.ibm.com ([122.99.82.10])
+        by smtp.googlemail.com with ESMTPSA id j6sm42686111pfg.158.2019.08.21.22.18.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 22:18:31 -0700 (PDT)
+Message-ID: <23135466fc524a13cd76532ec59f84de51152a1c.camel@gmail.com>
+Subject: Re: [PATCH v2 2/4] powerpc: expose secure variables to userspace
+ via sysfs
+From:   Oliver O'Halloran <oohall@gmail.com>
+To:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@ozlabs.org,
+        linux-efi@vger.kernel.org, linux-integrity@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Jeremy Kerr <jk@ozlabs.org>,
+        Matthew Garret <matthew.garret@nebula.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Claudio Carvalho <cclaudio@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Elaine Palmer <erpalmer@us.ibm.com>,
+        Eric Ricther <erichte@linux.ibm.com>
+Date:   Thu, 22 Aug 2019 15:18:23 +1000
+In-Reply-To: <1566400103-18201-3-git-send-email-nayna@linux.ibm.com>
+References: <1566400103-18201-1-git-send-email-nayna@linux.ibm.com>
+         <1566400103-18201-3-git-send-email-nayna@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <fcc94e7f347c3759a1698444239a7250b22cde7d.camel@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 22/08/2019 à 02:27, Alastair D'Silva a écrit :
-> On Wed, 2019-08-21 at 22:27 +0200, Christophe Leroy wrote:
->>
->> Le 20/08/2019 à 06:36, Alastair D'Silva a écrit :
->>> On Fri, 2019-08-16 at 15:52 +0000, Christophe Leroy wrote:
->>
->> [...]
->>
->>>
->>> Thanks Christophe,
->>>
->>> I'm trying a somewhat different approach that requires less
->>> knowledge
->>> of assembler. Handling of CPU_FTR_COHERENT_ICACHE is outside this
->>> function. The code below is not a patch as my tree is a bit messy,
->>> sorry:
->>
->> Can we be 100% sure that GCC won't add any code accessing some
->> global
->> data or stack while the Data MMU is OFF ?
->>
->> Christophe
->>
+On Wed, 2019-08-21 at 11:08 -0400, Nayna Jain wrote:
+> PowerNV secure variables, which store the keys used for OS kernel
+> verification, are managed by the firmware. These secure variables need to
+> be accessed by the userspace for addition/deletion of the certificates.
 > 
-> +mpe
+> This patch adds the sysfs interface to expose secure variables for PowerNV
+> secureboot. The users shall use this interface for manipulating
+> the keys stored in the secure variables.
 > 
-> I'm not sure how we would go about making such a guarantee, but I've
-> tied every variable used to a register and addr is passed in a
-> register, so there is no stack usage, and every call in there only
-> operates on it's operands.
+> Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
+> ---
+>  Documentation/ABI/testing/sysfs-secvar |  27 ++++
+>  arch/powerpc/Kconfig                   |   9 ++
+>  arch/powerpc/kernel/Makefile           |   1 +
+>  arch/powerpc/kernel/secvar-sysfs.c     | 210 +++++++++++++++++++++++++
+>  4 files changed, 247 insertions(+)
+>  create mode 100644 Documentation/ABI/testing/sysfs-secvar
+>  create mode 100644 arch/powerpc/kernel/secvar-sysfs.c
 > 
-> The calls to the inline cache helpers (for the PPC32 case) are all
-> constants, so I can't see a reasonable scenario where there would be a
-> function call and reordered to after the DR bit is turned off, but I
-> guess if we want to be paranoid, we could always add an mb() call
-> before the DR bit is manipulated to prevent the compiler from
-> reordering across the section where the data MMU is disabled.
-> 
-> 
+> diff --git a/Documentation/ABI/testing/sysfs-secvar b/Documentation/ABI/testing/sysfs-secvar
+> new file mode 100644
+> index 000000000000..68f0e03d873d
+> --- /dev/null
+> +++ b/Documentation/ABI/testing/sysfs-secvar
+> @@ -0,0 +1,27 @@
+> +What:		/sys/firmware/secvar
+> +Date:		August 2019
+> +Contact:	Nayna Jain <nayna@linux.ibm.com>
+> +Description:
+> +		This directory exposes interfaces for interacting with
+> +		the secure variables managed by OPAL firmware.
+> +
+> +		This is only for the powerpc/powernv platform.
+> +
+> +		Directory:
+> +		vars:		This directory lists all the variables that
+> +				are supported by the OPAL. The variables are
+> +				represented in the form of directories with
+> +				their variable names. The variable name is
+> +				unique and is in ASCII representation. The data
+> +				and size can be determined by reading their
+> +				respective attribute files.
+> +
+> +		Each variable directory has the following files:
+> +		name:		An ASCII representation of the variable name
+> +		data:		A read-only file containing the value of the
+> +				variable
+> +		size:		An integer representation of the size of the
+> +				content of the variable. In other works, it
+> +				represents the size of the data
+> +		update:		A write-only file that is used to submit the new
+> +				value for the variable.
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 42109682b727..b4bdf77837b2 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -925,6 +925,15 @@ config PPC_SECURE_BOOT
+>  	  allows user to enable OS Secure Boot on PowerPC systems that
+>  	  have firmware secure boot support.
+>  
+> +config SECVAR_SYSFS
+> +        tristate "Enable sysfs interface for POWER secure variables"
+> +        depends on PPC_SECURE_BOOT
+> +        help
+> +          POWER secure variables are managed and controlled by firmware.
+> +          These variables are exposed to userspace via sysfs to enable
+> +          read/write operations on these variables. Say Y if you have
+> +	  secure boot enabled and want to expose variables to userspace.
+> +
+>  endmenu
+>  
+>  config ISA_DMA_API
+> diff --git a/arch/powerpc/kernel/Makefile b/arch/powerpc/kernel/Makefile
+> index 9041563f1c74..4ea7b738c3a3 100644
+> --- a/arch/powerpc/kernel/Makefile
+> +++ b/arch/powerpc/kernel/Makefile
+> @@ -158,6 +158,7 @@ obj-$(CONFIG_EPAPR_PARAVIRT)	+= epapr_paravirt.o epapr_hcalls.o
+>  obj-$(CONFIG_KVM_GUEST)		+= kvm.o kvm_emul.o
+>  
+>  obj-$(CONFIG_PPC_SECURE_BOOT)	+= secboot.o ima_arch.o secvar-ops.o
+> +obj-$(CONFIG_SECVAR_SYSFS)     += secvar-sysfs.o
+>  
+>  # Disable GCOV, KCOV & sanitizers in odd or sensitive code
+>  GCOV_PROFILE_prom_init.o := n
+> diff --git a/arch/powerpc/kernel/secvar-sysfs.c b/arch/powerpc/kernel/secvar-sysfs.c
+> new file mode 100644
+> index 000000000000..e46986bb29a0
+> --- /dev/null
+> +++ b/arch/powerpc/kernel/secvar-sysfs.c
+> @@ -0,0 +1,210 @@
+> +// SPDX-License-Identifier: GPL-2.0+
+> +/*
+> + * Copyright (C) 2019 IBM Corporation <nayna@linux.ibm.com>
+> + *
+> + * This code exposes secure variables to user via sysfs
+> + */
+> +
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/compat.h>
+> +#include <linux/string.h>
+> +#include <asm/opal.h>
+> +#include <asm/secvar.h>
+> +
+> +//Approximating it for now, it is bound to change.
+> +#define VARIABLE_MAX_SIZE  32000
 
-Anyway, I think the benefit of converting that function to C is pretty 
-small. flush_dcache_range() and friends were converted to C mainly in 
-order to inline them. But this __flush_dcache_icache_phys() is too big 
-to be worth inlining, yet small and stable enough to remain in assembly 
-for the time being.
+this needs to be communicated from the secvar backend, maybe via a
+field in the ops structure?
 
-So I suggest you keep it aside your series for now, just move 
-PURGE_PREFETCHED_INS inside it directly as it will be the only remaining 
-user of it.
+> +
+> +static struct kobject *powerpc_kobj;
+Call it secvar_kobj or something.
 
-Christophe
+> +static struct secvar_operations *secvarops;
+Ah, the old I-can't-believe-it's-not-global trick.
+
+> +struct kset *secvar_kset;
+shouldn't that be static too?
+
+> +
+> +static ssize_t name_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +			 char *buf)
+> +{
+> +	return sprintf(buf, "%s", kobj->name);
+> +}
+> +
+> +static ssize_t size_show(struct kobject *kobj, struct kobj_attribute *attr,
+> +			 char *buf)
+> +{
+> +	unsigned long dsize;
+> +	int rc;
+> +
+> +	rc = secvarops->get_variable(kobj->name, strlen(kobj->name) + 1, NULL,
+> +				     &dsize);
+> +	if (rc) {
+> +		pr_err("Error retrieving variable size %d\n", rc);
+> +		return rc;
+> +	}
+> +
+> +	rc = sprintf(buf, "%ld", dsize);
+> +
+> +	return rc;
+> +}
+> +
+> +static ssize_t data_read(struct file *filep, struct kobject *kobj,
+> +			 struct bin_attribute *attr, char *buf, loff_t off,
+> +			 size_t count)
+> +{
+> +	unsigned long dsize;
+> +	int rc;
+> +	char *data;
+> +
+> +	rc = secvarops->get_variable(kobj->name, strlen(kobj->name) + 1, NULL,
+> +				     &dsize);
+> +	if (rc) {
+> +		pr_err("Error getting variable size %d\n", rc);
+> +		return rc;
+> +	}
+> +	pr_debug("dsize is %ld\n", dsize);
+> +
+> +	data = kzalloc(dsize, GFP_KERNEL);
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	rc = secvarops->get_variable(kobj->name, strlen(kobj->name)+1, data,
+> +				     &dsize);
+> +	if (rc) {
+> +		pr_err("Error getting variable %d\n", rc);
+> +		goto data_fail;
+> +	}
+> +
+> +	rc = memory_read_from_buffer(buf, count, &off, data, dsize);
+> +
+> +data_fail:
+> +	kfree(data);
+> +	return rc;
+> +}
+> +
+> +static ssize_t update_write(struct file *filep, struct kobject *kobj,
+> +			    struct bin_attribute *attr, char *buf, loff_t off,
+> +			    size_t count)
+> +{
+> +	int rc;
+> +
+> +	pr_debug("count is %ld\n", count);
+> +	rc = secvarops->set_variable(kobj->name, strlen(kobj->name)+1, buf,
+> +				     count);
+> +	if (rc) {
+> +		pr_err("Error setting the variable %s\n", kobj->name);
+> +		return rc;
+> +	}
+> +
+> +	return count;
+> +}
+> +
+> +static struct kobj_attribute name_attr =
+> +__ATTR(name, 0444, name_show, NULL);
+> +
+> +static struct kobj_attribute size_attr =
+> +__ATTR(size, 0444, size_show, NULL);
+> +
+
+> +static struct bin_attribute data_attr = {
+> +	.attr = {.name = "data", .mode = 0444},
+> +	.size = VARIABLE_MAX_SIZE,
+> +	.read = data_read,
+> +};
+
+Should they be globally readable? If efivars is globally readable I'm
+happy to follow that example, but mpe might have opinions.
+
+> +
+> +
+> +static struct bin_attribute update_attr = {
+> +	.attr = {.name = "update", .mode = 0200},
+> +	.size = VARIABLE_MAX_SIZE,
+> +	.write = update_write,
+> +};
+> +
+> +static struct bin_attribute  *secvar_bin_attrs[] = {
+> +	&data_attr,
+> +	&update_attr,
+> +	NULL,
+> +};
+> +
+> +static struct attribute *secvar_attrs[] = {
+> +	&name_attr.attr,
+> +	&size_attr.attr,
+> +	NULL,
+> +};
+> +
+> +const struct attribute_group secvar_attr_group = {
+> +	.attrs = secvar_attrs,
+> +	.bin_attrs = secvar_bin_attrs,
+> +};
+> +
+> +int secvar_sysfs_load(void)
+> +{
+> +
+> +	char *name;
+> +	unsigned long namesize;
+> +	struct kobject *kobj;
+> +	int status;
+> +	int rc = 0;
+> +
+> +	name = kzalloc(1024, GFP_KERNEL);
+> +	if (!name)
+> +		return -ENOMEM;
+
+Where'd the 1024 restriction on the length of the variable name come
+from? is that enforced by firmware? If so, how does firmware
+communicate the limited key length?
+
+> +
+> +	do {
+> +
+
+> +		status = secvarops->get_next_variable(name, &namesize, 1024);
+does namesize need to be initialised for the first call?
+
+> +		if (status != OPAL_SUCCESS)
+> +			break;
+
+You might want to differentiate between the error case and the "no
+extra variables" case. Come to think of it, since the point of
+abstracting secvar ops is to make this code indepdendent of the backend
+why are we checking for OPAL_SUCCESS? The ops functions should be
+returning linux return code (EIO, etc) rather than OPAL codes.
+
+> +
+> +		pr_info("name is %s\n", name);
+pr_info?
+
+> +		kobj = kobject_create_and_add(name, &(secvar_kset->kobj));
+> +		if (kobj) {
+> +			rc = sysfs_create_group(kobj, &secvar_attr_group);
+> +			if (rc)
+> +				pr_err("Error creating attributes for %s variable\n",
+> +				name);
+> +		} else {
+> +			pr_err("Error creating sysfs entry for %s variable\n",
+> +				name);
+> +			rc = -EINVAL;
+> +		}
+> +
+> +	} while ((status == OPAL_SUCCESS) && (rc == 0));
+
+Checking status here isn't needed here since we checked it above and
+broken out of the loop.
+
+> +
+> +	kfree(name);
+> +	return rc;
+> +}
+> +
+> +int secvar_sysfs_init(void)
+> +{
+> +	powerpc_kobj = kobject_create_and_add("secvar", firmware_kobj);
+> +	if (!powerpc_kobj) {
+> +		pr_err("secvar: Failed to create firmware kobj\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	secvar_kset = kset_create_and_add("vars", NULL, powerpc_kobj);
+> +	if (!secvar_kset) {
+> +		pr_err("secvar: sysfs kobject registration failed.\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	secvarops = get_secvar_ops();
+> +	if (!secvarops) {
+> +		kobject_put(powerpc_kobj);
+> +		pr_err("secvar: failed to retrieve secvar operations.\n");
+> +		return -ENODEV;
+> +	}
+
+Not having secvar support isn't an error. IMO checking if the ops are
+defined is the first thing you should be doing. If we don't have a
+defined set of ops then we don't need to do anything else.
+
+> +
+> +	secvar_sysfs_load();
+> +	pr_info("Secure variables sysfs initialized");
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(secvar_sysfs_init);
+> +
+> +static void secvar_sysfs_exit(void)
+> +{
+> +	kobject_put(powerpc_kobj);
+> +}
+> +EXPORT_SYMBOL_GPL(secvar_sysfs_exit);
+> +
+> +module_init(secvar_sysfs_init);
+> +module_exit(secvar_sysfs_exit);
+> +
+
+> +MODULE_AUTHOR("Nayna Jain<nayna@linux.ibm.com>");
+needs a space between your name and the opening '<' of the email
+> +MODULE_DESCRIPTION("sysfs interface to POWER secure variables");
+> +MODULE_LICENSE("GPL");
+
