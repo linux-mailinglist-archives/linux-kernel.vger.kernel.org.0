@@ -2,53 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1809298A73
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:28:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E6598A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:46:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730877AbfHVE1V (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 00:27:21 -0400
-Received: from verein.lst.de ([213.95.11.211]:43536 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728870AbfHVE1V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 00:27:21 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id ED3C668C4E; Thu, 22 Aug 2019 06:27:17 +0200 (CEST)
-Date:   Thu, 22 Aug 2019 06:27:17 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     Atish Patra <Atish.Patra@wdc.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "schwab@linux-m68k.org" <schwab@linux-m68k.org>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v3 1/3] RISC-V: Issue a local tlbflush if possible.
-Message-ID: <20190822042717.GA14076@lst.de>
-References: <20190822004644.25829-1-atish.patra@wdc.com> <20190822004644.25829-2-atish.patra@wdc.com> <20190822014642.GA11922@lst.de> <0f66583404f89ab2bd6c264ba653364ab8a3160e.camel@wdc.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0f66583404f89ab2bd6c264ba653364ab8a3160e.camel@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        id S1730942AbfHVEq3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 00:46:29 -0400
+Received: from conuserg-07.nifty.com ([210.131.2.74]:29726 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730890AbfHVEq2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 00:46:28 -0400
+Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x7M4kEYf001492;
+        Thu, 22 Aug 2019 13:46:14 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x7M4kEYf001492
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1566449175;
+        bh=ItuXEcXjS69g1cdGEVKkZEDPDunjHHF2tdkTu2z5CJw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bs6YWCXkZLcRsTXzpAE94K/ewaJ6jjHWAZOM601tDS95vV9YgyW4ysGflZwIEwzjk
+         6Y/EtDIAqQrkP86p4XNofVBVSKS8DOa/zTPlzVBacPXJGxKAX9+1BI+ncdeOsekrSJ
+         S2oEKM3Zr70ppCYecSZ76hDb+FY4k6RsOn6IKX9EgpeV+qLUY4XjB2LP8N3cx7/1JY
+         vyBeuus3iusS/nSWhLorhn9c53rQxOAXJTGinR0wwc36A+OwSnx5F3XpQ6ddExQb+y
+         Sqp+NQvaao56/TvnPkyOAXznzeVR7obenLZX76SukrQilUBm9w4lPEQ6X05KvgcWDG
+         /CICuQeV/wJ9A==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-kbuild@vger.kernel.org
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] kbuild: remove 'Using ... as source for kernel' message
+Date:   Thu, 22 Aug 2019 13:46:08 +0900
+Message-Id: <20190822044613.5349-1-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 04:01:24AM +0000, Atish Patra wrote:
-> The downside of this is that for every !cmask case in true SMP (more
-> common probably) it will execute 2 extra cpumask instructions. As
-> tlbflush path is in performance critical path, I think we should favor
-> more common case (SMP with more than 1 core).
+You already know the location of the source tree without this message.
 
-Actually, looking at both the current mainline code, and the code from my
-cleanups tree I don't think remote_sfence_vma / __sbi_tlb_flush_range
-can ever be called with  NULL cpumask, as we always have a valid mm.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-So this is a bit of a moot point, and we can drop andling that case
-entirely.  With that we can also use a simple if / else for the local
-cpu only vs remote case.  Btw, what was the reason you didn't like
-using cpumask_any_but like x86, which should be more efficient than
-cpumask_test_cpu + hweigt?
+ Makefile | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/Makefile b/Makefile
+index 7e54a821b4b0..a77102e4ee90 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1118,7 +1118,6 @@ PHONY += prepare archprepare prepare3
+ # 1) Check that make has not been executed in the kernel src $(srctree)
+ prepare3: include/config/kernel.release
+ ifdef building_out_of_srctree
+-	@$(kecho) '  Using $(srctree) as source for kernel'
+ 	$(Q)if [ -f $(srctree)/.config -o \
+ 		 -d $(srctree)/include/config -o \
+ 		 -d $(srctree)/arch/$(SRCARCH)/include/generated ]; then \
+-- 
+2.17.1
+
