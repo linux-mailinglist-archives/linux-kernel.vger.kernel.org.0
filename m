@@ -2,120 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02D27999A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:58:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F89D999A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:58:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388526AbfHVQ4t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 12:56:49 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41494 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfHVQ4t (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:56:49 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so3999219pgg.8
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 09:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=eweOfVjppggMglsWecUUmpbBhbZhOjeQJ6zyvaRS7vw=;
-        b=dpygPjwyk7QMVjozljViHC6MGXQIxMCHIQz4oSQPj/C9HCm8YTiEMsNXxbtFfBsFmk
-         6AVJ4juJ/GfcdfjFAJkql26zbcTtr6cxo0N0Xtr8ERp+IzHNecylMQR6Ob2i1L2vdGdO
-         UpF1VP4BlFBbeLkr/6vcy3qyhwsUMmYHHtincGx8DkCljU8GpBii1NL6O3wM6RgF90wE
-         Xqpu1kz+V7WOQ7CNFSXUnSXLChHwmZJ9WhHcjHJ2Bnfdmepp5giXwjfqxfNbsXtHB/Mp
-         TjOHg9f4v9ESkpPTwO0z2Hi/9+q+0ZiA5TmEZMzW8kHQ3ubPaICLsjazdOA2pSzH4djT
-         ko5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=eweOfVjppggMglsWecUUmpbBhbZhOjeQJ6zyvaRS7vw=;
-        b=e4Gano/9VVZH0OyVe/tos1ZTV8cUd2wvNbrkkvpJpfTWCe5m7F/4eDvEsC3PhGKNTv
-         Miifwas0jm7Z+OtIDtStq2er/HYQ4Kh74UeiaOEBNk8pfH32CqX/v7woAAmsm3kjjQqG
-         wy5Dhx6ivMKmiYztsPHE3GLQLQAYPl7SztflvI2yqkA3n88E8ijj5CxEc5GYM5h6Qwwo
-         ozCK8w5uQ0WLmkAtd0gtYWb46I2H9aoKziPNpfscB/GnG60GA5dTa/xYeRuiVfLXDYwk
-         dGoizJPsLqC6/npW2HtcCcFMuZ3+76jR5JKfRHgxXDclbyA4yJoP1iF1DgBQA0wTWdsp
-         sxcA==
-X-Gm-Message-State: APjAAAWfapcoNNVKA55RQxWX1cghohEyo4DbZv8Ki/Wvx9zNe9Ca/yY5
-        yiPK5OQqmmsU5i5S7Jg6LBT3tQ==
-X-Google-Smtp-Source: APXvYqw6DKKTLRQKWV9Kn1ksRJuddPhUPuY6A+AZ3UOtuSLwyTpcKmHrY1qwbjg1lglL3lONimwtyA==
-X-Received: by 2002:a62:f208:: with SMTP id m8mr172500pfh.108.1566493007379;
-        Thu, 22 Aug 2019 09:56:47 -0700 (PDT)
-Received: from google.com ([2620:15c:202:201:bc61:d85d:eb16:9036])
-        by smtp.gmail.com with ESMTPSA id i9sm25002251pgg.38.2019.08.22.09.56.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 09:56:46 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 09:56:41 -0700
-From:   Benson Leung <bleung@google.com>
-To:     torvalds@linux-foundation.org
-Cc:     bleung@kernel.org, bleung@chromium.org, bleung@google.com,
-        enric.balletbo@collabora.com, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] chrome-platform fixes for v5.3-rc6
-Message-ID: <20190822165641.GA17062@google.com>
+        id S2390215AbfHVQ5U convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 12:57:20 -0400
+Received: from lhrrgout.huawei.com ([185.176.76.210]:33182 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390198AbfHVQ5S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:57:18 -0400
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 9398412634E070F8825B;
+        Thu, 22 Aug 2019 17:57:16 +0100 (IST)
+Received: from LHREML523-MBX.china.huawei.com ([169.254.7.10]) by
+ LHREML710-CAH.china.huawei.com ([10.201.108.33]) with mapi id 14.03.0415.000;
+ Thu, 22 Aug 2019 17:56:56 +0100
+From:   Shiju Jose <shiju.jose@huawei.com>
+To:     James Morse <james.morse@arm.com>
+CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "lenb@kernel.org" <lenb@kernel.org>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "bp@alien8.de" <bp@alien8.de>,
+        "baicar@os.amperecomputing.com" <baicar@os.amperecomputing.com>,
+        Linuxarm <linuxarm@huawei.com>,
+        Jonathan Cameron <jonathan.cameron@huawei.com>,
+        tanxiaofei <tanxiaofei@huawei.com>
+Subject: RE: [PATCH RFC 0/4] ACPI: APEI: Add support to notify the vendor
+ specific HW errors
+Thread-Topic: [PATCH RFC 0/4] ACPI: APEI: Add support to notify the vendor
+ specific HW errors
+Thread-Index: AQHVUPaLJkVPMew7R0uzXOUXh4tDRKcF11kAgAEaSNA=
+Date:   Thu, 22 Aug 2019 16:56:55 +0000
+Message-ID: <86258A5CC0A3704780874CF6004BA8A6584C6BA0@lhreml523-mbx.china.huawei.com>
+References: <Shiju Jose> <20190812101149.26036-1-shiju.jose@huawei.com>
+ <72f44e4d-a20b-df1c-ddfe-55219e0ed429@arm.com>
+In-Reply-To: <72f44e4d-a20b-df1c-ddfe-55219e0ed429@arm.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.93.28]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi James, 
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the feedback.
 
-Hi Linus,
+>-----Original Message-----
+>From: linux-acpi-owner@vger.kernel.org [mailto:linux-acpi-
+>owner@vger.kernel.org] On Behalf Of James Morse
+>Sent: 21 August 2019 18:23
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-acpi@vger.kernel.org; linux-edac@vger.kernel.org; linux-
+>kernel@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org;
+>tony.luck@intel.com; bp@alien8.de; baicar@os.amperecomputing.com;
+>Linuxarm <linuxarm@huawei.com>; Jonathan Cameron
+><jonathan.cameron@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>
+>Subject: Re: [PATCH RFC 0/4] ACPI: APEI: Add support to notify the vendor
+>specific HW errors
+>
+>Hi,
+>
+>On 12/08/2019 11:11, Shiju Jose wrote:
+>> Presently kernel does not support reporting the vendor specific HW
+>> errors, in the non-standard format, to the vendor drivers for the recovery.
+>
+>'non standard' here is probably a little jarring to the casual reader. You're
+>referring to the UEFI spec's "N.2.3 Non-standard Section Body", which refers to
+>any section type published somewhere other than the UEFI spec.
+OK. I will change it.  
+>
+>These still have to have a GUID to identify them, so they still have the same
+>section header format.
+Yes. 
+ 
+>
+>
+>> This patch set add this support and also move the existing handler
+>> functions for the standard errors to the new callback method.
+>
+>Could you give an example of where this would be useful? You're adding an API
+>with no caller to justify its existence.
+One such example is handling the local errors occurred in a device controller, such as PCIe.
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+>
+>
+>GUIDs should only belong to one driver.
+UEFI spec's N.2.3 Non-standard Section Body mentioned,  "The type (e.g. format) of a non-standard section is identified by the GUID populated in the Section Descriptor's Section Type field." 
+There is a possibility to define common non-standard error section format which will be used for more than one driver if the error data to be reported is in the same format. Then can the same GUID belong to multiple drivers?
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+>
+>I don't think we should call drivers for something described as a fatal error.
+>(which is the case with what you have here)
+The notification is intended only for the recoverable errors as the ghes_proc() call panic for the fatal errors in the early stage.
 
-are available in the Git repository at:
+>
+>
+>> Also the CCIX RAS patches could be move to the proposed callback method.
+>
+>Presumably for any vendor-specific stuff?
+This information was related to the proposal to replace the  number of if(guid_equal(...)) else if(guid_equal(...)) checks in the ghes_do_proc() for the existing UEFI spec defined error sections(such as PCIe,  Memory, ARM HW error) by registering the corresponding handler functions to the proposed notification method. The same apply to the CCIX error sections and any other error sections defined by the UEFI spec in the future.  
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git t=
-ags/tag-chrome-platform-fixes-for-v5.3-rc6
+>
+>
+>Thanks,
+>
+>James
 
-for you to fetch changes up to 9cdde85804833af77c6afbf7c53f0d959c42eb9f:
-
-  platform/chrome: cros_ec_ishtp: fix crash during suspend (2019-07-29 13:1=
-8:45 +0200)
-
-----------------------------------------------------------------
-chrome-platform fixes for v5.3-rc6
-
-Fixes:
-1. platform/chrome: cros_ec_ishtp: fix crash during suspend
-   - Fixes a kernel crash during suspend/resume of cros_ec_ishtp
-
-----------------------------------------------------------------
-Hyungwoo Yang (1):
-      platform/chrome: cros_ec_ishtp: fix crash during suspend
-
- drivers/platform/chrome/cros_ec_ishtp.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
---=20
-Benson Leung
-Staff Software Engineer
-Chrome OS Kernel
-Google Inc.
-bleung@google.com
-Chromium OS Project
-bleung@chromium.org
-
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQQCtZK6p/AktxXfkOlzbaomhzOwwgUCXV7JSQAKCRBzbaomhzOw
-wmsMAP9l7zNyHT3RklLRY2MDx/u351aEXliRaffATK0+3bQFJwEAzyl1XaP/okMa
-CkShDhtnGnVYE6szX5GZXGQw5B0sYwU=
-=YMFb
------END PGP SIGNATURE-----
-
---n8g4imXOkfNTN/H1--
+Thanks,
+Shiju
