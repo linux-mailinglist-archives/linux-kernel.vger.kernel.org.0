@@ -2,356 +2,234 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C517993BE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E4C9993E1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388652AbfHVMdo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:33:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:39240 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388625AbfHVMdl (ORCPT
+        id S2388689AbfHVMeZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:34:25 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:49386 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1730918AbfHVMeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:33:41 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i63so5594281wmg.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:33:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jo69w2Y5GpdPAOSdBd76ME+SCr5IL7+9j1PUyEP8Fhw=;
-        b=TTe1RfnhK1hg+QfkErlN2RP9MHIiCIChj7XEEShaahOG92mWO23Dbhf3YTyC2/pYh0
-         1VBHaLDH9Xnpyx9PEy1s0K2y2dE7ZYm9mZTwgvHzID/QSfJ8kwClW/l1376daHt0+Htv
-         ObxFyKLz3AIxqZWEBsOYP8HJRHKCy1B6+8Qez34yOjp6RxXvl3GT9d/HhLsaGGI19bDJ
-         Eg09JMdw/SEjwb52gq+r+YUIUbrcFbpck9l57dKOzSRf/nyaEsx8XsuzQxpYu5dnElRO
-         sS5jcNOlabbvK5YIEMzn4WAYn0jP59mU2UW89Iitm8XGoUToTnxrjOBuEkhhTEcj3Hh3
-         0OEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jo69w2Y5GpdPAOSdBd76ME+SCr5IL7+9j1PUyEP8Fhw=;
-        b=iVakSVCkkp415x6Ds0VVWOkatyT1Xe2/areAR8qrPjN7SWTih7T77sAVEQX05bBkBb
-         3lDQIvboF/+spsCglDrFmRF9OV8Rd34pojPXU8KtLweMBqfqBuItNd3QukkjjDIH/Fu3
-         1/1h6rn7vpKXo6vWLgRd6CJeNW1Eh0+N7AviLWNpyCKzmE47eHCOXfGAXWuDKUWBXtpF
-         FiapIQb4Fza7VIQRrJp2+l6LKOIbyGxPfCLcwScmP6wa6jUzYHNGzn1p2CdI0rUrWPrm
-         o/34wHeVDb+61OLi38uoaSJb1N6NJHhtOs4pyavbj4Ov2ia0jn63dW1pqOrSMe5/+YRL
-         Ssww==
-X-Gm-Message-State: APjAAAVR2MN3+bvxdEhTDROrjyTghW1Hsl2fJhbdvXK9EKEktnMnytr1
-        ChKkuy6CPL+4Ezb4YZsiTL+OPZQwwUhOYudwcbIO5uCHpAw=
-X-Google-Smtp-Source: APXvYqyvRbS1LTMkIIyQkE/41BHL0/shCFGOpXnrr89IwodQepgzOEABw/zX3m+WQygrU3cuaUl6Z6hqR6nXdBSbcF4=
-X-Received: by 2002:a1c:3d89:: with SMTP id k131mr5691618wma.24.1566477218546;
- Thu, 22 Aug 2019 05:33:38 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190822084131.114764-1-anup.patel@wdc.com> <20190822084131.114764-11-anup.patel@wdc.com>
- <917cea87-42c0-e50a-6508-d5b577c8b702@amazon.com>
-In-Reply-To: <917cea87-42c0-e50a-6508-d5b577c8b702@amazon.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 22 Aug 2019 18:03:27 +0530
-Message-ID: <CAAhSdy2QtZRKvs0Hr-mZuVsb7sVkweeW-RpvhObZR009UbA7KA@mail.gmail.com>
-Subject: Re: [PATCH v5 10/20] RISC-V: KVM: Handle MMIO exits for VCPU
-To:     Alexander Graf <graf@amazon.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+        Thu, 22 Aug 2019 08:34:23 -0400
+X-UUID: 31f219a7482b44259f289d9290bf75da-20190822
+X-UUID: 31f219a7482b44259f289d9290bf75da-20190822
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ran.bi@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1694480463; Thu, 22 Aug 2019 20:34:17 +0800
+Received: from MTKCAS36.mediatek.inc (172.27.4.186) by mtkmbs07n2.mediatek.inc
+ (172.21.101.141) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 22 Aug
+ 2019 20:34:11 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS36.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 20:34:10 +0800
+Message-ID: <1566477254.12318.41.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 2/4] rtc: Add support for the MediaTek MT2712 RTC
+From:   Ran Bi <ran.bi@mediatek.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        "Flora Fu" <flora.fu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Date:   Thu, 22 Aug 2019 20:34:14 +0800
+In-Reply-To: <20190820201744.GZ3545@piout.net>
+References: <20190801110122.26834-1-ran.bi@mediatek.com>
+         <20190801110122.26834-3-ran.bi@mediatek.com>
+         <20190820201744.GZ3545@piout.net>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 5:44 PM Alexander Graf <graf@amazon.com> wrote:
->
-> On 22.08.19 10:44, Anup Patel wrote:
-> > We will get stage2 page faults whenever Guest/VM access SW emulated
-> > MMIO device or unmapped Guest RAM.
-> >
-> > This patch implements MMIO read/write emulation by extracting MMIO
-> > details from the trapped load/store instruction and forwarding the
-> > MMIO read/write to user-space. The actual MMIO emulation will happen
-> > in user-space and KVM kernel module will only take care of register
-> > updates before resuming the trapped VCPU.
-> >
-> > The handling for stage2 page faults for unmapped Guest RAM will be
-> > implemeted by a separate patch later.
-> >
-> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> > Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> > ---
-> >   arch/riscv/include/asm/kvm_host.h |  11 +
-> >   arch/riscv/kvm/mmu.c              |   7 +
-> >   arch/riscv/kvm/vcpu_exit.c        | 436 +++++++++++++++++++++++++++++-
-> >   3 files changed, 451 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> > index 18f1097f1d8d..4388bace6d70 100644
-> > --- a/arch/riscv/include/asm/kvm_host.h
-> > +++ b/arch/riscv/include/asm/kvm_host.h
-> > @@ -53,6 +53,12 @@ struct kvm_arch {
-> >       phys_addr_t pgd_phys;
-> >   };
-> >
-> > +struct kvm_mmio_decode {
-> > +     unsigned long insn;
-> > +     int len;
-> > +     int shift;
-> > +};
-> > +
-> >   struct kvm_cpu_context {
-> >       unsigned long zero;
-> >       unsigned long ra;
-> > @@ -141,6 +147,9 @@ struct kvm_vcpu_arch {
-> >       unsigned long irqs_pending;
-> >       unsigned long irqs_pending_mask;
-> >
-> > +     /* MMIO instruction details */
-> > +     struct kvm_mmio_decode mmio_decode;
-> > +
-> >       /* VCPU power-off state */
-> >       bool power_off;
-> >
-> > @@ -160,6 +169,8 @@ static inline void kvm_arch_vcpu_block_finish(struct kvm_vcpu *vcpu) {}
-> >   int kvm_riscv_setup_vsip(void);
-> >   void kvm_riscv_cleanup_vsip(void);
-> >
-> > +int kvm_riscv_stage2_map(struct kvm_vcpu *vcpu, gpa_t gpa, unsigned long hva,
-> > +                      bool is_write);
-> >   void kvm_riscv_stage2_flush_cache(struct kvm_vcpu *vcpu);
-> >   int kvm_riscv_stage2_alloc_pgd(struct kvm *kvm);
-> >   void kvm_riscv_stage2_free_pgd(struct kvm *kvm);
-> > diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> > index 04dd089b86ff..2b965f9aac07 100644
-> > --- a/arch/riscv/kvm/mmu.c
-> > +++ b/arch/riscv/kvm/mmu.c
-> > @@ -61,6 +61,13 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
-> >       return 0;
-> >   }
-> >
-> > +int kvm_riscv_stage2_map(struct kvm_vcpu *vcpu, gpa_t gpa, unsigned long hva,
-> > +                      bool is_write)
-> > +{
-> > +     /* TODO: */
-> > +     return 0;
-> > +}
-> > +
-> >   void kvm_riscv_stage2_flush_cache(struct kvm_vcpu *vcpu)
-> >   {
-> >       /* TODO: */
-> > diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> > index e4d7c8f0807a..efc06198c259 100644
-> > --- a/arch/riscv/kvm/vcpu_exit.c
-> > +++ b/arch/riscv/kvm/vcpu_exit.c
-> > @@ -6,9 +6,371 @@
-> >    *     Anup Patel <anup.patel@wdc.com>
-> >    */
-> >
-> > +#include <linux/bitops.h>
-> >   #include <linux/errno.h>
-> >   #include <linux/err.h>
-> >   #include <linux/kvm_host.h>
-> > +#include <asm/csr.h>
-> > +
-> > +#define INSN_MATCH_LB                0x3
-> > +#define INSN_MASK_LB         0x707f
-> > +#define INSN_MATCH_LH                0x1003
-> > +#define INSN_MASK_LH         0x707f
-> > +#define INSN_MATCH_LW                0x2003
-> > +#define INSN_MASK_LW         0x707f
-> > +#define INSN_MATCH_LD                0x3003
-> > +#define INSN_MASK_LD         0x707f
-> > +#define INSN_MATCH_LBU               0x4003
-> > +#define INSN_MASK_LBU                0x707f
-> > +#define INSN_MATCH_LHU               0x5003
-> > +#define INSN_MASK_LHU                0x707f
-> > +#define INSN_MATCH_LWU               0x6003
-> > +#define INSN_MASK_LWU                0x707f
-> > +#define INSN_MATCH_SB                0x23
-> > +#define INSN_MASK_SB         0x707f
-> > +#define INSN_MATCH_SH                0x1023
-> > +#define INSN_MASK_SH         0x707f
-> > +#define INSN_MATCH_SW                0x2023
-> > +#define INSN_MASK_SW         0x707f
-> > +#define INSN_MATCH_SD                0x3023
-> > +#define INSN_MASK_SD         0x707f
-> > +
-> > +#define INSN_MATCH_C_LD              0x6000
-> > +#define INSN_MASK_C_LD               0xe003
-> > +#define INSN_MATCH_C_SD              0xe000
-> > +#define INSN_MASK_C_SD               0xe003
-> > +#define INSN_MATCH_C_LW              0x4000
-> > +#define INSN_MASK_C_LW               0xe003
-> > +#define INSN_MATCH_C_SW              0xc000
-> > +#define INSN_MASK_C_SW               0xe003
-> > +#define INSN_MATCH_C_LDSP    0x6002
-> > +#define INSN_MASK_C_LDSP     0xe003
-> > +#define INSN_MATCH_C_SDSP    0xe002
-> > +#define INSN_MASK_C_SDSP     0xe003
-> > +#define INSN_MATCH_C_LWSP    0x4002
-> > +#define INSN_MASK_C_LWSP     0xe003
-> > +#define INSN_MATCH_C_SWSP    0xc002
-> > +#define INSN_MASK_C_SWSP     0xe003
-> > +
-> > +#define INSN_LEN(insn)               ((((insn) & 0x3) < 0x3) ? 2 : 4)
-> > +
-> > +#ifdef CONFIG_64BIT
-> > +#define LOG_REGBYTES         3
-> > +#else
-> > +#define LOG_REGBYTES         2
-> > +#endif
-> > +#define REGBYTES             (1 << LOG_REGBYTES)
-> > +
-> > +#define SH_RD                        7
-> > +#define SH_RS1                       15
-> > +#define SH_RS2                       20
-> > +#define SH_RS2C                      2
-> > +
-> > +#define RV_X(x, s, n)                (((x) >> (s)) & ((1 << (n)) - 1))
-> > +#define RVC_LW_IMM(x)                ((RV_X(x, 6, 1) << 2) | \
-> > +                              (RV_X(x, 10, 3) << 3) | \
-> > +                              (RV_X(x, 5, 1) << 6))
-> > +#define RVC_LD_IMM(x)                ((RV_X(x, 10, 3) << 3) | \
-> > +                              (RV_X(x, 5, 2) << 6))
-> > +#define RVC_LWSP_IMM(x)              ((RV_X(x, 4, 3) << 2) | \
-> > +                              (RV_X(x, 12, 1) << 5) | \
-> > +                              (RV_X(x, 2, 2) << 6))
-> > +#define RVC_LDSP_IMM(x)              ((RV_X(x, 5, 2) << 3) | \
-> > +                              (RV_X(x, 12, 1) << 5) | \
-> > +                              (RV_X(x, 2, 3) << 6))
-> > +#define RVC_SWSP_IMM(x)              ((RV_X(x, 9, 4) << 2) | \
-> > +                              (RV_X(x, 7, 2) << 6))
-> > +#define RVC_SDSP_IMM(x)              ((RV_X(x, 10, 3) << 3) | \
-> > +                              (RV_X(x, 7, 3) << 6))
-> > +#define RVC_RS1S(insn)               (8 + RV_X(insn, SH_RD, 3))
-> > +#define RVC_RS2S(insn)               (8 + RV_X(insn, SH_RS2C, 3))
-> > +#define RVC_RS2(insn)                RV_X(insn, SH_RS2C, 5)
-> > +
-> > +#define SHIFT_RIGHT(x, y)            \
-> > +     ((y) < 0 ? ((x) << -(y)) : ((x) >> (y)))
-> > +
-> > +#define REG_MASK                     \
-> > +     ((1 << (5 + LOG_REGBYTES)) - (1 << LOG_REGBYTES))
-> > +
-> > +#define REG_OFFSET(insn, pos)                \
-> > +     (SHIFT_RIGHT((insn), (pos) - LOG_REGBYTES) & REG_MASK)
-> > +
-> > +#define REG_PTR(insn, pos, regs)     \
-> > +     (ulong *)((ulong)(regs) + REG_OFFSET(insn, pos))
-> > +
-> > +#define GET_RM(insn)         (((insn) >> 12) & 7)
-> > +
-> > +#define GET_RS1(insn, regs)  (*REG_PTR(insn, SH_RS1, regs))
-> > +#define GET_RS2(insn, regs)  (*REG_PTR(insn, SH_RS2, regs))
-> > +#define GET_RS1S(insn, regs) (*REG_PTR(RVC_RS1S(insn), 0, regs))
-> > +#define GET_RS2S(insn, regs) (*REG_PTR(RVC_RS2S(insn), 0, regs))
-> > +#define GET_RS2C(insn, regs) (*REG_PTR(insn, SH_RS2C, regs))
-> > +#define GET_SP(regs)         (*REG_PTR(2, 0, regs))
-> > +#define SET_RD(insn, regs, val)      (*REG_PTR(insn, SH_RD, regs) = (val))
-> > +#define IMM_I(insn)          ((s32)(insn) >> 20)
-> > +#define IMM_S(insn)          (((s32)(insn) >> 25 << 5) | \
-> > +                              (s32)(((insn) >> 7) & 0x1f))
-> > +#define MASK_FUNCT3          0x7000
-> > +
-> > +#define STR(x)                       XSTR(x)
-> > +#define XSTR(x)                      #x
-> > +
-> > +/* TODO: Handle traps due to unpriv load and redirect it back to VS-mode */
-> > +static ulong get_insn(struct kvm_vcpu *vcpu)
-> > +{
-> > +     ulong __sepc = vcpu->arch.guest_context.sepc;
-> > +     ulong __hstatus, __sstatus, __vsstatus;
-> > +#ifdef CONFIG_RISCV_ISA_C
-> > +     ulong rvc_mask = 3, tmp;
-> > +#endif
-> > +     ulong flags, val;
-> > +
-> > +     local_irq_save(flags);
-> > +
-> > +     __vsstatus = csr_read(CSR_VSSTATUS);
-> > +     __sstatus = csr_read(CSR_SSTATUS);
-> > +     __hstatus = csr_read(CSR_HSTATUS);
-> > +
-> > +     csr_write(CSR_VSSTATUS, __vsstatus | SR_MXR);
-> > +     csr_write(CSR_SSTATUS, vcpu->arch.guest_context.sstatus | SR_MXR);
-> > +     csr_write(CSR_HSTATUS, vcpu->arch.guest_context.hstatus | HSTATUS_SPRV);
->
-> What happens when the insn load triggers a page fault, maybe because the
-> guest was malicious and did
->
->    1) Run on page 0x1000
->    2) Remove map for 0x1000, do *not* flush TLB
->    3) Trigger MMIO
->
-> That would DOS the host here, as the host kernel would continue running
-> in guest address space, right?
+Hi,
 
-Yes, we can certainly fault while accessing Guest instruction. We will
-be fixing this issue in a followup series. We have mentioned this in cover
-letter as well.
+> > +
+> > +#define MTK_RTC_DEV		KBUILD_MODNAME
+> 
+> You probably shouldn't do that and have a static string for the driver
+> name. I probably doesn't matter much though because DT is used to probe
+> the driver.
+> 
 
-BTW, RISC-V spec is going to further improve to provide easy
-access of faulting instruction to Hypervisor.
-(Refer, https://github.com/riscv/riscv-isa-manual/issues/431)
+Will change it at next patch.
 
-Regards,
-Anup
+> > +/* we map HW YEAR 0 to 2000 because 2000 is the leap year */
+> > +#define MT2712_MIN_YEAR		2000
+> > +#define MT2712_BASE_YEAR	1900
+> > +#define MT2712_MIN_YEAR_OFFSET	(MT2712_MIN_YEAR - MT2712_BASE_YEAR)
+> > +#define MT2712_MAX_YEAR_OFFSET	(MT2712_MIN_YEAR_OFFSET + 127)
+> > +
+> 
+> All those defines are unecessary, see below.
+> 
 
->
->
-> Alex
->
+Will change it at next patch.
+
+> > +struct mt2712_rtc {
+> > +	struct device		*dev;
+> 
+> Looking at the code closely, it seems this is only used for debug and
+> error messages. Maybe you could use rtc_dev->dev instead.
+> 
+
+Will change it at next patch.
+
+> > +	mutex_lock(&rtc->rtc_dev->ops_lock);
 > > +
-> > +#ifndef CONFIG_RISCV_ISA_C
-> > +     asm ("\n"
-> > +#ifdef CONFIG_64BIT
-> > +             STR(LWU) " %[insn], (%[addr])\n"
-> > +#else
-> > +             STR(LW) " %[insn], (%[addr])\n"
-> > +#endif
-> > +             : [insn] "=&r" (val) : [addr] "r" (__sepc));
-> > +#else
-> > +     asm ("and %[tmp], %[addr], 2\n"
-> > +             "bnez %[tmp], 1f\n"
-> > +#ifdef CONFIG_64BIT
-> > +             STR(LWU) " %[insn], (%[addr])\n"
-> > +#else
-> > +             STR(LW) " %[insn], (%[addr])\n"
-> > +#endif
-> > +             "and %[tmp], %[insn], %[rvc_mask]\n"
-> > +             "beq %[tmp], %[rvc_mask], 2f\n"
-> > +             "sll %[insn], %[insn], %[xlen_minus_16]\n"
-> > +             "srl %[insn], %[insn], %[xlen_minus_16]\n"
-> > +             "j 2f\n"
-> > +             "1:\n"
-> > +             "lhu %[insn], (%[addr])\n"
-> > +             "and %[tmp], %[insn], %[rvc_mask]\n"
-> > +             "bne %[tmp], %[rvc_mask], 2f\n"
-> > +             "lhu %[tmp], 2(%[addr])\n"
-> > +             "sll %[tmp], %[tmp], 16\n"
-> > +             "add %[insn], %[insn], %[tmp]\n"
-> > +             "2:"
-> > +     : [vsstatus] "+&r" (__vsstatus), [insn] "=&r" (val),
-> > +       [tmp] "=&r" (tmp)
-> > +     : [addr] "r" (__sepc), [rvc_mask] "r" (rvc_mask),
-> > +       [xlen_minus_16] "i" (__riscv_xlen - 16));
-> > +#endif
+> > +	irqsta = mt2712_readl(rtc, MT2712_IRQ_STA);
+> 
+> Do you have to lock that read? Is the register cleared on read?
+> 
+
+Yes, this register is read clear register.
+
+> > +	do {
+> > +		__mt2712_rtc_read_time(rtc, tm, &sec);
+> > +	} while (sec < tm->tm_sec);	/* SEC has carried */
+> 
+> Shouldn't that be while (tm->tm_sec < sec)?
+> 
+
+In __mt2712_rtc_read_time function, we read tm->tm_sec before read sec.
+Sometimes we can meet situation like "tm->tm_sec == 59" and "sec == 0".
+It means that TC_SEC has carried and we need to reload the tm struct. I
+suppose it was correct that using "while (sec < tm->tm_sec)"
+
 > > +
-> > +     csr_write(CSR_HSTATUS, __hstatus);
-> > +     csr_write(CSR_SSTATUS, __sstatus);
-> > +     csr_write(CSR_VSSTATUS, __vsstatus);
+> > +	/* HW register use 7 bits to store year data, minus
+> > +	 * MT2712_MIN_YEAR_OFFSET brfore write year data to register, and plus
+> > +	 * MT2712_MIN_YEAR_OFFSET back after read year from register
+> > +	 */
+> > +	tm->tm_year += MT2712_MIN_YEAR_OFFSET;
+> 
+> Simply add 100 in __mt2712_rtc_read_time
+> 
+
+Will change it at next patch.
+
 > > +
-> > +     local_irq_restore(flags);
+> > +	/* HW register start mon from one, but tm_mon start from zero. */
+> > +	tm->tm_mon--;
 > > +
-> > +     return val;
-> > +}
->
+> 
+> You can also do that in __mt2712_rtc_read_time.
+> 
+
+Will change it at next patch.
+
+> > +	if (rtc_valid_tm(tm)) {
+> 
+> This check is unnecessary, the validity is always checked by the core.
+> 
+
+Will remove this at next patch.
+
+> > +	if (tm->tm_year > MT2712_MAX_YEAR_OFFSET) {
+> > +		dev_dbg(rtc->dev, "Set year %d out of range. (%d - %d)\n",
+> > +			1900 + tm->tm_year, 1900 + MT2712_MIN_YEAR_OFFSET,
+> > +			1900 + MT2712_MAX_YEAR_OFFSET);
+> > +		return -EINVAL;
+> > +	}
+> 
+> This check is unnecessary, see below.
+> 
+
+Will change it at next patch.
+
+> > +
+> > +	tm->tm_year -= MT2712_MIN_YEAR_OFFSET;
+> > +	tm->tm_mon++;
+> 
+> You should probably avoid modifying tm, move the substraction and
+> addition in the mt2712_writel calls.
+> 
+
+Will change it at next patch.
+
+
+> > +	if (tm->tm_year > MT2712_MAX_YEAR_OFFSET) {
+> > +		dev_dbg(rtc->dev, "Set year %d out of range. (%d - %d)\n",
+> > +			1900 + tm->tm_year, 1900 + MT2712_MIN_YEAR_OFFSET,
+> > +			1900 + MT2712_MAX_YEAR_OFFSET);
+> > +		return -EINVAL;
+> > +	}
+> > +
+> 
+> Unnecessary check.
+> 
+
+Will change it at next patch.
+
+> > +	p1 = mt2712_readl(rtc, MT2712_POWERKEY1);
+> > +	p2 = mt2712_readl(rtc, MT2712_POWERKEY2);
+> > +	if (p1 != MT2712_POWERKEY1_KEY || p2 != MT2712_POWERKEY2_KEY)
+> > +		dev_dbg(rtc->dev, "powerkey not set (lost power)\n");
+> > +
+> 
+> This info is valuable, you should check that when reading the time and
+> return -EINVAL if power was lost.
+> 
+
+Will change it at next patch.
+
+> 
+> > +	/* RTC need POWERKEY1/2 match, then goto normal work mode */
+> > +	mt2712_writel(rtc, MT2712_POWERKEY1, MT2712_POWERKEY1_KEY);
+> > +	mt2712_writel(rtc, MT2712_POWERKEY2, MT2712_POWERKEY2_KEY);
+> 
+> This should be written when setting the time after power was lost.
+> 
+
+I suppose we can move this into mt2712_rtc_read_time function's "if
+(p1 != MT2712_POWERKEY1_KEY || p2 != MT2712_POWERKEY2_KEY)" condition
+which will be added at next patch. We need additional flag to mark this
+condition or another if condition in mt2712_rtc_set_time fucntion if we
+put these code in mt2712_rtc_set_time function.
+
+> > +static const struct rtc_class_ops mt2712_rtc_ops = {
+> > +	.read_time	= mt2712_rtc_read_time,
+> > +	.set_time	= mt2712_rtc_set_time,
+> > +	.read_alarm	= mt2712_rtc_read_alarm,
+> > +	.set_alarm	= mt2712_rtc_set_alarm,
+> 
+> For proper operations, you should also provide the .alarm_irq_enable
+> callback.
+> 
+
+Will change it at next patch.
+
+> > +	rtc->rtc_dev->ops = &mt2712_rtc_ops;
+> 
+> If you set the range properly here using rtc_dev->range_min and
+> rtc_dev->range_max, then the core will be able to do range checking and
+> will also take care of the year offset/windowing calculations instead of
+> having to hardcode that in the driver.
+> 
+
+Will change it at next patch.
+
+Best Regards,
+Ran
+
+
