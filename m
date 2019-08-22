@@ -2,143 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E9B098A27
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:06:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BEAB98A1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:01:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726234AbfHVEGD convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 00:06:03 -0400
-Received: from m9a0001g.houston.softwaregrp.com ([15.124.64.66]:45870 "EHLO
-        m9a0001g.houston.softwaregrp.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725710AbfHVEGD (ORCPT
+        id S1725892AbfHVEBJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 00:01:09 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:45453 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfHVEBI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 00:06:03 -0400
-Received: FROM m9a0001g.houston.softwaregrp.com (15.121.0.191) BY m9a0001g.houston.softwaregrp.com WITH ESMTP;
- Thu, 22 Aug 2019 04:05:20 +0000
-Received: from M9W0067.microfocus.com (2002:f79:be::f79:be) by
- M9W0068.microfocus.com (2002:f79:bf::f79:bf) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 22 Aug 2019 03:59:43 +0000
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (15.124.72.10) by
- M9W0067.microfocus.com (15.121.0.190) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10 via Frontend Transport; Thu, 22 Aug 2019 03:59:43 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sct61Eq1ZDoPUhgRd4NEdhuP+DxK3iNhKluTI3NSNt2eoK02ihMZfa2haFOhBOE5kiqJBYgDng4lKlzDt50G35FlFlRsbZBvUyx8Ft/iVfCdNeLNFh5N13XK6KR7Y1tcSv6JraO73rt6HIEm6jqVuKUyDlLmQQOGeHCiZGKTUX38cdT/zNxbt2St8YT+nGxnth3MSVFwsENOq/V28Fd0s5JQARFX9x6nUmYbLekSe7WCm5kAeQtxBMGvqP0/PHBnbMLsUvDK7f/5tuXqwfhG5Kq6DiqZXYaSKdV8lhGAMIoTQdz1ObDs2BrKEVHA08hyv/qDTWDCWywHG9x551T2Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tW2RhL7H2LNeHEe6Aan1RmlgL5J2iXm7mi6jOyFKPjo=;
- b=fhP/q5fduYIw0DiDORwW3ohHuP2nZnsE5od1sRa/2ddp8k91LGryf4gwO0TmNHDmEA1xM0xgrU1kT2851Wn06JflgEI5RtKaPunuT5sexv3A/7gO5UYeuBrtW9Q5czoEPq3QKREbD7XO5aZ30f1q04L7krGxri8cJBsSAdAMQavBCkEmYNFO9fBfqE1S1Q7Sp0rLHmXWpXhV2iuHnZA2He45sFbzVheTIi1Mqhj6fR2n+LnU587VxvlYI7POpvI+b+7lJ+wGSDWrYlo9iIK/XoIPdnHcaSTXdcQfdY/6YXDQ8tOvsHtTFmVOoIrPzpXgF3Rw01SWEA3L5JyVjgErHQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=suse.com; dmarc=pass action=none header.from=suse.com;
- dkim=pass header.d=suse.com; arc=none
-Received: from BY5PR18MB3283.namprd18.prod.outlook.com (10.255.139.203) by
- BY5PR18MB3219.namprd18.prod.outlook.com (10.255.137.152) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Thu, 22 Aug 2019 03:59:43 +0000
-Received: from BY5PR18MB3283.namprd18.prod.outlook.com
- ([fe80::847e:511a:8cc2:8fca]) by BY5PR18MB3283.namprd18.prod.outlook.com
- ([fe80::847e:511a:8cc2:8fca%6]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
- 03:59:43 +0000
-From:   Chester Lin <clin@suse.com>
-To:     "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "rppt@linux.ibm.com" <rppt@linux.ibm.com>,
-        "ard.biesheuvel@linaro.org" <ard.biesheuvel@linaro.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "geert@linux-m68k.org" <geert@linux-m68k.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-CC:     "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "guillaume.gardet@arm.com" <guillaume.gardet@arm.com>,
-        Gary Lin <GLin@suse.com>, Joey Lee <JLee@suse.com>
-Subject: Re: [PATCH] arm: skip nomap memblocks while finding the
- lowmem/highmem boundary
-Thread-Topic: [PATCH] arm: skip nomap memblocks while finding the
- lowmem/highmem boundary
-Thread-Index: AQHVWJwNXyBr+dQszki0v7NBI7XKFacGirsA
-Date:   Thu, 22 Aug 2019 03:59:42 +0000
-Message-ID: <20190822035920.GA27154@linux-8mug>
-References: <20190822034425.25899-1-clin@suse.com>
-In-Reply-To: <20190822034425.25899-1-clin@suse.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: DB8PR03CA0014.eurprd03.prod.outlook.com
- (2603:10a6:10:be::27) To BY5PR18MB3283.namprd18.prod.outlook.com
- (2603:10b6:a03:196::11)
-authentication-results: spf=none (sender IP is ) smtp.mailfrom=clin@suse.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [202.47.205.198]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 02ef12b8-4396-44c5-322e-08d726b529af
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BY5PR18MB3219;
-x-ms-traffictypediagnostic: BY5PR18MB3219:
-x-ms-exchange-purlcount: 1
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <BY5PR18MB321930AFDB724C487E15DF2BADA50@BY5PR18MB3219.namprd18.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 01371B902F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(4636009)(396003)(346002)(366004)(39860400002)(136003)(376002)(199004)(189003)(102836004)(6116002)(110136005)(8676002)(6436002)(6306002)(7416002)(81156014)(14454004)(3846002)(386003)(6506007)(11346002)(446003)(99286004)(256004)(14444005)(2201001)(9686003)(305945005)(76176011)(25786009)(86362001)(81166006)(2906002)(6512007)(1076003)(6246003)(33656002)(486006)(64756008)(52116002)(66556008)(66946007)(66476007)(66446008)(53936002)(2501003)(6486002)(8936002)(7736002)(229853002)(5660300002)(107886003)(4326008)(478600001)(71200400001)(71190400001)(66066001)(476003)(54906003)(186003)(33716001)(316002)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:BY5PR18MB3219;H:BY5PR18MB3283.namprd18.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: suse.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: pihe8yK0ze8ASnxoz63m0fmDIDLGoLmFLD9D55ARfvfBV782FUNWq3VheeJOB/urbP/4uq2WnZEE96yvFqgYB3P2Ebj8V4atvHDgKBzVmkW8p5BUVjYnzB29uDrC88mC749ubSLYIWj+HYWhgYP+eKN74/t0K7CNFyiPMtVqaibPW6PruQfcDzyo/i07oAfe49Cz7JaXaKFGC2xEJ0uo62EITHOzlTQ/Tq2D5w9zhf25gux42fFbVCXPDSW5kRNDYOO6rXSmH1/lMAnUhGMBMgX7iUOaS29s4YqHrMe/QVqBGb6nFKIpGub9jtsJZ0Tigd4Ap8gw6ZEE3edYDSZnV5Ol4KGvUahNxxVtpAh0P60Ue8WRIwrYOOnyZXBWe6bp+0klrLccCK37pXeeP3oXIklAtPVTKp9yoWFq2Op34Vs=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <655EB30C6C68C1439EF38D1F1C4169BB@namprd18.prod.outlook.com>
-Content-Transfer-Encoding: 8BIT
+        Thu, 22 Aug 2019 00:01:08 -0400
+Received: by mail-io1-f67.google.com with SMTP id t3so9042940ioj.12;
+        Wed, 21 Aug 2019 21:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=BybcKrDqDsV1vLqaW8rNec228gnkGTbH03h7q1YFv58=;
+        b=Y7vQ3Zm+wj8+Yuzw3JUYDonuE6oRk7m8wI4gRuWHwKlAAMlW717d5+hrRvZn9ANlMc
+         8mI6Mhx7E1KK8+LRauJkSBRDFUAMFm3T0YTvhsKOZS0eLrltn96jn57ZJw/sVyFIsNkj
+         A7i+7VkiC1VDAve32spDxJwfpP65doQtBTAzBnaKGNmcczqaTmixrA4tLXTuOdR6mI6h
+         fcCcSZ4LAZyu3erb/LqIpUpiQowiccIrAOp5Q02/uTbLqRkS9d/xiMnf25aSBrHr8N8X
+         redTAM3ldbRT7bBIQLLPNBw2cg0O7HvhxawnZOekNdCDkej+HNc30U1TI4PGTz3eCol9
+         TEzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=BybcKrDqDsV1vLqaW8rNec228gnkGTbH03h7q1YFv58=;
+        b=hn1Y7CEFvbsgj6SXxhtLvcJGuYODXgOgyttekuilXcyPxVbbiQ3/8qFbUacZoM/n1r
+         AYbErTkgM0tyB4K1gm64HhhhGjvNm35EGNY5040DA2EU92K71KfXSzGDcZmrizzGJdKr
+         n7fmNE6XA0SmhNg9cJkG3dLRfWdWRXAhCGJUixN8gdjO6hJeZ4qsDl+vnznJAo/6NxJq
+         5q6CIcP0KvQLz/BjVp63H3+Zo4z0R7uhKqsbE5ytECFw6xq4HWlJ6uvGa7AjtVNwBE71
+         NL0PC0ZHIXz8Y180UcFcyo6GKtSfVQILbYt0zQDoTtUSx/DAYMY3y+ucV7bg04RHXuB9
+         2Rvg==
+X-Gm-Message-State: APjAAAUkGjMGXYAD2hjgJasHRyLSKFhtITPAyPD/UviYsHERIaUyeOLF
+        8LhW6XNq5Je//PcROpsuhnSb7fp0y56szbLJJHg=
+X-Google-Smtp-Source: APXvYqxTBiRXARJgZzQt0mN0CCKgd09Sfxj9MwGfaPw58BNsM2WnEWudKSMOy2KZVA6yswYrCsPxKMh7jPQrukzwxks=
+X-Received: by 2002:a02:b713:: with SMTP id g19mr13929241jam.77.1566446467556;
+ Wed, 21 Aug 2019 21:01:07 -0700 (PDT)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02ef12b8-4396-44c5-322e-08d726b529af
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 03:59:42.8716
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 856b813c-16e5-49a5-85ec-6f081e13b527
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: AEtHnytHCPRzfmfXtZxVyvYxFJm1RXwZQEsqrXZil/MvFjPUeRcbmLG9Jz+YvEi9
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR18MB3219
-X-OriginatorOrg: suse.com
+References: <1563873380-2003-1-git-send-email-gkulkarni@marvell.com>
+ <1563873380-2003-3-git-send-email-gkulkarni@marvell.com> <20190812120125.GA50712@lakrids.cambridge.arm.com>
+ <CAKTKpr7juHd9Bgam28LESadihFadEAevRAhc-7w3PTMYY7HLNw@mail.gmail.com>
+ <20190813110345.GD866@lakrids.cambridge.arm.com> <20190821165339.7gu4rxkvdjcr4mta@willie-the-truck>
+In-Reply-To: <20190821165339.7gu4rxkvdjcr4mta@willie-the-truck>
+From:   Ganapatrao Kulkarni <gklkml16@gmail.com>
+Date:   Thu, 22 Aug 2019 09:30:56 +0530
+Message-ID: <CAKTKpr48Cmcs8u81EZeMMndP1XwaNOMCE-r00vhE6ysK3CUsrw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] drivers/perf: Add CCPI2 PMU support in ThunderX2
+ UNCORE driver.
+To:     Will Deacon <will@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        Jayachandran Chandrasekharan Nair <jnair@marvell.com>,
+        Robert Richter <rrichter@marvell.com>,
+        Jan Glauber <jglauber@marvell.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 11:45:34AM +0800, Chester Lin wrote:
-> adjust_lowmem_bounds() checks every memblocks in order to find the boundary
-> between lowmem and highmem. However some memblocks could be marked as NOMAP
-> so they are not used by kernel, which should be skipped while calculating
-> the boundary.
-> 
-> Signed-off-by: Chester Lin <clin@suse.com>
-> ---
->  arch/arm/mm/mmu.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm/mm/mmu.c b/arch/arm/mm/mmu.c
-> index 426d9085396b..b86dba44d828 100644
-> --- a/arch/arm/mm/mmu.c
-> +++ b/arch/arm/mm/mmu.c
-> @@ -1181,6 +1181,9 @@ void __init adjust_lowmem_bounds(void)
->  		phys_addr_t block_start = reg->base;
->  		phys_addr_t block_end = reg->base + reg->size;
->  
-> +		if (memblock_is_nomap(reg))
-> +			continue;
-> +
->  		if (reg->base < vmalloc_limit) {
->  			if (block_end > lowmem_limit)
->  				/*
-> -- 
-> 2.22.0
+On Wed, Aug 21, 2019 at 10:23 PM Will Deacon <will@kernel.org> wrote:
 >
+> On Tue, Aug 13, 2019 at 12:03:45PM +0100, Mark Rutland wrote:
+> > On Tue, Aug 13, 2019 at 04:25:15PM +0530, Ganapatrao Kulkarni wrote:
+> > > On Mon, Aug 12, 2019 at 5:31 PM Mark Rutland <mark.rutland@arm.com> wrote:
+> > > >
+> > > > On Tue, Jul 23, 2019 at 09:16:28AM +0000, Ganapatrao Kulkarni wrote:
+> > > > > CCPI2 is a low-latency high-bandwidth serial interface for connecting
+> > > > > ThunderX2 processors. This patch adds support to capture CCPI2 perf events.
+> > > >
+> > > > It would be worth pointing out in the commit message how the CCPI2
+> > > > counters differ from the others. I realise you have that in the body of
+> > > > patch 1, but it's critical information when reviewing this patch...
+> > >
+> > > Ok, I will add in next version.
+> > > >
+> > > > >
+> > > > > Signed-off-by: Ganapatrao Kulkarni <gkulkarni@marvell.com>
+> > > > > ---
+> > > > >  drivers/perf/thunderx2_pmu.c | 248 ++++++++++++++++++++++++++++++-----
+> > > > >  1 file changed, 214 insertions(+), 34 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/perf/thunderx2_pmu.c b/drivers/perf/thunderx2_pmu.c
+> > > > > index 43d76c85da56..a4e1273eafa3 100644
+> > > > > --- a/drivers/perf/thunderx2_pmu.c
+> > > > > +++ b/drivers/perf/thunderx2_pmu.c
+> > > > > @@ -17,22 +17,31 @@
+> > > > >   */
+> > > > >
+> > > > >  #define TX2_PMU_MAX_COUNTERS         4
+> > > >
+> > > > Shouldn't this be 8 now?
+> > >
+> > > It is kept unchanged to 4(as suggested by Will), which is same for
+> > > both L3 and DMC.
+> > > For CCPI2 this macro is not used.
+> >
+> > Hmmm....
+> >
+> > I disagree with that suggestion given that this also affects the
+> > active_counters bitmap size (and thus it is not correctly sized as of
+> > this patch), and it doesn't really save us much.
+> >
+> > I think it would be better to bump this to 8 and always update the
+> > events array, even though it will be unused for CCPI2. That's less
+> > surprising, needs fewer special-cases, and we can use the hrtimer
+> > function pointer alone to determine if we need to do any hrtimer work.
+>
+> tbf, my complaint was actually about some macros applying to the whole
+> PMU whilst others refer only to DMC/L3C and this not being apparent from
+> the naming:
+>
+> https://lkml.org/lkml/2019/6/27/250
+>
+> so I'm fine having TX2_PMU_DMC_L3C_MAX_COUNTERS and
+> TX2_PMU_CCPI2_MAX_COUNTERS, but that sort of naming needs to be consistent
+> unless the macro/definition really applies to both. That fed the suggestion
+> that GET_EVENTID could be generic and switch on the event type internally
+> instead of at the caller.
 
-Hi Russell, Mike and Ard,
+Thanks Will for the clarification.
+I will send new version with changes as suggested.
 
-Per the discussion in the thread "[PATH] efi/arm: fix allocation failure ...",
-(https://lkml.org/lkml/2019/8/21/163), I presume that the change to disregard
-NOMAP memblocks in adjust_lowmem_bounds() should be separated as a single patch.
+>
+> Will
 
-Please let me know if any suggestion, thank you.
-
-
+Thanks,
+Ganapat
