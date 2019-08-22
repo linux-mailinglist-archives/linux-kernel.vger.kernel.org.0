@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DDD8499DB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:44:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0E0E599E22
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:48:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392846AbfHVRoh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:44:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42856 "EHLO mail.kernel.org"
+        id S2391371AbfHVRWe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387958AbfHVRXQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:16 -0400
+        id S2391325AbfHVRW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:28 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BEB123405;
-        Thu, 22 Aug 2019 17:23:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0722723406;
+        Thu, 22 Aug 2019 17:22:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494596;
-        bh=1ZwtHgzaqpOXK7ILaSAJBsleTmCMydPzY4GoucyH5yM=;
+        s=default; t=1566494548;
+        bh=AVGNpKB1RDr8KZFmCHuUjaIXdHbRFaHjyTBQv44RL3s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=abP2dWa19fThZTnCRK/2Tlt7LY+PW7n17oJklti8PK1C/I0diiQNxNn6tRGKB5fEc
-         q/IQ4zg1AXwZBURtIzUS8sXkBEs5aTcdE/mpX6NHyJnXaZexrg20frKEvQcPtkO2V/
-         cvh0SSkBeeygtYIA0yBvsZ3lBqc0XYG7QCzZu44o=
+        b=QcVh95FBelO+Zo2iHYe9rU/xQbDqhkjkgwYz9hczyfGbsbZaAQA3KjE63f8KTmuZ4
+         EZT4GGgCiwwuduGqf9tpBeoM2h3v4ORBuK5QxC/l1aUZrVVYqObXcCEsHV0flV0Gz2
+         MtPdQjV9OdQQQsm4JevSX6CTD+vjyNfnbwODCpJo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
-        Jens Remus <jremus@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 017/103] s390/qdio: add sanity checks to the fast-requeue path
-Date:   Thu, 22 Aug 2019 10:18:05 -0700
-Message-Id: <20190822171729.547275416@linuxfoundation.org>
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH 4.4 03/78] x86/mm: Check for pfn instead of page in vmalloc_sync_one()
+Date:   Thu, 22 Aug 2019 10:18:07 -0700
+Message-Id: <20190822171832.145137492@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,50 +44,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit a6ec414a4dd529eeac5c3ea51c661daba3397108 ]
+From: Joerg Roedel <jroedel@suse.de>
 
-If the device driver were to send out a full queue's worth of SBALs,
-current code would end up discovering the last of those SBALs as PRIMED
-and erroneously skip the SIGA-w. This immediately stalls the queue.
+commit 51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0 upstream.
 
-Add a check to not attempt fast-requeue in this case. While at it also
-make sure that the state of the previous SBAL was successfully extracted
-before inspecting it.
+Do not require a struct page for the mapped memory location because it
+might not exist. This can happen when an ioremapped region is mapped with
+2MB pages.
 
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
-Reviewed-by: Jens Remus <jremus@linux.ibm.com>
-Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
+Link: https://lkml.kernel.org/r/20190719184652.11391-2-joro@8bytes.org
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/s390/cio/qdio_main.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ arch/x86/mm/fault.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/s390/cio/qdio_main.c b/drivers/s390/cio/qdio_main.c
-index 58cd0e0c9680b..b65cab4448021 100644
---- a/drivers/s390/cio/qdio_main.c
-+++ b/drivers/s390/cio/qdio_main.c
-@@ -1576,13 +1576,13 @@ static int handle_outbound(struct qdio_q *q, unsigned int callflags,
- 		rc = qdio_kick_outbound_q(q, phys_aob);
- 	} else if (need_siga_sync(q)) {
- 		rc = qdio_siga_sync_q(q);
-+	} else if (count < QDIO_MAX_BUFFERS_PER_Q &&
-+		   get_buf_state(q, prev_buf(bufnr), &state, 0) > 0 &&
-+		   state == SLSB_CU_OUTPUT_PRIMED) {
-+		/* The previous buffer is not processed yet, tack on. */
-+		qperf_inc(q, fast_requeue);
- 	} else {
--		/* try to fast requeue buffers */
--		get_buf_state(q, prev_buf(bufnr), &state, 0);
--		if (state != SLSB_CU_OUTPUT_PRIMED)
--			rc = qdio_kick_outbound_q(q, 0);
--		else
--			qperf_inc(q, fast_requeue);
-+		rc = qdio_kick_outbound_q(q, 0);
- 	}
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -222,7 +222,7 @@ static inline pmd_t *vmalloc_sync_one(pg
+ 	if (!pmd_present(*pmd))
+ 		set_pmd(pmd, *pmd_k);
+ 	else
+-		BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
++		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
  
- 	/* in case of SIGA errors we must process the error immediately */
--- 
-2.20.1
-
+ 	return pmd_k;
+ }
 
 
