@@ -2,64 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE99992A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 13:54:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BFBB599292
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 13:50:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732831AbfHVLyC convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 07:54:02 -0400
-Received: from mail1.ikir.ru ([195.88.179.152]:40932 "EHLO mail1.ikir.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727894AbfHVLyB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 07:54:01 -0400
-X-Greylist: delayed 471 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 07:54:01 EDT
-Received: from localhost (localhost [127.0.0.1])
-        by mail1.ikir.ru (Postfix) with ESMTP id 43EE15094CC;
-        Thu, 22 Aug 2019 23:46:03 +1200 (PETT)
-Received: from mail1.ikir.ru ([127.0.0.1])
-        by localhost (mail1.ikir.ru [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 0e4a8Rwldm_M; Thu, 22 Aug 2019 23:46:02 +1200 (PETT)
-Received: from localhost (localhost [127.0.0.1])
-        by mail1.ikir.ru (Postfix) with ESMTP id 454865094D4;
-        Thu, 22 Aug 2019 23:46:02 +1200 (PETT)
-X-Virus-Scanned: amavisd-new at mail1.ikir.ru
-Received: from mail1.ikir.ru ([127.0.0.1])
-        by localhost (mail1.ikir.ru [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id amWLhgOweBUn; Thu, 22 Aug 2019 23:46:01 +1200 (PETT)
-Received: from mail1.ikir.ru (mail2.ikir.ru [172.16.2.10])
-        by mail1.ikir.ru (Postfix) with ESMTP id E756A5094CC;
-        Thu, 22 Aug 2019 23:46:00 +1200 (PETT)
-Date:   Thu, 22 Aug 2019 23:46:00 +1200 (PETT)
-From:   Zimbra Admin Help Desk <drug@ikir.ru>
-Message-ID: <865973388.11419.1566474360927.JavaMail.zimbra@ikir.ru>
-Subject: =?utf-8?Q?IMPORTANTE:_a_todos_los_usuarios?=
- =?utf-8?Q?_de_correo_electr=C3=B3nico_de_Zimbra?=
+        id S1733060AbfHVLuU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 07:50:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:58326 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731963AbfHVLuU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 07:50:20 -0400
+X-UUID: 71a13bff9db64a2fa70989b6ffec4cbb-20190822
+X-UUID: 71a13bff9db64a2fa70989b6ffec4cbb-20190822
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <ran.bi@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 1308780366; Thu, 22 Aug 2019 19:50:14 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by mtkmbs07n2.mediatek.inc
+ (172.21.101.141) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Thu, 22 Aug
+ 2019 19:50:08 +0800
+Received: from [10.17.3.153] (172.27.4.253) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 19:50:06 +0800
+Message-ID: <1566474611.12318.9.camel@mhfsdcap03>
+Subject: Re: [PATCH v2 2/4] rtc: Add support for the MediaTek MT2712 RTC
+From:   Ran Bi <ran.bi@mediatek.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        <linux-rtc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, YT Shen <yt.shen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        "Flora Fu" <flora.fu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Date:   Thu, 22 Aug 2019 19:50:11 +0800
+In-Reply-To: <20190822092008.GR27031@piout.net>
+References: <20190801110122.26834-1-ran.bi@mediatek.com>
+         <20190801110122.26834-3-ran.bi@mediatek.com>
+         <c4e8b041-4a35-578e-07a3-2ebc99848ee2@gmail.com>
+         <20190822092008.GR27031@piout.net>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [172.16.10.10]
-X-Mailer: Zimbra 8.7.11_GA_1854 (zclient/8.7.11_GA_1854)
-Thread-Index: O0rHZfd4Nn0l00Vyym5WvYTxX/aX/Q==
-Thread-Topic: IMPORTANTE: a todos los usuarios de correo =?utf-8?Q?electr=C3=B3nico?= de Zimbra
-To:     unlisted-recipients:; (no To-header on input)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-IMPORTANTE: a todos los usuarios de correo electrónico de Zimbra
+On Thu, 2019-08-22 at 11:20 +0200, Alexandre Belloni wrote:
+> On 22/08/2019 11:12:29+0200, Matthias Brugger wrote:
+> > 
+> > 
+> > On 01/08/2019 13:01, Ran Bi wrote:
+> > > This add support for the MediaTek MT2712 RTC. It was SoC based RTC, but
+> > > had different architecture compared with MT7622 RTC.
+> > > 
+> > > Signed-off-by: Ran Bi <ran.bi@mediatek.com>
+> > > ---
+> > >  drivers/rtc/Kconfig      |  10 +
+> > >  drivers/rtc/Makefile     |   1 +
+> > >  drivers/rtc/rtc-mt2712.c | 444 +++++++++++++++++++++++++++++++++++++++
+> > 
+> > Can't we just adjust rtc-mt7622.c (and rename it) to unify the source for both
+> > devices. What is the difference that we need to write a driver of our own?
+> > 
+> 
+> If they are compatible, this is the way to go but the file can't be
+> renamed (and that is fine).
+> 
+> 
 
+They are not compatible. Both registers and operating methods are
+different.
 
-Esto le informa que nuestro servidor de correo electrónico Zimbra Web Client ha sido programado para actualización y mantenimiento, esto es para mejorar la capacidad de identificar y bloquear el spam, intentos de phishing para mejores servicios en línea.
+Best Regards,
+Ran
 
-
-Para evitar que su cuenta de correo electrónico se cancele durante esta actualización, siga las instrucciones para actualizar. haga clic en el enlace del formulario de la mesa de ayuda debajo: -
-
-
-https://formcrafts.com/a/emailservermessage?preview=true
-
-
-Gracias por usar nuestros servicios en línea.
-
-
-Zimbra Admin Help Desk.
-Servicios de actualización 2019/2020
