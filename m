@@ -2,93 +2,161 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E557B99D50
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E0CA199D8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405138AbfHVRlU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:41:20 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33561 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404269AbfHVRlN (ORCPT
+        id S2405343AbfHVRnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:43:31 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:38429 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405314AbfHVRn0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:41:13 -0400
-Received: by mail-oi1-f196.google.com with SMTP id l2so5014692oil.0;
-        Thu, 22 Aug 2019 10:41:12 -0700 (PDT)
+        Thu, 22 Aug 2019 13:43:26 -0400
+Received: by mail-pf1-f195.google.com with SMTP id o70so4436297pfg.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:43:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:references:date:in-reply-to:message-id
+         :user-agent:mime-version;
+        bh=6IOaGnUD4mxduRmdxfDGgTsq+7+zuErL30N4WfZQUJg=;
+        b=typmwV4DxiIjX786OwGD06aIxFTp+qy1+q3G/q+3uKSXV8Wu9ymDA3GRXFgcslgnHQ
+         AfYBMsoMbiZ3hVuvQblxg2KLydBMyUdXlTPif7k/ur8y9mZ6oI9NOxfeHxM3XZ4ciu8w
+         Qluo3Biqdjz2HtvR1oq31B5GcrEP8P78DVRfwpJpmRwrGtUctw17am3//F2iAK6pLKGI
+         lbj/llZPW2MLuHquvGIYEnE3RapHyyBKqFC0/KlqLw0pFV4i58RN8wlbHRx7DpXLgcvd
+         1s7fCIXr6sMzZoW/RH8i4UmcDdHdJQjjdk7ldI38RN5K6Gmw6+crU3Mg8SU3EKDUOshP
+         uQug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S3Wtmx63qYO2RYwlc+u7gYjYEryNsm6UT+kYuRsp+wI=;
-        b=sslPEcfdgZ9KQvOL+TIkZ3p39+WJ/J1pxAnS69kBC5lwFuS1liEHgWhwPwHsB4YgnZ
-         1a2a38KNO3cCxO93DUcaUQEqA+czK18SqAATh2ZaVt5hFmRVr55jKzLdyn2bLoHlVNUG
-         72WePR9MVNTtEbEYjiF8IbClzrD0EpwSiO8A1ALSvjSgfskZewtIpBr6CX7D76EiKG5E
-         Ui6JWU1bpQHU+TRnFq0Buki8SxfL1IlSXx107CeGu8ImQpd6GbU9+/Fdo+NR6n4E2olf
-         tO/JYLdOJ2+/MdobZKxY82rtEZ0F9enWAySyYVOdMe4WKXSsJ+PxOwH+/H5HY6oHEapQ
-         dygQ==
-X-Gm-Message-State: APjAAAWB4coirRjoeXyl9gDo33VOcK6VtRUwkcKYe0n6dzuJWcTIHekX
-        J07Rv+RKxaDi7YFF1WT37Bg=
-X-Google-Smtp-Source: APXvYqxXzyiGzvP9QOEziqdHlRZkxskbjNq0zGJS3yjldmavVtqqk7S7wFueDS6GCxtSQweXW/XKyg==
-X-Received: by 2002:aca:3887:: with SMTP id f129mr224476oia.108.1566495671970;
-        Thu, 22 Aug 2019 10:41:11 -0700 (PDT)
-Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
-        by smtp.gmail.com with ESMTPSA id o26sm71264otl.34.2019.08.22.10.41.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 10:41:11 -0700 (PDT)
-Subject: Re: [PATCH v7 08/14] nvmet-core: allow one host per passthru-ctrl
-To:     Max Gurtovoy <maxg@mellanox.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     Chaitanya Kulkarni <Chaitanya.Kulkarni@wdc.com>,
-        Stephen Bates <sbates@raithlin.com>, Jens Axboe <axboe@fb.com>,
-        Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>
-References: <20190801234514.7941-1-logang@deltatee.com>
- <20190801234514.7941-9-logang@deltatee.com>
- <05a74e81-1dbd-725f-1369-5ca5c5918db1@mellanox.com>
- <a6b9db95-a7f0-d1f6-1fa2-8dc13a6aa29e@deltatee.com>
- <5717f515-e051-c420-07b7-299bcfcd1f32@mellanox.com>
- <b0921c72-93f1-f67a-c4b3-31baeb1c39cb@grimberg.me>
- <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
-From:   Sagi Grimberg <sagi@grimberg.me>
-Message-ID: <24e2ddd0-4b2a-8092-cf91-df8c0fb482e5@grimberg.me>
-Date:   Thu, 22 Aug 2019 10:41:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
+         :message-id:user-agent:mime-version;
+        bh=6IOaGnUD4mxduRmdxfDGgTsq+7+zuErL30N4WfZQUJg=;
+        b=VwegHm3NCrqd/iTVygDD5Kcpsmc7RVSK2LCy4/J002IU09cnqvBPTcvCjIn/SH8At3
+         woVskwZbrVLidDi3ycIm/cxq4oarrxCCpCoHjm761le9J6RWcgpaM5NiJaLbB6SKBg+k
+         D7nxWV+eZeZOlb5lXsSoNRBjU3OGTM2j7BIgGQ4zkOUORnhG8D8aUQKe921vkMDYWZaJ
+         cTKTjrFOmEF5cZ78EvgxuFWKuIT2U1V/tWhjNeViKkMh85ozWuU+Hbl5v32cBTCcq3Wi
+         HueyRLG//mPzgbeJqWPR3M7Azq75TouGnttGVfVGve36eRKg4hqbNt0mwh6gJE2LnzzQ
+         YgFQ==
+X-Gm-Message-State: APjAAAUERhm5F1XKqUNlEB9sk6b9ovPiZopGMrXf/Sd/8tr3H3ClmOqN
+        NtwY2tzGP8sUcAaSbnf/0NMVdA==
+X-Google-Smtp-Source: APXvYqz+VrQ45BXYdArbTMZb1Lml83c2MchkPLghR2OpuSwsKJR61/80agQyoFrQOYugG33I94tlCA==
+X-Received: by 2002:a62:1444:: with SMTP id 65mr342557pfu.145.1566495805684;
+        Thu, 22 Aug 2019 10:43:25 -0700 (PDT)
+Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
+        by smtp.gmail.com with ESMTPSA id d3sm207973pjz.31.2019.08.22.10.43.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 10:43:24 -0700 (PDT)
+From:   bsegall@google.com
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        linux-kernel@vger.kernel.org, mingo@kernel.org,
+        liangyan.peng@linux.alibaba.com, shanpeic@linux.alibaba.com,
+        xlpang@linux.alibaba.com, pjt@google.com, stable@vger.kernel.org
+Subject: Re: [PATCH] sched/fair: Add missing unthrottle_cfs_rq()
+References: <0004fb54-cdee-2197-1cbf-6e2111d39ed9@arm.com>
+        <20190820105420.7547-1-valentin.schneider@arm.com>
+        <20190822092123.GL2349@hirez.programming.kicks-ass.net>
+Date:   Thu, 22 Aug 2019 10:43:23 -0700
+In-Reply-To: <20190822092123.GL2349@hirez.programming.kicks-ass.net> (Peter
+        Zijlstra's message of "Thu, 22 Aug 2019 11:21:23 +0200")
+Message-ID: <xm26pnkxhz9g.fsf@bsegall-linux.svl.corp.google.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-In-Reply-To: <b352c7f1-2629-e72f-9c85-785e0cf7c2c1@mellanox.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Peter Zijlstra <peterz@infradead.org> writes:
 
->>> I don't understand why we don't limit a regular ctrl to single access 
->>> and we do it for the PT ctrl.
->>>
->>> I guess the block layer helps to sync between multiple access in 
->>> parallel but we can do it as well.
->>>
->>> Also, let's say you limit the access to this subsystem to 1 user, the 
->>> bdev is still accessibly for local user and also you can create a 
->>> different subsystem that will use this device (PT and non-PT ctrl).
->>>
->>> Sagi,
->>>
->>> can you explain the trouble you meant and how this limitation solve it ?
->>
->> Its different to emulate the controller with all its admin
->> commands vs. passing it through to the nvme device.. (think of format 
->> nvm)
->>
->>
->>
-> we don't need to support format command for PT ctrl as we don't support 
-> other commands such create_sq/cq.
+> On Tue, Aug 20, 2019 at 11:54:20AM +0100, Valentin Schneider wrote:
+>> Turns out a cfs_rq->runtime_remaining can become positive in
+>> assign_cfs_rq_runtime(), but this codepath has no call to
+>> unthrottle_cfs_rq().
+>> 
+>> This can leave us in a situation where we have a throttled cfs_rq with
+>> positive ->runtime_remaining, which breaks the math in
+>> distribute_cfs_runtime(): this function expects a negative value so that
+>> it may safely negate it into a positive value.
+>> 
+>> Add the missing unthrottle_cfs_rq(). While at it, add a WARN_ON where
+>> we expect negative values, and pull in a comment from the mailing list
+>> that didn't make it in [1].
 
-That is just an example, basically every command that we are not aware
-of we simply passthru to the drive without knowing the implications
-on a multi-host environment..
+This didn't exist because it's not supposed to be possible to call
+account_cfs_rq_runtime on a throttled cfs_rq at all, so that's the
+invariant being violated. Do you know what the code path causing this
+looks like?
+
+This would allow both list del and add while distribute is doing a
+foreach, but I think that the racing behavior would just be to restart
+the distribute loop, which is fine.
+
+
+
+>> 
+>> [1]: https://lkml.kernel.org/r/BANLkTi=NmCxKX6EbDQcJYDJ5kKyG2N1ssw@mail.gmail.com
+>> 
+>> Cc: <stable@vger.kernel.org>
+>> Fixes: ec12cb7f31e2 ("sched: Accumulate per-cfs_rq cpu usage and charge against bandwidth")
+>> Reported-by: Liangyan <liangyan.peng@linux.alibaba.com>
+>> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+>
+> Thanks!
+>
+>> ---
+>>  kernel/sched/fair.c | 17 ++++++++++++-----
+>>  1 file changed, 12 insertions(+), 5 deletions(-)
+>> 
+>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+>> index 1054d2cf6aaa..219ff3f328e5 100644
+>> --- a/kernel/sched/fair.c
+>> +++ b/kernel/sched/fair.c
+>> @@ -4385,6 +4385,11 @@ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
+>>  	return rq_clock_task(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
+>>  }
+>>  
+>> +static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+>> +{
+>> +	return cfs_bandwidth_used() && cfs_rq->throttled;
+>> +}
+>> +
+>>  /* returns 0 on failure to allocate runtime */
+>>  static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+>>  {
+>> @@ -4411,6 +4416,9 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
+>>  
+>>  	cfs_rq->runtime_remaining += amount;
+>>  
+>> +	if (cfs_rq->runtime_remaining > 0 && cfs_rq_throttled(cfs_rq))
+>> +		unthrottle_cfs_rq(cfs_rq);
+>> +
+>>  	return cfs_rq->runtime_remaining > 0;
+>>  }
+>>  
+>> @@ -4439,11 +4447,6 @@ void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
+>>  	__account_cfs_rq_runtime(cfs_rq, delta_exec);
+>>  }
+>>  
+>> -static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
+>> -{
+>> -	return cfs_bandwidth_used() && cfs_rq->throttled;
+>> -}
+>> -
+>>  /* check whether cfs_rq, or any parent, is throttled */
+>>  static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
+>>  {
+>> @@ -4628,6 +4631,10 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
+>>  		if (!cfs_rq_throttled(cfs_rq))
+>>  			goto next;
+>>  
+>> +		/* By the above check, this should never be true */
+>> +		WARN_ON(cfs_rq->runtime_remaining > 0);
+>> +
+>> +		/* Pick the minimum amount to return to a positive quota state */
+>>  		runtime = -cfs_rq->runtime_remaining + 1;
+>>  		if (runtime > remaining)
+>>  			runtime = remaining;
+>> -- 
+>> 2.22.0
+>> 
