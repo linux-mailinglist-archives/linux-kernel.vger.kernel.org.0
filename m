@@ -2,84 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 788AF98D20
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:13:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E79998D24
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:13:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732137AbfHVIM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 04:12:29 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4560 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1731361AbfHVIM1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 04:12:27 -0400
-X-UUID: 148adf214d5e41aeb732a3567d7658e1-20190822
-X-UUID: 148adf214d5e41aeb732a3567d7658e1-20190822
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
-        (envelope-from <yingjoe.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 505389812; Thu, 22 Aug 2019 16:12:21 +0800
-Received: from mtkcas08.mediatek.inc (172.21.101.126) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 22 Aug 2019 16:12:15 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 22 Aug 2019 16:12:15 +0800
-Message-ID: <1566461540.16302.4.camel@mtksdaap41>
-Subject: Re: [PATCH v5 08/13] dt-bindings: pwm: update bindings for MT7628
- SoC
-From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
-To:     Sam Shih <sam.shih@mediatek.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
+        id S1732153AbfHVIMv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 04:12:51 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35371 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732158AbfHVIMu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 04:12:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id E5CD749470;
+        Thu, 22 Aug 2019 10:12:45 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id DGrO6zawJa6R; Thu, 22 Aug 2019 10:12:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5D8A34941E;
+        Thu, 22 Aug 2019 10:12:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id lvSPKS5MRZ-2; Thu, 22 Aug 2019 10:12:40 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3B934494AD;
+        Thu, 22 Aug 2019 10:12:40 +0200 (CEST)
+Message-ID: <c859d12167d18c21dda13b30c2dd3256f407d1d9.camel@v3.sk>
+Subject: Re: [PATCH 02/19] dt-bindings: arm: mrvl: Document MMP3 compatible
+ string
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        <linux-pwm@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        "John Crispin" <john@phrozen.org>
-Date:   Thu, 22 Aug 2019 16:12:20 +0800
-In-Reply-To: <1566457123-20791-9-git-send-email-sam.shih@mediatek.com>
-References: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
-         <1566457123-20791-9-git-send-email-sam.shih@mediatek.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Date:   Thu, 22 Aug 2019 10:12:38 +0200
+In-Reply-To: <20190821210349.GA29732@bogus>
+References: <20190809093158.7969-1-lkundrak@v3.sk>
+         <20190809093158.7969-3-lkundrak@v3.sk> <20190821210349.GA29732@bogus>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 3BD61D47ACABA7964220A1B0223F5209B3AA948622B67FF3DAA9B078EE5B90732000:8
-X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-08-22 at 14:58 +0800, Sam Shih wrote:
-> This updates bindings for MT7628 pwm controller.
+On Wed, 2019-08-21 at 16:03 -0500, Rob Herring wrote:
+> On Fri, Aug 09, 2019 at 11:31:41AM +0200, Lubomir Rintel wrote:
+> > Marvel MMP3 is a successor to MMP2, containing similar peripherals with two
+> > PJ4B cores.
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  Documentation/devicetree/bindings/arm/mrvl/mrvl.txt | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > index 951687528efb0..66e1e1414245b 100644
+> > --- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > @@ -12,3 +12,7 @@ Required root node properties:
+> >  MMP2 Brownstone Board
+> >  Required root node properties:
+> >  	- compatible = "mrvl,mmp2-brownstone", "mrvl,mmp2";
+> > +
+> > +MMP3 SoC
+> > +Required root node properties:
+> > +	- compatible = "marvell,mmp3";
 > 
-> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
-> ---
->  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 4 ++++
->  1 file changed, 4 insertions(+)
+> Please convert this file to DT schema before adding new SoCs.
+
+Is this something that should generally be done for all new or changed
+DT bindings?
+
 > 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> index ea95b490a913..93980e3da261 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-> @@ -21,6 +21,10 @@ Required properties:
->     See pinctrl/pinctrl-bindings.txt for details of the property values.
->   - num-pwms: the number of PWM channels.
-> +
-> + Optional properties:
-> + - clock-frequency: fix clock frequency, this is only used in MT7628 SoC
-> +                    for period calculation. This SoC has no complex clock tree.
+> Rob
 
-I'm sorry if this has been discussed before. 
-
-Would it be simpler if you just provide a fixed-clock as clock in device
-tree? This way you don't need this optional properties and don't need to
-special handle it in driver code. 
-
-After all, the hw is still connected to a simple clock tree.
-
-Joe.C
-
+Thanks
+Lubo
 
