@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 516C399B67
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C5FAE99B3D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404181AbfHVRY0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
+        id S2391685AbfHVRW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404025AbfHVRYC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:02 -0400
+        id S2391573AbfHVRWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:49 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D13B21743;
-        Thu, 22 Aug 2019 17:24:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F848233FD;
+        Thu, 22 Aug 2019 17:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494641;
-        bh=6iRVylKRm0ssg5ydfcpq94VWi9TeVr5xxmjV92gmqP0=;
+        s=default; t=1566494569;
+        bh=7Y1M18/AqFCRN9z+eM39Z9krN+UijCQpwgxQQok3FF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sJMyP1mzLwjZ5pOy+N4tsYZ6bkw2+IQngGyXtBaFmI14OganYCePSyJbNizYluDgj
-         3smPLjVwXPe9ywHBWUjNB2A87nQVlmwXJ7Hz25SIRFym5D/ySQZnZtAcIh9EaSI83c
-         HMWp5V+UxpWoon8l8263k3Q/whH0vs7Z/YanYJ7M=
+        b=mhKcS8DGS4otSorCM7e//ATsjsrbJBkwITvXOdgkLH1FBI1ZNIM2HhKyk+BqB/yWf
+         NiPb9xQoEV/qKUw2Nfpv/iX7HF/ZpptcZB1BlOEYIbx38we5rG3GAiN3lTAPPpOeWQ
+         RGOGT+pe+SZn2mBGYXTi/gmo7mohdCnHC9HztwmU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 075/103] kbuild: modpost: handle KBUILD_EXTRA_SYMBOLS only for external modules
+        stable@vger.kernel.org, Rogan Dawes <rogan@dawes.za.net>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.4 59/78] USB: serial: option: add D-Link DWM-222 device ID
 Date:   Thu, 22 Aug 2019 10:19:03 -0700
-Message-Id: <20190822171731.965458352@linuxfoundation.org>
+Message-Id: <20190822171833.745570709@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,35 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit cb4819934a7f9b87876f11ed05b8624c0114551b ]
+From: Rogan Dawes <rogan@dawes.za.net>
 
-KBUILD_EXTRA_SYMBOLS makes sense only when building external modules.
-Moreover, the modpost sets 'external_module' if the -e option is given.
+commit 552573e42aab5f75aff9bab855a9677979d9a7d5 upstream.
 
-I replaced $(patsubst %, -e %,...) with simpler $(addprefix -e,...)
-while I was here.
+Add device id for D-Link DWM-222 A2.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+MI_00 D-Link HS-USB Diagnostics
+MI_01 D-Link HS-USB Modem
+MI_02 D-Link HS-USB AT Port
+MI_03 D-Link HS-USB NMEA
+MI_04 D-Link HS-USB WWAN Adapter (qmi_wwan)
+MI_05 USB Mass Storage Device
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Rogan Dawes <rogan@dawes.za.net>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- scripts/Makefile.modpost | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/scripts/Makefile.modpost b/scripts/Makefile.modpost
-index 16923ba4b5b10..8cb7971b3f25c 100644
---- a/scripts/Makefile.modpost
-+++ b/scripts/Makefile.modpost
-@@ -74,7 +74,7 @@ modpost = scripts/mod/modpost                    \
-  $(if $(CONFIG_MODULE_SRCVERSION_ALL),-a,)       \
-  $(if $(KBUILD_EXTMOD),-i,-o) $(kernelsymfile)   \
-  $(if $(KBUILD_EXTMOD),-I $(modulesymfile))      \
-- $(if $(KBUILD_EXTRA_SYMBOLS), $(patsubst %, -e %,$(KBUILD_EXTRA_SYMBOLS))) \
-+ $(if $(KBUILD_EXTMOD),$(addprefix -e ,$(KBUILD_EXTRA_SYMBOLS))) \
-  $(if $(KBUILD_EXTMOD),-o $(modulesymfile))      \
-  $(if $(CONFIG_DEBUG_SECTION_MISMATCH),,-S)      \
-  $(if $(CONFIG_SECTION_MISMATCH_WARN_ONLY),,-E)  \
--- 
-2.20.1
-
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1949,6 +1949,8 @@ static const struct usb_device_id option
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e35, 0xff),			/* D-Link DWM-222 */
+ 	  .driver_info = RSVD(4) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e3d, 0xff),			/* D-Link DWM-222 A2 */
++	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
 
 
