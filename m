@@ -2,87 +2,90 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B549D99304
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78D6399308
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726206AbfHVMNt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:13:49 -0400
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:42104 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388386AbfHVMNk (ORCPT
+        id S2388409AbfHVMN6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:13:58 -0400
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:43853 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388389AbfHVMNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:13:40 -0400
-Received: by mail-vs1-f67.google.com with SMTP id b187so3660673vsc.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:13:39 -0700 (PDT)
+        Thu, 22 Aug 2019 08:13:45 -0400
+Received: by mail-ua1-f68.google.com with SMTP id y7so1897226uae.10
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:13:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=4Ly6KX3kvL/W0ycoaNLTVk5Ihkvoe8Wnu3biVwC7K5k=;
-        b=e+s77JT2cpzLx6Bok8gRYEyL3sIJy4MY0tlRRujMgKNbw6Z8D3adtcuYtllumK+DjH
-         LrHgjsL1mpImPi9hm6KbpBAAchu2bX0CfUzY6uYJjTeSuNqn6Wcgz2KcEnwVw6Pe/JpD
-         oKBN8X226wmaOyQuFVPK5p8PY+SwbN9m5mTaOL+YUCPd9ztzxrq/fneELEak3mkQUbRD
-         MYNbzBNBfg0IIdZfwMJqM9/zCu0TyPnJ89zkl32BKEuddVAN7XgJLendjEh+3sU1emMB
-         Q9iajclIOnQww/YNvGzunL8wkFKWjd3INZO0vdCfiVEOCPZMpO7URRy4oOPu0Mi57523
-         ZeVg==
+        bh=z8Whq5t8q9GwheJahJvFQp/NfuL/9ssSVrrEeSWFZQU=;
+        b=cAnyMpYGBwM8IXEcyZhXp6XNeJ4oqG8RVl6vX5Xv/J9d/FHqRPyEMmdNKw9wf1KDCE
+         tLTajI7r01JOL69r+MoFBwfA1kjTucGY+G1R14bZq8SmlCM6PO3BGBBN9yuq69YNiacP
+         mYmpS/C4rlbiZnBN3MJkIjzZi5QjJIBgqTDkqsktrLNUQCVUDKxJoAxYiNOrTY+ddK7Q
+         6hojXA83VxhzBp+wgoJjn3HcUYPgqfT3ruM7jraS3qKSkrTGl/9vDXPvOZTN+kPk59su
+         yaT/o07Qu6Cu/gc8sHAXfdaN6Zaf43AQzGWM4IaU3HTRALrleGzaFrp9e7J8oqudmz8J
+         twXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=4Ly6KX3kvL/W0ycoaNLTVk5Ihkvoe8Wnu3biVwC7K5k=;
-        b=AtOoc7TZXVJpCwKxFH1qwcvhcPyfmdxkazvAvEDBbceIkFBMagMlJdIE8qxpOm4hFi
-         7f4bYRvm1Z7wb2QK8N6PO7gfRb5g3kMSM3wfsvQiNYSAn1LTfBtj1g2+0rWXy+ySLnTY
-         hyaeAGZbmOFBGm4bin+bopbO417ObV5ni5nd2VMNY2DEHZ0vuBCrIy/pJwadotQLe6GT
-         wPAq0WXoWwNlKYB8Vf3bmnGkbM7ghtMHvNGndrBUrMvyg+IrSBosm2dB5hQhcZhsTxld
-         RcZzPta59UxPfba6MdffWAkjpqnPXbJKShZ3uXnxMeS0HDGX6418Yffm4sGMJ5jI3xpj
-         c0Fg==
-X-Gm-Message-State: APjAAAVBmgkDnurJFVFydAc8ArSIFra4ygmMAVPydlVJHxbW2unWYV8H
-        P1P9FE5v0wBnaHZMX6RcWtytsQR10AQ5282+q18sWQ==
-X-Google-Smtp-Source: APXvYqytHCOMHR5M9lts8SdpAxk1X76n5u7WLvfmxOXVJUEBRHaXV9qwemPTTdfSZATLeZEry7/4cv0gzsDJKxqcftg=
-X-Received: by 2002:a67:61c7:: with SMTP id v190mr24652042vsb.165.1566476019397;
- Thu, 22 Aug 2019 05:13:39 -0700 (PDT)
+        bh=z8Whq5t8q9GwheJahJvFQp/NfuL/9ssSVrrEeSWFZQU=;
+        b=qkGp6gTD3Tgg18jTaIk5YYt1FrrESyCw6WjxtBr4Y3S5qxWpHt6MQjQqapg82kEa++
+         z1YUbzyHJmI9+QBjwxvnoQLTTv8x6PnUt3zFPNV+6KsBytMtzQMjlaMCV9m2I8GVkbs+
+         Imy4L0+NyFcoyVqZSXqoCgF+zwNL6jzfIAzDNWDz8P/7Ln0H7IZbwMvv3Q1jEUcmmXms
+         Rs0HjlraJciN90sNcJviqybe2Yi7+IRIQ0GaAVW3bsxbwYUaPsn3E155dQbQ9k+VffVs
+         hWwiVLtaZnhZLiOnCzc/P4gJXioMEzCLe+mPVNc3EyXfgHQpMC6mSttOX2y1irtyBTK1
+         /eoQ==
+X-Gm-Message-State: APjAAAWAfVFhRj1FX7aaSO9D3xD2y2vMXKjIZG68MXYf9T1Mv5TFxWX0
+        fYVvwEfOoyYkDBhl+R3ISbQqrrp9n5OsSlCTDNglw4qu
+X-Google-Smtp-Source: APXvYqwyfK3+XunOkjrMGsFKUo/ps28tqmznFkFmVvl2sGgjI2r67E341S3VzcLrmVKcgXCaRvFrYS6XYbcLEdIXitk=
+X-Received: by 2002:ab0:6883:: with SMTP id t3mr5681666uar.104.1566476024313;
+ Thu, 22 Aug 2019 05:13:44 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190814072649.8237-1-yinbo.zhu@nxp.com> <20190814072649.8237-4-yinbo.zhu@nxp.com>
-In-Reply-To: <20190814072649.8237-4-yinbo.zhu@nxp.com>
+References: <20190808165301.GA30877@embeddedor>
+In-Reply-To: <20190808165301.GA30877@embeddedor>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 22 Aug 2019 14:13:03 +0200
-Message-ID: <CAPDyKFpwGGPAShEoXPK8Ksg5FPEVrbD3-HfeTSMACPsDC_V5FA@mail.gmail.com>
-Subject: Re: [PATCH v1 4/4] mmc: sdhci-of-esdhc: add erratum A011334 support
- in ls1028a 1.0 SoC
-To:     Yinbo Zhu <yinbo.zhu@nxp.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Li Yang <leoyang.li@nxp.com>,
-        Claudiu Manoil <claudiu.manoil@nxp.com>,
-        Amit Jain <amit.jain_1@nxp.com>, Yangbo Lu <yangbo.lu@nxp.com>,
-        Vabhav Sharma <vabhav.sharma@nxp.com>,
-        Rajesh Bhagat <rajesh.bhagat@nxp.com>,
-        Ashish Kumar <Ashish.Kumar@nxp.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+Date:   Thu, 22 Aug 2019 14:13:07 +0200
+Message-ID: <CAPDyKFoS3_RJvOxjQXpYT6YUgqJM7WXfvdHe1f6cTkab0rgsEQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-cadence: use struct_size() helper
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Xiaobo Xie <xiaobo.xie@nxp.com>,
-        Jiafei Pan <jiafei.pan@nxp.com>,
-        Alison Wang <alison.wang@nxp.com>,
-        Alex Marginean <alexandru.marginean@nxp.com>,
-        Catalin Horghidan <catalin.horghidan@nxp.com>,
-        Rajat Srivastava <rajat.srivastava@nxp.com>,
-        linuxppc-dev@lists.ozlabs.org
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Aug 2019 at 09:24, Yinbo Zhu <yinbo.zhu@nxp.com> wrote:
+On Thu, 8 Aug 2019 at 18:53, Gustavo A. R. Silva <gustavo@embeddedor.com> wrote:
 >
-> This patch is to add erratum A011334 support in ls1028a 1.0 SoC
+> One of the more common cases of allocation size calculations is finding
+> the size of a structure that has a zero-sized array at the end, along
+> with memory for some number of elements for that array. For example:
 >
-> Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
+> struct sdhci_cdns_priv {
+>         ...
+>         struct sdhci_cdns_phy_param phy_params[0];
+> };
+>
+> Make use of the struct_size() helper instead of an open-coded version
+> in order to avoid any potential type mistakes.
+>
+> So, replace the following form:
+>
+> sizeof(*priv) + sizeof(priv->phy_params[0]) * nr_phy_params
+>
+> with:
+>
+> struct_size(priv, phy_params, nr_phy_params)
+>
+> Also, notice that, in this case, variable priv_size is not necessary,
+> hence it is removed.
+>
+> This code was detected with the help of Coccinelle.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
 Applied for next, thanks!
 
@@ -91,21 +94,32 @@ Uffe
 
 
 > ---
->  drivers/mmc/host/sdhci-of-esdhc.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/mmc/host/sdhci-cadence.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/mmc/host/sdhci-of-esdhc.c b/drivers/mmc/host/sdhci-of-esdhc.c
-> index b16f7d440f78..eb2b290447fc 100644
-> --- a/drivers/mmc/host/sdhci-of-esdhc.c
-> +++ b/drivers/mmc/host/sdhci-of-esdhc.c
-> @@ -1006,6 +1006,7 @@ static struct soc_device_attribute soc_incorrect_hostver[] = {
->  static struct soc_device_attribute soc_fixup_sdhc_clkdivs[] = {
->         { .family = "QorIQ LX2160A", .revision = "1.0", },
->         { .family = "QorIQ LX2160A", .revision = "2.0", },
-> +       { .family = "QorIQ LS1028A", .revision = "1.0", },
->         { },
->  };
+> diff --git a/drivers/mmc/host/sdhci-cadence.c b/drivers/mmc/host/sdhci-cadence.c
+> index 163d1cf4367e..1768a13f89be 100644
+> --- a/drivers/mmc/host/sdhci-cadence.c
+> +++ b/drivers/mmc/host/sdhci-cadence.c
+> @@ -337,7 +337,6 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+>         struct sdhci_pltfm_host *pltfm_host;
+>         struct sdhci_cdns_priv *priv;
+>         struct clk *clk;
+> -       size_t priv_size;
+>         unsigned int nr_phy_params;
+>         int ret;
+>         struct device *dev = &pdev->dev;
+> @@ -351,8 +350,8 @@ static int sdhci_cdns_probe(struct platform_device *pdev)
+>                 return ret;
 >
+>         nr_phy_params = sdhci_cdns_phy_param_count(dev->of_node);
+> -       priv_size = sizeof(*priv) + sizeof(priv->phy_params[0]) * nr_phy_params;
+> -       host = sdhci_pltfm_init(pdev, &sdhci_cdns_pltfm_data, priv_size);
+> +       host = sdhci_pltfm_init(pdev, &sdhci_cdns_pltfm_data,
+> +                               struct_size(priv, phy_params, nr_phy_params));
+>         if (IS_ERR(host)) {
+>                 ret = PTR_ERR(host);
+>                 goto disable_clk;
 > --
-> 2.17.1
+> 2.22.0
 >
