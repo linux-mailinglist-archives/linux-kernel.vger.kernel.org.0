@@ -2,194 +2,120 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BC55D9A1BC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:11:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D1D5F9A203
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:16:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388669AbfHVVL0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:11:26 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:56084 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730991AbfHVVLZ (ORCPT
+        id S2392826AbfHVVQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:16:34 -0400
+Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:48895 "EHLO
+        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730897AbfHVVQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:11:25 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7ML8wCQ066920;
-        Thu, 22 Aug 2019 21:11:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2019-08-05;
- bh=BSgF3dcZ1Zww3m+mRQs7kxx7hplXe0cPCO1EsVNkNIk=;
- b=NaXy/4ydMECJhD2+36YRQL7cteuWgTIvvU6BaTbWOXenbdywpBzAibb7ENnmVe5j4nke
- EU5F71G7T55p5gp9TUeFllkmkLG1ykJNPQsYN9HoWoVijT4Gr5jI6lQvZZzRROS69+Rh
- h1CL8o/fH3EzcyJIf+jDCBffdbAHrJ31c3MXEo77kPjfI6oMXd4SvTqWQ2g4h1bdqZrh
- jZgXu+U8DMt1Y1e++cx9NZfNVCrIV658uUfLh7KRHjE8ZxpZ9oJVhsBK7vWOe3xQ+PfM
- PW1KVYbJKdWfZbW3TyafqCG30YLfurnLZypJUs+GS1QVZW3GyiExdDnG3iMXAy21OYGG HA== 
-Received: from aserp3020.oracle.com (aserp3020.oracle.com [141.146.126.70])
-        by userp2120.oracle.com with ESMTP id 2uea7r8mkb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Aug 2019 21:11:12 +0000
-Received: from pps.filterd (aserp3020.oracle.com [127.0.0.1])
-        by aserp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7ML8vpB039193;
-        Thu, 22 Aug 2019 21:11:11 GMT
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserp3020.oracle.com with ESMTP id 2uj1xys8ju-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Aug 2019 21:11:11 +0000
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7MLB9as024180;
-        Thu, 22 Aug 2019 21:11:10 GMT
-Received: from mihai.localdomain (/10.153.73.25)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 22 Aug 2019 14:11:09 -0700
-From:   Mihai Carabas <mihai.carabas@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     bp@alien8.de, ashok.raj@intel.com, boris.ostrovsky@oracle.com,
-        konrad.wilk@oracle.com, patrick.colp@oracle.com,
-        kanth.ghatraju@oracle.com, Jon.Grimm@amd.com,
-        Thomas.Lendacky@amd.com, mihai.carabas@oracle.com
-Subject: [PATCH] x86/microcode: Update microcode for all cores in parallel
-Date:   Thu, 22 Aug 2019 23:43:47 +0300
-Message-Id: <1566506627-16536-2-git-send-email-mihai.carabas@oracle.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1566506627-16536-1-git-send-email-mihai.carabas@oracle.com>
-References: <1566506627-16536-1-git-send-email-mihai.carabas@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908220185
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908220185
+        Thu, 22 Aug 2019 17:16:17 -0400
+X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 17:16:16 EDT
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id CFDEE49A;
+        Thu, 22 Aug 2019 17:08:14 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Thu, 22 Aug 2019 17:08:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
+        content-transfer-encoding:content-type:in-reply-to:date:cc
+        :subject:from:to:message-id; s=fm1; bh=WZ5Ec3wLQiEm5IlJwCBhY1oTo
+        MWeoHMfgT/wZdlQH5Q=; b=Utj4s/Z5saDMZIER6kYduuw5ZYnj1gZuBNQMjAk3I
+        GwAsPVKOr+/Azp/IbdYZPN6ePMEBYuIIZy6RNBaN4O63jvgcbJnxnmlGhrboJcmw
+        UthSMhr88TD8c0lIGbTubBfN3PlowT5cncIoEVsQh1jEloUj6Ags+rVsQUUoCbZP
+        Kksg6YvPmR2BlQIGxKyH28uW/d6KzRDss+bCEPBmhabFR6TPKiLFmssr92qJ8ou5
+        YUN4buxkRU/78bPvciLNknmT2SNhaJBzlsbo4Zk48ZBuua3MhxIjKsb6hsZHbpKR
+        2qGOCBtyRfjH3p7H/kHRFBcMDCNSXdkT1tB72cR2liWTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=WZ5Ec3
+        wLQiEm5IlJwCBhY1oToMWeoHMfgT/wZdlQH5Q=; b=eMNX9UaIeB2Sm/5VpMH21P
+        YOpr4TD0uVEwVn+0GeuAYiMuDQoSFgPuIdBv0dibbEinqvnDeaFSyGrOVOu3pTM8
+        6/wO4nY7vx4eiPN6DoMGMn+u3C1H7qHoFiCqmScXsxktUIAbR6SCQ+IY0QaQw7Ai
+        k30z2Rff7dseY0OsOvTujqKVXnTmuo+DXVb0BHr8/QxZDMjEiPARGSfi7gCVqjem
+        pPn7az+SLLjYZRqjlhc/jbp3lJpDD8xmNp7PcBkapH3avJQN54HiIQTUjYGmOjZC
+        dppndIgwiGYamCRnffNBmRlBJPxkor/4nfZipdRyr3n0ZEYELeWfh5K4txBvwNnA
+        ==
+X-ME-Sender: <xms:PQRfXQKfIgkFSLdEPMcp9yeLkcwroP3kxcHz1x3emQCrROzvNo8VBA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudegiedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enfghrlhcuvffnffculdefhedmnecujfgurhepgfgtjgffuffhvffksehtqhertddttdej
+    necuhfhrohhmpedfffgrnhhivghlucgiuhdfuceougiguhesugiguhhuuhdrgiihiieqne
+    cukfhppeduleelrddvtddurdeigedrgeenucfrrghrrghmpehmrghilhhfrhhomhepugig
+    uhesugiguhhuuhdrgiihiienucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:PQRfXYU8ISslaBb0aPcoNOzsZOXje8elv4Qqu48meYoY24cDCfFefA>
+    <xmx:PQRfXWkxwm9Ej8uQLPPEfg68dTjcMsgImjZsPelUAk-3lVlZiv5Fyg>
+    <xmx:PQRfXWdesUsRaPhOWUSMB6ytOdMczGHdAgcOQQniUZ-wZsRJ5rwU9g>
+    <xmx:PgRfXeJcvuWPQjvXGiyQ2-HXUt_fQurItbiQYKI3NPwNce8E4xUFp8--DV0>
+Received: from localhost (prnvpn05.thefacebook.com [199.201.64.4])
+        by mail.messagingengine.com (Postfix) with ESMTPA id CD78380062;
+        Thu, 22 Aug 2019 17:08:10 -0400 (EDT)
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190822090555.GJ2349@hirez.programming.kicks-ass.net>
+Date:   Thu, 22 Aug 2019 14:08:10 -0700
+Cc:     "Yonghong Song" <yhs@fb.com>, "Daniel Xu" <dxu@dxuuu.xyz>,
+        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+        "Andrii Nakryiko" <andriin@fb.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "Alexei Starovoitov" <ast@fb.com>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Kernel Team" <Kernel-team@fb.com>,
+        "Arnaldo Carvalho de Melo" <acme@redhat.com>
+Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
+ PERF_EVENT_IOC_QUERY_PROBE ioctl
+From:   "Daniel Xu" <dxu@dxuuu.xyz>
+To:     "Peter Zijlstra" <peterz@infradead.org>,
+        "Song Liu" <songliubraving@fb.com>
+Message-Id: <BWGGRTQXX7EP.15IPIDK3KLQ6O@dlxu-fedora-R90QNFJV>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ashok Raj <ashok.raj@intel.com>
+On Thu Aug 22, 2019 at 11:05 AM Peter Zijlstra wrote:
+> On Thu, Aug 22, 2019 at 07:54:16AM +0000, Song Liu wrote:
+> > Hi Peter,=20
+> >=20
+> > > On Aug 22, 2019, at 12:47 AM, Peter Zijlstra <peterz@infradead.org> w=
+rote:
+> > >=20
+> > > On Wed, Aug 21, 2019 at 06:43:49PM +0000, Yonghong Song wrote:
+> > >> On 8/21/19 11:31 AM, Peter Zijlstra wrote:
+> > >=20
+> > >>> So extending PERF_RECORD_LOST doesn't work. But PERF_FORMAT_LOST mi=
+ght
+> > >>> still work fine; but you get to implement it for all software event=
+s.
+> > >>=20
+> > >> Could you give more specifics about PERF_FORMAT_LOST? Googling=20
+> > >> "PERF_FORMAT_LOST" only yields two emails which we are discussing he=
+re :-(
+> > >=20
+> > > Look at what the other PERF_FORMAT_ flags do? Basically it is adding =
+a
+> > > field to the read(2) output.
+> >=20
+> > Do we need to implement PERF_FORMAT_LOST for all software events? If us=
+er
+> > space asks for PERF_FORMAT_LOST for events that do not support it, can =
+we
+> > just fail sys_perf_event_open()?
+>=20
+> It really shouldn't be hard; and I'm failing to see why kprobes are
+> special.
 
-Microcode update was changed to be serialized due to restrictions after
-Spectre days. Updating serially on a large multi-socket system can be
-painful since we do this one CPU at a time. Cloud customers have expressed
-discontent as services disappear for a prolonged time. The restriction is
-that only one core goes through the update while other cores are quiesced.
-The update is now done only on the first thread of each core while other
-siblings simply wait for this to complete.
+Thanks for the feedback, everyone. Really appreciate it.
 
-Signed-off-by: Ashok Raj <ashok.raj@intel.com>
-Signed-off-by: Mihai Carabas <mihai.carabas@oracle.com>
----
- arch/x86/kernel/cpu/microcode/core.c  | 44 ++++++++++++++++++++++++-----------
- arch/x86/kernel/cpu/microcode/intel.c | 14 ++++-------
- 2 files changed, 36 insertions(+), 22 deletions(-)
+I will look into extending read_format. I'll submit another patch series
+after I get the code to work.
 
-diff --git a/arch/x86/kernel/cpu/microcode/core.c b/arch/x86/kernel/cpu/microcode/core.c
-index cb0fdca..577b223 100644
---- a/arch/x86/kernel/cpu/microcode/core.c
-+++ b/arch/x86/kernel/cpu/microcode/core.c
-@@ -63,11 +63,6 @@
-  */
- static DEFINE_MUTEX(microcode_mutex);
- 
--/*
-- * Serialize late loading so that CPUs get updated one-by-one.
-- */
--static DEFINE_RAW_SPINLOCK(update_lock);
--
- struct ucode_cpu_info		ucode_cpu_info[NR_CPUS];
- 
- struct cpu_info_ctx {
-@@ -566,9 +561,23 @@ static int __reload_late(void *info)
- 	if (__wait_for_cpus(&late_cpus_in, NSEC_PER_SEC))
- 		return -1;
- 
--	raw_spin_lock(&update_lock);
--	apply_microcode_local(&err);
--	raw_spin_unlock(&update_lock);
-+	/*
-+	 * Update just on the first CPU in the core. Other siblings
-+	 * get the update automatically according to Intel SDM 9.11.6.3
-+	 * Update in a System Supporting Intel Hyper-Threading Technology
-+	 * Intel Hyper-Threading Technology has implications on the loading of the
-+	 * microcode update. The update must be loaded for each core in a physical
-+	 * processor. Thus, for a processor supporting Intel Hyper-Threading
-+	 * Technology, only one logical processor per core is required to load the
-+	 * microcode update. Each individual logical processor can independently
-+	 * load the update. However, MP initialization must provide some mechanism
-+	 * (e.g. a software semaphore) to force serialization of microcode update
-+	 * loads and to prevent simultaneous load attempts to the same core.
-+	 */
-+	if (cpumask_first(topology_sibling_cpumask(cpu)) == cpu)
-+		apply_microcode_local(&err);
-+	else
-+		goto wait_for_siblings;
- 
- 	/* siblings return UCODE_OK because their engine got updated already */
- 	if (err > UCODE_NFOUND) {
-@@ -578,15 +587,24 @@ static int __reload_late(void *info)
- 		ret = 1;
- 	}
- 
-+wait_for_siblings:
- 	/*
--	 * Increase the wait timeout to a safe value here since we're
--	 * serializing the microcode update and that could take a while on a
--	 * large number of CPUs. And that is fine as the *actual* timeout will
--	 * be determined by the last CPU finished updating and thus cut short.
-+	 * Since we are doing all cores in parallel, and the other
-+	 * sibling threads just do a rev update, there is no need to
-+	 * increase the timeout
- 	 */
--	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC * num_online_cpus()))
-+	if (__wait_for_cpus(&late_cpus_out, NSEC_PER_SEC))
- 		panic("Timeout during microcode update!\n");
- 
-+	/*
-+	 * At least one thread has completed update in each core.
-+	 * For others, simply call the update to make sure the
-+	 * per-cpu cpuinfo can be updated with right microcode
-+	 * revision.
-+	 */
-+	 if (cpumask_first(topology_sibling_cpumask(cpu)) != cpu)
-+		apply_microcode_local(&err);
-+
- 	return ret;
- }
- 
-diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
-index ce799cf..884d02d 100644
---- a/arch/x86/kernel/cpu/microcode/intel.c
-+++ b/arch/x86/kernel/cpu/microcode/intel.c
-@@ -793,7 +793,6 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	struct microcode_intel *mc;
- 	enum ucode_state ret;
--	static int prev_rev;
- 	u32 rev;
- 
- 	/* We should bind the task to the CPU */
-@@ -836,14 +835,11 @@ static enum ucode_state apply_microcode_intel(int cpu)
- 		return UCODE_ERROR;
- 	}
- 
--	if (rev != prev_rev) {
--		pr_info("updated to revision 0x%x, date = %04x-%02x-%02x\n",
--			rev,
--			mc->hdr.date & 0xffff,
--			mc->hdr.date >> 24,
--			(mc->hdr.date >> 16) & 0xff);
--		prev_rev = rev;
--	}
-+	pr_info_once("updated to revision 0x%x, date = %04x-%02x-%02x\n",
-+		rev,
-+		mc->hdr.date & 0xffff,
-+		mc->hdr.date >> 24,
-+		(mc->hdr.date >> 16) & 0xff);
- 
- 	ret = UCODE_UPDATED;
- 
--- 
-1.8.3.1
-
+Daniel
