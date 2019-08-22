@@ -2,301 +2,407 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EDA2399E4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:52:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23B5999E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:53:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390690AbfHVRup (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:50:45 -0400
-Received: from out30-130.freemail.mail.aliyun.com ([115.124.30.130]:56525 "EHLO
-        out30-130.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731960AbfHVRuo (ORCPT
+        id S2389974AbfHVRwy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:52:54 -0400
+Received: from sender4-of-o55.zoho.com ([136.143.188.55]:21543 "EHLO
+        sender4-of-o55.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393345AbfHVRwx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:50:44 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04400;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ta9PNTk_1566496230;
-Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Ta9PNTk_1566496230)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Fri, 23 Aug 2019 01:50:38 +0800
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-To:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
-        hannes@cmpxchg.org, mhocko@suse.com, hughd@google.com,
-        shakeelb@google.com, rientjes@google.com, cai@lca.pw,
-        akpm@linux-foundation.org
-Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
+        Thu, 22 Aug 2019 13:52:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; t=1566496365; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=njcRsPF/02yn6H0lZYcK+rcCJIm/AdP3uLokWD7X6U/uELuqpiNFQ9bnjoIXJZBOXo+D+TO4yB1FOHwzrzH22+YO2+yOHnMIk1iwIK8obB0kBxfO21EX9XJTZcEhF6pi5vI5H26FlhRdUxxTJ7LTt+eAXUsBhjEKnJZJeA5X/Oo=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1566496365; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To:ARC-Authentication-Results; 
+        bh=hajNLWDItg9LFXr1p/488VmQbRzQ2eUHYOM9UokpjIU=; 
+        b=anaNHWVPRG5Dad0pAq1biqa7Sph3tYYO193Qg/EFu3XTD3GqqpR9jbnYchLrZWEZQL5hjfFe/KAZ7zeW2TYXa1CUCnPa9KeCEO79A4GdLdmx6Cynt9cGWlv/625/pA+oyrk3IAXVBk+uJdAB0eAIwvMLOPqA1zzCv0eGD0Mf45E=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=brennan.io;
+        spf=pass  smtp.mailfrom=stephen@brennan.io;
+        dmarc=pass header.from=<stephen@brennan.io> header.from=<stephen@brennan.io>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1566496365;
+        s=selector01; d=brennan.io; i=stephen@brennan.io;
+        h=From:To:Cc:Message-ID:Subject:Date:MIME-Version:Content-Transfer-Encoding:Content-Type;
+        l=14220; bh=hajNLWDItg9LFXr1p/488VmQbRzQ2eUHYOM9UokpjIU=;
+        b=iC484pvuZYhLOkHtI3rDB5xjZHAPWhtsAVLo/0PIzaO7FTPe3XmoZEz0gIZU69ib
+        n/vJLlqGVIS2TBRR0apTx73QgNEKl2SpiuXkmMjexrM4Et/9IRfvBo4ZViJLlkzM1Rj
+        qwkVLSRzcN14KdKlI+6oi5y5ey040iKG6je4BmCY=
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2]) by mx.zohomail.com
+        with SMTPS id 1566496361624408.21571661497194; Thu, 22 Aug 2019 10:52:41 -0700 (PDT)
+From:   Stephen Brennan <stephen@brennan.io>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Stephen Brennan <stephen@brennan.io>, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [v6 PATCH 4/4] mm: thp: make deferred split shrinker memcg aware
-Date:   Fri, 23 Aug 2019 01:50:27 +0800
-Message-Id: <1566496227-84952-5-git-send-email-yang.shi@linux.alibaba.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1566496227-84952-1-git-send-email-yang.shi@linux.alibaba.com>
-References: <1566496227-84952-1-git-send-email-yang.shi@linux.alibaba.com>
+Message-ID: <20190822175228.3419-1-stephen@brennan.io>
+Subject: [PATCH] staging: rtl8192u: Fix indentation
+Date:   Thu, 22 Aug 2019 10:52:28 -0700
+X-Mailer: git-send-email 2.22.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently THP deferred split shrinker is not memcg aware, this may cause
-premature OOM with some configuration. For example the below test would
-run into premature OOM easily:
+Checkpatch reports WARNING:SUSPECT_CODE_INDENT in several places. Fix
+this by aligning code properly with tabs.
 
-$ cgcreate -g memory:thp
-$ echo 4G > /sys/fs/cgroup/memory/thp/memory/limit_in_bytes
-$ cgexec -g memory:thp transhuge-stress 4000
-
-transhuge-stress comes from kernel selftest.
-
-It is easy to hit OOM, but there are still a lot THP on the deferred
-split queue, memcg direct reclaim can't touch them since the deferred
-split shrinker is not memcg aware.
-
-Convert deferred split shrinker memcg aware by introducing per memcg
-deferred split queue.  The THP should be on either per node or per memcg
-deferred split queue if it belongs to a memcg.  When the page is
-immigrated to the other memcg, it will be immigrated to the target
-memcg's deferred split queue too.
-
-Reuse the second tail page's deferred_list for per memcg list since the
-same THP can't be on multiple deferred split queues.
-
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Shakeel Butt <shakeelb@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Qian Cai <cai@lca.pw>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Signed-off-by: Stephen Brennan <stephen@brennan.io>
 ---
- include/linux/huge_mm.h    |  9 +++++++
- include/linux/memcontrol.h |  4 +++
- include/linux/mm_types.h   |  1 +
- mm/huge_memory.c           | 62 +++++++++++++++++++++++++++++++++++++++-------
- mm/memcontrol.c            | 24 ++++++++++++++++++
- 5 files changed, 91 insertions(+), 9 deletions(-)
+ .../rtl8192u/ieee80211/ieee80211_crypt_ccmp.c |   2 +-
+ .../staging/rtl8192u/ieee80211/ieee80211_rx.c | 112 +++++++++---------
+ .../staging/rtl8192u/ieee80211/ieee80211_tx.c |  18 +--
+ .../staging/rtl8192u/ieee80211/ieee80211_wx.c |   8 +-
+ drivers/staging/rtl8192u/r819xU_firmware.c    |   2 +-
+ 5 files changed, 71 insertions(+), 71 deletions(-)
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 45ede62..61c9ffd 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -267,6 +267,15 @@ static inline bool thp_migration_supported(void)
- 	return IS_ENABLED(CONFIG_ARCH_ENABLE_THP_MIGRATION);
- }
- 
-+static inline struct list_head *page_deferred_list(struct page *page)
-+{
-+	/*
-+	 * Global or memcg deferred list in the second tail pages is
-+	 * occupied by compound_head.
-+	 */
-+	return &page[2].deferred_list;
-+}
-+
- #else /* CONFIG_TRANSPARENT_HUGEPAGE */
- #define HPAGE_PMD_SHIFT ({ BUILD_BUG(); 0; })
- #define HPAGE_PMD_MASK ({ BUILD_BUG(); 0; })
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 5771816..cace365 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -312,6 +312,10 @@ struct mem_cgroup {
- 	struct list_head event_list;
- 	spinlock_t event_list_lock;
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	struct deferred_split deferred_split_queue;
-+#endif
-+
- 	struct mem_cgroup_per_node *nodeinfo[0];
- 	/* WARNING: nodeinfo must be the last member here */
- };
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 3a37a89..156640c 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -139,6 +139,7 @@ struct page {
- 		struct {	/* Second tail page of compound page */
- 			unsigned long _compound_pad_1;	/* compound_head */
- 			unsigned long _compound_pad_2;
-+			/* For both global and memcg */
- 			struct list_head deferred_list;
- 		};
- 		struct {	/* Page table pages */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index e0d8e08..34fbc46 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -495,11 +495,25 @@ pmd_t maybe_pmd_mkwrite(pmd_t pmd, struct vm_area_struct *vma)
- 	return pmd;
- }
- 
--static inline struct list_head *page_deferred_list(struct page *page)
-+#ifdef CONFIG_MEMCG
-+static inline struct deferred_split *get_deferred_split_queue(struct page *page)
- {
--	/* ->lru in the tail pages is occupied by compound_head. */
--	return &page[2].deferred_list;
-+	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
-+	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
-+
-+	if (memcg)
-+		return &memcg->deferred_split_queue;
-+	else
-+		return &pgdat->deferred_split_queue;
- }
-+#else
-+static inline struct deferred_split *get_deferred_split_queue(struct page *page)
-+{
-+	struct pglist_data *pgdat = NODE_DATA(page_to_nid(page));
-+
-+	return &pgdat->deferred_split_queue;
-+}
-+#endif
- 
- void prep_transhuge_page(struct page *page)
- {
-@@ -2658,7 +2672,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- {
- 	struct page *head = compound_head(page);
- 	struct pglist_data *pgdata = NODE_DATA(page_to_nid(head));
--	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+	struct deferred_split *ds_queue = get_deferred_split_queue(page);
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
- 	int count, mapcount, extra_pins, ret;
-@@ -2794,8 +2808,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 
- void free_transhuge_page(struct page *page)
- {
--	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
--	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+	struct deferred_split *ds_queue = get_deferred_split_queue(page);
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-@@ -2809,17 +2822,37 @@ void free_transhuge_page(struct page *page)
- 
- void deferred_split_huge_page(struct page *page)
- {
--	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
--	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+	struct deferred_split *ds_queue = get_deferred_split_queue(page);
-+#ifdef CONFIG_MEMCG
-+	struct mem_cgroup *memcg = compound_head(page)->mem_cgroup;
-+#endif
- 	unsigned long flags;
- 
- 	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
- 
-+	/*
-+	 * The try_to_unmap() in page reclaim path might reach here too,
-+	 * this may cause a race condition to corrupt deferred split queue.
-+	 * And, if page reclaim is already handling the same page, it is
-+	 * unnecessary to handle it again in shrinker.
-+	 *
-+	 * Check PageSwapCache to determine if the page is being
-+	 * handled by page reclaim since THP swap would add the page into
-+	 * swap cache before calling try_to_unmap().
-+	 */
-+	if (PageSwapCache(page))
-+		return;
-+
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	if (list_empty(page_deferred_list(page))) {
- 		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
- 		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
- 		ds_queue->split_queue_len++;
-+#ifdef CONFIG_MEMCG
-+		if (memcg)
-+			memcg_set_shrinker_bit(memcg, page_to_nid(page),
-+					       deferred_split_shrinker.id);
-+#endif
- 	}
- 	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- }
-@@ -2829,6 +2862,11 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
- {
- 	struct pglist_data *pgdata = NODE_DATA(sc->nid);
- 	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+
-+#ifdef CONFIG_MEMCG
-+	if (sc->memcg)
-+		ds_queue = &sc->memcg->deferred_split_queue;
-+#endif
- 	return READ_ONCE(ds_queue->split_queue_len);
- }
- 
-@@ -2842,6 +2880,11 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	struct page *page;
- 	int split = 0;
- 
-+#ifdef CONFIG_MEMCG
-+	if (sc->memcg)
-+		ds_queue = &sc->memcg->deferred_split_queue;
-+#endif
-+
- 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	/* Take pin on all head pages to avoid freeing them under us */
- 	list_for_each_safe(pos, next, &ds_queue->split_queue) {
-@@ -2888,7 +2931,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 	.count_objects = deferred_split_count,
- 	.scan_objects = deferred_split_scan,
- 	.seeks = DEFAULT_SEEKS,
--	.flags = SHRINKER_NUMA_AWARE,
-+	.flags = SHRINKER_NUMA_AWARE | SHRINKER_MEMCG_AWARE |
-+		 SHRINKER_NONSLAB,
- };
- 
- #ifdef CONFIG_DEBUG_FS
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index d90ded1..da4a411 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4698,6 +4698,11 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	INIT_LIST_HEAD(&memcg->cgwb_list);
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_ccmp.c b/dr=
+ivers/staging/rtl8192u/ieee80211/ieee80211_crypt_ccmp.c
+index aecee42be95e..369c57b63350 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_ccmp.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_crypt_ccmp.c
+@@ -346,7 +346,7 @@ static int ieee80211_ccmp_set_key(void *key, int len, u=
+8 *seq, void *priv)
+ =09=09}
+ =09=09if (crypto_aead_setauthsize(tfm, CCMP_MIC_LEN) ||
+ =09=09    crypto_aead_setkey(tfm, data->key, CCMP_TK_LEN))
+-=09=09=09=09return -1;
++=09=09=09return -1;
+ =09} else if (len =3D=3D 0) {
+ =09=09data->key_set =3D 0;
+ =09} else {
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c b/drivers/st=
+aging/rtl8192u/ieee80211/ieee80211_rx.c
+index 7ef1e89de269..643e40e4c5fe 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_rx.c
+@@ -103,17 +103,17 @@ ieee80211_frag_cache_get(struct ieee80211_device *iee=
+e,
+ =09u8 tid;
+=20
+ =09if (((fc & IEEE80211_FCTL_DSTODS) =3D=3D IEEE80211_FCTL_DSTODS) && IEEE=
+80211_QOS_HAS_SEQ(fc)) {
+-=09  hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)hdr;
+-=09  tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)hdr;
++=09=09tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else if (IEEE80211_QOS_HAS_SEQ(fc)) {
+-=09  hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)hdr;
+-=09  tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)hdr;
++=09=09tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else {
+-=09  tid =3D 0;
++=09=09tid =3D 0;
+ =09}
+=20
+ =09if (frag =3D=3D 0) {
+@@ -170,17 +170,17 @@ static int ieee80211_frag_cache_invalidate(struct iee=
+e80211_device *ieee,
+ =09u8 tid;
+=20
+ =09if (((fc & IEEE80211_FCTL_DSTODS) =3D=3D IEEE80211_FCTL_DSTODS) && IEEE=
+80211_QOS_HAS_SEQ(fc)) {
+-=09  hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)hdr;
+-=09  tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)hdr;
++=09=09tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else if (IEEE80211_QOS_HAS_SEQ(fc)) {
+-=09  hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)hdr;
+-=09  tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)hdr;
++=09=09tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else {
+-=09  tid =3D 0;
++=09=09tid =3D 0;
+ =09}
+=20
+ =09entry =3D ieee80211_frag_cache_find(ieee, seq, -1, tid, hdr->addr2,
+@@ -427,17 +427,17 @@ static int is_duplicate_packet(struct ieee80211_devic=
+e *ieee,
+=20
+ =09//TO2DS and QoS
+ =09if (((fc & IEEE80211_FCTL_DSTODS) =3D=3D IEEE80211_FCTL_DSTODS) && IEEE=
+80211_QOS_HAS_SEQ(fc)) {
+-=09  hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)header;
+-=09  tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_4addrqos =3D (struct rtl_80211_hdr_4addrqos *)header;
++=09=09tid =3D le16_to_cpu(hdr_4addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else if (IEEE80211_QOS_HAS_SEQ(fc)) { //QoS
+-=09  hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)header;
+-=09  tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
+-=09  tid =3D UP2AC(tid);
+-=09  tid++;
++=09=09hdr_3addrqos =3D (struct rtl_80211_hdr_3addrqos *)header;
++=09=09tid =3D le16_to_cpu(hdr_3addrqos->qos_ctl) & IEEE80211_QCTL_TID;
++=09=09tid =3D UP2AC(tid);
++=09=09tid++;
+ =09} else { // no QoS
+-=09  tid =3D 0;
++=09=09tid =3D 0;
+ =09}
+=20
+ =09switch (ieee->iw_mode) {
+@@ -999,7 +999,7 @@ int ieee80211_rx(struct ieee80211_device *ieee, struct =
+sk_buff *skb,
+ =09// if QoS enabled, should check the sequence for each of the AC
+ =09if ((!ieee->pHTInfo->bCurRxReorderEnable) || !ieee->current_network.qos=
+_data.active || !IsDataFrame(skb->data) || IsLegacyDataFrame(skb->data)) {
+ =09=09if (is_duplicate_packet(ieee, hdr))
+-=09=09goto rx_dropped;
++=09=09=09goto rx_dropped;
+=20
+ =09} else {
+ =09=09struct rx_ts_record *pRxTS =3D NULL;
+@@ -1220,10 +1220,10 @@ int ieee80211_rx(struct ieee80211_device *ieee, str=
+uct sk_buff *skb,
+ #ifdef CONFIG_IEEE80211_DEBUG
+ =09if (crypt && !(fc & IEEE80211_FCTL_WEP) &&
+ =09    ieee80211_is_eapol_frame(ieee, skb, hdrlen)) {
+-=09=09=09struct eapol *eap =3D (struct eapol *)(skb->data +
+-=09=09=09=0924);
+-=09=09=09IEEE80211_DEBUG_EAP("RX: IEEE 802.1X EAPOL frame: %s\n",
+-=09=09=09=09=09=09eap_get_type(eap->type));
++=09=09struct eapol *eap =3D (struct eapol *)(skb->data +
++=09=09=0924);
++=09=09IEEE80211_DEBUG_EAP("RX: IEEE 802.1X EAPOL frame: %s\n",
++=09=09=09=09=09eap_get_type(eap->type));
+ =09}
  #endif
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	spin_lock_init(&memcg->deferred_split_queue.split_queue_lock);
-+	INIT_LIST_HEAD(&memcg->deferred_split_queue.split_queue);
-+	memcg->deferred_split_queue.split_queue_len = 0;
-+#endif
- 	idr_replace(&mem_cgroup_idr, memcg, memcg->id.id);
- 	return memcg;
- fail:
-@@ -5071,6 +5076,14 @@ static int mem_cgroup_move_account(struct page *page,
- 		__mod_memcg_state(to, NR_WRITEBACK, nr_pages);
- 	}
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	if (compound && !list_empty(page_deferred_list(page))) {
-+		spin_lock(&from->deferred_split_queue.split_queue_lock);
-+		list_del_init(page_deferred_list(page));
-+		from->deferred_split_queue.split_queue_len--;
-+		spin_unlock(&from->deferred_split_queue.split_queue_lock);
-+	}
-+#endif
- 	/*
- 	 * It is safe to change page->mem_cgroup here because the page
- 	 * is referenced, charged, and isolated - we can't race with
-@@ -5079,6 +5092,17 @@ static int mem_cgroup_move_account(struct page *page,
- 
- 	/* caller should have done css_get */
- 	page->mem_cgroup = to;
+=20
+@@ -1785,13 +1785,13 @@ int ieee80211_parse_info_param(struct ieee80211_dev=
+ice *ieee,
+ =09=09=09=09   info_element->data[2] =3D=3D 0x4c &&
+ =09=09=09=09   info_element->data[3] =3D=3D 0x033){
+=20
+-=09=09=09=09=09=09tmp_htcap_len =3D min(info_element->len, (u8)MAX_IE_LEN)=
+;
+-=09=09=09=09=09=09if (tmp_htcap_len !=3D 0) {
+-=09=09=09=09=09=09=09network->bssht.bdHTSpecVer =3D HT_SPEC_VER_EWC;
+-=09=09=09=09=09=09=09network->bssht.bdHTCapLen =3D tmp_htcap_len > sizeof(=
+network->bssht.bdHTCapBuf) ? \
+-=09=09=09=09=09=09=09=09sizeof(network->bssht.bdHTCapBuf) : tmp_htcap_len;
+-=09=09=09=09=09=09=09memcpy(network->bssht.bdHTCapBuf, info_element->data,=
+ network->bssht.bdHTCapLen);
+-=09=09=09=09=09=09}
++=09=09=09=09=09tmp_htcap_len =3D min(info_element->len, (u8)MAX_IE_LEN);
++=09=09=09=09=09if (tmp_htcap_len !=3D 0) {
++=09=09=09=09=09=09network->bssht.bdHTSpecVer =3D HT_SPEC_VER_EWC;
++=09=09=09=09=09=09network->bssht.bdHTCapLen =3D tmp_htcap_len > sizeof(net=
+work->bssht.bdHTCapBuf) ? \
++=09=09=09=09=09=09=09sizeof(network->bssht.bdHTCapBuf) : tmp_htcap_len;
++=09=09=09=09=09=09memcpy(network->bssht.bdHTCapBuf, info_element->data, ne=
+twork->bssht.bdHTCapLen);
++=09=09=09=09=09}
+ =09=09=09=09}
+ =09=09=09=09if (tmp_htcap_len !=3D 0)
+ =09=09=09=09=09network->bssht.bdSupportHT =3D true;
+@@ -1807,17 +1807,17 @@ int ieee80211_parse_info_param(struct ieee80211_dev=
+ice *ieee,
+ =09=09=09=09=09info_element->data[2] =3D=3D 0x4c &&
+ =09=09=09=09=09info_element->data[3] =3D=3D 0x034){
+=20
+-=09=09=09=09=09=09tmp_htinfo_len =3D min(info_element->len, (u8)MAX_IE_LEN=
+);
+-=09=09=09=09=09=09if (tmp_htinfo_len !=3D 0) {
+-=09=09=09=09=09=09=09network->bssht.bdHTSpecVer =3D HT_SPEC_VER_EWC;
+-=09=09=09=09=09=09=09if (tmp_htinfo_len) {
+-=09=09=09=09=09=09=09=09network->bssht.bdHTInfoLen =3D tmp_htinfo_len > si=
+zeof(network->bssht.bdHTInfoBuf) ? \
+-=09=09=09=09=09=09=09=09=09sizeof(network->bssht.bdHTInfoBuf) : tmp_htinfo=
+_len;
+-=09=09=09=09=09=09=09=09memcpy(network->bssht.bdHTInfoBuf, info_element->d=
+ata, network->bssht.bdHTInfoLen);
+-=09=09=09=09=09=09=09}
+-
++=09=09=09=09=09tmp_htinfo_len =3D min(info_element->len, (u8)MAX_IE_LEN);
++=09=09=09=09=09if (tmp_htinfo_len !=3D 0) {
++=09=09=09=09=09=09network->bssht.bdHTSpecVer =3D HT_SPEC_VER_EWC;
++=09=09=09=09=09=09if (tmp_htinfo_len) {
++=09=09=09=09=09=09=09network->bssht.bdHTInfoLen =3D tmp_htinfo_len > sizeo=
+f(network->bssht.bdHTInfoBuf) ? \
++=09=09=09=09=09=09=09=09sizeof(network->bssht.bdHTInfoBuf) : tmp_htinfo_le=
+n;
++=09=09=09=09=09=09=09memcpy(network->bssht.bdHTInfoBuf, info_element->data=
+, network->bssht.bdHTInfoLen);
+ =09=09=09=09=09=09}
+=20
++=09=09=09=09=09}
 +
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+	if (compound && list_empty(page_deferred_list(page))) {
-+		spin_lock(&to->deferred_split_queue.split_queue_lock);
-+		list_add_tail(page_deferred_list(page),
-+			      &to->deferred_split_queue.split_queue);
-+		to->deferred_split_queue.split_queue_len++;
-+		spin_unlock(&to->deferred_split_queue.split_queue_lock);
-+	}
-+#endif
-+
- 	spin_unlock_irqrestore(&from->move_lock, flags);
- 
- 	ret = 0;
--- 
-1.8.3.1
+ =09=09=09=09}
+ =09=09=09}
+=20
+@@ -1837,7 +1837,7 @@ int ieee80211_parse_info_param(struct ieee80211_devic=
+e *ieee,
+ =09=09=09=09=09=09network->bssht.bdRT2RTAggregation =3D true;
+=20
+ =09=09=09=09=09=09if ((ht_realtek_agg_buf[4] =3D=3D 1) && (ht_realtek_agg_=
+buf[5] & 0x02))
+-=09=09=09=09=09=09network->bssht.bdRT2RTLongSlotTime =3D true;
++=09=09=09=09=09=09=09network->bssht.bdRT2RTLongSlotTime =3D true;
+ =09=09=09=09=09}
+ =09=09=09=09}
+=20
+@@ -1858,7 +1858,7 @@ int ieee80211_parse_info_param(struct ieee80211_devic=
+e *ieee,
+ =09=09=09=09=09 info_element->data[1] =3D=3D 0x10 &&
+ =09=09=09=09=09 info_element->data[2] =3D=3D 0x18)){
+=20
+-=09=09=09=09=09=09network->broadcom_cap_exist =3D true;
++=09=09=09=09=09network->broadcom_cap_exist =3D true;
+=20
+ =09=09=09=09}
+ =09=09=09}
+@@ -2289,7 +2289,7 @@ static inline void update_network(struct ieee80211_ne=
+twork *dst,
+ =09   src->wmm_param[1].aci_aifsn || \
+ =09   src->wmm_param[2].aci_aifsn || \
+ =09   src->wmm_param[3].aci_aifsn) {
+-=09  memcpy(dst->wmm_param, src->wmm_param, WME_AC_PRAM_LEN);
++=09=09memcpy(dst->wmm_param, src->wmm_param, WME_AC_PRAM_LEN);
+ =09}
+ =09//dst->QoS_Enable =3D src->QoS_Enable;
+ #ifdef THOMAS_TURBO
+@@ -2436,11 +2436,11 @@ static inline void ieee80211_process_probe_response=
+(
+ =09if (is_same_network(&ieee->current_network, network, ieee)) {
+ =09=09update_network(&ieee->current_network, network);
+ =09=09if ((ieee->current_network.mode =3D=3D IEEE_N_24G || ieee->current_n=
+etwork.mode =3D=3D IEEE_G)
+-=09=09&& ieee->current_network.berp_info_valid){
+-=09=09if (ieee->current_network.erp_value & ERP_UseProtection)
+-=09=09=09ieee->current_network.buseprotection =3D true;
+-=09=09else
+-=09=09=09ieee->current_network.buseprotection =3D false;
++=09=09    && ieee->current_network.berp_info_valid){
++=09=09=09if (ieee->current_network.erp_value & ERP_UseProtection)
++=09=09=09=09ieee->current_network.buseprotection =3D true;
++=09=09=09else
++=09=09=09=09ieee->current_network.buseprotection =3D false;
+ =09=09}
+ =09=09if (is_beacon(beacon->header.frame_ctl))
+ =09=09{
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c b/drivers/st=
+aging/rtl8192u/ieee80211/ieee80211_tx.c
+index fc6eb97801e1..506de76a052f 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_tx.c
+@@ -508,7 +508,7 @@ static void ieee80211_query_protectionmode(struct ieee8=
+0211_device *ieee,
+ =09if (ieee->current_network.capability & WLAN_CAPABILITY_SHORT_PREAMBLE)
+ =09=09tcb_desc->bUseShortPreamble =3D true;
+ =09if (ieee->mode =3D=3D IW_MODE_MASTER)
+-=09=09=09goto NO_PROTECTION;
++=09=09goto NO_PROTECTION;
+ =09return;
+ NO_PROTECTION:
+ =09tcb_desc->bRTSEnable=09=3D false;
+@@ -808,15 +808,15 @@ int ieee80211_xmit(struct sk_buff *skb, struct net_de=
+vice *dev)
+=20
+ =09=09if(qos_actived)
+ =09=09{
+-=09=09  if (ieee->seq_ctrl[UP2AC(skb->priority) + 1] =3D=3D 0xFFF)
+-=09=09=09ieee->seq_ctrl[UP2AC(skb->priority) + 1] =3D 0;
+-=09=09  else
+-=09=09=09ieee->seq_ctrl[UP2AC(skb->priority) + 1]++;
++=09=09=09if (ieee->seq_ctrl[UP2AC(skb->priority) + 1] =3D=3D 0xFFF)
++=09=09=09=09ieee->seq_ctrl[UP2AC(skb->priority) + 1] =3D 0;
++=09=09=09else
++=09=09=09=09ieee->seq_ctrl[UP2AC(skb->priority) + 1]++;
+ =09=09} else {
+-=09=09  if (ieee->seq_ctrl[0] =3D=3D 0xFFF)
+-=09=09=09ieee->seq_ctrl[0] =3D 0;
+-=09=09  else
+-=09=09=09ieee->seq_ctrl[0]++;
++=09=09=09if (ieee->seq_ctrl[0] =3D=3D 0xFFF)
++=09=09=09=09ieee->seq_ctrl[0] =3D 0;
++=09=09=09else
++=09=09=09=09ieee->seq_ctrl[0]++;
+ =09=09}
+ =09} else {
+ =09=09if (unlikely(skb->len < sizeof(struct rtl_80211_hdr_3addr))) {
+diff --git a/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c b/drivers/st=
+aging/rtl8192u/ieee80211/ieee80211_wx.c
+index be08cd1d37a7..4920c1b27b52 100644
+--- a/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
++++ b/drivers/staging/rtl8192u/ieee80211/ieee80211_wx.c
+@@ -178,7 +178,7 @@ static inline char *rtl819x_translate_scan(struct ieee8=
+0211_device *ieee,
+=20
+ =09iwe.u.data.length =3D p - custom;
+ =09if (iwe.u.data.length)
+-=09    start =3D iwe_stream_add_point(info, start, stop, &iwe, custom);
++=09=09start =3D iwe_stream_add_point(info, start, stop, &iwe, custom);
+=20
+ =09if (ieee->wpa_enabled && network->wpa_ie_len) {
+ =09=09char buf[MAX_WPA_IE_LEN * 2 + 30];
+@@ -219,7 +219,7 @@ static inline char *rtl819x_translate_scan(struct ieee8=
+0211_device *ieee,
+ =09=09      " Last beacon: %lums ago", (jiffies - network->last_scanned) /=
+ (HZ / 100));
+ =09iwe.u.data.length =3D p - custom;
+ =09if (iwe.u.data.length)
+-=09    start =3D iwe_stream_add_point(info, start, stop, &iwe, custom);
++=09=09start =3D iwe_stream_add_point(info, start, stop, &iwe, custom);
+=20
+ =09return start;
+ }
+@@ -786,8 +786,8 @@ int ieee80211_wx_set_gen_ie(struct ieee80211_device *ie=
+ee, u8 *ie, size_t len)
+ =09u8 *buf;
+=20
+ =09if (len>MAX_WPA_IE_LEN || (len && !ie)) {
+-=09//=09printk("return error out, len:%d\n", len);
+-=09return -EINVAL;
++=09=09//printk("return error out, len:%d\n", len);
++=09=09return -EINVAL;
+ =09}
+=20
+=20
+diff --git a/drivers/staging/rtl8192u/r819xU_firmware.c b/drivers/staging/r=
+tl8192u/r819xU_firmware.c
+index 153d4ee0ec07..dd81d210bd49 100644
+--- a/drivers/staging/rtl8192u/r819xU_firmware.c
++++ b/drivers/staging/rtl8192u/r819xU_firmware.c
+@@ -231,7 +231,7 @@ bool init_firmware(struct net_device *dev)
+ =09=09rst_opt =3D OPT_FIRMWARE_RESET;
+ =09=09starting_state =3D FW_INIT_STEP2_DATA;
+ =09} else {
+-=09=09 RT_TRACE(COMP_FIRMWARE, "PlatformInitFirmware: undefined firmware s=
+tate\n");
++=09=09RT_TRACE(COMP_FIRMWARE, "PlatformInitFirmware: undefined firmware st=
+ate\n");
+ =09}
+=20
+ =09/*
+--=20
+2.22.0
+
+
 
