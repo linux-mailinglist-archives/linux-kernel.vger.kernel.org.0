@@ -2,40 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 02B6B99B44
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD60399B27
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:24:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403894AbfHVRXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42482 "EHLO mail.kernel.org"
+        id S2389680AbfHVRWN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387686AbfHVRXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:13 -0400
+        id S1730997AbfHVRWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:13 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 11E1E233FC;
-        Thu, 22 Aug 2019 17:23:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7D9B21743;
+        Thu, 22 Aug 2019 17:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494593;
-        bh=lddK2BR3eW6iu9NrovsCSujv19iVX+zVEY+ElFOHc70=;
+        s=default; t=1566494531;
+        bh=4HEmr50nV+JdKeTKkivXpmrx6+cnqQ1AJCpc1pzNJLw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vXYRYMrlINVodN/hXmV9pOXBuz7xdClSl/J29O/9vafoon4Mn/wEgbfCN2Xuu+n3Q
-         IVXVBceoAA6FCRKztRARCl4x0vNZrgvjNVPWSS8q4bVDXOKOGW+zYSBnWATGN8oHwS
-         sOzHZVmciCJNCfY+K9CQTaePXED1n8DDSgTVCgmo=
+        b=Zi1GyzBeSfm/XZ3oGIDTM+8aYz1zfXLQYDIhyVHQdXVjE4P1tIZT77giHB47oEn4c
+         rEQ1lbVILZ6z3QotTxZIc2kXdQVfi3NsZRQlMj7JKksnm7Pjz0Le9TYzyVAANHo543
+         Ln8bP4tw+zW8j8PUOXeptlWhUZMfPJm8Cksn2T7o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Thomas Tai <thomas.tai@oracle.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 013/103] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
-Date:   Thu, 22 Aug 2019 10:18:01 -0700
-Message-Id: <20190822171729.386681818@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+a64a382964bf6c71a9c0@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.4 01/78] usb: iowarrior: fix deadlock on disconnect
+Date:   Thu, 22 Aug 2019 10:18:05 -0700
+Message-Id: <20190822171832.078518051@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -44,70 +46,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-iscsi_ibft can use ACPI to find the iBFT entry during bootup,
-currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
-a X86 legacy way to find the iBFT by searching through the
-low memory. This patch changes the dependency so that other
-arch like ARM64 can use ISCSI_IBFT as long as the arch supports
-ACPI.
+commit c468a8aa790e0dfe0a7f8a39db282d39c2c00b46 upstream.
 
-ibft_init() needs to use the global variable ibft_addr declared
-in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
-to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
-Moving ibft_addr into the iscsi_ibft.c does not work because if
-ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
-be able to find the variable at compile time.
+We have to drop the mutex before we close() upon disconnect()
+as close() needs the lock. This is safe to do by dropping the
+mutex as intfdata is already set to NULL, so open() will fail.
 
-Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
-Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 03f36e885fc26 ("USB: open disconnect race in iowarrior")
+Reported-by: syzbot+a64a382964bf6c71a9c0@syzkaller.appspotmail.com
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20190808092728.23417-1-oneukum@suse.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/firmware/Kconfig      | 5 +++--
- drivers/firmware/iscsi_ibft.c | 4 ++++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ drivers/usb/misc/iowarrior.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-index bca172d42c743..854df538ae01e 100644
---- a/drivers/firmware/Kconfig
-+++ b/drivers/firmware/Kconfig
-@@ -144,7 +144,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
+--- a/drivers/usb/misc/iowarrior.c
++++ b/drivers/usb/misc/iowarrior.c
+@@ -898,19 +898,20 @@ static void iowarrior_disconnect(struct
+ 	dev = usb_get_intfdata(interface);
+ 	mutex_lock(&iowarrior_open_disc_lock);
+ 	usb_set_intfdata(interface, NULL);
++	/* prevent device read, write and ioctl */
++	dev->present = 0;
  
- config ISCSI_IBFT_FIND
- 	bool "iSCSI Boot Firmware Table Attributes"
--	depends on X86 && ACPI
-+	depends on X86 && ISCSI_IBFT
- 	default n
- 	help
- 	  This option enables the kernel to find the region of memory
-@@ -155,7 +155,8 @@ config ISCSI_IBFT_FIND
- config ISCSI_IBFT
- 	tristate "iSCSI Boot Firmware Table Attributes module"
- 	select ISCSI_BOOT_SYSFS
--	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
-+	select ISCSI_IBFT_FIND if X86
-+	depends on ACPI && SCSI && SCSI_LOWLEVEL
- 	default	n
- 	help
- 	  This option enables support for detection and exposing of iSCSI
-diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
-index 132b9bae4b6aa..220bbc91cebdb 100644
---- a/drivers/firmware/iscsi_ibft.c
-+++ b/drivers/firmware/iscsi_ibft.c
-@@ -93,6 +93,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
- MODULE_LICENSE("GPL");
- MODULE_VERSION(IBFT_ISCSI_VERSION);
+ 	minor = dev->minor;
++	mutex_unlock(&iowarrior_open_disc_lock);
++	/* give back our minor - this will call close() locks need to be dropped at this point*/
  
-+#ifndef CONFIG_ISCSI_IBFT_FIND
-+struct acpi_table_ibft *ibft_addr;
-+#endif
-+
- struct ibft_hdr {
- 	u8 id;
- 	u8 version;
--- 
-2.20.1
-
+-	/* give back our minor */
+ 	usb_deregister_dev(interface, &iowarrior_class);
+ 
+ 	mutex_lock(&dev->mutex);
+ 
+ 	/* prevent device read, write and ioctl */
+-	dev->present = 0;
+ 
+ 	mutex_unlock(&dev->mutex);
+-	mutex_unlock(&iowarrior_open_disc_lock);
+ 
+ 	if (dev->opened) {
+ 		/* There is a process that holds a filedescriptor to the device ,
 
 
