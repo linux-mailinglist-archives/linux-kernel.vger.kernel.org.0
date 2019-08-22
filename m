@@ -2,69 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 629F2996B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:31:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE156996A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:31:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388904AbfHVOb1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:31:27 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:33950 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727894AbfHVOb1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:31:27 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 58E73C2AD7CFE8B8459A;
-        Thu, 22 Aug 2019 22:30:49 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 22 Aug 2019
- 22:30:41 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <perex@perex.cz>,
-        <tiwai@suse.com>, <Vijendar.Mukunda@amd.com>,
-        <gregkh@linuxfoundation.org>, <maruthi.bayyavarapu@amd.com>,
-        <tglx@linutronix.de>, <yuehaibing@huawei.com>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH -next] ASoC: AMD: Fix Kconfig warning without GPIOLIB
-Date:   Thu, 22 Aug 2019 22:30:07 +0800
-Message-ID: <20190822143007.73644-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+        id S2388657AbfHVOaf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:30:35 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33262 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732789AbfHVOaf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:30:35 -0400
+Received: by mail-pl1-f193.google.com with SMTP id go14so3581696plb.0;
+        Thu, 22 Aug 2019 07:30:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=tDRFmgdNOn89BNEOePAuDKx2szX/hZIctu/3Yr6F4SY=;
+        b=GcpWx0alS4jSrHm66E2XU1peda1oBep0K+w9L2px9b14LBgA6xy/ISrhhtK8mg/w/4
+         TnFvf9R3krlEFyZKKwmrRU4OArQX0zpLujT73xRdF9X01F3Cd5zpDgPJxQrmV7DiR/4J
+         CoxdcK/1ItS1/h3ShD4cilXzjv+bV4Nqxqg9i4zmIfntX9EqBFFM3hqTCFxmjil19oKO
+         L51GUnnnMAIqdELQclX+fpHjdEmFZlf/9wsWhQqMab8go17GiyzYwqtG6aFDErp4b2VI
+         D1tQaHItI8JQiK35fs7BLtTxXxpz+UBcujtZihIsLRZH6i+Ri+NRjgwEb22bMgEEkmtH
+         EApA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=tDRFmgdNOn89BNEOePAuDKx2szX/hZIctu/3Yr6F4SY=;
+        b=jpWiTad/eRvYU3L6aIAb8NwbYI8x/qbejtXIGJJSsrUyk7nx9SDe4ouxFoHQDOcVw1
+         44m9DuId2ZYTBCsc/2ln9HOqdPksiZzMpxJq9I5PESMOISggl+E1UGPIzaKoX+361Rzm
+         AYK4/JSWgof7CFrd44Y8lP6FF8WvXoowJza0XloY9w/ZbKWsfellbb+MICwRrd1TTG4d
+         Q5YGr8ufb2pfej4+oeK/ISF2JSLFXOfgaaGvEGnRjipCuEgWJNeB7Mi2ZhBeqRA2HtUh
+         cenJqqBW8Sd4cz3xNZxPC39mPtwHlmIpbBynx5hbaZMqi3QCVw2KnA5REUA7mGyP7+we
+         TQHg==
+X-Gm-Message-State: APjAAAWlLx8wluPJsw8QYf8dVhXC0oNcqeJ/vASyBuvhLt7ZuVQ2C/Ku
+        EQPPr0HW1J4lfDJ0pWx/szc=
+X-Google-Smtp-Source: APXvYqw3uqWAVTZJzp78Lvd64ZCkRs9PAqZfr8g9qiVxMHxM+hHWnzzYrq4pCpeuhee1evkxC8YUiQ==
+X-Received: by 2002:a17:902:8649:: with SMTP id y9mr36937329plt.252.1566484234243;
+        Thu, 22 Aug 2019 07:30:34 -0700 (PDT)
+Received: from localhost.corp.microsoft.com ([167.220.255.114])
+        by smtp.googlemail.com with ESMTPSA id r23sm32263161pfg.10.2019.08.22.07.30.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Aug 2019 07:30:33 -0700 (PDT)
+From:   lantianyu1986@gmail.com
+X-Google-Original-From: Tianyu.Lan@microsoft.com
+To:     pbonzini@redhat.com, rkrcmar@redhat.com, corbet@lwn.net,
+        kys@microsoft.com, haiyangz@microsoft.com, sthemmin@microsoft.com,
+        sashal@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        michael.h.kelley@microsoft.com
+Cc:     Tianyu Lan <Tianyu.Lan@microsoft.com>, kvm@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-hyperv@vger.kernel.org,
+        linux-kernel@vger.kernel.org, vkuznets@redhat.com
+Subject: [PATCH V4 0/3] KVM/Hyper-V: Add Hyper-V direct tlb flush support
+Date:   Thu, 22 Aug 2019 22:30:18 +0800
+Message-Id: <20190822143021.7518-1-Tianyu.Lan@microsoft.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While do rand build without GPIOLIB, we get Kconfig warning:\
+From: Tianyu Lan <Tianyu.Lan@microsoft.com>
 
-WARNING: unmet direct dependencies detected for SND_SOC_MAX98357A
-  Depends on [n]: SOUND [=y] && !UML && SND [=m] && SND_SOC [=m] && GPIOLIB [=n]
-  Selected by [m]:
-  - SND_SOC_AMD_CZ_DA7219MX98357_MACH [=m] && SOUND [=y] && !UML && SND [=m] && SND_SOC [=m] && SND_SOC_AMD_ACP [=m] && I2C [=y]
+This patchset is to add Hyper-V direct tlb support in KVM. Hyper-V
+in L0 can delegate L1 hypervisor to handle tlb flush request from
+L2 guest when direct tlb flush is enabled in L1.
 
-Add GPIOLIB dependency to fix this.
+Patch 2 introduces new cap KVM_CAP_HYPERV_DIRECT_TLBFLUSH to enable
+feature from user space. User space should enable this feature only
+when Hyper-V hypervisor capability is exposed to guest and KVM profile
+is hided. There is a parameter conflict between KVM and Hyper-V hypercall.
+We hope L2 guest doesn't use KVM hypercall when the feature is
+enabled. Detail please see comment of new API "KVM_CAP_HYPERV_DIRECT_TLBFLUSH"
 
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- sound/soc/amd/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change since v3:
+       - Update changelog in each patches. 
 
-diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
-index 9ca9214..5f40517 100644
---- a/sound/soc/amd/Kconfig
-+++ b/sound/soc/amd/Kconfig
-@@ -10,7 +10,7 @@ config SND_SOC_AMD_CZ_DA7219MX98357_MACH
- 	select SND_SOC_MAX98357A
- 	select SND_SOC_ADAU7002
- 	select REGULATOR
--	depends on SND_SOC_AMD_ACP && I2C
-+	depends on SND_SOC_AMD_ACP && I2C && GPIOLIB
- 	help
- 	 This option enables machine driver for DA7219 and MAX9835.
- 
+Change since v2:
+       - Move hv assist page(hv_pa_pg) from struct kvm  to struct kvm_hv.
+
+Change since v1:
+       - Fix offset issue in the patch 1.
+       - Update description of KVM KVM_CAP_HYPERV_DIRECT_TLBFLUSH.
+
+Tianyu Lan (2):
+  x86/Hyper-V: Fix definition of struct hv_vp_assist_page
+  KVM/Hyper-V: Add new KVM capability KVM_CAP_HYPERV_DIRECT_TLBFLUSH
+
+Vitaly Kuznetsov (1):
+  KVM/Hyper-V/VMX: Add direct tlb flush support
+
+ Documentation/virtual/kvm/api.txt  | 13 +++++++++++++
+ arch/x86/include/asm/hyperv-tlfs.h | 24 ++++++++++++++++++-----
+ arch/x86/include/asm/kvm_host.h    |  4 ++++
+ arch/x86/kvm/vmx/evmcs.h           |  2 ++
+ arch/x86/kvm/vmx/vmx.c             | 39 ++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/x86.c                 |  8 ++++++++
+ include/uapi/linux/kvm.h           |  1 +
+ 7 files changed, 86 insertions(+), 5 deletions(-)
+
 -- 
-2.7.4
-
+2.14.5
 
