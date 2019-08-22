@@ -2,57 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D349F99BB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A7AE999BB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404784AbfHVR04 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49594 "EHLO mail.kernel.org"
+        id S2391971AbfHVR1M (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404462AbfHVRZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:38 -0400
+        id S2389976AbfHVRZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:49 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D57E23405;
-        Thu, 22 Aug 2019 17:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7BFE023428;
+        Thu, 22 Aug 2019 17:25:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494737;
-        bh=HZrj+XMtyosh2Tvu6fEBkovpHZXexMnaifEDww0LYbU=;
+        s=default; t=1566494748;
+        bh=MO3w8eOgsbjNExjFPHSc41pUyf7L1Ax8e6jm2SBydpg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I31JabTZC5hlhI0Nj0OpW/6jJkq8cTDbq3OM4SBUH3sO7GEm/IcGQaCGv150S02Wt
-         kIWL4cazXudm6rWyr5ghNoTKSl4ivQdJdvVqSvyVkvU+aVa4Ts2lpgnVONYHgc2u8a
-         BGYV9D5Dx2O7QZCNoxQEaMtulldocM5QPyENlZJk=
+        b=KvPS86UFqC3d9mwIunY/tb2yVYWjgJa+W0oS6l+53NHdBQUkPErKqdiCx51gydr+W
+         eGb8GENI7icvtpmXAIUtgUAw2kB+DCu//GUes3TUZrjH3yQBrXGZ4gNj5JWQieqHST
+         8lIniaQFu0cKxU28lOURGn20mX/U8idXW3n5125A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ralph Campbell <rcampbell@nvidia.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Christoph Lameter <cl@linux.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jan Kara <jack@suse.cz>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@suse.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 03/85] mm/hmm: fix bad subpage pointer in try_to_unmap_one
-Date:   Thu, 22 Aug 2019 10:18:36 -0700
-Message-Id: <20190822171731.151653399@linuxfoundation.org>
+        stable@vger.kernel.org, Fabrice Gasnier <fabrice.gasnier@st.com>,
+        Gottfried Haider <gottfried.haider@gmail.com>,
+        =?UTF-8?q?Michal=20Vok=C3=A1=C4=8D?= <michal.vokac@ysoft.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        John Keeping <john@metanate.com>
+Subject: [PATCH 4.19 08/85] Revert "pwm: Set class for exported channels in sysfs"
+Date:   Thu, 22 Aug 2019 10:18:41 -0700
+Message-Id: <20190822171731.369519312@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
 References: <20190822171731.012687054@linuxfoundation.org>
@@ -65,78 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ralph Campbell <rcampbell@nvidia.com>
+From: Fabrice Gasnier <fabrice.gasnier@st.com>
 
-commit 1de13ee59225dfc98d483f8cce7d83f97c0b31de upstream.
+commit c289d6625237aa785b484b4e94c23b3b91ea7e60 upstream.
 
-When migrating an anonymous private page to a ZONE_DEVICE private page,
-the source page->mapping and page->index fields are copied to the
-destination ZONE_DEVICE struct page and the page_mapcount() is
-increased.  This is so rmap_walk() can be used to unmap and migrate the
-page back to system memory.
+This reverts commit 7e5d1fd75c3dde9fc10c4472b9368089d1b81d00 ("pwm: Set
+class for exported channels in sysfs") as it causes regression with
+multiple pwm chip[1], when exporting a pwm channel (echo X > export):
 
-However, try_to_unmap_one() computes the subpage pointer from a swap pte
-which computes an invalid page pointer and a kernel panic results such
-as:
+- ABI (Documentation/ABI/testing/sysfs-class-pwm) states pwmX should be
+  created in /sys/class/pwm/pwmchipN/pwmX
+- Reverted patch causes new entry to be also created directly in
+  /sys/class/pwm/pwmX
+- 1st time, exporting pwmX will create an entry in /sys/class/pwm/pwmX
+- class attributes are added under pwmX folder, such as export, unexport
+  npwm, symlinks. This is wrong as it belongs to pwmchipN. It may cause
+  bad behavior and report wrong values.
+- when another export happens on another pwmchip, it can't be created
+  (e.g. -EEXIST). This is causing the issue with multiple pwmchip.
 
-  BUG: unable to handle page fault for address: ffffea1fffffffc8
+Example on stm32 (stm32429i-eval) platform:
+$ ls /sys/class/pwm
+pwmchip0 pwmchip4
 
-Currently, only single pages can be migrated to device private memory so
-no subpage computation is needed and it can be set to "page".
+$ cd /sys/class/pwm/pwmchip0/
+$ echo 0 > export
+$ ls /sys/class/pwm
+pwm0 pwmchip0 pwmchip4
 
-[rcampbell@nvidia.com: add comment]
-  Link: http://lkml.kernel.org/r/20190724232700.23327-4-rcampbell@nvidia.com
-Link: http://lkml.kernel.org/r/20190719192955.30462-4-rcampbell@nvidia.com
-Fixes: a5430dda8a3a1c ("mm/migrate: support un-addressable ZONE_DEVICE page in migration")
-Signed-off-by: Ralph Campbell <rcampbell@nvidia.com>
-Cc: "Jérôme Glisse" <jglisse@redhat.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Mike Kravetz <mike.kravetz@oracle.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Jason Gunthorpe <jgg@mellanox.com>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Cc: Christoph Lameter <cl@linux.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>
-Cc: Logan Gunthorpe <logang@deltatee.com>
-Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+$ cd /sys/class/pwm/pwmchip4/
+$ echo 0 > export
+sysfs: cannot create duplicate filename '/class/pwm/pwm0'
+...Exception stack follows...
+
+This is also seen on other platform [2]
+
+[1] https://lkml.org/lkml/2018/9/25/713
+[2] https://lkml.org/lkml/2018/9/25/447
+
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@st.com>
+Tested-by: Gottfried Haider <gottfried.haider@gmail.com>
+Tested-by: Michal Vokáč <michal.vokac@ysoft.com>
+Signed-off-by: Thierry Reding <thierry.reding@gmail.com>
+Cc: John Keeping <john@metanate.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- mm/rmap.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/pwm/sysfs.c |    1 -
+ 1 file changed, 1 deletion(-)
 
---- a/mm/rmap.c
-+++ b/mm/rmap.c
-@@ -1467,7 +1467,15 @@ static bool try_to_unmap_one(struct page
- 			/*
- 			 * No need to invalidate here it will synchronize on
- 			 * against the special swap migration pte.
-+			 *
-+			 * The assignment to subpage above was computed from a
-+			 * swap PTE which results in an invalid pointer.
-+			 * Since only PAGE_SIZE pages can currently be
-+			 * migrated, just set it to page. This will need to be
-+			 * changed when hugepage migrations to device private
-+			 * memory are supported.
- 			 */
-+			subpage = page;
- 			goto discard;
- 		}
+--- a/drivers/pwm/sysfs.c
++++ b/drivers/pwm/sysfs.c
+@@ -263,7 +263,6 @@ static int pwm_export_child(struct devic
+ 	export->pwm = pwm;
+ 	mutex_init(&export->lock);
  
+-	export->child.class = parent->class;
+ 	export->child.release = pwm_export_release;
+ 	export->child.parent = parent;
+ 	export->child.devt = MKDEV(0, 0);
 
 
