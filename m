@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F6A598FA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:39:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E855A98F92
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387439AbfHVJeQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:34:16 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35878 "EHLO shell.v3.sk"
+        id S1733285AbfHVJdw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:33:52 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35817 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730857AbfHVJeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:34:09 -0400
+        id S1733261AbfHVJdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:50 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 25C83D7566;
-        Thu, 22 Aug 2019 11:34:05 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id DE820D7562;
+        Thu, 22 Aug 2019 11:33:46 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 6-wbMKNKNzso; Thu, 22 Aug 2019 11:33:32 +0200 (CEST)
+        with ESMTP id ChwZ04mvNs-n; Thu, 22 Aug 2019 11:33:20 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id AC4ABD7563;
-        Thu, 22 Aug 2019 11:33:01 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 239B0D7570;
+        Thu, 22 Aug 2019 11:32:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id nx1hdKMA8KVp; Thu, 22 Aug 2019 11:27:28 +0200 (CEST)
+        with ESMTP id 5GDqGikVRw22; Thu, 22 Aug 2019 11:27:28 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 331B1D755C;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 866AFD755E;
         Thu, 22 Aug 2019 11:26:48 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
@@ -39,11 +39,10 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Pavel Machek <pavel@ucw.cz>
-Subject: [PATCH v2 06/20] irqchip/mmp: do not use of_address_to_resource() to get mux regs
-Date:   Thu, 22 Aug 2019 11:26:29 +0200
-Message-Id: <20190822092643.593488-7-lkundrak@v3.sk>
+        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v2 07/20] irqchip/mmp: add missing chained_irq_{enter,exit}()
+Date:   Thu, 22 Aug 2019 11:26:30 +0200
+Message-Id: <20190822092643.593488-8-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -54,76 +53,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
-are offsets from intc's base, not addresses on the parent bus. At this
-point it probably can't be fixed.
-
-On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
-axi bus, and thus of_address_to_resource() won't work. We should treat
-the values as mere integers as opposed to bus addresses.
+The lack of chained_irq_exit() leaves the muxed interrupt masked on MMP3.
+For reasons unknown this is not a problem on MMP2.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
 ---
-Changes since v4 of "MMP platform fixes" set:
-- Add a comment, as suggested by Pavel
-
 Changes since v1:
-- Fix up typoes in the comment
-- Do not allow the regs property be larger than the bindings document.
+- Use irq_desc_get_chip() instead of irq_get_chip()
 
- drivers/irqchip/irq-mmp.c | 22 +++++++++++++---------
- 1 file changed, 13 insertions(+), 9 deletions(-)
+ drivers/irqchip/irq-mmp.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 14618dc0bd396..e41e47ab71d3b 100644
+index e41e47ab71d3b..126ffdbffdddf 100644
 --- a/drivers/irqchip/irq-mmp.c
 +++ b/drivers/irqchip/irq-mmp.c
-@@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_=
-init);
- static int __init mmp2_mux_of_init(struct device_node *node,
- 				   struct device_node *parent)
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+@@ -132,11 +133,14 @@ struct irq_chip icu_irq_chip =3D {
+ static void icu_mux_irq_demux(struct irq_desc *desc)
  {
--	struct resource res;
- 	int i, ret, irq, j =3D 0;
- 	u32 nr_irqs, mfp_irq;
-+	u32 reg[4];
+ 	unsigned int irq =3D irq_desc_get_irq(desc);
++	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+ 	struct irq_domain *domain;
+ 	struct icu_chip_data *data;
+ 	int i;
+ 	unsigned long mask, status, n;
 =20
- 	if (!parent)
- 		return -ENODEV;
-@@ -438,18 +438,22 @@ static int __init mmp2_mux_of_init(struct device_no=
-de *node,
- 		pr_err("Not found mrvl,intc-nr-irqs property\n");
- 		return -EINVAL;
- 	}
--	ret =3D of_address_to_resource(node, 0, &res);
++	chained_irq_enter(chip, desc);
 +
-+	/*
-+	 * For historical reasons, the "regs" property of the
-+	 * mrvl,mmp2-mux-intc is not a regular "regs" property containing
-+	 * addresses on the parent bus, but offsets from the intc's base.
-+	 * That is why we can't use of_address_to_resource() here.
-+	 */
-+	ret =3D of_property_read_variable_u32_array(node, "reg", reg,
-+						  ARRAY_SIZE(reg),
-+						  ARRAY_SIZE(reg));
- 	if (ret < 0) {
- 		pr_err("Not found reg property\n");
- 		return -EINVAL;
+ 	for (i =3D 1; i < max_icu_nr; i++) {
+ 		if (irq =3D=3D icu_data[i].cascade_irq) {
+ 			domain =3D icu_data[i].domain;
+@@ -146,7 +150,7 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
  	}
--	icu_data[i].reg_status =3D mmp_icu_base + res.start;
--	ret =3D of_address_to_resource(node, 1, &res);
--	if (ret < 0) {
--		pr_err("Not found reg property\n");
--		return -EINVAL;
--	}
--	icu_data[i].reg_mask =3D mmp_icu_base + res.start;
-+	icu_data[i].reg_status =3D mmp_icu_base + reg[0];
-+	icu_data[i].reg_mask =3D mmp_icu_base + reg[2];
- 	icu_data[i].cascade_irq =3D irq_of_parse_and_map(node, 0);
- 	if (!icu_data[i].cascade_irq)
- 		return -EINVAL;
+ 	if (i >=3D max_icu_nr) {
+ 		pr_err("Spurious irq %d in MMP INTC\n", irq);
+-		return;
++		goto out;
+ 	}
+=20
+ 	mask =3D readl_relaxed(data->reg_mask);
+@@ -158,6 +162,9 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
+ 			generic_handle_irq(icu_data[i].virq_base + n);
+ 		}
+ 	}
++
++out:
++	chained_irq_exit(chip, desc);
+ }
+=20
+ static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
 --=20
 2.21.0
 
