@@ -2,71 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 281D39A1E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:15:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 490529A1E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:16:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390187AbfHVVPN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:15:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46040 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732447AbfHVVPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:15:12 -0400
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B09B20673;
-        Thu, 22 Aug 2019 21:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566508512;
-        bh=cMvgT9+Hti7+e9rtYjt9JjvQSTI7OPAivX0JomfHWns=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PrayglshAsw5nlzXV7lOu2jl+/WSgjODLHpdcsKe4JuFFgS1pRbd4k5zRgE9b9mgd
-         7Fr+EfxrnBqYqabQkLIiMoVvx7q48zEkM5IdoN6RgPVw3QywciLtPkM7KBgFOq4e9w
-         e268S0oQ/NNCfOARU4Da8ph9GU95t9ZZ87+ZGKb4=
-Date:   Thu, 22 Aug 2019 14:15:11 -0700
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        jslaby@suse.com, jay.dolan@accesio.com, hslester96@gmail.com,
-        je.yen.tam@ni.com, lkp@intel.com, kai.heng.feng@canonical.com,
-        heikki.krogerus@linux.intel.com, linux-serial@vger.kernel.org,
-        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
-        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
-Subject: Re: [PATCH V1 1/1] serial: 8250_pci: Add F81504A series Support
-Message-ID: <20190822211511.GA11893@kroah.com>
-References: <1565933249-23076-1-git-send-email-hpeter+linux_kernel@gmail.com>
- <20190816112644.GF30120@smile.fi.intel.com>
- <8e052919-b012-ff3f-f108-380d1ce5f7e7@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e052919-b012-ff3f-f108-380d1ce5f7e7@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2390789AbfHVVPz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:15:55 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38468 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390238AbfHVVPx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 17:15:53 -0400
+Received: by mail-wm1-f66.google.com with SMTP id m125so7097310wmm.3;
+        Thu, 22 Aug 2019 14:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=EtIN/Xlr6Ip9YVPKEGipzkLuuYaoLg7P8nPJxnIh64A=;
+        b=Z4W8X20hXdRXquz+6aomxEmdr1Nw6M30y/29B8Sk9nBVqCiMWQQA0jVA8B00CjXMEh
+         HJOB0pxT3z/GPheiZy4Ne1BHS0t5pNAZ3AU1XZ+/UQ5Tx+25X2nDLoeSe9SOfaXBiUZT
+         xtzmzLT0ZjJ+f+U6Cgd9WoOUO1D0lBQl0mGGPblPD6D5/C/5JgTrao1vlkrspMU9871K
+         ovuwE2RHRte1AeeXmVHtSTcfqGxGsUtyU/ngLnDFzP6kkZtVRy/igk9DSK2nRj6Bupe2
+         S7M783ui3HgnAOPNMj5FMxxAC8Ec3zLUFimt/kh0OC66m4gN9H0YrPjeHkvZ+TEWHgAZ
+         WvSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=EtIN/Xlr6Ip9YVPKEGipzkLuuYaoLg7P8nPJxnIh64A=;
+        b=hGzUz6UeeHJEXCHV+d0Q1ptAHTlLip/7vExdVK+IGF/WeCPqAZ9nuS6Mluhfq0U4iZ
+         zyKzVLJW5wfwn1oaJT8IeZ7AS4cgmMk3WfG65Xz1/39Fnq+XzuGwe/FMvDC60Yag5fGs
+         T/9i21ddgaFmBmemKJZGFrvgvqJy7R/dNXBv1rw4gxvqPGRwMRdVLOQzWTvJDbQWLqHj
+         9OJdcvq0kiwi96+/SGcyxC7xNIwybcsirA5BL3a1qlfjaN4yWD1jOQN5RneGVWj9ipSx
+         ZkEUST+Rw2K0RUl3XmFgqpai174bGktTGO1HlfHbI9HxjQYyzbI+RmKarOXjefuZp6Ze
+         LJNQ==
+X-Gm-Message-State: APjAAAXX+0IUe+sP1xcQPRuBY8+89bQ9Gdt/3fakH1WUqO7hNcUGHW1K
+        J5M8EoLtOXDHPgMBx1IlUaA=
+X-Google-Smtp-Source: APXvYqxLvVfwOSGwbc+tlhQaL4v3QM6AsGH84AkN9rdgEJ+l+bCU8PWZD6UvKDbZssKyf/GeYJr0Pw==
+X-Received: by 2002:a1c:1f41:: with SMTP id f62mr1096637wmf.176.1566508550977;
+        Thu, 22 Aug 2019 14:15:50 -0700 (PDT)
+Received: from localhost.localdomain ([86.126.25.232])
+        by smtp.gmail.com with ESMTPSA id g197sm578488wme.30.2019.08.22.14.15.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 14:15:50 -0700 (PDT)
+From:   Vladimir Oltean <olteanv@gmail.com>
+To:     broonie@kernel.org
+Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, netdev@vger.kernel.org,
+        Vladimir Oltean <olteanv@gmail.com>
+Subject: [PATCH v2 2/5] spi: spi-fsl-dspi: Exit the ISR with IRQ_NONE when it's not ours
+Date:   Fri, 23 Aug 2019 00:15:11 +0300
+Message-Id: <20190822211514.19288-3-olteanv@gmail.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190822211514.19288-1-olteanv@gmail.com>
+References: <20190822211514.19288-1-olteanv@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 08:49:50AM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> Hi,
-> 
-> Andy Shevchenko 於 2019/8/16 下午 07:26 寫道:
-> > On Fri, Aug 16, 2019 at 01:27:29PM +0800, Ji-Ze Hong (Peter Hong) wrote:
-> > > Fintek F81504A/508A/512A is PCIE to 4/8/12 UARTs device. It's support
-> > > IO/MMIO/PCIE conf to access all functions. The old F81504/508/512 is
-> > > only support IO.
-> > 
-> > We have 8250_fintek.
-> > Isn't it a right place to add these?
-> > 
-> 
-> The 8250_fintek implements PNP device with id PNP0501.
-> Should I also implements PCIe device in this file?
+The DSPI interrupt can be shared between two controllers at least on the
+LX2160A. In that case, the driver for one controller might misbehave and
+consume the other's interrupt. Fix this by actually checking if any of
+the bits in the status register have been asserted.
 
-Does it use the same logic?  If so, that makes sense, but if you can not
-share anything, then no, it does not make sense.
+Fixes: 13aed2392741 ("spi: spi-fsl-dspi: use IRQF_SHARED mode to request IRQ")
+Signed-off-by: Vladimir Oltean <olteanv@gmail.com>
+---
+ drivers/spi/spi-fsl-dspi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-thanks,
+diff --git a/drivers/spi/spi-fsl-dspi.c b/drivers/spi/spi-fsl-dspi.c
+index c90db7db4121..6ef2279a3699 100644
+--- a/drivers/spi/spi-fsl-dspi.c
++++ b/drivers/spi/spi-fsl-dspi.c
+@@ -659,7 +659,7 @@ static irqreturn_t dspi_interrupt(int irq, void *dev_id)
+ 	regmap_write(dspi->regmap, SPI_SR, spi_sr);
+ 
+ 	if (!(spi_sr & (SPI_SR_EOQF | SPI_SR_TCFQF)))
+-		return IRQ_HANDLED;
++		return IRQ_NONE;
+ 
+ 	/* Get transfer counter (in number of SPI transfers). It was
+ 	 * reset to 0 when transfer(s) were started.
+-- 
+2.17.1
 
-greg k-h
