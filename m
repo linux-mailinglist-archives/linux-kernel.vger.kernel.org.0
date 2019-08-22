@@ -2,156 +2,131 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 38EC199759
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:52:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D8A39975E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:52:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732618AbfHVOt6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:49:58 -0400
-Received: from iolanthe.rowland.org ([192.131.102.54]:52250 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1731445AbfHVOt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:49:58 -0400
-Received: (qmail 1325 invoked by uid 2102); 22 Aug 2019 10:49:57 -0400
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 22 Aug 2019 10:49:57 -0400
-Date:   Thu, 22 Aug 2019 10:49:57 -0400 (EDT)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-cc:     Oliver Neukum <oneukum@suse.com>, <jikos@kernel.org>,
-        <benjamin.tissoires@redhat.com>, <linux-input@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>
-Subject: Re: [PATCH] HID: quirks: Disable runtime suspend on Microsoft Corp.
- Basic Optical Mouse v2.0
-In-Reply-To: <D6E31CB0-BC2B-4B52-AF18-4BE990D3FDA5@canonical.com>
-Message-ID: <Pine.LNX.4.44L0.1908221043080.1311-100000@iolanthe.rowland.org>
+        id S2388051AbfHVOva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:51:30 -0400
+Received: from mout.web.de ([212.227.17.11]:44711 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387623AbfHVOv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:51:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1566485451;
+        bh=JJNw3yyI7LFjcQxSQaC2Dwh7+VMWL/aMrXs3yzs678I=;
+        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
+        b=E7/haOOojqJvt1y4CL5P/hXb2VGbhWXgdhuUd5fVONeM4kdaJOyqhlk/XGXhwEd72
+         7unQMKQT1yKllSd/lFZ3wVbTb6dBBt++sDGAPirwitITIT/IVqKDiF3mm2crMka4nQ
+         wGYeuDw3h/0gbAMNOADSM+usRzATNBJygTPyQg3g=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([78.49.181.43]) by smtp.web.de (mrweb103
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MQNma-1hok7z0Yiy-00Tj7H; Thu, 22
+ Aug 2019 16:50:51 +0200
+To:     kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Kees Cook <keescook@chromium.org>,
+        Li Rongqing <lirongqing@baidu.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Message-ID: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
+Date:   Thu, 22 Aug 2019 16:50:45 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UwA56m5d+nLxmCo7FtThSiUfdaO/tIYKyDa57OHKmeP6Dg1psQb
+ vCS2J31SUG7ODvZjYXk2JGxx6j4qfpsVd0TGURoUO/r8+/sB49pw+9ed/fNKS7RUX1tOwTv
+ VXbfOAdbSXYBbkl5PdZmtNWs7UgMW2hhteMJO8ERloF86Ce4/eMqV0XaBIP6elE8RyhYysB
+ NGXI5svLEny1G3EMtp19A==
+X-Spam-Flag: NO
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Ehrkp7VIAwM=:HELClc4fwit5GT3smweJuo
+ w4x1v8YuBelolUOGcZZadJONNhcvFhZ13vl/V8ucI5rh5wOmdlhEG766g65s4LV9dVoTc/Q+f
+ 0PTRVadQDj5U7/wftSi+p2iVKlCbBcby2kO9wchr1L075L843/CtEHXwgJ5UtkgQ0uIuZ1x9y
+ ub9cT6kynBx4t0LjVLrOlL462vzxlTlF3QzaB/GpsJcUE6T5RChekTuc80onrl8BueEEyHyIQ
+ NfudW+pfvzNrIaJRvsWShYqpIJB6dm+xHSswmxdUXIeE1rkXxr1wGWMcvaXoyFEpbupixpsQk
+ wnxFEf1E7PmRLHG0wmn6uAcoySennGRbmliVUPDFfFvKsnaNnIdm1/yAo2sMaeJT8uM0H/+2e
+ L8uqrTrMkF5EkIJNrPhYyL8ZsSmQAZxr8XNwqNLLoj+BCgQOhn8igqeYvn+a9AsBHPcNmNbGk
+ csVrxkEpSI7d8YwQyWiz6eEJcHYhd4hyWU3iZYH6HxkgTtFAPf/avx7/yZQE1pXaYmd3bb/X5
+ OW8t5kpMRIxSjwNc/9mmG19qhebabMix1WwS9LkZNqIZpSQKerauQW2R5geR4JJGfQQaKWQZ4
+ EY2FiDeUumAIhpC1WPRXXqXsPzb4+nvo/boacpXBOmTALw/mauz+eotrzkFcjUGdBRJTtaJSf
+ HuPo6RuDu1Js/743InAOSwECmUzsvRPT/1xWiAXb/r2hmGsEb97H4E/RVms6uG9Nf+lpkrNfH
+ MQcoq8i9FneceOG25AJdsjvDl6f1ydhM0DLS6fHCJ5sgqzF9lOGmXGMyq98KsMLuuuO34VXJ7
+ P+0JvOgBbr89vWZmupoGZMdR4hUgSENMPYJxs/UhBc9FheBQZJ8w7M8lUhX//daek8WSZfAhA
+ YzyVFZkN5H0CPMgLv/TJ+N5AknXTCxPYorRO9Lz2mYgzZVQz5m1pzqBB+f8iFS1/DKr766PxO
+ i3yNUneXWXeZtvAZlXY9soH8NNUHpZkKxuhFaoTqVV3PIDNidsXctoNuiSsuKslnnjZ2F73Ac
+ cNEZoPgYWJJTnIE9wh5qqYWARVdVBsCzanWiGqbIfRwKOBs3uaLVDkLYavx4ZFTmSTNhzz0T0
+ 7h9wKuDx3oN7aCTqqQ4+hDSnr3lnk92OvvY5HeKStRWvjQ1EAZenqghu2gfKZ4SkH7fHgIaJJ
+ Wjsja9x3YfF0Zefq2Ngr1TRnPM/VZ0EDmKKVmGzOM5KQR4XA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Aug 2019, Kai-Heng Feng wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 22 Aug 2019 16:38:49 +0200
+Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
 
-> at 18:38, Oliver Neukum <oneukum@suse.com> wrote:
-> 
-> > Am Donnerstag, den 22.08.2019, 18:04 +0800 schrieb Kai-Heng Feng:
-> >> Hi Oliver,
-> >>
-> >> at 17:45, Oliver Neukum <oneukum@suse.com> wrote:
-> >>
-> >>> Am Donnerstag, den 22.08.2019, 17:17 +0800 schrieb Kai-Heng Feng:
-> >>>> The optical sensor of the mouse gets turned off when it's runtime
-> >>>> suspended, so moving the mouse can't wake the mouse up, despite that
-> >>>> USB remote wakeup is successfully set.
-> >>>>
-> >>>> Introduce a new quirk to prevent the mouse from getting runtime
-> >>>> suspended.
-> >>>
-> >>> Hi,
-> >>>
-> >>> I am afraid this is a bad approach in principle. The device
-> >>> behaves according to spec.
-> >>
-> >> Can you please point out which spec it is? Is it USB 2.0 spec?
-> >
-> > Well, sort of. The USB spec merely states how to enter and exit
-> > a suspended state and that device state must not be lost.
-> > It does not tell you what a suspended device must be able to do.
-> 
-> But shouldn’t remote wakeup signaling wakes the device up and let it exit  
-> suspend state?
-> Or it’s okay to let the device be suspended when remote wakeup is needed  
-> but broken?
-> 
-> >
-> >>> And it behaves like most hardware.
-> >>
-> >> So seems like most hardware are broken.
-> >> Maybe a more appropriate solution is to disable RPM for all USB mice.
-> >
-> > That is a decision a distro certainly can make. However, the kernel
-> > does not, by default, call usb_enable_autosuspend() for HID devices
-> > for this very reason. It is enabled by default only for hubs,
-> > BT dongles and UVC cameras (and some minor devices)
-> >
-> > In other words, if on your system it is on, you need to look
-> > at udev, not the kernel.
-> 
-> So if a device is broken when “power/control” is flipped by user, we should  
-> deal it at userspace? That doesn’t sound right to me.
-> 
-> >
-> >>> If you do not want runtime PM for such devices, do not switch
-> >>> it on.
-> >>
-> >> A device should work regardless of runtime PM status.
-> >
-> > Well, no. Runtime PM is a trade off. You lose something if you use
-> > it. If it worked just as well as full power, you would never use
-> > full power, would you?
-> 
-> I am not asking the suspended state to work as full power, but to prevent a  
-> device enters suspend state because of broken remote wakeup.
-> 
-> >
-> > Whether the loss of functionality or performance is worth the energy
-> > savings is a policy decision. Hence it belongs into udev.
-> > Ideally the kernel would tell user space what will work in a
-> > suspended state. Unfortunately HID does not provide support for that.
-> 
-> I really don’t think “loss of functionally” belongs to policy decision. But  
-> that’s just my opinion.
-> 
-> >
-> > This is a deficiency of user space. The kernel has an ioctl()
-> > to let user space tell it, whether a device is fully needed.
-> > X does not use them.
-> 
-> Ok, I’ll take a look at other device drivers that use it.
-> 
-> >
-> >>> The refcounting needs to be done correctly.
-> >>
-> >> Will do.
-> >
-> > Well, I am afraid your patch breaks it and if you do not break
-> > it, the patch is reduced to nothing.
-> 
-> Maybe just calling usb_autopm_put_interface() in usbhid_close() to balance  
-> the refcount?
-> 
-> >
-> >>> This patch does something that udev should do and in a
-> >>> questionable manner.
-> >>
-> >> IMO if the device doesn’t support runtime suspend, then it needs to be
-> >> disabled in kernel but not workaround in userspace.
-> >
-> > You switch it on from user space. Of course the kernel default
-> > must be safe, as you said. It already is.
-> 
-> I’d also like to hear maintainers' opinion on this issue.
+A few update suggestions were taken into account
+from static source code analysis.
 
-I agree with Oliver.  There is no formal requirement on what actions
-should cause a mouse to generate a remote wakeup request.  Some mice
-will do it when they are moved and some mice won't.
+Markus Elfring (2):
+  Delete an unnecessary check before the macro call =E2=80=9Cdev_kfree_skb=
+=E2=80=9D
+  Improve exception handling in do_mq_notify()
 
-If you don't like the way a particular mouse behaves then you should
-not allow it to go into runtime suspend.  By default, the kernel
-prevents _all_ USB mice from being runtime suspended; the only way a
-mouse can be suspended is if some userspace program tells the kernel to
-allow it.
+ ipc/mqueue.c | 22 +++++++++-------------
+ 1 file changed, 9 insertions(+), 13 deletions(-)
 
-It might be a udev script which does this, or a powertop setting, or
-something else.  Regardless, what the kernel does is correct.  
-Furthermore, the kernel has to accomodate users who don't mind pressing
-a mouse button to wake up their mice.  For their sake, the kernel
-should not forbid a mouse from ever going into runtime suspend merely
-because it won't generate a wakeup request when it is moved.
-
-Alan Stern
+=2D-
+2.23.0
 
