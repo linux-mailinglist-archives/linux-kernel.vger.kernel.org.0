@@ -2,102 +2,99 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E97899974
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EF689997F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:46:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388263AbfHVQmv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 12:42:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50270 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731880AbfHVQmv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:42:51 -0400
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30ED8233FD;
-        Thu, 22 Aug 2019 16:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566492170;
-        bh=6hJ/e3xsqheFfKXl0ThuhFz0zaP+4lSo12cfTf5ujTI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=N9yC86KdtbTDhtmXrGJkrRDtj2LuZoeTwJAfnEzocp45KdnBE7VwF7eow4cB/FxPT
-         swE72HSNQtx7gvwkPrw2CIUvjxiaXT6nTosKZidfwtFGDjEmhogqBtDgMjeGW7E8zU
-         6Qi2H2bf4Of0ia9DCJ+oknvegUItmZpxlaEeFu4M=
-Date:   Thu, 22 Aug 2019 09:42:49 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
-        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
-        Eric Biggers <ebiggers@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>
-Subject: Re: [PATCH] /dev/mem: Bail out upon SIGKILL when reading memory.
-Message-ID: <20190822164249.GA12551@kroah.com>
-References: <20190820222403.GB8120@kroah.com>
- <201908220959.x7M9xP8r011133@www262.sakura.ne.jp>
- <20190822133538.GA16793@kroah.com>
- <e8d3ce30-8c61-048e-2606-f8a4e8f08d87@i-love.sakura.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e8d3ce30-8c61-048e-2606-f8a4e8f08d87@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S2388337AbfHVQoD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 12:44:03 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43526 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731880AbfHVQoC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:44:02 -0400
+Received: by mail-pl1-f195.google.com with SMTP id 4so3767376pld.10;
+        Thu, 22 Aug 2019 09:44:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=x9uce55kb6LZ9BYo7W+bqT1uxPy/bJS6Nheim+gxljU=;
+        b=bJBIjamPcgpm1ZXLpSxXD0oE/Ox67cJ9ESF+xyrbA/SkjeUjRz3OYUPh/q+mkf6WPW
+         gszvgZjW5Ii222UQ9cZcihxFW9h+rMspa/JpeAzL9LDsIz1jJ2swtPZe1+VUL+eFM9Qw
+         v4aTIGmNbz/8XbkanLChrI9PtQkDfbDkLzjQUvgRF1GkSFAHkj43uMm8zG5WdJd86Uqq
+         25hDzDwOIyhEmj0XRkqFgyrD7sWCaS3R/HCu4C/fUeMTPu+4fYv0uhFml2qpve1ViKF6
+         a/v6zkuV7yow07+jTxSnJu5/hqZ1aa54rlkappzHoqjQnR0pBhSNVwj70K8m/FAFnW1J
+         8e4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=x9uce55kb6LZ9BYo7W+bqT1uxPy/bJS6Nheim+gxljU=;
+        b=BitY8RPyuPv+IhDjAqlTsTOQ2sAncWTRBjdsARK94A7jrLLJVMTEObQBpOlQ5hNdVi
+         uxBG8H9HwL8WOcAi+Lq8gl7F/9xZJelUivKEoJLWRMbt9XW8FH6nTQjFVuSHUa2YAVjn
+         3mmMWAlWJcEswxyXBD/LNGvOpjhZkJq8sawK5fElp4qwkueNXW7BqYMiO2fdXcddlUpX
+         ifNzW4PsqTFCHablKd8RfTWhZhRgqFW0KCQG4hUjWjMSuNS5g4twZ/IgfQxc4+KiWTRW
+         bSLYmpqUWvVSJlS/9G3kbBsBv5rKI3X0thaZjKwymj1MEtTdUQZNaWqahDcOu061WOYp
+         Eukw==
+X-Gm-Message-State: APjAAAUTX+8hi38MYG1jzwaJJpnPwRrdFywFipMUR4qM6V9NGTDOJoVT
+        2zacugH3DO7AvWZI4Lfx+lY=
+X-Google-Smtp-Source: APXvYqxe6fOEzOe3vusXfkDM0IxXECeWeFZdwOpLMUqOaDlOvoQ66CBYHAGy9zDgc8muHzhUyugvfQ==
+X-Received: by 2002:a17:902:9686:: with SMTP id n6mr39475715plp.113.1566492241825;
+        Thu, 22 Aug 2019 09:44:01 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.107.181])
+        by smtp.gmail.com with ESMTPSA id br18sm83722pjb.20.2019.08.22.09.43.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 22 Aug 2019 09:44:01 -0700 (PDT)
+From:   Rishi Gupta <gupt21@gmail.com>
+To:     jikos@kernel.org
+Cc:     benjamin.tissoires@redhat.com, dmitry.torokhov@gmail.com,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rishi Gupta <gupt21@gmail.com>
+Subject: [PATCH] HID: hidraw: replace printk() with corresponding pr_xx() variant
+Date:   Thu, 22 Aug 2019 22:13:52 +0530
+Message-Id: <1566492232-13590-1-git-send-email-gupt21@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 11:00:59PM +0900, Tetsuo Handa wrote:
-> On 2019/08/22 22:35, Greg Kroah-Hartman wrote:
-> > On Thu, Aug 22, 2019 at 06:59:25PM +0900, Tetsuo Handa wrote:
-> >> Tetsuo Handa wrote:
-> >>> Greg Kroah-Hartman wrote:
-> >>>> Oh, nice!  This shouldn't break anything that is assuming that the read
-> >>>> will complete before a signal is delivered, right?
-> >>>>
-> >>>> I know userspace handling of "short" reads is almost always not there...
-> >>>
-> >>> Since this check will give up upon SIGKILL, userspace won't be able to see
-> >>> the return value from read(). Thus, returning 0 upon SIGKILL will be safe. ;-)
-> >>> Maybe we also want to add cond_resched()...
-> >>>
-> >>> By the way, do we want similar check on write_mem() side?
-> >>> If aborting "write to /dev/mem" upon SIGKILL (results in partial write) is
-> >>> unexpected, we might want to ignore SIGKILL for write_mem() case.
-> >>> But copying data from killed threads (especially when killed by OOM killer
-> >>> and userspace memory is reclaimed by OOM reaper before write_mem() returns)
-> >>> would be after all unexpected. Then, it might be preferable to check SIGKILL
-> >>> on write_mem() side...
-> >>>
-> >>
-> >> Ha, ha. syzbot reported the same problem using write_mem().
-> >> https://syzkaller.appspot.com/text?tag=CrashLog&x=1018055a600000
-> >> We want fatal_signal_pending() check on both sides.
-> > 
-> > Ok, want to send a patch for that?
-> 
-> Yes. But before sending a patch, I'm trying to dump values using debug printk().
-> 
-> > 
-> > And does anything use /dev/mem anymore?  I think X stopped using it a
-> > long time ago.
-> > 
-> >> By the way, write_mem() worries me whether there is possibility of replacing
-> >> kernel code/data with user-defined memory data supplied from userspace.
-> >> If write_mem() were by chance replaced with code that does
-> >>
-> >>    while (1);
-> >>
-> >> we won't be able to return from write_mem() even if we added fatal_signal_pending() check.
-> >> Ditto for replacing local variables with unexpected values...
-> > 
-> > I'm sorry, I don't really understand what you mean here, but I haven't
-> > had my morning coffee...  Any hints as to an example?
-> 
-> Probably similar idea: "lockdown: Restrict /dev/{mem,kmem,port} when the kernel is locked down"
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/char/mem.c?h=next-20190822&id=9b9d8dda1ed72e9bd560ab0ca93d322a9440510e
-> 
-> Then, syzbot might want to blacklist writing to /dev/mem .
+This commit replaces direct invocations of printk with
+their appropriate pr_info/warn() variant.
 
-syzbot should probably blacklist that now, you can do a lot of bad
-things writing to that device node :(
+Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+---
+ drivers/hid/hidraw.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/hid/hidraw.c b/drivers/hid/hidraw.c
+index 006bd6f..67b652b 100644
+--- a/drivers/hid/hidraw.c
++++ b/drivers/hid/hidraw.c
+@@ -197,14 +197,14 @@ static ssize_t hidraw_get_report(struct file *file, char __user *buffer, size_t
+ 	}
+ 
+ 	if (count > HID_MAX_BUFFER_SIZE) {
+-		printk(KERN_WARNING "hidraw: pid %d passed too large report\n",
++		pr_warn("hidraw: pid %d passed too large report\n",
+ 				task_pid_nr(current));
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+ 
+ 	if (count < 2) {
+-		printk(KERN_WARNING "hidraw: pid %d passed too short report\n",
++		pr_warn("hidraw: pid %d passed too short report\n",
+ 				task_pid_nr(current));
+ 		ret = -EINVAL;
+ 		goto out;
+@@ -597,7 +597,7 @@ int __init hidraw_init(void)
+ 	if (result < 0)
+ 		goto error_class;
+ 
+-	printk(KERN_INFO "hidraw: raw HID events driver (C) Jiri Kosina\n");
++	pr_info("hidraw: raw HID events driver (C) Jiri Kosina\n");
+ out:
+ 	return result;
+ 
+-- 
+2.7.4
+
