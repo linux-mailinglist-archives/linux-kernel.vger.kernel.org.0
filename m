@@ -2,95 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B619F9A073
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:47:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F4929A08A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388757AbfHVTrQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:47:16 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41013 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfHVTrP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:47:15 -0400
-Received: by mail-pl1-f193.google.com with SMTP id m9so4037368pls.8;
-        Thu, 22 Aug 2019 12:47:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=H7farA7jorlmfZ2e+AMW8oiTvvYc+aUzfxfRcuDpHnk=;
-        b=XO4/rwGLYk9SBYN8k7GRXHDJphUJmcRBvDWG44PY0QNg4zarCGqP8SQnHDyXKGZ3+M
-         doJ1GLX4b3OrVB/XVGKbBKAjw5QZN7Y/sf9EyO12Dx/Md0Zem8PiQ510+QghLiapF353
-         NEjs8KjS6x7LFgqS9j37zXpDdEdbVWk4xzJgyl4plClMJ9JwBsXatMrkIHtzzdkKvWep
-         DszRlTYo3xdTOOSkx1w5rJA8hd1o6ANEg3m9L9lQf+LkH7ELC2ZWziLlC14NPXxkFRw+
-         Q+rgwbzLCdzpTWNDnNdn/gF8027ea0R43zKbSC7gTabiPEJAqpRoIrAM/XF8LDxM3ns5
-         bYOA==
-X-Gm-Message-State: APjAAAXsYlBkxja3KFMZjogKk3Gd6UmmI8qGhGRRxVHu0V4uY91luxQ1
-        AIyevmmzEYb07svMXGkpUYI=
-X-Google-Smtp-Source: APXvYqx6e1XLcwxb1JcJfBbBHwrao8k3VyUgyeVUu0YdIROLSdrc1+tR5DYnDeiqbeePBddV80b7dA==
-X-Received: by 2002:a17:902:5a04:: with SMTP id q4mr543629pli.280.1566503234605;
-        Thu, 22 Aug 2019 12:47:14 -0700 (PDT)
-Received: from 42.do-not-panic.com (42.do-not-panic.com. [157.230.128.187])
-        by smtp.gmail.com with ESMTPSA id s4sm324360pjp.15.2019.08.22.12.47.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 12:47:13 -0700 (PDT)
-Received: by 42.do-not-panic.com (Postfix, from userid 1000)
-        id 92076403DC; Thu, 22 Aug 2019 19:47:12 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 19:47:12 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Scott Branden <scott.branden@broadcom.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org,
-        mcgrof@kernel.org
-Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
-Message-ID: <20190822194712.GG16384@42.do-not-panic.com>
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-3-scott.branden@broadcom.com>
+        id S2388018AbfHVTzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:55:37 -0400
+Received: from mx2.math.uh.edu ([129.7.128.33]:52178 "EHLO mx2.math.uh.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727953AbfHVTzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 15:55:37 -0400
+X-Greylist: delayed 968 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 15:55:37 EDT
+Received: from epithumia.math.uh.edu ([129.7.128.2])
+        by mx2.math.uh.edu with esmtp (Exim 4.92)
+        (envelope-from <tibbs@math.uh.edu>)
+        id 1i0sve-0004Tw-Mp; Thu, 22 Aug 2019 14:39:28 -0500
+Received: by epithumia.math.uh.edu (Postfix, from userid 7225)
+        id 9C2EF801554; Thu, 22 Aug 2019 14:39:26 -0500 (CDT)
+From:   Jason L Tibbitts III <tibbs@math.uh.edu>
+To:     linux-nfs@vger.kernel.org
+Cc:     km@cm4all.com, linux-kernel@vger.kernel.org
+Subject: Re: Regression in 5.1.20: Reading long directory fails
+References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
+Date:   Thu, 22 Aug 2019 14:39:26 -0500
+In-Reply-To: <ufak1bhyuew.fsf@epithumia.math.uh.edu> (Jason L. Tibbitts, III's
+        message of "Tue, 13 Aug 2019 10:08:55 -0500")
+Message-ID: <ufapnkxkn0x.fsf@epithumia.math.uh.edu>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822192451.5983-3-scott.branden@broadcom.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Spam-Score: -2.9 (--)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 12:24:46PM -0700, Scott Branden wrote:
-> @@ -923,16 +936,22 @@ EXPORT_SYMBOL_GPL(firmware_request_cache);
->   */
->  int
->  request_firmware_into_buf(const struct firmware **firmware_p, const char *name,
-> -			  struct device *device, void *buf, size_t size)
-> +			  struct device *device, void *buf, size_t size,
-> +			  size_t offset, unsigned int pread_flags)
+I now have another user reporting the same failure of readdir on a long
+directory which showed up in 5.1.20 and was traced to
+3536b79ba75ba44b9ac1a9f1634f2e833bbb735c.  I'm not sure what to do to
+get more traction besides reposting and adding some addresses to the CC
+list.  If there is any information I can provide which might help to get
+to the bottom of this, please let me know.
 
-This implies you having to change the other callers, and while currently
-our list of drivers is small, following the history of the firmware API
-and the long history of debate of *how* we should evolve its API, its
-preferred we add yet another new caller for this functionality. So
-please add a new caller, and use EXPORT_SYMBOL_GPL().
+To recap:
 
-And while at it, pleaase use firmware_request_*() as the prefix, as we
-have want to use that as the instilled prefix. We have yet to complete
-the rename of the others older callers but its just a matter of time.
+5.1.20 introduced a regression reading some large directories.  In this
+case, the directory should have 7800 files or so in it:
 
-So something like: firmware_request_into_buf_offset()
+[root@ld00 ~]# ls -l ~dblecher|wc -l
+ls: reading directory '/home/dblecher': Input/output error
+1844
+[root@ld00 ~]# cat /proc/version Linux version 5.1.20-300.fc30.x86_64 (mockbuild@bkernel04.phx2.fedoraproject.org) (gcc version 9.1.1 20190503 (Red Hat 9.1.1-1) (GCC)) #1 SMP Fri Jul 26 15:03:11 UTC 2019
 
-And thanks for adding a test case!
+(The server is a Centos 7 machine running kernel 3.10.0-957.12.2.el7.x86_64.)
 
-  Luis
+Building a kernel which reverts commit 3536b79ba75ba44b9ac1a9f1634f2e833bbb735c:
+  Revert "NFS: readdirplus optimization by cache mechanism" (memleak)
+fixes the issue, but of course that revert was fixing a real issue so
+I'm not sure what to do.
+
+I can trivially reproduce this by simply trying to list the problematic
+directories but I'm not sure how to construct such a directory; simply
+creating 10000 files doesn't cause the problem for me.  I am willing to
+test patches and can build my own kernels, and I'm happy to provide any
+debugging information you might require.  Unfortunately I don't know
+enough to dig in and figure out for myself what's going wrong.
+
+I did file https://bugzilla.redhat.com/show_bug.cgi?id=1740954 just to
+have this in a bug tracker somewhere.  I'm happy to file one somewhere
+else if that would help.
+
+ - J<
