@@ -2,169 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BB93D99443
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:53:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 25B379943E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:52:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388188AbfHVMxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:53:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40592 "EHLO mail.kernel.org"
+        id S2388069AbfHVMwF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725856AbfHVMxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:53:00 -0400
-Received: from localhost (unknown [171.61.89.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725856AbfHVMwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:52:05 -0400
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2891C2089E;
-        Thu, 22 Aug 2019 12:52:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A900233A2;
+        Thu, 22 Aug 2019 12:52:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566478378;
-        bh=+LmgaaxC2q4cxo4sEZL7ZYhCTTPgbmk76IWMitzQV7c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ExFlLSbYtm/2Llz1BRoI92FThaGkZH2k+tlxLgAIVzZKvlRuovRg8nUyOkBREh5Oi
-         dl1qW/GikXIQJenVO6JiXLZq90qVM/NhwFK/GYaTIzM8zOAKH/vBekoIi7G8wITIe7
-         3h/zMO1pb4zF7dtYSqo2+lMDJYzjLUDSqFbb9s+E=
-Date:   Thu, 22 Aug 2019 18:21:45 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Patrick Lai <plai@codeaurora.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Linux-ALSA <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/4] dt-bindings: soundwire: add slave bindings
-Message-ID: <20190822125145.GO12733@vkoul-mobl.Dlink>
-References: <20190809133407.25918-1-srinivas.kandagatla@linaro.org>
- <20190809133407.25918-2-srinivas.kandagatla@linaro.org>
- <20190821214436.GA13936@bogus>
- <0272eafd-0aa5-f695-64e4-f6ad7157a3a6@linaro.org>
- <CAL_JsqJJCJB9obR_Jn3hmn4gq+RQjY-8M+xkdYA185Uaw0MHcw@mail.gmail.com>
+        s=default; t=1566478324;
+        bh=M+Cv//+XfrETRuLsfLdPmRxWKe2q0redejZXokNjvFQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q2wTLVosMvILxnc9Lw9AIYfhRlWhXFI7PJchdrPati0756F0Lz9FjEGI7PQ9e16lC
+         aS9vv0kEAUlHPrbAG9z8xFnPV7PEU3s7u1jQ0aCewbDybe52QMBrdetWAHg3y0hHK+
+         h2g5SqKoLrGax+PD5EtieoOuK42O3+93WLXHlp/k=
+Received: by mail-qt1-f172.google.com with SMTP id q4so7490385qtp.1;
+        Thu, 22 Aug 2019 05:52:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAVXrgirlOpg41l3ev7OoU21YsRHb1vUOwdJCEsUzhDkJLMBhgpp
+        cpwXb+7ZqjZcDvV2Jwc9URWEEpumx5VmFQ6w/g==
+X-Google-Smtp-Source: APXvYqyud1uld7PRlHZyZGc9pJSR2E2SAPODxijwM1XUjXe1gqeZih14Umvdcphw6A3XJwJs9+MIzzyXSO4CKcIra7w=
+X-Received: by 2002:aed:24f4:: with SMTP id u49mr36868968qtc.110.1566478323380;
+ Thu, 22 Aug 2019 05:52:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJJCJB9obR_Jn3hmn4gq+RQjY-8M+xkdYA185Uaw0MHcw@mail.gmail.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <1566315318-30320-1-git-send-email-krzk@kernel.org>
+ <1566315318-30320-3-git-send-email-krzk@kernel.org> <CAL_JsqJLSZ50tdFcdPFc2ifcDoFZFuw=SoKsunzjtAhZ-11fBg@mail.gmail.com>
+ <CAJKOXPfkNcWw9sunwXGRz42jOL0cdRC-iiHLtWCYvo5oxCMwFQ@mail.gmail.com>
+ <CAL_JsqKAH6n1sMoWOhfiHKxgREr-EN1tw0QtC1H8Fm=a7PNzOA@mail.gmail.com>
+ <20190820202142.GA15866@kozik-lap> <CAL_JsqKBWB2FiVjYo9O7DPw1JYJvan7uRgbR0VBG=FfHDVYdZQ@mail.gmail.com>
+ <20190821175458.GA25168@kozik-lap>
+In-Reply-To: <20190821175458.GA25168@kozik-lap>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 22 Aug 2019 07:51:51 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+YZ9KdCCT1grtpf7Z1o=-mFuq3O=o7iVGSAhJYO1-=Ww@mail.gmail.com>
+Message-ID: <CAL_Jsq+YZ9KdCCT1grtpf7Z1o=-mFuq3O=o7iVGSAhJYO1-=Ww@mail.gmail.com>
+Subject: Re: [PATCH v6 3/4] dt-bindings: arm: fsl: Add Kontron i.MX6UL N6310 compatibles
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-08-19, 07:36, Rob Herring wrote:
-> On Thu, Aug 22, 2019 at 5:12 AM Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> wrote:
+On Wed, Aug 21, 2019 at 12:55 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> On Tue, Aug 20, 2019 at 03:27:39PM -0500, Rob Herring wrote:
+> > > I see. If I understand the schema correctly, this should look like:
 > >
+> > Looks correct, but a couple of comments.
 > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > index 7294ac36f4c0..eb263d1ccf13 100644
+> > > --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> > > @@ -161,6 +161,22 @@ properties:
+> > >          items:
+> > >            - enum:
+> > >                - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
+> > > +              - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
 > >
-> > On 21/08/2019 22:44, Rob Herring wrote:
-> > > On Fri, Aug 09, 2019 at 02:34:04PM +0100, Srinivas Kandagatla wrote:
-> > >> This patch adds bindings for Soundwire Slave devices that includes how
-> > >> SoundWire enumeration address and Link ID are used to represented in
-> > >> SoundWire slave device tree nodes.
-> > >>
-> > >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> > >> ---
-> > >>   .../devicetree/bindings/soundwire/slave.txt   | 51 +++++++++++++++++++
-> > >>   1 file changed, 51 insertions(+)
-> > >>   create mode 100644 Documentation/devicetree/bindings/soundwire/slave.txt
-> > >
-> > > Can you convert this to DT schema given it is a common binding.
-> > >
-> >
-> > I will give that a go in next version!
-> >
-> > > What does the host controller look like? You need to define the node
-> > > hierarchy. Bus controller schemas should then include the bus schema.
-> > > See spi-controller.yaml.
-> >
-> > Host controller is always parent of these devices which is represented
-> > in the example.
-> >
-> > In my previous patches, i did put this slave bindings in bus.txt, but
-> > Vinod suggested to move it to slave.txt.
-> >
-> > Are you suggesting to add two yamls here, one for slave and one for bus
-> > Or just document this in one bus bindings?
-> 
-> One. Like I said, see spi-controller.yaml.
-> 
-> > >> diff --git a/Documentation/devicetree/bindings/soundwire/slave.txt b/Documentation/devicetree/bindings/soundwire/slave.txt
-> > >> new file mode 100644
-> > >> index 000000000000..201f65d2fafa
-> > >> --- /dev/null
-> > >> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
-> > >> @@ -0,0 +1,51 @@
-> > >> +SoundWire slave device bindings.
-> > >> +
-> > >> +SoundWire is a 2-pin multi-drop interface with data and clock line.
-> > >> +It facilitates development of low cost, efficient, high performance systems.
-> > >> +
-> > >> +SoundWire slave devices:
-> > >> +Every SoundWire controller node can contain zero or more child nodes
-> > >> +representing slave devices on the bus. Every SoundWire slave device is
-> > >> +uniquely determined by the enumeration address containing 5 fields:
-> > >> +SoundWire Version, Instance ID, Manufacturer ID, Part ID
-> > >> +and Class ID for a device. Addition to below required properties,
-> > >> +child nodes can have device specific bindings.
-> > >> +
-> > >> +Required properties:
-> > >> +- compatible:        "sdw<LinkID><VersionID><InstanceID><MFD><PID><CID>".
-> > >> +              Is the textual representation of SoundWire Enumeration
-> > >> +              address along with Link ID. compatible string should contain
-> > >> +              SoundWire Link ID, SoundWire Version ID, Instance ID,
-> > >> +              Manufacturer ID, Part ID and Class ID in order
-> > >> +              represented as above and shall be in lower-case hexadecimal
-> > >> +              with leading zeroes. Vaild sizes of these fields are
-> > >> +              LinkID is 1 nibble,
-> > >> +              Version ID is 1 nibble
-> > >> +              Instance ID in 1 nibble
-> > >> +              MFD in 4 nibbles
-> > >> +              PID in 4 nibbles
-> > >> +              CID is 2 nibbles
-> > >> +
-> > >> +              Version number '0x1' represents SoundWire 1.0
-> > >> +              Version number '0x2' represents SoundWire 1.1
-> > >
-> > > This can all be a regex.
-> > >
-> > >> +              ex: "sdw0110217201000" represents 0 LinkID,
-> > >> +              SoundWire 1.0 version slave with Instance ID 1.
-> > >> +              More Information on detail of encoding of these fields can be
-> > >> +              found in MIPI Alliance DisCo & SoundWire 1.0 Specifications.
-> > >> +
-> > >> +SoundWire example for Qualcomm's SoundWire controller:
-> > >> +
-> > >> +soundwire@c2d0000 {
-> > >> +    compatible = "qcom,soundwire-v1.5.0"
-> > >> +    reg = <0x0c2d0000 0x2000>;
-> > >> +
-> > >> +    spkr_left:wsa8810-left{
-> > >> +            compatible = "sdw0110217201000";
-> > >> +            ...
-> > >> +    };
-> > >> +
-> > >> +    spkr_right:wsa8810-right{
-> > >> +            compatible = "sdw0120217201000";
-> > >
-> > > The normal way to distinguish instances is with 'reg'. So I think you
-> > > need 'reg' with Instance ID moved there at least. Just guessing, but
-> > > perhaps Link ID, too? And for 2 different classes of device is that
-> > > enough?
-> >
-> > In previous bindings ( https://lists.gt.net/linux/kernel/3403276 ) we
-> > did have instance-id as different property, however Pierre had some good
-> > suggestion to make it align with _ADR encoding as per MIPI DisCo spec.
-> >
-> > Do you still think that we should split the instance id to reg property?
-> 
-> Assuming you could have more than 1 of the same device on the bus,
-> then you need some way to distinguish them and the way that's done for
-> DT is unit-address/reg. And compatible strings should be constant for
-> each instance.
+> > Is the SOM ever used alone? If not, then no point in listing this here.
+>
+> SoM alone: no, because it requires some type of base board. However it
+> will be used by some customer designs with some amount of
+> changes/addons.
+>
+> Looking at other aproaches, usually SoMs have their own compatible.  In
+> such case - I should document it somewhere.
 
-That does make sense, we can use unit-address/reg as instance id.
+I wasn't suggesting not having the compatible for it, but you don't
+need it in this list because that is not valid. You have to list it
+with the base board compatibles.
 
-Thanks
--- 
-~Vinod
+Rob
