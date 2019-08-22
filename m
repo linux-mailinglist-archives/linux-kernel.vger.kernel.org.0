@@ -2,64 +2,159 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B1F49A2FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 339B69A30E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:37:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390976AbfHVWgK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 18:36:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
+        id S2394063AbfHVWg4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 18:36:56 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:35878 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390875AbfHVWgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 18:36:10 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2391054AbfHVWgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 18:36:55 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53E4921848;
-        Thu, 22 Aug 2019 22:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566513369;
-        bh=ZGarLzb1z82pc97B8UD712DtY9qzv28qrg/DgYfSiuM=;
-        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=shjdmtvcHkqgJpZxt1Cw4yGlVgFdLPayN6eGqrM79ndoZ9gils2taxUgCoKjjL+Nw
-         jHH/zWFHC8o8whwhsWWpUdAq2XnbDmr59SpffYnQJrmKxt43QBXXEZZFmlBpDWX6+b
-         1kZt0afG+eQspwGdCzWYKnGqz6QK2HLN1MIEZ38k=
-Content-Type: text/plain; charset="utf-8"
+        by mx1.redhat.com (Postfix) with ESMTPS id EC31D3083392;
+        Thu, 22 Aug 2019 22:36:54 +0000 (UTC)
+Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 873906DA80;
+        Thu, 22 Aug 2019 22:36:51 +0000 (UTC)
+Date:   Thu, 22 Aug 2019 17:36:49 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Miroslav Benes <mbenes@suse.cz>, jikos@kernel.org,
+        joe.lawrence@redhat.com, linux-kernel@vger.kernel.org,
+        live-patching@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] livepatch: Clear relocation targets on a module
+ removal
+Message-ID: <20190822223649.ptg6e7qyvosrljqx@treble>
+References: <20190719122840.15353-1-mbenes@suse.cz>
+ <20190719122840.15353-3-mbenes@suse.cz>
+ <20190728200427.dbrojgu7hafphia7@treble>
+ <alpine.LSU.2.21.1908141256150.16696@pobox.suse.cz>
+ <20190814151244.5xoaxib5iya2qjco@treble>
+ <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1e13a307539b47b8d874bdc5c36b705ba7a72f7e.camel@v3.sk>
-References: <20190816185716.530013-1-lkundrak@v3.sk> <20190816192707.DCC022133F@mail.kernel.org> <1e13a307539b47b8d874bdc5c36b705ba7a72f7e.camel@v3.sk>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: tidy up the help tags in Kconfig
-To:     Lubomir Rintel <lkundrak@v3.sk>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 22 Aug 2019 15:36:08 -0700
-Message-Id: <20190822223609.53E4921848@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190816094608.3p2z73oxcoqavnm4@pathway.suse.cz>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 22 Aug 2019 22:36:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-08-22 02:36:02)
-> On Fri, 2019-08-16 at 12:27 -0700, Stephen Boyd wrote:
-> > Quoting Lubomir Rintel (2019-08-16 11:57:16)
-> > > Sometimes an extraneous "---help---" follows "help". That is probably=
- a
-> > > copy&paste error stemming from their inconsistent use. Let's just rep=
-lace
-> > > them all with "help", removing the extra ones along the way.
-> >=20
-> > Can you just send the patch to remove the extra ones? I don't really
-> > care to make it consistent in the same patch.
->=20
-> Sure. Just done so.
->=20
-> Do you also care about making it consistent, or is it okay to just
-> leave it as it is?
->=20
->=20
+On Fri, Aug 16, 2019 at 11:46:08AM +0200, Petr Mladek wrote:
+> On Wed 2019-08-14 10:12:44, Josh Poimboeuf wrote:
+> > On Wed, Aug 14, 2019 at 01:06:09PM +0200, Miroslav Benes wrote:
+> > > > Really, we should be going in the opposite direction, by creating module
+> > > > dependencies, like all other kernel modules do, ensuring that a module
+> > > > is loaded *before* we patch it.  That would also eliminate this bug.
+> > > 
+> > > Yes, but it is not ideal either with cumulative one-fixes-all patch 
+> > > modules. It would load also modules which are not necessary for a 
+> > > customer and I know that at least some customers care about this. They 
+> > > want to deploy only things which are crucial for their systems.
+> > 
+> > If you frame the question as "do you want to destabilize the live
+> > patching infrastucture" then the answer might be different.
+> > 
+> > We should look at whether it makes sense to destabilize live patching
+> > for everybody, for a small minority of people who care about a small
+> > minority of edge cases.
+> 
+> I do not see it that simple. Forcing livepatched modules to be
+> loaded would mean loading "random" new modules when updating
+> livepatches:
 
-I don't think it matters. We just need to not duplicate it. Maybe we
-could add some check to Kconfig to detect duplicate help sections too.
+I don't want to start a long debate on this, because this idea isn't
+even my first choice.  But we shouldn't dismiss it outright.
 
+<devils-advocate>
+
+>   + It means more actions and higher risk to destabilize
+>     the system. Different modules have different quality.
+
+Maybe the distro shouldn't ship modules which would destabilize the
+system.
+
+>   + It might open more security holes that are not fixed by
+>     the livepatch.
+
+Following the same line of thinking, the livepatch infrastructure might
+open security holes because of the inherent complexity of late module
+patching.
+
+>   + It might require some extra configuration actions to handle
+>     the newly opened interfaces (devices). For example, updating
+>     SELinux policies.
+
+I assume you mean user-created policies, not distro ones?  Is this even
+a realistic concern?
+
+>   + Are there conflicting modules that might need to get
+>     livepatched?
+
+Again is this realistic?
+
+> This approach has a strong no-go from my side.
+
+</devils-advocate>
+
+I agree it's not ideal, but nothing is ideal at this point.  Let's not
+to rule it out prematurely.  I do feel that our current approach is not
+the best.  It will continue to create problems for us until we fix it.
+
+>
+> > Or maybe there's some other solution we haven't thought about, which
+> > fits more in the framework of how kernel modules already work.
+> >
+> > > We could split patch modules as you proposed in the past, but that have 
+> > > issues as well.
+> 
+> > Right, I'm not really crazy about that solution either.
+> 
+> Yes, this would just move the problem somewhere else.
+> 
+> 
+> > Here's another idea: per-object patch modules.  Patches to vmlinux are
+> > in a vmlinux patch module.  Patches to kvm.ko are in a kvm patch module.
+> > That would require:
+> > 
+> > - Careful management of dependencies between object-specific patches.
+> >   Maybe that just means that exported function ABIs shouldn't change.
+> > 
+> > - Some kind of hooking into modprobe to ensure the patch module gets
+> >   loaded with the real one.
+> 
+> I see this just as a particular approach how to split livepatches
+> per-object. The above points suggest how to handle dependencies
+> on the kernel side.
+
+Yes, they would need to be done on the distro / patch creation /
+operational side.  They probably wouldn't affect livepatch code.
+
+> > - Changing 'atomic replace' to allow patch modules to be per-object.
+> 
+> The problem might be how to transition all loaded objects atomically
+> when the needed code is loaded from different modules.
+
+I'm not sure what you mean.
+
+My idea was that each patch module would be specific to an object, with
+no inter-module change dependencies.  So when using atomic replace, if
+the patch module is only targeted to vmlinux, then only vmlinux-targeted
+patch modules would be replaced.
+
+In other words, 'atomic replace' would be object-specific.
+
+> Alternative would be to support only per-object consitency. But it
+> might reduce the number of supported scenarios too much. Also it
+> would make livepatching more error-prone.
+
+Again, I don't follow.
+
+-- 
+Josh
