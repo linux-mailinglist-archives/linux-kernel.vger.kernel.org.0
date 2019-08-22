@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0B85D9895E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B2C9F98957
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731255AbfHVCS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 22:18:56 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34060 "EHLO
+        id S1731207AbfHVCSw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 22:18:52 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:34142 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729691AbfHVCSN (ORCPT
+        with ESMTP id S1730876AbfHVCSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Aug 2019 22:18:13 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.92)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1i0cfX-0001S6-50; Wed, 21 Aug 2019 22:17:43 -0400
+        id 1i0cfX-0001S6-6N; Wed, 21 Aug 2019 22:17:43 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
         peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
         tglx@linutronix.de, mgorman@techsingularity.net,
         vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 04/15] sched,fair: move runnable_load_avg to cfs_rq
-Date:   Wed, 21 Aug 2019 22:17:29 -0400
-Message-Id: <20190822021740.15554-5-riel@surriel.com>
+Subject: [PATCH 05/15] sched,fair: remove cfs_rqs from leaf_cfs_rq_list bottom up
+Date:   Wed, 21 Aug 2019 22:17:30 -0400
+Message-Id: <20190822021740.15554-6-riel@surriel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190822021740.15554-1-riel@surriel.com>
 References: <20190822021740.15554-1-riel@surriel.com>
@@ -36,106 +36,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since only the root cfs_rq runnable_load_avg field is used any more,
-we can move the field from struct sched_avg, which every sched_entity
-has one of, directly into the struct cfs_rq, of which we have way fewer.
+Reducing the overhead of the CPU controller is achieved by not walking
+all the sched_entities every time a task is enqueued or dequeued.
 
-No functional changes.
+One of the things being checked every single time is whether the cfs_rq
+is on the rq->leaf_cfs_rq_list.
 
-Suggested-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+By only removing a cfs_rq from the list once it no longer has children
+on the list, we can avoid walking the sched_entity hierarchy if the bottom
+cfs_rq is on the list, once the runqueues have been flattened.
+
 Signed-off-by: Rik van Riel <riel@surriel.com>
+Suggested-by: Vincent Guittot <vincent.guittot@linaro.org>
 ---
- include/linux/sched.h | 1 -
- kernel/sched/debug.c  | 3 +--
- kernel/sched/fair.c   | 8 ++++----
- kernel/sched/sched.h  | 1 +
- 4 files changed, 6 insertions(+), 7 deletions(-)
+ kernel/sched/fair.c | 35 ++++++++++++++++++++++++++++++++++-
+ 1 file changed, 34 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index f5bb6948e40c..84a6cc6f5c47 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -394,7 +394,6 @@ struct sched_avg {
- 	u32				util_sum;
- 	u32				period_contrib;
- 	unsigned long			load_avg;
--	unsigned long			runnable_load_avg;
- 	unsigned long			util_avg;
- 	struct util_est			util_est;
- } ____cacheline_aligned;
-diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-index cefc1b171c0b..6e7c8ff210a8 100644
---- a/kernel/sched/debug.c
-+++ b/kernel/sched/debug.c
-@@ -539,7 +539,7 @@ void print_cfs_rq(struct seq_file *m, int cpu, struct cfs_rq *cfs_rq)
- 	SEQ_printf(m, "  .%-30s: %lu\n", "load_avg",
- 			cfs_rq->avg.load_avg);
- 	SEQ_printf(m, "  .%-30s: %lu\n", "runnable_load_avg",
--			cfs_rq->avg.runnable_load_avg);
-+			cfs_rq->runnable_load_avg);
- 	SEQ_printf(m, "  .%-30s: %lu\n", "util_avg",
- 			cfs_rq->avg.util_avg);
- 	SEQ_printf(m, "  .%-30s: %u\n", "util_est_enqueued",
-@@ -960,7 +960,6 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
- 	P(se.avg.load_sum);
- 	P(se.avg.util_sum);
- 	P(se.avg.load_avg);
--	P(se.avg.runnable_load_avg);
- 	P(se.avg.util_avg);
- 	P(se.enqueued_h_load);
- 	P(se.avg.last_update_time);
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 30afeda1620f..a48d0dbfc232 100644
+index a48d0dbfc232..04b216234265 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -2768,7 +2768,7 @@ enqueue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 		struct cfs_rq *root_cfs_rq = &cfs_rq->rq->cfs;
- 		se->enqueued_h_load = task_se_h_load(se);
- 
--		root_cfs_rq->avg.runnable_load_avg += se->enqueued_h_load;
-+		root_cfs_rq->runnable_load_avg += se->enqueued_h_load;
- 	}
+@@ -369,6 +369,39 @@ static inline void assert_list_leaf_cfs_rq(struct rq *rq)
+ 	SCHED_WARN_ON(rq->tmp_alone_branch != &rq->leaf_cfs_rq_list);
  }
  
-@@ -2777,7 +2777,7 @@ dequeue_runnable_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	if (entity_is_task(se)) {
- 		struct cfs_rq *root_cfs_rq = &cfs_rq->rq->cfs;
--		sub_positive(&root_cfs_rq->avg.runnable_load_avg,
-+		sub_positive(&root_cfs_rq->runnable_load_avg,
- 					se->enqueued_h_load);
- 	}
- }
-@@ -2795,7 +2795,7 @@ update_runnable_load_avg(struct sched_entity *se)
++/*
++ * Because list_add_leaf_cfs_rq always places a child cfs_rq on the list
++ * immediately before a parent cfs_rq, and cfs_rqs are removed from the list
++ * bottom-up, we only have to test whether the cfs_rq before us on the list
++ * is our child.
++ */
++static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
++{
++	struct cfs_rq *prev_cfs_rq;
++	struct list_head *prev;
++
++	prev = cfs_rq->leaf_cfs_rq_list.prev;
++	prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
++
++	return (prev_cfs_rq->tg->parent == cfs_rq->tg);
++}	
++
++/*
++ * Remove a cfs_rq from the list if it has no children on the list.
++ * The scheduler iterates over the list regularly; if conditions for
++ * removal are still true, we'll get to this cfs_rq in the future.
++ */
++static inline void list_del_leaf_cfs_rq_bottom(struct cfs_rq *cfs_rq)
++{
++	if (!cfs_rq->on_list)
++		return;
++
++	if (child_cfs_rq_on_list(cfs_rq))
++		return;
++
++	list_del_leaf_cfs_rq(cfs_rq);
++}
++
+ /* Iterate thr' all leaf cfs_rq's on a runqueue */
+ #define for_each_leaf_cfs_rq_safe(rq, cfs_rq, pos)			\
+ 	list_for_each_entry_safe(cfs_rq, pos, &rq->leaf_cfs_rq_list,	\
+@@ -7723,7 +7756,7 @@ static void update_blocked_averages(int cpu)
+ 		 * decayed cfs_rqs linger on the list.
+ 		 */
+ 		if (cfs_rq_is_decayed(cfs_rq))
+-			list_del_leaf_cfs_rq(cfs_rq);
++			list_del_leaf_cfs_rq_bottom(cfs_rq);
  
- 	new_h_load = task_se_h_load(se);
- 	delta = new_h_load - se->enqueued_h_load;
--	root_cfs_rq->avg.runnable_load_avg += delta;
-+	root_cfs_rq->runnable_load_avg += delta;
- 	se->enqueued_h_load = new_h_load;
- }
- 
-@@ -3561,7 +3561,7 @@ static void remove_entity_load_avg(struct sched_entity *se)
- 
- static inline unsigned long cfs_rq_runnable_load_avg(struct cfs_rq *cfs_rq)
- {
--	return cfs_rq->avg.runnable_load_avg;
-+	return cfs_rq->runnable_load_avg;
- }
- 
- static inline unsigned long cfs_rq_load_avg(struct cfs_rq *cfs_rq)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 5be14cee61f9..32978a8de8ce 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -516,6 +516,7 @@ struct cfs_rq {
- 	 * CFS load tracking
- 	 */
- 	struct sched_avg	avg;
-+	unsigned long		runnable_load_avg;
- #ifndef CONFIG_64BIT
- 	u64			load_last_update_time_copy;
- #endif
+ 		/* Don't need periodic decay once load/util_avg are null */
+ 		if (cfs_rq_has_blocked(cfs_rq))
 -- 
 2.20.1
 
