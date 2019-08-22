@@ -2,37 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 77FB299CE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:38:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA47199CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:38:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392972AbfHVRiB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:38:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46198 "EHLO mail.kernel.org"
+        id S2404933AbfHVRhi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:37:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404235AbfHVRYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:33 -0400
+        id S2404240AbfHVRYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:34 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F067423407;
-        Thu, 22 Aug 2019 17:24:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA74F2341A;
+        Thu, 22 Aug 2019 17:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1566494673;
-        bh=RwIlGsY5UpAFUdjUsjZdVdMjzCqIzdQG2xcWQDnjdI8=;
+        bh=1wM/SEQJfDfuIKMxA3jc2vKJwCSpwRpH0U615cu6rx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h8qwaF1pshMoaQqUumy8ucItXoQvSw3oq8y+a3a/ZCd9obHenBjpO/IoP0gtQ+4Aq
-         pILcsgiDhD8JMft7Rym6VAWvx/zs0KdcvueMAaepUsJUN+2CiPqZAEZZwXnKwcurmV
-         BeQ/g4uHNYPFtyekMJes65qr5PE+zDQxhy7u1ZLc=
+        b=cLD5DyUE5SNpMUyDlofT025BGkUDlqL9nhs4u+8ZddOsjD/g4j0lZqrv7CUB0WQct
+         VLZ1xkX3m8h/Eybv9AvLKE0egMJzFvwNfVZmPrHN/3zFX4jWiUOLslhViaNmG/kd4W
+         2pQI9n5fbc3hqzIrtCCYkfehnZVuy/CmDDrDGCd8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Hillf Danton <hdanton@sina.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.14 16/71] HID: hiddev: do cleanup in failure of opening a device
-Date:   Thu, 22 Aug 2019 10:18:51 -0700
-Message-Id: <20190822171728.038996613@linuxfoundation.org>
+        syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.14 17/71] Input: kbtab - sanity check for endpoint type
+Date:   Thu, 22 Aug 2019 10:18:52 -0700
+Message-Id: <20190822171728.076175556@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
 References: <20190822171726.131957995@linuxfoundation.org>
@@ -45,34 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 6d4472d7bec39917b54e4e80245784ea5d60ce49 upstream.
+commit c88090dfc84254fa149174eb3e6a8458de1912c4 upstream.
 
-Undo what we did for opening before releasing the memory slice.
+The driver should check whether the endpoint it uses has the correct
+type.
 
-Reported-by: syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reported-by: syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/input/tablet/kbtab.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -321,6 +321,10 @@ bail_normal_power:
- 	hid_hw_power(hid, PM_HINT_NORMAL);
- bail_unlock:
- 	mutex_unlock(&hiddev->existancelock);
+--- a/drivers/input/tablet/kbtab.c
++++ b/drivers/input/tablet/kbtab.c
+@@ -125,6 +125,10 @@ static int kbtab_probe(struct usb_interf
+ 	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
+ 		return -ENODEV;
+ 
++	endpoint = &intf->cur_altsetting->endpoint[0].desc;
++	if (!usb_endpoint_is_int_in(endpoint))
++		return -ENODEV;
 +
-+	spin_lock_irq(&list->hiddev->list_lock);
-+	list_del(&list->node);
-+	spin_unlock_irq(&list->hiddev->list_lock);
- bail:
- 	file->private_data = NULL;
- 	vfree(list);
+ 	kbtab = kzalloc(sizeof(struct kbtab), GFP_KERNEL);
+ 	input_dev = input_allocate_device();
+ 	if (!kbtab || !input_dev)
+@@ -163,8 +167,6 @@ static int kbtab_probe(struct usb_interf
+ 	input_set_abs_params(input_dev, ABS_Y, 0, 0x1750, 4, 0);
+ 	input_set_abs_params(input_dev, ABS_PRESSURE, 0, 0xff, 0, 0);
+ 
+-	endpoint = &intf->cur_altsetting->endpoint[0].desc;
+-
+ 	usb_fill_int_urb(kbtab->irq, dev,
+ 			 usb_rcvintpipe(dev, endpoint->bEndpointAddress),
+ 			 kbtab->data, 8,
 
 
