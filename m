@@ -2,114 +2,76 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DB6939A065
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:45:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BD7229A077
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:47:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392380AbfHVTpf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:45:35 -0400
-Received: from mailoutvs50.siol.net ([185.57.226.241]:56282 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S2392324AbfHVTpb (ORCPT
+        id S2389427AbfHVTrT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:47:19 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44157 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfHVTrS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:45:31 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 4AD9E5249EB;
-        Thu, 22 Aug 2019 21:45:29 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 42uRjQLJpET2; Thu, 22 Aug 2019 21:45:29 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id F1F6252481F;
-        Thu, 22 Aug 2019 21:45:28 +0200 (CEST)
-Received: from localhost.localdomain (cpe-86-58-59-25.static.triera.net [86.58.59.25])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPSA id 8A5B15249EF;
-        Thu, 22 Aug 2019 21:45:26 +0200 (CEST)
-From:   Jernej Skrabec <jernej.skrabec@siol.net>
-To:     mchehab@kernel.org, hverkuil-cisco@xs4all.nl,
-        paul.kocialkowski@bootlin.com, mripard@kernel.org
-Cc:     pawel@osciak.com, m.szyprowski@samsung.com,
-        kyungmin.park@samsung.com, tfiga@chromium.org, wens@csie.org,
-        acourbot@chromium.org, gregkh@linuxfoundation.org,
-        jernej.skrabec@siol.net, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org, ezequiel@collabora.com,
-        jonas@kwiboo.se
-Subject: [PATCH 8/8] media: cedrus: Add support for V4L2_DEC_CMD_FLUSH
-Date:   Thu, 22 Aug 2019 21:45:00 +0200
-Message-Id: <20190822194500.2071-9-jernej.skrabec@siol.net>
-X-Mailer: git-send-email 2.22.1
-In-Reply-To: <20190822194500.2071-1-jernej.skrabec@siol.net>
-References: <20190822194500.2071-1-jernej.skrabec@siol.net>
+        Thu, 22 Aug 2019 15:47:18 -0400
+Received: by mail-pg1-f193.google.com with SMTP id i18so4257632pgl.11;
+        Thu, 22 Aug 2019 12:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=geKo+r4JpYsWTyWrJg278HrPmOhiSRe0EiDLQt4J2MY=;
+        b=a6lfsgZHZTUqp/CIKlh691UsSMy3tNcuTSdW59qvWTTNQuxhgnRBn+IJqoI+N9FJJT
+         ru9IcW3OVUaw5WYIyI+U5v3Y8iIpIMBoUvyqkfXRsbscvxr8PW51w928bpbJtI4tayZ6
+         Tfo5JnDMz0tfnrJuQfgyhI2N+8iirlMe6fkggA913cL8UPzwBwHSRkRduoC2vxNVi8yd
+         ZYt8S1wCoMawjxJSLxj6TgSI8HoWW9dQi99O6Eu9OCSOSciYhqTTfBhukd8gcwVA3kv6
+         Stl4xLuIdkSw+3Fv6an5SA9gpikg1+5PMZ4zAl7JxxgWwSRfhak/JlD4ENAl/aee9DCn
+         1Ynw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=geKo+r4JpYsWTyWrJg278HrPmOhiSRe0EiDLQt4J2MY=;
+        b=iOSUVIFAk7omqCmsW9U97a+DapvvazuuVEYKTV2Tdo6E/J/XBebLV04cGY/ldJxsV3
+         Vzo5WDavUgFQdFpa9IFAAVptouYEkONAQmdaADPCl9Fm7cF3v4BAiPtzYjhMlnCV3vtU
+         4onwjoN3AvEvW59hkbHsoD8vx4Qg/vhF3cWRsz2gTTPTIbEMow8uz5mEUsG9KKdWCMAw
+         SfyntnYSZHBzFgJqennpGiNDflHoa84hyrleZKr0Irw33vLBBbgbrSqYm/btPrxPebEe
+         +y1BgIjfEhDZBe7mKjKNl5SCtWCjmSFCI6vsFOJzLZuj/d/kW881izuDFJdUVXTzGoZW
+         NIvw==
+X-Gm-Message-State: APjAAAXSJ22mzUOEPW3LYYKCbMgxxXrss//tpWIvOwtC2lda4wXJmk9/
+        9SyJAoY/pqn97WXkI6bzU+EMUb/Q3m+h/m3lhPSEzUa2UIs=
+X-Google-Smtp-Source: APXvYqzrpL9qj/EmLT6e3tFYK9qL3VK1t38d28pYNQeGk3WBfjVb4bjJ/bbHG/cTwmU4V1l3q2pV8jviw2jK/sH5eBc=
+X-Received: by 2002:a62:7503:: with SMTP id q3mr955466pfc.151.1566503237379;
+ Thu, 22 Aug 2019 12:47:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+References: <1566294992-703-1-git-send-email-info@metux.net>
+In-Reply-To: <1566294992-703-1-git-send-email-info@metux.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 22 Aug 2019 22:47:05 +0300
+Message-ID: <CAHp75VfFf7y5iLHSgS+mXa4cE78BC=maF6PWtwEGfgyi2pXKCg@mail.gmail.com>
+Subject: Re: [PATCH] platform: x86: pcengines-apuv2: detect apuv4 board
+To:     "Enrico Weigelt, metux IT consult" <info@metux.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This command is useful for explicitly flushing last decoded frame.
+On Tue, Aug 20, 2019 at 12:56 PM Enrico Weigelt, metux IT consult
+<info@metux.net> wrote:
+>
+> GPIO stuff on APUv4 seems to be the same as on APUv2, so we just
+> need to match on DMI data.
+>
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
----
- .../staging/media/sunxi/cedrus/cedrus_video.c | 34 +++++++++++++++++++
- 1 file changed, 34 insertions(+)
+> Fixes: f8eb0235f65989fc5521c40c78d1261e7f25cdbe
 
-diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/=
-staging/media/sunxi/cedrus/cedrus_video.c
-index 5153b2bba21e..9eae69d5741c 100644
---- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-+++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
-@@ -331,6 +331,37 @@ static int cedrus_s_fmt_vid_out(struct file *file, v=
-oid *priv,
- 	return 0;
- }
-=20
-+static int cedrus_try_decoder_cmd(struct file *file, void *fh,
-+				  struct v4l2_decoder_cmd *dc)
-+{
-+	if (dc->cmd !=3D V4L2_DEC_CMD_FLUSH)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int cedrus_decoder_cmd(struct file *file, void *fh,
-+			      struct v4l2_decoder_cmd *dc)
-+{
-+	struct cedrus_ctx *ctx =3D cedrus_file2ctx(file);
-+	struct vb2_v4l2_buffer *out_vb, *cap_vb;
-+	int ret;
-+
-+	ret =3D cedrus_try_decoder_cmd(file, fh, dc);
-+	if (ret < 0)
-+		return ret;
-+
-+	out_vb =3D v4l2_m2m_last_src_buf(ctx->fh.m2m_ctx);
-+	cap_vb =3D v4l2_m2m_last_dst_buf(ctx->fh.m2m_ctx);
-+
-+	if (out_vb)
-+		out_vb->flags &=3D ~V4L2_BUF_FLAG_M2M_HOLD_CAPTURE_BUF;
-+	else if (cap_vb && cap_vb->is_held)
-+		v4l2_m2m_buf_done(cap_vb, VB2_BUF_STATE_DONE);
-+
-+	return 0;
-+}
-+
- const struct v4l2_ioctl_ops cedrus_ioctl_ops =3D {
- 	.vidioc_querycap		=3D cedrus_querycap,
-=20
-@@ -355,6 +386,9 @@ const struct v4l2_ioctl_ops cedrus_ioctl_ops =3D {
- 	.vidioc_streamon		=3D v4l2_m2m_ioctl_streamon,
- 	.vidioc_streamoff		=3D v4l2_m2m_ioctl_streamoff,
-=20
-+	.vidioc_try_decoder_cmd		=3D cedrus_try_decoder_cmd,
-+	.vidioc_decoder_cmd		=3D cedrus_decoder_cmd,
-+
- 	.vidioc_subscribe_event		=3D v4l2_ctrl_subscribe_event,
- 	.vidioc_unsubscribe_event	=3D v4l2_event_unsubscribe,
- };
---=20
-2.22.1
+Wrong format.
 
+W/o SoB tag I can't take it.
+
+-- 
+With Best Regards,
+Andy Shevchenko
