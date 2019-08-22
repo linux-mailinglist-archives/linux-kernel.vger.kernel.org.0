@@ -2,45 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EF5DC99BC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8334999BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:26:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391999AbfHVR1S (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:27:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50226 "EHLO mail.kernel.org"
+        id S2390566AbfHVR0a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48446 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404513AbfHVRZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:53 -0400
+        id S2404376AbfHVRZU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:20 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C7012341E;
-        Thu, 22 Aug 2019 17:25:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC64F2064A;
+        Thu, 22 Aug 2019 17:25:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494752;
-        bh=yDeMJbzq+TOjCwQOhDH0nlJsiz1Mfw7aQRUec/IWZzk=;
+        s=default; t=1566494719;
+        bh=sihiTipHc8/WKfVhvkAVkcyT3aK0UieUNF3eUbU5xMc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vd/LB7abIv0mrdl8mi0RPq112ehzxP2HnFIx89h+bcCHD/4GNxBbFTuL0wB0ISf+b
-         6DDvVmkFnO6Zs3fk+r2MuSdia4hlxucK8gunhKw8qah0+sv8OZLnTGByne4+3A+Di9
-         QP/v6BKmT7rPXCadRJxISmCGwHpkNxYJyiS3nqxE=
+        b=miEsIWqVoUi+zmG7J2ZDcXJgQE47voPLiLAsHUlq2pj3Pf4MqduXicF5GPxESOeGa
+         DdTU7InFy3GiYZ+ujvFZo62gp5rbSZd0dSBF+mwGNvHhQ+81ixxqCN9zPjZFenVvIo
+         nhhPUeeBPX2wBtHlBrsmMyyxfDPUTUbyBs3qeB2Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yang Shi <yang.shi@linux.alibaba.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        David Rientjes <rientjes@google.com>,
-        Matthew Wilcox <willy@infradead.org>, Qian Cai <cai@lca.pw>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 51/85] Revert "kmemleak: allow to coexist with fault injection"
+        stable@vger.kernel.org,
+        syzbot+45a53506b65321c1fe91@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.14 49/71] USB: CDC: fix sanity checks in CDC union parser
 Date:   Thu, 22 Aug 2019 10:19:24 -0700
-Message-Id: <20190822171733.477513236@linuxfoundation.org>
+Message-Id: <20190822171729.971517249@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,70 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit df9576def004d2cd5beedc00cb6e8901427634b9 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-When running ltp's oom test with kmemleak enabled, the below warning was
-triggerred since kernel detects __GFP_NOFAIL & ~__GFP_DIRECT_RECLAIM is
-passed in:
+commit 54364278fb3cabdea51d6398b07c87415065b3fc upstream.
 
-  WARNING: CPU: 105 PID: 2138 at mm/page_alloc.c:4608 __alloc_pages_nodemask+0x1c31/0x1d50
-  Modules linked in: loop dax_pmem dax_pmem_core ip_tables x_tables xfs virtio_net net_failover virtio_blk failover ata_generic virtio_pci virtio_ring virtio libata
-  CPU: 105 PID: 2138 Comm: oom01 Not tainted 5.2.0-next-20190710+ #7
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.10.2-0-g5f4c7b1-prebuilt.qemu-project.org 04/01/2014
-  RIP: 0010:__alloc_pages_nodemask+0x1c31/0x1d50
-  ...
-   kmemleak_alloc+0x4e/0xb0
-   kmem_cache_alloc+0x2a7/0x3e0
-   mempool_alloc_slab+0x2d/0x40
-   mempool_alloc+0x118/0x2b0
-   bio_alloc_bioset+0x19d/0x350
-   get_swap_bio+0x80/0x230
-   __swap_writepage+0x5ff/0xb20
+A few checks checked for the size of the pointer to a structure
+instead of the structure itself. Copy & paste issue presumably.
 
-The mempool_alloc_slab() clears __GFP_DIRECT_RECLAIM, however kmemleak
-has __GFP_NOFAIL set all the time due to d9570ee3bd1d4f2 ("kmemleak:
-allow to coexist with fault injection").  But, it doesn't make any sense
-to have __GFP_NOFAIL and ~__GFP_DIRECT_RECLAIM specified at the same
-time.
+Fixes: e4c6fb7794982 ("usbnet: move the CDC parser into USB core")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: syzbot+45a53506b65321c1fe91@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20190813093541.18889-1-oneukum@suse.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-According to the discussion on the mailing list, the commit should be
-reverted for short term solution.  Catalin Marinas would follow up with
-a better solution for longer term.
-
-The failure rate of kmemleak metadata allocation may increase in some
-circumstances, but this should be expected side effect.
-
-Link: http://lkml.kernel.org/r/1563299431-111710-1-git-send-email-yang.shi@linux.alibaba.com
-Fixes: d9570ee3bd1d4f2 ("kmemleak: allow to coexist with fault injection")
-Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
-Suggested-by: Catalin Marinas <catalin.marinas@arm.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Qian Cai <cai@lca.pw>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/kmemleak.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/message.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/mm/kmemleak.c b/mm/kmemleak.c
-index 6c94b6865ac22..5eeabece0c178 100644
---- a/mm/kmemleak.c
-+++ b/mm/kmemleak.c
-@@ -126,7 +126,7 @@
- /* GFP bitmask for kmemleak internal allocations */
- #define gfp_kmemleak_mask(gfp)	(((gfp) & (GFP_KERNEL | GFP_ATOMIC)) | \
- 				 __GFP_NORETRY | __GFP_NOMEMALLOC | \
--				 __GFP_NOWARN | __GFP_NOFAIL)
-+				 __GFP_NOWARN)
- 
- /* scanning area inside a memory block */
- struct kmemleak_scan_area {
--- 
-2.20.1
-
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -2143,14 +2143,14 @@ int cdc_parse_cdc_header(struct usb_cdc_
+ 				(struct usb_cdc_dmm_desc *)buffer;
+ 			break;
+ 		case USB_CDC_MDLM_TYPE:
+-			if (elength < sizeof(struct usb_cdc_mdlm_desc *))
++			if (elength < sizeof(struct usb_cdc_mdlm_desc))
+ 				goto next_desc;
+ 			if (desc)
+ 				return -EINVAL;
+ 			desc = (struct usb_cdc_mdlm_desc *)buffer;
+ 			break;
+ 		case USB_CDC_MDLM_DETAIL_TYPE:
+-			if (elength < sizeof(struct usb_cdc_mdlm_detail_desc *))
++			if (elength < sizeof(struct usb_cdc_mdlm_detail_desc))
+ 				goto next_desc;
+ 			if (detail)
+ 				return -EINVAL;
 
 
