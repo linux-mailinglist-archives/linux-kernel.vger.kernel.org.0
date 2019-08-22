@@ -2,76 +2,55 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CC7C9A1D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6ECFD9A1DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:15:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390135AbfHVVNW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:13:22 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:44119 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729718AbfHVVNW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:13:22 -0400
-Received: by mail-qt1-f194.google.com with SMTP id 44so9284286qtg.11;
-        Thu, 22 Aug 2019 14:13:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=tVYGZF98cbwCuEnSEO1Hots0hv8R+WSge8zW0ooPbuk=;
-        b=O8leEuBYlqsOe/lClx0gekw2F1TuK5mIxCus51wwMx1g0I4yslglKjMsVWwhuis/R2
-         xJMkzHGBxGbvSRol1pOgOSxokHmAPmcbghciCuP00mBQxH+wGx7WpjanUSyVWm8PmLdV
-         xBjyd/J3cindAzLQJosmkpaI4erGlBzGELqic9Y/h3slZgHd9wQIqnEFpNZnph2Zb0lW
-         GnZ0zokq71rhJkwSdWfQ5iPkJ+4BDrklRBJG+QQ+VPWPz8HHJWCX/I6XTbvpGbpUpVNd
-         9nAKzfhvVosDtl3swmpYHHjXAMsFGES6cS/dQLjrnS/xXezmoW8z/axMpJZKsHEuppnt
-         Nvow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=tVYGZF98cbwCuEnSEO1Hots0hv8R+WSge8zW0ooPbuk=;
-        b=fmxoB1DbPO4UslUStIGXCeWD8z9kjb6aWnMZUFW0rGuOHHtnl0X3FtV1ane85yb2F9
-         Gflt4YKtvpjO0cWYcDt5Vk9cef1KTaraQscngo4DQiyLuMp08pE2l8Jb7qqXdSFa4YDj
-         T619QPOaWz8h4Qpo8d+cNauoFbhagQUbe53TgkG7tE4Xvo8TVNzz3ieYiwSTZIUz9Tsg
-         oTL6jt4YaJNG79Yw2J6pIyLWm5hnt2e0ykB2HnaqSon7QIT+MhE8vC4+EAyvLUKTGRgv
-         w+e64h2PcTTwGW2EwTWK7+cF003vfMd6P9idz4llIv3BmWIAZIPCJrLOvFaaFGRhb1n0
-         dttw==
-X-Gm-Message-State: APjAAAXvy+atzf16Zk7k2G4avjb7dIeqdCFhW9KfJt17euiKmu6oYJkt
-        c0L/P/N5cMgRKfp96Wh/CtcHxnuIvHdRnn2tzW4=
-X-Google-Smtp-Source: APXvYqzabskoAr859ElJLB/1NTl9lcAlIyr0pZ6JF+n8KfqYiXfinYi4g1g8nmSaWxuXRxu+M4uvCzB5uOEvEw1AWps=
-X-Received: by 2002:ac8:358e:: with SMTP id k14mr1675089qtb.83.1566508400887;
- Thu, 22 Aug 2019 14:13:20 -0700 (PDT)
-MIME-Version: 1.0
-References: <2755f638-7846-91f2-74f4-61031f3e34c8@web.de>
-In-Reply-To: <2755f638-7846-91f2-74f4-61031f3e34c8@web.de>
-From:   Song Liu <liu.song.a23@gmail.com>
-Date:   Thu, 22 Aug 2019 14:13:10 -0700
-Message-ID: <CAPhsuW4aH_kPc5NnWXQp5jgdvOZjq+eDWpUQGBgyZ9USEA6LKA@mail.gmail.com>
-Subject: =?UTF-8?Q?Re=3A_=5BPATCH=5D_net=2Fcore=2Fskmsg=3A_Delete_an_unnecessary_ch?=
-        =?UTF-8?Q?eck_before_the_function_call_=E2=80=9Cconsume=5Fskb=E2=80=9D?=
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     Networking <netdev@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "David S. Miller" <davem@davemloft.net>,
-        John Fastabend <john.fastabend@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S2390142AbfHVVPI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:15:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45958 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732447AbfHVVPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 17:15:08 -0400
+Subject: Re: [GIT PULL] PCI fixes for v5.3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566508507;
+        bh=KgeuTIuadlXWsCpNhH8NufflIAPIfriFmJs7aNh4MR4=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=eLRQ2Pb6GhPu8NPvzZ59XaxzK/8DbTVVF8VqEXIuEXZ4WmW2N/GQU/jdPPjXy0A4q
+         Deyll9h8B6BFzan6n4XfHmGbz36P5jW2gyq1tM+VRUwde09BzZVjx6cqkh0/sJgYvW
+         5Nsp6CESJtU5zE/vRoZYgEV81cKADTBW/yRftIIA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190822203239.GL14450@google.com>
+References: <20190822203239.GL14450@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190822203239.GL14450@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git
+ tags/pci-v5.3-fixes-1
+X-PR-Tracked-Commit-Id: 7bafda88de20b2990461d253c5475007436e355c
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 59c36bc8d377c8764eb617a92211e0fc2f1318da
+Message-Id: <156650850750.5209.13921717189408235811.pr-tracker-bot@kernel.org>
+Date:   Thu, 22 Aug 2019 21:15:07 +0000
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Lyude Paul <lyude@redhat.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 10:18 AM Markus Elfring <Markus.Elfring@web.de> wrote:
->
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 22 Aug 2019 18:00:40 +0200
->
-> The consume_skb() function performs also input parameter validation.
-> Thus the test around the call is not needed.
->
-> This issue was detected by using the Coccinelle software.
->
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+The pull request you sent on Thu, 22 Aug 2019 15:32:39 -0500:
 
-Acked-by: Song Liu <songliubraving@fb.com>
+> git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v5.3-fixes-1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/59c36bc8d377c8764eb617a92211e0fc2f1318da
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
