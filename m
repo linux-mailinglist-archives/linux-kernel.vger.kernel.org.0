@@ -2,271 +2,121 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C18EF99065
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:08:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BE79E99069
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:09:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733106AbfHVKIq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 06:08:46 -0400
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:38513 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733017AbfHVKIn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:08:43 -0400
-Received-SPF: Pass (esa6.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
-  a:mx2.microchip.iphmx.com include:servers.mcsv.net
-  include:mktomail.com include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa6.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa6.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa6.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: gerp3Eso7Xx12Qzq6t919YuBiGVgJGWpF/R1B7xKUwwln/Yyp1qVucoFUT8duRKJifi8nOKRmX
- Z7zk+TPuGKNvLkA3ZDlTUiRhg+4ocZWgEHESnixmg9pngY6lPV+ylnGul4WpbAB0GoO1CQN1tp
- zVFtGWi5rvrhYdR+uKuo3DrPmOOdzByg82vivRJhXSQiULN0UUDfjMvkA7C4V2Wf2nTbMuxwxc
- 2cyMpCYe7HgKG96AulDQTfCwHrKKzGoskUxWhRIy3iSaeSHFMivWc74HI73UBtTcF5Lv1cuY0C
- UaQ=
-X-IronPort-AV: E=Sophos;i="5.64,416,1559545200"; 
-   d="scan'208";a="43245616"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 22 Aug 2019 03:08:42 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Thu, 22 Aug 2019 03:08:41 -0700
-Received: from NAM03-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.87.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.1.1713.5
- via Frontend Transport; Thu, 22 Aug 2019 03:08:41 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Zhptn1t3R/KObAvwI3QLVMefO9S4gu4EVZNJ39kN2GQi9iYfBUQeElDYDVqdP7CiTDT3NiQnZxkHNk4G+8DnaC2HO/8GDIkGk/i78u96T+yN0cG4J+7vlFPePxVNHSF1GRgctkNEedHKx3ZkPKAZNNsOLgzyMZda+czFOi/YJce7BK9bPifV8BbNjjUQKrIATZNjlFTfgNtVxsqHCnRuDjKIH0C2aqmd0LXhjoZaLQ1EABMAukffzKqbdpgP5PzCW6B8rwQILYuAfsDLZqGOUerPYJBP/Uo/U7gRO9Mm7QsT954kI7sOv75fBpClVzykFEUoh7V1EsveTla0PTKNMQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VMjYeSSzb901bLXqXMTK/V+FAaE4RU7wVUp85Ddt9m0=;
- b=LM75mpokF4INGWQRq1mGTim+L0/hb1LcyRDw4e47gzJ5DjlHVkV6aubCFtJw6298mkEzH29YrLCdSHOVjka6vuXc8npI0pJCMTGezX7yAgKW/47dsJDlSUgLQjbmXHkOAtOnCxcM4JGNIwB7Nzzd5PcR/WfwEEspJzc5V5U+TVaMg4hU+xnGLkF+Trnn+i7JcI1DFUIxBDV7DKjLYOOl77Hnp0wb3M7/lw5snIxkP9si41NYB0TLJ4gz/diIrtjyExiSx1tHe+Uxv+c/vaNjBHdPJEDk3BUR+lR/xw1fPIEyciy1rEOMtlDLF1I3Yn2cJxJCUDfapa7rhaEE1Gbatg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector2-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VMjYeSSzb901bLXqXMTK/V+FAaE4RU7wVUp85Ddt9m0=;
- b=JeAXXn2pNiBqxkPm50oSAiLW/0JUi9wAzrUJ4QzAlJh35CYjRhsqU7mUwOz/qrJNciuOw+SgphTmGGDsSoJSlWOcFNKbdR8oi3hbg5WyvRFex1YSb53lhol1MOuxRzSbQa0DWBOuG0iAsDK87IYJ3ziZhM/BIMi2ejiLyzhWorc=
-Received: from MWHPR11MB1549.namprd11.prod.outlook.com (10.172.54.17) by
- MWHPR11MB1374.namprd11.prod.outlook.com (10.169.234.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Thu, 22 Aug 2019 10:08:40 +0000
-Received: from MWHPR11MB1549.namprd11.prod.outlook.com
- ([fe80::512b:adf0:597f:3dec]) by MWHPR11MB1549.namprd11.prod.outlook.com
- ([fe80::512b:adf0:597f:3dec%11]) with mapi id 15.20.2178.020; Thu, 22 Aug
- 2019 10:08:40 +0000
-From:   <Claudiu.Beznea@microchip.com>
-To:     <poeschel@lemonage.de>, <gregkh@linuxfoundation.org>,
-        <allison@lohutok.net>, <swinslow@gmail.com>, <tglx@linutronix.de>,
-        <kstewart@linuxfoundation.org>, <gustavo@embeddedor.com>,
-        <keescook@chromium.org>, <opensource@jilayne.com>,
-        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC:     <johan@kernel.org>
-Subject: Re: [PATCH v6 4/7] nfc: pn533: Split pn533 init & nfc_register
-Thread-Topic: [PATCH v6 4/7] nfc: pn533: Split pn533 init & nfc_register
-Thread-Index: AQHVWNGLH9d4su9mOUaBD5kDcgD8/A==
-Date:   Thu, 22 Aug 2019 10:08:40 +0000
-Message-ID: <67dbe5a1-35e7-0ac9-efbc-6425b3628b18@microchip.com>
-References: <20190820120345.22593-1-poeschel@lemonage.de>
- <20190820120345.22593-4-poeschel@lemonage.de>
-In-Reply-To: <20190820120345.22593-4-poeschel@lemonage.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR09CA0082.eurprd09.prod.outlook.com
- (2603:10a6:802:29::26) To MWHPR11MB1549.namprd11.prod.outlook.com
- (2603:10b6:301:c::17)
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tagtoolbar-keys: D20190822130829759
-x-originating-ip: [94.177.32.156]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: e275b680-1a38-41b4-dfb0-08d726e8b4be
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:MWHPR11MB1374;
-x-ms-traffictypediagnostic: MWHPR11MB1374:
-x-microsoft-antispam-prvs: <MWHPR11MB1374360EF2C48C3CC03A629D87A50@MWHPR11MB1374.namprd11.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 01371B902F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(366004)(396003)(199004)(189003)(7736002)(71190400001)(81166006)(25786009)(6486002)(110136005)(486006)(476003)(446003)(52116002)(11346002)(2616005)(316002)(71200400001)(256004)(4326008)(14454004)(5660300002)(6246003)(53936002)(31686004)(305945005)(99286004)(6506007)(386003)(53546011)(102836004)(26005)(66476007)(64756008)(66446008)(66556008)(66946007)(76176011)(186003)(6512007)(8936002)(86362001)(36756003)(66066001)(8676002)(3846002)(6116002)(478600001)(2906002)(229853002)(81156014)(6436002)(7416002)(31696002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR11MB1374;H:MWHPR11MB1549.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: FDO+Tm4DaGePPrXL1KBuPtovlVnb73cxRwU1ByX5bwA0U4PcuZrZC9MNfYA42kFPs9i6dbkv8zqoEiQnYVsjvJ/3mPpAwcqgmw+4F+prBXnCh9cGL8MI2w2+coK+d50EraoRNgKVzelRcIA4AqzDg10GfskKHuz54HgkDW7ADLxN51L9LTsNcN+pUpZLdd5SIqjXSLCp/zJTm9cyxqwapuipYnYtACpTc67ioIPbtgBcQHLsJfYE2Yn8DCgV9UwGcOn5rsMSOJSnCEu62yvPox30Y+WxzVOFKjnOR33ACoea1fohV+fSklafLMZg9dOj2/6bd4ks5hR1iNsSAOp1udfAqU8EBycXSwfRwoPIvoVps5CEDcAEDSiY5rDtdkAEEF9rItMrkWiKmtr/Sg24Elg6aZw2ZztyHhiMaE5sC84=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <4BA055C66E8D2E4887FB8DC16A9C67D9@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S1733299AbfHVKJJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 06:09:09 -0400
+Received: from foss.arm.com ([217.140.110.172]:42950 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731583AbfHVKJH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 06:09:07 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3587F15A2;
+        Thu, 22 Aug 2019 03:09:07 -0700 (PDT)
+Received: from [192.168.1.123] (unknown [172.31.20.19])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E13E43F246;
+        Thu, 22 Aug 2019 03:09:02 -0700 (PDT)
+Subject: Re: [PATCH v10 09/23] iommu/io-pgtable-arm-v7s: Extend to support
+ PA[33:32] for MediaTek
+To:     Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>
+Cc:     youlin.pei@mediatek.com, devicetree@vger.kernel.org,
+        Nicolas Boichat <drinkcat@chromium.org>,
+        cui.zhang@mediatek.com, srv_heupstream@mediatek.com,
+        chao.hao@mediatek.com, Joerg Roedel <joro@8bytes.org>,
+        linux-kernel@vger.kernel.org, Evan Green <evgreen@chromium.org>,
+        Tomasz Figa <tfiga@google.com>,
+        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
+        linux-mediatek@lists.infradead.org,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        ming-fan.chen@mediatek.com, anan.sun@mediatek.com,
+        Matthias Kaehlcke <mka@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <1566395606-7975-1-git-send-email-yong.wu@mediatek.com>
+ <1566395606-7975-10-git-send-email-yong.wu@mediatek.com>
+ <20190821152448.qmoqjh5zznfpdi6n@willie-the-truck>
+ <1566464186.11621.7.camel@mhfsdcap03>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <10d5122d-3375-161b-9356-2ddfc1c835bd@arm.com>
+Date:   Thu, 22 Aug 2019 11:08:58 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: e275b680-1a38-41b4-dfb0-08d726e8b4be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 10:08:40.4939
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 78kguz4K4/1DsBrdjoyp8TZTo+kNMNaOU2mFFsRGAsSoDC3KYeX+tfNr4B25k9gaYqK/1yfd4I4sIYLNdOSrjPDaG4Ould7y3KobBXMlPt4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR11MB1374
+In-Reply-To: <1566464186.11621.7.camel@mhfsdcap03>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDIwLjA4LjIwMTkgMTU6MDMsIExhcnMgUG9lc2NoZWwgd3JvdGU6DQo+IFRoZXJlIGlz
-IGEgcHJvYmxlbSBpbiB0aGUgaW5pdGlhbGlzYXRpb24gYW5kIHNldHVwIG9mIHRoZSBwbjUzMzog
-SXQNCj4gcmVnaXN0ZXJzIHdpdGggbmZjIHRvbyBlYXJseS4gSXQgY291bGQgaGFwcGVuLCB0aGF0
-IGl0IGZpbmlzaGVkDQo+IHJlZ2lzdGVyaW5nIHdpdGggbmZjIGFuZCBzb21lb25lIHN0YXJ0cyB1
-c2luZyBpdC4gQnV0IHNldHVwIG9mIHRoZSBwbjUzMw0KPiBpcyBub3QgeWV0IGZpbmlzaGVkLiBC
-YWQgb3IgYXQgbGVhc3QgdW5pbnRlbmRlZCB0aGluZ3MgY291bGQgaGFwcGVuLg0KPiBTbyBJIHNw
-bGl0IG91dCBuZmMgcmVnaXN0ZXJpbmcgKGFuZCB1bnJlZ2lzdGVyaW5nKSB0byBzZXBlcmF0ZSBm
-dW5jdGlvbnMNCj4gdGhhdCBoYXZlIHRvIGJlIGNhbGxlZCBsYXRlIGluIHByb2JlIHRoZW4uDQo+
-IA0KPiBDYzogSm9oYW4gSG92b2xkIDxqb2hhbkBrZXJuZWwub3JnPg0KPiBTaWduZWQtb2ZmLWJ5
-OiBMYXJzIFBvZXNjaGVsIDxwb2VzY2hlbEBsZW1vbmFnZS5kZT4NCj4gLS0tDQo+IENoYW5nZXMg
-aW4gdjY6DQo+IC0gUmViYXNlZCB0aGUgcGF0Y2ggc2VyaWVzIG9uIHY1LjMtcmM1DQo+IA0KPiBD
-aGFuZ2VzIGluIHY1Og0KPiAtIFRoaXMgcGF0Y2ggaXMgbmV3IGluIHY1DQo+IA0KPiAgZHJpdmVy
-cy9uZmMvcG41MzMvaTJjLmMgICB8IDE3ICsrKysrLS0tLS0NCj4gIGRyaXZlcnMvbmZjL3BuNTMz
-L3BuNTMzLmMgfCA2NiArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0NCj4g
-IGRyaXZlcnMvbmZjL3BuNTMzL3BuNTMzLmggfCAxMSArKysrLS0tDQo+ICBkcml2ZXJzL25mYy9w
-bjUzMy91c2IuYyAgIHwgMTIgKysrKystLQ0KPiAgNCBmaWxlcyBjaGFuZ2VkLCA1OSBpbnNlcnRp
-b25zKCspLCA0NyBkZWxldGlvbnMoLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL25mYy9w
-bjUzMy9pMmMuYyBiL2RyaXZlcnMvbmZjL3BuNTMzL2kyYy5jDQo+IGluZGV4IDFhYmQ0MDM5OGE1
-YS4uZTllNWExZWM4ODU3IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25mYy9wbjUzMy9pMmMuYw0K
-PiArKysgYi9kcml2ZXJzL25mYy9wbjUzMy9pMmMuYw0KPiBAQCAtMTkzLDEyICsxOTMsMTAgQEAg
-c3RhdGljIGludCBwbjUzM19pMmNfcHJvYmUoc3RydWN0IGkyY19jbGllbnQgKmNsaWVudCwNCj4g
-IAlwaHktPmkyY19kZXYgPSBjbGllbnQ7DQo+ICAJaTJjX3NldF9jbGllbnRkYXRhKGNsaWVudCwg
-cGh5KTsNCj4gIA0KPiAtCXByaXYgPSBwbjUzM19yZWdpc3Rlcl9kZXZpY2UoUE41MzNfREVWSUNF
-X1BONTMyLA0KPiAtCQkJCSAgICAgUE41MzNfTk9fVFlQRV9CX1BST1RPQ09MUywNCj4gKwlwcml2
-ID0gcG41M3hfY29tbW9uX2luaXQoUE41MzNfREVWSUNFX1BONTMyLA0KPiAgCQkJCSAgICAgUE41
-MzNfUFJPVE9fUkVRX0FDS19SRVNQLA0KPiAgCQkJCSAgICAgcGh5LCAmaTJjX3BoeV9vcHMsIE5V
-TEwsDQo+IC0JCQkJICAgICAmcGh5LT5pMmNfZGV2LT5kZXYsDQo+IC0JCQkJICAgICAmY2xpZW50
-LT5kZXYpOw0KPiArCQkJCSAgICAgJnBoeS0+aTJjX2Rldi0+ZGV2KTsNCj4gIA0KPiAgCWlmIChJ
-U19FUlIocHJpdikpIHsNCj4gIAkJciA9IFBUUl9FUlIocHJpdik7DQo+IEBAIC0yMjAsMTMgKzIx
-OCwxNyBAQCBzdGF0aWMgaW50IHBuNTMzX2kyY19wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xp
-ZW50LA0KPiAgCWlmIChyKQ0KPiAgCQlnb3RvIGZuX3NldHVwX2VycjsNCj4gIA0KPiAtCXJldHVy
-biAwOw0KPiArCXIgPSBwbjUzeF9yZWdpc3Rlcl9uZmMocHJpdiwgUE41MzNfTk9fVFlQRV9CX1BS
-T1RPQ09MUywgJmNsaWVudC0+ZGV2KTsNCj4gKwlpZiAocikNCj4gKwkJZ290byBmbl9zZXR1cF9l
-cnI7DQo+ICsNCj4gKwlyZXR1cm4gcjsNCj4gIA0KPiAgZm5fc2V0dXBfZXJyOg0KPiAgCWZyZWVf
-aXJxKGNsaWVudC0+aXJxLCBwaHkpOw0KPiAgDQo+ICBpcnFfcnFzdF9lcnI6DQo+IC0JcG41MzNf
-dW5yZWdpc3Rlcl9kZXZpY2UocGh5LT5wcml2KTsNCj4gKwlwbjUzeF9jb21tb25fY2xlYW4ocGh5
-LT5wcml2KTsNCj4gIA0KPiAgCXJldHVybiByOw0KPiAgfQ0KPiBAQCAtMjM5LDcgKzI0MSw4IEBA
-IHN0YXRpYyBpbnQgcG41MzNfaTJjX3JlbW92ZShzdHJ1Y3QgaTJjX2NsaWVudCAqY2xpZW50KQ0K
-PiAgDQo+ICAJZnJlZV9pcnEoY2xpZW50LT5pcnEsIHBoeSk7DQo+ICANCj4gLQlwbjUzM191bnJl
-Z2lzdGVyX2RldmljZShwaHktPnByaXYpOw0KPiArCXBuNTN4X3VucmVnaXN0ZXJfbmZjKHBoeS0+
-cHJpdik7DQo+ICsJcG41M3hfY29tbW9uX2NsZWFuKHBoeS0+cHJpdik7DQo+ICANCj4gIAlyZXR1
-cm4gMDsNCj4gIH0NCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmZjL3BuNTMzL3BuNTMzLmMgYi9k
-cml2ZXJzL25mYy9wbjUzMy9wbjUzMy5jDQo+IGluZGV4IDY0ODM2YzcyN2FlZS4uYThjNzU2Y2Fh
-Njc4IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25mYy9wbjUzMy9wbjUzMy5jDQo+ICsrKyBiL2Ry
-aXZlcnMvbmZjL3BuNTMzL3BuNTMzLmMNCj4gQEAgLTI1OTAsMTQgKzI1OTAsMTIgQEAgaW50IHBu
-NTMzX2ZpbmFsaXplX3NldHVwKHN0cnVjdCBwbjUzMyAqZGV2KQ0KPiAgfQ0KPiAgRVhQT1JUX1NZ
-TUJPTF9HUEwocG41MzNfZmluYWxpemVfc2V0dXApOw0KPiAgDQo+IC1zdHJ1Y3QgcG41MzMgKnBu
-NTMzX3JlZ2lzdGVyX2RldmljZSh1MzIgZGV2aWNlX3R5cGUsDQo+IC0JCQkJdTMyIHByb3RvY29s
-cywNCj4gK3N0cnVjdCBwbjUzMyAqcG41M3hfY29tbW9uX2luaXQodTMyIGRldmljZV90eXBlLA0K
-PiAgCQkJCWVudW0gcG41MzNfcHJvdG9jb2xfdHlwZSBwcm90b2NvbF90eXBlLA0KPiAgCQkJCXZv
-aWQgKnBoeSwNCj4gIAkJCQlzdHJ1Y3QgcG41MzNfcGh5X29wcyAqcGh5X29wcywNCj4gIAkJCQlz
-dHJ1Y3QgcG41MzNfZnJhbWVfb3BzICpmb3BzLA0KPiAtCQkJCXN0cnVjdCBkZXZpY2UgKmRldiwN
-Cj4gLQkJCQlzdHJ1Y3QgZGV2aWNlICpwYXJlbnQpDQo+ICsJCQkJc3RydWN0IGRldmljZSAqZGV2
-KQ0KPiAgew0KPiAgCXN0cnVjdCBwbjUzMyAqcHJpdjsNCj4gIAlpbnQgcmMgPSAtRU5PTUVNOw0K
-PiBAQCAtMjYzOCw0MyArMjYzNiwxOCBAQCBzdHJ1Y3QgcG41MzMgKnBuNTMzX3JlZ2lzdGVyX2Rl
-dmljZSh1MzIgZGV2aWNlX3R5cGUsDQo+ICAJc2tiX3F1ZXVlX2hlYWRfaW5pdCgmcHJpdi0+ZnJh
-Z21lbnRfc2tiKTsNCj4gIA0KPiAgCUlOSVRfTElTVF9IRUFEKCZwcml2LT5jbWRfcXVldWUpOw0K
-PiAtDQo+IC0JcHJpdi0+bmZjX2RldiA9IG5mY19hbGxvY2F0ZV9kZXZpY2UoJnBuNTMzX25mY19v
-cHMsIHByb3RvY29scywNCj4gLQkJCQkJICAgcHJpdi0+b3BzLT50eF9oZWFkZXJfbGVuICsNCj4g
-LQkJCQkJICAgUE41MzNfQ01EX0RBVEFFWENIX0hFQURfTEVOLA0KPiAtCQkJCQkgICBwcml2LT5v
-cHMtPnR4X3RhaWxfbGVuKTsNCj4gLQlpZiAoIXByaXYtPm5mY19kZXYpIHsNCj4gLQkJcmMgPSAt
-RU5PTUVNOw0KPiAtCQlnb3RvIGRlc3Ryb3lfd3E7DQo+IC0JfQ0KPiAtDQo+IC0JbmZjX3NldF9w
-YXJlbnRfZGV2KHByaXYtPm5mY19kZXYsIHBhcmVudCk7DQo+IC0JbmZjX3NldF9kcnZkYXRhKHBy
-aXYtPm5mY19kZXYsIHByaXYpOw0KPiAtDQo+IC0JcmMgPSBuZmNfcmVnaXN0ZXJfZGV2aWNlKHBy
-aXYtPm5mY19kZXYpOw0KPiAtCWlmIChyYykNCj4gLQkJZ290byBmcmVlX25mY19kZXY7DQo+IC0N
-Cj4gIAlyZXR1cm4gcHJpdjsNCj4gIA0KPiAtZnJlZV9uZmNfZGV2Og0KPiAtCW5mY19mcmVlX2Rl
-dmljZShwcml2LT5uZmNfZGV2KTsNCj4gLQ0KPiAtZGVzdHJveV93cToNCj4gLQlkZXN0cm95X3dv
-cmtxdWV1ZShwcml2LT53cSk7DQo+ICBlcnJvcjoNCj4gIAlrZnJlZShwcml2KTsNCj4gIAlyZXR1
-cm4gRVJSX1BUUihyYyk7DQo+ICB9DQo+IC1FWFBPUlRfU1lNQk9MX0dQTChwbjUzM19yZWdpc3Rl
-cl9kZXZpY2UpOw0KPiArRVhQT1JUX1NZTUJPTF9HUEwocG41M3hfY29tbW9uX2luaXQpOw0KPiAg
-DQo+IC12b2lkIHBuNTMzX3VucmVnaXN0ZXJfZGV2aWNlKHN0cnVjdCBwbjUzMyAqcHJpdikNCj4g
-K3ZvaWQgcG41M3hfY29tbW9uX2NsZWFuKHN0cnVjdCBwbjUzMyAqcHJpdikNCj4gIHsNCj4gIAlz
-dHJ1Y3QgcG41MzNfY21kICpjbWQsICpuOw0KPiAgDQo+IC0JbmZjX3VucmVnaXN0ZXJfZGV2aWNl
-KHByaXYtPm5mY19kZXYpOw0KPiAtCW5mY19mcmVlX2RldmljZShwcml2LT5uZmNfZGV2KTsNCj4g
-LQ0KPiAgCWZsdXNoX2RlbGF5ZWRfd29yaygmcHJpdi0+cG9sbF93b3JrKTsNCj4gIAlkZXN0cm95
-X3dvcmtxdWV1ZShwcml2LT53cSk7DQo+ICANCj4gQEAgLTI2ODksOCArMjY2MiwzNyBAQCB2b2lk
-IHBuNTMzX3VucmVnaXN0ZXJfZGV2aWNlKHN0cnVjdCBwbjUzMyAqcHJpdikNCj4gIA0KPiAgCWtm
-cmVlKHByaXYpOw0KPiAgfQ0KPiAtRVhQT1JUX1NZTUJPTF9HUEwocG41MzNfdW5yZWdpc3Rlcl9k
-ZXZpY2UpOw0KPiArRVhQT1JUX1NZTUJPTF9HUEwocG41M3hfY29tbW9uX2NsZWFuKTsNCj4gKw0K
-PiAraW50IHBuNTN4X3JlZ2lzdGVyX25mYyhzdHJ1Y3QgcG41MzMgKnByaXYsIHUzMiBwcm90b2Nv
-bHMsDQo+ICsJCQlzdHJ1Y3QgZGV2aWNlICpwYXJlbnQpDQo+ICt7DQo+ICsJaW50IHJjID0gLUVO
-T01FTTsNCg0KTm8gbmVlZCB0byBpbml0aWFsaXplIHJjIGhlcmUuLi4gb3IganVzdCByZXR1cm4g
-cmMgYmVsb3cuDQoNCj4gKw0KPiArCXByaXYtPm5mY19kZXYgPSBuZmNfYWxsb2NhdGVfZGV2aWNl
-KCZwbjUzM19uZmNfb3BzLCBwcm90b2NvbHMsDQo+ICsJCQkJCSAgIHByaXYtPm9wcy0+dHhfaGVh
-ZGVyX2xlbiArDQo+ICsJCQkJCSAgIFBONTMzX0NNRF9EQVRBRVhDSF9IRUFEX0xFTiwNCj4gKwkJ
-CQkJICAgcHJpdi0+b3BzLT50eF90YWlsX2xlbik7DQo+ICsJaWYgKCFwcml2LT5uZmNfZGV2KQ0K
-PiArCQlyZXR1cm4gLUVOT01FTTsNCj4gKw0KPiArCW5mY19zZXRfcGFyZW50X2Rldihwcml2LT5u
-ZmNfZGV2LCBwYXJlbnQpOw0KPiArCW5mY19zZXRfZHJ2ZGF0YShwcml2LT5uZmNfZGV2LCBwcml2
-KTsNCj4gKw0KPiArCXJjID0gbmZjX3JlZ2lzdGVyX2RldmljZShwcml2LT5uZmNfZGV2KTsNCj4g
-KwlpZiAocmMpDQo+ICsJCW5mY19mcmVlX2RldmljZShwcml2LT5uZmNfZGV2KTsNCj4gKw0KPiAr
-CXJldHVybiByYzsNCj4gK30NCj4gK0VYUE9SVF9TWU1CT0xfR1BMKHBuNTN4X3JlZ2lzdGVyX25m
-Yyk7DQo+ICANCj4gK3ZvaWQgcG41M3hfdW5yZWdpc3Rlcl9uZmMoc3RydWN0IHBuNTMzICpwcml2
-KQ0KPiArew0KPiArCW5mY191bnJlZ2lzdGVyX2RldmljZShwcml2LT5uZmNfZGV2KTsNCj4gKwlu
-ZmNfZnJlZV9kZXZpY2UocHJpdi0+bmZjX2Rldik7DQo+ICt9DQo+ICtFWFBPUlRfU1lNQk9MX0dQ
-TChwbjUzeF91bnJlZ2lzdGVyX25mYyk7DQo+ICANCj4gIE1PRFVMRV9BVVRIT1IoIkxhdXJvIFJh
-bW9zIFZlbmFuY2lvIDxsYXVyby52ZW5hbmNpb0BvcGVuYm9zc2Eub3JnPiIpOw0KPiAgTU9EVUxF
-X0FVVEhPUigiQWxvaXNpbyBBbG1laWRhIEpyIDxhbG9pc2lvLmFsbWVpZGFAb3BlbmJvc3NhLm9y
-Zz4iKTsNCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbmZjL3BuNTMzL3BuNTMzLmggYi9kcml2ZXJz
-L25mYy9wbjUzMy9wbjUzMy5oDQo+IGluZGV4IDU3MGVlMGEzZTgzMi4uNTEwZGRlYmJkODk2IDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL25mYy9wbjUzMy9wbjUzMy5oDQo+ICsrKyBiL2RyaXZlcnMv
-bmZjL3BuNTMzL3BuNTMzLmgNCj4gQEAgLTIxOSwxOCArMjE5LDE5IEBAIHN0cnVjdCBwbjUzM19w
-aHlfb3BzIHsNCj4gIH07DQo+ICANCj4gIA0KPiAtc3RydWN0IHBuNTMzICpwbjUzM19yZWdpc3Rl
-cl9kZXZpY2UodTMyIGRldmljZV90eXBlLA0KPiAtCQkJCXUzMiBwcm90b2NvbHMsDQo+ICtzdHJ1
-Y3QgcG41MzMgKnBuNTN4X2NvbW1vbl9pbml0KHUzMiBkZXZpY2VfdHlwZSwNCj4gIAkJCQllbnVt
-IHBuNTMzX3Byb3RvY29sX3R5cGUgcHJvdG9jb2xfdHlwZSwNCj4gIAkJCQl2b2lkICpwaHksDQo+
-ICAJCQkJc3RydWN0IHBuNTMzX3BoeV9vcHMgKnBoeV9vcHMsDQo+ICAJCQkJc3RydWN0IHBuNTMz
-X2ZyYW1lX29wcyAqZm9wcywNCj4gLQkJCQlzdHJ1Y3QgZGV2aWNlICpkZXYsDQo+IC0JCQkJc3Ry
-dWN0IGRldmljZSAqcGFyZW50KTsNCj4gKwkJCQlzdHJ1Y3QgZGV2aWNlICpkZXYpOw0KPiAgDQo+
-ICBpbnQgcG41MzNfZmluYWxpemVfc2V0dXAoc3RydWN0IHBuNTMzICpkZXYpOw0KPiAtdm9pZCBw
-bjUzM191bnJlZ2lzdGVyX2RldmljZShzdHJ1Y3QgcG41MzMgKnByaXYpOw0KPiArdm9pZCBwbjUz
-eF9jb21tb25fY2xlYW4oc3RydWN0IHBuNTMzICpwcml2KTsNCj4gIHZvaWQgcG41MzNfcmVjdl9m
-cmFtZShzdHJ1Y3QgcG41MzMgKmRldiwgc3RydWN0IHNrX2J1ZmYgKnNrYiwgaW50IHN0YXR1cyk7
-DQo+ICtpbnQgcG41M3hfcmVnaXN0ZXJfbmZjKHN0cnVjdCBwbjUzMyAqcHJpdiwgdTMyIHByb3Rv
-Y29scywNCj4gKwkJCXN0cnVjdCBkZXZpY2UgKnBhcmVudCk7DQo+ICt2b2lkIHBuNTN4X3VucmVn
-aXN0ZXJfbmZjKHN0cnVjdCBwbjUzMyAqcHJpdik7DQo+ICANCj4gIGJvb2wgcG41MzNfcnhfZnJh
-bWVfaXNfY21kX3Jlc3BvbnNlKHN0cnVjdCBwbjUzMyAqZGV2LCB2b2lkICpmcmFtZSk7DQo+ICBi
-b29sIHBuNTMzX3J4X2ZyYW1lX2lzX2Fjayh2b2lkICpfZnJhbWUpOw0KPiBkaWZmIC0tZ2l0IGEv
-ZHJpdmVycy9uZmMvcG41MzMvdXNiLmMgYi9kcml2ZXJzL25mYy9wbjUzMy91c2IuYw0KPiBpbmRl
-eCBjNTI4OWVhZjE3ZWUuLmExYzZhNDE5NDRjNiAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9uZmMv
-cG41MzMvdXNiLmMNCj4gKysrIGIvZHJpdmVycy9uZmMvcG41MzMvdXNiLmMNCj4gQEAgLTUzNCw5
-ICs1MzQsOSBAQCBzdGF0aWMgaW50IHBuNTMzX3VzYl9wcm9iZShzdHJ1Y3QgdXNiX2ludGVyZmFj
-ZSAqaW50ZXJmYWNlLA0KPiAgCQlnb3RvIGVycm9yOw0KPiAgCX0NCj4gIA0KPiAtCXByaXYgPSBw
-bjUzM19yZWdpc3Rlcl9kZXZpY2UoaWQtPmRyaXZlcl9pbmZvLCBwcm90b2NvbHMsIHByb3RvY29s
-X3R5cGUsDQo+ICsJcHJpdiA9IHBuNTN4X2NvbW1vbl9pbml0KGlkLT5kcml2ZXJfaW5mbywgcHJv
-dG9jb2xfdHlwZSwNCj4gIAkJCQkJcGh5LCAmdXNiX3BoeV9vcHMsIGZvcHMsDQo+IC0JCQkJCSZw
-aHktPnVkZXYtPmRldiwgJmludGVyZmFjZS0+ZGV2KTsNCj4gKwkJCQkJJnBoeS0+dWRldi0+ZGV2
-KTsNCj4gIA0KPiAgCWlmIChJU19FUlIocHJpdikpIHsNCj4gIAkJcmMgPSBQVFJfRVJSKHByaXYp
-Ow0KPiBAQCAtNTUwLDkgKzU1MCwxNCBAQCBzdGF0aWMgaW50IHBuNTMzX3VzYl9wcm9iZShzdHJ1
-Y3QgdXNiX2ludGVyZmFjZSAqaW50ZXJmYWNlLA0KPiAgCQlnb3RvIGVycm9yOw0KPiAgDQo+ICAJ
-dXNiX3NldF9pbnRmZGF0YShpbnRlcmZhY2UsIHBoeSk7DQoNCkFib3ZlIHRoaXMgaW5zdHJ1Y3Rp
-b24gdGhlcmUgaXMgdGhpcyBjb2RlOg0KDQoJcmMgPSBwbjUzM19maW5hbGl6ZV9zZXR1cChwcml2
-KTsNCglpZiAocmMpDQoJCWdvdG8gZXJyb3I7DQoNCkluc3RlYWQgb2YgImdvdG8gZXJyb3I7IiB5
-b3Ugc2hvdWxkIGhhdmUgImdvdG8gZXJyX2NsZWFuOyINCg0KPiArCXJjID0gcG41M3hfcmVnaXN0
-ZXJfbmZjKHByaXYsIHByb3RvY29scywgJmludGVyZmFjZS0+ZGV2KTsNCj4gKwlpZiAocmMpDQo+
-ICsJCWdvdG8gZXJyX2NsZWFuOw0KPiAgDQo+ICAJcmV0dXJuIDA7DQo+ICANCj4gK2Vycl9jbGVh
-bjoNCj4gKwlwbjUzeF9jb21tb25fY2xlYW4ocHJpdik7DQo+ICBlcnJvcjoNCj4gIAl1c2JfZnJl
-ZV91cmIocGh5LT5pbl91cmIpOw0KPiAgCXVzYl9mcmVlX3VyYihwaHktPm91dF91cmIpOw0KPiBA
-QCAtNTcwLDcgKzU3NSw4IEBAIHN0YXRpYyB2b2lkIHBuNTMzX3VzYl9kaXNjb25uZWN0KHN0cnVj
-dCB1c2JfaW50ZXJmYWNlICppbnRlcmZhY2UpDQo+ICAJaWYgKCFwaHkpDQo+ICAJCXJldHVybjsN
-Cj4gIA0KPiAtCXBuNTMzX3VucmVnaXN0ZXJfZGV2aWNlKHBoeS0+cHJpdik7DQo+ICsJcG41M3hf
-dW5yZWdpc3Rlcl9uZmMocGh5LT5wcml2KTsNCj4gKwlwbjUzeF9jb21tb25fY2xlYW4ocGh5LT5w
-cml2KTsNCj4gIA0KPiAgCXVzYl9zZXRfaW50ZmRhdGEoaW50ZXJmYWNlLCBOVUxMKTsNCj4gIA0K
-PiANCg==
+On 2019-08-22 9:56 am, Yong Wu wrote:
+> On Wed, 2019-08-21 at 16:24 +0100, Will Deacon wrote:
+>> On Wed, Aug 21, 2019 at 09:53:12PM +0800, Yong Wu wrote:
+>>> MediaTek extend the arm v7s descriptor to support up to 34 bits PA where
+>>> the bit32 and bit33 are encoded in the bit9 and bit4 of the PTE
+>>> respectively. Meanwhile the iova still is 32bits.
+>>>
+>>> Regarding whether the pagetable address could be over 4GB, the mt8183
+>>> support it while the previous mt8173 don't, thus keep it as is.
+>>>
+>>> Signed-off-by: Yong Wu <yong.wu@mediatek.com>
+>>> ---
+>>>   drivers/iommu/io-pgtable-arm-v7s.c | 32 +++++++++++++++++++++++++-------
+>>>   include/linux/io-pgtable.h         |  7 +++----
+>>>   2 files changed, 28 insertions(+), 11 deletions(-)
+>>
+>> [...]
+>>
+>>> @@ -731,7 +747,9 @@ static struct io_pgtable *arm_v7s_alloc_pgtable(struct io_pgtable_cfg *cfg,
+>>>   {
+>>>   	struct arm_v7s_io_pgtable *data;
+>>>   
+>>> -	if (cfg->ias > ARM_V7S_ADDR_BITS || cfg->oas > ARM_V7S_ADDR_BITS)
+>>> +	if (cfg->ias > ARM_V7S_ADDR_BITS ||
+>>> +	    (cfg->oas > ARM_V7S_ADDR_BITS &&
+>>> +	     !(cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_EXT)))
+>>
+>> Please can you instead change arm_v7s_alloc_pgtable() so that it allows an
+>> ias of up to 34 when the IO_PGTABLE_QUIRK_ARM_MTK_EXT is set?
+> 
+> Here I only simply skip the oas checking for our case. then which way do
+> your prefer?  something like you commented before:?
+> 
+> 
+> 	if (cfg->ias > ARM_V7S_ADDR_BITS)
+> 		return NULL;
+> 
+> 	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_EXT) {
+> 		if (!IS_ENABLED(CONFIG_PHYS_ADDR_T_64BIT))
+> 			cfg->oas = min(cfg->oas, ARM_V7S_ADDR_BITS);
+> 		else if (cfg->oas > 34)
+> 			return NULL;
+> 	} else if (cfg->oas > ARM_V7S_ADDR_BITS) {
+> 		return NULL;
+> 	}
+
+All it should take is something like:
+
+	if (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_EXT)
+		max_oas = 34;
+	else
+		max_oas = 32;
+	if (cfg->oas > max_oas)
+		return NULL;
+
+or even just:
+
+	if (cfg->oas > 32 ||
+	    (cfg->quirks & IO_PGTABLE_QUIRK_ARM_MTK_EXT && cfg->oas > 34))
+		return NULL;
+
+(and if we prefer the latter style, perhaps we could introduce some kind 
+of "is_mtk_4gb()" helper to save on verbosity)
+
+We shouldn't need to care about the size of phys_addr_t either way - the 
+fact is that the MTK format can still encode up to 34 bits of PA 
+regardless of whether callers can actually pass addresses that large.
+
+Robin.
