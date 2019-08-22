@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C2F599B52
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 598B799B2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:24:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403976AbfHVRXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43272 "EHLO mail.kernel.org"
+        id S2389873AbfHVRWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403948AbfHVRX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:26 -0400
+        id S2389818AbfHVRWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:15 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03BFB23400;
-        Thu, 22 Aug 2019 17:23:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85E23233FC;
+        Thu, 22 Aug 2019 17:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494606;
-        bh=uZoYPNP9h2RnFw8rgES6mbSeGOZpTQnaYDYan0JsDA4=;
+        s=default; t=1566494535;
+        bh=6kceLm+Vm1IIrrKk6SnuBmYtgdA8OWCP96uy53Jt3L4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SbZHKv/pI351wURk1BqpzVLA6R7EkLjn+YK3NkYqBh1KNMullqW/mTVczI4UKLfpR
-         KTrSg6LA3SQNkekH+zEwLk6PAxA267a14llNe+6V32dtl7giNPvGCwUAJPVKhGXoI3
-         sx02ksutdz4miQSYeWcAVlH35hestoGSKemCSYHw=
+        b=KBqztiBgVJ1jsM7TjWnw6tMiOPiE/fIPQBaFoUKL7GVu3PE7fs6HDQrzfEgenX/+1
+         gOOOLIoAf4GcCvvZCWdgjvfHHyNtxxp+JvMSUIuw0vLr00uuKDfSpBk5UF5lFbMeXl
+         aouAYWHCXq+N1EKVmSeID/yhu2f3Jftz//OdiQXE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 029/103] tty/ldsem, locking/rwsem: Add missing ACQUIRE to read_failed sleep loop
-Date:   Thu, 22 Aug 2019 10:18:17 -0700
-Message-Id: <20190822171730.019752147@linuxfoundation.org>
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.ibm.com>,
+        Jens Remus <jremus@linux.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 14/78] s390/qdio: add sanity checks to the fast-requeue path
+Date:   Thu, 22 Aug 2019 10:18:18 -0700
+Message-Id: <20190822171832.454261809@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,72 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 952041a8639a7a3a73a2b6573cb8aa8518bc39f8 ]
+[ Upstream commit a6ec414a4dd529eeac5c3ea51c661daba3397108 ]
 
-While reviewing rwsem down_slowpath, Will noticed ldsem had a copy of
-a bug we just found for rwsem.
+If the device driver were to send out a full queue's worth of SBALs,
+current code would end up discovering the last of those SBALs as PRIMED
+and erroneously skip the SIGA-w. This immediately stalls the queue.
 
-  X = 0;
+Add a check to not attempt fast-requeue in this case. While at it also
+make sure that the state of the previous SBAL was successfully extracted
+before inspecting it.
 
-  CPU0			CPU1
-
-  rwsem_down_read()
-    for (;;) {
-      set_current_state(TASK_UNINTERRUPTIBLE);
-
-                        X = 1;
-                        rwsem_up_write();
-                          rwsem_mark_wake()
-                            atomic_long_add(adjustment, &sem->count);
-                            smp_store_release(&waiter->task, NULL);
-
-      if (!waiter.task)
-        break;
-
-      ...
-    }
-
-  r = X;
-
-Allows 'r == 0'.
-
-Reported-by: Will Deacon <will@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4898e640caf0 ("tty: Add timed, writer-prioritized rw semaphore")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Reviewed-by: Jens Remus <jremus@linux.ibm.com>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/tty_ldsem.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/s390/cio/qdio_main.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index dbd7ba32caac3..6c5eb99fcfcee 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -137,8 +137,7 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
- 
- 	list_for_each_entry_safe(waiter, next, &sem->read_wait, list) {
- 		tsk = waiter->task;
--		smp_mb();
--		waiter->task = NULL;
-+		smp_store_release(&waiter->task, NULL);
- 		wake_up_process(tsk);
- 		put_task_struct(tsk);
+diff --git a/drivers/s390/cio/qdio_main.c b/drivers/s390/cio/qdio_main.c
+index 8d7fc3b6ca63f..adf322a86a01b 100644
+--- a/drivers/s390/cio/qdio_main.c
++++ b/drivers/s390/cio/qdio_main.c
+@@ -1576,13 +1576,13 @@ static int handle_outbound(struct qdio_q *q, unsigned int callflags,
+ 		rc = qdio_kick_outbound_q(q, phys_aob);
+ 	} else if (need_siga_sync(q)) {
+ 		rc = qdio_siga_sync_q(q);
++	} else if (count < QDIO_MAX_BUFFERS_PER_Q &&
++		   get_buf_state(q, prev_buf(bufnr), &state, 0) > 0 &&
++		   state == SLSB_CU_OUTPUT_PRIMED) {
++		/* The previous buffer is not processed yet, tack on. */
++		qperf_inc(q, fast_requeue);
+ 	} else {
+-		/* try to fast requeue buffers */
+-		get_buf_state(q, prev_buf(bufnr), &state, 0);
+-		if (state != SLSB_CU_OUTPUT_PRIMED)
+-			rc = qdio_kick_outbound_q(q, 0);
+-		else
+-			qperf_inc(q, fast_requeue);
++		rc = qdio_kick_outbound_q(q, 0);
  	}
-@@ -234,7 +233,7 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	for (;;) {
- 		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
  
--		if (!waiter.task)
-+		if (!smp_load_acquire(&waiter.task))
- 			break;
- 		if (!timeout)
- 			break;
+ 	/* in case of SIGA errors we must process the error immediately */
 -- 
 2.20.1
 
