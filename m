@@ -2,31 +2,31 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0E15098FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C82D98F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387492AbfHVJe5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:34:57 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35771 "EHLO shell.v3.sk"
+        id S1733258AbfHVJdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:33:43 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35782 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfHVJdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:33:33 -0400
+        id S1733245AbfHVJdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:35 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 380EED756F;
-        Thu, 22 Aug 2019 11:33:30 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id B0FC3D7576;
+        Thu, 22 Aug 2019 11:33:33 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BIQM0mIilM-s; Thu, 22 Aug 2019 11:33:09 +0200 (CEST)
+        with ESMTP id N7gI5GyWg9Ho; Thu, 22 Aug 2019 11:33:08 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id CF4FCD7558;
+        by zimbra.v3.sk (Postfix) with ESMTP id 84DB7D7557;
         Thu, 22 Aug 2019 11:32:57 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id FoEvkFic-Fvu; Thu, 22 Aug 2019 11:27:29 +0200 (CEST)
+        with ESMTP id qf4lwqAmDpNg; Thu, 22 Aug 2019 11:27:45 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E5B8AD7565;
-        Thu, 22 Aug 2019 11:26:49 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 48200D7566;
+        Thu, 22 Aug 2019 11:26:50 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -40,9 +40,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 11/20] ARM: mmp: don't select CACHE_TAUROS2 on all ARCH_MMP
-Date:   Thu, 22 Aug 2019 11:26:34 +0200
-Message-Id: <20190822092643.593488-12-lkundrak@v3.sk>
+Subject: [PATCH v2 12/20] ARM: mmp: map the PGU as well
+Date:   Thu, 22 Aug 2019 11:26:35 +0200
+Message-Id: <20190822092643.593488-13-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -53,28 +53,99 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MMP3 has a PJ4B with a Tauros 3 cache controller that uses CACHE_L2X0
-instead, while CACHE_TAUROS2 is present on PJ4 and PJ1 (Mohawk) based
-platforms only.
+The MMP2 and later includes a system control unit in this area. We'll nee=
+d
+that to initialize the secondary core on MMP3.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/mm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-mmp/addr-map.h |  7 +++++++
+ arch/arm/mach-mmp/common.c   | 15 +++++++++++++++
+ arch/arm/mach-mmp/common.h   |  1 +
+ arch/arm/mach-mmp/mmp2-dt.c  |  2 +-
+ 4 files changed, 24 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
-index c54cd7ed90ba5..8dabce4507025 100644
---- a/arch/arm/mm/Kconfig
-+++ b/arch/arm/mm/Kconfig
-@@ -1045,7 +1045,7 @@ endif
+diff --git a/arch/arm/mach-mmp/addr-map.h b/arch/arm/mach-mmp/addr-map.h
+index 25edf6a92276e..3dc2f0b0ecba5 100644
+--- a/arch/arm/mach-mmp/addr-map.h
++++ b/arch/arm/mach-mmp/addr-map.h
+@@ -20,6 +20,10 @@
+ #define AXI_VIRT_BASE		IOMEM(0xfe200000)
+ #define AXI_PHYS_SIZE		0x00200000
 =20
- config CACHE_TAUROS2
- 	bool "Enable the Tauros2 L2 cache controller"
--	depends on (ARCH_DOVE || ARCH_MMP || CPU_PJ4)
-+	depends on (CPU_MOHAWK || CPU_PJ4)
- 	default y
- 	select OUTER_CACHE
- 	help
++#define PGU_PHYS_BASE		0xe0000000
++#define PGU_VIRT_BASE		IOMEM(0xfe400000)
++#define PGU_PHYS_SIZE		0x00100000
++
+ /* Static Memory Controller - Chip Select 0 and 1 */
+ #define SMC_CS0_PHYS_BASE	0x80000000
+ #define SMC_CS0_PHYS_SIZE	0x10000000
+@@ -38,4 +42,7 @@
+ #define CIU_VIRT_BASE		(AXI_VIRT_BASE + 0x82c00)
+ #define CIU_REG(x)		(CIU_VIRT_BASE + (x))
+=20
++#define SCU_VIRT_BASE		(PGU_VIRT_BASE)
++#define SCU_REG(x)		(SCU_VIRT_BASE + (x))
++
+ #endif /* __ASM_MACH_ADDR_MAP_H */
+diff --git a/arch/arm/mach-mmp/common.c b/arch/arm/mach-mmp/common.c
+index 6684abc7708bd..2ee08c78e8bc9 100644
+--- a/arch/arm/mach-mmp/common.c
++++ b/arch/arm/mach-mmp/common.c
+@@ -36,6 +36,15 @@ static struct map_desc standard_io_desc[] __initdata =3D=
+ {
+ 	},
+ };
+=20
++static struct map_desc mmp2_io_desc[] __initdata =3D {
++	{
++		.pfn		=3D __phys_to_pfn(PGU_PHYS_BASE),
++		.virtual	=3D (unsigned long)PGU_VIRT_BASE,
++		.length		=3D PGU_PHYS_SIZE,
++		.type		=3D MT_DEVICE,
++	},
++};
++
+ void __init mmp_map_io(void)
+ {
+ 	iotable_init(standard_io_desc, ARRAY_SIZE(standard_io_desc));
+@@ -44,6 +53,12 @@ void __init mmp_map_io(void)
+ 	mmp_chip_id =3D __raw_readl(MMP_CHIPID);
+ }
+=20
++void __init mmp2_map_io(void)
++{
++	mmp_map_io();
++	iotable_init(mmp2_io_desc, ARRAY_SIZE(mmp2_io_desc));
++}
++
+ void mmp_restart(enum reboot_mode mode, const char *cmd)
+ {
+ 	soft_restart(0);
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index 483b8b6d3005a..ed56b3f15b45e 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -5,4 +5,5 @@
+ extern void mmp_timer_init(int irq, unsigned long rate);
+=20
+ extern void __init mmp_map_io(void);
++extern void __init mmp2_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2-dt.c b/arch/arm/mach-mmp/mmp2-dt.c
+index 305a9daba6d68..8eec881191f4b 100644
+--- a/arch/arm/mach-mmp/mmp2-dt.c
++++ b/arch/arm/mach-mmp/mmp2-dt.c
+@@ -33,7 +33,7 @@ static const char *const mmp2_dt_board_compat[] __initc=
+onst =3D {
+ };
+=20
+ DT_MACHINE_START(MMP2_DT, "Marvell MMP2 (Device Tree Support)")
+-	.map_io		=3D mmp_map_io,
++	.map_io		=3D mmp2_map_io,
+ 	.init_time	=3D mmp_init_time,
+ 	.dt_compat	=3D mmp2_dt_board_compat,
+ MACHINE_END
 --=20
 2.21.0
 
