@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6943699DA9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:44:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7081F99E41
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:49:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392665AbfHVRoL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:44:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43218 "EHLO mail.kernel.org"
+        id S2389800AbfHVRWP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403937AbfHVRXY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:24 -0400
+        id S1731739AbfHVRWN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:13 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B8E3023402;
-        Thu, 22 Aug 2019 17:23:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B295233FC;
+        Thu, 22 Aug 2019 17:22:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494603;
-        bh=uxZkgyh2XRlpGrbfErOZ3RRf3skFrk/YeROxyq9d8A0=;
+        s=default; t=1566494532;
+        bh=AVicXjXBDTNkmD+DCSqjsRvB8JpLgtzFJapW1rLcoxI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l4bPDoiFULV0lRcgW9vqNzJaR60Oqbn1Zx/571f+bUBQ8MR/uhPzAh248e0ZDfG1V
-         AbW8po0RzIQN4pNi8bNNiSaZF/omn2Dxa1fJca6FqZIC/hxx4kchYLenRhMDQpG9lb
-         M3wirE8eokAiG3lS5RuEQAqOd49ygToLDfyjmZ8Y=
+        b=KN3Ye7DTtkGLOPzTrnP65diCBHbs7omE4KxL8PvbyN4u5MjEUL0RBZvfFtzdqU3U8
+         bIAbni7MuOMrAA/4cJpKT3QTw2JDX4t9tYYmTjPSpCuekSuPFmU5OjK63OZX3m+n+m
+         zzw9poTEGwidegV6tu2co3Ak21J2myj0Evta562k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Thomas Tai <thomas.tai@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 026/103] scsi: megaraid_sas: fix panic on loading firmware crashdump
+Subject: [PATCH 4.4 10/78] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
 Date:   Thu, 22 Aug 2019 10:18:14 -0700
-Message-Id: <20190822171729.910717938@linuxfoundation.org>
+Message-Id: <20190822171832.342016584@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,41 +44,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3b5f307ef3cb5022bfe3c8ca5b8f2114d5bf6c29 ]
+[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
 
-While loading fw crashdump in function fw_crash_buffer_show(), left bytes
-in one dma chunk was not checked, if copying size over it, overflow access
-will cause kernel panic.
+iscsi_ibft can use ACPI to find the iBFT entry during bootup,
+currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
+a X86 legacy way to find the iBFT by searching through the
+low memory. This patch changes the dependency so that other
+arch like ARM64 can use ISCSI_IBFT as long as the arch supports
+ACPI.
 
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+ibft_init() needs to use the global variable ibft_addr declared
+in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
+to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
+Moving ibft_addr into the iscsi_ibft.c does not work because if
+ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
+be able to find the variable at compile time.
+
+Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/firmware/Kconfig      | 5 +++--
+ drivers/firmware/iscsi_ibft.c | 4 ++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 5b1c37e3913cd..d90693b2767fd 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -2847,6 +2847,7 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	u32 size;
- 	unsigned long buff_addr;
- 	unsigned long dmachunk = CRASH_DMA_BUF_SIZE;
-+	unsigned long chunk_left_bytes;
- 	unsigned long src_addr;
- 	unsigned long flags;
- 	u32 buff_offset;
-@@ -2872,6 +2873,8 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	}
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index cf478fe6b335b..b0d42234fba0e 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -135,7 +135,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
  
- 	size = (instance->fw_crash_buffer_size * dmachunk) - buff_offset;
-+	chunk_left_bytes = dmachunk - (buff_offset % dmachunk);
-+	size = (size > chunk_left_bytes) ? chunk_left_bytes : size;
- 	size = (size >= PAGE_SIZE) ? (PAGE_SIZE - 1) : size;
+ config ISCSI_IBFT_FIND
+ 	bool "iSCSI Boot Firmware Table Attributes"
+-	depends on X86 && ACPI
++	depends on X86 && ISCSI_IBFT
+ 	default n
+ 	help
+ 	  This option enables the kernel to find the region of memory
+@@ -146,7 +146,8 @@ config ISCSI_IBFT_FIND
+ config ISCSI_IBFT
+ 	tristate "iSCSI Boot Firmware Table Attributes module"
+ 	select ISCSI_BOOT_SYSFS
+-	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
++	select ISCSI_IBFT_FIND if X86
++	depends on ACPI && SCSI && SCSI_LOWLEVEL
+ 	default	n
+ 	help
+ 	  This option enables support for detection and exposing of iSCSI
+diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
+index 437c8ef90643b..30d67fbe00c73 100644
+--- a/drivers/firmware/iscsi_ibft.c
++++ b/drivers/firmware/iscsi_ibft.c
+@@ -93,6 +93,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(IBFT_ISCSI_VERSION);
  
- 	src_addr = (unsigned long)instance->crash_buf[buff_offset / dmachunk] +
++#ifndef CONFIG_ISCSI_IBFT_FIND
++struct acpi_table_ibft *ibft_addr;
++#endif
++
+ struct ibft_hdr {
+ 	u8 id;
+ 	u8 version;
 -- 
 2.20.1
 
