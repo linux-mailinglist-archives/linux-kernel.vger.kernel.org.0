@@ -2,362 +2,265 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E847C999A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 474A9999AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:58:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390203AbfHVQ5R convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 12:57:17 -0400
-Received: from lhrrgout.huawei.com ([185.176.76.210]:33181 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727807AbfHVQ5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:57:16 -0400
-Received: from LHREML714-CAH.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id 31D105D64E49A408FF9F;
-        Thu, 22 Aug 2019 17:57:15 +0100 (IST)
-Received: from LHREML523-MBX.china.huawei.com ([169.254.7.10]) by
- LHREML714-CAH.china.huawei.com ([10.201.108.37]) with mapi id 14.03.0415.000;
- Thu, 22 Aug 2019 17:57:09 +0100
-From:   Shiju Jose <shiju.jose@huawei.com>
-To:     James Morse <james.morse@arm.com>
-CC:     "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "lenb@kernel.org" <lenb@kernel.org>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "bp@alien8.de" <bp@alien8.de>,
-        "baicar@os.amperecomputing.com" <baicar@os.amperecomputing.com>,
-        Linuxarm <linuxarm@huawei.com>,
-        Jonathan Cameron <jonathan.cameron@huawei.com>,
-        tanxiaofei <tanxiaofei@huawei.com>
-Subject: RE: [PATCH RFC 1/4] ACPI: APEI: Add support to notify the vendor
- specific HW errors
-Thread-Topic: [PATCH RFC 1/4] ACPI: APEI: Add support to notify the vendor
- specific HW errors
-Thread-Index: AQHVUPaVDDB7fKoU40KADAw02afPcacF17OAgAFG26A=
-Date:   Thu, 22 Aug 2019 16:57:08 +0000
-Message-ID: <86258A5CC0A3704780874CF6004BA8A6584C7BBE@lhreml523-mbx.china.huawei.com>
-References: <Shiju Jose> <20190812101149.26036-1-shiju.jose@huawei.com>
- <20190812101149.26036-2-shiju.jose@huawei.com>
- <12a7f2f7-3a81-b0c3-fb8e-96db0cd626c5@arm.com>
-In-Reply-To: <12a7f2f7-3a81-b0c3-fb8e-96db0cd626c5@arm.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.93.28]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        id S2387600AbfHVQ6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 12:58:45 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:33621 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730411AbfHVQ6p (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:58:45 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190822165842euoutp0187c9c86e8835a67f1c97259446dabcff~9TTIXK-d10573305733euoutp01s
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 16:58:42 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190822165842euoutp0187c9c86e8835a67f1c97259446dabcff~9TTIXK-d10573305733euoutp01s
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566493122;
+        bh=DWPKQlMQ+jod8joLVtkfrQK2+7Pe98yfIoE7LabdUfw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=pYohBkSkfcz3xzvqjT4VGiEUB5h3t8Y7mNAKaODUD5rfy4kMzVbikk37beuYZfPMk
+         tofcRg1yEUstxssMFeiV9zGcdtID+FTn3kYdIH12xWZ/ZmtABxpZ3ptbJZbv8Jh4GA
+         RHVZIkDvIXdQtFCmJLqt0cX5rHpD/II2gG6DqsmI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190822165841eucas1p18126854da97c39f2a0fb6396e752b460~9TTHcjYbs2955929559eucas1p1R;
+        Thu, 22 Aug 2019 16:58:41 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id E0.16.04374.1C9CE5D5; Thu, 22
+        Aug 2019 17:58:41 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190822165840eucas1p254f3d07b75967a06651083ff270df922~9TTGaVhgQ2366923669eucas1p21;
+        Thu, 22 Aug 2019 16:58:40 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190822165840eusmtrp16ac4849f6016c6e144f5720048783ca6~9TTGKT7LF0979109791eusmtrp12;
+        Thu, 22 Aug 2019 16:58:40 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-7d-5d5ec9c16b69
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id F2.98.04117.0C9CE5D5; Thu, 22
+        Aug 2019 17:58:40 +0100 (BST)
+Received: from [106.109.129.180] (unknown [106.109.129.180]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190822165839eusmtip2a1b3ad3fffae3823ff4dacc29e1c2c20~9TTFPfojm1207312073eusmtip2M;
+        Thu, 22 Aug 2019 16:58:39 +0000 (GMT)
+Subject: Re: [PATCH net v2] ixgbe: fix double clean of tx descriptors with
+ xdp
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        Eelco Chaudron <echaudro@redhat.com>,
+        William Tu <u9012063@gmail.com>
+From:   Ilya Maximets <i.maximets@samsung.com>
+Message-ID: <7e9e426c-92eb-ebf8-2447-6c804a0c7135@samsung.com>
+Date:   Thu, 22 Aug 2019 19:58:38 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <CAKgT0Uf26P53EA4m503aehq3tWCX9b3C+17TW2Ursbue9Kp=_w@mail.gmail.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH++3e3V2Hs5/T8mQvWBlopUYRNxAriLgQgv0TpfmYdTPTWeym
+        vYhEV+o0H0Vpy9LQfBLpFEszoWl7ZCiZYvZAg8JH2UPXY222nFfJ/77nc76H7zlwaEI+Jval
+        E5JPcupkZZKCkpLNRlvPxieW6Kjg0sw1jPPWG5Kx2t5IGMelesRMdZoopvzOT4Ip6dGQzNs+
+        G8X0ZdokjPO1XcwYRzUUY24cQszL1hKKqTaYJYyxbCkz0Ou+YzHbVDMoYlt07yRseduYiNW+
+        6iVYfW02xVoyUtiinPcE+7W9n2LzmmoRO6VfFS6NkIYc5pISUjl1UGis9Ohd20XRidGA0/mW
+        CjINaVZrkRsNeAvYHW1Ii6S0HFcjGMyrkAiFFYEz20m4XHI8haCgdeX8hLEjnRJMVQi6v9nn
+        iu8IKidaSJfLC4dD4eRL5NLeOAi6GnJJl4nAt0kozv0tcjUovAGe1XXOmmQ4FB5+HJnlJPaD
+        Py/0lEsvwfthcrhDLHg8wXLjw2yAG94L1uuPZjmBfSDdWjOnV8ODiRLCFQY4m4ZflfkSYe9d
+        8NjaKxa0F4ybmub4Cui6mksK+gIMacaQMJyFoMjwVyQ0tkPTp+6ZAXomwR/utwYJeCfkGEdI
+        FwbsAa8mPIUdPOBKcxEhYBlkXZIL7rVgf1JFCNoXBr9MSQqQQrfgMt2Ca3QLrtH9zy1DZC3y
+        4VJ4VTzHb07mTgXyShWfkhwfeOi4So9mHrDrr+nHQ9TuiDMgTCOFu8ysjY6Si5Wp/BmVAQFN
+        KLxlqYUzSHZYeeYspz4eo05J4ngDWk6TCh/ZuUXDkXIcrzzJJXLcCU493xXRbr5piA0LThx2
+        CzNtxmp7bMx03FYi9V5kf2zmSKOXozQtQnN2omCZqdgW7NfnEVA6DT3rnh/I2JfYoKiPXr+t
+        7tRBbyZjUcJ4efA7Z2KsMiY9bfekf5yjwKwavVbNtfTvCRn8vLi5M+j7gIXfcLnjmH3oyFOt
+        7vPX4Zta9cD5/GdifYaC5I8qNwUQal75D7HGVxZ8AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLIsWRmVeSWpSXmKPExsVy+t/xe7oHTsbFGuw7K23xf+5tFosvP2+z
+        W/xp28Bo8fnIcTaLxQu/MVvMOd/CYnHnyk82iyvtP9kt/t/6zWpx7EULm8WJzfcZLS7vmsNm
+        seLQCXaLYwvELK5f4nHg99iy8iaTx85Zd9k9Fu95yeTRdeMSs8emVZ1sHiebSz2mdz9k9ni/
+        7yqbR9+WVYwenzfJBXBF6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mk
+        pOZklqUW6dsl6GUs/dnKVPBCq6L/5BKWBsYW+S5GTg4JAROJY4eb2LoYuTiEBJYySjw9vYEJ
+        IiEl8ePXBVYIW1jiz7UuqKL3jBLNW9eCJYQF/CR+Tl0O1iAioC9xemMPC0gRs8ACFom2Bx3M
+        EB3XGCVmPFzOBlLFJqAjcWr1EUYQm1fATmLH0+dg3SwCqhK/Lm4CqxEViJA4vGMWVI2gxMmZ
+        T1hAbE6BQIkv03aDbWYWUJf4M+8SM4QtLtH0ZSVUXF5i+9s5zBMYhWYhaZ+FpGUWkpZZSFoW
+        MLKsYhRJLS3OTc8tNtIrTswtLs1L10vOz93ECIz6bcd+btnB2PUu+BCjAAejEg/via64WCHW
+        xLLiytxDjBIczEoivGUTgUK8KYmVValF+fFFpTmpxYcYTYGem8gsJZqcD0xIeSXxhqaG5haW
+        hubG5sZmFkrivB0CB2OEBNITS1KzU1MLUotg+pg4OKUaGHvXBytJHbxx+qgtq5fsRtY/GpmM
+        Cww0FXS/bz14PmORP4NlfbeCWFnBi6f6/1ZZptf4PVEpuPr41JGqmVai124xhbKvdeU5c/bM
+        1U2nIro10uOClHlU+HR79hkeUWp9XeYQ/3vj+ynaeWcuLOo7et/p+2LfY6+2GB8V6T00rTa8
+        RNdtmYfbLCWW4oxEQy3mouJEAC8+QPMQAwAA
+X-CMS-MailID: 20190822165840eucas1p254f3d07b75967a06651083ff270df922
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190822123045eucas1p125b6e106f0310bdb50e759ef41993a91
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190822123045eucas1p125b6e106f0310bdb50e759ef41993a91
+References: <CGME20190822123045eucas1p125b6e106f0310bdb50e759ef41993a91@eucas1p1.samsung.com>
+        <20190822123037.28068-1-i.maximets@samsung.com>
+        <CAKgT0Uf26P53EA4m503aehq3tWCX9b3C+17TW2Ursbue9Kp=_w@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi James,
+On 22.08.2019 19:38, Alexander Duyck wrote:
+> On Thu, Aug 22, 2019 at 5:30 AM Ilya Maximets <i.maximets@samsung.com> wrote:
+>>
+>> Tx code doesn't clear the descriptors' status after cleaning.
+>> So, if the budget is larger than number of used elems in a ring, some
+>> descriptors will be accounted twice and xsk_umem_complete_tx will move
+>> prod_tail far beyond the prod_head breaking the comletion queue ring.
+>>
+>> Fix that by limiting the number of descriptors to clean by the number
+>> of used descriptors in the tx ring.
+>>
+>> 'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
+>> 'ixgbe_xsk_clean_tx_ring()' since we don't need most of the
+>> complications implemented in the regular 'ixgbe_clean_tx_irq()'
+>> and we're allowed to directly use 'next_to_clean' and 'next_to_use'
+>> indexes.
+>>
+>> Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
+>> Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
+>> ---
+>>
+>> Version 2:
+>>   * 'ixgbe_clean_xdp_tx_irq()' refactored to look more like
+>>     'ixgbe_xsk_clean_tx_ring()'.
+>>
+>>  drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c | 34 ++++++++------------
+>>  1 file changed, 13 insertions(+), 21 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
+>> index 6b609553329f..d1297660e14a 100644
+>> --- a/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
+>> +++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
+>> @@ -633,22 +633,23 @@ static void ixgbe_clean_xdp_tx_buffer(struct ixgbe_ring *tx_ring,
+>>  bool ixgbe_clean_xdp_tx_irq(struct ixgbe_q_vector *q_vector,
+>>                             struct ixgbe_ring *tx_ring, int napi_budget)
+>>  {
+>> +       u16 ntc = tx_ring->next_to_clean, ntu = tx_ring->next_to_use;
+>>         unsigned int total_packets = 0, total_bytes = 0;
+>> -       u32 i = tx_ring->next_to_clean, xsk_frames = 0;
+>>         unsigned int budget = q_vector->tx.work_limit;
+>>         struct xdp_umem *umem = tx_ring->xsk_umem;
+>> -       union ixgbe_adv_tx_desc *tx_desc;
+>> -       struct ixgbe_tx_buffer *tx_bi;
+>> +       u32 xsk_frames = 0;
+>>         bool xmit_done;
+>>
+>> -       tx_bi = &tx_ring->tx_buffer_info[i];
+>> -       tx_desc = IXGBE_TX_DESC(tx_ring, i);
+>> -       i -= tx_ring->count;
+>> +       while (likely(ntc != ntu && budget)) {
+> 
+> I would say you can get rid of budget entirely. It was only really
+> needed for the regular Tx case where you can have multiple CPUs
+> feeding a single Tx queue and causing a stall. Since we have a 1:1
+> mapping we should never have more than the Rx budget worth of packets
+> to really process. In addition we can only make one pass through the
+> ring since the ntu value is not updated while running the loop.
 
->-----Original Message-----
->From: James Morse [mailto:james.morse@arm.com]
->Sent: 21 August 2019 18:24
->To: Shiju Jose <shiju.jose@huawei.com>
->Cc: linux-acpi@vger.kernel.org; linux-edac@vger.kernel.org; linux-
->kernel@vger.kernel.org; rjw@rjwysocki.net; lenb@kernel.org;
->tony.luck@intel.com; bp@alien8.de; baicar@os.amperecomputing.com;
->Linuxarm <linuxarm@huawei.com>; Jonathan Cameron
-><jonathan.cameron@huawei.com>; tanxiaofei <tanxiaofei@huawei.com>
->Subject: Re: [PATCH RFC 1/4] ACPI: APEI: Add support to notify the vendor
->specific HW errors
->
->Hi,
->
->On 12/08/2019 11:11, Shiju Jose wrote:
->> Presently the vendor specific HW errors, in the non-standard format,
->> are not reported to the vendor drivers for the recovery.
+OK. Will remove.
+
+> 
+>> +               union ixgbe_adv_tx_desc *tx_desc;
+>> +               struct ixgbe_tx_buffer *tx_bi;
+>> +
+>> +               tx_desc = IXGBE_TX_DESC(tx_ring, ntc);
 >>
->> This patch adds support to notify the vendor specific HW errors to the
->> registered kernel drivers.
->
->> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c index
->> a66e00f..374d197 100644
->> --- a/drivers/acpi/apei/ghes.c
->> +++ b/drivers/acpi/apei/ghes.c
->> @@ -477,6 +477,77 @@ static void ghes_handle_aer(struct
->> acpi_hest_generic_data *gdata)  #endif  }
+>> -       do {
+>>                 if (!(tx_desc->wb.status & cpu_to_le32(IXGBE_TXD_STAT_DD)))
+>>                         break;
 >>
->> +struct ghes_error_notify {
->> +	struct list_head list;> +	struct rcu_head	rcu_head;
->> +	guid_t sec_type; /* guid of the error record */
->
->> +	error_handle handle; /* error handler function */
->
->ghes_error_handler_t error_handler; ?
+>> +               tx_bi = &tx_ring->tx_buffer_info[ntc];
+> 
+> Please don't move this logic into the loop. We were intentionally
+> processing this outside of the loop once and then just doing the
+> increments because it is faster that way. It takes several operations
+> to compute tx_bi based on ntc, whereas just incrementing is a single
+> operation.
+
+OK.
+
+> 
+>>                 total_bytes += tx_bi->bytecount;
+>>                 total_packets += tx_bi->gso_segs;
+>>
+>> @@ -659,24 +660,15 @@ bool ixgbe_clean_xdp_tx_irq(struct ixgbe_q_vector *q_vector,
+>>
+>>                 tx_bi->xdpf = NULL;
+>>
+>> -               tx_bi++;
+>> -               tx_desc++;
+>> -               i++;
+>> -               if (unlikely(!i)) {
+>> -                       i -= tx_ring->count;
+> 
+> So these two lines can probably just be replaced by:
+> if (unlikely(ntc == tx_ring->count)) {
+>         ntc = 0;
+
 Sure.
 
->
->
->> +	void *data; /* handler driver's private data if any */ };
->> +
->> +/* List to store the registered error handling functions */ static
->> +DEFINE_MUTEX(ghes_error_notify_mutex);
->> +static LIST_HEAD(ghes_error_notify_list);
->
->> +static refcount_t ghes_ref_count;
->
->I don't think this refcount is needed.
-refcount was added to register standard error handlers with this notification method one time when
-multiple ghes platform devices are probed.
- 
->
->
->> +/**
->> + * ghes_error_notify_register - register an error handling function
->> + * for the hw errors.
->> + * @sec_type: sec_type of the corresponding CPER to be notified.
->> + * @handle: pointer to the error handling function.
->> + * @data: handler driver's private data.
->> + *
->> + * return 0 : SUCCESS, non-zero : FAIL  */ int
->> +ghes_error_notify_register(guid_t sec_type, error_handle handle, void
->> +*data) {
->> +	struct ghes_error_notify *err_notify;
->> +
->> +	mutex_lock(&ghes_error_notify_mutex);
->> +	err_notify = kzalloc(sizeof(*err_notify), GFP_KERNEL);
->> +	if (!err_notify)
->> +		return -ENOMEM;
->
->Leaving the mutex locked.
->You may as well allocate the memory before taking the lock.
-Good spot. I will fix.
-
->
->
->> +
->> +	err_notify->handle = handle;
->> +	guid_copy(&err_notify->sec_type, &sec_type);
->> +	err_notify->data = data;
->> +	list_add_rcu(&err_notify->list, &ghes_error_notify_list);
->> +	mutex_unlock(&ghes_error_notify_mutex);
->> +
->> +	return 0;
->> +}
->> +EXPORT_SYMBOL_GPL(ghes_error_notify_register);
->
->Could we leave exporting this to modules until there is a user?
->
->
->> +/**
->> + * ghes_error_notify_unregister - unregister an error handling function.
->> + * @sec_type: sec_type of the corresponding CPER.
->> + * @handle: pointer to the error handling function.
->> + *
->> + * return none.
->> + */
->> +void ghes_error_notify_unregister(guid_t sec_type, error_handle
->> +handle)
->
->Why do we need the handle(r) a second time? Surely there can only be one
->callback for a given guid.
-There is a possibility of sharing the guid between drivers if the non-standard error section format is common
-for more than one devices if the error data to be reported is in the same format.
- 
->
->
->> +{
->> +	struct ghes_error_notify *err_notify;
->> +	bool found = 0;
->> +
->> +	mutex_lock(&ghes_error_notify_mutex);
->> +	rcu_read_lock();
->> +	list_for_each_entry_rcu(err_notify, &ghes_error_notify_list, list) {
->> +		if (guid_equal(&err_notify->sec_type, &sec_type) &&
->> +		    err_notify->handle == handle) {
->> +			list_del_rcu(&err_notify->list);
->> +			found = 1;
->> +			break;
->> +		}
->> +	}
->> +	rcu_read_unlock();
->
->> +	synchronize_rcu();
->
->Is this for the kfree()? Please keep them together so its obvious what its for.
->Putting it outside the mutex will also save any contended waiter some time.
-Yes. I will move synchronize_rcu () just before kfree. 
- 
->
->
->> +	mutex_unlock(&ghes_error_notify_mutex);
->> +	if (found)
->> +		kfree(err_notify);
->> +}
->> +EXPORT_SYMBOL_GPL(ghes_error_notify_unregister);
->> +
->
->>  static void ghes_do_proc(struct ghes *ghes,
->>  			 const struct acpi_hest_generic_status *estatus)  {>
->@@ -512,11
->> +585,29 @@ static void ghes_do_proc(struct ghes *ghes,
->>
->>  			log_arm_hw_error(err);
->>  		} else {
->> -			void *err = acpi_hest_get_payload(gdata);
+> 
+>> -                       tx_bi = tx_ring->tx_buffer_info;
+>> -                       tx_desc = IXGBE_TX_DESC(tx_ring, 0);
+>> -               }
 >> -
->> -			log_non_standard_event(sec_type, fru_id, fru_text,
->> -					       sec_sev, err,
->> -					       gdata->error_data_length);
->
->> +			rcu_read_lock();
->> +			list_for_each_entry_rcu(err_notify,
->> +						&ghes_error_notify_list, list) {
->> +				if (guid_equal(&err_notify->sec_type,
->> +					       sec_type)) {
->
->> +					/* The notification is called in the
->> +					 * interrupt context, thus the handler
->> +					 * functions should be take care of it.
->> +					 */
->
->I read this as "the handler will be called", which doesn't seem to be a useful
->comment.
-Ok. I will correct the comment.
->
->
->> +					err_notify->handle(gdata, sev,
->> +							   err_notify->data);
->> +					is_notify = 1;
->
->					break;
->
->> +				}
->> +			}
->> +			rcu_read_unlock();
->
->> +			if (!is_notify) {
->
->if (!found) Seems more natural.
-Ok. I will change to "is_notify"  to "found".
+>> -               /* issue prefetch for next Tx descriptor */
+>> -               prefetch(tx_desc);
+> 
+> Did you just drop the prefetch?
 
->
->
->> +				void *err = acpi_hest_get_payload(gdata);
->> +
->> +				log_non_standard_event(sec_type, fru_id,
->> +						       fru_text, sec_sev, err,
->> +						       gdata->error_data_length);
->> +			}
->
->This is tricky to read as its so bunched up. Please pull it out into a separate
->function.
->ghes_handle_non_standard_event() ?
-Ok. I will add to new ghes_handle_non_standard_event() function.
+I'll keep the prefetch in v3 because, as you fairly mentioned, it's not
+related to this patch. However, I'm not sure if this prefetch makes any
+sense here, because there is only one comparison operation between the
+prefetch and the data usage:
 
->
->
->Because you skip log_non_standard_event(), rasdaemon will no longer see
->these in user-space. For any kernel consumer of these, we need to know we
->aren't breaking the user-space component.
->
->
->>  		}
->>  	}
->>  }
->> @@ -1217,6 +1308,11 @@ static int ghes_probe(struct platform_device
->> *ghes_dev)
+ while (ntc != ntu) {
+     if (!(tx_desc->wb.status ...
+     <...>
+     prefetch(tx_desc);
+ }
+
+
+> You are changing way too much with
+> this patch. All you should need to do is replace i with ntc, replace
+> the "do {" with "while (ntc != ntu) {", and remove the while at the
+> end.
+> 
+>> +               ntc++;
+>> +               if (unlikely(ntc == tx_ring->count))
+>> +                       ntc = 0;
 >>
->>  	ghes_edac_register(ghes, &ghes_dev->dev);
+>>                 /* update budget accounting */
+>>                 budget--;
+>> -       } while (likely(budget));
+> 
+> As I stated earlier, budget can be removed entirely.
+
+Sure.
+
+> 
+>> +       }
 >>
->> +	if (!refcount_read(&ghes_ref_count))
->> +		refcount_set(&ghes_ref_count, 1);
->
->What stops this from racing with itself if two ghes platform devices are probed
->at the same time?
-yes. It is an issue.
->
->If the refcount needs initialising, please do it in ghes_init()....
-refcount was added to register the standard error handlers to the notification
-method only for the first time when the ghes device probed multiple times.
-I will check is it possible to avoid using refcount by moving the above registration
-of standard error handlers to the ghes_init().
->
->> +	else
->> +		refcount_inc(&ghes_ref_count);
->
->.. but I don't think this refcount is needed.
->
->
->>  	/* Handle any pending errors right away */
->>  	spin_lock_irqsave(&ghes_notify_lock_irq, flags);
->>  	ghes_proc(ghes);
->
->> @@ -1279,6 +1376,17 @@ static int ghes_remove(struct platform_device
->> *ghes_dev)
+>> -       i += tx_ring->count;
+>> -       tx_ring->next_to_clean = i;
+>> +       tx_ring->next_to_clean = ntc;
 >>
->>  	ghes_fini(ghes);
->>
->> +	if (refcount_dec_and_test(&ghes_ref_count) &&
->> +	    !list_empty(&ghes_error_notify_list)) {
->> +		mutex_lock(&ghes_error_notify_mutex);> +
->	list_for_each_entry_safe(err_notify, tmp,
->> +					 &ghes_error_notify_list, list) {
->> +			list_del_rcu(&err_notify->list);
->> +			kfree_rcu(err_notify, rcu_head);
->> +		}
->> +		mutex_unlock(&ghes_error_notify_mutex);
->> +	}
->
->... If someone unregisters, and re-registers all the GHES platform devices, the
->last one out flushes the vendor-specific error handlers away. Then we re-probe
->the devices again, but this time the vendor-specific error handlers don't work.
->
->As you have an add/remove API for drivers, its up to drivers to cleanup when
->they are removed. The comings and goings of GHES platform devices isn't
->relevant.
-Ok. Got it. I will either keep the unregister for the standard error handlers only
-if the standard error handlers can be part of the notification method or remove completely
-if the registration can be done in the ghes_init().    
->
->
->>  	ghes_edac_unregister(ghes);
->>
->>  	kfree(ghes);
->> diff --git a/include/acpi/ghes.h b/include/acpi/ghes.h index
->> e3f1cdd..d480537 100644
->> --- a/include/acpi/ghes.h
->> +++ b/include/acpi/ghes.h
->> @@ -50,6 +50,53 @@ enum {
->>  	GHES_SEV_PANIC = 0x3,
->>  };
->>
->> +/**
->> + * error_handle - error handling function for the hw errors.
->
->Fatal errors get dealt with earlier, so drivers will never see them.
->| error handling function for non-fatal hardware errors.
-Ok. I will change the comment as recoverable HW errors.
->
->
->> + * This handle function is called in the interrupt context.
->
->As this overrides ghes's logging of the error, we should mention:
->| The handler is responsible for any logging of the error.
-Ok. I will add in the comment.
->
->
->> + * @gdata: acpi_hest_generic_data.
->> + * @sev: error severity of the entire error event defined in the
->> + * ACPI spec table generic error status block.
->> + * @data: handler driver's private data.
->> + *
->> + * return : none.
->> + */
->> +typedef void (*error_handle)(struct acpi_hest_generic_data *gdata, int sev,
->> +			     void *data);
->
->
->Thanks,
->
->James
-Thanks,
-Shiju
+>>         u64_stats_update_begin(&tx_ring->syncp);
+>>         tx_ring->stats.bytes += total_bytes;
+>> --
+>> 2.17.1
