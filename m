@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0215299CD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:37:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B527E99C1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404271AbfHVRYi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45544 "EHLO mail.kernel.org"
+        id S2404516AbfHVRZw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:25:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404143AbfHVRYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:17 -0400
+        id S2391789AbfHVRY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:59 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B18BD23400;
-        Thu, 22 Aug 2019 17:24:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F1F6F2341D;
+        Thu, 22 Aug 2019 17:24:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494655;
-        bh=Ck+VrPPpa9FzruK7lFtVEWWTmxG15REiEr+0rrtY0SE=;
+        s=default; t=1566494698;
+        bh=cXsUr080SobksBYfBW9FDNJrCAnWHqZA/gXb0P3qIrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fnZyipCQFTjxQyXSh4wNzUgOy0N0IHluiP8q84070IqXI29EnpvaICVNZWwnWsZPf
-         HIrKwt4lP7OP1dXfNCzE6aF0V9KYNCARCiDAW0G5Wn/SnpT0oFmOleCydoRZYAWAwb
-         b8j9sPIR7emWvbmkLj+R4toBWqqtYquadPeYobG4=
+        b=BCOrvp+IQWu0faL6EBnUyJ7NI7ctn2J2b4iOVZcMCAOpEByzLuBUXlSBr2Y/PSWzm
+         U50KPGuqPIsUYWurQgwWRzaxySm/2VTcIHqHYsmqrDgBA3Ml8RCp+e0X1Agjf6Ctub
+         O0/GvegrHcNlSWYxGp7DELVvmH6PsZaVnQCJI7gY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        syzbot <syzkaller@googlegroups.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 097/103] net/packet: fix race in tpacket_snd()
+        stable@vger.kernel.org, Rogan Dawes <rogan@dawes.za.net>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 50/71] USB: serial: option: add D-Link DWM-222 device ID
 Date:   Thu, 22 Aug 2019 10:19:25 -0700
-Message-Id: <20190822171733.078235346@linuxfoundation.org>
+Message-Id: <20190822171730.005655525@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,78 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Dumazet <edumazet@google.com>
+From: Rogan Dawes <rogan@dawes.za.net>
 
-[ Upstream commit 32d3182cd2cd29b2e7e04df7b0db350fbe11289f ]
+commit 552573e42aab5f75aff9bab855a9677979d9a7d5 upstream.
 
-packet_sendmsg() checks tx_ring.pg_vec to decide
-if it must call tpacket_snd().
+Add device id for D-Link DWM-222 A2.
 
-Problem is that the check is lockless, meaning another thread
-can issue a concurrent setsockopt(PACKET_TX_RING ) to flip
-tx_ring.pg_vec back to NULL.
+MI_00 D-Link HS-USB Diagnostics
+MI_01 D-Link HS-USB Modem
+MI_02 D-Link HS-USB AT Port
+MI_03 D-Link HS-USB NMEA
+MI_04 D-Link HS-USB WWAN Adapter (qmi_wwan)
+MI_05 USB Mass Storage Device
 
-Given that tpacket_snd() grabs pg_vec_lock mutex, we can
-perform the check again to solve the race.
-
-syzbot reported :
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 11429 Comm: syz-executor394 Not tainted 5.3.0-rc4+ #101
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-RIP: 0010:packet_lookup_frame+0x8d/0x270 net/packet/af_packet.c:474
-Code: c1 ee 03 f7 73 0c 80 3c 0e 00 0f 85 cb 01 00 00 48 8b 0b 89 c0 4c 8d 24 c1 48 b8 00 00 00 00 00 fc ff df 4c 89 e1 48 c1 e9 03 <80> 3c 01 00 0f 85 94 01 00 00 48 8d 7b 10 4d 8b 3c 24 48 b8 00 00
-RSP: 0018:ffff88809f82f7b8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: ffff8880a45c7030 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 1ffff110148b8e06 RDI: ffff8880a45c703c
-RBP: ffff88809f82f7e8 R08: ffff888087aea200 R09: fffffbfff134ae50
-R10: fffffbfff134ae4f R11: ffffffff89a5727f R12: 0000000000000000
-R13: 0000000000000001 R14: ffff8880a45c6ac0 R15: 0000000000000000
-FS:  00007fa04716f700(0000) GS:ffff8880ae900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fa04716edb8 CR3: 0000000091eb4000 CR4: 00000000001406e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- packet_current_frame net/packet/af_packet.c:487 [inline]
- tpacket_snd net/packet/af_packet.c:2667 [inline]
- packet_sendmsg+0x590/0x6250 net/packet/af_packet.c:2975
- sock_sendmsg_nosec net/socket.c:637 [inline]
- sock_sendmsg+0xd7/0x130 net/socket.c:657
- ___sys_sendmsg+0x3e2/0x920 net/socket.c:2311
- __sys_sendmmsg+0x1bf/0x4d0 net/socket.c:2413
- __do_sys_sendmmsg net/socket.c:2442 [inline]
- __se_sys_sendmmsg net/socket.c:2439 [inline]
- __x64_sys_sendmmsg+0x9d/0x100 net/socket.c:2439
- do_syscall_64+0xfd/0x6a0 arch/x86/entry/common.c:296
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Fixes: 69e3c75f4d54 ("net: TX_RING and packet mmap")
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Rogan Dawes <rogan@dawes.za.net>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/packet/af_packet.c |    7 +++++++
- 1 file changed, 7 insertions(+)
 
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -2651,6 +2651,13 @@ static int tpacket_snd(struct packet_soc
- 
- 	mutex_lock(&po->pg_vec_lock);
- 
-+	/* packet_sendmsg() check on tx_ring.pg_vec was lockless,
-+	 * we need to confirm it under protection of pg_vec_lock.
-+	 */
-+	if (unlikely(!po->tx_ring.pg_vec)) {
-+		err = -EBUSY;
-+		goto out;
-+	}
- 	if (likely(saddr == NULL)) {
- 		dev	= packet_cached_dev_get(po);
- 		proto	= po->num;
+---
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1954,6 +1954,8 @@ static const struct usb_device_id option
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e35, 0xff),			/* D-Link DWM-222 */
+ 	  .driver_info = RSVD(4) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e3d, 0xff),			/* D-Link DWM-222 A2 */
++	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
 
 
