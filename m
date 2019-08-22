@@ -2,40 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B886E99BCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DD6199B41
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404851AbfHVR1k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:27:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50902 "EHLO mail.kernel.org"
+        id S2403806AbfHVRXE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42168 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404606AbfHVR0H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:26:07 -0400
+        id S2403771AbfHVRXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:01 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A1CE2341C;
-        Thu, 22 Aug 2019 17:26:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 647BF23402;
+        Thu, 22 Aug 2019 17:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494766;
-        bh=wKXD6gj0JrSo8P6g8TBDInk14gTgVAubp7XlhD41KnY=;
+        s=default; t=1566494580;
+        bh=kOAsT4PRJohDReo3vQiXOzyx8cJT/a67rvpPKMceO1s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RdEx9xa8Vw5PT5wZJgCkL0ygf0HDNKLnMtIMNZorpUFk7GUqpu+3XqM8H30XA/maZ
-         2xEf4KaaBm+DDuHFgtBXIPmfIg/SgNM8wF6hxedX2fC5hNQBYF+/ZJi8Ly6I2yE2jJ
-         WgY0uRtYMAjH8Q17OZM2M/k3XDABKgw4vo4kgHfM=
+        b=X6jsDfcY0897npbmVw0CGPka0fjvM3c95IVKD9BJUiqZP1uzA8Jya7xkLXbKfDPzA
+         wQZ3SgOgZFaK2/R4Ri+vfot0l5SptrDWqGCB266O2mgRCnnws9xb+R3BAAFHg1SRVA
+         0Ng8KO/S9aMa54npZIHGJGxkHt61thHP3BEbI/Ms=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        Qian Cai <cai@lca.pw>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 43/85] arm64/efi: fix variable si set but not used
+        stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+Subject: [PATCH 4.4 72/78] iommu/amd: Move iommu_init_pci() to .init section
 Date:   Thu, 22 Aug 2019 10:19:16 -0700
-Message-Id: <20190822171733.156230259@linuxfoundation.org>
+Message-Id: <20190822171834.113194199@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +42,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit f1d4836201543e88ebe70237e67938168d5fab19 ]
+From: Joerg Roedel <jroedel@suse.de>
 
-GCC throws out this warning on arm64.
+commit 24d2c521749d8547765b555b7a85cca179bb2275 upstream.
 
-drivers/firmware/efi/libstub/arm-stub.c: In function 'efi_entry':
-drivers/firmware/efi/libstub/arm-stub.c:132:22: warning: variable 'si'
-set but not used [-Wunused-but-set-variable]
+The function is only called from another __init function, so
+it should be moved to .init too.
 
-Fix it by making free_screen_info() a static inline function.
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Acked-by: Will Deacon <will@kernel.org>
-Signed-off-by: Qian Cai <cai@lca.pw>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/efi.h | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/iommu/amd_iommu_init.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
-index 7ed320895d1f4..f52a2968a3b69 100644
---- a/arch/arm64/include/asm/efi.h
-+++ b/arch/arm64/include/asm/efi.h
-@@ -94,7 +94,11 @@ static inline unsigned long efi_get_max_initrd_addr(unsigned long dram_base,
- 	((protocol##_t *)instance)->f(instance, ##__VA_ARGS__)
+--- a/drivers/iommu/amd_iommu_init.c
++++ b/drivers/iommu/amd_iommu_init.c
+@@ -1223,7 +1223,7 @@ static const struct attribute_group *amd
+ 	NULL,
+ };
  
- #define alloc_screen_info(x...)		&screen_info
--#define free_screen_info(x...)
-+
-+static inline void free_screen_info(efi_system_table_t *sys_table_arg,
-+				    struct screen_info *si)
-+{
-+}
- 
- /* redeclare as 'hidden' so the compiler will generate relative references */
- extern struct screen_info screen_info __attribute__((__visibility__("hidden")));
--- 
-2.20.1
-
+-static int iommu_init_pci(struct amd_iommu *iommu)
++static int __init iommu_init_pci(struct amd_iommu *iommu)
+ {
+ 	int cap_ptr = iommu->cap_ptr;
+ 	u32 range, misc, low, high;
 
 
