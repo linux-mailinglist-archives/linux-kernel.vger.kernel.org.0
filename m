@@ -2,167 +2,66 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B9A0299000
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3764899013
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:56:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732431AbfHVJu5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:50:57 -0400
-Received: from mail-eopbgr80099.outbound.protection.outlook.com ([40.107.8.99]:47585
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731952AbfHVJuz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:50:55 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=n6Lm7mLfk8IRlXmv0AjLdqFLNVI6ny8pHEVc63e0gKnt4X7fNxtOc16IdN6p+lrdvn1g2KGLTTuwafWBsszunr/ZwyMm/lvJd2qEm8gzFyRwWsDrhzqjN16hVyVLiHj+nnxSCMncMZf3UkcjR8TtuZXwXp/ho0HUHtGfYKSri+7tXZL6sHIXMt7mC41q+eZVNNXyuOfvFJs/tlbnLg3F4XrKJxvzPPfo+5Fml6Yi2GyUg9n4LkkRUlVYt22NiNqcuXIytL/OHibV9RG9nETjdhMqbN2vQ4qLfzOqByHXc9V6kyk3lSiUxM3dDzgDmkuH/ZxZrBJsQQ3A2FslJE9pzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t8061+pWOAWMG/aEWCfTKVajft5j6ws/czcxe2ntfIE=;
- b=AAQZmr7F2iVUlBQiQqp17Vb3yAJ3ygEnEO0zWqtZ9w9FZRf94qLXr5X/XnR8NiiciLi/SB6pBQ8p1tiedBquSegtx6QGN70dbqqRoxiTcMKmSqdxpXgW1Cmsva5jPzJoDoLPW7Peq0/m/RMyddl8gLZCGOm4KuUfeDPrx0oxoqCo6LkR36Z7E1EncCY2DaBXXdiuxJHK96T7DSB7O8cB8YqJxsVPNSwgoRm4lCDaWty2Q7i38WENZNvag36oiKOFXysA8JGwHFu9b76x4njqFWL3Jgd99rFiFFxOLUC2P2T+UbXDI+rRpTRs/NpH9JvuFvOrC1k8GheJHlkz9B4V/g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
- header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=t8061+pWOAWMG/aEWCfTKVajft5j6ws/czcxe2ntfIE=;
- b=GxWBQ7fRapZNe3WMCq0EfGn9dU/ze15dCkM8zKjMM2YEsSQU67udTmhOWRmrgLOO9oSfsfMEntPVxDeL1ibLxCkdvnyYEDuwYa+VvcvYhnjEq66duS2U3rLv9UCdDqVJJ1O8vIfeDj2NCzPftFODjW0g672440Chron7i02RfHs=
-Received: from VI1PR08MB2782.eurprd08.prod.outlook.com (10.170.236.143) by
- VI1PR08MB3808.eurprd08.prod.outlook.com (20.178.14.219) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.18; Thu, 22 Aug 2019 09:50:52 +0000
-Received: from VI1PR08MB2782.eurprd08.prod.outlook.com
- ([fe80::2969:e370:fb70:71a]) by VI1PR08MB2782.eurprd08.prod.outlook.com
- ([fe80::2969:e370:fb70:71a%3]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
- 09:50:52 +0000
-From:   Jan Dakinevich <jan.dakinevich@virtuozzo.com>
-To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Denis Lunev <den@virtuozzo.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>
-Subject: [PATCH 3/3] netlink: use generic skb_set_owner_r()
-Thread-Topic: [PATCH 3/3] netlink: use generic skb_set_owner_r()
-Thread-Index: AQHVWM8Vva8u3ocdLEKshhTEdM6/RQ==
-Date:   Thu, 22 Aug 2019 09:50:52 +0000
-Message-ID: <1566467448-9550-4-git-send-email-jan.dakinevich@virtuozzo.com>
-References: <1566467448-9550-1-git-send-email-jan.dakinevich@virtuozzo.com>
-In-Reply-To: <1566467448-9550-1-git-send-email-jan.dakinevich@virtuozzo.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: HE1PR09CA0088.eurprd09.prod.outlook.com
- (2603:10a6:7:3d::32) To VI1PR08MB2782.eurprd08.prod.outlook.com
- (2603:10a6:802:19::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=jan.dakinevich@virtuozzo.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: git-send-email 2.1.4
-x-originating-ip: [185.231.240.5]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 257d951d-dc61-490c-6f26-08d726e6380f
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR08MB3808;
-x-ms-traffictypediagnostic: VI1PR08MB3808:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR08MB380829E568C7749ECB24336B8AA50@VI1PR08MB3808.eurprd08.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2887;
-x-forefront-prvs: 01371B902F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(136003)(39830400003)(346002)(366004)(376002)(199004)(189003)(86362001)(14454004)(2616005)(476003)(446003)(316002)(44832011)(486006)(11346002)(6436002)(6512007)(5660300002)(4326008)(66066001)(53936002)(256004)(478600001)(3846002)(71200400001)(81166006)(5024004)(107886003)(8676002)(99286004)(36756003)(71190400001)(7736002)(81156014)(64756008)(6116002)(2906002)(66556008)(305945005)(50226002)(8936002)(5640700003)(6486002)(2351001)(25786009)(66946007)(6916009)(66446008)(54906003)(66476007)(26005)(76176011)(2501003)(386003)(6506007)(52116002)(186003)(102836004)(41533002);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB3808;H:VI1PR08MB2782.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: virtuozzo.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: bMpbjcqFIXPoZSy18X+E1p2rH/BIGqoZwDITswRfjGy0ysLA0cjqguWY0T7pPkgUAe074kvYPLy9px3OQDAu7rQkrF5I+X25P1IEQXmkVXYHq0CJtUit9OH+MVmLkf34lVcec6CTNRfFFXJhl+U5PSyPyYDw2dQOV8EZlBxk89PzZsvrd0jVfOcfWNVtoD7Adi726+3NZ05UFri2FfDl5u1odWaaq8cOObr8cEUohbheLLmbi66MSO2PcLu1jg0KxvM0BrAIynOi4mtuTxXeC3n79YvgvQ10wl3HpOouL7UeNZtdPpArNKflgk6ILmYm1mm3ZexXP0JnsbPwi9Ac45TFvcqZKkj29CIIw2EVjUlOVV/87V9AcODbHaw6GKwIz85RwLDjU3HUt8Ov2a/QldbRkYP3eeFDx/aRJZ2NzyM=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1732473AbfHVJ4A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:56:00 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:53470 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732459AbfHVJ4A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:56:00 -0400
+Received: from zn.tnic (p200300EC2F0DB400192DF49715E793F0.dip0.t-ipconnect.de [IPv6:2003:ec:2f0d:b400:192d:f497:15e7:93f0])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A80841EC0819;
+        Thu, 22 Aug 2019 11:55:58 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1566467758;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=8VeWpv2h+H0NzeKdjodPTrcJtIQ9N9F7wR1pWa15SXY=;
+        b=jeYif56vB5EWS/KCP5ftkAsRS/F7tYvSGbqKAQLTkf24Pn08bv+adobZrRv/G0tQ2z1F+l
+        oeljkyzfZPATnbp7nGwftmaTvy+M+7Gvax8qnnMi/RjMcVRxCTszv3G5GtEX+esunho7jL
+        x586B0PC76oZE7e5fsXj4e2uNaKoN+4=
+Date:   Thu, 22 Aug 2019 11:55:55 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Adam Borowski <kilobyte@angband.pl>
+Cc:     "Ghannam, Yazen" <Yazen.Ghannam@amd.com>,
+        "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v3 0/8] AMD64 EDAC fixes
+Message-ID: <20190822095554.GC11646@zn.tnic>
+References: <20190821235938.118710-1-Yazen.Ghannam@amd.com>
+ <20190822005020.GA403@angband.pl>
+ <20190822083548.GA11646@zn.tnic>
+ <20190822094607.GA14667@angband.pl>
 MIME-Version: 1.0
-X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 257d951d-dc61-490c-6f26-08d726e6380f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 09:50:52.3072
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: faRUzBwNkH7sbsbegGSJhw6gPcZ+Xxxa19LthOvEeHmLolkxK3wdQG4HetaR3/9JNgfSb6oaGJHN1zEZRfTinTWGJGZdSSt6memyImJkAPg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB3808
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190822094607.GA14667@angband.pl>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since skb destructor is not used for data deallocating,
-netlink_skb_set_owner_r() almost completely repeates generic
-skb_set_owner_r(). Thus, both netlink_skb_set_owner_r() and
-netlink_skb_destructor() are not required anymore.
+On Thu, Aug 22, 2019 at 11:46:07AM +0200, Adam Borowski wrote:
+> Yeah, some of messages are no longer emitted for memory-less nodes (NUMA 1
+> and 3).  Your patch set also overhauls the messages.
 
-Signed-off-by: Jan Dakinevich <jan.dakinevich@virtuozzo.com>
----
- net/netlink/af_netlink.c | 23 ++++-------------------
- 1 file changed, 4 insertions(+), 19 deletions(-)
+Not my patchset - Yazen's.
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 04a3457..b0c2eb2 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -358,21 +358,6 @@ static void netlink_rcv_wake(struct sock *sk)
- 		wake_up_interruptible(&nlk->wait);
- }
-=20
--static void netlink_skb_destructor(struct sk_buff *skb)
--{
--	if (skb->sk !=3D NULL)
--		sock_rfree(skb);
--}
--
--static void netlink_skb_set_owner_r(struct sk_buff *skb, struct sock *sk)
--{
--	WARN_ON(skb->sk !=3D NULL);
--	skb->sk =3D sk;
--	skb->destructor =3D netlink_skb_destructor;
--	atomic_add(skb->truesize, &sk->sk_rmem_alloc);
--	sk_mem_charge(sk, skb->truesize);
--}
--
- static void netlink_sock_destruct(struct sock *sk)
- {
- 	struct netlink_sock *nlk =3D nlk_sk(sk);
-@@ -1225,7 +1210,7 @@ int netlink_attachskb(struct sock *sk, struct sk_buff=
- *skb,
- 		}
- 		return 1;
- 	}
--	netlink_skb_set_owner_r(skb, sk);
-+	skb_set_owner_r(skb, sk);
- 	return 0;
- }
-=20
-@@ -1286,7 +1271,7 @@ static int netlink_unicast_kernel(struct sock *sk, st=
-ruct sk_buff *skb,
- 	ret =3D -ECONNREFUSED;
- 	if (nlk->netlink_rcv !=3D NULL) {
- 		ret =3D skb->len;
--		netlink_skb_set_owner_r(skb, sk);
-+		skb_set_owner_r(skb, sk);
- 		NETLINK_CB(skb).sk =3D ssk;
- 		netlink_deliver_tap_kernel(sk, ssk, skb);
- 		nlk->netlink_rcv(skb);
-@@ -1367,7 +1352,7 @@ static int netlink_broadcast_deliver(struct sock *sk,=
- struct sk_buff *skb)
-=20
- 	if (atomic_read(&sk->sk_rmem_alloc) <=3D sk->sk_rcvbuf &&
- 	    !test_bit(NETLINK_S_CONGESTED, &nlk->state)) {
--		netlink_skb_set_owner_r(skb, sk);
-+		skb_set_owner_r(skb, sk);
- 		__netlink_sendskb(sk, skb);
- 		return atomic_read(&sk->sk_rmem_alloc) > (sk->sk_rcvbuf >> 1);
- 	}
-@@ -2227,7 +2212,7 @@ static int netlink_dump(struct sock *sk)
- 	 * single netdev. The outcome is MSG_TRUNC error.
- 	 */
- 	skb_reserve(skb, skb_tailroom(skb) - alloc_size);
--	netlink_skb_set_owner_r(skb, sk);
-+	skb_set_owner_r(skb, sk);
-=20
- 	if (nlk->dump_done_errno > 0) {
- 		cb->extack =3D &extack;
---=20
-2.1.4
+> But, the amount of redundant messages I'm complaining about has actually
+> increased:
 
+He's working on that - that still needs some love.
+
+Thanks for testing.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
