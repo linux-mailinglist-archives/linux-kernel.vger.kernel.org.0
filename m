@@ -2,186 +2,127 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 054AC99721
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 688B599724
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:43:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389423AbfHVOmt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:42:49 -0400
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:34995 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389367AbfHVOmo (ORCPT
+        id S2389367AbfHVOnF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:43:05 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:52232 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S2388564AbfHVOnC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:42:44 -0400
-X-Originating-IP: 86.250.200.211
-Received: from aptenodytes (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: paul.kocialkowski@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 0208C60003;
-        Thu, 22 Aug 2019 14:42:40 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 16:42:40 +0200
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-        kernel@collabora.com,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        linux-rockchip@lists.infradead.org,
-        Heiko Stuebner <heiko@sntech.de>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Boris Brezillon <boris.brezillon@collabora.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        fbuergisser@chromium.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 02/11] media: uapi: h264: Rename pixel format
-Message-ID: <20190822144240.GA1618@aptenodytes>
-References: <20190816160132.7352-1-ezequiel@collabora.com>
- <20190816160132.7352-3-ezequiel@collabora.com>
- <20190819124110.GB32182@aptenodytes>
- <e618bf01-3f82-ff06-1842-9d21a379d7ee@xs4all.nl>
- <20190822115453.GA1627@aptenodytes>
- <5a6432ce-6d90-9efa-9ae8-400b5ca1d653@xs4all.nl>
- <5ad0899e81ef8f22545bcb6b01833c493ce2bdc9.camel@collabora.com>
+        Thu, 22 Aug 2019 10:43:02 -0400
+Received: (qmail 1313 invoked by uid 2102); 22 Aug 2019 10:43:01 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 22 Aug 2019 10:43:01 -0400
+Date:   Thu, 22 Aug 2019 10:43:01 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Roger Quadros <rogerq@ti.com>
+cc:     balbi@kernel.org, <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: gadget: udc: core: Fix segfault if udc_bind_to_driver()
+ for pending driver fails
+In-Reply-To: <20190822134028.2623-1-rogerq@ti.com>
+Message-ID: <Pine.LNX.4.44L0.1908221042440.1311-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="HcAYCG3uE/tztfnV"
-Content-Disposition: inline
-In-Reply-To: <5ad0899e81ef8f22545bcb6b01833c493ce2bdc9.camel@collabora.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 22 Aug 2019, Roger Quadros wrote:
 
---HcAYCG3uE/tztfnV
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> If a gadget driver is in the pending drivers list, a UDC
+> becomes available and udc_bind_to_driver() fails, then it
+> gets deleted from the pending list.
+> i.e. list_del(&driver->pending) in check_pending_gadget_drivers().
+> 
+> Then if that gadget driver is unregistered,
+> usb_gadget_unregister_driver() does a list_del(&driver->pending)
+> again thus causing a page fault as that list entry has been poisoned
+> by the previous list_del().
+> 
+> Fix this by using list_del_init() instead of list_del() in
+> check_pending_gadget_drivers().
+> 
+> Test case:
+> 
+> - Make sure no UDC is available
+> - modprobe g_mass_storage file=wrongfile
+> - Load UDC driver so it becomes available
+> 	lun0: unable to open backing file: wrongfile
+> - modprobe -r g_mass_storage
+> 
+> [   60.900431] Unable to handle kernel paging request at virtual address dead000000000108
+> [   60.908346] Mem abort info:
+> [   60.911145]   ESR = 0x96000044
+> [   60.914227]   Exception class = DABT (current EL), IL = 32 bits
+> [   60.920162]   SET = 0, FnV = 0
+> [   60.923217]   EA = 0, S1PTW = 0
+> [   60.926354] Data abort info:
+> [   60.929228]   ISV = 0, ISS = 0x00000044
+> [   60.933058]   CM = 0, WnR = 1
+> [   60.936011] [dead000000000108] address between user and kernel address ranges
+> [   60.943136] Internal error: Oops: 96000044 [#1] PREEMPT SMP
+> [   60.948691] Modules linked in: g_mass_storage(-) usb_f_mass_storage libcomposite xhci_plat_hcd xhci_hcd usbcore ti_am335x_adc kfifo_buf omap_rng cdns3 rng_core udc_core crc32_ce xfrm_user crct10dif_ce snd_so6
+> [   60.993995] Process modprobe (pid: 834, stack limit = 0x00000000c2aebc69)
+> [   61.000765] CPU: 0 PID: 834 Comm: modprobe Not tainted 4.19.59-01963-g065f42a60499 #92
+> [   61.008658] Hardware name: Texas Instruments SoC (DT)
+> [   61.014472] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [   61.019253] pc : usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
+> [   61.025503] lr : usb_gadget_unregister_driver+0x30/0x108 [udc_core]
+> [   61.031750] sp : ffff00001338fda0
+> [   61.035049] x29: ffff00001338fda0 x28: ffff800846d40000
+> [   61.040346] x27: 0000000000000000 x26: 0000000000000000
+> [   61.045642] x25: 0000000056000000 x24: 0000000000000800
+> [   61.050938] x23: ffff000008d7b0d0 x22: ffff0000088b07c8
+> [   61.056234] x21: ffff000001100000 x20: ffff000002020260
+> [   61.061530] x19: ffff0000010ffd28 x18: 0000000000000000
+> [   61.066825] x17: 0000000000000000 x16: 0000000000000000
+> [   61.072121] x15: 0000000000000000 x14: 0000000000000000
+> [   61.077417] x13: ffff000000000000 x12: ffffffffffffffff
+> [   61.082712] x11: 0000000000000030 x10: 7f7f7f7f7f7f7f7f
+> [   61.088008] x9 : fefefefefefefeff x8 : 0000000000000000
+> [   61.093304] x7 : ffffffffffffffff x6 : 000000000000ffff
+> [   61.098599] x5 : 8080000000000000 x4 : 0000000000000000
+> [   61.103895] x3 : ffff000001100020 x2 : ffff800846d40000
+> [   61.109190] x1 : dead000000000100 x0 : dead000000000200
+> [   61.114486] Call trace:
+> [   61.116922]  usb_gadget_unregister_driver+0x7c/0x108 [udc_core]
+> [   61.122828]  usb_composite_unregister+0x10/0x18 [libcomposite]
+> [   61.128643]  msg_cleanup+0x18/0xfce0 [g_mass_storage]
+> [   61.133682]  __arm64_sys_delete_module+0x17c/0x1f0
+> [   61.138458]  el0_svc_common+0x90/0x158
+> [   61.142192]  el0_svc_handler+0x2c/0x80
+> [   61.145926]  el0_svc+0x8/0xc
+> [   61.148794] Code: eb03003f d10be033 54ffff21 a94d0281 (f9000420)
+> [   61.154869] ---[ end trace afb22e9b637bd9a7 ]---
+> Segmentation fault
+> 
+> Signed-off-by: Roger Quadros <rogerq@ti.com>
+> ---
+> Changelog:
+> v2
+> - Retain policy behaviour if pending gadget driver fails to bind.
+> 
+>  drivers/usb/gadget/udc/core.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index 7cf34beb50df..92af8dc98c3d 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -1143,7 +1143,7 @@ static int check_pending_gadget_drivers(struct usb_udc *udc)
+>  						dev_name(&udc->dev)) == 0) {
+>  			ret = udc_bind_to_driver(udc, driver);
+>  			if (ret != -EPROBE_DEFER)
+> -				list_del(&driver->pending);
+> +				list_del_init(&driver->pending);
+>  			break;
+>  		}
+>  
 
-Hi,
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 
-On Thu 22 Aug 19, 11:38, Ezequiel Garcia wrote:
-> On Thu, 2019-08-22 at 15:47 +0200, Hans Verkuil wrote:
-> > On 8/22/19 1:54 PM, Paul Kocialkowski wrote:
-> > > Hi,
-> > >=20
-> > > On Mon 19 Aug 19, 17:53, Hans Verkuil wrote:
-> > > > On 8/19/19 2:41 PM, Paul Kocialkowski wrote:
-> > > > > Hi,
-> > > > >=20
-> > > > > On Fri 16 Aug 19, 13:01, Ezequiel Garcia wrote:
-> > > > > > The V4L2_PIX_FMT_H264_SLICE_RAW name was originally suggested
-> > > > > > because the pixel format would represent H264 slices without any
-> > > > > > start code.
-> > > > > >=20
-> > > > > > However, as we will now introduce a start code menu control,
-> > > > > > give the pixel format a more meaningful name, while it's
-> > > > > > still early enough to do so.
-> > > > >=20
-> > > > > I definitely agree that SLICE_RAW is not the suffix we are lookin=
-g for, but I'm
-> > > > > not sure that _SLICE is self-describing given that we can operate=
- either
-> > > > > per-frame or per-slice, and _SLICE sort of implies the latter. Al=
-so, VP8 uses
-> > > > > _FRAME to clearly indicate that it operates per-frame.
-> > > >=20
-> > > > Well, VP8 doesn't support slices at all.
-> > > >=20
-> > > > > In addition, the _SLICE suffix is used by MPEG-2 in the stable AP=
-I. Since we
-> > > >=20
-> > > > Regarding MPEG-2: while it has a concept of slices, it is my unders=
-tanding
-> > > > that you never process slices separately, but only full pictures. I=
- may be
-> > > > wrong here.
-> > >=20
-> > > I don't think that is the case since ffmpeg clearly implements decodi=
-ng on a
-> > > per-slice basis (mpeg_decode_slice).
-> > >=20
-> > > Information is also passed on a per-slice basis to VAAPI=20
-> > > (vaapi_mpeg2_decode_slice) with a distinct data buffer and slice para=
-meter
-> > > buffer for each slice. Among other things, it contains the vertical a=
-nd
-> > > horizontal positions for the slice, which we can set in the hardware.
-> > >=20
-> > > > > certainly want MPEG-2 to allow per-slice and per-frame decoding a=
-s well as
-> > > > > H.264 and that the _SLICE format is specified to be the broken "c=
-oncatenated
-> > > > > slices" that cedrus expects, we probably want to use another suff=
-ix. This way,
-> > > > > we could deprecated MPEG2_SLICE and introduce a new format for MP=
-EG-2 that would
-> > > > > have consistent naming with the other mpeg formats.
-> > > >=20
-> > > > I actually think that H264_SLICE is a decent name.
-> > > >=20
-> > > > I'm less sure about MPEG2_SLICE since I am not sure if it means the=
- same as
-> > > > a H264 slice.
-> > >=20
-> > > The main problem I see is that we have already specified MPEG2_SLICE =
-in a way
-> > > that is incompatible with the future improvments we want to bring to =
-the API:
-> > > " The output buffer must contain the appropriate number of macroblock=
-s to
-> > > decode a full corresponding frame to the matching capture buffer."
-> > >=20
-> > > So I only see two possibilities: either we decide to change the speci=
-fication
-> > > of the pixel format and we can keep using the _SLICE suffix, either w=
-e need to
-> > > introduce a new pixel format with another suffix, which should also b=
-e reflected
-> > > on other MPEG formats for consistency. Then we can deprecate MPEG2_SL=
-ICE and
-> > > have drivers stop using it.
-> > >=20
-> > > What do you think?
-> >=20
-> > I'd change the specification of the pixel format. So MPEG2_SLICE now su=
-pports
-> > multiple slices if the hardware supports it as well.
-> >=20
-> > We would need an MPEG2_DECODING_MODE control as well, that currently wo=
-uld
-> > read FRAME based only.
-> >=20
->=20
-> That's exactly what I was about to suggest.
-
-Sounds perfect then!
-
-I have started looking at the start-code situation to see if it shares
-similarities with H.264, but did not go far enough to reach any conclusion
-on that aspect.
-
-Cheers,
-
-Paul
-
---=20
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
---HcAYCG3uE/tztfnV
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAl1eqeAACgkQ3cLmz3+f
-v9EUVQf+J1FHQy9KETtrc0FuHLl83ZvjI8dmqaowj10YOKGx/Hu25lw1yudeG1HF
-+ErY6z3RKxFeYf3N61X4WSgjPI+r+s5AFzjYgss3MBtZ9TON88te8YClR7XBXhy/
-CboiD37r1VMc4nWCXDAVbP+eEky0bD1V15EwOKLPrdW/4bYRcBVcNZaWX/3Tcg/h
-isFrhTDzYwrCFGKfjb/pmFwXcTUspT4eYFUj0wgteHInWeQ6/t+StlnD8R22Wa0m
-KszJXNoLeXAskjRAzjFzLOaPxRzviW2GOYBQJhT1p6+Yulwe0CR082Ptq8iyX1LB
-tz42nt26InblIDf8QlCBPrZkVIIdbA==
-=bwBa
------END PGP SIGNATURE-----
-
---HcAYCG3uE/tztfnV--
