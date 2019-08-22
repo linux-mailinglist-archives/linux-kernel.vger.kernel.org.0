@@ -2,36 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D1B999D33
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8E07699D31
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392433AbfHVRk1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:40:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45090 "EHLO mail.kernel.org"
+        id S2405040AbfHVRkR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:40:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45180 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404075AbfHVRYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:07 -0400
+        id S2404086AbfHVRYI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:08 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA5C023406;
-        Thu, 22 Aug 2019 17:24:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 76AA123400;
+        Thu, 22 Aug 2019 17:24:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494646;
-        bh=H4Rj6tTPIzPoLVGEq5y6QZ/GhwVjv6rZLX6w8eMJ3r0=;
+        s=default; t=1566494647;
+        bh=1hKRuByecVlVLfQQ6iosXpCA9hG/cgMqUCWA0P8Ptts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wcYs8FxrvjgVj6BhTP3HtQwAS8ufap6t8WlnPNVC9UAtKPg2+W6PCFewmw8aJCNNs
-         z9lXHc1jTXR7kwZ59S1KKejLQvFbrGKzHtpFv3N4jTRLQoG3QVrwFxo6WrZYeiA7KU
-         5+esTXFb53x91NIpPn4FpC5kc6BKrzS7m7uJVaEQ=
+        b=NQLERfQyJGNQM9RYMVN3gk+HftnBjMWfM3d9jyCDvKaI8A8alYwR6eGVs481PGV1b
+         rv7u3n0/Idnp0rwOyupVwwNB/mVTQ4TmXyrhvhTyDgpdN0I9ui25nWts7GgmzouUfi
+         n0dPKMcRuiyR87y+9aTmiFcwB4LTIUjri/Ois2wE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: [PATCH 4.9 040/103] iwlwifi: dont unmap as page memory that was mapped as single
-Date:   Thu, 22 Aug 2019 10:18:28 -0700
-Message-Id: <20190822171730.425398224@linuxfoundation.org>
+        Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Subject: [PATCH 4.9 041/103] scsi: mpt3sas: Use 63-bit DMA addressing on SAS35 HBA
+Date:   Thu, 22 Aug 2019 10:18:29 -0700
+Message-Id: <20190822171730.468258675@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -44,37 +45,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+From: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 
-commit 87e7e25aee6b59fef740856f4e86d4b60496c9e1 upstream.
+commit df9a606184bfdb5ae3ca9d226184e9489f5c24f7 upstream.
 
-In order to remember how to unmap a memory (as single or
-as page), we maintain a bit per Transmit Buffer (TBs) in
-the meta data (structure iwl_cmd_meta).
-We maintain a bitmap: 1 bit per TB.
-If the TB is set, we will free the memory as a page.
-This bitmap was never cleared. Fix this.
+Although SAS3 & SAS3.5 IT HBA controllers support 64-bit DMA addressing, as
+per hardware design, if DMA-able range contains all 64-bits
+set (0xFFFFFFFF-FFFFFFFF) then it results in a firmware fault.
 
-Cc: stable@vger.kernel.org
-Fixes: 3cd1980b0cdf ("iwlwifi: pcie: introduce new tfd and tb formats")
-Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+E.g. SGE's start address is 0xFFFFFFFF-FFFF000 and data length is 0x1000
+bytes. when HBA tries to DMA the data at 0xFFFFFFFF-FFFFFFFF location then
+HBA will fault the firmware.
+
+Driver will set 63-bit DMA mask to ensure the above address will not be
+used.
+
+Cc: <stable@vger.kernel.org> # 5.1.20+
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-+++ b/drivers/net/wireless/intel/iwlwifi/pcie/tx.c
-@@ -439,6 +439,8 @@ static void iwl_pcie_tfd_unmap(struct iw
- 					 DMA_TO_DEVICE);
+---
+ drivers/scsi/mpt3sas/mpt3sas_base.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -1707,9 +1707,11 @@ _base_config_dma_addressing(struct MPT3S
+ {
+ 	struct sysinfo s;
+ 	u64 consistent_dma_mask;
++	/* Set 63 bit DMA mask for all SAS3 and SAS35 controllers */
++	int dma_mask = (ioc->hba_mpi_version_belonged > MPI2_VERSION) ? 63 : 64;
+ 
+ 	if (ioc->dma_mask)
+-		consistent_dma_mask = DMA_BIT_MASK(64);
++		consistent_dma_mask = DMA_BIT_MASK(dma_mask);
+ 	else
+ 		consistent_dma_mask = DMA_BIT_MASK(32);
+ 
+@@ -1717,11 +1719,11 @@ _base_config_dma_addressing(struct MPT3S
+ 		const uint64_t required_mask =
+ 		    dma_get_required_mask(&pdev->dev);
+ 		if ((required_mask > DMA_BIT_MASK(32)) &&
+-		    !pci_set_dma_mask(pdev, DMA_BIT_MASK(64)) &&
++		    !pci_set_dma_mask(pdev, DMA_BIT_MASK(dma_mask)) &&
+ 		    !pci_set_consistent_dma_mask(pdev, consistent_dma_mask)) {
+ 			ioc->base_add_sg_single = &_base_add_sg_single_64;
+ 			ioc->sge_size = sizeof(Mpi2SGESimple64_t);
+-			ioc->dma_mask = 64;
++			ioc->dma_mask = dma_mask;
+ 			goto out;
+ 		}
  	}
+@@ -1747,7 +1749,7 @@ static int
+ _base_change_consistent_dma_mask(struct MPT3SAS_ADAPTER *ioc,
+ 				      struct pci_dev *pdev)
+ {
+-	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64))) {
++	if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(ioc->dma_mask))) {
+ 		if (pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(32)))
+ 			return -ENODEV;
+ 	}
+@@ -3381,7 +3383,7 @@ _base_allocate_memory_pools(struct MPT3S
+ 		total_sz += sz;
+ 	} while (ioc->rdpq_array_enable && (++i < ioc->reply_queue_count));
  
-+	meta->tbs = 0;
-+
- 	if (trans->cfg->use_tfh) {
- 		struct iwl_tfh_tfd *tfd_fh = (void *)tfd;
- 
+-	if (ioc->dma_mask == 64) {
++	if (ioc->dma_mask > 32) {
+ 		if (_base_change_consistent_dma_mask(ioc, ioc->pdev) != 0) {
+ 			pr_warn(MPT3SAS_FMT
+ 			    "no suitable consistent DMA mask for %s\n",
 
 
