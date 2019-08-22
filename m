@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 527C299D3C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E820799DBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:45:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404029AbfHVRYC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43860 "EHLO mail.kernel.org"
+        id S2392917AbfHVRpL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:45:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403970AbfHVRXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:39 -0400
+        id S2403843AbfHVRXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:09 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD9AB23426;
-        Thu, 22 Aug 2019 17:23:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4B0D21743;
+        Thu, 22 Aug 2019 17:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494617;
-        bh=FaT5FQecb8EjfqwtrvETdTKkobJhqQVNVnVT3NtjbAc=;
+        s=default; t=1566494588;
+        bh=2lZWLAxLDs9rToWhxHHfjQSGkiHyEl+SzcW5iQL0/0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uDplekty9t3uYV+Fub7I6ak5gaAzWrANWgl8/3p7GgjiSjsYNg4sxsDYcMCPh4RCJ
-         2bbG1Ucsve+laUWeHFmfhyEnrLPOZFrFuzGdF4ecPVqgX1R4wdHhO0BMIG2QyxgT2y
-         mGnXDvrM9T//ye8tbhXblA8S/EXZZhH128CXfdVQ=
+        b=I9mUrqhNRb7XkctrV58HIeyBcezJZUUZTmUR6ORzi4nwI8w/VRlNcICe1NdWR4tzi
+         mOaTlBmnNlddC6+GGK2m6ohQiHzdCmBb6l7FrhekW0CoBlY37RBo/v4yDNnBcvPdJV
+         rQ/9ZOSw0jAVkKzwxfzIU04L/ypRhbfN32rB7gOw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.9 046/103] bpf: restrict access to core bpf sysctls
-Date:   Thu, 22 Aug 2019 10:18:34 -0700
-Message-Id: <20190822171730.662419102@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.4 31/78] mwifiex: fix 802.11n/WPA detection
+Date:   Thu, 22 Aug 2019 10:18:35 -0700
+Message-Id: <20190822171832.944750860@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,95 +43,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Brian Norris <briannorris@chromium.org>
 
-commit 2e4a30983b0f9b19b59e38bbf7427d7fdd480d98 upstream.
+commit df612421fe2566654047769c6852ffae1a31df16 upstream.
 
-Given BPF reaches far beyond just networking these days, it was
-never intended to allow setting and in some cases reading those
-knobs out of a user namespace root running without CAP_SYS_ADMIN,
-thus tighten such access.
+Commit 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant
+vendor IEs") adjusted the ieee_types_vendor_header struct, which
+inadvertently messed up the offsets used in
+mwifiex_is_wpa_oui_present(). Add that offset back in, mirroring
+mwifiex_is_rsn_oui_present().
 
-Also the bpf_jit_enable = 2 debugging mode should only be allowed
-if kptr_restrict is not set since it otherwise can leak addresses
-to the kernel log. Dump a note to the kernel log that this is for
-debugging JITs only when enabled.
+As it stands, commit 63d7ef36103d breaks compatibility with WPA (not
+WPA2) 802.11n networks, since we hit the "info: Disable 11n if AES is
+not supported by AP" case in mwifiex_is_network_compatible().
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-[bwh: Backported to 4.9:
- - We don't have bpf_dump_raw_ok(), so drop the condition based on it. This
-   condition only made it a bit harder for a privileged user to do something
-   silly.
- - Drop change to bpf_jit_kallsyms]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/sysctl_net_core.c |   39 +++++++++++++++++++++++++++++++++++++--
- 1 file changed, 37 insertions(+), 2 deletions(-)
 
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -232,6 +232,41 @@ static int proc_do_rss_key(struct ctl_ta
- 	return proc_dostring(&fake_table, write, buffer, lenp, ppos);
- }
+
+---
+ drivers/net/wireless/mwifiex/main.h |    1 +
+ drivers/net/wireless/mwifiex/scan.c |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+
+--- a/drivers/net/wireless/mwifiex/main.h
++++ b/drivers/net/wireless/mwifiex/main.h
+@@ -108,6 +108,7 @@ enum {
  
-+#ifdef CONFIG_BPF_JIT
-+static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
-+					   void __user *buffer, size_t *lenp,
-+					   loff_t *ppos)
-+{
-+	int ret, jit_enable = *(int *)table->data;
-+	struct ctl_table tmp = *table;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	tmp.data = &jit_enable;
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+	if (write && !ret) {
-+		*(int *)table->data = jit_enable;
-+		if (jit_enable == 2)
-+			pr_warn("bpf_jit_enable = 2 was set! NEVER use this in production, only for JIT debugging!\n");
-+	}
-+	return ret;
-+}
-+
-+# ifdef CONFIG_HAVE_EBPF_JIT
-+static int
-+proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
-+				    void __user *buffer, size_t *lenp,
-+				    loff_t *ppos)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+}
-+# endif
-+#endif
-+
- static struct ctl_table net_core_table[] = {
- #ifdef CONFIG_NET
- 	{
-@@ -293,7 +328,7 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_enable,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dointvec_minmax_bpf_enable,
- # ifdef CONFIG_BPF_JIT_ALWAYS_ON
- 		.extra1		= &one,
- 		.extra2		= &one,
-@@ -308,7 +343,7 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_harden,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0600,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
- 		.extra1		= &zero,
- 		.extra2		= &two,
- 	},
+ #define MWIFIEX_MAX_TOTAL_SCAN_TIME	(MWIFIEX_TIMER_10S - MWIFIEX_TIMER_1S)
+ 
++#define WPA_GTK_OUI_OFFSET				2
+ #define RSN_GTK_OUI_OFFSET				2
+ 
+ #define MWIFIEX_OUI_NOT_PRESENT			0
+--- a/drivers/net/wireless/mwifiex/scan.c
++++ b/drivers/net/wireless/mwifiex/scan.c
+@@ -151,7 +151,8 @@ mwifiex_is_wpa_oui_present(struct mwifie
+ 	if (((bss_desc->bcn_wpa_ie) &&
+ 	     ((*(bss_desc->bcn_wpa_ie)).vend_hdr.element_id ==
+ 	      WLAN_EID_VENDOR_SPECIFIC))) {
+-		iebody = (struct ie_body *) bss_desc->bcn_wpa_ie->data;
++		iebody = (struct ie_body *)((u8 *)bss_desc->bcn_wpa_ie->data +
++					    WPA_GTK_OUI_OFFSET);
+ 		oui = &mwifiex_wpa_oui[cipher][0];
+ 		ret = mwifiex_search_oui_in_ie(iebody, oui);
+ 		if (ret)
 
 
