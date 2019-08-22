@@ -2,105 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B3D699F8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0E6F99F75
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:10:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403959AbfHVTMU (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:12:20 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40518 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726142AbfHVTMU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:12:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NZCJZbx63toKQeKOUzkuciD01o1c7jKzoOhoeTrTjFk=; b=q+csDCqmfhxxH7GM7HWjgxuWY
-        5gXEE5q4zf7t5ijiChoL4bNdFk0bTc1imKVmCGY8ONcTyS92ZuvVbca9Q2smEf3TukbfnWNnmg/a4
-        zOltZeEZyhoIq5xb5QEKQJ3v3RmrCxwApOxbhtgwmWx/NeDL7Wfr2RrhCgpeYJZ5T9Aqc=;
-Received: from 92.40.26.78.threembb.co.uk ([92.40.26.78] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1i0sVK-0007xk-KH; Thu, 22 Aug 2019 19:12:15 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 5ACD7D02CB0; Thu, 22 Aug 2019 20:05:07 +0100 (BST)
-Date:   Thu, 22 Aug 2019 20:05:07 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Ashish Kumar <ashish.kumar@nxp.com>
-Cc:     "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        id S2387824AbfHVTKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:10:38 -0400
+Received: from mga11.intel.com ([192.55.52.93]:23126 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730427AbfHVTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 15:10:38 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 12:10:37 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
+   d="scan'208";a="190695444"
+Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
+  by orsmga002.jf.intel.com with ESMTP; 22 Aug 2019 12:10:37 -0700
+Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
+ fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
+ id 14.3.439.0; Thu, 22 Aug 2019 12:10:36 -0700
+Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.127]) by
+ FMSMSX153.amr.corp.intel.com ([169.254.9.165]) with mapi id 14.03.0439.000;
+ Thu, 22 Aug 2019 12:10:36 -0700
+From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
+To:     "justin.he@arm.com" <justin.he@arm.com>,
+        "jmoyer@redhat.com" <jmoyer@redhat.com>
+CC:     "Williams, Dan J" <dan.j.williams@intel.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-next@vger.kernel.org" <linux-next@vger.kernel.org>,
-        Kuldeep Singh <kuldeep.singh@nxp.com>
-Subject: Re: [EXT] Re: [Patch v4 1/3] dt-bindings: spi: spi-fsl-qspi: Add
- ls2080a compatibility string to bindings
-Message-ID: <20190822190507.GI23391@sirena.co.uk>
-References: <1565691791-26167-1-git-send-email-Ashish.Kumar@nxp.com>
- <20190821110640.GC5128@sirena.co.uk>
- <VI1PR04MB401528B4F92DAD98385EF53395AA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
+Subject: Re: [PATCH 2/2] drivers/dax/kmem: give a warning if
+ CONFIG_DEV_DAX_PMEM_COMPAT is enabled
+Thread-Topic: [PATCH 2/2] drivers/dax/kmem: give a warning if
+ CONFIG_DEV_DAX_PMEM_COMPAT is enabled
+Thread-Index: AQHVWRtCI+fbHAl24k6KFAKDmutKnqcH/a+A
+Date:   Thu, 22 Aug 2019 19:10:35 +0000
+Message-ID: <91b07911eb6d307c4cb652da6ec53bad661ec066.camel@intel.com>
+References: <20190816111844.87442-1-justin.he@arm.com>
+         <20190816111844.87442-3-justin.he@arm.com>
+         <x49tva9ni68.fsf@segfault.boston.devel.redhat.com>
+In-Reply-To: <x49tva9ni68.fsf@segfault.boston.devel.redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Evolution 3.30.5 (3.30.5-1.fc29) 
+x-originating-ip: [10.232.112.185]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FE4E6340A0DCFB4990BDFDF7F44BCDE4@intel.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="n+lFg1Zro7sl44OB"
-Content-Disposition: inline
-In-Reply-To: <VI1PR04MB401528B4F92DAD98385EF53395AA0@VI1PR04MB4015.eurprd04.prod.outlook.com>
-X-Cookie: Don't SANFORIZE me!!
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---n+lFg1Zro7sl44OB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Aug 21, 2019 at 02:18:43PM +0000, Ashish Kumar wrote:
-
-Please fix your mail client to word wrap within paragraphs at something
-substantially less than 80 columns.  Doing this makes your messages much
-easier to read and reply to.
-
-> Snippet from driver spi-fsl-qspi.c
-> static const struct of_device_id fsl_qspi_dt_ids[] = {
->         { .compatible = "fsl,vf610-qspi", .data = &vybrid_data, },
->         { .compatible = "fsl,imx6sx-qspi", .data = &imx6sx_data, },
->         { .compatible = "fsl,imx7d-qspi", .data = &imx7d_data, },
->         { .compatible = "fsl,imx6ul-qspi", .data = &imx6ul_data, },
->         { .compatible = "fsl,ls1021a-qspi", .data = &ls1021a_data, },
->         { .compatible = "fsl,ls2080a-qspi", .data = &ls2080a_data, },
->         { /* sentinel */ }
-> };
-
-> I had previously sent dts patch based out of Shawn's tree with
-> dependency on these dt binding patch. To which Shawn had
-> replied to get dependency patch accepted first before sending
-> this dts change.
-
-Right, there appears to be an entry for patch 1 which was added
-without the binding doc being updated - patch 2 looks to not have
-the compatibles in the driver though?
-
---n+lFg1Zro7sl44OB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1e52IACgkQJNaLcl1U
-h9CabAf/YnrmOa6aer/v5GZLa3V7LnDmLiT3+f/Pw1XPzt4G1mUV+xM1rjIPcPBy
-i2g6mH4lVLJYx/ERwlDb6jW+2GH+uG08pU8ekqm1lQqOhqGaWJGY+Q4zXRGNoWRd
-OlCbXUx/ZLWJ0RjrHkoSO43s5mOXkX1rtef65k/b6tAgW1PIM4GEzrRNnSwFXQ+R
-zxOhxAAesVweBvASCRd5tOll8I+9KFX9pHbByUwCxHbb1OqJHg5/sT1TCtCRr0fR
-K+7/bB4MjfjCF14StKLKszFUWhRNnyT73S13gX8NlPQPSRAUtOOyvuNPX/UtkNJj
-trVFOiTCRf5s01u6GQl2n+a1gOa/Ew==
-=Scpe
------END PGP SIGNATURE-----
-
---n+lFg1Zro7sl44OB--
+T24gVGh1LCAyMDE5LTA4LTIyIGF0IDE0OjU1IC0wNDAwLCBKZWZmIE1veWVyIHdyb3RlOg0KPiAN
+Cj4gV2hlbiB1c2luZyBkYXhjdGwgdG8gb25saW5lIG1lbW9yeSwgeW91IGFscmVhZHkgZ2V0IHRo
+ZSBmb2xsb3dpbmcNCj4gbWVzc2FnZToNCj4gDQo+IGxpYmRheGN0bDogZGF4Y3RsX2Rldl9kaXNh
+YmxlOiBkYXgwLjA6IGVycm9yOiBkZXZpY2UgbW9kZWwgaXMgZGF4LWNsYXNzDQo+IA0KPiBUaGF0
+J3Mgc3RpbGwgbm90IHZlcnkgaGVscGZ1bC4gIEl0IHdvdWxkIGJlIGJldHRlciBpZiB0aGUgbWVz
+c2FnZQ0KPiBzdWdnZXN0ZWQgYSBmaXggKGxpa2UgdXNpbmcgbWlncmF0ZS1kZXZpY2UtbW9kZWwp
+LiAgVmlzaGFsPw0KDQpZZXMsIGl0IGlzIG9uIG15IGxpc3QgdG8gaW1wcm92ZSB0aGlzLiBDdXJy
+ZW50bHkgdGhlIG1hbiBwYWdlIHNob3dzIHRoZQ0KYWJvdmUgZXJyb3IgbWVzc2FnZSwgYW5kIHRh
+bGtzIGFib3V0IG1pZ3JhdGUtZGV2aWNlLW1vZGVsLCBidXQgSQ0KcmVjZWl2ZWQgbW9yZSBmZWVk
+YmFjayB0byBhZGQgYW5vdGhlciBicmVhZCBjcnVtYiBpbiB0aGUgcHJpbnRlZCBtZXNzYWdlDQpw
+b2ludGluZyB0byBtaWdyYXRlLWRldmljZS1tb2RlbC4gIEknbGwgc2VuZCBhIHBhdGNoIGZvciBp
+dCBzb29uLg0KDQpUaGFua3MsDQoJLVZpc2hhbA0K
