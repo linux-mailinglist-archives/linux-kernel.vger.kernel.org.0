@@ -2,26 +2,29 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D8A39975E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:52:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F3AB99787
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:59:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbfHVOva (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:51:30 -0400
-Received: from mout.web.de ([212.227.17.11]:44711 "EHLO mout.web.de"
+        id S2389102AbfHVO6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:58:49 -0400
+Received: from mout.web.de ([212.227.17.11]:37869 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387623AbfHVOv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:51:29 -0400
+        id S1729922AbfHVO6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:58:48 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1566485451;
-        bh=JJNw3yyI7LFjcQxSQaC2Dwh7+VMWL/aMrXs3yzs678I=;
-        h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
-        b=E7/haOOojqJvt1y4CL5P/hXb2VGbhWXgdhuUd5fVONeM4kdaJOyqhlk/XGXhwEd72
-         7unQMKQT1yKllSd/lFZ3wVbTb6dBBt++sDGAPirwitITIT/IVqKDiF3mm2crMka4nQ
-         wGYeuDw3h/0gbAMNOADSM+usRzATNBJygTPyQg3g=
+        s=dbaedf251592; t=1566485580;
+        bh=laNrLcoKOC6PZfIKvLc6tR9UiABDlygov3ZDtuLoQQI=;
+        h=X-UI-Sender-Class:Subject:From:To:Cc:References:Date:In-Reply-To;
+        b=DWcwa5mLl5fSG10ckxJkhEo6B9jwpIlCp/gG1in27OpFLRJfg05pB7vL0rkN+4XKQ
+         v2yrIEbcEbMM6aP8q3//3OQ45/yY5bvB0tL72zd7X5ssFxqBT/ye8AP+PNrY/cgdmK
+         sdF2YBwy/nwMRsiznJQs5vdXFNHJGzrYiVkXUk0A=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([78.49.181.43]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MQNma-1hok7z0Yiy-00Tj7H; Thu, 22
- Aug 2019 16:50:51 +0200
+Received: from [192.168.1.2] ([78.49.181.43]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MK1s1-1hzz6v1mLt-001ToU; Thu, 22
+ Aug 2019 16:53:00 +0200
+Subject: =?UTF-8?Q?=5bPATCH_1/2=5d_ipc/mqueue=3a_Delete_an_unnecessary_check?=
+ =?UTF-8?B?IGJlZm9yZSB0aGUgbWFjcm8gY2FsbCDigJxkZXZfa2ZyZWVfc2ti4oCd?=
+From:   Markus Elfring <Markus.Elfring@web.de>
 To:     kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -29,8 +32,8 @@ To:     kernel-janitors@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
         Davidlohr Bueso <dave@stgolabs.net>,
         Kees Cook <keescook@chromium.org>,
         Li Rongqing <lirongqing@baidu.com>
-From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
 Openpgp: preference=signencrypt
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -75,58 +78,70 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Cc:     LKML <linux-kernel@vger.kernel.org>
-Message-ID: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
-Date:   Thu, 22 Aug 2019 16:50:45 +0200
+Message-ID: <07477187-63e5-cc80-34c1-32dd16b38e12@web.de>
+Date:   Thu, 22 Aug 2019 16:52:55 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <6e9378d1-3b9b-e138-53f6-bc5683ac8b8c@web.de>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UwA56m5d+nLxmCo7FtThSiUfdaO/tIYKyDa57OHKmeP6Dg1psQb
- vCS2J31SUG7ODvZjYXk2JGxx6j4qfpsVd0TGURoUO/r8+/sB49pw+9ed/fNKS7RUX1tOwTv
- VXbfOAdbSXYBbkl5PdZmtNWs7UgMW2hhteMJO8ERloF86Ce4/eMqV0XaBIP6elE8RyhYysB
- NGXI5svLEny1G3EMtp19A==
+X-Provags-ID: V03:K1:Ksz9lXlJzzprN4y/6kTggolQWTokRX2QsM0w5W/uuh0PUbOaLVn
+ uNB5O5yrOFPJFMNVIMFRPLsDe9xjomG/1Z514oeUTy0At0a1CqkJlzFKHCWkA1cAofpirvd
+ uIiinS6LnDk8383z87n0+OmrfYGU9l9Zsh9NCLh4RMXWv+1jHG3byKG9moVHXyQRIP2Zk+9
+ A15mfmsCc1z9LrrIlMF+Q==
 X-Spam-Flag: NO
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Ehrkp7VIAwM=:HELClc4fwit5GT3smweJuo
- w4x1v8YuBelolUOGcZZadJONNhcvFhZ13vl/V8ucI5rh5wOmdlhEG766g65s4LV9dVoTc/Q+f
- 0PTRVadQDj5U7/wftSi+p2iVKlCbBcby2kO9wchr1L075L843/CtEHXwgJ5UtkgQ0uIuZ1x9y
- ub9cT6kynBx4t0LjVLrOlL462vzxlTlF3QzaB/GpsJcUE6T5RChekTuc80onrl8BueEEyHyIQ
- NfudW+pfvzNrIaJRvsWShYqpIJB6dm+xHSswmxdUXIeE1rkXxr1wGWMcvaXoyFEpbupixpsQk
- wnxFEf1E7PmRLHG0wmn6uAcoySennGRbmliVUPDFfFvKsnaNnIdm1/yAo2sMaeJT8uM0H/+2e
- L8uqrTrMkF5EkIJNrPhYyL8ZsSmQAZxr8XNwqNLLoj+BCgQOhn8igqeYvn+a9AsBHPcNmNbGk
- csVrxkEpSI7d8YwQyWiz6eEJcHYhd4hyWU3iZYH6HxkgTtFAPf/avx7/yZQE1pXaYmd3bb/X5
- OW8t5kpMRIxSjwNc/9mmG19qhebabMix1WwS9LkZNqIZpSQKerauQW2R5geR4JJGfQQaKWQZ4
- EY2FiDeUumAIhpC1WPRXXqXsPzb4+nvo/boacpXBOmTALw/mauz+eotrzkFcjUGdBRJTtaJSf
- HuPo6RuDu1Js/743InAOSwECmUzsvRPT/1xWiAXb/r2hmGsEb97H4E/RVms6uG9Nf+lpkrNfH
- MQcoq8i9FneceOG25AJdsjvDl6f1ydhM0DLS6fHCJ5sgqzF9lOGmXGMyq98KsMLuuuO34VXJ7
- P+0JvOgBbr89vWZmupoGZMdR4hUgSENMPYJxs/UhBc9FheBQZJ8w7M8lUhX//daek8WSZfAhA
- YzyVFZkN5H0CPMgLv/TJ+N5AknXTCxPYorRO9Lz2mYgzZVQz5m1pzqBB+f8iFS1/DKr766PxO
- i3yNUneXWXeZtvAZlXY9soH8NNUHpZkKxuhFaoTqVV3PIDNidsXctoNuiSsuKslnnjZ2F73Ac
- cNEZoPgYWJJTnIE9wh5qqYWARVdVBsCzanWiGqbIfRwKOBs3uaLVDkLYavx4ZFTmSTNhzz0T0
- 7h9wKuDx3oN7aCTqqQ4+hDSnr3lnk92OvvY5HeKStRWvjQ1EAZenqghu2gfKZ4SkH7fHgIaJJ
- Wjsja9x3YfF0Zefq2Ngr1TRnPM/VZ0EDmKKVmGzOM5KQR4XA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:Yc+tx7ueFS0=:c3RHU8gAZ14TkvPlbHBTPp
+ GzD/Ek9Un+z7nAO01SUI8PCuVbHWpS8iaznppDRmQYsKJORFiYum0z9ZEs8BLVm1zZh+NAH7u
+ A+SS4hdZHyUYpu8nzX85Jo1A9l18m/H+K7iwZCVcCZrZqermHPKXOYgUQaZgsAsgJTsJNxq4D
+ QG0LlYeQQaf5vBsmfBrmU4/1IGdrLd/vJMA7PVTJhqy9BpBvyY75Vx/Ua8jRNtYQwbTSNkOXB
+ E+fNcIm8GqPLiEjgVJQ+nkBmdYbr1aB3yCi7KeGVc0Ktjbrje8jQu9We1dtfLQJV2RtwUPUiH
+ WoqlcBbz07Snm+FilysPzloQrTKCzFZ95v4D20BN7vOpu84ZFuNglSGhS6C9Qotco4xGfsBL5
+ SNiVhCRLMZhOAMfuwMr9n28m4KM9n6UrSsHn/0TiIVZQNS08SizXzJ3hJV8atbZJ2C1XLnpqP
+ 9R/hYtyr0lvg3jpToOaVDuI36BzQG7hYLGv000uwbNW4DndsKUuc7+zOpWD6zpAYgmLkHdlMK
+ 6TUAoR2KA6+GvLBSDB3iWA45DrF1x/xehdb2Fs5yfBXnborUka3SrP6ETOW+/mVUd/PMvkJVA
+ nbybZgo5rkvryqqF7llU7liVCoDUQKuL0YTtsSNQZKZDzrqQLKte6OTeod4hsz6FETOiqOwYD
+ iSTcreJZdSiTJP5DiSvKYf/sqhwd7nRpwqCzdmkWdik5tnBM+G0jr0iHHsdcdGTMSz9X223MR
+ MS5U6o5aGvA0aap94lFSfvPbovmdiTx/LY626M+1iLp0TECcYvq9/qRdYe4vUvLNfHG942lRT
+ 8BMSYSA6spMRQ1Z/25Df3oSigzZnhpyslhRNXl5QHnzUpbXAXrT+epQGnzhGON04Aft5fPO5K
+ VVH9tAjX+VXRUEifeDWSXXWomvWoVWq2NUYvoBlNR8dRrCj54uro0s/fwFkPZVfVwhdQaZtgE
+ 4q4ngJyVi68l42NM3kajP7Qc1MKDyjJ7yR8LukGyJKelQwycdO02pEQNDinp88H7b2oXlZm3a
+ ikznf5q5gv2tIlde8qsoFEUYc38RkRGPpP66zArXfcuq6f9rInaVR8J5n+ahKH7ZgRunWLqf6
+ UcroG0Q37+LyV2hGqbtYONseW+o4Y8F/k8L6bnlR+Msr5k6jVL/oOunQ2dNDSsqw3mPj+zhdB
+ s3I8nKAVlsquQdswlFw1C5C5TvuwH0gMliQv8D0Duufmz6iQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 22 Aug 2019 16:38:49 +0200
-Subject: [PATCH 0/2] ipc/mqueue: Adjustments for do_mq_notify()
+Date: Thu, 22 Aug 2019 14:07:57 +0200
 
-A few update suggestions were taken into account
-from static source code analysis.
+The dev_kfree_skb() function performs also input parameter validation.
+Thus the test around the call is not needed.
 
-Markus Elfring (2):
-  Delete an unnecessary check before the macro call =E2=80=9Cdev_kfree_skb=
-=E2=80=9D
-  Improve exception handling in do_mq_notify()
+This issue was detected by using the Coccinelle software.
 
- ipc/mqueue.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ ipc/mqueue.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/ipc/mqueue.c b/ipc/mqueue.c
+index 7a5a8edc3de3..494ab78863f4 100644
+=2D-- a/ipc/mqueue.c
++++ b/ipc/mqueue.c
+@@ -1334,7 +1334,7 @@ static int do_mq_notify(mqd_t mqdes, const struct si=
+gevent *notification)
+ out:
+ 	if (sock)
+ 		netlink_detachskb(sock, nc);
+-	else if (nc)
++	else
+ 		dev_kfree_skb(nc);
+
+ 	return ret;
 =2D-
 2.23.0
 
