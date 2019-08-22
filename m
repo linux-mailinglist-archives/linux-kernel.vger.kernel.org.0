@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D659599BE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED37799D02
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404613AbfHVR0H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47770 "EHLO mail.kernel.org"
+        id S2404472AbfHVRi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:38:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391807AbfHVRZC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:02 -0400
+        id S2391502AbfHVRYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:21 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96F202341D;
-        Thu, 22 Aug 2019 17:25:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 014D72341C;
+        Thu, 22 Aug 2019 17:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494701;
-        bh=S5fq1gyPpjlzADyaUeZ9auniopys715Ee8R+VyyfMuA=;
+        s=default; t=1566494661;
+        bh=uO1DtXYY5dFWAVZQ7w613gpheeo7EbjiYk6aLMvzxU0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wmy8lxaHn6PVpB67W6GFWNrBIW2qQ31ILIlD2PehwaRSErcXR7g43dPYV8GGcP7R4
-         UFtLwacvhq7x2nEyA3OH/af+y0IQDU7roffF3zhn48mKFs9yI/xy1frhrQM5L/RVM4
-         GucrznWwpMZX9rs4NvO8jt0Ne4nbpoumXBUdziCE=
+        b=ilYsBxeBuAilzNTZfkSrmn7o1K9W8ikYN8jeB90NC3SrzR9uMe5ym4uhycwvE6RbN
+         XLha9WqV2v8HEUrJzsgUw8c0rtpvvEoT2TbhfF3ici1WFjraqeLJuHzy94AWl0yVOp
+         GXtuCGuu2ZXgLIyTQCh28TDOF7t9c/z9/pePW0Oo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 55/71] Revert "tcp: Clear sk_send_head after purging the write queue"
-Date:   Thu, 22 Aug 2019 10:19:30 -0700
-Message-Id: <20190822171730.183440197@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Jay Vosburgh <jay.vosburgh@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 103/103] bonding: Add vlan tx offload to hw_enc_features
+Date:   Thu, 22 Aug 2019 10:19:31 -0700
+Message-Id: <20190822171733.315253131@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,42 +44,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit e99e7745d03fc50ba7c5b7c91c17294fee2d5991.
+From: YueHaibing <yuehaibing@huawei.com>
 
-Ben Hutchings writes:
+[ Upstream commit d595b03de2cb0bdf9bcdf35ff27840cc3a37158f ]
 
->Sorry, this is the same issue that was already fixed by "tcp: reset
->sk_send_head in tcp_write_queue_purge".  You can drop my version from
->the queue for 4.4 and 4.9 and revert it for 4.14.
+As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
+said, we should always enable bonding's vlan tx offload, pass the
+vlan packets to the slave devices with vlan tci, let them to handle
+vlan implementation.
 
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Now if encapsulation protocols like VXLAN is used, skb->encapsulation
+may be set, then the packet is passed to vlan device which based on
+bonding device. However in netif_skb_features(), the check of
+hw_enc_features:
+
+	 if (skb->encapsulation)
+                 features &= dev->hw_enc_features;
+
+clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
+in same issue in commit 30d8177e8ac7 like this:
+
+vlan_dev_hard_start_xmit
+  -->dev_queue_xmit
+    -->validate_xmit_skb
+      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
+      -->validate_xmit_vlan
+        -->__vlan_hwaccel_push_inside //skb->tci is cleared
+...
+ --> bond_start_xmit
+   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
+     --> __skb_flow_dissect // nhoff point to IP header
+        -->  case htons(ETH_P_8021Q)
+             // skb_vlan_tag_present is false, so
+             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
+             //vlan point to ip header wrongly
+
+Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- include/net/tcp.h | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/net/bonding/bond_main.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 9de2c8cdcc512..7994e569644e0 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1613,8 +1613,6 @@ static inline void tcp_init_send_head(struct sock *sk)
- 	sk->sk_send_head = NULL;
- }
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -1107,7 +1107,9 @@ static void bond_compute_features(struct
  
--static inline void tcp_init_send_head(struct sock *sk);
--
- /* write queue abstraction */
- static inline void tcp_write_queue_purge(struct sock *sk)
- {
-@@ -1623,7 +1621,6 @@ static inline void tcp_write_queue_purge(struct sock *sk)
- 	tcp_chrono_stop(sk, TCP_CHRONO_BUSY);
- 	while ((skb = __skb_dequeue(&sk->sk_write_queue)) != NULL)
- 		sk_wmem_free_skb(sk, skb);
--	tcp_init_send_head(sk);
- 	sk_mem_reclaim(sk);
- 	tcp_clear_all_retrans_hints(tcp_sk(sk));
- 	tcp_init_send_head(sk);
--- 
-2.20.1
-
+ done:
+ 	bond_dev->vlan_features = vlan_features;
+-	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL;
++	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
++				    NETIF_F_HW_VLAN_CTAG_TX |
++				    NETIF_F_HW_VLAN_STAG_TX;
+ 	bond_dev->hard_header_len = max_hard_header_len;
+ 	bond_dev->gso_max_segs = gso_max_segs;
+ 	netif_set_gso_max_size(bond_dev, gso_max_size);
 
 
