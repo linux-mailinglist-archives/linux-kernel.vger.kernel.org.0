@@ -2,113 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D8D98ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:09:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5FC3798ED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:11:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732049AbfHVJJO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:09:14 -0400
-Received: from szxga08-in.huawei.com ([45.249.212.255]:50976 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730438AbfHVJJO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:09:14 -0400
-Received: from DGGEMM403-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id E4B21A0C7B4BBDACC7A4;
-        Thu, 22 Aug 2019 17:09:07 +0800 (CST)
-Received: from dggeme762-chm.china.huawei.com (10.3.19.108) by
- DGGEMM403-HUB.china.huawei.com (10.3.20.211) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 22 Aug 2019 17:09:07 +0800
-Received: from architecture4 (10.140.130.215) by
- dggeme762-chm.china.huawei.com (10.3.19.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
- 15.1.1591.10; Thu, 22 Aug 2019 17:09:07 +0800
-Date:   Thu, 22 Aug 2019 17:08:27 +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Richard Weinberger <richard.weinberger@gmail.com>
-CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        <linux-erofs@lists.ozlabs.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: erofs: Question on unused fields in on-disk structs
-Message-ID: <20190822090827.GB193349@architecture4>
-References: <1323459733.69859.1566234633793.JavaMail.zimbra@nod.at>
- <20190819204504.GB10075@hsiangkao-HP-ZHAN-66-Pro-G1>
- <CAFLxGvxr2UMeVa29M9pjLtWMFPz7w6udRV38CRxEF1moyA9_Rw@mail.gmail.com>
- <20190821220251.GA3954@hsiangkao-HP-ZHAN-66-Pro-G1>
- <CAFLxGvzLPgD22pVOV_jz1EvC-c7YU_2dEFbBt4q08bSkZ3U0Dg@mail.gmail.com>
- <20190822090541.GA193349@architecture4>
+        id S1732995AbfHVJKM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:10:12 -0400
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:49524 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1732985AbfHVJKL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:10:11 -0400
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7M97stv015986;
+        Thu, 22 Aug 2019 11:09:46 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=STMicroelectronics;
+ bh=pe8srJJW5dECkgXrPF2LkQb+H+Tg6+y671jwy3FXLxU=;
+ b=gMe7tnvn/WZ7bt7vlEe/EbC/jnhFHIEqSXg5PKMu2z1frfTaIwY+jYT16vvnzvdAtFsF
+ VIz6YbwH+v1RXZeR3KSU/cFFtW7wi2M3bZ2WB8CEMg/g5FBUIMUxySAKWvbjT/bGYKP5
+ cLLvpjBtlmKvaQUZW3nRcYzLJBq/DmSMZIOjBwcB8g1FOGorFiMbWbIYEPKZEUKtTY4M
+ 9VYvsFHu6HCTaR/RTPEKyZpk+mzdfxbgx6oid8I24MPEwdHM54rSf+NyrRklxHJFonRe
+ QTF545pgPGD39s6feJPj3yLMyUopgdCTDijMKBlyOhIqrXjG50q6UB5ACyBF7pSdJ8YY NA== 
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2ue721bvdr-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 22 Aug 2019 11:09:46 +0200
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id E10F512C;
+        Thu, 22 Aug 2019 09:07:01 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D04292BC43D;
+        Thu, 22 Aug 2019 11:07:01 +0200 (CEST)
+Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 22 Aug
+ 2019 11:07:01 +0200
+Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
+ SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
+ 15.00.1473.003; Thu, 22 Aug 2019 11:07:01 +0200
+From:   Gerald BAEZA <gerald.baeza@st.com>
+To:     "peterz@infradead.org" <peterz@infradead.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "acme@kernel.org" <acme@kernel.org>,
+        "alexander.shishkin@linux.intel.com" 
+        <alexander.shishkin@linux.intel.com>,
+        "jolsa@redhat.com" <jolsa@redhat.com>,
+        "namhyung@kernel.org" <namhyung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Gerald BAEZA <gerald.baeza@st.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>
+Subject: [PATCH] libperf: fix alignment trap in perf stat
+Thread-Topic: [PATCH] libperf: fix alignment trap in perf stat
+Thread-Index: AQHVWMj1j+C7y+L4oEKEBHLzYFO6WA==
+Date:   Thu, 22 Aug 2019 09:07:01 +0000
+Message-ID: <1566464769-16374-1-git-send-email-gerald.baeza@st.com>
+Accept-Language: fr-FR, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.45]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190822090541.GA193349@architecture4>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.140.130.215]
-X-ClientProxiedBy: dggeme707-chm.china.huawei.com (10.1.199.103) To
- dggeme762-chm.china.huawei.com (10.3.19.108)
-X-CFilter-Loop: Reflected
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 05:05:41PM +0800, Gao Xiang wrote:
+Following the patch 'perf stat: Fix --no-scale', an
+alignment trap happens in process_counter_values()
+on ARMv7 platforms due to the attempt to copy non
+64 bits aligned double words (pointed by 'count')
+via a NEON vectored instruction ('vld1' with 64
+bits alignment constraint).
 
-[]
+This patch sets a 64 bits alignment constraint on
+'contents[]' field in 'struct xyarray' since the
+'count' pointer used above points to such a
+structure.
 
-> > 
-> > But be very sure that existing erofs filesystems actually have this field
-> > set to 0 or something other which is always the same.
-> > Otherwise you cannot use the field anymore because it could be anything.
-> > A common bug is that the mkfs program keeps such unused fields
-> > uninitialized and then it can be a more or less random value without
-> > notice.
-> 
-> Why? In my thought, the logic is that
->  - v4.3, "features" that kernel can handle is 0, so chksum is unused (DONTCARE field)
->    and chksum field could be anything, but the kernel doesn't care.
+Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
+---
+ tools/perf/lib/include/internal/xyarray.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-- sorry, I meant linux <= v5.3. add a word....
-
-Thanks,
-Gao Xiang
-
-> 
->  - later version, add an extra compat feature to "features" to indicate SB_CHKSUM
->     is now valid, such as EROFS_FEATURE_SB_CHKSUM (rather than requirements, it's
->     incompat), so the kernel can check the checksum like that:
-> 
->     if (feature & EROFS_FEATURE_SB_CHKSUM) {	/* chksum is set */
->         if (chk crc32c and no match) {
->              return -EFSBADCRC;
-> 	}
->         go ahead
->     } else {
->         /* still don't care chksum field but print the following warning to kmsg */
->         warnln("You are mounting a image without super_block chksum, please take care!!!!");
-> 
->         or maybe we can even refuse mount these images, except for some mount option
->         such as "force-mount".
->     }
-> 
->  That is also what F2FS did recently, refer the following commit
->    commit d440c52d3151("f2fs: support superblock checksum")
-> 
-> > 
-> > > Or maybe you mean these reserved fields? I have no idea all other
-> > > filesystems check these fields to 0 or not... But I think it should
-> > > be used with some other flag is set rather than directly use, right?
-> > 
-> > Basically you want a way to know when a field shall be used and when not.
-> > Most filesystems have version/feature fields. Often multiple to denote different
-> > levels of compatibility.
-> 
-> On-disk inode has i_advise field, and super_block has
-> "features" and "requirements" fields. we can use some of them
-> or any combinations.
-> 
-> Thanks,
-> Gao Xiang
-> 
-> > 
-> > -- 
-> > Thanks,
-> > //richard
+diff --git a/tools/perf/lib/include/internal/xyarray.h b/tools/perf/lib/inc=
+lude/internal/xyarray.h
+index 3bf70e4..51e35d6 100644
+--- a/tools/perf/lib/include/internal/xyarray.h
++++ b/tools/perf/lib/include/internal/xyarray.h
+@@ -2,6 +2,7 @@
+ #ifndef __LIBPERF_INTERNAL_XYARRAY_H
+ #define __LIBPERF_INTERNAL_XYARRAY_H
+=20
++#include <linux/compiler.h>
+ #include <sys/types.h>
+=20
+ struct xyarray {
+@@ -10,7 +11,7 @@ struct xyarray {
+ 	size_t entries;
+ 	size_t max_x;
+ 	size_t max_y;
+-	char contents[];
++	char contents[] __aligned(8);
+ };
+=20
+ struct xyarray *xyarray__new(int xlen, int ylen, size_t entry_size);
+--=20
+2.7.4
