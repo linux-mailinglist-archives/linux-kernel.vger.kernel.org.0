@@ -2,71 +2,80 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A0E6F99F75
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:10:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8631599F89
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:12:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387824AbfHVTKi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:10:38 -0400
-Received: from mga11.intel.com ([192.55.52.93]:23126 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730427AbfHVTKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:10:38 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 12:10:37 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
-   d="scan'208";a="190695444"
-Received: from fmsmsx107.amr.corp.intel.com ([10.18.124.205])
-  by orsmga002.jf.intel.com with ESMTP; 22 Aug 2019 12:10:37 -0700
-Received: from fmsmsx153.amr.corp.intel.com (10.18.125.6) by
- fmsmsx107.amr.corp.intel.com (10.18.124.205) with Microsoft SMTP Server (TLS)
- id 14.3.439.0; Thu, 22 Aug 2019 12:10:36 -0700
-Received: from fmsmsx113.amr.corp.intel.com ([169.254.13.127]) by
- FMSMSX153.amr.corp.intel.com ([169.254.9.165]) with mapi id 14.03.0439.000;
- Thu, 22 Aug 2019 12:10:36 -0700
-From:   "Verma, Vishal L" <vishal.l.verma@intel.com>
-To:     "justin.he@arm.com" <justin.he@arm.com>,
-        "jmoyer@redhat.com" <jmoyer@redhat.com>
-CC:     "Williams, Dan J" <dan.j.williams@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>
-Subject: Re: [PATCH 2/2] drivers/dax/kmem: give a warning if
- CONFIG_DEV_DAX_PMEM_COMPAT is enabled
-Thread-Topic: [PATCH 2/2] drivers/dax/kmem: give a warning if
- CONFIG_DEV_DAX_PMEM_COMPAT is enabled
-Thread-Index: AQHVWRtCI+fbHAl24k6KFAKDmutKnqcH/a+A
-Date:   Thu, 22 Aug 2019 19:10:35 +0000
-Message-ID: <91b07911eb6d307c4cb652da6ec53bad661ec066.camel@intel.com>
-References: <20190816111844.87442-1-justin.he@arm.com>
-         <20190816111844.87442-3-justin.he@arm.com>
-         <x49tva9ni68.fsf@segfault.boston.devel.redhat.com>
-In-Reply-To: <x49tva9ni68.fsf@segfault.boston.devel.redhat.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Evolution 3.30.5 (3.30.5-1.fc29) 
-x-originating-ip: [10.232.112.185]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <FE4E6340A0DCFB4990BDFDF7F44BCDE4@intel.com>
-Content-Transfer-Encoding: base64
+        id S2403833AbfHVTMC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:12:02 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:34442 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732147AbfHVTMB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 15:12:01 -0400
+Received: by mail-qt1-f194.google.com with SMTP id q4so8970757qtp.1;
+        Thu, 22 Aug 2019 12:12:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Fb2qwZYsSzxhGRR5mo2zpxAtspNTusEf9sR5Gv8Wr0w=;
+        b=pbxKW2Wq8ozKXk1AjQ0mKJp6ifr7KAHxIaLtad7RSOq9eHi42/Pz7fgajmpFp7nr/p
+         ew30UMH3oZfrK15Tip2g3tkZlKEGRNTflzUC1wd+fHZeKolMNjYsW+EP4QdyTZlqaWL7
+         VzsPQF69g9dCK+2mVWTOtrBgTv0BxmsXerNVMU5HRKDsKGu5GaOaEYATkn37qrijuuU9
+         OixFqWrjuAPbhOihNA4oeRf6Msl4iv6n7P5U/j7lNGAHvEeUgGkHGxK0vY9Tj37vVZrV
+         l8549p7C7NuBT173DIBnSvW3jHYbCo+fVAGHSVUb/MmDVhGhJtC8Hb29QOSbLrNoH0v7
+         H23Q==
+X-Gm-Message-State: APjAAAWnsoRAp2dNirUbtJQ98JjiAhQGagEFm3/HycQDzY1WVaKIQNcQ
+        R1kO8vwTW2zB5FTz5mwrk66UtkABvEAdbM8SrVE=
+X-Google-Smtp-Source: APXvYqx1AMqI9CgyyZgqTV3YCcQ8BJ60y0NK4/Q/PHkzZ0zdX2ddG7itfNLle3CCeAzbO68hX/6eptJKTEUE5tWG7Ig=
+X-Received: by 2002:ac8:f99:: with SMTP id b25mr1258325qtk.142.1566501120558;
+ Thu, 22 Aug 2019 12:12:00 -0700 (PDT)
 MIME-Version: 1.0
+References: <1566461871-21992-1-git-send-email-ayal@mellanox.com>
+ <20190822140635.GH13020@lunn.ch> <20190822174037.GA18030@splinter>
+In-Reply-To: <20190822174037.GA18030@splinter>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 22 Aug 2019 21:11:42 +0200
+Message-ID: <CAK8P3a2mQHvQKzWSKofBPdzFDTZq9oJkDHqR2PR85Hswocy45g@mail.gmail.com>
+Subject: Re: [net] devlink: Add method for time-stamp on reporter's dump
+To:     Ido Schimmel <idosch@idosch.org>
+Cc:     Andrew Lunn <andrew@lunn.ch>, Aya Levin <ayal@mellanox.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Jiri Pirko <jiri@mellanox.com>,
+        Networking <netdev@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gVGh1LCAyMDE5LTA4LTIyIGF0IDE0OjU1IC0wNDAwLCBKZWZmIE1veWVyIHdyb3RlOg0KPiAN
-Cj4gV2hlbiB1c2luZyBkYXhjdGwgdG8gb25saW5lIG1lbW9yeSwgeW91IGFscmVhZHkgZ2V0IHRo
-ZSBmb2xsb3dpbmcNCj4gbWVzc2FnZToNCj4gDQo+IGxpYmRheGN0bDogZGF4Y3RsX2Rldl9kaXNh
-YmxlOiBkYXgwLjA6IGVycm9yOiBkZXZpY2UgbW9kZWwgaXMgZGF4LWNsYXNzDQo+IA0KPiBUaGF0
-J3Mgc3RpbGwgbm90IHZlcnkgaGVscGZ1bC4gIEl0IHdvdWxkIGJlIGJldHRlciBpZiB0aGUgbWVz
-c2FnZQ0KPiBzdWdnZXN0ZWQgYSBmaXggKGxpa2UgdXNpbmcgbWlncmF0ZS1kZXZpY2UtbW9kZWwp
-LiAgVmlzaGFsPw0KDQpZZXMsIGl0IGlzIG9uIG15IGxpc3QgdG8gaW1wcm92ZSB0aGlzLiBDdXJy
-ZW50bHkgdGhlIG1hbiBwYWdlIHNob3dzIHRoZQ0KYWJvdmUgZXJyb3IgbWVzc2FnZSwgYW5kIHRh
-bGtzIGFib3V0IG1pZ3JhdGUtZGV2aWNlLW1vZGVsLCBidXQgSQ0KcmVjZWl2ZWQgbW9yZSBmZWVk
-YmFjayB0byBhZGQgYW5vdGhlciBicmVhZCBjcnVtYiBpbiB0aGUgcHJpbnRlZCBtZXNzYWdlDQpw
-b2ludGluZyB0byBtaWdyYXRlLWRldmljZS1tb2RlbC4gIEknbGwgc2VuZCBhIHBhdGNoIGZvciBp
-dCBzb29uLg0KDQpUaGFua3MsDQoJLVZpc2hhbA0K
+On Thu, Aug 22, 2019 at 7:40 PM Ido Schimmel <idosch@idosch.org> wrote:
+> On Thu, Aug 22, 2019 at 04:06:35PM +0200, Andrew Lunn wrote:
+> > On Thu, Aug 22, 2019 at 11:17:51AM +0300, Aya Levin wrote:
+> > > When setting the dump's time-stamp, use ktime_get_real in addition to
+> > > jiffies. This simplifies the user space implementation and bypasses
+> > > some inconsistent behavior with translating jiffies to current time.
+> >
+> > Is this year 2038 safe? I don't know enough about this to answer the
+> > question myself.
+>
+> Good point. 'struct timespec' is not considered year 2038 safe and
+> unfortunately I recently made the mistake of using it to communicate
+> timestamps to user space over netlink. :/ The code is still in net-next,
+> so I will fix it while I can.
+>
+> Arnd, would it be acceptable to use 'struct __kernel_timespec' instead?
+
+The in-kernel representation should just use 'timespec64' if you need
+separate seconds and nanoseconds, you can convert that to
+__kernel_timespec while copying to user space.
+
+However, please consider two other points:
+
+- for simplicity, the general recommendation is to use 64-bit nanoseconds
+  without separate seconds for timestamps
+- instead of CLOCK_REALTIME, you could use CLOCK_MONOTONIC
+  timestamps that are not affected by clock_settime() or leap second jumps.
+
+      Arnd
