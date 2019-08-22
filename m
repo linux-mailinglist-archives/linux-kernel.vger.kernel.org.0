@@ -2,45 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D648F99B66
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DD76399B61
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391536AbfHVRYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
+        id S2390094AbfHVRYK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391767AbfHVRX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:59 -0400
+        id S2391501AbfHVRWs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:48 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D5E802341D;
-        Thu, 22 Aug 2019 17:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2222023405;
+        Thu, 22 Aug 2019 17:22:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494638;
-        bh=nMFYjPTxcPdrrFI4O258toqIKPFroB9lSfcn3O8O7Ck=;
+        s=default; t=1566494567;
+        bh=Y/+XWBGaeuRRuumbxhD/nqhpYXI4L+3AvQCbGWM+bPQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NlU6iJfhTXQa7AcNopQZ7IDsxdRjyVyaKGcWFzl3sMCdzliNyQkbnlupFiE+V5ykP
-         kuef+6jt0la5ai5mD0mO1MRp34nOltj8E4KZ6P3DH7x35VnsUDlXMCkkkr2I0rfc6g
-         2At94ISnU33vLeLExx3wYlHEv7q/deC+TRvR+L/U=
+        b=aAKdQMejITGg3pLU18spPeV08gTZSI47UQEFyf3qM8rNn7NyrQ3wdD0QwBpIeariG
+         QLL+Z9GntSBBJc6AFrY9BAPF8ER0oQL21oyhkUfIWzuRqzVOCv+LoECVD1uBHqHovJ
+         nVfJpRu1SSnTiJAzOUvPM1dWdDE6aCDa/luzsf4I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Numfor Mbiziwo-Tiapo <nums@google.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
-        Mark Drayton <mbd@fb.com>, Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Song Liu <songliubraving@fb.com>,
-        Stephane Eranian <eranian@google.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 071/103] perf header: Fix use of unitialized value warning
-Date:   Thu, 22 Aug 2019 10:18:59 -0700
-Message-Id: <20190822171731.763340998@linuxfoundation.org>
+        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.4 56/78] staging: comedi: dt3000: Fix rounding up of timer divisor
+Date:   Thu, 22 Aug 2019 10:19:00 -0700
+Message-Id: <20190822171833.661983116@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -50,68 +42,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 20f9781f491360e7459c589705a2e4b1f136bee9 ]
+From: Ian Abbott <abbotti@mev.co.uk>
 
-When building our local version of perf with MSAN (Memory Sanitizer) and
-running the perf record command, MSAN throws a use of uninitialized
-value warning in "tools/perf/util/util.c:333:6".
+commit 8e2a589a3fc36ce858d42e767c3bcd8fc62a512b upstream.
 
-This warning stems from the "buf" variable being passed into "write".
-It originated as the variable "ev" with the type union perf_event*
-defined in the "perf_event__synthesize_attr" function in
-"tools/perf/util/header.c".
+`dt3k_ns_to_timer()` determines the prescaler and divisor to use to
+produce a desired timing period.  It is influenced by a rounding mode
+and can round the divisor up, down, or to the nearest value.  However,
+the code for rounding up currently does the same as rounding down!  Fix
+ir by using the `DIV_ROUND_UP()` macro to calculate the divisor when
+rounding up.
 
-In the "perf_event__synthesize_attr" function they allocate space with a malloc
-call using ev, then go on to only assign some of the member variables before
-passing "ev" on as a parameter to the "process" function therefore "ev"
-contains uninitialized memory. Changing the malloc call to zalloc to initialize
-all the members of "ev" which gets rid of the warning.
+Also, change the types of the `divider`, `base` and `prescale` variables
+from `int` to `unsigned int` to avoid mixing signed and unsigned types
+in the calculations.
 
-To reproduce this warning, build perf by running:
-make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-fsanitize=memory\
- -fsanitize-memory-track-origins"
+Also fix a typo in a nearby comment: "improvment" => "improvement".
 
-(Additionally, llvm might have to be installed and clang might have to
-be specified as the compiler - export CC=/usr/bin/clang)
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Cc: stable <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/20190812120814.21188-1-abbotti@mev.co.uk
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-then running:
-tools/perf/perf record -o - ls / | tools/perf/perf --no-pager annotate\
- -i - --stdio
-
-Please see the cover letter for why false positive warnings may be
-generated.
-
-Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Mark Drayton <mbd@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Song Liu <songliubraving@fb.com>
-Cc: Stephane Eranian <eranian@google.com>
-Link: http://lkml.kernel.org/r/20190724234500.253358-2-nums@google.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/comedi/drivers/dt3000.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 693dcd4ea6a38..61e3c482935ad 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2943,7 +2943,7 @@ int perf_event__synthesize_attr(struct perf_tool *tool,
- 	size += sizeof(struct perf_event_header);
- 	size += ids * sizeof(u64);
+--- a/drivers/staging/comedi/drivers/dt3000.c
++++ b/drivers/staging/comedi/drivers/dt3000.c
+@@ -351,9 +351,9 @@ static irqreturn_t dt3k_interrupt(int ir
+ static int dt3k_ns_to_timer(unsigned int timer_base, unsigned int *nanosec,
+ 			    unsigned int flags)
+ {
+-	int divider, base, prescale;
++	unsigned int divider, base, prescale;
  
--	ev = malloc(size);
-+	ev = zalloc(size);
+-	/* This function needs improvment */
++	/* This function needs improvement */
+ 	/* Don't know if divider==0 works. */
  
- 	if (ev == NULL)
- 		return -ENOMEM;
--- 
-2.20.1
-
+ 	for (prescale = 0; prescale < 16; prescale++) {
+@@ -367,7 +367,7 @@ static int dt3k_ns_to_timer(unsigned int
+ 			divider = (*nanosec) / base;
+ 			break;
+ 		case CMDF_ROUND_UP:
+-			divider = (*nanosec) / base;
++			divider = DIV_ROUND_UP(*nanosec, base);
+ 			break;
+ 		}
+ 		if (divider < 65536) {
 
 
