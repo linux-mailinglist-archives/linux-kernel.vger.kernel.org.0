@@ -2,99 +2,98 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CEF34999E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:11:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E036399A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:11:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388835AbfHVRIK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:08:10 -0400
-Received: from relay.sw.ru ([185.231.240.75]:60454 "EHLO relay.sw.ru"
+        id S2387451AbfHVRKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:10:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59670 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388772AbfHVRIK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:08:10 -0400
-Received: from [172.16.25.5]
-        by relay.sw.ru with esmtp (Exim 4.92)
-        (envelope-from <aryabinin@virtuozzo.com>)
-        id 1i0qYx-0000iY-OZ; Thu, 22 Aug 2019 20:07:51 +0300
-Subject: Re: [PATCH 2/2] riscv: Add KASAN support
-To:     Nick Hu <nickhu@andestech.com>,
-        Christoph Hellwig <hch@infradead.org>
-Cc:     =?UTF-8?B?QWxhbiBRdWV5LUxpYW5nIEthbyjpq5jprYHoia8p?= 
-        <alankao@andestech.com>,
-        "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-        "palmer@sifive.com" <palmer@sifive.com>,
-        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-        "green.hu@gmail.com" <green.hu@gmail.com>,
-        "deanbo422@gmail.com" <deanbo422@gmail.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "glider@google.com" <glider@google.com>,
-        "dvyukov@google.com" <dvyukov@google.com>,
-        "Anup.Patel@wdc.com" <Anup.Patel@wdc.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "alexios.zavras@intel.com" <alexios.zavras@intel.com>,
-        "atish.patra@wdc.com" <atish.patra@wdc.com>,
-        =?UTF-8?B?6Zui6IG3Wm9uZyBab25nLVhpYW4gTGko5p2O5a6X5oayKQ==?= 
-        <zong@andestech.com>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>
-References: <cover.1565161957.git.nickhu@andestech.com>
- <88358ef8f7cfcb7fd01b6b989eccaddbe00a1e57.1565161957.git.nickhu@andestech.com>
- <20190812151050.GJ26897@infradead.org> <20190814074417.GA21929@andestech.com>
-From:   Andrey Ryabinin <aryabinin@virtuozzo.com>
-Message-ID: <cf7a4259-afa5-53e6-f8f2-c243339cc3e9@virtuozzo.com>
-Date:   Thu, 22 Aug 2019 20:08:00 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2390743AbfHVRJW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:09:22 -0400
+Received: from sasha-vm.mshome.net (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 82795233FC;
+        Thu, 22 Aug 2019 17:09:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566493761;
+        bh=eGhOCkG3h8+cooPbmp5urxtxkVCRzGEQPvOlqq6G53E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=lnw5Zmze7jfCSpwBpuxuXwB++ZHpODW/O5vG4pIsIIDEofEO9PIi3/fmWnouH2gwn
+         FOQ8q7rum4ie5ccsInT45GkE3xmuINEcPPGjiFS4+x5IOKjuZsCLnsmObPIQwrJhQa
+         ZfwK3QPaTj1eSJrVenxjnNk/2cle65OeznCqC4oQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Roman Mashak <mrv@mojatatu.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5.2 125/135] net sched: update skbedit action for batched events operations
+Date:   Thu, 22 Aug 2019 13:08:01 -0400
+Message-Id: <20190822170811.13303-126-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190822170811.13303-1-sashal@kernel.org>
+References: <20190822170811.13303-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190814074417.GA21929@andestech.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.2.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.2.10-rc1
+X-KernelTest-Deadline: 2019-08-24T17:07+00:00
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Roman Mashak <mrv@mojatatu.com>
 
+[ Upstream commit e1fea322fc6d4075254ca9c5f2afdace0281da2a ]
 
-On 8/14/19 10:44 AM, Nick Hu wrote:
+Add get_fill_size() routine used to calculate the action size
+when building a batch of events.
 
->>
->>> diff --git a/arch/riscv/kernel/vmlinux.lds.S b/arch/riscv/kernel/vmlinux.lds.S
->>> index 23cd1a9..9700980 100644
->>> --- a/arch/riscv/kernel/vmlinux.lds.S
->>> +++ b/arch/riscv/kernel/vmlinux.lds.S
->>> @@ -46,6 +46,7 @@ SECTIONS
->>>  		KPROBES_TEXT
->>>  		ENTRY_TEXT
->>>  		IRQENTRY_TEXT
->>> +		SOFTIRQENTRY_TEXT
->>
->> Hmm.  What is the relation to kasan here?  Maybe we should add this
->> separately with a good changelog?
->>
-> There is a commit for it:
-> 
-> Author: Alexander Potapenko <glider@google.com>
-> Date:   Fri Mar 25 14:22:05 2016 -0700
-> 
->     arch, ftrace: for KASAN put hard/soft IRQ entries into separate sections
-> 
->     KASAN needs to know whether the allocation happens in an IRQ handler.
->     This lets us strip everything below the IRQ entry point to reduce the
->     number of unique stack traces needed to be stored.
-> 
->     Move the definition of __irq_entry to <linux/interrupt.h> so that the
->     users don't need to pull in <linux/ftrace.h>.  Also introduce the
->     __softirq_entry macro which is similar to __irq_entry, but puts the
->     corresponding functions to the .softirqentry.text section.
-> 
-> After reading the patch I understand that soft/hard IRQ entries should be
-> separated for KASAN to work, but why?
-> 
+Fixes: ca9b0e27e ("pkt_action: add new action skbedit")
+Signed-off-by: Roman Mashak <mrv@mojatatu.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ net/sched/act_skbedit.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-KASAN doesn't need soft/hard IRQ entries separated. KASAN wants to know the entry
-point of IRQ (hard or soft) to filter out random non-irq part of the stacktrace before feeding it to
-stack_depot_save. See filter_irq_stacks().
-
+diff --git a/net/sched/act_skbedit.c b/net/sched/act_skbedit.c
+index b100870f02a6d..37dced00b63d1 100644
+--- a/net/sched/act_skbedit.c
++++ b/net/sched/act_skbedit.c
+@@ -307,6 +307,17 @@ static int tcf_skbedit_search(struct net *net, struct tc_action **a, u32 index)
+ 	return tcf_idr_search(tn, a, index);
+ }
+ 
++static size_t tcf_skbedit_get_fill_size(const struct tc_action *act)
++{
++	return nla_total_size(sizeof(struct tc_skbedit))
++		+ nla_total_size(sizeof(u32)) /* TCA_SKBEDIT_PRIORITY */
++		+ nla_total_size(sizeof(u16)) /* TCA_SKBEDIT_QUEUE_MAPPING */
++		+ nla_total_size(sizeof(u32)) /* TCA_SKBEDIT_MARK */
++		+ nla_total_size(sizeof(u16)) /* TCA_SKBEDIT_PTYPE */
++		+ nla_total_size(sizeof(u32)) /* TCA_SKBEDIT_MASK */
++		+ nla_total_size_64bit(sizeof(u64)); /* TCA_SKBEDIT_FLAGS */
++}
++
+ static struct tc_action_ops act_skbedit_ops = {
+ 	.kind		=	"skbedit",
+ 	.id		=	TCA_ID_SKBEDIT,
+@@ -316,6 +327,7 @@ static struct tc_action_ops act_skbedit_ops = {
+ 	.init		=	tcf_skbedit_init,
+ 	.cleanup	=	tcf_skbedit_cleanup,
+ 	.walk		=	tcf_skbedit_walker,
++	.get_fill_size	=	tcf_skbedit_get_fill_size,
+ 	.lookup		=	tcf_skbedit_search,
+ 	.size		=	sizeof(struct tcf_skbedit),
+ };
+-- 
+2.20.1
 
