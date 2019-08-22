@@ -2,37 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 78C1399C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:34:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D1DF99D08
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392444AbfHVRdx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:33:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48908 "EHLO mail.kernel.org"
+        id S2404151AbfHVRYR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404418AbfHVRZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:25 -0400
+        id S2404006AbfHVRXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:49 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3E122341B;
-        Thu, 22 Aug 2019 17:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3DE4623402;
+        Thu, 22 Aug 2019 17:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494725;
-        bh=dJcgYYwO1zK/K2OX8dLOCh5HsTUHvjTM05e7faINRRs=;
+        s=default; t=1566494628;
+        bh=sWPY5wHpHQYElFzjxxqjIGiuU7yleBCilc6zKT7o3IQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lXnYXarSy7MTiksJQ8uoDF1/dPo4Y7Z+pXdLVGLAhCdyaVEqzamYUIknRcirbSBiO
-         sv6kAzlqwR32GzJbeMd5kwTXpFiak/RoK0NnFidcA3G3gHt0WQyXZxhjI4LAMFj+ZF
-         dvTi0EwoSHRbwN//lrL6t6enOoOTz68O/O1Chzi4=
+        b=n0jRHdqvXzW3YTdTteveIuHk11XnBQ6afRSYTUrsH71bsi+F8f98qTXHxmv+nWhxa
+         h7FZ/UMtjAA3P8Vs4hSUFC1uPeiSUGoyitQfIStxxtqMUjN6SUdpJ09OWgtyyl5k17
+         OIvr0+5eLVaSLW/yBC1reCJ3nzsfywPmI7C2+xYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 14/85] ALSA: hda - Apply workaround for another AMD chip 1022:1487
+        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 059/103] ALSA: hda - Fix a memory leak bug
 Date:   Thu, 22 Aug 2019 10:18:47 -0700
-Message-Id: <20190822171731.714599183@linuxfoundation.org>
+Message-Id: <20190822171731.176777180@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,34 +43,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+From: Wenwen Wang <wenwen@cs.uga.edu>
 
-commit de768ce45466f3009809719eb7b1f6f5277d9373 upstream.
+commit cfef67f016e4c00a2f423256fc678a6967a9fc09 upstream.
 
-MSI MPG X570 board is with another AMD HD-audio controller (PCI ID
-1022:1487) and it requires the same workaround applied for X370, etc
-(PCI ID 1022:1457).
+In snd_hda_parse_generic_codec(), 'spec' is allocated through kzalloc().
+Then, the pin widgets in 'codec' are parsed. However, if the parsing
+process fails, 'spec' is not deallocated, leading to a memory leak.
 
-BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=195303
+To fix the above issue, free 'spec' before returning the error.
+
+Fixes: 352f7f914ebb ("ALSA: hda - Merge Realtek parser code to generic parser")
+Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
 Cc: <stable@vger.kernel.org>
 Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- sound/pci/hda/hda_intel.c |    3 +++
- 1 file changed, 3 insertions(+)
+ sound/pci/hda/hda_generic.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/sound/pci/hda/hda_intel.c
-+++ b/sound/pci/hda/hda_intel.c
-@@ -2655,6 +2655,9 @@ static const struct pci_device_id azx_id
- 	/* AMD, X370 & co */
- 	{ PCI_DEVICE(0x1022, 0x1457),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_AMD_SB },
-+	/* AMD, X570 & co */
-+	{ PCI_DEVICE(0x1022, 0x1487),
-+	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_AMD_SB },
- 	/* AMD Stoney */
- 	{ PCI_DEVICE(0x1022, 0x157a),
- 	  .driver_data = AZX_DRIVER_GENERIC | AZX_DCAPS_PRESET_ATI_SB |
+--- a/sound/pci/hda/hda_generic.c
++++ b/sound/pci/hda/hda_generic.c
+@@ -5898,7 +5898,7 @@ static int snd_hda_parse_generic_codec(s
+ 
+ 	err = snd_hda_parse_pin_defcfg(codec, &spec->autocfg, NULL, 0);
+ 	if (err < 0)
+-		return err;
++		goto error;
+ 
+ 	err = snd_hda_gen_parse_auto_config(codec, &spec->autocfg);
+ 	if (err < 0)
 
 
