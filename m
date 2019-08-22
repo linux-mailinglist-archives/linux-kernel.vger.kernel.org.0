@@ -2,36 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 673B699C26
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E0E399C24
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392263AbfHVRbn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:31:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S2392252AbfHVRbj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:31:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404510AbfHVRZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:52 -0400
+        id S2404511AbfHVRZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:53 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71913206DD;
-        Thu, 22 Aug 2019 17:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCBFB23405;
+        Thu, 22 Aug 2019 17:25:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494751;
-        bh=nbUMkkVdV4Rm6SzM4baXLIak3yyPqp6T9xLY/MHLjng=;
+        s=default; t=1566494753;
+        bh=eVVfnND6+8w4CpkKtZC2eBq5M8dM5nUmyL4NnSPSKpw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f3qhRH7qScji77DLBgGL0EjLuvOu1HIMpQyjYald/78lhyZ3xRgHtdoBTJrgws6H+
-         RPVPd4XL8Xda/pHirT+0cT883rmLzUh2FL80th+2zZFaXZ35ZEWXXVAnbLbtfRYg2D
-         Btdy9L7Ia1KDR5ikluPsw5UhgErL/LpNft+PuMYo=
+        b=f4jZBrcB+pzlsu7Yrdc5jDwDgpOFuXjsC8iunTem9JHv907uVuFBsWs/gMLRUxtjS
+         3d4s3K7osI5b7zq0KCMmbeUYZRouodumvp91jtkx5NwOerBAOnGBeKDbxIwBOqOZhS
+         FaE1Fwe9ZmXp6n0M1dhqYg9Kh2UQy890sST9wYpw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
-        Inki Dae <inki.dae@samsung.com>,
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 50/85] drm/exynos: fix missing decrement of retry counter
-Date:   Thu, 22 Aug 2019 10:19:23 -0700
-Message-Id: <20190822171733.446901019@linuxfoundation.org>
+Subject: [PATCH 4.19 52/85] ocfs2: remove set but not used variable last_hash
+Date:   Thu, 22 Aug 2019 10:19:25 -0700
+Message-Id: <20190822171733.513920094@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
 References: <20190822171731.012687054@linuxfoundation.org>
@@ -44,39 +51,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1bbbab097a05276e312dd2462791d32b21ceb1ee ]
+[ Upstream commit 7bc36e3ce91471b6377c8eadc0a2f220a2280083 ]
 
-Currently the retry counter is not being decremented, leading to a
-potential infinite spin if the scalar_reads don't change state.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Addresses-Coverity: ("Infinite loop")
-Fixes: 280e54c9f614 ("drm/exynos: scaler: Reset hardware before starting the operation")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+  fs/ocfs2/xattr.c: In function ocfs2_xattr_bucket_find:
+  fs/ocfs2/xattr.c:3828:6: warning: variable last_hash set but not used [-Wunused-but-set-variable]
+
+It's never used and can be removed.
+
+Link: http://lkml.kernel.org/r/20190716132110.34836-1-yuehaibing@huawei.com
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos_drm_scaler.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/xattr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_scaler.c b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-index 0ddb6eec7b113..df228436a03d9 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_scaler.c
-@@ -108,12 +108,12 @@ static inline int scaler_reset(struct scaler_context *scaler)
- 	scaler_write(SCALER_CFG_SOFT_RESET, SCALER_CFG);
- 	do {
- 		cpu_relax();
--	} while (retry > 1 &&
-+	} while (--retry > 1 &&
- 		 scaler_read(SCALER_CFG) & SCALER_CFG_SOFT_RESET);
- 	do {
- 		cpu_relax();
- 		scaler_write(1, SCALER_INT_EN);
--	} while (retry > 0 && scaler_read(SCALER_INT_EN) != 1);
-+	} while (--retry > 0 && scaler_read(SCALER_INT_EN) != 1);
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 3a24ce3deb013..c146e12a8601f 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -3833,7 +3833,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
+ 	u16 blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
+ 	int low_bucket = 0, bucket, high_bucket;
+ 	struct ocfs2_xattr_bucket *search;
+-	u32 last_hash;
+ 	u64 blkno, lower_blkno = 0;
  
- 	return retry ? 0 : -EIO;
- }
+ 	search = ocfs2_xattr_bucket_new(inode);
+@@ -3877,8 +3876,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
+ 		if (xh->xh_count)
+ 			xe = &xh->xh_entries[le16_to_cpu(xh->xh_count) - 1];
+ 
+-		last_hash = le32_to_cpu(xe->xe_name_hash);
+-
+ 		/* record lower_blkno which may be the insert place. */
+ 		lower_blkno = blkno;
+ 
 -- 
 2.20.1
 
