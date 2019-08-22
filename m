@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C82D98F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 84EAE98F98
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733258AbfHVJdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:33:43 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35782 "EHLO shell.v3.sk"
+        id S1733308AbfHVJd5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:33:57 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35843 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733245AbfHVJdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:33:35 -0400
+        id S1733284AbfHVJdy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:54 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B0FC3D7576;
-        Thu, 22 Aug 2019 11:33:33 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id E1B59D755A;
+        Thu, 22 Aug 2019 11:33:50 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id N7gI5GyWg9Ho; Thu, 22 Aug 2019 11:33:08 +0200 (CEST)
+        with ESMTP id LqdrDrATp3VP; Thu, 22 Aug 2019 11:33:21 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 84DB7D7557;
-        Thu, 22 Aug 2019 11:32:57 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id BE2A9D7360;
+        Thu, 22 Aug 2019 11:32:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qf4lwqAmDpNg; Thu, 22 Aug 2019 11:27:45 +0200 (CEST)
+        with ESMTP id ORVKNwk84bqK; Thu, 22 Aug 2019 11:27:49 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 48200D7566;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id A0F65D7567;
         Thu, 22 Aug 2019 11:26:50 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
@@ -40,9 +40,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 12/20] ARM: mmp: map the PGU as well
-Date:   Thu, 22 Aug 2019 11:26:35 +0200
-Message-Id: <20190822092643.593488-13-lkundrak@v3.sk>
+Subject: [PATCH v2 13/20] ARM: mmp: DT: convert timer driver to use TIMER_OF_DECLARE
+Date:   Thu, 22 Aug 2019 11:26:36 +0200
+Message-Id: <20190822092643.593488-14-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -53,99 +53,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MMP2 and later includes a system control unit in this area. We'll nee=
-d
-that to initialize the secondary core on MMP3.
+This makes things just a tiny bit simpler.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/mach-mmp/addr-map.h |  7 +++++++
- arch/arm/mach-mmp/common.c   | 15 +++++++++++++++
- arch/arm/mach-mmp/common.h   |  1 +
- arch/arm/mach-mmp/mmp2-dt.c  |  2 +-
- 4 files changed, 24 insertions(+), 1 deletion(-)
+ arch/arm/mach-mmp/mmp-dt.c  |  5 ++---
+ arch/arm/mach-mmp/mmp2-dt.c |  5 ++---
+ arch/arm/mach-mmp/time.c    | 38 +++++++++++--------------------------
+ 3 files changed, 15 insertions(+), 33 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/addr-map.h b/arch/arm/mach-mmp/addr-map.h
-index 25edf6a92276e..3dc2f0b0ecba5 100644
---- a/arch/arm/mach-mmp/addr-map.h
-+++ b/arch/arm/mach-mmp/addr-map.h
-@@ -20,6 +20,10 @@
- #define AXI_VIRT_BASE		IOMEM(0xfe200000)
- #define AXI_PHYS_SIZE		0x00200000
+diff --git a/arch/arm/mach-mmp/mmp-dt.c b/arch/arm/mach-mmp/mmp-dt.c
+index 35559792d5cca..91214996acecc 100644
+--- a/arch/arm/mach-mmp/mmp-dt.c
++++ b/arch/arm/mach-mmp/mmp-dt.c
+@@ -9,14 +9,13 @@
+ #include <linux/irqchip.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk-provider.h>
++#include <linux/clocksource.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+ #include <asm/hardware/cache-tauros2.h>
 =20
-+#define PGU_PHYS_BASE		0xe0000000
-+#define PGU_VIRT_BASE		IOMEM(0xfe400000)
-+#define PGU_PHYS_SIZE		0x00100000
-+
- /* Static Memory Controller - Chip Select 0 and 1 */
- #define SMC_CS0_PHYS_BASE	0x80000000
- #define SMC_CS0_PHYS_SIZE	0x10000000
-@@ -38,4 +42,7 @@
- #define CIU_VIRT_BASE		(AXI_VIRT_BASE + 0x82c00)
- #define CIU_REG(x)		(CIU_VIRT_BASE + (x))
+ #include "common.h"
 =20
-+#define SCU_VIRT_BASE		(PGU_VIRT_BASE)
-+#define SCU_REG(x)		(SCU_VIRT_BASE + (x))
-+
- #endif /* __ASM_MACH_ADDR_MAP_H */
-diff --git a/arch/arm/mach-mmp/common.c b/arch/arm/mach-mmp/common.c
-index 6684abc7708bd..2ee08c78e8bc9 100644
---- a/arch/arm/mach-mmp/common.c
-+++ b/arch/arm/mach-mmp/common.c
-@@ -36,6 +36,15 @@ static struct map_desc standard_io_desc[] __initdata =3D=
- {
- 	},
- };
-=20
-+static struct map_desc mmp2_io_desc[] __initdata =3D {
-+	{
-+		.pfn		=3D __phys_to_pfn(PGU_PHYS_BASE),
-+		.virtual	=3D (unsigned long)PGU_VIRT_BASE,
-+		.length		=3D PGU_PHYS_SIZE,
-+		.type		=3D MT_DEVICE,
-+	},
-+};
-+
- void __init mmp_map_io(void)
- {
- 	iotable_init(standard_io_desc, ARRAY_SIZE(standard_io_desc));
-@@ -44,6 +53,12 @@ void __init mmp_map_io(void)
- 	mmp_chip_id =3D __raw_readl(MMP_CHIPID);
+-extern void __init mmp_dt_init_timer(void);
+-
+ static const char *const pxa168_dt_board_compat[] __initconst =3D {
+ 	"mrvl,pxa168-aspenite",
+ 	NULL,
+@@ -32,8 +31,8 @@ static void __init mmp_init_time(void)
+ #ifdef CONFIG_CACHE_TAUROS2
+ 	tauros2_init(0);
+ #endif
+-	mmp_dt_init_timer();
+ 	of_clk_init(NULL);
++	timer_probe();
  }
 =20
-+void __init mmp2_map_io(void)
-+{
-+	mmp_map_io();
-+	iotable_init(mmp2_io_desc, ARRAY_SIZE(mmp2_io_desc));
-+}
-+
- void mmp_restart(enum reboot_mode mode, const char *cmd)
- {
- 	soft_restart(0);
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 483b8b6d3005a..ed56b3f15b45e 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -5,4 +5,5 @@
- extern void mmp_timer_init(int irq, unsigned long rate);
-=20
- extern void __init mmp_map_io(void);
-+extern void __init mmp2_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
+ DT_MACHINE_START(PXA168_DT, "Marvell PXA168 (Device Tree Support)")
 diff --git a/arch/arm/mach-mmp/mmp2-dt.c b/arch/arm/mach-mmp/mmp2-dt.c
-index 305a9daba6d68..8eec881191f4b 100644
+index 8eec881191f4b..510c762ddc484 100644
 --- a/arch/arm/mach-mmp/mmp2-dt.c
 +++ b/arch/arm/mach-mmp/mmp2-dt.c
-@@ -33,7 +33,7 @@ static const char *const mmp2_dt_board_compat[] __initc=
-onst =3D {
- };
+@@ -10,21 +10,20 @@
+ #include <linux/irqchip.h>
+ #include <linux/of_platform.h>
+ #include <linux/clk-provider.h>
++#include <linux/clocksource.h>
+ #include <asm/mach/arch.h>
+ #include <asm/mach/time.h>
+ #include <asm/hardware/cache-tauros2.h>
 =20
- DT_MACHINE_START(MMP2_DT, "Marvell MMP2 (Device Tree Support)")
--	.map_io		=3D mmp_map_io,
-+	.map_io		=3D mmp2_map_io,
- 	.init_time	=3D mmp_init_time,
- 	.dt_compat	=3D mmp2_dt_board_compat,
- MACHINE_END
+ #include "common.h"
+=20
+-extern void __init mmp_dt_init_timer(void);
+-
+ static void __init mmp_init_time(void)
+ {
+ #ifdef CONFIG_CACHE_TAUROS2
+ 	tauros2_init(0);
+ #endif
+ 	of_clk_init(NULL);
+-	mmp_dt_init_timer();
++	timer_probe();
+ }
+=20
+ static const char *const mmp2_dt_board_compat[] __initconst =3D {
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 483df32583be6..3f6fd0be00512 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -195,30 +195,17 @@ void __init mmp_timer_init(int irq, unsigned long r=
+ate)
+ 	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+=20
+-#ifdef CONFIG_OF
+-static const struct of_device_id mmp_timer_dt_ids[] =3D {
+-	{ .compatible =3D "mrvl,mmp-timer", },
+-	{}
+-};
+-
+-void __init mmp_dt_init_timer(void)
++static int __init mmp_dt_init_timer(struct device_node *np)
+ {
+-	struct device_node *np;
+ 	struct clk *clk;
+ 	int irq, ret;
+ 	unsigned long rate;
+=20
+-	np =3D of_find_matching_node(NULL, mmp_timer_dt_ids);
+-	if (!np) {
+-		ret =3D -ENODEV;
+-		goto out;
+-	}
+-
+ 	clk =3D of_clk_get(np, 0);
+ 	if (!IS_ERR(clk)) {
+ 		ret =3D clk_prepare_enable(clk);
+ 		if (ret)
+-			goto out;
++			return ret;
+ 		rate =3D clk_get_rate(clk) / 2;
+ 	} else if (cpu_is_pj4()) {
+ 		rate =3D 6500000;
+@@ -227,18 +214,15 @@ void __init mmp_dt_init_timer(void)
+ 	}
+=20
+ 	irq =3D irq_of_parse_and_map(np, 0);
+-	if (!irq) {
+-		ret =3D -EINVAL;
+-		goto out;
+-	}
++	if (!irq)
++		return -EINVAL;
++
+ 	mmp_timer_base =3D of_iomap(np, 0);
+-	if (!mmp_timer_base) {
+-		ret =3D -ENOMEM;
+-		goto out;
+-	}
++	if (!mmp_timer_base)
++		return -ENOMEM;
++
+ 	mmp_timer_init(irq, rate);
+-	return;
+-out:
+-	pr_err("Failed to get timer from device tree with error:%d\n", ret);
++	return 0;
+ }
+-#endif
++
++TIMER_OF_DECLARE(mmp_timer, "mrvl,mmp-timer", mmp_dt_init_timer);
 --=20
 2.21.0
 
