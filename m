@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E82399BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3ED3D99CFE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390545AbfHVR31 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:29:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52020 "EHLO mail.kernel.org"
+        id S2392686AbfHVRiq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:38:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404715AbfHVR0X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:26:23 -0400
+        id S2391551AbfHVRYY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:24 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 623212341B;
-        Thu, 22 Aug 2019 17:26:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4867A23400;
+        Thu, 22 Aug 2019 17:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494783;
-        bh=knNzGv7U90G6s8FkqQAIlHlVzVaaICmVz/9jHubH6fE=;
+        s=default; t=1566494663;
+        bh=7Y1M18/AqFCRN9z+eM39Z9krN+UijCQpwgxQQok3FF8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cBf+v3r1CTh4rx4/bmSzozZoOgtSGCWHoojE7eQtxXbQzEuNQkcAIZNh2AdDX4TGN
-         L0JxK9XhG/Z2ES+xctPQ0CcQTKW+jeGBmkRywtD964L3mWjrIC5yy+Gq/kLK0naHjO
-         dAPcvILcXTfUcdGYd9xEHMuFAJXabvWXEEdM4BJI=
+        b=KHneuTl4daIAXxNaeCcdpz6IlZPf9XcwD3i2hHN42lxzVI7/KeL6XOjhAizkRzyp1
+         l6xKIebS6pDPqEKji8AtngwXCBs1aaMY2taxTqP0gV6LkSCvBuxAxu49Bz15rAYVq1
+         zzsHf9ePZdlLAcIaUOnzRYAbh1m33tNOd2FQs+Js=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 40/85] ata: libahci: do not complain in case of deferred probe
-Date:   Thu, 22 Aug 2019 10:19:13 -0700
-Message-Id: <20190822171733.045123260@linuxfoundation.org>
+        stable@vger.kernel.org, Rogan Dawes <rogan@dawes.za.net>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.9 086/103] USB: serial: option: add D-Link DWM-222 device ID
+Date:   Thu, 22 Aug 2019 10:19:14 -0700
+Message-Id: <20190822171732.669900836@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,36 +43,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 090bb803708198e5ab6b0046398c7ed9f4d12d6b ]
+From: Rogan Dawes <rogan@dawes.za.net>
 
-Retrieving PHYs can defer the probe, do not spawn an error when
--EPROBE_DEFER is returned, it is normal behavior.
+commit 552573e42aab5f75aff9bab855a9677979d9a7d5 upstream.
 
-Fixes: b1a9edbda040 ("ata: libahci: allow to use multiple PHYs")
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Add device id for D-Link DWM-222 A2.
+
+MI_00 D-Link HS-USB Diagnostics
+MI_01 D-Link HS-USB Modem
+MI_02 D-Link HS-USB AT Port
+MI_03 D-Link HS-USB NMEA
+MI_04 D-Link HS-USB WWAN Adapter (qmi_wwan)
+MI_05 USB Mass Storage Device
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Rogan Dawes <rogan@dawes.za.net>
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/ata/libahci_platform.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/serial/option.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
-index c92c10d553746..5bece9752ed68 100644
---- a/drivers/ata/libahci_platform.c
-+++ b/drivers/ata/libahci_platform.c
-@@ -313,6 +313,9 @@ static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32 port,
- 		hpriv->phys[port] = NULL;
- 		rc = 0;
- 		break;
-+	case -EPROBE_DEFER:
-+		/* Do not complain yet */
-+		break;
- 
- 	default:
- 		dev_err(dev,
--- 
-2.20.1
-
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1949,6 +1949,8 @@ static const struct usb_device_id option
+ 	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e35, 0xff),			/* D-Link DWM-222 */
+ 	  .driver_info = RSVD(4) },
++	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e3d, 0xff),			/* D-Link DWM-222 A2 */
++	  .driver_info = RSVD(4) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
 
 
