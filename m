@@ -2,88 +2,91 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8C5FE98B31
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5EA2998B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:06:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731204AbfHVGE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 02:04:29 -0400
-Received: from ozlabs.org ([203.11.71.1]:50041 "EHLO ozlabs.org"
+        id S1731636AbfHVGGQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:06:16 -0400
+Received: from ox4u.de ([212.118.221.216]:45541 "EHLO s1.ox4u.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729877AbfHVGE2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:04:28 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        id S1729455AbfHVGGQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 02:06:16 -0400
+Received: by s1.ox4u.de (Postfix, from userid 65534)
+        id 255FA260127; Thu, 22 Aug 2019 08:06:14 +0200 (CEST)
+X-Spam-Checker-Version: SpamAssassin 3.4.1 (2015-04-28) on s1.ox4u.de
+X-Spam-Level: 
+X-Spam-Status: No, score=-1.0 required=5.0 tests=ALL_TRUSTED
+        autolearn=disabled version=3.4.1
+Received: from ws-140106.systec.local (unknown [212.185.67.146])
+        (using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 46DYrn6bGXz9s00;
-        Thu, 22 Aug 2019 16:04:25 +1000 (AEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1566453866;
-        bh=xevryb0cBS6pgjNUrk9qQ6SxfzSEULSEp7tmyIAV1Nk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=lIdu/jnNaBstIKXsKrO1J3nV950nSe4AX4K/VkKCwX+/5dta+zMgTTS0Tb7d6QGn3
-         FMU2MYIeCubdCrlAwL6lkjxcVyA+sICf3D1Ga7ZFzmUiae6+TZoYoMPNTSfNqQeZyQ
-         4IOW2SbtWU6AR4ya5WQPrXRrZSLDNznmcpGjdYuwtw6FqqNsN6qMDVqwxviixzynB1
-         DPiQ9SLXtXKWgbKuPI1+nhKSUVvUXhgwjBEDZw1yPPpzFN6ThCqGAKA9tSBHZRq5u2
-         P0QDu2dHJDpE3ZrS0KMIE7UIRCUPscQFMMP5IgxdpGHQtC5ogi8W3Hb6DbDSh20b1g
-         uaskd+kUnKp7Q==
-Date:   Thu, 22 Aug 2019 16:04:25 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Subject: linux-next: build warning after merge of the soundwire tree
-Message-ID: <20190822160425.6998054e@canb.auug.org.au>
+        by s1.ox4u.de (Postfix) with ESMTPSA id 7A95C260122;
+        Thu, 22 Aug 2019 08:06:13 +0200 (CEST)
+From:   Alexander Stein <alexander.stein@systec-electronic.com>
+To:     Jonathan Cameron <jic23@kernel.org>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>
+Cc:     Alexander Stein <alexander.stein@systec-electronic.com>,
+        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] iio: core: Fix fractional format generation
+Date:   Thu, 22 Aug 2019 08:06:07 +0200
+Message-Id: <20190822060607.25339-1-alexander.stein@systec-electronic.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/lUk2R4Zs4qhBXgIcDPq6IY/";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/lUk2R4Zs4qhBXgIcDPq6IY/
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+In case the result is -0.3252 tmp0 is 0 after the div_s64_rem, so tmp0 is
+non-negative which results in an output of 0.3252.
+Fix this by explicitly handling the negative sign ourselves.
 
-Hi all,
+Signed-off-by: Alexander Stein <alexander.stein@systec-electronic.com>
+---
+Changes in v2:
+* Support vals[0] >= and vals[1] < 0 in IIO_VAL_FRACTIONAL
+* Note: IIO_VAL_FRACTIONAL is untested, as I lack hardware
+* Note2: Currently IIO_VAL_FRACTIONAL is only called with vals[1] from
+         in-kernel drivers AFAICS
 
-After merging the soundwire tree, today's linux-next build (x86_64
-allmodconfig) produced this warning:
+ drivers/iio/industrialio-core.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-drivers/soundwire/intel.c: In function 'sdw_master_read_intel_prop':
-drivers/soundwire/intel.c:829:12: warning: unused variable 'i' [-Wunused-va=
-riable]
-  int nval, i;
-            ^
-drivers/soundwire/intel.c:829:6: warning: unused variable 'nval' [-Wunused-=
-variable]
-  int nval, i;
-      ^~~~
+diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
+index 245b5844028d..247338142c87 100644
+--- a/drivers/iio/industrialio-core.c
++++ b/drivers/iio/industrialio-core.c
+@@ -568,6 +568,7 @@ static ssize_t __iio_format_value(char *buf, size_t len, unsigned int type,
+ {
+ 	unsigned long long tmp;
+ 	int tmp0, tmp1;
++	char *sign;
+ 	bool scale_db = false;
+ 
+ 	switch (type) {
+@@ -593,11 +594,17 @@ static ssize_t __iio_format_value(char *buf, size_t len, unsigned int type,
+ 		tmp = div_s64((s64)vals[0] * 1000000000LL, vals[1]);
+ 		tmp1 = vals[1];
+ 		tmp0 = (int)div_s64_rem(tmp, 1000000000, &tmp1);
+-		return snprintf(buf, len, "%d.%09u", tmp0, abs(tmp1));
++		if (vals[1] < 0) {
++			sign = vals[0] >= 0 ? "-" : "";
++		} else {
++			sign = vals[0] < 0 ? "-" : "";
++		}
++		return snprintf(buf, len, "%s%u.%09u", sign, abs(tmp0), abs(tmp1));
+ 	case IIO_VAL_FRACTIONAL_LOG2:
++		sign = vals[0] < 0 ? "-" : "";
+ 		tmp = shift_right((s64)vals[0] * 1000000000LL, vals[1]);
+ 		tmp0 = (int)div_s64_rem(tmp, 1000000000LL, &tmp1);
+-		return snprintf(buf, len, "%d.%09u", tmp0, abs(tmp1));
++		return snprintf(buf, len, "%s%u.%09u", sign, abs(tmp0), abs(tmp1));
+ 	case IIO_VAL_INT_MULTIPLE:
+ 	{
+ 		int i;
+-- 
+2.23.0
 
-Introduced by commit
-
-  085f4ace103d ("soundwire: intel: read mclk_freq property from firmware")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/lUk2R4Zs4qhBXgIcDPq6IY/
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1eMGkACgkQAVBC80lX
-0Gx3KwgAkJqquDMzglB6Dm9inBqPQS2vzaw61LIsSQcIaedIkzbkB1CAfm0jpjir
-bjllO+UnDdCjVUYnI+tG7C4a9p+0EkK4+zfYbsUbq+nUW16/mN0UGRVJnnfItQuJ
-FsbduDbdSEgGdLn/8Y6zrcA3uuMVvMv6o4iGoG71bLNKeoNwoh0A/CS8uOmAQryD
-kigGlJkGx6VuARwpn4QoHS+I1Ip9UquFBeEjGFhRVlXq0ZUaZBpHkn/Pn8hudNjZ
-mHv3nFD6u5SioTlaMPIxzZCtbDBPoH/BMZMKgxzsYVEz3m40FWaAfXIv5x8heHJF
-yi3bJEP+ccOFJzU1DegR6zh3CDIlKg==
-=8TyC
------END PGP SIGNATURE-----
-
---Sig_/lUk2R4Zs4qhBXgIcDPq6IY/--
