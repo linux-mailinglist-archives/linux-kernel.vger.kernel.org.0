@@ -2,39 +2,44 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E715C99C66
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:34:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 64AAC99CEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392653AbfHVReF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:34:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49470 "EHLO mail.kernel.org"
+        id S2391554AbfHVRYY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404450AbfHVRZg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:36 -0400
+        id S2391778AbfHVRYA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:00 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3978C2341E;
-        Thu, 22 Aug 2019 17:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B8FE23402;
+        Thu, 22 Aug 2019 17:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494735;
-        bh=8y6LThwS1iDw3wBEKn53hyWVhA31tU2OGD4DW8G0fX4=;
+        s=default; t=1566494639;
+        bh=JL+SNRjKrSzVY2bQH0EbSdf5BZ9LDIz2h6lVziuKeSA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QTWLhetXD3/t3Bcwmf3YVzmOY7LZsc3twNT91e6WgufTu8OIoba9Phyz42+8TxTBU
-         ywf29F1UKTzCY1pCOBqo7+OQdTwAgSvpaisRF1rgs1ovBdVJMkqHSe5v+HwSRVaLQ8
-         fQtpDH6clemLAhGrdebIW6MsbmEFAiU0ZWEyIKB0=
+        b=Il1uN3WgqlnC1jk1fn5cS7TVrKuzkxY3PqL7hDYjIjV9QfiKjGPAYLMqPLYABdW43
+         dR6MubmUkCdDfZOa4RwrOXl9xRYdiPhZwFUOHoYJ5Tqi0jemvn+2CuwgK9k1JFkzo8
+         5DKRTRcmvn7SW04ccQHIuBJSZUaJfgcIcHbFV2oU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org,
+        Bader Ali - Saleh <bader.alisaleh@microsemi.com>,
+        Scott Teel <scott.teel@microsemi.com>,
+        Scott Benesh <scott.benesh@microsemi.com>,
+        Kevin Barnett <kevin.barnett@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 27/85] clk: sprd: Select REGMAP_MMIO to avoid compile errors
-Date:   Thu, 22 Aug 2019 10:19:00 -0700
-Message-Id: <20190822171732.337800878@linuxfoundation.org>
+Subject: [PATCH 4.9 073/103] scsi: hpsa: correct scsi command status issue after reset
+Date:   Thu, 22 Aug 2019 10:19:01 -0700
+Message-Id: <20190822171731.867363725@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,30 +49,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit c9a67cbb5189e966c70451562b2ca4c3876ab546 ]
+[ Upstream commit eeebce1862970653cdf5c01e98bc669edd8f529a ]
 
-Make REGMAP_MMIO selected to avoid undefined reference to regmap symbols.
-
-Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Bader Ali - Saleh <bader.alisaleh@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Scott Benesh <scott.benesh@microsemi.com>
+Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/hpsa.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
-index 87892471eb96c..bad8099832d48 100644
---- a/drivers/clk/sprd/Kconfig
-+++ b/drivers/clk/sprd/Kconfig
-@@ -2,6 +2,7 @@ config SPRD_COMMON_CLK
- 	tristate "Clock support for Spreadtrum SoCs"
- 	depends on ARCH_SPRD || COMPILE_TEST
- 	default ARCH_SPRD
-+	select REGMAP_MMIO
+diff --git a/drivers/scsi/hpsa.c b/drivers/scsi/hpsa.c
+index 9f98c7211ec24..b82df8cdf9626 100644
+--- a/drivers/scsi/hpsa.c
++++ b/drivers/scsi/hpsa.c
+@@ -2236,6 +2236,8 @@ static int handle_ioaccel_mode2_error(struct ctlr_info *h,
+ 	case IOACCEL2_SERV_RESPONSE_COMPLETE:
+ 		switch (c2->error_data.status) {
+ 		case IOACCEL2_STATUS_SR_TASK_COMP_GOOD:
++			if (cmd)
++				cmd->result = 0;
+ 			break;
+ 		case IOACCEL2_STATUS_SR_TASK_COMP_CHK_COND:
+ 			cmd->result |= SAM_STAT_CHECK_CONDITION;
+@@ -2423,8 +2425,10 @@ static void process_ioaccel2_completion(struct ctlr_info *h,
  
- if SPRD_COMMON_CLK
+ 	/* check for good status */
+ 	if (likely(c2->error_data.serv_response == 0 &&
+-			c2->error_data.status == 0))
++			c2->error_data.status == 0)) {
++		cmd->result = 0;
+ 		return hpsa_cmd_free_and_done(h, c, cmd);
++	}
  
+ 	/*
+ 	 * Any RAID offload error results in retry which will use
+@@ -5511,6 +5515,12 @@ static int hpsa_scsi_queue_command(struct Scsi_Host *sh, struct scsi_cmnd *cmd)
+ 	}
+ 	c = cmd_tagged_alloc(h, cmd);
+ 
++	/*
++	 * This is necessary because the SML doesn't zero out this field during
++	 * error recovery.
++	 */
++	cmd->result = 0;
++
+ 	/*
+ 	 * Call alternate submit routine for I/O accelerated commands.
+ 	 * Retries always go down the normal I/O path.
 -- 
 2.20.1
 
