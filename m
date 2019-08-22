@@ -2,37 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C8A99B4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 191EC99B4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387438AbfHVRX2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42878 "EHLO mail.kernel.org"
+        id S2391562AbfHVRXe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390121AbfHVRXV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:21 -0400
+        id S2403928AbfHVRXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:22 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D88EE23406;
-        Thu, 22 Aug 2019 17:23:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AD6323405;
+        Thu, 22 Aug 2019 17:23:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494600;
-        bh=xr41tJqVxe692GCkDD5OSJBDIWj3pT8XZ1dJgTZ0/7U=;
+        s=default; t=1566494602;
+        bh=v1qJUyEw14ffyTtAkJ2MRHYdOutA6FVC35Hnd5dLXyU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Oqgb2MxSKUmm6rn8hjwFYXDN46xBxqq5JygPD72+ijFqxgJj/xrwdISTJoLiRUIxf
-         j2Xb7UaNJoIPyQbKirtEHFYwxJ54xlKXmfrtVA4fuMdhy8+4dxdCJLhAU4KbNV+j1D
-         O3nJnq8ge2yhB4BhAkupOm6MXYGgdo3+QOUE/tHQ=
+        b=Oav2r/vitdIrmKCRvSE09WZtHfC2ag8RE4bEI1aJUfiN5cvn2Qt9UYorGMC9DKea5
+         OF+41jO+gCDrgNrje3uQNA7MLiDFtcSajx6R4Am7tyKjT/WSK3wgw99EAZ/Hms2PVH
+         osHicVlYP8wsXfRpNqJbxbMH6+qUXhPZZRUE9wAY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Charles Keepax <ckeepax@opensource.cirrus.com>,
-        Vinod Koul <vkoul@kernel.org>, Takashi Iwai <tiwai@suse.de>,
+        stable@vger.kernel.org, Hanjun Guo <guohanjun@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 021/103] ALSA: compress: Be more restrictive about when a drain is allowed
-Date:   Thu, 22 Aug 2019 10:18:09 -0700
-Message-Id: <20190822171729.707336221@linuxfoundation.org>
+Subject: [PATCH 4.9 024/103] ACPI/IORT: Fix off-by-one check in iort_dev_find_its_id()
+Date:   Thu, 22 Aug 2019 10:18:12 -0700
+Message-Id: <20190822171729.831400354@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -45,46 +49,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3b8179944cb0dd53e5223996966746cdc8a60657 ]
+[ Upstream commit 5a46d3f71d5e5a9f82eabc682f996f1281705ac7 ]
 
-Draining makes little sense in the situation of hardware overrun, as the
-hardware will have consumed all its available samples. Additionally,
-draining whilst the stream is paused would presumably get stuck as no
-data is being consumed on the DSP side.
+Static analysis identified that index comparison against ITS entries in
+iort_dev_find_its_id() is off by one.
 
-Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Update the comparison condition and clarify the resulting error
+message.
+
+Fixes: 4bf2efd26d76 ("ACPI: Add new IORT functions to support MSI domain handling")
+Link: https://lore.kernel.org/linux-arm-kernel/20190613065410.GB16334@mwanda/
+Reviewed-by: Hanjun Guo <guohanjun@huawei.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc: Dan Carpenter <dan.carpenter@oracle.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Hanjun Guo <guohanjun@huawei.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/core/compress_offload.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/acpi/arm64/iort.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/sound/core/compress_offload.c b/sound/core/compress_offload.c
-index b4f1536b17cb5..2e2d184684911 100644
---- a/sound/core/compress_offload.c
-+++ b/sound/core/compress_offload.c
-@@ -812,7 +812,10 @@ static int snd_compr_drain(struct snd_compr_stream *stream)
- 	case SNDRV_PCM_STATE_OPEN:
- 	case SNDRV_PCM_STATE_SETUP:
- 	case SNDRV_PCM_STATE_PREPARED:
-+	case SNDRV_PCM_STATE_PAUSED:
- 		return -EPERM;
-+	case SNDRV_PCM_STATE_XRUN:
-+		return -EPIPE;
- 	default:
- 		break;
- 	}
-@@ -861,7 +864,10 @@ static int snd_compr_partial_drain(struct snd_compr_stream *stream)
- 	case SNDRV_PCM_STATE_OPEN:
- 	case SNDRV_PCM_STATE_SETUP:
- 	case SNDRV_PCM_STATE_PREPARED:
-+	case SNDRV_PCM_STATE_PAUSED:
- 		return -EPERM;
-+	case SNDRV_PCM_STATE_XRUN:
-+		return -EPIPE;
- 	default:
- 		break;
+diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+index 6b81746cd13c8..e5b1b3f1c2319 100644
+--- a/drivers/acpi/arm64/iort.c
++++ b/drivers/acpi/arm64/iort.c
+@@ -324,8 +324,8 @@ static int iort_dev_find_its_id(struct device *dev, u32 req_id,
+ 
+ 	/* Move to ITS specific data */
+ 	its = (struct acpi_iort_its_group *)node->node_data;
+-	if (idx > its->its_count) {
+-		dev_err(dev, "requested ITS ID index [%d] is greater than available [%d]\n",
++	if (idx >= its->its_count) {
++		dev_err(dev, "requested ITS ID index [%d] overruns ITS entries [%d]\n",
+ 			idx, its->its_count);
+ 		return -ENXIO;
  	}
 -- 
 2.20.1
