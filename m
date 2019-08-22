@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2275C99D4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9742499E38
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:49:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391088AbfHVRX4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43748 "EHLO mail.kernel.org"
+        id S2393336AbfHVRs6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:48:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40008 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391508AbfHVRXg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:36 -0400
+        id S2389867AbfHVRWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:19 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B21D2342A;
-        Thu, 22 Aug 2019 17:23:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EDB6233FE;
+        Thu, 22 Aug 2019 17:22:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494615;
-        bh=GxpXIsPHFbuaZBKjNQf/MJm4SWd/jFG6S2Ae0i4PNOU=;
+        s=default; t=1566494539;
+        bh=zQr/OS7hgJPdZdMVbsb05k6WtMaWvYev5JYNHwhQ6PA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MUaStPYp0lx+Hke2I4jPMKom8ENvG8efuMTEvYXwjQpqkpGU9Z0gMnVPKAmQVXv6c
-         x5fTRxGRc7SSMpuk/eLsUR9jz1hx2EruuIlepEwKIgRoPlpJYVXzIXAviH5+IfT3DJ
-         GN8jvJTxZnJLSSFmfp7gB6ruu/7XAzz1m+mUeZFI=
+        b=lCgOGHm9D/H6iwwznwJ27MGNHMDY3VzkHcF4p1dM2njWAPqEQW3Nn8bgzU6byOQAR
+         QrahYNVyEpKLc76+/eCVSZ9pcWVzddnTCj307Q4GDFire7Vhxq6mbQ+xf6IDRY0cG5
+         pxgsYrkxj3VzgvvRTvzliUSME9ut0FVRlt6mwn0U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.9 035/103] ALSA: hda - Dont override global PCM hw info flag
+        stable@vger.kernel.org, Sekhar Nori <nsekhar@ti.com>,
+        Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 19/78] ARM: davinci: fix sleep.S build error on ARMv4
 Date:   Thu, 22 Aug 2019 10:18:23 -0700
-Message-Id: <20190822171730.238296406@linuxfoundation.org>
+Message-Id: <20190822171832.601635831@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,42 +44,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Takashi Iwai <tiwai@suse.de>
+[ Upstream commit d64b212ea960db4276a1d8372bd98cb861dfcbb0 ]
 
-commit c1c6c877b0c79fd7e05c931435aa42211eaeebaf upstream.
+When building a multiplatform kernel that includes armv4 support,
+the default target CPU does not support the blx instruction,
+which leads to a build failure:
 
-The commit bfcba288b97f ("ALSA - hda: Add support for link audio time
-reporting") introduced the conditional PCM hw info setup, but it
-overwrites the global azx_pcm_hw object.  This will cause a problem if
-any other HD-audio controller, as it'll inherit the same bit flag
-although another controller doesn't support that feature.
+arch/arm/mach-davinci/sleep.S: Assembler messages:
+arch/arm/mach-davinci/sleep.S:56: Error: selected processor does not support `blx ip' in ARM mode
 
-Fix the bug by setting the PCM hw info flag locally.
+Add a .arch statement in the sources to make this file build.
 
-Fixes: bfcba288b97f ("ALSA - hda: Add support for link audio time reporting")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Link: https://lore.kernel.org/r/20190722145211.1154785-1-arnd@arndb.de
+Acked-by: Sekhar Nori <nsekhar@ti.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_controller.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/arm/mach-davinci/sleep.S | 1 +
+ 1 file changed, 1 insertion(+)
 
---- a/sound/pci/hda/hda_controller.c
-+++ b/sound/pci/hda/hda_controller.c
-@@ -609,11 +609,9 @@ static int azx_pcm_open(struct snd_pcm_s
- 	}
- 	runtime->private_data = azx_dev;
+diff --git a/arch/arm/mach-davinci/sleep.S b/arch/arm/mach-davinci/sleep.S
+index a5336a5e27395..459d081caf79b 100644
+--- a/arch/arm/mach-davinci/sleep.S
++++ b/arch/arm/mach-davinci/sleep.S
+@@ -37,6 +37,7 @@
+ #define DEEPSLEEP_SLEEPENABLE_BIT	BIT(31)
  
--	if (chip->gts_present)
--		azx_pcm_hw.info = azx_pcm_hw.info |
--			SNDRV_PCM_INFO_HAS_LINK_SYNCHRONIZED_ATIME;
--
- 	runtime->hw = azx_pcm_hw;
-+	if (chip->gts_present)
-+		runtime->hw.info |= SNDRV_PCM_INFO_HAS_LINK_SYNCHRONIZED_ATIME;
- 	runtime->hw.channels_min = hinfo->channels_min;
- 	runtime->hw.channels_max = hinfo->channels_max;
- 	runtime->hw.formats = hinfo->formats;
+ 	.text
++	.arch	armv5te
+ /*
+  * Move DaVinci into deep sleep state
+  *
+-- 
+2.20.1
+
 
 
