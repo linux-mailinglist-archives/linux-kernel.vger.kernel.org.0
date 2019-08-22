@@ -2,120 +2,115 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D1D5F9A203
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:16:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 317889A1B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:10:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392826AbfHVVQe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:16:34 -0400
-Received: from wnew3-smtp.messagingengine.com ([64.147.123.17]:48895 "EHLO
-        wnew3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1730897AbfHVVQR (ORCPT
+        id S1732837AbfHVVKa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:10:30 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41139 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730991AbfHVVKa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:16:17 -0400
-X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 17:16:16 EDT
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id CFDEE49A;
-        Thu, 22 Aug 2019 17:08:14 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Thu, 22 Aug 2019 17:08:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=
-        content-transfer-encoding:content-type:in-reply-to:date:cc
-        :subject:from:to:message-id; s=fm1; bh=WZ5Ec3wLQiEm5IlJwCBhY1oTo
-        MWeoHMfgT/wZdlQH5Q=; b=Utj4s/Z5saDMZIER6kYduuw5ZYnj1gZuBNQMjAk3I
-        GwAsPVKOr+/Azp/IbdYZPN6ePMEBYuIIZy6RNBaN4O63jvgcbJnxnmlGhrboJcmw
-        UthSMhr88TD8c0lIGbTubBfN3PlowT5cncIoEVsQh1jEloUj6Ags+rVsQUUoCbZP
-        Kksg6YvPmR2BlQIGxKyH28uW/d6KzRDss+bCEPBmhabFR6TPKiLFmssr92qJ8ou5
-        YUN4buxkRU/78bPvciLNknmT2SNhaJBzlsbo4Zk48ZBuua3MhxIjKsb6hsZHbpKR
-        2qGOCBtyRfjH3p7H/kHRFBcMDCNSXdkT1tB72cR2liWTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=WZ5Ec3
-        wLQiEm5IlJwCBhY1oToMWeoHMfgT/wZdlQH5Q=; b=eMNX9UaIeB2Sm/5VpMH21P
-        YOpr4TD0uVEwVn+0GeuAYiMuDQoSFgPuIdBv0dibbEinqvnDeaFSyGrOVOu3pTM8
-        6/wO4nY7vx4eiPN6DoMGMn+u3C1H7qHoFiCqmScXsxktUIAbR6SCQ+IY0QaQw7Ai
-        k30z2Rff7dseY0OsOvTujqKVXnTmuo+DXVb0BHr8/QxZDMjEiPARGSfi7gCVqjem
-        pPn7az+SLLjYZRqjlhc/jbp3lJpDD8xmNp7PcBkapH3avJQN54HiIQTUjYGmOjZC
-        dppndIgwiGYamCRnffNBmRlBJPxkor/4nfZipdRyr3n0ZEYELeWfh5K4txBvwNnA
-        ==
-X-ME-Sender: <xms:PQRfXQKfIgkFSLdEPMcp9yeLkcwroP3kxcHz1x3emQCrROzvNo8VBA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudegiedguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enfghrlhcuvffnffculdefhedmnecujfgurhepgfgtjgffuffhvffksehtqhertddttdej
-    necuhfhrohhmpedfffgrnhhivghlucgiuhdfuceougiguhesugiguhhuuhdrgiihiieqne
-    cukfhppeduleelrddvtddurdeigedrgeenucfrrghrrghmpehmrghilhhfrhhomhepugig
-    uhesugiguhhuuhdrgiihiienucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:PQRfXYU8ISslaBb0aPcoNOzsZOXje8elv4Qqu48meYoY24cDCfFefA>
-    <xmx:PQRfXWkxwm9Ej8uQLPPEfg68dTjcMsgImjZsPelUAk-3lVlZiv5Fyg>
-    <xmx:PQRfXWdesUsRaPhOWUSMB6ytOdMczGHdAgcOQQniUZ-wZsRJ5rwU9g>
-    <xmx:PgRfXeJcvuWPQjvXGiyQ2-HXUt_fQurItbiQYKI3NPwNce8E4xUFp8--DV0>
-Received: from localhost (prnvpn05.thefacebook.com [199.201.64.4])
-        by mail.messagingengine.com (Postfix) with ESMTPA id CD78380062;
-        Thu, 22 Aug 2019 17:08:10 -0400 (EDT)
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-In-Reply-To: <20190822090555.GJ2349@hirez.programming.kicks-ass.net>
-Date:   Thu, 22 Aug 2019 14:08:10 -0700
-Cc:     "Yonghong Song" <yhs@fb.com>, "Daniel Xu" <dxu@dxuuu.xyz>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        "Andrii Nakryiko" <andriin@fb.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        "Alexei Starovoitov" <ast@fb.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Kernel Team" <Kernel-team@fb.com>,
-        "Arnaldo Carvalho de Melo" <acme@redhat.com>
-Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
- PERF_EVENT_IOC_QUERY_PROBE ioctl
-From:   "Daniel Xu" <dxu@dxuuu.xyz>
-To:     "Peter Zijlstra" <peterz@infradead.org>,
-        "Song Liu" <songliubraving@fb.com>
-Message-Id: <BWGGRTQXX7EP.15IPIDK3KLQ6O@dlxu-fedora-R90QNFJV>
+        Thu, 22 Aug 2019 17:10:30 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g7so5463557oia.8;
+        Thu, 22 Aug 2019 14:10:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=722k5ddNheSppDzrG90q8EFQ8uGNK424zDmyHBRv/xk=;
+        b=sQ2/Kgp64yj3UAzuBYxwngzdEsHH68xa0fs511sEE7FtajN+DcF1jQOnBWTeCAwwop
+         pGu30/wuYeVTLFG5Fy/hP3qmpKk/s/cL28i5K2pxyFhNOCHMFSUhv6v4JomnSyG87xE1
+         J0VY5ivLVW5m5dIn5Tyy5HSF85sLplKjOokZM0KygO5aR+qV1eEX4SAyLVXR/4cPVfBk
+         d/Sftdg/wypUFxiCcFUAot2RcoAhuGC96MxT1COkz0WT7F52AUEZUKcQA79xPHXI2Dn9
+         CVijj2x673H//O8eNn0wuPu0IuWBmWiS0XNmePGTHnl2rZLPozQANXUREqck2Eio086G
+         eE2Q==
+X-Gm-Message-State: APjAAAVxoKcx6P0vbNKiGYizjfPYfTh3eRMFJMchzbeQvR+Hhi1S5FUE
+        /FujHt6ThG5kcPV9GYrhUerSjSeUuXjmO/+kmoA=
+X-Google-Smtp-Source: APXvYqzipBbFAy30yqllDRxVg2wDXWGv50k8XyQth34p3InV0dg8l5sHIhCCRt/28NsM9VDdy0aBudPzL12G7mXE8DE=
+X-Received: by 2002:aca:4dd8:: with SMTP id a207mr756501oib.115.1566508228550;
+ Thu, 22 Aug 2019 14:10:28 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190822200551.129039-1-helgaas@kernel.org> <20190822200551.129039-4-helgaas@kernel.org>
+In-Reply-To: <20190822200551.129039-4-helgaas@kernel.org>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Thu, 22 Aug 2019 23:10:17 +0200
+Message-ID: <CAJZ5v0joSqE5hwHGEPoVG0xDb_wnhS8EjnYZe+EuukBgDpzwQg@mail.gmail.com>
+Subject: Re: [PATCH 3/3] PCI / PM: Return error when changing power state from D3cold
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Linux PCI <linux-pci@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu Aug 22, 2019 at 11:05 AM Peter Zijlstra wrote:
-> On Thu, Aug 22, 2019 at 07:54:16AM +0000, Song Liu wrote:
-> > Hi Peter,=20
-> >=20
-> > > On Aug 22, 2019, at 12:47 AM, Peter Zijlstra <peterz@infradead.org> w=
-rote:
-> > >=20
-> > > On Wed, Aug 21, 2019 at 06:43:49PM +0000, Yonghong Song wrote:
-> > >> On 8/21/19 11:31 AM, Peter Zijlstra wrote:
-> > >=20
-> > >>> So extending PERF_RECORD_LOST doesn't work. But PERF_FORMAT_LOST mi=
-ght
-> > >>> still work fine; but you get to implement it for all software event=
-s.
-> > >>=20
-> > >> Could you give more specifics about PERF_FORMAT_LOST? Googling=20
-> > >> "PERF_FORMAT_LOST" only yields two emails which we are discussing he=
-re :-(
-> > >=20
-> > > Look at what the other PERF_FORMAT_ flags do? Basically it is adding =
-a
-> > > field to the read(2) output.
-> >=20
-> > Do we need to implement PERF_FORMAT_LOST for all software events? If us=
-er
-> > space asks for PERF_FORMAT_LOST for events that do not support it, can =
-we
-> > just fail sys_perf_event_open()?
->=20
-> It really shouldn't be hard; and I'm failing to see why kprobes are
-> special.
+On Thu, Aug 22, 2019 at 10:06 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> From: Bjorn Helgaas <bhelgaas@google.com>
+>
+> pci_raw_set_power_state() uses the Power Management capability to change a
+> device's power state.  The capability is in config space, which is
+> accessible in D0, D1, D2, and D3hot, but not in D3cold.
+>
+> If we call pci_raw_set_power_state() on a device that's in D3cold, config
+> reads fail and return ~0 data, which we erroneously interpreted as "the
+> device is in D3hot", leading to messages like this:
+>
+>   pcieport 0000:03:00.0: Refused to change power state, currently in D3
+>
+> The PCI_PM_CTRL has several RsvdP fields, so ~0 is never a valid register
+> value.  Notice if we get that data, print a more informative message, and
+> return an error.
+>
+> Changing the power state of a device from D3cold must be done by a platform
+> power management method or some other non-config space mechanism.
+>
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 
-Thanks for the feedback, everyone. Really appreciate it.
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-I will look into extending read_format. I'll submit another patch series
-after I get the code to work.
-
-Daniel
+> ---
+>  drivers/pci/pci.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 5f0a3145c3f2..41112af189a8 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -853,6 +853,12 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
+>                 return -EIO;
+>
+>         pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+> +       if (pmcsr == (u16) PCI_ERROR_RESPONSE) {
+> +               pci_err(dev, "can't access config space to change power state from %s to %s\n",
+> +                       pci_power_name(dev->current_state),
+> +                       pci_power_name(state));
+> +               return -EIO;
+> +       }
+>
+>         /*
+>          * If we're (effectively) in D3, force entire word to 0.
+> @@ -893,8 +899,9 @@ static int pci_raw_set_power_state(struct pci_dev *dev, pci_power_t state)
+>         pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+>         dev->current_state = (pmcsr & PCI_PM_CTRL_STATE_MASK);
+>         if (dev->current_state != state && printk_ratelimit())
+> -               pci_info(dev, "refused to change power state (currently %s)\n",
+> -                        pci_power_name(dev->current_state));
+> +               pci_info(dev, "refused to change power state from %s to %s\n",
+> +                        pci_power_name(dev->current_state),
+> +                        pci_power_name(state));
+>
+>         /*
+>          * According to section 5.4.1 of the "PCI BUS POWER MANAGEMENT
+> --
+> 2.23.0.187.g17f5b7556c-goog
+>
