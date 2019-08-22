@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 36B3B99D5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:42:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C969499DFF
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:47:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405156AbfHVRly (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:41:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44602 "EHLO mail.kernel.org"
+        id S2393140AbfHVRq5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:46:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391740AbfHVRXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:54 -0400
+        id S1732661AbfHVRWm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:42 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B47723428;
-        Thu, 22 Aug 2019 17:23:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14D8723406;
+        Thu, 22 Aug 2019 17:22:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494633;
-        bh=1wM/SEQJfDfuIKMxA3jc2vKJwCSpwRpH0U615cu6rx4=;
+        s=default; t=1566494562;
+        bh=oxdxb3+q5l4YKRxmcQH3c+7PvrvDkfftZOxp4GEsiiI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BeXA2lWyG1brnZBqNDvnKiuaPQD6JEwHHwftqudgN0s6QFnrRGceyqaUTn+/LmiE9
-         ODhNYCJXdhdWQ5I8pBchDP1J2k5QhrHcbybSeqZJE8mEah6K0C8X/PEhqVFC6xvBLV
-         3yoquUJZrAD2d/qRPhayqUoNbIw/SlxHAj5lCGJM=
+        b=dQStUWK9QPcm5V6i2UihfrIp5PjDJHXkHd1IzyyCwmatK4y41ssZk5BjfW2dBQfO1
+         BVbx7tlo8lld9VkTCLuqIqq6XQfWA4hb6spDdZkN1yk2uScYXpWaF7wzR6w1kOpL0L
+         6i5qEm/O/htLUN2em9HVas/+Rk/uhqFegZCq5lY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 065/103] Input: kbtab - sanity check for endpoint type
-Date:   Thu, 22 Aug 2019 10:18:53 -0700
-Message-Id: <20190822171731.406317755@linuxfoundation.org>
+        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 50/78] ata: libahci: do not complain in case of deferred probe
+Date:   Thu, 22 Aug 2019 10:18:54 -0700
+Message-Id: <20190822171833.492407824@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+[ Upstream commit 090bb803708198e5ab6b0046398c7ed9f4d12d6b ]
 
-commit c88090dfc84254fa149174eb3e6a8458de1912c4 upstream.
+Retrieving PHYs can defer the probe, do not spawn an error when
+-EPROBE_DEFER is returned, it is normal behavior.
 
-The driver should check whether the endpoint it uses has the correct
-type.
-
-Reported-by: syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Fixes: b1a9edbda040 ("ata: libahci: allow to use multiple PHYs")
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/input/tablet/kbtab.c |    6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/ata/libahci_platform.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/input/tablet/kbtab.c
-+++ b/drivers/input/tablet/kbtab.c
-@@ -125,6 +125,10 @@ static int kbtab_probe(struct usb_interf
- 	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
- 		return -ENODEV;
+diff --git a/drivers/ata/libahci_platform.c b/drivers/ata/libahci_platform.c
+index cd2eab6aa92ea..65371e1befe8a 100644
+--- a/drivers/ata/libahci_platform.c
++++ b/drivers/ata/libahci_platform.c
+@@ -300,6 +300,9 @@ static int ahci_platform_get_phy(struct ahci_host_priv *hpriv, u32 port,
+ 		hpriv->phys[port] = NULL;
+ 		rc = 0;
+ 		break;
++	case -EPROBE_DEFER:
++		/* Do not complain yet */
++		break;
  
-+	endpoint = &intf->cur_altsetting->endpoint[0].desc;
-+	if (!usb_endpoint_is_int_in(endpoint))
-+		return -ENODEV;
-+
- 	kbtab = kzalloc(sizeof(struct kbtab), GFP_KERNEL);
- 	input_dev = input_allocate_device();
- 	if (!kbtab || !input_dev)
-@@ -163,8 +167,6 @@ static int kbtab_probe(struct usb_interf
- 	input_set_abs_params(input_dev, ABS_Y, 0, 0x1750, 4, 0);
- 	input_set_abs_params(input_dev, ABS_PRESSURE, 0, 0xff, 0, 0);
- 
--	endpoint = &intf->cur_altsetting->endpoint[0].desc;
--
- 	usb_fill_int_urb(kbtab->irq, dev,
- 			 usb_rcvintpipe(dev, endpoint->bEndpointAddress),
- 			 kbtab->data, 8,
+ 	default:
+ 		dev_err(dev,
+-- 
+2.20.1
+
 
 
