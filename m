@@ -2,168 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B5C49A297
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:09:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 91BA29A29B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:09:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393842AbfHVWJX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 18:09:23 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42852 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393823AbfHVWJU (ORCPT
+        id S2393849AbfHVWJy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 18:09:54 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45299 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390311AbfHVWJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 18:09:20 -0400
-Received: by mail-pf1-f194.google.com with SMTP id i30so4890163pfk.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 15:09:20 -0700 (PDT)
+        Thu, 22 Aug 2019 18:09:54 -0400
+Received: by mail-wr1-f66.google.com with SMTP id q12so6772718wrj.12
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 15:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9zuadHq2oNAonLqdCJokcmV7Tuo9vqcylSnraeruuq0=;
-        b=Kpr3QTAHjS54FLrMAqnHEX87rbU/GpTGSZqfU8qQ9hxl6HzXlLA48Sn/M1KycdVeI6
-         KJRdjA8uLj5Gi1uS7vdpyPz0Kw9s1VUmnULZVRTHyjf0pfqL2Q/HetGUczthXAWr9gZq
-         s1rMj910XwiYgUUXbDCNTFrw2b0Liwi6uFyax9ibgDqxQlUb5bBcCgGo9WqHF+EfOCNY
-         Vok1YRSY4m/O8w9HyFPA55mudsdKVOJFDk3y1ocvXxKDld3J51o+zwkHeZgyppoSnnTy
-         v6GFTLNHweKRTDvOhjQKi7B1IGcuhfgiQZ4xVj04Sg0wI1ODfvlqViynwPxYi36lvVNM
-         jYbg==
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=M+oIdnD3jm/q0FEoEMnIGzoD27Ik3dMH4NYQUO8iSBo=;
+        b=ZI42VLIf3XR0ok5i+0x5WISOnHyGwIZxT87RAf5JOkT72TxGxOM5SLOZYlrOMK2Lz0
+         /pMXLKJ9Bp6o+JdDPyTNehpyrMiXLKq/THe45t1S8Y9iG0NX2rg/tiUPjo6oBHCdZUgS
+         H9MYSXYdU+sMDcOmye0Qxn0PQG2F3X8yS+ekQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=9zuadHq2oNAonLqdCJokcmV7Tuo9vqcylSnraeruuq0=;
-        b=sgxKUmsIL5OINBPr4qfh+PdvjonYih3W0GDgAr1SnTtZWiFpAvy5vzHiMbfvGxTGWT
-         m7KQpOg2rokPbInLvjdwecLrvYj7aPxqpNfwWXJspSFDoWIxVhDyGHdQguOI9UYLE9tr
-         cLNvJO++Ke2MEdQKZJ8pDoPkwOjbH4+hLwJ7wLHuiqsnKzGuWPN+ASt7tPCrkOeodTwT
-         ys3L06hEAhY8mfjay3bAnD65fJbeQxDIDIg2b2IEqnfkk8MkPhHz+gWTiiA+1te7wBN2
-         CDVohFWX4EESxi3s1uU1wOsBZpTKYcwCHVzkCEoDyGUPoB6G5WH+0r6vzLphd8gDrjr9
-         as1A==
-X-Gm-Message-State: APjAAAVY2MrJXNnwt3+F/hHDT9/Ydogern/lgr+6qjgaAMk+8wgwNnDq
-        n8Zg9ej8EpAKpTEk3hbJi/d1xg==
-X-Google-Smtp-Source: APXvYqy84OkTLajF4+tdro/zEbqpNFakHDW+gSLGmhAWrFYvZI20iFVQypOHf0JtT/vxegZCjr1sfw==
-X-Received: by 2002:a63:607:: with SMTP id 7mr1204487pgg.240.1566511759764;
-        Thu, 22 Aug 2019 15:09:19 -0700 (PDT)
-Received: from xps15.cg.shawcable.net (S0106002369de4dac.cg.shawcable.net. [68.147.8.254])
-        by smtp.gmail.com with ESMTPSA id s7sm377432pfb.138.2019.08.22.15.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 15:09:19 -0700 (PDT)
-From:   Mathieu Poirier <mathieu.poirier@linaro.org>
-To:     yabinc@google.com, suzuki.poulose@arm.com, leo.yan@linaro.org
-Cc:     mike.leach@arm.com, alexander.shishkin@linux.intel.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] coresight: tmc-etr: Add barrier packet when moving offset forward
-Date:   Thu, 22 Aug 2019 16:09:15 -0600
-Message-Id: <20190822220915.8876-3-mathieu.poirier@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190822220915.8876-1-mathieu.poirier@linaro.org>
-References: <20190822220915.8876-1-mathieu.poirier@linaro.org>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M+oIdnD3jm/q0FEoEMnIGzoD27Ik3dMH4NYQUO8iSBo=;
+        b=niHCT8aBUBDC4UDbDUaojGezmmIe6kS5UbkMyUBLD5rEueQKZX5BNzUBk+AV2CBG9A
+         cwuGV8kjYx4gUHkqBRI5mkY9HzlReykd1Ms6c3jfWUW0rWYcGw53xIJdWaHm7eANkcm3
+         +BOBErcK/tErKMb3RdMWZf+kwGI9QRcALChVKK04zyDLSL0pzS8mt/MPD6uyPKpRHdCf
+         dnailchxeNzMioz15kd7bRR8mM5nYHDuSqzBriVAUCJqYjcg8K5E+hv7kPHEsho/w8Ly
+         CUiQ07FPweM8IyljFsvx0R5vq/8XY0lYl5onZpYHgp/KGatnX5FrsTXhS9d7KEVis3rh
+         19oQ==
+X-Gm-Message-State: APjAAAWT6GjSjSioNsyQrofy04mSzOgoWxQaxUsYlSihr1y+3v+IX62T
+        qwr+XZkkqZPzhajZweba5U7sVA==
+X-Google-Smtp-Source: APXvYqwhFYLuDgxoml+DLuSpfZTqsK4iafwdRNx6hqMwddGuTcDHWBVBaZxAq1227fwR/ulvrWIyEw==
+X-Received: by 2002:adf:e504:: with SMTP id j4mr1064839wrm.222.1566511792353;
+        Thu, 22 Aug 2019 15:09:52 -0700 (PDT)
+Received: from [192.168.0.107] (84-238-136-197.ip.btc-net.bg. [84.238.136.197])
+        by smtp.gmail.com with ESMTPSA id c11sm590230wrs.86.2019.08.22.15.09.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 22 Aug 2019 15:09:51 -0700 (PDT)
+Subject: Re: [PATCH 0/3] Add NETIF_F_HW_BRIDGE feature
+To:     Horatiu Vultur <horatiu.vultur@microchip.com>,
+        roopa@cumulusnetworks.com, davem@davemloft.net,
+        UNGLinuxDriver@microchip.com, alexandre.belloni@bootlin.com,
+        allan.nielsen@microchip.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bridge@lists.linux-foundation.org
+References: <1566500850-6247-1-git-send-email-horatiu.vultur@microchip.com>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <1e16da88-08c5-abd5-0a3e-b8e6c3db134a@cumulusnetworks.com>
+Date:   Fri, 23 Aug 2019 01:09:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <1566500850-6247-1-git-send-email-horatiu.vultur@microchip.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds barrier packets in the trace stream when the offset in the
-data buffer needs to be moved forward.  Otherwise the decoder isn't aware
-of the break in the stream and can't synchronise itself with the trace
-data.
+On 22/08/2019 22:07, Horatiu Vultur wrote:
+> Current implementation of the SW bridge is setting the interfaces in
+> promisc mode when they are added to bridge if learning of the frames is
+> enabled.
+> In case of Ocelot which has HW capabilities to switch frames, it is not
+> needed to set the ports in promisc mode because the HW already capable of
+> doing that. Therefore add NETIF_F_HW_BRIDGE feature to indicate that the
+> HW has bridge capabilities. Therefore the SW bridge doesn't need to set
+> the ports in promisc mode to do the switching.
+> This optimization takes places only if all the interfaces that are part
+> of the bridge have this flag and have the same network driver.
+> 
+> If the bridge interfaces is added in promisc mode then also the ports part
+> of the bridge are set in promisc mode.
+> 
+> Horatiu Vultur (3):
+>   net: Add HW_BRIDGE offload feature
+>   net: mscc: Use NETIF_F_HW_BRIDGE
+>   net: mscc: Implement promisc mode.
+> 
+>  drivers/net/ethernet/mscc/ocelot.c | 26 ++++++++++++++++++++++++--
+>  include/linux/netdev_features.h    |  3 +++
+>  net/bridge/br_if.c                 | 29 ++++++++++++++++++++++++++++-
+>  net/core/ethtool.c                 |  1 +
+>  4 files changed, 56 insertions(+), 3 deletions(-)
+> 
 
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
----
- .../hwtracing/coresight/coresight-tmc-etr.c   | 43 ++++++++++++++-----
- 1 file changed, 33 insertions(+), 10 deletions(-)
+IMO the name is misleading.
+Why do the devices have to be from the same driver ? This is too specific targeting some
+devices. The bridge should not care what's the port device, it should be the other way
+around, so adding device-specific code to the bridge is not ok. Isn't there a solution
+where you can use NETDEV_JOIN and handle it all from your driver ?
+Would all HW-learned entries be hidden from user-space in this case ?
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etr.c b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-index 4f000a03152e..0e4cd6ec5f28 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etr.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etr.c
-@@ -946,10 +946,6 @@ static void tmc_sync_etr_buf(struct tmc_drvdata *drvdata)
- 	WARN_ON(!etr_buf->ops || !etr_buf->ops->sync);
- 
- 	etr_buf->ops->sync(etr_buf, rrp, rwp);
--
--	/* Insert barrier packets at the beginning, if there was an overflow */
--	if (etr_buf->full)
--		tmc_etr_buf_insert_barrier_packet(etr_buf, etr_buf->offset);
- }
- 
- static void __tmc_etr_enable_hw(struct tmc_drvdata *drvdata)
-@@ -1415,10 +1411,11 @@ static void tmc_free_etr_buffer(void *config)
-  * buffer to the perf ring buffer.
-  */
- static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf,
-+				     unsigned long src_offset,
- 				     unsigned long to_copy)
- {
- 	long bytes;
--	long pg_idx, pg_offset, src_offset;
-+	long pg_idx, pg_offset;
- 	unsigned long head = etr_perf->head;
- 	char **dst_pages, *src_buf;
- 	struct etr_buf *etr_buf = etr_perf->etr_buf;
-@@ -1427,7 +1424,6 @@ static void tmc_etr_sync_perf_buffer(struct etr_perf_buffer *etr_perf,
- 	pg_idx = head >> PAGE_SHIFT;
- 	pg_offset = head & (PAGE_SIZE - 1);
- 	dst_pages = (char **)etr_perf->pages;
--	src_offset = etr_buf->offset + etr_buf->len - to_copy;
- 
- 	while (to_copy > 0) {
- 		/*
-@@ -1475,7 +1471,7 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
- 		      void *config)
- {
- 	bool lost = false;
--	unsigned long flags, size = 0;
-+	unsigned long flags, offset, size = 0;
- 	struct tmc_drvdata *drvdata = dev_get_drvdata(csdev->dev.parent);
- 	struct etr_perf_buffer *etr_perf = config;
- 	struct etr_buf *etr_buf = etr_perf->etr_buf;
-@@ -1503,11 +1499,39 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
- 	spin_unlock_irqrestore(&drvdata->spinlock, flags);
- 
- 	size = etr_buf->len;
-+	offset = etr_buf->offset;
-+	lost |= etr_buf->full;
-+
-+	/*
-+	 * The ETR buffer may be bigger than the space available in the
-+	 * perf ring buffer (handle->size).  If so advance the offset so that we
-+	 * get the latest trace data.  In snapshot mode none of that matters
-+	 * since we are expected to clobber stale data in favour of the latest
-+	 * traces.
-+	 */
- 	if (!etr_perf->snapshot && size > handle->size) {
--		size = handle->size;
-+		u32 mask = tmc_get_memwidth_mask(drvdata);
-+
-+		/*
-+		 * Make sure the new size is aligned in accordance with the
-+		 * requirement explained in function tmc_get_memwidth_mask().
-+		 */
-+		size = handle->size & mask;
-+		offset = etr_buf->offset + etr_buf->len - size;
-+
-+		if (offset >= etr_buf->size)
-+			offset -= etr_buf->size;
- 		lost = true;
- 	}
--	tmc_etr_sync_perf_buffer(etr_perf, size);
-+
-+	/*
-+	 * Insert barrier packets at the beginning, if there was an overflow
-+	 * or if the offset had to be brought forward.
-+	 */
-+	if (lost)
-+		tmc_etr_buf_insert_barrier_packet(etr_buf, offset);
-+
-+	tmc_etr_sync_perf_buffer(etr_perf, offset, size);
- 
- 	/*
- 	 * In snapshot mode we simply increment the head by the number of byte
-@@ -1518,7 +1542,6 @@ tmc_update_etr_buffer(struct coresight_device *csdev,
- 	if (etr_perf->snapshot)
- 		handle->head += size;
- 
--	lost |= etr_buf->full;
- out:
- 	/*
- 	 * Don't set the TRUNCATED flag in snapshot mode because 1) the
--- 
-2.17.1
+
 
