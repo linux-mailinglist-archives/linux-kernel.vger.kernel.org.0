@@ -2,40 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4623199E35
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:49:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 28DD899D61
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:42:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393239AbfHVRsv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:48:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40332 "EHLO mail.kernel.org"
+        id S2405173AbfHVRmD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:42:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44544 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389988AbfHVRWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:21 -0400
+        id S2391726AbfHVRXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:53 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C2EF23400;
-        Thu, 22 Aug 2019 17:22:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 048E821743;
+        Thu, 22 Aug 2019 17:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494540;
-        bh=m5NZwnBFJYJ2c4JlcSy4JuljsJe7navc+ij5rqPDI6U=;
+        s=default; t=1566494632;
+        bh=WRLxgu5pjGZz8vXoOs3/zQIOrHQH6Ij/EdXN46H2njE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fUN9WvuJmtMepgCENBgotxhU8QkP60L1X1O5FqxHt/shmxpIEM4+dzVHXYV620fJv
-         lMZaGTgbScGysSwoFHjyz/XHhiSniPSqqOVNEwdYIEt3117Zd2I+s/2PefBkB5amcQ
-         k5GXRcXoX0dQQh6NvTvfQIlcZw8eYOm3ny59pNuE=
+        b=1cFhF/4CRYYQw7HqEBSJpeDcOJuqVEWfxCpmc+G0ty4XW69V5ZzfXd8RTGz4EEH1V
+         uc6cjj1+kU1lJoqqm9PSIfycsmL5UbWpzXu2vFZN6ePtRtDoyxaS5mlxtfiTFYrf5t
+         jsTNQcv3tC8IQgcZvuVH9jwMfSxUzTFOZdQsdGO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 20/78] scsi: megaraid_sas: fix panic on loading firmware crashdump
-Date:   Thu, 22 Aug 2019 10:18:24 -0700
-Message-Id: <20190822171832.629738393@linuxfoundation.org>
+        stable@vger.kernel.org, Pavel Shilovsky <pshilov@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>
+Subject: [PATCH 4.9 037/103] SMB3: Fix deadlock in validate negotiate hits reconnect
+Date:   Thu, 22 Aug 2019 10:18:25 -0700
+Message-Id: <20190822171730.314854913@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,43 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 3b5f307ef3cb5022bfe3c8ca5b8f2114d5bf6c29 ]
+From: Pavel Shilovsky <pshilov@microsoft.com>
 
-While loading fw crashdump in function fw_crash_buffer_show(), left bytes
-in one dma chunk was not checked, if copying size over it, overflow access
-will cause kernel panic.
+commit e99c63e4d86d3a94818693147b469fa70de6f945 upstream.
 
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Currently we skip SMB2_TREE_CONNECT command when checking during
+reconnect because Tree Connect happens when establishing
+an SMB session. For SMB 3.0 protocol version the code also calls
+validate negotiate which results in SMB2_IOCL command being sent
+over the wire. This may deadlock on trying to acquire a mutex when
+checking for reconnect. Fix this by skipping SMB2_IOCL command
+when doing the reconnect check.
+
+Signed-off-by: Pavel Shilovsky <pshilov@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+CC: Stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/scsi/megaraid/megaraid_sas_base.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/cifs/smb2pdu.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_base.c b/drivers/scsi/megaraid/megaraid_sas_base.c
-index 2422094f1f15c..5e0bac8de6381 100644
---- a/drivers/scsi/megaraid/megaraid_sas_base.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_base.c
-@@ -2752,6 +2752,7 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	u32 size;
- 	unsigned long buff_addr;
- 	unsigned long dmachunk = CRASH_DMA_BUF_SIZE;
-+	unsigned long chunk_left_bytes;
- 	unsigned long src_addr;
- 	unsigned long flags;
- 	u32 buff_offset;
-@@ -2777,6 +2778,8 @@ megasas_fw_crash_buffer_show(struct device *cdev,
- 	}
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -168,7 +168,7 @@ smb2_reconnect(__le16 smb2_command, stru
+ 	if (tcon == NULL)
+ 		return 0;
  
- 	size = (instance->fw_crash_buffer_size * dmachunk) - buff_offset;
-+	chunk_left_bytes = dmachunk - (buff_offset % dmachunk);
-+	size = (size > chunk_left_bytes) ? chunk_left_bytes : size;
- 	size = (size >= PAGE_SIZE) ? (PAGE_SIZE - 1) : size;
+-	if (smb2_command == SMB2_TREE_CONNECT)
++	if (smb2_command == SMB2_TREE_CONNECT || smb2_command == SMB2_IOCTL)
+ 		return 0;
  
- 	src_addr = (unsigned long)instance->crash_buf[buff_offset / dmachunk] +
--- 
-2.20.1
-
+ 	if (tcon->tidStatus == CifsExiting) {
 
 
