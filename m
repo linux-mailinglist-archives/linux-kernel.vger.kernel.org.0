@@ -2,86 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4410898956
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2443998965
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:21:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731181AbfHVCSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 22:18:46 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34204 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730886AbfHVCSN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 22:18:13 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1i0cfX-0001S6-LO; Wed, 21 Aug 2019 22:17:43 -0400
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
-        peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
-        tglx@linutronix.de, mgorman@techsingularity.net,
-        vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 15/15] sched,fair: scale vdiff in wakeup_preempt_entity
-Date:   Wed, 21 Aug 2019 22:17:40 -0400
-Message-Id: <20190822021740.15554-16-riel@surriel.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190822021740.15554-1-riel@surriel.com>
-References: <20190822021740.15554-1-riel@surriel.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1731023AbfHVCVl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 22:21:41 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42082 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729942AbfHVCVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 22:21:40 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 018101A02AC;
+        Thu, 22 Aug 2019 04:21:39 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FA661A0595;
+        Thu, 22 Aug 2019 04:21:33 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 8523040296;
+        Thu, 22 Aug 2019 10:21:25 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com, Liviu Dudau <liviu.dudau@arm.com>,
+        Brian Starkey <brian.starkey@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, leoyang.li@nxp.com
+Cc:     Wen He <wen.he_1@nxp.com>
+Subject: [v4 1/2] dt/bindings: display: Add optional property node define for Mali DP500
+Date:   Thu, 22 Aug 2019 10:11:34 +0800
+Message-Id: <20190822021135.10288-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When a task wakes back up after having gone to sleep, place_entity
-will limit the vruntime difference between min_vruntime and the
-woken up task to half of sysctl_sched_latency.
+Add optional property node 'arm,malidp-arqos-value' for the Mali DP500.
+This property describe the ARQoS levels of DP500's QoS signaling.
 
-The code in wakeup_preempt_entity calculates how much vruntime a
-time slice for the woken up task represents, in wakeup_gran.
-
-It then assumes that all the vruntime used since the task went to
-sleep was used by the currently running task (which has its vruntime
-scaled by calc_delta_fair, as well).
-
-However, that assumption is not necessarily true, and the vruntime
-may have advanced at different rates, pushed ahead by different tasks
-on the CPU. This becomes more visible when the CPU controller is enabled.
-
-This leads to the symptom that a high priority woken up task is likely to
-preempt whatever is running, even if the currently running task is of equal
-or higher priority than the woken up task!
-
-Scaling the vdiff down if the currently running task is also high priority
-solves that symptom.
-
-This is not the correct thing to do if all of the vruntime was accumulated
-by the current task, or other tasks at similar priority, and already scaled
-by the same priority, but I do not have any better ideas on how to tackle
-the "task X got preempted by task Y of the same priority" issue that system
-administrators try to resolve by setting the sched_wakeup_granularity
-sysctl variable to a larger value than half of sysctl_sched_latency...
-
-Signed-off-by: Rik van Riel <riel@surriel.com>
+Signed-off-by: Wen He <wen.he_1@nxp.com>
 ---
- kernel/sched/fair.c | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/display/arm,malidp.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3df5d60b245f..ef7629bdf41d 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -6774,6 +6774,7 @@ wakeup_preempt_entity(struct sched_entity *curr, struct sched_entity *se)
- 	if (vdiff <= 0)
- 		return -1;
+diff --git a/Documentation/devicetree/bindings/display/arm,malidp.txt b/Documentation/devicetree/bindings/display/arm,malidp.txt
+index 2f7870983ef1..7a97a2b48c2a 100644
+--- a/Documentation/devicetree/bindings/display/arm,malidp.txt
++++ b/Documentation/devicetree/bindings/display/arm,malidp.txt
+@@ -37,6 +37,8 @@ Optional properties:
+     Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt)
+     to be used for the framebuffer; if not present, the framebuffer may
+     be located anywhere in memory.
++  - arm,malidp-arqos-high-level: integer of u32 value describing the ARQoS
++    levels of DP500's QoS signaling.
  
-+	vdiff = min((u64)vdiff, calc_delta_fair(vdiff, curr));
- 	gran = wakeup_gran(se);
- 	if (vdiff > gran)
- 		return 1;
+ 
+ Example:
+@@ -54,6 +56,7 @@ Example:
+ 		clocks = <&oscclk2>, <&fpgaosc0>, <&fpgaosc1>, <&fpgaosc1>;
+ 		clock-names = "pxlclk", "mclk", "aclk", "pclk";
+ 		arm,malidp-output-port-lines = /bits/ 8 <8 8 8>;
++		arm,malidp-arqos-high-level = <0xd000d000>;
+ 		port {
+ 			dp0_output: endpoint {
+ 				remote-endpoint = <&tda998x_2_input>;
 -- 
-2.20.1
+2.17.1
 
