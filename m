@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 46DAD99C14
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 55C9999D05
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404549AbfHVRZ5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:25:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47638 "EHLO mail.kernel.org"
+        id S2405001AbfHVRjK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:39:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391796AbfHVRZA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:00 -0400
+        id S2404157AbfHVRYT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:19 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 687422341E;
-        Thu, 22 Aug 2019 17:24:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4CC421743;
+        Thu, 22 Aug 2019 17:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494699;
-        bh=NHbac2QxJ6V8IXj/hcuj/yaFWVSBPxszMbXr9ajtCOI=;
+        s=default; t=1566494658;
+        bh=xBv82axvaCm0znDv9PDHNDmC3AahI4PGfwOwV27pXjI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TKLMXgR1qa6Az0xcork8SL4mVbFmtWhRNBM/uHV01zS2jLMsS0G0857oBaFAgWIpp
-         8Lw3jUrbK5/YKUUzwQWEx6zxmPW4PmjWCoUXSS27n3vVvgUBuHxg3nbGOhO1CIZEZ6
-         UTcw9i34MY/yXB0x4kRe1YUrrfOXe+Ejfs/5G6l0=
+        b=M5fguV837QvzUjYTcsgAPeo3wS04SzJMkobZFevpKR/tL2J9lXrVqQaoCUOEPZZFT
+         xH+8CZaYfqk9HOtc4+IbwpGOdD0a3zYEWypSFvIoEcHcw/6/x1m/Qzmxd/CD9JinLn
+         u/xtgIDY6B6MH7leJIw4eX9HA/Ge2hOkhX3x64q8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bob Ham <bob.ham@puri.sm>,
-        "Angus Ainslie (Purism)" <angus@akkea.ca>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 52/71] USB: serial: option: add the BroadMobi BM818 card
-Date:   Thu, 22 Aug 2019 10:19:27 -0700
-Message-Id: <20190822171730.075776705@linuxfoundation.org>
+        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.9 100/103] net/mlx5e: Only support tx/rx pause setting for port owner
+Date:   Thu, 22 Aug 2019 10:19:28 -0700
+Message-Id: <20190822171733.191929634@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,45 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Ham <bob.ham@puri.sm>
+From: Huy Nguyen <huyn@mellanox.com>
 
-commit e5d8badf37e6b547842f2fcde10361b29e08bd36 upstream.
+[ Upstream commit 466df6eb4a9e813b3cfc674363316450c57a89c5 ]
 
-Add a VID:PID for the BroadMobi BM818 M.2 card
+Only support changing tx/rx pause frame setting if the net device
+is the vport group manager.
 
-T:  Bus=01 Lev=03 Prnt=40 Port=03 Cnt=01 Dev#= 44 Spd=480 MxCh= 0
-D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
-P:  Vendor=2020 ProdID=2060 Rev=00.00
-S:  Manufacturer=Qualcomm, Incorporated
-S:  Product=Qualcomm CDMA Technologies MSM
-C:  #Ifs= 5 Cfg#= 1 Atr=e0 MxPwr=500mA
-I:  If#=0x0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-I:  If#=0x1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-I:  If#=0x2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-I:  If#=0x3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=fe Prot=ff Driver=(none)
-I:  If#=0x4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
-
-Signed-off-by: Bob Ham <bob.ham@puri.sm>
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
-Cc: stable <stable@vger.kernel.org>
-[ johan: use USB_DEVICE_INTERFACE_CLASS() ]
-Signed-off-by: Johan Hovold <johan@kernel.org>
+Fixes: 3c2d18ef22df ("net/mlx5e: Support ethtool get/set_pauseparam")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1962,6 +1962,8 @@ static const struct usb_device_id option
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2031, 0xff),			/* Olicard 600 */
- 	  .driver_info = RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x2060, 0xff),			/* BroadMobi BM818 */
-+	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2020, 0x4000, 0xff) },			/* OLICARD300 - MT6225 */
- 	{ USB_DEVICE(INOVIA_VENDOR_ID, INOVIA_SEW858) },
- 	{ USB_DEVICE(VIATELECOM_VENDOR_ID, VIATELECOM_PRODUCT_CDS7) },
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1149,6 +1149,9 @@ static int mlx5e_set_pauseparam(struct n
+ 	struct mlx5_core_dev *mdev = priv->mdev;
+ 	int err;
+ 
++	if (!MLX5_CAP_GEN(mdev, vport_group_manager))
++		return -EOPNOTSUPP;
++
+ 	if (pauseparam->autoneg)
+ 		return -EINVAL;
+ 
 
 
