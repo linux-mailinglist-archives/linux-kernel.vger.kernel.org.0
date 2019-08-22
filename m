@@ -2,39 +2,37 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 18A0B99B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 43BB099BAC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403855AbfHVRXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42434 "EHLO mail.kernel.org"
+        id S2391892AbfHVR0i (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403826AbfHVRXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:07 -0400
+        id S2404396AbfHVRZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:22 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 688EA23407;
-        Thu, 22 Aug 2019 17:23:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E2B192064A;
+        Thu, 22 Aug 2019 17:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494586;
-        bh=6fU+9PuammxkfJEvmn0ipo4sM2/Oi5xnKuBsX/DqtLI=;
+        s=default; t=1566494722;
+        bh=Qlp3x3U+zOCKY7hCtsldlsB4qi6UWQSOuURbtxgayK8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ytww0zm+wIhGrV4gr9SgU0mPjNiwrv8N423Qtqa1/tS4PfsTZDLq1WbtZ7CEmQamC
-         6yKzPeiWBLui3yYyMOKS3JvXMgz5A191CexL2YI6j9w97BoW3rL9+rkSbRpcQ75N03
-         FHlhk3hyKmnj9QanxEX6un3aKG7FrtXI23tphZf8=
+        b=iihzBwBHjdv86Nt0AEsk+L+L7I1VK5+z1fvQbWrpLzgGBv9upfZ+UlI++gjXsUMF8
+         4SVH5kvJQsaE2EyEmmKvbPvBMVa/hwqFSgXEBW3xwD5LB99r144dxuN6FG6eA4tcBV
+         lSqDIBKRFC7/bWKgGXeNlgXZJBUqr9LDEsHR80mg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+965152643a75a56737be@syzkaller.appspotmail.com,
-        Oliver Neukum <oneukum@suse.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.4 38/78] HID: holtek: test for sanity of intfdata
-Date:   Thu, 22 Aug 2019 10:18:42 -0700
-Message-Id: <20190822171833.144706924@linuxfoundation.org>
+        stable@vger.kernel.org, Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PATCH 4.19 10/85] xtensa: add missing isync to the cpu_reset TLB code
+Date:   Thu, 22 Aug 2019 10:18:43 -0700
+Message-Id: <20190822171731.471245216@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,42 +42,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit 01ec0a5f19c8c82960a07f6c7410fc9e01d7fb51 upstream.
+commit cd8869f4cb257f22b89495ca40f5281e58ba359c upstream.
 
-The ioctl handler uses the intfdata of a second interface,
-which may not be present in a broken or malicious device, hence
-the intfdata needs to be checked for NULL.
+ITLB entry modifications must be followed by the isync instruction
+before the new entries are possibly used. cpu_reset lacks one isync
+between ITLB way 6 initialization and jump to the identity mapping.
+Add missing isync to xtensa cpu_reset.
 
-[jkosina@suse.cz: fix newly added spurious space]
-Reported-by: syzbot+965152643a75a56737be@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/hid-holtek-kbd.c |    9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/xtensa/kernel/setup.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/hid/hid-holtek-kbd.c
-+++ b/drivers/hid/hid-holtek-kbd.c
-@@ -126,9 +126,14 @@ static int holtek_kbd_input_event(struct
- 
- 	/* Locate the boot interface, to receive the LED change events */
- 	struct usb_interface *boot_interface = usb_ifnum_to_if(usb_dev, 0);
-+	struct hid_device *boot_hid;
-+	struct hid_input *boot_hid_input;
- 
--	struct hid_device *boot_hid = usb_get_intfdata(boot_interface);
--	struct hid_input *boot_hid_input = list_first_entry(&boot_hid->inputs,
-+	if (unlikely(boot_interface == NULL))
-+		return -ENODEV;
-+
-+	boot_hid = usb_get_intfdata(boot_interface);
-+	boot_hid_input = list_first_entry(&boot_hid->inputs,
- 		struct hid_input, list);
- 
- 	return boot_hid_input->input->event(boot_hid_input->input, type, code,
+--- a/arch/xtensa/kernel/setup.c
++++ b/arch/xtensa/kernel/setup.c
+@@ -515,6 +515,7 @@ void cpu_reset(void)
+ 				      "add	%2, %2, %7\n\t"
+ 				      "addi	%0, %0, -1\n\t"
+ 				      "bnez	%0, 1b\n\t"
++				      "isync\n\t"
+ 				      /* Jump to identity mapping */
+ 				      "jx	%3\n"
+ 				      "2:\n\t"
 
 
