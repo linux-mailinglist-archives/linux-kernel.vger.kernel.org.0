@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CE44798F9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B4F998F97
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:38:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387412AbfHVJeB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:34:01 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35853 "EHLO shell.v3.sk"
+        id S1733298AbfHVJd4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:33:56 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35833 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733284AbfHVJd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:33:59 -0400
+        id S1733263AbfHVJdw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:52 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 42491D749F;
-        Thu, 22 Aug 2019 11:33:57 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 85DC5D7568;
+        Thu, 22 Aug 2019 11:33:47 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id fRdB2mApLZv0; Thu, 22 Aug 2019 11:33:29 +0200 (CEST)
+        with ESMTP id sVi2EZBn7Y0o; Thu, 22 Aug 2019 11:33:24 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 030CCD7548;
+        by zimbra.v3.sk (Postfix) with ESMTP id 5275ED755A;
         Thu, 22 Aug 2019 11:32:59 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id EN6T64Sm9TiR; Thu, 22 Aug 2019 11:27:29 +0200 (CEST)
+        with ESMTP id ClbKA0x62TeE; Thu, 22 Aug 2019 11:27:29 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4239DD7561;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 92AC0D7564;
         Thu, 22 Aug 2019 11:26:49 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
@@ -40,9 +40,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 09/20] irqchip/mmp: coexist with GIC root IRQ controller
-Date:   Thu, 22 Aug 2019 11:26:32 +0200
-Message-Id: <20190822092643.593488-10-lkundrak@v3.sk>
+Subject: [PATCH v2 10/20] ARM: l2c: add definition for FWA in PL310 aux register
+Date:   Thu, 22 Aug 2019 11:26:33 +0200
+Message-Id: <20190822092643.593488-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -53,36 +53,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On MMP3, the GIC can be set as a root IRQ interrupt controller. If the
-device tree indicated that GIC is enabled, avoid hooking up
-mmp2_handle_irq().
-
-The interrupt muxes are still being used.
+The PL310 also has a "Force write allocate" bits in the Auxiliary
+Control Register.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/irqchip/irq-mmp.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/include/asm/hardware/cache-l2x0.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-index 25848d73f6792..c8e7b098ccf71 100644
---- a/drivers/irqchip/irq-mmp.c
-+++ b/drivers/irqchip/irq-mmp.c
-@@ -470,7 +470,12 @@ static int __init mmp3_of_init(struct device_node *n=
-ode,
- 	icu_data[0].conf_disable =3D mmp3_conf.conf_disable;
- 	icu_data[0].conf_mask =3D mmp3_conf.conf_mask;
- 	icu_data[0].conf2_mask =3D mmp3_conf.conf2_mask;
--	set_handle_irq(mmp2_handle_irq);
-+
-+	if (!parent) {
-+		/* This is the main interrupt controller. */
-+		set_handle_irq(mmp2_handle_irq);
-+	}
-+
- 	max_icu_nr =3D 1;
- 	return 0;
- }
+diff --git a/arch/arm/include/asm/hardware/cache-l2x0.h b/arch/arm/includ=
+e/asm/hardware/cache-l2x0.h
+index 32edfadb15935..a6d4ee86ba543 100644
+--- a/arch/arm/include/asm/hardware/cache-l2x0.h
++++ b/arch/arm/include/asm/hardware/cache-l2x0.h
+@@ -118,6 +118,8 @@
+ #define L310_AUX_CTRL_STORE_LIMITATION		BIT(11)	/* R2P0+ */
+ #define L310_AUX_CTRL_EXCLUSIVE_CACHE		BIT(12)
+ #define L310_AUX_CTRL_ASSOCIATIVITY_16		BIT(16)
++#define L310_AUX_CTRL_FWA_SHIFT			23
++#define L310_AUX_CTRL_FWA_MASK			(3 << 23)
+ #define L310_AUX_CTRL_CACHE_REPLACE_RR		BIT(25)	/* R2P0+ */
+ #define L310_AUX_CTRL_NS_LOCKDOWN		BIT(26)
+ #define L310_AUX_CTRL_NS_INT_CTRL		BIT(27)
 --=20
 2.21.0
 
