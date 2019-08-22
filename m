@@ -2,141 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DB269A086
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:54:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDCDE9A08B
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:57:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387781AbfHVTyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:54:17 -0400
-Received: from perceval.ideasonboard.com ([213.167.242.64]:50732 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbfHVTyR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:54:17 -0400
-Received: from pendragon.ideasonboard.com (dfj612yhrgyx302h3jwwy-3.rev.dnainternet.fi [IPv6:2001:14ba:21f5:5b00:ce28:277f:58d7:3ca4])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4CC8C2B2;
-        Thu, 22 Aug 2019 21:54:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1566503654;
-        bh=GHCA3gkwB4RNKsfkuiYa//90I1sQp0GbRnug/PQKMuY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FdbAKJGU0PAGTJJ+3FUf2mZfUKKsADKgnVPfWCsjSgjgW8GbyBxNCS46RRYy2FRbm
-         asG6pEl8oQNjGBRvEv73m3+dT/Zn4Y0xQxQ7TR5aig7k5ocPn+gNtEAf1HJrfFAG0G
-         sg0AQ5sWUKh5Il1ccVxw6hQC/7g8swIGeA5PmaXs=
-Date:   Thu, 22 Aug 2019 22:54:07 +0300
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Jacopo Mondi <jacopo@jmondi.org>
-Cc:     Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 19/19] drm: rcar-du: kms: Update CMM in atomic commit
- tail
-Message-ID: <20190822195407.GL5027@pendragon.ideasonboard.com>
-References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
- <20190706140746.29132-20-jacopo+renesas@jmondi.org>
- <20190820184215.GM10820@pendragon.ideasonboard.com>
- <20190822191925.dnbdihnt3ole2nqx@uno.localdomain>
+        id S2389452AbfHVT4a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:56:30 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:44156 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725873AbfHVT4a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 15:56:30 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F8BB18C4261;
+        Thu, 22 Aug 2019 19:56:30 +0000 (UTC)
+Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 623725D6A7;
+        Thu, 22 Aug 2019 19:56:29 +0000 (UTC)
+Date:   Thu, 22 Aug 2019 14:56:27 -0500
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Raphael Gault <raphael.gault@arm.com>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
+        julien.thierry.kdev@gmail.com, raph.gault+kdev@gmail.com
+Subject: Re: [RFC v4 00/18] objtool: Add support for arm64
+Message-ID: <20190822195627.mzi3c4sjqnvnzaho@treble>
+References: <20190816122403.14994-1-raphael.gault@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190822191925.dnbdihnt3ole2nqx@uno.localdomain>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190816122403.14994-1-raphael.gault@arm.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.62]); Thu, 22 Aug 2019 19:56:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacopo,
-
-On Thu, Aug 22, 2019 at 09:19:25PM +0200, Jacopo Mondi wrote:
-> On Tue, Aug 20, 2019 at 09:42:15PM +0300, Laurent Pinchart wrote:
-> > On Sat, Jul 06, 2019 at 04:07:46PM +0200, Jacopo Mondi wrote:
-> > > Update CMM settings at in the atomic commit tail helper method.
-> > >
-> > > The CMM is updated with new gamma values provided to the driver
-> > > in the GAMMA_LUT blob property.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/rcar_du_kms.c | 35 +++++++++++++++++++++++++++
-> > >  1 file changed, 35 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_kms.c b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> > > index b79cda2f5531..f9aece78ca5f 100644
-> > > --- a/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_du_kms.c
-> > > @@ -21,6 +21,7 @@
-> > >  #include <linux/of_platform.h>
-> > >  #include <linux/wait.h>
-> > >
-> > > +#include "rcar_cmm.h"
-> > >  #include "rcar_du_crtc.h"
-> > >  #include "rcar_du_drv.h"
-> > >  #include "rcar_du_encoder.h"
-> > > @@ -287,6 +288,37 @@ rcar_du_fb_create(struct drm_device *dev, struct drm_file *file_priv,
-> > >   * Atomic Check and Update
-> > >   */
-> > >
-> > > +static void rcar_du_atomic_commit_update_cmm(struct drm_crtc *crtc,
-> > > +					     struct drm_crtc_state *old_state)
-> > > +{
-> > > +	struct rcar_du_crtc *rcrtc = to_rcar_crtc(crtc);
-> > > +	struct rcar_cmm_config cmm_config = {};
-> > > +
-> > > +	if (!rcrtc->cmm || !crtc->state->color_mgmt_changed)
-> > > +		return;
-> > > +
-> > > +	if (!crtc->state->gamma_lut) {
-> > > +		cmm_config.lut.enable = false;
-> > > +		rcar_cmm_setup(rcrtc->cmm, &cmm_config);
-> > > +
-> > > +		return;
-> > > +	}
-> > > +
-> > > +	cmm_config.lut.enable = true;
-> > > +	cmm_config.lut.table = (struct drm_color_lut *)
-> > > +			       crtc->state->gamma_lut->data;
-> > > +
-> > > +	/* Set LUT table size to 0 if entries should not be updated. */
-> > > +	if (!old_state->gamma_lut ||
-> > > +	    old_state->gamma_lut->base.id != crtc->state->gamma_lut->base.id)
-> > > +		cmm_config.lut.size = crtc->state->gamma_lut->length
-> > > +				    / sizeof(cmm_config.lut.table[0]);
-> > > +	else
-> > > +		cmm_config.lut.size = 0;
-> > > +
-> > > +	rcar_cmm_setup(rcrtc->cmm, &cmm_config);
-> > > +}
-> > > +
-> > >  static int rcar_du_atomic_check(struct drm_device *dev,
-> > >  				struct drm_atomic_state *state)
-> > >  {
-> > > @@ -329,6 +361,9 @@ static void rcar_du_atomic_commit_tail(struct drm_atomic_state *old_state)
-> > >  			rcdu->dpad1_source = rcrtc->index;
-> > >  	}
-> > >
-> > > +	for_each_old_crtc_in_state(old_state, crtc, crtc_state, i)
-> > > +		rcar_du_atomic_commit_update_cmm(crtc, crtc_state);
-> > > +
-> >
-> > I think this looks good overall, but I wonder if we couldn't simplify
-> > the CMM driver suspend/resume and LUT caching due to config while not
-> > enabled by handling it on the DU side. I have a rework on the commit
-> > tail handler in progress, I'll think how this could be done. For now I
-> > think you can leave it as is.
+On Fri, Aug 16, 2019 at 01:23:45PM +0100, Raphael Gault wrote:
+> Hi,
 > 
-> Does this mean I have your R-b tag ? :)
+> Changes since RFC V3:
+> * Rebased on tip/master: Switch/jump table had been refactored
+> * Take Catalin Marinas comments into account regarding the asm macro for
+>   marking exceptions.
+> 
+> As of now, objtool only supports the x86_64 architecture but the
+> groundwork has already been done in order to add support for other
+> architectures without too much effort.
+> 
+> This series of patches adds support for the arm64 architecture
+> based on the Armv8.5 Architecture Reference Manual.
+> 
+> Objtool will be a valuable tool to progress and provide more guarentees
+> on live patching which is a work in progress for arm64.
+> 
+> Once we have the base of objtool working the next steps will be to
+> port Peter Z's uaccess validation for arm64.
 
-I'd like to review this in the context of v3 :-)
+Hi Raphael,
 
-> > >  	/* Apply the atomic update. */
-> > >  	drm_atomic_helper_commit_modeset_disables(dev, old_state);
-> > >  	drm_atomic_helper_commit_planes(dev, old_state,
+Sorry about the long delay.  I have some comments coming shortly.
+
+One general comment: I noticed that several of the (mostly minor)
+suggested changes I made for v1 haven't been fixed.
+
+I'll try to suggest them again here for v4, so you don't need to go back
+and find them.  But in the future please try to incorporate all the
+comments from previous patch sets before posting new versions.  I'm sure
+it wasn't intentional, as you did acknowledge and agree to most of the
+changes.  But it does waste people's time and goodwill if you neglect to
+incorporate their suggestions.  Thanks.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Josh
