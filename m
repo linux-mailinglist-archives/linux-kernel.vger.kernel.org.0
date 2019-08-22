@@ -2,134 +2,102 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 66B299899D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:55:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E6095989B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 05:02:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfHVCzf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 22:55:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:54780 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728348AbfHVCzf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 22:55:35 -0400
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6B26189DAE0;
-        Thu, 22 Aug 2019 02:55:34 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-82.pek2.redhat.com [10.72.12.82])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C4152600CD;
-        Thu, 22 Aug 2019 02:55:28 +0000 (UTC)
-From:   Kairui Song <kasong@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Baoquan He <bhe@redhat.com>, Lianbo Jiang <lijiang@redhat.com>,
-        Dave Young <dyoung@redhat.com>, x86@kernel.org,
-        "kexec@lists.infradead.org" <kexec@lists.infradead.org>,
-        Kairui Song <kasong@redhat.com>
-Subject: [PATCH] x86/kdump: Reserve extra memory when SME or SEV is active
-Date:   Thu, 22 Aug 2019 10:53:28 +0800
-Message-Id: <20190822025328.17151-1-kasong@redhat.com>
+        id S1729505AbfHVDCJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 23:02:09 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54754 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728286AbfHVDCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 23:02:08 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7M31jQ6103174;
+        Wed, 21 Aug 2019 23:02:02 -0400
+Received: from ppma04wdc.us.ibm.com (1a.90.2fa9.ip4.static.sl-reverse.com [169.47.144.26])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhgqt3ka3-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Wed, 21 Aug 2019 23:02:02 -0400
+Received: from pps.filterd (ppma04wdc.us.ibm.com [127.0.0.1])
+        by ppma04wdc.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7M315UB019729;
+        Thu, 22 Aug 2019 03:02:01 GMT
+Received: from b01cxnp22033.gho.pok.ibm.com (b01cxnp22033.gho.pok.ibm.com [9.57.198.23])
+        by ppma04wdc.us.ibm.com with ESMTP id 2ufye0e0ag-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Aug 2019 03:02:01 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7M320Ie50659746
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Aug 2019 03:02:00 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D238EB2067;
+        Thu, 22 Aug 2019 03:02:00 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3187B2064;
+        Thu, 22 Aug 2019 03:02:00 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.200.24])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Aug 2019 03:02:00 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 9BD5516C65CA; Wed, 21 Aug 2019 20:02:00 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 20:02:00 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     josh@joshtriplett.org, rcu@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rcu: don't include <linux/ktime.h> in rcutiny.h
+Message-ID: <20190822030200.GX28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190822015343.4058-1-hch@lst.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.63]); Thu, 22 Aug 2019 02:55:34 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822015343.4058-1-hch@lst.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_03:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908220030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit c7753208a94c ("x86, swiotlb: Add memory encryption support"),
-SWIOTLB will be enabled even if there is less than 4G of memory when SME
-is active, to support DMA of devices that not support address with the
-encrypt bit.
+On Thu, Aug 22, 2019 at 10:53:43AM +0900, Christoph Hellwig wrote:
+> The kbuild reported a built failure due to a header loop when RCUTINY is
+> enabled with my pending riscv-nommu port.  Switch rcutiny.h to only
+> include the minimal required header to get HZ instead.
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
 
-And commit aba2d9a6385a ("iommu/amd: Do not disable SWIOTLB if SME is
-active") make the kernel keep SWIOTLB enabled even if there is an IOMMU.
+Queued for review and testing, thank you!
 
-Then commit d7b417fa08d1 ("x86/mm: Add DMA support for SEV memory
-encryption") will always force SWIOTLB to be enabled when SEV is active
-in all cases.
+Do you need this in v5.4?  My normal workflow would put it into v5.5.
 
-Now, when either SME or SEV is active, SWIOTLB will be force enabled,
-and this is also true for kdump kernel. As a result kdump kernel will
-run out of already scarce pre-reserved memory easily.
+							Thanx, Paul
 
-So when SME/SEV is active, reserve extra memory for SWIOTLB to ensure
-kdump kernel have enough memory, except when "crashkernel=size[KMG],high"
-is specified or any offset is used. As for the high reservation case, an
-extra low memory region will always be reserved and that is enough for
-SWIOTLB. Else if the offset format is used, user should be fully aware
-of any possible kdump kernel memory requirement and have to organize the
-memory usage carefully.
-
-Signed-off-by: Kairui Song <kasong@redhat.com>
----
- arch/x86/kernel/setup.c | 26 +++++++++++++++++++++++---
- 1 file changed, 23 insertions(+), 3 deletions(-)
-
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index bbe35bf879f5..ed91fa9d9f6e 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -528,7 +528,7 @@ static int __init reserve_crashkernel_low(void)
- 
- static void __init reserve_crashkernel(void)
- {
--	unsigned long long crash_size, crash_base, total_mem;
-+	unsigned long long crash_size, crash_base, total_mem, mem_enc_req;
- 	bool high = false;
- 	int ret;
- 
-@@ -550,6 +550,17 @@ static void __init reserve_crashkernel(void)
- 		return;
- 	}
- 
-+	/*
-+	 * When SME/SEV is active, it will always required an extra SWIOTLB
-+	 * region.
-+	 */
-+	if (sme_active() || sev_active()) {
-+		mem_enc_req = ALIGN(swiotlb_size_or_default(), SZ_1M);
-+		pr_info("Memory encryption is active, crashkernel needs %ldMB extra memory\n",
-+				(unsigned long)(mem_enc_req >> 20));
-+	} else
-+		mem_enc_req = 0;
-+
- 	/* 0 means: find the address automatically */
- 	if (!crash_base) {
- 		/*
-@@ -563,11 +574,19 @@ static void __init reserve_crashkernel(void)
- 		if (!high)
- 			crash_base = memblock_find_in_range(CRASH_ALIGN,
- 						CRASH_ADDR_LOW_MAX,
--						crash_size, CRASH_ALIGN);
--		if (!crash_base)
-+						crash_size + mem_enc_req,
-+						CRASH_ALIGN);
-+		/*
-+		 * For high reservation, an extra low memory for SWIOTLB will
-+		 * always be reserved later, so no need to reserve extra
-+		 * memory for memory encryption case here.
-+		 */
-+		if (!crash_base) {
-+			mem_enc_req = 0;
- 			crash_base = memblock_find_in_range(CRASH_ALIGN,
- 						CRASH_ADDR_HIGH_MAX,
- 						crash_size, CRASH_ALIGN);
-+		}
- 		if (!crash_base) {
- 			pr_info("crashkernel reservation failed - No suitable area found.\n");
- 			return;
-@@ -583,6 +602,7 @@ static void __init reserve_crashkernel(void)
- 			return;
- 		}
- 	}
-+	crash_size += mem_enc_req;
- 	ret = memblock_reserve(crash_base, crash_size);
- 	if (ret) {
- 		pr_err("%s: Error reserving crashkernel memblock.\n", __func__);
--- 
-2.21.0
-
+> ---
+>  include/linux/rcutiny.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/rcutiny.h b/include/linux/rcutiny.h
+> index 8e727f57d814..9bf1dfe7781f 100644
+> --- a/include/linux/rcutiny.h
+> +++ b/include/linux/rcutiny.h
+> @@ -12,7 +12,7 @@
+>  #ifndef __LINUX_TINY_H
+>  #define __LINUX_TINY_H
+>  
+> -#include <linux/ktime.h>
+> +#include <asm/param.h> /* for HZ */
+>  
+>  /* Never flag non-existent other CPUs! */
+>  static inline bool rcu_eqs_special_set(int cpu) { return false; }
+> -- 
+> 2.20.1
+> 
