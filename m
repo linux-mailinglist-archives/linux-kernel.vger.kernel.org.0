@@ -2,40 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C56D599DF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:47:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E96599D66
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:42:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390700AbfHVRWl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:22:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41070 "EHLO mail.kernel.org"
+        id S2392689AbfHVRmV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:42:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44422 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391408AbfHVRWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:38 -0400
+        id S2404012AbfHVRXu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:50 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB41223406;
-        Thu, 22 Aug 2019 17:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0504423766;
+        Thu, 22 Aug 2019 17:23:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494557;
-        bh=Hx/oTr1LiKPxSvknHAXUYWhatBWqSa8VofgNXmS2oX8=;
+        s=default; t=1566494629;
+        bh=B7kkM0ZlWxR9GSrJ+E7aG9eJznkgKGpsBWxZ7RuDDjs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PRPVii60cRiQci+D4Tv2JtMXv3P/x2EXvC5gMD1UBhmkqGIZ3LbU5/+ta5G1zaamm
-         DI7Y2YLJfLxjnV9dlECVxThIq063LB8MaMF2CTs1auS1XpY55PX+Abw59EuDKppvFQ
-         6g2DzrbCnyfZ2zCfV+Ifjcmcv1ZJ54FzYZxRR9uQ=
+        b=AOQVwJHxX2IdjXS7nIi1VZgFJxO/LPSuLv8CtMJpYMse4wzA6qzxpCdnsDc2zgPWW
+         3QylI4qzRnwKYZujQ/MbwQe762tp2HiDCr2qsexGnvCs9Igj8itPKwtcTMl7TTdyqm
+         ouLKQ56kdw16wPwe/YHvDSczhRQq8KC8GCGwL1DQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com,
-        Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 43/78] net: usb: pegasus: fix improper read if get_registers() fail
-Date:   Thu, 22 Aug 2019 10:18:47 -0700
-Message-Id: <20190822171833.287668797@linuxfoundation.org>
+        stable@vger.kernel.org, Hui Wang <hui.wang@canonical.com>,
+        Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.9 060/103] ALSA: hda - Add a generic reboot_notify
+Date:   Thu, 22 Aug 2019 10:18:48 -0700
+Message-Id: <20190822171731.220559115@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,32 +43,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kirjanov <kda@linux-powerpc.org>
+From: Hui Wang <hui.wang@canonical.com>
 
-commit 224c04973db1125fcebefffd86115f99f50f8277 upstream.
+commit 871b9066027702e6e6589da0e1edd3b7dede7205 upstream.
 
-get_registers() may fail with -ENOMEM and in this
-case we can read a garbage from the status variable tmp.
+Make codec enter D3 before rebooting or poweroff can fix the noise
+issue on some laptops. And in theory it is harmless for all codecs
+to enter D3 before rebooting or poweroff, let us add a generic
+reboot_notify, then realtek and conexant drivers can call this
+function.
 
-Reported-by: syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com
-Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: stable@vger.kernel.org
+Signed-off-by: Hui Wang <hui.wang@canonical.com>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/net/usb/pegasus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/pci/hda/hda_generic.c    |   19 +++++++++++++++++++
+ sound/pci/hda/hda_generic.h    |    1 +
+ sound/pci/hda/patch_conexant.c |    6 +-----
+ sound/pci/hda/patch_realtek.c  |   11 +----------
+ 4 files changed, 22 insertions(+), 15 deletions(-)
 
---- a/drivers/net/usb/pegasus.c
-+++ b/drivers/net/usb/pegasus.c
-@@ -285,7 +285,7 @@ static void mdio_write(struct net_device
- static int read_eprom_word(pegasus_t *pegasus, __u8 index, __u16 *retdata)
- {
- 	int i;
--	__u8 tmp;
-+	__u8 tmp = 0;
- 	__le16 retdatai;
- 	int ret;
+--- a/sound/pci/hda/hda_generic.c
++++ b/sound/pci/hda/hda_generic.c
+@@ -5849,6 +5849,24 @@ void snd_hda_gen_free(struct hda_codec *
+ }
+ EXPORT_SYMBOL_GPL(snd_hda_gen_free);
  
++/**
++ * snd_hda_gen_reboot_notify - Make codec enter D3 before rebooting
++ * @codec: the HDA codec
++ *
++ * This can be put as patch_ops reboot_notify function.
++ */
++void snd_hda_gen_reboot_notify(struct hda_codec *codec)
++{
++	/* Make the codec enter D3 to avoid spurious noises from the internal
++	 * speaker during (and after) reboot
++	 */
++	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
++	snd_hda_codec_write(codec, codec->core.afg, 0,
++			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
++	msleep(10);
++}
++EXPORT_SYMBOL_GPL(snd_hda_gen_reboot_notify);
++
+ #ifdef CONFIG_PM
+ /**
+  * snd_hda_gen_check_power_status - check the loopback power save state
+@@ -5876,6 +5894,7 @@ static const struct hda_codec_ops generi
+ 	.init = snd_hda_gen_init,
+ 	.free = snd_hda_gen_free,
+ 	.unsol_event = snd_hda_jack_unsol_event,
++	.reboot_notify = snd_hda_gen_reboot_notify,
+ #ifdef CONFIG_PM
+ 	.check_power_status = snd_hda_gen_check_power_status,
+ #endif
+--- a/sound/pci/hda/hda_generic.h
++++ b/sound/pci/hda/hda_generic.h
+@@ -322,6 +322,7 @@ int snd_hda_gen_parse_auto_config(struct
+ 				  struct auto_pin_cfg *cfg);
+ int snd_hda_gen_build_controls(struct hda_codec *codec);
+ int snd_hda_gen_build_pcms(struct hda_codec *codec);
++void snd_hda_gen_reboot_notify(struct hda_codec *codec);
+ 
+ /* standard jack event callbacks */
+ void snd_hda_gen_hp_automute(struct hda_codec *codec,
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -216,11 +216,7 @@ static void cx_auto_reboot_notify(struct
+ 	/* Turn the problematic codec into D3 to avoid spurious noises
+ 	   from the internal speaker during (and after) reboot */
+ 	cx_auto_turn_eapd(codec, spec->num_eapds, spec->eapds, false);
+-
+-	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
+-	snd_hda_codec_write(codec, codec->core.afg, 0,
+-			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
+-	msleep(10);
++	snd_hda_gen_reboot_notify(codec);
+ }
+ 
+ static void cx_auto_free(struct hda_codec *codec)
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -802,15 +802,6 @@ static void alc_reboot_notify(struct hda
+ 		alc_shutup(codec);
+ }
+ 
+-/* power down codec to D3 at reboot/shutdown; set as reboot_notify ops */
+-static void alc_d3_at_reboot(struct hda_codec *codec)
+-{
+-	snd_hda_codec_set_power_to_all(codec, codec->core.afg, AC_PWRST_D3);
+-	snd_hda_codec_write(codec, codec->core.afg, 0,
+-			    AC_VERB_SET_POWER_STATE, AC_PWRST_D3);
+-	msleep(10);
+-}
+-
+ #define alc_free	snd_hda_gen_free
+ 
+ #ifdef CONFIG_PM
+@@ -4473,7 +4464,7 @@ static void alc_fixup_tpt440_dock(struct
+ 	struct alc_spec *spec = codec->spec;
+ 
+ 	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
+-		spec->reboot_notify = alc_d3_at_reboot; /* reduce noise */
++		spec->reboot_notify = snd_hda_gen_reboot_notify; /* reduce noise */
+ 		spec->parse_flags = HDA_PINCFG_NO_HP_FIXUP;
+ 		codec->power_save_node = 0; /* avoid click noises */
+ 		snd_hda_apply_pincfgs(codec, pincfgs);
 
 
