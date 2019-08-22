@@ -2,39 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D3D9999B29
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:24:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C2F599B52
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389844AbfHVRWQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:22:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39974 "EHLO mail.kernel.org"
+        id S2403976AbfHVRXk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43272 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730997AbfHVRWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:14 -0400
+        id S2403948AbfHVRX0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:26 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44C96233FD;
-        Thu, 22 Aug 2019 17:22:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03BFB23400;
+        Thu, 22 Aug 2019 17:23:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494533;
-        bh=9u2CoFWIChXQB7BT8n5JYZmcQmil3bWK6/eJ7jJASD4=;
+        s=default; t=1566494606;
+        bh=uZoYPNP9h2RnFw8rgES6mbSeGOZpTQnaYDYan0JsDA4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mI+sDNUOvIqDHD9o60nKk/RKgbHq2WG6lpuIPEP/CVz6uCMAggCvM/XJ3Ya/m2Ryq
-         BeA5BZEw25TInwx2bRVFu7gk8gTtqiogMuhRN2FQV4cewjRmzUS3kv/hluPOrLR7R1
-         qsp7AL8QCpBEdf2GEZYvHpfh9oL6W7iMEvVBnq0g=
+        b=SbZHKv/pI351wURk1BqpzVLA6R7EkLjn+YK3NkYqBh1KNMullqW/mTVczI4UKLfpR
+         KTrSg6LA3SQNkekH+zEwLk6PAxA267a14llNe+6V32dtl7giNPvGCwUAJPVKhGXoI3
+         sx02ksutdz4miQSYeWcAVlH35hestoGSKemCSYHw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 11/78] mac80211: dont warn about CW params when not using them
-Date:   Thu, 22 Aug 2019 10:18:15 -0700
-Message-Id: <20190822171832.370119925@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Hurley <peter@hurleysoftware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 029/103] tty/ldsem, locking/rwsem: Add missing ACQUIRE to read_failed sleep loop
+Date:   Thu, 22 Aug 2019 10:18:17 -0700
+Message-Id: <20190822171730.019752147@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,50 +47,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit d2b3fe42bc629c2d4002f652b3abdfb2e72991c7 ]
+[ Upstream commit 952041a8639a7a3a73a2b6573cb8aa8518bc39f8 ]
 
-ieee80211_set_wmm_default() normally sets up the initial CW min/max for
-each queue, except that it skips doing this if the driver doesn't
-support ->conf_tx. We still end up calling drv_conf_tx() in some cases
-(e.g., ieee80211_reconfig()), which also still won't do anything
-useful...except it complains here about the invalid CW parameters.
+While reviewing rwsem down_slowpath, Will noticed ldsem had a copy of
+a bug we just found for rwsem.
 
-Let's just skip the WARN if we weren't going to do anything useful with
-the parameters.
+  X = 0;
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Link: https://lore.kernel.org/r/20190718015712.197499-1-briannorris@chromium.org
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+  CPU0			CPU1
+
+  rwsem_down_read()
+    for (;;) {
+      set_current_state(TASK_UNINTERRUPTIBLE);
+
+                        X = 1;
+                        rwsem_up_write();
+                          rwsem_mark_wake()
+                            atomic_long_add(adjustment, &sem->count);
+                            smp_store_release(&waiter->task, NULL);
+
+      if (!waiter.task)
+        break;
+
+      ...
+    }
+
+  r = X;
+
+Allows 'r == 0'.
+
+Reported-by: Will Deacon <will@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Will Deacon <will@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Hurley <peter@hurleysoftware.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Fixes: 4898e640caf0 ("tty: Add timed, writer-prioritized rw semaphore")
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/driver-ops.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/tty/tty_ldsem.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/net/mac80211/driver-ops.c b/net/mac80211/driver-ops.c
-index c258f1041d330..df2e4e3112177 100644
---- a/net/mac80211/driver-ops.c
-+++ b/net/mac80211/driver-ops.c
-@@ -169,11 +169,16 @@ int drv_conf_tx(struct ieee80211_local *local,
- 	if (!check_sdata_in_driver(sdata))
- 		return -EIO;
+diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
+index dbd7ba32caac3..6c5eb99fcfcee 100644
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -137,8 +137,7 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
  
--	if (WARN_ONCE(params->cw_min == 0 ||
--		      params->cw_min > params->cw_max,
--		      "%s: invalid CW_min/CW_max: %d/%d\n",
--		      sdata->name, params->cw_min, params->cw_max))
-+	if (params->cw_min == 0 || params->cw_min > params->cw_max) {
-+		/*
-+		 * If we can't configure hardware anyway, don't warn. We may
-+		 * never have initialized the CW parameters.
-+		 */
-+		WARN_ONCE(local->ops->conf_tx,
-+			  "%s: invalid CW_min/CW_max: %d/%d\n",
-+			  sdata->name, params->cw_min, params->cw_max);
- 		return -EINVAL;
-+	}
+ 	list_for_each_entry_safe(waiter, next, &sem->read_wait, list) {
+ 		tsk = waiter->task;
+-		smp_mb();
+-		waiter->task = NULL;
++		smp_store_release(&waiter->task, NULL);
+ 		wake_up_process(tsk);
+ 		put_task_struct(tsk);
+ 	}
+@@ -234,7 +233,7 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
+ 	for (;;) {
+ 		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
  
- 	trace_drv_conf_tx(local, sdata, ac, params);
- 	if (local->ops->conf_tx)
+-		if (!waiter.task)
++		if (!smp_load_acquire(&waiter.task))
+ 			break;
+ 		if (!timeout)
+ 			break;
 -- 
 2.20.1
 
