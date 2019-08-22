@@ -2,84 +2,174 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D002996A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:31:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D0DEE996B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:31:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388317AbfHVOaa (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:30:30 -0400
-Received: from foss.arm.com ([217.140.110.172]:46912 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732789AbfHVOa3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:30:29 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0F453337;
-        Thu, 22 Aug 2019 07:30:29 -0700 (PDT)
-Received: from [10.1.197.57] (e110467-lin.cambridge.arm.com [10.1.197.57])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5672B3F706;
-        Thu, 22 Aug 2019 07:30:26 -0700 (PDT)
-Subject: Re: [PATCH v2 1/4] iommu/arm-smmu: Introduce wrapper for writeq/readq
-To:     Will Deacon <will@kernel.org>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        iommu@lists.linux-foundation.org, Rob Herring <robh+dt@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        =?UTF-8?Q?Miqu=c3=a8l_Raynal?= <miquel.raynal@bootlin.com>,
-        Hanna Hawa <hannah@marvell.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-References: <20190711150242.25290-1-gregory.clement@bootlin.com>
- <20190711150242.25290-2-gregory.clement@bootlin.com>
- <20190820120848.2m6gytilrpil4stu@willie-the-truck>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <4ef6512d-701f-4fe8-8173-5f659dab0d32@arm.com>
-Date:   Thu, 22 Aug 2019 15:30:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2389184AbfHVObc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:31:32 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42935 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733053AbfHVObb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:31:31 -0400
+Received: by mail-lf1-f66.google.com with SMTP id s19so4693635lfb.9
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 07:31:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=I6vURle/yUma+eW5rLJzWOxNL358DqVD4LvDOo35ub4=;
+        b=Z69PyISMAGubDibz/jDX9RD9SsPVwEzQmzrpqarBcmpM+eu/UGhwntcwqKskrvNSXg
+         fVRZ0My+OBfqEvJxZbiUtRqoz5VR5OKw2bp2pHU/7kXNShJ6OHeONvD4F6RDImnjxdYh
+         OUu1nz38bWX/75Ut2ii6qegPhgRKpza6T1opofsn9VxnPk+32GJEhQSiyJt1bgKLNpiL
+         pfekHdCC587hvfbr5d9atg2kLoUdFLNitVnki5j98ESn1tAhUy5dzumLvvs+FbYD0KV0
+         gMBXcI8uJWp9I+Uy0Z3/SBacREbDbz7iYAhNlQuHtz1N/lpuMnPiykIcGCCySIKZYLvW
+         36ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=I6vURle/yUma+eW5rLJzWOxNL358DqVD4LvDOo35ub4=;
+        b=rv3+r6lOIJ5hL1WZ7spuIE7RiYV0zfXqZvcqLUPocXJBEO8w2iv9g4Zn6Io4WwezLg
+         WlxwzO+Op0qzhHLkitSc03FKWo15Mz27dxkEhd590c+H/ZmbbFN+VeLUh7lxkU+yndbe
+         aW9ReR+SABxXDQW6p2I80nSfDMNYf0gj2MER1odi0w4HnmvCHC+9Gj5ccc/3+kFUlilB
+         6qioY4GLpcuBBrqpoWAK2TYSaVWARjmuvzvV9IBY+FgyZRHa5rJ/8FRpioGtexwcHXZA
+         cCGrnm/jLkFSCrg3GeQw9WNMLD0BvIwlHAFuTCfBhe3I9eYNgt0fYN62Y7EY90YmZzhH
+         oogA==
+X-Gm-Message-State: APjAAAVWx8WBN9SbwmnGHovTC9iI5Lk26icUPpf7zy4ytHqrg6qrmhhm
+        dUfTDm3OtT7jP30ypvrrIAd8Hdek8Xk+/wIDD+A=
+X-Google-Smtp-Source: APXvYqz1avAYh0AsWmsURnKU/2s4bG/mkiWMach7jmQuStEunA2n4c+7wznzV+RVNP/7g3QUlUZfehY390JwpdzgaN4=
+X-Received: by 2002:ac2:563c:: with SMTP id b28mr21575220lff.93.1566484289181;
+ Thu, 22 Aug 2019 07:31:29 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190820120848.2m6gytilrpil4stu@willie-the-truck>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <CAM_iQpXvuYKn94WjJ9nSjzhk8DzYAvDmdgxsi6cc9CdBfkdTnw@mail.gmail.com>
+ <20180223121456.GZ25201@hirez.programming.kicks-ass.net> <20180226203937.GA21543@tassilo.jf.intel.com>
+ <CAKA=qzYOU-VtEC5p6djRNmVS0xGe=jpTd3ZgUr++1G3Jj1=PTg@mail.gmail.com>
+ <alpine.DEB.2.21.1908121933310.7324@nanos.tec.linutronix.de>
+ <CAKA=qzY=F-wj8YXhb-B7RahNceeab0rSA=06qBc8+7V-SyY-+Q@mail.gmail.com>
+ <alpine.DEB.2.21.1908122133310.7324@nanos.tec.linutronix.de>
+ <CAKA=qzYTax6ECQBChUrNWMRp5iY9F2SezMY2Ma_zmWxiDgjOSA@mail.gmail.com>
+ <CAKA=qzY_2S11MTMEjLtQHJLgHV_nY8893EhBm4-gBmS+duYBDA@mail.gmail.com> <CAKA=qzann=Ex3owK7mJezq3JfkD1HxPiVAqQSSA=u7tPYVVXZA@mail.gmail.com>
+In-Reply-To: <CAKA=qzann=Ex3owK7mJezq3JfkD1HxPiVAqQSSA=u7tPYVVXZA@mail.gmail.com>
+From:   Josh Hunt <joshhunt00@gmail.com>
+Date:   Thu, 22 Aug 2019 07:31:17 -0700
+Message-ID: <CAKA=qzaxQ1_CsJHay17r1kfJ8D99Bnqd9OY0BqX=HH2aed9ZfQ@mail.gmail.com>
+Subject: Re: Long standing kernel warning: perfevents: irq loop stuck!
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Andi Kleen <ak@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        "Liang, Kan" <kan.liang@intel.com>, jolsa@redhat.com,
+        bigeasy@linutronix.de, "H. Peter Anvin" <hpa@zytor.com>,
+        Ingo Molnar <mingo@redhat.com>, x86 <x86@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 20/08/2019 13:08, Will Deacon wrote:
-> Hi Gregory, Hanna,
-> 
-> On Thu, Jul 11, 2019 at 05:02:39PM +0200, Gregory CLEMENT wrote:
->> From: Hanna Hawa <hannah@marvell.com>
->>
->> This patch introduces the smmu_writeq_relaxed/smmu_readq_relaxed
->> helpers, as preparation to add specific Marvell work-around for
->> accessing 64 bits width registers of ARM SMMU.
->>
->> Signed-off-by: Hanna Hawa <hannah@marvell.com>
->> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->> ---
->>   drivers/iommu/arm-smmu.c | 36 +++++++++++++++++++++++++++---------
->>   1 file changed, 27 insertions(+), 9 deletions(-)
-> 
-> Sorry for the delay in replying to this -- Robin's been reworking the driver
-> so that implementation quirks can be specified more cleanly. Please can you
-> take a look at:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/will/linux.git/log/?h=for-joerg/arm-smmu/refactoring
-> 
-> and try to respin your patches on top of that?
+On Mon, Aug 19, 2019 at 4:16 PM Josh Hunt <joshhunt00@gmail.com> wrote:
+>
+> On Mon, Aug 19, 2019 at 2:17 PM Josh Hunt <joshhunt00@gmail.com> wrote:
+> >
+> > On Mon, Aug 12, 2019 at 12:42 PM Josh Hunt <joshhunt00@gmail.com> wrote:
+> > >
+> > > On Mon, Aug 12, 2019 at 12:34 PM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > >
+> > > > On Mon, 12 Aug 2019, Josh Hunt wrote:
+> > > > > On Mon, Aug 12, 2019 at 10:55 AM Thomas Gleixner <tglx@linutronix.de> wrote:
+> > > > > >
+> > > > > > On Mon, 12 Aug 2019, Josh Hunt wrote:
+> > > > > > > Was there any progress made on debugging this issue? We are still
+> > > > > > > seeing it on 4.19.44:
+> > > > > >
+> > > > > > I haven't seen anyone looking at this.
+> > > > > >
+> > > > > > Can you please try the patch Ingo posted:
+> > > > > >
+> > > > > >   https://lore.kernel.org/lkml/20150501070226.GB18957@gmail.com/
+> > > > > >
+> > > > > > and if it fixes the issue decrease the value from 128 to the point where it
+> > > > > > comes back, i.e. 128 -> 64 -> 32 ...
+> > > > > >
+> > > > > > Thanks,
+> > > > > >
+> > > > > >         tglx
+> > > > >
+> > > > > I just checked the machines where this problem occurs and they're both
+> > > > > Nehalem boxes. I think Ingo's patch would only help Haswell machines.
+> > > > > Please let me know if I misread the patch or if what I'm seeing is a
+> > > > > different issue than the one Cong originally reported.
+> > > >
+> > > > Find the NHM hack below.
+> > > >
+> > > > Thanks,
+> > > >
+> > > >         tglx
+> > > >
+> > > > 8<----------------
+> > > >
+> > > > diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+> > > > index 648260b5f367..93c1a4f0e73e 100644
+> > > > --- a/arch/x86/events/intel/core.c
+> > > > +++ b/arch/x86/events/intel/core.c
+> > > > @@ -3572,6 +3572,11 @@ static u64 bdw_limit_period(struct perf_event *event, u64 left)
+> > > >         return left;
+> > > >  }
+> > > >
+> > > > +static u64 nhm_limit_period(struct perf_event *event, u64 left)
+> > > > +{
+> > > > +       return max(left, 128ULL);
+> > > > +}
+> > > > +
+> > > >  PMU_FORMAT_ATTR(event, "config:0-7"    );
+> > > >  PMU_FORMAT_ATTR(umask, "config:8-15"   );
+> > > >  PMU_FORMAT_ATTR(edge,  "config:18"     );
+> > > > @@ -4606,6 +4611,7 @@ __init int intel_pmu_init(void)
+> > > >                 x86_pmu.pebs_constraints = intel_nehalem_pebs_event_constraints;
+> > > >                 x86_pmu.enable_all = intel_pmu_nhm_enable_all;
+> > > >                 x86_pmu.extra_regs = intel_nehalem_extra_regs;
+> > > > +               x86_pmu.limit_period = nhm_limit_period;
+> > > >
+> > > >                 mem_attr = nhm_mem_events_attrs;
+> > > >
+> > > Thanks Thomas. Will try this and let you know.
+> > >
+> > > --
+> > > Josh
+> >
+> > Thomas
+> >
+> > I found on my setup that setting the value to 32 was the lowest value
+> > I could use to keep the problem from happening. Let me know if you
+> > want me to send a patch with the updated value, etc.
+> >
+> > I saw in the original thread from Ingo and Vince that this was seen on
+> > Haswell, but I checked our Haswell boxes and so far we have not
+> > reproduced the problem there.
+> >
+> > --
+> > Josh
+>
+> I went ahead and sent this patch with the value set to 32:
+> https://lore.kernel.org/lkml/1566256411-18820-1-git-send-email-johunt@akamai.com/T/#u
+>
+> I wasn't sure how/who to give credit to for the change, so please
+> resubmit if what I did is incorrect or if you wanted to debug further.
+> If you decide to resubmit the patch please add my tested-by and
+> Bhupesh's reported-by. I'm able to reproduce the problem within about
+> 2 hours if there's anything else you wanted to look into before going
+> with this approach.
+>
+> Thanks!
+> --
+> Josh
 
-Right, the arm_smmu_impl design was specifically anticipating this quirk 
-as well - it should just be a case of a cfg_probe hook to hide the 
-features which can't work, plus {read,write}_reg64 hooks to override any 
-remaining 64-bit accesses with the explicit hi_lo_* variants, munged 
-together (either statically or dynamically) with the standard MMU-500 hooks.
+Thomas
 
-Robin.
+Any thoughts on the above or the patch that I sent?
+
+Thanks!
+-- 
+Josh
