@@ -2,43 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3791999D53
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C114B99D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:40:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392366AbfHVRlc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:41:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44776 "EHLO mail.kernel.org"
+        id S2404070AbfHVRYG (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391762AbfHVRX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:58 -0400
+        id S2391482AbfHVRWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:47 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E7A621743;
-        Thu, 22 Aug 2019 17:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65A7A233FE;
+        Thu, 22 Aug 2019 17:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494637;
-        bh=lP9m1NorUH5z/y3KWy07mtIG+q/fbsq/E5dtd35zv0E=;
+        s=default; t=1566494566;
+        bh=M0ON+wcSMXQ4IP2Gj/v1u/IHC14XFEaaHkW20mRRtX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sLkzJyb05u55xwBhUtGh+JLqGH/XQpCQ0HV+cs4dO48ASv5CoJLNTSTletxwdvfQ/
-         OD9yi2clKuoMSTcByJT1PWqPOV7DYcABjjuiH55+E2QrQVALEk0/yvyA6J7ajPlvQ5
-         BmuabPb6IZWJzJhDi9hauZyDbyD1AoLlRbj/btuY=
+        b=uqw0aEEyNZzHtCEItJsDsE6dwvibKWPSIwntvhS/K7NUrHQKao6Yp7ExnmcYgyv0G
+         a3SqczWBE443ghsSqW58FRVF7K0zgmAh8JLXIaMrzPXiAmf8lcWlpmC/lEPiR0jneW
+         HTab9ydMUfqsyOKVVqCPcHQqge2iAztvVhnSJNhw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vince Weaver <vincent.weaver@maine.edu>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 070/103] perf header: Fix divide by zero error if f_header.attr_size==0
-Date:   Thu, 22 Aug 2019 10:18:58 -0700
-Message-Id: <20190822171731.710829593@linuxfoundation.org>
+        stable@vger.kernel.org, David Binderman <dcb314@hotmail.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.4 55/78] staging: comedi: dt3000: Fix signed integer overflow divider * base
+Date:   Thu, 22 Aug 2019 10:18:59 -0700
+Message-Id: <20190822171833.633945478@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -48,52 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7622236ceb167aa3857395f9bdaf871442aa467e ]
+From: Ian Abbott <abbotti@mev.co.uk>
 
-So I have been having lots of trouble with hand-crafted perf.data files
-causing segfaults and the like, so I have started fuzzing the perf tool.
+commit b4d98bc3fc93ec3a58459948a2c0e0c9b501cd88 upstream.
 
-First issue found:
+In `dt3k_ns_to_timer()` the following lines near the end of the function
+result in a signed integer overflow:
 
-If f_header.attr_size is 0 in the perf.data file, then perf will crash
-with a divide-by-zero error.
+	prescale = 15;
+	base = timer_base * (1 << prescale);
+	divider = 65535;
+	*nanosec = divider * base;
 
-Committer note:
+(`divider`, `base` and `prescale` are type `int`, `timer_base` and
+`*nanosec` are type `unsigned int`.  The value of `timer_base` will be
+either 50 or 100.)
 
-Added a pr_err() to tell the user why the command failed.
+The main reason for the overflow is that the calculation for `base` is
+completely wrong.  It should be:
 
-Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1907231100440.14532@macbook-air
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+	base = timer_base * (prescale + 1);
+
+which matches an earlier instance of this calculation in the same
+function.
+
+Reported-by: David Binderman <dcb314@hotmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Link: https://lore.kernel.org/r/20190812111517.26803-1-abbotti@mev.co.uk
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- tools/perf/util/header.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/staging/comedi/drivers/dt3000.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 283148104ffbe..693dcd4ea6a38 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2854,6 +2854,13 @@ int perf_session__read_header(struct perf_session *session)
- 			   file->path);
+--- a/drivers/staging/comedi/drivers/dt3000.c
++++ b/drivers/staging/comedi/drivers/dt3000.c
+@@ -377,7 +377,7 @@ static int dt3k_ns_to_timer(unsigned int
  	}
  
-+	if (f_header.attr_size == 0) {
-+		pr_err("ERROR: The %s file's attr size field is 0 which is unexpected.\n"
-+		       "Was the 'perf record' command properly terminated?\n",
-+		       file->path);
-+		return -EINVAL;
-+	}
-+
- 	nr_attrs = f_header.attrs.size / f_header.attr_size;
- 	lseek(fd, f_header.attrs.offset, SEEK_SET);
- 
--- 
-2.20.1
-
+ 	prescale = 15;
+-	base = timer_base * (1 << prescale);
++	base = timer_base * (prescale + 1);
+ 	divider = 65535;
+ 	*nanosec = divider * base;
+ 	return (prescale << 16) | (divider);
 
 
