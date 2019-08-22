@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87EC099B43
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDB9799BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403872AbfHVRXM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42482 "EHLO mail.kernel.org"
+        id S2391813AbfHVR02 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403851AbfHVRXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:10 -0400
+        id S2404379AbfHVRZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:19 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 65DFA23402;
-        Thu, 22 Aug 2019 17:23:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF0282341F;
+        Thu, 22 Aug 2019 17:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494589;
-        bh=HPNzx4VxH9DlBbAtxABhmKBRkBXNftbrYMoVCau5eTc=;
+        s=default; t=1566494719;
+        bh=oylRR7tSe0koEcCNyDNiwT/AtGRhGuiECLpAT7wlnAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MU2uK8dWzGvz23WMIwSluxQj/QHbOd+b/9gJCO2BoQdJtfVHR0hz4Y1BGjJwxt+Vs
-         U4kJkjKHqsBpH7Yfp3xjp2Joy5KsEJvsiexiKjzS1AGVmKzl+aiRHLjrtMObcB8CdM
-         0O3V2YgF6oVfNBANhrGRkxGhbcxgQR3WqAM4WAFI=
+        b=p1HpBHuOZp8TjmXkyhntQ0O+Q2r4G3zF56KMI1Oq0uIrdrasmNRrAjAIoBNzC69er
+         hK6jVaIxfE+RYSVqQVJd7s2OCB/WyT85k/mMIYNmTK3RJjw7UHONehEzIEgS8GSEJL
+         aZrqABfm9RX+juNA5+E0+0R7m8Zuqv10Ed61HExI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 78/78] bonding: Add vlan tx offload to hw_enc_features
-Date:   Thu, 22 Aug 2019 10:19:22 -0700
-Message-Id: <20190822171834.289717985@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
+Subject: [PATCH 4.14 48/71] usb: cdc-acm: make sure a refcount is taken early enough
+Date:   Thu, 22 Aug 2019 10:19:23 -0700
+Message-Id: <20190822171729.936606642@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +43,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Oliver Neukum <oneukum@suse.com>
 
-[ Upstream commit d595b03de2cb0bdf9bcdf35ff27840cc3a37158f ]
+commit c52873e5a1ef72f845526d9f6a50704433f9c625 upstream.
 
-As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
-said, we should always enable bonding's vlan tx offload, pass the
-vlan packets to the slave devices with vlan tci, let them to handle
-vlan implementation.
+destroy() will decrement the refcount on the interface, so that
+it needs to be taken so early that it never undercounts.
 
-Now if encapsulation protocols like VXLAN is used, skb->encapsulation
-may be set, then the packet is passed to vlan device which based on
-bonding device. However in netif_skb_features(), the check of
-hw_enc_features:
-
-	 if (skb->encapsulation)
-                 features &= dev->hw_enc_features;
-
-clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
-in same issue in commit 30d8177e8ac7 like this:
-
-vlan_dev_hard_start_xmit
-  -->dev_queue_xmit
-    -->validate_xmit_skb
-      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
-      -->validate_xmit_vlan
-        -->__vlan_hwaccel_push_inside //skb->tci is cleared
-...
- --> bond_start_xmit
-   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
-     --> __skb_flow_dissect // nhoff point to IP header
-        -->  case htons(ETH_P_8021Q)
-             // skb_vlan_tag_present is false, so
-             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
-             //vlan point to ip header wrongly
-
-Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 7fb57a019f94e ("USB: cdc-acm: Fix potential deadlock (lockdep warning)")
+Cc: stable <stable@vger.kernel.org>
+Reported-and-tested-by: syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20190808142119.7998-1-oneukum@suse.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/bonding/bond_main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1111,7 +1111,9 @@ static void bond_compute_features(struct
+---
+ drivers/usb/class/cdc-acm.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1342,10 +1342,6 @@ made_compressed_probe:
+ 	if (acm == NULL)
+ 		goto alloc_fail;
  
- done:
- 	bond_dev->vlan_features = vlan_features;
--	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL;
-+	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
-+				    NETIF_F_HW_VLAN_CTAG_TX |
-+				    NETIF_F_HW_VLAN_STAG_TX;
- 	bond_dev->gso_max_segs = gso_max_segs;
- 	netif_set_gso_max_size(bond_dev, gso_max_size);
+-	minor = acm_alloc_minor(acm);
+-	if (minor < 0)
+-		goto alloc_fail1;
+-
+ 	ctrlsize = usb_endpoint_maxp(epctrl);
+ 	readsize = usb_endpoint_maxp(epread) *
+ 				(quirks == SINGLE_RX_URB ? 1 : 2);
+@@ -1353,6 +1349,13 @@ made_compressed_probe:
+ 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
+ 	acm->control = control_interface;
+ 	acm->data = data_interface;
++
++	usb_get_intf(acm->control); /* undone in destruct() */
++
++	minor = acm_alloc_minor(acm);
++	if (minor < 0)
++		goto alloc_fail1;
++
+ 	acm->minor = minor;
+ 	acm->dev = usb_dev;
+ 	if (h.usb_cdc_acm_descriptor)
+@@ -1501,7 +1504,6 @@ skip_countries:
+ 	usb_driver_claim_interface(&acm_driver, data_interface, acm);
+ 	usb_set_intfdata(data_interface, acm);
  
+-	usb_get_intf(control_interface);
+ 	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
+ 			&control_interface->dev);
+ 	if (IS_ERR(tty_dev)) {
 
 
