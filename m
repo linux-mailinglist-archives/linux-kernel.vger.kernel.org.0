@@ -2,39 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 91E0A99B87
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18A0B99B42
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404430AbfHVRZ1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:25:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46936 "EHLO mail.kernel.org"
+        id S2403855AbfHVRXJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388119AbfHVRYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:47 -0400
+        id S2403826AbfHVRXH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:07 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77EBF21743;
-        Thu, 22 Aug 2019 17:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 688EA23407;
+        Thu, 22 Aug 2019 17:23:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494686;
-        bh=vCnG6nfAkHenqBbOG37dUmz84sjUM/PCLY/Ncld4Su4=;
+        s=default; t=1566494586;
+        bh=6fU+9PuammxkfJEvmn0ipo4sM2/Oi5xnKuBsX/DqtLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gwPyqHt64CQbCCAr7qPXFNaurOGGy52UmqqV4aU0WZX/EM7IgUB8EtlN+AbP32GB6
-         xG64d1U7LA2/9cUS3qFtZwcy7zuODQ0pefT+U/OU+OnmZJtXfs+CYhCr9KY02n5Z56
-         PJlIHGrrJ8Kr+giNrDpS8Jpyv+sutRTT6xLEshxM=
+        b=ytww0zm+wIhGrV4gr9SgU0mPjNiwrv8N423Qtqa1/tS4PfsTZDLq1WbtZ7CEmQamC
+         6yKzPeiWBLui3yYyMOKS3JvXMgz5A191CexL2YI6j9w97BoW3rL9+rkSbRpcQ75N03
+         FHlhk3hyKmnj9QanxEX6un3aKG7FrtXI23tphZf8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 06/71] bpf: restrict access to core bpf sysctls
-Date:   Thu, 22 Aug 2019 10:18:41 -0700
-Message-Id: <20190822171726.829659211@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+965152643a75a56737be@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>, Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.4 38/78] HID: holtek: test for sanity of intfdata
+Date:   Thu, 22 Aug 2019 10:18:42 -0700
+Message-Id: <20190822171833.144706924@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,102 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Oliver Neukum <oneukum@suse.com>
 
-commit 2e4a30983b0f9b19b59e38bbf7427d7fdd480d98 upstream.
+commit 01ec0a5f19c8c82960a07f6c7410fc9e01d7fb51 upstream.
 
-Given BPF reaches far beyond just networking these days, it was
-never intended to allow setting and in some cases reading those
-knobs out of a user namespace root running without CAP_SYS_ADMIN,
-thus tighten such access.
+The ioctl handler uses the intfdata of a second interface,
+which may not be present in a broken or malicious device, hence
+the intfdata needs to be checked for NULL.
 
-Also the bpf_jit_enable = 2 debugging mode should only be allowed
-if kptr_restrict is not set since it otherwise can leak addresses
-to the kernel log. Dump a note to the kernel log that this is for
-debugging JITs only when enabled.
-
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-[bwh: Backported to 4.14: We don't have bpf_dump_raw_ok(), so drop the
- condition based on it. This condition only made it a bit harder for a
- privileged user to do something silly.]
-Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+[jkosina@suse.cz: fix newly added spurious space]
+Reported-by: syzbot+965152643a75a56737be@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/core/sysctl_net_core.c |   41 ++++++++++++++++++++++++++++++++++++++---
- 1 file changed, 38 insertions(+), 3 deletions(-)
 
---- a/net/core/sysctl_net_core.c
-+++ b/net/core/sysctl_net_core.c
-@@ -251,6 +251,41 @@ static int proc_do_rss_key(struct ctl_ta
- 	return proc_dostring(&fake_table, write, buffer, lenp, ppos);
- }
+---
+ drivers/hid/hid-holtek-kbd.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+--- a/drivers/hid/hid-holtek-kbd.c
++++ b/drivers/hid/hid-holtek-kbd.c
+@@ -126,9 +126,14 @@ static int holtek_kbd_input_event(struct
  
-+#ifdef CONFIG_BPF_JIT
-+static int proc_dointvec_minmax_bpf_enable(struct ctl_table *table, int write,
-+					   void __user *buffer, size_t *lenp,
-+					   loff_t *ppos)
-+{
-+	int ret, jit_enable = *(int *)table->data;
-+	struct ctl_table tmp = *table;
+ 	/* Locate the boot interface, to receive the LED change events */
+ 	struct usb_interface *boot_interface = usb_ifnum_to_if(usb_dev, 0);
++	struct hid_device *boot_hid;
++	struct hid_input *boot_hid_input;
+ 
+-	struct hid_device *boot_hid = usb_get_intfdata(boot_interface);
+-	struct hid_input *boot_hid_input = list_first_entry(&boot_hid->inputs,
++	if (unlikely(boot_interface == NULL))
++		return -ENODEV;
 +
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	tmp.data = &jit_enable;
-+	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-+	if (write && !ret) {
-+		*(int *)table->data = jit_enable;
-+		if (jit_enable == 2)
-+			pr_warn("bpf_jit_enable = 2 was set! NEVER use this in production, only for JIT debugging!\n");
-+	}
-+	return ret;
-+}
-+
-+# ifdef CONFIG_HAVE_EBPF_JIT
-+static int
-+proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
-+				    void __user *buffer, size_t *lenp,
-+				    loff_t *ppos)
-+{
-+	if (!capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+}
-+# endif
-+#endif
-+
- static struct ctl_table net_core_table[] = {
- #ifdef CONFIG_NET
- 	{
-@@ -326,7 +361,7 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_enable,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dointvec_minmax_bpf_enable,
- # ifdef CONFIG_BPF_JIT_ALWAYS_ON
- 		.extra1		= &one,
- 		.extra2		= &one,
-@@ -341,7 +376,7 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_harden,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0600,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
- 		.extra1		= &zero,
- 		.extra2		= &two,
- 	},
-@@ -350,7 +385,7 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_kallsyms,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0600,
--		.proc_handler	= proc_dointvec_minmax,
-+		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
- 		.extra1		= &zero,
- 		.extra2		= &one,
- 	},
++	boot_hid = usb_get_intfdata(boot_interface);
++	boot_hid_input = list_first_entry(&boot_hid->inputs,
+ 		struct hid_input, list);
+ 
+ 	return boot_hid_input->input->event(boot_hid_input->input, type, code,
 
 
