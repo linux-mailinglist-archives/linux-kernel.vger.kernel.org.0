@@ -2,116 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10CCE1967C9
-	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 17:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DF461967D1
+	for <lists+linux-kernel@lfdr.de>; Sat, 28 Mar 2020 18:04:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbgC1Q5n (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 28 Mar 2020 12:57:43 -0400
-Received: from mail-il1-f193.google.com ([209.85.166.193]:39198 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726186AbgC1Q5n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 28 Mar 2020 12:57:43 -0400
-Received: by mail-il1-f193.google.com with SMTP id r5so11761026ilq.6;
-        Sat, 28 Mar 2020 09:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=WLDYwWYbolvs0EFALE9dMKsppiAeImVTfUdChbO3aow=;
-        b=pPgqIvdZ9uNU7ousZa8O2z2V+0gFzTJGZ7ABV8Gxi8q3uDmusxPuaKdRJSwm57b/cL
-         ruYb656wWLtlY53QjVAUZSag3Ic2h5PDKDET4B6KrQ4YvXehJDb8JVrBSMKU2oro5vuz
-         Z+KZjfk5YlZ2DFwobx/GMAQIFRWYxJwHEBSDRV9fQs9ADG4BJfSyMPunk+oJg3vfD7Ua
-         vH3VBF077y1DVtJC2Gob+dulzgj6ELBrZH1wI/SLzDii9zSBTasHK8CazQAqJ4nleT5A
-         vXX7suRnXWPWuxdeSUACQ2lwZ4ZLKDGPZrB0AuFsd09SRFIqO1/XMt3c/OH/3YXle8+v
-         1zEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=WLDYwWYbolvs0EFALE9dMKsppiAeImVTfUdChbO3aow=;
-        b=QuHS9JwnV0YGnv6jbLbxNPn6CXidX43fO2vWYoQXr05QXULVtHlhOiKuo+xa1+hO4s
-         V0R6dxR/iTunFF/AyN+P4Lvl6amVXstiIv/L//YpRoNB6F9wpk530lS6Wn4r4fo2reHv
-         Y6u8zHFmt0f+EGQnlAaWFGSdYT4K+fqNKALDmYsgHhCw8ylhGTF+9hkIBbmGKehYb08N
-         a0Vh5WCxW3Vpvi2A7zYYBAriWrz4yiwMYoQwqhiFGse8hOR0pN/YmC68WSeuA23StAt7
-         GHz2ALvf3wLAu98wcPb21l+LcxOB0XdGZc5aRvXydpRy8sjUtmIvIqG85AWD9rifrqdg
-         JOdQ==
-X-Gm-Message-State: ANhLgQ0NG0IzlB5Py5nX/PLzAyFzX2Dz+CMU+wbkfZOFbAaNAeqHpXlj
-        JP/uCPFHSe0Auy89WXHN58L6n81krN68jpj2Rjc=
-X-Google-Smtp-Source: ADFU+vuddmVyw+A7IZajazkq9naRHRcxcUddjdccvYWE0Sz6p4/HG+6kcqL17pjFizx9jh7A3zQERI6a2RANMmH2NOY=
-X-Received: by 2002:a92:77c2:: with SMTP id s185mr4244689ilc.297.1585414661819;
- Sat, 28 Mar 2020 09:57:41 -0700 (PDT)
+        id S1727134AbgC1REl (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 28 Mar 2020 13:04:41 -0400
+Received: from mx.sdf.org ([205.166.94.20]:63281 "EHLO mx.sdf.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725807AbgC1REk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 28 Mar 2020 13:04:40 -0400
+Received: from sdf.org (IDENT:lkml@sdf.lonestar.org [205.166.94.16])
+        by mx.sdf.org (8.15.2/8.14.5) with ESMTPS id 02SH47cb023288
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits) verified NO);
+        Sat, 28 Mar 2020 17:04:08 GMT
+Received: (from lkml@localhost)
+        by sdf.org (8.15.2/8.12.8/Submit) id 02SH4767016334;
+        Sat, 28 Mar 2020 17:04:07 GMT
+Message-Id: <202003281704.02SH4767016334@sdf.org>
+From:   George Spelvin <lkml@sdf.org>
+Date:   Wed, 21 Aug 2019 20:30:18 -0400
+Subject: [RFC PATCH v1 18/50] net/ipv6/addrconf.c: Use prandom_u32_max for
+ rfc3315 backoff time computation
 MIME-Version: 1.0
-References: <20200328151511.22932-1-hqjagain@gmail.com> <CAKMK7uF2mipUSr-XRESrRJ8JdOZCekNTCVsDPW5hNp-mWwPj6Q@mail.gmail.com>
-In-Reply-To: <CAKMK7uF2mipUSr-XRESrRJ8JdOZCekNTCVsDPW5hNp-mWwPj6Q@mail.gmail.com>
-From:   Qiujun Huang <hqjagain@gmail.com>
-Date:   Sun, 29 Mar 2020 00:57:29 +0800
-Message-ID: <CAJRQjocxe+KfSBX3uFv+_ajcY6agF9oXWvkon_kPM+3dk6Pz2Q@mail.gmail.com>
-Subject: Re: [PATCH] fbcon: fix null-ptr-deref in fbcon_switch
-To:     Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        ghalat@redhat.com, dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+To:     linux-kernel@vger.kernel.org, lkml@sdf.org
+Cc:     Maciej Zenczykowski <maze@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        netdev@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Mar 29, 2020 at 12:31 AM Daniel Vetter <daniel.vetter@ffwll.ch> wrote:
->
-> On Sat, Mar 28, 2020 at 4:15 PM Qiujun Huang <hqjagain@gmail.com> wrote:
-> > Add check for vc_cons[logo_shown].d, as it can be released by
-> > vt_ioctl(VT_DISALLOCATE).
->
-> Can you pls link to the syzbot report and distill the essence of the
-> crash/issue here in the commit message? As-is a bit unclear what's
-> going on. Patch itself looks correct.
+There's no need for 64-bit intermediate values and do_div.
 
-https://lkml.org/lkml/2020/3/27/403
-Thanks.
+(Actually, the algorithm isn't changing much, except that the old
+code used a scaling factor of 1 million.  prandom_u32_max uses
+a factor of 2^32, making the final division more efficient.)
 
->
-> Thanks, Daniel
->
-> > Reported-by: syzbot+732528bae351682f1f27@syzkaller.appspotmail.com
-> > Signed-off-by: Qiujun Huang <hqjagain@gmail.com>
-> > ---
-> >  drivers/video/fbdev/core/fbcon.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-> > index bb6ae995c2e5..7ee0f7b55829 100644
-> > --- a/drivers/video/fbdev/core/fbcon.c
-> > +++ b/drivers/video/fbdev/core/fbcon.c
-> > @@ -2254,7 +2254,7 @@ static int fbcon_switch(struct vc_data *vc)
-> >                 fbcon_update_softback(vc);
-> >         }
-> >
-> > -       if (logo_shown >= 0) {
-> > +       if (logo_shown >= 0 && vc_cons_allocated(logo_shown)) {
-> >                 struct vc_data *conp2 = vc_cons[logo_shown].d;
-> >
-> >                 if (conp2->vc_top == logo_lines
-> > @@ -2852,7 +2852,7 @@ static void fbcon_scrolldelta(struct vc_data *vc, int lines)
-> >                         return;
-> >                 if (vc->vc_mode != KD_TEXT || !lines)
-> >                         return;
-> > -               if (logo_shown >= 0) {
-> > +               if (logo_shown >= 0 && vc_cons_allocated(logo_shown)) {
-> >                         struct vc_data *conp2 = vc_cons[logo_shown].d;
-> >
-> >                         if (conp2->vc_top == logo_lines
-> > --
-> > 2.17.1
-> >
->
->
-> --
-> Daniel Vetter
-> Software Engineer, Intel Corporation
-> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+One thing that concerns me a bit is that the data types are all
+signed.  The old code cast the inputs to unsigned and produced
+strange overflowed results if they were negative, so presumably
+that never happens in practice.
+
+The new code works the same for positive inputs, but produces
+different strange overflowed results if fed negative inputs.
+
+Signed-off-by: George Spelvin <lkml@sdf.org>
+Cc: Maciej Żenczykowski <maze@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>
+Cc: Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>
+Cc: netdev@vger.kernel.org
+---
+ net/ipv6/addrconf.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/net/ipv6/addrconf.c b/net/ipv6/addrconf.c
+index ec3f472bc5a8f..5172f1f874363 100644
+--- a/net/ipv6/addrconf.c
++++ b/net/ipv6/addrconf.c
+@@ -103,20 +103,19 @@ static inline u32 cstamp_delta(unsigned long cstamp)
+ static inline s32 rfc3315_s14_backoff_init(s32 irt)
+ {
+ 	/* multiply 'initial retransmission time' by 0.9 .. 1.1 */
+-	u64 tmp = (900000 + prandom_u32() % 200001) * (u64)irt;
+-	do_div(tmp, 1000000);
+-	return (s32)tmp;
++	s32 range = irt / 5;
++	return irt - (s32)(range/2) + (s32)prandom_u32_max(range);
+ }
+ 
+ static inline s32 rfc3315_s14_backoff_update(s32 rt, s32 mrt)
+ {
+ 	/* multiply 'retransmission timeout' by 1.9 .. 2.1 */
+-	u64 tmp = (1900000 + prandom_u32() % 200001) * (u64)rt;
+-	do_div(tmp, 1000000);
+-	if ((s32)tmp > mrt) {
++	s32 range = rt / 5;
++	s32 tmp = 2*rt - (s32)(range/2) + (s32)prandom_u32_max(range);
++	if (tmp > mrt) {
+ 		/* multiply 'maximum retransmission time' by 0.9 .. 1.1 */
+-		tmp = (900000 + prandom_u32() % 200001) * (u64)mrt;
+-		do_div(tmp, 1000000);
++		range = mrt / 5;
++		tmp = mrt - (s32)(range/2) + (s32)prandom_u32_max(range);
+ 	}
+ 	return (s32)tmp;
+ }
+-- 
+2.26.0
+
