@@ -2,142 +2,402 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F8D1993E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:34:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 83D16993E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:35:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388673AbfHVMeW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:34:22 -0400
-Received: from mail-eopbgr20071.outbound.protection.outlook.com ([40.107.2.71]:17795
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730918AbfHVMeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:34:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ne8XkoBsB/m4UUfqjbTPrUe1KrWHXnHyLYtWDjiUnFPH3nyroqUEhLjqPgZVsyU+Bh7bpol9lMCamCu5QDutM+xk1UTnVw5JI5vs/Ro3jGrP2SvDawB6PzQjjGa4xDyDT/IJPO7iq8pTOmMPdaZmD5RKZ156NRuMnhfwteZH7AvjD0VrvYDajJ0OQjDGeZzoK9jApk1DWcWKjClP8AgAClA/eYxe2e+FvlBzWvLN+tYCFPQb/haxDInuB6qACS6SYxcrZr31xr0fwSvG8iMCeV6CMA+XoEoTPwCgtiiIbMw/UgFvy5Hgem5TWe12Bjb+XZshzHkeB4RbdvaKqCBTrw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VDnK8p8YZXUFIcCNd9u85VsuBtOMMannter/nOuJwng=;
- b=OjBh6gGvyBaZtlRTENLgobLLPE1Rh1EoHwgR1aA7AY1+AD+D839KyR4X8UjlYOyD0A9lD6DsJSjVfFaL/tXk0+1Bc3wZFgV7JpERH8KLRZYKh0U2Cl9rciisZouoU5D8LJYieayAv66EkHtVD54pHa0hzDAhHQzN8QYsCYVivbuM0ulnEwyF3pzDMojx63eQFrtnnedoJGJI2crEyFTe/rLejIFT6nLJ3kPLNh5+Rh3LGHv11uTXuWk/N1TJ15KVjnO3P8FyKbHY01o9wtWgrv3L546itTZlqXNcLufSWZJZ9K8DQuGJSnN6BDhGixpZtTfebRvVyN0Atj0ssZ3Vrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VDnK8p8YZXUFIcCNd9u85VsuBtOMMannter/nOuJwng=;
- b=YA5QwGD3vDaxiyFjwAcu8Ptf8WbKpeZa23/I1RcDbsQ1FBgng+zPN2xWIo4kVcQeNiIMqd/tm9CCWffs1IkQYGHJTQSxnScBjPzng+od9onRhyM99Y7dKnD0s95DVcj08bBN2Qj1G0CzAu+ngzy8bYm8aPxrYjFSOOPSySahwFU=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5871.eurprd04.prod.outlook.com (20.178.205.13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Thu, 22 Aug 2019 12:34:17 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
- 12:34:17 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>, "sboyd@kernel.org" <sboyd@kernel.org>
-CC:     Jacky Bai <ping.bai@nxp.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1732368AbfHVMfo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:35:44 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:20351 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725856AbfHVMfn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:35:43 -0400
+X-UUID: 592448d0be024390b0d39049756024ea-20190822
+X-UUID: 592448d0be024390b0d39049756024ea-20190822
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <qii.wang@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 435136641; Thu, 22 Aug 2019 20:35:37 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs07n1.mediatek.inc (172.21.101.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 22 Aug 2019 20:35:31 +0800
+Received: from localhost.localdomain (10.17.3.153) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 20:35:30 +0800
+From:   <qii.wang@mediatek.com>
+To:     <robh+dt@kernel.org>
+CC:     <matthias.bgg@gmail.com>, <mark.rutland@arm.com>,
+        <devicetree@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Topic: [PATCH] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Index: AQHVVv10E+OF2Euht0ilryFWSAJw8w==
-Date:   Thu, 22 Aug 2019 12:34:16 +0000
-Message-ID: <VI1PR04MB70234B225BC4AC8E909A4C2AEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1566266337-21597-1-git-send-email-peng.fan@nxp.com>
- <VI1PR04MB7023C1017F60BF132B6A3F8CEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <AM0PR04MB44818E133AD735E3EB2789E288A50@AM0PR04MB4481.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 66bdf910-1ee7-404d-563e-08d726fd0c3b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR04MB5871;
-x-ms-traffictypediagnostic: VI1PR04MB5871:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB587132A8AFD449B2FE26D99CEEA50@VI1PR04MB5871.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 01371B902F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(396003)(376002)(39860400002)(136003)(189003)(199004)(305945005)(5660300002)(76116006)(66946007)(66446008)(64756008)(66556008)(66476007)(14454004)(53936002)(8676002)(102836004)(6246003)(66066001)(9686003)(478600001)(446003)(316002)(33656002)(7736002)(53546011)(6506007)(2906002)(54906003)(71200400001)(256004)(476003)(3846002)(6116002)(25786009)(7696005)(186003)(110136005)(52536014)(81166006)(6436002)(86362001)(76176011)(14444005)(44832011)(99286004)(74316002)(55016002)(486006)(2501003)(4326008)(71190400001)(8936002)(81156014)(26005)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5871;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: ggsv6HV2BmM0wgmKqg1eNwIeYNfWZL6jwA3ih7GrZMDDmzT8nWWmQD93BDHZ908o6bYLxiYBDjIEQ5hqDwrDbhAikhdH8XyvqM6XK4DvkVUuKSpZ20wVAcmEU+pUHycgJuHHYWj1sh5vKmOK+AJDZqUQsVks9XNz0SIrIaGaw79UXa1v83cpz3S9UtVKk7azvEt5atwj2QyfXVDMg6MWByrw94IqaiwfIlj2d72O0kMb9ws8ScTsj/xFDZKkwdC7nYyMQK1bPvKQrZzXgejtds9oioC4j5hXnRXWlhbaZcEB+A3jRyZrgPjrTeZ981aEII5r6toDcK7wmbtEuw/vEwd4hv4EPxCgZipHpddGy1QCSwctFkVH/wWecNl7IXPiAzb6HAaMmrFIO/1gEP8qkU1B1NG/FqY0KW0pGtko4PU=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <srv_heupstream@mediatek.com>, <leilk.liu@mediatek.com>,
+        <qii.wang@mediatek.com>
+Subject: [PATCH] arm64: dts: mt8183: add I2C nodes
+Date:   Thu, 22 Aug 2019 20:35:16 +0800
+Message-ID: <1566477316-13245-1-git-send-email-qii.wang@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66bdf910-1ee7-404d-563e-08d726fd0c3b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 12:34:16.8389
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dUyg9FnkptF2eQD2A3+brWjj5IZN/Vj0yiQwwVg8scDxqVg2LtOS9/kdq3SCUkWauc/9nkezu9VGhCtcVlKNZA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5871
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22.08.2019 12:18, Peng Fan wrote:=0A=
->> Subject: Re: [PATCH] clk: imx: pll14xx: avoid glitch when set rate=0A=
->>=0A=
->> On 20.08.2019 05:17, Peng Fan wrote:=0A=
->>> According to PLL1443XA and PLL1416X spec, "When BYPASS is 0 and RESETB=
-=0A=
->>> is changed from 0 to 1, FOUT starts to output unstable clock until=0A=
->>> lock time passes. PLL1416X/PLL1443XA may generate a glitch at FOUT."=0A=
->>>=0A=
->>> So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.=0A=
->>> In the end of set rate, BYPASS will be cleared.=0A=
->>>=0A=
->>> @@ -191,6 +191,10 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw=
-,=0A=
->> unsigned long drate,=0A=
->>>    	tmp &=3D ~RST_MASK;=0A=
->>>    	writel_relaxed(tmp, pll->base);=0A=
->>>=0A=
->>> +	/* Enable BYPASS */=0A=
->>> +	tmp |=3D BYPASS_MASK;=0A=
->>> +	writel(tmp, pll->base);=0A=
->>> +=0A=
->>=0A=
->> Shouldn't BYPASS be set before reset?=0A=
-> =0A=
-> No. the glitch happens when RESET changes from 0 to 1, not from 1 to 0.=
-=0A=
-=0A=
-You're right, sorry.=0A=
-=0A=
->> Also, isn't a similar bypass/unbypass dance also needed in=0A=
->> clk_pll14xx_prepare? As far as I understand that could also output glitc=
-hes=0A=
->> until the PLL is locked. It could be a separate patch.=0A=
-> =0A=
-> Yes, that might also output glitch. Fix in v2.=0A=
-> =0A=
->>=0A=
->> It's strange that this BYPASS bit is also handled by muxes like=0A=
->> audio_pll1_bypass in clk-imx8mm.c but that's a separate issue not strict=
-ly=0A=
->> related to the glitches you're trying to fix here.=0A=
-> =0A=
-> Yes, need use EXT_BYPASS for the mux usage.=0A=
-=0A=
-Might make sense to post as a series.=0A=
+From: Qii Wang <qii.wang@mediatek.com>
+
+Add i2c nodes to mt8183 and mt8183-evb.
+
+Signed-off-by: Qii Wang <qii.wang@mediatek.com>
+---
+ arch/arm64/boot/dts/mediatek/mt8183-evb.dts |  96 ++++++++++++++
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi    | 189 ++++++++++++++++++++++++++++
+ 2 files changed, 285 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+index d8e555c..1fb195c 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8183-evb.dts
+@@ -30,7 +30,103 @@
+ 	status = "okay";
+ };
+ 
++&i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_0>;
++	status = "okay";
++	clock-frequency = <100000>;
++};
++
++&i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_1>;
++	status = "okay";
++	clock-frequency = <100000>;
++};
++
++&i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_2>;
++	status = "okay";
++	clock-frequency = <100000>;
++};
++
++&i2c3 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_3>;
++	status = "okay";
++	clock-frequency = <100000>;
++};
++
++&i2c4 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_4>;
++	status = "okay";
++	clock-frequency = <1000000>;
++};
++
++&i2c5 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&i2c_pins_5>;
++	status = "okay";
++	clock-frequency = <1000000>;
++};
++
+ &pio {
++	i2c_pins_0: i2c0{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO82__FUNC_SDA0>,
++				 <PINMUX_GPIO83__FUNC_SCL0>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
++	i2c_pins_1: i2c1{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO81__FUNC_SDA1>,
++				 <PINMUX_GPIO84__FUNC_SCL1>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
++	i2c_pins_2: i2c2{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO103__FUNC_SCL2>,
++				 <PINMUX_GPIO104__FUNC_SDA2>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
++	i2c_pins_3: i2c3{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO50__FUNC_SCL3>,
++				 <PINMUX_GPIO51__FUNC_SDA3>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
++	i2c_pins_4: i2c4{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO105__FUNC_SCL4>,
++				 <PINMUX_GPIO106__FUNC_SDA4>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
++	i2c_pins_5: i2c5{
++		pins_i2c{
++			pinmux = <PINMUX_GPIO48__FUNC_SCL5>,
++				 <PINMUX_GPIO49__FUNC_SDA5>;
++			mediatek,pull-up-adv = <3>;
++			mediatek,drive-strength-adv = <00>;
++		};
++	};
++
+ 	spi_pins_0: spi0{
+ 		pins_spi{
+ 			pinmux = <PINMUX_GPIO85__FUNC_SPI0_MI>,
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183.dtsi b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+index c2749c4..ab71291 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183.dtsi
+@@ -16,6 +16,21 @@
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
+ 
++	aliases {
++		i2c0 = &i2c0;
++		i2c1 = &i2c1;
++		i2c2 = &i2c2;
++		i2c3 = &i2c3;
++		i2c4 = &i2c4;
++		i2c5 = &i2c5;
++		i2c6 = &i2c6;
++		i2c7 = &i2c7;
++		i2c8 = &i2c8;
++		i2c9 = &i2c9;
++		i2c10 = &i2c10;
++		i2c11 = &i2c11;
++	};
++
+ 	cpus {
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+@@ -294,6 +309,64 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2c6: i2c@11005000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11005000 0 0x1000>,
++			      <0 0x11000600 0 0x80>;
++			interrupts = <GIC_SPI 87 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C6>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c0: i2c@11007000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11007000 0 0x1000>,
++			      <0 0x11000080 0 0x80>;
++			interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C0>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c4: i2c@11008000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11008000 0 0x1000>,
++			      <0 0x11000100 0 0x80>;
++			interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C1>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C1_ARBITER>;
++			clock-names = "main", "dma","arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@11009000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11009000 0 0x1000>,
++			      <0 0x11000280 0 0x80>;
++			interrupts = <GIC_SPI 83 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C2>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C2_ARBITER>;
++			clock-names = "main", "dma", "arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		spi0: spi@1100a000 {
+ 			compatible = "mediatek,mt8183-spi";
+ 			#address-cells = <1>;
+@@ -307,6 +380,20 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2c3: i2c@1100f000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x1100f000 0 0x1000>,
++			      <0 0x11000400 0 0x80>;
++			interrupts = <GIC_SPI 84 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C3>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		spi1: spi@11010000 {
+ 			compatible = "mediatek,mt8183-spi";
+ 			#address-cells = <1>;
+@@ -320,6 +407,20 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2c1: i2c@11011000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11011000 0 0x1000>,
++			      <0 0x11000480 0 0x80>;
++			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C4>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		spi2: spi@11012000 {
+ 			compatible = "mediatek,mt8183-spi";
+ 			#address-cells = <1>;
+@@ -346,6 +447,66 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2c9: i2c@11014000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11014000 0 0x1000>,
++			      <0 0x11000180 0 0x80>;
++			interrupts = <GIC_SPI 131 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C1_IMM>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C1_ARBITER>;
++			clock-names = "main", "dma", "arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c10: i2c@11015000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11015000 0 0x1000>,
++			      <0 0x11000300 0 0x80>;
++			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C2_IMM>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C2_ARBITER>;
++			clock-names = "main", "dma", "arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c5: i2c@11016000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11016000 0 0x1000>,
++			      <0 0x11000500 0 0x80>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C5>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C5_ARBITER>;
++			clock-names = "main", "dma", "arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c11: i2c@11017000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x11017000 0 0x1000>,
++			      <0 0x11000580 0 0x80>;
++			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C5_IMM>,
++				 <&infracfg CLK_INFRA_AP_DMA>,
++				 <&infracfg CLK_INFRA_I2C5_ARBITER>;
++			clock-names = "main", "dma", "arb";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		spi4: spi@11018000 {
+ 			compatible = "mediatek,mt8183-spi";
+ 			#address-cells = <1>;
+@@ -372,6 +533,34 @@
+ 			status = "disabled";
+ 		};
+ 
++		i2c7: i2c@1101a000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x1101a000 0 0x1000>,
++			      <0 0x11000680 0 0x80>;
++			interrupts = <GIC_SPI 88 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C7>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c8: i2c@1101b000 {
++			compatible = "mediatek,mt8183-i2c";
++			reg = <0 0x1101b000 0 0x1000>,
++			      <0 0x11000700 0 0x80>;
++			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_LOW>;
++			clocks = <&infracfg CLK_INFRA_I2C8>,
++				 <&infracfg CLK_INFRA_AP_DMA>;
++			clock-names = "main", "dma";
++			clock-div = <1>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		audiosys: syscon@11220000 {
+ 			compatible = "mediatek,mt8183-audiosys", "syscon";
+ 			reg = <0 0x11220000 0 0x1000>;
+-- 
+1.9.1
+
