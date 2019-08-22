@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0041E9A19B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:02:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 78C809A19C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:02:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393458AbfHVVCM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:02:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43196 "EHLO mail.kernel.org"
+        id S2393469AbfHVVCQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:02:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393445AbfHVVCJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:02:09 -0400
+        id S2393445AbfHVVCN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 17:02:13 -0400
 Received: from quaco.ghostprotocols.net (unknown [177.158.141.211])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7ACBD23404;
-        Thu, 22 Aug 2019 21:02:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 609A023401;
+        Thu, 22 Aug 2019 21:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566507728;
-        bh=2DrlLcTd1l3Twm/SjC+AGH+HYuDLsHGaxsl6OvmAqwI=;
+        s=default; t=1566507733;
+        bh=nK+KraOlYJIZ8uhhQBcjTlCqlC7Io6TrQfS2Wcsr+HI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eUX3v2fSjwYOqSt7BNPeGwyufytL8bLdxZwPV+vdaa9S9RUTKHbLhsl9vozqNJ23v
-         rSjy8iLNk4DkUZjICUlM7L3UOv/OwGJf9yZNuktwRZRsX/Kw3Qw4/MpOYsBYH+woLu
-         du1h93g28OWHHUXJRCZrFXmyEK77NYYabTrC3koc=
+        b=DaFPt9JrJADBjweXWP1Yk0595EmsBzpY5b1Ulgi39Zev2uAXTD6qTXpoAAp5pE7wP
+         6CLWYSgv7hYhetQ60uF/tLrox7E9OZ2JbXnQSV128p6OPusBHvZ4FL6Zx3x8yTMKtx
+         dyBFKB09spHtmcTi48MAjRummvUVZbg2KaM6tVLc=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -31,9 +31,9 @@ Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
         linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>
-Subject: [PATCH 14/25] perf stat: Add missing counts.h
-Date:   Thu, 22 Aug 2019 18:00:49 -0300
-Message-Id: <20190822210100.3461-15-acme@kernel.org>
+Subject: [PATCH 15/25] perf scripting python: Add missing counts.h header
+Date:   Thu, 22 Aug 2019 18:00:50 -0300
+Message-Id: <20190822210100.3461-16-acme@kernel.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822210100.3461-1-acme@kernel.org>
 References: <20190822210100.3461-1-acme@kernel.org>
@@ -53,37 +53,24 @@ it from there.
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-jwcbm9gv9llloe3he5qkdefs@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-6bxk3ltwkw91qcld2ot86bgg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat-display.c | 1 +
- tools/perf/util/stat.c         | 1 +
- 2 files changed, 2 insertions(+)
+ tools/perf/util/scripting-engines/trace-event-python.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 3df0e39ccd52..605a1fdbda7a 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -4,6 +4,7 @@
+diff --git a/tools/perf/util/scripting-engines/trace-event-python.c b/tools/perf/util/scripting-engines/trace-event-python.c
+index 32c17a727450..51771fc0d0df 100644
+--- a/tools/perf/util/scripting-engines/trace-event-python.c
++++ b/tools/perf/util/scripting-engines/trace-event-python.c
+@@ -32,6 +32,7 @@
  #include <linux/time64.h>
- #include <math.h>
- #include "color.h"
-+#include "counts.h"
- #include "evlist.h"
- #include "evsel.h"
- #include "stat.h"
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 2715112290cf..1e6a25abe00f 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -2,6 +2,7 @@
- #include <errno.h>
- #include <inttypes.h>
- #include <math.h>
-+#include "counts.h"
- #include "stat.h"
- #include "evlist.h"
- #include "evsel.h"
+ 
+ #include "../../perf.h"
++#include "../counts.h"
+ #include "../debug.h"
+ #include "../callchain.h"
+ #include "../evsel.h"
 -- 
 2.21.0
 
