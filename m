@@ -2,75 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E86FD99E58
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:56:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F9AB99E67
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 20:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389844AbfHVR4e (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:56:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44688 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731231AbfHVR4e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:56:34 -0400
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27CA4233FD;
-        Thu, 22 Aug 2019 17:56:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566496593;
-        bh=L9UMGcdA614fnSHWQ04BSdS4ymvZGTviHvehBqLdubs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ZNLjdK+2Tq5C2CzVvNoWBQJCMNgJaYiAZrGB2fXAjonnhn+dzQ3Vx7E63+MqY88+p
-         i2vdqvHMZiNOqz5ZBEtZKtOZnRp/mSd9geEiqx2AdkHp4kf7K3VFWyq2Y6CUgYT2xA
-         bbT+p1lhoCDgWcMgSTgwRWxpB1Ga+pT/rPA6IQdI=
-Received: by mail-qt1-f171.google.com with SMTP id y26so8742687qto.4;
-        Thu, 22 Aug 2019 10:56:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAUjZkkkhqlMrIy/gmvovn7tvkkQEgQJyc9muQgEsJmB1BiEJi2C
-        v6r//ljQjXJZqszZ5WOWr8JCCXztvfXbvvkxTA==
-X-Google-Smtp-Source: APXvYqxmpTMuJpoR2hQvI30KNyZXaO90aPAJVNRDaz/KGX8/IUr6Sp01aMXULiLAaSLUCCkn9iQ5zlj6tY+yhexEMPk=
-X-Received: by 2002:ac8:44c4:: with SMTP id b4mr890120qto.224.1566496592345;
- Thu, 22 Aug 2019 10:56:32 -0700 (PDT)
+        id S1733113AbfHVSCP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 14:02:15 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:33825 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729641AbfHVSCM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 14:02:12 -0400
+Received: by mail-oi1-f194.google.com with SMTP id g128so5068486oib.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 11:02:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=h4HLC/ZMcej4QwTFBU3hYph7KTFLlz07LCtS+Hruuhk=;
+        b=aOS62eQqJ5Ms6gnVdD3fBpaogG1GY7SI+b95tqVDjfEOLE9hCMVXabPahCaDi7qG6a
+         ZoHbuH3o7eTBDt+dwR+iepeaVFZRJu6HQncyQNHxbGX+lYvaJ4f/PLoZSSXda+frlkCM
+         xI6I5bCMWYMdqzWf4mgj1B7p9fDwGCSsXtE+3PSjzNM11rWB91Uc54fEPcA0J4dlE9Bq
+         AQscmFCiRqcvvTKPgmOrv9sO4samKlXVIjTkhJD2eqlYvqDc1qu01h1KzuVk8ylVrzTn
+         BR4LicsB7xAUDZgmwICyPVwt6xZghdFUtSTJY0IYTQyN5wPWeWM7/xIzosPQSIH9Q9oB
+         Nakw==
+X-Gm-Message-State: APjAAAUugfW2NChcbQ1sx8nAWYpRsHx+IzsgbgtNQk396SBrxJ5Ufr/c
+        Xe1fYcl3J3SIL1ZLxkDP+X4=
+X-Google-Smtp-Source: APXvYqyUYP4/lZX+eCDveqQeqWdCXDo0bY2DhBbEvArHfbzlqv5ewmtI81CJSd+J2leLy7f7nZEVcA==
+X-Received: by 2002:aca:edc8:: with SMTP id l191mr270438oih.15.1566496931917;
+        Thu, 22 Aug 2019 11:02:11 -0700 (PDT)
+Received: from ?IPv6:2600:1700:65a0:78e0:514:7862:1503:8e4d? ([2600:1700:65a0:78e0:514:7862:1503:8e4d])
+        by smtp.gmail.com with ESMTPSA id a17sm91005otq.56.2019.08.22.11.02.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 11:02:10 -0700 (PDT)
+Subject: Re: [PATCH v4 2/4] nvme-pci: Add support for variable IO SQ element
+ size
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-nvme@lists.infradead.org, Jens Axboe <axboe@fb.com>,
+        Keith Busch <keith.busch@intel.com>,
+        linux-kernel@vger.kernel.org, Paul Pawlowski <paul@mrarm.io>
+References: <20190807075122.6247-1-benh@kernel.crashing.org>
+ <20190807075122.6247-3-benh@kernel.crashing.org>
+ <20190822002818.GA10391@lst.de>
+ <87e1fea1c297ef98f989175b3041c69e8b7de020.camel@kernel.crashing.org>
+From:   Sagi Grimberg <sagi@grimberg.me>
+Message-ID: <4fc11568-73fe-c8b5-ac29-d49daee9abad@grimberg.me>
+Date:   Thu, 22 Aug 2019 11:02:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190822060238.3887-1-krzk@kernel.org> <20190822060238.3887-3-krzk@kernel.org>
-In-Reply-To: <20190822060238.3887-3-krzk@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 22 Aug 2019 12:56:20 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq++LZ82v9WbyHK8pQg3WVQOxLvWcJ-qM0QAnhzKw033vA@mail.gmail.com>
-Message-ID: <CAL_Jsq++LZ82v9WbyHK8pQg3WVQOxLvWcJ-qM0QAnhzKw033vA@mail.gmail.com>
-Subject: Re: [PATCH v7 3/4] dt-bindings: arm: fsl: Add Kontron i.MX6UL N6310 compatibles
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Schrempf Frieder <frieder.schrempf@kontron.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <87e1fea1c297ef98f989175b3041c69e8b7de020.camel@kernel.crashing.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 1:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Add the compatibles for Kontron i.MX6UL N6310 SoM and boards.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Changes since v6:
-> 1. Split entries to pass the dtbs_check.
->
-> Changes since v5:
-> New patch
-> ---
->  Documentation/devicetree/bindings/arm/fsl.yaml | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+>> wrote:
+>>> +#define NVME_NVM_ADMSQES	6
+>>>   #define NVME_NVM_IOSQES		6
+>>>   #define NVME_NVM_IOCQES		4
+>>
+>> The NVM in the two defines here stands for the NVM command set,
+>> so this should just be named NVME_ADM_SQES or so.  But except for
+>> this
+>> the patch looks good:
+>>
+>> Reviewed-by: Christoph Hellwig <hch@lst.de>
+>>
+>> So maybe Sagi can just fix this up in the tree.
+> 
+> Ah ok I missed the meaning. Thanks. Sagi, can you fix that up or do you
+> need me to resubmit ?
+
+I'll fix it. Note that I'm going to take it out of the tree soon
+because it will have conflicts with Jens for-5.4/block, so we
+will send it to Jens after the initial merge window, after he
+rebases off of Linus.
