@@ -2,109 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E22999C42
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D23DD99C4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392778AbfHVRcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:32:54 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:47097 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392340AbfHVRcj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:32:39 -0400
-Received: by mail-qk1-f196.google.com with SMTP id p13so5835637qkg.13;
-        Thu, 22 Aug 2019 10:32:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7FtduzNMNJFnI5g1RLjKgEXAg+yuPVumc8YVJkrfUPo=;
-        b=qEeYXn5zbDKeUYzAE395iJhxBSXY28NfVitbQtYAB3PyhcKFqVr0X8Y3AjTCXoMcUW
-         5Q6LV4kVvOVUcpwcdQd+RF2OffQr24rN0eQZq3BDv/35RQTRjTQUYxMeKsFlsZsXaPfH
-         YrcMBwU0UhDNBbqSYOlRU++IvVq++BtYBmhkts46VzrTmF8KclLlqgc+CHt2WtCJO2r6
-         nIM7cD6wO544OQZp10ybXnkdiDQ+maOQ5nEjLFxf8tHi/wSXZ8JobjexChhEQFQRQPbi
-         sY2neb0g/idAF/SUszOnQGAazwU50BHbnfUixRgwyyGMg7ihYlA73k5zIOtKUusHsRHS
-         B4oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7FtduzNMNJFnI5g1RLjKgEXAg+yuPVumc8YVJkrfUPo=;
-        b=omjU5eRsKW89ppqvusB+XjarLHZrKkQZ7FQ2qBQO1EZ5i3FiqN2uCFR3uog7vZqhgl
-         QhgIWiwB3q4ElHQSJ/IlGJGkLi6NYYnH2wU8IiAxOLX7HFUILkL1NNv7ZZkMAaDbXATg
-         9/8KjEWBC0dFh9KuiwRaF9HX6958poq52WwO1nZvnYW003aDwQuKzpmm+YDafbSAhs8N
-         08mfLdwOUUhvfJ9cBOOPC0cdN1ct6d0kEbDaa/YsnWuvTqOzB77QDbAp/9hORUupP+N8
-         Nfpb1yXISXxL8dGnWS9FEEocrHz5/GkPCoZWpm0RvWJomF1zTIdWGOEINlM+nis9nZTj
-         26Zw==
-X-Gm-Message-State: APjAAAV1rIPbhMutmHiI6uR45Z/Py/IdeWvmom+UqUIXmTC/UX6LUzX3
-        TzMKMN4IKXsICk0twvHouYVr+/zz3Dztn+3usKc=
-X-Google-Smtp-Source: APXvYqyZflRkrgrTQAX1CVrQ2mJ3BeQg/IFnw+nskWRQ/EeD1oK9/Sz/YX7dvuHcw7OXa0C9CcbV+WlmtaA2P/RjI/E=
-X-Received: by 2002:a37:690:: with SMTP id 138mr101661qkg.184.1566495158839;
- Thu, 22 Aug 2019 10:32:38 -0700 (PDT)
+        id S2387825AbfHVRdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:33:22 -0400
+Received: from mail-eopbgr60059.outbound.protection.outlook.com ([40.107.6.59]:35396
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389885AbfHVRdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:33:17 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fFT3QhzDtfiQDg0ZtQMf0ZPnQ/fyLgVyyh9tgLD2qzAlWZQ+yDeJDUFU1Te23j3uhzSI2wN5rjw6B7pD0rj4gw/Ukr8Yiw28qq8R4s3thanp9en9GyhJh2liXDSC2cLYf+O54X09fLX5Zv6dQTivmWFFEYmp8TZIJMLgqE5v5f6ZEnBthmsivN+khbEXb2a6AO9eWgEPZt5om3qrbtMXNUN2xEvi4EY198qB6Bh0MuUK0sRrgHFzhAm9WrVNfrSBXnfUadM3kJVZFfCLCVN1nsvOyQwGpaY6uGuHbWoqO2lPJ/njsZMHyni4uXB0F25nZ8AoBYY4p24nceNzHqGUbg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GMKQEEzf7CT5wF9y/GSJl1EPplWS2baUsomLh5eXA/s=;
+ b=A67EMz8UiiNsCuKey6131lj1FsUXyiGee9YJ+/LVNtHO+uC1jOYE3rV8Iduionn18iehMOZfF8wQdZrL5dMGbNqySSsI8L2zD4PhNhRTsx3i+d71oCuaT5ncVBiMcftNgpnYtgUq2hJYjPFtgt3K9Y3YOzEAMqBMBiPpCqbm677duB9at85Xfd0Z0IPOQfZfryJ/CWCvUFA9v6encTpyvom1PJTEOEfPEhjF1HPHcjZpEzGK7lo0o5hL06XUJ3DdAbTsO7eSTYKBs2PGUeuuoSiCLlQHfxsc2wKysWni6hYjerPA7s/+hbNEYazxNnjuNzZN4iJk+Xm3fOXVF6I68g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GMKQEEzf7CT5wF9y/GSJl1EPplWS2baUsomLh5eXA/s=;
+ b=MAhzvRAtxziTdALhkvADSrQ8uIu8CGFXIydG0ddoHU8GKK5GyhV6svRfhNFE4U9DbMHQvu+63cDFKTvTiqcS4TUeUYSMjQbXtv4vqpyc9pej6FjoWxVMfmoLxovzUlt+MQFv9obBPPJnXEmTS6UIKDVGi6sTOX1UF1jpxskiAQ4=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB7022.eurprd04.prod.outlook.com (10.186.157.85) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Thu, 22 Aug 2019 17:33:13 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
+ 17:33:13 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <festevam@gmail.com>
+CC:     Chris Healy <cphealy@gmail.com>, Peter Chen <peter.chen@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+Subject: Re: [PATCH] ARM: imx: Drop imx_anatop_init()
+Thread-Topic: [PATCH] ARM: imx: Drop imx_anatop_init()
+Thread-Index: AQHVR8oGvyTNCOZoFU6BqtEMTuzaog==
+Date:   Thu, 22 Aug 2019 17:33:13 +0000
+Message-ID: <VI1PR04MB7023AE3910B261877892EEABEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <20190731180131.8597-1-andrew.smirnov@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f18ad444-36b1-47e0-3971-08d72726cf72
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR04MB7022;
+x-ms-traffictypediagnostic: VI1PR04MB7022:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB70221FF6F60576E579211724EEA50@VI1PR04MB7022.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1091;
+x-forefront-prvs: 01371B902F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(396003)(376002)(136003)(189003)(199004)(8936002)(66066001)(6436002)(8676002)(2906002)(81166006)(102836004)(486006)(476003)(186003)(26005)(446003)(44832011)(74316002)(52536014)(7736002)(5660300002)(6506007)(53546011)(91956017)(81156014)(76116006)(6116002)(3846002)(305945005)(33656002)(64756008)(9686003)(55016002)(4326008)(6246003)(7696005)(66476007)(66446008)(25786009)(66946007)(76176011)(71190400001)(71200400001)(256004)(14444005)(53936002)(54906003)(110136005)(478600001)(316002)(14454004)(99286004)(86362001)(229853002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB7022;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: hwD+IB1x77ZUy6cbWSQuHnIFMKcIBYxgTyGzsokVWuEFxj+6cB6Dd2pM4xSNlHfNVlIqDiugTcUPB3FajRocR+LLr9/+hSdErONrKUtH/55uv2aRJUa09azf/YydZWtWQ2hudAPwLAGVdN+naVxCBx/13yaphgaATja6yUoqaQgc5gFMsIW8vzDwfOyHM5zdAtA2eyQzRPfsRxsJ8ll8Hm2SS8vhWng2rjNcUSN/aYiqX60zhVyvZNp5lLQ3v61IRiyVH4PzDwSYKvhiccHB+YefSxgBJmvqJVstIf+oH70BJvL5VysMG8o7OUBuCxlKdDt+bxYR8GTN1AjIyuZWnMfM9XPHjfUnHEOx18Qpmqbco+2CaTTXCaxlw0LUG5zQK0et7+NXVjQzrIp42ijZFDIsEM2vkAYwTKAG1NoVwUE=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <CGME20190822171243eucas1p12213f2239d6c36be515dade41ed7470b@eucas1p1.samsung.com>
- <20190822171237.20798-1-i.maximets@samsung.com> <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
-In-Reply-To: <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
-From:   William Tu <u9012063@gmail.com>
-Date:   Thu, 22 Aug 2019 10:32:00 -0700
-Message-ID: <CALDO+SYhU4krmBO8d4hsDGm+BuUAR4qMv=WzVa=jAx27+g9KnA@mail.gmail.com>
-Subject: Re: [PATCH net v3] ixgbe: fix double clean of tx descriptors with xdp
-To:     Alexander Duyck <alexander.duyck@gmail.com>
-Cc:     Ilya Maximets <i.maximets@samsung.com>,
-        Netdev <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
-        Magnus Karlsson <magnus.karlsson@intel.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
-        Eelco Chaudron <echaudro@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f18ad444-36b1-47e0-3971-08d72726cf72
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 17:33:13.8294
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JGF811ej90jAp6yoNjfI31NWWJEVDIGLlyBQ8pay0k5nLcM+0Tsa1kr2uWwMnF3og03oIklEaDwo4IveaAd50w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 10:21 AM Alexander Duyck
-<alexander.duyck@gmail.com> wrote:
->
-> On Thu, Aug 22, 2019 at 10:12 AM Ilya Maximets <i.maximets@samsung.com> wrote:
-> >
-> > Tx code doesn't clear the descriptors' status after cleaning.
-> > So, if the budget is larger than number of used elems in a ring, some
-> > descriptors will be accounted twice and xsk_umem_complete_tx will move
-> > prod_tail far beyond the prod_head breaking the completion queue ring.
-> >
-> > Fix that by limiting the number of descriptors to clean by the number
-> > of used descriptors in the tx ring.
-> >
-> > 'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
-> > 'ixgbe_xsk_clean_tx_ring()' since we're allowed to directly use
-> > 'next_to_clean' and 'next_to_use' indexes.
-> >
-> > Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
-> > Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
-> > ---
-> >
-> > Version 3:
-> >   * Reverted some refactoring made for v2.
-> >   * Eliminated 'budget' for tx clean.
-> >   * prefetch returned.
-> >
-> > Version 2:
-> >   * 'ixgbe_clean_xdp_tx_irq()' refactored to look more like
-> >     'ixgbe_xsk_clean_tx_ring()'.
-> >
-> >  drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c | 29 ++++++++------------
-> >  1 file changed, 11 insertions(+), 18 deletions(-)
->
-> Thanks for addressing my concerns.
->
-> Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
-
-Thanks.
-
-Tested-by: William Tu <u9012063@gmail.com>
+On 31.07.2019 21:01, Andrey Smirnov wrote:=0A=
+> With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger=0A=
+> detect in mxs_phy_hw_init()") in tree all of the necessary charger=0A=
+> setup is done by the USB PHY driver which covers all of the affected=0A=
+> i.MX6 SoCs.=0A=
+> =0A=
+> NOTE: Imx_anatop_init() was also called for i.MX7D, but looking at its=0A=
+> datasheet it appears to have a different USB PHY IP block, so=0A=
+> executing i.MX6 charger disable configuration seems unnecessary.=0A=
+> =0A=
+> -void __init imx_anatop_init(void)=0A=
+> -{=0A=
+> -	anatop =3D syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");=0A=
+> -	if (IS_ERR(anatop)) {=0A=
+> -		pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);=0A=
+> -		return;=0A=
+> -	}=0A=
+=0A=
+This patch breaks suspend on imx6 in linux-next because the "anatop" =0A=
+regmap is no longer initialized. This was found via bisect but =0A=
+no_console_suspend prints a helpful stack anyway:=0A=
+=0A=
+(regmap_read) from [<c01226e4>] (imx_anatop_enable_weak2p5+0x28/0x70)=0A=
+(imx_anatop_enable_weak2p5) from [<c0122744>] =0A=
+(imx_anatop_pre_suspend+0x18/0x64)=0A=
+(imx_anatop_pre_suspend) from [<c0124434>] (imx6q_pm_enter+0x60/0x16c)=0A=
+(imx6q_pm_enter) from [<c018c8a4>] (suspend_devices_and_enter+0x7d4/0xcbc)=
+=0A=
+(suspend_devices_and_enter) from [<c018d544>] (pm_suspend+0x7b8/0x904)=0A=
+(pm_suspend) from [<c018b1b4>] (state_store+0x68/0xc8)=0A=
+=0A=
+Minimal fix looks like this:=0A=
+=0A=
+--- arch/arm/mach-imx/anatop.c=0A=
++++ arch/arm/mach-imx/anatop.c=0A=
+@@ -111,6 +111,12 @@ void __init imx_init_revision_from_anatop(void)=0A=
+          digprog =3D readl_relaxed(anatop_base + offset);=0A=
+          iounmap(anatop_base);=0A=
+=0A=
++       anatop =3D syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");=
+=0A=
++       if (IS_ERR(anatop)) {=0A=
++               pr_err("failed to find imx6q-anatop regmap!\n");=0A=
++               return;=0A=
++       }=0A=
+=0A=
+Since all SOCs that called imx_anatop_init also call =0A=
+imx_init_revision_from_anatop this might be an acceptable solution, =0A=
+unless there is some limitation preventing early regmap lookup.=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
