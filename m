@@ -2,58 +2,61 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAE89965E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:25:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 812AF99660
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbfHVOZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:25:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40264 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728042AbfHVOZA (ORCPT
+        id S2388057AbfHVOZE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:25:04 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36023 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387980AbfHVOZC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:25:00 -0400
-Received: by mail-wr1-f67.google.com with SMTP id c3so5618648wrd.7
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 07:24:59 -0700 (PDT)
+        Thu, 22 Aug 2019 10:25:02 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r3so5637095wrt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 07:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9OVx3jQWP4kZ5xJyqef16dDp2+r5/pkxkhk8LNAWmX4=;
-        b=idQ8iW2xtN9Z7AliSk77ovUIB903UmaYQgKv3ApPk4O3q0V27W7ZDIobQ4+dlnAMiH
-         cHbKdpngCnKxltSls1Y7TZXrbhU1iazWGtK96aKaaXSSWHc67X3E6Xl9RjMIylZOCkpO
-         SHe2quUdPXW2RYKDJTf1SnjXzxANBS3R++T+aaNHCdOGH1KIkoSSS0FP+rfQu0/1Vf4g
-         codkCiEWII91vRMM1SLUswJkkI//E4JAuruZMlk0uxgkqrSR9peFGZV98FGd5ScnoGz4
-         BAj9fMJ0xoNrRvwOEIs2jB2bw5eEYGkRFzgU3Y5GC3cwdcSiRYRNTQwAy2QlVCsuh/bB
-         uf1A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=532R/ZWuiDeQURoM9QVstK3VNVhlUb1b5wMTdcD1y6g=;
+        b=bLOp1aL7F9THqfOV7Xme5zs7Clfg5QY4THoC3eh0rpK44IWqhwMShz0XtR/iqKv8kc
+         NcQFoFY3MPRkiYgSRInPWeijRXC5S5f1rqLaSjPnKUoRSjG+eI/aOj7CvEefd4KmH/g8
+         UDbf+h2tWFy8sjTBM8VbqE7RXx9e/19Xz+PxO7P48ixBT665fCzijh+eVYDnKaQUAXbp
+         boZg+ini8cDQ9V7X9MhxT/SQPvbX6PZ3XuTgdtOJXKKwfG2+F7UZUNv78y7T6ckNRVMn
+         H3BTICzwaKMl8djlpygj5xvQ9ogRv12RtOHsHbmYkOisf7LLjUix1ka3IbRQAxM9GhbO
+         SDbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9OVx3jQWP4kZ5xJyqef16dDp2+r5/pkxkhk8LNAWmX4=;
-        b=HLsinj6R+awJOj/awPslST5TvJwMNGilV7z0GvvnhtK+gAXPjtZsXdLw5BsCLo0+A/
-         Ry44QoZb78f0qmlEAws6+ZQz6YSiutlO5IVjwT3XYby/NYseiUXm8hjPtJOamWWXnFe8
-         lDNkSPUn0fp/jJcZZy/ZwoollmgYGrlu4ulqEeV5KfkQnjhgRP8uZWVHWfwmgPfqpwqb
-         PUV4VlsN6Fu3EM/PDElRNqFd/G29YvCRufF/nYSHHXD6Vs+bW0rTqLWYUR9OdFh9PTaR
-         cmIRIbS0MBZVeTLVVD2qdbx6jYd9JPpOzwzgdJkU8PD5axWbm0pzHYksPx6O8c8yRLDX
-         6+zg==
-X-Gm-Message-State: APjAAAXnZAZ+Ka4quAW67za8wfVoFMnOV0SEcI7w1aTcnO3+HMIVX+Xq
-        5oQHE0Wud4uz2RElPjagbbiVTg==
-X-Google-Smtp-Source: APXvYqx3a41MFNhYZEgCdkzdje7C0zBjdhT4MO5uJCc4++EvcwS9Uz/v1rJGzSeEpyFmCrumGT1VbQ==
-X-Received: by 2002:adf:f281:: with SMTP id k1mr47694586wro.154.1566483898729;
-        Thu, 22 Aug 2019 07:24:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=532R/ZWuiDeQURoM9QVstK3VNVhlUb1b5wMTdcD1y6g=;
+        b=goolKKOFcPhkjMQ8SvX1sNMDjv0btv38y+4ioEjUD2j23fH9vqj56PUOSu7d+3nkvJ
+         C7qF2dieHGbQyDl1FjCjn7BhxOV4TlagPqq3+tbokTo1bibhM3sYtBVpGTIDGmxs9nyC
+         mKCSfNSWtaBEcZHf7Do2JOPoVOeXP+rUgi5mGBx5lRpkdjVv1BChdLNE0RodhUVox5XX
+         7CmXTRn8dhgKI8tvcXf5wbb7uQ9GlZgRaEg7VAZqxiNsj1VLs5zP9SRKpGFDRhp2VW3b
+         q+jS9nWGx6jmBNS1i71SyS5RZ5B2wTc3wwQq7hlJzacLA7xrtzr7HkI86fG2TwMV+XGl
+         LBiw==
+X-Gm-Message-State: APjAAAU/JS7jHVFF93vWkMc+OCb+75bZyuW6rwL0JfIs7s/FQL1o58eV
+        1VQIvNFXs+9llvzJKbQ8XBbcYA==
+X-Google-Smtp-Source: APXvYqxNvQfiW+pmE3LmlxBbVlKlHM6v/pU91KToTSnslnmLS0Z+eHTKFQz+xNljPf3GF3C7gC2pJQ==
+X-Received: by 2002:adf:cd84:: with SMTP id q4mr25260602wrj.232.1566483899812;
+        Thu, 22 Aug 2019 07:24:59 -0700 (PDT)
 Received: from bender.baylibre.local (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id d17sm25806547wrm.52.2019.08.22.07.24.57
+        by smtp.gmail.com with ESMTPSA id d17sm25806547wrm.52.2019.08.22.07.24.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 07:24:58 -0700 (PDT)
+        Thu, 22 Aug 2019 07:24:59 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     khilman@baylibre.com, jbrunet@baylibre.com
+To:     khilman@baylibre.com, jbrunet@baylibre.com,
+        devicetree@vger.kernel.org
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] arm64: meson-sm1: add support for DVFS
-Date:   Thu, 22 Aug 2019 16:24:49 +0200
-Message-Id: <20190822142455.12506-1-narmstrong@baylibre.com>
+Subject: [PATCH 1/6] dt-bindings: clk: meson: add sm1 periph clock controller bindings
+Date:   Thu, 22 Aug 2019 16:24:50 +0200
+Message-Id: <20190822142455.12506-2-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190822142455.12506-1-narmstrong@baylibre.com>
+References: <20190822142455.12506-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,41 +64,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Following DVFS support for the Amlogic G12A and G12B SoCs, this serie
-enables DVFS on the SM1 SoC for the SEI610 board.
+Update the documentation to support clock driver for the Amlogic SM1 SoC.
 
-The SM1 Clock structure is slightly different because of the Cortex-A55
-core used, having the capability for each core of a same cluster to run
-at a different frequency thanks to the newly used DynamIQ Shared Unit.
+SM1 clock tree is very close, the main differences are :
+- each CPU core can achieve a different frequency, albeit a common PLL
+- a similar tree as the clock tree has been added for the DynamIQ Shared Unit
+- has a new GP1 PLL used for the DynamIQ Shared Unit
+- SM1 has additional clocks like for CSI, NanoQ an other components
 
-This is why SM1 has a CPU clock tree for each core and for DynamIQ Shared Unit,
-with a bypass mux to use the CPU0 instead of the dedicated trees.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-The DSU uses a new GP1 PLL as default clock, thus GP1 is added as read-only.
-
-The SM1 OPPs has been taken from the Amlogic Vendor tree, and unlike
-G12A only a single version of the SoC is available.
-
-Dependencies:
-- patch 6 is based on the "arm64: meson: add support for SM1 Power Domains" serie,
-	but is not a strong dependency, it will work without
-
-Neil Armstrong (6):
-  dt-bindings: clk: meson: add sm1 periph clock controller bindings
-  clk: meson: g12a: add support for SM1 GP1 PLL
-  clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
-  clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
-  clk: meson: g12a: expose SM1 CPU 1, 2 & 3 clocks
-  arm64: dts: meson-sm1-sei610: enable DVFS
-
- .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
- .../boot/dts/amlogic/meson-sm1-sei610.dts     |  59 +-
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  69 +++
- drivers/clk/meson/g12a.c                      | 544 ++++++++++++++++++
- drivers/clk/meson/g12a.h                      |  26 +-
- include/dt-bindings/clock/g12a-clkc.h         |   3 +
- 6 files changed, 697 insertions(+), 5 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+index 6eaa52092313..7ccecd5c02c1 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
++++ b/Documentation/devicetree/bindings/clock/amlogic,gxbb-clkc.txt
+@@ -11,6 +11,7 @@ Required Properties:
+ 		"amlogic,axg-clkc" for AXG SoC.
+ 		"amlogic,g12a-clkc" for G12A SoC.
+ 		"amlogic,g12b-clkc" for G12B SoC.
++		"amlogic,sm1-clkc" for SM1 SoC.
+ - clocks : list of clock phandle, one for each entry clock-names.
+ - clock-names : should contain the following:
+   * "xtal": the platform xtal
 -- 
 2.22.0
 
