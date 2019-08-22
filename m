@@ -2,110 +2,109 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B760099C2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7E22999C42
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404810AbfHVRcF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:32:05 -0400
-Received: from mx.aristanetworks.com ([162.210.129.12]:49691 "EHLO
-        smtp.aristanetworks.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404615AbfHVRcB (ORCPT
+        id S2392778AbfHVRcy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:32:54 -0400
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:47097 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392340AbfHVRcj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:32:01 -0400
-Received: from smtp.aristanetworks.com (localhost [127.0.0.1])
-        by smtp.aristanetworks.com (Postfix) with ESMTP id 08B5142743A;
-        Thu, 22 Aug 2019 10:32:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arista.com;
-        s=Arista-A; t=1566495165;
-        bh=VS7LeuGqbPwIcHqY2XBp8+c2oKqQvPTyP/4ofEIs1qM=;
-        h=From:To:Cc:Subject:Date;
-        b=UI+s7seUH3h+J1ieyZ9ZWXCsGPQYgN6+OC21RjWYBBs1BZr9su6WVbTIujTSfgpJg
-         adXZoGyymThG9MtCLbc1Wqcw/JeysqLe/FEZ3VMta5nPxE9bn78rdC5kkk1Sq416YN
-         E9vDeXw5dh7j/2ykrqLMLsgf/rClu6jMK575OIbNSNZ92GgYPkwvViewd0AWxjmyWT
-         hTIOP2XKMCLwgCb2sVea0U0oYHCHX2htPSMu1rYH3gSmFv+t6kCcee6mh7bYVg3IqU
-         CZKWQGyHZqx6P1EtEA2knqeCCPvdzyuVrHeUClCWLOz+2u7C/Z3yklCeU37gB2EzBW
-         TcV5mb9VOP0Ng==
-Received: from egc101.sjc.aristanetworks.com (unknown [172.20.210.50])
-        by smtp.aristanetworks.com (Postfix) with ESMTP id EE3F342745B;
-        Thu, 22 Aug 2019 10:32:44 -0700 (PDT)
-From:   Edward Chron <echron@arista.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@suse.com>, Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        David Rientjes <rientjes@google.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, colona@arista.com,
-        Edward Chron <echron@arista.com>
-Subject: [PATCH] mm/oom: Add oom_score_adj and pgtables to Killed process message
-Date:   Thu, 22 Aug 2019 10:31:57 -0700
-Message-Id: <20190822173157.1569-1-echron@arista.com>
-X-Mailer: git-send-email 2.20.1
+        Thu, 22 Aug 2019 13:32:39 -0400
+Received: by mail-qk1-f196.google.com with SMTP id p13so5835637qkg.13;
+        Thu, 22 Aug 2019 10:32:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7FtduzNMNJFnI5g1RLjKgEXAg+yuPVumc8YVJkrfUPo=;
+        b=qEeYXn5zbDKeUYzAE395iJhxBSXY28NfVitbQtYAB3PyhcKFqVr0X8Y3AjTCXoMcUW
+         5Q6LV4kVvOVUcpwcdQd+RF2OffQr24rN0eQZq3BDv/35RQTRjTQUYxMeKsFlsZsXaPfH
+         YrcMBwU0UhDNBbqSYOlRU++IvVq++BtYBmhkts46VzrTmF8KclLlqgc+CHt2WtCJO2r6
+         nIM7cD6wO544OQZp10ybXnkdiDQ+maOQ5nEjLFxf8tHi/wSXZ8JobjexChhEQFQRQPbi
+         sY2neb0g/idAF/SUszOnQGAazwU50BHbnfUixRgwyyGMg7ihYlA73k5zIOtKUusHsRHS
+         B4oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7FtduzNMNJFnI5g1RLjKgEXAg+yuPVumc8YVJkrfUPo=;
+        b=omjU5eRsKW89ppqvusB+XjarLHZrKkQZ7FQ2qBQO1EZ5i3FiqN2uCFR3uog7vZqhgl
+         QhgIWiwB3q4ElHQSJ/IlGJGkLi6NYYnH2wU8IiAxOLX7HFUILkL1NNv7ZZkMAaDbXATg
+         9/8KjEWBC0dFh9KuiwRaF9HX6958poq52WwO1nZvnYW003aDwQuKzpmm+YDafbSAhs8N
+         08mfLdwOUUhvfJ9cBOOPC0cdN1ct6d0kEbDaa/YsnWuvTqOzB77QDbAp/9hORUupP+N8
+         Nfpb1yXISXxL8dGnWS9FEEocrHz5/GkPCoZWpm0RvWJomF1zTIdWGOEINlM+nis9nZTj
+         26Zw==
+X-Gm-Message-State: APjAAAV1rIPbhMutmHiI6uR45Z/Py/IdeWvmom+UqUIXmTC/UX6LUzX3
+        TzMKMN4IKXsICk0twvHouYVr+/zz3Dztn+3usKc=
+X-Google-Smtp-Source: APXvYqyZflRkrgrTQAX1CVrQ2mJ3BeQg/IFnw+nskWRQ/EeD1oK9/Sz/YX7dvuHcw7OXa0C9CcbV+WlmtaA2P/RjI/E=
+X-Received: by 2002:a37:690:: with SMTP id 138mr101661qkg.184.1566495158839;
+ Thu, 22 Aug 2019 10:32:38 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CGME20190822171243eucas1p12213f2239d6c36be515dade41ed7470b@eucas1p1.samsung.com>
+ <20190822171237.20798-1-i.maximets@samsung.com> <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
+In-Reply-To: <CAKgT0UepBGqx=FiqrdC-r3kvkMxVAHonkfc6rDt_HVQuzahZPQ@mail.gmail.com>
+From:   William Tu <u9012063@gmail.com>
+Date:   Thu, 22 Aug 2019 10:32:00 -0700
+Message-ID: <CALDO+SYhU4krmBO8d4hsDGm+BuUAR4qMv=WzVa=jAx27+g9KnA@mail.gmail.com>
+Subject: Re: [PATCH net v3] ixgbe: fix double clean of tx descriptors with xdp
+To:     Alexander Duyck <alexander.duyck@gmail.com>
+Cc:     Ilya Maximets <i.maximets@samsung.com>,
+        Netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn.topel@intel.com>,
+        Magnus Karlsson <magnus.karlsson@intel.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        intel-wired-lan <intel-wired-lan@lists.osuosl.org>,
+        Eelco Chaudron <echaudro@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For an OOM event: print oom_score_adj value for the OOM Killed process to
-document what the oom score adjust value was at the time the process was
-OOM Killed. The adjustment value can be set by user code and it affects
-the resulting oom_score so it is used to influence kill process selection.
+On Thu, Aug 22, 2019 at 10:21 AM Alexander Duyck
+<alexander.duyck@gmail.com> wrote:
+>
+> On Thu, Aug 22, 2019 at 10:12 AM Ilya Maximets <i.maximets@samsung.com> wrote:
+> >
+> > Tx code doesn't clear the descriptors' status after cleaning.
+> > So, if the budget is larger than number of used elems in a ring, some
+> > descriptors will be accounted twice and xsk_umem_complete_tx will move
+> > prod_tail far beyond the prod_head breaking the completion queue ring.
+> >
+> > Fix that by limiting the number of descriptors to clean by the number
+> > of used descriptors in the tx ring.
+> >
+> > 'ixgbe_clean_xdp_tx_irq()' function refactored to look more like
+> > 'ixgbe_xsk_clean_tx_ring()' since we're allowed to directly use
+> > 'next_to_clean' and 'next_to_use' indexes.
+> >
+> > Fixes: 8221c5eba8c1 ("ixgbe: add AF_XDP zero-copy Tx support")
+> > Signed-off-by: Ilya Maximets <i.maximets@samsung.com>
+> > ---
+> >
+> > Version 3:
+> >   * Reverted some refactoring made for v2.
+> >   * Eliminated 'budget' for tx clean.
+> >   * prefetch returned.
+> >
+> > Version 2:
+> >   * 'ixgbe_clean_xdp_tx_irq()' refactored to look more like
+> >     'ixgbe_xsk_clean_tx_ring()'.
+> >
+> >  drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c | 29 ++++++++------------
+> >  1 file changed, 11 insertions(+), 18 deletions(-)
+>
+> Thanks for addressing my concerns.
+>
+> Acked-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
 
-When eligible tasks are not printed (sysctl oom_dump_tasks = 0) printing
-this value is the only documentation of the value for the process being
-killed. Having this value on the Killed process message is useful to
-document if a miscconfiguration occurred or to confirm that the
-oom_score_adj configuration applies as expected.
+Thanks.
 
-An example which illustates both misconfiguration and validation that
-the oom_score_adj was applied as expected is:
-
-Aug 14 23:00:02 testserver kernel: Out of memory: Killed process 2692
- (systemd-udevd) total-vm:1056800kB, anon-rss:1052760kB, file-rss:4kB,
- shmem-rss:0kB pgtables:22kB oom_score_adj:1000
-
-The systemd-udevd is a critical system application that should have
-an oom_score_adj of -1000. It was miconfigured to have a adjustment of
-1000 making it a highly favored OOM kill target process. The output
-documents both the misconfiguration and the fact that the process
-was correctly targeted by OOM due to the miconfiguration. This can
-be quite helpful for triage and problem determination.
-
-The addition of the pgtables_bytes shows page table usage by the
-process and is a useful measure of the memory size of the process.
-
-Signed-off-by: Edward Chron <echron@arista.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Acked-by: David Rientjes <rientjes@google.com>
----
- mm/oom_kill.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index eda2e2a0bdc6..98cb3943e5a2 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -884,12 +884,12 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 	 */
- 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
- 	mark_oom_victim(victim);
--	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
--		message, task_pid_nr(victim), victim->comm,
--		K(victim->mm->total_vm),
--		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
--		K(get_mm_counter(victim->mm, MM_FILEPAGES)),
--		K(get_mm_counter(victim->mm, MM_SHMEMPAGES)));
-+	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB pgtables:%lukB oom_score_adj:%hd\n",
-+		message, task_pid_nr(victim), victim->comm, K(mm->total_vm),
-+		K(get_mm_counter(mm, MM_ANONPAGES)),
-+		K(get_mm_counter(mm, MM_FILEPAGES)),
-+		K(get_mm_counter(mm, MM_SHMEMPAGES)),
-+		mm_pgtables_bytes(mm), victim->signal->oom_score_adj);
- 	task_unlock(victim);
- 
- 	/*
--- 
-2.20.1
-
+Tested-by: William Tu <u9012063@gmail.com>
