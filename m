@@ -2,36 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BDFA99CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:37:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AD6399C37
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392617AbfHVRhN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:37:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46354 "EHLO mail.kernel.org"
+        id S2404484AbfHVRZm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:25:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404273AbfHVRYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:39 -0400
+        id S2391602AbfHVRYx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:53 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 332092341E;
-        Thu, 22 Aug 2019 17:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 372CE23407;
+        Thu, 22 Aug 2019 17:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494678;
-        bh=wy5KoSJmIv5PrAHz5Ep3SD8p4yqJdHmOkyvC/C4rbK8=;
+        s=default; t=1566494692;
+        bh=UrRX+YAvAnzmTTdaf0EAwx3YweqXDSSy+g35XFQF+ks=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zlzT0A+bdXsuzIAnlrvx6xDC8dHL96EkqAeEvxR+5mD5shSLZx+CXet9FrQFK32jl
-         x6kGhSkY2EFfbxK+fYeiDF8ovPXp7xHZozoczVsViw9LTl8viU9HFpPrO1e2dwp391
-         ndGSX0foAmpc+rBJ85Zuc5LeUUBMwVZtk/yPS1ls=
+        b=OcsVHLCuwrFvIN+raKTxrMuTt1OR/j+Ms92j937ajJq/nlg8DVHkOdNkfyj6qCAn2
+         XeyqJ+MkxZc2MCNP4I1yTPH+YE+y4GORDR0Vtvd4O4LvCjmzNXPgyjZavjnEXtZ0Vd
+         FKsEEvKqAi20mcARDx0LbF7hqU4eTXhzau0Qz7lQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Daniel Borkmann <daniel@iogearbox.net>,
         Alexei Starovoitov <ast@kernel.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 05/71] bpf: get rid of pure_initcall dependency to enable jits
-Date:   Thu, 22 Aug 2019 10:18:40 -0700
-Message-Id: <20190822171726.700480610@linuxfoundation.org>
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Jann Horn <jannh@google.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: [PATCH 4.14 07/71] bpf: add bpf_jit_limit knob to restrict unpriv allocations
+Date:   Thu, 22 Aug 2019 10:18:42 -0700
+Message-Id: <20190822171726.904054988@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
 References: <20190822171726.131957995@linuxfoundation.org>
@@ -46,275 +50,197 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Daniel Borkmann <daniel@iogearbox.net>
 
-commit fa9dd599b4dae841924b022768354cfde9affecb upstream.
+commit ede95a63b5e84ddeea6b0c473b36ab8bfd8c6ce3 upstream.
 
-Having a pure_initcall() callback just to permanently enable BPF
-JITs under CONFIG_BPF_JIT_ALWAYS_ON is unnecessary and could leave
-a small race window in future where JIT is still disabled on boot.
-Since we know about the setting at compilation time anyway, just
-initialize it properly there. Also consolidate all the individual
-bpf_jit_enable variables into a single one and move them under one
-location. Moreover, don't allow for setting unspecified garbage
-values on them.
+Rick reported that the BPF JIT could potentially fill the entire module
+space with BPF programs from unprivileged users which would prevent later
+attempts to load normal kernel modules or privileged BPF programs, for
+example. If JIT was enabled but unsuccessful to generate the image, then
+before commit 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
+we would always fall back to the BPF interpreter. Nowadays in the case
+where the CONFIG_BPF_JIT_ALWAYS_ON could be set, then the load will abort
+with a failure since the BPF interpreter was compiled out.
 
+Add a global limit and enforce it for unprivileged users such that in case
+of BPF interpreter compiled out we fail once the limit has been reached
+or we fall back to BPF interpreter earlier w/o using module mem if latter
+was compiled in. In a next step, fair share among unprivileged users can
+be resolved in particular for the case where we would fail hard once limit
+is reached.
+
+Fixes: 290af86629b2 ("bpf: introduce BPF_JIT_ALWAYS_ON config")
+Fixes: 0a14842f5a3c ("net: filter: Just In Time compiler for x86-64")
+Co-Developed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
 Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
 Acked-by: Alexei Starovoitov <ast@kernel.org>
+Cc: Eric Dumazet <eric.dumazet@gmail.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
 Signed-off-by: Alexei Starovoitov <ast@kernel.org>
-[bwh: Backported to 4.14 as dependency of commit 2e4a30983b0f
- "bpf: restrict access to core bpf sysctls":
- - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/net/bpf_jit_32.c         |    2 --
- arch/arm64/net/bpf_jit_comp.c     |    2 --
- arch/mips/net/bpf_jit.c           |    2 --
- arch/mips/net/ebpf_jit.c          |    2 --
- arch/powerpc/net/bpf_jit_comp.c   |    2 --
- arch/powerpc/net/bpf_jit_comp64.c |    2 --
- arch/s390/net/bpf_jit_comp.c      |    2 --
- arch/sparc/net/bpf_jit_comp_32.c  |    2 --
- arch/sparc/net/bpf_jit_comp_64.c  |    2 --
- arch/x86/net/bpf_jit_comp.c       |    2 --
- kernel/bpf/core.c                 |   19 ++++++++++++-------
- net/core/sysctl_net_core.c        |   18 ++++++++++++------
- net/socket.c                      |    9 ---------
- 13 files changed, 24 insertions(+), 42 deletions(-)
+ Documentation/sysctl/net.txt |    8 +++++++
+ include/linux/filter.h       |    1 
+ kernel/bpf/core.c            |   49 ++++++++++++++++++++++++++++++++++++++++---
+ net/core/sysctl_net_core.c   |   10 +++++++-
+ 4 files changed, 63 insertions(+), 5 deletions(-)
 
---- a/arch/arm/net/bpf_jit_32.c
-+++ b/arch/arm/net/bpf_jit_32.c
-@@ -25,8 +25,6 @@
+--- a/Documentation/sysctl/net.txt
++++ b/Documentation/sysctl/net.txt
+@@ -91,6 +91,14 @@ Values :
+ 	0 - disable JIT kallsyms export (default value)
+ 	1 - enable JIT kallsyms export for privileged users only
  
- #include "bpf_jit_32.h"
++bpf_jit_limit
++-------------
++
++This enforces a global limit for memory allocations to the BPF JIT
++compiler in order to reject unprivileged JIT requests once it has
++been surpassed. bpf_jit_limit contains the value of the global limit
++in bytes.
++
+ dev_weight
+ --------------
  
--int bpf_jit_enable __read_mostly;
--
- /*
-  * eBPF prog stack layout:
-  *
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -31,8 +31,6 @@
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -729,6 +729,7 @@ struct sock *do_sk_redirect_map(struct s
+ extern int bpf_jit_enable;
+ extern int bpf_jit_harden;
+ extern int bpf_jit_kallsyms;
++extern int bpf_jit_limit;
  
- #include "bpf_jit.h"
+ typedef void (*bpf_jit_fill_hole_t)(void *area, unsigned int size);
  
--int bpf_jit_enable __read_mostly;
--
- #define TMP_REG_1 (MAX_BPF_JIT_REG + 0)
- #define TMP_REG_2 (MAX_BPF_JIT_REG + 1)
- #define TCALL_CNT (MAX_BPF_JIT_REG + 2)
---- a/arch/mips/net/bpf_jit.c
-+++ b/arch/mips/net/bpf_jit.c
-@@ -1207,8 +1207,6 @@ jmp_cmp:
- 	return 0;
- }
- 
--int bpf_jit_enable __read_mostly;
--
- void bpf_jit_compile(struct bpf_prog *fp)
- {
- 	struct jit_ctx ctx;
---- a/arch/mips/net/ebpf_jit.c
-+++ b/arch/mips/net/ebpf_jit.c
-@@ -177,8 +177,6 @@ static u32 b_imm(unsigned int tgt, struc
- 		(ctx->idx * 4) - 4;
- }
- 
--int bpf_jit_enable __read_mostly;
--
- enum which_ebpf_reg {
- 	src_reg,
- 	src_reg_no_fp,
---- a/arch/powerpc/net/bpf_jit_comp.c
-+++ b/arch/powerpc/net/bpf_jit_comp.c
-@@ -18,8 +18,6 @@
- 
- #include "bpf_jit32.h"
- 
--int bpf_jit_enable __read_mostly;
--
- static inline void bpf_flush_icache(void *start, void *end)
- {
- 	smp_wmb();
---- a/arch/powerpc/net/bpf_jit_comp64.c
-+++ b/arch/powerpc/net/bpf_jit_comp64.c
-@@ -21,8 +21,6 @@
- 
- #include "bpf_jit64.h"
- 
--int bpf_jit_enable __read_mostly;
--
- static void bpf_jit_fill_ill_insns(void *area, unsigned int size)
- {
- 	memset32(area, BREAKPOINT_INSTRUCTION, size/4);
---- a/arch/s390/net/bpf_jit_comp.c
-+++ b/arch/s390/net/bpf_jit_comp.c
-@@ -30,8 +30,6 @@
- #include <asm/set_memory.h>
- #include "bpf_jit.h"
- 
--int bpf_jit_enable __read_mostly;
--
- struct bpf_jit {
- 	u32 seen;		/* Flags to remember seen eBPF instructions */
- 	u32 seen_reg[16];	/* Array to remember which registers are used */
---- a/arch/sparc/net/bpf_jit_comp_32.c
-+++ b/arch/sparc/net/bpf_jit_comp_32.c
-@@ -11,8 +11,6 @@
- 
- #include "bpf_jit_32.h"
- 
--int bpf_jit_enable __read_mostly;
--
- static inline bool is_simm13(unsigned int value)
- {
- 	return value + 0x1000 < 0x2000;
---- a/arch/sparc/net/bpf_jit_comp_64.c
-+++ b/arch/sparc/net/bpf_jit_comp_64.c
-@@ -12,8 +12,6 @@
- 
- #include "bpf_jit_64.h"
- 
--int bpf_jit_enable __read_mostly;
--
- static inline bool is_simm13(unsigned int value)
- {
- 	return value + 0x1000 < 0x2000;
---- a/arch/x86/net/bpf_jit_comp.c
-+++ b/arch/x86/net/bpf_jit_comp.c
-@@ -16,8 +16,6 @@
- #include <asm/nospec-branch.h>
- #include <linux/bpf.h>
- 
--int bpf_jit_enable __read_mostly;
--
- /*
-  * assembly code in arch/x86/net/bpf_jit.S
-  */
 --- a/kernel/bpf/core.c
 +++ b/kernel/bpf/core.c
-@@ -290,6 +290,11 @@ struct bpf_prog *bpf_patch_insn_single(s
+@@ -290,10 +290,13 @@ struct bpf_prog *bpf_patch_insn_single(s
  }
  
  #ifdef CONFIG_BPF_JIT
-+/* All BPF JIT sysctl knobs here. */
-+int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
-+int bpf_jit_harden   __read_mostly;
-+int bpf_jit_kallsyms __read_mostly;
++# define BPF_JIT_LIMIT_DEFAULT	(PAGE_SIZE * 40000)
 +
+ /* All BPF JIT sysctl knobs here. */
+ int bpf_jit_enable   __read_mostly = IS_BUILTIN(CONFIG_BPF_JIT_ALWAYS_ON);
+ int bpf_jit_harden   __read_mostly;
+ int bpf_jit_kallsyms __read_mostly;
++int bpf_jit_limit    __read_mostly = BPF_JIT_LIMIT_DEFAULT;
+ 
  static __always_inline void
  bpf_get_prog_addr_region(const struct bpf_prog *prog,
- 			 unsigned long *symbol_start,
-@@ -358,8 +363,6 @@ static DEFINE_SPINLOCK(bpf_lock);
- static LIST_HEAD(bpf_kallsyms);
- static struct latch_tree_root bpf_tree __cacheline_aligned;
- 
--int bpf_jit_kallsyms __read_mostly;
--
- static void bpf_prog_ksym_node_add(struct bpf_prog_aux *aux)
- {
- 	WARN_ON_ONCE(!list_empty(&aux->ksym_lnode));
-@@ -540,8 +543,6 @@ void __weak bpf_jit_free(struct bpf_prog
- 	bpf_prog_unlock_free(fp);
+@@ -489,27 +492,64 @@ int bpf_get_kallsym(unsigned int symnum,
+ 	return ret;
  }
  
--int bpf_jit_harden __read_mostly;
--
- static int bpf_jit_blind_insn(const struct bpf_insn *from,
- 			      const struct bpf_insn *aux,
- 			      struct bpf_insn *to_buff)
-@@ -1327,9 +1328,13 @@ EVAL4(PROG_NAME_LIST, 416, 448, 480, 512
- };
- 
- #else
--static unsigned int __bpf_prog_ret0(const void *ctx,
--				    const struct bpf_insn *insn)
-+static unsigned int __bpf_prog_ret0_warn(const void *ctx,
-+					 const struct bpf_insn *insn)
++static atomic_long_t bpf_jit_current;
++
++#if defined(MODULES_VADDR)
++static int __init bpf_jit_charge_init(void)
++{
++	/* Only used as heuristic here to derive limit. */
++	bpf_jit_limit = min_t(u64, round_up((MODULES_END - MODULES_VADDR) >> 2,
++					    PAGE_SIZE), INT_MAX);
++	return 0;
++}
++pure_initcall(bpf_jit_charge_init);
++#endif
++
++static int bpf_jit_charge_modmem(u32 pages)
++{
++	if (atomic_long_add_return(pages, &bpf_jit_current) >
++	    (bpf_jit_limit >> PAGE_SHIFT)) {
++		if (!capable(CAP_SYS_ADMIN)) {
++			atomic_long_sub(pages, &bpf_jit_current);
++			return -EPERM;
++		}
++	}
++
++	return 0;
++}
++
++static void bpf_jit_uncharge_modmem(u32 pages)
++{
++	atomic_long_sub(pages, &bpf_jit_current);
++}
++
+ struct bpf_binary_header *
+ bpf_jit_binary_alloc(unsigned int proglen, u8 **image_ptr,
+ 		     unsigned int alignment,
+ 		     bpf_jit_fill_hole_t bpf_fill_ill_insns)
  {
-+	/* If this handler ever gets executed, then BPF_JIT_ALWAYS_ON
-+	 * is not working properly, so warn about it!
-+	 */
-+	WARN_ON_ONCE(1);
- 	return 0;
+ 	struct bpf_binary_header *hdr;
+-	unsigned int size, hole, start;
++	u32 size, hole, start, pages;
+ 
+ 	/* Most of BPF filters are really small, but if some of them
+ 	 * fill a page, allow at least 128 extra bytes to insert a
+ 	 * random section of illegal instructions.
+ 	 */
+ 	size = round_up(proglen + sizeof(*hdr) + 128, PAGE_SIZE);
++	pages = size / PAGE_SIZE;
++
++	if (bpf_jit_charge_modmem(pages))
++		return NULL;
+ 	hdr = module_alloc(size);
+-	if (hdr == NULL)
++	if (!hdr) {
++		bpf_jit_uncharge_modmem(pages);
+ 		return NULL;
++	}
+ 
+ 	/* Fill space with illegal/arch-dep instructions. */
+ 	bpf_fill_ill_insns(hdr, size);
+ 
+-	hdr->pages = size / PAGE_SIZE;
++	hdr->pages = pages;
+ 	hole = min_t(unsigned int, size - (proglen + sizeof(*hdr)),
+ 		     PAGE_SIZE - sizeof(*hdr));
+ 	start = (get_random_int() % hole) & ~(alignment - 1);
+@@ -522,7 +562,10 @@ bpf_jit_binary_alloc(unsigned int progle
+ 
+ void bpf_jit_binary_free(struct bpf_binary_header *hdr)
+ {
++	u32 pages = hdr->pages;
++
+ 	module_memfree(hdr);
++	bpf_jit_uncharge_modmem(pages);
  }
- #endif
-@@ -1386,7 +1391,7 @@ struct bpf_prog *bpf_prog_select_runtime
  
- 	fp->bpf_func = interpreters[(round_up(stack_depth, 32) / 32) - 1];
- #else
--	fp->bpf_func = __bpf_prog_ret0;
-+	fp->bpf_func = __bpf_prog_ret0_warn;
- #endif
- 
- 	/* eBPF JITs can rewrite the program in case constant
+ /* This symbol is only overridden by archs that have different
 --- a/net/core/sysctl_net_core.c
 +++ b/net/core/sysctl_net_core.c
-@@ -25,6 +25,7 @@
+@@ -272,7 +272,6 @@ static int proc_dointvec_minmax_bpf_enab
+ 	return ret;
+ }
  
- static int zero = 0;
- static int one = 1;
-+static int two __maybe_unused = 2;
- static int min_sndbuf = SOCK_MIN_SNDBUF;
- static int min_rcvbuf = SOCK_MIN_RCVBUF;
- static int max_skb_frags = MAX_SKB_FRAGS;
-@@ -325,13 +326,14 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_enable,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0644,
--#ifndef CONFIG_BPF_JIT_ALWAYS_ON
--		.proc_handler	= proc_dointvec
--#else
- 		.proc_handler	= proc_dointvec_minmax,
-+# ifdef CONFIG_BPF_JIT_ALWAYS_ON
- 		.extra1		= &one,
+-# ifdef CONFIG_HAVE_EBPF_JIT
+ static int
+ proc_dointvec_minmax_bpf_restricted(struct ctl_table *table, int write,
+ 				    void __user *buffer, size_t *lenp,
+@@ -283,7 +282,6 @@ proc_dointvec_minmax_bpf_restricted(stru
+ 
+ 	return proc_dointvec_minmax(table, write, buffer, lenp, ppos);
+ }
+-# endif
+ #endif
+ 
+ static struct ctl_table net_core_table[] = {
+@@ -390,6 +388,14 @@ static struct ctl_table net_core_table[]
  		.extra2		= &one,
--#endif
-+# else
-+		.extra1		= &zero,
-+		.extra2		= &two,
-+# endif
- 	},
- # ifdef CONFIG_HAVE_EBPF_JIT
- 	{
-@@ -339,14 +341,18 @@ static struct ctl_table net_core_table[]
- 		.data		= &bpf_jit_harden,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0600,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &two,
- 	},
- 	{
- 		.procname	= "bpf_jit_kallsyms",
- 		.data		= &bpf_jit_kallsyms,
- 		.maxlen		= sizeof(int),
- 		.mode		= 0600,
--		.proc_handler	= proc_dointvec,
-+		.proc_handler	= proc_dointvec_minmax,
-+		.extra1		= &zero,
-+		.extra2		= &one,
  	},
  # endif
++	{
++		.procname	= "bpf_jit_limit",
++		.data		= &bpf_jit_limit,
++		.maxlen		= sizeof(int),
++		.mode		= 0600,
++		.proc_handler	= proc_dointvec_minmax_bpf_restricted,
++		.extra1		= &one,
++	},
  #endif
---- a/net/socket.c
-+++ b/net/socket.c
-@@ -2656,15 +2656,6 @@ out_fs:
- 
- core_initcall(sock_init);	/* early initcall */
- 
--static int __init jit_init(void)
--{
--#ifdef CONFIG_BPF_JIT_ALWAYS_ON
--	bpf_jit_enable = 1;
--#endif
--	return 0;
--}
--pure_initcall(jit_init);
--
- #ifdef CONFIG_PROC_FS
- void socket_seq_show(struct seq_file *seq)
- {
+ 	{
+ 		.procname	= "netdev_tstamp_prequeue",
 
 
