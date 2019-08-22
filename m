@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F38BD99B5F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 583BD99BB2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404082AbfHVRYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
+        id S2404774AbfHVR0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49564 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391556AbfHVRWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:49 -0400
+        id S2404458AbfHVRZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:37 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AC74233FE;
-        Thu, 22 Aug 2019 17:22:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AC2D0206DD;
+        Thu, 22 Aug 2019 17:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494568;
-        bh=6KUXWNDA8/+Pde2MDNRP2/6V1yRx83M8Ry5DX+w5b6U=;
+        s=default; t=1566494736;
+        bh=F2s4r3Dc85Wwzv9Jk0wTHcyEYqKnxm5Uoi84WZ3ZM+E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t8T9IeOEzdB5bcmc3C1nto/O6YpadIn40vq5p+7G1WD+hvjx+lkyveEj86TTuyUc8
-         KUexa4nen13A5BORvuI0PQJ55NI0vWMaOiaJPCatfIiPOInhk9ghXooZGIx5SIgSzE
-         dMCoNmAKsnpqXtQDG4nh38lDxE7kI4Ttq5xTx+iw=
+        b=OYYXXEo2WiMXesSUeESeaCxanArdFcFUV5uSz6n3n/HWMk8GGNFYVAZv9qIT42Zah
+         VShFStTP7DsmVJvZX70rbRFr+LMtyIQCw7yMqccRpccJFkE39cDt197/SxakXbGezr
+         DFjbMghF6PWt9CPLsf2ynMIVxHYfJDz18ksRwzek=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 58/78] usb: cdc-acm: make sure a refcount is taken early enough
+        stable@vger.kernel.org, Hulk Robot <hulkci@huawei.com>,
+        YueHaibing <yuehaibing@huawei.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 29/85] xen/pciback: remove set but not used variable old_state
 Date:   Thu, 22 Aug 2019 10:19:02 -0700
-Message-Id: <20190822171833.717553055@linuxfoundation.org>
+Message-Id: <20190822171732.591441660@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,64 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+[ Upstream commit 09e088a4903bd0dd911b4f1732b250130cdaffed ]
 
-commit c52873e5a1ef72f845526d9f6a50704433f9c625 upstream.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-destroy() will decrement the refcount on the interface, so that
-it needs to be taken so early that it never undercounts.
+drivers/xen/xen-pciback/conf_space_capability.c: In function pm_ctrl_write:
+drivers/xen/xen-pciback/conf_space_capability.c:119:25: warning:
+ variable old_state set but not used [-Wunused-but-set-variable]
 
-Fixes: 7fb57a019f94e ("USB: cdc-acm: Fix potential deadlock (lockdep warning)")
-Cc: stable <stable@vger.kernel.org>
-Reported-and-tested-by: syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Link: https://lore.kernel.org/r/20190808142119.7998-1-oneukum@suse.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It is never used so can be removed.
 
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Juergen Gross <jgross@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/class/cdc-acm.c |   18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ drivers/xen/xen-pciback/conf_space_capability.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1319,13 +1319,6 @@ made_compressed_probe:
- 	if (acm == NULL)
- 		goto alloc_fail;
+diff --git a/drivers/xen/xen-pciback/conf_space_capability.c b/drivers/xen/xen-pciback/conf_space_capability.c
+index 73427d8e01161..e5694133ebe57 100644
+--- a/drivers/xen/xen-pciback/conf_space_capability.c
++++ b/drivers/xen/xen-pciback/conf_space_capability.c
+@@ -116,13 +116,12 @@ static int pm_ctrl_write(struct pci_dev *dev, int offset, u16 new_value,
+ {
+ 	int err;
+ 	u16 old_value;
+-	pci_power_t new_state, old_state;
++	pci_power_t new_state;
  
--	minor = acm_alloc_minor(acm);
--	if (minor < 0) {
--		dev_err(&intf->dev, "no more free acm devices\n");
--		kfree(acm);
--		return -ENODEV;
--	}
--
- 	ctrlsize = usb_endpoint_maxp(epctrl);
- 	readsize = usb_endpoint_maxp(epread) *
- 				(quirks == SINGLE_RX_URB ? 1 : 2);
-@@ -1333,6 +1326,16 @@ made_compressed_probe:
- 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
- 	acm->control = control_interface;
- 	acm->data = data_interface;
-+
-+	usb_get_intf(acm->control); /* undone in destruct() */
-+
-+	minor = acm_alloc_minor(acm);
-+	if (minor < 0) {
-+		dev_err(&intf->dev, "no more free acm devices\n");
-+		kfree(acm);
-+		return -ENODEV;
-+	}
-+
- 	acm->minor = minor;
- 	acm->dev = usb_dev;
- 	acm->ctrl_caps = ac_management_function;
-@@ -1474,7 +1477,6 @@ skip_countries:
- 	usb_driver_claim_interface(&acm_driver, data_interface, acm);
- 	usb_set_intfdata(data_interface, acm);
+ 	err = pci_read_config_word(dev, offset, &old_value);
+ 	if (err)
+ 		goto out;
  
--	usb_get_intf(control_interface);
- 	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
- 			&control_interface->dev);
- 	if (IS_ERR(tty_dev)) {
+-	old_state = (pci_power_t)(old_value & PCI_PM_CTRL_STATE_MASK);
+ 	new_state = (pci_power_t)(new_value & PCI_PM_CTRL_STATE_MASK);
+ 
+ 	new_value &= PM_OK_BITS;
+-- 
+2.20.1
+
 
 
