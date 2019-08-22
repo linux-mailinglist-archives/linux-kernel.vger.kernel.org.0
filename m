@@ -2,104 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 561BA9930A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 333B39930C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388431AbfHVMOA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:14:00 -0400
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42113 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388392AbfHVMNx (ORCPT
+        id S2388440AbfHVMOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:14:05 -0400
+Received: from mail-ua1-f44.google.com ([209.85.222.44]:35671 "EHLO
+        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388389AbfHVMN7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:13:53 -0400
-Received: by mail-vs1-f66.google.com with SMTP id b187so3661023vsc.9
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:13:52 -0700 (PDT)
+        Thu, 22 Aug 2019 08:13:59 -0400
+Received: by mail-ua1-f44.google.com with SMTP id j21so1913417uap.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:13:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=E6/IjtBPVj0Oz4iJYzEDbuqonF1ZiM27DpCa69vmHwc=;
-        b=Joha3CS+69v3l15rP/aCLwahlRT79HSR53vcRKRD19ch/SeKqLtDd14wSG9/aPbfRd
-         l9rvapek5GoET3eH7i+sCraqajqS0AOAb/FrIkoTuWuqRXn+serk9ID311WqWdd8Bk6x
-         tDXnI12KtaeMX/1o5YVOEHferPVRaYlZiyjR3iT3NmG+oV9d0BcbGbSKl2T2/JcVNOAa
-         ahUcQjDD47ueJ6dTeLrwVNbO2Cb5Ch5uLv4yntlMu6llx6RUNFlnmnzvZ7J46SIsjn6Q
-         y7Ar31OGKqMSh3EABmGu6BAYK29iqImtdlriR64YSTPXyfwqjiWdixjl6vTr5eJZ5/6v
-         furQ==
+        bh=DoBmeUN23M8f6sfbc9hjllfgwqRgBk2+sJFpDr9LHV0=;
+        b=fBVXvdd5bwH+sPQ0EwczYi7R6UmwhFeLh0tBrRFjzXX7IFfV2KnWfv8vwWiNuIBB8H
+         NGGZv62Zk/qT4ZXkyI0BBvAYEl+xvjQK7SG7Tsj0MijJuSmyal+GioBCqP3LfHzD4+oY
+         H4u7Wfgxm/ojS3Txbnuys36cWl+exdG4o4s0mesYIrVTF2ehlmDXzZqXpQFcEd+LatFA
+         1zFeZZ+yHi8H7Dy4+/zq0XzTxf0XkUSK77ho1+CZNnHkMvgw6bTJmR1mvUE0A01KmHn2
+         MdqHGzSDf7tD3eCbDAEt80tOupjxhBET+sk/uQ0Xjzk1P95B6OphlIfJrhjJs6r2lq83
+         HQIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=E6/IjtBPVj0Oz4iJYzEDbuqonF1ZiM27DpCa69vmHwc=;
-        b=D3zLY/UUm/jrLEMmMJRwn0X+aa15V57HlhDmX3tYVkj0vCDd7LfdAhramV6nYQ93gI
-         RKh7fvShKdFb7Yq4an0CQZrPN1Ysxtcc5qCskPB51iRMthkz//JezTroxxl4YbG5Cj6q
-         LR5QqEhA5QTp+CqKGxVSZT+rXLgqtMlJBfBUovsPwX/2XEYltuVfP1vj3WlxCNh7jjRf
-         HmwVn4FB77uP3olHICQSHPqDcJgxpJjQMw9uXWLc7nBgn3l2uUKqEg7MLsG2aE1Gxz3g
-         Q/9ilZHS5BgyQccMD7WWTNMdSM5UO0sDDgl+/EkmV5uYv4q5c6xMAk0LoBsWSHThU8xf
-         r4Hw==
-X-Gm-Message-State: APjAAAUbKKxketBkdH+OsKNyxH8o6diqu7VubzE9XT65ZxXKPGBoJfYT
-        Gx8DMvwIxxbyo5Ch+R3lo/rfhxG154UY5Djpi6UmeQ==
-X-Google-Smtp-Source: APXvYqyhQ/ujxJj+dVFADP98FB6B+BRSrIpjyWbp9YXdhDJfkng0dqPjtRh6NyZiqzTkyemUxcsWScmqEbs0yEb9oAY=
-X-Received: by 2002:a67:347:: with SMTP id 68mr18766574vsd.35.1566476031413;
- Thu, 22 Aug 2019 05:13:51 -0700 (PDT)
+        bh=DoBmeUN23M8f6sfbc9hjllfgwqRgBk2+sJFpDr9LHV0=;
+        b=MEIbjQF5seHadyt9W9OTljYc7yne+AxBCgUGBm8aRkNWG4X1Tr9nzFsMoUkazy/z5v
+         jwPMgumJKQ0UFUi+pXl9Fsj0eQv6DZHKDqG9nfxhddme0nLslnUXHvfTeFhbO2Y0+WFl
+         0U/AFc98z35Hqr+Nd30SX+i0QLlhZclYo8CBnuS89BPokFSuH7tdS4IQE9sfs47fRY1m
+         L4TGANUcIJQs53GeCbBdQES23XGktSTw8Is6XUtMzI1hV+g4CzIODocFsJKM+B8ET8X+
+         lW18ac/N9PuTsPdKpeiULJ/jyVuF73S08fyzl5XMDIcrEy2U7mTL0jDw3wSBkQ3NXQF1
+         sAoQ==
+X-Gm-Message-State: APjAAAUngG+Euk5lbcEP0iv4/vYUOkciCEv1NdQUz10/LYNsN5ydumE1
+        tMjf6tg041dpErOhbzQ+VY7Bn1GeEZMojduVHqww4M+5
+X-Google-Smtp-Source: APXvYqzXVsDy0ze4FRIDwywvutY/B4QAw3R64INVMx+0auCjLO0cktw5lNHc/YQDg6mDs7Vet6xKvfAPTB3hUQaHhXY=
+X-Received: by 2002:ab0:210f:: with SMTP id d15mr5424470ual.129.1566476038016;
+ Thu, 22 Aug 2019 05:13:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190810121608.24145-1-paul@crapouillou.net> <20190810121608.24145-2-paul@crapouillou.net>
-In-Reply-To: <20190810121608.24145-2-paul@crapouillou.net>
+References: <20190822064741.11196-1-chaotian.jing@mediatek.com>
+In-Reply-To: <20190822064741.11196-1-chaotian.jing@mediatek.com>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 22 Aug 2019 14:13:15 +0200
-Message-ID: <CAPDyKFqMmCcsJi9r9j24wW9gOPsYr+t5TrryqpJ3=EH0ANwi9A@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mmc: jz4740: Drop dependency on arch header
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+Date:   Thu, 22 Aug 2019 14:13:21 +0200
+Message-ID: <CAPDyKFqEqF_ZHerbkTqqcVBceQvMr_A+-MkbzQJBByhCv9B0fg@mail.gmail.com>
+Subject: Re: fix controller busy issue and add 24bits segment support
+To:     Chaotian Jing <chaotian.jing@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-mediatek@lists.infradead.org,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        od@zcrc.me
+        srv_heupstream <srv_heupstream@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 10 Aug 2019 at 14:16, Paul Cercueil <paul@crapouillou.net> wrote:
+On Thu, 22 Aug 2019 at 08:47, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
 >
-> We don't need to set the 'slave_id' anymore - that field is never read
-> by the DMA driver.
+> the below 2 patches fix controller busy issue when plug out SD card
+> and add 24bits segment size support.
 >
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> Chaotian Jing (2):
+>   mmc: mediatek: fix controller busy when plug out SD
+>   mmc: mediatek: support 24bits segment size
+>
+>  drivers/mmc/host/mtk-sd.c | 24 ++++++++++++++++++------
+>  1 file changed, 18 insertions(+), 6 deletions(-)
 
 Applied for next, thanks!
 
 Kind regards
 Uffe
-
-
-> ---
->  drivers/mmc/host/jz4740_mmc.c | 4 ----
->  1 file changed, 4 deletions(-)
->
-> diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-> index 59f81e8afcce..7ff2034d739a 100644
-> --- a/drivers/mmc/host/jz4740_mmc.c
-> +++ b/drivers/mmc/host/jz4740_mmc.c
-> @@ -25,8 +25,6 @@
->
->  #include <asm/cacheflush.h>
->
-> -#include <asm/mach-jz4740/dma.h>
-> -
->  #define JZ_REG_MMC_STRPCL      0x00
->  #define JZ_REG_MMC_STATUS      0x04
->  #define JZ_REG_MMC_CLKRT       0x08
-> @@ -292,11 +290,9 @@ static int jz4740_mmc_start_dma_transfer(struct jz4740_mmc_host *host,
->         if (data->flags & MMC_DATA_WRITE) {
->                 conf.direction = DMA_MEM_TO_DEV;
->                 conf.dst_addr = host->mem_res->start + JZ_REG_MMC_TXFIFO;
-> -               conf.slave_id = JZ4740_DMA_TYPE_MMC_TRANSMIT;
->         } else {
->                 conf.direction = DMA_DEV_TO_MEM;
->                 conf.src_addr = host->mem_res->start + JZ_REG_MMC_RXFIFO;
-> -               conf.slave_id = JZ4740_DMA_TYPE_MMC_RECEIVE;
->         }
->
->         sg_count = jz4740_mmc_prepare_dma_data(host, data, COOKIE_MAPPED);
-> --
-> 2.21.0.593.g511ec345e18
->
