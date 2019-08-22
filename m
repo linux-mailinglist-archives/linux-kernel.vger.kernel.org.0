@@ -2,86 +2,125 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CF7F299A2D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:11:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3620B99A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:11:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390902AbfHVRLN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:11:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32896 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389135AbfHVRLJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:11:09 -0400
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 821062089E;
-        Thu, 22 Aug 2019 17:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566493868;
-        bh=Eu5zYHsgZr/DzgkYZtrV8Xf3yPbZrB6F/5Aa3SVutiA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=YgpviCCuEYOqne1wsEWgd6l+Gzkw+5xYBwggmYQtDll2PjCPqB1qmScWDXN1P/B5K
-         B/RNg/icssWR6AjcDPdeqSlGGxWCAS2rl4YBtOQnalt5AVfZm3e4ze3if6d5gFRY2x
-         +KvCpV/lo8jNDpZObQ1PLinLdtTKiva/GCEIEsL4=
-Date:   Thu, 22 Aug 2019 10:11:08 -0700
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gavin Li <git@thegavinli.com>,
-        Laurentiu Tudor <laurentiu.tudor@nxp.com>,
-        Minas Harutyunyan <hminas@synopsys.com>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Geoff Levand <geoff@infradead.org>,
-        Michal Simek <michal.simek@xilinx.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Bin Liu <b-liu@ti.com>, linux-arm-kernel@lists.infradead.org,
-        linux-usb@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-m68k@lists.linux-m68k.org, iommu@lists.linux-foundation.org,
-        linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: next take at setting up a dma mask by default for platform
- devices v2
-Message-ID: <20190822171108.GA17471@kroah.com>
-References: <20190816062435.881-1-hch@lst.de>
+        id S2403768AbfHVRLj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:11:39 -0400
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:33024 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390913AbfHVRLd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:11:33 -0400
+Received: by mail-qk1-f195.google.com with SMTP id w18so5830910qki.0
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:11:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gb0fma4SYZkehZAw45Gi4L0bDfo73oujKKHVTeGoQIs=;
+        b=IRjN9WlJI2NizOqoywAu1t0dasUD2HvfgwBoOa9osPpEM5aXa+yGTdPiN1TiJrsWvG
+         iGjVHWvYW4UX16sIaTg+QfTcU+Oxhzhu02LywcI0apxLSb/bD5M1LZTIeFjzJMXcOwgK
+         dj7JFd0ME9QR+iHMqXDTZSGYSBjOVWgr70YI0CNC1cWiUeIlaKextW4Y/iu34MlJrPjr
+         XdjfXiZI0uu3CLQkaowXHBF/i4hZdcwaTXJt8OrNJC2Fziu5qs8SrWDAzAjhzuq5XaxE
+         xpot9/k1xGzYE0Kjkw6JFcnJ84oyZeq2BwLFoxI2SYVYFfubezEbJKTgvUSfoxkWcuC+
+         maZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gb0fma4SYZkehZAw45Gi4L0bDfo73oujKKHVTeGoQIs=;
+        b=f6ZF/shjO2/UaFTRgusFNClGrD/xMdKqyoByfrwlTG1vBa+ID2H8i86BvlxI7FiWuo
+         bbP2meX4DOwngEi/4DgQ80ZkFtONiNSF+cOJypCgJEfHc3SbWhe3krJF/d3F4KIpdGw8
+         edzCtdDJIotaf8gj+L3eG6yDelPK6iNqIVLQAxCYpSj3VOtauB6aTybIVvKgEQ53ymjW
+         f7++ktx7Z3cD3RnpgDQcSIjsBDHL+6p/2ay0VFGBpM62MYJA4lt+C4dQQcKti66VuWa5
+         IzL695A3Bj4BBcCH0Ov+CSdqwTRot3oD5udlveskj7RjXDRIKX/50RU2v9gcjFVvtCs4
+         NThQ==
+X-Gm-Message-State: APjAAAVWoxHC5bwXEbh0p7hX9LJlg1jr/sZyhqfrf2U9ZxxCdZcg8U4w
+        vt77ZenDuqtN4o7mY/kh6/3eAlWRta3vVcmAgzasrg==
+X-Google-Smtp-Source: APXvYqxPEdStgyeuCloUwnL5iefdzeiMR6CC0TYoeSyeF/2xzpm7U2SOTQQPmVIJS4sKZHVEsEOYn5XL1N6tDYT1pig=
+X-Received: by 2002:a37:c40d:: with SMTP id d13mr21876qki.8.1566493892003;
+ Thu, 22 Aug 2019 10:11:32 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190816062435.881-1-hch@lst.de>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190820222403.GB8120@kroah.com> <201908220959.x7M9xP8r011133@www262.sakura.ne.jp>
+ <20190822133538.GA16793@kroah.com> <e8d3ce30-8c61-048e-2606-f8a4e8f08d87@i-love.sakura.ne.jp>
+ <20190822164249.GA12551@kroah.com>
+In-Reply-To: <20190822164249.GA12551@kroah.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Thu, 22 Aug 2019 10:11:20 -0700
+Message-ID: <CACT4Y+Z0yCAwie83Oqd7XBNgQjWtEkuEg5WJCd6rW-ZMWqosxg@mail.gmail.com>
+Subject: Re: [PATCH] /dev/mem: Bail out upon SIGKILL when reading memory.
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Arnd Bergmann <arnd@arndb.de>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>,
+        Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 08:24:29AM +0200, Christoph Hellwig wrote:
-> Hi all,
-> 
-> this is another attempt to make sure the dma_mask pointer is always
-> initialized for platform devices.  Not doing so lead to lots of
-> boilerplate code, and makes platform devices different from all our
-> major busses like PCI where we always set up a dma_mask.  In the long
-> run this should also help to eventually make dma_mask a scalar value
-> instead of a pointer and remove even more cruft.
-> 
-> The bigger blocker for this last time was the fact that the usb
-> subsystem uses the presence or lack of a dma_mask to check if the core
-> should do dma mapping for the driver, which is highly unusual.  So we
-> fix this first.  Note that this has some overlap with the pending
-> desire to use the proper dma_mmap_coherent helper for mapping usb
-> buffers.  The first two patches have already been queued up by Greg
-> and are only included for completeness.
+On Thu, Aug 22, 2019 at 9:42 AM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Aug 22, 2019 at 11:00:59PM +0900, Tetsuo Handa wrote:
+> > On 2019/08/22 22:35, Greg Kroah-Hartman wrote:
+> > > On Thu, Aug 22, 2019 at 06:59:25PM +0900, Tetsuo Handa wrote:
+> > >> Tetsuo Handa wrote:
+> > >>> Greg Kroah-Hartman wrote:
+> > >>>> Oh, nice!  This shouldn't break anything that is assuming that the read
+> > >>>> will complete before a signal is delivered, right?
+> > >>>>
+> > >>>> I know userspace handling of "short" reads is almost always not there...
+> > >>>
+> > >>> Since this check will give up upon SIGKILL, userspace won't be able to see
+> > >>> the return value from read(). Thus, returning 0 upon SIGKILL will be safe. ;-)
+> > >>> Maybe we also want to add cond_resched()...
+> > >>>
+> > >>> By the way, do we want similar check on write_mem() side?
+> > >>> If aborting "write to /dev/mem" upon SIGKILL (results in partial write) is
+> > >>> unexpected, we might want to ignore SIGKILL for write_mem() case.
+> > >>> But copying data from killed threads (especially when killed by OOM killer
+> > >>> and userspace memory is reclaimed by OOM reaper before write_mem() returns)
+> > >>> would be after all unexpected. Then, it might be preferable to check SIGKILL
+> > >>> on write_mem() side...
+> > >>>
+> > >>
+> > >> Ha, ha. syzbot reported the same problem using write_mem().
+> > >> https://syzkaller.appspot.com/text?tag=CrashLog&x=1018055a600000
+> > >> We want fatal_signal_pending() check on both sides.
+> > >
+> > > Ok, want to send a patch for that?
+> >
+> > Yes. But before sending a patch, I'm trying to dump values using debug printk().
+> >
+> > >
+> > > And does anything use /dev/mem anymore?  I think X stopped using it a
+> > > long time ago.
+> > >
+> > >> By the way, write_mem() worries me whether there is possibility of replacing
+> > >> kernel code/data with user-defined memory data supplied from userspace.
+> > >> If write_mem() were by chance replaced with code that does
+> > >>
+> > >>    while (1);
+> > >>
+> > >> we won't be able to return from write_mem() even if we added fatal_signal_pending() check.
+> > >> Ditto for replacing local variables with unexpected values...
+> > >
+> > > I'm sorry, I don't really understand what you mean here, but I haven't
+> > > had my morning coffee...  Any hints as to an example?
+> >
+> > Probably similar idea: "lockdown: Restrict /dev/{mem,kmem,port} when the kernel is locked down"
+> >
+> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/char/mem.c?h=next-20190822&id=9b9d8dda1ed72e9bd560ab0ca93d322a9440510e
+> >
+> > Then, syzbot might want to blacklist writing to /dev/mem .
+>
+> syzbot should probably blacklist that now, you can do a lot of bad
+> things writing to that device node :(
 
-Note to everyone.  The first two patches in this series is already in
-5.3-rc5.
-
-I've applied the rest of the series to my usb-next branch (with the 6th
-patch landing there later today.)  They are scheduled to be merge to
-Linus in 5.4-rc1.
-
-Christoph, thanks so much for these cleanups.
-
-greg k-h
+Agree. It wasn't supposed to reach it, but it figured out how to mount
+devfs and then open "./mem"  bypassing all checks. Fortunately there
+is a config to disable /dev/mem, so we are going to turn it off.
