@@ -2,161 +2,122 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E0CA199D8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C02A99DFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:47:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405343AbfHVRnb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:43:31 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:38429 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405314AbfHVRn0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:43:26 -0400
-Received: by mail-pf1-f195.google.com with SMTP id o70so4436297pfg.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:43:26 -0700 (PDT)
+        id S2391633AbfHVRqn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:46:43 -0400
+Received: from mail-eopbgr760089.outbound.protection.outlook.com ([40.107.76.89]:34198
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2389333AbfHVRqm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:46:42 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=doa8mFEOXXTu2eBDGc8GMCl5aKHD4TEQHqm5DYVQytYhRQW/kd2yIzZQxNnLIqMw41I1mJMrGNR0UERx9fFFpxJOcYNEKMdHGcPOZ6NuAqN/9ZIlzNdEXziQhknTI0j8N+kqjYCZtiE03+Dp8lSAzbfvePXzktJtHPevmn6YpjzUYfv7V8Ikl2oA+vQp1bdvaJFepramr1XnJtRNQexpZjHSBF2z/NOtv8okUB2IMbMKkBBDAMRdmZLMldVVdncZavD4RAXgQTey9W8eIE54URna1aTnRKCvwJl+jU5ZRJYGKJEWoVYl+mDJFV82gazGf0x3y2vJtN7r3TejHuSp1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zUK30UwzVfHljYQyXvmnFcFhPo0kD61tDWawQOrlqfw=;
+ b=ZOqntH1u90GyDIPEU75a3zZ7iQuZPHbAgf6C5HgEnW07NaPojMmXycKu4fGc5BUesZ8DWPQXCYj242tx23xN6dJBMMvaO9nKqwEBWaQQy07Bp8WSF+nZJwQDOny3QyFUnnUZ/ANoYIY4a1diWC0R+DcW2qOtEmfP2L61BpgrL2LnggV70niIuGa2Udnn1Cr8VVeLsQ5PTJaJW6xM/IMnKILyr+j7smLzTnR8h2g4c8TAMCVaNHxUqEdCMys549rd4t40RhYMfM9w80+PztXXwqsaS5T33GmsP0jq6k9Q+BEU0Paz/7CRDfOU+7fMID+KezxJudI9RmReHR5+oB8LCw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=xilinx.com; dmarc=pass action=none header.from=xilinx.com;
+ dkim=pass header.d=xilinx.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:references:date:in-reply-to:message-id
-         :user-agent:mime-version;
-        bh=6IOaGnUD4mxduRmdxfDGgTsq+7+zuErL30N4WfZQUJg=;
-        b=typmwV4DxiIjX786OwGD06aIxFTp+qy1+q3G/q+3uKSXV8Wu9ymDA3GRXFgcslgnHQ
-         AfYBMsoMbiZ3hVuvQblxg2KLydBMyUdXlTPif7k/ur8y9mZ6oI9NOxfeHxM3XZ4ciu8w
-         Qluo3Biqdjz2HtvR1oq31B5GcrEP8P78DVRfwpJpmRwrGtUctw17am3//F2iAK6pLKGI
-         lbj/llZPW2MLuHquvGIYEnE3RapHyyBKqFC0/KlqLw0pFV4i58RN8wlbHRx7DpXLgcvd
-         1s7fCIXr6sMzZoW/RH8i4UmcDdHdJQjjdk7ldI38RN5K6Gmw6+crU3Mg8SU3EKDUOshP
-         uQug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:references:date:in-reply-to
-         :message-id:user-agent:mime-version;
-        bh=6IOaGnUD4mxduRmdxfDGgTsq+7+zuErL30N4WfZQUJg=;
-        b=VwegHm3NCrqd/iTVygDD5Kcpsmc7RVSK2LCy4/J002IU09cnqvBPTcvCjIn/SH8At3
-         woVskwZbrVLidDi3ycIm/cxq4oarrxCCpCoHjm761le9J6RWcgpaM5NiJaLbB6SKBg+k
-         D7nxWV+eZeZOlb5lXsSoNRBjU3OGTM2j7BIgGQ4zkOUORnhG8D8aUQKe921vkMDYWZaJ
-         cTKTjrFOmEF5cZ78EvgxuFWKuIT2U1V/tWhjNeViKkMh85ozWuU+Hbl5v32cBTCcq3Wi
-         HueyRLG//mPzgbeJqWPR3M7Azq75TouGnttGVfVGve36eRKg4hqbNt0mwh6gJE2LnzzQ
-         YgFQ==
-X-Gm-Message-State: APjAAAUERhm5F1XKqUNlEB9sk6b9ovPiZopGMrXf/Sd/8tr3H3ClmOqN
-        NtwY2tzGP8sUcAaSbnf/0NMVdA==
-X-Google-Smtp-Source: APXvYqz+VrQ45BXYdArbTMZb1Lml83c2MchkPLghR2OpuSwsKJR61/80agQyoFrQOYugG33I94tlCA==
-X-Received: by 2002:a62:1444:: with SMTP id 65mr342557pfu.145.1566495805684;
-        Thu, 22 Aug 2019 10:43:25 -0700 (PDT)
-Received: from bsegall-linux.svl.corp.google.com.localhost ([2620:15c:2cd:202:39d7:98b3:2536:e93f])
-        by smtp.gmail.com with ESMTPSA id d3sm207973pjz.31.2019.08.22.10.43.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:43:24 -0700 (PDT)
-From:   bsegall@google.com
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        linux-kernel@vger.kernel.org, mingo@kernel.org,
-        liangyan.peng@linux.alibaba.com, shanpeic@linux.alibaba.com,
-        xlpang@linux.alibaba.com, pjt@google.com, stable@vger.kernel.org
-Subject: Re: [PATCH] sched/fair: Add missing unthrottle_cfs_rq()
-References: <0004fb54-cdee-2197-1cbf-6e2111d39ed9@arm.com>
-        <20190820105420.7547-1-valentin.schneider@arm.com>
-        <20190822092123.GL2349@hirez.programming.kicks-ass.net>
-Date:   Thu, 22 Aug 2019 10:43:23 -0700
-In-Reply-To: <20190822092123.GL2349@hirez.programming.kicks-ass.net> (Peter
-        Zijlstra's message of "Thu, 22 Aug 2019 11:21:23 +0200")
-Message-ID: <xm26pnkxhz9g.fsf@bsegall-linux.svl.corp.google.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+ d=xilinx.onmicrosoft.com; s=selector2-xilinx-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zUK30UwzVfHljYQyXvmnFcFhPo0kD61tDWawQOrlqfw=;
+ b=sOQ8LTGhf7Sqavj90klmUiYcgPiNH5mbgRchtrSvu0XBltc1cTJbceVjnUTGUNYVu9JO+NCJF5wCRPpkl5ptLDXWCdDKzehBajAToTpfaRuoQUHS9s0ZGy6SxTpedx9XmXsGbbKvCyC7eUTVuHuWuYlH+3vBdqqhFmPRDhY4wzQ=
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com (52.132.231.93) by
+ CH2PR02MB6789.namprd02.prod.outlook.com (20.180.17.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Thu, 22 Aug 2019 17:46:38 +0000
+Received: from CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::5c58:16c0:d226:4c96]) by CH2PR02MB6359.namprd02.prod.outlook.com
+ ([fe80::5c58:16c0:d226:4c96%2]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
+ 17:46:37 +0000
+From:   Dragan Cvetic <draganc@xilinx.com>
+To:     Colin King <colin.king@canonical.com>,
+        Derek Kiernan <dkiernan@xilinx.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michal Simek <michals@xilinx.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+CC:     "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake: "Schdule"
+ -> "Schedule"
+Thread-Topic: [PATCH][next] misc: xilinx_sdfec: fix spelling mistake:
+ "Schdule" -> "Schedule"
+Thread-Index: AQHVVnJP4VcE2hpVHUK1v1iNBAmG8KcHdetw
+Date:   Thu, 22 Aug 2019 17:46:37 +0000
+Message-ID: <CH2PR02MB635948C20B17ED85455EBE06CBA50@CH2PR02MB6359.namprd02.prod.outlook.com>
+References: <20190819094137.390-1-colin.king@canonical.com>
+In-Reply-To: <20190819094137.390-1-colin.king@canonical.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=draganc@xilinx.com; 
+x-originating-ip: [149.199.80.133]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: adab16dc-e1fa-4594-453c-08d72728ae71
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:CH2PR02MB6789;
+x-ms-traffictypediagnostic: CH2PR02MB6789:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <CH2PR02MB6789CA4D05A5230057A05873CBA50@CH2PR02MB6789.namprd02.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3044;
+x-forefront-prvs: 01371B902F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(39840400004)(376002)(396003)(136003)(13464003)(189003)(199004)(2906002)(316002)(229853002)(66476007)(76116006)(76176011)(66946007)(54906003)(305945005)(74316002)(478600001)(99286004)(110136005)(64756008)(66446008)(66556008)(55016002)(9686003)(6436002)(71200400001)(71190400001)(7736002)(7696005)(14444005)(3846002)(486006)(6116002)(66066001)(33656002)(53936002)(52536014)(5660300002)(14454004)(11346002)(446003)(53546011)(6246003)(8936002)(6506007)(81166006)(81156014)(26005)(8676002)(25786009)(186003)(102836004)(86362001)(4326008)(256004)(476003)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:CH2PR02MB6789;H:CH2PR02MB6359.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UTsoc5jSyL/8viEq6rlvcvp5hkfG/Ts6DnteM2Sdt0Q1yQBGKIMM0QJXkUxQLam2ii7G/xyB+sR/USV19Av1TF9FhahwZiuYcwtfrJd/b7mqquVRIiA0yruUGn4eGUbJt2Tfu4514NcWrBwG5Ve63nV+Ktyrwjf5wzPsfpK8yOsDvKL9V/pdp7pXU7tdKTRusSjr+iZqoXWAUpi7PqdTffqctm3/oCpZqRpyeUXoOYeg+Spoink812cIM8V1BXftV5qu/kcg4/5xHULCQB2os1/5uuBebhpdPjWgmRGzHv5S+9MalGVRFdZ+uOtHzJMv3iW6aGv/tVemGHt4muKhRl9XyPXQDnb+AcoAk8MVsD9o/+8rmJoyeQun8FJasKBkoDA7a00iL129/4mMnwaRl1xsOThy3v4Ka1W4PI9AUBE=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: adab16dc-e1fa-4594-453c-08d72728ae71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 17:46:37.3789
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tr+bfPqEx5j0SQ5ne1RVTeQW+iqgnYADnchG5BxZEYWK2/xED8l3q81sxQrJ5uyPCM3KUiBoA37i5fok5imZ1A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR02MB6789
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Peter Zijlstra <peterz@infradead.org> writes:
-
-> On Tue, Aug 20, 2019 at 11:54:20AM +0100, Valentin Schneider wrote:
->> Turns out a cfs_rq->runtime_remaining can become positive in
->> assign_cfs_rq_runtime(), but this codepath has no call to
->> unthrottle_cfs_rq().
->> 
->> This can leave us in a situation where we have a throttled cfs_rq with
->> positive ->runtime_remaining, which breaks the math in
->> distribute_cfs_runtime(): this function expects a negative value so that
->> it may safely negate it into a positive value.
->> 
->> Add the missing unthrottle_cfs_rq(). While at it, add a WARN_ON where
->> we expect negative values, and pull in a comment from the mailing list
->> that didn't make it in [1].
-
-This didn't exist because it's not supposed to be possible to call
-account_cfs_rq_runtime on a throttled cfs_rq at all, so that's the
-invariant being violated. Do you know what the code path causing this
-looks like?
-
-This would allow both list del and add while distribute is doing a
-foreach, but I think that the racing behavior would just be to restart
-the distribute loop, which is fine.
-
-
-
->> 
->> [1]: https://lkml.kernel.org/r/BANLkTi=NmCxKX6EbDQcJYDJ5kKyG2N1ssw@mail.gmail.com
->> 
->> Cc: <stable@vger.kernel.org>
->> Fixes: ec12cb7f31e2 ("sched: Accumulate per-cfs_rq cpu usage and charge against bandwidth")
->> Reported-by: Liangyan <liangyan.peng@linux.alibaba.com>
->> Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
->
-> Thanks!
->
->> ---
->>  kernel/sched/fair.c | 17 ++++++++++++-----
->>  1 file changed, 12 insertions(+), 5 deletions(-)
->> 
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 1054d2cf6aaa..219ff3f328e5 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -4385,6 +4385,11 @@ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
->>  	return rq_clock_task(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
->>  }
->>  
->> +static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->> +{
->> +	return cfs_bandwidth_used() && cfs_rq->throttled;
->> +}
->> +
->>  /* returns 0 on failure to allocate runtime */
->>  static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>  {
->> @@ -4411,6 +4416,9 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
->>  
->>  	cfs_rq->runtime_remaining += amount;
->>  
->> +	if (cfs_rq->runtime_remaining > 0 && cfs_rq_throttled(cfs_rq))
->> +		unthrottle_cfs_rq(cfs_rq);
->> +
->>  	return cfs_rq->runtime_remaining > 0;
->>  }
->>  
->> @@ -4439,11 +4447,6 @@ void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
->>  	__account_cfs_rq_runtime(cfs_rq, delta_exec);
->>  }
->>  
->> -static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
->> -{
->> -	return cfs_bandwidth_used() && cfs_rq->throttled;
->> -}
->> -
->>  /* check whether cfs_rq, or any parent, is throttled */
->>  static inline int throttled_hierarchy(struct cfs_rq *cfs_rq)
->>  {
->> @@ -4628,6 +4631,10 @@ static u64 distribute_cfs_runtime(struct cfs_bandwidth *cfs_b, u64 remaining)
->>  		if (!cfs_rq_throttled(cfs_rq))
->>  			goto next;
->>  
->> +		/* By the above check, this should never be true */
->> +		WARN_ON(cfs_rq->runtime_remaining > 0);
->> +
->> +		/* Pick the minimum amount to return to a positive quota state */
->>  		runtime = -cfs_rq->runtime_remaining + 1;
->>  		if (runtime > remaining)
->>  			runtime = remaining;
->> -- 
->> 2.22.0
->> 
+SGkgQ29saW4sDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQ29saW4g
+S2luZyBbbWFpbHRvOmNvbGluLmtpbmdAY2Fub25pY2FsLmNvbV0NCj4gU2VudDogTW9uZGF5IDE5
+IEF1Z3VzdCAyMDE5IDEwOjQyDQo+IFRvOiBEZXJlayBLaWVybmFuIDxka2llcm5hbkB4aWxpbngu
+Y29tPjsgRHJhZ2FuIEN2ZXRpYyA8ZHJhZ2FuY0B4aWxpbnguY29tPjsgQXJuZCBCZXJnbWFubiA8
+YXJuZEBhcm5kYi5kZT47IEdyZWcgS3JvYWgtDQo+IEhhcnRtYW4gPGdyZWdraEBsaW51eGZvdW5k
+YXRpb24ub3JnPjsgTWljaGFsIFNpbWVrIDxtaWNoYWxzQHhpbGlueC5jb20+OyBsaW51eC1hcm0t
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gQ2M6IGtlcm5lbC1qYW5pdG9yc0B2Z2VyLmtl
+cm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3ViamVjdDogW1BBVENI
+XVtuZXh0XSBtaXNjOiB4aWxpbnhfc2RmZWM6IGZpeCBzcGVsbGluZyBtaXN0YWtlOiAiU2NoZHVs
+ZSIgLT4gIlNjaGVkdWxlIg0KPiANCj4gRnJvbTogQ29saW4gSWFuIEtpbmcgPGNvbGluLmtpbmdA
+Y2Fub25pY2FsLmNvbT4NCj4gDQo+IFRoZXJlIGlzIGEgc3BlbGxpbmcgbWlzdGFrZSBpbiBhIGRl
+dl9kYmcgbWVzc2FnZSwgZml4IGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ29saW4gSWFuIEtp
+bmcgPGNvbGluLmtpbmdAY2Fub25pY2FsLmNvbT4NCj4gLS0tDQo+ICBkcml2ZXJzL21pc2MveGls
+aW54X3NkZmVjLmMgfCAyICstDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEg
+ZGVsZXRpb24oLSkNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVj
+LmMgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gaW5kZXggOTEyZTkzOWRlYzYyLi5i
+MjVjNThlZTYxOGMgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbWlzYy94aWxpbnhfc2RmZWMuYw0K
+PiArKysgYi9kcml2ZXJzL21pc2MveGlsaW54X3NkZmVjLmMNCj4gQEAgLTU1Myw3ICs1NTMsNyBA
+QCBzdGF0aWMgaW50IHhzZGZlY19yZWcyX3dyaXRlKHN0cnVjdCB4c2RmZWNfZGV2ICp4c2RmZWMs
+IHUzMiBubGF5ZXJzLCB1MzIgbm1xYywNCj4gIAkJIFhTREZFQ19SRUcyX05PX0ZJTkFMX1BBUklU
+WV9NQVNLKTsNCj4gIAlpZiAobWF4X3NjaGVkdWxlICYNCj4gIAkgICAgfihYU0RGRUNfUkVHMl9N
+QVhfU0NIRURVTEVfTUFTSyA+PiBYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTFNCKSkNCj4gLQkJ
+ZGV2X2RiZyh4c2RmZWMtPmRldiwgIk1heCBTY2hkdWxlIGV4Y2VlZHMgMiBiaXRzIik7DQo+ICsJ
+CWRldl9kYmcoeHNkZmVjLT5kZXYsICJNYXggU2NoZWR1bGUgZXhjZWVkcyAyIGJpdHMiKTsNCj4g
+IAltYXhfc2NoZWR1bGUgPSAoKG1heF9zY2hlZHVsZSA8PCBYU0RGRUNfUkVHMl9NQVhfU0NIRURV
+TEVfTFNCKSAmDQo+ICAJCQlYU0RGRUNfUkVHMl9NQVhfU0NIRURVTEVfTUFTSyk7DQo+IA0KPiAt
+LQ0KPiAyLjIwLjENCg0KUmV2aWV3ZWQtYnk6IERyYWdhbiBDdmV0aWMgPGRyYWdhbi5jdmV0aWNA
+eGlsaW54LmNvbT4NCg0KVGhhbmtzLA0KRHJhZ2FuDQo=
