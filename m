@@ -2,46 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E6F799B60
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A75B99BB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404095AbfHVRYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41476 "EHLO mail.kernel.org"
+        id S2404765AbfHVR0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391343AbfHVRWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:45 -0400
+        id S2391863AbfHVRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:34 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EDFD721743;
-        Thu, 22 Aug 2019 17:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C4E7D2064A;
+        Thu, 22 Aug 2019 17:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494565;
-        bh=nJyMM1t0uV8gdvWpzjioIKjwPDWu2tgojeBNJygO+HQ=;
+        s=default; t=1566494733;
+        bh=fhxerGabZfXb3FnqDlDzXd1dKIMry2EkxBDyGiHtxIU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bp9e3d6ph/Onk2SfhsDVskDEYFytEDh5fJ17IRwdbPtjfN+VB67ZtD6LpKFUswRaE
-         w4+qveA7FS1ehjyPnPm434Qc49nDMXOKnH6iyKfPDEOqPeagUDC0vIIthO9LU9UZUP
-         5Q5fCEAVf40RozNwATYXA5TA3X6Xk/nWuu1gO7iw=
+        b=bN18KC+5pIy1tK6yh3tuBMpeZgJKehj7JV+FEab1LtILZ2SGidTf19KQho0X5irSG
+         BeTsPwaXL2FeS7iEVeMjtlQl3emOQfjOkMwYtTndpc9ePkF1tPFH7RdSK6F4moh3VY
+         M9VDSD+Qxz8pXPeH2N7rWks+UZ9c7gBdk0BgA14M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 53/78] ocfs2: remove set but not used variable last_hash
-Date:   Thu, 22 Aug 2019 10:18:57 -0700
-Message-Id: <20190822171833.576608679@linuxfoundation.org>
+        stable@vger.kernel.org, Vincent Chen <vincent.chen@sifive.com>,
+        Anup Patel <anup@brainfault.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Paul Walmsley <paul.walmsley@sifive.com>
+Subject: [PATCH 4.19 25/85] riscv: Make __fstate_clean() work correctly.
+Date:   Thu, 22 Aug 2019 10:18:58 -0700
+Message-Id: <20190822171732.250431221@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -51,54 +45,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7bc36e3ce91471b6377c8eadc0a2f220a2280083 ]
+From: Vincent Chen <vincent.chen@sifive.com>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+commit 69703eb9a8ae28a46cd5bce7d69ceeef6273a104 upstream.
 
-  fs/ocfs2/xattr.c: In function ocfs2_xattr_bucket_find:
-  fs/ocfs2/xattr.c:3828:6: warning: variable last_hash set but not used [-Wunused-but-set-variable]
+Make the __fstate_clean() function correctly set the
+state of sstatus.FS in pt_regs to SR_FS_CLEAN.
 
-It's never used and can be removed.
+Fixes: 7db91e57a0acd ("RISC-V: Task implementation")
+Cc: linux-stable <stable@vger.kernel.org>
+Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
+Reviewed-by: Anup Patel <anup@brainfault.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+[paul.walmsley@sifive.com: expanded "Fixes" commit ID]
+Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Link: http://lkml.kernel.org/r/20190716132110.34836-1-yuehaibing@huawei.com
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/xattr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/riscv/include/asm/switch_to.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 4f0788232f2f9..06faa608e5622 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -3808,7 +3808,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
- 	u16 blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
- 	int low_bucket = 0, bucket, high_bucket;
- 	struct ocfs2_xattr_bucket *search;
--	u32 last_hash;
- 	u64 blkno, lower_blkno = 0;
+--- a/arch/riscv/include/asm/switch_to.h
++++ b/arch/riscv/include/asm/switch_to.h
+@@ -23,7 +23,7 @@ extern void __fstate_restore(struct task
  
- 	search = ocfs2_xattr_bucket_new(inode);
-@@ -3852,8 +3851,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
- 		if (xh->xh_count)
- 			xe = &xh->xh_entries[le16_to_cpu(xh->xh_count) - 1];
+ static inline void __fstate_clean(struct pt_regs *regs)
+ {
+-	regs->sstatus |= (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
++	regs->sstatus = (regs->sstatus & ~SR_FS) | SR_FS_CLEAN;
+ }
  
--		last_hash = le32_to_cpu(xe->xe_name_hash);
--
- 		/* record lower_blkno which may be the insert place. */
- 		lower_blkno = blkno;
- 
--- 
-2.20.1
-
+ static inline void fstate_save(struct task_struct *task,
 
 
