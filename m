@@ -2,75 +2,92 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E069299422
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:47:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B5CB099429
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:49:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbfHVMqe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:46:34 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:43107 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729922AbfHVMqe (ORCPT
+        id S2388039AbfHVMsj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:48:39 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41013 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732590AbfHVMsj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:46:34 -0400
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 01503100003;
-        Thu, 22 Aug 2019 12:46:28 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 14:46:28 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Ran Bi <ran.bi@mediatek.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
-        YT Shen <yt.shen@mediatek.com>,
-        Eddie Huang <eddie.huang@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        Flora Fu <flora.fu@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: Re: [PATCH v2 2/4] rtc: Add support for the MediaTek MT2712 RTC
-Message-ID: <20190822124628.GS27031@piout.net>
-References: <20190801110122.26834-1-ran.bi@mediatek.com>
- <20190801110122.26834-3-ran.bi@mediatek.com>
- <20190820201744.GZ3545@piout.net>
- <1566477254.12318.41.camel@mhfsdcap03>
+        Thu, 22 Aug 2019 08:48:39 -0400
+Received: by mail-lj1-f195.google.com with SMTP id m24so5404706ljg.8
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:48:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:from:date:message-id:subject:to
+         :content-transfer-encoding;
+        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
+        b=gu6RY87SUJc2miUSpULIutQNQXrH/4Z6JRSjjd9ciadFmY40YQUxeW/WFjdX6QkZoj
+         wiQ9QexgqNAt1AbcZ6iqt0LpHxU/dI9dzplFCF6YuIczRrsqREMvn13NgiYgs2SZGBW3
+         pr7m4zfHGBwRPZqSEJUTHfv60P2ZeNqmtsc66de/MNe6bTvSezDa4D90cCqiOmJwh4Gi
+         GV3aZZF8vcaOXyL/XRkTgxyGuUx/oIiRFdAmWpnXAQInBwUAmB9q489V63JVSw4r6EmB
+         zZzpnTxA18En4eoeBn0Mcy5jWYVq87bznIzt1YZGibJjL5RMl72egm/vqOX+M6xEKOZa
+         JbfQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:reply-to:from:date:message-id
+         :subject:to:content-transfer-encoding;
+        bh=aWwEGZ7IKPwlD1SyN53LweuoS+rG8j2WBRgPDxMagPA=;
+        b=POHvu4NkRAmhSGs+Mwpjip5eqWw2f0GUxV4WVmNT4CKVPFQX4A5TLhGmN4+LU9tAPG
+         DOtje9XsVt9Wle9qH4ihnTFYyR7He59/qyD6BmSzas7nd4RgO3JPmyVXzsywVW5v6WpR
+         C/qFcLKzsjNo8wLMiZz++5O8iRmiQidruF9KP5iQIFLzahZW66RfqKWNssFKYht9o7nb
+         +zi5iZBTKsSdk7M134+aXP12E8qf8eygMd/rPXXqdmiT/jt7pDTct/m88yJ7HqQDzCpR
+         XPozpTnEY0uvW8Mgjt0hMJypl+qknhqEbk2/0vvuarkKIajPRVSkScAyt444HyrM3iSd
+         b/uA==
+X-Gm-Message-State: APjAAAUYT8srqI6uCLPdjDLLgCr2bR/CdePDb3PNW7jqA0iPzzuukTRI
+        OSESyNdDDzCyhEJHxqlyx0U10vu3A2DkhJv+sq8=
+X-Google-Smtp-Source: APXvYqzHwCs1SSQgeNw+YDGu9XyECT5YBOKqGAOTqfRZCIOmD0CgThrHPaDhjaxZ2RtpLX8TbuaPzYf4GBtpagGi3g8=
+X-Received: by 2002:a2e:8455:: with SMTP id u21mr21169533ljh.20.1566478117470;
+ Thu, 22 Aug 2019 05:48:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1566477254.12318.41.camel@mhfsdcap03>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Received: by 2002:ab3:6a0f:0:0:0:0:0 with HTTP; Thu, 22 Aug 2019 05:48:36
+ -0700 (PDT)
+Reply-To: eku.lawfirm@gmail.com
+From:   "Law firm(Eku and Associates)" <ezeobodo1@gmail.com>
+Date:   Thu, 22 Aug 2019 12:48:36 +0000
+Message-ID: <CAN-_bTaowtnR-MosSFDBy9Zt=CDwXZ-Ck_vqb_tzG6nokVBK-w@mail.gmail.com>
+Subject: MY $25,000,000.00 INVESTMENT PROPOSAL WITH YOU AND IN YOUR COUNTRY.
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2019 20:34:14+0800, Ran Bi wrote:
-> > > +	/* RTC need POWERKEY1/2 match, then goto normal work mode */
-> > > +	mt2712_writel(rtc, MT2712_POWERKEY1, MT2712_POWERKEY1_KEY);
-> > > +	mt2712_writel(rtc, MT2712_POWERKEY2, MT2712_POWERKEY2_KEY);
-> > 
-> > This should be written when setting the time after power was lost.
-> > 
-> 
-> I suppose we can move this into mt2712_rtc_read_time function's "if
-> (p1 != MT2712_POWERKEY1_KEY || p2 != MT2712_POWERKEY2_KEY)" condition
-> which will be added at next patch. We need additional flag to mark this
-> condition or another if condition in mt2712_rtc_set_time fucntion if we
-> put these code in mt2712_rtc_set_time function.
-> 
+--=20
+Dear,
+With due respect this is not spam or Scam mail, because I have
+contacted you before and there was no response from you,I apologise if
+the contents of this mail are contrary to your moral ethics, which I
+feel may be of great disturbance to your person, but please treat this
+with absolute confidentiality, believing that this email reaches you
+in good faith. My contacting you is not a mistake or a coincidence
+because God can use any person known or unknown to accomplish great
+things.
+I am a lawyer and I have an investment business proposal to offer you.
+It is not official but should be considered as legal and confidential
+business. I have a customer's deposit of $US25 million dollars ready
+to be moved for investment if you can partner with us. We are ready to
+offer you 10% of this total amount as your compensation for supporting
+the transaction to completion. If you are interested to help me please
+reply me with your full details as stated below:
+(1) Your full names:
+(2) Your address:
+(3) Your occupation:
+(4) Your mobile telephone number:
+(5) Your nationality:
+(6) Your present location:
+(7) Your age:
+So that I will provide you more details on what to do and what is
+required for successful completion.
+Note: DO NOT REPLY ME IF YOU ARE NOT INTERESTED AND WITHOUT THE ABOVE
+MENTIONED DETAILS
 
-It is fine to test both in read_time and in set_time.
-
--- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sinc=C3=A8rement v=C3=B4tre,
+Avocat Etienne Eku Esq.(Lawfirm)
+Procureur principal. De Cabinet d=E2=80=99avocats de l=E2=80=99Afrique de l=
+=E2=80=99ouest.
+Skype:westafricalawfirm
