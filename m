@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B62A098B26
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:04:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A20898B29
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:04:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731593AbfHVGCw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 02:02:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42710 "EHLO mail.kernel.org"
+        id S1731605AbfHVGC4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:02:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730576AbfHVGCv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:02:51 -0400
+        id S1730576AbfHVGCz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 02:02:55 -0400
 Received: from localhost.localdomain (unknown [194.230.147.11])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7B820233A1;
-        Thu, 22 Aug 2019 06:02:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7956B233A2;
+        Thu, 22 Aug 2019 06:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566453771;
-        bh=JIhqcUM9It35GZ1DT2KSNI4eJjJ0/eIEsvqNON5bhB0=;
+        s=default; t=1566453774;
+        bh=s5Qwnruo1Obm/UgGKOuiLFuyxuT50eeJafK3ydS0kLA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tSB3ndQ/ki6pd/SHSODQv3ct2dT0GlV9ukz7golGQSPZyesnnUpw7+Fa/biCGFvsI
-         kWO3K32uYuZKLtXMcJayAc5ohyhMaXUbHwTggzi9joz1ynYR5fKF7FaiX6VBDkoGoV
-         9ua8yR+zZWnl9wRXVNmVXoIc91dMoMOBBTFbrHCY=
+        b=Dv1EXf7GNShiWAoKHVSRufR4r8GMjrh7DcVXpVY9oLGKzt8eVKsuQEMtoEjKUYG4d
+         wSUD1TeckIXuTZTm6PObMjoJG+YCP5dt4b7TQ0KydEXkwhh3f8+Im1At/DCbkLV4D+
+         nllO/9BDx5sutMUZ4she2cdmOqnOA8wy+9jtXWcw=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         Rob Herring <robh+dt@kernel.org>,
@@ -35,9 +35,9 @@ To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v7 2/4] dt-bindings: eeprom: at25: Add Anvo ANV32E61W
-Date:   Thu, 22 Aug 2019 08:02:36 +0200
-Message-Id: <20190822060238.3887-2-krzk@kernel.org>
+Subject: [PATCH v7 3/4] dt-bindings: arm: fsl: Add Kontron i.MX6UL N6310 compatibles
+Date:   Thu, 22 Aug 2019 08:02:37 +0200
+Message-Id: <20190822060238.3887-3-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190822060238.3887-1-krzk@kernel.org>
 References: <20190822060238.3887-1-krzk@kernel.org>
@@ -46,37 +46,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the compatible for ANV32E61W 64kb Serial SPI non-volatile SRAM.
-Although it is a SRAM device, it can be accessed through EEPROM
-interface. At least until there is no proper SRAM driver support for
-it.
+Add the compatibles for Kontron i.MX6UL N6310 SoM and boards.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
 
 ---
+
+Changes since v6:
+1. Split entries to pass the dtbs_check.
 
 Changes since v5:
-1. None
-
-Changes since v4:
-1. Update commit msg.
+New patch
 ---
- Documentation/devicetree/bindings/eeprom/at25.txt | 1 +
- 1 file changed, 1 insertion(+)
+ Documentation/devicetree/bindings/arm/fsl.yaml | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/eeprom/at25.txt b/Documentation/devicetree/bindings/eeprom/at25.txt
-index b3bde97dc199..42577dd113dd 100644
---- a/Documentation/devicetree/bindings/eeprom/at25.txt
-+++ b/Documentation/devicetree/bindings/eeprom/at25.txt
-@@ -3,6 +3,7 @@ EEPROMs (SPI) compatible with Atmel at25.
- Required properties:
- - compatible : Should be "<vendor>,<type>", and generic value "atmel,at25".
-   Example "<vendor>,<type>" values:
-+    "anvo,anv32e61w"
-     "microchip,25lc040"
-     "st,m95m02"
-     "st,m95256"
+diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+index 7294ac36f4c0..1f440817fc03 100644
+--- a/Documentation/devicetree/bindings/arm/fsl.yaml
++++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+@@ -161,6 +161,20 @@ properties:
+         items:
+           - enum:
+               - fsl,imx6ul-14x14-evk      # i.MX6 UltraLite 14x14 EVK Board
++              - kontron,imx6ul-n6310-som  # Kontron N6310 SOM
++          - const: fsl,imx6ul
++
++      - description: Kontron N6310 S Board
++        items:
++          - const: kontron,imx6ul-n6310-s
++          - const: kontron,imx6ul-n6310-som
++          - const: fsl,imx6ul
++
++      - description: Kontron N6310 S 43 Board
++        items:
++          - const: kontron,imx6ul-n6310-s-43
++          - const: kontron,imx6ul-n6310-s
++          - const: kontron,imx6ul-n6310-som
+           - const: fsl,imx6ul
+ 
+       - description: i.MX6ULL based Boards
 -- 
 2.17.1
 
