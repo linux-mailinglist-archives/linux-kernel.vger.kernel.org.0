@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 73BC999CEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7147699C4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391498AbfHVRYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44624 "EHLO mail.kernel.org"
+        id S2404004AbfHVRdN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:33:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390102AbfHVRXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:54 -0400
+        id S2391842AbfHVRZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:32 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39CF22342A;
-        Thu, 22 Aug 2019 17:23:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9F3C2341E;
+        Thu, 22 Aug 2019 17:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494634;
-        bh=8YuwYjJzQhn4cLB3olIy40BOVZ1hEpJxinnUGLJp2HQ=;
+        s=default; t=1566494730;
+        bh=H9PxVcmkwzH7ZZsM5nkJr9QnieR3VHq7pO6yyAPZ9XM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dvuMz6i6G3gu7JbnrIC9DyC7B0nZ+GM6B2z/Hs0xs+/VjugFqAi41cTgNVi6hEDmP
-         AX8Y4hukW7L9Spt+WFTq8Nk3TPPtF0bsM7V/7SvRoPHK2kbPXGld/w7PEDNfIZ4Qjt
-         2z7j3M1+chVRtaw4XLQj2t9IgGi6Eh6J5/rm4dEY=
+        b=aCi7tSu0+LWSh7WZQjPGGU/Iw8ce6snzAnQMvvBeW2LMsYHoyTP+T2p9xT3EShLol
+         V4vp/L83LPpFKSkGkeMs4Sm0PA0szWJ9WHOBwEqFuNgtqsFoqrb9cr0+/8qYN5reB8
+         bCarBRCWp9WTPexOiWioqbxKTqhlRogma9coIHbk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+5efc10c005014d061a74@syzkaller.appspotmail.com,
+        syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com,
         Oliver Neukum <oneukum@suse.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 066/103] Input: iforce - add sanity checks
+Subject: [PATCH 4.19 21/85] Input: kbtab - sanity check for endpoint type
 Date:   Thu, 22 Aug 2019 10:18:54 -0700
-Message-Id: <20190822171731.465137146@linuxfoundation.org>
+Message-Id: <20190822171732.079738646@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,34 +47,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oliver Neukum <oneukum@suse.com>
 
-commit 849f5ae3a513c550cad741c68dd3d7eb2bcc2a2c upstream.
+commit c88090dfc84254fa149174eb3e6a8458de1912c4 upstream.
 
-The endpoint type should also be checked before a device
-is accepted.
+The driver should check whether the endpoint it uses has the correct
+type.
 
-Reported-by: syzbot+5efc10c005014d061a74@syzkaller.appspotmail.com
+Reported-by: syzbot+c7df50363aaff50aa363@syzkaller.appspotmail.com
 Signed-off-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/iforce/iforce-usb.c |    5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/input/tablet/kbtab.c |    6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
---- a/drivers/input/joystick/iforce/iforce-usb.c
-+++ b/drivers/input/joystick/iforce/iforce-usb.c
-@@ -145,7 +145,12 @@ static int iforce_usb_probe(struct usb_i
+--- a/drivers/input/tablet/kbtab.c
++++ b/drivers/input/tablet/kbtab.c
+@@ -116,6 +116,10 @@ static int kbtab_probe(struct usb_interf
+ 	if (intf->cur_altsetting->desc.bNumEndpoints < 1)
  		return -ENODEV;
  
- 	epirq = &interface->endpoint[0].desc;
-+	if (!usb_endpoint_is_int_in(epirq))
++	endpoint = &intf->cur_altsetting->endpoint[0].desc;
++	if (!usb_endpoint_is_int_in(endpoint))
 +		return -ENODEV;
 +
- 	epout = &interface->endpoint[1].desc;
-+	if (!usb_endpoint_is_int_out(epout))
-+		return -ENODEV;
+ 	kbtab = kzalloc(sizeof(struct kbtab), GFP_KERNEL);
+ 	input_dev = input_allocate_device();
+ 	if (!kbtab || !input_dev)
+@@ -154,8 +158,6 @@ static int kbtab_probe(struct usb_interf
+ 	input_set_abs_params(input_dev, ABS_Y, 0, 0x1750, 4, 0);
+ 	input_set_abs_params(input_dev, ABS_PRESSURE, 0, 0xff, 0, 0);
  
- 	if (!(iforce = kzalloc(sizeof(struct iforce) + 32, GFP_KERNEL)))
- 		goto fail;
+-	endpoint = &intf->cur_altsetting->endpoint[0].desc;
+-
+ 	usb_fill_int_urb(kbtab->irq, dev,
+ 			 usb_rcvintpipe(dev, endpoint->bEndpointAddress),
+ 			 kbtab->data, 8,
 
 
