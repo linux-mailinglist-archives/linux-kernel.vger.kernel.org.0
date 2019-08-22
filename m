@@ -2,37 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8405599BA5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:26:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0863899BD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404720AbfHVR0Y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48416 "EHLO mail.kernel.org"
+        id S2404911AbfHVR14 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404297AbfHVRZR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:17 -0400
+        id S2404704AbfHVR0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:26:21 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF504206DD;
-        Thu, 22 Aug 2019 17:25:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5F4F8206DD;
+        Thu, 22 Aug 2019 17:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494716;
-        bh=Y/+XWBGaeuRRuumbxhD/nqhpYXI4L+3AvQCbGWM+bPQ=;
+        s=default; t=1566494780;
+        bh=lWZcLGMxVzkLkjXVAnVVtVjDSKLQt1ZNIi+upVQUH3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IbnQ6JcVja4RBlF3GVFIuYfQaSdN940ygGa7xrHNd6zRpkLlOVEWHSf0BH+Xi3EbF
-         pz4x60O82HRq8T//DXQ+qD7KutR1gBFrLlb8trk403sVp4mPEVSwSMyTJY0tIzhcZz
-         5xh6aeT2HLPqO1DVC+PXPCqmg7exLx3+Elrq4XWI=
+        b=HhS+o1MapEos+AQFTODiorujQvG2/jlgzLJVw+Sdv6rbv+NaA3Gh+ZdG5uRkuNWiD
+         fv1NAPGvDPJaXP0Hp3ruX+WOnaLQuPBkNeuLfpNxGmt6AT8psfFJPm0oyW860Un4zs
+         VfKAfpW/huLdAnC/cORdx6fEIKOby+4HkpflOOOM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.14 44/71] staging: comedi: dt3000: Fix rounding up of timer divisor
+        stable@vger.kernel.org, Tony Luck <tony.luck@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 46/85] IB/core: Add mitigation for Spectre V1
 Date:   Thu, 22 Aug 2019 10:19:19 -0700
-Message-Id: <20190822171729.787526741@linuxfoundation.org>
+Message-Id: <20190822171733.289701089@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,54 +44,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+[ Upstream commit 61f259821dd3306e49b7d42a3f90fb5a4ff3351b ]
 
-commit 8e2a589a3fc36ce858d42e767c3bcd8fc62a512b upstream.
+Some processors may mispredict an array bounds check and
+speculatively access memory that they should not. With
+a user supplied array index we like to play things safe
+by masking the value with the array size before it is
+used as an index.
 
-`dt3k_ns_to_timer()` determines the prescaler and divisor to use to
-produce a desired timing period.  It is influenced by a rounding mode
-and can round the divisor up, down, or to the nearest value.  However,
-the code for rounding up currently does the same as rounding down!  Fix
-ir by using the `DIV_ROUND_UP()` macro to calculate the divisor when
-rounding up.
-
-Also, change the types of the `divider`, `base` and `prescale` variables
-from `int` to `unsigned int` to avoid mixing signed and unsigned types
-in the calculations.
-
-Also fix a typo in a nearby comment: "improvment" => "improvement".
-
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190812120814.21188-1-abbotti@mev.co.uk
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+Link: https://lore.kernel.org/r/20190731043957.GA1600@agluck-desk2.amr.corp.intel.com
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/comedi/drivers/dt3000.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/core/user_mad.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers/dt3000.c
-+++ b/drivers/staging/comedi/drivers/dt3000.c
-@@ -351,9 +351,9 @@ static irqreturn_t dt3k_interrupt(int ir
- static int dt3k_ns_to_timer(unsigned int timer_base, unsigned int *nanosec,
- 			    unsigned int flags)
- {
--	int divider, base, prescale;
-+	unsigned int divider, base, prescale;
+diff --git a/drivers/infiniband/core/user_mad.c b/drivers/infiniband/core/user_mad.c
+index c34a6852d691f..a18f3f8ad77fe 100644
+--- a/drivers/infiniband/core/user_mad.c
++++ b/drivers/infiniband/core/user_mad.c
+@@ -49,6 +49,7 @@
+ #include <linux/sched.h>
+ #include <linux/semaphore.h>
+ #include <linux/slab.h>
++#include <linux/nospec.h>
  
--	/* This function needs improvment */
-+	/* This function needs improvement */
- 	/* Don't know if divider==0 works. */
+ #include <linux/uaccess.h>
  
- 	for (prescale = 0; prescale < 16; prescale++) {
-@@ -367,7 +367,7 @@ static int dt3k_ns_to_timer(unsigned int
- 			divider = (*nanosec) / base;
- 			break;
- 		case CMDF_ROUND_UP:
--			divider = (*nanosec) / base;
-+			divider = DIV_ROUND_UP(*nanosec, base);
- 			break;
- 		}
- 		if (divider < 65536) {
+@@ -868,11 +869,14 @@ static int ib_umad_unreg_agent(struct ib_umad_file *file, u32 __user *arg)
+ 
+ 	if (get_user(id, arg))
+ 		return -EFAULT;
++	if (id >= IB_UMAD_MAX_AGENTS)
++		return -EINVAL;
+ 
+ 	mutex_lock(&file->port->file_mutex);
+ 	mutex_lock(&file->mutex);
+ 
+-	if (id >= IB_UMAD_MAX_AGENTS || !__get_agent(file, id)) {
++	id = array_index_nospec(id, IB_UMAD_MAX_AGENTS);
++	if (!__get_agent(file, id)) {
+ 		ret = -EINVAL;
+ 		goto out;
+ 	}
+-- 
+2.20.1
+
 
 
