@@ -2,121 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E4A169977C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:57:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A39899785
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:59:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388761AbfHVOzx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:55:53 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43059 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732015AbfHVOzw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:55:52 -0400
-Received: by mail-io1-f66.google.com with SMTP id 18so12370994ioe.10
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 07:55:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=arista.com; s=googlenew;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Q0wZh/4eoEqPIOzqTZqYPWLyH+hmBcAleu6hn0qpR1E=;
-        b=FYT0lQV4jyIvhIYQEmusX9xZ6+PljzPQLO5A6kRdIxSmSntvCyp+oIozq0QbcobPm0
-         U+n09xGdumBz3idw8/NbVLvhZima8AHwuZyYxthJPW7w33MQAB++LXepHo5AJv0mRYjg
-         VMzOsk6/yhFIgLaavspEQnZNQzeZfkKGf5RDH2DTgt7p2Ojpt4kxjzwv6GrNdd8YnDmy
-         b8sy1sReUILgJvjsNVSWDrN1a/eKfy0O6tT69sflIow4VUzC+hFCCg6d/Y3LnF6VFxgo
-         /vDvOVQkvoTYJZMEmtqI/YYwZ8j6S9Ig2VJiNr1kV1FwQlK1eMw5w5yc5NTQEeugzctm
-         jfYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Q0wZh/4eoEqPIOzqTZqYPWLyH+hmBcAleu6hn0qpR1E=;
-        b=QvXiO517OP/8JJNupcbOXPHayGpa1LVfqIqlSRgqvKGUWglxFl8IOXy+4TCiP6yCoE
-         zCENx9OzjeUGAplwDfiGlv2u1hLW7bSDLh4/VTiN3cZ2riSINS8qZ8BTxV/9ZuMtJb+X
-         nUJJsWlD2xN4pGDDbp7TsE01UKkbZFqMTDboM297uo2EKMU5AlH9gOeX9n9OcyFadYGA
-         PuiM17X8XVfEfUMVMY/Hx1SBlmmDVwzIVs5xwkLVOw1BGs7pXq4S6wuvTGlR4zyDTnAz
-         GP7shsneST0+hwpP9jxjnTcGDZBYMkJCDsZXE81w+G/3m3yCw4fqaDC2FCT8Zq5tZ9zg
-         v+uQ==
-X-Gm-Message-State: APjAAAWxC05dAUOP+NzjXwxBSAntBpWXcj9y4qNAk7RSpXIZEwzIU6lB
-        Ru5hLvjcLK/mQBzuAxFq2pWw8GgMd3pvdRyB2gEkTw==
-X-Google-Smtp-Source: APXvYqy5AZAJmwouZteRGWOXLWbdOyLehNERePxTeUACR/e5Q5nCRTooG/TRmy2DbZbovwqmENfGImoE8GJYUGNCEsE=
-X-Received: by 2002:a5e:8e0d:: with SMTP id a13mr122437ion.28.1566485751848;
- Thu, 22 Aug 2019 07:55:51 -0700 (PDT)
+        id S2388946AbfHVO6p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:58:45 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5201 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729922AbfHVO6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:58:44 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 7D38731106B5519A65DA;
+        Thu, 22 Aug 2019 22:58:32 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Thu, 22 Aug 2019
+ 22:58:25 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <perex@perex.cz>, <tiwai@suse.com>, <gregkh@linuxfoundation.org>,
+        <pavel@denx.de>, <allison@lohutok.net>, <tglx@linutronix.de>,
+        <yuehaibing@huawei.com>, <pakki001@umn.edu>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH -next] ALSA: line6: Fix -Wunused-const-variable warnings
+Date:   Thu, 22 Aug 2019 22:57:41 +0800
+Message-ID: <20190822145741.9592-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-References: <20190821001445.32114-1-echron@arista.com> <alpine.DEB.2.21.1908202024300.141379@chino.kir.corp.google.com>
- <20190821064732.GW3111@dhcp22.suse.cz> <alpine.DEB.2.21.1908210017320.177871@chino.kir.corp.google.com>
- <20190821074721.GY3111@dhcp22.suse.cz> <CAM3twVR5Z1LG4+pqMF94mCw8R0sJ3VJtnggQnu+047c7jxJVug@mail.gmail.com>
- <20190822072134.GD12785@dhcp22.suse.cz>
-In-Reply-To: <20190822072134.GD12785@dhcp22.suse.cz>
-From:   Edward Chron <echron@arista.com>
-Date:   Thu, 22 Aug 2019 07:55:40 -0700
-Message-ID: <CAM3twVQuMU+T+GveqyMuyedcOC+NGrb7QNJCsHXRk3eVCfNG0w@mail.gmail.com>
-Subject: Re: [PATCH] mm/oom: Add oom_score_adj value to oom Killed process message
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Rientjes <rientjes@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Shakeel Butt <shakeelb@google.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Ivan Delalande <colona@arista.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 12:21 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Wed 21-08-19 16:12:08, Edward Chron wrote:
-> [...]
-> > Additionally (which you know, but mentioning for reference) the OOM
-> > output used to look like this:
-> >
-> > Nov 14 15:23:48 oldserver kernel: [337631.991218] Out of memory: Kill
-> > process 19961 (python) score 17 or sacrifice child
-> > Nov 14 15:23:48 oldserver kernel: [337631.991237] Killed process 31357
-> > (sh) total-vm:5400kB, anon-rss:252kB, file-rss:4kB, shmem-rss:0kB
-> >
-> > It now looks like this with 5.3.0-rc5 (minus the oom_score_adj):
-> >
-> > Jul 22 10:42:40 newserver kernel:
-> > oom-kill:constraint=CONSTRAINT_NONE,nodemask=(null),cpuset=/,mems_allowed=0,global_oom,task_memcg=/user.slice/user-10383.slice/user@10383.service,task=oomprocs,pid=3035,uid=10383
-> > Jul 22 10:42:40 newserver kernel: Out of memory: Killed process 3035
-> > (oomprocs) total-vm:1056800kB, anon-rss:8kB, file-rss:4kB,
-> > shmem-rss:0kB
-> > Jul 22 10:42:40 newserver kernel: oom_reaper: reaped process 3035
-> > (oomprocs), now anon-rss:0kB, file-rss:0kB, shmem-rss:0kB
-> >
-> > The old output did explain that a oom_score of 17 must have either
-> > tied for highest or was the highest.
-> > This did document why OOM selected the process it did, even if ends up
-> > killing the related sh process.
-> >
-> > With the newer format that added constraint message, it does provide
-> > uid which can be helpful and
-> > the oom_reaper showing that the memory was reclaimed is certainly reassuring.
-> >
-> > My understanding now is that printing the oom_score is discouraged.
-> > This seems unfortunate.  The oom_score_adj can be adjusted
-> > appropriately if oom_score is known.
-> > So It would be useful to have both.
->
-> As already mentioned in our previous discussion I am really not happy
-> about exporting oom_score withtout a larger context - aka other tasks
-> scores to have something to compare against. Other than that the value
-> is an internal implementation detail and it is meaningless without
-> knowing the exact algorithm which can change at any times so no
-> userspace should really depend on it. All important metrics should be
-> displayed by the oom report message already.
+sound/usb/line6/driver.h:69:18: warning:
+ SYSEX_DATA_OFS defined but not used [-Wunused-const-variable=]
+sound/usb/line6/driver.h:70:18: warning:
+ SYSEX_EXTRA_SIZE defined but not used [-Wunused-const-variable=]
 
-The oom_score is no longer displayed any where in the OOM output with 5.3
-so there isn't anything to compare against any way with the current OOM
-per process output and for the killed process.
+SYSEX_EXTRA_SIZE is only used in driver.c and
+SYSEX_DATA_OFS in pod.c, so move them to .c fix
+this warning.
 
-I understand the reasoning for this from your discussion.
-Thanks for explaining the rational.
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ sound/usb/line6/driver.c | 2 ++
+ sound/usb/line6/driver.h | 3 ---
+ sound/usb/line6/pod.c    | 2 ++
+ 3 files changed, 4 insertions(+), 3 deletions(-)
 
->
-> --
-> Michal Hocko
-> SUSE Labs
+diff --git a/sound/usb/line6/driver.c b/sound/usb/line6/driver.c
+index b5a3f75..8027da8 100644
+--- a/sound/usb/line6/driver.c
++++ b/sound/usb/line6/driver.c
+@@ -31,6 +31,8 @@ const unsigned char line6_midi_id[3] = {
+ };
+ EXPORT_SYMBOL_GPL(line6_midi_id);
+ 
++static const int SYSEX_EXTRA_SIZE = sizeof(line6_midi_id) + 4;
++
+ /*
+ 	Code to request version of POD, Variax interface
+ 	(and maybe other devices).
+diff --git a/sound/usb/line6/driver.h b/sound/usb/line6/driver.h
+index e5e572e..c57633a 100644
+--- a/sound/usb/line6/driver.h
++++ b/sound/usb/line6/driver.h
+@@ -66,9 +66,6 @@
+ 
+ extern const unsigned char line6_midi_id[3];
+ 
+-static const int SYSEX_DATA_OFS = sizeof(line6_midi_id) + 3;
+-static const int SYSEX_EXTRA_SIZE = sizeof(line6_midi_id) + 4;
+-
+ /*
+ 	 Common properties of Line 6 devices.
+ */
+diff --git a/sound/usb/line6/pod.c b/sound/usb/line6/pod.c
+index ee4c9d2..24ad337 100644
+--- a/sound/usb/line6/pod.c
++++ b/sound/usb/line6/pod.c
+@@ -110,6 +110,8 @@ enum {
+ 	POD_BUSY_MIDISEND
+ };
+ 
++static const int SYSEX_DATA_OFS = sizeof(line6_midi_id) + 3;
++
+ static struct snd_ratden pod_ratden = {
+ 	.num_min = 78125,
+ 	.num_max = 78125,
+-- 
+2.7.4
+
+
