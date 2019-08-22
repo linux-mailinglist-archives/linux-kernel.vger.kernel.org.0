@@ -2,142 +2,225 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D23DD99C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 32AD799CF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387825AbfHVRdW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:33:22 -0400
-Received: from mail-eopbgr60059.outbound.protection.outlook.com ([40.107.6.59]:35396
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2389885AbfHVRdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:33:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fFT3QhzDtfiQDg0ZtQMf0ZPnQ/fyLgVyyh9tgLD2qzAlWZQ+yDeJDUFU1Te23j3uhzSI2wN5rjw6B7pD0rj4gw/Ukr8Yiw28qq8R4s3thanp9en9GyhJh2liXDSC2cLYf+O54X09fLX5Zv6dQTivmWFFEYmp8TZIJMLgqE5v5f6ZEnBthmsivN+khbEXb2a6AO9eWgEPZt5om3qrbtMXNUN2xEvi4EY198qB6Bh0MuUK0sRrgHFzhAm9WrVNfrSBXnfUadM3kJVZFfCLCVN1nsvOyQwGpaY6uGuHbWoqO2lPJ/njsZMHyni4uXB0F25nZ8AoBYY4p24nceNzHqGUbg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GMKQEEzf7CT5wF9y/GSJl1EPplWS2baUsomLh5eXA/s=;
- b=A67EMz8UiiNsCuKey6131lj1FsUXyiGee9YJ+/LVNtHO+uC1jOYE3rV8Iduionn18iehMOZfF8wQdZrL5dMGbNqySSsI8L2zD4PhNhRTsx3i+d71oCuaT5ncVBiMcftNgpnYtgUq2hJYjPFtgt3K9Y3YOzEAMqBMBiPpCqbm677duB9at85Xfd0Z0IPOQfZfryJ/CWCvUFA9v6encTpyvom1PJTEOEfPEhjF1HPHcjZpEzGK7lo0o5hL06XUJ3DdAbTsO7eSTYKBs2PGUeuuoSiCLlQHfxsc2wKysWni6hYjerPA7s/+hbNEYazxNnjuNzZN4iJk+Xm3fOXVF6I68g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GMKQEEzf7CT5wF9y/GSJl1EPplWS2baUsomLh5eXA/s=;
- b=MAhzvRAtxziTdALhkvADSrQ8uIu8CGFXIydG0ddoHU8GKK5GyhV6svRfhNFE4U9DbMHQvu+63cDFKTvTiqcS4TUeUYSMjQbXtv4vqpyc9pej6FjoWxVMfmoLxovzUlt+MQFv9obBPPJnXEmTS6UIKDVGi6sTOX1UF1jpxskiAQ4=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB7022.eurprd04.prod.outlook.com (10.186.157.85) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2178.16; Thu, 22 Aug 2019 17:33:13 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
- 17:33:13 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>
-CC:     Chris Healy <cphealy@gmail.com>, Peter Chen <peter.chen@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Subject: Re: [PATCH] ARM: imx: Drop imx_anatop_init()
-Thread-Topic: [PATCH] ARM: imx: Drop imx_anatop_init()
-Thread-Index: AQHVR8oGvyTNCOZoFU6BqtEMTuzaog==
-Date:   Thu, 22 Aug 2019 17:33:13 +0000
-Message-ID: <VI1PR04MB7023AE3910B261877892EEABEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <20190731180131.8597-1-andrew.smirnov@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f18ad444-36b1-47e0-3971-08d72726cf72
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR04MB7022;
-x-ms-traffictypediagnostic: VI1PR04MB7022:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB70221FF6F60576E579211724EEA50@VI1PR04MB7022.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1091;
-x-forefront-prvs: 01371B902F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(396003)(376002)(136003)(189003)(199004)(8936002)(66066001)(6436002)(8676002)(2906002)(81166006)(102836004)(486006)(476003)(186003)(26005)(446003)(44832011)(74316002)(52536014)(7736002)(5660300002)(6506007)(53546011)(91956017)(81156014)(76116006)(6116002)(3846002)(305945005)(33656002)(64756008)(9686003)(55016002)(4326008)(6246003)(7696005)(66476007)(66446008)(25786009)(66946007)(76176011)(71190400001)(71200400001)(256004)(14444005)(53936002)(54906003)(110136005)(478600001)(316002)(14454004)(99286004)(86362001)(229853002)(66556008);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB7022;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: hwD+IB1x77ZUy6cbWSQuHnIFMKcIBYxgTyGzsokVWuEFxj+6cB6Dd2pM4xSNlHfNVlIqDiugTcUPB3FajRocR+LLr9/+hSdErONrKUtH/55uv2aRJUa09azf/YydZWtWQ2hudAPwLAGVdN+naVxCBx/13yaphgaATja6yUoqaQgc5gFMsIW8vzDwfOyHM5zdAtA2eyQzRPfsRxsJ8ll8Hm2SS8vhWng2rjNcUSN/aYiqX60zhVyvZNp5lLQ3v61IRiyVH4PzDwSYKvhiccHB+YefSxgBJmvqJVstIf+oH70BJvL5VysMG8o7OUBuCxlKdDt+bxYR8GTN1AjIyuZWnMfM9XPHjfUnHEOx18Qpmqbco+2CaTTXCaxlw0LUG5zQK0et7+NXVjQzrIp42ijZFDIsEM2vkAYwTKAG1NoVwUE=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2392315AbfHVRiP (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:38:15 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33958 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389826AbfHVRiL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:38:11 -0400
+Received: by mail-wr1-f66.google.com with SMTP id s18so6225367wrn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:38:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2YyhTDWSBbWwm8NRBZUXXKvMf2Bg9as5ev6Cz2sZtgw=;
+        b=HR/KJAe7TH2UMKwCBqKRrBkD4C7CgtEyTEkcth+ndNdy9HRuuHI+zwquIDFiKloYy+
+         8r6OFHtaFdyclYUPdKmoPievJ9+Z9z6ElWqRBsxLr01cUdhzB6HlnG5gVrXyTyLNrvni
+         xl8aAiEpdPyqKArMJSdpLkDrM1fxeja8b8Wk+khWENz6WRwWJHsSaEubfGL62DiWS03O
+         dD4WDClXTDnTNyS7KGfwRiDAyk3fv5TkWOLJE8LCR5XL6fCdvemZmz40HEmjK+pctEsR
+         V9OoWzqcucmfTHv5aI/i15phJJLZUh4aJ3fEUdjlf2VZ/fFgktYs6/wo2DP6cD2xqv21
+         PNXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2YyhTDWSBbWwm8NRBZUXXKvMf2Bg9as5ev6Cz2sZtgw=;
+        b=VMaiobf6NnkL4ZOsSpl1K7uTnslh86OyhQLdyHjksma99pOi+YcSM5NcYS2TOxbNGE
+         xpPke19E3DeLy33GpYK4JNlqjCmEUqbzLhZazHUbKo19c5ZsW9mEyH6eYs6Zz9cvOAnb
+         f0AjbunYPyEavz49899pqA6UqadbrJJYuYy2vdIDQ2rZgxxc0BKNcumW1eiD9y4Ge7rS
+         BHmfE8XtiKjpCEZcyK9NgwUnVg8TuO54YWOW8sKHTiL5khl+JnL1OI3lD+AyM7DnazhN
+         EArV//Mhhk+GKEA8uOK1jpUWf7C8FfAunDqedn3EphsZTuwB9qKwPh3OIhdW8RppCaPL
+         c9/w==
+X-Gm-Message-State: APjAAAU+HgWJFpiajvvWWGXS288/X7/x6goowrt71TDyxBMhhaGKjDTx
+        Rv/QbJRPofA2rrqcraY2SxA=
+X-Google-Smtp-Source: APXvYqxxdVX0hYwk1OMdCK4IfjJgSWtYUedl5d68bJYuK3xUnYKySBPwfcrupHUSXaSdP7bBXiAw2w==
+X-Received: by 2002:adf:e504:: with SMTP id j4mr93243wrm.222.1566495488093;
+        Thu, 22 Aug 2019 10:38:08 -0700 (PDT)
+Received: from andrea ([167.220.197.36])
+        by smtp.gmail.com with ESMTPSA id u7sm142984wrp.96.2019.08.22.10.38.06
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 22 Aug 2019 10:38:07 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 19:38:01 +0200
+From:   Andrea Parri <parri.andrea@gmail.com>
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     John Ogness <john.ogness@linutronix.de>,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Brendan Higgins <brendanhiggins@google.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: comments style: Re: [RFC PATCH v4 1/9] printk-rb: add a new
+ printk ringbuffer implementation
+Message-ID: <20190822173801.GA2218@andrea>
+References: <20190807222634.1723-1-john.ogness@linutronix.de>
+ <20190807222634.1723-2-john.ogness@linutronix.de>
+ <20190820085554.deuejmxn4kbqnq7n@pathway.suse.cz>
+ <20190820092731.GA14137@jagdpanzerIV>
+ <87a7c3f4uj.fsf@linutronix.de>
+ <20190822135052.dp4dvav6fy2ajzkx@pathway.suse.cz>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f18ad444-36b1-47e0-3971-08d72726cf72
-X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 17:33:13.8294
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JGF811ej90jAp6yoNjfI31NWWJEVDIGLlyBQ8pay0k5nLcM+0Tsa1kr2uWwMnF3og03oIklEaDwo4IveaAd50w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822135052.dp4dvav6fy2ajzkx@pathway.suse.cz>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 31.07.2019 21:01, Andrey Smirnov wrote:=0A=
-> With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger=0A=
-> detect in mxs_phy_hw_init()") in tree all of the necessary charger=0A=
-> setup is done by the USB PHY driver which covers all of the affected=0A=
-> i.MX6 SoCs.=0A=
-> =0A=
-> NOTE: Imx_anatop_init() was also called for i.MX7D, but looking at its=0A=
-> datasheet it appears to have a different USB PHY IP block, so=0A=
-> executing i.MX6 charger disable configuration seems unnecessary.=0A=
-> =0A=
-> -void __init imx_anatop_init(void)=0A=
-> -{=0A=
-> -	anatop =3D syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");=0A=
-> -	if (IS_ERR(anatop)) {=0A=
-> -		pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);=0A=
-> -		return;=0A=
-> -	}=0A=
-=0A=
-This patch breaks suspend on imx6 in linux-next because the "anatop" =0A=
-regmap is no longer initialized. This was found via bisect but =0A=
-no_console_suspend prints a helpful stack anyway:=0A=
-=0A=
-(regmap_read) from [<c01226e4>] (imx_anatop_enable_weak2p5+0x28/0x70)=0A=
-(imx_anatop_enable_weak2p5) from [<c0122744>] =0A=
-(imx_anatop_pre_suspend+0x18/0x64)=0A=
-(imx_anatop_pre_suspend) from [<c0124434>] (imx6q_pm_enter+0x60/0x16c)=0A=
-(imx6q_pm_enter) from [<c018c8a4>] (suspend_devices_and_enter+0x7d4/0xcbc)=
-=0A=
-(suspend_devices_and_enter) from [<c018d544>] (pm_suspend+0x7b8/0x904)=0A=
-(pm_suspend) from [<c018b1b4>] (state_store+0x68/0xc8)=0A=
-=0A=
-Minimal fix looks like this:=0A=
-=0A=
---- arch/arm/mach-imx/anatop.c=0A=
-+++ arch/arm/mach-imx/anatop.c=0A=
-@@ -111,6 +111,12 @@ void __init imx_init_revision_from_anatop(void)=0A=
-          digprog =3D readl_relaxed(anatop_base + offset);=0A=
-          iounmap(anatop_base);=0A=
-=0A=
-+       anatop =3D syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");=
-=0A=
-+       if (IS_ERR(anatop)) {=0A=
-+               pr_err("failed to find imx6q-anatop regmap!\n");=0A=
-+               return;=0A=
-+       }=0A=
-=0A=
-Since all SOCs that called imx_anatop_init also call =0A=
-imx_init_revision_from_anatop this might be an acceptable solution, =0A=
-unless there is some limitation preventing early regmap lookup.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+On Thu, Aug 22, 2019 at 03:50:52PM +0200, Petr Mladek wrote:
+> On Wed 2019-08-21 07:46:28, John Ogness wrote:
+> > On 2019-08-20, Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com> wrote:
+> > > [..]
+> > >> > +	 *
+> > >> > +	 * Memory barrier involvement:
+> > >> > +	 *
+> > >> > +	 * If dB reads from gA, then dC reads from fG.
+> > >> > +	 * If dB reads from gA, then dD reads from fH.
+> > >> > +	 * If dB reads from gA, then dE reads from fE.
+> > >> > +	 *
+> > >> > +	 * Note that if dB reads from gA, then dC cannot read from fC.
+> > >> > +	 * Note that if dB reads from gA, then dD cannot read from fD.
+> > >> > +	 *
+> > >> > +	 * Relies on:
+> > >> > +	 *
+> > >> > +	 * RELEASE from fG to gA
+> > >> > +	 *    matching
+> > >> > +	 * ADDRESS DEP. from dB to dC
+> > >> > +	 *
+> > >> > +	 * RELEASE from fH to gA
+> > >> > +	 *    matching
+> > >> > +	 * ADDRESS DEP. from dB to dD
+> > >> > +	 *
+> > >> > +	 * RELEASE from fE to gA
+> > >> > +	 *    matching
+> > >> > +	 * ACQUIRE from dB to dE
+> > >> > +	 */
+> > >> 
+> > >> But I am not sure how much this is useful. It would take ages to decrypt
+> > >> all these shortcuts (signs) and translate them into something
+> > >> human readable. Also it might get outdated easily.
+> > >> 
+> > The labels are necessary for the technical documentation of the
+> > barriers. And, after spending much time in this, I find them very
+> > useful. But I agree that there needs to be a better way to assign label
+> > names.
+> 
+> I could understand that you spend a lot of time on creating the
+> labels and that they are somehow useful for you.
+> 
+> But I am not using them and I hope that I will not have to:
+> 
+>   + Grepping takes a lot of time, especially over several files.
+> 
+>   + Grepping is actually not enough. It is required to read
+>     the following comment or code to realize what the label is for.
+> 
+>   + Several barriers have multiple dependencies. Grepping one
+>     label helps to check that one connection makes sense.
+>     But it is hard to keep all relations in head to confirm
+>     that they are complete and make sense overall.
+> 
+>   + There are about 50 labels in the code. "Entry Lifecycle"
+>     section in dataring.c talks about 8 step. One would
+>     expect that it would require 8 read and 8 write barriers.
+> 
+>     Even coordination of 16 barriers might be complicated to check.
+>     Where 50 is just scary.
+> 
+> 
+>   + It seems to be a newly invented format and it is not documented.
+>     I personally do not understand it completely, for example,
+>     the meaning of "RELEASE from jA->cD->hA to jB".
+
+IIUC, something like "hA is the interested access, happening within
+cD (should have been cC?), which in turn happens within jA".  But I
+should defer to John (FWIW, I found that notation quite helpful).
+
+
+> 
+> 
+> I hope that we could do better. I believe that human readable
+> comments all less error prone because they describe the intention.
+> Pseudo code based on labels just describes the code but it
+> does not explain why it was done this way.
+> 
+> From my POV, the labels do more harm than good. The code gets
+> too scattered and is harder to follow.
+> 
+> 
+> > I hope that we can agree that the labels are important.
+> 
+> It would be great to hear from others.
+
+I agree with you that reviewing these comments might be "scary" and
+not suitable for a bed-reading  ;-) (I didn't have time to complete
+such review yet).  OTOH, from my POV, removing such comments/labels
+could only make such (and future) reviews scarier, because then the
+(memory-ordering) "intention" would then be _hidden in the code.
+
+
+> 
+> > And that a formal documentation of the barriers is also important.
+> 
+> It might be helpful if it can be somehow feed to a tool that would
+> prove correctness. Is this the case?
+
+From what I've read so far, it _should be relatively straighforward
+to write down a litmus test from any such comment (and give this to
+the LKMM simulator).
+
+
+> 
+> In each case, it should follow some "widely" used format.
+> We should not invent a new one that nobody else would use
+> and understand.
+
+Agreed.  Well, litmus tests (or the comments here in question, that
+are intended to convey the same information) have been successfully
+adopted by memory model and concurrency people for as long as I can
+remember, current architecture reference manuals use these tools to
+describe the semantics of fence or atomic instructions, discussions
+about memory barriers on LKML, gcc MLs often reduce to a discussion
+around one or more litmus tests...
+
+[trimming]
+
+
+> > Andrea suggested that the documentation should be within the code, which
+> > I think is a good idea. Even if it means we have more comments than
+> > code.
+> 
+> It depends on the type of the information. I would describe:
+> 
+>   + The overall design on top of the source file or in
+>     Documentation/...
+> 
+>   + The behavior of externally used API and non-obvious functions
+>     above the function definition.
+> 
+>   + Implementation details, non-obvious effects, side effects,
+>     relations, meaning of tricky calculation, meaning of
+>     a block of code inside the code. But each function should
+>     ideally fit on the screen.
+> 
+> I personally tend to write more documentation but it is sometimes
+> too much. I am trying to become more effective and to the point.
+
+Unfortunately, I don't know of more concise ways to convey the same
+information that these comments are intended to provide.  Thoughts?
+
+Please don't get me wrong: I'm all for overall design, external API,
+etc., if some improvements can be achieved here.
+
+  Andrea
