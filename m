@@ -2,86 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C9BC98C27
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:04:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3515298BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:01:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732066AbfHVHCv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 03:02:51 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:45334 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730048AbfHVHCu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:02:50 -0400
-X-UUID: b4b4cd9a999845b89599d32499c65354-20190822
-X-UUID: b4b4cd9a999845b89599d32499c65354-20190822
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <sam.shih@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 114307298; Thu, 22 Aug 2019 15:02:44 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 22 Aug 2019 15:02:43 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 22 Aug 2019 15:02:39 +0800
-From:   Sam Shih <sam.shih@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>
-CC:     Ryder Lee <ryder.lee@mediatek.com>,
-        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Sam Shih <sam.shih@mediatek.com>
-Subject: [PATCH v5 13/13] arm: dts: mediatek: add mt7629 pwm support
-Date:   Thu, 22 Aug 2019 14:58:43 +0800
-Message-ID: <1566457123-20791-14-git-send-email-sam.shih@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
-References: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
+        id S1731944AbfHVHBd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 03:01:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57630 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728605AbfHVHBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 03:01:32 -0400
+Received: from zzz.localdomain (unknown [67.218.105.90])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F266920870;
+        Thu, 22 Aug 2019 07:01:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566457291;
+        bh=1xRMbxjyV8ew6m3nfyvNCRRuTi1GhKBMZS5I0/ItEFg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=mpIBtwgHmHmuv6opUL5a6B6cFIPtk4LNZPdCb6RvShauYyMt3Ayh5SfIFRxP3zzGb
+         oKFNmsRIOROoD9GQGu5F0k3dITGMsA1hEw+aJ70DCXKYFYvt6YZam3NMpGDnxi5VRD
+         MkwFk1Buqa7SbLimpx/sFmShbMNpUPyIHke2XAfc=
+Date:   Thu, 22 Aug 2019 00:01:29 -0700
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+Subject: Re: [PATCH v2] tomoyo: Don't check open/getattr permission on
+ sockets.
+Message-ID: <20190822070129.GL6111@zzz.localdomain>
+Mail-Followup-To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        syzbot <syzbot+0341f6a4d729d4e0acf1@syzkaller.appspotmail.com>,
+        jmorris@namei.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org, serge@hallyn.com,
+        syzkaller-bugs@googlegroups.com, takedakn@nttdata.co.jp,
+        "David S. Miller" <davem@davemloft.net>
+References: <8f874b03-b129-205f-5f05-125479701275@i-love.sakura.ne.jp>
+ <20190822063018.GK6111@zzz.localdomain>
+ <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <201908220655.x7M6tVmv029579@www262.sakura.ne.jp>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds pwm support for MT7629.
+On Thu, Aug 22, 2019 at 03:55:31PM +0900, Tetsuo Handa wrote:
+> Eric Biggers wrote:
+> > What happened to this patch?
+> 
+> I have to learn how to manage a git tree for sending
+> pull requests, but I can't find time to try.
+> 
+> > 
+> > Also, isn't the same bug in other places too?:
+> > 
+> > 	- tomoyo_path_chmod()
+> > 	- tomoyo_path_chown()
+> > 	- smack_inode_getsecurity()
+> > 	- smack_inode_setsecurity()
+> 
+> What's the bug? The file descriptor returned by open(O_PATH) cannot be
+> passed to read(2), write(2), fchmod(2), fchown(2), fgetxattr(2), mmap(2) etc.
+> 
 
-Signed-off-by: Sam Shih <sam.shih@mediatek.com>
----
- arch/arm/boot/dts/mt7629.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+chmod(2), chown(2), getxattr(2), and setxattr(2) take a path, not a fd.
 
-diff --git a/arch/arm/boot/dts/mt7629.dtsi b/arch/arm/boot/dts/mt7629.dtsi
-index 9608bc2ccb3f..493be9a9453b 100644
---- a/arch/arm/boot/dts/mt7629.dtsi
-+++ b/arch/arm/boot/dts/mt7629.dtsi
-@@ -241,6 +241,22 @@
- 			status = "disabled";
- 		};
- 
-+		pwm: pwm@11006000 {
-+			compatible = "mediatek,mt7629-pwm",
-+				     "mediatek,mt7622-pwm";
-+			reg = <0 0x11006000 0 0x1000>;
-+			interrupts = <GIC_SPI 77 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&topckgen CLK_TOP_PWM_SEL>,
-+				 <&pericfg CLK_PERI_PWM_PD>,
-+				 <&pericfg CLK_PERI_PWM1_PD>;
-+			clock-names = "top", "main", "pwm1";
-+			assigned-clocks = <&topckgen CLK_TOP_PWM_SEL>;
-+			assigned-clock-parents =
-+					<&topckgen CLK_TOP_UNIVPLL2_D4>;
-+			num-pwms = <1>;
-+			status = "disabled";
-+		};
-+
- 		i2c: i2c@11007000 {
- 			compatible = "mediatek,mt7629-i2c",
- 				     "mediatek,mt2712-i2c";
--- 
-2.17.1
-
+- Eric
