@@ -2,88 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E93E29A0B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:04:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E26D9A0B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:05:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392521AbfHVUES (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 16:04:18 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:43686 "EHLO mx1.redhat.com"
+        id S2392569AbfHVUFT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 16:05:19 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:48288 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387767AbfHVUES (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 16:04:18 -0400
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        id S2392539AbfHVUFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 16:05:19 -0400
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EBC9181F11;
-        Thu, 22 Aug 2019 20:04:17 +0000 (UTC)
-Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F3B3860CDA;
-        Thu, 22 Aug 2019 20:04:16 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 15:04:15 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        julien.thierry.kdev@gmail.com, raph.gault+kdev@gmail.com
-Subject: Re: [RFC v4 08/18] objtool: Refactor switch-tables code to support
- other architectures
-Message-ID: <20190822200415.t3hkjxf4m3lg5tgz@treble>
-References: <20190816122403.14994-1-raphael.gault@arm.com>
- <20190816122403.14994-9-raphael.gault@arm.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 6AD4485550;
+        Thu, 22 Aug 2019 20:05:18 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1B8856012A;
+        Thu, 22 Aug 2019 20:05:13 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     intel-gfx@lists.freedesktop.org
+Cc:     Chris Wilson <chris@chris-wilson.co.uk>, stable@vger.kernel.org,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/i915: Call dma_set_max_seg_size() in i915_ggtt_probe_hw()
+Date:   Thu, 22 Aug 2019 16:04:20 -0400
+Message-Id: <20190822200420.23485-1-lyude@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190816122403.14994-9-raphael.gault@arm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 22 Aug 2019 20:04:18 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 22 Aug 2019 20:05:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 01:23:53PM +0100, Raphael Gault wrote:
-> The way to identify switch-tables and retrieves all the data necessary
-> to handle the different execution branches is not the same on all
-> architecture. In order to be able to add other architecture support,
-> this patch defines arch-dependent functions to process jump-tables.
-> 
-> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
-> ---
->  tools/objtool/arch/arm64/arch_special.c | 15 ++++
->  tools/objtool/arch/arm64/decode.c       |  4 +-
->  tools/objtool/arch/x86/arch_special.c   | 79 ++++++++++++++++++++
->  tools/objtool/check.c                   | 95 +------------------------
->  tools/objtool/check.h                   |  7 ++
->  tools/objtool/special.h                 | 10 ++-
->  6 files changed, 114 insertions(+), 96 deletions(-)
-> 
-> diff --git a/tools/objtool/arch/arm64/arch_special.c b/tools/objtool/arch/arm64/arch_special.c
-> index a21d28876317..17a8a06aac2a 100644
-> --- a/tools/objtool/arch/arm64/arch_special.c
-> +++ b/tools/objtool/arch/arm64/arch_special.c
-> @@ -20,3 +20,18 @@ void arch_force_alt_path(unsigned short feature,
->  			 struct special_alt *alt)
->  {
->  }
-> +
-> +int arch_add_jump_table(struct objtool_file *file, struct instruction *insn,
-> +			struct rela *table, struct rela *next_table)
-> +{
-> +	return 0;
-> +}
-> +
-> +struct rela *arch_find_switch_table(struct objtool_file *file,
-> +				  struct rela *text_rela,
-> +				  struct section *rodata_sec,
-> +				  unsigned long table_offset)
-> +{
-> +	file->ignore_unreachables = true;
-> +	return NULL;
-> +}
+Currently, we don't call dma_set_max_seg_size() for i915 because we
+intentionally do not limit the segment length that the device supports.
+However, this results in a warning being emitted if we try to map
+anything larger than SZ_64K on a kernel with CONFIG_DMA_API_DEBUG_SG
+enabled:
 
-If this refactoring is done before adding arm64 support then you won't
-need intermediate hacks like this.
+[    7.751926] DMA-API: i915 0000:00:02.0: mapping sg segment longer
+than device claims to support [len=98304] [max=65536]
+[    7.751934] WARNING: CPU: 5 PID: 474 at kernel/dma/debug.c:1220
+debug_dma_map_sg+0x20f/0x340
 
+This was originally brought up on
+https://bugs.freedesktop.org/show_bug.cgi?id=108517 , and the consensus
+there was it wasn't really useful to set a limit (and that dma-debug
+isn't really all that useful for i915 in the first place). Unfortunately
+though, CONFIG_DMA_API_DEBUG_SG is enabled in the debug configs for
+various distro kernels. Since a WARN_ON() will disable automatic problem
+reporting (and cause any CI with said option enabled to start
+complaining), we really should just fix the problem.
+
+Note that as me and Chris Wilson discussed, the other solution for this
+would be to make DMA-API not make such assumptions when a driver hasn't
+explicitly set a maximum segment size. But, taking a look at the commit
+which originally introduced this behavior, commit 78c47830a5cb
+("dma-debug: check scatterlist segments"), there is an explicit mention
+of this assumption and how it applies to devices with no segment size:
+
+	Conversely, devices which are less limited than the rather
+	conservative defaults, or indeed have no limitations at all
+	(e.g. GPUs with their own internal MMU), should be encouraged to
+	set appropriate dma_parms, as they may get more efficient DMA
+	mapping performance out of it.
+
+So unless there's any concerns (I'm open to discussion!), let's just
+follow suite and call dma_set_max_seg_size() with UINT_MAX as our limit
+to silence any warnings.
+
+Signed-off-by: Lyude Paul <lyude@redhat.com>
+Cc: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: <stable@vger.kernel.org> # v4.18+
+---
+ drivers/gpu/drm/i915/i915_gem_gtt.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/gpu/drm/i915/i915_gem_gtt.c b/drivers/gpu/drm/i915/i915_gem_gtt.c
+index 0b81e0b64393..a1475039d182 100644
+--- a/drivers/gpu/drm/i915/i915_gem_gtt.c
++++ b/drivers/gpu/drm/i915/i915_gem_gtt.c
+@@ -3152,6 +3152,11 @@ static int ggtt_probe_hw(struct i915_ggtt *ggtt, struct intel_gt *gt)
+ 	if (ret)
+ 		return ret;
+ 
++	/* We don't have a max segment size, so set it to the max so sg's
++	 * debugging layer doesn't complain
++	 */
++	dma_set_max_seg_size(ggtt->vm.dma, UINT_MAX);
++
+ 	if ((ggtt->vm.total - 1) >> 32) {
+ 		DRM_ERROR("We never expected a Global GTT with more than 32bits"
+ 			  " of address space! Found %lldM!\n",
 -- 
-Josh
+2.21.0
+
