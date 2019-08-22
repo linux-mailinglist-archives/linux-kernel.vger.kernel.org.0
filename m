@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BF0799D00
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3720199C54
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:33:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392716AbfHVRiy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:38:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45812 "EHLO mail.kernel.org"
+        id S2391866AbfHVRZe (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:25:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391535AbfHVRYW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:22 -0400
+        id S2391595AbfHVRYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:51 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B777C21743;
-        Thu, 22 Aug 2019 17:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB1B2341D;
+        Thu, 22 Aug 2019 17:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494661;
-        bh=JhDJFf/uCjrXkIsJfuzBaAiGGlV24nhfnGt6L1EGX+8=;
+        s=default; t=1566494690;
+        bh=bI7elKzC2dEUH++Osnf/AkXvQS5hQGMYuQgl4gkMTRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MXhQ1eWwrgLX24cWdfz9wDrysJsxgYeqnToKCwQkMsf6DQmzkmaslYchqE31gOWvq
-         fV1H9lH8HLn2xEbk6Ml8trPJk7nfRP/QXB/QGquFT86KswKMDCq0ZosFIcx+Z4putc
-         p7d/bCLVUl8/f+k+jR6OVHheisQWMV1InUl33PBc=
+        b=ah2tOyb4zEyAQsWoX+8oRYVRjFsmRuomT6+4JPl/ZNM7qCIG9K+pb/2lK3YfVK43B
+         o2vhy4s+YGh6+j0NuMPIiW+MSIla+At30ZognjC2hWDhZ5KMQf+xA5lNw23fetTSCk
+         5Mx7oNv/gYcb03oRaPbTHPxYcmsNhIjgUYUg+DeM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
-        syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
-Subject: [PATCH 4.9 084/103] usb: cdc-acm: make sure a refcount is taken early enough
-Date:   Thu, 22 Aug 2019 10:19:12 -0700
-Message-Id: <20190822171732.543001370@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 38/71] IB/mad: Fix use-after-free in ib mad completion handling
+Date:   Thu, 22 Aug 2019 10:19:13 -0700
+Message-Id: <20190822171729.557772483@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,58 +46,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oliver Neukum <oneukum@suse.com>
+[ Upstream commit 770b7d96cfff6a8bf6c9f261ba6f135dc9edf484 ]
 
-commit c52873e5a1ef72f845526d9f6a50704433f9c625 upstream.
+We encountered a use-after-free bug when unloading the driver:
 
-destroy() will decrement the refcount on the interface, so that
-it needs to be taken so early that it never undercounts.
+[ 3562.116059] BUG: KASAN: use-after-free in ib_mad_post_receive_mads+0xddc/0xed0 [ib_core]
+[ 3562.117233] Read of size 4 at addr ffff8882ca5aa868 by task kworker/u13:2/23862
+[ 3562.118385]
+[ 3562.119519] CPU: 2 PID: 23862 Comm: kworker/u13:2 Tainted: G           OE     5.1.0-for-upstream-dbg-2019-05-19_16-44-30-13 #1
+[ 3562.121806] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu2 04/01/2014
+[ 3562.123075] Workqueue: ib-comp-unb-wq ib_cq_poll_work [ib_core]
+[ 3562.124383] Call Trace:
+[ 3562.125640]  dump_stack+0x9a/0xeb
+[ 3562.126911]  print_address_description+0xe3/0x2e0
+[ 3562.128223]  ? ib_mad_post_receive_mads+0xddc/0xed0 [ib_core]
+[ 3562.129545]  __kasan_report+0x15c/0x1df
+[ 3562.130866]  ? ib_mad_post_receive_mads+0xddc/0xed0 [ib_core]
+[ 3562.132174]  kasan_report+0xe/0x20
+[ 3562.133514]  ib_mad_post_receive_mads+0xddc/0xed0 [ib_core]
+[ 3562.134835]  ? find_mad_agent+0xa00/0xa00 [ib_core]
+[ 3562.136158]  ? qlist_free_all+0x51/0xb0
+[ 3562.137498]  ? mlx4_ib_sqp_comp_worker+0x1970/0x1970 [mlx4_ib]
+[ 3562.138833]  ? quarantine_reduce+0x1fa/0x270
+[ 3562.140171]  ? kasan_unpoison_shadow+0x30/0x40
+[ 3562.141522]  ib_mad_recv_done+0xdf6/0x3000 [ib_core]
+[ 3562.142880]  ? _raw_spin_unlock_irqrestore+0x46/0x70
+[ 3562.144277]  ? ib_mad_send_done+0x1810/0x1810 [ib_core]
+[ 3562.145649]  ? mlx4_ib_destroy_cq+0x2a0/0x2a0 [mlx4_ib]
+[ 3562.147008]  ? _raw_spin_unlock_irqrestore+0x46/0x70
+[ 3562.148380]  ? debug_object_deactivate+0x2b9/0x4a0
+[ 3562.149814]  __ib_process_cq+0xe2/0x1d0 [ib_core]
+[ 3562.151195]  ib_cq_poll_work+0x45/0xf0 [ib_core]
+[ 3562.152577]  process_one_work+0x90c/0x1860
+[ 3562.153959]  ? pwq_dec_nr_in_flight+0x320/0x320
+[ 3562.155320]  worker_thread+0x87/0xbb0
+[ 3562.156687]  ? __kthread_parkme+0xb6/0x180
+[ 3562.158058]  ? process_one_work+0x1860/0x1860
+[ 3562.159429]  kthread+0x320/0x3e0
+[ 3562.161391]  ? kthread_park+0x120/0x120
+[ 3562.162744]  ret_from_fork+0x24/0x30
+...
+[ 3562.187615] Freed by task 31682:
+[ 3562.188602]  save_stack+0x19/0x80
+[ 3562.189586]  __kasan_slab_free+0x11d/0x160
+[ 3562.190571]  kfree+0xf5/0x2f0
+[ 3562.191552]  ib_mad_port_close+0x200/0x380 [ib_core]
+[ 3562.192538]  ib_mad_remove_device+0xf0/0x230 [ib_core]
+[ 3562.193538]  remove_client_context+0xa6/0xe0 [ib_core]
+[ 3562.194514]  disable_device+0x14e/0x260 [ib_core]
+[ 3562.195488]  __ib_unregister_device+0x79/0x150 [ib_core]
+[ 3562.196462]  ib_unregister_device+0x21/0x30 [ib_core]
+[ 3562.197439]  mlx4_ib_remove+0x162/0x690 [mlx4_ib]
+[ 3562.198408]  mlx4_remove_device+0x204/0x2c0 [mlx4_core]
+[ 3562.199381]  mlx4_unregister_interface+0x49/0x1d0 [mlx4_core]
+[ 3562.200356]  mlx4_ib_cleanup+0xc/0x1d [mlx4_ib]
+[ 3562.201329]  __x64_sys_delete_module+0x2d2/0x400
+[ 3562.202288]  do_syscall_64+0x95/0x470
+[ 3562.203277]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-Fixes: 7fb57a019f94e ("USB: cdc-acm: Fix potential deadlock (lockdep warning)")
-Cc: stable <stable@vger.kernel.org>
-Reported-and-tested-by: syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
-Signed-off-by: Oliver Neukum <oneukum@suse.com>
-Link: https://lore.kernel.org/r/20190808142119.7998-1-oneukum@suse.com
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+The problem was that the MAD PD was deallocated before the MAD CQ.
+There was completion work pending for the CQ when the PD got deallocated.
+When the mad completion handling reached procedure
+ib_mad_post_receive_mads(), we got a use-after-free bug in the following
+line of code in that procedure:
+   sg_list.lkey = qp_info->port_priv->pd->local_dma_lkey;
+(the pd pointer in the above line is no longer valid, because the
+pd has been deallocated).
 
+We fix this by allocating the PD before the CQ in procedure
+ib_mad_port_open(), and deallocating the PD after freeing the CQ
+in procedure ib_mad_port_close().
+
+Since the CQ completion work queue is flushed during ib_free_cq(),
+no completions will be pending for that CQ when the PD is later
+deallocated.
+
+Note that freeing the CQ before deallocating the PD is the practice
+in the ULPs.
+
+Fixes: 4be90bc60df4 ("IB/mad: Remove ib_get_dma_mr calls")
+Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Link: https://lore.kernel.org/r/20190801121449.24973-1-leon@kernel.org
+Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/class/cdc-acm.c |   12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/infiniband/core/mad.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1264,10 +1264,6 @@ made_compressed_probe:
- 	if (acm == NULL)
- 		goto alloc_fail;
+diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
+index 55252079faf65..49b6da1d990fc 100644
+--- a/drivers/infiniband/core/mad.c
++++ b/drivers/infiniband/core/mad.c
+@@ -3170,18 +3170,18 @@ static int ib_mad_port_open(struct ib_device *device,
+ 	if (has_smi)
+ 		cq_size *= 2;
  
--	minor = acm_alloc_minor(acm);
--	if (minor < 0)
--		goto alloc_fail1;
++	port_priv->pd = ib_alloc_pd(device, 0);
++	if (IS_ERR(port_priv->pd)) {
++		dev_err(&device->dev, "Couldn't create ib_mad PD\n");
++		ret = PTR_ERR(port_priv->pd);
++		goto error3;
++	}
++
+ 	port_priv->cq = ib_alloc_cq(port_priv->device, port_priv, cq_size, 0,
+ 			IB_POLL_WORKQUEUE);
+ 	if (IS_ERR(port_priv->cq)) {
+ 		dev_err(&device->dev, "Couldn't create ib_mad CQ\n");
+ 		ret = PTR_ERR(port_priv->cq);
+-		goto error3;
+-	}
 -
- 	ctrlsize = usb_endpoint_maxp(epctrl);
- 	readsize = usb_endpoint_maxp(epread) *
- 				(quirks == SINGLE_RX_URB ? 1 : 2);
-@@ -1275,6 +1271,13 @@ made_compressed_probe:
- 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
- 	acm->control = control_interface;
- 	acm->data = data_interface;
-+
-+	usb_get_intf(acm->control); /* undone in destruct() */
-+
-+	minor = acm_alloc_minor(acm);
-+	if (minor < 0)
-+		goto alloc_fail1;
-+
- 	acm->minor = minor;
- 	acm->dev = usb_dev;
- 	if (h.usb_cdc_acm_descriptor)
-@@ -1420,7 +1423,6 @@ skip_countries:
- 	usb_driver_claim_interface(&acm_driver, data_interface, acm);
- 	usb_set_intfdata(data_interface, acm);
+-	port_priv->pd = ib_alloc_pd(device, 0);
+-	if (IS_ERR(port_priv->pd)) {
+-		dev_err(&device->dev, "Couldn't create ib_mad PD\n");
+-		ret = PTR_ERR(port_priv->pd);
+ 		goto error4;
+ 	}
  
--	usb_get_intf(control_interface);
- 	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
- 			&control_interface->dev);
- 	if (IS_ERR(tty_dev)) {
+@@ -3224,11 +3224,11 @@ error8:
+ error7:
+ 	destroy_mad_qp(&port_priv->qp_info[0]);
+ error6:
+-	ib_dealloc_pd(port_priv->pd);
+-error4:
+ 	ib_free_cq(port_priv->cq);
+ 	cleanup_recv_queue(&port_priv->qp_info[1]);
+ 	cleanup_recv_queue(&port_priv->qp_info[0]);
++error4:
++	ib_dealloc_pd(port_priv->pd);
+ error3:
+ 	kfree(port_priv);
+ 
+@@ -3258,8 +3258,8 @@ static int ib_mad_port_close(struct ib_device *device, int port_num)
+ 	destroy_workqueue(port_priv->wq);
+ 	destroy_mad_qp(&port_priv->qp_info[1]);
+ 	destroy_mad_qp(&port_priv->qp_info[0]);
+-	ib_dealloc_pd(port_priv->pd);
+ 	ib_free_cq(port_priv->cq);
++	ib_dealloc_pd(port_priv->pd);
+ 	cleanup_recv_queue(&port_priv->qp_info[1]);
+ 	cleanup_recv_queue(&port_priv->qp_info[0]);
+ 	/* XXX: Handle deallocation of MAD registration tables */
+-- 
+2.20.1
+
 
 
