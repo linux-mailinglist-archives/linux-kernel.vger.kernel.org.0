@@ -2,111 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 99EA79913C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:46:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D5F2199148
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:49:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732253AbfHVKpx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 06:45:53 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:32925 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730333AbfHVKpw (ORCPT
+        id S2387652AbfHVKr1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 06:47:27 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43643 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728042AbfHVKr0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:45:52 -0400
-Received: by mail-wr1-f67.google.com with SMTP id u16so4960920wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 03:45:51 -0700 (PDT)
+        Thu, 22 Aug 2019 06:47:26 -0400
+Received: by mail-lj1-f193.google.com with SMTP id h15so5066274ljg.10
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 03:47:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=/DjOjyPKJGO/AF9O06K0OKutOBMRAX78D/FmEPCYTxg=;
-        b=H1nHUAjLEMs4Dr3/Rfk4r8Z7hCsoI3/15V+TnydrEwdtdKJA4Vc1HidnpZVfn+XmKl
-         M6c1XvAax0EAAkoyitioea/2HCCVE1kmjwMwIAjvxB+0UG4ZuBIXSXnsrp6qrNbOK2ou
-         1LNkD31uLewoJA83SLRrTHR4ab5eKPpOv4kWrt3yq2GQp6I9PhIrrAOu6/f+X6Lc+lTs
-         c8lUCbNH5kByi28P2a/nH0BWzQ1kPO3QIEnykizpOuAnVKmFCj3WtHqU77o7TFSxEDVn
-         FaxpSJ6tRo8eAhO8WYS62HfIlPeN2EjKweqdADxmZVST0H7rSwQIlVMXXvk5ld4BtERk
-         3Q+g==
+        d=gmail.com; s=20161025;
+        h=mime-version:reply-to:sender:from:date:message-id:subject:to;
+        bh=6Bzs9Uh+jHGsL9kjcIqcUl1UtkwJtpfRk9Teoyz8MSE=;
+        b=bPdTukxviGbgLibV0ozB6n6pBPjufIvqM6Lp072NzM1BmriO9VOcpKko1pFWoCICaK
+         xBPhDlyfneYL8AM74v54/pHJm3dsusoxNLcyxfMfUL+/PT6C6HJ22/xKguukKJxqrjT0
+         +EU7enELFXOpU7nAziKvptL3a9GOeJzhf84YBCVs8w9kBMjwMfsrFnIdoK1ACoUZkmrP
+         g9VevhbyN8UKGNFjvGf3V8vGZeckT5ovSLYCsMDuAU5jCXXflE1vQEkMLRLKPaczwfOn
+         IFHzFN4y91wHN6pMuG22cZIPtUyDjkRqlVRUnVF0B0yaxjDoUSGITZpjBuHe//q81LEx
+         CS9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=/DjOjyPKJGO/AF9O06K0OKutOBMRAX78D/FmEPCYTxg=;
-        b=G27dXbrKx/uDXtssfhmDVhu0uudEglxK5tz7n7BjpwS20m8R9eP8/4/E9ksezpsPxM
-         UgQX/Kdt0xQr9YMk7pYPlzAFkYbZW+2eONphHUdcXujirUQ11+BRbtwM/Ogp5B/V8zyV
-         EyFI4l3wQy0WtUGiLr9eOOjs2vEiV3FkSZpLUmA/lA9nBiqGIlIbiEZQ8fCc05BDeilt
-         frkyOGOgEiPs4zo7Z4ys48bP+fPLh9DMSnw+KDeXO/wFvrKWJwAkPKV2aA7ZnKqaC36I
-         Ld2BTf959H6QEy56QFg5ecSfhob6gZeI/rKQ1RFwTfCDoCba1xSBmq3i2LMqANeBzR8L
-         z/Xw==
-X-Gm-Message-State: APjAAAXZTjocGbnFhcLlBTMxjxRo25QsKiAkeR44Ye1mlipaBi2wx/zX
-        nVeSyvUxdcL3A+YXMA4sle8ZRg==
-X-Google-Smtp-Source: APXvYqxPje/72ek540Wsgy2FREnCYVC+6jwVQWIqUyJBEi7qym21drEX2bFUj7QhfEDtCBnjXkOH0g==
-X-Received: by 2002:adf:e801:: with SMTP id o1mr47743779wrm.45.1566470750528;
-        Thu, 22 Aug 2019 03:45:50 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id f134sm5264028wmg.20.2019.08.22.03.45.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 03:45:49 -0700 (PDT)
-Subject: Re: [PATCH v2 3/4] ASoC: qdsp6: q6afe-dai: Update max rate for slim
- and tdm dais
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     broonie@kernel.org, spapothi@codeaurora.org,
-        bgoswami@codeaurora.org, plai@codeaurora.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com
-References: <20190822095653.7200-1-srinivas.kandagatla@linaro.org>
- <20190822095653.7200-4-srinivas.kandagatla@linaro.org>
- <s5h7e75v7en.wl-tiwai@suse.de>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <923f1d65-d908-c64c-3109-0da1938d3824@linaro.org>
-Date:   Thu, 22 Aug 2019 11:45:48 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:mime-version:reply-to:sender:from:date
+         :message-id:subject:to;
+        bh=6Bzs9Uh+jHGsL9kjcIqcUl1UtkwJtpfRk9Teoyz8MSE=;
+        b=lop8Y9zGPVu5jpMnovnDlHeH7kVVLtha+l3DrlnRjkrLKGeGuAfw6ZWjhNXtFT8ZU8
+         UuJGUp0DEGc+Phuf7AVgmXRtDNJl7k71q6NowhiJ9Cr5/stLiJVnAqf5D5NJlXVxEVO8
+         BHuKWj6SJhy4KCB83uxkMQF+qJ6SuND0xLlo4a90mavBO6CohAK7DOudZn+0xH7oRGXh
+         MX/5v68p0POyK2S3sk5HlgZYaM625nv6Py6k2/7lIn9Z2TuaM4aCXoKviu9W0SoM7Nun
+         uOJd6tbGvDD0rWZExAl+dFl2eg0FC/w2v9alZQnbxmi2mhSyzocN69Y85LBfX8HPQoB3
+         HhdQ==
+X-Gm-Message-State: APjAAAWT4eSfvx6CKMtQYveppsSyYv6IZER0Oy25fV8FYE2k6Fihde3r
+        3TYWyCOp4sLBWb74bnsamd8nuJuuMH9zp1ibfrI=
+X-Google-Smtp-Source: APXvYqxjWS4L/SPbaKMF98Ws9p4/GK6mEH4nGSibUBERLvr/bcFlWt+utgsnxsZ/oZZJKdf37yCbuWkbEuYiySYxEw0=
+X-Received: by 2002:a2e:6101:: with SMTP id v1mr5832040ljb.42.1566470844509;
+ Thu, 22 Aug 2019 03:47:24 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <s5h7e75v7en.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Reply-To: awatifsalah@aol.com
+Received: by 2002:a2e:7304:0:0:0:0:0 with HTTP; Thu, 22 Aug 2019 03:47:23
+ -0700 (PDT)
+From:   Awatif Salah <awatifsalahh@gmail.com>
+Date:   Thu, 22 Aug 2019 03:47:23 -0700
+X-Google-Sender-Auth: 6nppikIi5vQIA740gnUBi8XlVus
+Message-ID: <CAKLgmfTBxuKwQttJjDa9eZctbRkyDWNYEBkL2_-yRpk-ENHPAQ@mail.gmail.com>
+Subject: Confidential Please
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Greetings,
 
+I need a trusted and integrity person who has an account that can
+receive huge amount of dollars? Reply so we can discuss details and
+what will be your commission, I got your contact through our area of
+commerce and the industry directory.
 
-On 22/08/2019 11:09, Takashi Iwai wrote:
-> On Thu, 22 Aug 2019 11:56:52 +0200,
-> Srinivas Kandagatla wrote:
->>
->> QDSP supports up to 384000 rates on SLIM dais and 352800 rate on TDM dais.
->> Add this missing rates.
->>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->> ---
->>   sound/soc/qcom/qdsp6/q6afe-dai.c | 92 +++++++++++---------------------
->>   1 file changed, 32 insertions(+), 60 deletions(-)
->>
->> diff --git a/sound/soc/qcom/qdsp6/q6afe-dai.c b/sound/soc/qcom/qdsp6/q6afe-dai.c
->> index c1a7624eaf17..ae2baefdb6e2 100644
->> --- a/sound/soc/qcom/qdsp6/q6afe-dai.c
->> +++ b/sound/soc/qcom/qdsp6/q6afe-dai.c
->> @@ -18,14 +18,14 @@
->>   			.stream_name = pre" TDM"#num" Playback",	\
->>   			.rates = SNDRV_PCM_RATE_8000 | SNDRV_PCM_RATE_16000 |\
->>   				SNDRV_PCM_RATE_32000 | SNDRV_PCM_RATE_48000 |\
->> -				SNDRV_PCM_RATE_176400,			\
->> +				SNDRV_PCM_RATE_176400 | SNDRV_PCM_RATE_352800,\
-> 
-> This will support a lot more than advertised, e.g. it contains 64000Hz
-> or 22050Hz.  Is this supposed?  If yes, mention it clearly in the
-> changelog, too.
+My name is Mrs. Awatif Salah Abdullah, the wife of former Sudanese
+security chief Major General Salah Gosh Abdallah, please I need your
+help because of the ban the United States of America impost on my
+husband, myself and our daughter Miss. Shaimaa Salah Abdullah from
+entering into their country.
 
-Some of the rates inbetween are not in the DSP supported rate list for TDM.
+please am very much aware that this platform is not a conducive arena
+to contact unknown person for this, but I have to due to the situation
+here now.
 
-DSP should return error if we try to set any unsupported rate!
+The transaction is genuine; I took the decision because of the
+pressure on me to move for an exile with my daughter since my husband
+has been placed on house arrest after the United States of America
+announce the ban. Please I will explain more when I see your response
+and please do threat this message confidentially.
 
---srini
-> 
-> thanks,
-> 
-> Takashi
-> 
+Regards
+Mrs. Awatif Salah.
