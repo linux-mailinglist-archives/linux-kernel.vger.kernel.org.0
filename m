@@ -2,55 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2D58699711
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:41:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 298C899717
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:42:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfHVOlr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:41:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57240 "EHLO mail.kernel.org"
+        id S1727874AbfHVOmc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:42:32 -0400
+Received: from foss.arm.com ([217.140.110.172]:47230 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729659AbfHVOlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:41:47 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6FE7233A1;
-        Thu, 22 Aug 2019 14:41:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566484906;
-        bh=xbTF8AseRu01mR/EJfz3wstTj03rAj+32ynAtGi6ytQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=HrYUTaHAc5uY99i0UbHQP96oyVsZ4v2UeRGZw+LFJwAvyEML0OT4YU2iosLEsWwzp
-         AyYMZspul2AXS3ZOQngqo8H414ASKbM4qJ0d8UwmGmjh8UeYCRbwpr8JY7Egzad0k2
-         spguzpf5p1q+yZ6cMWVRmd0cGcB/iZRqqKySqb4s=
-Date:   Thu, 22 Aug 2019 16:41:44 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [patch V2 14/38] posix-cpu-timers: Get rid of pointer indirection
-Message-ID: <20190822144143.GR22020@lenoir>
-References: <20190821190847.665673890@linutronix.de>
- <20190821192920.535079278@linutronix.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821192920.535079278@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S1726332AbfHVOmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:42:31 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E82C8337;
+        Thu, 22 Aug 2019 07:42:30 -0700 (PDT)
+Received: from e121650-lin.cambridge.arm.com (e121650-lin.cambridge.arm.com [10.1.196.120])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 917F13F706;
+        Thu, 22 Aug 2019 07:42:29 -0700 (PDT)
+From:   Raphael Gault <raphael.gault@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     mingo@redhat.com, peterz@infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, acme@kernel.org, mark.rutland@arm.com,
+        raph.gault+kdev@gmail.com, Raphael Gault <raphael.gault@arm.com>
+Subject: [PATCH v4 0/7] arm64: Enable access to pmu registers by user-space
+Date:   Thu, 22 Aug 2019 15:42:13 +0100
+Message-Id: <20190822144220.27860-1-raphael.gault@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:09:01PM +0200, Thomas Gleixner wrote:
-> Now that the sample functions have no return value anymore, the result can
-> simply be returned instead of using pointer indirection.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Hi,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Changes since v3:
+* Rebased on will/for-next/perf in order to include this patch [1]
+* Re-introduce `mrs` hook used in previous versions
+* Invert cpu feature to track homogeneity instead of heterogeneity
+* Introduce accessor for boot_cpu_data (see second commit for more info)
+* Apply Mark Rutland's comments
+
+
+The perf user-space tool relies on the PMU to monitor events. It offers an
+abstraction layer over the hardware counters since the underlying
+implementation is cpu-dependent. We want to allow userspace tools to have
+access to the registers storing the hardware counters' values directly.
+This targets specifically self-monitoring tasks in order to reduce the
+overhead by directly accessing the registers without having to go
+through the kernel.
+In order to do this we need to setup the pmu so that it exposes its registers
+to userspace access.
+
+The first patch add a test to the perf tool so that we can test that the
+access to the registers works correctly from userspace.
+
+The second patch introduces an accessor for `boot_cpu_data` which is
+static. Including cpu.h turned out to cause a chain of dependencies so I
+opted for the accessor since it is not much used.
+
+The third patch add a capability in the arm64 cpufeatures framework in
+order to detect when we are running on a homogeneous system.
+
+The fourth patch re introduces the hooks to handling undefined
+instruction for `mrs` instructions on pmu-related registers.
+
+The fifth patch focuses on the armv8 pmuv3 PMU support and makes sure that
+the access to the pmu registers is enable and that the userspace have
+access to the relevent information in order to use them.
+
+The sixth patch put in place callbacks to enable access to the hardware
+counters from userspace when a compatible event is opened using the perf
+API.
+
+The seventh patch adds a short documentation about PMU counters direct
+access from userspace.
+
+[1]: https://lkml.org/lkml/2019/8/20/875
+
+Raphael Gault (7):
+  perf: arm64: Add test to check userspace access to hardware counters.
+  arm64: cpu: Add accessor for boot_cpu_data
+  arm64: cpufeature: Add feature to detect homogeneous systems
+  arm64: pmu: Add hook to handle pmu-related undefined instructions
+  arm64: pmu: Add function implementation to update event index in
+    userpage.
+  arm64: perf: Enable pmu counter direct access for perf event on armv8
+  Documentation: arm64: Document PMU counters access from userspace
+
+ .../arm64/pmu_counter_user_access.txt         |  42 +++
+ arch/arm64/include/asm/cpu.h                  |   2 +-
+ arch/arm64/include/asm/cpucaps.h              |   3 +-
+ arch/arm64/include/asm/cpufeature.h           |  10 +
+ arch/arm64/include/asm/mmu.h                  |   6 +
+ arch/arm64/include/asm/mmu_context.h          |   2 +
+ arch/arm64/include/asm/perf_event.h           |  14 +
+ arch/arm64/kernel/cpufeature.c                |  32 ++-
+ arch/arm64/kernel/cpuinfo.c                   |   7 +-
+ arch/arm64/kernel/perf_event.c                |  77 ++++++
+ drivers/perf/arm_pmu.c                        |  54 ++++
+ include/linux/perf/arm_pmu.h                  |   2 +
+ tools/perf/arch/arm64/include/arch-tests.h    |   7 +
+ tools/perf/arch/arm64/tests/Build             |   1 +
+ tools/perf/arch/arm64/tests/arch-tests.c      |   4 +
+ tools/perf/arch/arm64/tests/user-events.c     | 254 ++++++++++++++++++
+ 16 files changed, 512 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/arm64/pmu_counter_user_access.txt
+ create mode 100644 tools/perf/arch/arm64/tests/user-events.c
+
+-- 
+2.17.1
+
