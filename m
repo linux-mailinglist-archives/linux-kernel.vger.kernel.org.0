@@ -2,86 +2,124 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 48C76998E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:12:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 101EA998E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:12:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729819AbfHVQKT (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 12:10:19 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:47832 "EHLO ale.deltatee.com"
+        id S2389832AbfHVQLW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 12:11:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725934AbfHVQKR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:10:17 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i0pfC-00079K-KT; Thu, 22 Aug 2019 10:10:16 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.92)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1i0pfC-0001RJ-FF; Thu, 22 Aug 2019 10:10:14 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Cc:     Bjorn Helgaas <bhelgaas@google.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Thu, 22 Aug 2019 10:10:13 -0600
-Message-Id: <20190822161013.5481-4-logang@deltatee.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190822161013.5481-1-logang@deltatee.com>
-References: <20190822161013.5481-1-logang@deltatee.com>
+        id S1732895AbfHVQLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:11:21 -0400
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E72B0233FD;
+        Thu, 22 Aug 2019 16:11:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566490281;
+        bh=zOMLxHs2VWka/qFMYIuywdwW7/bJZ8chpRACeFjJll8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Gx4N0gs5HtgNNNI/UK3B/3JnCYAtGMrYh/avF9aHXY/GFEJZDbLYFPe7BcU+uefo6
+         1z2B/Cbb3Iwz6+HSYwszt9a4aVUn1gi1UUcz0vNkCCM/RQqTD4+ZHTyVumsknbyAib
+         dqf8F5Co7o3Nq/0oOfMLaWbluVThrfcPlqT0P8nc=
+Received: by mail-qt1-f169.google.com with SMTP id t12so8330749qtp.9;
+        Thu, 22 Aug 2019 09:11:20 -0700 (PDT)
+X-Gm-Message-State: APjAAAWsWUSAwK7W0Ym9mRCjVl7HPxKlNKqLSt+sGM/1oioVRnZQK9bB
+        oi4l2PHNhfwdyLuFviOfDaabbUG7iPw9zhsfBA==
+X-Google-Smtp-Source: APXvYqy6FBlK1ClzTIESpRbzxj+d3ls/cIRjhDZi4Cfkk62DRf1Upbl2njPgECs0QSQz5nK0p9oVjHnL75jmEGJ+Cvc=
+X-Received: by 2002:ad4:4050:: with SMTP id r16mr122097qvp.200.1566490280005;
+ Thu, 22 Aug 2019 09:11:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, bhelgaas@google.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-X-Spam-Checker-Version: SpamAssassin 3.4.2 (2018-09-13) on ale.deltatee.com
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=5.0 tests=ALL_TRUSTED,BAYES_00,
-        GREYLIST_ISWHITE,MYRULES_NO_TEXT autolearn=ham autolearn_force=no
-        version=3.4.2
-Subject: [PATCH v2 3/3] PCI: Force trailing new line to resource_alignment_param in sysfs
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+References: <20190809133407.25918-1-srinivas.kandagatla@linaro.org>
+ <20190809133407.25918-2-srinivas.kandagatla@linaro.org> <20190821214436.GA13936@bogus>
+ <0272eafd-0aa5-f695-64e4-f6ad7157a3a6@linaro.org> <CAL_JsqJJCJB9obR_Jn3hmn4gq+RQjY-8M+xkdYA185Uaw0MHcw@mail.gmail.com>
+ <90b9fa33-3a49-c414-4352-66e26673a05d@linaro.org>
+In-Reply-To: <90b9fa33-3a49-c414-4352-66e26673a05d@linaro.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 22 Aug 2019 11:11:08 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLuH5=PLSVvyd=5oOECfcV3mgf8b842Y4ppJKG_NHds-g@mail.gmail.com>
+Message-ID: <CAL_JsqLuH5=PLSVvyd=5oOECfcV3mgf8b842Y4ppJKG_NHds-g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/4] dt-bindings: soundwire: add slave bindings
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     Vinod <vkoul@kernel.org>, Mark Brown <broonie@kernel.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When 'pci=resource_alignment=' is specified on the command line, there
-is no trailing new line.  Then, when it's read through the corresponding
-sysfs attribute, there will be no newline and a cat command will not
-show correctly in a shell. If the parameter is set through sysfs
-a new line will be stored and it will 'cat' correctly.
+On Thu, Aug 22, 2019 at 7:56 AM Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
+>
+>
+>
+> On 22/08/2019 13:36, Rob Herring wrote:
+> >>>> +soundwire@c2d0000 {
+> >>>> +    compatible = "qcom,soundwire-v1.5.0"
+> >>>> +    reg = <0x0c2d0000 0x2000>;
+> >>>> +
+> >>>> +    spkr_left:wsa8810-left{
+> >>>> +            compatible = "sdw0110217201000";
+> >>>> +            ...
+> >>>> +    };
+> >>>> +
+> >>>> +    spkr_right:wsa8810-right{
+> >>>> +            compatible = "sdw0120217201000";
+> >>> The normal way to distinguish instances is with 'reg'. So I think you
+> >>> need 'reg' with Instance ID moved there at least. Just guessing, but
+> >>> perhaps Link ID, too? And for 2 different classes of device is that
+> >>> enough?
+> >> In previous bindings (https://lists.gt.net/linux/kernel/3403276  ) we
+> >> did have instance-id as different property, however Pierre had some good
+> >> suggestion to make it align with _ADR encoding as per MIPI DisCo spec.
+> >>
+> >> Do you still think that we should split the instance id to reg property?
+> > Assuming you could have more than 1 of the same device on the bus,
+> > then you need some way to distinguish them and the way that's done for
+> > DT is unit-address/reg. And compatible strings should be constant for
+> > each instance.
+> That is a good point!
+> Okay that makes more sense keep compatible string constant.
+> Class ID would be constant for given functionality that the driver will
+> provide.
+>
+> So we will end up with some thing like this:
+>
+> soundwire@c2d0000 {
+>         compatible = "qcom,soundwire-v1.5.0"
+>         reg = <0x0c2d0000 0x2000>;
+>          #address-cells = <1>;
+>          #size-cells = <0>;
+>
+>         spkr_left:skpr@1{
+>                 compatible = "sdw10217201000";
+>                 reg = <0x1>
+>                 sdw-link-id = <0>;
 
-To solve this, append a new line character in the show function if
-one does not already exist.
+Not really sure what Link ID is, but maybe it should be part of reg
+too if it is part of how you address a device.
 
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/pci.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 5e00371149b1..4748362d6a49 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -6117,6 +6117,16 @@ static ssize_t resource_alignment_show(struct bus_type *bus, char *buf)
- 		count = snprintf(buf, PAGE_SIZE, "%s", resource_alignment_param);
- 	spin_unlock(&resource_alignment_lock);
- 
-+	/*
-+	 * When set by the command line, resource_alignment_param will not
-+	 * have a trailing line feed, which is ugly. So conditionally add
-+	 * it here.
-+	 */
-+	if (count >= 2 && buf[count - 2] != '\n' && count < PAGE_SIZE - 1) {
-+		buf[count - 1] = '\n';
-+		buf[count++] = 0;
-+	}
-+
- 	return count;
- }
- 
--- 
-2.20.1
-
+>                 ...
+>         };
+>
+>         spkr_right:spkr@2{
+>                 compatible = "sdw10217201000";
+>                 reg = <0x2>
+>                 sdw-link-id = <0>;
+>         };
+> };
+>
+> I will spin this in next version!
+>
+> Thanks,
+> srini
+>
+> >
+> > Rob
