@@ -2,176 +2,73 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A640798F54
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4F6BC98F65
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:33:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733220AbfHVJ3J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:29:09 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:36888 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732231AbfHVJ3G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:29:06 -0400
-Received: by mail-wr1-f66.google.com with SMTP id z11so4726327wrt.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 02:29:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=resnulli-us.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zvZLQm2eReId0SwTyMH9VzRmlkdF2ZdYygKx0uvmAk0=;
-        b=SGase5XAZFg+vTPEPlwvJlx1ym/QLLzp1ud2bXoCHajj5R7wkWDyAY3NQMyW+Fa8yk
-         5TCCIETKfD2hpQpyh+tifopk6nxKPmvbjcRFK1Q7HOAQ+XMIoCYUknmm3EkeolqTHsYm
-         XAE3JtkBJqI9/xyF2u/s0xTJHog+xjFhwlQXOcq63WrxnWnwQa4o79tGYuP2qbab4mpY
-         MubhtDyP2NTE032vF1BczpQQZSJyrKtJMU1BNyw6BjHvG5FaU42RbjCvzhaH9EzhrSHk
-         wkT+7neXomFGGvJMp9BtLhrT5LxpJ/FZKToD9fFKKkk3H9rvhMw06d5uDNaJUDrRpjEF
-         7gUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zvZLQm2eReId0SwTyMH9VzRmlkdF2ZdYygKx0uvmAk0=;
-        b=lRyEEJw3A5/27Pl1HOSJZUQv93qWlHO71AlF0ssFgrwQA1NzJbSSlsl/F4WdpIl5wZ
-         qy4i/K9MM9IaQFrYLzPw0pfyykwdOJpYjDXA/opc+bVIG1f4KrAbkcjQMwOPTxoO4fPt
-         CKmCOauIQX1u7e2aWX8Wxa8BjGHquL8ju9cxmVBAuGqDhwTliLPe50l/kRMjEvXjmzhm
-         Hi+fhDeCRfwm/Vksm+MoAbpRP+l0sYpTIuEfcIOKXVrYmLFcfyxuFEU2Oyaa9J0Vfb8Q
-         o/k0Xwmw1OqbKRjsBlSd5QibC3gLIk+Hxwf3lvACvgLZGtXM+5lRgmxi9NFEapxJBePR
-         PW+Q==
-X-Gm-Message-State: APjAAAW+q46b+OD4cX7mNCnw8663P1yl+DKBO9Dtv5W3sFtiGl2oaCeU
-        vLjZmZoM8MUXHrl00FvnNN6yKw==
-X-Google-Smtp-Source: APXvYqy3MiZfh5jTT4YN2SGl9rGBNzJSpnL2EizF5M0c7ozx13iyKmQrwYFgp8g2hjvLpKPNCjxyIA==
-X-Received: by 2002:adf:f641:: with SMTP id x1mr7145810wrp.179.1566466145132;
-        Thu, 22 Aug 2019 02:29:05 -0700 (PDT)
-Received: from localhost (jirka.pirko.cz. [84.16.102.26])
-        by smtp.gmail.com with ESMTPSA id t19sm4383224wmi.29.2019.08.22.02.29.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 02:29:04 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 11:29:03 +0200
-From:   Jiri Pirko <jiri@resnulli.us>
-To:     Parav Pandit <parav@mellanox.com>
-Cc:     Alex Williamson <alex.williamson@redhat.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Kirti Wankhede <kwankhede@nvidia.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        cjia <cjia@nvidia.com>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
-Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
-Message-ID: <20190822092903.GA2276@nanopsycho.orion>
-References: <AM0PR05MB4866148ABA3C4E48E73E95FCD1AD0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <AM0PR05MB48668B6221E477A873688CDBD1AB0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190820111904.75515f58@x1.home>
- <AM0PR05MB486686D3C311F3C61BE0997DD1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190820222051.7aeafb69@x1.home>
- <AM0PR05MB48664CDF05C3D02F9441440DD1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190820225722.237a57d2@x1.home>
- <AM0PR05MB4866AE8FC4AA3CC24B08B326D1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
- <20190820232622.164962d3@x1.home>
- <AM0PR05MB4866437FAA63C447CACCD7E5D1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
+        id S1732553AbfHVJd0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:33:26 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35734 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725799AbfHVJd0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:26 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id A6343D756F;
+        Thu, 22 Aug 2019 11:33:19 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id RK4SDxnr7J-A; Thu, 22 Aug 2019 11:33:05 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 74E51D749F;
+        Thu, 22 Aug 2019 11:27:25 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id b_wlen16TW9p; Thu, 22 Aug 2019 11:26:46 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2B844493E8;
+        Thu, 22 Aug 2019 11:26:46 +0200 (CEST)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC 
+Date:   Thu, 22 Aug 2019 11:26:23 +0200
+Message-Id: <20190822092643.593488-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AM0PR05MB4866437FAA63C447CACCD7E5D1AA0@AM0PR05MB4866.eurprd05.prod.outlook.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wed, Aug 21, 2019 at 08:23:17AM CEST, parav@mellanox.com wrote:
->
->
->> -----Original Message-----
->> From: Alex Williamson <alex.williamson@redhat.com>
->> Sent: Wednesday, August 21, 2019 10:56 AM
->> To: Parav Pandit <parav@mellanox.com>
->> Cc: Jiri Pirko <jiri@mellanox.com>; David S . Miller <davem@davemloft.net>;
->> Kirti Wankhede <kwankhede@nvidia.com>; Cornelia Huck
->> <cohuck@redhat.com>; kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
->> cjia <cjia@nvidia.com>; netdev@vger.kernel.org
->> Subject: Re: [PATCH v2 0/2] Simplify mtty driver and mdev core
->> 
->> > > > > Just an example of the alias, not proposing how it's set.  In
->> > > > > fact, proposing that the user does not set it, mdev-core
->> > > > > provides one
->> > > automatically.
->> > > > >
->> > > > > > > Since there seems to be some prefix overhead, as I ask about
->> > > > > > > above in how many characters we actually have to work with
->> > > > > > > in IFNAMESZ, maybe we start with 8 characters (matching your
->> > > > > > > "index" namespace) and expand as necessary for disambiguation.
->> > > > > > > If we can eliminate overhead in IFNAMESZ, let's start with 12.
->> > > > > > > Thanks,
->> > > > > > >
->> > > > > > If user is going to choose the alias, why does it have to be limited to
->> sha1?
->> > > > > > Or you just told it as an example?
->> > > > > >
->> > > > > > It can be an alpha-numeric string.
->> > > > >
->> > > > > No, I'm proposing a different solution where mdev-core creates
->> > > > > an alias based on an abbreviated sha1.  The user does not provide the
->> alias.
->> > > > >
->> > > > > > Instead of mdev imposing number of characters on the alias, it
->> > > > > > should be best
->> > > > > left to the user.
->> > > > > > Because in future if netdev improves on the naming scheme,
->> > > > > > mdev will be
->> > > > > limiting it, which is not right.
->> > > > > > So not restricting alias size seems right to me.
->> > > > > > User configuring mdev for networking devices in a given kernel
->> > > > > > knows what
->> > > > > user is doing.
->> > > > > > So user can choose alias name size as it finds suitable.
->> > > > >
->> > > > > That's not what I'm proposing, please read again.  Thanks,
->> > > >
->> > > > I understood your point. But mdev doesn't know how user is going
->> > > > to use
->> > > udev/systemd to name the netdev.
->> > > > So even if mdev chose to pick 12 characters, it could result in collision.
->> > > > Hence the proposal to provide the alias by the user, as user know
->> > > > the best
->> > > policy for its use case in the environment its using.
->> > > > So 12 character sha1 method will still work by user.
->> > >
->> > > Haven't you already provided examples where certain drivers or
->> > > subsystems have unique netdev prefixes?  If mdev provides a unique
->> > > alias within the subsystem, couldn't we simply define a netdev
->> > > prefix for the mdev subsystem and avoid all other collisions?  I'm
->> > > not in favor of the user providing both a uuid and an
->> > > alias/instance.  Thanks,
->> > >
->> > For a given prefix, say ens2f0, can two UUID->sha1 first 9 characters have
->> collision?
->> 
->> I think it would be a mistake to waste so many chars on a prefix, but 9
->> characters of sha1 likely wouldn't have a collision before we have 10s of
->> thousands of devices.  Thanks,
->> 
->> Alex
->
->Jiri, Dave,
->Are you ok with it for devlink/netdev part?
->Mdev core will create an alias from a UUID.
->
->This will be supplied during devlink port attr set such as,
->
->devlink_port_attrs_mdev_set(struct devlink_port *port, const char *mdev_alias);
->
->This alias is used to generate representor netdev's phys_port_name.
->This alias from the mdev device's sysfs will be used by the udev/systemd to generate predicable netdev's name.
->Example: enm<mdev_alias_first_12_chars>
+Hi,=20
 
-What happens in unlikely case of 2 UUIDs collide?
+this is a second spin of a patch set that adds support for the Marvell
+MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
+FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients.=20
 
+Compared to v1, there's a handful of fixes in response to reviews. Patch
+02/20 is new. Details in individual patches.
+=20
+Apart from the adjustments in mach-mmp/, the patch makes necessary=20
+changes to the irqchip driver and adds an USB2 PHY driver. The latter=20
+has a dependency on the mach-mmp/ changes, so it can't be submitted=20
+separately.
+=20
+The patch set has been tested to work on Wyse Tx0D and not ruin MMP2=20
+support on XO-1.75.=20
 
->I took Ethernet mdev as an example.
->New prefix 'm' stands for mediated device.
->Remaining 12 characters are first 12 chars of the mdev alias.
+Thanks
+Lubo
 
-Does this resolve the identification of devlink port representor? I
-assume you want to use the same 12(or so) chars, don't you?
 
