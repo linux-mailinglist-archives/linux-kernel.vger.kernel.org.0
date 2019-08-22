@@ -2,39 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFF6A99B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02B6B99B44
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391720AbfHVRXv (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43688 "EHLO mail.kernel.org"
+        id S2403894AbfHVRXR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391563AbfHVRXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:34 -0400
+        id S2387686AbfHVRXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:13 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F36DD23426;
-        Thu, 22 Aug 2019 17:23:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11E1E233FC;
+        Thu, 22 Aug 2019 17:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494614;
-        bh=irG79BRN+ND2MxZ1FUv7m4nPGmkpbWu7XaNgMHd+65E=;
+        s=default; t=1566494593;
+        bh=lddK2BR3eW6iu9NrovsCSujv19iVX+zVEY+ElFOHc70=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kfq5xbWLFZx3A29cVZUqmXgnFqTo+7nlOwau1UgH0t6CPA3i9ptLMGiCovnEXNb1Y
-         y7Q2JtSKlE++lbc4lMqiFnQiFLHor4rlOHTUVl662bTpP0eje2G+l54x0UUr2r8R0p
-         TZOreetXnGMh6a15zNRvV4tEgWKLpVB0YwuIXfVs=
+        b=vXYRYMrlINVodN/hXmV9pOXBuz7xdClSl/J29O/9vafoon4Mn/wEgbfCN2Xuu+n3Q
+         IVXVBceoAA6FCRKztRARCl4x0vNZrgvjNVPWSS8q4bVDXOKOGW+zYSBnWATGN8oHwS
+         sOzHZVmciCJNCfY+K9CQTaePXED1n8DDSgTVCgmo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Liebler <stli@linux.ibm.com>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Hendrik Brueckner <brueckner@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 4.9 009/103] perf record: Fix module size on s390
-Date:   Thu, 22 Aug 2019 10:17:57 -0700
-Message-Id: <20190822171729.229084973@linuxfoundation.org>
+        stable@vger.kernel.org, Thomas Tai <thomas.tai@oracle.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 013/103] iscsi_ibft: make ISCSI_IBFT dependson ACPI instead of ISCSI_IBFT_FIND
+Date:   Thu, 22 Aug 2019 10:18:01 -0700
+Message-Id: <20190822171729.386681818@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -47,138 +44,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thomas Richter <tmricht@linux.ibm.com>
+[ Upstream commit 94bccc34071094c165c79b515d21b63c78f7e968 ]
 
-commit 12a6d2940b5f02b4b9f71ce098e3bb02bc24a9ea upstream.
+iscsi_ibft can use ACPI to find the iBFT entry during bootup,
+currently, ISCSI_IBFT depends on ISCSI_IBFT_FIND which is
+a X86 legacy way to find the iBFT by searching through the
+low memory. This patch changes the dependency so that other
+arch like ARM64 can use ISCSI_IBFT as long as the arch supports
+ACPI.
 
-On s390 the modules loaded in memory have the text segment located after
-the GOT and Relocation table. This can be seen with this output:
+ibft_init() needs to use the global variable ibft_addr declared
+in iscsi_ibft_find.c. A #ifndef CONFIG_ISCSI_IBFT_FIND is needed
+to declare the variable if CONFIG_ISCSI_IBFT_FIND is not selected.
+Moving ibft_addr into the iscsi_ibft.c does not work because if
+ISCSI_IBFT is selected as a module, the arch/x86/kernel/setup.c won't
+be able to find the variable at compile time.
 
-  [root@m35lp76 perf]# fgrep qeth /proc/modules
-  qeth 151552 1 qeth_l2, Live 0x000003ff800b2000
-  ...
-  [root@m35lp76 perf]# cat /sys/module/qeth/sections/.text
-  0x000003ff800b3990
-  [root@m35lp76 perf]#
-
-There is an offset of 0x1990 bytes. The size of the qeth module is
-151552 bytes (0x25000 in hex).
-
-The location of the GOT/relocation table at the beginning of a module is
-unique to s390.
-
-commit 203d8a4aa6ed ("perf s390: Fix 'start' address of module's map")
-adjusts the start address of a module in the map structures, but does
-not adjust the size of the modules. This leads to overlapping of module
-maps as this example shows:
-
-[root@m35lp76 perf] # ./perf report -D
-     0 0 0xfb0 [0xa0]: PERF_RECORD_MMAP -1/0: [0x3ff800b3990(0x25000)
-          @ 0]:  x /lib/modules/.../qeth.ko.xz
-     0 0 0x1050 [0xb0]: PERF_RECORD_MMAP -1/0: [0x3ff800d85a0(0x8000)
-          @ 0]:  x /lib/modules/.../ip6_tables.ko.xz
-
-The module qeth.ko has an adjusted start address modified to b3990, but
-its size is unchanged and the module ends at 0x3ff800d8990.  This end
-address overlaps with the next modules start address of 0x3ff800d85a0.
-
-When the size of the leading GOT/Relocation table stored in the
-beginning of the text segment (0x1990 bytes) is subtracted from module
-qeth end address, there are no overlaps anymore:
-
-   0x3ff800d8990 - 0x1990 = 0x0x3ff800d7000
-
-which is the same as
-
-   0x3ff800b2000 + 0x25000 = 0x0x3ff800d7000.
-
-To fix this issue, also adjust the modules size in function
-arch__fix_module_text_start(). Add another function parameter named size
-and reduce the size of the module when the text segment start address is
-changed.
-
-Output after:
-     0 0 0xfb0 [0xa0]: PERF_RECORD_MMAP -1/0: [0x3ff800b3990(0x23670)
-          @ 0]:  x /lib/modules/.../qeth.ko.xz
-     0 0 0x1050 [0xb0]: PERF_RECORD_MMAP -1/0: [0x3ff800d85a0(0x7a60)
-          @ 0]:  x /lib/modules/.../ip6_tables.ko.xz
-
-Reported-by: Stefan Liebler <stli@linux.ibm.com>
-Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-Acked-by: Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc: Hendrik Brueckner <brueckner@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: stable@vger.kernel.org
-Fixes: 203d8a4aa6ed ("perf s390: Fix 'start' address of module's map")
-Link: http://lkml.kernel.org/r/20190724122703.3996-1-tmricht@linux.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Thomas Tai <thomas.tai@oracle.com>
+Signed-off-by: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/s390/util/machine.c |   14 +++++++++++++-
- tools/perf/util/machine.c           |    3 ++-
- tools/perf/util/machine.h           |    2 +-
- 3 files changed, 16 insertions(+), 3 deletions(-)
+ drivers/firmware/Kconfig      | 5 +++--
+ drivers/firmware/iscsi_ibft.c | 4 ++++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
---- a/tools/perf/arch/s390/util/machine.c
-+++ b/tools/perf/arch/s390/util/machine.c
-@@ -6,7 +6,7 @@
- #include "api/fs/fs.h"
- #include "debug.h"
+diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+index bca172d42c743..854df538ae01e 100644
+--- a/drivers/firmware/Kconfig
++++ b/drivers/firmware/Kconfig
+@@ -144,7 +144,7 @@ config DMI_SCAN_MACHINE_NON_EFI_FALLBACK
  
--int arch__fix_module_text_start(u64 *start, const char *name)
-+int arch__fix_module_text_start(u64 *start, u64 *size, const char *name)
- {
- 	u64 m_start = *start;
- 	char path[PATH_MAX];
-@@ -16,6 +16,18 @@ int arch__fix_module_text_start(u64 *sta
- 	if (sysfs__read_ull(path, (unsigned long long *)start) < 0) {
- 		pr_debug2("Using module %s start:%#lx\n", path, m_start);
- 		*start = m_start;
-+	} else {
-+		/* Successful read of the modules segment text start address.
-+		 * Calculate difference between module start address
-+		 * in memory and module text segment start address.
-+		 * For example module load address is 0x3ff8011b000
-+		 * (from /proc/modules) and module text segment start
-+		 * address is 0x3ff8011b870 (from file above).
-+		 *
-+		 * Adjust the module size and subtract the GOT table
-+		 * size located at the beginning of the module.
-+		 */
-+		*size -= (*start - m_start);
- 	}
+ config ISCSI_IBFT_FIND
+ 	bool "iSCSI Boot Firmware Table Attributes"
+-	depends on X86 && ACPI
++	depends on X86 && ISCSI_IBFT
+ 	default n
+ 	help
+ 	  This option enables the kernel to find the region of memory
+@@ -155,7 +155,8 @@ config ISCSI_IBFT_FIND
+ config ISCSI_IBFT
+ 	tristate "iSCSI Boot Firmware Table Attributes module"
+ 	select ISCSI_BOOT_SYSFS
+-	depends on ISCSI_IBFT_FIND && SCSI && SCSI_LOWLEVEL
++	select ISCSI_IBFT_FIND if X86
++	depends on ACPI && SCSI && SCSI_LOWLEVEL
+ 	default	n
+ 	help
+ 	  This option enables support for detection and exposing of iSCSI
+diff --git a/drivers/firmware/iscsi_ibft.c b/drivers/firmware/iscsi_ibft.c
+index 132b9bae4b6aa..220bbc91cebdb 100644
+--- a/drivers/firmware/iscsi_ibft.c
++++ b/drivers/firmware/iscsi_ibft.c
+@@ -93,6 +93,10 @@ MODULE_DESCRIPTION("sysfs interface to BIOS iBFT information");
+ MODULE_LICENSE("GPL");
+ MODULE_VERSION(IBFT_ISCSI_VERSION);
  
- 	return 0;
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -1074,6 +1074,7 @@ static int machine__set_modules_path(str
- 	return map_groups__set_modules_path_dir(&machine->kmaps, modules_path, 0);
- }
- int __weak arch__fix_module_text_start(u64 *start __maybe_unused,
-+				u64 *size __maybe_unused,
- 				const char *name __maybe_unused)
- {
- 	return 0;
-@@ -1085,7 +1086,7 @@ static int machine__create_module(void *
- 	struct machine *machine = arg;
- 	struct map *map;
- 
--	if (arch__fix_module_text_start(&start, name) < 0)
-+	if (arch__fix_module_text_start(&start, &size, name) < 0)
- 		return -1;
- 
- 	map = machine__findnew_module_map(machine, start, name);
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -205,7 +205,7 @@ struct symbol *machine__find_kernel_func
- 
- struct map *machine__findnew_module_map(struct machine *machine, u64 start,
- 					const char *filename);
--int arch__fix_module_text_start(u64 *start, const char *name);
-+int arch__fix_module_text_start(u64 *start, u64 *size, const char *name);
- 
- int __machine__load_kallsyms(struct machine *machine, const char *filename,
- 			     enum map_type type, bool no_kcore);
++#ifndef CONFIG_ISCSI_IBFT_FIND
++struct acpi_table_ibft *ibft_addr;
++#endif
++
+ struct ibft_hdr {
+ 	u8 id;
+ 	u8 version;
+-- 
+2.20.1
+
 
 
