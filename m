@@ -2,38 +2,41 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 195E799B9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:26:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 51AD099BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404653AbfHVR0L (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48216 "EHLO mail.kernel.org"
+        id S2390392AbfHVR3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:29:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404336AbfHVRZK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:10 -0400
+        id S2404751AbfHVR0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:26:49 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E39A12341B;
-        Thu, 22 Aug 2019 17:25:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A96B2064A;
+        Thu, 22 Aug 2019 17:26:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494710;
-        bh=Gj847P+qXm8y51Qcuet4CDKDoDTyJYgVLrmfPsIq1Ik=;
+        s=default; t=1566494809;
+        bh=5u86D2mnbw9aSHt54t/7AtwNfywdza/lGyREW78gyl8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DbNTuj2YGTJ1cLJ0a7ZWXZ9L6VkVzX9C6NNieh9r52/PhYSygCHss5aOVJh7awuJ1
-         MGl2QKy202rntimVr2ByetT5hnZ6fgzQA8m9qyBKQbwVoxkvQdK49nYhtiIaBITP9j
-         XRslscbZSRMz3Ezurvgl0v6X2vWCtM9NqF1+tLMQ=
+        b=I+7oz9QuupO7tkC6XOwZ1kSavWUyGLz52jh56rFCFsI+UrsFX2FFlWYJb3P/MrwGi
+         HaZ++k9fF7skZPFE3TIhr8UAYABYkSpZ13gBiz8tFKbtN194fsPey502LtIGw5z5Sl
+         V2F9nFX5E0tAq/swsLj/ROXu8X1Ef6sMzX/tOxqY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 65/71] xen/netback: Reset nr_frags before freeing skb
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        "Wan Yusof, Wan Fahim AsqalaniX" 
+        <wan.fahim.asqalanix.wan.yusof@intel.com>
+Subject: [PATCH 4.19 67/85] drm/i915/cfl: Add a new CFL PCI ID.
 Date:   Thu, 22 Aug 2019 10:19:40 -0700
-Message-Id: <20190822171730.557817012@linuxfoundation.org>
+Message-Id: <20190822171734.100250801@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +46,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ross Lagerwall <ross.lagerwall@citrix.com>
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
 
-[ Upstream commit 3a0233ddec554b886298de2428edb5c50a20e694 ]
+commit d0e062ebb3a44b56a7e672da568334c76f763552 upstream.
 
-At this point nr_frags has been incremented but the frag does not yet
-have a page assigned so freeing the skb results in a crash. Reset
-nr_frags before freeing the skb to prevent this.
+One more CFL ID added to spec.
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: José Roberto de Souza <jose.souza@intel.com>
+Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
+Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
+Link: https://patchwork.freedesktop.org/patch/msgid/20180803232721.20038-1-rodrigo.vivi@intel.com
+Signed-off-by: Wan Yusof, Wan Fahim AsqalaniX <wan.fahim.asqalanix.wan.yusof@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/xen-netback/netback.c |    2 ++
- 1 file changed, 2 insertions(+)
 
---- a/drivers/net/xen-netback/netback.c
-+++ b/drivers/net/xen-netback/netback.c
-@@ -927,6 +927,7 @@ static void xenvif_tx_build_gops(struct
- 			skb_shinfo(skb)->nr_frags = MAX_SKB_FRAGS;
- 			nskb = xenvif_alloc_skb(0);
- 			if (unlikely(nskb == NULL)) {
-+				skb_shinfo(skb)->nr_frags = 0;
- 				kfree_skb(skb);
- 				xenvif_tx_err(queue, &txreq, extra_count, idx);
- 				if (net_ratelimit())
-@@ -942,6 +943,7 @@ static void xenvif_tx_build_gops(struct
+---
+ include/drm/i915_pciids.h |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/include/drm/i915_pciids.h
++++ b/include/drm/i915_pciids.h
+@@ -386,6 +386,7 @@
+ 	INTEL_VGA_DEVICE(0x3E91, info), /* SRV GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E92, info), /* SRV GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E96, info), /* SRV GT2 */ \
++	INTEL_VGA_DEVICE(0x3E98, info), /* SRV GT2 */ \
+ 	INTEL_VGA_DEVICE(0x3E9A, info)  /* SRV GT2 */
  
- 			if (xenvif_set_skb_gso(queue->vif, skb, gso)) {
- 				/* Failure in xenvif_set_skb_gso is fatal. */
-+				skb_shinfo(skb)->nr_frags = 0;
- 				kfree_skb(skb);
- 				kfree_skb(nskb);
- 				break;
+ /* CFL H */
 
 
