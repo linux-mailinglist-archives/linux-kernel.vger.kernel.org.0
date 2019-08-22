@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 394EA99BB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F07D99B6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391953AbfHVR1G (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:27:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S2404319AbfHVRYp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45736 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404488AbfHVRZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:45 -0400
+        id S2391542AbfHVRYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:23 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E44FC2341E;
-        Thu, 22 Aug 2019 17:25:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8342623428;
+        Thu, 22 Aug 2019 17:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494745;
-        bh=fgkm7WAJnjMm0e9zjgQqZSf3/wt/5O1q3IEJNndBPfE=;
+        s=default; t=1566494662;
+        bh=XPQQR9SYyUnBPVcLEBI8BTIaknpWogaU5KEOM4JTVkE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tmbg3ZNHqawmIogiU6UY04D3j3H4A/az1J79zbySAq5jtuVj/koeb32izdOyQYHHJ
-         GWEfAFVJMMQEitjdSwSDXKvgEyY9Uo34X83YoAHj2xvIh6Mrg59zQJF92VKKZ7sN9Q
-         HGs7q25DfOLw2QQVF1kswFVBAwrfFzziLeGUIjrw=
+        b=nD7D9WB2PAT6ETgGCs9yncA2gwFWpucw5hNbR0AUo/w273UbMrDBC3sILGilt0GkX
+         pBiq/PhmBKUhxWAkUARHG/47aJyr0QQ0jApFJMuYZKBrG+s1lUbFYVt2J33m2XYVtM
+         hfhhZR0KgUyzCQIVxj7KdjRb7AVgEbJ4eWmj6+zY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wang Xiayang <xywang.sjtu@sjtu.edu.cn>,
-        Chunming Zhou <david1.zhou@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 39/85] drm/amdgpu: fix a potential information leaking bug
-Date:   Thu, 22 Aug 2019 10:19:12 -0700
-Message-Id: <20190822171733.010185705@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+45a53506b65321c1fe91@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.9 085/103] USB: CDC: fix sanity checks in CDC union parser
+Date:   Thu, 22 Aug 2019 10:19:13 -0700
+Message-Id: <20190822171732.610903284@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,45 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 929e571c04c285861e0bb049a396a2bdaea63282 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-Coccinelle reports a path that the array "data" is never initialized.
-The path skips the checks in the conditional branches when either
-of callback functions, read_wave_vgprs and read_wave_sgprs, is not
-registered. Later, the uninitialized "data" array is read
-in the while-loop below and passed to put_user().
+commit 54364278fb3cabdea51d6398b07c87415065b3fc upstream.
 
-Fix the path by allocating the array with kcalloc().
+A few checks checked for the size of the pointer to a structure
+instead of the structure itself. Copy & paste issue presumably.
 
-The patch is simplier than adding a fall-back branch that explicitly
-calls memset(data, 0, ...). Also it does not need the multiplication
-1024*sizeof(*data) as the size parameter for memset() though there is
-no risk of integer overflow.
+Fixes: e4c6fb7794982 ("usbnet: move the CDC parser into USB core")
+Cc: stable <stable@vger.kernel.org>
+Reported-by: syzbot+45a53506b65321c1fe91@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20190813093541.18889-1-oneukum@suse.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-Signed-off-by: Wang Xiayang <xywang.sjtu@sjtu.edu.cn>
-Reviewed-by: Chunming Zhou <david1.zhou@amd.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/core/message.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-index f5fb93795a69a..65cecfdd9b454 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_debugfs.c
-@@ -707,7 +707,7 @@ static ssize_t amdgpu_debugfs_gpr_read(struct file *f, char __user *buf,
- 	thread = (*pos & GENMASK_ULL(59, 52)) >> 52;
- 	bank = (*pos & GENMASK_ULL(61, 60)) >> 60;
- 
--	data = kmalloc_array(1024, sizeof(*data), GFP_KERNEL);
-+	data = kcalloc(1024, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
- 
--- 
-2.20.1
-
+--- a/drivers/usb/core/message.c
++++ b/drivers/usb/core/message.c
+@@ -2142,14 +2142,14 @@ int cdc_parse_cdc_header(struct usb_cdc_
+ 				(struct usb_cdc_dmm_desc *)buffer;
+ 			break;
+ 		case USB_CDC_MDLM_TYPE:
+-			if (elength < sizeof(struct usb_cdc_mdlm_desc *))
++			if (elength < sizeof(struct usb_cdc_mdlm_desc))
+ 				goto next_desc;
+ 			if (desc)
+ 				return -EINVAL;
+ 			desc = (struct usb_cdc_mdlm_desc *)buffer;
+ 			break;
+ 		case USB_CDC_MDLM_DETAIL_TYPE:
+-			if (elength < sizeof(struct usb_cdc_mdlm_detail_desc *))
++			if (elength < sizeof(struct usb_cdc_mdlm_detail_desc))
+ 				goto next_desc;
+ 			if (detail)
+ 				return -EINVAL;
 
 
