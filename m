@@ -2,38 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF1E99BAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13BC799B37
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404749AbfHVR0k (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
+        id S2391463AbfHVRWp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:22:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404408AbfHVRZ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:26 -0400
+        id S2391343AbfHVRWk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:40 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1E1123427;
-        Thu, 22 Aug 2019 17:25:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2568F233FD;
+        Thu, 22 Aug 2019 17:22:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494725;
-        bh=rWMI78uObu5Jq7fpXek1iMxgJ/1Q82HDvXacm5NBlAI=;
+        s=default; t=1566494559;
+        bh=LCYHX6/+MmhDWR7YgKpX0H0dBEI3H2iLTyfTGTr/wEQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KHFC8cwm3W9eW3ukiBoEn2sLzdgOL+wF+pjj9sQB4FUPfis2zJEOLidPRsyp+kAtc
-         gT22xxypOR2vVPCDTD0roaTLTjMfGHXXMzbRyqqw4aQHTlB10gXrLZK8cEpPOR3YOR
-         M8QpoHcYvMY7s8aEHBe5i8wDAaoe2YD5Ea3yvHpQ=
+        b=YBImv9/TAPTy7nwAFfZVBrT3A1PDQbF7CNCIvw6Rx1xpE5RFcjKumjSkMH9OgyPuP
+         z8jctPUdbBo5Y2lD2hu+q4s83TmN52quytbtIxJubcG1li17mtnIxQPlYGNKPy7s/1
+         3JmJ7zJ8RyGFMfNhSI4Z4Qub11irfcz6TrwnQarM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wenwen Wang <wenwen@cs.uga.edu>,
-        Takashi Iwai <tiwai@suse.de>
-Subject: [PATCH 4.19 15/85] ALSA: hda - Fix a memory leak bug
-Date:   Thu, 22 Aug 2019 10:18:48 -0700
-Message-Id: <20190822171731.773409513@linuxfoundation.org>
+        stable@vger.kernel.org, Vince Weaver <vincent.weaver@maine.edu>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 46/78] perf header: Fix divide by zero error if f_header.attr_size==0
+Date:   Thu, 22 Aug 2019 10:18:50 -0700
+Message-Id: <20190822171833.373316491@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,36 +48,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wenwen@cs.uga.edu>
+[ Upstream commit 7622236ceb167aa3857395f9bdaf871442aa467e ]
 
-commit cfef67f016e4c00a2f423256fc678a6967a9fc09 upstream.
+So I have been having lots of trouble with hand-crafted perf.data files
+causing segfaults and the like, so I have started fuzzing the perf tool.
 
-In snd_hda_parse_generic_codec(), 'spec' is allocated through kzalloc().
-Then, the pin widgets in 'codec' are parsed. However, if the parsing
-process fails, 'spec' is not deallocated, leading to a memory leak.
+First issue found:
 
-To fix the above issue, free 'spec' before returning the error.
+If f_header.attr_size is 0 in the perf.data file, then perf will crash
+with a divide-by-zero error.
 
-Fixes: 352f7f914ebb ("ALSA: hda - Merge Realtek parser code to generic parser")
-Signed-off-by: Wenwen Wang <wenwen@cs.uga.edu>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Committer note:
 
+Added a pr_err() to tell the user why the command failed.
+
+Signed-off-by: Vince Weaver <vincent.weaver@maine.edu>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/alpine.DEB.2.21.1907231100440.14532@macbook-air
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/pci/hda/hda_generic.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/header.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/sound/pci/hda/hda_generic.c
-+++ b/sound/pci/hda/hda_generic.c
-@@ -6082,7 +6082,7 @@ static int snd_hda_parse_generic_codec(s
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 304f5d7101436..0102dd46fb6da 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2591,6 +2591,13 @@ int perf_session__read_header(struct perf_session *session)
+ 			   file->path);
+ 	}
  
- 	err = snd_hda_parse_pin_defcfg(codec, &spec->autocfg, NULL, 0);
- 	if (err < 0)
--		return err;
-+		goto error;
++	if (f_header.attr_size == 0) {
++		pr_err("ERROR: The %s file's attr size field is 0 which is unexpected.\n"
++		       "Was the 'perf record' command properly terminated?\n",
++		       file->path);
++		return -EINVAL;
++	}
++
+ 	nr_attrs = f_header.attrs.size / f_header.attr_size;
+ 	lseek(fd, f_header.attrs.offset, SEEK_SET);
  
- 	err = snd_hda_gen_parse_auto_config(codec, &spec->autocfg);
- 	if (err < 0)
+-- 
+2.20.1
+
 
 
