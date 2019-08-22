@@ -2,181 +2,427 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 13FA59947F
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 15:08:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9DB2D99484
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 15:09:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388879AbfHVNIf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 09:08:35 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:43510 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387491AbfHVNIe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 09:08:34 -0400
-Received: by mail-ed1-f65.google.com with SMTP id h13so7820724edq.10
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 06:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=02CnF/oWum6EvkbDCiosLBlondS4OglCjhZywUsed8k=;
-        b=Tz3518yn5WWULcFmtdPHCt2A7d5ApDMbK6MopGvul1So7VZJrxGoVd1hyvCU0FgAig
-         ye563cwx7GI5x5B4BWPNRLocDhkAh5WkywQKqm+Jr2kFLFdo6ZvrAiASzH4UPpqYcvIR
-         UI/6Ne7TBMI+JfwpqwiLplhtxJXXL3xRjQvNk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=02CnF/oWum6EvkbDCiosLBlondS4OglCjhZywUsed8k=;
-        b=crty5LDh+tt88zhsqTYN1aQAC5lI2Q5crJi9t/3lKSczrPDnrSzyGD2SfMa8VawN/u
-         3gndq5KfCE1/CqBZVZQ4L+ZUMK6LsA48TbxkICOMwn5mswJONE0jkof2KOG7MCKXQ7Qw
-         NmTqblygu+IZwZltBtf88u5nj3Cr4vo2WNqKMrS1pEmU/jiawJcb/o2iP3YzErXWI9eA
-         qG6CJQgjKyECwxPDozLUQLeOUFqI71Ke5q5s5vRXmzUv5+KcliEKniRhlFAUnucsSbBd
-         RgRMS70U6VQYsfxM/xYLfc3nYlGT+l57zOTdvfCJ3dB44N0S9SeDm1GlU3FQ/6kIBP57
-         rtLA==
-X-Gm-Message-State: APjAAAUYzD+RLPBCXnFlgpG/6FQ0xDRgVErtPu9T/J3eU3aJxdgMKzJ9
-        c5xhaE8erNqYTvjGkveZJ/zE0g==
-X-Google-Smtp-Source: APXvYqxNoo1owvPn0PSkGZksrLAGZl5I2D27njFoLTJGpyXSzyHhr2Krz6ugzkijunzf7H69CY/wkg==
-X-Received: by 2002:a17:906:e0cd:: with SMTP id gl13mr35138284ejb.52.1566479312351;
-        Thu, 22 Aug 2019 06:08:32 -0700 (PDT)
-Received: from phenom.ffwll.local (212-51-149-96.fiber7.init7.net. [212.51.149.96])
-        by smtp.gmail.com with ESMTPSA id w3sm4735338edu.4.2019.08.22.06.08.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 06:08:31 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 15:08:29 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     dri-devel@lists.freedesktop.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/3] fbdev: drop res_id parameter from
- remove_conflicting_pci_framebuffers
-Message-ID: <20190822130829.GV11147@phenom.ffwll.local>
-Mail-Followup-To: Gerd Hoffmann <kraxel@redhat.com>,
-        dri-devel@lists.freedesktop.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        "open list:FRAMEBUFFER LAYER" <linux-fbdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190822090645.25410-1-kraxel@redhat.com>
- <20190822090645.25410-2-kraxel@redhat.com>
+        id S2388914AbfHVNI7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 09:08:59 -0400
+Received: from mga09.intel.com ([134.134.136.24]:49158 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387491AbfHVNIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 09:08:55 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 06:08:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,416,1559545200"; 
+   d="scan'208";a="262856129"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.68.145])
+  by orsmga001.jf.intel.com with ESMTP; 22 Aug 2019 06:08:51 -0700
+Received: from andy by smile with local (Exim 4.92.1)
+        (envelope-from <andriy.shevchenko@intel.com>)
+        id 1i0mpd-0001hH-02; Thu, 22 Aug 2019 16:08:49 +0300
+Date:   Thu, 22 Aug 2019 16:08:48 +0300
+From:   Andy Shevchenko <andriy.shevchenko@intel.com>
+To:     "Ramuthevar,Vadivel MuruganX" 
+        <vadivel.muruganx.ramuthevar@linux.intel.com>
+Cc:     kishon@ti.com, robh@kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, cheol.yong.kim@intel.com,
+        qi-ming.wu@intel.com, peter.harliman.liem@intel.com
+Subject: Re: [PATCH v4 2/2] phy: intel-lgm-emmc: Add support for eMMC PHY
+Message-ID: <20190822130848.GO30120@smile.fi.intel.com>
+References: <20190822102843.47964-1-vadivel.muruganx.ramuthevar@linux.intel.com>
+ <20190822102843.47964-2-vadivel.muruganx.ramuthevar@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190822090645.25410-2-kraxel@redhat.com>
-X-Operating-System: Linux phenom 5.2.0-2-amd64 
+In-Reply-To: <20190822102843.47964-2-vadivel.muruganx.ramuthevar@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 11:06:43AM +0200, Gerd Hoffmann wrote:
-> Since commit b0e999c95581 ("fbdev: list all pci memory bars as
-> conflicting apertures") the parameter was used for some sanity checks
-> only, to make sure we detect any issues with the new approach to just
-> list all memory bars as apertures.
+On Thu, Aug 22, 2019 at 06:28:43PM +0800, Ramuthevar,Vadivel MuruganX wrote:
+> From: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
 > 
-> No issues turned up so far, so continue to cleanup:  Drop the res_id
-> parameter, drop the sanity checks.  Also downgrade the logging from
-> "info" level to "debug" level and update documentation.
+> Add support for eMMC PHY on Intel's Lightning Mountain SoC.
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Thanks for an update!
+One minor comment below. After addressing it
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@intel.com>
 
+> Signed-off-by: Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
 > ---
->  include/drm/drm_fb_helper.h      |  2 +-
->  include/linux/fb.h               |  2 +-
->  drivers/video/fbdev/core/fbmem.c | 17 +++++------------
->  3 files changed, 7 insertions(+), 14 deletions(-)
+> chnages in v4:
+>  - As per Andy's review comments,the following update
+>  - add license_tag, macro, blank_line, error_check and grouping
 > 
-> diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
-> index c8a8ae2a678a..5a5f4b1d8241 100644
-> --- a/include/drm/drm_fb_helper.h
-> +++ b/include/drm/drm_fb_helper.h
-> @@ -560,7 +560,7 @@ drm_fb_helper_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
->  	 * otherwise the vga fbdev driver falls over.
->  	 */
->  #if IS_REACHABLE(CONFIG_FB)
-> -	ret = remove_conflicting_pci_framebuffers(pdev, resource_id, name);
-> +	ret = remove_conflicting_pci_framebuffers(pdev, name);
->  #endif
->  	if (ret == 0)
->  		ret = vga_remove_vgacon(pdev);
-> diff --git a/include/linux/fb.h b/include/linux/fb.h
-> index 756706b666a1..41e0069eca0a 100644
-> --- a/include/linux/fb.h
-> +++ b/include/linux/fb.h
-> @@ -607,7 +607,7 @@ extern ssize_t fb_sys_write(struct fb_info *info, const char __user *buf,
->  extern int register_framebuffer(struct fb_info *fb_info);
->  extern void unregister_framebuffer(struct fb_info *fb_info);
->  extern void unlink_framebuffer(struct fb_info *fb_info);
-> -extern int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id,
-> +extern int remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
->  					       const char *name);
->  extern int remove_conflicting_framebuffers(struct apertures_struct *a,
->  					   const char *name, bool primary);
-> diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-> index e6a1c805064f..95c32952fa8a 100644
-> --- a/drivers/video/fbdev/core/fbmem.c
-> +++ b/drivers/video/fbdev/core/fbmem.c
-> @@ -1758,21 +1758,19 @@ EXPORT_SYMBOL(remove_conflicting_framebuffers);
->  /**
->   * remove_conflicting_pci_framebuffers - remove firmware-configured framebuffers for PCI devices
->   * @pdev: PCI device
-> - * @res_id: index of PCI BAR configuring framebuffer memory
->   * @name: requesting driver name
->   *
->   * This function removes framebuffer devices (eg. initialized by firmware)
-> - * using memory range configured for @pdev's BAR @res_id.
-> + * using memory range configured for any of @pdev's memory bars.
->   *
->   * The function assumes that PCI device with shadowed ROM drives a primary
->   * display and so kicks out vga16fb.
->   */
-> -int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id, const char *name)
-> +int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, const char *name)
->  {
->  	struct apertures_struct *ap;
->  	bool primary = false;
->  	int err, idx, bar;
-> -	bool res_id_found = false;
+> changes in v3:
+>  - As per Andy's review comments macro optimization,aligned
+>    function call in proper order and udelay added.
+> 
+> changes in v2:
+>  - optimize IS_CALDONE() and IS_DLLRDY() macro
+>  - remove unneccessary comment
+>  - remove redundant assignment
+>  - add return the error ptr
+> ---
+>  drivers/phy/Kconfig                |   1 +
+>  drivers/phy/Makefile               |   1 +
+>  drivers/phy/intel/Kconfig          |   9 ++
+>  drivers/phy/intel/Makefile         |   2 +
+>  drivers/phy/intel/phy-intel-emmc.c | 281 +++++++++++++++++++++++++++++++++++++
+>  5 files changed, 294 insertions(+)
+>  create mode 100644 drivers/phy/intel/Kconfig
+>  create mode 100644 drivers/phy/intel/Makefile
+>  create mode 100644 drivers/phy/intel/phy-intel-emmc.c
+> 
+> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
+> index 0263db2ac874..b3ed94b98d9b 100644
+> --- a/drivers/phy/Kconfig
+> +++ b/drivers/phy/Kconfig
+> @@ -69,5 +69,6 @@ source "drivers/phy/socionext/Kconfig"
+>  source "drivers/phy/st/Kconfig"
+>  source "drivers/phy/tegra/Kconfig"
+>  source "drivers/phy/ti/Kconfig"
+> +source "drivers/phy/intel/Kconfig"
 >  
->  	for (idx = 0, bar = 0; bar < PCI_ROM_RESOURCE; bar++) {
->  		if (!(pci_resource_flags(pdev, bar) & IORESOURCE_MEM))
-> @@ -1789,16 +1787,11 @@ int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id, const
->  			continue;
->  		ap->ranges[idx].base = pci_resource_start(pdev, bar);
->  		ap->ranges[idx].size = pci_resource_len(pdev, bar);
-> -		pci_info(pdev, "%s: bar %d: 0x%lx -> 0x%lx\n", __func__, bar,
-> -			 (unsigned long)pci_resource_start(pdev, bar),
-> -			 (unsigned long)pci_resource_end(pdev, bar));
-> +		pci_dbg(pdev, "%s: bar %d: 0x%lx -> 0x%lx\n", __func__, bar,
-> +			(unsigned long)pci_resource_start(pdev, bar),
-> +			(unsigned long)pci_resource_end(pdev, bar));
->  		idx++;
-> -		if (res_id == bar)
-> -			res_id_found = true;
->  	}
-> -	if (!res_id_found)
-> -		pci_warn(pdev, "%s: passed res_id (%d) is not a memory bar\n",
-> -			 __func__, res_id);
->  
->  #ifdef CONFIG_X86
->  	primary = pdev->resource[PCI_ROM_RESOURCE].flags &
+>  endmenu
+> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
+> index 0d9fddc498a6..3f1fc9efbbed 100644
+> --- a/drivers/phy/Makefile
+> +++ b/drivers/phy/Makefile
+> @@ -19,6 +19,7 @@ obj-y					+= broadcom/	\
+>  					   cadence/	\
+>  					   freescale/	\
+>  					   hisilicon/	\
+> +					   intel/	\
+>  					   marvell/	\
+>  					   motorola/	\
+>  					   mscc/	\
+> diff --git a/drivers/phy/intel/Kconfig b/drivers/phy/intel/Kconfig
+> new file mode 100644
+> index 000000000000..4ea6a8897cd7
+> --- /dev/null
+> +++ b/drivers/phy/intel/Kconfig
+> @@ -0,0 +1,9 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +#
+> +# Phy drivers for Intel Lightning Mountain(LGM) platform
+> +#
+> +config PHY_INTEL_EMMC
+> +	tristate "Intel EMMC PHY driver"
+> +	select GENERIC_PHY
+> +	help
+> +	  Enable this to support the Intel EMMC PHY
+> diff --git a/drivers/phy/intel/Makefile b/drivers/phy/intel/Makefile
+> new file mode 100644
+> index 000000000000..6b876a75599d
+> --- /dev/null
+> +++ b/drivers/phy/intel/Makefile
+> @@ -0,0 +1,2 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +obj-$(CONFIG_PHY_INTEL_EMMC)            += phy-intel-emmc.o
+> diff --git a/drivers/phy/intel/phy-intel-emmc.c b/drivers/phy/intel/phy-intel-emmc.c
+> new file mode 100644
+> index 000000000000..4f0226f37ab0
+> --- /dev/null
+> +++ b/drivers/phy/intel/phy-intel-emmc.c
+> @@ -0,0 +1,281 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Intel eMMC PHY driver
+> + * Copyright (C) 2019 Intel, Corp.
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/clk.h>
+> +#include <linux/delay.h>
+> +#include <linux/mfd/syscon.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/phy/phy.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +/* eMMC phy register definitions */
+> +#define EMMC_PHYCTRL0_REG	0xa8
+> +#define DR_TY_MASK		GENMASK(30, 28)
+> +#define DR_TY_SHIFT(x)		(((x) << 28) & DR_TY_MASK)
+> +#define OTAPDLYENA		BIT(14)
+> +#define OTAPDLYSEL_MASK		GENMASK(13, 10)
+> +#define OTAPDLYSEL_SHIFT(x)	(((x) << 10) & OTAPDLYSEL_MASK)
+> +
+> +#define EMMC_PHYCTRL1_REG	0xac
+> +#define PDB_MASK		BIT(0)
+> +#define PDB_SHIFT(x)		(((x) << 0) & PDB_MASK)
+> +#define ENDLL_MASK		BIT(7)
+> +#define ENDLL_SHIFT(x)		(((x) << 7) & ENDLL_MASK)
+> +
+> +#define EMMC_PHYCTRL2_REG	0xb0
+> +#define FRQSEL_25M		0
+> +#define FRQSEL_50M		1
+> +#define FRQSEL_100M		2
+> +#define FRQSEL_150M		3
+> +#define FRQSEL_MASK		GENMASK(24, 22)
+> +#define FRQSEL_SHIFT(x)		(((x) << 22) & FRQSEL_MASK)
+> +
+> +#define EMMC_PHYSTAT_REG	0xbc
+> +#define CALDONE_MASK		BIT(9)
+> +#define DLLRDY_MASK		BIT(8)
+> +#define IS_CALDONE(x)	((x) & CALDONE_MASK)
+> +#define IS_DLLRDY(x)	((x) & DLLRDY_MASK)
+> +
+> +struct intel_emmc_phy {
+> +	struct regmap *syscfg;
+> +	struct clk *emmcclk;
+> +};
+> +
+> +static int intel_emmc_phy_power(struct phy *phy, bool on_off)
+> +{
+> +	struct intel_emmc_phy *priv = phy_get_drvdata(phy);
+> +	unsigned int caldone;
+> +	unsigned int dllrdy;
+> +	unsigned int freqsel;
+> +	unsigned long rate;
+> +	int ret, quot;
+> +
+> +	/*
+> +	 * Keep phyctrl_pdb and phyctrl_endll low to allow
+> +	 * initialization of CALIO state M/C DFFs
+> +	 */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL1_REG, PDB_MASK,
+> +				 PDB_SHIFT(0));
+> +	if (ret) {
+> +		dev_err(&phy->dev, "CALIO power down bar failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Already finish power_off above */
+> +	if (!on_off)
+> +		return 0;
+> +
+> +	rate = clk_get_rate(priv->emmcclk);
+> +	quot = DIV_ROUND_CLOSEST(rate, 50000000);
+> +	if (quot > FRQSEL_150M)
+> +		dev_warn(&phy->dev, "Unsupported rate: %lu\n", rate);
+> +	freqsel = clamp_t(int, quot, FRQSEL_25M, FRQSEL_150M);
+> +
+> +	/*
+> +	 * According to the user manual, calpad calibration
+> +	 * cycle takes more than 2us without the minimal recommended
+> +	 * value, so we may need a little margin here
+> +	 */
+> +	udelay(5);
+> +
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL1_REG, PDB_MASK, 1);
+
+1 is magic.
+
+> +	if (ret) {
+> +		dev_err(&phy->dev, "CALIO power down bar failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * According to the user manual, it asks driver to wait 5us for
+> +	 * calpad busy trimming. However it is documented that this value is
+> +	 * PVT(A.K.A process,voltage and temperature) relevant, so some
+> +	 * failure cases are found which indicates we should be more tolerant
+> +	 * to calpad busy trimming.
+> +	 */
+> +	ret = regmap_read_poll_timeout(priv->syscfg, EMMC_PHYSTAT_REG,
+> +				       caldone, IS_CALDONE(caldone),
+> +				       0, 50);
+> +	if (ret) {
+> +		dev_err(&phy->dev, "caldone failed, ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Set the frequency of the DLL operation */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL2_REG, FRQSEL_MASK,
+> +				 FRQSEL_SHIFT(freqsel));
+> +	if (ret) {
+> +		dev_err(&phy->dev, "set the frequency of dll failed:%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Turn on the DLL */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL1_REG, ENDLL_MASK,
+> +				 ENDLL_SHIFT(1));
+> +	if (ret) {
+> +		dev_err(&phy->dev, "turn on the dll failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/*
+> +	 * After enabling analog DLL circuits docs say that we need 10.2 us if
+> +	 * our source clock is at 50 MHz and that lock time scales linearly
+> +	 * with clock speed.  If we are powering on the PHY and the card clock
+> +	 * is super slow (like 100 kHZ) this could take as long as 5.1 ms as
+> +	 * per the math: 10.2 us * (50000000 Hz / 100000 Hz) => 5.1 ms
+> +	 * Hopefully we won't be running at 100 kHz, but we should still make
+> +	 * sure we wait long enough.
+> +	 *
+> +	 * NOTE: There appear to be corner cases where the DLL seems to take
+> +	 * extra long to lock for reasons that aren't understood.  In some
+> +	 * extreme cases we've seen it take up to over 10ms (!).  We'll be
+> +	 * generous and give it 50ms.
+> +	 */
+> +	ret = regmap_read_poll_timeout(priv->syscfg,
+> +				       EMMC_PHYSTAT_REG,
+> +				       dllrdy, IS_DLLRDY(dllrdy),
+> +				       0, 50 * USEC_PER_MSEC);
+> +	if (ret) {
+> +		dev_err(&phy->dev, "dllrdy failed. ret=%d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int intel_emmc_phy_init(struct phy *phy)
+> +{
+> +	struct intel_emmc_phy *priv = phy_get_drvdata(phy);
+> +
+> +	/*
+> +	 * We purposely get the clock here and not in probe to avoid the
+> +	 * circular dependency problem. We expect:
+> +	 * - PHY driver to probe
+> +	 * - SDHCI driver to start probe
+> +	 * - SDHCI driver to register it's clock
+> +	 * - SDHCI driver to get the PHY
+> +	 * - SDHCI driver to init the PHY
+> +	 *
+> +	 * The clock is optional, so upon any error just return it like
+> +	 * any other error to user.
+> +	 *
+> +	 */
+> +	priv->emmcclk = clk_get_optional(&phy->dev, "emmcclk");
+> +	if (IS_ERR(priv->emmcclk)) {
+> +		dev_err(&phy->dev, "ERROR: getting emmcclk\n");
+> +		return PTR_ERR(priv->emmcclk);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int intel_emmc_phy_exit(struct phy *phy)
+> +{
+> +	struct intel_emmc_phy *priv = phy_get_drvdata(phy);
+> +
+> +	clk_put(priv->emmcclk);
+> +
+> +	return 0;
+> +}
+> +
+> +static int intel_emmc_phy_power_on(struct phy *phy)
+> +{
+> +	struct intel_emmc_phy *priv = phy_get_drvdata(phy);
+> +	int ret;
+> +
+> +	/* Drive impedance: 50 Ohm */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL0_REG, DR_TY_MASK,
+> +				 DR_TY_SHIFT(6));
+> +	if (ret) {
+> +		dev_err(&phy->dev, "ERROR set drive-impednce-50ohm: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Output tap delay: disable */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL0_REG, OTAPDLYENA, 0);
+> +	if (ret) {
+> +		dev_err(&phy->dev, "ERROR Set output tap delay : %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Output tap delay */
+> +	ret = regmap_update_bits(priv->syscfg, EMMC_PHYCTRL0_REG,
+> +				 OTAPDLYSEL_MASK, OTAPDLYSEL_SHIFT(4));
+> +	if (ret) {
+> +		dev_err(&phy->dev, "ERROR: output tap dly select: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	/* Power up eMMC phy analog blocks */
+> +	return intel_emmc_phy_power(phy, true);
+> +}
+> +
+> +static int intel_emmc_phy_power_off(struct phy *phy)
+> +{
+> +	/* Power down eMMC phy analog blocks */
+> +	return intel_emmc_phy_power(phy, false);
+> +}
+> +
+> +static const struct phy_ops ops = {
+> +	.init		= intel_emmc_phy_init,
+> +	.exit		= intel_emmc_phy_exit,
+> +	.power_on	= intel_emmc_phy_power_on,
+> +	.power_off	= intel_emmc_phy_power_off,
+> +	.owner		= THIS_MODULE,
+> +};
+> +
+> +static int intel_emmc_phy_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *np = dev->of_node;
+> +	struct intel_emmc_phy *priv;
+> +	struct phy *generic_phy;
+> +	struct phy_provider *phy_provider;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	/* Get eMMC phy (accessed via chiptop) regmap */
+> +	priv->syscfg = syscon_regmap_lookup_by_phandle(np, "intel,syscon");
+> +	if (IS_ERR(priv->syscfg)) {
+> +		dev_err(dev, "failed to find syscon\n");
+> +		return PTR_ERR(priv->syscfg);
+> +	}
+> +
+> +	generic_phy = devm_phy_create(dev, np, &ops);
+> +	if (IS_ERR(generic_phy)) {
+> +		dev_err(dev, "failed to create PHY\n");
+> +		return PTR_ERR(generic_phy);
+> +	}
+> +
+> +	phy_set_drvdata(generic_phy, priv);
+> +	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
+> +
+> +	return PTR_ERR_OR_ZERO(phy_provider);
+> +}
+> +
+> +static const struct of_device_id intel_emmc_phy_dt_ids[] = {
+> +	{ .compatible = "intel,lgm-emmc-phy" },
+> +	{}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, intel_emmc_phy_dt_ids);
+> +
+> +static struct platform_driver intel_emmc_driver = {
+> +	.probe		= intel_emmc_phy_probe,
+> +	.driver		= {
+> +		.name	= "intel-emmc-phy",
+> +		.of_match_table = intel_emmc_phy_dt_ids,
+> +	},
+> +};
+> +
+> +module_platform_driver(intel_emmc_driver);
+> +
+> +MODULE_AUTHOR("Peter Harliman Liem <peter.harliman.liem@intel.com>");
+> +MODULE_DESCRIPTION("Intel eMMC PHY driver");
 > -- 
-> 2.18.1
+> 2.11.0
 > 
 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+With Best Regards,
+Andy Shevchenko
+
+
