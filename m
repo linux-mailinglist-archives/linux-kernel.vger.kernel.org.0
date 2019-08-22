@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D29E99D27
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1647C99D22
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392721AbfHVRjs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:39:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45394 "EHLO mail.kernel.org"
+        id S2405047AbfHVRje (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:39:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45318 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404117AbfHVRYM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:12 -0400
+        id S2404122AbfHVRYN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:13 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E665921743;
-        Thu, 22 Aug 2019 17:24:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AED0B23400;
+        Thu, 22 Aug 2019 17:24:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1566494652;
-        bh=vAxN4LcP1t22yKu+PwrsNMiJe85M6FUxg3JUwmu9NT0=;
+        bh=YLSDIMuCDp/pQ8b1bLsyZv4ffLewgbv3UcvNqC6fHM4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=R+Auk55KP2lO0MdnvX21tPcxpJtfNol7oqSe2R90F5HnK7DCSkeMliMl8TbDJzpw2
-         WF69UC5zHsPBw4yvOf1tjSB2P4paY65SFATgTrgU30zyZi0CBHy8QalcX901xuv2Dp
-         uYpI/RGBG5LiA4Quq2ds0EhquNDr2za9u5BNOhSI=
+        b=N0GocdUvDnxbzA8eX9W1Iq8O7X/8fpQdWFfG7m0tbkFLjic2v35acQ5avaj9efaVq
+         HJog6QNp2GVmJUtA3RQhVJLD9CV7F9qKxr04I2ZhkHuhJilWv7qNgClT6ecluS2g8R
+         363u5BRPy0+7FGGa+Fy/wmTaNwoapdxkzPC8ftC4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>
-Subject: [PATCH 4.9 092/103] arm64: compat: Allow single-byte watchpoints on all addresses
-Date:   Thu, 22 Aug 2019 10:19:20 -0700
-Message-Id: <20190822171732.894197823@linuxfoundation.org>
+        stable@vger.kernel.org, Dirk Morris <dmorris@metaloft.com>,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.9 093/103] netfilter: conntrack: Use consistent ct id hash calculation
+Date:   Thu, 22 Aug 2019 10:19:21 -0700
+Message-Id: <20190822171732.933803946@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -42,42 +44,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Dirk Morris <dmorris@metaloft.com>
 
-commit 849adec41203ac5837c40c2d7e08490ffdef3c2c upstream.
+commit 656c8e9cc1badbc18eefe6ba01d33ebbcae61b9a upstream.
 
-Commit d968d2b801d8 ("ARM: 7497/1: hw_breakpoint: allow single-byte
-watchpoints on all addresses") changed the validation requirements for
-hardware watchpoints on arch/arm/. Update our compat layer to implement
-the same relaxation.
+Change ct id hash calculation to only use invariants.
 
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Will Deacon <will@kernel.org>
+Currently the ct id hash calculation is based on some fields that can
+change in the lifetime on a conntrack entry in some corner cases. The
+current hash uses the whole tuple which contains an hlist pointer which
+will change when the conntrack is placed on the dying list resulting in
+a ct id change.
+
+This patch also removes the reply-side tuple and extension pointer from
+the hash calculation so that the ct id will will not change from
+initialization until confirmation.
+
+Fixes: 3c79107631db1f7 ("netfilter: ctnetlink: don't use conntrack/expect object addresses as id")
+Signed-off-by: Dirk Morris <dmorris@metaloft.com>
+Acked-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/arm64/kernel/hw_breakpoint.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ net/netfilter/nf_conntrack_core.c |   16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
---- a/arch/arm64/kernel/hw_breakpoint.c
-+++ b/arch/arm64/kernel/hw_breakpoint.c
-@@ -508,13 +508,14 @@ int arch_validate_hwbkpt_settings(struct
- 			/* Aligned */
- 			break;
- 		case 1:
--			/* Allow single byte watchpoint. */
--			if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
--				break;
- 		case 2:
- 			/* Allow halfword watchpoints and breakpoints. */
- 			if (info->ctrl.len == ARM_BREAKPOINT_LEN_2)
- 				break;
-+		case 3:
-+			/* Allow single byte watchpoint. */
-+			if (info->ctrl.len == ARM_BREAKPOINT_LEN_1)
-+				break;
- 		default:
- 			return -EINVAL;
- 		}
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -308,13 +308,12 @@ EXPORT_SYMBOL_GPL(nf_ct_invert_tuple);
+  * table location, we assume id gets exposed to userspace.
+  *
+  * Following nf_conn items do not change throughout lifetime
+- * of the nf_conn after it has been committed to main hash table:
++ * of the nf_conn:
+  *
+  * 1. nf_conn address
+- * 2. nf_conn->ext address
+- * 3. nf_conn->master address (normally NULL)
+- * 4. tuple
+- * 5. the associated net namespace
++ * 2. nf_conn->master address (normally NULL)
++ * 3. the associated net namespace
++ * 4. the original direction tuple
+  */
+ u32 nf_ct_get_id(const struct nf_conn *ct)
+ {
+@@ -324,9 +323,10 @@ u32 nf_ct_get_id(const struct nf_conn *c
+ 	net_get_random_once(&ct_id_seed, sizeof(ct_id_seed));
+ 
+ 	a = (unsigned long)ct;
+-	b = (unsigned long)ct->master ^ net_hash_mix(nf_ct_net(ct));
+-	c = (unsigned long)ct->ext;
+-	d = (unsigned long)siphash(&ct->tuplehash, sizeof(ct->tuplehash),
++	b = (unsigned long)ct->master;
++	c = (unsigned long)nf_ct_net(ct);
++	d = (unsigned long)siphash(&ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple,
++				   sizeof(ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple),
+ 				   &ct_id_seed);
+ #ifdef CONFIG_64BIT
+ 	return siphash_4u64((u64)a, (u64)b, (u64)c, (u64)d, &ct_id_seed);
 
 
