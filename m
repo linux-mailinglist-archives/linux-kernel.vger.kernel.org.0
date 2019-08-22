@@ -2,73 +2,82 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F4929A08A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:57:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E72649A07F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 21:51:43 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388018AbfHVTzh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 15:55:37 -0400
-Received: from mx2.math.uh.edu ([129.7.128.33]:52178 "EHLO mx2.math.uh.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727953AbfHVTzh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 15:55:37 -0400
-X-Greylist: delayed 968 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 15:55:37 EDT
-Received: from epithumia.math.uh.edu ([129.7.128.2])
-        by mx2.math.uh.edu with esmtp (Exim 4.92)
-        (envelope-from <tibbs@math.uh.edu>)
-        id 1i0sve-0004Tw-Mp; Thu, 22 Aug 2019 14:39:28 -0500
-Received: by epithumia.math.uh.edu (Postfix, from userid 7225)
-        id 9C2EF801554; Thu, 22 Aug 2019 14:39:26 -0500 (CDT)
-From:   Jason L Tibbitts III <tibbs@math.uh.edu>
-To:     linux-nfs@vger.kernel.org
-Cc:     km@cm4all.com, linux-kernel@vger.kernel.org
-Subject: Re: Regression in 5.1.20: Reading long directory fails
-References: <ufak1bhyuew.fsf@epithumia.math.uh.edu>
-Date:   Thu, 22 Aug 2019 14:39:26 -0500
-In-Reply-To: <ufak1bhyuew.fsf@epithumia.math.uh.edu> (Jason L. Tibbitts, III's
-        message of "Tue, 13 Aug 2019 10:08:55 -0500")
-Message-ID: <ufapnkxkn0x.fsf@epithumia.math.uh.edu>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.2 (gnu/linux)
+        id S1732048AbfHVTvm (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 15:51:42 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:38450 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726206AbfHVTvl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 15:51:41 -0400
+Received: by mail-pf1-f193.google.com with SMTP id o70so4667273pfg.5;
+        Thu, 22 Aug 2019 12:51:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Kfl18FpM/XAci4fHCuqG5GPCb1xU4xeI3MoyLakSpmI=;
+        b=QwSk8rYGAWusM2Ur/kdh+3lGkQwQc33PuQ2ZLVioWVgsO5Fj6YP5S1ssOZjh4fWZQV
+         dgV5aAV5j0YsxclQ4IMpNTT9LZNn96HnO0pgoTgfrLjD5RDaOL4N91glHTWd4X5D4sTw
+         gi5Omlr30DNnuALjeHAPFLBlr3sPv84dQm0WD1o7lOObDNfhlf5MPLBG7S+2keG6Z7Ul
+         jnBC4AoPoN0Lmb4qmaBH+jMFStDsUiO27CVpEltazretehfxC1zdD8ziBa+fX+P+aGqw
+         0kQWwOK0Vqt841aGYfDaMGItr5RFyAN+Licn26PZI3ex3Y9aLIvnWtBTy18T1i809pF5
+         S+cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Kfl18FpM/XAci4fHCuqG5GPCb1xU4xeI3MoyLakSpmI=;
+        b=C/s/QZYoQA2P561PWHmmDVNdN0fIVlPzXADn9S+Z3acj3rHXpgjEEvnBqmSxSDWiQB
+         8eaSM0dlT8EF8WpDIpw0pOsWk4FlvTY4vKUAlasAXUE/oTpYCtW9v5zSYBsKmm201VVt
+         8/4cBJH4VYj4Y4kO0TUE0o6P2TeYMxRqfTwYUgg8BvKhmNRreTbKjNJWqWM8mQj2p7+1
+         NXwGvjXqAPdj2Tk3PvjpWXKau8GT/iAbE+dzpDH7WQ/aL/Ftz0iXGodfLxpWI4aQp/jC
+         C8RPrvgBQuIx6eYX1PTtDxWjuEeb5nty9o8qtmjSJigmw8c37lNJ3Acp3JjsH0KIstJO
+         3CyQ==
+X-Gm-Message-State: APjAAAWsJN9JIRy6sQ2PVzFOzjL/YCFL89jUwORXk9RxrgWFnOdJkBfH
+        bgkKBYABWgA32OSNKglN6qkXtgzy
+X-Google-Smtp-Source: APXvYqyOa4BrAVFLBd5/tHmGIOLZcipQZxeBvdtSxMf7KF2x3o0bEVoP1LXxr+5Jax6aIHJj2nYZLA==
+X-Received: by 2002:a62:642:: with SMTP id 63mr920630pfg.257.1566503500972;
+        Thu, 22 Aug 2019 12:51:40 -0700 (PDT)
+Received: from bharath12345-Inspiron-5559 ([103.110.42.34])
+        by smtp.gmail.com with ESMTPSA id q3sm209993pfn.4.2019.08.22.12.51.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 12:51:40 -0700 (PDT)
+Date:   Fri, 23 Aug 2019 01:21:33 +0530
+From:   Bharath Vedartham <linux.bhar@gmail.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org,
+        allison@lohutok.net
+Cc:     tglx@linutronix.de, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: net/dst_cache.c: preemption bug in net/dst_cache.c
+Message-ID: <20190822195132.GA2100@bharath12345-Inspiron-5559>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Score: -2.9 (--)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I now have another user reporting the same failure of readdir on a long
-directory which showed up in 5.1.20 and was traced to
-3536b79ba75ba44b9ac1a9f1634f2e833bbb735c.  I'm not sure what to do to
-get more traction besides reposting and adding some addresses to the CC
-list.  If there is any information I can provide which might help to get
-to the bottom of this, please let me know.
+Hi all,
 
-To recap:
+I just want to bring attention to the syzbot bug [1]
 
-5.1.20 introduced a regression reading some large directories.  In this
-case, the directory should have 7800 files or so in it:
+Even though syzbot claims the bug to be in net/tipc, I feel it is in
+net/dst_cache.c. Please correct me if I am wrong.
 
-[root@ld00 ~]# ls -l ~dblecher|wc -l
-ls: reading directory '/home/dblecher': Input/output error
-1844
-[root@ld00 ~]# cat /proc/version Linux version 5.1.20-300.fc30.x86_64 (mockbuild@bkernel04.phx2.fedoraproject.org) (gcc version 9.1.1 20190503 (Red Hat 9.1.1-1) (GCC)) #1 SMP Fri Jul 26 15:03:11 UTC 2019
+This bug is being triggered a lot of times by syzbot since the day it
+was reported. Also given that this is core networking code, I felt it
+was important to bring this to attention.
 
-(The server is a Centos 7 machine running kernel 3.10.0-957.12.2.el7.x86_64.)
+It looks like preemption needs to be disabled before using this_cpu_ptr
+or maybe we would be better of using a get_cpu_var and put_cpu_var combo
+here.
 
-Building a kernel which reverts commit 3536b79ba75ba44b9ac1a9f1634f2e833bbb735c:
-  Revert "NFS: readdirplus optimization by cache mechanism" (memleak)
-fixes the issue, but of course that revert was fixing a real issue so
-I'm not sure what to do.
+[1] https://syzkaller.appspot.com/bug?id=dc6352b92862eb79373fe03fdf9af5928753e057
 
-I can trivially reproduce this by simply trying to list the problematic
-directories but I'm not sure how to construct such a directory; simply
-creating 10000 files doesn't cause the problem for me.  I am willing to
-test patches and can build my own kernels, and I'm happy to provide any
-debugging information you might require.  Unfortunately I don't know
-enough to dig in and figure out for myself what's going wrong.
-
-I did file https://bugzilla.redhat.com/show_bug.cgi?id=1740954 just to
-have this in a bug tracker somewhere.  I'm happy to file one somewhere
-else if that would help.
-
- - J<
+Thank you
+Bharath
