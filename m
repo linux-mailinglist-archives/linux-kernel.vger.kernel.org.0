@@ -2,39 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id ED37799D02
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8F42699C17
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404472AbfHVRi7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:38:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45782 "EHLO mail.kernel.org"
+        id S2392220AbfHVRbQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:31:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50692 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391502AbfHVRYV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:21 -0400
+        id S2404555AbfHVRZ7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:59 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 014D72341C;
-        Thu, 22 Aug 2019 17:24:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D70F82341A;
+        Thu, 22 Aug 2019 17:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494661;
-        bh=uO1DtXYY5dFWAVZQ7w613gpheeo7EbjiYk6aLMvzxU0=;
+        s=default; t=1566494758;
+        bh=s0ApEAcmL3TT3fBlquZB8oeVyf6DwCkBqIEm+2y66aM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ilYsBxeBuAilzNTZfkSrmn7o1K9W8ikYN8jeB90NC3SrzR9uMe5ym4uhycwvE6RbN
-         XLha9WqV2v8HEUrJzsgUw8c0rtpvvEoT2TbhfF3ici1WFjraqeLJuHzy94AWl0yVOp
-         GXtuCGuu2ZXgLIyTQCh28TDOF7t9c/z9/pePW0Oo=
+        b=VIbekyjkmeP4Jkq/L5K+JiEDsFgg8R6lsQVnT0VZWHVdcw90LCWxl3HvmAm1Q89sN
+         vj/n5d+d0TkIu3hq+xJntaRUKfdUzSNwCJM3evTLln40LHRI8EspBvsAYFC+C65F9G
+         zAYC1lZ0FCq31g5H8fimcFxMzqfimRe5U3tkJ0/0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Jay Vosburgh <jay.vosburgh@canonical.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 103/103] bonding: Add vlan tx offload to hw_enc_features
-Date:   Thu, 22 Aug 2019 10:19:31 -0700
-Message-Id: <20190822171733.315253131@linuxfoundation.org>
+        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
+        syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
+Subject: [PATCH 4.19 59/85] USB: core: Fix races in character device registration and deregistraion
+Date:   Thu, 22 Aug 2019 10:19:32 -0700
+Message-Id: <20190822171733.779726452@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,62 +43,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Alan Stern <stern@rowland.harvard.edu>
 
-[ Upstream commit d595b03de2cb0bdf9bcdf35ff27840cc3a37158f ]
+commit 303911cfc5b95d33687d9046133ff184cf5043ff upstream.
 
-As commit 30d8177e8ac7 ("bonding: Always enable vlan tx offload")
-said, we should always enable bonding's vlan tx offload, pass the
-vlan packets to the slave devices with vlan tci, let them to handle
-vlan implementation.
+The syzbot fuzzer has found two (!) races in the USB character device
+registration and deregistration routines.  This patch fixes the races.
 
-Now if encapsulation protocols like VXLAN is used, skb->encapsulation
-may be set, then the packet is passed to vlan device which based on
-bonding device. However in netif_skb_features(), the check of
-hw_enc_features:
+The first race results from the fact that usb_deregister_dev() sets
+usb_minors[intf->minor] to NULL before calling device_destroy() on the
+class device.  This leaves a window during which another thread can
+allocate the same minor number but will encounter a duplicate name
+error when it tries to register its own class device.  A typical error
+message in the system log would look like:
 
-	 if (skb->encapsulation)
-                 features &= dev->hw_enc_features;
+    sysfs: cannot create duplicate filename '/class/usbmisc/ldusb0'
 
-clears NETIF_F_HW_VLAN_CTAG_TX/NETIF_F_HW_VLAN_STAG_TX. This results
-in same issue in commit 30d8177e8ac7 like this:
+The patch fixes this race by destroying the class device first.
 
-vlan_dev_hard_start_xmit
-  -->dev_queue_xmit
-    -->validate_xmit_skb
-      -->netif_skb_features //NETIF_F_HW_VLAN_CTAG_TX is cleared
-      -->validate_xmit_vlan
-        -->__vlan_hwaccel_push_inside //skb->tci is cleared
-...
- --> bond_start_xmit
-   --> bond_xmit_hash //BOND_XMIT_POLICY_ENCAP34
-     --> __skb_flow_dissect // nhoff point to IP header
-        -->  case htons(ETH_P_8021Q)
-             // skb_vlan_tag_present is false, so
-             vlan = __skb_header_pointer(skb, nhoff, sizeof(_vlan),
-             //vlan point to ip header wrongly
+The second race is in usb_register_dev().  When that routine runs, it
+first allocates a minor number, then drops minor_rwsem, and then
+creates the class device.  If the device creation fails, the minor
+number is deallocated and the whole routine returns an error.  But
+during the time while minor_rwsem was dropped, there is a window in
+which the minor number is allocated and so another thread can
+successfully open the device file.  Typically this results in
+use-after-free errors or invalid accesses when the other thread closes
+its open file reference, because the kernel then tries to release
+resources that were already deallocated when usb_register_dev()
+failed.  The patch fixes this race by keeping minor_rwsem locked
+throughout the entire routine.
 
-Fixes: b2a103e6d0af ("bonding: convert to ndo_fix_features")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Jay Vosburgh <jay.vosburgh@canonical.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-and-tested-by: syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
+Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+CC: <stable@vger.kernel.org>
+Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1908121607590.1659-100000@iolanthe.rowland.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/net/bonding/bond_main.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -1107,7 +1107,9 @@ static void bond_compute_features(struct
+---
+ drivers/usb/core/file.c |   10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+--- a/drivers/usb/core/file.c
++++ b/drivers/usb/core/file.c
+@@ -193,9 +193,10 @@ int usb_register_dev(struct usb_interfac
+ 		intf->minor = minor;
+ 		break;
+ 	}
+-	up_write(&minor_rwsem);
+-	if (intf->minor < 0)
++	if (intf->minor < 0) {
++		up_write(&minor_rwsem);
+ 		return -EXFULL;
++	}
  
- done:
- 	bond_dev->vlan_features = vlan_features;
--	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL;
-+	bond_dev->hw_enc_features = enc_features | NETIF_F_GSO_ENCAP_ALL |
-+				    NETIF_F_HW_VLAN_CTAG_TX |
-+				    NETIF_F_HW_VLAN_STAG_TX;
- 	bond_dev->hard_header_len = max_hard_header_len;
- 	bond_dev->gso_max_segs = gso_max_segs;
- 	netif_set_gso_max_size(bond_dev, gso_max_size);
+ 	/* create a usb class device for this usb interface */
+ 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
+@@ -203,12 +204,11 @@ int usb_register_dev(struct usb_interfac
+ 				      MKDEV(USB_MAJOR, minor), class_driver,
+ 				      "%s", kbasename(name));
+ 	if (IS_ERR(intf->usb_dev)) {
+-		down_write(&minor_rwsem);
+ 		usb_minors[minor] = NULL;
+ 		intf->minor = -1;
+-		up_write(&minor_rwsem);
+ 		retval = PTR_ERR(intf->usb_dev);
+ 	}
++	up_write(&minor_rwsem);
+ 	return retval;
+ }
+ EXPORT_SYMBOL_GPL(usb_register_dev);
+@@ -234,12 +234,12 @@ void usb_deregister_dev(struct usb_inter
+ 		return;
+ 
+ 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
++	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
+ 
+ 	down_write(&minor_rwsem);
+ 	usb_minors[intf->minor] = NULL;
+ 	up_write(&minor_rwsem);
+ 
+-	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
+ 	intf->usb_dev = NULL;
+ 	intf->minor = -1;
+ 	destroy_usb_class();
 
 
