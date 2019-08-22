@@ -2,38 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3614599DF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:47:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A41E99D63
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:42:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391451AbfHVRWo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:22:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41148 "EHLO mail.kernel.org"
+        id S2405185AbfHVRmJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:42:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391414AbfHVRWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:38 -0400
+        id S2391716AbfHVRXv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:51 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6212321743;
-        Thu, 22 Aug 2019 17:22:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AEAA23697;
+        Thu, 22 Aug 2019 17:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494558;
-        bh=UQ8Ck8beOoAG5unTjjmxqkGlgJyFjjAtdvlh3GDzJVw=;
+        s=default; t=1566494630;
+        bh=6fU+9PuammxkfJEvmn0ipo4sM2/Oi5xnKuBsX/DqtLI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lB4Gq688eNTG92IEuJHwyKP8xGL3Y3D9YB/tNICo8g2/WI7WQnA94BV3hzGHmUBx9
-         0naGW1WNGxaUsSwiACXK8DYxKR5bDIj6Ftb9LRIfvEdYunpBpugWToN3UPFNQ3vhph
-         ZOQoDpPbTAgW4suOVOmTWwQp/awn/Oi3urp84C68=
+        b=f+8x7GhwUAJh+Mbu3XkD2DLBoe2GTJ8iN97+Uc9nUq+5z0eyitRhS28xjGLEFWMEI
+         0HR+88x9LYJkqN0QenASxdJzwW4OYBgxCFmuO2r+hNsApUoroZNRjjyIOlzXbsuXY4
+         0n/IIPKuOMkFQNVkBYqMEugEh/1PV7+3YyOkCtIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Marc Zyngier <maz@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 45/78] irqchip/irq-imx-gpcv2: Forward irq type to parent
-Date:   Thu, 22 Aug 2019 10:18:49 -0700
-Message-Id: <20190822171833.344979645@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+965152643a75a56737be@syzkaller.appspotmail.com,
+        Oliver Neukum <oneukum@suse.com>, Jiri Kosina <jkosina@suse.cz>
+Subject: [PATCH 4.9 062/103] HID: holtek: test for sanity of intfdata
+Date:   Thu, 22 Aug 2019 10:18:50 -0700
+Message-Id: <20190822171731.300815625@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,33 +44,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 9a446ef08f3bfc0c3deb9c6be840af2528ef8cf8 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-The GPCv2 is a stacked IRQ controller below the ARM GIC. It doesn't
-care about the IRQ type itself, but needs to forward the type to the
-parent IRQ controller, so this one can be configured correctly.
+commit 01ec0a5f19c8c82960a07f6c7410fc9e01d7fb51 upstream.
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+The ioctl handler uses the intfdata of a second interface,
+which may not be present in a broken or malicious device, hence
+the intfdata needs to be checked for NULL.
+
+[jkosina@suse.cz: fix newly added spurious space]
+Reported-by: syzbot+965152643a75a56737be@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/irqchip/irq-imx-gpcv2.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/hid/hid-holtek-kbd.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/irqchip/irq-imx-gpcv2.c b/drivers/irqchip/irq-imx-gpcv2.c
-index 2d203b422129e..c56da0b13da5d 100644
---- a/drivers/irqchip/irq-imx-gpcv2.c
-+++ b/drivers/irqchip/irq-imx-gpcv2.c
-@@ -145,6 +145,7 @@ static struct irq_chip gpcv2_irqchip_data_chip = {
- 	.irq_unmask		= imx_gpcv2_irq_unmask,
- 	.irq_set_wake		= imx_gpcv2_irq_set_wake,
- 	.irq_retrigger		= irq_chip_retrigger_hierarchy,
-+	.irq_set_type		= irq_chip_set_type_parent,
- #ifdef CONFIG_SMP
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
- #endif
--- 
-2.20.1
-
+--- a/drivers/hid/hid-holtek-kbd.c
++++ b/drivers/hid/hid-holtek-kbd.c
+@@ -126,9 +126,14 @@ static int holtek_kbd_input_event(struct
+ 
+ 	/* Locate the boot interface, to receive the LED change events */
+ 	struct usb_interface *boot_interface = usb_ifnum_to_if(usb_dev, 0);
++	struct hid_device *boot_hid;
++	struct hid_input *boot_hid_input;
+ 
+-	struct hid_device *boot_hid = usb_get_intfdata(boot_interface);
+-	struct hid_input *boot_hid_input = list_first_entry(&boot_hid->inputs,
++	if (unlikely(boot_interface == NULL))
++		return -ENODEV;
++
++	boot_hid = usb_get_intfdata(boot_interface);
++	boot_hid_input = list_first_entry(&boot_hid->inputs,
+ 		struct hid_input, list);
+ 
+ 	return boot_hid_input->input->event(boot_hid_input->input, type, code,
 
 
