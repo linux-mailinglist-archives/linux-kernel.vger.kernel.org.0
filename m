@@ -2,44 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 83D3399B12
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34D2099B1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390291AbfHVRIW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
+        id S2389121AbfHVRTo (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:19:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390262AbfHVRIT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:08:19 -0400
+        id S2390295AbfHVRIY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:08:24 -0400
 Received: from sasha-vm.mshome.net (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EE0E2341B;
-        Thu, 22 Aug 2019 17:08:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EACED23404;
+        Thu, 22 Aug 2019 17:08:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566493699;
-        bh=6o1NOPLZe31bDQ/tQaqmdQYyapJSNNIVBkL+DSK1RA8=;
+        s=default; t=1566493703;
+        bh=WozQVHAvxMlGUO9JWvfxjwZ3Pv3TpGs1akcR2dUpekk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WnwzNUkT/ko0dm6ATD/gmOj5DRVU7Fu/02KHiQKzTjnqarHJy1jTmXeFgGiq8DMdg
-         DhGpy6BwyYHwtQLud1Q+HZHYCGYMONOu97MhATfxwUjum2/XIgoR0UD2VtPK1Znq3B
-         JBlBcSFgZiVulLpICoHn2R9Yywb5opzkc0gBTZ/M=
+        b=EplEx8lIhIcIAgHB30E+zWUQ6Tn9jgJ10upY0z4NYjywy5+V7CTHAjHs1vl2nzARX
+         MZJMthCeWNMEZ73B1fSRwlgkcmaWfuuiD16jpyFOPvljvmMx6GN/Ex+tQRjTAQKpdy
+         BZkmU8ZPkob9+cFn1gsyUwxwWY+UPRnxXqswkb5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Henry Burns <henryburns@google.com>,
-        Shakeel Butt <shakeelb@google.com>,
-        Jonathan Adams <jwadams@google.com>,
-        Vitaly Vul <vitaly.vul@sony.com>,
-        Vitaly Wool <vitalywool@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Henry Burns <henrywolfeburns@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Max Filippov <jcmvbkbc@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.2 008/135] mm/z3fold.c: fix z3fold_destroy_pool() race condition
-Date:   Thu, 22 Aug 2019 13:06:04 -0400
-Message-Id: <20190822170811.13303-9-sashal@kernel.org>
+Subject: [PATCH 5.2 015/135] xtensa: add missing isync to the cpu_reset TLB code
+Date:   Thu, 22 Aug 2019 13:06:11 -0400
+Message-Id: <20190822170811.13303-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190822170811.13303-1-sashal@kernel.org>
 References: <20190822170811.13303-1-sashal@kernel.org>
@@ -58,64 +48,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Henry Burns <henryburns@google.com>
+From: Max Filippov <jcmvbkbc@gmail.com>
 
-commit b997052bc3ac444a0bceab1093aff7ae71ed419e upstream.
+commit cd8869f4cb257f22b89495ca40f5281e58ba359c upstream.
 
-The constraint from the zpool use of z3fold_destroy_pool() is there are
-no outstanding handles to memory (so no active allocations), but it is
-possible for there to be outstanding work on either of the two wqs in
-the pool.
+ITLB entry modifications must be followed by the isync instruction
+before the new entries are possibly used. cpu_reset lacks one isync
+between ITLB way 6 initialization and jump to the identity mapping.
+Add missing isync to xtensa cpu_reset.
 
-Calling z3fold_deregister_migration() before the workqueues are drained
-means that there can be allocated pages referencing a freed inode,
-causing any thread in compaction to be able to trip over the bad pointer
-in PageMovable().
-
-Link: http://lkml.kernel.org/r/20190726224810.79660-2-henryburns@google.com
-Fixes: 1f862989b04a ("mm/z3fold.c: support page migration")
-Signed-off-by: Henry Burns <henryburns@google.com>
-Reviewed-by: Shakeel Butt <shakeelb@google.com>
-Reviewed-by: Jonathan Adams <jwadams@google.com>
-Cc: Vitaly Vul <vitaly.vul@sony.com>
-Cc: Vitaly Wool <vitalywool@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Henry Burns <henrywolfeburns@gmail.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/z3fold.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ arch/xtensa/kernel/setup.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/mm/z3fold.c b/mm/z3fold.c
-index d06d7f9560028..c4debbe683eba 100644
---- a/mm/z3fold.c
-+++ b/mm/z3fold.c
-@@ -819,16 +819,19 @@ static struct z3fold_pool *z3fold_create_pool(const char *name, gfp_t gfp,
- static void z3fold_destroy_pool(struct z3fold_pool *pool)
- {
- 	kmem_cache_destroy(pool->c_handle);
--	z3fold_unregister_migration(pool);
- 
- 	/*
- 	 * We need to destroy pool->compact_wq before pool->release_wq,
- 	 * as any pending work on pool->compact_wq will call
- 	 * queue_work(pool->release_wq, &pool->work).
-+	 *
-+	 * There are still outstanding pages until both workqueues are drained,
-+	 * so we cannot unregister migration until then.
- 	 */
- 
- 	destroy_workqueue(pool->compact_wq);
- 	destroy_workqueue(pool->release_wq);
-+	z3fold_unregister_migration(pool);
- 	kfree(pool);
- }
- 
+diff --git a/arch/xtensa/kernel/setup.c b/arch/xtensa/kernel/setup.c
+index 176cb46bcf12c..0634bfb82a0bc 100644
+--- a/arch/xtensa/kernel/setup.c
++++ b/arch/xtensa/kernel/setup.c
+@@ -515,6 +515,7 @@ void cpu_reset(void)
+ 				      "add	%2, %2, %7\n\t"
+ 				      "addi	%0, %0, -1\n\t"
+ 				      "bnez	%0, 1b\n\t"
++				      "isync\n\t"
+ 				      /* Jump to identity mapping */
+ 				      "jx	%3\n"
+ 				      "2:\n\t"
 -- 
 2.20.1
 
