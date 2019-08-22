@@ -2,104 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 089E39A1B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:11:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A8AA09A1BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 23:11:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387683AbfHVVKt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 17:10:49 -0400
-Received: from foss.arm.com ([217.140.110.172]:52502 "EHLO foss.arm.com"
+        id S2388875AbfHVVLb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 17:11:31 -0400
+Received: from mga07.intel.com ([134.134.136.100]:61963 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730991AbfHVVKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 17:10:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D63B337;
-        Thu, 22 Aug 2019 14:10:47 -0700 (PDT)
-Received: from [10.0.2.15] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 3B9583F706;
-        Thu, 22 Aug 2019 14:10:46 -0700 (PDT)
-Subject: Re: [PATCH] sched/fair: Add missing unthrottle_cfs_rq()
-From:   Valentin Schneider <valentin.schneider@arm.com>
-To:     bsegall@google.com
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        peterz@infradead.org, liangyan.peng@linux.alibaba.com,
-        shanpeic@linux.alibaba.com, xlpang@linux.alibaba.com,
-        pjt@google.com, stable@vger.kernel.org
-References: <0004fb54-cdee-2197-1cbf-6e2111d39ed9@arm.com>
- <20190820105420.7547-1-valentin.schneider@arm.com>
- <xm26lfvlhw93.fsf@bsegall-linux.svl.corp.google.com>
- <20382abf-4741-7792-d830-34603409361e@arm.com>
-Message-ID: <0df3e0e2-b5cc-d689-7776-c7a31ad244dc@arm.com>
-Date:   Thu, 22 Aug 2019 22:10:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1730991AbfHVVL3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 17:11:29 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 14:11:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,418,1559545200"; 
+   d="scan'208";a="186688734"
+Received: from sjchrist-coffee.jf.intel.com ([10.54.74.41])
+  by FMSMGA003.fm.intel.com with ESMTP; 22 Aug 2019 14:11:28 -0700
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org
+Cc:     "H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Subject: [PATCH] x86/retpoline: Don't clobber RFLAGS during CALL_NOSPEC on i386
+Date:   Thu, 22 Aug 2019 14:11:22 -0700
+Message-Id: <20190822211122.27579-1-sean.j.christopherson@intel.com>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
-In-Reply-To: <20382abf-4741-7792-d830-34603409361e@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/08/2019 21:40, Valentin Schneider wrote:
-> On 22/08/2019 19:48, bsegall@google.com wrote:
+Use 'lea' instead of 'add' when adjusting %rsp in CALL_NOSPEC so as to
+avoid clobbering flags.
 
-Re we shouldn't get account_cfs_rq_runtime() called on throttled cfs_rq's,
-with this:
+KVM's emulator makes indirect calls into a jump table of sorts, where
+the destination of the CALL_NOSPEC is a small blob of code that performs
+fast emulation by executing the target instruction with fixed operands.
+
+  adcb_al_dl:
+     0x000339f8 <+0>:   adc    %dl,%al
+     0x000339fa <+2>:   ret
+
+A major motiviation for doing fast emulation is to leverage the CPU to
+handle consumption and manipulation of arithmetic flags, i.e. RFLAGS is
+both an input and output to the target of CALL_NOSPEC.  Clobbering flags
+results in all sorts of incorrect emulation, e.g. Jcc instructions often
+take the wrong path.  Sans the nops...
+
+  asm("push %[flags]; popf; " CALL_NOSPEC " ; pushf; pop %[flags]\n"
+     0x0003595a <+58>:  mov    0xc0(%ebx),%eax
+     0x00035960 <+64>:  mov    0x60(%ebx),%edx
+     0x00035963 <+67>:  mov    0x90(%ebx),%ecx
+     0x00035969 <+73>:  push   %edi
+     0x0003596a <+74>:  popf
+     0x0003596b <+75>:  call   *%esi
+     0x000359a0 <+128>: pushf
+     0x000359a1 <+129>: pop    %edi
+     0x000359a2 <+130>: mov    %eax,0xc0(%ebx)
+     0x000359b1 <+145>: mov    %edx,0x60(%ebx)
+
+  ctxt->eflags = (ctxt->eflags & ~EFLAGS_MASK) | (flags & EFLAGS_MASK);
+     0x000359a8 <+136>: mov    -0x10(%ebp),%eax
+     0x000359ab <+139>: and    $0x8d5,%edi
+     0x000359b4 <+148>: and    $0xfffff72a,%eax
+     0x000359b9 <+153>: or     %eax,%edi
+     0x000359bd <+157>: mov    %edi,0x4(%ebx)
+
+For the most part this has gone unnoticed as emulation of guest code
+that can trigger fast emulation is effectively limited to MMIO when
+running on modern hardware, and MMIO is rarely, if ever, accessed by
+instructions that affect or consume flags.
+
+Breakage is almost instantaneous when running with unrestricted guest
+disabled, in which case KVM must emulate all instructions when the guest
+has invalid state, e.g. when the guest is in Big Real Mode during early
+BIOS.
+
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: <kvm@vger.kernel.org>
+Cc: <stable@vger.kernel.org>
+Fixes: 1a29b5b7f347a ("KVM: x86: Make indirect calls in emulator speculation safe")
+Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
 ---
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 171eef3f08f9..1acb88024cad 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4385,6 +4385,11 @@ static inline u64 cfs_rq_clock_task(struct cfs_rq *cfs_rq)
- 	return rq_clock_task(rq_of(cfs_rq)) - cfs_rq->throttled_clock_task_time;
- }
- 
-+static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
-+{
-+	return cfs_bandwidth_used() && cfs_rq->throttled;
-+}
-+
- /* returns 0 on failure to allocate runtime */
- static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- {
-@@ -4411,6 +4416,8 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 
- 	cfs_rq->runtime_remaining += amount;
- 
-+	WARN_ON(cfs_rq_throttled(cfs_rq) && cfs_rq->runtime_remaining > 0);
-+
- 	return cfs_rq->runtime_remaining > 0;
- }
- 
-@@ -4436,12 +4443,9 @@ void account_cfs_rq_runtime(struct cfs_rq *cfs_rq, u64 delta_exec)
- 	if (!cfs_bandwidth_used() || !cfs_rq->runtime_enabled)
- 		return;
- 
--	__account_cfs_rq_runtime(cfs_rq, delta_exec);
--}
-+	WARN_ON(cfs_rq_throttled(cfs_rq));
- 
--static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq)
--{
--	return cfs_bandwidth_used() && cfs_rq->throttled;
-+	__account_cfs_rq_runtime(cfs_rq, delta_exec);
- }
- 
- /* check whether cfs_rq, or any parent, is throttled */
----
+ arch/x86/include/asm/nospec-branch.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I get this:
+diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
+index 109f974f9835..80bc209c0708 100644
+--- a/arch/x86/include/asm/nospec-branch.h
++++ b/arch/x86/include/asm/nospec-branch.h
+@@ -192,7 +192,7 @@
+ 	"    	lfence;\n"					\
+ 	"       jmp    902b;\n"					\
+ 	"       .align 16\n"					\
+-	"903:	addl   $4, %%esp;\n"				\
++	"903:	lea    4(%%esp), %%esp;\n"			\
+ 	"       pushl  %[thunk_target];\n"			\
+ 	"       ret;\n"						\
+ 	"       .align 16\n"					\
+-- 
+2.22.0
 
-[  204.798643] Call Trace:
-[  204.798645]  put_prev_entity+0x8d/0x100
-[  204.798647]  put_prev_task_fair+0x22/0x40
-[  204.798648]  pick_next_task_idle+0x36/0x50
-[  204.798650]  __schedule+0x61d/0x6c0
-[  204.798651]  schedule+0x2d/0x90
-[  204.798653]  exit_to_usermode_loop+0x61/0x100
-[  204.798654]  prepare_exit_to_usermode+0x91/0xa0
-[  204.798656]  retint_user+0x8/0x8
-
-(this is a hit on the account_cfs_rq_runtime() WARN_ON)
