@@ -2,502 +2,274 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1132999977
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:43:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AE2DB99984
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:46:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390060AbfHVQm4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 12:42:56 -0400
-Received: from relay2-d.mail.gandi.net ([217.70.183.194]:53871 "EHLO
-        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731880AbfHVQmz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:42:55 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 9540B40002;
-        Thu, 22 Aug 2019 16:42:47 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 18:44:12 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     Ulrich Hecht <uli@fpond.eu>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        kieran.bingham+renesas@ideasonboard.com, airlied@linux.ie,
-        daniel@ffwll.ch, koji.matsuoka.xm@renesas.com, muroya@ksk.co.jp,
-        VenkataRajesh.Kalakodima@in.bosch.com,
-        Harsha.ManjulaMallikarjun@in.bosch.com,
-        linux-renesas-soc@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 14/19] drm: rcar-du: Add support for CMM
-Message-ID: <20190822164404.czsfo2c6wusrslek@uno.localdomain>
-References: <20190706140746.29132-1-jacopo+renesas@jmondi.org>
- <20190706140746.29132-15-jacopo+renesas@jmondi.org>
- <898081800.61387.1563283024145@webmail.strato.com>
- <20190820173744.GG10820@pendragon.ideasonboard.com>
+        id S2390163AbfHVQpz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 12:45:55 -0400
+Received: from mta-02.yadro.com ([89.207.88.252]:36134 "EHLO mta-01.yadro.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390124AbfHVQpz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:45:55 -0400
+Received: from localhost (unknown [127.0.0.1])
+        by mta-01.yadro.com (Postfix) with ESMTP id 340C142ED0;
+        Thu, 22 Aug 2019 16:45:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=yadro.com; h=
+        content-type:content-type:in-reply-to:mime-version:user-agent
+        :date:date:message-id:organization:from:from:references:subject
+        :subject:received:received:received; s=mta-01; t=1566492350; x=
+        1568306751; bh=LLSfhjZ20UrvmFyJq5xWniuCu6bmNYlvnVKbsaRQT+I=; b=l
+        em5IMtGjuww6S3ubO3pVFjgLlBClF1l6ScWEkqV1ChoSHkEEot7RJPxm0N92b1Ny
+        vVtZWkhqE+2O/0cyiSfBZaCKuFh+ubycfhdWJrAIEQMlO7dFc6oMBwhbGjaP8JUs
+        pUEUqUD1hzjnrP4Ycbjvn2451WYGTFGXvn4L9iGosM=
+X-Virus-Scanned: amavisd-new at yadro.com
+Received: from mta-01.yadro.com ([127.0.0.1])
+        by localhost (mta-01.yadro.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MT5ByLDJR1cr; Thu, 22 Aug 2019 19:45:50 +0300 (MSK)
+Received: from T-EXCH-02.corp.yadro.com (t-exch-02.corp.yadro.com [172.17.10.102])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mta-01.yadro.com (Postfix) with ESMTPS id 368E342ECD;
+        Thu, 22 Aug 2019 19:45:49 +0300 (MSK)
+Received: from [172.17.14.197] (172.17.14.197) by T-EXCH-02.corp.yadro.com
+ (172.17.10.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id 15.1.669.32; Thu, 22
+ Aug 2019 19:45:48 +0300
+Subject: Re: [PATCH 3/3] watchdog/aspeed: add support for dual boot
+To:     Guenter Roeck <linux@roeck-us.net>
+CC:     Ivan Mikhaylov <i.mikhaylov@yadro.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        <linux-watchdog@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-aspeed@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>
+References: <1f2cd155057e5ab0cdb20a9a11614bbb09bb49ad.camel@yadro.com>
+ <20190821163220.GA11547@roeck-us.net>
+ <9e7fe5cc-ba1b-b8b6-69c5-c3c6cf508a36@yadro.com>
+ <20190821181008.GB15127@roeck-us.net>
+ <5cb20f52-884a-b921-c904-ebf244092318@yadro.com>
+ <20190822160127.GA6992@roeck-us.net>
+From:   Alexander Amelkin <a.amelkin@yadro.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=a.amelkin@yadro.com; prefer-encrypt=mutual; keydata=
+ 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
+ dTYsE5wSxM06T2l/MILupCNZ7A==
+Organization: YADRO
+Message-ID: <0bce44fc-0d03-511d-245a-8f867a6e067b@yadro.com>
+Date:   Thu, 22 Aug 2019 19:45:48 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <20190822160127.GA6992@roeck-us.net>
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="udwnqrrxkfgyy2n6"
-Content-Disposition: inline
-In-Reply-To: <20190820173744.GG10820@pendragon.ideasonboard.com>
-User-Agent: NeoMutt/20180716
+        protocol="application/pgp-signature";
+        boundary="Ph7UczBb1taROq5iq7Drmb3GLE2mw8Tfa"
+X-Originating-IP: [172.17.14.197]
+X-ClientProxiedBy: T-EXCH-01.corp.yadro.com (172.17.10.101) To
+ T-EXCH-02.corp.yadro.com (172.17.10.102)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Ph7UczBb1taROq5iq7Drmb3GLE2mw8Tfa
+Content-Type: multipart/mixed; boundary="c04A7lFeUTafm5XtcA5KOfAygNkAorqeW";
+ protected-headers="v1"
+From: Alexander Amelkin <a.amelkin@yadro.com>
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Ivan Mikhaylov <i.mikhaylov@yadro.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@aj.id.au>, linux-watchdog@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Message-ID: <0bce44fc-0d03-511d-245a-8f867a6e067b@yadro.com>
+Subject: Re: [PATCH 3/3] watchdog/aspeed: add support for dual boot
+References: <1f2cd155057e5ab0cdb20a9a11614bbb09bb49ad.camel@yadro.com>
+ <20190821163220.GA11547@roeck-us.net>
+ <9e7fe5cc-ba1b-b8b6-69c5-c3c6cf508a36@yadro.com>
+ <20190821181008.GB15127@roeck-us.net>
+ <5cb20f52-884a-b921-c904-ebf244092318@yadro.com>
+ <20190822160127.GA6992@roeck-us.net>
+In-Reply-To: <20190822160127.GA6992@roeck-us.net>
 
---udwnqrrxkfgyy2n6
+--c04A7lFeUTafm5XtcA5KOfAygNkAorqeW
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
 
-Hi Ulrich,
+22.08.2019 19:01, Guenter Roeck wrote:
+> On Thu, Aug 22, 2019 at 05:36:21PM +0300, Alexander Amelkin wrote:
+>> 21.08.2019 21:10, Guenter Roeck wrote:
+>>> On Wed, Aug 21, 2019 at 08:42:24PM +0300, Alexander Amelkin wrote:
+>>>> 21.08.2019 19:32, Guenter Roeck wrote:
+>>>>> On Wed, Aug 21, 2019 at 06:57:43PM +0300, Ivan Mikhaylov wrote:
+>>>>>> Set WDT_CLEAR_TIMEOUT_AND_BOOT_CODE_SELECTION into WDT_CLEAR_TIMEO=
+UT_STATUS
+>>>>>> to clear out boot code source and re-enable access to the primary =
+SPI flash
+>>>>>> chip while booted via wdt2 from the alternate chip.
+>>>>>>
+>>>>>> AST2400 datasheet says:
+>>>>>> "In the 2nd flash booting mode, all the address mapping to CS0# wo=
+uld be
+>>>>>> re-directed to CS1#. And CS0# is not accessable under this mode. T=
+o access
+>>>>>> CS0#, firmware should clear the 2nd boot mode register in the WDT2=
+ status
+>>>>>> register WDT30.bit[1]."
+>>>>> Is there reason to not do this automatically when loading the modul=
+e
+>>>>> in alt-boot mode ? What means does userspace have to determine if C=
+S0
+>>>>> or CS1 is active at any given time ? If there is reason to ever hav=
+e CS1
+>>>>> active instead of CS0, what means would userspace have to enable it=
+ ?
+>>>> Yes, there is. The driver is loaded long before the filesystems are =
+mounted.
+>>>> The filesystems, in the event of alternate/recovery boot, need to be=
+ mounted
+>>>> from the same chip that the kernel was booted. For one reason becaus=
+e the main
+>>>> chip at CS0 is most probably corrupt. If you clear that bit when dri=
+ver is
+>>>> loaded, your software will not know that and will try to mount the w=
+rong
+>>>> filesystems. The whole idea of ASPEED's switching chipselects is to =
+have
+>>>> identical firmware in both chips, without the need to process the al=
+ternate
+>>>> boot state in any way except for indicating a successful boot and re=
+storing
+>>>> access to CS0 when needed.
+>>>>
+>>>> The userspace can read bootstatus sysfs node to determine if an alte=
+rnate
+>>>> boot has occured.
+>>>>
+>>>> With ASPEED, CS1 is activated automatically by wdt2 when system fail=
+s to boot
+>>>> from the primary flash chip (at CS0) and disable the watchdog to ind=
+icate a
+>>>> successful boot. When that happens, both CS0 and CS1 controls=C2=A0 =
+get routed in
+>>>> hardware to CS1 line, making the primary flash chip inaccessible. De=
+pending
+>>>> on the architecture of the user-space software, it may choose to re-=
+enable
+>>>> access to the primary chip via CS0 at different times. There must be=
+ a way to do so.
+>>>>
+>>> So by activating cs0, userspace would essentially pull its own root f=
+ile system
+>>> from underneath itself ?
+>> Exactly. That's why for alternate boot the firmware would usually copy=
 
-On Tue, Aug 20, 2019 at 08:37:44PM +0300, Laurent Pinchart wrote:
-> Hello,
->
-> On Tue, Jul 16, 2019 at 03:17:04PM +0200, Ulrich Hecht wrote:
-> > > On July 6, 2019 at 4:07 PM Jacopo Mondi <jacopo+renesas@jmondi.org> wrote:
-> > >
-> > > Add a driver for the R-Car Display Unit Color Correction Module.
-> > >
-> > > In most of Gen3 SoCs, each DU output channel is provided with a CMM unit
-> > > to perform image enhancement and color correction.
-> > >
-> > > Add support for CMM through a driver that supports configuration of
-> > > the 1-dimensional LUT table. More advanced CMM feature will be
-> > > implemented on top of this basic one.
-> > >
-> > > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > ---
-> > >  drivers/gpu/drm/rcar-du/Kconfig    |   7 +
-> > >  drivers/gpu/drm/rcar-du/Makefile   |   1 +
-> > >  drivers/gpu/drm/rcar-du/rcar_cmm.c | 292 +++++++++++++++++++++++++++++
-> > >  drivers/gpu/drm/rcar-du/rcar_cmm.h |  38 ++++
-> > >  4 files changed, 338 insertions(+)
-> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > >  create mode 100644 drivers/gpu/drm/rcar-du/rcar_cmm.h
-> > >
-> > > diff --git a/drivers/gpu/drm/rcar-du/Kconfig b/drivers/gpu/drm/rcar-du/Kconfig
-> > > index 1529849e217e..539d232790d1 100644
-> > > --- a/drivers/gpu/drm/rcar-du/Kconfig
-> > > +++ b/drivers/gpu/drm/rcar-du/Kconfig
-> > > @@ -13,6 +13,13 @@ config DRM_RCAR_DU
-> > >  	  Choose this option if you have an R-Car chipset.
-> > >  	  If M is selected the module will be called rcar-du-drm.
-> > >
-> > > +config DRM_RCAR_CMM
-> > > +	bool "R-Car DU Color Management Module (CMM) Support"
-> > > +	depends on DRM && OF
-> > > +	depends on DRM_RCAR_DU
-> > > +	help
-> > > +	  Enable support for R-Car Color Management Module (CMM).
-> > > +
-> > >  config DRM_RCAR_DW_HDMI
-> > >  	tristate "R-Car DU Gen3 HDMI Encoder Support"
-> > >  	depends on DRM && OF
-> > > diff --git a/drivers/gpu/drm/rcar-du/Makefile b/drivers/gpu/drm/rcar-du/Makefile
-> > > index 6c2ed9c46467..4d1187ccc3e5 100644
-> > > --- a/drivers/gpu/drm/rcar-du/Makefile
-> > > +++ b/drivers/gpu/drm/rcar-du/Makefile
-> > > @@ -15,6 +15,7 @@ rcar-du-drm-$(CONFIG_DRM_RCAR_LVDS)	+= rcar_du_of.o \
-> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_VSP)	+= rcar_du_vsp.o
-> > >  rcar-du-drm-$(CONFIG_DRM_RCAR_WRITEBACK) += rcar_du_writeback.o
-> > >
-> > > +obj-$(CONFIG_DRM_RCAR_CMM)		+= rcar_cmm.o
-> > >  obj-$(CONFIG_DRM_RCAR_DU)		+= rcar-du-drm.o
-> > >  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+= rcar_dw_hdmi.o
-> > >  obj-$(CONFIG_DRM_RCAR_LVDS)		+= rcar_lvds.o
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.c b/drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > > new file mode 100644
-> > > index 000000000000..76ed3fce2b33
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.c
-> > > @@ -0,0 +1,292 @@
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * rcar_cmm.c -- R-Car Display Unit Color Management Module
-> > > + *
-> > > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > + */
-> > > +
-> > > +#include <linux/clk.h>
-> > > +#include <linux/io.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/of.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include <linux/pm.h>
-> > > +
-> > > +#include <drm/drm_atomic.h>
-> > > +
-> > > +#include "rcar_cmm.h"
-> > > +
-> > > +#define CM2_LUT_CTRL		0x0000
-> > > +#define CM2_LUT_CTRL_EN		BIT(0)
-> > > +#define CM2_LUT_TBLA_BASE	0x0600
-> > > +#define CM2_LUT_TBLA(__i)	(CM2_LUT_TBLA_BASE + (__i) * 4)
-> > > +
-> > > +struct rcar_cmm {
-> > > +	struct clk *clk;
-> > > +	void __iomem *base;
-> > > +	bool enabled;
-> > > +
-> > > +	/*
-> > > +	 * restore: LUT restore flag
-> > > +	 * running: LUT operating flag
-> > > +	 * size: Number of programmed entries in the LUT table
-> > > +	 * table: Scratch buffer where to store the LUT table entries to be
-> > > +	 *	  later restored.
-> > > +	 */
-> > > +	struct {
-> > > +		bool restore;
-> > > +		bool running;
-> > > +		unsigned int size;
-> > > +		struct drm_color_lut table[CMM_GAMMA_LUT_SIZE];
-> > > +	} lut;
-> > > +};
-> > > +
-> > > +static inline int rcar_cmm_read(struct rcar_cmm *rcmm, u32 reg)
-> > > +{
-> > > +	return ioread32(rcmm->base + reg);
-> > > +}
-> > > +
-> > > +static inline void rcar_cmm_write(struct rcar_cmm *rcmm, u32 reg, u32 data)
-> > > +{
-> > > +	iowrite32(data, rcmm->base + reg);
-> > > +}
-> > > +
-> > > +static void rcar_cmm_lut_write(struct rcar_cmm *rcmm, unsigned int size,
-> > > +			       struct drm_color_lut *lut)
-> > > +{
-> > > +	unsigned int i;
-> > > +
-> > > +	for (i = 0; i < size; ++i) {
-> > > +		struct drm_color_lut *entry = &lut[i];
-> > > +
-> > > +		u32 val = (entry->red & 0xff) << 16 |
-> > > +			  (entry->green & 0xff) << 8 |
-> > > +			  (entry->blue & 0xff);
-> >
-> > I don't think it's correct to cut off the high bits here. There is a
-> > function "drm_color_lut_extract()" for converting drm_color_lut values
-> > to hardware precision.
-> >
+>> all filesystems to memory and mount from there. Some embedded systems
+>> do that always, regardless of which chip they boot from.
+>>
+> That is different, though, to what you said earlier. Linux would then s=
+tart
+> with a clean file system, and not need access to the file system in cs1=
+ at all.
+> Clearing the flag when starting the driver would then be ok.
 
-Oh, I see! the value received from userspace in 16-bits precision
-needs to be rescaled to the hw supported one! Thanks, I totally missed
-this!
+I don't see how that is different. Copying to memory may be done by start=
+up
+scripts that run after the driver is loaded, so they need to read the dat=
+a from
+the chip they are booted from. That is how it is done in OpenBMC, for ins=
+tance.
+Other flavors of firmware may choose a different approach.
+Having the control available via sysfs gives more flexibility.
 
-> > > +		rcar_cmm_write(rcmm, CM2_LUT_TBLA(i), val);
-> > > +	}
-> > > +}
-> > > +
-> > > +/**
-> > > + * rcar_cmm_setup() - configure the CMM unit
-> > > + *
-> > > + * @pdev: The platform device associated with the CMM instance
-> > > + * @config: The CRTC provided configuration.
-> > > + *
-> > > + * Configure the CMM unit with the CRTC provided configuration.
-> > > + * Currently enabling, disabling and programming of the 1-D LUT unit is
-> > > + * supported.
-> > > + */
-> > > +int rcar_cmm_setup(struct platform_device *pdev,
-> > > +		   const struct rcar_cmm_config *config)
-> > > +{
-> > > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
-> > > +	unsigned int i;
-> > > +
-> > > +	if (config->lut.size > CMM_GAMMA_LUT_SIZE)
-> > > +		return -EINVAL;
-> > > +
-> > > +	/*
-> > > +	 * As cmm_setup is called by atomic commit tail helper, it might be
-> > > +	 * called before enabling the CRTC (which calls cmm_enable()).
-> > > +	 */
-> > > +	if (!rcmm->enabled) {
-> > > +		if (!config->lut.enable)
-> > > +			return 0;
-> > > +
-> > > +		/*
-> > > +		 * Store the LUT table entries in the scratch buffer to be later
-> > > +		 * programmed at enable time.
-> > > +		 */
-> > > +		for (i = 0; i < config->lut.size; ++i)
-> > > +			rcmm->lut.table[i] = config->lut.table[i];
-> > > +
-> > > +		rcmm->lut.size = config->lut.size;
-> > > +		rcmm->lut.restore = true;
-> > > +
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	/* Stop LUT operations, if requested. */
-> > > +	if (rcmm->lut.running && !config->lut.enable) {
-> > > +		rcar_cmm_write(rcmm, CM2_LUT_CTRL, 0);
-> > > +		rcmm->lut.running = 0;
-> > > +		rcmm->lut.size = 0;
-> > > +
-> > > +		return 0;
-> > > +	}
-> > > +
-> > > +	/* Enable LUT and program the new gamma table values. */
-> > > +	if (!rcmm->lut.running) {
-> > > +		rcar_cmm_write(rcmm, CM2_LUT_CTRL, CM2_LUT_CTRL_EN);
-> > > +		rcmm->lut.running = true;
-> > > +	}
-> > > +
-> > > +	rcar_cmm_lut_write(rcmm, config->lut.size, config->lut.table);
-> > > +	rcmm->lut.size = config->lut.size;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(rcar_cmm_setup);
-> > > +
-> > > +/**
-> > > + * rcar_cmm_enable - enable the CMM unit
-> > > + *
-> > > + * @pdev: The platform device associated with the CMM instance
-> > > + *
-> > > + * Enable the CMM unit by enabling the parent clock and enabling the CMM
-> > > + * components, such as 1-D LUT, if requested.
-> > > + */
-> > > +int rcar_cmm_enable(struct platform_device *pdev)
-> > > +{
-> > > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
-> > > +	int ret;
-> > > +
-> > > +	if (!rcmm)
-> > > +		return -EPROBE_DEFER;
-> > > +
-> > > +	ret = clk_prepare_enable(rcmm->clk);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* Apply the LUT table values saved at cmm_setup time. */
-> > > +	if (rcmm->lut.restore) {
-> > > +		rcar_cmm_write(rcmm, CM2_LUT_CTRL, CM2_LUT_CTRL_EN);
-> > > +		rcar_cmm_lut_write(rcmm, rcmm->lut.size, rcmm->lut.table);
-> > > +
-> > > +		rcmm->lut.restore = false;
-> > > +		rcmm->lut.running = true;
-> > > +	}
-> > > +
-> > > +	rcmm->enabled = true;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(rcar_cmm_enable);
-> > > +
-> > > +/**
-> > > + * rcar_cmm_disable() - disable the CMM unit
-> > > + *
-> > > + * Disable the CMM unit by stopping the parent clock.
-> > > + *
-> > > + * @pdev: The platform device associated with the CMM instance
-> > > + */
-> > > +void rcar_cmm_disable(struct platform_device *pdev)
-> > > +{
-> > > +	struct rcar_cmm *rcmm = platform_get_drvdata(pdev);
-> > > +
-> > > +	rcar_cmm_write(rcmm, CM2_LUT_CTRL, 0);
-> > > +
-> > > +	clk_disable_unprepare(rcmm->clk);
-> > > +
-> > > +	rcmm->lut.restore = false;
-> > > +	rcmm->lut.running = false;
-> > > +	rcmm->lut.size = 0;
-> > > +
-> > > +	rcmm->enabled = false;
-> > > +}
-> > > +EXPORT_SYMBOL_GPL(rcar_cmm_disable);
-> > > +
-> > > +#ifdef CONFIG_PM_SLEEP
-> > > +static int rcar_cmm_pm_suspend(struct device *dev)
-> > > +{
-> > > +	struct rcar_cmm *rcmm = dev_get_drvdata(dev);
-> > > +	unsigned int i;
-> > > +
-> > > +	if (!(rcmm->lut.running || rcmm->lut.restore))
-> > > +		return 0;
-> > > +
-> > > +	/* Save the LUT table entries in the scratch buffer table. */
-> > > +	for (i = 0; i < rcmm->lut.size; ++i) {
-> > > +		int entry = rcar_cmm_read(rcmm, CM2_LUT_TBLA(i));
-> > > +		struct drm_color_lut *lut = &rcmm->lut.table[i];
-> > > +
-> > > +		lut->blue = entry & 0xff;
-> > > +		lut->green = (entry >> 8) & 0xff;
-> > > +		lut->red = (entry >> 16) & 0xff;
-> >
-> > Need to convert the values back to drm_color_lut scale here. I could
-> > not find a counterpart to drm_color_lut_extract(), though...
->
-> How about storing the LUT in hardware format internally ? I wonder if we
-> should always update the cached copy, in which case rcar_cmm_lut_write()
-> could just write the LUT values from the cache.
->
+>> However, to be able to recover the main flash chip, the system needs C=
+S0
+>> to function as such (not as CS1). That's why this control is needed.
+>>
+> If what you said is correct, not really. It should be fine and create m=
+ore
+> predictive behavior if the probe function selects cs0 automatically.
 
-Probably that's the easier, so we always write stuff already scaled
-down to the 8-bit precision the CMM supports.
+Well, this is not a function for home users. This is for servers. You won=
+'t
+even find an ASPEED BMC chip in a home PC. Aspeed's dual-boot is quite
+an advanced feature and people willing to use it are expected to be able
+to predict the behavior. To me, as an embedded systems developer,
+automatic selection of cs0 by probe is a limitation. I prefer flexibility=
+=2E
 
-Thanks both
-   j
+With best regards,
+Alexander Amelkin,
+BIOS/BMC Team Lead, YADRO
+https://yadro.com
 
-> > > +	}
-> > > +
-> > > +	rcmm->lut.restore = true;
-> > > +	rcmm->lut.running = false;
-> > > +
-> > > +	rcar_cmm_write(rcmm, CM2_LUT_CTRL, 0);
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static int rcar_cmm_pm_resume(struct device *dev)
-> > > +{
-> > > +	struct rcar_cmm *rcmm = dev_get_drvdata(dev);
-> > > +
-> > > +	if (!rcmm->lut.restore)
-> > > +		return 0;
-> > > +
-> > > +	/* Program the LUT entries saved at suspend time. */
-> > > +	rcar_cmm_write(rcmm, CM2_LUT_CTRL, CM2_LUT_CTRL_EN);
-> > > +	rcar_cmm_lut_write(rcmm, rcmm->lut.size, rcmm->lut.table);
-> > > +	rcmm->lut.running = true;
-> > > +	rcmm->lut.restore = false;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +#endif
-> > > +
-> > > +static const struct dev_pm_ops rcar_cmm_pm_ops = {
-> > > +	SET_SYSTEM_SLEEP_PM_OPS(rcar_cmm_pm_suspend, rcar_cmm_pm_resume)
-> > > +};
-> > > +
-> > > +static int rcar_cmm_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct rcar_cmm *rcmm;
-> > > +	struct resource *res;
-> > > +	resource_size_t size;
-> > > +
-> > > +	rcmm = devm_kzalloc(&pdev->dev, sizeof(*rcmm), GFP_KERNEL);
-> > > +	if (!rcmm)
-> > > +		return -ENOMEM;
-> > > +
-> > > +	platform_set_drvdata(pdev, rcmm);
-> > > +
-> > > +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +	size = resource_size(res);
-> > > +	if (!devm_request_mem_region(&pdev->dev, res->start, size,
-> > > +				     dev_name(&pdev->dev))) {
-> > > +		dev_err(&pdev->dev,
-> > > +			"can't request region for resource %pR\n", res);
-> > > +		return -EBUSY;
-> > > +	}
-> > > +
-> > > +	rcmm->base = devm_ioremap_nocache(&pdev->dev, res->start, size);
-> > > +	if (IS_ERR(rcmm->base))
-> > > +		return PTR_ERR(rcmm->base);
-> > > +
-> > > +	rcmm->clk = devm_clk_get(&pdev->dev, NULL);
-> > > +	if (IS_ERR(rcmm->clk)) {
-> > > +		dev_err(&pdev->dev, "Failed to get CMM clock");
-> > > +		return PTR_ERR(rcmm->clk);
-> > > +	}
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > > +static const struct of_device_id rcar_cmm_of_table[] = {
-> > > +	{ .compatible = "renesas,rcar-gen3-cmm", },
-> > > +	{ .compatible = "renesas,rcar-gen2-cmm", },
-> > > +	{ },
-> > > +};
-> > > +
-> > > +MODULE_DEVICE_TABLE(of, rcar_cmm_of_table);
-> > > +
-> > > +static struct platform_driver rcar_cmm_platform_driver = {
-> > > +	.probe		= rcar_cmm_probe,
-> > > +	.driver		= {
-> > > +		.name	= "rcar-cmm",
-> > > +		.pm	= &rcar_cmm_pm_ops,
-> > > +		.of_match_table = rcar_cmm_of_table,
-> > > +	},
-> > > +};
-> > > +
-> > > +module_platform_driver(rcar_cmm_platform_driver);
-> > > +
-> > > +MODULE_AUTHOR("Jacopo Mondi <jacopo+renesas@jmondi.org>");
-> > > +MODULE_DESCRIPTION("Renesas R-Car CMM Driver");
-> > > +MODULE_LICENSE("GPL v2");
-> > > diff --git a/drivers/gpu/drm/rcar-du/rcar_cmm.h b/drivers/gpu/drm/rcar-du/rcar_cmm.h
-> > > new file mode 100644
-> > > index 000000000000..8744e72f32cd
-> > > --- /dev/null
-> > > +++ b/drivers/gpu/drm/rcar-du/rcar_cmm.h
-> > > @@ -0,0 +1,38 @@
-> > > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > > +/*
-> > > + * rcar_cmm.h -- R-Car Display Unit Color Management Module
-> > > + *
-> > > + * Copyright (C) 2019 Jacopo Mondi <jacopo+renesas@jmondi.org>
-> > > + */
-> > > +
-> > > +#ifndef __RCAR_CMM_H__
-> > > +#define __RCAR_CMM_H__
-> > > +
-> > > +#define CMM_GAMMA_LUT_SIZE		256
-> > > +
-> > > +struct platform_device;
-> > > +struct drm_color_lut;
-> > > +
-> > > +/**
-> > > + * struct rcar_cmm_config - CMM configuration
-> > > + *
-> > > + * @lut:	1D-LUT configuration
-> > > + * @lut.enable:	1D-LUT enable flag
-> > > + * @lut.table:	1D-LUT table entries.
-> > > + * @lut.size	1D-LUT number of entries. Max is 256.
-> > > + */
-> > > +struct rcar_cmm_config {
-> > > +	struct {
-> > > +		bool enable;
-> > > +		struct drm_color_lut *table;
-> > > +		unsigned int size;
-> > > +	} lut;
-> > > +};
-> > > +
-> > > +int rcar_cmm_enable(struct platform_device *pdev);
-> > > +void rcar_cmm_disable(struct platform_device *pdev);
-> > > +
-> > > +int rcar_cmm_setup(struct platform_device *pdev,
-> > > +		   const struct rcar_cmm_config *config);
-> > > +
-> > > +#endif /* __RCAR_CMM_H__ */
->
-> --
-> Regards,
->
-> Laurent Pinchart
 
---udwnqrrxkfgyy2n6
+
+--c04A7lFeUTafm5XtcA5KOfAygNkAorqeW--
+
+--Ph7UczBb1taROq5iq7Drmb3GLE2mw8Tfa
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1exlwACgkQcjQGjxah
-VjyKVw//QHMqG/emAzAF/E6YMjnXd93L6jGtIUDNQhdnlAs4lzSRf41TcDg1eQUZ
-bhvWfQWpp++LxGBVXPP3B+/8sGLtm0LFOjIdr3BbgK2zA+j2RSv2kCkUf5PrA6ed
-YsjtGVxYjFEY7aC8u2ra/khtVwnwwN8BUi2IEGVGDfk0OoqDzGsuYeIpkQnyayAc
-pPuVqqZSLpMRqdrQH7ZQToDtz9M9mp0KKLIR8tMZkkqVIRg/TGGSA4TWWmzjnAli
-RZAAByqDyrPYOnGri/h5pBUS9wUsj9Kvs1LQEqU291jVbIh2urHNwAModMXHuZCc
-9qzeY3TT24xlM7CcQyaC1fOZhZaugOJmSH74XOmuTnGVObnYX0d49ArY86vVh7c8
-y9iVNcRacB2r1is92W7maZGxg39qBWpHDPk2EVNislY6BwCg6grFEXszfa9njrq0
-K40OK+sAfUrVOaSkaIUxIPbkVUA9VpZ43rp+bvOux3AYYfTREOdyU0Zl2sKwCISV
-ABKteiqG64/iniqTJLB3GY5PreXcxYoc+hWoK1yFBX0x/EiffnvFP8N8Q+vtrFz+
-En5vHA+rZOdVOe6tFGJdmZNejRpbbZdkty71gh+Ia3P+xgWfMENEGwFukaEzU755
-4/vOXUCYM9b/FXNNYqgDx1AGKmDNJF0gcdR8pLUuGmJJqFFGL00=
-=THG0
+iQIcBAEBCAAGBQJdXsa8AAoJEOiTWHtbdBeNpz8QAMJqCodfgFfuRbOjdovLu46D
+K9uudfxOQCsAFxY+VgXu1E5Zso5OotrYjofklDbIb6Q9ZS3UgiNA4+UrWJ6Yhjnp
+Md6mh9ADb24rTpaPE74rj2JpyJz9jDwBB+C5ONnKPAcr0tXLjis+anVtDjHvQ8cK
+wOZKytgC2omgF5Xrlu0SjhVxf+kqHBpo69SCfMWsp0NIZzlTCovJH1IX54rC176k
+XpjeVIT4EzzdiRN/r6Ft8BfiD/JaYUs0OLCWckHTUCelHMCRKMsyzTKNwp3FE5sH
+qgeOqzgcN8Nj4ZvaVnzmiH/r61+NNArtLJaqsJJywXDA7+v0KkxV5urWghxD8FMs
+OUwnotJqSquXO7k9VcTnZQK/aeQvBoRdWfTpiybK5df61U26STEQzMAr5pslnDRl
+kJLiY32929QyDiIGy8yYcmvMRrvDotuPK+XtaJN20IISRnM6T6e6q+3mRCzAvykn
+LcjRcVUs+49DMuTswUNRxl7YggZaRwOqHGrEhPQv5LbZmvm2JtQwa+loV0/32mVp
+uajzhKaazw4JzUjvPDl5oVJX6+fEj+8/iFJksRRhs7De/rBhwxn1OmWcWeh4UMJ4
+T3muwenl131/Sb3ufnGfPnG+oSd2TKlpKH4oi0dXuhu5EFkV3QQ7jWMbnJ+9m+d9
+zs/9X7nt2Kc2pO2vcTne
+=G5CA
 -----END PGP SIGNATURE-----
 
---udwnqrrxkfgyy2n6--
+--Ph7UczBb1taROq5iq7Drmb3GLE2mw8Tfa--
