@@ -2,42 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5546D99CD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:37:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1B399C67
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:34:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392660AbfHVRh3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:37:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46354 "EHLO mail.kernel.org"
+        id S2392691AbfHVReH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:34:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404256AbfHVRYh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:37 -0400
+        id S2391857AbfHVRZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:33 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AC5B523407;
-        Thu, 22 Aug 2019 17:24:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 108FA23400;
+        Thu, 22 Aug 2019 17:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494676;
-        bh=PlMqAN8+epMELBmyC4iK2dJFZedqwDoHhpGBl5HPV+g=;
+        s=default; t=1566494733;
+        bh=fVOfMDhv67/fWY9m59BiAVg7e25aNXujUHQmhfjO+cM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ocB6QumOm7+VFM7Q7Ya+1Zb8W8Cl2uuTwZYf+awSpVUXgYdjh4NLRaWO4tDZO+mgY
-         7wxEAf+3cqcEYyo7katEScTzzW6uPqJbf4lb9jac3o6yGzBFikGLjiwws18rbLYMpY
-         uFdUoca9o+SbgvHArOOwE3FoMWo2C3gJKFnWudt0=
+        b=fvUK+2bBRwmeA8dRa0FQQln1nwjtMRv86lFAlq84hwUsuFJYZ3Vpal9vBycOxcw1j
+         col3jfibPBykD1PLa3LtsDPcfv5R7JGTLVyApml05swUBmDT7qGaHk1kPSknTJWfo6
+         91h+3UVPtREv13cnT6QiYUHxUZmjpH8TkycUP36s=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 21/71] clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV + 1
-Date:   Thu, 22 Aug 2019 10:18:56 -0700
-Message-Id: <20190822171728.498686520@linuxfoundation.org>
+        syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com,
+        Florian Westphal <fw@strlen.de>,
+        Pablo Neira Ayuso <pablo@netfilter.org>
+Subject: [PATCH 4.19 24/85] netfilter: ebtables: also count base chain policies
+Date:   Thu, 22 Aug 2019 10:18:57 -0700
+Message-Id: <20190822171732.213000750@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,39 +45,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 1573eebeaa8055777eb753f9b4d1cbe653380c38 ]
+From: Florian Westphal <fw@strlen.de>
 
-In clk_generated_determine_rate(), if the divisor is greater than
-GENERATED_MAX_DIV + 1, then the wrong best_rate will be returned.
-If clk_generated_set_rate() will be called later with this wrong
-rate, it will return -EINVAL, so the generated clock won't change
-its value. Do no let the divisor be greater than GENERATED_MAX_DIV + 1.
+commit 3b48300d5cc7c7bed63fddb006c4046549ed4aec upstream.
 
-Fixes: 8c7aa6328947 ("clk: at91: clk-generated: remove useless divisor loop")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
-Acked-by: Ludovic Desroches <ludovic.desroches@microchip.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+ebtables doesn't include the base chain policies in the rule count,
+so we need to add them manually when we call into the x_tables core
+to allocate space for the comapt offset table.
+
+This lead syzbot to trigger:
+WARNING: CPU: 1 PID: 9012 at net/netfilter/x_tables.c:649
+xt_compat_add_offset.cold+0x11/0x36 net/netfilter/x_tables.c:649
+
+Reported-by: syzbot+276ddebab3382bbf72db@syzkaller.appspotmail.com
+Fixes: 2035f3ff8eaa ("netfilter: ebtables: compat: un-break 32bit setsockopt when no rules are present")
+Signed-off-by: Florian Westphal <fw@strlen.de>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/clk/at91/clk-generated.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/bridge/netfilter/ebtables.c |   28 +++++++++++++++++-----------
+ 1 file changed, 17 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 33481368740e7..113152425a95d 100644
---- a/drivers/clk/at91/clk-generated.c
-+++ b/drivers/clk/at91/clk-generated.c
-@@ -153,6 +153,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
- 			continue;
+--- a/net/bridge/netfilter/ebtables.c
++++ b/net/bridge/netfilter/ebtables.c
+@@ -1779,20 +1779,28 @@ static int compat_calc_entry(const struc
+ 	return 0;
+ }
  
- 		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
-+		if (div > GENERATED_MAX_DIV + 1)
-+			div = GENERATED_MAX_DIV + 1;
++static int ebt_compat_init_offsets(unsigned int number)
++{
++	if (number > INT_MAX)
++		return -EINVAL;
++
++	/* also count the base chain policies */
++	number += NF_BR_NUMHOOKS;
++
++	return xt_compat_init_offsets(NFPROTO_BRIDGE, number);
++}
  
- 		clk_generated_best_diff(req, parent, parent_rate, div,
- 					&best_diff, &best_rate);
--- 
-2.20.1
-
+ static int compat_table_info(const struct ebt_table_info *info,
+ 			     struct compat_ebt_replace *newinfo)
+ {
+ 	unsigned int size = info->entries_size;
+ 	const void *entries = info->entries;
++	int ret;
+ 
+ 	newinfo->entries_size = size;
+-	if (info->nentries) {
+-		int ret = xt_compat_init_offsets(NFPROTO_BRIDGE,
+-						 info->nentries);
+-		if (ret)
+-			return ret;
+-	}
++	ret = ebt_compat_init_offsets(info->nentries);
++	if (ret)
++		return ret;
+ 
+ 	return EBT_ENTRY_ITERATE(entries, size, compat_calc_entry, info,
+ 							entries, newinfo);
+@@ -2241,11 +2249,9 @@ static int compat_do_replace(struct net
+ 
+ 	xt_compat_lock(NFPROTO_BRIDGE);
+ 
+-	if (tmp.nentries) {
+-		ret = xt_compat_init_offsets(NFPROTO_BRIDGE, tmp.nentries);
+-		if (ret < 0)
+-			goto out_unlock;
+-	}
++	ret = ebt_compat_init_offsets(tmp.nentries);
++	if (ret < 0)
++		goto out_unlock;
+ 
+ 	ret = compat_copy_entries(entries_tmp, tmp.entries_size, &state);
+ 	if (ret < 0)
 
 
