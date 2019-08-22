@@ -2,38 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C5FAE99B3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C089999B68
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391685AbfHVRW5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:22:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41670 "EHLO mail.kernel.org"
+        id S2404195AbfHVRY3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391573AbfHVRWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:49 -0400
+        id S2404035AbfHVRYD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:03 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4F848233FD;
-        Thu, 22 Aug 2019 17:22:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D4CB23400;
+        Thu, 22 Aug 2019 17:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494569;
-        bh=7Y1M18/AqFCRN9z+eM39Z9krN+UijCQpwgxQQok3FF8=;
+        s=default; t=1566494642;
+        bh=ndrEd7/0nAPg5IGK3CZvJhfhdbCZ9U2faBcBoDVLAbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mhKcS8DGS4otSorCM7e//ATsjsrbJBkwITvXOdgkLH1FBI1ZNIM2HhKyk+BqB/yWf
-         NiPb9xQoEV/qKUw2Nfpv/iX7HF/ZpptcZB1BlOEYIbx38we5rG3GAiN3lTAPPpOeWQ
-         RGOGT+pe+SZn2mBGYXTi/gmo7mohdCnHC9HztwmU=
+        b=jrskGparkg6X351NS5+zstPwgLjUo4XzTv1erOWVV+5UrTjNt0on7gLNxpBtTWgrc
+         StsbYV4/rbkiRaQ+YSM76YqEo+7HyTkp/ckjekutVIYq8Eox8+8phQEFr2nlvih6dx
+         0dPgtoNCr5geYedwbFliJUE+pt6ee218QwJ2/yIM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rogan Dawes <rogan@dawes.za.net>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.4 59/78] USB: serial: option: add D-Link DWM-222 device ID
-Date:   Thu, 22 Aug 2019 10:19:03 -0700
-Message-Id: <20190822171833.745570709@linuxfoundation.org>
+        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
+        Qian Cai <cai@lca.pw>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 076/103] arm64/efi: fix variable si set but not used
+Date:   Thu, 22 Aug 2019 10:19:04 -0700
+Message-Id: <20190822171732.020029545@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,38 +45,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rogan Dawes <rogan@dawes.za.net>
+[ Upstream commit f1d4836201543e88ebe70237e67938168d5fab19 ]
 
-commit 552573e42aab5f75aff9bab855a9677979d9a7d5 upstream.
+GCC throws out this warning on arm64.
 
-Add device id for D-Link DWM-222 A2.
+drivers/firmware/efi/libstub/arm-stub.c: In function 'efi_entry':
+drivers/firmware/efi/libstub/arm-stub.c:132:22: warning: variable 'si'
+set but not used [-Wunused-but-set-variable]
 
-MI_00 D-Link HS-USB Diagnostics
-MI_01 D-Link HS-USB Modem
-MI_02 D-Link HS-USB AT Port
-MI_03 D-Link HS-USB NMEA
-MI_04 D-Link HS-USB WWAN Adapter (qmi_wwan)
-MI_05 USB Mass Storage Device
+Fix it by making free_screen_info() a static inline function.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Rogan Dawes <rogan@dawes.za.net>
-Signed-off-by: Johan Hovold <johan@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Acked-by: Will Deacon <will@kernel.org>
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/serial/option.c |    2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/include/asm/efi.h | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/serial/option.c
-+++ b/drivers/usb/serial/option.c
-@@ -1949,6 +1949,8 @@ static const struct usb_device_id option
- 	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e35, 0xff),			/* D-Link DWM-222 */
- 	  .driver_info = RSVD(4) },
-+	{ USB_DEVICE_INTERFACE_CLASS(0x2001, 0x7e3d, 0xff),			/* D-Link DWM-222 A2 */
-+	  .driver_info = RSVD(4) },
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e01, 0xff, 0xff, 0xff) },	/* D-Link DWM-152/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x3e02, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/C1 */
- 	{ USB_DEVICE_AND_INTERFACE_INFO(0x07d1, 0x7e11, 0xff, 0xff, 0xff) },	/* D-Link DWM-156/A3 */
+diff --git a/arch/arm64/include/asm/efi.h b/arch/arm64/include/asm/efi.h
+index 65615820155e6..65db124a44bff 100644
+--- a/arch/arm64/include/asm/efi.h
++++ b/arch/arm64/include/asm/efi.h
+@@ -52,7 +52,11 @@ int efi_set_mapping_permissions(struct mm_struct *mm, efi_memory_desc_t *md);
+ #define efi_is_64bit()			(true)
+ 
+ #define alloc_screen_info(x...)		&screen_info
+-#define free_screen_info(x...)
++
++static inline void free_screen_info(efi_system_table_t *sys_table_arg,
++				    struct screen_info *si)
++{
++}
+ 
+ /* redeclare as 'hidden' so the compiler will generate relative references */
+ extern struct screen_info screen_info __attribute__((__visibility__("hidden")));
+-- 
+2.20.1
+
 
 
