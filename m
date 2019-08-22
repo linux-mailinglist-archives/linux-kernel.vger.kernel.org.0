@@ -2,132 +2,79 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 72FA098D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:11:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 96D4198D1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732095AbfHVILH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 04:11:07 -0400
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:49177 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728519AbfHVILH (ORCPT
+        id S1732125AbfHVIM1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 04:12:27 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:59400 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732043AbfHVIM1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 04:11:07 -0400
-Received: from [192.168.2.10] ([46.9.232.237])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id 0iBRiabxwThuu0iBUij9WI; Thu, 22 Aug 2019 10:11:04 +0200
-Subject: Re: [PATCH v7 6/9] drm: sti: use cec_notifier_conn_(un)register
-To:     Dariusz Marcinkiewicz <darekm@google.com>,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org
-Cc:     David Airlie <airlied@linux.ie>, linux-kernel@vger.kernel.org,
-        Vincent Abriou <vincent.abriou@st.com>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>
-References: <20190814104520.6001-1-darekm@google.com>
- <20190814104520.6001-7-darekm@google.com>
-From:   Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Message-ID: <00515839-a4bd-6721-8563-a16fbbaa7159@xs4all.nl>
-Date:   Thu, 22 Aug 2019 10:11:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        Thu, 22 Aug 2019 04:12:27 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7M89D3w092228;
+        Thu, 22 Aug 2019 08:12:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=s6KN7n7wkiNHTz781fv1oKcr9eZQGtOISMDsPqy3ymQ=;
+ b=ANhJW+v28SWzBNlNfDsbjycGnBonf7D7p/r/wJWQ1wvnMwnYCy5OCHIjxogBEY0+P6KR
+ IlCOFKI2PBPstULr+daaouDQDz5JdrdpnaJtkiMOV+O06OSWLj5jjHXyS+p9d9JyirEC
+ JAKK0U7BYTcL5891CU6dXOTExay5CsWRjyUoExGPKFR0EzFCRso/xg3rXnpaUsOxsNkl
+ UXCtUuT/ontlARDj4qNGQApzlnHP9BW3/9SWwg8XIrcKkrZTGs/pFvG2T2rnBpePdtxe
+ Sq9oWmpv5pn35QBWO7cjbycwdhpHKEE/d6S5S40MEeNoJac5zTqrk0qiYAukSvz93c+p dQ== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2ue9hpuhvs-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Aug 2019 08:12:02 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7M88dgY148864;
+        Thu, 22 Aug 2019 08:12:01 GMT
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userp3020.oracle.com with ESMTP id 2uh83pqfy5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Aug 2019 08:12:01 +0000
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x7M8C0Ii007220;
+        Thu, 22 Aug 2019 08:12:00 GMT
+Received: from kadam (/41.57.98.10)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 22 Aug 2019 08:11:59 +0000
+Date:   Thu, 22 Aug 2019 11:11:53 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Austin Kim <austindh.kim@gmail.com>
+Cc:     darrick.wong@oracle.com, linux-xfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] xfs: Use BUG_ON rather than BUG() to remove unreachable
+ code
+Message-ID: <20190822081153.GG4451@kadam>
+References: <20190822062320.GA35267@LGEARND20B15>
 MIME-Version: 1.0
-In-Reply-To: <20190814104520.6001-7-darekm@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfD3mDYGvx47Wy6gERwptdz9X8s4p9xGef0OydqGSa3W6iprNAGDQKaolMMAlvvLbecwFUP8VSGeaWtp8JPrSOzTzR4fO8gBnetG2oLLrOj0x9R9CuR/L
- d4j+MDawiw7eZ1qclL9j0/f+y48g7yfOzDLNtj/4YpaFMf+C927ewaJkf4XO4yCuWra7TaSB+vhvzGDE7e2OMzXvhr4wtm8gxkrQrDVvc1xSeKnh0ObKaHme
- oYRybMj0JalSyE6ZzZ0mElWR8L+nufhxluKkIZxAiJ+Z6VhySBHqpqSl53+cpshKEhLnxqzV+q/ERNBA5YqQw8v7CcmYlM/CeSr74my8V1xMxnSVWz4033R4
- xHS00Ye/mqb7ipPOgzBtunZ82vma7RopOApctsb5nnO6TiQsjt4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822062320.GA35267@LGEARND20B15>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=844
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1906280000 definitions=main-1908220089
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9355 signatures=668684
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=915 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
+ definitions=main-1908220089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Benjamin Gaignard.
+Depending on the config BUG() might be a no-op.  Outside of filesystems
+everyone ignores that and crashes ungracefully, but in filesystems they
+don't want to risk corrupting your files.
 
-Benjamin, can you take a look at this and Ack it (or merge it if you prefer) and
-ideally test it as well. This is the only patch in this series that I could not
-test since I don't have any hardware.
-
-Regards,
-
-	Hans
-
-On 8/14/19 12:45 PM, Dariusz Marcinkiewicz wrote:
-> Use the new cec_notifier_conn_(un)register() functions to
-> (un)register the notifier for the HDMI connector, and fill
-> in the cec_connector_info.
-> 
-> Changes since v2:
-> 	Don't invalidate physical address before unregistering the
-> 	notifier.
-> 
-> Signed-off-by: Dariusz Marcinkiewicz <darekm@google.com>
-> ---
->  drivers/gpu/drm/sti/sti_hdmi.c | 19 ++++++++++++-------
->  1 file changed, 12 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-> index 9862c322f0c4a..bd15902b825ad 100644
-> --- a/drivers/gpu/drm/sti/sti_hdmi.c
-> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
-> @@ -1256,6 +1256,7 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
->  	struct drm_device *drm_dev = data;
->  	struct drm_encoder *encoder;
->  	struct sti_hdmi_connector *connector;
-> +	struct cec_connector_info conn_info;
->  	struct drm_connector *drm_connector;
->  	struct drm_bridge *bridge;
->  	int err;
-> @@ -1318,6 +1319,14 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
->  		goto err_sysfs;
->  	}
->  
-> +	cec_fill_conn_info_from_drm(&conn_info, drm_connector);
-> +	hdmi->notifier = cec_notifier_conn_register(&hdmi->dev, NULL,
-> +						    &conn_info);
-> +	if (!hdmi->notifier) {
-> +		hdmi->drm_connector = NULL;
-> +		return -ENOMEM;
-> +	}
-> +
->  	/* Enable default interrupts */
->  	hdmi_write(hdmi, HDMI_DEFAULT_INT, HDMI_INT_EN);
->  
-> @@ -1331,6 +1340,9 @@ static int sti_hdmi_bind(struct device *dev, struct device *master, void *data)
->  static void sti_hdmi_unbind(struct device *dev,
->  		struct device *master, void *data)
->  {
-> +	struct sti_hdmi *hdmi = dev_get_drvdata(dev);
-> +
-> +	cec_notifier_conn_unregister(hdmi->notifier);
->  }
->  
->  static const struct component_ops sti_hdmi_ops = {
-> @@ -1436,10 +1448,6 @@ static int sti_hdmi_probe(struct platform_device *pdev)
->  		goto release_adapter;
->  	}
->  
-> -	hdmi->notifier = cec_notifier_get(&pdev->dev);
-> -	if (!hdmi->notifier)
-> -		goto release_adapter;
-> -
->  	hdmi->reset = devm_reset_control_get(dev, "hdmi");
->  	/* Take hdmi out of reset */
->  	if (!IS_ERR(hdmi->reset))
-> @@ -1459,14 +1467,11 @@ static int sti_hdmi_remove(struct platform_device *pdev)
->  {
->  	struct sti_hdmi *hdmi = dev_get_drvdata(&pdev->dev);
->  
-> -	cec_notifier_set_phys_addr(hdmi->notifier, CEC_PHYS_ADDR_INVALID);
-> -
->  	i2c_put_adapter(hdmi->ddc_adapt);
->  	if (hdmi->audio_pdev)
->  		platform_device_unregister(hdmi->audio_pdev);
->  	component_del(&pdev->dev, &sti_hdmi_ops);
->  
-> -	cec_notifier_put(hdmi->notifier);
->  	return 0;
->  }
->  
-> 
+regards,
+dan carpenter
 
