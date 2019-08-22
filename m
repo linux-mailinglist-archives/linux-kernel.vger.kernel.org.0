@@ -2,40 +2,45 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5A75B99BB0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D648F99B66
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404765AbfHVR0u (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49348 "EHLO mail.kernel.org"
+        id S2391536AbfHVRYW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44804 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391863AbfHVRZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:34 -0400
+        id S2391767AbfHVRX7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:59 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4E7D2064A;
-        Thu, 22 Aug 2019 17:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D5E802341D;
+        Thu, 22 Aug 2019 17:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494733;
-        bh=fhxerGabZfXb3FnqDlDzXd1dKIMry2EkxBDyGiHtxIU=;
+        s=default; t=1566494638;
+        bh=nMFYjPTxcPdrrFI4O258toqIKPFroB9lSfcn3O8O7Ck=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bN18KC+5pIy1tK6yh3tuBMpeZgJKehj7JV+FEab1LtILZ2SGidTf19KQho0X5irSG
-         BeTsPwaXL2FeS7iEVeMjtlQl3emOQfjOkMwYtTndpc9ePkF1tPFH7RdSK6F4moh3VY
-         M9VDSD+Qxz8pXPeH2N7rWks+UZ9c7gBdk0BgA14M=
+        b=NlU6iJfhTXQa7AcNopQZ7IDsxdRjyVyaKGcWFzl3sMCdzliNyQkbnlupFiE+V5ykP
+         kuef+6jt0la5ai5mD0mO1MRp34nOltj8E4KZ6P3DH7x35VnsUDlXMCkkkr2I0rfc6g
+         2At94ISnU33vLeLExx3wYlHEv7q/deC+TRvR+L/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vincent Chen <vincent.chen@sifive.com>,
-        Anup Patel <anup@brainfault.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Paul Walmsley <paul.walmsley@sifive.com>
-Subject: [PATCH 4.19 25/85] riscv: Make __fstate_clean() work correctly.
-Date:   Thu, 22 Aug 2019 10:18:58 -0700
-Message-Id: <20190822171732.250431221@linuxfoundation.org>
+        stable@vger.kernel.org, Numfor Mbiziwo-Tiapo <nums@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@redhat.com>,
+        Mark Drayton <mbd@fb.com>, Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Song Liu <songliubraving@fb.com>,
+        Stephane Eranian <eranian@google.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 071/103] perf header: Fix use of unitialized value warning
+Date:   Thu, 22 Aug 2019 10:18:59 -0700
+Message-Id: <20190822171731.763340998@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,36 +50,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vincent Chen <vincent.chen@sifive.com>
+[ Upstream commit 20f9781f491360e7459c589705a2e4b1f136bee9 ]
 
-commit 69703eb9a8ae28a46cd5bce7d69ceeef6273a104 upstream.
+When building our local version of perf with MSAN (Memory Sanitizer) and
+running the perf record command, MSAN throws a use of uninitialized
+value warning in "tools/perf/util/util.c:333:6".
 
-Make the __fstate_clean() function correctly set the
-state of sstatus.FS in pt_regs to SR_FS_CLEAN.
+This warning stems from the "buf" variable being passed into "write".
+It originated as the variable "ev" with the type union perf_event*
+defined in the "perf_event__synthesize_attr" function in
+"tools/perf/util/header.c".
 
-Fixes: 7db91e57a0acd ("RISC-V: Task implementation")
-Cc: linux-stable <stable@vger.kernel.org>
-Signed-off-by: Vincent Chen <vincent.chen@sifive.com>
-Reviewed-by: Anup Patel <anup@brainfault.org>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-[paul.walmsley@sifive.com: expanded "Fixes" commit ID]
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+In the "perf_event__synthesize_attr" function they allocate space with a malloc
+call using ev, then go on to only assign some of the member variables before
+passing "ev" on as a parameter to the "process" function therefore "ev"
+contains uninitialized memory. Changing the malloc call to zalloc to initialize
+all the members of "ev" which gets rid of the warning.
 
+To reproduce this warning, build perf by running:
+make -C tools/perf CLANG=1 CC=clang EXTRA_CFLAGS="-fsanitize=memory\
+ -fsanitize-memory-track-origins"
+
+(Additionally, llvm might have to be installed and clang might have to
+be specified as the compiler - export CC=/usr/bin/clang)
+
+then running:
+tools/perf/perf record -o - ls / | tools/perf/perf --no-pager annotate\
+ -i - --stdio
+
+Please see the cover letter for why false positive warnings may be
+generated.
+
+Signed-off-by: Numfor Mbiziwo-Tiapo <nums@google.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mark Drayton <mbd@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Song Liu <songliubraving@fb.com>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20190724234500.253358-2-nums@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/riscv/include/asm/switch_to.h |    2 +-
+ tools/perf/util/header.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/riscv/include/asm/switch_to.h
-+++ b/arch/riscv/include/asm/switch_to.h
-@@ -23,7 +23,7 @@ extern void __fstate_restore(struct task
+diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
+index 693dcd4ea6a38..61e3c482935ad 100644
+--- a/tools/perf/util/header.c
++++ b/tools/perf/util/header.c
+@@ -2943,7 +2943,7 @@ int perf_event__synthesize_attr(struct perf_tool *tool,
+ 	size += sizeof(struct perf_event_header);
+ 	size += ids * sizeof(u64);
  
- static inline void __fstate_clean(struct pt_regs *regs)
- {
--	regs->sstatus |= (regs->sstatus & ~(SR_FS)) | SR_FS_CLEAN;
-+	regs->sstatus = (regs->sstatus & ~SR_FS) | SR_FS_CLEAN;
- }
+-	ev = malloc(size);
++	ev = zalloc(size);
  
- static inline void fstate_save(struct task_struct *task,
+ 	if (ev == NULL)
+ 		return -ENOMEM;
+-- 
+2.20.1
+
 
 
