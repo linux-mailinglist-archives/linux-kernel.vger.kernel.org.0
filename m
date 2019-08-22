@@ -2,129 +2,138 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EF569A0C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:06:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 50E969A0CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:07:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392736AbfHVUGY (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 16:06:24 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:33476 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392689AbfHVUGS (ORCPT
+        id S2388283AbfHVUHq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 16:07:46 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35364 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731461AbfHVUHq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 16:06:18 -0400
-Received: by mail-io1-f65.google.com with SMTP id z3so14688351iog.0
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 13:06:17 -0700 (PDT)
+        Thu, 22 Aug 2019 16:07:46 -0400
+Received: by mail-pl1-f195.google.com with SMTP id gn20so4081220plb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 13:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hsSpn9hGEc+4R8e8fM9phFi1Gxa64aABU+4CIuIySwQ=;
-        b=e3YefOAIAkPen79sC/z3FeJcEtTSDDxtGIpTx0MKzfxYpWbHAU6YT0jAsEXUNJ9n9K
-         zV/02U83jNhXCwxe0cJVWD0qZ2fXSVzjnRNmwU9YaswhphX/c7MT82J+0wB4oYOAfIdf
-         o3t/Bqgk97YtBogPYkk+Z6m2DSrKvtLTfjFovUJFPYPZsWR2WlF38PbpsHZuauwRMHck
-         km1KO2U9UdcyghSHMH942MHDeSS3GxhiDi1pI/rvWaBejPOT2w5lN+J1nfkROn3k98me
-         k3KvTcyKKKYXV72i+mLnPzHu5qCM+l1w8QTs8fro0vJ41lrqh03Y60Y3DadG+GUUGroJ
-         GbnA==
+        d=broadcom.com; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=T7WELdrj1lpZKb10glO64Ci1A/cHC9qRquQl0ZBFVYE=;
+        b=C3g11sbiJLWJXhTVKSRs7RsmwmyNDMWE2NR02ihZhTaX8aV3FEKZ5YdkwOxo6qCVWq
+         m8jJkKYj85QU0HpYZJ1Drc4qi0TJV0r3IGjyGWOOP0/s3ieUNAmBO2MVB0IRxNYezn93
+         Ta1X+nvAuArVldordiVEZgCtlKT/kaqGj7nFc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hsSpn9hGEc+4R8e8fM9phFi1Gxa64aABU+4CIuIySwQ=;
-        b=M+kpDzMMwUbKHBBmqMOD+f1qHnMeWM9hDYM3qH/4JaQRVc7D/Re7vFpTCAIUc9li9e
-         2MnbzaLBZWbIo6+6RTW6f+xOQXmIlyL6+Kn1Xu4CdP5MPTkSeU7yP95223wtwUHfgLvz
-         7jrYf8IXWbPmkl5q74e22RuLx26+3n0yvNLskl+kGx8M+PGRAjFK0NWjvMWEvkNrSS3X
-         lZ/FYsIoD89+TkSWPFgqg3w+p8cK6I8QYNcjFMIx5Is7yadZor29qQnKspJFuj89Hihx
-         nAIm11/0DzSVC2BfFahEymDLuFN3p9qhOMMsdzjW3fbXPEBOK2LdORlAknV76qZf02oi
-         ZATw==
-X-Gm-Message-State: APjAAAUXHAOSyObpDhOPp1xddYH+1kMXWV5gIGZ3d16d4XB6shhK5PWh
-        NkEI8tB9s6XPKTxyUzZdXTwlBBM+dkuNAAiYYOU=
-X-Google-Smtp-Source: APXvYqwJwJfQRekS8pIphZHiktR5Z63xT/ocdJ4BcGIsoRN24AEWfNDp/0UbySpNcl8VOzLJtdf2clOAKG5G16UAk1c=
-X-Received: by 2002:a02:bb13:: with SMTP id y19mr1425878jan.86.1566504376856;
- Thu, 22 Aug 2019 13:06:16 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=T7WELdrj1lpZKb10glO64Ci1A/cHC9qRquQl0ZBFVYE=;
+        b=PDIZWCQXBHg5tBx94xIL6FL8yU8hbQzS97j9HV2ZXTU4rDd360+JSbDj1cZtxmdKhF
+         P8e56BVm1oD5BV+eIXlQ8p5m4mgmUJx573eQXppmv5AHIOgY+uNbXD5lsHwz4yrV3vtV
+         ZO5km3dMne11B6waGLfN1KEs2liS3uscicUDQLyowT93/8B7XX5k27WeVIWAeUIl/aqJ
+         WmUq0v0P6riJ4amlzf7R50qQn7+6+jBH3QUyV4uHyF9kGPyK2Of4sYHI5rtQYzL4+fWb
+         Y+puBM1cRD9JqIRrcnfb9IFhwn4RUnMSupI0D2/2z5ZAr//g6MTQsy3QLEMxNrXAnqX2
+         VYIA==
+X-Gm-Message-State: APjAAAUZTbrfQMBQGMCyDMNZk77fKs3ZOIj9PzsbT3uQ4I3/obKS9xib
+        wYbnP8AtKkCEQV8lIW7Trl4+/w==
+X-Google-Smtp-Source: APXvYqwPgliCGszErOKKFpnP9RfEOJ+aybpl80q46iwpUnIp/wgrGOyV1u3N0905b4Kuaoc0P8jo7w==
+X-Received: by 2002:a17:902:1027:: with SMTP id b36mr585958pla.203.1566504465286;
+        Thu, 22 Aug 2019 13:07:45 -0700 (PDT)
+Received: from [10.136.13.65] ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id k5sm229441pfg.167.2019.08.22.13.07.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 22 Aug 2019 13:07:44 -0700 (PDT)
+Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        David Brown <david.brown@linaro.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        Olof Johansson <olof@lixom.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Kees Cook <keescook@chromium.org>,
+        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
+References: <20190822192451.5983-1-scott.branden@broadcom.com>
+ <20190822192451.5983-3-scott.branden@broadcom.com>
+ <20190822194712.GG16384@42.do-not-panic.com>
+From:   Scott Branden <scott.branden@broadcom.com>
+Message-ID: <7ee02971-e177-af05-28e0-90575ebe12e0@broadcom.com>
+Date:   Thu, 22 Aug 2019 13:07:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-References: <20190731180131.8597-1-andrew.smirnov@gmail.com> <VI1PR04MB7023AE3910B261877892EEABEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB7023AE3910B261877892EEABEEA50@VI1PR04MB7023.eurprd04.prod.outlook.com>
-From:   Andrey Smirnov <andrew.smirnov@gmail.com>
-Date:   Thu, 22 Aug 2019 13:06:05 -0700
-Message-ID: <CAHQ1cqHBzFi80ZCa+jgs0Qy=dMP4yP7am1x-hMTxzb-8Zpok0w@mail.gmail.com>
-Subject: Re: [PATCH] ARM: imx: Drop imx_anatop_init()
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <festevam@gmail.com>,
-        Chris Healy <cphealy@gmail.com>,
-        Peter Chen <peter.chen@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190822194712.GG16384@42.do-not-panic.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 10:33 AM Leonard Crestez
-<leonard.crestez@nxp.com> wrote:
->
-> On 31.07.2019 21:01, Andrey Smirnov wrote:
-> > With commit b5bbe2235361 ("usb: phy: mxs: Disable external charger
-> > detect in mxs_phy_hw_init()") in tree all of the necessary charger
-> > setup is done by the USB PHY driver which covers all of the affected
-> > i.MX6 SoCs.
-> >
-> > NOTE: Imx_anatop_init() was also called for i.MX7D, but looking at its
-> > datasheet it appears to have a different USB PHY IP block, so
-> > executing i.MX6 charger disable configuration seems unnecessary.
-> >
-> > -void __init imx_anatop_init(void)
-> > -{
-> > -     anatop = syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");
-> > -     if (IS_ERR(anatop)) {
-> > -             pr_err("%s: failed to find imx6q-anatop regmap!\n", __func__);
-> > -             return;
-> > -     }
->
-> This patch breaks suspend on imx6 in linux-next because the "anatop"
-> regmap is no longer initialized. This was found via bisect but
-> no_console_suspend prints a helpful stack anyway:
->
-> (regmap_read) from [<c01226e4>] (imx_anatop_enable_weak2p5+0x28/0x70)
-> (imx_anatop_enable_weak2p5) from [<c0122744>]
-> (imx_anatop_pre_suspend+0x18/0x64)
-> (imx_anatop_pre_suspend) from [<c0124434>] (imx6q_pm_enter+0x60/0x16c)
-> (imx6q_pm_enter) from [<c018c8a4>] (suspend_devices_and_enter+0x7d4/0xcbc)
-> (suspend_devices_and_enter) from [<c018d544>] (pm_suspend+0x7b8/0x904)
-> (pm_suspend) from [<c018b1b4>] (state_store+0x68/0xc8)
->
+Hi Luis,
 
-My bad, completely missed that fact that anatop was a global variable
-in  imx_anatop_init(). Sorry about that.
+On 2019-08-22 12:47 p.m., Luis Chamberlain wrote:
+> On Thu, Aug 22, 2019 at 12:24:46PM -0700, Scott Branden wrote:
+>> @@ -923,16 +936,22 @@ EXPORT_SYMBOL_GPL(firmware_request_cache);
+>>    */
+>>   int
+>>   request_firmware_into_buf(const struct firmware **firmware_p, const char *name,
+>> -			  struct device *device, void *buf, size_t size)
+>> +			  struct device *device, void *buf, size_t size,
+>> +			  size_t offset, unsigned int pread_flags)
+> This implies you having to change the other callers, and while currently
+> our list of drivers is small,
 
-> Minimal fix looks like this:
->
-> --- arch/arm/mach-imx/anatop.c
-> +++ arch/arm/mach-imx/anatop.c
-> @@ -111,6 +111,12 @@ void __init imx_init_revision_from_anatop(void)
->           digprog = readl_relaxed(anatop_base + offset);
->           iounmap(anatop_base);
->
-> +       anatop = syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop");
-> +       if (IS_ERR(anatop)) {
-> +               pr_err("failed to find imx6q-anatop regmap!\n");
-> +               return;
-> +       }
->
-> Since all SOCs that called imx_anatop_init also call
-> imx_init_revision_from_anatop this might be an acceptable solution,
-> unless there is some limitation preventing early regmap lookup.
->
+Yes, the list is small, very small.
 
-Would making every function that uses anatop explicitly request it via
-syscon_regmap_lookup_by_compatible("fsl,imx6q-anatop") be too much of
-a code duplication? This way we won't need to worry if
-imx_init_revision_from_anatop() was called before any of them are
-used.
+There is a single driver making a call to the existing API.
 
-Thanks,
-Andrey Smirnov
+And, the existing API was never tested until I submitted a test case.
+
+And, the maintainer of that driver wanted
+
+to start utilizing my enhanced API instead of the current API.
+
+As such I think it is very reasonable to update the API right now.
+
+> following the history of the firmware API
+> and the long history of debate of *how* we should evolve its API, its
+> preferred we add yet another new caller for this functionality. So
+> please add a new caller, and use EXPORT_SYMBOL_GPL().
+>
+> And while at it, pleaase use firmware_request_*() as the prefix, as we
+> have want to use that as the instilled prefix. We have yet to complete
+> the rename of the others older callers but its just a matter of time.
+>
+> So something like: firmware_request_into_buf_offset()
+
+I would prefer to rename the API at this time given there is only a 
+single user.
+
+Otherwise I would need to duplicate quite a bit in the test code to 
+support testing
+
+the single user of the old api and then enhanced API.
+
+Or, I can leave existing API in place and change the test case to
+
+just test the enhanced API to keep things simpler in the test code?
+
+>
+> And thanks for adding a test case!
+>
+>    Luis
+
+Regards,
+
+  Scott
+
