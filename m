@@ -2,55 +2,204 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B559499892
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B607E99887
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:50:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389642AbfHVPwb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 11:52:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59534 "EHLO mail.kernel.org"
+        id S2389617AbfHVPuW convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 11:50:22 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:49358 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727953AbfHVPwa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 11:52:30 -0400
-Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731069AbfHVPuW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 11:50:22 -0400
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DB962089E;
-        Thu, 22 Aug 2019 15:52:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566489149;
-        bh=LSJs+hg+Esa9XzSaNnvzaRu1U+LN0W0QrCA9FzqpRw0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f/ddtJSGCGY64F5bIzbo8y00yVAkluyt6InZJmYvOD57H5NenPHuJBEPEhkukZ8gc
-         DvazXl9gd4ISH3deV5OMqkLBdu7VPs8kPJAB/ECWq2+CfFStcSiPz3osr89Mafdgbq
-         cGRFujZP8uT8CAJUVuzbNadmzl2Hups9aAOhlryU=
-Date:   Thu, 22 Aug 2019 18:50:01 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     Saeed Mahameed <saeedm@mellanox.com>, davem@davemloft.net,
-        netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net/mlx5e: Use PTR_ERR_OR_ZERO in
- mlx5e_tc_add_nic_flow()
-Message-ID: <20190822155001.GG29433@mtr-leonro.mtl.com>
-References: <20190822065219.73945-1-yuehaibing@huawei.com>
+        by mx1.redhat.com (Postfix) with ESMTPS id 8586B85550
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 15:50:21 +0000 (UTC)
+Received: by mail-qk1-f199.google.com with SMTP id d203so6268009qke.4
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 08:50:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=e33KgK5g3O2XLfmnWFACPhTCEze1U4J8Z33SDjP74cg=;
+        b=jTN9ncA6y6i1a+3iZCLwoWPQ/PrkMcBQEqJM/QHJmdvq+iftCq01dXY5fYeZdpX8r+
+         SmF8RfxlYEQ0QsZ8TVskuunmzuZRadUaXCB0RdVNueFWaXm789v+CKsr+TVFDLCCT9xp
+         5CFw+t2RH8HF1mHez4a+8R1trIwbktzEgMpUeKu9zn2dKtMnSvsV8jwhV3M71meqmGVv
+         aZIGNC2oNpY0vEeT3c5A2ZUFRbhvo3BMym2JqTBot8t111E3FIURPoUZD48YL/HE/7jJ
+         2y/PlQqhOAzBzLtte8L9tSZeRq6sD6+45+3Z73m7SHziDposZpHaEns8CKLLDuOdYqjY
+         +TqA==
+X-Gm-Message-State: APjAAAXyJf6lXw/WwZcTr87+fY1wgFaVWhq4pSe+fBYmpX3Wj99JS4mn
+        6IITaYBrM4mVj//4L1NgH2x4EUPCCjvLoUaZ5cZ1jurATsQLWRIblX7tFzSOopTfhHxj5px7ZL+
+        xCBLi7X5fi07LuYIPZtFAmGEpy3wwrEiqaKxKiSZ7
+X-Received: by 2002:ac8:c86:: with SMTP id n6mr199540qti.345.1566489020852;
+        Thu, 22 Aug 2019 08:50:20 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqyRgOzepRKfTeAqRTqi7wUGOejeOBFZfIFjjdiBfCpr2htlaQFncT/AR+JSo1yb4xgQ3hq2ONwRKd7bXhpahuI=
+X-Received: by 2002:ac8:c86:: with SMTP id n6mr199526qti.345.1566489020648;
+ Thu, 22 Aug 2019 08:50:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190822065219.73945-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190812162740.15898-1-benjamin.tissoires@redhat.com>
+ <20190812162740.15898-2-benjamin.tissoires@redhat.com> <20190813075358.2a3cbfbd@pluto.restena.lu>
+In-Reply-To: <20190813075358.2a3cbfbd@pluto.restena.lu>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Thu, 22 Aug 2019 17:50:08 +0200
+Message-ID: <CAO-hwJJUT3eWMrnGP6zsaqdaWNfv=h6tcwyHJsu=Q5Mhp4_Pcw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] HID: do not call hid_set_drvdata(hdev, NULL) in drivers
+To:     =?UTF-8?Q?Bruno_Pr=C3=A9mont?= <bonbons@linux-vserver.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+        Ping Cheng <pinglinux@gmail.com>,
+        Jason Gerecke <jason.gerecke@wacom.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 06:52:19AM +0000, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
+On Tue, Aug 13, 2019 at 7:54 AM Bruno Prémont <bonbons@linux-vserver.org> wrote:
 >
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/en_tc.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
+> On Mon, 12 Aug 2019 18:27:39 +0200 Benjamin Tissoires wrote:
+> > This is a common pattern in the HID drivers to reset the drvdata. Some
+> > do it properly, some do it only in case of failure.
+> >
+> > But, this is actually already handled by driver core, so there is no need
+> > to do it manually.
+> >
+> > Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 >
+> For hid-picolcd_core.c:
+>   Acked-by: Bruno Prémont <bonbons@linux-vserver.org>
 
-Thanks,
-Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Thanks for the acks.
+
+Applied to for-5.4/cleanup
+
+Cheers,
+Benjamin
+
+>
+> > ---
+> >  drivers/hid/hid-cougar.c       | 6 ++----
+> >  drivers/hid/hid-gfrm.c         | 7 -------
+> >  drivers/hid/hid-lenovo.c       | 2 --
+> >  drivers/hid/hid-picolcd_core.c | 7 +------
+> >  drivers/hid/hid-sensor-hub.c   | 1 -
+> >  5 files changed, 3 insertions(+), 20 deletions(-)
+> >
+> > diff --git a/drivers/hid/hid-cougar.c b/drivers/hid/hid-cougar.c
+> > index e0bb7b34f3a4..4ff3bc1d25e2 100644
+> > --- a/drivers/hid/hid-cougar.c
+> > +++ b/drivers/hid/hid-cougar.c
+> > @@ -207,7 +207,7 @@ static int cougar_probe(struct hid_device *hdev,
+> >       error = hid_parse(hdev);
+> >       if (error) {
+> >               hid_err(hdev, "parse failed\n");
+> > -             goto fail;
+> > +             return error;
+> >       }
+> >
+> >       if (hdev->collection->usage == COUGAR_VENDOR_USAGE) {
+> > @@ -219,7 +219,7 @@ static int cougar_probe(struct hid_device *hdev,
+> >       error = hid_hw_start(hdev, connect_mask);
+> >       if (error) {
+> >               hid_err(hdev, "hw start failed\n");
+> > -             goto fail;
+> > +             return error;
+> >       }
+> >
+> >       error = cougar_bind_shared_data(hdev, cougar);
+> > @@ -249,8 +249,6 @@ static int cougar_probe(struct hid_device *hdev,
+> >
+> >  fail_stop_and_cleanup:
+> >       hid_hw_stop(hdev);
+> > -fail:
+> > -     hid_set_drvdata(hdev, NULL);
+> >       return error;
+> >  }
+> >
+> > diff --git a/drivers/hid/hid-gfrm.c b/drivers/hid/hid-gfrm.c
+> > index 86c317320bf2..699186ff2349 100644
+> > --- a/drivers/hid/hid-gfrm.c
+> > +++ b/drivers/hid/hid-gfrm.c
+> > @@ -123,12 +123,6 @@ static int gfrm_probe(struct hid_device *hdev, const struct hid_device_id *id)
+> >       return ret;
+> >  }
+> >
+> > -static void gfrm_remove(struct hid_device *hdev)
+> > -{
+> > -     hid_hw_stop(hdev);
+> > -     hid_set_drvdata(hdev, NULL);
+> > -}
+> > -
+> >  static const struct hid_device_id gfrm_devices[] = {
+> >       { HID_BLUETOOTH_DEVICE(0x58, 0x2000),
+> >               .driver_data = GFRM100 },
+> > @@ -142,7 +136,6 @@ static struct hid_driver gfrm_driver = {
+> >       .name = "gfrm",
+> >       .id_table = gfrm_devices,
+> >       .probe = gfrm_probe,
+> > -     .remove = gfrm_remove,
+> >       .input_mapping = gfrm_input_mapping,
+> >       .raw_event = gfrm_raw_event,
+> >       .input_configured = gfrm_input_configured,
+> > diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+> > index 364bc7f11d9d..96fa2a2c2cd3 100644
+> > --- a/drivers/hid/hid-lenovo.c
+> > +++ b/drivers/hid/hid-lenovo.c
+> > @@ -866,8 +866,6 @@ static void lenovo_remove_tpkbd(struct hid_device *hdev)
+> >
+> >       led_classdev_unregister(&data_pointer->led_micmute);
+> >       led_classdev_unregister(&data_pointer->led_mute);
+> > -
+> > -     hid_set_drvdata(hdev, NULL);
+> >  }
+> >
+> >  static void lenovo_remove_cptkbd(struct hid_device *hdev)
+> > diff --git a/drivers/hid/hid-picolcd_core.c b/drivers/hid/hid-picolcd_core.c
+> > index 5f7a39a5d4af..1b5c63241af0 100644
+> > --- a/drivers/hid/hid-picolcd_core.c
+> > +++ b/drivers/hid/hid-picolcd_core.c
+> > @@ -534,8 +534,7 @@ static int picolcd_probe(struct hid_device *hdev,
+> >       data = kzalloc(sizeof(struct picolcd_data), GFP_KERNEL);
+> >       if (data == NULL) {
+> >               hid_err(hdev, "can't allocate space for Minibox PicoLCD device data\n");
+> > -             error = -ENOMEM;
+> > -             goto err_no_cleanup;
+> > +             return -ENOMEM;
+> >       }
+> >
+> >       spin_lock_init(&data->lock);
+> > @@ -597,9 +596,6 @@ static int picolcd_probe(struct hid_device *hdev,
+> >       hid_hw_stop(hdev);
+> >  err_cleanup_data:
+> >       kfree(data);
+> > -err_no_cleanup:
+> > -     hid_set_drvdata(hdev, NULL);
+> > -
+> >       return error;
+> >  }
+> >
+> > @@ -635,7 +631,6 @@ static void picolcd_remove(struct hid_device *hdev)
+> >       picolcd_exit_cir(data);
+> >       picolcd_exit_keys(data);
+> >
+> > -     hid_set_drvdata(hdev, NULL);
+> >       mutex_destroy(&data->mutex);
+> >       /* Finally, clean up the picolcd data itself */
+> >       kfree(data);
+> > diff --git a/drivers/hid/hid-sensor-hub.c b/drivers/hid/hid-sensor-hub.c
+> > index be92a6f79687..94c7398b5c27 100644
+> > --- a/drivers/hid/hid-sensor-hub.c
+> > +++ b/drivers/hid/hid-sensor-hub.c
+> > @@ -742,7 +742,6 @@ static void sensor_hub_remove(struct hid_device *hdev)
+> >       }
+> >       spin_unlock_irqrestore(&data->lock, flags);
+> >       mfd_remove_devices(&hdev->dev);
+> > -     hid_set_drvdata(hdev, NULL);
+> >       mutex_destroy(&data->mutex);
+> >  }
+> >
