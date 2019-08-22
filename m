@@ -2,103 +2,106 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DE959A0B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:05:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9F44D9A0BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 22:06:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392535AbfHVUFI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 16:05:08 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:36390 "EHLO mx1.redhat.com"
+        id S2392574AbfHVUGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 16:06:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731970AbfHVUFI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 16:05:08 -0400
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S2387738AbfHVUGA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 16:06:00 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A66DE10C696E;
-        Thu, 22 Aug 2019 20:05:07 +0000 (UTC)
-Received: from treble (ovpn-121-55.rdu2.redhat.com [10.10.121.55])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A737C1001947;
-        Thu, 22 Aug 2019 20:05:06 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 15:05:04 -0500
-From:   Josh Poimboeuf <jpoimboe@redhat.com>
-To:     Raphael Gault <raphael.gault@arm.com>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, catalin.marinas@arm.com, will.deacon@arm.com,
-        julien.thierry.kdev@gmail.com, raph.gault+kdev@gmail.com
-Subject: Re: [RFC v4 09/18] gcc-plugins: objtool: Add plugin to detect switch
- table on arm64
-Message-ID: <20190822200504.x4unrhw36buwvdmg@treble>
-References: <20190816122403.14994-1-raphael.gault@arm.com>
- <20190816122403.14994-10-raphael.gault@arm.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 3463423400;
+        Thu, 22 Aug 2019 20:05:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566504359;
+        bh=E+RM8lcOXSVIMYx4+rXzzGMSVrhC1b6YIQ0v0hDRtG4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=gEi5ksaa9IiQKCO40DUHyjA4t8hhezRyG4yFoVnlCwlS2OzU6PtiMBv4Q8C5C0EiR
+         Xb2cGtGYsiuDwF8yl5xp7I6QqeJNJl5DQyoJ8wXfjmgsVdYTELkfnLuoxmycnfv41b
+         mGOH0VBhCsjTJS6mkFr20D1ToX/qo7gS9DQ4EWyU=
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     linux-pci@vger.kernel.org
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v2 0/3] PCI: Add PCI_ERROR_RESPONSE, check for errors
+Date:   Thu, 22 Aug 2019 15:05:48 -0500
+Message-Id: <20190822200551.129039-1-helgaas@kernel.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190816122403.14994-10-raphael.gault@arm.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.65]); Thu, 22 Aug 2019 20:05:07 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 01:23:54PM +0100, Raphael Gault wrote:
-> This plugins comes into play before the final 2 RTL passes of GCC and
+From: Bjorn Helgaas <bhelgaas@google.com>
 
-"plugin"
+Reads from a PCI device may fail if the device has been turned off (put
+into D3cold), removed, or if some other error occurs.  The PCI host bridge
+typically fabricates ~0 data to complete the CPU's read.
 
-> detects switch-tables that are to be outputed in the ELF and writes
-> information in an "objtool_data" section which will be used by objtool.
+We check for that in a few places, but not in a consistent way.  This
+series adds a PCI_ERROR_RESPONSE definition to make the checks more
+consistent and easier to find.  Note that ~0 may indicate a PCI error, but
+it may also be valid read data, so you need more information (such as
+knowing that a register can never contain ~0) before concluding that it's
+an error.
 
-The section should probably have a ".discard" prefix
-(.discard.objtool_data) so it gets discarded at link time.
+This series also adds a new check for PCI_ERROR_RESPONSE in the power
+management code because that code frequently encounters devices in D3cold,
+where we previously misinterpreted ~0 data.  It also uses pci_power_name()
+to print D-state names more consistently.
 
-Also, "objtool_data" is a bit generic.  How about
-".discard.switch_tables" or something.
+Rafael, I didn't add your Reviewed-by to "PCI / PM: Return error when
+changing power state from D3cold" because I made small changes to try to
+make the messages more consistent, and I didn't want to presume they'd be
+OK with you.
 
-> 
-> Signed-off-by: Raphael Gault <raphael.gault@arm.com>
-> ---
->  scripts/Makefile.gcc-plugins                  |  2 +
->  scripts/gcc-plugins/Kconfig                   |  9 +++
->  .../arm64_switch_table_detection_plugin.c     | 58 +++++++++++++++++++
->  3 files changed, 69 insertions(+)
->  create mode 100644 scripts/gcc-plugins/arm64_switch_table_detection_plugin.c
-> 
-> diff --git a/scripts/Makefile.gcc-plugins b/scripts/Makefile.gcc-plugins
-> index 5f7df50cfe7a..a56736df9dc2 100644
-> --- a/scripts/Makefile.gcc-plugins
-> +++ b/scripts/Makefile.gcc-plugins
-> @@ -44,6 +44,8 @@ ifdef CONFIG_GCC_PLUGIN_ARM_SSP_PER_TASK
->  endif
->  export DISABLE_ARM_SSP_PER_TASK_PLUGIN
->  
-> +gcc-plugin-$(CONFIG_GCC_PLUGIN_SWITCH_TABLES)	+= arm64_switch_table_detection_plugin.so
-> +
->  # All the plugin CFLAGS are collected here in case a build target needs to
->  # filter them out of the KBUILD_CFLAGS.
->  GCC_PLUGINS_CFLAGS := $(strip $(addprefix -fplugin=$(objtree)/scripts/gcc-plugins/, $(gcc-plugin-y)) $(gcc-plugin-cflags-y))
-> diff --git a/scripts/gcc-plugins/Kconfig b/scripts/gcc-plugins/Kconfig
-> index d33de0b9f4f5..1daeffb55dce 100644
-> --- a/scripts/gcc-plugins/Kconfig
-> +++ b/scripts/gcc-plugins/Kconfig
-> @@ -113,4 +113,13 @@ config GCC_PLUGIN_ARM_SSP_PER_TASK
->  	bool
->  	depends on GCC_PLUGINS && ARM
->  
-> +config GCC_PLUGIN_SWITCH_TABLES
-> +	bool "GCC Plugin: Identify switch tables at compile time"
-> +	default y
-> +	depends on STACK_VALIDATION && ARM64
-> +	help
-> +	  Plugin to identify switch tables generated at compile time and store
-> +	  them in a .objtool_data section. Objtool will then use that section
-> +	  to analyse the different execution path of the switch table.
+Changes since v1:
+  - Add Rafael's Reviewed-By to the first two patches
+  - Drop "PCI / PM: Check for error when reading PME status" because Rafael
+    pointed out that some devices can signal PME even when in D3cold, so
+    this would require additional rework
+  - Drop "PCI / PM: Check for error when reading Power State" because
+    Rafael thinks it's mostly redundant
 
-This isn't something you want to ask the user about, as objtool for
-arm64 requires it.  For the same reason, instead of
-GCC_PLUGIN_SWITCH_TABLES depending on STACK_VALIDATION, arm64
-HAVE_STACK_VALIDATION should depend on GCC_PLUGIN_SWITCH_TABLES.
+Bjorn Helgaas (3):
+  PCI: Add PCI_ERROR_RESPONSE definition
+  PCI / PM: Decode D3cold power state correctly
+  PCI / PM: Return error when changing power state from D3cold
+
+ drivers/pci/access.c                          | 13 ++++----
+ .../pci/controller/dwc/pcie-designware-host.c |  2 +-
+ drivers/pci/controller/pci-aardvark.c         |  2 +-
+ drivers/pci/controller/pci-mvebu.c            |  4 +--
+ drivers/pci/controller/pci-thunder-ecam.c     | 20 ++++++------
+ drivers/pci/controller/pci-thunder-pem.c      |  2 +-
+ drivers/pci/controller/pcie-altera.c          |  2 +-
+ drivers/pci/controller/pcie-iproc.c           |  2 +-
+ drivers/pci/controller/pcie-mediatek.c        |  4 +--
+ drivers/pci/controller/pcie-rcar.c            |  2 +-
+ drivers/pci/controller/pcie-rockchip-host.c   |  2 +-
+ drivers/pci/controller/vmd.c                  |  2 +-
+ drivers/pci/hotplug/cpqphp_ctrl.c             | 12 +++----
+ drivers/pci/hotplug/cpqphp_pci.c              | 20 ++++++------
+ drivers/pci/hotplug/pciehp_hpc.c              |  6 ++--
+ drivers/pci/pci.c                             | 31 ++++++++++++-------
+ drivers/pci/pcie/dpc.c                        |  3 +-
+ drivers/pci/pcie/pme.c                        |  4 +--
+ drivers/pci/probe.c                           |  4 +--
+ drivers/pci/quirks.c                          |  2 +-
+ include/linux/pci.h                           |  7 +++++
+ 21 files changed, 81 insertions(+), 65 deletions(-)
 
 -- 
-Josh
+2.23.0.187.g17f5b7556c-goog
+
