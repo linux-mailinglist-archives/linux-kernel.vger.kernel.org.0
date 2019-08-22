@@ -2,38 +2,42 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DBEF699B3B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D361399BB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391670AbfHVRWz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:22:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41448 "EHLO mail.kernel.org"
+        id S2391930AbfHVR0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49524 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391527AbfHVRWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:49 -0400
+        id S2404455AbfHVRZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:37 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE24023406;
-        Thu, 22 Aug 2019 17:22:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5D9F2064A;
+        Thu, 22 Aug 2019 17:25:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494568;
-        bh=p81gYO1OegpMvTe0u5jGw4T/neWGhQp383tbYVrdTTA=;
+        s=default; t=1566494736;
+        bh=XyTgGdc5NkJvhOS+g7j8/YRQbNieEGcd94XNJp3A8AQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j7MCdEf9mHCtc/MGWL2MReR9OJkMedgAxPr7JCVKPhWcw0nCLu9+7E4uqkCfQpWdr
-         2RAT6H9jAef0q8TB5iPGCRb00esVdwz2hLLGwa8+zXq3HtBrmSUk1AS/8gyo13PQKw
-         QhX0dl5o4ms1/YvVnyl+n7VhPfhD1WGVvs/3qaTU=
+        b=GWznrDZvhZdO+YPF+b0oW90AUoOshr+6rG7Pcg0X8Ef1t80t60+t2nm5FXmpwhDqQ
+         BBf1NEucUKM78ZfQWdwrxETFlrpEVWuudaAkaMQVFddLBqwNaKOyFNDtGovOUDOdyV
+         eyyhArPGpUbFFKWFpl5DMKyJoOd3Cr33FxGmRAAY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alan Stern <stern@rowland.harvard.edu>,
-        syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
-Subject: [PATCH 4.4 57/78] USB: core: Fix races in character device registration and deregistraion
+        stable@vger.kernel.org,
+        Yao Lihua <Lihua.Yao@desay-svautomotive.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Linh Phung <linh.phung.jy@renesas.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 28/85] clk: renesas: cpg-mssr: Fix reset control race condition
 Date:   Thu, 22 Aug 2019 10:19:01 -0700
-Message-Id: <20190822171833.689551533@linuxfoundation.org>
+Message-Id: <20190822171732.539895663@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -43,89 +47,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alan Stern <stern@rowland.harvard.edu>
+[ Upstream commit e1f1ae8002e4b06addc52443fcd975bbf554ae92 ]
 
-commit 303911cfc5b95d33687d9046133ff184cf5043ff upstream.
+The module reset code in the Renesas CPG/MSSR driver uses
+read-modify-write (RMW) operations to write to a Software Reset Register
+(SRCRn), and simple writes to write to a Software Reset Clearing
+Register (SRSTCLRn), as was mandated by the R-Car Gen2 and Gen3 Hardware
+User's Manuals.
 
-The syzbot fuzzer has found two (!) races in the USB character device
-registration and deregistration routines.  This patch fixes the races.
+However, this may cause a race condition when two devices are reset in
+parallel: if the reset for device A completes in the middle of the RMW
+operation for device B, device A may be reset again, causing subtle
+failures (e.g. i2c timeouts):
 
-The first race results from the fact that usb_deregister_dev() sets
-usb_minors[intf->minor] to NULL before calling device_destroy() on the
-class device.  This leaves a window during which another thread can
-allocate the same minor number but will encounter a duplicate name
-error when it tries to register its own class device.  A typical error
-message in the system log would look like:
+	thread A			thread B
+	--------			--------
 
-    sysfs: cannot create duplicate filename '/class/usbmisc/ldusb0'
+	val = SRCRn
+	val |= bit A
+	SRCRn = val
 
-The patch fixes this race by destroying the class device first.
+	delay
 
-The second race is in usb_register_dev().  When that routine runs, it
-first allocates a minor number, then drops minor_rwsem, and then
-creates the class device.  If the device creation fails, the minor
-number is deallocated and the whole routine returns an error.  But
-during the time while minor_rwsem was dropped, there is a window in
-which the minor number is allocated and so another thread can
-successfully open the device file.  Typically this results in
-use-after-free errors or invalid accesses when the other thread closes
-its open file reference, because the kernel then tries to release
-resources that were already deallocated when usb_register_dev()
-failed.  The patch fixes this race by keeping minor_rwsem locked
-throughout the entire routine.
+					val = SRCRn (bit A is set)
 
-Reported-and-tested-by: syzbot+30cf45ebfe0b0c4847a1@syzkaller.appspotmail.com
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/Pine.LNX.4.44L0.1908121607590.1659-100000@iolanthe.rowland.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+	SRSTCLRn = bit A
+	(bit A in SRCRn is cleared)
 
+					val |= bit B
+					SRCRn = val (bit A and B are set)
+
+This can be reproduced on e.g. Salvator-XS using:
+
+    $ while true; do i2cdump -f -y 4 0x6A b > /dev/null; done &
+    $ while true; do i2cdump -f -y 2 0x10 b > /dev/null; done &
+
+    i2c-rcar e6510000.i2c: error -110 : 40000002
+    i2c-rcar e66d8000.i2c: error -110 : 40000002
+
+According to the R-Car Gen3 Hardware Manual Errata for Rev.
+0.80 of Feb 28, 2018, reflected in Rev. 1.00 of the R-Car Gen3 Hardware
+User's Manual, writes to SRCRn do not require read-modify-write cycles.
+
+Note that the R-Car Gen2 Hardware User's Manual has not been updated
+yet, and still says a read-modify-write sequence is required.  According
+to the hardware team, the reset hardware block is the same on both R-Car
+Gen2 and Gen3, though.
+
+Hence fix the issue by replacing the read-modify-write operations on
+SRCRn by simple writes.
+
+Reported-by: Yao Lihua <Lihua.Yao@desay-svautomotive.com>
+Fixes: 6197aa65c4905532 ("clk: renesas: cpg-mssr: Add support for reset control")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Tested-by: Linh Phung <linh.phung.jy@renesas.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/file.c |   10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/renesas-cpg-mssr.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
---- a/drivers/usb/core/file.c
-+++ b/drivers/usb/core/file.c
-@@ -191,9 +191,10 @@ int usb_register_dev(struct usb_interfac
- 		intf->minor = minor;
- 		break;
- 	}
--	up_write(&minor_rwsem);
--	if (intf->minor < 0)
-+	if (intf->minor < 0) {
-+		up_write(&minor_rwsem);
- 		return -EXFULL;
-+	}
+diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
+index f4b013e9352d9..24485bee9b49e 100644
+--- a/drivers/clk/renesas/renesas-cpg-mssr.c
++++ b/drivers/clk/renesas/renesas-cpg-mssr.c
+@@ -535,17 +535,11 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+ 	unsigned int reg = id / 32;
+ 	unsigned int bit = id % 32;
+ 	u32 bitmask = BIT(bit);
+-	unsigned long flags;
+-	u32 value;
  
- 	/* create a usb class device for this usb interface */
- 	snprintf(name, sizeof(name), class_driver->name, minor - minor_base);
-@@ -206,12 +207,11 @@ int usb_register_dev(struct usb_interfac
- 				      MKDEV(USB_MAJOR, minor), class_driver,
- 				      "%s", temp);
- 	if (IS_ERR(intf->usb_dev)) {
--		down_write(&minor_rwsem);
- 		usb_minors[minor] = NULL;
- 		intf->minor = -1;
--		up_write(&minor_rwsem);
- 		retval = PTR_ERR(intf->usb_dev);
- 	}
-+	up_write(&minor_rwsem);
- 	return retval;
+ 	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+ 
+ 	/* Reset module */
+-	spin_lock_irqsave(&priv->rmw_lock, flags);
+-	value = readl(priv->base + SRCR(reg));
+-	value |= bitmask;
+-	writel(value, priv->base + SRCR(reg));
+-	spin_unlock_irqrestore(&priv->rmw_lock, flags);
++	writel(bitmask, priv->base + SRCR(reg));
+ 
+ 	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
+ 	udelay(35);
+@@ -562,16 +556,10 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+ 	unsigned int reg = id / 32;
+ 	unsigned int bit = id % 32;
+ 	u32 bitmask = BIT(bit);
+-	unsigned long flags;
+-	u32 value;
+ 
+ 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
+ 
+-	spin_lock_irqsave(&priv->rmw_lock, flags);
+-	value = readl(priv->base + SRCR(reg));
+-	value |= bitmask;
+-	writel(value, priv->base + SRCR(reg));
+-	spin_unlock_irqrestore(&priv->rmw_lock, flags);
++	writel(bitmask, priv->base + SRCR(reg));
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(usb_register_dev);
-@@ -237,12 +237,12 @@ void usb_deregister_dev(struct usb_inter
- 		return;
  
- 	dev_dbg(&intf->dev, "removing %d minor\n", intf->minor);
-+	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 
- 	down_write(&minor_rwsem);
- 	usb_minors[intf->minor] = NULL;
- 	up_write(&minor_rwsem);
- 
--	device_destroy(usb_class->class, MKDEV(USB_MAJOR, intf->minor));
- 	intf->usb_dev = NULL;
- 	intf->minor = -1;
- 	destroy_usb_class();
+-- 
+2.20.1
+
 
 
