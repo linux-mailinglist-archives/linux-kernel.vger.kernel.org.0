@@ -2,78 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 333B39930C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 29815992FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:17:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388440AbfHVMOF (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:14:05 -0400
-Received: from mail-ua1-f44.google.com ([209.85.222.44]:35671 "EHLO
-        mail-ua1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388389AbfHVMN7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:13:59 -0400
-Received: by mail-ua1-f44.google.com with SMTP id j21so1913417uap.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:13:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=DoBmeUN23M8f6sfbc9hjllfgwqRgBk2+sJFpDr9LHV0=;
-        b=fBVXvdd5bwH+sPQ0EwczYi7R6UmwhFeLh0tBrRFjzXX7IFfV2KnWfv8vwWiNuIBB8H
-         NGGZv62Zk/qT4ZXkyI0BBvAYEl+xvjQK7SG7Tsj0MijJuSmyal+GioBCqP3LfHzD4+oY
-         H4u7Wfgxm/ojS3Txbnuys36cWl+exdG4o4s0mesYIrVTF2ehlmDXzZqXpQFcEd+LatFA
-         1zFeZZ+yHi8H7Dy4+/zq0XzTxf0XkUSK77ho1+CZNnHkMvgw6bTJmR1mvUE0A01KmHn2
-         MdqHGzSDf7tD3eCbDAEt80tOupjxhBET+sk/uQ0Xjzk1P95B6OphlIfJrhjJs6r2lq83
-         HQIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DoBmeUN23M8f6sfbc9hjllfgwqRgBk2+sJFpDr9LHV0=;
-        b=MEIbjQF5seHadyt9W9OTljYc7yne+AxBCgUGBm8aRkNWG4X1Tr9nzFsMoUkazy/z5v
-         jwPMgumJKQ0UFUi+pXl9Fsj0eQv6DZHKDqG9nfxhddme0nLslnUXHvfTeFhbO2Y0+WFl
-         0U/AFc98z35Hqr+Nd30SX+i0QLlhZclYo8CBnuS89BPokFSuH7tdS4IQE9sfs47fRY1m
-         L4TGANUcIJQs53GeCbBdQES23XGktSTw8Is6XUtMzI1hV+g4CzIODocFsJKM+B8ET8X+
-         lW18ac/N9PuTsPdKpeiULJ/jyVuF73S08fyzl5XMDIcrEy2U7mTL0jDw3wSBkQ3NXQF1
-         sAoQ==
-X-Gm-Message-State: APjAAAUngG+Euk5lbcEP0iv4/vYUOkciCEv1NdQUz10/LYNsN5ydumE1
-        tMjf6tg041dpErOhbzQ+VY7Bn1GeEZMojduVHqww4M+5
-X-Google-Smtp-Source: APXvYqzXVsDy0ze4FRIDwywvutY/B4QAw3R64INVMx+0auCjLO0cktw5lNHc/YQDg6mDs7Vet6xKvfAPTB3hUQaHhXY=
-X-Received: by 2002:ab0:210f:: with SMTP id d15mr5424470ual.129.1566476038016;
- Thu, 22 Aug 2019 05:13:58 -0700 (PDT)
+        id S2388369AbfHVMNc (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:13:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43720 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726206AbfHVMNc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:13:32 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8F5921848;
+        Thu, 22 Aug 2019 12:13:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566476011;
+        bh=YLOaLuRCDHh2QH4FiU60m7B77VChjAMGE1TWEPelH+I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CtAvV5dCxRms/zgsQ7N0RVbywsMoNfzdhce40kMJVXwhcKkGbcC1l179DEg7RDLfM
+         ACIEe8sUNF1jKnXrVvnWViGCKWAOgRIkEAkMws4/HYkp6XucJM+cIR7JIgOORv7Hdm
+         w4cWqzNUXS7Ah1GaAOwNaLtSmiJC81pSzVuTcof4=
+Date:   Thu, 22 Aug 2019 14:13:28 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [patch V2 04/38] posix-cpu-timers: Provide quick sample function
+ for itimer
+Message-ID: <20190822121327.GH22020@lenoir>
+References: <20190821190847.665673890@linutronix.de>
+ <20190821192919.599658199@linutronix.de>
 MIME-Version: 1.0
-References: <20190822064741.11196-1-chaotian.jing@mediatek.com>
-In-Reply-To: <20190822064741.11196-1-chaotian.jing@mediatek.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 22 Aug 2019 14:13:21 +0200
-Message-ID: <CAPDyKFqEqF_ZHerbkTqqcVBceQvMr_A+-MkbzQJBByhCv9B0fg@mail.gmail.com>
-Subject: Re: fix controller busy issue and add 24bits segment support
-To:     Chaotian Jing <chaotian.jing@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-mediatek@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        srv_heupstream <srv_heupstream@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821192919.599658199@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Aug 2019 at 08:47, Chaotian Jing <chaotian.jing@mediatek.com> wrote:
->
-> the below 2 patches fix controller busy issue when plug out SD card
-> and add 24bits segment size support.
->
-> Chaotian Jing (2):
->   mmc: mediatek: fix controller busy when plug out SD
->   mmc: mediatek: support 24bits segment size
->
->  drivers/mmc/host/mtk-sd.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
+On Wed, Aug 21, 2019 at 09:08:51PM +0200, Thomas Gleixner wrote:
+> get_itimer() needs a sample of the current thread group cputime. It invokes
+> thread_group_cputimer() - which is a misnomer. That function also starts
+> eventually the group cputime accouting which is bogus because the
+> accounting is already active when a timer is armed.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Applied for next, thanks!
-
-Kind regards
-Uffe
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
