@@ -2,99 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5992898B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:47:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EB59B98BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:51:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731822AbfHVGr5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 02:47:57 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:4502 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730847AbfHVGr4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:47:56 -0400
-X-UUID: a74640b5860348139aa514829cad0918-20190822
-X-UUID: a74640b5860348139aa514829cad0918-20190822
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <chaotian.jing@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
-        with ESMTP id 1104521508; Thu, 22 Aug 2019 14:47:50 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs07n2.mediatek.inc (172.21.101.141) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 22 Aug 2019 14:47:45 +0800
-Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 22 Aug 2019 14:47:44 +0800
-From:   Chaotian Jing <chaotian.jing@mediatek.com>
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-CC:     Chaotian Jing <chaotian.jing@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <linux-mmc@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srv_heupstream@mediatek.com>
-Subject: [PATCH 2/2] mmc: mediatek: support 24bits segment size
-Date:   Thu, 22 Aug 2019 14:47:41 +0800
-Message-ID: <20190822064741.11196-3-chaotian.jing@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20190822064741.11196-1-chaotian.jing@mediatek.com>
-References: <20190822064741.11196-1-chaotian.jing@mediatek.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+        id S1731792AbfHVGuq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:50:46 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42750 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727553AbfHVGuq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 02:50:46 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7E2EC10F23E4;
+        Thu, 22 Aug 2019 06:50:45 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 969FD5D9E5;
+        Thu, 22 Aug 2019 06:50:42 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id C54E216E32; Thu, 22 Aug 2019 08:50:41 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     tzimmermann@suse.de, Gerd Hoffmann <kraxel@redhat.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        virtualization@lists.linux-foundation.org (open list:DRM DRIVER FOR
+        BOCHS VIRTUAL GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v4 1/4] drm/bochs: pass framebuffer to bochs_hw_setbase
+Date:   Thu, 22 Aug 2019 08:50:38 +0200
+Message-Id: <20190822065041.11941-2-kraxel@redhat.com>
+In-Reply-To: <20190822065041.11941-1-kraxel@redhat.com>
+References: <20190822065041.11941-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.6.2 (mx1.redhat.com [10.5.110.66]); Thu, 22 Aug 2019 06:50:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MSDC IP which support 64G DRAM will support 24bits BDMA buffer length,
-so add support it.
+Also rename bochs_hw_setbase to bochs_hw_setfb,
+we have to set more than just the base address.
 
-Signed-off-by: Chaotian Jing <chaotian.jing@mediatek.com>
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
 ---
- drivers/mmc/host/mtk-sd.c | 16 +++++++++++++---
- 1 file changed, 13 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/bochs/bochs.h     |  5 +++--
+ drivers/gpu/drm/bochs/bochs_hw.c  | 24 +++++++++++-------------
+ drivers/gpu/drm/bochs/bochs_kms.c | 11 +++--------
+ 3 files changed, 17 insertions(+), 23 deletions(-)
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 5cc422e5db69..4c72c5b73e87 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -328,6 +328,7 @@ struct mt_bdma_desc {
- 	u32 ptr;
- 	u32 bd_data_len;
- #define BDMA_DESC_BUFLEN	(0xffff) /* bit0 ~ bit15 */
-+#define BDMA_DESC_BUFLEN_EXT	(0xffffff) /* bit0 ~ bit23 */
- };
+diff --git a/drivers/gpu/drm/bochs/bochs.h b/drivers/gpu/drm/bochs/bochs.h
+index 68483a2fc12c..ed16840411f1 100644
+--- a/drivers/gpu/drm/bochs/bochs.h
++++ b/drivers/gpu/drm/bochs/bochs.h
+@@ -83,8 +83,9 @@ void bochs_hw_setmode(struct bochs_device *bochs,
+ 		      struct drm_display_mode *mode);
+ void bochs_hw_setformat(struct bochs_device *bochs,
+ 			const struct drm_format_info *format);
+-void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, int stride, u64 addr);
++void bochs_hw_setfb(struct bochs_device *bochs,
++		    struct drm_framebuffer *fb,
++		    int x, int y);
+ int bochs_hw_load_edid(struct bochs_device *bochs);
  
- struct msdc_dma {
-@@ -641,8 +642,14 @@ static inline void msdc_dma_setup(struct msdc_host *host, struct msdc_dma *dma,
- 			bd[j].bd_info |= (upper_32_bits(dma_address) & 0xf)
- 					 << 28;
- 		}
--		bd[j].bd_data_len &= ~BDMA_DESC_BUFLEN;
--		bd[j].bd_data_len |= (dma_len & BDMA_DESC_BUFLEN);
-+
-+		if (host->dev_comp->support_64g) {
-+			bd[j].bd_data_len &= ~BDMA_DESC_BUFLEN_EXT;
-+			bd[j].bd_data_len |= (dma_len & BDMA_DESC_BUFLEN_EXT);
-+		} else {
-+			bd[j].bd_data_len &= ~BDMA_DESC_BUFLEN;
-+			bd[j].bd_data_len |= (dma_len & BDMA_DESC_BUFLEN);
-+		}
+ /* bochs_mm.c */
+diff --git a/drivers/gpu/drm/bochs/bochs_hw.c b/drivers/gpu/drm/bochs/bochs_hw.c
+index e567bdfa2ab8..949930d8a92f 100644
+--- a/drivers/gpu/drm/bochs/bochs_hw.c
++++ b/drivers/gpu/drm/bochs/bochs_hw.c
+@@ -258,22 +258,20 @@ void bochs_hw_setformat(struct bochs_device *bochs,
+ 	};
+ }
  
- 		if (j == data->sg_count - 1) /* the last bd */
- 			bd[j].bd_info |= BDMA_DESC_EOL;
-@@ -2277,7 +2284,10 @@ static int msdc_drv_probe(struct platform_device *pdev)
- 	mmc->caps |= MMC_CAP_ERASE | MMC_CAP_CMD23;
- 	/* MMC core transfer sizes tunable parameters */
- 	mmc->max_segs = MAX_BD_NUM;
--	mmc->max_seg_size = BDMA_DESC_BUFLEN;
-+	if (host->dev_comp->support_64g)
-+		mmc->max_seg_size = BDMA_DESC_BUFLEN_EXT;
-+	else
-+		mmc->max_seg_size = BDMA_DESC_BUFLEN;
- 	mmc->max_blk_size = 2048;
- 	mmc->max_req_size = 512 * 1024;
- 	mmc->max_blk_count = mmc->max_req_size / 512;
+-void bochs_hw_setbase(struct bochs_device *bochs,
+-		      int x, int y, int stride, u64 addr)
++void bochs_hw_setfb(struct bochs_device *bochs,
++		    struct drm_framebuffer *fb,
++		    int x, int y)
+ {
+-	unsigned long offset;
+-	unsigned int vx, vy, vwidth;
+-
+-	bochs->stride = stride;
+-	offset = (unsigned long)addr +
+-		y * bochs->stride +
+-		x * (bochs->bpp / 8);
+-	vy = offset / bochs->stride;
+-	vx = (offset % bochs->stride) * 8 / bochs->bpp;
+-	vwidth = stride * 8 / bochs->bpp;
++	struct drm_gem_vram_object *bo = drm_gem_vram_of_gem(fb->obj[0]);
++	unsigned long offset = bo->bo.offset +
++		y * fb->pitches[0] +
++		x * fb->format->cpp[0];
++	int vy = offset / fb->pitches[0];
++	int vx = (offset % fb->pitches[0]) / fb->format->cpp[0];
++	int vwidth = fb->pitches[0] / fb->format->cpp[0];
+ 
+ 	DRM_DEBUG_DRIVER("x %d, y %d, addr %llx -> offset %lx, vx %d, vy %d\n",
+-			 x, y, addr, offset, vx, vy);
++			 x, y, bo->bo.offset, offset, vx, vy);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_VIRT_WIDTH, vwidth);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_X_OFFSET, vx);
+ 	bochs_dispi_write(bochs, VBE_DISPI_INDEX_Y_OFFSET, vy);
+diff --git a/drivers/gpu/drm/bochs/bochs_kms.c b/drivers/gpu/drm/bochs/bochs_kms.c
+index 02a9c1ed165b..f5d663259753 100644
+--- a/drivers/gpu/drm/bochs/bochs_kms.c
++++ b/drivers/gpu/drm/bochs/bochs_kms.c
+@@ -29,17 +29,12 @@ static const uint32_t bochs_formats[] = {
+ static void bochs_plane_update(struct bochs_device *bochs,
+ 			       struct drm_plane_state *state)
+ {
+-	struct drm_gem_vram_object *gbo;
+-
+ 	if (!state->fb || !bochs->stride)
+ 		return;
+ 
+-	gbo = drm_gem_vram_of_gem(state->fb->obj[0]);
+-	bochs_hw_setbase(bochs,
+-			 state->crtc_x,
+-			 state->crtc_y,
+-			 state->fb->pitches[0],
+-			 state->fb->offsets[0] + gbo->bo.offset);
++	bochs_hw_setfb(bochs, state->fb,
++		       state->crtc_x,
++		       state->crtc_y);
+ 	bochs_hw_setformat(bochs, state->fb->format);
+ }
+ 
 -- 
-2.18.0
+2.18.1
 
