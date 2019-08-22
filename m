@@ -2,181 +2,113 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E96A98BCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:56:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CB4B98BE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731877AbfHVG4g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 02:56:36 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:60833 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfHVG4g (ORCPT
+        id S1731910AbfHVG7U (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:59:20 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:46130 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731197AbfHVG7U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:56:36 -0400
-X-Originating-IP: 87.18.63.98
-Received: from uno.localdomain (unknown [87.18.63.98])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 2CEFC20008;
-        Thu, 22 Aug 2019 06:56:31 +0000 (UTC)
-Date:   Thu, 22 Aug 2019 08:58:00 +0200
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Ricardo Ribalda Delgado <ribalda@kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        linux-media <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] media: imx214: Add new control with
- V4L2_CID_PIXEL_SIZE
-Message-ID: <20190822065800.ja7mbga67vaawsil@uno.localdomain>
-References: <20190819121720.31345-1-ribalda@kernel.org>
- <20190819121720.31345-3-ribalda@kernel.org>
- <20190821161523.6lckivpwiihpl35z@uno.localdomain>
- <CAPybu_3QzD4t7c4BXLcxAwYbuKUoAmJY8foPQLm=XKzgD7W+Dw@mail.gmail.com>
+        Thu, 22 Aug 2019 02:59:20 -0400
+X-UUID: 9892230d232c4ace851d9d8e20acf3d2-20190822
+X-UUID: 9892230d232c4ace851d9d8e20acf3d2-20190822
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <sam.shih@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 361690198; Thu, 22 Aug 2019 14:59:14 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 22 Aug 2019 14:59:08 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 14:59:08 +0800
+From:   Sam Shih <sam.shih@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     Ryder Lee <ryder.lee@mediatek.com>,
+        John Crispin <john@phrozen.org>, <linux-pwm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Sam Shih <sam.shih@mediatek.com>
+Subject: [PATCH v5 0/13] Add mt7629 and fix mt7628 pwm
+Date:   Thu, 22 Aug 2019 14:58:30 +0800
+Message-ID: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rdj7zxh5vjncwfdy"
-Content-Disposition: inline
-In-Reply-To: <CAPybu_3QzD4t7c4BXLcxAwYbuKUoAmJY8foPQLm=XKzgD7W+Dw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain
+X-TM-SNTS-SMTP: 12CFB085C5D238A2521CDD7EC48FA63A77B9CEB2F2950846F6EAD765795AD1F82000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Changes since v5:
+- Follow reviewer's comments:
+  1. the license stuff is a separate change
+  2. split fix mt7628 pwm into a single patch
+  3. to ensure to not use mtk_pwm_clk_name[10] 
+     (After dynamic allocate clock array patch, 
+      this is no need to check)
+  4. Use clock-frequency property to replace 
+     the use of has_clks
 
---rdj7zxh5vjncwfdy
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Changes since v4:
+- Follow reviewer's comments (v3: pwm: mediatek: add a property "num-pwms")
+  Move the changes of droping the check for of_device_get_match_data
+  returning non-NULL to next patch
+- Follow reviewers's comments 
+  (v3: pwm: mediatek: allocate the clks array dynamically)
+  1. use pc->soc->has_clks to check clocks exist or not.
+  2. Add error message when probe() unable to get clks
+- Fixes bug when SoC is old mips which has no complex clock tree.
+if clocks not exist, use the new property from DT to apply period 
+calculation; otherwise, use clk_get_rate to get clock frequency and 
+apply period calculation.
 
-Hi Ricardo,
+Changes since v3:
+- add a new property "clock-frequency" and fix mt7628 pwm
+- add mt7629 pwm support
 
-On Wed, Aug 21, 2019 at 06:31:05PM +0200, Ricardo Ribalda Delgado wrote:
-> Hi Jacopo
->
->
-> On Wed, Aug 21, 2019 at 6:14 PM Jacopo Mondi <jacopo@jmondi.org> wrote:
-> >
-> > Hi Ricardo,
-> >
-> > On Mon, Aug 19, 2019 at 02:17:20PM +0200, Ricardo Ribalda Delgado wrote:
-> > > According to the product brief, the unit cell size is 1120 nanometers^2.
-> >
-> > Should this information come from DT ?
->
-> I do not think so. You cannot change this value and it needs to be
-> defined also in sensors/cameras that might not have a DT, like a usb
-> webcam.
+Changes since v2:
+- use num-pwms instead of mediatek,num-pwms.
+- rename the member from num_pwms to fallback_num_pwms to make it 
+  more obvious that it doesn't represent the actually used value.
+- add a dev_warn and a expressive comment to help other developers 
+  to not start adding num_pwms in the compatible_data.
 
-You're probably right. I got this thinking because the camera
-location/orientation are two read only parameters that come from DT,
-but their value depends on the design of the device where the camera
-is installed on, so they're configurable, while this and other
-physical properties are not, and it doesn't make much sense to have
-them in DT.
+Changes since v1:
+- add some checks for backwards compatibility.
 
-Thanks
-   j
 
->
-> It would be like adding to the DT the min/max exposure time...
->
-> But of course we can discuss it ;)
->
-> Best regards
->
-> >
-> > I'm asking as I've a series in review that adds an helper that
-> > collectes dt properties and register controls for them. It currently
-> > only supports the newly proposed camera location control, but there
-> > might be others like the rotation, for which we already have a DT
-> > property.
-> >
-> > https://patchwork.kernel.org/project/linux-media/list/?series=160901
-> >
-> > This new one is indeed an HW property of the sensor, I wonder if
-> > having it in the firmware interface would make any sense or not...
-> >
-> > Thanks
-> >   j
-> >
-> > >
-> > > https://www.sony-semicon.co.jp/products_en/IS/sensor1/img/products/ProductBrief_IMX214_20150428.pdf
-> > >
-> > > Signed-off-by: Ricardo Ribalda Delgado <ribalda@kernel.org>
-> > > ---
-> > >  drivers/media/i2c/imx214.c | 23 +++++++++++++++++++++++
-> > >  1 file changed, 23 insertions(+)
-> > >
-> > > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> > > index 159a3a604f0e..b2f6bd2d8d7d 100644
-> > > --- a/drivers/media/i2c/imx214.c
-> > > +++ b/drivers/media/i2c/imx214.c
-> > > @@ -47,6 +47,7 @@ struct imx214 {
-> > >       struct v4l2_ctrl *pixel_rate;
-> > >       struct v4l2_ctrl *link_freq;
-> > >       struct v4l2_ctrl *exposure;
-> > > +     struct v4l2_ctrl *pixel_size;
-> > >
-> > >       struct regulator_bulk_data      supplies[IMX214_NUM_SUPPLIES];
-> > >
-> > > @@ -941,6 +942,26 @@ static int __maybe_unused imx214_resume(struct device *dev)
-> > >       return ret;
-> > >  }
-> > >
-> > > +static void pixel_size_init(const struct v4l2_ctrl *ctrl, u32 idx,
-> > > +                  union v4l2_ctrl_ptr ptr)
-> > > +{
-> > > +     ptr.p_pixel_size->width = 1120;
-> > > +     ptr.p_pixel_size->height = 1120;
-> > > +}
-> > > +
-> > > +static const struct v4l2_ctrl_type_ops pixel_size_ops = {
-> > > +     .init = pixel_size_init,
-> > > +};
-> > > +
-> > > +static struct v4l2_ctrl *new_pixel_size_ctrl(struct v4l2_ctrl_handler *handler)
-> > > +{
-> > > +     static struct v4l2_ctrl_config ctrl = {
-> > > +             .id = V4L2_CID_PIXEL_SIZE,
-> > > +             .type_ops = &pixel_size_ops,
-> > > +     };
-> > > +
-> > > +     return v4l2_ctrl_new_custom(handler, &ctrl, NULL);
-> > > +}
-> > >  static int imx214_probe(struct i2c_client *client)
-> > >  {
-> > >       struct device *dev = &client->dev;
-> > > @@ -1029,6 +1050,8 @@ static int imx214_probe(struct i2c_client *client)
-> > >                                            V4L2_CID_EXPOSURE,
-> > >                                            0, 3184, 1, 0x0c70);
-> > >
-> > > +     imx214->pixel_size = new_pixel_size_ctrl(&imx214->ctrls);
-> > > +
-> > >       ret = imx214->ctrls.error;
-> > >       if (ret) {
-> > >               dev_err(&client->dev, "%s control init failed (%d)\n",
-> > > --
-> > > 2.23.0.rc1
-> > >
+Ryder Lee (5):
+  pwm: mediatek: add a property "num-pwms"
+  dt-bindings: pwm: add a property "num-pwms"
+  arm64: dts: mt7622: add a property "num-pwms" for PWM
+  arm: dts: mt7623: add a property "num-pwms" for PWM
+  dt-bindings: pwm: update bindings for MT7629 SoC
 
---rdj7zxh5vjncwfdy
-Content-Type: application/pgp-signature; name="signature.asc"
+Sam Shih (8):
+  pwm: mediatek: droping the check for of_device_get_match_data
+  pwm: mediatek: add a property "clock-frequency"
+  pwm: mediatek: allocate the clks array dynamically
+  pwm: mediatek: use pwm_mediatek as common prefix
+  pwm: mediatek: update license and switch to SPDX tag
+  dt-bindings: pwm: update bindings for MT7628 SoC
+  pwm: mediatek: remove a property "has-clock"
+  arm: dts: mediatek: add mt7629 pwm support
 
------BEGIN PGP SIGNATURE-----
+ .../devicetree/bindings/pwm/pwm-mediatek.txt  |  12 +-
+ arch/arm/boot/dts/mt7623.dtsi                 |   1 +
+ arch/arm64/boot/dts/mediatek/mt7622.dtsi      |   1 +
+ drivers/pwm/pwm-mediatek.c                    | 257 ++++++++++--------
+ arch/arm/boot/dts/mt7629.dtsi                 | 16 ++++++++++++++++
+ 5 files changed, 168 insertions(+), 119 deletions(-)
 
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAl1ePPgACgkQcjQGjxah
-VjwMjxAArr2C7WDJ9BhR2zFYHrKbgsFaW/1l+OqTTV7vDbHwH5lhIzsqjKXJ406g
-4ExHp7xhZU3Rt3apZNMDguqF+t9nc8hAS/Z7cJY3uBTb203akHtuY1SNUez2JInS
-T88rozV8SEW/yT6Gq9IZcpj8bozBdQZ1yXuZLVY4JEoHB2LHIDzzL4wV8L+8QT71
-F4HDfosLMVfv0FxtmsF93kFtNAqAYzVLDYoLOWwTXMNeHHoU+NHWWdnRVz16nTPq
-OP9B+u+VFX3rl//zNGs6e/OGKB15IMlFXD+eRV6S57btWOnPk476IquZFTmPp21H
-bmGD7FHyftFzSa20xfFN45lJlDmQbNXO7ysh7pE/IDLQXNM9g32muolpzOhAlS0B
-qUsO3o5awGAFZstZRTOPJ/J0P5VKf+SdoYkTPupRJaDQT0Fg43jpKrVxmqyi4ZJ4
-V5r4YMdzwdFv0uTnqUyWmeopWp8XRwM+x3r002H7FjAON20F0HPys+0JtlOwOrA5
-LaBe4hp61sssBeL1DGU6HUQb0jLPHoiCYaXsfgErEa1N7y9tkhvKocEIjrd080Gx
-0sSW5YCBrYyK60h/+oKOKZK35YJnr1/aumYikGKVPKfvsPvwYug4/bKmy0uAWcV4
-qrWVCBDuOLVWRyLorvm0fimnwHGxGJw7qLG5wzLMRnSzKAPBR5Y=
-=f/eP
------END PGP SIGNATURE-----
+-- 
+2.17.1
 
---rdj7zxh5vjncwfdy--
