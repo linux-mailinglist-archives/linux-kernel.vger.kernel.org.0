@@ -2,229 +2,169 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BFF099437
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BB93D99443
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:53:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388103AbfHVMuR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:50:17 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46618 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731604AbfHVMuQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:50:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z1so5284817wru.13
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:50:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ROB4gx4OGB1CpDcKjvU71ET9FrwtUSFzAVqfUnfvjig=;
-        b=Tjz6zp1luUYbfqgLHs8u1XU3r21rRiuHFjEEE445sTZjPTG1K1TbEO655UT3JDH3uL
-         sC9vFssy7r4wfHsKKF/jvniljfpEfBFwOrQchEZDTPX3FFboKQyRluqtt46Kzkw0x8XG
-         yKutR8H6zkflJqqRKMFoQNCPwDuLl5c3EUDnFRNxl1fIpcQ6/JjEJYLu2fsFzhRNkdkC
-         T6RMZHoZAvxRZ25l7eXoVO73Em9ogqkTFCN2UVljQt/8eRLrTATgzUwrfpw6Zd6lqKRY
-         g9WxpB32AOgs0olEMDJsyZyRztxQnxlRzFtFxz+8PJQyQWvuhTE7hN6yS2Wz9XivJaJq
-         D+sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ROB4gx4OGB1CpDcKjvU71ET9FrwtUSFzAVqfUnfvjig=;
-        b=Q7D1p0L9QS8mRtFh0QNbYoMflsb4xDGf/aUzRtgO/uNrRP9Vwyf/kITtLrNI9DEwFo
-         uJxhfEKNz1az5MKubJylaU9ZBpRTpb1vI2jsWw361XiDu5Bdo55vm+wKW/SMR+UBHhAg
-         oGogE1u1bWMKEfeN8SFdAHNKsczxBrCgpvt63ImEb7wkvy38wouRrPAKdG6dJcZbaP5X
-         qC8rEz0uOfLrEH4fRlaEuWkNVtDJX7Xg/A7kRck9cJR0Ywsihboas5PskkDIeqJ72A9y
-         NarJQ0BWmlGkFvSBcRwpNfq5bG7CXzrMs6f59dgSlyhDwC8YxFCunuJ6T4sylE6HN5SV
-         sAcA==
-X-Gm-Message-State: APjAAAUq42Y7ZizPmSqPoqlgoU0m+ariPpZxLK9USQc6Vod/UZbmX9Kc
-        uIquTpd9jQVVpC9CMAOgxy8V4suev3iCASTPu5fzSQ==
-X-Google-Smtp-Source: APXvYqzQ1TjSFQOix3vHo2hOrSZgy2endTM2XhjVhF8ByOGg0ehcvHXulptQXEetr33hXvAwYdNbyFGI7JnPGcIt6sU=
-X-Received: by 2002:a05:6000:104c:: with SMTP id c12mr42632777wrx.328.1566478213090;
- Thu, 22 Aug 2019 05:50:13 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190822084131.114764-1-anup.patel@wdc.com> <20190822084131.114764-12-anup.patel@wdc.com>
- <29b8f7c6-4b9d-91fc-61e7-82ecfd26ff88@amazon.com>
-In-Reply-To: <29b8f7c6-4b9d-91fc-61e7-82ecfd26ff88@amazon.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 22 Aug 2019 18:20:01 +0530
-Message-ID: <CAAhSdy2=6gC6fe_VtsnbQVXZnJMm_2Hc_qG3xS3nSnn5j8H1cQ@mail.gmail.com>
-Subject: Re: [PATCH v5 11/20] RISC-V: KVM: Handle WFI exits for VCPU
-To:     Alexander Graf <graf@amazon.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        id S2388188AbfHVMxA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:53:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40592 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725856AbfHVMxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:53:00 -0400
+Received: from localhost (unknown [171.61.89.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2891C2089E;
+        Thu, 22 Aug 2019 12:52:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566478378;
+        bh=+LmgaaxC2q4cxo4sEZL7ZYhCTTPgbmk76IWMitzQV7c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ExFlLSbYtm/2Llz1BRoI92FThaGkZH2k+tlxLgAIVzZKvlRuovRg8nUyOkBREh5Oi
+         dl1qW/GikXIQJenVO6JiXLZq90qVM/NhwFK/GYaTIzM8zOAKH/vBekoIi7G8wITIe7
+         3h/zMO1pb4zF7dtYSqo2+lMDJYzjLUDSqFbb9s+E=
+Date:   Thu, 22 Aug 2019 18:21:45 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Mark Brown <broonie@kernel.org>,
+        Banajit Goswami <bgoswami@codeaurora.org>,
+        Patrick Lai <plai@codeaurora.org>,
+        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
+        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v3 1/4] dt-bindings: soundwire: add slave bindings
+Message-ID: <20190822125145.GO12733@vkoul-mobl.Dlink>
+References: <20190809133407.25918-1-srinivas.kandagatla@linaro.org>
+ <20190809133407.25918-2-srinivas.kandagatla@linaro.org>
+ <20190821214436.GA13936@bogus>
+ <0272eafd-0aa5-f695-64e4-f6ad7157a3a6@linaro.org>
+ <CAL_JsqJJCJB9obR_Jn3hmn4gq+RQjY-8M+xkdYA185Uaw0MHcw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJJCJB9obR_Jn3hmn4gq+RQjY-8M+xkdYA185Uaw0MHcw@mail.gmail.com>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 5:49 PM Alexander Graf <graf@amazon.com> wrote:
->
-> On 22.08.19 10:45, Anup Patel wrote:
-> > We get illegal instruction trap whenever Guest/VM executes WFI
-> > instruction.
+On 22-08-19, 07:36, Rob Herring wrote:
+> On Thu, Aug 22, 2019 at 5:12 AM Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
 > >
-> > This patch handles WFI trap by blocking the trapped VCPU using
-> > kvm_vcpu_block() API. The blocked VCPU will be automatically
-> > resumed whenever a VCPU interrupt is injected from user-space
-> > or from in-kernel IRQCHIP emulation.
 > >
-> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> > Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> > ---
-> >   arch/riscv/kvm/vcpu_exit.c | 88 ++++++++++++++++++++++++++++++++++++++
-> >   1 file changed, 88 insertions(+)
 > >
-> > diff --git a/arch/riscv/kvm/vcpu_exit.c b/arch/riscv/kvm/vcpu_exit.c
-> > index efc06198c259..fbc04fe335ad 100644
-> > --- a/arch/riscv/kvm/vcpu_exit.c
-> > +++ b/arch/riscv/kvm/vcpu_exit.c
-> > @@ -12,6 +12,9 @@
-> >   #include <linux/kvm_host.h>
-> >   #include <asm/csr.h>
+> > On 21/08/2019 22:44, Rob Herring wrote:
+> > > On Fri, Aug 09, 2019 at 02:34:04PM +0100, Srinivas Kandagatla wrote:
+> > >> This patch adds bindings for Soundwire Slave devices that includes how
+> > >> SoundWire enumeration address and Link ID are used to represented in
+> > >> SoundWire slave device tree nodes.
+> > >>
+> > >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > >> ---
+> > >>   .../devicetree/bindings/soundwire/slave.txt   | 51 +++++++++++++++++++
+> > >>   1 file changed, 51 insertions(+)
+> > >>   create mode 100644 Documentation/devicetree/bindings/soundwire/slave.txt
+> > >
+> > > Can you convert this to DT schema given it is a common binding.
+> > >
 > >
-> > +#define INSN_MASK_WFI                0xffffff00
-> > +#define INSN_MATCH_WFI               0x10500000
-> > +
-> >   #define INSN_MATCH_LB               0x3
-> >   #define INSN_MASK_LB                0x707f
-> >   #define INSN_MATCH_LH               0x1003
-> > @@ -179,6 +182,87 @@ static ulong get_insn(struct kvm_vcpu *vcpu)
-> >       return val;
-> >   }
+> > I will give that a go in next version!
 > >
-> > +typedef int (*illegal_insn_func)(struct kvm_vcpu *vcpu,
-> > +                              struct kvm_run *run,
-> > +                              ulong insn);
-> > +
-> > +static int truly_illegal_insn(struct kvm_vcpu *vcpu,
-> > +                           struct kvm_run *run,
-> > +                           ulong insn)
-> > +{
-> > +     /* TODO: Redirect trap to Guest VCPU */
-> > +     return -ENOTSUPP;
-> > +}
-> > +
-> > +static int system_opcode_insn(struct kvm_vcpu *vcpu,
-> > +                           struct kvm_run *run,
-> > +                           ulong insn)
-> > +{
-> > +     if ((insn & INSN_MASK_WFI) == INSN_MATCH_WFI) {
-> > +             vcpu->stat.wfi_exit_stat++;
-> > +             if (!kvm_arch_vcpu_runnable(vcpu)) {
-> > +                     srcu_read_unlock(&vcpu->kvm->srcu, vcpu->arch.srcu_idx);
-> > +                     kvm_vcpu_block(vcpu);
-> > +                     vcpu->arch.srcu_idx = srcu_read_lock(&vcpu->kvm->srcu);
-> > +                     kvm_clear_request(KVM_REQ_UNHALT, vcpu);
-> > +             }
-> > +             vcpu->arch.guest_context.sepc += INSN_LEN(insn);
-> > +             return 1;
-> > +     }
-> > +
-> > +     return truly_illegal_insn(vcpu, run, insn);
-> > +}
-> > +
-> > +static illegal_insn_func illegal_insn_table[32] = {
->
-> Every time I did experiments on PowerPC with indirect tables like this
-> over switch() in C, the switch() code won. CPUs are pretty good at
-> predicting branches. Predicting indirect jumps however, they are
-> terrible at.
->
-> So unless you consider the jump table more readable / maintainable, I
-> would suggest to use a simple switch() statement. It will be faster and
-> smaller.
+> > > What does the host controller look like? You need to define the node
+> > > hierarchy. Bus controller schemas should then include the bus schema.
+> > > See spi-controller.yaml.
+> >
+> > Host controller is always parent of these devices which is represented
+> > in the example.
+> >
+> > In my previous patches, i did put this slave bindings in bus.txt, but
+> > Vinod suggested to move it to slave.txt.
+> >
+> > Are you suggesting to add two yamls here, one for slave and one for bus
+> > Or just document this in one bus bindings?
+> 
+> One. Like I said, see spi-controller.yaml.
+> 
+> > >> diff --git a/Documentation/devicetree/bindings/soundwire/slave.txt b/Documentation/devicetree/bindings/soundwire/slave.txt
+> > >> new file mode 100644
+> > >> index 000000000000..201f65d2fafa
+> > >> --- /dev/null
+> > >> +++ b/Documentation/devicetree/bindings/soundwire/slave.txt
+> > >> @@ -0,0 +1,51 @@
+> > >> +SoundWire slave device bindings.
+> > >> +
+> > >> +SoundWire is a 2-pin multi-drop interface with data and clock line.
+> > >> +It facilitates development of low cost, efficient, high performance systems.
+> > >> +
+> > >> +SoundWire slave devices:
+> > >> +Every SoundWire controller node can contain zero or more child nodes
+> > >> +representing slave devices on the bus. Every SoundWire slave device is
+> > >> +uniquely determined by the enumeration address containing 5 fields:
+> > >> +SoundWire Version, Instance ID, Manufacturer ID, Part ID
+> > >> +and Class ID for a device. Addition to below required properties,
+> > >> +child nodes can have device specific bindings.
+> > >> +
+> > >> +Required properties:
+> > >> +- compatible:        "sdw<LinkID><VersionID><InstanceID><MFD><PID><CID>".
+> > >> +              Is the textual representation of SoundWire Enumeration
+> > >> +              address along with Link ID. compatible string should contain
+> > >> +              SoundWire Link ID, SoundWire Version ID, Instance ID,
+> > >> +              Manufacturer ID, Part ID and Class ID in order
+> > >> +              represented as above and shall be in lower-case hexadecimal
+> > >> +              with leading zeroes. Vaild sizes of these fields are
+> > >> +              LinkID is 1 nibble,
+> > >> +              Version ID is 1 nibble
+> > >> +              Instance ID in 1 nibble
+> > >> +              MFD in 4 nibbles
+> > >> +              PID in 4 nibbles
+> > >> +              CID is 2 nibbles
+> > >> +
+> > >> +              Version number '0x1' represents SoundWire 1.0
+> > >> +              Version number '0x2' represents SoundWire 1.1
+> > >
+> > > This can all be a regex.
+> > >
+> > >> +              ex: "sdw0110217201000" represents 0 LinkID,
+> > >> +              SoundWire 1.0 version slave with Instance ID 1.
+> > >> +              More Information on detail of encoding of these fields can be
+> > >> +              found in MIPI Alliance DisCo & SoundWire 1.0 Specifications.
+> > >> +
+> > >> +SoundWire example for Qualcomm's SoundWire controller:
+> > >> +
+> > >> +soundwire@c2d0000 {
+> > >> +    compatible = "qcom,soundwire-v1.5.0"
+> > >> +    reg = <0x0c2d0000 0x2000>;
+> > >> +
+> > >> +    spkr_left:wsa8810-left{
+> > >> +            compatible = "sdw0110217201000";
+> > >> +            ...
+> > >> +    };
+> > >> +
+> > >> +    spkr_right:wsa8810-right{
+> > >> +            compatible = "sdw0120217201000";
+> > >
+> > > The normal way to distinguish instances is with 'reg'. So I think you
+> > > need 'reg' with Instance ID moved there at least. Just guessing, but
+> > > perhaps Link ID, too? And for 2 different classes of device is that
+> > > enough?
+> >
+> > In previous bindings ( https://lists.gt.net/linux/kernel/3403276 ) we
+> > did have instance-id as different property, however Pierre had some good
+> > suggestion to make it align with _ADR encoding as per MIPI DisCo spec.
+> >
+> > Do you still think that we should split the instance id to reg property?
+> 
+> Assuming you could have more than 1 of the same device on the bus,
+> then you need some way to distinguish them and the way that's done for
+> DT is unit-address/reg. And compatible strings should be constant for
+> each instance.
 
-Yes, readability was the reason why we choose jump table but
-I see your point. Most of the entries in jump table point to
-truly_illegal_insn() so I guess switch case will be quite simple
-here.
+That does make sense, we can use unit-address/reg as instance id.
 
-I will update this in next revision.
-
-Regards,
-Anup
-
->
->
-> Alex
->
->
-> > +     truly_illegal_insn, /* 0 */
-> > +     truly_illegal_insn, /* 1 */
-> > +     truly_illegal_insn, /* 2 */
-> > +     truly_illegal_insn, /* 3 */
-> > +     truly_illegal_insn, /* 4 */
-> > +     truly_illegal_insn, /* 5 */
-> > +     truly_illegal_insn, /* 6 */
-> > +     truly_illegal_insn, /* 7 */
-> > +     truly_illegal_insn, /* 8 */
-> > +     truly_illegal_insn, /* 9 */
-> > +     truly_illegal_insn, /* 10 */
-> > +     truly_illegal_insn, /* 11 */
-> > +     truly_illegal_insn, /* 12 */
-> > +     truly_illegal_insn, /* 13 */
-> > +     truly_illegal_insn, /* 14 */
-> > +     truly_illegal_insn, /* 15 */
-> > +     truly_illegal_insn, /* 16 */
-> > +     truly_illegal_insn, /* 17 */
-> > +     truly_illegal_insn, /* 18 */
-> > +     truly_illegal_insn, /* 19 */
-> > +     truly_illegal_insn, /* 20 */
-> > +     truly_illegal_insn, /* 21 */
-> > +     truly_illegal_insn, /* 22 */
-> > +     truly_illegal_insn, /* 23 */
-> > +     truly_illegal_insn, /* 24 */
-> > +     truly_illegal_insn, /* 25 */
-> > +     truly_illegal_insn, /* 26 */
-> > +     truly_illegal_insn, /* 27 */
-> > +     system_opcode_insn, /* 28 */
-> > +     truly_illegal_insn, /* 29 */
-> > +     truly_illegal_insn, /* 30 */
-> > +     truly_illegal_insn  /* 31 */
-> > +};
-> > +
-> > +static int illegal_inst_fault(struct kvm_vcpu *vcpu, struct kvm_run *run,
-> > +                           unsigned long stval)
-> > +{
-> > +     ulong insn = stval;
-> > +
-> > +     if (unlikely((insn & 3) != 3)) {
-> > +             if (insn == 0)
-> > +                     insn = get_insn(vcpu);
-> > +             if ((insn & 3) != 3)
-> > +                     return truly_illegal_insn(vcpu, run, insn);
-> > +     }
-> > +
-> > +     return illegal_insn_table[(insn & 0x7c) >> 2](vcpu, run, insn);
-> > +}
-> > +
-> >   static int emulate_load(struct kvm_vcpu *vcpu, struct kvm_run *run,
-> >                       unsigned long fault_addr)
-> >   {
-> > @@ -439,6 +523,10 @@ int kvm_riscv_vcpu_exit(struct kvm_vcpu *vcpu, struct kvm_run *run,
-> >       ret = -EFAULT;
-> >       run->exit_reason = KVM_EXIT_UNKNOWN;
-> >       switch (scause) {
-> > +     case EXC_INST_ILLEGAL:
-> > +             if (vcpu->arch.guest_context.hstatus & HSTATUS_SPV)
-> > +                     ret = illegal_inst_fault(vcpu, run, stval);
-> > +             break;
-> >       case EXC_INST_PAGE_FAULT:
-> >       case EXC_LOAD_PAGE_FAULT:
-> >       case EXC_STORE_PAGE_FAULT:
-> >
->
+Thanks
+-- 
+~Vinod
