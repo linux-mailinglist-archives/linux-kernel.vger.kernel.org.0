@@ -2,43 +2,35 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 60B8399CDC
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:38:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CA00699CF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404221AbfHVRYb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45090 "EHLO mail.kernel.org"
+        id S2404959AbfHVRi1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:38:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404060AbfHVRYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:06 -0400
+        id S2404187AbfHVRY2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:28 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4038521743;
-        Thu, 22 Aug 2019 17:24:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0C0972341E;
+        Thu, 22 Aug 2019 17:24:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494645;
-        bh=jxLOBhw9h0lPlbNUzEXOihM0wCVLjaQE6aK+9h0aGs4=;
+        s=default; t=1566494667;
+        bh=M0ON+wcSMXQ4IP2Gj/v1u/IHC14XFEaaHkW20mRRtX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XP77jMJAY57286jjjWVdwANph0RhkkyhEc6GdXzC9k7P3DALOlMRShfwd0VyCEKc/
-         FycU8qRZEfDgJDuZypWUppdtxPOfYNxz3NsYcNJbEEyvJmj98rlSu2kLNLDbMLBpLF
-         zvroToWan/1Zwavv6WPTRqNhvy3ssN8cxm/2HfzM=
+        b=kiBIxfYzDgxMGCEwJXi1uvk+1e9TsvbxG3tUAfkwLUP8vwyffM6jxMKUp69ovri0w
+         rvVdAHswXhWGPcLaZFWgbL1GE9KUOGiQLLTXiMAwu1YFBDI3dhUouOeVmTs8HrrrsQ
+         oCG/cQmX3YdS6/LbSMkMiDtJ1kwFbUHbBkjw93Yo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 080/103] ocfs2: remove set but not used variable last_hash
-Date:   Thu, 22 Aug 2019 10:19:08 -0700
-Message-Id: <20190822171732.212530014@linuxfoundation.org>
+        stable@vger.kernel.org, David Binderman <dcb314@hotmail.com>,
+        Ian Abbott <abbotti@mev.co.uk>
+Subject: [PATCH 4.9 081/103] staging: comedi: dt3000: Fix signed integer overflow divider * base
+Date:   Thu, 22 Aug 2019 10:19:09 -0700
+Message-Id: <20190822171732.247195281@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -51,54 +43,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 7bc36e3ce91471b6377c8eadc0a2f220a2280083 ]
+From: Ian Abbott <abbotti@mev.co.uk>
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+commit b4d98bc3fc93ec3a58459948a2c0e0c9b501cd88 upstream.
 
-  fs/ocfs2/xattr.c: In function ocfs2_xattr_bucket_find:
-  fs/ocfs2/xattr.c:3828:6: warning: variable last_hash set but not used [-Wunused-but-set-variable]
+In `dt3k_ns_to_timer()` the following lines near the end of the function
+result in a signed integer overflow:
 
-It's never used and can be removed.
+	prescale = 15;
+	base = timer_base * (1 << prescale);
+	divider = 65535;
+	*nanosec = divider * base;
 
-Link: http://lkml.kernel.org/r/20190716132110.34836-1-yuehaibing@huawei.com
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
-Cc: Mark Fasheh <mark@fasheh.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Junxiao Bi <junxiao.bi@oracle.com>
-Cc: Changwei Ge <gechangwei@live.cn>
-Cc: Gang He <ghe@suse.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+(`divider`, `base` and `prescale` are type `int`, `timer_base` and
+`*nanosec` are type `unsigned int`.  The value of `timer_base` will be
+either 50 or 100.)
+
+The main reason for the overflow is that the calculation for `base` is
+completely wrong.  It should be:
+
+	base = timer_base * (prescale + 1);
+
+which matches an earlier instance of this calculation in the same
+function.
+
+Reported-by: David Binderman <dcb314@hotmail.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
+Link: https://lore.kernel.org/r/20190812111517.26803-1-abbotti@mev.co.uk
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- fs/ocfs2/xattr.c | 3 ---
- 1 file changed, 3 deletions(-)
+ drivers/staging/comedi/drivers/dt3000.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
-index 01932763b4d10..e108c945ac1f8 100644
---- a/fs/ocfs2/xattr.c
-+++ b/fs/ocfs2/xattr.c
-@@ -3832,7 +3832,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
- 	u16 blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
- 	int low_bucket = 0, bucket, high_bucket;
- 	struct ocfs2_xattr_bucket *search;
--	u32 last_hash;
- 	u64 blkno, lower_blkno = 0;
+--- a/drivers/staging/comedi/drivers/dt3000.c
++++ b/drivers/staging/comedi/drivers/dt3000.c
+@@ -377,7 +377,7 @@ static int dt3k_ns_to_timer(unsigned int
+ 	}
  
- 	search = ocfs2_xattr_bucket_new(inode);
-@@ -3876,8 +3875,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
- 		if (xh->xh_count)
- 			xe = &xh->xh_entries[le16_to_cpu(xh->xh_count) - 1];
- 
--		last_hash = le32_to_cpu(xe->xe_name_hash);
--
- 		/* record lower_blkno which may be the insert place. */
- 		lower_blkno = blkno;
- 
--- 
-2.20.1
-
+ 	prescale = 15;
+-	base = timer_base * (1 << prescale);
++	base = timer_base * (prescale + 1);
+ 	divider = 65535;
+ 	*nanosec = divider * base;
+ 	return (prescale << 16) | (divider);
 
 
