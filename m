@@ -2,118 +2,104 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 464489993C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:33:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E927E99942
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 18:34:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389986AbfHVQcf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 12:32:35 -0400
-Received: from foss.arm.com ([217.140.110.172]:48772 "EHLO foss.arm.com"
+        id S1732948AbfHVQeD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 12:34:03 -0400
+Received: from pegase1.c-s.fr ([93.17.236.30]:19398 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728591AbfHVQcd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 12:32:33 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7AFD28;
-        Thu, 22 Aug 2019 09:32:32 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 877293F718;
-        Thu, 22 Aug 2019 09:32:31 -0700 (PDT)
-Subject: Re: [PATCH v2 05/12] irqchip/gic: Prepare for more than 16 PPIs
-To:     Julien <julien.thierry.kdev@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     John Garry <john.garry@huawei.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>,
-        Lokesh Vutla <lokeshvutla@ti.com>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190806100121.240767-1-maz@kernel.org>
- <20190806100121.240767-6-maz@kernel.org>
- <1b2675f6-f839-80f8-b7d8-a7d402085745@gmail.com>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <ccd1a1f2-d1a5-4f35-eb5e-ba5acd33e3ea@kernel.org>
-Date:   Thu, 22 Aug 2019 17:32:27 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <1b2675f6-f839-80f8-b7d8-a7d402085745@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1730610AbfHVQeD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 12:34:03 -0400
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 46DqqC6cmCz9v0d2;
+        Thu, 22 Aug 2019 18:33:59 +0200 (CEST)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=B+jtpOPd; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id oQlzQ3FpwLRp; Thu, 22 Aug 2019 18:33:59 +0200 (CEST)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 46DqqC5b0Dz9v0d4;
+        Thu, 22 Aug 2019 18:33:59 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1566491639; bh=Kdm5BN3MSh4jmd1gvQf5NOGQGIfy+jba9n23a8nT9D0=;
+        h=From:Subject:To:Cc:Date:From;
+        b=B+jtpOPdcqq2126W9BjzD62GByRF8IzigU7Zz5okxFmURHa5u7ptX6FduM8M41k6K
+         yhP2L7vwHc1efdFz1kAzdzewmKxyTk+gyY6eXycNbAhrlLbguzq+y3W+vyqJTHYZSg
+         s2fc3l2KFTtQSVmsTQCpv3TkesPfx1VOJV0mMDaA=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 766FF8B84C;
+        Thu, 22 Aug 2019 18:34:01 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id WsNVxstKHuCt; Thu, 22 Aug 2019 18:34:01 +0200 (CEST)
+Received: from pc16032vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 39D158B81D;
+        Thu, 22 Aug 2019 18:34:01 +0200 (CEST)
+Received: by pc16032vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id DDCD66B730; Thu, 22 Aug 2019 16:34:00 +0000 (UTC)
+Message-Id: <cover.1566491310.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v2 0/8] powerpc/vdso32 enhancement and optimisation
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Thu, 22 Aug 2019 16:34:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julien,
+This series:
+- adds getcpu()
+- adds coarse clocks in clock_gettime
+- fixes and adds all clocks in clock_getres
+- optimises the retrieval of the datapage address
+- optimises the cache functions
 
-On 22/08/2019 17:11, Julien wrote:
-> Hi Marc,
-> 
-> On 06/08/19 11:01, Marc Zyngier wrote:
->> GICv3.1 allows up to 80 PPIs (16 legaci PPIs and 64 Extended PPIs),
->> meaning we can't just leave the old 16 hardcoded everywhere.
->>
->> We also need to add the infrastructure to discover the number of PPIs
->> on a per redistributor basis, although we still pretend there is only
->> 16 of them for now.
->>
->> No functional change.
->>
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> ---
->>   drivers/irqchip/irq-gic-common.c | 19 ++++++++++++-------
->>   drivers/irqchip/irq-gic-common.h |  2 +-
->>   drivers/irqchip/irq-gic-v3.c     | 22 +++++++++++++++-------
->>   drivers/irqchip/irq-gic.c        |  2 +-
->>   drivers/irqchip/irq-hip04.c      |  2 +-
->>   5 files changed, 30 insertions(+), 17 deletions(-)
->>
->> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
->> index 6900b6f0921c..14110db01c05 100644
->> --- a/drivers/irqchip/irq-gic-common.c
->> +++ b/drivers/irqchip/irq-gic-common.c
->> @@ -128,26 +128,31 @@ void gic_dist_config(void __iomem *base, int gic_irqs,
->>   		sync_access();
->>   }
->>   
->> -void gic_cpu_config(void __iomem *base, void (*sync_access)(void))
->> +void gic_cpu_config(void __iomem *base, int nr, void (*sync_access)(void))
->>   {
->>   	int i;
->>   
->>   	/*
->>   	 * Deal with the banked PPI and SGI interrupts - disable all
->> -	 * PPI interrupts, ensure all SGI interrupts are enabled.
->> -	 * Make sure everything is deactivated.
->> +	 * private interrupts. Make sure everything is deactivated.
->>   	 */
->> -	writel_relaxed(GICD_INT_EN_CLR_X32, base + GIC_DIST_ACTIVE_CLEAR);
->> -	writel_relaxed(GICD_INT_EN_CLR_PPI, base + GIC_DIST_ENABLE_CLEAR);
->> -	writel_relaxed(GICD_INT_EN_SET_SGI, base + GIC_DIST_ENABLE_SET);
->> +	for (i = 0; i < nr; i += 32) {
-> 
-> You added "nr" as argument but if "nr" isn't a multiple of 32 weird 
-> things might happen, no?
->
-> It would be worth specifying that somewhere, and checking it with a WARN().
+It puts together the three patches sent out earlier allthought they
+were not presented as a series, hence the 'v2' tag for now.
 
-TBH, I'm unsure whether that's worth it. The architecture is completely
-built around having the private interrupts in blocks of 32, and you can
-only get something wrong if you misdecode the number of interrupts from
-the registers.
+v2:
+- Used named labels in patch 2
+- Added patch from Vincenzo to fix clock_getres() (patch 3)
+- Removed unnecessary label in patch 4 as suggested by Segher
+- Added patches 5 to 8
 
-> Maybe it might be worth reducing the granularity to manipulating 16 irqs 
-> since there are 16 SGI + 16 PPI + 64 EPPI, but that might not be very 
-> useful right now.
+Christophe Leroy (8):
+  powerpc/32: Add VDSO version of getcpu
+  powerpc/vdso32: Add support for CLOCK_{REALTIME/MONOTONIC}_COARSE
+  powerpc: Fix vDSO clock_getres()
+  powerpc/vdso32: inline __get_datapage()
+  powerpc/vdso32: Don't read cache line size from the datapage on PPC32.
+  powerpc/vdso32: use LOAD_REG_IMMEDIATE()
+  powerpc/vdso32: implement clock_getres entirely
+  powerpc/vdso32: miscellaneous optimisations
 
-I don't see what this brings us at this point. The architecture doesn't
-seem to go in the direction of adding more SGIs, so we're pretty safe on
-that front...
+ arch/powerpc/include/asm/vdso.h           |   2 +
+ arch/powerpc/include/asm/vdso_datapage.h  |   6 +-
+ arch/powerpc/kernel/asm-offsets.c         |   7 +-
+ arch/powerpc/kernel/head_32.h             |  13 ++++
+ arch/powerpc/kernel/head_booke.h          |  11 +++
+ arch/powerpc/kernel/time.c                |   1 +
+ arch/powerpc/kernel/vdso.c                |   5 --
+ arch/powerpc/kernel/vdso32/Makefile       |   4 +-
+ arch/powerpc/kernel/vdso32/cacheflush.S   |  33 ++++++--
+ arch/powerpc/kernel/vdso32/datapage.S     |  32 ++------
+ arch/powerpc/kernel/vdso32/datapage.h     |  11 +++
+ arch/powerpc/kernel/vdso32/getcpu.S       |  13 +++-
+ arch/powerpc/kernel/vdso32/gettimeofday.S | 125 +++++++++++++++++++++---------
+ arch/powerpc/kernel/vdso32/vdso32.lds.S   |   2 -
+ arch/powerpc/kernel/vdso64/gettimeofday.S |   7 +-
+ 15 files changed, 183 insertions(+), 89 deletions(-)
+ create mode 100644 arch/powerpc/kernel/vdso32/datapage.h
 
-Thanks,
-
-	M.
 -- 
-Jazz is not dead, it just smells funny...
+2.13.3
+
