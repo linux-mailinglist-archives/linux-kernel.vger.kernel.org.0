@@ -2,176 +2,93 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id DA16C99775
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:55:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B6C19977F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 16:57:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732321AbfHVOyR (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 10:54:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37378 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732015AbfHVOyQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 10:54:16 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so3820047pgp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 07:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=x7HSKfWMUdaVga31So0a+mtOQLYUde3yUivJl3LTw5g=;
-        b=X098aRZXbyr7BUOHnuJL2JXqRpr5e8XAyVfqVyBfBqCtVhZ7IhjfP8E2B2YJsJ1E0G
-         hxrJCy7aZCex7/tusPNBr3Dk+TUi2Uwh0d7M8r9WxoaRjHtqVEksWyah5Pz0eVCpc0hA
-         a2RB13MNX+AXvTFptX7uLFfFQu42+Wva+JnVRz9CPZ8aHNHbzEVgQuZ7GlHvsTFMZ2Re
-         9+3DEOUzSPmQQ6y6Iw8eTnhvhWUuiv7lOUZAheY/d3VBCFzstRbAVPMox3Op4bEU5SVH
-         bJz5itsV0o+KwP5fpzjw1LqkIzlKhbxjVOee0aspB7QkzT3IOl36C3jwon6b3oGly1KY
-         JTVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x7HSKfWMUdaVga31So0a+mtOQLYUde3yUivJl3LTw5g=;
-        b=k0NlCN1BL9lGwKAG3IcweSRrJ9//reMtD74P9WHN7tbflVbJK+ZQHu3mRBA5j1g8q1
-         /hoOkB0G1of65e/qN+/J7mL/CU2u0XhNXLfMq2ajjLZFswmnTxDgXKz1MEXfsipT2sby
-         EMxd0BaS0HltHp42uE28SgnpJfysWKQm+qB9s+D2vGSASeMfFqbb+uSQsVLoi+YeibgP
-         m63LEgMmsLtZ0V42iK1mPPF0fdrRoD4bvQL57HvUbjwsQnrb5QA8g0ElVJ/fDc5FVcK3
-         VKz5H02j6HHjv3KorpO70TRkB9ltdPjBrTbg6s8wEjukJwfEBhrpPbz4ISKilL554t21
-         cTAw==
-X-Gm-Message-State: APjAAAUoDKqXn8AS+jbQzcPTYz8MWb7IoRBRM8daykz+J82CgcM5wjRd
-        yGDZO3e91csIeFDqS3qrEST3ibNG8KuAQAwfapAEZg==
-X-Google-Smtp-Source: APXvYqzBNvIpEvVab5uvhNpSX4tVDr7f0wZOMhTUXFg77KUDSGwsULUFa1wN7ajsvNDzlVTzNqendNlf5megUHX/qys=
-X-Received: by 2002:a17:90a:858a:: with SMTP id m10mr11906pjn.129.1566485655293;
- Thu, 22 Aug 2019 07:54:15 -0700 (PDT)
+        id S2388864AbfHVO5J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 10:57:09 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:5200 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729922AbfHVO5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 10:57:08 -0400
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3BA7652E0CFE38D2A19A;
+        Thu, 22 Aug 2019 22:56:41 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.439.0; Thu, 22 Aug 2019
+ 22:56:35 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <vkoul@kernel.org>, <sanyog.r.kale@intel.com>,
+        <pierre-louis.bossart@linux.intel.com>, <ladis@linux-mips.org>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH v2 -next] soundwire: Fix -Wunused-function warning
+Date:   Thu, 22 Aug 2019 22:54:08 +0800
+Message-ID: <20190822145408.76272-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
+In-Reply-To: <20190816141409.49940-1-yuehaibing@huawei.com>
+References: <20190816141409.49940-1-yuehaibing@huawei.com>
 MIME-Version: 1.0
-References: <000000000000d9f094057a17b97b@google.com> <000000000000b439370586498dff@google.com>
- <CAAeHK+zUHJswwHfVUCV0qTgvFVFZpT0hJqioLyYgbA0yQC0H8Q@mail.gmail.com>
- <CAAeHK+w+asSQ3axWymToQ+uzPfEAYS2QimVBL85GuJRBtxkjDA@mail.gmail.com> <CAAeHK+y-2DZ1sWUE5bESrd=dUAaGrHXzR5+gFJFgiAaWo+D2dw@mail.gmail.com>
-In-Reply-To: <CAAeHK+y-2DZ1sWUE5bESrd=dUAaGrHXzR5+gFJFgiAaWo+D2dw@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 22 Aug 2019 16:54:04 +0200
-Message-ID: <CAAeHK+wL4pmXo3Li2dcULu4Wx+zUQLX_94BDizoZWQ+vMdz5Lw@mail.gmail.com>
-Subject: Re: WARNING in rollback_registered_many (2)
-To:     syzbot <syzbot+40918e4d826fb2ff9b96@syzkaller.appspotmail.com>,
-        USB list <linux-usb@vger.kernel.org>
-Cc:     Larry Finger <Larry.Finger@lwfinger.net>, avagin@virtuozzo.com,
-        "David S. Miller" <davem@davemloft.net>,
-        devel@driverdev.osuosl.org,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Eric Dumazet <edumazet@google.com>,
-        florian.c.schilhabel@googlemail.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kai Heng Feng <kai.heng.feng@canonical.com>,
-        ktkhai@virtuozzo.com, LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, straube.linux@gmail.com,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        tyhicks@canonical.com, Matthew Wilcox <willy@infradead.org>,
-        Oliver Neukum <oneukum@suse.com>,
-        Alan Stern <stern@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 3:07 PM Andrey Konovalov <andreyknvl@google.com> wrote:
->
-> On Wed, Aug 7, 2019 at 4:03 PM Andrey Konovalov <andreyknvl@google.com> wrote:
-> >
-> > On Fri, Apr 12, 2019 at 1:32 PM Andrey Konovalov <andreyknvl@google.com> wrote:
-> > >
-> > > On Fri, Apr 12, 2019 at 1:29 AM syzbot
-> > > <syzbot+40918e4d826fb2ff9b96@syzkaller.appspotmail.com> wrote:
-> > > >
-> > > > syzbot has found a reproducer for the following crash on:
-> > > >
-> > > > HEAD commit:    9a33b369 usb-fuzzer: main usb gadget fuzzer driver
-> > > > git tree:       https://github.com/google/kasan/tree/usb-fuzzer
-> > > > console output: https://syzkaller.appspot.com/x/log.txt?x=10d552b7200000
-> > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=23e37f59d94ddd15
-> > > > dashboard link: https://syzkaller.appspot.com/bug?extid=40918e4d826fb2ff9b96
-> > > > compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-> > > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a4c1af200000
-> > > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=121b274b200000
-> > > >
-> > > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> > > > Reported-by: syzbot+40918e4d826fb2ff9b96@syzkaller.appspotmail.com
-> > > >
-> > > > usb 1-1: r8712u: MAC Address from efuse = 00:e0:4c:87:00:00
-> > > > usb 1-1: r8712u: Loading firmware from "rtlwifi/rtl8712u.bin"
-> > > > usb 1-1: USB disconnect, device number 2
-> > > > usb 1-1: Direct firmware load for rtlwifi/rtl8712u.bin failed with error -2
-> > > > usb 1-1: r8712u: Firmware request failed
-> > > > WARNING: CPU: 0 PID: 575 at net/core/dev.c:8152
-> > > > rollback_registered_many+0x1f3/0xe70 net/core/dev.c:8152
-> > > > Kernel panic - not syncing: panic_on_warn set ...
-> > > > CPU: 0 PID: 575 Comm: kworker/0:4 Not tainted 5.1.0-rc4-319354-g9a33b36 #3
-> > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> > > > Google 01/01/2011
-> > > > Workqueue: usb_hub_wq hub_event
-> > > > Call Trace:
-> > > >   __dump_stack lib/dump_stack.c:77 [inline]
-> > > >   dump_stack+0xe8/0x16e lib/dump_stack.c:113
-> > > >   panic+0x29d/0x5f2 kernel/panic.c:214
-> > > >   __warn.cold+0x20/0x48 kernel/panic.c:571
-> > > >   report_bug+0x262/0x2a0 lib/bug.c:186
-> > > >   fixup_bug arch/x86/kernel/traps.c:179 [inline]
-> > > >   fixup_bug arch/x86/kernel/traps.c:174 [inline]
-> > > >   do_error_trap+0x130/0x1f0 arch/x86/kernel/traps.c:272
-> > > >   do_invalid_op+0x37/0x40 arch/x86/kernel/traps.c:291
-> > > >   invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:973
-> > > > RIP: 0010:rollback_registered_many+0x1f3/0xe70 net/core/dev.c:8152
-> > > > Code: 05 00 00 31 ff 44 89 fe e8 5a 15 f3 f4 45 84 ff 0f 85 49 ff ff ff e8
-> > > > 1c 14 f3 f4 0f 1f 44 00 00 e8 12 14 f3 f4 e8 0d 14 f3 f4 <0f> 0b 4c 89 e7
-> > > > e8 33 72 f2 f6 31 ff 41 89 c4 89 c6 e8 27 15 f3 f4
-> > > > RSP: 0018:ffff88809d087698 EFLAGS: 00010293
-> > > > RAX: ffff88809d058000 RBX: ffff888096240000 RCX: ffffffff8c7eb146
-> > > > RDX: 0000000000000000 RSI: ffffffff8c7eb163 RDI: 0000000000000001
-> > > > RBP: ffff88809d0877c8 R08: ffff88809d058000 R09: fffffbfff2708111
-> > > > R10: fffffbfff2708110 R11: ffffffff93840887 R12: ffff888096240070
-> > > > R13: dffffc0000000000 R14: ffff88809d087758 R15: 0000000000000000
-> > > >   rollback_registered+0xf7/0x1c0 net/core/dev.c:8228
-> > > >   unregister_netdevice_queue net/core/dev.c:9275 [inline]
-> > > >   unregister_netdevice_queue+0x1dc/0x2b0 net/core/dev.c:9268
-> > > >   unregister_netdevice include/linux/netdevice.h:2655 [inline]
-> > > >   unregister_netdev+0x1d/0x30 net/core/dev.c:9316
-> > > >   r871xu_dev_remove+0xe7/0x223 drivers/staging/rtl8712/usb_intf.c:604
-> > > >   usb_unbind_interface+0x1c9/0x980 drivers/usb/core/driver.c:423
-> > > >   __device_release_driver drivers/base/dd.c:1082 [inline]
-> > > >   device_release_driver_internal+0x436/0x4f0 drivers/base/dd.c:1113
-> > > >   bus_remove_device+0x302/0x5c0 drivers/base/bus.c:556
-> > > >   device_del+0x467/0xb90 drivers/base/core.c:2269
-> > > >   usb_disable_device+0x242/0x790 drivers/usb/core/message.c:1235
-> > > >   usb_disconnect+0x298/0x870 drivers/usb/core/hub.c:2197
-> > > >   hub_port_connect drivers/usb/core/hub.c:4940 [inline]
-> > > >   hub_port_connect_change drivers/usb/core/hub.c:5204 [inline]
-> > > >   port_event drivers/usb/core/hub.c:5350 [inline]
-> > > >   hub_event+0xcd2/0x3b00 drivers/usb/core/hub.c:5432
-> > > >   process_one_work+0x90f/0x1580 kernel/workqueue.c:2269
-> > > >   process_scheduled_works kernel/workqueue.c:2331 [inline]
-> > > >   worker_thread+0x7b0/0xe20 kernel/workqueue.c:2417
-> > > >   kthread+0x313/0x420 kernel/kthread.c:253
-> > > >   ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:352
-> > > > Kernel Offset: disabled
-> > > > Rebooting in 86400 seconds..
-> > > >
-> > >
-> > > +linux-usb mailing list
-> >
-> > This USB bug is the most frequently triggered one right now with over
-> > 27k kernel crashes.
->
-> OK, this report is confusing. It was initially reported on the
-> upstream instance a long time ago, but since then has stopped
-> happening, as it was probably fixed. Then when we launched the USB
-> fuzzing instance, it has started producing similarly named reports
-> (with a different root cause though), and they were bucketed into this
-> bug by syzkaller. I've improved parsing titles of such reports in
-> syzkaller, so I'm invalidating this one, and syzbot should send a
-> properly attributed USB report soon.
->
-> #syz invalid
+If CONFIG_ACPI is not set, gcc warning this:
 
-This has been reported as:
+drivers/soundwire/slave.c:16:12: warning:
+ 'sdw_slave_add' defined but not used [-Wunused-function]
 
-WARNING in r871xu_dev_remove
+Now all code in slave.c is only used on ACPI enabled,
+so compiles it while CONFIG_ACPI is set.
 
-https://syzkaller.appspot.com/bug?extid=80899a8a8efe8968cde7
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Suggested-by: Ladislav Michl <ladis@linux-mips.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+v2: use obj-$(CONFIG_ACPI) += slave.o
+---
+ drivers/soundwire/Makefile | 3 ++-
+ drivers/soundwire/slave.c  | 3 ---
+ 2 files changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/soundwire/Makefile b/drivers/soundwire/Makefile
+index 45b7e50..a28bf3e 100644
+--- a/drivers/soundwire/Makefile
++++ b/drivers/soundwire/Makefile
+@@ -4,8 +4,9 @@
+ #
+ 
+ #Bus Objs
+-soundwire-bus-objs := bus_type.o bus.o slave.o mipi_disco.o stream.o
++soundwire-bus-objs := bus_type.o bus.o mipi_disco.o stream.o
+ obj-$(CONFIG_SOUNDWIRE) += soundwire-bus.o
++obj-$(CONFIG_ACPI) += slave.o
+ 
+ #Cadence Objs
+ soundwire-cadence-objs := cadence_master.o
+diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
+index f39a581..0dc188e 100644
+--- a/drivers/soundwire/slave.c
++++ b/drivers/soundwire/slave.c
+@@ -60,7 +60,6 @@ static int sdw_slave_add(struct sdw_bus *bus,
+ 	return ret;
+ }
+ 
+-#if IS_ENABLED(CONFIG_ACPI)
+ /*
+  * sdw_acpi_find_slaves() - Find Slave devices in Master ACPI node
+  * @bus: SDW bus instance
+@@ -110,5 +109,3 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
+ 
+ 	return 0;
+ }
+-
+-#endif
+-- 
+2.7.4
+
+
