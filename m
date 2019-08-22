@@ -2,123 +2,249 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2897B99B1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id ED6F399B13
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389682AbfHVRTs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:19:48 -0400
-Received: from gateway20.websitewelcome.com ([192.185.65.13]:32549 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389626AbfHVRTr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:19:47 -0400
-X-Greylist: delayed 1288 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 13:19:46 EDT
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id BFB07400D3776
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:53:35 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id 0qPhiofEe3Qi00qPhiV1kF; Thu, 22 Aug 2019 11:58:17 -0500
-X-Authority-Reason: nr=8
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=embeddedor.com; s=default; h=Content-Type:MIME-Version:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=jDN3gcI13QMuU629GhiL2SRw0Co9gX7UJT+3Os8fErM=; b=SEOHjcoyRRWZGD7Hbi6DMWELk7
-        yP/k6pnGV41ErJRQJOySfDIGkbyV7p8KXAbmeF27boVsaEwnQbl4m8EK2qUM17eSCQCgbI4QMlHF+
-        W1WuIw1wyvrUvcfD0BRo4UtKhiLMXQY5UtkWLzjM5u7OizXtMxjHdmqRIC04L3KLD2oj2eC6Oi+7+
-        eVJFasQCPdfvIGOqBXkXRv/JU30M+DPzsrsN1GS81VGvC9gUo3eVQcyfw5ywAO1bOFjCjrHcVxQk+
-        8YBaN4xHV5D8OtP9yuL27fmdqejo+ov//ejEw/PYp4V7SkB0eA+clptDiH7hcXA8Rg0YKU3Up+cuz
-        6yPIpZCg==;
-Received: from 187-162-252-62.static.axtel.net ([187.162.252.62]:51776 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.92)
-        (envelope-from <gustavo@linux.embeddedor.com>)
-        id 1i0qPg-000n27-S2; Thu, 22 Aug 2019 11:58:16 -0500
-Date:   Thu, 22 Aug 2019 11:58:15 -0500
-From:   "Gustavo A. R. Silva" <gustavo@linux.embeddedor.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [GIT PULL] Wimplicit-fallthrough patches for 5.3-rc6
-Message-ID: <20190822165815.GA2586@embeddedor>
+        id S2390309AbfHVRIZ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:08:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:57700 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725857AbfHVRIS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:08:18 -0400
+Received: from sasha-vm.mshome.net (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F266023407;
+        Thu, 22 Aug 2019 17:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566493697;
+        bh=rK1OBrGuvm+R9TGIP4jYa7M0vAZtn4Rbs1nc+qSXYII=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qpfH5gfC+GUz80zf2TqLhSEE0NgjbS7JtMwH/FNyDq7WNfpkMNFx3blxjA3AY+57i
+         Cn5ypQbrUWZEI0QSTfFgaCHogOTgdATQHp7D2WznxHAuwT4tAF7x+F/iKz5+Jx2oiT
+         qw0wrqWJF4c4yTomNLvcsFv3Lx5CrNMBD4fWkeZ4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Yang Shi <yang.shi@linux.alibaba.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Michal Hocko <mhocko@suse.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 5.2 006/135] mm: mempolicy: handle vma with unmovable pages mapped correctly in mbind
+Date:   Thu, 22 Aug 2019 13:06:02 -0400
+Message-Id: <20190822170811.13303-7-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190822170811.13303-1-sashal@kernel.org>
+References: <20190822170811.13303-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - linux.embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 187.162.252.62
-X-Source-L: No
-X-Exim-ID: 1i0qPg-000n27-S2
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: 187-162-252-62.static.axtel.net (embeddedor) [187.162.252.62]:51776
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 4
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-5.2.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 5.2.10-rc1
+X-KernelTest-Deadline: 2019-08-24T17:07+00:00
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The following changes since commit 609488bc979f99f805f34e9a32c1e3b71179d10b:
+From: Yang Shi <yang.shi@linux.alibaba.com>
 
-  Linux 5.3-rc2 (2019-07-28 12:47:02 -0700)
+commit a53190a4aaa36494f4d7209fd1fcc6f2ee08e0e0 upstream.
 
-are available in the Git repository at:
+When running syzkaller internally, we ran into the below bug on 4.9.x
+kernel:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gustavoars/linux.git tags/Wimplicit-fallthrough-5.3-rc6
+  kernel BUG at mm/huge_memory.c:2124!
+  invalid opcode: 0000 [#1] SMP KASAN
+  CPU: 0 PID: 1518 Comm: syz-executor107 Not tainted 4.9.168+ #2
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 0.5.1 01/01/2011
+  task: ffff880067b34900 task.stack: ffff880068998000
+  RIP: split_huge_page_to_list+0x8fb/0x1030 mm/huge_memory.c:2124
+  Call Trace:
+    split_huge_page include/linux/huge_mm.h:100 [inline]
+    queue_pages_pte_range+0x7e1/0x1480 mm/mempolicy.c:538
+    walk_pmd_range mm/pagewalk.c:50 [inline]
+    walk_pud_range mm/pagewalk.c:90 [inline]
+    walk_pgd_range mm/pagewalk.c:116 [inline]
+    __walk_page_range+0x44a/0xdb0 mm/pagewalk.c:208
+    walk_page_range+0x154/0x370 mm/pagewalk.c:285
+    queue_pages_range+0x115/0x150 mm/mempolicy.c:694
+    do_mbind mm/mempolicy.c:1241 [inline]
+    SYSC_mbind+0x3c3/0x1030 mm/mempolicy.c:1370
+    SyS_mbind+0x46/0x60 mm/mempolicy.c:1352
+    do_syscall_64+0x1d2/0x600 arch/x86/entry/common.c:282
+    entry_SYSCALL_64_after_swapgs+0x5d/0xdb
+  Code: c7 80 1c 02 00 e8 26 0a 76 01 <0f> 0b 48 c7 c7 40 46 45 84 e8 4c
+  RIP  [<ffffffff81895d6b>] split_huge_page_to_list+0x8fb/0x1030 mm/huge_memory.c:2124
+   RSP <ffff88006899f980>
 
-for you to fetch changes up to c3cb6674df4c4a70f949e412dfe2230483092523:
+with the below test:
 
-  video: fbdev: acornfb: Mark expected switch fall-through (2019-08-20 19:44:01 -0500)
+  uint64_t r[1] = {0xffffffffffffffff};
 
-----------------------------------------------------------------
-Wimplicit-fallthrough patches for 5.3-rc6
+  int main(void)
+  {
+        syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
+                                intptr_t res = 0;
+        res = syscall(__NR_socket, 0x11, 3, 0x300);
+        if (res != -1)
+                r[0] = res;
+        *(uint32_t*)0x20000040 = 0x10000;
+        *(uint32_t*)0x20000044 = 1;
+        *(uint32_t*)0x20000048 = 0xc520;
+        *(uint32_t*)0x2000004c = 1;
+        syscall(__NR_setsockopt, r[0], 0x107, 0xd, 0x20000040, 0x10);
+        syscall(__NR_mmap, 0x20fed000, 0x10000, 0, 0x8811, r[0], 0);
+        *(uint64_t*)0x20000340 = 2;
+        syscall(__NR_mbind, 0x20ff9000, 0x4000, 0x4002, 0x20000340, 0x45d4, 3);
+        return 0;
+  }
 
-Hi Linus,
+Actually the test does:
 
-Please, pull the following patches that mark switch cases where we are
-expecting to fall through.
+  mmap(0x20000000, 16777216, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_FIXED|MAP_ANONYMOUS, -1, 0) = 0x20000000
+  socket(AF_PACKET, SOCK_RAW, 768)        = 3
+  setsockopt(3, SOL_PACKET, PACKET_TX_RING, {block_size=65536, block_nr=1, frame_size=50464, frame_nr=1}, 16) = 0
+  mmap(0x20fed000, 65536, PROT_NONE, MAP_SHARED|MAP_FIXED|MAP_POPULATE|MAP_DENYWRITE, 3, 0) = 0x20fed000
+  mbind(..., MPOL_MF_STRICT|MPOL_MF_MOVE) = 0
 
- - Fix fall-through warnings on arm and mips for multiple
-   configurations.
+The setsockopt() would allocate compound pages (16 pages in this test)
+for packet tx ring, then the mmap() would call packet_mmap() to map the
+pages into the user address space specified by the mmap() call.
 
-Thanks
+When calling mbind(), it would scan the vma to queue the pages for
+migration to the new node.  It would split any huge page since 4.9
+doesn't support THP migration, however, the packet tx ring compound
+pages are not THP and even not movable.  So, the above bug is triggered.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+However, the later kernel is not hit by this issue due to commit
+d44d363f6578 ("mm: don't assume anonymous pages have SwapBacked flag"),
+which just removes the PageSwapBacked check for a different reason.
 
-----------------------------------------------------------------
-Gustavo A. R. Silva (10):
-      dmaengine: fsldma: Mark expected switch fall-through
-      ARM: riscpc: Mark expected switch fall-through
-      drm/sun4i: sun6i_mipi_dsi: Mark expected switch fall-through
-      drm/sun4i: tcon: Mark expected switch fall-through
-      mtd: sa1100: Mark expected switch fall-through
-      watchdog: wdt285: Mark expected switch fall-through
-      power: supply: ab8500_charger: Mark expected switch fall-through
-      MIPS: Octeon: Mark expected switch fall-through
-      scsi: libsas: sas_discover: Mark expected switch fall-through
-      video: fbdev: acornfb: Mark expected switch fall-through
+But, there is a deeper issue.  According to the semantic of mbind(), it
+should return -EIO if MPOL_MF_MOVE or MPOL_MF_MOVE_ALL was specified and
+MPOL_MF_STRICT was also specified, but the kernel was unable to move all
+existing pages in the range.  The tx ring of the packet socket is
+definitely not movable, however, mbind() returns success for this case.
 
- arch/arm/mach-rpc/riscpc.c                   | 1 +
- arch/mips/include/asm/octeon/cvmx-sli-defs.h | 1 +
- drivers/dma/fsldma.c                         | 1 +
- drivers/gpu/drm/sun4i/sun4i_tcon.c           | 1 +
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c       | 1 +
- drivers/mtd/maps/sa1100-flash.c              | 1 +
- drivers/power/supply/ab8500_charger.c        | 1 +
- drivers/scsi/libsas/sas_discover.c           | 1 +
- drivers/video/fbdev/acornfb.c                | 1 +
- drivers/watchdog/wdt285.c                    | 2 +-
- 10 files changed, 10 insertions(+), 1 deletion(-)
+Although the most socket file associates with non-movable pages, but XDP
+may have movable pages from gup.  So, it sounds not fine to just check
+the underlying file type of vma in vma_migratable().
+
+Change migrate_page_add() to check if the page is movable or not, if it
+is unmovable, just return -EIO.  But do not abort pte walk immediately,
+since there may be pages off LRU temporarily.  We should migrate other
+pages if MPOL_MF_MOVE* is specified.  Set has_unmovable flag if some
+paged could not be not moved, then return -EIO for mbind() eventually.
+
+With this change the above test would return -EIO as expected.
+
+[yang.shi@linux.alibaba.com: fix review comments from Vlastimil]
+  Link: http://lkml.kernel.org/r/1563556862-54056-3-git-send-email-yang.shi@linux.alibaba.com
+Link: http://lkml.kernel.org/r/1561162809-59140-3-git-send-email-yang.shi@linux.alibaba.com
+Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Mel Gorman <mgorman@techsingularity.net>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ mm/mempolicy.c | 32 +++++++++++++++++++++++++-------
+ 1 file changed, 25 insertions(+), 7 deletions(-)
+
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index a1a8f5630245d..ca3f443c8fc15 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -403,7 +403,7 @@ static const struct mempolicy_operations mpol_ops[MPOL_MAX] = {
+ 	},
+ };
+ 
+-static void migrate_page_add(struct page *page, struct list_head *pagelist,
++static int migrate_page_add(struct page *page, struct list_head *pagelist,
+ 				unsigned long flags);
+ 
+ struct queue_pages {
+@@ -463,12 +463,11 @@ static int queue_pages_pmd(pmd_t *pmd, spinlock_t *ptl, unsigned long addr,
+ 	flags = qp->flags;
+ 	/* go to thp migration */
+ 	if (flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)) {
+-		if (!vma_migratable(walk->vma)) {
++		if (!vma_migratable(walk->vma) ||
++		    migrate_page_add(page, qp->pagelist, flags)) {
+ 			ret = 1;
+ 			goto unlock;
+ 		}
+-
+-		migrate_page_add(page, qp->pagelist, flags);
+ 	} else
+ 		ret = -EIO;
+ unlock:
+@@ -532,7 +531,14 @@ static int queue_pages_pte_range(pmd_t *pmd, unsigned long addr,
+ 				has_unmovable = true;
+ 				break;
+ 			}
+-			migrate_page_add(page, qp->pagelist, flags);
++
++			/*
++			 * Do not abort immediately since there may be
++			 * temporary off LRU pages in the range.  Still
++			 * need migrate other LRU pages.
++			 */
++			if (migrate_page_add(page, qp->pagelist, flags))
++				has_unmovable = true;
+ 		} else
+ 			break;
+ 	}
+@@ -961,7 +967,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
+ /*
+  * page migration, thp tail pages can be passed.
+  */
+-static void migrate_page_add(struct page *page, struct list_head *pagelist,
++static int migrate_page_add(struct page *page, struct list_head *pagelist,
+ 				unsigned long flags)
+ {
+ 	struct page *head = compound_head(page);
+@@ -974,8 +980,19 @@ static void migrate_page_add(struct page *page, struct list_head *pagelist,
+ 			mod_node_page_state(page_pgdat(head),
+ 				NR_ISOLATED_ANON + page_is_file_cache(head),
+ 				hpage_nr_pages(head));
++		} else if (flags & MPOL_MF_STRICT) {
++			/*
++			 * Non-movable page may reach here.  And, there may be
++			 * temporary off LRU pages or non-LRU movable pages.
++			 * Treat them as unmovable pages since they can't be
++			 * isolated, so they can't be moved at the moment.  It
++			 * should return -EIO for this case too.
++			 */
++			return -EIO;
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ /* page allocation callback for NUMA node migration */
+@@ -1178,9 +1195,10 @@ static struct page *new_page(struct page *page, unsigned long start)
+ }
+ #else
+ 
+-static void migrate_page_add(struct page *page, struct list_head *pagelist,
++static int migrate_page_add(struct page *page, struct list_head *pagelist,
+ 				unsigned long flags)
+ {
++	return -EIO;
+ }
+ 
+ int do_migrate_pages(struct mm_struct *mm, const nodemask_t *from,
+-- 
+2.20.1
+
