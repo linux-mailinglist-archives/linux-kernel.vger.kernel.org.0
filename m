@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 651AF99E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B7E399D35
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:41:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393288AbfHVRsr (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:48:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40420 "EHLO mail.kernel.org"
+        id S2405067AbfHVRkb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:40:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390047AbfHVRWX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:22:23 -0400
+        id S2404065AbfHVRYH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:07 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23B3E233FE;
-        Thu, 22 Aug 2019 17:22:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF7B923400;
+        Thu, 22 Aug 2019 17:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494542;
-        bh=5uuql1tVFziqA9qQ6xOQe96Cm2H7wKqbV3eqJLptOhc=;
+        s=default; t=1566494646;
+        bh=4RI37Rx+sjcyo1ydJ5qrYWugcM4CsjGfUywUIGQzXhM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1W1uxlfn30oCYKU5cmO8vFt3Qk4lR4XHokMHysbqsE7iqZ+Eg624KcEdqnApWgBXM
-         cqMr5WOqmhCKSdt1cjj/i19SERGTv/i6fI70bXNnFOQbpdI+e5Om/muhDIn3J/eZM2
-         8XfUw8ngOJRh+3c+ewOTxS9fvEIM5iQ+KALeogNk=
+        b=p+wmAu4lfMTdI8mR4aC8EfqHlgbkfl0Jb31kS9NS35JdtsVCIFDD7heMr/+6F0qP7
+         ZKS2nHcFFmb9Ryzn3adVJU0r0UFUxQcKIUbuf+ubVk2C2IYnAXDfUD3JL3doOUC8eS
+         qq5dkoJsiv0LP79a4jQxuvbobUlfgX9f9vBED4uA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Will Deacon <will@kernel.org>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Hurley <peter@hurleysoftware.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 22/78] tty/ldsem, locking/rwsem: Add missing ACQUIRE to read_failed sleep loop
-Date:   Thu, 22 Aug 2019 10:18:26 -0700
-Message-Id: <20190822171832.686181635@linuxfoundation.org>
+        stable@vger.kernel.org, Brian Norris <briannorris@chromium.org>,
+        Kalle Valo <kvalo@codeaurora.org>
+Subject: [PATCH 4.9 039/103] mwifiex: fix 802.11n/WPA detection
+Date:   Thu, 22 Aug 2019 10:18:27 -0700
+Message-Id: <20190822171730.389618592@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-References: <20190822171832.012773482@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,74 +43,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit 952041a8639a7a3a73a2b6573cb8aa8518bc39f8 ]
+From: Brian Norris <briannorris@chromium.org>
 
-While reviewing rwsem down_slowpath, Will noticed ldsem had a copy of
-a bug we just found for rwsem.
+commit df612421fe2566654047769c6852ffae1a31df16 upstream.
 
-  X = 0;
+Commit 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant
+vendor IEs") adjusted the ieee_types_vendor_header struct, which
+inadvertently messed up the offsets used in
+mwifiex_is_wpa_oui_present(). Add that offset back in, mirroring
+mwifiex_is_rsn_oui_present().
 
-  CPU0			CPU1
+As it stands, commit 63d7ef36103d breaks compatibility with WPA (not
+WPA2) 802.11n networks, since we hit the "info: Disable 11n if AES is
+not supported by AP" case in mwifiex_is_network_compatible().
 
-  rwsem_down_read()
-    for (;;) {
-      set_current_state(TASK_UNINTERRUPTIBLE);
+Fixes: 63d7ef36103d ("mwifiex: Don't abort on small, spec-compliant vendor IEs")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-                        X = 1;
-                        rwsem_up_write();
-                          rwsem_mark_wake()
-                            atomic_long_add(adjustment, &sem->count);
-                            smp_store_release(&waiter->task, NULL);
-
-      if (!waiter.task)
-        break;
-
-      ...
-    }
-
-  r = X;
-
-Allows 'r == 0'.
-
-Reported-by: Will Deacon <will@kernel.org>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Will Deacon <will@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Hurley <peter@hurleysoftware.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Fixes: 4898e640caf0 ("tty: Add timed, writer-prioritized rw semaphore")
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/tty_ldsem.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/net/wireless/marvell/mwifiex/main.h |    1 +
+ drivers/net/wireless/marvell/mwifiex/scan.c |    3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/tty/tty_ldsem.c b/drivers/tty/tty_ldsem.c
-index 34234c2338511..656c2ade6a434 100644
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -137,8 +137,7 @@ static void __ldsem_wake_readers(struct ld_semaphore *sem)
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -120,6 +120,7 @@ enum {
  
- 	list_for_each_entry_safe(waiter, next, &sem->read_wait, list) {
- 		tsk = waiter->task;
--		smp_mb();
--		waiter->task = NULL;
-+		smp_store_release(&waiter->task, NULL);
- 		wake_up_process(tsk);
- 		put_task_struct(tsk);
- 	}
-@@ -234,7 +233,7 @@ down_read_failed(struct ld_semaphore *sem, long count, long timeout)
- 	for (;;) {
- 		set_task_state(tsk, TASK_UNINTERRUPTIBLE);
+ #define MWIFIEX_MAX_TOTAL_SCAN_TIME	(MWIFIEX_TIMER_10S - MWIFIEX_TIMER_1S)
  
--		if (!waiter.task)
-+		if (!smp_load_acquire(&waiter.task))
- 			break;
- 		if (!timeout)
- 			break;
--- 
-2.20.1
-
++#define WPA_GTK_OUI_OFFSET				2
+ #define RSN_GTK_OUI_OFFSET				2
+ 
+ #define MWIFIEX_OUI_NOT_PRESENT			0
+--- a/drivers/net/wireless/marvell/mwifiex/scan.c
++++ b/drivers/net/wireless/marvell/mwifiex/scan.c
+@@ -181,7 +181,8 @@ mwifiex_is_wpa_oui_present(struct mwifie
+ 	u8 ret = MWIFIEX_OUI_NOT_PRESENT;
+ 
+ 	if (has_vendor_hdr(bss_desc->bcn_wpa_ie, WLAN_EID_VENDOR_SPECIFIC)) {
+-		iebody = (struct ie_body *) bss_desc->bcn_wpa_ie->data;
++		iebody = (struct ie_body *)((u8 *)bss_desc->bcn_wpa_ie->data +
++					    WPA_GTK_OUI_OFFSET);
+ 		oui = &mwifiex_wpa_oui[cipher][0];
+ 		ret = mwifiex_search_oui_in_ie(iebody, oui);
+ 		if (ret)
 
 
