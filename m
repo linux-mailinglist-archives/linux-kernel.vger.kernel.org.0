@@ -2,34 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 07E3B99BBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CE06E99BCB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392028AbfHVR11 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:27:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50226 "EHLO mail.kernel.org"
+        id S2392039AbfHVR1a (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404540AbfHVRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2404548AbfHVRZ5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Aug 2019 13:25:57 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 639E82341C;
-        Thu, 22 Aug 2019 17:25:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 206782064A;
+        Thu, 22 Aug 2019 17:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494756;
-        bh=seQynoquBhsfEosIOR5PXp3K4/WUQdH/99onwZUV/c0=;
+        s=default; t=1566494757;
+        bh=UwMjA6/92uxn97FblUBFzyvPxR0wqAPJJgs1ZdS+/RI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U1cuA3pCNB9Ym7IY05W+W4x3IrODtpSx9HYqi8XoDW8cgMtGyMfLGw57C2X3IJwq+
-         o9ESguAgHBZiKnA8Z6jrToEklMhOO/A2Ol9SeK+uuOry2I6PmS8rCyPNDcVIKZ3Qxx
-         CrdRhzOtXrr8bBCOpwxbOhxoNI2eHKb+y4oU+x8k=
+        b=U0jtuTBtpzwFWrIn5fI3Ew0tuSmekkF6i958vAZ1Jj2hol/mBpuU/l0EpROATTTs8
+         H9soPQIhkZzoCbOfx6Q1bAJXVyf3S0epOjSo8/bWZfftDlhyp3PnTCTFS4HRuwfQRC
+         QNJCD0lkZHfM0e0DkXznGL9MdEkDXEz48F08LgKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.19 57/85] staging: comedi: dt3000: Fix rounding up of timer divisor
-Date:   Thu, 22 Aug 2019 10:19:30 -0700
-Message-Id: <20190822171733.691612184@linuxfoundation.org>
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Stable@vger.kernel.org,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Subject: [PATCH 4.19 58/85] iio: adc: max9611: Fix temperature reading in probe
+Date:   Thu, 22 Aug 2019 10:19:31 -0700
+Message-Id: <20190822171733.738901968@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
 References: <20190822171731.012687054@linuxfoundation.org>
@@ -42,54 +44,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-commit 8e2a589a3fc36ce858d42e767c3bcd8fc62a512b upstream.
+commit b9ddd5091160793ee9fac10da765cf3f53d2aaf0 upstream.
 
-`dt3k_ns_to_timer()` determines the prescaler and divisor to use to
-produce a desired timing period.  It is influenced by a rounding mode
-and can round the divisor up, down, or to the nearest value.  However,
-the code for rounding up currently does the same as rounding down!  Fix
-ir by using the `DIV_ROUND_UP()` macro to calculate the divisor when
-rounding up.
+The max9611 driver reads the die temperature at probe time to validate
+the communication channel. Use the actual read value to perform the test
+instead of the read function return value, which was mistakenly used so
+far.
 
-Also, change the types of the `divider`, `base` and `prescale` variables
-from `int` to `unsigned int` to avoid mixing signed and unsigned types
-in the calculations.
+The temperature reading test was only successful because the 0 return
+value is in the range of supported temperatures.
 
-Also fix a typo in a nearby comment: "improvment" => "improvement".
-
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190812120814.21188-1-abbotti@mev.co.uk
+Fixes: 69780a3bbc0b ("iio: adc: Add Maxim max9611 ADC driver")
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Cc: <Stable@vger.kernel.org>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/comedi/drivers/dt3000.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/iio/adc/max9611.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers/dt3000.c
-+++ b/drivers/staging/comedi/drivers/dt3000.c
-@@ -342,9 +342,9 @@ static irqreturn_t dt3k_interrupt(int ir
- static int dt3k_ns_to_timer(unsigned int timer_base, unsigned int *nanosec,
- 			    unsigned int flags)
- {
--	int divider, base, prescale;
-+	unsigned int divider, base, prescale;
+--- a/drivers/iio/adc/max9611.c
++++ b/drivers/iio/adc/max9611.c
+@@ -483,7 +483,7 @@ static int max9611_init(struct max9611_d
+ 	if (ret)
+ 		return ret;
  
--	/* This function needs improvment */
-+	/* This function needs improvement */
- 	/* Don't know if divider==0 works. */
+-	regval = ret & MAX9611_TEMP_MASK;
++	regval &= MAX9611_TEMP_MASK;
  
- 	for (prescale = 0; prescale < 16; prescale++) {
-@@ -358,7 +358,7 @@ static int dt3k_ns_to_timer(unsigned int
- 			divider = (*nanosec) / base;
- 			break;
- 		case CMDF_ROUND_UP:
--			divider = (*nanosec) / base;
-+			divider = DIV_ROUND_UP(*nanosec, base);
- 			break;
- 		}
- 		if (divider < 65536) {
+ 	if ((regval > MAX9611_TEMP_MAX_POS &&
+ 	     regval < MAX9611_TEMP_MIN_NEG) ||
 
 
