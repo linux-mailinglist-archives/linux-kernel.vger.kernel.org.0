@@ -2,79 +2,185 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E578B994AE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 15:16:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5645994B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 15:19:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732239AbfHVNQW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 09:16:22 -0400
-Received: from mga12.intel.com ([192.55.52.136]:16964 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727685AbfHVNQV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 09:16:21 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 06:16:20 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,416,1559545200"; 
-   d="scan'208";a="196245250"
-Received: from unknown (HELO localhost) ([10.239.159.128])
-  by fmsmga001.fm.intel.com with ESMTP; 22 Aug 2019 06:16:19 -0700
-Date:   Thu, 22 Aug 2019 21:17:45 +0800
-From:   Yang Weijiang <weijiang.yang@intel.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Yang Weijiang <weijiang.yang@intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, sean.j.christopherson@intel.com,
-        mst@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        yu.c.zhang@intel.com, alazar@bitdefender.com
-Subject: Re: [PATCH RESEND v4 7/9] KVM: VMX: Handle SPP induced vmexit and
- page fault
-Message-ID: <20190822131745.GA20168@local-michael-cet-test>
-References: <20190814070403.6588-1-weijiang.yang@intel.com>
- <20190814070403.6588-8-weijiang.yang@intel.com>
- <5f6ba406-17c4-a552-2352-2ff50569aac0@redhat.com>
- <fb6cd8b4-eee9-6e58-4047-550811bffd58@redhat.com>
- <20190820134435.GE4828@local-michael-cet-test.sh.intel.com>
+        id S1732880AbfHVNS4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 09:18:56 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:54493 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732471AbfHVNS4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 09:18:56 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190822131854euoutp01b30ee3e24e111313633fdaa8c82f6f02~9QTNv4pO31207012070euoutp01C
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 13:18:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190822131854euoutp01b30ee3e24e111313633fdaa8c82f6f02~9QTNv4pO31207012070euoutp01C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566479934;
+        bh=F44EVnTO+GtDjxdQbJnARMCEO/Q+Yxe2hI8JoPBw2gQ=;
+        h=Subject:Cc:To:From:Date:In-Reply-To:References:From;
+        b=f0vLyt8w7YPH1rhBmSW+wXxcSts5ox5EmwTa6ocUbdjVPzFpKbrQE77MR+tTYQ0Ek
+         +Gvw1yS3tFZ9FRDxi8nkclY9Ty41F6Pho6ZCRDQd+zlbMiAHBrAWMzQA81YTyi++qC
+         wDCkzeJ9Nkbik75HcsDBCJZCDTCCBM6cawbiY8HI=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190822131853eucas1p2c5af1edc93b92358245c742ecd1de77a~9QTM0H8ic0687106871eucas1p2G;
+        Thu, 22 Aug 2019 13:18:53 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B3.9E.04374.D369E5D5; Thu, 22
+        Aug 2019 14:18:53 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190822131852eucas1p14653c9ddd85096bbee11447e0c68c052~9QTLxC46Y1860818608eucas1p1k;
+        Thu, 22 Aug 2019 13:18:52 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190822131852eusmtrp2c34461aaa48dd5fe69e0efcb6635db70~9QTLhTY4g2865128651eusmtrp2S;
+        Thu, 22 Aug 2019 13:18:52 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-f7-5d5e963dae74
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 56.D3.04117.C369E5D5; Thu, 22
+        Aug 2019 14:18:52 +0100 (BST)
+Received: from [106.120.51.18] (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190822131851eusmtip22c23884609353eaf52f43abc24fd7fcb~9QTK1iFoa2631926319eusmtip2L;
+        Thu, 22 Aug 2019 13:18:51 +0000 (GMT)
+Subject: Re: [RESEND PATCH v5 0/4] add coupled regulators for
+ Exynos5422/5800
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Kukjin Kim <kgene@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <vireshk@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+To:     MyungJoo Ham <myungjoo.ham@samsung.com>
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+Message-ID: <fd9897b6-edc9-f88f-4393-62050bd66710@partner.samsung.com>
+Date:   Thu, 22 Aug 2019 15:18:50 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190820134435.GE4828@local-michael-cet-test.sh.intel.com>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+In-Reply-To: <20190808090234.12577-1-k.konieczny@partner.samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0iTURj27Lvs05odp7UX7WITIY0ySeiA3YSSVT8S/KFkmiu/VFKzTafW
+        D83ssnW/UDYlu1gumbcpTqOsdDg10yywYQXLS0FqZSophtb2FfnvOc/lvO9zOBwltTPeXHJa
+        Bq9KU6bIWTe6vnW6a82m63Gx65reu5OawiqGvJ34zJASSxdDLg4MU6S7u1pMXuaPiIlpoJch
+        bx4Vs2T8vAWRwu4mEamwfBCT+297ROTdcQNLRqZeisjJJxYxme2toUmtvZXd6qEw3jIihalc
+        yypqS3MVF+rKkcJqM4sU46blEewet40JfEqyhlcFbY53SyrNr2TSJxZnX6vOp/OQ0UOHXDnA
+        IVAwNE3pkBsnxQYE/VfrxcJhAkH1gI12uKR4HIFhZq8Occ7ECaOr4ClDUNRz9W96FEHh00rW
+        EfDEu+H5zwbaIVD4FQ1fXt2mHIIXXg0zto/OW1m8AfrNnSIHluBwMJ+4yzgwjf2h6Os7p38x
+        joYf9hZG8HhA+81BZ9YVb4eK8nYnprAM+gZLRAJeAebRYudGgLUcTPaVMULRbaDrbGEF7Alf
+        rHViAS+FuUYhDDgLhu5cEAvhAgT202O0IIRCi7WHcfSncABUPQoS6DAoajDQwrO4g23UQ9jB
+        Ha7U36AEWgJnTkkFtz987jj3d5IP6OYqmUtIrp/XTD+vjX5eG/3/ubcRXY5kfKY6NZFXr0/j
+        s9aqlanqzLTEtQcOp5rQn3/3YtY62YCafu1vRphD8oWSNl1crJRRatQ5qc0IOEruJdFc/kNJ
+        EpQ5R3nV4X2qzBRe3Yx8OFoukxxzscdIcaIygz/E8+m86p8q4ly98xDqtQZw1Xm76BjwKd0S
+        ft9v1fu2D0vuTu18ol12ve/1YIJs+uRjSX/rjq23cmsiQjeVdN2I8naJfhYZPKPNkbmkH9Ev
+        eZCsPeS1cruvxHZcFxhiojQRGsv3yhHfeL8FZR8bxx5GRVZEJ5DBrivxZxOHp6hFSZ+Cv91r
+        CQtHHdmBB+W0OkkZHEip1MrfD68QFXMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xe7o20+JiDSZuZLfYOGM9q8X1L89Z
+        LeYfOcdq0f/4NbPF+fMb2C3ONr1ht9j0+BqrxeVdc9gsPvceYbSYcX4fk8XaI3fZLZZev8hk
+        cbtxBZvFmx9nmSxa9x5ht/h3bSOLxeYHx9gcBD3WzFvD6LFpVSebx+Yl9R59W1Yxehy/sZ3J
+        4/MmuQC2KD2bovzSklSFjPziElulaEMLIz1DSws9IxNLPUNj81grI1MlfTublNSczLLUIn27
+        BL2MJU3rWAu+iFZM2dDE0sC4RrCLkYNDQsBEonkNZxcjJ4eQwFJGiUOzbEFsCQFpicbTq5kg
+        bGGJP9e62LoYuYBqXjNK3N5ykxUkISzgK3Hxwh0WkASzwAUWiee/DrJCVM1glLgzp5EdpEpE
+        QFvi942HLCA2m4C5xKPtZ8DG8gq4SWxvXgQ2iUVAVWL2u9vMILaoQITE4R2zGCFqBCVOznwC
+        1ssp4CqxdtVJMJtZQF3iz7xLzBC2uMStJ/OZIGx5ie1v5zBPYBSahaR9FpKWWUhaZiFpWcDI
+        sopRJLW0ODc9t9hIrzgxt7g0L10vOT93EyMwwrcd+7llB2PXu+BDjAIcjEo8vCe64mKFWBPL
+        iitzDzFKcDArifCWTQQK8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4w+eSVxBuaGppbWBqa
+        G5sbm1koifN2CByMERJITyxJzU5NLUgtgulj4uCUamDMEZVaci5V68Ttc+WcT5cd2Z23Tirt
+        1Y336hvXF2TfOdP6ab10Dv+PW+eebFw+zfZCysrm6pkRjya1qFu6Suz2PXf83I8lzFfjp860
+        9ImeUfH2sGJ6utqlaw9t6jOYZp2KiZvDwR+1rsj4u2pLe7DLmZD1tQz37nxR3bBxzhajGUIy
+        6Xma5o4PlViKMxINtZiLihMB6AXRsgYDAAA=
+X-CMS-MailID: 20190822131852eucas1p14653c9ddd85096bbee11447e0c68c052
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190808090249eucas1p19944820d79ec211c85d9e1285f892f9c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190808090249eucas1p19944820d79ec211c85d9e1285f892f9c
+References: <CGME20190808090249eucas1p19944820d79ec211c85d9e1285f892f9c@eucas1p1.samsung.com>
+        <20190808090234.12577-1-k.konieczny@partner.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Aug 20, 2019 at 09:44:35PM +0800, Yang Weijiang wrote:
-> On Mon, Aug 19, 2019 at 05:04:23PM +0200, Paolo Bonzini wrote:
-> > On 19/08/19 16:43, Paolo Bonzini wrote:
-> > >> +			/*
-> > >> +			 * Record write protect fault caused by
-> > >> +			 * Sub-page Protection, let VMI decide
-> > >> +			 * the next step.
-> > >> +			 */
-> > >> +			if (spte & PT_SPP_MASK) {
-> > > Should this be "if (spte & PT_WRITABLE_MASK)" instead?  That is, if the
-> > > page is already writable, the fault must be an SPP fault.
-> > 
-> > Hmm, no I forgot how SPP works; still, this is *not* correct.  For
-> > example, if SPP marks part of a page as read-write, but KVM wants to
-> > write-protect the whole page for access or dirty tracking, that should
-> > not cause an SPP exit.
-> > 
-> > So I think that when KVM wants to write-protect the whole page
-> > (wrprot_ad_disabled_spte) it must also clear PT_SPP_MASK; for example it
-> > could save it in bit 53 (PT64_SECOND_AVAIL_BITS_SHIFT + 1).  If the
-> > saved bit is set, fast_page_fault must then set PT_SPP_MASK instead of
-> > PT_WRITABLE_MASK.
-> Sure, will change the processing flow.
+
+Dear MyungJoo,
+
+On 08.08.2019 11:02, Kamil Konieczny wrote:
+> Hi,
 > 
-> > On re-entry this will cause an SPP vmexit;
-> > fast_page_fault should never trigger an SPP userspace exit on its own,
-> > all the SPP handling should go through handle_spp.
- Hi, Paolo,
- According to the latest SDM(28.2.4), handle_spp only handles SPPT miss and SPPT
- misconfig(exit_reason==66), subpage write access violation causes EPT violation,
- so have to deal with the two cases into handlers.
-> > Paolo
+> The main purpose of this patch series is to add coupled regulators for
+> Exynos5422/5800 to keep constrain on voltage difference between vdd_arm
+> and vdd_int to be at most 300mV. In exynos-bus instead of using
+> regulator_set_voltage_tol() with default voltage tolerance it should be
+> used regulator_set_voltage_triplet() with volatege range, and this is
+> already present in opp/core.c code, so it can be reused. While at this,
+> move setting regulators into opp/core.
+> 
+> This patchset was tested on Odroid XU3.
+> 
+> The DTS coupled regulators patch depends on previous patches.
+> 
+> Changes:
+> v5:
+> - squashed last patch "remove exynos_bus_passive_target()" into second
+> - added Acked-by to patch "correct clock enable sequence"
+
+Could you please merge patches 1/4 and 2/4 for v5.4
+(they were already Ack-ed by Chanwoo Choi)?
+
+-- 
+Best regards,
+Kamil Konieczny
+Samsung R&D Institute Poland
+
+> v4:
+> - removed "opp: core: add regulators enable and disable" from patchset
+>   as it was applied by Viresh Kumar and changed cover letter
+> - fix patch "devfreq: exynos-bus: correct clock enable sequence" to
+>   correct order of enable/disable
+> - removed unrelated changes in "devfreq: exynos-bus: convert to use
+>   dev_pm_opp_set_rate()"
+> - added new patch "devfreq: exynos-bus: remove exynos_bus_passive_target()"
+>   as suggested by Chanwoo Choi
+> v3:
+> - added new exynos-bus patch to correct clock and regulator enabling
+>   and disabling sequence as suggested by Chanwoo Choi
+> - corrected error path in enable and improved commit message in opp/core
+> - improve comment in devfreq/exynos-bus.c before devfreq_recommended_opp()
+> - change cover letter as there is new patch
+> - added note before Signed-off-by in 4th patch
+> v2:
+> - improve regulators enable/disable code in opp/core as suggested by
+>   Viresh Kumar
+> - add new patch for remove unused dt-bindings as suggested by Krzysztof
+>   Kozlowski
+> 
+> Kamil Konieczny (3):
+>   devfreq: exynos-bus: correct clock enable sequence
+>   devfreq: exynos-bus: convert to use dev_pm_opp_set_rate()
+>   dt-bindings: devfreq: exynos-bus: remove unused property
+> 
+> Marek Szyprowski (1):
+>   ARM: dts: exynos: add initial data for coupled regulators for
+>     Exynos5422/5800
+> 
+>  .../bindings/devfreq/exynos-bus.txt           |   2 -
+>  arch/arm/boot/dts/exynos5420.dtsi             |  34 ++--
+>  arch/arm/boot/dts/exynos5422-odroid-core.dtsi |   4 +
+>  arch/arm/boot/dts/exynos5800-peach-pi.dts     |   4 +
+>  arch/arm/boot/dts/exynos5800.dtsi             |  32 ++--
+>  drivers/devfreq/exynos-bus.c                  | 153 +++++-------------
+>  6 files changed, 78 insertions(+), 151 deletions(-)
+> 
+
