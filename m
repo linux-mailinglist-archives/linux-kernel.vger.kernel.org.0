@@ -2,36 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id BA0B199C29
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60B8999C6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392270AbfHVRbt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:31:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50260 "EHLO mail.kernel.org"
+        id S2392766AbfHVReV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:34:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391875AbfHVRZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:50 -0400
+        id S2404400AbfHVRZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:23 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3966E2064A;
-        Thu, 22 Aug 2019 17:25:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9EE4E206DD;
+        Thu, 22 Aug 2019 17:25:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494749;
-        bh=bL68iMJ3TJ2Mww0F06M3ZjctDATG3hXQLAa3FyGMF9g=;
+        s=default; t=1566494722;
+        bh=9DPX3KSIliTFiRsyLG+ikS6pltUNT9tRg+QaBVPlITA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0bQDj0mwtHPNpYfAEUcCWJuEUBY2BCouRcC2GswkXqMfbygQqENiax5mATduyvIiI
-         77zFtOuoBjuUDTw3IudiJ2evthPmZC4fwqMsa5aazkXMQ7dVKst0ZIWfUKCEhtaGjr
-         Mr5D45KEumRzTglZLN8M618N7w32cL99f2A9TPd8=
+        b=CP9m+jxqi+bHuCdxR3Ck0YIu+xr3eatQb4ivJbFPN0sp01ehGgvQrHJCxdxSmEC9d
+         7zbkXohyBshjkw2ECq/p4d++USGUTkYY8pPIy/uegkw+GNHzGUcfPY6j9TO8l9Ux+v
+         y1RL+E523h7YwxomkISHMEpPJeiuhYZc2lUoguY0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Doug Smythies <dsmythies@telus.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Subject: [PATCH 4.19 09/85] cpufreq: schedutil: Dont skip freq update when limits change
-Date:   Thu, 22 Aug 2019 10:18:42 -0700
-Message-Id: <20190822171731.403911636@linuxfoundation.org>
+        stable@vger.kernel.org, Takashi Iwai <tiwai@suse.de>
+Subject: [PATCH 4.19 11/85] ALSA: hda/realtek - Add quirk for HP Envy x360
+Date:   Thu, 22 Aug 2019 10:18:44 -0700
+Message-Id: <20190822171731.561759150@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
 References: <20190822171731.012687054@linuxfoundation.org>
@@ -44,92 +42,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Takashi Iwai <tiwai@suse.de>
 
-commit 600f5badb78c316146d062cfd7af4a2cfb655baa upstream.
+commit 190d03814eb3b49d4f87ff38fef26d36f3568a60 upstream.
 
-To avoid reducing the frequency of a CPU prematurely, we skip reducing
-the frequency if the CPU had been busy recently.
+HP Envy x360 (AMD Ryzen-based model) with 103c:8497 needs the same
+quirk like HP Spectre x360 for enabling the mute LED over Mic3 pin.
 
-This should not be done when the limits of the policy are changed, for
-example due to thermal throttling. We should always get the frequency
-within the new limits as soon as possible.
-
-Trying to fix this by using only one flag, i.e. need_freq_update, can
-lead to a race condition where the flag gets cleared without forcing us
-to change the frequency at least once. And so this patch introduces
-another flag to avoid that race condition.
-
-Fixes: ecd288429126 ("cpufreq: schedutil: Don't set next_freq to UINT_MAX")
-Cc: v4.18+ <stable@vger.kernel.org> # v4.18+
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Tested-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+BugLink: https://bugzilla.kernel.org/show_bug.cgi?id=204373
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- kernel/sched/cpufreq_schedutil.c |   14 ++++++++++----
- 1 file changed, 10 insertions(+), 4 deletions(-)
+ sound/pci/hda/patch_realtek.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/kernel/sched/cpufreq_schedutil.c
-+++ b/kernel/sched/cpufreq_schedutil.c
-@@ -40,6 +40,7 @@ struct sugov_policy {
- 	struct task_struct	*thread;
- 	bool			work_in_progress;
- 
-+	bool			limits_changed;
- 	bool			need_freq_update;
- };
- 
-@@ -90,8 +91,11 @@ static bool sugov_should_update_freq(str
- 	    !cpufreq_this_cpu_can_update(sg_policy->policy))
- 		return false;
- 
--	if (unlikely(sg_policy->need_freq_update))
-+	if (unlikely(sg_policy->limits_changed)) {
-+		sg_policy->limits_changed = false;
-+		sg_policy->need_freq_update = true;
- 		return true;
-+	}
- 
- 	delta_ns = time - sg_policy->last_freq_update_time;
- 
-@@ -405,7 +409,7 @@ static inline bool sugov_cpu_is_busy(str
- static inline void ignore_dl_rate_limit(struct sugov_cpu *sg_cpu, struct sugov_policy *sg_policy)
- {
- 	if (cpu_bw_dl(cpu_rq(sg_cpu->cpu)) > sg_cpu->bw_dl)
--		sg_policy->need_freq_update = true;
-+		sg_policy->limits_changed = true;
- }
- 
- static void sugov_update_single(struct update_util_data *hook, u64 time,
-@@ -425,7 +429,8 @@ static void sugov_update_single(struct u
- 	if (!sugov_should_update_freq(sg_policy, time))
- 		return;
- 
--	busy = sugov_cpu_is_busy(sg_cpu);
-+	/* Limits may have changed, don't skip frequency update */
-+	busy = !sg_policy->need_freq_update && sugov_cpu_is_busy(sg_cpu);
- 
- 	util = sugov_get_util(sg_cpu);
- 	max = sg_cpu->max;
-@@ -798,6 +803,7 @@ static int sugov_start(struct cpufreq_po
- 	sg_policy->last_freq_update_time	= 0;
- 	sg_policy->next_freq			= 0;
- 	sg_policy->work_in_progress		= false;
-+	sg_policy->limits_changed		= false;
- 	sg_policy->need_freq_update		= false;
- 	sg_policy->cached_raw_freq		= 0;
- 
-@@ -849,7 +855,7 @@ static void sugov_limits(struct cpufreq_
- 		mutex_unlock(&sg_policy->work_lock);
- 	}
- 
--	sg_policy->need_freq_update = true;
-+	sg_policy->limits_changed = true;
- }
- 
- static struct cpufreq_governor schedutil_gov = {
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -6851,6 +6851,7 @@ static const struct snd_pci_quirk alc269
+ 	SND_PCI_QUIRK(0x103c, 0x82bf, "HP G3 mini", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x82c0, "HP G3 mini premium", ALC221_FIXUP_HP_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x103c, 0x83b9, "HP Spectre x360", ALC269_FIXUP_HP_MUTE_LED_MIC3),
++	SND_PCI_QUIRK(0x103c, 0x8497, "HP Envy x360", ALC269_FIXUP_HP_MUTE_LED_MIC3),
+ 	SND_PCI_QUIRK(0x1043, 0x103e, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
 
 
