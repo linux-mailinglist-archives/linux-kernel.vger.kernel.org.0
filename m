@@ -2,89 +2,34 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A2739A3A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 01:17:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 45E529A3A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 01:20:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405632AbfHVXRk (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 19:17:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405538AbfHVXRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 19:17:40 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 289372173E;
-        Thu, 22 Aug 2019 23:17:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566515859;
-        bh=VEJEONhWfk/WukaJbmkMh8WQd3wSqaeL0fnc4kfKLRQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Eq6e920n03QqMtZHtU65ENAUyTt5UdCda4ZnRXq4af144N6CGohpF9H0MoXYbCy7X
-         +qCRdw3coCdMO0AmooZErI8fnbwP6GNr0PNkwAXP/4/xs2oKIl4Z7xzyRrYV23zsfE
-         xolST8n19Znx5gIHrLQiltNelfhC35fe/AeuINyI=
-Date:   Thu, 22 Aug 2019 16:17:38 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Suren Baghdasaryan <surenb@google.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jason Xing <kerneljasonxing@linux.alibaba.com>,
-        Caspar Zhang <caspar@linux.alibaba.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v3] psi: get poll_work to run when calling poll syscall
- next time
-Message-Id: <20190822161738.02297ead0abd424c44fb33b9@linux-foundation.org>
-In-Reply-To: <CAJuCfpHULB5wQWf0Uxo=zSoyOAUmVFanrTZ0fo0-cfGc1o9hNQ@mail.gmail.com>
-References: <1566357985-97781-1-git-send-email-joseph.qi@linux.alibaba.com>
-        <20190822152107.adc0d4cd374fcc3eb8e148a9@linux-foundation.org>
-        <CAJuCfpHULB5wQWf0Uxo=zSoyOAUmVFanrTZ0fo0-cfGc1o9hNQ@mail.gmail.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S2394266AbfHVXSw convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 19:18:52 -0400
+Received: from 69-64-69-54.dedicated.codero.net ([69.64.69.54]:59625 "EHLO
+        69-64-69-18.phx.dedicated.codero.com" rhost-flags-OK-FAIL-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2388588AbfHVXSw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 19:18:52 -0400
+X-Greylist: delayed 2642 seconds by postgrey-1.27 at vger.kernel.org; Thu, 22 Aug 2019 19:18:52 EDT
+Received: from smtpout.sunriseimports.com.au (unknown [153.36.116.225])
+        by 69-64-69-18.phx.dedicated.codero.com (Postfix) with ESMTPSA id 010871465B03
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 08:12:42 +1000 (AEST)
+From:   "Will C" <willjcroz@sunriseimports.com.au>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: 8BIT
+Mime-Version: 1.0 (1.0)
+Subject: 
+Message-Id: <3804D0D3-5FE4-42FE-F131-8610453217CA@sunriseimports.com.au>
+Date:   Thu, 22 Aug 2019 18:16:18 -0400
+To:     "Linux kernel mailing list" <linux-kernel@vger.kernel.org>
+Reply-To: "Will C" <willjcrozr@yahoo.co.uk>
+X-Mailer: iPhone Mail (15E302)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Aug 2019 16:11:15 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-
-> On Thu, Aug 22, 2019 at 3:21 PM Andrew Morton <akpm@linux-foundation.org> wrote:
-> >
-> > On Wed, 21 Aug 2019 11:26:25 +0800 Joseph Qi <joseph.qi@linux.alibaba.com> wrote:
-> >
-> > > Only when calling the poll syscall the first time can user
-> > > receive POLLPRI correctly. After that, user always fails to
-> > > acquire the event signal.
-> > >
-> > > Reproduce case:
-> > > 1. Get the monitor code in Documentation/accounting/psi.txt
-> > > 2. Run it, and wait for the event triggered.
-> > > 3. Kill and restart the process.
-> > >
-> > > The question is why we can end up with poll_scheduled = 1 but the work
-> > > not running (which would reset it to 0). And the answer is because the
-> > > scheduling side sees group->poll_kworker under RCU protection and then
-> > > schedules it, but here we cancel the work and destroy the worker. The
-> > > cancel needs to pair with resetting the poll_scheduled flag.
-> >
-> > Should this be backported into -stable kernels?
-> 
-> Adding GregKH and stable@vger.kernel.org
-> 
-> I was able to cleanly apply this patch to stable master and
-> linux-5.2.y branches (these are the only branches that have psi
-> triggers).
-> Greg, Andrew got this patch into -mm tree. Please advise on how we
-> should proceed to land it in stable 5.2.y and master.
-
-That isn't the point - we know how to merge patches ;)
-
-What I'm asking is whether it is desirable that -stable kernels have
-this patch.  It certainly sounds like it from the changelog, so I'm
-wondering if the omission of cc:stable was intentional?
-
-
+     https://u.to/nEEgFg  Will
