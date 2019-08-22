@@ -2,382 +2,123 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E852B98960
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8498C98943
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:13:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbfHVCS7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 22:18:59 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:37146 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731213AbfHVCSz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 22:18:55 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DB8A62005B4;
-        Thu, 22 Aug 2019 04:18:52 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 280B02005AD;
-        Thu, 22 Aug 2019 04:18:47 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1C95A402A2;
-        Thu, 22 Aug 2019 10:18:40 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com, Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-Subject: [v3 2/2] clk: ls1028a: Add clock driver for Display output interface
-Date:   Thu, 22 Aug 2019 10:08:47 +0800
-Message-Id: <20190822020847.10159-2-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-In-Reply-To: <20190822020847.10159-1-wen.he_1@nxp.com>
-References: <20190822020847.10159-1-wen.he_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730847AbfHVCNE (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 22:13:04 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38556 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727874AbfHVCNE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 21 Aug 2019 22:13:04 -0400
+Received: by mail-wm1-f67.google.com with SMTP id m125so4066049wmm.3
+        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 19:13:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ojaEvfqlKAAL2lTKmwRHpldmWlVYnPOGOZegIqvukh4=;
+        b=vPJ+HTkPwnSMhE+qk8hSEgNCinF4IuXtqDQft6K7Z6pWsZRigw83vmRIhHY25E6qfN
+         gG7UUcRGewF79O4OeMiXpE3WrqVd6YWw1gf+tajAQ42uAD+lyh9ocOcr3zTKvcDHW76K
+         mYTudpP2GdNQBAAecf9HQtxfVLHYL/u3Du+nHR+jhwDK90wV53KbznnQQgC/lbs8TdRx
+         A1lTRcezQS9D2/pFwd6SZFA5moefvJ06I9ZHAdIhAQf07OEXr8E8LICKyBcXMOmMpARm
+         B+F+n0typVorUhOxNHzx0Czag8LXcQCq2ZiRsJEwbMzSnWfDt40QVKe919bw5QR0A04D
+         16YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ojaEvfqlKAAL2lTKmwRHpldmWlVYnPOGOZegIqvukh4=;
+        b=Tn5c6zUmj0niHiZZXEy5IKnNutzojd+jHSJQs4fCku1tbEgY3sLvu0ALNUIBpliTrr
+         BrRodAvsR9Z9wx2YCle1eOvsv08X60Zw7mue9Vno2yIdVx4WteP82SNwHJ5mFSkURrLR
+         +kXCU/ugAGR0vLwXCodKgU5mK2p11PUgRJU040nCn/w55Xgm+O9DzYtHowYYGZQNpNQh
+         bwTrBZ1thJJU8ZtPv6Gjv8zejy/Tp2d4XZhqsVRHXaUKKjn94gov0WtsvCMWnAKDGd2W
+         /qcgyz9xh6GL4QIjpXkjKwEAgaNbd79EcoE68zHPZY5bJ1iBIE7bd2zs1qrgENazDxEN
+         2vqg==
+X-Gm-Message-State: APjAAAV+QqdSny88YcCcjhSZbiQgIZqXJjYMghUfFKCdeLBNqq2ToKrn
+        r9eoxBmzgEcoQioOWSqIVnuVWqZL3hub2Eo0bNQ=
+X-Google-Smtp-Source: APXvYqz1e6uwc2N1gK7CKn+4vyXXXefJ+pKwR+9EfXYJmVBylK261gkCDlDmCLca8YnY0HAftOAX0k6IOPy/Un811cA=
+X-Received: by 2002:a05:600c:352:: with SMTP id u18mr3004060wmd.141.1566439981994;
+ Wed, 21 Aug 2019 19:13:01 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190820235713.3429-1-natechancellor@gmail.com> <f594d746-9eaf-76fe-d380-bb033cce06f8@amd.com>
+In-Reply-To: <f594d746-9eaf-76fe-d380-bb033cce06f8@amd.com>
+From:   Alex Deucher <alexdeucher@gmail.com>
+Date:   Wed, 21 Aug 2019 22:12:50 -0400
+Message-ID: <CADnq5_PH6gA2kMi5+sT4N=AQdfJkEg4ZhoZtYduLTDAyUT7cBA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Fix 32-bit divide error in wait_for_alt_mode
+To:     Harry Wentland <hwentlan@amd.com>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        "Wentland, Harry" <Harry.Wentland@amd.com>,
+        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
-as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
-integer division and range of the display output pixel clock's 27-594MHz.
+Applied.  thanks!
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
----
-change in v3:
-        - remove the OF dependency
-        - use clk_parent_data instead of parent_name
+Alex
 
- drivers/clk/Kconfig      |  10 ++
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-plldig.c | 283 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 294 insertions(+)
- create mode 100644 drivers/clk/clk-plldig.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 801fa1cd0321..ab05f342af04 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -223,6 +223,16 @@ config CLK_QORIQ
- 	  This adds the clock driver support for Freescale QorIQ platforms
- 	  using common clock framework.
- 
-+config CLK_LS1028A_PLLDIG
-+        bool "Clock driver for LS1028A Display output"
-+        depends on ARCH_LAYERSCAPE || COMPILE_TEST
-+        default ARCH_LAYERSCAPE
-+        help
-+          This driver support the Display output interfaces(LCD, DPHY) pixel clocks
-+          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM PLL. Not all
-+          features of the PLL are currently supported by the driver. By default,
-+          configured bypass mode with this PLL.
-+
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default ARCH_XGENE
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 0cad76021297..c8e22a764c4d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
- obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
-+obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
- obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
- obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
-diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-new file mode 100644
-index 000000000000..c5ce80a46fd4
---- /dev/null
-+++ b/drivers/clk/clk-plldig.c
-@@ -0,0 +1,283 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright 2019 NXP
-+
-+/*
-+ * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+/* PLLDIG register offsets and bit masks */
-+#define PLLDIG_REG_PLLSR            0x24
-+#define PLLDIG_REG_PLLDV            0x28
-+#define PLLDIG_REG_PLLFM            0x2c
-+#define PLLDIG_REG_PLLFD            0x30
-+#define PLLDIG_REG_PLLCAL1          0x38
-+#define PLLDIG_REG_PLLCAL2          0x3c
-+#define PLLDIG_DEFAULE_MULT         0x2c
-+#define PLLDIG_LOCK_MASK            BIT(2)
-+#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
-+#define PLLDIG_FDEN                 BIT(30)
-+#define PLLDIG_DTHRCTL              (0x3 << 16)
-+
-+/* macro to get/set values into register */
-+#define PLLDIG_GET_MULT(x)          (((x) & ~(0xffffff00)) << 0)
-+#define PLLDIG_GET_RFDPHI1(x)       ((u32)(x) >> 25)
-+#define PLLDIG_SET_RFDPHI1(x)       ((u32)(x) << 25)
-+
-+struct clk_plldig {
-+	struct clk_hw hw;
-+	void __iomem *regs;
-+	struct device *dev;
-+};
-+#define to_clk_plldig(_hw)	container_of(_hw, struct clk_plldig, hw)
-+#define LOCK_TIMEOUT_US		USEC_PER_MSEC
-+
-+static int plldig_enable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+	/*
-+	 * Use Bypass mode with PLL off by default, the frequency overshoot
-+	 * detector output was disable. SSCG Bypass mode should be enable.
-+	 */
-+	val |= PLLDIG_SSCGBYP_ENABLE;
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFD);
-+	/* Disable dither and Sigma delta modulation in bypass mode */
-+	val |= (PLLDIG_FDEN | PLLDIG_DTHRCTL);
-+	writel(val, data->regs + PLLDIG_REG_PLLFD);
-+
-+	return 0;
-+}
-+
-+static void plldig_disable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+
-+	val &= ~PLLDIG_SSCGBYP_ENABLE;
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+}
-+
-+static int plldig_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+
-+	return (readl(data->regs + PLLDIG_REG_PLLFM) & PLLDIG_SSCGBYP_ENABLE);
-+}
-+
-+/*
-+ * Clock configuration relationship between the PHI1 frequency(fpll_phi) and
-+ * the output frequency of the PLL is determined by the PLLDV, according to
-+ * the following equation:
-+ * pxlclk = fpll_phi / RFDPHI1 = (pll_ref x PLLDV[MFD]) / PLLDV[RFDPHI1].
-+ */
-+static bool plldig_is_valid_range(unsigned long rate, unsigned long parent_rate,
-+		unsigned int *mult, unsigned int *rfdphi1,
-+		unsigned long *round_rate_base)
-+{
-+	u32 div, div_temp, mfd = PLLDIG_DEFAULE_MULT;
-+	unsigned long round_rate;
-+
-+	round_rate = parent_rate * mfd;
-+
-+	/* Range of the divider for driving the PHI1 output clock */
-+	for (div = 1; div <= 63; div++) {
-+		/* Checking match with default mult number at first */
-+		if (round_rate / div == rate) {
-+			*rfdphi1 = div;
-+			*round_rate_base = round_rate;
-+			*mult = mfd;
-+			return true;
-+		}
-+	}
-+
-+	for (div = 1; div <= 63; div++) {
-+		mfd = (div * rate) / parent_rate;
-+		/*
-+		 * Range of the muliplicationthe factor applied to the
-+		 * output reference frequency
-+		 */
-+		if ((mfd >= 10) && (mfd <= 150)) {
-+			div_temp = (parent_rate * mfd) / rate;
-+			if ((div_temp * rate) == (mfd * parent_rate)) {
-+				*rfdphi1 = div_temp;
-+				*mult = mfd;
-+				*round_rate_base = mfd * parent_rate;
-+				return true;
-+			}
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static unsigned long plldig_recalc_rate(struct clk_hw *hw,
-+		unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 mult, div, val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* Check if PLL is bypassed */
-+	if (val & PLLDIG_SSCGBYP_ENABLE)
-+		return parent_rate;
-+
-+	/* Checkout multiplication factor divider value */
-+	mult = val;
-+	mult = PLLDIG_GET_MULT(mult);
-+
-+	/* Checkout divider value of the output frequency */
-+	div = val;
-+	div = PLLDIG_GET_RFDPHI1(div);
-+
-+	return (parent_rate * mult) / div;
-+}
-+
-+static long plldig_round_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long *parent)
-+{
-+	unsigned long parent_rate = *parent;
-+	unsigned long round_rate;
-+	u32 mult = 0, rfdphi1 = 0;
-+	bool found = false;
-+
-+	found = plldig_is_valid_range(rate, parent_rate, &mult,
-+					&rfdphi1, &round_rate);
-+	if (!found) {
-+		pr_warn("%s: unable to round rate %lu, parent rate :%lu\n",
-+				clk_hw_get_name(hw), rate, parent_rate);
-+		return 0;
-+	}
-+
-+	return round_rate / rfdphi1;
-+}
-+
-+static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	bool valid = false;
-+	unsigned long round_rate = 0;
-+	u32 rfdphi1 = 0, val, mult = 0, cond = 0;
-+	int ret = -ETIMEDOUT;
-+
-+	valid = plldig_is_valid_range(rate, parent_rate, &mult,
-+					&rfdphi1, &round_rate);
-+	if (!valid) {
-+		pr_warn("%s: unable to support rate %lu, parent_rate: %lu\n",
-+				clk_hw_get_name(hw), rate, parent_rate);
-+		return -EINVAL;
-+	}
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+	val = mult;
-+	rfdphi1 = PLLDIG_SET_RFDPHI1(rfdphi1);
-+	val |= rfdphi1;
-+
-+	writel(val, data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* delay 200us make sure that old lock state is cleared */
-+	udelay(200);
-+
-+	/* Wait until PLL is locked or timeout (maximum 1000 usecs) */
-+	ret = readl_poll_timeout_atomic(data->regs + PLLDIG_REG_PLLSR, cond,
-+					cond & PLLDIG_LOCK_MASK, 0,
-+					USEC_PER_MSEC);
-+
-+	return ret;
-+}
-+
-+static const struct clk_ops plldig_clk_ops = {
-+	.enable = plldig_enable,
-+	.disable = plldig_disable,
-+	.is_enabled = plldig_is_enabled,
-+	.recalc_rate = plldig_recalc_rate,
-+	.round_rate = plldig_round_rate,
-+	.set_rate = plldig_set_rate,
-+};
-+
-+static int plldig_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_plldig *data;
-+	struct resource *mem;
-+	struct clk_init_data init = {};
-+	struct device *dev = &pdev->dev;
-+	struct clk_parent_data parent_data;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->regs = devm_ioremap_resource(dev, mem);
-+	if (IS_ERR(data->regs))
-+		return PTR_ERR(data->regs);
-+
-+	parent_data.name = of_clk_get_parent_name(dev->of_node, 0);
-+	parent_data.index = 0;
-+
-+	init.name = dev->of_node->name;
-+	init.ops = &plldig_clk_ops;
-+	init.parent_data = &parent_data;
-+	init.num_parents = 1;
-+
-+	data->hw.init = &init;
-+	data->dev = dev;
-+
-+	ret = devm_clk_hw_register(dev, &data->hw);
-+	if (ret) {
-+		dev_err(dev, "failed to register %s clock\n", init.name);
-+		return ret;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get, &data->hw);
-+	if (ret)
-+		dev_err(dev, "failed adding the clock provider\n");
-+
-+	return ret;
-+}
-+
-+static int plldig_clk_remove(struct platform_device *pdev)
-+{
-+	of_clk_del_provider(pdev->dev.of_node);
-+	return 0;
-+}
-+
-+static const struct of_device_id plldig_clk_id[] = {
-+	{ .compatible = "fsl,ls1028a-plldig", .data = NULL},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, plldig_clk_id);
-+
-+static struct platform_driver plldig_clk_driver = {
-+	.driver = {
-+		.name = "plldig-clock",
-+		.of_match_table = plldig_clk_id,
-+	},
-+	.probe = plldig_clk_probe,
-+	.remove = plldig_clk_remove,
-+};
-+module_platform_driver(plldig_clk_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Wen He <wen.he_1@nxp.com>");
-+MODULE_DESCRIPTION("LS1028A Display output interface pixel clock driver");
--- 
-2.17.1
-
+On Wed, Aug 21, 2019 at 12:40 PM Harry Wentland <hwentlan@amd.com> wrote:
+>
+> On 2019-08-20 7:57 p.m., Nathan Chancellor wrote:
+> > When building arm32 allyesconfig:
+> >
+> > ld.lld: error: undefined symbol: __aeabi_uldivmod
+> >>>> referenced by dc_link.c
+> >>>> gpu/drm/amd/display/dc/core/dc_link.o:(wait_for_alt_mode) in archive drivers/built-in.a
+> >>>> referenced by dc_link.c
+> >>>> gpu/drm/amd/display/dc/core/dc_link.o:(wait_for_alt_mode) in archive drivers/built-in.a
+> >
+> > time_taken_in_ns is of type unsigned long long so we need to use div_u64
+> > to avoid this error.
+> >
+> > Fixes: b5b1f4554904 ("drm/amd/display: Enable type C hotplug")
+> > Reported-by: Randy Dunlap <rdunlap@infradead.org>
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+>
+> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
+>
+> Harry
+>
+> > ---
+> >  drivers/gpu/drm/amd/display/dc/core/dc_link.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > index f2d78d7b089e..8634923b4444 100644
+> > --- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > +++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
+> > @@ -721,7 +721,7 @@ bool wait_for_alt_mode(struct dc_link *link)
+> >                       time_taken_in_ns = dm_get_elapse_time_in_ns(
+> >                               link->ctx, finish_timestamp, enter_timestamp);
+> >                       DC_LOG_WARNING("Alt mode entered finished after %llu ms\n",
+> > -                                    time_taken_in_ns / 1000000);
+> > +                                    div_u64(time_taken_in_ns, 1000000));
+> >                       return true;
+> >               }
+> >
+> > @@ -730,7 +730,7 @@ bool wait_for_alt_mode(struct dc_link *link)
+> >       time_taken_in_ns = dm_get_elapse_time_in_ns(link->ctx, finish_timestamp,
+> >                                                   enter_timestamp);
+> >       DC_LOG_WARNING("Alt mode has timed out after %llu ms\n",
+> > -                     time_taken_in_ns / 1000000);
+> > +                     div_u64(time_taken_in_ns, 1000000));
+> >       return false;
+> >  }
+> >
+> >
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
