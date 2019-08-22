@@ -2,156 +2,97 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 209A798B0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 07:59:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D520698B18
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:01:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731539AbfHVF6B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 01:58:01 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:46473 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731525AbfHVF6B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 01:58:01 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q139so3137852pfc.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 22:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Kn51c4iVY6vEKLBAUEgNeUWaRLfBi8NFzSwtDO3qJPo=;
-        b=d+XGRDvs6km5uuLibtMj+3KC3ZkxqZYWOsU2LWeCn9xko3LMBY/ZiIalGDExdpPNkv
-         2hL3j0jv/IRmHQ2CmCsOqXHykpFCzIX2ZmXO2/s20zJg9nYkd2fXr37b9m5qc4mNgd4k
-         KQ6QB3GyCnueCJccC3fjLqL+gRTgY6o1l4ZZY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Kn51c4iVY6vEKLBAUEgNeUWaRLfBi8NFzSwtDO3qJPo=;
-        b=QTKK/ZEnqXxlKoP+xVz4xcz6y211yxzmaHLnMXpZ7Ck+QYGe3Ddd78Z2SH+hF1L54e
-         xITa0J4P/UtQChph0DMquEn4SB6uNOPhxpgXhcBuf66fSpz94BXNxgWafRsW++FOatS9
-         pWUiAeeApa+ck5a8WHOB1s2/W+9f3zsEqMDzIhb7/fTh7UTahEljZB1KLcN3AbXq1aUE
-         Hu0Cstr/gsDlBfi0Fqhbg34Uw8XnSzRP7ppAxoLsO580M7n3B6UE5QCY7+Rh1hRXV8cB
-         k3H40Tk0l1Pf1yBg8yQNpYudEwGlswD/mckkYNSfKGotuvoBR84X853o/6Til0xjUylt
-         o5hA==
-X-Gm-Message-State: APjAAAUHelygPfQJnH9KBJdCMvgRNowEkY0Z19O+3v6KRxaJ99k1O3OF
-        kvVVcaQWcCRwQxlg3mT5+IHi2w==
-X-Google-Smtp-Source: APXvYqzL8tM2JbDNSwlC6qNUOLwrEHhxUu03EMAJx/fBuHRv6q5B+0v8WjvhppnsEoQ2SVVVq/TgTQ==
-X-Received: by 2002:a62:cec4:: with SMTP id y187mr39225066pfg.84.1566453480758;
-        Wed, 21 Aug 2019 22:58:00 -0700 (PDT)
-Received: from hsinyi-z840.tpe.corp.google.com ([2401:fa00:1:10:b852:bd51:9305:4261])
-        by smtp.gmail.com with ESMTPSA id e6sm24867338pfn.71.2019.08.21.22.57.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 21 Aug 2019 22:58:00 -0700 (PDT)
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Qii Wang <qii.wang@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Jun Gao <jun.gao@mediatek.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Alexandru M Stan <amstan@chromium.org>
-Subject: [PATCH RESEND] i2c: mediatek: disable zero-length transfers for mt8183
-Date:   Thu, 22 Aug 2019 13:57:37 +0800
-Message-Id: <20190822055737.142384-1-hsinyi@chromium.org>
-X-Mailer: git-send-email 2.20.1
+        id S1731559AbfHVGA3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:00:29 -0400
+Received: from ozlabs.org ([203.11.71.1]:35283 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727781AbfHVGA2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 02:00:28 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 46DYm94dvXz9s00;
+        Thu, 22 Aug 2019 16:00:25 +1000 (AEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1566453625;
+        bh=VFotkBeoQnghfR8tH06nrgVXHITRs+NJzJpLHEvDidI=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=L6ft1CCHZbEPcpYc1MaIaZGnmK/0OHRuaD3UwTqiYMsYPDtLykbR75qGc4Sefsbyp
+         h1nnEl9JMD6P04QQDEV5gBUQxGQk4XAa95AFy/znQOzrYYkTEdwR2qhOWQlDoTAgVj
+         l7DN1dJ8TQ3lwIaHQnngGcXtL7oRvw15Mhvn98g0tokHJsHv9oMx4x4xofVK4PGgOB
+         igGL+u4rxmZ4au+mF+pt7kJty3l7CPW3tm1sTTBeOtF6iqQM/HlsGorhbH80IRypnU
+         +0ePvYjC63h8GXt26rf3ZBmh47wPwBSLpZ0VB7wfeGH0OQP4MGROrtT3EeQXsXmBi0
+         RTSPxnpfn+qcQ==
+Date:   Thu, 22 Aug 2019 16:00:24 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Abdul Haleem <abdhalee@linux.vnet.ibm.com>
+Cc:     linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-next <linux-next@vger.kernel.org>, jgg@mellanox.com,
+        rcampbell@nvidia.com
+Subject: Re: [linux-next][PPC][bisected c7d8b7][gcc 6.4.1] build error at
+ drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:1471
+Message-ID: <20190822155953.79f01e54@canb.auug.org.au>
+In-Reply-To: <1566452811.526.7.camel@abdul.in.ibm.com>
+References: <1566452811.526.7.camel@abdul.in.ibm.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/XrmJ+4XahkVTA+0CD=Bp1ls";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When doing i2cdetect quick write mode, we would get transfer
-error ENOMEM, and i2cdetect shows there's no device at the address.
-Quoting from mt8183 datasheet, the number of transfers to be
-transferred in one transaction should be set to bigger than 1,
-so we should forbid zero-length transfer and update functionality.
+--Sig_/XrmJ+4XahkVTA+0CD=Bp1ls
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Incorrect return:
-localhost ~ # i2cdetect -q -y 0
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:          -- -- -- -- -- -- -- -- -- -- -- -- --
-10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-30: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-70: -- -- -- -- -- -- -- --
+Hi Abdul,
 
-After this patch:
-localhost ~ #  i2cdetect -q -y 0
-Error: Can't use SMBus Quick Write command on this bus
+On Thu, 22 Aug 2019 11:16:51 +0530 Abdul Haleem <abdhalee@linux.vnet.ibm.co=
+m> wrote:
+>
+> Today's linux-next kernel 5.3.0-rc5-next-20190820 failed to build on my
+> powerpc machine
+>=20
+> Build errors:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c: In function amdgpu_exit:
+> drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c:1471:2: error: implicit
+> declaration of function mmu_notifier_synchronize
+> [-Werror=3Dimplicit-function-declaration]
+>   mmu_notifier_synchronize();
+>   ^~~~~~~~~~~~~~~~~~~~~~~~=20
+> cc1: some warnings being treated as errors
+> make[4]: *** [drivers/gpu/drm/amd/amdgpu/amdgpu_drv.o] Error 1
+> make[3]: *** [drivers/gpu/drm/amd/amdgpu] Error 2
+>=20
+> It was introduced with commit c7d8b7 (hmm: use mmu_notifier_get/put for
+> 'struct hmm')
 
-localhost ~ #  i2cdetect -y 0
-Warning: Can't use SMBus Quick Write command, will skip some addresses
-     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
-00:
-10:
-20:
-30: -- -- -- -- -- -- -- --
-40:
-50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-60:
-70:
+This should have been fixed in next-20190821.
 
-Reported-by: Alexandru M Stan <amstan@chromium.org>
-Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
----
-Previous patch and discussion:
-http://patchwork.ozlabs.org/patch/1042684/
----
- drivers/i2c/busses/i2c-mt65xx.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+--=20
+Cheers,
+Stephen Rothwell
 
-diff --git a/drivers/i2c/busses/i2c-mt65xx.c b/drivers/i2c/busses/i2c-mt65xx.c
-index 252edb433fdf..2842ca4b8c3b 100644
---- a/drivers/i2c/busses/i2c-mt65xx.c
-+++ b/drivers/i2c/busses/i2c-mt65xx.c
-@@ -234,6 +234,10 @@ static const struct i2c_adapter_quirks mt7622_i2c_quirks = {
- 	.max_num_msgs = 255,
- };
- 
-+static const struct i2c_adapter_quirks mt8183_i2c_quirks = {
-+	.flags = I2C_AQ_NO_ZERO_LEN,
-+};
-+
- static const struct mtk_i2c_compatible mt2712_compat = {
- 	.regs = mt_i2c_regs_v1,
- 	.pmic_i2c = 0,
-@@ -298,6 +302,7 @@ static const struct mtk_i2c_compatible mt8173_compat = {
- };
- 
- static const struct mtk_i2c_compatible mt8183_compat = {
-+	.quirks = &mt8183_i2c_quirks,
- 	.regs = mt_i2c_regs_v2,
- 	.pmic_i2c = 0,
- 	.dcm = 0,
-@@ -870,7 +875,11 @@ static irqreturn_t mtk_i2c_irq(int irqno, void *dev_id)
- 
- static u32 mtk_i2c_functionality(struct i2c_adapter *adap)
- {
--	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+	if (adap->quirks->flags & I2C_AQ_NO_ZERO_LEN)
-+		return I2C_FUNC_I2C |
-+			(I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
-+	else
-+		return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
- }
- 
- static const struct i2c_algorithm mtk_i2c_algorithm = {
-@@ -933,8 +942,8 @@ static int mtk_i2c_probe(struct platform_device *pdev)
- 	i2c->dev = &pdev->dev;
- 	i2c->adap.dev.parent = &pdev->dev;
- 	i2c->adap.owner = THIS_MODULE;
--	i2c->adap.algo = &mtk_i2c_algorithm;
- 	i2c->adap.quirks = i2c->dev_comp->quirks;
-+	i2c->adap.algo = &mtk_i2c_algorithm;
- 	i2c->adap.timeout = 2 * HZ;
- 	i2c->adap.retries = 1;
- 
--- 
-2.20.1
+--Sig_/XrmJ+4XahkVTA+0CD=Bp1ls
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAl1eL3kACgkQAVBC80lX
+0GzB2gf+KEISnntYC1xlRdG6xsqu3zj1kkSNXSw5wvXZfw5GsjNgADkRGD9WO4rw
+6QBAuxPbdgnp0EtpspqQ8ZFhPfT41MH/NBKRYFTzDs4r6BilnWVUfa6sLK4RA1u/
+RkKoy14dluF2c5QE5bqrUTeHPl9CtAELyD1n82c8gX9sCsLqQbEcc+hFJG+V5FPa
+0ceqZhcvCOxtSFMDzZsAbLzZFx+7EYaZRoXrmwtv/ufucmuYxOS/BPRakw1EuFY2
+4Pkz1bKht8aaFPkl6G8PMV2NT8L1Q9WVuf6xUrB5pZ7XNMVXKqDj/gBFp/QMGPvj
+4ZXWp5MjokdY4SV5OxLliFeBsVOv0g==
+=lUpR
+-----END PGP SIGNATURE-----
+
+--Sig_/XrmJ+4XahkVTA+0CD=Bp1ls--
