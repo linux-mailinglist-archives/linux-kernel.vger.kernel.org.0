@@ -2,58 +2,58 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 10B809A309
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C05BE9A305
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 00:37:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405321AbfHVWgi (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 18:36:38 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55449 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404921AbfHVWgZ (ORCPT
+        id S2405292AbfHVWg2 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 18:36:28 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36581 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405066AbfHVWg1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 18:36:25 -0400
-Received: by mail-wm1-f68.google.com with SMTP id f72so7106397wmf.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 15:36:24 -0700 (PDT)
+        Thu, 22 Aug 2019 18:36:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id r3so6856262wrt.3
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 15:36:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=wEysXn0BHtJ7BnPMP+dSrHUvSy8/goLl6VzMxecNkns=;
-        b=jsAQfXr+7d6NgmgJ41qH3Mu0sKABLrrvJCn4SK1J7CG8z0noPF0Y+A+5XSuZNqkS91
-         5/2KcuI/YxULBHSC24f07+n+RffjQWhFiPtMHzCjNhg7t1PSLcXMB5XD9eiAkaT6gCHx
-         YKCMHSYbPSRaioeHQM8gjafeFEzRGi9ETLCbqNiYhtqbWwOzfFoJqiL7vH6mMiVhVxxy
-         rWthZkileeFCD3AIuohYC8B8nSM9JURPH9wSCJeDg44z16pkmd0n3qY3JHfwJw59VK5X
-         1GkBXVzMMZPYeX5xzHZhHn+/kaD7rMPmNr9xHGPgLcBozfomQJkkWvXtTVcq01WSaTFe
-         j8VQ==
+        bh=jKItD6VTynhG44BbTNA1tEZDVFXwDRIxmLymjPcSI/g=;
+        b=UIbD8GdZb05DvJGyoe8mUhcjQ+SEbR4I1go5jt3NvovhaS5NSHSJFJ1Zhn7URrhEbN
+         VElQUAWabycOuciSESS4qCbHIFw6xUeb7HsjI5iThHVz0bBZeUMw3yVS+f9aSZ2OeZ/6
+         m/FGQv9upzbh47uolgLBj6YE0VLyzp7WyBx8wGqM6q6+/CqAHn9Fs2Yt274hpZKDMOFB
+         pJpB8ff93pEiB9c5L0H5gPFY8MCMuTBTFLK/0ZfaNTMtiqrg2wRdjE3XG698ck02HEI9
+         zUSPGXphTpUiqi8T1UPZFArmPpY+XzuD1eQbvkXtprW64A7XzrFDS4RPgBkxbLBGfJFI
+         /mzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=wEysXn0BHtJ7BnPMP+dSrHUvSy8/goLl6VzMxecNkns=;
-        b=GyJIWQPkZdOCprZ18O7SRaRIB3hYfqE5HMbrlh/W1CXNvvsznNyNtLPugSk5Zn3ZsK
-         AduAzbrqAh9dX82h+p58Ko60qswe9vrrFeHn4sJd0OMJIWHv187+kjBpC4jhkOvTu9QR
-         r2JC7nUu4YhbnaRR0rytiBbfoZ62VB7ZK2s7Axk8i58IQNkg54gp3k+ZygqWYHvEQTOk
-         e80/RjOjSQ9fIsaFQ0fyD3H7dHrpS+eJT7Fg7LeJL5p2ix+20+MKhoLuaunaiH5yMBsO
-         kAM3dpAG1mEoz2qlaYy9CPkTGkgtf4VGlwSaisHEFc8fxY56WC/og1u3sZjUycLwBHAP
-         JQzw==
-X-Gm-Message-State: APjAAAXigf8rZeMYQo5/H4gQjcDGCHZA7pFG4jAp1DXN2v5DCYHXqG7d
-        d2387pBqf0PS5WpkFXH7bpfFKw==
-X-Google-Smtp-Source: APXvYqwcSpNSV6achN4zzlZQGUbq02JsajoyaVpGGk8j/JNIuQk3zkThhTljDwdQETSdVgHYzK6b4w==
-X-Received: by 2002:a1c:f910:: with SMTP id x16mr1194320wmh.69.1566513383887;
-        Thu, 22 Aug 2019 15:36:23 -0700 (PDT)
+        bh=jKItD6VTynhG44BbTNA1tEZDVFXwDRIxmLymjPcSI/g=;
+        b=YAWAfFW+Dqy3wwJmGo3zyvRP5bpGPbdrUWlKX0/vl7hmKI/lhY0dXrwEAAp/xkn3J7
+         eRdw9JzvHtWqn6CYXYC7K8vv++rUP3gJ7eoymli0sd7aQMs1JVeZYeYTBLUYluYn8tnv
+         Z5okhyjajBYtWNhzxxNVmeVGlxemcdF1WFRIpqbs9zgNAGB9RgHlpcSrCCq5+ygLFQli
+         JPD6rMb5pqUfneIZn6lmNDbZvw0+T1G4uswAm4fwVMrp2lrQOvQ2zDCDkEvNXwkcZaTG
+         TXgkldEK9yV9Jg1+jhyL/OYX+VSF5Mpik9yQHT/2kK11r5U/wcIUTxT8P3WkI7/pK2Fc
+         eRJQ==
+X-Gm-Message-State: APjAAAVUVKja8pMeYjTgjc4f/GDPDK8iDDttUQrQu3lkZmXuHBdF0/jz
+        Lbu1KdKo7qIKVl3U+lafbtZnyQ==
+X-Google-Smtp-Source: APXvYqy0eUrEncO6dXNEUZrNk2ZhNndpnblHusApU+VE3u0zUnQEc3+LjQadGewlrSU67VKgbRwHtQ==
+X-Received: by 2002:a5d:568e:: with SMTP id f14mr1102872wrv.167.1566513385232;
+        Thu, 22 Aug 2019 15:36:25 -0700 (PDT)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id m188sm1886380wmm.32.2019.08.22.15.36.22
+        by smtp.gmail.com with ESMTPSA id m188sm1886380wmm.32.2019.08.22.15.36.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 15:36:23 -0700 (PDT)
+        Thu, 22 Aug 2019 15:36:24 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     broonie@kernel.org, robh+dt@kernel.org, vkoul@kernel.org
 Cc:     spapothi@codeaurora.org, bgoswami@codeaurora.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         lgirdwood@gmail.com, devicetree@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 2/4] soundwire: core: add device tree support for slave devices
-Date:   Thu, 22 Aug 2019 23:36:04 +0100
-Message-Id: <20190822223606.6775-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 3/4] dt-bindings: ASoC: Add WSA881x bindings
+Date:   Thu, 22 Aug 2019 23:36:05 +0100
+Message-Id: <20190822223606.6775-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822223606.6775-1-srinivas.kandagatla@linaro.org>
 References: <20190822223606.6775-1-srinivas.kandagatla@linaro.org>
@@ -64,115 +64,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds support to parsing device tree based
-SoundWire slave devices.
+This patch adds bindings for WSA8810/WSA8815 Class-D Smart Speaker
+Amplifier. This Amplifier also has a simple thermal sensor for
+over temperature and speaker protection.
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/soundwire/bus.c   |  2 ++
- drivers/soundwire/bus.h   |  1 +
- drivers/soundwire/slave.c | 52 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 55 insertions(+)
+ .../bindings/sound/qcom,wsa881x.yaml          | 44 +++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
 
-diff --git a/drivers/soundwire/bus.c b/drivers/soundwire/bus.c
-index 49f64b2115b9..c2eaeb5c38ed 100644
---- a/drivers/soundwire/bus.c
-+++ b/drivers/soundwire/bus.c
-@@ -77,6 +77,8 @@ int sdw_add_bus_master(struct sdw_bus *bus)
- 	 */
- 	if (IS_ENABLED(CONFIG_ACPI) && ACPI_HANDLE(bus->dev))
- 		ret = sdw_acpi_find_slaves(bus);
-+	else if (IS_ENABLED(CONFIG_OF) && bus->dev->of_node)
-+		ret = sdw_of_find_slaves(bus);
- 	else
- 		ret = -ENOTSUPP; /* No ACPI/DT so error out */
- 
-diff --git a/drivers/soundwire/bus.h b/drivers/soundwire/bus.h
-index 3048ca153f22..ee46befedbd1 100644
---- a/drivers/soundwire/bus.h
-+++ b/drivers/soundwire/bus.h
-@@ -15,6 +15,7 @@ static inline int sdw_acpi_find_slaves(struct sdw_bus *bus)
- }
- #endif
- 
-+int sdw_of_find_slaves(struct sdw_bus *bus);
- void sdw_extract_slave_id(struct sdw_bus *bus,
- 			  u64 addr, struct sdw_slave_id *id);
- 
-diff --git a/drivers/soundwire/slave.c b/drivers/soundwire/slave.c
-index f39a5815e25d..3ef265d2ee89 100644
---- a/drivers/soundwire/slave.c
-+++ b/drivers/soundwire/slave.c
-@@ -2,6 +2,7 @@
- // Copyright(c) 2015-17 Intel Corporation.
- 
- #include <linux/acpi.h>
-+#include <linux/of.h>
- #include <linux/soundwire/sdw.h>
- #include <linux/soundwire/sdw_type.h>
- #include "bus.h"
-@@ -35,6 +36,7 @@ static int sdw_slave_add(struct sdw_bus *bus,
- 
- 	slave->dev.release = sdw_slave_release;
- 	slave->dev.bus = &sdw_bus_type;
-+	slave->dev.of_node = of_node_get(to_of_node(fwnode));
- 	slave->bus = bus;
- 	slave->status = SDW_SLAVE_UNATTACHED;
- 	slave->dev_num = 0;
-@@ -112,3 +114,53 @@ int sdw_acpi_find_slaves(struct sdw_bus *bus)
- }
- 
- #endif
+diff --git a/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+new file mode 100644
+index 000000000000..ad718d75c660
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+@@ -0,0 +1,44 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/sound/qcom,wsa881x.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+/*
-+ * sdw_of_find_slaves() - Find Slave devices in master device tree node
-+ * @bus: SDW bus instance
-+ *
-+ * Scans Master DT node for SDW child Slave devices and registers it.
-+ */
-+int sdw_of_find_slaves(struct sdw_bus *bus)
-+{
-+	struct device *dev = bus->dev;
-+	struct device_node *node;
++title: Bindings for Qualcomm WSA8810/WSA8815 Class-D Smart Speaker Amplifier
 +
-+	for_each_child_of_node(bus->dev->of_node, node) {
-+		int link_id, sdw_version, ret, len;
-+		const char *compat = NULL;
-+		struct sdw_slave_id id;
-+		const __be32 *addr;
++maintainers:
++  - Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 +
-+		compat = of_get_property(node, "compatible", NULL);
-+		if (!compat)
-+			continue;
++allOf:
++  - $ref: "soundwire-controller.yaml#"
 +
-+		ret = sscanf(compat, "sdw%01x%04hx%04hx%02hhx", &sdw_version,
-+			     &id.mfg_id, &id.part_id, &id.class_id);
++properties:
++  compatible:
++    const: sdw10217201000
 +
-+		if (ret != 4) {
-+			dev_err(dev, "Invalid compatible string found %s\n",
-+				compat);
-+			continue;
-+		}
++  reg:
++    maxItems: 1
 +
-+		addr = of_get_property(node, "reg", &len);
-+		if (!addr || (len < 2 * sizeof(u32))) {
-+			dev_err(dev, "Invalid Instance and Link ID\n");
-+			continue;
-+		}
++  pd-gpios:
++    description: GPIO spec for Powerdown/Shutdown line to use
++    maxItems: 1
 +
-+		id.unique_id = be32_to_cpup(addr++);
-+		link_id = be32_to_cpup(addr);
-+		id.sdw_version = sdw_version;
++  "#thermal-sensor-cells":
++    const: 0
 +
-+		/* Check for link_id match */
-+		if (link_id != bus->link_id)
-+			continue;
++required:
++  - compatible
++  - reg
++  - pd-gpios
++  - #thermal-sensor-cells
 +
-+		sdw_slave_add(bus, &id, of_fwnode_handle(node));
-+	}
++examples:
++  - |
++    efuse@1c23800 {
++        compatible = "allwinner,sun4i-a10-sid";
++        reg = <0x01c23800 0x10>;
++        pd-gpios = <&wcdpinctrl 2 0>;
++        #thermal-sensor-cells = <0>;
++    };
 +
-+	return 0;
-+}
++...
 -- 
 2.21.0
 
