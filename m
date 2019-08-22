@@ -2,17 +2,17 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 8413B99E48
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:52:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B82699E49
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:52:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389455AbfHVRum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        id S2387613AbfHVRum (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Thu, 22 Aug 2019 13:50:42 -0400
-Received: from out30-56.freemail.mail.aliyun.com ([115.124.30.56]:39988 "EHLO
-        out30-56.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731548AbfHVRul (ORCPT
+Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:33974 "EHLO
+        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731614AbfHVRul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 22 Aug 2019 13:50:41 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04407;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ta9PNTk_1566496230;
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01e04423;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=12;SR=0;TI=SMTPD_---0Ta9PNTk_1566496230;
 Received: from e19h19392.et15sqa.tbsite.net(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0Ta9PNTk_1566496230)
           by smtp.aliyun-inc.com(127.0.0.1);
           Fri, 23 Aug 2019 01:50:37 +0800
@@ -23,9 +23,9 @@ To:     kirill.shutemov@linux.intel.com, ktkhai@virtuozzo.com,
         akpm@linux-foundation.org
 Cc:     yang.shi@linux.alibaba.com, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org
-Subject: [v6 PATCH 1/4] mm: thp: extract split_queue_* into a struct
-Date:   Fri, 23 Aug 2019 01:50:24 +0800
-Message-Id: <1566496227-84952-2-git-send-email-yang.shi@linux.alibaba.com>
+Subject: [v6 PATCH 2/4] mm: move mem_cgroup_uncharge out of __page_cache_release()
+Date:   Fri, 23 Aug 2019 01:50:25 +0800
+Message-Id: <1566496227-84952-3-git-send-email-yang.shi@linux.alibaba.com>
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1566496227-84952-1-git-send-email-yang.shi@linux.alibaba.com>
 References: <1566496227-84952-1-git-send-email-yang.shi@linux.alibaba.com>
@@ -34,9 +34,14 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Put split_queue, split_queue_lock and split_queue_len into a struct in
-order to reduce code duplication when we convert deferred_split to memcg
-aware in the later patches.
+The later patch would make THP deferred split shrinker memcg aware, but
+it needs page->mem_cgroup information in THP destructor, which is called
+after mem_cgroup_uncharge() now.
+
+So, move mem_cgroup_uncharge() from __page_cache_release() to compound
+page destructor, which is called by both THP and other compound pages
+except HugeTLB.  And call it in __put_single_page() for single order
+page.
 
 Suggested-by: "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
 Cc: Johannes Weiner <hannes@cmpxchg.org>
@@ -49,204 +54,66 @@ Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 Reviewed-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Signed-off-by: Yang Shi <yang.shi@linux.alibaba.com>
 ---
- include/linux/mmzone.h | 12 +++++++++---
- mm/huge_memory.c       | 45 +++++++++++++++++++++++++--------------------
- mm/page_alloc.c        |  8 +++++---
- 3 files changed, 39 insertions(+), 26 deletions(-)
+ mm/page_alloc.c | 1 +
+ mm/swap.c       | 2 +-
+ mm/vmscan.c     | 6 ++----
+ 3 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index d77d717..d8ec773 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -676,6 +676,14 @@ struct zonelist {
- extern struct page *mem_map;
- #endif
- 
-+#ifdef CONFIG_TRANSPARENT_HUGEPAGE
-+struct deferred_split {
-+	spinlock_t split_queue_lock;
-+	struct list_head split_queue;
-+	unsigned long split_queue_len;
-+};
-+#endif
-+
- /*
-  * On NUMA machines, each NUMA node would have a pg_data_t to describe
-  * it's memory layout. On UMA machines there is a single pglist_data which
-@@ -755,9 +763,7 @@ struct zonelist {
- #endif /* CONFIG_DEFERRED_STRUCT_PAGE_INIT */
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--	spinlock_t split_queue_lock;
--	struct list_head split_queue;
--	unsigned long split_queue_len;
-+	struct deferred_split deferred_split_queue;
- #endif
- 
- 	/* Fields commonly accessed by the page reclaim scanner */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1334ede..e0d8e08 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2658,6 +2658,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- {
- 	struct page *head = compound_head(page);
- 	struct pglist_data *pgdata = NODE_DATA(page_to_nid(head));
-+	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
- 	struct anon_vma *anon_vma = NULL;
- 	struct address_space *mapping = NULL;
- 	int count, mapcount, extra_pins, ret;
-@@ -2744,17 +2745,17 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 	}
- 
- 	/* Prevent deferred_split_scan() touching ->_refcount */
--	spin_lock(&pgdata->split_queue_lock);
-+	spin_lock(&ds_queue->split_queue_lock);
- 	count = page_count(head);
- 	mapcount = total_mapcount(head);
- 	if (!mapcount && page_ref_freeze(head, 1 + extra_pins)) {
- 		if (!list_empty(page_deferred_list(head))) {
--			pgdata->split_queue_len--;
-+			ds_queue->split_queue_len--;
- 			list_del(page_deferred_list(head));
- 		}
- 		if (mapping)
- 			__dec_node_page_state(page, NR_SHMEM_THPS);
--		spin_unlock(&pgdata->split_queue_lock);
-+		spin_unlock(&ds_queue->split_queue_lock);
- 		__split_huge_page(page, list, end, flags);
- 		if (PageSwapCache(head)) {
- 			swp_entry_t entry = { .val = page_private(head) };
-@@ -2771,7 +2772,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- 			dump_page(page, "total_mapcount(head) > 0");
- 			BUG();
- 		}
--		spin_unlock(&pgdata->split_queue_lock);
-+		spin_unlock(&ds_queue->split_queue_lock);
- fail:		if (mapping)
- 			xa_unlock(&mapping->i_pages);
- 		spin_unlock_irqrestore(&pgdata->lru_lock, flags);
-@@ -2794,52 +2795,56 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
- void free_transhuge_page(struct page *page)
- {
- 	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-+	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-+	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	if (!list_empty(page_deferred_list(page))) {
--		pgdata->split_queue_len--;
-+		ds_queue->split_queue_len--;
- 		list_del(page_deferred_list(page));
- 	}
--	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-+	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- 	free_compound_page(page);
- }
- 
- void deferred_split_huge_page(struct page *page)
- {
- 	struct pglist_data *pgdata = NODE_DATA(page_to_nid(page));
-+	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
- 	unsigned long flags;
- 
- 	VM_BUG_ON_PAGE(!PageTransHuge(page), page);
- 
--	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-+	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	if (list_empty(page_deferred_list(page))) {
- 		count_vm_event(THP_DEFERRED_SPLIT_PAGE);
--		list_add_tail(page_deferred_list(page), &pgdata->split_queue);
--		pgdata->split_queue_len++;
-+		list_add_tail(page_deferred_list(page), &ds_queue->split_queue);
-+		ds_queue->split_queue_len++;
- 	}
--	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-+	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- }
- 
- static unsigned long deferred_split_count(struct shrinker *shrink,
- 		struct shrink_control *sc)
- {
- 	struct pglist_data *pgdata = NODE_DATA(sc->nid);
--	return READ_ONCE(pgdata->split_queue_len);
-+	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
-+	return READ_ONCE(ds_queue->split_queue_len);
- }
- 
- static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		struct shrink_control *sc)
- {
- 	struct pglist_data *pgdata = NODE_DATA(sc->nid);
-+	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
- 	unsigned long flags;
- 	LIST_HEAD(list), *pos, *next;
- 	struct page *page;
- 	int split = 0;
- 
--	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
-+	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
- 	/* Take pin on all head pages to avoid freeing them under us */
--	list_for_each_safe(pos, next, &pgdata->split_queue) {
-+	list_for_each_safe(pos, next, &ds_queue->split_queue) {
- 		page = list_entry((void *)pos, struct page, mapping);
- 		page = compound_head(page);
- 		if (get_page_unless_zero(page)) {
-@@ -2847,12 +2852,12 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		} else {
- 			/* We lost race with put_compound_page() */
- 			list_del_init(page_deferred_list(page));
--			pgdata->split_queue_len--;
-+			ds_queue->split_queue_len--;
- 		}
- 		if (!--sc->nr_to_scan)
- 			break;
- 	}
--	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-+	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- 
- 	list_for_each_safe(pos, next, &list) {
- 		page = list_entry((void *)pos, struct page, mapping);
-@@ -2866,15 +2871,15 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
- 		put_page(page);
- 	}
- 
--	spin_lock_irqsave(&pgdata->split_queue_lock, flags);
--	list_splice_tail(&list, &pgdata->split_queue);
--	spin_unlock_irqrestore(&pgdata->split_queue_lock, flags);
-+	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
-+	list_splice_tail(&list, &ds_queue->split_queue);
-+	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
- 
- 	/*
- 	 * Stop shrinker if we didn't split any page, but the queue is empty.
- 	 * This can happen if pages were freed under us.
- 	 */
--	if (!split && list_empty(&pgdata->split_queue))
-+	if (!split && list_empty(&ds_queue->split_queue))
- 		return SHRINK_STOP;
- 	return split;
- }
 diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index 272c6de..df02a88 100644
+index df02a88..1d1c5d3 100644
 --- a/mm/page_alloc.c
 +++ b/mm/page_alloc.c
-@@ -6649,9 +6649,11 @@ static unsigned long __init calc_memmap_size(unsigned long spanned_pages,
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- static void pgdat_init_split_queue(struct pglist_data *pgdat)
+@@ -670,6 +670,7 @@ static void bad_page(struct page *page, const char *reason,
+ 
+ void free_compound_page(struct page *page)
  {
--	spin_lock_init(&pgdat->split_queue_lock);
--	INIT_LIST_HEAD(&pgdat->split_queue);
--	pgdat->split_queue_len = 0;
-+	struct deferred_split *ds_queue = &pgdat->deferred_split_queue;
-+
-+	spin_lock_init(&ds_queue->split_queue_lock);
-+	INIT_LIST_HEAD(&ds_queue->split_queue);
-+	ds_queue->split_queue_len = 0;
++	mem_cgroup_uncharge(page);
+ 	__free_pages_ok(page, compound_order(page));
  }
- #else
- static void pgdat_init_split_queue(struct pglist_data *pgdat) {}
+ 
+diff --git a/mm/swap.c b/mm/swap.c
+index ae30039..d4242c8 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -71,12 +71,12 @@ static void __page_cache_release(struct page *page)
+ 		spin_unlock_irqrestore(&pgdat->lru_lock, flags);
+ 	}
+ 	__ClearPageWaiters(page);
+-	mem_cgroup_uncharge(page);
+ }
+ 
+ static void __put_single_page(struct page *page)
+ {
+ 	__page_cache_release(page);
++	mem_cgroup_uncharge(page);
+ 	free_unref_page(page);
+ }
+ 
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index dbdc46a..b1b5e5f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1490,10 +1490,9 @@ static unsigned long shrink_page_list(struct list_head *page_list,
+ 		 * Is there need to periodically free_page_list? It would
+ 		 * appear not as the counts should be low
+ 		 */
+-		if (unlikely(PageTransHuge(page))) {
+-			mem_cgroup_uncharge(page);
++		if (unlikely(PageTransHuge(page)))
+ 			(*get_compound_page_dtor(page))(page);
+-		} else
++		else
+ 			list_add(&page->lru, &free_pages);
+ 		continue;
+ 
+@@ -1914,7 +1913,6 @@ static unsigned noinline_for_stack move_pages_to_lru(struct lruvec *lruvec,
+ 
+ 			if (unlikely(PageCompound(page))) {
+ 				spin_unlock_irq(&pgdat->lru_lock);
+-				mem_cgroup_uncharge(page);
+ 				(*get_compound_page_dtor(page))(page);
+ 				spin_lock_irq(&pgdat->lru_lock);
+ 			} else
 -- 
 1.8.3.1
 
