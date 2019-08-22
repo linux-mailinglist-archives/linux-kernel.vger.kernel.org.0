@@ -2,37 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 56ABE99BE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C82D99CF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404627AbfHVR0J (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47994 "EHLO mail.kernel.org"
+        id S2404968AbfHVRic (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:38:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391831AbfHVRZG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:06 -0400
+        id S2404183AbfHVRY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:27 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 521E42343D;
-        Thu, 22 Aug 2019 17:25:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4905223407;
+        Thu, 22 Aug 2019 17:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494705;
-        bh=70IBQmYceIx3NyES1L3VkXVI4Y7yX2XPoGekW2rJ6DQ=;
+        s=default; t=1566494666;
+        bh=T/cO9sSANSOj2sVm3GHrDKOf5nGOMHkGGaYdGq+hUCA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sTLDcCsNJo7VOkIQVbJ6eMatekJMRYy1vo4zsO2ZLROPXwz3PhQQB8dGBSyENXUIZ
-         Xwmh8UeotMsLxslH/N7cxqOhkWswGPvnu1LlC+nY93VA20Wvr2nHoBTNh/5srXtt9q
-         8t6zyDJxSkxKoHFb8A9QRu3qHgRpUib2Wc9zbOa0=
+        b=Dcw73NGD4KK9kRia0ao5SIAvycHfJ9ioECfr55vtigZsYrcZ2eojbwoJBX6l+oERs
+         AIdeMRSUqB+pg9BrMgMYUe2Q7wVbLeeR9fkUSWST5heW1K2gqFIRpzOcvoMYM9j/iD
+         dn2YX/85KEoRb1aGVO2xxr+JB3uD1d/pcGzsjt6w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Marc Zyngier <maz@kernel.org>
-Subject: [PATCH 4.14 42/71] KVM: arm/arm64: Sync ICH_VMCR_EL2 back when about to block
-Date:   Thu, 22 Aug 2019 10:19:17 -0700
-Message-Id: <20190822171729.714313634@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Jakub Jelinek <jakub@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        James Y Knight <jyknight@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 090/103] asm-generic: fix -Wtype-limits compiler warnings
+Date:   Thu, 22 Aug 2019 10:19:18 -0700
+Message-Id: <20190822171732.812246728@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,171 +53,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <maz@kernel.org>
+[ Upstream commit cbedfe11347fe418621bd188d58a206beb676218 ]
 
-commit 5eeaf10eec394b28fad2c58f1f5c3a5da0e87d1c upstream.
+Commit d66acc39c7ce ("bitops: Optimise get_order()") introduced a
+compilation warning because "rx_frag_size" is an "ushort" while
+PAGE_SHIFT here is 16.
 
-Since commit commit 328e56647944 ("KVM: arm/arm64: vgic: Defer
-touching GICH_VMCR to vcpu_load/put"), we leave ICH_VMCR_EL2 (or
-its GICv2 equivalent) loaded as long as we can, only syncing it
-back when we're scheduled out.
+The commit changed the get_order() to be a multi-line macro where
+compilers insist to check all statements in the macro even when
+__builtin_constant_p(rx_frag_size) will return false as "rx_frag_size"
+is a module parameter.
 
-There is a small snag with that though: kvm_vgic_vcpu_pending_irq(),
-which is indirectly called from kvm_vcpu_check_block(), needs to
-evaluate the guest's view of ICC_PMR_EL1. At the point were we
-call kvm_vcpu_check_block(), the vcpu is still loaded, and whatever
-changes to PMR is not visible in memory until we do a vcpu_put().
+In file included from ./arch/powerpc/include/asm/page_64.h:107,
+                 from ./arch/powerpc/include/asm/page.h:242,
+                 from ./arch/powerpc/include/asm/mmu.h:132,
+                 from ./arch/powerpc/include/asm/lppaca.h:47,
+                 from ./arch/powerpc/include/asm/paca.h:17,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:21,
+                 from ./arch/powerpc/include/asm/processor.h:39,
+                 from ./include/linux/prefetch.h:15,
+                 from drivers/net/ethernet/emulex/benet/be_main.c:14:
+drivers/net/ethernet/emulex/benet/be_main.c: In function 'be_rx_cqs_create':
+./include/asm-generic/getorder.h:54:9: warning: comparison is always
+true due to limited range of data type [-Wtype-limits]
+   (((n) < (1UL << PAGE_SHIFT)) ? 0 :  \
+         ^
+drivers/net/ethernet/emulex/benet/be_main.c:3138:33: note: in expansion
+of macro 'get_order'
+  adapter->big_page_size = (1 << get_order(rx_frag_size)) * PAGE_SIZE;
+                                 ^~~~~~~~~
 
-Things go really south if the guest does the following:
+Fix it by moving all of this multi-line macro into a proper function,
+and killing __get_order() off.
 
-	mov x0, #0	// or any small value masking interrupts
-	msr ICC_PMR_EL1, x0
-
-	[vcpu preempted, then rescheduled, VMCR sampled]
-
-	mov x0, #ff	// allow all interrupts
-	msr ICC_PMR_EL1, x0
-	wfi		// traps to EL2, so samping of VMCR
-
-	[interrupt arrives just after WFI]
-
-Here, the hypervisor's view of PMR is zero, while the guest has enabled
-its interrupts. kvm_vgic_vcpu_pending_irq() will then say that no
-interrupts are pending (despite an interrupt being received) and we'll
-block for no reason. If the guest doesn't have a periodic interrupt
-firing once it has blocked, it will stay there forever.
-
-To avoid this unfortuante situation, let's resync VMCR from
-kvm_arch_vcpu_blocking(), ensuring that a following kvm_vcpu_check_block()
-will observe the latest value of PMR.
-
-This has been found by booting an arm64 Linux guest with the pseudo NMI
-feature, and thus using interrupt priorities to mask interrupts instead
-of the usual PSTATE masking.
-
-Cc: stable@vger.kernel.org # 4.12
-Fixes: 328e56647944 ("KVM: arm/arm64: vgic: Defer touching GICH_VMCR to vcpu_load/put")
-Signed-off-by: Marc Zyngier <maz@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
-
+[akpm@linux-foundation.org: remove __get_order() altogether]
+[cai@lca.pw: v2]
+  Link: http://lkml.kernel.org/r/1564000166-31428-1-git-send-email-cai@lca.pw
+Link: http://lkml.kernel.org/r/1563914986-26502-1-git-send-email-cai@lca.pw
+Fixes: d66acc39c7ce ("bitops: Optimise get_order()")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jakub Jelinek <jakub@redhat.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: James Y Knight <jyknight@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/kvm/arm_vgic.h      |    1 +
- virt/kvm/arm/arm.c          |   10 ++++++++++
- virt/kvm/arm/vgic/vgic-v2.c |   11 ++++++++++-
- virt/kvm/arm/vgic/vgic-v3.c |    7 ++++++-
- virt/kvm/arm/vgic/vgic.c    |   11 +++++++++++
- virt/kvm/arm/vgic/vgic.h    |    2 ++
- 6 files changed, 40 insertions(+), 2 deletions(-)
+ include/asm-generic/getorder.h | 50 ++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 30 deletions(-)
 
---- a/include/kvm/arm_vgic.h
-+++ b/include/kvm/arm_vgic.h
-@@ -315,6 +315,7 @@ int kvm_vgic_vcpu_pending_irq(struct kvm
+diff --git a/include/asm-generic/getorder.h b/include/asm-generic/getorder.h
+index 65e4468ac53da..52fbf236a90ea 100644
+--- a/include/asm-generic/getorder.h
++++ b/include/asm-generic/getorder.h
+@@ -6,24 +6,6 @@
+ #include <linux/compiler.h>
+ #include <linux/log2.h>
  
- void kvm_vgic_load(struct kvm_vcpu *vcpu);
- void kvm_vgic_put(struct kvm_vcpu *vcpu);
-+void kvm_vgic_vmcr_sync(struct kvm_vcpu *vcpu);
- 
- #define irqchip_in_kernel(k)	(!!((k)->arch.vgic.in_kernel))
- #define vgic_initialized(k)	((k)->arch.vgic.initialized)
---- a/virt/kvm/arm/arm.c
-+++ b/virt/kvm/arm/arm.c
-@@ -317,6 +317,16 @@ int kvm_cpu_has_pending_timer(struct kvm
- void kvm_arch_vcpu_blocking(struct kvm_vcpu *vcpu)
- {
- 	kvm_timer_schedule(vcpu);
-+	/*
-+	 * If we're about to block (most likely because we've just hit a
-+	 * WFI), we need to sync back the state of the GIC CPU interface
-+	 * so that we have the lastest PMR and group enables. This ensures
-+	 * that kvm_arch_vcpu_runnable has up-to-date data to decide
-+	 * whether we have pending interrupts.
-+	 */
-+	preempt_disable();
-+	kvm_vgic_vmcr_sync(vcpu);
-+	preempt_enable();
- }
- 
- void kvm_arch_vcpu_unblocking(struct kvm_vcpu *vcpu)
---- a/virt/kvm/arm/vgic/vgic-v2.c
-+++ b/virt/kvm/arm/vgic/vgic-v2.c
-@@ -407,10 +407,19 @@ void vgic_v2_load(struct kvm_vcpu *vcpu)
- 	writel_relaxed(cpu_if->vgic_vmcr, vgic->vctrl_base + GICH_VMCR);
- }
- 
--void vgic_v2_put(struct kvm_vcpu *vcpu)
-+void vgic_v2_vmcr_sync(struct kvm_vcpu *vcpu)
- {
- 	struct vgic_v2_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v2;
- 	struct vgic_dist *vgic = &vcpu->kvm->arch.vgic;
- 
- 	cpu_if->vgic_vmcr = readl_relaxed(vgic->vctrl_base + GICH_VMCR);
- }
-+
-+void vgic_v2_put(struct kvm_vcpu *vcpu)
+-/*
+- * Runtime evaluation of get_order()
+- */
+-static inline __attribute_const__
+-int __get_order(unsigned long size)
+-{
+-	int order;
+-
+-	size--;
+-	size >>= PAGE_SHIFT;
+-#if BITS_PER_LONG == 32
+-	order = fls(size);
+-#else
+-	order = fls64(size);
+-#endif
+-	return order;
+-}
+-
+ /**
+  * get_order - Determine the allocation order of a memory size
+  * @size: The size for which to get the order
+@@ -42,19 +24,27 @@ int __get_order(unsigned long size)
+  * to hold an object of the specified size.
+  *
+  * The result is undefined if the size is 0.
+- *
+- * This function may be used to initialise variables with compile time
+- * evaluations of constants.
+  */
+-#define get_order(n)						\
+-(								\
+-	__builtin_constant_p(n) ? (				\
+-		((n) == 0UL) ? BITS_PER_LONG - PAGE_SHIFT :	\
+-		(((n) < (1UL << PAGE_SHIFT)) ? 0 :		\
+-		 ilog2((n) - 1) - PAGE_SHIFT + 1)		\
+-	) :							\
+-	__get_order(n)						\
+-)
++static inline __attribute_const__ int get_order(unsigned long size)
 +{
-+	struct vgic_v2_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v2;
-+	struct vgic_dist *vgic = &vcpu->kvm->arch.vgic;
++	if (__builtin_constant_p(size)) {
++		if (!size)
++			return BITS_PER_LONG - PAGE_SHIFT;
 +
-+	vgic_v2_vmcr_sync(vcpu);
-+	cpu_if->vgic_apr = readl_relaxed(vgic->vctrl_base + GICH_APR);
++		if (size < (1UL << PAGE_SHIFT))
++			return 0;
++
++		return ilog2((size) - 1) - PAGE_SHIFT + 1;
++	}
++
++	size--;
++	size >>= PAGE_SHIFT;
++#if BITS_PER_LONG == 32
++	return fls(size);
++#else
++	return fls64(size);
++#endif
 +}
---- a/virt/kvm/arm/vgic/vgic-v3.c
-+++ b/virt/kvm/arm/vgic/vgic-v3.c
-@@ -547,10 +547,15 @@ void vgic_v3_load(struct kvm_vcpu *vcpu)
- 		kvm_call_hyp(__vgic_v3_write_vmcr, cpu_if->vgic_vmcr);
- }
  
--void vgic_v3_put(struct kvm_vcpu *vcpu)
-+void vgic_v3_vmcr_sync(struct kvm_vcpu *vcpu)
- {
- 	struct vgic_v3_cpu_if *cpu_if = &vcpu->arch.vgic_cpu.vgic_v3;
+ #endif	/* __ASSEMBLY__ */
  
- 	if (likely(cpu_if->vgic_sre))
- 		cpu_if->vgic_vmcr = kvm_call_hyp(__vgic_v3_read_vmcr);
- }
-+
-+void vgic_v3_put(struct kvm_vcpu *vcpu)
-+{
-+	vgic_v3_vmcr_sync(vcpu);
-+}
---- a/virt/kvm/arm/vgic/vgic.c
-+++ b/virt/kvm/arm/vgic/vgic.c
-@@ -764,6 +764,17 @@ void kvm_vgic_put(struct kvm_vcpu *vcpu)
- 		vgic_v3_put(vcpu);
- }
- 
-+void kvm_vgic_vmcr_sync(struct kvm_vcpu *vcpu)
-+{
-+	if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
-+		return;
-+
-+	if (kvm_vgic_global_state.type == VGIC_V2)
-+		vgic_v2_vmcr_sync(vcpu);
-+	else
-+		vgic_v3_vmcr_sync(vcpu);
-+}
-+
- int kvm_vgic_vcpu_pending_irq(struct kvm_vcpu *vcpu)
- {
- 	struct vgic_cpu *vgic_cpu = &vcpu->arch.vgic_cpu;
---- a/virt/kvm/arm/vgic/vgic.h
-+++ b/virt/kvm/arm/vgic/vgic.h
-@@ -168,6 +168,7 @@ int vgic_register_dist_iodev(struct kvm
- void vgic_v2_init_lrs(void);
- void vgic_v2_load(struct kvm_vcpu *vcpu);
- void vgic_v2_put(struct kvm_vcpu *vcpu);
-+void vgic_v2_vmcr_sync(struct kvm_vcpu *vcpu);
- 
- static inline void vgic_get_irq_kref(struct vgic_irq *irq)
- {
-@@ -195,6 +196,7 @@ bool vgic_v3_check_base(struct kvm *kvm)
- 
- void vgic_v3_load(struct kvm_vcpu *vcpu);
- void vgic_v3_put(struct kvm_vcpu *vcpu);
-+void vgic_v3_vmcr_sync(struct kvm_vcpu *vcpu);
- 
- bool vgic_has_its(struct kvm *kvm);
- int kvm_vgic_register_its_device(void);
+-- 
+2.20.1
+
 
 
