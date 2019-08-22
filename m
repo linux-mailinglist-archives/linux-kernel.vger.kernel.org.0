@@ -2,37 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B1EA99B69
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7E4999BB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404234AbfHVRYd (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45318 "EHLO mail.kernel.org"
+        id S2391942AbfHVR1D (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49894 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404110AbfHVRYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:11 -0400
+        id S2404474AbfHVRZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:45 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58C3C23400;
-        Thu, 22 Aug 2019 17:24:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D98E23426;
+        Thu, 22 Aug 2019 17:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494650;
-        bh=Y/+XWBGaeuRRuumbxhD/nqhpYXI4L+3AvQCbGWM+bPQ=;
+        s=default; t=1566494744;
+        bh=fmHX5gFkRLE6HEbw4pNjyFQ6FzlHrGcqNU+mkFP+Wpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q2qHo8idWKjfrSMVB/jW9qsXJo9AHnpE638btQ1gBC4C2fmXXktmlg8j/mjwUGZg6
-         DlzIF3tH58gL1HOBr+OXxJHnTvOGWQ/i6YyaDZR3u4d2bbBXZdjiV3e6DDSRqB1hiV
-         h/qpq70LeV7dsDSIud5H3bU3xx8Nx17NuaNTfTVA=
+        b=Of1vQEaaXfq+bTfXupDr1W1+mBMHaVAOuyWGjrjvVcZJzSN6i1NK6OFNVodFAkJDr
+         8ZDFDB0a18LfNZecrY5X9Wtfp0QktKE9wIp2wHvhk72Hg375sci0G8uzBpmX+y+xem
+         gwksi8lUUWepr6Ys+9Yea+RjhXB1rLQBN0PDcxRc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: [PATCH 4.9 082/103] staging: comedi: dt3000: Fix rounding up of timer divisor
-Date:   Thu, 22 Aug 2019 10:19:10 -0700
-Message-Id: <20190822171732.302698020@linuxfoundation.org>
+        stable@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Himanshu Madhani <hmadhani@marvell.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 38/85] scsi: qla2xxx: Fix possible fcport null-pointer dereferences
+Date:   Thu, 22 Aug 2019 10:19:11 -0700
+Message-Id: <20190822171732.971558743@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -42,54 +45,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ian Abbott <abbotti@mev.co.uk>
+[ Upstream commit e82f04ec6ba91065fd33a6201ffd7cab840e1475 ]
 
-commit 8e2a589a3fc36ce858d42e767c3bcd8fc62a512b upstream.
+In qla2x00_alloc_fcport(), fcport is assigned to NULL in the error
+handling code on line 4880:
+    fcport = NULL;
 
-`dt3k_ns_to_timer()` determines the prescaler and divisor to use to
-produce a desired timing period.  It is influenced by a rounding mode
-and can round the divisor up, down, or to the nearest value.  However,
-the code for rounding up currently does the same as rounding down!  Fix
-ir by using the `DIV_ROUND_UP()` macro to calculate the divisor when
-rounding up.
+Then fcport is used on lines 4883-4886:
+    INIT_WORK(&fcport->del_work, qla24xx_delete_sess_fn);
+	INIT_WORK(&fcport->reg_work, qla_register_fcport_fn);
+	INIT_LIST_HEAD(&fcport->gnl_entry);
+	INIT_LIST_HEAD(&fcport->list);
 
-Also, change the types of the `divider`, `base` and `prescale` variables
-from `int` to `unsigned int` to avoid mixing signed and unsigned types
-in the calculations.
+Thus, possible null-pointer dereferences may occur.
 
-Also fix a typo in a nearby comment: "improvment" => "improvement".
+To fix these bugs, qla2x00_alloc_fcport() directly returns NULL
+in the error handling code.
 
-Signed-off-by: Ian Abbott <abbotti@mev.co.uk>
-Cc: stable <stable@vger.kernel.org>
-Link: https://lore.kernel.org/r/20190812120814.21188-1-abbotti@mev.co.uk
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+These bugs are found by a static analysis tool STCheck written by us.
 
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Acked-by: Himanshu Madhani <hmadhani@marvell.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/comedi/drivers/dt3000.c |    6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/scsi/qla2xxx/qla_init.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/staging/comedi/drivers/dt3000.c
-+++ b/drivers/staging/comedi/drivers/dt3000.c
-@@ -351,9 +351,9 @@ static irqreturn_t dt3k_interrupt(int ir
- static int dt3k_ns_to_timer(unsigned int timer_base, unsigned int *nanosec,
- 			    unsigned int flags)
- {
--	int divider, base, prescale;
-+	unsigned int divider, base, prescale;
- 
--	/* This function needs improvment */
-+	/* This function needs improvement */
- 	/* Don't know if divider==0 works. */
- 
- 	for (prescale = 0; prescale < 16; prescale++) {
-@@ -367,7 +367,7 @@ static int dt3k_ns_to_timer(unsigned int
- 			divider = (*nanosec) / base;
- 			break;
- 		case CMDF_ROUND_UP:
--			divider = (*nanosec) / base;
-+			divider = DIV_ROUND_UP(*nanosec, base);
- 			break;
- 		}
- 		if (divider < 65536) {
+diff --git a/drivers/scsi/qla2xxx/qla_init.c b/drivers/scsi/qla2xxx/qla_init.c
+index f84f9bf150278..ddce32fe0513a 100644
+--- a/drivers/scsi/qla2xxx/qla_init.c
++++ b/drivers/scsi/qla2xxx/qla_init.c
+@@ -4732,7 +4732,7 @@ qla2x00_alloc_fcport(scsi_qla_host_t *vha, gfp_t flags)
+ 		ql_log(ql_log_warn, vha, 0xd049,
+ 		    "Failed to allocate ct_sns request.\n");
+ 		kfree(fcport);
+-		fcport = NULL;
++		return NULL;
+ 	}
+ 	INIT_WORK(&fcport->del_work, qla24xx_delete_sess_fn);
+ 	INIT_LIST_HEAD(&fcport->gnl_entry);
+-- 
+2.20.1
+
 
 
