@@ -2,93 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 87FDA99BEF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C77599C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391065AbfHVR3d (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:29:33 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:38164 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390631AbfHVR3a (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:29:30 -0400
-Received: by mail-pg1-f194.google.com with SMTP id e11so4053669pga.5
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
-        b=l6U7Lyf0pAC/hPrTqdj669gt+CJ2CBM5J0Opg6CFM4CUAfgfTtm4KpO9FqRIop85Qz
-         og1xd2wgn2De8IsjsrP8/RZGxBgAftfBiGPbR1jyBC+m6ItdST7JEQuPdc27GZqj+TUy
-         FVB72DFh2flIuP8MmLebo1Fe4pP6NVI95/AvQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=ukVWNvitz/UHIvotHd8untO0xzPRYvc+1WN6pDOo+Js=;
-        b=nsaoeDYmzEzpfe1GV2Oh3iWydjuD8MBZRPgrclRUK2FisDs1jdhJwb2rCMasSSYS15
-         +alLrz494CDqQouYj0fzqVutSrqMQvnoGKKTiJgRwavgMjnZ0eoZkX0KDgLFN2++/LTK
-         203mFUc64HW1AjXc1pfUN08fdEOom/JVpXf+Il766+L32CHE5NgNcFsMqZDn1BmRy8tG
-         MN7FinIFrUw0Aq7VxmIzJrbwLfRLwjUWftxskIIqSGZ9SzlvTtTe1/HIVKO+ZEhcR51i
-         DX3lBjBJ8VYyIiD06BJ1IOyzaLX4O74Rht7KZpqHkEPH1I5OC3G26KW2VAc9HMaaYiK4
-         97AA==
-X-Gm-Message-State: APjAAAXNihOr8VlFY4MDbZ7XsOM9kMJ53TyCKZFip82VuBkCeF5kElOD
-        OZ4fi/kdvFj6F7gZ2XK9zG/AmA==
-X-Google-Smtp-Source: APXvYqz4lxbTsv5Z2JO/gKEg6i2DpoNEniiFZCAuMi/Tl3YoY+PSd8B4B3xWz6iKO9e1ZGHdDvWg5A==
-X-Received: by 2002:a17:90a:380a:: with SMTP id w10mr798893pjb.138.1566494969205;
-        Thu, 22 Aug 2019 10:29:29 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id b6sm23644299pgq.26.2019.08.22.10.29.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:29:28 -0700 (PDT)
-Message-ID: <5d5ed0f8.1c69fb81.46245.daf8@mx.google.com>
-Content-Type: text/plain; charset="utf-8"
+        id S2404841AbfHVRcL (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:32:11 -0400
+Received: from foss.arm.com ([217.140.110.172]:50008 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404559AbfHVRcA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:32:00 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AD8D628;
+        Thu, 22 Aug 2019 10:31:59 -0700 (PDT)
+Received: from e121166-lin.cambridge.arm.com (unknown [10.1.196.255])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0846C3F718;
+        Thu, 22 Aug 2019 10:31:57 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 18:31:55 +0100
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>,
+        "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Leo Li <leoyang.li@nxp.com>,
+        "andrew.murray@arm.com" <andrew.murray@arm.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>
+Subject: Re: [PATCHv2 1/4] dt-bindings: PCI: designware: Remove the num-lanes
+ from Required properties
+Message-ID: <20190822173155.GB12855@e121166-lin.cambridge.arm.com>
+References: <20190820073022.24217-1-Zhiqiang.Hou@nxp.com>
+ <20190820073022.24217-2-Zhiqiang.Hou@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
-References: <20190812223622.73297-1-swboyd@chromium.org> <20190812223622.73297-5-swboyd@chromium.org> <20190819164005.evg35d2hcuslbnrj@linux.intel.com> <5d5ad7f0.1c69fb81.ebfc2.7e1d@mx.google.com> <20190821175846.ewcrpam44fdm27ya@linux.intel.com>
-Cc:     Peter Huewe <peterhuewe@gmx.de>, linux-kernel@vger.kernel.org,
-        linux-integrity@vger.kernel.org,
-        Andrey Pronin <apronin@chromium.org>,
-        Duncan Laurie <dlaurie@chromium.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Alexander Steffen <Alexander.Steffen@infineon.com>
-Subject: Re: [PATCH v4 4/6] tpm: tpm_tis_spi: Export functionality to other drivers
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-From:   Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 22 Aug 2019 10:29:27 -0700
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190820073022.24217-2-Zhiqiang.Hou@nxp.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Jarkko Sakkinen (2019-08-21 10:58:46)
-> On Mon, Aug 19, 2019 at 10:10:08AM -0700, Stephen Boyd wrote:
-> > Quoting Jarkko Sakkinen (2019-08-19 09:40:05)
-> > >=20
-> > > Instead there should be a single tpm_tis_spi driver that dynamically
-> > > either TCG or CR50. I rather take some extra bytes in the LKM than
-> > > the added complexity.
-> > >=20
-> >=20
-> > Ok. I had that patch originally[1]. Do you want me to resend that patch
-> > and start review over from there?
-> >=20
-> > [1] https://lkml.kernel.org/r/5d2f955d.1c69fb81.35877.7018@mx.google.com
->=20
-> What if:
->=20
-> 1. You mostly use this solution but have it as a separate source module
->    only.
-> 2. Use TPM_IS_CR50 only once to bind the callbacks.
->=20
+On Tue, Aug 20, 2019 at 07:28:43AM +0000, Z.q. Hou wrote:
+> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> 
+> The num-lanes is not a mandatory property, e.g. on FSL
+> Layerscape SoCs, the PCIe link training is completed
+> automatically base on the selected SerDes protocol, it
+> doesn't need the num-lanes to set-up the link width.
+> 
+> It is previously in both Required and Optional properties,
+> let's remove it from the Required properties.
+> 
+> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
+> ---
+> V2:
+>  - Reworded the change log and subject.
+>  - Fixed a typo in subject.
+> 
+>  Documentation/devicetree/bindings/pci/designware-pcie.txt | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/designware-pcie.txt b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> index 5561a1c060d0..bd880df39a79 100644
+> --- a/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> +++ b/Documentation/devicetree/bindings/pci/designware-pcie.txt
+> @@ -11,7 +11,6 @@ Required properties:
+>  	     the ATU address space.
+>      (The old way of getting the configuration address space from "ranges"
+>      is deprecated and should be avoided.)
+> -- num-lanes: number of lanes to use
+>  RC mode:
+>  - #address-cells: set to <3>
+>  - #size-cells: set to <2>
 
-Ok I think I understand. Take the callback approach from these patches
-and combine that with the TPM_IS_CR50 changes I made in [1]. I'll try it
-out and resend.
+The patch is fine but if I were to be picky, we should update the
+"Optional" entry to remove the "this property should be specified
+unless the link is brought already up in BIOS" AFAIK in this HW
+"BIOS" does not really play a role (and honestly the sentence above
+is vague enough to make it useless if not harmful in a DT binding).
 
+Lorenzo
