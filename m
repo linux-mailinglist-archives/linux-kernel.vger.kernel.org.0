@@ -2,271 +2,142 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id B7D6A99158
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:49:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CAB069914A
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:49:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387891AbfHVKs7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 06:48:59 -0400
-Received: from conuserg-07.nifty.com ([210.131.2.74]:58804 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732378AbfHVKs6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:48:58 -0400
-Received: from localhost.localdomain (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x7MAm3ob013611;
-        Thu, 22 Aug 2019 19:48:04 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x7MAm3ob013611
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1566470884;
-        bh=pgMh/XShvFXZtm5mQiWwmSeXQh92l0dVrwBiaBdOW5M=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qy7j2+OxzQ3YyC5B0siftsymKSsn8q0bji129g0ZmxeoUxuJT4Hjbjz2E2wJa1W3A
-         zT8w16DEdBNGoR0kcNTp6nEnWdrnMtoIT3hx3gHs4xOhvRLxAnTZtGiJd4Ufk3xmqa
-         jHeL1ldQYloj4FyLWKCPHpD1/xaPRaZyM3f64gOvCY9WbUfZ/wu50Yni0BX4yVjDn1
-         mR+r8lwRE6Czj1pDJojrMKrrr5dlulM5EWEIidWRPPo8006ajvj4N4lWpYq2lCs01V
-         QokuaM9FjCfIJwIV3kNn7TOsFheU4kWySS3F86zH6qtUPefcek7LG5nEkGKbPiv2Hq
-         mMTrN5QN8YzIA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>, Paul Smith <psmith@gnu.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] [NOT APPLICABLE YET] kbuild: speed up incremental build for the new GNU Make?
-Date:   Thu, 22 Aug 2019 19:47:59 +0900
-Message-Id: <20190822104759.31775-1-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.17.1
+        id S2387810AbfHVKsM (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 06:48:12 -0400
+Received: from mail-eopbgr150121.outbound.protection.outlook.com ([40.107.15.121]:33286
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732494AbfHVKsM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 06:48:12 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mqnp9Z/eeJWIiQO2tp86Gcv8yCatLp6U/QCxd8YfXnAWOIkk+weDYdu2jgAaOkiVLIVMsX6Hr5+hZd/LzJxQBMZZ4VIeMpSY3H9s7ggwUbqh481FJIy4IuLeoWyuW8+CtDkgge3bGBH8r5eSyyHJnzQVBKVpaGDKLpx8/tbpGh8z97TsKS3WgIqgLeh/4/8ctQTb4or08de3zZ6R0kUZ/cUvJLPhTQJ7ngGbrM9djehIWF4IIKW45chE8O+rW8noH2VwHY7pkxLOal8bLgeeZKP+kw4OWksryXIFD6tK2Eh5vKroQF0+MZJF5GGwCtDKwyG4QltDjK072XGhtU0MbQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XPvVUob0c0d1S+fmQT9H6gkk2lxFy0seicc/ClTLuso=;
+ b=VzghZ9dXYBh6A4qcrSolMPBm6ocgVh2dfwN8BJgz+YLmlAYhvxfOl874D7yj3v16nm8eJ7sH0mvoT9hJg3CpmfPogSxLlvjUT0GkCWlGPs71sDIeKee2jUM4FMKHJDjJO64CSnZKlBbUHEW1x8G9VvO5s1ajblkLVSKg1oSdso+s4mq2cPCk8gGl53i/5C/Xgn2SLphudxLV7wphK9AcDxe50H57z9cv9aZWKt7D0tz1gqfqRxCBjaXkh51TBnmXpLeeQ8AmYiMA/R4dQYUXzzencMxcZVHm6N5KWrKued12ciukPTANTzH1tMPMzmE07mBZZCVbXSwW52yXZeJrsA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=virtuozzo.com; dmarc=pass action=none
+ header.from=virtuozzo.com; dkim=pass header.d=virtuozzo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XPvVUob0c0d1S+fmQT9H6gkk2lxFy0seicc/ClTLuso=;
+ b=P1Y0ZkSh6Zq1R5QuDtdd48M1fg0zWldYl7qksRSJHozMl5o8KQ3bAge7CRtWQLXAEGFc2lYQM7loX23+fDE8kr/7isAeJu4E6gDsgM3QqDWuspBgf8N9wqErgV531+UnHVgEv5ofwdEemNWNhl0IXU3B8alg1Aj9x2vEuNNYPqQ=
+Received: from VI1PR08MB2782.eurprd08.prod.outlook.com (10.170.236.143) by
+ VI1PR08MB2655.eurprd08.prod.outlook.com (10.175.245.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Thu, 22 Aug 2019 10:48:08 +0000
+Received: from VI1PR08MB2782.eurprd08.prod.outlook.com
+ ([fe80::2969:e370:fb70:71a]) by VI1PR08MB2782.eurprd08.prod.outlook.com
+ ([fe80::2969:e370:fb70:71a%3]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
+ 10:48:08 +0000
+From:   Jan Dakinevich <jan.dakinevich@virtuozzo.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Denis Lunev <den@virtuozzo.com>,
+        Konstantin Khorenko <khorenko@virtuozzo.com>,
+        "jan.dakinevich@gmail.com" <jan.dakinevich@gmail.com>,
+        Jan Dakinevich <jan.dakinevich@virtuozzo.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Alexey Kuznetsov (C)" <kuznet@ms2.inr.ac.ru>,
+        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        Florian Westphal <fw@strlen.de>,
+        Johannes Berg <johannes.berg@intel.com>,
+        David Ahern <dsahern@gmail.com>,
+        Christian Brauner <christian@brauner.io>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Willem de Bruijn <willemb@google.com>,
+        Cong Wang <xiyou.wangcong@gmail.com>,
+        Simon Horman <simon.horman@netronome.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Eric Dumazet <edumazet@google.com>,
+        Li RongQing <lirongqing@baidu.com>,
+        Taehee Yoo <ap420073@gmail.com>,
+        Patrick Talbert <ptalbert@redhat.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Dmitry Safonov <dima@arista.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "netfilter-devel@vger.kernel.org" <netfilter-devel@vger.kernel.org>,
+        "coreteam@netfilter.org" <coreteam@netfilter.org>
+Subject: [PATCH 0/3] rework netlink skb allocation
+Thread-Topic: [PATCH 0/3] rework netlink skb allocation
+Thread-Index: AQHVWNcVBzufB0ixBkav/5yACjs/iw==
+Date:   Thu, 22 Aug 2019 10:48:08 +0000
+Message-ID: <1566470851-4694-1-git-send-email-jan.dakinevich@virtuozzo.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: HE1PR0202CA0033.eurprd02.prod.outlook.com
+ (2603:10a6:3:e4::19) To VI1PR08MB2782.eurprd08.prod.outlook.com
+ (2603:10a6:802:19::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jan.dakinevich@virtuozzo.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: git-send-email 2.1.4
+x-originating-ip: [185.231.240.5]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: f7f3b429-3346-40df-56a6-08d726ee37e1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:VI1PR08MB2655;
+x-ms-traffictypediagnostic: VI1PR08MB2655:
+x-ld-processed: 0bc7f26d-0264-416e-a6fc-8352af79c58f,ExtAddr
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR08MB26559CD07CE0CE988AFD5A318AA50@VI1PR08MB2655.eurprd08.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3968;
+x-forefront-prvs: 01371B902F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(396003)(366004)(136003)(376002)(39840400004)(199004)(189003)(2616005)(99286004)(66476007)(66946007)(66556008)(5660300002)(476003)(64756008)(6116002)(66446008)(8936002)(3846002)(478600001)(6506007)(386003)(81166006)(7406005)(81156014)(44832011)(316002)(52116002)(8676002)(14444005)(305945005)(6486002)(256004)(5640700003)(86362001)(71200400001)(6512007)(102836004)(14454004)(7736002)(6436002)(186003)(7416002)(486006)(50226002)(66066001)(4744005)(2906002)(6916009)(36756003)(2501003)(53936002)(2351001)(71190400001)(25786009)(4326008)(54906003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR08MB2655;H:VI1PR08MB2782.eurprd08.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: virtuozzo.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LDyzR3zFN40v8lkANxiMle0FU1hl5xtt/dMWarNJVdcXtLXRJPZ6EiWUYPzVU48A5mx3hMo9CynUm8hPv6ZpLT7VsDhQucQr5WnShWS8PY35ghia7ckPyx20TRVvOzSnIeN8Gw7usI0sX9Lg7a2EHzkzF6Qy3fk6Hbp2JByUnP4pf5QVWaf0yIa4xIAAGPH3X3vRQR4lqtjgtXw4066HMd5GzYbvHIxaem8emX1O4TYTWKT9a3c3EjsAN/1/Fb2NM5+nFOAWMFCZULoYzwxfDENDhWm0oTCNkYtfsdQbx7vvfVPCte++Gb3WKe8iMxoPzKGM5hhNiQqEZP3qAIwitslwkpqpxZ1/nS4vh/drbPyr6XgewT5Hy48Xu5BoE0RfSPHDa8ubaGUKbaSjpyCWx49IWN02ZACqy5WchTuRbLs=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: virtuozzo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f7f3b429-3346-40df-56a6-08d726ee37e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 10:48:08.0649
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: uwMgAaZ387mInRd+RVR4jj4ndd0WETZn+pffh7M+KPeghSXVZLfobfASlBhhG7O7YEvzblVWR+zrPSgTtTpUk48NnunB7eIeZeuuTxJuxMg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR08MB2655
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It has been 3 years since GNU Make 4.2.1 was released. The maintainer
-of GNU Make, Paul Smith, has announced that the new version (4.3?) will
-be released soon.
+Currently, userspace is able to initiate costly high-order allocation in=20
+kernel sending large broadcast netlink message, which is considered=20
+undesirable. At the same time, unicast message are safe in this regard,=20
+because they uses vmalloc-ed memory.
 
-I reported a bug about the $? behavior some time ago, but it has not
-been fixed yet. I am eager to see it fixed for the new release.
-[https://savannah.gnu.org/bugs/?55532]
+This series introduces changes, that allow broadcast messages to be=20
+allocated with vmalloc() as well as unicast.
 
-This is a hypothetical patch to demonstrate how it would be beneficial
-for the Linux kernel build if it were fixed in time.
+Jan Dakinevich (3):
+  skbuff: use kvfree() to deallocate head
+  netlink: always use vmapped memory for skb data
+  netlink: use generic skb_set_owner_r()
 
-The incremental build of Linux kernel is somewhat slow, especially when
-lots of objects are compiled. The incremental build of allmodconfig
-typically takes a couple of minutes even when none of the objects needs
-to be rebuilt.
+ include/linux/netlink.h   | 16 ----------------
+ net/core/skbuff.c         |  2 +-
+ net/ipv4/fib_frontend.c   |  2 +-
+ net/netfilter/nfnetlink.c |  2 +-
+ net/netlink/af_netlink.c  | 39 +++++++--------------------------------
+ 5 files changed, 10 insertions(+), 51 deletions(-)
 
-The time-consuming part in the incremental build is the evaluation of
-if_changed* macros since they are used in the recipes to compile C and
-assembly source files into objects.
-
-I notice the following code in if_changed* is expensive:
-
-  $(filter-out $(PHONY) $(wildcard $^),$^)
-
-In the incremental build, every object has its .*.cmd file, which
-contains the auto-generated list of included headers. So, $^ are
-expanded into the long list of the source file + included headers,
-and $(wildcard $^) checks whether they exist.
-
-It may not be clear why this check exists there.
-
-Here is the record of my research.
-
-[1] The first code addition into Kbuild
-
-This code dates back to 2002. It is the pre-git era. So, I copy-pasted
-it from the historical git tree.
-
-| commit 4a6db0791528c220655b063cf13fefc8470dbfee (HEAD)
-| Author: Kai Germaschewski <kai@tp1.ruhr-uni-bochum.de>
-| Date:   Mon Jun 17 00:22:37 2002 -0500
-|
-|     kbuild: Handle removed headers
-|
-|     New and old way to handle dependencies would choke when a file
-|     #include'd by other files was removed, since the dependency on it was
-|     still recorded, but since it was gone, make has no idea what to do about
-|     it (and would complain with "No rule to make <file> ...")
-|
-|     We now add targets for all the previously included files, so make will
-|     just ignore them if they disappear.
-|
-| diff --git a/Rules.make b/Rules.make
-| index 6ef827d3df39..7db5301ea7db 100644
-| --- a/Rules.make
-| +++ b/Rules.make
-| @@ -446,7 +446,7 @@ if_changed = $(if $(strip $? \
-|  # execute the command and also postprocess generated .d dependencies
-|  # file
-|
-| -if_changed_dep = $(if $(strip $? \
-| +if_changed_dep = $(if $(strip $? $(filter-out FORCE $(wildcard $^),$^)\
-|                           $(filter-out $(cmd_$(1)),$(cmd_$@))\
-|                           $(filter-out $(cmd_$@),$(cmd_$(1)))),\
-|         @set -e; \
-| diff --git a/scripts/fixdep.c b/scripts/fixdep.c
-| index b5d7bee8efc7..db45bd1888c0 100644
-| --- a/scripts/fixdep.c
-| +++ b/scripts/fixdep.c
-| @@ -292,7 +292,7 @@ void parse_dep_file(void *map, size_t len)
-|                 exit(1);
-|         }
-|         memcpy(s, m, p-m); s[p-m] = 0;
-| -       printf("%s: \\\n", target);
-| +       printf("deps_%s := \\\n", target);
-|         m = p+1;
-|
-|         clear_config();
-| @@ -314,7 +314,8 @@ void parse_dep_file(void *map, size_t len)
-|                 }
-|                 m = p + 1;
-|         }
-| -       printf("\n");
-| +       printf("\n%s: $(deps_%s)\n\n", target, target);
-| +       printf("$(deps_%s):\n", target);
-|  }
-|
-|  void print_deps(void)
-
-The "No rule to make <file> ..." error can be solved by passing -MP to
-the compiler, but I think the detection of header removal is a good
-feature. When a header is removed, all source files that previously
-included it should be re-compiled. This makes sure we has correctly
-got rid of #include directives of it.
-
-This is also related with the behavior of $?. The manual says:
-
-  $?
-      The names of all the prerequisites that are newer than the target,
-      with spaces between them.
-
-This does not address whether a non-existent prerequisite is considered
-to be newer than the target.
-
-At this point of time, GNU Make 3.7x was used, where the $? did not
-include non-existent prerequisites. Therefore,
-
-  $(filter-out FORCE $(wildcard $^),$^)
-
-was added to detect the header removal, and to rebuild the related
-objects if it is the case.
-
-[2] Change of $? behavior
-
-Later, the behavior of $? was changed (fixed) to include prerequisites
-that did not exist.
-
-First, GNU Make commit 64e16d6c00a5 ("Various changes getting ready for
-the release of 3.81.") changed it, but in the release test of 3.81, it
-turned out to break the kernel build.
-
-Some materials:
-
- - http://lists.gnu.org/archive/html/bug-make/2006-03/msg00003.html
- - https://savannah.gnu.org/bugs/?16002
- - https://savannah.gnu.org/bugs/?16051
-
-Then, GNU Make commit 6d8d9b74d9c5 ("Numerous updates to tests for
-issues found on Cygwin and Windows.") reverted it for the 3.81 release
-to give Linux kernel time to adjust to the new behavior.
-
-After the 3.81 release, GNU Make commit 7595f38f62af ("Fixed a number
-of documentation bugs, plus some build/install issues:") re-added it.
-
-[3] Adjustment to the new $? behavior on Kbuild side
-
-Meanwhile, the kernel build was changed by commit 4f1933620f57 ("kbuild:
-change kbuild to not rely on incorrect GNU make behavior") to adjust to
-the new $? behavior.
-
-[4] GNU Make 3.82 released in 2010
-
-Talking about the released versions, 3.82 was the first release that
-came with the new $? behavior.
-
- 3.81 or older:
-    $? does not contain any non-existent prerequisite. So, we need the
-    expensive $(filter-out $(PHONY) $(wildcard $^),$^) if we want to
-    notice the removal of an included header.
-
- 3.82 or newer:
-    $? contains non-existent prerequisites. When a header is removed,
-    it appears in $?. $(filter-out $(PHONY) $(wildcard $^),$^) became
-    a redundant check.
-
-We could have optimized the build by dropping the expensive check
-for 3.82 or later. But, we did not.
-
-[5] The .SECONDARY special target affects $?
-
-Some time later, I noticed $? did not work as expected under some
-circumstances. As above, $? should list non-existent prerequisites,
-but the ones specified as SECONDARY do not appear in $?.
-
-I asked this in GNU Make ML, and it seems a bug:
-
-  https://lists.gnu.org/archive/html/bug-make/2019-01/msg00001.html
-
-Since commit 8e9b61b293d9 ("kbuild: move .SECONDARY special target to
-Kbuild.include"), all files, including headers listed in .*.cmd files,
-are treated as secondary.
-
-So, we are back into the situation where non-existent files are not
-contained in $?.
-
-If we want to rebuild objects, reacting to the header removal, we need
-the extra check by $(filter-out $(PHONY) $(wildcard $^),$^).
-
-[Summary]
-
- - I believe noticing the header removal and recompiling objects is a
-   good feature for the build system.
-
- - Currently, it is achieved by the expensive code:
-
-    $(filter-out $(PHONY) $(wildcard $^),$^)
-
- - I do not want to revert commit 8e9b61b293d9 ("kbuild: move
-   .SECONDARY special target to Kbuild.include"). Specifying
-   .SECONDARY globally is clean, and it matches to the Kbuild policy.
-
- - The behavior of $? affected by .SECONDARY is a bug.
-
- - If it is fixed, we can bypass the costly check, at least for
-   the new released version.
-
-This commit bypasses the expensive check for GNU Make >= 4.3.
-According to my analysis, we can save ~20% of time for the incremental
-build.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- scripts/Kbuild.include | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
-index 4b0432e095ae..5c4f63642bfe 100644
---- a/scripts/Kbuild.include
-+++ b/scripts/Kbuild.include
-@@ -217,7 +217,14 @@ make-cmd = $(call escsq,$(subst $(pound),$$(pound),$(subst $$,$$$$,$(cmd_$(1))))
- 
- # Find any prerequisites that is newer than target or that does not exist.
- # PHONY targets skipped in both cases.
-+
-+ifeq ($(firstword $(sort $(MAKE_VERSION) 4.3)),4.3)
-+any-prereq = $(filter-out $(PHONY),$?)
-+else
-+# For Make <= 4.2.1, $? does not contain non-existent prerequisites that are
-+# specified as secondary. We need an extra check to notice header removal.
- any-prereq = $(filter-out $(PHONY),$?)$(filter-out $(PHONY) $(wildcard $^),$^)
-+endif
- 
- # Execute command if command has changed or prerequisite(s) are updated.
- if_changed = $(if $(any-prereq)$(cmd-check),                                 \
--- 
-2.17.1
+--=20
+2.1.4
 
