@@ -2,105 +2,78 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 820BA98F1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:19:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DEE6C98F31
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:21:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733149AbfHVJTD (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:19:03 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41311 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727953AbfHVJTC (ORCPT
+        id S1733175AbfHVJUO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:20:14 -0400
+Received: from relay8-d.mail.gandi.net ([217.70.183.201]:55365 "EHLO
+        relay8-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfHVJUO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:19:02 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j16so4678340wrr.8
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 02:19:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=m9KKLrIqbY97G+YHTsqbk+m53nDW2UqwwOTGF21lRdM=;
-        b=TUbZ+XT64zRH29bUvN0i/pkfTQ5oDoq3voysQLVKmlejq8f7t3N8QwT1Uti6bNMT2X
-         aNtXyFjHsIv6Nt9FPjZ2mdrXl16cz5U+bkoXSS2aOS2EigmniSZRVAiIIqYfUaF5EEZI
-         3XJ7wB6GWL5vslhkX96ikuN6ExYzq36yPaTkWSvErHrrfdXl2LEYueeWsYsvcBP2s75G
-         xzcASZGDbE750EU1CXfDMw9+R1E9cpwqy3uo6TdWZ1cG2jpFuGu5uJZmkiN4FrUDjIYc
-         y1cN+ZP3qBjDVlUtvbemet0/PoOXjo4WgHdszQcvq1OtjbnJpGdSsG+WLk9nB0iYyP+C
-         A3Yw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=m9KKLrIqbY97G+YHTsqbk+m53nDW2UqwwOTGF21lRdM=;
-        b=VoAsm5BIVUv/BejVO3NhwHgGLzzSd+lA/feeksT4Leg30xHE9q2R+qwwClRdmbytxV
-         MpubIZU7o/YSSrim/a9XOwo6PdPKOACHXE0bDn2K70E2uVbxjPfyrRZpVxz7IJ+wzoxp
-         8GJjTXds67HDwu07ts7oUbSxtzNYPCGLlIjPWYvHn0lOoCnrAZBJp4cbRvOCcA/qvih9
-         971JHtPTEXDdLgYVwuH9Kp5AH0M9nyaAGFgsv2zN9Isa4X6BSrPTr+GMt3WmvXpR/o2z
-         5HPeyyqY1nORmCUDad+srOPQjQcdGnTXWDsT9ulNWjBOQy4CmWLVC/9MTTH6ux0xQlPP
-         sAEg==
-X-Gm-Message-State: APjAAAULRPEU15kk1phiYsaKMxS9i25IzUonNimFXyJ8gE/9iHqYi6Kf
-        63YVPvpuy5DtAdW/BfJytvPNtQ==
-X-Google-Smtp-Source: APXvYqzOVluoLA+MQFTvG9csQYBVPHzlnPIYJG5axOcRqEmbg07SceenPRU1Pq/+XLrKpoCD4FOEzA==
-X-Received: by 2002:adf:c7cb:: with SMTP id y11mr39705758wrg.281.1566465541055;
-        Thu, 22 Aug 2019 02:19:01 -0700 (PDT)
-Received: from [192.168.86.34] (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.googlemail.com with ESMTPSA id o8sm10141815wma.1.2019.08.22.02.18.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 02:18:59 -0700 (PDT)
-Subject: Re: [PATCH] ALSA: pcm: add support for 352.8KHz and 384KHz sample
- rate
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     broonie@kernel.org, bgoswami@codeaurora.org, plai@codeaurora.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, Vidyakumar Athota <vathota@codeaurora.org>
-References: <20190821102705.18382-1-srinivas.kandagatla@linaro.org>
- <s5h4l2a76qz.wl-tiwai@suse.de>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <cd375dcc-f2b8-4953-8099-485f72f426da@linaro.org>
-Date:   Thu, 22 Aug 2019 10:18:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Thu, 22 Aug 2019 05:20:14 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay8-d.mail.gandi.net (Postfix) with ESMTPSA id A5BF61BF206;
+        Thu, 22 Aug 2019 09:20:08 +0000 (UTC)
+Date:   Thu, 22 Aug 2019 11:20:08 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Matthias Brugger <matthias.bgg@gmail.com>
+Cc:     Ran Bi <ran.bi@mediatek.com>, Rob Herring <robh+dt@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, srv_heupstream@mediatek.com,
+        YT Shen <yt.shen@mediatek.com>,
+        Eddie Huang <eddie.huang@mediatek.com>,
+        Yingjoe Chen <yingjoe.chen@mediatek.com>,
+        Flora Fu <flora.fu@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>
+Subject: Re: [PATCH v2 2/4] rtc: Add support for the MediaTek MT2712 RTC
+Message-ID: <20190822092008.GR27031@piout.net>
+References: <20190801110122.26834-1-ran.bi@mediatek.com>
+ <20190801110122.26834-3-ran.bi@mediatek.com>
+ <c4e8b041-4a35-578e-07a3-2ebc99848ee2@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <s5h4l2a76qz.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c4e8b041-4a35-578e-07a3-2ebc99848ee2@gmail.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for taking time to review,
-
-On 21/08/2019 18:44, Takashi Iwai wrote:
-> On Wed, 21 Aug 2019 12:27:05 +0200,
-> Srinivas Kandagatla wrote:
->>
->> From: Vidyakumar Athota <vathota@codeaurora.org>
->>
->> Most of the modern codecs supports 352.8KHz and 384KHz sample rates.
->> Currently HW params fails to set 352.8Kz and 384KHz sample rate
->> as these are not in known rates list.
->> Add these new rates to known list to allow them.
->>
->> This patch also adds defines in pcm.h so that drivers can use it.
->>
->> Signed-off-by: Vidyakumar Athota <vathota@codeaurora.org>
->> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+On 22/08/2019 11:12:29+0200, Matthias Brugger wrote:
 > 
-> As I repeatedly write for this kind of request, please submit always
-> with the user of the API, not only the API change itself.
 > 
-I totally agree with you.
-
-I will respin the patchset with wcd9335 and QDSP6 patches.
-
-
-thanks,
-srini
-
-
+> On 01/08/2019 13:01, Ran Bi wrote:
+> > This add support for the MediaTek MT2712 RTC. It was SoC based RTC, but
+> > had different architecture compared with MT7622 RTC.
+> > 
+> > Signed-off-by: Ran Bi <ran.bi@mediatek.com>
+> > ---
+> >  drivers/rtc/Kconfig      |  10 +
+> >  drivers/rtc/Makefile     |   1 +
+> >  drivers/rtc/rtc-mt2712.c | 444 +++++++++++++++++++++++++++++++++++++++
 > 
-> thanks,
+> Can't we just adjust rtc-mt7622.c (and rename it) to unify the source for both
+> devices. What is the difference that we need to write a driver of our own?
 > 
-> Takashi
-> 
+
+If they are compatible, this is the way to go but the file can't be
+renamed (and that is fine).
+
+
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
