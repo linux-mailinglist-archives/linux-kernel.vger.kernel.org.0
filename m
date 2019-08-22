@@ -2,111 +2,203 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 20424990BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:28:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C03FB990AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:25:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731830AbfHVK1A (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 06:27:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:56016 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732978AbfHVK07 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:26:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Type:MIME-Version:References:
-        Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=DotA4iLQHzv00Y2V/yoKvVtA73fz51KfKrhIQUWvQ/A=; b=eVlrAYfdcJG6+boQHJJ67V4KC9
-        QbHlfleONMxWazMENqrju+gkrvwQLKEz4QjyGgdQGgpHf8jEQXlHo4zRC76zDN3CEw8MlAGvtVfHx
-        nXCCrySC8KOMw/dx4+ur5Hsh41NaRdWf8zPEO2ZGmBsWq2Zbaq3FFRljQgMxjF9hwmuHIbJInd1SC
-        4EW2tUZqsG0Dn0OBEg+jRNaThJ6Cf4r+kfd2xkDyMDzE1xSghN6eLY2LtQE9eYsGpcbe6HsK4DFri
-        SgKJ6OznuE7hxelqdcSlVojJywGHj5XPhCZMSr0rafQ54vGsqmaMHA7JARfChK82Zp8VFr05M8CsV
-        +gd8V1lg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0kIu-0008DM-Nt; Thu, 22 Aug 2019 10:26:52 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9003B30780C;
-        Thu, 22 Aug 2019 12:26:18 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
-        id 6DF1720BD78F0; Thu, 22 Aug 2019 12:26:50 +0200 (CEST)
-Message-Id: <20190822102411.393701010@infradead.org>
-User-Agent: quilt/0.65
-Date:   Thu, 22 Aug 2019 12:23:11 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     peterz@infradead.org, x86@kernel.org,
-        Dave Hansen <dave.hansen@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 5/5] x86/intel: Add common OPTDIFFs
-References: <20190822102306.109718810@infradead.org>
+        id S2387565AbfHVKZg (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 06:25:36 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:42380 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387555AbfHVKZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 06:25:35 -0400
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com [209.85.128.72])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 3A37E2D1CE
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:25:35 +0000 (UTC)
+Received: by mail-wm1-f72.google.com with SMTP id g2so1871955wmk.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 03:25:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=OkWE/ypXtm5ByIaQmws7qUqEgpMrRSHM+eiQENF8y7E=;
+        b=KB5PDhvxl4SJ11v9oodODA7MsIgh5jxKs/iTOOX85iywYtxYhAAyhjSIRj0+vFJy63
+         s3k/3fnCOqLcOQvQG/FfZJLkeulEBc7EtyQob21N4RLaX4jgXDTyHHr1aWDEMEan4k9f
+         dWDOZ8vBRD1GYjivW+ii7z0+Gw5MIjqMFS5B5ITaz9yTx5Ejw8z4S57SSZ6Sx57qziPZ
+         J2ZJerGTifhjPUDMVGLpjGvRK8kwT8YDT/ux4NAnSqguFgVp5D6MVZzZadmGcPXESw0T
+         M8aGxrDys/1xHjlR2sXcx+j33gymngWBq4+dep2q15vnazi+1vbbTjfN9MJvkurg16zq
+         jOOg==
+X-Gm-Message-State: APjAAAVwnATTvd4Is7+mB3AQTMDYGo1jUvt9FcWTBuDcQ3pL5Y/E+Yv9
+        zKfFDEB8/qBi2DA59dsI24O1tFA5tyS9VYfCJm29rwOemmGawd9T4jKsAOK+FOQv/pybTXrbo88
+        xVMuywlj/KUy2yFm2GyGeq4tR
+X-Received: by 2002:a1c:a383:: with SMTP id m125mr5554927wme.57.1566469533833;
+        Thu, 22 Aug 2019 03:25:33 -0700 (PDT)
+X-Google-Smtp-Source: APXvYqzfnLy3HKEn/7VIiE1whM0k6Xh58TuFmITLJJOXHevPzuzCcy4uuxv6bxU801laeEZq5DwlZQ==
+X-Received: by 2002:a1c:a383:: with SMTP id m125mr5554883wme.57.1566469533587;
+        Thu, 22 Aug 2019 03:25:33 -0700 (PDT)
+Received: from steredhat (host80-221-dynamic.18-79-r.retail.telecomitalia.it. [79.18.221.80])
+        by smtp.gmail.com with ESMTPSA id f13sm17769033wrr.5.2019.08.22.03.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 03:25:33 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 12:25:29 +0200
+From:   Stefano Garzarella <sgarzare@redhat.com>
+To:     Dexuan Cui <decui@microsoft.com>
+Cc:     "jhansen@vmware.com" <jhansen@vmware.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "stefanha@redhat.com" <stefanha@redhat.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "sashal@kernel.org" <sashal@kernel.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] vsock: Fix a lockdep warning in __vsock_release()
+Message-ID: <20190822102529.q5ozdvh6kbymi6ni@steredhat>
+References: <1566270830-28981-1-git-send-email-decui@microsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1566270830-28981-1-git-send-email-decui@microsoft.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 20, 2019 at 03:14:22AM +0000, Dexuan Cui wrote:
+> Lockdep is unhappy if two locks from the same class are held.
+> 
+> Fix the below warning by making __vsock_release() non-recursive -- this
+> patch is kind of ugly, but it looks to me there is not a better way to
+> deal with the problem here.
+> 
+> ============================================
+> WARNING: possible recursive locking detected
+> 5.2.0+ #6 Not tainted
+> --------------------------------------------
+> a.out/1020 is trying to acquire lock:
+> 0000000074731a98 (sk_lock-AF_VSOCK){+.+.}, at: hvs_release+0x10/0x120 [hv_sock]
+> 
+> but task is already holding lock:
+> 0000000014ff8397 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
+> 
+> other info that might help us debug this:
+>  Possible unsafe locking scenario:
+> 
+>        CPU0
+>        ----
+>   lock(sk_lock-AF_VSOCK);
+>   lock(sk_lock-AF_VSOCK);
+> 
+>  *** DEADLOCK ***
+> 
+>  May be due to missing lock nesting notation
+> 
+> 2 locks held by a.out/1020:
+>  #0: 00000000f8bceaa7 (&sb->s_type->i_mutex_key#10){+.+.}, at: __sock_release+0x2d/0xa0
+>  #1: 0000000014ff8397 (sk_lock-AF_VSOCK){+.+.}, at: __vsock_release+0x2e/0xf0 [vsock]
+> 
+> stack backtrace:
+> CPU: 7 PID: 1020 Comm: a.out Not tainted 5.2.0+ #6
+> Call Trace:
+>  dump_stack+0x67/0x90
+>  __lock_acquire.cold.66+0x14d/0x1f8
+>  lock_acquire+0xb5/0x1c0
+>  lock_sock_nested+0x6d/0x90
+>  hvs_release+0x10/0x120 [hv_sock]
+>  __vsock_release+0x24/0xf0 [vsock]
+>  __vsock_release+0xa0/0xf0 [vsock]
+>  vsock_release+0x12/0x30 [vsock]
+>  __sock_release+0x37/0xa0
+>  sock_close+0x14/0x20
+>  __fput+0xc1/0x250
+>  task_work_run+0x98/0xc0
+>  do_exit+0x3dd/0xc60
+>  do_group_exit+0x47/0xc0
+>  get_signal+0x169/0xc60
+>  do_signal+0x30/0x710
+>  exit_to_usermode_loop+0x50/0xa0
+>  do_syscall_64+0x1fc/0x220
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> 
+> Signed-off-by: Dexuan Cui <decui@microsoft.com>
+> ---
+>  net/vmw_vsock/af_vsock.c         | 33 ++++++++++++++++++++++++++++++++-
+>  net/vmw_vsock/hyperv_transport.c |  2 +-
+>  2 files changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/vmw_vsock/af_vsock.c b/net/vmw_vsock/af_vsock.c
+> index ab47bf3..420f605 100644
+> --- a/net/vmw_vsock/af_vsock.c
+> +++ b/net/vmw_vsock/af_vsock.c
+> @@ -638,6 +638,37 @@ struct sock *__vsock_create(struct net *net,
+>  }
+>  EXPORT_SYMBOL_GPL(__vsock_create);
+>  
+> +static void __vsock_release2(struct sock *sk)
+> +{
+> +	if (sk) {
+> +		struct sk_buff *skb;
+> +		struct vsock_sock *vsk;
+> +
+> +		vsk = vsock_sk(sk);
+> +
+> +		/* The release call is supposed to use lock_sock_nested()
+> +		 * rather than lock_sock(), if a lock should be acquired.
+> +		 */
+> +		transport->release(vsk);
+> +
+> +		/* Use the nested version to avoid the warning
+> +		 * "possible recursive locking detected".
+> +		 */
+> +		lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: x86@kernel.org
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Tony Luck <tony.luck@intel.com>
----
- arch/x86/include/asm/intel-family.h |   21 +++++++++++++++------
- 1 file changed, 15 insertions(+), 6 deletions(-)
+What about using lock_sock_nested() in the __vsock_release() without
+define this new function?
 
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -5,9 +5,6 @@
- /*
-  * "Big Core" Processors (Branded as Core, Xeon, etc...)
-  *
-- * The "_X" parts are generally the EP and EX Xeons, or the
-- * "Extreme" ones, like Broadwell-E, or Atom microserver.
-- *
-  * While adding a new CPUID for a new microarchitecture, add a new
-  * group to keep logically sorted out in chronological order. Within
-  * that group keep the CPUID for the variants sorted by model number.
-@@ -21,9 +18,19 @@
-  * MICROARCH	Is the code name for the micro-architecture for this core.
-  *		N.B. Not the platform name.
-  * OPTDIFF	If needed, a short string to differentiate by market segment.
-- *		Exact strings here will vary over time. _DESKTOP, _MOBILE, and
-- *		_X (short for Xeon server) should be used when they are
-- *		appropriate.
-+ *
-+ *		Common OPTDIFFs:
-+ *
-+ *			- regular client parts
-+ *		_L	- regular mobile parts
-+ *		_G	- parts with extra graphics on
-+ *		_X	- regular server parts
-+ *		_D	- micro server parts
-+ *
-+ *		Historical OPTDIFFs:
-+ *
-+ *		_EP	- 2 socket server parts
-+ *		_EX	- 4+ socket server parts
-  *
-  * The #define line may optionally include a comment including platform names.
-  */
-@@ -91,6 +98,8 @@
- 
- #define INTEL_FAM6_ATOM_GOLDMONT	0x5C /* Apollo Lake */
- #define INTEL_FAM6_ATOM_GOLDMONT_D	0x5F /* Denverton */
-+
-+/* Note: the micro-architecture is "Goldmont Plus" */
- #define INTEL_FAM6_ATOM_GOLDMONT_PLUS	0x7A /* Gemini Lake */
- 
- #define INTEL_FAM6_ATOM_TREMONT_D	0x86 /* Jacobsville */
+> +		sock_orphan(sk);
+> +		sk->sk_shutdown = SHUTDOWN_MASK;
+> +
+> +		while ((skb = skb_dequeue(&sk->sk_receive_queue)))
+> +			kfree_skb(skb);
+> +
+> +		/* This sk can not be a listener, so it's unnecessary
+> +		 * to call vsock_dequeue_accept().
+> +		 */
+> +		release_sock(sk);
+> +		sock_put(sk);
+> +	}
+> +}
+> +
+>  static void __vsock_release(struct sock *sk)
+>  {
+>  	if (sk) {
+> @@ -659,7 +690,7 @@ static void __vsock_release(struct sock *sk)
+>  
+>  		/* Clean up any sockets that never were accepted. */
+>  		while ((pending = vsock_dequeue_accept(sk)) != NULL) {
+> -			__vsock_release(pending);
+> +			__vsock_release2(pending);
+>  			sock_put(pending);
+>  		}
+>  
+> diff --git a/net/vmw_vsock/hyperv_transport.c b/net/vmw_vsock/hyperv_transport.c
+> index 9d864eb..4b126b2 100644
+> --- a/net/vmw_vsock/hyperv_transport.c
+> +++ b/net/vmw_vsock/hyperv_transport.c
+> @@ -559,7 +559,7 @@ static void hvs_release(struct vsock_sock *vsk)
+>  	struct sock *sk = sk_vsock(vsk);
+>  	bool remove_sock;
+>  
+> -	lock_sock(sk);
+> +	lock_sock_nested(sk, SINGLE_DEPTH_NESTING);
 
+Should we update also other transports?
 
+Thanks,
+Stefano
