@@ -2,42 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D361399BB1
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:27:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F38BD99B5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391930AbfHVR0x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49524 "EHLO mail.kernel.org"
+        id S2404082AbfHVRYH (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404455AbfHVRZh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:37 -0400
+        id S2391556AbfHVRWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:49 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5D9F2064A;
-        Thu, 22 Aug 2019 17:25:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8AC74233FE;
+        Thu, 22 Aug 2019 17:22:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494736;
-        bh=XyTgGdc5NkJvhOS+g7j8/YRQbNieEGcd94XNJp3A8AQ=;
+        s=default; t=1566494568;
+        bh=6KUXWNDA8/+Pde2MDNRP2/6V1yRx83M8Ry5DX+w5b6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GWznrDZvhZdO+YPF+b0oW90AUoOshr+6rG7Pcg0X8Ef1t80t60+t2nm5FXmpwhDqQ
-         BBf1NEucUKM78ZfQWdwrxETFlrpEVWuudaAkaMQVFddLBqwNaKOyFNDtGovOUDOdyV
-         eyyhArPGpUbFFKWFpl5DMKyJoOd3Cr33FxGmRAAY=
+        b=t8T9IeOEzdB5bcmc3C1nto/O6YpadIn40vq5p+7G1WD+hvjx+lkyveEj86TTuyUc8
+         KUexa4nen13A5BORvuI0PQJ55NI0vWMaOiaJPCatfIiPOInhk9ghXooZGIx5SIgSzE
+         dMCoNmAKsnpqXtQDG4nh38lDxE7kI4Ttq5xTx+iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Yao Lihua <Lihua.Yao@desay-svautomotive.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linh Phung <linh.phung.jy@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 28/85] clk: renesas: cpg-mssr: Fix reset control race condition
-Date:   Thu, 22 Aug 2019 10:19:01 -0700
-Message-Id: <20190822171732.539895663@linuxfoundation.org>
+        stable@vger.kernel.org, Oliver Neukum <oneukum@suse.com>,
+        syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
+Subject: [PATCH 4.4 58/78] usb: cdc-acm: make sure a refcount is taken early enough
+Date:   Thu, 22 Aug 2019 10:19:02 -0700
+Message-Id: <20190822171833.717553055@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -47,109 +43,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ Upstream commit e1f1ae8002e4b06addc52443fcd975bbf554ae92 ]
+From: Oliver Neukum <oneukum@suse.com>
 
-The module reset code in the Renesas CPG/MSSR driver uses
-read-modify-write (RMW) operations to write to a Software Reset Register
-(SRCRn), and simple writes to write to a Software Reset Clearing
-Register (SRSTCLRn), as was mandated by the R-Car Gen2 and Gen3 Hardware
-User's Manuals.
+commit c52873e5a1ef72f845526d9f6a50704433f9c625 upstream.
 
-However, this may cause a race condition when two devices are reset in
-parallel: if the reset for device A completes in the middle of the RMW
-operation for device B, device A may be reset again, causing subtle
-failures (e.g. i2c timeouts):
+destroy() will decrement the refcount on the interface, so that
+it needs to be taken so early that it never undercounts.
 
-	thread A			thread B
-	--------			--------
+Fixes: 7fb57a019f94e ("USB: cdc-acm: Fix potential deadlock (lockdep warning)")
+Cc: stable <stable@vger.kernel.org>
+Reported-and-tested-by: syzbot+1b2449b7b5dc240d107a@syzkaller.appspotmail.com
+Signed-off-by: Oliver Neukum <oneukum@suse.com>
+Link: https://lore.kernel.org/r/20190808142119.7998-1-oneukum@suse.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-	val = SRCRn
-	val |= bit A
-	SRCRn = val
-
-	delay
-
-					val = SRCRn (bit A is set)
-
-	SRSTCLRn = bit A
-	(bit A in SRCRn is cleared)
-
-					val |= bit B
-					SRCRn = val (bit A and B are set)
-
-This can be reproduced on e.g. Salvator-XS using:
-
-    $ while true; do i2cdump -f -y 4 0x6A b > /dev/null; done &
-    $ while true; do i2cdump -f -y 2 0x10 b > /dev/null; done &
-
-    i2c-rcar e6510000.i2c: error -110 : 40000002
-    i2c-rcar e66d8000.i2c: error -110 : 40000002
-
-According to the R-Car Gen3 Hardware Manual Errata for Rev.
-0.80 of Feb 28, 2018, reflected in Rev. 1.00 of the R-Car Gen3 Hardware
-User's Manual, writes to SRCRn do not require read-modify-write cycles.
-
-Note that the R-Car Gen2 Hardware User's Manual has not been updated
-yet, and still says a read-modify-write sequence is required.  According
-to the hardware team, the reset hardware block is the same on both R-Car
-Gen2 and Gen3, though.
-
-Hence fix the issue by replacing the read-modify-write operations on
-SRCRn by simple writes.
-
-Reported-by: Yao Lihua <Lihua.Yao@desay-svautomotive.com>
-Fixes: 6197aa65c4905532 ("clk: renesas: cpg-mssr: Add support for reset control")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Tested-by: Linh Phung <linh.phung.jy@renesas.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/usb/class/cdc-acm.c |   18 ++++++++++--------
+ 1 file changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9..24485bee9b49e 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -535,17 +535,11 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
- 	unsigned int reg = id / 32;
- 	unsigned int bit = id % 32;
- 	u32 bitmask = BIT(bit);
--	unsigned long flags;
--	u32 value;
+--- a/drivers/usb/class/cdc-acm.c
++++ b/drivers/usb/class/cdc-acm.c
+@@ -1319,13 +1319,6 @@ made_compressed_probe:
+ 	if (acm == NULL)
+ 		goto alloc_fail;
  
- 	dev_dbg(priv->dev, "reset %u%02u\n", reg, bit);
+-	minor = acm_alloc_minor(acm);
+-	if (minor < 0) {
+-		dev_err(&intf->dev, "no more free acm devices\n");
+-		kfree(acm);
+-		return -ENODEV;
+-	}
+-
+ 	ctrlsize = usb_endpoint_maxp(epctrl);
+ 	readsize = usb_endpoint_maxp(epread) *
+ 				(quirks == SINGLE_RX_URB ? 1 : 2);
+@@ -1333,6 +1326,16 @@ made_compressed_probe:
+ 	acm->writesize = usb_endpoint_maxp(epwrite) * 20;
+ 	acm->control = control_interface;
+ 	acm->data = data_interface;
++
++	usb_get_intf(acm->control); /* undone in destruct() */
++
++	minor = acm_alloc_minor(acm);
++	if (minor < 0) {
++		dev_err(&intf->dev, "no more free acm devices\n");
++		kfree(acm);
++		return -ENODEV;
++	}
++
+ 	acm->minor = minor;
+ 	acm->dev = usb_dev;
+ 	acm->ctrl_caps = ac_management_function;
+@@ -1474,7 +1477,6 @@ skip_countries:
+ 	usb_driver_claim_interface(&acm_driver, data_interface, acm);
+ 	usb_set_intfdata(data_interface, acm);
  
- 	/* Reset module */
--	spin_lock_irqsave(&priv->rmw_lock, flags);
--	value = readl(priv->base + SRCR(reg));
--	value |= bitmask;
--	writel(value, priv->base + SRCR(reg));
--	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	writel(bitmask, priv->base + SRCR(reg));
- 
- 	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
- 	udelay(35);
-@@ -562,16 +556,10 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
- 	unsigned int reg = id / 32;
- 	unsigned int bit = id % 32;
- 	u32 bitmask = BIT(bit);
--	unsigned long flags;
--	u32 value;
- 
- 	dev_dbg(priv->dev, "assert %u%02u\n", reg, bit);
- 
--	spin_lock_irqsave(&priv->rmw_lock, flags);
--	value = readl(priv->base + SRCR(reg));
--	value |= bitmask;
--	writel(value, priv->base + SRCR(reg));
--	spin_unlock_irqrestore(&priv->rmw_lock, flags);
-+	writel(bitmask, priv->base + SRCR(reg));
- 	return 0;
- }
- 
--- 
-2.20.1
-
+-	usb_get_intf(control_interface);
+ 	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
+ 			&control_interface->dev);
+ 	if (IS_ERR(tty_dev)) {
 
 
