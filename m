@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C44899BC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 623C499B74
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391913AbfHVR0p (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49182 "EHLO mail.kernel.org"
+        id S2391797AbfHVRZA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:25:00 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404445AbfHVRZa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:30 -0400
+        id S2404135AbfHVRYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:36 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17B3423400;
-        Thu, 22 Aug 2019 17:25:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 21D8C2341C;
+        Thu, 22 Aug 2019 17:24:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494730;
-        bh=RwIlGsY5UpAFUdjUsjZdVdMjzCqIzdQG2xcWQDnjdI8=;
+        s=default; t=1566494675;
+        bh=Hx/oTr1LiKPxSvknHAXUYWhatBWqSa8VofgNXmS2oX8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2U0QtRAzHnyEUPh+Z7G+bgy38xXKmLQiKmjPAg/j/pOgwT9Ih8csq/1xdFkZIDroe
-         ngbiTaF20u1rkR8V2IAIb9qAiBGEmHMvSqxz2EO15iTwQDq6l/r0dplgE7Ytv9VWRw
-         ClaIbluVmncLTlYs+WLDrC8b95UbPwOA/kRa4Aa0=
+        b=VuZDDF84xSO4Ef5ZaWa+Mfs9KwrYqn0mZwGerh95P5n22YaEhZ/Np8B1yMYFJCYO6
+         Xj5CnTmb6GlmL5PdyaFC6ZnOCKlIzBZ/CeaKInCRwV/qEomnh5yXv4psAKWdfk66xI
+         25+44ge+dN6Df/K1k/jmDH1oFWw9X1qPP0eNRLn8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>,
-        Andrey Konovalov <andreyknvl@google.com>,
-        Hillf Danton <hdanton@sina.com>, Jiri Kosina <jkosina@suse.cz>
-Subject: [PATCH 4.19 20/85] HID: hiddev: do cleanup in failure of opening a device
-Date:   Thu, 22 Aug 2019 10:18:53 -0700
-Message-Id: <20190822171732.018807591@linuxfoundation.org>
+        syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com,
+        Denis Kirjanov <kda@linux-powerpc.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.14 19/71] net: usb: pegasus: fix improper read if get_registers() fail
+Date:   Thu, 22 Aug 2019 10:18:54 -0700
+Message-Id: <20190822171728.426732549@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,34 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hillf Danton <hdanton@sina.com>
+From: Denis Kirjanov <kda@linux-powerpc.org>
 
-commit 6d4472d7bec39917b54e4e80245784ea5d60ce49 upstream.
+commit 224c04973db1125fcebefffd86115f99f50f8277 upstream.
 
-Undo what we did for opening before releasing the memory slice.
+get_registers() may fail with -ENOMEM and in this
+case we can read a garbage from the status variable tmp.
 
-Reported-by: syzbot <syzbot+62a1e04fd3ec2abf099e@syzkaller.appspotmail.com>
-Cc: Andrey Konovalov <andreyknvl@google.com>
-Signed-off-by: Hillf Danton <hdanton@sina.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Reported-by: syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com
+Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/hid/usbhid/hiddev.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/usb/pegasus.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/usbhid/hiddev.c
-+++ b/drivers/hid/usbhid/hiddev.c
-@@ -321,6 +321,10 @@ bail_normal_power:
- 	hid_hw_power(hid, PM_HINT_NORMAL);
- bail_unlock:
- 	mutex_unlock(&hiddev->existancelock);
-+
-+	spin_lock_irq(&list->hiddev->list_lock);
-+	list_del(&list->node);
-+	spin_unlock_irq(&list->hiddev->list_lock);
- bail:
- 	file->private_data = NULL;
- 	vfree(list);
+--- a/drivers/net/usb/pegasus.c
++++ b/drivers/net/usb/pegasus.c
+@@ -285,7 +285,7 @@ static void mdio_write(struct net_device
+ static int read_eprom_word(pegasus_t *pegasus, __u8 index, __u16 *retdata)
+ {
+ 	int i;
+-	__u8 tmp;
++	__u8 tmp = 0;
+ 	__le16 retdatai;
+ 	int ret;
+ 
 
 
