@@ -2,41 +2,39 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 51AD099BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 885CC99BA0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:26:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390392AbfHVR3H (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:29:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52540 "EHLO mail.kernel.org"
+        id S2404669AbfHVR0O (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:26:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48240 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404751AbfHVR0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:26:49 -0400
+        id S2404341AbfHVRZL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:11 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A96B2064A;
-        Thu, 22 Aug 2019 17:26:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABC5923426;
+        Thu, 22 Aug 2019 17:25:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494809;
-        bh=5u86D2mnbw9aSHt54t/7AtwNfywdza/lGyREW78gyl8=;
+        s=default; t=1566494710;
+        bh=lWiXdrFpPl+47r/41TiMavfsdsKGVAwGSJYGPTvESsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I+7oz9QuupO7tkC6XOwZ1kSavWUyGLz52jh56rFCFsI+UrsFX2FFlWYJb3P/MrwGi
-         HaZ++k9fF7skZPFE3TIhr8UAYABYkSpZ13gBiz8tFKbtN194fsPey502LtIGw5z5Sl
-         V2F9nFX5E0tAq/swsLj/ROXu8X1Ef6sMzX/tOxqY=
+        b=xaTAXD96acXN2YWsryEW5H38MZyXpXxqbVZ01QOrgcftw/H3QhOkjM1aPO1B7SL/l
+         A0SE6WMaqEfSh/YzZRW20QRA9JfT1ZWfac/DqXo/CNXADwC0BzRJqpV9NOTZzM6UE4
+         y92H/2kdT87z+HVL8Cb78WpTjB2oKO6xbeu5MkvE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jos=C3=A9=20Roberto=20de=20Souza?= <jose.souza@intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        "Wan Yusof, Wan Fahim AsqalaniX" 
-        <wan.fahim.asqalanix.wan.yusof@intel.com>
-Subject: [PATCH 4.19 67/85] drm/i915/cfl: Add a new CFL PCI ID.
-Date:   Thu, 22 Aug 2019 10:19:40 -0700
-Message-Id: <20190822171734.100250801@linuxfoundation.org>
+        stable@vger.kernel.org, Huy Nguyen <huyn@mellanox.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>
+Subject: [PATCH 4.14 66/71] net/mlx5e: Only support tx/rx pause setting for port owner
+Date:   Thu, 22 Aug 2019 10:19:41 -0700
+Message-Id: <20190822171730.590818002@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -46,32 +44,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+From: Huy Nguyen <huyn@mellanox.com>
 
-commit d0e062ebb3a44b56a7e672da568334c76f763552 upstream.
+[ Upstream commit 466df6eb4a9e813b3cfc674363316450c57a89c5 ]
 
-One more CFL ID added to spec.
+Only support changing tx/rx pause frame setting if the net device
+is the vport group manager.
 
-Cc: José Roberto de Souza <jose.souza@intel.com>
-Signed-off-by: Rodrigo Vivi <rodrigo.vivi@intel.com>
-Reviewed-by: José Roberto de Souza <jose.souza@intel.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180803232721.20038-1-rodrigo.vivi@intel.com
-Signed-off-by: Wan Yusof, Wan Fahim AsqalaniX <wan.fahim.asqalanix.wan.yusof@intel.com>
+Fixes: 3c2d18ef22df ("net/mlx5e: Support ethtool get/set_pauseparam")
+Signed-off-by: Huy Nguyen <huyn@mellanox.com>
+Reviewed-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- include/drm/i915_pciids.h |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
---- a/include/drm/i915_pciids.h
-+++ b/include/drm/i915_pciids.h
-@@ -386,6 +386,7 @@
- 	INTEL_VGA_DEVICE(0x3E91, info), /* SRV GT2 */ \
- 	INTEL_VGA_DEVICE(0x3E92, info), /* SRV GT2 */ \
- 	INTEL_VGA_DEVICE(0x3E96, info), /* SRV GT2 */ \
-+	INTEL_VGA_DEVICE(0x3E98, info), /* SRV GT2 */ \
- 	INTEL_VGA_DEVICE(0x3E9A, info)  /* SRV GT2 */
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_ethtool.c
+@@ -1400,6 +1400,9 @@ static int mlx5e_set_pauseparam(struct n
+ 	struct mlx5_core_dev *mdev = priv->mdev;
+ 	int err;
  
- /* CFL H */
++	if (!MLX5_CAP_GEN(mdev, vport_group_manager))
++		return -EOPNOTSUPP;
++
+ 	if (pauseparam->autoneg)
+ 		return -EINVAL;
+ 
 
 
