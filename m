@@ -2,39 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 879AE99CD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:37:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B65E599C1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390200AbfHVRYh (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:37 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45590 "EHLO mail.kernel.org"
+        id S2404535AbfHVRZ4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:25:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404148AbfHVRYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:17 -0400
+        id S1731556AbfHVRY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:59 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 78A2F21743;
-        Thu, 22 Aug 2019 17:24:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B60382341C;
+        Thu, 22 Aug 2019 17:24:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494656;
-        bh=FWi77/lppBIOBBlfD5y2SgJK0wYJVg47OoT2P6y9i/A=;
+        s=default; t=1566494698;
+        bh=Q4i4je0b+xN++DwkKR4jmJG7VQLrh8a2Gpmm8Fx2NY8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hfVI4yzQES62R9pYaneZBw1Idddzjl0s+PIlAZoYEHIobapjLnpm2SHo3S3Y/8UFD
-         68UJkiApfdD6OWfIjSPT8fXECwjSToTK5SEJfFILwUX2vpeiP4w+XtMYXHF6vi/wZm
-         jwC81gjL5q9TUal2KGcyiL+ull4oE9Du4xjPurd4=
+        b=AOqMSv2qSKrjcciV/3jdXadTI4fC6Twx5pxiFyvB9Z4haEg5bYM4NbpKidSHqkY29
+         JnRPVc/VSo52PUxISYs/3SH4jCqZWupXNphED9VzdGTp9Ft01ayotp4RFNl24m8Xm+
+         2fnEKK2O68rR8Ui2YW/g/Z7lgOumufZvcu+/aqAs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Xin Long <lucien.xin@gmail.com>,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>
-Subject: [PATCH 4.9 098/103] sctp: fix the transport error_count check
+        stable@vger.kernel.org,
+        Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>,
+        Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.14 51/71] USB: serial: option: Add support for ZTE MF871A
 Date:   Thu, 22 Aug 2019 10:19:26 -0700
-Message-Id: <20190822171733.115889899@linuxfoundation.org>
+Message-Id: <20190822171730.038267294@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -44,37 +45,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>
 
-[ Upstream commit a1794de8b92ea6bc2037f445b296814ac826693e ]
+commit 7e7ae38bf928c5cfa6dd6e9a2cf8b42c84a27c92 upstream.
 
-As the annotation says in sctp_do_8_2_transport_strike():
+This patch adds support for MF871A USB modem (aka Speed USB STICK U03)
+to option driver. This modem is manufactured by ZTE corporation, and
+sold by KDDI.
 
-  "If the transport error count is greater than the pf_retrans
-   threshold, and less than pathmaxrtx ..."
+Interface layout:
+0: AT
+1: MODEM
 
-It should be transport->error_count checked with pathmaxrxt,
-instead of asoc->pf_retrans.
+usb-devices output:
+T:  Bus=01 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  9 Spd=480 MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=19d2 ProdID=1481 Rev=52.87
+S:  Manufacturer=ZTE,Incorporated
+S:  Product=ZTE Technologies MSM
+S:  SerialNumber=1234567890ABCDEF
+C:  #Ifs= 2 Cfg#= 1 Atr=80 MxPwr=500mA
+I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+I:  If#= 1 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
 
-Fixes: 5aa93bcf66f4 ("sctp: Implement quick failover draft from tsvwg")
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Co-developed-by: Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>
+Signed-off-by: Hiroyuki Yamamoto <hyamamo@allied-telesis.co.jp>
+Signed-off-by: Yoshiaki Okamoto <yokamoto@allied-telesis.co.jp>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- net/sctp/sm_sideeffect.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/sctp/sm_sideeffect.c
-+++ b/net/sctp/sm_sideeffect.c
-@@ -508,7 +508,7 @@ static void sctp_do_8_2_transport_strike
- 	 */
- 	if (net->sctp.pf_enable &&
- 	   (transport->state == SCTP_ACTIVE) &&
--	   (asoc->pf_retrans < transport->pathmaxrxt) &&
-+	   (transport->error_count < transport->pathmaxrxt) &&
- 	   (transport->error_count > asoc->pf_retrans)) {
- 
- 		sctp_assoc_control_transport(asoc, transport,
+---
+ drivers/usb/serial/option.c |    1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -1552,6 +1552,7 @@ static const struct usb_device_id option
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1428, 0xff, 0xff, 0xff),  /* Telewell TW-LTE 4G v2 */
+ 	  .driver_info = RSVD(2) },
+ 	{ USB_DEVICE_INTERFACE_CLASS(ZTE_VENDOR_ID, 0x1476, 0xff) },	/* GosunCn ZTE WeLink ME3630 (ECM/NCM mode) */
++	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1481, 0xff, 0x00, 0x00) }, /* ZTE MF871A */
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1533, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1534, 0xff, 0xff, 0xff) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(ZTE_VENDOR_ID, 0x1535, 0xff, 0xff, 0xff) },
 
 
