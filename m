@@ -2,119 +2,181 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 39BC599882
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:50:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B33B99878
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:48:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388252AbfHVPs5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 11:48:57 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46235 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726387AbfHVPs5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 11:48:57 -0400
-Received: by mail-pg1-f193.google.com with SMTP id m3so3878306pgv.13;
-        Thu, 22 Aug 2019 08:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2gibvD/PE/0k2/MgxLtnC9v6hycHeC3vvECK4dop/Xo=;
-        b=sF3NPfIhqt3Hzc9KufbzNsaUbbCQVjOI0o8UDhRvQtYR6/vH4PpZ/wkdh5TWxLkeKj
-         mYde/YuazOc7nnSd8AxHozSoOH7LNUG36AuVSRCxuqqR4vLq89D4Nx3G4d9wbbqMCKyv
-         sNqskZoKRu0j6XgfoLa/t2g9/VruzpdsSCZdPFcMUMdYtbVL5xgYtz5X1SrxIeajHRWC
-         kLnexInTNp9iOEi9RBQoksUAmmznkbgNBXhYWHm1bttktZ0CHdI2PQW/PQESCCDkniES
-         m8iyUQRftUUQF4+y63MkpSC4J65mZgfABsePvyUm0wMae9ctxYXnF8FEgm1kfGX4Dqp/
-         1UfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2gibvD/PE/0k2/MgxLtnC9v6hycHeC3vvECK4dop/Xo=;
-        b=KKcL7djQSNRXdS/QWIR4w2HSOmv1vX6x9NXoS2WlQGxWKZUiXs+xEP81ZbOQkAbxfO
-         dmkZ23JSPNVqO0fhBJJ81exblUSUp0mC/SUm+XjTgKhfXhlVgY2IOv2+fNvAYiClixqN
-         MZ0lYgyOWWN4oD3aY2BbMictXpjHMBIRaunvKb1sr9Lesf0bqMzCNjcxBEIJuDQUL9Jh
-         0rIWRtODGrhl9U99HFS/QnBKdkuKOCCm8Lh9jY0zyhH60Ee6/deTfGy9micyZoVJUqzF
-         lo0W1dT0TX6pd1NMuRgZbk3/+CsJvkS5v3+FouiYXUlRcT+hMneadnI/hDwpIh+bYXsG
-         xQmQ==
-X-Gm-Message-State: APjAAAXrvv9gX+lskIo+dqfHUHoR/9HY3kqivvHO1AJiVDgsn7tw8qxC
-        t4PWdNatvratXyCDL6SI2zE=
-X-Google-Smtp-Source: APXvYqxoI/708laf6gtdOu/5W9IHi68WsTOyfXTApi1AbF+GqRB6Sp57tyWIM4vuUW9q1QIysQIBrg==
-X-Received: by 2002:a63:e148:: with SMTP id h8mr3032468pgk.275.1566488936083;
-        Thu, 22 Aug 2019 08:48:56 -0700 (PDT)
-Received: from localhost ([100.118.89.196])
-        by smtp.gmail.com with ESMTPSA id ay7sm3717pjb.4.2019.08.22.08.48.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 08:48:55 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        Fritz Koenig <frkoenig@google.com>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        id S2387939AbfHVPsC (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 11:48:02 -0400
+Received: from mga01.intel.com ([192.55.52.88]:53780 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387880AbfHVPsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 11:48:02 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 08:48:02 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,417,1559545200"; 
+   d="scan'208";a="196274097"
+Received: from otc-lr-04.jf.intel.com ([10.54.39.122])
+  by fmsmga001.fm.intel.com with ESMTP; 22 Aug 2019 08:48:01 -0700
+From:   kan.liang@linux.intel.com
+To:     peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/msm/dpu: add rotation property
-Date:   Thu, 22 Aug 2019 08:46:21 -0700
-Message-Id: <20190822154644.11723-1-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Cc:     eranian@google.com, ak@linux.intel.com,
+        Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2] perf/x86: Consider pinned events for group validation
+Date:   Thu, 22 Aug 2019 08:47:46 -0700
+Message-Id: <1566488866-5975-1-git-send-email-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+perf stat -M metrics relies on weak groups to reject unschedulable
+groups and run them as non-groups.
+This uses the group validation code in the kernel. Unfortunately
+that code doesn't take pinned events, such as the NMI watchdog, into
+account. So some groups can pass validation, but then later still
+never schedule.
+
+For example,
+
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $perf stat -M Page_Walks_Utilization
+
+ Performance counter stats for 'system wide':
+
+     <not counted>      itlb_misses.walk_pending
+(0.00%)
+     <not counted>      dtlb_load_misses.walk_pending
+(0.00%)
+     <not counted>      dtlb_store_misses.walk_pending
+(0.00%)
+     <not counted>      ept.walk_pending
+(0.00%)
+     <not counted>      cycles
+(0.00%)
+
+       1.176613558 seconds time elapsed
+
+Current pinned events are always scheduled first. So the new group must
+can be scheduled together with current pinned events. Otherwise, it will
+never get a chance to be scheduled later.
+The trick is to pretend the current pinned events as part of the new
+group, and insert them into the fake_cpuc.
+The simulation result will tell if they can be scheduled successfully.
+The fake_cpuc never touch event state. The current pinned events will
+not be impacted.
+Disabling interrupts to prevent the events in current CPU's cpuc going
+away and getting freed.
+
+It won't catch all possible cases that cannot be scheduled, such as
+events pinned differently on different CPUs, or complicated constraints.
+The validation is based on current environment. It doesn't help on the
+case, which first create a group and then a pinned event, either.
+But for the most common case, the NMI watchdog interacting with the
+current perf metrics, it is strong enough.
+
+After applying the patch,
+
+ $echo 1 > /proc/sys/kernel/nmi_watchdog
+ $ perf stat -M Page_Walks_Utilization
+
+ Performance counter stats for 'system wide':
+
+         2,491,910      itlb_misses.walk_pending  #      0.0
+Page_Walks_Utilization   (79.94%)
+        13,630,942      dtlb_load_misses.walk_pending
+(80.02%)
+           207,255      dtlb_store_misses.walk_pending
+(80.04%)
+                 0      ept.walk_pending
+(80.04%)
+       236,204,924      cycles
+(79.97%)
+
+       0.901785713 seconds time elapsed
+
+Reported-by: Stephane Eranian <eranian@google.com>
+Suggested-by: Andi Kleen <ak@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-index 45bfac9e3af7..970194958257 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-@@ -1040,8 +1040,21 @@ static void dpu_plane_sspp_atomic_update(struct drm_plane *plane)
- 				pstate->multirect_mode);
+The V2 still only check current CPU's cpuc. Because I think we cannot
+prevent the cpuc in other CPU without a lock. Adding a lock will
+introduce extra overhead in some critical path, e.g. context switch.
+The patch is good enough for the common case. We may leave the other
+complicated cases as they are.
+
+Changes since V1:
+- Disabling interrupts to prevent the events in current CPU's cpuc
+  going away and getting freed.
+- Update comments and description
+
+ arch/x86/events/core.c | 34 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 33 insertions(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 81b005e..b59154e 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -2011,9 +2011,12 @@ static int validate_event(struct perf_event *event)
+  */
+ static int validate_group(struct perf_event *event)
+ {
++	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+ 	struct perf_event *leader = event->group_leader;
+ 	struct cpu_hw_events *fake_cpuc;
+-	int ret = -EINVAL, n;
++	struct perf_event *pinned_event;
++	int ret = -EINVAL, n, i;
++	unsigned long flags;
  
- 	if (pdpu->pipe_hw->ops.setup_format) {
-+		unsigned int rotation;
-+
- 		src_flags = 0x0;
+ 	fake_cpuc = allocate_fake_cpuc();
+ 	if (IS_ERR(fake_cpuc))
+@@ -2033,9 +2036,38 @@ static int validate_group(struct perf_event *event)
+ 	if (n < 0)
+ 		goto out;
  
-+		rotation = drm_rotation_simplify(state->rotation,
-+						 DRM_MODE_ROTATE_0 |
-+						 DRM_MODE_REFLECT_X |
-+						 DRM_MODE_REFLECT_Y);
++	/*
++	 * Disable interrupts to prevent the events in this CPU's cpuc
++	 * going away and getting freed.
++	 */
++	local_irq_save(flags);
 +
-+		if (rotation & DRM_MODE_REFLECT_X)
-+			src_flags |= DPU_SSPP_FLIP_LR;
++	/*
++	 * The new group must can be scheduled together with current pinned
++	 * events. Otherwise, it will never get a chance to be scheduled later.
++	 *
++	 * It won't catch all possible cases that cannot schedule, such as
++	 * events pinned on CPU1, but the validation for a new CPU1 event
++	 * running on other CPU. However, it's good enough to handle common
++	 * cases like the global NMI watchdog.
++	 */
++	for (i = 0; i < cpuc->n_events; i++) {
++		pinned_event = cpuc->event_list[i];
++		if (WARN_ON_ONCE(!pinned_event))
++			continue;
++		if (!pinned_event->attr.pinned)
++			continue;
++		fake_cpuc->n_events = n;
++		n = collect_events(fake_cpuc, pinned_event, false);
++		if (n < 0)
++			goto irq;
++	}
 +
-+		if (rotation & DRM_MODE_REFLECT_Y)
-+			src_flags |= DPU_SSPP_FLIP_UD;
-+
- 		/* update format */
- 		pdpu->pipe_hw->ops.setup_format(pdpu->pipe_hw, fmt, src_flags,
- 				pstate->multirect_index);
-@@ -1522,6 +1535,13 @@ struct drm_plane *dpu_plane_init(struct drm_device *dev,
- 	if (ret)
- 		DPU_ERROR("failed to install zpos property, rc = %d\n", ret);
+ 	fake_cpuc->n_events = 0;
+ 	ret = x86_pmu.schedule_events(fake_cpuc, n, NULL);
  
-+	drm_plane_create_rotation_property(plane,
-+			DRM_MODE_ROTATE_0,
-+			DRM_MODE_ROTATE_0 |
-+			DRM_MODE_ROTATE_180 |
-+			DRM_MODE_REFLECT_X |
-+			DRM_MODE_REFLECT_Y);
-+
- 	drm_plane_enable_fb_damage_clips(plane);
- 
- 	/* success! finalize initialization */
++irq:
++	local_irq_restore(flags);
+ out:
+ 	free_fake_cpuc(fake_cpuc);
+ 	return ret;
 -- 
-2.21.0
+2.7.4
 
