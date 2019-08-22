@@ -2,172 +2,49 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 0462E9909C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BF667990BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 12:28:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387541AbfHVKWP convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-kernel@lfdr.de>); Thu, 22 Aug 2019 06:22:15 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:22654 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725893AbfHVKWP (ORCPT
+        id S2387587AbfHVK0y (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 06:26:54 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:55970 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731830AbfHVK0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 06:22:15 -0400
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7MAImaV067976
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 06:22:13 -0400
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhnug7g7k-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 06:22:13 -0400
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <naveen.n.rao@linux.vnet.ibm.com>;
-        Thu, 22 Aug 2019 11:22:11 +0100
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 22 Aug 2019 11:22:07 +0100
-Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7MAM6KX48169076
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 22 Aug 2019 10:22:07 GMT
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C2920A404D;
-        Thu, 22 Aug 2019 10:22:06 +0000 (GMT)
-Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5D12CA4040;
-        Thu, 22 Aug 2019 10:22:06 +0000 (GMT)
-Received: from localhost (unknown [9.199.32.226])
-        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Thu, 22 Aug 2019 10:22:06 +0000 (GMT)
-Date:   Thu, 22 Aug 2019 15:52:05 +0530
-From:   "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: [PATCH v4] arm64: implement KPROBES_ON_FTRACE
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Will Deacon <will@kernel.org>
-References: <20190822113421.52920377@xhacker.debian>
-        <1566456155.27ojwy97ss.naveen@linux.ibm.com>
-        <20190822173558.63de3fc4@xhacker.debian>
-In-Reply-To: <20190822173558.63de3fc4@xhacker.debian>
-MIME-Version: 1.0
-User-Agent: astroid/0.15.0 (https://github.com/astroidmail/astroid)
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8BIT
-X-TM-AS-GCONF: 00
-x-cbid: 19082210-0016-0000-0000-000002A16D6B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082210-0017-0000-0000-00003301A5EE
-Message-Id: <1566468150.x8u1577wgh.naveen@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=699 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908220111
+        Thu, 22 Aug 2019 06:26:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Subject:Cc:To:From:Date:Message-Id:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QvcO34wTkx1q03L8ZPni6sOEYrOLMaZGkJZF5UZr6gI=; b=GdR8bcz0yJhRxdOmDa+FKQqLQ
+        xSLhDrFRLg0glWzZ3A2rIoGTK3hMh9Xh4OvDLV4qqp5/DxgC5D8t5iaJ7Kt4qq/9ZVKQs0aTKvrNv
+        Y3c1NveVilwwEdARd8m6SKLyg27DupDqqA/73Djn0vBI1v8i0OWOLt8p1zl3efcrsmPBYNikCqwCL
+        QO0PoledVbzEJ5SGV+5fXnZC9BhpUDmR1WpobIiWs1IIk9h+r0yBel/muucZWU1CoO1P3+3P3CT2a
+        SAjIumfqeZkXGMbtH+feqlTHUTOW6BeqQZF4rErTuvuQESEXlIifl/QFIC1B3yAkUBsyfBruKlbFp
+        DW44yPZQQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
+        id 1i0kIu-0008DK-O5; Thu, 22 Aug 2019 10:26:52 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 7C0BB307766;
+        Thu, 22 Aug 2019 12:26:18 +0200 (CEST)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 0)
+        id 572D8202D580F; Thu, 22 Aug 2019 12:26:50 +0200 (CEST)
+Message-Id: <20190822102306.109718810@infradead.org>
+User-Agent: quilt/0.65
+Date:   Thu, 22 Aug 2019 12:23:06 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     peterz@infradead.org
+Subject: [PATCH 0/5] Further sanitize INTEL_FAM6 naming
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jisheng Zhang wrote:
-> Hi,
-> 
-> On Thu, 22 Aug 2019 12:23:58 +0530
-> "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com> wrote:
->> Jisheng Zhang wrote:
-...
->> > +/* Ftrace callback handler for kprobes -- called under preepmt 
->> > disabed */
->> > +void kprobe_ftrace_handler(unsigned long ip, unsigned long parent_ip,
->> > +                        struct ftrace_ops *ops, struct pt_regs *regs)
->> > +{
->> > +     struct kprobe *p;
->> > +     struct kprobe_ctlblk *kcb;
->> > +
->> > +     /* Preempt is disabled by ftrace */
->> > +     p = get_kprobe((kprobe_opcode_t *)ip);
->> > +     if (unlikely(!p) || kprobe_disabled(p))
->> > +             return;
->> > +
->> > +     kcb = get_kprobe_ctlblk();
->> > +     if (kprobe_running()) {
->> > +             kprobes_inc_nmissed_count(p);
->> > +     } else {
->> > +             unsigned long orig_ip = instruction_pointer(regs);
->> > +             /* Kprobe handler expects regs->pc = pc + 4 as breakpoint hit */
->> > +             instruction_pointer_set(regs, ip + sizeof(kprobe_opcode_t));  
->> 
->> Just want to make sure that you've confirmed that this is what happens
->> with a regular trap/brk based kprobe on ARM64. The reason for setting
->> the instruction pointer here is to ensure that it is set to the same
->> value as would be set if there was a trap/brk instruction at the ftrace
->> location. This ensures that the kprobe pre handler sees the same value
->> regardless.
-> 
-> Due to the arm64's DYNAMIC_FTRACE_WITH_REGS implementation, the code itself
-> is correct. But this doesn't look like "there was a trap instruction at
-> the ftrace location".
-> 
-> W/O KPROBE_ON_FTRACE:
-> 
-> foo:
-> 00	insA
-> 04	insB
-> 08	insC
-> 
-> kprobe's pre_handler() will see pc points to 00.
-
-In this case, the probe will be placed at foo+0x00, so pre_handler() 
-seeing that address in pt_regs is correct behavior - as long as arm64 
-'brk' instruction causes an exception with the instruction pointer set 
-*to* the 'brk' instruction. This is similar to how powerpc 'trap' works.  
-However, x86 'int3' causes an exception *after* execution of the 
-instruction.
-
-> 
-> W/ KPROBE_ON_FTRACE:
-> 
-> foo:
-> 00	lr saver
-> 04	nop     // will be modified to ftrace call ins when KPROBE is armed
-> 08	insA
-> 0c	insB
-
-In this case, if user asks for a probe to be placed at 'foo', we will 
-choose foo+0x04 and from that point on, the behavior should reflect that 
-a kprobe was placed at foo+0x04. In particular, the pre_handler() should 
-see foo+0x04 in pt_regs. The post_handler() would then see foo+0x08.
-
-> 
-> later, kprobe_ftrace_handler() will see pc points to 04, so pc + 4 will
-> point to 08 the same as the one w/o KPROBE_ON_FTRACE.
-
-I didn't mean to compare regular trap/brk based kprobes with 
-KPROBES_ON_FTRACE. The only important aspect is that the handlers see 
-consistent pt_regs in both cases, depending on where the kprobe was 
-placed. Choosing a different address/offset to place a kprobe during its 
-registration is an orthogonal aspect.
-
-> 
-> It seems I need to fix the comment.
-
-Given your explanation above, I think you can simply drop the first 
-adjustment to the instruction pointer before the pre handler invocation.  
-The rest of the code looks fine.
-
-
-- Naveen
+Lots of variation has crept in; time to collapse the lot again.
 
