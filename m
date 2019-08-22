@@ -2,67 +2,54 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 2608D98CBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:59:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8000098CAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:57:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbfHVH7B (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 03:59:01 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:20003 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730431AbfHVH67 (ORCPT
+        id S1731708AbfHVHwO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 03:52:14 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:42552 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730037AbfHVHwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:58:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566460740; x=1597996740;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=zMgrwQo3ioYoX5CQO1W5apOPVVHZ8O/Xw2bhvtHvfOw=;
-  b=IE9V3zAURPI/mVnJ1sUct3ATBTOGZxJr24cA3cnV6DQD121JhXzrY7bG
-   dsYnvkN3UbU8+FnNeRZUOsJZjXxOuV6Jpo/ocyUNfbPq2vMDv1Ky/hY0/
-   HZnlcf+HYEIDM7U9J4/+AwNfmf0a9/S1XMVJkjcqae5G1WxGneVN8yNbS
-   1FiB591PHFBr8D12bPqaITTTxfMbVtjRM1sR4Dm7uJyK7oZDZtAIfeysE
-   bZo7eWcUNHJlSjtcy0NrBqpr1bl/CkhXJp66vuwFBFV5ZfnUzX5sL0kId
-   aI9XDKGWpC6uvMBggMB2DbNFdiGBWToZ9OiHqhglyBPxCaX9et+2Q06fy
-   A==;
-IronPort-SDR: HoU518b1x4zmaa6VN+71c4unrRg0Vl7FfQFLPSX2Kgycl1uDckKqYckl6QStdm7mxD9PGXfNeq
- EIf8topBLfb3rpBUI6a8HIW0E9T7i4I0J2S9ktOGkcIRQM6ZdroiBZ0BRGVIK/aiVF89FA8XcP
- qWYJBfxuPQdU0diSBMWiDarDvDjZnj1z3NYbD0haTfTl4n3Mo8CUBfGmCwAZU5hpaEAZp/oDFs
- xa+shTw8KLOqNqMU5MnjjB2z73WWyyMuRXtJt4KK77fFpToJrMbGkYtE6LTW5hgj3rMgp07vYk
- NEs=
-X-IronPort-AV: E=Sophos;i="5.64,415,1559491200"; 
-   d="scan'208";a="116397485"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Aug 2019 15:58:59 +0800
-IronPort-SDR: XO2D3Pvo3sOykbykkGFoRvsUJAqHOyQU9ju7JA+Eur22Zk/69g7tNOXarEIVLOu/Em2ec/LEGE
- X+yGd9LGfEJeJ4w9uSA3ioROCoSeMauRATNicJwOr8Xb1OwU+ybjPkivjuFb/TIJNALt8PecI7
- qS97DTh6nDr5qXNoiRdlbEi94xwoLyU/FSgpkWP/MLq9pdUl0H7mce/j5EAx8TqyFbZTxVgpY+
- 2wiZa7GKuxJ+aVvlDabu3PjT7oHsRN0URZKpdTanWl87LitGvV5SxhNV1evsccEBiVk+rP7JPc
- ZKIiIAxJtcKgrz43nBte5fxL
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2019 00:56:19 -0700
-IronPort-SDR: 7VJp5AX1m3dQMbgrglO08YJQbJAypaQXuQTfTNHQ3OB2+NiU57sfGAMfxX/aL2VOobx6ltblnx
- LktuVXVYN25WuohHaGZgbFHpzHBTIBkAER1BV5wVs7vtyLXxeGXzwobK/aDtd+1AXCl4bBByj8
- s/niCGcIiy4ZSwPKQLi7THnQrriAEe/6k1/YEV7A4c9LCcHQBB74I1s8jZcxTTZD4udB2oVhw1
- 9Tfo8Ai5rcFo8yWnWPhXzGi8hMGGxcTyc4/qj4d+/v6bs3XmBI/YlGP/JtneDHWSNlgx/R9R3M
- Coc=
-WDCIronportException: Internal
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 22 Aug 2019 00:58:59 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@lst.de>, Anup Patel <Anup.Patel@wdc.com>
-Subject: [PATCH v4 3/3] RISC-V: Issue a tlb page flush if possible
-Date:   Thu, 22 Aug 2019 00:51:51 -0700
-Message-Id: <20190822075151.24838-4-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190822075151.24838-1-atish.patra@wdc.com>
-References: <20190822075151.24838-1-atish.patra@wdc.com>
+        Thu, 22 Aug 2019 03:52:14 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l14so4619279ljj.9
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 00:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCTePgG7RYdXOtsqMn/EGiKAq/u1kBDj9aPT9Dfgczw=;
+        b=UsKrpxXPuL+ZKlwuc+ITBE2tuLBFTuT+d1kgO/pLG86lqhfUTqbrbhF74QLrk18Pzb
+         aOSONgtap5+EOa0YnJJ0gx+bb3jdFQaJOFn7UB33gwPAQlJWy8VDqNOK6ZTbyqKmTSVM
+         pvhaBbl0n3KZ4qFLlOKtQ5UHKddxuxb/jsrZk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=rCTePgG7RYdXOtsqMn/EGiKAq/u1kBDj9aPT9Dfgczw=;
+        b=l2RtoUtQwH+8Wa9whFkQZYBZXxLPKAPBCiB7cUvUg1LovP4F0HzeRO3ROE+YiV0mU8
+         KT8FuR75RBnNdTzTvNMsqitLVABvTwwWHUpk/urLuhhEF6Lwl4qJ/2rqOSZKIW9uCgVf
+         EMqx6Ag52HA8MXnA27PMxkeopAnu7XBbp5Dk5xV7EQd5cz4THKc40+KZgIhYkQlAvlPP
+         0k1RNNIeB2AhPnqvrc+Yg9rkbgd9pNgv2c4Qct8txc3XPGeircaMw0ykNAIfQ4kU2Z1Y
+         t/TVqnPdqV45MbltLu6xGJuOPUtbIL2PLl17XCQiu++DQ7UtnEhdntnr3UVyA/WwB8Fx
+         e5Zg==
+X-Gm-Message-State: APjAAAW4E6Bpcr1EdZPsRkv2ivqKN6YyYEha/2YPWF3VIqUAG9KWjoK1
+        llTG+PxXx9B3LGBaXl2C7PiGNA==
+X-Google-Smtp-Source: APXvYqxV31j+6lX+In5ijbALOUcTYMKfDsts8VM2xlJCyXRU+AgvcViEXDeB82pw2Jxiz7jc352mNA==
+X-Received: by 2002:a05:651c:104a:: with SMTP id x10mr20266511ljm.238.1566460332223;
+        Thu, 22 Aug 2019 00:52:12 -0700 (PDT)
+Received: from prevas-ravi.prevas.se ([81.216.59.226])
+        by smtp.gmail.com with ESMTPSA id x13sm3699675ljm.7.2019.08.22.00.52.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 00:52:11 -0700 (PDT)
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] mm/init-mm.c: use CPU_BITS_NONE to initialize .cpu_bitmap
+Date:   Thu, 22 Aug 2019 09:52:07 +0200
+Message-Id: <20190822075207.26400-1-linux@rasmusvillemoes.dk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -70,32 +57,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If tlbflush request is for page only, there is no need to do a
-complete local tlb shootdown.
+init_mm is sizeof(long) larger than it needs to be. Use the
+CPU_BITS_NONE macro meant for this, which will initialize just the
+indices 0...(BITS_TO_LONGS(NR_CPUS)-1) and hence make the array size
+actually BITS_TO_LONGS(NR_CPUS).
 
-Just do a local tlb flush for the given address.
-
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
+Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 ---
- arch/riscv/mm/tlbflush.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ mm/init-mm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 8172fbf46123..b1c04751bcf1 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -27,7 +27,10 @@ static void __sbi_tlb_flush_range(struct cpumask *cmask, unsigned long start,
- 
- 	if (cpumask_any_but(cmask, cpuid) >= nr_cpu_ids) {
- 		/* local cpu is the only cpu present in cpumask */
--		local_flush_tlb_all();
-+		if (size <= PAGE_SIZE)
-+			local_flush_tlb_page(start);
-+		else
-+			local_flush_tlb_all();
- 	} else {
- 		riscv_cpuid_to_hartid_mask(cmask, &hmask);
- 		sbi_remote_sfence_vma(cpumask_bits(&hmask), start, size);
+diff --git a/mm/init-mm.c b/mm/init-mm.c
+index a787a319211e..fb1e15028ef0 100644
+--- a/mm/init-mm.c
++++ b/mm/init-mm.c
+@@ -35,6 +35,6 @@ struct mm_struct init_mm = {
+ 	.arg_lock	=  __SPIN_LOCK_UNLOCKED(init_mm.arg_lock),
+ 	.mmlist		= LIST_HEAD_INIT(init_mm.mmlist),
+ 	.user_ns	= &init_user_ns,
+-	.cpu_bitmap	= { [BITS_TO_LONGS(NR_CPUS)] = 0},
++	.cpu_bitmap	= CPU_BITS_NONE,
+ 	INIT_MM_CONTEXT(init_mm)
+ };
 -- 
-2.21.0
+2.20.1
 
