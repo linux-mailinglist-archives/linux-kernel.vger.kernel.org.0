@@ -2,242 +2,67 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id A7ADE993F5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:38:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 219DC99403
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 14:41:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387792AbfHVMis (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 08:38:48 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:46315 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732332AbfHVMir (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 08:38:47 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z1so5249671wru.13
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 05:38:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BnFwQaeHO9BwaDaPDs30ViOA3PYpNnt8DXjyb7utwWk=;
-        b=Qg8jr2yWOLGcPOOts1J5YDswgaDhv2IKEGB6uG/dpPewlZixUmhziVkFuGIHuajdda
-         gTepf4bkcV/X96wxwDEW5TutP6blq3MrJKOtjDZaDC1hBqeuln5N0N5AaM1mlvedjnd+
-         rmFgPP4Nwn5+CwnFqhI/ogR5nGw7oQ8OxuuuyS1PaNVD+KAdItTbB1ew6xbd+zm2+ocr
-         7CNtzkP3EtQXqybSQFOANXOiBnXZ5tJMUKzRarkt4W3CyvtrM0W/G4eteBzXY9TBDoGs
-         3nTtfpHwAZFZduYVg7KBikEcycQXr2P/BrDUlumgBk84Sa0dK8tqxO0Mt1nnOiGsHUAO
-         Rxfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BnFwQaeHO9BwaDaPDs30ViOA3PYpNnt8DXjyb7utwWk=;
-        b=U4apKiniQCJsacnrLvEVpsIgDeU+3h5HEWSQPERrE8dozJ9ErPuLboePH+vpbf60qm
-         r8PKoCektRV6+pSMEC9Tnd71DN6RAYtk9HROuDKioX2WZWWgdPOVwrDiRHKDGXDoQatg
-         l8ASl+kwUtp2nmWnqNykmTtzImHaL2Vd6OXljEBXxaVziSPabUG9SkI+0umEckNBYTVo
-         cOvpGKB4FMytBbdZZTaGqV03r6qWRV4wQNfDPlJR/lZQDHYDwPb0xBA+IEaZJLXJIwKB
-         ZY5BjSWITWcWVi7o1+XmV3iohImMvpuGWIuxFQ1kuGRICKJbTLDRUoXUGsT5rqcHae+3
-         nuzQ==
-X-Gm-Message-State: APjAAAUsRXYcS/zSznyawNKeUzqiwgSDvtwt+4IkLtoepZIMA0G/V8uF
-        XZaJXOW6wF9ZcEzE3B2ZiQo2m35Y9IW9clAZ7TGxQg==
-X-Google-Smtp-Source: APXvYqxliBRuaaMcL1lknjwgrVUrKd1aZkJOJwxxfHvTC3naTZb/hSNSUzJP45WaEW+UG6yIhAMbUhJTS+QRL7uN2pc=
-X-Received: by 2002:a5d:4ecb:: with SMTP id s11mr20341742wrv.323.1566477524109;
- Thu, 22 Aug 2019 05:38:44 -0700 (PDT)
+        id S2387739AbfHVMlb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 08:41:31 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732129AbfHVMlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 08:41:31 -0400
+Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08B0C206DD;
+        Thu, 22 Aug 2019 12:41:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566477690;
+        bh=ufaJdla4WjitlIUVwrCCXVQWoJ8wWemRzKfjx3IdVk4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=t/Vggz3iThCTxMA5zz0iMDRkmfct+wgjPCnjG+0o7UbcOizI8hzrfTfgHjnH6GUwR
+         kausWwjnEG1kg+pATFnnlpJCee6RbY+pjjxwBd6NGauatEnO46wz96jStM8I3L0xyM
+         gAYzNyMlmWFQaX8wsvbV//DWIU2MeDoB1TYT2vKo=
+Date:   Thu, 22 Aug 2019 14:41:28 +0200
+From:   Frederic Weisbecker <frederic@kernel.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        John Stultz <john.stultz@linaro.org>,
+        Anna-Maria Behnsen <anna-maria@linutronix.de>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [patch V2 07/38] posix-cpu-timers: Rename
+ thread_group_cputimer() and make it static
+Message-ID: <20190822124127.GK22020@lenoir>
+References: <20190821190847.665673890@linutronix.de>
+ <20190821192919.869350319@linutronix.de>
 MIME-Version: 1.0
-References: <20190822084131.114764-1-anup.patel@wdc.com> <20190822084131.114764-14-anup.patel@wdc.com>
- <77b9ff3c-292f-ee17-ddbb-134c0666fde7@amazon.com>
-In-Reply-To: <77b9ff3c-292f-ee17-ddbb-134c0666fde7@amazon.com>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Thu, 22 Aug 2019 18:08:32 +0530
-Message-ID: <CAAhSdy1h+m0gA2pro-XAb4qhe0Q+8knjW+8+6jaz3efOdKWskA@mail.gmail.com>
-Subject: Re: [PATCH v5 13/20] RISC-V: KVM: Implement stage2 page table programming
-To:     Alexander Graf <graf@amazon.com>
-Cc:     Anup Patel <Anup.Patel@wdc.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim K <rkrcmar@redhat.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Atish Patra <Atish.Patra@wdc.com>,
-        Alistair Francis <Alistair.Francis@wdc.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821192919.869350319@linutronix.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 5:58 PM Alexander Graf <graf@amazon.com> wrote:
->
-> On 22.08.19 10:45, Anup Patel wrote:
-> > This patch implements all required functions for programming
-> > the stage2 page table for each Guest/VM.
-> >
-> > At high-level, the flow of stage2 related functions is similar
-> > from KVM ARM/ARM64 implementation but the stage2 page table
-> > format is quite different for KVM RISC-V.
-> >
-> > Signed-off-by: Anup Patel <anup.patel@wdc.com>
-> > Acked-by: Paolo Bonzini <pbonzini@redhat.com>
-> > Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
-> > ---
-> >   arch/riscv/include/asm/kvm_host.h     |  10 +
-> >   arch/riscv/include/asm/pgtable-bits.h |   1 +
-> >   arch/riscv/kvm/mmu.c                  | 637 +++++++++++++++++++++++++-
-> >   3 files changed, 638 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/arch/riscv/include/asm/kvm_host.h b/arch/riscv/include/asm/kvm_host.h
-> > index 3b09158f80f2..a37775c92586 100644
-> > --- a/arch/riscv/include/asm/kvm_host.h
-> > +++ b/arch/riscv/include/asm/kvm_host.h
-> > @@ -72,6 +72,13 @@ struct kvm_mmio_decode {
-> >       int shift;
-> >   };
-> >
-> > +#define KVM_MMU_PAGE_CACHE_NR_OBJS   32
-> > +
-> > +struct kvm_mmu_page_cache {
-> > +     int nobjs;
-> > +     void *objects[KVM_MMU_PAGE_CACHE_NR_OBJS];
-> > +};
-> > +
-> >   struct kvm_cpu_context {
-> >       unsigned long zero;
-> >       unsigned long ra;
-> > @@ -163,6 +170,9 @@ struct kvm_vcpu_arch {
-> >       /* MMIO instruction details */
-> >       struct kvm_mmio_decode mmio_decode;
-> >
-> > +     /* Cache pages needed to program page tables with spinlock held */
-> > +     struct kvm_mmu_page_cache mmu_page_cache;
-> > +
-> >       /* VCPU power-off state */
-> >       bool power_off;
-> >
-> > diff --git a/arch/riscv/include/asm/pgtable-bits.h b/arch/riscv/include/asm/pgtable-bits.h
-> > index bbaeb5d35842..be49d62fcc2b 100644
-> > --- a/arch/riscv/include/asm/pgtable-bits.h
-> > +++ b/arch/riscv/include/asm/pgtable-bits.h
-> > @@ -26,6 +26,7 @@
-> >
-> >   #define _PAGE_SPECIAL   _PAGE_SOFT
-> >   #define _PAGE_TABLE     _PAGE_PRESENT
-> > +#define _PAGE_LEAF      (_PAGE_READ | _PAGE_WRITE | _PAGE_EXEC)
-> >
-> >   /*
-> >    * _PAGE_PROT_NONE is set on not-present pages (and ignored by the hardware) to
-> > diff --git a/arch/riscv/kvm/mmu.c b/arch/riscv/kvm/mmu.c
-> > index 2b965f9aac07..9e95ab6769f6 100644
-> > --- a/arch/riscv/kvm/mmu.c
-> > +++ b/arch/riscv/kvm/mmu.c
-> > @@ -18,6 +18,432 @@
-> >   #include <asm/page.h>
-> >   #include <asm/pgtable.h>
-> >
-> > +#ifdef CONFIG_64BIT
-> > +#define stage2_have_pmd              true
-> > +#define stage2_gpa_size              ((phys_addr_t)(1ULL << 39))
-> > +#define stage2_cache_min_pages       2
-> > +#else
-> > +#define pmd_index(x)         0
-> > +#define pfn_pmd(x, y)                ({ pmd_t __x = { 0 }; __x; })
-> > +#define stage2_have_pmd              false
-> > +#define stage2_gpa_size              ((phys_addr_t)(1ULL << 32))
-> > +#define stage2_cache_min_pages       1
-> > +#endif
-> > +
-> > +static int stage2_cache_topup(struct kvm_mmu_page_cache *pcache,
-> > +                           int min, int max)
-> > +{
-> > +     void *page;
-> > +
-> > +     BUG_ON(max > KVM_MMU_PAGE_CACHE_NR_OBJS);
-> > +     if (pcache->nobjs >= min)
-> > +             return 0;
-> > +     while (pcache->nobjs < max) {
-> > +             page = (void *)__get_free_page(GFP_KERNEL | __GFP_ZERO);
-> > +             if (!page)
-> > +                     return -ENOMEM;
-> > +             pcache->objects[pcache->nobjs++] = page;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static void stage2_cache_flush(struct kvm_mmu_page_cache *pcache)
-> > +{
-> > +     while (pcache && pcache->nobjs)
-> > +             free_page((unsigned long)pcache->objects[--pcache->nobjs]);
-> > +}
-> > +
-> > +static void *stage2_cache_alloc(struct kvm_mmu_page_cache *pcache)
-> > +{
-> > +     void *p;
-> > +
-> > +     if (!pcache)
-> > +             return NULL;
-> > +
-> > +     BUG_ON(!pcache->nobjs);
-> > +     p = pcache->objects[--pcache->nobjs];
-> > +
-> > +     return p;
-> > +}
-> > +
-> > +struct local_guest_tlb_info {
-> > +     struct kvm_vmid *vmid;
-> > +     gpa_t addr;
-> > +};
-> > +
-> > +static void local_guest_tlb_flush_vmid_gpa(void *info)
-> > +{
-> > +     struct local_guest_tlb_info *infop = info;
-> > +
-> > +     __kvm_riscv_hfence_gvma_vmid_gpa(READ_ONCE(infop->vmid->vmid_version),
-> > +                                      infop->addr);
-> > +}
-> > +
-> > +static void stage2_remote_tlb_flush(struct kvm *kvm, gpa_t addr)
-> > +{
-> > +     struct local_guest_tlb_info info;
-> > +     struct kvm_vmid *vmid = &kvm->arch.vmid;
-> > +
-> > +     /* TODO: This should be SBI call */
-> > +     info.vmid = vmid;
-> > +     info.addr = addr;
-> > +     preempt_disable();
-> > +     smp_call_function_many(cpu_all_mask, local_guest_tlb_flush_vmid_gpa,
-> > +                            &info, true);
->
-> This is all nice and dandy on the toy 4 core systems we have today, but
-> it will become a bottleneck further down the road.
->
-> How many VMIDs do you have? Could you just allocate a new one every time
-> you switch host CPUs? Then you know exactly which CPUs to flush by
-> looking at all your vcpu structs and a local field that tells you which
-> pCPU they're on at this moment.
->
-> Either way, it's nothing that should block inclusion. For today, we're fine.
+On Wed, Aug 21, 2019 at 09:08:54PM +0200, Thomas Gleixner wrote:
+> thread_group_cputimer() is a complete misnomer. The function does two things:
+> 
+>  - For arming process wide timers it makes sure that the atomic time
+>    storage is up to date. If no cpu timer is armed yet, then the atomic
+>    time storage is not updated by the scheduler for performance reasons.
+> 
+>    In that case a full summing up of all threads needs to be done and the
+>    update needs to be enabled.
+> 
+> - Samples the current time into the caller supplied storage.
+> 
+> Rename it to thread_group_start_cputime(), make it static and fixup the
+> callsite.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-We are not happy about this either.
-
-Other two options, we have are:
-1. Have SBI calls for remote HFENCEs
-2. Propose RISC-V ISA extension for remote FENCEs
-
-Option1 is mostly extending SBI spec and implementing it in runtime
-firmware.
-
-Option2 is ideal solution but requires consensus among wider audience
-in RISC-V foundation.
-
-At this point, we are fine with a simple solution.
-
-Regards,
-Anup
-
->
->
-> Alex
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
