@@ -2,36 +2,36 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 37FB399D7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D93FA99D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:43:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391623AbfHVRXp (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:23:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43510 "EHLO mail.kernel.org"
+        id S2405482AbfHVRnJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:43:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391489AbfHVRXa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:23:30 -0400
+        id S2391494AbfHVRXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:31 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5A2812341B;
-        Thu, 22 Aug 2019 17:23:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 15DEC23406;
+        Thu, 22 Aug 2019 17:23:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494610;
-        bh=B1oks3VphFC6eY+dHHTJW0whY8yniblTcnUEBpNvQcc=;
+        s=default; t=1566494611;
+        bh=b0aCbWO7BBEEMuz1CaPk9B3H8UIz8O29Qy3+OQF4CpQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k+Ki9OYt0lTkF+jf0bkOksDYHE2sBl0DW+n3lG+XfVRK/CW+xSNr45YiSW91bgJl9
-         NHVgWeX8OPSCJp3L5qYo4C06yHXpjrKiDrJ1uSRXGuS4Zzax4rhQSv0llhxtMCkQcj
-         TfPsEyWnjlxDWTq8TJgzCUW1duRaGFYkOcB4S+So=
+        b=A6IszvUtBpUttICxscWBQVkgFgA2y6oBNTI7nx1rahS7YfYkBJJ5REevAKX84JMLQ
+         mAGu7rL8I0t46EPvpP6FBAMR5lDPJj/Bqwg2FzJriaEk0ikvigbEMLGfEvdBrxRWDM
+         fW6PWd1STsz+rDIu7+IN8mdfanOmOk7W0z0b72CQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Joerg Roedel <jroedel@suse.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Dave Hansen <dave.hansen@linux.intel.com>
-Subject: [PATCH 4.9 004/103] x86/mm: Check for pfn instead of page in vmalloc_sync_one()
-Date:   Thu, 22 Aug 2019 10:17:52 -0700
-Message-Id: <20190822171728.769271248@linuxfoundation.org>
+Subject: [PATCH 4.9 005/103] x86/mm: Sync also unmappings in vmalloc_sync_all()
+Date:   Thu, 22 Aug 2019 10:17:53 -0700
+Message-Id: <20190822171728.829608283@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
 References: <20190822171728.445189830@linuxfoundation.org>
@@ -46,33 +46,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Joerg Roedel <jroedel@suse.de>
 
-commit 51b75b5b563a2637f9d8dc5bd02a31b2ff9e5ea0 upstream.
+commit 8e998fc24de47c55b47a887f6c95ab91acd4a720 upstream.
 
-Do not require a struct page for the mapped memory location because it
-might not exist. This can happen when an ioremapped region is mapped with
-2MB pages.
+With huge-page ioremap areas the unmappings also need to be synced between
+all page-tables. Otherwise it can cause data corruption when a region is
+unmapped and later re-used.
+
+Make the vmalloc_sync_one() function ready to sync unmappings and make sure
+vmalloc_sync_all() iterates over all page-tables even when an unmapped PMD
+is found.
 
 Fixes: 5d72b4fba40ef ('x86, mm: support huge I/O mapping capability I/F')
 Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Link: https://lkml.kernel.org/r/20190719184652.11391-2-joro@8bytes.org
+Link: https://lkml.kernel.org/r/20190719184652.11391-3-joro@8bytes.org
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/mm/fault.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/mm/fault.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
 --- a/arch/x86/mm/fault.c
 +++ b/arch/x86/mm/fault.c
-@@ -279,7 +279,7 @@ static inline pmd_t *vmalloc_sync_one(pg
- 	if (!pmd_present(*pmd))
- 		set_pmd(pmd, *pmd_k);
- 	else
--		BUG_ON(pmd_page(*pmd) != pmd_page(*pmd_k));
-+		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
+@@ -273,11 +273,12 @@ static inline pmd_t *vmalloc_sync_one(pg
  
- 	return pmd_k;
- }
+ 	pmd = pmd_offset(pud, address);
+ 	pmd_k = pmd_offset(pud_k, address);
+-	if (!pmd_present(*pmd_k))
+-		return NULL;
+ 
+-	if (!pmd_present(*pmd))
++	if (pmd_present(*pmd) != pmd_present(*pmd_k))
+ 		set_pmd(pmd, *pmd_k);
++
++	if (!pmd_present(*pmd_k))
++		return NULL;
+ 	else
+ 		BUG_ON(pmd_pfn(*pmd) != pmd_pfn(*pmd_k));
+ 
+@@ -299,17 +300,13 @@ void vmalloc_sync_all(void)
+ 		spin_lock(&pgd_lock);
+ 		list_for_each_entry(page, &pgd_list, lru) {
+ 			spinlock_t *pgt_lock;
+-			pmd_t *ret;
+ 
+ 			/* the pgt_lock only for Xen */
+ 			pgt_lock = &pgd_page_get_mm(page)->page_table_lock;
+ 
+ 			spin_lock(pgt_lock);
+-			ret = vmalloc_sync_one(page_address(page), address);
++			vmalloc_sync_one(page_address(page), address);
+ 			spin_unlock(pgt_lock);
+-
+-			if (!ret)
+-				break;
+ 		}
+ 		spin_unlock(&pgd_lock);
+ 	}
 
 
