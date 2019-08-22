@@ -2,53 +2,56 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F21B698A24
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:04:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 03E1798A2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 06:09:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfHVEE3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 00:04:29 -0400
-Received: from shards.monkeyblade.net ([23.128.96.9]:37986 "EHLO
+        id S1726526AbfHVEJK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 00:09:10 -0400
+Received: from shards.monkeyblade.net ([23.128.96.9]:38052 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725710AbfHVEE3 (ORCPT
+        with ESMTP id S1725710AbfHVEJJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 00:04:29 -0400
+        Thu, 22 Aug 2019 00:09:09 -0400
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::d71])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 44FD91524749A;
-        Wed, 21 Aug 2019 21:04:28 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 21:04:27 -0700 (PDT)
-Message-Id: <20190821.210427.500229269128524420.davem@davemloft.net>
-To:     anders.roxell@linaro.org
-Cc:     shuah@kernel.org, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: net: add missing NFT_FWD_NETDEV to config
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 915CC15247F14;
+        Wed, 21 Aug 2019 21:09:08 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 21:09:07 -0700 (PDT)
+Message-Id: <20190821.210907.884869474698105971.davem@davemloft.net>
+To:     haiyangz@microsoft.com
+Cc:     sashal@kernel.org, saeedm@mellanox.com, leon@kernel.org,
+        eranbe@mellanox.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-hyperv@vger.kernel.org, netdev@vger.kernel.org,
+        kys@microsoft.com, sthemmin@microsoft.com,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next,v3, 0/6] Add software backchannel and mlx5e HV
+ VHCA stats
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190820134102.25636-1-anders.roxell@linaro.org>
-References: <20190820134102.25636-1-anders.roxell@linaro.org>
+In-Reply-To: <1566346948-69497-1-git-send-email-haiyangz@microsoft.com>
+References: <1566346948-69497-1-git-send-email-haiyangz@microsoft.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 21 Aug 2019 21:04:28 -0700 (PDT)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Wed, 21 Aug 2019 21:09:09 -0700 (PDT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
-Date: Tue, 20 Aug 2019 15:41:02 +0200
+From: Haiyang Zhang <haiyangz@microsoft.com>
+Date: Wed, 21 Aug 2019 00:23:19 +0000
 
-> When running xfrm_policy.sh we see the following
+> This patch set adds paravirtual backchannel in software in pci_hyperv,
+> which is required by the mlx5e driver HV VHCA stats agent.
 > 
->  # sysctl cannot stat /proc/sys/net/ipv4/conf/eth1/forwarding No such file or directory
->  cannot: stat_/proc/sys/net/ipv4/conf/eth1/forwarding #
+> The stats agent is responsible on running a periodic rx/tx packets/bytes
+> stats update.
 
-I don't understand how a netfilter config options is going to make that
-generic ipv4 protocol per-device sysctl appear.
+These patches don't apply cleanly to net-next, probably due to some recent
+mlx5 driver changes.
 
-If it's unrelated to your change, don't include it in the commit message
-as it is confusing.
-
-Thank you.
+Please respin.
