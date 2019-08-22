@@ -2,40 +2,46 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F004A99BC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E6F799B60
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404753AbfHVR0t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:26:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49348 "EHLO mail.kernel.org"
+        id S2404095AbfHVRYJ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391853AbfHVRZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:33 -0400
+        id S2391343AbfHVRWp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:22:45 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5160D23427;
-        Thu, 22 Aug 2019 17:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDFD721743;
+        Thu, 22 Aug 2019 17:22:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494732;
-        bh=Hx/oTr1LiKPxSvknHAXUYWhatBWqSa8VofgNXmS2oX8=;
+        s=default; t=1566494565;
+        bh=nJyMM1t0uV8gdvWpzjioIKjwPDWu2tgojeBNJygO+HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZdzL05H5w+1oCU9fnbltB1oULIlHxMDAPvrXxGLpoDgCpmhDSfgfWjKHwIFlU6PrS
-         HxR/cD6RFKvYMsPzEhhpdL+eOWy3ttXGivFUAExxeMkGhEtsifXhC5uboRbAFpf1FH
-         Q2BV9uqibBDEqkx8643jOLxfr3wVlwMEnsIVOnuM=
+        b=Bp9e3d6ph/Onk2SfhsDVskDEYFytEDh5fJ17IRwdbPtjfN+VB67ZtD6LpKFUswRaE
+         w4+qveA7FS1ehjyPnPm434Qc49nDMXOKnH6iyKfPDEOqPeagUDC0vIIthO9LU9UZUP
+         5Q5fCEAVf40RozNwATYXA5TA3X6Xk/nWuu1gO7iw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com,
-        Denis Kirjanov <kda@linux-powerpc.org>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 23/85] net: usb: pegasus: fix improper read if get_registers() fail
-Date:   Thu, 22 Aug 2019 10:18:56 -0700
-Message-Id: <20190822171732.175012031@linuxfoundation.org>
+        stable@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
+        Changwei Ge <gechangwei@live.cn>, Gang He <ghe@suse.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 53/78] ocfs2: remove set but not used variable last_hash
+Date:   Thu, 22 Aug 2019 10:18:57 -0700
+Message-Id: <20190822171833.576608679@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
+References: <20190822171832.012773482@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,32 +51,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Kirjanov <kda@linux-powerpc.org>
+[ Upstream commit 7bc36e3ce91471b6377c8eadc0a2f220a2280083 ]
 
-commit 224c04973db1125fcebefffd86115f99f50f8277 upstream.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-get_registers() may fail with -ENOMEM and in this
-case we can read a garbage from the status variable tmp.
+  fs/ocfs2/xattr.c: In function ocfs2_xattr_bucket_find:
+  fs/ocfs2/xattr.c:3828:6: warning: variable last_hash set but not used [-Wunused-but-set-variable]
 
-Reported-by: syzbot+3499a83b2d062ae409d4@syzkaller.appspotmail.com
-Signed-off-by: Denis Kirjanov <kda@linux-powerpc.org>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+It's never used and can be removed.
 
+Link: http://lkml.kernel.org/r/20190716132110.34836-1-yuehaibing@huawei.com
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Joseph Qi <joseph.qi@linux.alibaba.com>
+Cc: Mark Fasheh <mark@fasheh.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
+Cc: Changwei Ge <gechangwei@live.cn>
+Cc: Gang He <ghe@suse.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/pegasus.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/ocfs2/xattr.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
---- a/drivers/net/usb/pegasus.c
-+++ b/drivers/net/usb/pegasus.c
-@@ -285,7 +285,7 @@ static void mdio_write(struct net_device
- static int read_eprom_word(pegasus_t *pegasus, __u8 index, __u16 *retdata)
- {
- 	int i;
--	__u8 tmp;
-+	__u8 tmp = 0;
- 	__le16 retdatai;
- 	int ret;
+diff --git a/fs/ocfs2/xattr.c b/fs/ocfs2/xattr.c
+index 4f0788232f2f9..06faa608e5622 100644
+--- a/fs/ocfs2/xattr.c
++++ b/fs/ocfs2/xattr.c
+@@ -3808,7 +3808,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
+ 	u16 blk_per_bucket = ocfs2_blocks_per_xattr_bucket(inode->i_sb);
+ 	int low_bucket = 0, bucket, high_bucket;
+ 	struct ocfs2_xattr_bucket *search;
+-	u32 last_hash;
+ 	u64 blkno, lower_blkno = 0;
  
+ 	search = ocfs2_xattr_bucket_new(inode);
+@@ -3852,8 +3851,6 @@ static int ocfs2_xattr_bucket_find(struct inode *inode,
+ 		if (xh->xh_count)
+ 			xe = &xh->xh_entries[le16_to_cpu(xh->xh_count) - 1];
+ 
+-		last_hash = le32_to_cpu(xe->xe_name_hash);
+-
+ 		/* record lower_blkno which may be the insert place. */
+ 		lower_blkno = blkno;
+ 
+-- 
+2.20.1
+
 
 
