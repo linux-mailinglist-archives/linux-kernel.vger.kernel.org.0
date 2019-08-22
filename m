@@ -2,40 +2,48 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AA2ED99B6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6494699BCA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404247AbfHVRYf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:24:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45520 "EHLO mail.kernel.org"
+        id S2392009AbfHVR1W (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404135AbfHVRYQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:16 -0400
+        id S2404524AbfHVRZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:25:54 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0357D2341D;
-        Thu, 22 Aug 2019 17:24:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DCD22064A;
+        Thu, 22 Aug 2019 17:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494655;
-        bh=bW1g/fBVXLbz31tBrsOcMvh5V2C7AsoLRIxH3c0QeLM=;
+        s=default; t=1566494753;
+        bh=HWnuTJMp8UOcJkkW5UdBW3XhI+Tz8ZBNjp501XRIP+Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vf12lv+wzJYB53pfD/7r/MJ7It6GNyE5xaX5yXS5SAFNG6QC45J4VIXB1tbvms+9w
-         eZleEFbzH2xBDv0k/VAAwtTqfv7w6JFgxq42IEyPW345xOgq4tXlEYB5c5OqR034kF
-         AMHJctCcvuI09C3VOX556eP+YE0VMYuG7eOBl0EQ=
+        b=bL67+qpbVP6RTyux3KS6MFjPrjcA6styI2LpbQyrmkvB2KWdWB5TDwMP6wDMshgW4
+         c8xdvxnRMfJGIjOKnF/87e1qmq0muOwD32+EljAmhw5kJ64e0ixIvmbYu170Efc/1S
+         uHtdfgzpslgVB3b6/6W7Xv0N+iogRgIabpZykepk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Manish Chopra <manishc@marvell.com>,
-        Sudarsana Kalluru <skalluru@marvell.com>,
-        Shahed Shaikh <shshaikh@marvell.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 096/103] bnx2x: Fix VFs VLAN reconfiguration in reload.
-Date:   Thu, 22 Aug 2019 10:19:24 -0700
-Message-Id: <20190822171733.044363085@linuxfoundation.org>
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>,
+        Jakub Jelinek <jakub@redhat.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        James Y Knight <jyknight@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 53/85] asm-generic: fix -Wtype-limits compiler warnings
+Date:   Thu, 22 Aug 2019 10:19:26 -0700
+Message-Id: <20190822171733.549787257@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
-References: <20190822171728.445189830@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,98 +53,132 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manish Chopra <manishc@marvell.com>
+[ Upstream commit cbedfe11347fe418621bd188d58a206beb676218 ]
 
-[ Upstream commit 4a4d2d372fb9b9229327e2ed01d5d9572eddf4de ]
+Commit d66acc39c7ce ("bitops: Optimise get_order()") introduced a
+compilation warning because "rx_frag_size" is an "ushort" while
+PAGE_SHIFT here is 16.
 
-Commit 04f05230c5c13 ("bnx2x: Remove configured vlans as
-part of unload sequence."), introduced a regression in driver
-that as a part of VF's reload flow, VLANs created on the VF
-doesn't get re-configured in hardware as vlan metadata/info
-was not getting cleared for the VFs which causes vlan PING to stop.
+The commit changed the get_order() to be a multi-line macro where
+compilers insist to check all statements in the macro even when
+__builtin_constant_p(rx_frag_size) will return false as "rx_frag_size"
+is a module parameter.
 
-This patch clears the vlan metadata/info so that VLANs gets
-re-configured back in the hardware in VF's reload flow and
-PING/traffic continues for VLANs created over the VFs.
+In file included from ./arch/powerpc/include/asm/page_64.h:107,
+                 from ./arch/powerpc/include/asm/page.h:242,
+                 from ./arch/powerpc/include/asm/mmu.h:132,
+                 from ./arch/powerpc/include/asm/lppaca.h:47,
+                 from ./arch/powerpc/include/asm/paca.h:17,
+                 from ./arch/powerpc/include/asm/current.h:13,
+                 from ./include/linux/thread_info.h:21,
+                 from ./arch/powerpc/include/asm/processor.h:39,
+                 from ./include/linux/prefetch.h:15,
+                 from drivers/net/ethernet/emulex/benet/be_main.c:14:
+drivers/net/ethernet/emulex/benet/be_main.c: In function 'be_rx_cqs_create':
+./include/asm-generic/getorder.h:54:9: warning: comparison is always
+true due to limited range of data type [-Wtype-limits]
+   (((n) < (1UL << PAGE_SHIFT)) ? 0 :  \
+         ^
+drivers/net/ethernet/emulex/benet/be_main.c:3138:33: note: in expansion
+of macro 'get_order'
+  adapter->big_page_size = (1 << get_order(rx_frag_size)) * PAGE_SIZE;
+                                 ^~~~~~~~~
 
-Fixes: 04f05230c5c13 ("bnx2x: Remove configured vlans as part of unload sequence.")
-Signed-off-by: Manish Chopra <manishc@marvell.com>
-Signed-off-by: Sudarsana Kalluru <skalluru@marvell.com>
-Signed-off-by: Shahed Shaikh <shshaikh@marvell.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fix it by moving all of this multi-line macro into a proper function,
+and killing __get_order() off.
+
+[akpm@linux-foundation.org: remove __get_order() altogether]
+[cai@lca.pw: v2]
+  Link: http://lkml.kernel.org/r/1564000166-31428-1-git-send-email-cai@lca.pw
+Link: http://lkml.kernel.org/r/1563914986-26502-1-git-send-email-cai@lca.pw
+Fixes: d66acc39c7ce ("bitops: Optimise get_order()")
+Signed-off-by: Qian Cai <cai@lca.pw>
+Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: David Howells <dhowells@redhat.com>
+Cc: Jakub Jelinek <jakub@redhat.com>
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Bill Wendling <morbo@google.com>
+Cc: James Y Knight <jyknight@google.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c  |    7 ++++---
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h  |    2 ++
- drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c |   17 ++++++++++++-----
- 3 files changed, 18 insertions(+), 8 deletions(-)
+ include/asm-generic/getorder.h | 50 ++++++++++++++--------------------
+ 1 file changed, 20 insertions(+), 30 deletions(-)
 
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
-@@ -3062,12 +3062,13 @@ int bnx2x_nic_unload(struct bnx2x *bp, i
- 	/* if VF indicate to PF this function is going down (PF will delete sp
- 	 * elements and clear initializations
- 	 */
--	if (IS_VF(bp))
-+	if (IS_VF(bp)) {
-+		bnx2x_clear_vlan_info(bp);
- 		bnx2x_vfpf_close_vf(bp);
--	else if (unload_mode != UNLOAD_RECOVERY)
-+	} else if (unload_mode != UNLOAD_RECOVERY) {
- 		/* if this is a normal/close unload need to clean up chip*/
- 		bnx2x_chip_cleanup(bp, unload_mode, keep_link);
--	else {
-+	} else {
- 		/* Send the UNLOAD_REQUEST to the MCP */
- 		bnx2x_send_unload_req(bp, unload_mode);
+diff --git a/include/asm-generic/getorder.h b/include/asm-generic/getorder.h
+index c64bea7a52beb..e9f20b813a699 100644
+--- a/include/asm-generic/getorder.h
++++ b/include/asm-generic/getorder.h
+@@ -7,24 +7,6 @@
+ #include <linux/compiler.h>
+ #include <linux/log2.h>
  
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
-@@ -425,6 +425,8 @@ void bnx2x_set_reset_global(struct bnx2x
- void bnx2x_disable_close_the_gate(struct bnx2x *bp);
- int bnx2x_init_hw_func_cnic(struct bnx2x *bp);
- 
-+void bnx2x_clear_vlan_info(struct bnx2x *bp);
-+
+-/*
+- * Runtime evaluation of get_order()
+- */
+-static inline __attribute_const__
+-int __get_order(unsigned long size)
+-{
+-	int order;
+-
+-	size--;
+-	size >>= PAGE_SHIFT;
+-#if BITS_PER_LONG == 32
+-	order = fls(size);
+-#else
+-	order = fls64(size);
+-#endif
+-	return order;
+-}
+-
  /**
-  * bnx2x_sp_event - handle ramrods completion.
+  * get_order - Determine the allocation order of a memory size
+  * @size: The size for which to get the order
+@@ -43,19 +25,27 @@ int __get_order(unsigned long size)
+  * to hold an object of the specified size.
   *
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_main.c
-@@ -8488,11 +8488,21 @@ int bnx2x_set_vlan_one(struct bnx2x *bp,
- 	return rc;
- }
- 
-+void bnx2x_clear_vlan_info(struct bnx2x *bp)
+  * The result is undefined if the size is 0.
+- *
+- * This function may be used to initialise variables with compile time
+- * evaluations of constants.
+  */
+-#define get_order(n)						\
+-(								\
+-	__builtin_constant_p(n) ? (				\
+-		((n) == 0UL) ? BITS_PER_LONG - PAGE_SHIFT :	\
+-		(((n) < (1UL << PAGE_SHIFT)) ? 0 :		\
+-		 ilog2((n) - 1) - PAGE_SHIFT + 1)		\
+-	) :							\
+-	__get_order(n)						\
+-)
++static inline __attribute_const__ int get_order(unsigned long size)
 +{
-+	struct bnx2x_vlan_entry *vlan;
++	if (__builtin_constant_p(size)) {
++		if (!size)
++			return BITS_PER_LONG - PAGE_SHIFT;
 +
-+	/* Mark that hw forgot all entries */
-+	list_for_each_entry(vlan, &bp->vlan_reg, link)
-+		vlan->hw = false;
++		if (size < (1UL << PAGE_SHIFT))
++			return 0;
 +
-+	bp->vlan_cnt = 0;
++		return ilog2((size) - 1) - PAGE_SHIFT + 1;
++	}
++
++	size--;
++	size >>= PAGE_SHIFT;
++#if BITS_PER_LONG == 32
++	return fls(size);
++#else
++	return fls64(size);
++#endif
 +}
-+
- static int bnx2x_del_all_vlans(struct bnx2x *bp)
- {
- 	struct bnx2x_vlan_mac_obj *vlan_obj = &bp->sp_objs[0].vlan_obj;
- 	unsigned long ramrod_flags = 0, vlan_flags = 0;
--	struct bnx2x_vlan_entry *vlan;
- 	int rc;
  
- 	__set_bit(RAMROD_COMP_WAIT, &ramrod_flags);
-@@ -8501,10 +8511,7 @@ static int bnx2x_del_all_vlans(struct bn
- 	if (rc)
- 		return rc;
+ #endif	/* __ASSEMBLY__ */
  
--	/* Mark that hw forgot all entries */
--	list_for_each_entry(vlan, &bp->vlan_reg, link)
--		vlan->hw = false;
--	bp->vlan_cnt = 0;
-+	bnx2x_clear_vlan_info(bp);
- 
- 	return 0;
- }
+-- 
+2.20.1
+
 
 
