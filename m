@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 113EB99C2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:32:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EE69E99CA4
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:36:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404594AbfHVRcA (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:32:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49862 "EHLO mail.kernel.org"
+        id S2391778AbfHVRY4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404497AbfHVRZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:48 -0400
+        id S2404047AbfHVRYa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:24:30 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1AB10206DD;
-        Thu, 22 Aug 2019 17:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D86D2341A;
+        Thu, 22 Aug 2019 17:24:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494747;
-        bh=x4GW7c2JlwLxPGm5e4bIPxoPtdr/wRUzPZBqG+t2Xhc=;
+        s=default; t=1566494670;
+        bh=zMjLqjHkQP6YEj55vt24IX18hBz9ajdl1eYp8pKxUho=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NXa0lUmo79f5DaV2Dlr3AKYzvKLpUGRWzd4XFfLvqtWFnOw4ZWuqVf0dJPwovwv8X
-         9oxHE2IMpJoBP7OZcoAxDr3Srtg0/YEjoSg0mNZLDjyg/nhzxrfPU0Hzc+lOSH6Sba
-         eCLiHI0lIwYyFxTGKVWZ7an1zVgfOy6vHzJBFtkc=
+        b=O+Ss3Z93vSQ9dfd/W94MLk71BLz3KIC17/x2Xjn+LsZVtlnKa5fdNEhVCBus5WSM8
+         bDwp07rxJ0baJTYdAbVhtc/gzbxJ5nKkxJebvE0LHy+asBLKVTUSvsjL0hXsREuFKQ
+         oBinirwzs49dKC6rKYV8L+gYsNoRj9SejBMreMr8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -32,12 +32,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Vladimir Davydov <vdavydov.dev@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [PATCH 4.19 06/85] mm/memcontrol.c: fix use after free in mem_cgroup_iter()
+Subject: [PATCH 4.14 04/71] mm/memcontrol.c: fix use after free in mem_cgroup_iter()
 Date:   Thu, 22 Aug 2019 10:18:39 -0700
-Message-Id: <20190822171731.298944742@linuxfoundation.org>
+Message-Id: <20190822171726.481743286@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
-References: <20190822171731.012687054@linuxfoundation.org>
+In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
+References: <20190822171726.131957995@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -205,13 +205,14 @@ Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
+
 ---
  mm/memcontrol.c |   39 +++++++++++++++++++++++++++++----------
  1 file changed, 29 insertions(+), 10 deletions(-)
 
 --- a/mm/memcontrol.c
 +++ b/mm/memcontrol.c
-@@ -1037,26 +1037,45 @@ void mem_cgroup_iter_break(struct mem_cg
+@@ -871,26 +871,45 @@ void mem_cgroup_iter_break(struct mem_cg
  		css_put(&prev->css);
  }
  
@@ -264,8 +265,8 @@ Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 +						dead_memcg);
 +}
 +
- /**
-  * mem_cgroup_scan_tasks - iterate over tasks of a memory cgroup hierarchy
-  * @memcg: hierarchy root
+ /*
+  * Iteration constructs for visiting all cgroups (under a tree).  If
+  * loops are exited prematurely (break), mem_cgroup_iter_break() must
 
 
