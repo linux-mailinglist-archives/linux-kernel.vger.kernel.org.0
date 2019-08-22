@@ -2,49 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id AFAA998D1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:13:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 788AF98D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 10:13:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732111AbfHVIL4 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 04:11:56 -0400
-Received: from verein.lst.de ([213.95.11.211]:44790 "EHLO verein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbfHVIL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 04:11:56 -0400
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 999B968C4E; Thu, 22 Aug 2019 10:11:53 +0200 (CEST)
-Date:   Thu, 22 Aug 2019 10:11:53 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Atish Patra <atish.patra@wdc.com>
-Cc:     linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@lst.de>, Anup Patel <Anup.Patel@wdc.com>
-Subject: Re: [PATCH v4 3/3] RISC-V: Issue a tlb page flush if possible
-Message-ID: <20190822081153.GC17573@lst.de>
-References: <20190822075151.24838-1-atish.patra@wdc.com> <20190822075151.24838-4-atish.patra@wdc.com>
+        id S1732137AbfHVIM3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 04:12:29 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:4560 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1731361AbfHVIM1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 04:12:27 -0400
+X-UUID: 148adf214d5e41aeb732a3567d7658e1-20190822
+X-UUID: 148adf214d5e41aeb732a3567d7658e1-20190822
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <yingjoe.chen@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 505389812; Thu, 22 Aug 2019 16:12:21 +0800
+Received: from mtkcas08.mediatek.inc (172.21.101.126) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 22 Aug 2019 16:12:15 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas08.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 16:12:15 +0800
+Message-ID: <1566461540.16302.4.camel@mtksdaap41>
+Subject: Re: [PATCH v5 08/13] dt-bindings: pwm: update bindings for MT7628
+ SoC
+From:   Yingjoe Chen <yingjoe.chen@mediatek.com>
+To:     Sam Shih <sam.shih@mediatek.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        <linux-pwm@vger.kernel.org>, Ryder Lee <ryder.lee@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        "John Crispin" <john@phrozen.org>
+Date:   Thu, 22 Aug 2019 16:12:20 +0800
+In-Reply-To: <1566457123-20791-9-git-send-email-sam.shih@mediatek.com>
+References: <1566457123-20791-1-git-send-email-sam.shih@mediatek.com>
+         <1566457123-20791-9-git-send-email-sam.shih@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190822075151.24838-4-atish.patra@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Transfer-Encoding: 7bit
+X-TM-SNTS-SMTP: 3BD61D47ACABA7964220A1B0223F5209B3AA948622B67FF3DAA9B078EE5B90732000:8
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 12:51:51AM -0700, Atish Patra wrote:
-> If tlbflush request is for page only, there is no need to do a
-> complete local tlb shootdown.
+On Thu, 2019-08-22 at 14:58 +0800, Sam Shih wrote:
+> This updates bindings for MT7628 pwm controller.
 > 
-> Just do a local tlb flush for the given address.
+> Signed-off-by: Sam Shih <sam.shih@mediatek.com>
+> ---
+>  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> index ea95b490a913..93980e3da261 100644
+> --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+> @@ -21,6 +21,10 @@ Required properties:
+>     See pinctrl/pinctrl-bindings.txt for details of the property values.
+>   - num-pwms: the number of PWM channels.
+> +
+> + Optional properties:
+> + - clock-frequency: fix clock frequency, this is only used in MT7628 SoC
+> +                    for period calculation. This SoC has no complex clock tree.
 
-Looks good, although I suspect in many cases even doing multiple
-single-page sfence.vma calls might be cheaper than the global one.
+I'm sorry if this has been discussed before. 
 
-But I think that is worth a ѕeparate discussion, preferably with actual
-numbers.
+Would it be simpler if you just provide a fixed-clock as clock in device
+tree? This way you don't need this optional properties and don't need to
+special handle it in driver code. 
 
-Reviewed-by: Christoph Hellwig <hch@lst.de>
+After all, the hw is still connected to a simple clock tree.
+
+Joe.C
+
+
