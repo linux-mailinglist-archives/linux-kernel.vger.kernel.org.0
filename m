@@ -2,127 +2,133 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9730599818
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:25:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9083F9981F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 17:28:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731378AbfHVPYj (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 11:24:39 -0400
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:35739 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730842AbfHVPYj (ORCPT
+        id S1731649AbfHVP1Z (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 11:27:25 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39556 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725804AbfHVP1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 11:24:39 -0400
-Received: by mail-qk1-f196.google.com with SMTP id r21so5503284qke.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 08:24:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:date:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=odvCOXj3UumVA2n+f7aef7KNjmkmoOgl5FgEwfn9Tf8=;
-        b=LTKmvoyDOtI8+cnmX5WagSmAPXowvfTqeoMk0yP1L1AXljbfsoeh7qtEV60ohWvajT
-         Wf7oZWKKgaHellGhB/may3c3uBlyfQSF1WsvmyUe6pSGV/4iuUVrKMmEb7ZMZJhqWZes
-         le8KG1nwaojukDQxYUIXbbG/s1D3tk6zWQy6OFuvFH1878Z3gVKob/ESeHL6tNXFaCp9
-         mR0pvKn+G3QXmfQOrzXrMnITu/4PO1LUBH2sAezrIWn07g/3EbX+ATp9uYW5tPavG/OA
-         IBcOBDYX5WluiIF1V669MinYYojV3Fj7bBKwKpuN0EAH7+ge8KNE2nAckv7hpYLWZXxU
-         bzlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=odvCOXj3UumVA2n+f7aef7KNjmkmoOgl5FgEwfn9Tf8=;
-        b=rC1IEdnaYXl1JEI8U44EALe258vcIFFkxWuAEDkKJ26hFs2dnGqz2TVrinmx1wvILQ
-         VPqBiebrgMYp2kSU2tlAkoTvhgv3FxMbc0WErRZ7EPYs2xyIH5bD093ybGMUi9Apjo3o
-         gglvSz50HuPAB3YGVYAu82UpvuhhbMGy9LLO9snUIfj2PxSb/z8a7P7nCsHrfuaIn0WH
-         KMG2E8eTM6ICnOZQKQOY4QaHMTDJYUDk4vncNJh5KdlwNd/MqQDAsYQTJk3xxsDKFh/O
-         4RbTNUBJPJGWSb5vhd1rkf5vuB/GgCn722DAm2PshudTh0l2l30jW+tGAiIg/zVhVnyp
-         zg6Q==
-X-Gm-Message-State: APjAAAXI43xRT7UYua7veISczlZfYnVEYMXWhz0LKQOeymzwDXljqstS
-        v6FpnJ4MJIx955vL9PbM4t8=
-X-Google-Smtp-Source: APXvYqxrfZYf1LQJpL83KkMXacTD6/xp3AlHaGqxOc940hRUvJRm3oo4e05QdGjNT2UQqBmyd6cQTA==
-X-Received: by 2002:ae9:eb4e:: with SMTP id b75mr36365876qkg.478.1566487478538;
-        Thu, 22 Aug 2019 08:24:38 -0700 (PDT)
-Received: from quaco.ghostprotocols.net ([179.97.35.50])
-        by smtp.gmail.com with ESMTPSA id r4sm13878895qta.93.2019.08.22.08.24.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 08:24:37 -0700 (PDT)
-From:   Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>
-X-Google-Original-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
-        id A955A40340; Thu, 22 Aug 2019 12:24:35 -0300 (-03)
-Date:   Thu, 22 Aug 2019 12:24:35 -0300
-To:     Gerald BAEZA <gerald.baeza@st.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH] libperf: fix alignment trap in perf stat
-Message-ID: <20190822152435.GD29569@kernel.org>
-References: <1566464769-16374-1-git-send-email-gerald.baeza@st.com>
+        Thu, 22 Aug 2019 11:27:25 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7MFM642094538;
+        Thu, 22 Aug 2019 11:27:08 -0400
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhw1bj694-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Aug 2019 11:27:08 -0400
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.16.0.27/8.16.0.27) with SMTP id x7MFM5s9094473;
+        Thu, 22 Aug 2019 11:27:08 -0400
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2uhw1bj683-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Aug 2019 11:27:08 -0400
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.0.27/8.16.0.27) with SMTP id x7MFQU7R004861;
+        Thu, 22 Aug 2019 15:27:06 GMT
+Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
+        by ppma04dal.us.ibm.com with ESMTP id 2ue977crpp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Aug 2019 15:27:06 +0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7MFR5e736503854
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 22 Aug 2019 15:27:06 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CCC59B2064;
+        Thu, 22 Aug 2019 15:27:05 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B90DDB2067;
+        Thu, 22 Aug 2019 15:27:05 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.154])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Thu, 22 Aug 2019 15:27:05 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id A5EC616C0F61; Thu, 22 Aug 2019 08:27:06 -0700 (PDT)
+Date:   Thu, 22 Aug 2019 08:27:06 -0700
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Scott Wood <swood@redhat.com>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH RT v2 1/3] rcu: Acquire RCU lock when disabling BHs
+Message-ID: <20190822152706.GB28441@linux.ibm.com>
+Reply-To: paulmck@linux.ibm.com
+References: <20190821231906.4224-1-swood@redhat.com>
+ <20190821231906.4224-2-swood@redhat.com>
+ <20190821233358.GU28441@linux.ibm.com>
+ <20190822133955.GA29841@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566464769-16374-1-git-send-email-gerald.baeza@st.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.12.0 (2019-05-25)
+In-Reply-To: <20190822133955.GA29841@google.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-22_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1906280000 definitions=main-1908220151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Aug 22, 2019 at 09:07:01AM +0000, Gerald BAEZA escreveu:
-> Following the patch 'perf stat: Fix --no-scale', an
-> alignment trap happens in process_counter_values()
-> on ARMv7 platforms due to the attempt to copy non
-> 64 bits aligned double words (pointed by 'count')
-> via a NEON vectored instruction ('vld1' with 64
-> bits alignment constraint).
+On Thu, Aug 22, 2019 at 09:39:55AM -0400, Joel Fernandes wrote:
+> On Wed, Aug 21, 2019 at 04:33:58PM -0700, Paul E. McKenney wrote:
+> > On Wed, Aug 21, 2019 at 06:19:04PM -0500, Scott Wood wrote:
+> > > A plain local_bh_disable() is documented as creating an RCU critical
+> > > section, and (at least) rcutorture expects this to be the case.  However,
+> > > in_softirq() doesn't block a grace period on PREEMPT_RT, since RCU checks
+> > > preempt_count() directly.  Even if RCU were changed to check
+> > > in_softirq(), that wouldn't allow blocked BH disablers to be boosted.
+> > > 
+> > > Fix this by calling rcu_read_lock() from local_bh_disable(), and update
+> > > rcu_read_lock_bh_held() accordingly.
+> > 
+> > Cool!  Some questions and comments below.
+> > 
+> > 							Thanx, Paul
+> > 
+> > > Signed-off-by: Scott Wood <swood@redhat.com>
+> > > ---
+> > > Another question is whether non-raw spinlocks are intended to create an
+> > > RCU read-side critical section due to implicit preempt disable.
+> > 
+> > Hmmm...  Did non-raw spinlocks act like rcu_read_lock_sched()
+> > and rcu_read_unlock_sched() pairs in -rt prior to the RCU flavor
+> > consolidation?  If not, I don't see why they should do so after that
+> > consolidation in -rt.
 > 
-> This patch sets a 64 bits alignment constraint on
-> 'contents[]' field in 'struct xyarray' since the
-> 'count' pointer used above points to such a
-> structure.
+> May be I am missing something, but I didn't see the connection between
+> consolidation and this patch. AFAICS, this patch is so that
+> rcu_read_lock_bh_held() works at all on -rt. Did I badly miss something?
 
-You forgot to add Mathieu and Andi, which I just did.
+I was interpreting Scott's question (which would be excluded from the
+git commit log) as relating to a possible follow-on patch.
 
-I think this is ok and I'm applying, please holler anyone if think this
-isn't the case,
+The question is "how special can non-raw spinlocks be in -rt?".  From what
+I can see, they have been treated as sleeplocks from an RCU viewpoint,
+so maybe that should continue to be the case.  It does deserve some
+thought because in mainline a non-raw spinlock really would block a
+post-consolidation RCU grace period, even in PREEMPT kernels.
 
-- Arnaldo
- 
-> Signed-off-by: Gerald Baeza <gerald.baeza@st.com>
-> ---
->  tools/perf/lib/include/internal/xyarray.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/lib/include/internal/xyarray.h b/tools/perf/lib/include/internal/xyarray.h
-> index 3bf70e4..51e35d6 100644
-> --- a/tools/perf/lib/include/internal/xyarray.h
-> +++ b/tools/perf/lib/include/internal/xyarray.h
-> @@ -2,6 +2,7 @@
->  #ifndef __LIBPERF_INTERNAL_XYARRAY_H
->  #define __LIBPERF_INTERNAL_XYARRAY_H
->  
-> +#include <linux/compiler.h>
->  #include <sys/types.h>
->  
->  struct xyarray {
-> @@ -10,7 +11,7 @@ struct xyarray {
->  	size_t entries;
->  	size_t max_x;
->  	size_t max_y;
-> -	char contents[];
-> +	char contents[] __aligned(8);
->  };
->  
->  struct xyarray *xyarray__new(int xlen, int ylen, size_t entry_size);
-> -- 
-> 2.7.4
+But then again, you cannot preempt a non-raw spinlock in mainline but
+you can in -rt, so extending that exception to RCU is not unreasonable.
 
--- 
+Either way, we do need to make a definite decision and document it.
+If I were forced to make a decision right now, I would follow the old
+behavior, so that only raw spinlocks were guaranteed to block RCU grace
+periods.  But I am not being forced, so let's actually discuss and make
+a conscious decision.  ;-)
 
-- Arnaldo
+							Thanx, Paul
