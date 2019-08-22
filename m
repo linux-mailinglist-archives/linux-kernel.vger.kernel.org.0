@@ -2,95 +2,137 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C20F98EB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:06:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A9B2798EC2
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 11:07:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732925AbfHVJGI (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 05:06:08 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:55022 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727910AbfHVJGI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:06:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=jQUmhm+crCMl7aYhsmY917C2u3wYSGbnGiCkrOsABG0=; b=H96MoQ+Xd3KhAeEuhp3KuJohI
-        7ynuQoFB+FMMXI0yuJcBPGyPNWoozF3fDKL9kl4B1XlMv3+6HktRE1qRLl7vo2y5kWQsZ1DyZye2c
-        D9kG9tcMcVvyCEkQ+xqenprcGbr2Gvn0PAaMxckZsZrBkOjWWIh522IzryqmQX0oBFf0K/llZ93O6
-        ZDU/ioNYP/VUNvq59utMpn18uDg7xZOFlRcstWcRz1zfQ9Ez0NQEKeBhW+jmRezsiZrZTxj3r+RT6
-        zHReVu6e3nCBZlm6teISKVXXZnYetDwGV4kJGAqQtH/SBfvLNvHDE5vEekVryI6QFRfDmLqGtuE0V
-        KC4nhDu6Q==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=noisy.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.92 #3 (Red Hat Linux))
-        id 1i0j2c-0000zc-VK; Thu, 22 Aug 2019 09:05:59 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 82957307145;
-        Thu, 22 Aug 2019 11:05:23 +0200 (CEST)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 8000620A21FDF; Thu, 22 Aug 2019 11:05:55 +0200 (CEST)
-Date:   Thu, 22 Aug 2019 11:05:55 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Song Liu <songliubraving@fb.com>
-Cc:     Yonghong Song <yhs@fb.com>, Daniel Xu <dxu@dxuuu.xyz>,
-        "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
-        Andrii Nakryiko <andriin@fb.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "acme@kernel.org" <acme@kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        "alexander.shishkin@linux.intel.com" 
-        <alexander.shishkin@linux.intel.com>,
-        "jolsa@redhat.com" <jolsa@redhat.com>,
-        "namhyung@kernel.org" <namhyung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Kernel Team <Kernel-team@fb.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH v3 bpf-next 1/4] tracing/probe: Add
- PERF_EVENT_IOC_QUERY_PROBE ioctl
-Message-ID: <20190822090555.GJ2349@hirez.programming.kicks-ass.net>
-References: <20190820144503.GV2332@hirez.programming.kicks-ass.net>
- <BWENHQJIN885.216UOYEIWNGFU@dlxu-fedora-R90QNFJV>
- <20190821110856.GB2349@hirez.programming.kicks-ass.net>
- <62874df3-cae0-36a1-357f-b59484459e52@fb.com>
- <20190821183155.GE2349@hirez.programming.kicks-ass.net>
- <5ecdcd72-255d-26d1-baf3-dc64498753c2@fb.com>
- <20190822074737.GG2349@hirez.programming.kicks-ass.net>
- <E9CB8C05-8972-4454-9D19-FA2D0D94F32D@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E9CB8C05-8972-4454-9D19-FA2D0D94F32D@fb.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1732962AbfHVJG7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 05:06:59 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:29615 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732927AbfHVJG6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:06:58 -0400
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 03B7930872C5;
+        Thu, 22 Aug 2019 09:06:58 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-60.ams2.redhat.com [10.36.116.60])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 0EDAF7E43;
+        Thu, 22 Aug 2019 09:06:48 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 13DB259EC; Thu, 22 Aug 2019 11:06:46 +0200 (CEST)
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     dri-devel@lists.freedesktop.org
+Cc:     Gerd Hoffmann <kraxel@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        linux-fbdev@vger.kernel.org (open list:FRAMEBUFFER LAYER),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/3] fbdev: drop res_id parameter from remove_conflicting_pci_framebuffers
+Date:   Thu, 22 Aug 2019 11:06:43 +0200
+Message-Id: <20190822090645.25410-2-kraxel@redhat.com>
+In-Reply-To: <20190822090645.25410-1-kraxel@redhat.com>
+References: <20190822090645.25410-1-kraxel@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 22 Aug 2019 09:06:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 07:54:16AM +0000, Song Liu wrote:
-> Hi Peter, 
-> 
-> > On Aug 22, 2019, at 12:47 AM, Peter Zijlstra <peterz@infradead.org> wrote:
-> > 
-> > On Wed, Aug 21, 2019 at 06:43:49PM +0000, Yonghong Song wrote:
-> >> On 8/21/19 11:31 AM, Peter Zijlstra wrote:
-> > 
-> >>> So extending PERF_RECORD_LOST doesn't work. But PERF_FORMAT_LOST might
-> >>> still work fine; but you get to implement it for all software events.
-> >> 
-> >> Could you give more specifics about PERF_FORMAT_LOST? Googling 
-> >> "PERF_FORMAT_LOST" only yields two emails which we are discussing here :-(
-> > 
-> > Look at what the other PERF_FORMAT_ flags do? Basically it is adding a
-> > field to the read(2) output.
-> 
-> Do we need to implement PERF_FORMAT_LOST for all software events? If user
-> space asks for PERF_FORMAT_LOST for events that do not support it, can we
-> just fail sys_perf_event_open()?
+Since commit b0e999c95581 ("fbdev: list all pci memory bars as
+conflicting apertures") the parameter was used for some sanity checks
+only, to make sure we detect any issues with the new approach to just
+list all memory bars as apertures.
 
-It really shouldn't be hard; and I'm failing to see why kprobes are
-special.
+No issues turned up so far, so continue to cleanup:  Drop the res_id
+parameter, drop the sanity checks.  Also downgrade the logging from
+"info" level to "debug" level and update documentation.
+
+Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+---
+ include/drm/drm_fb_helper.h      |  2 +-
+ include/linux/fb.h               |  2 +-
+ drivers/video/fbdev/core/fbmem.c | 17 +++++------------
+ 3 files changed, 7 insertions(+), 14 deletions(-)
+
+diff --git a/include/drm/drm_fb_helper.h b/include/drm/drm_fb_helper.h
+index c8a8ae2a678a..5a5f4b1d8241 100644
+--- a/include/drm/drm_fb_helper.h
++++ b/include/drm/drm_fb_helper.h
+@@ -560,7 +560,7 @@ drm_fb_helper_remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+ 	 * otherwise the vga fbdev driver falls over.
+ 	 */
+ #if IS_REACHABLE(CONFIG_FB)
+-	ret = remove_conflicting_pci_framebuffers(pdev, resource_id, name);
++	ret = remove_conflicting_pci_framebuffers(pdev, name);
+ #endif
+ 	if (ret == 0)
+ 		ret = vga_remove_vgacon(pdev);
+diff --git a/include/linux/fb.h b/include/linux/fb.h
+index 756706b666a1..41e0069eca0a 100644
+--- a/include/linux/fb.h
++++ b/include/linux/fb.h
+@@ -607,7 +607,7 @@ extern ssize_t fb_sys_write(struct fb_info *info, const char __user *buf,
+ extern int register_framebuffer(struct fb_info *fb_info);
+ extern void unregister_framebuffer(struct fb_info *fb_info);
+ extern void unlink_framebuffer(struct fb_info *fb_info);
+-extern int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id,
++extern int remove_conflicting_pci_framebuffers(struct pci_dev *pdev,
+ 					       const char *name);
+ extern int remove_conflicting_framebuffers(struct apertures_struct *a,
+ 					   const char *name, bool primary);
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index e6a1c805064f..95c32952fa8a 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -1758,21 +1758,19 @@ EXPORT_SYMBOL(remove_conflicting_framebuffers);
+ /**
+  * remove_conflicting_pci_framebuffers - remove firmware-configured framebuffers for PCI devices
+  * @pdev: PCI device
+- * @res_id: index of PCI BAR configuring framebuffer memory
+  * @name: requesting driver name
+  *
+  * This function removes framebuffer devices (eg. initialized by firmware)
+- * using memory range configured for @pdev's BAR @res_id.
++ * using memory range configured for any of @pdev's memory bars.
+  *
+  * The function assumes that PCI device with shadowed ROM drives a primary
+  * display and so kicks out vga16fb.
+  */
+-int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id, const char *name)
++int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, const char *name)
+ {
+ 	struct apertures_struct *ap;
+ 	bool primary = false;
+ 	int err, idx, bar;
+-	bool res_id_found = false;
+ 
+ 	for (idx = 0, bar = 0; bar < PCI_ROM_RESOURCE; bar++) {
+ 		if (!(pci_resource_flags(pdev, bar) & IORESOURCE_MEM))
+@@ -1789,16 +1787,11 @@ int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, int res_id, const
+ 			continue;
+ 		ap->ranges[idx].base = pci_resource_start(pdev, bar);
+ 		ap->ranges[idx].size = pci_resource_len(pdev, bar);
+-		pci_info(pdev, "%s: bar %d: 0x%lx -> 0x%lx\n", __func__, bar,
+-			 (unsigned long)pci_resource_start(pdev, bar),
+-			 (unsigned long)pci_resource_end(pdev, bar));
++		pci_dbg(pdev, "%s: bar %d: 0x%lx -> 0x%lx\n", __func__, bar,
++			(unsigned long)pci_resource_start(pdev, bar),
++			(unsigned long)pci_resource_end(pdev, bar));
+ 		idx++;
+-		if (res_id == bar)
+-			res_id_found = true;
+ 	}
+-	if (!res_id_found)
+-		pci_warn(pdev, "%s: passed res_id (%d) is not a memory bar\n",
+-			 __func__, res_id);
+ 
+ #ifdef CONFIG_X86
+ 	primary = pdev->resource[PCI_ROM_RESOURCE].flags &
+-- 
+2.18.1
+
