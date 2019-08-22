@@ -2,40 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 23AD599C9D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:35:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E3C99C12
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:31:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392460AbfHVRfn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:35:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47842 "EHLO mail.kernel.org"
+        id S2392210AbfHVRbK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:31:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391821AbfHVRZE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:25:04 -0400
+        id S2404559AbfHVR0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:26:00 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19EE223427;
-        Thu, 22 Aug 2019 17:25:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 561F823405;
+        Thu, 22 Aug 2019 17:25:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494703;
-        bh=23yLYRYpZScSgWCIO/+4mT49aq0tGCkThcNRFW6pIUc=;
+        s=default; t=1566494759;
+        bh=2gdbjHhkbWqhj+3DY8AUj7t5iK1XdHveNGKJAc0gszA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tDsq8zZTcdcZlTWDSaUL6EjIlDmPJgGXgDwomnuu34ne+hZBcvvj7lo8zM8XAJLkB
-         jIrOxGAhkT9TsDel8fLcEcE4/A4UNK7LLnV2zCRA7HMsJj2CUS0OjwgzSGJeQa1In/
-         4qaT8Pr4EYWvf60w1qk5Fz64GXfDg0HV4uptqOXM=
+        b=ydrlr69/5m2YFGqFR/q/TYUQbmUXoXKTqrJ6/t91jwu3jr+MJo4eu7pUR95JrnlZb
+         PwgWiAhf33ibUeboCGpXu02HgWjhGTI4m/fl13IUEG2ibIjOfU1HRY5rPUtVcfJmOx
+         AWi+iyfwljmLhPcWnjRMcj63mZljdA85d96ccyRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        James Morse <james.morse@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 4.14 57/71] arm64: ftrace: Ensure module ftrace trampoline is coherent with I-side
-Date:   Thu, 22 Aug 2019 10:19:32 -0700
-Message-Id: <20190822171730.254380401@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.19 60/85] usb: gadget: udc: renesas_usb3: Fix sysfs interface of "role"
+Date:   Thu, 22 Aug 2019 10:19:33 -0700
+Message-Id: <20190822171733.818552029@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171731.012687054@linuxfoundation.org>
+References: <20190822171731.012687054@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -45,81 +45,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will@kernel.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit b6143d10d23ebb4a77af311e8b8b7f019d0163e6 upstream.
+commit 5dac665cf403967bb79a7aeb8c182a621fe617ff upstream.
 
-The initial support for dynamic ftrace trampolines in modules made use
-of an indirect branch which loaded its target from the beginning of
-a special section (e71a4e1bebaf7 ("arm64: ftrace: add support for far
-branches to dynamic ftrace")). Since no instructions were being patched,
-no cache maintenance was needed. However, later in be0f272bfc83 ("arm64:
-ftrace: emit ftrace-mod.o contents through code") this code was reworked
-to output the trampoline instructions directly into the PLT entry but,
-unfortunately, the necessary cache maintenance was overlooked.
+Since the role_store() uses strncmp(), it's possible to refer
+out-of-memory if the sysfs data size is smaller than strlen("host").
+This patch fixes it by using sysfs_streq() instead of strncmp().
 
-Add a call to __flush_icache_range() after writing the new trampoline
-instructions but before patching in the branch to the trampoline.
-
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: James Morse <james.morse@arm.com>
-Cc: <stable@vger.kernel.org>
-Fixes: be0f272bfc83 ("arm64: ftrace: emit ftrace-mod.o contents through code")
-Signed-off-by: Will Deacon <will@kernel.org>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Fixes: cc995c9ec118 ("usb: gadget: udc: renesas_usb3: add support for usb role swap")
+Cc: <stable@vger.kernel.org> # v4.12+
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- arch/arm64/kernel/ftrace.c |   21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ drivers/usb/gadget/udc/renesas_usb3.c |    5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
---- a/arch/arm64/kernel/ftrace.c
-+++ b/arch/arm64/kernel/ftrace.c
-@@ -76,7 +76,7 @@ int ftrace_make_call(struct dyn_ftrace *
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -19,6 +19,7 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/sizes.h>
+ #include <linux/slab.h>
++#include <linux/string.h>
+ #include <linux/sys_soc.h>
+ #include <linux/uaccess.h>
+ #include <linux/usb/ch9.h>
+@@ -2378,9 +2379,9 @@ static ssize_t role_store(struct device
+ 	if (usb3->forced_b_device)
+ 		return -EBUSY;
  
- 	if (offset < -SZ_128M || offset >= SZ_128M) {
- #ifdef CONFIG_ARM64_MODULE_PLTS
--		struct plt_entry trampoline;
-+		struct plt_entry trampoline, *dst;
- 		struct module *mod;
- 
- 		/*
-@@ -104,24 +104,27 @@ int ftrace_make_call(struct dyn_ftrace *
- 		 * is added in the future, but for now, the pr_err() below
- 		 * deals with a theoretical issue only.
- 		 */
-+		dst = mod->arch.ftrace_trampoline;
- 		trampoline = get_plt_entry(addr);
--		if (!plt_entries_equal(mod->arch.ftrace_trampoline,
--				       &trampoline)) {
--			if (!plt_entries_equal(mod->arch.ftrace_trampoline,
--					       &(struct plt_entry){})) {
-+		if (!plt_entries_equal(dst, &trampoline)) {
-+			if (!plt_entries_equal(dst, &(struct plt_entry){})) {
- 				pr_err("ftrace: far branches to multiple entry points unsupported inside a single module\n");
- 				return -EINVAL;
- 			}
- 
- 			/* point the trampoline to our ftrace entry point */
- 			module_disable_ro(mod);
--			*mod->arch.ftrace_trampoline = trampoline;
-+			*dst = trampoline;
- 			module_enable_ro(mod, true);
- 
--			/* update trampoline before patching in the branch */
--			smp_wmb();
-+			/*
-+			 * Ensure updated trampoline is visible to instruction
-+			 * fetch before we patch in the branch.
-+			 */
-+			flush_icache_range((unsigned long)&dst[0],
-+					   (unsigned long)&dst[1]);
- 		}
--		addr = (unsigned long)(void *)mod->arch.ftrace_trampoline;
-+		addr = (unsigned long)dst;
- #else /* CONFIG_ARM64_MODULE_PLTS */
+-	if (!strncmp(buf, "host", strlen("host")))
++	if (sysfs_streq(buf, "host"))
+ 		new_mode_is_host = true;
+-	else if (!strncmp(buf, "peripheral", strlen("peripheral")))
++	else if (sysfs_streq(buf, "peripheral"))
+ 		new_mode_is_host = false;
+ 	else
  		return -EINVAL;
- #endif /* CONFIG_ARM64_MODULE_PLTS */
 
 
