@@ -2,30 +2,30 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B90898959
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4410898956
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 04:19:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731220AbfHVCSy (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 22:18:54 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34114 "EHLO
+        id S1731181AbfHVCSq (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 22:18:46 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:34204 "EHLO
         shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730870AbfHVCSN (ORCPT
+        with ESMTP id S1730886AbfHVCSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 21 Aug 2019 22:18:13 -0400
 Received: from imladris.surriel.com ([96.67.55.152])
         by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.92)
         (envelope-from <riel@shelob.surriel.com>)
-        id 1i0cfX-0001S6-Ji; Wed, 21 Aug 2019 22:17:43 -0400
+        id 1i0cfX-0001S6-LO; Wed, 21 Aug 2019 22:17:43 -0400
 From:   Rik van Riel <riel@surriel.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     kernel-team@fb.com, pjt@google.com, dietmar.eggemann@arm.com,
         peterz@infradead.org, mingo@redhat.com, morten.rasmussen@arm.com,
         tglx@linutronix.de, mgorman@techsingularity.net,
         vincent.guittot@linaro.org, Rik van Riel <riel@surriel.com>
-Subject: [PATCH 14/15] sched,fair: ramp up task_se_h_weight quickly
-Date:   Wed, 21 Aug 2019 22:17:39 -0400
-Message-Id: <20190822021740.15554-15-riel@surriel.com>
+Subject: [PATCH 15/15] sched,fair: scale vdiff in wakeup_preempt_entity
+Date:   Wed, 21 Aug 2019 22:17:40 -0400
+Message-Id: <20190822021740.15554-16-riel@surriel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190822021740.15554-1-riel@surriel.com>
 References: <20190822021740.15554-1-riel@surriel.com>
@@ -36,55 +36,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code in update_cfs_group / calc_group_shares has some logic to
-quickly ramp up the load when a task has just started running in a
-cgroup, in order to get sane values for the cgroup se->load.weight.
+When a task wakes back up after having gone to sleep, place_entity
+will limit the vruntime difference between min_vruntime and the
+woken up task to half of sysctl_sched_latency.
 
-This code adds a similar hack to task_se_h_weight.
+The code in wakeup_preempt_entity calculates how much vruntime a
+time slice for the woken up task represents, in wakeup_gran.
 
-However, THIS CODE IS WRONG, since it does not do things hierarchically.
+It then assumes that all the vruntime used since the task went to
+sleep was used by the currently running task (which has its vruntime
+scaled by calc_delta_fair, as well).
 
-I am wondering a few things here:
-1) Should I have something similar to the logic in calc_group_shares
-   in update_cfs_rq_h_load?
-2) If so, should I also use that fast-ramp-up value for task_h_load,
-   to prevent the load balancer from thinking it is moving zero weight
-   tasks around?
-3) If update_cfs_rq_h_load is the wrong place, where should I be
-   calculating a hierarchical group weight value, instead?
+However, that assumption is not necessarily true, and the vruntime
+may have advanced at different rates, pushed ahead by different tasks
+on the CPU. This becomes more visible when the CPU controller is enabled.
 
-Not-yet-signed-off-by: Rik van Riel <riel@surriel.com>
+This leads to the symptom that a high priority woken up task is likely to
+preempt whatever is running, even if the currently running task is of equal
+or higher priority than the woken up task!
+
+Scaling the vdiff down if the currently running task is also high priority
+solves that symptom.
+
+This is not the correct thing to do if all of the vruntime was accumulated
+by the current task, or other tasks at similar priority, and already scaled
+by the same priority, but I do not have any better ideas on how to tackle
+the "task X got preempted by task Y of the same priority" issue that system
+administrators try to resolve by setting the sched_wakeup_granularity
+sysctl variable to a larger value than half of sysctl_sched_latency...
+
 Signed-off-by: Rik van Riel <riel@surriel.com>
 ---
- kernel/sched/fair.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ kernel/sched/fair.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d6c881c5c4d5..3df5d60b245f 100644
+index 3df5d60b245f..ef7629bdf41d 100644
 --- a/kernel/sched/fair.c
 +++ b/kernel/sched/fair.c
-@@ -7672,6 +7672,7 @@ static void update_cfs_rq_h_load(struct cfs_rq *cfs_rq)
+@@ -6774,6 +6774,7 @@ wakeup_preempt_entity(struct sched_entity *curr, struct sched_entity *se)
+ 	if (vdiff <= 0)
+ 		return -1;
  
- static unsigned long task_se_h_weight(struct sched_entity *se)
- {
-+	unsigned long group_load;
- 	struct cfs_rq *cfs_rq;
- 
- 	if (!task_se_in_cgroup(se))
-@@ -7680,8 +7681,12 @@ static unsigned long task_se_h_weight(struct sched_entity *se)
- 	cfs_rq = group_cfs_rq_of_parent(se);
- 	update_cfs_rq_h_load(cfs_rq);
- 
-+	/* Ramp up quickly to keep h_weight sane. */
-+	group_load = max(scale_load_down(se->parent->load.weight),
-+							cfs_rq->h_load);
-+
- 	/* Reduce the load.weight by the h_load of the group the task is in. */
--	return (cfs_rq->h_load * se->load.weight) >> SCHED_FIXEDPOINT_SHIFT;
-+	return (group_load * se->load.weight) >> SCHED_FIXEDPOINT_SHIFT;
- }
- 
- static unsigned long task_se_h_load(struct sched_entity *se)
++	vdiff = min((u64)vdiff, calc_delta_fair(vdiff, curr));
+ 	gran = wakeup_gran(se);
+ 	if (vdiff > gran)
+ 		return 1;
 -- 
 2.20.1
 
