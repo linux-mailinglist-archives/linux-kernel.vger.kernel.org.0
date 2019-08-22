@@ -2,98 +2,74 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 12A9B988AD
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 02:47:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7468B988B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 02:50:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730160AbfHVAqz (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Wed, 21 Aug 2019 20:46:55 -0400
-Received: from esa2.hgst.iphmx.com ([68.232.143.124]:34532 "EHLO
-        esa2.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729951AbfHVAqp (ORCPT
+        id S1730240AbfHVArb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Wed, 21 Aug 2019 20:47:31 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:37532 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727493AbfHVArb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 21 Aug 2019 20:46:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1566434912; x=1597970912;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=YlJDmiJLhozVCCONzet/NwZI4xFiot+23HMp3bKyELg=;
-  b=ALzRCfqUydbTGqZba0vgbcwKLQO+ep48AHRHtypTRRK17NNTo93/nFDw
-   AWaaZeq71khbXkKBtSjKZTFhCMPWFy0xX0LBCSSOmm/Rm/HFdnnbLqG6X
-   cna7qJYP0XWzqdtX2nDknVITNsrS2E8cU5MjE0ko0DX0uvLxcRcvlFMwI
-   kbI3l8ORiuOFc2HUqaFL1KwMgsw5iozTUutstikD3/NrF3NL2FmT4JVew
-   szpb10YHS4+VEsYsLafjoe1B0+N7eCH9YMh5jKalSxmYAq+1Q8ru7VwjI
-   jYWYZtXIDKx+uwEqWkIPCfCB5+5Rw9C1skQVW6yi0duHylas2j4Vw17Cy
-   Q==;
-IronPort-SDR: 3Iky/8oI7rQRWQoVE1nGNiS2tJn4QXVY1MBGuBnM97TsdIsWXYcnTqlBkNb7mlhGh/lupbQ0SB
- iLjxJqQKWhByOmg00SnAEoe6/9EWV0+cpLIjPGgPIru3vXCziG9EbZARiHskRECvxOcbAK/KTk
- pzxthshCGpoCO5MsG6DiTT/Nx1CB3Ez9KcKpQ5n1Cm8nzwxxCa78JG6pdI/U70SgZuysd59dRA
- uH9zyG4FDjru/2+ZdJkV/AuHelHRROwjKlo+L77jBFd1x/ZY+Lurh6Ghmc2uPk2zYgWTuOUlyV
- S20=
-X-IronPort-AV: E=Sophos;i="5.64,414,1559491200"; 
-   d="scan'208";a="216804440"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 22 Aug 2019 08:48:32 +0800
-IronPort-SDR: 9KIiuNliAWSdin1ubjIA5jfsyIofJU7x/lu3VLgVUqVXblFTH9ncVYSfojIP4rFmgx/AHoOcCZ
- mvZPJjmciqbSXM4AAaGa1vbzxWgcQpZQig9r/JgZRb/GUgywbmpognzuV8Mwz7nFV3fA9Ob6sc
- oK4289QA4lZwGZqUE4PsG8+no1gkC30RgzhJgnpEDvzpd4jUpHzGgZlUCoPxhgXmvQNIMFMY9j
- 0VjD3a+1OFIlOvFZrFForqTjjb578x3ijQB/IM3qQbPR4gg21xcj1Pgv9fbKHrsZiZhU8zuN76
- abTTRMQI5fqupD9Rs6polN9t
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2019 17:44:06 -0700
-IronPort-SDR: HYUsOW/XJrLNmL4Jvw+YV1eMd4r1pZej015AjlwdtGCcqCmLZcEFcuvZUczk1QqfpfRU2gI+iK
- zBQZc+Cxyr0xD6KjQUy6cPLxyIstg8xkVVxEFGmEYlJT3IRbUA29M581QIhg8AKzDyp4e0yEoK
- Gy2oKkYOOjBDnaTgGmeh4Ju4IJS3uoBufXp8nYXCWFed0ZclGgwdgHwo+T+oI4Vvo57VwtLrKO
- o+MHJKaXQEPguVb5HoGum31fc4ETUQuuyn0+7D9QCzk4Uj6zCrSOj2b6bzrir3OuMC7SivUc2f
- Mvo=
-WDCIronportException: Internal
-Received: from jedi-01.sdcorp.global.sandisk.com (HELO jedi-01.int.fusionio.com) ([10.11.143.218])
-  by uls-op-cesaip02.wdc.com with ESMTP; 21 Aug 2019 17:46:46 -0700
-From:   Atish Patra <atish.patra@wdc.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Atish Patra <atish.patra@wdc.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Anup Patel <Anup.Patel@wdc.com>,
-        Andreas Schwab <schwab@linux-m68k.org>
-Subject: [PATCH v3 3/3] RISC-V: Do not invoke SBI call if cpumask is empty
-Date:   Wed, 21 Aug 2019 17:46:44 -0700
-Message-Id: <20190822004644.25829-4-atish.patra@wdc.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190822004644.25829-1-atish.patra@wdc.com>
-References: <20190822004644.25829-1-atish.patra@wdc.com>
+        Wed, 21 Aug 2019 20:47:31 -0400
+Received: by mail-ot1-f68.google.com with SMTP id f17so3893354otq.4;
+        Wed, 21 Aug 2019 17:47:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p5+8V3eJWfGGDoM+IoGi8PvkamL+iQCdi1rQoKthzls=;
+        b=VC4S9hTFe2NMNT+NR6RJSwaryBnEIZOo9KBE05W4eqXmpufXycj0tFoZZAVxBXtkuS
+         xgwkYC85pjHmSrOmYTvGrYS4O1pYB7wM67YmTJEeSsTDB14S8f/SRIUv5fN1QbGKzmU7
+         6UEY1dNlIGm5fN/Mo1ZSrXaIQjOlsMOOn25chYGV4nhBeEQqKmZ6kPr4psq0s39Vz47B
+         p/F8KlIYS7RfH0/4gucRql7iV7PofXa0mNE+Y7Xrg4+fqgCAH78nxSO1bu9x3TC67X+z
+         2mZORlLmQAek2qImmOIPUNBrjesPTc+YJDOBgctxox95cm1bORcVYCvBrVO21AypqUY3
+         UYJQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p5+8V3eJWfGGDoM+IoGi8PvkamL+iQCdi1rQoKthzls=;
+        b=ZQsF/fbW4DzLsDDgOn9klcSPCeO0NGxGEivCTA1HOk6EGoem4vlniST0oeHuYlvfjl
+         nU/dDrkyoErTlCbSXkKHOKMr8nAQ0rYZ1nwhTRg3fz+9U62yItx5aUlBjwd5xU9GTPDr
+         IkbY1QvGCBCbeeb9uzlp7hx5uJOjTBPrY1TimWvHlPVYYEw5UklW2NEgob3cTr3Wrf6k
+         G5SISQK81lEpT7ZKQDqqMuF+06ZYVWF0AkFXifTXM7+AH4jhwNxwk9ryvbYfLZshezHR
+         6J8SjwXDAbcCCie5dGmdSa939xkHL5wfQp86G/f8U7MhVQixrY+06S4Y/s8eaMcvZ/Tz
+         hfnA==
+X-Gm-Message-State: APjAAAXMSu2T3abFYKekQkasebl/wL6zJU22DiyMNrdpuJSIrSpthTKP
+        Adh57l4kwZ4ApQ/OgPQtjNjMbT7y4SbNhMhioBs=
+X-Google-Smtp-Source: APXvYqx1ubxmdTzLEQJe8vEwiBwjrYjEbwhI0GFJNumYWCLD2E6HSMOS2uc/P0Wmp89hRIcF4zjFhZmu9oqKzebqNKU=
+X-Received: by 2002:a9d:4590:: with SMTP id x16mr77827ote.254.1566434850855;
+ Wed, 21 Aug 2019 17:47:30 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1564970604-10044-1-git-send-email-wanpengli@tencent.com>
+ <9acbc733-442f-0f65-9b56-ff800a3fa0f5@redhat.com> <CANRm+CwH54S555nw-Zik-3NFDH9yqe+SOZrGc3mPoAU_qGxP-A@mail.gmail.com>
+ <e7b84893-42bf-e80e-61c9-ef5d1b200064@redhat.com>
+In-Reply-To: <e7b84893-42bf-e80e-61c9-ef5d1b200064@redhat.com>
+From:   Wanpeng Li <kernellwp@gmail.com>
+Date:   Thu, 22 Aug 2019 08:46:57 +0800
+Message-ID: <CANRm+CzJf9Or_45frTe9ivFx9QDfx6Nou7uLT6tm1NmcPKDn8A@mail.gmail.com>
+Subject: Re: [PATCH v4 1/6] KVM: Fix leak vCPU's VMCS value into other pCPU
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, kvm <kvm@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Marc Zyngier <Marc.Zyngier@arm.com>,
+        "# v3 . 10+" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SBI calls are expensive. If cpumask is empty, there is no need to
-trap via SBI as no remote tlb flushing is required.
+On Tue, 6 Aug 2019 at 14:20, Paolo Bonzini <pbonzini@redhat.com> wrote:
+>
+> On 06/08/19 02:35, Wanpeng Li wrote:
+> > Thank you, Paolo! Btw, how about other 5 patches?
+>
+> Queued everything else too.
 
-Signed-off-by: Atish Patra <atish.patra@wdc.com>
----
- arch/riscv/mm/tlbflush.c | 3 +++
- 1 file changed, 3 insertions(+)
+How about patch 4/6~5/6, they are not in kvm/queue. :)
 
-diff --git a/arch/riscv/mm/tlbflush.c b/arch/riscv/mm/tlbflush.c
-index 9f58b3790baa..2bd3c418d769 100644
---- a/arch/riscv/mm/tlbflush.c
-+++ b/arch/riscv/mm/tlbflush.c
-@@ -21,6 +21,9 @@ static void __sbi_tlb_flush_range(struct cpumask *cmask, unsigned long start,
- 		goto issue_sfence;
- 	}
- 
-+	if (cpumask_empty(cmask))
-+		goto done;
-+
- 	if (cpumask_test_cpu(cpuid, cmask) && cpumask_weight(cmask) == 1) {
- 		if (size <= PAGE_SIZE && size != -1)
- 			local_flush_tlb_page(start);
--- 
-2.21.0
-
+Regards,
+Wanpeng Li
