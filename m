@@ -2,27 +2,27 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C085899CDB
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:37:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 73BC999CEA
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:39:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404322AbfHVRhf (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:37:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46354 "EHLO mail.kernel.org"
+        id S2391498AbfHVRYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:24:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404244AbfHVRYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:34 -0400
+        id S2390102AbfHVRXy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:54 -0400
 Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 663032342B;
-        Thu, 22 Aug 2019 17:24:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39CF22342A;
+        Thu, 22 Aug 2019 17:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566494674;
+        s=default; t=1566494634;
         bh=8YuwYjJzQhn4cLB3olIy40BOVZ1hEpJxinnUGLJp2HQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtgAgx8P8rcHngB8+xT9W9TTq+Me22bvecuNZE6ZNKadXl9KWNbJpcK1pvFsGN6sx
-         Ih2dGyWA6s2kragiLpjWP7NvlafnZy4pmd+wJ//Y7xGVeBFupM01NciF4IGk/3rwZS
-         XUQn2lu6IGKU4civ6ISRm072o112cv9Ns8rIpLek=
+        b=dvuMz6i6G3gu7JbnrIC9DyC7B0nZ+GM6B2z/Hs0xs+/VjugFqAi41cTgNVi6hEDmP
+         AX8Y4hukW7L9Spt+WFTq8Nk3TPPtF0bsM7V/7SvRoPHK2kbPXGld/w7PEDNfIZ4Qjt
+         2z7j3M1+chVRtaw4XLQj2t9IgGi6Eh6J5/rm4dEY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -30,12 +30,12 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         syzbot+5efc10c005014d061a74@syzkaller.appspotmail.com,
         Oliver Neukum <oneukum@suse.com>,
         Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 18/71] Input: iforce - add sanity checks
-Date:   Thu, 22 Aug 2019 10:18:53 -0700
-Message-Id: <20190822171728.315771656@linuxfoundation.org>
+Subject: [PATCH 4.9 066/103] Input: iforce - add sanity checks
+Date:   Thu, 22 Aug 2019 10:18:54 -0700
+Message-Id: <20190822171731.465137146@linuxfoundation.org>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20190822171726.131957995@linuxfoundation.org>
-References: <20190822171726.131957995@linuxfoundation.org>
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
 User-Agent: quilt/0.66
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
