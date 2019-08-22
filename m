@@ -2,103 +2,244 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AE5199B18
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:21:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C22699B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:25:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732941AbfHVRTn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:19:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58046 "EHLO mail.kernel.org"
+        id S2404011AbfHVRXt (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:23:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725857AbfHVRIZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:08:25 -0400
-Received: from sasha-vm.mshome.net (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S2391528AbfHVRXe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:23:34 -0400
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2E6F23406;
-        Thu, 22 Aug 2019 17:08:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E0482341C;
+        Thu, 22 Aug 2019 17:23:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566493705;
-        bh=gnDqYprqryBgYwsbaoWSzJtYzfvv0NyZ3hqDyWJpqlk=;
+        s=default; t=1566494612;
+        bh=NJlu1tKopqcwTPS9n/1mEJCBiUAn0IsQou0p8j0a4gk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oXYb1aFvuwQUIselXl+Tey3g0bRbkwRyFNabQVKfdI1liKGn9rkNsQFsYNKWnEjiQ
-         chcuPtVSazpO0QJxe2R04HW58sDyCiKaASJ4hIR2LABTFU6BEaKSrSZRozxj+xjrkf
-         d9p+fdNfTAK7h/LIOQPe3BKz7zmBfQ0Yx+0ShhOQ=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hui Peng <benquike@gmail.com>,
-        Mathias Payer <mathias.payer@nebelwelt.net>,
-        Takashi Iwai <tiwai@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: [PATCH 5.2 019/135] ALSA: usb-audio: Fix an OOB bug in parse_audio_mixer_unit
-Date:   Thu, 22 Aug 2019 13:06:15 -0400
-Message-Id: <20190822170811.13303-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190822170811.13303-1-sashal@kernel.org>
-References: <20190822170811.13303-1-sashal@kernel.org>
+        b=p4IwGrXQKMuQc4Pg41xHkW+4eKYueF8zQ7thPBv8YuYaWxI7W0AVH7zpyBPDeChmr
+         pWUweGYXvwxEOhEEbLY8128eluQPQPBkUOrpOIsVKEQjv4X41eQCtazFVUOMl3IBD7
+         G+YXXOfBRIprYfseWOWI5AfCkQaH4sFp5PCo7nVQ=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Hendrik Brueckner <brueckner@linux.vnet.ibm.com>,
+        Zvonko Kosic <zvonko.kosic@de.ibm.com>,
+        Daniel Daz <daniel.diaz@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.9 007/103] perf record: Fix wrong size in perf_record_mmap for last kernel module
+Date:   Thu, 22 Aug 2019 10:17:55 -0700
+Message-Id: <20190822171729.066633097@linuxfoundation.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190822171728.445189830@linuxfoundation.org>
+References: <20190822171728.445189830@linuxfoundation.org>
+User-Agent: quilt/0.66
 MIME-Version: 1.0
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-5.2.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 5.2.10-rc1
-X-KernelTest-Deadline: 2019-08-24T17:07+00:00
-X-stable: review
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hui Peng <benquike@gmail.com>
+From: Thomas Richter <tmricht@linux.vnet.ibm.com>
 
-commit daac07156b330b18eb5071aec4b3ddca1c377f2c upstream.
+commit 9ad4652b66f19a60f07e63b942b80b5c2d7465bf upstream.
 
-The `uac_mixer_unit_descriptor` shown as below is read from the
-device side. In `parse_audio_mixer_unit`, `baSourceID` field is
-accessed from index 0 to `bNrInPins` - 1, the current implementation
-assumes that descriptor is always valid (the length  of descriptor
-is no shorter than 5 + `bNrInPins`). If a descriptor read from
-the device side is invalid, it may trigger out-of-bound memory
-access.
+During work on perf report for s390 I ran into the following issue:
 
-```
-struct uac_mixer_unit_descriptor {
-	__u8 bLength;
-	__u8 bDescriptorType;
-	__u8 bDescriptorSubtype;
-	__u8 bUnitID;
-	__u8 bNrInPins;
-	__u8 baSourceID[];
-}
-```
+0 0x318 [0x78]: PERF_RECORD_MMAP -1/0:
+        [0x3ff804d6990(0xfffffc007fb2966f) @ 0]:
+        x /lib/modules/4.12.0perf1+/kernel/drivers/s390/net/qeth_l2.ko
 
-This patch fixes the bug by add a sanity check on the length of
-the descriptor.
+This is a PERF_RECORD_MMAP entry of the perf.data file with an invalid
+module size for qeth_l2.ko (the s390 ethernet device driver).
 
-Reported-by: Hui Peng <benquike@gmail.com>
-Reported-by: Mathias Payer <mathias.payer@nebelwelt.net>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Hui Peng <benquike@gmail.com>
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Even a mainframe does not have 0xfffffc007fb2966f bytes of main memory.
+
+It turned out that this wrong size is created by the perf record
+command.  What happens is this function call sequence from
+__cmd_record():
+
+  perf_session__new():
+    perf_session__create_kernel_maps():
+      machine__create_kernel_maps():
+        machine__create_modules():   Creates map for all loaded kernel modules.
+          modules__parse():   Reads /proc/modules and extracts module name and
+                              load address (1st and last column)
+            machine__create_module():   Called for every module found in /proc/modules.
+                              Creates a new map for every module found and enters
+                              module name and start address into the map. Since the
+                              module end address is unknown it is set to zero.
+
+This ends up with a kernel module map list sorted by module start
+addresses.  All module end addresses are zero.
+
+Last machine__create_kernel_maps() calls function map_groups__fixup_end().
+This function iterates through the maps and assigns each map entry's
+end address the successor map entry start address. The last entry of the
+map group has no successor, so ~0 is used as end to consume the remaining
+memory.
+
+Later __cmd_record calls function record__synthesize() which in turn calls
+perf_event__synthesize_kernel_mmap() and perf_event__synthesize_modules()
+to create PERF_REPORT_MMAP entries into the perf.data file.
+
+On s390 this results in the last module qeth_l2.ko
+(which has highest start address, see module table:
+        [root@s8360047 perf]# cat /proc/modules
+        qeth_l2 86016 1 - Live 0x000003ff804d6000
+        qeth 266240 1 qeth_l2, Live 0x000003ff80296000
+        ccwgroup 24576 1 qeth, Live 0x000003ff80218000
+        vmur 36864 0 - Live 0x000003ff80182000
+        qdio 143360 2 qeth_l2,qeth, Live 0x000003ff80002000
+        [root@s8360047 perf]# )
+to be the last entry and its map has an end address of ~0.
+
+When the PERF_RECORD_MMAP entry is created for kernel module qeth_l2.ko
+its start address and length is written. The length is calculated in line:
+    event->mmap.len   = pos->end - pos->start;
+and results in 0xffffffffffffffff - 0x3ff804d6990(*) = 0xfffffc007fb2966f
+
+(*) On s390 the module start address is actually determined by a __weak function
+named arch__fix_module_text_start() in machine__create_module().
+
+I think this improvable. We can use the module size (2nd column of /proc/modules)
+to get each loaded kernel module size and calculate its end address.
+Only for map entries which do not have a valid end address (end is still zero)
+we can use the heuristic we have now, that is use successor start address or ~0.
+
+Signed-off-by: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
+Cc: Thomas-Mich Richter <tmricht@linux.vnet.ibm.com>
+Cc: Zvonko Kosic <zvonko.kosic@de.ibm.com>
+LPU-Reference: 20170803134902.47207-2-tmricht@linux.vnet.ibm.com
+Link: http://lkml.kernel.org/n/tip-nmoqij5b5vxx7rq2ckwu8iaj@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Daniel Daz <daniel.diaz@linaro.org>
+Cc: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- sound/usb/mixer.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 2051a64fa2904..b5927c3d5bc0b 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -745,6 +745,8 @@ static int uac_mixer_unit_get_channels(struct mixer_build *state,
- 		return -EINVAL;
- 	if (!desc->bNrInPins)
- 		return -EINVAL;
-+	if (desc->bLength < sizeof(*desc) + desc->bNrInPins)
-+		return -EINVAL;
+---
+ tools/perf/util/machine.c    |    4 +++-
+ tools/perf/util/symbol-elf.c |    2 +-
+ tools/perf/util/symbol.c     |   21 ++++++++++++++-------
+ tools/perf/util/symbol.h     |    2 +-
+ 4 files changed, 19 insertions(+), 10 deletions(-)
+
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -1079,7 +1079,8 @@ int __weak arch__fix_module_text_start(u
+ 	return 0;
+ }
  
- 	switch (state->mixer->protocol) {
- 	case UAC_VERSION_1:
--- 
-2.20.1
+-static int machine__create_module(void *arg, const char *name, u64 start)
++static int machine__create_module(void *arg, const char *name, u64 start,
++				  u64 size)
+ {
+ 	struct machine *machine = arg;
+ 	struct map *map;
+@@ -1090,6 +1091,7 @@ static int machine__create_module(void *
+ 	map = machine__findnew_module_map(machine, start, name);
+ 	if (map == NULL)
+ 		return -1;
++	map->end = start + size;
+ 
+ 	dso__kernel_module_get_build_id(map->dso, machine->root_dir);
+ 
+--- a/tools/perf/util/symbol-elf.c
++++ b/tools/perf/util/symbol-elf.c
+@@ -1478,7 +1478,7 @@ static int kcore_copy__parse_kallsyms(st
+ 
+ static int kcore_copy__process_modules(void *arg,
+ 				       const char *name __maybe_unused,
+-				       u64 start)
++				       u64 start, u64 size __maybe_unused)
+ {
+ 	struct kcore_copy_info *kci = arg;
+ 
+--- a/tools/perf/util/symbol.c
++++ b/tools/perf/util/symbol.c
+@@ -217,7 +217,8 @@ void __map_groups__fixup_end(struct map_
+ 		goto out_unlock;
+ 
+ 	for (next = map__next(curr); next; next = map__next(curr)) {
+-		curr->end = next->start;
++		if (!curr->end)
++			curr->end = next->start;
+ 		curr = next;
+ 	}
+ 
+@@ -225,7 +226,8 @@ void __map_groups__fixup_end(struct map_
+ 	 * We still haven't the actual symbols, so guess the
+ 	 * last map final address.
+ 	 */
+-	curr->end = ~0ULL;
++	if (!curr->end)
++		curr->end = ~0ULL;
+ 
+ out_unlock:
+ 	pthread_rwlock_unlock(&maps->lock);
+@@ -512,7 +514,7 @@ void dso__sort_by_name(struct dso *dso,
+ 
+ int modules__parse(const char *filename, void *arg,
+ 		   int (*process_module)(void *arg, const char *name,
+-					 u64 start))
++					 u64 start, u64 size))
+ {
+ 	char *line = NULL;
+ 	size_t n;
+@@ -525,8 +527,8 @@ int modules__parse(const char *filename,
+ 
+ 	while (1) {
+ 		char name[PATH_MAX];
+-		u64 start;
+-		char *sep;
++		u64 start, size;
++		char *sep, *endptr;
+ 		ssize_t line_len;
+ 
+ 		line_len = getline(&line, &n, file);
+@@ -558,7 +560,11 @@ int modules__parse(const char *filename,
+ 
+ 		scnprintf(name, sizeof(name), "[%s]", line);
+ 
+-		err = process_module(arg, name, start);
++		size = strtoul(sep + 1, &endptr, 0);
++		if (*endptr != ' ' && *endptr != '\t')
++			continue;
++
++		err = process_module(arg, name, start, size);
+ 		if (err)
+ 			break;
+ 	}
+@@ -905,7 +911,8 @@ static struct module_info *find_module(c
+ 	return NULL;
+ }
+ 
+-static int __read_proc_modules(void *arg, const char *name, u64 start)
++static int __read_proc_modules(void *arg, const char *name, u64 start,
++			       u64 size __maybe_unused)
+ {
+ 	struct rb_root *modules = arg;
+ 	struct module_info *mi;
+--- a/tools/perf/util/symbol.h
++++ b/tools/perf/util/symbol.h
+@@ -268,7 +268,7 @@ int filename__read_build_id(const char *
+ int sysfs__read_build_id(const char *filename, void *bf, size_t size);
+ int modules__parse(const char *filename, void *arg,
+ 		   int (*process_module)(void *arg, const char *name,
+-					 u64 start));
++					 u64 start, u64 size));
+ int filename__read_debuglink(const char *filename, char *debuglink,
+ 			     size_t size);
+ 
+
 
