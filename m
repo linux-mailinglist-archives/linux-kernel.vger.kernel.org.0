@@ -2,174 +2,111 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0CF69A3D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 01:30:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EF359A3EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 01:38:58 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726424AbfHVXam (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 19:30:42 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46389 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfHVXal (ORCPT
+        id S1726928AbfHVXiW (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 19:38:22 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:43704 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfHVXiW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 19:30:41 -0400
-Received: by mail-pg1-f194.google.com with SMTP id m3so4563357pgv.13
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 16:30:41 -0700 (PDT)
+        Thu, 22 Aug 2019 19:38:22 -0400
+Received: by mail-wr1-f68.google.com with SMTP id y8so6922722wrn.10
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 16:38:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=pipHIj2z8t6n6jqMVgjlsl2tSXUd+7sKmIuVqD9kPY4=;
-        b=hMnkoT5tbbKTZsnL0o1jbPhA9Rz8Qwpwy4McYBokvjjLVHvSW4wOMynuN5oMcP122a
-         7WuQfzvAX0353Q+FkxsoKOMI95qLc2yuaJ1UYcq6w9RXgM4ouNA07MzId4svJ02rAvrs
-         ZYfoOc+wEVTW6rnnvuG4FkOXzoQ9sH0pA1diY=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mxo0eAEf3fJwKk0DHfBYnFpenezLkSgCZl+oCD3TV3M=;
+        b=dsMUqV6r4O2zGkVt3hW+Fx7aIsyRgpSQErbvTBN7+ZPaKFr9tuyizHRQVNeMj8c4XL
+         WFqYh1lZiXvZUF8xFPzF25S0ERpoYImdgLie7gREL490yoNp1SvV8CBy/YApGjaF1xfb
+         YMQXlQfC5sVNrCpzMUAAR8I5GJpnuxwlW6wz/sOa45gwrVdGDthTfDW7U08uwMNtn/bg
+         RYUxSd6OeQCpxstLos3AlTzNgqV4UDeRrK+BP8U4DIahtvTu7depDZnlMMDU8KeiSp1E
+         TyATForz+R18C3S+TDdHTIV2Aw67+PvqLnMsmtOkgF6lE+Gfu7jnCB4RljVzbuI2rQik
+         ta4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=pipHIj2z8t6n6jqMVgjlsl2tSXUd+7sKmIuVqD9kPY4=;
-        b=c5U5WwgRrm1I71EXIIjyhbxp8Ubs6B/wTEaC4Q8bghgNgNgAZqPOJlJ6HI8DG7/aM1
-         Ap4djLIuhoiSq7kBfNsKNwKlxQcA2lw23/88snw4Jdfnnz5ZWKdPrR8pfnsKoZwmXUff
-         GlzBcRpl1OfgBy8KZWLWjhjXn0ZITJjA5L865faLUj464X6vZh4Xu8qdpxnLDpydFY7n
-         a+yyJuhzMAsGLVR09d6cmWnDG9YWPYcLQMWGGqAMM3FkMnHbQ6ZcNu20IpkW2XD2YsCQ
-         KWZNPCJ9sY8v4daR9vf6MjL3/88bnuo5B5qDs3slpWXe2uuiabSDBiWwr6uvFKo6M1c0
-         3SKg==
-X-Gm-Message-State: APjAAAU5rUKFsNEEBVuH6fqKoFmtibrU2Kq3ENgRrGVKRpmUSyL7mMBM
-        HvR1sJAGNYDMViFx1uAWQjHfUA==
-X-Google-Smtp-Source: APXvYqzKrKT+k/MJjU1tTcW0RKdJpKgeuPCz/JwywMw0aLkN5Y6KHgx4CNyQzDQLoks+nrLfaVWIWQ==
-X-Received: by 2002:a17:90a:234f:: with SMTP id f73mr2274285pje.130.1566516640592;
-        Thu, 22 Aug 2019 16:30:40 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id c12sm526175pfc.22.2019.08.22.16.30.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 22 Aug 2019 16:30:40 -0700 (PDT)
-Subject: Re: [PATCH 2/7] firmware: add offset to request_firmware_into_buf
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Brown <david.brown@linaro.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shuah Khan <shuah@kernel.org>, bjorn.andersson@linaro.org,
-        Shuah Khan <skhan@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Olof Johansson <olof@lixom.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Kees Cook <keescook@chromium.org>,
-        Takashi Iwai <tiwai@suse.de>, linux-kselftest@vger.kernel.org
-References: <20190822192451.5983-1-scott.branden@broadcom.com>
- <20190822192451.5983-3-scott.branden@broadcom.com>
- <20190822194712.GG16384@42.do-not-panic.com>
- <7ee02971-e177-af05-28e0-90575ebe12e0@broadcom.com>
- <20190822211220.GR16384@42.do-not-panic.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <009295ce-bdc5-61d8-b450-5fcdae041922@broadcom.com>
-Date:   Thu, 22 Aug 2019 16:30:37 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mxo0eAEf3fJwKk0DHfBYnFpenezLkSgCZl+oCD3TV3M=;
+        b=i4oc+juaDvc42hf6GSCfGf42kkM3ckihLRXGPkNmgmNduyeCqfoPCcNsLl0geduARp
+         5sJLGlP7300IzNEvgiRx7uU4wN+PhrCbNVdS2n2yjkahAAsFHy6y0Uge1dQfxa4Y/BnV
+         B3i8M8oxCzONZuVj6n03yB4DY35MrqJwfuARJF26u0OKWCexBlwd6iR7yF5lz5nKqo9g
+         hXEMNPEy1H9Wf8HFEBdDdBt3ESCsAWzj/cymhJ/S4oyxCZB2wzKggP2lzsu6HTbXpVQg
+         Eh/G8V5XYn9Pg01oX8mdAeud95mFufdifxipRbBk+hd1+OUelztPOfMVrfnLatIShLho
+         iIhw==
+X-Gm-Message-State: APjAAAUTwYbN8LPuoAHhndk/F3MacB6vAww1O416tAoXL/yTfnWBXjCj
+        tUFaxvb+W3//FHfvhPyg5h/+qw==
+X-Google-Smtp-Source: APXvYqzVwNyXgKAoUxu6i1pDAVSMuh+VIbRZnl5lFohQGcKO7KCWaa0n9xm8Y4YFV9dQ970h6z0pmA==
+X-Received: by 2002:a5d:4ec6:: with SMTP id s6mr1210862wrv.327.1566517099942;
+        Thu, 22 Aug 2019 16:38:19 -0700 (PDT)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id f134sm1705157wmg.20.2019.08.22.16.38.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 16:38:19 -0700 (PDT)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org, robh+dt@kernel.org, vkoul@kernel.org
+Cc:     spapothi@codeaurora.org, bgoswami@codeaurora.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        lgirdwood@gmail.com, devicetree@vger.kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [RESEND PATCH v4 0/4] ASoC: codecs: Add WSA881x Smart Speaker amplifier support
+Date:   Fri, 23 Aug 2019 00:37:55 +0100
+Message-Id: <20190822233759.12663-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-In-Reply-To: <20190822211220.GR16384@42.do-not-panic.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luis,
+Resending this series due to a typo in yaml filename!
 
-On 2019-08-22 2:12 p.m., Luis Chamberlain wrote:
-> On Thu, Aug 22, 2019 at 01:07:41PM -0700, Scott Branden wrote:
->> On 2019-08-22 12:47 p.m., Luis Chamberlain wrote:
->>> This implies you having to change the other callers, and while currently
->>> our list of drivers is small,
->> Yes, the list is small, very small.
->>
->> There is a single driver making a call to the existing API.
->>
->> And, the maintainer of that driver wanted
->> to start utilizing my enhanced API instead of the current API.
-> You mean in the near term future? Your change makes it use the full file.
-> Just checking.
+Thanks for reviewing v3 patchset, here is v4 with addressing the comments in v3
 
-The change in the patch keeps the existing functionality in the
+This patchset adds support to WSA8810/WSA8815 Class-D Smart Speaker
+Amplifier which is SoundWire interfaced.
+This also adds support to some missing bits in SoundWire bus layer like
+Device Tree support.
 
-qcom mdt_loader by reading the full file using the enhanced api.
+This patchset along with DB845c machine driver and WCD934x codec driver
+has been tested on SDM845 SoC based DragonBoard DB845c with two
+WSA8810 speakers.
 
-I don't know when Bjorn will switch to use the partial firmware load:
+Most of the code in this driver is rework of Qualcomm downstream drivers
+used in Andriod. Credits to Banajit Goswami and Patrick Lai's Team.
 
-https://lkml.org/lkml/2019/5/27/9
+TODO:
+	Add thermal sensor support in WSA881x.
 
->
->> As such I think it is very reasonable to update the API right now.
-> I'd prefer to see it separate, and we fix the race *before* we introduce
-> the new functionality. I'll be poking at that shortly but I should note
-> that I leave on vacation this weekend and won't be back for a good while.
-> I already have an idea of how to approach this.
->
-> When the current user want to use the new API it can do so, and then we
-> just kill the older caller.
+Thanks,
+srini
 
-We can kill the older api right now as my patch in qcom mdt_loader
+Changes since v3:
+ - updated slave bindings according to Rob's Suggestion.
+ - moved bindings to yaml
 
-calls the new API which allows reading of full or partial files?
+Srinivas Kandagatla (4):
+  dt-bindings: soundwire: add slave bindings
+  soundwire: core: add device tree support for slave devices
+  dt-bindings: ASoC: Add WSA881x bindings
+  ASoC: codecs: add wsa881x amplifier support
 
->
->>> following the history of the firmware API
->>> and the long history of debate of *how* we should evolve its API, its
->>> preferred we add yet another new caller for this functionality. So
->>> please add a new caller, and use EXPORT_SYMBOL_GPL().
->>>
->>> And while at it, pleaase use firmware_request_*() as the prefix, as we
->>> have want to use that as the instilled prefix. We have yet to complete
->>> the rename of the others older callers but its just a matter of time.
->>>
->>> So something like: firmware_request_into_buf_offset()
->> I would prefer to rename the API at this time given there is only a single
->> user.
->>
->> Otherwise I would need to duplicate quite a bit in the test code to support
->> testing the single user of the old api and then enhanced API.
->> Or, I can leave existing API in place and change the test case to
->> just test the enhanced API to keep things simpler in the test code?
-> If the new user is going to move to the API once available I will be
-> happy to then leave out testing for the older API. That would make
-> sense.
+ .../bindings/sound/qcom,wsa881x.yaml          |   44 +
+ .../soundwire/soundwire-controller.yaml       |   75 ++
+ drivers/soundwire/bus.c                       |    2 +
+ drivers/soundwire/bus.h                       |    1 +
+ drivers/soundwire/slave.c                     |   52 +
+ sound/soc/codecs/Kconfig                      |   10 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/wsa881x.c                    | 1134 +++++++++++++++++
+ 8 files changed, 1320 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/qcom,wsa881x.yaml
+ create mode 100644 Documentation/devicetree/bindings/soundwire/soundwire-controller.yaml
+ create mode 100644 sound/soc/codecs/wsa881x.c
 
-I have switched the single user of the existing api to the new
+-- 
+2.21.0
 
-API in the patch already?  And both full and partial reads using
-
-the new API are tested with this patch series.  If you really insist
-
-on keeping the old API for a single user I can drop that change from the
-
-patch series and have the old request_firmware_api call simply
-
-be a wrapper calling the new API.
-
->
-> But if you do want to keep testing for the old API, and allow an easy
-> removal for it on the test driver, wouldn't a function pointer suffice
-> for which API call to use based on a boolean?
->
-> But yeah if we're going to abandon the old mechanism I'm happy to skip
-> its te
-
-We can skip right now then.  As enhanced API is a superset of old API.
-
-If you want the old API left in place I can just add the wrapper 
-described and
-
-only test the newly named function and thus indirectly test the old
-
-request_firmware_into_buf.
-
-> sting.
->
->    Luis
