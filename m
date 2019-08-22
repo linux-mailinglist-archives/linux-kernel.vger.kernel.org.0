@@ -2,123 +2,85 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B99B98B21
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E6EA98B25
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 08:04:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731577AbfHVGB6 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 02:01:58 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:47096 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731568AbfHVGB5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 02:01:57 -0400
-Received: by mail-pg1-f196.google.com with SMTP id m3so2856148pgv.13
-        for <linux-kernel@vger.kernel.org>; Wed, 21 Aug 2019 23:01:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IGOK/aeV6wllM58ymB1HOVxByK2+4raXwd9FqZiG31g=;
-        b=A6wBWaxdm4l0kPg3WfejXZYMtZSZkafevVrK68W4QcP39sJ+oJ3ScykX9C6MMenFI9
-         AAGksjnnQmDD8Sm6eTz9jIrMjeqN02yrRa4m7Nb6In1ryQa3OGETXk1XMXgbjYuEgmRt
-         Fd6rjqCxGNiBqSxHFhVFX+xzxUM2yhpqsVsqi1weXRzFmZv5RN6JBCSuQ6UR77OnGdQ0
-         SkSwPHRHVM1Gob6a18uzwN1D4MTA05jQ8aNqUShPb3SVBm25EgljzfSrE84Atp07O3jv
-         lBaTY1FCIcOfOji/B2qAxZjw6zDg5mNcxEnu+YIeVbDNZRJYJ0wcsKCxQVvrtaZyQ39C
-         pxvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IGOK/aeV6wllM58ymB1HOVxByK2+4raXwd9FqZiG31g=;
-        b=UyWDuvVMeYN+f6n9NOJQwb11MDRRRtNSeIgav/+3+rm9Lf9hHWa/+lpRBQx2bN5pnt
-         GVtuJkKTZCEcnvBl9lbpfBDr0G5rSvpQyuaEzUt2vNeYKwtkVG/9ycQvSMUKAVFxOGkF
-         23qxOAJxeiHnrjxchL7DJ6i3fkk6BA3p9f92RlSIUEeCkgfOTx2XZ1pRQA71pM5wGIJg
-         z362yUeOFvM4X4cmC5dqR3AIUfyHupRflEFchTC45kofaik1EwxS6/bwLDub3k7gpkDl
-         Xqq2Ir931P5iI0Dh1PBDH33JTEoPXdGtvLzF3a0Awg1gHwNzouJ9N4eG4l6/Fs8FabkU
-         oz9Q==
-X-Gm-Message-State: APjAAAX0xV2freu1PsJiju61D2ZjYNwaXkCX1ZdSRon7vFv6lfP8ZsOE
-        8D17HL/zax4kPVvSnCW7Yq4ZDA==
-X-Google-Smtp-Source: APXvYqxv4NVeiFvjfAZaGPzviWL08bYWazxBVM3wDB/0/GBKJdrmVajkKdL44cHCfgPLd9Kxn9tb6A==
-X-Received: by 2002:a63:6901:: with SMTP id e1mr31280923pgc.390.1566453716840;
-        Wed, 21 Aug 2019 23:01:56 -0700 (PDT)
-Received: from localhost ([122.172.76.219])
-        by smtp.gmail.com with ESMTPSA id q10sm31712808pfl.8.2019.08.21.23.01.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 21 Aug 2019 23:01:55 -0700 (PDT)
-Date:   Thu, 22 Aug 2019 11:31:53 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     YueHaibing <yuehaibing@huawei.com>, agross@kernel.org,
-        rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [PATCH -next] cpufreq: qcom-hw: remove set but not used variable
- 'prev_cc'
-Message-ID: <20190822060153.gasv4okmeuvbtmbi@vireshk-i7>
-References: <20190821121445.72588-1-yuehaibing@huawei.com>
- <20190822024051.eubzzxh3b2ip2gzv@vireshk-i7>
- <6c485d00652f873b98664ff211e496cd@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6c485d00652f873b98664ff211e496cd@codeaurora.org>
-User-Agent: NeoMutt/20180716-391-311a52
+        id S1731584AbfHVGCs (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 02:02:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42646 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730758AbfHVGCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 02:02:48 -0400
+Received: from localhost.localdomain (unknown [194.230.147.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72F6D21848;
+        Thu, 22 Aug 2019 06:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566453768;
+        bh=PdtTcSZjjJb+bU2tlX229LVd2lD6fC6ue5lm35NYCHw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=SJmF9qAvaqsYn+FzYMbnPOQGSw0yFX4dJEP99kmXhonsbnior6Lh8dM8qXSRPR9fE
+         3Jiyc78yBhYV3yaCCEcTWIiZxhI+ik3f2BTccYu159tACCncJgANdplrewmdVwDFtv
+         rFIPvKANKkuCcLTsKDWAZwd3mWtLeVNL5RDRfKD4=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Schrempf Frieder <frieder.schrempf@kontron.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v7 1/4] dt-bindings: vendor-prefixes: Add Anvo-Systems
+Date:   Thu, 22 Aug 2019 08:02:35 +0200
+Message-Id: <20190822060238.3887-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22-08-19, 10:25, Sibi Sankar wrote:
-> @YueHaibing thanks for the patch.
-> 
-> On 2019-08-22 08:10, Viresh Kumar wrote:
-> > On 21-08-19, 20:14, YueHaibing wrote:
-> > > drivers/cpufreq/qcom-cpufreq-hw.c: In function
-> > > qcom_cpufreq_hw_read_lut:
-> > > drivers/cpufreq/qcom-cpufreq-hw.c:89:38: warning:
-> > >  variable prev_cc set but not used [-Wunused-but-set-variable]
-> > > 
-> > > It is not used since commit 3003e75a5045 ("cpufreq:
-> > > qcom-hw: Update logic to detect turbo frequency")
-> > > 
-> > > Reported-by: Hulk Robot <hulkci@huawei.com>
-> > > Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> > > ---
-> > >  drivers/cpufreq/qcom-cpufreq-hw.c | 3 +--
-> > >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c
-> > > b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > > index 3eea197..a9ae2f8 100644
-> > > --- a/drivers/cpufreq/qcom-cpufreq-hw.c
-> > > +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
-> > > @@ -86,7 +86,7 @@ static int qcom_cpufreq_hw_read_lut(struct device
-> > > *cpu_dev,
-> > >  				    struct cpufreq_policy *policy,
-> > >  				    void __iomem *base)
-> > >  {
-> > > -	u32 data, src, lval, i, core_count, prev_cc = 0, prev_freq = 0,
-> > > freq;
-> > > +	u32 data, src, lval, i, core_count, prev_freq = 0, freq;
-> > >  	u32 volt;
-> > >  	struct cpufreq_frequency_table	*table;
-> > > 
-> > > @@ -139,7 +139,6 @@ static int qcom_cpufreq_hw_read_lut(struct
-> > > device *cpu_dev,
-> > >  			break;
-> > >  		}
-> > > 
-> > > -		prev_cc = core_count;
-> > >  		prev_freq = freq;
-> > >  	}
-> > 
-> > @Sibi, you fine with this change ? I will merge it with the original
-> > patch then.
-> 
-> yes the changes seem fine, I missed
-> removing prev_cc.
+Add vendor prefix for Anvo-Systems Dresden GmbH.
 
-Thanks. Merged into the original patch itself.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
+---
+
+Changes since v4:
+None
+
+Changes since v3:
+1. Add Rob's tag,
+2. Remove Admatec (not needed anymore).
+
+Changes since v2:
+1. Use admatecde vendor prefix.
+2. Add Anvo-Systems Dresden GmbH.
+
+Changes since v1:
+New patch
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index 6992bbbbffab..519889f5aec8 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -81,6 +81,8 @@ patternProperties:
+     description: Analogix Semiconductor, Inc.
+   "^andestech,.*":
+     description: Andes Technology Corporation
++  "^anvo,.*":
++    description: Anvo-Systems Dresden GmbH
+   "^apm,.*":
+     description: Applied Micro Circuits Corporation (APM)
+   "^aptina,.*":
 -- 
-viresh
+2.17.1
+
