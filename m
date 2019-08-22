@@ -2,113 +2,143 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 3685C98C0D
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D291898C2F
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 09:07:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732014AbfHVHC1 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 03:02:27 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:53336 "EHLO huawei.com"
+        id S1730447AbfHVHGB (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 03:06:01 -0400
+Received: from mail-eopbgr720063.outbound.protection.outlook.com ([40.107.72.63]:52620
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731985AbfHVHC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 03:02:26 -0400
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id DBFF3A7227D4AE8C8C53;
-        Thu, 22 Aug 2019 15:02:22 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.439.0; Thu, 22 Aug 2019 15:02:12 +0800
-From:   Mao Wenan <maowenan@huawei.com>
-To:     <balbi@kernel.org>, <gregkh@linuxfoundation.org>, <vz@mleia.com>,
-        <slemieux.tyco@gmail.com>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <kernel-janitors@vger.kernel.org>, Mao Wenan <maowenan@huawei.com>
-Subject: [PATCH -next] usb: udc: lpc32xx: remove set but not used 3 variables
-Date:   Thu, 22 Aug 2019 15:05:57 +0800
-Message-ID: <20190822070557.74874-1-maowenan@huawei.com>
-X-Mailer: git-send-email 2.20.1
+        id S1726857AbfHVHGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 03:06:01 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=lNwmIe+DF7xmwRJgABKBxFIbSrsXj4krvA7UaWdp5BL1d8ZFew8QZb2X4dlFbSb90+SaPHrXw3qEmI7KhJV1HKfo41ELnilyPpW9U/4aw6C0q4vrC21gpTejrdZRcMQPFCoieYYRcsI1wL3ltlgmw7NltzRDd4IGn0glAPECg80C+/BH27xzER2Dn9rJmK8CCV6Tb9SZj1pwqyU4v3iZZxFdZXngGtFZD3RVGaZyH2daPHK/+uwf/XYYw5+HROUA6QQ5YxbBbr+pEu/usnn2nQZcXhY0j5xY83v/ftiAdI2S8ZtGC+6P/FsQlHIp3G542rFKTOPf473/8E9vwhj02Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcL61Utyr96sHtWso9Lz0DdS5KzmkQ9GPeGFM4MzqdE=;
+ b=H9o8NDfJ8snkR5oAWyLSGqbi0L5qzfQNp14LCdlwuCaXWMc++LyWie3SISX3QtS6v6IF9w12Ua76VLHMdF1gpAxMutb4F2XqXjGDAfGlrFwMLxQpFQeKLuklGZmLoXNQit3tQLcoT91nACqGVMvzsW0m5GOE3G8RVozJWO/qopQ6/30xMO53eqwJNbwCsLmro0lGEJcPgpa120lWX4Hlf9t5NcgidpagElvZlbEawWBdxpp6a+b4dFIY7l6ytz6z9bMpLwKmifQcRHoIX5biM+M5TBgO3JRVTzNbV21JMNDZJYv74eNl0BEgHK0BQ4Reu9BTgl1pJTaB4CpLu1i13g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=infinera.com; dmarc=pass action=none header.from=infinera.com;
+ dkim=pass header.d=infinera.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=infinera.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PcL61Utyr96sHtWso9Lz0DdS5KzmkQ9GPeGFM4MzqdE=;
+ b=a8Xva8p+sw08A+cRV7mdCOVGQsp4Jv7rVDs6SD3gDCIu1lryQy3+PBHU+yTCGFk8L4HF02KtLmm89tAWZEj5nZyAhwqzjus39T9ovBHY5Pcr/uOtDm1Eg6QBiyMjUGEInq+J1dj3WXbCDU0mGFUdDNCImkqx4fwdYN+T6JQR3kg=
+Received: from BN8PR10MB3540.namprd10.prod.outlook.com (20.179.78.205) by
+ BN8PR10MB3377.namprd10.prod.outlook.com (20.179.139.207) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.16; Thu, 22 Aug 2019 07:05:57 +0000
+Received: from BN8PR10MB3540.namprd10.prod.outlook.com
+ ([fe80::ed3c:99c5:c9c:92cc]) by BN8PR10MB3540.namprd10.prod.outlook.com
+ ([fe80::ed3c:99c5:c9c:92cc%7]) with mapi id 15.20.2178.020; Thu, 22 Aug 2019
+ 07:05:57 +0000
+From:   Joakim Tjernlund <Joakim.Tjernlund@infinera.com>
+To:     "christophe.leroy@c-s.fr" <christophe.leroy@c-s.fr>,
+        "paulus@samba.org" <paulus@samba.org>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "benh@kernel.crashing.org" <benh@kernel.crashing.org>
+CC:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] powerpc/8xx: drop unused self-modifying code alternative
+ to FixupDAR.
+Thread-Topic: [PATCH] powerpc/8xx: drop unused self-modifying code alternative
+ to FixupDAR.
+Thread-Index: AQHVWFxgkw0qBO7mokiN+e108Pb66qcGv1yA
+Date:   Thu, 22 Aug 2019 07:05:57 +0000
+Message-ID: <c358a18b99a59ff600f83dd0c83ad80072f3d10b.camel@infinera.com>
+References: <b095e12c82fcba1ac4c09fc3b85d969f36614746.1566417610.git.christophe.leroy@c-s.fr>
+In-Reply-To: <b095e12c82fcba1ac4c09fc3b85d969f36614746.1566417610.git.christophe.leroy@c-s.fr>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Joakim.Tjernlund@infinera.com; 
+x-originating-ip: [88.131.87.201]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 164be2da-a6d7-4d53-574c-08d726cf2e3b
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600166)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:BN8PR10MB3377;
+x-ms-traffictypediagnostic: BN8PR10MB3377:
+x-microsoft-antispam-prvs: <BN8PR10MB33779613ECB2F70A3907B2C1F4A50@BN8PR10MB3377.namprd10.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1728;
+x-forefront-prvs: 01371B902F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39840400004)(136003)(346002)(376002)(396003)(366004)(199004)(189003)(186003)(76116006)(6246003)(66556008)(446003)(53936002)(2616005)(25786009)(229853002)(486006)(3846002)(6116002)(4326008)(76176011)(2906002)(6506007)(64756008)(6486002)(66476007)(478600001)(102836004)(26005)(91956017)(7736002)(66446008)(14444005)(256004)(11346002)(476003)(86362001)(2501003)(118296001)(2201001)(71200400001)(71190400001)(66946007)(316002)(14454004)(5660300002)(81166006)(110136005)(8936002)(6436002)(36756003)(81156014)(6512007)(8676002)(66066001)(305945005)(54906003)(99286004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN8PR10MB3377;H:BN8PR10MB3540.namprd10.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: infinera.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: sYfseLweNCoQpCekAEPzxM9vol2t+RqV9qsMkSiflw0UXF0peVjgCYEMMboD8w4Y5Imwo9/cyjqdKXtpLwrRpXDpgk7W/33CG2twieFM/4ecgu1lJ5Hy7U9CJuIpr1jWAE3ueMh2uiD5gjyLVaR1KXqTCpguGnJSn0ZEypNiou1VZVek5Gdkl+4BQbPBVo2ghAU4KRx4WaQMY/GQBCnpRfiFbSeBKDmrU24ESFZuugCs5m3Yuxf+7rvKQg2BXx94DBTgG4XjYmOEw+4oRnlC/ivYK30cg2rg31K+vOto9b7QpGtOM5+QkZjDR6cTJPgF+vO34JwlNmv3cKrK0MQrmi9oSHRlyDFoxSb98N/6Xbk8e9MPXzJ7PDM4RZm/2DLWCyAdJUe4R8EUplmd+KPudo3hcLCQjgj5FkiuSNS4YSc=
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <26A0C5C0D80B9047A769A2F1F9C9578E@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+X-OriginatorOrg: infinera.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 164be2da-a6d7-4d53-574c-08d726cf2e3b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2019 07:05:57.0252
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 285643de-5f5b-4b03-a153-0ae2dc8aaf77
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tAvODIzw3DbA2Vznr4bbpEQPNOoHJJk54aARDmViYsDwuCEVp0geu/7dNSjDvufQehunVsHN5Us2+Jv30l1IVg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN8PR10MB3377
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_protocol_cmd_r’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:744:6: warning: variable ‘tmp’ set but not used [-Wunused-but-set-variable]
-
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_handle_dma_ep’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:1994:14: warning: variable ‘epstatus’ set but not used [-Wunused-but-set-variable]
-
-drivers/usb/gadget/udc/lpc32xx_udc.c: In function ‘udc_handle_ep0_setup’:
-drivers/usb/gadget/udc/lpc32xx_udc.c:2200:22: warning: variable ‘wLength’ set but not used [-Wunused-but-set-variable]
-
-It is not used since commit 90fccb529d24 ("usb: gadget: Gadget directory cleanup - group UDC drivers")
-
-Signed-off-by: Mao Wenan <maowenan@huawei.com>
----
- drivers/usb/gadget/udc/lpc32xx_udc.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/usb/gadget/udc/lpc32xx_udc.c b/drivers/usb/gadget/udc/lpc32xx_udc.c
-index 606c8bc..b3e073f 100644
---- a/drivers/usb/gadget/udc/lpc32xx_udc.c
-+++ b/drivers/usb/gadget/udc/lpc32xx_udc.c
-@@ -741,7 +741,6 @@ static inline void udc_protocol_cmd_data_w(struct lpc32xx_udc *udc, u32 cmd,
-  * response data */
- static u32 udc_protocol_cmd_r(struct lpc32xx_udc *udc, u32 cmd)
- {
--	u32 tmp;
- 	int to = 1000;
- 
- 	/* Write a command and read data from the protocol engine */
-@@ -751,7 +750,6 @@ static u32 udc_protocol_cmd_r(struct lpc32xx_udc *udc, u32 cmd)
- 	/* Write command code */
- 	udc_protocol_cmd_w(udc, cmd);
- 
--	tmp = readl(USBD_DEVINTST(udc->udp_baseaddr));
- 	while ((!(readl(USBD_DEVINTST(udc->udp_baseaddr)) & USBD_CDFULL))
- 	       && (to > 0))
- 		to--;
-@@ -1991,7 +1989,7 @@ void udc_handle_eps(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- /* DMA end of transfer completion */
- static void udc_handle_dma_ep(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- {
--	u32 status, epstatus;
-+	u32 status;
- 	struct lpc32xx_request *req;
- 	struct lpc32xx_usbd_dd_gad *dd;
- 
-@@ -2085,7 +2083,7 @@ static void udc_handle_dma_ep(struct lpc32xx_udc *udc, struct lpc32xx_ep *ep)
- 		if (udc_clearep_getsts(udc, ep->hwep_num) & EP_SEL_F) {
- 			udc_clearep_getsts(udc, ep->hwep_num);
- 			uda_enable_hwepint(udc, ep->hwep_num);
--			epstatus = udc_clearep_getsts(udc, ep->hwep_num);
-+			udc_clearep_getsts(udc, ep->hwep_num);
- 
- 			/* Let the EP interrupt handle the ZLP */
- 			return;
-@@ -2197,7 +2195,7 @@ static void udc_handle_ep0_setup(struct lpc32xx_udc *udc)
- 	struct lpc32xx_ep *ep, *ep0 = &udc->ep[0];
- 	struct usb_ctrlrequest ctrlpkt;
- 	int i, bytes;
--	u16 wIndex, wValue, wLength, reqtype, req, tmp;
-+	u16 wIndex, wValue, reqtype, req, tmp;
- 
- 	/* Nuke previous transfers */
- 	nuke(ep0, -EPROTO);
-@@ -2213,7 +2211,6 @@ static void udc_handle_ep0_setup(struct lpc32xx_udc *udc)
- 	/* Native endianness */
- 	wIndex = le16_to_cpu(ctrlpkt.wIndex);
- 	wValue = le16_to_cpu(ctrlpkt.wValue);
--	wLength = le16_to_cpu(ctrlpkt.wLength);
- 	reqtype = le16_to_cpu(ctrlpkt.bRequestType);
- 
- 	/* Set direction of EP0 */
--- 
-2.7.4
-
+T24gV2VkLCAyMDE5LTA4LTIxIGF0IDIwOjAwICswMDAwLCBDaHJpc3RvcGhlIExlcm95IHdyb3Rl
+Og0KPiANCj4gVGhlIGNvZGUgd2hpY2ggZml4dXBzIHRoZSBEQVIgb24gVExCIGVycm9ycyBmb3Ig
+ZGJjWCBpbnN0cnVjdGlvbnMNCj4gaGFzIGEgc2VsZi1tb2RpZnlpbmcgY29kZSBhbHRlcm5hdGl2
+ZSB0aGF0IGhhcyBuZXZlciBiZWVuIHVzZWQuDQo+IA0KPiBEcm9wIGl0Lg0KDQpBcmdoLCBteSBt
+YXN0ZXIgcGllY2UgZnJvbSB3YXkgYmFjayA6KQ0KQnV0IGl0IGlzIHRpbWUgZm9yIGl0IHRvIGdv
+Lg0KDQpSZXZpZXdlZC1ieTogSm9ha2ltIFRqZXJubHVuZCA8am9ha2ltLnRqZXJubHVuZEBpbmZp
+bmVyYS5jb20+DQoNCiBKb2NrZQ0KPiANCj4gU2lnbmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBMZXJv
+eSA8Y2hyaXN0b3BoZS5sZXJveUBjLXMuZnI+DQo+IC0tLQ0KPiAgYXJjaC9wb3dlcnBjL2tlcm5l
+bC9oZWFkXzh4eC5TIHwgMjQgLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hh
+bmdlZCwgMjQgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9wb3dlcnBjL2tl
+cm5lbC9oZWFkXzh4eC5TIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC9oZWFkXzh4eC5TDQo+IGluZGV4
+IGI4Y2E1YjQzZTU4Ny4uMTlmNTgzZTE4NDAyIDEwMDY0NA0KPiAtLS0gYS9hcmNoL3Bvd2VycGMv
+a2VybmVsL2hlYWRfOHh4LlMNCj4gKysrIGIvYXJjaC9wb3dlcnBjL2tlcm5lbC9oZWFkXzh4eC5T
+DQo+IEBAIC01NzUsOCArNTc1LDYgQEAgSW5zdHJ1Y3Rpb25CcmVha3BvaW50Og0KPiAgICogYnkg
+ZGVjb2RpbmcgdGhlIHJlZ2lzdGVycyB1c2VkIGJ5IHRoZSBkY2J4IGluc3RydWN0aW9uIGFuZCBh
+ZGRpbmcgdGhlbS4NCj4gICAqIERBUiBpcyBzZXQgdG8gdGhlIGNhbGN1bGF0ZWQgYWRkcmVzcy4N
+Cj4gICAqLw0KPiAtIC8qIGRlZmluZSBpZiB5b3UgZG9uJ3Qgd2FudCB0byB1c2Ugc2VsZiBtb2Rp
+ZnlpbmcgY29kZSAqLw0KPiAtI2RlZmluZSBOT19TRUxGX01PRElGWUlOR19DT0RFDQo+ICBGaXh1
+cERBUjovKiBFbnRyeSBwb2ludCBmb3IgZGNieCB3b3JrYXJvdW5kLiAqLw0KPiAgICAgICAgIG10
+c3ByICAgU1BSTl9NX1RXLCByMTANCj4gICAgICAgICAvKiBmZXRjaCBpbnN0cnVjdGlvbiBmcm9t
+IG1lbW9yeS4gKi8NCj4gQEAgLTY0MCwyNyArNjM4LDYgQEAgRml4dXBEQVI6LyogRW50cnkgcG9p
+bnQgZm9yIGRjYnggd29ya2Fyb3VuZC4gKi8NCj4gICAgICAgICBybHdpbm0gIHIxMCwgcjEwLDAs
+Nyw1ICAvKiBDbGVhciBzdG9yZSBiaXQgZm9yIGJ1Z2d5IGRjYnN0IGluc24gKi8NCj4gICAgICAg
+ICBtdHNwciAgIFNQUk5fRFNJU1IsIHIxMA0KPiAgMTQyOiAgIC8qIGNvbnRpbnVlLCBpdCB3YXMg
+YSBkY2J4LCBkY2JpIGluc3RydWN0aW9uLiAqLw0KPiAtI2lmbmRlZiBOT19TRUxGX01PRElGWUlO
+R19DT0RFDQo+IC0gICAgICAgYW5kaXMuICByMTAscjExLDB4MWYgICAgLyogdGVzdCBpZiByZWcg
+UkEgaXMgcjAgKi8NCj4gLSAgICAgICBsaSAgICAgIHIxMCxtb2RpZmllZF9pbnN0ckBsDQo+IC0g
+ICAgICAgZGNidHN0ICByMCxyMTAgICAgICAgICAgLyogdG91Y2ggZm9yIHN0b3JlICovDQo+IC0g
+ICAgICAgcmx3aW5tICByMTEscjExLDAsMCwyMCAgLyogWmVybyBsb3dlciAxMCBiaXRzICovDQo+
+IC0gICAgICAgb3JpcyAgICByMTEscjExLDY0MCAgICAgLyogVHJhbnNmb3JtIGluc3RyLiB0byBh
+ICJhZGQgcjEwLFJBLFJCIiAqLw0KPiAtICAgICAgIG9yaSAgICAgcjExLHIxMSw1MzINCj4gLSAg
+ICAgICBzdHcgICAgIHIxMSwwKHIxMCkgICAgICAvKiBzdG9yZSBhZGQvYW5kIGluc3RydWN0aW9u
+ICovDQo+IC0gICAgICAgZGNiZiAgICAwLHIxMCAgICAgICAgICAgLyogZmx1c2ggbmV3IGluc3Ry
+LiB0byBtZW1vcnkuICovDQo+IC0gICAgICAgaWNiaSAgICAwLHIxMCAgICAgICAgICAgLyogaW52
+YWxpZGF0ZSBpbnN0ci4gY2FjaGUgbGluZSAqLw0KPiAtICAgICAgIG1mc3ByICAgcjExLCBTUFJO
+X1NQUkdfU0NSQVRDSDEgLyogcmVzdG9yZSByMTEgKi8NCj4gLSAgICAgICBtZnNwciAgIHIxMCwg
+U1BSTl9TUFJHX1NDUkFUQ0gwIC8qIHJlc3RvcmUgcjEwICovDQo+IC0gICAgICAgaXN5bmMgICAg
+ICAgICAgICAgICAgICAgLyogV2FpdCB1bnRpbCBuZXcgaW5zdHIgaXMgbG9hZGVkIGZyb20gbWVt
+b3J5ICovDQo+IC1tb2RpZmllZF9pbnN0cjoNCj4gLSAgICAgICAuc3BhY2UgIDQgICAgICAgICAg
+ICAgICAvKiB0aGlzIGlzIHdoZXJlIHRoZSBhZGQgaW5zdHIuIGlzIHN0b3JlZCAqLw0KPiAtICAg
+ICAgIGJuZSsgICAgMTQzZg0KPiAtICAgICAgIHN1YmYgICAgcjEwLHIwLHIxMCAgICAgIC8qIHIx
+MD1yMTAtcjAsIG9ubHkgaWYgcmVnIFJBIGlzIHIwICovDQo+IC0xNDM6ICAgbXRkYXIgICByMTAg
+ICAgICAgICAgICAgLyogc3RvcmUgZmF1bHRpbmcgRUEgaW4gREFSICovDQo+IC0gICAgICAgbWZz
+cHIgICByMTAsU1BSTl9NX1RXDQo+IC0gICAgICAgYiAgICAgICBEQVJGaXhlZCAgICAgICAgLyog
+R28gYmFjayB0byBub3JtYWwgVExCIGhhbmRsaW5nICovDQo+IC0jZWxzZQ0KPiAgICAgICAgIG1m
+Y3RyICAgcjEwDQo+ICAgICAgICAgbXRkYXIgICByMTAgICAgICAgICAgICAgICAgICAgICAvKiBz
+YXZlIGN0ciByZWcgaW4gREFSICovDQo+ICAgICAgICAgcmx3aW5tICByMTAsIHIxMSwgMjQsIDI0
+LCAyOCAgICAvKiBvZmZzZXQgaW50byBqdW1wIHRhYmxlIGZvciByZWcgUkIgKi8NCj4gQEAgLTcy
+NCw3ICs3MDEsNiBAQCBtb2RpZmllZF9pbnN0cjoNCj4gICAgICAgICBhZGQgICAgIHIxMCwgcjEw
+LCByMTEgICAvKiBhZGQgaXQgKi8NCj4gICAgICAgICBtZmN0ciAgIHIxMSAgICAgICAgICAgICAv
+KiByZXN0b3JlIHIxMSAqLw0KPiAgICAgICAgIGIgICAgICAgMTUxYg0KPiAtI2VuZGlmDQo+IA0K
+PiAgLyoNCj4gICAqIFRoaXMgaXMgd2hlcmUgdGhlIG1haW4ga2VybmVsIGNvZGUgc3RhcnRzLg0K
+PiAtLQ0KPiAyLjEzLjMNCj4gDQoNCg==
