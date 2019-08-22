@@ -2,97 +2,71 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id D5D3A99B94
-	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:26:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 728CC99BD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 22 Aug 2019 19:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391877AbfHVRZu (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 13:25:50 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:35741 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391767AbfHVRY4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 13:24:56 -0400
-Received: by mail-pf1-f196.google.com with SMTP id d85so4414132pfd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 10:24:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
-        b=RX3L3NEysLNGueK8XYcm4tI5nQZ2pEFyeSxHYiObmFt8nWRtF62qzckIHmf2rpGxrP
-         BLn4KXyVPFgfoviJQgPO/s2j82QZFQl96pFgqGNU4z2fsVsaxfgeFqyUhckvdrHLzqrA
-         p8HLWOVvrNzJ8jujwhikFfgqm0RNuFfV4wK1Xj4qfo6pDRR2KeGAgorfqhi1U2Q1agzD
-         qLOLhFMM0fBHGwattVPoacW0SA8gg+UqkAchcyWJxEspzojX5olDwPFZWk9xUAaO6LPb
-         8Qp3+xNgeubaXFd3rIDxjUGNumFk054qag4X+vH9xDBisRUZi4LK940Ny0tqYab7R/zY
-         5V+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
-        b=b3oKASauCo0V8foytynCuqG9Xg7phECwmjG/1lTfi2WwBVLvuMUazCvav5+tQ5cFU5
-         IetuB20O7UD0l/g34diADBFqcl7Pd3i25oYgrtAU1Iq7Nl8G82HNQabwvzLVHOTcJWH8
-         D26R3WpiURmq6wswsw9JmivLwsOTWxcqdwixUZOJZkgJkonfuou9ZiNrVQQ+LeSiKqPi
-         kC/ddVVxYcph+fveqc6dFjora6YDMwpuO7FUX6DCVYAP2OO3q3bKDaCCQEsoNH8E6dAz
-         2qM93H2kQcYSjl2w4UHhVj99p1QrWmk/5JUeVhpijcWOKp2r/5XWXMrKxftuMUvNjOhM
-         m2NQ==
-X-Gm-Message-State: APjAAAWA0zJlEPPvIQ70sz7VI/E4NE599YS0i6b0Dn+o3wBqTsXG7vnl
-        0zvp2m7OHQtbyZgVF8yH0+VS
-X-Google-Smtp-Source: APXvYqxXFDaJ955RJz/a34+rWtNfFOs3hBYdX2U9Etyi7MVotAVqBYvnVOl+UsQc16TjNDKQSF4Dkw==
-X-Received: by 2002:a63:e20a:: with SMTP id q10mr327282pgh.24.1566494695791;
-        Thu, 22 Aug 2019 10:24:55 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:71cc:5738:24ad:193e:4b59:8a76])
-        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.24.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:24:55 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 2/8] clk: Warn if clk_init_data is not zero initialized
-Date:   Thu, 22 Aug 2019 22:54:20 +0530
-Message-Id: <20190822172426.25879-3-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
-References: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
+        id S2404921AbfHVR15 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 13:27:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2391796AbfHVR01 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 22 Aug 2019 13:26:27 -0400
+Received: from localhost (wsip-184-188-36-2.sd.sd.cox.net [184.188.36.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 348902064A;
+        Thu, 22 Aug 2019 17:26:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566494787;
+        bh=8YIskV3g2ELvJm5gvUcuHviZMwFQuwWB+NE2xhRFItM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AhPZq2dTYhc+jLJicdbKMjyHJEP9MIDz70rf7o96k7+RoFQD8FWtLcN9zuL9WQfzT
+         kVAmBunNJ6HDH34jxSbPEm+KSRGmEj4E+kSON1y9hiP5UtmVNIltJlZoFFsfUe4lLV
+         YoR0XuiUlP9oZu1QXrPPjAr1kwVzztAhjQ0Yx1QQ=
+Date:   Thu, 22 Aug 2019 10:26:19 -0700
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org
+Subject: Re: [PATCH 5.2 000/135] 5.2.10-stable review
+Message-ID: <20190822172619.GA22458@kroah.com>
+References: <20190822170811.13303-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822170811.13303-1-sashal@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new implementation for determining parent map uses multiple ways
-to pass parent info. The order in which it gets processed depends on
-the first available member. Hence, it is necessary to zero init the
-clk_init_data struct so that the expected member gets processed correctly.
-So, add a warning if multiple clk_init_data members are available during
-clk registration.
+On Thu, Aug 22, 2019 at 01:05:56PM -0400, Sasha Levin wrote:
+> 
+> This is the start of the stable review cycle for the 5.2.10 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat 24 Aug 2019 05:07:10 PM UTC.
+> Anything received after that time might be too late.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/clk.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Just to confirm to everyone, yes, this is real :)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..7d6d6984c979 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3497,6 +3497,14 @@ static int clk_core_populate_parent_map(struct clk_core *core)
- 	if (!num_parents)
- 		return 0;
- 
-+	/*
-+	 * Check for non-zero initialized clk_init_data struct. This is
-+	 * required because, we only require one of the (parent_names/
-+	 * parent_data/parent_hws) to be set at a time. Otherwise, the
-+	 * current code would use first available member.
-+	 */
-+	WARN_ON((parent_names && parent_data) || (parent_names && parent_hws));
-+
- 	/*
- 	 * Avoid unnecessary string look-ups of clk_core's possible parents by
- 	 * having a cache of names/clk_hw pointers to clk_core pointers.
--- 
-2.17.1
+Sasha has been helping me out with the stable patch work for a while now
+and we finally sat down together today and worked out how to do the
+releases as well.  This is the first attempt at this, hopefully it all
+works as it was all based on some horrible scripts that have evolved
+over the past 15+ years, which he sanely rewrote into something
+simple[1].
 
+If anyone notices anything that we messed up, please let us know.
+
+thanks,
+
+greg k-h
+
+[1] Turns out that 'git format-patch' does a lot more things now than it
+    used to, so most of my 'formail' scripts are no longer needed.
