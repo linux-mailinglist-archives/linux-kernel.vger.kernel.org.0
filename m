@@ -2,30 +2,32 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E6D39AC4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AE3C9AC4B
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 11:59:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403801AbfHWJ6x (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 05:58:53 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:57208 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726508AbfHWJ6t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2390013AbfHWJ6t (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
         Fri, 23 Aug 2019 05:58:49 -0400
+Received: from szxga07-in.huawei.com ([45.249.212.35]:57186 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725992AbfHWJ6s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:58:48 -0400
 Received: from DGGEMS412-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id A9DD7CAD03B67576FF9E;
+        by Forcepoint Email with ESMTP id A5C1524C3D1AA0FF058E;
         Fri, 23 Aug 2019 17:58:46 +0800 (CST)
 Received: from szvp000203569.huawei.com (10.120.216.130) by
  DGGEMS412-HUB.china.huawei.com (10.3.19.212) with Microsoft SMTP Server id
- 14.3.439.0; Fri, 23 Aug 2019 17:58:38 +0800
+ 14.3.439.0; Fri, 23 Aug 2019 17:58:39 +0800
 From:   Chao Yu <yuchao0@huawei.com>
 To:     <jaegeuk@kernel.org>
 CC:     <linux-f2fs-devel@lists.sourceforge.net>,
         <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
         Chao Yu <yuchao0@huawei.com>
-Subject: [PATCH 1/3] f2fs: fix wrong error injection path in inc_valid_block_count()
-Date:   Fri, 23 Aug 2019 17:58:34 +0800
-Message-ID: <20190823095836.28569-1-yuchao0@huawei.com>
+Subject: [PATCH 2/3] f2fs: clean up __bio_alloc()'s parameter
+Date:   Fri, 23 Aug 2019 17:58:35 +0800
+Message-ID: <20190823095836.28569-2-yuchao0@huawei.com>
 X-Mailer: git-send-email 2.18.0.rc1
+In-Reply-To: <20190823095836.28569-1-yuchao0@huawei.com>
+References: <20190823095836.28569-1-yuchao0@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-Originating-IP: [10.120.216.130]
@@ -35,37 +37,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If FAULT_BLOCK type error injection is on, in inc_valid_block_count()
-we may decrease sbi->alloc_valid_block_count percpu stat count
-incorrectly, fix it.
+Just cleanup, no logic change.
 
-Fixes: 36b877af7992 ("f2fs: Keep alloc_valid_block_count in sync")
 Signed-off-by: Chao Yu <yuchao0@huawei.com>
 ---
- fs/f2fs/f2fs.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/f2fs/data.c | 27 +++++++++++----------------
+ 1 file changed, 11 insertions(+), 16 deletions(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 2b8b6b305164..4673c3152508 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1791,7 +1791,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
- 	if (time_to_inject(sbi, FAULT_BLOCK)) {
- 		f2fs_show_injection_info(FAULT_BLOCK);
- 		release = *count;
--		goto enospc;
-+		goto release_quota;
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 9fcfbd4f0b8c..769c548e955a 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -259,26 +259,25 @@ static bool __same_bdev(struct f2fs_sb_info *sbi,
+ /*
+  * Low-level block read/write IO operations.
+  */
+-static struct bio *__bio_alloc(struct f2fs_sb_info *sbi, block_t blk_addr,
+-				struct writeback_control *wbc,
+-				int npages, bool is_read,
+-				enum page_type type, enum temp_type temp)
++static struct bio *__bio_alloc(struct f2fs_io_info *fio, int npages)
+ {
++	struct f2fs_sb_info *sbi = fio->sbi;
+ 	struct bio *bio;
+ 
+ 	bio = f2fs_bio_alloc(sbi, npages, true);
+ 
+-	f2fs_target_device(sbi, blk_addr, bio);
+-	if (is_read) {
++	f2fs_target_device(sbi, fio->new_blkaddr, bio);
++	if (is_read_io(fio->op)) {
+ 		bio->bi_end_io = f2fs_read_end_io;
+ 		bio->bi_private = NULL;
+ 	} else {
+ 		bio->bi_end_io = f2fs_write_end_io;
+ 		bio->bi_private = sbi;
+-		bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi, type, temp);
++		bio->bi_write_hint = f2fs_io_type_to_rw_hint(sbi,
++						fio->type, fio->temp);
+ 	}
+-	if (wbc)
+-		wbc_init_bio(wbc, bio);
++	if (fio->io_wbc)
++		wbc_init_bio(fio->io_wbc, bio);
+ 
+ 	return bio;
+ }
+@@ -461,8 +460,7 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
+ 	f2fs_trace_ios(fio, 0);
+ 
+ 	/* Allocate a new bio */
+-	bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+-				1, is_read_io(fio->op), fio->type, fio->temp);
++	bio = __bio_alloc(fio, 1);
+ 
+ 	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
+ 		bio_put(bio);
+@@ -538,8 +536,7 @@ int f2fs_merge_page_bio(struct f2fs_io_info *fio)
+ 	}
+ alloc_new:
+ 	if (!bio) {
+-		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
+-				BIO_MAX_PAGES, false, fio->type, fio->temp);
++		bio = __bio_alloc(fio, BIO_MAX_PAGES);
+ 		bio_set_op_attrs(bio, fio->op, fio->op_flags);
  	}
  
- 	/*
-@@ -1836,6 +1836,7 @@ static inline int inc_valid_block_count(struct f2fs_sb_info *sbi,
+@@ -616,9 +613,7 @@ void f2fs_submit_page_write(struct f2fs_io_info *fio)
+ 			fio->retry = true;
+ 			goto skip;
+ 		}
+-		io->bio = __bio_alloc(sbi, fio->new_blkaddr, fio->io_wbc,
+-						BIO_MAX_PAGES, false,
+-						fio->type, fio->temp);
++		io->bio = __bio_alloc(fio, BIO_MAX_PAGES);
+ 		io->fio = *fio;
+ 	}
  
- enospc:
- 	percpu_counter_sub(&sbi->alloc_valid_block_count, release);
-+release_quota:
- 	dquot_release_reservation_block(inode, release);
- 	return -ENOSPC;
- }
 -- 
 2.18.0.rc1
 
