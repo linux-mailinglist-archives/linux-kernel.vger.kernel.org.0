@@ -2,133 +2,88 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id EA0BF9A850
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B83DA9A848
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:10:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392824AbfHWHLx (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:11:53 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:11226 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2392797AbfHWHLv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:11:51 -0400
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7N777cq073483
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:11:50 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2uj9p2kt1u-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 03:11:49 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <huntbag@linux.vnet.ibm.com>;
-        Fri, 23 Aug 2019 08:11:48 +0100
-Received: from b06avi18878370.portsmouth.uk.ibm.com (9.149.26.194)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 23 Aug 2019 08:11:44 +0100
-Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06avi18878370.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x7N7Bi9Z38797672
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Aug 2019 07:11:44 GMT
-Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E820252050;
-        Fri, 23 Aug 2019 07:11:43 +0000 (GMT)
-Received: from boston16h.aus.stglabs.ibm.com (unknown [9.3.23.78])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 323E45204F;
-        Fri, 23 Aug 2019 07:11:42 +0000 (GMT)
-From:   Abhishek Goel <huntbag@linux.vnet.ibm.com>
-To:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        devicetree@vger.kernel.org, paulus@samba.org
-Cc:     npiggin@gmail.com, mpe@ellerman.id.au, ego@linux.vnet.ibm.com,
-        svaidy@linux.ibm.com, mikey@neuling.org, rjw@rjwysocki.net,
-        daniel.lezcano@linaro.org,
-        Abhishek Goel <huntbag@linux.vnet.ibm.com>
-Subject: [RFC 3/3] cpuidle/powernv : Add flags to identify stop state type
-Date:   Fri, 23 Aug 2019 02:09:40 -0500
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190823070940.43220-1-huntbag@linux.vnet.ibm.com>
-References: <20190823070940.43220-1-huntbag@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 19082307-4275-0000-0000-0000035C72A9
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19082307-4276-0000-0000-0000386E9ADB
-Message-Id: <20190823070940.43220-4-huntbag@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-23_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=726 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1906280000 definitions=main-1908230072
+        id S2390636AbfHWHKn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:10:43 -0400
+Received: from mga06.intel.com ([134.134.136.31]:6425 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728332AbfHWHKn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 03:10:43 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 00:10:42 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,420,1559545200"; 
+   d="scan'208";a="196419917"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 23 Aug 2019 00:10:38 -0700
+Received: by lahna (sSMTP sendmail emulation); Fri, 23 Aug 2019 10:10:37 +0300
+Date:   Fri, 23 Aug 2019 10:10:37 +0300
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Matthias Andree <matthias.andree@gmx.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Lukas Wunner <lukas@wunner.de>,
+        Keith Busch <keith.busch@intel.com>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Paul Menzel <pmenzel@molgen.mpg.de>,
+        Nicholas Johnson <nicholas.johnson-opensource@outlook.com.au>,
+        Justin Forbes <jmforbes@linuxtx.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Add missing link delays required by the PCIe spec
+Message-ID: <20190823071037.GP19908@lahna.fi.intel.com>
+References: <20190821124519.71594-1-mika.westerberg@linux.intel.com>
+ <9f741e3a-0878-b914-39d8-a64a02484cb5@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9f741e3a-0878-b914-39d8-a64a02484cb5@gmx.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Removed threshold latency which was being used to decide if a state
-is cpuidle type or not. This decision can be taken using flags, as this
-information has been encapsulated in the state->flags and being read
-from idle device-tree.
+On Thu, Aug 22, 2019 at 08:29:09PM +0200, Matthias Andree wrote:
+> Am 21.08.19 um 14:45 schrieb Mika Westerberg:
+> > Hi all,
+> >
+> > As the changelog says this is reworked version that tries to avoid reported
+> > issues while at the same time fix the missing delays so we can get ICL
+> > systems and at least the one system with Titan Ridge controller working
+> > properly.
+> >
+> > @Matthias, @Paul and @Nicholas: it would be great if you could try the
+> > patch on top of v5.4-rc5+ and verify that it does not cause any issues on
+> > your systems.
+> >
+> >  drivers/pci/pci-driver.c |  19 ++++++
+> >  drivers/pci/pci.c        | 127 ++++++++++++++++++++++++++++++++++++---
+> >  drivers/pci/pci.h        |   1 +
+> >  3 files changed, 137 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> > index a8124e47bf6e..9aec78ed8907 100644
+> 
+> ...
+> 
+> Mika, Bjorn, Rafael,
+> 
+> quick smoke test, this test applied with git-am on top
+> v5.3-rc5-149-gbb7ba8069de9, reboot, suspend, wake, suspend, wake,
+> hibernate, wake, looks good to me. The top of git log --pretty-short is
+> shown below.
 
-Signed-off-by: Abhishek Goel <huntbag@linux.vnet.ibm.com>
----
- arch/powerpc/include/asm/opal-api.h |  7 +++++++
- drivers/cpuidle/cpuidle-powernv.c   | 16 +++++++++-------
- 2 files changed, 16 insertions(+), 7 deletions(-)
+Thanks for testing!
 
-diff --git a/arch/powerpc/include/asm/opal-api.h b/arch/powerpc/include/asm/opal-api.h
-index 383242eb0dea..b9068fee21d8 100644
---- a/arch/powerpc/include/asm/opal-api.h
-+++ b/arch/powerpc/include/asm/opal-api.h
-@@ -233,6 +233,13 @@
- #define OPAL_PM_STOP_INST_FAST		0x00100000
- #define OPAL_PM_STOP_INST_DEEP		0x00200000
- 
-+/*
-+ * Flags for stop states to distinguish between cpuidle and
-+ * cpuoffline type of states.
-+ */
-+#define OPAL_PM_STOP_CPUIDLE		0x01000000
-+#define OPAL_PM_STOP_CPUHOTPLUG		0x02000000
-+
- /*
-  * OPAL_CONFIG_CPU_IDLE_STATE parameters
-  */
-diff --git a/drivers/cpuidle/cpuidle-powernv.c b/drivers/cpuidle/cpuidle-powernv.c
-index 1b6c84d4ac77..1a33a548b769 100644
---- a/drivers/cpuidle/cpuidle-powernv.c
-+++ b/drivers/cpuidle/cpuidle-powernv.c
-@@ -270,8 +270,13 @@ static int powernv_add_idle_states(void)
- 		goto out;
- 	}
- 
--	/* TODO: Count only states which are eligible for cpuidle */
--	dt_idle_states = nr_pnv_idle_states;
-+	/* Count only cpuidle states*/
-+	for (i = 0; i < nr_pnv_idle_states; i++) {
-+		if (pnv_idle_states[i].flags & OPAL_PM_STOP_CPUIDLE)
-+			dt_idle_states++;
-+	}
-+	pr_info("idle states in dt = %d , states with idle flag = %d",
-+				nr_pnv_idle_states, dt_idle_states);
- 
- 	/*
- 	 * Since snooze is used as first idle state, max idle states allowed is
-@@ -300,11 +305,8 @@ static int powernv_add_idle_states(void)
- 			continue;
- 		}
- 
--		/*
--		 * If an idle state has exit latency beyond
--		 * POWERNV_THRESHOLD_LATENCY_NS then don't use it in cpu-idle.
--		 */
--		if (state->latency_ns > POWERNV_THRESHOLD_LATENCY_NS) {
-+		/* Check whether a state is of cpuidle type */
-+		if ((state->flags & OPAL_PM_STOP_CPUIDLE) != state->flags) {
- 			pr_info("State %d is not idletype\n", i);
- 			continue;
- 		}
--- 
-2.17.1
+> Couldn't test on v5.4-rc5 though as I've handed off my time machine for
+> repairs,
+> I seem to recall they said something about the flux compensator.
 
+:)
