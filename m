@@ -2,153 +2,346 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FF6E9B0C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:25:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A2919B0CF
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 15:25:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392904AbfHWNY5 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 09:24:57 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:45596 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392194AbfHWNY5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 09:24:57 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7NDNlFj051828;
-        Fri, 23 Aug 2019 13:23:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2019-08-05; bh=p0RQDgsmP5itMie9wmmg6pNVdSasWpi8POdZFHN0hhQ=;
- b=Vlayb+W8aI4dB2lk56qdPkGxUESvCY4ymrzNW4pai7a+89Ka5YQw/Kk0E5+AM7vkZ70s
- RVQe0Y8rVNwaCW3e3v/HDXX+fjP6E48jMxgnSlSWh8muKWkRcVX2GEQpZYn0wWIgS0Av
- U1+o55AP0hXZq8JULmqHGZyvJIuaNztbqL165VibrrKhPpWmnU3SyUKVFPHyvf8Q+N3W
- JQPaGWtK0L5o8vk24AIJ9Y4uw5b/2dqhgBeKOjeB7fhnWKEyjQR44L0fPigtqTSiYyZz
- wois3cP+sgIVu2PR8hZDZN3N/mk6VxXJ/CYXuT6Wq3k/OtOl02AEGQK/4z3o52SqPi0a GA== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by userp2120.oracle.com with ESMTP id 2uea7rcrpg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Aug 2019 13:23:47 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id x7NDNRWO138212;
-        Fri, 23 Aug 2019 13:23:45 GMT
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userp3020.oracle.com with ESMTP id 2ujca83pee-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 23 Aug 2019 13:23:45 +0000
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x7NDNhlr023979;
-        Fri, 23 Aug 2019 13:23:43 GMT
-Received: from [192.168.14.112] (/109.64.228.12)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 23 Aug 2019 06:23:43 -0700
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
-Subject: Re: [RESEND PATCH 05/13] KVM: x86: Don't attempt VMWare emulation on
- #GP with non-zero error code
-From:   Liran Alon <liran.alon@oracle.com>
-In-Reply-To: <20190823010709.24879-6-sean.j.christopherson@intel.com>
-Date:   Fri, 23 Aug 2019 16:23:38 +0300
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5D23F679-9E64-4BFA-8041-C18952EF0F56@oracle.com>
-References: <20190823010709.24879-1-sean.j.christopherson@intel.com>
- <20190823010709.24879-6-sean.j.christopherson@intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-X-Mailer: Apple Mail (2.3445.4.7)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=769
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1906280000 definitions=main-1908230138
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9357 signatures=668684
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=817 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1906280000
- definitions=main-1908230138
+        id S2395148AbfHWNZb (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 09:25:31 -0400
+Received: from foss.arm.com ([217.140.110.172]:34490 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2395134AbfHWNZ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 09:25:29 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BE5D628;
+        Fri, 23 Aug 2019 06:25:28 -0700 (PDT)
+Received: from localhost (unknown [10.37.6.20])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 150F33F718;
+        Fri, 23 Aug 2019 06:25:28 -0700 (PDT)
+Date:   Fri, 23 Aug 2019 14:25:26 +0100
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Xiaowei Bao <xiaowei.bao@nxp.com>
+Cc:     bhelgaas@google.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        shawnguo@kernel.org, leoyang.li@nxp.com, kishon@ti.com,
+        lorenzo.pieralisi@arm.co, arnd@arndb.de,
+        gregkh@linuxfoundation.org, minghuan.Lian@nxp.com,
+        mingkai.hu@nxp.com, roy.zang@nxp.com, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com, linux-pci@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2 01/10] PCI: designware-ep: Add multiple PFs support
+ for DWC
+Message-ID: <20190823132526.GD14582@e119886-lin.cambridge.arm.com>
+References: <20190822112242.16309-1-xiaowei.bao@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822112242.16309-1-xiaowei.bao@nxp.com>
+User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Aug 22, 2019 at 07:22:33PM +0800, Xiaowei Bao wrote:
+> Add multiple PFs support for DWC, different PF have different config space
+> we use pf-offset property which get from the DTS to access the different pF
+> config space.
 
+It looks like you're missing a --cover-letter again.
 
-> On 23 Aug 2019, at 4:07, Sean Christopherson =
-<sean.j.christopherson@intel.com> wrote:
->=20
-> The VMware backdoor hooks #GP faults on IN{S}, OUT{S}, and RDPMC, none
-> of which generate a non-zero error code for their #GP.  Re-injecting =
-#GP
-> instead of attempting emulation on a non-zero error code will allow a
-> future patch to move #GP injection (for emulation failure) into
-> kvm_emulate_instruction() without having to plumb in the error code.
->=20
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-
-Reviewed-by: Liran Alon <liran.alon@oracle.com>
-
--Liran
-
+> 
+> Signed-off-by: Xiaowei Bao <xiaowei.bao@nxp.com>
 > ---
-> arch/x86/kvm/svm.c     | 6 +++++-
-> arch/x86/kvm/vmx/vmx.c | 7 ++++++-
-> 2 files changed, 11 insertions(+), 2 deletions(-)
->=20
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 5a42f9c70014..b96a119690f4 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -2772,11 +2772,15 @@ static int gp_interception(struct vcpu_svm =
-*svm)
->=20
-> 	WARN_ON_ONCE(!enable_vmware_backdoor);
->=20
-> +	if (error_code) {
-> +		kvm_queue_exception_e(vcpu, GP_VECTOR, error_code);
-> +		return 1;
-> +	}
-> 	er =3D kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
-> 	if (er =3D=3D EMULATE_USER_EXIT)
-> 		return 0;
-> 	else if (er !=3D EMULATE_DONE)
-> -		kvm_queue_exception_e(vcpu, GP_VECTOR, error_code);
-> +		kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
-> 	return 1;
-> }
->=20
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index 6ecf773825e2..3ee0dd304bc7 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -4509,11 +4509,16 @@ static int handle_exception_nmi(struct =
-kvm_vcpu *vcpu)
->=20
-> 	if (!vmx->rmode.vm86_active && is_gp_fault(intr_info)) {
-> 		WARN_ON_ONCE(!enable_vmware_backdoor);
+> v2:
+>  - Remove duplicate redundant code.
+>  - Reimplement the PF config space access way.
+> 
+>  drivers/pci/controller/dwc/pcie-designware-ep.c | 122 ++++++++++++++++--------
+>  drivers/pci/controller/dwc/pcie-designware.c    |  59 ++++++++----
+>  drivers/pci/controller/dwc/pcie-designware.h    |  11 ++-
+>  3 files changed, 134 insertions(+), 58 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> index 2bf5a35..3e2b740 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware-ep.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+> @@ -19,12 +19,17 @@ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep)
+>  	pci_epc_linkup(epc);
+>  }
+>  
+> -static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, enum pci_barno bar,
+> -				   int flags)
+> +static void __dw_pcie_ep_reset_bar(struct dw_pcie *pci, u8 func_no,
+> +				   enum pci_barno bar, int flags)
+>  {
+>  	u32 reg;
+> +	unsigned int func_offset = 0;
+> +	struct dw_pcie_ep *ep = &pci->ep;
+>  
+> -	reg = PCI_BASE_ADDRESS_0 + (4 * bar);
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
 > +
-> +		if (error_code) {
-> +			kvm_queue_exception_e(vcpu, GP_VECTOR, =
-error_code);
-> +			return 1;
-> +		}
-> 		er =3D kvm_emulate_instruction(vcpu, EMULTYPE_VMWARE);
-> 		if (er =3D=3D EMULATE_USER_EXIT)
-> 			return 0;
-> 		else if (er !=3D EMULATE_DONE)
-> -			kvm_queue_exception_e(vcpu, GP_VECTOR, =
-error_code);
-> +			kvm_queue_exception_e(vcpu, GP_VECTOR, 0);
-> 		return 1;
-> 	}
->=20
-> --=20
-> 2.22.0
->=20
+> +	reg = func_offset + PCI_BASE_ADDRESS_0 + (4 * bar);
 
+This pattern of checking if func_conf_select exists and using it to get an
+offset is repeated a lot throughout this file. You could move this
+functionality into a new function (similar to dw_pcie_read_dbi etc). Or
+perhaps a new variant of dw_pcie_writel_ should be created that writes takes
+a func_no argument.
+ 
+
+>  	dw_pcie_dbi_ro_wr_en(pci);
+>  	dw_pcie_writel_dbi2(pci, reg, 0x0);
+>  	dw_pcie_writel_dbi(pci, reg, 0x0);
+
+
+> @@ -235,7 +257,7 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  
+> -	ret = dw_pcie_ep_outbound_atu(ep, addr, pci_addr, size);
+> +	ret = dw_pcie_ep_outbound_atu(ep, func_no, addr, pci_addr, size);
+>  	if (ret) {
+>  		dev_err(pci->dev, "Failed to enable address\n");
+>  		return ret;
+> @@ -249,11 +271,15 @@ static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
+>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	u32 val, reg;
+> +	unsigned int func_offset = 0;
+> +
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
+>  
+>  	if (!ep->msi_cap)
+>  		return -EINVAL;
+>  
+> -	reg = ep->msi_cap + PCI_MSI_FLAGS;
+> +	reg = ep->msi_cap + func_offset + PCI_MSI_FLAGS;
+
+This makes me nervous.
+
+From a PCI viewpoint, each function has it's own capability structure and
+within each function there may exist a MSI capability. Yet what we're doing
+here is using dw_pcie_ep_find_capability to get the list of capabilities for
+function 0, and then applying offsets from that for subsequent functions. I.e.
+we're applying DW specific knowledge to find the correct capability, rather
+than following the general PCI approach.
+
+I think the above hunk shouldn't be required - but instead
+dw_pcie_ep_find_capability is updated to take a func_no parameter.
+
+Have I understood this correctly?
+
+>  	val = dw_pcie_readw_dbi(pci, reg);
+>  	if (!(val & PCI_MSI_FLAGS_ENABLE))
+>  		return -EINVAL;
+> @@ -268,11 +294,15 @@ static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	u32 val, reg;
+> +	unsigned int func_offset = 0;
+> +
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
+>  
+>  	if (!ep->msi_cap)
+>  		return -EINVAL;
+>  
+> -	reg = ep->msi_cap + PCI_MSI_FLAGS;
+> +	reg = ep->msi_cap + func_offset + PCI_MSI_FLAGS;
+>  	val = dw_pcie_readw_dbi(pci, reg);
+>  	val &= ~PCI_MSI_FLAGS_QMASK;
+>  	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
+> @@ -288,11 +318,15 @@ static int dw_pcie_ep_get_msix(struct pci_epc *epc, u8 func_no)
+>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	u32 val, reg;
+> +	unsigned int func_offset = 0;
+> +
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
+>  
+>  	if (!ep->msix_cap)
+>  		return -EINVAL;
+>  
+> -	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+> +	reg = ep->msix_cap + func_offset + PCI_MSIX_FLAGS;
+
+Same for MSIX.
+
+>  	val = dw_pcie_readw_dbi(pci, reg);
+>  	if (!(val & PCI_MSIX_FLAGS_ENABLE))
+>  		return -EINVAL;
+> @@ -307,11 +341,15 @@ static int dw_pcie_ep_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
+>  	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	u32 val, reg;
+> +	unsigned int func_offset = 0;
+> +
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
+>  
+>  	if (!ep->msix_cap)
+>  		return -EINVAL;
+>  
+> -	reg = ep->msix_cap + PCI_MSIX_FLAGS;
+> +	reg = ep->msix_cap + func_offset + PCI_MSIX_FLAGS;
+>  	val = dw_pcie_readw_dbi(pci, reg);
+>  	val &= ~PCI_MSIX_FLAGS_QSIZE;
+>  	val |= interrupts;
+> @@ -398,29 +436,33 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+>  	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+>  	struct pci_epc *epc = ep->epc;
+>  	unsigned int aligned_offset;
+> +	unsigned int func_offset = 0;
+>  	u16 msg_ctrl, msg_data;
+>  	u32 msg_addr_lower, msg_addr_upper, reg;
+>  	u64 msg_addr;
+>  	bool has_upper;
+>  	int ret;
+>  
+> +	if (ep->ops->func_conf_select)
+> +		func_offset = ep->ops->func_conf_select(ep, func_no);
+> +
+
+You could probably move this hunk below the test for msi_cap to save some
+cycles.
+
+>  	if (!ep->msi_cap)
+>  		return -EINVAL;
+>  
+>  	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
+> -	reg = ep->msi_cap + PCI_MSI_FLAGS;
+> +	reg = ep->msi_cap + func_offset + PCI_MSI_FLAGS;
+>  	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
+>  	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
+> -	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
+> +	reg = ep->msi_cap + func_offset + PCI_MSI_ADDRESS_LO;
+>  	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
+>  	if (has_upper) {
+> -		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
+> +		reg = ep->msi_cap + func_offset + PCI_MSI_ADDRESS_HI;
+>  		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
+> -		reg = ep->msi_cap + PCI_MSI_DATA_64;
+> +		reg = ep->msi_cap + func_offset + PCI_MSI_DATA_64;
+>  		msg_data = dw_pcie_readw_dbi(pci, reg);
+>  	} else {
+>  		msg_addr_upper = 0;
+> -		reg = ep->msi_cap + PCI_MSI_DATA_32;
+> +		reg = ep->msi_cap + func_offset + PCI_MSI_DATA_32;
+>  		msg_data = dw_pcie_readw_dbi(pci, reg);
+>  	}
+>  	aligned_offset = msg_addr_lower & (epc->mem->page_size - 1);
+
+
+
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
+> index 7d25102..305e73d 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware.c
+> @@ -158,9 +158,10 @@ static void dw_pcie_writel_ob_unroll(struct dw_pcie *pci, u32 index, u32 reg,
+>  	dw_pcie_writel_atu(pci, offset + reg, val);
+>  }
+>  
+> -static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+> -					     int type, u64 cpu_addr,
+> -					     u64 pci_addr, u32 size)
+> +static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, u8 func_no,
+> +					     int index, int type,
+> +					     u64 cpu_addr, u64 pci_addr,
+> +					     u32 size)
+>  {
+>  	u32 retries, val;
+>  
+> @@ -175,7 +176,7 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+>  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_UPPER_TARGET,
+>  				 upper_32_bits(pci_addr));
+>  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL1,
+> -				 type);
+> +				 type | PCIE_ATU_FUNC_NUM(func_no));
+
+Much better :)
+
+>  	dw_pcie_writel_ob_unroll(pci, index, PCIE_ATU_UNR_REGION_CTRL2,
+>  				 PCIE_ATU_ENABLE);
+>  
+> @@ -194,8 +195,9 @@ static void dw_pcie_prog_outbound_atu_unroll(struct dw_pcie *pci, int index,
+>  	dev_err(pci->dev, "Outbound iATU is not being enabled\n");
+>  }
+>  
+> -void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+> -			       u64 cpu_addr, u64 pci_addr, u32 size)
+> +static void __dw_pcie_prog_outbound_atu(struct dw_pcie *pci, u8 func_no,
+> +					int index, int type, u64 cpu_addr,
+> +					u64 pci_addr, u32 size)
+>  {
+>  	u32 retries, val;
+>  
+> @@ -203,8 +205,8 @@ void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index, int type,
+>  		cpu_addr = pci->ops->cpu_addr_fixup(pci, cpu_addr);
+>  
+>  	if (pci->iatu_unroll_enabled) {
+> -		dw_pcie_prog_outbound_atu_unroll(pci, index, type, cpu_addr,
+> -						 pci_addr, size);
+> +		dw_pcie_prog_outbound_atu_unroll(pci, func_no, index, type,
+> +						 cpu_addr, pci_addr, size);
+>  		return;
+>  	}
+>  
+
+
+> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+> index ffed084..a0fdbf7 100644
+> --- a/drivers/pci/controller/dwc/pcie-designware.h
+> +++ b/drivers/pci/controller/dwc/pcie-designware.h
+> @@ -71,9 +71,11 @@
+>  #define PCIE_ATU_TYPE_IO		0x2
+>  #define PCIE_ATU_TYPE_CFG0		0x4
+>  #define PCIE_ATU_TYPE_CFG1		0x5
+> +#define PCIE_ATU_FUNC_NUM(pf)           (pf << 20)
+
+"Macro argument 'pf' may be better as '(pf)' to avoid precedence issues"
+
+>  #define PCIE_ATU_CR2			0x908
+>  #define PCIE_ATU_ENABLE			BIT(31)
+>  #define PCIE_ATU_BAR_MODE_ENABLE	BIT(30)
+> +#define PCIE_ATU_FUNC_NUM_MATCH_EN      BIT(19)
+>  #define PCIE_ATU_LOWER_BASE		0x90C
+>  #define PCIE_ATU_UPPER_BASE		0x910
+>  #define PCIE_ATU_LIMIT			0x914
+> @@ -197,6 +199,7 @@ struct dw_pcie_ep_ops {
+>  	int	(*raise_irq)(struct dw_pcie_ep *ep, u8 func_no,
+>  			     enum pci_epc_irq_type type, u16 interrupt_num);
+>  	const struct pci_epc_features* (*get_features)(struct dw_pcie_ep *ep);
+> +	unsigned int (*func_conf_select)(struct dw_pcie_ep *ep, u8 func_no);
+
+Given that this function will return an offset, I'm not sure the name you
+have is suitable. Something like get_pf_offset or similar is more descriptive.
+
+Thanks,
+
+Andrew Murray
+
+>  };
+>  
+>  struct dw_pcie_ep {
+> @@ -265,8 +268,12 @@ int dw_pcie_wait_for_link(struct dw_pcie *pci);
+>  void dw_pcie_prog_outbound_atu(struct dw_pcie *pci, int index,
+>  			       int type, u64 cpu_addr, u64 pci_addr,
+>  			       u32 size);
+> -int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, int index, int bar,
+> -			     u64 cpu_addr, enum dw_pcie_as_type as_type);
+> +void dw_pcie_prog_ep_outbound_atu(struct dw_pcie *pci, u8 func_no, int index,
+> +				  int type, u64 cpu_addr, u64 pci_addr,
+> +				  u32 size);
+> +int dw_pcie_prog_inbound_atu(struct dw_pcie *pci, u8 func_no, int index,
+> +			     int bar, u64 cpu_addr,
+> +			     enum dw_pcie_as_type as_type);
+>  void dw_pcie_disable_atu(struct dw_pcie *pci, int index,
+>  			 enum dw_pcie_region_type type);
+>  void dw_pcie_setup(struct dw_pcie *pci);
+> -- 
+> 2.9.5
+> 
