@@ -2,41 +2,40 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F0B2E9A5B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:44:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FECC9A5B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 04:44:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391361AbfHWCo3 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Thu, 22 Aug 2019 22:44:29 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:33861 "EHLO
+        id S2391337AbfHWCo0 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Thu, 22 Aug 2019 22:44:26 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:33867 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391271AbfHWCoX (ORCPT
+        with ESMTP id S2391302AbfHWCoY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 22 Aug 2019 22:44:23 -0400
+        Thu, 22 Aug 2019 22:44:24 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i0zYo-0001NW-5P; Fri, 23 Aug 2019 04:44:18 +0200
+        id 1i0zYn-0001NE-KE; Fri, 23 Aug 2019 04:44:17 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 9BEE41C07E4;
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 20EC81C0890;
         Fri, 23 Aug 2019 04:44:17 +0200 (CEST)
 Date:   Fri, 23 Aug 2019 02:44:17 -0000
 From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] tools arch x86: Sync asm/cpufeatures.h with the with
- the kernel
+Subject: [tip: perf/core] tools headers: Synchronize linux/bits.h with the
+ kernel sources
 Cc:     linux-kernel@vger.kernel.org,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Namhyung Kim <namhyung@kernel.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Adrian Hunter <adrian.hunter@intel.com>
-In-Reply-To: <tip-860dq1qie2cpnfghlpcnxrzr@git.kernel.org>
-References: <tip-860dq1qie2cpnfghlpcnxrzr@git.kernel.org>
+In-Reply-To: <tip-1if3iga5r3di6oyddgxsr225@git.kernel.org>
+References: <tip-1if3iga5r3di6oyddgxsr225@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156652825757.13159.13503870368118594852.tip-bot2@tip-bot2>
+Message-ID: <156652825705.13156.18245800688508519303.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
@@ -53,55 +52,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     0ac10d87a571ae7d68c7f70f1c2229388f1dce9e
-Gitweb:        https://git.kernel.org/tip/0ac10d87a571ae7d68c7f70f1c2229388f1dce9e
+Commit-ID:     b658911731d41a91b9de5458d6f38d6e1c90a453
+Gitweb:        https://git.kernel.org/tip/b658911731d41a91b9de5458d6f38d6e1c90a453
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Mon, 19 Aug 2019 10:53:20 -03:00
+AuthorDate:    Mon, 19 Aug 2019 11:14:28 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitterDate: Tue, 20 Aug 2019 12:17:09 -03:00
+CommitterDate: Tue, 20 Aug 2019 12:09:21 -03:00
 
-tools arch x86: Sync asm/cpufeatures.h with the with the kernel
+tools headers: Synchronize linux/bits.h with the kernel sources
 
-To pick up the changes in:
+To pick up the changes in this cset:
 
-  f36cf386e3fe ("x86/speculation/swapgs: Exclude ATOMs from speculation through SWAPGS")
-  18ec54fdd6d1 ("x86/speculation: Prepare entry code for Spectre v1 swapgs mitigations")
+  95b980d62d52 ("linux/bits.h: make BIT(), GENMASK(), and friends available in assembly")
 
-That don't affect anything in tools/.
+To address this tools/perf build warning:
 
-This silences this perf build warning:
-
-  Warning: Kernel ABI header at 'tools/arch/x86/include/asm/cpufeatures.h' differs from latest version at 'arch/x86/include/asm/cpufeatures.h'
-  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+  Warning: Kernel ABI header at 'tools/include/linux/bits.h' differs from latest version at 'include/linux/bits.h'
+  diff -u tools/include/linux/bits.h include/linux/bits.h
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/n/tip-860dq1qie2cpnfghlpcnxrzr@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-1if3iga5r3di6oyddgxsr225@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/arch/x86/include/asm/cpufeatures.h | 3 +++
- 1 file changed, 3 insertions(+)
+ tools/include/linux/bits.h | 17 ++++++++++-------
+ 1 file changed, 10 insertions(+), 7 deletions(-)
 
-diff --git a/tools/arch/x86/include/asm/cpufeatures.h b/tools/arch/x86/include/asm/cpufeatures.h
-index 998c2cc..e880f24 100644
---- a/tools/arch/x86/include/asm/cpufeatures.h
-+++ b/tools/arch/x86/include/asm/cpufeatures.h
-@@ -281,6 +281,8 @@
- #define X86_FEATURE_CQM_OCCUP_LLC	(11*32+ 1) /* LLC occupancy monitoring */
- #define X86_FEATURE_CQM_MBM_TOTAL	(11*32+ 2) /* LLC Total MBM monitoring */
- #define X86_FEATURE_CQM_MBM_LOCAL	(11*32+ 3) /* LLC Local MBM monitoring */
-+#define X86_FEATURE_FENCE_SWAPGS_USER	(11*32+ 4) /* "" LFENCE in user entry SWAPGS path */
-+#define X86_FEATURE_FENCE_SWAPGS_KERNEL	(11*32+ 5) /* "" LFENCE in kernel entry SWAPGS path */
+diff --git a/tools/include/linux/bits.h b/tools/include/linux/bits.h
+index 2b7b532..669d694 100644
+--- a/tools/include/linux/bits.h
++++ b/tools/include/linux/bits.h
+@@ -1,13 +1,15 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ #ifndef __LINUX_BITS_H
+ #define __LINUX_BITS_H
++
++#include <linux/const.h>
+ #include <asm/bitsperlong.h>
  
- /* Intel-defined CPU features, CPUID level 0x00000007:1 (EAX), word 12 */
- #define X86_FEATURE_AVX512_BF16		(12*32+ 5) /* AVX512 BFLOAT16 instructions */
-@@ -394,5 +396,6 @@
- #define X86_BUG_L1TF			X86_BUG(18) /* CPU is affected by L1 Terminal Fault */
- #define X86_BUG_MDS			X86_BUG(19) /* CPU is affected by Microarchitectural data sampling */
- #define X86_BUG_MSBDS_ONLY		X86_BUG(20) /* CPU is only affected by the  MSDBS variant of BUG_MDS */
-+#define X86_BUG_SWAPGS			X86_BUG(21) /* CPU is affected by speculation through SWAPGS */
+-#define BIT(nr)			(1UL << (nr))
+-#define BIT_ULL(nr)		(1ULL << (nr))
+-#define BIT_MASK(nr)		(1UL << ((nr) % BITS_PER_LONG))
++#define BIT(nr)			(UL(1) << (nr))
++#define BIT_ULL(nr)		(ULL(1) << (nr))
++#define BIT_MASK(nr)		(UL(1) << ((nr) % BITS_PER_LONG))
+ #define BIT_WORD(nr)		((nr) / BITS_PER_LONG)
+-#define BIT_ULL_MASK(nr)	(1ULL << ((nr) % BITS_PER_LONG_LONG))
++#define BIT_ULL_MASK(nr)	(ULL(1) << ((nr) % BITS_PER_LONG_LONG))
+ #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
+ #define BITS_PER_BYTE		8
  
- #endif /* _ASM_X86_CPUFEATURES_H */
+@@ -17,10 +19,11 @@
+  * GENMASK_ULL(39, 21) gives us the 64bit vector 0x000000ffffe00000.
+  */
+ #define GENMASK(h, l) \
+-	(((~0UL) - (1UL << (l)) + 1) & (~0UL >> (BITS_PER_LONG - 1 - (h))))
++	(((~UL(0)) - (UL(1) << (l)) + 1) & \
++	 (~UL(0) >> (BITS_PER_LONG - 1 - (h))))
+ 
+ #define GENMASK_ULL(h, l) \
+-	(((~0ULL) - (1ULL << (l)) + 1) & \
+-	 (~0ULL >> (BITS_PER_LONG_LONG - 1 - (h))))
++	(((~ULL(0)) - (ULL(1) << (l)) + 1) & \
++	 (~ULL(0) >> (BITS_PER_LONG_LONG - 1 - (h))))
+ 
+ #endif	/* __LINUX_BITS_H */
