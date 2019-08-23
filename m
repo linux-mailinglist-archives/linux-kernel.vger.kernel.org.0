@@ -2,80 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E9D99B589
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 19:34:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 910049B58E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 19:34:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403824AbfHWRdn (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 13:33:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38806 "EHLO mail.kernel.org"
+        id S2404066AbfHWRef (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 13:34:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39100 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389882AbfHWRdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 13:33:43 -0400
-Received: from localhost (lfbn-ncy-1-174-150.w83-194.abo.wanadoo.fr [83.194.254.150])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2403948AbfHWRee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 13:34:34 -0400
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF43D206DD;
-        Fri, 23 Aug 2019 17:33:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36324206DD;
+        Fri, 23 Aug 2019 17:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566581622;
-        bh=94RX8Vqgfb7MEDIB8FPZqdl8Vii0/A5/FbL6pBjOnH4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=PshLJnEHQZalu73RYtFPsHig0dozCCKriuCSEuWJRIfkOBE/mCyLmAE+xN5aTcU4Q
-         KXIaZeZyAUCW877VntFkydybUeO5XcR309rHSvbr6YZOH76tRvZ6gaHIXY+xL6HTHn
-         LQnmnRIB7Vd2HRK3lt/F66cnhcZ3s4vGkfchZYhI=
-Date:   Fri, 23 Aug 2019 19:33:39 +0200
-From:   Frederic Weisbecker <frederic@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        s=default; t=1566581673;
+        bh=MnDHgmtHVoUC5O71SAn2lWqY/5HpVQR/a6wzW32r/Fg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=DDGJEOge//QDHu5P/vX2Lr/yo3am86JXIqoxGkq+riYVFfL/XboZECe6klOycuvjb
+         0tvO9qW2HYpJH2K0hh1IidNs4DOI3GsR/6TrYboK8nXgYEBgvB+Swim4YYBu7T63cY
+         lmqN2dgfMn6DPtS4BUA+cmQbdZtcfgd6quNsnZlI=
+Subject: Re: [PATCH v14 01/18] kunit: test: add KUnit test runner core
+To:     Brendan Higgins <brendanhiggins@google.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Kees Cook <keescook@google.com>,
+        Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        John Stultz <john.stultz@linaro.org>,
-        Anna-Maria Behnsen <anna-maria@linutronix.de>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [patch V2 20/38] posix-cpu-timers: Provide array based access to
- expiry cache
-Message-ID: <20190823173338.GA18880@lenoir>
-References: <20190821190847.665673890@linutronix.de>
- <20190821192921.105793824@linutronix.de>
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        kunit-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        linux-um@lists.infradead.org,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        "Bird, Timothy" <Tim.Bird@sony.com>,
+        Amir Goldstein <amir73il@gmail.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Daniel Vetter <daniel@ffwll.ch>, Jeff Dike <jdike@addtoit.com>,
+        Joel Stanley <joel@jms.id.au>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Knut Omang <knut.omang@oracle.com>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        David Rientjes <rientjes@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, wfg@linux.intel.com,
+        shuah <shuah@kernel.org>
+References: <20190820232046.50175-1-brendanhiggins@google.com>
+ <20190820232046.50175-2-brendanhiggins@google.com>
+ <7f2c8908-75f6-b793-7113-ad57c51777ce@kernel.org>
+ <CAFd5g44mRK9t4f58i_YMEt=e9RTxwrrhFY_V2LW_E7bUwR3cdg@mail.gmail.com>
+ <4513d9f3-a69b-a9a4-768b-86c2962b62e0@kernel.org>
+ <CAFd5g446J=cVW4QW+QeZMLDi+ANqshAW6KTrFFBTusPcdr6-GA@mail.gmail.com>
+From:   shuah <shuah@kernel.org>
+Message-ID: <42c6235c-c586-8de1-1913-7cf1962c6066@kernel.org>
+Date:   Fri, 23 Aug 2019 11:34:30 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821192921.105793824@linutronix.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAFd5g446J=cVW4QW+QeZMLDi+ANqshAW6KTrFFBTusPcdr6-GA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 09:09:07PM +0200, Thomas Gleixner wrote:
-> Using struct task_cputime for the expiry cache is a pretty odd choice and
-> comes with magic defines to rename the fields for usage in the expiry
-> cache.
+On 8/23/19 11:27 AM, Brendan Higgins wrote:
+> On Fri, Aug 23, 2019 at 10:05 AM shuah <shuah@kernel.org> wrote:
+>>
+>> On 8/23/19 10:48 AM, Brendan Higgins wrote:
+>>> On Fri, Aug 23, 2019 at 8:33 AM shuah <shuah@kernel.org> wrote:
+>>>>
+>>>> Hi Brendan,
+>>>>
+>>>> On 8/20/19 5:20 PM, Brendan Higgins wrote:
+>>>>> Add core facilities for defining unit tests; this provides a common way
+>>>>> to define test cases, functions that execute code which is under test
+>>>>> and determine whether the code under test behaves as expected; this also
+>>>>> provides a way to group together related test cases in test suites (here
+>>>>> we call them test_modules).
+>>>>>
+>>>>> Just define test cases and how to execute them for now; setting
+>>>>> expectations on code will be defined later.
+>>>>>
+>>>>> Signed-off-by: Brendan Higgins <brendanhiggins@google.com>
+>>>>> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>>>> Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+>>>>> Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+>>>>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>>>> ---
+>>>>>     include/kunit/test.h | 179 ++++++++++++++++++++++++++++++++++++++++
+>>>>>     kunit/Kconfig        |  17 ++++
+>>>>>     kunit/Makefile       |   1 +
+>>>>>     kunit/test.c         | 191 +++++++++++++++++++++++++++++++++++++++++++
+>>>>>     4 files changed, 388 insertions(+)
+>>>>>     create mode 100644 include/kunit/test.h
+>>>>>     create mode 100644 kunit/Kconfig
+>>>>>     create mode 100644 kunit/Makefile
+>>>>>     create mode 100644 kunit/test.c
+>>>>>
+>>>>> diff --git a/include/kunit/test.h b/include/kunit/test.h
+>>>>> new file mode 100644
+>>>>> index 0000000000000..e0b34acb9ee4e
+>>>>> --- /dev/null
+>>>>> +++ b/include/kunit/test.h
+>>>>> @@ -0,0 +1,179 @@
+>>>>> +/* SPDX-License-Identifier: GPL-2.0 */
+>>>>> +/*
+>>>>> + * Base unit test (KUnit) API.
+>>>>> + *
+>>>>> + * Copyright (C) 2019, Google LLC.
+>>>>> + * Author: Brendan Higgins <brendanhiggins@google.com>
+>>>>> + */
+>>>>> +
+>>>>> +#ifndef _KUNIT_TEST_H
+>>>>> +#define _KUNIT_TEST_H
+>>>>> +
+>>>>> +#include <linux/types.h>
+>>>>> +
+>>>>> +struct kunit;
+>>>>> +
+>>>>> +/**
+>>>>> + * struct kunit_case - represents an individual test case.
+>>>>> + * @run_case: the function representing the actual test case.
+>>>>> + * @name: the name of the test case.
+>>>>> + *
+>>>>> + * A test case is a function with the signature, ``void (*)(struct kunit *)``
+>>>>> + * that makes expectations (see KUNIT_EXPECT_TRUE()) about code under test. Each
+>>>>> + * test case is associated with a &struct kunit_suite and will be run after the
+>>>>> + * suite's init function and followed by the suite's exit function.
+>>>>> + *
+>>>>> + * A test case should be static and should only be created with the KUNIT_CASE()
+>>>>> + * macro; additionally, every array of test cases should be terminated with an
+>>>>> + * empty test case.
+>>>>> + *
+>>>>> + * Example:
+>>>>
+>>>> Can you fix these line continuations. It makes it very hard to read.
+>>>> Sorry for this late comment. These comments lines are longer than 80
+>>>> and wrap.
+>>>
+>>> None of the lines in this commit are over 80 characters in column
+>>> width. Some are exactly 80 characters (like above).
+>>>
+>>> My guess is that you are seeing the diff added text (+ ), which when
+>>> you add that to a line which is exactly 80 char in length ends up
+>>> being over 80 char in email. If you apply the patch you will see that
+>>> they are only 80 chars.
+>>>
+>>>>
+>>>> There are several comment lines in the file that are way too long.
+>>>
+>>> Note that checkpatch also does not complain about any over 80 char
+>>> lines in this file.
+>>>
+>>> Sorry if I am misunderstanding what you are trying to tell me. Please
+>>> confirm either way.
+>>>
+>>
+>> WARNING: Avoid unnecessary line continuations
+>> #258: FILE: include/kunit/test.h:137:
+>> +                */                                                            \
+>>
+>> total: 0 errors, 2 warnings, 388 lines checked
 > 
-> struct task_cputime is basically a u64 array with 3 members, but it has
-> distinct members.
+> Ah, okay so you don't like the warning about the line continuation.
+> That's not because it is over 80 char, but because there is a line
+> continuation after a comment. I don't really see a way to get rid of
+> it without removing the comment from inside the macro.
 > 
-> The expiry cache content is different than the content of task_cputime
-> because
+> I put this TODO there in the first place a Luis' request, and I put it
+> in the body of the macro because this macro already had a kernel-doc
+> comment and I didn't think that an implementation detail TODO belonged
+> in the user documentation.
 > 
->   expiry[PROF]  = task_cputime.stime + task_cputime.utime
->   expiry[VIRT]  = task_cputime.utime
->   expiry[SCHED] = task_cputime.sum_exec_runtime
+>> Go ahead fix these. It appears there are few lines that either longer
+>> than 80. In general, I keep them around 75, so it is easier read.
 > 
-> So there is no direct mapping between task_cputime and the expiry cache and
-> the #define based remapping is just a horrible hack.
+> Sorry, the above is the only checkpatch warning other than the
+> reminder to update the MAINTAINERS file.
 > 
-> Having the expiry cache array based allows further simplification of the
-> expiry code.
+> Are you saying you want me to go through and make all the lines fit in
+> 75 char column width? I hope not because that is going to be a pretty
+> substantial change to make.
 > 
-> To avoid an all in one cleanup which is hard to review add a temporary
-> anonymous union into struct task_cputime which allows array based access to
-> it. That requires to reorder the members. Add a build time sanity check to
-> validate that the members are at the same place.
-> 
-> The union and the build time checks will be removed after conversion.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+There are two things with these comment lines. One is checkpatch
+complaining and the other is general readability.
+
+Please go ahead and adjust them.
+
+thanks,
+-- Shuah
