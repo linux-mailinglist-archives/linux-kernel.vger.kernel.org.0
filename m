@@ -2,221 +2,43 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 400F69AA47
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:27:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2ED1D9AA50
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 10:28:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392593AbfHWI0g (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 04:26:36 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44219 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390021AbfHWI0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 04:26:36 -0400
-Received: by mail-lj1-f195.google.com with SMTP id e24so8060098ljg.11
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 01:26:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Ei2fflkWmYx29L2DvfP6gO0YcKa8w1PsJQRnQ3bwOOw=;
-        b=cuh/+hjrQKfDst0VBgf43KbUa7s/BrRVbEjQT1+J8T65JN4Wc5H7RFWOkmWwB/aLB2
-         SoTc0msWBlb54IdeTFq0YwTCGUWKWksRacojaOKMjbqT7A9WIjQ9J/IuV6FeA3qNYNZL
-         RAcBfY34UiFcbyBiRpELJrR0/3wHd6VMAx0p4EIatyuWohEtU4xhyGMfEDuVwUhZRO6R
-         95WOgrTQ1uGmeZ4blE3hHT/T4QnMCZ4P/c4dWcGQ1bsnhTatnNGJkWW8u0o7+aVe1ccF
-         yRWJPq0Mdf0XlqgHx+LUXLg1wjmulqFFTlXzjuLgYAWQi3N3CtymS528FiT+DGsUHGXD
-         CFGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Ei2fflkWmYx29L2DvfP6gO0YcKa8w1PsJQRnQ3bwOOw=;
-        b=EnjqzOhuLMf2hcPOVWAZHLlzKUkXl/lzh/I76SLFxYgyJ56fQN5lSovgi3ynrSDDcN
-         iBrC46B9SvqDAHsVz1Z1M3ihXFz8mW8kYO92wED5ft/WPsiCazbmFEYbmtXE6ewb2WGg
-         flHlp5Csn+yRPtO16OXzx4WKJbVgLRsuE0cBh28pmwbZz8Az35agkcuK2PMS91X+st6R
-         wOCU2p3UR5pnKHitb9MAkdHj0n22W6eWc1Q7rWV9ht5qHxkjHhcyUosVFG2bzpZSxAH8
-         mGYu/v6QZ6fmdkZTX7b2ioOYbDWZ586CtNVfOTveuyUbT25Jyk6YN9MYHeG7QmxLh9MO
-         UsEg==
-X-Gm-Message-State: APjAAAXIsbWqt7asoUGqlvjqXwX7pg2gNakmiqKGskJUrRxkTWXG9XYe
-        un8U55eI2hhKhuWKzz5wucQ1Jj3XFsus2RF50T9c1g==
-X-Google-Smtp-Source: APXvYqy3KR8PkNemNTvSsvAPKbwWz5AYA4idh215gAMbHm3HrR6/fvRPnTIsNZj57xRG2aedNB37kQBnWN7B7ReL8jE=
-X-Received: by 2002:a2e:8559:: with SMTP id u25mr2128013ljj.224.1566548793811;
- Fri, 23 Aug 2019 01:26:33 -0700 (PDT)
+        id S2392726AbfHWI2E (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 04:28:04 -0400
+Received: from 8bytes.org ([81.169.241.247]:51038 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390104AbfHWI2E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 04:28:04 -0400
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id 196BE20E; Fri, 23 Aug 2019 10:28:03 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 10:27:57 +0200
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc:     iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iommu/amd: Override wrong IVRS IOAPIC on Raven Ridge
+ systems
+Message-ID: <20190823082757.GA24194@8bytes.org>
+References: <20190817063502.27311-1-kai.hen.fen@canonical.com>
+ <20190821051004.2367-1-kai.heng.feng@canonical.com>
 MIME-Version: 1.0
-References: <20190822171832.012773482@linuxfoundation.org>
-In-Reply-To: <20190822171832.012773482@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 23 Aug 2019 13:56:22 +0530
-Message-ID: <CA+G9fYv90rOtmxHpvvs2_TssLj9Ngp_vJh5sjoz0nj8y+mhNzQ@mail.gmail.com>
-Subject: Re: [PATCH 4.4 00/78] 4.4.190-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190821051004.2367-1-kai.heng.feng@canonical.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 22 Aug 2019 at 22:53, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.4.190 release.
-> There are 78 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat 24 Aug 2019 05:18:13 PM UTC.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.4.190-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.4.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Wed, Aug 21, 2019 at 01:10:04PM +0800, Kai-Heng Feng wrote:
+>  drivers/iommu/Makefile           |  2 +-
+>  drivers/iommu/amd_iommu.h        | 14 +++++
+>  drivers/iommu/amd_iommu_init.c   |  5 +-
+>  drivers/iommu/amd_iommu_quirks.c | 92 ++++++++++++++++++++++++++++++++
+>  4 files changed, 111 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/iommu/amd_iommu.h
+>  create mode 100644 drivers/iommu/amd_iommu_quirks.c
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.190-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.4.y
-git commit: f607b8c5ce70dfa9966f5f1f560bc7888aacbb63
-git describe: v4.4.189-79-gf607b8c5ce70
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
-ld/v4.4.189-79-gf607b8c5ce70
-
-
-No regressions (compared to build v4.4.189)
-
-
-No fixes (compared to build v4.4.189)
-
-Ran 20031 total tests in the following environments and test suites.
-
-Environments
---------------
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* build
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-open-posix-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* network-basic-tests
-* perf
-* prep-tmp-disk
-* spectre-meltdown-checker-test
-* kvm-unit-tests
-* v4l2-compliance
-* install-android-platform-tools-r2600
-* kselftest-vsyscall-mode-native
-* kselftest-vsyscall-mode-none
-* ssuite
-
-Summary
-------------------------------------------------------------------------
-
-kernel: 4.4.190-rc1
-git repo: https://git.linaro.org/lkft/arm64-stable-rc.git
-git branch: 4.4.190-rc1-hikey-20190822-542
-git commit: 1ba22f5aa4da73b8aba0abbbbb0d9c225dd0c34f
-git describe: 4.4.190-rc1-hikey-20190822-542
-Test details: https://qa-reports.linaro.org/lkft/linaro-hikey-stable-rc-4.4=
--oe/build/4.4.190-rc1-hikey-20190822-542
-
-
-No regressions (compared to build 4.4.190-rc1-hikey-20190822-541)
-
-
-No fixes (compared to build 4.4.190-rc1-hikey-20190822-541)
-
-Ran 1550 total tests in the following environments and test suites.
-
-Environments
---------------
-- hi6220-hikey - arm64
-
-Test Suites
------------
-* build
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-commands-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-dio-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* perf
-* spectre-meltdown-checker-test
-* v4l2-compliance
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
+Applied, thanks.
