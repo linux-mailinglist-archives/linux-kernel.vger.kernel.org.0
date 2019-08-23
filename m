@@ -2,126 +2,135 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id C95A69A673
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 06:02:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E9CCD9A679
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 06:12:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfHWECX (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 00:02:23 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:46719 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfHWECX (ORCPT
+        id S1729334AbfHWEMK (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 00:12:10 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50525 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728717AbfHWEMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 00:02:23 -0400
-Received: by mail-pl1-f195.google.com with SMTP id c2so4764862plz.13;
-        Thu, 22 Aug 2019 21:02:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Yel0x+m2Aj0fHDjusl5I4z7R0Ifl+JFYgseDOVUIkZk=;
-        b=Tj8kd3iWedgRnZYmXtQ1Inof1niR5jWQlUDlprQYn/jRwEPa7qH+LKWVYSuIPG6N+M
-         azuHxFgl4BlOeRK4npX7cx0FqYVcstAgUBJUVcQoUxA2VH/ANXhjzTjaWIJAgZx0J3lX
-         OoJotT8tSe5hYCXHY1hcnAeDOHAQraxCkwhLrZLgCvYAslNwSLpfNkTVPwJHdIOKkBf/
-         Eye2vO7BhxvYuMXDme6aci3NBpzZITPWJsUWxSKI6ICMPB6UYoUJTuXIwSCt9kXK1uBN
-         p0V0qbXgHB0ggKxPLHP+SaHCsrZe7ThaaioaCsQNajhyv/v6o7BYPW7Z30IoCAB165zB
-         lqbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Yel0x+m2Aj0fHDjusl5I4z7R0Ifl+JFYgseDOVUIkZk=;
-        b=H7HVwQbceYBDzuN5nYa2Bz+UcvRWPrsvrspg8/orXJHVUm8p7UYK+rhQ72OqftQPOo
-         MltBCpmrQlKagy4P/NbLEf3HPMrcN9zhkIuYLRoNLUfswK4m/l53IVLNR/WMQv44Agb8
-         HkmOKcM9rxpSIYGBHv4mOVG5FC2h7QfIfRjmG1IGpdThwDVo+rNxkOa0Gw2HN2uO6eU5
-         mBnvkCAfeBBc1byQ6xs6ywmisrkhg/FxvAVG6BeDy8n+G4YRLevdbiJ2vjM5Z4Q+5qLc
-         TeBPJj6bDyyxJ94yi7zS1zHwideILShMJyJFpErSCfV6xtl3HL35vLM/tvPmjtHd+k0C
-         XMZA==
-X-Gm-Message-State: APjAAAXWeIjeTmgYEr5Zj2wxQjH5JXpZdg8ItifkzSAkkhnj1OUSHqpV
-        anWMQ4evqZ1Bk3pnDnEceLY=
-X-Google-Smtp-Source: APXvYqx6OiWPOmb6UnDM7G4EeXtWVfl24KDBgNHT+5SzRGe+1+0Z1DiIj9dXuUxlW6ZND39sOQs42g==
-X-Received: by 2002:a17:902:3363:: with SMTP id a90mr2403398plc.270.1566532942559;
-        Thu, 22 Aug 2019 21:02:22 -0700 (PDT)
-Received: from localhost ([2601:1c0:5200:e554::6bd7])
-        by smtp.gmail.com with ESMTPSA id e189sm699430pgc.15.2019.08.22.21.02.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 21:02:21 -0700 (PDT)
-From:   Rob Clark <robdclark@gmail.com>
-To:     dri-devel@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Bruce Wang <bzwang@chromium.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Sravanthi Kollukuduru <skolluku@codeaurora.org>,
-        Abhinav Kumar <abhinavk@codeaurora.org>,
-        Fritz Koenig <frkoenig@google.com>,
-        linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/msm/dpu: remove unused arg
-Date:   Thu, 22 Aug 2019 21:00:11 -0700
-Message-Id: <20190823040103.22289-2-robdclark@gmail.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190823040103.22289-1-robdclark@gmail.com>
-References: <20190823040103.22289-1-robdclark@gmail.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 23 Aug 2019 00:12:10 -0400
+Received: from fsav108.sakura.ne.jp (fsav108.sakura.ne.jp [27.133.134.235])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x7N4BgHC004623;
+        Fri, 23 Aug 2019 13:11:42 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav108.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp);
+ Fri, 23 Aug 2019 13:11:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav108.sakura.ne.jp)
+Received: from ccsecurity.localdomain (softbank126227201116.bbtec.net [126.227.201.116])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x7N4BcR0004403
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 23 Aug 2019 13:11:42 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
+Subject: [PATCH v2] /dev/mem: Bail out upon SIGKILL.
+Date:   Fri, 23 Aug 2019 13:11:19 +0900
+Message-Id: <1566533479-4390-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Clark <robdclark@chromium.org>
+syzbot found that a thread can stall for minutes inside read_mem() or
+write_mem() after that thread was killed by SIGKILL [1]. Reading 2GB at
+one read() is legal, but delaying termination of killed thread for minutes
+is bad. Let's insert cond_resched() and SIGKILL check into iteration loop
+of reading/writing /dev/mem and /dev/kmem.
 
-Signed-off-by: Rob Clark <robdclark@chromium.org>
+  [ 1335.912419][T20577] read_mem: sz=4096 count=2134565632
+  [ 1335.943194][T20577] read_mem: sz=4096 count=2134561536
+  [ 1335.978280][T20577] read_mem: sz=4096 count=2134557440
+  [ 1336.011147][T20577] read_mem: sz=4096 count=2134553344
+  [ 1336.041897][T20577] read_mem: sz=4096 count=2134549248
+
+[1] https://syzkaller.appspot.com/bug?id=a0e3436829698d5824231251fad9d8e998f94f5e
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+8ab2d0f39fb79fe6ca40@syzkaller.appspotmail.com>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h | 3 +--
- 3 files changed, 3 insertions(+), 4 deletions(-)
+ drivers/char/mem.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 4e54550c4a80..a52439e029c9 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -634,7 +634,7 @@ void dpu_crtc_commit_kickoff(struct drm_crtc *crtc, bool async)
- 	 */
- 	drm_for_each_encoder_mask(encoder, crtc->dev,
- 				  crtc->state->encoder_mask)
--		dpu_encoder_prepare_for_kickoff(encoder, async);
-+		dpu_encoder_prepare_for_kickoff(encoder);
+diff --git a/drivers/char/mem.c b/drivers/char/mem.c
+index b08dc50..cb8e653 100644
+--- a/drivers/char/mem.c
++++ b/drivers/char/mem.c
+@@ -140,6 +140,10 @@ static ssize_t read_mem(struct file *file, char __user *buf,
+ 		int allowed, probe;
  
- 	if (!async) {
- 		/* wait for previous frame_event_done completion */
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index ed677cf2e1af..627c57594221 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -1780,7 +1780,7 @@ static void dpu_encoder_vsync_event_work_handler(struct kthread_work *work)
- 			nsecs_to_jiffies(ktime_to_ns(wakeup_time)));
- }
+ 		sz = size_inside_page(p, count);
++		cond_resched();
++		err = -EINTR;
++		if (fatal_signal_pending(current))
++			goto failed;
  
--void dpu_encoder_prepare_for_kickoff(struct drm_encoder *drm_enc, bool async)
-+void dpu_encoder_prepare_for_kickoff(struct drm_encoder *drm_enc)
- {
- 	struct dpu_encoder_virt *dpu_enc;
- 	struct dpu_encoder_phys *phys;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-index a8bf1147fc56..997d131c2440 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-@@ -68,9 +68,8 @@ void dpu_encoder_register_frame_event_callback(struct drm_encoder *encoder,
-  *	Immediately: if no previous commit is outstanding.
-  *	Delayed: Block until next trigger can be issued.
-  * @encoder:	encoder pointer
-- * @async:	true if this is an asynchronous commit
-  */
--void dpu_encoder_prepare_for_kickoff(struct drm_encoder *encoder,  bool async);
-+void dpu_encoder_prepare_for_kickoff(struct drm_encoder *encoder);
+ 		err = -EPERM;
+ 		allowed = page_is_allowed(p >> PAGE_SHIFT);
+@@ -218,6 +222,9 @@ static ssize_t write_mem(struct file *file, const char __user *buf,
+ 		int allowed;
  
- /**
-  * dpu_encoder_trigger_kickoff_pending - Clear the flush bits from previous
+ 		sz = size_inside_page(p, count);
++		cond_resched();
++		if (fatal_signal_pending(current))
++			return -EINTR;
+ 
+ 		allowed = page_is_allowed(p >> PAGE_SHIFT);
+ 		if (!allowed)
+@@ -451,6 +458,9 @@ static ssize_t read_kmem(struct file *file, char __user *buf,
+ #endif
+ 		while (low_count > 0) {
+ 			sz = size_inside_page(p, low_count);
++			cond_resched();
++			if (fatal_signal_pending(current))
++				return -EINTR;
+ 
+ 			/*
+ 			 * On ia64 if a page has been mapped somewhere as
+@@ -477,6 +487,11 @@ static ssize_t read_kmem(struct file *file, char __user *buf,
+ 			return -ENOMEM;
+ 		while (count > 0) {
+ 			sz = size_inside_page(p, count);
++			cond_resched();
++			if (fatal_signal_pending(current)) {
++				err = -EINTR;
++				break;
++			}
+ 			if (!is_vmalloc_or_module_addr((void *)p)) {
+ 				err = -ENXIO;
+ 				break;
+@@ -523,6 +538,9 @@ static ssize_t do_write_kmem(unsigned long p, const char __user *buf,
+ 		void *ptr;
+ 
+ 		sz = size_inside_page(p, count);
++		cond_resched();
++		if (fatal_signal_pending(current))
++			return -EINTR;
+ 
+ 		/*
+ 		 * On ia64 if a page has been mapped somewhere as uncached, then
+@@ -581,6 +599,11 @@ static ssize_t write_kmem(struct file *file, const char __user *buf,
+ 			unsigned long sz = size_inside_page(p, count);
+ 			unsigned long n;
+ 
++			cond_resched();
++			if (fatal_signal_pending(current)) {
++				err = -EINTR;
++				break;
++			}
+ 			if (!is_vmalloc_or_module_addr((void *)p)) {
+ 				err = -ENXIO;
+ 				break;
 -- 
-2.21.0
+1.8.3.1
 
