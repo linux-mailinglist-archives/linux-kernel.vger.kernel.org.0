@@ -2,86 +2,211 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B86D9B2FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:06:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BC089B2F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 17:04:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404489AbfHWPF7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 11:05:59 -0400
-Received: from mga05.intel.com ([192.55.52.43]:20136 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732530AbfHWPF7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 11:05:59 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Aug 2019 08:05:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,421,1559545200"; 
-   d="scan'208";a="186890433"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by FMSMGA003.fm.intel.com with ESMTP; 23 Aug 2019 08:05:58 -0700
-Date:   Fri, 23 Aug 2019 09:04:03 -0600
-From:   Keith Busch <kbusch@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     linux-pci@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [PATCH v2 0/3] PCI: Add PCI_ERROR_RESPONSE, check for errors
-Message-ID: <20190823150403.GB16605@localhost.localdomain>
-References: <20190822200551.129039-1-helgaas@kernel.org>
+        id S2395561AbfHWPEO (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 11:04:14 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35899 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394180AbfHWPEI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 11:04:08 -0400
+Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tip-bot2@linutronix.de>)
+        id 1i1B6h-0004lN-NE; Fri, 23 Aug 2019 17:04:03 +0200
+Received: from [127.0.1.1] (localhost [IPv6:::1])
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 5BB781C04F3;
+        Fri, 23 Aug 2019 17:04:03 +0200 (CEST)
+Date:   Fri, 23 Aug 2019 15:04:03 -0000
+From:   tip-bot2 for Vitaly Kuznetsov <tip-bot2@linutronix.de>
+Reply-to: linux-kernel@vger.kernel.org
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] clocksource/drivers/hyperv: Enable TSC page
+ clocksource on 32bit
+Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
+In-Reply-To: <20190822083630.17059-1-vkuznets@redhat.com>
+References: <20190822083630.17059-1-vkuznets@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Message-ID: <156657264330.8408.14103404893660006409.tip-bot2@tip-bot2>
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot2.linutronix.de>
+Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Disposition: inline
-In-Reply-To: <20190822200551.129039-1-helgaas@kernel.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 03:05:48PM -0500, Bjorn Helgaas wrote:
-> From: Bjorn Helgaas <bhelgaas@google.com>
-> 
-> Reads from a PCI device may fail if the device has been turned off (put
-> into D3cold), removed, or if some other error occurs.  The PCI host bridge
-> typically fabricates ~0 data to complete the CPU's read.
-> 
-> We check for that in a few places, but not in a consistent way.  This
-> series adds a PCI_ERROR_RESPONSE definition to make the checks more
-> consistent and easier to find.  Note that ~0 may indicate a PCI error, but
-> it may also be valid read data, so you need more information (such as
-> knowing that a register can never contain ~0) before concluding that it's
-> an error.
-> 
-> This series also adds a new check for PCI_ERROR_RESPONSE in the power
-> management code because that code frequently encounters devices in D3cold,
-> where we previously misinterpreted ~0 data.  It also uses pci_power_name()
-> to print D-state names more consistently.
-> 
-> Rafael, I didn't add your Reviewed-by to "PCI / PM: Return error when
-> changing power state from D3cold" because I made small changes to try to
-> make the messages more consistent, and I didn't want to presume they'd be
-> OK with you.
-> 
-> Changes since v1:
->   - Add Rafael's Reviewed-By to the first two patches
->   - Drop "PCI / PM: Check for error when reading PME status" because Rafael
->     pointed out that some devices can signal PME even when in D3cold, so
->     this would require additional rework
->   - Drop "PCI / PM: Check for error when reading Power State" because
->     Rafael thinks it's mostly redundant
-> 
-> Bjorn Helgaas (3):
->   PCI: Add PCI_ERROR_RESPONSE definition
->   PCI / PM: Decode D3cold power state correctly
->   PCI / PM: Return error when changing power state from D3cold
+The following commit has been merged into the timers/core branch of tip:
 
-Series looks good to me.
+Commit-ID:     3e2d94535adb2df15f3907e4b4c7cd8a5a4c2b5a
+Gitweb:        https://git.kernel.org/tip/3e2d94535adb2df15f3907e4b4c7cd8a5a4c2b5a
+Author:        Vitaly Kuznetsov <vkuznets@redhat.com>
+AuthorDate:    Thu, 22 Aug 2019 10:36:30 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 23 Aug 2019 16:59:54 +02:00
 
-Reviewed-by: Keith Busch <kbusch@kernel.org>
+clocksource/drivers/hyperv: Enable TSC page clocksource on 32bit
+
+There is no particular reason to not enable TSC page clocksource on
+32-bit. mul_u64_u64_shr() is available and despite the increased
+computational complexity (compared to 64bit) TSC page is still a huge win
+compared to MSR-based clocksource.
+
+In-kernel reads:
+  MSR based clocksource: 3361 cycles
+  TSC page clocksource: 49 cycles
+
+Reads from userspace (utilizing vDSO in case of TSC page):
+  MSR based clocksource: 5664 cycles
+  TSC page clocksource: 131 cycles
+
+Enabling TSC page on 32bits allows to get rid of CONFIG_HYPERV_TSCPAGE as
+it is now not any different from CONFIG_HYPERV_TIMER.
+
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Link: https://lkml.kernel.org/r/20190822083630.17059-1-vkuznets@redhat.com
+
+---
+ arch/x86/include/asm/vdso/gettimeofday.h |  6 +++---
+ drivers/clocksource/hyperv_timer.c       | 11 -----------
+ drivers/hv/Kconfig                       |  3 ---
+ include/clocksource/hyperv_timer.h       |  8 +++-----
+ 4 files changed, 6 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/include/asm/vdso/gettimeofday.h b/arch/x86/include/asm/vdso/gettimeofday.h
+index ae91429..bcbf901 100644
+--- a/arch/x86/include/asm/vdso/gettimeofday.h
++++ b/arch/x86/include/asm/vdso/gettimeofday.h
+@@ -51,7 +51,7 @@ extern struct pvclock_vsyscall_time_info pvclock_page
+ 	__attribute__((visibility("hidden")));
+ #endif
+ 
+-#ifdef CONFIG_HYPERV_TSCPAGE
++#ifdef CONFIG_HYPERV_TIMER
+ extern struct ms_hyperv_tsc_page hvclock_page
+ 	__attribute__((visibility("hidden")));
+ #endif
+@@ -192,7 +192,7 @@ static u64 vread_pvclock(void)
+ }
+ #endif
+ 
+-#ifdef CONFIG_HYPERV_TSCPAGE
++#ifdef CONFIG_HYPERV_TIMER
+ static u64 vread_hvclock(void)
+ {
+ 	return hv_read_tsc_page(&hvclock_page);
+@@ -215,7 +215,7 @@ static inline u64 __arch_get_hw_counter(s32 clock_mode)
+ 		return vread_pvclock();
+ 	}
+ #endif
+-#ifdef CONFIG_HYPERV_TSCPAGE
++#ifdef CONFIG_HYPERV_TIMER
+ 	if (clock_mode == VCLOCK_HVCLOCK) {
+ 		barrier();
+ 		return vread_hvclock();
+diff --git a/drivers/clocksource/hyperv_timer.c b/drivers/clocksource/hyperv_timer.c
+index c322ab4..2317d4e 100644
+--- a/drivers/clocksource/hyperv_timer.c
++++ b/drivers/clocksource/hyperv_timer.c
+@@ -213,8 +213,6 @@ EXPORT_SYMBOL_GPL(hv_stimer_global_cleanup);
+ struct clocksource *hyperv_cs;
+ EXPORT_SYMBOL_GPL(hyperv_cs);
+ 
+-#ifdef CONFIG_HYPERV_TSCPAGE
+-
+ static struct ms_hyperv_tsc_page tsc_pg __aligned(PAGE_SIZE);
+ 
+ struct ms_hyperv_tsc_page *hv_get_tsc_page(void)
+@@ -245,7 +243,6 @@ static struct clocksource hyperv_cs_tsc = {
+ 	.mask	= CLOCKSOURCE_MASK(64),
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+-#endif
+ 
+ static u64 notrace read_hv_clock_msr(struct clocksource *arg)
+ {
+@@ -272,7 +269,6 @@ static struct clocksource hyperv_cs_msr = {
+ 	.flags	= CLOCK_SOURCE_IS_CONTINUOUS,
+ };
+ 
+-#ifdef CONFIG_HYPERV_TSCPAGE
+ static bool __init hv_init_tsc_clocksource(void)
+ {
+ 	u64		tsc_msr;
+@@ -304,13 +300,6 @@ static bool __init hv_init_tsc_clocksource(void)
+ 
+ 	return true;
+ }
+-#else
+-static bool __init hv_init_tsc_clocksource(void)
+-{
+-	return false;
+-}
+-#endif
+-
+ 
+ void __init hv_init_clocksource(void)
+ {
+diff --git a/drivers/hv/Kconfig b/drivers/hv/Kconfig
+index 9a59957..79e5356 100644
+--- a/drivers/hv/Kconfig
++++ b/drivers/hv/Kconfig
+@@ -14,9 +14,6 @@ config HYPERV
+ config HYPERV_TIMER
+ 	def_bool HYPERV
+ 
+-config HYPERV_TSCPAGE
+-       def_bool HYPERV && X86_64
+-
+ config HYPERV_UTILS
+ 	tristate "Microsoft Hyper-V Utilities driver"
+ 	depends on HYPERV && CONNECTOR && NLS
+diff --git a/include/clocksource/hyperv_timer.h b/include/clocksource/hyperv_timer.h
+index a821deb..422f5e5 100644
+--- a/include/clocksource/hyperv_timer.h
++++ b/include/clocksource/hyperv_timer.h
+@@ -28,12 +28,10 @@ extern void hv_stimer_cleanup(unsigned int cpu);
+ extern void hv_stimer_global_cleanup(void);
+ extern void hv_stimer0_isr(void);
+ 
+-#if IS_ENABLED(CONFIG_HYPERV)
++#ifdef CONFIG_HYPERV_TIMER
+ extern struct clocksource *hyperv_cs;
+ extern void hv_init_clocksource(void);
+-#endif /* CONFIG_HYPERV */
+ 
+-#ifdef CONFIG_HYPERV_TSCPAGE
+ extern struct ms_hyperv_tsc_page *hv_get_tsc_page(void);
+ 
+ static inline notrace u64
+@@ -91,7 +89,7 @@ hv_read_tsc_page(const struct ms_hyperv_tsc_page *tsc_pg)
+ 	return hv_read_tsc_page_tsc(tsc_pg, &cur_tsc);
+ }
+ 
+-#else /* CONFIG_HYPERV_TSC_PAGE */
++#else /* CONFIG_HYPERV_TIMER */
+ static inline struct ms_hyperv_tsc_page *hv_get_tsc_page(void)
+ {
+ 	return NULL;
+@@ -102,6 +100,6 @@ static inline u64 hv_read_tsc_page_tsc(const struct ms_hyperv_tsc_page *tsc_pg,
+ {
+ 	return U64_MAX;
+ }
+-#endif /* CONFIG_HYPERV_TSCPAGE */
++#endif /* CONFIG_HYPERV_TIMER */
+ 
+ #endif
