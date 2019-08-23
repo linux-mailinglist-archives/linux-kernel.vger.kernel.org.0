@@ -2,97 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id 03F999A798
+	by mail.lfdr.de (Postfix) with ESMTP id 6D95C9A799
 	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 08:35:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404392AbfHWG24 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 02:28:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45866 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731346AbfHWG24 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 02:28:56 -0400
-Received: from localhost (unknown [12.236.144.82])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 591102070B;
-        Fri, 23 Aug 2019 06:28:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566541735;
-        bh=9PxnY8Syeoj7fi5pKhNT+lx69maAv5KdABpLie9J16c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qRSqFtCKIik3YToJrPmUn4Tp32SCfcVNZktYnVlExOv5BdFMEF2WCrC537mlIdIDq
-         s6Cwp4VKpru2rOz4RXrkx4oqH67/b+g2BMYrldRxh52Ah9+MRl6t7UhL3JTx1p6wbS
-         55X6m8v5Lc/e3K5m30ltZZCs+b8TJyuTOUPtncs0=
-Date:   Fri, 23 Aug 2019 02:28:53 -0400
-From:   Sasha Levin <sashal@kernel.org>
-To:     Stefan Lippers-Hollmann <s.l-h@gmx.de>
-Cc:     Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 5.2 000/135] 5.2.10-stable review
-Message-ID: <20190823062853.GC1581@sasha-vm>
-References: <20190822170811.13303-1-sashal@kernel.org>
- <20190822172619.GA22458@kroah.com>
- <20190823000527.0ea91c6b@mir>
- <20190822233847.GB24034@kroah.com>
- <20190823024248.11e2dac3@mir>
+        id S2404428AbfHWGaS (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 02:30:18 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:38389 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404394AbfHWGaR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 23 Aug 2019 02:30:17 -0400
+Received: by mail-pl1-f194.google.com with SMTP id w11so4523510plp.5
+        for <linux-kernel@vger.kernel.org>; Thu, 22 Aug 2019 23:30:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PHgzB7LXrFsDHZMpQ3e7AmMOPq1F2h1b1Flup3dGb5k=;
+        b=nmVf6U+Yw+OIUaxMQF9WI05AI4EhxwHVlvr9jNM9Mzf4LtCySIgvRnABT0drXl/Kis
+         l/wu4O3seA8e2RjFyD55Ap6vvdgyjod1M+SkK9OdEvqHDNEUptuvtJf6uFhvOefo55+R
+         Km9j2WA4OKdaIs5EYafyWLbr5V6BWczzcQDPT3XRVLeyNV1f89PkF0RKG/DSb0iuVvuo
+         iOl2JqlK6yCs+pJHPX7yxVhztxpoWikKPOygzOJCL9uy3aex32hj/v1wKebi/+GIFQzc
+         XV1SghbYCKRCBiN+//pCHXI/EJkBbY+8kI2U1fufbtIr5VM0cksWsDaa9tzzrKYMzmO0
+         qIIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=PHgzB7LXrFsDHZMpQ3e7AmMOPq1F2h1b1Flup3dGb5k=;
+        b=iPtC0JnSTXkuh1zf9LUbgJrr+BqxkiqYzQue5iCyzh7hwOeWxVsCEnAXJHhDdbhlHU
+         TKbTRbjPWefYG5qHfkC/+AGnZHIWZgBv6bBa4T1NiqH7p6spI9g+PyzYTMB3ACiBsTIb
+         ehdLfU2u0uCxoJUL6ucFfYsIZ4PE+3+DMJWjjHRuuPLyrIE5Y51r28BM4pajsK//zN3P
+         b7Ua8zD0FAm+Pmuoo+46/oNqv1/nvEYRuXNiYlXxc8b/z2dofgd85xN/Q+IjqX1N30KB
+         kb3Avo3GKbqOl9ukNQX50J7x+TMo+m1yNlPyb74konJSPPBeZzCD4ueaJjKnrTTT5OPg
+         8PGg==
+X-Gm-Message-State: APjAAAXWjHC2l5/JzwxirKdH2MyYwFGj3BYxFF3KUK5I65+1b21zeXTD
+        +72tK8a6PbwbXFOnYRsYS6U=
+X-Google-Smtp-Source: APXvYqzjM1750tRhH/gnLvOqHn8wNbky+a9NAExFz6f74r1T0MfI+OlLiPsk82HDNkLmauL6eirrdg==
+X-Received: by 2002:a17:902:2f43:: with SMTP id s61mr2885601plb.22.1566541816984;
+        Thu, 22 Aug 2019 23:30:16 -0700 (PDT)
+Received: from FINLAND.cbr.squiz.net.au (220-245-33-70.static.tpgi.com.au. [220.245.33.70])
+        by smtp.gmail.com with ESMTPSA id o1sm1195408pjp.0.2019.08.22.23.30.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2019 23:30:16 -0700 (PDT)
+From:   Adam Zerella <adam.zerella@gmail.com>
+Cc:     Adam Zerella <adam.zerella@gmail.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] pcmcia/i82092: Refactored dprintk macro for pr_debug().
+Date:   Fri, 23 Aug 2019 16:29:49 +1000
+Message-Id: <20190823062951.1168-1-adam.zerella@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20190823024248.11e2dac3@mir>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 02:42:48AM +0200, Stefan Lippers-Hollmann wrote:
->Hi
->
->On 2019-08-22, Greg KH wrote:
->> On Fri, Aug 23, 2019 at 12:05:27AM +0200, Stefan Lippers-Hollmann wrote:
->> > On 2019-08-22, Greg KH wrote:
->> > > On Thu, Aug 22, 2019 at 01:05:56PM -0400, Sasha Levin wrote:
->[...]
->> > It might be down to kernel.org mirroring, but the patch file doesn't
->> > seem to be available yet (404), both in the wrong location listed
->> > above - and the expected one under
->> >
->> > 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
->[...]
->> Ah, no, it's not a mirroring problem, Sasha and I didn't know if anyone
->> was actually using the patch files anymore, so it was simpler to do a
->> release without them to see what happens. :)
->>
->> Do you rely on these, or can you use the -rc git tree or the quilt
->> series?  If you do rely on them, we will work to fix this, it just
->> involves some scripting that we didn't get done this morning.
->
->"Rely" is a strong word, I can adapt if they're going away, but
->I've been using them so far, as in (slightly simplified):
->
->$ cd patches/upstream/
->$ wget https://cdn.kernel.org/pub/linux/kernel/v5.x/patch-5.2.9.xz
->$ xz -d patch-5.2.9.xz
->$ wget https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.2.10-rc1.gz
->$ gunzip patch-5.2.10-rc1.gz
->$ vim ../series
->$ quilt ...
->
->I can switch to importing the quilt queue with some sed magic (and I
->already do that, if interesting or just a larger amounts of patches are
->queuing up for more than a day or two), but using the -rc patches has
->been convenient in that semi-manual workflow, also to make sure to really
->get and test the formal -rc patch, rather than something inbetween.
+As pointed out in https://kernelnewbies.org/KernelJanitors/Todo
+this patch replaces the outdated macro of DPRINTK for pr_debug()
 
-An easy way to generate a patch is to just use the git.kernel.org web
-interface. A patch for 5.2.10-rc1 would be:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/patch/?id=linux-5.2.y&id2=v5.2.9
+To: Dominik Brodowski <linux@dominikbrodowski.net>
+To: Thomas Gleixner <tglx@linutronix.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Adam Zerella <adam.zerella@gmail.com>
+To: linux-kernel@vger.kernel.org
+Signed-off-by: Adam Zerella <adam.zerella@gmail.com>
+---
+ drivers/pcmcia/i82092.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Personally this patch upload story sounded to me like a pre-git era
-artifact...
+diff --git a/drivers/pcmcia/i82092.c b/drivers/pcmcia/i82092.c
+index ec54a2aa5cb8..e1929520c20e 100644
+--- a/drivers/pcmcia/i82092.c
++++ b/drivers/pcmcia/i82092.c
+@@ -117,9 +117,9 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 		
+ 		if (card_present(i)) {
+ 			sockets[i].card_state = 3;
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is occupied\n",i);
++			pr_debug("i82092aa: slot %i is occupied\n", i);
+ 		} else {
+-			dprintk(KERN_DEBUG "i82092aa: slot %i is vacant\n",i);
++			pr_debug("i82092aa: slot %i is vacant\n", i);
+ 		}
+ 	}
+ 		
+@@ -128,7 +128,7 @@ static int i82092aa_pci_probe(struct pci_dev *dev, const struct pci_device_id *i
+ 	pci_write_config_byte(dev, 0x50, configbyte); /* PCI Interrupt Routing Register */
+ 
+ 	/* Register the interrupt handler */
+-	dprintk(KERN_DEBUG "Requesting interrupt %i \n",dev->irq);
++	pr_debug("Requesting interrupt %i\n", dev->irq);
+ 	if ((ret = request_irq(dev->irq, i82092aa_interrupt, IRQF_SHARED, "i82092aa", i82092aa_interrupt))) {
+ 		printk(KERN_ERR "i82092aa: Failed to register IRQ %d, aborting\n", dev->irq);
+ 		goto err_out_free_res;
+-- 
+2.20.1
 
-Thanks for the testing effort!
-
---
-Thanks,
-Sasha
