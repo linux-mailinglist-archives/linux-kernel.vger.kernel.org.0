@@ -2,38 +2,38 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id E16709AF3D
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:24:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D5E9AF3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 14:24:35 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391990AbfHWMYQ (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 08:24:16 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:35259 "EHLO
+        id S2394610AbfHWMYV (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 08:24:21 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:35267 "EHLO
         Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387912AbfHWMYO (ORCPT
+        with ESMTP id S1731856AbfHWMYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 08:24:14 -0400
+        Fri, 23 Aug 2019 08:24:15 -0400
 Received: from [5.158.153.53] (helo=tip-bot2.lab.linutronix.de)
         by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
         (Exim 4.80)
         (envelope-from <tip-bot2@linutronix.de>)
-        id 1i18bx-0001qS-Hm; Fri, 23 Aug 2019 14:24:09 +0200
+        id 1i18by-0001r6-Cx; Fri, 23 Aug 2019 14:24:10 +0200
 Received: from [127.0.1.1] (localhost [IPv6:::1])
-        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 241CB1C089A;
-        Fri, 23 Aug 2019 14:24:09 +0200 (CEST)
+        by tip-bot2.lab.linutronix.de (Postfix) with ESMTP id 089A01C089A;
+        Fri, 23 Aug 2019 14:24:10 +0200 (CEST)
 Date:   Fri, 23 Aug 2019 12:24:09 -0000
 From:   tip-bot2 for Arnaldo Carvalho de Melo <tip-bot2@linutronix.de>
 Reply-to: linux-kernel@vger.kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf stat: Add missing counts.h
+Subject: [tip: perf/core] perf evsel: Add missing perf/evsel.h header in util/evsel.h
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org
-In-Reply-To: <tip-jwcbm9gv9llloe3he5qkdefs@git.kernel.org>
-References: <tip-jwcbm9gv9llloe3he5qkdefs@git.kernel.org>
+In-Reply-To: <tip-nfb9e0t4jm9zhvr0q86hc29d@git.kernel.org>
+References: <tip-nfb9e0t4jm9zhvr0q86hc29d@git.kernel.org>
 MIME-Version: 1.0
-Message-ID: <156656304907.32114.12611741392633447359.tip-bot2@tip-bot2>
+Message-ID: <156656304997.32120.3841712694711958136.tip-bot2@tip-bot2>
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot2.linutronix.de>
 Robot-Unsubscribe: Contact <mailto:tglx@linutronix.de> to get blacklisted from
@@ -51,50 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The following commit has been merged into the perf/core branch of tip:
 
-Commit-ID:     bfc49182c64e9dbdea494a577894194701b61e72
-Gitweb:        https://git.kernel.org/tip/bfc49182c64e9dbdea494a577894194701b61e72
+Commit-ID:     69714a4e3959eb051e685c6dce06c6d5a8f27c3c
+Gitweb:        https://git.kernel.org/tip/69714a4e3959eb051e685c6dce06c6d5a8f27c3c
 Author:        Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate:    Wed, 21 Aug 2019 14:02:05 -03:00
+AuthorDate:    Wed, 21 Aug 2019 14:09:54 -03:00
 Committer:     Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitterDate: Thu, 22 Aug 2019 17:16:57 -03:00
 
-perf stat: Add missing counts.h
+perf evsel: Add missing perf/evsel.h header in util/evsel.h
 
-It is getting this via evsel.h, that don't strictly need counts.h, just
-forward declarations for some structs, so add it here before we remove
-it from there.
+Since util/evsel.h uses perf_evsel__cpus() that has its prototype in
+libperf's perf/evsel.h file, we need it explicitely included.
+
+This was working by luck as util/evsel.h includes counts.h, but that is
+not necessary, just some forward declarations, so, before we remove
+counts.h from util/evsel.h, add what is realli needed.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-jwcbm9gv9llloe3he5qkdefs@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-nfb9e0t4jm9zhvr0q86hc29d@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/stat-display.c | 1 +
- tools/perf/util/stat.c         | 1 +
- 2 files changed, 2 insertions(+)
+ tools/perf/util/evsel.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index 3df0e39..605a1fd 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -4,6 +4,7 @@
- #include <linux/time64.h>
- #include <math.h>
- #include "color.h"
-+#include "counts.h"
- #include "evlist.h"
- #include "evsel.h"
- #include "stat.h"
-diff --git a/tools/perf/util/stat.c b/tools/perf/util/stat.c
-index 2715112..1e6a25a 100644
---- a/tools/perf/util/stat.c
-+++ b/tools/perf/util/stat.c
-@@ -2,6 +2,7 @@
- #include <errno.h>
- #include <inttypes.h>
- #include <math.h>
-+#include "counts.h"
- #include "stat.h"
- #include "evlist.h"
- #include "evsel.h"
+diff --git a/tools/perf/util/evsel.h b/tools/perf/util/evsel.h
+index 2928eee..da91d6f 100644
+--- a/tools/perf/util/evsel.h
++++ b/tools/perf/util/evsel.h
+@@ -8,6 +8,7 @@
+ #include <linux/perf_event.h>
+ #include <linux/types.h>
+ #include <internal/evsel.h>
++#include <perf/evsel.h>
+ #include "symbol_conf.h"
+ #include "cpumap.h"
+ #include "counts.h"
