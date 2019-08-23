@@ -2,98 +2,105 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id CB7359BC15
-	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 08:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2D4DA9BC1B
+	for <lists+linux-kernel@lfdr.de>; Sat, 24 Aug 2019 08:08:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727431AbfHXGDN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Sat, 24 Aug 2019 02:03:13 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:32790 "EHLO
+        id S1726979AbfHXGFN (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Sat, 24 Aug 2019 02:05:13 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34651 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727147AbfHXGC5 (ORCPT
+        with ESMTP id S1726058AbfHXGFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 24 Aug 2019 02:02:57 -0400
-Received: by mail-pf1-f194.google.com with SMTP id g2so8053208pfq.0
-        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 23:02:57 -0700 (PDT)
+        Sat, 24 Aug 2019 02:05:13 -0400
+Received: by mail-pf1-f194.google.com with SMTP id b24so8066246pfp.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 23:05:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=F+nj3E/Xs8M7qxtN9qZbU1CEqcrINAxu4k53hreWaAI=;
-        b=EVwFOFRCLghWrV0B+Fgrf9sXqIz31luQckRhXbCogqE/cNfM8k73Y6HwKDlmIq8A+G
-         HxcNwPCzKijsvwc/Bn+fqZfhonidiEMLuxFuX78RAJBwA17y0sCbzBw0nu4pS6JAgu/I
-         K80zgOkAlrkJFSSsAaMQ+qDw2E7o7qVfbNUf6Ta3hZl1V2lRL+J8suLqtOVnaKLoznnB
-         b3rcKY9fA2bOQ3lONgofr+nWhtQmbtlFVdJgFaHleHDZEaVDZcV8+xcU/H0FckNlZ7t3
-         J506fuTyCqwLIK4SnhCYJRTlNjyNmc4TlGWJ4F0PZAjQX0JIQIBZRZ7SRtvGt5mGQKPf
-         qAxA==
-X-Gm-Message-State: APjAAAX8QhyRU+smPAdkQFExWpcywLC19839EVNeLf2k03oa7hVVwc3r
-        iJ8JaEYNOAS0S2Rj6ic+u8Y=
-X-Google-Smtp-Source: APXvYqwoSY1YsQL7ykK2Wm70uU0BpfKji/wNiOEP4B4MY7NXWa87XMT8TEerNMfzR/+iHEWz7ovu3A==
-X-Received: by 2002:a65:5cca:: with SMTP id b10mr7190158pgt.365.1566626576692;
-        Fri, 23 Aug 2019 23:02:56 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kDV1vhN0wODBotvyRh1M9ntCF2zJ8VrUcg/cgB4CwYg=;
+        b=NISril8xgnKPq8sH+bCA8IO/00VdT0J7DX966/UC6mCE/72dFUrF7OugxQnNUyx07c
+         gnCn9tsil/6IR0PztUNNrJo/x6H/2skN3q22V68SvU+cWBOnfBCZj3pH/ovAowVL4rKE
+         vJcyEK7Qf6c0Uw51KycnjThnuOkBzpo62VCWif06KXKUwDCNrNnWMIdEGzFG/rFvFBtB
+         sC9R1Z8Kw/rwo3TRHJ1P5i8mevEh6wnucEkw/s6UW7Ggi9NKdjA72hTeZ7T6RuMBSMNC
+         wsA8MWSYSrVgbwuUnlap1RjwSVDICO9sLPmjcVFr9VnK1VyfmlO/upIY1CW8WKekiP+O
+         WAmA==
+X-Gm-Message-State: APjAAAWGoHpZAx1Pa3O+KiNl3Mvu7ZjpeaD9cAHur9d1yy1pvrDftv8y
+        FcXjGsOiyjkHSLd4nIYy1zM=
+X-Google-Smtp-Source: APXvYqzlRbYMmTK0qQhZkPzDvPeuntH4nvz+aupEoP5w94g3eR1oGjx1Ji6+K1Gk7+sTj6ivfU5Fkw==
+X-Received: by 2002:a62:53c3:: with SMTP id h186mr9304094pfb.178.1566626712276;
+        Fri, 23 Aug 2019 23:05:12 -0700 (PDT)
 Received: from sc2-haas01-esx0118.eng.vmware.com ([66.170.99.1])
-        by smtp.gmail.com with ESMTPSA id i11sm6505645pfk.34.2019.08.23.23.02.54
+        by smtp.gmail.com with ESMTPSA id w2sm4300882pjr.27.2019.08.23.23.05.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Aug 2019 23:02:55 -0700 (PDT)
+        Fri, 23 Aug 2019 23:05:11 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
-To:     Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>
+To:     Peter Zijlstra <peterz@infradead.org>
 Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
         Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Garnier <thgarnie@chromium.org>,
         Ingo Molnar <mingo@redhat.com>, Nadav Amit <namit@vmware.com>
-Subject: [PATCH v4 9/9] x86/mm/tlb: Remove unnecessary uses of the inline keyword
-Date:   Fri, 23 Aug 2019 15:41:53 -0700
-Message-Id: <20190823224153.15223-10-namit@vmware.com>
+Subject: [PATCH 0/7] x86/percpu: Use segment qualifiers
+Date:   Fri, 23 Aug 2019 15:44:17 -0700
+Message-Id: <20190823224424.15296-1-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190823224153.15223-1-namit@vmware.com>
-References: <20190823224153.15223-1-namit@vmware.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compiler is smart enough without these hints.
+GCC 6+ supports segment qualifiers. Using them allows to implement
+several optimizations:
 
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Reviewed-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
----
- arch/x86/mm/tlb.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+1. Avoid unnecessary instructions when an operation is carried on
+read/written per-cpu value, and instead allow the compiler to set
+instructions that access per-cpu value directly.
 
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 3dca146edcf1..0addc6e84126 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -189,7 +189,7 @@ static void sync_current_stack_to_mm(struct mm_struct *mm)
- 	}
- }
- 
--static inline unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
-+static unsigned long mm_mangle_tif_spec_ib(struct task_struct *next)
- {
- 	unsigned long next_tif = task_thread_info(next)->flags;
- 	unsigned long ibpb = (next_tif >> TIF_SPEC_IB) & LAST_USER_MM_IBPB;
-@@ -741,7 +741,7 @@ static DEFINE_PER_CPU_SHARED_ALIGNED(struct flush_tlb_info, flush_tlb_info);
- static DEFINE_PER_CPU(unsigned int, flush_tlb_info_idx);
- #endif
- 
--static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
-+static struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 			unsigned long start, unsigned long end,
- 			unsigned int stride_shift, bool freed_tables,
- 			u64 new_tlb_gen)
-@@ -768,7 +768,7 @@ static inline struct flush_tlb_info *get_flush_tlb_info(struct mm_struct *mm,
- 	return info;
- }
- 
--static inline void put_flush_tlb_info(void)
-+static void put_flush_tlb_info(void)
- {
- #ifdef CONFIG_DEBUG_VM
- 	/* Complete reentrency prevention checks */
+2. Make this_cpu_ptr() more efficient and allow its value to be cached,
+since preemption must be disabled when this_cpu_ptr() is used.
+
+3. Provide better alternative for this_cpu_read_stable() that caches
+values more efficiently using alias attribute to const variable.
+
+4. Allow the compiler to perform other optimizations (e.g. CSE).
+
+5. Use rip-relative addressing in per_cpu_read_stable(), which make it
+PIE-ready.
+
+"size" and Peter's compare do not seem to show the impact on code size
+reduction correctly. Summing the code size according to nm on defconfig
+shows a minor reduction from 11451310 to 11451310 (0.09%).
+
+RFC->v1:
+ * Fixing i386 build bug
+ * Moving chunk to the right place [Peter]
+
+Nadav Amit (7):
+  compiler: Report x86 segment support
+  x86/percpu: Use compiler segment prefix qualifier
+  x86/percpu: Use C for percpu accesses when possible
+  x86: Fix possible caching of current_task
+  percpu: Assume preemption is disabled on per_cpu_ptr()
+  x86/percpu: Optimized arch_raw_cpu_ptr()
+  x86/current: Aggressive caching of current
+
+ arch/x86/include/asm/current.h         |  30 +++
+ arch/x86/include/asm/fpu/internal.h    |   7 +-
+ arch/x86/include/asm/percpu.h          | 293 +++++++++++++++++++------
+ arch/x86/include/asm/preempt.h         |   3 +-
+ arch/x86/include/asm/resctrl_sched.h   |  14 +-
+ arch/x86/kernel/cpu/Makefile           |   1 +
+ arch/x86/kernel/cpu/common.c           |   7 +-
+ arch/x86/kernel/cpu/current.c          |  16 ++
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c |   4 +-
+ arch/x86/kernel/process_32.c           |   4 +-
+ arch/x86/kernel/process_64.c           |   4 +-
+ include/asm-generic/percpu.h           |  12 +
+ include/linux/compiler-gcc.h           |   4 +
+ include/linux/compiler.h               |   2 +-
+ include/linux/percpu-defs.h            |  33 ++-
+ 15 files changed, 346 insertions(+), 88 deletions(-)
+ create mode 100644 arch/x86/kernel/cpu/current.c
+
 -- 
 2.17.1
 
