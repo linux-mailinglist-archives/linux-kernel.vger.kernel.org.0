@@ -2,89 +2,84 @@ Return-Path: <linux-kernel-owner@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.lfdr.de (Postfix) with ESMTP id F15609A918
-	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:48:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 065C19A926
+	for <lists+linux-kernel@lfdr.de>; Fri, 23 Aug 2019 09:52:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390873AbfHWHr7 (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
-        Fri, 23 Aug 2019 03:47:59 -0400
-Received: from relay11.mail.gandi.net ([217.70.178.231]:40469 "EHLO
-        relay11.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbfHWHr6 (ORCPT
+        id S2391062AbfHWHuw (ORCPT <rfc822;lists+linux-kernel@lfdr.de>);
+        Fri, 23 Aug 2019 03:50:52 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:33858 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732840AbfHWHuv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:47:58 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay11.mail.gandi.net (Postfix) with ESMTPSA id 42D4210000C;
-        Fri, 23 Aug 2019 07:47:55 +0000 (UTC)
-Date:   Fri, 23 Aug 2019 09:47:54 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH v8 0/5] media: Allwinner A10 CSI support
-Message-ID: <20190823074754.z23rx62o5do4pu3z@flea>
-References: <cover.85d78dd1a3b44fe4cde1b65a9b1eb3b95daea7cc.1566462064.git-series.maxime.ripard@bootlin.com>
+        Fri, 23 Aug 2019 03:50:51 -0400
+Received: by mail-lf1-f67.google.com with SMTP id b29so6473105lfq.1
+        for <linux-kernel@vger.kernel.org>; Fri, 23 Aug 2019 00:50:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=AROq8DpxBavGw3rOZlBsIIIgdgdRJheHWzoZIaKAbGU=;
+        b=eZXrBT737nM6L8Pa5XlEQuC0rQBRrzfTsrl7Tw0vIf6llspePcFP3Z99vwe48Xo+q+
+         xOKOeB2kfRG07WTIk/J/GStBuxjjfJKMkzmaTv+HZxcu+unxdyhXqKmAcj8A6lXg4nll
+         Wh5bMJd1ogfOrPxcDidGKUBQ9eIYg8/0B5MHQGTrHe/GPKG/Ds+nI4dND4hFOoU+Mdgs
+         nuA64AWazxNszt2zSzknLq2Go1nWPLVQW2G+zpe8aY/JKdzYSFUXNP4Zweqq/FTXRHef
+         Gx6CccrR4hrMSojSHJjv1mmNtPTOQ5L/PyeCjpMZX9KG+V+MXVOELXgnFpiPNT0xvQjA
+         UKqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AROq8DpxBavGw3rOZlBsIIIgdgdRJheHWzoZIaKAbGU=;
+        b=Xu1ESmRaJI2hyxiAX+72vLULWymUDA5QRtoIOXdLkIfup7S9b9CKXs6zbPN0GRr1QN
+         GBswQZSTzSd7achKi2OIrHHesQoHkFwiZbznEWiP36Mzgvdbes4NX+KmE4aSsG7khTY9
+         +HdkPBJFDRbKtYFSUrsUj3FWuqQ5OVKKe87WN/Pu+DdQgbZo8FsSM+MLFhYce6KlHycR
+         lrdOmVA768dfLuxNbHq4u/Ei8i4efrUVn52UvJ66FUoJ1Ctd2H43YeviDKsNlYmjZMiD
+         E7WoCuxWJB572c7yn417XG1jiLvGqma7peQV8z2QCajsvdHmU1pnS+vDajAtKLOpAsXw
+         1MbA==
+X-Gm-Message-State: APjAAAWTdPjQsjPOLOA9ffBZRWmwahkwhR8Ysv903jdV4gGG6GqQRj/3
+        OjklaDRQb7aS0uW+43fghW+kJ4WVmjoHd1LCyoTsNw==
+X-Google-Smtp-Source: APXvYqy4LEAB6weVbikWw4omf6hTp96l46dy0piklsM9lAxP3u3RWDVFhgst2bdXR83kAe94+v5z+0MY4UWyNN2QLmo=
+X-Received: by 2002:ac2:5c42:: with SMTP id s2mr1990286lfp.61.1566546650115;
+ Fri, 23 Aug 2019 00:50:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="p5b5zggpj4lv77ke"
-Content-Disposition: inline
-In-Reply-To: <cover.85d78dd1a3b44fe4cde1b65a9b1eb3b95daea7cc.1566462064.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20180716
+References: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
+In-Reply-To: <1565686400-5711-1-git-send-email-light.hsieh@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 23 Aug 2019 09:50:38 +0200
+Message-ID: <CACRpkdY0+eQXknPPj2vz9-Zo9cQHJQafbUC97mOQvEuzbX-qtw@mail.gmail.com>
+Subject: Re: [PATCH v1 0/5] Improve MediaTek pinctrl v2 and make backward
+ compatible to smartphone mass production usage
+To:     Light Hsieh <light.hsieh@mediatek.com>
+Cc:     "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Sean Wang <sean.wang@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Tue, Aug 13, 2019 at 10:53 AM Light Hsieh <light.hsieh@mediatek.com> wrote:
 
---p5b5zggpj4lv77ke
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> This patch improves MediaTek pinctrl v2 and makes backward compatible to
+> current smartphone mass production usage by:
+> 1.Check gpio pin number and use binary search in control address lookup
+> 2.Supporting driving setting without mapping current to register value
+> 3.Correct usage of PIN_CONFIG get/set implementation
 
-On Thu, Aug 22, 2019 at 10:21:11AM +0200, Maxime Ripard wrote:
-> From: Maxime Ripard <maxime.ripard@bootlin.com>
->
-> Hi,
->
-> Here is a series introducing the support for the A10 (and SoCs of the same
-> generation) CMOS Sensor Interface (called CSI, not to be confused with
-> MIPI-CSI, which isn't support by that IP).
->
-> That interface is pretty straightforward, but the driver has a few issues
-> that I wanted to bring up:
->
->   * The only board I've been testing this with has an ov5640 sensor
->     attached, which doesn't work with the upstream driver. Copying the
->     Allwinner init sequence works though, and this is how it has been
->     tested. Testing with a second sensor would allow to see if it's an
->     issue on the CSI side or the sensor side.
->   * We don't have support for the ISP at the moment, but this can be added
->     eventually.
+I rely on Sean to review and get this in shape.
 
-Applied patch 4.
+> 4.Backward compatible to previous Mediatek's bias-pull usage
 
-Maxime
+This is fine as long as the new style of using explicit pull
+setting also works. It's nice to be compatible.
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 5.Add support for pin configuration dump via sysfs
 
---p5b5zggpj4lv77ke
-Content-Type: application/pgp-signature; name="signature.asc"
+Do you mean debugfs? You should use debugfs for debug.
+sysfs is subject to ABI rules.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXV+aKgAKCRDj7w1vZxhR
-xRMwAP0fMmxNQd3iwRCBEhylWiBgjth2nBRFWwaoecI6PiXhjQD8Cr8Op739M9P5
-ELbAfEs0KtHW7ro3qTMi5KruzloAGgU=
-=+ikl
------END PGP SIGNATURE-----
-
---p5b5zggpj4lv77ke--
+Yours,
+Linus Walleij
